@@ -6,4 +6,10 @@ public class RushBingoCard extends RegularBingoCard
     {
         CARD_SIZE = 3;
     }
+
+    @Override
+    public int getCardInventorySlot(int itemIndex)
+    {
+        return getCardInventorySlot(itemIndex, 3, 3);
+    }
 }

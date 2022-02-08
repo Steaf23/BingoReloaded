@@ -2,22 +2,21 @@ package me.steven.bingoreloaded;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import javax.annotation.Nullable;
-import java.util.Objects;
 
 public class BingoReloaded extends JavaPlugin
 {
+    public static final String PRINT_PREFIX = "" + ChatColor.DARK_RED + "[" + ChatColor.GOLD + ChatColor.BOLD + "Bingo-" + ChatColor.YELLOW + ChatColor.ITALIC + "Reloaded" + ChatColor.DARK_RED + "] " + ChatColor.RESET + "";
     public static final String NAME = "BingoReloaded";
-    public BingoGame game = new BingoGame();
+    public BingoGame game;
 
     @Override
     public void onEnable()
     {
+        game = new BingoGame();
         Bukkit.getLogger().info(ChatColor.GREEN + "Enabled " + this.getName());
         this.getCommand("bingo").setExecutor(new BingoCommand(game));
         getServer().getPluginManager().registerEvents(game, this);
@@ -31,8 +30,7 @@ public class BingoReloaded extends JavaPlugin
 
     public static void print(String message, @Nullable Player player)
     {
-        Bukkit.getLogger().info(message);
-
+        message = PRINT_PREFIX + message;
         if (player != null)
         {
             player.sendMessage(message);
@@ -41,7 +39,8 @@ public class BingoReloaded extends JavaPlugin
 
     public static void print(String message)
     {
-        print(message, null);
+        message = PRINT_PREFIX + message;
+        Bukkit.getLogger().info(message);
     }
 
     public static void broadcast(String message)

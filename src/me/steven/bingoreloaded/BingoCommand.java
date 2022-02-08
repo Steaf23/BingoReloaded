@@ -1,6 +1,7 @@
 package me.steven.bingoreloaded;
 
 import me.steven.bingoreloaded.cards.*;
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -33,13 +34,31 @@ public class BingoCommand implements CommandExecutor
                         gameInstance.setup(BingoGameMode.REGULAR);
                     }
                     break;
+
                 case "join":
                     if (!(commandSender instanceof Player player)) return false;
-
+                    if (gameInstance.gameInProgress)
+                    {
+                        BingoReloaded.print(ChatColor.RED + "You cannot join an ongoing game, please wait until it ends", player);
+                        break;
+                    }
                     gameInstance.teamManager.openTeamSelector(player);
                     break;
+
+                case "leave":
+                    if (!(commandSender instanceof Player player)) return false;
+
+                    gameInstance.teamManager.removePlayerFromAllTeams(player);
+                    BingoReloaded.print("You have been successfully removed from the game, use " + ChatColor.DARK_RED + "/bingo join " + ChatColor.RESET + "to come back to me :D", player);
+                    gameInstance.takePlayerEffects(player);
+                    break;
+
                 case "start":
                     gameInstance.start();
+                    break;
+
+                case "end":
+                    gameInstance.end();
                     break;
             }
         }

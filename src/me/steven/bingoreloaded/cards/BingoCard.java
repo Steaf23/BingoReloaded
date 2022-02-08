@@ -16,6 +16,13 @@ import java.util.List;
 
 public abstract class BingoCard extends AbstractGUIInventory
 {
+    public enum CardDifficulty
+    {
+        EASY,
+        NORMAL,
+        HARD,
+    }
+
     public BingoGameMode mode;
     // CARD_SIZE must be between 1 and 6! Denotes the size of the length and width of the bingo card (i.e. size 5 will have 25 total spaces)
     public static int CARD_SIZE = 5;
@@ -38,9 +45,9 @@ public abstract class BingoCard extends AbstractGUIInventory
         };
     }
 
-    public void generateCard(String difficulty)
+    public void generateCard(CardDifficulty difficulty)
     {
-        List<Material> materials = BingoItem.ITEMS.get("normal");
+        List<Material> materials = BingoItem.ITEMS.get(difficulty);
         Collections.shuffle(materials);
 
         for (int i = 0; i < Math.pow(CARD_SIZE, 2); i++)
@@ -49,18 +56,20 @@ public abstract class BingoCard extends AbstractGUIInventory
         }
     }
 
-    public abstract boolean checkBingo();
-
-    public boolean isItemInCard(Material item)
-    {
-        BingoReloaded.print("Check out " + item.toString() + "!", null);
-
-        return false;
-    }
+    public abstract boolean hasBingo();
 
     public boolean completeItem(Material item)
     {
-        return true;
+        for (BingoItem bingoItem : items)
+        {
+            if (bingoItem.stack.getType() == item && !bingoItem.isCompleted())
+            {
+                bingoItem.complete();
+                return true;
+            }
+        }
+
+        return false;
     }
 
     @Override
@@ -77,17 +86,22 @@ public abstract class BingoCard extends AbstractGUIInventory
 
     public int getCardInventorySlot(int itemIndex)
     {
+        return getCardInventorySlot(itemIndex, 2, 2);
+    }
+
+    public int getCardInventorySlot(int itemIndex, int leftSpacing, int rightSpacing)
+    {
         int row;
-        if (itemIndex == 24)
+        if (itemIndex == Math.pow(CARD_SIZE, 2) - 1)
         {
-            row = 4;
+            row = CARD_SIZE - 1;
         }
         else
         {
             row = (int) Math.floor(itemIndex / (double)CARD_SIZE);
         }
 
-        return itemIndex + 2 + row * 4;
+        return itemIndex + leftSpacing + row * (leftSpacing + rightSpacing);
     }
 
     @Override

@@ -11,7 +11,7 @@ public class RegularBingoCard extends BingoCard
         20, 21, 22, 23, 24,
      */
     @Override
-    public boolean checkBingo()
+    public boolean hasBingo()
     {
         //check for rows and columns
         for (int y = 0; y < CARD_SIZE; y++)
@@ -21,13 +21,13 @@ public class RegularBingoCard extends BingoCard
             for (int x = 0; x < CARD_SIZE; x++)
             {
                 int indexRow = CARD_SIZE * y + x;
-                if (items.get(indexRow).isCompleted())
+                if (!items.get(indexRow).isCompleted())
                 {
                     completedRow = false;
                 }
 
                 int indexCol = CARD_SIZE * x + y;
-                if (items.get(indexCol).isCompleted())
+                if (!items.get(indexCol).isCompleted())
                 {
                     completedCol = false;
                 }
@@ -43,7 +43,7 @@ public class RegularBingoCard extends BingoCard
         boolean completedDiagonal = true;
         for (int idx = 0; idx < Math.pow(CARD_SIZE, 2); idx += CARD_SIZE + 1)
         {
-            if (items.get(idx).isCompleted())
+            if (!items.get(idx).isCompleted())
             {
                 completedDiagonal = false;
             }
@@ -53,7 +53,7 @@ public class RegularBingoCard extends BingoCard
         {
             if (idx != 0 && idx != Math.pow(CARD_SIZE, 2) - 1)
             {
-                if (items.get(idx).isCompleted())
+                if (!items.get(idx).isCompleted())
                 {
                     completedDiagonal = false;
                 }

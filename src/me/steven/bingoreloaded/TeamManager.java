@@ -4,7 +4,6 @@ import me.steven.bingoreloaded.cards.BingoCard;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 
@@ -17,7 +16,7 @@ public class TeamManager
 
     public TeamManager()
     {
-        scoreboard = Objects.requireNonNull(Bukkit.getScoreboardManager()).getNewScoreboard();
+        scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
     }
 
     public Team getPlayerTeam(Player player)
@@ -73,6 +72,7 @@ public class TeamManager
 
     public void removePlayerFromAllTeams(Player player)
     {
+        if (!getParticipants().contains(player)) return;
         for (Team team : scoreboard.getTeams())
         {
             team.removeEntry(player.getName());
@@ -96,10 +96,7 @@ public class TeamManager
 
     public void initializeCards(BingoCard masterCard)
     {
-        for (Team t : activeTeams.keySet())
-        {
-            activeTeams.put(t, masterCard);
-        }
+        activeTeams.replaceAll((t, v) -> masterCard);
     }
 
     public Set<Player> getParticipants()

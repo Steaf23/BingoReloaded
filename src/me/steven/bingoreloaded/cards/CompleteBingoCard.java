@@ -11,7 +11,7 @@ public class CompleteBingoCard extends BingoCard
     }
 
     @Override
-    public boolean checkBingo()
+    public boolean hasBingo()
     {
         boolean completed = true;
         for (BingoItem item : items)

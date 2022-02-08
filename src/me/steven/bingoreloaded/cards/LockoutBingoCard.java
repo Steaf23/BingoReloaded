@@ -4,7 +4,7 @@ package me.steven.bingoreloaded.cards;
 public class LockoutBingoCard extends BingoCard
 {
     @Override
-    public boolean checkBingo()
+    public boolean hasBingo()
     {
         return false;
     }

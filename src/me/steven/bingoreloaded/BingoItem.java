@@ -1,5 +1,6 @@
 package me.steven.bingoreloaded;
 
+import me.steven.bingoreloaded.cards.BingoCard;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -26,17 +27,6 @@ public class BingoItem
         stack.setItemMeta(meta);
     }
 
-    public static final Map<String, List<Material>> ITEMS = new HashMap<>() {{
-        put("normal", new ArrayList<>() {{
-            add(Material.CYAN_CONCRETE);
-            add(Material.COBBLESTONE);
-            add(Material.STONE);
-            add(Material.GRANITE);
-            add(Material.DIORITE);
-            add(Material.ANDESITE);
-        }});
-    }};
-
     public boolean isCompleted()
     {
         return completed;
@@ -47,7 +37,26 @@ public class BingoItem
         if (completed) return;
 
         completed = true;
+        String name = stack.getItemMeta().getDisplayName();
         stack.setType(Material.BARRIER);
+        ItemMeta meta = stack.getItemMeta();
+        meta.setDisplayName(name);
+        stack.setItemMeta(meta);
         BingoReloaded.broadcast(ChatColor.GREEN + "Completed " + item.toString() + "!");
     }
+
+    public static final Map<BingoCard.CardDifficulty, List<Material>> ITEMS = new HashMap<>() {{
+        put(BingoCard.CardDifficulty.NORMAL, new ArrayList<>() {{
+            add(Material.CYAN_CONCRETE);
+            add(Material.COBBLESTONE);
+            add(Material.STONE);
+            add(Material.GRANITE);
+            add(Material.DIORITE);
+            add(Material.ANDESITE);
+            add(Material.MAGENTA_CONCRETE);
+            add(Material.CANDLE);
+            add(Material.GRAY_DYE);
+            add(Material.DIAMOND);
+        }});
+    }};
 }

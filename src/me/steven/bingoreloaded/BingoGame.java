@@ -6,6 +6,7 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
@@ -13,8 +14,9 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.MainHand;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scoreboard.Team;
 import org.bukkit.util.Vector;
 
@@ -29,17 +31,31 @@ public class BingoGame implements Listener
     private static final int TELEPORT_DISTANCE = 1000000;
     private BingoGameMode currentMode = BingoGameMode.REGULAR;
     private final ItemStack cardItem = new ItemStack(Material.MAP);
-    public final TeamManager teamManager = new TeamManager();
+    private final ItemCooldownManager wandCooldown = new ItemCooldownManager(new ItemStack(Material.WARPED_FUNGUS_ON_A_STICK), 5000);
+    public final TeamManager teamManager;
 
+    public boolean gameInProgress = false;
 
     public BingoGame()
     {
+        teamManager = new TeamManager();
+
         ItemMeta cardMeta = cardItem.getItemMeta();
         if (cardMeta != null)
             cardMeta.setDisplayName("" + ChatColor.DARK_PURPLE + ChatColor.ITALIC + ChatColor.BOLD + "Bingo Card");
         if (cardMeta != null)
             cardMeta.setLore(List.of("Click To Open The Bingo Card!"));
         cardItem.setItemMeta(cardMeta);
+
+        ItemMeta wandMeta = wandCooldown.stack.getItemMeta();
+        if (wandMeta != null)
+            wandMeta.setDisplayName("" + ChatColor.DARK_PURPLE + ChatColor.ITALIC + ChatColor.BOLD + "The Go Up Wand");
+        if (wandMeta != null)
+        {
+            wandMeta.setLore(List.of("Right-Click To Teleport Upwards!"));
+        }
+        wandCooldown.stack.setItemMeta(wandMeta);
+        wandCooldown.stack.addEnchantment(Enchantment.DURABILITY, 3);
     }
 
     /**
@@ -59,47 +75,50 @@ public class BingoGame implements Listener
      */
     public void start()
     {
-        BingoCard masterCard = BingoCard.fromMode(currentMode);
-        masterCard.generateCard(null);
-
         if (teamManager.getParticipants().size() <= 0)
         {
             BingoReloaded.broadcast("" + ChatColor.RED + ChatColor.ITALIC + ChatColor.BOLD + "Bingo could not be started since nobody joined :(");
             return;
         }
 
+        if (gameInProgress)
+        {
+            BingoReloaded.broadcast("" + ChatColor.RED + ChatColor.ITALIC + ChatColor.BOLD + "Cannot start a game of Bingo when there is already one active!");
+            return;
+        }
+
+        gameInProgress = true;
+        BingoCard masterCard = BingoCard.fromMode(currentMode);
+        masterCard.generateCard(BingoCard.CardDifficulty.NORMAL);
+
+
         teamManager.initializeCards(masterCard);
         givePlayerKits();
         teleportPlayers();
+        givePlayersEffects();
     }
 
     public void end()
     {
-
-    }
-
-    public void restart(BingoCard card)
-    {
-        end();
-        start();
-    }
-
-    public void quickRestart()
-    {
-        end();
-        start();
+        if (gameInProgress)
+        {
+            gameInProgress = false;
+            BingoReloaded.broadcast("" + ChatColor.GREEN + ChatColor.ITALIC + ChatColor.BOLD + "Game has ended! Click to " + ChatColor.RED + "Restart!" + ChatColor.DARK_GREEN);
+        }
     }
 
     @EventHandler
     public void onPlayerDropItem(final PlayerDropItemEvent dropEvent)
     {
-        if (dropEvent.getItemDrop().getItemStack().equals(cardItem))
+        if (dropEvent.getItemDrop().getItemStack().equals(cardItem) ||
+                dropEvent.getItemDrop().getItemStack().equals(wandCooldown.stack))
         {
             dropEvent.setCancelled(true);
             return;
         }
 
-        Material item = dropEvent.getItemDrop().getItemStack().getType();
+        ItemStack stack = dropEvent.getItemDrop().getItemStack();
+        Material item = stack.getType();
         Player player = dropEvent.getPlayer();
 
         player.getUniqueId();
@@ -110,13 +129,13 @@ public class BingoGame implements Listener
 
         if (card.completeItem(item))
         {
-            dropEvent.getItemDrop().remove();
+            stack.setAmount(stack.getAmount() - 1);
             for (Player p : teamManager.getParticipants())
             {
                 p.playSound(p, Sound.ENTITY_DRAGON_FIREBALL_EXPLODE, 0.8f, 1.0f);
             }
 
-            if (card.checkBingo())
+            if (card.hasBingo())
             {
                 bingo(team);
             }
@@ -157,13 +176,38 @@ public class BingoGame implements Listener
         if (event.getItem().equals(cardItem))
         {
             event.setCancelled(true);
+            Team playerTeam = teamManager.getPlayerTeam(event.getPlayer());
+            if (playerTeam == null)
+            {
+                BingoReloaded.print("NO TEAM?", event.getPlayer());
+            }
 
-            BingoCard card = teamManager.getCardForTeam(teamManager.getPlayerTeam(event.getPlayer()));
+            BingoCard card = teamManager.getCardForTeam(playerTeam);
 
             // if the player is actually participating, show it
             if (card != null)
             {
                 card.showInventory(event.getPlayer());
+            }
+            else
+            {
+                BingoReloaded.print("CARD IS NULL!", event.getPlayer());
+            }
+        }
+
+        if (event.getItem().equals(wandCooldown.stack)
+                && (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK))
+        {
+            if (wandCooldown.use(event.getPlayer()))
+            {
+                event.setCancelled(true);
+                teleportPlayerUp(event.getPlayer(), 75);
+                event.getPlayer().playSound(event.getPlayer(), Sound.ENTITY_SHULKER_TELEPORT, 0.8f, 1.0f);
+            }
+            else
+            {
+                double seconds = wandCooldown.getTimeLeft(event.getPlayer());
+                BingoReloaded.print(ChatColor.RED + String.format("You cannot use this item for another %.2f seconds!", seconds), event.getPlayer());
             }
         }
     }
@@ -188,8 +232,27 @@ public class BingoGame implements Listener
                 put(Enchantment.PROTECTION_ENVIRONMENTAL, 4);
             }});
             p.getInventory().setArmorContents(new ItemStack[] {boots, null, null, helmet});
+            p.getInventory().setItem(7, wandCooldown.stack);
             p.getInventory().setItem(8, cardItem);
         });
+    }
+
+    public void givePlayersEffects()
+    {
+        Set<Player> players = teamManager.getParticipants();
+        players.forEach(p ->
+        {
+            p.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, 100000, 1, false, false));
+            p.addPotionEffect(new PotionEffect(PotionEffectType.WATER_BREATHING, 100000, 1, false, false));
+            p.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 100000, 2, false, false));
+        });
+    }
+
+    public void takePlayerEffects(Player player)
+    {
+        player.removePotionEffect(PotionEffectType.NIGHT_VISION);
+        player.removePotionEffect(PotionEffectType.WATER_BREATHING);
+        player.removePotionEffect(PotionEffectType.SPEED);
     }
 
     public void teleportPlayers()
@@ -212,10 +275,23 @@ public class BingoGame implements Listener
         }
 
         if (teamManager.getParticipants().size() > 0)
-            spawnStartPlatform(spawnLocation, 5);
+            spawnPlatform(spawnLocation, 5);
     }
 
-    public void spawnStartPlatform(@Nullable Location spawnLocation, int size)
+    public void teleportPlayerUp(Player player, int distance)
+    {
+        int fallDistance = 10;
+        Location newLocation = player.getLocation();
+        newLocation.setY(newLocation.getY() + distance + fallDistance);
+
+        player.teleport(newLocation, PlayerTeleportEvent.TeleportCause.CHORUS_FRUIT);
+
+        newLocation.setY(newLocation.getY() - fallDistance);
+
+        spawnPlatform(newLocation, 1);
+    }
+
+    public void spawnPlatform(@Nullable Location spawnLocation, int size)
     {
         for (int x = -size; x < size + 1; x++)
         {
