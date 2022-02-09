@@ -40,26 +40,27 @@ public class RegularBingoCard extends BingoCard
         }
 
         // check for diagonals
-        boolean completedDiagonal = true;
+        boolean completedDiagonal1 = true;
         for (int idx = 0; idx < Math.pow(CARD_SIZE, 2); idx += CARD_SIZE + 1)
         {
             if (!items.get(idx).isCompleted())
             {
-                completedDiagonal = false;
+                completedDiagonal1 = false;
             }
         }
 
+        boolean completedDiagonal2 = true;
         for (int idx = 0; idx < Math.pow(CARD_SIZE, 2); idx += CARD_SIZE - 1)
         {
             if (idx != 0 && idx != Math.pow(CARD_SIZE, 2) - 1)
             {
                 if (!items.get(idx).isCompleted())
                 {
-                    completedDiagonal = false;
+                    completedDiagonal2 = false;
                 }
             }
         }
 
-        return completedDiagonal;
+        return completedDiagonal1 || completedDiagonal2;
     }
 }

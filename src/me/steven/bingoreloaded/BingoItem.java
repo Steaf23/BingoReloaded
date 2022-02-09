@@ -1,6 +1,7 @@
 package me.steven.bingoreloaded;
 
 import me.steven.bingoreloaded.cards.BingoCard;
+import org.apache.commons.lang.WordUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -37,12 +38,17 @@ public class BingoItem
         if (completed) return;
 
         completed = true;
-        String name = stack.getItemMeta().getDisplayName();
-        stack.setType(Material.BARRIER);
+        String name = stack.getType().name().replace("_", " ");
+        name = WordUtils.capitalizeFully(name);
+        BingoReloaded.broadcast(ChatColor.GREEN + "Completed " + name + "!");
+
+        name = "" + ChatColor.GRAY + ChatColor.STRIKETHROUGH + name;
+        stack.setType(Material.WHITE_STAINED_GLASS_PANE);
         ItemMeta meta = stack.getItemMeta();
-        meta.setDisplayName(name);
+        if (meta != null)
+            meta.setDisplayName(name);
         stack.setItemMeta(meta);
-        BingoReloaded.broadcast(ChatColor.GREEN + "Completed " + item.toString() + "!");
+
     }
 
     public static final Map<BingoCard.CardDifficulty, List<Material>> ITEMS = new HashMap<>() {{

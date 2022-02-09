@@ -1,6 +1,10 @@
 package me.steven.bingoreloaded;
 
 import me.steven.bingoreloaded.cards.*;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.*;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -103,7 +107,16 @@ public class BingoGame implements Listener
         if (gameInProgress)
         {
             gameInProgress = false;
-            BingoReloaded.broadcast("" + ChatColor.GREEN + ChatColor.ITALIC + ChatColor.BOLD + "Game has ended! Click to " + ChatColor.RED + "Restart!" + ChatColor.DARK_GREEN);
+            TextComponent message = new TextComponent("" + ChatColor.GREEN + ChatColor.ITALIC + ChatColor.BOLD + "Game has ended! Click to ");
+            TextComponent comp = new TextComponent("" + ChatColor.RED + ChatColor.ITALIC + "Restart!");
+            comp.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/bingo start"));
+            comp.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
+                    new ComponentBuilder("" + ChatColor.GREEN + ChatColor.ITALIC + "Click to restart using the same rules!").create()));
+
+            for(Player p : Bukkit.getOnlinePlayers())
+            {
+                p.spigot().sendMessage(message, comp);
+            }
         }
     }
 
@@ -308,6 +321,7 @@ public class BingoGame implements Listener
 
     public void bingo(Team team)
     {
-        BingoReloaded.broadcast("Congratulations! Team " + team.getDisplayName() + " has won the Bingo!");
+        BingoReloaded.broadcast("Congratulations! Team " + team.getDisplayName() + ChatColor.RESET + " has won the Bingo!");
+        end();
     }
 }
