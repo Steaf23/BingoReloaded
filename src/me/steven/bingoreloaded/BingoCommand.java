@@ -37,12 +37,7 @@ public class BingoCommand implements CommandExecutor
 
                 case "join":
                     if (!(commandSender instanceof Player player)) return false;
-                    if (gameInstance.gameInProgress)
-                    {
-                        BingoReloaded.print(ChatColor.RED + "You cannot join an ongoing game, please wait until it ends", player);
-                        break;
-                    }
-                    gameInstance.teamManager.openTeamSelector(player);
+                    gameInstance.playerJoin(player);
                     break;
 
                 case "leave":
@@ -60,6 +55,12 @@ public class BingoCommand implements CommandExecutor
                 case "end":
                     gameInstance.end();
                     break;
+
+                case "kit":
+                    if (args.length == 2)
+                    {
+                        gameInstance.setKit(args[1]);
+                    }
             }
         }
         else

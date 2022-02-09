@@ -120,6 +120,16 @@ public class BingoGame implements Listener
         }
     }
 
+    public void playerJoin(Player player)
+    {
+        if (gameInProgress)
+        {
+            BingoReloaded.print(ChatColor.RED + "You cannot join an ongoing game, please wait until it ends", player);
+            return;
+        }
+        teamManager.openTeamSelector(player);
+    }
+
     @EventHandler
     public void onPlayerDropItem(final PlayerDropItemEvent dropEvent)
     {
@@ -222,6 +232,20 @@ public class BingoGame implements Listener
                 double seconds = wandCooldown.getTimeLeft(event.getPlayer());
                 BingoReloaded.print(ChatColor.RED + String.format("You cannot use this item for another %.2f seconds!", seconds), event.getPlayer());
             }
+        }
+    }
+
+    public void setKit(String command)
+    {
+        switch (command)
+        {
+            case "reset":
+            case "normal":
+                BingoReloaded.broadcast(ChatColor.GOLD + "Selected Normal Kit!");
+                break;
+            default:
+                BingoReloaded.broadcast(ChatColor.RED + "Kit '" + command + "' not found!");
+                break;
         }
     }
 
