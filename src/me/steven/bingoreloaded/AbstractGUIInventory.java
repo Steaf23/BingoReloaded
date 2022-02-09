@@ -1,8 +1,6 @@
 package me.steven.bingoreloaded;
 
 import org.bukkit.Bukkit;
-import org.bukkit.entity.HumanEntity;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -13,18 +11,19 @@ import org.bukkit.plugin.Plugin;
 public abstract class AbstractGUIInventory implements Listener
 {
     protected Inventory inventory = null;
-    public abstract void showInventory(HumanEntity player);
     //used to process logic when player clicks on an item in the inventory.
     public abstract void delegateClick(InventoryClickEvent event);
     //used to process logic when player drags an item in the inventory.
     public abstract void delegateDrag(InventoryDragEvent event);
 
-    public AbstractGUIInventory()
+    public AbstractGUIInventory(int size, String title)
     {
         Plugin plugin = Bukkit.getPluginManager().getPlugin(BingoReloaded.NAME);
         if (plugin == null) return;
 
         Bukkit.getPluginManager().registerEvents(this, plugin);
+
+        inventory = Bukkit.createInventory(null, size, title);
     }
 
     @EventHandler

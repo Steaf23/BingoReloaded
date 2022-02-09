@@ -37,7 +37,7 @@ public class TeamManager
     public void openTeamSelector(Player player)
     {
         TeamSelectorInventory teamSelect = new TeamSelectorInventory(this);
-        teamSelect.showInventory(player);
+        player.openInventory(teamSelect.inventory);
     }
 
     public Team addTeam(String teamName)

@@ -32,7 +32,7 @@ public abstract class BingoCard extends AbstractGUIInventory
 
     public BingoCard()
     {
-
+        super(9, "ERROR CARD");
     }
 
     public static BingoCard fromMode(BingoGameMode mode)
@@ -72,7 +72,6 @@ public abstract class BingoCard extends AbstractGUIInventory
         return false;
     }
 
-    @Override
     public void showInventory(HumanEntity player)
     {
         this.inventory = Bukkit.createInventory(null, 9 * CARD_SIZE, ChatColor.WHITE + "Bingo Reloaded - " + name);

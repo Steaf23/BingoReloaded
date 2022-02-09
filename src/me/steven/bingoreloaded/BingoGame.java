@@ -53,7 +53,7 @@ public class BingoGame implements Listener
 
         ItemMeta wandMeta = wandCooldown.stack.getItemMeta();
         if (wandMeta != null)
-            wandMeta.setDisplayName("" + ChatColor.DARK_PURPLE + ChatColor.ITALIC + ChatColor.BOLD + "The Go Up Wand");
+            wandMeta.setDisplayName("" + ChatColor.DARK_PURPLE + ChatColor.ITALIC + ChatColor.BOLD + "The Go-Up-Wand");
         if (wandMeta != null)
         {
             wandMeta.setLore(List.of("Right-Click To Teleport Upwards!"));

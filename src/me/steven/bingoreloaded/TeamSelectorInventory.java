@@ -1,9 +1,7 @@
 package me.steven.bingoreloaded;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
@@ -19,7 +17,7 @@ public class TeamSelectorInventory extends AbstractGUIInventory
 
     public TeamSelectorInventory(TeamManager manager)
     {
-        inventory = Bukkit.createInventory(null, 18, ChatColor.DARK_RED + "Select Team");
+        super(18, ChatColor.DARK_RED + "Select Team");
 
         for (ChatColor color : ChatColor.values())
         {
@@ -163,12 +161,6 @@ public class TeamSelectorInventory extends AbstractGUIInventory
             meta.setLore(List.of("Click to join the " + meta.getDisplayName() + ChatColor.DARK_PURPLE + ChatColor.ITALIC + " Team!"));
         item.setItemMeta(meta);
         return item;
-    }
-
-    @Override
-    public void showInventory(HumanEntity player)
-    {
-        player.openInventory(inventory);
     }
 
     @Override

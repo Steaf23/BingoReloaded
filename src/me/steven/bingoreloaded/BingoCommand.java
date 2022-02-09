@@ -62,6 +62,14 @@ public class BingoCommand implements CommandExecutor
                     break;
             }
         }
+        else
+        {
+            if (commandSender instanceof Player player)
+            {
+                BingoOptionsUI options = new BingoOptionsUI(gameInstance);
+                player.openInventory(options.inventory);
+            }
+        }
 
         return false;
     }
