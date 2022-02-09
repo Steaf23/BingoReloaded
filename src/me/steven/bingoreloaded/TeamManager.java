@@ -13,10 +13,12 @@ public class TeamManager
 {
     private final Map<Team, BingoCard> activeTeams = new HashMap<>();
     private final Scoreboard scoreboard;
+    private final BingoGame game;
 
-    public TeamManager()
+    public TeamManager(BingoGame game)
     {
-        scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
+        this.game = game;
+        scoreboard = Objects.requireNonNull(Bukkit.getScoreboardManager()).getNewScoreboard();
     }
 
     public Team getPlayerTeam(Player player)
@@ -34,10 +36,14 @@ public class TeamManager
         return null;
     }
 
-    public void openTeamSelector(Player player)
+    public void openTeamSelector(Player player, AbstractGUIInventory parentUI)
     {
-        TeamSelectorInventory teamSelect = new TeamSelectorInventory(this);
-        player.openInventory(teamSelect.inventory);
+        if (game.isGameInProgress())
+        {
+            BingoReloaded.print(ChatColor.RED + "You cannot join or switch teams in an ongoing game, please wait until it ends", player);
+            return;
+        }
+        TeamSelectorInventory.open(this, parentUI, player);
     }
 
     public Team addTeam(String teamName)

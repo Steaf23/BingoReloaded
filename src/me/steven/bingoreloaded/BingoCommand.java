@@ -37,15 +37,13 @@ public class BingoCommand implements CommandExecutor
 
                 case "join":
                     if (!(commandSender instanceof Player player)) return false;
-                    gameInstance.playerJoin(player);
+                    gameInstance.teamManager.openTeamSelector(player, null);
                     break;
 
                 case "leave":
                     if (!(commandSender instanceof Player player)) return false;
 
-                    gameInstance.teamManager.removePlayerFromAllTeams(player);
-                    BingoReloaded.print("You have been successfully removed from the game, use " + ChatColor.DARK_RED + "/bingo join " + ChatColor.RESET + "to come back to me :D", player);
-                    gameInstance.takePlayerEffects(player);
+                    gameInstance.playerQuit(player);
                     break;
 
                 case "start":

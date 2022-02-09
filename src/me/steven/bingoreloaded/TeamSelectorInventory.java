@@ -2,6 +2,7 @@ package me.steven.bingoreloaded;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
@@ -11,13 +12,13 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.List;
 import java.util.Objects;
 
-public class TeamSelectorInventory extends AbstractGUIInventory
+public class TeamSelectorInventory extends SubGUIInventory
 {
     private final TeamManager manager;
 
-    public TeamSelectorInventory(TeamManager manager)
+    private TeamSelectorInventory(TeamManager manager, AbstractGUIInventory parent)
     {
-        super(18, ChatColor.DARK_RED + "Select Team");
+        super(18, ChatColor.DARK_RED + "Select Team", parent);
 
         for (ChatColor color : ChatColor.values())
         {
@@ -29,6 +30,12 @@ public class TeamSelectorInventory extends AbstractGUIInventory
         }
 
         this.manager = manager;
+    }
+
+    public static void open(TeamManager manager, AbstractGUIInventory parent, HumanEntity player)
+    {
+        TeamSelectorInventory inv = new TeamSelectorInventory(manager, parent);
+        player.openInventory(inv.inventory);
     }
 
     public ItemStack createTeamItem(ChatColor color)
@@ -171,6 +178,7 @@ public class TeamSelectorInventory extends AbstractGUIInventory
         if (clickedItem == null || clickedItem.getType().isAir()) return;
 
         manager.addPlayerToTeam((Player)event.getWhoClicked(), Objects.requireNonNull(event.getCurrentItem().getItemMeta()).getDisplayName());
+        openParent((Player)event.getWhoClicked());
     }
 
     @Override
