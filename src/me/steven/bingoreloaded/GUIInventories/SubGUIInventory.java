@@ -1,6 +1,8 @@
-package me.steven.bingoreloaded;
+package me.steven.bingoreloaded.GUIInventories;
 
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
 
 public abstract class SubGUIInventory extends AbstractGUIInventory
 {
@@ -15,6 +17,6 @@ public abstract class SubGUIInventory extends AbstractGUIInventory
     public void openParent(Player player)
     {
         if (parent != null)
-            player.openInventory(parent.inventory);
+            parent.open(player);
     }
 }

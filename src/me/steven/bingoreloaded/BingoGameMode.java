@@ -1,8 +1,6 @@
-package me.steven.bingoreloaded.cards;
+package me.steven.bingoreloaded;
 
 import org.bukkit.ChatColor;
-
-import java.util.NoSuchElementException;
 
 public enum BingoGameMode
 {
@@ -19,17 +17,5 @@ public enum BingoGameMode
     {
         this.name = name;
         this.command = command;
-    }
-
-    public static BingoGameMode fromCommand(String cmd)
-    {
-        for (BingoGameMode mode : values())
-        {
-            if (mode.command.equals(cmd))
-            {
-                return mode;
-            }
-        }
-        throw new NoSuchElementException("Bingo game mode with command name " + cmd + " has not been found");
     }
 }

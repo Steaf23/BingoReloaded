@@ -4,6 +4,11 @@ author: Steven
 main: me.steven.bingoreloaded.BingoReloaded
 api-version: 1.18
 
+permissions:
+  bingo.admin:
+    description: Bingo admins can create and start games of Bingo, as well as edit game settings in the /bingo menu
+    default: op
+
 commands:
   bingo:
     description: Bingo commands lmao

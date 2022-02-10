@@ -1,4 +1,4 @@
-package me.steven.bingoreloaded.cards;
+package me.steven.bingoreloaded.GUIInventories.cards;
 
 public enum CardSize
 {

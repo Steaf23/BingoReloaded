@@ -1,11 +1,11 @@
 package me.steven.bingoreloaded;
 
-import me.steven.bingoreloaded.cards.*;
+import me.steven.bingoreloaded.GUIInventories.BingoOptionsUI;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 
 public class BingoCommand implements CommandExecutor
@@ -24,22 +24,6 @@ public class BingoCommand implements CommandExecutor
         {
             switch (args[0])
             {
-                case "setup":
-                    if (args.length == 2)
-                    {
-                        gameInstance.setup(BingoGameMode.fromCommand(args[1]));
-                    }
-                    else if (args.length == 1)
-                    {
-                        gameInstance.setup(BingoGameMode.REGULAR);
-                    }
-                    break;
-
-                case "join":
-                    if (!(commandSender instanceof Player player)) return false;
-                    gameInstance.teamManager.openTeamSelector(player, null);
-                    break;
-
                 case "leave":
                     if (!(commandSender instanceof Player player)) return false;
 
@@ -53,11 +37,12 @@ public class BingoCommand implements CommandExecutor
                 case "end":
                     gameInstance.end();
                     break;
-
-                case "kit":
-                    if (args.length == 2)
+                default:
+                    if (commandSender instanceof Player p)
+                        BingoReloaded.print(ChatColor.RED + "Usage: /bingo [start|end|leave]", p);
+                    else
                     {
-                        gameInstance.setKit(args[1]);
+                        BingoReloaded.print(ChatColor.RED + "Usage: /bingo [start|end|leave]");
                     }
             }
         }
@@ -65,8 +50,19 @@ public class BingoCommand implements CommandExecutor
         {
             if (commandSender instanceof Player player)
             {
-                BingoOptionsUI options = new BingoOptionsUI(gameInstance);
-                player.openInventory(options.inventory);
+                if (gameInstance.isGameInProgress())
+                {
+                    TextComponent[] message = BingoReloaded.createHoverCommandMessage(
+                            "Cannot open the settings menu while a game is still in progress, end it using ",
+                            "/bingo end",
+                            "/bingo end",
+                            "Or click here to end the game ;)");
+
+                    player.spigot().sendMessage(message);
+                    return false;
+                }
+
+                BingoOptionsUI.open(player, gameInstance);
             }
         }
 

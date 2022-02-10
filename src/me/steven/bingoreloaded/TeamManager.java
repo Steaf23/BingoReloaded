@@ -1,6 +1,8 @@
 package me.steven.bingoreloaded;
 
-import me.steven.bingoreloaded.cards.BingoCard;
+import me.steven.bingoreloaded.GUIInventories.AbstractGUIInventory;
+import me.steven.bingoreloaded.GUIInventories.TeamSelectorInventory;
+import me.steven.bingoreloaded.GUIInventories.cards.BingoCard;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;

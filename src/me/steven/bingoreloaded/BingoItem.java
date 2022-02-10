@@ -1,10 +1,9 @@
 package me.steven.bingoreloaded;
 
-import me.steven.bingoreloaded.cards.BingoCard;
+import me.steven.bingoreloaded.GUIInventories.cards.BingoCard;
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.*;
@@ -12,25 +11,19 @@ import java.util.*;
 public class BingoItem
 {
     public final Material item;
-    public final ItemStack stack;
+    public final MenuItem stack;
 
     private boolean completed = false;
 
     public BingoItem(Material item)
     {
         this.item = item;
-        this.stack = new ItemStack(item);
-
-        ItemMeta meta = stack.getItemMeta();
-        if (meta == null) return;
-
-        meta.setLore(List.of("I am a bingo Item :D"));
-        stack.setItemMeta(meta);
+        this.stack = new MenuItem(item, null, "I am a bingo Item :D");
     }
 
-    public boolean isCompleted()
+    public boolean isIncomplete()
     {
-        return completed;
+        return !completed;
     }
 
     public void complete()

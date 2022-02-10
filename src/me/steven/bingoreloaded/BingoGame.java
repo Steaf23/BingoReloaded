@@ -1,9 +1,6 @@
 package me.steven.bingoreloaded;
 
-import me.steven.bingoreloaded.cards.*;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
-import net.md_5.bungee.api.chat.HoverEvent;
+import me.steven.bingoreloaded.GUIInventories.cards.*;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.*;
 import org.bukkit.enchantments.Enchantment;
@@ -34,15 +31,18 @@ import java.util.Set;
 public class BingoGame implements Listener
 {
     private static final int TELEPORT_DISTANCE = 1000000;
-    private BingoGameMode currentMode = BingoGameMode.REGULAR;
+    private BingoGameMode currentMode;
+    private PlayerKit currentKit;
     private final ItemStack cardItem = new ItemStack(Material.MAP);
-    private final ItemCooldownManager wandCooldown = new ItemCooldownManager(new ItemStack(Material.WARPED_FUNGUS_ON_A_STICK), 5000);
+    private final ItemCooldownManager wandItem = new ItemCooldownManager(new ItemStack(Material.WARPED_FUNGUS_ON_A_STICK), 5000);
     public final TeamManager teamManager;
     private boolean gameInProgress = false;
-    private PlayerKit selectedKit = PlayerKit.NORMAL;
 
     public BingoGame()
     {
+        currentMode = BingoGameMode.REGULAR;
+        currentKit = PlayerKit.NORMAL;
+
         teamManager = new TeamManager(this);
 
         ItemMeta cardMeta = cardItem.getItemMeta();
@@ -52,15 +52,15 @@ public class BingoGame implements Listener
             cardMeta.setLore(List.of("Click To Open The Bingo Card!"));
         cardItem.setItemMeta(cardMeta);
 
-        ItemMeta wandMeta = wandCooldown.stack.getItemMeta();
+        ItemMeta wandMeta = wandItem.stack.getItemMeta();
         if (wandMeta != null)
             wandMeta.setDisplayName("" + ChatColor.DARK_PURPLE + ChatColor.ITALIC + ChatColor.BOLD + "The Go-Up-Wand");
         if (wandMeta != null)
         {
             wandMeta.setLore(List.of("Right-Click To Teleport Upwards!"));
         }
-        wandCooldown.stack.setItemMeta(wandMeta);
-        wandCooldown.stack.addEnchantment(Enchantment.DURABILITY, 3);
+        wandItem.stack.setItemMeta(wandMeta);
+        wandItem.stack.addEnchantment(Enchantment.DURABILITY, 3);
     }
 
     /**
@@ -68,11 +68,20 @@ public class BingoGame implements Listener
      *
      * @param mode the chosen bingo game mode
      */
-    public void setup(BingoGameMode mode)
+    public void setGameMode(BingoGameMode mode)
     {
         currentMode = mode;
 
-        BingoReloaded.broadcast(currentMode.name + ChatColor.GOLD + " Bingo is about to start, join the game using " + ChatColor.DARK_RED + "/bingo join" + ChatColor.GOLD + "!");
+        TextComponent[] message = BingoReloaded.createHoverCommandMessage(
+                currentMode.name + ChatColor.GOLD + " Bingo has been selected by an admin, join the game using ",
+                ChatColor.DARK_RED + "/bingo",
+                "/bingo",
+                "Or click here to join the game ;)");
+
+        for (Player p : Bukkit.getOnlinePlayers())
+        {
+            p.spigot().sendMessage(message);
+        }
     }
 
     /**
@@ -93,7 +102,7 @@ public class BingoGame implements Listener
         }
 
         gameInProgress = true;
-        BingoCard masterCard = BingoCard.fromMode(currentMode);
+        BingoCard masterCard = CardBuilder.fromMode(currentMode);
         masterCard.generateCard(BingoCard.CardDifficulty.NORMAL);
 
 
@@ -108,16 +117,20 @@ public class BingoGame implements Listener
         if (gameInProgress)
         {
             gameInProgress = false;
-            TextComponent message = new TextComponent("" + ChatColor.GREEN + ChatColor.ITALIC + ChatColor.BOLD + "Game has ended! Click to ");
-            TextComponent comp = new TextComponent("" + ChatColor.RED + ChatColor.ITALIC + "Restart!");
-            comp.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/bingo start"));
-            comp.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                    new ComponentBuilder("" + ChatColor.GREEN + ChatColor.ITALIC + "Click to restart using the same rules!").create()));
+            TextComponent[] commandMessage = BingoReloaded.createHoverCommandMessage(
+                    "Game has ended! Click to ",
+                    "Restart!",
+                    "/bingo start",
+                    "Click to restart using the same rules!");
 
             for(Player p : Bukkit.getOnlinePlayers())
             {
-                p.spigot().sendMessage(message, comp);
+                p.spigot().sendMessage(commandMessage);
             }
+        }
+        else
+        {
+            BingoReloaded.print(ChatColor.RED + "No Game to end!");
         }
     }
 
@@ -125,7 +138,7 @@ public class BingoGame implements Listener
     public void onPlayerDropItem(final PlayerDropItemEvent dropEvent)
     {
         if (dropEvent.getItemDrop().getItemStack().equals(cardItem) ||
-                dropEvent.getItemDrop().getItemStack().equals(wandCooldown.stack))
+                dropEvent.getItemDrop().getItemStack().equals(wandItem.stack))
         {
             dropEvent.setCancelled(true);
             return;
@@ -210,12 +223,12 @@ public class BingoGame implements Listener
             }
         }
 
-        if (event.getItem().equals(wandCooldown.stack)
+        if (event.getItem().equals(wandItem.stack)
                 && (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK))
         {
             event.setCancelled(true);
             if (!teamManager.getParticipants().contains(event.getPlayer())) return;
-            if (wandCooldown.use(event.getPlayer()))
+            if (wandItem.use(event.getPlayer()))
             {
                 event.setCancelled(true);
                 teleportPlayerUp(event.getPlayer(), 75);
@@ -223,7 +236,7 @@ public class BingoGame implements Listener
             }
             else
             {
-                double seconds = wandCooldown.getTimeLeft(event.getPlayer());
+                double seconds = wandItem.getTimeLeft(event.getPlayer());
                 BingoReloaded.print(ChatColor.RED + String.format("You cannot use this item for another %.2f seconds!", seconds), event.getPlayer());
             }
         }
@@ -243,7 +256,10 @@ public class BingoGame implements Listener
     {
         switch (command)
         {
-            case "reset", "normal" -> BingoReloaded.broadcast(ChatColor.GOLD + "Selected Normal Kit!");
+            case "reset", "normal" -> {
+                BingoReloaded.broadcast(ChatColor.GOLD + "Selected Normal Kit!");
+                currentKit = PlayerKit.NORMAL;
+            }
             default -> BingoReloaded.broadcast(ChatColor.RED + "Kit '" + command + "' not found!");
         }
     }
@@ -269,7 +285,7 @@ public class BingoGame implements Listener
                 put(Enchantment.PROTECTION_ENVIRONMENTAL, 4);
             }});
             p.getInventory().setArmorContents(new ItemStack[] {boots, null, null, helmet});
-            p.getInventory().setItem(7, wandCooldown.stack);
+            p.getInventory().setItem(7, wandItem.stack);
             p.getInventory().setItem(8, cardItem);
         });
     }
