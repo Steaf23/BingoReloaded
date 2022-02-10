@@ -6,8 +6,7 @@ import me.steven.bingoreloaded.GUIInventories.cards.BingoCard;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-import org.bukkit.scoreboard.Scoreboard;
-import org.bukkit.scoreboard.Team;
+import org.bukkit.scoreboard.*;
 
 import java.util.*;
 
@@ -20,7 +19,9 @@ public class TeamManager
     public TeamManager(BingoGame game)
     {
         this.game = game;
-        scoreboard = Objects.requireNonNull(Bukkit.getScoreboardManager()).getNewScoreboard();
+        scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
+        Objective objective = scoreboard.registerNewObjective("item_count", "bingo_item_count", "Collected Items");
+        objective.setDisplaySlot(DisplaySlot.SIDEBAR);
     }
 
     public Team getPlayerTeam(Player player)
@@ -57,9 +58,11 @@ public class TeamManager
             Team newTeam = scoreboard.registerNewTeam(teamName);
             BingoReloaded.broadcast("Adding Team " + newTeam.getDisplayName() + ChatColor.RESET + "!");
             activeTeams.put(newTeam, null);
+            ChatColor teamColor = ChatColor.getByChar((char)newTeam.getDisplayName().getBytes()[1]);
+            if (teamColor != null)
+                newTeam.setColor(teamColor);
             return newTeam;
         }
-
         return existingTeam;
     }
 
@@ -132,5 +135,30 @@ public class TeamManager
         }
 
         return players;
+    }
+
+    public void updateTeamDisplay()
+    {
+        Objective objective = scoreboard.getObjective("item_count");
+        if (objective == null) return;
+
+        for (Team t : activeTeams.keySet())
+        {
+            Score score = objective.getScore(t.getDisplayName() + ChatColor.RESET + ":");
+            score.setScore(getCardForTeam(t).getCompleteCount(t));
+        }
+
+        for (Player p : getParticipants())
+        {
+            p.setScoreboard(scoreboard);
+        }
+    }
+
+    public void clearTeamDisplay()
+    {
+        for (String entry : scoreboard.getEntries())
+        {
+            scoreboard.resetScores(entry);
+        }
     }
 }

@@ -7,6 +7,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public class BingoCommand implements CommandExecutor
 {
@@ -18,7 +19,7 @@ public class BingoCommand implements CommandExecutor
     }
 
     @Override
-    public boolean onCommand(CommandSender commandSender, Command command, String s, String[] args)
+    public boolean onCommand(@NonNull CommandSender commandSender, @NonNull Command command, @NonNull String s, String[] args)
     {
         if (args.length > 0)
         {
@@ -55,6 +56,7 @@ public class BingoCommand implements CommandExecutor
                     TextComponent[] message = BingoReloaded.createHoverCommandMessage(
                             "Cannot open the settings menu while a game is still in progress, end it using ",
                             "/bingo end",
+                            "",
                             "/bingo end",
                             "Or click here to end the game ;)");
 

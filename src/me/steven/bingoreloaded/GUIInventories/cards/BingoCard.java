@@ -22,7 +22,6 @@ public class BingoCard extends AbstractGUIInventory
 
     public CardSize size;
 
-    public String name = "Bingo Card";
     public ArrayList<BingoItem> items = new ArrayList<>();
 
     public BingoCard(CardSize size)
@@ -33,8 +32,10 @@ public class BingoCard extends AbstractGUIInventory
 
     public void generateCard(CardDifficulty difficulty)
     {
-        List<Material> materials = BingoItem.ITEMS.get(difficulty);
+        List<Material> materials = BingoReloaded.bingoItems.get(difficulty);
         Collections.shuffle(materials);
+
+        BingoReloaded.broadcast(materials.toString());
 
         for (int i = 0; i < size.fullCardSize; i++)
         {

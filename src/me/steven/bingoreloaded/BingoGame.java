@@ -17,6 +17,7 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scoreboard.Team;
@@ -75,6 +76,7 @@ public class BingoGame implements Listener
         TextComponent[] message = BingoReloaded.createHoverCommandMessage(
                 currentMode.name + ChatColor.GOLD + " Bingo has been selected by an admin, join the game using ",
                 ChatColor.DARK_RED + "/bingo",
+                "",
                 "/bingo",
                 "Or click here to join the game ;)");
 
@@ -103,13 +105,16 @@ public class BingoGame implements Listener
 
         gameInProgress = true;
         BingoCard masterCard = CardBuilder.fromMode(currentMode);
-        masterCard.generateCard(BingoCard.CardDifficulty.NORMAL);
+        masterCard.generateCard(BingoCard.CardDifficulty.EASY);
 
+        World world = Bukkit.getWorlds().get(0);
 
         teamManager.initializeCards(masterCard);
         givePlayerKits();
-        teleportPlayers();
+        teleportPlayers(world);
         givePlayersEffects();
+        teamManager.clearTeamDisplay();
+        teamManager.updateTeamDisplay();
     }
 
     public void end()
@@ -120,6 +125,7 @@ public class BingoGame implements Listener
             TextComponent[] commandMessage = BingoReloaded.createHoverCommandMessage(
                     "Game has ended! Click to ",
                     "Restart!",
+                    "",
                     "/bingo start",
                     "Click to restart using the same rules!");
 
@@ -161,6 +167,7 @@ public class BingoGame implements Listener
             {
                 p.playSound(p, Sound.ENTITY_DRAGON_FIREBALL_EXPLODE, 0.8f, 1.0f);
             }
+            teamManager.updateTeamDisplay();
 
             if (card.hasBingo(team))
             {
@@ -279,6 +286,15 @@ public class BingoGame implements Listener
                 put(Enchantment.DURABILITY, 3);
                 put(Enchantment.PROTECTION_ENVIRONMENTAL, 4);
             }});
+
+            LeatherArmorMeta helmetMeta = (LeatherArmorMeta) helmet.getItemMeta();
+            if (helmetMeta != null)
+            {
+                java.awt.Color color = teamManager.getPlayerTeam(p).getColor().asBungee().getColor();
+                helmetMeta.setColor(Color.fromRGB(color.getRed(), color.getGreen(), color.getBlue()));
+            }
+            helmet.setItemMeta(helmetMeta);
+
             ItemStack boots = new ItemStack(Material.NETHERITE_BOOTS);
             boots.addEnchantments(new HashMap<>(){{
                 put(Enchantment.DEPTH_STRIDER, 3);
@@ -317,7 +333,7 @@ public class BingoGame implements Listener
         player.removePotionEffect(PotionEffectType.SPEED);
     }
 
-    public void teleportPlayers()
+    public void teleportPlayers(World world)
     {
         Vector targetPosition = Vector.getRandom().multiply(TELEPORT_DISTANCE);
 
@@ -330,7 +346,7 @@ public class BingoGame implements Listener
             if (!locationSet)
             {
                 locationSet = true;
-                spawnLocation = new Location(p.getWorld(), targetPosition.getX(), 200, targetPosition.getZ());
+                spawnLocation = new Location(world, targetPosition.getX(), 200, targetPosition.getZ());
             }
 
             p.teleport(spawnLocation, PlayerTeleportEvent.TeleportCause.PLUGIN);
