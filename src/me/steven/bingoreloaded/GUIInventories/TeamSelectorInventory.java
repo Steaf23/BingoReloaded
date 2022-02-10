@@ -11,6 +11,7 @@ import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.List;
 import java.util.Objects;
 
 public class TeamSelectorInventory extends SubGUIInventory
@@ -58,133 +59,81 @@ public class TeamSelectorInventory extends SubGUIInventory
 
     public MenuItem createTeamItem(ChatColor color)
     {
-        MenuItem item = new MenuItem(Material.BARRIER, "", "");
-        ItemMeta meta = item.getItemMeta();
-        if (meta != null)
-            meta.setDisplayName("NONE");
-
+        MenuItem item;
         switch (color)
         {
-//            case WHITE:
-//                item = new ItemStack(Material.WHITE_CONCRETE);
-//                meta = item.getItemMeta();
-//                if (meta != null)
-//                    meta.setDisplayName(ChatColor.WHITE + "White" + ChatColor.RESET);
-//                break;
-//
-//            case DARK_RED:
-//                item = new ItemStack(Material.BROWN_CONCRETE);
-//                meta = item.getItemMeta();
-//                if (meta != null)
-//                    meta.setDisplayName(ChatColor.DARK_RED + "Evil Red" + ChatColor.RESET);
-//                break;
-//
-//            case RED:
-//                item = new ItemStack(Material.RED_CONCRETE);
-//                meta = item.getItemMeta();
-//                if (meta != null)
-//                    meta.setDisplayName(ChatColor.RED + "Red" + ChatColor.RESET);
-//                break;
-//
-//            case GOLD:
-//                item = new ItemStack(Material.ORANGE_CONCRETE);
-//                meta = item.getItemMeta();
-//                if (meta != null)
-//                    meta.setDisplayName(ChatColor.GOLD + "Gold" + ChatColor.RESET);
-//                break;
-//
-//            case YELLOW:
-//                item = new ItemStack(Material.YELLOW_CONCRETE);
-//                meta = item.getItemMeta();
-//                if (meta != null)
-//                    meta.setDisplayName(ChatColor.YELLOW + "Yellow" + ChatColor.RESET);
-//                break;
-//
-//            case DARK_GREEN:
-//                item = new ItemStack(Material.GREEN_CONCRETE);
-//                meta = item.getItemMeta();
-//                if (meta != null)
-//                    meta.setDisplayName(ChatColor.DARK_GREEN + "Dark Green" + ChatColor.RESET);
-//                break;
-//
-//            case GREEN:
-//                item = new ItemStack(Material.LIME_CONCRETE);
-//                meta = item.getItemMeta();
-//                if (meta != null)
-//                    meta.setDisplayName(ChatColor.GREEN + "Light Green" + ChatColor.RESET);
-//                break;
-//
-//            case AQUA:
-//                item = new ItemStack(Material.MAGENTA_CONCRETE);
-//                meta = item.getItemMeta();
-//                if (meta != null)
-//                    meta.setDisplayName(ChatColor.AQUA + "Fake Magenta" + ChatColor.RESET);
-//                break;
-//
-//            case DARK_AQUA:
-//                item = new ItemStack(Material.CYAN_CONCRETE);
-//                meta = item.getItemMeta();
-//                if (meta != null)
-//                    meta.setDisplayName(ChatColor.DARK_AQUA + "Cyan" + ChatColor.RESET);
-//                break;
-//
-//            case DARK_BLUE:
-//                item = new ItemStack(Material.BLUE_CONCRETE);
-//                meta = item.getItemMeta();
-//                if (meta != null)
-//                    meta.setDisplayName(ChatColor.DARK_BLUE + "Dark Blue" + ChatColor.RESET);
-//                break;
-//
-//            case BLUE:
-//                item = new ItemStack(Material.LIGHT_BLUE_CONCRETE);
-//                meta = item.getItemMeta();
-//                if (meta != null)
-//                    meta.setDisplayName(ChatColor.BLUE + "Light Blue" + ChatColor.RESET);
-//                break;
-//
-//            case LIGHT_PURPLE:
-//                item = new ItemStack(Material.PINK_CONCRETE);
-//                meta = item.getItemMeta();
-//                if (meta != null)
-//                    meta.setDisplayName(ChatColor.LIGHT_PURPLE + "Pink" + ChatColor.RESET);
-//                break;
-//
-//            case DARK_PURPLE:
-//                item = new ItemStack(Material.PURPLE_CONCRETE);
-//                meta = item.getItemMeta();
-//                if (meta != null)
-//                    meta.setDisplayName(ChatColor.DARK_PURPLE + "Purple" + ChatColor.RESET);
-//                break;
-//
-//            case GRAY:
-//                item = new ItemStack(Material.LIGHT_GRAY_CONCRETE);
-//                meta = item.getItemMeta();
-//                if (meta != null)
-//                    meta.setDisplayName(ChatColor.GRAY + "Light Gray" + ChatColor.RESET);
-//                break;
-//
-//            case DARK_GRAY:
-//                item = new ItemStack(Material.GRAY_CONCRETE);
-//                meta = item.getItemMeta();
-//                if (meta != null)
-//                    meta.setDisplayName(ChatColor.DARK_GRAY + "Gray" + ChatColor.RESET);
-//                break;
-//
-//            case BLACK:
-//                item = new ItemStack(Material.BLACK_CONCRETE);
-//                meta = item.getItemMeta();
-//                if (meta != null)
-//                    meta.setDisplayName(ChatColor.BLACK + "Dark Gray" + ChatColor.RESET);
-//                break;
+            case WHITE:
+                item = new MenuItem(Material.WHITE_CONCRETE, ChatColor.WHITE + "White");
+                break;
+
+            case DARK_RED:
+                item = new MenuItem(Material.BROWN_CONCRETE, ChatColor.DARK_RED + "Evil Red");
+                break;
+
+            case RED:
+                item = new MenuItem(Material.RED_CONCRETE, ChatColor.RED + "Red");
+                break;
+
+            case GOLD:
+                item = new MenuItem(Material.ORANGE_CONCRETE, ChatColor.GOLD + "Gold");
+                break;
+
+            case YELLOW:
+                item = new MenuItem(Material.YELLOW_CONCRETE, ChatColor.YELLOW + "Yellow");
+                break;
+
+            case DARK_GREEN:
+                item = new MenuItem(Material.GREEN_CONCRETE, ChatColor.DARK_GREEN + "Dark Green");
+                break;
+
+            case GREEN:
+                item = new MenuItem(Material.LIME_CONCRETE, ChatColor.GREEN + "Light Green");
+                break;
+
+            case AQUA:
+                item = new MenuItem(Material.MAGENTA_CONCRETE, ChatColor.AQUA + "fake Magenta");
+                break;
+
+            case DARK_AQUA:
+                item = new MenuItem(Material.CYAN_CONCRETE, ChatColor.DARK_AQUA + "Cyan");
+                break;
+
+            case DARK_BLUE:
+                item = new MenuItem(Material.BLUE_CONCRETE, ChatColor.DARK_BLUE + "Dark Blue");
+                break;
+
+            case BLUE:
+                item = new MenuItem(Material.LIGHT_BLUE_CONCRETE, ChatColor.BLUE + "Light Blue");
+                break;
+
+            case LIGHT_PURPLE:
+                item = new MenuItem(Material.PINK_CONCRETE, ChatColor.LIGHT_PURPLE + "Pink");
+                break;
+
+            case DARK_PURPLE:
+                item = new MenuItem(Material.PURPLE_CONCRETE, ChatColor.DARK_PURPLE + "Purple");
+                break;
+
+            case GRAY:
+                item = new MenuItem(Material.LIGHT_GRAY_CONCRETE, ChatColor.GRAY + "Light Gray");
+                break;
+
+            case DARK_GRAY:
+                item = new MenuItem(Material.GRAY_CONCRETE, ChatColor.DARK_GRAY + "Gray");
+                break;
+
+            case BLACK:
+                item = new MenuItem(Material.BLACK_CONCRETE, ChatColor.BLACK + "Dark Gray");
+                break;
 
             default:
-                return item;
-
+                return null;
         }
 
-//        if (meta != null)
-//            meta.setLore(List.of("Click to join the " + meta.getDisplayName() + ChatColor.DARK_PURPLE + ChatColor.ITALIC + " Team!"));
-//        item.setItemMeta(meta);
-//        return item;
+        ItemMeta meta = item.getItemMeta();
+        if (meta != null)
+            meta.setLore(List.of("Click to join the " + meta.getDisplayName() + ChatColor.DARK_PURPLE + ChatColor.ITALIC + " Team!"));
+        item.setItemMeta(meta);
+        return item;
     }
 }
