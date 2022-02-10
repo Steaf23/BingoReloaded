@@ -154,7 +154,7 @@ public class BingoGame implements Listener
 
         BingoCard card = teamManager.getCardForTeam(team);
 
-        if (card.completeItem(item))
+        if (card.completeItem(item, CardBuilder.completeColor(team)))
         {
             stack.setAmount(stack.getAmount() - 1);
             for (Player p : teamManager.getParticipants())

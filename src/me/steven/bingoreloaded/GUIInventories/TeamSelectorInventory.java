@@ -63,67 +63,67 @@ public class TeamSelectorInventory extends SubGUIInventory
         switch (color)
         {
             case WHITE:
-                item = new MenuItem(Material.WHITE_CONCRETE, ChatColor.WHITE + "White");
+                item = new MenuItem(Material.WHITE_CONCRETE, color + "White");
                 break;
 
             case DARK_RED:
-                item = new MenuItem(Material.BROWN_CONCRETE, ChatColor.DARK_RED + "Evil Red");
+                item = new MenuItem(Material.BROWN_CONCRETE, color + "Evil Red");
                 break;
 
             case RED:
-                item = new MenuItem(Material.RED_CONCRETE, ChatColor.RED + "Red");
+                item = new MenuItem(Material.RED_CONCRETE, color + "Red");
                 break;
 
             case GOLD:
-                item = new MenuItem(Material.ORANGE_CONCRETE, ChatColor.GOLD + "Gold");
+                item = new MenuItem(Material.ORANGE_CONCRETE, color + "Gold");
                 break;
 
             case YELLOW:
-                item = new MenuItem(Material.YELLOW_CONCRETE, ChatColor.YELLOW + "Yellow");
+                item = new MenuItem(Material.YELLOW_CONCRETE, color + "Yellow");
                 break;
 
             case DARK_GREEN:
-                item = new MenuItem(Material.GREEN_CONCRETE, ChatColor.DARK_GREEN + "Dark Green");
+                item = new MenuItem(Material.GREEN_CONCRETE, color + "Dark Green");
                 break;
 
             case GREEN:
-                item = new MenuItem(Material.LIME_CONCRETE, ChatColor.GREEN + "Light Green");
+                item = new MenuItem(Material.LIME_CONCRETE, color + "Light Green");
                 break;
 
             case AQUA:
-                item = new MenuItem(Material.MAGENTA_CONCRETE, ChatColor.AQUA + "fake Magenta");
+                item = new MenuItem(Material.MAGENTA_CONCRETE, color + "fake Magenta");
                 break;
 
             case DARK_AQUA:
-                item = new MenuItem(Material.CYAN_CONCRETE, ChatColor.DARK_AQUA + "Cyan");
+                item = new MenuItem(Material.CYAN_CONCRETE, color + "Cyan");
                 break;
 
             case DARK_BLUE:
-                item = new MenuItem(Material.BLUE_CONCRETE, ChatColor.DARK_BLUE + "Dark Blue");
+                item = new MenuItem(Material.BLUE_CONCRETE, color + "Dark Blue");
                 break;
 
             case BLUE:
-                item = new MenuItem(Material.LIGHT_BLUE_CONCRETE, ChatColor.BLUE + "Light Blue");
+                item = new MenuItem(Material.LIGHT_BLUE_CONCRETE, color + "Light Blue");
                 break;
 
             case LIGHT_PURPLE:
-                item = new MenuItem(Material.PINK_CONCRETE, ChatColor.LIGHT_PURPLE + "Pink");
+                item = new MenuItem(Material.PINK_CONCRETE, color + "Pink");
                 break;
 
             case DARK_PURPLE:
-                item = new MenuItem(Material.PURPLE_CONCRETE, ChatColor.DARK_PURPLE + "Purple");
+                item = new MenuItem(Material.PURPLE_CONCRETE, color + "Purple");
                 break;
 
             case GRAY:
-                item = new MenuItem(Material.LIGHT_GRAY_CONCRETE, ChatColor.GRAY + "Light Gray");
+                item = new MenuItem(Material.LIGHT_GRAY_CONCRETE, color + "Light Gray");
                 break;
 
             case DARK_GRAY:
-                item = new MenuItem(Material.GRAY_CONCRETE, ChatColor.DARK_GRAY + "Gray");
+                item = new MenuItem(Material.GRAY_CONCRETE, color + "Gray");
                 break;
 
             case BLACK:
-                item = new MenuItem(Material.BLACK_CONCRETE, ChatColor.BLACK + "Dark Gray");
+                item = new MenuItem(Material.BLACK_CONCRETE, color + "Dark Gray");
                 break;
 
             default:

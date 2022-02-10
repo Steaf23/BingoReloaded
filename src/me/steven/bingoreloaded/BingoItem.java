@@ -26,7 +26,7 @@ public class BingoItem
         return !completed;
     }
 
-    public void complete()
+    public void complete(Material completeMaterial)
     {
         if (completed) return;
 
@@ -36,7 +36,7 @@ public class BingoItem
         BingoReloaded.broadcast(ChatColor.GREEN + "Completed " + name + "!");
 
         name = "" + ChatColor.GRAY + ChatColor.STRIKETHROUGH + name;
-        stack.setType(Material.WHITE_STAINED_GLASS_PANE);
+        stack.setType(completeMaterial);
         ItemMeta meta = stack.getItemMeta();
         if (meta != null)
             meta.setDisplayName(name);

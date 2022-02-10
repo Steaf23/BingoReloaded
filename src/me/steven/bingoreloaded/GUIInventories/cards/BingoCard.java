@@ -2,10 +2,12 @@ package me.steven.bingoreloaded.GUIInventories.cards;
 
 import me.steven.bingoreloaded.*;
 import me.steven.bingoreloaded.GUIInventories.AbstractGUIInventory;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
+import org.bukkit.scoreboard.Team;
 
 import java.util.*;
 
@@ -41,13 +43,13 @@ public class BingoCard extends AbstractGUIInventory
         }
     }
 
-    public boolean completeItem(Material item)
+    public boolean completeItem(Material item, Material completeMaterial)
     {
         for (BingoItem bingoItem : items)
         {
             if (bingoItem.stack.getType() == item && bingoItem.isIncomplete())
             {
-                bingoItem.complete();
+                bingoItem.complete(completeMaterial);
                 return true;
             }
         }
