@@ -20,7 +20,6 @@ public class BingoCard extends AbstractGUIInventory
         HARD,
     }
 
-    // CARD_SIZE must be between 1 and 6! Denotes the size of the length and width of the bingo card (i.e. size 5 will have 25 total spaces)
     public CardSize size;
 
     public String name = "Bingo Card";
@@ -43,13 +42,19 @@ public class BingoCard extends AbstractGUIInventory
         }
     }
 
-    public boolean completeItem(Material item, Material completeMaterial)
+    /**
+     * attempts to check off the submitted item from the team's card.
+     * @param item the item to check completion of.
+     * @param team the team submitting the item
+     * @return if the item could be completed and wasn't already done so, return true.
+     */
+    public boolean completeItem(Material item, Team team)
     {
         for (BingoItem bingoItem : items)
         {
-            if (bingoItem.stack.getType() == item && bingoItem.isIncomplete())
+            if (bingoItem.stack.getType() == item && !bingoItem.isComplete(team))
             {
-                bingoItem.complete(completeMaterial);
+                bingoItem.complete(team);
                 return true;
             }
         }
@@ -67,8 +72,9 @@ public class BingoCard extends AbstractGUIInventory
         open(player);
     }
 
-    public boolean hasBingo()
+    public boolean hasBingo(Team team)
     {
+        BingoReloaded.print("Your team (" + team.getDisplayName() + ChatColor.RESET + ") has collected " + getCompleteCount(team) + " items!", team);
         //check for rows and columns
         for (int y = 0; y < size.cardSize; y++)
         {
@@ -77,13 +83,13 @@ public class BingoCard extends AbstractGUIInventory
             for (int x = 0; x < size.cardSize; x++)
             {
                 int indexRow = size.cardSize * y + x;
-                if (items.get(indexRow).isIncomplete())
+                if (!items.get(indexRow).isComplete(team))
                 {
                     completedRow = false;
                 }
 
                 int indexCol = size.cardSize * x + y;
-                if (items.get(indexCol).isIncomplete())
+                if (!items.get(indexCol).isComplete(team))
                 {
                     completedCol = false;
                 }
@@ -99,7 +105,7 @@ public class BingoCard extends AbstractGUIInventory
         boolean completedDiagonal1 = true;
         for (int idx = 0; idx < size.fullCardSize; idx += size.cardSize + 1)
         {
-            if (items.get(idx).isIncomplete())
+            if (!items.get(idx).isComplete(team))
             {
                 completedDiagonal1 = false;
                 break;
@@ -111,7 +117,7 @@ public class BingoCard extends AbstractGUIInventory
         {
             if (idx != 0 && idx != size.fullCardSize - 1)
             {
-                if (items.get(idx).isIncomplete())
+                if (!items.get(idx).isComplete(team))
                 {
                     completedDiagonal2 = false;
                     break;
@@ -120,6 +126,22 @@ public class BingoCard extends AbstractGUIInventory
         }
 
         return completedDiagonal1 || completedDiagonal2;
+    }
+
+    /**
+     *
+     * @param team
+     * @return the amount of completed items for the given team
+     */
+    public int getCompleteCount(Team team)
+    {
+        int count = 0;
+        for (BingoItem item : items)
+        {
+            if (item.isComplete(team)) count++;
+        }
+
+        return count;
     }
 
     @Override

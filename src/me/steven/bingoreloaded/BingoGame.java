@@ -154,7 +154,7 @@ public class BingoGame implements Listener
 
         BingoCard card = teamManager.getCardForTeam(team);
 
-        if (card.completeItem(item, CardBuilder.completeColor(team)))
+        if (card.completeItem(item, team))
         {
             stack.setAmount(stack.getAmount() - 1);
             for (Player p : teamManager.getParticipants())
@@ -162,7 +162,7 @@ public class BingoGame implements Listener
                 p.playSound(p, Sound.ENTITY_DRAGON_FIREBALL_EXPLODE, 0.8f, 1.0f);
             }
 
-            if (card.hasBingo())
+            if (card.hasBingo(team))
             {
                 bingo(team);
             }

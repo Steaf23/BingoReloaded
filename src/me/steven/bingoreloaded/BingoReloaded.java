@@ -9,6 +9,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scoreboard.Team;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 import javax.annotation.Nullable;
 
@@ -33,12 +35,22 @@ public class BingoReloaded extends JavaPlugin
         Bukkit.getLogger().info(ChatColor.RED + "Disabled " + this.getName());
     }
 
-    public static void print(String message, @Nullable Player player)
+    public static void print(String message, @NonNull Player player)
     {
         message = PRINT_PREFIX + message;
-        if (player != null)
+        player.sendMessage(message);
+    }
+
+    public static void print(String message, @NonNull Team team)
+    {
+        message = PRINT_PREFIX + message;
+        for (String name : team.getEntries())
         {
-            player.sendMessage(message);
+            Player p = Bukkit.getPlayer(name);
+            if (p != null)
+            {
+                p.sendMessage(message);
+            }
         }
     }
 

@@ -1,10 +1,12 @@
 package me.steven.bingoreloaded;
 
 import me.steven.bingoreloaded.GUIInventories.cards.BingoCard;
+import me.steven.bingoreloaded.GUIInventories.cards.CardBuilder;
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.scoreboard.Team;
 
 import java.util.*;
 
@@ -12,8 +14,7 @@ public class BingoItem
 {
     public final Material item;
     public final MenuItem stack;
-
-    private boolean completed = false;
+    private Team completedBy = null;
 
     public BingoItem(Material item)
     {
@@ -21,25 +22,33 @@ public class BingoItem
         this.stack = new MenuItem(item, null, "I am a bingo Item :D");
     }
 
-    public boolean isIncomplete()
+    public boolean isComplete(Team team)
     {
-        return !completed;
+        if (completedBy == null) return false;
+
+        return completedBy.getDisplayName().equals(team.getDisplayName());
     }
 
-    public void complete(Material completeMaterial)
+    public void complete(Team team)
     {
-        if (completed) return;
+        if (completedBy != null) return;
 
-        completed = true;
+        Material completeMaterial = CardBuilder.completeColor(team);
+
+        completedBy = team;
+
         String name = stack.getType().name().replace("_", " ");
         name = WordUtils.capitalizeFully(name);
-        BingoReloaded.broadcast(ChatColor.GREEN + "Completed " + name + "!");
+        BingoReloaded.broadcast(ChatColor.GREEN + "Completed " + name + " by team " + completedBy.getDisplayName() + "!");
 
         name = "" + ChatColor.GRAY + ChatColor.STRIKETHROUGH + name;
         stack.setType(completeMaterial);
         ItemMeta meta = stack.getItemMeta();
         if (meta != null)
+        {
             meta.setDisplayName(name);
+            meta.setLore(List.of("Completed by team " + completedBy.getDisplayName()));
+        }
         stack.setItemMeta(meta);
 
     }
