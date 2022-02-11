@@ -51,12 +51,6 @@ public class TeamSelectorInventory extends SubGUIInventory
         openParent((Player)event.getWhoClicked());
     }
 
-    @Override
-    public void delegateDrag(InventoryDragEvent event)
-    {
-
-    }
-
     public MenuItem createTeamItem(ChatColor color)
     {
         MenuItem item;

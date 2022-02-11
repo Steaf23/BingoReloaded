@@ -5,7 +5,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.inventory.RecipeChoice;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
 import java.io.File;
@@ -16,8 +16,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ItemConfigManager
+public class ItemDataManager
 {
+    //TODO: redo this mess
     public static Map<BingoCard.CardDifficulty, List<Material>> getBingoItems()
     {
         Plugin plugin = Bukkit.getPluginManager().getPlugin(BingoReloaded.NAME);
@@ -50,5 +51,11 @@ public class ItemConfigManager
         }
         items.put(BingoCard.CardDifficulty.EASY, easyItems);
         return items;
+    }
+
+    public static void saveItem(String category, ItemStack stack)
+    {
+        String itemName = stack.getType().name();
+        //TODO: write implementation
     }
 }

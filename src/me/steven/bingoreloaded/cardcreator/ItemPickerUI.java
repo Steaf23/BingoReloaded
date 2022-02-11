@@ -6,7 +6,6 @@ import me.steven.bingoreloaded.MenuItem;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
@@ -45,17 +44,16 @@ public class ItemPickerUI extends AbstractGUIInventory
             currentPage = Math.floorMod(currentPage + 1, pageAmount);
             fillPage(currentPage);
         }
-        if (isMenuItem(event.getCurrentItem(), PREVIOUS))
+        else if (isMenuItem(event.getCurrentItem(), PREVIOUS))
         {
             currentPage = Math.floorMod(currentPage - 1, pageAmount);
             fillPage(currentPage);
         }
-    }
-
-    @Override
-    public void delegateDrag(InventoryDragEvent event)
-    {
-
+        else if (!isMenuItem(event.getCurrentItem(), BG_ITEM)) //If it is a normal item;
+        {
+            ItemDifficultySelectionUI difficultySelector = new ItemDifficultySelectionUI(event.getCurrentItem().getType(), this);
+            difficultySelector.open(event.getWhoClicked());
+        }
     }
 
     public void fillPage(int pageNumber)

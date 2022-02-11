@@ -16,10 +16,4 @@ public class DifficultyOptionsUI extends SubGUIInventory
     {
         openParent((Player)event.getWhoClicked());
     }
-
-    @Override
-    public void delegateDrag(InventoryDragEvent event)
-    {
-
-    }
 }

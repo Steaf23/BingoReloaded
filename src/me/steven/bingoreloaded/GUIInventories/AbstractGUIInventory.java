@@ -20,8 +20,6 @@ public abstract class AbstractGUIInventory implements Listener
     private Inventory inventory = null;
     //used to process logic when player clicks on an item in the inventory.
     public abstract void delegateClick(InventoryClickEvent event);
-    //used to process logic when player drags an item in the inventory.
-    public abstract void delegateDrag(InventoryDragEvent event);
 
     public AbstractGUIInventory(int size, String title)
     {
@@ -55,8 +53,6 @@ public abstract class AbstractGUIInventory implements Listener
         if (event.getInventory() == inventory)
         {
             event.setCancelled(true);
-
-            delegateDrag(event);
         }
     }
 

@@ -1,15 +1,17 @@
 package me.steven.bingoreloaded.GUIInventories.cards;
 
-import me.steven.bingoreloaded.*;
+import me.steven.bingoreloaded.BingoItem;
+import me.steven.bingoreloaded.BingoReloaded;
 import me.steven.bingoreloaded.GUIInventories.AbstractGUIInventory;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.scoreboard.Team;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class BingoCard extends AbstractGUIInventory
 {
@@ -147,12 +149,6 @@ public class BingoCard extends AbstractGUIInventory
 
     @Override
     public void delegateClick(InventoryClickEvent event)
-    {
-
-    }
-
-    @Override
-    public void delegateDrag(InventoryDragEvent event)
     {
 
     }

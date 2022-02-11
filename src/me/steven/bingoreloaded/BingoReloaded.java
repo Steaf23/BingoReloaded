@@ -9,7 +9,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scoreboard.Team;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -31,7 +30,7 @@ public class BingoReloaded extends JavaPlugin
         Bukkit.getLogger().info(ChatColor.GREEN + "Enabled " + this.getName());
         this.getCommand("bingo").setExecutor(new BingoCommand(game));
         getServer().getPluginManager().registerEvents(game, this);
-        bingoItems = ItemConfigManager.getBingoItems();
+        bingoItems = ItemDataManager.getBingoItems();
     }
 
     @Override

@@ -59,12 +59,6 @@ public class BingoOptionsUI extends AbstractGUIInventory
         }
     }
 
-    @Override
-    public void delegateDrag(InventoryDragEvent event)
-    {
-
-    }
-
     public static void open(Player player, BingoGame gameInstance)
     {
         BingoOptionsUI options = new BingoOptionsUI(gameInstance);

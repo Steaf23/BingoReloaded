@@ -28,10 +28,4 @@ public class KitOptionsUI extends SubGUIInventory
         game.setKit("normal");
         openParent((Player)event.getWhoClicked());
     }
-
-    @Override
-    public void delegateDrag(InventoryDragEvent event)
-    {
-
-    }
 }

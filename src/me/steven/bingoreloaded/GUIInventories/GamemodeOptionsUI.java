@@ -51,10 +51,4 @@ public class GamemodeOptionsUI extends SubGUIInventory
         }
         openParent((Player)event.getWhoClicked());
     }
-
-    @Override
-    public void delegateDrag(InventoryDragEvent event)
-    {
-
-    }
 }
