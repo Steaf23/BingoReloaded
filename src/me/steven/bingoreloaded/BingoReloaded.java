@@ -108,12 +108,4 @@ public class BingoReloaded extends JavaPlugin
 
         return new TextComponent[]{message1, comp, message2};
     }
-
-    /**
-     * Compares String equality of two ItemStack display names.
-     */
-    public static boolean areNamesEqual(ItemStack stack1, ItemStack stack2)
-    {
-        return stack1.getItemMeta().getDisplayName().equals(stack2.getItemMeta().getDisplayName());
-    }
 }

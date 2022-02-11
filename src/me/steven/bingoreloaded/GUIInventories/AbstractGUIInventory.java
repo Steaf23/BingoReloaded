@@ -10,6 +10,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
 public abstract class AbstractGUIInventory implements Listener
@@ -87,8 +88,24 @@ public abstract class AbstractGUIInventory implements Listener
         }
     }
 
+    public MenuItem getOption(int slot)
+    {
+        ItemStack stack = inventory.getItem(slot);
+        if (stack == null) return null;
+
+        return new MenuItem(inventory.getItem(slot));
+    }
+
     public void open(HumanEntity player)
     {
         player.openInventory(inventory);
+    }
+
+    /**
+     * Compares the given ItemStack getDisplayName to the MenuItem DisplayName and returns true if they are equal.
+     */
+    protected static boolean isMenuItem(ItemStack stack, MenuItem menuItem)
+    {
+        return stack.getItemMeta().getDisplayName().equals(menuItem.getItemMeta().getDisplayName());
     }
 }

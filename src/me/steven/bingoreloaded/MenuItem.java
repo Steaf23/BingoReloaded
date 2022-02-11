@@ -20,4 +20,9 @@ public class MenuItem extends ItemStack
         }
         setItemMeta(meta);
     }
+
+    public MenuItem(ItemStack item)
+    {
+        super(item);
+    }
 }

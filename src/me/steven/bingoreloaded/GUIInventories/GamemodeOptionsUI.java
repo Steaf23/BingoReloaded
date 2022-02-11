@@ -33,19 +33,19 @@ public class GamemodeOptionsUI extends SubGUIInventory
         if (event.getCurrentItem() == null) return;
         if (event.getCurrentItem().getItemMeta() == null) return;
 
-        if (BingoReloaded.areNamesEqual(event.getCurrentItem(), options[0]))
+        if (isMenuItem(event.getCurrentItem(), options[0]))
         {
             game.setGameMode(BingoGameMode.REGULAR);
         }
-        else if (BingoReloaded.areNamesEqual(event.getCurrentItem(), options[1]))
+        else if (isMenuItem(event.getCurrentItem(), options[1]))
         {
             game.setGameMode(BingoGameMode.LOCKOUT);
         }
-        else if (BingoReloaded.areNamesEqual(event.getCurrentItem(), options[2]))
+        else if (isMenuItem(event.getCurrentItem(), options[2]))
         {
             game.setGameMode(BingoGameMode.COMPLETE);
         }
-        else if (BingoReloaded.areNamesEqual(event.getCurrentItem(), options[3]))
+        else if (isMenuItem(event.getCurrentItem(), options[3]))
         {
             game.setGameMode(BingoGameMode.RUSH);
         }

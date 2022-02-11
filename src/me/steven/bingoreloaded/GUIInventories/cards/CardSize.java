@@ -25,11 +25,11 @@ public enum CardSize
     public int getCardInventorySlot(int itemIndex)
     {
         int row;
-        if (itemIndex == Math.pow(cardSize, 2) - 1)
+        if (itemIndex == fullCardSize - 1) //set correct row for last item
         {
             row = cardSize - 1;
         }
-        else
+        else //set correct row for other items
         {
             row = (int) Math.floor(itemIndex / (double)cardSize);
         }

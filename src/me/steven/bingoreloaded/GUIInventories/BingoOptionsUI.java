@@ -39,20 +39,20 @@ public class BingoOptionsUI extends AbstractGUIInventory
 
         ItemStack item = event.getCurrentItem();
 
-        if (BingoReloaded.areNamesEqual(item, menuItems.get("join")))
+        if (isMenuItem(item, menuItems.get("join")))
         {
             game.teamManager.openTeamSelector((Player)event.getWhoClicked(), this);
         }
-        else if (BingoReloaded.areNamesEqual(item, menuItems.get("leave")))
+        else if (isMenuItem(item, menuItems.get("leave")))
         {
             game.playerQuit((Player)event.getWhoClicked());
         }
-        else if (BingoReloaded.areNamesEqual(item, menuItems.get("kit")))
+        else if (isMenuItem(item, menuItems.get("kit")))
         {
             KitOptionsUI kitSelector = new KitOptionsUI(this, game);
             kitSelector.open(event.getWhoClicked());
         }
-        else if (BingoReloaded.areNamesEqual(item, menuItems.get("gamemode")))
+        else if (isMenuItem(item, menuItems.get("gamemode")))
         {
             GamemodeOptionsUI gamemodeSelector = new GamemodeOptionsUI(this, game);
             gamemodeSelector.open(event.getWhoClicked());
