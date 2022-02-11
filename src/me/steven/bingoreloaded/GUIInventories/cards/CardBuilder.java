@@ -1,12 +1,10 @@
 package me.steven.bingoreloaded.GUIInventories.cards;
 
 import me.steven.bingoreloaded.BingoGameMode;
-import me.steven.bingoreloaded.BingoReloaded;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.scoreboard.Team;
 
-import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
 public class CardBuilder

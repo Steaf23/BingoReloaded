@@ -1,6 +1,7 @@
 package me.steven.bingoreloaded;
 
 import me.steven.bingoreloaded.cardcreator.BingoItemData;
+import me.steven.bingoreloaded.cardcreator.CardCommand;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -8,6 +9,7 @@ import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scoreboard.Team;
@@ -28,7 +30,15 @@ public class BingoReloaded extends JavaPlugin
         game = new BingoGame();
 
         Bukkit.getLogger().info(ChatColor.GREEN + "Enabled " + this.getName());
-        this.getCommand("bingo").setExecutor(new BingoCommand(game));
+
+        PluginCommand bingoCommand = getCommand("bingo");
+        if (bingoCommand != null)
+            bingoCommand.setExecutor(new BingoCommand(game));
+
+        PluginCommand cardCommand = getCommand("card");
+        if (cardCommand != null)
+            cardCommand.setExecutor(new CardCommand());
+
         getServer().getPluginManager().registerEvents(game, this);
         bingoItems = BingoItemData.getAllItems();
     }

@@ -36,7 +36,7 @@ public class BingoGame implements Listener
 
         teamManager = new TeamManager(this);
 
-        wandItem.stack.addEnchantment(Enchantment.DURABILITY, 3);
+        wandItem.item.addEnchantment(Enchantment.DURABILITY, 3);
     }
 
     /**
@@ -83,6 +83,8 @@ public class BingoGame implements Listener
         masterCard.generateCard(CardDifficulty.EASY);
 
         World world = Bukkit.getWorlds().get(0);
+        world.setStorm(false);
+        world.setTime(1000);
 
         teamManager.initializeCards(masterCard);
         givePlayerKits();
@@ -157,7 +159,7 @@ public class BingoGame implements Listener
                 put(Enchantment.PROTECTION_ENVIRONMENTAL, 4);
             }});
             p.getInventory().setArmorContents(new ItemStack[] {boots, null, null, helmet});
-            p.getInventory().setItem(7, wandItem.stack);
+            p.getInventory().setItem(7, wandItem.item);
             p.getInventory().setItem(8, cardItem);
         });
     }
@@ -202,7 +204,7 @@ public class BingoGame implements Listener
     public void onPlayerDropItem(final PlayerDropItemEvent dropEvent)
     {
         if (dropEvent.getItemDrop().getItemStack().equals(cardItem) ||
-                dropEvent.getItemDrop().getItemStack().equals(wandItem.stack))
+                dropEvent.getItemDrop().getItemStack().equals(wandItem.item))
         {
             dropEvent.setCancelled(true);
             return;
@@ -290,7 +292,7 @@ public class BingoGame implements Listener
             }
         }
 
-        if (event.getItem().equals(wandItem.stack)
+        if (event.getItem().equals(wandItem.item)
                 && (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK))
         {
             int teleportHeight = 75;

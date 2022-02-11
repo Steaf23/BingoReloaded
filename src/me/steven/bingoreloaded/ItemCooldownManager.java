@@ -7,11 +7,11 @@ import java.util.Map;
 
 public class ItemCooldownManager
 {
-    public final CustomItem stack;
+    public final CustomItem item;
 
     public ItemCooldownManager(CustomItem stack, long maxCooldownTime)
     {
-        this.stack = stack;
+        this.item = stack;
         this.maxCooldownTime = maxCooldownTime;
     }
 

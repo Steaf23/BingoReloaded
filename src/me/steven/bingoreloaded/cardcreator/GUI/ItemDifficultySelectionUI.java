@@ -1,9 +1,10 @@
-package me.steven.bingoreloaded.cardcreator;
+package me.steven.bingoreloaded.cardcreator.GUI;
 
 import me.steven.bingoreloaded.BingoReloaded;
 import me.steven.bingoreloaded.GUIInventories.AbstractGUIInventory;
 import me.steven.bingoreloaded.GUIInventories.SubGUIInventory;
 import me.steven.bingoreloaded.CustomItem;
+import me.steven.bingoreloaded.cardcreator.BingoItemData;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;

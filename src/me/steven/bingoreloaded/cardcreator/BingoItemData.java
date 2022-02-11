@@ -1,6 +1,5 @@
 package me.steven.bingoreloaded.cardcreator;
 
-import me.steven.bingoreloaded.BingoReloaded;
 import me.steven.bingoreloaded.YMLDataManager;
 import org.bukkit.Material;
 

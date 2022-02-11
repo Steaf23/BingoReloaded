@@ -1,7 +1,6 @@
 package me.steven.bingoreloaded;
 
 import me.steven.bingoreloaded.GUIInventories.BingoOptionsUI;
-import me.steven.bingoreloaded.cardcreator.ItemPickerUI;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -38,19 +37,12 @@ public class BingoCommand implements CommandExecutor
                     gameInstance.end();
                     break;
 
-                case "edit":
-                    ItemPickerUI itemPicker = new ItemPickerUI();
-                    if (commandSender instanceof Player p)
-                        itemPicker.open(p);
-                    break;
-
                 default:
                     if (commandSender instanceof Player p)
-                        BingoReloaded.print(ChatColor.RED + "Usage: /bingo [start|end|leave|edit]", p);
+                        BingoReloaded.print(ChatColor.RED + "Usage: /bingo [start|end|leave]", p);
                     else
-                    {
-                        BingoReloaded.print(ChatColor.RED + "Usage: /bingo [start|end|leave|edit]");
-                    }
+                        BingoReloaded.print(ChatColor.RED + "Usage: /bingo [start|end|leave]");
+                    break;
             }
         }
         else

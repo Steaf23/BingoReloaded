@@ -12,3 +12,5 @@ permissions:
 commands:
   bingo:
     description: Bingo commands lmao
+  card:
+    description: Card commands lmao

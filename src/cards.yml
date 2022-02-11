@@ -1,0 +1,7 @@
+testcard1:
+  easy:
+    max: 25
+  medium:
+    max: 10
+  customlist1:
+    max: 2

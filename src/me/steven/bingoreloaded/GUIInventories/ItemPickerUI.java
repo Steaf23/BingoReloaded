@@ -1,7 +1,5 @@
-package me.steven.bingoreloaded.cardcreator;
+package me.steven.bingoreloaded.GUIInventories;
 
-import me.steven.bingoreloaded.BingoReloaded;
-import me.steven.bingoreloaded.GUIInventories.AbstractGUIInventory;
 import me.steven.bingoreloaded.CustomItem;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -10,16 +8,24 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.ArrayList;
+import javax.annotation.Nullable;
 import java.util.List;
 
-public class ItemPickerUI extends AbstractGUIInventory
+public abstract class ItemPickerUI extends SubGUIInventory
 {
-    public ItemPickerUI()
+    public abstract void onOptionClickedDelegate(InventoryClickEvent event, ItemStack itemClicked, Player player);
+
+    public ItemPickerUI(@Nullable AbstractGUIInventory parent, List<CustomItem> options)
     {
-        super(54, "Item Picker");
-        setMaterialList();
-        initMenu();
+        super(54, "Item Picker", parent);
+        isSubUI = parent != null;
+
+        fillOptions(new int[]{8, 17, 26, 35, 44, 53}, new CustomItem[]{
+                BG_ITEM, NEXT, BG_ITEM, BG_ITEM, PREVIOUS, BG_ITEM,
+        });
+
+        this.items = options;
+        addWhitespace();
 
         currentPage = 0;
         fillPage(0);
@@ -27,7 +33,7 @@ public class ItemPickerUI extends AbstractGUIInventory
     }
 
     @Override
-    public void delegateClick(InventoryClickEvent event, ItemStack itemClicked, Player player)
+    final public void delegateClick(InventoryClickEvent event, ItemStack itemClicked, Player player)
     {
         if (itemClicked == null) return;
 
@@ -43,8 +49,7 @@ public class ItemPickerUI extends AbstractGUIInventory
         }
         else if (!isMenuItem(itemClicked, BG_ITEM)) //If it is a normal item;
         {
-            ItemDifficultySelectionUI difficultySelector = new ItemDifficultySelectionUI(itemClicked.getType(), this);
-            difficultySelector.open(player);
+            onOptionClickedDelegate(event, itemClicked, player);
         }
     }
 
@@ -53,7 +58,7 @@ public class ItemPickerUI extends AbstractGUIInventory
         int startingIndex = pageNumber * ITEMS_PER_PAGE;
         for (int i = 0; i < ITEMS_PER_PAGE; i++)
         {
-            addOption(getSlotIndexForItem(i), new CustomItem(materialList.get(startingIndex + i), "", "Click to make this item appear", "on bingo cards"));
+            addOption(getSlotIndexForItem(i), items.get(startingIndex + i));
         }
 
         String pageCountDesc = String.format("%02d", pageNumber + 1) + "/" + (pageAmount);
@@ -92,39 +97,26 @@ public class ItemPickerUI extends AbstractGUIInventory
         return itemIndex + row;
     }
 
-    public void setMaterialList()
-    {
-        for (Material m : Material.values())
-        {
-            if (!m.name().contains("LEGACY_") && m.isItem() && !m.isAir())
-            {
-                materialList.add(m);
-            }
-        }
-
-        int remainingSpaces = ITEMS_PER_PAGE - (materialList.size() % ITEMS_PER_PAGE);
-
-        for (int i = remainingSpaces; i > 0; i--)
-        {
-            materialList.add(Material.AIR);
-        }
-
-        pageAmount = (materialList.size() / ITEMS_PER_PAGE);
-    }
-
-    public void initMenu()
-    {
-        fillOptions(new int[]{8, 17, 26, 35, 44, 53}, new CustomItem[]{
-                BG_ITEM, NEXT, BG_ITEM, BG_ITEM, PREVIOUS, BG_ITEM,
-        });
-    }
-
     private static final int ITEMS_PER_PAGE = 48;
-    private final List<Material> materialList = new ArrayList<>();
+    private final List<CustomItem> items;
     private int pageAmount;
     private int currentPage;
 
     private static final CustomItem BG_ITEM = new CustomItem(Material.BLACK_STAINED_GLASS_PANE, ChatColor.MAGIC + "a", "");
     private static final CustomItem NEXT = new CustomItem(Material.STRUCTURE_VOID, "Next Page", "");
     private static final CustomItem PREVIOUS = new CustomItem(Material.BARRIER, "Previous Page", "");
+
+    private final boolean isSubUI;
+
+    private void addWhitespace()
+    {
+        int remainingSpaces = ITEMS_PER_PAGE - (items.size() % ITEMS_PER_PAGE);
+
+        for (int i = remainingSpaces; i > 0; i--)
+        {
+            items.add(new CustomItem(Material.AIR, "", ""));
+        }
+
+        pageAmount = (items.size() / ITEMS_PER_PAGE);
+    }
 }
