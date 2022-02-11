@@ -1,6 +1,6 @@
 package me.steven.bingoreloaded;
 
-import me.steven.bingoreloaded.GUIInventories.cards.BingoCard;
+import me.steven.bingoreloaded.cardcreator.BingoItemData;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -18,19 +18,19 @@ import java.util.Map;
 
 public class BingoReloaded extends JavaPlugin
 {
-    public static final String PRINT_PREFIX = "" + ChatColor.DARK_RED + "[" + ChatColor.GOLD + ChatColor.BOLD + "Bingo-" + ChatColor.YELLOW + ChatColor.ITALIC + "Reloaded" + ChatColor.DARK_RED + "] " + ChatColor.RESET + "";
+    public static final String PRINT_PREFIX = "" + ChatColor.DARK_RED + "[" + ChatColor.DARK_AQUA + ChatColor.BOLD + "Bingo" + ChatColor.YELLOW + ChatColor.ITALIC + "Reloaded" + ChatColor.DARK_RED + "] " + ChatColor.RESET + "";
     public static final String NAME = "BingoReloaded";
-    public BingoGame game;
-    public static Map<BingoCard.CardDifficulty, List<Material>> bingoItems;
+    public static Map<String, List<Material>> bingoItems;
 
     @Override
     public void onEnable()
     {
         game = new BingoGame();
+
         Bukkit.getLogger().info(ChatColor.GREEN + "Enabled " + this.getName());
         this.getCommand("bingo").setExecutor(new BingoCommand(game));
         getServer().getPluginManager().registerEvents(game, this);
-        bingoItems = ItemDataManager.getBingoItems();
+        bingoItems = BingoItemData.getAllItems();
     }
 
     @Override
@@ -107,4 +107,6 @@ public class BingoReloaded extends JavaPlugin
 
         return new TextComponent[]{message1, comp, message2};
     }
+
+    private BingoGame game;
 }

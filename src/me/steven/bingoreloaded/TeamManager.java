@@ -12,10 +12,6 @@ import java.util.*;
 
 public class TeamManager
 {
-    private final Map<Team, BingoCard> activeTeams = new HashMap<>();
-    private final Scoreboard scoreboard;
-    private final BingoGame game;
-
     public TeamManager(BingoGame game)
     {
         this.game = game;
@@ -161,4 +157,8 @@ public class TeamManager
             scoreboard.resetScores(entry);
         }
     }
+
+    private final Map<Team, BingoCard> activeTeams = new HashMap<>();
+    private final Scoreboard scoreboard;
+    private final BingoGame game;
 }

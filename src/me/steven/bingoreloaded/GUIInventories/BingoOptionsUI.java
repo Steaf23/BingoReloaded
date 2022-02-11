@@ -1,13 +1,11 @@
 package me.steven.bingoreloaded.GUIInventories;
 
 import me.steven.bingoreloaded.BingoGame;
-import me.steven.bingoreloaded.BingoReloaded;
-import me.steven.bingoreloaded.MenuItem;
+import me.steven.bingoreloaded.CustomItem;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
@@ -15,47 +13,29 @@ import java.util.Map;
 
 public class BingoOptionsUI extends AbstractGUIInventory
 {
-    private final BingoGame game;
-
-    private final Map<String, MenuItem> menuItems = new HashMap<>(){{
-        put("join", new MenuItem(Material.WHITE_GLAZED_TERRACOTTA, "" + ChatColor.GOLD + ChatColor.BOLD + "Join A Team"));
-        put("leave", new MenuItem(Material.BARRIER, "" + ChatColor.GOLD + ChatColor.BOLD + "Quit Bingo"));
-        put("gamemode", new MenuItem(Material.ENCHANTED_BOOK, "" + ChatColor.GOLD + ChatColor.BOLD + "Change Gamemode"));
-        put("kit", new MenuItem(Material.IRON_INGOT, "" + ChatColor.GOLD + ChatColor.BOLD + "Change Starting Kit"));
-        put("difficulty", new MenuItem(Material.ENDER_EYE, "" + ChatColor.GOLD + ChatColor.BOLD + "Change Bingo Difficulty"));
-    }};
-
-    private BingoOptionsUI(BingoGame game)
-    {
-        super(45, "Options Menu");
-        this.game = game;
-    }
-
     @Override
-    public void delegateClick(InventoryClickEvent event)
+    public void delegateClick(InventoryClickEvent event, ItemStack itemClicked, Player player)
     {
-        if (event.getCurrentItem() == null) return;
-        if (event.getCurrentItem().getItemMeta() == null) return;
+        if (itemClicked == null) return;
+        if (itemClicked.getItemMeta() == null) return;
 
-        ItemStack item = event.getCurrentItem();
-
-        if (isMenuItem(item, menuItems.get("join")))
+        if (isMenuItem(itemClicked, menuItems.get("join")))
         {
-            game.teamManager.openTeamSelector((Player)event.getWhoClicked(), this);
+            game.getTeamManager().openTeamSelector(player, this);
         }
-        else if (isMenuItem(item, menuItems.get("leave")))
+        else if (isMenuItem(itemClicked, menuItems.get("leave")))
         {
-            game.playerQuit((Player)event.getWhoClicked());
+            game.playerQuit(player);
         }
-        else if (isMenuItem(item, menuItems.get("kit")))
+        else if (isMenuItem(itemClicked, menuItems.get("kit")))
         {
             KitOptionsUI kitSelector = new KitOptionsUI(this, game);
-            kitSelector.open(event.getWhoClicked());
+            kitSelector.open(player);
         }
-        else if (isMenuItem(item, menuItems.get("gamemode")))
+        else if (isMenuItem(itemClicked, menuItems.get("gamemode")))
         {
             GamemodeOptionsUI gamemodeSelector = new GamemodeOptionsUI(this, game);
-            gamemodeSelector.open(event.getWhoClicked());
+            gamemodeSelector.open(player);
         }
     }
 
@@ -65,7 +45,7 @@ public class BingoOptionsUI extends AbstractGUIInventory
 
         if (player.hasPermission("bingo.admin"))
         {
-            options.fillOptions(new int[]{12, 14, 29, 31, 33}, new MenuItem[]{
+            options.fillOptions(new int[]{12, 14, 29, 31, 33}, new CustomItem[]{
                     options.menuItems.get("join"),
                     options.menuItems.get("leave"),
                     options.menuItems.get("kit"),
@@ -75,12 +55,28 @@ public class BingoOptionsUI extends AbstractGUIInventory
         }
         else
         {
-            options.fillOptions(new int[]{21, 23}, new MenuItem[]{
+            options.fillOptions(new int[]{21, 23}, new CustomItem[]{
                     options.menuItems.get("join"),
                     options.menuItems.get("leave"),
             });
         }
 
         options.open(player);
+    }
+
+    private final BingoGame game;
+
+    private final Map<String, CustomItem> menuItems = new HashMap<>(){{
+        put("join", new CustomItem(Material.WHITE_GLAZED_TERRACOTTA, "" + ChatColor.GOLD + ChatColor.BOLD + "Join A Team"));
+        put("leave", new CustomItem(Material.BARRIER, "" + ChatColor.GOLD + ChatColor.BOLD + "Quit Bingo"));
+        put("gamemode", new CustomItem(Material.ENCHANTED_BOOK, "" + ChatColor.GOLD + ChatColor.BOLD + "Change Gamemode"));
+        put("kit", new CustomItem(Material.IRON_INGOT, "" + ChatColor.GOLD + ChatColor.BOLD + "Change Starting Kit"));
+        put("difficulty", new CustomItem(Material.ENDER_EYE, "" + ChatColor.GOLD + ChatColor.BOLD + "Change Bingo Difficulty"));
+    }};
+
+    private BingoOptionsUI(BingoGame game)
+    {
+        super(45, "Options Menu");
+        this.game = game;
     }
 }

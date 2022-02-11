@@ -6,9 +6,9 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.List;
 
-public class MenuItem extends ItemStack
+public class CustomItem extends ItemStack
 {
-    public MenuItem(Material material, String name, String... description)
+    public CustomItem(Material material, String name, String... description)
     {
         super(material);
 
@@ -21,7 +21,7 @@ public class MenuItem extends ItemStack
         setItemMeta(meta);
     }
 
-    public MenuItem(ItemStack item)
+    public CustomItem(ItemStack item)
     {
         super(item);
     }

@@ -6,7 +6,9 @@ import me.steven.bingoreloaded.GUIInventories.AbstractGUIInventory;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.scoreboard.Team;
 
 import java.util.ArrayList;
@@ -15,13 +17,6 @@ import java.util.List;
 
 public class BingoCard extends AbstractGUIInventory
 {
-    public enum CardDifficulty
-    {
-        EASY,
-        NORMAL,
-        HARD,
-    }
-
     public CardSize size;
 
     public ArrayList<BingoItem> items = new ArrayList<>();
@@ -34,7 +29,7 @@ public class BingoCard extends AbstractGUIInventory
 
     public void generateCard(CardDifficulty difficulty)
     {
-        List<Material> materials = BingoReloaded.bingoItems.get(difficulty);
+        List<Material> materials = BingoReloaded.bingoItems.get(difficulty.itemDifficulty);
         Collections.shuffle(materials);
 
         BingoReloaded.broadcast(materials.toString());
@@ -61,7 +56,6 @@ public class BingoCard extends AbstractGUIInventory
                 return true;
             }
         }
-
         return false;
     }
 
@@ -132,9 +126,8 @@ public class BingoCard extends AbstractGUIInventory
     }
 
     /**
-     *
-     * @param team
-     * @return the amount of completed items for the given team
+     * @param team The team.
+     * @return The amount of completed items for the given team.
      */
     public int getCompleteCount(Team team)
     {
@@ -148,7 +141,7 @@ public class BingoCard extends AbstractGUIInventory
     }
 
     @Override
-    public void delegateClick(InventoryClickEvent event)
+    public void delegateClick(InventoryClickEvent event, ItemStack itemClicked, Player player)
     {
 
     }

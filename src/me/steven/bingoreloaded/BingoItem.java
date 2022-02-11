@@ -1,6 +1,5 @@
 package me.steven.bingoreloaded;
 
-import me.steven.bingoreloaded.GUIInventories.cards.BingoCard;
 import me.steven.bingoreloaded.GUIInventories.cards.CardBuilder;
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.ChatColor;
@@ -13,13 +12,12 @@ import java.util.*;
 public class BingoItem
 {
     public final Material item;
-    public final MenuItem stack;
-    private Team completedBy = null;
+    public final CustomItem stack;
 
     public BingoItem(Material item)
     {
         this.item = item;
-        this.stack = new MenuItem(item, null, "I am a bingo Item :D");
+        this.stack = new CustomItem(item, null, "I am a bingo Item :D");
     }
 
     public boolean isComplete(Team team)
@@ -50,21 +48,7 @@ public class BingoItem
             meta.setLore(List.of("Completed by team " + completedBy.getDisplayName()));
         }
         stack.setItemMeta(meta);
-
     }
 
-    public static final Map<BingoCard.CardDifficulty, List<Material>> ITEMS = new HashMap<>() {{
-        put(BingoCard.CardDifficulty.NORMAL, new ArrayList<>() {{
-            add(Material.CYAN_CONCRETE);
-            add(Material.COBBLESTONE);
-            add(Material.STONE);
-            add(Material.GRANITE);
-            add(Material.DIORITE);
-            add(Material.ANDESITE);
-            add(Material.MAGENTA_CONCRETE);
-            add(Material.CANDLE);
-            add(Material.GRAY_DYE);
-            add(Material.DIAMOND);
-        }});
-    }};
+    private Team completedBy = null;
 }

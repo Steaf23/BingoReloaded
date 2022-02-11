@@ -12,8 +12,6 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 
 public class BingoCommand implements CommandExecutor
 {
-    public BingoGame gameInstance;
-
     public BingoCommand(BingoGame game)
     {
         gameInstance = game;
@@ -44,12 +42,14 @@ public class BingoCommand implements CommandExecutor
                     ItemPickerUI itemPicker = new ItemPickerUI();
                     if (commandSender instanceof Player p)
                         itemPicker.open(p);
+                    break;
+
                 default:
                     if (commandSender instanceof Player p)
-                        BingoReloaded.print(ChatColor.RED + "Usage: /bingo [start|end|leave]", p);
+                        BingoReloaded.print(ChatColor.RED + "Usage: /bingo [start|end|leave|edit]", p);
                     else
                     {
-                        BingoReloaded.print(ChatColor.RED + "Usage: /bingo [start|end|leave]");
+                        BingoReloaded.print(ChatColor.RED + "Usage: /bingo [start|end|leave|edit]");
                     }
             }
         }
@@ -76,4 +76,6 @@ public class BingoCommand implements CommandExecutor
 
         return false;
     }
+
+    private final BingoGame gameInstance;
 }

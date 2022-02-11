@@ -1,21 +1,15 @@
 package me.steven.bingoreloaded;
 
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class ItemCooldownManager
 {
-    public final ItemStack stack;
-    // cooldown time in milliseconds
-    private long maxCooldownTime = 0;
+    public final CustomItem stack;
 
-    public Map<String, Long> playerTimes = new HashMap<>();
-
-    public ItemCooldownManager(ItemStack stack, long maxCooldownTime)
+    public ItemCooldownManager(CustomItem stack, long maxCooldownTime)
     {
         this.stack = stack;
         this.maxCooldownTime = maxCooldownTime;
@@ -45,4 +39,6 @@ public class ItemCooldownManager
         return ((playerTimes.get(player.getName()) + maxCooldownTime) - System.currentTimeMillis()) / 1000.0;
     }
 
+    private final long maxCooldownTime;
+    private final Map<String, Long> playerTimes = new HashMap<>();
 }

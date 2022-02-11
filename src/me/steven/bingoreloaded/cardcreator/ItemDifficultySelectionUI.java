@@ -3,8 +3,7 @@ package me.steven.bingoreloaded.cardcreator;
 import me.steven.bingoreloaded.BingoReloaded;
 import me.steven.bingoreloaded.GUIInventories.AbstractGUIInventory;
 import me.steven.bingoreloaded.GUIInventories.SubGUIInventory;
-import me.steven.bingoreloaded.ItemDataManager;
-import me.steven.bingoreloaded.MenuItem;
+import me.steven.bingoreloaded.CustomItem;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -12,51 +11,57 @@ import org.bukkit.inventory.ItemStack;
 
 public class ItemDifficultySelectionUI extends SubGUIInventory
 {
-    private static final MenuItem EASY = new MenuItem(Material.LIME_CONCRETE, "Easy", "Click here to set item's", "difficulty to easy.");
-    private static final MenuItem MEDIUM = new MenuItem(Material.ORANGE_CONCRETE, "Medium", "Click here to set item's", "difficulty to medium.");
-    private static final MenuItem HARD = new MenuItem(Material.RED_CONCRETE, "Hard", "Click here to set item's", "difficulty to hard.");
-
-    private final MenuItem item;
-
     public ItemDifficultySelectionUI(Material material, AbstractGUIInventory parent)
     {
-        super(27, "Item Difficulty", parent);
-        this.item = new MenuItem(material,"", "Click Here To Cancel");
+        super(36, "Item Difficulty", parent);
+        this.item = new CustomItem(material,"", "Click Here To Cancel");
 
-        fillOptions(new int[]{4, 20, 22, 24}, new MenuItem[]{item, EASY, MEDIUM, HARD});
+        fillOptions(new int[]{12, 14, 20, 22, 24}, new CustomItem[]{item, RESET, EASY, MEDIUM, HARD});
     }
 
     @Override
-    public void delegateClick(InventoryClickEvent event)
+    public void delegateClick(InventoryClickEvent event, ItemStack itemClicked, Player player)
     {
-        if (event.getCurrentItem() == null) return;
+        if (itemClicked == null) return;
 
-        if (isMenuItem(event.getCurrentItem(), item))
+        if (isMenuItem(itemClicked, item))
         {
-            openParent(event.getWhoClicked());
+            openParent(player);
         }
-        else if (isMenuItem(event.getCurrentItem(), EASY))
+        else if (isMenuItem(itemClicked, EASY))
         {
-            saveItemToFile("easy", item);
-            BingoReloaded.print("Set " + item.getType() + "'s difficulty to easy", (Player)event.getWhoClicked());
-            openParent(event.getWhoClicked());
+            saveItemToFile("easy");
+            BingoReloaded.print("Set " + item.getType() + "'s difficulty to easy", player);
+            openParent(player);
         }
-        else if (isMenuItem(event.getCurrentItem(), MEDIUM))
+        else if (isMenuItem(itemClicked, MEDIUM))
         {
-            saveItemToFile("medium", item);
-            BingoReloaded.print("Set " + item.getType() + "'s difficulty to medium", (Player)event.getWhoClicked());
-            openParent(event.getWhoClicked());
+            saveItemToFile("medium");
+            BingoReloaded.print("Set " + item.getType() + "'s difficulty to medium", player);
+            openParent(player);
         }
-        else if (isMenuItem(event.getCurrentItem(), HARD))
+        else if (isMenuItem(itemClicked, HARD))
         {
-            saveItemToFile("hard", item);
-            BingoReloaded.print("Set " + item.getType() + "'s difficulty to hard", (Player)event.getWhoClicked());
-            openParent(event.getWhoClicked());
+            saveItemToFile("hard");
+            BingoReloaded.print("Set " + item.getType() + "'s difficulty to hard", player);
+            openParent(player);
+        }
+        else if (isMenuItem(itemClicked, RESET))
+        {
+            BingoItemData.removeItem(item.getType());
+            BingoReloaded.print("Removed " + item.getType() + " from the item list", player);
+            openParent(player);
         }
     }
 
-    public void saveItemToFile(String difficulty, ItemStack stack)
+    public void saveItemToFile(String difficulty)
     {
-        ItemDataManager.saveItem(difficulty, stack);
+        BingoItemData.saveItems(difficulty, item.getType());
     }
+
+    private static final CustomItem EASY = new CustomItem(Material.LIME_CONCRETE, "Easy", "Click here to set item's", "difficulty to easy.");
+    private static final CustomItem MEDIUM = new CustomItem(Material.ORANGE_CONCRETE, "Medium", "Click here to set item's", "difficulty to medium.");
+    private static final CustomItem HARD = new CustomItem(Material.RED_CONCRETE, "Hard", "Click here to set item's", "difficulty to hard.");
+    private static final CustomItem RESET = new CustomItem(Material.BARRIER, "Reset Item", "Click here to remove item", "from the item list");
+    private final CustomItem item;
 }
