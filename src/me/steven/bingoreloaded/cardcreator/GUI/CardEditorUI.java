@@ -1,6 +1,7 @@
 package me.steven.bingoreloaded.cardcreator.GUI;
 
 import me.steven.bingoreloaded.GUIInventories.ItemPickerUI;
+import me.steven.bingoreloaded.GUIInventories.cards.BingoCard;
 import me.steven.bingoreloaded.InventoryItem;
 import me.steven.bingoreloaded.cardcreator.BingoCardData;
 import me.steven.bingoreloaded.cardcreator.BingoItemData;
@@ -21,6 +22,8 @@ public class CardEditorUI extends ItemPickerUI
     private final InventoryItem addList;
     private final InventoryItem saveCard;
 
+    private ListValueEditorGUI valueEditorGUI;
+
     public CardEditorUI(CardEntry card)
     {
         super(new ArrayList<>(), "Editing '" + card.name + "'", null);
@@ -36,6 +39,11 @@ public class CardEditorUI extends ItemPickerUI
     public void onOptionClickedDelegate(InventoryClickEvent event, InventoryItem clickedOption, Player player)
     {
         //if an ItemList attached to a card was clicked on
+        if (clickedOption.getItemMeta() == null) return;
+
+        String listName = clickedOption.getItemMeta().getDisplayName();
+        valueEditorGUI = new ListValueEditorGUI(this, listName, BingoCardData.getListValues(card.name, listName));
+        valueEditorGUI.open(player);
     }
 
     @Override
@@ -93,10 +101,18 @@ public class CardEditorUI extends ItemPickerUI
         List<InventoryItem> newItems = new ArrayList<>();
         for (String listName : card.getItemLists().keySet())
         {
-            newItems.add(new InventoryItem(Material.MAP, listName, ChatColor.DARK_PURPLE + "Contains " + BingoItemData.getItemCount(listName) + " item(s)"));
+            InventoryItem item = new InventoryItem(Material.MAP, listName, ChatColor.DARK_PURPLE + "Contains " + BingoItemData.getItemCount(listName) + " item(s)");
+            item.setAmount(card.getItemLists().get(listName));
+            newItems.add(item);
         }
 
         addItems(newItems.toArray(new InventoryItem[0]));
         updatePage();
+    }
+
+    public void updateListValues(String listName, int maxOccurrence)
+    {
+        card.getItemLists().put(listName, maxOccurrence);
+        updateCardDisplay();
     }
 }

@@ -61,4 +61,9 @@ public class BingoCardData
     {
         return data.getConfig().getKeys(false);
     }
+
+    public static int getListValues(String cardName, String listName)
+    {
+        return data.getConfig().getInt(cardName + "." + listName);
+    }
 }

@@ -1,7 +1,6 @@
 package me.steven.bingoreloaded.GUIInventories;
 
 import me.steven.bingoreloaded.InventoryItem;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -23,14 +22,14 @@ public abstract class ItemPickerUI extends AbstractGUIInventory
     private static final InventoryItem BG_ITEM = new InventoryItem(Material.BLACK_STAINED_GLASS_PANE, " ", "");
     private static final InventoryItem NEXT = new InventoryItem(53, Material.STRUCTURE_VOID, "Next page", "");
     private static final InventoryItem PREVIOUS = new InventoryItem(45, Material.BARRIER, "Previous page", "");
-
+    private static final InventoryItem CLOSE = new InventoryItem(49, Material.REDSTONE, "Close Menu", "");
     public ItemPickerUI(List<InventoryItem> options, String title, AbstractGUIInventory parent)
     {
         super(54, title != null ? title : "Item Picker", parent);
         isSubUI = parent != null;
 
         fillOptions(new int[]{45, 46, 47, 48, 49, 50, 51, 52, 53}, new InventoryItem[]{
-                PREVIOUS, BG_ITEM, BG_ITEM, BG_ITEM, BG_ITEM, BG_ITEM, BG_ITEM, BG_ITEM, NEXT,
+                PREVIOUS, BG_ITEM, BG_ITEM, BG_ITEM, CLOSE, BG_ITEM, BG_ITEM, BG_ITEM, NEXT,
         });
 
         currentPage = 0;
@@ -51,6 +50,10 @@ public abstract class ItemPickerUI extends AbstractGUIInventory
         else if (slotClicked == PREVIOUS.getSlot())
         {
             previousPage();
+        }
+        else if (slotClicked == CLOSE.getSlot())
+        {
+            openParent(player);
         }
         else if (isSlotValidOption(slotClicked) && getOption(slotClicked) != null) //If it is a normal item;
         {

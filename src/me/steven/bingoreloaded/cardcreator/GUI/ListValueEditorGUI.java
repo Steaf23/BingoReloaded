@@ -1,7 +1,9 @@
 package me.steven.bingoreloaded.cardcreator.GUI;
 
 import me.steven.bingoreloaded.GUIInventories.AbstractGUIInventory;
+import me.steven.bingoreloaded.GUIInventories.cards.BingoCard;
 import me.steven.bingoreloaded.InventoryItem;
+import me.steven.bingoreloaded.cardcreator.BingoCardData;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -14,11 +16,18 @@ public class ListValueEditorGUI extends AbstractGUIInventory
     private final InventoryItem counter = new InventoryItem(22, Material.TARGET, " ", "");
     private final InventoryItem SAVE = new InventoryItem(41, Material.DIAMOND, "Save and go back", "");
 
-    public int itemCount = 1;
+    private final CardEditorUI cardEditor;
 
-    public ListValueEditorGUI(AbstractGUIInventory parent)
+    public int itemCount = 1;
+    private String listName;
+
+    public ListValueEditorGUI(CardEditorUI parent, String listName, int startingValue)
     {
         super(45, "Updating Values", parent);
+        this.cardEditor = parent;
+        this.listName = listName;
+
+        this.itemCount = startingValue;
 
         fillOptions(new int[]{13, 22, 31, 41}, new InventoryItem[]{HIGHER, counter, LOWER, SAVE});
     }
@@ -36,6 +45,7 @@ public class ListValueEditorGUI extends AbstractGUIInventory
         }
         else if (slotClicked == SAVE.getSlot())
         {
+            setValueForList();
             openParent(player);
         }
     }
@@ -51,5 +61,10 @@ public class ListValueEditorGUI extends AbstractGUIInventory
         meta.setDisplayName("");
         counter.setItemMeta(meta);
         addOption(counter.getSlot(), counter);
+    }
+
+    private void setValueForList()
+    {
+        cardEditor.updateListValues(listName, itemCount);
     }
 }

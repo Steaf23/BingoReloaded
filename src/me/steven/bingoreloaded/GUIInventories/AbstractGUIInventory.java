@@ -122,6 +122,6 @@ public abstract class AbstractGUIInventory implements Listener
         if (parent != null)
             parent.open(player);
         else
-            BingoReloaded.print("You attempted to open this Screen's parent when it was, in fact, null :O", (Player)player);
+            close(player);
     }
 }
