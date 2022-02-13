@@ -1,122 +1,162 @@
 package me.steven.bingoreloaded.GUIInventories;
 
-import me.steven.bingoreloaded.CustomItem;
+import me.steven.bingoreloaded.InventoryItem;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import javax.annotation.Nullable;
+import java.util.Collections;
 import java.util.List;
 
-public abstract class ItemPickerUI extends SubGUIInventory
+public abstract class ItemPickerUI extends AbstractGUIInventory
 {
-    public abstract void onOptionClickedDelegate(InventoryClickEvent event, ItemStack itemClicked, Player player);
+    public abstract void onOptionClickedDelegate(InventoryClickEvent event, InventoryItem clickedOption, Player player);
+    public final boolean isSubUI;
 
-    public ItemPickerUI(@Nullable AbstractGUIInventory parent, List<CustomItem> options)
+    private static final int ITEMS_PER_PAGE = 45;
+    private final List<InventoryItem> items;
+    private int pageAmount;
+    private int currentPage;
+
+    private static final InventoryItem BG_ITEM = new InventoryItem(Material.BLACK_STAINED_GLASS_PANE, " ", "");
+    private static final InventoryItem NEXT = new InventoryItem(53, Material.STRUCTURE_VOID, "Next page", "");
+    private static final InventoryItem PREVIOUS = new InventoryItem(45, Material.BARRIER, "Previous page", "");
+
+    public ItemPickerUI(List<InventoryItem> options, String title, AbstractGUIInventory parent)
     {
-        super(54, "Item Picker", parent);
+        super(54, title != null ? title : "Item Picker", parent);
         isSubUI = parent != null;
 
-        fillOptions(new int[]{8, 17, 26, 35, 44, 53}, new CustomItem[]{
-                BG_ITEM, NEXT, BG_ITEM, BG_ITEM, PREVIOUS, BG_ITEM,
+        fillOptions(new int[]{45, 46, 47, 48, 49, 50, 51, 52, 53}, new InventoryItem[]{
+                PREVIOUS, BG_ITEM, BG_ITEM, BG_ITEM, BG_ITEM, BG_ITEM, BG_ITEM, BG_ITEM, NEXT,
         });
 
-        this.items = options;
-        addWhitespace();
-
         currentPage = 0;
-        fillPage(0);
+        items = options;
+        updatePageAmount();
+
+        updatePage();
 
     }
 
     @Override
-    final public void delegateClick(InventoryClickEvent event, ItemStack itemClicked, Player player)
+    public void delegateClick(InventoryClickEvent event, int slotClicked, Player player)
     {
-        if (itemClicked == null) return;
-
-        if (isMenuItem(itemClicked, NEXT))
+        if (slotClicked == NEXT.getSlot())
         {
-            currentPage = Math.floorMod(currentPage + 1, pageAmount);
-            fillPage(currentPage);
+            nextPage();
         }
-        else if (isMenuItem(itemClicked, PREVIOUS))
+        else if (slotClicked == PREVIOUS.getSlot())
         {
-            currentPage = Math.floorMod(currentPage - 1, pageAmount);
-            fillPage(currentPage);
+            previousPage();
         }
-        else if (!isMenuItem(itemClicked, BG_ITEM)) //If it is a normal item;
+        else if (isSlotValidOption(slotClicked) && getOption(slotClicked) != null) //If it is a normal item;
         {
-            onOptionClickedDelegate(event, itemClicked, player);
+            onOptionClickedDelegate(event, getOption(slotClicked), player);
         }
     }
 
-    public void fillPage(int pageNumber)
+    protected boolean isSlotValidOption(int slot)
     {
-        int startingIndex = pageNumber * ITEMS_PER_PAGE;
-        for (int i = 0; i < ITEMS_PER_PAGE; i++)
+        return slot <= 44;
+    }
+
+    public void addItems(InventoryItem... newItems)
+    {
+        //first remove any previous whitespace
+        while (items.size() > 0)
         {
-            addOption(getSlotIndexForItem(i), items.get(startingIndex + i));
+            InventoryItem lastItem = items.get(items.size() - 1);
+
+            if (lastItem.getType().isAir())
+                items.remove(lastItem);
+            else
+
+                break;
         }
 
-        String pageCountDesc = String.format("%02d", pageNumber + 1) + "/" + (pageAmount);
+        Collections.addAll(items, newItems);
 
-        CustomItem next = getOption(17);
+        updatePageAmount();
+    }
+
+    public void removeItems(int... itemIndices)
+    {
+        //first remove any previous whitespace
+        while (items.size() > 0)
+        {
+            InventoryItem lastItem = items.get(items.size() - 1);
+
+            if (lastItem.getType().isAir())
+                items.remove(lastItem);
+            else
+                break;
+        }
+
+        for (int i : itemIndices)
+            items.remove(i);
+
+        updatePageAmount();
+    }
+
+    public void clearItems()
+    {
+        items.clear();
+        updatePageAmount();
+    }
+
+    protected void nextPage()
+    {
+        updatePageAmount();
+        currentPage = Math.floorMod(currentPage + 1, pageAmount);
+        updatePage();
+    }
+
+    protected void previousPage()
+    {
+        updatePageAmount();
+        currentPage = Math.floorMod(currentPage - 1, pageAmount);
+        updatePage();
+    }
+
+    protected void updatePage()
+    {
+        updatePageAmount();
+
+        int startingIndex = currentPage * ITEMS_PER_PAGE;
+        for (int i = 0; i < ITEMS_PER_PAGE; i++)
+        {
+            if (startingIndex + i < items.size())
+                addOption(i, items.get(startingIndex + i));
+            else
+                addOption(i, new InventoryItem(Material.AIR, "", ""));
+        }
+
+        String pageCountDesc = String.format("%02d", currentPage + 1) + "/" + String.format("%02d", pageAmount);
+
+        InventoryItem next = getOption(NEXT.getSlot());
         ItemMeta nextMeta = next.getItemMeta();
         if (nextMeta != null)
         {
             nextMeta.setLore(List.of(pageCountDesc));
         }
         next.setItemMeta(nextMeta);
-        addOption(17, next);
+        addOption(NEXT.getSlot(), next);
 
-        CustomItem previous = getOption(44);
+        InventoryItem previous = getOption(PREVIOUS.getSlot());
         ItemMeta prevMeta = previous.getItemMeta();
         if (prevMeta != null)
         {
             prevMeta.setLore(List.of(pageCountDesc));
         }
         previous.setItemMeta(prevMeta);
-        addOption(44, previous);
+        addOption(PREVIOUS.getSlot(), previous);
     }
 
-    public int getSlotIndexForItem(int itemIndex)
+    private void updatePageAmount()
     {
-        int row;
-        if (itemIndex == ITEMS_PER_PAGE - 1) //set correct row for last item
-        {
-            row = 5;
-        }
-        else //set correct row for other items
-        {
-            row = (int) Math.floor(itemIndex / (double)8);
-        }
-
-        return itemIndex + row;
-    }
-
-    private static final int ITEMS_PER_PAGE = 48;
-    private final List<CustomItem> items;
-    private int pageAmount;
-    private int currentPage;
-
-    private static final CustomItem BG_ITEM = new CustomItem(Material.BLACK_STAINED_GLASS_PANE, ChatColor.MAGIC + "a", "");
-    private static final CustomItem NEXT = new CustomItem(Material.STRUCTURE_VOID, "Next Page", "");
-    private static final CustomItem PREVIOUS = new CustomItem(Material.BARRIER, "Previous Page", "");
-
-    private final boolean isSubUI;
-
-    private void addWhitespace()
-    {
-        int remainingSpaces = ITEMS_PER_PAGE - (items.size() % ITEMS_PER_PAGE);
-
-        for (int i = remainingSpaces; i > 0; i--)
-        {
-            items.add(new CustomItem(Material.AIR, "", ""));
-        }
-
-        pageAmount = (items.size() / ITEMS_PER_PAGE);
+        pageAmount = Math.max(1, (int)Math.ceil(items.size() / (double)ITEMS_PER_PAGE));
     }
 }

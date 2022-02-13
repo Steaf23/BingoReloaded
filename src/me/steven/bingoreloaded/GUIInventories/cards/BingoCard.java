@@ -3,6 +3,9 @@ package me.steven.bingoreloaded.GUIInventories.cards;
 import me.steven.bingoreloaded.BingoItem;
 import me.steven.bingoreloaded.BingoReloaded;
 import me.steven.bingoreloaded.GUIInventories.AbstractGUIInventory;
+import me.steven.bingoreloaded.cardcreator.BingoCardData;
+import me.steven.bingoreloaded.cardcreator.BingoItemData;
+import me.steven.bingoreloaded.cardcreator.CardEntry;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
@@ -23,13 +26,14 @@ public class BingoCard extends AbstractGUIInventory
 
     public BingoCard(CardSize size)
     {
-        super(9 * size.cardSize, "Card Viewer");
+        super(9 * size.cardSize, "Card Viewer", null);
         this.size = size;
     }
 
-    public void generateCard(CardDifficulty difficulty)
+    public void generateCard(CardEntry card)
     {
-        List<Material> materials = BingoReloaded.bingoItems.get(difficulty.itemDifficulty);
+        String listName = card.getItemLists().keySet().iterator().next();
+        List<Material> materials = BingoItemData.getItems(listName);
         Collections.shuffle(materials);
 
         BingoReloaded.broadcast(materials.toString());
@@ -141,7 +145,7 @@ public class BingoCard extends AbstractGUIInventory
     }
 
     @Override
-    public void delegateClick(InventoryClickEvent event, ItemStack itemClicked, Player player)
+    public void delegateClick(InventoryClickEvent event, int slotClicked, Player player)
     {
 
     }

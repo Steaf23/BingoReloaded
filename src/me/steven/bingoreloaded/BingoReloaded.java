@@ -22,7 +22,6 @@ public class BingoReloaded extends JavaPlugin
 {
     public static final String PRINT_PREFIX = "" + ChatColor.DARK_RED + "[" + ChatColor.DARK_AQUA + ChatColor.BOLD + "Bingo" + ChatColor.YELLOW + ChatColor.ITALIC + "Reloaded" + ChatColor.DARK_RED + "] " + ChatColor.RESET + "";
     public static final String NAME = "BingoReloaded";
-    public static Map<String, List<Material>> bingoItems;
 
     @Override
     public void onEnable()
@@ -40,7 +39,6 @@ public class BingoReloaded extends JavaPlugin
             cardCommand.setExecutor(new CardCommand());
 
         getServer().getPluginManager().registerEvents(game, this);
-        bingoItems = BingoItemData.getAllItems();
     }
 
     @Override

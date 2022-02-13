@@ -1,6 +1,6 @@
 package me.steven.bingoreloaded.GUIInventories;
 
-import me.steven.bingoreloaded.CustomItem;
+import me.steven.bingoreloaded.InventoryItem;
 import me.steven.bingoreloaded.TeamManager;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -13,7 +13,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.List;
 import java.util.Objects;
 
-public class TeamSelectorInventory extends SubGUIInventory
+public class TeamSelectorInventory extends AbstractGUIInventory
 {
     public static void open(TeamManager manager, AbstractGUIInventory parent, HumanEntity player)
     {
@@ -22,82 +22,82 @@ public class TeamSelectorInventory extends SubGUIInventory
     }
 
     @Override
-    public void delegateClick(InventoryClickEvent event, ItemStack itemClicked, Player player)
+    public void delegateClick(InventoryClickEvent event, int slotClicked, Player player)
     {
+        InventoryItem item = getOption(slotClicked);
+        if (item == null) return;
 
-        if (itemClicked == null || itemClicked.getType().isAir()) return;
-
-        manager.addPlayerToTeam(player, Objects.requireNonNull(itemClicked.getItemMeta()).getDisplayName());
+        manager.addPlayerToTeam(player, Objects.requireNonNull(item.getItemMeta()).getDisplayName());
         openParent(player);
     }
 
-    public CustomItem createTeamItem(ChatColor color)
+    public InventoryItem createTeamItem(ChatColor color)
     {
-        CustomItem item;
+        InventoryItem item;
         switch (color)
         {
             case WHITE:
-                item = new CustomItem(Material.WHITE_CONCRETE, color + "White");
+                item = new InventoryItem(Material.WHITE_CONCRETE, color + "White");
                 break;
 
             case DARK_RED:
-                item = new CustomItem(Material.BROWN_CONCRETE, color + "Evil Red");
+                item = new InventoryItem(Material.BROWN_CONCRETE, color + "Evil Red");
                 break;
 
             case RED:
-                item = new CustomItem(Material.RED_CONCRETE, color + "Red");
+                item = new InventoryItem(Material.RED_CONCRETE, color + "Red");
                 break;
 
             case GOLD:
-                item = new CustomItem(Material.ORANGE_CONCRETE, color + "Gold");
+                item = new InventoryItem(Material.ORANGE_CONCRETE, color + "Gold");
                 break;
 
             case YELLOW:
-                item = new CustomItem(Material.YELLOW_CONCRETE, color + "Yellow");
+                item = new InventoryItem(Material.YELLOW_CONCRETE, color + "Yellow");
                 break;
 
             case DARK_GREEN:
-                item = new CustomItem(Material.GREEN_CONCRETE, color + "Dark Green");
+                item = new InventoryItem(Material.GREEN_CONCRETE, color + "Dark Green");
                 break;
 
             case GREEN:
-                item = new CustomItem(Material.LIME_CONCRETE, color + "Light Green");
+                item = new InventoryItem(Material.LIME_CONCRETE, color + "Light Green");
                 break;
 
             case AQUA:
-                item = new CustomItem(Material.MAGENTA_CONCRETE, color + "fake Magenta");
+                item = new InventoryItem(Material.MAGENTA_CONCRETE, color + "fake Magenta");
                 break;
 
             case DARK_AQUA:
-                item = new CustomItem(Material.CYAN_CONCRETE, color + "Cyan");
+                item = new InventoryItem(Material.CYAN_CONCRETE, color + "Cyan");
                 break;
 
             case DARK_BLUE:
-                item = new CustomItem(Material.BLUE_CONCRETE, color + "Dark Blue");
+                item = new InventoryItem(Material.BLUE_CONCRETE, color + "Dark Blue");
                 break;
 
             case BLUE:
-                item = new CustomItem(Material.LIGHT_BLUE_CONCRETE, color + "Light Blue");
+                item = new InventoryItem(Material.LIGHT_BLUE_CONCRETE, color + "Light Blue");
                 break;
 
             case LIGHT_PURPLE:
-                item = new CustomItem(Material.PINK_CONCRETE, color + "Pink");
+                item = new InventoryItem(Material.PINK_CONCRETE, color + "Pink");
                 break;
 
             case DARK_PURPLE:
-                item = new CustomItem(Material.PURPLE_CONCRETE, color + "Purple");
+                item = new InventoryItem(Material.PURPLE_CONCRETE, color + "Purple");
                 break;
 
             case GRAY:
-                item = new CustomItem(Material.LIGHT_GRAY_CONCRETE, color + "Light Gray");
+                item = new InventoryItem(Material.LIGHT_GRAY_CONCRETE, color + "Light Gray");
                 break;
 
             case DARK_GRAY:
-                item = new CustomItem(Material.GRAY_CONCRETE, color + "Gray");
+                item = new InventoryItem(Material.GRAY_CONCRETE, color + "Gray");
                 break;
 
             case BLACK:
-                item = new CustomItem(Material.BLACK_CONCRETE, color + "Dark Gray");
+                item = new InventoryItem(Material.BLACK_CONCRETE, color + "Dark Gray");
                 break;
 
             default:

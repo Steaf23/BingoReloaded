@@ -2,10 +2,8 @@ package me.steven.bingoreloaded.GUIInventories;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryDragEvent;
-import org.bukkit.inventory.ItemStack;
 
-public class DifficultyOptionsUI extends SubGUIInventory
+public class DifficultyOptionsUI extends AbstractGUIInventory
 {
     public DifficultyOptionsUI(AbstractGUIInventory parent)
     {
@@ -13,7 +11,7 @@ public class DifficultyOptionsUI extends SubGUIInventory
     }
 
     @Override
-    public void delegateClick(InventoryClickEvent event, ItemStack itemClicked, Player player)
+    public void delegateClick(InventoryClickEvent event, int slotClicked, Player player)
     {
         openParent(player);
     }

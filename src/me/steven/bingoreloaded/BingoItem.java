@@ -12,12 +12,12 @@ import java.util.*;
 public class BingoItem
 {
     public final Material item;
-    public final CustomItem stack;
+    public final InventoryItem stack;
 
     public BingoItem(Material item)
     {
         this.item = item;
-        this.stack = new CustomItem(item, null, "I am a bingo Item :D");
+        this.stack = new InventoryItem(item, null, "I am a bingo Item :D");
     }
 
     public boolean isComplete(Team team)

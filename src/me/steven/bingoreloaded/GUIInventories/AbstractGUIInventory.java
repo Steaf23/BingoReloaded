@@ -1,7 +1,7 @@
 package me.steven.bingoreloaded.GUIInventories;
 
 import me.steven.bingoreloaded.BingoReloaded;
-import me.steven.bingoreloaded.CustomItem;
+import me.steven.bingoreloaded.InventoryItem;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.HumanEntity;
@@ -20,19 +20,24 @@ import org.bukkit.plugin.Plugin;
  */
 public abstract class AbstractGUIInventory implements Listener
 {
-    protected static final String TITLE_PREFIX = "" + ChatColor.GOLD + ChatColor.BOLD;
-
     /**
      * Event delegate to handle custom click behaviour for inventory items
      * @param event The event that gets fired when an item in the inventory was clicked.
-     * @param itemClicked The item that was clicked on by the player.
-     *                    Item can be null.
+     * @param slotClicked The slot that was clicked on by the player.
+     *                    Slot can be null.
      * @param player The player that clicked on the item.
      */
-    public abstract void delegateClick(InventoryClickEvent event, ItemStack itemClicked, Player player);
+    public abstract void delegateClick(InventoryClickEvent event, int slotClicked, Player player);
 
-    public AbstractGUIInventory(int size, String title)
+    protected static final String TITLE_PREFIX = "" + ChatColor.GOLD + ChatColor.BOLD;
+
+    private Inventory inventory = null;
+    private final AbstractGUIInventory parent;
+
+    public AbstractGUIInventory(int size, String title, AbstractGUIInventory parent)
     {
+        this.parent = parent;
+
         Plugin plugin = Bukkit.getPluginManager().getPlugin(BingoReloaded.NAME);
         if (plugin == null) return;
 
@@ -49,9 +54,9 @@ public abstract class AbstractGUIInventory implements Listener
         {
             event.setCancelled(true);
 
-            if (event.getRawSlot() < event.getInventory().getSize())
+            if (event.getRawSlot() < event.getInventory().getSize() && event.getRawSlot() >= 0)
             {
-                delegateClick(event, event.getCurrentItem(), (Player)event.getWhoClicked());
+                delegateClick(event, event.getSlot(), (Player)event.getWhoClicked());
             }
         }
     }
@@ -66,14 +71,14 @@ public abstract class AbstractGUIInventory implements Listener
         }
     }
 
-    protected void fillOptions(int[] slots, CustomItem[] options)
+    protected void fillOptions(int[] slots, InventoryItem[] options)
     {
         if (slots.length != options.length) throw new IllegalArgumentException("Number of options and number of slots to put them in are not equal!");
         if (inventory.getSize() < slots.length) throw new IllegalArgumentException("Cannot fill options with current inventory size (" + inventory.getSize() + ")!");
 
         for (int i = 0; i < slots.length; i++)
         {
-            addOption(slots[i], options[i]);
+            addOption(slots[i], options[i].inSlot(slots[i]));
         }
     }
 
@@ -82,7 +87,7 @@ public abstract class AbstractGUIInventory implements Listener
      * @param slot inventory slot to fill
      * @param option menu item to put in the inventory
      */
-    protected void addOption(int slot, CustomItem option)
+    protected void addOption(int slot, InventoryItem option)
     {
         if (slot == -1)
         {
@@ -94,12 +99,12 @@ public abstract class AbstractGUIInventory implements Listener
         }
     }
 
-    public CustomItem getOption(int slot)
+    public InventoryItem getOption(int slot)
     {
         ItemStack stack = inventory.getItem(slot);
-        if (stack == null) return null;
+        if (stack == null || stack.getType().isAir()) return null;
 
-        return new CustomItem(inventory.getItem(slot));
+        return new InventoryItem(slot, inventory.getItem(slot));
     }
 
     public void open(HumanEntity player)
@@ -107,13 +112,16 @@ public abstract class AbstractGUIInventory implements Listener
         player.openInventory(inventory);
     }
 
-    /**
-     * Compares the given ItemStack getDisplayName to the MenuItem DisplayName and returns true if they are equal.
-     */
-    protected static boolean isMenuItem(ItemStack stack, CustomItem customItem)
+    public void close(HumanEntity player)
     {
-        return stack.getItemMeta().getDisplayName().equals(customItem.getItemMeta().getDisplayName());
+        player.closeInventory();
     }
 
-    private Inventory inventory = null;
+    public void openParent(HumanEntity player)
+    {
+        if (parent != null)
+            parent.open(player);
+        else
+            BingoReloaded.print("You attempted to open this Screen's parent when it was, in fact, null :O", (Player)player);
+    }
 }

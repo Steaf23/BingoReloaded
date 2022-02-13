@@ -1,5 +1,8 @@
 package me.steven.bingoreloaded.cardcreator;
 
+import me.steven.bingoreloaded.BingoItem;
+import org.bukkit.Material;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -13,13 +16,18 @@ public class CardEntry
         this.name = name;
     }
 
-    private void addItemList(String listName, int maxOccurrences)
+    public void addItemList(String listName, int maxOccurrences)
     {
-
+        itemLists.put(listName, maxOccurrences);
     }
 
-    private void removeItemList(String listName)
+    public void removeItemList(String listName)
     {
+        itemLists.remove(listName);
+    }
 
+    public Map<String, Integer> getItemLists()
+    {
+        return itemLists;
     }
 }

@@ -11,6 +11,8 @@ import java.util.*;
  */
 public class BingoItemData
 {
+    private static final YMLDataManager data = new YMLDataManager("items.yml");
+
     /**
      * @return A Map of all categories and the items associated with it.
      */
@@ -40,6 +42,11 @@ public class BingoItemData
                 result.add(Material.getMaterial(name)));
 
         return result;
+    }
+
+    public static int getItemCount(String category)
+    {
+        return data.getConfig().getStringList(category).size();
     }
 
     /**
@@ -109,6 +116,4 @@ public class BingoItemData
     {
         return data.getConfig().getKeys(false);
     }
-
-    private static final YMLDataManager data = new YMLDataManager("items.yml");
 }

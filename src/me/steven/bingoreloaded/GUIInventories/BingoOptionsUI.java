@@ -1,41 +1,57 @@
 package me.steven.bingoreloaded.GUIInventories;
 
 import me.steven.bingoreloaded.BingoGame;
-import me.steven.bingoreloaded.CustomItem;
+import me.steven.bingoreloaded.BingoReloaded;
+import me.steven.bingoreloaded.InventoryItem;
+import me.steven.bingoreloaded.cardcreator.BingoCardData;
+import me.steven.bingoreloaded.cardcreator.CardEntry;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class BingoOptionsUI extends AbstractGUIInventory
 {
-    @Override
-    public void delegateClick(InventoryClickEvent event, ItemStack itemClicked, Player player)
-    {
-        if (itemClicked == null) return;
-        if (itemClicked.getItemMeta() == null) return;
+    private final BingoGame game;
 
-        if (isMenuItem(itemClicked, menuItems.get("join")))
+    private final Map<String, InventoryItem> menuItems = new HashMap<>(){{
+        put("join", new InventoryItem(12, Material.WHITE_GLAZED_TERRACOTTA, "" + ChatColor.GOLD + ChatColor.BOLD + "Join A Team"));
+        put("leave", new InventoryItem(14, Material.BARRIER, "" + ChatColor.GOLD + ChatColor.BOLD + "Quit Bingo"));
+        put("gamemode", new InventoryItem(29, Material.ENCHANTED_BOOK, "" + ChatColor.GOLD + ChatColor.BOLD + "Change Gamemode"));
+        put("kit", new InventoryItem(31, Material.IRON_INGOT, "" + ChatColor.GOLD + ChatColor.BOLD + "Change Starting Kit"));
+        put("card", new InventoryItem(33, Material.MAP, "" + ChatColor.GOLD + ChatColor.BOLD + "Change Bingo Card"));
+    }};
+
+    @Override
+    public void delegateClick(InventoryClickEvent event, int slotClicked, Player player)
+    {
+        if (slotClicked == menuItems.get("join").getSlot())
         {
             game.getTeamManager().openTeamSelector(player, this);
         }
-        else if (isMenuItem(itemClicked, menuItems.get("leave")))
+        else if (slotClicked == menuItems.get("leave").getSlot())
         {
             game.playerQuit(player);
         }
-        else if (isMenuItem(itemClicked, menuItems.get("kit")))
+        else if (slotClicked == menuItems.get("kit").getSlot())
         {
             KitOptionsUI kitSelector = new KitOptionsUI(this, game);
             kitSelector.open(player);
         }
-        else if (isMenuItem(itemClicked, menuItems.get("gamemode")))
+        else if (slotClicked == menuItems.get("gamemode").getSlot())
         {
             GamemodeOptionsUI gamemodeSelector = new GamemodeOptionsUI(this, game);
             gamemodeSelector.open(player);
+        }
+        else if (slotClicked == menuItems.get("card").getSlot())
+        {
+            openCardPicker(player);
         }
     }
 
@@ -45,17 +61,17 @@ public class BingoOptionsUI extends AbstractGUIInventory
 
         if (player.hasPermission("bingo.admin"))
         {
-            options.fillOptions(new int[]{12, 14, 29, 31, 33}, new CustomItem[]{
+            options.fillOptions(new int[]{12, 14, 29, 31, 33}, new InventoryItem[]{
                     options.menuItems.get("join"),
                     options.menuItems.get("leave"),
                     options.menuItems.get("kit"),
                     options.menuItems.get("gamemode"),
-                    options.menuItems.get("difficulty"),
+                    options.menuItems.get("card"),
             });
         }
         else
         {
-            options.fillOptions(new int[]{21, 23}, new CustomItem[]{
+            options.fillOptions(new int[]{21, 23}, new InventoryItem[]{
                     options.menuItems.get("join"),
                     options.menuItems.get("leave"),
             });
@@ -64,19 +80,44 @@ public class BingoOptionsUI extends AbstractGUIInventory
         options.open(player);
     }
 
-    private final BingoGame game;
-
-    private final Map<String, CustomItem> menuItems = new HashMap<>(){{
-        put("join", new CustomItem(Material.WHITE_GLAZED_TERRACOTTA, "" + ChatColor.GOLD + ChatColor.BOLD + "Join A Team"));
-        put("leave", new CustomItem(Material.BARRIER, "" + ChatColor.GOLD + ChatColor.BOLD + "Quit Bingo"));
-        put("gamemode", new CustomItem(Material.ENCHANTED_BOOK, "" + ChatColor.GOLD + ChatColor.BOLD + "Change Gamemode"));
-        put("kit", new CustomItem(Material.IRON_INGOT, "" + ChatColor.GOLD + ChatColor.BOLD + "Change Starting Kit"));
-        put("difficulty", new CustomItem(Material.ENDER_EYE, "" + ChatColor.GOLD + ChatColor.BOLD + "Change Bingo Difficulty"));
-    }};
-
     private BingoOptionsUI(BingoGame game)
     {
-        super(45, "Options Menu");
+        super(45, "Options Menu", null);
         this.game = game;
+    }
+
+    private void openCardPicker(Player player)
+    {
+        List<InventoryItem> cards = new ArrayList<>();
+
+        for (String cardName : BingoCardData.getCardNames())
+        {
+            cards.add(new InventoryItem(Material.PAPER, cardName,
+                    ChatColor.DARK_PURPLE + "Contains " +
+                            BingoCardData.getOrCreateCard(cardName).getItemLists().size() + "item List(s)"));
+        }
+
+        ItemPickerUI cardPicker = new ItemPickerUI(cards, "Pick a card",this)
+        {
+            @Override
+            public void onOptionClickedDelegate(InventoryClickEvent event, InventoryItem clickedOption, Player player)
+            {
+                ItemMeta meta = clickedOption.getItemMeta();
+                if (meta != null)
+                {
+                    cardSelected(BingoCardData.getOrCreateCard(meta.getDisplayName()), player);
+                }
+                openParent(player);
+            }
+        };
+        cardPicker.open(player);
+    }
+
+    private void cardSelected(CardEntry card, Player player)
+    {
+        if (card == null) return;
+
+        BingoReloaded.print("'" + card.name + "' selected as the playing Bingo card!", player);
+        game.card = card;
     }
 }

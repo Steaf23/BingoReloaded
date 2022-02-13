@@ -1,6 +1,7 @@
 package me.steven.bingoreloaded;
 
 import me.steven.bingoreloaded.GUIInventories.cards.*;
+import me.steven.bingoreloaded.cardcreator.CardEntry;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.*;
 import org.bukkit.enchantments.Enchantment;
@@ -16,6 +17,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -24,11 +26,31 @@ import org.bukkit.util.Vector;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
 
 
 public class BingoGame implements Listener
 {
+    public CardEntry card;
+
+    private static final int TELEPORT_DISTANCE = 1000000;
+    private final TeamManager teamManager;
+    private BingoGameMode currentMode;
+    private PlayerKit currentKit;
+    private final InventoryItem cardItem = new InventoryItem(
+            Material.MAP,
+            "" + ChatColor.DARK_PURPLE + ChatColor.ITALIC + ChatColor.BOLD + "Bingo Card",
+            "Click To Open The Bingo Card!");
+
+    private final ItemCooldownManager wandItem = new ItemCooldownManager(new InventoryItem(
+            Material.WARPED_FUNGUS_ON_A_STICK,
+            "" + ChatColor.DARK_PURPLE + ChatColor.ITALIC + ChatColor.BOLD + "The Go-Up-Wand",
+            "Right-Click To Teleport Upwards!"
+    ), 5000);
+
+    private boolean gameInProgress = false;
+
     public BingoGame()
     {
         currentMode = BingoGameMode.REGULAR;
@@ -36,6 +58,12 @@ public class BingoGame implements Listener
 
         teamManager = new TeamManager(this);
 
+        ItemMeta cardMeta = cardItem.getItemMeta();
+        if (cardMeta != null)
+            cardMeta.setDisplayName("" + ChatColor.DARK_PURPLE + ChatColor.ITALIC + ChatColor.BOLD + "Bingo Card");
+        if (cardMeta != null)
+            cardMeta.setLore(List.of("Click To Open The Bingo Card!"));
+        cardItem.setItemMeta(cardMeta);
         wandItem.item.addEnchantment(Enchantment.DURABILITY, 3);
     }
 
@@ -80,7 +108,7 @@ public class BingoGame implements Listener
 
         gameInProgress = true;
         BingoCard masterCard = CardBuilder.fromMode(currentMode);
-        masterCard.generateCard(CardDifficulty.EASY);
+        masterCard.generateCard(card);
 
         World world = Bukkit.getWorlds().get(0);
         world.setStorm(false);
@@ -159,6 +187,7 @@ public class BingoGame implements Listener
                 put(Enchantment.PROTECTION_ENVIRONMENTAL, 4);
             }});
             p.getInventory().setArmorContents(new ItemStack[] {boots, null, null, helmet});
+            p.getInventory().setItem(0, new ItemStack(Material.GOLDEN_CARROT, 64));
             p.getInventory().setItem(7, wandItem.item);
             p.getInventory().setItem(8, cardItem);
         });
@@ -203,8 +232,9 @@ public class BingoGame implements Listener
     @EventHandler
     public void onPlayerDropItem(final PlayerDropItemEvent dropEvent)
     {
-        if (dropEvent.getItemDrop().getItemStack().equals(cardItem) ||
-                dropEvent.getItemDrop().getItemStack().equals(wandItem.item))
+        BingoReloaded.broadcast(cardItem.getItemMeta().getDisplayName() + " " + dropEvent.getItemDrop().getItemStack().getItemMeta().getDisplayName());
+        if (dropEvent.getItemDrop().getItemStack().equals(cardItem.getAsStack()) ||
+                dropEvent.getItemDrop().getItemStack().equals(wandItem.item.getAsStack()))
         {
             dropEvent.setCancelled(true);
             return;
@@ -244,7 +274,7 @@ public class BingoGame implements Listener
         ItemStack item = event.getCurrentItem();
         if (item == null) return;
 
-        if (item.equals(cardItem))
+        if (item.equals(cardItem.getAsStack()))
         {
             event.setCancelled(true);
         }
@@ -255,7 +285,7 @@ public class BingoGame implements Listener
     {
         if (event.getCursor() == null) return;
 
-        if (event.getCursor().equals(cardItem))
+        if (event.getCursor().equals(cardItem.getAsStack()))
         {
             event.setCancelled(true);
         }
@@ -269,7 +299,7 @@ public class BingoGame implements Listener
         if (event.getItem() == null) return;
         if (event.getItem().getType().isAir()) return;
 
-        if (event.getItem().equals(cardItem))
+        if (event.getItem().equals(cardItem.getAsStack()))
         {
             event.setCancelled(true);
             if (!teamManager.getParticipants().contains(event.getPlayer())) return;
@@ -292,7 +322,7 @@ public class BingoGame implements Listener
             }
         }
 
-        if (event.getItem().equals(wandItem.item)
+        if (event.getItem().equals(wandItem.item.getAsStack())
                 && (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK))
         {
             int teleportHeight = 75;
@@ -321,24 +351,6 @@ public class BingoGame implements Listener
 
         event.setCancelled(true);
     }
-
-    private static final int TELEPORT_DISTANCE = 1000000;
-    private final TeamManager teamManager;
-    private BingoGameMode currentMode;
-    private PlayerKit currentKit;
-
-    private final CustomItem cardItem = new CustomItem(
-            Material.MAP,
-            "" + ChatColor.DARK_PURPLE + ChatColor.ITALIC + ChatColor.BOLD + "Bingo Card",
-            "Click To Open The Bingo Card!");
-
-    private final ItemCooldownManager wandItem = new ItemCooldownManager(new CustomItem(
-            Material.WARPED_FUNGUS_ON_A_STICK,
-            "" + ChatColor.DARK_PURPLE + ChatColor.ITALIC + ChatColor.BOLD + "The Go-Up-Wand",
-            "Right-Click To Teleport Upwards!"
-    ), 5000);
-
-    private boolean gameInProgress = false;
 
     private void takePlayerEffects(Player player)
     {
