@@ -114,14 +114,9 @@ public abstract class AbstractGUIInventory implements Listener
 
     public void close(HumanEntity player)
     {
-        player.closeInventory();
-    }
-
-    public void openParent(HumanEntity player)
-    {
         if (parent != null)
             parent.open(player);
         else
-            close(player);
+            player.closeInventory();
     }
 }

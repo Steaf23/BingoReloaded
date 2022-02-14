@@ -167,15 +167,19 @@ public class BingoGame implements Listener
     public void givePlayersEffects()
     {
         Set<Player> players = teamManager.getParticipants();
-        players.forEach(p ->
-        {
-            p.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, 100000, 1, false, false));
-            p.addPotionEffect(new PotionEffect(PotionEffectType.WATER_BREATHING, 100000, 1, false, false));
-            p.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 100000, 2, false, false));
+        players.forEach(this::givePlayerEffects);
+    }
 
-            p.addPotionEffect(new PotionEffect(PotionEffectType.SATURATION, 2, 100, false, false));
-            p.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 2, 100, false, false));
-        });
+    private void givePlayerEffects(Player player)
+    {
+        if (teamManager.getParticipants().contains(player))
+        {
+            player.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, 100000, 1, false, false));
+            player.addPotionEffect(new PotionEffect(PotionEffectType.WATER_BREATHING, 100000, 1, false, false));
+
+            player.addPotionEffect(new PotionEffect(PotionEffectType.SATURATION, 2, 100, false, false));
+            player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 2, 100, false, false));
+        }
     }
 
     public void playerQuit(Player player)
@@ -190,6 +194,11 @@ public class BingoGame implements Listener
     public void bingo(Team team)
     {
         BingoReloaded.broadcast("Congratulations! Team " + team.getDisplayName() + ChatColor.RESET + " has won the Bingo!");
+        for (Player p : teamManager.getParticipants())
+        {
+            p.playSound(p, Sound.ENTITY_DRAGON_FIREBALL_EXPLODE, 0.8f, 1.0f);
+            p.playSound(p, Sound.UI_TOAST_CHALLENGE_COMPLETE, 0.5f, 1.0f);
+        }
         end();
     }
 
@@ -203,13 +212,20 @@ public class BingoGame implements Listener
         return teamManager;
     }
 
-    public void teleportPlayerAfterDeath(String playerName)
+    public void teleportPlayerAfterDeath(Player player)
     {
-        Player p = Bukkit.getPlayer(playerName);
-        if (p == null) return;
+        givePlayerEffects(player);
 
-        p.teleport(deadPlayers.get(playerName), PlayerTeleportEvent.TeleportCause.PLUGIN);
-        deadPlayers.remove(playerName);
+        if (teamManager.getParticipants().contains(player) && gameInProgress)
+        {
+            returnCardToPlayer(player);
+        }
+
+        if (player == null) return;
+        Location location = deadPlayers.get(player.getName());
+        BingoReloaded.print("Death Location: " + location, player);
+        player.teleport(deadPlayers.get(player.getName()), PlayerTeleportEvent.TeleportCause.PLUGIN);
+        deadPlayers.remove(player.getName());
     }
 
     @EventHandler
@@ -360,6 +376,9 @@ public class BingoGame implements Listener
         {
             if (teamManager.getParticipants().contains(event.getEntity()))
             {
+                while (event.getDrops().contains(currentKit.cardItem.getAsStack()))
+                    event.getDrops().remove(currentKit.cardItem.getAsStack());
+
                 Location deathCoords = event.getEntity().getLocation();
 
                 TextComponent[] teleportMsg = BingoReloaded.createHoverCommandMessage("",
@@ -369,15 +388,43 @@ public class BingoGame implements Listener
                         "Click to teleport to " + deathCoords);
 
                 event.getEntity().spigot().sendMessage(teleportMsg);
+                deadPlayers.put(event.getEntity().getName(), deathCoords);
             }
         }
+    }
+
+    @EventHandler
+    public void onPlayerHoldsCard(final PlayerItemHeldEvent event)
+    {
+        if (teamManager.getParticipants().contains(event.getPlayer()) && gameInProgress)
+        {
+            if (event.getNewSlot() == currentKit.cardItem.getSlot())
+            {
+                event.getPlayer().addPotionEffect(
+                        new PotionEffect(PotionEffectType.SPEED, 100000, 2, false, false));
+            }
+
+            if (event.getPreviousSlot() == currentKit.cardItem.getSlot())
+            {
+                event.getPlayer().removePotionEffect(PotionEffectType.SPEED);
+            }
+        }
+    }
+
+    public void returnCardToPlayer(Player player)
+    {
+        if (!gameInProgress) return;
+
+        while (player.getInventory().contains(currentKit.cardItem.getAsStack()))
+            player.getInventory().remove(currentKit.cardItem.getAsStack());
+
+        player.getInventory().setItem(8, currentKit.cardItem.getAsStack());
     }
 
     private void takePlayerEffects(Player player)
     {
         player.removePotionEffect(PotionEffectType.NIGHT_VISION);
         player.removePotionEffect(PotionEffectType.WATER_BREATHING);
-        player.removePotionEffect(PotionEffectType.SPEED);
     }
 
     private void teleportPlayers(World world)

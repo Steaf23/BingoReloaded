@@ -53,7 +53,7 @@ public abstract class ItemPickerUI extends AbstractGUIInventory
         }
         else if (slotClicked == CLOSE.getSlot())
         {
-            openParent(player);
+            close(player);
         }
         else if (isSlotValidOption(slotClicked) && getOption(slotClicked) != null) //If it is a normal item;
         {

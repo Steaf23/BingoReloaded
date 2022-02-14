@@ -108,7 +108,7 @@ public class BingoOptionsUI extends AbstractGUIInventory
                 {
                     cardSelected(BingoCardData.getOrCreateCard(meta.getDisplayName()), player);
                 }
-                openParent(player);
+                close(player);
             }
         };
         cardPicker.open(player);

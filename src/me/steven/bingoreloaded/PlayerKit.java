@@ -125,7 +125,7 @@ public enum PlayerKit
             "Right-Click To Teleport Upwards!"
     ).withEnchantment(Enchantment.DURABILITY, 3), 5000);
 
-    public final InventoryItem cardItem = new InventoryItem(
+    public final InventoryItem cardItem = new InventoryItem(8,
             Material.MAP,
             "" + ChatColor.DARK_PURPLE + ChatColor.ITALIC + ChatColor.BOLD + "Bingo Card",
             "Click To Open The Bingo Card!");

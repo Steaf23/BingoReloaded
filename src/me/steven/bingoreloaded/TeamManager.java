@@ -3,6 +3,7 @@ package me.steven.bingoreloaded;
 import me.steven.bingoreloaded.GUIInventories.AbstractGUIInventory;
 import me.steven.bingoreloaded.GUIInventories.ItemPickerUI;
 import me.steven.bingoreloaded.GUIInventories.cards.BingoCard;
+import me.steven.bingoreloaded.GUIInventories.cards.LockoutBingoCard;
 import me.steven.bingoreloaded.util.FlexibleColor;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -10,6 +11,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.scoreboard.*;
 
+import javax.swing.*;
 import java.util.*;
 
 public class TeamManager
@@ -71,7 +73,7 @@ public class TeamManager
                 if (color == null) return;
 
                 addPlayerToTeam(player, color.displayName);
-                openParent(player);
+                close(player);
             }
         };
         teamPicker.open(player);
@@ -112,7 +114,11 @@ public class TeamManager
 
     public void initializeCards(BingoCard masterCard)
     {
-        activeTeams.replaceAll((t, v) -> masterCard);
+        if (masterCard instanceof LockoutBingoCard lockoutCard)
+        {
+            lockoutCard.teamCount = activeTeams.size();
+        }
+        activeTeams.replaceAll((t, v) -> masterCard.copy());
     }
 
     public Set<Player> getParticipants()

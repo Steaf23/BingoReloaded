@@ -70,7 +70,7 @@ public class CardEditorUI extends ItemPickerUI
                     {
                         getResultFromPicker(optionMeta.getDisplayName());
                     }
-                    openParent(player);
+                    close(player);
                 }
             };
             listPicker.open(player);

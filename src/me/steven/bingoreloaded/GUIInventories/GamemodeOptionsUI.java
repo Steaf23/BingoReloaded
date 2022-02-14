@@ -41,7 +41,7 @@ public class GamemodeOptionsUI extends AbstractGUIInventory
         {
             game.setGameMode(BingoGameMode.RUSH);
         }
-        openParent(player);
+        close(player);
     }
 
     private final BingoGame game;

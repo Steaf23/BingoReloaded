@@ -37,17 +37,23 @@ public class BingoCommand implements CommandExecutor
                     gameInstance.end();
                     break;
 
+                case "getcard":
+                    if (commandSender instanceof Player p)
+                    {
+                        gameInstance.returnCardToPlayer(p);
+                    }
+
                 case "back":
                     if (commandSender instanceof Player p)
                     {
-                        gameInstance.teleportPlayerAfterDeath(p.getName());
+                        gameInstance.teleportPlayerAfterDeath(p);
                     }
 
                 default:
                     if (commandSender instanceof Player p)
-                        BingoReloaded.print(ChatColor.RED + "Usage: /bingo [start|end|leave]", p);
+                        BingoReloaded.print(ChatColor.RED + "Usage: /bingo [start|end|leave|getcard]", p);
                     else
-                        BingoReloaded.print(ChatColor.RED + "Usage: /bingo [start|end|leave]");
+                        BingoReloaded.print(ChatColor.RED + "Usage: /bingo [start|end|leave|getcard]");
                     break;
             }
         }

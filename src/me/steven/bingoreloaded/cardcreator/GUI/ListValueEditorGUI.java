@@ -1,9 +1,7 @@
 package me.steven.bingoreloaded.cardcreator.GUI;
 
 import me.steven.bingoreloaded.GUIInventories.AbstractGUIInventory;
-import me.steven.bingoreloaded.GUIInventories.cards.BingoCard;
 import me.steven.bingoreloaded.InventoryItem;
-import me.steven.bingoreloaded.cardcreator.BingoCardData;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -46,7 +44,7 @@ public class ListValueEditorGUI extends AbstractGUIInventory
         else if (slotClicked == SAVE.getSlot())
         {
             setValueForList();
-            openParent(player);
+            close(player);
         }
     }
 

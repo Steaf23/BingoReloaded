@@ -46,6 +46,6 @@ public class KitOptionsUI extends AbstractGUIInventory
         {
             game.setKit(PlayerKit.RELOADED);
         }
-        openParent(player);
+        close(player);
     }
 }

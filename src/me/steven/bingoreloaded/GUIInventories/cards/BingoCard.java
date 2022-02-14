@@ -3,7 +3,6 @@ package me.steven.bingoreloaded.GUIInventories.cards;
 import me.steven.bingoreloaded.BingoItem;
 import me.steven.bingoreloaded.BingoReloaded;
 import me.steven.bingoreloaded.GUIInventories.AbstractGUIInventory;
-import me.steven.bingoreloaded.cardcreator.BingoCardData;
 import me.steven.bingoreloaded.cardcreator.BingoItemData;
 import me.steven.bingoreloaded.cardcreator.CardEntry;
 import org.bukkit.ChatColor;
@@ -11,7 +10,6 @@ import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.scoreboard.Team;
 
 import java.util.ArrayList;
@@ -22,7 +20,7 @@ public class BingoCard extends AbstractGUIInventory
 {
     public CardSize size;
 
-    public ArrayList<BingoItem> items = new ArrayList<>();
+    public List<BingoItem> items = new ArrayList<>();
 
     public BingoCard(CardSize size)
     {
@@ -32,6 +30,8 @@ public class BingoCard extends AbstractGUIInventory
 
     public void generateCard(CardEntry card)
     {
+        items.clear();
+
         String listName = card.getItemLists().keySet().iterator().next();
         List<Material> materials = BingoItemData.getItems(listName);
         Collections.shuffle(materials);
@@ -146,5 +146,12 @@ public class BingoCard extends AbstractGUIInventory
     public void delegateClick(InventoryClickEvent event, int slotClicked, Player player)
     {
 
+    }
+
+    public BingoCard copy()
+    {
+        BingoCard card = new BingoCard(this.size);
+        card.items = this.items;
+        return card;
     }
 }

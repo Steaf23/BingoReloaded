@@ -27,34 +27,28 @@ public class ItemDifficultySelectionUI extends AbstractGUIInventory
     @Override
     public void delegateClick(InventoryClickEvent event, int slotClicked, Player player)
     {
-        if (slotClicked == item.getSlot())
-        {
-            openParent(player);
-        }
-        else if (slotClicked == EASY.getSlot())
+        if (slotClicked == EASY.getSlot())
         {
             saveItemToFile("easy");
             BingoReloaded.print("Set " + item.getType() + "'s difficulty to easy", player);
-            openParent(player);
         }
         else if (slotClicked == MEDIUM.getSlot())
         {
             saveItemToFile("medium");
             BingoReloaded.print("Set " + item.getType() + "'s difficulty to medium", player);
-            openParent(player);
         }
         else if (slotClicked == HARD.getSlot())
         {
             saveItemToFile("hard");
             BingoReloaded.print("Set " + item.getType() + "'s difficulty to hard", player);
-            openParent(player);
         }
         else if (slotClicked == RESET.getSlot())
         {
             BingoItemData.removeItem(item.getType());
             BingoReloaded.print("Removed " + item.getType() + " from the item list", player);
-            openParent(player);
         }
+
+        close(player);
     }
 
     public void saveItemToFile(String difficulty)

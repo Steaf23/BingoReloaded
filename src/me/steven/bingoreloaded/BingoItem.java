@@ -37,7 +37,7 @@ public class BingoItem
 
         String name = stack.getType().name().replace("_", " ");
         name = WordUtils.capitalizeFully(name);
-        BingoReloaded.broadcast(ChatColor.GREEN + "Completed " + name + " by team " + completedBy.getDisplayName() + "!");
+        BingoReloaded.broadcast(ChatColor.GREEN + "Completed " + name + " by team " + completedBy.getColor() + completedBy.getDisplayName() + ChatColor.GREEN + "!");
 
         name = "" + ChatColor.GRAY + ChatColor.STRIKETHROUGH + name;
         stack.setType(completeMaterial);
@@ -45,7 +45,7 @@ public class BingoItem
         if (meta != null)
         {
             meta.setDisplayName(name);
-            meta.setLore(List.of("Completed by team " + completedBy.getDisplayName()));
+            meta.setLore(List.of("Completed by team " + completedBy.getColor() + completedBy.getDisplayName()));
         }
         stack.setItemMeta(meta);
     }

@@ -15,4 +15,12 @@ public class CompleteBingoCard extends BingoCard
     {
         return getCompleteCount(team) == size.fullCardSize;
     }
+
+    @Override
+    public CompleteBingoCard copy()
+    {
+        CompleteBingoCard card = new CompleteBingoCard(this.size);
+        card.items = this.items;
+        return card;
+    }
 }
