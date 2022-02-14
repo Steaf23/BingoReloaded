@@ -1,26 +1,34 @@
 package me.steven.bingoreloaded;
 
 import me.steven.bingoreloaded.GUIInventories.AbstractGUIInventory;
-import me.steven.bingoreloaded.GUIInventories.TeamSelectorInventory;
+import me.steven.bingoreloaded.GUIInventories.ItemPickerUI;
 import me.steven.bingoreloaded.GUIInventories.cards.BingoCard;
+import me.steven.bingoreloaded.util.FlexibleColor;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.scoreboard.*;
 
 import java.util.*;
 
 public class TeamManager
 {
+    private final Map<Team, BingoCard> activeTeams = new HashMap<>();
+    private final Scoreboard scoreboard;
+    private final BingoGame game;
+
     public TeamManager(BingoGame game)
     {
         this.game = game;
         scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
         Objective objective = scoreboard.registerNewObjective("item_count", "bingo_item_count", "Collected Items");
         objective.setDisplaySlot(DisplaySlot.SIDEBAR);
+
+        createTeams();
     }
 
-    public Team getPlayerTeam(Player player)
+    public Team getTeamOfPlayer(Player player)
     {
         for (Team t : scoreboard.getTeams())
         {
@@ -42,39 +50,46 @@ public class TeamManager
             BingoReloaded.print(ChatColor.RED + "You cannot join or switch teams in an ongoing game, please wait until it ends", player);
             return;
         }
-        TeamSelectorInventory.open(this, parentUI, player);
-    }
 
-    public Team addTeam(String teamName)
-    {
-        Team existingTeam = scoreboard.getTeam(teamName);
+        List<InventoryItem> optionItems = new ArrayList<>();
 
-        if (existingTeam == null)
+        for (Team t : scoreboard.getTeams())
         {
-            Team newTeam = scoreboard.registerNewTeam(teamName);
-            BingoReloaded.broadcast("Adding Team " + newTeam.getDisplayName() + ChatColor.RESET + "!");
-            activeTeams.put(newTeam, null);
-            ChatColor teamColor = ChatColor.getByChar((char)newTeam.getDisplayName().getBytes()[1]);
-            if (teamColor != null)
-                newTeam.setColor(teamColor);
-            return newTeam;
+            FlexibleColor color = FlexibleColor.fromChatColor(t.getColor());
+            if (color != null)
+            {
+                optionItems.add(new InventoryItem(color.concrete, color.chatColor + t.getDisplayName()));
+            }
         }
-        return existingTeam;
+
+        ItemPickerUI teamPicker = new ItemPickerUI(optionItems, "Pick A Team", parentUI)
+        {
+            @Override
+            public void onOptionClickedDelegate(InventoryClickEvent event, InventoryItem clickedOption, Player player)
+            {
+                FlexibleColor color = FlexibleColor.fromConcrete(clickedOption.getType());
+                if (color == null) return;
+
+                addPlayerToTeam(player, color.displayName);
+                openParent(player);
+            }
+        };
+        teamPicker.open(player);
     }
 
     public void addPlayerToTeam(Player player, String teamName)
     {
-        removePlayerFromAllTeams(player);
-
         Team team = scoreboard.getTeam(teamName);
-
         if (team == null)
         {
-            team = addTeam(teamName);
+            BingoReloaded.broadcast(ChatColor.RED + "Could not add you to team '" + teamName + "', since it just doesn't exist!");
+            return;
         }
+        removePlayerFromAllTeams(player);
 
+        activeTeams.put(team, null);
         team.addEntry(player.getName());
-        BingoReloaded.print("You successfully joined team " + team.getDisplayName(), player);
+        BingoReloaded.print("You successfully joined team " + team.getColor() + team.getDisplayName(), player);
     }
 
     public void removePlayerFromAllTeams(Player player)
@@ -85,15 +100,9 @@ public class TeamManager
             team.removeEntry(player.getName());
             if (team.getEntries().size() == 0)
             {
-                removeTeam(team);
+                activeTeams.remove(team);
             }
         }
-    }
-
-    public void removeTeam(Team team)
-    {
-        activeTeams.remove(team);
-        team.unregister();
     }
 
     public BingoCard getCardForTeam(Team team)
@@ -133,6 +142,22 @@ public class TeamManager
         return players;
     }
 
+    public void updateActivePlayers()
+    {
+        for (Team team : activeTeams.keySet())
+        {
+            for (String entry : team.getEntries())
+            {
+                Player p = Bukkit.getPlayer(entry);
+                if (p != null)
+                    if (p.isOnline())
+                        break;
+
+                removePlayerFromAllTeams(p);
+            }
+        }
+    }
+
     public void updateTeamDisplay()
     {
         Objective objective = scoreboard.getObjective("item_count");
@@ -140,7 +165,7 @@ public class TeamManager
 
         for (Team t : activeTeams.keySet())
         {
-            Score score = objective.getScore(t.getDisplayName() + ChatColor.RESET + ":");
+            Score score = objective.getScore(t.getColor() + t.getDisplayName() + ChatColor.RESET + ":");
             score.setScore(getCardForTeam(t).getCompleteCount(t));
         }
 
@@ -158,7 +183,22 @@ public class TeamManager
         }
     }
 
-    private final Map<Team, BingoCard> activeTeams = new HashMap<>();
-    private final Scoreboard scoreboard;
-    private final BingoGame game;
+    private void createTeams()
+    {
+        for (ChatColor c : ChatColor.values())
+        {
+            if (c.isColor())
+            {
+                FlexibleColor flexColor = FlexibleColor.fromChatColor(c);
+                if (flexColor == null) return;
+
+                String name = flexColor.displayName;
+                scoreboard.registerNewTeam(name);
+                scoreboard.getTeam(name).setColor(flexColor.chatColor);
+            }
+        }
+
+        BingoReloaded.broadcast(ChatColor.GREEN + "Successfully created " + scoreboard.getTeams().size() + " teams");
+        BingoReloaded.print(ChatColor.GREEN + "Successfully created " + scoreboard.getTeams().size() + " teams");
+    }
 }

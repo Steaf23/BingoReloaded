@@ -23,8 +23,8 @@ public class BingoOptionsUI extends AbstractGUIInventory
     private final Map<String, InventoryItem> menuItems = new HashMap<>(){{
         put("join", new InventoryItem(12, Material.WHITE_GLAZED_TERRACOTTA, "" + ChatColor.GOLD + ChatColor.BOLD + "Join A Team"));
         put("leave", new InventoryItem(14, Material.BARRIER, "" + ChatColor.GOLD + ChatColor.BOLD + "Quit Bingo"));
-        put("gamemode", new InventoryItem(29, Material.ENCHANTED_BOOK, "" + ChatColor.GOLD + ChatColor.BOLD + "Change Gamemode"));
-        put("kit", new InventoryItem(31, Material.IRON_INGOT, "" + ChatColor.GOLD + ChatColor.BOLD + "Change Starting Kit"));
+        put("kit", new InventoryItem(29, Material.IRON_INGOT, "" + ChatColor.GOLD + ChatColor.BOLD + "Change Starting Kit"));
+        put("gamemode", new InventoryItem(31, Material.ENCHANTED_BOOK, "" + ChatColor.GOLD + ChatColor.BOLD + "Change Gamemode"));
         put("card", new InventoryItem(33, Material.MAP, "" + ChatColor.GOLD + ChatColor.BOLD + "Change Bingo Card"));
     }};
 
@@ -71,6 +71,7 @@ public class BingoOptionsUI extends AbstractGUIInventory
         }
         else
         {
+            //TODO: fix dynamic slot locations
             options.fillOptions(new int[]{21, 23}, new InventoryItem[]{
                     options.menuItems.get("join"),
                     options.menuItems.get("leave"),
@@ -94,7 +95,7 @@ public class BingoOptionsUI extends AbstractGUIInventory
         {
             cards.add(new InventoryItem(Material.PAPER, cardName,
                     ChatColor.DARK_PURPLE + "Contains " +
-                            BingoCardData.getOrCreateCard(cardName).getItemLists().size() + "item List(s)"));
+                            BingoCardData.getOrCreateCard(cardName).getItemLists().size() + " item List(s)"));
         }
 
         ItemPickerUI cardPicker = new ItemPickerUI(cards, "Pick a card",this)

@@ -36,8 +36,6 @@ public class BingoCard extends AbstractGUIInventory
         List<Material> materials = BingoItemData.getItems(listName);
         Collections.shuffle(materials);
 
-        BingoReloaded.broadcast(materials.toString());
-
         for (int i = 0; i < size.fullCardSize; i++)
         {
             items.add(new BingoItem(materials.get(i % materials.size())));

@@ -2,23 +2,20 @@ package me.steven.bingoreloaded;
 
 import me.steven.bingoreloaded.GUIInventories.cards.*;
 import me.steven.bingoreloaded.cardcreator.CardEntry;
+import me.steven.bingoreloaded.util.FlexibleColor;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.*;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
-import org.bukkit.event.player.PlayerDropItemEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scoreboard.Team;
@@ -26,7 +23,7 @@ import org.bukkit.util.Vector;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;
-import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 
@@ -38,16 +35,8 @@ public class BingoGame implements Listener
     private final TeamManager teamManager;
     private BingoGameMode currentMode;
     private PlayerKit currentKit;
-    private final InventoryItem cardItem = new InventoryItem(
-            Material.MAP,
-            "" + ChatColor.DARK_PURPLE + ChatColor.ITALIC + ChatColor.BOLD + "Bingo Card",
-            "Click To Open The Bingo Card!");
 
-    private final ItemCooldownManager wandItem = new ItemCooldownManager(new InventoryItem(
-            Material.WARPED_FUNGUS_ON_A_STICK,
-            "" + ChatColor.DARK_PURPLE + ChatColor.ITALIC + ChatColor.BOLD + "The Go-Up-Wand",
-            "Right-Click To Teleport Upwards!"
-    ), 5000);
+    private final Map<String, Location> deadPlayers;
 
     private boolean gameInProgress = false;
 
@@ -58,13 +47,7 @@ public class BingoGame implements Listener
 
         teamManager = new TeamManager(this);
 
-        ItemMeta cardMeta = cardItem.getItemMeta();
-        if (cardMeta != null)
-            cardMeta.setDisplayName("" + ChatColor.DARK_PURPLE + ChatColor.ITALIC + ChatColor.BOLD + "Bingo Card");
-        if (cardMeta != null)
-            cardMeta.setLore(List.of("Click To Open The Bingo Card!"));
-        cardItem.setItemMeta(cardMeta);
-        wandItem.item.addEnchantment(Enchantment.DURABILITY, 3);
+        deadPlayers = new HashMap<>();
     }
 
     /**
@@ -94,6 +77,8 @@ public class BingoGame implements Listener
      */
     public void start()
     {
+        teamManager.updateActivePlayers();
+
         if (teamManager.getParticipants().size() <= 0)
         {
             BingoReloaded.broadcast("" + ChatColor.RED + ChatColor.ITALIC + ChatColor.BOLD + "Bingo could not be started since nobody joined :(");
@@ -103,6 +88,12 @@ public class BingoGame implements Listener
         if (gameInProgress)
         {
             BingoReloaded.broadcast("" + ChatColor.RED + ChatColor.ITALIC + ChatColor.BOLD + "Cannot start a game of Bingo when there is already one active!");
+            return;
+        }
+
+        if (card == null)
+        {
+            BingoReloaded.broadcast(ChatColor.RED + "Please select a card before starting the game!");
             return;
         }
 
@@ -143,18 +134,14 @@ public class BingoGame implements Listener
         {
             BingoReloaded.print(ChatColor.RED + "No Game to end!");
         }
+
+        teamManager.updateActivePlayers();
     }
 
-    public void setKit(String command)
+    public void setKit(PlayerKit kit)
     {
-        switch (command)
-        {
-            case "reset", "normal" -> {
-                BingoReloaded.broadcast(ChatColor.GOLD + "Selected Normal Kit!");
-                currentKit = PlayerKit.NORMAL;
-            }
-            default -> BingoReloaded.broadcast(ChatColor.RED + "Kit '" + command + "' not found!");
-        }
+        currentKit = kit;
+        BingoReloaded.broadcast(ChatColor.GOLD + "Selected " + kit.displayName + ChatColor.GOLD + " player kit!");
     }
 
     public void givePlayerKits()
@@ -165,31 +152,15 @@ public class BingoGame implements Listener
         {
             p.getInventory().clear();
             p.closeInventory();
+            FlexibleColor teamColor = FlexibleColor.fromChatColor(teamManager.getTeamOfPlayer(p).getColor());
 
-            ItemStack helmet = new ItemStack(Material.LEATHER_HELMET);
-            helmet.addEnchantments(new HashMap<>(){{
-                put(Enchantment.WATER_WORKER, 1);
-                put(Enchantment.DURABILITY, 3);
-                put(Enchantment.PROTECTION_ENVIRONMENTAL, 4);
-            }});
+            if (teamColor == null) return;
 
-            LeatherArmorMeta helmetMeta = (LeatherArmorMeta) helmet.getItemMeta();
-            if (helmetMeta != null)
+            BingoReloaded.broadcast("Team " + teamColor.name() + " is getting items!");
+            for(InventoryItem item : currentKit.getItems(teamColor))
             {
-                java.awt.Color color = teamManager.getPlayerTeam(p).getColor().asBungee().getColor();
-                helmetMeta.setColor(Color.fromRGB(color.getRed(), color.getGreen(), color.getBlue()));
+                p.getInventory().setItem(item.getSlot(), item);
             }
-            helmet.setItemMeta(helmetMeta);
-
-            ItemStack boots = new ItemStack(Material.NETHERITE_BOOTS);
-            boots.addEnchantments(new HashMap<>(){{
-                put(Enchantment.DEPTH_STRIDER, 3);
-                put(Enchantment.PROTECTION_ENVIRONMENTAL, 4);
-            }});
-            p.getInventory().setArmorContents(new ItemStack[] {boots, null, null, helmet});
-            p.getInventory().setItem(0, new ItemStack(Material.GOLDEN_CARROT, 64));
-            p.getInventory().setItem(7, wandItem.item);
-            p.getInventory().setItem(8, cardItem);
         });
     }
 
@@ -201,6 +172,9 @@ public class BingoGame implements Listener
             p.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, 100000, 1, false, false));
             p.addPotionEffect(new PotionEffect(PotionEffectType.WATER_BREATHING, 100000, 1, false, false));
             p.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 100000, 2, false, false));
+
+            p.addPotionEffect(new PotionEffect(PotionEffectType.SATURATION, 2, 100, false, false));
+            p.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 2, 100, false, false));
         });
     }
 
@@ -229,12 +203,20 @@ public class BingoGame implements Listener
         return teamManager;
     }
 
+    public void teleportPlayerAfterDeath(String playerName)
+    {
+        Player p = Bukkit.getPlayer(playerName);
+        if (p == null) return;
+
+        p.teleport(deadPlayers.get(playerName), PlayerTeleportEvent.TeleportCause.PLUGIN);
+        deadPlayers.remove(playerName);
+    }
+
     @EventHandler
     public void onPlayerDropItem(final PlayerDropItemEvent dropEvent)
     {
-        BingoReloaded.broadcast(cardItem.getItemMeta().getDisplayName() + " " + dropEvent.getItemDrop().getItemStack().getItemMeta().getDisplayName());
-        if (dropEvent.getItemDrop().getItemStack().equals(cardItem.getAsStack()) ||
-                dropEvent.getItemDrop().getItemStack().equals(wandItem.item.getAsStack()))
+        if (dropEvent.getItemDrop().getItemStack().equals(currentKit.cardItem.getAsStack()) ||
+                dropEvent.getItemDrop().getItemStack().equals(currentKit.wandItem.item.getAsStack()))
         {
             dropEvent.setCancelled(true);
             return;
@@ -248,7 +230,7 @@ public class BingoGame implements Listener
 
         player.getUniqueId();
 
-        Team team = teamManager.getPlayerTeam(player);
+        Team team = teamManager.getTeamOfPlayer(player);
 
         BingoCard card = teamManager.getCardForTeam(team);
 
@@ -274,7 +256,7 @@ public class BingoGame implements Listener
         ItemStack item = event.getCurrentItem();
         if (item == null) return;
 
-        if (item.equals(cardItem.getAsStack()))
+        if (item.equals(currentKit.cardItem.getAsStack()))
         {
             event.setCancelled(true);
         }
@@ -285,7 +267,7 @@ public class BingoGame implements Listener
     {
         if (event.getCursor() == null) return;
 
-        if (event.getCursor().equals(cardItem.getAsStack()))
+        if (event.getCursor().equals(currentKit.cardItem.getAsStack()))
         {
             event.setCancelled(true);
         }
@@ -299,11 +281,11 @@ public class BingoGame implements Listener
         if (event.getItem() == null) return;
         if (event.getItem().getType().isAir()) return;
 
-        if (event.getItem().equals(cardItem.getAsStack()))
+        if (event.getItem().equals(currentKit.cardItem.getAsStack()))
         {
             event.setCancelled(true);
             if (!teamManager.getParticipants().contains(event.getPlayer())) return;
-            Team playerTeam = teamManager.getPlayerTeam(event.getPlayer());
+            Team playerTeam = teamManager.getTeamOfPlayer(event.getPlayer());
             if (playerTeam == null)
             {
                 BingoReloaded.print("NO TEAM?", event.getPlayer());
@@ -322,13 +304,13 @@ public class BingoGame implements Listener
             }
         }
 
-        if (event.getItem().equals(wandItem.item.getAsStack())
+        if (event.getItem().equals(currentKit.wandItem.item.getAsStack())
                 && (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK))
         {
             int teleportHeight = 75;
             event.setCancelled(true);
             if (!teamManager.getParticipants().contains(event.getPlayer())) return;
-            if (wandItem.use(event.getPlayer()))
+            if (currentKit.wandItem.use(event.getPlayer()))
             {
                 event.setCancelled(true);
                 teleportPlayerUp(event.getPlayer(), teleportHeight);
@@ -336,7 +318,7 @@ public class BingoGame implements Listener
             }
             else
             {
-                double seconds = wandItem.getTimeLeft(event.getPlayer());
+                double seconds = currentKit.wandItem.getTimeLeft(event.getPlayer());
                 BingoReloaded.print(ChatColor.RED + String.format("You cannot use this item for another %.2f seconds!", seconds), event.getPlayer());
             }
         }
@@ -350,6 +332,45 @@ public class BingoGame implements Listener
         if (event.getCause() != EntityDamageEvent.DamageCause.FALL) return;
 
         event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onPlayerJoin(final PlayerJoinEvent event)
+    {
+        if (gameInProgress)
+        {
+            if (teamManager.getParticipants().contains(event.getPlayer()))
+            {
+                BingoReloaded.print("You joined back!", event.getPlayer());
+                teamManager.updateTeamDisplay();
+            }
+        }
+    }
+
+    @EventHandler
+    public void onPlayerLeave(final PlayerQuitEvent event)
+    {
+
+    }
+
+    @EventHandler
+    public void onPlayerDeath(final PlayerDeathEvent event)
+    {
+        if (gameInProgress)
+        {
+            if (teamManager.getParticipants().contains(event.getEntity()))
+            {
+                Location deathCoords = event.getEntity().getLocation();
+
+                TextComponent[] teleportMsg = BingoReloaded.createHoverCommandMessage("",
+                        "" + ChatColor.DARK_AQUA + ChatColor.BOLD + "Click here to teleport back to where you died",
+                        "",
+                        "/bingo back",
+                        "Click to teleport to " + deathCoords);
+
+                event.getEntity().spigot().sendMessage(teleportMsg);
+            }
+        }
     }
 
     private void takePlayerEffects(Player player)
