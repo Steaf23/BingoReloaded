@@ -389,6 +389,11 @@ public class BingoGame implements Listener
 
                 event.getEntity().spigot().sendMessage(teleportMsg);
                 deadPlayers.put(event.getEntity().getName(), deathCoords);
+
+                if (event.getEntity().getLastDamageCause() == null) return;
+
+                if (event.getEntity().getLastDamageCause().getCause() == EntityDamageEvent.DamageCause.LAVA)
+                event.getEntity().getWorld().setType(deathCoords, Material.WATER);
             }
         }
     }

@@ -151,7 +151,12 @@ public class BingoCard extends AbstractGUIInventory
     public BingoCard copy()
     {
         BingoCard card = new BingoCard(this.size);
-        card.items = this.items;
+        List<BingoItem> newItems = new ArrayList<>();
+        for (BingoItem item : items)
+        {
+            newItems.add(new BingoItem(item.item));
+        }
+        card.items = newItems;
         return card;
     }
 }
