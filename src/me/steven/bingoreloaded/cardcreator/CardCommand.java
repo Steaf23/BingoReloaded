@@ -1,22 +1,14 @@
 package me.steven.bingoreloaded.cardcreator;
 
 import me.steven.bingoreloaded.BingoReloaded;
-import me.steven.bingoreloaded.GUIInventories.ItemPickerUI;
-import me.steven.bingoreloaded.InventoryItem;
 import me.steven.bingoreloaded.cardcreator.GUI.CardEditorUI;
-import me.steven.bingoreloaded.cardcreator.GUI.ItemDifficultySelectionUI;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryClickEvent;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class CardCommand implements CommandExecutor
 {
@@ -26,7 +18,7 @@ public class CardCommand implements CommandExecutor
     }
 
     @Override
-    public boolean onCommand(@NonNull CommandSender commandSender, @NonNull Command command, @NonNull String s, String[] args)
+    public boolean onCommand(@NonNull CommandSender commandSender, @NonNull Command command, @NonNull String name, String[] args)
     {
         if (args.length > 0)
         {
@@ -84,45 +76,51 @@ public class CardCommand implements CommandExecutor
 
                     break;
 
-                case "items":
-                    if (commandSender instanceof Player p)
-                        openItemPicker(p);
-                    break;
+//                case "items":
+//                    if (commandSender instanceof Player p)
+//                        openItemPicker(p);
+//                    break;
 
                 default:
                     if (commandSender instanceof Player player)
-                        BingoReloaded.print(ChatColor.RED + "Usage: /card [create|edit|remove|items]", player);
+                        BingoReloaded.print(ChatColor.RED + "Usage: /card [create|edit|remove]", player);
                     else
-                        BingoReloaded.print(ChatColor.RED + "Usage: /card [create|edit|remove|items]");
+                        BingoReloaded.print(ChatColor.RED + "Usage: /card [create|edit|remove]");
                     break;
             }
         }
         return false;
     }
 
-    public static void openItemPicker(Player player)
-    {
-        List<InventoryItem> items = new ArrayList<>();
-        for (Material m : Material.values())
-        {
-            if (!m.name().contains("LEGACY_") && m.isItem() && !m.isAir())
-            {
-                items.add(new InventoryItem(m, "", "Click to make this item appear", "on bingo cards"));
-            }
-        }
-
-        ItemPickerUI itemPicker = new ItemPickerUI(items,"Pick Items", null)
-        {
-            @Override
-            public void onOptionClickedDelegate(InventoryClickEvent event, InventoryItem clickedOption, Player player)
-            {
-                ItemDifficultySelectionUI difficultySelector = new ItemDifficultySelectionUI(clickedOption.getType(), this);
-                difficultySelector.open(player);
-            }
-        };
-
-        itemPicker.open(player);
-    }
+//    public static void openItemPicker(Player player)
+//    {
+//        List<Material> glassPanes = new ArrayList<>();
+//        for (FlexibleColor flexColor : FlexibleColor.values())
+//        {
+//            glassPanes.add(flexColor.glassPane);
+//        }
+//
+//        List<InventoryItem> items = new ArrayList<>();
+//        for (Material m : Material.values())
+//        {
+//            if (!m.name().contains("LEGACY_") && m.isItem() && !m.isAir() && !glassPanes.contains(m))
+//            {
+//                items.add(new InventoryItem(m, "", "Click to make this item appear", "on bingo cards"));
+//            }
+//        }
+//
+//        ItemPickerUI itemPicker = new ItemPickerUI(items,"Pick Items", null)
+//        {
+//            @Override
+//            public void onOptionClickedDelegate(InventoryClickEvent event, InventoryItem clickedOption, Player player)
+//            {
+//                ItemDifficultySelectionUI difficultySelector = new ItemDifficultySelectionUI(clickedOption.getType(), this);
+//                difficultySelector.open(player);
+//            }
+//        };
+//
+//        itemPicker.open(player);
+//    }
 
     public static void editCard(String cardName, Player player)
     {

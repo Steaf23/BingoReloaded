@@ -1,6 +1,7 @@
 package me.steven.bingoreloaded;
 
 import me.steven.bingoreloaded.cardcreator.CardCommand;
+import me.steven.bingoreloaded.cardcreator.ItemListCommand;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -32,6 +33,10 @@ public class BingoReloaded extends JavaPlugin
         PluginCommand cardCommand = getCommand("card");
         if (cardCommand != null)
             cardCommand.setExecutor(new CardCommand());
+
+        PluginCommand itemListCommand = getCommand("itemlist");
+        if (itemListCommand != null)
+            itemListCommand.setExecutor(new ItemListCommand());
 
         getServer().getPluginManager().registerEvents(game, this);
     }

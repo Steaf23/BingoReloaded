@@ -53,7 +53,6 @@ public class BingoCardData
             data.saveConfig();
             return true;
         }
-
         return false;
     }
 

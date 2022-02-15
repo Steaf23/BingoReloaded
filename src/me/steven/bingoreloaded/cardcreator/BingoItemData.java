@@ -84,13 +84,15 @@ public class BingoItemData
         data.saveConfig();
     }
 
-    /**
-     * Removes item from all categories.
-     * @param item The Material to remove.
-     */
-    public static void removeItem(Material item)
+    public static boolean removeItemList(String listName)
     {
-        saveItems("", item);
+        if (data.getConfig().contains(listName))
+        {
+            data.getConfig().set(listName, null);
+            data.saveConfig();
+            return true;
+        }
+        return false;
     }
 
     /**

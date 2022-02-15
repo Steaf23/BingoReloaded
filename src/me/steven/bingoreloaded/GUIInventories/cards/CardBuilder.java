@@ -30,12 +30,12 @@ public class CardBuilder
 
     private static BingoCard rush()
     {
-        return new BingoCard(CardSize.X4);
+        return new BingoCard(CardSize.X3);
     }
 
     private static BingoCard complete()
     {
-        return new CompleteBingoCard(CardSize.X3);
+        return new CompleteBingoCard(CardSize.X4);
     }
 
     public static Material completeColor(Team team)

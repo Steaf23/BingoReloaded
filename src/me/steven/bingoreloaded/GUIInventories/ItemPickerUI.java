@@ -1,12 +1,19 @@
 package me.steven.bingoreloaded.GUIInventories;
 
+import me.steven.bingoreloaded.BingoReloaded;
 import me.steven.bingoreloaded.InventoryItem;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryEvent;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 public abstract class ItemPickerUI extends AbstractGUIInventory
@@ -16,6 +23,7 @@ public abstract class ItemPickerUI extends AbstractGUIInventory
 
     private static final int ITEMS_PER_PAGE = 45;
     private final List<InventoryItem> items;
+    private List<InventoryItem> selectedItems;
     private int pageAmount;
     private int currentPage;
 
@@ -34,6 +42,7 @@ public abstract class ItemPickerUI extends AbstractGUIInventory
 
         currentPage = 0;
         items = options;
+        selectedItems = new ArrayList<>();
         updatePageAmount();
 
         updatePage();
@@ -55,9 +64,9 @@ public abstract class ItemPickerUI extends AbstractGUIInventory
         {
             close(player);
         }
-        else if (isSlotValidOption(slotClicked) && getOption(slotClicked) != null) //If it is a normal item;
+        else if (isSlotValidOption(slotClicked) && items.get(ITEMS_PER_PAGE * currentPage + slotClicked) != null) //If it is a normal item;
         {
-            onOptionClickedDelegate(event, getOption(slotClicked), player);
+            onOptionClickedDelegate(event, items.get(ITEMS_PER_PAGE * currentPage + slotClicked), player);
         }
     }
 
@@ -82,7 +91,7 @@ public abstract class ItemPickerUI extends AbstractGUIInventory
 
         Collections.addAll(items, newItems);
 
-        updatePageAmount();
+        updatePage();
     }
 
     public void removeItems(int... itemIndices)
@@ -101,13 +110,55 @@ public abstract class ItemPickerUI extends AbstractGUIInventory
         for (int i : itemIndices)
             items.remove(i);
 
-        updatePageAmount();
+        updatePage();
     }
 
     public void clearItems()
     {
         items.clear();
-        updatePageAmount();
+        updatePage();
+    }
+
+    public List<InventoryItem> getItems()
+    {
+        return items;
+    }
+
+    public List<InventoryItem> getSelectedItems()
+    {
+        return selectedItems;
+    }
+
+    public void selectItem(InventoryItem item, boolean value)
+    {
+        if (items.contains(item))
+        {
+            ItemMeta meta = item.getItemMeta();
+            if (meta == null) return;
+
+            if (value)
+            {
+                meta.setLore(List.of(ChatColor.DARK_PURPLE + "This item has been added to the list"));
+                meta.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_UNBREAKABLE);
+
+                item.setItemMeta(meta);
+                item.addUnsafeEnchantment(Enchantment.DURABILITY, 1);
+
+                selectedItems.add(item);
+            }
+            else
+            {
+                meta.setLore(List.of(ChatColor.GRAY + "Click to make this item", ChatColor.GRAY + "appear on bingo cards"));
+                meta.removeItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_UNBREAKABLE);
+
+                item.setItemMeta(meta);
+                item.removeEnchantment(Enchantment.DURABILITY);
+                selectedItems.remove(item);
+            }
+
+            items.set(items.indexOf(item), item);
+        }
+        updatePage();
     }
 
     protected void nextPage()
@@ -137,6 +188,7 @@ public abstract class ItemPickerUI extends AbstractGUIInventory
                 addOption(i, new InventoryItem(Material.AIR, "", ""));
         }
 
+        //Update Page description (20/23) for the Next and Previous 'buttons'.
         String pageCountDesc = String.format("%02d", currentPage + 1) + "/" + String.format("%02d", pageAmount);
 
         InventoryItem next = getOption(NEXT.getSlot());

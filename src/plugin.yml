@@ -14,3 +14,5 @@ commands:
     description: Bingo commands lmao
   card:
     description: Card commands lmao
+  itemlist:
+    description: Item List commands lmao
