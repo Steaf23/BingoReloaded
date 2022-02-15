@@ -128,14 +128,12 @@ public class ItemListCommand implements CommandExecutor
             @Override
             public void onOptionClickedDelegate(InventoryClickEvent event, InventoryItem clickedOption, Player player)
             {
-                BingoReloaded.print("ITEM: " + clickedOption.getType().name(), player);
                 selectItem(clickedOption, !getSelectedItems().contains(clickedOption));
             }
 
             @Override
             public void open(HumanEntity player)
             {
-                BingoReloaded.print("Called anon class override!", (Player)player);
                 List<Material> items = BingoItemData.getItems(itemListName);
                 
                 List<InventoryItem> allItems = getItems();
