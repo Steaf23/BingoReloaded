@@ -19,7 +19,7 @@ public class GamemodeOptionsUI extends AbstractGUIInventory
                 new InventoryItem(5, Material.CYAN_CONCRETE, TITLE_PREFIX + "Complete-All", "Collect all items on the card to win!"),
                 new InventoryItem(7, Material.RED_CONCRETE, TITLE_PREFIX + "Rush", "Like regular Bingo but with a 3x3 Card, Spicy!"),
         };
-        fillOptions(new int[]{1, 3, 5, 7}, options);
+        fillOptions(options);
     }
 
     @Override

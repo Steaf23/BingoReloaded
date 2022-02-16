@@ -16,3 +16,5 @@ commands:
     description: Card commands lmao
   itemlist:
     description: Item List commands lmao
+  btc:
+    description: TeamChat commmands lmao

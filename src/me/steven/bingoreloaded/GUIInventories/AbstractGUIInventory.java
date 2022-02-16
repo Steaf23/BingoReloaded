@@ -71,31 +71,27 @@ public abstract class AbstractGUIInventory implements Listener
         }
     }
 
-    protected void fillOptions(int[] slots, InventoryItem[] options)
+    protected void fillOptions(InventoryItem[] options)
     {
-        if (slots.length != options.length) throw new IllegalArgumentException("Number of options and number of slots to put them in are not equal!");
-        if (inventory.getSize() < slots.length) throw new IllegalArgumentException("Cannot fill options with current inventory size (" + inventory.getSize() + ")!");
-
-        for (int i = 0; i < slots.length; i++)
+        for (InventoryItem option : options)
         {
-            addOption(slots[i], options[i].inSlot(slots[i]));
+            addOption(option);
         }
     }
 
     /**
      * Adds items into the specified slot. If slot is -1, it will use the next available slot or merge using Inventory#addItem().
-     * @param slot inventory slot to fill
      * @param option menu item to put in the inventory
      */
-    protected void addOption(int slot, InventoryItem option)
+    protected void addOption(InventoryItem option)
     {
-        if (slot == -1)
+        if (option.getSlot() == -1)
         {
             inventory.addItem(option);
         }
         else
         {
-            inventory.setItem(slot, option);
+            inventory.setItem(option.getSlot(), option);
         }
     }
 

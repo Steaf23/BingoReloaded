@@ -11,20 +11,20 @@ public class KitOptionsUI extends AbstractGUIInventory
 {
     private final BingoGame game;
     private static final InventoryItem HARDCORE = new InventoryItem(GUIBuilder5x9.OptionPositions.FOUR_CENTER3.positions[0],
-            Material.RED_WOOL, TITLE_PREFIX + PlayerKit.HARDCORE.displayName);
+            Material.RED_CONCRETE, TITLE_PREFIX + PlayerKit.HARDCORE.displayName);
     private static final InventoryItem NORMAL = new InventoryItem(GUIBuilder5x9.OptionPositions.FOUR_CENTER3.positions[1],
-            Material.YELLOW_WOOL, TITLE_PREFIX + PlayerKit.NORMAL.displayName);
+            Material.YELLOW_CONCRETE, TITLE_PREFIX + PlayerKit.NORMAL.displayName);
     private static final InventoryItem OVERPOWERED = new InventoryItem(GUIBuilder5x9.OptionPositions.FOUR_CENTER3.positions[2],
-            Material.PURPLE_WOOL, TITLE_PREFIX + PlayerKit.OVERPOWERED.displayName);
+            Material.PURPLE_CONCRETE, TITLE_PREFIX + PlayerKit.OVERPOWERED.displayName);
     private static final InventoryItem RELOADED = new InventoryItem(GUIBuilder5x9.OptionPositions.FOUR_CENTER3.positions[3],
-            Material.CYAN_WOOL, TITLE_PREFIX + PlayerKit.RELOADED.displayName);
+            Material.CYAN_CONCRETE, TITLE_PREFIX + PlayerKit.RELOADED.displayName);
 
     public KitOptionsUI(AbstractGUIInventory parent, BingoGame game)
     {
         super(45, "Choose Player Kit", parent);
         this.game = game;
 
-        fillOptions(GUIBuilder5x9.OptionPositions.FOUR_CENTER3.positions, new InventoryItem[]{HARDCORE, NORMAL, OVERPOWERED, RELOADED});
+        fillOptions(new InventoryItem[]{HARDCORE, NORMAL, OVERPOWERED, RELOADED});
     }
 
     @Override

@@ -38,6 +38,10 @@ public class BingoReloaded extends JavaPlugin
         if (itemListCommand != null)
             itemListCommand.setExecutor(new ItemListCommand());
 
+        PluginCommand teamChatCommand = getCommand("btc");
+        if (teamChatCommand != null)
+            teamChatCommand.setExecutor(new TeamChat(game.getTeamManager()));
+
         getServer().getPluginManager().registerEvents(game, this);
     }
 

@@ -1,5 +1,7 @@
 package me.steven.bingoreloaded.GUIInventories.cards;
 
+import me.steven.bingoreloaded.InventoryItem;
+import org.bukkit.Material;
 import org.bukkit.scoreboard.Team;
 
 public class LockoutBingoCard extends BingoCard
@@ -9,6 +11,8 @@ public class LockoutBingoCard extends BingoCard
     public LockoutBingoCard(CardSize size)
     {
         super(size);
+        InventoryItem cardInfo = new InventoryItem(0, Material.PAPER, "Lockout Bingo Card", "Complete the most items to win.", "When an item has been completed", "it cannot be complete by any other team.");
+        addOption(cardInfo);
     }
 
     @Override

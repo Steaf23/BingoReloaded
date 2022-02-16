@@ -61,7 +61,7 @@ public class BingoOptionsUI extends AbstractGUIInventory
 
         if (player.hasPermission("bingo.admin"))
         {
-            options.fillOptions(new int[]{12, 14, 29, 31, 33}, new InventoryItem[]{
+            options.fillOptions(new InventoryItem[]{
                     options.menuItems.get("join"),
                     options.menuItems.get("leave"),
                     options.menuItems.get("kit"),
@@ -72,7 +72,7 @@ public class BingoOptionsUI extends AbstractGUIInventory
         else
         {
             //TODO: fix dynamic slot locations
-            options.fillOptions(new int[]{21, 23}, new InventoryItem[]{
+            options.fillOptions(new InventoryItem[]{
                     options.menuItems.get("join"),
                     options.menuItems.get("leave"),
             });

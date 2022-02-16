@@ -17,7 +17,7 @@ public class ListValueEditorGUI extends AbstractGUIInventory
     private final CardEditorUI cardEditor;
 
     public int itemCount = 1;
-    private String listName;
+    private final String listName;
 
     public ListValueEditorGUI(CardEditorUI parent, String listName, int startingValue)
     {
@@ -27,7 +27,7 @@ public class ListValueEditorGUI extends AbstractGUIInventory
 
         this.itemCount = startingValue;
 
-        fillOptions(new int[]{13, 22, 31, 41}, new InventoryItem[]{HIGHER, counter, LOWER, SAVE});
+        fillOptions(new InventoryItem[]{HIGHER, counter, LOWER, SAVE});
     }
 
     @Override
@@ -58,7 +58,7 @@ public class ListValueEditorGUI extends AbstractGUIInventory
         if (meta == null) return;
         meta.setDisplayName("");
         counter.setItemMeta(meta);
-        addOption(counter.getSlot(), counter);
+        addOption(counter);
     }
 
     private void setValueForList()

@@ -3,6 +3,7 @@ package me.steven.bingoreloaded.GUIInventories.cards;
 import me.steven.bingoreloaded.BingoItem;
 import me.steven.bingoreloaded.BingoReloaded;
 import me.steven.bingoreloaded.GUIInventories.AbstractGUIInventory;
+import me.steven.bingoreloaded.InventoryItem;
 import me.steven.bingoreloaded.cardcreator.BingoItemData;
 import me.steven.bingoreloaded.cardcreator.CardEntry;
 import org.bukkit.ChatColor;
@@ -26,13 +27,15 @@ public class BingoCard extends AbstractGUIInventory
     {
         super(9 * size.cardSize, "Card Viewer", null);
         this.size = size;
+        InventoryItem cardInfoItem = new InventoryItem(0, Material.PAPER, "Regular Bingo Card", "First team to complete 1 line wins.", "Lines can span vertically, horizontally", "or vertically.");
+        addOption(cardInfoItem);
     }
 
-    public void generateCard(CardEntry card)
+    public void generateCard(CardEntry cardData)
     {
         items.clear();
 
-        String listName = card.getItemLists().keySet().iterator().next();
+        String listName = cardData.getItemLists().keySet().iterator().next();
         List<Material> materials = BingoItemData.getItems(listName);
         Collections.shuffle(materials);
 
@@ -65,7 +68,7 @@ public class BingoCard extends AbstractGUIInventory
     {
         for (int i = 0; i < items.size(); i++)
         {
-            addOption(size.getCardInventorySlot(i), items.get(i).stack);
+            addOption(items.get(i).stack.inSlot(size.getCardInventorySlot(i)));
         }
 
         open(player);

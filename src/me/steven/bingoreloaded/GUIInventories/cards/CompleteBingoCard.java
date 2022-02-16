@@ -1,5 +1,7 @@
 package me.steven.bingoreloaded.GUIInventories.cards;
 
+import me.steven.bingoreloaded.InventoryItem;
+import org.bukkit.Material;
 import org.bukkit.scoreboard.Team;
 
 public class CompleteBingoCard extends BingoCard
@@ -8,6 +10,8 @@ public class CompleteBingoCard extends BingoCard
     public CompleteBingoCard(CardSize size)
     {
         super(size);
+        InventoryItem item = new InventoryItem(0, Material.PAPER, "Complete-All Bingo Card", "First team to complete all items wins.");
+        addOption(item);
     }
 
     @Override

@@ -1,19 +1,16 @@
 package me.steven.bingoreloaded.GUIInventories;
 
-import me.steven.bingoreloaded.BingoReloaded;
 import me.steven.bingoreloaded.InventoryItem;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryEvent;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 
 public abstract class ItemPickerUI extends AbstractGUIInventory
@@ -23,7 +20,7 @@ public abstract class ItemPickerUI extends AbstractGUIInventory
 
     private static final int ITEMS_PER_PAGE = 45;
     private final List<InventoryItem> items;
-    private List<InventoryItem> selectedItems;
+    private final List<InventoryItem> selectedItems;
     private int pageAmount;
     private int currentPage;
 
@@ -36,8 +33,8 @@ public abstract class ItemPickerUI extends AbstractGUIInventory
         super(54, title != null ? title : "Item Picker", parent);
         isSubUI = parent != null;
 
-        fillOptions(new int[]{45, 46, 47, 48, 49, 50, 51, 52, 53}, new InventoryItem[]{
-                PREVIOUS, BG_ITEM, BG_ITEM, BG_ITEM, CLOSE, BG_ITEM, BG_ITEM, BG_ITEM, NEXT,
+        fillOptions(new InventoryItem[]{
+                PREVIOUS, BG_ITEM.inSlot(46), BG_ITEM.inSlot(47), BG_ITEM.inSlot(48), CLOSE, BG_ITEM.inSlot(50), BG_ITEM.inSlot(51), BG_ITEM.inSlot(52), NEXT,
         });
 
         currentPage = 0;
@@ -183,9 +180,9 @@ public abstract class ItemPickerUI extends AbstractGUIInventory
         for (int i = 0; i < ITEMS_PER_PAGE; i++)
         {
             if (startingIndex + i < items.size())
-                addOption(i, items.get(startingIndex + i));
+                addOption(items.get(startingIndex + i).inSlot(i));
             else
-                addOption(i, new InventoryItem(Material.AIR, "", ""));
+                addOption(new InventoryItem(i, Material.AIR, "", ""));
         }
 
         //Update Page description (20/23) for the Next and Previous 'buttons'.
@@ -198,7 +195,7 @@ public abstract class ItemPickerUI extends AbstractGUIInventory
             nextMeta.setLore(List.of(pageCountDesc));
         }
         next.setItemMeta(nextMeta);
-        addOption(NEXT.getSlot(), next);
+        addOption(next);
 
         InventoryItem previous = getOption(PREVIOUS.getSlot());
         ItemMeta prevMeta = previous.getItemMeta();
@@ -207,7 +204,7 @@ public abstract class ItemPickerUI extends AbstractGUIInventory
             prevMeta.setLore(List.of(pageCountDesc));
         }
         previous.setItemMeta(prevMeta);
-        addOption(PREVIOUS.getSlot(), previous);
+        addOption(previous);
     }
 
     private void updatePageAmount()

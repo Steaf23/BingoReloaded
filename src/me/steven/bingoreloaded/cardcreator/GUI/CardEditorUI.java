@@ -32,7 +32,7 @@ public class CardEditorUI extends ItemPickerUI
         addList = new InventoryItem(48, Material.EMERALD, "Add Item List", "");
         saveCard = new InventoryItem(50, Material.DIAMOND, "Save and exit", "");
 
-        fillOptions(new int[]{48, 50}, new InventoryItem[]{addList, saveCard});
+        fillOptions(new InventoryItem[]{addList, saveCard});
     }
 
     @Override
