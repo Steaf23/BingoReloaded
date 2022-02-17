@@ -1,5 +1,6 @@
-package me.steven.bingoreloaded;
+package me.steven.bingoreloaded.player;
 
+import me.steven.bingoreloaded.BingoReloaded;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;

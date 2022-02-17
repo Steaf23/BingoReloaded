@@ -1,6 +1,6 @@
-package me.steven.bingoreloaded.GUIInventories.cards;
+package me.steven.bingoreloaded.gui.cards;
 
-import me.steven.bingoreloaded.InventoryItem;
+import me.steven.bingoreloaded.item.InventoryItem;
 import org.bukkit.Material;
 import org.bukkit.scoreboard.Team;
 

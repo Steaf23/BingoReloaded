@@ -1,10 +1,8 @@
-package me.steven.bingoreloaded.cardcreator.GUI;
+package me.steven.bingoreloaded.gui;
 
-import me.steven.bingoreloaded.GUIInventories.ItemPickerUI;
-import me.steven.bingoreloaded.GUIInventories.cards.BingoCard;
-import me.steven.bingoreloaded.InventoryItem;
-import me.steven.bingoreloaded.cardcreator.BingoCardData;
-import me.steven.bingoreloaded.cardcreator.BingoItemData;
+import me.steven.bingoreloaded.item.InventoryItem;
+import me.steven.bingoreloaded.data.BingoCardData;
+import me.steven.bingoreloaded.data.BingoItemData;
 import me.steven.bingoreloaded.cardcreator.CardEntry;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;

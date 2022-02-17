@@ -1,4 +1,4 @@
-package me.steven.bingoreloaded.GUIInventories.cards;
+package me.steven.bingoreloaded.gui.cards;
 
 import me.steven.bingoreloaded.BingoGameMode;
 import me.steven.bingoreloaded.util.FlexibleColor;

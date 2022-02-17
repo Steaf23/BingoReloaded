@@ -1,8 +1,9 @@
-package me.steven.bingoreloaded;
+package me.steven.bingoreloaded.player;
 
+import me.steven.bingoreloaded.item.InventoryItem;
+import me.steven.bingoreloaded.item.ItemCooldownManager;
 import me.steven.bingoreloaded.util.FlexibleColor;
 import org.bukkit.ChatColor;
-import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
@@ -97,15 +98,17 @@ public enum PlayerKit
                         .withEnchantment(Enchantment.DURABILITY, 3)
                         .withEnchantment(Enchantment.DEPTH_STRIDER, 3)
                         .withEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 4));
+                items.add(new InventoryItem(38, Material.ELYTRA, "")
+                        .withIllegalEnchantment(Enchantment.DURABILITY, 10));
                 items.add(new InventoryItem(0, Material.NETHERITE_PICKAXE, "")
                         .withEnchantment(Enchantment.LOOT_BONUS_BLOCKS, 3)
                         .withEnchantment(Enchantment.DIG_SPEED, 5));
                 items.add(new InventoryItem(1, Material.NETHERITE_AXE, "")
-                        .withEnchantment(Enchantment.LOOT_BONUS_MOBS, 3)
-                        .withEnchantment(Enchantment.DAMAGE_ALL, 5)
+                        .withIllegalEnchantment(Enchantment.LOOT_BONUS_MOBS, 3)
+                        .withIllegalEnchantment(Enchantment.DAMAGE_ALL, 5)
                         .withEnchantment(Enchantment.DIG_SPEED, 5));
                 items.add(new InventoryItem(2, Material.NETHERITE_SHOVEL, "")
-                        .withEnchantment(Enchantment.SILK_TOUCH, 3)
+                        .withEnchantment(Enchantment.SILK_TOUCH, 1)
                         .withEnchantment(Enchantment.DIG_SPEED, 5));
                 items.add(new InventoryItem(3, Material.ENCHANTED_GOLDEN_APPLE, "")
                         .withAmount(64));

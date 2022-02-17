@@ -11,11 +11,9 @@ public enum BingoGameMode
     ;
 
     public String name;
-    String command;
 
     BingoGameMode(String name, String command)
     {
         this.name = name;
-        this.command = command;
     }
 }

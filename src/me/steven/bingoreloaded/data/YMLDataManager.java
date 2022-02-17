@@ -1,5 +1,6 @@
-package me.steven.bingoreloaded;
+package me.steven.bingoreloaded.data;
 
+import me.steven.bingoreloaded.BingoReloaded;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;

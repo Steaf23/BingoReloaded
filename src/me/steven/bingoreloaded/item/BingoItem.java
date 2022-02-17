@@ -1,6 +1,7 @@
-package me.steven.bingoreloaded;
+package me.steven.bingoreloaded.item;
 
-import me.steven.bingoreloaded.GUIInventories.cards.CardBuilder;
+import me.steven.bingoreloaded.BingoReloaded;
+import me.steven.bingoreloaded.gui.cards.CardBuilder;
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;

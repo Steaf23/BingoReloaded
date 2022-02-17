@@ -1,6 +1,8 @@
-package me.steven.bingoreloaded;
+package me.steven.bingoreloaded.command;
 
-import me.steven.bingoreloaded.GUIInventories.BingoOptionsUI;
+import me.steven.bingoreloaded.BingoGame;
+import me.steven.bingoreloaded.BingoReloaded;
+import me.steven.bingoreloaded.gui.BingoOptionsUI;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;

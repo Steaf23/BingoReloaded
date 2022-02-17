@@ -1,7 +1,10 @@
 package me.steven.bingoreloaded;
 
-import me.steven.bingoreloaded.GUIInventories.cards.*;
+import me.steven.bingoreloaded.gui.cards.*;
 import me.steven.bingoreloaded.cardcreator.CardEntry;
+import me.steven.bingoreloaded.item.InventoryItem;
+import me.steven.bingoreloaded.player.PlayerKit;
+import me.steven.bingoreloaded.player.TeamManager;
 import me.steven.bingoreloaded.util.FlexibleColor;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.*;

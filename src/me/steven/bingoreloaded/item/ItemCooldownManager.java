@@ -1,5 +1,6 @@
-package me.steven.bingoreloaded;
+package me.steven.bingoreloaded.item;
 
+import me.steven.bingoreloaded.item.InventoryItem;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;

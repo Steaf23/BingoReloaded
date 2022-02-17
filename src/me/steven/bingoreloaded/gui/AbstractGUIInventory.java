@@ -1,7 +1,7 @@
-package me.steven.bingoreloaded.GUIInventories;
+package me.steven.bingoreloaded.gui;
 
 import me.steven.bingoreloaded.BingoReloaded;
-import me.steven.bingoreloaded.InventoryItem;
+import me.steven.bingoreloaded.item.InventoryItem;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.HumanEntity;

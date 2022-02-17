@@ -1,8 +1,8 @@
-package me.steven.bingoreloaded.GUIInventories;
+package me.steven.bingoreloaded.gui;
 
 import me.steven.bingoreloaded.BingoGame;
-import me.steven.bingoreloaded.InventoryItem;
-import me.steven.bingoreloaded.PlayerKit;
+import me.steven.bingoreloaded.item.InventoryItem;
+import me.steven.bingoreloaded.player.PlayerKit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;

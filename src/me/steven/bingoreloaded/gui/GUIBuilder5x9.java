@@ -1,4 +1,4 @@
-package me.steven.bingoreloaded.GUIInventories;
+package me.steven.bingoreloaded.gui;
 
 public class GUIBuilder5x9
 {

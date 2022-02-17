@@ -1,7 +1,9 @@
 package me.steven.bingoreloaded;
 
-import me.steven.bingoreloaded.cardcreator.CardCommand;
-import me.steven.bingoreloaded.cardcreator.ItemListCommand;
+import me.steven.bingoreloaded.command.BingoCommand;
+import me.steven.bingoreloaded.command.CardCommand;
+import me.steven.bingoreloaded.command.ItemListCommand;
+import me.steven.bingoreloaded.player.TeamChat;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;

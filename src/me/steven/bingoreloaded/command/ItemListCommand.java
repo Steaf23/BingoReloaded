@@ -1,8 +1,9 @@
-package me.steven.bingoreloaded.cardcreator;
+package me.steven.bingoreloaded.command;
 
 import me.steven.bingoreloaded.BingoReloaded;
-import me.steven.bingoreloaded.GUIInventories.ItemPickerUI;
-import me.steven.bingoreloaded.InventoryItem;
+import me.steven.bingoreloaded.gui.ItemPickerUI;
+import me.steven.bingoreloaded.item.InventoryItem;
+import me.steven.bingoreloaded.data.BingoItemData;
 import me.steven.bingoreloaded.util.FlexibleColor;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -10,7 +11,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;

@@ -1,7 +1,8 @@
-package me.steven.bingoreloaded.cardcreator;
+package me.steven.bingoreloaded.command;
 
 import me.steven.bingoreloaded.BingoReloaded;
-import me.steven.bingoreloaded.cardcreator.GUI.CardEditorUI;
+import me.steven.bingoreloaded.gui.CardEditorUI;
+import me.steven.bingoreloaded.data.BingoCardData;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;

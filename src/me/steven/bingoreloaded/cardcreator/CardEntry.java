@@ -1,8 +1,5 @@
 package me.steven.bingoreloaded.cardcreator;
 
-import me.steven.bingoreloaded.BingoItem;
-import org.bukkit.Material;
-
 import java.util.HashMap;
 import java.util.Map;
 

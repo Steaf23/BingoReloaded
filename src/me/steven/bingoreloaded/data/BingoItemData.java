@@ -1,6 +1,5 @@
-package me.steven.bingoreloaded.cardcreator;
+package me.steven.bingoreloaded.data;
 
-import me.steven.bingoreloaded.YMLDataManager;
 import org.bukkit.Material;
 
 import java.util.*;
