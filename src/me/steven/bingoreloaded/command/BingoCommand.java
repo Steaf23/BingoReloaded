@@ -44,12 +44,14 @@ public class BingoCommand implements CommandExecutor
                     {
                         gameInstance.returnCardToPlayer(p);
                     }
+                    break;
 
                 case "back":
                     if (commandSender instanceof Player p)
                     {
                         gameInstance.teleportPlayerAfterDeath(p);
                     }
+                    break;
 
                 default:
                     if (commandSender instanceof Player p)

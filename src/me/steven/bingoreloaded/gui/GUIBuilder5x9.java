@@ -36,6 +36,7 @@ public class GUIBuilder5x9
         SEVEN_CENTER1(new int[]{4, 11, 15, 22, 29, 33, 40}),
         SEVEN_CENTER2(new int[]{3, 5, 20, 22, 24, 39, 41}),
         SEVEN_CENTER_WIDE(new int[]{3, 5, 19, 22, 25, 39, 41}),
+        EIGHT_CENTER(new int[]{10, 12, 14, 16, 28, 30, 32, 34}),
         ;
 
         public final int[] positions;
@@ -45,22 +46,4 @@ public class GUIBuilder5x9
             this.positions = positions;
         }
     }
-
-//    public static AbstractGUIInventory createUI(OptionPositions optionPoses, List<CustomItem> options, String title)
-//    {
-//        int[] slots = optionPoses.positions;
-//        if (options.size() != slots.length)
-//        {
-//            Bukkit.getLogger().log(Level.SEVERE, "Cannot create GUI, size of options (" + options.size() + ") and positions (" + slots.length + ") arent equal!");
-//        }
-//
-//        return new AbstractGUIInventory(45, title)
-//        {
-//            @Override
-//            public void delegateClick(InventoryClickEvent event, ItemStack itemClicked, Player player)
-//            {
-//
-//            }
-//        };
-//    }
 }

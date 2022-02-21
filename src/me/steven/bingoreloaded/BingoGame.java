@@ -37,6 +37,7 @@ public class BingoGame implements Listener
     private static final int TELEPORT_DISTANCE = 1000000;
     private final TeamManager teamManager;
     private BingoGameMode currentMode;
+    private CardSize currentSize;
     private PlayerKit currentKit;
 
     private final Map<String, Location> deadPlayers;
@@ -58,21 +59,10 @@ public class BingoGame implements Listener
      *
      * @param mode the chosen bingo game mode
      */
-    public void setGameMode(BingoGameMode mode)
+    public void setCardSettings(BingoGameMode mode, CardSize size)
     {
         currentMode = mode;
-
-        TextComponent[] message = BingoReloaded.createHoverCommandMessage(
-                currentMode.name + ChatColor.GOLD + " Bingo has been selected by an admin, join the game using ",
-                ChatColor.DARK_RED + "/bingo",
-                "",
-                "/bingo",
-                "Or click here to join the game ;)");
-
-        for (Player p : Bukkit.getOnlinePlayers())
-        {
-            p.spigot().sendMessage(message);
-        }
+        currentSize = size;
     }
 
     /**
@@ -101,7 +91,7 @@ public class BingoGame implements Listener
         }
 
         gameInProgress = true;
-        BingoCard masterCard = CardBuilder.fromMode(currentMode);
+        BingoCard masterCard = CardBuilder.fromMode(currentMode, currentSize);
         masterCard.generateCard(card);
 
         World world = Bukkit.getWorlds().get(0);

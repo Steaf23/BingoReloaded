@@ -52,8 +52,8 @@ public enum PlayerKit
                         .withEnchantment(Enchantment.WATER_WORKER, 1));
                 items.add(boots
                         .withEnchantment(Enchantment.DEPTH_STRIDER, 3));
-                items.add(new InventoryItem(0, Material.IRON_PICKAXE, ""));
-                items.add(new InventoryItem(1, Material.IRON_AXE, ""));
+                items.add(new InventoryItem(1, Material.IRON_PICKAXE, ""));
+                items.add(new InventoryItem(0, Material.IRON_AXE, ""));
                 items.add(new InventoryItem(2, Material.IRON_SHOVEL, "")
                         .withEnchantment(Enchantment.SILK_TOUCH, 1));
                 items.add(new InventoryItem(3, Material.BAKED_POTATO, "")
@@ -72,10 +72,10 @@ public enum PlayerKit
                         .withEnchantment(Enchantment.DURABILITY, 3)
                         .withEnchantment(Enchantment.DEPTH_STRIDER, 3)
                         .withEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 4));
-                items.add(new InventoryItem(0, Material.NETHERITE_PICKAXE, "")
+                items.add(new InventoryItem(1, Material.NETHERITE_PICKAXE, "")
                         .withEnchantment(Enchantment.LOOT_BONUS_BLOCKS, 3)
                         .withEnchantment(Enchantment.DIG_SPEED, 5));
-                items.add(new InventoryItem(1, Material.NETHERITE_AXE, "")
+                items.add(new InventoryItem(0, Material.NETHERITE_AXE, "")
                         .withIllegalEnchantment(Enchantment.LOOT_BONUS_MOBS, 3)
                         .withIllegalEnchantment(Enchantment.DAMAGE_ALL, 5)
                         .withEnchantment(Enchantment.DIG_SPEED, 5));
@@ -100,13 +100,13 @@ public enum PlayerKit
                         .withEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 4));
                 items.add(new InventoryItem(38, Material.ELYTRA, "")
                         .withIllegalEnchantment(Enchantment.DURABILITY, 10));
-                items.add(new InventoryItem(0, Material.NETHERITE_PICKAXE, "")
-                        .withEnchantment(Enchantment.LOOT_BONUS_BLOCKS, 3)
-                        .withEnchantment(Enchantment.DIG_SPEED, 5));
-                items.add(new InventoryItem(1, Material.NETHERITE_AXE, "")
+                items.add(new InventoryItem(0, Material.NETHERITE_AXE, "")
                         .withIllegalEnchantment(Enchantment.LOOT_BONUS_MOBS, 3)
                         .withIllegalEnchantment(Enchantment.DAMAGE_ALL, 5)
                         .withEnchantment(Enchantment.DIG_SPEED, 5));
+                items.add(new InventoryItem(1, Material.NETHERITE_PICKAXE, "")
+                        .withIllegalEnchantment(Enchantment.LOOT_BONUS_BLOCKS, 3)
+                        .withIllegalEnchantment(Enchantment.DIG_SPEED, 5));
                 items.add(new InventoryItem(2, Material.NETHERITE_SHOVEL, "")
                         .withEnchantment(Enchantment.SILK_TOUCH, 1)
                         .withEnchantment(Enchantment.DIG_SPEED, 5));

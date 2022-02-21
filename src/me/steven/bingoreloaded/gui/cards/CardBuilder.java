@@ -7,35 +7,14 @@ import org.bukkit.scoreboard.Team;
 
 public class CardBuilder
 {
-    public static BingoCard fromMode(BingoGameMode mode)
+    public static BingoCard fromMode(BingoGameMode mode, CardSize size)
     {
         return switch (mode)
                 {
-                    case LOCKOUT -> lockout();
-                    case RUSH -> rush();
-                    case COMPLETE -> complete();
-                    default -> regular();
+                    case LOCKOUT -> new LockoutBingoCard(size);
+                    case COMPLETE -> new CompleteBingoCard(size);
+                    default -> new BingoCard(size);
                 };
-    }
-
-    private static BingoCard regular()
-    {
-        return new BingoCard(CardSize.X5);
-    }
-
-    private static BingoCard lockout()
-    {
-        return new LockoutBingoCard(CardSize.X5);
-    }
-
-    private static BingoCard rush()
-    {
-        return new BingoCard(CardSize.X3);
-    }
-
-    private static BingoCard complete()
-    {
-        return new CompleteBingoCard(CardSize.X4);
     }
 
     public static Material completeColor(Team team)
