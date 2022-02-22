@@ -5,7 +5,7 @@ import org.bukkit.configuration.ConfigurationSection;
 
 import java.util.Set;
 
-public class BingoCardData
+public class BingoCardsData
 {
     private static final YMLDataManager data = new YMLDataManager("cards.yml");
 

@@ -1,7 +1,7 @@
 package me.steven.bingoreloaded.gui;
 
 import me.steven.bingoreloaded.item.InventoryItem;
-import me.steven.bingoreloaded.data.BingoCardData;
+import me.steven.bingoreloaded.data.BingoCardsData;
 import me.steven.bingoreloaded.data.BingoItemData;
 import me.steven.bingoreloaded.cardcreator.CardEntry;
 import org.bukkit.ChatColor;
@@ -40,7 +40,7 @@ public class CardEditorUI extends ItemPickerUI
         if (clickedOption.getItemMeta() == null) return;
 
         String listName = clickedOption.getItemMeta().getDisplayName();
-        valueEditorGUI = new ListValueEditorGUI(this, listName, BingoCardData.getListValues(card.name, listName));
+        valueEditorGUI = new ListValueEditorGUI(this, listName, BingoCardsData.getListValues(card.name, listName));
         valueEditorGUI.open(player);
     }
 
@@ -75,7 +75,7 @@ public class CardEditorUI extends ItemPickerUI
         }
         else if(slotClicked == saveCard.getSlot())
         {
-            BingoCardData.saveCard(card);
+            BingoCardsData.saveCard(card);
             close(player);
         }
     }

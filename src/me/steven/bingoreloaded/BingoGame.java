@@ -1,5 +1,6 @@
 package me.steven.bingoreloaded;
 
+import me.steven.bingoreloaded.data.CurrentCardData;
 import me.steven.bingoreloaded.gui.cards.*;
 import me.steven.bingoreloaded.cardcreator.CardEntry;
 import me.steven.bingoreloaded.item.InventoryItem;
@@ -165,6 +166,8 @@ public class BingoGame implements Listener
 
     private void givePlayerEffects(Player player)
     {
+        takePlayerEffects(player);
+
         if (teamManager.getParticipants().contains(player))
         {
             player.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, 100000, 1, false, false));
@@ -258,6 +261,8 @@ public class BingoGame implements Listener
                 bingo(team);
             }
         }
+
+        CurrentCardData.saveCardData(card, currentMode, team);
     }
 
     @EventHandler
@@ -422,8 +427,10 @@ public class BingoGame implements Listener
 
     private void takePlayerEffects(Player player)
     {
-        player.removePotionEffect(PotionEffectType.NIGHT_VISION);
-        player.removePotionEffect(PotionEffectType.WATER_BREATHING);
+        for (PotionEffectType effect : PotionEffectType.values())
+        {
+            player.removePotionEffect(effect);
+        }
     }
 
     private void teleportPlayers(World world)

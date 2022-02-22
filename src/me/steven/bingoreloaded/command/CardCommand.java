@@ -2,7 +2,7 @@ package me.steven.bingoreloaded.command;
 
 import me.steven.bingoreloaded.BingoReloaded;
 import me.steven.bingoreloaded.gui.CardEditorUI;
-import me.steven.bingoreloaded.data.BingoCardData;
+import me.steven.bingoreloaded.data.BingoCardsData;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -54,7 +54,7 @@ public class CardCommand implements CommandExecutor
                             break;
                         }
 
-                        if (BingoCardData.removeCard(args[1]))
+                        if (BingoCardsData.removeCard(args[1]))
                             BingoReloaded.print("Card '" + args[1] + "' successfully removed!", p);
                         else
                             BingoReloaded.print("Card couldn't be found, make sure its spelled correctly!", p);
@@ -68,7 +68,7 @@ public class CardCommand implements CommandExecutor
                             break;
                         }
 
-                        if (BingoCardData.removeCard(args[1]))
+                        if (BingoCardsData.removeCard(args[1]))
                             BingoReloaded.print("Card '" + args[1] + "' successfully removed!");
                         else
                             BingoReloaded.print("Card couldn't be found, make sure its spelled correctly!");
@@ -125,7 +125,7 @@ public class CardCommand implements CommandExecutor
 
     public static void editCard(String cardName, Player player)
     {
-        CardEditorUI cardEditor = new CardEditorUI(BingoCardData.getOrCreateCard(cardName));
+        CardEditorUI cardEditor = new CardEditorUI(BingoCardsData.getOrCreateCard(cardName));
         cardEditor.open(player);
     }
 }

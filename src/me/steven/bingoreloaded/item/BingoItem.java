@@ -51,5 +51,10 @@ public class BingoItem
         stack.setItemMeta(meta);
     }
 
+    public Team getWhoCompleted()
+    {
+        return completedBy;
+    }
+
     private Team completedBy = null;
 }

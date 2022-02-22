@@ -36,4 +36,17 @@ public enum CardSize
 
         return itemIndex + leftSpacing + row * (leftSpacing + rightSpacing);
     }
+
+    public static CardSize fromWidth(int width)
+    {
+        for (CardSize size : CardSize.values())
+        {
+            if (size.cardSize == width)
+            {
+                return size;
+            }
+        }
+
+        return CardSize.X5;
+    }
 }

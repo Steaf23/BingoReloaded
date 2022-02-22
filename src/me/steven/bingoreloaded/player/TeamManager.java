@@ -191,6 +191,19 @@ public class TeamManager
         }
     }
 
+    public Team getTeamByName(String name)
+    {
+        for (Team team : scoreboard.getTeams())
+        {
+            if (team.getDisplayName().equals(name))
+            {
+                return team;
+            }
+        }
+
+        return null;
+    }
+
     private void createTeams()
     {
         for (ChatColor c : ChatColor.values())

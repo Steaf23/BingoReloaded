@@ -3,7 +3,7 @@ package me.steven.bingoreloaded.gui;
 import me.steven.bingoreloaded.BingoGame;
 import me.steven.bingoreloaded.BingoReloaded;
 import me.steven.bingoreloaded.item.InventoryItem;
-import me.steven.bingoreloaded.data.BingoCardData;
+import me.steven.bingoreloaded.data.BingoCardsData;
 import me.steven.bingoreloaded.cardcreator.CardEntry;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -91,11 +91,11 @@ public class BingoOptionsUI extends AbstractGUIInventory
     {
         List<InventoryItem> cards = new ArrayList<>();
 
-        for (String cardName : BingoCardData.getCardNames())
+        for (String cardName : BingoCardsData.getCardNames())
         {
             cards.add(new InventoryItem(Material.PAPER, cardName,
                     ChatColor.DARK_PURPLE + "Contains " +
-                            BingoCardData.getOrCreateCard(cardName).getItemLists().size() + " item List(s)"));
+                            BingoCardsData.getOrCreateCard(cardName).getItemLists().size() + " item List(s)"));
         }
 
         ItemPickerUI cardPicker = new ItemPickerUI(cards, "Pick a card",this)
@@ -106,7 +106,7 @@ public class BingoOptionsUI extends AbstractGUIInventory
                 ItemMeta meta = clickedOption.getItemMeta();
                 if (meta != null)
                 {
-                    cardSelected(BingoCardData.getOrCreateCard(meta.getDisplayName()), player);
+                    cardSelected(BingoCardsData.getOrCreateCard(meta.getDisplayName()), player);
                 }
                 close(player);
             }
