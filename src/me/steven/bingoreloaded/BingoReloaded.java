@@ -3,6 +3,7 @@ package me.steven.bingoreloaded;
 import me.steven.bingoreloaded.command.BingoCommand;
 import me.steven.bingoreloaded.command.CardCommand;
 import me.steven.bingoreloaded.command.ItemListCommand;
+import me.steven.bingoreloaded.data.RecoveryCardData;
 import me.steven.bingoreloaded.player.TeamChat;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -20,6 +21,8 @@ public class BingoReloaded extends JavaPlugin
 {
     public static final String PRINT_PREFIX = "" + ChatColor.DARK_RED + "[" + ChatColor.DARK_AQUA + ChatColor.BOLD + "Bingo" + ChatColor.YELLOW + ChatColor.ITALIC + "Reloaded" + ChatColor.DARK_RED + "] " + ChatColor.RESET + "";
     public static final String NAME = "BingoReloaded";
+
+    private BingoGame game;
 
     @Override
     public void onEnable()
@@ -45,6 +48,11 @@ public class BingoReloaded extends JavaPlugin
             teamChatCommand.setExecutor(new TeamChat(game.getTeamManager()));
 
         getServer().getPluginManager().registerEvents(game, this);
+
+        if (RecoveryCardData.loadCards(game.getTeamManager()))
+        {
+            game.resume();
+        }
     }
 
     @Override
@@ -121,6 +129,4 @@ public class BingoReloaded extends JavaPlugin
 
         return new TextComponent[]{message1, comp, message2};
     }
-
-    private BingoGame game;
 }

@@ -65,19 +65,6 @@ public class BingoCommand implements CommandExecutor
         {
             if (commandSender instanceof Player player)
             {
-                if (gameInstance.isGameInProgress())
-                {
-                    TextComponent[] message = BingoReloaded.createHoverCommandMessage(
-                            "Cannot open the settings menu while a game is still in progress, end it using ",
-                            "/bingo end",
-                            "",
-                            "/bingo end",
-                            "Or click here to end the game ;)");
-
-                    player.spigot().sendMessage(message);
-                    return false;
-                }
-
                 BingoOptionsUI.open(player, gameInstance);
             }
         }

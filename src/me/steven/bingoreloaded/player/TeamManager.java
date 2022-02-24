@@ -2,6 +2,7 @@ package me.steven.bingoreloaded.player;
 
 import me.steven.bingoreloaded.BingoGame;
 import me.steven.bingoreloaded.BingoReloaded;
+import me.steven.bingoreloaded.data.RecoveryCardData;
 import me.steven.bingoreloaded.gui.AbstractGUIInventory;
 import me.steven.bingoreloaded.gui.ItemPickerUI;
 import me.steven.bingoreloaded.gui.cards.BingoCard;
@@ -51,12 +52,11 @@ public class TeamManager
     {
         if (game.isGameInProgress())
         {
-            BingoReloaded.print(ChatColor.RED + "You cannot join or switch teams in an ongoing game, please wait until it ends", player);
+            BingoReloaded.print(ChatColor.RED + "You cannot join an ongoing game!", player);
             return;
         }
 
         List<InventoryItem> optionItems = new ArrayList<>();
-
         for (Team t : scoreboard.getTeams())
         {
             FlexibleColor color = FlexibleColor.fromChatColor(t.getColor());
@@ -91,7 +91,9 @@ public class TeamManager
         }
         removePlayerFromAllTeams(player);
 
-        activeTeams.put(team, null);
+        if (!activeTeams.containsKey(team))
+            activeTeams.put(team, null);
+
         team.addEntry(player.getName());
         BingoReloaded.print("You successfully joined team " + team.getColor() + team.getDisplayName(), player);
     }
@@ -102,10 +104,6 @@ public class TeamManager
         for (Team team : scoreboard.getTeams())
         {
             team.removeEntry(player.getName());
-            if (team.getEntries().size() == 0)
-            {
-                activeTeams.remove(team);
-            }
         }
     }
 
@@ -122,6 +120,17 @@ public class TeamManager
         }
         activeTeams.replaceAll((t, v) -> masterCard.copy());
     }
+
+    public void setCardForTeam(Team team, BingoCard card)
+    {
+        activeTeams.put(team, card);
+    }
+
+    public Map<Team, BingoCard> getActiveTeams()
+    {
+        return activeTeams;
+    }
+
 
     public Set<Player> getParticipants()
     {
@@ -202,6 +211,19 @@ public class TeamManager
         }
 
         return null;
+    }
+
+    public void activateTeam(Team team)
+    {
+        if (!activeTeams.containsKey(team))
+        {
+            activeTeams.put(team, null);
+        }
+    }
+
+    public void activateTeam(String teamName)
+    {
+        activateTeam(getTeamByName(teamName));
     }
 
     private void createTeams()

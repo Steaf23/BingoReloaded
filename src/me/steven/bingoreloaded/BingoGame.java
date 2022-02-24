@@ -1,6 +1,6 @@
 package me.steven.bingoreloaded;
 
-import me.steven.bingoreloaded.data.CurrentCardData;
+import me.steven.bingoreloaded.data.RecoveryCardData;
 import me.steven.bingoreloaded.gui.cards.*;
 import me.steven.bingoreloaded.cardcreator.CardEntry;
 import me.steven.bingoreloaded.item.InventoryItem;
@@ -48,6 +48,7 @@ public class BingoGame implements Listener
     public BingoGame()
     {
         currentMode = BingoGameMode.REGULAR;
+        currentSize = CardSize.X5;
         currentKit = PlayerKit.NORMAL;
 
         teamManager = new TeamManager(this);
@@ -105,6 +106,15 @@ public class BingoGame implements Listener
         givePlayersEffects();
         teamManager.clearTeamDisplay();
         teamManager.updateTeamDisplay();
+
+        RecoveryCardData.saveCards(teamManager, currentMode, currentSize);
+        RecoveryCardData.markCardEnded(false);
+    }
+
+    public void resume()
+    {
+        gameInProgress = true;
+        teamManager.updateTeamDisplay();
     }
 
     public void end()
@@ -123,6 +133,7 @@ public class BingoGame implements Listener
             {
                 p.spigot().sendMessage(commandMessage);
             }
+            RecoveryCardData.markCardEnded(true);
         }
         else
         {
@@ -246,7 +257,7 @@ public class BingoGame implements Listener
         Team team = teamManager.getTeamOfPlayer(player);
 
         BingoCard card = teamManager.getCardForTeam(team);
-
+        BingoReloaded.broadcast("Resumed correctly!");
         if (card.completeItem(item, team))
         {
             stack.setAmount(stack.getAmount() - 1);
@@ -262,7 +273,7 @@ public class BingoGame implements Listener
             }
         }
 
-        CurrentCardData.saveCardData(card, currentMode, team);
+        RecoveryCardData.saveCards(teamManager, currentMode, currentSize);
     }
 
     @EventHandler
@@ -358,7 +369,15 @@ public class BingoGame implements Listener
             {
                 BingoReloaded.print("You joined back!", event.getPlayer());
                 teamManager.updateTeamDisplay();
+                return;
             }
+
+            Team team = RecoveryCardData.getActiveTeamOfPlayer(event.getPlayer(), teamManager);
+            if (team == null) return;
+
+            teamManager.addPlayerToTeam(event.getPlayer(), team.getName());
+            teamManager.updateTeamDisplay();
+            teamManager.updateTeamDisplay();
         }
     }
 
