@@ -100,6 +100,7 @@ public class BingoGame implements Listener
         world.setStorm(false);
         world.setTime(1000);
 
+        teamManager.removeEmptyTeams();
         teamManager.initializeCards(masterCard);
         givePlayerKits();
         teleportPlayers(world);
@@ -255,7 +256,6 @@ public class BingoGame implements Listener
         Team team = teamManager.getTeamOfPlayer(player);
 
         BingoCard card = teamManager.getCardForTeam(team);
-        BingoReloaded.broadcast("Resumed correctly!");
         if (card.completeItem(item, team))
         {
             stack.setAmount(stack.getAmount() - 1);
@@ -422,7 +422,7 @@ public class BingoGame implements Listener
             if (event.getNewSlot() == currentKit.cardItem.getSlot())
             {
                 event.getPlayer().addPotionEffect(
-                        new PotionEffect(PotionEffectType.SPEED, 100000, 2, false, false));
+                        new PotionEffect(PotionEffectType.SPEED, 100000, 1, false, false));
             }
 
             if (event.getPreviousSlot() == currentKit.cardItem.getSlot())
@@ -440,6 +440,7 @@ public class BingoGame implements Listener
             player.getInventory().remove(currentKit.cardItem.getAsStack());
 
         player.getInventory().setItem(8, currentKit.cardItem.getAsStack());
+        givePlayerEffects(player);
     }
 
     private void takePlayerEffects(Player player)

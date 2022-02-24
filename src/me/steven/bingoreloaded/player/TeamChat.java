@@ -58,7 +58,7 @@ public class TeamChat implements Listener, CommandExecutor
 
             if (!member.isOnline()) continue;
 
-            player.sendMessage(ChatColor.DARK_RED + "[" + team.getColor() + ChatColor.BOLD + team.getDisplayName() + ChatColor.DARK_RED + "]" +
+            member.sendMessage(ChatColor.DARK_RED + "[" + team.getColor() + ChatColor.BOLD + team.getDisplayName() + ChatColor.DARK_RED + "]" +
                     ChatColor.RESET  + "<" + player.getName() + "> " + message);
         }
     }

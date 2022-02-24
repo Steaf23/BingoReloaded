@@ -107,6 +107,17 @@ public class TeamManager
         }
     }
 
+    public void removeEmptyTeams()
+    {
+        for (Team t : activeTeams.keySet())
+        {
+            if (t.getEntries().size() <= 0)
+            {
+                activeTeams.remove(t);
+            }
+        }
+    }
+
     public BingoCard getCardForTeam(Team team)
     {
         return activeTeams.get(team);
