@@ -118,7 +118,7 @@ public class BingoOptionsUI extends AbstractGUIInventory
     {
         if (card == null) return;
 
-        BingoReloaded.print("'" + card.name + "' selected as the playing Bingo card!", player);
+        BingoReloaded.print("'" + card.getName() + "' selected as the playing Bingo card!", player);
         game.card = card;
     }
 }

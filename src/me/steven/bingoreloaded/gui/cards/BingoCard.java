@@ -33,16 +33,34 @@ public class BingoCard extends AbstractGUIInventory
 
     public void generateCard(CardEntry cardData)
     {
-        items.clear();
+        List<BingoItem> newItems = new ArrayList<>();
 
-        String listName = cardData.getItemLists().keySet().iterator().next();
-        List<Material> materials = BingoItemData.getItems(listName);
-        Collections.shuffle(materials);
-
-        for (int i = 0; i < size.fullCardSize; i++)
+        for (String listName : cardData.getItemLists().keySet())
         {
-            items.add(new BingoItem(materials.get(i % materials.size())));
+            List<Material> materials = BingoItemData.getItems(listName);
+            Collections.shuffle(materials);
+
+            int value = cardData.getItemLists().get(listName);
+            for (int i = 0; i < value; i++)
+            {
+                newItems.add(new BingoItem(materials.get(Math.floorMod(i, materials.size()))));
+            }
         }
+
+        newItems = trimItemList(newItems);
+
+        //Lastly, shuffle and cut the list so it contains exactly enough items
+        Collections.shuffle(newItems);
+        items = newItems;
+    }
+
+    public List<BingoItem> trimItemList(List<BingoItem> newItems)
+    {
+        while (newItems.size() < size.fullCardSize)
+        {
+            newItems.add(new BingoItem(Material.DIRT));
+        }
+        return newItems.subList(0, size.fullCardSize);
     }
 
     /**

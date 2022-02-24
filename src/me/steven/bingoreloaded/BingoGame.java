@@ -1,5 +1,6 @@
 package me.steven.bingoreloaded;
 
+import me.steven.bingoreloaded.data.BingoCardsData;
 import me.steven.bingoreloaded.data.RecoveryCardData;
 import me.steven.bingoreloaded.gui.cards.*;
 import me.steven.bingoreloaded.cardcreator.CardEntry;
@@ -88,8 +89,7 @@ public class BingoGame implements Listener
 
         if (card == null)
         {
-            BingoReloaded.broadcast(ChatColor.RED + "Please select a card before starting the game!");
-            return;
+            card = BingoCardsData.getOrCreateCard("default_card");
         }
 
         gameInProgress = true;
@@ -151,7 +151,7 @@ public class BingoGame implements Listener
 
     public void givePlayerKits()
     {
-        BingoReloaded.broadcast("Giving all participants Kits and Cards!");
+        BingoReloaded.broadcast(ChatColor.GREEN + "Giving all participants Kits and Cards!");
         Set<Player> players = teamManager.getParticipants();
         players.forEach(p ->
         {
@@ -160,8 +160,6 @@ public class BingoGame implements Listener
             FlexibleColor teamColor = FlexibleColor.fromChatColor(teamManager.getTeamOfPlayer(p).getColor());
 
             if (teamColor == null) return;
-
-            BingoReloaded.broadcast("Team " + teamColor.name() + " is getting items!");
             for(InventoryItem item : currentKit.getItems(teamColor))
             {
                 p.getInventory().setItem(item.getSlot(), item);

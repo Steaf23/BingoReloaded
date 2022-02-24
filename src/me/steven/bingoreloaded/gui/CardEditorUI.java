@@ -24,7 +24,7 @@ public class CardEditorUI extends ItemPickerUI
 
     public CardEditorUI(CardEntry card)
     {
-        super(new ArrayList<>(), "Editing '" + card.name + "'", null);
+        super(new ArrayList<>(), "Editing '" + card.getName() + "'", null);
         this.card = card;
 
         addList = new InventoryItem(48, Material.EMERALD, "Add Item List", "");
@@ -40,7 +40,7 @@ public class CardEditorUI extends ItemPickerUI
         if (clickedOption.getItemMeta() == null) return;
 
         String listName = clickedOption.getItemMeta().getDisplayName();
-        valueEditorGUI = new ListValueEditorGUI(this, listName, BingoCardsData.getListValues(card.name, listName));
+        valueEditorGUI = new ListValueEditorGUI(this, listName, card.getItemLists().get(listName));
         valueEditorGUI.open(player);
     }
 
@@ -82,7 +82,7 @@ public class CardEditorUI extends ItemPickerUI
 
     public void getResultFromPicker(String result)
     {
-        card.addItemList(result, 1);
+        card.addItemList(result, 36);
     }
 
     @Override

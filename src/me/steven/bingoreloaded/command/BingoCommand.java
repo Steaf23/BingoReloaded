@@ -3,7 +3,6 @@ package me.steven.bingoreloaded.command;
 import me.steven.bingoreloaded.BingoGame;
 import me.steven.bingoreloaded.BingoReloaded;
 import me.steven.bingoreloaded.gui.BingoOptionsUI;
-import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -13,6 +12,8 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 
 public class BingoCommand implements CommandExecutor
 {
+    private final BingoGame gameInstance;
+
     public BingoCommand(BingoGame game)
     {
         gameInstance = game;
@@ -68,9 +69,6 @@ public class BingoCommand implements CommandExecutor
                 BingoOptionsUI.open(player, gameInstance);
             }
         }
-
         return false;
     }
-
-    private final BingoGame gameInstance;
 }

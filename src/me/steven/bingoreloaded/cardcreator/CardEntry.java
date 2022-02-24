@@ -5,7 +5,7 @@ import java.util.Map;
 
 public class CardEntry
 {
-    public final String name;
+    private final String name;
     private final Map<String, Integer> itemLists = new HashMap<>();
 
     public CardEntry(String name)
@@ -26,5 +26,10 @@ public class CardEntry
     public Map<String, Integer> getItemLists()
     {
         return itemLists;
+    }
+
+    public String getName()
+    {
+        return name;
     }
 }

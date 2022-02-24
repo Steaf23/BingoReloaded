@@ -22,12 +22,10 @@ public class BingoReloaded extends JavaPlugin
     public static final String PRINT_PREFIX = "" + ChatColor.DARK_RED + "[" + ChatColor.DARK_AQUA + ChatColor.BOLD + "Bingo" + ChatColor.YELLOW + ChatColor.ITALIC + "Reloaded" + ChatColor.DARK_RED + "] " + ChatColor.RESET + "";
     public static final String NAME = "BingoReloaded";
 
-    private BingoGame game;
-
     @Override
     public void onEnable()
     {
-        game = new BingoGame();
+        BingoGame game = new BingoGame();
 
         Bukkit.getLogger().info(ChatColor.GREEN + "Enabled " + this.getName());
 

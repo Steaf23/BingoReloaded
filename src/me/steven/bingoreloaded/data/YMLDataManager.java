@@ -13,6 +13,11 @@ import java.io.InputStreamReader;
 
 public class YMLDataManager
 {
+    private final Plugin plugin;
+    private final String fileName;
+    private FileConfiguration dataConfig = null;
+    private File configFile = null;
+
     public YMLDataManager(String fileName)
     {
         this.plugin = Bukkit.getPluginManager().getPlugin(BingoReloaded.NAME);
@@ -63,11 +68,6 @@ public class YMLDataManager
             plugin.saveResource(fileName, false);
         }
     }
-
-    private final Plugin plugin;
-    private final String fileName;
-    private FileConfiguration dataConfig = null;
-    private File configFile = null;
 
     private File getConfigFile()
     {

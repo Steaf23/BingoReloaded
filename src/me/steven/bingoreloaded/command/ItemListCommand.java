@@ -23,7 +23,6 @@ import java.util.List;
 
 public class ItemListCommand implements CommandExecutor
 {
-
     @Override
     public boolean onCommand(@NonNull CommandSender commandSender, @NonNull Command command, @NonNull String name, String[] args)
     {

@@ -13,20 +13,6 @@ public class BingoItemData
     private static final YMLDataManager data = new YMLDataManager("items.yml");
 
     /**
-     * @return A Map of all categories and the items associated with it.
-     */
-    public static Map<String, List<Material>> getAllItems()
-    {
-        Map<String, List<Material>> result = new HashMap<>();
-        for (String category : getCategories())
-        {
-            result.put(category, getItems(category));
-        }
-
-        return result;
-    }
-
-    /**
      * @param category Name of the category list to get items from.
      *                 Make sure that this parameter is equal to the actual list path in the items.yml file.
      * @return The List of Materials that have been saved in the given category

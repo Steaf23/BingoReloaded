@@ -11,13 +11,39 @@ public class KitOptionsUI extends AbstractGUIInventory
 {
     private final BingoGame game;
     private static final InventoryItem HARDCORE = new InventoryItem(GUIBuilder5x9.OptionPositions.FOUR_CENTER3.positions[0],
-            Material.RED_CONCRETE, TITLE_PREFIX + PlayerKit.HARDCORE.displayName);
+            Material.RED_CONCRETE, TITLE_PREFIX + PlayerKit.HARDCORE.displayName,
+            "This kit includes:", "",
+            "   - Nothing, good luck!");
     private static final InventoryItem NORMAL = new InventoryItem(GUIBuilder5x9.OptionPositions.FOUR_CENTER3.positions[1],
-            Material.YELLOW_CONCRETE, TITLE_PREFIX + PlayerKit.NORMAL.displayName);
+            Material.YELLOW_CONCRETE, TITLE_PREFIX + PlayerKit.NORMAL.displayName,
+            "This kit includes:", "",
+            "   - Iron Axe",
+            "   - Iron Pickaxe",
+            "   - Iron Shovel (Silk Touch)",
+            "   - 32 baked Potatoes",
+            "   - Leather Helmet",
+            "   - Leather Boots");
     private static final InventoryItem OVERPOWERED = new InventoryItem(GUIBuilder5x9.OptionPositions.FOUR_CENTER3.positions[2],
-            Material.PURPLE_CONCRETE, TITLE_PREFIX + PlayerKit.OVERPOWERED.displayName);
+            Material.PURPLE_CONCRETE, TITLE_PREFIX + PlayerKit.OVERPOWERED.displayName,
+            "This kit includes:", "",
+            "   - Netherite Axe",
+            "   - Netherite Pickaxe (Fortune)",
+            "   - Netherite Shovel (Silk Touch)",
+            "   - 64 Golden Carrots",
+            "   - The Go-Up-Wand",
+            "   - Leather Helmet",
+            "   - Leather Boots");
     private static final InventoryItem RELOADED = new InventoryItem(GUIBuilder5x9.OptionPositions.FOUR_CENTER3.positions[3],
-            Material.CYAN_CONCRETE, TITLE_PREFIX + PlayerKit.RELOADED.displayName);
+            Material.CYAN_CONCRETE, TITLE_PREFIX + PlayerKit.RELOADED.displayName,
+            "This kit includes:", "",
+            "   - Netherite Axe",
+            "   - Netherite Pickaxe (Fortune)",
+            "   - Netherite Shovel (Silk Touch)",
+            "   - 64 Golden Carrots",
+            "   - The Go-Up-Wand",
+            "   - Leather Helmet",
+            "   - Elytra (Unbreaking X)",
+            "   - Leather Boots");
 
     public KitOptionsUI(AbstractGUIInventory parent, BingoGame game)
     {

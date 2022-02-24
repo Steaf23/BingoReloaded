@@ -23,7 +23,7 @@ public class BingoCardsData
             {
                 for (String itemList : section.getKeys(false))
                 {
-                    card.addItemList(itemList, data.getConfig().getInt(cardName + "." + itemList));
+                    card.addItemList(itemList, getListValues(cardName, itemList));
                 }
             }
         }
@@ -35,7 +35,7 @@ public class BingoCardsData
     {
         for (String list : card.getItemLists().keySet())
         {
-            data.getConfig().set(card.name + "." + list, card.getItemLists().get(list));
+            data.getConfig().set(card.getName() + "." + list, card.getItemLists().get(list));
         }
         data.saveConfig();
     }

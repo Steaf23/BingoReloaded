@@ -11,10 +11,10 @@ permissions:
 
 commands:
   bingo:
-    description: Bingo commands lmao
+    description: Used to open the settings menu as well as to start and end the game.
   card:
-    description: Card commands lmao
+    description: Used to edit and create cards containing itemlists where each list as it's own frequency.
   itemlist:
-    description: Item List commands lmao
+    description: Used to edit and create lists containing items to be used in bingo cards.
   btc:
-    description: TeamChat commmands lmao
+    description: Used to toggle team chat when a game is active

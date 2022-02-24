@@ -13,11 +13,6 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 
 public class CardCommand implements CommandExecutor
 {
-    public CardCommand()
-    {
-
-    }
-
     @Override
     public boolean onCommand(@NonNull CommandSender commandSender, @NonNull Command command, @NonNull String name, String[] args)
     {
@@ -74,13 +69,7 @@ public class CardCommand implements CommandExecutor
                             BingoReloaded.print("Card couldn't be found, make sure its spelled correctly!");
                         break;
                     }
-
                     break;
-
-//                case "items":
-//                    if (commandSender instanceof Player p)
-//                        openItemPicker(p);
-//                    break;
 
                 default:
                     if (commandSender instanceof Player player)
@@ -92,36 +81,6 @@ public class CardCommand implements CommandExecutor
         }
         return false;
     }
-
-//    public static void openItemPicker(Player player)
-//    {
-//        List<Material> glassPanes = new ArrayList<>();
-//        for (FlexibleColor flexColor : FlexibleColor.values())
-//        {
-//            glassPanes.add(flexColor.glassPane);
-//        }
-//
-//        List<InventoryItem> items = new ArrayList<>();
-//        for (Material m : Material.values())
-//        {
-//            if (!m.name().contains("LEGACY_") && m.isItem() && !m.isAir() && !glassPanes.contains(m))
-//            {
-//                items.add(new InventoryItem(m, "", "Click to make this item appear", "on bingo cards"));
-//            }
-//        }
-//
-//        ItemPickerUI itemPicker = new ItemPickerUI(items,"Pick Items", null)
-//        {
-//            @Override
-//            public void onOptionClickedDelegate(InventoryClickEvent event, InventoryItem clickedOption, Player player)
-//            {
-//                ItemDifficultySelectionUI difficultySelector = new ItemDifficultySelectionUI(clickedOption.getType(), this);
-//                difficultySelector.open(player);
-//            }
-//        };
-//
-//        itemPicker.open(player);
-//    }
 
     public static void editCard(String cardName, Player player)
     {
