@@ -63,7 +63,7 @@ To add new Item lists, use the `/itemlist create <name>` command. In the list ed
 ![itemlist](https://user-images.githubusercontent.com/21062141/155626599-ff38778b-f75a-4768-97b9-03dcc904434d.png)
 
 ***
-**NOTE:** *As of version 1.0.0 the plug-in does not really use permissions so be carefull messing around with it on public servers, as anyone could change the bingo settings! Also as of version 1.0.0 the plug-in lacks a *
+**NOTE:** *As of version 1.0.0 the plug-in does not really use permissions so be carefull messing around with it on public servers, as anyone could change the bingo settings!*
 
 **NOTE(2):** *If you do want to use this plug-in on your public server but don't know how to update the code that's available or are unsure of it's 'inner workings', please contact me!!*
 
