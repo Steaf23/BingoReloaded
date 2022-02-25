@@ -287,7 +287,7 @@ public class BingoGame implements Listener
     }
 
     @EventHandler
-    public void onInventorDrag(final InventoryDragEvent event)
+    public void onInventoryDrag(final InventoryDragEvent event)
     {
         if (event.getCursor() == null) return;
 
