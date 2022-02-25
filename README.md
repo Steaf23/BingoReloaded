@@ -28,7 +28,7 @@ When playing the game you can complete items from the card by throwing them out 
 - Resume games that have been paused by the server or plug-in crashing or after having been reloaded plug-in due to the automatic card recovery system!
 - Team Chat! you can use `/btc` to toggle team chat on or off when a game is in progress.
 - Several Effects! You get constant water breathing, fire resistance and night vision. You get speed 1 when holding the bingocard in your hand.
-
+![options](https://user-images.githubusercontent.com/21062141/155626604-a46a900a-156b-4fd5-93ff-19b3197b5bab.png)
 
 ## Play bingo in 3 Different gamemodes
 This plugin has 3 seperate ways to play bingo with your friends.
@@ -68,4 +68,3 @@ To add new Item lists, use the `/itemlist create <name>` command. In the list ed
 **NOTE(2):** *If you do want to use this plug-in on your public server but don't know how to update the code that's available or are unsure of it's 'inner workings', please contact me!!*
 
 **NOTE(3):** *I am a professional programmer, but this is the first time I have made a Spigot plug-in on my own. If you are a technical reader and notice something out of practise in my code or if you want to contribute, feel free to contact me!*
-![options](https://user-images.githubusercontent.com/21062141/155626604-a46a900a-156b-4fd5-93ff-19b3197b5bab.png)
