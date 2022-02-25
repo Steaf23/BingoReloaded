@@ -4,7 +4,7 @@ A Minecraft 1.18 Spigot Plug-in, take a look at the card viewer!
 ***
 Thanks for looking at my Bingo Plug-in!
 
-This plug-in is written for Minecraft version 1.18 and up!
+This plug-in is written for Minecraft version 1.18 and up, inspired by https://www.spigotmc.org/resources/bingo-2-2-for-1-18.92134/.
 
 This plug-in is intended for use in closed groups, i.e. with your friends on your own server. 
 
