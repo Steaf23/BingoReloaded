@@ -9,6 +9,8 @@ import java.util.Map;
 public class ItemCooldownManager
 {
     public final InventoryItem item;
+    private final long maxCooldownTime;
+    private final Map<String, Long> playerTimes = new HashMap<>();
 
     public ItemCooldownManager(InventoryItem stack, long maxCooldownTime)
     {
@@ -39,7 +41,4 @@ public class ItemCooldownManager
     {
         return ((playerTimes.get(player.getName()) + maxCooldownTime) - System.currentTimeMillis()) / 1000.0;
     }
-
-    private final long maxCooldownTime;
-    private final Map<String, Long> playerTimes = new HashMap<>();
 }

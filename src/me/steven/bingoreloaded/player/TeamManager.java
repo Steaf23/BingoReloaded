@@ -2,7 +2,6 @@ package me.steven.bingoreloaded.player;
 
 import me.steven.bingoreloaded.BingoGame;
 import me.steven.bingoreloaded.BingoReloaded;
-import me.steven.bingoreloaded.data.RecoveryCardData;
 import me.steven.bingoreloaded.gui.AbstractGUIInventory;
 import me.steven.bingoreloaded.gui.ItemPickerUI;
 import me.steven.bingoreloaded.gui.cards.BingoCard;
@@ -19,23 +18,22 @@ import java.util.*;
 
 public class TeamManager
 {
-    private final Map<Team, BingoCard> activeTeams = new HashMap<>();
-    private final Scoreboard scoreboard;
+    private final Map<Team, BingoCard> activeTeams;
     private final BingoGame game;
+    private final Scoreboard scoreboard;
 
-    public TeamManager(BingoGame game)
+    public TeamManager(BingoGame game, Scoreboard scoreboard)
     {
+        this.activeTeams = new HashMap<>();
         this.game = game;
-        scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
-        Objective objective = scoreboard.registerNewObjective("item_count", "bingo_item_count", "Collected Items");
-        objective.setDisplaySlot(DisplaySlot.SIDEBAR);
+        this.scoreboard = scoreboard;
 
         createTeams();
     }
 
     public Team getTeamOfPlayer(Player player)
     {
-        for (Team t : scoreboard.getTeams())
+        for (Team t : activeTeams.keySet())
         {
             for (String entry : t.getEntries())
             {
@@ -72,7 +70,8 @@ public class TeamManager
             public void onOptionClickedDelegate(InventoryClickEvent event, InventoryItem clickedOption, Player player)
             {
                 FlexibleColor color = FlexibleColor.fromConcrete(clickedOption.getType());
-                if (color == null) return;
+                if (color == null)
+                    return;
 
                 addPlayerToTeam(player, color.displayName);
                 close(player);
@@ -91,8 +90,7 @@ public class TeamManager
         }
         removePlayerFromAllTeams(player);
 
-        if (!activeTeams.containsKey(team))
-            activeTeams.put(team, null);
+        activateTeam(teamName);
 
         team.addEntry(player.getName());
         BingoReloaded.print("You successfully joined team " + team.getColor() + team.getDisplayName(), player);
@@ -100,7 +98,8 @@ public class TeamManager
 
     public void removePlayerFromAllTeams(Player player)
     {
-        if (!getParticipants().contains(player)) return;
+        if (!getParticipants().contains(player))
+            return;
         for (Team team : scoreboard.getTeams())
         {
             team.removeEntry(player.getName());
@@ -186,31 +185,6 @@ public class TeamManager
         }
     }
 
-    public void updateTeamDisplay()
-    {
-        Objective objective = scoreboard.getObjective("item_count");
-        if (objective == null) return;
-
-        for (Team t : activeTeams.keySet())
-        {
-            Score score = objective.getScore(t.getColor() + t.getDisplayName() + ChatColor.RESET + ":");
-            score.setScore(getCardForTeam(t).getCompleteCount(t));
-        }
-
-        for (Player p : getParticipants())
-        {
-            p.setScoreboard(scoreboard);
-        }
-    }
-
-    public void clearTeamDisplay()
-    {
-        for (String entry : scoreboard.getEntries())
-        {
-            scoreboard.resetScores(entry);
-        }
-    }
-
     public Team getTeamByName(String name)
     {
         for (Team team : scoreboard.getTeams())
@@ -244,7 +218,8 @@ public class TeamManager
             if (c.isColor())
             {
                 FlexibleColor flexColor = FlexibleColor.fromChatColor(c);
-                if (flexColor == null) return;
+                if (flexColor == null)
+                    return;
 
                 String name = flexColor.displayName;
                 scoreboard.registerNewTeam(name);

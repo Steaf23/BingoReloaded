@@ -65,7 +65,7 @@ public class RecoveryCardData
 
             if (completedBy != null)
             {
-                item.complete(completedBy);
+                item.complete(completedBy, 0);
             }
             items.add(item);
         }

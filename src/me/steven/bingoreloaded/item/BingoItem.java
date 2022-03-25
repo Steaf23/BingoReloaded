@@ -1,6 +1,7 @@
 package me.steven.bingoreloaded.item;
 
 import me.steven.bingoreloaded.BingoReloaded;
+import me.steven.bingoreloaded.GameTimer;
 import me.steven.bingoreloaded.gui.cards.CardBuilder;
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.ChatColor;
@@ -14,11 +15,19 @@ public class BingoItem
 {
     public final Material item;
     public final InventoryItem stack;
+    public final String name;
 
     public BingoItem(Material item)
     {
         this.item = item;
         this.stack = new InventoryItem(item, null, "I am a bingo Item :D");
+        this.name = convertToReadableName(item);
+    }
+
+    public static String convertToReadableName(Material m)
+    {
+        String name = m.name().replace("_", " ");
+        return WordUtils.capitalizeFully(name);
     }
 
     public boolean isComplete(Team team)
@@ -28,7 +37,7 @@ public class BingoItem
         return completedBy.getDisplayName().equals(team.getDisplayName());
     }
 
-    public void complete(Team team)
+    public void complete(Team team, int time)
     {
         if (completedBy != null) return;
 
@@ -36,17 +45,18 @@ public class BingoItem
 
         completedBy = team;
 
-        String name = stack.getType().name().replace("_", " ");
-        name = WordUtils.capitalizeFully(name);
-        BingoReloaded.broadcast(ChatColor.GREEN + "Completed " + name + " by team " + completedBy.getColor() + completedBy.getDisplayName() + ChatColor.GREEN + "!");
+        String timeString = GameTimer.getTimeAsString(time);
 
-        name = "" + ChatColor.GRAY + ChatColor.STRIKETHROUGH + name;
+        BingoReloaded.broadcast(ChatColor.GREEN + "Completed " + name + " by team " + completedBy.getColor() + completedBy.getDisplayName() + ChatColor.GREEN + "! At " + timeString);
+
+        String crossedName = "" + ChatColor.GRAY + ChatColor.STRIKETHROUGH + name;
         stack.setType(completeMaterial);
         ItemMeta meta = stack.getItemMeta();
         if (meta != null)
         {
-            meta.setDisplayName(name);
-            meta.setLore(List.of("Completed by team " + completedBy.getColor() + completedBy.getDisplayName()));
+            meta.setDisplayName(crossedName);
+            meta.setLore(List.of("Completed by team " + completedBy.getColor() + completedBy.getDisplayName(),
+                    "At " + ChatColor.GOLD + timeString + ChatColor.RESET + ""));
         }
         stack.setItemMeta(meta);
     }

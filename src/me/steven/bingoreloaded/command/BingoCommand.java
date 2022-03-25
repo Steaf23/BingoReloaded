@@ -53,12 +53,25 @@ public class BingoCommand implements CommandExecutor
                         gameInstance.teleportPlayerAfterDeath(p);
                     }
                     break;
+                case "deathmatch":
+                    if (gameInstance.isGameInProgress())
+                    {
+                        gameInstance.startDeathMatch(3);
+                    }
+                    else
+                    {
+                        if (commandSender instanceof Player p)
+                            BingoReloaded.print(ChatColor.RED + "Cannot start a death match when there is no game active!", p);
+                        else
+                            BingoReloaded.print(ChatColor.RED + "Cannot start a death match when there is no game active!");
+                    }
+                    break;
 
                 default:
                     if (commandSender instanceof Player p)
-                        BingoReloaded.print(ChatColor.RED + "Usage: /bingo [start|end|leave|getcard]", p);
+                        BingoReloaded.print(ChatColor.RED + "Usage: /bingo [start|end|leave|getcard|deathmatch]", p);
                     else
-                        BingoReloaded.print(ChatColor.RED + "Usage: /bingo [start|end|leave|getcard]");
+                        BingoReloaded.print(ChatColor.RED + "Usage: /bingo [start|end|leave|getcard|deathmatch]");
                     break;
             }
         }

@@ -69,13 +69,13 @@ public class BingoCard extends AbstractGUIInventory
      * @param team the team submitting the item
      * @return if the item could be completed and wasn't already done so, return true.
      */
-    public boolean completeItem(Material item, Team team)
+    public boolean completeItem(Material item, Team team, int time)
     {
         for (BingoItem bingoItem : items)
         {
             if (bingoItem.stack.getType() == item && !bingoItem.isComplete(team))
             {
-                bingoItem.complete(team);
+                bingoItem.complete(team, time);
                 return true;
             }
         }
