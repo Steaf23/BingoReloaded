@@ -13,6 +13,8 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 public class GamemodeOptionsUI extends AbstractGUIInventory
 {
     private static final String DESCRIPTION = "" + ChatColor.DARK_PURPLE + ChatColor.ITALIC + "Click to select this gamemode.";
+    private final BingoGame game;
+    private final InventoryItem[] options;
 
     public GamemodeOptionsUI(AbstractGUIInventory parent, BingoGame game)
     {
@@ -69,7 +71,4 @@ public class GamemodeOptionsUI extends AbstractGUIInventory
         game.setCardSettings(chosenMode, chosenSize);
         close(player);
     }
-
-    private final BingoGame game;
-    private final InventoryItem[] options;
 }

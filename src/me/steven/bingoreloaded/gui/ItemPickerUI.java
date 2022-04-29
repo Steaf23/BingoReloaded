@@ -16,7 +16,6 @@ import java.util.List;
 public abstract class ItemPickerUI extends AbstractGUIInventory
 {
     public abstract void onOptionClickedDelegate(InventoryClickEvent event, InventoryItem clickedOption, Player player);
-    public final boolean isSubUI;
 
     private static final int ITEMS_PER_PAGE = 45;
     private final List<InventoryItem> items;
@@ -31,7 +30,6 @@ public abstract class ItemPickerUI extends AbstractGUIInventory
     public ItemPickerUI(List<InventoryItem> options, String title, AbstractGUIInventory parent)
     {
         super(54, title != null ? title : "Item Picker", parent);
-        isSubUI = parent != null;
 
         fillOptions(new InventoryItem[]{
                 PREVIOUS, BG_ITEM.inSlot(46), BG_ITEM.inSlot(47), BG_ITEM.inSlot(48), CLOSE, BG_ITEM.inSlot(50), BG_ITEM.inSlot(51), BG_ITEM.inSlot(52), NEXT,

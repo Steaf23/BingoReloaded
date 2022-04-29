@@ -21,11 +21,20 @@ public class BingoOptionsUI extends AbstractGUIInventory
     private final BingoGame game;
 
     private final Map<String, InventoryItem> menuItems = new HashMap<>(){{
-        put("join", new InventoryItem(12, Material.WHITE_GLAZED_TERRACOTTA, "" + ChatColor.GOLD + ChatColor.BOLD + "Join A Team"));
-        put("leave", new InventoryItem(14, Material.BARRIER, "" + ChatColor.GOLD + ChatColor.BOLD + "Quit Bingo"));
-        put("kit", new InventoryItem(29, Material.IRON_INGOT, "" + ChatColor.GOLD + ChatColor.BOLD + "Change Starting Kit"));
-        put("gamemode", new InventoryItem(31, Material.ENCHANTED_BOOK, "" + ChatColor.GOLD + ChatColor.BOLD + "Change Gamemode"));
-        put("card", new InventoryItem(33, Material.MAP, "" + ChatColor.GOLD + ChatColor.BOLD + "Change Bingo Card"));
+        put("join", new InventoryItem(GUIBuilder5x9.OptionPositions.SEVEN_CENTER1.positions[0],
+                Material.WHITE_GLAZED_TERRACOTTA, TITLE_PREFIX + "Join A Team"));
+        put("leave", new InventoryItem(GUIBuilder5x9.OptionPositions.SEVEN_CENTER1.positions[1],
+                Material.BARRIER, TITLE_PREFIX + "Quit Bingo"));
+        put("kit", new InventoryItem(GUIBuilder5x9.OptionPositions.SEVEN_CENTER1.positions[2],
+                Material.IRON_INGOT, TITLE_PREFIX + "Change Starting Kit"));
+        put("start", new InventoryItem(GUIBuilder5x9.OptionPositions.SEVEN_CENTER1.positions[3],
+                Material.LIME_CONCRETE, TITLE_PREFIX + "Start The Game"));
+        put("card", new InventoryItem(GUIBuilder5x9.OptionPositions.SEVEN_CENTER1.positions[4],
+                Material.MAP, TITLE_PREFIX + "Change Bingo Card"));
+        put("gamemode", new InventoryItem(GUIBuilder5x9.OptionPositions.SEVEN_CENTER1.positions[5],
+                Material.ENCHANTED_BOOK, TITLE_PREFIX + "Change Gamemode"));
+        put("effects", new InventoryItem(GUIBuilder5x9.OptionPositions.SEVEN_CENTER1.positions[6],
+                Material.POTION, TITLE_PREFIX + "Change Player Effects"));
     }};
 
     @Override
@@ -53,31 +62,29 @@ public class BingoOptionsUI extends AbstractGUIInventory
         {
             openCardPicker(player);
         }
+        else if (slotClicked == menuItems.get("effects").getSlot())
+        {
+            EffectOptionsUI effectSelector = new EffectOptionsUI(this, game);
+            effectSelector.open(player);
+        }
+        else if (slotClicked == menuItems.get("start").getSlot())
+        {
+            game.start();
+        }
     }
 
     public static void open(Player player, BingoGame gameInstance)
     {
         BingoOptionsUI options = new BingoOptionsUI(gameInstance);
-
-        if (player.hasPermission("bingo.admin"))
-        {
-            options.fillOptions(new InventoryItem[]{
-                    options.menuItems.get("join"),
-                    options.menuItems.get("leave"),
-                    options.menuItems.get("kit"),
-                    options.menuItems.get("gamemode"),
-                    options.menuItems.get("card"),
-            });
-        }
-        else
-        {
-            //TODO: fix dynamic slot locations
-            options.fillOptions(new InventoryItem[]{
-                    options.menuItems.get("join"),
-                    options.menuItems.get("leave"),
-            });
-        }
-
+        options.fillOptions(new InventoryItem[]{
+                options.menuItems.get("join"),
+                options.menuItems.get("leave"),
+                options.menuItems.get("kit"),
+                options.menuItems.get("gamemode"),
+                options.menuItems.get("card"),
+                options.menuItems.get("start"),
+                options.menuItems.get("effects"),
+                });
         options.open(player);
     }
 

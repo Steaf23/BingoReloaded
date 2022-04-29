@@ -127,6 +127,10 @@ public class TeamManager
         if (masterCard instanceof LockoutBingoCard lockoutCard)
         {
             lockoutCard.teamCount = activeTeams.size();
+            for (Team t : activeTeams.keySet())
+            {
+                lockoutCard.teams.put(t, true);
+            }
         }
         activeTeams.replaceAll((t, v) -> masterCard.copy());
     }
@@ -196,6 +200,19 @@ public class TeamManager
         }
 
         return null;
+    }
+
+    public Set<Player> getPlayersOfTeam(Team team)
+    {
+        Set<Player> players = new HashSet<>();
+        for (Player p : getParticipants())
+        {
+            if (team.equals(getTeamOfPlayer(p)))
+            {
+                players.add(p);
+            }
+        }
+        return players;
     }
 
     public void activateTeam(Team team)

@@ -57,13 +57,25 @@ public class BingoItem
             meta.setDisplayName(crossedName);
             meta.setLore(List.of("Completed by team " + completedBy.getColor() + completedBy.getDisplayName(),
                     "At " + ChatColor.GOLD + timeString + ChatColor.RESET + ""));
+            stack.setItemMeta(meta);
         }
-        stack.setItemMeta(meta);
     }
 
     public Team getWhoCompleted()
     {
         return completedBy;
+    }
+
+    public void voidItem()
+    {
+        stack.setType(Material.BEDROCK);
+        ItemMeta meta = stack.getItemMeta();
+        if (meta != null)
+        {
+            meta.setDisplayName("" + ChatColor.BLACK + ChatColor.STRIKETHROUGH + name);
+            meta.setLore(List.of(ChatColor.BLACK + "This team is out of the game!"));
+            stack.setItemMeta(meta);
+        }
     }
 
     private Team completedBy = null;

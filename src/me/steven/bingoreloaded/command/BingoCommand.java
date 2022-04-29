@@ -1,7 +1,9 @@
 package me.steven.bingoreloaded.command;
 
+import com.sun.security.auth.login.ConfigFile;
 import me.steven.bingoreloaded.BingoGame;
 import me.steven.bingoreloaded.BingoReloaded;
+import me.steven.bingoreloaded.data.ConfigData;
 import me.steven.bingoreloaded.gui.BingoOptionsUI;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -50,7 +52,10 @@ public class BingoCommand implements CommandExecutor
                 case "back":
                     if (commandSender instanceof Player p)
                     {
-                        gameInstance.teleportPlayerAfterDeath(p);
+                        if (ConfigData.getConfig().teleportAfterDeath)
+                        {
+                            gameInstance.teleportPlayerAfterDeath(p);
+                        }
                     }
                     break;
                 case "deathmatch":

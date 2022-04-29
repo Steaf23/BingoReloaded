@@ -1,5 +1,7 @@
 package me.steven.bingoreloaded.player;
 
+import me.steven.bingoreloaded.gui.EffectOptionFlags;
+import me.steven.bingoreloaded.gui.EffectOptionsUI;
 import me.steven.bingoreloaded.item.InventoryItem;
 import me.steven.bingoreloaded.item.ItemCooldownManager;
 import me.steven.bingoreloaded.util.FlexibleColor;
@@ -9,19 +11,35 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 
 public enum PlayerKit
 {
-    HARDCORE(ChatColor.DARK_RED + "Hardcore"),
-    NORMAL(ChatColor.YELLOW + "Normal"),
-    OVERPOWERED(ChatColor.DARK_PURPLE + "Overpowered"),
-    RELOADED(ChatColor.DARK_AQUA + "Reloaded"),
+    HARDCORE(ChatColor.DARK_RED + "Hardcore", EnumSet.noneOf(EffectOptionFlags.class)),
+    NORMAL(ChatColor.YELLOW + "Normal", EnumSet.of(EffectOptionFlags.CARD_SPEED, EffectOptionFlags.NO_FALL_DAMAGE)),
+    OVERPOWERED(ChatColor.DARK_PURPLE + "Overpowered", EnumSet.allOf(EffectOptionFlags.class)),
+    RELOADED(ChatColor.DARK_AQUA + "Reloaded", EnumSet.allOf(EffectOptionFlags.class)),
     ;
 
-    PlayerKit(String displayName)
+    public final ItemCooldownManager wandItem = new ItemCooldownManager(new InventoryItem(
+            Material.WARPED_FUNGUS_ON_A_STICK,
+            "" + ChatColor.DARK_PURPLE + ChatColor.ITALIC + ChatColor.BOLD + "The Go-Up-Wand",
+            "Right-Click To Teleport Upwards!"
+    ).withEnchantment(Enchantment.DURABILITY, 3), 5000);
+
+    public final InventoryItem cardItem = new InventoryItem(8,
+            Material.MAP,
+            "" + ChatColor.DARK_PURPLE + ChatColor.ITALIC + ChatColor.BOLD + "Bingo Card",
+            "Click To Open The Bingo Card!");
+
+    public final String displayName;
+    public final EnumSet<EffectOptionFlags> defaultEffects;
+
+    PlayerKit(String displayName, EnumSet<EffectOptionFlags> defaultEffects)
     {
         this.displayName = displayName;
+        this.defaultEffects = defaultEffects;
     }
 
     public List<InventoryItem> getItems(FlexibleColor teamColor)
@@ -121,17 +139,4 @@ public enum PlayerKit
             }
         }
     }
-
-    public final ItemCooldownManager wandItem = new ItemCooldownManager(new InventoryItem(
-            Material.WARPED_FUNGUS_ON_A_STICK,
-            "" + ChatColor.DARK_PURPLE + ChatColor.ITALIC + ChatColor.BOLD + "The Go-Up-Wand",
-            "Right-Click To Teleport Upwards!"
-    ).withEnchantment(Enchantment.DURABILITY, 3), 5000);
-
-    public final InventoryItem cardItem = new InventoryItem(8,
-            Material.MAP,
-            "" + ChatColor.DARK_PURPLE + ChatColor.ITALIC + ChatColor.BOLD + "Bingo Card",
-            "Click To Open The Bingo Card!");
-
-    public final String displayName;
 }

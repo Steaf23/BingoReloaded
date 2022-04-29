@@ -1,7 +1,9 @@
 package me.steven.bingoreloaded;
 
 import me.steven.bingoreloaded.data.BingoCardsData;
+import me.steven.bingoreloaded.data.ConfigData;
 import me.steven.bingoreloaded.data.RecoveryCardData;
+import me.steven.bingoreloaded.gui.EffectOptionFlags;
 import me.steven.bingoreloaded.gui.cards.*;
 import me.steven.bingoreloaded.cardcreator.CardEntry;
 import me.steven.bingoreloaded.item.BingoItem;
@@ -30,6 +32,7 @@ import org.bukkit.scoreboard.Team;
 import org.bukkit.util.Vector;
 
 import javax.annotation.Nullable;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -39,7 +42,7 @@ public class BingoGame implements Listener
 {
     public CardEntry card;
 
-    private static final int TELEPORT_DISTANCE = 1000000;
+    private static final int TELEPORT_DISTANCE = ConfigData.getConfig().teleportMaxDistance;
     private static final int ONE_SECOND = 20;
     private final TeamManager teamManager;
     private final GameTimer timer;
@@ -47,6 +50,7 @@ public class BingoGame implements Listener
     private BingoGameMode currentMode;
     private CardSize currentSize;
     private PlayerKit currentKit;
+    private EnumSet<EffectOptionFlags> currentEffects;
     private Material deathMatchItem;
 
     private final Map<String, Location> deadPlayers;
@@ -58,6 +62,7 @@ public class BingoGame implements Listener
         currentMode = BingoGameMode.REGULAR;
         currentSize = CardSize.X5;
         currentKit = PlayerKit.NORMAL;
+        currentEffects = currentKit.defaultEffects;
 
         scoreboard = new BingoScoreboard(this);
 
@@ -163,7 +168,19 @@ public class BingoGame implements Listener
     public void setKit(PlayerKit kit)
     {
         currentKit = kit;
+        currentEffects = kit.defaultEffects;
         BingoReloaded.broadcast(ChatColor.GOLD + "Selected " + kit.displayName + ChatColor.GOLD + " player kit!");
+    }
+
+    public void setEffects(EnumSet<EffectOptionFlags> effects)
+    {
+        currentEffects = effects;
+        BingoReloaded.broadcast(ChatColor.GOLD + "Selected Effect options, view them in the /bingo options!");
+    }
+
+    public EnumSet<EffectOptionFlags> getEffects()
+    {
+        return currentEffects;
     }
 
     public void givePlayerKits()
@@ -187,7 +204,10 @@ public class BingoGame implements Listener
     public void givePlayersEffects()
     {
         Set<Player> players = teamManager.getParticipants();
-        players.forEach(this::givePlayerEffects);
+        players.forEach((p) -> {
+            givePlayerEffects(p);
+            p.setGameMode(GameMode.SURVIVAL);
+        });
     }
 
     private void givePlayerEffects(Player player)
@@ -196,9 +216,12 @@ public class BingoGame implements Listener
 
         if (teamManager.getParticipants().contains(player))
         {
-            player.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, 100000, 1, false, false));
-            player.addPotionEffect(new PotionEffect(PotionEffectType.WATER_BREATHING, 100000, 1, false, false));
-            player.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, 100000, 1, false, false));
+            if (currentEffects.contains(EffectOptionFlags.NIGHT_VISION))
+                player.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, 100000, 1, false, false));
+            if (currentEffects.contains(EffectOptionFlags.WATER_BREATHING))
+                player.addPotionEffect(new PotionEffect(PotionEffectType.WATER_BREATHING, 100000, 1, false, false));
+            if (currentEffects.contains(EffectOptionFlags.FIRE_RESISTANCE))
+                player.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, 100000, 1, false, false));
 
             player.addPotionEffect(new PotionEffect(PotionEffectType.SATURATION, 2, 100, false, false));
             player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 2, 100, false, false));
@@ -280,11 +303,6 @@ public class BingoGame implements Listener
     public void teleportPlayerAfterDeath(Player player)
     {
         givePlayerEffects(player);
-
-        if (teamManager.getParticipants().contains(player) && gameInProgress)
-        {
-            returnCardToPlayer(player);
-        }
 
         if (player == null) return;
         Location location = deadPlayers.get(player.getName());
@@ -437,7 +455,10 @@ public class BingoGame implements Listener
         if (event.getCause() != EntityDamageEvent.DamageCause.FALL)
             return;
 
-        event.setCancelled(true);
+        if (currentEffects.contains(EffectOptionFlags.NO_FALL_DAMAGE))
+        {
+            event.setCancelled(true);
+        }
     }
 
     @EventHandler
@@ -479,15 +500,17 @@ public class BingoGame implements Listener
                     event.getDrops().remove(currentKit.cardItem.getAsStack());
 
                 Location deathCoords = event.getEntity().getLocation();
+                if (ConfigData.getConfig().teleportAfterDeath)
+                {
+                    TextComponent[] teleportMsg = BingoReloaded.createHoverCommandMessage("",
+                            "" + ChatColor.DARK_AQUA + ChatColor.BOLD + "Click here to teleport back to where you died",
+                            "",
+                            "/bingo back",
+                            "Click to teleport to " + deathCoords);
 
-                TextComponent[] teleportMsg = BingoReloaded.createHoverCommandMessage("",
-                        "" + ChatColor.DARK_AQUA + ChatColor.BOLD + "Click here to teleport back to where you died",
-                        "",
-                        "/bingo back",
-                        "Click to teleport to " + deathCoords);
-
-                event.getEntity().spigot().sendMessage(teleportMsg);
-                deadPlayers.put(event.getEntity().getName(), deathCoords);
+                    event.getEntity().spigot().sendMessage(teleportMsg);
+                    deadPlayers.put(event.getEntity().getName(), deathCoords);
+                }
 
                 if (event.getEntity().getLastDamageCause() == null)
                     return;
@@ -503,7 +526,7 @@ public class BingoGame implements Listener
     {
         if (teamManager.getParticipants().contains(event.getPlayer()) && gameInProgress)
         {
-            if (event.getNewSlot() == currentKit.cardItem.getSlot())
+            if (event.getNewSlot() == currentKit.cardItem.getSlot() && currentEffects.contains(EffectOptionFlags.CARD_SPEED))
             {
                 event.getPlayer().addPotionEffect(
                         new PotionEffect(PotionEffectType.SPEED, 100000, 1, false, false));
@@ -513,6 +536,15 @@ public class BingoGame implements Listener
             {
                 event.getPlayer().removePotionEffect(PotionEffectType.SPEED);
             }
+        }
+    }
+
+    @EventHandler
+    public void onPlayerRespawnEvent(final PlayerRespawnEvent event)
+    {
+        if (teamManager.getParticipants().contains(event.getPlayer()) && gameInProgress)
+        {
+            returnCardToPlayer(event.getPlayer());
         }
     }
 
@@ -528,7 +560,7 @@ public class BingoGame implements Listener
         givePlayerEffects(player);
     }
 
-    public boolean isOceanBiome(Biome biome)
+    private boolean isOceanBiome(Biome biome)
     {
         return switch (biome)
         {
@@ -554,24 +586,64 @@ public class BingoGame implements Listener
 
     private void teleportPlayersToStart(World world)
     {
-        Vector targetPosition = Vector.getRandom().multiply(TELEPORT_DISTANCE);
-        Location spawnLocation = new Location(world, targetPosition.getX(), 200, targetPosition.getZ());
+        switch (ConfigData.getConfig().playerTeleportStrategy)
+        {
+            case ALONE:
+                for (Player p : teamManager.getParticipants())
+                {
+                    Location playerLoc = getRandomSpawnLocation(world);
+
+                    p.teleport(playerLoc, PlayerTeleportEvent.TeleportCause.PLUGIN);
+
+                    if (teamManager.getParticipants().size() > 0)
+                        spawnPlatform(playerLoc, 5);
+                }
+                break;
+
+            case TEAM:
+                for (Team t: teamManager.getActiveTeams().keySet())
+                {
+                    Location teamLocation = getRandomSpawnLocation(world);
+
+                    Set<Player> teamPlayers = teamManager.getPlayersOfTeam(t);
+                    for (Player p : teamPlayers)
+                    {
+                        p.teleport(teamLocation, PlayerTeleportEvent.TeleportCause.PLUGIN);
+                    }
+
+                    if (teamManager.getParticipants().size() > 0)
+                        spawnPlatform(teamLocation, 5);
+                }
+                break;
+
+            case ALL:
+                Location spawnLocation = getRandomSpawnLocation(world);
+
+                Set<Player> players = teamManager.getParticipants();
+                for (Player p : players)
+                {
+                    p.teleport(spawnLocation, PlayerTeleportEvent.TeleportCause.PLUGIN);
+                }
+
+                if (teamManager.getParticipants().size() > 0)
+                    spawnPlatform(spawnLocation, 5);
+                break;
+        }
+    }
+
+    private Location getRandomSpawnLocation(World world)
+    {
+        Vector position = Vector.getRandom().multiply(TELEPORT_DISTANCE);
+        Location location = new Location(world, position.getX(), ConfigData.getConfig().lobbySpawnHeight, position.getZ());
 
         //find a not ocean biome to start the game in
-        while (isOceanBiome(world.getBiome(spawnLocation)))
+        while (isOceanBiome(world.getBiome(location)))
         {
-            targetPosition = Vector.getRandom().multiply(TELEPORT_DISTANCE);
-            spawnLocation = new Location(world, targetPosition.getX(), 200, targetPosition.getZ());
+            position = Vector.getRandom().multiply(TELEPORT_DISTANCE);
+            location = new Location(world, position.getX(), ConfigData.getConfig().lobbySpawnHeight, position.getZ());
         }
 
-        Set<Player> players = teamManager.getParticipants();
-        for (Player p : players)
-        {
-            p.teleport(spawnLocation, PlayerTeleportEvent.TeleportCause.PLUGIN);
-        }
-
-        if (teamManager.getParticipants().size() > 0)
-            spawnPlatform(spawnLocation, 5);
+        return location;
     }
 
     private static void teleportPlayerUp(Player player, int distance, int fallDistance)
