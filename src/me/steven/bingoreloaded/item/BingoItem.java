@@ -3,11 +3,11 @@ package me.steven.bingoreloaded.item;
 import me.steven.bingoreloaded.BingoReloaded;
 import me.steven.bingoreloaded.GameTimer;
 import me.steven.bingoreloaded.gui.cards.CardBuilder;
+import me.steven.bingoreloaded.player.BingoTeam;
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.scoreboard.Team;
 
 import java.util.*;
 
@@ -16,6 +16,8 @@ public class BingoItem
     public final Material item;
     public final InventoryItem stack;
     public final String name;
+
+    private BingoTeam completedBy = null;
 
     public BingoItem(Material item)
     {
@@ -30,14 +32,14 @@ public class BingoItem
         return WordUtils.capitalizeFully(name);
     }
 
-    public boolean isComplete(Team team)
+    public boolean isComplete(BingoTeam team)
     {
         if (completedBy == null) return false;
 
-        return completedBy.getDisplayName().equals(team.getDisplayName());
+        return completedBy.getName().equals(team.getName());
     }
 
-    public void complete(Team team, int time)
+    public void complete(BingoTeam team, int time)
     {
         if (completedBy != null) return;
 
@@ -47,7 +49,7 @@ public class BingoItem
 
         String timeString = GameTimer.getTimeAsString(time);
 
-        BingoReloaded.broadcast(ChatColor.GREEN + "Completed " + name + " by team " + completedBy.getColor() + completedBy.getDisplayName() + ChatColor.GREEN + "! At " + timeString);
+        BingoReloaded.broadcast(ChatColor.GREEN + "Completed " + name + " by team " + completedBy.team.getColor() + completedBy.getName() + ChatColor.GREEN + "! At " + timeString);
 
         String crossedName = "" + ChatColor.GRAY + ChatColor.STRIKETHROUGH + name;
         stack.setType(completeMaterial);
@@ -55,13 +57,13 @@ public class BingoItem
         if (meta != null)
         {
             meta.setDisplayName(crossedName);
-            meta.setLore(List.of("Completed by team " + completedBy.getColor() + completedBy.getDisplayName(),
+            meta.setLore(List.of("Completed by team " + completedBy.team.getColor() + completedBy.getName(),
                     "At " + ChatColor.GOLD + timeString + ChatColor.RESET + ""));
             stack.setItemMeta(meta);
         }
     }
 
-    public Team getWhoCompleted()
+    public BingoTeam getWhoCompleted()
     {
         return completedBy;
     }
@@ -77,6 +79,4 @@ public class BingoItem
             stack.setItemMeta(meta);
         }
     }
-
-    private Team completedBy = null;
 }

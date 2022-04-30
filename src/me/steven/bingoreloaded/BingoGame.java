@@ -8,6 +8,7 @@ import me.steven.bingoreloaded.gui.cards.*;
 import me.steven.bingoreloaded.cardcreator.CardEntry;
 import me.steven.bingoreloaded.item.BingoItem;
 import me.steven.bingoreloaded.item.InventoryItem;
+import me.steven.bingoreloaded.player.BingoTeam;
 import me.steven.bingoreloaded.player.PlayerKit;
 import me.steven.bingoreloaded.player.TeamManager;
 import me.steven.bingoreloaded.util.FlexibleColor;
@@ -28,7 +29,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scoreboard.Team;
 import org.bukkit.util.Vector;
 
 import javax.annotation.Nullable;
@@ -191,7 +191,7 @@ public class BingoGame implements Listener
         {
             p.getInventory().clear();
             p.closeInventory();
-            FlexibleColor teamColor = FlexibleColor.fromChatColor(teamManager.getTeamOfPlayer(p).getColor());
+            FlexibleColor teamColor = FlexibleColor.fromChatColor(teamManager.getTeamOfPlayer(p).team.getColor());
 
             if (teamColor == null) return;
             for(InventoryItem item : currentKit.getItems(teamColor))
@@ -237,9 +237,9 @@ public class BingoGame implements Listener
         takePlayerEffects(player);
     }
 
-    public void bingo(Team team)
+    public void bingo(BingoTeam team)
     {
-        BingoReloaded.broadcast("Congratulations! Team " + team.getDisplayName() + ChatColor.RESET + " has won the Bingo!");
+        BingoReloaded.broadcast("Congratulations! Team " + team.getName() + ChatColor.RESET + " has won the Bingo!");
         for (Player p : teamManager.getParticipants())
         {
             p.playSound(p, Sound.ENTITY_DRAGON_FIREBALL_EXPLODE, 0.8f, 1.0f);
@@ -329,14 +329,14 @@ public class BingoGame implements Listener
 
         player.getUniqueId();
 
-        Team team = teamManager.getTeamOfPlayer(player);
+        BingoTeam team = teamManager.getTeamOfPlayer(player);
 
         if (deathMatchItem != null && deathMatchItem.equals(item))
         {
             bingo(team);
         }
 
-        BingoCard card = teamManager.getCardForTeam(team);
+        BingoCard card = team.card;
         if (card.completeItem(item, team, timer.getTime()))
         {
             stack.setAmount(stack.getAmount() - 1);
@@ -391,15 +391,14 @@ public class BingoGame implements Listener
         if (event.getItem().equals(currentKit.cardItem.getAsStack()))
         {
             event.setCancelled(true);
-            if (!teamManager.getParticipants().contains(event.getPlayer()))
-                return;
-            Team playerTeam = teamManager.getTeamOfPlayer(event.getPlayer());
+            BingoTeam playerTeam = teamManager.getTeamOfPlayer(event.getPlayer());
             if (playerTeam == null)
             {
                 BingoReloaded.print("NO TEAM?", event.getPlayer());
+                return;
             }
 
-            BingoCard card = teamManager.getCardForTeam(playerTeam);
+            BingoCard card = playerTeam.card;
 
             // if the player is actually participating, show it
             if (card != null)
@@ -473,7 +472,7 @@ public class BingoGame implements Listener
                 return;
             }
 
-            Team team = RecoveryCardData.getActiveTeamOfPlayer(event.getPlayer(), teamManager);
+            BingoTeam team = RecoveryCardData.getActiveTeamOfPlayer(event.getPlayer(), teamManager);
             if (team == null)
                 return;
 
@@ -601,7 +600,7 @@ public class BingoGame implements Listener
                 break;
 
             case TEAM:
-                for (Team t: teamManager.getActiveTeams().keySet())
+                for (BingoTeam t: teamManager.getActiveTeams())
                 {
                     Location teamLocation = getRandomSpawnLocation(world);
 

@@ -4,6 +4,7 @@ import me.steven.bingoreloaded.command.BingoCommand;
 import me.steven.bingoreloaded.command.CardCommand;
 import me.steven.bingoreloaded.command.ItemListCommand;
 import me.steven.bingoreloaded.data.RecoveryCardData;
+import me.steven.bingoreloaded.player.BingoTeam;
 import me.steven.bingoreloaded.player.TeamChat;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -14,7 +15,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scoreboard.Team;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 public class BingoReloaded extends JavaPlugin
@@ -72,10 +72,10 @@ public class BingoReloaded extends JavaPlugin
         player.spigot().sendMessage(message);
     }
 
-    public static void print(String message, @NonNull Team team)
+    public static void print(String message, @NonNull BingoTeam team)
     {
         message = PRINT_PREFIX + message;
-        for (String name : team.getEntries())
+        for (String name : team.team.getEntries())
         {
             Player p = Bukkit.getPlayer(name);
             if (p != null)

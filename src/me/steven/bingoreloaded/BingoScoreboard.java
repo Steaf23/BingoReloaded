@@ -1,5 +1,6 @@
 package me.steven.bingoreloaded;
 
+import me.steven.bingoreloaded.player.BingoTeam;
 import me.steven.bingoreloaded.player.TeamManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -54,10 +55,10 @@ public class BingoScoreboard
         if (objective == null)
             return;
 
-        for (Team t : teamManager.getActiveTeams().keySet())
+        for (BingoTeam t : teamManager.getActiveTeams())
         {
-            Score score = objective.getScore(t.getColor() + t.getDisplayName());
-            score.setScore(teamManager.getCardForTeam(t).getCompleteCount(t));
+            Score score = objective.getScore(t.getColor() + t.getName());
+            score.setScore(t.card.getCompleteCount(t));
         }
 
         for (Player p : teamManager.getParticipants())

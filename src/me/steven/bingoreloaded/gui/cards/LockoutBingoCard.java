@@ -3,25 +3,22 @@ package me.steven.bingoreloaded.gui.cards;
 import me.steven.bingoreloaded.BingoReloaded;
 import me.steven.bingoreloaded.item.BingoItem;
 import me.steven.bingoreloaded.item.InventoryItem;
+import me.steven.bingoreloaded.player.BingoTeam;
 import me.steven.bingoreloaded.player.TeamManager;
 import org.bukkit.Material;
-import org.bukkit.scoreboard.Team;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class LockoutBingoCard extends BingoCard
 {
     public int teamCount;
-    public final Map<Team, Boolean> teams;
+    public TeamManager teamManager;
     public int currentMaxItems;
 
     public LockoutBingoCard(CardSize size)
     {
         super(size);
-        this.teams = new HashMap<>();
+
+        this.currentMaxItems = size.fullCardSize;
+        this.teamCount = teamManager.getActiveTeams().size();
 
         InventoryItem cardInfo = new InventoryItem(0, Material.PAPER, "Lockout Bingo Card", "Complete the most items to win.", "When an item has been completed", "it cannot be complete by any other team.");
         addOption(cardInfo);
@@ -34,85 +31,55 @@ public class LockoutBingoCard extends BingoCard
     }
 
     @Override
-    public boolean hasBingo(Team team)
+    public boolean hasBingo(BingoTeam team)
     {
-        if (teamCount == 2)
-        {
-            int completeCount = getCompleteCount(team);
-            return completeCount >= Math.floor(size.fullCardSize / (double) teamCount) + 1;
-        }
+        int completeCount = getCompleteCount(team);
+        return completeCount >= Math.floor(currentMaxItems / (double) teamCount) + 1;
+    }
 
-        if (teamCount < 2)
+    @Override
+    public boolean completeItem(Material item, BingoTeam team, int time)
+    {
+        boolean result = super.completeItem(item, team, time);
+
+        if (!result)
         {
-            return true;
+            return false;
         }
 
         // get the completeCount of the team with the most items.
-        int leadingTeamCompleteCount = 0;
-        Team leadingTeam = team;
-        for (Team otherTeam : teams.keySet())
+        BingoTeam leadingTeam = teamManager.getLeadingTeam();
+        BingoTeam losingTeam = teamManager.getLosingTeam();
+
+        int itemsLeft = size.fullCardSize - getTotalCompleteCount();
+
+        // if amount on items cannot get up to amount of items of the team with the most items, this team cannot win anymore.
+        if (itemsLeft + getCompleteCount(losingTeam) < getCompleteCount(leadingTeam))
         {
-            int teamCC = getCompleteCount(otherTeam);
-            if (teamCC > leadingTeamCompleteCount)
-            {
-                leadingTeamCompleteCount = teamCC;
-                leadingTeam = otherTeam;
-            }
-        }
-
-        if (team.equals(leadingTeam) && (getCompleteCount(team) * 2 + 1) >= getRemainingItemCount())
-
-        for (Team t : teams.keySet())
-        {
-            if (!t.equals(leadingTeam))
-            {
-                int completeCount = getCompleteCount(t);
-                int otherTeamsTotal = getTotalCompleteCount() - completeCount;
-                BingoReloaded.print("other teams got " + otherTeamsTotal + " items");
-
-                // if amount on items cannot get up to amount of items of the team with the most items, this team cannot win anymore.
-                int itemsLeft = size.fullCardSize - getTotalCompleteCount();
-                if (itemsLeft + completeCount < leadingTeamCompleteCount)
-                {
-                    dropTeam(t);
-                    return false;
-                }
-            }
+            dropTeam(losingTeam);
         }
         return true;
     }
 
-    public int getRemainingItemCount()
+    public void dropTeam(BingoTeam team)
     {
-        int totalVoidSpaces = 0;
-        for (Team team : teams.keySet())
-        {
-            if (!teams.get(team))
-            {
-                totalVoidSpaces += getCompleteCount(team);
-            }
-        }
-        return size.fullCardSize - totalVoidSpaces;
-    }
-
-    public void dropTeam(Team team)
-    {
-        BingoReloaded.broadcast("Team " + team.getColor() + team.getDisplayName() + " cannot win anymore, they are out of the game!");
-        teams.put(team, false);
+        BingoReloaded.broadcast("Team " + team.getColor() + team.getName() + " cannot win anymore, they are out of the game!");
+        team.outOfTheGame = true;
         for (BingoItem item : items)
         {
             if (item.getWhoCompleted().equals(team))
             {
                 item.voidItem();
+                currentMaxItems--;
             }
         }
-        teamCount -= 1;
+        teamCount--;
     }
 
     public int getTotalCompleteCount()
     {
         int total = 0;
-        for (Team t : teams.keySet())
+        for (BingoTeam t : teamManager.getActiveTeams())
         {
             total += getCompleteCount(t);
         }

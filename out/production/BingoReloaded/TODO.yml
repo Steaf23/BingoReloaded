@@ -1,6 +1,2 @@
 - fix 2+ player lockout
   - players that are out get put into spectator mode
-- automatically change gamemode to survivial on start
-- give back bingocard on death, or keep it in player's inventory on death
-- add config for teleporting back after death
-- add team teleporting to config

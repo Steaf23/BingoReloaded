@@ -6,6 +6,7 @@ import me.steven.bingoreloaded.gui.AbstractGUIInventory;
 import me.steven.bingoreloaded.item.InventoryItem;
 import me.steven.bingoreloaded.data.BingoItemData;
 import me.steven.bingoreloaded.cardcreator.CardEntry;
+import me.steven.bingoreloaded.player.BingoTeam;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
@@ -69,7 +70,7 @@ public class BingoCard extends AbstractGUIInventory
      * @param team the team submitting the item
      * @return if the item could be completed and wasn't already done so, return true.
      */
-    public boolean completeItem(Material item, Team team, int time)
+    public boolean completeItem(Material item, BingoTeam team, int time)
     {
         for (BingoItem bingoItem : items)
         {
@@ -92,9 +93,9 @@ public class BingoCard extends AbstractGUIInventory
         open(player);
     }
 
-    public boolean hasBingo(Team team)
+    public boolean hasBingo(BingoTeam team)
     {
-        BingoReloaded.print("Your team (" + team.getDisplayName() + ChatColor.RESET + ") has collected " + getCompleteCount(team) + " items!", team);
+        BingoReloaded.print("Your team (" + team.getName() + ChatColor.RESET + ") has collected " + getCompleteCount(team) + " items!", team);
         //check for rows and columns
         for (int y = 0; y < size.cardSize; y++)
         {
@@ -152,7 +153,7 @@ public class BingoCard extends AbstractGUIInventory
      * @param team The team.
      * @return The amount of completed items for the given team.
      */
-    public int getCompleteCount(Team team)
+    public int getCompleteCount(BingoTeam team)
     {
         int count = 0;
         for (BingoItem item : items)

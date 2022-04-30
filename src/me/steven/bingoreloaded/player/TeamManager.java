@@ -18,24 +18,24 @@ import java.util.*;
 
 public class TeamManager
 {
-    private final Map<Team, BingoCard> activeTeams;
+    private final List<BingoTeam> activeTeams;
     private final BingoGame game;
     private final Scoreboard scoreboard;
 
     public TeamManager(BingoGame game, Scoreboard scoreboard)
     {
-        this.activeTeams = new HashMap<>();
+        this.activeTeams = new ArrayList<>();
         this.game = game;
         this.scoreboard = scoreboard;
 
         createTeams();
     }
 
-    public Team getTeamOfPlayer(Player player)
+    public BingoTeam getTeamOfPlayer(Player player)
     {
-        for (Team t : activeTeams.keySet())
+        for (BingoTeam t : activeTeams)
         {
-            for (String entry : t.getEntries())
+            for (String entry : t.team.getEntries())
             {
                 if (entry.equals(player.getName()))
                 {
@@ -90,7 +90,7 @@ public class TeamManager
         }
         removePlayerFromAllTeams(player);
 
-        activateTeam(teamName);
+        activateTeam(team);
 
         team.addEntry(player.getName());
         BingoReloaded.print("You successfully joined team " + team.getColor() + team.getDisplayName(), player);
@@ -108,18 +108,7 @@ public class TeamManager
 
     public void removeEmptyTeams()
     {
-        for (Team t : activeTeams.keySet())
-        {
-            if (t.getEntries().size() <= 0)
-            {
-                activeTeams.remove(t);
-            }
-        }
-    }
-
-    public BingoCard getCardForTeam(Team team)
-    {
-        return activeTeams.get(team);
+        activeTeams.removeIf((t) -> t.team.getEntries().size() <= 0);
     }
 
     public void initializeCards(BingoCard masterCard)
@@ -127,20 +116,16 @@ public class TeamManager
         if (masterCard instanceof LockoutBingoCard lockoutCard)
         {
             lockoutCard.teamCount = activeTeams.size();
-            for (Team t : activeTeams.keySet())
-            {
-                lockoutCard.teams.put(t, true);
-            }
         }
-        activeTeams.replaceAll((t, v) -> masterCard.copy());
+        activeTeams.forEach((t) -> t.card = masterCard.copy());
     }
 
-    public void setCardForTeam(Team team, BingoCard card)
+    public void setCardForTeam(BingoTeam team, BingoCard card)
     {
-        activeTeams.put(team, card);
+        team.card = card;
     }
 
-    public Map<Team, BingoCard> getActiveTeams()
+    public List<BingoTeam> getActiveTeams()
     {
         return activeTeams;
     }
@@ -152,9 +137,9 @@ public class TeamManager
         for (Player p : Bukkit.getOnlinePlayers())
         {
             boolean found = false;
-            for (Team team : activeTeams.keySet())
+            for (BingoTeam t : activeTeams)
             {
-                for (String entry : team.getEntries())
+                for (String entry : t.team.getEntries())
                 {
                     if (entry.equals(p.getName()))
                     {
@@ -175,9 +160,9 @@ public class TeamManager
 
     public void updateActivePlayers()
     {
-        for (Team team : activeTeams.keySet())
+        for (BingoTeam team : activeTeams)
         {
-            for (String entry : team.getEntries())
+            for (String entry : team.team.getEntries())
             {
                 Player p = Bukkit.getPlayer(entry);
                 if (p != null)
@@ -189,11 +174,11 @@ public class TeamManager
         }
     }
 
-    public Team getTeamByName(String name)
+    public BingoTeam getTeamByName(String name)
     {
-        for (Team team : scoreboard.getTeams())
+        for (BingoTeam team : activeTeams)
         {
-            if (team.getDisplayName().equals(name))
+            if (team.getName().equals(name))
             {
                 return team;
             }
@@ -202,7 +187,7 @@ public class TeamManager
         return null;
     }
 
-    public Set<Player> getPlayersOfTeam(Team team)
+    public Set<Player> getPlayersOfTeam(BingoTeam team)
     {
         Set<Player> players = new HashSet<>();
         for (Player p : getParticipants())
@@ -215,17 +200,28 @@ public class TeamManager
         return players;
     }
 
-    public void activateTeam(Team team)
+    public BingoTeam getLeadingTeam()
     {
-        if (!activeTeams.containsKey(team))
-        {
-            activeTeams.put(team, null);
-        }
+        Optional<BingoTeam> leadingTeam = activeTeams.stream().max(
+                (t, t2) -> t.card.getCompleteCount(t) - t2.card.getCompleteCount(t)
+        );
+        return leadingTeam.orElse(null);
     }
 
-    public void activateTeam(String teamName)
+    public BingoTeam getLosingTeam()
     {
-        activateTeam(getTeamByName(teamName));
+        Optional<BingoTeam> losingTeam = activeTeams.stream().min(
+                (t, t2) -> t.card.getCompleteCount(t) - t2.card.getCompleteCount(t)
+        );
+        return losingTeam.orElse(null);
+    }
+
+    public void activateTeam(Team team)
+    {
+        if (activeTeams.stream().noneMatch((t) -> t.team == team))
+        {
+            activeTeams.add(new BingoTeam(team, null));
+        }
     }
 
     private void createTeams()

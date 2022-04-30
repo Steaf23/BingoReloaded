@@ -1,8 +1,8 @@
 package me.steven.bingoreloaded.gui.cards;
 
 import me.steven.bingoreloaded.item.InventoryItem;
+import me.steven.bingoreloaded.player.BingoTeam;
 import org.bukkit.Material;
-import org.bukkit.scoreboard.Team;
 
 public class CompleteBingoCard extends BingoCard
 {
@@ -15,7 +15,7 @@ public class CompleteBingoCard extends BingoCard
     }
 
     @Override
-    public boolean hasBingo(Team team)
+    public boolean hasBingo(BingoTeam team)
     {
         return getCompleteCount(team) == size.fullCardSize;
     }

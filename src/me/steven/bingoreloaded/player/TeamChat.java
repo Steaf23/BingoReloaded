@@ -11,7 +11,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.scoreboard.Team;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.ArrayList;
@@ -39,7 +38,7 @@ public class TeamChat implements Listener, CommandExecutor
     {
         if (!enabledPlayers.contains(event.getPlayer())) return;
 
-        Team team = teamManager.getTeamOfPlayer(event.getPlayer());
+        BingoTeam team = teamManager.getTeamOfPlayer(event.getPlayer());
         if (team == null) return;
 
         String message = event.getMessage();
@@ -49,16 +48,16 @@ public class TeamChat implements Listener, CommandExecutor
 
     }
 
-    public void sendMessage(Team team, Player player, String message)
+    public void sendMessage(BingoTeam team, Player player, String message)
     {
-        for (String entry : team.getEntries())
+        for (String entry : team.team.getEntries())
         {
             Player member = Bukkit.getPlayer(entry);
             if (member == null) continue;
 
             if (!member.isOnline()) continue;
 
-            member.sendMessage(ChatColor.DARK_RED + "[" + team.getColor() + ChatColor.BOLD + team.getDisplayName() + ChatColor.DARK_RED + "]" +
+            member.sendMessage(ChatColor.DARK_RED + "[" + team.getColor() + ChatColor.BOLD + team.getName() + ChatColor.DARK_RED + "]" +
                     ChatColor.RESET  + "<" + player.getName() + "> " + message);
         }
     }
