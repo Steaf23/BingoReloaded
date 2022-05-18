@@ -5,7 +5,9 @@ import me.steven.bingoreloaded.item.BingoItem;
 import me.steven.bingoreloaded.item.InventoryItem;
 import me.steven.bingoreloaded.player.BingoTeam;
 import me.steven.bingoreloaded.player.TeamManager;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 
 public class LockoutBingoCard extends BingoCard
 {
@@ -72,6 +74,10 @@ public class LockoutBingoCard extends BingoCard
                 item.voidItem();
                 currentMaxItems--;
             }
+        }
+        for (Player p : teamManager.getPlayersOfTeam(team))
+        {
+            p.setGameMode(GameMode.SPECTATOR);
         }
         teamCount--;
     }

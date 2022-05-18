@@ -2,7 +2,10 @@ package me.steven.bingoreloaded.player;
 
 import me.steven.bingoreloaded.gui.cards.BingoCard;
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Team;
+
+import java.util.Set;
 
 public class BingoTeam
 {

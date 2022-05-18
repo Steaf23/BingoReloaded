@@ -2,8 +2,6 @@ package me.steven.bingoreloaded;
 
 import org.bukkit.ChatColor;
 
-import java.util.Objects;
-
 public enum BingoGameMode
 {
     REGULAR(ChatColor.GREEN + "Regular", "regular"),
