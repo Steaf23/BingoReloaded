@@ -20,3 +20,5 @@ GoUpWand:
   upDistance: 75 # teleport up distance
   downDistance: 5 # teleport down distance, watch out for the void ;)
   cooldown: 5.0 # item cooldown in seconds
+
+respawnWithKit: false

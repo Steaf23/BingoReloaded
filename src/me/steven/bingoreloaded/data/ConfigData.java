@@ -68,7 +68,5 @@ public class ConfigData
         this.wandUp = config.getInt("GoUpWand.upDistance");
         this.wandDown = config.getInt("GoUpWand.downDistance");
         this.wandCooldown = config.getDouble("GoUpWand.cooldown");
-
-        BingoReloaded.print("WAND_UP: " + this.wandUp);
     }
 }

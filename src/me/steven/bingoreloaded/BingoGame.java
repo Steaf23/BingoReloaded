@@ -510,12 +510,6 @@ public class BingoGame implements Listener
                     event.getEntity().spigot().sendMessage(teleportMsg);
                     deadPlayers.put(event.getEntity().getName(), deathCoords);
                 }
-
-                if (event.getEntity().getLastDamageCause() == null)
-                    return;
-
-                if (event.getEntity().getLastDamageCause().getCause() == EntityDamageEvent.DamageCause.LAVA)
-                event.getEntity().getWorld().setType(deathCoords, Material.WATER);
             }
         }
     }
@@ -541,7 +535,7 @@ public class BingoGame implements Listener
     @EventHandler
     public void onPlayerRespawnEvent(final PlayerRespawnEvent event)
     {
-        if (teamManager.getParticipants().contains(event.getPlayer()) && gameInProgress)
+        if (deadPlayers.containsKey(event.getPlayer().getName()))
         {
             returnCardToPlayer(event.getPlayer());
         }

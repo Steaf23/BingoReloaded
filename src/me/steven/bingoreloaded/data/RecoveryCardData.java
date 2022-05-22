@@ -28,6 +28,12 @@ public class RecoveryCardData
         BingoGameMode mode = BingoGameMode.fromDataString(data.getConfig().getString("gamemode"));
         CardSize size = CardSize.fromWidth(data.getConfig().getInt("size"));
 
+        if (teamManager.getActiveTeams().size() == 0)
+        {
+            BingoReloaded.print(ChatColor.RED + "Could not resume game, no teams have joined the last game?!");
+            return false;
+        }
+
         // add each team's card back
         ConfigurationSection cards = data.getConfig().getConfigurationSection("cards");
         if (cards == null) return false;
@@ -111,7 +117,6 @@ public class RecoveryCardData
 
     public static void markCardEnded(boolean value)
     {
-        BingoReloaded.print("ENDING GAME");
         data.getConfig().set("ended", value);
         data.saveConfig();
     }
