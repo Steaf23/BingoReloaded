@@ -32,6 +32,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import javax.annotation.Nullable;
+import java.io.ObjectInputFilter;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
@@ -61,7 +62,7 @@ public class BingoGame implements Listener
     {
         currentMode = BingoGameMode.REGULAR;
         currentSize = CardSize.X5;
-        currentKit = PlayerKit.NORMAL;
+        currentKit = ConfigData.getConfig().defaultKit;
         currentEffects = currentKit.defaultEffects;
 
         scoreboard = new BingoScoreboard(this);
@@ -117,7 +118,12 @@ public class BingoGame implements Listener
 
         teamManager.removeEmptyTeams();
         teamManager.initializeCards(masterCard);
-        givePlayerKits();
+
+        BingoReloaded.broadcast(ChatColor.GREEN + "Giving all participants Kits and Cards!");
+        Set<Player> players = teamManager.getParticipants();
+        players.forEach(this::givePlayerKit);
+        players.forEach(this::returnCardToPlayer);
+
         teleportPlayersToStart(world);
         givePlayersEffects();
 
@@ -183,22 +189,17 @@ public class BingoGame implements Listener
         return currentEffects;
     }
 
-    public void givePlayerKits()
+    public void givePlayerKit(Player p)
     {
-        BingoReloaded.broadcast(ChatColor.GREEN + "Giving all participants Kits and Cards!");
-        Set<Player> players = teamManager.getParticipants();
-        players.forEach(p ->
-        {
-            p.getInventory().clear();
-            p.closeInventory();
-            FlexibleColor teamColor = FlexibleColor.fromChatColor(teamManager.getTeamOfPlayer(p).team.getColor());
+        p.getInventory().clear();
+        p.closeInventory();
+        FlexibleColor teamColor = FlexibleColor.fromChatColor(teamManager.getTeamOfPlayer(p).team.getColor());
 
-            if (teamColor == null) return;
-            for(InventoryItem item : currentKit.getItems(teamColor))
-            {
-                p.getInventory().setItem(item.getSlot(), item);
-            }
-        });
+        if (teamColor == null) return;
+        for(InventoryItem item : currentKit.getItems(teamColor))
+        {
+            p.getInventory().setItem(item.getSlot(), item);
+        }
     }
 
     public void givePlayersEffects()
@@ -214,18 +215,15 @@ public class BingoGame implements Listener
     {
         takePlayerEffects(player);
 
-        if (teamManager.getParticipants().contains(player))
-        {
-            if (currentEffects.contains(EffectOptionFlags.NIGHT_VISION))
-                player.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, 100000, 1, false, false));
-            if (currentEffects.contains(EffectOptionFlags.WATER_BREATHING))
-                player.addPotionEffect(new PotionEffect(PotionEffectType.WATER_BREATHING, 100000, 1, false, false));
-            if (currentEffects.contains(EffectOptionFlags.FIRE_RESISTANCE))
-                player.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, 100000, 1, false, false));
+        if (currentEffects.contains(EffectOptionFlags.NIGHT_VISION))
+            player.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, 100000, 1, false, false));
+        if (currentEffects.contains(EffectOptionFlags.WATER_BREATHING))
+            player.addPotionEffect(new PotionEffect(PotionEffectType.WATER_BREATHING, 100000, 1, false, false));
+        if (currentEffects.contains(EffectOptionFlags.FIRE_RESISTANCE))
+            player.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, 100000, 1, false, false));
 
-            player.addPotionEffect(new PotionEffect(PotionEffectType.SATURATION, 2, 100, false, false));
-            player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 2, 100, false, false));
-        }
+        player.addPotionEffect(new PotionEffect(PotionEffectType.SATURATION, 2, 100, false, false));
+        player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 2, 100, false, false));
     }
 
     public void playerQuit(Player player)
@@ -302,8 +300,6 @@ public class BingoGame implements Listener
 
     public void teleportPlayerAfterDeath(Player player)
     {
-        givePlayerEffects(player);
-
         if (player == null) return;
         Location location = deadPlayers.get(player.getName());
         BingoReloaded.print("Death Location: " + location, player);
@@ -550,7 +546,15 @@ public class BingoGame implements Listener
             player.getInventory().remove(currentKit.cardItem.getAsStack());
 
         player.getInventory().setItem(8, currentKit.cardItem.getAsStack());
-        givePlayerEffects(player);
+
+        new BukkitRunnable()
+        {
+            @Override
+            public void run()
+            {
+                givePlayerEffects(player);
+            }
+        }.runTaskLater(BingoReloaded.getPlugin(BingoReloaded.class), ONE_SECOND);
     }
 
     private boolean isOceanBiome(Biome biome)

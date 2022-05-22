@@ -1,3 +1,9 @@
+# IMPORTANT NOTE!: TO UPDATE THIS FILE TO THE LATEST VERSION:
+# 1) MAKE A BACKUP AND DELETE THIS FILE.
+# 2) START THE PLUGIN TO GENERATE THE NEW FILE.
+# 3) RESTORE SETTINGS ACCORDING TO THE BACKUP FILE.
+# 4) RELOAD PLUGIN AND THAT'S IT
+
 # When the game starts everyone will be teleported in a random square radius
 #   between 0 and teleportMaxDistance blocks from 0,0. (no more than 1.000.000 blocks)
 teleportMaxDistance: 1000000
@@ -21,4 +27,9 @@ GoUpWand:
   downDistance: 5 # teleport down distance, watch out for the void ;)
   cooldown: 5.0 # item cooldown in seconds
 
-respawnWithKit: false
+# Decide what kit should be the default kit when loading the plugin:
+#   - (HARDCORE)
+#   - (NORMAL)
+#   - (OVERPOWERED)
+#   - (RELOADED)
+defaultKit: OVERPOWERED

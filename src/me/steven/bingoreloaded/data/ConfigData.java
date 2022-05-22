@@ -1,6 +1,7 @@
 package me.steven.bingoreloaded.data;
 
 import me.steven.bingoreloaded.BingoReloaded;
+import me.steven.bingoreloaded.player.PlayerKit;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.Plugin;
@@ -35,9 +36,6 @@ public class ConfigData
         }
     }
 
-    private final FileConfiguration config;
-    private static ConfigData INSTANCE;
-
     public final int teleportMaxDistance;
     public final PlayerTeleportStrategy playerTeleportStrategy;
     public final boolean teleportAfterDeath;
@@ -45,6 +43,9 @@ public class ConfigData
     public final int wandUp;
     public final int wandDown;
     public final double wandCooldown;
+    public final PlayerKit defaultKit;
+
+    private static ConfigData INSTANCE;
 
     public static ConfigData getConfig()
     {
@@ -60,7 +61,6 @@ public class ConfigData
 
     private ConfigData(FileConfiguration config)
     {
-        this.config = config;
         this.teleportMaxDistance = config.getInt("teleportMaxDistance");
         this.playerTeleportStrategy = PlayerTeleportStrategy.fromName(config.getString("playerTeleportStrategy"));
         this.teleportAfterDeath = config.getBoolean("teleportBackAfterDeathMessage");
@@ -68,5 +68,6 @@ public class ConfigData
         this.wandUp = config.getInt("GoUpWand.upDistance");
         this.wandDown = config.getInt("GoUpWand.downDistance");
         this.wandCooldown = config.getDouble("GoUpWand.cooldown");
+        this.defaultKit = PlayerKit.fromConfig(config.getString("defaultKit"));
     }
 }

@@ -51,8 +51,6 @@ public class BingoReloaded extends JavaPlugin
         {
             game.resume();
         }
-
-        this.saveDefaultConfig();
     }
 
     @Override

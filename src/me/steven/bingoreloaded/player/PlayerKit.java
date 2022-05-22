@@ -65,7 +65,6 @@ public enum PlayerKit
         {
             case NORMAL -> {
                 items = new ArrayList<>();
-                items.add(cardItem.inSlot(8));
                 items.add(helmet
                         .withEnchantment(Enchantment.WATER_WORKER, 1));
                 items.add(boots
@@ -80,7 +79,6 @@ public enum PlayerKit
             }
             case OVERPOWERED -> {
                 items = new ArrayList<>();
-                items.add(cardItem.inSlot(8));
                 items.add(wandItem.item.inSlot(7));
                 items.add(helmet
                         .withEnchantment(Enchantment.DURABILITY, 3)
@@ -106,7 +104,6 @@ public enum PlayerKit
             }
             case RELOADED -> {
                 items = new ArrayList<>();
-                items.add(cardItem.inSlot(8));
                 items.add(wandItem.item.inSlot(7));
                 items.add(helmet
                         .withEnchantment(Enchantment.DURABILITY, 3)
@@ -134,9 +131,21 @@ public enum PlayerKit
             }
             default -> {
                 items = new ArrayList<>();
-                items.add(cardItem.inSlot(8));
                 return items;
             }
         }
+    }
+
+    public static PlayerKit fromConfig(String name)
+    {
+        if (name == null)
+            return HARDCORE;
+        return switch (name.toLowerCase())
+                {
+                    case "normal" -> NORMAL;
+                    case "overpowered" -> OVERPOWERED;
+                    case "reloaded" -> RELOADED;
+                    default -> HARDCORE;
+                };
     }
 }
