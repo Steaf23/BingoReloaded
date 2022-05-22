@@ -44,6 +44,7 @@ public class ConfigData
     public final int wandDown;
     public final double wandCooldown;
     public final PlayerKit defaultKit;
+    public final int gracePeriod;
 
     private static ConfigData INSTANCE;
 
@@ -61,13 +62,14 @@ public class ConfigData
 
     private ConfigData(FileConfiguration config)
     {
-        this.teleportMaxDistance = config.getInt("teleportMaxDistance");
-        this.playerTeleportStrategy = PlayerTeleportStrategy.fromName(config.getString("playerTeleportStrategy"));
-        this.teleportAfterDeath = config.getBoolean("teleportBackAfterDeathMessage");
-        this.lobbySpawnHeight = config.getInt("lobbySpawnHeight");
-        this.wandUp = config.getInt("GoUpWand.upDistance");
-        this.wandDown = config.getInt("GoUpWand.downDistance");
-        this.wandCooldown = config.getDouble("GoUpWand.cooldown");
-        this.defaultKit = PlayerKit.fromConfig(config.getString("defaultKit"));
+        this.teleportMaxDistance = config.getInt("teleportMaxDistance", 1000000);
+        this.playerTeleportStrategy = PlayerTeleportStrategy.fromName(config.getString("playerTeleportStrategy", "ALL"));
+        this.teleportAfterDeath = config.getBoolean("teleportBackAfterDeathMessage", true);
+        this.lobbySpawnHeight = config.getInt("lobbySpawnHeight", 128);
+        this.wandUp = config.getInt("GoUpWand.upDistance", 75);
+        this.wandDown = config.getInt("GoUpWand.downDistance", 5);
+        this.wandCooldown = config.getDouble("GoUpWand.cooldown", 5.0);
+        this.defaultKit = PlayerKit.fromConfig(config.getString("defaultKit", "HARDCORE"));
+        this.gracePeriod = config.getInt("gracePeriod", 30);
     }
 }

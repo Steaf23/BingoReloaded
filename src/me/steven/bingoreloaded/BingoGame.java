@@ -224,6 +224,7 @@ public class BingoGame implements Listener
 
         player.addPotionEffect(new PotionEffect(PotionEffectType.SATURATION, 2, 100, false, false));
         player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 2, 100, false, false));
+        player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, ONE_SECOND * ConfigData.getConfig().gracePeriod, 100, false, false));
     }
 
     public void playerQuit(Player player)
@@ -423,14 +424,15 @@ public class BingoGame implements Listener
                 event.setCancelled(true);
                 if (event.getPlayer().isSneaking())
                 {
-                    teleportPlayerUp(event.getPlayer(), -5, 0);
+                    teleportPlayerUp(event.getPlayer(), -ConfigData.getConfig().wandDown, 0);
                 }
                 else
                 {
-                    teleportPlayerUp(event.getPlayer(), 75, 5);
+                    teleportPlayerUp(event.getPlayer(), ConfigData.getConfig().wandUp, 5);
                 }
 
                 event.getPlayer().playSound(event.getPlayer(), Sound.ENTITY_SHULKER_TELEPORT, 0.8f, 1.0f);
+                event.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, ONE_SECOND * 10, 100, false, false));
             }
             else
             {

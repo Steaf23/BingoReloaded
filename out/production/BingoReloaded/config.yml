@@ -33,3 +33,6 @@ GoUpWand:
 #   - (OVERPOWERED)
 #   - (RELOADED)
 defaultKit: OVERPOWERED
+
+# The period of time (in seconds) at the start of the game when a player is protected from any damage
+gracePeriod: 30

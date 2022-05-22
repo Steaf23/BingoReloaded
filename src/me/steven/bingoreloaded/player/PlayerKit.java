@@ -1,5 +1,6 @@
 package me.steven.bingoreloaded.player;
 
+import me.steven.bingoreloaded.data.ConfigData;
 import me.steven.bingoreloaded.gui.EffectOptionFlags;
 import me.steven.bingoreloaded.gui.EffectOptionsUI;
 import me.steven.bingoreloaded.item.InventoryItem;
@@ -26,7 +27,7 @@ public enum PlayerKit
             Material.WARPED_FUNGUS_ON_A_STICK,
             "" + ChatColor.DARK_PURPLE + ChatColor.ITALIC + ChatColor.BOLD + "The Go-Up-Wand",
             "Right-Click To Teleport Upwards!"
-    ).withEnchantment(Enchantment.DURABILITY, 3), 5000);
+    ).withEnchantment(Enchantment.DURABILITY, 3), (int)(ConfigData.getConfig().wandCooldown * 1000));
 
     public final InventoryItem cardItem = new InventoryItem(8,
             Material.MAP,
