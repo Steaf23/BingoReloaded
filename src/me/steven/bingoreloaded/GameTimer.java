@@ -1,5 +1,6 @@
 package me.steven.bingoreloaded;
 
+import me.steven.bingoreloaded.data.MessageSender;
 import org.bukkit.ChatColor;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -40,7 +41,7 @@ public class GameTimer
         }
         catch (IllegalStateException e)
         {
-            BingoReloaded.print(ChatColor.RED + "Timer couldn't be stopped since it never started!");
+            MessageSender.log(ChatColor.RED + "Timer couldn't be stopped since it never started!");
         }
     }
 

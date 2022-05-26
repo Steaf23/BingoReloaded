@@ -1,13 +1,12 @@
 package me.steven.bingoreloaded.gui.cards;
 
+import me.steven.bingoreloaded.data.MessageSender;
 import me.steven.bingoreloaded.item.BingoItem;
-import me.steven.bingoreloaded.BingoReloaded;
 import me.steven.bingoreloaded.gui.AbstractGUIInventory;
 import me.steven.bingoreloaded.item.InventoryItem;
 import me.steven.bingoreloaded.data.BingoItemData;
 import me.steven.bingoreloaded.cardcreator.CardEntry;
 import me.steven.bingoreloaded.player.BingoTeam;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
@@ -94,7 +93,7 @@ public class BingoCard extends AbstractGUIInventory
 
     public boolean hasBingo(BingoTeam team)
     {
-        BingoReloaded.print("Your team (" + team.getName() + ChatColor.RESET + ") has collected " + getCompleteCount(team) + " items!", team);
+        MessageSender.send("game.item.team_completed", team, List.of(team.getName(), String.format("%d", getCompleteCount(team))));
         //check for rows and columns
         for (int y = 0; y < size.cardSize; y++)
         {

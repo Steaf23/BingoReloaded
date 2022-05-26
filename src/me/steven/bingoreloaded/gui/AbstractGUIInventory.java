@@ -1,6 +1,7 @@
 package me.steven.bingoreloaded.gui;
 
 import me.steven.bingoreloaded.BingoReloaded;
+import me.steven.bingoreloaded.data.MessageSender;
 import me.steven.bingoreloaded.item.InventoryItem;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -43,7 +44,7 @@ public abstract class AbstractGUIInventory implements Listener
 
         Bukkit.getPluginManager().registerEvents(this, plugin);
 
-        inventory = Bukkit.createInventory(null, size, BingoReloaded.PRINT_PREFIX + ChatColor.DARK_RED + title);
+        inventory = Bukkit.createInventory(null, size, MessageSender.PRINT_PREFIX + ChatColor.DARK_RED + title);
     }
 
     @EventHandler
