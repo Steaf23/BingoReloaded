@@ -1,7 +1,6 @@
 package me.steven.bingoreloaded.data;
 
 import me.steven.bingoreloaded.BingoGameMode;
-import me.steven.bingoreloaded.BingoReloaded;
 import me.steven.bingoreloaded.gui.cards.BingoCard;
 import me.steven.bingoreloaded.gui.cards.CardBuilder;
 import me.steven.bingoreloaded.gui.cards.CardSize;
@@ -24,13 +23,13 @@ public class RecoveryCardData
         boolean success = false;
         if (data.getConfig().getBoolean("ended")) return false;
 
-        BingoReloaded.print(ChatColor.GREEN + "The last game did not finish, attempting to recover bingo card...");
+        MessageSender.log(ChatColor.GREEN + "The last game did not finish, attempting to recover bingo card...");
         BingoGameMode mode = BingoGameMode.fromDataString(data.getConfig().getString("gamemode"));
         CardSize size = CardSize.fromWidth(data.getConfig().getInt("size"));
 
         if (teamManager.getActiveTeams().size() == 0)
         {
-            BingoReloaded.print(ChatColor.RED + "Could not resume game, no teams have joined the last game?!");
+            MessageSender.log(ChatColor.RED + "Could not resume game, no teams have joined the last game?!");
             return false;
         }
 

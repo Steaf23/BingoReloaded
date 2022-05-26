@@ -1,7 +1,7 @@
 package me.steven.bingoreloaded.player;
 
 import me.steven.bingoreloaded.BingoGame;
-import me.steven.bingoreloaded.BingoReloaded;
+import me.steven.bingoreloaded.data.MessageSender;
 import me.steven.bingoreloaded.gui.AbstractGUIInventory;
 import me.steven.bingoreloaded.gui.ItemPickerUI;
 import me.steven.bingoreloaded.gui.cards.BingoCard;
@@ -50,7 +50,7 @@ public class TeamManager
     {
         if (game.isGameInProgress())
         {
-            BingoReloaded.print(ChatColor.RED + "You cannot join an ongoing game!", player);
+            MessageSender.send("game.team.no_join", player, null, ChatColor.RED);
             return;
         }
 
@@ -85,7 +85,7 @@ public class TeamManager
         Team team = scoreboard.getTeam(teamName);
         if (team == null)
         {
-            BingoReloaded.broadcast(ChatColor.RED + "Could not add you to team '" + teamName + "', since it just doesn't exist!");
+            MessageSender.send("game.team.no_team", player, List.of(teamName), ChatColor.RED);
             return;
         }
         removePlayerFromAllTeams(player);
@@ -93,7 +93,7 @@ public class TeamManager
         activateTeam(team);
 
         team.addEntry(player.getName());
-        BingoReloaded.print("You successfully joined team " + team.getColor() + team.getDisplayName(), player);
+        MessageSender.send("game.team.join", player, List.of(teamName), ChatColor.GREEN);
     }
 
     public void removePlayerFromAllTeams(Player player)
@@ -240,7 +240,6 @@ public class TeamManager
             }
         }
 
-        BingoReloaded.broadcast(ChatColor.GREEN + "Successfully created " + scoreboard.getTeams().size() + " teams");
-        BingoReloaded.print(ChatColor.GREEN + "Successfully created " + scoreboard.getTeams().size() + " teams");
+        MessageSender.log(ChatColor.GREEN + "Successfully created " + scoreboard.getTeams().size() + " teams");
     }
 }

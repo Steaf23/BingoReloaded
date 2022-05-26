@@ -1,9 +1,8 @@
 package me.steven.bingoreloaded.command;
 
-import com.sun.security.auth.login.ConfigFile;
 import me.steven.bingoreloaded.BingoGame;
-import me.steven.bingoreloaded.BingoReloaded;
 import me.steven.bingoreloaded.data.ConfigData;
+import me.steven.bingoreloaded.data.MessageSender;
 import me.steven.bingoreloaded.gui.BingoOptionsUI;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -11,6 +10,8 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
+
+import java.util.List;
 
 public class BingoCommand implements CommandExecutor
 {
@@ -66,17 +67,17 @@ public class BingoCommand implements CommandExecutor
                     else
                     {
                         if (commandSender instanceof Player p)
-                            BingoReloaded.print(ChatColor.RED + "Cannot start a death match when there is no game active!", p);
+                            MessageSender.send("command.bingo.no_deathmatch", p, null, ChatColor.RED);
                         else
-                            BingoReloaded.print(ChatColor.RED + "Cannot start a death match when there is no game active!");
+                            MessageSender.send("command.bingo.no_deathmatch", null, ChatColor.RED);
                     }
                     break;
 
                 default:
                     if (commandSender instanceof Player p)
-                        BingoReloaded.print(ChatColor.RED + "Usage: /bingo [start|end|leave|getcard|deathmatch]", p);
+                        MessageSender.send("command.use", p, List.of("/bingo [start|end|leave|getcard|deathmatch]"), ChatColor.RED);
                     else
-                        BingoReloaded.print(ChatColor.RED + "Usage: /bingo [start|end|leave|getcard|deathmatch]");
+                        MessageSender.send("command.use", List.of("/bingo [start|end|leave|getcard|deathmatch]"), ChatColor.RED);
                     break;
             }
         }
