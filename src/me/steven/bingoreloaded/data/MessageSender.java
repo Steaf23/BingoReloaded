@@ -45,7 +45,7 @@ public class MessageSender
     public static void send(String translatePath, @NonNull Player player, @Nullable List<String> params, @Nullable ChatColor... modifiers)
     {
         String translatedString = TranslationData.get(translatePath);
-        String[] messageParts = translatedString.split("(\\{[^{}]*})");
+        String[] messageParts = translatedString.split("(%[^%]*%)");
 
         TextComponent message = new TextComponent(PRINT_PREFIX);
         if (params != null)
