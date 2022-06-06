@@ -3,25 +3,15 @@ version: 1.1.1 # the plugin's version
 author: Steven
 main: me.steven.bingoreloaded.BingoReloaded
 api-version: 1.18
-prefix: I am prefix!
 
 permissions:
   bingo.admin:
     description: Bingo admins can create and start games of Bingo, as well as edit game settings in the /bingo menu
-  bingo.card.edit:
-    description: ""
-  bingo.card.remove:
-    description: ""
+    default: op
 
 commands:
   bingo:
     description: Used to open the settings menu as well as to start and end the game.
-  bingo start:
-    description: start the game
-  itemlist edit:
-    description: edit item list
-  itemlist create:
-    description: create item list
   card:
     description: Used to edit and create cards containing itemlists where each list as it's own frequency.
   itemlist:
