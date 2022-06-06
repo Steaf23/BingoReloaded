@@ -2,7 +2,6 @@ package me.steven.bingoreloaded.gui;
 
 import me.steven.bingoreloaded.BingoGame;
 import me.steven.bingoreloaded.BingoReloaded;
-import me.steven.bingoreloaded.data.MessageSender;
 import me.steven.bingoreloaded.item.InventoryItem;
 import me.steven.bingoreloaded.data.BingoCardsData;
 import me.steven.bingoreloaded.cardcreator.CardEntry;
@@ -126,7 +125,7 @@ public class BingoOptionsUI extends AbstractGUIInventory
     {
         if (card == null) return;
 
-        MessageSender.send("game.start.card", List.of(card.getName()));
+        BingoReloaded.print("'" + card.getName() + "' selected as the playing Bingo card!", player);
         game.card = card;
     }
 }

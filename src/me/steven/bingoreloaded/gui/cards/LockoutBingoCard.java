@@ -1,6 +1,6 @@
 package me.steven.bingoreloaded.gui.cards;
 
-import me.steven.bingoreloaded.data.MessageSender;
+import me.steven.bingoreloaded.BingoReloaded;
 import me.steven.bingoreloaded.item.BingoItem;
 import me.steven.bingoreloaded.item.InventoryItem;
 import me.steven.bingoreloaded.player.BingoTeam;
@@ -8,8 +8,6 @@ import me.steven.bingoreloaded.player.TeamManager;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-
-import java.util.List;
 
 public class LockoutBingoCard extends BingoCard
 {
@@ -67,7 +65,7 @@ public class LockoutBingoCard extends BingoCard
 
     public void dropTeam(BingoTeam team)
     {
-        MessageSender.send("game.team.dropped", List.of(team.getColor() + team.getName()));
+        BingoReloaded.broadcast("Team " + team.getColor() + team.getName() + " cannot win anymore, they are out of the game!");
         team.outOfTheGame = true;
         for (BingoItem item : items)
         {

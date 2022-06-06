@@ -23,14 +23,7 @@ public class YMLDataManager
         this.plugin = Bukkit.getPluginManager().getPlugin(BingoReloaded.NAME);
         this.fileName = fileName;
 
-        try
-        {
-            saveDefaultConfig();
-        }
-        catch(IllegalArgumentException exc)
-        {
-            MessageSender.log(exc.getMessage());
-        }
+        saveDefaultConfig();
     }
 
     public void reloadConfig()
@@ -64,7 +57,7 @@ public class YMLDataManager
         }
         catch (IOException e)
         {
-            MessageSender.log(e.getMessage());
+            BingoReloaded.print(e.getMessage());
         }
     }
 

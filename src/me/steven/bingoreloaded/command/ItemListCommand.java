@@ -1,6 +1,6 @@
 package me.steven.bingoreloaded.command;
 
-import me.steven.bingoreloaded.data.MessageSender;
+import me.steven.bingoreloaded.BingoReloaded;
 import me.steven.bingoreloaded.gui.ItemPickerUI;
 import me.steven.bingoreloaded.item.InventoryItem;
 import me.steven.bingoreloaded.data.BingoItemData;
@@ -31,27 +31,26 @@ public class ItemListCommand implements CommandExecutor
             switch (args[0])
             {
                 case "create":
-                    if (!(commandSender instanceof Player p))
-                        break;
                     if (args.length < 2)
                     {
-                        MessageSender.send("command.itemlist.no_name", p, List.of("/itemlist create <list_name>"), ChatColor.RED);
+                        BingoReloaded.broadcast(ChatColor.RED + "Please provide item list name: /itemlist create <list_name>");
                         break;
                     }
-
-                    editList(args[1], p);
+                    if (commandSender instanceof Player p)
+                        editList(args[1], p);
                     break;
 
                 case "edit":
-                    if (!(commandSender instanceof Player p))
-                        break;
                     if (args.length < 2)
                     {
-                        MessageSender.send("command.itemlist.no_name", p, List.of("/itemlist edit <list_name>"), ChatColor.RED);
+                        BingoReloaded.broadcast(ChatColor.RED + "Please provide item list name: /itemlist edit <list_name>");
                         break;
                     }
+                    if (commandSender instanceof Player p)
+                        editList(args[1], p);
+                    break;
 
-                    editList(args[1], p);
+                case "view":
                     break;
 
                 case "remove":
@@ -59,37 +58,38 @@ public class ItemListCommand implements CommandExecutor
                     {
                         if (args.length < 2)
                         {
-                            MessageSender.send("command.itemlist.no_name", p, List.of("/itemlist remove <list_name>"), ChatColor.RED);
+                            BingoReloaded.print(ChatColor.RED + "Please provide item list name: /itemlist remove <list_name>", p);
                             break;
                         }
 
                         if (BingoItemData.removeItemList(args[1]))
-                            MessageSender.send("command.itemlist.removed", p, List.of(args[1]), ChatColor.RED);
+                            BingoReloaded.print("Item list '" + args[1] + "' successfully removed!", p);
                         else
-                            MessageSender.send("command.itemlist.no_remove", p, List.of(args[1]), ChatColor.RED);
+                            BingoReloaded.print("Item list couldn't be found, make sure its spelled correctly!", p);
                         break;
                     }
                     else if (commandSender instanceof ConsoleCommandSender)
                     {
                         if (args.length < 2)
                         {
-                            MessageSender.log(ChatColor.RED + "Please provide item list name: /itemlist remove <item_list>");
+                            BingoReloaded.print(ChatColor.RED + "Please provide item list name: /itemlist remove <item_list>");
                             break;
                         }
 
                         if (BingoItemData.removeItemList(args[1]))
-                            MessageSender.log("Item list '" + args[1] + "' successfully removed!");
+                            BingoReloaded.print("Item list '" + args[1] + "' successfully removed!");
                         else
-                            MessageSender.log("Item list couldn't be found, make sure its spelled correctly!");
+                            BingoReloaded.print("Item list couldn't be found, make sure its spelled correctly!");
                         break;
                     }
+
                     break;
 
                 default:
                     if (commandSender instanceof Player player)
-                        MessageSender.send("command.usage", player, List.of("/itemlist [create|edit|remove]"), ChatColor.RED);
+                        BingoReloaded.print(ChatColor.RED + "Usage: /itemlist [create|edit|remove]", player);
                     else
-                        MessageSender.log(ChatColor.RED + "Usage: /itemlist [create|edit|remove]");
+                        BingoReloaded.print(ChatColor.RED + "Usage: /itemlist [create|edit|remove]");
                     break;
             }
         }

@@ -1,7 +1,6 @@
 package me.steven.bingoreloaded.player;
 
 import me.steven.bingoreloaded.BingoReloaded;
-import me.steven.bingoreloaded.data.MessageSender;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -70,19 +69,19 @@ public class TeamChat implements Listener, CommandExecutor
         {
             if (!teamManager.getParticipants().contains(p))
             {
-                MessageSender.send("game.team.chat_off", p, null, ChatColor.RED);
+                BingoReloaded.print(ChatColor.RED + "Can't toggle team chat since you aren't in a team!");
                 return false;
             }
 
             if (enabledPlayers.contains(p))
             {
                 enabledPlayers.remove(p);
-                MessageSender.send("game.team.chat_off", p, List.of("/btc"), ChatColor.RED);
+                BingoReloaded.print(ChatColor.RED + "Disabled team chat, use /btc to enable it again.", p);
             }
             else
             {
                 enabledPlayers.add(p);
-                MessageSender.send("game.team.chat_on", p, List.of("/btc"), ChatColor.RED);
+                BingoReloaded.print(ChatColor.GREEN + "Enabled team chat, use /btc to disable it.", p);
             }
         }
         return false;

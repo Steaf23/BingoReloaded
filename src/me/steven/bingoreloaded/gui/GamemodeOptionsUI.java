@@ -3,15 +3,12 @@ package me.steven.bingoreloaded.gui;
 import me.steven.bingoreloaded.BingoGame;
 import me.steven.bingoreloaded.BingoGameMode;
 import me.steven.bingoreloaded.BingoReloaded;
-import me.steven.bingoreloaded.data.MessageSender;
 import me.steven.bingoreloaded.gui.cards.CardSize;
 import me.steven.bingoreloaded.item.InventoryItem;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
-
-import java.util.List;
 
 public class GamemodeOptionsUI extends AbstractGUIInventory
 {
@@ -48,26 +45,26 @@ public class GamemodeOptionsUI extends AbstractGUIInventory
 
         if (slotClicked == options[0].getSlot() || slotClicked == options[3].getSlot())
         {
-            MessageSender.send("game.settings.regular_selected", List.of(BingoGameMode.REGULAR.name), ChatColor.GREEN);
+            BingoReloaded.broadcast(ChatColor.GREEN + "Selected " + BingoGameMode.REGULAR.name + ChatColor.GREEN + " Bingo. Complete one line to win (horizontal, vertical or diagonal).");
         }
         else if (slotClicked == options[1].getSlot() || slotClicked == options[4].getSlot())
         {
-            MessageSender.send("game.settings.lockout_selected", List.of(BingoGameMode.REGULAR.name), ChatColor.GREEN);
+            BingoReloaded.broadcast(ChatColor.GREEN + "Selected " + BingoGameMode.LOCKOUT.name + ChatColor.GREEN + " Bingo. Compete to complete the majority of the card to win!");
             chosenMode = BingoGameMode.LOCKOUT;
         }
         else if (slotClicked == options[2].getSlot() || slotClicked == options[5].getSlot())
         {
-            MessageSender.send("game.settings.complete_selected", List.of(BingoGameMode.REGULAR.name), ChatColor.GREEN);
+            BingoReloaded.broadcast(ChatColor.GREEN + "Selected " + BingoGameMode.COMPLETE.name + ChatColor.GREEN + " Bingo. Collect all items on the card to win!");
             chosenMode = BingoGameMode.COMPLETE;
         }
 
         if (slotClicked == options[0].getSlot() || slotClicked == options[1].getSlot() || slotClicked == options[2].getSlot())
         {
-            MessageSender.send("game.settings.cardsize", List.of("5x5"), ChatColor.GREEN);
+            BingoReloaded.broadcast(ChatColor.GREEN + "Chosen card size: 5x5");
         }
         else if (slotClicked == options[3].getSlot() || slotClicked == options[4].getSlot() || slotClicked == options[5].getSlot())
         {
-            MessageSender.send("game.settings.cardsize", List.of("3x3"), ChatColor.GREEN);
+            BingoReloaded.broadcast(ChatColor.GREEN + "Chosen card size: 3x3");
             chosenSize = CardSize.X3;
         }
 
