@@ -76,15 +76,25 @@ public class BingoOptionsUI extends AbstractGUIInventory
     public static void open(Player player, BingoGame gameInstance)
     {
         BingoOptionsUI options = new BingoOptionsUI(gameInstance);
-        options.fillOptions(new InventoryItem[]{
-                options.menuItems.get("join"),
-                options.menuItems.get("leave"),
-                options.menuItems.get("kit"),
-                options.menuItems.get("gamemode"),
-                options.menuItems.get("card"),
-                options.menuItems.get("start"),
-                options.menuItems.get("effects"),
-                });
+        if (player.hasPermission("bingo.settings"))
+        {
+            options.fillOptions(new InventoryItem[]{
+                    options.menuItems.get("join"),
+                    options.menuItems.get("leave"),
+                    options.menuItems.get("kit"),
+                    options.menuItems.get("gamemode"),
+                    options.menuItems.get("card"),
+                    options.menuItems.get("start"),
+                    options.menuItems.get("effects"),
+            });
+        }
+        else if (player.hasPermission("bingo.player"))
+        {
+            options.fillOptions(new InventoryItem[]{
+                    options.menuItems.get("join").inSlot(20),
+                    options.menuItems.get("leave").inSlot(24),
+            });
+        }
         options.open(player);
     }
 
