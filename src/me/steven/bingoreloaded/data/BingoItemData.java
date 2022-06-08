@@ -24,7 +24,7 @@ public class BingoItemData
         if (data.getConfig().get(category) == null) return result;
 
         data.getConfig().getStringList(category).forEach(name ->
-                result.add(Material.getMaterial(name)));
+                 result.add(Material.getMaterial(name)));
 
         return result;
     }
