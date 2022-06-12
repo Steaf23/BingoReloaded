@@ -1,8 +1,12 @@
 package me.steven.bingoreloaded.gui.cards;
 
+import me.steven.bingoreloaded.item.BingoItem;
 import me.steven.bingoreloaded.item.InventoryItem;
 import me.steven.bingoreloaded.player.BingoTeam;
 import org.bukkit.Material;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class CompleteBingoCard extends BingoCard
 {
@@ -24,7 +28,12 @@ public class CompleteBingoCard extends BingoCard
     public CompleteBingoCard copy()
     {
         CompleteBingoCard card = new CompleteBingoCard(this.size);
-        card.items = this.items;
+        List<BingoItem> newItems = new ArrayList<>();
+        for (BingoItem item : items)
+        {
+            newItems.add(new BingoItem(item.item));
+        }
+        card.items = newItems;
         return card;
     }
 }
