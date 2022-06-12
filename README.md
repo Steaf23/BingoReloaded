@@ -1,12 +1,14 @@
-# **Bingo**- *Reloaded* 1.0.0
-A Minecraft 1.18 Spigot Plug-in, take a look at the card viewer!
+# **Bingo**- *Reloaded* 1.2.0
+A Minecraft 1.18/1.19+ Spigot Plug-in, take a look at the card viewer!
 ![card](https://user-images.githubusercontent.com/21062141/155626593-fa054f3c-98c2-4e70-9ef6-404153224155.png)
 ***
 Thanks for looking at my Bingo Plug-in!
 
 This plug-in is written for Minecraft version 1.18 and up, inspired by https://www.spigotmc.org/resources/bingo-2-2-for-1-18.92134/.
 
-This plug-in is intended for use in closed groups, i.e. with your friends on your own server. 
+For now atleast, this plug-in is intended for use in closed groups, i.e. with your friends on your own server. 
+
+I created a Discord server where you can post your concerns or requests, join it [here](https://discord.gg/AzZNxPRNPf)
 
 To get started, use the `/bingo` command, after which a menu will open taht you can use to change the settings. To actually start the game, use the command `/bingo start`. To end a game prematurely, the `/bingo end` command can be used. Finally if during the game your Bingo card has been lost, use `/bingo getcard` to get it back!
 When playing the game you can complete items from the card by throwing them out of your inventory (using q when holding an item or dragging them with the mouse outisde of the inventory slots).

@@ -30,39 +30,53 @@ public class BingoCommand implements CommandExecutor
             switch (args[0])
             {
                 case "leave":
-                    if (!(commandSender instanceof Player player)) return false;
+                    if (!(commandSender instanceof Player player && player.hasPermission("bingo.player"))) return false;
 
                     gameInstance.playerQuit(player);
                     break;
 
                 case "start":
-                    gameInstance.start();
+                    if (commandSender instanceof Player p && p.hasPermission("bingo.settings"))
+                    {
+                        gameInstance.start();
+                        return true;
+                    }
                     break;
 
                 case "end":
+                    if (!(commandSender instanceof Player p) || p.hasPermission("bingo.settings"))
                     gameInstance.end();
                     break;
 
                 case "getcard":
-                    if (commandSender instanceof Player p)
+                    if (commandSender instanceof Player p && p.hasPermission("bingo.player"))
                     {
                         gameInstance.returnCardToPlayer(p);
+                        return true;
                     }
                     break;
 
                 case "back":
-                    if (commandSender instanceof Player p)
+                    if (commandSender instanceof Player p && p.hasPermission("bingo.player"))
                     {
                         if (ConfigData.getConfig().teleportAfterDeath)
                         {
                             gameInstance.teleportPlayerAfterDeath(p);
+                            return true;
                         }
                     }
                     break;
+
                 case "deathmatch":
+                    if (commandSender instanceof Player p && !p.hasPermission("bingo.settings"))
+                    {
+                        return false;
+                    }
+
                     if (gameInstance.isGameInProgress())
                     {
                         gameInstance.startDeathMatch(3);
+                        return true;
                     }
                     else
                     {

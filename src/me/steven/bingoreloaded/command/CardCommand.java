@@ -19,6 +19,11 @@ public class CardCommand implements CommandExecutor
     @Override
     public boolean onCommand(@NonNull CommandSender commandSender, @NonNull Command command, @NonNull String name, String[] args)
     {
+        if (commandSender instanceof Player p && !p.hasPermission("bingo.manager"))
+        {
+            return false;
+        }
+
         if (args.length > 0)
         {
             switch (args[0])
