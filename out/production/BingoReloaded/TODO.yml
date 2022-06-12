@@ -2,8 +2,4 @@ translations!
 
 name of tab doesnt consistently have the team's color (probably because of the scoreboard switching)
 
-lockout is still broken!
-
 fix error when clicking empty space in itempicker ui
-
-create a way to switch teams mid game so testing features where multiple teams are required is easier
