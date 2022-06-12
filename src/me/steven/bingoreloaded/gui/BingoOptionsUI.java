@@ -20,7 +20,7 @@ public class BingoOptionsUI extends AbstractGUIInventory
 {
     private final BingoGame game;
 
-    private final Map<String, InventoryItem> menuItems = new HashMap<>(){{
+    private final Map<String, InventoryItem> settingsMenuItems = new HashMap<>(){{
         put("join", new InventoryItem(GUIBuilder5x9.OptionPositions.SEVEN_CENTER1.positions[0],
                 Material.WHITE_GLAZED_TERRACOTTA, TITLE_PREFIX + "Join A Team"));
         put("leave", new InventoryItem(GUIBuilder5x9.OptionPositions.SEVEN_CENTER1.positions[1],
@@ -37,37 +37,58 @@ public class BingoOptionsUI extends AbstractGUIInventory
                 Material.POTION, TITLE_PREFIX + "Change Player Effects"));
     }};
 
+    private final Map<String, InventoryItem> playerMenuItems = new HashMap<>(){{
+        put("join", new InventoryItem(GUIBuilder5x9.OptionPositions.TWO_HORIZONTAL_WIDE.positions[0],
+                Material.WHITE_GLAZED_TERRACOTTA, TITLE_PREFIX + "Join A Team"));
+        put("leave", new InventoryItem(GUIBuilder5x9.OptionPositions.TWO_HORIZONTAL_WIDE.positions[1],
+                Material.BARRIER, TITLE_PREFIX + "Quit Bingo"));
+    }};
+
     @Override
     public void delegateClick(InventoryClickEvent event, int slotClicked, Player player)
     {
-        if (slotClicked == menuItems.get("join").getSlot())
+        if (!player.hasPermission("bingo.settings"))
+        {
+            if (slotClicked == playerMenuItems.get("join").getSlot())
+            {
+                game.getTeamManager().openTeamSelector(player, this);
+            }
+            else if (slotClicked == playerMenuItems.get("leave").getSlot())
+            {
+                game.playerQuit(player);
+            }
+            return;
+        }
+
+
+        if (slotClicked == settingsMenuItems.get("join").getSlot())
         {
             game.getTeamManager().openTeamSelector(player, this);
         }
-        else if (slotClicked == menuItems.get("leave").getSlot())
+        else if (slotClicked == settingsMenuItems.get("leave").getSlot())
         {
             game.playerQuit(player);
         }
-        else if (slotClicked == menuItems.get("kit").getSlot())
+        else if (slotClicked == settingsMenuItems.get("kit").getSlot())
         {
             KitOptionsUI kitSelector = new KitOptionsUI(this, game);
             kitSelector.open(player);
         }
-        else if (slotClicked == menuItems.get("gamemode").getSlot())
+        else if (slotClicked == settingsMenuItems.get("gamemode").getSlot())
         {
             GamemodeOptionsUI gamemodeSelector = new GamemodeOptionsUI(this, game);
             gamemodeSelector.open(player);
         }
-        else if (slotClicked == menuItems.get("card").getSlot())
+        else if (slotClicked == settingsMenuItems.get("card").getSlot())
         {
             openCardPicker(player);
         }
-        else if (slotClicked == menuItems.get("effects").getSlot())
+        else if (slotClicked == settingsMenuItems.get("effects").getSlot())
         {
             EffectOptionsUI effectSelector = new EffectOptionsUI(this, game);
             effectSelector.open(player);
         }
-        else if (slotClicked == menuItems.get("start").getSlot())
+        else if (slotClicked == settingsMenuItems.get("start").getSlot())
         {
             game.start();
         }
@@ -79,20 +100,20 @@ public class BingoOptionsUI extends AbstractGUIInventory
         if (player.hasPermission("bingo.settings"))
         {
             options.fillOptions(new InventoryItem[]{
-                    options.menuItems.get("join"),
-                    options.menuItems.get("leave"),
-                    options.menuItems.get("kit"),
-                    options.menuItems.get("gamemode"),
-                    options.menuItems.get("card"),
-                    options.menuItems.get("start"),
-                    options.menuItems.get("effects"),
+                    options.settingsMenuItems.get("join"),
+                    options.settingsMenuItems.get("leave"),
+                    options.settingsMenuItems.get("kit"),
+                    options.settingsMenuItems.get("gamemode"),
+                    options.settingsMenuItems.get("card"),
+                    options.settingsMenuItems.get("start"),
+                    options.settingsMenuItems.get("effects"),
             });
         }
         else if (player.hasPermission("bingo.player"))
         {
             options.fillOptions(new InventoryItem[]{
-                    options.menuItems.get("join").inSlot(20),
-                    options.menuItems.get("leave").inSlot(24),
+                    options.playerMenuItems.get("join").inSlot(20),
+                    options.playerMenuItems.get("leave").inSlot(24),
             });
         }
         options.open(player);

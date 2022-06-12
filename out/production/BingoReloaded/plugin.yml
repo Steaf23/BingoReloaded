@@ -9,8 +9,8 @@ permissions:
     description: Access all commands and features.
     default: op
     children:
-      bingo.settings: true
-      bingo.manager: true
+      bingo.settings: true # used for accessing all settings in ./bingo
+      bingo.manager: true # used to create and remove cards and item list in the card creator
   bingo.player:
     description: Players can join teams and play games.
     default: true
@@ -19,16 +19,16 @@ commands:
   bingo:
     permission: bingo.player
     description: Used to open the settings menu as well as to start and end the game.
-    permission-message: You don't have permission to use this command!
+    permission-message: §CYou don't have permission to use this command!
   card:
     permission: bingo.manager
     description: Used to edit and create cards containing itemlists where each list as it's own frequency.
-    permission-message: You don't have permission to use this command, you need to be atleast a bingo manager!
+    permission-message: §CYou don't have permission to use this command, you need to be atleast a bingo manager!
   itemlist:
     permission: bingo.manager
     description: Used to edit and create lists containing items to be used in bingo cards.
-    permission-message: You don't have permission to use this command, you need to be atleast a bingo manager!
+    permission-message: §CYou don't have permission to use this command, you need to be atleast a bingo manager!
   btc:
     permission: bingo.player
     description: Used to toggle team chat when a game is active
-    permission-message: You don't have permission to use this command!
+    permission-message: §CYou don't have permission to use this command!
