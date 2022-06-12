@@ -5,6 +5,7 @@ import me.steven.bingoreloaded.BingoGame;
 import me.steven.bingoreloaded.BingoReloaded;
 import me.steven.bingoreloaded.data.ConfigData;
 import me.steven.bingoreloaded.gui.BingoOptionsUI;
+import me.steven.bingoreloaded.player.BingoTeam;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;

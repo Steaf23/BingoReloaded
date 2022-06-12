@@ -108,6 +108,7 @@ public class BingoGame implements Listener
             card = BingoCardsData.getOrCreateCard("default_card");
         }
 
+        teamManager.removeEmptyTeams(); // remove empty teams before initializing cards
         gameInProgress = true;
         BingoCard masterCard = CardBuilder.fromMode(currentMode, currentSize, teamManager);
         masterCard.generateCard(card);
@@ -116,7 +117,6 @@ public class BingoGame implements Listener
         world.setStorm(false);
         world.setTime(1000);
 
-        teamManager.removeEmptyTeams();
         teamManager.initializeCards(masterCard);
 
         BingoReloaded.broadcast(ChatColor.GREEN + "Giving all participants Kits and Cards!");
