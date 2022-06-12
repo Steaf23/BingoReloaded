@@ -1,6 +1,5 @@
 package me.steven.bingoreloaded.command;
 
-import com.sun.security.auth.login.ConfigFile;
 import me.steven.bingoreloaded.BingoGame;
 import me.steven.bingoreloaded.BingoReloaded;
 import me.steven.bingoreloaded.data.ConfigData;

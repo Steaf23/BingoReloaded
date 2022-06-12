@@ -1,7 +1,7 @@
 package me.steven.bingoreloaded.gui.cards;
 
 import me.steven.bingoreloaded.BingoReloaded;
-import me.steven.bingoreloaded.item.BingoItem;
+import me.steven.bingoreloaded.item.BingoCardItem;
 import me.steven.bingoreloaded.item.InventoryItem;
 import me.steven.bingoreloaded.player.BingoTeam;
 import me.steven.bingoreloaded.player.TeamManager;
@@ -67,7 +67,7 @@ public class LockoutBingoCard extends BingoCard
     {
         BingoReloaded.broadcast("Team " + team.getColor() + team.getName() + " cannot win anymore, they are out of the game!");
         team.outOfTheGame = true;
-        for (BingoItem item : items)
+        for (BingoCardItem item : items)
         {
             if (item.getWhoCompleted().equals(team))
             {

@@ -1,13 +1,9 @@
 package me.steven.bingoreloaded.cardcreator;
 
 import me.steven.bingoreloaded.data.BingoItemData;
-import me.steven.bingoreloaded.item.BingoItem;
 import org.bukkit.Material;
-import org.bukkit.inventory.RecipeChoice;
 
-import java.sql.Array;
 import java.util.*;
-import java.util.random.RandomGenerator;
 
 public class CardEntry
 {

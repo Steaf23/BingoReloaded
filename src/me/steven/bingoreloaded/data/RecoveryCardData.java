@@ -2,10 +2,11 @@ package me.steven.bingoreloaded.data;
 
 import me.steven.bingoreloaded.BingoGameMode;
 import me.steven.bingoreloaded.BingoReloaded;
+import me.steven.bingoreloaded.criteria.ItemCriteria;
 import me.steven.bingoreloaded.gui.cards.BingoCard;
 import me.steven.bingoreloaded.gui.cards.CardBuilder;
 import me.steven.bingoreloaded.gui.cards.CardSize;
-import me.steven.bingoreloaded.item.BingoItem;
+import me.steven.bingoreloaded.item.BingoCardItem;
 import me.steven.bingoreloaded.player.BingoTeam;
 import me.steven.bingoreloaded.player.TeamManager;
 import org.bukkit.ChatColor;
@@ -55,7 +56,7 @@ public class RecoveryCardData
         if (itemNames == null) return false;
         if (itemNames.size() != card.size.fullCardSize) return false;
 
-        List<BingoItem> items = new ArrayList<>();
+        List<BingoCardItem> items = new ArrayList<>();
         for (Object entry : itemNames)
         {
             String itemName = "";
@@ -66,7 +67,7 @@ public class RecoveryCardData
                 itemName = (String) mapEntry.get();
             }
 
-            BingoItem item = new BingoItem(Material.getMaterial(itemName));
+            BingoCardItem item = new BingoCardItem(new ItemCriteria(Material.getMaterial(itemName)));
             BingoTeam completedBy = manager.getTeamByName((String) itemMap.get(itemName));
 
             if (completedBy != null)
@@ -93,7 +94,7 @@ public class RecoveryCardData
 
             for (int i = 0; i < t.card.items.size(); i++)
             {
-                BingoItem item = t.card.items.get(i);
+                BingoCardItem item = t.card.items.get(i);
 
                 if (item.getWhoCompleted() == null)
                 {

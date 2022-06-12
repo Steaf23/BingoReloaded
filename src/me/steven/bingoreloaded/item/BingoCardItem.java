@@ -2,6 +2,7 @@ package me.steven.bingoreloaded.item;
 
 import me.steven.bingoreloaded.BingoReloaded;
 import me.steven.bingoreloaded.GameTimer;
+import me.steven.bingoreloaded.criteria.IBingoCriteria;
 import me.steven.bingoreloaded.gui.cards.CardBuilder;
 import me.steven.bingoreloaded.player.BingoTeam;
 import org.apache.commons.lang.WordUtils;
@@ -11,19 +12,21 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.*;
 
-public class BingoItem
+public class BingoCardItem
 {
     public final Material item;
     public final InventoryItem stack;
     public final String name;
+    private final IBingoCriteria criteria;
 
     private BingoTeam completedBy = null;
 
-    public BingoItem(Material item)
+    public BingoCardItem(IBingoCriteria criteria)
     {
-        this.item = item;
+        this.item = criteria.getMaterial();
         this.stack = new InventoryItem(item, null, "I am a bingo Item :D");
         this.name = convertToReadableName(item);
+        this.criteria = criteria;
     }
 
     public static String convertToReadableName(Material m)

@@ -1,12 +1,13 @@
 package me.steven.bingoreloaded;
 
+import me.steven.bingoreloaded.criteria.BingoCriteriaCompleteEvent;
 import me.steven.bingoreloaded.data.BingoCardsData;
 import me.steven.bingoreloaded.data.ConfigData;
 import me.steven.bingoreloaded.data.RecoveryCardData;
 import me.steven.bingoreloaded.gui.EffectOptionFlags;
 import me.steven.bingoreloaded.gui.cards.*;
 import me.steven.bingoreloaded.cardcreator.CardEntry;
-import me.steven.bingoreloaded.item.BingoItem;
+import me.steven.bingoreloaded.item.BingoCardItem;
 import me.steven.bingoreloaded.item.InventoryItem;
 import me.steven.bingoreloaded.player.BingoTeam;
 import me.steven.bingoreloaded.player.PlayerKit;
@@ -32,7 +33,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import javax.annotation.Nullable;
-import java.io.ObjectInputFilter;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
@@ -274,7 +274,7 @@ public class BingoGame implements Listener
             return;
         }
         deathMatchItem = card.getRandomItem();
-        String itemName = BingoItem.convertToReadableName(deathMatchItem);
+        String itemName = BingoCardItem.convertToReadableName(deathMatchItem);
         for (Player p : teamManager.getParticipants())
         {
             p.sendTitle(ChatColor.GOLD + itemName, ChatColor.DARK_PURPLE + "Death Match: Get this item to win!", -1, -1, -1);
@@ -284,7 +284,7 @@ public class BingoGame implements Listener
 
     public void showDeathMatchItem(Player p)
     {
-        String itemName = BingoItem.convertToReadableName(deathMatchItem);
+        String itemName = BingoCardItem.convertToReadableName(deathMatchItem);
         p.sendTitle(ChatColor.GOLD + itemName, ChatColor.DARK_PURPLE + "DeathMatch - Find this item to win!", -1, -1, -1);
         BingoReloaded.print(ChatColor.GOLD + itemName, p);
     }
@@ -306,6 +306,26 @@ public class BingoGame implements Listener
         BingoReloaded.print("Death Location: " + location, player);
         player.teleport(deadPlayers.get(player.getName()), PlayerTeleportEvent.TeleportCause.PLUGIN);
         deadPlayers.remove(player.getName());
+    }
+
+    @EventHandler
+    public void onPlayerCompletedCriteria(final BingoCriteriaCompleteEvent event)
+    {
+        BingoTeam team = teamManager.getTeamOfPlayer(event.getPlayer());
+
+        if (team.card.completeCriteria(event.getCriteria(), timer.getTime()))
+        {
+            for (Player p : teamManager.getParticipants())
+            {
+                p.playSound(p, Sound.ENTITY_DRAGON_FIREBALL_EXPLODE, 0.8f, 1.0f);
+            }
+            scoreboard.updateItemCount();
+
+            if (team.card.hasBingo(team))
+            {
+                bingo(team);
+            }
+        }
     }
 
     @EventHandler
@@ -351,6 +371,8 @@ public class BingoGame implements Listener
 
         RecoveryCardData.saveCards(teamManager, currentMode, currentSize);
     }
+
+
 
     @EventHandler
     public void onInventoryClick(final InventoryClickEvent event)

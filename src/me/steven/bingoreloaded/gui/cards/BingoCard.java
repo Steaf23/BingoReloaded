@@ -1,6 +1,8 @@
 package me.steven.bingoreloaded.gui.cards;
 
-import me.steven.bingoreloaded.item.BingoItem;
+import me.steven.bingoreloaded.criteria.IBingoCriteria;
+import me.steven.bingoreloaded.criteria.ItemCriteria;
+import me.steven.bingoreloaded.item.BingoCardItem;
 import me.steven.bingoreloaded.BingoReloaded;
 import me.steven.bingoreloaded.gui.AbstractGUIInventory;
 import me.steven.bingoreloaded.item.InventoryItem;
@@ -21,7 +23,7 @@ public class BingoCard extends AbstractGUIInventory
 {
     public CardSize size;
 
-    public List<BingoItem> items = new ArrayList<>();
+    public List<BingoCardItem> items = new ArrayList<>();
 
     public BingoCard(CardSize size)
     {
@@ -33,7 +35,7 @@ public class BingoCard extends AbstractGUIInventory
 
     public void generateCard(CardEntry cardData)
     {
-        List<BingoItem> newItems = new ArrayList<>();
+        List<BingoCardItem> newItems = new ArrayList<>();
 
         for (String listName : cardData.getItemLists().keySet())
         {
@@ -43,7 +45,7 @@ public class BingoCard extends AbstractGUIInventory
             int value = cardData.getItemLists().get(listName);
             for (int i = 0; i < value; i++)
             {
-                newItems.add(new BingoItem(materials.get(Math.floorMod(i, materials.size()))));
+                newItems.add(new BingoCardItem(new ItemCriteria(materials.get(Math.floorMod(i, materials.size())))));
             }
         }
 
@@ -54,11 +56,11 @@ public class BingoCard extends AbstractGUIInventory
         items = newItems;
     }
 
-    public List<BingoItem> trimItemList(List<BingoItem> newItems)
+    public List<BingoCardItem> trimItemList(List<BingoCardItem> newItems)
     {
         while (newItems.size() < size.fullCardSize)
         {
-            newItems.add(new BingoItem(Material.DIRT));
+            newItems.add(new BingoCardItem(new ItemCriteria(Material.DIRT)));
         }
         return newItems.subList(0, size.fullCardSize);
     }
@@ -71,7 +73,7 @@ public class BingoCard extends AbstractGUIInventory
      */
     public boolean completeItem(Material item, BingoTeam team, int time)
     {
-        for (BingoItem bingoItem : items)
+        for (BingoCardItem bingoItem : items)
         {
             if (bingoItem.stack.getType() == item && !bingoItem.isComplete(team))
             {
@@ -80,6 +82,11 @@ public class BingoCard extends AbstractGUIInventory
             }
         }
         return false;
+    }
+
+    public boolean completeCriteria(IBingoCriteria criteria, int time)
+    {
+        return true;
     }
 
     public void showInventory(HumanEntity player)
@@ -155,7 +162,7 @@ public class BingoCard extends AbstractGUIInventory
     public int getCompleteCount(BingoTeam team)
     {
         int count = 0;
-        for (BingoItem item : items)
+        for (BingoCardItem item : items)
         {
             if (item.isComplete(team)) count++;
         }
@@ -172,10 +179,10 @@ public class BingoCard extends AbstractGUIInventory
     public BingoCard copy()
     {
         BingoCard card = new BingoCard(this.size);
-        List<BingoItem> newItems = new ArrayList<>();
-        for (BingoItem item : items)
+        List<BingoCardItem> newItems = new ArrayList<>();
+        for (BingoCardItem item : items)
         {
-            newItems.add(new BingoItem(item.item));
+            newItems.add(new BingoCardItem(new ItemCriteria(item.item)));
         }
         card.items = newItems;
         return card;
