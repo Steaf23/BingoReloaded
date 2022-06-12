@@ -106,7 +106,7 @@ public class BingoGame implements Listener
         }
 
         gameInProgress = true;
-        BingoCard masterCard = CardBuilder.fromMode(currentMode, currentSize);
+        BingoCard masterCard = CardBuilder.fromMode(currentMode, currentSize, teamManager);
         masterCard.generateCard(card);
 
         World world = Bukkit.getWorlds().get(0);

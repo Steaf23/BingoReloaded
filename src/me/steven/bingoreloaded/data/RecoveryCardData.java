@@ -40,7 +40,7 @@ public class RecoveryCardData
         {
             BingoTeam cardOwner = teamManager.getTeamByName(key);
 
-            BingoCard card = CardBuilder.fromMode(mode, size);
+            BingoCard card = CardBuilder.fromMode(mode, size, teamManager);
             success = fillCard(teamManager, cardOwner, card);
             teamManager.setCardForTeam(cardOwner, card);
         }
