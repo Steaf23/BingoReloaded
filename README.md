@@ -10,7 +10,7 @@ For now atleast, this plug-in is intended for use in closed groups, i.e. with yo
 
 I created a Discord server where you can post your concerns or requests, join it [here](https://discord.gg/AzZNxPRNPf)
 
-To get started, use the `/bingo` command, after which a menu will open that you can use to join or leave the game. To actually start the game you have to be OP and use the command `/bingo start`. Admins also get access to teh settings in `/bingo`. To end a game prematurely, the `/bingo end` command can be used. Finally if during the game your Bingo card has been lost, use `/bingo getcard` to get it back!
+To get started, use the `/bingo` command, after which a menu will open that you can use to join or leave the game. To actually start the game you have to be OP and use the command `/bingo start`. Admins also get access to the settings in `/bingo`. To end a game prematurely, the `/bingo end` command can be used. Finally if during the game your Bingo card has been lost, use `/bingo getcard` to get it back!
 When playing the game you can complete items from the card by throwing them out of your inventory (using q when holding an item or dragging them with the mouse outisde of the inventory slots).
 
 # Features:
