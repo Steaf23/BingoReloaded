@@ -10,7 +10,7 @@ For now atleast, this plug-in is intended for use in closed groups, i.e. with yo
 
 I created a Discord server where you can post your concerns or requests, join it [here](https://discord.gg/AzZNxPRNPf)
 
-To get started, use the `/bingo` command, after which a menu will open taht you can use to change the settings. To actually start the game, use the command `/bingo start`. To end a game prematurely, the `/bingo end` command can be used. Finally if during the game your Bingo card has been lost, use `/bingo getcard` to get it back!
+To get started, use the `/bingo` command, after which a menu will open that you can use to join or leave the game. To actually start the game you have to be OP and use the command `/bingo start`. Admins also get access to teh settings in `/bingo`. To end a game prematurely, the `/bingo end` command can be used. Finally if during the game your Bingo card has been lost, use `/bingo getcard` to get it back!
 When playing the game you can complete items from the card by throwing them out of your inventory (using q when holding an item or dragging them with the mouse outisde of the inventory slots).
 
 # Features:
@@ -65,8 +65,5 @@ To add new Item lists, use the `/itemlist create <name>` command. In the list ed
 ![itemlist](https://user-images.githubusercontent.com/21062141/155626599-ff38778b-f75a-4768-97b9-03dcc904434d.png)
 
 ***
-**NOTE:** *As of version 1.0.0 the plug-in does not really use permissions so be carefull messing around with it on public servers, as anyone could change the bingo settings!*
-
-**NOTE(2):** *If you do want to use this plug-in on your public server but don't know how to update the code that's available or are unsure of it's 'inner workings', please contact me!!*
 
 **NOTE(3):** *I am a professional programmer, but this is the first time I have made a Spigot plug-in on my own. If you are a technical reader and notice something out of practise in my code or if you want to contribute, feel free to contact me!*
