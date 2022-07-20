@@ -26,6 +26,7 @@ import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -33,10 +34,7 @@ import org.bukkit.util.Vector;
 
 import javax.annotation.Nullable;
 import java.io.ObjectInputFilter;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 
 public class BingoGame implements Listener
@@ -627,6 +625,8 @@ public class BingoGame implements Listener
                 if (teamManager.getParticipants().size() > 0)
                     spawnPlatform(spawnLocation, 5);
                 break;
+            default:
+                return;
         }
     }
 

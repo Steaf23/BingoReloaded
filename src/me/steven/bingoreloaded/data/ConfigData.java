@@ -14,7 +14,8 @@ public class ConfigData
     {
         ALONE("alone"),
         TEAM("team"),
-        ALL("all");
+        ALL("all"),
+        NONE("none");
 
         public final String name;
 
@@ -31,7 +32,8 @@ public class ConfigData
                     {
                         case "alone" -> ALONE;
                         case "team" -> TEAM;
-                        default -> ALL;
+                        case "all" -> ALL;
+                        default -> NONE;
                     };
         }
     }
@@ -45,6 +47,8 @@ public class ConfigData
     public final double wandCooldown;
     public final PlayerKit defaultKit;
     public final int gracePeriod;
+    public final boolean resetPlayerItems;
+    public final boolean resetPlayerPositions;
 
     private static ConfigData INSTANCE;
 
@@ -71,5 +75,7 @@ public class ConfigData
         this.wandCooldown = config.getDouble("GoUpWand.cooldown", 5.0);
         this.defaultKit = PlayerKit.fromConfig(config.getString("defaultKit", "HARDCORE"));
         this.gracePeriod = config.getInt("gracePeriod", 30);
+        this.resetPlayerItems = config.getBoolean("resetPlayerItems", true);
+        this.resetPlayerPositions = config.getBoolean("resetPlayerPositions", true);
     }
 }
