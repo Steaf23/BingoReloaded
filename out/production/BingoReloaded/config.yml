@@ -12,6 +12,7 @@ teleportMaxDistance: 1000000
 #   - everyone together (ALL),
 #   - everyone apart (ALONE),
 #   - everyone with their teammates (TEAM),
+#   - no one gets teleported at all (NONE),
 playerTeleportStrategy: ALL
 
 # If true, the game will send a message to players that died while playing the game
