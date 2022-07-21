@@ -35,6 +35,10 @@ public class LockoutBingoCard extends BingoCard
     @Override
     public boolean hasBingo(BingoTeam team)
     {
+        if (teamCount < 2)
+        {
+            return true;
+        }
         int completeCount = getCompleteCount(team);
         return completeCount >= Math.floor(currentMaxItems / (double) teamCount) + 1;
     }

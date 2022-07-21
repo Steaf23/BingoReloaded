@@ -27,16 +27,15 @@ import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import javax.annotation.Nullable;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.io.ObjectInputFilter;
+import java.util.*;
 
 
 public class BingoGame implements Listener
@@ -108,6 +107,7 @@ public class BingoGame implements Listener
             card = BingoCardsData.getOrCreateCard("default_card");
         }
 
+        teamManager.removeEmptyTeams(); // remove empty teams before initializing cards
         gameInProgress = true;
         BingoCard masterCard = CardBuilder.fromMode(currentMode, currentSize, teamManager);
         masterCard.generateCard(card);
@@ -116,7 +116,6 @@ public class BingoGame implements Listener
         world.setStorm(false);
         world.setTime(1000);
 
-        teamManager.removeEmptyTeams();
         teamManager.initializeCards(masterCard);
 
         BingoReloaded.broadcast(ChatColor.GREEN + "Giving all participants Kits and Cards!");
@@ -649,6 +648,8 @@ public class BingoGame implements Listener
                 if (teamManager.getParticipants().size() > 0)
                     spawnPlatform(spawnLocation, 5);
                 break;
+            default:
+                return;
         }
     }
 
