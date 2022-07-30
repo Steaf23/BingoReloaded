@@ -1,5 +1,6 @@
 package io.github.steaf23.bingoreloaded.gui;
 
+import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -12,8 +13,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-//TODO: fix bug where outofbounds error when there is no item and the first slot is clicked
 
 public abstract class ListPickerUI extends AbstractGUIInventory
 {
@@ -88,7 +87,7 @@ public abstract class ListPickerUI extends AbstractGUIInventory
         {
             clearFilter();
         }
-        else if (isSlotValidOption(slotClicked) && filteredItems.get(ITEMS_PER_PAGE * currentPage + slotClicked) != null) //If it is a normal item;
+        else if (isSlotValidOption(slotClicked)) //If it is a normal item;
         {
             onOptionClickedDelegate(event, filteredItems.get(ITEMS_PER_PAGE * currentPage + slotClicked), player);
         }
@@ -129,7 +128,6 @@ public abstract class ListPickerUI extends AbstractGUIInventory
         }
 
         updatePageAmount();
-        currentPage = 0;
         updatePage();
     }
 
@@ -138,13 +136,39 @@ public abstract class ListPickerUI extends AbstractGUIInventory
         applyFilter("");
     }
 
+    public boolean passesFilter(InventoryItem item)
+    {
+        boolean result = false;
+        switch (filterType)
+        {
+            case DISPLAY_NAME:
+                if (ChatColor.stripColor(item.getItemMeta().getDisplayName()).toLowerCase().contains(keywordFilter.toLowerCase())) {
+                    result = true;
+                }
+                break;
+            case MATERIAL:
+                String name = item.getType().name().replace("_", " ");
+                if (name.toLowerCase().contains(keywordFilter.toLowerCase()))
+                {
+                    result = true;
+                }
+        }
+        return result;
+    }
+
+    public String getFilter()
+    {
+        return keywordFilter;
+    }
+
     protected boolean isSlotValidOption(int slot)
     {
-        return slot < items.size();
+        return ITEMS_PER_PAGE * currentPage + slot < filteredItems.size();
     }
 
     public void addItems(InventoryItem... newItems)
     {
+        BingoReloaded.print("" + newItems[0].getType() + " " + newItems[0].getAmount());
         //first remove any previous whitespace
         while (items.size() > 0)
         {

@@ -23,7 +23,7 @@ public class BingoCardsData
             {
                 for (String itemList : section.getKeys(false))
                 {
-                    card.addItemList(itemList, getListValues(cardName, itemList));
+                    card.addItemList(itemList, getListMax(cardName, itemList));
                 }
             }
         }
@@ -35,7 +35,7 @@ public class BingoCardsData
     {
         for (String list : card.getSlotLists().keySet())
         {
-            data.getConfig().set(card.getName() + "." + list, card.getSlotLists().get(list));
+            data.getConfig().set(card.getName() + "." + list + ".max", card.getSlotLists().get(list));
         }
         data.saveConfig();
     }
@@ -61,8 +61,8 @@ public class BingoCardsData
         return data.getConfig().getKeys(false);
     }
 
-    public static int getListValues(String cardName, String listName)
+    public static int getListMax(String cardName, String listName)
     {
-        return data.getConfig().getInt(cardName + "." + listName);
+        return data.getConfig().getInt(cardName + "." + listName + ".max");
     }
 }

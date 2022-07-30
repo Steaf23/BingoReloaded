@@ -17,8 +17,8 @@ import java.util.List;
 public class CardEditorUI extends ListPickerUI
 {
     private final CardEntry card;
-    private final InventoryItem addList;
-    private final InventoryItem saveCard;
+    private static final InventoryItem ADD_LIST = new InventoryItem(48, Material.EMERALD, "Add Item List", "");
+    private static final InventoryItem SAVE_CARD = new InventoryItem(50, Material.DIAMOND, "Save and exit", "");
 
     private ListValueEditorGUI valueEditorGUI;
 
@@ -27,10 +27,9 @@ public class CardEditorUI extends ListPickerUI
         super(new ArrayList<>(), "Editing '" + card.getName() + "'", null, FilterType.DISPLAY_NAME);
         this.card = card;
 
-        addList = new InventoryItem(48, Material.EMERALD, "Add Item List", "");
-        saveCard = new InventoryItem(50, Material.DIAMOND, "Save and exit", "");
 
-        fillOptions(new InventoryItem[]{addList, saveCard});
+
+        fillOptions(new InventoryItem[]{ADD_LIST, SAVE_CARD});
     }
 
     @Override
@@ -49,7 +48,7 @@ public class CardEditorUI extends ListPickerUI
     {
         super.delegateClick(event, slotClicked, player);
 
-        if (slotClicked == addList.getSlot())
+        if (slotClicked == ADD_LIST.getSlot())
         {
             List<InventoryItem> items = new ArrayList<>();
             for (String category : BingoSlotsData.getListNames())
@@ -73,7 +72,7 @@ public class CardEditorUI extends ListPickerUI
             };
             listPicker.open(player);
         }
-        else if(slotClicked == saveCard.getSlot())
+        else if(slotClicked == SAVE_CARD.getSlot())
         {
             BingoCardsData.saveCard(card);
             close(player);
@@ -88,8 +87,8 @@ public class CardEditorUI extends ListPickerUI
     @Override
     public void open(HumanEntity player)
     {
-        updateCardDisplay();
         super.open(player);
+        updateCardDisplay();
     }
 
     public void updateCardDisplay()
@@ -100,12 +99,13 @@ public class CardEditorUI extends ListPickerUI
         for (String listName : card.getSlotLists().keySet())
         {
             InventoryItem item = new InventoryItem(Material.MAP, listName, ChatColor.DARK_PURPLE + "Contains " + BingoSlotsData.getSlotCount(listName) + " item(s)");
-            item.setAmount(card.getSlotLists().get(listName));
+            item.setAmount(card.getSlotLists().get(listName) == 0 ? 1 : card.getSlotLists().get(listName));
             newItems.add(item);
         }
 
         addItems(newItems.toArray(new InventoryItem[0]));
-        updatePage();
+
+        applyFilter(getFilter());
     }
 
     public void updateListValues(String listName, int maxOccurrence)

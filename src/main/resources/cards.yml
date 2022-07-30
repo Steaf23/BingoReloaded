@@ -1,2 +1,3 @@
 default_card:
-  default_list: 25
+  default_list:
+    max: 25
