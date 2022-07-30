@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+//TODO: fix bug where outofbounds error when there is no item and the first slot is clicked
+
 public abstract class ListPickerUI extends AbstractGUIInventory
 {
     public abstract void onOptionClickedDelegate(final InventoryClickEvent event, InventoryItem clickedOption, Player player);

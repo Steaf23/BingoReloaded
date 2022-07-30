@@ -1,8 +1,8 @@
 package io.github.steaf23.bingoreloaded.item;
 
-import io.github.steaf23.bingoreloaded.gui.cards.CardBuilder;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.GameTimer;
+import io.github.steaf23.bingoreloaded.gui.cards.CardBuilder;
 import io.github.steaf23.bingoreloaded.player.BingoTeam;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -13,24 +13,18 @@ import java.util.List;
 public abstract class AbstractCardSlot
 {
     public final InventoryItem item;
-    public final String name;
+    public final ChatColor nameColor;
 
     private BingoTeam completedBy = null;
 
-    abstract public AbstractCardSlot copy();
+    public abstract AbstractCardSlot copy();
+    public abstract String getName();
+    public abstract String getDisplayName();
 
-    public AbstractCardSlot(Material material)
+    public AbstractCardSlot(Material material, ChatColor nameColor)
     {
         this.item = new InventoryItem(material, null, "I am a bingo Item :D");
-        this.name = convertToReadableName(material);
-    }
-
-    public static String convertToReadableName(Material m)
-    {
-        String name = m.name().replace("_", " ");
-        //TODO: FIX DEPENCENCY!!
-//        return WorldUtils.capitalizeFully(name);
-        return name;
+        this.nameColor = nameColor;
     }
 
     public boolean isComplete()
@@ -57,9 +51,9 @@ public abstract class AbstractCardSlot
 
         String timeString = GameTimer.getTimeAsString(time);
 
-        BingoReloaded.broadcast(ChatColor.GREEN + "Completed " + name + " by team " + completedBy.team.getColor() + completedBy.getName() + ChatColor.GREEN + "! At " + timeString);
+        BingoReloaded.broadcast(ChatColor.GREEN + "Completed " + getName() + " by team " + completedBy.team.getColor() + completedBy.getName() + ChatColor.GREEN + "! At " + timeString);
 
-        String crossedName = "" + ChatColor.GRAY + ChatColor.STRIKETHROUGH + name;
+        String crossedName = "" + ChatColor.GRAY + ChatColor.STRIKETHROUGH + getName();
         item.setType(completeMaterial);
         ItemMeta meta = item.getItemMeta();
         if (meta != null)
@@ -82,7 +76,7 @@ public abstract class AbstractCardSlot
         ItemMeta meta = item.getItemMeta();
         if (meta != null)
         {
-            meta.setDisplayName("" + ChatColor.BLACK + ChatColor.STRIKETHROUGH + name);
+            meta.setDisplayName("" + ChatColor.BLACK + ChatColor.STRIKETHROUGH + getName());
             meta.setLore(List.of(ChatColor.BLACK + "This team is out of the game!"));
             item.setItemMeta(meta);
         }

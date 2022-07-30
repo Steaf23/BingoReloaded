@@ -1,8 +1,8 @@
 package io.github.steaf23.bingoreloaded.command;
 
+import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.BingoCardsData;
 import io.github.steaf23.bingoreloaded.gui.CardEditorUI;
-import io.github.steaf23.bingoreloaded.BingoReloaded;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -25,6 +25,15 @@ public class CardCommand implements CommandExecutor
         {
             switch (args[0])
             {
+                case "list":
+                    if (commandSender instanceof Player p)
+                        BingoReloaded.print("These are all existing cards: " + ChatColor.GOLD + BingoCardsData.getCardNames(), p);
+                    else if (commandSender instanceof ConsoleCommandSender cmd)
+                    {
+                        BingoReloaded.print("These are all existing cards: " + BingoCardsData.getCardNames());
+                    }
+                    break;
+
                 case "create":
                     if (args.length < 2)
                     {

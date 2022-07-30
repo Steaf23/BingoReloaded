@@ -1,13 +1,13 @@
 package io.github.steaf23.bingoreloaded;
 
-import io.github.steaf23.bingoreloaded.item.BingoCardSlotCompleteEvent;
 import io.github.steaf23.bingoreloaded.data.ConfigData;
 import io.github.steaf23.bingoreloaded.data.RecoveryCardData;
 import io.github.steaf23.bingoreloaded.gui.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.gui.cards.BingoCard;
 import io.github.steaf23.bingoreloaded.gui.cards.CardBuilder;
-import io.github.steaf23.bingoreloaded.item.AbstractCardSlot;
+import io.github.steaf23.bingoreloaded.item.BingoCardSlotCompleteEvent;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
+import io.github.steaf23.bingoreloaded.item.ItemCardSlot;
 import io.github.steaf23.bingoreloaded.player.BingoTeam;
 import io.github.steaf23.bingoreloaded.player.TeamManager;
 import io.github.steaf23.bingoreloaded.util.FlexibleColor;
@@ -58,6 +58,8 @@ public class BingoGame implements Listener
 
     public void start()
     {
+        //TODO: Remove all advancements from all participants when starting.
+
         // Pre-start Setup
         if (getTeamManager().getParticipants().size() <= 0)
         {
@@ -137,7 +139,7 @@ public class BingoGame implements Listener
         for (Player p : getTeamManager().getParticipants())
         {
             p.playSound(p, Sound.ENTITY_DRAGON_FIREBALL_EXPLODE, 0.8f, 1.0f);
-            p.playSound(p, Sound.UI_TOAST_CHALLENGE_COMPLETE, 0.5f, 1.0f);
+            p.playSound(p, Sound.UI_TOAST_CHALLENGE_COMPLETE, 0.75f, 1.0f);
         }
         end();
     }
@@ -218,7 +220,7 @@ public class BingoGame implements Listener
         }
 
         settings.deathMatchItem = settings.generateDeathMatchItem();
-        String itemName = AbstractCardSlot.convertToReadableName(settings.deathMatchItem);
+        String itemName = ItemCardSlot.convertToReadableName(settings.deathMatchItem);
         for (Player p : getTeamManager().getParticipants())
         {
             p.sendTitle(ChatColor.GOLD + itemName, ChatColor.DARK_PURPLE + "Death Match: Get this item to win!", -1, -1, -1);
@@ -228,7 +230,7 @@ public class BingoGame implements Listener
 
     public void showDeathMatchItem(Player p)
     {
-        String itemName = AbstractCardSlot.convertToReadableName(settings.deathMatchItem);
+        String itemName = ItemCardSlot.convertToReadableName(settings.deathMatchItem);
         p.sendTitle(ChatColor.GOLD + itemName, ChatColor.DARK_PURPLE + "DeathMatch - Find this item to win!", -1, -1, -1);
         BingoReloaded.print(ChatColor.GOLD + itemName, p);
     }

@@ -33,9 +33,9 @@ public class BingoCardsData
 
     public static void saveCard(CardEntry card)
     {
-        for (String list : card.getItemLists().keySet())
+        for (String list : card.getSlotLists().keySet())
         {
-            data.getConfig().set(card.getName() + "." + list, card.getItemLists().get(list));
+            data.getConfig().set(card.getName() + "." + list, card.getSlotLists().get(list));
         }
         data.saveConfig();
     }

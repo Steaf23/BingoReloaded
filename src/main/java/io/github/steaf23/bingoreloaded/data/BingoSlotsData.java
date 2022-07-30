@@ -1,74 +1,99 @@
 package io.github.steaf23.bingoreloaded.data;
 
+import io.github.steaf23.bingoreloaded.item.AbstractCardSlot;
+import io.github.steaf23.bingoreloaded.item.AdvancementCardSlot;
+import io.github.steaf23.bingoreloaded.item.ItemCardSlot;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
- * This class is used to interface with the lists.yml file to allow the user to set individual difficulty for Bingo items.
+ * This class is used to interface with the lists.yml file.
  * Material and string comparisons are done using the Enum.name() method.
  */
 public class BingoSlotsData
 {
     private static final YMLDataManager data = new YMLDataManager("lists.yml");
 
-    /**
-     * @param category Name of the category list to get items from.
-     *                 Make sure that this parameter is equal to the actual list path in the lists.yml file.
-     * @return The List of Materials that have been saved in the given category
-     */
-    public static List<Material> getSlots(String category)
+    public static List<ItemCardSlot> getItemSlots(String listName)
     {
-        List<Material> result = new ArrayList<>();
-        if (!data.getConfig().contains(category)) return result;
-        if (data.getConfig().get(category) == null) return result;
+        List<ItemCardSlot> result = new ArrayList<>();
+        for (Map<?, ?> slot : data.getConfig().getMapList(listName + ".item"))
+        {
+            if (!slot.containsKey("name"))
+            {
+                continue;
+            }
 
-        data.getConfig().getStringList(category).forEach(name ->
-                 result.add(Material.getMaterial(name)));
+            ItemCardSlot item = new ItemCardSlot(Material.valueOf((String) slot.get("name")));
+            if (slot.containsKey("count"))
+                item.count = (int) slot.get("count");
 
+            result.add(item);
+        }
         return result;
     }
 
-    public static int getSlotCount(String category)
+    public static List<AdvancementCardSlot> getAdvancementSlots(String listName)
     {
-        return data.getConfig().getStringList(category).size();
+        List<AdvancementCardSlot> result = new ArrayList<>();
+
+        for (Map<?, ?> slot : data.getConfig().getMapList(listName + ".advancement"))
+        {
+            if (!slot.containsKey("name"))
+            {
+                continue;
+            }
+
+            AdvancementCardSlot advancement = new AdvancementCardSlot(Material.PAPER);
+            if (slot.containsKey("count"))
+                advancement.advancement = Bukkit.getAdvancement(NamespacedKey.fromString((String) slot.get("name")));
+
+            result.add(advancement);
+        }
+        return result;
     }
 
-    /**
-     * Used to add a new item(s) to a category
-     * @param category The category to save the item as.
-     *                 This can for example be used to denote difficulty for an item added.
-     *                 A new Category will be created if the given name does not exist yet.
-     * @param items The actual Materials that will be added to the category list.
-     */
-    public static void saveSlots(String category, Material... items)
+    public static List<AbstractCardSlot> getAllSlots(String listName)
     {
-        if (!getCategories().contains(category) && !category.equals(""))
-        {
-            addCategories(category);
-        }
+        List<AbstractCardSlot> result = new ArrayList<>();
+        result.addAll(getItemSlots(listName));
+        result.addAll(getAdvancementSlots(listName));
+        return result;
+    }
 
-        for (String c : getCategories())
+    public static void saveItemSlots(String listName, ItemCardSlot... slots)
+    {
+        List<Map<String, Object>> slotList = new ArrayList<>();
+        for (ItemCardSlot slot : slots)
         {
-            List<String> names = data.getConfig().getStringList(c);
-
-            for (Material item : items)
-            {
-                if (category.equals(c)) // Add the item to the given category.
-                {
-                    if (!names.contains(item.name()))
-                        names.add(item.name());
-                }
-                else // Remove the item from the other categories.
-                {
-                    names.remove(item.name());
-                }
-            }
-            data.getConfig().set(c, names);
+            slotList.add(new HashMap<>(){{
+                put("name", slot.getName());
+                put("count", slot.count);
+            }});
         }
+        data.getConfig().set(listName + ".item", slotList);
         data.saveConfig();
+    }
+
+    public static void saveAdvancementSlots(String listName, AdvancementCardSlot... slots)
+    {
+        List<Map<String, Object>> slotList = new ArrayList<>();
+        for (AdvancementCardSlot slot : slots)
+        {
+            slotList.add(new HashMap<>(){{
+                put("name", slot.getName());
+            }});
+        }
+        data.getConfig().set(listName + ".advancement", slots);
+        data.saveConfig();
+    }
+
+    public static int getSlotCount(String listName)
+    {
+        return data.getConfig().getStringList(listName).size();
     }
 
     public static boolean removeList(String listName)
@@ -86,7 +111,7 @@ public class BingoSlotsData
      * Add empty lists to the lists.yml file.
      * @param names names of the categories to add
      */
-    public static void addCategories(String... names)
+    public static void addEmptyList(String... names)
     {
         for (String n : names)
         {
@@ -101,7 +126,7 @@ public class BingoSlotsData
     /**
      * @return All the category names present in the lists.yml file.
      */
-    public static Set<String> getCategories()
+    public static Set<String> getListNames()
     {
         return data.getConfig().getKeys(false);
     }

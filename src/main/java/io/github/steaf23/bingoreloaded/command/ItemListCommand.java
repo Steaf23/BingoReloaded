@@ -6,6 +6,7 @@ import io.github.steaf23.bingoreloaded.data.BingoSlotsData;
 import io.github.steaf23.bingoreloaded.gui.FilterType;
 import io.github.steaf23.bingoreloaded.gui.ListPickerUI;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
+import io.github.steaf23.bingoreloaded.item.ItemCardSlot;
 import io.github.steaf23.bingoreloaded.util.FlexibleColor;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -25,6 +26,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 
 public class ItemListCommand implements CommandExecutor
 {
@@ -40,6 +42,15 @@ public class ItemListCommand implements CommandExecutor
         {
             switch (args[0])
             {
+                case "list":
+                    if (commandSender instanceof Player p)
+                        BingoReloaded.print("These are all existing lists: " + ChatColor.GOLD + BingoSlotsData.getListNames(), p);
+                    else if (commandSender instanceof ConsoleCommandSender cmd)
+                    {
+                        BingoReloaded.print("These are all existing lists: " + BingoSlotsData.getListNames());
+                    }
+                    break;
+
                 case "create":
                     if (args.length < 2)
                     {
@@ -63,10 +74,6 @@ public class ItemListCommand implements CommandExecutor
                 case "adv":
                     if (commandSender instanceof Player p)
                         editAdvancementList(args[1], p);
-                    break;
-
-                case "view":
-                    //TODO: Open ItemPicker with all Itemlists, allowing the user to edit any using the UI
                     break;
 
                 case "remove":
@@ -149,15 +156,14 @@ public class ItemListCommand implements CommandExecutor
             @Override
             public void open(HumanEntity player)
             {
-                List<Material> items = BingoSlotsData.getSlots(itemListName);
+                List<ItemCardSlot> items = BingoSlotsData.getItemSlots(itemListName);
                 
                 List<InventoryItem> allItems = getItems();
 
-                allItems.forEach(item -> {
-                    ItemMeta meta = item.getItemMeta();
-                    if (meta == null) return;
-
-                    selectItem(item, items.contains(item.getType()));
+                items.forEach(slot -> {
+                    String mat = slot.item.getType().name();
+                    Optional<InventoryItem> item = allItems.stream().filter((i) -> i.getType().name() == mat).findFirst();
+                    item.ifPresent(inventoryItem -> selectItem(inventoryItem, true));
                 });
 
                 super.open(player);
@@ -166,7 +172,9 @@ public class ItemListCommand implements CommandExecutor
             @Override
             public void close(HumanEntity player)
             {
-                addItemsToList(itemListName, getSelectedItems());
+                List<ItemCardSlot> slots = new ArrayList<>();
+                getSelectedItems().forEach((item) -> slots.add(new ItemCardSlot(item.getType())));
+                BingoSlotsData.saveItemSlots(itemListName, slots.toArray(ItemCardSlot[]::new));
                 super.close(player);
             }
         };
@@ -197,16 +205,5 @@ public class ItemListCommand implements CommandExecutor
             }
         };
         advancementPicker.open(player);
-    }
-
-    public void addItemsToList(String listName, List<InventoryItem> selectedItems)
-    {
-        List<Material> materials = new ArrayList<>();
-        for (InventoryItem item : selectedItems)
-        {
-            materials.add(item.getType());
-        }
-        BingoSlotsData.removeList(listName);
-        BingoSlotsData.saveSlots(listName, materials.toArray(new Material[0]));
     }
 }

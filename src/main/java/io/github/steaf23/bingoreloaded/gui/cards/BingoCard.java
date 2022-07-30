@@ -3,12 +3,9 @@ package io.github.steaf23.bingoreloaded.gui.cards;
 import io.github.steaf23.bingoreloaded.BingoGame;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.cardcreator.CardEntry;
-import io.github.steaf23.bingoreloaded.item.BingoCardSlotCompleteEvent;
+import io.github.steaf23.bingoreloaded.item.*;
 import io.github.steaf23.bingoreloaded.data.BingoSlotsData;
 import io.github.steaf23.bingoreloaded.gui.AbstractGUIInventory;
-import io.github.steaf23.bingoreloaded.item.AbstractCardSlot;
-import io.github.steaf23.bingoreloaded.item.InventoryItem;
-import io.github.steaf23.bingoreloaded.item.ItemCardSlot;
 import io.github.steaf23.bingoreloaded.player.BingoTeam;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -18,6 +15,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.player.PlayerAdvancementDoneEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 
 import java.util.ArrayList;
@@ -30,6 +28,8 @@ public class BingoCard extends AbstractGUIInventory implements Listener
     public List<AbstractCardSlot> cardSlots = new ArrayList<>();
 
     protected BingoGame game;
+
+    private static final ItemCardSlot DEFAULT_SLOT = new ItemCardSlot(Material.DIRT);
 
     public BingoCard(CardSize size, BingoGame game)
     {
@@ -46,15 +46,25 @@ public class BingoCard extends AbstractGUIInventory implements Listener
     {
         List<AbstractCardSlot> newItems = new ArrayList<>();
 
-        for (String listName : cardData.getItemLists().keySet())
+        for (String listName : cardData.getSlotLists().keySet())
         {
-            List<Material> materials = BingoSlotsData.getSlots(listName);
-            Collections.shuffle(materials);
+            List<AbstractCardSlot> slots = BingoSlotsData.getAllSlots(listName);
+            Collections.shuffle(slots);
 
-            int count = cardData.getItemLists().get(listName);
-            for (int i = 0; i < count; i++)
+            int count = cardData.getSlotLists().get(listName);
+            if (slots.size() <= 0)
             {
-                newItems.add(new ItemCardSlot(materials.get(Math.floorMod(i, materials.size()))));
+                for (int i = 0; i < count; i++)
+                {
+                    newItems.add(DEFAULT_SLOT.copy());
+                }
+            }
+            else
+            {
+                for (int i = 0; i < count; i++)
+                {
+                    newItems.add(slots.get(Math.floorMod(i, slots.size())));
+                }
             }
         }
 
@@ -179,11 +189,35 @@ public class BingoCard extends AbstractGUIInventory implements Listener
         {
             if (slot instanceof ItemCardSlot itemSlot)
             {
-                if (!slot.isComplete() && event.getItemDrop().getItemStack().getType().equals(slot.item.getType()))
+                if (!itemSlot.isComplete() && event.getItemDrop().getItemStack().getType().equals(itemSlot.item.getType()))
                 {
-                    slot.complete(team, game.getGameTime());
+                    itemSlot.complete(team, game.getGameTime());
                     event.getItemDrop().getItemStack().setAmount(event.getItemDrop().getItemStack().getAmount() - 1);
-                    var slotEvent = new BingoCardSlotCompleteEvent(slot, team, event.getPlayer(), hasBingo(team));
+
+                    var slotEvent = new BingoCardSlotCompleteEvent(itemSlot, team, event.getPlayer(), hasBingo(team));
+                    Bukkit.getPluginManager().callEvent(slotEvent);
+                    break;
+                }
+            }
+        }
+    }
+
+    @EventHandler
+    public void onPlayerAdvancementDone(final PlayerAdvancementDoneEvent event)
+    {
+        // Make sure the card of the player is this one!
+        BingoTeam team = game.getTeamManager().getTeamOfPlayer(event.getPlayer());
+        if (team == null || team.card != this)
+            return;
+
+        for (var slot : cardSlots)
+        {
+            if (slot instanceof AdvancementCardSlot advSlot && !advSlot.isComplete())
+            {
+                if (advSlot.advancement.equals(event.getAdvancement()))
+                {
+                    advSlot.complete(team, game.getGameTime());
+                    var slotEvent = new BingoCardSlotCompleteEvent(advSlot, team, event.getPlayer(), hasBingo(team));
                     Bukkit.getPluginManager().callEvent(slotEvent);
                     break;
                 }

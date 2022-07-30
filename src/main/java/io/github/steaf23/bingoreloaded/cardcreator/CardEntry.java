@@ -1,6 +1,7 @@
 package io.github.steaf23.bingoreloaded.cardcreator;
 
 import io.github.steaf23.bingoreloaded.data.BingoSlotsData;
+import io.github.steaf23.bingoreloaded.item.AbstractCardSlot;
 import org.bukkit.Material;
 
 import java.util.*;
@@ -8,7 +9,7 @@ import java.util.*;
 public class CardEntry
 {
     private final String name;
-    private final Map<String, Integer> itemLists = new HashMap<>();
+    private final Map<String, Integer> slotLists = new HashMap<>();
 
     public CardEntry(String name)
     {
@@ -17,17 +18,17 @@ public class CardEntry
 
     public void addItemList(String listName, int maxOccurrences)
     {
-        itemLists.put(listName, maxOccurrences);
+        slotLists.put(listName, maxOccurrences);
     }
 
     public void removeItemList(String listName)
     {
-        itemLists.remove(listName);
+        slotLists.remove(listName);
     }
 
-    public Map<String, Integer> getItemLists()
+    public Map<String, Integer> getSlotLists()
     {
-        return itemLists;
+        return slotLists;
     }
 
     public String getName()
@@ -35,16 +36,22 @@ public class CardEntry
         return name;
     }
 
-    public Material getRandomItem()
+    public AbstractCardSlot getRandomSlot()
     {
-        List<Material> allItems = new ArrayList<>();
+        List<AbstractCardSlot> allItems = new ArrayList<>();
 
-        for (String list : itemLists.keySet())
+        for (String list : slotLists.keySet())
         {
-            allItems.addAll(BingoSlotsData.getSlots(list));
+            allItems.addAll(BingoSlotsData.getAllSlots(list));
         }
         int randomIdx = (new Random().nextInt(allItems.size()));
 
         return allItems.get(randomIdx);
+    }
+
+    public Material getRandomItemSlot()
+    {
+        //TODO: GET RANDOM ITEMS FROM THE ITEMS IN THE LIST!
+        return Material.BEDROCK;
     }
 }

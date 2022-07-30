@@ -40,7 +40,7 @@ public class CardEditorUI extends ListPickerUI
         if (clickedOption.getItemMeta() == null) return;
 
         String listName = clickedOption.getItemMeta().getDisplayName();
-        valueEditorGUI = new ListValueEditorGUI(this, listName, card.getItemLists().get(listName));
+        valueEditorGUI = new ListValueEditorGUI(this, listName, card.getSlotLists().get(listName));
         valueEditorGUI.open(player);
     }
 
@@ -52,7 +52,7 @@ public class CardEditorUI extends ListPickerUI
         if (slotClicked == addList.getSlot())
         {
             List<InventoryItem> items = new ArrayList<>();
-            for (String category : BingoSlotsData.getCategories())
+            for (String category : BingoSlotsData.getListNames())
             {
                 items.add(new InventoryItem(Material.PAPER, category, "Click to select"));
             }
@@ -97,10 +97,10 @@ public class CardEditorUI extends ListPickerUI
         clearItems();
 
         List<InventoryItem> newItems = new ArrayList<>();
-        for (String listName : card.getItemLists().keySet())
+        for (String listName : card.getSlotLists().keySet())
         {
             InventoryItem item = new InventoryItem(Material.MAP, listName, ChatColor.DARK_PURPLE + "Contains " + BingoSlotsData.getSlotCount(listName) + " item(s)");
-            item.setAmount(card.getItemLists().get(listName));
+            item.setAmount(card.getSlotLists().get(listName));
             newItems.add(item);
         }
 
@@ -110,7 +110,7 @@ public class CardEditorUI extends ListPickerUI
 
     public void updateListValues(String listName, int maxOccurrence)
     {
-        card.getItemLists().put(listName, maxOccurrence);
+        card.getSlotLists().put(listName, maxOccurrence);
         updateCardDisplay();
     }
 }

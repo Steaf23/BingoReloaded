@@ -30,7 +30,7 @@ public class BingoGameSettings
 
     public Material generateDeathMatchItem()
     {
-        return card.getRandomItem();
+        return card.getRandomItemSlot();
     }
 
     public void setKit(PlayerKit kit)
