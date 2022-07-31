@@ -5,7 +5,6 @@ import org.bukkit.Material;
 
 public class ItemCardSlot extends AbstractCardSlot
 {
-    public int count = 1;
 
     public ItemCardSlot(Material material)
     {
@@ -16,7 +15,7 @@ public class ItemCardSlot extends AbstractCardSlot
     public AbstractCardSlot copy()
     {
         ItemCardSlot copy = new ItemCardSlot(item.getType());
-        copy.count = count;
+        copy.setCount(getCount());
         return copy;
     }
 
@@ -30,6 +29,16 @@ public class ItemCardSlot extends AbstractCardSlot
     public String getDisplayName()
     {
         return convertToReadableName(item.getType());
+    }
+
+    public void setCount(int value)
+    {
+        item.setAmount(value);
+    }
+
+    public int getCount()
+    {
+        return item.getAmount();
     }
 
     public static String convertToReadableName(Material m)

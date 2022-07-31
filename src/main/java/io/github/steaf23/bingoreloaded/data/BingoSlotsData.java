@@ -41,7 +41,7 @@ public class BingoSlotsData
             {
                 ItemCardSlot item = new ItemCardSlot(Material.valueOf((String) slot.get("name")));
                 if (slot.containsKey("count"))
-                    item.count = (int) slot.get("count");
+                    item.setCount((int) slot.get("count"));
 
                 result.add(item);
             }
@@ -74,6 +74,7 @@ public class BingoSlotsData
         List<AbstractCardSlot> result = new ArrayList<>();
         result.addAll(getItemSlots(listName));
         result.addAll(getAdvancementSlots(listName));
+
         return result;
     }
 
@@ -98,7 +99,7 @@ public class BingoSlotsData
                 slotList.add(new HashMap<>()
                 {{
                     put("name", slot.getName());
-                    put("count", slot.count);
+                    put("count", slot.getCount());
                 }});
             }
         }

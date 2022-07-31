@@ -164,7 +164,6 @@ public class ItemListCommand implements CommandExecutor
             public void open(HumanEntity player)
             {
                 List<ItemCardSlot> items = BingoSlotsData.getItemSlots(itemListName);
-                BingoReloaded.print("Size: " + items.size());
                 List<InventoryItem> allItems = getItems();
 
                 items.forEach(slot -> {
@@ -172,7 +171,7 @@ public class ItemListCommand implements CommandExecutor
                     Optional<InventoryItem> item = allItems.stream().filter((i) -> i.getType().name() == mat).findFirst();
                     item.ifPresent(inventoryItem -> {
                         selectItem(inventoryItem, true);
-                        inventoryItem.setAmount(slot.count);
+                        inventoryItem.setAmount(slot.getCount());
                     });
                 });
 
@@ -187,7 +186,7 @@ public class ItemListCommand implements CommandExecutor
                 List<ItemCardSlot> slots = new ArrayList<>();
                 getSelectedItems().forEach((item) -> {
                     ItemCardSlot newItem = new ItemCardSlot(item.getType());
-                    newItem.count = item.getAmount();
+                    newItem.setCount(item.getAmount());
                     slots.add(newItem);
                 });
                 BingoSlotsData.saveItemSlots(itemListName, slots.toArray(ItemCardSlot[]::new));
