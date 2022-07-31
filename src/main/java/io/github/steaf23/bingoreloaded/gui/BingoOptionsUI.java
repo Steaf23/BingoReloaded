@@ -2,12 +2,12 @@ package io.github.steaf23.bingoreloaded.gui;
 
 import io.github.steaf23.bingoreloaded.BingoGame;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
-import io.github.steaf23.bingoreloaded.cardcreator.CardEntry;
 import io.github.steaf23.bingoreloaded.data.BingoCardsData;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -45,7 +45,7 @@ public class BingoOptionsUI extends AbstractGUIInventory
     }};
 
     @Override
-    public void delegateClick(InventoryClickEvent event, int slotClicked, Player player)
+    public void delegateClick(InventoryClickEvent event, int slotClicked, Player player, ClickType clickType)
     {
         if (!player.hasPermission("bingo.settings"))
         {
@@ -133,7 +133,7 @@ public class BingoOptionsUI extends AbstractGUIInventory
         {
             cards.add(new InventoryItem(Material.PAPER, cardName,
                     ChatColor.DARK_PURPLE + "Contains " +
-                            BingoCardsData.getOrCreateCard(cardName).getSlotLists().size() + " item List(s)"));
+                            BingoCardsData.getListsOnCard(cardName).size() + " item List(s)"));
         }
 
         ListPickerUI cardPicker = new ListPickerUI(cards, "Pick a card",this, FilterType.DISPLAY_NAME)
@@ -144,7 +144,7 @@ public class BingoOptionsUI extends AbstractGUIInventory
                 ItemMeta meta = clickedOption.getItemMeta();
                 if (meta != null)
                 {
-                    cardSelected(BingoCardsData.getOrCreateCard(meta.getDisplayName()), player);
+                    cardSelected(meta.getDisplayName(), player);
                 }
                 close(player);
             }
@@ -152,11 +152,11 @@ public class BingoOptionsUI extends AbstractGUIInventory
         cardPicker.open(player);
     }
 
-    private void cardSelected(CardEntry card, Player player)
+    private void cardSelected(String cardName, Player player)
     {
-        if (card == null) return;
+        if (cardName == null) return;
 
-        BingoReloaded.print("'" + card.getName() + "' selected as the playing Bingo card!", player);
-        game.getSettings().card = card;
+        BingoReloaded.print("'" + cardName + "' selected as the playing Bingo card!", player);
+        game.getSettings().card = cardName;
     }
 }

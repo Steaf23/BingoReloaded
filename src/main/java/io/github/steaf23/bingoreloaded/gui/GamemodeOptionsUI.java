@@ -1,13 +1,14 @@
 package io.github.steaf23.bingoreloaded.gui;
 
-import io.github.steaf23.bingoreloaded.gui.cards.CardSize;
-import io.github.steaf23.bingoreloaded.item.InventoryItem;
 import io.github.steaf23.bingoreloaded.BingoGame;
 import io.github.steaf23.bingoreloaded.BingoGameMode;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
+import io.github.steaf23.bingoreloaded.gui.cards.CardSize;
+import io.github.steaf23.bingoreloaded.item.InventoryItem;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
 public class GamemodeOptionsUI extends AbstractGUIInventory
@@ -38,7 +39,7 @@ public class GamemodeOptionsUI extends AbstractGUIInventory
     }
 
     @Override
-    public void delegateClick(InventoryClickEvent event, int slotClicked, Player player)
+    public void delegateClick(InventoryClickEvent event, int slotClicked, Player player, ClickType clickType)
     {
         BingoGameMode chosenMode = BingoGameMode.REGULAR;
         CardSize chosenSize = CardSize.X5;

@@ -1,6 +1,5 @@
 package io.github.steaf23.bingoreloaded.item;
 
-import org.apache.commons.text.WordUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 
@@ -35,7 +34,18 @@ public class ItemCardSlot extends AbstractCardSlot
 
     public static String convertToReadableName(Material m)
     {
-        String name = m.name().replace("_", " ");
-        return WordUtils.capitalizeFully(name);
+        String[] nameParts = m.name().split("_");
+        String name = "";
+        for (String section : nameParts)
+        {
+            name += capitalize(section) + " ";
+        }
+        return name;
+    }
+
+    private static String capitalize(String str)
+    {
+        if(str == null || str.length()<=1) return str;
+        return str.substring(0, 1).toUpperCase() + str.substring(1);
     }
 }

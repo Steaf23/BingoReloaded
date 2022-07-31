@@ -27,11 +27,24 @@ public class BingoSlotsData
                 continue;
             }
 
-            ItemCardSlot item = new ItemCardSlot(Material.valueOf((String) slot.get("name")));
-            if (slot.containsKey("count"))
-                item.count = (int) slot.get("count");
+            boolean duplicate = false;
+            for (var entry : result)
+            {
+                if (entry.getName().equals(slot.get("name")))
+                {
+                    duplicate = true;
+                    break;
+                }
+            }
 
-            result.add(item);
+            if (!duplicate)
+            {
+                ItemCardSlot item = new ItemCardSlot(Material.valueOf((String) slot.get("name")));
+                if (slot.containsKey("count"))
+                    item.count = (int) slot.get("count");
+
+                result.add(item);
+            }
         }
         return result;
     }
@@ -66,20 +79,37 @@ public class BingoSlotsData
 
     public static void saveItemSlots(String listName, ItemCardSlot... slots)
     {
-        List<Map<String, Object>> slotList = new ArrayList<>();
-        for (ItemCardSlot slot : slots)
+        data.getConfig().set(listName + ".item", null);
+        List<Map<?, ?>> slotList = new ArrayList<>();
+        for (var slot : slots)
         {
-            slotList.add(new HashMap<>(){{
-                put("name", slot.getName());
-                put("count", slot.count);
-            }});
+            boolean duplicate = false;
+            for (var entry : slotList)
+            {
+                if (slot.getName().equals(entry.get("name")))
+                {
+                    duplicate = true;
+                    break;
+                }
+            }
+
+            if (!duplicate)
+            {
+                slotList.add(new HashMap<>()
+                {{
+                    put("name", slot.getName());
+                    put("count", slot.count);
+                }});
+            }
         }
+
         data.getConfig().set(listName + ".item", slotList);
         data.saveConfig();
     }
 
     public static void saveAdvancementSlots(String listName, AdvancementCardSlot... slots)
     {
+        data.getConfig().set(listName + ".advancement", null);
         List<Map<String, Object>> slotList = new ArrayList<>();
         for (AdvancementCardSlot slot : slots)
         {
@@ -89,6 +119,16 @@ public class BingoSlotsData
         }
         data.getConfig().set(listName + ".advancement", slots);
         data.saveConfig();
+    }
+
+    public static boolean isAlreadyAddedToList(AbstractCardSlot slot, List<AbstractCardSlot> list)
+    {
+        boolean result = false;
+        for (var entry : list)
+        {
+            result = entry.getName().equals(slot.getName());
+        }
+        return result;
     }
 
     public static int getSlotCount(String listName)
@@ -129,5 +169,19 @@ public class BingoSlotsData
     public static Set<String> getListNames()
     {
         return data.getConfig().getKeys(false);
+    }
+
+    public static AbstractCardSlot getRandomSlot(String listName)
+    {
+        List<AbstractCardSlot> slots = getAllSlots(listName);
+        int idx = new Random().nextInt(slots.size());
+        return slots.get(idx);
+    }
+
+    public static ItemCardSlot getRandomItemSlot(String listName)
+    {
+        List<ItemCardSlot> slots = getItemSlots(listName);
+        int idx = new Random().nextInt(slots.size());
+        return slots.get(idx);
     }
 }

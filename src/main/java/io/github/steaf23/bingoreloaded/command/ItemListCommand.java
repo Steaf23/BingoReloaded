@@ -110,9 +110,9 @@ public class ItemListCommand implements CommandExecutor
 
                 default:
                     if (commandSender instanceof Player player)
-                        BingoReloaded.print(ChatColor.RED + "Usage: /itemlist [create|edit|remove]", player);
+                        BingoReloaded.print(ChatColor.RED + "Usage: /itemlist [list | create | edit | remove]", player);
                     else
-                        BingoReloaded.print(ChatColor.RED + "Usage: /itemlist [create|edit|remove]");
+                        BingoReloaded.print(ChatColor.RED + "Usage: /itemlist [list | create | edit | remove]");
                     break;
             }
         }
@@ -150,21 +150,33 @@ public class ItemListCommand implements CommandExecutor
             @Override
             public void onOptionClickedDelegate(InventoryClickEvent event, InventoryItem clickedOption, Player player)
             {
-                selectItem(clickedOption, !getSelectedItems().contains(clickedOption));
+                if (event.getClick().isLeftClick())
+                {
+                    incrementItemCount(clickedOption);
+                }
+                else
+                {
+                    decrementItemCount(clickedOption);
+                }
             }
 
             @Override
             public void open(HumanEntity player)
             {
                 List<ItemCardSlot> items = BingoSlotsData.getItemSlots(itemListName);
-                
+                BingoReloaded.print("Size: " + items.size());
                 List<InventoryItem> allItems = getItems();
 
                 items.forEach(slot -> {
                     String mat = slot.item.getType().name();
                     Optional<InventoryItem> item = allItems.stream().filter((i) -> i.getType().name() == mat).findFirst();
-                    item.ifPresent(inventoryItem -> selectItem(inventoryItem, true));
+                    item.ifPresent(inventoryItem -> {
+                        selectItem(inventoryItem, true);
+                        inventoryItem.setAmount(slot.count);
+                    });
                 });
+
+                updatePage();
 
                 super.open(player);
             }
@@ -173,9 +185,53 @@ public class ItemListCommand implements CommandExecutor
             public void close(HumanEntity player)
             {
                 List<ItemCardSlot> slots = new ArrayList<>();
-                getSelectedItems().forEach((item) -> slots.add(new ItemCardSlot(item.getType())));
+                getSelectedItems().forEach((item) -> {
+                    ItemCardSlot newItem = new ItemCardSlot(item.getType());
+                    newItem.count = item.getAmount();
+                    slots.add(newItem);
+                });
                 BingoSlotsData.saveItemSlots(itemListName, slots.toArray(ItemCardSlot[]::new));
                 super.close(player);
+            }
+
+            public void incrementItemCount(InventoryItem item)
+            {
+                boolean select = false;
+                if (!getSelectedItems().contains(item))
+                {
+                    select = true;
+                }
+
+                if (!select)
+                {
+                    item.setAmount(Math.min(item.getMaxStackSize(), item.getAmount() + 1));
+                }
+
+
+                if (select)
+                {
+                    selectItem(item,true);
+                }
+                updatePage();
+            }
+
+            public void decrementItemCount(InventoryItem item)
+            {
+                boolean deselect = false;
+                if (getSelectedItems().contains(item))
+                {
+                    if (item.getAmount() == 1)
+                    {
+                        deselect = true;
+                    }
+                }
+                item.setAmount(Math.max(1, item.getAmount() - 1));
+
+                if (deselect)
+                {
+                    selectItem(item, false);
+                }
+                updatePage();
             }
         };
         itemPicker.open(player);

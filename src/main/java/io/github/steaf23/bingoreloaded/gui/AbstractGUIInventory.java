@@ -1,15 +1,12 @@
 package io.github.steaf23.bingoreloaded.gui;
 
-import io.github.steaf23.bingoreloaded.item.InventoryItem;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
+import io.github.steaf23.bingoreloaded.item.InventoryItem;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.event.inventory.InventoryDragEvent;
-import org.bukkit.event.inventory.InventoryOpenEvent;
+import org.bukkit.event.inventory.*;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
@@ -26,7 +23,7 @@ public abstract class AbstractGUIInventory
      *                    Slot can be null.
      * @param player The player that clicked on the item.
      */
-    public abstract void delegateClick(final InventoryClickEvent event, int slotClicked, Player player);
+    public abstract void delegateClick(final InventoryClickEvent event, int slotClicked, Player player, ClickType clickType);
 
     protected static final String TITLE_PREFIX = "" + ChatColor.GOLD + ChatColor.BOLD;
 
@@ -50,7 +47,7 @@ public abstract class AbstractGUIInventory
 
             if (event.getRawSlot() < event.getInventory().getSize() && event.getRawSlot() >= 0)
             {
-                delegateClick(event, event.getSlot(), (Player)event.getWhoClicked());
+                delegateClick(event, event.getSlot(), (Player)event.getWhoClicked(), event.getClick());
             }
         }
     }

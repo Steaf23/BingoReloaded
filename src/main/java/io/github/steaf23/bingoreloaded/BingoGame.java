@@ -89,6 +89,7 @@ public class BingoGame implements Listener
         Set<Player> players = getTeamManager().getParticipants();
         players.forEach(this::givePlayerKit);
         players.forEach(this::returnCardToPlayer);
+        players.forEach(p -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "advancement revoke " + p.getName() + " everything"));
 
         teleportPlayersToStart(world);
         givePlayersEffects();

@@ -2,10 +2,11 @@ package io.github.steaf23.bingoreloaded.gui.cards;
 
 import io.github.steaf23.bingoreloaded.BingoGame;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
-import io.github.steaf23.bingoreloaded.cardcreator.CardEntry;
-import io.github.steaf23.bingoreloaded.item.*;
+import io.github.steaf23.bingoreloaded.data.AdvancementData;
+import io.github.steaf23.bingoreloaded.data.BingoCardsData;
 import io.github.steaf23.bingoreloaded.data.BingoSlotsData;
 import io.github.steaf23.bingoreloaded.gui.AbstractGUIInventory;
+import io.github.steaf23.bingoreloaded.item.*;
 import io.github.steaf23.bingoreloaded.player.BingoTeam;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -14,6 +15,7 @@ import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerAdvancementDoneEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
@@ -42,16 +44,16 @@ public class BingoCard extends AbstractGUIInventory implements Listener
         BingoReloaded.registerListener(this);
     }
 
-    public void generateCard(CardEntry cardData)
+    public void generateCard(String cardName)
     {
         List<AbstractCardSlot> newItems = new ArrayList<>();
 
-        for (String listName : cardData.getSlotLists().keySet())
+        for (String listName : BingoCardsData.getListsOnCard(cardName))
         {
             List<AbstractCardSlot> slots = BingoSlotsData.getAllSlots(listName);
             Collections.shuffle(slots);
 
-            int count = cardData.getSlotLists().get(listName);
+            int count = BingoCardsData.getListMax(cardName, listName);
             if (slots.size() <= 0)
             {
                 for (int i = 0; i < count; i++)
@@ -160,7 +162,7 @@ public class BingoCard extends AbstractGUIInventory implements Listener
     }
 
     @Override
-    public void delegateClick(InventoryClickEvent event, int slotClicked, Player player)
+    public void delegateClick(InventoryClickEvent event, int slotClicked, Player player, ClickType clickType)
     {
 
     }
@@ -184,6 +186,16 @@ public class BingoCard extends AbstractGUIInventory implements Listener
         BingoTeam team = game.getTeamManager().getTeamOfPlayer(event.getPlayer());
         if (team == null || team.card != this)
             return;
+
+        if (game.getSettings().deathMatchItem != null)
+        {
+            if (event.getItemDrop().getItemStack().getType() == game.getSettings().deathMatchItem)
+            {
+                var slotEvent = new BingoCardSlotCompleteEvent(null, team, event.getPlayer(), true);
+                Bukkit.getPluginManager().callEvent(slotEvent);
+            }
+            return;
+        }
 
         for (var slot : cardSlots)
         {
@@ -209,6 +221,11 @@ public class BingoCard extends AbstractGUIInventory implements Listener
         BingoTeam team = game.getTeamManager().getTeamOfPlayer(event.getPlayer());
         if (team == null || team.card != this)
             return;
+
+        if (game.getSettings().deathMatchItem != null)
+            return;
+
+        BingoReloaded.print(AdvancementData.getAdvancementTitle(event.getAdvancement().getKey().getKey()));
 
         for (var slot : cardSlots)
         {

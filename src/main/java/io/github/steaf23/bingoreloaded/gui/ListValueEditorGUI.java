@@ -1,9 +1,11 @@
 package io.github.steaf23.bingoreloaded.gui;
 
+import io.github.steaf23.bingoreloaded.data.BingoCardsData;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -34,7 +36,7 @@ public class ListValueEditorGUI extends AbstractGUIInventory
     }
 
     @Override
-    public void delegateClick(final InventoryClickEvent event, int slotClicked, Player player)
+    public void delegateClick(final InventoryClickEvent event, int slotClicked, Player player, ClickType clickType)
     {
         if (slotClicked == HIGHER.getSlot())
         {
@@ -71,6 +73,7 @@ public class ListValueEditorGUI extends AbstractGUIInventory
 
     private void setValueForList()
     {
-        cardEditor.updateListValues(listName, itemCount + 1);
+        BingoCardsData.setList(cardEditor.cardName, listName, itemCount + 1, 0);
+        cardEditor.updateCardDisplay();
     }
 }

@@ -1,6 +1,5 @@
 package io.github.steaf23.bingoreloaded;
 
-import io.github.steaf23.bingoreloaded.cardcreator.CardEntry;
 import io.github.steaf23.bingoreloaded.data.BingoCardsData;
 import io.github.steaf23.bingoreloaded.gui.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.gui.cards.CardSize;
@@ -12,7 +11,7 @@ import java.util.EnumSet;
 
 public class BingoGameSettings
 {
-    public CardEntry card;
+    public String card;
     public BingoGameMode mode;
     public CardSize cardSize;
     public PlayerKit kit;
@@ -21,7 +20,7 @@ public class BingoGameSettings
 
     public BingoGameSettings()
     {
-        this.card = BingoCardsData.getOrCreateCard("default_card");
+        this.card = "default_card";
         this.mode = BingoGameMode.REGULAR;
         this.cardSize = CardSize.X5;
         this.kit = PlayerKit.OVERPOWERED;
@@ -30,7 +29,7 @@ public class BingoGameSettings
 
     public Material generateDeathMatchItem()
     {
-        return card.getRandomItemSlot();
+        return BingoCardsData.getRandomItemSlot(card).item.getType();
     }
 
     public void setKit(PlayerKit kit)

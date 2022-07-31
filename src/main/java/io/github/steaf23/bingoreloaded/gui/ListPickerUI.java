@@ -1,11 +1,11 @@
 package io.github.steaf23.bingoreloaded.gui;
 
-import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -56,7 +56,7 @@ public abstract class ListPickerUI extends AbstractGUIInventory
     }
 
     @Override
-    public void delegateClick(InventoryClickEvent event, int slotClicked, Player player)
+    public void delegateClick(InventoryClickEvent event, int slotClicked, Player player, ClickType clickType)
     {
         if (slotClicked == NEXT.getSlot())
         {
@@ -168,7 +168,6 @@ public abstract class ListPickerUI extends AbstractGUIInventory
 
     public void addItems(InventoryItem... newItems)
     {
-        BingoReloaded.print("" + newItems[0].getType() + " " + newItems[0].getAmount());
         //first remove any previous whitespace
         while (items.size() > 0)
         {
@@ -240,6 +239,7 @@ public abstract class ListPickerUI extends AbstractGUIInventory
             }
             else
             {
+                item.setAmount(1);
                 meta.setLore(List.of(ChatColor.GRAY + "Click to make this item", ChatColor.GRAY + "appear on bingo cards"));
                 meta.removeItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_UNBREAKABLE);
 
