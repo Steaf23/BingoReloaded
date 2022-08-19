@@ -29,10 +29,10 @@ public abstract class ListPickerUI extends AbstractGUIInventory
     private FilterType filterType;
 
     private static final InventoryItem BG_ITEM = new InventoryItem(Material.BLACK_STAINED_GLASS_PANE, " ", "");
-    private static final InventoryItem NEXT = new InventoryItem(53, Material.STRUCTURE_VOID, "Next page", "");
-    private static final InventoryItem PREVIOUS = new InventoryItem(45, Material.BARRIER, "Previous page", "");
-    private static final InventoryItem CLOSE = new InventoryItem(49, Material.REDSTONE, "Close Menu", "");
-    private static final InventoryItem FILTER = new InventoryItem(46, Material.SPYGLASS, "Filter...", "");
+    private static final InventoryItem NEXT = new InventoryItem(53, Material.STRUCTURE_VOID, "" + ChatColor.LIGHT_PURPLE + ChatColor.BOLD + "Next page", "");
+    private static final InventoryItem PREVIOUS = new InventoryItem(45, Material.BARRIER, "" + ChatColor.LIGHT_PURPLE + ChatColor.BOLD + "Previous page", "");
+    private static final InventoryItem CLOSE = new InventoryItem(49, Material.REDSTONE, "" + ChatColor.RED + ChatColor.BOLD + "Close Menu", "");
+    private static final InventoryItem FILTER = new InventoryItem(46, Material.SPYGLASS, TITLE_PREFIX + "Filter...", "");
 
     public ListPickerUI(List<InventoryItem> options, String title, AbstractGUIInventory parent, FilterType filterType)
     {

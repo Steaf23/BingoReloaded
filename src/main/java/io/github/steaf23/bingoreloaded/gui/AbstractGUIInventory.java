@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.*;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
 
 /**
  * Abstract class for Inventory based GUIs.
@@ -105,7 +106,14 @@ public abstract class AbstractGUIInventory
 
     public void open(HumanEntity player)
     {
-        player.openInventory(inventory);
+        new BukkitRunnable()
+        {
+            @Override
+            public void run()
+            {
+                player.openInventory(inventory);
+            }
+        }.runTask(Bukkit.getPluginManager().getPlugin(BingoReloaded.NAME));
     }
 
     public void close(HumanEntity player)
@@ -113,7 +121,14 @@ public abstract class AbstractGUIInventory
         if (parent != null)
             parent.open(player);
         else
-            player.closeInventory();
+            new BukkitRunnable()
+            {
+                @Override
+                public void run()
+                {
+                    player.closeInventory();
+                }
+            }.runTask(Bukkit.getPluginManager().getPlugin(BingoReloaded.NAME));
     }
 
     public GUIHolder getHolder()

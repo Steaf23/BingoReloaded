@@ -13,7 +13,6 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.SkullMeta;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -23,9 +22,9 @@ public abstract class KeyboardUI extends AbstractGUIInventory
     private String keyword;
 
     private static final InventoryItem BG_ITEM = new InventoryItem(Material.BLACK_STAINED_GLASS_PANE, " ", "");
-    private static final InventoryItem CLEAR = new InventoryItem(46, Material.HOPPER, "Clear", "");
-    private static final InventoryItem CANCEL = new InventoryItem(48, Material.REDSTONE, "Cancel", "");
-    private static final InventoryItem APPLY = new InventoryItem(50, Material.DIAMOND, "Apply", "");
+    private static final InventoryItem CLEAR = new InventoryItem(46, Material.HOPPER, "" + ChatColor.GRAY + ChatColor.BOLD + "Clear Filter", "");
+    private static final InventoryItem CANCEL = new InventoryItem(48, Material.REDSTONE, "" + ChatColor.RED + ChatColor.BOLD +"Cancel", "");
+    private static final InventoryItem APPLY = new InventoryItem(50, Material.DIAMOND, "" + ChatColor.AQUA + ChatColor.BOLD +"Apply", "");
 
     private static InventoryItem[] options = new InventoryItem[0];
 
@@ -71,18 +70,15 @@ public abstract class KeyboardUI extends AbstractGUIInventory
     {
         super(54, title, parent);
 
-        keyword = "";
+        this.keyword = "";
+        this.options = new InventoryItem[28];
 
-        ItemStack skull = new ItemStack(Material.PLAYER_HEAD);
-        SkullMeta meta = (SkullMeta)skull.getItemMeta();
-
-        options = new InventoryItem[28];
         int idx = 0;
         for (String key : letterSlots.keySet())
         {
             InventoryItem bannerKeyItem = new InventoryItem(letterSlots.get(key), bannerPatterns.get(key));
             ItemMeta bannerMeta = bannerKeyItem.getItemMeta();
-            bannerMeta.setDisplayName(key);
+            bannerMeta.setDisplayName(TITLE_PREFIX + key);
             bannerMeta.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
             bannerKeyItem.setItemMeta(bannerMeta);
             options[idx] = bannerKeyItem;

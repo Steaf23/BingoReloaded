@@ -3,6 +3,7 @@ package io.github.steaf23.bingoreloaded.item;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -32,9 +33,22 @@ public class InventoryItem extends ItemStack
             meta.setDisplayName(name);
             if (description.length > 1 && description[0] != "")
                 meta.setLore(List.of(description));
+            meta.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
         }
         setItemMeta(meta);
     }
+
+    public InventoryItem(int slot, ItemStack item)
+    {
+        this(item);
+        this.slot = slot;
+    }
+
+    public InventoryItem(ItemStack item)
+    {
+        super(item);
+    }
+
 
     public InventoryItem withEnchantment(Enchantment enchantment, int level)
     {
@@ -59,16 +73,6 @@ public class InventoryItem extends ItemStack
         return new ItemStack(this);
     }
 
-    public InventoryItem(int slot, ItemStack item)
-    {
-        super(item);
-        this.slot = slot;
-    }
-
-    public InventoryItem(ItemStack item)
-    {
-        super(item);
-    }
 
     public InventoryItem copy()
     {

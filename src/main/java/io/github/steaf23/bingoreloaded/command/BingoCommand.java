@@ -1,9 +1,10 @@
 package io.github.steaf23.bingoreloaded.command;
 
-import io.github.steaf23.bingoreloaded.data.ConfigData;
-import io.github.steaf23.bingoreloaded.gui.BingoOptionsUI;
 import io.github.steaf23.bingoreloaded.BingoGame;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
+import io.github.steaf23.bingoreloaded.data.ConfigData;
+import io.github.steaf23.bingoreloaded.gui.BingoOptionsUI;
+import io.github.steaf23.bingoreloaded.gui.CardCreatorUI;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -85,11 +86,19 @@ public class BingoCommand implements CommandExecutor
                     }
                     break;
 
+                case "cards":
+                    if (commandSender instanceof Player p && p.hasPermission("bingo.manager"))
+                    {
+                        CardCreatorUI creatorUI = new CardCreatorUI(null);
+                        creatorUI.open(p);
+                    }
+                    break;
+
                 default:
                     if (commandSender instanceof Player p)
-                        BingoReloaded.print(ChatColor.RED + "Usage: /bingo [start|end|leave|getcard|deathmatch]", p);
+                        BingoReloaded.print(ChatColor.RED + "Usage: /bingo [getcard | start | end | leave | deathmatch | cards]", p);
                     else
-                        BingoReloaded.print(ChatColor.RED + "Usage: /bingo [start|end|leave|getcard|deathmatch]");
+                        BingoReloaded.print(ChatColor.RED + "Usage: /bingo [start | end | deathmatch]");
                     break;
             }
         }

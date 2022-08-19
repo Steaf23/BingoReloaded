@@ -2,7 +2,6 @@ package io.github.steaf23.bingoreloaded.gui.cards;
 
 import io.github.steaf23.bingoreloaded.BingoGame;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
-import io.github.steaf23.bingoreloaded.data.AdvancementData;
 import io.github.steaf23.bingoreloaded.data.BingoCardsData;
 import io.github.steaf23.bingoreloaded.data.BingoSlotsData;
 import io.github.steaf23.bingoreloaded.gui.AbstractGUIInventory;
@@ -15,11 +14,14 @@ import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerAdvancementDoneEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -95,7 +97,7 @@ public class BingoCard extends AbstractGUIInventory implements Listener
 
     public boolean hasBingo(BingoTeam team)
     {
-        BingoReloaded.print("Your team (" + team.getName() + ChatColor.RESET + ") has collected " + getCompleteCount(team) + " items!", team);
+        BingoReloaded.print("Your team (" + team.getColor() + team.getName() + ChatColor.RESET + ") has collected " + getCompleteCount(team) + " items!", team);
         //check for rows and columns
         for (int y = 0; y < size.cardSize; y++)
         {
@@ -182,42 +184,61 @@ public class BingoCard extends AbstractGUIInventory implements Listener
     }
 
     @EventHandler
-    public void onPlayerDropItem(final PlayerDropItemEvent event)
+    public void onInventoryClick(final InventoryClickEvent event)
     {
-        // Make sure the card of the player is this one!
+        if (!(event.getWhoClicked() instanceof Player player))
+        {
+            return;
+        }
+
+        BingoTeam team = game.getTeamManager().getTeamOfPlayer(player);
+        if (team == null || team.card != this)
+            return;
+
+        if (event.getSlotType() == InventoryType.SlotType.RESULT)
+        {
+            ItemStack item = event.getInventory().getItem(event.getRawSlot());
+            if (item == null)
+            {
+                return;
+            }
+            item = completeItemSlot(item, team, player);
+            event.setCancelled(false);
+            return;
+        }
+
+        for (ItemStack stack : player.getInventory().getContents())
+        {
+            if (stack != null)
+            {
+                stack = completeItemSlot(stack, team, player);
+            }
+        }
+    }
+
+    @EventHandler
+    public void onPlayerCollectItem(final EntityPickupItemEvent event)
+    {
+        if (!(event.getEntity() instanceof Player p))
+            return;
+
+        BingoTeam team = game.getTeamManager().getTeamOfPlayer(p);
+        if (team == null || team.card != this)
+            return;
+
+        ItemStack stack = event.getItem().getItemStack();
+        stack = completeItemSlot(stack, team, p);
+    }
+
+    @EventHandler
+    public void onPlayerDroppedItem(final PlayerDropItemEvent event)
+    {
         BingoTeam team = game.getTeamManager().getTeamOfPlayer(event.getPlayer());
         if (team == null || team.card != this)
             return;
 
-        if (game.getSettings().deathMatchItem != null)
-        {
-            if (event.getItemDrop().getItemStack().getType() == game.getSettings().deathMatchItem)
-            {
-                var slotEvent = new BingoCardSlotCompleteEvent(null, team, event.getPlayer(), true);
-                Bukkit.getPluginManager().callEvent(slotEvent);
-            }
-            return;
-        }
-
-        for (var slot : cardSlots)
-        {
-            if (slot instanceof ItemCardSlot itemSlot)
-            {
-                if (!itemSlot.isComplete())
-                {
-                    ItemStack drop = event.getItemDrop().getItemStack();
-                    if (drop.getType().equals(itemSlot.item.getType()) && drop.getAmount() >= itemSlot.getCount())
-                    {
-                        itemSlot.complete(team, game.getGameTime());
-                        drop.setAmount(drop.getAmount() - itemSlot.getCount());
-
-                        var slotEvent = new BingoCardSlotCompleteEvent(itemSlot, team, event.getPlayer(), hasBingo(team));
-                        Bukkit.getPluginManager().callEvent(slotEvent);
-                        break;
-                    }
-                }
-            }
-        }
+        ItemStack stack = event.getItemDrop().getItemStack();
+        stack = completeItemSlot(stack, team, event.getPlayer());
     }
 
     @EventHandler
@@ -230,9 +251,6 @@ public class BingoCard extends AbstractGUIInventory implements Listener
 
         if (game.getSettings().deathMatchItem != null)
             return;
-
-        BingoReloaded.print(AdvancementData.getAdvancementTitle(event.getAdvancement().getKey().getKey()));
-
         for (var slot : cardSlots)
         {
             if (slot instanceof AdvancementCardSlot advSlot && !advSlot.isComplete())
@@ -246,5 +264,42 @@ public class BingoCard extends AbstractGUIInventory implements Listener
                 }
             }
         }
+    }
+
+    ItemStack completeItemSlot(ItemStack item, BingoTeam team, Player player)
+    {
+        if (game.getSettings().deathMatchItem != null)
+        {
+            if (item.getType() == game.getSettings().deathMatchItem)
+            {
+                var slotEvent = new BingoCardSlotCompleteEvent(null, team, player, true);
+                Bukkit.getPluginManager().callEvent(slotEvent);
+            }
+            return item;
+        }
+
+        for (AbstractCardSlot slot : cardSlots)
+        {
+            if (slot instanceof ItemCardSlot itemSlot)
+            {
+                if (item.getType().equals(itemSlot.item.getType()) && item.getAmount() >= itemSlot.getCount())
+                {
+                    itemSlot.complete(team, game.getGameTime());
+                    item.setAmount(item.getAmount() - itemSlot.getCount());
+                    new BukkitRunnable()
+                    {
+                        @Override
+                        public void run()
+                        {
+                            player.updateInventory();
+                        }
+                    }.runTask(Bukkit.getPluginManager().getPlugin(BingoReloaded.NAME));
+                    var slotEvent = new BingoCardSlotCompleteEvent(itemSlot, team, player, hasBingo(team));
+                    Bukkit.getPluginManager().callEvent(slotEvent);
+                    break;
+                }
+            }
+        }
+        return item;
     }
 }

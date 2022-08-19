@@ -98,7 +98,7 @@ public class CardCommand implements CommandExecutor
 
     public static void editCard(String cardName, Player player)
     {
-        CardEditorUI cardEditor = new CardEditorUI(cardName);
+        CardEditorUI cardEditor = new CardEditorUI(cardName, null);
         cardEditor.open(player);
     }
 }

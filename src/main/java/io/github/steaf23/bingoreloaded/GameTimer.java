@@ -24,7 +24,6 @@ public class GameTimer
             @Override
             public void run()
             {
-//                BingoReloaded.print("Time: " + getTimeAsString(getTime()));
                 setTime(getTime() + 1);
             }
         };

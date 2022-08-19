@@ -17,12 +17,12 @@ import java.util.List;
 public class CardEditorUI extends ListPickerUI
 {
     public final String cardName;
-    private static final InventoryItem ADD_LIST = new InventoryItem(48, Material.EMERALD, "Add Item List", "");
+    private static final InventoryItem ADD_LIST = new InventoryItem(48, Material.EMERALD, "" + ChatColor.GREEN + ChatColor.BOLD + "Add Item List", "");
     private ListValueEditorGUI valueEditorGUI;
 
-    public CardEditorUI(String cardName)
+    public CardEditorUI(String cardName, AbstractGUIInventory parent)
     {
-        super(new ArrayList<>(), "Editing '" + cardName + "'", null, FilterType.DISPLAY_NAME);
+        super(new ArrayList<>(), "Editing '" + cardName + "'", parent, FilterType.DISPLAY_NAME);
         this.cardName = cardName;
 
         fillOptions(new InventoryItem[]{ADD_LIST});

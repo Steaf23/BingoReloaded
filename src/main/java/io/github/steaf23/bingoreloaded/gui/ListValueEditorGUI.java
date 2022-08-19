@@ -13,11 +13,11 @@ import java.util.List;
 
 public class ListValueEditorGUI extends AbstractGUIInventory
 {
-    private static final InventoryItem HIGHER = new InventoryItem(13, Material.GUNPOWDER, "More");
-    private static final InventoryItem LOWER = new InventoryItem(31, Material.HOPPER, "Less");
+    private static final InventoryItem HIGHER = new InventoryItem(13, Material.GUNPOWDER, "" + ChatColor.GRAY + ChatColor.BOLD + "More");
+    private static final InventoryItem LOWER = new InventoryItem(31, Material.HOPPER, "" + ChatColor.GRAY + ChatColor.BOLD + "Less");
     private final InventoryItem counter = new InventoryItem(22, Material.TARGET, " ");
-    private final InventoryItem CANCEL = new InventoryItem(20, Material.REDSTONE, "Cancel");
-    private final InventoryItem SAVE = new InventoryItem(24, Material.DIAMOND, "Save");
+    private final InventoryItem CANCEL = new InventoryItem(20, Material.REDSTONE, "" + ChatColor.RED + ChatColor.BOLD + "Cancel");
+    private final InventoryItem SAVE = new InventoryItem(24, Material.DIAMOND, "" + ChatColor.AQUA + ChatColor.BOLD + "Save");
 
     private final CardEditorUI cardEditor;
 
@@ -65,7 +65,7 @@ public class ListValueEditorGUI extends AbstractGUIInventory
         ItemMeta meta = counter.getItemMeta();
 
         if (meta == null) return;
-        meta.setDisplayName("" + ChatColor.GOLD + ChatColor.BOLD + (itemCount + 1));
+        meta.setDisplayName(TITLE_PREFIX + (itemCount + 1));
         meta.setLore(List.of("Items from this list", "will be picked at most " + (itemCount + 1) +  " time(s)"));
         counter.setItemMeta(meta);
         addOption(counter);
