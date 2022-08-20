@@ -167,11 +167,8 @@ public class TeamManager
             for (String entry : team.team.getEntries())
             {
                 Player p = Bukkit.getPlayer(entry);
-                if (p != null)
-                    if (p.isOnline())
-                        break;
-
-                removePlayerFromAllTeams(p);
+                if (p == null || !p.isOnline())
+                    removePlayerFromAllTeams(p);;
             }
         }
     }

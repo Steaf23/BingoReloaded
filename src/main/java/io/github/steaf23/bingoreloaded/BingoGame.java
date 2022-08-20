@@ -74,6 +74,7 @@ public class BingoGame implements Listener
 
         settings.deathMatchItem = null;
         getTeamManager().updateActivePlayers();
+        getTeamManager().removeEmptyTeams();
         World world = Bukkit.getWorlds().get(0);
         world.setStorm(false);
         world.setTime(1000);
@@ -131,7 +132,6 @@ public class BingoGame implements Listener
             BingoReloaded.print(ChatColor.RED + "No game to end!");
             return;
         }
-        getTeamManager().updateActivePlayers();
     }
 
     public void bingo(BingoTeam team)
