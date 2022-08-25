@@ -3,8 +3,8 @@ package io.github.steaf23.bingoreloaded.data;
 import io.github.steaf23.bingoreloaded.gui.cards.BingoCard;
 import io.github.steaf23.bingoreloaded.gui.cards.CardBuilder;
 import io.github.steaf23.bingoreloaded.gui.cards.CardSize;
-import io.github.steaf23.bingoreloaded.item.AbstractCardSlot;
-import io.github.steaf23.bingoreloaded.item.ItemCardSlot;
+import io.github.steaf23.bingoreloaded.item.tasks.AbstractBingoTask;
+import io.github.steaf23.bingoreloaded.item.tasks.ItemTask;
 import io.github.steaf23.bingoreloaded.BingoGame;
 import io.github.steaf23.bingoreloaded.BingoGameMode;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
@@ -57,7 +57,7 @@ public class RecoveryCardData
         if (itemNames == null) return false;
         if (itemNames.size() != card.size.fullCardSize) return false;
 
-        List<AbstractCardSlot> items = new ArrayList<>();
+        List<AbstractBingoTask> items = new ArrayList<>();
         for (Object entry : itemNames)
         {
             String itemName = "";
@@ -68,7 +68,7 @@ public class RecoveryCardData
                 itemName = (String) mapEntry.get();
             }
 
-            AbstractCardSlot item = new ItemCardSlot(Material.getMaterial(itemName));
+            AbstractBingoTask item = new ItemTask(Material.getMaterial(itemName));
             BingoTeam completedBy = manager.getTeamByName((String) itemMap.get(itemName));
 
             if (completedBy != null)
@@ -78,7 +78,7 @@ public class RecoveryCardData
             items.add(item);
         }
 
-        card.cardSlots = items;
+        card.tasks = items;
         return true;
     }
 
@@ -93,9 +93,9 @@ public class RecoveryCardData
         {
             List<Map<String, String>> items = new ArrayList<>();
 
-            for (int i = 0; i < t.card.cardSlots.size(); i++)
+            for (int i = 0; i < t.card.tasks.size(); i++)
             {
-                AbstractCardSlot slot = t.card.cardSlots.get(i);
+                AbstractBingoTask slot = t.card.tasks.get(i);
 
                 if (slot.getWhoCompleted() == null)
                 {

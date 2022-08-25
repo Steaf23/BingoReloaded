@@ -26,7 +26,7 @@ public abstract class ListPickerUI extends AbstractGUIInventory
     private int currentPage;
     private KeyboardUI filter;
     private String keywordFilter;
-    private FilterType filterType;
+    public FilterType filterType;
 
     private static final InventoryItem BG_ITEM = new InventoryItem(Material.BLACK_STAINED_GLASS_PANE, " ", "");
     private static final InventoryItem NEXT = new InventoryItem(53, Material.STRUCTURE_VOID, "" + ChatColor.LIGHT_PURPLE + ChatColor.BOLD + "Next page", "");
@@ -197,7 +197,6 @@ public abstract class ListPickerUI extends AbstractGUIInventory
             else
                 break;
         }
-
         for (int i : itemIndices)
             items.remove(i);
 
@@ -229,7 +228,7 @@ public abstract class ListPickerUI extends AbstractGUIInventory
 
             if (value)
             {
-                meta.setLore(List.of(ChatColor.DARK_PURPLE + "This item has been added to the list"));
+                meta.setLore(List.of("This task has been added to the list"));
                 meta.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_UNBREAKABLE);
 
                 item.setItemMeta(meta);
@@ -240,7 +239,7 @@ public abstract class ListPickerUI extends AbstractGUIInventory
             else
             {
                 item.setAmount(1);
-                meta.setLore(List.of(ChatColor.GRAY + "Click to make this item", ChatColor.GRAY + "appear on bingo cards"));
+                meta.setLore(List.of(ChatColor.GRAY + "Click to make this task", ChatColor.GRAY + "appear on bingo cards"));
                 meta.removeItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_UNBREAKABLE);
 
                 item.setItemMeta(meta);

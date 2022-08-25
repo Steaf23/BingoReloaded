@@ -1,7 +1,10 @@
-package io.github.steaf23.bingoreloaded.gui;
+package io.github.steaf23.bingoreloaded.gui.creator;
 
 import io.github.steaf23.bingoreloaded.data.BingoCardsData;
-import io.github.steaf23.bingoreloaded.data.BingoSlotsData;
+import io.github.steaf23.bingoreloaded.data.BingoTasksData;
+import io.github.steaf23.bingoreloaded.gui.AbstractGUIInventory;
+import io.github.steaf23.bingoreloaded.gui.FilterType;
+import io.github.steaf23.bingoreloaded.gui.ListPickerUI;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -35,7 +38,7 @@ public class CardEditorUI extends ListPickerUI
         if (clickedOption.getItemMeta() == null) return;
 
         String listName = clickedOption.getItemMeta().getDisplayName();
-        valueEditorGUI = new ListValueEditorGUI(this, listName, BingoCardsData.getListMax(cardName, listName));
+        valueEditorGUI = new ListValueEditorGUI(this, listName, BingoCardsData.getListMax(cardName, listName), BingoCardsData.getListMin(cardName, listName));
         valueEditorGUI.open(player);
     }
 
@@ -47,7 +50,7 @@ public class CardEditorUI extends ListPickerUI
         if (slotClicked == ADD_LIST.getSlot())
         {
             List<InventoryItem> items = new ArrayList<>();
-            for (String category : BingoSlotsData.getListNames())
+            for (String category : BingoTasksData.getListNames())
             {
                 items.add(new InventoryItem(Material.PAPER, category, "Click to select"));
             }
@@ -72,7 +75,7 @@ public class CardEditorUI extends ListPickerUI
 
     public void getResultFromPicker(String result)
     {
-        BingoCardsData.setList(cardName, result, 36, 0);
+        BingoCardsData.setList(cardName, result, BingoTasksData.getTaskCount(result), 1);
     }
 
     @Override
@@ -87,9 +90,9 @@ public class CardEditorUI extends ListPickerUI
         clearItems();
 
         List<InventoryItem> newItems = new ArrayList<>();
-        for (String listName : BingoCardsData.getListsOnCard(cardName))
+        for (String listName : BingoCardsData.getLists(cardName))
         {
-            InventoryItem item = new InventoryItem(Material.MAP, listName, ChatColor.DARK_PURPLE + "Contains " + BingoSlotsData.getSlotCount(listName) + " item(s)");
+            InventoryItem item = new InventoryItem(Material.MAP, listName, ChatColor.DARK_PURPLE + "Contains " + BingoTasksData.getTaskCount(listName) + " item(s)");
             item.setAmount(BingoCardsData.getListMax(cardName, listName));
             newItems.add(item);
         }

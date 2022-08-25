@@ -1,5 +1,6 @@
 package io.github.steaf23.bingoreloaded.item;
 
+import io.github.steaf23.bingoreloaded.item.tasks.AbstractBingoTask;
 import io.github.steaf23.bingoreloaded.player.BingoTeam;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
@@ -8,11 +9,11 @@ import org.bukkit.event.player.PlayerEvent;
 public class BingoCardSlotCompleteEvent extends PlayerEvent
 {
     private static final HandlerList HANDLERS = new HandlerList();
-    private final AbstractCardSlot slot;
+    private final AbstractBingoTask slot;
     private final BingoTeam team;
     private final boolean bingo;
 
-    public BingoCardSlotCompleteEvent(AbstractCardSlot slot, BingoTeam team, Player player, boolean bingo)
+    public BingoCardSlotCompleteEvent(AbstractBingoTask slot, BingoTeam team, Player player, boolean bingo)
     {
         super(player);
         this.slot = slot;
@@ -30,7 +31,7 @@ public class BingoCardSlotCompleteEvent extends PlayerEvent
         return HANDLERS;
     }
 
-    public AbstractCardSlot getCardSlot()
+    public AbstractBingoTask getCardSlot()
     {
         return slot;
     }

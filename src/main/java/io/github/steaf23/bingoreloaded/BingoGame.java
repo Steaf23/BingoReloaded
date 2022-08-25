@@ -7,7 +7,7 @@ import io.github.steaf23.bingoreloaded.gui.cards.BingoCard;
 import io.github.steaf23.bingoreloaded.gui.cards.CardBuilder;
 import io.github.steaf23.bingoreloaded.item.BingoCardSlotCompleteEvent;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
-import io.github.steaf23.bingoreloaded.item.ItemCardSlot;
+import io.github.steaf23.bingoreloaded.item.tasks.ItemTask;
 import io.github.steaf23.bingoreloaded.player.BingoTeam;
 import io.github.steaf23.bingoreloaded.player.TeamManager;
 import io.github.steaf23.bingoreloaded.util.FlexibleColor;
@@ -91,7 +91,6 @@ public class BingoGame implements Listener
         players.forEach(this::givePlayerKit);
         players.forEach(this::returnCardToPlayer);
         players.forEach(p -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "advancement revoke " + p.getName() + " everything"));
-
         teleportPlayersToStart(world);
         givePlayersEffects();
 
@@ -221,7 +220,7 @@ public class BingoGame implements Listener
         }
 
         settings.deathMatchItem = settings.generateDeathMatchItem();
-        String itemName = ItemCardSlot.convertToReadableName(settings.deathMatchItem);
+        String itemName = ItemTask.convertToReadableName(settings.deathMatchItem);
         for (Player p : getTeamManager().getParticipants())
         {
             p.sendTitle(ChatColor.GOLD + itemName, ChatColor.DARK_PURPLE + "Death Match: Get this item to win!", -1, -1, -1);
@@ -231,7 +230,7 @@ public class BingoGame implements Listener
 
     public void showDeathMatchItem(Player p)
     {
-        String itemName = ItemCardSlot.convertToReadableName(settings.deathMatchItem);
+        String itemName = ItemTask.convertToReadableName(settings.deathMatchItem);
         p.sendTitle(ChatColor.GOLD + itemName, ChatColor.DARK_PURPLE + "DeathMatch - Find this item to win!", -1, -1, -1);
         BingoReloaded.print(ChatColor.GOLD + itemName, p);
     }
@@ -284,11 +283,17 @@ public class BingoGame implements Listener
         {
             for (int z = -size; z < size + 1; z++)
             {
-                spawnLocation.getWorld().setType(
-                        (int)spawnLocation.getX() + x,
-                        (int)spawnLocation.getY() - 20,
-                        (int)spawnLocation.getZ() + z,
-                        Material.WHITE_STAINED_GLASS);
+                if (!spawnLocation.getWorld().getType(
+                     (int)spawnLocation.getX() + x,
+                    (int)spawnLocation.getY() - 20,
+                    (int)spawnLocation.getZ() + z).isSolid())
+                {
+                    spawnLocation.getWorld().setType(
+                            (int)spawnLocation.getX() + x,
+                            (int)spawnLocation.getY() - 20,
+                            (int)spawnLocation.getZ() + z,
+                            Material.WHITE_STAINED_GLASS);
+                }
             }
         }
     }
@@ -303,6 +308,7 @@ public class BingoGame implements Listener
                     Location playerLoc = getRandomSpawnLocation(world);
 
                     p.teleport(playerLoc, PlayerTeleportEvent.TeleportCause.PLUGIN);
+                    p.setBedSpawnLocation(playerLoc);
 
                     if (getTeamManager().getParticipants().size() > 0)
                         spawnPlatform(playerLoc, 5);
@@ -318,6 +324,7 @@ public class BingoGame implements Listener
                     for (Player p : teamPlayers)
                     {
                         p.teleport(teamLocation, PlayerTeleportEvent.TeleportCause.PLUGIN);
+                        p.setBedSpawnLocation(teamLocation);
                     }
 
                     if (getTeamManager().getParticipants().size() > 0)
@@ -332,6 +339,7 @@ public class BingoGame implements Listener
                 for (Player p : players)
                 {
                     p.teleport(spawnLocation, PlayerTeleportEvent.TeleportCause.PLUGIN);
+                    p.setBedSpawnLocation(spawnLocation);
                 }
 
                 if (getTeamManager().getParticipants().size() > 0)

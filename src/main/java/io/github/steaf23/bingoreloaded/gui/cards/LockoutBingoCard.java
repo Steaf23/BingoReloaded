@@ -1,6 +1,6 @@
 package io.github.steaf23.bingoreloaded.gui.cards;
 
-import io.github.steaf23.bingoreloaded.item.AbstractCardSlot;
+import io.github.steaf23.bingoreloaded.item.tasks.AbstractBingoTask;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
 import io.github.steaf23.bingoreloaded.BingoGame;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
@@ -16,16 +16,16 @@ public class LockoutBingoCard extends BingoCard
 {
     public int teamCount;
     public TeamManager teamManager;
-    public int currentMaxItems;
+    public int currentMaxTasks;
 
     public LockoutBingoCard(CardSize size, BingoGame game, TeamManager manager)
     {
         super(size, game);
         this.teamManager = manager;
-        this.currentMaxItems = size.fullCardSize;
+        this.currentMaxTasks = size.fullCardSize;
         this.teamCount = teamManager.getActiveTeams().size();
 
-        InventoryItem cardInfo = new InventoryItem(0, Material.PAPER, "Lockout Bingo Card", "Complete the most items to win.", "When an item has been completed", "it cannot be complete by any other team.");
+        InventoryItem cardInfo = new InventoryItem(0, Material.MAP, "Lockout Bingo Card", "Complete the most items to win.", "When an item has been completed", "it cannot be complete by any other team.");
         addOption(cardInfo);
     }
 
@@ -43,7 +43,7 @@ public class LockoutBingoCard extends BingoCard
             return true;
         }
         int completeCount = getCompleteCount(team);
-        return completeCount >= Math.floor(currentMaxItems / (double) teamCount) + 1;
+        return completeCount >= Math.floor(currentMaxTasks / (double) teamCount) + 1;
     }
 
     @EventHandler
@@ -66,12 +66,12 @@ public class LockoutBingoCard extends BingoCard
     {
         BingoReloaded.broadcast("Team " + team.getColor() + team.getName() + " cannot win anymore, they are out of the game!");
         team.outOfTheGame = true;
-        for (AbstractCardSlot item : cardSlots)
+        for (AbstractBingoTask task : tasks)
         {
-            if (item.getWhoCompleted().equals(team))
+            if (task.getWhoCompleted().equals(team))
             {
-                item.voidItem();
-                currentMaxItems--;
+                task.voidTask();
+                currentMaxTasks--;
             }
         }
         for (Player p : teamManager.getPlayersOfTeam(team))

@@ -3,9 +3,13 @@ package io.github.steaf23.bingoreloaded.gui.cards;
 import io.github.steaf23.bingoreloaded.BingoGame;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.BingoCardsData;
-import io.github.steaf23.bingoreloaded.data.BingoSlotsData;
+import io.github.steaf23.bingoreloaded.data.BingoTasksData;
 import io.github.steaf23.bingoreloaded.gui.AbstractGUIInventory;
-import io.github.steaf23.bingoreloaded.item.*;
+import io.github.steaf23.bingoreloaded.item.BingoCardSlotCompleteEvent;
+import io.github.steaf23.bingoreloaded.item.InventoryItem;
+import io.github.steaf23.bingoreloaded.item.tasks.AbstractBingoTask;
+import io.github.steaf23.bingoreloaded.item.tasks.AdvancementTask;
+import io.github.steaf23.bingoreloaded.item.tasks.ItemTask;
 import io.github.steaf23.bingoreloaded.player.BingoTeam;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -23,25 +27,23 @@ import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class BingoCard extends AbstractGUIInventory implements Listener
 {
     public CardSize size;
-    public List<AbstractCardSlot> cardSlots = new ArrayList<>();
+    public List<AbstractBingoTask> tasks = new ArrayList<>();
 
     protected BingoGame game;
 
-    private static final ItemCardSlot DEFAULT_SLOT = new ItemCardSlot(Material.DIRT);
+    private static final ItemTask DEFAULT_TASK = new ItemTask(Material.DIRT);
 
     public BingoCard(CardSize size, BingoGame game)
     {
         super(9 * size.cardSize, "Card Viewer", null);
         this.size = size;
         this.game = game;
-        InventoryItem cardInfoItem = new InventoryItem(0, Material.PAPER, "Regular Bingo Card", "First team to complete 1 line wins.", "Lines can span vertically, horizontally", "or vertically.");
+        InventoryItem cardInfoItem = new InventoryItem(0, Material.MAP, "Regular Bingo Card", "First team to complete 1 line wins.", "Lines can span vertically, horizontally", "or vertically.");
         addOption(cardInfoItem);
 
         BingoReloaded.registerListener(this);
@@ -49,47 +51,65 @@ public class BingoCard extends AbstractGUIInventory implements Listener
 
     public void generateCard(String cardName)
     {
-        List<AbstractCardSlot> newItems = new ArrayList<>();
+        List<AbstractBingoTask> newItems = new ArrayList<>();
 
-        for (String listName : BingoCardsData.getListsOnCard(cardName))
+        List<String> ticketList = new ArrayList<>();
+        for (String listName : BingoCardsData.getListsSortedByMin(cardName))
         {
-            List<AbstractCardSlot> slots = BingoSlotsData.getAllSlots(listName);
-            Collections.shuffle(slots);
+            if (BingoTasksData.getTaskCount(listName) <= 0) // Skip empty task lists.
+            {
+                continue;
+            }
+            for (int i = 0; i < BingoCardsData.getListMin(cardName, listName); i++)
+            {
+                ticketList.add(listName);
+            }
+        }
 
-            int count = BingoCardsData.getListMax(cardName, listName);
-            if (slots.size() <= 0)
+        List<String> overflowList = new ArrayList<>();
+        for (String listName : BingoCardsData.getLists(cardName))
+        {
+            for (int i = 0; i < BingoCardsData.getListMax(cardName, listName) - BingoCardsData.getListMin(cardName, listName); i++)
             {
-                for (int i = 0; i < count; i++)
-                {
-                    newItems.add(DEFAULT_SLOT.copy());
-                }
+                overflowList.add(listName);
             }
-            else
+        }
+        Collections.shuffle(overflowList);
+        ticketList.addAll(overflowList);
+        if (ticketList.size() > size.fullCardSize)
+            ticketList = ticketList.subList(0, size.fullCardSize);
+
+        Map<String, List<AbstractBingoTask>> allTasks = new HashMap<>();
+        for (String listName : ticketList)
+        {
+            if (!allTasks.containsKey(listName))
             {
-                for (int i = 0; i < count; i++)
+                List<AbstractBingoTask> listTasks = BingoTasksData.getAllTasks(listName);
+                if (listTasks.size() <= 0) // Skip empty task lists.
                 {
-                    slots.get(Math.floorMod(i, slots.size())).item.getAmount();
-                    newItems.add(slots.get(Math.floorMod(i, slots.size())));
+                    continue;
                 }
+                Collections.shuffle(listTasks);
+                allTasks.put(listName, listTasks);
             }
+            newItems.add(allTasks.get(listName).remove(allTasks.get(listName).size() - 1));
         }
 
         while (newItems.size() < size.fullCardSize)
         {
-            newItems.add(new ItemCardSlot(Material.DIRT));
+            newItems.add(DEFAULT_TASK.copy());
         }
         newItems = newItems.subList(0, size.fullCardSize);
 
-        //Lastly, shuffle and cut the list so that it contains exactly enough items
         Collections.shuffle(newItems);
-        cardSlots = newItems;
+        tasks = newItems;
     }
 
     public void showInventory(HumanEntity player)
     {
-        for (int i = 0; i < cardSlots.size(); i++)
+        for (int i = 0; i < tasks.size(); i++)
         {
-            addOption(cardSlots.get(i).item.inSlot(size.getCardInventorySlot(i)));
+            addOption(tasks.get(i).item.inSlot(size.getCardInventorySlot(i)));
         }
 
         open(player);
@@ -97,7 +117,7 @@ public class BingoCard extends AbstractGUIInventory implements Listener
 
     public boolean hasBingo(BingoTeam team)
     {
-        BingoReloaded.print("Your team (" + team.getColor() + team.getName() + ChatColor.RESET + ") has collected " + getCompleteCount(team) + " items!", team);
+        BingoReloaded.print("Your team (" + team.getColor() + team.getName() + ChatColor.RESET + ") has completed " + getCompleteCount(team) + " task(s)!", team);
         //check for rows and columns
         for (int y = 0; y < size.cardSize; y++)
         {
@@ -106,13 +126,13 @@ public class BingoCard extends AbstractGUIInventory implements Listener
             for (int x = 0; x < size.cardSize; x++)
             {
                 int indexRow = size.cardSize * y + x;
-                if (!cardSlots.get(indexRow).isCompletedByTeam(team))
+                if (!tasks.get(indexRow).isCompletedByTeam(team))
                 {
                     completedRow = false;
                 }
 
                 int indexCol = size.cardSize * x + y;
-                if (!cardSlots.get(indexCol).isCompletedByTeam(team))
+                if (!tasks.get(indexCol).isCompletedByTeam(team))
                 {
                     completedCol = false;
                 }
@@ -128,7 +148,7 @@ public class BingoCard extends AbstractGUIInventory implements Listener
         boolean completedDiagonal1 = true;
         for (int idx = 0; idx < size.fullCardSize; idx += size.cardSize + 1)
         {
-            if (!cardSlots.get(idx).isCompletedByTeam(team))
+            if (!tasks.get(idx).isCompletedByTeam(team))
             {
                 completedDiagonal1 = false;
                 break;
@@ -140,7 +160,7 @@ public class BingoCard extends AbstractGUIInventory implements Listener
         {
             if (idx != 0 && idx != size.fullCardSize - 1)
             {
-                if (!cardSlots.get(idx).isCompletedByTeam(team))
+                if (!tasks.get(idx).isCompletedByTeam(team))
                 {
                     completedDiagonal2 = false;
                     break;
@@ -157,7 +177,7 @@ public class BingoCard extends AbstractGUIInventory implements Listener
     public int getCompleteCount(BingoTeam team)
     {
         int count = 0;
-        for (AbstractCardSlot item : cardSlots)
+        for (AbstractBingoTask item : tasks)
         {
             if (item.isCompletedByTeam(team))
                 count++;
@@ -175,12 +195,12 @@ public class BingoCard extends AbstractGUIInventory implements Listener
     public BingoCard copy()
     {
         BingoCard card = new BingoCard(this.size, game);
-        List<AbstractCardSlot> newItems = new ArrayList<>();
-        for (AbstractCardSlot slot : cardSlots)
+        List<AbstractBingoTask> newItems = new ArrayList<>();
+        for (AbstractBingoTask slot : tasks)
         {
             newItems.add(slot.copy());
         }
-        card.cardSlots = newItems;
+        card.tasks = newItems;
         return card;
     }
 
@@ -276,9 +296,9 @@ public class BingoCard extends AbstractGUIInventory implements Listener
 
         if (game.getSettings().deathMatchItem != null)
             return;
-        for (var slot : cardSlots)
+        for (var slot : tasks)
         {
-            if (slot instanceof AdvancementCardSlot advSlot && !advSlot.isComplete())
+            if (slot instanceof AdvancementTask advSlot && !advSlot.isComplete())
             {
                 if (advSlot.advancement.equals(event.getAdvancement()))
                 {
@@ -303,16 +323,16 @@ public class BingoCard extends AbstractGUIInventory implements Listener
             return item;
         }
 
-        for (AbstractCardSlot slot : cardSlots)
+        for (AbstractBingoTask task : tasks)
         {
-            if (slot instanceof ItemCardSlot itemSlot)
+            if (task instanceof ItemTask itemTask)
             {
-                if (item.getType().equals(itemSlot.item.getType()) && item.getAmount() >= itemSlot.getCount())
+                if (item.getType().equals(itemTask.item.getType()) && item.getAmount() >= itemTask.getCount())
                 {
-                    itemSlot.complete(team, game.getGameTime());
-                    item.setAmount(item.getAmount() - itemSlot.getCount());
+                    itemTask.complete(team, game.getGameTime());
+                    item.setAmount(item.getAmount() - itemTask.getCount());
 //                    player.updateInventory();
-                    var slotEvent = new BingoCardSlotCompleteEvent(itemSlot, team, player, hasBingo(team));
+                    var slotEvent = new BingoCardSlotCompleteEvent(itemTask, team, player, hasBingo(team));
                     Bukkit.getPluginManager().callEvent(slotEvent);
                     break;
                 }

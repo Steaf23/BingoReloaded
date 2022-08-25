@@ -1,6 +1,6 @@
 package io.github.steaf23.bingoreloaded.gui.cards;
 
-import io.github.steaf23.bingoreloaded.item.AbstractCardSlot;
+import io.github.steaf23.bingoreloaded.item.tasks.AbstractBingoTask;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
 import io.github.steaf23.bingoreloaded.BingoGame;
 import io.github.steaf23.bingoreloaded.player.BingoTeam;
@@ -14,7 +14,7 @@ public class CompleteBingoCard extends BingoCard
     public CompleteBingoCard(CardSize size, BingoGame game)
     {
         super(size, game);
-        InventoryItem item = new InventoryItem(0, Material.PAPER, "Complete-All Bingo Card", "First team to complete all items wins.");
+        InventoryItem item = new InventoryItem(0, Material.MAP, "Complete-All Bingo Card", "First team to complete all items wins.");
         addOption(item);
     }
 
@@ -28,12 +28,12 @@ public class CompleteBingoCard extends BingoCard
     public CompleteBingoCard copy()
     {
         CompleteBingoCard card = new CompleteBingoCard(this.size, game);
-        List<AbstractCardSlot> newItems = new ArrayList<>();
-        for (AbstractCardSlot item : cardSlots)
+        List<AbstractBingoTask> newTasks = new ArrayList<>();
+        for (AbstractBingoTask item : tasks)
         {
-            newItems.add(item.copy());
+            newTasks.add(item.copy());
         }
-        card.cardSlots = newItems;
+        card.tasks = newTasks;
         return card;
     }
 }

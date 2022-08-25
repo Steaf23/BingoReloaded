@@ -248,7 +248,7 @@ public class TeamManager
         if (!getParticipants().contains(player)) return;
 
         removePlayerFromAllTeams(player);
-        BingoReloaded.print("You have been successfully removed from the game, use " + ChatColor.DARK_RED + "/bingo join " + ChatColor.RESET + "to come back to me :D", player);
+        BingoReloaded.print("You have been successfully removed from the game!", player);
         BingoGame.takePlayerEffects(player);
     }
 }

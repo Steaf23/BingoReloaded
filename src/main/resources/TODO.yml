@@ -1,5 +1,18 @@
 translations!
+multiworld refactor!
+
+save the card picked for quicker configurating when picking cards.
 
 name of tab doesnt consistently have the team's color (probably because of the scoreboard switching)
 
-fix error when clicking empty space in itempicker ui
+add option to duplicate cards/lists
+
+create cards in Card Creator
+
+add countdown
+
+show item count in list's lore
+
+toggle start button to end button if game in progress.
+
+Refactor card recovery (its shit)

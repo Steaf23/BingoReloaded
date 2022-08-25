@@ -2,7 +2,7 @@ package io.github.steaf23.bingoreloaded.command;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.BingoCardsData;
-import io.github.steaf23.bingoreloaded.gui.CardEditorUI;
+import io.github.steaf23.bingoreloaded.gui.creator.CardEditorUI;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -44,16 +44,6 @@ public class CardCommand implements CommandExecutor
                         editCard(args[1], p);
                     break;
 
-                case "edit":
-                    if (args.length < 2)
-                    {
-                        BingoReloaded.broadcast(ChatColor.RED + "Please provide card name: /card edit <card_name>");
-                        break;
-                    }
-                    if (commandSender instanceof Player p)
-                        editCard(args[1], p);
-                    break;
-
                 case "remove":
                     if (commandSender instanceof Player p)
                     {
@@ -87,9 +77,9 @@ public class CardCommand implements CommandExecutor
 
                 default:
                     if (commandSender instanceof Player player)
-                        BingoReloaded.print(ChatColor.RED + "Usage: /card [create|edit|remove]", player);
+                        BingoReloaded.print(ChatColor.RED + "Usage: /card [create | remove]", player);
                     else
-                        BingoReloaded.print(ChatColor.RED + "Usage: /card [create|edit|remove]");
+                        BingoReloaded.print(ChatColor.RED + "Usage: /card [create | remove]");
                     break;
             }
         }

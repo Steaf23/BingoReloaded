@@ -1,17 +1,14 @@
 package io.github.steaf23.bingoreloaded.command;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
-import io.github.steaf23.bingoreloaded.data.AdvancementData;
-import io.github.steaf23.bingoreloaded.data.BingoSlotsData;
+import io.github.steaf23.bingoreloaded.data.BingoTasksData;
 import io.github.steaf23.bingoreloaded.gui.FilterType;
 import io.github.steaf23.bingoreloaded.gui.ListPickerUI;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
-import io.github.steaf23.bingoreloaded.item.ItemCardSlot;
+import io.github.steaf23.bingoreloaded.item.tasks.ItemTask;
 import io.github.steaf23.bingoreloaded.util.FlexibleColor;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.advancement.Advancement;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -24,7 +21,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
@@ -44,10 +40,10 @@ public class ItemListCommand implements CommandExecutor
             {
                 case "list":
                     if (commandSender instanceof Player p)
-                        BingoReloaded.print("These are all existing lists: " + ChatColor.GOLD + BingoSlotsData.getListNames(), p);
+                        BingoReloaded.print("These are all existing lists: " + ChatColor.GOLD + BingoTasksData.getListNames(), p);
                     else if (commandSender instanceof ConsoleCommandSender cmd)
                     {
-                        BingoReloaded.print("These are all existing lists: " + BingoSlotsData.getListNames());
+                        BingoReloaded.print("These are all existing lists: " + BingoTasksData.getListNames());
                     }
                     break;
 
@@ -61,21 +57,6 @@ public class ItemListCommand implements CommandExecutor
                         editList(args[1], p);
                     break;
 
-                case "edit":
-                    if (args.length < 2)
-                    {
-                        BingoReloaded.broadcast(ChatColor.RED + "Please provide item list name: /itemlist edit <list_name>");
-                        break;
-                    }
-                    if (commandSender instanceof Player p)
-                        editList(args[1], p);
-                    break;
-
-                case "adv":
-                    if (commandSender instanceof Player p)
-                        editAdvancementList(args[1], p);
-                    break;
-
                 case "remove":
                     if (commandSender instanceof Player p)
                     {
@@ -85,7 +66,7 @@ public class ItemListCommand implements CommandExecutor
                             break;
                         }
 
-                        if (BingoSlotsData.removeList(args[1]))
+                        if (BingoTasksData.removeList(args[1]))
                             BingoReloaded.print("Item list '" + args[1] + "' successfully removed!", p);
                         else
                             BingoReloaded.print("Item list couldn't be found, make sure its spelled correctly!", p);
@@ -99,7 +80,7 @@ public class ItemListCommand implements CommandExecutor
                             break;
                         }
 
-                        if (BingoSlotsData.removeList(args[1]))
+                        if (BingoTasksData.removeList(args[1]))
                             BingoReloaded.print("Item list '" + args[1] + "' successfully removed!");
                         else
                             BingoReloaded.print("Item list couldn't be found, make sure its spelled correctly!");
@@ -110,9 +91,9 @@ public class ItemListCommand implements CommandExecutor
 
                 default:
                     if (commandSender instanceof Player player)
-                        BingoReloaded.print(ChatColor.RED + "Usage: /itemlist [list | create | edit | remove]", player);
+                        BingoReloaded.print(ChatColor.RED + "Usage: /itemlist [list | create | remove]", player);
                     else
-                        BingoReloaded.print(ChatColor.RED + "Usage: /itemlist [list | create | edit | remove]");
+                        BingoReloaded.print(ChatColor.RED + "Usage: /itemlist [list | create | remove]");
                     break;
             }
         }
@@ -163,7 +144,7 @@ public class ItemListCommand implements CommandExecutor
             @Override
             public void open(HumanEntity player)
             {
-                List<ItemCardSlot> items = BingoSlotsData.getItemSlots(itemListName);
+                List<ItemTask> items = BingoTasksData.getItemTasks(itemListName);
                 List<InventoryItem> allItems = getItems();
 
                 items.forEach(slot -> {
@@ -183,13 +164,12 @@ public class ItemListCommand implements CommandExecutor
             @Override
             public void close(HumanEntity player)
             {
-                List<ItemCardSlot> slots = new ArrayList<>();
+                List<ItemTask> slots = new ArrayList<>();
                 getSelectedItems().forEach((item) -> {
-                    ItemCardSlot newItem = new ItemCardSlot(item.getType());
-                    newItem.setCount(item.getAmount());
+                    ItemTask newItem = new ItemTask(item.getType(), item.getAmount());
                     slots.add(newItem);
                 });
-                BingoSlotsData.saveItemSlots(itemListName, slots.toArray(ItemCardSlot[]::new));
+                BingoTasksData.saveItemTasks(itemListName, slots.toArray(ItemTask[]::new));
                 super.close(player);
             }
 
@@ -234,31 +214,5 @@ public class ItemListCommand implements CommandExecutor
             }
         };
         itemPicker.open(player);
-    }
-
-    public void editAdvancementList(String listName, Player player)
-    {
-        List<InventoryItem> options = new ArrayList<>();
-        for (Iterator<Advancement> it = Bukkit.advancementIterator(); it.hasNext(); )
-        {
-            Advancement a = it.next();
-            String key = a.getKey().getKey();
-            if (key.startsWith("recipes/") || key.endsWith("/root"))
-            {
-                continue;
-            }
-            InventoryItem item = new InventoryItem(Material.PAPER, AdvancementData.getAdvancementTitle(key));
-            options.add(item);
-        }
-
-        ListPickerUI advancementPicker = new ListPickerUI(options, "Add Advancements", null, FilterType.DISPLAY_NAME)
-        {
-            @Override
-            public void onOptionClickedDelegate(InventoryClickEvent event, InventoryItem clickedOption, Player player)
-            {
-                selectItem(clickedOption, !getSelectedItems().contains(clickedOption));
-            }
-        };
-        advancementPicker.open(player);
     }
 }

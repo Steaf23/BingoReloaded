@@ -133,7 +133,7 @@ public class BingoOptionsUI extends AbstractGUIInventory
         {
             cards.add(new InventoryItem(Material.PAPER, cardName,
                     ChatColor.DARK_PURPLE + "Contains " +
-                            BingoCardsData.getListsOnCard(cardName).size() + " item List(s)"));
+                            BingoCardsData.getLists(cardName).size() + " item List(s)"));
         }
 
         ListPickerUI cardPicker = new ListPickerUI(cards, "Pick a card",this, FilterType.DISPLAY_NAME)

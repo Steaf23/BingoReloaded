@@ -22,9 +22,9 @@ public abstract class KeyboardUI extends AbstractGUIInventory
     private String keyword;
 
     private static final InventoryItem BG_ITEM = new InventoryItem(Material.BLACK_STAINED_GLASS_PANE, " ", "");
-    private static final InventoryItem CLEAR = new InventoryItem(46, Material.HOPPER, "" + ChatColor.GRAY + ChatColor.BOLD + "Clear Filter", "");
-    private static final InventoryItem CANCEL = new InventoryItem(48, Material.REDSTONE, "" + ChatColor.RED + ChatColor.BOLD +"Cancel", "");
-    private static final InventoryItem APPLY = new InventoryItem(50, Material.DIAMOND, "" + ChatColor.AQUA + ChatColor.BOLD +"Apply", "");
+    private static final InventoryItem CLEAR = new InventoryItem(46, Material.HOPPER, "" + ChatColor.GRAY + ChatColor.BOLD + "Clear", "");
+    private static final InventoryItem CANCEL = new InventoryItem(48, Material.REDSTONE, "" + ChatColor.RED + ChatColor.BOLD + "Cancel", "");
+    private static final InventoryItem ACCEPT = new InventoryItem(50, Material.DIAMOND, "" + ChatColor.AQUA + ChatColor.BOLD + "Accept", "");
 
     private static InventoryItem[] options = new InventoryItem[0];
 
@@ -87,7 +87,7 @@ public abstract class KeyboardUI extends AbstractGUIInventory
 
         fillOptions(options);
         fillOptions(new InventoryItem[]{
-                BG_ITEM.inSlot(45), CLEAR, BG_ITEM.inSlot(47), CANCEL, BG_ITEM.inSlot(49), APPLY, BG_ITEM.inSlot(51), BG_ITEM.inSlot(52), BG_ITEM.inSlot(53)
+                BG_ITEM.inSlot(45), CLEAR, BG_ITEM.inSlot(47), CANCEL, BG_ITEM.inSlot(49), ACCEPT, BG_ITEM.inSlot(51), BG_ITEM.inSlot(52), BG_ITEM.inSlot(53)
         });
     }
 
@@ -127,7 +127,7 @@ public abstract class KeyboardUI extends AbstractGUIInventory
         {
             close(player);
         }
-        else if (slotClicked == APPLY.getSlot())
+        else if (slotClicked == ACCEPT.getSlot())
         {
             storeValue();
             close(player);
@@ -152,9 +152,10 @@ public abstract class KeyboardUI extends AbstractGUIInventory
     public void updateTitle(HumanEntity player)
     {
         inventory = Bukkit.createInventory(new GUIHolder(), 54, BingoReloaded.PRINT_PREFIX + ChatColor.GOLD + "\"" + keyword + "\"");
+
         fillOptions(options);
         fillOptions(new InventoryItem[]{
-                BG_ITEM.inSlot(45), CLEAR, BG_ITEM.inSlot(47), CANCEL, BG_ITEM.inSlot(49), APPLY, BG_ITEM.inSlot(51), BG_ITEM.inSlot(52), BG_ITEM.inSlot(53)
+                BG_ITEM.inSlot(45), CLEAR, BG_ITEM.inSlot(47), CANCEL, BG_ITEM.inSlot(49), ACCEPT, BG_ITEM.inSlot(51), BG_ITEM.inSlot(52), BG_ITEM.inSlot(53)
         });
         player.openInventory(inventory);
     }

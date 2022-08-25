@@ -1,7 +1,10 @@
-package io.github.steaf23.bingoreloaded.gui;
+package io.github.steaf23.bingoreloaded.gui.creator;
 
 import io.github.steaf23.bingoreloaded.data.BingoCardsData;
-import io.github.steaf23.bingoreloaded.data.BingoSlotsData;
+import io.github.steaf23.bingoreloaded.data.BingoTasksData;
+import io.github.steaf23.bingoreloaded.gui.AbstractGUIInventory;
+import io.github.steaf23.bingoreloaded.gui.FilterType;
+import io.github.steaf23.bingoreloaded.gui.ListPickerUI;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -48,13 +51,13 @@ public class CardCreatorUI extends AbstractGUIInventory
         else if (slotClicked == ITEM.getSlot())
         {
             List<InventoryItem> items = new ArrayList<>();
-            for (String list : BingoSlotsData.getListNames())
+            for (String list : BingoTasksData.getListNames())
             {
                 InventoryItem item = new InventoryItem(Material.PAPER, list);
                 items.add(item);
             }
 
-            ListPickerUI listPicker = new ListPickerUI(items, "Choose a list", this, FilterType.DISPLAY_NAME)
+            ListPickerUI listPicker = new ListPickerUI(items, "Choose A List", this, FilterType.DISPLAY_NAME)
             {
                 @Override
                 public void onOptionClickedDelegate(InventoryClickEvent event, InventoryItem clickedOption, Player player)
@@ -74,6 +77,7 @@ public class CardCreatorUI extends AbstractGUIInventory
 
     private void openListEditor(String listName, Player player)
     {
-
+        ListEditorUI editor = new ListEditorUI(listName, this);
+        editor.openItemPicker(player);
     }
 }

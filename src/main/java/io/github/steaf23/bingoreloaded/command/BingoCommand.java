@@ -4,7 +4,7 @@ import io.github.steaf23.bingoreloaded.BingoGame;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.ConfigData;
 import io.github.steaf23.bingoreloaded.gui.BingoOptionsUI;
-import io.github.steaf23.bingoreloaded.gui.CardCreatorUI;
+import io.github.steaf23.bingoreloaded.gui.creator.CardCreatorUI;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;

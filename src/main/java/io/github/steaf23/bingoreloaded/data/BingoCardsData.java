@@ -1,14 +1,14 @@
 package io.github.steaf23.bingoreloaded.data;
 
-import io.github.steaf23.bingoreloaded.item.ItemCardSlot;
+import io.github.steaf23.bingoreloaded.item.tasks.ItemTask;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 
 public class BingoCardsData
 {
+    public static final int MAX_ITEMS = 36;
+    public static final int MIN_ITEMS = 1;
+
     private static final YMLDataManager data = new YMLDataManager("cards.yml");
 
     public static boolean removeCard(String cardName)
@@ -29,31 +29,31 @@ public class BingoCardsData
 
     public static int getListMax(String cardName, String listName)
     {
-        return data.getConfig().getInt(cardName + "." + listName + ".max", 36);
+        return data.getConfig().getInt(cardName + "." + listName + ".max", MAX_ITEMS);
     }
 
     public static int getListMin(String cardName, String listName)
     {
-        return data.getConfig().getInt(cardName + "." + listName + ".min", 0);
+        return data.getConfig().getInt(cardName + "." + listName + ".min", MIN_ITEMS);
     }
 
     public static void setList(String cardName, String listName, int max, int min)
     {
-        data.getConfig().set(cardName + "." + listName, new HashMap<>(){{
+        data.getConfig().createSection(cardName + "." + listName, new HashMap<>(){{
             put("max", max);
             put("min", min);
         }});
         data.saveConfig();
     }
 
-    public static ItemCardSlot getRandomItemSlot(String cardName)
+    public static ItemTask getRandomItemTask(String cardName)
     {
-        String[] lists = getListsOnCard(cardName).toArray(new String[0]);
+        String[] lists = getLists(cardName).toArray(new String[0]);
         int listIdx = new Random().nextInt(lists.length);
-        return BingoSlotsData.getRandomItemSlot(lists[listIdx]);
+        return BingoTasksData.getRandomItemTask(lists[listIdx]);
     }
 
-    public static Set<String> getListsOnCard(String cardName)
+    public static Set<String> getLists(String cardName)
     {
         if (data.getConfig().getConfigurationSection(cardName) == null)
             return new HashSet<>();
@@ -61,5 +61,19 @@ public class BingoCardsData
         {
             return data.getConfig().getConfigurationSection(cardName).getKeys(false);
         }
+    }
+
+    public static List<String> getListsSortedByMin(String cardName)
+    {
+        List<String> result = new ArrayList<>(data.getConfig().getConfigurationSection(cardName).getKeys(false));
+        result.sort((a, b) -> Integer.compare(getListMin(cardName, a), getListMin(cardName, b)));
+        return result;
+    }
+
+    public static List<String> getListsSortedByMax(String cardName)
+    {
+        List<String> result = new ArrayList<>(data.getConfig().getConfigurationSection(cardName).getKeys(false));
+        result.sort((a, b) -> Integer.compare(getListMax(cardName, a), getListMax(cardName, b)));
+        return result;
     }
 }
