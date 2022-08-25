@@ -44,7 +44,7 @@ public class ItemTask extends AbstractBingoTask
     @Override
     public List<String> getDescription()
     {
-        return List.of("Get this item " + getCount() + " time(s) to complete this task!");
+        return List.of("Get " + getCount() + " of this item to complete this task!");
     }
 
     public int getCount()

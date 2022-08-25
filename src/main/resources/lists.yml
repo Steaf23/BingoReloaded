@@ -329,7 +329,6 @@ default_advancements:
     - key: minecraft:nether/obtain_crying_obsidian
     - key: minecraft:nether/distract_piglin
     - key: minecraft:story/obtain_armor
-    - key: minecraft:adventure/very_very_frightening
     - key: minecraft:story/lava_bucket
     - key: minecraft:husbandry/ride_a_boat_with_a_goat
     - key: minecraft:nether/brew_potion
@@ -337,7 +336,6 @@ default_advancements:
     - key: minecraft:story/deflect_arrow
     - key: minecraft:husbandry/make_a_sign_glow
     - key: minecraft:husbandry/tame_an_animal
-    - key: minecraft:adventure/lightning_rod_with_villager_no_fire
     - key: minecraft:adventure/kill_mob_near_sculk_catalyst
     - key: minecraft:husbandry/fishy_business
     - key: minecraft:nether/explore_nether

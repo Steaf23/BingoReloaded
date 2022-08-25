@@ -1,16 +1,14 @@
 translations!
 multiworld refactor!
 
-save the card picked for quicker configurating when picking cards.
+show item count in list's lore
+
+toggle start button to end button if game in progress.
 
 name of tab doesnt consistently have the team's color (probably because of the scoreboard switching)
 
 add option to duplicate cards/lists
 
 add countdown
-
-show item count in list's lore
-
-toggle start button to end button if game in progress.
 
 Refactor card recovery (its shit)

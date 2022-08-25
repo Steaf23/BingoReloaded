@@ -20,13 +20,13 @@ import java.util.List;
 public class CardCreatorUI extends AbstractGUIInventory
 {
     public static final InventoryItem CARD = new InventoryItem(11, Material.FILLED_MAP, TITLE_PREFIX + "Edit Cards", "Click to view and edit bingo cards!");
-    public static final InventoryItem ITEM = new InventoryItem(15, Material.PAPER, TITLE_PREFIX + "Edit Lists", "Click to view and edit bingo lists!");
+    public static final InventoryItem LIST = new InventoryItem(15, Material.PAPER, TITLE_PREFIX + "Edit Lists", "Click to view and edit bingo lists!");
 
     public CardCreatorUI(AbstractGUIInventory parent)
     {
         super(27, "Card Creator", parent);
 
-        fillOptions(new InventoryItem[]{CARD, ITEM});
+        fillOptions(new InventoryItem[]{CARD, LIST});
     }
 
     @Override
@@ -70,12 +70,12 @@ public class CardCreatorUI extends AbstractGUIInventory
             };
             cardPicker.open(player);
         }
-        else if (slotClicked == ITEM.getSlot())
+        else if (slotClicked == LIST.getSlot())
         {
             List<InventoryItem> items = new ArrayList<>();
             for (String list : BingoTasksData.getListNames())
             {
-                InventoryItem item = new InventoryItem(Material.PAPER, list);
+                InventoryItem item = new InventoryItem(Material.PAPER, list, "This list contains " + BingoTasksData.getTaskCount(list) + " tasks");
                 items.add(item);
             }
 

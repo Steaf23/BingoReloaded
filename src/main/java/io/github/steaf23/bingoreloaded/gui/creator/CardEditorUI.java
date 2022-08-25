@@ -49,9 +49,9 @@ public class CardEditorUI extends ListPickerUI
         if (slotClicked == ADD_LIST.getSlot())
         {
             List<InventoryItem> items = new ArrayList<>();
-            for (String category : BingoTasksData.getListNames())
+            for (String listName : BingoTasksData.getListNames())
             {
-                items.add(new InventoryItem(Material.PAPER, category, "Click to select"));
+                items.add(new InventoryItem(Material.PAPER, listName, "This list contains " + BingoTasksData.getTaskCount(listName) + " tasks", ChatColor.GRAY + "Click to select"));
             }
 
             ListPickerUI listPicker = new ListPickerUI(items, "Pick A List", this, FilterType.DISPLAY_NAME)
@@ -91,7 +91,7 @@ public class CardEditorUI extends ListPickerUI
         List<InventoryItem> newItems = new ArrayList<>();
         for (String listName : BingoCardsData.getLists(cardName))
         {
-            InventoryItem item = new InventoryItem(Material.MAP, listName, ChatColor.DARK_PURPLE + "Contains " + BingoTasksData.getTaskCount(listName) + " item(s)");
+            InventoryItem item = new InventoryItem(Material.MAP, listName, "This list contains " + BingoTasksData.getTaskCount(listName) + " tasks");
             item.setAmount(Math.max(1, BingoCardsData.getListMax(cardName, listName)));
             newItems.add(item);
         }
