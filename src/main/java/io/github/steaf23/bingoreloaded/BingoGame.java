@@ -1,5 +1,6 @@
 package io.github.steaf23.bingoreloaded;
 
+import io.github.steaf23.bingoreloaded.data.BingoCardsData;
 import io.github.steaf23.bingoreloaded.data.ConfigData;
 import io.github.steaf23.bingoreloaded.data.RecoveryCardData;
 import io.github.steaf23.bingoreloaded.gui.EffectOptionFlags;
@@ -58,7 +59,11 @@ public class BingoGame implements Listener
 
     public void start()
     {
-        //TODO: Remove all advancements from all participants when starting.
+        if (!BingoCardsData.getCardNames().contains(settings.card))
+        {
+            BingoReloaded.broadcast("Cannot start game with the card '" + settings.card + "' because it does not exist!");
+            return;
+        }
 
         // Pre-start Setup
         if (getTeamManager().getParticipants().size() <= 0)
@@ -91,6 +96,7 @@ public class BingoGame implements Listener
         players.forEach(this::givePlayerKit);
         players.forEach(this::returnCardToPlayer);
         players.forEach(p -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "advancement revoke " + p.getName() + " everything"));
+        players.forEach(p -> {p.setLevel(0); p.setExp(0.0f);});
         teleportPlayersToStart(world);
         givePlayersEffects();
 
@@ -118,13 +124,12 @@ public class BingoGame implements Listener
                     "",
                     "/bingo start",
                     "Click to restart using the same rules!");
-
-            for(Player p : Bukkit.getOnlinePlayers())
-            {
-                p.spigot().sendMessage(commandMessage);
-            }
+            Set<Player> players = getTeamManager().getParticipants();
+            players.forEach(p -> p.spigot().sendMessage(commandMessage));
             BingoReloaded.broadcast(ChatColor.GREEN + "Game Duration: " + ChatColor.GRAY + ChatColor.ITALIC + GameTimer.getTimeAsString(timer.getTime()));
             RecoveryCardData.markCardEnded(true);
+            players.forEach(p -> takePlayerEffects(p));
+            scoreboard.resetBoards();
         }
         else
         {

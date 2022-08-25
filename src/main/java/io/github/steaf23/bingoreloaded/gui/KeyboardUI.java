@@ -13,6 +13,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -23,8 +24,7 @@ public abstract class KeyboardUI extends AbstractGUIInventory
 
     private static final InventoryItem BG_ITEM = new InventoryItem(Material.BLACK_STAINED_GLASS_PANE, " ", "");
     private static final InventoryItem CLEAR = new InventoryItem(46, Material.HOPPER, "" + ChatColor.GRAY + ChatColor.BOLD + "Clear", "");
-    private static final InventoryItem CANCEL = new InventoryItem(48, Material.REDSTONE, "" + ChatColor.RED + ChatColor.BOLD + "Cancel", "");
-    private static final InventoryItem ACCEPT = new InventoryItem(50, Material.DIAMOND, "" + ChatColor.AQUA + ChatColor.BOLD + "Accept", "");
+    private static final InventoryItem ACCEPT = new InventoryItem(49, Material.DIAMOND, "" + ChatColor.AQUA + ChatColor.BOLD + "Accept & Close", "");
 
     private static InventoryItem[] options = new InventoryItem[0];
 
@@ -66,9 +66,9 @@ public abstract class KeyboardUI extends AbstractGUIInventory
             put("<-", BannerBuilder.fromCommand("/give @p minecraft:white_banner{BlockEntityTag:{Patterns:[{Pattern:ls,Color:15},{Pattern:ms,Color:15},{Pattern:ts,Color:0},{Pattern:bs,Color:0},{Pattern:cbo,Color:0}]}} 1"));
     }};
 
-    public KeyboardUI(String title, AbstractGUIInventory parent)
+    public KeyboardUI(AbstractGUIInventory parent)
     {
-        super(54, title, parent);
+        super(54, "", parent);
 
         this.keyword = "";
         this.options = new InventoryItem[28];
@@ -87,7 +87,7 @@ public abstract class KeyboardUI extends AbstractGUIInventory
 
         fillOptions(options);
         fillOptions(new InventoryItem[]{
-                BG_ITEM.inSlot(45), CLEAR, BG_ITEM.inSlot(47), CANCEL, BG_ITEM.inSlot(49), ACCEPT, BG_ITEM.inSlot(51), BG_ITEM.inSlot(52), BG_ITEM.inSlot(53)
+                BG_ITEM.inSlot(45), CLEAR, BG_ITEM.inSlot(47), BG_ITEM.inSlot(48), ACCEPT, BG_ITEM.inSlot(50), BG_ITEM.inSlot(51), BG_ITEM.inSlot(52), BG_ITEM.inSlot(53)
         });
     }
 
@@ -123,19 +123,21 @@ public abstract class KeyboardUI extends AbstractGUIInventory
             keyword = "";
             updateTitle(player);
         }
-        else if (slotClicked == CANCEL.getSlot())
-        {
-            close(player);
-        }
         else if (slotClicked == ACCEPT.getSlot())
         {
-            storeValue();
             close(player);
+            new BukkitRunnable() {
+                @Override
+                public void run()
+                {
+                    storeResult();
+                }
+            }.runTask(Bukkit.getPluginManager().getPlugin(BingoReloaded.NAME));
         }
     }
 
     // Will be called when the inventory closes, i.e. when the value is needed. This method can then be used to store the string that the user typed.
-    public abstract void storeValue();
+    public abstract void storeResult();
 
     public String getKeyword()
     {
@@ -155,7 +157,7 @@ public abstract class KeyboardUI extends AbstractGUIInventory
 
         fillOptions(options);
         fillOptions(new InventoryItem[]{
-                BG_ITEM.inSlot(45), CLEAR, BG_ITEM.inSlot(47), CANCEL, BG_ITEM.inSlot(49), ACCEPT, BG_ITEM.inSlot(51), BG_ITEM.inSlot(52), BG_ITEM.inSlot(53)
+                BG_ITEM.inSlot(45), CLEAR, BG_ITEM.inSlot(47), BG_ITEM.inSlot(48), ACCEPT, BG_ITEM.inSlot(50), BG_ITEM.inSlot(51), BG_ITEM.inSlot(52), BG_ITEM.inSlot(53)
         });
         player.openInventory(inventory);
     }

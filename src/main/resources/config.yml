@@ -37,3 +37,6 @@ defaultKit: OVERPOWERED
 
 # The period of time (in seconds) at the start of the game when a player is protected from any damage
 gracePeriod: 30
+
+# The card that the game will select automatically when starting the server/ reloading the plugin
+selectedCard: default_card

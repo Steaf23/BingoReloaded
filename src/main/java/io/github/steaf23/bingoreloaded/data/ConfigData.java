@@ -49,6 +49,7 @@ public class ConfigData
     public final int gracePeriod;
     public final boolean resetPlayerItems;
     public final boolean resetPlayerPositions;
+    public final String selectedCard;
 
     private static ConfigData INSTANCE;
 
@@ -77,5 +78,6 @@ public class ConfigData
         this.gracePeriod = config.getInt("gracePeriod", 30);
         this.resetPlayerItems = config.getBoolean("resetPlayerItems", true);
         this.resetPlayerPositions = config.getBoolean("resetPlayerPositions", true);
+        this.selectedCard = config.getString("selectedCard", "default_card");
     }
 }

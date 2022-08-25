@@ -86,7 +86,7 @@ public class BingoCommand implements CommandExecutor
                     }
                     break;
 
-                case "cards":
+                case "creator":
                     if (commandSender instanceof Player p && p.hasPermission("bingo.manager"))
                     {
                         CardCreatorUI creatorUI = new CardCreatorUI(null);
@@ -96,7 +96,7 @@ public class BingoCommand implements CommandExecutor
 
                 default:
                     if (commandSender instanceof Player p)
-                        BingoReloaded.print(ChatColor.RED + "Usage: /bingo [getcard | start | end | leave | deathmatch | cards]", p);
+                        BingoReloaded.print(ChatColor.RED + "Usage: /bingo [getcard | start | end | leave | deathmatch | creator]", p);
                     else
                         BingoReloaded.print(ChatColor.RED + "Usage: /bingo [start | end | deathmatch]");
                     break;

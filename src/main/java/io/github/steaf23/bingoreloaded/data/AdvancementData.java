@@ -9,15 +9,19 @@ public class AdvancementData
 
     public static String getAdvancementTitle(Advancement adv)
     {
-        if (data.getConfig().getString(adv.getKey().getKey()) == null)
+        if (data.getConfig().getConfigurationSection(adv.getKey().getKey()) == null)
         {
             return "" + ChatColor.BOLD + ChatColor.DARK_RED + adv.getKey().toString();
         }
-        return data.getConfig().getString(adv.getKey().getKey());
+        return data.getConfig().getConfigurationSection(adv.getKey().getKey()).getString("name");
     }
 
     public static String getAdvancementDesc(Advancement adv)
     {
-        return data.getConfig().getString(adv.getKey().getKey());
+        if (data.getConfig().getConfigurationSection(adv.getKey().getKey()) == null)
+        {
+            return getAdvancementTitle(adv);
+        }
+        return data.getConfig().getConfigurationSection(adv.getKey().getKey()).getString("desc");
     }
 }

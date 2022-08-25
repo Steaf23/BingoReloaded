@@ -4,9 +4,12 @@ import io.github.steaf23.bingoreloaded.data.BingoCardsData;
 import io.github.steaf23.bingoreloaded.data.BingoTasksData;
 import io.github.steaf23.bingoreloaded.gui.AbstractGUIInventory;
 import io.github.steaf23.bingoreloaded.gui.FilterType;
+import io.github.steaf23.bingoreloaded.gui.KeyboardUI;
 import io.github.steaf23.bingoreloaded.gui.ListPickerUI;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -40,6 +43,25 @@ public class CardCreatorUI extends AbstractGUIInventory
 
             ListPickerUI cardPicker = new ListPickerUI(items, "Choose A Card", this, FilterType.DISPLAY_NAME)
             {
+                private static final InventoryItem CREATE_CARD = new InventoryItem(51, Material.EMERALD, "" + ChatColor.GREEN + ChatColor.BOLD + "New Card");
+
+                @Override
+                public void open(HumanEntity player)
+                {
+                    fillOptions(new InventoryItem[]{CREATE_CARD});
+                    super.open(player);
+                }
+
+                @Override
+                public void delegateClick(InventoryClickEvent event, int slotClicked, Player player, ClickType clickType)
+                {
+                    if (slotClicked == CREATE_CARD.getSlot())
+                    {
+                        createCard(player);
+                    }
+                    super.delegateClick(event, slotClicked, player, clickType);
+                }
+
                 @Override
                 public void onOptionClickedDelegate(InventoryClickEvent event, InventoryItem clickedOption, Player player)
                 {
@@ -59,6 +81,25 @@ public class CardCreatorUI extends AbstractGUIInventory
 
             ListPickerUI listPicker = new ListPickerUI(items, "Choose A List", this, FilterType.DISPLAY_NAME)
             {
+                private static final InventoryItem CREATE_LIST = new InventoryItem(51, Material.EMERALD, "" + ChatColor.GREEN + ChatColor.BOLD + "New List");
+
+                @Override
+                public void open(HumanEntity player)
+                {
+                    fillOptions(new InventoryItem[]{CREATE_LIST});
+                    super.open(player);
+                }
+
+                @Override
+                public void delegateClick(InventoryClickEvent event, int slotClicked, Player player, ClickType clickType)
+                {
+                    if (slotClicked == CREATE_LIST.getSlot())
+                    {
+                        createCard(player);
+                    }
+                    super.delegateClick(event, slotClicked, player, clickType);
+                }
+
                 @Override
                 public void onOptionClickedDelegate(InventoryClickEvent event, InventoryItem clickedOption, Player player)
                 {
@@ -79,5 +120,35 @@ public class CardCreatorUI extends AbstractGUIInventory
     {
         ListEditorUI editor = new ListEditorUI(listName, this);
         editor.openItemPicker(player);
+    }
+
+    public void createCard(Player player)
+    {
+        final String name;
+        KeyboardUI keys = new KeyboardUI(this)
+        {
+            @Override
+            public void storeResult()
+            {
+                if (!getKeyword().isBlank())
+                    openCardEditor(getKeyword().toLowerCase(), player);
+            }
+        };
+        keys.open(player);
+    }
+
+    public void createList(Player player)
+    {
+        final String name;
+        KeyboardUI keys = new KeyboardUI(this)
+        {
+            @Override
+            public void storeResult()
+            {
+                if (!getKeyword().isBlank())
+                    openListEditor(getKeyword().toLowerCase(), player);
+            }
+        };
+        keys.open(player);
     }
 }

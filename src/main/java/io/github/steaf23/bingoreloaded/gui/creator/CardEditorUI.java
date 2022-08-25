@@ -20,14 +20,13 @@ import java.util.List;
 public class CardEditorUI extends ListPickerUI
 {
     public final String cardName;
-    private static final InventoryItem ADD_LIST = new InventoryItem(48, Material.EMERALD, "" + ChatColor.GREEN + ChatColor.BOLD + "Add Item List", "");
+    private static final InventoryItem ADD_LIST = new InventoryItem(51, Material.EMERALD, "" + ChatColor.GREEN + ChatColor.BOLD + "Add Item List", "");
     private ListValueEditorGUI valueEditorGUI;
 
     public CardEditorUI(String cardName, AbstractGUIInventory parent)
     {
         super(new ArrayList<>(), "Editing '" + cardName + "'", parent, FilterType.DISPLAY_NAME);
         this.cardName = cardName;
-
         fillOptions(new InventoryItem[]{ADD_LIST});
     }
 
@@ -93,7 +92,7 @@ public class CardEditorUI extends ListPickerUI
         for (String listName : BingoCardsData.getLists(cardName))
         {
             InventoryItem item = new InventoryItem(Material.MAP, listName, ChatColor.DARK_PURPLE + "Contains " + BingoTasksData.getTaskCount(listName) + " item(s)");
-            item.setAmount(BingoCardsData.getListMax(cardName, listName));
+            item.setAmount(Math.max(1, BingoCardsData.getListMax(cardName, listName)));
             newItems.add(item);
         }
 

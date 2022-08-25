@@ -1,3 +1,7 @@
 default_card:
-  default_list:
-    max: 25
+  default_items:
+    min: 1
+    max: 36
+  default_advancements:
+    min: 3
+    max: 8

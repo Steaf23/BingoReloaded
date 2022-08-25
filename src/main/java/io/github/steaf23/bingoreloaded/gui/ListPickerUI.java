@@ -73,10 +73,10 @@ public abstract class ListPickerUI extends AbstractGUIInventory
         else if (slotClicked == FILTER.getSlot())
         {
             close(player);
-            filter = new KeyboardUI("Filter Items", this)
+            filter = new KeyboardUI(this)
             {
                 @Override
-                public void storeValue()
+                public void storeResult()
                 {
                     applyFilter(filter.getKeyword());
                 }

@@ -1,158 +1,376 @@
-default_list:
-  - DiAMOND_CHESTPLATE
-#  - TUFF
-#  - CALCITE
-#  - DRIPSTONE_BLOCK
-#  - AMETHYST_BLOCK
-#  - IRON_BLOCK
-#  - COPPER_BLOCK
-#  - GOLD_BLOCK
-#  - DIAMOND_BLOCK
-#  - OAK_WOOD
-#  - SPRUCE_WOOD
-#  - BIRCH_WOOD
-#  - JUNGLE_WOOD
-#  - ACACIA_WOOD
-#  - DARK_OAK_WOOD
-#  - CRIMSON_HYPHAE
-#  - WARPED_HYPHAE
-#  - WET_SPONGE
-#  - TINTED_GLASS
-#  - LAPIS_BLOCK
-#  - SANDSTONE
-#  - CHISELED_SANDSTONE
-#  - CUT_SANDSTONE
-#  - COBWEB
-#  - FLOWERING_AZALEA
-#  - DEAD_BUSH
-#  - SEA_PICKLE
-#  - SPORE_BLOSSOM
-#  - BROWN_MUSHROOM
-#  - RED_MUSHROOM
-#  - CRIMSON_FUNGUS
-#  - WARPED_FUNGUS
-#  - WEEPING_VINES
-#  - TWISTING_VINES
-#  - MOSS_BLOCK
-#  - HANGING_ROOTS
-#  - BAMBOO
-#  - SMOOTH_STONE
-#  - BRICKS
-#  - BOOKSHELF
-#  - ICE
-#  - SNOW_BLOCK
-#  - CACTUS
-#  - JUKEBOX
-#  - JACK_O_LANTERN
-#  - SOUL_SAND
-#  - BASALT
-#  - GLOWSTONE
-#  - STONE_BRICKS
-#  - MOSSY_STONE_BRICKS
-#  - IRON_BARS
-#  - CHAIN
-#  - GLASS_PANE
-#  - MELON
-#  - VINE
-#  - GLOW_LICHEN
-#  - LILY_PAD
-#  - NETHER_BRICKS
-#  - ENCHANTING_TABLE
-#  - EMERALD_BLOCK
-#  - PRISMARINE
-#  - SEA_LANTERN
-#  - MAGMA_BLOCK
-#  - NETHER_WART_BLOCK
-#  - WARPED_WART_BLOCK
-#  - BONE_BLOCK
-#  - LIGHT_GRAY_GLAZED_TERRACOTTA
-#  - CYAN_GLAZED_TERRACOTTA
-#  - PURPLE_GLAZED_TERRACOTTA
-#  - BLUE_GLAZED_TERRACOTTA
-#  - BROWN_GLAZED_TERRACOTTA
-#  - GREEN_GLAZED_TERRACOTTA
-#  - RED_GLAZED_TERRACOTTA
-#  - BLACK_GLAZED_TERRACOTTA
-#  - LIGHT_GRAY_CONCRETE
-#  - CYAN_CONCRETE
-#  - PURPLE_CONCRETE
-#  - BLUE_CONCRETE
-#  - BROWN_CONCRETE
-#  - GREEN_CONCRETE
-#  - RED_CONCRETE
-#  - BLACK_CONCRETE
-#  - REDSTONE_BLOCK
-#  - REPEATER
-#  - COMPARATOR
-#  - PISTON
-#  - HOPPER
-#  - LECTERN
-#  - TARGET
-#  - TRAPPED_CHEST
-#  - TNT
-#  - REDSTONE_LAMP
-#  - POWERED_RAIL
-#  - DETECTOR_RAIL
-#  - RAIL
-#  - ACTIVATOR_RAIL
-#  - BOW
-#  - NETHERITE_SCRAP
-#  - GOLDEN_HOE
-#  - IRON_HOE
-#  - DIAMOND_HOE
-#  - LEATHER_CHESTPLATE
-#  - IRON_CHESTPLATE
-#  - DIAMOND_CHESTPLATE
-#  - GOLDEN_CHESTPLATE
-#  - PAINTING
-#  - GOLDEN_APPLE
-#  - WATER_BUCKET
-#  - LAVA_BUCKET
-#  - PUFFERFISH_BUCKET
-#  - SALMON_BUCKET
-#  - COD_BUCKET
-#  - TROPICAL_FISH_BUCKET
-#  - AXOLOTL_BUCKET
-#  - DRIED_KELP_BLOCK
-#  - FISHING_ROD
-#  - CLOCK
-#  - SPYGLASS
-#  - INK_SAC
-#  - GLOW_INK_SAC
-#  - ENDER_PEARL
-#  - BREWING_STAND
-#  - CAULDRON
-#  - ITEM_FRAME
-#  - GLOW_ITEM_FRAME
-#  - BAKED_POTATO
-#  - POISONOUS_POTATO
-#  - GOLDEN_CARROT
-#  - FIREWORK_ROCKET
-#  - COOKED_RABBIT
-#  - ARMOR_STAND
-#  - BEETROOT
-#  - SHIELD
-#  - HEART_OF_THE_SEA
-#  - CROSSBOW
-#  - SUSPICIOUS_STEW
-#  - LOOM
-#  - COMPOSTER
-#  - BARREL
-#  - SMOKER
-#  - BLAST_FURNACE
-#  - CARTOGRAPHY_TABLE
-#  - FLETCHING_TABLE
-#  - GRINDSTONE
-#  - SMITHING_TABLE
-#  - STONECUTTER
-#  - BELL
-#  - LANTERN
-#  - BEE_NEST
-#  - CRYING_OBSIDIAN
-#  - POINTED_DRIPSTONE
-#  - MANGROVE_WOOD
-#  - SCULK_SENSOR
-#  - TADPOLE_BUCKET
-#  - GOAT_HORN
-#  - ECHO_SHARD
-#  - FROGSPAWN
+default_items:
+  item:
+    - count: 1
+      key: DRIPSTONE_BLOCK
+    - count: 64
+      key: TUFF
+    - count: 1
+      key: CALCITE
+    - count: 10
+      key: AMETHYST_BLOCK
+    - count: 1
+      key: IRON_BLOCK
+    - count: 1
+      key: COPPER_BLOCK
+    - count: 1
+      key: GOLD_BLOCK
+    - count: 1
+      key: DIAMOND_BLOCK
+    - count: 1
+      key: OAK_WOOD
+    - count: 1
+      key: SPRUCE_WOOD
+    - count: 1
+      key: BIRCH_WOOD
+    - count: 1
+      key: JUNGLE_WOOD
+    - count: 1
+      key: ACACIA_WOOD
+    - count: 1
+      key: DARK_OAK_WOOD
+    - count: 1
+      key: MANGROVE_WOOD
+    - count: 1
+      key: CRIMSON_HYPHAE
+    - count: 1
+      key: WARPED_HYPHAE
+    - count: 1
+      key: WET_SPONGE
+    - count: 1
+      key: TINTED_GLASS
+    - count: 1
+      key: LAPIS_BLOCK
+    - count: 4
+      key: SANDSTONE
+    - count: 1
+      key: CHISELED_SANDSTONE
+    - count: 1
+      key: CUT_SANDSTONE
+    - count: 1
+      key: FLOWERING_AZALEA
+    - count: 1
+      key: DEAD_BUSH
+    - count: 1
+      key: SEA_PICKLE
+    - count: 1
+      key: SPORE_BLOSSOM
+    - count: 1
+      key: BROWN_MUSHROOM
+    - count: 1
+      key: RED_MUSHROOM
+    - count: 1
+      key: CRIMSON_FUNGUS
+    - count: 1
+      key: WARPED_FUNGUS
+    - count: 1
+      key: WEEPING_VINES
+    - count: 1
+      key: TWISTING_VINES
+    - count: 1
+      key: MOSS_BLOCK
+    - count: 1
+      key: HANGING_ROOTS
+    - count: 1
+      key: BAMBOO
+    - count: 1
+      key: SMOOTH_STONE
+    - count: 1
+      key: BRICKS
+    - count: 1
+      key: BOOKSHELF
+    - count: 1
+      key: ICE
+    - count: 1
+      key: SNOW_BLOCK
+    - count: 1
+      key: CACTUS
+    - count: 1
+      key: JUKEBOX
+    - count: 1
+      key: JACK_O_LANTERN
+    - count: 1
+      key: SOUL_SAND
+    - count: 1
+      key: BASALT
+    - count: 1
+      key: GLOWSTONE
+    - count: 1
+      key: MOSSY_STONE_BRICKS
+    - count: 1
+      key: STONE_BRICKS
+    - count: 1
+      key: CHISELED_STONE_BRICKS
+    - count: 1
+      key: IRON_BARS
+    - count: 1
+      key: CHAIN
+    - count: 1
+      key: GLASS_PANE
+    - count: 1
+      key: MELON
+    - count: 1
+      key: VINE
+    - count: 1
+      key: GLOW_LICHEN
+    - count: 1
+      key: LILY_PAD
+    - count: 1
+      key: NETHER_BRICKS
+    - count: 1
+      key: ENCHANTING_TABLE
+    - count: 1
+      key: EMERALD_BLOCK
+    - count: 1
+      key: PRISMARINE
+    - count: 1
+      key: SEA_LANTERN
+    - count: 1
+      key: MAGMA_BLOCK
+    - count: 1
+      key: NETHER_WART_BLOCK
+    - count: 1
+      key: WARPED_WART_BLOCK
+    - count: 1
+      key: BONE_BLOCK
+    - count: 1
+      key: WHITE_GLAZED_TERRACOTTA
+    - count: 1
+      key: ORANGE_GLAZED_TERRACOTTA
+    - count: 1
+      key: MAGENTA_GLAZED_TERRACOTTA
+    - count: 1
+      key: LIGHT_BLUE_GLAZED_TERRACOTTA
+    - count: 1
+      key: YELLOW_GLAZED_TERRACOTTA
+    - count: 1
+      key: LIME_GLAZED_TERRACOTTA
+    - count: 1
+      key: PINK_GLAZED_TERRACOTTA
+    - count: 1
+      key: GRAY_GLAZED_TERRACOTTA
+    - count: 1
+      key: LIGHT_GRAY_CONCRETE
+    - count: 1
+      key: CYAN_CONCRETE
+    - count: 1
+      key: PURPLE_CONCRETE
+    - count: 1
+      key: BLUE_CONCRETE
+    - count: 1
+      key: BROWN_CONCRETE
+    - count: 1
+      key: GREEN_CONCRETE
+    - count: 1
+      key: RED_CONCRETE
+    - count: 1
+      key: BLACK_CONCRETE
+    - count: 1
+      key: REDSTONE_BLOCK
+    - count: 1
+      key: REPEATER
+    - count: 1
+      key: COMPARATOR
+    - count: 1
+      key: PISTON
+    - count: 1
+      key: HOPPER
+    - count: 1
+      key: LECTERN
+    - count: 1
+      key: TARGET
+    - count: 1
+      key: SCULK_SENSOR
+    - count: 1
+      key: TRAPPED_CHEST
+    - count: 1
+      key: TNT
+    - count: 1
+      key: REDSTONE_LAMP
+    - count: 4
+      key: NOTE_BLOCK
+    - count: 6
+      key: POWERED_RAIL
+    - count: 6
+      key: DETECTOR_RAIL
+    - count: 32
+      key: RAIL
+    - count: 6
+      key: ACTIVATOR_RAIL
+    - count: 1
+      key: BOW
+    - count: 1
+      key: NETHERITE_SCRAP
+    - count: 1
+      key: GOLDEN_HOE
+    - count: 1
+      key: IRON_HOE
+    - count: 1
+      key: DIAMOND_HOE
+    - count: 1
+      key: LEATHER_CHESTPLATE
+    - count: 1
+      key: IRON_CHESTPLATE
+    - count: 1
+      key: DIAMOND_CHESTPLATE
+    - count: 1
+      key: GOLDEN_CHESTPLATE
+    - count: 1
+      key: PAINTING
+    - count: 1
+      key: GOLDEN_APPLE
+    - count: 1
+      key: WATER_BUCKET
+    - count: 1
+      key: LAVA_BUCKET
+    - count: 1
+      key: PUFFERFISH_BUCKET
+    - count: 1
+      key: SALMON_BUCKET
+    - count: 1
+      key: COD_BUCKET
+    - count: 1
+      key: TROPICAL_FISH_BUCKET
+    - count: 1
+      key: AXOLOTL_BUCKET
+    - count: 1
+      key: MILK_BUCKET
+    - count: 1
+      key: POWDER_SNOW_BUCKET
+    - count: 1
+      key: MUD_BRICKS
+    - count: 16
+      key: DEEPSLATE_TILES
+    - count: 1
+      key: FISHING_ROD
+    - count: 1
+      key: CLOCK
+    - count: 1
+      key: DRIED_KELP_BLOCK
+    - count: 1
+      key: SPYGLASS
+    - count: 1
+      key: GLOW_INK_SAC
+    - count: 1
+      key: INK_SAC
+    - count: 1
+      key: ENDER_PEARL
+    - count: 1
+      key: BLAZE_ROD
+    - count: 1
+      key: CAULDRON
+    - count: 1
+      key: BREWING_STAND
+    - count: 1
+      key: ITEM_FRAME
+    - count: 1
+      key: GLOW_ITEM_FRAME
+    - count: 1
+      key: FLOWER_POT
+    - count: 1
+      key: BAKED_POTATO
+    - count: 1
+      key: POISONOUS_POTATO
+    - count: 1
+      key: GOLDEN_CARROT
+    - count: 1
+      key: FIREWORK_ROCKET
+    - count: 1
+      key: COOKED_RABBIT
+    - count: 1
+      key: ARMOR_STAND
+    - count: 1
+      key: BEETROOT
+    - count: 1
+      key: SHIELD
+    - count: 1
+      key: HEART_OF_THE_SEA
+    - count: 1
+      key: CROSSBOW
+    - count: 1
+      key: SUSPICIOUS_STEW
+    - count: 1
+      key: LOOM
+    - count: 1
+      key: COMPOSTER
+    - count: 1
+      key: BARREL
+    - count: 1
+      key: SMOKER
+    - count: 1
+      key: BLAST_FURNACE
+    - count: 1
+      key: CARTOGRAPHY_TABLE
+    - count: 1
+      key: FLETCHING_TABLE
+    - count: 1
+      key: GRINDSTONE
+    - count: 1
+      key: SMITHING_TABLE
+    - count: 1
+      key: STONECUTTER
+    - count: 1
+      key: GOAT_HORN
+    - count: 1
+      key: BELL
+    - count: 1
+      key: LANTERN
+    - count: 1
+      key: SOUL_LANTERN
+    - count: 1
+      key: BEE_NEST
+    - count: 1
+      key: CRYING_OBSIDIAN
+    - count: 1
+      key: POINTED_DRIPSTONE
+    - count: 1
+      key: ECHO_SHARD
+default_advancements:
+  advancement:
+    - key: minecraft:nether/obtain_crying_obsidian
+    - key: minecraft:nether/distract_piglin
+    - key: minecraft:story/obtain_armor
+    - key: minecraft:adventure/very_very_frightening
+    - key: minecraft:story/lava_bucket
+    - key: minecraft:husbandry/ride_a_boat_with_a_goat
+    - key: minecraft:nether/brew_potion
+    - key: minecraft:story/iron_tools
+    - key: minecraft:story/deflect_arrow
+    - key: minecraft:husbandry/make_a_sign_glow
+    - key: minecraft:husbandry/tame_an_animal
+    - key: minecraft:adventure/lightning_rod_with_villager_no_fire
+    - key: minecraft:adventure/kill_mob_near_sculk_catalyst
+    - key: minecraft:husbandry/fishy_business
+    - key: minecraft:nether/explore_nether
+    - key: minecraft:adventure/fall_from_world_height
+    - key: minecraft:nether/ride_strider
+    - key: minecraft:adventure/sniper_duel
+    - key: minecraft:story/upgrade_tools
+    - key: minecraft:story/enter_the_nether
+    - key: minecraft:story/mine_stone
+    - key: minecraft:adventure/bullseye
+    - key: minecraft:husbandry/tactical_fishing
+    - key: minecraft:story/form_obsidian
+    - key: minecraft:nether/obtain_blaze_rod
+    - key: minecraft:nether/loot_bastion
+    - key: minecraft:adventure/shoot_arrow
+    - key: minecraft:story/smelt_iron
+    - key: minecraft:story/shiny_gear
+    - key: minecraft:adventure/summon_iron_golem
+    - key: minecraft:adventure/avoid_vibration
+    - key: minecraft:nether/return_to_sender
+    - key: minecraft:adventure/sleep_in_bed
+    - key: minecraft:story/enchant_item
+    - key: minecraft:adventure/voluntary_exile
+    - key: minecraft:adventure/spyglass_at_parrot
+    - key: minecraft:adventure/kill_a_mob
+    - key: minecraft:husbandry/plant_seed
+    - key: minecraft:nether/find_bastion
+    - key: minecraft:husbandry/axolotl_in_a_bucket
+    - key: minecraft:nether/obtain_ancient_debris
+    - key: minecraft:nether/find_fortress
+    - key: minecraft:story/mine_diamond
+    - key: minecraft:adventure/spyglass_at_ghast
+    - key: minecraft:adventure/trade
+    - key: minecraft:nether/fast_travel
+    - key: minecraft:adventure/ol_betsy
+    - key: minecraft:husbandry/breed_an_animal
