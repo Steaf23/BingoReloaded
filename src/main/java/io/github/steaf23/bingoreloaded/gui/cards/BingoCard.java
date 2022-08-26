@@ -214,7 +214,7 @@ public class BingoCard extends AbstractGUIInventory implements Listener
         if (team == null || team.card != this)
             return;
 
-        if (event.getSlotType() == InventoryType.SlotType.RESULT)
+        if (event.getSlotType() == InventoryType.SlotType.RESULT && event.getClick() != ClickType.SHIFT_LEFT)
         {
             new BukkitRunnable()
             {
@@ -231,13 +231,23 @@ public class BingoCard extends AbstractGUIInventory implements Listener
             return;
         }
 
-        for (ItemStack stack : player.getInventory().getContents())
+        new BukkitRunnable()
         {
-            if (stack != null)
+            @Override
+            public void run()
             {
+                for (ItemStack stack : player.getInventory().getContents())
+                {
+                    if (stack != null)
+                    {
+                        stack = completeItemSlot(stack, team, player);
+                    }
+                }
+
+                ItemStack stack = player.getItemOnCursor();
                 stack = completeItemSlot(stack, team, player);
             }
-        }
+        }.runTask(Bukkit.getPluginManager().getPlugin(BingoReloaded.NAME));
     }
 
     @EventHandler
@@ -279,8 +289,15 @@ public class BingoCard extends AbstractGUIInventory implements Listener
         if (team == null || team.card != this)
             return;
 
-        ItemStack stack = event.getItemDrop().getItemStack();
-        stack = completeItemSlot(stack, team, event.getPlayer());
+        new BukkitRunnable()
+        {
+            @Override
+            public void run()
+            {
+                ItemStack stack = event.getItemDrop().getItemStack();
+                stack = completeItemSlot(stack, team, event.getPlayer());
+            }
+        }.runTask(Bukkit.getPluginManager().getPlugin(BingoReloaded.NAME));
     }
 
     @EventHandler

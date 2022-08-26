@@ -31,11 +31,11 @@ public class InventoryItem extends ItemStack
         if (meta != null)
         {
             meta.setDisplayName(name);
-            if (description.length > 1 && description[0] != "")
+            if (description.length >= 1 && description[0] != "")
                 meta.setLore(List.of(description));
             meta.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
+            setItemMeta(meta);
         }
-        setItemMeta(meta);
     }
 
     public InventoryItem(int slot, ItemStack item)

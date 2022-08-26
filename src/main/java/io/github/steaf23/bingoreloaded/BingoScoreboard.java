@@ -5,7 +5,6 @@ import io.github.steaf23.bingoreloaded.player.TeamManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
@@ -38,16 +37,16 @@ public class BingoScoreboard
         Objective itemObjective = itemCountBoard.registerNewObjective("item_count", "bingo_item_count", "Collected Items");
         itemObjective.setDisplaySlot(DisplaySlot.SIDEBAR);
 
-        new BukkitRunnable() {
-            @Override
-            public void run()
-            {
-                if (game.inProgress)
-                {
-                    switchBoards();
-                }
-            }
-        }.runTaskTimer(BingoReloaded.getPlugin(BingoReloaded.class), 0, 20 * 5);
+//        new BukkitRunnable() {
+//            @Override
+//            public void run()
+//            {
+//                if (game.inProgress)
+//                {
+//                    switchBoards();
+//                }
+//            }
+//        }.runTaskTimer(BingoReloaded.getPlugin(BingoReloaded.class), 0, 20 * 5);
     }
 
     public void updateItemCount()
@@ -70,16 +69,10 @@ public class BingoScoreboard
 
     public void updateGameTime(GameTimer timer)
     {
-        Objective objective = gameTimeBoard.getObjective("time");
-        if (objective == null)
-            return;
-
-        gameTimeBoard.resetScores(ChatColor.AQUA + "Time: " + ChatColor.WHITE + GameTimer.getTimeAsString(timer.getTime()));
-        Score score = objective.getScore(ChatColor.AQUA + "Time: " + ChatColor.WHITE + GameTimer.getTimeAsString(timer.getTime() + 1));
-        score.setScore(-1);
         for (Player player : teamManager.getParticipants())
         {
-            setPlayerBoard(player);
+            BingoReloaded.showPlayerActionMessage("" + ChatColor.AQUA + ChatColor.BOLD + " Game Time: " +
+                    ChatColor.WHITE + GameTimer.getTimeAsString(timer.getTime()), player);
         }
     }
 

@@ -17,6 +17,8 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import java.util.ArrayList;
 import java.util.List;
 
+// This class is used to navigate through the cards and lists.
+// Uses a double ListPicker, one for cards and one for lists.
 public class CardCreatorUI extends AbstractGUIInventory
 {
     public static final InventoryItem CARD = new InventoryItem(11, Material.FILLED_MAP, TITLE_PREFIX + "Edit Cards", "Click to view and edit bingo cards!");
@@ -25,7 +27,6 @@ public class CardCreatorUI extends AbstractGUIInventory
     public CardCreatorUI(AbstractGUIInventory parent)
     {
         super(27, "Card Creator", parent);
-
         fillOptions(new InventoryItem[]{CARD, LIST});
     }
 
@@ -75,7 +76,7 @@ public class CardCreatorUI extends AbstractGUIInventory
             List<InventoryItem> items = new ArrayList<>();
             for (String list : BingoTasksData.getListNames())
             {
-                InventoryItem item = new InventoryItem(Material.PAPER, list, "This list contains " + BingoTasksData.getTaskCount(list) + " tasks");
+                InventoryItem item = new InventoryItem(Material.PAPER, list,"This list contains " + BingoTasksData.getTaskCount(list) + " tasks");
                 items.add(item);
             }
 
