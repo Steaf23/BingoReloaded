@@ -1,0 +1,291 @@
+"adventure/adventuring_time":
+  name: "Adventuring Time"
+  desc: "Discover every biome"
+"adventure/arbalistic":
+  name: "Arbalistic"
+  desc: "Kill five unique mobs with one crossbow shot"
+"adventure/avoid_vibration":
+  name: "Sneak 100"
+  desc: "Sneak near a Sculk Sensor or Warden to prevent it from detecting you"
+"adventure/bullseye":
+  name: "Bullseye"
+  desc: "Hit the bullseye of a Target Block from at least 30 meters away"
+"adventure/fall_from_world_height":
+  name: "Caves & Cliffs"
+  desc: "Survive a free fall from build height to bedrock"
+"adventure/kill_mob_near_sculk_catalyst":
+  name: "It Spreads"
+  desc: "kill a mob near a Sculk Catalyst"
+"adventure/walk_on_powder_snow_with_leather_boots":
+  name: "Light as a Rabbit"
+  desc: "Walk on powder snow... without sinking in it"
+"adventure/lightning_rod_with_villager_no_fire":
+  name: "Surge Protector"
+  desc: "Use a Lightning Rod to protect a villager"
+"adventure/spyglass_at_parrot":
+  name: "Is It a Bird?"
+  desc: "Look at a parrot through a spyglass"
+"adventure/spyglass_at_ghast":
+  name: "Is It a Balloon?"
+  desc: "Look at a ghast through a spyglass"
+"adventure/spyglass_at_dragon":
+  name: "Is It a Plane?"
+  desc: "Look at the Ender Dragon through a spyglass"
+"adventure/hero_of_the_village":
+  name: "Hero of the Village"
+  desc: "Successfully defend a village from a raid"
+"adventure/honey_block_slide":
+  name: "Sticky Situation"
+  desc: "Jump into a Honey Block to break your fall"
+"adventure/kill_all_mobs":
+  name: "Monsters Hunted"
+  desc: "Kill one of every hostile monster"
+"adventure/kill_a_mob":
+  name: "Monster Hunter"
+  desc: "Kill any hostile monster"
+"adventure/ol_betsy":
+  name: "Ol' Betsy"
+  desc: "Shoot a crossbow"
+"adventure/play_jukebox_in_meadows":
+  name: "Sound of Music"
+  desc: "Play a music disc in a Meadow"
+"adventure/shoot_arrow":
+  name: "Take Aim"
+  desc: "Shoot something with an arrow"
+"adventure/sleep_in_bed":
+  name: "Sweet Dreams"
+  desc: "Sleep in a bed to change your respawn point"
+"adventure/sniper_duel":
+  name: "Sniper Duel"
+  desc: "Kill a skeleton from at least 50 meters away"
+"adventure/summon_iron_golem":
+  name: "Hired Help"
+  desc: "Summon an Iron Golem to help defend a village"
+"adventure/totem_of_undying":
+  name: "Postmortal"
+  desc: "Use a Totem of Undying to cheat death"
+"adventure/trade":
+  name: "What a Deal!"
+  desc: "Successfully trade with a villager"
+"adventure/trade_at_world_height":
+  name: "Star Trader"
+  desc: "Trade with a Villager at the build height limit"
+"adventure/throw_trident":
+  name: "A Throwaway Joke"
+  desc: "Throw a trident at something"
+"adventure/two_birds_one_arrow":
+  name: "Two Birds, One Arrow"
+  desc: "Kill two Phantoms with a piercing arrow"
+"adventure/very_very_frightening":
+  name: "Very Very Frightening"
+  desc: "Strike a Villager with lightning"
+"adventure/voluntary_exile":
+  name: "Voluntary Exile"
+  desc: "Kill a raid captain"
+"adventure/whos_the_pillager_now":
+  name: "Who's the Pillager Now?"
+  desc: "Give a Pillager a taste of their own medicine"
+"husbandry/breed_an_animal":
+  name: "The Parrots and the Bats"
+  desc: "Breed two animals together"
+"husbandry/fishy_business":
+  name: "Fishy Business"
+  desc: "Catch a fish"
+"husbandry/make_a_sign_glow":
+  name: "Glow and Behold!"
+  desc: "Make the text of a sign glow"
+"husbandry/ride_a_boat_with_a_goat":
+  name: "Whatever Floats Your Goat!"
+  desc: "Get in a Boat and float with a Goat"
+"husbandry/tactical_fishing":
+  name: "Tactical Fishing"
+  desc: "Catch a fish... without a fishing rod!"
+"husbandry/axolotl_in_a_bucket":
+  name: "The Cutest Predator"
+  desc: "Catch an axolotl in a bucket"
+"husbandry/froglights":
+  name: "With Our Powers Combined!"
+  desc: "Have all Froglights in your inventory"
+"husbandry/tadpole_in_a_bucket":
+  name: "Bukkit Bukkit"
+  desc: "Catch a Tadpole in a Bucket"
+"husbandry/leash_all_frog_variants":
+  name: "When the Squad Hops into Town"
+  desc: "Get each Frog variant on a Lead"
+"husbandry/kill_axolotl_target":
+  name: "The Healing Power of Friendship!"
+  desc: "Team up with an axolotl and win a fight"
+"husbandry/bred_all_animals":
+  name: "Two by Two"
+  desc: "Breed all the animals!"
+"husbandry/tame_an_animal":
+  name: "Best Friends Forever"
+  desc: "Tame an animal"
+"husbandry/plant_seed":
+  name: "A Seedy Place"
+  desc: "Plant a seed and watch it grow"
+"husbandry/obtain_netherite_hoe":
+  name: "Serious Dedication"
+  desc: "Use a Netherite Ingot to upgrade a hoe"
+"husbandry/balanced_diet":
+  name: "A Balanced Diet"
+  desc: "Eat everything that is edible, even if it's not good for you"
+"husbandry/complete_catalogue":
+  name: "A Complete Catalogue"
+  desc: "Tame all cat variants!"
+"husbandry/safely_harvest_honey":
+  name: "Bee Our Guest"
+  desc: "Collect Honey from a Beehive using a Bottle without aggravating the bees"
+"husbandry/silk_touch_nest":
+  name: "Total Beelocation"
+  desc: "Move a Bee Nest, with 3 bees inside, using Silk Touch"
+"husbandry/wax_on":
+  name: "Wax On"
+  desc: "Apply Honeycomb to a Copper block!"
+"husbandry/wax_off":
+  name: "Wax Off"
+  desc: "Scrape Wax off of a Copper block!"
+"husbandry/allay_deliver_item_to_player":
+  name: "You've Got a Friend in Me"
+  desc: "Have an Allay deliver items to you"
+"husbandry/allay_deliver_cake_to_note_block":
+  name: "Birthday Song"
+  desc: "Have an Allay drop a Cake at a Note Block"
+"end/dragon_breath":
+  name: "You Need a Mint"
+  desc: "Collect dragon's breath in a glass bottle"
+"end/dragon_egg":
+  name: "The Next Generation"
+  desc: "Hold the Dragon Egg"
+"end/elytra":
+  name: "Sky's the Limit"
+  desc: "Find elytra"
+"end/enter_end_gateway":
+  name: "Remote Getaway"
+  desc: "Escape the island"
+"end/find_end_city":
+  name: "The City at the End of the Game"
+  desc: "Go on in, what could happen?"
+"end/kill_dragon":
+  name: "Free the End"
+  desc: "Good luck"
+"end/levitate":
+  name: "Great View From Up Here"
+  desc: "Levitate up 50 blocks from the attacks of a Shulker"
+"end/respawn_dragon":
+  name: "The End... Again..."
+  desc: "Respawn the Ender Dragon"
+"nether/brew_potion":
+  name: "Local Brewery"
+  desc: "Brew a potion"
+"nether/all_potions":
+  name: "A Furious Cocktail"
+  desc: "Have every potion effect applied at the same time"
+"nether/all_effects":
+  name: "How Did We Get Here?"
+  desc: "Have every effect applied at the same time"
+"nether/create_beacon":
+  name: "Bring Home the Beacon"
+  desc: "Construct and place a beacon"
+"nether/create_full_beacon":
+  name: "Beaconator"
+  desc: "Bring a beacon to full power"
+"nether/find_fortress":
+  name: "A Terrible Fortress"
+  desc: "Break your way into a Nether Fortress"
+"nether/get_wither_skull":
+  name: "Spooky Scary Skeleton"
+  desc: "Obtain a Wither Skeleton's skull"
+"nether/obtain_blaze_rod":
+  name: "Into Fire"
+  desc: "Relieve a Blaze of its rod"
+"nether/return_to_sender":
+  name: "Return to Sender"
+  desc: "Destroy a Ghast with a fireball"
+"nether/summon_wither":
+  name: "Withering Heights"
+  desc: "Summon the Wither"
+"nether/fast_travel":
+  name: "Subspace Bubble"
+  desc: "Use the Nether to travel 7 km in the Overworld"
+"nether/uneasy_alliance":
+  name: "Uneasy Alliance"
+  desc: "Kill a Ghast in the Overworld"
+"nether/obtain_ancient_debris":
+  name: "Hidden in the Depths"
+  desc: "Obtain Ancient Debris"
+"nether/netherite_armor":
+  name: "Cover Me in Debris"
+  desc: "Get a full suit of Netherite armor"
+"nether/use_lodestone":
+  name: "Country Lode, Take Me Home"
+  desc: "Use a compass on a Lodestone"
+"nether/obtain_crying_obsidian":
+  name: "Who is Cutting Onions?"
+  desc: "Obtain Crying Obsidian"
+"nether/charge_respawn_anchor":
+  name: "Not Quite \"Nine\" Lives"
+  desc: "Charge a Respawn Anchor to the maximum"
+"nether/ride_strider":
+  name: "This Boat Has Legs"
+  desc: "Ride a Strider with a Warped Fungus on a Stick"
+"nether/ride_strider_in_overworld_lava": 
+  name: "Feels Like Home"
+  desc: "Take a Strider for a loooong ride on a lava lake in the Overworld"
+"nether/explore_nether":
+  name: "Hot Tourist Destinations"
+  desc: "Explore all Nether biomes"
+"nether/find_bastion":
+  name: "Those Were the Days"
+  desc: "Enter a Bastion Remnant"
+"nether/loot_bastion":
+  name: "War Pigs"
+  desc: "Loot a chest in a Bastion Remnant"
+"nether/distract_piglin":
+  name: "Oh Shiny"
+  desc: "Distract Piglins with gold"
+"story/cure_zombie_villager":
+  name: "Zombie Doctor"
+  desc: "Weaken and then cure a Zombie Villager"
+"story/deflect_arrow":
+  name: "Not Today, Thank You"
+  desc: "Block a projectile using your shield"
+"story/enchant_item":
+  name: "Enchanter"
+  desc: "Enchant an item at an Enchantment Table"
+"story/enter_the_end":
+  name: "The End?"
+  desc: "Enter the End Portal"
+"story/enter_the_nether":
+  name: "We Need to Go Deeper"
+  desc: "Build, light and enter a Nether Portal"
+"story/follow_ender_eye":
+  name: "Eye Spy"
+  desc: "Follow an Ender Eye"
+"story/form_obsidian":
+  name: "Ice Bucket Challenge"
+  desc: "Obtain a block of obsidian"
+"story/iron_tools":
+  name: "Isn't It Iron Pick"
+  desc: "Upgrade your pickaxe"
+"story/lava_bucket":
+  name: "Hot Stuff"
+  desc: "Fill a bucket with lava"
+"story/mine_diamond":
+  name: "Diamonds!"
+  desc: "Acquire diamonds"
+"story/mine_stone":
+  name: "Stone Age"
+  desc: "Mine stone with your new pickaxe"
+"story/obtain_armor":
+  name: "Suit Up"
+  desc: "Protect yourself with a piece of iron armor"
+"story/shiny_gear":
+  name: "Cover Me with Diamonds"
+  desc: "Diamond armor saves lives"
+"story/smelt_iron":
+  name: "Acquire Hardware"
+  desc: "Smelt an iron ingot"
+"story/upgrade_tools":
+  name: "Getting an Upgrade"
+  desc: "Construct a better pickaxe"
