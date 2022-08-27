@@ -57,8 +57,11 @@ public class BingoScoreboard
 
         for (BingoTeam t : teamManager.getActiveTeams())
         {
-            Score score = objective.getScore(t.getColor() + t.getName());
-            score.setScore(t.card.getCompleteCount(t));
+            if (t.card != null)
+            {
+                Score score = objective.getScore(t.getColor() + t.getName());
+                score.setScore(t.card.getCompleteCount(t));
+            }
         }
 
         for (Player p : teamManager.getParticipants())
