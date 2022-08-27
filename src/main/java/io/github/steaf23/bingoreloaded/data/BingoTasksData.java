@@ -1,5 +1,6 @@
 package io.github.steaf23.bingoreloaded.data;
 
+import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.item.tasks.AbstractBingoTask;
 import io.github.steaf23.bingoreloaded.item.tasks.AdvancementTask;
 import io.github.steaf23.bingoreloaded.item.tasks.ItemTask;
@@ -40,12 +41,19 @@ public class BingoTasksData
 
             if (!duplicate)
             {
-                ItemTask item;
-                if (task.containsKey("count"))
-                    item = new ItemTask(Material.valueOf((String) task.get("key")), (int)task.get("count"));
-                else
-                    item = new ItemTask(Material.valueOf((String) task.get("key")));
-                result.add(item);
+                try
+                {
+                    ItemTask item;
+                    if (task.containsKey("count"))
+                        item = new ItemTask(Material.valueOf((String) task.get("key")), (int)task.get("count"));
+                    else
+                        item = new ItemTask(Material.valueOf((String) task.get("key")));
+                    result.add(item);
+                }
+                catch (IllegalArgumentException exc)
+                {
+                    BingoReloaded.print("ignoring item '" + task.get("key") + "' since it cannot be found!");
+                }
             }
         }
         return result;
@@ -75,8 +83,15 @@ public class BingoTasksData
             if (!duplicate)
             {
                 Advancement adv = Bukkit.getAdvancement(NamespacedKey.fromString((String) task.get("key")));
-                AdvancementTask advancement = new AdvancementTask(adv);
-                result.add(advancement);
+                if (adv != null)
+                {
+                    AdvancementTask advancement = new AdvancementTask(adv);
+                    result.add(advancement);
+                }
+                else
+                {
+                    BingoReloaded.print("ignoring advancement '" + task.get("key") + "' since it cannot be found!");
+                }
             }
         }
         return result;

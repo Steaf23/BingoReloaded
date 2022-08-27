@@ -43,6 +43,6 @@ public class AdvancementTask extends AbstractBingoTask
     @Override
     public List<String> getDescription()
     {
-        return List.of(AdvancementData.getAdvancementDesc(advancement));
+        return advancement == null ? List.of("") : List.of(AdvancementData.getAdvancementDesc(advancement));
     }
 }
