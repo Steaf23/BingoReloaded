@@ -4,7 +4,6 @@ import io.github.steaf23.bingoreloaded.command.BingoCommand;
 import io.github.steaf23.bingoreloaded.command.CardCommand;
 import io.github.steaf23.bingoreloaded.command.ItemListCommand;
 import io.github.steaf23.bingoreloaded.data.RecoveryCardData;
-import io.github.steaf23.bingoreloaded.data.TranslationData;
 import io.github.steaf23.bingoreloaded.gui.UIManager;
 import io.github.steaf23.bingoreloaded.player.TeamChat;
 import net.md_5.bungee.api.ChatMessageType;
@@ -27,8 +26,6 @@ public class BingoReloaded extends JavaPlugin
     @Override
     public void onEnable()
     {
-        TranslationData.populateTranslations();
-
         BingoGame game = new BingoGame();
         // create UIManager singleton.
         UIManager.getUIManager();

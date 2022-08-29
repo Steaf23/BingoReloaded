@@ -1,7 +1,6 @@
 command:
   use: "Usage: {}" # {cmd usage}
   bingo:
-    use: "Usage: {}" # {/bingo usage}
     no_deathmatch: "Cannot start a death match when there is no game active!"
   card:
     no_name: "Please provide card name: {}" # {command}

@@ -50,6 +50,7 @@ public class ConfigData
     public final boolean resetPlayerItems;
     public final boolean resetPlayerPositions;
     public final String selectedCard;
+    public final String language;
 
     private static ConfigData INSTANCE;
 
@@ -79,5 +80,6 @@ public class ConfigData
         this.resetPlayerItems = config.getBoolean("resetPlayerItems", true);
         this.resetPlayerPositions = config.getBoolean("resetPlayerPositions", true);
         this.selectedCard = config.getString("selectedCard", "default_card");
+        this.language = config.getString("language", "en_us.yml");
     }
 }

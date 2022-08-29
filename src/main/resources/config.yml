@@ -40,3 +40,6 @@ gracePeriod: 30
 
 # The card that the game will select automatically when starting the server/ reloading the plugin
 selectedCard: default_card
+
+# The yml file that contains the language data that will be used for this plugin
+language: en_us.yml
