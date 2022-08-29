@@ -1,8 +1,8 @@
 package io.github.steaf23.bingoreloaded.gui;
 
 import io.github.steaf23.bingoreloaded.BingoGame;
-import io.github.steaf23.bingoreloaded.BingoGameMode;
-import io.github.steaf23.bingoreloaded.BingoReloaded;
+import io.github.steaf23.bingoreloaded.BingoGamemode;
+import io.github.steaf23.bingoreloaded.MessageSender;
 import io.github.steaf23.bingoreloaded.gui.cards.CardSize;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
 import org.bukkit.ChatColor;
@@ -10,8 +10,6 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
-
-import java.util.List;
 
 public class GamemodeOptionsUI extends AbstractGUIInventory
 {
@@ -43,31 +41,31 @@ public class GamemodeOptionsUI extends AbstractGUIInventory
     @Override
     public void delegateClick(InventoryClickEvent event, int slotClicked, Player player, ClickType clickType)
     {
-        BingoGameMode chosenMode = BingoGameMode.REGULAR;
+        BingoGamemode chosenMode = BingoGamemode.REGULAR;
         CardSize chosenSize = CardSize.X5;
 
         if (slotClicked == options[0].getSlot() || slotClicked == options[3].getSlot())
         {
-            MessageSender.send("game.settings.regular_selected", List.of(BingoGameMode.REGULAR.name), ChatColor.GREEN);
+            MessageSender.sendAll("game.settings.regular_selected", BingoGamemode.REGULAR.name);
         }
         else if (slotClicked == options[1].getSlot() || slotClicked == options[4].getSlot())
         {
-            MessageSender.send("game.settings.lockout_selected", List.of(BingoGameMode.REGULAR.name), ChatColor.GREEN);
-            chosenMode = BingoGameMode.LOCKOUT;
+            MessageSender.sendAll("game.settings.lockout_selected", BingoGamemode.REGULAR.name);
+            chosenMode = BingoGamemode.LOCKOUT;
         }
         else if (slotClicked == options[2].getSlot() || slotClicked == options[5].getSlot())
         {
-            MessageSender.send("game.settings.complete_selected", List.of(BingoGameMode.REGULAR.name), ChatColor.GREEN);
-            chosenMode = BingoGameMode.COMPLETE;
+            MessageSender.sendAll("game.settings.complete_selected", BingoGamemode.REGULAR.name);
+            chosenMode = BingoGamemode.COMPLETE;
         }
 
         if (slotClicked == options[0].getSlot() || slotClicked == options[1].getSlot() || slotClicked == options[2].getSlot())
         {
-            MessageSender.send("game.settings.cardsize", List.of("5x5"), ChatColor.GREEN);
+            MessageSender.sendAll("game.settings.cardsize", "5x5");
         }
         else if (slotClicked == options[3].getSlot() || slotClicked == options[4].getSlot() || slotClicked == options[5].getSlot())
         {
-            MessageSender.send("game.settings.cardsize", List.of("3x3"), ChatColor.GREEN);
+            MessageSender.sendAll("game.settings.cardsize", "3x3");
             chosenSize = CardSize.X3;
         }
 

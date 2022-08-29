@@ -1,5 +1,7 @@
 package io.github.steaf23.bingoreloaded.player;
 
+import io.github.steaf23.bingoreloaded.BingoGame;
+import io.github.steaf23.bingoreloaded.MessageSender;
 import io.github.steaf23.bingoreloaded.gui.AbstractGUIInventory;
 import io.github.steaf23.bingoreloaded.gui.FilterType;
 import io.github.steaf23.bingoreloaded.gui.ListPickerUI;
@@ -7,8 +9,6 @@ import io.github.steaf23.bingoreloaded.gui.cards.BingoCard;
 import io.github.steaf23.bingoreloaded.gui.cards.LockoutBingoCard;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
 import io.github.steaf23.bingoreloaded.util.FlexibleColor;
-import io.github.steaf23.bingoreloaded.BingoGame;
-import io.github.steaf23.bingoreloaded.BingoReloaded;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -52,7 +52,7 @@ public class TeamManager
     {
         if (game.inProgress)
         {
-            MessageSender.send("game.team.no_join", player, null, ChatColor.RED);
+            MessageSender.sendPlayer("game.team.no_join", player);
             return;
         }
 
@@ -87,7 +87,7 @@ public class TeamManager
         Team team = scoreboard.getTeam(teamName);
         if (team == null)
         {
-            MessageSender.send("game.team.no_team", player, List.of(teamName), ChatColor.RED);
+            MessageSender.sendPlayer("game.team.no_team", player, teamName);
             return;
         }
         removePlayerFromAllTeams(player);
@@ -95,7 +95,7 @@ public class TeamManager
         activateTeam(team);
 
         team.addEntry(player.getName());
-        MessageSender.send("game.team.join", player, List.of(teamName), ChatColor.GREEN);
+        MessageSender.sendPlayer("game.team.join", player, teamName);
     }
 
     public void removePlayerFromAllTeams(Player player)
@@ -247,7 +247,7 @@ public class TeamManager
         if (!getParticipants().contains(player)) return;
 
         removePlayerFromAllTeams(player);
-        BingoReloaded.print("You have been successfully removed from the game!", player);
+        MessageSender.sendPlayer("game.player.leave", player, null, null);
         BingoGame.takePlayerEffects(player);
     }
 }

@@ -4,6 +4,7 @@ import io.github.steaf23.bingoreloaded.BingoGame;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.BingoCardsData;
 import io.github.steaf23.bingoreloaded.data.BingoTasksData;
+import io.github.steaf23.bingoreloaded.MessageSender;
 import io.github.steaf23.bingoreloaded.gui.AbstractGUIInventory;
 import io.github.steaf23.bingoreloaded.item.BingoCardSlotCompleteEvent;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
@@ -12,7 +13,6 @@ import io.github.steaf23.bingoreloaded.item.tasks.AdvancementTask;
 import io.github.steaf23.bingoreloaded.item.tasks.ItemTask;
 import io.github.steaf23.bingoreloaded.player.BingoTeam;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
@@ -117,7 +117,7 @@ public class BingoCard extends AbstractGUIInventory implements Listener
 
     public boolean hasBingo(BingoTeam team)
     {
-        BingoReloaded.print("Your team (" + team.getColor() + team.getName() + ChatColor.RESET + ") has completed " + getCompleteCount(team) + " task(s)!", team);
+        MessageSender.sendTeam("game.item.team_completed", team, team.getName(), String.format("%d", getCompleteCount(team)));
         //check for rows and columns
         for (int y = 0; y < size.cardSize; y++)
         {

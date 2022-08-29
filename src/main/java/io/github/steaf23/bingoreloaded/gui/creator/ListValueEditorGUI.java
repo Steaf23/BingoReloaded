@@ -1,6 +1,5 @@
 package io.github.steaf23.bingoreloaded.gui.creator;
 
-import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.BingoCardsData;
 import io.github.steaf23.bingoreloaded.data.BingoTasksData;
 import io.github.steaf23.bingoreloaded.gui.AbstractGUIInventory;
@@ -86,8 +85,6 @@ public class ListValueEditorGUI extends AbstractGUIInventory
     {
         // Set the max count to be between MIN_ITEMS and the amount of tasks in that list if it's smaller than MAX_ITEMS.
         maxCount = Math.floorMod(newValue - minCount, Math.max(1, Math.min(BingoCardsData.MAX_ITEMS, BingoTasksData.getTaskCount(listName))) - minCount + 1) + minCount;
-
-        BingoReloaded.print("max: " + maxCount);
         maxCounter.setAmount(maxCount);
         ItemMeta meta = maxCounter.getItemMeta();
 
@@ -101,8 +98,6 @@ public class ListValueEditorGUI extends AbstractGUIInventory
     public void updateMin(int newValue)
     {
         minCount = Math.floorMod(newValue - 1, maxCount) + 1;
-
-        BingoReloaded.print("min: " + minCount);
         minCounter.setAmount(minCount);
         ItemMeta meta = minCounter.getItemMeta();
 

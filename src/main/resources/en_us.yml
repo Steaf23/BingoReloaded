@@ -25,10 +25,10 @@ game:
     give_cards: "Giving all participants Kits and Cards!"
     deathmatch: "Death Match: Get this item to win!"
     card: "Selected '{}' as the playing Bingo card!" # {card name}
+    no_card: "Cannot start game with the card '{}' because it does not exist!" # {card_name}
   end:
     bingo: "Congratulations! Team {} has won the Bingo!" # {winning team}
     duration: "Game Duration: {}" # {total game time}
-    no_game: "No game to end!"
   player:
     leave: "You have been successfully removed from the game, use {} to come back to me :D" # {/bingo command}
     no_start: "The game has not started yet!"
@@ -44,7 +44,7 @@ game:
     chat_on: "Enabled team chat, use {} to disable it." # {/btc}
   item:
     completed: "Completed {} by team {}! At {}" # {item name} {team} {completion time}
-    team_completed: "Your team ({}) has collected {} items!" # {team name} {item count}
+    team_completed: "Your team ({}) has collected {} task(s)!" # {team name} {task count}
     lore: "Completed by {} \n At {}" # {team} {completion time}
     deathmatch: "DeathMatch - Find this item to win: {}" # {item name}
 menu:

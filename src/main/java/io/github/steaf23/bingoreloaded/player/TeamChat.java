@@ -1,6 +1,7 @@
 package io.github.steaf23.bingoreloaded.player;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
+import io.github.steaf23.bingoreloaded.MessageSender;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -69,19 +70,19 @@ public class TeamChat implements Listener, CommandExecutor
         {
             if (!teamManager.getParticipants().contains(p))
             {
-                MessageSender.send("game.team.chat_off", p, null, ChatColor.RED);
+                MessageSender.sendPlayer("game.team.chat_off", p);
                 return false;
             }
 
             if (enabledPlayers.contains(p))
             {
                 enabledPlayers.remove(p);
-                MessageSender.send("game.team.chat_off", p, List.of("/btc"), ChatColor.RED);
+                MessageSender.sendPlayer("game.team.chat_off", p, "/btc");
             }
             else
             {
                 enabledPlayers.add(p);
-                MessageSender.send("game.team.chat_on", p, List.of("/btc"), ChatColor.RED);
+                MessageSender.sendPlayer("game.team.chat_on", p, "/btc");
             }
         }
         return false;

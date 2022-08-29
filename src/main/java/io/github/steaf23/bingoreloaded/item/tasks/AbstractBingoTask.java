@@ -1,7 +1,7 @@
 package io.github.steaf23.bingoreloaded.item.tasks;
 
-import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.GameTimer;
+import io.github.steaf23.bingoreloaded.MessageSender;
 import io.github.steaf23.bingoreloaded.gui.cards.CardBuilder;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
 import io.github.steaf23.bingoreloaded.player.BingoTeam;
@@ -66,7 +66,7 @@ public abstract class AbstractBingoTask
 
         String timeString = GameTimer.getTimeAsString(time);
 
-        BingoReloaded.broadcast(ChatColor.GREEN + "Completed " + getDisplayName() + " by team " + completedBy.team.getColor() + completedBy.getName() + ChatColor.GREEN + "! At " + timeString);
+        MessageSender.sendAll(ChatColor.GREEN + "Completed " + getDisplayName() + " by team " + completedBy.team.getColor() + completedBy.getName() + ChatColor.GREEN + "! At " + timeString);
 
         String crossedName = "" + ChatColor.GRAY + ChatColor.STRIKETHROUGH + ChatColor.stripColor(getDisplayName());
         item.setType(completeMaterial);

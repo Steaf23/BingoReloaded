@@ -1,6 +1,7 @@
 package io.github.steaf23.bingoreloaded.gui;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
+import io.github.steaf23.bingoreloaded.MessageSender;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -34,11 +35,6 @@ public abstract class AbstractGUIInventory
     public AbstractGUIInventory(int size, String title, AbstractGUIInventory parent)
     {
         this.parent = parent;
-
-        Plugin plugin = Bukkit.getPluginManager().getPlugin(BingoReloaded.NAME);
-        if (plugin == null) return;
-
-        Bukkit.getPluginManager().registerEvents(this, plugin);
 
         inventory = Bukkit.createInventory(new GUIHolder(), size, MessageSender.PRINT_PREFIX + ChatColor.DARK_RED + title);
         UIManager.addInventory(this);

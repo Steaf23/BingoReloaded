@@ -1,6 +1,5 @@
 package io.github.steaf23.bingoreloaded;
 
-import me.steven.bingoreloaded.data.MessageSender;
 import org.bukkit.ChatColor;
 import org.bukkit.scheduler.BukkitRunnable;
 

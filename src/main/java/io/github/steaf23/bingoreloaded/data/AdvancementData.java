@@ -5,7 +5,7 @@ import org.bukkit.advancement.Advancement;
 
 public class AdvancementData
 {
-    private static final YMLDataManager data = new YMLDataManager("advancements.yml");
+    private static final YmlDataManager data = new YmlDataManager("advancements.yml");
 
     public static String getAdvancementTitle(Advancement adv)
     {

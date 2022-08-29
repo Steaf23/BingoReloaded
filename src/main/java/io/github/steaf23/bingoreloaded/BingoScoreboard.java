@@ -36,17 +36,6 @@ public class BingoScoreboard
 
         Objective itemObjective = itemCountBoard.registerNewObjective("item_count", "bingo_item_count", "Collected Items");
         itemObjective.setDisplaySlot(DisplaySlot.SIDEBAR);
-
-//        new BukkitRunnable() {
-//            @Override
-//            public void run()
-//            {
-//                if (game.inProgress)
-//                {
-//                    switchBoards();
-//                }
-//            }
-//        }.runTaskTimer(BingoReloaded.getPlugin(BingoReloaded.class), 0, 20 * 5);
     }
 
     public void updateItemCount()

@@ -1,7 +1,7 @@
 package io.github.steaf23.bingoreloaded.util;
 
 
-import io.github.steaf23.bingoreloaded.BingoReloaded;
+import io.github.steaf23.bingoreloaded.MessageSender;
 import org.bukkit.Material;
 import org.bukkit.block.banner.PatternType;
 import org.bukkit.inventory.ItemStack;
@@ -30,7 +30,7 @@ public class BannerBuilder
         }
         if (banner == null)
         {
-            BingoReloaded.print("Malformed banner command! (Cannot find banner base!)");
+            MessageSender.log("Malformed banner command! (Cannot find banner base!)");
         }
 
         Matcher patMatcher = pattern.matcher(command);
@@ -60,7 +60,7 @@ public class BannerBuilder
         }
         else
         {
-            BingoReloaded.print("Malformed banner command! (Mismatch count of pattern types and colors)");
+            MessageSender.log("Malformed banner command! (Mismatch count of pattern types and colors)");
         }
         return banner;
     }

@@ -1,7 +1,7 @@
 package io.github.steaf23.bingoreloaded.command;
 
-import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.BingoCardsData;
+import io.github.steaf23.bingoreloaded.MessageSender;
 import io.github.steaf23.bingoreloaded.gui.creator.CardEditorUI;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -10,8 +10,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
-import java.util.List;
 
 public class CardCommand implements CommandExecutor
 {
@@ -27,21 +25,12 @@ public class CardCommand implements CommandExecutor
         {
             switch (args[0])
             {
-                case "list":
-                    if (commandSender instanceof Player p)
-                        BingoReloaded.print("These are all existing cards: " + ChatColor.GOLD + BingoCardsData.getCardNames(), p);
-                    else if (commandSender instanceof ConsoleCommandSender cmd)
-                    {
-                        BingoReloaded.print("These are all existing cards: " + BingoCardsData.getCardNames());
-                    }
-                    break;
-
                 case "create":
                     if (!(commandSender instanceof Player p))
                         break;
                     if (args.length < 2)
                     {
-                        MessageSender.send("command.card.no_name", p, List.of("/card create <card_name>"), ChatColor.RED);
+                        MessageSender.sendPlayer("command.card.no_name", p, "/card create <card_name>");
                         break;
                     }
 
@@ -53,14 +42,14 @@ public class CardCommand implements CommandExecutor
                     {
                         if (args.length < 2)
                         {
-                            MessageSender.send("command.card.no_name", p, List.of("/card remove <card_name>"), ChatColor.RED);
+                            MessageSender.sendPlayer("command.card.no_name", p, "/card remove <card_name>");
                             break;
                         }
 
                         if (BingoCardsData.removeCard(args[1]))
-                            MessageSender.send("command.card.removed", p, List.of(args[1]), ChatColor.RED);
+                            MessageSender.sendPlayer("command.card.removed", p, args[1]);
                         else
-                            MessageSender.send("command.send.no_remove", p, List.of(args[1]), ChatColor.RED);
+                            MessageSender.sendPlayer("command.send.no_remove", p, args[1]);
                         break;
                     }
                     else if (commandSender instanceof ConsoleCommandSender)
@@ -81,7 +70,7 @@ public class CardCommand implements CommandExecutor
 
                 default:
                     if (commandSender instanceof Player player)
-                        MessageSender.send("command.usage", player, List.of("/card [create | remove]"), ChatColor.RED);
+                        MessageSender.sendPlayer("command.usage", player, "/card [create | remove]");
                     else
                         MessageSender.log(ChatColor.RED + "Usage: /card [create | remove]");
                     break;

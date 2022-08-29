@@ -1,6 +1,7 @@
 package io.github.steaf23.bingoreloaded.data;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
+import io.github.steaf23.bingoreloaded.MessageSender;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -11,14 +12,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-public class YMLDataManager
+public class YmlDataManager
 {
     private final Plugin plugin;
     private final String fileName;
     private FileConfiguration dataConfig = null;
     private File configFile = null;
 
-    public YMLDataManager(String fileName)
+    public YmlDataManager(String fileName)
     {
         this.plugin = Bukkit.getPluginManager().getPlugin(BingoReloaded.NAME);
         this.fileName = fileName;

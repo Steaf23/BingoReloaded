@@ -1,19 +1,19 @@
-package me.steven.bingoreloaded.data;
+package io.github.steaf23.bingoreloaded.data;
 
+import io.github.steaf23.bingoreloaded.MessageSender;
 import org.bukkit.ChatColor;
-import org.bukkit.configuration.ConfigurationSection;
 
-import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 public class TranslationData
 {
-    private static final Map<String, YMLDataManager> translations = new HashMap<>();
+    private static final Map<String, YmlDataManager> translations = new HashMap<>();
     private static String language = "english_us";
 
     public static void populateTranslations()
     {
-        YMLDataManager languages = new YMLDataManager("translations.yml");
+        YmlDataManager languages = new YmlDataManager("translations.yml");
         for (Map<?, ?> map : languages.getConfig().getMapList("languages"))
         {
             for (Object key : map.keySet())
@@ -21,7 +21,7 @@ public class TranslationData
                 if (key instanceof String lang)
                 {
                     MessageSender.log(lang);
-                    translations.put(lang, new YMLDataManager(languages.getConfig().getString("languages." + lang)));
+                    translations.put(lang, new YmlDataManager(languages.getConfig().getString("languages." + lang)));
                     break;
                 }
             }

@@ -61,19 +61,19 @@ public class BingoGame implements Listener
     {
         if (!BingoCardsData.getCardNames().contains(settings.card))
         {
-            BingoReloaded.broadcast("Cannot start game with the card '" + settings.card + "' because it does not exist!");
+            MessageSender.sendAll("game.start.no_card", settings.card);
             return;
         }
 
         // Pre-start Setup
         if (getTeamManager().getParticipants().size() <= 0)
         {
-            BingoReloaded.broadcast("" + ChatColor.RED + ChatColor.ITALIC + ChatColor.BOLD + "Bingo could not be started since nobody joined :(");
+            MessageSender.sendAll("game.start.no_players");
             return;
         }
         if (inProgress)
         {
-            BingoReloaded.broadcast("" + ChatColor.RED + ChatColor.ITALIC + ChatColor.BOLD + "Cannot start a game of Bingo when there is already one active!");
+            MessageSender.sendAll("game.start.already_active");
             return;
         }
 
@@ -91,7 +91,7 @@ public class BingoGame implements Listener
         masterCard.generateCard(settings.card);
         getTeamManager().initializeCards(masterCard);
 
-        BingoReloaded.broadcast(ChatColor.GREEN + "Giving all participants Kits and Cards!");
+        MessageSender.sendAll("game.start.give_cards");
         Set<Player> players = getTeamManager().getParticipants();
         players.forEach(this::givePlayerKit);
         players.forEach(this::returnCardToPlayer);
@@ -115,32 +115,27 @@ public class BingoGame implements Listener
     {
         settings.deathMatchItem = null;
         timer.stop();
-        if(inProgress)
-        {
-            inProgress = false;
-            TextComponent[] commandMessage = BingoReloaded.createHoverCommandMessage(
-                    "Game has ended! Click to ",
-                    "Restart!",
-                    "",
-                    "/bingo start",
-                    "Click to restart using the same rules!");
-            Set<Player> players = getTeamManager().getParticipants();
-            players.forEach(p -> p.spigot().sendMessage(commandMessage));
-            BingoReloaded.broadcast(ChatColor.GREEN + "Game Duration: " + ChatColor.GRAY + ChatColor.ITALIC + GameTimer.getTimeAsString(timer.getTime()));
-            RecoveryCardData.markCardEnded(true);
-            players.forEach(p -> takePlayerEffects(p));
-            scoreboard.resetBoards();
-        }
-        else
-        {
-            BingoReloaded.print(ChatColor.RED + "No game to end!");
+        if(!inProgress)
             return;
-        }
+
+        inProgress = false;
+        TextComponent[] commandMessage = MessageSender.createHoverCommandMessage(
+                "Game has ended! Click to ",
+                "Restart!",
+                "",
+                "/bingo start",
+                "Click to restart using the same rules!");
+        Set<Player> players = getTeamManager().getParticipants();
+        players.forEach(p -> p.spigot().sendMessage(commandMessage));
+        MessageSender.sendAll("game.end.duration", GameTimer.getTimeAsString(timer.getTime()));
+        RecoveryCardData.markCardEnded(true);
+        players.forEach(p -> takePlayerEffects(p));
+        scoreboard.resetBoards();
     }
 
     public void bingo(BingoTeam team)
     {
-        BingoReloaded.broadcast("Congratulations! Team " + team.getName() + ChatColor.RESET + " has won the Bingo!");
+        MessageSender.sendAll("game.send.bingo", team.getName());
         for (Player p : getTeamManager().getParticipants())
         {
             p.playSound(p, Sound.ENTITY_DRAGON_FIREBALL_EXPLODE, 0.8f, 1.0f);
@@ -210,7 +205,7 @@ public class BingoGame implements Listener
             for (Player p : getTeamManager().getParticipants())
             {
                 p.sendTitle(color + "" + countdown, "", -1, -1, -1);
-                BingoReloaded.print(color + "" + countdown, p);
+                MessageSender.sendDebug(color + "" + countdown, p);
             }
 
             new BukkitRunnable()
@@ -229,7 +224,7 @@ public class BingoGame implements Listener
         for (Player p : getTeamManager().getParticipants())
         {
             p.sendTitle(ChatColor.GOLD + itemName, ChatColor.DARK_PURPLE + "Death Match: Get this item to win!", -1, -1, -1);
-            BingoReloaded.print(ChatColor.GOLD + itemName, p);
+            MessageSender.sendDebug(ChatColor.GOLD + itemName, p);
         }
     }
 
@@ -237,7 +232,7 @@ public class BingoGame implements Listener
     {
         String itemName = ItemTask.convertToReadableName(settings.deathMatchItem);
         p.sendTitle(ChatColor.GOLD + itemName, ChatColor.DARK_PURPLE + "DeathMatch - Find this item to win!", -1, -1, -1);
-        BingoReloaded.print(ChatColor.GOLD + itemName, p);
+        MessageSender.sendDebug(ChatColor.GOLD + itemName, p);
     }
 
     public static void givePlayerEffects(Player player, BingoGameSettings settings)
@@ -277,7 +272,7 @@ public class BingoGame implements Listener
     {
         if (player == null) return;
         Location location = deadPlayers.get(player.getName());
-        BingoReloaded.print("Death Location: " + location, player);
+        MessageSender.sendDebug("Death Location: " + location, player);
         player.teleport(deadPlayers.get(player.getName()), PlayerTeleportEvent.TeleportCause.PLUGIN);
         deadPlayers.remove(player.getName());
     }
@@ -430,7 +425,6 @@ public class BingoGame implements Listener
             BingoTeam playerTeam = getTeamManager().getTeamOfPlayer(event.getPlayer());
             if (playerTeam == null)
             {
-                BingoReloaded.print("NO TEAM?", event.getPlayer());
                 return;
             }
 
@@ -448,7 +442,7 @@ public class BingoGame implements Listener
             }
             else
             {
-                BingoReloaded.print(ChatColor.RED + "The game has not started yet!", event.getPlayer());
+                MessageSender.sendPlayer("game.player.no_start", event.getPlayer());
             }
         }
 
@@ -508,7 +502,7 @@ public class BingoGame implements Listener
         {
             if (getTeamManager().getParticipants().contains(event.getPlayer()))
             {
-                BingoReloaded.print("You joined back!", event.getPlayer());
+                MessageSender.sendPlayer("game.player.join_back", event.getPlayer());
                 scoreboard.updateItemCount();
                 return;
             }
@@ -542,7 +536,7 @@ public class BingoGame implements Listener
                 Location deathCoords = event.getEntity().getLocation();
                 if (ConfigData.getConfig().teleportAfterDeath)
                 {
-                    TextComponent[] teleportMsg = BingoReloaded.createHoverCommandMessage("",
+                    TextComponent[] teleportMsg = MessageSender.createHoverCommandMessage("",
                             "" + ChatColor.DARK_AQUA + ChatColor.BOLD + "Click here to teleport back to where you died",
                             "",
                             "/bingo back",

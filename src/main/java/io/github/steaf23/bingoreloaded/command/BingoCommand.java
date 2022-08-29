@@ -1,18 +1,15 @@
 package io.github.steaf23.bingoreloaded.command;
 
 import io.github.steaf23.bingoreloaded.BingoGame;
-import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.ConfigData;
+import io.github.steaf23.bingoreloaded.MessageSender;
 import io.github.steaf23.bingoreloaded.gui.BingoOptionsUI;
 import io.github.steaf23.bingoreloaded.gui.creator.CardCreatorUI;
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
-import java.util.List;
 
 public class BingoCommand implements CommandExecutor
 {
@@ -82,9 +79,9 @@ public class BingoCommand implements CommandExecutor
                     else
                     {
                         if (commandSender instanceof Player p)
-                            MessageSender.send("command.bingo.no_deathmatch", p, null, ChatColor.RED);
+                            MessageSender.sendPlayer("command.bingo.no_deathmatch", p);
                         else
-                            MessageSender.send("command.bingo.no_deathmatch", null, ChatColor.RED);
+                            MessageSender.log("command.bingo.no_deathmatch");
                     }
                     break;
 
@@ -98,9 +95,9 @@ public class BingoCommand implements CommandExecutor
 
                 default:
                     if (commandSender instanceof Player p)
-                        MessageSender.send("command.use", p, List.of("/bingo [getcard | start | end | leave | deathmatch | creator]"), ChatColor.RED);
+                        MessageSender.sendPlayer("command.use", p, "/bingo [getcard | start | end | leave | deathmatch | creator]");
                     else
-                        MessageSender.send("command.use", List.of("/bingo [start | end | deathmatch]"), ChatColor.RED);
+                        MessageSender.log("Usage: /bingo [start | end | deathmatch]");
                     break;
             }
         }

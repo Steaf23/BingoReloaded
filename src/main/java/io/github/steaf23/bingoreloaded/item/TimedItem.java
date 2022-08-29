@@ -1,7 +1,6 @@
 package io.github.steaf23.bingoreloaded.item;
 
-import io.github.steaf23.bingoreloaded.BingoReloaded;
-import org.bukkit.ChatColor;
+import io.github.steaf23.bingoreloaded.MessageSender;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
@@ -40,7 +39,7 @@ public abstract class TimedItem
         if (! success)
         {
             double seconds = getTimeLeft(player);
-            BingoReloaded.print(ChatColor.RED + String.format("You cannot use this item for another %.2f seconds!", seconds), player);
+            MessageSender.sendPlayer("game.item.cooldown", player, "" + seconds);
         }
 
         return success;

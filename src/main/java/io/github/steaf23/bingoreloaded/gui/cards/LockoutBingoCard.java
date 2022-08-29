@@ -1,18 +1,16 @@
 package io.github.steaf23.bingoreloaded.gui.cards;
 
-import io.github.steaf23.bingoreloaded.item.tasks.AbstractBingoTask;
-import io.github.steaf23.bingoreloaded.item.InventoryItem;
 import io.github.steaf23.bingoreloaded.BingoGame;
-import io.github.steaf23.bingoreloaded.BingoReloaded;
+import io.github.steaf23.bingoreloaded.MessageSender;
 import io.github.steaf23.bingoreloaded.item.BingoCardSlotCompleteEvent;
+import io.github.steaf23.bingoreloaded.item.InventoryItem;
+import io.github.steaf23.bingoreloaded.item.tasks.AbstractBingoTask;
 import io.github.steaf23.bingoreloaded.player.BingoTeam;
 import io.github.steaf23.bingoreloaded.player.TeamManager;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-
-import java.util.List;
 
 public class LockoutBingoCard extends BingoCard
 {
@@ -66,7 +64,7 @@ public class LockoutBingoCard extends BingoCard
 
     public void dropTeam(BingoTeam team)
     {
-        MessageSender.send("game.team.dropped", List.of(team.getColor() + team.getName()));
+        MessageSender.sendAll("game.team.dropped",team.getColor() + team.getName());
         team.outOfTheGame = true;
         for (AbstractBingoTask task : tasks)
         {

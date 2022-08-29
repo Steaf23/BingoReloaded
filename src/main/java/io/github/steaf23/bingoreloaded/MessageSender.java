@@ -1,14 +1,13 @@
-package me.steven.bingoreloaded.data;
+package io.github.steaf23.bingoreloaded;
 
-import me.steven.bingoreloaded.player.BingoTeam;
+import io.github.steaf23.bingoreloaded.data.TranslationData;
+import io.github.steaf23.bingoreloaded.player.BingoTeam;
 import net.md_5.bungee.api.chat.*;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-
-import java.util.List;
 
 public class MessageSender
 {
@@ -33,16 +32,13 @@ public class MessageSender
     }
 
     //Send message to all players
-    public static void send(String translatePath, @Nullable List<String> params, @Nullable ChatColor... modifiers)
+    public static void sendAll(String translatePath, @Nullable String... params)
     {
-        for (Player p : Bukkit.getServer().getOnlinePlayers())
-        {
-            send(translatePath, p, params, modifiers);
-        }
+        Bukkit.getOnlinePlayers().forEach(p -> sendPlayer(translatePath, p, params));
     }
 
     // Send message to a player
-    public static void send(String translatePath, @NonNull Player player, @Nullable List<String> params, @Nullable ChatColor... modifiers)
+    public static void sendPlayer(String translatePath, @NonNull Player player, @Nullable String... params)
     {
         String translatedString = TranslationData.get(translatePath);
         String[] messageParts = translatedString.split("(%[^%]*%)");
@@ -51,15 +47,15 @@ public class MessageSender
         if (params != null)
         {
             int i = 0;
-            if (messageParts.length == params.size())
+            if (messageParts.length == params.length)
             {
-                for (i = 0; i < params.size(); i++)
+                for (i = 0; i < params.length; i++)
                 {
                     message.addExtra(new TextComponent(messageParts[i]));
-                    message.addExtra(new TranslatableComponent(params.get(i)));
+                    message.addExtra(new TranslatableComponent(params[i]));
                 }
             }
-            if (messageParts.length == params.size() + 1)
+            if (messageParts.length == params.length + 1)
             {
                 message.addExtra(new TextComponent(messageParts[i + 1]));
             }
@@ -73,14 +69,14 @@ public class MessageSender
     }
 
     //Send message to a team
-    public static void send(String translatePath, BingoTeam team, @Nullable List<String> params, @Nullable ChatColor... modifiers)
+    public static void sendTeam(String translatePath, BingoTeam team, @Nullable String... params)
     {
         for (String name : team.team.getEntries())
         {
             Player p = Bukkit.getPlayer(name);
             if (p != null)
             {
-                send(translatePath, p, params, modifiers);
+                sendPlayer(translatePath, p, params);
             }
         }
     }
