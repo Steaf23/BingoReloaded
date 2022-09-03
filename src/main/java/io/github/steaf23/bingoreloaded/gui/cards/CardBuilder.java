@@ -20,7 +20,7 @@ public class CardBuilder
 
     public static Material completeColor(BingoTeam team)
     {
-        FlexibleColor color = FlexibleColor.fromChatColor(team.team.getColor());
+        FlexibleColor color = FlexibleColor.fromChatColor(team.getColor());
         if (color == null) return Material.BLACK_STAINED_GLASS_PANE;
         return color.glassPane;
     }

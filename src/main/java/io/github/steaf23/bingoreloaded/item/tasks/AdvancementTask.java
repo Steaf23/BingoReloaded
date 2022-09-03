@@ -1,7 +1,7 @@
 package io.github.steaf23.bingoreloaded.item.tasks;
 
 import io.github.steaf23.bingoreloaded.data.AdvancementData;
-import org.bukkit.ChatColor;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.advancement.Advancement;
 import org.bukkit.enchantments.Enchantment;
@@ -13,7 +13,7 @@ public class AdvancementTask extends AbstractBingoTask
     public Advancement advancement;
     public AdvancementTask(Advancement advancement)
     {
-        super(Material.FILLED_MAP, ChatColor.GREEN);
+        super(Material.FILLED_MAP, ChatColor.AQUA);
         this.advancement = advancement;
         updateItem();
         item.addUnsafeEnchantment(Enchantment.DURABILITY, 1);
@@ -36,7 +36,7 @@ public class AdvancementTask extends AbstractBingoTask
     public String getDisplayName()
     {
         if (advancement != null)
-            return ChatColor.GREEN + "[" + AdvancementData.getAdvancementTitle(advancement) + "]" + ChatColor.RESET;
+            return "[" + AdvancementData.getAdvancementTitle(advancement) + "]";
         return "";
     }
 

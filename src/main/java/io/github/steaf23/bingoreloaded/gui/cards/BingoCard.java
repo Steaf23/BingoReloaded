@@ -2,9 +2,9 @@ package io.github.steaf23.bingoreloaded.gui.cards;
 
 import io.github.steaf23.bingoreloaded.BingoGame;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
+import io.github.steaf23.bingoreloaded.Message;
 import io.github.steaf23.bingoreloaded.data.BingoCardsData;
 import io.github.steaf23.bingoreloaded.data.BingoTasksData;
-import io.github.steaf23.bingoreloaded.MessageSender;
 import io.github.steaf23.bingoreloaded.gui.AbstractGUIInventory;
 import io.github.steaf23.bingoreloaded.item.BingoCardSlotCompleteEvent;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
@@ -43,7 +43,7 @@ public class BingoCard extends AbstractGUIInventory implements Listener
         super(9 * size.cardSize, "Card Viewer", null);
         this.size = size;
         this.game = game;
-        InventoryItem cardInfoItem = new InventoryItem(0, Material.MAP, "Regular Bingo Card", "First team to complete 1 line wins.", "Lines can span vertically, horizontally", "or vertically.");
+        InventoryItem cardInfoItem = new InventoryItem(0, Material.MAP, "Regular Bingo Card", "First team to complete 1 line wins.", "Lines can span vertically, horizontally", "or diagonally.");
         addOption(cardInfoItem);
 
         BingoReloaded.registerListener(this);
@@ -117,7 +117,6 @@ public class BingoCard extends AbstractGUIInventory implements Listener
 
     public boolean hasBingo(BingoTeam team)
     {
-        MessageSender.sendTeam("game.item.team_completed", team, team.getName(), String.format("%d", getCompleteCount(team)));
         //check for rows and columns
         for (int y = 0; y < size.cardSize; y++)
         {

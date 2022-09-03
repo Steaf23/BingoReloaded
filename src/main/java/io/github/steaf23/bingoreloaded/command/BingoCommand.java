@@ -1,10 +1,12 @@
 package io.github.steaf23.bingoreloaded.command;
 
 import io.github.steaf23.bingoreloaded.BingoGame;
+import io.github.steaf23.bingoreloaded.Message;
 import io.github.steaf23.bingoreloaded.data.ConfigData;
-import io.github.steaf23.bingoreloaded.MessageSender;
 import io.github.steaf23.bingoreloaded.gui.BingoOptionsUI;
 import io.github.steaf23.bingoreloaded.gui.creator.CardCreatorUI;
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -79,9 +81,9 @@ public class BingoCommand implements CommandExecutor
                     else
                     {
                         if (commandSender instanceof Player p)
-                            MessageSender.sendPlayer("command.bingo.no_deathmatch", p);
+                            new Message("command.bingo.no_deathmatch").send(p);
                         else
-                            MessageSender.log("command.bingo.no_deathmatch");
+                            Message.log("command.bingo.no_deathmatch");
                     }
                     break;
 
@@ -95,9 +97,9 @@ public class BingoCommand implements CommandExecutor
 
                 default:
                     if (commandSender instanceof Player p)
-                        MessageSender.sendPlayer("command.use", p, "/bingo [getcard | start | end | leave | deathmatch | creator]");
+                        new Message("command.use").color(ChatColor.RED).arg("/bingo [getcard | start | end | leave | deathmatch | creator]").send(p);
                     else
-                        MessageSender.log("Usage: /bingo [start | end | deathmatch]");
+                        Message.log(ChatColor.RED + "Usage: /bingo [start | end | deathmatch]");
                     break;
             }
         }

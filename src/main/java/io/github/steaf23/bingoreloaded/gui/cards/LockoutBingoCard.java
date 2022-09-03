@@ -1,7 +1,7 @@
 package io.github.steaf23.bingoreloaded.gui.cards;
 
 import io.github.steaf23.bingoreloaded.BingoGame;
-import io.github.steaf23.bingoreloaded.MessageSender;
+import io.github.steaf23.bingoreloaded.Message;
 import io.github.steaf23.bingoreloaded.item.BingoCardSlotCompleteEvent;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
 import io.github.steaf23.bingoreloaded.item.tasks.AbstractBingoTask;
@@ -64,7 +64,9 @@ public class LockoutBingoCard extends BingoCard
 
     public void dropTeam(BingoTeam team)
     {
-        MessageSender.sendAll("game.team.dropped",team.getColor() + team.getName());
+        new Message("game.team.dropped")
+                .arg(team.getName()).color(team.getColor()).bold()
+                .sendAll();
         team.outOfTheGame = true;
         for (AbstractBingoTask task : tasks)
         {

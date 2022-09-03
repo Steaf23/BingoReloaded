@@ -59,19 +59,19 @@ public class KitOptionsUI extends AbstractGUIInventory
     {
         if (slotClicked == HARDCORE.getSlot())
         {
-            game.getSettings().kit = PlayerKit.HARDCORE;
+            game.getSettings().setKit(PlayerKit.HARDCORE);
         }
         else if (slotClicked == NORMAL.getSlot())
         {
-            game.getSettings().kit = PlayerKit.NORMAL;
+            game.getSettings().setKit(PlayerKit.NORMAL);
         }
         else if (slotClicked == OVERPOWERED.getSlot())
         {
-            game.getSettings().kit = PlayerKit.OVERPOWERED;
+            game.getSettings().setKit(PlayerKit.OVERPOWERED);
         }
         else if (slotClicked == RELOADED.getSlot())
         {
-            game.getSettings().kit = PlayerKit.RELOADED;
+            game.getSettings().setKit(PlayerKit.RELOADED);
         }
         close(player);
     }

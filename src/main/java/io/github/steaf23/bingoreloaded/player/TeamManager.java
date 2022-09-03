@@ -1,7 +1,6 @@
 package io.github.steaf23.bingoreloaded.player;
 
-import io.github.steaf23.bingoreloaded.BingoGame;
-import io.github.steaf23.bingoreloaded.MessageSender;
+import io.github.steaf23.bingoreloaded.*;
 import io.github.steaf23.bingoreloaded.gui.AbstractGUIInventory;
 import io.github.steaf23.bingoreloaded.gui.FilterType;
 import io.github.steaf23.bingoreloaded.gui.ListPickerUI;
@@ -9,8 +8,8 @@ import io.github.steaf23.bingoreloaded.gui.cards.BingoCard;
 import io.github.steaf23.bingoreloaded.gui.cards.LockoutBingoCard;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
 import io.github.steaf23.bingoreloaded.util.FlexibleColor;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.scoreboard.Scoreboard;
@@ -22,13 +21,13 @@ public class TeamManager
 {
     private final List<BingoTeam> activeTeams;
     private final BingoGame game;
-    private final Scoreboard scoreboard;
+    private final Scoreboard teams;
 
-    public TeamManager(BingoGame game, Scoreboard scoreboard)
+    public TeamManager(BingoGame game)
     {
         this.activeTeams = new ArrayList<>();
         this.game = game;
-        this.scoreboard = scoreboard;
+        this.teams = Bukkit.getScoreboardManager().getNewScoreboard();
 
         createTeams();
     }
@@ -52,18 +51,14 @@ public class TeamManager
     {
         if (game.inProgress)
         {
-            MessageSender.sendPlayer("game.team.no_join", player);
+            new Message("game.team.no_join").send(player);
             return;
         }
 
         List<InventoryItem> optionItems = new ArrayList<>();
-        for (Team t : scoreboard.getTeams())
+        for (FlexibleColor color : FlexibleColor.values())
         {
-            FlexibleColor color = FlexibleColor.fromChatColor(t.getColor());
-            if (color != null)
-            {
-                optionItems.add(new InventoryItem(color.concrete, color.chatColor + t.getDisplayName()));
-            }
+            optionItems.add(new InventoryItem(color.concrete, color.chatColor + color.displayName));
         }
 
         ListPickerUI teamPicker = new ListPickerUI(optionItems, "Pick A Team", parentUI, FilterType.DISPLAY_NAME)
@@ -84,25 +79,30 @@ public class TeamManager
 
     public void addPlayerToTeam(Player player, String teamName)
     {
-        Team team = scoreboard.getTeam(teamName);
+        Team team = teams.getTeam(teamName);
         if (team == null)
         {
-            MessageSender.sendPlayer("game.team.no_team", player, teamName);
+            new Message("game.team.no_team").arg(teamName).send(player);
             return;
         }
         removePlayerFromAllTeams(player);
 
-        activateTeam(team);
+        BingoTeam bingoTeam = activateTeam(team);
 
-        team.addEntry(player.getName());
-        MessageSender.sendPlayer("game.team.join", player, teamName);
+        if (bingoTeam != null)
+        {
+            team.addEntry(player.getName());
+            new Message("game.team.join").color(ChatColor.GREEN)
+                    .arg(bingoTeam.getName()).color(bingoTeam.getColor()).bold()
+                    .send(player);
+        }
     }
 
     public void removePlayerFromAllTeams(Player player)
     {
         if (!getParticipants().contains(player))
             return;
-        for (Team team : scoreboard.getTeams())
+        for (Team team : teams.getTeams())
         {
             team.removeEntry(player.getName());
         }
@@ -215,31 +215,34 @@ public class TeamManager
         return losingTeam.orElse(null);
     }
 
-    public void activateTeam(Team team)
+    public BingoTeam activateTeam(Team team)
     {
         if (activeTeams.stream().noneMatch((t) -> t.team == team))
         {
-            activeTeams.add(new BingoTeam(team, null));
+            FlexibleColor color = FlexibleColor.fromDisplayName(team.getName());
+            BingoTeam bTeam;
+            if (color != null)
+            {
+                bTeam = new BingoTeam(team, null, color.chatColor);
+            }
+            else
+            {
+                bTeam = new BingoTeam(team, null, ChatColor.WHITE);
+            }
+            activeTeams.add(bTeam);
+            return bTeam;
         }
+        return null;
     }
 
     private void createTeams()
     {
-        for (ChatColor c : ChatColor.values())
+        for (FlexibleColor fColor : FlexibleColor.values())
         {
-            if (c.isColor())
-            {
-                FlexibleColor flexColor = FlexibleColor.fromChatColor(c);
-                if (flexColor == null)
-                    return;
-
-                String name = flexColor.displayName;
-                scoreboard.registerNewTeam(name);
-                scoreboard.getTeam(name).setColor(flexColor.chatColor);
-            }
+            String name = fColor.displayName;
+            teams.registerNewTeam(name);
         }
-
-        MessageSender.log(ChatColor.GREEN + "Successfully created " + scoreboard.getTeams().size() + " teams");
+        Message.log(ChatColor.GREEN + "Successfully created " + teams.getTeams().size() + " teams");
     }
 
     public void playerQuit(Player player)
@@ -247,7 +250,7 @@ public class TeamManager
         if (!getParticipants().contains(player)) return;
 
         removePlayerFromAllTeams(player);
-        MessageSender.sendPlayer("game.player.leave", player, null, null);
+        new Message("game.player.leave").send(player);
         BingoGame.takePlayerEffects(player);
     }
 }

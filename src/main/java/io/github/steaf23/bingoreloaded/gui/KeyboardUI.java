@@ -1,7 +1,7 @@
 package io.github.steaf23.bingoreloaded.gui;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
-import io.github.steaf23.bingoreloaded.MessageSender;
+import io.github.steaf23.bingoreloaded.Message;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
 import io.github.steaf23.bingoreloaded.util.BannerBuilder;
 import org.bukkit.Bukkit;
@@ -154,7 +154,7 @@ public abstract class KeyboardUI extends AbstractGUIInventory
 
     public void updateTitle(HumanEntity player)
     {
-        inventory = Bukkit.createInventory(new GUIHolder(), 54, MessageSender.PRINT_PREFIX + ChatColor.GOLD + "\"" + keyword + "\"");
+        inventory = Bukkit.createInventory(new GUIHolder(), 54, Message.PREFIX_STRING + ChatColor.GOLD + "\"" + keyword + "\"");
 
         fillOptions(options);
         fillOptions(new InventoryItem[]{

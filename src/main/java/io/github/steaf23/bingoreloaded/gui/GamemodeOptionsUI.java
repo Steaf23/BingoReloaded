@@ -2,10 +2,10 @@ package io.github.steaf23.bingoreloaded.gui;
 
 import io.github.steaf23.bingoreloaded.BingoGame;
 import io.github.steaf23.bingoreloaded.BingoGamemode;
-import io.github.steaf23.bingoreloaded.MessageSender;
+import io.github.steaf23.bingoreloaded.Message;
 import io.github.steaf23.bingoreloaded.gui.cards.CardSize;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
-import org.bukkit.ChatColor;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -46,26 +46,27 @@ public class GamemodeOptionsUI extends AbstractGUIInventory
 
         if (slotClicked == options[0].getSlot() || slotClicked == options[3].getSlot())
         {
-            MessageSender.sendAll("game.settings.regular_selected", BingoGamemode.REGULAR.name);
+            new Message("game.settings.regular_selected").color(ChatColor.GOLD).sendAll();
         }
         else if (slotClicked == options[1].getSlot() || slotClicked == options[4].getSlot())
         {
-            MessageSender.sendAll("game.settings.lockout_selected", BingoGamemode.REGULAR.name);
+            new Message("game.settings.lockout_selected").color(ChatColor.GOLD).sendAll();
+
             chosenMode = BingoGamemode.LOCKOUT;
         }
         else if (slotClicked == options[2].getSlot() || slotClicked == options[5].getSlot())
         {
-            MessageSender.sendAll("game.settings.complete_selected", BingoGamemode.REGULAR.name);
+            new Message("game.settings.lockout_selected").color(ChatColor.GOLD).sendAll();
             chosenMode = BingoGamemode.COMPLETE;
         }
 
         if (slotClicked == options[0].getSlot() || slotClicked == options[1].getSlot() || slotClicked == options[2].getSlot())
         {
-            MessageSender.sendAll("game.settings.cardsize", "5x5");
+            new Message("game.settings.cardsize").color(ChatColor.GOLD).arg("5x5").sendAll();
         }
         else if (slotClicked == options[3].getSlot() || slotClicked == options[4].getSlot() || slotClicked == options[5].getSlot())
         {
-            MessageSender.sendAll("game.settings.cardsize", "3x3");
+            new Message("game.settings.cardsize").color(ChatColor.GOLD).arg("3x3").sendAll();
             chosenSize = CardSize.X3;
         }
 

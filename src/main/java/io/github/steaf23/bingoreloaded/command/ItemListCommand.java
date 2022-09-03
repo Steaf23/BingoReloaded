@@ -1,13 +1,13 @@
 package io.github.steaf23.bingoreloaded.command;
 
+import io.github.steaf23.bingoreloaded.Message;
 import io.github.steaf23.bingoreloaded.data.BingoTasksData;
-import io.github.steaf23.bingoreloaded.MessageSender;
 import io.github.steaf23.bingoreloaded.gui.FilterType;
 import io.github.steaf23.bingoreloaded.gui.ListPickerUI;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
 import io.github.steaf23.bingoreloaded.item.tasks.ItemTask;
 import io.github.steaf23.bingoreloaded.util.FlexibleColor;
-import org.bukkit.ChatColor;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -43,7 +43,7 @@ public class ItemListCommand implements CommandExecutor
                         break;
                     if (args.length < 2)
                     {
-                        MessageSender.sendPlayer("command.list.no_name", p, "/itemlist create <list_name>");
+                        new Message("command.list.no_name").color(ChatColor.DARK_RED).arg("/itemlist create <list_name>").send(p);
                         break;
                     }
 
@@ -55,36 +55,36 @@ public class ItemListCommand implements CommandExecutor
                     {
                         if (args.length < 2)
                         {
-                            MessageSender.sendPlayer("command.list.no_name", p, "/itemlist remove <list_name>");
+                            new Message("command.list.no_name").arg("/itemlist remove <list_name>").send(p);
                             break;
                         }
                         if (BingoTasksData.removeList(args[1]))
-                            MessageSender.sendPlayer("command.itemlist.removed", p, args[1]);
+                            new Message("command.itemlist.removed").arg(args[1]).send(p);
                         else
-                            MessageSender.sendPlayer("command.itemlist.no_remove", p, args[1]);
+                            new Message("command.itemlist.no_remove").arg(args[1]).send(p);
                         break;
                     }
                     else if (commandSender instanceof ConsoleCommandSender)
                     {
                         if (args.length < 2)
                         {
-                            MessageSender.log(ChatColor.RED + "Please provide item list name: /itemlist remove <item_list>");
+                            new Message("Please provide item list name: /itemlist remove <item_list>").color(ChatColor.RED);
                             break;
                         }
 
                         if (BingoTasksData.removeList(args[1]))
-                            MessageSender.log("Item list '" + args[1] + "' successfully removed!");
+                            Message.log("Item list '" + args[1] + "' successfully removed!");
                         else
-                            MessageSender.log("Item list couldn't be found, make sure its spelled correctly!");
+                            Message.log("Item list couldn't be found, make sure its spelled correctly!");
                         break;
                     }
                     break;
 
                 default:
                     if (commandSender instanceof Player player)
-                        MessageSender.sendPlayer("command.usage", player, "/itemlist [list | create | remove]");
+                        new Message("command.usage").color(ChatColor.RED).arg("/itemlist [list | create | remove]").send(player);
                     else
-                        MessageSender.log(ChatColor.RED + "Usage: /itemlist [list | create | remove]");
+                        Message.log(ChatColor.RED + "Usage: /itemlist [list | create | remove]");
                     break;
             }
         }

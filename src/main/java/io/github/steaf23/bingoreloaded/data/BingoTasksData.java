@@ -1,6 +1,6 @@
 package io.github.steaf23.bingoreloaded.data;
 
-import io.github.steaf23.bingoreloaded.MessageSender;
+import io.github.steaf23.bingoreloaded.Message;
 import io.github.steaf23.bingoreloaded.item.tasks.AbstractBingoTask;
 import io.github.steaf23.bingoreloaded.item.tasks.AdvancementTask;
 import io.github.steaf23.bingoreloaded.item.tasks.ItemTask;
@@ -52,7 +52,7 @@ public class BingoTasksData
                 }
                 catch (IllegalArgumentException exc)
                 {
-                    MessageSender.log("ignoring item '" + task.get("key") + "' since it cannot be found!");
+                    Message.log("ignoring item '" + task.get("key") + "' since it cannot be found!");
                 }
             }
         }
@@ -90,7 +90,7 @@ public class BingoTasksData
                 }
                 else
                 {
-                    MessageSender.log("ignoring advancement '" + task.get("key") + "' since it cannot be found!");
+                    Message.log("ignoring advancement '" + task.get("key") + "' since it cannot be found!");
                 }
             }
         }

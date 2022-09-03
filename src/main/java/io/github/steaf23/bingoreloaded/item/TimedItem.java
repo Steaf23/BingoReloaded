@@ -1,6 +1,7 @@
 package io.github.steaf23.bingoreloaded.item;
 
-import io.github.steaf23.bingoreloaded.MessageSender;
+import io.github.steaf23.bingoreloaded.Message;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
@@ -39,7 +40,7 @@ public abstract class TimedItem
         if (! success)
         {
             double seconds = getTimeLeft(player);
-            MessageSender.sendPlayer("game.item.cooldown", player, "" + seconds);
+            new Message("game.item.cooldown").color(ChatColor.RED).arg(String.format("%.2f", seconds)).send(player);
         }
 
         return success;

@@ -1,6 +1,6 @@
 package io.github.steaf23.bingoreloaded.item.tasks;
 
-import org.bukkit.ChatColor;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 
 import java.util.List;

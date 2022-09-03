@@ -39,7 +39,7 @@ public class GameTimer
         }
         catch (IllegalStateException e)
         {
-            MessageSender.log(ChatColor.RED + "Timer couldn't be stopped since it never started!");
+            Message.log(ChatColor.RED + "Timer couldn't be stopped since it never started!");
         }
     }
 

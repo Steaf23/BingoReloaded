@@ -1,11 +1,14 @@
 package io.github.steaf23.bingoreloaded.item.tasks;
 
 import io.github.steaf23.bingoreloaded.GameTimer;
-import io.github.steaf23.bingoreloaded.MessageSender;
+import io.github.steaf23.bingoreloaded.Message;
+import io.github.steaf23.bingoreloaded.data.AdvancementData;
+import io.github.steaf23.bingoreloaded.data.RecoveryCardData;
 import io.github.steaf23.bingoreloaded.gui.cards.CardBuilder;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
 import io.github.steaf23.bingoreloaded.player.BingoTeam;
-import org.bukkit.ChatColor;
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -66,7 +69,11 @@ public abstract class AbstractBingoTask
 
         String timeString = GameTimer.getTimeAsString(time);
 
-        MessageSender.sendAll(ChatColor.GREEN + "Completed " + getDisplayName() + " by team " + completedBy.team.getColor() + completedBy.getName() + ChatColor.GREEN + "! At " + timeString);
+        new Message("game.item.completed").color(ChatColor.GREEN)
+                .arg(getDisplayName()).color(nameColor)
+                .arg(completedBy.getName()).color(completedBy.getColor()).bold()
+                .arg(timeString).color(ChatColor.WHITE)
+                .sendAll();
 
         String crossedName = "" + ChatColor.GRAY + ChatColor.STRIKETHROUGH + ChatColor.stripColor(getDisplayName());
         item.setType(completeMaterial);

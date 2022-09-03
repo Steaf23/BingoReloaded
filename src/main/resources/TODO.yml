@@ -10,3 +10,5 @@ refactor card recovery (its shit).
 use percentages instead of numbers for list chances.
 
 fix Deathmatch
+
+use translatableComponents for items!

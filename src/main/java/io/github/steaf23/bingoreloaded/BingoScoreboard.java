@@ -29,7 +29,7 @@ public class BingoScoreboard
         this.boards.add(itemCountBoard);
         this.boards.add(gameTimeBoard);
 
-        this.teamManager = new TeamManager(game, itemCountBoard);
+        this.teamManager = new TeamManager(game);
 
         Objective timeObjective = gameTimeBoard.registerNewObjective("time", "time_since_start", "Game Time");
         timeObjective.setDisplaySlot(DisplaySlot.SIDEBAR);
@@ -48,7 +48,7 @@ public class BingoScoreboard
         {
             if (t.card != null)
             {
-                Score score = objective.getScore(t.getColor() + t.getName());
+                Score score = objective.getScore("" + t.getName());
                 score.setScore(t.card.getCompleteCount(t));
             }
         }

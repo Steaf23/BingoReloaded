@@ -1,10 +1,10 @@
 package io.github.steaf23.bingoreloaded.gui;
 
 import io.github.steaf23.bingoreloaded.BingoGame;
+import io.github.steaf23.bingoreloaded.Message;
 import io.github.steaf23.bingoreloaded.data.BingoCardsData;
-import io.github.steaf23.bingoreloaded.MessageSender;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
-import org.bukkit.ChatColor;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -183,7 +183,7 @@ public class BingoOptionsUI extends AbstractGUIInventory
     private void cardSelected(String cardName)
     {
         if (cardName == null) return;
-        MessageSender.sendAll("game.start.card", cardName);
+        new Message("game.start.card").color(ChatColor.GOLD).arg(cardName).sendAll();
         game.getSettings().card = cardName;
     }
 }

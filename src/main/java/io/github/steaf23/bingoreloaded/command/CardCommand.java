@@ -1,9 +1,9 @@
 package io.github.steaf23.bingoreloaded.command;
 
+import io.github.steaf23.bingoreloaded.Message;
 import io.github.steaf23.bingoreloaded.data.BingoCardsData;
-import io.github.steaf23.bingoreloaded.MessageSender;
 import io.github.steaf23.bingoreloaded.gui.creator.CardEditorUI;
-import org.bukkit.ChatColor;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -30,7 +30,7 @@ public class CardCommand implements CommandExecutor
                         break;
                     if (args.length < 2)
                     {
-                        MessageSender.sendPlayer("command.card.no_name", p, "/card create <card_name>");
+                        new Message("command.card.no_name").arg("/card create <card_name>").send(p);
                         break;
                     }
 
@@ -42,37 +42,37 @@ public class CardCommand implements CommandExecutor
                     {
                         if (args.length < 2)
                         {
-                            MessageSender.sendPlayer("command.card.no_name", p, "/card remove <card_name>");
+                            new Message("command.card.no_name").arg("/card remove <card_name>").send(p);
                             break;
                         }
 
                         if (BingoCardsData.removeCard(args[1]))
-                            MessageSender.sendPlayer("command.card.removed", p, args[1]);
+                            new Message("command.card.removed").arg(args[1]).send(p);
                         else
-                            MessageSender.sendPlayer("command.send.no_remove", p, args[1]);
+                            new Message("command.card.no_remove").arg(args[1]).send(p);
                         break;
                     }
                     else if (commandSender instanceof ConsoleCommandSender)
                     {
                         if (args.length < 2)
                         {
-                            MessageSender.log(ChatColor.RED + "Please provide card name: /card remove <card_name>");
+                            Message.log(ChatColor.RED + "Please provide card name: /card remove <card_name>");
                             break;
                         }
 
                         if (BingoCardsData.removeCard(args[1]))
-                            MessageSender.log("Card '" + args[1] + "' successfully removed!");
+                            Message.log("Card '" + args[1] + "' successfully removed!");
                         else
-                            MessageSender.log("Card couldn't be found, make sure its spelled correctly!");
+                            Message.log("Card couldn't be found, make sure its spelled correctly!");
                         break;
                     }
                     break;
 
                 default:
                     if (commandSender instanceof Player player)
-                        MessageSender.sendPlayer("command.usage", player, "/card [create | remove]");
+                        new Message("command.usage").color(ChatColor.RED).arg("/card [create | remove]");
                     else
-                        MessageSender.log(ChatColor.RED + "Usage: /card [create | remove]");
+                        Message.log(ChatColor.RED + "Usage: /card [create | remove]");
                     break;
             }
         }

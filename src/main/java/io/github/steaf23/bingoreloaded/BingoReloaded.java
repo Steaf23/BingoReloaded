@@ -6,6 +6,7 @@ import io.github.steaf23.bingoreloaded.command.ItemListCommand;
 import io.github.steaf23.bingoreloaded.data.RecoveryCardData;
 import io.github.steaf23.bingoreloaded.gui.UIManager;
 import io.github.steaf23.bingoreloaded.player.TeamChat;
+import me.clip.placeholderapi.PlaceholderAPI;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
@@ -23,9 +24,13 @@ public class BingoReloaded extends JavaPlugin
     // Amount of ticks per second.
     public static final int ONE_SECOND = 20;
 
+    public static boolean usesPlaceholder = false;
+
     @Override
     public void onEnable()
     {
+        usesPlaceholder = Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null;
+
         BingoGame game = new BingoGame();
         // create UIManager singleton.
         UIManager.getUIManager();

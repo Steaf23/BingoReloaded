@@ -82,7 +82,7 @@ public enum PlayerKit
         LeatherArmorMeta helmetMeta = (LeatherArmorMeta) helmet.getItemMeta();
         if (helmetMeta != null)
         {
-            helmetMeta.setColor(teamColor.rgbColor);
+            helmetMeta.setColor(FlexibleColor.toBukkitColor(teamColor.chatColor.getColor()));
         }
         helmet.setItemMeta(helmetMeta);
 
@@ -90,7 +90,7 @@ public enum PlayerKit
         LeatherArmorMeta bootMeta = (LeatherArmorMeta) boots.getItemMeta();
         if (bootMeta != null)
         {
-            bootMeta.setColor(teamColor.rgbColor);
+            bootMeta.setColor(FlexibleColor.toBukkitColor(teamColor.chatColor.getColor()));
         }
         boots.setItemMeta(bootMeta);
 
@@ -107,7 +107,7 @@ public enum PlayerKit
                 items.add(new InventoryItem(0, Material.IRON_AXE, ""));
                 items.add(new InventoryItem(2, Material.IRON_SHOVEL, "")
                         .withEnchantment(Enchantment.SILK_TOUCH, 1));
-                items.add(new InventoryItem(3, Material.BAKED_POTATO, "")
+                items.add(new InventoryItem(3, Material.COOKED_PORKCHOP, "")
                         .withAmount(32));
                 return items;
             }
