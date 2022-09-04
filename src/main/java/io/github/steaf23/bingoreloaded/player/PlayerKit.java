@@ -1,6 +1,7 @@
 package io.github.steaf23.bingoreloaded.player;
 
 import io.github.steaf23.bingoreloaded.data.ConfigData;
+import io.github.steaf23.bingoreloaded.data.TranslationData;
 import io.github.steaf23.bingoreloaded.gui.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
 import io.github.steaf23.bingoreloaded.item.TimedItem;
@@ -24,10 +25,10 @@ import java.util.List;
 
 public enum PlayerKit
 {
-    HARDCORE(ChatColor.DARK_RED + "Hardcore", EnumSet.noneOf(EffectOptionFlags.class)),
-    NORMAL(ChatColor.YELLOW + "Normal", EnumSet.of(EffectOptionFlags.CARD_SPEED, EffectOptionFlags.NO_FALL_DAMAGE)),
-    OVERPOWERED(ChatColor.DARK_PURPLE + "Overpowered", EnumSet.allOf(EffectOptionFlags.class)),
-    RELOADED(ChatColor.DARK_AQUA + "Reloaded", EnumSet.allOf(EffectOptionFlags.class)),
+    HARDCORE(TranslationData.translate("kits.hardcore"), EnumSet.noneOf(EffectOptionFlags.class)),
+    NORMAL(TranslationData.translate("kits.normal"), EnumSet.of(EffectOptionFlags.CARD_SPEED, EffectOptionFlags.NO_FALL_DAMAGE)),
+    OVERPOWERED(TranslationData.translate("kits.overpowered"), EnumSet.allOf(EffectOptionFlags.class)),
+    RELOADED(TranslationData.translate("kits.reloaded"), EnumSet.allOf(EffectOptionFlags.class)),
     ;
 
     public final TimedItem wandItem = new TimedItem(new InventoryItem(

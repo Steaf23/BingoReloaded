@@ -1,6 +1,8 @@
 translations!
 multiworld refactor!
 
+fix lockout bug!
+
 add option to duplicate cards/lists
 
 add countdown
@@ -9,6 +11,10 @@ refactor card recovery (its shit).
 
 use percentages instead of numbers for list chances.
 
-fix Deathmatch
+use translatableComponents for items! how though?
 
-use translatableComponents for items!
+redo clickable and hover messages using Message.
+
+add multiple game sessions in one world?
+
+remove spawnplatform

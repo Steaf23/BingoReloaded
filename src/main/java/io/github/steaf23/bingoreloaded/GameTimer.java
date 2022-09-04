@@ -7,13 +7,11 @@ public class GameTimer
 {
     private int time;
 
-    private BukkitRunnable runnable;
-    private final BingoScoreboard scoreboard;
+    private BukkitRunnable runnable;;
 
-    public GameTimer(BingoScoreboard scoreboard)
+    public GameTimer()
     {
         this.time = 0;
-        this.scoreboard = scoreboard;
     }
 
     public void start()
@@ -61,7 +59,6 @@ public class GameTimer
     public void setTime(int seconds)
     {
         time = seconds;
-        scoreboard.updateGameTime(this);
     }
 
     public int getTime()

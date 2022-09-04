@@ -52,7 +52,7 @@ public class BingoGame implements Listener
     {
         this.inProgress = false;
         this.scoreboard = new BingoScoreboard(this);
-        this.timer = new GameTimer(scoreboard);
+        this.timer = new GameTimer();
         this.settings = new BingoGameSettings();
         this.deadPlayers = new HashMap<>();
 
@@ -75,7 +75,7 @@ public class BingoGame implements Listener
         }
         if (inProgress)
         {
-            new Message("game.start.already_active").color(ChatColor.RED).sendAll();
+            new Message("game.start.already_started").color(ChatColor.RED).sendAll();
             return;
         }
 
@@ -104,6 +104,7 @@ public class BingoGame implements Listener
 
         // Post-start Setup
         scoreboard.resetBoards();
+        scoreboard.updateItemCount();
         timer.start();
     }
 
@@ -139,10 +140,10 @@ public class BingoGame implements Listener
 
     public void bingo(BingoTeam team)
     {
-        new Message("game.send.bingo").arg(team.getName()).sendAll();
+        new Message("game.end.bingo").arg(team.getName()).color(team.getColor()).bold().sendAll();
         for (Player p : getTeamManager().getParticipants())
         {
-            p.playSound(p, Sound.ITEM_GOAT_HORN_SOUND_5, 0.8f, 1.0f);
+            p.playSound(p, Sound.ENTITY_DRAGON_FIREBALL_EXPLODE, 0.8f, 1.0f);
             p.playSound(p, Sound.UI_TOAST_CHALLENGE_COMPLETE, 0.75f, 1.0f);
         }
         end();

@@ -81,7 +81,7 @@ public class BingoCommand implements CommandExecutor
                     else
                     {
                         if (commandSender instanceof Player p)
-                            new Message("command.bingo.no_deathmatch").send(p);
+                            new Message("command.bingo.no_deathmatch").color(ChatColor.RED).send(p);
                         else
                             Message.log("command.bingo.no_deathmatch");
                     }

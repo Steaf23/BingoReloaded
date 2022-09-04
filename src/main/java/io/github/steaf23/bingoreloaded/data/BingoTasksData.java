@@ -226,6 +226,7 @@ public class BingoTasksData
 
     public static ItemTask getRandomItemTask(String listName)
     {
+        Message.log("Picking random item from " + listName);
         List<ItemTask> tasks = getItemTasks(listName);
         int idx = new Random().nextInt(tasks.size());
         return tasks.get(idx);

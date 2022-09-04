@@ -33,7 +33,8 @@ public class Message
 
     private String raw;
     private List<BaseComponent> args;
-    private BaseComponent base;
+    private TextComponent base;
+    private BaseComponent finalMessage;
 
     public Message(String translatePath)
     {
@@ -121,8 +122,9 @@ public class Message
 
     public void send(Player player)
     {
-        BaseComponent message = createMessage(player);
-        player.spigot().sendMessage(message);
+        if (finalMessage == null)
+            createMessage(player);
+        player.spigot().sendMessage(finalMessage);
     }
 
     public void sendAll()
@@ -185,34 +187,22 @@ public class Message
         return new TextComponent[]{message1, comp, message2};
     }
 
-    private BaseComponent createMessage(Player player)
+    private void createMessage(Player player)
     {
         TextComponent prefixedBase = new TextComponent();
         for (BaseComponent c : PRINT_PREFIX)
         {
             prefixedBase.addExtra(c);
         }
-        prefixedBase.addExtra(base);
 
         //for any given message like "{#00bb33}Completed {0} by team {1}! At {2}" split the arguments from the message.
         String[] rawSplit = raw.split("\\{[^\\{\\}#]*\\}"); //[{#00bb33}Completed, by team, ! At]
 
         // convert custom hex colors to legacyText: {#00bb33} -> ChatColor.of("#00bb33")
         // convert "&" to "§" and "&&" to "&"
-        Pattern hexPattern = Pattern.compile("\\{#[a-fA-F0-9]{6}\\}");
         for (int i = 0; i < rawSplit.length; i++)
         {
-            String part = rawSplit[i];
-            part = part.replaceAll("(?<!&)&(?!&)", "§");
-            part = part.replaceAll("&&", "&");
-
-            Matcher matcher = hexPattern.matcher(part);
-            while (matcher.find())
-            {
-                String match = matcher.group();
-                String color = match.replaceAll("[\\{\\}]", "");
-                part = part.replace(match, "" + ChatColor.of(color));
-            }
+            String part = TranslationData.convertColors(rawSplit[i]);
 
             // solve placeholders from PlaceholderAPI
             if (BingoReloaded.usesPlaceholder)
@@ -241,6 +231,8 @@ public class Message
             }
             i++;
         }
-        return prefixedBase;
+
+        prefixedBase.addExtra(base);
+        finalMessage = prefixedBase;
     }
 }

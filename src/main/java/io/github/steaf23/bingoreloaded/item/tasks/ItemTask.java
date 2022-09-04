@@ -2,6 +2,8 @@ package io.github.steaf23.bingoreloaded.item.tasks;
 
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -52,7 +54,7 @@ public class ItemTask extends AbstractBingoTask
         return item.getAmount();
     }
 
-    public static String convertToReadableName(Material m)
+    public static String convertToReadableName(@NotNull Material m)
     {
         String[] nameParts = m.name().split("_");
         String name = "";

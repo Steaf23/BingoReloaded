@@ -12,6 +12,7 @@ import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.scoreboard.Score;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 
@@ -23,11 +24,11 @@ public class TeamManager
     private final BingoGame game;
     private final Scoreboard teams;
 
-    public TeamManager(BingoGame game)
+    public TeamManager(BingoGame game, Scoreboard board)
     {
         this.activeTeams = new ArrayList<>();
         this.game = game;
-        this.teams = Bukkit.getScoreboardManager().getNewScoreboard();
+        this.teams = board;
 
         createTeams();
     }
@@ -240,7 +241,9 @@ public class TeamManager
         for (FlexibleColor fColor : FlexibleColor.values())
         {
             String name = fColor.displayName;
-            teams.registerNewTeam(name);
+            Team t = teams.registerNewTeam(name);
+            t.setPrefix("" + ChatColor.DARK_RED + "[" + fColor.chatColor + ChatColor.BOLD + fColor.displayName + ChatColor.DARK_RED + "] ");
+            t.addEntry("" + fColor.chatColor);
         }
         Message.log(ChatColor.GREEN + "Successfully created " + teams.getTeams().size() + " teams");
     }

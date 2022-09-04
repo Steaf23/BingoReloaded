@@ -2,9 +2,11 @@ package io.github.steaf23.bingoreloaded;
 
 import io.github.steaf23.bingoreloaded.player.BingoTeam;
 import io.github.steaf23.bingoreloaded.player.TeamManager;
+import io.github.steaf23.bingoreloaded.util.FlexibleColor;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
@@ -15,27 +17,18 @@ import java.util.List;
 
 public class BingoScoreboard
 {
-    private final List<Scoreboard> boards;
     private final Scoreboard itemCountBoard;
-    private final Scoreboard gameTimeBoard;
     private final TeamManager teamManager;
 
     public BingoScoreboard(BingoGame game)
     {
-        this.boards = new ArrayList<>();
         this.itemCountBoard = Bukkit.getScoreboardManager().getNewScoreboard();
-        this.gameTimeBoard = Bukkit.getScoreboardManager().getNewScoreboard();
-
-        this.boards.add(itemCountBoard);
-        this.boards.add(gameTimeBoard);
-
-        this.teamManager = new TeamManager(game);
-
-        Objective timeObjective = gameTimeBoard.registerNewObjective("time", "time_since_start", "Game Time");
-        timeObjective.setDisplaySlot(DisplaySlot.SIDEBAR);
+        this.teamManager = new TeamManager(game, itemCountBoard);
 
         Objective itemObjective = itemCountBoard.registerNewObjective("item_count", "bingo_item_count", "Collected Items");
         itemObjective.setDisplaySlot(DisplaySlot.SIDEBAR);
+
+        resetBoards();
     }
 
     public void updateItemCount()
@@ -48,14 +41,13 @@ public class BingoScoreboard
         {
             if (t.card != null)
             {
-                Score score = objective.getScore("" + t.getName());
-                score.setScore(t.card.getCompleteCount(t));
+                objective.getScore("" + t.getColor()).setScore(t.card.getCompleteCount(t));
             }
         }
 
         for (Player p : teamManager.getParticipants())
         {
-            setPlayerBoard(p);
+            p.setScoreboard(itemCountBoard);
         }
     }
 
@@ -75,28 +67,15 @@ public class BingoScoreboard
             itemCountBoard.resetScores(entry);
         }
 
-        for (String entry : gameTimeBoard.getEntries())
+        for (Player p : teamManager.getParticipants())
         {
-            gameTimeBoard.resetScores(entry);
+            Message.log("Clearing scoreboard for " + p.getDisplayName());
+            p.setScoreboard(Bukkit.getScoreboardManager().getNewScoreboard());
         }
-
-        updateItemCount();
-    }
-
-    private void setPlayerBoard(Player player)
-    {
-        player.setScoreboard(boards.get(0));
     }
 
     public TeamManager getTeamManager()
     {
         return teamManager;
-    }
-
-    private void switchBoards()
-    {
-        Scoreboard tmp = boards.get(0);
-        boards.set(0, boards.get(1));
-        boards.set(1, tmp);
     }
 }
