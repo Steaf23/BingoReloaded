@@ -283,7 +283,7 @@ public class BingoGame implements Listener
         deadPlayers.remove(player.getName());
     }
 
-    public static void spawnPlatform(@Nullable Location spawnLocation, int size)
+    public static void spawnPlatform(Location spawnLocation, int size)
     {
         for (int x = -size; x < size + 1; x++)
         {
@@ -304,6 +304,27 @@ public class BingoGame implements Listener
         }
     }
 
+    public static void removePlatform(Location platformLocation, int size)
+    {
+        for (int x = -size; x < size + 1; x++)
+        {
+            for (int z = -size; z < size + 1; z++)
+            {
+                if (platformLocation.getWorld().getType(
+                        (int)platformLocation.getX() + x,
+                        (int)platformLocation.getY() - 20,
+                        (int)platformLocation.getZ() + z) == Material.WHITE_STAINED_GLASS)
+                {
+                    platformLocation.getWorld().setType(
+                            (int)platformLocation.getX() + x,
+                            (int)platformLocation.getY() - 20,
+                            (int)platformLocation.getZ() + z,
+                            Material.AIR);
+                }
+            }
+        }
+    }
+
     private void teleportPlayersToStart(World world)
     {
         switch (ConfigData.getConfig().playerTeleportStrategy)
@@ -317,7 +338,19 @@ public class BingoGame implements Listener
                     p.setBedSpawnLocation(playerLoc);
 
                     if (getTeamManager().getParticipants().size() > 0)
+                    {
                         spawnPlatform(playerLoc, 5);
+
+                        new BukkitRunnable()
+                        {
+                            @Override
+                            public void run()
+                            {
+                                BingoGame.removePlatform(playerLoc, 5);
+                            }
+                        }.runTaskLater(Bukkit.getPluginManager().getPlugin(BingoReloaded.NAME),
+                                (Math.max(0, ConfigData.getConfig().gracePeriod - 5)) * BingoReloaded.ONE_SECOND);
+                    }
                 }
                 break;
 
@@ -334,7 +367,19 @@ public class BingoGame implements Listener
                     }
 
                     if (getTeamManager().getParticipants().size() > 0)
+                    {
                         spawnPlatform(teamLocation, 5);
+
+                        new BukkitRunnable()
+                        {
+                            @Override
+                            public void run()
+                            {
+                                BingoGame.removePlatform(teamLocation, 5);
+                            }
+                        }.runTaskLater(Bukkit.getPluginManager().getPlugin(BingoReloaded.NAME),
+                                (Math.max(0, ConfigData.getConfig().gracePeriod - 7)) * BingoReloaded.ONE_SECOND);
+                    }
                 }
                 break;
 
@@ -349,7 +394,19 @@ public class BingoGame implements Listener
                 }
 
                 if (getTeamManager().getParticipants().size() > 0)
+                {
                     spawnPlatform(spawnLocation, 5);
+
+                    new BukkitRunnable()
+                    {
+                        @Override
+                        public void run()
+                        {
+                            BingoGame.removePlatform(spawnLocation, 5);
+                        }
+                    }.runTaskLater(Bukkit.getPluginManager().getPlugin(BingoReloaded.NAME),
+                            (Math.max(0, ConfigData.getConfig().gracePeriod - 7)) * BingoReloaded.ONE_SECOND);
+                }
                 break;
             default:
                 return;

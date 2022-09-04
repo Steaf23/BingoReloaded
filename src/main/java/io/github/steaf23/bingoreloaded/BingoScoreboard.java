@@ -69,7 +69,6 @@ public class BingoScoreboard
 
         for (Player p : teamManager.getParticipants())
         {
-            Message.log("Clearing scoreboard for " + p.getDisplayName());
             p.setScoreboard(Bukkit.getScoreboardManager().getNewScoreboard());
         }
     }

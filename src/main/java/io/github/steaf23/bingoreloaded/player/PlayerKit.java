@@ -8,16 +8,14 @@ import io.github.steaf23.bingoreloaded.item.TimedItem;
 import io.github.steaf23.bingoreloaded.util.FlexibleColor;
 import io.github.steaf23.bingoreloaded.BingoGame;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
@@ -60,6 +58,15 @@ public enum PlayerKit
             player.teleport(newLocation, PlayerTeleportEvent.TeleportCause.CHORUS_FRUIT);
             newLocation.setY(newLocation.getY() - fallDistance);
             BingoGame.spawnPlatform(newLocation, 1);
+
+            new BukkitRunnable() {
+                @Override
+                public void run()
+                {
+                    BingoGame.removePlatform(newLocation, 1);
+                }
+            }.runTaskLater(Bukkit.getPluginManager().getPlugin(BingoReloaded.NAME),
+                    Math.max(0, ConfigData.getConfig().platformLifetime) * BingoReloaded.ONE_SECOND);
         }
     };
 

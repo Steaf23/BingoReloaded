@@ -45,6 +45,7 @@ public class ConfigData
     public final int wandUp;
     public final int wandDown;
     public final double wandCooldown;
+    public final int platformLifetime;
     public final PlayerKit defaultKit;
     public final int gracePeriod;
     public final boolean resetPlayerItems;
@@ -75,6 +76,7 @@ public class ConfigData
         this.wandUp = config.getInt("GoUpWand.upDistance", 75);
         this.wandDown = config.getInt("GoUpWand.downDistance", 5);
         this.wandCooldown = config.getDouble("GoUpWand.cooldown", 5.0);
+        this.platformLifetime = config.getInt("GoUPWand.platformLifetime", 10);
         this.defaultKit = PlayerKit.fromConfig(config.getString("defaultKit", "HARDCORE"));
         this.gracePeriod = config.getInt("gracePeriod", 30);
         this.resetPlayerItems = config.getBoolean("resetPlayerItems", true);

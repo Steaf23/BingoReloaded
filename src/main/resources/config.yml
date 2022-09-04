@@ -27,6 +27,7 @@ GoUpWand:
   upDistance: 75 # teleport up distance
   downDistance: 5 # teleport down distance, watch out for the void ;)
   cooldown: 5.0 # item cooldown in seconds
+  platformLifetime: 10 # time in seconds that placed platforms will stay before disappearing.
 
 # Decide what kit should be the default kit when loading the plugin:
 #   - (HARDCORE)
@@ -36,6 +37,7 @@ GoUpWand:
 defaultKit: OVERPOWERED
 
 # The period of time (in seconds) at the start of the game when a player is protected from any damage
+#   also determines the time after which the spawn platform will disappear.
 gracePeriod: 30
 
 # The card that the game will select automatically when starting the server/ reloading the plugin

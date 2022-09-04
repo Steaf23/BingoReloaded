@@ -111,7 +111,21 @@ public class TeamManager
 
     public void removeEmptyTeams()
     {
-        activeTeams.removeIf((t) -> t.team.getEntries().size() <= 0);
+        for (BingoTeam t : activeTeams)
+        {
+            boolean remove = true;
+            for (String entry : t.team.getEntries())
+            {
+                if (Bukkit.getPlayer(entry) != null)
+                {
+                    remove = false;
+                }
+            }
+            if (remove)
+            {
+                activeTeams.remove(t);
+            }
+        }
     }
 
     public void initializeCards(BingoCard masterCard)
