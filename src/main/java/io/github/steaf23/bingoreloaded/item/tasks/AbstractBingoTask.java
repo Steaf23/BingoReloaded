@@ -13,6 +13,7 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.Arrays;
 import java.util.List;
 
 public abstract class AbstractBingoTask
@@ -81,8 +82,9 @@ public abstract class AbstractBingoTask
         if (meta != null)
         {
             meta.setDisplayName(crossedName);
-            meta.setLore(List.of("Completed by team " + completedBy.team.getColor() + completedBy.getName(),
-                    "At " + ChatColor.GOLD + timeString + ChatColor.RESET + ""));
+            meta.setLore(Arrays.stream(new Message("game.item.complete_lore").color(ChatColor.DARK_PURPLE).italic()
+                            .arg(completedBy.getName()).color(completedBy.getColor()).bold()
+                            .arg(timeString).color(ChatColor.GOLD).toLegacyString().split("\\n")).toList());
             item.setItemMeta(meta);
         }
     }

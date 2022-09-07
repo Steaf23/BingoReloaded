@@ -5,6 +5,7 @@ import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.Message;
 import io.github.steaf23.bingoreloaded.data.BingoCardsData;
 import io.github.steaf23.bingoreloaded.data.BingoTasksData;
+import io.github.steaf23.bingoreloaded.data.TranslationData;
 import io.github.steaf23.bingoreloaded.gui.AbstractGUIInventory;
 import io.github.steaf23.bingoreloaded.item.BingoCardSlotCompleteEvent;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
@@ -40,10 +41,10 @@ public class BingoCard extends AbstractGUIInventory implements Listener
 
     public BingoCard(CardSize size, BingoGame game)
     {
-        super(9 * size.cardSize, "Card Viewer", null);
+        super(9 * size.cardSize, TranslationData.translate("menu.card.title"), null);
         this.size = size;
         this.game = game;
-        InventoryItem cardInfoItem = new InventoryItem(0, Material.MAP, "Regular Bingo Card", "First team to complete 1 line wins.", "Lines can span vertically, horizontally", "or diagonally.");
+        InventoryItem cardInfoItem = new InventoryItem(0, Material.MAP, TranslationData.itemName("menu.card.info_regular"), TranslationData.itemDescription("menu.card.info_regular"));
         addOption(cardInfoItem);
 
         BingoReloaded.registerListener(this);

@@ -1,10 +1,12 @@
 package io.github.steaf23.bingoreloaded.gui;
 
+import io.github.steaf23.bingoreloaded.data.TranslationData;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Turtle;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemFlag;
@@ -29,10 +31,10 @@ public abstract class ListPickerUI extends AbstractGUIInventory
     public FilterType filterType;
 
     private static final InventoryItem BG_ITEM = new InventoryItem(Material.BLACK_STAINED_GLASS_PANE, " ", "");
-    private static final InventoryItem NEXT = new InventoryItem(53, Material.STRUCTURE_VOID, "" + ChatColor.LIGHT_PURPLE + ChatColor.BOLD + "Next page", "");
-    private static final InventoryItem PREVIOUS = new InventoryItem(45, Material.BARRIER, "" + ChatColor.LIGHT_PURPLE + ChatColor.BOLD + "Previous page", "");
-    private static final InventoryItem CLOSE = new InventoryItem(49, Material.REDSTONE, "" + ChatColor.RED + ChatColor.BOLD + "Close Menu", "");
-    private static final InventoryItem FILTER = new InventoryItem(46, Material.SPYGLASS, TITLE_PREFIX + "Filter...", "");
+    private static final InventoryItem NEXT = new InventoryItem(53, Material.STRUCTURE_VOID, "" + ChatColor.LIGHT_PURPLE + ChatColor.BOLD + TranslationData.translate("menu.next"), "");
+    private static final InventoryItem PREVIOUS = new InventoryItem(45, Material.BARRIER, "" + ChatColor.LIGHT_PURPLE + ChatColor.BOLD + TranslationData.translate("menu.prev"), "");
+    private static final InventoryItem CLOSE = new InventoryItem(49, Material.REDSTONE, "" + ChatColor.RED + ChatColor.BOLD + TranslationData.translate("menu.exit"), "");
+    private static final InventoryItem FILTER = new InventoryItem(46, Material.SPYGLASS, TITLE_PREFIX + TranslationData.translate("menu.filter"), "");
 
     public ListPickerUI(List<InventoryItem> options, String title, AbstractGUIInventory parent, FilterType filterType)
     {

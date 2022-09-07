@@ -23,16 +23,16 @@ import java.util.List;
 
 public enum PlayerKit
 {
-    HARDCORE(TranslationData.translate("kits.hardcore"), EnumSet.noneOf(EffectOptionFlags.class)),
-    NORMAL(TranslationData.translate("kits.normal"), EnumSet.of(EffectOptionFlags.CARD_SPEED, EffectOptionFlags.NO_FALL_DAMAGE)),
-    OVERPOWERED(TranslationData.translate("kits.overpowered"), EnumSet.allOf(EffectOptionFlags.class)),
-    RELOADED(TranslationData.translate("kits.reloaded"), EnumSet.allOf(EffectOptionFlags.class)),
+    HARDCORE(TranslationData.itemName("menu.kits.hardcore"), EnumSet.noneOf(EffectOptionFlags.class)),
+    NORMAL(TranslationData.itemName("menu.kits.normal"), EnumSet.of(EffectOptionFlags.CARD_SPEED, EffectOptionFlags.NO_FALL_DAMAGE)),
+    OVERPOWERED(TranslationData.itemName("menu.kits.overpowered"), EnumSet.allOf(EffectOptionFlags.class)),
+    RELOADED(TranslationData.itemName("menu.kits.reloaded"), EnumSet.allOf(EffectOptionFlags.class)),
     ;
 
     public final TimedItem wandItem = new TimedItem(new InventoryItem(
             Material.WARPED_FUNGUS_ON_A_STICK,
-            "" + ChatColor.DARK_PURPLE + ChatColor.ITALIC + ChatColor.BOLD + "The Go-Up-Wand",
-            "Right-Click To Teleport Upwards!"
+            "" + ChatColor.DARK_PURPLE + ChatColor.ITALIC + ChatColor.BOLD + TranslationData.itemName("items.wand"),
+            TranslationData.itemDescription("items.wand")
     ).withEnchantment(Enchantment.DURABILITY, 3), (int)(ConfigData.getConfig().wandCooldown * 1000))
     {
         @Override
@@ -72,8 +72,8 @@ public enum PlayerKit
 
     public final InventoryItem cardItem = new InventoryItem(8,
             Material.MAP,
-            "" + ChatColor.DARK_PURPLE + ChatColor.ITALIC + ChatColor.BOLD + "Bingo Card",
-            "Click To Open The Bingo Card!");
+            "" + ChatColor.DARK_PURPLE + ChatColor.ITALIC + ChatColor.BOLD + TranslationData.itemName("items.card"),
+            TranslationData.itemDescription("items.card"));
 
     public final String displayName;
     public final EnumSet<EffectOptionFlags> defaultEffects;

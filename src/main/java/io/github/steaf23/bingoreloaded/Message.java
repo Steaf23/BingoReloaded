@@ -123,7 +123,9 @@ public class Message
     public void send(Player player)
     {
         if (finalMessage == null)
-            createMessage(player);
+            //TODO: solving placeholders should be done last, however that is quite a but more complicated
+            raw = solvePlaceholders(raw, player);
+            createPrefixedMessage();
         player.spigot().sendMessage(finalMessage);
     }
 
@@ -142,6 +144,13 @@ public class Message
                 send(p);
             }
         }
+    }
+
+    public String toLegacyString()
+    {
+        if (finalMessage == null)
+            createMessage();
+        return finalMessage.toLegacyText();
     }
 
     public static void log(String text)
@@ -187,14 +196,8 @@ public class Message
         return new TextComponent[]{message1, comp, message2};
     }
 
-    private void createMessage(Player player)
+    private void createMessage()
     {
-        TextComponent prefixedBase = new TextComponent();
-        for (BaseComponent c : PRINT_PREFIX)
-        {
-            prefixedBase.addExtra(c);
-        }
-
         //for any given message like "{#00bb33}Completed {0} by team {1}! At {2}" split the arguments from the message.
         String[] rawSplit = raw.split("\\{[^\\{\\}#]*\\}"); //[{#00bb33}Completed, by team, ! At]
 
@@ -203,13 +206,6 @@ public class Message
         for (int i = 0; i < rawSplit.length; i++)
         {
             String part = TranslationData.convertColors(rawSplit[i]);
-
-            // solve placeholders from PlaceholderAPI
-            if (BingoReloaded.usesPlaceholder)
-            {
-                part = PlaceholderAPI.setPlaceholders(player, part);
-            }
-
             rawSplit[i] = part;
         }
 
@@ -231,8 +227,30 @@ public class Message
             }
             i++;
         }
+        finalMessage = base;
+    }
+
+    private void createPrefixedMessage()
+    {
+        TextComponent prefixedBase = new TextComponent();
+        for (BaseComponent c : PRINT_PREFIX)
+        {
+            prefixedBase.addExtra(c);
+        }
+
+        createMessage();
 
         prefixedBase.addExtra(base);
         finalMessage = prefixedBase;
+    }
+
+    // solve placeholders from PlaceholderAPI
+    private static String solvePlaceholders(String input, Player player)
+    {
+        if (BingoReloaded.usesPlaceholder)
+        {
+            return PlaceholderAPI.setPlaceholders(player, input);
+        }
+        return input;
     }
 }

@@ -1,6 +1,7 @@
 package io.github.steaf23.bingoreloaded.gui;
 
 import io.github.steaf23.bingoreloaded.BingoGame;
+import io.github.steaf23.bingoreloaded.data.TranslationData;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
 import io.github.steaf23.bingoreloaded.player.PlayerKit;
 import org.bukkit.Material;
@@ -8,47 +9,27 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
+import javax.swing.table.TableRowSorter;
+
 public class KitOptionsUI extends AbstractGUIInventory
 {
     private final BingoGame game;
     private static final InventoryItem HARDCORE = new InventoryItem(GUIBuilder5x9.OptionPositions.FOUR_CENTER3.positions[0],
             Material.RED_CONCRETE, TITLE_PREFIX + PlayerKit.HARDCORE.displayName,
-            "This kit includes:", "",
-            "   - Nothing, good luck!");
+            TranslationData.itemDescription("menu.kits.hardcore"));
     private static final InventoryItem NORMAL = new InventoryItem(GUIBuilder5x9.OptionPositions.FOUR_CENTER3.positions[1],
             Material.YELLOW_CONCRETE, TITLE_PREFIX + PlayerKit.NORMAL.displayName,
-            "This kit includes:", "",
-            "   - Iron Axe",
-            "   - Iron Pickaxe",
-            "   - Iron Shovel (Silk Touch)",
-            "   - 32 baked Potatoes",
-            "   - Leather Helmet",
-            "   - Leather Boots");
+            TranslationData.itemDescription("menu.kits.normal"));
     private static final InventoryItem OVERPOWERED = new InventoryItem(GUIBuilder5x9.OptionPositions.FOUR_CENTER3.positions[2],
             Material.PURPLE_CONCRETE, TITLE_PREFIX + PlayerKit.OVERPOWERED.displayName,
-            "This kit includes:", "",
-            "   - Netherite Axe",
-            "   - Netherite Pickaxe (Fortune)",
-            "   - Netherite Shovel (Silk Touch)",
-            "   - 64 Golden Carrots",
-            "   - The Go-Up-Wand",
-            "   - Leather Helmet",
-            "   - Leather Boots");
+            TranslationData.itemDescription("menu.kits.overpowered"));
     private static final InventoryItem RELOADED = new InventoryItem(GUIBuilder5x9.OptionPositions.FOUR_CENTER3.positions[3],
             Material.CYAN_CONCRETE, TITLE_PREFIX + PlayerKit.RELOADED.displayName,
-            "This kit includes:", "",
-            "   - Netherite Axe",
-            "   - Netherite Pickaxe (Fortune)",
-            "   - Netherite Shovel (Silk Touch)",
-            "   - 64 Golden Carrots",
-            "   - The Go-Up-Wand",
-            "   - Leather Helmet",
-            "   - Elytra (Unbreaking X)",
-            "   - Leather Boots");
+            TranslationData.itemDescription("menu.kits.reloaded"));
 
     public KitOptionsUI(AbstractGUIInventory parent, BingoGame game)
     {
-        super(45, "Choose Player Kit", parent);
+        super(45, TranslationData.itemName("menu.options.kit"), parent);
         this.game = game;
 
         fillOptions(new InventoryItem[]{HARDCORE, NORMAL, OVERPOWERED, RELOADED});

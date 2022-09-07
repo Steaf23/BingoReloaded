@@ -82,6 +82,6 @@ public class ConfigData
         this.resetPlayerItems = config.getBoolean("resetPlayerItems", true);
         this.resetPlayerPositions = config.getBoolean("resetPlayerPositions", true);
         this.selectedCard = config.getString("selectedCard", "default_card");
-        this.language = config.getString("language", "en_us.yml");
+        this.language = "languages/" + config.getString("language", "en_us.yml");
     }
 }

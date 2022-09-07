@@ -15,14 +15,33 @@ public class TranslationData
 
     public static String get(String path)
     {
-        String def = ChatColor.GRAY + "--no translation for '" + path + "' in " + ConfigData.getConfig().language + "--";
-        return data.getConfig().getString(path, def);
+        String def = ChatColor.GRAY + "-- No translation for '" + path + "' in " + ConfigData.getConfig().language + " --";
+        // avoid weird MemorySection String prints instead of translation failed message.
+        if (data.getConfig().getConfigurationSection(path) == null)
+            return data.getConfig().getString(path, def);
+        return def;
     }
 
-    public static String translate(String key)
+    public static String translate(String key, String... args)
     {
         String rawTranslation = get(key);
-        return convertColors(rawTranslation);
+        rawTranslation = convertColors(rawTranslation);
+
+        for (int i = 0; i < args.length; i++)
+        {
+            rawTranslation = rawTranslation.replace("{" + i + "}", args[i]);
+        }
+        return rawTranslation;
+    }
+
+    public static String itemName(String key)
+    {
+        return translate(key + ".name");
+    }
+
+    public static String[] itemDescription(String key)
+    {
+        return translate(key + ".desc").split("\\n");
     }
 
     /**

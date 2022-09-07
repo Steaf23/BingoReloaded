@@ -42,6 +42,6 @@ public class BingoGameSettings
     public void setEffects(EnumSet<EffectOptionFlags> effects)
     {
         this.effects = effects;
-        new Message("game.settings.effects_selected").sendAll();
+        new Message("game.settings.effects_selected").color(ChatColor.GOLD).sendAll();
     }
 }

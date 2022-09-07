@@ -70,7 +70,7 @@ public class TeamChat implements Listener, CommandExecutor
         {
             if (!teamManager.getParticipants().contains(p))
             {
-                new Message("game.team.chat_off").send(p);
+                new Message("game.team.no_chat").color(ChatColor.RED).send(p);
                 return false;
             }
 

@@ -1,10 +1,12 @@
 package io.github.steaf23.bingoreloaded.item.tasks;
 
+import io.github.steaf23.bingoreloaded.data.TranslationData;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class ItemTask extends AbstractBingoTask
@@ -46,7 +48,7 @@ public class ItemTask extends AbstractBingoTask
     @Override
     public List<String> getDescription()
     {
-        return List.of("Get " + getCount() + " of this item to complete this task!");
+        return Arrays.stream(TranslationData.translate("game.item.lore", "" + getCount()).split("\\n")).toList();
     }
 
     public int getCount()

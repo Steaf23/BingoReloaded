@@ -1,0 +1,53 @@
+command:
+  use: "Gebruik: {0}" # 0: cmd usage
+  bingo:
+    use: "Gebruik: {0}" # 0: /bingo usage
+    no_deathmatch: "Er kan geen deathmatch gestart worden als er geen bingo spel loopt!"
+  card:
+    no_name: "Geef de naam van de kaart op: {0}" # 0: command
+    no_remove: "'{0}' kan niet verwijderd worden, weet je zeker dat de naam klopt?" # 0: card name
+    removed: "'{0}' is succesvol verwijderd!" # 0: card name
+  list:
+    no_name: "Geef de naam van de lijst op: {0}" # 0: command
+    no_remove: "'{0}' kan niet verwijderd worden, weet je zeker dat de naam klopt?" # 0: item list name
+    removed: "'{0}' is succesvol verwijderd!" # 0: item list name
+game:
+  settings:
+    kit_selected: "De {0} player kit is geselecteerd" # 0: selected kit (see "kit") below
+    effects_selected: "Effect opties zijn geselecteerd, bekijk ze in met /bingo"
+    regular_selected: "Regular Bingo is geselecteerd. Maak 1 rij vol om te winnen (horizontaal, verticaal of diagonaal)!"
+    lockout_selected: "Lockout Bingo is geselecteerd. Strijd om de meeste taken te voltooien en speel je tegenstanders weg!"
+    complete_selected: "Complete-All Bingo is geselecteerd. Het team dat alle taken het snelst voltooid wint!"
+    card_selected: "Selected '{0}' as the playing Bingo card!" # 0: card name
+    cardsize: "Gekozen bingo kaart dimensies: {0}" # 0: card size
+  start:
+    no_players: "Bingo kan niet gestart worden als er niemand gejoined is :(."
+    already_started: "Bingo kan niet gestart worden omdat er al een spel bezig is"
+    give_cards: "Alle kits en bingo kaarten worden nu uitgedeeld!"
+    no_card: "Bingo kan niet gestart worden met de kaart '{0}' want deze kaart bestaat niet!" # 0: card_name
+  end:
+    bingo: "Gefeliciteerd, team {0} heeft het spel gewonnen!" # 0: winning team
+    duration: "Speelduur: {0}" # 0: total game time
+  player:
+    leave: "je bent uit het spel verwijderd, gebruik {0} om weer mee te kunnen doen" # 0: /bingo command
+    no_start: "Het spel is nog niet begonnen!"
+    join_back: "Welkom terug, het spel is nog niet over!"
+  team:
+    no_join: "Je kan niet midden in een spel meedoen!"
+    join: "Je zit nu in team {0}!" # 0: team name
+    dropped: "Team {0} kan niet meer winnen, zij zijn uit het spel!" # 0: team name
+    no_chat: "Team chat kan niet uit/aan gezet worden, omdat je niet in een team zit..."
+    chat_off: "&fTeam chat staat nu &cuit&r, gebruik {0} om team chat aan te zetten!" # 0: /btc
+    chat_on: "&fTeam chat staat nu &aaan&r, gebruik {0} om team chat uit te schakelen!" # 0: /btc
+  item:
+    completed: "{0} is behaald door team {1} op {2}!" # 0: item name, 1: team, 2: completion time
+    lore: "Behaald door team {0} \nop {1}" # 0: team, 1: completion time
+    deathmatch: "Deathmatch - Vind dit item on te winnen: {0}" # 0: item name
+    cooldown: "Je kan dit item niet gebruiken voor {0} seconden!" # 0: seconds
+menu:
+  items:
+kits:
+  hardcore: "&4Hardcore"
+  normal: "&eNormal"
+  overpowered: "&5Overpowered"
+  reloaded: "&3Reloaded"

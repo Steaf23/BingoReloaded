@@ -1,6 +1,7 @@
 package io.github.steaf23.bingoreloaded.player;
 
 import io.github.steaf23.bingoreloaded.*;
+import io.github.steaf23.bingoreloaded.data.TranslationData;
 import io.github.steaf23.bingoreloaded.gui.AbstractGUIInventory;
 import io.github.steaf23.bingoreloaded.gui.FilterType;
 import io.github.steaf23.bingoreloaded.gui.ListPickerUI;
@@ -59,10 +60,10 @@ public class TeamManager
         List<InventoryItem> optionItems = new ArrayList<>();
         for (FlexibleColor color : FlexibleColor.values())
         {
-            optionItems.add(new InventoryItem(color.concrete, color.chatColor + color.displayName));
+            optionItems.add(new InventoryItem(color.concrete, "" + color.chatColor + ChatColor.BOLD + color.displayName));
         }
 
-        ListPickerUI teamPicker = new ListPickerUI(optionItems, "Pick A Team", parentUI, FilterType.DISPLAY_NAME)
+        ListPickerUI teamPicker = new ListPickerUI(optionItems, TranslationData.itemName("menu.options.team"), parentUI, FilterType.DISPLAY_NAME)
         {
             @Override
             public void onOptionClickedDelegate(InventoryClickEvent event, InventoryItem clickedOption, Player player)
@@ -83,7 +84,7 @@ public class TeamManager
         Team team = teams.getTeam(teamName);
         if (team == null)
         {
-            new Message("game.team.no_team").arg(teamName).send(player);
+            Message.log("Team " + teamName + " does not exist, could not add " + player.getDisplayName() + " to this team!");
             return;
         }
         removePlayerFromAllTeams(player);
