@@ -3,6 +3,7 @@ package io.github.steaf23.bingoreloaded;
 import io.github.steaf23.bingoreloaded.data.BingoCardsData;
 import io.github.steaf23.bingoreloaded.data.ConfigData;
 import io.github.steaf23.bingoreloaded.data.RecoveryCardData;
+import io.github.steaf23.bingoreloaded.data.TranslationData;
 import io.github.steaf23.bingoreloaded.gui.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.gui.cards.BingoCard;
 import io.github.steaf23.bingoreloaded.gui.cards.CardBuilder;
@@ -335,7 +336,7 @@ public class BingoGame implements Listener
                     Location playerLoc = getRandomSpawnLocation(world);
 
                     p.teleport(playerLoc, PlayerTeleportEvent.TeleportCause.PLUGIN);
-                    p.setBedSpawnLocation(playerLoc);
+                    p.setBedSpawnLocation(playerLoc, true);
 
                     if (getTeamManager().getParticipants().size() > 0)
                     {
@@ -363,7 +364,7 @@ public class BingoGame implements Listener
                     for (Player p : teamPlayers)
                     {
                         p.teleport(teamLocation, PlayerTeleportEvent.TeleportCause.PLUGIN);
-                        p.setBedSpawnLocation(teamLocation);
+                        p.setBedSpawnLocation(teamLocation, true);
                     }
 
                     if (getTeamManager().getParticipants().size() > 0)
@@ -390,7 +391,7 @@ public class BingoGame implements Listener
                 for (Player p : players)
                 {
                     p.teleport(spawnLocation, PlayerTeleportEvent.TeleportCause.PLUGIN);
-                    p.setBedSpawnLocation(spawnLocation);
+                    p.setBedSpawnLocation(spawnLocation, true);
                 }
 
                 if (getTeamManager().getParticipants().size() > 0)
@@ -600,10 +601,10 @@ public class BingoGame implements Listener
                 if (ConfigData.getConfig().teleportAfterDeath)
                 {
                     TextComponent[] teleportMsg = Message.createHoverCommandMessage("",
-                            "" + ChatColor.DARK_AQUA + ChatColor.BOLD + "Click here to teleport back to where you died",
+                            "" + ChatColor.DARK_AQUA + ChatColor.BOLD + TranslationData.translate("game.player.respawn"),
                             "",
                             "/bingo back",
-                            "Click to teleport to " + deathCoords);
+                            "" + deathCoords);
 
                     event.getEntity().spigot().sendMessage(teleportMsg);
                     deadPlayers.put(event.getEntity().getName(), deathCoords);

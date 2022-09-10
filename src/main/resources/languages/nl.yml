@@ -1,3 +1,5 @@
+name: "Nederlands"
+changed: "Taal staat op Nederlands!"
 command:
   use: "Gebruik: {0}" # 0: cmd usage
   bingo:
@@ -31,7 +33,9 @@ game:
   player:
     leave: "je bent uit het spel verwijderd, gebruik {0} om weer mee te kunnen doen" # 0: /bingo command
     no_start: "Het spel is nog niet begonnen!"
+    cooldown: "Je kan dit item niet gebruiken voor {0} seconden!" # 0: time left
     join_back: "Welkom terug, het spel is nog niet over!"
+    respawn: "Klik hier om terug te gaan naar waar je dood bent gegaan!"
   team:
     no_join: "Je kan niet midden in een spel meedoen!"
     join: "Je zit nu in team {0}!" # 0: team name
@@ -40,12 +44,108 @@ game:
     chat_off: "&fTeam chat staat nu &cuit&r, gebruik {0} om team chat aan te zetten!" # 0: /btc
     chat_on: "&fTeam chat staat nu &aaan&r, gebruik {0} om team chat uit te schakelen!" # 0: /btc
   item:
+    lore: Verzamel {0} van dit item om deze taak te voltooien! # 0: item count
     completed: "{0} is behaald door team {1} op {2}!" # 0: item name, 1: team, 2: completion time
-    lore: "Behaald door team {0} \nop {1}" # 0: team, 1: completion time
+    complete_lore: "Behaald door team {0} \nop {1}" # 0: team, 1: completion time
     deathmatch: "Deathmatch - Vind dit item on te winnen: {0}" # 0: item name
     cooldown: "Je kan dit item niet gebruiken voor {0} seconden!" # 0: seconds
 menu:
-  items:
+  save: "Opslaan"
+  exit: "Sluit Menu"
+  save_exit: "Opslaan && Sluiten"
+  accept: "Accepteer && Terug"
+  next: "Volgende"
+  prev: "Vorige"
+  filter: "Filter..."
+  clear: "Wis Filter"
+  card:
+    title: "Bingo Kaart"
+    info_regular:
+      name: "Bingo Kaart"
+      desc: "Het eerste team dat 1 lijn voltooid wint het spel. \nLijnen kunnen verticaal, horizontaal \nof diagonaal zijn."
+    info_lockout:
+      name: "Lockout Bingo Kaart"
+      desc: "Voltooi de meeste taken om te winnen. \nWanneer een taak door een team voltooid is \nkan niemand anders meer dezelfde taak voltooien."
+    info_complete:
+      name: "Volle Bingo Kaart"
+      desc: "Het eerste team met een volle kaart wint."
+  options:
+    title: "Opties"
+    start:
+      name: "Start Het Spel"
+    end:
+      name: "Beëndig Het Spel"
+    team:
+      name: "Kies Een Team"
+    leave:
+      name: "Verlaat Het Spel"
+    kit:
+      name: "Kies Kits"
+    card:
+      name: "Kies De Kaart"
+    mode:
+      name: "Kies De Gamemode"
+    effects:
+      name: "Effecten"
+  effects:
+    enable: "Klik on dit effect AAN te zetten."
+    disable: "Klik om dit effect UIT te zetten."
+    enabled: "AAN"
+    disabled: "UIT"
+    night_vision: "Night Vision"
+    water_breath: "Water Breathing"
+    fire_res: "Fire Resistance"
+    no_fall_dmg: "No Fall Damage"
+    card_speed: "Speed Als Je De Kaart Vasthoud"
+  kits:
+    hardcore:
+      name: "&4Hardcore"
+      desc: "Deze kit bevat: \n
+      \n
+          - Niks, veel succes!"
+    normal:
+      name: "&eNormal"
+      desc: "Deze kit bevat: \n
+      \n
+          - Iron Axe \n
+          - Iron Pickaxe \n
+          - Iron Shovel (Silk Touch) \n
+          - 32 baked Potatoes \n
+          - Leather Helmet \n
+          - Leather Boots"
+    overpowered:
+      name: "&5Overpowered"
+      desc: "Deze kit bevat: \n
+      \n
+          - Netherite Axe \n
+          - Netherite Pickaxe (Fortune) \n
+          - Netherite Shovel (Silk Touch) \n
+          - 64 Golden Carrots \n
+          - The Go-Up-Wand \n
+          - Leather Helmet \n
+          - Leather Boots"
+    reloaded:
+      name: "&3Reloaded"
+      desc: "Deze kit bevat: \n
+      \n
+          - Netherite Axe \n
+          - Netherite Pickaxe (Fortune) \n
+          - Netherite Shovel (Silk Touch) \n
+          - 64 Golden Carrots \n
+          - The Go-Up-Wand \n
+          - Leather Helmet \n
+          - Elytra (Unbreaking X) \n
+          - Leather Boots"
+items:
+  card:
+    name: "Bingo Kaart"
+    desc: "Klik om de kaart te openen!"
+  wand:
+    name: "The Go-Up-Wand"
+    desc: "Teleporteer omhoog met rechter-muisklik! \n(& gebruik shift om naar beneden te gaan)"
+creator:
+  card_item:
+    desc: "Bevat {0} lijst(en)" # 0: list count
 kits:
   hardcore: "&4Hardcore"
   normal: "&eNormal"

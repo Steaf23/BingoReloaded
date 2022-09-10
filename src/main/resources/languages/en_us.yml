@@ -1,3 +1,5 @@
+name: "English"
+changed: "Language configured to English!"
 command:
   use: "Usage: {0}" # 0: cmd usage
   bingo:
@@ -33,6 +35,7 @@ game:
     no_start: "The game has not started yet!"
     cooldown: "You cannot use this item for another {0} seconds!" # 0: time left
     join_back: "Welcome back, the game is still on!"
+    respawn: "Click here to teleport back to where you died"
   team:
     no_join: "You cannot join an ongoing game!"
     join: "You successfully joined team {0}!" # 0: team name
@@ -50,9 +53,11 @@ menu:
   save: "Save"
   exit: "Close Menu"
   save_exit: "Save && Exit"
+  accept: "Accept && Close"
   next: "Next Page"
   prev: "Prev Page"
   filter: "Filter..."
+  clear: "Clear Filter"
   card:
     title: "Card Viewer"
     info_regular:
@@ -140,4 +145,4 @@ items:
     desc: "Right-Click To Teleport Upwards! (& hold shift to go down)"
 creator:
   card_item:
-    desc: "Contains {0} item List(s)" # 0: list count
+    desc: "Contains {0} list(s)" # 0: list count

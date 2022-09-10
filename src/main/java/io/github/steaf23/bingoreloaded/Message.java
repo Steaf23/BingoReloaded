@@ -185,17 +185,6 @@ public class Message
         return new TextComponent[]{message1, comp, message2};
     }
 
-    public static TextComponent[] createHoverInfoMessage(String beforeText, String hoverableText, String afterText, String hoverText)
-    {
-        TextComponent message1 = new TextComponent(PREFIX_STRING + ChatColor.GREEN + ChatColor.ITALIC + ChatColor.BOLD + beforeText);
-        TextComponent message2 = new TextComponent("" + ChatColor.GREEN + ChatColor.ITALIC + ChatColor.BOLD + afterText);
-        TextComponent comp = new TextComponent("" + ChatColor.RED + ChatColor.ITALIC + hoverableText);
-        comp.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                new ComponentBuilder("" + ChatColor.GREEN + ChatColor.ITALIC + hoverText).create()));
-
-        return new TextComponent[]{message1, comp, message2};
-    }
-
     private void createMessage()
     {
         //for any given message like "{#00bb33}Completed {0} by team {1}! At {2}" split the arguments from the message.
