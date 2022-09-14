@@ -4,6 +4,7 @@ import io.github.steaf23.bingoreloaded.data.TranslationData;
 import io.github.steaf23.bingoreloaded.player.BingoTeam;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.*;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -51,6 +52,12 @@ public class Message
             arg.addExtra(cmp);
         }
         args.add(arg);
+        return this;
+    }
+
+    public Message component(@NonNull BaseComponent component)
+    {
+        args.add(component);
         return this;
     }
 
@@ -171,6 +178,11 @@ public class Message
     public static void sendDebug(BaseComponent text, Player player)
     {
         player.spigot().sendMessage(text);
+    }
+
+    public static void sendActionMessage(String message, Player player)
+    {
+        player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent[]{new TextComponent(message)});
     }
 
     public static TextComponent[] createHoverCommandMessage(String beforeText, String commandText, String afterText, String command, String hoverText)

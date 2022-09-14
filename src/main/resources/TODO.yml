@@ -1,7 +1,4 @@
-translations!
 multiworld refactor!
-
-fix lockout bug!
 
 add option to duplicate cards/lists
 
@@ -11,10 +8,6 @@ refactor card recovery (its shit).
 
 use percentages instead of numbers for list chances.
 
-use translatableComponents for items! how though?
-
 redo clickable and hover messages using Message.
 
-add multiple game sessions in one world?
-
-remove spawnplatform
+add tabcomplete on commands

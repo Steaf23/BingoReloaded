@@ -29,7 +29,7 @@ game:
     no_card: "Cannot start game with the card '{0}' because it does not exist!" # 0: card_name
   end:
     bingo: "Congratulations! Team {0} has won the Bingo!" # 0: winning team
-    duration: "Game Duration: {0}" # 0: total game time
+    duration: "&b&lGame Duration: {0}" # 0: total game time
   player:
     leave: "You have been successfully removed from the game, use {0} to come back to me :D" # 0: /bingo command
     no_start: "The game has not started yet!"
@@ -58,6 +58,7 @@ menu:
   prev: "Prev Page"
   filter: "Filter..."
   clear: "Clear Filter"
+  completed: "Completed Tasks"
   card:
     title: "Card Viewer"
     info_regular:
@@ -143,6 +144,23 @@ items:
   wand:
     name: "The Go-Up-Wand"
     desc: "Right-Click To Teleport Upwards! (& hold shift to go down)"
+teams:
+  brown: "Brown"
+  orange: "Orange"
+  pink: "Pink"
+  red: "Red"
+  white: "White"
+  lime: "Lime"
+  green: "Green"
+  gray: "Gray"
+  light_gray: "Light Gray"
+  black: "Black"
+  yellow: "Yellow"
+  magenta: "Magenta"
+  cyan: "Cyan"
+  blue: "Blue"
+  purple: "Purple"
+  light_blue: "Light Blue"
 creator:
   card_item:
     desc: "Contains {0} list(s)" # 0: list count

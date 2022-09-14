@@ -1,7 +1,10 @@
 package io.github.steaf23.bingoreloaded.item.tasks;
 
 import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Material;
+import org.w3c.dom.Text;
 
 import java.util.List;
 
@@ -26,9 +29,14 @@ public class StatisticTask extends AbstractBingoTask
     }
 
     @Override
-    public String getDisplayName()
+    public BaseComponent getDisplayName()
     {
-        return null;
+        return new TextComponent("dummy stats!");
+    }
+
+    @Override
+    public void updateItemNBT()
+    {
     }
 
     @Override

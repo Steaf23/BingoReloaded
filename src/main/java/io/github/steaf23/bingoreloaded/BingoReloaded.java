@@ -67,11 +67,6 @@ public class BingoReloaded extends JavaPlugin
         Bukkit.getLogger().info(ChatColor.RED + "Disabled " + this.getName());
     }
 
-    public static void showPlayerActionMessage(String message, Player player)
-    {
-        player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent[]{new TextComponent(message)});
-    }
-
     public static void registerListener(Listener listener)
     {
         Plugin plugin = Bukkit.getPluginManager().getPlugin(BingoReloaded.NAME);

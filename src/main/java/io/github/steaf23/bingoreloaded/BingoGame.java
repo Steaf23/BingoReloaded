@@ -9,12 +9,14 @@ import io.github.steaf23.bingoreloaded.gui.cards.BingoCard;
 import io.github.steaf23.bingoreloaded.gui.cards.CardBuilder;
 import io.github.steaf23.bingoreloaded.item.BingoCardSlotCompleteEvent;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
+import io.github.steaf23.bingoreloaded.item.ItemNameBuilder;
 import io.github.steaf23.bingoreloaded.item.tasks.ItemTask;
 import io.github.steaf23.bingoreloaded.player.BingoTeam;
 import io.github.steaf23.bingoreloaded.player.TeamManager;
 import io.github.steaf23.bingoreloaded.util.FlexibleColor;
-import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.chat.TranslatableComponent;
 import org.bukkit.*;
 import org.bukkit.block.Biome;
 import org.bukkit.entity.Player;
@@ -53,7 +55,7 @@ public class BingoGame implements Listener
     {
         this.inProgress = false;
         this.scoreboard = new BingoScoreboard(this);
-        this.timer = new GameTimer();
+        this.timer = new GameTimer(scoreboard);
         this.settings = new BingoGameSettings();
         this.deadPlayers = new HashMap<>();
 
@@ -226,20 +228,21 @@ public class BingoGame implements Listener
         }
 
         settings.deathMatchItem = settings.generateDeathMatchItem();
-        String itemName = ItemTask.convertToReadableName(settings.deathMatchItem);
+
         for (Player p : getTeamManager().getParticipants())
         {
-            Message msg = new Message("game.item.deathmatch");
-            p.sendTitle(ChatColor.GOLD + itemName, ChatColor.DARK_PURPLE + "Death Match: Get this item to win!", -1, -1, -1);
-            Message.sendDebug(ChatColor.GOLD + itemName, p);
+            showDeathMatchItem(p);
+            p.sendTitle("" + ChatColor.GOLD + ChatColor.GOLD + "GO", "" + ChatColor.DARK_PURPLE + ChatColor.ITALIC + "find the item listed in the chat to win!", -1, -1, -1);
         }
     }
 
     public void showDeathMatchItem(Player p)
     {
-        String itemName = ItemTask.convertToReadableName(settings.deathMatchItem);
-        p.sendTitle(ChatColor.GOLD + itemName, ChatColor.DARK_PURPLE + "DeathMatch - Find this item to win!", -1, -1, -1);
-        Message.sendDebug(ChatColor.GOLD + itemName, p);
+        String itemKey = ItemNameBuilder.getTranslateKey(settings.deathMatchItem);
+
+        new Message("game.item.deathmatch").color(ChatColor.GOLD)
+                .component(new TranslatableComponent(itemKey))
+                .send(p);
     }
 
     public static void givePlayerEffects(Player player, BingoGameSettings settings)

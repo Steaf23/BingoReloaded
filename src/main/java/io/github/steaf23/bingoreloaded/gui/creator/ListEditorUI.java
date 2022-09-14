@@ -1,17 +1,19 @@
 package io.github.steaf23.bingoreloaded.gui.creator;
 
+import io.github.steaf23.bingoreloaded.Message;
 import io.github.steaf23.bingoreloaded.data.AdvancementData;
 import io.github.steaf23.bingoreloaded.data.BingoTasksData;
 import io.github.steaf23.bingoreloaded.gui.AbstractGUIInventory;
 import io.github.steaf23.bingoreloaded.gui.FilterType;
 import io.github.steaf23.bingoreloaded.gui.ListPickerUI;
+import io.github.steaf23.bingoreloaded.item.ItemNameBuilder;
 import io.github.steaf23.bingoreloaded.item.tasks.AdvancementTask;
 import io.github.steaf23.bingoreloaded.item.AdvancementListItem;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
 import io.github.steaf23.bingoreloaded.item.tasks.ItemTask;
 import io.github.steaf23.bingoreloaded.util.FlexibleColor;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.advancement.Advancement;
 import org.bukkit.entity.HumanEntity;
@@ -75,13 +77,16 @@ public class ListEditorUI
         {
             if (!m.name().contains("LEGACY_") && m.isItem() && !m.isAir() && !glassPanes.contains(m))
             {
-                InventoryItem item = new InventoryItem(m, "", ChatColor.GRAY + "Click to make this item", ChatColor.GRAY + "appear on bingo cards");
+                InventoryItem item = new InventoryItem(m, "");
                 ItemMeta meta = item.getItemMeta();
                 if (meta == null) continue;
 
                 meta.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_UNBREAKABLE);
 
                 item.setItemMeta(meta);
+                new ItemNameBuilder(ChatColor.YELLOW, false, false, false, false, false)
+                        .translate(ItemNameBuilder.getTranslateKey(m))
+                        .build(item);
                 items.add(item);
             }
         }

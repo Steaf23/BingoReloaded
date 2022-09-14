@@ -1,7 +1,13 @@
 package io.github.steaf23.bingoreloaded.item.tasks;
 
 import io.github.steaf23.bingoreloaded.data.TranslationData;
+import io.github.steaf23.bingoreloaded.item.ItemNameBuilder;
+import io.github.steaf23.bingoreloaded.player.BingoTeam;
+import io.github.steaf23.bingoreloaded.util.FlexibleColor;
 import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.chat.TranslatableComponent;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -37,12 +43,44 @@ public class ItemTask extends AbstractBingoTask
     }
 
     @Override
-    public String getDisplayName()
+    public BaseComponent getDisplayName()
     {
+        BaseComponent comp = new TranslatableComponent(ItemNameBuilder.getTranslateKey(item.getType()));
         if (getCount() > 1 && isComplete())
-            return convertToReadableName(item.getType()) + " (" + getCount() + "x)";
+        {
+            comp.addExtra(" (" + getCount() + "x)");
+            comp.setColor(ChatColor.GRAY);
+            comp.setStrikethrough(true);
+            return comp;
+        }
         else
-            return convertToReadableName(item.getType());
+        {
+            comp.setColor(nameColor);
+            return comp;
+        }
+    }
+
+    @Override
+    public void updateItemNBT()
+    {
+        if (isComplete())
+        {
+            if (getCount() > 1)
+            {
+                new ItemNameBuilder(ChatColor.GRAY, false, false, true, false, false)
+                        .translate(ItemNameBuilder.getTranslateKey(item.getType())).text( " (" + getCount() + "x)").build(item);
+            }
+            else
+            {
+                new ItemNameBuilder(ChatColor.GRAY, false, false, true, false, false)
+                        .translate(ItemNameBuilder.getTranslateKey(item.getType())).build(item);
+            }
+        }
+        else
+        {
+            new ItemNameBuilder(nameColor, false, false, false, false, false)
+                    .translate(ItemNameBuilder.getTranslateKey(item.getType())).build(item);
+        }
     }
 
     @Override
@@ -51,20 +89,17 @@ public class ItemTask extends AbstractBingoTask
         return Arrays.stream(TranslationData.translate("game.item.lore", "" + getCount()).split("\\n")).toList();
     }
 
+    public static TranslatableComponent getTranslatedName(Material mat, Player player)
+    {
+        String result = "";
+        TranslatableComponent name = new TranslatableComponent("item." + mat.name().toLowerCase() + ".name");
+
+        return name;
+    }
+
     public int getCount()
     {
         return item.getAmount();
-    }
-
-    public static String convertToReadableName(@NotNull Material m)
-    {
-        String[] nameParts = m.name().split("_");
-        String name = "";
-        for (String section : nameParts)
-        {
-            name += capitalize(section) + " ";
-        }
-        return name.trim();
     }
 
     private static String capitalize(String str)

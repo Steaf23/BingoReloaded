@@ -9,12 +9,21 @@ import io.github.steaf23.bingoreloaded.data.TranslationData;
 import io.github.steaf23.bingoreloaded.gui.AbstractGUIInventory;
 import io.github.steaf23.bingoreloaded.item.BingoCardSlotCompleteEvent;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
+import io.github.steaf23.bingoreloaded.item.ItemNameBuilder;
 import io.github.steaf23.bingoreloaded.item.tasks.AbstractBingoTask;
 import io.github.steaf23.bingoreloaded.item.tasks.AdvancementTask;
 import io.github.steaf23.bingoreloaded.item.tasks.ItemTask;
 import io.github.steaf23.bingoreloaded.player.BingoTeam;
+import io.github.steaf23.bingoreloaded.util.FlexibleColor;
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.chat.TranslatableComponent;
+import net.md_5.bungee.chat.ComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.UnsafeValues;
+import org.bukkit.entity.ComplexLivingEntity;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -26,8 +35,10 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerAdvancementDoneEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.nio.file.AtomicMoveNotSupportedException;
 import java.util.*;
 
 public class BingoCard extends AbstractGUIInventory implements Listener
@@ -110,7 +121,8 @@ public class BingoCard extends AbstractGUIInventory implements Listener
     {
         for (int i = 0; i < tasks.size(); i++)
         {
-            addOption(tasks.get(i).item.inSlot(size.getCardInventorySlot(i)));
+            InventoryItem item = tasks.get(i).item.inSlot(size.getCardInventorySlot(i));
+            addOption(item);
         }
 
         open(player);
@@ -346,7 +358,10 @@ public class BingoCard extends AbstractGUIInventory implements Listener
             {
                 if (item.getType().equals(itemTask.item.getType()) && item.getAmount() >= itemTask.getCount())
                 {
-                    itemTask.complete(team, game.getGameTime());
+                    if (!itemTask.complete(team, game.getGameTime()))
+                    {
+                        continue;
+                    }
                     item.setAmount(item.getAmount() - itemTask.getCount());
 //                    player.updateInventory();
                     var slotEvent = new BingoCardSlotCompleteEvent(itemTask, team, player, hasBingo(team));

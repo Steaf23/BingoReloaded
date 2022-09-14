@@ -1,16 +1,18 @@
 package io.github.steaf23.bingoreloaded;
 
+import io.github.steaf23.bingoreloaded.gui.cards.BingoCard;
 import org.bukkit.ChatColor;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class GameTimer
 {
     private int time;
+    private BingoScoreboard scoreboard;
+    private BukkitRunnable runnable;
 
-    private BukkitRunnable runnable;;
-
-    public GameTimer()
+    public GameTimer(BingoScoreboard scoreboard)
     {
+        this.scoreboard = scoreboard;
         this.time = 0;
     }
 
@@ -59,6 +61,7 @@ public class GameTimer
     public void setTime(int seconds)
     {
         time = seconds;
+        scoreboard.updateGameTime(this);
     }
 
     public int getTime()
