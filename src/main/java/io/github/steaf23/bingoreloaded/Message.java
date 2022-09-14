@@ -39,7 +39,7 @@ public class Message
 
     public Message(String translatePath)
     {
-        this.raw = TranslationData.get(translatePath);
+        this.raw = TranslationData.translate(translatePath);
         this.args = new ArrayList<>();
         this.base = new TextComponent();
     }
@@ -130,7 +130,7 @@ public class Message
     public void send(Player player)
     {
         if (finalMessage == null)
-            //TODO: solving placeholders should be done last, however that is quite a but more complicated
+            //TODO: solving placeholders should be done last, however that is quite a bit more complicated
             raw = solvePlaceholders(raw, player);
             createPrefixedMessage();
         player.spigot().sendMessage(finalMessage);
@@ -185,16 +185,21 @@ public class Message
         player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent[]{new TextComponent(message)});
     }
 
-    public static TextComponent[] createHoverCommandMessage(String beforeText, String commandText, String afterText, String command, String hoverText)
+    public static TextComponent[] createHoverCommandMessage(@NonNull String translatePath, @Nullable String command)
     {
-        TextComponent message1 = new TextComponent(PREFIX_STRING + ChatColor.GREEN + ChatColor.ITALIC + ChatColor.BOLD + beforeText);
-        TextComponent message2 = new TextComponent("" + ChatColor.GREEN + ChatColor.ITALIC + ChatColor.BOLD + afterText);
-        TextComponent comp = new TextComponent("" + ChatColor.RED + ChatColor.ITALIC + commandText);
-        comp.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, command));
-        comp.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                new ComponentBuilder("" + ChatColor.GREEN + ChatColor.ITALIC + hoverText).create()));
+        TextComponent prefix = new TextComponent(PREFIX_STRING + TranslationData.translate(translatePath + ".prefix"));
+        TextComponent hoverable = new TextComponent(TranslationData.translate(translatePath + ".hoverable"));
+        TextComponent hover = new TextComponent(TranslationData.translate(translatePath + ".hover"));
+        TextComponent suffix = new TextComponent(TranslationData.translate(translatePath + ".suffix"));
 
-        return new TextComponent[]{message1, comp, message2};
+        if (command != null)
+        {
+            hoverable.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, command));
+        }
+        hoverable.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
+                new ComponentBuilder(hover).create()));
+
+        return new TextComponent[]{prefix, hoverable, suffix};
     }
 
     private void createMessage()

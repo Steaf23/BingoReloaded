@@ -13,15 +13,6 @@ public class TranslationData
 
     private static final Pattern HEX_PATTERN = Pattern.compile("\\{#[a-fA-F0-9]{6}\\}");
 
-    public static String get(String path)
-    {
-        String def = ChatColor.GRAY + "-- No translation for '" + path + "' in " + ConfigData.getConfig().language + " --";
-        // avoid weird MemorySection String prints instead of translation failed message.
-        if (data.getConfig().getConfigurationSection(path) == null)
-            return data.getConfig().getString(path, def);
-        return def;
-    }
-
     public static String translate(String key, String... args)
     {
         String rawTranslation = get(key);
@@ -63,5 +54,14 @@ public class TranslationData
         }
 
         return part;
+    }
+
+    private static String get(String path)
+    {
+        String def = ChatColor.GRAY + "-- No translation for '" + path + "' in " + ConfigData.getConfig().language + " --";
+        // avoid weird MemorySection String prints instead of translation failed message.
+        if (data.getConfig().getConfigurationSection(path) == null)
+            return data.getConfig().getString(path, def);
+        return def;
     }
 }

@@ -34,6 +34,7 @@ public class TeamManager
         createTeams();
     }
 
+    // Returns null when a player is not part of a team.
     public BingoTeam getTeamOfPlayer(Player player)
     {
         for (BingoTeam t : activeTeams)
@@ -53,14 +54,14 @@ public class TeamManager
     {
         if (game.inProgress)
         {
-            new Message("game.team.no_join").send(player);
+            new Message("game.team.no_join").color(ChatColor.RED).send(player);
             return;
         }
 
         List<InventoryItem> optionItems = new ArrayList<>();
         for (FlexibleColor color : FlexibleColor.values())
         {
-            optionItems.add(new InventoryItem(color.concrete, "" + color.chatColor + ChatColor.BOLD + color.displayName));
+            optionItems.add(new InventoryItem(color.concrete, "" + color.chatColor + ChatColor.BOLD + color.getTranslation()));
         }
 
         ListPickerUI teamPicker = new ListPickerUI(optionItems, TranslationData.itemName("menu.options.team"), parentUI, FilterType.DISPLAY_NAME)
@@ -72,7 +73,7 @@ public class TeamManager
                 if (color == null)
                     return;
 
-                addPlayerToTeam(player, color.displayName);
+                addPlayerToTeam(player, color.name);
                 close(player);
             }
         };
@@ -84,7 +85,7 @@ public class TeamManager
         Team team = teams.getTeam(teamName);
         if (team == null)
         {
-            Message.log("Team " + teamName + " does not exist, could not add " + player.getDisplayName() + " to this team!");
+            Message.log("Team " + FlexibleColor.fromName(teamName).getTranslation() + " does not exist, could not add " + player.getDisplayName() + " to this team!");
             return;
         }
         removePlayerFromAllTeams(player);
@@ -95,7 +96,7 @@ public class TeamManager
         {
             team.addEntry(player.getName());
             new Message("game.team.join").color(ChatColor.GREEN)
-                    .arg(bingoTeam.getName()).color(bingoTeam.getColor()).bold()
+                    .arg(FlexibleColor.fromName(bingoTeam.getName()).getTranslation()).color(bingoTeam.getColor()).bold()
                     .send(player);
         }
     }
@@ -235,7 +236,7 @@ public class TeamManager
     {
         if (activeTeams.stream().noneMatch((t) -> t.team == team))
         {
-            FlexibleColor color = FlexibleColor.fromDisplayName(team.getName());
+            FlexibleColor color = FlexibleColor.fromName(team.getName());
             BingoTeam bTeam;
             if (color != null)
             {
@@ -255,20 +256,11 @@ public class TeamManager
     {
         for (FlexibleColor fColor : FlexibleColor.values())
         {
-            String name = fColor.displayName;
+            String name = fColor.name;
             Team t = teams.registerNewTeam(name);
-            t.setPrefix("" + ChatColor.DARK_RED + "[" + fColor.chatColor + ChatColor.BOLD + fColor.displayName + ChatColor.DARK_RED + "] ");
+            t.setPrefix("" + ChatColor.DARK_RED + "[" + fColor.chatColor + ChatColor.BOLD + fColor.getTranslation() + ChatColor.DARK_RED + "] ");
             t.addEntry("" + fColor.chatColor);
         }
         Message.log(ChatColor.GREEN + "Successfully created " + teams.getTeams().size() + " teams");
-    }
-
-    public void playerQuit(Player player)
-    {
-        if (!getParticipants().contains(player)) return;
-
-        removePlayerFromAllTeams(player);
-        new Message("game.player.leave").send(player);
-        BingoGame.takePlayerEffects(player);
     }
 }

@@ -45,10 +45,10 @@ public class GameTimer
 
     public static String getTimeAsString(int seconds)
     {
-        if (seconds > 60)
+        if (seconds >= 60)
         {
             int minutes = (seconds / 60) % 60;
-            if (seconds > 3600)
+            if (seconds >= 3600)
             {
                 int hours = seconds / 3600;
                 return String.format("%02d:%02d:%02d", hours, minutes, seconds % 60);

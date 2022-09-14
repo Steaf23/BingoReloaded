@@ -30,12 +30,21 @@ game:
   end:
     bingo: "Gefeliciteerd, team {0} heeft het spel gewonnen!" # 0: winning team
     duration: "Speelduur: {0}" # 0: total game time
+    restart:
+      prefix: "&a&o&lHet spel is beëindigd! Om opnieuw te starten, klik "
+      hoverable: "&c&oHier!"
+      hover: "&a&o&lKlik om een nieuw spel met dezelfde regels en teams te starten"
+      suffix: ""
   player:
     leave: "je bent uit het spel verwijderd, gebruik {0} om weer mee te kunnen doen" # 0: /bingo command
     no_start: "Het spel is nog niet begonnen!"
     cooldown: "Je kan dit item niet gebruiken voor {0} seconden!" # 0: time left
     join_back: "Welkom terug, het spel is nog niet over!"
-    respawn: "Klik hier om terug te gaan naar waar je dood bent gegaan!"
+    respawn:
+      prefix: ""
+      hoverable: "&3&lKlik hier om terug te gaan naar waar je dood bent gegaan!"
+      hover: ""
+      suffix: ""
   team:
     no_join: "Je kan niet midden in een spel meedoen!"
     join: "Je zit nu in team {0}!" # 0: team name
@@ -58,6 +67,7 @@ menu:
   prev: "Vorige"
   filter: "Filter..."
   clear: "Wis Filter"
+  completed: "Taken Voltooid"
   card:
     title: "Bingo Kaart"
     info_regular:
@@ -74,7 +84,7 @@ menu:
     start:
       name: "Start Het Spel"
     end:
-      name: "Beëndig Het Spel"
+      name: "Beëindig Het Spel"
     team:
       name: "Kies Een Team"
     leave:
@@ -95,7 +105,7 @@ menu:
     night_vision: "Night Vision"
     water_breath: "Water Breathing"
     fire_res: "Fire Resistance"
-    no_fall_dmg: "No Fall Damage"
+    no_fall_dmg: "Geen Fall Damage"
     card_speed: "Speed Als Je De Kaart Vasthoud"
   kits:
     hardcore:
@@ -146,6 +156,23 @@ items:
 creator:
   card_item:
     desc: "Bevat {0} lijst(en)" # 0: list count
+teams:
+  brown: "Bruin"
+  orange: "Oranje"
+  pink: "Roze"
+  red: "Rood"
+  white: "Wit"
+  lime: "Lichtgroen"
+  green: "Groen"
+  gray: "Grijs"
+  light_gray: "Lichtgrijs"
+  black: "Zwart"
+  yellow: "Geel"
+  magenta: "Magenta"
+  cyan: "Cyaan"
+  blue: "Blauw"
+  purple: "Paars"
+  light_blue: "Lightblauw"
 kits:
   hardcore: "&4Hardcore"
   normal: "&eNormal"

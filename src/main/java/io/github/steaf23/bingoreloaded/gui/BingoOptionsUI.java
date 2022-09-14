@@ -48,7 +48,7 @@ public class BingoOptionsUI extends AbstractGUIInventory
             }
             else if (slotClicked == LEAVE_P.getSlot())
             {
-                game.getTeamManager().playerQuit(player);
+                game.playerQuit(player);
             }
             return;
         }
@@ -60,7 +60,7 @@ public class BingoOptionsUI extends AbstractGUIInventory
         }
         else if (slotClicked == LEAVE.getSlot())
         {
-            game.getTeamManager().playerQuit(player);
+            game.playerQuit(player);
         }
         else if (slotClicked == KIT.getSlot())
         {

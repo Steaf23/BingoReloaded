@@ -40,6 +40,7 @@ import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 public class BingoGame implements Listener
 {
@@ -48,7 +49,7 @@ public class BingoGame implements Listener
     private final BingoScoreboard scoreboard;
     private final GameTimer timer;
     private BingoGameSettings settings;
-    private final Map<String, Location> deadPlayers;
+    private final Map<UUID, Location> deadPlayers;
     private static final int TELEPORT_DISTANCE = ConfigData.getConfig().teleportMaxDistance;
 
     public BingoGame()
@@ -125,12 +126,7 @@ public class BingoGame implements Listener
             return;
 
         inProgress = false;
-        TextComponent[] commandMessage = Message.createHoverCommandMessage(
-                "Game has ended! Click to ",
-                "Restart!",
-                "",
-                "/bingo start",
-                "Click to restart using the same rules!");
+        TextComponent[] commandMessage = Message.createHoverCommandMessage("game.end.restart", "/bingo start");
         Set<Player> players = getTeamManager().getParticipants();
         players.forEach(p -> p.spigot().sendMessage(commandMessage));
         new Message("game.end.duration").color(ChatColor.GREEN)
@@ -143,7 +139,7 @@ public class BingoGame implements Listener
 
     public void bingo(BingoTeam team)
     {
-        new Message("game.end.bingo").arg(team.getName()).color(team.getColor()).bold().sendAll();
+        new Message("game.end.bingo").arg(FlexibleColor.fromName(team.getName()).getTranslation()).color(team.getColor()).bold().sendAll();
         for (Player p : getTeamManager().getParticipants())
         {
             p.playSound(p, Sound.ENTITY_DRAGON_FIREBALL_EXPLODE, 0.8f, 1.0f);
@@ -281,10 +277,10 @@ public class BingoGame implements Listener
     public void teleportPlayerAfterDeath(Player player)
     {
         if (player == null) return;
-        Location location = deadPlayers.get(player.getName());
+        Location location = deadPlayers.get(player.getUniqueId());
         Message.sendDebug("Death location" + location, player);
-        player.teleport(deadPlayers.get(player.getName()), PlayerTeleportEvent.TeleportCause.PLUGIN);
-        deadPlayers.remove(player.getName());
+        player.teleport(deadPlayers.get(player.getUniqueId()), PlayerTeleportEvent.TeleportCause.PLUGIN);
+        deadPlayers.remove(player.getUniqueId());
     }
 
     public static void spawnPlatform(Location spawnLocation, int size)
@@ -584,6 +580,19 @@ public class BingoGame implements Listener
         }
     }
 
+    public void playerQuit(Player player)
+    {
+        if (!getTeamManager().getParticipants().contains(player)) return;
+
+        getTeamManager().removePlayerFromAllTeams(player);
+        new Message("game.player.leave").arg(ChatColor.RED + "/bingo join").send(player);
+        BingoGame.takePlayerEffects(player);
+        if (deadPlayers.containsKey(player.getUniqueId()))
+        {
+            deadPlayers.remove(player.getUniqueId());
+        }
+    }
+
     @EventHandler
     public void onPlayerLeave(final PlayerQuitEvent event)
     {
@@ -603,14 +612,10 @@ public class BingoGame implements Listener
                 Location deathCoords = event.getEntity().getLocation();
                 if (ConfigData.getConfig().teleportAfterDeath)
                 {
-                    TextComponent[] teleportMsg = Message.createHoverCommandMessage("",
-                            "" + ChatColor.DARK_AQUA + ChatColor.BOLD + TranslationData.translate("game.player.respawn"),
-                            "",
-                            "/bingo back",
-                            "" + deathCoords);
+                    TextComponent[] teleportMsg = Message.createHoverCommandMessage("game.player.respawn", "/bingo back");
 
                     event.getEntity().spigot().sendMessage(teleportMsg);
-                    deadPlayers.put(event.getEntity().getName(), deathCoords);
+                    deadPlayers.put(event.getEntity().getUniqueId(), deathCoords);
                 }
             }
         }
@@ -637,7 +642,12 @@ public class BingoGame implements Listener
     @EventHandler
     public void onPlayerRespawnEvent(final PlayerRespawnEvent event)
     {
-        if (deadPlayers.containsKey(event.getPlayer().getName()))
+        if (getTeamManager().getTeamOfPlayer(event.getPlayer()) == null)
+        {
+            event.getPlayer().setGameMode(GameMode.SPECTATOR);
+        }
+
+        if (deadPlayers.containsKey(event.getPlayer().getUniqueId()))
         {
             returnCardToPlayer(event.getPlayer());
         }

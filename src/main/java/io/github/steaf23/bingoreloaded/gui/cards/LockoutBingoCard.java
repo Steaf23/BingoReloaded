@@ -8,6 +8,7 @@ import io.github.steaf23.bingoreloaded.item.InventoryItem;
 import io.github.steaf23.bingoreloaded.item.tasks.AbstractBingoTask;
 import io.github.steaf23.bingoreloaded.player.BingoTeam;
 import io.github.steaf23.bingoreloaded.player.TeamManager;
+import io.github.steaf23.bingoreloaded.util.FlexibleColor;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -66,7 +67,7 @@ public class LockoutBingoCard extends BingoCard
     public void dropTeam(BingoTeam team)
     {
         new Message("game.team.dropped")
-                .arg(team.getName()).color(team.getColor()).bold()
+                .arg(FlexibleColor.fromName(team.getName()).getTranslation()).color(team.getColor()).bold()
                 .sendAll();
         team.outOfTheGame = true;
         for (AbstractBingoTask task : tasks)

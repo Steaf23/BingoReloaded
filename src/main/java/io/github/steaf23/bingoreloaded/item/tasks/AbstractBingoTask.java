@@ -7,6 +7,7 @@ import io.github.steaf23.bingoreloaded.data.RecoveryCardData;
 import io.github.steaf23.bingoreloaded.gui.cards.CardBuilder;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
 import io.github.steaf23.bingoreloaded.player.BingoTeam;
+import io.github.steaf23.bingoreloaded.util.FlexibleColor;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -77,7 +78,7 @@ public abstract class AbstractBingoTask
 
         new Message("game.item.completed").color(ChatColor.GREEN)
                 .component(itemName).color(nameColor)
-                .arg(completedBy.getName()).color(completedBy.getColor()).bold()
+                .arg(FlexibleColor.fromName(completedBy.getName()).getTranslation()).color(completedBy.getColor()).bold()
                 .arg(timeString).color(ChatColor.WHITE)
                 .sendAll();
 
@@ -86,7 +87,7 @@ public abstract class AbstractBingoTask
         if (meta != null)
         {
             meta.setLore(Arrays.stream(new Message("game.item.complete_lore").color(ChatColor.DARK_PURPLE).italic()
-                    .arg(completedBy.getName()).color(completedBy.getColor()).bold()
+                    .arg(FlexibleColor.fromName(completedBy.getName()).getTranslation()).color(completedBy.getColor()).bold()
                     .arg(timeString).color(ChatColor.GOLD).toLegacyString().split("\\n")).toList());
             meta.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS, ItemFlag.HIDE_ENCHANTS);
             item.setItemMeta(meta);

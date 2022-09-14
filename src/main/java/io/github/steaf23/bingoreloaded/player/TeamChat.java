@@ -2,6 +2,7 @@ package io.github.steaf23.bingoreloaded.player;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.Message;
+import io.github.steaf23.bingoreloaded.util.FlexibleColor;
 import org.bukkit.Bukkit;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.command.Command;
@@ -58,7 +59,7 @@ public class TeamChat implements Listener, CommandExecutor
 
             if (!member.isOnline()) continue;
 
-            member.sendMessage(ChatColor.DARK_RED + "[" + team.getColor() + ChatColor.BOLD + team.getName() + ChatColor.DARK_RED + "]" +
+            member.sendMessage(ChatColor.DARK_RED + "[" + team.getColor() + ChatColor.BOLD + FlexibleColor.fromName(team.getName()).getTranslation() + ChatColor.DARK_RED + "]" +
                     ChatColor.RESET  + "<" + player.getName() + "> " + message);
         }
     }

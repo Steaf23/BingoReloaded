@@ -29,10 +29,15 @@ public class BingoCommand implements CommandExecutor
         {
             switch (args[0])
             {
+                case "join":
+                    if (!(commandSender instanceof Player player && player.hasPermission("bingo.player"))) return false;
+
+                    gameInstance.getTeamManager().openTeamSelector(player, null);
+                    break;
                 case "leave":
                     if (!(commandSender instanceof Player player && player.hasPermission("bingo.player"))) return false;
 
-                    gameInstance.getTeamManager().playerQuit(player);
+                    gameInstance.playerQuit(player);
                     break;
 
                 case "start":
@@ -97,7 +102,7 @@ public class BingoCommand implements CommandExecutor
 
                 default:
                     if (commandSender instanceof Player p)
-                        new Message("command.use").color(ChatColor.RED).arg("/bingo [getcard | start | end | leave | deathmatch | creator]").send(p);
+                        new Message("command.use").color(ChatColor.RED).arg("/bingo [getcard | start | end | join | back | leave | deathmatch | creator]").send(p);
                     else
                         Message.log(ChatColor.RED + "Usage: /bingo [start | end | deathmatch]");
                     break;
