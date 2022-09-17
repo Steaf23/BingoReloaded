@@ -29,8 +29,6 @@ default_items:
     - count: 1
       key: DARK_OAK_WOOD
     - count: 1
-      key: MANGROVE_WOOD
-    - count: 1
       key: CRIMSON_HYPHAE
     - count: 1
       key: WARPED_HYPHAE
@@ -179,8 +177,6 @@ default_items:
     - count: 1
       key: TARGET
     - count: 1
-      key: SCULK_SENSOR
-    - count: 1
       key: TRAPPED_CHEST
     - count: 1
       key: TNT
@@ -236,8 +232,6 @@ default_items:
       key: MILK_BUCKET
     - count: 1
       key: POWDER_SNOW_BUCKET
-    - count: 1
-      key: MUD_BRICKS
     - count: 16
       key: DEEPSLATE_TILES
     - count: 1
@@ -309,8 +303,6 @@ default_items:
     - count: 1
       key: STONECUTTER
     - count: 1
-      key: GOAT_HORN
-    - count: 1
       key: BELL
     - count: 1
       key: LANTERN
@@ -336,10 +328,8 @@ default_advancements:
     - key: minecraft:story/deflect_arrow
     - key: minecraft:husbandry/make_a_sign_glow
     - key: minecraft:husbandry/tame_an_animal
-    - key: minecraft:adventure/kill_mob_near_sculk_catalyst
     - key: minecraft:husbandry/fishy_business
     - key: minecraft:nether/explore_nether
-    - key: minecraft:adventure/fall_from_world_height
     - key: minecraft:nether/ride_strider
     - key: minecraft:adventure/sniper_duel
     - key: minecraft:story/upgrade_tools
@@ -354,7 +344,6 @@ default_advancements:
     - key: minecraft:story/smelt_iron
     - key: minecraft:story/shiny_gear
     - key: minecraft:adventure/summon_iron_golem
-    - key: minecraft:adventure/avoid_vibration
     - key: minecraft:nether/return_to_sender
     - key: minecraft:adventure/sleep_in_bed
     - key: minecraft:story/enchant_item
