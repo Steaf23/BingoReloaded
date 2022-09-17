@@ -54,6 +54,7 @@ game:
     chat_on: "&fTeam chat staat nu &aaan&r, gebruik {0} om team chat uit te schakelen!" # 0: /btc
   item:
     lore: Verzamel {0} van dit item om deze taak te voltooien! # 0: item count
+    lore_advancement: "Klik voor meer informatie!"
     completed: "{0} is behaald door team {1} op {2}!" # 0: item name, 1: team, 2: completion time
     complete_lore: "Behaald door team {0} \nop {1}" # 0: team, 1: completion time
     deathmatch: "Deathmatch - Vind dit item on te winnen: {0}" # 0: item name

@@ -2,7 +2,6 @@ package io.github.steaf23.bingoreloaded.item.tasks;
 
 import io.github.steaf23.bingoreloaded.GameTimer;
 import io.github.steaf23.bingoreloaded.Message;
-import io.github.steaf23.bingoreloaded.data.AdvancementData;
 import io.github.steaf23.bingoreloaded.data.RecoveryCardData;
 import io.github.steaf23.bingoreloaded.gui.cards.CardBuilder;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
@@ -26,12 +25,35 @@ public abstract class AbstractBingoTask
     private BingoTeam completedBy = null;
 
     public abstract AbstractBingoTask copy();
+
+    /**
+     * @return the key used to store this task in lists.yml
+     */
     public abstract String getKey();
-    // use isComplete() to change the name depending on if the task has been completed.
+
+    /**
+     * Use isComplete() to change the name depending on if the task has been completed.
+     * Used to display task information in the chat.
+     * @return chat component holding the name.
+     */
     public abstract BaseComponent getDisplayName();
-    // Similar to updateItemName. use this method to update the item's NBT.
-    public abstract void updateItemNBT();
-    public abstract List<String> getDescription();
+
+    /**
+     * Used to display task information in the chat.
+     * @return chat component holding the description.
+     */
+    public abstract BaseComponent getDescription();
+
+    /**
+     * @return item lore of the task that will be displayed on the bingo card item.
+     */
+    public abstract List<String> getItemLore();
+
+    /**
+     * Similar to getName. Use this method to update the item's name through NBT.
+     * This means it supports things like translations.
+     */
+    public abstract void updateItemName();
 
     public AbstractBingoTask(Material material, ChatColor nameColor)
     {
@@ -41,11 +63,11 @@ public abstract class AbstractBingoTask
 
     protected void updateItem()
     {
-        updateItemNBT();
+        updateItemName();
         ItemMeta meta = item.getItemMeta();
         if (meta != null)
         {
-            meta.setLore(getDescription());
+            meta.setLore(getItemLore());
             meta.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS, ItemFlag.HIDE_ENCHANTS);
             item.setItemMeta(meta);
         }
@@ -82,7 +104,7 @@ public abstract class AbstractBingoTask
                 .arg(timeString).color(ChatColor.WHITE)
                 .sendAll();
 
-        updateItemNBT();
+        updateItemName();
         ItemMeta meta = item.getItemMeta();
         if (meta != null)
         {

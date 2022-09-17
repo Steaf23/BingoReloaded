@@ -3,18 +3,15 @@ package io.github.steaf23.bingoreloaded;
 import io.github.steaf23.bingoreloaded.data.BingoCardsData;
 import io.github.steaf23.bingoreloaded.data.ConfigData;
 import io.github.steaf23.bingoreloaded.data.RecoveryCardData;
-import io.github.steaf23.bingoreloaded.data.TranslationData;
 import io.github.steaf23.bingoreloaded.gui.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.gui.cards.BingoCard;
 import io.github.steaf23.bingoreloaded.gui.cards.CardBuilder;
 import io.github.steaf23.bingoreloaded.item.BingoCardSlotCompleteEvent;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
-import io.github.steaf23.bingoreloaded.item.ItemNameBuilder;
-import io.github.steaf23.bingoreloaded.item.tasks.ItemTask;
+import io.github.steaf23.bingoreloaded.item.ItemTextBuilder;
 import io.github.steaf23.bingoreloaded.player.BingoTeam;
 import io.github.steaf23.bingoreloaded.player.TeamManager;
 import io.github.steaf23.bingoreloaded.util.FlexibleColor;
-import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.chat.TranslatableComponent;
 import org.bukkit.*;
@@ -36,7 +33,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 import net.md_5.bungee.api.ChatColor;
 
-import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -234,7 +230,7 @@ public class BingoGame implements Listener
 
     public void showDeathMatchItem(Player p)
     {
-        String itemKey = ItemNameBuilder.getTranslateKey(settings.deathMatchItem);
+        String itemKey = ItemTextBuilder.getItemKey(settings.deathMatchItem);
 
         new Message("game.item.deathmatch").color(ChatColor.GOLD)
                 .component(new TranslatableComponent(itemKey))
@@ -335,7 +331,9 @@ public class BingoGame implements Listener
                     Location playerLoc = getRandomSpawnLocation(world);
 
                     p.teleport(playerLoc, PlayerTeleportEvent.TeleportCause.PLUGIN);
-                    p.setBedSpawnLocation(playerLoc, true);
+                    Location bedSpawn = playerLoc.clone();
+                    bedSpawn.setY(bedSpawn.getWorld().getHighestBlockYAt(bedSpawn.getBlockX(), bedSpawn.getBlockZ()) + 2);
+                    p.setBedSpawnLocation(bedSpawn, true);
 
                     if (getTeamManager().getParticipants().size() > 0)
                     {
@@ -363,7 +361,9 @@ public class BingoGame implements Listener
                     for (Player p : teamPlayers)
                     {
                         p.teleport(teamLocation, PlayerTeleportEvent.TeleportCause.PLUGIN);
-                        p.setBedSpawnLocation(teamLocation, true);
+                        Location bedSpawn = teamLocation.clone();
+                        bedSpawn.setY(bedSpawn.getWorld().getHighestBlockYAt(bedSpawn.getBlockX(), bedSpawn.getBlockZ()) + 2);
+                        p.setBedSpawnLocation(bedSpawn, true);
                     }
 
                     if (getTeamManager().getParticipants().size() > 0)
@@ -390,7 +390,9 @@ public class BingoGame implements Listener
                 for (Player p : players)
                 {
                     p.teleport(spawnLocation, PlayerTeleportEvent.TeleportCause.PLUGIN);
-                    p.setBedSpawnLocation(spawnLocation, true);
+                    Location bedSpawn = spawnLocation.clone();
+                    bedSpawn.setY(bedSpawn.getWorld().getHighestBlockYAt(bedSpawn.getBlockX(), bedSpawn.getBlockZ()) + 2);
+                    p.setBedSpawnLocation(bedSpawn, true);
                 }
 
                 if (getTeamManager().getParticipants().size() > 0)
@@ -552,7 +554,7 @@ public class BingoGame implements Listener
         if (event.getCause() != EntityDamageEvent.DamageCause.FALL)
             return;
 
-        if (settings.effects.contains(EffectOptionFlags.NO_FALL_DAMAGE))
+        if (inProgress && settings.effects.contains(EffectOptionFlags.NO_FALL_DAMAGE))
         {
             event.setCancelled(true);
         }

@@ -1,16 +1,14 @@
 package io.github.steaf23.bingoreloaded.item.tasks;
 
 import io.github.steaf23.bingoreloaded.data.TranslationData;
-import io.github.steaf23.bingoreloaded.item.ItemNameBuilder;
-import io.github.steaf23.bingoreloaded.player.BingoTeam;
-import io.github.steaf23.bingoreloaded.util.FlexibleColor;
+import io.github.steaf23.bingoreloaded.item.ItemTextBuilder;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.chat.TranslatableComponent;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
+import org.w3c.dom.Text;
 
 import java.util.Arrays;
 import java.util.List;
@@ -45,48 +43,58 @@ public class ItemTask extends AbstractBingoTask
     @Override
     public BaseComponent getDisplayName()
     {
-        BaseComponent comp = new TranslatableComponent(ItemNameBuilder.getTranslateKey(item.getType()));
+        BaseComponent comp = new TranslatableComponent(ItemTextBuilder.getItemKey(item.getType()));
         if (getCount() > 1 && isComplete())
         {
             comp.addExtra(" (" + getCount() + "x)");
             comp.setColor(ChatColor.GRAY);
             comp.setStrikethrough(true);
-            return comp;
         }
         else
         {
             comp.setColor(nameColor);
-            return comp;
         }
+        return comp;
     }
 
     @Override
-    public void updateItemNBT()
+    public BaseComponent getDescription()
+    {
+        BaseComponent base = new TextComponent();
+        for (var line : getItemLore())
+        {
+            base.addExtra(line);
+        }
+        return base;
+    }
+
+    @Override
+    public List<String> getItemLore()
+    {
+        return Arrays.stream(TranslationData.translate("game.item.lore", "" + getCount()).split("\\n")).toList();
+    }
+
+    @Override
+    public void updateItemName()
     {
         if (isComplete())
         {
             if (getCount() > 1)
             {
-                new ItemNameBuilder(ChatColor.GRAY, false, false, true, false, false)
-                        .translate(ItemNameBuilder.getTranslateKey(item.getType())).text( " (" + getCount() + "x)").build(item);
+                new ItemTextBuilder(ChatColor.GRAY, "strikethrough")
+                        .translate(ItemTextBuilder.getItemKey(item.getType())).text( " (" + getCount() + "x)").buildName(item);
             }
             else
             {
-                new ItemNameBuilder(ChatColor.GRAY, false, false, true, false, false)
-                        .translate(ItemNameBuilder.getTranslateKey(item.getType())).build(item);
+                new ItemTextBuilder(ChatColor.GRAY, "strikethrough")
+                        .translate(ItemTextBuilder.getItemKey(item.getType())).buildName(item);
             }
         }
         else
         {
-            new ItemNameBuilder(nameColor, false, false, false, false, false)
-                    .translate(ItemNameBuilder.getTranslateKey(item.getType())).build(item);
+            new ItemTextBuilder(nameColor)
+                    .translate(ItemTextBuilder.getItemKey(item.getType())).buildName(item);
         }
-    }
-
-    @Override
-    public List<String> getDescription()
-    {
-        return Arrays.stream(TranslationData.translate("game.item.lore", "" + getCount()).split("\\n")).toList();
     }
 
     public static TranslatableComponent getTranslatedName(Material mat, Player player)

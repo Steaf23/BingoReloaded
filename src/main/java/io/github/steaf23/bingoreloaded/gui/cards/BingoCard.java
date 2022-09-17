@@ -9,21 +9,15 @@ import io.github.steaf23.bingoreloaded.data.TranslationData;
 import io.github.steaf23.bingoreloaded.gui.AbstractGUIInventory;
 import io.github.steaf23.bingoreloaded.item.BingoCardSlotCompleteEvent;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
-import io.github.steaf23.bingoreloaded.item.ItemNameBuilder;
 import io.github.steaf23.bingoreloaded.item.tasks.AbstractBingoTask;
 import io.github.steaf23.bingoreloaded.item.tasks.AdvancementTask;
 import io.github.steaf23.bingoreloaded.item.tasks.ItemTask;
 import io.github.steaf23.bingoreloaded.player.BingoTeam;
-import io.github.steaf23.bingoreloaded.util.FlexibleColor;
 import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
-import net.md_5.bungee.api.chat.TranslatableComponent;
-import net.md_5.bungee.chat.ComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
-import org.bukkit.UnsafeValues;
-import org.bukkit.entity.ComplexLivingEntity;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -35,10 +29,8 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerAdvancementDoneEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.nio.file.AtomicMoveNotSupportedException;
 import java.util.*;
 
 public class BingoCard extends AbstractGUIInventory implements Listener
@@ -201,7 +193,22 @@ public class BingoCard extends AbstractGUIInventory implements Listener
     @Override
     public void delegateClick(InventoryClickEvent event, int slotClicked, Player player, ClickType clickType)
     {
-
+        for (int i = 0; i < tasks.size(); i++)
+        {
+            if (size.getCardInventorySlot(i) == slotClicked)
+            {
+                AbstractBingoTask task = tasks.get(i);
+                BaseComponent base = new TextComponent("\n");
+                BaseComponent name = task.getDisplayName();
+                name.setBold(true);
+                BaseComponent desc = task.getDescription();
+                desc.setColor(ChatColor.GRAY);
+                base.addExtra(name);
+                base.addExtra("\n - ");
+                base.addExtra(desc);
+                Message.sendDebug(base, player);
+            }
+        }
     }
 
     public BingoCard copy()

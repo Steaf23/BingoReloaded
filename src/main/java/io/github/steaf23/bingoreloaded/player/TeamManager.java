@@ -113,6 +113,7 @@ public class TeamManager
 
     public void removeEmptyTeams()
     {
+        List<BingoTeam> teamsToRemove = new ArrayList<>();
         for (BingoTeam t : activeTeams)
         {
             boolean remove = true;
@@ -125,8 +126,12 @@ public class TeamManager
             }
             if (remove)
             {
-                activeTeams.remove(t);
+                teamsToRemove.add(t);
             }
+        }
+        for (var team : teamsToRemove)
+        {
+            activeTeams.remove(team);
         }
     }
 

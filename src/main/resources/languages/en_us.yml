@@ -54,6 +54,7 @@ game:
     chat_on: "&fTeam chat is now &aon&r, use {0} to disable it." # 0: /btc
   item:
     lore: Get {0} of this item to complete this task! # 0: item count
+    lore_advancement: "Click to learn more!"
     completed: "Completed {0} by team {1} at {2}" # 0: item name, 1: team, 2: completion time
     complete_lore: "Completed by {0} \nat {1}" # 0: team, 1: completion time
     deathmatch: "DeathMatch - Find this item to win: {0}" # 0: item name

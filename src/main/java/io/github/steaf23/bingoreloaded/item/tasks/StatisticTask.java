@@ -35,13 +35,19 @@ public class StatisticTask extends AbstractBingoTask
     }
 
     @Override
-    public void updateItemNBT()
+    public BaseComponent getDescription()
     {
+        return new TextComponent("Complete the statistic to complete this task!");
     }
 
     @Override
-    public List<String> getDescription()
+    public List<String> getItemLore()
     {
         return List.of("Complete the statistic to complete this task!");
+    }
+
+    @Override
+    public void updateItemName()
+    {
     }
 }

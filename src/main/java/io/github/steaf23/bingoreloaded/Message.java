@@ -130,9 +130,11 @@ public class Message
     public void send(Player player)
     {
         if (finalMessage == null)
+        {
             //TODO: solving placeholders should be done last, however that is quite a bit more complicated
             raw = solvePlaceholders(raw, player);
             createPrefixedMessage();
+        }
         player.spigot().sendMessage(finalMessage);
     }
 
