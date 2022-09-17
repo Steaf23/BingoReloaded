@@ -5,6 +5,8 @@ So, you want to add a translation to Bingo Reloaded? Please read the following i
 - ### Navigate to your plugins folder in the server, then go to `BingoReloaded/languages`.
 - ### Copy and paste the `en_us.yml` file giving it the name of the language.
 - ### Open this file and change the text in "" to what's appropriate!
+- ### Save the file. To test your translation, go to `config/yml` and set the `language` property to teh name of the file you created.
+- ### Reload the server, Bingo Reloaded should now use your translation file!
 - ### If you are satisfied with your translation, be sure to send it to me on my discord server so it can be included for everyone to use in future versions!
 
 ## Additional Features:
