@@ -1,15 +1,16 @@
 package io.github.steaf23.bingoreloaded.data;
 
+import io.github.steaf23.bingoreloaded.Message;
 import io.github.steaf23.bingoreloaded.gui.cards.BingoCard;
 import io.github.steaf23.bingoreloaded.gui.cards.CardBuilder;
 import io.github.steaf23.bingoreloaded.gui.cards.CardSize;
 import io.github.steaf23.bingoreloaded.item.tasks.AbstractBingoTask;
 import io.github.steaf23.bingoreloaded.item.tasks.ItemTask;
 import io.github.steaf23.bingoreloaded.BingoGame;
-import io.github.steaf23.bingoreloaded.BingoGameMode;
-import io.github.steaf23.bingoreloaded.BingoReloaded;
+import io.github.steaf23.bingoreloaded.BingoGamemode;
 import io.github.steaf23.bingoreloaded.player.BingoTeam;
 import io.github.steaf23.bingoreloaded.player.TeamManager;
+import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
@@ -19,20 +20,20 @@ import java.util.*;
 
 public class RecoveryCardData
 {
-    private static final YMLDataManager data = new YMLDataManager("recovered.yml");
+    private static final YmlDataManager data = new YmlDataManager("recovered.yml");
 
     public static boolean loadCards(BingoGame game)
     {
         boolean success = false;
         if (data.getConfig().getBoolean("ended")) return false;
 
-        BingoReloaded.print(ChatColor.GREEN + "The last game did not finish, attempting to recover bingo card...");
-        BingoGameMode mode = BingoGameMode.fromDataString(data.getConfig().getString("gamemode"));
+        Message.log(ChatColor.GREEN + "The last game did not finish, attempting to recover bingo card...");
+        BingoGamemode mode = BingoGamemode.fromDataString(data.getConfig().getString("gamemode"));
         CardSize size = CardSize.fromWidth(data.getConfig().getInt("size"));
 
         if (game.getTeamManager().getActiveTeams().size() == 0)
         {
-            BingoReloaded.print(ChatColor.RED + "Could not resume game, no teams have joined the last game?!");
+            Message.log(ChatColor.RED + "Could not resume game, no teams have joined the last game?!");
             return false;
         }
 
@@ -49,6 +50,12 @@ public class RecoveryCardData
         }
 
         return success;
+    }
+
+    public static void writeDebug(String text)
+    {
+        data.getConfig().set("testString", text);
+        data.saveConfig();
     }
 
     public static boolean fillCard(TeamManager manager, BingoTeam team, BingoCard card)
@@ -82,7 +89,7 @@ public class RecoveryCardData
         return true;
     }
 
-    public static void saveCards(TeamManager manager, BingoGameMode mode, CardSize size)
+    public static void saveCards(TeamManager manager, BingoGamemode mode, CardSize size)
     {
         data.getConfig().set("gamemode", mode.getDataName());
         data.getConfig().set("size", size.cardSize);

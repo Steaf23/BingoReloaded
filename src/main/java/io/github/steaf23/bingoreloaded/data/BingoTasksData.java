@@ -1,6 +1,6 @@
 package io.github.steaf23.bingoreloaded.data;
 
-import io.github.steaf23.bingoreloaded.BingoReloaded;
+import io.github.steaf23.bingoreloaded.Message;
 import io.github.steaf23.bingoreloaded.item.tasks.AbstractBingoTask;
 import io.github.steaf23.bingoreloaded.item.tasks.AdvancementTask;
 import io.github.steaf23.bingoreloaded.item.tasks.ItemTask;
@@ -17,7 +17,7 @@ import java.util.*;
  */
 public class BingoTasksData
 {
-    private static final YMLDataManager data = new YMLDataManager("lists.yml");
+    private static final YmlDataManager data = new YmlDataManager("lists.yml");
 
     public static List<ItemTask> getItemTasks(String listName)
     {
@@ -52,7 +52,7 @@ public class BingoTasksData
                 }
                 catch (IllegalArgumentException exc)
                 {
-                    BingoReloaded.print("ignoring item '" + task.get("key") + "' since it cannot be found!");
+                    Message.log("ignoring item '" + task.get("key") + "' since it cannot be found!");
                 }
             }
         }
@@ -90,7 +90,7 @@ public class BingoTasksData
                 }
                 else
                 {
-                    BingoReloaded.print("ignoring advancement '" + task.get("key") + "' since it cannot be found!");
+                    Message.log("ignoring advancement '" + task.get("key") + "' since it cannot be found!");
                 }
             }
         }
@@ -226,6 +226,7 @@ public class BingoTasksData
 
     public static ItemTask getRandomItemTask(String listName)
     {
+        Message.log("Picking random item from " + listName);
         List<ItemTask> tasks = getItemTasks(listName);
         int idx = new Random().nextInt(tasks.size());
         return tasks.get(idx);

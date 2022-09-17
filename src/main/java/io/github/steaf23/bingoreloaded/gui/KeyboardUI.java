@@ -1,6 +1,8 @@
 package io.github.steaf23.bingoreloaded.gui;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
+import io.github.steaf23.bingoreloaded.Message;
+import io.github.steaf23.bingoreloaded.data.TranslationData;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
 import io.github.steaf23.bingoreloaded.util.BannerBuilder;
 import org.bukkit.Bukkit;
@@ -23,8 +25,8 @@ public abstract class KeyboardUI extends AbstractGUIInventory
     private String keyword;
 
     private static final InventoryItem BG_ITEM = new InventoryItem(Material.BLACK_STAINED_GLASS_PANE, " ", "");
-    private static final InventoryItem CLEAR = new InventoryItem(46, Material.HOPPER, "" + ChatColor.GRAY + ChatColor.BOLD + "Clear", "");
-    private static final InventoryItem ACCEPT = new InventoryItem(49, Material.DIAMOND, "" + ChatColor.AQUA + ChatColor.BOLD + "Accept & Close", "");
+    private static final InventoryItem CLEAR = new InventoryItem(46, Material.HOPPER, "" + ChatColor.GRAY + ChatColor.BOLD + TranslationData.translate("menu.clear"), "");
+    private static final InventoryItem ACCEPT = new InventoryItem(49, Material.DIAMOND, "" + ChatColor.AQUA + ChatColor.BOLD + TranslationData.translate("menu.accept"), "");
 
     private static InventoryItem[] options = new InventoryItem[0];
 
@@ -153,7 +155,7 @@ public abstract class KeyboardUI extends AbstractGUIInventory
 
     public void updateTitle(HumanEntity player)
     {
-        inventory = Bukkit.createInventory(new GUIHolder(), 54, BingoReloaded.PRINT_PREFIX + ChatColor.GOLD + "\"" + keyword + "\"");
+        inventory = Bukkit.createInventory(new GUIHolder(), 54, Message.PREFIX_STRING + ChatColor.GOLD + "\"" + keyword + "\"");
 
         fillOptions(options);
         fillOptions(new InventoryItem[]{

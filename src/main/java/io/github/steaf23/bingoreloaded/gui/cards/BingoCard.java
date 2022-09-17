@@ -2,8 +2,10 @@ package io.github.steaf23.bingoreloaded.gui.cards;
 
 import io.github.steaf23.bingoreloaded.BingoGame;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
+import io.github.steaf23.bingoreloaded.Message;
 import io.github.steaf23.bingoreloaded.data.BingoCardsData;
 import io.github.steaf23.bingoreloaded.data.BingoTasksData;
+import io.github.steaf23.bingoreloaded.data.TranslationData;
 import io.github.steaf23.bingoreloaded.gui.AbstractGUIInventory;
 import io.github.steaf23.bingoreloaded.item.BingoCardSlotCompleteEvent;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
@@ -11,8 +13,10 @@ import io.github.steaf23.bingoreloaded.item.tasks.AbstractBingoTask;
 import io.github.steaf23.bingoreloaded.item.tasks.AdvancementTask;
 import io.github.steaf23.bingoreloaded.item.tasks.ItemTask;
 import io.github.steaf23.bingoreloaded.player.BingoTeam;
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
@@ -40,10 +44,10 @@ public class BingoCard extends AbstractGUIInventory implements Listener
 
     public BingoCard(CardSize size, BingoGame game)
     {
-        super(9 * size.cardSize, "Card Viewer", null);
+        super(9 * size.cardSize, TranslationData.translate("menu.card.title"), null);
         this.size = size;
         this.game = game;
-        InventoryItem cardInfoItem = new InventoryItem(0, Material.MAP, "Regular Bingo Card", "First team to complete 1 line wins.", "Lines can span vertically, horizontally", "or vertically.");
+        InventoryItem cardInfoItem = new InventoryItem(0, Material.MAP, TranslationData.itemName("menu.card.info_regular"), TranslationData.itemDescription("menu.card.info_regular"));
         addOption(cardInfoItem);
 
         BingoReloaded.registerListener(this);
@@ -109,7 +113,8 @@ public class BingoCard extends AbstractGUIInventory implements Listener
     {
         for (int i = 0; i < tasks.size(); i++)
         {
-            addOption(tasks.get(i).item.inSlot(size.getCardInventorySlot(i)));
+            InventoryItem item = tasks.get(i).item.inSlot(size.getCardInventorySlot(i));
+            addOption(item);
         }
 
         open(player);
@@ -117,7 +122,6 @@ public class BingoCard extends AbstractGUIInventory implements Listener
 
     public boolean hasBingo(BingoTeam team)
     {
-        BingoReloaded.print("Your team (" + team.getColor() + team.getName() + ChatColor.RESET + ") has completed " + getCompleteCount(team) + " task(s)!", team);
         //check for rows and columns
         for (int y = 0; y < size.cardSize; y++)
         {
@@ -189,7 +193,22 @@ public class BingoCard extends AbstractGUIInventory implements Listener
     @Override
     public void delegateClick(InventoryClickEvent event, int slotClicked, Player player, ClickType clickType)
     {
-
+        for (int i = 0; i < tasks.size(); i++)
+        {
+            if (size.getCardInventorySlot(i) == slotClicked)
+            {
+                AbstractBingoTask task = tasks.get(i);
+                BaseComponent base = new TextComponent("\n");
+                BaseComponent name = task.getDisplayName();
+                name.setBold(true);
+                BaseComponent desc = task.getDescription();
+                desc.setColor(ChatColor.GRAY);
+                base.addExtra(name);
+                base.addExtra("\n - ");
+                base.addExtra(desc);
+                Message.sendDebug(base, player);
+            }
+        }
     }
 
     public BingoCard copy()
@@ -346,7 +365,10 @@ public class BingoCard extends AbstractGUIInventory implements Listener
             {
                 if (item.getType().equals(itemTask.item.getType()) && item.getAmount() >= itemTask.getCount())
                 {
-                    itemTask.complete(team, game.getGameTime());
+                    if (!itemTask.complete(team, game.getGameTime()))
+                    {
+                        continue;
+                    }
                     item.setAmount(item.getAmount() - itemTask.getCount());
 //                    player.updateInventory();
                     var slotEvent = new BingoCardSlotCompleteEvent(itemTask, team, player, hasBingo(team));

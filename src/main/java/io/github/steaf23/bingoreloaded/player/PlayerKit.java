@@ -1,22 +1,21 @@
 package io.github.steaf23.bingoreloaded.player;
 
 import io.github.steaf23.bingoreloaded.data.ConfigData;
+import io.github.steaf23.bingoreloaded.data.TranslationData;
 import io.github.steaf23.bingoreloaded.gui.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
 import io.github.steaf23.bingoreloaded.item.TimedItem;
 import io.github.steaf23.bingoreloaded.util.FlexibleColor;
 import io.github.steaf23.bingoreloaded.BingoGame;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
@@ -24,16 +23,16 @@ import java.util.List;
 
 public enum PlayerKit
 {
-    HARDCORE(ChatColor.DARK_RED + "Hardcore", EnumSet.noneOf(EffectOptionFlags.class)),
-    NORMAL(ChatColor.YELLOW + "Normal", EnumSet.of(EffectOptionFlags.CARD_SPEED, EffectOptionFlags.NO_FALL_DAMAGE)),
-    OVERPOWERED(ChatColor.DARK_PURPLE + "Overpowered", EnumSet.allOf(EffectOptionFlags.class)),
-    RELOADED(ChatColor.DARK_AQUA + "Reloaded", EnumSet.allOf(EffectOptionFlags.class)),
+    HARDCORE(TranslationData.itemName("menu.kits.hardcore"), EnumSet.noneOf(EffectOptionFlags.class)),
+    NORMAL(TranslationData.itemName("menu.kits.normal"), EnumSet.of(EffectOptionFlags.CARD_SPEED, EffectOptionFlags.NO_FALL_DAMAGE)),
+    OVERPOWERED(TranslationData.itemName("menu.kits.overpowered"), EnumSet.allOf(EffectOptionFlags.class)),
+    RELOADED(TranslationData.itemName("menu.kits.reloaded"), EnumSet.allOf(EffectOptionFlags.class)),
     ;
 
     public final TimedItem wandItem = new TimedItem(new InventoryItem(
             Material.WARPED_FUNGUS_ON_A_STICK,
-            "" + ChatColor.DARK_PURPLE + ChatColor.ITALIC + ChatColor.BOLD + "The Go-Up-Wand",
-            "Right-Click To Teleport Upwards!"
+            "" + ChatColor.DARK_PURPLE + ChatColor.ITALIC + ChatColor.BOLD + TranslationData.itemName("items.wand"),
+            TranslationData.itemDescription("items.wand")
     ).withEnchantment(Enchantment.DURABILITY, 3), (int)(ConfigData.getConfig().wandCooldown * 1000))
     {
         @Override
@@ -59,13 +58,22 @@ public enum PlayerKit
             player.teleport(newLocation, PlayerTeleportEvent.TeleportCause.CHORUS_FRUIT);
             newLocation.setY(newLocation.getY() - fallDistance);
             BingoGame.spawnPlatform(newLocation, 1);
+
+            new BukkitRunnable() {
+                @Override
+                public void run()
+                {
+                    BingoGame.removePlatform(newLocation, 1);
+                }
+            }.runTaskLater(Bukkit.getPluginManager().getPlugin(BingoReloaded.NAME),
+                    Math.max(0, ConfigData.getConfig().platformLifetime) * BingoReloaded.ONE_SECOND);
         }
     };
 
     public final InventoryItem cardItem = new InventoryItem(8,
             Material.MAP,
-            "" + ChatColor.DARK_PURPLE + ChatColor.ITALIC + ChatColor.BOLD + "Bingo Card",
-            "Click To Open The Bingo Card!");
+            "" + ChatColor.DARK_PURPLE + ChatColor.ITALIC + ChatColor.BOLD + TranslationData.itemName("items.card"),
+            TranslationData.itemDescription("items.card"));
 
     public final String displayName;
     public final EnumSet<EffectOptionFlags> defaultEffects;
@@ -82,7 +90,7 @@ public enum PlayerKit
         LeatherArmorMeta helmetMeta = (LeatherArmorMeta) helmet.getItemMeta();
         if (helmetMeta != null)
         {
-            helmetMeta.setColor(teamColor.rgbColor);
+            helmetMeta.setColor(FlexibleColor.toBukkitColor(teamColor.chatColor.getColor()));
         }
         helmet.setItemMeta(helmetMeta);
 
@@ -90,7 +98,7 @@ public enum PlayerKit
         LeatherArmorMeta bootMeta = (LeatherArmorMeta) boots.getItemMeta();
         if (bootMeta != null)
         {
-            bootMeta.setColor(teamColor.rgbColor);
+            bootMeta.setColor(FlexibleColor.toBukkitColor(teamColor.chatColor.getColor()));
         }
         boots.setItemMeta(bootMeta);
 
@@ -107,7 +115,7 @@ public enum PlayerKit
                 items.add(new InventoryItem(0, Material.IRON_AXE, ""));
                 items.add(new InventoryItem(2, Material.IRON_SHOVEL, "")
                         .withEnchantment(Enchantment.SILK_TOUCH, 1));
-                items.add(new InventoryItem(3, Material.BAKED_POTATO, "")
+                items.add(new InventoryItem(3, Material.COOKED_PORKCHOP, "")
                         .withAmount(32));
                 return items;
             }

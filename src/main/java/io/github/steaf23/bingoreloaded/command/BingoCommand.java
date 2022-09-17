@@ -1,11 +1,12 @@
 package io.github.steaf23.bingoreloaded.command;
 
 import io.github.steaf23.bingoreloaded.BingoGame;
-import io.github.steaf23.bingoreloaded.BingoReloaded;
+import io.github.steaf23.bingoreloaded.Message;
 import io.github.steaf23.bingoreloaded.data.ConfigData;
 import io.github.steaf23.bingoreloaded.gui.BingoOptionsUI;
 import io.github.steaf23.bingoreloaded.gui.creator.CardCreatorUI;
-import org.bukkit.ChatColor;
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -28,10 +29,15 @@ public class BingoCommand implements CommandExecutor
         {
             switch (args[0])
             {
+                case "join":
+                    if (!(commandSender instanceof Player player && player.hasPermission("bingo.player"))) return false;
+
+                    gameInstance.getTeamManager().openTeamSelector(player, null);
+                    break;
                 case "leave":
                     if (!(commandSender instanceof Player player && player.hasPermission("bingo.player"))) return false;
 
-                    gameInstance.getTeamManager().playerQuit(player);
+                    gameInstance.playerQuit(player);
                     break;
 
                 case "start":
@@ -80,9 +86,9 @@ public class BingoCommand implements CommandExecutor
                     else
                     {
                         if (commandSender instanceof Player p)
-                            BingoReloaded.print(ChatColor.RED + "Cannot start a death match when there is no game active!", p);
+                            new Message("command.bingo.no_deathmatch").color(ChatColor.RED).send(p);
                         else
-                            BingoReloaded.print(ChatColor.RED + "Cannot start a death match when there is no game active!");
+                            Message.log("command.bingo.no_deathmatch");
                     }
                     break;
 
@@ -96,9 +102,9 @@ public class BingoCommand implements CommandExecutor
 
                 default:
                     if (commandSender instanceof Player p)
-                        BingoReloaded.print(ChatColor.RED + "Usage: /bingo [getcard | start | end | leave | deathmatch | creator]", p);
+                        new Message("command.use").color(ChatColor.RED).arg("/bingo [getcard | start | end | join | back | leave | deathmatch | creator]").send(p);
                     else
-                        BingoReloaded.print(ChatColor.RED + "Usage: /bingo [start | end | deathmatch]");
+                        Message.log(ChatColor.RED + "Usage: /bingo [start | end | deathmatch]");
                     break;
             }
         }

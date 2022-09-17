@@ -1,8 +1,16 @@
 package io.github.steaf23.bingoreloaded.item.tasks;
 
-import org.bukkit.ChatColor;
+import io.github.steaf23.bingoreloaded.data.TranslationData;
+import io.github.steaf23.bingoreloaded.item.ItemTextBuilder;
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.chat.TranslatableComponent;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
+import org.w3c.dom.Text;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class ItemTask extends AbstractBingoTask
@@ -33,34 +41,73 @@ public class ItemTask extends AbstractBingoTask
     }
 
     @Override
-    public String getDisplayName()
+    public BaseComponent getDisplayName()
     {
+        BaseComponent comp = new TranslatableComponent(ItemTextBuilder.getItemKey(item.getType()));
         if (getCount() > 1 && isComplete())
-            return convertToReadableName(item.getType()) + "(" + getCount() + "x)";
+        {
+            comp.addExtra(" (" + getCount() + "x)");
+            comp.setColor(ChatColor.GRAY);
+            comp.setStrikethrough(true);
+        }
         else
-            return convertToReadableName(item.getType());
+        {
+            comp.setColor(nameColor);
+        }
+        return comp;
     }
 
     @Override
-    public List<String> getDescription()
+    public BaseComponent getDescription()
     {
-        return List.of("Get " + getCount() + " of this item to complete this task!");
+        BaseComponent base = new TextComponent();
+        for (var line : getItemLore())
+        {
+            base.addExtra(line);
+        }
+        return base;
+    }
+
+    @Override
+    public List<String> getItemLore()
+    {
+        return Arrays.stream(TranslationData.translate("game.item.lore", "" + getCount()).split("\\n")).toList();
+    }
+
+    @Override
+    public void updateItemName()
+    {
+        if (isComplete())
+        {
+            if (getCount() > 1)
+            {
+                new ItemTextBuilder(ChatColor.GRAY, "strikethrough")
+                        .translate(ItemTextBuilder.getItemKey(item.getType())).text( " (" + getCount() + "x)").buildName(item);
+            }
+            else
+            {
+                new ItemTextBuilder(ChatColor.GRAY, "strikethrough")
+                        .translate(ItemTextBuilder.getItemKey(item.getType())).buildName(item);
+            }
+        }
+        else
+        {
+            new ItemTextBuilder(nameColor)
+                    .translate(ItemTextBuilder.getItemKey(item.getType())).buildName(item);
+        }
+    }
+
+    public static TranslatableComponent getTranslatedName(Material mat, Player player)
+    {
+        String result = "";
+        TranslatableComponent name = new TranslatableComponent("item." + mat.name().toLowerCase() + ".name");
+
+        return name;
     }
 
     public int getCount()
     {
         return item.getAmount();
-    }
-
-    public static String convertToReadableName(Material m)
-    {
-        String[] nameParts = m.name().split("_");
-        String name = "";
-        for (String section : nameParts)
-        {
-            name += capitalize(section) + " ";
-        }
-        return name.trim();
     }
 
     private static String capitalize(String str)

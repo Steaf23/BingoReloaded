@@ -1,6 +1,7 @@
 package io.github.steaf23.bingoreloaded.gui;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
+import io.github.steaf23.bingoreloaded.Message;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -35,7 +36,7 @@ public abstract class AbstractGUIInventory
     {
         this.parent = parent;
 
-        inventory = Bukkit.createInventory(new GUIHolder(), size, BingoReloaded.PRINT_PREFIX + ChatColor.DARK_RED + title);
+        inventory = Bukkit.createInventory(new GUIHolder(), size, Message.PREFIX_STRING + ChatColor.DARK_RED + title);
         UIManager.addInventory(this);
     }
 

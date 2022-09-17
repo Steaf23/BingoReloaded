@@ -1,9 +1,9 @@
 package io.github.steaf23.bingoreloaded.command;
 
-import io.github.steaf23.bingoreloaded.BingoReloaded;
+import io.github.steaf23.bingoreloaded.Message;
 import io.github.steaf23.bingoreloaded.data.BingoCardsData;
 import io.github.steaf23.bingoreloaded.gui.creator.CardEditorUI;
-import org.bukkit.ChatColor;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -25,23 +25,16 @@ public class CardCommand implements CommandExecutor
         {
             switch (args[0])
             {
-                case "list":
-                    if (commandSender instanceof Player p)
-                        BingoReloaded.print("These are all existing cards: " + ChatColor.GOLD + BingoCardsData.getCardNames(), p);
-                    else if (commandSender instanceof ConsoleCommandSender cmd)
-                    {
-                        BingoReloaded.print("These are all existing cards: " + BingoCardsData.getCardNames());
-                    }
-                    break;
-
                 case "create":
+                    if (!(commandSender instanceof Player p))
+                        break;
                     if (args.length < 2)
                     {
-                        BingoReloaded.broadcast(ChatColor.RED + "Please provide card name: /card create <card_name>");
+                        new Message("command.card.no_name").arg("/card create <card_name>").send(p);
                         break;
                     }
-                    if (commandSender instanceof Player p)
-                        editCard(args[1], p);
+
+                    editCard(args[1], p);
                     break;
 
                 case "remove":
@@ -49,37 +42,37 @@ public class CardCommand implements CommandExecutor
                     {
                         if (args.length < 2)
                         {
-                            BingoReloaded.print(ChatColor.RED + "Please provide card name: /card remove <card_name>", p);
+                            new Message("command.card.no_name").arg("/card remove <card_name>").send(p);
                             break;
                         }
 
                         if (BingoCardsData.removeCard(args[1]))
-                            BingoReloaded.print("Card '" + args[1] + "' successfully removed!", p);
+                            new Message("command.card.removed").arg(args[1]).send(p);
                         else
-                            BingoReloaded.print("Card couldn't be found, make sure its spelled correctly!", p);
+                            new Message("command.card.no_remove").arg(args[1]).send(p);
                         break;
                     }
                     else if (commandSender instanceof ConsoleCommandSender)
                     {
                         if (args.length < 2)
                         {
-                            BingoReloaded.print(ChatColor.RED + "Please provide card name: /card remove <card_name>");
+                            Message.log(ChatColor.RED + "Please provide card name: /card remove <card_name>");
                             break;
                         }
 
                         if (BingoCardsData.removeCard(args[1]))
-                            BingoReloaded.print("Card '" + args[1] + "' successfully removed!");
+                            Message.log("Card '" + args[1] + "' successfully removed!");
                         else
-                            BingoReloaded.print("Card couldn't be found, make sure its spelled correctly!");
+                            Message.log("Card couldn't be found, make sure its spelled correctly!");
                         break;
                     }
                     break;
 
                 default:
                     if (commandSender instanceof Player player)
-                        BingoReloaded.print(ChatColor.RED + "Usage: /card [create | remove]", player);
+                        new Message("command.usage").color(ChatColor.RED).arg("/card [create | remove]");
                     else
-                        BingoReloaded.print(ChatColor.RED + "Usage: /card [create | remove]");
+                        Message.log(ChatColor.RED + "Usage: /card [create | remove]");
                     break;
             }
         }

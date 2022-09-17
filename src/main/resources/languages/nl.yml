@@ -1,0 +1,181 @@
+name: "Nederlands"
+changed: "Taal staat op Nederlands!"
+command:
+  use: "Gebruik: {0}" # 0: cmd usage
+  bingo:
+    use: "Gebruik: {0}" # 0: /bingo usage
+    no_deathmatch: "Er kan geen deathmatch gestart worden als er geen bingo spel loopt!"
+  card:
+    no_name: "Geef de naam van de kaart op: {0}" # 0: command
+    no_remove: "'{0}' kan niet verwijderd worden, weet je zeker dat de naam klopt?" # 0: card name
+    removed: "'{0}' is succesvol verwijderd!" # 0: card name
+  list:
+    no_name: "Geef de naam van de lijst op: {0}" # 0: command
+    no_remove: "'{0}' kan niet verwijderd worden, weet je zeker dat de naam klopt?" # 0: item list name
+    removed: "'{0}' is succesvol verwijderd!" # 0: item list name
+game:
+  settings:
+    kit_selected: "De {0} player kit is geselecteerd" # 0: selected kit (see "kit") below
+    effects_selected: "Effect opties zijn geselecteerd, bekijk ze in met /bingo"
+    regular_selected: "Regular Bingo is geselecteerd. Maak 1 rij vol om te winnen (horizontaal, verticaal of diagonaal)!"
+    lockout_selected: "Lockout Bingo is geselecteerd. Strijd om de meeste taken te voltooien en speel je tegenstanders weg!"
+    complete_selected: "Complete-All Bingo is geselecteerd. Het team dat alle taken het snelst voltooid wint!"
+    card_selected: "Selected '{0}' as the playing Bingo card!" # 0: card name
+    cardsize: "Gekozen bingo kaart dimensies: {0}" # 0: card size
+  start:
+    no_players: "Bingo kan niet gestart worden als er niemand gejoined is :(."
+    already_started: "Bingo kan niet gestart worden omdat er al een spel bezig is"
+    give_cards: "Alle kits en bingo kaarten worden nu uitgedeeld!"
+    no_card: "Bingo kan niet gestart worden met de kaart '{0}' want deze kaart bestaat niet!" # 0: card_name
+  end:
+    bingo: "Gefeliciteerd, team {0} heeft het spel gewonnen!" # 0: winning team
+    duration: "Speelduur: {0}" # 0: total game time
+    restart:
+      prefix: "&a&o&lHet spel is beëindigd! Om opnieuw te starten, klik "
+      hoverable: "&c&oHier!"
+      hover: "&a&o&lKlik om een nieuw spel met dezelfde regels en teams te starten"
+      suffix: ""
+  player:
+    leave: "je bent uit het spel verwijderd, gebruik {0} om weer mee te kunnen doen" # 0: /bingo command
+    no_start: "Het spel is nog niet begonnen!"
+    cooldown: "Je kan dit item niet gebruiken voor {0} seconden!" # 0: time left
+    join_back: "Welkom terug, het spel is nog niet over!"
+    respawn:
+      prefix: ""
+      hoverable: "&3&lKlik hier om terug te gaan naar waar je dood bent gegaan!"
+      hover: ""
+      suffix: ""
+  team:
+    no_join: "Je kan niet midden in een spel meedoen!"
+    join: "Je zit nu in team {0}!" # 0: team name
+    dropped: "Team {0} kan niet meer winnen, zij zijn uit het spel!" # 0: team name
+    no_chat: "Team chat kan niet uit/aan gezet worden, omdat je niet in een team zit..."
+    chat_off: "&fTeam chat staat nu &cuit&r, gebruik {0} om team chat aan te zetten!" # 0: /btc
+    chat_on: "&fTeam chat staat nu &aaan&r, gebruik {0} om team chat uit te schakelen!" # 0: /btc
+  item:
+    lore: Verzamel {0} van dit item om deze taak te voltooien! # 0: item count
+    lore_advancement: "Klik voor meer informatie!"
+    completed: "{0} is behaald door team {1} op {2}!" # 0: item name, 1: team, 2: completion time
+    complete_lore: "Behaald door team {0} \nop {1}" # 0: team, 1: completion time
+    deathmatch: "Deathmatch - Vind dit item on te winnen: {0}" # 0: item name
+    cooldown: "Je kan dit item niet gebruiken voor {0} seconden!" # 0: seconds
+menu:
+  save: "Opslaan"
+  exit: "Sluit Menu"
+  save_exit: "Opslaan && Sluiten"
+  accept: "Accepteer && Terug"
+  next: "Volgende"
+  prev: "Vorige"
+  filter: "Filter..."
+  clear: "Wis Filter"
+  completed: "Taken Voltooid"
+  card:
+    title: "Bingo Kaart"
+    info_regular:
+      name: "Bingo Kaart"
+      desc: "Het eerste team dat 1 lijn voltooid wint het spel. \nLijnen kunnen verticaal, horizontaal \nof diagonaal zijn."
+    info_lockout:
+      name: "Lockout Bingo Kaart"
+      desc: "Voltooi de meeste taken om te winnen. \nWanneer een taak door een team voltooid is \nkan niemand anders meer dezelfde taak voltooien."
+    info_complete:
+      name: "Volle Bingo Kaart"
+      desc: "Het eerste team met een volle kaart wint."
+  options:
+    title: "Opties"
+    start:
+      name: "Start Het Spel"
+    end:
+      name: "Beëindig Het Spel"
+    team:
+      name: "Kies Een Team"
+    leave:
+      name: "Verlaat Het Spel"
+    kit:
+      name: "Kies Kits"
+    card:
+      name: "Kies De Kaart"
+    mode:
+      name: "Kies De Gamemode"
+    effects:
+      name: "Effecten"
+  effects:
+    enable: "Klik on dit effect AAN te zetten."
+    disable: "Klik om dit effect UIT te zetten."
+    enabled: "AAN"
+    disabled: "UIT"
+    night_vision: "Night Vision"
+    water_breath: "Water Breathing"
+    fire_res: "Fire Resistance"
+    no_fall_dmg: "Geen Fall Damage"
+    card_speed: "Speed Als Je De Kaart Vasthoud"
+  kits:
+    hardcore:
+      name: "&4Hardcore"
+      desc: "Deze kit bevat: \n
+      \n
+          - Niks, veel succes!"
+    normal:
+      name: "&eNormal"
+      desc: "Deze kit bevat: \n
+      \n
+          - Iron Axe \n
+          - Iron Pickaxe \n
+          - Iron Shovel (Silk Touch) \n
+          - 32 baked Potatoes \n
+          - Leather Helmet \n
+          - Leather Boots"
+    overpowered:
+      name: "&5Overpowered"
+      desc: "Deze kit bevat: \n
+      \n
+          - Netherite Axe \n
+          - Netherite Pickaxe (Fortune) \n
+          - Netherite Shovel (Silk Touch) \n
+          - 64 Golden Carrots \n
+          - The Go-Up-Wand \n
+          - Leather Helmet \n
+          - Leather Boots"
+    reloaded:
+      name: "&3Reloaded"
+      desc: "Deze kit bevat: \n
+      \n
+          - Netherite Axe \n
+          - Netherite Pickaxe (Fortune) \n
+          - Netherite Shovel (Silk Touch) \n
+          - 64 Golden Carrots \n
+          - The Go-Up-Wand \n
+          - Leather Helmet \n
+          - Elytra (Unbreaking X) \n
+          - Leather Boots"
+items:
+  card:
+    name: "Bingo Kaart"
+    desc: "Klik om de kaart te openen!"
+  wand:
+    name: "The Go-Up-Wand"
+    desc: "Teleporteer omhoog met rechter-muisklik! \n(& gebruik shift om naar beneden te gaan)"
+creator:
+  card_item:
+    desc: "Bevat {0} lijst(en)" # 0: list count
+teams:
+  brown: "Bruin"
+  orange: "Oranje"
+  pink: "Roze"
+  red: "Rood"
+  white: "Wit"
+  lime: "Lichtgroen"
+  green: "Groen"
+  gray: "Grijs"
+  light_gray: "Lichtgrijs"
+  black: "Zwart"
+  yellow: "Geel"
+  magenta: "Magenta"
+  cyan: "Cyaan"
+  blue: "Blauw"
+  purple: "Paars"
+  light_blue: "Lightblauw"
+kits:
+  hardcore: "&4Hardcore"
+  normal: "&eNormal"
+  overpowered: "&5Overpowered"
+  reloaded: "&3Reloaded"

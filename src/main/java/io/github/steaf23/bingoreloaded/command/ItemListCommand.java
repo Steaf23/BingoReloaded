@@ -1,13 +1,13 @@
 package io.github.steaf23.bingoreloaded.command;
 
-import io.github.steaf23.bingoreloaded.BingoReloaded;
+import io.github.steaf23.bingoreloaded.Message;
 import io.github.steaf23.bingoreloaded.data.BingoTasksData;
 import io.github.steaf23.bingoreloaded.gui.FilterType;
 import io.github.steaf23.bingoreloaded.gui.ListPickerUI;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
 import io.github.steaf23.bingoreloaded.item.tasks.ItemTask;
 import io.github.steaf23.bingoreloaded.util.FlexibleColor;
-import org.bukkit.ChatColor;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -38,23 +38,16 @@ public class ItemListCommand implements CommandExecutor
         {
             switch (args[0])
             {
-                case "list":
-                    if (commandSender instanceof Player p)
-                        BingoReloaded.print("These are all existing lists: " + ChatColor.GOLD + BingoTasksData.getListNames(), p);
-                    else if (commandSender instanceof ConsoleCommandSender cmd)
-                    {
-                        BingoReloaded.print("These are all existing lists: " + BingoTasksData.getListNames());
-                    }
-                    break;
-
                 case "create":
+                    if (!(commandSender instanceof Player p))
+                        break;
                     if (args.length < 2)
                     {
-                        BingoReloaded.broadcast(ChatColor.RED + "Please provide item list name: /itemlist create <list_name>");
+                        new Message("command.list.no_name").color(ChatColor.DARK_RED).arg("/itemlist create <list_name>").send(p);
                         break;
                     }
-                    if (commandSender instanceof Player p)
-                        editList(args[1], p);
+
+                    editList(args[1], p);
                     break;
 
                 case "remove":
@@ -62,38 +55,36 @@ public class ItemListCommand implements CommandExecutor
                     {
                         if (args.length < 2)
                         {
-                            BingoReloaded.print(ChatColor.RED + "Please provide item list name: /itemlist remove <list_name>", p);
+                            new Message("command.list.no_name").arg("/itemlist remove <list_name>").send(p);
                             break;
                         }
-
                         if (BingoTasksData.removeList(args[1]))
-                            BingoReloaded.print("Item list '" + args[1] + "' successfully removed!", p);
+                            new Message("command.itemlist.removed").arg(args[1]).send(p);
                         else
-                            BingoReloaded.print("Item list couldn't be found, make sure its spelled correctly!", p);
+                            new Message("command.itemlist.no_remove").arg(args[1]).send(p);
                         break;
                     }
                     else if (commandSender instanceof ConsoleCommandSender)
                     {
                         if (args.length < 2)
                         {
-                            BingoReloaded.print(ChatColor.RED + "Please provide item list name: /itemlist remove <item_list>");
+                            new Message("Please provide item list name: /itemlist remove <item_list>").color(ChatColor.RED);
                             break;
                         }
 
                         if (BingoTasksData.removeList(args[1]))
-                            BingoReloaded.print("Item list '" + args[1] + "' successfully removed!");
+                            Message.log("Item list '" + args[1] + "' successfully removed!");
                         else
-                            BingoReloaded.print("Item list couldn't be found, make sure its spelled correctly!");
+                            Message.log("Item list couldn't be found, make sure its spelled correctly!");
                         break;
                     }
-
                     break;
 
                 default:
                     if (commandSender instanceof Player player)
-                        BingoReloaded.print(ChatColor.RED + "Usage: /itemlist [list | create | remove]", player);
+                        new Message("command.usage").color(ChatColor.RED).arg("/itemlist [list | create | remove]").send(player);
                     else
-                        BingoReloaded.print(ChatColor.RED + "Usage: /itemlist [list | create | remove]");
+                        Message.log(ChatColor.RED + "Usage: /itemlist [list | create | remove]");
                     break;
             }
         }

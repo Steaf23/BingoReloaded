@@ -1,6 +1,7 @@
 package io.github.steaf23.bingoreloaded.gui;
 
 import io.github.steaf23.bingoreloaded.BingoGame;
+import io.github.steaf23.bingoreloaded.data.TranslationData;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -21,26 +22,22 @@ public class EffectOptionsUI extends AbstractGUIInventory
 
     public EffectOptionsUI(AbstractGUIInventory parent, BingoGame game)
     {
-        super(45, "Choose gameplay effects", parent);
+        super(45, TranslationData.translate("menu.options.effects.name"), parent);
         this.game = game;
 
         options = new InventoryItem[]{
                 new InventoryItem(GUIBuilder5x9.OptionPositions.FIVE_TOP_WIDE.positions[0],
-                        Material.CARROT, "" + ChatColor.RED + ChatColor.BOLD + EffectOptionFlags.NIGHT_VISION.name + " DISABLED",
-                        ChatColor.RED + "Click to enable this option"),
+                        Material.CARROT, ""),
                 new InventoryItem(GUIBuilder5x9.OptionPositions.FIVE_TOP_WIDE.positions[1],
-                        Material.PUFFERFISH, "" + ChatColor.RED + ChatColor.BOLD + EffectOptionFlags.WATER_BREATHING.name + " DISABLED",
-                        ChatColor.RED + "Click to enable this option"),
+                        Material.PUFFERFISH, ""),
                 new InventoryItem(GUIBuilder5x9.OptionPositions.FIVE_TOP_WIDE.positions[2],
-                        Material.MAGMA_CREAM, "" + ChatColor.RED + ChatColor.BOLD + EffectOptionFlags.FIRE_RESISTANCE.name + " DISABLED",
-                        ChatColor.RED + "Click to enable this option"),
+                        Material.MAGMA_CREAM, ""),
                 new InventoryItem(GUIBuilder5x9.OptionPositions.FIVE_TOP_WIDE.positions[3],
-                        Material.NETHERITE_BOOTS, "" + ChatColor.RED + ChatColor.BOLD + EffectOptionFlags.NO_FALL_DAMAGE.name + " DISABLED",
-                        ChatColor.RED + "Click to enable this option"),
+                        Material.NETHERITE_BOOTS, ""),
                 new InventoryItem(GUIBuilder5x9.OptionPositions.FIVE_TOP_WIDE.positions[4],
-                        Material.FEATHER, "" + ChatColor.RED + ChatColor.BOLD + EffectOptionFlags.CARD_SPEED.name + " DISABLED",
-                        ChatColor.RED + "Click to enable this option"),
-                new InventoryItem(44, Material.DIAMOND, "Save and exit")
+                        Material.FEATHER, ""),
+                new InventoryItem(44, Material.DIAMOND,
+                        "" + ChatColor.AQUA + ChatColor.BOLD + TranslationData.translate("menu.save_exit"))
         };
         fillOptions(options);
 
@@ -85,13 +82,13 @@ public class EffectOptionsUI extends AbstractGUIInventory
             {
                 if (flags.contains(EffectOptionFlags.values()[i]))
                 {
-                    meta.setDisplayName("" + ChatColor.GREEN + ChatColor.BOLD + EffectOptionFlags.values()[i].name + " ENABLED");
-                    meta.setLore(List.of(ChatColor.GREEN + "Click to DISABLE this option"));
+                    meta.setDisplayName("" + ChatColor.GREEN + ChatColor.BOLD + EffectOptionFlags.values()[i].name + " " + TranslationData.translate("menu.effects.enabled"));
+                    meta.setLore(List.of(ChatColor.GREEN + TranslationData.translate("menu.effects.disable")));
                 }
                 else
                 {
-                    meta.setDisplayName("" + ChatColor.RED + ChatColor.BOLD + EffectOptionFlags.values()[i].name + " DISABLED");
-                    meta.setLore(List.of(ChatColor.RED + "Click to ENABLE this option"));
+                    meta.setDisplayName("" + ChatColor.RED + ChatColor.BOLD + EffectOptionFlags.values()[i].name + " " + TranslationData.translate("menu.effects.disabled"));
+                    meta.setLore(List.of(ChatColor.RED + TranslationData.translate("menu.effects.enable")));
                 }
             }
             options[i].setItemMeta(meta);

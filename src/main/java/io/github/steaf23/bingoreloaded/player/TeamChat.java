@@ -1,8 +1,10 @@
 package io.github.steaf23.bingoreloaded.player;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
+import io.github.steaf23.bingoreloaded.Message;
+import io.github.steaf23.bingoreloaded.util.FlexibleColor;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -57,7 +59,7 @@ public class TeamChat implements Listener, CommandExecutor
 
             if (!member.isOnline()) continue;
 
-            member.sendMessage(ChatColor.DARK_RED + "[" + team.getColor() + ChatColor.BOLD + team.getName() + ChatColor.DARK_RED + "]" +
+            member.sendMessage(ChatColor.DARK_RED + "[" + team.getColor() + ChatColor.BOLD + FlexibleColor.fromName(team.getName()).getTranslation() + ChatColor.DARK_RED + "]" +
                     ChatColor.RESET  + "<" + player.getName() + "> " + message);
         }
     }
@@ -69,19 +71,19 @@ public class TeamChat implements Listener, CommandExecutor
         {
             if (!teamManager.getParticipants().contains(p))
             {
-                BingoReloaded.print(ChatColor.RED + "Can't toggle team chat since you aren't in a team!");
+                new Message("game.team.no_chat").color(ChatColor.RED).send(p);
                 return false;
             }
 
             if (enabledPlayers.contains(p))
             {
                 enabledPlayers.remove(p);
-                BingoReloaded.print(ChatColor.RED + "Disabled team chat, use /btc to enable it again.", p);
+                new Message("game.team.chat_off").color(ChatColor.GREEN).arg("/btc").send(p);
             }
             else
             {
                 enabledPlayers.add(p);
-                BingoReloaded.print(ChatColor.GREEN + "Enabled team chat, use /btc to disable it.", p);
+                new Message("game.team.chat_on").color(ChatColor.GREEN).arg("/btc").send(p);
             }
         }
         return false;

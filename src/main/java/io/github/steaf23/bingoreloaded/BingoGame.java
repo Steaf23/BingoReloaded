@@ -8,11 +8,12 @@ import io.github.steaf23.bingoreloaded.gui.cards.BingoCard;
 import io.github.steaf23.bingoreloaded.gui.cards.CardBuilder;
 import io.github.steaf23.bingoreloaded.item.BingoCardSlotCompleteEvent;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
-import io.github.steaf23.bingoreloaded.item.tasks.ItemTask;
+import io.github.steaf23.bingoreloaded.item.ItemTextBuilder;
 import io.github.steaf23.bingoreloaded.player.BingoTeam;
 import io.github.steaf23.bingoreloaded.player.TeamManager;
 import io.github.steaf23.bingoreloaded.util.FlexibleColor;
 import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.chat.TranslatableComponent;
 import org.bukkit.*;
 import org.bukkit.block.Biome;
 import org.bukkit.entity.Player;
@@ -30,11 +31,12 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
+import net.md_5.bungee.api.ChatColor;
 
-import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 public class BingoGame implements Listener
 {
@@ -43,7 +45,7 @@ public class BingoGame implements Listener
     private final BingoScoreboard scoreboard;
     private final GameTimer timer;
     private BingoGameSettings settings;
-    private final Map<String, Location> deadPlayers;
+    private final Map<UUID, Location> deadPlayers;
     private static final int TELEPORT_DISTANCE = ConfigData.getConfig().teleportMaxDistance;
 
     public BingoGame()
@@ -61,19 +63,19 @@ public class BingoGame implements Listener
     {
         if (!BingoCardsData.getCardNames().contains(settings.card))
         {
-            BingoReloaded.broadcast("Cannot start game with the card '" + settings.card + "' because it does not exist!");
+            new Message("game.start.no_card").color(ChatColor.RED).arg(settings.card).sendAll();
             return;
         }
 
         // Pre-start Setup
         if (getTeamManager().getParticipants().size() <= 0)
         {
-            BingoReloaded.broadcast("" + ChatColor.RED + ChatColor.ITALIC + ChatColor.BOLD + "Bingo could not be started since nobody joined :(");
+            new Message("game.start.no_players").color(ChatColor.RED).sendAll();
             return;
         }
         if (inProgress)
         {
-            BingoReloaded.broadcast("" + ChatColor.RED + ChatColor.ITALIC + ChatColor.BOLD + "Cannot start a game of Bingo when there is already one active!");
+            new Message("game.start.already_started").color(ChatColor.RED).sendAll();
             return;
         }
 
@@ -91,7 +93,7 @@ public class BingoGame implements Listener
         masterCard.generateCard(settings.card);
         getTeamManager().initializeCards(masterCard);
 
-        BingoReloaded.broadcast(ChatColor.GREEN + "Giving all participants Kits and Cards!");
+        new Message("game.start.give_cards").sendAll();
         Set<Player> players = getTeamManager().getParticipants();
         players.forEach(this::givePlayerKit);
         players.forEach(this::returnCardToPlayer);
@@ -102,6 +104,7 @@ public class BingoGame implements Listener
 
         // Post-start Setup
         scoreboard.resetBoards();
+        scoreboard.updateItemCount();
         timer.start();
     }
 
@@ -115,32 +118,24 @@ public class BingoGame implements Listener
     {
         settings.deathMatchItem = null;
         timer.stop();
-        if(inProgress)
-        {
-            inProgress = false;
-            TextComponent[] commandMessage = BingoReloaded.createHoverCommandMessage(
-                    "Game has ended! Click to ",
-                    "Restart!",
-                    "",
-                    "/bingo start",
-                    "Click to restart using the same rules!");
-            Set<Player> players = getTeamManager().getParticipants();
-            players.forEach(p -> p.spigot().sendMessage(commandMessage));
-            BingoReloaded.broadcast(ChatColor.GREEN + "Game Duration: " + ChatColor.GRAY + ChatColor.ITALIC + GameTimer.getTimeAsString(timer.getTime()));
-            RecoveryCardData.markCardEnded(true);
-            players.forEach(p -> takePlayerEffects(p));
-            scoreboard.resetBoards();
-        }
-        else
-        {
-            BingoReloaded.print(ChatColor.RED + "No game to end!");
+        if(!inProgress)
             return;
-        }
+
+        inProgress = false;
+        TextComponent[] commandMessage = Message.createHoverCommandMessage("game.end.restart", "/bingo start");
+        Set<Player> players = getTeamManager().getParticipants();
+        players.forEach(p -> p.spigot().sendMessage(commandMessage));
+        new Message("game.end.duration").color(ChatColor.GREEN)
+                .arg(GameTimer.getTimeAsString(timer.getTime())).color(ChatColor.WHITE)
+                .sendAll();
+        RecoveryCardData.markCardEnded(true);
+        players.forEach(p -> takePlayerEffects(p));
+        scoreboard.resetBoards();
     }
 
     public void bingo(BingoTeam team)
     {
-        BingoReloaded.broadcast("Congratulations! Team " + team.getName() + ChatColor.RESET + " has won the Bingo!");
+        new Message("game.end.bingo").arg(FlexibleColor.fromName(team.getName()).getTranslation()).color(team.getColor()).bold().sendAll();
         for (Player p : getTeamManager().getParticipants())
         {
             p.playSound(p, Sound.ENTITY_DRAGON_FIREBALL_EXPLODE, 0.8f, 1.0f);
@@ -168,7 +163,7 @@ public class BingoGame implements Listener
     {
         p.getInventory().clear();
         p.closeInventory();
-        FlexibleColor teamColor = FlexibleColor.fromChatColor(getTeamManager().getTeamOfPlayer(p).team.getColor());
+        FlexibleColor teamColor = FlexibleColor.fromChatColor(getTeamManager().getTeamOfPlayer(p).getColor());
 
         if (teamColor == null) return;
         for(InventoryItem item : settings.kit.getItems(teamColor))
@@ -210,7 +205,7 @@ public class BingoGame implements Listener
             for (Player p : getTeamManager().getParticipants())
             {
                 p.sendTitle(color + "" + countdown, "", -1, -1, -1);
-                BingoReloaded.print(color + "" + countdown, p);
+                Message.sendDebug(color + "" + countdown, p);
             }
 
             new BukkitRunnable()
@@ -225,19 +220,21 @@ public class BingoGame implements Listener
         }
 
         settings.deathMatchItem = settings.generateDeathMatchItem();
-        String itemName = ItemTask.convertToReadableName(settings.deathMatchItem);
+
         for (Player p : getTeamManager().getParticipants())
         {
-            p.sendTitle(ChatColor.GOLD + itemName, ChatColor.DARK_PURPLE + "Death Match: Get this item to win!", -1, -1, -1);
-            BingoReloaded.print(ChatColor.GOLD + itemName, p);
+            showDeathMatchItem(p);
+            p.sendTitle("" + ChatColor.GOLD + ChatColor.GOLD + "GO", "" + ChatColor.DARK_PURPLE + ChatColor.ITALIC + "find the item listed in the chat to win!", -1, -1, -1);
         }
     }
 
     public void showDeathMatchItem(Player p)
     {
-        String itemName = ItemTask.convertToReadableName(settings.deathMatchItem);
-        p.sendTitle(ChatColor.GOLD + itemName, ChatColor.DARK_PURPLE + "DeathMatch - Find this item to win!", -1, -1, -1);
-        BingoReloaded.print(ChatColor.GOLD + itemName, p);
+        String itemKey = ItemTextBuilder.getItemKey(settings.deathMatchItem);
+
+        new Message("game.item.deathmatch").color(ChatColor.GOLD)
+                .component(new TranslatableComponent(itemKey))
+                .send(p);
     }
 
     public static void givePlayerEffects(Player player, BingoGameSettings settings)
@@ -276,13 +273,13 @@ public class BingoGame implements Listener
     public void teleportPlayerAfterDeath(Player player)
     {
         if (player == null) return;
-        Location location = deadPlayers.get(player.getName());
-        BingoReloaded.print("Death Location: " + location, player);
-        player.teleport(deadPlayers.get(player.getName()), PlayerTeleportEvent.TeleportCause.PLUGIN);
-        deadPlayers.remove(player.getName());
+        Location location = deadPlayers.get(player.getUniqueId());
+        Message.sendDebug("Death location" + location, player);
+        player.teleport(deadPlayers.get(player.getUniqueId()), PlayerTeleportEvent.TeleportCause.PLUGIN);
+        deadPlayers.remove(player.getUniqueId());
     }
 
-    public static void spawnPlatform(@Nullable Location spawnLocation, int size)
+    public static void spawnPlatform(Location spawnLocation, int size)
     {
         for (int x = -size; x < size + 1; x++)
         {
@@ -303,6 +300,27 @@ public class BingoGame implements Listener
         }
     }
 
+    public static void removePlatform(Location platformLocation, int size)
+    {
+        for (int x = -size; x < size + 1; x++)
+        {
+            for (int z = -size; z < size + 1; z++)
+            {
+                if (platformLocation.getWorld().getType(
+                        (int)platformLocation.getX() + x,
+                        (int)platformLocation.getY() - 20,
+                        (int)platformLocation.getZ() + z) == Material.WHITE_STAINED_GLASS)
+                {
+                    platformLocation.getWorld().setType(
+                            (int)platformLocation.getX() + x,
+                            (int)platformLocation.getY() - 20,
+                            (int)platformLocation.getZ() + z,
+                            Material.AIR);
+                }
+            }
+        }
+    }
+
     private void teleportPlayersToStart(World world)
     {
         switch (ConfigData.getConfig().playerTeleportStrategy)
@@ -313,10 +331,24 @@ public class BingoGame implements Listener
                     Location playerLoc = getRandomSpawnLocation(world);
 
                     p.teleport(playerLoc, PlayerTeleportEvent.TeleportCause.PLUGIN);
-                    p.setBedSpawnLocation(playerLoc);
+                    Location bedSpawn = playerLoc.clone();
+                    bedSpawn.setY(bedSpawn.getWorld().getHighestBlockYAt(bedSpawn.getBlockX(), bedSpawn.getBlockZ()) + 2);
+                    p.setBedSpawnLocation(bedSpawn, true);
 
                     if (getTeamManager().getParticipants().size() > 0)
+                    {
                         spawnPlatform(playerLoc, 5);
+
+                        new BukkitRunnable()
+                        {
+                            @Override
+                            public void run()
+                            {
+                                BingoGame.removePlatform(playerLoc, 5);
+                            }
+                        }.runTaskLater(Bukkit.getPluginManager().getPlugin(BingoReloaded.NAME),
+                                (Math.max(0, ConfigData.getConfig().gracePeriod - 5)) * BingoReloaded.ONE_SECOND);
+                    }
                 }
                 break;
 
@@ -329,11 +361,25 @@ public class BingoGame implements Listener
                     for (Player p : teamPlayers)
                     {
                         p.teleport(teamLocation, PlayerTeleportEvent.TeleportCause.PLUGIN);
-                        p.setBedSpawnLocation(teamLocation);
+                        Location bedSpawn = teamLocation.clone();
+                        bedSpawn.setY(bedSpawn.getWorld().getHighestBlockYAt(bedSpawn.getBlockX(), bedSpawn.getBlockZ()) + 2);
+                        p.setBedSpawnLocation(bedSpawn, true);
                     }
 
                     if (getTeamManager().getParticipants().size() > 0)
+                    {
                         spawnPlatform(teamLocation, 5);
+
+                        new BukkitRunnable()
+                        {
+                            @Override
+                            public void run()
+                            {
+                                BingoGame.removePlatform(teamLocation, 5);
+                            }
+                        }.runTaskLater(Bukkit.getPluginManager().getPlugin(BingoReloaded.NAME),
+                                (Math.max(0, ConfigData.getConfig().gracePeriod - 7)) * BingoReloaded.ONE_SECOND);
+                    }
                 }
                 break;
 
@@ -344,11 +390,25 @@ public class BingoGame implements Listener
                 for (Player p : players)
                 {
                     p.teleport(spawnLocation, PlayerTeleportEvent.TeleportCause.PLUGIN);
-                    p.setBedSpawnLocation(spawnLocation);
+                    Location bedSpawn = spawnLocation.clone();
+                    bedSpawn.setY(bedSpawn.getWorld().getHighestBlockYAt(bedSpawn.getBlockX(), bedSpawn.getBlockZ()) + 2);
+                    p.setBedSpawnLocation(bedSpawn, true);
                 }
 
                 if (getTeamManager().getParticipants().size() > 0)
+                {
                     spawnPlatform(spawnLocation, 5);
+
+                    new BukkitRunnable()
+                    {
+                        @Override
+                        public void run()
+                        {
+                            BingoGame.removePlatform(spawnLocation, 5);
+                        }
+                    }.runTaskLater(Bukkit.getPluginManager().getPlugin(BingoReloaded.NAME),
+                            (Math.max(0, ConfigData.getConfig().gracePeriod - 7)) * BingoReloaded.ONE_SECOND);
+                }
                 break;
             default:
                 return;
@@ -430,7 +490,6 @@ public class BingoGame implements Listener
             BingoTeam playerTeam = getTeamManager().getTeamOfPlayer(event.getPlayer());
             if (playerTeam == null)
             {
-                BingoReloaded.print("NO TEAM?", event.getPlayer());
                 return;
             }
 
@@ -448,7 +507,7 @@ public class BingoGame implements Listener
             }
             else
             {
-                BingoReloaded.print(ChatColor.RED + "The game has not started yet!", event.getPlayer());
+                new Message("game.player.no_start").send(event.getPlayer());
             }
         }
 
@@ -495,7 +554,7 @@ public class BingoGame implements Listener
         if (event.getCause() != EntityDamageEvent.DamageCause.FALL)
             return;
 
-        if (settings.effects.contains(EffectOptionFlags.NO_FALL_DAMAGE))
+        if (inProgress && settings.effects.contains(EffectOptionFlags.NO_FALL_DAMAGE))
         {
             event.setCancelled(true);
         }
@@ -508,7 +567,7 @@ public class BingoGame implements Listener
         {
             if (getTeamManager().getParticipants().contains(event.getPlayer()))
             {
-                BingoReloaded.print("You joined back!", event.getPlayer());
+                new Message("game.player.join_back").send(event.getPlayer());
                 scoreboard.updateItemCount();
                 return;
             }
@@ -520,6 +579,19 @@ public class BingoGame implements Listener
             getTeamManager().addPlayerToTeam(event.getPlayer(), team.getName());
             scoreboard.updateItemCount();
             scoreboard.updateItemCount();
+        }
+    }
+
+    public void playerQuit(Player player)
+    {
+        if (!getTeamManager().getParticipants().contains(player)) return;
+
+        getTeamManager().removePlayerFromAllTeams(player);
+        new Message("game.player.leave").arg(ChatColor.RED + "/bingo join").send(player);
+        BingoGame.takePlayerEffects(player);
+        if (deadPlayers.containsKey(player.getUniqueId()))
+        {
+            deadPlayers.remove(player.getUniqueId());
         }
     }
 
@@ -542,14 +614,10 @@ public class BingoGame implements Listener
                 Location deathCoords = event.getEntity().getLocation();
                 if (ConfigData.getConfig().teleportAfterDeath)
                 {
-                    TextComponent[] teleportMsg = BingoReloaded.createHoverCommandMessage("",
-                            "" + ChatColor.DARK_AQUA + ChatColor.BOLD + "Click here to teleport back to where you died",
-                            "",
-                            "/bingo back",
-                            "Click to teleport to " + deathCoords);
+                    TextComponent[] teleportMsg = Message.createHoverCommandMessage("game.player.respawn", "/bingo back");
 
                     event.getEntity().spigot().sendMessage(teleportMsg);
-                    deadPlayers.put(event.getEntity().getName(), deathCoords);
+                    deadPlayers.put(event.getEntity().getUniqueId(), deathCoords);
                 }
             }
         }
@@ -576,7 +644,12 @@ public class BingoGame implements Listener
     @EventHandler
     public void onPlayerRespawnEvent(final PlayerRespawnEvent event)
     {
-        if (deadPlayers.containsKey(event.getPlayer().getName()))
+        if (getTeamManager().getTeamOfPlayer(event.getPlayer()) == null)
+        {
+            event.getPlayer().setGameMode(GameMode.SPECTATOR);
+        }
+
+        if (deadPlayers.containsKey(event.getPlayer().getUniqueId()))
         {
             returnCardToPlayer(event.getPlayer());
         }

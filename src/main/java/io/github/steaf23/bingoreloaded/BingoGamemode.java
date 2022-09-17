@@ -2,7 +2,7 @@ package io.github.steaf23.bingoreloaded;
 
 import org.bukkit.ChatColor;
 
-public enum BingoGameMode
+public enum BingoGamemode
 {
     REGULAR(ChatColor.GREEN + "Regular", "regular"),
     LOCKOUT(ChatColor.DARK_PURPLE + "Lockout", "lockout"),
@@ -12,15 +12,15 @@ public enum BingoGameMode
     public final String name;
     private final String dataName;
 
-    BingoGameMode(String name, String dataName)
+    BingoGamemode(String name, String dataName)
     {
         this.name = name;
         this.dataName = dataName;
     }
 
-    public static BingoGameMode fromDataString(String data)
+    public static BingoGamemode fromDataString(String data)
     {
-        for (BingoGameMode mode : BingoGameMode.values())
+        for (BingoGamemode mode : BingoGamemode.values())
         {
             if (mode.dataName.equals(data))
             {
@@ -28,7 +28,7 @@ public enum BingoGameMode
             }
         }
 
-        return BingoGameMode.REGULAR;
+        return BingoGamemode.REGULAR;
     }
 
     public String getDataName()

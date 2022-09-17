@@ -1,19 +1,19 @@
 package io.github.steaf23.bingoreloaded;
 
+import io.github.steaf23.bingoreloaded.gui.cards.BingoCard;
 import org.bukkit.ChatColor;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class GameTimer
 {
     private int time;
-
+    private BingoScoreboard scoreboard;
     private BukkitRunnable runnable;
-    private final BingoScoreboard scoreboard;
 
     public GameTimer(BingoScoreboard scoreboard)
     {
-        this.time = 0;
         this.scoreboard = scoreboard;
+        this.time = 0;
     }
 
     public void start()
@@ -39,16 +39,16 @@ public class GameTimer
         }
         catch (IllegalStateException e)
         {
-            BingoReloaded.print(ChatColor.RED + "Timer couldn't be stopped since it never started!");
+            Message.log(ChatColor.RED + "Timer couldn't be stopped since it never started!");
         }
     }
 
     public static String getTimeAsString(int seconds)
     {
-        if (seconds > 60)
+        if (seconds >= 60)
         {
             int minutes = (seconds / 60) % 60;
-            if (seconds > 3600)
+            if (seconds >= 3600)
             {
                 int hours = seconds / 3600;
                 return String.format("%02d:%02d:%02d", hours, minutes, seconds % 60);

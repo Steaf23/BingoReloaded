@@ -1,20 +1,23 @@
 package io.github.steaf23.bingoreloaded.player;
 
 import io.github.steaf23.bingoreloaded.gui.cards.BingoCard;
-import org.bukkit.ChatColor;
+
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.scoreboard.Team;
 
 public class BingoTeam
 {
+    public final Team team;
     public BingoCard card;
     public boolean outOfTheGame = false;
 
-    public final Team team;
+    private ChatColor color;
 
-    public BingoTeam(Team team, BingoCard card)
+    public BingoTeam(Team team, BingoCard card, ChatColor color)
     {
         this.team = team;
         this.card = card;
+        this.color = color;
     }
 
     public String getName()
@@ -24,6 +27,6 @@ public class BingoTeam
 
     public ChatColor getColor()
     {
-        return team.getColor();
+        return color;
     }
 }

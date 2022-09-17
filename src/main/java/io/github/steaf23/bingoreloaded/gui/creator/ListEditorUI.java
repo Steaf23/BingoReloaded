@@ -1,17 +1,17 @@
 package io.github.steaf23.bingoreloaded.gui.creator;
 
-import io.github.steaf23.bingoreloaded.data.AdvancementData;
 import io.github.steaf23.bingoreloaded.data.BingoTasksData;
 import io.github.steaf23.bingoreloaded.gui.AbstractGUIInventory;
 import io.github.steaf23.bingoreloaded.gui.FilterType;
 import io.github.steaf23.bingoreloaded.gui.ListPickerUI;
+import io.github.steaf23.bingoreloaded.item.ItemTextBuilder;
 import io.github.steaf23.bingoreloaded.item.tasks.AdvancementTask;
 import io.github.steaf23.bingoreloaded.item.AdvancementListItem;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
 import io.github.steaf23.bingoreloaded.item.tasks.ItemTask;
 import io.github.steaf23.bingoreloaded.util.FlexibleColor;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.advancement.Advancement;
 import org.bukkit.entity.HumanEntity;
@@ -75,13 +75,16 @@ public class ListEditorUI
         {
             if (!m.name().contains("LEGACY_") && m.isItem() && !m.isAir() && !glassPanes.contains(m))
             {
-                InventoryItem item = new InventoryItem(m, "", ChatColor.GRAY + "Click to make this item", ChatColor.GRAY + "appear on bingo cards");
+                InventoryItem item = new InventoryItem(m, "");
                 ItemMeta meta = item.getItemMeta();
                 if (meta == null) continue;
 
                 meta.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_UNBREAKABLE);
 
                 item.setItemMeta(meta);
+                new ItemTextBuilder(ChatColor.YELLOW)
+                        .translate(ItemTextBuilder.getItemKey(m))
+                        .buildName(item);
                 items.add(item);
             }
         }
@@ -218,12 +221,15 @@ public class ListEditorUI
                 continue;
             }
             InventoryItem item = new AdvancementListItem(a);
-            ItemMeta meta = item.getItemMeta();
-            if (meta != null)
-            {
-                meta.setLore(List.of(AdvancementData.getAdvancementDesc(a), "" + ChatColor.GRAY + "Click to make this item", ChatColor.GRAY + "appear on bingo cards"));
-                item.setItemMeta(meta);
-            }
+            new ItemTextBuilder(ChatColor.DARK_PURPLE)
+                    .translate(ItemTextBuilder.getAdvancementDescKey(a))
+                    .text("" + ChatColor.GRAY + "Click to make this item\n appear on bingo cards")
+                    .buildDescription(item);
+            new ItemTextBuilder(ChatColor.AQUA, "italic")
+                    .text("[")
+                    .translate(ItemTextBuilder.getAdvancementTitleKey(a))
+                    .text("]")
+                    .buildName(item);
             options.add(item);
         }
 

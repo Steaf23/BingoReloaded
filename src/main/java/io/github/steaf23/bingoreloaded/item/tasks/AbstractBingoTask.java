@@ -1,15 +1,20 @@
 package io.github.steaf23.bingoreloaded.item.tasks;
 
-import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.GameTimer;
+import io.github.steaf23.bingoreloaded.Message;
+import io.github.steaf23.bingoreloaded.data.RecoveryCardData;
 import io.github.steaf23.bingoreloaded.gui.cards.CardBuilder;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
 import io.github.steaf23.bingoreloaded.player.BingoTeam;
-import org.bukkit.ChatColor;
+import io.github.steaf23.bingoreloaded.util.FlexibleColor;
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.Arrays;
 import java.util.List;
 
 public abstract class AbstractBingoTask
@@ -20,9 +25,35 @@ public abstract class AbstractBingoTask
     private BingoTeam completedBy = null;
 
     public abstract AbstractBingoTask copy();
+
+    /**
+     * @return the key used to store this task in lists.yml
+     */
     public abstract String getKey();
-    public abstract String getDisplayName();
-    public abstract List<String> getDescription();
+
+    /**
+     * Use isComplete() to change the name depending on if the task has been completed.
+     * Used to display task information in the chat.
+     * @return chat component holding the name.
+     */
+    public abstract BaseComponent getDisplayName();
+
+    /**
+     * Used to display task information in the chat.
+     * @return chat component holding the description.
+     */
+    public abstract BaseComponent getDescription();
+
+    /**
+     * @return item lore of the task that will be displayed on the bingo card item.
+     */
+    public abstract List<String> getItemLore();
+
+    /**
+     * Similar to getName. Use this method to update the item's name through NBT.
+     * This means it supports things like translations.
+     */
+    public abstract void updateItemName();
 
     public AbstractBingoTask(Material material, ChatColor nameColor)
     {
@@ -32,11 +63,11 @@ public abstract class AbstractBingoTask
 
     protected void updateItem()
     {
+        updateItemName();
         ItemMeta meta = item.getItemMeta();
         if (meta != null)
         {
-            meta.setDisplayName(getDisplayName());
-            meta.setLore(getDescription());
+            meta.setLore(getItemLore());
             meta.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS, ItemFlag.HIDE_ENCHANTS);
             item.setItemMeta(meta);
         }
@@ -55,29 +86,36 @@ public abstract class AbstractBingoTask
         return completedBy.getName().equals(team.getName());
     }
 
-    public void complete(BingoTeam team, int time)
+    public boolean complete(BingoTeam team, int time)
     {
-        if (completedBy != null)
-            return;
+        if (isComplete())
+            return false;
 
         Material completeMaterial = CardBuilder.completeColor(team);
 
+        BaseComponent itemName = getDisplayName();
         completedBy = team;
 
         String timeString = GameTimer.getTimeAsString(time);
 
-        BingoReloaded.broadcast(ChatColor.GREEN + "Completed " + getDisplayName() + " by team " + completedBy.team.getColor() + completedBy.getName() + ChatColor.GREEN + "! At " + timeString);
+        new Message("game.item.completed").color(ChatColor.GREEN)
+                .component(itemName).color(nameColor)
+                .arg(FlexibleColor.fromName(completedBy.getName()).getTranslation()).color(completedBy.getColor()).bold()
+                .arg(timeString).color(ChatColor.WHITE)
+                .sendAll();
 
-        String crossedName = "" + ChatColor.GRAY + ChatColor.STRIKETHROUGH + ChatColor.stripColor(getDisplayName());
-        item.setType(completeMaterial);
+        updateItemName();
         ItemMeta meta = item.getItemMeta();
         if (meta != null)
         {
-            meta.setDisplayName(crossedName);
-            meta.setLore(List.of("Completed by team " + completedBy.team.getColor() + completedBy.getName(),
-                    "At " + ChatColor.GOLD + timeString + ChatColor.RESET + ""));
+            meta.setLore(Arrays.stream(new Message("game.item.complete_lore").color(ChatColor.DARK_PURPLE).italic()
+                    .arg(FlexibleColor.fromName(completedBy.getName()).getTranslation()).color(completedBy.getColor()).bold()
+                    .arg(timeString).color(ChatColor.GOLD).toLegacyString().split("\\n")).toList());
+            meta.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS, ItemFlag.HIDE_ENCHANTS);
             item.setItemMeta(meta);
         }
+        item.setType(completeMaterial);
+        return true;
     }
 
     public BingoTeam getWhoCompleted()
