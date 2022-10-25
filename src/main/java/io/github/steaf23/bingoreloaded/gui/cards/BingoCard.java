@@ -7,7 +7,7 @@ import io.github.steaf23.bingoreloaded.data.BingoCardsData;
 import io.github.steaf23.bingoreloaded.data.BingoTasksData;
 import io.github.steaf23.bingoreloaded.data.TranslationData;
 import io.github.steaf23.bingoreloaded.gui.AbstractGUIInventory;
-import io.github.steaf23.bingoreloaded.item.BingoCardSlotCompleteEvent;
+import io.github.steaf23.bingoreloaded.event.BingoCardSlotCompleteEvent;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
 import io.github.steaf23.bingoreloaded.item.tasks.AbstractBingoTask;
 import io.github.steaf23.bingoreloaded.item.tasks.AdvancementTask;

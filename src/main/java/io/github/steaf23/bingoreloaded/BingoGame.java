@@ -6,7 +6,7 @@ import io.github.steaf23.bingoreloaded.data.RecoveryCardData;
 import io.github.steaf23.bingoreloaded.gui.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.gui.cards.BingoCard;
 import io.github.steaf23.bingoreloaded.gui.cards.CardBuilder;
-import io.github.steaf23.bingoreloaded.item.BingoCardSlotCompleteEvent;
+import io.github.steaf23.bingoreloaded.event.BingoCardSlotCompleteEvent;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
 import io.github.steaf23.bingoreloaded.item.ItemTextBuilder;
 import io.github.steaf23.bingoreloaded.player.BingoTeam;

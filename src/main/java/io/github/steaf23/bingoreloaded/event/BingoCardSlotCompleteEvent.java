@@ -1,4 +1,4 @@
-package io.github.steaf23.bingoreloaded.item;
+package io.github.steaf23.bingoreloaded.event;
 
 import io.github.steaf23.bingoreloaded.item.tasks.AbstractBingoTask;
 import io.github.steaf23.bingoreloaded.player.BingoTeam;
@@ -19,10 +19,6 @@ public class BingoCardSlotCompleteEvent extends PlayerEvent
         this.slot = slot;
         this.team = team;
         this.bingo = bingo;
-    }
-
-    public static HandlerList getHandlerList() {
-        return HANDLERS;
     }
 
     @Override

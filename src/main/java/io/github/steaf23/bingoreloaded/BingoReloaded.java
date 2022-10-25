@@ -1,9 +1,6 @@
 package io.github.steaf23.bingoreloaded;
 
-import io.github.steaf23.bingoreloaded.command.BingoCommand;
-import io.github.steaf23.bingoreloaded.command.BingoTabCompleter;
-import io.github.steaf23.bingoreloaded.command.CardCommand;
-import io.github.steaf23.bingoreloaded.command.ItemListCommand;
+import io.github.steaf23.bingoreloaded.command.*;
 import io.github.steaf23.bingoreloaded.data.RecoveryCardData;
 import io.github.steaf23.bingoreloaded.data.TranslationData;
 import io.github.steaf23.bingoreloaded.gui.UIManager;
@@ -42,6 +39,13 @@ public class BingoReloaded extends JavaPlugin
         {
             bingoCommand.setExecutor(new BingoCommand(game));
             bingoCommand.setTabCompleter( new BingoTabCompleter());
+        }
+
+        PluginCommand autoBingoCommand = getCommand("autobingo");
+        if (autoBingoCommand != null)
+        {
+            autoBingoCommand.setExecutor(new AutoBingoCommand(game.getSettings()));
+            autoBingoCommand.setTabCompleter(new AutoBingoTabCompleter());
         }
 
         PluginCommand cardCommand = getCommand("card");

@@ -45,3 +45,7 @@ selectedCard: default_card
 
 # The yml file that contains the language data that will be used for this plugin
 language: en_us.yml
+
+# Countdown time in minutes that is used for the Countdown gamemode.
+countdownTime: 20
+
