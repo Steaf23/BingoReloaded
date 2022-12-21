@@ -12,7 +12,7 @@ import java.util.EnumSet;
 
 public class BingoGameSettings
 {
-    public String card = ConfigData.getConfig().selectedCard;
+    public String card = ConfigData.instance.selectedCard;
     public BingoGamemode mode;
     public CardSize cardSize;
     public PlayerKit kit;
@@ -21,7 +21,7 @@ public class BingoGameSettings
 
     public BingoGameSettings()
     {
-        this.card = ConfigData.getConfig().selectedCard;
+        this.card = ConfigData.instance.selectedCard;
         this.mode = BingoGamemode.REGULAR;
         this.cardSize = CardSize.X5;
         this.kit = PlayerKit.OVERPOWERED;

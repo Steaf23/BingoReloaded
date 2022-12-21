@@ -1,6 +1,10 @@
 package io.github.steaf23.bingoreloaded;
 
-import io.github.steaf23.bingoreloaded.command.*;
+import io.github.steaf23.bingoreloaded.command.BingoCommand;
+import io.github.steaf23.bingoreloaded.command.BingoTabCompleter;
+import io.github.steaf23.bingoreloaded.command.CardCommand;
+import io.github.steaf23.bingoreloaded.command.ItemListCommand;
+import io.github.steaf23.bingoreloaded.data.ConfigData;
 import io.github.steaf23.bingoreloaded.data.RecoveryCardData;
 import io.github.steaf23.bingoreloaded.data.TranslationData;
 import io.github.steaf23.bingoreloaded.gui.UIManager;
@@ -28,10 +32,14 @@ public class BingoReloaded extends JavaPlugin
     @Override
     public void onEnable()
     {
+        reloadConfig();
+        saveDefaultConfig();
+        ConfigData.instance.loadConfig(this.getConfig());
+
         usesPlaceholder = Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null;
 
         BingoGame game = new BingoGame();
-        // create UIManager singleton.
+        // create singletons.
         UIManager.getUIManager();
 
         PluginCommand bingoCommand = getCommand("bingo");

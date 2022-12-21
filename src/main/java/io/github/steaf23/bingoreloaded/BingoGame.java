@@ -33,6 +33,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 import net.md_5.bungee.api.ChatColor;
 
+import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -46,7 +47,6 @@ public class BingoGame implements Listener
     private final GameTimer timer;
     private BingoGameSettings settings;
     private final Map<UUID, Location> deadPlayers;
-    private static final int TELEPORT_DISTANCE = ConfigData.getConfig().teleportMaxDistance;
 
     public BingoGame()
     {
@@ -59,7 +59,7 @@ public class BingoGame implements Listener
         BingoReloaded.registerListener(this);
     }
 
-    public void start()
+    public void start(@Nullable int seed)
     {
         if (!BingoCardsData.getCardNames().contains(settings.card))
         {
@@ -90,7 +90,7 @@ public class BingoGame implements Listener
         inProgress = true;
 
         BingoCard masterCard = CardBuilder.fromMode(settings.mode, settings.cardSize, this);
-        masterCard.generateCard(settings.card);
+        masterCard.generateCard(settings.card, seed);
         getTeamManager().initializeCards(masterCard);
 
         new Message("game.start.give_cards").sendAll();
@@ -250,7 +250,7 @@ public class BingoGame implements Listener
 
         player.addPotionEffect(new PotionEffect(PotionEffectType.SATURATION, 2, 100, false, false));
         player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 2, 100, false, false));
-        player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, BingoReloaded.ONE_SECOND * ConfigData.getConfig().gracePeriod, 100, false, false));
+        player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, BingoReloaded.ONE_SECOND * ConfigData.instance.gracePeriod, 100, false, false));
     }
 
     public static void takePlayerEffects(Player player)
@@ -323,7 +323,7 @@ public class BingoGame implements Listener
 
     private void teleportPlayersToStart(World world)
     {
-        switch (ConfigData.getConfig().playerTeleportStrategy)
+        switch (ConfigData.instance.playerTeleportStrategy)
         {
             case ALONE:
                 for (Player p : getTeamManager().getParticipants())
@@ -347,7 +347,7 @@ public class BingoGame implements Listener
                                 BingoGame.removePlatform(playerLoc, 5);
                             }
                         }.runTaskLater(Bukkit.getPluginManager().getPlugin(BingoReloaded.NAME),
-                                (Math.max(0, ConfigData.getConfig().gracePeriod - 5)) * BingoReloaded.ONE_SECOND);
+                                (Math.max(0, ConfigData.instance.gracePeriod - 5)) * BingoReloaded.ONE_SECOND);
                     }
                 }
                 break;
@@ -378,7 +378,7 @@ public class BingoGame implements Listener
                                 BingoGame.removePlatform(teamLocation, 5);
                             }
                         }.runTaskLater(Bukkit.getPluginManager().getPlugin(BingoReloaded.NAME),
-                                (Math.max(0, ConfigData.getConfig().gracePeriod - 7)) * BingoReloaded.ONE_SECOND);
+                                (Math.max(0, ConfigData.instance.gracePeriod - 7)) * BingoReloaded.ONE_SECOND);
                     }
                 }
                 break;
@@ -407,7 +407,7 @@ public class BingoGame implements Listener
                             BingoGame.removePlatform(spawnLocation, 5);
                         }
                     }.runTaskLater(Bukkit.getPluginManager().getPlugin(BingoReloaded.NAME),
-                            (Math.max(0, ConfigData.getConfig().gracePeriod - 7)) * BingoReloaded.ONE_SECOND);
+                            ((long)Math.max(0, ConfigData.instance.gracePeriod - 7)) * BingoReloaded.ONE_SECOND);
                 }
                 break;
             default:
@@ -417,14 +417,14 @@ public class BingoGame implements Listener
 
     private static Location getRandomSpawnLocation(World world)
     {
-        Vector position = Vector.getRandom().multiply(TELEPORT_DISTANCE);
-        Location location = new Location(world, position.getX(), ConfigData.getConfig().lobbySpawnHeight, position.getZ());
+        Vector position = Vector.getRandom().multiply(ConfigData.instance.teleportMaxDistance);
+        Location location = new Location(world, position.getX(), ConfigData.instance.lobbySpawnHeight, position.getZ());
 
         //find a not ocean biome to start the game in
         while (isOceanBiome(world.getBiome(location)))
         {
-            position = Vector.getRandom().multiply(TELEPORT_DISTANCE);
-            location = new Location(world, position.getX(), ConfigData.getConfig().lobbySpawnHeight, position.getZ());
+            position = Vector.getRandom().multiply(ConfigData.instance.teleportMaxDistance);
+            location = new Location(world, position.getX(), ConfigData.instance.lobbySpawnHeight, position.getZ());
         }
 
         return location;
@@ -612,7 +612,7 @@ public class BingoGame implements Listener
                     event.getDrops().remove(settings.kit.cardItem.getAsStack());
 
                 Location deathCoords = event.getEntity().getLocation();
-                if (ConfigData.getConfig().teleportAfterDeath)
+                if (ConfigData.instance.teleportAfterDeath)
                 {
                     TextComponent[] teleportMsg = Message.createHoverCommandMessage("game.player.respawn", "/bingo back");
 

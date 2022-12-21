@@ -239,10 +239,14 @@ public class TeamManager
 
     public BingoTeam activateTeam(Team team)
     {
-        if (activeTeams.stream().noneMatch((t) -> t.team == team))
+        BingoTeam bTeam;
+        bTeam = activeTeams.stream().filter(
+                (t) -> t.team.getName().equals(team.getName()))
+                .findFirst().orElse(null);
+
+        if(bTeam == null)
         {
             FlexibleColor color = FlexibleColor.fromName(team.getName());
-            BingoTeam bTeam;
             if (color != null)
             {
                 bTeam = new BingoTeam(team, null, color.chatColor);
@@ -251,10 +255,10 @@ public class TeamManager
             {
                 bTeam = new BingoTeam(team, null, ChatColor.WHITE);
             }
+
             activeTeams.add(bTeam);
-            return bTeam;
         }
-        return null;
+        return bTeam;
     }
 
     private void createTeams()

@@ -43,7 +43,15 @@ public class BingoCommand implements CommandExecutor
                 case "start":
                     if (commandSender instanceof Player p && p.hasPermission("bingo.settings"))
                     {
-                        gameInstance.start();
+                        if (args.length > 1)
+                        {
+                            int seed = Integer.parseInt(args[1]);
+                            gameInstance.start(seed);
+                        }
+                        else
+                        {
+                            gameInstance.start(0);
+                        }
                         return true;
                     }
                     break;
@@ -64,7 +72,7 @@ public class BingoCommand implements CommandExecutor
                 case "back":
                     if (commandSender instanceof Player p && p.hasPermission("bingo.player"))
                     {
-                        if (ConfigData.getConfig().teleportAfterDeath)
+                        if (ConfigData.instance.teleportAfterDeath)
                         {
                             gameInstance.teleportPlayerAfterDeath(p);
                             return true;

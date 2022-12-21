@@ -30,6 +30,7 @@ import org.bukkit.event.player.PlayerAdvancementDoneEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.*;
 
@@ -53,8 +54,18 @@ public class BingoCard extends AbstractGUIInventory implements Listener
         BingoReloaded.registerListener(this);
     }
 
-    public void generateCard(String cardName)
+    public void generateCard(String cardName, int seed)
     {
+        Random shuffler;
+        if (seed == 0)
+        {
+            shuffler = new Random();
+        }
+        else
+        {
+            shuffler = new Random(seed);
+        }
+
         List<AbstractBingoTask> newItems = new ArrayList<>();
 
         List<String> ticketList = new ArrayList<>();
@@ -78,7 +89,7 @@ public class BingoCard extends AbstractGUIInventory implements Listener
                 overflowList.add(listName);
             }
         }
-        Collections.shuffle(overflowList);
+        Collections.shuffle(overflowList, shuffler);
         ticketList.addAll(overflowList);
         if (ticketList.size() > size.fullCardSize)
             ticketList = ticketList.subList(0, size.fullCardSize);
@@ -93,7 +104,7 @@ public class BingoCard extends AbstractGUIInventory implements Listener
                 {
                     continue;
                 }
-                Collections.shuffle(listTasks);
+                Collections.shuffle(listTasks, shuffler);
                 allTasks.put(listName, listTasks);
             }
             newItems.add(allTasks.get(listName).remove(allTasks.get(listName).size() - 1));
@@ -105,7 +116,7 @@ public class BingoCard extends AbstractGUIInventory implements Listener
         }
         newItems = newItems.subList(0, size.fullCardSize);
 
-        Collections.shuffle(newItems);
+        Collections.shuffle(newItems, shuffler);
         tasks = newItems;
     }
 
