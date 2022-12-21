@@ -97,7 +97,7 @@ public class BingoOptionsUI extends AbstractGUIInventory
             }
             else
             {
-                game.start();
+                game.start(0);
             }
         }
     }

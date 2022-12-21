@@ -1,6 +1,7 @@
 package io.github.steaf23.bingoreloaded.data;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
+import io.github.steaf23.bingoreloaded.Message;
 import io.github.steaf23.bingoreloaded.player.PlayerKit;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -38,37 +39,26 @@ public class ConfigData
         }
     }
 
-    public final int teleportMaxDistance;
-    public final PlayerTeleportStrategy playerTeleportStrategy;
-    public final boolean teleportAfterDeath;
-    public final int lobbySpawnHeight;
-    public final int wandUp;
-    public final int wandDown;
-    public final double wandCooldown;
-    public final int platformLifetime;
-    public final PlayerKit defaultKit;
-    public final int gracePeriod;
-    public final boolean resetPlayerItems;
-    public final boolean resetPlayerPositions;
-    public final String selectedCard;
-    public final String language;
+    public int teleportMaxDistance;
+    public PlayerTeleportStrategy playerTeleportStrategy;
+    public boolean teleportAfterDeath;
+    public int lobbySpawnHeight;
+    public int wandUp;
+    public int wandDown;
+    public double wandCooldown;
+    public int platformLifetime;
+    public PlayerKit defaultKit;
+    public int gracePeriod;
+    public boolean resetPlayerItems;
+    public boolean resetPlayerPositions;
+    public String selectedCard;
+    public String language;
 
-    private static ConfigData INSTANCE;
+    public static final ConfigData instance = new ConfigData();
 
-    public static ConfigData getConfig()
+    public void loadConfig(FileConfiguration config)
     {
-        if (INSTANCE == null)
-        {
-            Plugin plugin = Bukkit.getPluginManager().getPlugin(BingoReloaded.NAME);
-            plugin.saveDefaultConfig();
-            plugin.reloadConfig();
-            INSTANCE = new ConfigData(plugin.getConfig());
-        }
-        return INSTANCE;
-    }
-
-    private ConfigData(FileConfiguration config)
-    {
+        this.language = "languages/" + config.getString("language", "en_us.yml");
         this.teleportMaxDistance = config.getInt("teleportMaxDistance", 1000000);
         this.playerTeleportStrategy = PlayerTeleportStrategy.fromName(config.getString("playerTeleportStrategy", "ALL"));
         this.teleportAfterDeath = config.getBoolean("teleportBackAfterDeathMessage", true);
@@ -82,6 +72,20 @@ public class ConfigData
         this.resetPlayerItems = config.getBoolean("resetPlayerItems", true);
         this.resetPlayerPositions = config.getBoolean("resetPlayerPositions", true);
         this.selectedCard = config.getString("selectedCard", "default_card");
-        this.language = "languages/" + config.getString("language", "en_us.yml");
+
+        Message.log("" + this.teleportMaxDistance);
+        Message.log("" + this.playerTeleportStrategy);
+        Message.log("" + this.teleportAfterDeath);
+        Message.log("" + this.lobbySpawnHeight);
+        Message.log("" + this.wandUp);
+        Message.log("" + this.wandDown);
+        Message.log("" + this.wandCooldown);
+        Message.log("" + this.platformLifetime);
+        Message.log("" + this.defaultKit);
+        Message.log("" + this.gracePeriod);
+        Message.log("" + this.resetPlayerItems);
+        Message.log("" + this.resetPlayerPositions);
+        Message.log("" + this.selectedCard);
+        Message.log("" + this.language);
     }
 }

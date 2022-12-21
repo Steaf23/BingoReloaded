@@ -33,18 +33,18 @@ public enum PlayerKit
             Material.WARPED_FUNGUS_ON_A_STICK,
             "" + ChatColor.DARK_PURPLE + ChatColor.ITALIC + ChatColor.BOLD + TranslationData.itemName("items.wand"),
             TranslationData.itemDescription("items.wand")
-    ).withEnchantment(Enchantment.DURABILITY, 3), (int)(ConfigData.getConfig().wandCooldown * 1000))
+    ).withEnchantment(Enchantment.DURABILITY, 3), (int)(ConfigData.instance.wandCooldown * 1000))
     {
         @Override
         public void use(Player player)
         {
             if (player.isSneaking())
             {
-                teleportPlayerUp(player, -ConfigData.getConfig().wandDown, 0);
+                teleportPlayerUp(player, -ConfigData.instance.wandDown, 0);
             }
             else
             {
-                teleportPlayerUp(player, ConfigData.getConfig().wandUp, 5);
+                teleportPlayerUp(player, ConfigData.instance.wandUp, 5);
             }
 
             player.playSound(player, Sound.ENTITY_SHULKER_TELEPORT, 0.8f, 1.0f);
@@ -66,7 +66,7 @@ public enum PlayerKit
                     BingoGame.removePlatform(newLocation, 1);
                 }
             }.runTaskLater(Bukkit.getPluginManager().getPlugin(BingoReloaded.NAME),
-                    Math.max(0, ConfigData.getConfig().platformLifetime) * BingoReloaded.ONE_SECOND);
+                    Math.max(0, ConfigData.instance.platformLifetime) * BingoReloaded.ONE_SECOND);
         }
     };
 
