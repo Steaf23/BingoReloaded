@@ -19,7 +19,7 @@ game:
     effects_selected: "Selected Effect options, view them in the /bingo options"
     regular_selected: "Selected Regular Bingo. Complete one line to win (horizontal, vertical or diagonal)!"
     lockout_selected: "Selected Lockout Bingo. Compete to complete the majority of the card to win!"
-    complete_selected: "Selected Complete-All Bingo. Collect all items on the card to win!"
+    complete_selected: "Selected Complete-All Bingo. Complete all tasks on the card to win!"
     card_selected: "Selected '{0}' as the playing Bingo card!" # 0: card name
     cardsize: "Chosen card size: {0}" # 0: card size
   start:
@@ -76,10 +76,10 @@ menu:
       desc: "First team to complete 1 line wins. \nLines can span vertically, horizontally \nor diagonally."
     info_lockout:
       name: "Lockout Bingo Card"
-      desc: "Complete the most items to win. \nWhen an item has been completed \nit cannot be complete by any other team."
+      desc: "Complete the most tasks to win. \nWhen a task has been completed \nit cannot be complete by another team."
     info_complete:
       name: "Complete-All Bingo Card"
-      desc: "First team to complete all items wins."
+      desc: "First team to complete all tasks wins."
   options:
     title: "Options Menu"
     start:

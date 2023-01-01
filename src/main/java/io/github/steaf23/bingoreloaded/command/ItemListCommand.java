@@ -140,7 +140,7 @@ public class ItemListCommand implements CommandExecutor
 
                 items.forEach(slot -> {
                     String mat = slot.item.getType().name();
-                    Optional<InventoryItem> item = allItems.stream().filter((i) -> i.getType().name() == mat).findFirst();
+                    Optional<InventoryItem> item = allItems.stream().filter((i) -> i.getType().name().equals(mat)).findFirst();
                     item.ifPresent(inventoryItem -> {
                         selectItem(inventoryItem, true);
                         inventoryItem.setAmount(slot.getCount());

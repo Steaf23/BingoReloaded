@@ -18,6 +18,10 @@ permissions:
     default: true
 
 commands:
+  autobingo:
+    permission: bingo.admin
+    description: Used to start and manage settings for bingo games through commands only
+    permission-message: §CYou don't have permission to use this command!
   bingo:
     permission: bingo.player
     description: Used to open the settings menu as well as to start and end the game.

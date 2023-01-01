@@ -3,6 +3,7 @@ package io.github.steaf23.bingoreloaded;
 import io.github.steaf23.bingoreloaded.data.BingoCardsData;
 import io.github.steaf23.bingoreloaded.data.ConfigData;
 import io.github.steaf23.bingoreloaded.data.RecoveryCardData;
+import io.github.steaf23.bingoreloaded.event.BingoGameEvent;
 import io.github.steaf23.bingoreloaded.gui.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.gui.cards.BingoCard;
 import io.github.steaf23.bingoreloaded.gui.cards.CardBuilder;
@@ -10,6 +11,7 @@ import io.github.steaf23.bingoreloaded.event.BingoCardSlotCompleteEvent;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
 import io.github.steaf23.bingoreloaded.item.ItemTextBuilder;
 import io.github.steaf23.bingoreloaded.player.BingoTeam;
+import io.github.steaf23.bingoreloaded.player.PlayerKit;
 import io.github.steaf23.bingoreloaded.player.TeamManager;
 import io.github.steaf23.bingoreloaded.util.FlexibleColor;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -59,7 +61,12 @@ public class BingoGame implements Listener
         BingoReloaded.registerListener(this);
     }
 
-    public void start(@Nullable int seed)
+    public void start()
+    {
+        start(0);
+    }
+
+    public void start(int seed)
     {
         if (!BingoCardsData.getCardNames().contains(settings.card))
         {
@@ -447,6 +454,87 @@ public class BingoGame implements Listener
                 };
     }
 
+    public void playerQuit(Player player)
+    {
+        if (!getTeamManager().getParticipants().contains(player)) return;
+
+        getTeamManager().removePlayerFromAllTeams(player);
+        new Message("game.player.leave").arg(ChatColor.RED + "/bingo join").send(player);
+        BingoGame.takePlayerEffects(player);
+        if (deadPlayers.containsKey(player.getUniqueId()))
+        {
+            deadPlayers.remove(player.getUniqueId());
+        }
+    }
+
+    /**
+     *
+     * @param player
+     * @param item
+     * @return true if wand was used successfully
+     */
+    public static boolean useGoUpWand(Player player, ItemStack item)
+    {
+        if (!item.equals(PlayerKit.wandItem.getAsStack()))
+        {
+            return false;
+        }
+
+        if (ItemCooldownManager.isCooldownOver(player, item))
+        {
+            ItemCooldownManager.addCooldown(player, item, (int)(ConfigData.instance.wandCooldown * 1000));
+
+            double distance = 0.0;
+            double fallDistance = 5.0;
+            // Use the wand
+            if (player.isSneaking())
+            {
+                distance = -ConfigData.instance.wandDown;
+                fallDistance = 0.0;
+            }
+            else
+            {
+                distance = ConfigData.instance.wandUp + 5;
+                fallDistance = 5.0;
+            }
+
+            Location newLocation = player.getLocation();
+            newLocation.setY(newLocation.getY() + distance + fallDistance);
+            player.teleport(newLocation, PlayerTeleportEvent.TeleportCause.PLUGIN);
+            newLocation.setY(newLocation.getY() - fallDistance);
+            BingoGame.spawnPlatform(newLocation, 1);
+
+            new BukkitRunnable() {
+                @Override
+                public void run()
+                {
+                    BingoGame.removePlatform(newLocation, 1);
+                }
+            }.runTaskLater(Bukkit.getPluginManager().getPlugin(BingoReloaded.NAME),
+                    Math.max(0, ConfigData.instance.platformLifetime) * BingoReloaded.ONE_SECOND);
+
+            player.playSound(player, Sound.ENTITY_SHULKER_TELEPORT, 0.8f, 1.0f);
+            player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, BingoReloaded.ONE_SECOND * 10, 100, false, false));
+            return true;
+        }
+
+        double timeLeft = ItemCooldownManager.getTimeLeft(player, item) / 1000.0;
+        new Message("game.item.cooldown").color(ChatColor.RED).arg(String.format("%.2f", timeLeft)).send(player);
+        return false;
+    }
+
+// @EventHandlers ========================================================================
+
+    @EventHandler
+    public void onBingoGameEvent(final BingoGameEvent event)
+    {
+        switch (event.eventName)
+        {
+            case "start_game":
+                start();
+        }
+    }
+
     @EventHandler
     public void onCardSlotCompleteEvent(final BingoCardSlotCompleteEvent event)
     {
@@ -465,7 +553,7 @@ public class BingoGame implements Listener
     public void onPlayerDropItem(final PlayerDropItemEvent dropEvent)
     {
         if (dropEvent.getItemDrop().getItemStack().equals(settings.kit.cardItem.getAsStack()) ||
-                dropEvent.getItemDrop().getItemStack().equals(settings.kit.wandItem.item.getAsStack()))
+                dropEvent.getItemDrop().getItemStack().equals(PlayerKit.wandItem.getAsStack()))
         {
             dropEvent.setCancelled(true);
             return;
@@ -511,10 +599,10 @@ public class BingoGame implements Listener
             }
         }
 
-        if (event.getItem().equals(settings.kit.wandItem.item.getAsStack())
+        if (event.getItem().equals(PlayerKit.wandItem.getAsStack())
                 && (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK))
         {
-            if (settings.kit.wandItem.tryUse(event.getPlayer()))
+            if (useGoUpWand(event.getPlayer(), event.getItem()))
             {
                 event.setCancelled(true);
             }
@@ -579,19 +667,6 @@ public class BingoGame implements Listener
             getTeamManager().addPlayerToTeam(event.getPlayer(), team.getName());
             scoreboard.updateItemCount();
             scoreboard.updateItemCount();
-        }
-    }
-
-    public void playerQuit(Player player)
-    {
-        if (!getTeamManager().getParticipants().contains(player)) return;
-
-        getTeamManager().removePlayerFromAllTeams(player);
-        new Message("game.player.leave").arg(ChatColor.RED + "/bingo join").send(player);
-        BingoGame.takePlayerEffects(player);
-        if (deadPlayers.containsKey(player.getUniqueId()))
-        {
-            deadPlayers.remove(player.getUniqueId());
         }
     }
 

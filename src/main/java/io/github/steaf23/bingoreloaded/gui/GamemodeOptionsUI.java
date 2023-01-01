@@ -41,6 +41,7 @@ public class GamemodeOptionsUI extends AbstractGUIInventory
     @Override
     public void delegateClick(InventoryClickEvent event, int slotClicked, Player player, ClickType clickType)
     {
+        //TODO: move messages to BingoSettings
         BingoGamemode chosenMode = BingoGamemode.REGULAR;
         CardSize chosenSize = CardSize.X5;
 

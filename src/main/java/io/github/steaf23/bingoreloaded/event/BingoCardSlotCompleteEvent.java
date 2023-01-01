@@ -27,6 +27,11 @@ public class BingoCardSlotCompleteEvent extends PlayerEvent
         return HANDLERS;
     }
 
+    public static HandlerList getHandlerList()
+    {
+        return HANDLERS;
+    }
+
     public AbstractBingoTask getCardSlot()
     {
         return slot;

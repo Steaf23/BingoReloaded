@@ -23,11 +23,11 @@ public class ItemTextBuilder
     {
         args.add("{\"text\":\"\"" +
                 ",\"color\":\"#" + Integer.toHexString(color.getColor().getRGB()).substring(2) + "\"" +
-                ",\"italic\":\"" + Arrays.stream(modifiers).anyMatch((m) -> m == "italic") + "\"" +
-                ",\"bold\":\"" + Arrays.stream(modifiers).anyMatch((m) -> m == "bold") + "\"" +
-                ",\"strikethrough\":\"" + Arrays.stream(modifiers).anyMatch((m) -> m == "strikethrough") + "\"" +
-                ",\"underlined\":\"" + Arrays.stream(modifiers).anyMatch((m) -> m == "underlined") + "\"" +
-                ",\"obfuscated\":\"" + Arrays.stream(modifiers).anyMatch((m) -> m == "obfuscated") + "\"" +
+                ",\"italic\":\"" + Arrays.stream(modifiers).anyMatch((m) -> m.equals("italic")) + "\"" +
+                ",\"bold\":\"" + Arrays.stream(modifiers).anyMatch((m) -> m.equals("bold")) + "\"" +
+                ",\"strikethrough\":\"" + Arrays.stream(modifiers).anyMatch((m) -> m.equals("strikethrough")) + "\"" +
+                ",\"underlined\":\"" + Arrays.stream(modifiers).anyMatch((m) -> m.equals("underlined")) + "\"" +
+                ",\"obfuscated\":\"" + Arrays.stream(modifiers).anyMatch((m) -> m.equals("obfuscated")) + "\"" +
                 "}");
     }
 

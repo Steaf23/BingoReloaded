@@ -4,7 +4,6 @@ import io.github.steaf23.bingoreloaded.data.ConfigData;
 import io.github.steaf23.bingoreloaded.data.TranslationData;
 import io.github.steaf23.bingoreloaded.gui.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
-import io.github.steaf23.bingoreloaded.item.TimedItem;
 import io.github.steaf23.bingoreloaded.util.FlexibleColor;
 import io.github.steaf23.bingoreloaded.BingoGame;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
@@ -29,52 +28,16 @@ public enum PlayerKit
     RELOADED(TranslationData.itemName("menu.kits.reloaded"), EnumSet.allOf(EffectOptionFlags.class)),
     ;
 
-    public final TimedItem wandItem = new TimedItem(new InventoryItem(
-            Material.WARPED_FUNGUS_ON_A_STICK,
-            "" + ChatColor.DARK_PURPLE + ChatColor.ITALIC + ChatColor.BOLD + TranslationData.itemName("items.wand"),
-            TranslationData.itemDescription("items.wand")
-    ).withEnchantment(Enchantment.DURABILITY, 3), (int)(ConfigData.instance.wandCooldown * 1000))
-    {
-        @Override
-        public void use(Player player)
-        {
-            if (player.isSneaking())
-            {
-                teleportPlayerUp(player, -ConfigData.instance.wandDown, 0);
-            }
-            else
-            {
-                teleportPlayerUp(player, ConfigData.instance.wandUp, 5);
-            }
-
-            player.playSound(player, Sound.ENTITY_SHULKER_TELEPORT, 0.8f, 1.0f);
-            player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, BingoReloaded.ONE_SECOND * 10, 100, false, false));
-        }
-
-        private static void teleportPlayerUp(Player player, int distance, int fallDistance)
-        {
-            Location newLocation = player.getLocation();
-            newLocation.setY(newLocation.getY() + distance + fallDistance);
-            player.teleport(newLocation, PlayerTeleportEvent.TeleportCause.CHORUS_FRUIT);
-            newLocation.setY(newLocation.getY() - fallDistance);
-            BingoGame.spawnPlatform(newLocation, 1);
-
-            new BukkitRunnable() {
-                @Override
-                public void run()
-                {
-                    BingoGame.removePlatform(newLocation, 1);
-                }
-            }.runTaskLater(Bukkit.getPluginManager().getPlugin(BingoReloaded.NAME),
-                    Math.max(0, ConfigData.instance.platformLifetime) * BingoReloaded.ONE_SECOND);
-        }
-    };
-
-    public final InventoryItem cardItem = new InventoryItem(8,
+    public static final InventoryItem cardItem = new InventoryItem(8,
             Material.MAP,
             "" + ChatColor.DARK_PURPLE + ChatColor.ITALIC + ChatColor.BOLD + TranslationData.itemName("items.card"),
             TranslationData.itemDescription("items.card"));
 
+    public static final InventoryItem wandItem = new InventoryItem(
+            (int)(ConfigData.instance.wandCooldown * 1000),
+            Material.WARPED_FUNGUS_ON_A_STICK,
+            "" + ChatColor.DARK_PURPLE + ChatColor.ITALIC + ChatColor.BOLD + TranslationData.itemName("items.wand"),
+            TranslationData.itemDescription("items.wand")).withEnchantment(Enchantment.DURABILITY, 3);
     public final String displayName;
     public final EnumSet<EffectOptionFlags> defaultEffects;
 
@@ -121,7 +84,7 @@ public enum PlayerKit
             }
             case OVERPOWERED -> {
                 items = new ArrayList<>();
-                items.add(wandItem.item.inSlot(7));
+                items.add(wandItem.inSlot(7));
                 items.add(helmet
                         .withEnchantment(Enchantment.DURABILITY, 3)
                         .withEnchantment(Enchantment.WATER_WORKER, 1)
@@ -146,7 +109,7 @@ public enum PlayerKit
             }
             case RELOADED -> {
                 items = new ArrayList<>();
-                items.add(wandItem.item.inSlot(7));
+                items.add(wandItem.inSlot(7));
                 items.add(helmet
                         .withEnchantment(Enchantment.DURABILITY, 3)
                         .withEnchantment(Enchantment.WATER_WORKER, 1)
@@ -189,5 +152,11 @@ public enum PlayerKit
                     case "reloaded" -> RELOADED;
                     default -> HARDCORE;
                 };
+    }
+
+    private static InventoryItem createGoUpWand()
+    {
+
+        return wandItem;
     }
 }

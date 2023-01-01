@@ -37,7 +37,8 @@ public class BingoReloaded extends JavaPlugin
 
         BingoGame game = new BingoGame();
         // create singletons.
-        UIManager.getUIManager();
+        UIManager.create();
+        ItemCooldownManager.create();
 
         PluginCommand bingoCommand = getCommand("bingo");
         if (bingoCommand != null)

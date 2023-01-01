@@ -5,9 +5,14 @@ import io.github.steaf23.bingoreloaded.BingoGameSettings;
 import io.github.steaf23.bingoreloaded.BingoGamemode;
 import io.github.steaf23.bingoreloaded.Message;
 import io.github.steaf23.bingoreloaded.data.BingoCardsData;
+import io.github.steaf23.bingoreloaded.event.BingoCardSlotCompleteEvent;
+import io.github.steaf23.bingoreloaded.event.BingoGameEvent;
 import io.github.steaf23.bingoreloaded.gui.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.gui.cards.CardSize;
 import io.github.steaf23.bingoreloaded.player.PlayerKit;
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.TextComponent;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -18,6 +23,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Arrays;
 import java.util.List;
 
+//TODO: Add autobingo end command!
 public class AutoBingoCommand implements CommandExecutor
 {
     private BingoGameSettings settings;
@@ -31,8 +37,10 @@ public class AutoBingoCommand implements CommandExecutor
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String alias, @NotNull String[] args)
     {
         // AutoBingo should only work for admins or console.
-        if (!(commandSender instanceof Player p) || p.hasPermission("bingo.admin"))
-            return false;
+        if (commandSender instanceof Player p && !p.hasPermission("bingo.admin"))
+        {
+            return true;
+        }
 
         if (args.length > 1)
         {
@@ -49,9 +57,11 @@ public class AutoBingoCommand implements CommandExecutor
                 case "effects":
                     // If argument count is only 1, enable all, none or just the single effect typed.
                     //     Else default enable effect unless the second argument is "false".
-                    if (!setEffect(args[1], args.length > 2 && args[2] == "false" ? false : true))
+                    sendFailed("" + args.length, commandSender);
+                    boolean enable = args.length > 2 && args[2].equals("false") ? false : true;
+                    if (!setEffect(args[1], enable))
                     {
-                        sendFailed("Invalid effect setting '" + args[1] + " to '" + args[2] + "'!", commandSender);
+                        sendFailed("Invalid effect setting '" + args[1] + "' to '" + enable + "'!", commandSender);
                         return false;
                     }
                     return true;
@@ -108,12 +118,12 @@ public class AutoBingoCommand implements CommandExecutor
 
     public boolean setEffect(String effect, boolean enable)
     {
-        if (effect == "all")
+        if (effect.equals("all"))
         {
             settings.setEffects(EffectOptionFlags.ALL_ON);
             return true;
         }
-        else if (effect == "none")
+        else if (effect.equals("none"))
         {
             settings.setEffects(EffectOptionFlags.ALL_OFF);
             return true;
@@ -162,7 +172,7 @@ public class AutoBingoCommand implements CommandExecutor
     {
         try
         {
-            settings.mode = BingoGamemode.valueOf(gamemode);
+            settings.mode = BingoGamemode.fromDataString(gamemode);
             switch (cardSize)
             {
                 case "3":
@@ -177,6 +187,9 @@ public class AutoBingoCommand implements CommandExecutor
         {
             return false;
         }
+
+        var startEvent = new BingoGameEvent("start_game");
+        Bukkit.getPluginManager().callEvent(startEvent);
         return true;
     }
 
@@ -199,13 +212,15 @@ public class AutoBingoCommand implements CommandExecutor
 
     private void sendFailed(String message, CommandSender sender)
     {
+        TextComponent text = new TextComponent(message);
+        text.setColor(ChatColor.RED);
         if (sender instanceof Player)
         {
-            Message.sendDebug(message, (Player)sender);
+            Message.sendDebug(text, (Player)sender);
         }
         else
         {
-            Message.log(message);
+            Message.log(text);
         }
     }
 }

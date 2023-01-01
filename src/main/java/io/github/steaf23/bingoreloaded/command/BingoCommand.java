@@ -50,7 +50,7 @@ public class BingoCommand implements CommandExecutor
                         }
                         else
                         {
-                            gameInstance.start(0);
+                            gameInstance.start();
                         }
                         return true;
                     }
