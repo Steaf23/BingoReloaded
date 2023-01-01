@@ -1,9 +1,6 @@
 package io.github.steaf23.bingoreloaded;
 
-import io.github.steaf23.bingoreloaded.command.BingoCommand;
-import io.github.steaf23.bingoreloaded.command.BingoTabCompleter;
-import io.github.steaf23.bingoreloaded.command.CardCommand;
-import io.github.steaf23.bingoreloaded.command.ItemListCommand;
+import io.github.steaf23.bingoreloaded.command.*;
 import io.github.steaf23.bingoreloaded.data.ConfigData;
 import io.github.steaf23.bingoreloaded.data.RecoveryCardData;
 import io.github.steaf23.bingoreloaded.data.TranslationData;

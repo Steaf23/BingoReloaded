@@ -18,14 +18,14 @@ public class AutoBingoTabCompleter implements TabCompleter
         switch (args.length)
         {
             case 1:
-                return List.of("kit", "effects", "card", "teammax", "start");
+                return List.of("kit", "effects", "card", "team_max", "start");
             case 2:
                 switch (args[1])
                 {
                     case "kit":
                         return List.of("custom", "normal", "overpowered", "reloaded", "hardcore");
                     case "effects":
-                        return List.of("all", "none", "waterbreathing", "nightvision", "fireresistance", "nofall", "cardspeed");
+                        return List.of("all", "none", "water_breathing", "night_vision", "fire_resistance", "no_fall", "card_speed");
                     case "card":
                         return BingoCardsData.getCardNames().stream().toList();
                     case "start":

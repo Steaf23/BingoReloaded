@@ -24,12 +24,14 @@ public class TeamManager
     private final List<BingoTeam> activeTeams;
     private final BingoGame game;
     private final Scoreboard teams;
+    private int maximumTeamSize;
 
     public TeamManager(BingoGame game, Scoreboard board)
     {
         this.activeTeams = new ArrayList<>();
         this.game = game;
         this.teams = board;
+        this.maximumTeamSize = game.getSettings().maxTeamSize;
 
         createTeams();
     }
@@ -86,6 +88,11 @@ public class TeamManager
         if (team == null)
         {
             Message.log("Team " + FlexibleColor.fromName(teamName).getTranslation() + " does not exist, could not add " + player.getDisplayName() + " to this team!");
+            return;
+        }
+        if (team.getEntries().size() >= maximumTeamSize)
+        {
+            Message.log("Team " + FlexibleColor.fromName(teamName).getTranslation() + " has reached it's capacity of " + maximumTeamSize + " players!");
             return;
         }
         removePlayerFromAllTeams(player);

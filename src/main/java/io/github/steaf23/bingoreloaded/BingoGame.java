@@ -50,10 +50,10 @@ public class BingoGame implements Listener
 
     public BingoGame()
     {
+        this.settings = new BingoGameSettings();
         this.inProgress = false;
         this.scoreboard = new BingoScoreboard(this);
         this.timer = new GameTimer(scoreboard);
-        this.settings = new BingoGameSettings();
         this.deadPlayers = new HashMap<>();
 
         BingoReloaded.registerListener(this);

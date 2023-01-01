@@ -18,6 +18,7 @@ public class BingoGameSettings
     public PlayerKit kit;
     public EnumSet<EffectOptionFlags> effects;
     public Material deathMatchItem;
+    public int maxTeamSize;
 
     public BingoGameSettings()
     {
@@ -26,6 +27,7 @@ public class BingoGameSettings
         this.cardSize = CardSize.X5;
         this.kit = PlayerKit.OVERPOWERED;
         this.effects = kit.defaultEffects;
+        this.maxTeamSize = Integer.MAX_VALUE;
     }
 
     public Material generateDeathMatchItem()
