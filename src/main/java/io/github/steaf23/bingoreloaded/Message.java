@@ -37,11 +37,29 @@ public class Message
     private TextComponent base;
     private BaseComponent finalMessage;
 
+    public Message()
+    {
+        this("");
+    }
+
     public Message(String translatePath)
     {
-        this.raw = TranslationData.translate(translatePath);
+        if (translatePath != "")
+        {
+            this.raw = TranslationData.translate(translatePath);
+        }
+        else
+        {
+            this.raw = "";
+        }
         this.args = new ArrayList<>();
         this.base = new TextComponent();
+    }
+
+    public Message untranslated(String message)
+    {
+        raw = message;
+        return this;
     }
 
     public Message arg(@NonNull String name)

@@ -1,0 +1,176 @@
+name: "Français"
+changed: "Langue changée en Français!"
+command:
+  use: "Utilisation: {0}" # 0: cmd usage
+  bingo:
+    use: "Utilisation: {0}" # 0: /bingo usage
+    no_deathmatch: "Impossible de commencer une mort subite quand aucune partie n'est en cours!"
+  card:
+    no_name: "Veuillez indiquer le nom de la grille: {0}" # 0: command
+    no_remove: "Impossible de supprimer la grille '{0}', vérifiez si vous avez orthographié le nom correctement!" # 0: card name
+    removed: "Grille '{0}' supprimée avec succès!" # 0: card name
+  list:
+    no_name: "Veuillez indiquer le nom de la liste d'éléments: {0}" # 0: command
+    no_remove: "Impossible de supprimer la liste d'éléments '{0}', vérifiez si vous avez orthographié le nom correctement!" # 0: item list name
+    removed: "Liste d'éléments '{0}' supprimée avec succès!" # 0: item list name
+game:
+  settings:
+    kit_selected: "Kit de démarrage {0} sélectionné" # 0: selected kit (see "kit") below
+    effects_selected: "Options d'effets sélectionnées, consultez les dans les /bingo options"
+    regular_selected: "Bingo classique sélectionné Complétez une ligne pour gagner (horizontale, verticale ou diagonale)!"
+    lockout_selected: "Bingo avec verrouillage sélectionné Complétez et verrouillez un maximum de cases sur la grille pour gagner!"
+    complete_selected: "Bingo grille intégrale sélectionnée. Complétez toutes les cases de la grille pour gagner!"
+    card_selected: "Grille de Bingo '{0}' sélectionnée pour la partie!" # 0: card name
+    cardsize: "Taille de grille sélectionnée: {0}" # 0: card size
+  start:
+    no_players: "Le Bingo ne peut pas démarrer car aucun joueur n'a rejoint la partie :("
+    already_started: "Impossible de démarrer une nouvelle partie car il y en a une déjà en cours!"
+    give_cards: "Tous les participants reçoivent un kit de démarrage et une grille de Bingo!"
+    no_card: "Impossible de démarrer la partie en utilisant la grille '{0}' car elle n'existe pas!" # 0: card_name
+  end:
+    bingo: "Félicitations! L'équipe {0} a remporté la partie de Bingo!" # 0: winning team
+    duration: "&b&lDurée de la partie: {0}" # 0: total game time
+    restart:
+      prefix: "&a&o&lLa partie est terminée! Cliquez sur "
+      hoverable: "&c&oRelancer!"
+      hover: "&a&o&lCliquez sur relancer pour utiliser les mêmes règles et les mêmes équipes!"
+      suffix: ""
+  player:
+    leave: "Vous avez été enlevé de la partie avec succès, utilisez {0} pour revenir :D" # 0: /bingo command
+    no_start: "La partie n'a pas encore commencée!"
+    cooldown: "Vous ne pouvez plus utiliser cet élément durant les {0} prochaines secondes!" # 0: time left
+    join_back: "Bon retour, la partie est toujours en cours!"
+    respawn:
+      prefix: ""
+      hoverable: "&3&lCliquez ici pour vous téléporter à l'endroit de votre mort"
+      hover: ""
+      suffix: ""
+  team:
+    no_join: "Vous ne pouvez pas rejoindre une partie en cours!"
+    join: "Vous avez intégré l'équipe {0} avec succès!" # 0: team name
+    dropped: "L'équipe {0} ne peut plus gagner, ils sont ejectés de la partie en cours!" # 0: team name
+    no_chat: "Vous ne pouvez pas activer ou désactiver le chat d'équipe car vous n'êtes pas dans une équipe!"
+    chat_off: "&fLe chat d'équipe est désormais &cdésactivé&r, utilisez la commande {0} pour le réactiver." # 0: /btc
+    chat_on: "&fLe chat d'équipe est désormais &aactivé&r, utilisez la commande {0} pour le désactiver." # 0: /btc
+  item:
+    lore: Amassez {0} de cet élément pour compléter cette tâche! # 0: item count
+    lore_advancement: "Cliquez pour plus de détails!"
+    completed: "{0} completé par l'équipe {1} à {2}" # 0: item name, 1: team, 2: completion time
+    complete_lore: "Completé par {0} \nà {1}" # 0: team, 1: completion time
+    deathmatch: "Mort subite - Trouvez cet élément pour gagner: {0}" # 0: item name
+    cooldown: "Vous ne pouvez plus utiliser cet élément durant les {0} prochaines secondes!" # 0: seconds
+menu:
+  save: "Sauvegarder"
+  exit: "Fermer le menu"
+  save_exit: "Sauvegarder && Quitter"
+  accept: "Accepter && Fermer"
+  next: "Page Suivante"
+  prev: "Page Précédente"
+  filter: "Filtrer..."
+  clear: "Effacer le Filtre"
+  completed: "Tâches complétées"
+  card:
+    title: "Grille"
+    info_regular:
+      name: "Grille de Bingo classique"
+      desc: "La première équipe à terminer une ligne gagne. \nLes lignes peuvent se faire horizontalement, verticalement \nou en diagonale."
+    info_lockout:
+      name: "Grille de Bingo avec verrouillage"
+      desc: "Complétez le plus d'éléments possible pour gagner. \nQuand un élément est complété \nil ne peut plus être complété par une autre équipe."
+    info_complete:
+      name: "Grille de Bingo intégrale"
+      desc: "La première équipe à compléter la totalité de la grille gagne."
+  options:
+    title: "Options"
+    start:
+      name: "Démarrer la partie"
+    end:
+      name: "Terminer la partie"
+    team:
+      name: "Rejoindre une équipe"
+    leave:
+      name: "Quitter la partie"
+    kit:
+      name: "Kit de démarrage"
+    card:
+      name: "Sélectionner une grille"
+    mode:
+      name: "Mode de jeu"
+    effects:
+      name: "Effets"
+  effects:
+    enable: "Cliquez pour ACTIVER cet effet"
+    disable: "Cliquez pour DESACTIVER cet effet"
+    enabled: "ACTIVE"
+    disabled: "DESACTIVE"
+    night_vision: "Vision nocturne"
+    water_breath: "Respiration aquatique"
+    fire_res: "Résistance au feu"
+    no_fall_dmg: "Aucun dégat de chute"
+    card_speed: "Accélération quand le joueur tient la grille"
+  kits:
+    hardcore:
+      name: "&4Hardcore"
+      desc: "Ce kit contient: \n
+      \n
+          - Rien du tout, bonne chance!"
+    normal:
+      name: "&eNormal"
+      desc: "Ce kit contient: \n
+      \n
+          - Hache en fer \n
+          - Pioche en fer \n
+          - Pelle en fer (Toucher de soie) \n
+          - 32 cotelettes de porc cuites \n
+          - Casque en cuir \n
+          - Bottes en cuir"
+    overpowered:
+      name: "&5Surpuissant"
+      desc: "Ce kit contient: \n
+      \n
+          - Hache en Netherite \n
+          - Pioche en Netherite (Fortune) \n
+          - Pelle en Netherite (Toucher de soie) \n
+          - 64 Carottes dorées \n
+          - La Baguette d'Envol \n
+          - Casque en cuir \n
+          - Bottes en cuir"
+    reloaded:
+      name: "&3Reloaded"
+      desc: "Ce kit contient: \n
+      \n
+          - Hache en Netherite \n
+          - Pioche en Netherite (Fortune) \n
+          - Pelle en Netherite (Toucher de soie) \n
+          - 64 Carottes dorées \n
+          - La Baguette d'Envol \n
+          - Casque en cuir \n
+          - Elytres (Solidité X) \n
+          - Bottes en cuir"
+items:
+  card:
+    name: "Grille de Bingo"
+    desc: "Cliquez pour ouvrir la grille de Bingo!"
+  wand:
+    name: "La Baguette d'Envol"
+    desc: "Cliquez avec le bouton de droite pour vous envoler dans les cieux! (& maintenez shift pour descendre)"
+teams:
+  brown: "Marron"
+  orange: "Orange"
+  pink: "Rose"
+  red: "Rouge"
+  white: "Blanc"
+  lime: "Vert clair"
+  green: "Vert"
+  gray: "Gris"
+  light_gray: "Gris clair"
+  black: "Noir"
+  yellow: "Jaune"
+  magenta: "Magenta"
+  cyan: "Cyan"
+  blue: "Bleu"
+  purple: "Violet"
+  light_blue: "Bleu clair"
+creator:
+  card_item:
+    desc: "Contient {0} liste(s)" # 0: list count

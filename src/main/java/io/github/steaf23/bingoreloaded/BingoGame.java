@@ -56,6 +56,9 @@ public class BingoGame implements Listener
         this.timer = new GameTimer(scoreboard);
         this.deadPlayers = new HashMap<>();
 
+        scoreboard.resetBoards();
+        scoreboard.updateItemCount();
+
         BingoReloaded.registerListener(this);
     }
 
@@ -288,7 +291,12 @@ public class BingoGame implements Listener
     {
         if (player == null) return;
         Location location = deadPlayers.get(player.getUniqueId());
-        Message.sendDebug("Death location" + location, player);
+        if (location == null)
+        {
+            new Message("menu.effects.disabled").color(ChatColor.RED).send(player);
+            return;
+        }
+
         player.teleport(deadPlayers.get(player.getUniqueId()), PlayerTeleportEvent.TeleportCause.PLUGIN);
         deadPlayers.remove(player.getUniqueId());
     }

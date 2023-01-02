@@ -56,7 +56,6 @@ public class AutoBingoCommand implements CommandExecutor
                 case "effects":
                     // If argument count is only 1, enable all, none or just the single effect typed.
                     //     Else default enable effect unless the second argument is "false".
-                    sendFailed("" + args.length, commandSender);
                     boolean enable = args.length > 2 && args[2].equals("false") ? false : true;
                     if (!setEffect(args[1], enable))
                     {
@@ -96,13 +95,16 @@ public class AutoBingoCommand implements CommandExecutor
         }
         else
         {
-            if (!end())
+            if (args[0].equals("end"))
             {
-                sendFailed("Invalid command, can not end the game", commandSender);
-            }
-            else
-            {
-                return true;
+                if (!end())
+                {
+                    sendFailed("Invalid command, can not end the game", commandSender);
+                }
+                else
+                {
+                    return true;
+                }
             }
 
             sendFailed("Invalid number of arguments: " + args.length + "!", commandSender);

@@ -44,6 +44,7 @@ gracePeriod: 30
 selectedCard: default_card
 
 # The yml file that contains the language data that will be used for this plugin
+#   Choose from: en_us.yml, nl.yml, fr_fr.yml
 language: en_us.yml
 
 # Countdown time in minutes that is used for the Countdown gamemode.
