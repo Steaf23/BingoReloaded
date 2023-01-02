@@ -49,3 +49,8 @@ language: en_us.yml
 # Countdown time in minutes that is used for the Countdown gamemode.
 countdownTime: 20
 
+# Save player statistics (stats) like wins, losses, tasks completed, etc... Used for the leaderboard. Stats are saved to player_stats.yml.
+#   Stats are not automatically removed if you turn this to false if it has been on true before.
+#   Turning this option on later will not retroactively fill stats for games played with stats off.
+savePlayerStatistics: false # true or false
+

@@ -1,8 +1,6 @@
 package io.github.steaf23.bingoreloaded;
 
-import io.github.steaf23.bingoreloaded.data.BingoCardsData;
-import io.github.steaf23.bingoreloaded.data.ConfigData;
-import io.github.steaf23.bingoreloaded.data.RecoveryCardData;
+import io.github.steaf23.bingoreloaded.data.*;
 import io.github.steaf23.bingoreloaded.event.BingoGameEvent;
 import io.github.steaf23.bingoreloaded.gui.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.gui.cards.BingoCard;
@@ -147,6 +145,15 @@ public class BingoGame implements Listener
         {
             p.playSound(p, Sound.ENTITY_DRAGON_FIREBALL_EXPLODE, 0.8f, 1.0f);
             p.playSound(p, Sound.UI_TOAST_CHALLENGE_COMPLETE, 0.75f, 1.0f);
+
+            if (getTeamManager().getTeamOfPlayer(p).equals(team))
+            {
+                BingoStatsData.incrementPlayerStat(p.getUniqueId(), BingoStatType.WINS);
+            }
+            else
+            {
+                BingoStatsData.incrementPlayerStat(p.getUniqueId(), BingoStatType.LOSSES);
+            }
         }
         end();
     }
@@ -515,6 +522,8 @@ public class BingoGame implements Listener
 
             player.playSound(player, Sound.ENTITY_SHULKER_TELEPORT, 0.8f, 1.0f);
             player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, BingoReloaded.ONE_SECOND * 10, 100, false, false));
+
+            BingoStatsData.incrementPlayerStat(player.getUniqueId(), BingoStatType.WAND_USES);
             return true;
         }
 
@@ -542,6 +551,7 @@ public class BingoGame implements Listener
     @EventHandler
     public void onCardSlotCompleteEvent(final BingoCardSlotCompleteEvent event)
     {
+        BingoStatsData.incrementPlayerStat(event.getPlayer().getUniqueId(), BingoStatType.TASKS);
         for (Player p : getTeamManager().getParticipants())
         {
             p.playSound(p, Sound.ENTITY_DRAGON_FIREBALL_EXPLODE, 0.8f, 1.0f);
@@ -606,7 +616,11 @@ public class BingoGame implements Listener
         if (event.getItem().equals(PlayerKit.wandItem.getAsStack())
                 && (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK))
         {
-            if (useGoUpWand(event.getPlayer(), event.getItem()))
+            if (!inProgress)
+            {
+                new Message("game.player.no_start").send(event.getPlayer());
+            }
+            else if (useGoUpWand(event.getPlayer(), event.getItem()))
             {
                 event.setCancelled(true);
             }

@@ -1,9 +1,13 @@
-multiworld refactor!
+multiworld refactor! using Multiverse plugin
 
 add option to duplicate cards/lists
-
-add countdown
 
 refactor card recovery (its shit).
 
 use percentages instead of numbers for list chances.
+
+implement Vault plugin
+
+add player stats YML file for leaderboards
+
+create lobby to: vote for options and select teams pre-game

@@ -49,10 +49,13 @@ public class ConfigData
     public int platformLifetime;
     public PlayerKit defaultKit;
     public int gracePeriod;
+    //TODO: Implement option
     public boolean resetPlayerItems;
+    //TODO: Implement option
     public boolean resetPlayerPositions;
     public String selectedCard;
     public String language;
+    public boolean savePlayerStatistics;
 
     public static final ConfigData instance = new ConfigData();
 
@@ -72,20 +75,6 @@ public class ConfigData
         this.resetPlayerItems = config.getBoolean("resetPlayerItems", true);
         this.resetPlayerPositions = config.getBoolean("resetPlayerPositions", true);
         this.selectedCard = config.getString("selectedCard", "default_card");
-
-        Message.log("" + this.teleportMaxDistance);
-        Message.log("" + this.playerTeleportStrategy);
-        Message.log("" + this.teleportAfterDeath);
-        Message.log("" + this.lobbySpawnHeight);
-        Message.log("" + this.wandUp);
-        Message.log("" + this.wandDown);
-        Message.log("" + this.wandCooldown);
-        Message.log("" + this.platformLifetime);
-        Message.log("" + this.defaultKit);
-        Message.log("" + this.gracePeriod);
-        Message.log("" + this.resetPlayerItems);
-        Message.log("" + this.resetPlayerPositions);
-        Message.log("" + this.selectedCard);
-        Message.log("" + this.language);
+        this.savePlayerStatistics = config.getBoolean("savePlayerStatistics", false);
     }
 }
