@@ -23,7 +23,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Arrays;
 import java.util.List;
 
-//TODO: Add autobingo end command!
 public class AutoBingoCommand implements CommandExecutor
 {
     private BingoGameSettings settings;
@@ -97,6 +96,15 @@ public class AutoBingoCommand implements CommandExecutor
         }
         else
         {
+            if (!end())
+            {
+                sendFailed("Invalid command, can not end the game", commandSender);
+            }
+            else
+            {
+                return true;
+            }
+
             sendFailed("Invalid number of arguments: " + args.length + "!", commandSender);
             return false;
         }
@@ -190,6 +198,13 @@ public class AutoBingoCommand implements CommandExecutor
 
         var startEvent = new BingoGameEvent("start_game");
         Bukkit.getPluginManager().callEvent(startEvent);
+        return true;
+    }
+
+    public boolean end()
+    {
+        var endEvent = new BingoGameEvent("end_game");
+        Bukkit.getPluginManager().callEvent(endEvent);
         return true;
     }
 

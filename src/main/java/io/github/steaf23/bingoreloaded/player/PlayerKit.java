@@ -26,6 +26,7 @@ public enum PlayerKit
     NORMAL(TranslationData.itemName("menu.kits.normal"), EnumSet.of(EffectOptionFlags.CARD_SPEED, EffectOptionFlags.NO_FALL_DAMAGE)),
     OVERPOWERED(TranslationData.itemName("menu.kits.overpowered"), EnumSet.allOf(EffectOptionFlags.class)),
     RELOADED(TranslationData.itemName("menu.kits.reloaded"), EnumSet.allOf(EffectOptionFlags.class)),
+    CUSTOM(TranslationData.itemName("menu.kits.custom"), EnumSet.noneOf(EffectOptionFlags.class)),
     ;
 
     public static final InventoryItem cardItem = new InventoryItem(8,
@@ -135,6 +136,7 @@ public enum PlayerKit
                 return items;
             }
             default -> {
+                //TODO: Implement CUSTOM kit
                 items = new ArrayList<>();
                 return items;
             }

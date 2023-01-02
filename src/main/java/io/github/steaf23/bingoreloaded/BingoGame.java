@@ -532,6 +532,10 @@ public class BingoGame implements Listener
         {
             case "start_game":
                 start();
+                break;
+            case "end_game":
+                end();
+                break;
         }
     }
 
