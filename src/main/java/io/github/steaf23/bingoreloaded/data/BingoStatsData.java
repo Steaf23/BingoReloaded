@@ -1,10 +1,8 @@
 package io.github.steaf23.bingoreloaded.data;
 
-import org.bukkit.entity.Player;
-import org.bukkit.scoreboard.Scoreboard;
-import org.jetbrains.annotations.Nullable;
-
+import javax.annotation.Nullable;
 import java.util.UUID;
+
 
 public class BingoStatsData
 {

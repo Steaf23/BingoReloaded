@@ -30,7 +30,6 @@ import org.bukkit.event.player.PlayerAdvancementDoneEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.*;
 
@@ -100,7 +99,7 @@ public class BingoCard extends AbstractGUIInventory implements Listener
             if (!allTasks.containsKey(listName))
             {
                 List<AbstractBingoTask> listTasks = BingoTasksData.getAllTasks(listName);
-                if (listTasks.size() <= 0) // Skip empty task lists.
+                if (listTasks.size() == 0) // Skip empty task lists.
                 {
                     continue;
                 }
@@ -252,10 +251,7 @@ public class BingoCard extends AbstractGUIInventory implements Listener
                 public void run()
                 {
                     ItemStack resultStack = player.getItemOnCursor();
-                    if (resultStack != null)
-                    {
-                        completeItemSlot(resultStack, team, player);
-                    }
+                    completeItemSlot(resultStack, team, player);
                 }
             }.runTask(Bukkit.getPluginManager().getPlugin(BingoReloaded.NAME));
             return;
