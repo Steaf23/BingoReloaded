@@ -1,7 +1,7 @@
 package io.github.steaf23.bingoreloaded;
 
 import io.github.steaf23.bingoreloaded.data.*;
-import io.github.steaf23.bingoreloaded.event.BingoGameEvent;
+import io.github.steaf23.bingoreloaded.event.SendBingoGameEvent;
 import io.github.steaf23.bingoreloaded.gui.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.gui.cards.BingoCard;
 import io.github.steaf23.bingoreloaded.gui.cards.CardBuilder;
@@ -11,7 +11,8 @@ import io.github.steaf23.bingoreloaded.item.ItemTextBuilder;
 import io.github.steaf23.bingoreloaded.player.BingoTeam;
 import io.github.steaf23.bingoreloaded.player.PlayerKit;
 import io.github.steaf23.bingoreloaded.player.TeamManager;
-import io.github.steaf23.bingoreloaded.util.FlexibleColor;
+import io.github.steaf23.bingoreloaded.util.*;
+import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.chat.TranslatableComponent;
 import org.bukkit.*;
@@ -32,28 +33,37 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 import net.md_5.bungee.api.ChatColor;
+import org.w3c.dom.css.Counter;
 
-import javax.annotation.Nullable;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 public class BingoGame implements Listener
 {
     public boolean inProgress;
+    public GameTimer timer;
 
     private final BingoScoreboard scoreboard;
-    private final GameTimer timer;
     private BingoGameSettings settings;
     private final Map<UUID, Location> deadPlayers;
+    private final TimeNotifier notifier;
 
     public BingoGame()
     {
         this.settings = new BingoGameSettings();
         this.inProgress = false;
         this.scoreboard = new BingoScoreboard(this);
-        this.timer = new GameTimer(scoreboard);
+        this.notifier = new TimeNotifier()
+        {
+            @Override
+            public void timeUpdated(int seconds)
+            {
+                for (Player player : getTeamManager().getParticipants())
+                {
+                    player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(
+                            timer.getTimeDisplayMessage().toLegacyString()));
+                }
+            }
+        };
         this.deadPlayers = new HashMap<>();
 
         scoreboard.resetBoards();
@@ -69,6 +79,16 @@ public class BingoGame implements Listener
 
     public void start(int seed)
     {
+        if (settings.mode == BingoGamemode.COUNTDOWN)
+        {
+            timer = new CountdownTimer(settings.countdownGameDuration * 60, 5 * 60, 1 * 60);
+        }
+        else
+        {
+            timer = new CounterTimer();
+        }
+        timer.setNotifier(notifier);
+
         if (!BingoCardsData.getCardNames().contains(settings.card))
         {
             new Message("game.start.no_card").color(ChatColor.RED).arg(settings.card).sendAll();
@@ -125,7 +145,6 @@ public class BingoGame implements Listener
     public void end()
     {
         settings.deathMatchItem = null;
-        timer.stop();
         if(!inProgress)
             return;
 
@@ -133,12 +152,10 @@ public class BingoGame implements Listener
         TextComponent[] commandMessage = Message.createHoverCommandMessage("game.end.restart", "/bingo start");
         Set<Player> players = getTeamManager().getParticipants();
         players.forEach(p -> p.spigot().sendMessage(commandMessage));
-        new Message("game.end.duration").color(ChatColor.GREEN)
-                .arg(GameTimer.getTimeAsString(timer.getTime())).color(ChatColor.WHITE)
-                .sendAll();
+        timer.getTimeDisplayMessage().sendAll();
+        timer.stop();
         RecoveryCardData.markCardEnded(true);
         players.forEach(p -> takePlayerEffects(p));
-        scoreboard.resetBoards();
     }
 
     public void bingo(BingoTeam team)
@@ -163,7 +180,11 @@ public class BingoGame implements Listener
 
     public int getGameTime()
     {
-        return timer.getTime();
+        if (timer != null)
+        {
+            return timer.getTime();
+        }
+        return 0;
     }
 
     public BingoGameSettings getSettings()
@@ -211,38 +232,39 @@ public class BingoGame implements Listener
 
     public void startDeathMatch(int countdown)
     {
-        if (countdown > 0)
+        if (countdown == 0)
         {
-            ChatColor color = switch (countdown)
-                    {
-                        case 1 -> ChatColor.RED;
-                        case 2 -> ChatColor.GOLD;
-                        default -> ChatColor.GREEN;
-                    };
+            settings.deathMatchItem = settings.generateDeathMatchItem();
+
             for (Player p : getTeamManager().getParticipants())
             {
-                p.sendTitle(color + "" + countdown, "", -1, -1, -1);
-                Message.sendDebug(color + "" + countdown, p);
+                showDeathMatchItem(p);
+                p.sendTitle("" + ChatColor.GOLD + ChatColor.GOLD + "GO", "" + ChatColor.DARK_PURPLE + ChatColor.ITALIC + "find the item listed in the chat to win!", -1, -1, -1);
             }
-
-            new BukkitRunnable()
-            {
-                @Override
-                public void run()
-                {
-                    startDeathMatch(countdown - 1);
-                }
-            }.runTaskLater(BingoReloaded.getPlugin(BingoReloaded.class), BingoReloaded.ONE_SECOND);
             return;
         }
 
-        settings.deathMatchItem = settings.generateDeathMatchItem();
-
+        ChatColor color = switch (countdown)
+                {
+                    case 1 -> ChatColor.RED;
+                    case 2 -> ChatColor.GOLD;
+                    default -> ChatColor.GREEN;
+                };
         for (Player p : getTeamManager().getParticipants())
         {
-            showDeathMatchItem(p);
-            p.sendTitle("" + ChatColor.GOLD + ChatColor.GOLD + "GO", "" + ChatColor.DARK_PURPLE + ChatColor.ITALIC + "find the item listed in the chat to win!", -1, -1, -1);
+            p.sendTitle(color + "" + countdown, "", -1, -1, -1);
+            Message.sendDebug(color + "" + countdown, p);
         }
+
+        new BukkitRunnable()
+        {
+            @Override
+            public void run()
+            {
+                startDeathMatch(countdown - 1);
+            }
+        }.runTaskLater(BingoReloaded.getPlugin(BingoReloaded.class), BingoReloaded.ONE_SECOND);
+        return;
     }
 
     public void showDeathMatchItem(Player p)
@@ -543,14 +565,14 @@ public class BingoGame implements Listener
 // @EventHandlers ========================================================================
 
     @EventHandler
-    public void onBingoGameEvent(final BingoGameEvent event)
+    public void onBingoGameEvent(final SendBingoGameEvent event)
     {
-        switch (event.eventName)
+        switch (event.eventType)
         {
-            case "start_game":
+            case START:
                 start();
                 break;
-            case "end_game":
+            case END:
                 end();
                 break;
         }

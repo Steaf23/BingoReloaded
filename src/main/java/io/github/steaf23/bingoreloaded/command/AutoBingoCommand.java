@@ -1,12 +1,11 @@
 package io.github.steaf23.bingoreloaded.command;
 
-import io.github.steaf23.bingoreloaded.BingoGame;
 import io.github.steaf23.bingoreloaded.BingoGameSettings;
 import io.github.steaf23.bingoreloaded.BingoGamemode;
 import io.github.steaf23.bingoreloaded.Message;
 import io.github.steaf23.bingoreloaded.data.BingoCardsData;
-import io.github.steaf23.bingoreloaded.event.BingoCardSlotCompleteEvent;
 import io.github.steaf23.bingoreloaded.event.BingoGameEvent;
+import io.github.steaf23.bingoreloaded.event.SendBingoGameEvent;
 import io.github.steaf23.bingoreloaded.gui.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.gui.cards.CardSize;
 import io.github.steaf23.bingoreloaded.player.PlayerKit;
@@ -18,10 +17,6 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.Arrays;
-import java.util.List;
 
 public class AutoBingoCommand implements CommandExecutor
 {
@@ -45,6 +40,14 @@ public class AutoBingoCommand implements CommandExecutor
         {
             switch (args[0])
             {
+                case "start":
+                    if (!start(args[1], args.length > 2 ? args[2] : ""))
+                    {
+                        sendFailed("Invalid command, could not start game with gamemode '" + args[1] + "'!", commandSender);
+                        return false;
+                    }
+                    return true;
+
                 case "kit":
                     if (!setKit(args[1]))
                     {
@@ -80,10 +83,10 @@ public class AutoBingoCommand implements CommandExecutor
                     }
                     return true;
 
-                case "start":
-                    if (!start(args[1], args.length > 2 ? args[2] : ""))
+                case "duration":
+                    if (!setCountdownGameDuration(args[1]))
                     {
-                        sendFailed("Invalid command, could not start game with gamemode '" + args[1] + "'!", commandSender);
+                        sendFailed("Could not set Countdown game duration to " + args[1] + "!", commandSender);
                         return false;
                     }
                     return true;
@@ -110,6 +113,31 @@ public class AutoBingoCommand implements CommandExecutor
             sendFailed("Invalid number of arguments: " + args.length + "!", commandSender);
             return false;
         }
+    }
+
+    public boolean start(String gamemode, String cardSize)
+    {
+        try
+        {
+            settings.mode = BingoGamemode.fromDataString(gamemode);
+            switch (cardSize)
+            {
+                case "3":
+                    settings.cardSize = CardSize.X3;
+                    break;
+                default:
+                    settings.cardSize = CardSize.X5;
+                    break;
+            }
+        }
+        catch (IllegalArgumentException e)
+        {
+            return false;
+        }
+
+        var startEvent = new SendBingoGameEvent(BingoGameEvent.START);
+        Bukkit.getPluginManager().callEvent(startEvent);
+        return true;
     }
 
     private boolean setKit(String kitName)
@@ -178,34 +206,20 @@ public class AutoBingoCommand implements CommandExecutor
         return false;
     }
 
-    public boolean start(String gamemode, String cardSize)
+    public boolean setCountdownGameDuration(String duration)
     {
-        try
+        int gameDuration = toInt(duration, 0);
+        if (gameDuration > 0)
         {
-            settings.mode = BingoGamemode.fromDataString(gamemode);
-            switch (cardSize)
-            {
-                case "3":
-                    settings.cardSize = CardSize.X3;
-                    break;
-                default:
-                    settings.cardSize = CardSize.X5;
-                    break;
-            }
+            settings.countdownGameDuration = gameDuration;
+            return true;
         }
-        catch (IllegalArgumentException e)
-        {
-            return false;
-        }
-
-        var startEvent = new BingoGameEvent("start_game");
-        Bukkit.getPluginManager().callEvent(startEvent);
-        return true;
+        return false;
     }
 
     public boolean end()
     {
-        var endEvent = new BingoGameEvent("end_game");
+        var endEvent = new SendBingoGameEvent(BingoGameEvent.END);
         Bukkit.getPluginManager().callEvent(endEvent);
         return true;
     }

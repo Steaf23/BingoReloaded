@@ -19,6 +19,7 @@ public class BingoGameSettings
     public EnumSet<EffectOptionFlags> effects;
     public Material deathMatchItem;
     public int maxTeamSize;
+    public int countdownGameDuration;
 
     public BingoGameSettings()
     {
@@ -28,6 +29,7 @@ public class BingoGameSettings
         this.kit = PlayerKit.OVERPOWERED;
         this.effects = kit.defaultEffects;
         this.maxTeamSize = Integer.MAX_VALUE;
+        this.countdownGameDuration = ConfigData.instance.defaultGameDuration;
     }
 
     public Material generateDeathMatchItem()

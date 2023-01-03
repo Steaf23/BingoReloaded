@@ -148,7 +148,10 @@ public class TeamManager
         {
             lockoutCard.teamCount = activeTeams.size();
         }
-        activeTeams.forEach((t) -> t.card = masterCard.copy());
+        activeTeams.forEach((t) -> {
+            t.outOfTheGame = false;
+            t.card = masterCard.copy();
+        });
     }
 
     public void setCardForTeam(BingoTeam team, BingoCard card)
@@ -266,6 +269,11 @@ public class TeamManager
             activeTeams.add(bTeam);
         }
         return bTeam;
+    }
+
+    public int getCompleteCount(BingoTeam team)
+    {
+        return team.card.getCompleteCount(team);
     }
 
     private void createTeams()

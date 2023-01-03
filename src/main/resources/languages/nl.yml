@@ -20,6 +20,7 @@ game:
     regular_selected: "Regular Bingo is geselecteerd. Maak 1 rij vol om te winnen (horizontaal, verticaal of diagonaal)!"
     lockout_selected: "Lockout Bingo is geselecteerd. Strijd om de meeste taken te voltooien en speel je tegenstanders weg!"
     complete_selected: "Complete-All Bingo is geselecteerd. Het team dat alle taken het snelst voltooid wint!"
+    countdown_selected: "Countdown Bingo is geselecteerd. Het team dat de meeste taken binnen de gegeven tijd voltooid wint het spel!"
     card_selected: "Selected '{0}' as the playing Bingo card!" # 0: card name
     cardsize: "Gekozen bingo kaart dimensies: {0}" # 0: card size
   start:
@@ -80,6 +81,9 @@ menu:
     info_complete:
       name: "Volle Bingo Kaart"
       desc: "Het eerste team met een volle kaart wint."
+    info_countdown:
+      name: "Countdown Bingo Kaart"
+      desc: "Strijd voor de meeste taken binnen de gegeven tijd. Een deathmatch zal de winnaar bekend maken bij gelijkspel!"
   options:
     title: "Opties"
     start:

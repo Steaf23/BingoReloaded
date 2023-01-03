@@ -14,12 +14,16 @@ command:
     no_remove: "Impossible de supprimer la liste d'éléments '{0}', vérifiez si vous avez orthographié le nom correctement!" # 0: item list name
     removed: "Liste d'éléments '{0}' supprimée avec succès!" # 0: item list name
 game:
+  timer:
+    duration: "Durée de la partie: {0}" # 0: total game time
+    time_left: "Temps restant: {0}" # 0: total game time
   settings:
     kit_selected: "Kit de démarrage {0} sélectionné" # 0: selected kit (see "kit") below
     effects_selected: "Options d'effets sélectionnées, consultez les dans les /bingo options"
     regular_selected: "Bingo classique sélectionné Complétez une ligne pour gagner (horizontale, verticale ou diagonale)!"
     lockout_selected: "Bingo avec verrouillage sélectionné Complétez et verrouillez un maximum de cases sur la grille pour gagner!"
     complete_selected: "Bingo grille intégrale sélectionnée. Complétez toutes les cases de la grille pour gagner!"
+    countdown_selected: "Selected Countdown Bingo. Race to complete the most tasks within the given time!"
     card_selected: "Grille de Bingo '{0}' sélectionnée pour la partie!" # 0: card name
     cardsize: "Taille de grille sélectionnée: {0}" # 0: card size
   start:
@@ -29,7 +33,6 @@ game:
     no_card: "Impossible de démarrer la partie en utilisant la grille '{0}' car elle n'existe pas!" # 0: card_name
   end:
     bingo: "Félicitations! L'équipe {0} a remporté la partie de Bingo!" # 0: winning team
-    duration: "&b&lDurée de la partie: {0}" # 0: total game time
     restart:
       prefix: "&a&o&lLa partie est terminée! Cliquez sur "
       hoverable: "&c&oRelancer!"
@@ -80,6 +83,9 @@ menu:
     info_complete:
       name: "Grille de Bingo intégrale"
       desc: "La première équipe à compléter la totalité de la grille gagne."
+    info_countdown:
+      name: "Grille de Bingo Compte à rebours"
+      desc: "Race to complete the most tasks. A deathmatch will be the deciding factor in a tie after time runs out!"
   options:
     title: "Options"
     start:

@@ -138,7 +138,7 @@ public class BingoCommand implements CommandExecutor
 
                 default:
                     if (commandSender instanceof Player p)
-                        new Message("command.use").color(ChatColor.RED).arg("/bingo [getcard | start | end | join | back | leave | deathmatch | creator]").send(p);
+                        new Message("command.use").color(ChatColor.RED).arg("/bingo [getcard | stats | start | end | join | back | leave | deathmatch | creator]").send(p);
                     else
                         Message.log(ChatColor.RED + "Usage: /bingo [start | end | deathmatch]");
                     break;

@@ -20,11 +20,11 @@ public class BingoTabCompleter implements TabCompleter
         {
             if (sender instanceof Player player && !player.hasPermission("bingo.admin"))
             {
-                return List.of("join", "getcard", "back", "leave");
+                return List.of("join", "getcard", "back", "leave", "stats");
             }
             else
             {
-                return List.of("join", "getcard", "back", "leave", "start", "end", "creator", "deathmatch");
+                return List.of("join", "getcard", "back", "leave", "stats", "start", "end", "creator", "deathmatch");
             }
         }
         return null;

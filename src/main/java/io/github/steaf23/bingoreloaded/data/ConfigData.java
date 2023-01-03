@@ -55,6 +55,7 @@ public class ConfigData
     public boolean resetPlayerPositions;
     public String selectedCard;
     public String language;
+    public int defaultGameDuration;
     public boolean savePlayerStatistics;
 
     public static final ConfigData instance = new ConfigData();
@@ -76,5 +77,6 @@ public class ConfigData
         this.resetPlayerPositions = config.getBoolean("resetPlayerPositions", true);
         this.selectedCard = config.getString("selectedCard", "default_card");
         this.savePlayerStatistics = config.getBoolean("savePlayerStatistics", false);
+        this.defaultGameDuration = config.getInt("defaultGameDuration", 20);
     }
 }

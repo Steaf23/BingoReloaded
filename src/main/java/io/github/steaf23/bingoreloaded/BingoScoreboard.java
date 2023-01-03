@@ -4,6 +4,7 @@ import io.github.steaf23.bingoreloaded.data.TranslationData;
 import io.github.steaf23.bingoreloaded.player.BingoTeam;
 import io.github.steaf23.bingoreloaded.player.TeamManager;
 import io.github.steaf23.bingoreloaded.util.FlexibleColor;
+import io.github.steaf23.bingoreloaded.util.GameTimer;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -58,9 +59,7 @@ public class BingoScoreboard
     {
         for (Player player : teamManager.getParticipants())
         {
-            player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(new Message("game.end.duration")
-                    .arg(GameTimer.getTimeAsString(timer.getTime()))
-                    .toLegacyString()));
+            player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(timer.getTimeDisplayMessage().toLegacyString()));
         }
     }
 

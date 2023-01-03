@@ -18,7 +18,7 @@ public class AutoBingoTabCompleter implements TabCompleter
         switch (args.length)
         {
             case 1:
-                return List.of("kit", "effects", "card", "team_max", "start");
+                return List.of("start", "kit", "effects", "card", "team_max", "duration");
             case 2:
                 switch (args[0])
                 {

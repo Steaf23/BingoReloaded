@@ -283,7 +283,7 @@ public class BingoCard extends AbstractGUIInventory implements Listener
             return;
 
         BingoTeam team = game.getTeamManager().getTeamOfPlayer(p);
-        if (team == null || team.card != this)
+        if (team == null || team.card != this || team.outOfTheGame)
             return;
 
         ItemStack stack = event.getItem().getItemStack();
@@ -312,7 +312,7 @@ public class BingoCard extends AbstractGUIInventory implements Listener
             return;
 
         BingoTeam team = game.getTeamManager().getTeamOfPlayer(event.getPlayer());
-        if (team == null || team.card != this)
+        if (team == null || team.card != this || team.outOfTheGame)
             return;
 
         new BukkitRunnable()
@@ -334,7 +334,7 @@ public class BingoCard extends AbstractGUIInventory implements Listener
 
         // Make sure the card of the player is this one!
         BingoTeam team = game.getTeamManager().getTeamOfPlayer(event.getPlayer());
-        if (team == null || team.card != this)
+        if (team == null || team.card != this || team.outOfTheGame)
             return;
 
         if (game.getSettings().deathMatchItem != null)

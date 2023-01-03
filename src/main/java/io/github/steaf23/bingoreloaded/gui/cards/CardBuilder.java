@@ -12,7 +12,7 @@ public class CardBuilder
     {
         return switch (mode)
                 {
-                    case LOCKOUT -> new LockoutBingoCard(size, game, game.getTeamManager());
+                    case LOCKOUT -> new LockoutBingoCard(size, game);
                     case COMPLETE -> new CompleteBingoCard(size, game);
                     case COUNTDOWN -> new CountdownBingoCard(size, game);
                     default -> new BingoCard(size, game);

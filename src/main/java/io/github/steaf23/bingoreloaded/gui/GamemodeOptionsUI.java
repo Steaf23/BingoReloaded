@@ -22,18 +22,22 @@ public class GamemodeOptionsUI extends AbstractGUIInventory
         super(45, TranslationData.itemName("menu.options.mode"), parent);
         this.game = game;
         options = new InventoryItem[]{
-                new InventoryItem(GUIBuilder5x9.OptionPositions.SIX_CENTER1.positions[0],
+                new InventoryItem(GUIBuilder5x9.OptionPositions.EIGHT_CENTER.positions[0],
                         Material.LIME_CONCRETE, TITLE_PREFIX + "Regular 5x5"),
-                new InventoryItem(GUIBuilder5x9.OptionPositions.SIX_CENTER1.positions[1],
+                new InventoryItem(GUIBuilder5x9.OptionPositions.EIGHT_CENTER.positions[1],
                         Material.MAGENTA_CONCRETE, TITLE_PREFIX + "Lockout 5x5"),
-                new InventoryItem(GUIBuilder5x9.OptionPositions.SIX_CENTER1.positions[2],
+                new InventoryItem(GUIBuilder5x9.OptionPositions.EIGHT_CENTER.positions[2],
                         Material.LIGHT_BLUE_CONCRETE, TITLE_PREFIX + "Complete-All 5x5"),
-                new InventoryItem(GUIBuilder5x9.OptionPositions.SIX_CENTER1.positions[3],
+                new InventoryItem(GUIBuilder5x9.OptionPositions.EIGHT_CENTER.positions[3],
+                        Material.PINK_CONCRETE, TITLE_PREFIX + "Countdown 5x5"),
+                new InventoryItem(GUIBuilder5x9.OptionPositions.EIGHT_CENTER.positions[4],
                         Material.GREEN_CONCRETE, TITLE_PREFIX + "Regular 3x3"),
-                new InventoryItem(GUIBuilder5x9.OptionPositions.SIX_CENTER1.positions[4],
+                new InventoryItem(GUIBuilder5x9.OptionPositions.EIGHT_CENTER.positions[5],
                         Material.PURPLE_CONCRETE, TITLE_PREFIX + "Lockout 3x3"),
-                new InventoryItem(GUIBuilder5x9.OptionPositions.SIX_CENTER1.positions[5],
+                new InventoryItem(GUIBuilder5x9.OptionPositions.EIGHT_CENTER.positions[6],
                         Material.CYAN_CONCRETE, TITLE_PREFIX + "Complete-All 3x3"),
+                new InventoryItem(GUIBuilder5x9.OptionPositions.EIGHT_CENTER.positions[7],
+                        Material.RED_CONCRETE, TITLE_PREFIX + "Countdown 3x3"),
         };
         fillOptions(options);
     }
@@ -45,27 +49,32 @@ public class GamemodeOptionsUI extends AbstractGUIInventory
         BingoGamemode chosenMode = BingoGamemode.REGULAR;
         CardSize chosenSize = CardSize.X5;
 
-        if (slotClicked == options[0].getSlot() || slotClicked == options[3].getSlot())
+        if (slotClicked == options[0].getSlot() || slotClicked == options[4].getSlot())
         {
             new Message("game.settings.regular_selected").color(ChatColor.GOLD).sendAll();
         }
-        else if (slotClicked == options[1].getSlot() || slotClicked == options[4].getSlot())
+        else if (slotClicked == options[1].getSlot() || slotClicked == options[5].getSlot())
         {
             new Message("game.settings.lockout_selected").color(ChatColor.GOLD).sendAll();
 
             chosenMode = BingoGamemode.LOCKOUT;
         }
-        else if (slotClicked == options[2].getSlot() || slotClicked == options[5].getSlot())
+        else if (slotClicked == options[2].getSlot() || slotClicked == options[6].getSlot())
         {
-            new Message("game.settings.lockout_selected").color(ChatColor.GOLD).sendAll();
+            new Message("game.settings.complete_selected").color(ChatColor.GOLD).sendAll();
             chosenMode = BingoGamemode.COMPLETE;
         }
+        else if (slotClicked == options[3].getSlot() || slotClicked == options[7].getSlot())
+        {
+            new Message("game.settings.countdown_selected").color(ChatColor.GOLD).sendAll();
+            chosenMode = BingoGamemode.COUNTDOWN;
+        }
 
-        if (slotClicked == options[0].getSlot() || slotClicked == options[1].getSlot() || slotClicked == options[2].getSlot())
+        if (slotClicked == options[0].getSlot() || slotClicked == options[1].getSlot() || slotClicked == options[2].getSlot() || slotClicked == options[3].getSlot())
         {
             new Message("game.settings.cardsize").color(ChatColor.GOLD).arg("5x5").sendAll();
         }
-        else if (slotClicked == options[3].getSlot() || slotClicked == options[4].getSlot() || slotClicked == options[5].getSlot())
+        else if (slotClicked == options[4].getSlot() || slotClicked == options[5].getSlot() || slotClicked == options[6].getSlot() || slotClicked == options[7].getSlot())
         {
             new Message("game.settings.cardsize").color(ChatColor.GOLD).arg("3x3").sendAll();
             chosenSize = CardSize.X3;

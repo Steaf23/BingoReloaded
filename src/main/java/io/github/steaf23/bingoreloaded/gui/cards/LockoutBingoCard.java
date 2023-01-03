@@ -20,10 +20,10 @@ public class LockoutBingoCard extends BingoCard
     public TeamManager teamManager;
     public int currentMaxTasks;
 
-    public LockoutBingoCard(CardSize size, BingoGame game, TeamManager manager)
+    public LockoutBingoCard(CardSize size, BingoGame game)
     {
         super(size, game);
-        this.teamManager = manager;
+        this.teamManager = game.getTeamManager();
         this.currentMaxTasks = size.fullCardSize;
         this.teamCount = teamManager.getActiveTeams().size();
 
