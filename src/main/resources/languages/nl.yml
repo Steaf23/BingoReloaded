@@ -83,7 +83,7 @@ menu:
       desc: "Het eerste team met een volle kaart wint."
     info_countdown:
       name: "Countdown Bingo Kaart"
-      desc: "Strijd voor de meeste taken binnen de gegeven tijd. Een deathmatch zal de winnaar bekend maken bij gelijkspel!"
+      desc: "Strijd voor de meeste taken binnen de gegeven tijd. \nEen deathmatch zal de winnaar bekend maken bij gelijkspel!"
   options:
     title: "Opties"
     start:

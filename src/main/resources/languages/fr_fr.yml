@@ -85,7 +85,7 @@ menu:
       desc: "La première équipe à compléter la totalité de la grille gagne."
     info_countdown:
       name: "Grille de Bingo Compte à rebours"
-      desc: "Race to complete the most tasks. A deathmatch will be the deciding factor in a tie after time runs out!"
+      desc: "Race to complete the most tasks. \nA deathmatch will be the deciding factor in a tie after time runs out!"
   options:
     title: "Options"
     start:

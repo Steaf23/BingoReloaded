@@ -85,7 +85,7 @@ menu:
       desc: "First team to complete all tasks wins."
     info_countdown:
       name: "Countdown Bingo Card"
-      desc: "Race to complete the most tasks. A deathmatch will be the deciding factor in a tie after time runs out!"
+      desc: "Race to complete the most tasks. \nA deathmatch will be the deciding factor in a tie after time runs out!"
   options:
     title: "Options Menu"
     start:
