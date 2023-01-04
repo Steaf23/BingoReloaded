@@ -28,7 +28,7 @@ public class BingoGameSettings
         this.cardSize = CardSize.X5;
         this.kit = PlayerKit.OVERPOWERED;
         this.effects = kit.defaultEffects;
-        this.maxTeamSize = Integer.MAX_VALUE;
+        this.maxTeamSize = ConfigData.instance.defaultTeamSize;
         this.countdownGameDuration = ConfigData.instance.defaultGameDuration;
     }
 

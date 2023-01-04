@@ -52,14 +52,6 @@ public class BingoReloaded extends JavaPlugin
             autoBingoCommand.setTabCompleter(new AutoBingoTabCompleter());
         }
 
-        PluginCommand cardCommand = getCommand("card");
-        if (cardCommand != null)
-            cardCommand.setExecutor(new CardCommand());
-
-        PluginCommand itemListCommand = getCommand("itemlist");
-        if (itemListCommand != null)
-            itemListCommand.setExecutor(new ItemListCommand());
-
         PluginCommand teamChatCommand = getCommand("btc");
         if (teamChatCommand != null)
             teamChatCommand.setExecutor(new TeamChat(game.getTeamManager()));

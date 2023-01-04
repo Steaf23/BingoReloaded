@@ -56,6 +56,7 @@ public class ConfigData
     public String selectedCard;
     public String language;
     public int defaultGameDuration;
+    public int defaultTeamSize;
     public boolean savePlayerStatistics;
 
     public static final ConfigData instance = new ConfigData();
@@ -78,5 +79,6 @@ public class ConfigData
         this.selectedCard = config.getString("selectedCard", "default_card");
         this.savePlayerStatistics = config.getBoolean("savePlayerStatistics", false);
         this.defaultGameDuration = config.getInt("defaultGameDuration", 20);
+        this.defaultTeamSize = config.getInt("defaultTeamSize", 64);
     }
 }

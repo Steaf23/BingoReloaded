@@ -109,11 +109,11 @@ public class ListEditorUI
             @Override
             public void onOptionClickedDelegate(InventoryClickEvent event, InventoryItem clickedOption, Player player)
             {
-                if (event.getClick().isLeftClick())
+                if (event.getClick() == ClickType.LEFT)
                 {
                     incrementItemCount(clickedOption);
                 }
-                else if (event.getClick().isRightClick())
+                else if (event.getClick() == ClickType.RIGHT)
                 {
                     decrementItemCount(clickedOption);
                 }

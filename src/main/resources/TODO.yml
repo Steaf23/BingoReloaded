@@ -8,14 +8,4 @@ use percentages instead of numbers for list chances.
 
 implement Vault plugin
 
-add player stats YML file for leaderboards
-
-create lobby to: vote for options and select teams pre-game
-
-add default game duration config option
-add game duration setting to autobingo
-
-add game duration setting to bingo menu
-add max_team size setting to bingo menu
-
-add countdown gamemode to bingo menu
+create lobby to: vote for options and select teams pre-game and show leaderboards

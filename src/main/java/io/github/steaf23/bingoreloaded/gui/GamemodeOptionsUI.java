@@ -22,21 +22,21 @@ public class GamemodeOptionsUI extends AbstractGUIInventory
         super(45, TranslationData.itemName("menu.options.mode"), parent);
         this.game = game;
         options = new InventoryItem[]{
-                new InventoryItem(GUIBuilder5x9.OptionPositions.EIGHT_CENTER.positions[0],
+                new InventoryItem(GUIBuilder5x9.OptionPositions.EIGHT_CENTER1.positions[0],
                         Material.LIME_CONCRETE, TITLE_PREFIX + "Regular 5x5"),
-                new InventoryItem(GUIBuilder5x9.OptionPositions.EIGHT_CENTER.positions[1],
+                new InventoryItem(GUIBuilder5x9.OptionPositions.EIGHT_CENTER1.positions[1],
                         Material.MAGENTA_CONCRETE, TITLE_PREFIX + "Lockout 5x5"),
-                new InventoryItem(GUIBuilder5x9.OptionPositions.EIGHT_CENTER.positions[2],
+                new InventoryItem(GUIBuilder5x9.OptionPositions.EIGHT_CENTER1.positions[2],
                         Material.LIGHT_BLUE_CONCRETE, TITLE_PREFIX + "Complete-All 5x5"),
-                new InventoryItem(GUIBuilder5x9.OptionPositions.EIGHT_CENTER.positions[3],
+                new InventoryItem(GUIBuilder5x9.OptionPositions.EIGHT_CENTER1.positions[3],
                         Material.PINK_CONCRETE, TITLE_PREFIX + "Countdown 5x5"),
-                new InventoryItem(GUIBuilder5x9.OptionPositions.EIGHT_CENTER.positions[4],
+                new InventoryItem(GUIBuilder5x9.OptionPositions.EIGHT_CENTER1.positions[4],
                         Material.GREEN_CONCRETE, TITLE_PREFIX + "Regular 3x3"),
-                new InventoryItem(GUIBuilder5x9.OptionPositions.EIGHT_CENTER.positions[5],
+                new InventoryItem(GUIBuilder5x9.OptionPositions.EIGHT_CENTER1.positions[5],
                         Material.PURPLE_CONCRETE, TITLE_PREFIX + "Lockout 3x3"),
-                new InventoryItem(GUIBuilder5x9.OptionPositions.EIGHT_CENTER.positions[6],
+                new InventoryItem(GUIBuilder5x9.OptionPositions.EIGHT_CENTER1.positions[6],
                         Material.CYAN_CONCRETE, TITLE_PREFIX + "Complete-All 3x3"),
-                new InventoryItem(GUIBuilder5x9.OptionPositions.EIGHT_CENTER.positions[7],
+                new InventoryItem(GUIBuilder5x9.OptionPositions.EIGHT_CENTER1.positions[7],
                         Material.RED_CONCRETE, TITLE_PREFIX + "Countdown 3x3"),
         };
         fillOptions(options);

@@ -36,7 +36,8 @@ public class GUIBuilder5x9
         SEVEN_CENTER1(new int[]{4, 11, 15, 22, 29, 33, 40}),
         SEVEN_CENTER2(new int[]{3, 5, 20, 22, 24, 39, 41}),
         SEVEN_CENTER_WIDE(new int[]{3, 5, 19, 22, 25, 39, 41}),
-        EIGHT_CENTER(new int[]{10, 12, 14, 16, 28, 30, 32, 34}),
+        EIGHT_CENTER1(new int[]{10, 12, 14, 16, 28, 30, 32, 34}),
+        EIGHT_CENTER2(new int[]{4, 11, 15, 22, 29, 33, 39, 41}),
         ;
 
         public final int[] positions;
