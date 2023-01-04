@@ -14,12 +14,16 @@ command:
     no_remove: "Cannot remove '{0}', make sure you spelled it correctly!" # 0: item list name
     removed: "Item list '{0}' successfully removed!" # 0: item list name
 game:
+  timer:
+    duration: "Game duration: {0}" # 0: total game time duration
+    time_left: "Time remaining: {0}" # 0: total game time left (for Countdown cards)
   settings:
     kit_selected: "Selected {0} player kit" # 0: selected kit (see "kit") below
     effects_selected: "Selected Effect options, view them in the /bingo options"
     regular_selected: "Selected Regular Bingo. Complete one line to win (horizontal, vertical or diagonal)!"
     lockout_selected: "Selected Lockout Bingo. Compete to complete the majority of the card to win!"
-    complete_selected: "Selected Complete-All Bingo. Collect all items on the card to win!"
+    complete_selected: "Selected Complete-All Bingo. Complete all tasks on the card to win!"
+    countdown_selected: "Selected Countdown Bingo. Race to complete the most tasks within the given time!"
     card_selected: "Selected '{0}' as the playing Bingo card!" # 0: card name
     cardsize: "Chosen card size: {0}" # 0: card size
   start:
@@ -29,7 +33,6 @@ game:
     no_card: "Cannot start game with the card '{0}' because it does not exist!" # 0: card_name
   end:
     bingo: "Congratulations! Team {0} has won the Bingo!" # 0: winning team
-    duration: "&b&lGame Duration: {0}" # 0: total game time
     restart:
       prefix: "&a&o&lGame has ended! Click to "
       hoverable: "&c&oRestart!"
@@ -76,10 +79,13 @@ menu:
       desc: "First team to complete 1 line wins. \nLines can span vertically, horizontally \nor diagonally."
     info_lockout:
       name: "Lockout Bingo Card"
-      desc: "Complete the most items to win. \nWhen an item has been completed \nit cannot be complete by any other team."
+      desc: "Complete the most tasks to win. \nWhen a task has been completed \nit cannot be complete by another team."
     info_complete:
       name: "Complete-All Bingo Card"
-      desc: "First team to complete all items wins."
+      desc: "First team to complete all tasks wins."
+    info_countdown:
+      name: "Countdown Bingo Card"
+      desc: "Race to complete the most tasks. \nA deathmatch will be the deciding factor in a tie after time runs out!"
   options:
     title: "Options Menu"
     start:

@@ -3,7 +3,7 @@ package io.github.steaf23.bingoreloaded.gui.cards;
 import io.github.steaf23.bingoreloaded.BingoGame;
 import io.github.steaf23.bingoreloaded.Message;
 import io.github.steaf23.bingoreloaded.data.TranslationData;
-import io.github.steaf23.bingoreloaded.item.BingoCardSlotCompleteEvent;
+import io.github.steaf23.bingoreloaded.event.BingoCardSlotCompleteEvent;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
 import io.github.steaf23.bingoreloaded.item.tasks.AbstractBingoTask;
 import io.github.steaf23.bingoreloaded.player.BingoTeam;
@@ -20,10 +20,10 @@ public class LockoutBingoCard extends BingoCard
     public TeamManager teamManager;
     public int currentMaxTasks;
 
-    public LockoutBingoCard(CardSize size, BingoGame game, TeamManager manager)
+    public LockoutBingoCard(CardSize size, BingoGame game)
     {
         super(size, game);
-        this.teamManager = manager;
+        this.teamManager = game.getTeamManager();
         this.currentMaxTasks = size.fullCardSize;
         this.teamCount = teamManager.getActiveTeams().size();
 

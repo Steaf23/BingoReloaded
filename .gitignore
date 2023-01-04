@@ -18,7 +18,7 @@
 *.zip
 *.tar.gz
 *.rar
-.idea/
+.idea/*
 
 /out
 
@@ -26,4 +26,3 @@
 hs_err_pid*
 
 /target
-.idea/misc.xml

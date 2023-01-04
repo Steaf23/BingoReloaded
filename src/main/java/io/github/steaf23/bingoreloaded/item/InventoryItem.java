@@ -90,4 +90,25 @@ public class InventoryItem extends ItemStack
     {
         return slot;
     }
+
+    public void setDescription(String... description)
+    {
+        ItemMeta meta = getItemMeta();
+        if (meta != null)
+        {
+            if (description.length >= 1 && description[0] != "")
+                meta.setLore(List.of(description));
+            meta.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
+            setItemMeta(meta);
+        }
+    }
+
+    public void setName(String name)
+    {
+        ItemMeta meta = getItemMeta();
+        if (meta != null)
+        {
+            meta.setDisplayName(name);
+        }
+    }
 }

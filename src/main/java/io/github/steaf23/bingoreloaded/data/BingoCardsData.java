@@ -48,6 +48,11 @@ public class BingoCardsData
         data.saveConfig();
     }
 
+    public static void removeList(String cardName, String listName)
+    {
+        data.getConfig().set(cardName + "." + listName, null);
+    }
+
     public static ItemTask getRandomItemTask(String cardName)
     {
         List<ItemTask> allItemTasks = new ArrayList<>();

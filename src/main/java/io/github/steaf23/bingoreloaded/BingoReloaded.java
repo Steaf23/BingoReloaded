@@ -1,11 +1,7 @@
 package io.github.steaf23.bingoreloaded;
 
-import io.github.steaf23.bingoreloaded.command.BingoCommand;
-import io.github.steaf23.bingoreloaded.command.BingoTabCompleter;
-import io.github.steaf23.bingoreloaded.command.CardCommand;
-import io.github.steaf23.bingoreloaded.command.ItemListCommand;
-import io.github.steaf23.bingoreloaded.data.RecoveryCardData;
-import io.github.steaf23.bingoreloaded.data.TranslationData;
+import io.github.steaf23.bingoreloaded.command.*;
+import io.github.steaf23.bingoreloaded.data.*;
 import io.github.steaf23.bingoreloaded.gui.UIManager;
 import io.github.steaf23.bingoreloaded.player.TeamChat;
 import me.clip.placeholderapi.PlaceholderAPI;
@@ -31,11 +27,16 @@ public class BingoReloaded extends JavaPlugin
     @Override
     public void onEnable()
     {
+        reloadConfig();
+        saveDefaultConfig();
+        ConfigData.instance.loadConfig(this.getConfig());
+
         usesPlaceholder = Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null;
 
         BingoGame game = new BingoGame();
-        // create UIManager singleton.
-        UIManager.getUIManager();
+        // create singletons.
+        UIManager.create();
+        ItemCooldownManager.create();
 
         PluginCommand bingoCommand = getCommand("bingo");
         if (bingoCommand != null)
@@ -44,13 +45,12 @@ public class BingoReloaded extends JavaPlugin
             bingoCommand.setTabCompleter( new BingoTabCompleter());
         }
 
-        PluginCommand cardCommand = getCommand("card");
-        if (cardCommand != null)
-            cardCommand.setExecutor(new CardCommand());
-
-        PluginCommand itemListCommand = getCommand("itemlist");
-        if (itemListCommand != null)
-            itemListCommand.setExecutor(new ItemListCommand());
+        PluginCommand autoBingoCommand = getCommand("autobingo");
+        if (autoBingoCommand != null)
+        {
+            autoBingoCommand.setExecutor(new AutoBingoCommand(game.getSettings()));
+            autoBingoCommand.setTabCompleter(new AutoBingoTabCompleter());
+        }
 
         PluginCommand teamChatCommand = getCommand("btc");
         if (teamChatCommand != null)

@@ -33,6 +33,8 @@ public class BingoOptionsUI extends AbstractGUIInventory
             Material.ENCHANTED_BOOK, TITLE_PREFIX + TranslationData.itemName("menu.options.mode"));
     private static final InventoryItem EFFECTS = new InventoryItem(GUIBuilder5x9.OptionPositions.SEVEN_CENTER1.positions[6],
             Material.POTION, TITLE_PREFIX + TranslationData.itemName("menu.options.effects"));
+    private static final InventoryItem EXTRA = new InventoryItem(44,
+            Material.STRUCTURE_VOID, TITLE_PREFIX + TranslationData.translate("menu.next"));
 
     private static final InventoryItem JOIN_P = JOIN.inSlot(GUIBuilder5x9.OptionPositions.TWO_HORIZONTAL_WIDE.positions[0]);
     private static final InventoryItem LEAVE_P = LEAVE.inSlot(GUIBuilder5x9.OptionPositions.TWO_HORIZONTAL_WIDE.positions[1]);
@@ -80,6 +82,11 @@ public class BingoOptionsUI extends AbstractGUIInventory
         {
             EffectOptionsUI effectSelector = new EffectOptionsUI(this, game);
             effectSelector.open(player);
+        }
+        else if (slotClicked == EXTRA.getSlot())
+        {
+             BingoOptionsExtraUI extraOptions = new BingoOptionsExtraUI(this, game);
+             extraOptions.open(player);
         }
         else if (slotClicked == start.getSlot())
         {
@@ -135,6 +142,7 @@ public class BingoOptionsUI extends AbstractGUIInventory
                     CARD,
                     options.start,
                     EFFECTS,
+                    EXTRA,
             });
         }
         else if (player.hasPermission("bingo.player"))

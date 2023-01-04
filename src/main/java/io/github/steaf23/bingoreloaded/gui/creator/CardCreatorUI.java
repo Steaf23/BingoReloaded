@@ -96,7 +96,7 @@ public class CardCreatorUI extends AbstractGUIInventory
                 {
                     if (slotClicked == CREATE_LIST.getSlot())
                     {
-                        createCard(player);
+                        createList(player);
                     }
                     super.delegateClick(event, slotClicked, player, clickType);
                 }

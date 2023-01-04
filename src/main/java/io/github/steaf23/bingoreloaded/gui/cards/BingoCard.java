@@ -7,7 +7,7 @@ import io.github.steaf23.bingoreloaded.data.BingoCardsData;
 import io.github.steaf23.bingoreloaded.data.BingoTasksData;
 import io.github.steaf23.bingoreloaded.data.TranslationData;
 import io.github.steaf23.bingoreloaded.gui.AbstractGUIInventory;
-import io.github.steaf23.bingoreloaded.item.BingoCardSlotCompleteEvent;
+import io.github.steaf23.bingoreloaded.event.BingoCardSlotCompleteEvent;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
 import io.github.steaf23.bingoreloaded.item.tasks.AbstractBingoTask;
 import io.github.steaf23.bingoreloaded.item.tasks.AdvancementTask;
@@ -53,8 +53,18 @@ public class BingoCard extends AbstractGUIInventory implements Listener
         BingoReloaded.registerListener(this);
     }
 
-    public void generateCard(String cardName)
+    public void generateCard(String cardName, int seed)
     {
+        Random shuffler;
+        if (seed == 0)
+        {
+            shuffler = new Random();
+        }
+        else
+        {
+            shuffler = new Random(seed);
+        }
+
         List<AbstractBingoTask> newItems = new ArrayList<>();
 
         List<String> ticketList = new ArrayList<>();
@@ -78,7 +88,7 @@ public class BingoCard extends AbstractGUIInventory implements Listener
                 overflowList.add(listName);
             }
         }
-        Collections.shuffle(overflowList);
+        Collections.shuffle(overflowList, shuffler);
         ticketList.addAll(overflowList);
         if (ticketList.size() > size.fullCardSize)
             ticketList = ticketList.subList(0, size.fullCardSize);
@@ -89,11 +99,11 @@ public class BingoCard extends AbstractGUIInventory implements Listener
             if (!allTasks.containsKey(listName))
             {
                 List<AbstractBingoTask> listTasks = BingoTasksData.getAllTasks(listName);
-                if (listTasks.size() <= 0) // Skip empty task lists.
+                if (listTasks.size() == 0) // Skip empty task lists.
                 {
                     continue;
                 }
-                Collections.shuffle(listTasks);
+                Collections.shuffle(listTasks, shuffler);
                 allTasks.put(listName, listTasks);
             }
             newItems.add(allTasks.get(listName).remove(allTasks.get(listName).size() - 1));
@@ -105,7 +115,7 @@ public class BingoCard extends AbstractGUIInventory implements Listener
         }
         newItems = newItems.subList(0, size.fullCardSize);
 
-        Collections.shuffle(newItems);
+        Collections.shuffle(newItems, shuffler);
         tasks = newItems;
     }
 
@@ -241,10 +251,7 @@ public class BingoCard extends AbstractGUIInventory implements Listener
                 public void run()
                 {
                     ItemStack resultStack = player.getItemOnCursor();
-                    if (resultStack != null)
-                    {
-                        completeItemSlot(resultStack, team, player);
-                    }
+                    completeItemSlot(resultStack, team, player);
                 }
             }.runTask(Bukkit.getPluginManager().getPlugin(BingoReloaded.NAME));
             return;
@@ -276,7 +283,7 @@ public class BingoCard extends AbstractGUIInventory implements Listener
             return;
 
         BingoTeam team = game.getTeamManager().getTeamOfPlayer(p);
-        if (team == null || team.card != this)
+        if (team == null || team.card != this || team.outOfTheGame)
             return;
 
         ItemStack stack = event.getItem().getItemStack();
@@ -305,7 +312,7 @@ public class BingoCard extends AbstractGUIInventory implements Listener
             return;
 
         BingoTeam team = game.getTeamManager().getTeamOfPlayer(event.getPlayer());
-        if (team == null || team.card != this)
+        if (team == null || team.card != this || team.outOfTheGame)
             return;
 
         new BukkitRunnable()
@@ -327,7 +334,7 @@ public class BingoCard extends AbstractGUIInventory implements Listener
 
         // Make sure the card of the player is this one!
         BingoTeam team = game.getTeamManager().getTeamOfPlayer(event.getPlayer());
-        if (team == null || team.card != this)
+        if (team == null || team.card != this || team.outOfTheGame)
             return;
 
         if (game.getSettings().deathMatchItem != null)

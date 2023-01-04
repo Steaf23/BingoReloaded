@@ -1,15 +1,17 @@
 package io.github.steaf23.bingoreloaded.util;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
-import org.bukkit.ChatColor;
+import io.github.steaf23.bingoreloaded.Message;
+import io.github.steaf23.bingoreloaded.event.CountdownTimerFinishedEvent;
+import net.md_5.bungee.api.ChatColor;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
-public class CountdownTimer
+public class CountdownTimer extends GameTimer
 {
     private int startTime = 0;
-    private int time = 0;
-    private BukkitRunnable timer;
+    private static BukkitRunnable runnable;
     private int medThreshold;
     private int lowThreshold;
 
@@ -22,26 +24,7 @@ public class CountdownTimer
     {
         this.medThreshold = medThreshold;
         this.lowThreshold = lowThreshold;
-        start(seconds);
-    }
-
-    public void start(int seconds)
-    {
         this.startTime = seconds;
-        this.time = seconds;
-        timer = new BukkitRunnable() {
-
-            @Override
-            public void run()
-            {
-                time--;
-                if (time <= 0)
-                {
-                    stop();
-                }
-            }
-        };
-        timer.runTaskTimer(BingoReloaded.getPlugin(BingoReloaded.class), 0, 20);
     }
 
     public int getStartTime()
@@ -49,24 +32,59 @@ public class CountdownTimer
         return startTime;
     }
 
-    public int getTimeLeft()
+    @Override
+    public void start()
     {
-        return time;
+        updateTime(startTime);
+        runnable = new BukkitRunnable() {
+
+            @Override
+            public void run()
+            {
+                updateTime(getTime() - 1);
+                if (getTime() <= 0)
+                {
+                    CountdownTimerFinishedEvent event = new CountdownTimerFinishedEvent();
+                    Bukkit.getPluginManager().callEvent(event);
+                    stop();
+                }
+            }
+        };
+        runnable.runTaskTimer(BingoReloaded.getPlugin(BingoReloaded.class), 0, 20);
     }
 
+    @Override
+    public int pause()
+    {
+        return getTime();
+    }
+
+    @Override
     public int stop()
     {
-        timer.cancel();
-        return time;
+        try
+        {
+            if (runnable != null)
+                runnable.cancel();
+        }
+        catch (IllegalStateException e)
+        {
+            Message.log(ChatColor.RED + "Timer couldn't be stopped since it never started!");
+            return -1;
+        }
+        return getTime();
     }
 
-    public void showTime(Player player)
+    @Override
+    public Message getTimeDisplayMessage()
     {
-        ChatColor color = ChatColor.GREEN;
-        if (time <= lowThreshold)
+        ChatColor color = ChatColor.WHITE;
+        if (getTime() <= lowThreshold)
             color = ChatColor.RED;
-        else if (time <= medThreshold)
+        else if (getTime() <= medThreshold)
             color = ChatColor.GOLD;
-        player.sendTitle(color + "" + time, "", -1, -1, -1);
+        return new Message("game.timer.time_left")
+                .color(ChatColor.LIGHT_PURPLE).bold()
+                .arg(GameTimer.getTimeAsString(getTime())).color(color);
     }
 }

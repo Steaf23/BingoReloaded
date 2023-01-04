@@ -24,12 +24,14 @@ public class TeamManager
     private final List<BingoTeam> activeTeams;
     private final BingoGame game;
     private final Scoreboard teams;
+    private int maximumTeamSize;
 
     public TeamManager(BingoGame game, Scoreboard board)
     {
         this.activeTeams = new ArrayList<>();
         this.game = game;
         this.teams = board;
+        this.maximumTeamSize = game.getSettings().maxTeamSize;
 
         createTeams();
     }
@@ -88,6 +90,11 @@ public class TeamManager
             Message.log("Team " + FlexibleColor.fromName(teamName).getTranslation() + " does not exist, could not add " + player.getDisplayName() + " to this team!");
             return;
         }
+        if (team.getEntries().size() >= maximumTeamSize)
+        {
+            Message.log("Team " + FlexibleColor.fromName(teamName).getTranslation() + " has reached it's capacity of " + maximumTeamSize + " players!");
+            return;
+        }
         removePlayerFromAllTeams(player);
 
         BingoTeam bingoTeam = activateTeam(team);
@@ -141,7 +148,10 @@ public class TeamManager
         {
             lockoutCard.teamCount = activeTeams.size();
         }
-        activeTeams.forEach((t) -> t.card = masterCard.copy());
+        activeTeams.forEach((t) -> {
+            t.outOfTheGame = false;
+            t.card = masterCard.copy();
+        });
     }
 
     public void setCardForTeam(BingoTeam team, BingoCard card)
@@ -239,10 +249,14 @@ public class TeamManager
 
     public BingoTeam activateTeam(Team team)
     {
-        if (activeTeams.stream().noneMatch((t) -> t.team == team))
+        BingoTeam bTeam;
+        bTeam = activeTeams.stream().filter(
+                (t) -> t.team.getName().equals(team.getName()))
+                .findFirst().orElse(null);
+
+        if(bTeam == null)
         {
             FlexibleColor color = FlexibleColor.fromName(team.getName());
-            BingoTeam bTeam;
             if (color != null)
             {
                 bTeam = new BingoTeam(team, null, color.chatColor);
@@ -251,10 +265,15 @@ public class TeamManager
             {
                 bTeam = new BingoTeam(team, null, ChatColor.WHITE);
             }
+
             activeTeams.add(bTeam);
-            return bTeam;
         }
-        return null;
+        return bTeam;
+    }
+
+    public int getCompleteCount(BingoTeam team)
+    {
+        return team.card.getCompleteCount(team);
     }
 
     private void createTeams()

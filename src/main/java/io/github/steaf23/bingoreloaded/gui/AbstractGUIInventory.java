@@ -5,6 +5,7 @@ import io.github.steaf23.bingoreloaded.Message;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.*;
@@ -42,6 +43,10 @@ public abstract class AbstractGUIInventory
 
     public void handleClick(final InventoryClickEvent event)
     {
+        // ignore double clicks as they are annoying AF
+        if (event.getClick() == ClickType.DOUBLE_CLICK)
+            return;
+
         if (inventory == null) return;
         if (event.getInventory() == inventory)
         {

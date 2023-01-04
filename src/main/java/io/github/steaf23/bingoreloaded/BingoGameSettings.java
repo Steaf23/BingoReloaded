@@ -12,20 +12,24 @@ import java.util.EnumSet;
 
 public class BingoGameSettings
 {
-    public String card = ConfigData.getConfig().selectedCard;
+    public String card = ConfigData.instance.selectedCard;
     public BingoGamemode mode;
     public CardSize cardSize;
     public PlayerKit kit;
     public EnumSet<EffectOptionFlags> effects;
     public Material deathMatchItem;
+    public int maxTeamSize;
+    public int countdownGameDuration;
 
     public BingoGameSettings()
     {
-        this.card = ConfigData.getConfig().selectedCard;
+        this.card = ConfigData.instance.selectedCard;
         this.mode = BingoGamemode.REGULAR;
         this.cardSize = CardSize.X5;
         this.kit = PlayerKit.OVERPOWERED;
         this.effects = kit.defaultEffects;
+        this.maxTeamSize = ConfigData.instance.defaultTeamSize;
+        this.countdownGameDuration = ConfigData.instance.defaultGameDuration;
     }
 
     public Material generateDeathMatchItem()

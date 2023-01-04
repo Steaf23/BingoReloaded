@@ -18,6 +18,7 @@ import org.bukkit.entity.Player;
 
 import java.util.*;
 
+@Deprecated
 public class RecoveryCardData
 {
     private static final YmlDataManager data = new YmlDataManager("recovered.yml");

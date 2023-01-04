@@ -14,17 +14,17 @@ public class BingoTabCompleter implements TabCompleter
 {
     @Nullable
     @Override
-    public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args)
+    public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args)
     {
         if (args.length == 1)
         {
             if (sender instanceof Player player && !player.hasPermission("bingo.admin"))
             {
-                return List.of("join", "getcard", "back", "leave");
+                return List.of("join", "getcard", "back", "leave", "stats");
             }
             else
             {
-                return List.of("join", "getcard", "back", "leave", "start", "end", "creator", "deathmatch");
+                return List.of("join", "getcard", "back", "leave", "stats", "start", "end", "creator", "deathmatch");
             }
         }
         return null;

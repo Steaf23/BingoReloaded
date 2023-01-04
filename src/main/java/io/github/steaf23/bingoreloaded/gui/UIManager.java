@@ -17,13 +17,12 @@ public class UIManager implements Listener
 
     private static UIManager INSTANCE;
 
-    public static UIManager getUIManager()
+    public static void create()
     {
         if (INSTANCE == null)
         {
             INSTANCE = new UIManager();
         }
-        return INSTANCE;
     }
 
     public static void addInventory(AbstractGUIInventory inventory)

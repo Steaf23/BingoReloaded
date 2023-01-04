@@ -100,14 +100,14 @@ public abstract class KeyboardUI extends AbstractGUIInventory
         {
             if (pair.getValue() == slotClicked)
             {
-                if (pair.getKey() == "<-")
+                if (pair.getKey().equals("<-"))
                 {
                     if (keyword.length() > 0)
                     {
                         keyword = keyword.substring(0, keyword.length() - 1);
                     }
                 }
-                else if (pair.getKey() == "_")
+                else if (pair.getKey().equals("_"))
                 {
                     keyword += " ";
                 }
