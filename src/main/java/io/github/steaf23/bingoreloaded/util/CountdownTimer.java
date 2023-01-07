@@ -15,13 +15,14 @@ public class CountdownTimer extends GameTimer
     private int medThreshold;
     private int lowThreshold;
 
-    public CountdownTimer(int seconds)
+    public CountdownTimer(int seconds, String worldName)
     {
-        this(seconds, 0, 0);
+        this(seconds, 0, 0, worldName);
     }
 
-    public CountdownTimer(int seconds, int medThreshold, int lowThreshold)
+    public CountdownTimer(int seconds, int medThreshold, int lowThreshold, String worldName)
     {
+        super(worldName);
         this.medThreshold = medThreshold;
         this.lowThreshold = lowThreshold;
         this.startTime = seconds;
@@ -44,7 +45,7 @@ public class CountdownTimer extends GameTimer
                 updateTime(getTime() - 1);
                 if (getTime() <= 0)
                 {
-                    CountdownTimerFinishedEvent event = new CountdownTimerFinishedEvent();
+                    CountdownTimerFinishedEvent event = new CountdownTimerFinishedEvent(worldName);
                     Bukkit.getPluginManager().callEvent(event);
                     stop();
                 }

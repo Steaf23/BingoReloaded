@@ -8,14 +8,14 @@ import org.bukkit.Material;
 
 public class CardBuilder
 {
-    public static BingoCard fromMode(BingoGamemode mode, CardSize size, BingoGame game)
+    public static BingoCard fromMode(BingoGamemode mode, CardSize size, int teamCount)
     {
         return switch (mode)
                 {
-                    case LOCKOUT -> new LockoutBingoCard(size, game);
-                    case COMPLETE -> new CompleteBingoCard(size, game);
-                    case COUNTDOWN -> new CountdownBingoCard(size, game);
-                    default -> new BingoCard(size, game);
+                    case LOCKOUT -> new LockoutBingoCard(size, teamCount);
+                    case COMPLETE -> new CompleteBingoCard(size);
+                    case COUNTDOWN -> new CountdownBingoCard(size);
+                    default -> new BingoCard(size);
                 };
     }
 

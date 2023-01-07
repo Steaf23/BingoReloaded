@@ -58,6 +58,10 @@ public class ConfigData
     public int defaultGameDuration;
     public int defaultTeamSize;
     public boolean savePlayerStatistics;
+    public int cardSeed;
+    public boolean enableTeamChat;
+
+    // TODO: make defaultBingoWorld: "world" config option
 
     public static final ConfigData instance = new ConfigData();
 
@@ -80,5 +84,7 @@ public class ConfigData
         this.savePlayerStatistics = config.getBoolean("savePlayerStatistics", false);
         this.defaultGameDuration = config.getInt("defaultGameDuration", 20);
         this.defaultTeamSize = config.getInt("defaultTeamSize", 64);
+        this.cardSeed = config.getInt("cardSeed", 0);
+        this.enableTeamChat = config.getBoolean("enableTeamChat", true);
     }
 }

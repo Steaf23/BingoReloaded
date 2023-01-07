@@ -7,12 +7,17 @@ public abstract class GameTimer
 {
     protected TimeNotifier notifier;
     private int time;
-    private BukkitRunnable runnable;
+    protected String worldName;
 
     public abstract void start();
     public abstract int pause();
     public abstract int stop();
     public abstract Message getTimeDisplayMessage();
+
+    public GameTimer(String worldName)
+    {
+        this.worldName = worldName;
+    }
     public int getTime()
     {
         return time;

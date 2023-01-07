@@ -1,6 +1,7 @@
 package io.github.steaf23.bingoreloaded.gui;
 
 import io.github.steaf23.bingoreloaded.BingoGame;
+import io.github.steaf23.bingoreloaded.BingoSettings;
 import io.github.steaf23.bingoreloaded.data.TranslationData;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
 import org.bukkit.ChatColor;
@@ -15,15 +16,15 @@ import java.util.List;
 
 public class EffectOptionsUI extends AbstractGUIInventory
 {
-    private final BingoGame game;
+    private final BingoSettings settings;
     private final EnumSet<EffectOptionFlags> flags;
 
     private final InventoryItem[] options;
 
-    public EffectOptionsUI(AbstractGUIInventory parent, BingoGame game)
+    public EffectOptionsUI(AbstractGUIInventory parent, BingoSettings settings)
     {
         super(45, TranslationData.translate("menu.options.effects.name"), parent);
-        this.game = game;
+        this.settings = settings;
 
         options = new InventoryItem[]{
                 new InventoryItem(GUIBuilder5x9.OptionPositions.FIVE_TOP_WIDE.positions[0],
@@ -41,7 +42,7 @@ public class EffectOptionsUI extends AbstractGUIInventory
         };
         fillOptions(options);
 
-        flags = game.getSettings().effects;
+        flags = settings.effects;
         updateUI();
     }
 
@@ -58,7 +59,7 @@ public class EffectOptionsUI extends AbstractGUIInventory
 
         if (slotClicked == options[5].getSlot())
         {
-            game.getSettings().effects = flags;
+            settings.effects = flags;
             close(player);
         }
     }

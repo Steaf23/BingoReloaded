@@ -158,7 +158,6 @@ public enum PlayerKit
 
     private static InventoryItem createGoUpWand()
     {
-
         return wandItem;
     }
 }

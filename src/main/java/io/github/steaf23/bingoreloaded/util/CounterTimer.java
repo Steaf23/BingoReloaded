@@ -10,6 +10,11 @@ public class CounterTimer extends GameTimer
 {
     private BukkitRunnable runnable;
 
+    public CounterTimer(String worldName)
+    {
+        super(worldName);
+    }
+
     @Override
     public void start()
     {

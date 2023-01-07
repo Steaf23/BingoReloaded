@@ -45,7 +45,7 @@ public class RecoveryCardData
         {
             BingoTeam cardOwner = game.getTeamManager().getTeamByName(key);
 
-            BingoCard card = CardBuilder.fromMode(mode, size, game);
+            BingoCard card = CardBuilder.fromMode(mode, size, game.getTeamManager().getActiveTeams().size());
             success = fillCard(game.getTeamManager(), cardOwner, card);
             game.getTeamManager().setCardForTeam(cardOwner, card);
         }

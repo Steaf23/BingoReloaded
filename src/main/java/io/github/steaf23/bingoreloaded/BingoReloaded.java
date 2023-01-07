@@ -3,14 +3,9 @@ package io.github.steaf23.bingoreloaded;
 import io.github.steaf23.bingoreloaded.command.*;
 import io.github.steaf23.bingoreloaded.data.*;
 import io.github.steaf23.bingoreloaded.gui.UIManager;
-import io.github.steaf23.bingoreloaded.player.TeamChat;
-import me.clip.placeholderapi.PlaceholderAPI;
-import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.PluginCommand;
-import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -24,6 +19,9 @@ public class BingoReloaded extends JavaPlugin
 
     public static boolean usesPlaceholder = false;
 
+    private GameWorldManager gameManager;
+    private BingoEventManager eventManager;
+
     @Override
     public void onEnable()
     {
@@ -33,7 +31,8 @@ public class BingoReloaded extends JavaPlugin
 
         usesPlaceholder = Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null;
 
-        BingoGame game = new BingoGame();
+        gameManager = GameWorldManager.get();
+        eventManager = new BingoEventManager();
         // create singletons.
         UIManager.create();
         ItemCooldownManager.create();
@@ -41,25 +40,28 @@ public class BingoReloaded extends JavaPlugin
         PluginCommand bingoCommand = getCommand("bingo");
         if (bingoCommand != null)
         {
-            bingoCommand.setExecutor(new BingoCommand(game));
+            bingoCommand.setExecutor(new BingoCommand());
             bingoCommand.setTabCompleter( new BingoTabCompleter());
         }
 
         PluginCommand autoBingoCommand = getCommand("autobingo");
         if (autoBingoCommand != null)
         {
-            autoBingoCommand.setExecutor(new AutoBingoCommand(game.getSettings()));
+            autoBingoCommand.setExecutor(new AutoBingoCommand());
             autoBingoCommand.setTabCompleter(new AutoBingoTabCompleter());
         }
 
-        PluginCommand teamChatCommand = getCommand("btc");
-        if (teamChatCommand != null)
-            teamChatCommand.setExecutor(new TeamChat(game.getTeamManager()));
-
-        if (RecoveryCardData.loadCards(game))
+        if (ConfigData.instance.enableTeamChat)
         {
-            game.resume();
+            PluginCommand teamChatCommand = getCommand("btc");
+            if (teamChatCommand != null)
+                teamChatCommand.setExecutor(new TeamChatCommand());
         }
+
+//        if (RecoveryCardData.loadCards(game))
+//        {
+//            game.resume();
+//        }
 
         Message.log("[" + getName() + "]" + TranslationData.translate("changed"));
         Bukkit.getLogger().info(ChatColor.GREEN + "Enabled " + this.getName());

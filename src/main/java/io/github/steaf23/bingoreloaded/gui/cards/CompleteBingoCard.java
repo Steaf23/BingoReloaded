@@ -12,9 +12,9 @@ import java.util.List;
 
 public class CompleteBingoCard extends BingoCard
 {
-    public CompleteBingoCard(CardSize size, BingoGame game)
+    public CompleteBingoCard(CardSize size)
     {
-        super(size, game);
+        super(size);
         InventoryItem item = new InventoryItem(0, Material.MAP, TranslationData.itemName("menu.card.info_complete"), TranslationData.itemDescription("menu.card.info_complete"));
         addOption(item);
     }
@@ -28,7 +28,7 @@ public class CompleteBingoCard extends BingoCard
     @Override
     public CompleteBingoCard copy()
     {
-        CompleteBingoCard card = new CompleteBingoCard(this.size, game);
+        CompleteBingoCard card = new CompleteBingoCard(this.size);
         List<AbstractBingoTask> newTasks = new ArrayList<>();
         for (AbstractBingoTask item : tasks)
         {

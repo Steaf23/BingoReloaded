@@ -10,22 +10,24 @@ import org.bukkit.Material;
 
 import java.util.EnumSet;
 
-public class BingoGameSettings
+public class BingoSettings
 {
     public String card = ConfigData.instance.selectedCard;
     public BingoGamemode mode;
     public CardSize cardSize;
+    public int cardSeed;
     public PlayerKit kit;
     public EnumSet<EffectOptionFlags> effects;
     public Material deathMatchItem;
     public int maxTeamSize;
     public int countdownGameDuration;
 
-    public BingoGameSettings()
+    public BingoSettings()
     {
         this.card = ConfigData.instance.selectedCard;
         this.mode = BingoGamemode.REGULAR;
         this.cardSize = CardSize.X5;
+        this.cardSeed = ConfigData.instance.cardSeed;
         this.kit = PlayerKit.OVERPOWERED;
         this.effects = kit.defaultEffects;
         this.maxTeamSize = ConfigData.instance.defaultTeamSize;

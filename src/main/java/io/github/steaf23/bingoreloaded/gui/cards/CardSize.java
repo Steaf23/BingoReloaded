@@ -14,6 +14,7 @@ public enum CardSize
     public int leftSpacing;
     public int rightSpacing;
     public int fullCardSize;
+
     CardSize(int size, int leftSpacing)
     {
         this.cardSize = size;

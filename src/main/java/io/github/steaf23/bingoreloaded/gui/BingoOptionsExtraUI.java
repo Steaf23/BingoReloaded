@@ -1,6 +1,7 @@
 package io.github.steaf23.bingoreloaded.gui;
 
 import io.github.steaf23.bingoreloaded.BingoGame;
+import io.github.steaf23.bingoreloaded.BingoSettings;
 import io.github.steaf23.bingoreloaded.Message;
 import io.github.steaf23.bingoreloaded.data.TranslationData;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
@@ -16,7 +17,7 @@ public class BingoOptionsExtraUI extends AbstractGUIInventory
 
     private static final int TEAM_MAX = 64;
     private static final int DURATION_MAX = 60;
-    private final BingoGame game;
+    private final BingoSettings settings;
     private final InventoryItem exit = new InventoryItem(36,
             Material.BARRIER, TITLE_PREFIX + TranslationData.translate("menu.prev"));
     private final InventoryItem maxTeamMembers = new InventoryItem(GUIBuilder5x9.OptionPositions.TWO_HORIZONTAL.positions[0],
@@ -24,10 +25,10 @@ public class BingoOptionsExtraUI extends AbstractGUIInventory
     private final InventoryItem gameDuration = new InventoryItem(GUIBuilder5x9.OptionPositions.TWO_HORIZONTAL.positions[1],
             Material.CLOCK, TITLE_PREFIX + "Countdown Duration");
 
-    public BingoOptionsExtraUI(AbstractGUIInventory parent, BingoGame game)
+    public BingoOptionsExtraUI(AbstractGUIInventory parent, BingoSettings settings)
     {
         super(45, TranslationData.translate("menu.options.title"), parent);
-        this.game = game;
+        this.settings = settings;
     }
 
     @Override
@@ -76,8 +77,8 @@ public class BingoOptionsExtraUI extends AbstractGUIInventory
     @Override
     public void handleClose(final InventoryCloseEvent event)
     {
-        game.getSettings().maxTeamSize = maxTeamMembers.getAmount();
-        game.getSettings().countdownGameDuration = gameDuration.getAmount();
+        settings.maxTeamSize = maxTeamMembers.getAmount();
+        settings.countdownGameDuration = gameDuration.getAmount();
         super.handleClose(event);
     }
 
@@ -85,13 +86,13 @@ public class BingoOptionsExtraUI extends AbstractGUIInventory
     public void handleOpen(InventoryOpenEvent event)
     {
         super.handleOpen(event);
-        maxTeamMembers.setAmount(Math.max(0, Math.min(TEAM_MAX, game.getSettings().maxTeamSize)));
+        maxTeamMembers.setAmount(Math.max(0, Math.min(TEAM_MAX, settings.maxTeamSize)));
         maxTeamMembers.setDescription(
                 "§7" + maxTeamMembers.getAmount() + " Players per team",
                 "§r§oUse the mouse buttons to increase/ decrease",
                 "the maximum amount of players per team");
 
-        gameDuration.setAmount(Math.max(0, Math.min(DURATION_MAX, game.getSettings().countdownGameDuration)));
+        gameDuration.setAmount(Math.max(0, Math.min(DURATION_MAX, settings.countdownGameDuration)));
         gameDuration.setDescription(
                 "§7Timer set to " + gameDuration.getAmount() + " minute(s) for Countdown Bingo",
                 "§r§oUse the mouse buttons to increase/ decrease",

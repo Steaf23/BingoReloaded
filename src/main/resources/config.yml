@@ -19,9 +19,6 @@ playerTeleportStrategy: ALL
 #   that can be used to teleport them back.
 teleportBackAfterDeathMessage: true  # true or false
 
-# The height (exact y-level) of the spawn platform at the start of the game
-lobbySpawnHeight: 128
-
 # Distances to teleport a player that uses the Go-Up-Wand
 GoUpWand:
   upDistance: 75 # teleport up distance
@@ -59,3 +56,10 @@ defaultTeamSize: 64 # whole number between 1 and 64.
 #   Stats are not automatically removed if you turn this to false if it has been on true before.
 #   Turning this option on later will not retroactively fill stats for games played with stats off.
 savePlayerStatistics: false # true or false
+
+# The seed of the card that will be played.
+#   0 means the seed is not defined and cards will be generated like normal.
+cardSeed: 0 # any whole number
+
+# Enables the /btc options for players to use to communicate with each other.
+enableTeamChat: true # true or false

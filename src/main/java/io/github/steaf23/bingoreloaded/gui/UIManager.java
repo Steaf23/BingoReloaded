@@ -11,7 +11,7 @@ import org.bukkit.event.inventory.InventoryOpenEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UIManager implements Listener
+public class UIManager
 {
     private static List<AbstractGUIInventory> inventories;
 
@@ -32,12 +32,10 @@ public class UIManager implements Listener
 
     private UIManager()
     {
-        BingoReloaded.registerListener(this);
         inventories = new ArrayList<>();
     }
 
-    @EventHandler
-    public void onInventoryClick(final InventoryClickEvent event)
+    public static void onInventoryClick(final InventoryClickEvent event)
     {
         for (var inv : inventories)
         {
@@ -49,8 +47,7 @@ public class UIManager implements Listener
         }
     }
 
-    @EventHandler
-    public void onInventoryDrag(final InventoryDragEvent event)
+    public static void onInventoryDrag(final InventoryDragEvent event)
     {
         for (var inv : inventories)
         {
@@ -62,8 +59,7 @@ public class UIManager implements Listener
         }
     }
 
-    @EventHandler
-    public void onInventoryClose(final InventoryCloseEvent event)
+    public static void onInventoryClose(final InventoryCloseEvent event)
     {
         for (var inv : inventories)
         {
@@ -75,8 +71,7 @@ public class UIManager implements Listener
         }
     }
 
-    @EventHandler
-    public void onInventoryOpen(final InventoryOpenEvent event)
+    public static void onInventoryOpen(final InventoryOpenEvent event)
     {
         for (var inv : inventories)
         {

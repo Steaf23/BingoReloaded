@@ -22,16 +22,16 @@ import java.util.*;
 public class TeamManager
 {
     private final List<BingoTeam> activeTeams;
-    private final BingoGame game;
     private final Scoreboard teams;
     private int maximumTeamSize;
+    private String worldName;
 
-    public TeamManager(BingoGame game, Scoreboard board)
+    public TeamManager(Scoreboard board, String worldName)
     {
         this.activeTeams = new ArrayList<>();
-        this.game = game;
         this.teams = board;
-        this.maximumTeamSize = game.getSettings().maxTeamSize;
+        this.worldName = worldName;
+        this.maximumTeamSize = GameWorldManager.get().getGameSettings(worldName).maxTeamSize;
 
         createTeams();
     }
@@ -54,7 +54,7 @@ public class TeamManager
 
     public void openTeamSelector(Player player, AbstractGUIInventory parentUI)
     {
-        if (game.inProgress)
+        if (GameWorldManager.get().isGameWorldActive(worldName))
         {
             new Message("game.team.no_join").color(ChatColor.RED).send(player);
             return;
@@ -286,5 +286,10 @@ public class TeamManager
             t.addEntry("" + fColor.chatColor);
         }
         Message.log(ChatColor.GREEN + "Successfully created " + teams.getTeams().size() + " teams");
+    }
+
+    public String getWorldName()
+    {
+        return worldName;
     }
 }

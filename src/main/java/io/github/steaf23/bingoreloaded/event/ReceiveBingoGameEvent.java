@@ -4,14 +4,15 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
-public class ReceiveBingoGameEvent extends Event
+public class ReceiveBingoGameEvent extends BingoEvent
 {
     private static final HandlerList HANDLERS = new HandlerList();
 
     public final BingoGameEvent eventType;
 
-    public ReceiveBingoGameEvent(BingoGameEvent eventType)
+    public ReceiveBingoGameEvent(BingoGameEvent eventType, String worldName)
     {
+        super(worldName);
         this.eventType = eventType;
     }
 

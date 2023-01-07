@@ -1,6 +1,7 @@
 package io.github.steaf23.bingoreloaded.gui.cards;
 
 import io.github.steaf23.bingoreloaded.BingoGame;
+import io.github.steaf23.bingoreloaded.GameWorldManager;
 import io.github.steaf23.bingoreloaded.Message;
 import io.github.steaf23.bingoreloaded.data.TranslationData;
 import io.github.steaf23.bingoreloaded.event.BingoCardSlotCompleteEvent;
@@ -17,20 +18,19 @@ import org.bukkit.event.EventHandler;
 public class LockoutBingoCard extends BingoCard
 {
     public int teamCount;
-    public TeamManager teamManager;
     public int currentMaxTasks;
 
-    public LockoutBingoCard(CardSize size, BingoGame game)
+    public LockoutBingoCard(CardSize size, int teamCount)
     {
-        super(size, game);
-        this.teamManager = game.getTeamManager();
+        super(size);
         this.currentMaxTasks = size.fullCardSize;
-        this.teamCount = teamManager.getActiveTeams().size();
+        this.teamCount = teamCount;
 
         InventoryItem cardInfo = new InventoryItem(0, Material.MAP, TranslationData.itemName("menu.card.info_lockout"), TranslationData.itemDescription("menu.card.info_lockout"));
         addOption(cardInfo);
     }
 
+    // Lockout cards cannot be copied since it should be the same instance for every player.
     @Override
     public LockoutBingoCard copy()
     {
@@ -51,20 +51,27 @@ public class LockoutBingoCard extends BingoCard
     @EventHandler
     public void onCardSlotCompleteEvent(final BingoCardSlotCompleteEvent event)
     {
+        BingoGame game = GameWorldManager.get().getActiveGame(event.getWorldName());
+        if (game == null)
+        {
+            return;
+        }
+
+        TeamManager teamManager = game.getTeamManager();
         // get the completeCount of the team with the most items.
         BingoTeam leadingTeam = teamManager.getLeadingTeam();
         BingoTeam losingTeam = teamManager.getLosingTeam();
 
-        int itemsLeft = size.fullCardSize - getTotalCompleteCount();
+        int itemsLeft = size.fullCardSize - getTotalCompleteCount(teamManager);
 
         // if amount on items cannot get up to amount of items of the team with the most items, this team cannot win anymore.
         if (itemsLeft + getCompleteCount(losingTeam) < getCompleteCount(leadingTeam))
         {
-            dropTeam(losingTeam);
+            dropTeam(losingTeam, teamManager);
         }
     }
 
-    public void dropTeam(BingoTeam team)
+    public void dropTeam(BingoTeam team, TeamManager teamManager)
     {
         new Message("game.team.dropped")
                 .arg(FlexibleColor.fromName(team.getName()).getTranslation()).color(team.getColor()).bold()
@@ -85,7 +92,7 @@ public class LockoutBingoCard extends BingoCard
         teamCount--;
     }
 
-    public int getTotalCompleteCount()
+    public int getTotalCompleteCount(TeamManager teamManager)
     {
         int total = 0;
         for (BingoTeam t : teamManager.getActiveTeams())

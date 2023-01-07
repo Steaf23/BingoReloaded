@@ -2,6 +2,7 @@ package io.github.steaf23.bingoreloaded.gui;
 
 import io.github.steaf23.bingoreloaded.BingoGame;
 import io.github.steaf23.bingoreloaded.BingoGamemode;
+import io.github.steaf23.bingoreloaded.BingoSettings;
 import io.github.steaf23.bingoreloaded.Message;
 import io.github.steaf23.bingoreloaded.data.TranslationData;
 import io.github.steaf23.bingoreloaded.gui.cards.CardSize;
@@ -14,13 +15,13 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 
 public class GamemodeOptionsUI extends AbstractGUIInventory
 {
-    private final BingoGame game;
+    private final BingoSettings settings;
     private final InventoryItem[] options;
 
-    public GamemodeOptionsUI(AbstractGUIInventory parent, BingoGame game)
+    public GamemodeOptionsUI(AbstractGUIInventory parent, BingoSettings settings)
     {
         super(45, TranslationData.itemName("menu.options.mode"), parent);
-        this.game = game;
+        this.settings = settings;
         options = new InventoryItem[]{
                 new InventoryItem(GUIBuilder5x9.OptionPositions.EIGHT_CENTER1.positions[0],
                         Material.LIME_CONCRETE, TITLE_PREFIX + "Regular 5x5"),
@@ -80,8 +81,8 @@ public class GamemodeOptionsUI extends AbstractGUIInventory
             chosenSize = CardSize.X3;
         }
 
-        game.getSettings().mode = chosenMode;
-        game.getSettings().cardSize = chosenSize;
+        settings.mode = chosenMode;
+        settings.cardSize = chosenSize;
         close(player);
     }
 }

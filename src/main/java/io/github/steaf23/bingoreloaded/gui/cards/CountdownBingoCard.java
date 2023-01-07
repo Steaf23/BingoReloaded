@@ -1,6 +1,7 @@
 package io.github.steaf23.bingoreloaded.gui.cards;
 
 import io.github.steaf23.bingoreloaded.BingoGame;
+import io.github.steaf23.bingoreloaded.GameWorldManager;
 import io.github.steaf23.bingoreloaded.Message;
 import io.github.steaf23.bingoreloaded.data.TranslationData;
 import io.github.steaf23.bingoreloaded.event.BingoGameEvent;
@@ -21,9 +22,9 @@ import java.util.Set;
 
 public class CountdownBingoCard extends CompleteBingoCard
 {
-    public CountdownBingoCard(CardSize size, BingoGame game)
+    public CountdownBingoCard(CardSize size)
     {
-        super(size, game);
+        super(size);
         InventoryItem cardInfoItem = new InventoryItem(0, Material.MAP, TranslationData.itemName("menu.card.info_countdown"), TranslationData.itemDescription("menu.card.info_countdown"));
         addOption(cardInfoItem);
     }
@@ -31,6 +32,14 @@ public class CountdownBingoCard extends CompleteBingoCard
     @EventHandler
     public void onCountdownFinished(final CountdownTimerFinishedEvent event)
     {
+        BingoGame game = GameWorldManager.get().getActiveGame(event.getWorldName());
+        if (game == null)
+            return;
+
+        if (!game.getWorldName().equals(event.getWorldName()))
+        {
+            return;
+        }
         Set<BingoTeam> tiedTeams = new HashSet<>();
         TeamManager teamManager = game.getTeamManager();
         tiedTeams.add(teamManager.getLeadingTeam());
@@ -58,19 +67,10 @@ public class CountdownBingoCard extends CompleteBingoCard
         }
     }
 
-    @EventHandler
-    public void onBingoGameEventReceived(final ReceiveBingoGameEvent event)
-    {
-        if (event.eventType.equals(BingoGameEvent.ENDED))
-        {
-
-        }
-    }
-
     @Override
     public CountdownBingoCard copy()
     {
-        CountdownBingoCard card = new CountdownBingoCard(this.size, game);
+        CountdownBingoCard card = new CountdownBingoCard(this.size);
         List<AbstractBingoTask> newTasks = new ArrayList<>();
         for (AbstractBingoTask item : tasks)
         {

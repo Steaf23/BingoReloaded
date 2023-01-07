@@ -1,7 +1,6 @@
 package io.github.steaf23.bingoreloaded;
 
 import io.github.steaf23.bingoreloaded.data.*;
-import io.github.steaf23.bingoreloaded.event.SendBingoGameEvent;
 import io.github.steaf23.bingoreloaded.gui.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.gui.cards.BingoCard;
 import io.github.steaf23.bingoreloaded.gui.cards.CardBuilder;
@@ -33,7 +32,6 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 import net.md_5.bungee.api.ChatColor;
-import org.w3c.dom.css.Counter;
 
 import java.util.*;
 
@@ -42,16 +40,18 @@ public class BingoGame implements Listener
     public boolean inProgress;
     public GameTimer timer;
 
+    private final String worldName;
+    private BingoSettings settings;
     private final BingoScoreboard scoreboard;
-    private BingoGameSettings settings;
     private final Map<UUID, Location> deadPlayers;
     private final TimeNotifier notifier;
 
-    public BingoGame()
+    public BingoGame(String worldName)
     {
-        this.settings = new BingoGameSettings();
+        this.worldName = worldName;
         this.inProgress = false;
-        this.scoreboard = new BingoScoreboard(this);
+        this.scoreboard = new BingoScoreboard(worldName);
+        this.deadPlayers = new HashMap<>();
         this.notifier = new TimeNotifier()
         {
             @Override
@@ -64,28 +64,20 @@ public class BingoGame implements Listener
                 }
             }
         };
-        this.deadPlayers = new HashMap<>();
-
-        scoreboard.resetBoards();
-        scoreboard.updateItemCount();
-
         BingoReloaded.registerListener(this);
     }
 
-    public void start()
+    public void start(BingoSettings settings)
     {
-        start(0);
-    }
+        this.settings = settings;
 
-    public void start(int seed)
-    {
         if (settings.mode == BingoGamemode.COUNTDOWN)
         {
-            timer = new CountdownTimer(settings.countdownGameDuration * 60, 5 * 60, 1 * 60);
+            timer = new CountdownTimer(settings.countdownGameDuration * 60, 5 * 60, 1 * 60, getWorldName());
         }
         else
         {
-            timer = new CounterTimer();
+            timer = new CounterTimer(getWorldName());
         }
         timer.setNotifier(notifier);
 
@@ -96,7 +88,7 @@ public class BingoGame implements Listener
         }
 
         // Pre-start Setup
-        if (getTeamManager().getParticipants().size() <= 0)
+        if (getTeamManager().getParticipants().size() == 0)
         {
             new Message("game.start.no_players").color(ChatColor.RED).sendAll();
             return;
@@ -117,8 +109,8 @@ public class BingoGame implements Listener
         // Start
         inProgress = true;
 
-        BingoCard masterCard = CardBuilder.fromMode(settings.mode, settings.cardSize, this);
-        masterCard.generateCard(settings.card, seed);
+        BingoCard masterCard = CardBuilder.fromMode(settings.mode, settings.cardSize, getTeamManager().getActiveTeams().size());
+        masterCard.generateCard(settings.card, ConfigData.instance.cardSeed);
         getTeamManager().initializeCards(masterCard);
 
         new Message("game.start.give_cards").sendAll();
@@ -156,6 +148,7 @@ public class BingoGame implements Listener
         timer.stop();
         RecoveryCardData.markCardEnded(true);
         players.forEach(p -> takePlayerEffects(p));
+        settings = null;
     }
 
     public void bingo(BingoTeam team)
@@ -187,7 +180,7 @@ public class BingoGame implements Listener
         return 0;
     }
 
-    public BingoGameSettings getSettings()
+    public BingoSettings getSettings()
     {
         return settings;
     }
@@ -276,7 +269,7 @@ public class BingoGame implements Listener
                 .send(p);
     }
 
-    public static void givePlayerEffects(Player player, BingoGameSettings settings)
+    public static void givePlayerEffects(Player player, BingoSettings settings)
     {
         takePlayerEffects(player);
 
@@ -323,21 +316,21 @@ public class BingoGame implements Listener
         deadPlayers.remove(player.getUniqueId());
     }
 
-    public static void spawnPlatform(Location spawnLocation, int size)
+    public static void spawnPlatform(Location platformLocation, int size)
     {
         for (int x = -size; x < size + 1; x++)
         {
             for (int z = -size; z < size + 1; z++)
             {
-                if (!spawnLocation.getWorld().getType(
-                     (int)spawnLocation.getX() + x,
-                    (int)spawnLocation.getY() - 20,
-                    (int)spawnLocation.getZ() + z).isSolid())
+                if (!platformLocation.getWorld().getType(
+                     (int)platformLocation.getX() + x,
+                    (int)platformLocation.getY(),
+                    (int)platformLocation.getZ() + z).isSolid())
                 {
-                    spawnLocation.getWorld().setType(
-                            (int)spawnLocation.getX() + x,
-                            (int)spawnLocation.getY() - 20,
-                            (int)spawnLocation.getZ() + z,
+                    platformLocation.getWorld().setType(
+                            (int)platformLocation.getX() + x,
+                            (int)platformLocation.getY(),
+                            (int)platformLocation.getZ() + z,
                             Material.WHITE_STAINED_GLASS);
                 }
             }
@@ -352,12 +345,12 @@ public class BingoGame implements Listener
             {
                 if (platformLocation.getWorld().getType(
                         (int)platformLocation.getX() + x,
-                        (int)platformLocation.getY() - 20,
+                        (int)platformLocation.getY(),
                         (int)platformLocation.getZ() + z) == Material.WHITE_STAINED_GLASS)
                 {
                     platformLocation.getWorld().setType(
                             (int)platformLocation.getX() + x,
-                            (int)platformLocation.getY() - 20,
+                            (int)platformLocation.getY(),
                             (int)platformLocation.getZ() + z,
                             Material.AIR);
                 }
@@ -372,23 +365,23 @@ public class BingoGame implements Listener
             case ALONE:
                 for (Player p : getTeamManager().getParticipants())
                 {
-                    Location playerLoc = getRandomSpawnLocation(world);
+                    Location platformLocation = getRandomSpawnLocation(world);
 
-                    p.teleport(playerLoc, PlayerTeleportEvent.TeleportCause.PLUGIN);
-                    Location bedSpawn = playerLoc.clone();
-                    bedSpawn.setY(bedSpawn.getWorld().getHighestBlockYAt(bedSpawn.getBlockX(), bedSpawn.getBlockZ()) + 2);
-                    p.setBedSpawnLocation(bedSpawn, true);
+                    Location playerLocation = platformLocation.clone();
+                    playerLocation.setY(playerLocation.getY() + 10.0);
+                    p.teleport(playerLocation, PlayerTeleportEvent.TeleportCause.PLUGIN);
+                    p.setBedSpawnLocation(platformLocation, true);
 
                     if (getTeamManager().getParticipants().size() > 0)
                     {
-                        spawnPlatform(playerLoc, 5);
+                        spawnPlatform(platformLocation.clone(), 5);
 
                         new BukkitRunnable()
                         {
                             @Override
                             public void run()
                             {
-                                BingoGame.removePlatform(playerLoc, 5);
+                                BingoGame.removePlatform(platformLocation, 5);
                             }
                         }.runTaskLater(Bukkit.getPluginManager().getPlugin(BingoReloaded.NAME),
                                 (Math.max(0, ConfigData.instance.gracePeriod - 5)) * BingoReloaded.ONE_SECOND);
@@ -404,10 +397,10 @@ public class BingoGame implements Listener
                     Set<Player> teamPlayers = getTeamManager().getPlayersOfTeam(t);
                     for (Player p : teamPlayers)
                     {
-                        p.teleport(teamLocation, PlayerTeleportEvent.TeleportCause.PLUGIN);
-                        Location bedSpawn = teamLocation.clone();
-                        bedSpawn.setY(bedSpawn.getWorld().getHighestBlockYAt(bedSpawn.getBlockX(), bedSpawn.getBlockZ()) + 2);
-                        p.setBedSpawnLocation(bedSpawn, true);
+                        Location playerLocation = teamLocation.clone();
+                        playerLocation.setY(playerLocation.getY() + 10.0);
+                        p.teleport(playerLocation, PlayerTeleportEvent.TeleportCause.PLUGIN);
+                        p.setBedSpawnLocation(teamLocation, true);
                     }
 
                     if (getTeamManager().getParticipants().size() > 0)
@@ -433,10 +426,10 @@ public class BingoGame implements Listener
                 Set<Player> players = getTeamManager().getParticipants();
                 for (Player p : players)
                 {
-                    p.teleport(spawnLocation, PlayerTeleportEvent.TeleportCause.PLUGIN);
-                    Location bedSpawn = spawnLocation.clone();
-                    bedSpawn.setY(bedSpawn.getWorld().getHighestBlockYAt(bedSpawn.getBlockX(), bedSpawn.getBlockZ()) + 2);
-                    p.setBedSpawnLocation(bedSpawn, true);
+                    Location playerLocation = spawnLocation.clone();
+                    playerLocation.setY(playerLocation.getY() + 10.0);
+                    p.teleport(playerLocation, PlayerTeleportEvent.TeleportCause.PLUGIN);
+                    p.setBedSpawnLocation(spawnLocation, true);
                 }
 
                 if (getTeamManager().getParticipants().size() > 0)
@@ -462,13 +455,13 @@ public class BingoGame implements Listener
     private static Location getRandomSpawnLocation(World world)
     {
         Vector position = Vector.getRandom().multiply(ConfigData.instance.teleportMaxDistance);
-        Location location = new Location(world, position.getX(), ConfigData.instance.lobbySpawnHeight, position.getZ());
+        Location location = new Location(world, position.getX(), world.getHighestBlockYAt(position.getBlockX(), position.getBlockZ()), position.getZ());
 
         //find a not ocean biome to start the game in
         while (isOceanBiome(world.getBiome(location)))
         {
             position = Vector.getRandom().multiply(ConfigData.instance.teleportMaxDistance);
-            location = new Location(world, position.getX(), ConfigData.instance.lobbySpawnHeight, position.getZ());
+            location = new Location(world, position.getBlockX(), world.getHighestBlockYAt(position.getBlockX(), position.getBlockZ()), position.getBlockZ());
         }
 
         return location;
@@ -539,6 +532,7 @@ public class BingoGame implements Listener
             newLocation.setY(newLocation.getY() + distance + fallDistance);
             player.teleport(newLocation, PlayerTeleportEvent.TeleportCause.PLUGIN);
             newLocation.setY(newLocation.getY() - fallDistance);
+
             BingoGame.spawnPlatform(newLocation, 1);
 
             new BukkitRunnable() {
@@ -562,25 +556,19 @@ public class BingoGame implements Listener
         return false;
     }
 
-// @EventHandlers ========================================================================
-
-    @EventHandler
-    public void onBingoGameEvent(final SendBingoGameEvent event)
+    public String getWorldName()
     {
-        switch (event.eventType)
-        {
-            case START:
-                start();
-                break;
-            case END:
-                end();
-                break;
-        }
+        return worldName;
     }
+
+// @EventHandlers ========================================================================
 
     @EventHandler
     public void onCardSlotCompleteEvent(final BingoCardSlotCompleteEvent event)
     {
+        if (!getWorldName().equals(event.getWorldName()))
+            return;
+
         BingoStatsData.incrementPlayerStat(event.getPlayer().getUniqueId(), BingoStatType.TASKS);
         for (Player p : getTeamManager().getParticipants())
         {
@@ -596,6 +584,9 @@ public class BingoGame implements Listener
     @EventHandler
     public void onPlayerDropItem(final PlayerDropItemEvent dropEvent)
     {
+        if (!getWorldName().equals(GameWorldManager.getWorldName(dropEvent.getPlayer().getWorld())))
+            return;
+
         if (dropEvent.getItemDrop().getItemStack().equals(settings.kit.cardItem.getAsStack()) ||
                 dropEvent.getItemDrop().getItemStack().equals(PlayerKit.wandItem.getAsStack()))
         {
@@ -607,11 +598,10 @@ public class BingoGame implements Listener
     @EventHandler
     public void onItemInteract(final PlayerInteractEvent event)
     {
-        if (event.getHand() != EquipmentSlot.HAND)
+        if (!getWorldName().equals(GameWorldManager.getWorldName(event.getPlayer().getWorld())))
             return;
-        if (event.getItem() == null)
-            return;
-        if (event.getItem().getType().isAir())
+
+        if (event.getItem() == null || event.getHand() != EquipmentSlot.HAND || event.getItem().getType().isAir())
             return;
         if (!getTeamManager().getParticipants().contains(event.getPlayer()))
             return;
@@ -660,10 +650,13 @@ public class BingoGame implements Listener
     @EventHandler
     public void onInventoryClick(final InventoryClickEvent event)
     {
+        if (!getWorldName().equals(GameWorldManager.getWorldName(event.getWhoClicked().getWorld())))
+            return;
+
         ItemStack item = event.getCurrentItem();
         if (item == null) return;
 
-        if (item.equals(settings.kit.cardItem.getAsStack()))
+        if (item.equals(PlayerKit.cardItem.getAsStack()))
         {
             event.setCancelled(true);
         }
@@ -672,9 +665,12 @@ public class BingoGame implements Listener
     @EventHandler
     public void onInventoryDrag(final InventoryDragEvent event)
     {
+        if (!getWorldName().equals(GameWorldManager.getWorldName(event.getWhoClicked().getWorld())))
+            return;
+
         if (event.getCursor() == null) return;
 
-        if (event.getCursor().equals(settings.kit.cardItem.getAsStack()))
+        if (event.getCursor().equals(PlayerKit.cardItem.getAsStack()))
         {
             event.setCancelled(true);
         }
@@ -683,6 +679,9 @@ public class BingoGame implements Listener
     @EventHandler
     public void onEntityDamage(final EntityDamageEvent event)
     {
+        if (!getWorldName().equals(GameWorldManager.getWorldName(event.getEntity().getWorld())))
+            return;
+
         if (!(event.getEntity() instanceof Player player))
             return;
         if (!getTeamManager().getParticipants().contains(player))
@@ -699,6 +698,9 @@ public class BingoGame implements Listener
     @EventHandler
     public void onPlayerJoin(final PlayerJoinEvent event)
     {
+        if (!getWorldName().equals(GameWorldManager.getWorldName(event.getPlayer().getWorld())))
+            return;
+
         if (inProgress)
         {
             if (getTeamManager().getParticipants().contains(event.getPlayer()))
@@ -719,14 +721,11 @@ public class BingoGame implements Listener
     }
 
     @EventHandler
-    public void onPlayerLeave(final PlayerQuitEvent event)
-    {
-
-    }
-
-    @EventHandler
     public void onPlayerDeath(final PlayerDeathEvent event)
     {
+        if (!getWorldName().equals(GameWorldManager.getWorldName(event.getEntity().getWorld())))
+            return;
+
         if (inProgress)
         {
             if (getTeamManager().getParticipants().contains(event.getEntity()))
@@ -749,6 +748,9 @@ public class BingoGame implements Listener
     @EventHandler
     public void onPlayerHoldsCard(final PlayerItemHeldEvent event)
     {
+        if (!getWorldName().equals(GameWorldManager.getWorldName(event.getPlayer().getWorld())))
+            return;
+
         if (getTeamManager().getParticipants().contains(event.getPlayer()) && inProgress)
         {
             if (event.getNewSlot() == settings.kit.cardItem.getSlot() && settings.effects.contains(EffectOptionFlags.CARD_SPEED))
@@ -767,6 +769,9 @@ public class BingoGame implements Listener
     @EventHandler
     public void onPlayerRespawnEvent(final PlayerRespawnEvent event)
     {
+        if (!getWorldName().equals(GameWorldManager.getWorldName(event.getPlayer().getWorld())))
+            return;
+
         if (getTeamManager().getTeamOfPlayer(event.getPlayer()) == null)
         {
             event.getPlayer().setGameMode(GameMode.SPECTATOR);

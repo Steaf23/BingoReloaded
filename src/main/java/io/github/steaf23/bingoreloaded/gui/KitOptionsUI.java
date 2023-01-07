@@ -1,6 +1,7 @@
 package io.github.steaf23.bingoreloaded.gui;
 
 import io.github.steaf23.bingoreloaded.BingoGame;
+import io.github.steaf23.bingoreloaded.BingoSettings;
 import io.github.steaf23.bingoreloaded.data.TranslationData;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
 import io.github.steaf23.bingoreloaded.player.PlayerKit;
@@ -13,7 +14,7 @@ import javax.swing.table.TableRowSorter;
 
 public class KitOptionsUI extends AbstractGUIInventory
 {
-    private final BingoGame game;
+    private final BingoSettings settings;
     private static final InventoryItem HARDCORE = new InventoryItem(GUIBuilder5x9.OptionPositions.FOUR_CENTER3.positions[0],
             Material.RED_CONCRETE, TITLE_PREFIX + PlayerKit.HARDCORE.displayName,
             TranslationData.itemDescription("menu.kits.hardcore"));
@@ -27,10 +28,10 @@ public class KitOptionsUI extends AbstractGUIInventory
             Material.CYAN_CONCRETE, TITLE_PREFIX + PlayerKit.RELOADED.displayName,
             TranslationData.itemDescription("menu.kits.reloaded"));
 
-    public KitOptionsUI(AbstractGUIInventory parent, BingoGame game)
+    public KitOptionsUI(AbstractGUIInventory parent, BingoSettings settings)
     {
         super(45, TranslationData.itemName("menu.options.kit"), parent);
-        this.game = game;
+        this.settings = settings;
 
         fillOptions(new InventoryItem[]{HARDCORE, NORMAL, OVERPOWERED, RELOADED});
     }
@@ -40,19 +41,19 @@ public class KitOptionsUI extends AbstractGUIInventory
     {
         if (slotClicked == HARDCORE.getSlot())
         {
-            game.getSettings().setKit(PlayerKit.HARDCORE);
+            settings.setKit(PlayerKit.HARDCORE);
         }
         else if (slotClicked == NORMAL.getSlot())
         {
-            game.getSettings().setKit(PlayerKit.NORMAL);
+            settings.setKit(PlayerKit.NORMAL);
         }
         else if (slotClicked == OVERPOWERED.getSlot())
         {
-            game.getSettings().setKit(PlayerKit.OVERPOWERED);
+            settings.setKit(PlayerKit.OVERPOWERED);
         }
         else if (slotClicked == RELOADED.getSlot())
         {
-            game.getSettings().setKit(PlayerKit.RELOADED);
+            settings.setKit(PlayerKit.RELOADED);
         }
         close(player);
     }

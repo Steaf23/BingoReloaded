@@ -1,6 +1,8 @@
 package io.github.steaf23.bingoreloaded.command;
 
+import io.github.steaf23.bingoreloaded.BingoEventManager;
 import io.github.steaf23.bingoreloaded.BingoGame;
+import io.github.steaf23.bingoreloaded.GameWorldManager;
 import io.github.steaf23.bingoreloaded.Message;
 import io.github.steaf23.bingoreloaded.data.BingoStatsData;
 import io.github.steaf23.bingoreloaded.data.ConfigData;
@@ -19,96 +21,87 @@ import java.util.UUID;
 
 public class BingoCommand implements CommandExecutor
 {
-    private final BingoGame gameInstance;
-
-    public BingoCommand(BingoGame game)
-    {
-        gameInstance = game;
-    }
-
     @Override
     public boolean onCommand(@NonNull CommandSender commandSender, @NonNull Command command, @NonNull String s, String[] args)
     {
+        if (!(commandSender instanceof Player player) || !player.hasPermission("bingo.player"))
+        {
+            return false;
+        }
+
+        String worldName = GameWorldManager.getWorldName(player.getWorld());
+        BingoGame activeGame = GameWorldManager.get().getActiveGame(worldName);
+        
         if (args.length > 0)
         {
             switch (args[0])
             {
                 case "join":
-                    if (!(commandSender instanceof Player player && player.hasPermission("bingo.player"))) return false;
-
-                    gameInstance.getTeamManager().openTeamSelector(player, null);
+                    if (GameWorldManager.get().doesGameWorldExist(worldName))
+//                        activeGame.getTeamManager().openTeamSelector(player, null);
                     break;
                 case "leave":
-                    if (!(commandSender instanceof Player player && player.hasPermission("bingo.player"))) return false;
-
-                    gameInstance.playerQuit(player);
+                    if (GameWorldManager.get().doesGameWorldExist(worldName))
+//                        activeGame.playerQuit(player);
                     break;
 
                 case "start":
-                    if (commandSender instanceof Player p && p.hasPermission("bingo.settings"))
+                    if (player.hasPermission("bingo.settings"))
                     {
                         if (args.length > 1)
                         {
                             int seed = Integer.parseInt(args[1]);
-                            gameInstance.start(seed);
+                            GameWorldManager.get().getGameSettings(worldName).cardSeed = seed;
                         }
-                        else
-                        {
-                            gameInstance.start();
-                        }
+
+                        GameWorldManager.get().startGame(worldName);
                         return true;
                     }
                     break;
 
                 case "end":
-                    if (!(commandSender instanceof Player p) || p.hasPermission("bingo.settings"))
-                    gameInstance.end();
+                    if (player.hasPermission("bingo.settings"))
+                        GameWorldManager.get().endGame(worldName);
                     break;
 
                 case "getcard":
-                    if (commandSender instanceof Player p && p.hasPermission("bingo.player"))
+                    if (activeGame != null)
                     {
-                        gameInstance.returnCardToPlayer(p);
+                        activeGame.returnCardToPlayer(player);
                         return true;
                     }
                     break;
 
                 case "back":
-                    if (commandSender instanceof Player p && p.hasPermission("bingo.player"))
+                    if (activeGame != null)
                     {
                         if (ConfigData.instance.teleportAfterDeath)
                         {
-                            gameInstance.teleportPlayerAfterDeath(p);
+                            activeGame.teleportPlayerAfterDeath(player);
                             return true;
                         }
                     }
                     break;
 
                 case "deathmatch":
-                    if (commandSender instanceof Player p && !p.hasPermission("bingo.settings"))
+                    if (!player.hasPermission("bingo.settings"))
                     {
                         return false;
                     }
+                    else if (activeGame == null)
+                    {
+                        new Message("command.bingo.no_deathmatch").color(ChatColor.RED).send(player);
+                        return false;
+                    }
 
-                    if (gameInstance.inProgress)
-                    {
-                        gameInstance.startDeathMatch(3);
-                        return true;
-                    }
-                    else
-                    {
-                        if (commandSender instanceof Player p)
-                            new Message("command.bingo.no_deathmatch").color(ChatColor.RED).send(p);
-                        else
-                            Message.log("command.bingo.no_deathmatch");
-                    }
-                    break;
+                    activeGame.startDeathMatch(3);
+                    return true;
 
                 case "creator":
-                    if (commandSender instanceof Player p && p.hasPermission("bingo.manager"))
+                    if (player.hasPermission("bingo.manager"))
                     {
                         CardCreatorUI creatorUI = new CardCreatorUI(null);
-                        creatorUI.open(p);
+                        creatorUI.open(player);
                     }
                     break;
 
@@ -146,9 +139,14 @@ public class BingoCommand implements CommandExecutor
         }
         else
         {
-            if (commandSender instanceof Player player)
+            if (GameWorldManager.get().doesGameWorldExist(worldName))
             {
-                BingoOptionsUI.open(player, gameInstance);
+                BingoOptionsUI.openOptions(player);
+                return true;
+            }
+            else
+            {
+                return false;
             }
         }
         return false;

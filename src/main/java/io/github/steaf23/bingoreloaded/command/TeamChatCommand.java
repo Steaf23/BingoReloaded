@@ -1,7 +1,8 @@
-package io.github.steaf23.bingoreloaded.player;
+package io.github.steaf23.bingoreloaded.command;
 
-import io.github.steaf23.bingoreloaded.BingoReloaded;
-import io.github.steaf23.bingoreloaded.Message;
+import io.github.steaf23.bingoreloaded.*;
+import io.github.steaf23.bingoreloaded.player.BingoTeam;
+import io.github.steaf23.bingoreloaded.player.TeamManager;
 import io.github.steaf23.bingoreloaded.util.FlexibleColor;
 import org.bukkit.Bukkit;
 import net.md_5.bungee.api.ChatColor;
@@ -18,15 +19,12 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TeamChat implements Listener, CommandExecutor
+public class TeamChatCommand implements Listener, CommandExecutor
 {
     private final List<Player> enabledPlayers;
 
-    private final TeamManager teamManager;
-
-    public TeamChat(TeamManager teamManager)
+    public TeamChatCommand()
     {
-        this.teamManager = teamManager;
         this.enabledPlayers = new ArrayList<>();
 
         Plugin plugin = Bukkit.getPluginManager().getPlugin(BingoReloaded.NAME);
@@ -38,8 +36,13 @@ public class TeamChat implements Listener, CommandExecutor
     @EventHandler
     public void onPlayerSendMessage(final AsyncPlayerChatEvent event)
     {
+        BingoGame game = GameWorldManager.get().getGame(GameWorldManager.getWorldName(event.getPlayer().getWorld()));
+        if (game == null)
+            return;
+
         if (!enabledPlayers.contains(event.getPlayer())) return;
 
+        TeamManager teamManager = game.getTeamManager();
         BingoTeam team = teamManager.getTeamOfPlayer(event.getPlayer());
         if (team == null) return;
 
@@ -47,7 +50,6 @@ public class TeamChat implements Listener, CommandExecutor
         sendMessage(team, event.getPlayer(), message);
 
         event.setCancelled(true);
-
     }
 
     public void sendMessage(BingoTeam team, Player player, String message)
@@ -69,6 +71,11 @@ public class TeamChat implements Listener, CommandExecutor
     {
         if (commandSender instanceof Player p)
         {
+            BingoGame game = GameWorldManager.get().getGame(GameWorldManager.getWorldName(p.getWorld()));
+            if (game == null)
+                return false;
+
+            TeamManager teamManager = game.getTeamManager();
             if (!teamManager.getParticipants().contains(p))
             {
                 new Message("game.team.no_chat").color(ChatColor.RED).send(p);
