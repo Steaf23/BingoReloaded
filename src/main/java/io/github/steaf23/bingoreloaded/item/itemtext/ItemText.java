@@ -1,0 +1,247 @@
+package io.github.steaf23.bingoreloaded.item.itemtext;
+
+import io.github.steaf23.bingoreloaded.Message;
+import io.github.steaf23.bingoreloaded.data.YmlDataManager;
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.chat.ComponentSerializer;
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.Statistic;
+import org.bukkit.advancement.Advancement;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Item;
+import org.bukkit.inventory.ItemStack;
+
+import java.util.*;
+
+/**
+ * A builder used for naming items through NBT data.
+ * This means it can also be used to translate text from the minecraft key namespace to the client's language.
+ * Can also return bungee's ChatComponents using asComponent.
+ */
+public class ItemText
+{
+    private String type;
+    private String text;
+    private String modifiers;
+    private final List<ItemText> children;
+    private static YmlDataManager statTranslation = new YmlDataManager("stat_translation.yml");
+
+    public ItemText(ChatColor... modifiers)
+    {
+        this("", modifiers);
+    }
+
+    public ItemText(String text, ChatColor... modifiers)
+    {
+        this("text", text, createModifiers(modifiers));
+    }
+
+    private ItemText(String type, String text, String modifiers, ItemText... children)
+    {
+        this.type = type;
+        this.text = text;
+        this.modifiers = modifiers;
+        this.children = new ArrayList<>();
+        for (ItemText child : children)
+        {
+            this.children.add(child);
+        }
+    }
+
+    public BaseComponent asComponent()
+    {
+        // TODO: return array instead of single component, since hat should also be send-able as a message.
+        BaseComponent root = new TextComponent();
+        root.setExtra(Arrays.stream(ComponentSerializer.parse(asJsonString())).toList());
+        return root;
+    }
+
+    public String asJsonString()
+    {
+        String result = "{\"" + type + "\":\"" + text + "\"" + modifiers;
+        if (children.size() == 0)
+            return result + "}";
+
+        result += ",\"extra\":[";
+        for (int i = 0; i < children.size(); i ++)
+        {
+            if (i != 0) result += ",";
+            result += children.get(i).asJsonString();
+        }
+
+        result += "]}";
+        return result;
+    }
+
+    public ItemText add(ItemText other)
+    {
+        children.add(other);
+        return other;
+    }
+
+    /**
+     * Add a simple text element
+     * @param text
+     * @param modifiers
+     * @return
+     */
+    public ItemText addText(String text, ChatColor... modifiers)
+    {
+        return add(new ItemText("text", text, ItemText.createModifiers(modifiers)));
+    }
+
+    /**
+     * Adds a translated piece of text based on minecraft's lang files using the provided translation key
+     * @param key
+     * @param modifiers
+     * @return
+     */
+    public  ItemText addTranslation(String key, ChatColor... modifiers)
+    {
+        return add(translateComponent(key, new ItemText[]{}, modifiers));
+    }
+
+    public  ItemText addTranslation(String key, ItemText[] jsonArgs, ChatColor... modifiers)
+    {
+        return add(translateComponent(key, jsonArgs, modifiers));
+    }
+
+    public ItemText addItemName(Material item)
+    {
+        return addTranslation(itemKey(item));
+    }
+
+    public ItemText addAdvancementTitle(Advancement advancement)
+    {
+        return addTranslation(advancementKey(advancement) + ".title");
+    }
+
+    public ItemText addAdvancementDescription(Advancement advancement)
+    {
+        return addTranslation(advancementKey(advancement) + ".description");
+    }
+
+    public ItemText addStatistic(Statistic statistic, ItemText... with)
+    {
+        return addTranslation(statisticKey(statistic), with);
+    }
+
+    public ItemText addEntityName(EntityType entity)
+    {
+        return addTranslation(entityKey(entity));
+    }
+
+    public static ItemStack buildItemText(ItemStack itemStack, ItemText nameText, ItemText... loreText)
+    {
+        String newText = "{display:{Name:\'[" + nameText.asJsonString() + "]\'";
+
+        if (loreText.length == 0 || (loreText.length == 1 && loreText[0].text.isEmpty()))
+            return Bukkit.getUnsafe().modifyItemStack(itemStack, newText + "}}");
+
+        newText += ",Lore:[";
+        for (int i = 0; i < loreText.length; i ++)
+        {
+            if (i != 0) newText += ",";
+            newText += "\'" + loreText[i].asJsonString() + "\'";
+        }
+
+        newText += "]}}";
+
+        return Bukkit.getUnsafe().modifyItemStack(itemStack, newText);
+    }
+
+    public ItemText setModifiers(ChatColor... newModifiers)
+    {
+        this.modifiers = createModifiers(newModifiers);
+        return this;
+    }
+
+    public static String createModifiers(ChatColor... modifiers)
+    {
+        Set<ChatColor> modifierSet = new HashSet<>(Arrays.stream(modifiers).toList());
+        String mods = "";
+        for (ChatColor mod : modifierSet)
+        {
+            if (mod.getColor() != null)
+            {
+                mods += ",\"color\":\"#" + Integer.toHexString(mod.getColor().getRGB()).substring(2) + "\"";
+                continue;
+            }
+        }
+        mods += ",\"italic\":" + (modifierSet.contains(ChatColor.ITALIC) ? "true" : "false");
+        if (modifierSet.contains(ChatColor.BOLD)) mods += ",\"bold\":true";
+        if (modifierSet.contains(ChatColor.STRIKETHROUGH)) mods += ",\"bold\":true";
+        if (modifierSet.contains(ChatColor.UNDERLINE)) mods += ",\"underlined\":true";
+        if (modifierSet.contains(ChatColor.MAGIC)) mods += ",\"obfuscated\":true";
+        return mods;
+    }
+
+    /**
+     * jsonArgs for simple text can be created using createText()
+     * @param key
+     * @param jsonArgs
+     * @param modifiers
+     * @return
+     */
+    private static ItemText translateComponent(String key, ItemText[] jsonArgs, ChatColor... modifiers)
+    {
+        if (jsonArgs.length == 0)
+            return new ItemText("translate", key, ItemText.createModifiers(modifiers));
+
+        // Fill translate arguments (if any)
+        String with = ",\"with\":[";
+        int idx = 0;
+        for (ItemText arg : jsonArgs)
+        {
+            if (idx > 0)
+            {
+                with += ",";
+            }
+            with += arg.asJsonString();
+            idx += 1;
+        }
+        return new ItemText("translate", key, with + "]" + ItemText.createModifiers(modifiers));
+    }
+
+    private static String advancementKey(Advancement advancement)
+    {
+        String result = advancement.getKey().getKey().replace("/", ".");
+        switch (result) // Needed to correct Spigot on some advancement names vs how they appear in the lang files
+        {
+            case "husbandry.obtain_netherite_hoe":
+                result = "husbandry.netherite_hoe";
+                break;
+            case "husbandry.bred_all_animals":
+                result = "husbandry.breed_all_animals";
+                break;
+        }
+        return "advancements." + result;
+    }
+
+    private static String statisticKey(Statistic statistic)
+    {
+        String prefix = statistic.isSubstatistic() ? "stat_type.minecraft." : "stat.minecraft.";
+        String result = statTranslation.getConfig().getString(statistic.name(), "");
+        return result != "" ? prefix + result : statistic.name();
+    }
+
+    private static String itemKey(Material item)
+    {
+        String key = item.isBlock() ? "block" : "item";
+        key += ".minecraft." + item.getKey().getKey();
+        return key;
+    }
+
+    private static String entityKey(EntityType entity)
+    {
+        return switch (entity)
+                {
+                    case MUSHROOM_COW -> "entity.minecraft.mooshroom";
+                    case SNOWMAN -> "entity.minecraft.snow_golem";
+                    default -> "entity.minecraft." + entity.name().toLowerCase();
+                };
+    }
+}

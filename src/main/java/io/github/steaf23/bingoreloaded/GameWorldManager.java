@@ -53,6 +53,7 @@ public class GameWorldManager
 
         templates.remove(worldName);
         activeGames.remove(worldName);
+        Message.log(templates.toString());
         return true;
     }
 

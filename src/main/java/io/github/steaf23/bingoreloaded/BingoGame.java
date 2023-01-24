@@ -6,7 +6,6 @@ import io.github.steaf23.bingoreloaded.gui.cards.BingoCard;
 import io.github.steaf23.bingoreloaded.gui.cards.CardBuilder;
 import io.github.steaf23.bingoreloaded.event.BingoCardSlotCompleteEvent;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
-import io.github.steaf23.bingoreloaded.item.ItemTextBuilder;
 import io.github.steaf23.bingoreloaded.player.BingoTeam;
 import io.github.steaf23.bingoreloaded.player.PlayerKit;
 import io.github.steaf23.bingoreloaded.player.TeamManager;
@@ -55,7 +54,7 @@ public class BingoGame implements Listener
         this.notifier = new TimeNotifier()
         {
             @Override
-            public void timeUpdated(int seconds)
+            public void timeUpdated(long seconds)
             {
                 for (Player player : getTeamManager().getParticipants())
                 {
@@ -153,7 +152,7 @@ public class BingoGame implements Listener
 
     public void bingo(BingoTeam team)
     {
-        new Message("game.end.bingo").arg(FlexibleColor.fromName(team.getName()).getTranslation()).color(team.getColor()).bold().sendAll();
+        new Message("game.end.bingo").arg(FlexColor.fromName(team.getName()).getTranslatedName()).color(team.getColor()).bold().sendAll();
         for (Player p : getTeamManager().getParticipants())
         {
             p.playSound(p, Sound.ENTITY_DRAGON_FIREBALL_EXPLODE, 0.8f, 1.0f);
@@ -171,7 +170,7 @@ public class BingoGame implements Listener
         end();
     }
 
-    public int getGameTime()
+    public long getGameTime()
     {
         if (timer != null)
         {
@@ -194,7 +193,7 @@ public class BingoGame implements Listener
     {
         p.getInventory().clear();
         p.closeInventory();
-        FlexibleColor teamColor = FlexibleColor.fromChatColor(getTeamManager().getTeamOfPlayer(p).getColor());
+        FlexColor teamColor = FlexColor.fromChatColor(getTeamManager().getTeamOfPlayer(p).getColor());
 
         if (teamColor == null) return;
         for(InventoryItem item : settings.kit.getItems(teamColor))
@@ -262,7 +261,8 @@ public class BingoGame implements Listener
 
     public void showDeathMatchItem(Player p)
     {
-        String itemKey = ItemTextBuilder.getItemKey(settings.deathMatchItem);
+        String itemKey = settings.deathMatchItem.isBlock() ? "block" : "item";
+        itemKey += ".minecraft." + settings.deathMatchItem.getKey().getKey();
 
         new Message("game.item.deathmatch").color(ChatColor.GOLD)
                 .component(new TranslatableComponent(itemKey))

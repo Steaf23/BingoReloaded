@@ -15,6 +15,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -23,8 +24,13 @@ public class AutoBingoCommand implements CommandExecutor
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String alias, @NotNull String[] args)
     {
+        //TODO: QUADRUPLE CHECK THIS!
         // AutoBingo should only work for admins or console.
-        if (commandSender instanceof Player)
+        if (!(commandSender instanceof ConsoleCommandSender))
+        {
+            return false;
+        }
+        else if (commandSender instanceof Player p && !p.hasPermission("bingo.admin"))
         {
             return false;
         }
@@ -41,7 +47,7 @@ public class AutoBingoCommand implements CommandExecutor
         {
             if (args.length > 1 && args[1].equals("create"))
             {
-                if (args.length <= 2)
+                if (args.length == 2)
                 {
                     sendFailed("Usage: /autobingo <world_name> create <max_team_size>", commandSender, worldName);
                     return false;
@@ -94,6 +100,7 @@ public class AutoBingoCommand implements CommandExecutor
                     return true;
 
                 case "card":
+                    //TODO: Add card seed parameter to /autobingo card
                     if (!setCard(settings, args[2]))
                     {
                         sendFailed("Invalid card name '" + args[2] + "'!", commandSender, worldName);
@@ -116,7 +123,7 @@ public class AutoBingoCommand implements CommandExecutor
         }
         else
         {
-            if (args[0].equals("end"))
+            if (args[1].equals("end"))
             {
                 if (!end(settings, worldName))
                 {

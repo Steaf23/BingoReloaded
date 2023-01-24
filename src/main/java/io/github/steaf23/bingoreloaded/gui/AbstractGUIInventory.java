@@ -20,10 +20,9 @@ import org.bukkit.scheduler.BukkitRunnable;
 public abstract class AbstractGUIInventory
 {
     /**
-     * Event delegate to handle custom click behaviour for inventory items
+     * Event delegate to handle custom click behaviour for inventory screens.
      * @param event The event that gets fired when an item in the inventory was clicked.
      * @param slotClicked The slot that was clicked on by the player.
-     *                    Slot can be null.
      * @param player The player that clicked on the item.
      */
     public abstract void delegateClick(final InventoryClickEvent event, int slotClicked, Player player, ClickType clickType);
@@ -37,11 +36,13 @@ public abstract class AbstractGUIInventory
     {
         this.parent = parent;
 
-        inventory = Bukkit.createInventory(new GUIHolder(), size, Message.PREFIX_STRING + ChatColor.DARK_RED + title);
+        inventory = Bukkit.createInventory(new GUIHolder(), size, Message.PREFIX_STRING_SHORT + ChatColor.DARK_RED + title);
         UIManager.addInventory(this);
+
+        Message.log("Constructing " + title);
     }
 
-    public void handleClick(final InventoryClickEvent event)
+    public final void handleClick(final InventoryClickEvent event)
     {
         // ignore double clicks as they are annoying AF
         if (event.getClick() == ClickType.DOUBLE_CLICK)
@@ -78,7 +79,7 @@ public abstract class AbstractGUIInventory
 
     }
 
-    protected void fillOptions(InventoryItem[] options)
+    protected void fillOptions(InventoryItem... options)
     {
         for (InventoryItem option : options)
         {
@@ -102,6 +103,11 @@ public abstract class AbstractGUIInventory
         }
     }
 
+    public void clear()
+    {
+        inventory.clear();
+    }
+
     public InventoryItem getOption(int slot)
     {
         ItemStack stack = inventory.getItem(slot);
@@ -110,7 +116,7 @@ public abstract class AbstractGUIInventory
         return new InventoryItem(slot, inventory.getItem(slot));
     }
 
-    public void open(HumanEntity player)
+    public final void open(HumanEntity player)
     {
         new BukkitRunnable()
         {
@@ -122,7 +128,7 @@ public abstract class AbstractGUIInventory
         }.runTask(Bukkit.getPluginManager().getPlugin(BingoReloaded.NAME));
     }
 
-    public void close(HumanEntity player)
+    public final void close(HumanEntity player)
     {
         if (parent != null)
             parent.open(player);

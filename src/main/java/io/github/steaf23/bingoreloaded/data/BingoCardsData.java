@@ -1,9 +1,9 @@
 package io.github.steaf23.bingoreloaded.data;
 
+import io.github.steaf23.bingoreloaded.item.tasks.BingoTask;
 import io.github.steaf23.bingoreloaded.item.tasks.ItemTask;
 import org.bukkit.Material;
 
-import java.sql.Array;
 import java.util.*;
 
 public class BingoCardsData
@@ -53,15 +53,15 @@ public class BingoCardsData
         data.getConfig().set(cardName + "." + listName, null);
     }
 
-    public static ItemTask getRandomItemTask(String cardName)
+    public static BingoTask getRandomItemTask(String cardName)
     {
-        List<ItemTask> allItemTasks = new ArrayList<>();
-        getLists(cardName).forEach((l) -> allItemTasks.addAll(BingoTasksData.getItemTasks(l)));
+        List<BingoTask> allItemTasks = new ArrayList<>();
+        getLists(cardName).forEach((l) -> allItemTasks.addAll(TaskListsData.getItemTasks(l)));
 
         if (allItemTasks.size() > 0)
             return allItemTasks.get(Math.abs(new Random().nextInt(allItemTasks.size())));
         else
-            return new ItemTask(Material.DIAMOND_HOE);
+            return new BingoTask(new ItemTask(Material.DIAMOND_HOE, 1));
     }
 
     public static Set<String> getLists(String cardName)

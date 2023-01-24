@@ -1,97 +1,59 @@
 package io.github.steaf23.bingoreloaded.item.tasks;
 
-import io.github.steaf23.bingoreloaded.data.TranslationData;
-import io.github.steaf23.bingoreloaded.item.ItemTextBuilder;
-import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.TextComponent;
-import net.md_5.bungee.api.chat.TranslatableComponent;
-import org.bukkit.Material;
+import io.github.steaf23.bingoreloaded.item.itemtext.ItemText;
+import org.bukkit.Bukkit;
+import org.bukkit.NamespacedKey;
 import org.bukkit.advancement.Advancement;
-import org.bukkit.enchantments.Enchantment;
+import org.bukkit.configuration.serialization.SerializableAs;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
-public class AdvancementTask extends AbstractBingoTask
+@SerializableAs("AdvancementTask")
+public record AdvancementTask(Advancement advancement) implements TaskData
 {
-    public Advancement advancement;
-    public AdvancementTask(Advancement advancement)
+    @Override
+    public ItemText getDisplayName()
     {
-        super(Material.FILLED_MAP, ChatColor.AQUA);
-        this.advancement = advancement;
-        updateItem();
-        item.addUnsafeEnchantment(Enchantment.DURABILITY, 1);
+        ItemText text = new ItemText("[");
+        text.addAdvancementTitle(advancement);
+        text.addText("]");
+        return text;
     }
 
     @Override
-    public AbstractBingoTask copy()
+    public ItemText getDescription()
     {
-        AdvancementTask copy = new AdvancementTask(advancement);
-        return copy;
+        return new ItemText().addAdvancementDescription(advancement);
     }
 
     @Override
-    public String getKey()
+    public PersistentDataContainer pdcSerialize(PersistentDataContainer stream)
     {
-        return advancement.getKey().toString();
+        return null;
     }
 
-    @Override
-    public BaseComponent getDisplayName()
+    public static AdvancementTask fromPdc(PersistentDataContainer pdc)
     {
-        if (advancement == null)
-            return new TextComponent("NO ADVANCEMENT");
-
-        BaseComponent base = new TextComponent("[");
-        base.addExtra(new TranslatableComponent(ItemTextBuilder.getAdvancementTitleKey(advancement)));
-        if (isComplete())
-        {
-            base.setStrikethrough(true);
-            base.setColor(ChatColor.GRAY);
-        }
-        else
-        {
-            base.setColor(nameColor);
-        }
-        base.addExtra("]");
-
-        return base;
+        AdvancementTask task = new AdvancementTask(null);
+        return task;
     }
 
+    @NotNull
     @Override
-    public BaseComponent getDescription()
+    public Map<String, Object> serialize()
     {
-        return new TranslatableComponent(ItemTextBuilder.getAdvancementDescKey(advancement));
+        return new HashMap<>(){{
+            put("advancement", advancement.getKey().toString());
+        }};
     }
 
-    @Override
-    public List<String> getItemLore()
+    public static AdvancementTask deserialize(Map<String, Object> data)
     {
-        return Arrays.stream(TranslationData.translate("game.item.lore_advancement").split("\\n")).toList();
-    }
-
-    @Override
-    public void updateItemName()
-    {
-        if (advancement == null)
-            new ItemTextBuilder(ChatColor.DARK_RED)
-                    .text("NO ADVANCEMENT").buildName(item);
-        if (isComplete())
-        {
-            new ItemTextBuilder(ChatColor.GRAY, "strikethrough")
-                    .text("[")
-                    .translate(ItemTextBuilder.getAdvancementTitleKey(advancement))
-                    .text("]")
-                    .buildName(item);
-        }
-        else
-        {
-            new ItemTextBuilder(nameColor)
-                    .text("[")
-                    .translate(ItemTextBuilder.getAdvancementTitleKey(advancement))
-                    .text("]")
-                    .buildName(item);
-        }
+        return new AdvancementTask(
+                Bukkit.getAdvancement(NamespacedKey.fromString((String)data.get("advancement")))
+        );
     }
 }

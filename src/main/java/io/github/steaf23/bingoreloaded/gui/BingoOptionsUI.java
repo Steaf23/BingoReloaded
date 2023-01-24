@@ -7,6 +7,7 @@ import io.github.steaf23.bingoreloaded.Message;
 import io.github.steaf23.bingoreloaded.data.BingoCardsData;
 import io.github.steaf23.bingoreloaded.data.TranslationData;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
+import io.github.steaf23.bingoreloaded.util.GUIPreset5x9;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -19,25 +20,25 @@ import java.util.List;
 
 public class BingoOptionsUI extends AbstractGUIInventory
 {
-    private final InventoryItem start = new InventoryItem(GUIBuilder5x9.OptionPositions.SEVEN_CENTER1.positions[3],
+    private final InventoryItem start = new InventoryItem(GUIPreset5x9.SEVEN_CENTER1.positions[3],
             Material.LIME_CONCRETE, TITLE_PREFIX + TranslationData.itemName("menu.options.start"));
-    private static final InventoryItem JOIN = new InventoryItem(GUIBuilder5x9.OptionPositions.SEVEN_CENTER1.positions[0],
+    private static final InventoryItem JOIN = new InventoryItem(GUIPreset5x9.SEVEN_CENTER1.positions[0],
             Material.WHITE_GLAZED_TERRACOTTA, TITLE_PREFIX + TranslationData.itemName("menu.options.team"));
-    private static final InventoryItem LEAVE = new InventoryItem(GUIBuilder5x9.OptionPositions.SEVEN_CENTER1.positions[1],
+    private static final InventoryItem LEAVE = new InventoryItem(GUIPreset5x9.SEVEN_CENTER1.positions[1],
             Material.BARRIER, TITLE_PREFIX + TranslationData.itemName("menu.options.leave"));
-    private static final InventoryItem KIT = new InventoryItem(GUIBuilder5x9.OptionPositions.SEVEN_CENTER1.positions[2],
+    private static final InventoryItem KIT = new InventoryItem(GUIPreset5x9.SEVEN_CENTER1.positions[2],
             Material.IRON_INGOT, TITLE_PREFIX + TranslationData.itemName("menu.options.kit"));
-    private static final InventoryItem CARD = new InventoryItem(GUIBuilder5x9.OptionPositions.SEVEN_CENTER1.positions[4],
+    private static final InventoryItem CARD = new InventoryItem(GUIPreset5x9.SEVEN_CENTER1.positions[4],
             Material.MAP, TITLE_PREFIX + TranslationData.itemName("menu.options.card"));
-    private static final InventoryItem MODE = new InventoryItem(GUIBuilder5x9.OptionPositions.SEVEN_CENTER1.positions[5],
+    private static final InventoryItem MODE = new InventoryItem(GUIPreset5x9.SEVEN_CENTER1.positions[5],
             Material.ENCHANTED_BOOK, TITLE_PREFIX + TranslationData.itemName("menu.options.mode"));
-    private static final InventoryItem EFFECTS = new InventoryItem(GUIBuilder5x9.OptionPositions.SEVEN_CENTER1.positions[6],
+    private static final InventoryItem EFFECTS = new InventoryItem(GUIPreset5x9.SEVEN_CENTER1.positions[6],
             Material.POTION, TITLE_PREFIX + TranslationData.itemName("menu.options.effects"));
     private static final InventoryItem EXTRA = new InventoryItem(44,
             Material.STRUCTURE_VOID, TITLE_PREFIX + TranslationData.translate("menu.next"));
 
-    private static final InventoryItem JOIN_P = JOIN.inSlot(GUIBuilder5x9.OptionPositions.TWO_HORIZONTAL_WIDE.positions[0]);
-    private static final InventoryItem LEAVE_P = LEAVE.inSlot(GUIBuilder5x9.OptionPositions.TWO_HORIZONTAL_WIDE.positions[1]);
+    private static final InventoryItem JOIN_P = JOIN.inSlot(GUIPreset5x9.TWO_HORIZONTAL_WIDE.positions[0]);
+    private static final InventoryItem LEAVE_P = LEAVE.inSlot(GUIPreset5x9.TWO_HORIZONTAL_WIDE.positions[1]);
 
     @Override
     public void delegateClick(InventoryClickEvent event, int slotClicked, Player player, ClickType clickType)
@@ -107,7 +108,7 @@ public class BingoOptionsUI extends AbstractGUIInventory
                     meta.setDisplayName(TITLE_PREFIX + TranslationData.itemName("menu.options.start"));
                     start.setItemMeta(meta);
                 }
-                fillOptions(new InventoryItem[]{start});
+                addOption(start);
             }
             else
             {
@@ -141,7 +142,7 @@ public class BingoOptionsUI extends AbstractGUIInventory
         }
         if (player.hasPermission("bingo.settings"))
         {
-            options.fillOptions(new InventoryItem[]{
+            options.fillOptions(
                     JOIN,
                     LEAVE,
                     KIT,
@@ -149,15 +150,15 @@ public class BingoOptionsUI extends AbstractGUIInventory
                     CARD,
                     options.start,
                     EFFECTS,
-                    EXTRA,
-            });
+                    EXTRA
+            );
         }
         else if (player.hasPermission("bingo.player"))
         {
-            options.fillOptions(new InventoryItem[]{
+            options.fillOptions(
                     JOIN_P.inSlot(20),
-                    LEAVE_P.inSlot(24),
-            });
+                    LEAVE_P.inSlot(24)
+            );
         }
         options.open(player);
     }
@@ -178,7 +179,7 @@ public class BingoOptionsUI extends AbstractGUIInventory
                             "" + BingoCardsData.getLists(cardName).size())));
         }
 
-        ListPickerUI cardPicker = new ListPickerUI(cards, TranslationData.itemName("menu.options.card"),this, FilterType.DISPLAY_NAME)
+        PaginatedPickerUI cardPicker = new PaginatedPickerUI(cards, TranslationData.itemName("menu.options.card"),this, FilterType.DISPLAY_NAME)
         {
             @Override
             public void onOptionClickedDelegate(InventoryClickEvent event, InventoryItem clickedOption, Player player)

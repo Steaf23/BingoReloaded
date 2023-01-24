@@ -1,60 +1,67 @@
 package io.github.steaf23.bingoreloaded.gui.creator;
 
-import io.github.steaf23.bingoreloaded.data.BingoTasksData;
+import io.github.steaf23.bingoreloaded.data.TranslationData;
 import io.github.steaf23.bingoreloaded.gui.AbstractGUIInventory;
-import io.github.steaf23.bingoreloaded.gui.FilterType;
-import io.github.steaf23.bingoreloaded.gui.ListPickerUI;
-import io.github.steaf23.bingoreloaded.item.ItemTextBuilder;
-import io.github.steaf23.bingoreloaded.item.tasks.AdvancementTask;
-import io.github.steaf23.bingoreloaded.item.AdvancementListItem;
+import io.github.steaf23.bingoreloaded.gui.SubMenuUI;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
-import io.github.steaf23.bingoreloaded.item.tasks.ItemTask;
-import io.github.steaf23.bingoreloaded.util.FlexibleColor;
+import io.github.steaf23.bingoreloaded.item.tasks.*;
+import io.github.steaf23.bingoreloaded.util.FlexColor;
+import io.github.steaf23.bingoreloaded.util.GUIPreset5x9;
 import net.md_5.bungee.api.ChatColor;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.advancement.Advancement;
-import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.inventory.ItemFlag;
-import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
-public class ListEditorUI
+public class ListEditorUI extends SubMenuUI
 {
-    public final AbstractGUIInventory parent;
-
-    private ListPickerUI items;
-    private ListPickerUI advancements;
+    private AbstractGUIInventory items;
+    private AbstractGUIInventory advancements;
+    private AbstractGUIInventory statistics;
     private final String listName;
+
+    private static final InventoryItem ITEMS = new InventoryItem(GUIPreset5x9.THREE_CENTER.positions[0], Material.APPLE, TITLE_PREFIX + "Items", "Click to add or remove items");
+    private static final InventoryItem ADVANCEMENTS = new InventoryItem(GUIPreset5x9.THREE_CENTER.positions[1], Material.ENDER_EYE, TITLE_PREFIX + "Advancements", "Click to add or remove advancements");
+    private static final InventoryItem STATISTICS = new InventoryItem(GUIPreset5x9.THREE_CENTER.positions[2], Material.GLOBE_BANNER_PATTERN, TITLE_PREFIX + "Statistics", "Click to add or remove statistics");
+
+    private static final InventoryItem SAVE = new InventoryItem(49, Material.REDSTONE, "" + ChatColor.RED + ChatColor.BOLD + TranslationData.translate("menu.save_exit"));
+    private static final InventoryItem BLANK = new InventoryItem(Material.BLACK_STAINED_GLASS_PANE, " ", "");
 
     public ListEditorUI(String listName, AbstractGUIInventory parent)
     {
-        this.parent = parent;
+        super("", parent);
         this.listName = listName;
+        addMenuOption(ITEMS, createItemPicker());
+        addMenuOption(ADVANCEMENTS, createAdvancementPicker());
+        addMenuOption(STATISTICS, createStatisticsPicker());
+        fillOptions(BLANK.inSlot(45),
+                BLANK.inSlot(46),
+                BLANK.inSlot(47),
+                BLANK.inSlot(48),
+                SAVE,
+                BLANK.inSlot(50),
+                BLANK.inSlot(51),
+                BLANK.inSlot(52),
+                BLANK.inSlot(53));
     }
 
-    public void openItemPicker(Player player)
+    @Override
+    public void delegateClick(InventoryClickEvent event, int slotClicked, Player player, ClickType clickType)
     {
-        if (advancements != null)
-            advancements.close(player);
-        items = createItemPicker();
-        items.open(player);
+        if (slotClicked == SAVE.getSlot())
+        {
+            close(player);
+        }
+        super.delegateClick(event, slotClicked, player, clickType);
     }
 
-    public void openAdvancementPicker(Player player)
+    public AbstractGUIInventory createStatisticsPicker()
     {
-        if (items != null)
-            items.close(player);
-        advancements = createAdvancementPicker();
-        advancements.open(player);
+        AbstractGUIInventory statistics = new StatisticPickerUI(this, listName);
+        return statistics;
     }
 
     private static List<InventoryItem> getItemOptions()
@@ -62,256 +69,84 @@ public class ListEditorUI
         return new ArrayList<>();
     }
 
-    private ListPickerUI createItemPicker()
+    private AbstractGUIInventory createItemPicker()
     {
-        List<Material> glassPanes = new ArrayList<>();
-        for (FlexibleColor flexColor : FlexibleColor.values())
+        Set<Material> glassPanes = new HashSet<>();
+        for (FlexColor flexColor : FlexColor.values())
         {
             glassPanes.add(flexColor.glassPane);
         }
 
-        List<InventoryItem> items = new ArrayList<>();
+        List<BingoTask> tasks = new ArrayList<>();
         for (Material m : Material.values())
         {
-            if (!m.name().contains("LEGACY_") && m.isItem() && !m.isAir() && !glassPanes.contains(m))
+            if (!m.name().contains("LEGACY_") && !glassPanes.contains(m) && m.isItem() && !m.isAir())
             {
-                InventoryItem item = new InventoryItem(m, "");
-                ItemMeta meta = item.getItemMeta();
-                if (meta == null) continue;
-
-                meta.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_UNBREAKABLE);
-
-                item.setItemMeta(meta);
-                new ItemTextBuilder(ChatColor.YELLOW)
-                        .translate(ItemTextBuilder.getItemKey(m))
-                        .buildName(item);
-                items.add(item);
+                tasks.add(new BingoTask(new ItemTask(m, 1)));
             }
         }
 
-        ListPickerUI itemPicker = new ListPickerUI(items,"Managing items", parent, FilterType.MATERIAL)
+        TaskPickerUI itemPicker = new TaskPickerUI(tasks,"Select Items", this, listName)
         {
-            private static final InventoryItem ADVANCEMENTS = new InventoryItem(51, Material.ENDER_EYE, TITLE_PREFIX + "Advancements", "Click to add or remove advancements");
-
             @Override
-            public void delegateClick(InventoryClickEvent event, int slotClicked, Player player, ClickType clickType)
+            public void handleClose(final InventoryCloseEvent event)
             {
-                if (slotClicked == ADVANCEMENTS.getSlot())
-                {
-                    openAdvancementPicker(player);
-                }
-                else
-                {
-                    super.delegateClick(event, slotClicked, player, clickType);
-                }
-            }
-
-            @Override
-            public void onOptionClickedDelegate(InventoryClickEvent event, InventoryItem clickedOption, Player player)
-            {
-                if (event.getClick() == ClickType.LEFT)
-                {
-                    incrementItemCount(clickedOption);
-                }
-                else if (event.getClick() == ClickType.RIGHT)
-                {
-                    decrementItemCount(clickedOption);
-                }
-            }
-
-            @Override
-            public void open(HumanEntity player)
-            {
-                fillOptions(new InventoryItem[]{ADVANCEMENTS});
-                loadSelectedItems();
-                super.open(player);
-            }
-
-            @Override
-            public void close(HumanEntity player)
-            {
-                List<ItemTask> tasks = new ArrayList<>();
-                getSelectedItems().forEach((item) -> {
-                    ItemTask newItem = new ItemTask(item.getType(), item.getAmount());
-                    tasks.add(newItem);
-                });
-                BingoTasksData.saveItemTasks(listName, tasks.toArray(ItemTask[]::new));
-                super.close(player);
-            }
-
-            public void incrementItemCount(InventoryItem item)
-            {
-                boolean select = false;
-                if (!getSelectedItems().contains(item))
-                {
-                    select = true;
-                }
-
-                if (!select)
-                {
-                    item.setAmount(Math.min(item.getMaxStackSize(), item.getAmount() + 1));
-                }
-
-                if (select)
-                {
-                    selectItem(item,true);
-                }
-                updatePage();
-            }
-
-            public void decrementItemCount(InventoryItem item)
-            {
-                boolean deselect = false;
-                if (getSelectedItems().contains(item))
-                {
-                    if (item.getAmount() == 1)
-                    {
-                        deselect = true;
-                    }
-                }
-                item.setAmount(Math.max(1, item.getAmount() - 1));
-
-                if (deselect)
-                {
-                    selectItem(item, false);
-                }
-                updatePage();
-            }
-
-            private void loadSelectedItems()
-            {
-                List<ItemTask> items = BingoTasksData.getItemTasks(listName);
-                List<InventoryItem> allItems = getItems();
-
-                items.forEach(task -> {
-                    String mat = task.item.getType().name();
-                    Optional<InventoryItem> item = allItems.stream().filter((i) -> i.getType().name().equals(mat)).findFirst();
-                    item.ifPresent(inventoryItem -> {
-                        selectItem(inventoryItem, true);
-                        inventoryItem.setAmount(task.getCount());
-                    });
-                });
-                updatePage();
-            }
-
-            @Override
-            public void handleClose(InventoryCloseEvent event)
-            {
-                List<ItemTask> tasks = new ArrayList<>();
-                getSelectedItems().forEach((item) -> {
-                    ItemTask newItem = new ItemTask(item.getType(), item.getAmount());
-                    tasks.add(newItem);
-                });
-                BingoTasksData.saveItemTasks(listName, tasks.toArray(ItemTask[]::new));
-                super.handleClose(event);
+//                super.handleClose(event);
+//                List<ItemTask> tasks = new ArrayList<>();
+//                getSelectedItems().forEach((item) -> {
+//                    ItemTask newItem = new ItemTask(item.getType(), item.getAmount());
+//                    tasks.add(newItem);
+//                });
+//                TaskListsData.saveTasks(listName, tasks.toArray(BingoTask[]::new));
             }
         };
         return itemPicker;
     }
 
-    private ListPickerUI createAdvancementPicker()
+    private AbstractGUIInventory createAdvancementPicker()
     {
-        List<InventoryItem> options = new ArrayList<>();
-        for (Iterator<Advancement> it = Bukkit.advancementIterator(); it.hasNext(); )
+        List<BingoTask> tasks = new ArrayList<>();
+//        for (Iterator<Advancement> it = Bukkit.advancementIterator(); it.hasNext(); )
+//        {
+//            Advancement a = it.next();
+//            String key = a.getKey().getKey();
+//            if (key.startsWith("recipes/") || key.endsWith("/root"))
+//            {
+//                continue;
+//            }
+//
+//            AdvancementTask task = new AdvancementTask(a);
+//            tasks.add(task);
+//            //TODO: move this to BingoTaskBuilder
+////            InventoryItem item = new AdvancementListItem(a);
+////            new ItemTextBuilder(ChatColor.DARK_PURPLE)
+////                    .translate(ItemTextBuilder.getAdvancementDescKey(a))
+////                    .text("" + ChatColor.GRAY + "Click to make this item\n appear on bingo cards")
+////                    .buildDescription(item);
+////            new ItemTextBuilder(ChatColor.AQUA, "italic")
+////                    .text("[")
+////                    .translate(ItemTextBuilder.getAdvancementTitleKey(a))
+////                    .text("]")
+////                    .buildName(item);
+////            options.add(item);
+//        }
+
+        TaskPickerUI advancementPicker = new TaskPickerUI(tasks, "Add Advancements", this, listName)
         {
-            Advancement a = it.next();
-            String key = a.getKey().getKey();
-            if (key.startsWith("recipes/") || key.endsWith("/root"))
-            {
-                continue;
-            }
-            InventoryItem item = new AdvancementListItem(a);
-            new ItemTextBuilder(ChatColor.DARK_PURPLE)
-                    .translate(ItemTextBuilder.getAdvancementDescKey(a))
-                    .text("" + ChatColor.GRAY + "Click to make this item\n appear on bingo cards")
-                    .buildDescription(item);
-            new ItemTextBuilder(ChatColor.AQUA, "italic")
-                    .text("[")
-                    .translate(ItemTextBuilder.getAdvancementTitleKey(a))
-                    .text("]")
-                    .buildName(item);
-            options.add(item);
-        }
-
-        ListPickerUI advancementPicker = new ListPickerUI(options, "Add Advancements", parent, FilterType.DISPLAY_NAME)
-        {
-            private static final InventoryItem ITEMS = new InventoryItem(51, Material.APPLE, TITLE_PREFIX + "Items", "Click to add or remove items");
-
             @Override
-            public void delegateClick(InventoryClickEvent event, int slotClicked, Player player, ClickType clickType)
+            public void handleClose(final InventoryCloseEvent event)
             {
-                if (slotClicked == ITEMS.getSlot())
-                {
-                    openItemPicker(player);
-                }
-                else
-                {
-                    super.delegateClick(event, slotClicked, player, clickType);
-                }
-            }
-
-            @Override
-            public void onOptionClickedDelegate(InventoryClickEvent event, InventoryItem clickedOption, Player player)
-            {
-                selectItem(clickedOption, !getSelectedItems().contains(clickedOption));
-            }
-
-            @Override
-            public void open(HumanEntity player)
-            {
-                fillOptions(new InventoryItem[]{ITEMS});
-                loadSelectedItems();
-                super.open(player);
-            }
-
-            @Override
-            public void close(HumanEntity player)
-            {
-                List<AdvancementTask> tasks = new ArrayList<>();
-                getSelectedItems().forEach((item) -> {
-                    if ((item instanceof AdvancementListItem advItem))
-                    {
-                        AdvancementTask slot = new AdvancementTask(advItem.advancement);
-                        tasks.add(slot);
-                    }
-                });
-                BingoTasksData.saveAdvancementTasks(listName, tasks.toArray(AdvancementTask[]::new));
-                super.close(player);
-            }
-
-            private void loadSelectedItems()
-            {
-                List<AdvancementTask> advancementTasks = BingoTasksData.getAdvancementTasks(listName);
-                List<AdvancementListItem> allItems = new ArrayList<>();
-                for (InventoryItem item : getItems())
-                {
-                    if (item instanceof AdvancementListItem advItem)
-                        allItems.add(advItem);
-                }
-
-                advancementTasks.forEach(task -> {
-                    String key = task.advancement.getKey().toString();
-                    Optional<AdvancementListItem> item = allItems.stream().filter((adv) -> adv.advancement.getKey().toString().equals(key)).findFirst();
-                    item.ifPresent(advancementItem -> {
-                        selectItem(advancementItem, true);
-                    });
-                });
-                updatePage();
-            }
-
-            @Override
-            public void handleClose(InventoryCloseEvent event)
-            {
-                List<AdvancementTask> tasks = new ArrayList<>();
-                getSelectedItems().forEach((item) -> {
-                    if ((item instanceof AdvancementListItem advItem))
-                    {
-                        AdvancementTask slot = new AdvancementTask(advItem.advancement);
-                        tasks.add(slot);
-                    }
-                });
-                BingoTasksData.saveAdvancementTasks(listName, tasks.toArray(AdvancementTask[]::new));
                 super.handleClose(event);
+                //TODO: REDO
+//                List<AdvancementTask> tasks = new ArrayList<>();
+//                getSelectedItems().forEach((item) -> {
+//                    if ((item instanceof AdvancementListItem advItem))
+//                    {
+//                        AdvancementTask slot = new AdvancementTask(advItem.advancement);
+//                        tasks.add(slot);
+//                    }
+//                });
+//                BingoTasksData.saveTasks(listName, tasks.toArray(AdvancementTask[]::new));
             }
         };
         return advancementPicker;

@@ -4,17 +4,10 @@ import io.github.steaf23.bingoreloaded.data.ConfigData;
 import io.github.steaf23.bingoreloaded.data.TranslationData;
 import io.github.steaf23.bingoreloaded.gui.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
-import io.github.steaf23.bingoreloaded.util.FlexibleColor;
-import io.github.steaf23.bingoreloaded.BingoGame;
-import io.github.steaf23.bingoreloaded.BingoReloaded;
+import io.github.steaf23.bingoreloaded.util.FlexColor;
 import org.bukkit.*;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
@@ -48,13 +41,13 @@ public enum PlayerKit
         this.defaultEffects = defaultEffects;
     }
 
-    public List<InventoryItem> getItems(FlexibleColor teamColor)
+    public List<InventoryItem> getItems(FlexColor teamColor)
     {
         InventoryItem helmet = new InventoryItem(39, Material.LEATHER_HELMET, "");
         LeatherArmorMeta helmetMeta = (LeatherArmorMeta) helmet.getItemMeta();
         if (helmetMeta != null)
         {
-            helmetMeta.setColor(FlexibleColor.toBukkitColor(teamColor.chatColor.getColor()));
+            helmetMeta.setColor(FlexColor.toBukkitColor(teamColor.chatColor.getColor()));
         }
         helmet.setItemMeta(helmetMeta);
 
@@ -62,7 +55,7 @@ public enum PlayerKit
         LeatherArmorMeta bootMeta = (LeatherArmorMeta) boots.getItemMeta();
         if (bootMeta != null)
         {
-            bootMeta.setColor(FlexibleColor.toBukkitColor(teamColor.chatColor.getColor()));
+            bootMeta.setColor(FlexColor.toBukkitColor(teamColor.chatColor.getColor()));
         }
         boots.setItemMeta(bootMeta);
 

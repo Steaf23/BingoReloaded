@@ -1,10 +1,9 @@
 package io.github.steaf23.bingoreloaded.gui;
 
-import io.github.steaf23.bingoreloaded.BingoGame;
 import io.github.steaf23.bingoreloaded.BingoSettings;
-import io.github.steaf23.bingoreloaded.Message;
 import io.github.steaf23.bingoreloaded.data.TranslationData;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
+import io.github.steaf23.bingoreloaded.util.GUIPreset5x9;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -20,9 +19,9 @@ public class BingoOptionsExtraUI extends AbstractGUIInventory
     private final BingoSettings settings;
     private final InventoryItem exit = new InventoryItem(36,
             Material.BARRIER, TITLE_PREFIX + TranslationData.translate("menu.prev"));
-    private final InventoryItem maxTeamMembers = new InventoryItem(GUIBuilder5x9.OptionPositions.TWO_HORIZONTAL.positions[0],
+    private final InventoryItem maxTeamMembers = new InventoryItem(GUIPreset5x9.TWO_HORIZONTAL.positions[0],
             Material.ENDER_EYE, TITLE_PREFIX + "Maximum Team Size");
-    private final InventoryItem gameDuration = new InventoryItem(GUIBuilder5x9.OptionPositions.TWO_HORIZONTAL.positions[1],
+    private final InventoryItem gameDuration = new InventoryItem(GUIPreset5x9.TWO_HORIZONTAL.positions[1],
             Material.CLOCK, TITLE_PREFIX + "Countdown Duration");
 
     public BingoOptionsExtraUI(AbstractGUIInventory parent, BingoSettings settings)
@@ -98,10 +97,10 @@ public class BingoOptionsExtraUI extends AbstractGUIInventory
                 "§r§oUse the mouse buttons to increase/ decrease",
                 "the amount of minutes that Countdown bingo will last.");
 
-        fillOptions(new InventoryItem[]{
+        fillOptions(
                 exit,
                 maxTeamMembers,
-                gameDuration,
-        });
+                gameDuration
+        );
     }
 }

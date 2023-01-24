@@ -5,6 +5,7 @@ import io.github.steaf23.bingoreloaded.data.*;
 import io.github.steaf23.bingoreloaded.gui.UIManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
@@ -65,6 +66,8 @@ public class BingoReloaded extends JavaPlugin
 
         Message.log("[" + getName() + "]" + TranslationData.translate("changed"));
         Bukkit.getLogger().info(ChatColor.GREEN + "Enabled " + this.getName());
+
+        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "autobingo world create 3");
     }
 
     @Override
@@ -77,5 +80,10 @@ public class BingoReloaded extends JavaPlugin
     {
         Plugin plugin = Bukkit.getPluginManager().getPlugin(BingoReloaded.NAME);
         Bukkit.getPluginManager().registerEvents(listener, plugin);
+    }
+
+    public static BingoReloaded get()
+    {
+        return getPlugin(BingoReloaded.class);
     }
 }

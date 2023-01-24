@@ -30,7 +30,15 @@ public class Message
             .append("]", ComponentBuilder.FormatRetention.NONE).color(ChatColor.DARK_RED)
             .append(" ", ComponentBuilder.FormatRetention.NONE).create();
 
+    public static final BaseComponent[] SHORT_PREFIX = new ComponentBuilder("").append("[").color(ChatColor.DARK_RED)
+            .append("B", ComponentBuilder.FormatRetention.NONE).color(ChatColor.DARK_AQUA).bold(true)
+            .append("R", ComponentBuilder.FormatRetention.NONE).color(ChatColor.YELLOW).italic(true)
+            .append("]", ComponentBuilder.FormatRetention.NONE).color(ChatColor.DARK_RED)
+            .append(" ", ComponentBuilder.FormatRetention.NONE).create();
+
     public static final String PREFIX_STRING = new TextComponent(PRINT_PREFIX).toLegacyText();
+
+    public static final String PREFIX_STRING_SHORT = new TextComponent(SHORT_PREFIX).toLegacyText();
 
     private String raw;
     private List<BaseComponent> args;
@@ -196,6 +204,11 @@ public class Message
     }
 
     public static void sendDebug(BaseComponent text, Player player)
+    {
+        player.spigot().sendMessage(text);
+    }
+
+    public static void sendDebug(BaseComponent[] text, Player player)
     {
         player.spigot().sendMessage(text);
     }

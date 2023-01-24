@@ -1,7 +1,6 @@
 package io.github.steaf23.bingoreloaded.util;
 
 
-import io.github.steaf23.bingoreloaded.Message;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.banner.PatternType;
@@ -42,11 +41,11 @@ public class BannerBuilder
         }
 
         Matcher colMatcher = color.matcher(command);
-        List<FlexibleColor> colors = new ArrayList<>();
+        List<FlexColor> colors = new ArrayList<>();
         while (colMatcher.find())
         {
             int i = Integer.parseInt(colMatcher.group());
-            colors.add(FlexibleColor.fromNbt(i));
+            colors.add(FlexColor.fromNbt(i));
         }
 
         if (types.size() == colors.size())

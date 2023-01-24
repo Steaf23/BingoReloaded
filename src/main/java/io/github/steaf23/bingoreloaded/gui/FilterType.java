@@ -4,4 +4,6 @@ public enum FilterType
 {
     DISPLAY_NAME,
     MATERIAL,
+    LORE,
+    CUSTOM,
 }

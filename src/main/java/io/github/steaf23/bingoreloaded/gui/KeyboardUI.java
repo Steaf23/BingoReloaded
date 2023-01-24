@@ -88,9 +88,16 @@ public abstract class KeyboardUI extends AbstractGUIInventory
         }
 
         fillOptions(options);
-        fillOptions(new InventoryItem[]{
-                BG_ITEM.inSlot(45), CLEAR, BG_ITEM.inSlot(47), BG_ITEM.inSlot(48), ACCEPT, BG_ITEM.inSlot(50), BG_ITEM.inSlot(51), BG_ITEM.inSlot(52), BG_ITEM.inSlot(53)
-        });
+        fillOptions(BG_ITEM.inSlot(45),
+                CLEAR,
+                BG_ITEM.inSlot(47),
+                BG_ITEM.inSlot(48),
+                ACCEPT,
+                BG_ITEM.inSlot(50),
+                BG_ITEM.inSlot(51),
+                BG_ITEM.inSlot(52),
+                BG_ITEM.inSlot(53)
+        );
     }
 
     @Override
@@ -158,9 +165,16 @@ public abstract class KeyboardUI extends AbstractGUIInventory
         inventory = Bukkit.createInventory(new GUIHolder(), 54, Message.PREFIX_STRING + ChatColor.GOLD + "\"" + keyword + "\"");
 
         fillOptions(options);
-        fillOptions(new InventoryItem[]{
-                BG_ITEM.inSlot(45), CLEAR, BG_ITEM.inSlot(47), BG_ITEM.inSlot(48), ACCEPT, BG_ITEM.inSlot(50), BG_ITEM.inSlot(51), BG_ITEM.inSlot(52), BG_ITEM.inSlot(53)
-        });
+        fillOptions(BG_ITEM.inSlot(45),
+                CLEAR,
+                BG_ITEM.inSlot(47),
+                BG_ITEM.inSlot(48),
+                ACCEPT,
+                BG_ITEM.inSlot(50),
+                BG_ITEM.inSlot(51),
+                BG_ITEM.inSlot(52),
+                BG_ITEM.inSlot(53)
+        );
         player.openInventory(inventory);
     }
 }

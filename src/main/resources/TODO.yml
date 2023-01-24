@@ -4,8 +4,20 @@ add option to duplicate cards/lists
 
 refactor card recovery (its shit).
 
-use percentages instead of numbers for list chances.
-
 implement Vault plugin
 
 create lobby to: vote for options and select teams pre-game and show leaderboards
+
+add option to send players to a world when the game ends..
+
+finish statistics
+
+allow players to join existing teams
+
+win effects plays once for every player
+
+max team size doesn't do shit
+
+rework InventoryItem slot to (x, y)
+
+Add dummy player class to test stuff like lockout!

@@ -1,9 +1,9 @@
 package io.github.steaf23.bingoreloaded.gui;
 
-import io.github.steaf23.bingoreloaded.BingoGame;
 import io.github.steaf23.bingoreloaded.BingoSettings;
 import io.github.steaf23.bingoreloaded.data.TranslationData;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
+import io.github.steaf23.bingoreloaded.util.GUIPreset5x9;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -27,15 +27,15 @@ public class EffectOptionsUI extends AbstractGUIInventory
         this.settings = settings;
 
         options = new InventoryItem[]{
-                new InventoryItem(GUIBuilder5x9.OptionPositions.FIVE_TOP_WIDE.positions[0],
+                new InventoryItem(GUIPreset5x9.FIVE_TOP_WIDE.positions[0],
                         Material.CARROT, ""),
-                new InventoryItem(GUIBuilder5x9.OptionPositions.FIVE_TOP_WIDE.positions[1],
+                new InventoryItem(GUIPreset5x9.FIVE_TOP_WIDE.positions[1],
                         Material.PUFFERFISH, ""),
-                new InventoryItem(GUIBuilder5x9.OptionPositions.FIVE_TOP_WIDE.positions[2],
+                new InventoryItem(GUIPreset5x9.FIVE_TOP_WIDE.positions[2],
                         Material.MAGMA_CREAM, ""),
-                new InventoryItem(GUIBuilder5x9.OptionPositions.FIVE_TOP_WIDE.positions[3],
+                new InventoryItem(GUIPreset5x9.FIVE_TOP_WIDE.positions[3],
                         Material.NETHERITE_BOOTS, ""),
-                new InventoryItem(GUIBuilder5x9.OptionPositions.FIVE_TOP_WIDE.positions[4],
+                new InventoryItem(GUIPreset5x9.FIVE_TOP_WIDE.positions[4],
                         Material.FEATHER, ""),
                 new InventoryItem(44, Material.DIAMOND,
                         "" + ChatColor.AQUA + ChatColor.BOLD + TranslationData.translate("menu.save_exit"))

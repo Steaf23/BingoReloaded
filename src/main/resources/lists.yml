@@ -372,3 +372,15 @@ default_advancements:
     - key: minecraft:nether/fast_travel
     - key: minecraft:adventure/ol_betsy
     - key: minecraft:husbandry/breed_an_animal
+default_statistics:
+  item:
+    COBBLESTONE:
+      count: 1
+      voided: true
+      completedBy: 123-1da232h1-d1hj1-33hnvzz-112311
+  advancement:
+    minecraft:adventure/trade:
+      count: 1
+  statistic:
+    - count: 2
+      key:

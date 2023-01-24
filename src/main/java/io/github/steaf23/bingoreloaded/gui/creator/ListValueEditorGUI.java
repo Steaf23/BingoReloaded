@@ -1,7 +1,7 @@
 package io.github.steaf23.bingoreloaded.gui.creator;
 
 import io.github.steaf23.bingoreloaded.data.BingoCardsData;
-import io.github.steaf23.bingoreloaded.data.BingoTasksData;
+import io.github.steaf23.bingoreloaded.data.TaskListsData;
 import io.github.steaf23.bingoreloaded.gui.AbstractGUIInventory;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
 import org.bukkit.ChatColor;
@@ -45,7 +45,7 @@ public class ListValueEditorGUI extends AbstractGUIInventory
         updateMax(maxStart);
         updateMin(minStart);
 
-        fillOptions(new InventoryItem[]{INFO, minCounter, maxCounter, CANCEL, SAVE});
+        fillOptions(INFO, minCounter, maxCounter, CANCEL, SAVE);
     }
 
     @Override
@@ -92,7 +92,7 @@ public class ListValueEditorGUI extends AbstractGUIInventory
     public void updateMax(int newValue)
     {
         // Set the max count to be between MIN_ITEMS and the amount of tasks in that list if it's smaller than MAX_ITEMS.
-        maxCount = Math.floorMod(newValue - minCount, Math.max(1, Math.min(BingoCardsData.MAX_ITEMS, BingoTasksData.getTaskCount(listName))) - minCount + 1) + minCount;
+        maxCount = Math.floorMod(newValue - minCount, Math.max(1, Math.min(BingoCardsData.MAX_ITEMS, TaskListsData.getTaskCount(listName))) - minCount + 1) + minCount;
         maxCounter.setAmount(maxCount);
         ItemMeta meta = maxCounter.getItemMeta();
 

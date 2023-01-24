@@ -4,16 +4,15 @@ import io.github.steaf23.bingoreloaded.*;
 import io.github.steaf23.bingoreloaded.data.TranslationData;
 import io.github.steaf23.bingoreloaded.gui.AbstractGUIInventory;
 import io.github.steaf23.bingoreloaded.gui.FilterType;
-import io.github.steaf23.bingoreloaded.gui.ListPickerUI;
+import io.github.steaf23.bingoreloaded.gui.PaginatedPickerUI;
 import io.github.steaf23.bingoreloaded.gui.cards.BingoCard;
 import io.github.steaf23.bingoreloaded.gui.cards.LockoutBingoCard;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
-import io.github.steaf23.bingoreloaded.util.FlexibleColor;
+import io.github.steaf23.bingoreloaded.util.FlexColor;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.scoreboard.Score;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 
@@ -61,17 +60,17 @@ public class TeamManager
         }
 
         List<InventoryItem> optionItems = new ArrayList<>();
-        for (FlexibleColor color : FlexibleColor.values())
+        for (FlexColor color : FlexColor.values())
         {
-            optionItems.add(new InventoryItem(color.concrete, "" + color.chatColor + ChatColor.BOLD + color.getTranslation()));
+            optionItems.add(new InventoryItem(color.concrete, "" + color.chatColor + ChatColor.BOLD + color.getTranslatedName()));
         }
 
-        ListPickerUI teamPicker = new ListPickerUI(optionItems, TranslationData.itemName("menu.options.team"), parentUI, FilterType.DISPLAY_NAME)
+        PaginatedPickerUI teamPicker = new PaginatedPickerUI(optionItems, TranslationData.itemName("menu.options.team"), parentUI, FilterType.DISPLAY_NAME)
         {
             @Override
             public void onOptionClickedDelegate(InventoryClickEvent event, InventoryItem clickedOption, Player player)
             {
-                FlexibleColor color = FlexibleColor.fromConcrete(clickedOption.getType());
+                FlexColor color = FlexColor.fromConcrete(clickedOption.getType());
                 if (color == null)
                     return;
 
@@ -87,12 +86,12 @@ public class TeamManager
         Team team = teams.getTeam(teamName);
         if (team == null)
         {
-            Message.log("Team " + FlexibleColor.fromName(teamName).getTranslation() + " does not exist, could not add " + player.getDisplayName() + " to this team!");
+            Message.log("Team " + FlexColor.fromName(teamName).getTranslatedName() + " does not exist, could not add " + player.getDisplayName() + " to this team!");
             return;
         }
         if (team.getEntries().size() >= maximumTeamSize)
         {
-            Message.log("Team " + FlexibleColor.fromName(teamName).getTranslation() + " has reached it's capacity of " + maximumTeamSize + " players!");
+            Message.log("Team " + FlexColor.fromName(teamName).getTranslatedName() + " has reached it's capacity of " + maximumTeamSize + " players!");
             return;
         }
         removePlayerFromAllTeams(player);
@@ -103,7 +102,7 @@ public class TeamManager
         {
             team.addEntry(player.getName());
             new Message("game.team.join").color(ChatColor.GREEN)
-                    .arg(FlexibleColor.fromName(bingoTeam.getName()).getTranslation()).color(bingoTeam.getColor()).bold()
+                    .arg(FlexColor.fromName(bingoTeam.getName()).getTranslatedName()).color(bingoTeam.getColor()).bold()
                     .send(player);
         }
     }
@@ -256,7 +255,7 @@ public class TeamManager
 
         if(bTeam == null)
         {
-            FlexibleColor color = FlexibleColor.fromName(team.getName());
+            FlexColor color = FlexColor.fromName(team.getName());
             if (color != null)
             {
                 bTeam = new BingoTeam(team, null, color.chatColor);
@@ -278,11 +277,11 @@ public class TeamManager
 
     private void createTeams()
     {
-        for (FlexibleColor fColor : FlexibleColor.values())
+        for (FlexColor fColor : FlexColor.values())
         {
             String name = fColor.name;
             Team t = teams.registerNewTeam(name);
-            t.setPrefix("" + ChatColor.DARK_RED + "[" + fColor.chatColor + ChatColor.BOLD + fColor.getTranslation() + ChatColor.DARK_RED + "] ");
+            t.setPrefix("" + ChatColor.DARK_RED + "[" + fColor.chatColor + ChatColor.BOLD + fColor.getTranslatedName() + ChatColor.DARK_RED + "] ");
             t.addEntry("" + fColor.chatColor);
         }
         Message.log(ChatColor.GREEN + "Successfully created " + teams.getTeams().size() + " teams");

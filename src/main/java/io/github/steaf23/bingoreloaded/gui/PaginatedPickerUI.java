@@ -1,12 +1,12 @@
 package io.github.steaf23.bingoreloaded.gui;
 
+import io.github.steaf23.bingoreloaded.Message;
 import io.github.steaf23.bingoreloaded.data.TranslationData;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Turtle;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemFlag;
@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public abstract class ListPickerUI extends AbstractGUIInventory
+public abstract class PaginatedPickerUI extends AbstractGUIInventory
 {
     public abstract void onOptionClickedDelegate(final InventoryClickEvent event, InventoryItem clickedOption, Player player);
 
@@ -30,19 +30,26 @@ public abstract class ListPickerUI extends AbstractGUIInventory
     private String keywordFilter;
     public FilterType filterType;
 
-    private static final InventoryItem BG_ITEM = new InventoryItem(Material.BLACK_STAINED_GLASS_PANE, " ", "");
-    private static final InventoryItem NEXT = new InventoryItem(53, Material.STRUCTURE_VOID, "" + ChatColor.LIGHT_PURPLE + ChatColor.BOLD + TranslationData.translate("menu.next"), "");
-    private static final InventoryItem PREVIOUS = new InventoryItem(45, Material.BARRIER, "" + ChatColor.LIGHT_PURPLE + ChatColor.BOLD + TranslationData.translate("menu.prev"), "");
-    private static final InventoryItem CLOSE = new InventoryItem(49, Material.REDSTONE, "" + ChatColor.RED + ChatColor.BOLD + TranslationData.translate("menu.save_exit"), "");
-    private static final InventoryItem FILTER = new InventoryItem(46, Material.SPYGLASS, TITLE_PREFIX + TranslationData.translate("menu.filter"), "");
+    protected static final InventoryItem BG_ITEM = new InventoryItem(Material.BLACK_STAINED_GLASS_PANE, " ", "");
+    protected static final InventoryItem NEXT = new InventoryItem(53, Material.STRUCTURE_VOID, "" + ChatColor.LIGHT_PURPLE + ChatColor.BOLD + TranslationData.translate("menu.next"), "");
+    protected static final InventoryItem PREVIOUS = new InventoryItem(45, Material.BARRIER, "" + ChatColor.LIGHT_PURPLE + ChatColor.BOLD + TranslationData.translate("menu.prev"), "");
+    protected static final InventoryItem CLOSE = new InventoryItem(49, Material.REDSTONE, "" + ChatColor.RED + ChatColor.BOLD + TranslationData.translate("menu.save_exit"), "");
+    protected static final InventoryItem FILTER = new InventoryItem(46, Material.SPYGLASS, TITLE_PREFIX + TranslationData.translate("menu.filter"), "");
 
-    public ListPickerUI(List<InventoryItem> options, String title, AbstractGUIInventory parent, FilterType filterType)
+    public PaginatedPickerUI(List<InventoryItem> options, String title, AbstractGUIInventory parent, FilterType filterType)
     {
         super(54, title != null ? title : "Item Picker", parent);
 
-        fillOptions(new InventoryItem[]{
-                PREVIOUS, FILTER, BG_ITEM.inSlot(47), BG_ITEM.inSlot(48), CLOSE, BG_ITEM.inSlot(50), BG_ITEM.inSlot(51), BG_ITEM.inSlot(52), NEXT,
-        });
+        fillOptions(PREVIOUS,
+                FILTER,
+                BG_ITEM.inSlot(47),
+                BG_ITEM.inSlot(48),
+                CLOSE,
+                BG_ITEM.inSlot(50),
+                BG_ITEM.inSlot(51),
+                BG_ITEM.inSlot(52),
+                NEXT
+        );
 
         currentPage = 0;
         items = options;
@@ -127,6 +134,24 @@ public abstract class ListPickerUI extends AbstractGUIInventory
                     }
                 }
                 break;
+            case LORE:
+                for (InventoryItem item : items)
+                {
+                    if (ChatColor.stripColor(item.getItemMeta().getLore().get(0)).toLowerCase().contains(keywordFilter.toLowerCase()))
+                    {
+                        filteredItems.add(item);
+                    }
+                }
+                break;
+            case CUSTOM:
+                for (InventoryItem item : items)
+                {
+                    if (passesFilter(item))
+                    {
+                        filteredItems.add(item);
+                    }
+                }
+                break;
         }
 
         updatePageAmount();
@@ -138,24 +163,14 @@ public abstract class ListPickerUI extends AbstractGUIInventory
         applyFilter("");
     }
 
+    /**
+     * Implement this method if filterType is set to CUSTOM
+     * @param item
+     * @return Whether the item should be shown when this filter is applied.
+     */
     public boolean passesFilter(InventoryItem item)
     {
-        boolean result = false;
-        switch (filterType)
-        {
-            case DISPLAY_NAME:
-                if (ChatColor.stripColor(item.getItemMeta().getDisplayName()).toLowerCase().contains(keywordFilter.toLowerCase())) {
-                    result = true;
-                }
-                break;
-            case MATERIAL:
-                String name = item.getType().name().replace("_", " ");
-                if (name.toLowerCase().contains(keywordFilter.toLowerCase()))
-                {
-                    result = true;
-                }
-        }
-        return result;
+        return false;
     }
 
     public String getFilter()
@@ -281,7 +296,7 @@ public abstract class ListPickerUI extends AbstractGUIInventory
                 addOption(new InventoryItem(i, Material.AIR, "", ""));
         }
 
-        //Update Page description (20/23) for the Next and Previous 'buttons'.
+        //Update Page description e.g. (20/23) for the Next and Previous 'buttons'.
         String pageCountDesc = String.format("%02d", currentPage + 1) + "/" + String.format("%02d", pageAmount);
 
         InventoryItem next = getOption(NEXT.getSlot());

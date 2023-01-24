@@ -6,37 +6,37 @@ import org.bukkit.scheduler.BukkitRunnable;
 public abstract class GameTimer
 {
     protected TimeNotifier notifier;
-    private int time;
+    private long time;
     protected String worldName;
 
     public abstract void start();
-    public abstract int pause();
-    public abstract int stop();
+    public abstract long pause();
+    public abstract long stop();
     public abstract Message getTimeDisplayMessage();
 
     public GameTimer(String worldName)
     {
         this.worldName = worldName;
     }
-    public int getTime()
+    public long getTime()
     {
         return time;
     }
 
-    protected void updateTime(int newTime)
+    protected void updateTime(long newTime)
     {
         time = newTime;
         notifier.timeUpdated(newTime);
     }
 
-    public static String getTimeAsString(int seconds)
+    public static String getTimeAsString(long seconds)
     {
         if (seconds >= 60)
         {
-            int minutes = (seconds / 60) % 60;
+            long minutes = (seconds / 60) % 60;
             if (seconds >= 3600)
             {
-                int hours = seconds / 3600;
+                long hours = seconds / 3600;
                 return String.format("%02d:%02d:%02d", hours, minutes, seconds % 60);
             }
             return String.format("%02d:%02d", minutes, seconds % 60);

@@ -55,13 +55,13 @@ public class CountdownTimer extends GameTimer
     }
 
     @Override
-    public int pause()
+    public long pause()
     {
         return getTime();
     }
 
     @Override
-    public int stop()
+    public long stop()
     {
         try
         {

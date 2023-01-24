@@ -33,7 +33,7 @@ public class InventoryItem extends ItemStack
             meta.setDisplayName(name);
             if (description.length >= 1 && description[0] != "")
                 meta.setLore(List.of(description));
-            meta.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
+            meta.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_UNBREAKABLE, ItemFlag.HIDE_ATTRIBUTES);
             setItemMeta(meta);
         }
     }

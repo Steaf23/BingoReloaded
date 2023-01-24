@@ -3,7 +3,7 @@ package io.github.steaf23.bingoreloaded.command;
 import io.github.steaf23.bingoreloaded.*;
 import io.github.steaf23.bingoreloaded.player.BingoTeam;
 import io.github.steaf23.bingoreloaded.player.TeamManager;
-import io.github.steaf23.bingoreloaded.util.FlexibleColor;
+import io.github.steaf23.bingoreloaded.util.FlexColor;
 import org.bukkit.Bukkit;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.command.Command;
@@ -61,7 +61,7 @@ public class TeamChatCommand implements Listener, CommandExecutor
 
             if (!member.isOnline()) continue;
 
-            member.sendMessage(ChatColor.DARK_RED + "[" + team.getColor() + ChatColor.BOLD + FlexibleColor.fromName(team.getName()).getTranslation() + ChatColor.DARK_RED + "]" +
+            member.sendMessage(ChatColor.DARK_RED + "[" + team.getColor() + ChatColor.BOLD + FlexColor.fromName(team.getName()).getTranslatedName() + ChatColor.DARK_RED + "]" +
                     ChatColor.RESET  + "<" + player.getName() + "> " + message);
         }
     }

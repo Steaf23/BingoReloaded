@@ -1,12 +1,12 @@
 package io.github.steaf23.bingoreloaded.gui;
 
-import io.github.steaf23.bingoreloaded.BingoGame;
 import io.github.steaf23.bingoreloaded.BingoGamemode;
 import io.github.steaf23.bingoreloaded.BingoSettings;
 import io.github.steaf23.bingoreloaded.Message;
 import io.github.steaf23.bingoreloaded.data.TranslationData;
 import io.github.steaf23.bingoreloaded.gui.cards.CardSize;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
+import io.github.steaf23.bingoreloaded.util.GUIPreset5x9;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -23,21 +23,21 @@ public class GamemodeOptionsUI extends AbstractGUIInventory
         super(45, TranslationData.itemName("menu.options.mode"), parent);
         this.settings = settings;
         options = new InventoryItem[]{
-                new InventoryItem(GUIBuilder5x9.OptionPositions.EIGHT_CENTER1.positions[0],
+                new InventoryItem(GUIPreset5x9.EIGHT_CENTER1.positions[0],
                         Material.LIME_CONCRETE, TITLE_PREFIX + "Regular 5x5"),
-                new InventoryItem(GUIBuilder5x9.OptionPositions.EIGHT_CENTER1.positions[1],
+                new InventoryItem(GUIPreset5x9.EIGHT_CENTER1.positions[1],
                         Material.MAGENTA_CONCRETE, TITLE_PREFIX + "Lockout 5x5"),
-                new InventoryItem(GUIBuilder5x9.OptionPositions.EIGHT_CENTER1.positions[2],
+                new InventoryItem(GUIPreset5x9.EIGHT_CENTER1.positions[2],
                         Material.LIGHT_BLUE_CONCRETE, TITLE_PREFIX + "Complete-All 5x5"),
-                new InventoryItem(GUIBuilder5x9.OptionPositions.EIGHT_CENTER1.positions[3],
+                new InventoryItem(GUIPreset5x9.EIGHT_CENTER1.positions[3],
                         Material.PINK_CONCRETE, TITLE_PREFIX + "Countdown 5x5"),
-                new InventoryItem(GUIBuilder5x9.OptionPositions.EIGHT_CENTER1.positions[4],
+                new InventoryItem(GUIPreset5x9.EIGHT_CENTER1.positions[4],
                         Material.GREEN_CONCRETE, TITLE_PREFIX + "Regular 3x3"),
-                new InventoryItem(GUIBuilder5x9.OptionPositions.EIGHT_CENTER1.positions[5],
+                new InventoryItem(GUIPreset5x9.EIGHT_CENTER1.positions[5],
                         Material.PURPLE_CONCRETE, TITLE_PREFIX + "Lockout 3x3"),
-                new InventoryItem(GUIBuilder5x9.OptionPositions.EIGHT_CENTER1.positions[6],
+                new InventoryItem(GUIPreset5x9.EIGHT_CENTER1.positions[6],
                         Material.CYAN_CONCRETE, TITLE_PREFIX + "Complete-All 3x3"),
-                new InventoryItem(GUIBuilder5x9.OptionPositions.EIGHT_CENTER1.positions[7],
+                new InventoryItem(GUIPreset5x9.EIGHT_CENTER1.positions[7],
                         Material.RED_CONCRETE, TITLE_PREFIX + "Countdown 3x3"),
         };
         fillOptions(options);

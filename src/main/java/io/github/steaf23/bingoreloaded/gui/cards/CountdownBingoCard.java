@@ -8,7 +8,7 @@ import io.github.steaf23.bingoreloaded.event.BingoGameEvent;
 import io.github.steaf23.bingoreloaded.event.CountdownTimerFinishedEvent;
 import io.github.steaf23.bingoreloaded.event.ReceiveBingoGameEvent;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
-import io.github.steaf23.bingoreloaded.item.tasks.AbstractBingoTask;
+import io.github.steaf23.bingoreloaded.item.tasks.BingoTask;
 import io.github.steaf23.bingoreloaded.player.BingoTeam;
 import io.github.steaf23.bingoreloaded.player.TeamManager;
 import io.github.steaf23.bingoreloaded.util.CountdownTimer;
@@ -71,8 +71,8 @@ public class CountdownBingoCard extends CompleteBingoCard
     public CountdownBingoCard copy()
     {
         CountdownBingoCard card = new CountdownBingoCard(this.size);
-        List<AbstractBingoTask> newTasks = new ArrayList<>();
-        for (AbstractBingoTask item : tasks)
+        List<BingoTask> newTasks = new ArrayList<>();
+        for (BingoTask item : tasks)
         {
             newTasks.add(item.copy());
         }

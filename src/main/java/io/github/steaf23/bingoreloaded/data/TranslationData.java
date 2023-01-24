@@ -58,7 +58,7 @@ public class TranslationData
 
     private static String get(String path)
     {
-        String def = ChatColor.GRAY + "-- No translation for '" + path + "' in " + ConfigData.instance.language + " --";
+        String def = ChatColor.GRAY + "-- No translation for \"" + path + "\" in " + ConfigData.instance.language + " --";
         // avoid weird MemorySection String prints instead of translation failed message.
         if (data.getConfig().getConfigurationSection(path) == null)
             return data.getConfig().getString(path, def);
