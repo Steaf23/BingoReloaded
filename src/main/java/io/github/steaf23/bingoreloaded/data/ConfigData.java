@@ -16,7 +16,8 @@ public class ConfigData
         ALONE("alone"),
         TEAM("team"),
         ALL("all"),
-        NONE("none");
+        NONE("none"),
+        CUSTOM("custom");
 
         public final String name;
 
@@ -34,6 +35,7 @@ public class ConfigData
                         case "alone" -> ALONE;
                         case "team" -> TEAM;
                         case "all" -> ALL;
+                        case "custom" -> CUSTOM;
                         default -> NONE;
                     };
         }
