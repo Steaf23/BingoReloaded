@@ -7,6 +7,7 @@ import io.github.steaf23.bingoreloaded.data.TranslationData;
 import io.github.steaf23.bingoreloaded.event.BingoCardSlotCompleteEvent;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
 import io.github.steaf23.bingoreloaded.item.tasks.BingoTask;
+import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.player.BingoTeam;
 import io.github.steaf23.bingoreloaded.player.TeamManager;
 import io.github.steaf23.bingoreloaded.util.FlexColor;
@@ -74,20 +75,20 @@ public class LockoutBingoCard extends BingoCard
     public void dropTeam(BingoTeam team, TeamManager teamManager)
     {
         new Message("game.team.dropped")
-                .arg(FlexColor.fromName(team.getName()).getTranslatedName()).color(team.getColor()).bold()
+                .arg(team.getColoredName().asLegacyString())
                 .sendAll();
         team.outOfTheGame = true;
         for (BingoTask task : tasks)
         {
             if (task.completedBy.equals(team))
             {
-                task.voided = true;
+                task.setVoided(true);
                 currentMaxTasks--;
             }
         }
-        for (Player p : teamManager.getPlayersOfTeam(team))
+        for (BingoPlayer p : teamManager.getPlayersOfTeam(team))
         {
-            p.setGameMode(GameMode.SPECTATOR);
+            p.player().setGameMode(GameMode.SPECTATOR);
         }
         teamCount--;
     }

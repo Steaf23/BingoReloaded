@@ -1,9 +1,14 @@
 package io.github.steaf23.bingoreloaded.data;
 
+import io.github.steaf23.bingoreloaded.Message;
+import io.github.steaf23.bingoreloaded.item.ItemText;
+import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.TextComponent;
-import org.bukkit.ChatColor;
 
 import javax.swing.text.JTextComponent;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -23,6 +28,46 @@ public class TranslationData
             rawTranslation = rawTranslation.replace("{" + i + "}", args[i]);
         }
         return rawTranslation;
+    }
+
+    /**
+     * convert translated string with arguments to ItemText and preserve argument order, like translate() does
+     * @param key
+     * @param args
+     * @return An array of itemText where each element is a line,
+     *  where each line is defined by '\n' in the translated string.
+     */
+    public static ItemText[] translateToItemText(String key, Set<ChatColor> modifiers, ItemText... args)
+    {
+        //TODO: fix issue where raw translations cannot convert the colors defined in lang files properly on items
+        String rawTranslation = get(key);
+        rawTranslation = convertColors(rawTranslation);
+        TextComponent.fromLegacyText(rawTranslation);
+
+        List<ItemText> result = new ArrayList<>();
+        String[] lines = rawTranslation.split("\\n");
+        String[] pieces;
+        for (int i = 0; i < lines.length; i++)
+        {
+            ItemText line = new ItemText(modifiers.toArray(new ChatColor[]{}));
+            pieces = lines[i].split("\\{");
+            for (String piece : pieces)
+            {
+                String pieceToAdd = piece;
+                for (int argIdx = 0; argIdx < args.length; argIdx++)
+                {
+                    if (pieceToAdd.contains(argIdx + "}"))
+                    {
+                        line.add(args[argIdx]);
+                        pieceToAdd = pieceToAdd.replace(i + "}", "");
+                        break;
+                    }
+                }
+                line.addText(pieceToAdd);
+            }
+            result.add(line);
+        }
+        return result.toArray(new ItemText[]{});
     }
 
     public static String itemName(String key)

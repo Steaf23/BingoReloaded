@@ -1,26 +1,34 @@
 package io.github.steaf23.bingoreloaded.item.tasks;
 
 import io.github.steaf23.bingoreloaded.data.TranslationData;
-import io.github.steaf23.bingoreloaded.item.itemtext.ItemText;
+import io.github.steaf23.bingoreloaded.item.ItemText;
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.Material;
 import org.bukkit.Statistic;
-import org.bukkit.configuration.serialization.SerializableAs;
+import org.bukkit.entity.EntityType;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
-@SerializableAs("StatisticTask")
 public record StatisticTask(BingoStatistic statistic, int count) implements TaskData
 {
+    public StatisticTask(BingoStatistic statistic)
+    {
+        this(statistic, 1);
+    }
+
     @Override
-    public ItemText getDisplayName()
+    public ItemText getItemDisplayName()
     {
         ItemText amount = new ItemText(Integer.toString(count));
 
-        ItemText text = new ItemText("*");
+        ItemText text = new ItemText("*", ChatColor.ITALIC);
 
         switch (statistic.getCategory())
         {
@@ -62,22 +70,59 @@ public record StatisticTask(BingoStatistic statistic, int count) implements Task
     }
 
     @Override
-    public ItemText getDescription()
+    public ItemText[] getItemDescription()
     {
-        return new ItemText(TranslationData.translate("game.item.lore_statistic"));
+        Set<ChatColor> modifiers = new HashSet<>(){{
+            add(ChatColor.DARK_AQUA);
+        }};
+        return TranslationData.translateToItemText("game.item.lore_statistic", modifiers);
+    }
+
+    @Override
+    public BaseComponent getDescription()
+    {
+        return ItemText.combine(getItemDescription()).asComponent();
+    }
+
+    @Override
+    public int getStackSize()
+    {
+        return count;
     }
 
     @Override
     public PersistentDataContainer pdcSerialize(PersistentDataContainer stream)
     {
-        stream.set(BingoTask.getTaskDataKey("statistic"),  PersistentDataType.TAG_CONTAINER, statistic.asPdc());
+        stream.set(BingoTask.getTaskDataKey("statistic"), PersistentDataType.STRING, statistic.stat().name());
+        if (statistic.materialType() != null)
+        {
+            stream.set(BingoTask.getTaskDataKey("item"),  PersistentDataType.STRING, statistic.materialType().name());
+        }
+        if (statistic.entityType() != null)
+        {
+            stream.set(BingoTask.getTaskDataKey("entity"), PersistentDataType.STRING, statistic.entityType().name());
+        }
         stream.set(BingoTask.getTaskDataKey("count"),  PersistentDataType.INTEGER, count);
         return stream;
     }
 
     public static StatisticTask fromPdc(PersistentDataContainer pdc)
     {
-        StatisticTask task = new StatisticTask(new BingoStatistic(Statistic.BELL_RING), 1);
+        Statistic stat = Statistic.valueOf(pdc.getOrDefault(BingoTask.getTaskDataKey("statistic"), PersistentDataType.STRING, "stat.minecraft.bell_ring"));
+
+        Material item = null;
+        if (pdc.has(BingoTask.getTaskDataKey("item"), PersistentDataType.STRING))
+        {
+            item = Material.valueOf(pdc.get(BingoTask.getTaskDataKey("item"), PersistentDataType.STRING));
+        }
+        EntityType entity = null;
+        if (pdc.has(BingoTask.getTaskDataKey("entity"), PersistentDataType.STRING))
+        {
+            entity = EntityType.valueOf(pdc.get(BingoTask.getTaskDataKey("entity"), PersistentDataType.STRING));
+        }
+        int count = pdc.getOrDefault(BingoTask.getTaskDataKey("count"), PersistentDataType.INTEGER, 1);
+
+        StatisticTask task = new StatisticTask(new BingoStatistic(stat, entity, item), count);
         return task;
     }
 

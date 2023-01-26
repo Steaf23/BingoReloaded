@@ -43,7 +43,7 @@ public class TeamChatCommand implements Listener, CommandExecutor
         if (!enabledPlayers.contains(event.getPlayer())) return;
 
         TeamManager teamManager = game.getTeamManager();
-        BingoTeam team = teamManager.getTeamOfPlayer(event.getPlayer());
+        BingoTeam team = teamManager.getTeamOfPlayer(game.getTeamManager().getBingoPlayer(event.getPlayer()));
         if (team == null) return;
 
         String message = event.getMessage();
@@ -61,7 +61,7 @@ public class TeamChatCommand implements Listener, CommandExecutor
 
             if (!member.isOnline()) continue;
 
-            member.sendMessage(ChatColor.DARK_RED + "[" + team.getColor() + ChatColor.BOLD + FlexColor.fromName(team.getName()).getTranslatedName() + ChatColor.DARK_RED + "]" +
+            member.sendMessage(ChatColor.DARK_RED + "[" + team.getColoredName().asLegacyString() + ChatColor.DARK_RED + "]" +
                     ChatColor.RESET  + "<" + player.getName() + "> " + message);
         }
     }

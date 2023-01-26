@@ -1,5 +1,6 @@
 package io.github.steaf23.bingoreloaded.gui;
 
+import io.github.steaf23.bingoreloaded.BingoGame;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.Message;
 import io.github.steaf23.bingoreloaded.data.TranslationData;
@@ -135,13 +136,7 @@ public abstract class KeyboardUI extends AbstractGUIInventory
         else if (slotClicked == ACCEPT.getSlot())
         {
             close(player);
-            new BukkitRunnable() {
-                @Override
-                public void run()
-                {
-                    storeResult();
-                }
-            }.runTask(Bukkit.getPluginManager().getPlugin(BingoReloaded.NAME));
+            Bukkit.getScheduler().runTask(BingoReloaded.get(), this::storeResult);
         }
     }
 

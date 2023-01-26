@@ -1,6 +1,7 @@
 package io.github.steaf23.bingoreloaded;
 
 import io.github.steaf23.bingoreloaded.data.TranslationData;
+import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.player.BingoTeam;
 import io.github.steaf23.bingoreloaded.player.TeamManager;
 import org.bukkit.Bukkit;
@@ -42,9 +43,9 @@ public class BingoScoreboard
             }
         }
 
-        for (Player p : teamManager.getParticipants())
+        for (BingoPlayer p : teamManager.getParticipants())
         {
-            p.setScoreboard(itemCountBoard);
+            p.player().setScoreboard(itemCountBoard);
         }
     }
 
@@ -55,9 +56,9 @@ public class BingoScoreboard
             itemCountBoard.resetScores(entry);
         }
 
-        for (Player p : teamManager.getParticipants())
+        for (BingoPlayer p : teamManager.getParticipants())
         {
-            p.setScoreboard(Bukkit.getScoreboardManager().getNewScoreboard());
+            p.player().setScoreboard(Bukkit.getScoreboardManager().getNewScoreboard());
         }
     }
 

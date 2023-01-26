@@ -51,7 +51,7 @@ public class CardEditorUI extends PaginatedPickerUI
             List<InventoryItem> items = new ArrayList<>();
             for (String listName : TaskListsData.getListNames())
             {
-                items.add(new InventoryItem(Material.PAPER, listName, "This list contains " + TaskListsData.getTaskCount(listName) + " tasks", ChatColor.GRAY + "Click to select"));
+                items.add(new InventoryItem(Material.PAPER, listName, "This list contains " + TaskListsData.getTasks(listName).size() + " tasks", ChatColor.GRAY + "Click to select"));
             }
 
             PaginatedPickerUI listPicker = new PaginatedPickerUI(items, "Pick A List", this, FilterType.DISPLAY_NAME)
@@ -74,7 +74,7 @@ public class CardEditorUI extends PaginatedPickerUI
 
     public void getResultFromPicker(String result)
     {
-        BingoCardsData.setList(cardName, result, TaskListsData.getTaskCount(result), 1);
+        BingoCardsData.setList(cardName, result, TaskListsData.getTasks(result).size(), 1);
     }
 
     @Override
@@ -91,7 +91,7 @@ public class CardEditorUI extends PaginatedPickerUI
         List<InventoryItem> newItems = new ArrayList<>();
         for (String listName : BingoCardsData.getLists(cardName))
         {
-            InventoryItem item = new InventoryItem(Material.MAP, listName, "This list contains " + TaskListsData.getTaskCount(listName) + " tasks");
+            InventoryItem item = new InventoryItem(Material.MAP, listName, "This list contains " + TaskListsData.getTasks(listName).size() + " tasks");
             item.setAmount(Math.max(1, BingoCardsData.getListMax(cardName, listName)));
             newItems.add(item);
         }

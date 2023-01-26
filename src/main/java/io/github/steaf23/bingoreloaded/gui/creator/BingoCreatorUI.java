@@ -76,7 +76,7 @@ public class BingoCreatorUI extends AbstractGUIInventory
             List<InventoryItem> items = new ArrayList<>();
             for (String list : TaskListsData.getListNames())
             {
-                InventoryItem item = new InventoryItem(Material.PAPER, list,"This list contains " + TaskListsData.getTaskCount(list) + " tasks");
+                InventoryItem item = new InventoryItem(Material.PAPER, list,"This list contains " + TaskListsData.getTasks(list).size() + " tasks");
                 items.add(item);
             }
 

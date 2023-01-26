@@ -92,7 +92,7 @@ public class ListValueEditorGUI extends AbstractGUIInventory
     public void updateMax(int newValue)
     {
         // Set the max count to be between MIN_ITEMS and the amount of tasks in that list if it's smaller than MAX_ITEMS.
-        maxCount = Math.floorMod(newValue - minCount, Math.max(1, Math.min(BingoCardsData.MAX_ITEMS, TaskListsData.getTaskCount(listName))) - minCount + 1) + minCount;
+        maxCount = Math.floorMod(newValue - minCount, Math.max(1, Math.min(BingoCardsData.MAX_ITEMS, TaskListsData.getTasks(listName).size())) - minCount + 1) + minCount;
         maxCounter.setAmount(maxCount);
         ItemMeta meta = maxCounter.getItemMeta();
 

@@ -1,21 +1,28 @@
 package io.github.steaf23.bingoreloaded.item.tasks;
 
 import io.github.steaf23.bingoreloaded.data.TranslationData;
-import io.github.steaf23.bingoreloaded.item.itemtext.ItemText;
+import io.github.steaf23.bingoreloaded.item.ItemText;
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.Material;
-import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
-@SerializableAs("ItemTask")
 public record ItemTask(Material material, int count) implements TaskData
 {
+    public ItemTask(Material material)
+    {
+        this(material, 1);
+    }
+
     @Override
-    public ItemText getDisplayName()
+    public ItemText getItemDisplayName()
     {
         ItemText text = new ItemText();
         text.addText(Integer.toString(count) + "x ");
@@ -24,9 +31,24 @@ public record ItemTask(Material material, int count) implements TaskData
     }
 
     @Override
-    public ItemText getDescription()
+    public ItemText[] getItemDescription()
     {
-        return new ItemText(TranslationData.translate("game.item.lore", Integer.toString(count)));
+        Set<ChatColor> modifiers = new HashSet<>(){{
+            add(ChatColor.DARK_AQUA);
+        }};
+        return TranslationData.translateToItemText("game.item.lore", modifiers, new ItemText(Integer.toString(count)));
+    }
+
+    @Override
+    public BaseComponent getDescription()
+    {
+        return ItemText.combine(getItemDescription()).asComponent();
+    }
+
+    @Override
+    public int getStackSize()
+    {
+        return count;
     }
 
     @Override
@@ -39,7 +61,9 @@ public record ItemTask(Material material, int count) implements TaskData
 
     public static ItemTask fromPdc(PersistentDataContainer pdc)
     {
-        ItemTask rec = new ItemTask(Material.BEDROCK, 1);
+        Material item = Material.valueOf(pdc.getOrDefault(BingoTask.getTaskDataKey("item"), PersistentDataType.STRING, "BEDROCK"));
+        int count = pdc.getOrDefault(BingoTask.getTaskDataKey("count"), PersistentDataType.INTEGER, 1);
+        ItemTask rec = new ItemTask(item, count);
         return rec;
     }
 

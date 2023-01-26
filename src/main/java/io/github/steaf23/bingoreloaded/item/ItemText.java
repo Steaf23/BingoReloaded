@@ -1,4 +1,4 @@
-package io.github.steaf23.bingoreloaded.item.itemtext;
+package io.github.steaf23.bingoreloaded.item;
 
 import io.github.steaf23.bingoreloaded.Message;
 import io.github.steaf23.bingoreloaded.data.YmlDataManager;
@@ -11,7 +11,6 @@ import org.bukkit.Material;
 import org.bukkit.Statistic;
 import org.bukkit.advancement.Advancement;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Item;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
@@ -55,13 +54,30 @@ public class ItemText
     {
         // TODO: return array instead of single component, since hat should also be send-able as a message.
         BaseComponent root = new TextComponent();
-        root.setExtra(Arrays.stream(ComponentSerializer.parse(asJsonString())).toList());
+        root.setExtra(Arrays.stream(ComponentSerializer.parse(asJsonRoot())).toList());
         return root;
+    }
+
+    public String asLegacyString()
+    {
+        return asComponent().toLegacyText();
+    }
+
+    public String asJsonRoot()
+    {
+        // Make the root not italic, to circumvent the default behavior.
+        if (!modifiers.contains(",\"italic\""))
+        {
+            modifiers += ",\"italic\":false";
+        }
+        return asJsonString();
+
     }
 
     public String asJsonString()
     {
         String result = "{\"" + type + "\":\"" + text + "\"" + modifiers;
+
         if (children.size() == 0)
             return result + "}";
 
@@ -73,6 +89,16 @@ public class ItemText
         }
 
         result += "]}";
+        return result;
+    }
+
+    public static ItemText combine(ItemText... input)
+    {
+        ItemText result = new ItemText();
+        for (ItemText part : input)
+        {
+            result.add(part);
+        }
         return result;
     }
 
@@ -136,9 +162,9 @@ public class ItemText
 
     public static ItemStack buildItemText(ItemStack itemStack, ItemText nameText, ItemText... loreText)
     {
-        String newText = "{display:{Name:\'[" + nameText.asJsonString() + "]\'";
+        String newText = "{display:{Name:\'[" + nameText.asJsonRoot() + "]\'";
 
-        if (loreText.length == 0 || (loreText.length == 1 && loreText[0].text.isEmpty()))
+        if (loreText.length == 0 || (loreText.length == 1 && loreText[0].asJsonRoot().isEmpty()))
             return Bukkit.getUnsafe().modifyItemStack(itemStack, newText + "}}");
 
         newText += ",Lore:[";
@@ -153,12 +179,6 @@ public class ItemText
         return Bukkit.getUnsafe().modifyItemStack(itemStack, newText);
     }
 
-    public ItemText setModifiers(ChatColor... newModifiers)
-    {
-        this.modifiers = createModifiers(newModifiers);
-        return this;
-    }
-
     public static String createModifiers(ChatColor... modifiers)
     {
         Set<ChatColor> modifierSet = new HashSet<>(Arrays.stream(modifiers).toList());
@@ -171,9 +191,9 @@ public class ItemText
                 continue;
             }
         }
-        mods += ",\"italic\":" + (modifierSet.contains(ChatColor.ITALIC) ? "true" : "false");
+        if (modifierSet.contains(ChatColor.ITALIC)) mods += ",\"italic\":true";
         if (modifierSet.contains(ChatColor.BOLD)) mods += ",\"bold\":true";
-        if (modifierSet.contains(ChatColor.STRIKETHROUGH)) mods += ",\"bold\":true";
+        if (modifierSet.contains(ChatColor.STRIKETHROUGH)) mods += ",\"strikethrough\":true";
         if (modifierSet.contains(ChatColor.UNDERLINE)) mods += ",\"underlined\":true";
         if (modifierSet.contains(ChatColor.MAGIC)) mods += ",\"obfuscated\":true";
         return mods;

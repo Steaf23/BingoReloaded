@@ -3,10 +3,12 @@ package io.github.steaf23.bingoreloaded;
 import io.github.steaf23.bingoreloaded.command.*;
 import io.github.steaf23.bingoreloaded.data.*;
 import io.github.steaf23.bingoreloaded.gui.UIManager;
+import io.github.steaf23.bingoreloaded.item.tasks.*;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
+import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -29,6 +31,11 @@ public class BingoReloaded extends JavaPlugin
         reloadConfig();
         saveDefaultConfig();
         ConfigData.instance.loadConfig(this.getConfig());
+        ConfigurationSerialization.registerClass(ItemTask.class, "Bingo.ItemTask");
+        ConfigurationSerialization.registerClass(AdvancementTask.class, "Bingo.AdvancementTask");
+        ConfigurationSerialization.registerClass(StatisticTask.class, "Bingo.StatisticTask");
+        ConfigurationSerialization.registerClass(BingoTask.class, "Bingo.Task");
+        ConfigurationSerialization.registerClass(BingoStatistic.class, "Bingo.Statistic");
 
         usesPlaceholder = Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null;
 
@@ -68,6 +75,7 @@ public class BingoReloaded extends JavaPlugin
         Bukkit.getLogger().info(ChatColor.GREEN + "Enabled " + this.getName());
 
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "autobingo world create 3");
+
     }
 
     @Override

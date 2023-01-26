@@ -9,6 +9,9 @@ import io.github.steaf23.bingoreloaded.data.ConfigData;
 import io.github.steaf23.bingoreloaded.gui.BingoOptionsUI;
 import io.github.steaf23.bingoreloaded.gui.creator.BingoCreatorUI;
 import io.github.steaf23.bingoreloaded.item.tasks.*;
+import io.github.steaf23.bingoreloaded.player.BingoPlayer;
+import io.github.steaf23.bingoreloaded.player.BingoTeam;
+import io.github.steaf23.bingoreloaded.util.FlexColor;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
@@ -20,7 +23,10 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.checkerframework.checker.nullness.qual.NonNull;
+
+import java.util.Optional;
 
 public class BingoCommand implements CommandExecutor
 {
@@ -47,13 +53,16 @@ public class BingoCommand implements CommandExecutor
         switch (args[0])
         {
             case "join":
-                if (GameWorldManager.get().doesGameWorldExist(worldName))
-//                  activeGame.getTeamManager().openTeamSelector(player, null);
-                    break;
+                if (activeGame != null)
+                    activeGame.getTeamManager().openTeamSelector(player, null);
+                break;
             case "leave":
-                if (GameWorldManager.get().doesGameWorldExist(worldName))
-//                  activeGame.playerQuit(player);
-                    break;
+                if (activeGame != null)
+                {
+                    BingoPlayer participant = activeGame.getTeamManager().getBingoPlayer(player);
+                    activeGame.playerQuit(participant);
+                }
+                break;
 
             case "start":
                 if (player.hasPermission("bingo.settings"))
@@ -77,7 +86,9 @@ public class BingoCommand implements CommandExecutor
             case "getcard":
                 if (activeGame != null)
                 {
-                    activeGame.returnCardToPlayer(player);
+                    BingoPlayer participant = activeGame.getTeamManager().getBingoPlayer(player);
+                    if (participant != null);
+                        activeGame.returnCardToPlayer(participant);
                     return true;
                 }
                 break;
@@ -143,18 +154,34 @@ public class BingoCommand implements CommandExecutor
                 if (commandSender instanceof Player p)
                 {
                     TaskListsData.saveTasks("CHEESE",
-                            new BingoTask(new ItemTask(Material.BEACON, 2)),
-                            new BingoTask(new AdvancementTask(Bukkit.getAdvancement(new NamespacedKey("minecraft", "husbandry/axolotl_in_a_bucket")))),
-                            new BingoTask(new StatisticTask(new BingoStatistic(Statistic.BELL_RING), 3)),
+                            new BingoTask(new ItemTask(Material.BEACON)),
+                            new BingoTask(new AdvancementTask(Bukkit.getAdvancement(NamespacedKey.fromString("minecraft:nether/obtain_crying_obsidian")))),
+                            new BingoTask(new StatisticTask(new BingoStatistic(Statistic.BELL_RING))),
                             new BingoTask(new StatisticTask(new BingoStatistic(Statistic.KILL_ENTITY, EntityType.MUSHROOM_COW), 3))
                     );
 
+                    BingoPlayer dummy = new BingoPlayer(p.getUniqueId(),
+                            new BingoTeam(
+                                    Bukkit.getScoreboardManager().getNewScoreboard().registerNewTeam("orange"),
+                                    null,
+                                    FlexColor.ORANGE)
+                            , "world");
+
                     var tasks = TaskListsData.getTasks("CHEESE");
-                    Message.log(tasks.size() + "");
-                    p.getInventory().setItem(0, tasks.get(0).asStack());
-                    p.getInventory().setItem(1, tasks.get(1).asStack());
-                    p.getInventory().setItem(2, tasks.get(2).asStack());
-                    p.getInventory().setItem(3, tasks.get(3).asStack());
+                    p.getInventory().addItem(tasks.get(0).asStack());
+                    p.getInventory().addItem(tasks.get(1).asStack());
+                    p.getInventory().addItem(tasks.get(2).asStack());
+                    p.getInventory().addItem(tasks.get(3).asStack());
+                    tasks.forEach(t -> t.completedBy = Optional.ofNullable(dummy));
+                    p.getInventory().addItem(tasks.get(0).asStack());
+                    p.getInventory().addItem(tasks.get(1).asStack());
+                    p.getInventory().addItem(tasks.get(2).asStack());
+                    p.getInventory().addItem(tasks.get(3).asStack());
+                    tasks.forEach(t -> t.setVoided(true));
+                    p.getInventory().addItem(tasks.get(0).asStack());
+                    p.getInventory().addItem(tasks.get(1).asStack());
+                    p.getInventory().addItem(tasks.get(2).asStack());
+                    p.getInventory().addItem(tasks.get(3).asStack());
                 }
                 break;
 

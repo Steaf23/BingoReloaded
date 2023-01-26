@@ -15,9 +15,8 @@ public class ItemCooldownManager
 
     private static ItemCooldownManager INSTANCE;
 
-    public static void addCooldown(Player player, ItemStack item, long cooldownMs)
+    public static void addCooldown(UUID playerID, ItemStack item, long cooldownMs)
     {
-        UUID playerID = player.getUniqueId();
         if (!cooldownMap.containsKey(playerID))
         {
             cooldownMap.put(playerID, new HashMap<>());
@@ -25,9 +24,8 @@ public class ItemCooldownManager
         cooldownMap.get(playerID).put(item.getType(), System.currentTimeMillis() + cooldownMs);
     }
 
-    public static long getTimeLeft(Player player, ItemStack item)
+    public static long getTimeLeft(UUID playerID, ItemStack item)
     {
-        UUID playerID = player.getUniqueId();
         Material material = item.getType();
         if (!cooldownMap.containsKey(playerID))
         {
@@ -52,7 +50,7 @@ public class ItemCooldownManager
         return timeLeft > 0 ? timeLeft : 0;
     }
 
-    public static boolean isCooldownOver(Player player, ItemStack item)
+    public static boolean isCooldownOver(UUID player, ItemStack item)
     {
         return getTimeLeft(player, item) == 0;
     }

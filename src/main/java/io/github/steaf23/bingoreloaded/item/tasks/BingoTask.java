@@ -1,23 +1,15 @@
 package io.github.steaf23.bingoreloaded.item.tasks;
 
-import io.github.steaf23.bingoreloaded.BingoGame;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
-import io.github.steaf23.bingoreloaded.GameWorldManager;
 import io.github.steaf23.bingoreloaded.Message;
 import io.github.steaf23.bingoreloaded.data.TranslationData;
-import io.github.steaf23.bingoreloaded.gui.cards.CardBuilder;
-import io.github.steaf23.bingoreloaded.item.itemtext.ItemText;
+import io.github.steaf23.bingoreloaded.item.ItemText;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
-import io.github.steaf23.bingoreloaded.player.BingoTeam;
-import io.github.steaf23.bingoreloaded.util.FlexColor;
 import io.github.steaf23.bingoreloaded.util.GameTimer;
 import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
-import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -26,12 +18,9 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
-@SerializableAs("BingoTask")
+
 public class BingoTask implements ConfigurationSerializable
 {
     enum TaskType
@@ -43,7 +32,7 @@ public class BingoTask implements ConfigurationSerializable
 
     public Optional<BingoPlayer> completedBy;
     public long completedAt;
-    public boolean voided;
+    private boolean voided;
 
     public final TaskType type;
     public final TaskData data;
@@ -89,35 +78,57 @@ public class BingoTask implements ConfigurationSerializable
         }
     }
 
+    public void setVoided(boolean value)
+    {
+        if (value && completedBy.isEmpty())
+            return;
+
+        voided = value;
+    }
+
+    public boolean isVoided()
+    {
+        return voided && completedBy.isPresent();
+    }
+
     public ItemStack asStack()
     {
         ItemStack item;
 
-        if (voided && completedBy.isPresent())
+        if (isVoided()) // VOIDED TASK
         {
-            ItemText addedDesc = new ItemText(TranslationData.translate("game.team.dropped",
-                            completedBy.get().player().getName()), ChatColor.BLACK);
+            ItemText addedDesc = new ItemText(TranslationData.translate("game.team.voided",
+                            completedBy.get().player().getName()), ChatColor.DARK_GRAY);
+
+            ItemText itemName = new ItemText(ChatColor.DARK_GRAY, ChatColor.STRIKETHROUGH);
+            itemName.addText("A", ChatColor.MAGIC);
+            itemName.add(data.getItemDisplayName());
+            itemName.addText("A", ChatColor.MAGIC);
 
             item = new ItemStack(Material.BEDROCK);
-            ItemText.buildItemText(item,
-                    data.getDisplayName().setModifiers(ChatColor.BLACK, ChatColor.STRIKETHROUGH),
-                    new ItemText[]{addedDesc, data.getDescription().setModifiers(ChatColor.BLACK)});
+            ItemText.buildItemText(item, itemName, addedDesc);
         }
-        else if (completedBy.isPresent())
+        else if (completedBy.isPresent()) // COMPLETED TASK
         {
-            FlexColor color = CardBuilder.completeColor(completedBy.get().team());
-            Material completeMaterial = color.glassPane;
+            Material completeMaterial = completedBy.get().team().getColor().glassPane;
 
             String timeString = GameTimer.getTimeAsString(completedAt);
 
-            String desc1 = new Message("game.item.complete_lore").color(ChatColor.DARK_PURPLE).italic()
-                    .arg(FlexColor.fromName(completedBy.get().team().getName()).getTranslatedName()).color(completedBy.get().team().getColor()).bold()
-                    .arg(timeString).color(ChatColor.GOLD).toLegacyString();
+            ItemText itemName = new ItemText(ChatColor.GRAY, ChatColor.STRIKETHROUGH);
+            itemName.add(data.getItemDisplayName());
+
+            Set<ChatColor> modifiers = new HashSet<>(){{
+                add(ChatColor.DARK_PURPLE);
+                add(ChatColor.ITALIC);
+            }};
+            ItemText[] desc = TranslationData.translateToItemText("game.item.complete_lore", modifiers,
+                    completedBy.get().team().getColoredName(),
+                    new ItemText(timeString, ChatColor.GOLD));
 
             item = new ItemStack(completeMaterial);
             ItemText.buildItemText(item,
-                    data.getDisplayName().setModifiers(ChatColor.GRAY, ChatColor.STRIKETHROUGH),
-                    new ItemText[]{new ItemText(desc1)});
+                    itemName,
+                    desc);
 
             ItemMeta meta = item.getItemMeta();
             if (meta != null)
@@ -125,16 +136,24 @@ public class BingoTask implements ConfigurationSerializable
                 item.setItemMeta(meta);
             }
         }
-        else
+        else // DEFAULT TASK
         {
+            ItemText itemName = new ItemText(nameColor);
+            itemName.add(data.getItemDisplayName());
+
             item = new ItemStack(material);
             ItemText.buildItemText(item,
-                    data.getDisplayName().setModifiers(nameColor),
-                    new ItemText[]{data.getDescription()});
+                    itemName,
+                    data.getItemDescription());
+
+            item.setAmount(data.getStackSize());
         }
 
         ItemMeta meta = item.getItemMeta();
         PersistentDataContainer pdcData = meta.getPersistentDataContainer();
+        // Serialize specific data first, to catch discourage null pointers for incomplete implementations.
+        pdcData = data.pdcSerialize(pdcData);
+        // Then serialize generic task info/ live data
         pdcData.set(getTaskDataKey("type"), PersistentDataType.STRING, type.name());
         pdcData.set(getTaskDataKey("voided"), PersistentDataType.BYTE, (byte)(voided ? 1 : 0));
         pdcData.set(getTaskDataKey("completed_at"), PersistentDataType.LONG, completedAt);
@@ -143,14 +162,14 @@ public class BingoTask implements ConfigurationSerializable
         else
             pdcData.set(getTaskDataKey("completed_by"), PersistentDataType.STRING, "");
 
-        pdcData = data.pdcSerialize(pdcData);
+
 
         if (glowing && completedBy.isEmpty())
         {
 
-            meta.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS, ItemFlag.HIDE_ENCHANTS);
             meta.addEnchant(Enchantment.DURABILITY, 1, true);
         }
+        meta.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES);
         item.setItemMeta(meta);
         return item;
     }
@@ -159,6 +178,7 @@ public class BingoTask implements ConfigurationSerializable
     {
         PersistentDataContainer pdcData = in.getItemMeta().getPersistentDataContainer();
 
+        Message.log(in.getItemMeta().getAsString());
         boolean voided = pdcData.getOrDefault(getTaskDataKey("voided"), PersistentDataType.BYTE, (byte)0) != 0;
         UUID completedBy = null;
         String idStr = pdcData.getOrDefault(getTaskDataKey("completed_by"), PersistentDataType.STRING, "");
@@ -219,20 +239,19 @@ public class BingoTask implements ConfigurationSerializable
     public Map<String, Object> serialize()
     {
         return new HashMap<>(){{
-           put("type", type.name());
            put("data", data);
         }};
     }
 
-    public static BingoTask deserialize(Map<String, Object> data)
+    public static BingoTask deserialize(Map<String, Object> taskData)
     {
         return new BingoTask(
-                ((TaskData) data.get("data"))
+                ((TaskData) taskData.get("data"))
         );
     }
 
     public BingoTask copy()
     {
-        return new BingoTask((ItemTask) data);
+        return new BingoTask(data);
     }
 }

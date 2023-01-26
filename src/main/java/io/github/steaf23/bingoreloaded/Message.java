@@ -218,6 +218,11 @@ public class Message
         player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent[]{new TextComponent(message)});
     }
 
+    public static void sendActionMessage(Message message, Player player)
+    {
+        sendActionMessage(message.toLegacyString(), player);
+    }
+
     public static TextComponent[] createHoverCommandMessage(@NonNull String translatePath, @Nullable String command)
     {
         TextComponent prefix = new TextComponent(PREFIX_STRING + TranslationData.translate(translatePath + ".prefix"));

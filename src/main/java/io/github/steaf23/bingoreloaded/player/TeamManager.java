@@ -10,12 +10,14 @@ import io.github.steaf23.bingoreloaded.gui.cards.LockoutBingoCard;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
 import io.github.steaf23.bingoreloaded.util.FlexColor;
 import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.chat.SelectorComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 
+import javax.annotation.Nullable;
 import java.util.*;
 
 public class TeamManager
@@ -36,16 +38,19 @@ public class TeamManager
     }
 
     // Returns null when a player is not part of a team.
-    public BingoTeam getTeamOfPlayer(Player player)
+    public BingoTeam getTeamOfPlayer(BingoPlayer player)
     {
-        for (BingoTeam t : activeTeams)
+        return player.team();
+    }
+
+    @Nullable
+    public BingoPlayer getBingoPlayer(Player player)
+    {
+        for (BingoPlayer participant : getParticipants())
         {
-            for (String entry : t.team.getEntries())
+            if (participant.player().equals(player))
             {
-                if (entry.equals(player.getName()))
-                {
-                    return t;
-                }
+                return participant;
             }
         }
         return null;
@@ -94,7 +99,9 @@ public class TeamManager
             Message.log("Team " + FlexColor.fromName(teamName).getTranslatedName() + " has reached it's capacity of " + maximumTeamSize + " players!");
             return;
         }
-        removePlayerFromAllTeams(player);
+
+        if (getBingoPlayer(player) != null)
+            removePlayerFromAllTeams(getBingoPlayer(player));
 
         BingoTeam bingoTeam = activateTeam(team);
 
@@ -102,18 +109,18 @@ public class TeamManager
         {
             team.addEntry(player.getName());
             new Message("game.team.join").color(ChatColor.GREEN)
-                    .arg(FlexColor.fromName(bingoTeam.getName()).getTranslatedName()).color(bingoTeam.getColor()).bold()
+                    .arg(bingoTeam.getColoredName().asLegacyString())
                     .send(player);
         }
     }
 
-    public void removePlayerFromAllTeams(Player player)
+    public void removePlayerFromAllTeams(BingoPlayer player)
     {
         if (!getParticipants().contains(player))
             return;
         for (Team team : teams.getTeams())
         {
-            team.removeEntry(player.getName());
+            team.removeEntry(player.player().getName());
         }
     }
 
@@ -164,9 +171,13 @@ public class TeamManager
     }
 
 
-    public Set<Player> getParticipants()
+    /**
+     * The returned players are in the same world as this TeamManager at the time of this call.
+     * @return Set of BingoPlayers that have joined a team.
+     */
+    public Set<BingoPlayer> getParticipants()
     {
-        Set<Player> players = new HashSet<>();
+        Set<BingoPlayer> players = new HashSet<>();
         for (Player p : Bukkit.getOnlinePlayers())
         {
             boolean found = false;
@@ -176,9 +187,13 @@ public class TeamManager
                 {
                     if (entry.equals(p.getName()))
                     {
-                        players.add(p);
-                        found = true;
-                        break;
+                        BingoPlayer participant = new BingoPlayer(p.getUniqueId(), t, worldName);
+                        if (participant.isInBingoWorld(worldName))
+                        {
+                            players.add(participant);
+                            found = true;
+                            break;
+                        }
                     }
                 }
                 if (found)
@@ -198,8 +213,8 @@ public class TeamManager
             for (String entry : team.team.getEntries())
             {
                 Player p = Bukkit.getPlayer(entry);
-                if (p == null || !p.isOnline())
-                    removePlayerFromAllTeams(p);;
+                if (p == null || !p.isOnline() && getBingoPlayer(p) != null)
+                    removePlayerFromAllTeams(getBingoPlayer(p));
             }
         }
     }
@@ -217,10 +232,10 @@ public class TeamManager
         return null;
     }
 
-    public Set<Player> getPlayersOfTeam(BingoTeam team)
+    public Set<BingoPlayer> getPlayersOfTeam(BingoTeam team)
     {
-        Set<Player> players = new HashSet<>();
-        for (Player p : getParticipants())
+        Set<BingoPlayer> players = new HashSet<>();
+        for (BingoPlayer p : getParticipants())
         {
             if (team.equals(getTeamOfPlayer(p)))
             {
@@ -258,11 +273,11 @@ public class TeamManager
             FlexColor color = FlexColor.fromName(team.getName());
             if (color != null)
             {
-                bTeam = new BingoTeam(team, null, color.chatColor);
+                bTeam = new BingoTeam(team, null, color);
             }
             else
             {
-                bTeam = new BingoTeam(team, null, ChatColor.WHITE);
+                bTeam = new BingoTeam(team, null, FlexColor.WHITE);
             }
 
             activeTeams.add(bTeam);

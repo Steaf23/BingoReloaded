@@ -118,14 +118,9 @@ public abstract class AbstractGUIInventory
 
     public final void open(HumanEntity player)
     {
-        new BukkitRunnable()
-        {
-            @Override
-            public void run()
-            {
-                player.openInventory(inventory);
-            }
-        }.runTask(Bukkit.getPluginManager().getPlugin(BingoReloaded.NAME));
+        Bukkit.getScheduler().runTask(BingoReloaded.get(), task -> {
+            player.openInventory(inventory);
+        });
     }
 
     public final void close(HumanEntity player)
@@ -133,14 +128,9 @@ public abstract class AbstractGUIInventory
         if (parent != null)
             parent.open(player);
         else
-            new BukkitRunnable()
-            {
-                @Override
-                public void run()
-                {
-                    player.closeInventory();
-                }
-            }.runTask(Bukkit.getPluginManager().getPlugin(BingoReloaded.NAME));
+            Bukkit.getScheduler().runTask(BingoReloaded.get(), task -> {
+                player.closeInventory();
+            });
     }
 
     public GUIHolder getHolder()

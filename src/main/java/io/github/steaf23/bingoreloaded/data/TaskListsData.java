@@ -2,6 +2,9 @@ package io.github.steaf23.bingoreloaded.data;
 
 import io.github.steaf23.bingoreloaded.Message;
 import io.github.steaf23.bingoreloaded.item.tasks.*;
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.MemorySection;
 
 import javax.management.ListenerNotFoundException;
@@ -17,12 +20,17 @@ public class TaskListsData
 
     public static List<BingoTask> getTasks(String listName)
     {
-        MemorySection taskList = ((MemorySection) data.getConfig().get(listName));
+        MemorySection taskList = ((MemorySection) data.getConfig().get(listName + ".tasks"));
         List<BingoTask> finalList = new ArrayList<>();
         taskList.getValues(false).forEach((k, v) -> {
             finalList.add((BingoTask)v);
         });
         return finalList;
+    }
+
+    public static int getTaskCount(String listName)
+    {
+        return data.getConfig().getInt(listName + ".size", 0);
     }
 
     public static List<BingoTask> getItemTasks(String listName)
@@ -42,14 +50,10 @@ public class TaskListsData
         data.getConfig().set(listName, null);
         for (BingoTask task : tasks)
         {
-            data.getConfig().set(listName + "." + task.data.hashCode(), task);
+            data.getConfig().set(listName + ".tasks." + task.data.hashCode(), task);
         }
+        data.getConfig().set(listName + ".size", tasks.length);
         data.saveConfig();
-    }
-
-    public static int getTaskCount(String listName)
-    {
-        return ((MemorySection) data.getConfig().get(listName)).getValues(false).size();
     }
 
     public static boolean removeList(String listName)

@@ -6,7 +6,7 @@ refactor card recovery (its shit).
 
 implement Vault plugin
 
-create lobby to: vote for options and select teams pre-game and show leaderboards
+create lobby to vote for options and select teams pre-game and show leaderboards
 
 add option to send players to a world when the game ends..
 
@@ -21,3 +21,14 @@ max team size doesn't do shit
 rework InventoryItem slot to (x, y)
 
 Add dummy player class to test stuff like lockout!
+
+add command to assign a player to a team /autobingo world team <team_name> <add|remove> <player_name>
+  
+disable scoreboard and action bar messages for players outside active worlds.
+  
+fix /autobingo end command doesn't want to accept the world_name argument
+  /autobingo world end returns "Invalid number of arguments"
+
+add custom kit options
+
+make timer string return atleast 0

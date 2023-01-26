@@ -55,7 +55,7 @@ public class BingoOptionsUI extends AbstractGUIInventory
             }
             else if (slotClicked == LEAVE_P.getSlot())
             {
-                game.playerQuit(player);
+                game.playerQuit(game.getTeamManager().getBingoPlayer(player));
             }
             return;
         }
@@ -70,7 +70,7 @@ public class BingoOptionsUI extends AbstractGUIInventory
         else if (slotClicked == LEAVE.getSlot())
         {
             BingoGame game = GameWorldManager.get().getGame(worldName);
-            game.playerQuit(player);
+            game.playerQuit(game.getTeamManager().getBingoPlayer(player));
         }
         else if (slotClicked == KIT.getSlot())
         {

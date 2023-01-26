@@ -17,7 +17,6 @@ import javax.annotation.Nullable;
 import java.util.*;
 import java.util.stream.Stream;
 
-@SerializableAs("BingoStatistic")
 public record BingoStatistic(@NotNull Statistic stat, @Nullable EntityType entityType, @Nullable Material materialType) implements ConfigurationSerializable
 {
     public enum StatisticCategory
@@ -45,18 +44,6 @@ public record BingoStatistic(@NotNull Statistic stat, @Nullable EntityType entit
     public BingoStatistic(Statistic stat, @Nullable Material materialType)
     {
         this(stat, null, materialType);
-    }
-
-    public BingoStatistic(@NotNull Statistic stat, @Nullable EntityType entityType, @Nullable Material materialType)
-    {
-        this.stat = stat;
-        this.entityType = entityType;
-        this.materialType = materialType;
-    }
-
-    public PersistentDataContainer asPdc()
-    {
-        return null;
     }
 
     //TODO: less static?
@@ -347,10 +334,18 @@ public record BingoStatistic(@NotNull Statistic stat, @Nullable EntityType entit
 
     public static BingoStatistic deserialize(Map<String, Object> data)
     {
-        Message.log(data + "");
         Statistic stat = Statistic.valueOf((String)data.get("statistic"));
-        EntityType entity = data.containsKey("entity") ? EntityType.valueOf((String)data.get("entity")) : null;
-        Material material = data.containsKey("item") ? Material.valueOf((String)data.get("item")) : null;
+
+        String entityStr = (String) data.getOrDefault("entity", null);
+        EntityType entity = null;
+        if (entityStr != null && !entityStr.isEmpty())
+            entity = EntityType.valueOf((String)data.get("entity"));
+
+        String materialStr = (String) data.getOrDefault("item", null);
+        Material material = null;
+        if (materialStr != null && !materialStr.isEmpty())
+            material = Material.valueOf((String)data.get("item"));
+
         return new BingoStatistic(stat, entity, material);
     }
 }

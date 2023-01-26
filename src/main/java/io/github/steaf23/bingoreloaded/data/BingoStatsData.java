@@ -1,6 +1,7 @@
 package io.github.steaf23.bingoreloaded.data;
 
 import io.github.steaf23.bingoreloaded.Message;
+import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 
@@ -31,9 +32,9 @@ public class BingoStatsData
         return Integer.parseInt(stats[statType.idx]);
     }
 
-    public static void incrementPlayerStat(UUID playerId, BingoStatType statType)
+    public static void incrementPlayerStat(BingoPlayer player, BingoStatType statType)
     {
-        BingoStatsData.incrementPlayerStat(playerId, statType, 1);
+        BingoStatsData.incrementPlayerStat(player.playerId(), statType, 1);
     }
 
     public static void incrementPlayerStat(UUID playerId, BingoStatType statType, int by)
@@ -106,7 +107,6 @@ public class BingoStatsData
         for (String recordName : playerData.keySet())
         {
             UUID playerId = UUID.fromString(recordName);
-            Message.log(playerId.toString());
             if (Bukkit.getPlayer(playerId).getName().equals(playerName))
             {
                 return playerId;

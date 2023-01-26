@@ -16,10 +16,4 @@ public class CardBuilder
                     default -> new BingoCard(size);
                 };
     }
-
-    public static FlexColor completeColor(BingoTeam team)
-    {
-        FlexColor color = FlexColor.fromChatColor(team.getColor());
-        return FlexColor.BLACK;
-    }
 }
