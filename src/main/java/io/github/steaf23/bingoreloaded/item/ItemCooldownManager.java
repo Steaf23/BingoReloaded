@@ -1,6 +1,5 @@
-package io.github.steaf23.bingoreloaded;
+package io.github.steaf23.bingoreloaded.item;
 
-import io.github.steaf23.bingoreloaded.gui.UIManager;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;

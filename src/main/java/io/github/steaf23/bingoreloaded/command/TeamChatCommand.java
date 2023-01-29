@@ -3,7 +3,7 @@ package io.github.steaf23.bingoreloaded.command;
 import io.github.steaf23.bingoreloaded.*;
 import io.github.steaf23.bingoreloaded.player.BingoTeam;
 import io.github.steaf23.bingoreloaded.player.TeamManager;
-import io.github.steaf23.bingoreloaded.util.FlexColor;
+import io.github.steaf23.bingoreloaded.util.Message;
 import org.bukkit.Bukkit;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.command.Command;
@@ -78,19 +78,19 @@ public class TeamChatCommand implements Listener, CommandExecutor
             TeamManager teamManager = game.getTeamManager();
             if (!teamManager.getParticipants().contains(p))
             {
-                new Message("game.team.no_chat").color(ChatColor.RED).send(p);
+                new BingoMessage("game.team.no_chat").color(ChatColor.RED).send(p);
                 return false;
             }
 
             if (enabledPlayers.contains(p))
             {
                 enabledPlayers.remove(p);
-                new Message("game.team.chat_off").color(ChatColor.GREEN).arg("/btc").send(p);
+                new BingoMessage("game.team.chat_off").color(ChatColor.GREEN).arg("/btc").send(p);
             }
             else
             {
                 enabledPlayers.add(p);
-                new Message("game.team.chat_on").color(ChatColor.GREEN).arg("/btc").send(p);
+                new BingoMessage("game.team.chat_on").color(ChatColor.GREEN).arg("/btc").send(p);
             }
         }
         return false;

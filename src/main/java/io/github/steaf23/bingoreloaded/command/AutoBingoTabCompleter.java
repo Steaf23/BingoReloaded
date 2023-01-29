@@ -1,6 +1,7 @@
 package io.github.steaf23.bingoreloaded.command;
 
 import io.github.steaf23.bingoreloaded.data.BingoCardsData;
+import io.github.steaf23.bingoreloaded.util.FlexColor;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -11,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class AutoBingoTabCompleter implements TabCompleter
@@ -37,9 +39,9 @@ public class AutoBingoTabCompleter implements TabCompleter
                 }
                 return allWorlds;
             case 2:
-                return List.of("create", "destroy", "start", "kit", "effects", "card", "team_max", "duration");
+                return List.of("create", "destroy", "start", "end","kit", "effects", "card", "team_max", "duration", "team");
             case 3:
-                switch (args[0])
+                switch (args[1])
                 {
                     case "kit":
                         return List.of("custom", "normal", "overpowered", "reloaded", "hardcore");
@@ -49,18 +51,25 @@ public class AutoBingoTabCompleter implements TabCompleter
                         return BingoCardsData.getCardNames().stream().toList();
                     case "start":
                         return List.of("regular", "lockout", "complete", "countdown");
+                    default:
+                        return null;
                 }
             case 4:
                 switch (args[1])
                 {
                     case "effects":
-                        if (args[2].equals("all") || args[2].equals("none"))
+                        if (args[3].equals("all") || args[3].equals("none"))
                         {
                             return null;
                         }
                         return List.of("true", "false");
                     case "start":
                         return List.of("3", "5");
+                    case "team":
+                        FlexColor[] colors = FlexColor.values();
+                        List<String> list = new ArrayList<>(Arrays.stream(colors).map(c -> c.name).toList());
+                        list.add(0, "none");
+                        return list;
                 }
             default:
                 return null;

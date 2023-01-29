@@ -1,8 +1,10 @@
 package io.github.steaf23.bingoreloaded.command;
 
 import io.github.steaf23.bingoreloaded.BingoGame;
+import io.github.steaf23.bingoreloaded.BingoMessage;
+import io.github.steaf23.bingoreloaded.BingoScoreboard;
 import io.github.steaf23.bingoreloaded.GameWorldManager;
-import io.github.steaf23.bingoreloaded.Message;
+import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.bingoreloaded.data.BingoStatsData;
 import io.github.steaf23.bingoreloaded.data.TaskListsData;
 import io.github.steaf23.bingoreloaded.data.ConfigData;
@@ -23,7 +25,6 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Optional;
@@ -111,7 +112,7 @@ public class BingoCommand implements CommandExecutor
                 }
                 else if (activeGame == null)
                 {
-                    new Message("command.bingo.no_deathmatch").color(ChatColor.RED).send(player);
+                    new BingoMessage("command.bingo.no_deathmatch").color(ChatColor.RED).send(player);
                     return false;
                 }
 
@@ -133,7 +134,7 @@ public class BingoCommand implements CommandExecutor
                     {
                         TextComponent text = new TextComponent("Player statistics are not being tracked at this moment!");
                         text.setColor(ChatColor.RED);
-                        Message.sendDebug(text, p);
+                        BingoMessage.sendDebug(text, p);
                         return true;
                     }
                     Message msg;
@@ -187,9 +188,9 @@ public class BingoCommand implements CommandExecutor
 
             default:
                 if (commandSender instanceof Player p)
-                    new Message("command.use").color(ChatColor.RED).arg("/bingo [getcard | stats | start | end | join | back | leave | deathmatch | creator]").send(p);
+                    new BingoMessage("command.use").color(ChatColor.RED).arg("/bingo [getcard | stats | start | end | join | back | leave | deathmatch | creator]").send(p);
                 else
-                    Message.log(ChatColor.RED + "Usage: /bingo [start | end | deathmatch]");
+                    BingoMessage.log(ChatColor.RED + "Usage: /bingo [start | end | deathmatch]");
                 break;
         }
 

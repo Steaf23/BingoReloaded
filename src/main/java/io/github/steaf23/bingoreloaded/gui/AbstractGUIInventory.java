@@ -1,17 +1,16 @@
 package io.github.steaf23.bingoreloaded.gui;
 
+import io.github.steaf23.bingoreloaded.BingoMessage;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
-import io.github.steaf23.bingoreloaded.Message;
+import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.*;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
 
 /**
  * Abstract class for Inventory based GUIs.
@@ -37,7 +36,7 @@ public abstract class AbstractGUIInventory
     {
         this.parent = parent;
 
-        inventory = Bukkit.createInventory(new GUIHolder(), size, Message.PREFIX_STRING_SHORT + ChatColor.DARK_RED + title);
+        inventory = Bukkit.createInventory(new GUIHolder(), size, BingoMessage.PREFIX_STRING_SHORT + ChatColor.DARK_RED + title);
         UIManager.addInventory(this);
 
         Message.log("Constructing " + title);

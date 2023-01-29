@@ -1,11 +1,9 @@
 package io.github.steaf23.bingoreloaded.data;
 
-import io.github.steaf23.bingoreloaded.Message;
 import io.github.steaf23.bingoreloaded.item.ItemText;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.TextComponent;
 
-import javax.swing.text.JTextComponent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;

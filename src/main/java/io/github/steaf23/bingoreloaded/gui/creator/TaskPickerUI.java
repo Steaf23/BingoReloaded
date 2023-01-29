@@ -1,6 +1,5 @@
 package io.github.steaf23.bingoreloaded.gui.creator;
 
-import io.github.steaf23.bingoreloaded.Message;
 import io.github.steaf23.bingoreloaded.data.TaskListsData;
 import io.github.steaf23.bingoreloaded.gui.AbstractGUIInventory;
 import io.github.steaf23.bingoreloaded.gui.FilterType;

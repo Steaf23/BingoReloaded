@@ -1,11 +1,9 @@
 package io.github.steaf23.bingoreloaded.util;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
-import io.github.steaf23.bingoreloaded.Message;
 import io.github.steaf23.bingoreloaded.event.CountdownTimerFinishedEvent;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class CountdownTimer extends GameTimer

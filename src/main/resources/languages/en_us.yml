@@ -155,6 +155,8 @@ menu:
           - Leather Helmet \n
           - Elytra (Unbreaking X) \n
           - Leather Boots"
+    custom:
+      name: "&2Overpowered Modified"
 items:
   card:
     name: "Bingo Card"

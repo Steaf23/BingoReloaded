@@ -2,12 +2,9 @@ package io.github.steaf23.bingoreloaded.util;
 
 import io.github.steaf23.bingoreloaded.data.TranslationData;
 import net.md_5.bungee.api.ChatColor;
-import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
-
-import java.util.logging.Level;
 
 public enum FlexColor
 {
@@ -69,7 +66,7 @@ public enum FlexColor
             }
         }
 
-        Bukkit.getLogger().log(Level.WARNING, "Could not find a color fitting to " + name + "!");
+        Message.warn("Could not find a color fitting to " + name + "!");
         return null;
     }
 
@@ -81,7 +78,7 @@ public enum FlexColor
                 return flexColor;
         }
 
-        Bukkit.getLogger().log(Level.WARNING, "Could not find a color fitting to " + color + "(chat color)!");
+        Message.warn("Could not find a color fitting to " + color + "(chat color)!");
         return null;
     }
 
@@ -101,7 +98,7 @@ public enum FlexColor
                 return flexColor;
         }
 
-        Bukkit.getLogger().log(Level.WARNING, "Could not find a color fitting to " + dye.name() + "(dye) !");
+        Message.warn("Could not find a color fitting to " + dye.name() + "(dye) !");
         return null;
     }
 
@@ -113,7 +110,7 @@ public enum FlexColor
                 return flexColor;
         }
 
-        Bukkit.getLogger().log(Level.WARNING, "Could not find a color fitting to " + concrete.name() + "(concrete) !");
+        Message.warn("Could not find a color fitting to " + concrete.name() + "(concrete) !");
         return null;
     }
 
@@ -125,7 +122,7 @@ public enum FlexColor
                 return flexColor;
         }
 
-        Bukkit.getLogger().log(Level.WARNING, "Could not find a color fitting to " + glassPane.name() + "(glass pane) !");
+        Message.warn("Could not find a color fitting to " + glassPane.name() + "(glass pane) !");
         return null;
     }
 
@@ -137,7 +134,7 @@ public enum FlexColor
                 return flexColor;
         }
 
-        Bukkit.getLogger().log(Level.WARNING, "Could not find a color fitting to " + banner.name() + "(banner) !");
+        Message.warn("Could not find a color fitting to " + banner.name() + "(banner) !");
         return null;
     }
 
@@ -149,7 +146,7 @@ public enum FlexColor
                 return flexColor;
         }
 
-        Bukkit.getLogger().log(Level.WARNING, "Could not find a color fitting to " + nbtColor + "(nbt) !");
+        Message.warn("Could not find a color fitting to " + nbtColor + "(nbt) !");
         return null;
     }
 }

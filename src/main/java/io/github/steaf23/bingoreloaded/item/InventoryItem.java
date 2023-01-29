@@ -1,7 +1,5 @@
 package io.github.steaf23.bingoreloaded.item;
 
-import io.github.steaf23.bingoreloaded.Message;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;

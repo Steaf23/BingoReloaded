@@ -42,12 +42,12 @@ public class BingoSettings
     public void setKit(PlayerKit kit)
     {
         this.kit = kit;
-        new Message("game.settings.kit_selected").color(ChatColor.GOLD).arg(kit.displayName).sendAll();
+        new BingoMessage("game.settings.kit_selected").color(ChatColor.GOLD).arg(kit.displayName).sendAll();
     }
 
     public void setEffects(EnumSet<EffectOptionFlags> effects)
     {
         this.effects = effects;
-        new Message("game.settings.effects_selected").color(ChatColor.GOLD).sendAll();
+        new BingoMessage("game.settings.effects_selected").color(ChatColor.GOLD).sendAll();
     }
 }

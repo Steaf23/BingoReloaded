@@ -9,8 +9,8 @@ import io.github.steaf23.bingoreloaded.gui.cards.BingoCard;
 import io.github.steaf23.bingoreloaded.gui.cards.LockoutBingoCard;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
 import io.github.steaf23.bingoreloaded.util.FlexColor;
+import io.github.steaf23.bingoreloaded.util.Message;
 import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.chat.SelectorComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -67,7 +67,7 @@ public class TeamManager
     {
         if (GameWorldManager.get().isGameWorldActive(worldName))
         {
-            new Message("game.team.no_join").color(ChatColor.RED).send(player);
+            new BingoMessage("game.team.no_join").color(ChatColor.RED).send(player);
             return;
         }
 
@@ -93,33 +93,50 @@ public class TeamManager
         teamPicker.open(player);
     }
 
-    public void addPlayerToTeam(Player player, String teamName)
+    public boolean addPlayerToTeam(Player player, String teamName)
     {
         Team team = teams.getTeam(teamName);
+        FlexColor color = FlexColor.fromName(teamName);
+        if (color == null)
+        {
+            BingoMessage.error("Team " + teamName + " does not exist!");
+            return false;
+        }
         if (team == null)
         {
-            Message.log("Team " + FlexColor.fromName(teamName).getTranslatedName() + " does not exist, could not add " + player.getDisplayName() + " to this team!");
-            return;
+            BingoMessage.error("Team " + color.getTranslatedName() + " does not exist, could not add " + player.getDisplayName() + " to this team!");
+            return false;
         }
         if (team.getEntries().size() >= maximumTeamSize + 1)
         {
-            Message.log("Team " + FlexColor.fromName(teamName).getTranslatedName() + " has reached it's capacity of " + maximumTeamSize + " players!");
-            return;
+            BingoMessage.error("Team " + color.getTranslatedName() + " has reached it's capacity of " + maximumTeamSize + " players!");
+            return false;
+        }
+
+        if (GameWorldManager.get().isGameWorldActive(worldName) && !activeTeams.stream().anyMatch(t -> t.getColor().name.equals(teamName)))
+        {
+            BingoMessage.error("Team " + color.getTranslatedName() + " is not playing in this game of bingo!");
+            return false;
         }
 
         if (getBingoPlayer(player) != null)
             removePlayerFromAllTeams(getBingoPlayer(player));
 
         BingoTeam bingoTeam = activateTeam(team);
+
+        if (bingoTeam == null)
+        {
+            return false;
+        }
+
+        team.addEntry(player.getName());
+        new BingoMessage("game.team.join").color(ChatColor.GREEN)
+                .arg(bingoTeam.getColoredName().asLegacyString())
+                .send(player);
+
         bingoTeam.players.add(getBingoPlayer(player));
 
-        if (bingoTeam != null)
-        {
-            team.addEntry(player.getName());
-            new Message("game.team.join").color(ChatColor.GREEN)
-                    .arg(bingoTeam.getColoredName().asLegacyString())
-                    .send(player);
-        }
+        return true;
     }
 
     public void removePlayerFromAllTeams(BingoPlayer player)
@@ -221,6 +238,7 @@ public class TeamManager
     {
         for (BingoTeam team : activeTeams)
         {
+            BingoMessage.log(team.players + "");
             for (String entry : team.team.getEntries())
             {
                 Player p = Bukkit.getPlayer(entry);
@@ -300,9 +318,10 @@ public class TeamManager
             String name = fColor.name;
             Team t = teams.registerNewTeam(name);
             t.setPrefix("" + ChatColor.DARK_RED + "[" + fColor.chatColor + ChatColor.BOLD + fColor.getTranslatedName() + ChatColor.DARK_RED + "] ");
+            // Add dummy entry to show the prefix on the board
             t.addEntry("" + fColor.chatColor);
         }
-        Message.log(ChatColor.GREEN + "Successfully created " + teams.getTeams().size() + " teams");
+        BingoMessage.log(ChatColor.GREEN + "Successfully created " + teams.getTeams().size() + " teams");
     }
 
     public String getWorldName()

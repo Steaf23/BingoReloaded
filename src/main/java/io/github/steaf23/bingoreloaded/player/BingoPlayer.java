@@ -5,7 +5,7 @@ import io.github.steaf23.bingoreloaded.data.BingoStatType;
 import io.github.steaf23.bingoreloaded.data.BingoStatsData;
 import io.github.steaf23.bingoreloaded.data.ConfigData;
 import io.github.steaf23.bingoreloaded.gui.EffectOptionFlags;
-import io.github.steaf23.bingoreloaded.util.FlexColor;
+import io.github.steaf23.bingoreloaded.item.ItemCooldownManager;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.TranslatableComponent;
 import org.bukkit.*;
@@ -15,7 +15,6 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.EnumSet;
 import java.util.UUID;
@@ -106,7 +105,7 @@ public record BingoPlayer(UUID playerId, BingoTeam team, String worldName)
         String itemKey = deathMatchItem.isBlock() ? "block" : "item";
         itemKey += ".minecraft." + deathMatchItem.getKey().getKey();
 
-        new Message("game.item.deathmatch").color(ChatColor.GOLD)
+        new BingoMessage("game.item.deathmatch").color(ChatColor.GOLD)
                 .component(new TranslatableComponent(itemKey))
                 .send(player());
     }
@@ -156,7 +155,7 @@ public record BingoPlayer(UUID playerId, BingoTeam team, String worldName)
         }
 
         double timeLeft = ItemCooldownManager.getTimeLeft(playerId, wand) / 1000.0;
-        new Message("game.item.cooldown").color(ChatColor.RED).arg(String.format("%.2f", timeLeft)).send(player());
+        new BingoMessage("game.item.cooldown").color(ChatColor.RED).arg(String.format("%.2f", timeLeft)).send(player());
         return false;
     }
 }

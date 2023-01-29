@@ -1,8 +1,5 @@
 package io.github.steaf23.bingoreloaded.util;
 
-import io.github.steaf23.bingoreloaded.Message;
-import org.bukkit.scheduler.BukkitRunnable;
-
 public abstract class GameTimer
 {
     protected TimeNotifier notifier;

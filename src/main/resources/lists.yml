@@ -810,12 +810,6 @@ default_items:
         ==: Bingo.ItemTask
         item: POISONOUS_POTATO
         count: 1
-    '1276790243':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: GOLDEN_CARROT
-        count: 1
     '-996288206':
       ==: Bingo.Task
       data:

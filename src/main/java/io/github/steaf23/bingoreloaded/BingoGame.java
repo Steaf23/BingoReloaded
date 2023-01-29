@@ -57,7 +57,7 @@ public class BingoGame implements Listener
                 {
                     var p = Optional.ofNullable(player.player());
                     if (player.isInBingoWorld(getWorldName()))
-                        Message.sendActionMessage(timer.getTimeDisplayMessage(), p.get());
+                        BingoMessage.sendActionMessage(timer.getTimeDisplayMessage(), p.get());
                 }
             }
         };
@@ -80,19 +80,19 @@ public class BingoGame implements Listener
 
         if (!BingoCardsData.getCardNames().contains(settings.card))
         {
-            new Message("game.start.no_card").color(ChatColor.RED).arg(settings.card).sendAll();
+            new BingoMessage("game.start.no_card").color(ChatColor.RED).arg(settings.card).sendAll();
             return;
         }
 
         // Pre-start Setup
         if (getTeamManager().getParticipants().size() == 0)
         {
-            new Message("game.start.no_players").color(ChatColor.RED).sendAll();
+            new BingoMessage("game.start.no_players").color(ChatColor.RED).sendAll();
             return;
         }
         if (inProgress)
         {
-            new Message("game.start.already_started").color(ChatColor.RED).sendAll();
+            new BingoMessage("game.start.already_started").color(ChatColor.RED).sendAll();
             return;
         }
 
@@ -110,7 +110,7 @@ public class BingoGame implements Listener
         masterCard.generateCard(settings.card, ConfigData.instance.cardSeed);
         getTeamManager().initializeCards(masterCard);
 
-        new Message("game.start.give_cards").sendAll();
+        new BingoMessage("game.start.give_cards").sendAll();
         Set<BingoPlayer> players = getTeamManager().getParticipants();
         players.forEach(p -> p.giveKit(settings.kit));
         players.forEach(this::returnCardToPlayer);
@@ -138,11 +138,11 @@ public class BingoGame implements Listener
             return;
 
         inProgress = false;
-        TextComponent[] commandMessage = Message.createHoverCommandMessage("game.end.restart", "/bingo start");
+        TextComponent[] commandMessage = BingoMessage.createHoverCommandMessage("game.end.restart", "/bingo start");
         Set<BingoPlayer> players = getTeamManager().getParticipants();
         players.forEach(p -> {
             if (p.isInBingoWorld(worldName))
-                Message.sendDebug(commandMessage, p.player());
+                BingoMessage.sendDebug(commandMessage, p.player());
         });
         timer.getTimeDisplayMessage().sendAll();
         timer.stop();
@@ -153,7 +153,7 @@ public class BingoGame implements Listener
 
     public void bingo(BingoTeam team)
     {
-        new Message("game.end.bingo").arg(team.getColoredName().asLegacyString()).sendAll();
+        new BingoMessage("game.end.bingo").arg(team.getColoredName().asLegacyString()).sendAll();
         for (BingoPlayer p : getTeamManager().getParticipants())
         {
             p.player().playSound(p.player(), Sound.ENTITY_DRAGON_FIREBALL_EXPLODE, 0.8f, 1.0f);
@@ -225,7 +225,7 @@ public class BingoGame implements Listener
         for (BingoPlayer p : getTeamManager().getParticipants())
         {
             p.player().sendTitle(color + "" + countdown, "", -1, -1, -1);
-            Message.sendDebug(color + "" + countdown, p.player());
+            BingoMessage.sendDebug(color + "" + countdown, p.player());
         }
 
         Bukkit.getScheduler().runTaskLater(BingoReloaded.get(), task -> {
@@ -249,7 +249,7 @@ public class BingoGame implements Listener
         Location location = deadPlayers.get(player.getUniqueId());
         if (location == null)
         {
-            new Message("menu.effects.disabled").color(ChatColor.RED).send(player);
+            new BingoMessage("menu.effects.disabled").color(ChatColor.RED).send(player);
             return;
         }
 
@@ -413,7 +413,7 @@ public class BingoGame implements Listener
         if (!getTeamManager().getParticipants().contains(player)) return;
 
         getTeamManager().removePlayerFromAllTeams(player);
-        new Message("game.player.leave").arg(ChatColor.RED + "/bingo join").send(player.player());
+        new BingoMessage("game.player.leave").arg(ChatColor.RED + "/bingo join").send(player.player());
 
         player.takeEffects();
         if (deadPlayers.containsKey(player.playerId()))
@@ -500,7 +500,7 @@ public class BingoGame implements Listener
             }
             else
             {
-                new Message("game.player.no_start").send(event.getPlayer());
+                new BingoMessage("game.player.no_start").send(event.getPlayer());
             }
         }
 
@@ -509,7 +509,7 @@ public class BingoGame implements Listener
         {
             if (!inProgress)
             {
-                new Message("game.player.no_start").send(event.getPlayer());
+                new BingoMessage("game.player.no_start").send(event.getPlayer());
             }
             else if (player.useGoUpWand(event.getItem()))
             {
@@ -587,9 +587,9 @@ public class BingoGame implements Listener
 
         if (inProgress)
         {
-            if (getTeamManager().getParticipants().contains(onlinePlayer))
+            if (getTeamManager().getParticipants().contains(player))
             {
-                new Message("game.player.join_back").send(onlinePlayer);
+                new BingoMessage("game.player.join_back").send(onlinePlayer);
                 scoreboard.updateItemCount();
                 return;
             }
@@ -612,7 +612,7 @@ public class BingoGame implements Listener
                 Location deathCoords = event.getEntity().getLocation();
                 if (ConfigData.instance.teleportAfterDeath)
                 {
-                    TextComponent[] teleportMsg = Message.createHoverCommandMessage("game.player.respawn", "/bingo back");
+                    TextComponent[] teleportMsg = BingoMessage.createHoverCommandMessage("game.player.respawn", "/bingo back");
 
                     event.getEntity().spigot().sendMessage(teleportMsg);
                     deadPlayers.put(event.getEntity().getUniqueId(), deathCoords);

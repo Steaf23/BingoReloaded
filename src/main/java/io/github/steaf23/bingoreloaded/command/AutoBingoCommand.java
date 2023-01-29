@@ -1,21 +1,16 @@
 package io.github.steaf23.bingoreloaded.command;
 
-import io.github.steaf23.bingoreloaded.BingoGamemode;
-import io.github.steaf23.bingoreloaded.GameWorldManager;
-import io.github.steaf23.bingoreloaded.BingoSettings;
-import io.github.steaf23.bingoreloaded.Message;
+import io.github.steaf23.bingoreloaded.*;
 import io.github.steaf23.bingoreloaded.data.BingoCardsData;
-import io.github.steaf23.bingoreloaded.event.BingoGameEvent;
 import io.github.steaf23.bingoreloaded.gui.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.gui.cards.CardSize;
+import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.player.PlayerKit;
-import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.chat.TextComponent;
+import io.github.steaf23.bingoreloaded.util.Message;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -26,11 +21,7 @@ public class AutoBingoCommand implements CommandExecutor
     {
         //TODO: QUADRUPLE CHECK THIS!
         // AutoBingo should only work for admins or console.
-        if (!(commandSender instanceof ConsoleCommandSender))
-        {
-            return false;
-        }
-        else if (commandSender instanceof Player p && !p.hasPermission("bingo.admin"))
+        if (commandSender instanceof Player p && !p.hasPermission("bingo.admin"))
         {
             return false;
         }
@@ -49,13 +40,13 @@ public class AutoBingoCommand implements CommandExecutor
             {
                 if (args.length == 2)
                 {
-                    sendFailed("Usage: /autobingo <world_name> create <max_team_size>", commandSender, worldName);
+                    sendFailed("Usage: /autobingo <world_name> create <max_team_size>", worldName);
                     return false;
                 }
                 create(worldName, args[2]);
                 return true;
             }
-            sendFailed("Cannot perform command on a world that has not been created yet!", commandSender, worldName);
+            sendFailed("Cannot perform command on a world that has not been created yet!", worldName);
             return false;
         }
         else
@@ -75,7 +66,7 @@ public class AutoBingoCommand implements CommandExecutor
                 case "start":
                     if (!start(settings, worldName, args[2], args.length > 3 ? args[3] : ""))
                     {
-                        sendFailed("Invalid command, could not start game with gamemode '" + args[2] + "'!", commandSender, worldName);
+                        sendFailed("Invalid command, could not start game with gamemode '" + args[2] + "'!", worldName);
                         return false;
                     }
                     return true;
@@ -83,27 +74,27 @@ public class AutoBingoCommand implements CommandExecutor
                 case "kit":
                     if (!setKit(settings,args[2]))
                     {
-                        sendFailed("Could not find Kit with name '" + args[2] + "'!", commandSender, worldName);
+                        sendFailed("Could not find Kit with name '" + args[2] + "'!", worldName);
                         return false;
                     }
                     return true;
 
                 case "effects":
+                    // autobingo world effect
                     // If argument count is only 1, enable all, none or just the single effect typed.
                     //     Else default enable effect unless the second argument is "false".
                     boolean enable = args.length > 3 && args[3].equals("false") ? false : true;
                     if (!setEffect(settings, args[2], enable))
                     {
-                        sendFailed("Invalid effect setting '" + args[2] + "' to '" + enable + "'!", commandSender, worldName);
+                        sendFailed("Invalid effect setting '" + args[2] + "' to '" + enable + "'!", worldName);
                         return false;
                     }
                     return true;
 
                 case "card":
-                    //TODO: Add card seed parameter to /autobingo card
                     if (!setCard(settings, args[2], args.length > 3 ? args[3] : "0"))
                     {
-                        sendFailed("Invalid card name '" + args[2] + "'!", commandSender, worldName);
+                        sendFailed("Invalid card name '" + args[2] + "'!", worldName);
                         return false;
                     }
                     return true;
@@ -111,13 +102,23 @@ public class AutoBingoCommand implements CommandExecutor
                 case "duration":
                     if (!setCountdownGameDuration(settings, args[2]))
                     {
-                        sendFailed("Could not set Countdown game duration to " + args[2] + "!", commandSender, worldName);
+                        sendFailed("Could not set Countdown game duration to " + args[2] + "!", worldName);
                         return false;
                     }
                     return true;
 
+                case "team":
+                    // autobingo world team <player_name> <team_name | none>
+                    if (args.length == 3)
+                    {
+                        sendFailed("Invalid number of arguments: " + args.length + "!", worldName);
+                        return false;
+                    }
+
+                    return setPlayerTeam(worldName, args[2], args[3]);
+
                 default:
-                    sendFailed("Invalid command '" + args[2] + "'!", commandSender, worldName);
+                    sendFailed("Invalid command '" + args[2] + "'!", worldName);
                     return false;
             }
         }
@@ -127,7 +128,7 @@ public class AutoBingoCommand implements CommandExecutor
             {
                 if (!end(settings, worldName))
                 {
-                    sendFailed("Invalid command, can not end the game", commandSender, worldName);
+                    sendFailed("Invalid command, can not end the game", worldName);
                 }
                 else
                 {
@@ -135,7 +136,7 @@ public class AutoBingoCommand implements CommandExecutor
                 }
             }
 
-            sendFailed("Invalid number of arguments: " + args.length + "!", commandSender, worldName);
+            sendFailed("Invalid number of arguments: " + args.length + "!", worldName);
             return false;
         }
     }
@@ -253,6 +254,46 @@ public class AutoBingoCommand implements CommandExecutor
         return false;
     }
 
+    public boolean setPlayerTeam(String worldName, String playerName, String teamName)
+    {
+        if (!GameWorldManager.get().doesGameWorldExist(worldName))
+        {
+            sendFailed("Cannot add player to team, world '" + worldName + "' is not a bingo world!", worldName);
+            return false;
+        }
+
+        BingoGame game = GameWorldManager.get().getGame(worldName);
+
+        Player player = Bukkit.getPlayer(playerName);
+        if (player == null)
+        {
+            sendFailed("Cannot add " + playerName + " to team, player does not exist/ is not online!", worldName);
+            return false;
+        }
+
+        if (teamName.toLowerCase().equals("none"))
+        {
+            BingoPlayer bPlayer = game.getTeamManager().getBingoPlayer(player);
+            if (bPlayer == null)
+            {
+                sendFailed(playerName + " did not join any teams!", worldName);
+                return false;
+            }
+
+            game.getTeamManager().removePlayerFromAllTeams(bPlayer);
+            Message.log("Player " + playerName + " removed from all teams");
+        }
+        else
+        {
+            if (!game.getTeamManager().addPlayerToTeam(player, teamName))
+            {
+                return false;
+            }
+            Message.log("Player " + playerName + " added to team " + teamName + "");
+        }
+        return true;
+    }
+
     public boolean end(BingoSettings settings, String worldName)
     {
         return GameWorldManager.get().endGame(worldName);
@@ -275,10 +316,15 @@ public class AutoBingoCommand implements CommandExecutor
         }
     }
 
-    private void sendFailed(String message, CommandSender sender, String worldName)
+    private void sendFailed(String message, String worldName)
     {
-        TextComponent text = new TextComponent("Bingo in '" + worldName + "': " + message);
-        text.setColor(ChatColor.RED);
-        Message.log(text);
+        String text = "'" + worldName + "': " + message;
+        BingoMessage.error(text);
+    }
+
+    private void sendSuccess(String message, String worldName)
+    {
+        String text = "'" + worldName + "': " + message;
+        BingoMessage.log(text);
     }
 }

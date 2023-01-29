@@ -9,6 +9,7 @@ import org.bukkit.*;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 
+import java.sql.Array;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
@@ -128,6 +129,30 @@ public enum PlayerKit
                         .withAmount(64));
                 return items;
             }
+            case CUSTOM -> {
+                items = new ArrayList<>();
+                items.add(helmet
+                        .withEnchantment(Enchantment.DURABILITY, 3)
+                        .withEnchantment(Enchantment.WATER_WORKER, 1)
+                        .withEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 4));
+                items.add(boots
+                        .withEnchantment(Enchantment.DURABILITY, 3)
+                        .withEnchantment(Enchantment.DEPTH_STRIDER, 3)
+                        .withEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 4));
+                items.add(new InventoryItem(1, Material.NETHERITE_PICKAXE, "")
+                        .withEnchantment(Enchantment.LOOT_BONUS_BLOCKS, 3)
+                        .withEnchantment(Enchantment.DIG_SPEED, 5));
+                items.add(new InventoryItem(0, Material.NETHERITE_AXE, "")
+                        .withIllegalEnchantment(Enchantment.LOOT_BONUS_MOBS, 3)
+                        .withIllegalEnchantment(Enchantment.DAMAGE_ALL, 5)
+                        .withEnchantment(Enchantment.DIG_SPEED, 5));
+                items.add(new InventoryItem(2, Material.NETHERITE_SHOVEL, "")
+                        .withEnchantment(Enchantment.SILK_TOUCH, 1)
+                        .withEnchantment(Enchantment.DIG_SPEED, 5));
+                items.add(new InventoryItem(3, Material.GOLDEN_CARROT, "")
+                        .withAmount(64));
+                return items;
+            }
             default -> {
                 //TODO: Implement CUSTOM kit
                 items = new ArrayList<>();
@@ -145,6 +170,7 @@ public enum PlayerKit
                     case "normal" -> NORMAL;
                     case "overpowered" -> OVERPOWERED;
                     case "reloaded" -> RELOADED;
+                    case "custom" -> CUSTOM;
                     default -> HARDCORE;
                 };
     }

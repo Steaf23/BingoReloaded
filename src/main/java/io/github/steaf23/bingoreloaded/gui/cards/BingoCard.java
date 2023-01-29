@@ -1,9 +1,10 @@
 package io.github.steaf23.bingoreloaded.gui.cards;
 
 import io.github.steaf23.bingoreloaded.BingoGame;
+import io.github.steaf23.bingoreloaded.BingoMessage;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.GameWorldManager;
-import io.github.steaf23.bingoreloaded.Message;
+import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.bingoreloaded.data.BingoCardsData;
 import io.github.steaf23.bingoreloaded.data.TaskListsData;
 import io.github.steaf23.bingoreloaded.data.TranslationData;
@@ -135,13 +136,15 @@ public class BingoCard extends AbstractGUIInventory implements Listener
             for (int x = 0; x < size.cardSize; x++)
             {
                 int indexRow = size.cardSize * y + x;
-                if (!team.players.contains(tasks.get(indexRow).completedBy))
+                Optional<BingoPlayer> completedBy = tasks.get(indexRow).completedBy;
+                if (completedBy.isEmpty() || !team.players.contains(completedBy.get()))
                 {
                     completedRow = false;
                 }
 
                 int indexCol = size.cardSize * x + y;
-                if (!team.players.contains(tasks.get(indexRow).completedBy))
+                completedBy = tasks.get(indexCol).completedBy;
+                if (completedBy.isEmpty() || !team.players.contains(completedBy.get()))
                 {
                     completedCol = false;
                 }
@@ -157,7 +160,8 @@ public class BingoCard extends AbstractGUIInventory implements Listener
         boolean completedDiagonal1 = true;
         for (int idx = 0; idx < size.fullCardSize; idx += size.cardSize + 1)
         {
-            if (!team.players.contains(tasks.get(idx).completedBy))
+            Optional<BingoPlayer> completedBy = tasks.get(idx).completedBy;
+            if (completedBy.isEmpty() || !team.players.contains(completedBy.get()))
             {
                 completedDiagonal1 = false;
                 break;
@@ -169,7 +173,8 @@ public class BingoCard extends AbstractGUIInventory implements Listener
         {
             if (idx != 0 && idx != size.fullCardSize - 1)
             {
-                if (!team.players.contains(tasks.get(idx).completedBy))
+                Optional<BingoPlayer> completedBy = tasks.get(idx).completedBy;
+                if (completedBy.isEmpty() || !team.players.contains(completedBy.get()))
                 {
                     completedDiagonal2 = false;
                     break;
@@ -188,7 +193,7 @@ public class BingoCard extends AbstractGUIInventory implements Listener
         int count = 0;
         for (var task : tasks)
         {
-            if (team.players.contains(task.completedBy))
+            if (task.completedBy.isPresent() && team.players.contains(task.completedBy.get()))
                 count++;
         }
 
@@ -198,6 +203,9 @@ public class BingoCard extends AbstractGUIInventory implements Listener
     @Override
     public void delegateClick(InventoryClickEvent event, int slotClicked, Player player, ClickType clickType)
     {
+        if (!size.taskSlots.contains(slotClicked))
+            return;
+
         BingoTask task = BingoTask.fromStack(event.getCurrentItem());
         if (task == null)
             return;
@@ -211,7 +219,7 @@ public class BingoCard extends AbstractGUIInventory implements Listener
         base.addExtra("\n - ");
         base.addExtra(task.data.getDescription());
 
-        Message.sendDebug(base, player);
+        BingoMessage.sendDebug(base, player);
     }
 
     public BingoCard copy()

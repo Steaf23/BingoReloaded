@@ -1,16 +1,9 @@
 package io.github.steaf23.bingoreloaded.data;
 
-import io.github.steaf23.bingoreloaded.BingoReloaded;
-import io.github.steaf23.bingoreloaded.Message;
 import io.github.steaf23.bingoreloaded.item.tasks.*;
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.MemorySection;
 
-import javax.management.ListenerNotFoundException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * This class is used to interface with the lists.yml file.
@@ -40,13 +33,6 @@ public class TaskListsData
     public static List<BingoTask> getItemTasks(String listName)
     {
         return getTasks(listName);
-//        List<ItemTask> tasks = new ArrayList<>();
-//        getTasks(listName).forEach(task ->
-//        {
-//            if (task instanceof ItemTask)
-//                tasks.add((ItemTask) task);
-//        });
-//        return tasks;
     }
 
     public static void saveTasks(String listName, BingoTask... tasks)
@@ -137,12 +123,4 @@ public class TaskListsData
         int idx = new Random().nextInt(tasks.size());
         return tasks.get(idx);
     }
-//
-//    public static ItemTask getRandomItemTask(String listName)
-//    {
-//        Message.log("Picking random item from " + listName);
-//        List<ItemTask> tasks = getItemTasks(listName);
-//        int idx = new Random().nextInt(tasks.size());
-//        return tasks.get(idx);
-//    }
 }

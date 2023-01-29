@@ -1,5 +1,8 @@
 package io.github.steaf23.bingoreloaded.gui.cards;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public enum CardSize
 {
     X1(1, 4),
@@ -15,12 +18,20 @@ public enum CardSize
     public int rightSpacing;
     public int fullCardSize;
 
+    public final Set<Integer> taskSlots;
+
     CardSize(int size, int leftSpacing)
     {
         this.cardSize = size;
         this.leftSpacing = leftSpacing;
         this.rightSpacing = 9 - size - leftSpacing;
         this.fullCardSize = (int)Math.pow(size, 2);
+
+        this.taskSlots = new HashSet<>();
+        for (int i = 0; i < fullCardSize; i++)
+        {
+            taskSlots.add(getCardInventorySlot(i));
+        }
     }
 
     public int getCardInventorySlot(int itemIndex)

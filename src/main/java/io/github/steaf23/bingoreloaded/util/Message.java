@@ -1,5 +1,6 @@
-package io.github.steaf23.bingoreloaded;
+package io.github.steaf23.bingoreloaded.util;
 
+import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.TranslationData;
 import io.github.steaf23.bingoreloaded.player.BingoTeam;
 import me.clip.placeholderapi.PlaceholderAPI;
@@ -8,44 +9,21 @@ import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.*;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.PluginLogger;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.w3c.dom.Text;
 
 import javax.annotation.Nullable;
-import javax.swing.text.JTextComponent;
-import java.sql.Array;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 // Message builder class to construct and send messages to the player
 // Also used for debugging and console logging
 // Similar to ComponentBuilder, but can parse language yml files better.
 public class Message
 {
-    public static final BaseComponent[] PRINT_PREFIX = new ComponentBuilder("").append("[").color(ChatColor.DARK_RED)
-            .append("Bingo", ComponentBuilder.FormatRetention.NONE).color(ChatColor.DARK_AQUA).bold(true)
-            .append("Reloaded", ComponentBuilder.FormatRetention.NONE).color(ChatColor.YELLOW).italic(true)
-            .append("]", ComponentBuilder.FormatRetention.NONE).color(ChatColor.DARK_RED)
-            .append(" ", ComponentBuilder.FormatRetention.NONE).create();
-
-    public static final BaseComponent[] SHORT_PREFIX = new ComponentBuilder("").append("[").color(ChatColor.DARK_RED)
-            .append("B", ComponentBuilder.FormatRetention.NONE).color(ChatColor.DARK_AQUA).bold(true)
-            .append("R", ComponentBuilder.FormatRetention.NONE).color(ChatColor.YELLOW).italic(true)
-            .append("]", ComponentBuilder.FormatRetention.NONE).color(ChatColor.DARK_RED)
-            .append(" ", ComponentBuilder.FormatRetention.NONE).create();
-
-    public static final String PREFIX_STRING = new TextComponent(PRINT_PREFIX).toLegacyText();
-
-    public static final String PREFIX_STRING_SHORT = new TextComponent(SHORT_PREFIX).toLegacyText();
-
-    private static final PluginLogger logger = new PluginLogger(BingoReloaded.get());
-    private String raw;
-    private List<BaseComponent> args;
-    private TextComponent base;
-    private BaseComponent finalMessage;
+    protected String raw;
+    protected List<BaseComponent> args;
+    protected TextComponent base;
+    protected BaseComponent finalMessage;
 
     public Message()
     {
@@ -161,7 +139,7 @@ public class Message
         {
             //TODO: solving placeholders should be done last, however that is quite a bit more complicated
             raw = solvePlaceholders(raw, player);
-            createPrefixedMessage();
+            createMessage();
         }
         player.spigot().sendMessage(finalMessage);
     }
@@ -192,12 +170,22 @@ public class Message
 
     public static void log(String text)
     {
-        logger.info(text);
+        Bukkit.getLogger().info(text);
+    }
+
+    public static void warn(String text)
+    {
+        Bukkit.getLogger().warning(text);
+    }
+
+    public static void error(String text)
+    {
+        Bukkit.getLogger().severe(text);
     }
 
     public static void log(BaseComponent text)
     {
-        log(text.toPlainText());
+        Bukkit.getLogger().info(text.toPlainText());
     }
 
     public static void sendDebug(String text, Player player)
@@ -225,24 +213,7 @@ public class Message
         sendActionMessage(message.toLegacyString(), player);
     }
 
-    public static TextComponent[] createHoverCommandMessage(@NonNull String translatePath, @Nullable String command)
-    {
-        TextComponent prefix = new TextComponent(PREFIX_STRING + TranslationData.translate(translatePath + ".prefix"));
-        TextComponent hoverable = new TextComponent(TranslationData.translate(translatePath + ".hoverable"));
-        TextComponent hover = new TextComponent(TranslationData.translate(translatePath + ".hover"));
-        TextComponent suffix = new TextComponent(TranslationData.translate(translatePath + ".suffix"));
-
-        if (command != null)
-        {
-            hoverable.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, command));
-        }
-        hoverable.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                new ComponentBuilder(hover).create()));
-
-        return new TextComponent[]{prefix, hoverable, suffix};
-    }
-
-    private void createMessage()
+    protected void createMessage()
     {
         //for any given message like "{#00bb33}Completed {0} by team {1}! At {2}" split the arguments from the message.
         String[] rawSplit = raw.split("\\{[^\\{\\}#]*\\}"); //[{#00bb33}Completed, by team, ! At]
@@ -276,22 +247,8 @@ public class Message
         finalMessage = base;
     }
 
-    private void createPrefixedMessage()
-    {
-        TextComponent prefixedBase = new TextComponent();
-        for (BaseComponent c : PRINT_PREFIX)
-        {
-            prefixedBase.addExtra(c);
-        }
-
-        createMessage();
-
-        prefixedBase.addExtra(base);
-        finalMessage = prefixedBase;
-    }
-
     // solve placeholders from PlaceholderAPI
-    private static String solvePlaceholders(String input, Player player)
+    protected static String solvePlaceholders(String input, Player player)
     {
         if (BingoReloaded.usesPlaceholder)
         {

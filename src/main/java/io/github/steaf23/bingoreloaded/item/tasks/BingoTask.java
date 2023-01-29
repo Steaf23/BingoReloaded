@@ -1,20 +1,17 @@
 package io.github.steaf23.bingoreloaded.item.tasks;
 
+import io.github.steaf23.bingoreloaded.BingoMessage;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
-import io.github.steaf23.bingoreloaded.Message;
+import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.bingoreloaded.data.TranslationData;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
 import io.github.steaf23.bingoreloaded.item.ItemText;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
-import io.github.steaf23.bingoreloaded.player.BingoTeam;
-import io.github.steaf23.bingoreloaded.util.FlexColor;
 import io.github.steaf23.bingoreloaded.util.GameTimer;
 import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -74,7 +71,7 @@ public class BingoTask implements ConfigurationSerializable
         }
         else
         {
-            Message.log("This Type of data is not supported by BingoTask: '" + data + "'!");
+            BingoMessage.log("This Type of data is not supported by BingoTask: '" + data + "'!");
             this.type = TaskType.ITEM;
             this.glowing = false;
             this.nameColor = ChatColor.WHITE;
@@ -197,7 +194,7 @@ public class BingoTask implements ConfigurationSerializable
         TaskType type;
         if (typeStr.isEmpty())
         {
-            Message.log("Cannot create a valid task from this item stack!");
+            BingoMessage.log("Cannot create a valid task from this item stack!");
             return null;
         }
 
@@ -227,7 +224,7 @@ public class BingoTask implements ConfigurationSerializable
 
         String timeString = GameTimer.getTimeAsString(time);
 
-        new Message("game.item.completed").color(ChatColor.GREEN)
+        new BingoMessage("game.item.completed").color(ChatColor.GREEN)
                 .component(data.getItemDisplayName().asComponent()).color(nameColor)
                 .arg(player.team().getColoredName().asLegacyString())
                 .arg(timeString).color(ChatColor.WHITE)
