@@ -11,7 +11,6 @@ import io.github.steaf23.bingoreloaded.player.PlayerKit;
 import io.github.steaf23.bingoreloaded.player.TeamManager;
 import io.github.steaf23.bingoreloaded.util.*;
 import net.md_5.bungee.api.chat.TextComponent;
-import net.md_5.bungee.api.chat.TranslatableComponent;
 import org.bukkit.*;
 import org.bukkit.block.Biome;
 import org.bukkit.entity.Player;
@@ -27,7 +26,6 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 import net.md_5.bungee.api.ChatColor;
 
@@ -122,7 +120,7 @@ public class BingoGame implements Listener
         givePlayersEffects();
 
         // Post-start Setup
-        scoreboard.resetBoards();
+        scoreboard.reset();
         scoreboard.updateItemCount();
         timer.start();
     }

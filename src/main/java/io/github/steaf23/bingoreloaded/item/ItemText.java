@@ -52,7 +52,6 @@ public class ItemText
 
     public BaseComponent asComponent()
     {
-        // TODO: return array instead of single component, since hat should also be send-able as a message.
         BaseComponent root = new TextComponent();
         root.setExtra(Arrays.stream(ComponentSerializer.parse(asJsonRoot())).toList());
         return root;

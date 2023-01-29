@@ -208,7 +208,7 @@ public record BingoStatistic(@NotNull Statistic stat, @Nullable EntityType entit
             case WALK_ONE_CM -> Material.LEATHER_BOOTS;
             case WALK_ON_WATER_ONE_CM -> Material.ICE;
             case FALL_ONE_CM -> Material.LAVA_BUCKET;
-            case SNEAK_TIME -> Material.SCULK_SENSOR;
+            case SNEAK_TIME -> Material.SCULK_SHRIEKER;
             case CLIMB_ONE_CM -> Material.EMERALD_ORE;
             case FLY_ONE_CM -> Material.COMMAND_BLOCK;
             case WALK_UNDER_WATER_ONE_CM -> Material.GOLDEN_BOOTS;
@@ -217,7 +217,7 @@ public record BingoStatistic(@NotNull Statistic stat, @Nullable EntityType entit
             case PIG_ONE_CM -> Material.CARROT_ON_A_STICK;
             case HORSE_ONE_CM -> Material.SADDLE;
             case SPRINT_ONE_CM -> Material.FEATHER;
-            case CROUCH_ONE_CM -> Material.SCULK_VEIN;
+            case CROUCH_ONE_CM -> Material.SCULK_SENSOR;
             case AVIATE_ONE_CM -> Material.ELYTRA;
             case TIME_SINCE_DEATH -> Material.RECOVERY_COMPASS;
             case TALKED_TO_VILLAGER -> Material.POPPY;

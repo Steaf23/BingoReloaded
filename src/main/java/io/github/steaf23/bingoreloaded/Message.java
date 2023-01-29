@@ -8,6 +8,7 @@ import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.*;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.PluginLogger;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.w3c.dom.Text;
 
@@ -40,6 +41,7 @@ public class Message
 
     public static final String PREFIX_STRING_SHORT = new TextComponent(SHORT_PREFIX).toLegacyText();
 
+    private static final PluginLogger logger = new PluginLogger(BingoReloaded.get());
     private String raw;
     private List<BaseComponent> args;
     private TextComponent base;
@@ -190,7 +192,7 @@ public class Message
 
     public static void log(String text)
     {
-        Bukkit.getLogger().info(text);
+        logger.info(text);
     }
 
     public static void log(BaseComponent text)

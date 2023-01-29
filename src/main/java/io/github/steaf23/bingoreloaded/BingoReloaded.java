@@ -71,7 +71,7 @@ public class BingoReloaded extends JavaPlugin
 //            game.resume();
 //        }
 
-        Message.log("[" + getName() + "]" + TranslationData.translate("changed"));
+        Message.log(TranslationData.translate("changed"));
         Bukkit.getLogger().info(ChatColor.GREEN + "Enabled " + this.getName());
 
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "autobingo world create 3");

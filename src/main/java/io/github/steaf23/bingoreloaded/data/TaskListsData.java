@@ -1,5 +1,6 @@
 package io.github.steaf23.bingoreloaded.data;
 
+import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.Message;
 import io.github.steaf23.bingoreloaded.item.tasks.*;
 import org.bukkit.Bukkit;
@@ -20,6 +21,9 @@ public class TaskListsData
 
     public static List<BingoTask> getTasks(String listName)
     {
+        if (!data.getConfig().contains(listName + ".tasks"))
+            return new ArrayList<>();
+
         MemorySection taskList = ((MemorySection) data.getConfig().get(listName + ".tasks"));
         List<BingoTask> finalList = new ArrayList<>();
         taskList.getValues(false).forEach((k, v) -> {
@@ -56,6 +60,53 @@ public class TaskListsData
         data.saveConfig();
     }
 
+    public static void saveTasksFromGroup(String listName, List<BingoTask> group, List<BingoTask> tasksToSave)
+    {
+        if (tasksToSave.size() == 0)
+            return;
+
+        data.getConfig().set(listName, new HashMap<String, Object>(){{
+            put("tasks", new HashMap<>());
+            put("size", 0);
+        }});
+
+        var savedTasks = getTasks(listName);
+        List<BingoTask> tasksToRemove = group.stream().filter(t ->
+        {
+            for (BingoTask saveTask : tasksToSave)
+            {
+                if (t.data.isTaskEqual(saveTask.data)) return false;
+            }
+            return true;
+        }).toList();
+
+        for (BingoTask task : savedTasks)
+        {
+            TaskData taskData = task.data;
+            for (BingoTask t : tasksToRemove)
+            {
+                if (t.data.isTaskEqual(taskData))
+                    data.getConfig().set(listName + ".tasks." + task.data.hashCode(), null);
+            }
+
+            for (BingoTask t : tasksToSave)
+            {
+                if (t.data.isTaskEqual(taskData))
+                    data.getConfig().set(listName + ".tasks." + task.data.hashCode(), null);
+            }
+        }
+
+        for (BingoTask task : tasksToSave)
+        {
+            data.getConfig().set(listName + ".tasks." + task.data.hashCode(), task);
+        }
+
+        data.getConfig().set(listName + ".size", getTasks(listName).size());
+        data.saveConfig();
+
+        removeEmptyLists();
+    }
+
     public static boolean removeList(String listName)
     {
         if (data.getConfig().contains(listName))
@@ -67,20 +118,9 @@ public class TaskListsData
         return false;
     }
 
-    /**
-     * Add empty lists to the lists.yml file.
-     * @param names names of the categories to add
-     */
-    public static void addEmptyList(String... names)
+    public static void removeEmptyLists()
     {
-        for (String n : names)
-        {
-            if (data.getConfig().contains(n)) return;
-            if (n.equals("")) return;
 
-            data.getConfig().set(n, new String[]{});
-        }
-        data.saveConfig();
     }
 
     /**

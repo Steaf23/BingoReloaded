@@ -31,6 +31,7 @@ public abstract class GameTimer
 
     public static String getTimeAsString(long seconds)
     {
+        seconds = Math.max(seconds, 0);
         if (seconds >= 60)
         {
             long minutes = (seconds / 60) % 60;

@@ -5,7 +5,6 @@ import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.player.BingoTeam;
 import io.github.steaf23.bingoreloaded.player.TeamManager;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
@@ -26,7 +25,7 @@ public class BingoScoreboard
         Objective itemObjective = itemCountBoard.registerNewObjective("item_count", "bingo_item_count", TranslationData.translate("menu.completed"));
         itemObjective.setDisplaySlot(DisplaySlot.SIDEBAR);
 
-        resetBoards();
+        reset();
     }
 
     public void updateItemCount()
@@ -49,7 +48,7 @@ public class BingoScoreboard
         }
     }
 
-    public void resetBoards()
+    public void reset()
     {
         for (String entry : itemCountBoard.getEntries())
         {

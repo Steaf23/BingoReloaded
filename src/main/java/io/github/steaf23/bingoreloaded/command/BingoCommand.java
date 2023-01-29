@@ -156,8 +156,8 @@ public class BingoCommand implements CommandExecutor
                     TaskListsData.saveTasks("CHEESE",
                             new BingoTask(new ItemTask(Material.BEACON)),
                             new BingoTask(new AdvancementTask(Bukkit.getAdvancement(NamespacedKey.fromString("minecraft:nether/obtain_crying_obsidian")))),
-                            new BingoTask(new StatisticTask(new BingoStatistic(Statistic.BELL_RING))),
-                            new BingoTask(new StatisticTask(new BingoStatistic(Statistic.KILL_ENTITY, EntityType.MUSHROOM_COW), 3))
+                            new BingoTask(new StatisticTask(new BingoStatistic(Statistic.BELL_RING), 69)),
+                            new BingoTask(new StatisticTask(new BingoStatistic(Statistic.KILL_ENTITY, EntityType.MUSHROOM_COW), 100))
                     );
 
                     BingoPlayer dummy = new BingoPlayer(p.getUniqueId(),

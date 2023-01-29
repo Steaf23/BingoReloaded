@@ -101,7 +101,7 @@ public class AutoBingoCommand implements CommandExecutor
 
                 case "card":
                     //TODO: Add card seed parameter to /autobingo card
-                    if (!setCard(settings, args[2]))
+                    if (!setCard(settings, args[2], args.length > 3 ? args[3] : "0"))
                     {
                         sendFailed("Invalid card name '" + args[2] + "'!", commandSender, worldName);
                         return false;
@@ -219,11 +219,13 @@ public class AutoBingoCommand implements CommandExecutor
         }
     }
 
-    private boolean setCard(BingoSettings settings, String cardName)
+    private boolean setCard(BingoSettings settings, String cardName, String cardSeed)
     {
+        int seed = toInt(cardSeed, 0);
         if (BingoCardsData.getCardNames().contains(cardName))
         {
             settings.card = cardName;
+            settings.cardSeed = seed;
             return true;
         }
         return false;

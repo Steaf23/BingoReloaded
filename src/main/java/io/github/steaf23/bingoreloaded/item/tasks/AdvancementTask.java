@@ -21,7 +21,6 @@ public record AdvancementTask(Advancement advancement) implements TaskData
     @Override
     public ItemText getItemDisplayName()
     {
-        //TODO: FIX ITALIC ON DISPLAYNAME!
         ItemText text = new ItemText("[", ChatColor.ITALIC);
         text.addAdvancementTitle(advancement);
         text.addText("]");
@@ -49,6 +48,12 @@ public record AdvancementTask(Advancement advancement) implements TaskData
     public int getStackSize()
     {
         return 1;
+    }
+
+    @Override
+    public boolean isTaskEqual(TaskData other)
+    {
+        return this.equals(other);
     }
 
     @Override

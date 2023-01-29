@@ -8,7 +8,9 @@ import io.github.steaf23.bingoreloaded.item.tasks.*;
 import io.github.steaf23.bingoreloaded.util.FlexColor;
 import io.github.steaf23.bingoreloaded.util.GUIPreset5x9;
 import net.md_5.bungee.api.ChatColor;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.advancement.Advancement;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -18,9 +20,6 @@ import java.util.*;
 
 public class ListEditorUI extends SubMenuUI
 {
-    private AbstractGUIInventory items;
-    private AbstractGUIInventory advancements;
-    private AbstractGUIInventory statistics;
     private final String listName;
 
     private static final InventoryItem ITEMS = new InventoryItem(GUIPreset5x9.THREE_CENTER.positions[0], Material.APPLE, TITLE_PREFIX + "Items", "Click to add or remove items");
@@ -32,7 +31,7 @@ public class ListEditorUI extends SubMenuUI
 
     public ListEditorUI(String listName, AbstractGUIInventory parent)
     {
-        super("", parent);
+        super("Editing '" + listName + "'", parent);
         this.listName = listName;
         addMenuOption(ITEMS, createItemPicker());
         addMenuOption(ADVANCEMENTS, createAdvancementPicker());
@@ -86,69 +85,27 @@ public class ListEditorUI extends SubMenuUI
             }
         }
 
-        TaskPickerUI itemPicker = new TaskPickerUI(tasks,"Select Items", this, listName)
-        {
-            @Override
-            public void handleClose(final InventoryCloseEvent event)
-            {
-//                super.handleClose(event);
-//                List<ItemTask> tasks = new ArrayList<>();
-//                getSelectedItems().forEach((item) -> {
-//                    ItemTask newItem = new ItemTask(item.getType(), item.getAmount());
-//                    tasks.add(newItem);
-//                });
-//                TaskListsData.saveTasks(listName, tasks.toArray(BingoTask[]::new));
-            }
-        };
+        TaskPickerUI itemPicker = new TaskPickerUI(tasks,"Select Items", this, listName);
         return itemPicker;
     }
 
     private AbstractGUIInventory createAdvancementPicker()
     {
         List<BingoTask> tasks = new ArrayList<>();
-//        for (Iterator<Advancement> it = Bukkit.advancementIterator(); it.hasNext(); )
-//        {
-//            Advancement a = it.next();
-//            String key = a.getKey().getKey();
-//            if (key.startsWith("recipes/") || key.endsWith("/root"))
-//            {
-//                continue;
-//            }
-//
-//            AdvancementTask task = new AdvancementTask(a);
-//            tasks.add(task);
-//            //TODO: move this to BingoTaskBuilder
-////            InventoryItem item = new AdvancementListItem(a);
-////            new ItemTextBuilder(ChatColor.DARK_PURPLE)
-////                    .translate(ItemTextBuilder.getAdvancementDescKey(a))
-////                    .text("" + ChatColor.GRAY + "Click to make this item\n appear on bingo cards")
-////                    .buildDescription(item);
-////            new ItemTextBuilder(ChatColor.AQUA, "italic")
-////                    .text("[")
-////                    .translate(ItemTextBuilder.getAdvancementTitleKey(a))
-////                    .text("]")
-////                    .buildName(item);
-////            options.add(item);
-//        }
-
-        TaskPickerUI advancementPicker = new TaskPickerUI(tasks, "Add Advancements", this, listName)
+        for (Iterator<Advancement> it = Bukkit.advancementIterator(); it.hasNext(); )
         {
-            @Override
-            public void handleClose(final InventoryCloseEvent event)
+            Advancement a = it.next();
+            String key = a.getKey().getKey();
+            if (key.startsWith("recipes/") || key.endsWith("/root"))
             {
-                super.handleClose(event);
-                //TODO: REDO
-//                List<AdvancementTask> tasks = new ArrayList<>();
-//                getSelectedItems().forEach((item) -> {
-//                    if ((item instanceof AdvancementListItem advItem))
-//                    {
-//                        AdvancementTask slot = new AdvancementTask(advItem.advancement);
-//                        tasks.add(slot);
-//                    }
-//                });
-//                BingoTasksData.saveTasks(listName, tasks.toArray(AdvancementTask[]::new));
+                continue;
             }
-        };
+
+            AdvancementTask task = new AdvancementTask(a);
+            tasks.add(new BingoTask(task));
+        }
+
+        TaskPickerUI advancementPicker = new TaskPickerUI(tasks, "Add Advancements", this, listName);
         return advancementPicker;
     }
 }

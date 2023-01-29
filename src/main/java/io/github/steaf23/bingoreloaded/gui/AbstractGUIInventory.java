@@ -28,9 +28,10 @@ public abstract class AbstractGUIInventory
     public abstract void delegateClick(final InventoryClickEvent event, int slotClicked, Player player, ClickType clickType);
 
     protected static final String TITLE_PREFIX = "" + ChatColor.GOLD + ChatColor.BOLD;
-
     protected Inventory inventory = null;
+
     private final AbstractGUIInventory parent;
+    private int maxStackSizeOverride = -1; // -1 means no override (i.e. default stack sizes for all items)
 
     public AbstractGUIInventory(int size, String title, AbstractGUIInventory parent)
     {
@@ -40,6 +41,11 @@ public abstract class AbstractGUIInventory
         UIManager.addInventory(this);
 
         Message.log("Constructing " + title);
+    }
+
+    protected void setMaxStackSizeOverride(int maxValue)
+    {
+        maxStackSizeOverride = Math.min(64, Math.max(1, maxValue));
     }
 
     public final void handleClick(final InventoryClickEvent event)
@@ -93,6 +99,9 @@ public abstract class AbstractGUIInventory
      */
     protected void addOption(InventoryItem option)
     {
+        if (maxStackSizeOverride != -1)
+            inventory.setMaxStackSize(maxStackSizeOverride);
+
         if (option.getSlot() == -1)
         {
             inventory.addItem(option);

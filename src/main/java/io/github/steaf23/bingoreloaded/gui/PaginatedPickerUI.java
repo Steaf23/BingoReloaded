@@ -3,7 +3,8 @@ package io.github.steaf23.bingoreloaded.gui;
 import io.github.steaf23.bingoreloaded.Message;
 import io.github.steaf23.bingoreloaded.data.TranslationData;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
-import org.bukkit.ChatColor;
+import io.github.steaf23.bingoreloaded.item.ItemText;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -12,17 +13,28 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public abstract class PaginatedPickerUI extends AbstractGUIInventory
 {
+    /**
+     * Called by this Inventory's ClickEvents.
+     * @param event
+     * @param clickedOption item that was clicked on, it's slot being the same slot that was clicked on.
+     * @param player
+     */
     public abstract void onOptionClickedDelegate(final InventoryClickEvent event, InventoryItem clickedOption, Player player);
 
-    private static final int ITEMS_PER_PAGE = 45;
+    public static final int ITEMS_PER_PAGE = 45;
+
+    // All the items that exist in this picker
     private final List<InventoryItem> items;
+
+    // All selected items in this picker
     private final List<InventoryItem> selectedItems;
+
+    // All items that pass the filter, these are always the items shown to the player
     private final List<InventoryItem> filteredItems;
     private int pageAmount;
     private int currentPage;
@@ -98,7 +110,7 @@ public abstract class PaginatedPickerUI extends AbstractGUIInventory
         }
         else if (isSlotValidOption(slotClicked)) //If it is a normal item;
         {
-            onOptionClickedDelegate(event, filteredItems.get(ITEMS_PER_PAGE * currentPage + slotClicked), player);
+            onOptionClickedDelegate(event, filteredItems.get(ITEMS_PER_PAGE * currentPage + slotClicked).inSlot(slotClicked), player);
         }
     }
 
@@ -238,34 +250,23 @@ public abstract class PaginatedPickerUI extends AbstractGUIInventory
 
     public void selectItem(InventoryItem item, boolean value)
     {
-        if (items.contains(item))
+        if (!items.contains(item))
         {
-            ItemMeta meta = item.getItemMeta();
-            if (meta == null) return;
-
-            if (value)
-            {
-                meta.setLore(List.of("This task has been added to the list"));
-                meta.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_UNBREAKABLE);
-
-                item.setItemMeta(meta);
-                item.addUnsafeEnchantment(Enchantment.DURABILITY, 1);
-
-                selectedItems.add(item);
-            }
-            else
-            {
-                item.setAmount(1);
-                meta.setLore(List.of(ChatColor.GRAY + "Click to make this task", ChatColor.GRAY + "appear on bingo cards"));
-                meta.removeItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_UNBREAKABLE);
-
-                item.setItemMeta(meta);
-                item.removeEnchantment(Enchantment.DURABILITY);
-                selectedItems.remove(item);
-            }
-
-            items.set(items.indexOf(item), item);
+            return;
         }
+
+        if (value)
+        {
+            selectedItems.add(item);
+        }
+        else
+        {
+            selectedItems.remove(item);
+        }
+
+        item.highlight(value);
+
+        items.set(items.indexOf(item), item);
         updatePage();
     }
 
@@ -321,5 +322,40 @@ public abstract class PaginatedPickerUI extends AbstractGUIInventory
     private void updatePageAmount()
     {
         pageAmount = Math.max(1, (int)Math.ceil(filteredItems.size() / (double)ITEMS_PER_PAGE));
+    }
+
+    public int getCurrentPage()
+    {
+        return currentPage;
+    }
+
+    //
+
+    /**
+     * Replaces the item in the given slot at the current page to the new item. Keeps the item's selection status.
+     * @param newItem
+     * @param slot
+     */
+    public void replaceItem(InventoryItem newItem, int slot)
+    {
+        InventoryItem oldItem = filteredItems.get(ITEMS_PER_PAGE * currentPage + slot);
+        replaceItem(newItem, oldItem);
+    }
+
+    public void replaceItem(InventoryItem newItem, InventoryItem oldItem)
+    {
+        if (!items.contains(oldItem))
+        {
+            return;
+        }
+
+        int idx = items.indexOf(oldItem);
+        items.set(items.indexOf(oldItem), newItem);
+        filteredItems.set(filteredItems.indexOf(oldItem), newItem);
+
+        if (selectedItems.contains(oldItem))
+        {
+            selectedItems.remove(oldItem);
+        }
     }
 }

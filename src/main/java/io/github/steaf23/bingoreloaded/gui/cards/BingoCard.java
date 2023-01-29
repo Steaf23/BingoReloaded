@@ -48,6 +48,7 @@ public class BingoCard extends AbstractGUIInventory implements Listener
         addOption(cardInfoItem);
 
         BingoReloaded.registerListener(this);
+        this.setMaxStackSizeOverride(64);
     }
 
     public void generateCard(String cardName, int seed)
@@ -119,7 +120,7 @@ public class BingoCard extends AbstractGUIInventory implements Listener
     {
         for (int i = 0; i < tasks.size(); i++)
         {
-            InventoryItem item = new InventoryItem(tasks.get(i).asStack()).inSlot(size.getCardInventorySlot(i));
+            InventoryItem item = tasks.get(i).asStack().inSlot(size.getCardInventorySlot(i));
             addOption(item);
         }
 

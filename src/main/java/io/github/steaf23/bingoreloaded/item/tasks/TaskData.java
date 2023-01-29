@@ -14,6 +14,6 @@ public interface TaskData extends ConfigurationSerializable, Serializable
     ItemText[] getItemDescription();
     BaseComponent getDescription();
     int getStackSize();
-
+    boolean isTaskEqual(TaskData other);
     @NotNull PersistentDataContainer pdcSerialize(PersistentDataContainer stream);
 }

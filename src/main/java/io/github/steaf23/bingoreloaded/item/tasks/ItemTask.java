@@ -14,11 +14,17 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public record ItemTask(Material material, int count) implements TaskData
+public record ItemTask(Material material, int count) implements CountableTask
 {
     public ItemTask(Material material)
     {
         this(material, 1);
+    }
+
+    public ItemTask(Material material, int count)
+    {
+        this.material = material;
+        this.count = Math.min(64, Math.max(1, count));
     }
 
     @Override
@@ -77,10 +83,31 @@ public record ItemTask(Material material, int count) implements TaskData
         }};
     }
 
+    @Override
+    public boolean isTaskEqual(TaskData other)
+    {
+        if (!(other instanceof ItemTask itemTask))
+            return false;
+
+        return material.equals(itemTask.material);
+    }
+
     public static ItemTask deserialize(Map<String, Object> data)
     {
         return new ItemTask(
                 Material.valueOf((String) data.get("item")),
                 (int) data.get("count"));
+    }
+
+    @Override
+    public int getCount()
+    {
+        return count;
+    }
+
+    @Override
+    public CountableTask updateTask(int newCount)
+    {
+        return new ItemTask(material, newCount);
     }
 }

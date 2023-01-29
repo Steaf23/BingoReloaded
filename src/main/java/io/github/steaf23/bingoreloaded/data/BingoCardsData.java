@@ -55,8 +55,10 @@ public class BingoCardsData
 
     public static BingoTask getRandomItemTask(String cardName)
     {
-        List<BingoTask> allItemTasks = new ArrayList<>();
-        getLists(cardName).forEach((l) -> allItemTasks.addAll(TaskListsData.getItemTasks(l)));
+        List<BingoTask> tasks = new ArrayList<>();
+        getLists(cardName).forEach((l) -> tasks.addAll(TaskListsData.getItemTasks(l)));
+
+        List<BingoTask> allItemTasks = tasks.stream().filter(task -> task.type == BingoTask.TaskType.ITEM).toList();
 
         if (allItemTasks.size() > 0)
             return allItemTasks.get(Math.abs(new Random().nextInt(allItemTasks.size())));

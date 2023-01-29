@@ -16,11 +16,17 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public record StatisticTask(BingoStatistic statistic, int count) implements TaskData
+public record StatisticTask(BingoStatistic statistic, int count) implements CountableTask
 {
     public StatisticTask(BingoStatistic statistic)
     {
         this(statistic, 1);
+    }
+
+    public StatisticTask(BingoStatistic statistic, int count)
+    {
+        this.statistic = statistic;
+        this.count = Math.min(64, Math.max(1, count));
     }
 
     @Override
@@ -55,7 +61,7 @@ public record StatisticTask(BingoStatistic statistic, int count) implements Task
                 }
             }
             case TRAVEL -> {
-                text.add(amount);
+                text.add(new ItemText(Integer.toString(count * 10)));
                 text.addText(" Blocks ");
                 text.addStatistic(statistic.stat());
             }
@@ -88,6 +94,15 @@ public record StatisticTask(BingoStatistic statistic, int count) implements Task
     public int getStackSize()
     {
         return count;
+    }
+
+    @Override
+    public boolean isTaskEqual(TaskData other)
+    {
+        if (!(other instanceof StatisticTask statisticTask))
+            return false;
+
+        return statistic.equals(statisticTask.statistic);
     }
 
     @Override
@@ -142,5 +157,17 @@ public record StatisticTask(BingoStatistic statistic, int count) implements Task
                 (BingoStatistic) data.get("statistic"),
                 (int)data.get("count")
         );
+    }
+
+    @Override
+    public int getCount()
+    {
+        return count;
+    }
+
+    @Override
+    public CountableTask updateTask(int newCount)
+    {
+        return new StatisticTask(statistic, newCount);
     }
 }

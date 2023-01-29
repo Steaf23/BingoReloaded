@@ -3,10 +3,14 @@ package io.github.steaf23.bingoreloaded.item.tasks;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.Message;
 import io.github.steaf23.bingoreloaded.data.TranslationData;
+import io.github.steaf23.bingoreloaded.item.InventoryItem;
 import io.github.steaf23.bingoreloaded.item.ItemText;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
+import io.github.steaf23.bingoreloaded.player.BingoTeam;
+import io.github.steaf23.bingoreloaded.util.FlexColor;
 import io.github.steaf23.bingoreloaded.util.GameTimer;
 import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
@@ -23,7 +27,7 @@ import java.util.*;
 
 public class BingoTask implements ConfigurationSerializable
 {
-    enum TaskType
+    public enum TaskType
     {
         ITEM,
         STATISTIC,
@@ -91,9 +95,11 @@ public class BingoTask implements ConfigurationSerializable
         return voided && completedBy.isPresent();
     }
 
-    public ItemStack asStack()
+    public InventoryItem asStack()
     {
         ItemStack item;
+
+        // Step 1: create the item and put the new name, description and material on it.
 
         if (isVoided()) // VOIDED TASK
         {
@@ -149,7 +155,10 @@ public class BingoTask implements ConfigurationSerializable
             item.setAmount(data.getStackSize());
         }
 
-        ItemMeta meta = item.getItemMeta();
+        // STEP 2: Add additional stuff like pdc data and glowing effect.
+
+        InventoryItem finalItem = new InventoryItem(item);
+        ItemMeta meta = finalItem.getItemMeta();
         PersistentDataContainer pdcData = meta.getPersistentDataContainer();
         // Serialize specific data first, to catch discourage null pointers for incomplete implementations.
         pdcData = data.pdcSerialize(pdcData);
@@ -162,23 +171,21 @@ public class BingoTask implements ConfigurationSerializable
         else
             pdcData.set(getTaskDataKey("completed_by"), PersistentDataType.STRING, "");
 
-
+        meta.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES);
+        finalItem.setItemMeta(meta);
 
         if (glowing && completedBy.isEmpty())
         {
-
-            meta.addEnchant(Enchantment.DURABILITY, 1, true);
+            finalItem.highlight(true);
         }
-        meta.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES);
-        item.setItemMeta(meta);
-        return item;
+
+        return finalItem;
     }
 
     public static BingoTask fromStack(ItemStack in)
     {
         PersistentDataContainer pdcData = in.getItemMeta().getPersistentDataContainer();
 
-        Message.log(in.getItemMeta().getAsString());
         boolean voided = pdcData.getOrDefault(getTaskDataKey("voided"), PersistentDataType.BYTE, (byte)0) != 0;
         UUID completedBy = null;
         String idStr = pdcData.getOrDefault(getTaskDataKey("completed_by"), PersistentDataType.STRING, "");
@@ -210,29 +217,25 @@ public class BingoTask implements ConfigurationSerializable
         return new NamespacedKey(BingoReloaded.get(), "task." + property);
     }
 
-//    // TODO: Move to BingoTaskBuilder
-//    public boolean complete(BingoPlayer player, long time, BingoTeam team)
-//    {
-//        if (completedBy.isPresent())
-//            return false;
-//
-//        completedBy = Optional.of(player);
-//        completedAt = time;
-//
-//        FlexColor color = CardBuilder.completeColor(team);
-//        Material completeMaterial = color.glassPane;
-//
-//        BaseComponent itemName = data.getDisplayName().asComponent();
-//
-//        String timeString = GameTimer.getTimeAsString(time);
-//
-//        new Message("game.item.completed").color(ChatColor.GREEN)
-//                .component(itemName).color(nameColor)
-//                .arg(FlexColor.fromName(team.getName()).getTranslatedName()).color(color.chatColor).bold()
-//                .arg(timeString).color(ChatColor.WHITE)
-//                .sendAll();
-//        return true;
-//    }
+
+    //TODO: Implement
+    public boolean complete(BingoPlayer player, long time, BingoTeam team)
+    {
+        if (completedBy.isPresent())
+            return false;
+
+        completedBy = Optional.of(player);
+        completedAt = time;
+
+        String timeString = GameTimer.getTimeAsString(time);
+
+        new Message("game.item.completed").color(ChatColor.GREEN)
+                .component(data.getItemDisplayName().asComponent()).color(nameColor)
+                .arg(team.getColoredName().asLegacyString())
+                .arg(timeString).color(ChatColor.WHITE)
+                .sendAll();
+        return true;
+    }
 
     @NotNull
     @Override

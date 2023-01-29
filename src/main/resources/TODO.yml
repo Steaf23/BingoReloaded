@@ -31,4 +31,8 @@ fix /autobingo end command doesn't want to accept the world_name argument
 
 add custom kit options
 
-make timer string return atleast 0
+update autobingo page with world commands and /bingo card seed command
+
+Don't allow the player to hold the card in the offhand!
+
+see what players joined what team on TAB and in team selector

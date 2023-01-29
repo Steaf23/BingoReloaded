@@ -1,5 +1,7 @@
 package io.github.steaf23.bingoreloaded.item;
 
+import io.github.steaf23.bingoreloaded.Message;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -109,6 +111,18 @@ public class InventoryItem extends ItemStack
         if (meta != null)
         {
             meta.setDisplayName(name);
+        }
+    }
+
+    public void highlight(boolean value)
+    {
+        if (value)
+        {
+            addUnsafeEnchantment(Enchantment.DURABILITY, 1);
+        }
+        else
+        {
+            removeEnchantment(Enchantment.DURABILITY);
         }
     }
 }
