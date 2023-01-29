@@ -46,7 +46,7 @@ public class AutoBingoTabCompleter implements TabCompleter
                     case "kit":
                         return List.of("custom", "normal", "overpowered", "reloaded", "hardcore");
                     case "effects":
-                        return List.of("all", "none", "water_breathing", "night_vision", "fire_resistance", "no_fall", "card_speed");
+                        return List.of("all", "none", "water_breathing", "night_vision", "fire_resistance", "no_fall_damage", "card_speed");
                     case "card":
                         return BingoCardsData.getCardNames().stream().toList();
                     case "start":

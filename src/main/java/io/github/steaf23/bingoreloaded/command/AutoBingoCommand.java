@@ -44,6 +44,7 @@ public class AutoBingoCommand implements CommandExecutor
                     return false;
                 }
                 create(worldName, args[2]);
+                sendSuccess("Connected Bingo Reloaded to this world!", worldName);
                 return true;
             }
             sendFailed("Cannot perform command on a world that has not been created yet!", worldName);
@@ -54,6 +55,7 @@ public class AutoBingoCommand implements CommandExecutor
             if (args.length > 1 && args[1].equals("destroy"))
             {
                 destroy(worldName);
+                sendSuccess("Disconnected Bingo Reloaded from this world!", worldName);
                 return true;
             }
         }
@@ -69,6 +71,7 @@ public class AutoBingoCommand implements CommandExecutor
                         sendFailed("Invalid command, could not start game with gamemode '" + args[2] + "'!", worldName);
                         return false;
                     }
+                    sendSuccess("Started bingo!", worldName);
                     return true;
 
                 case "kit":
@@ -77,10 +80,11 @@ public class AutoBingoCommand implements CommandExecutor
                         sendFailed("Could not find Kit with name '" + args[2] + "'!", worldName);
                         return false;
                     }
+                    sendSuccess("Kit set to " + settings.kit.displayName, worldName);
                     return true;
 
                 case "effects":
-                    // autobingo world effect
+                    // autobingo world effect <effect_name> [true | false]
                     // If argument count is only 1, enable all, none or just the single effect typed.
                     //     Else default enable effect unless the second argument is "false".
                     boolean enable = args.length > 3 && args[3].equals("false") ? false : true;
@@ -89,6 +93,7 @@ public class AutoBingoCommand implements CommandExecutor
                         sendFailed("Invalid effect setting '" + args[2] + "' to '" + enable + "'!", worldName);
                         return false;
                     }
+                    sendSuccess("Updated active effects to " + settings.effects, worldName);
                     return true;
 
                 case "card":
@@ -97,6 +102,8 @@ public class AutoBingoCommand implements CommandExecutor
                         sendFailed("Invalid card name '" + args[2] + "'!", worldName);
                         return false;
                     }
+                    sendSuccess("Playing card set to " + settings.card + " with " +
+                            (settings.cardSeed == 0 ? " no seed" : " seed " + settings.cardSeed), worldName);
                     return true;
 
                 case "duration":
@@ -105,6 +112,7 @@ public class AutoBingoCommand implements CommandExecutor
                         sendFailed("Could not set Countdown game duration to " + args[2] + "!", worldName);
                         return false;
                     }
+                    sendSuccess("Set duration for countdown mode to " + settings.countdownGameDuration, worldName);
                     return true;
 
                 case "team":
@@ -114,7 +122,6 @@ public class AutoBingoCommand implements CommandExecutor
                         sendFailed("Invalid number of arguments: " + args.length + "!", worldName);
                         return false;
                     }
-
                     return setPlayerTeam(worldName, args[2], args[3]);
 
                 default:
@@ -132,6 +139,7 @@ public class AutoBingoCommand implements CommandExecutor
                 }
                 else
                 {
+                    sendSuccess("Game forcefully ended!", worldName);
                     return true;
                 }
             }
@@ -281,7 +289,7 @@ public class AutoBingoCommand implements CommandExecutor
             }
 
             game.getTeamManager().removePlayerFromAllTeams(bPlayer);
-            Message.log("Player " + playerName + " removed from all teams");
+            sendSuccess("Player " + playerName + " removed from all teams", worldName);
         }
         else
         {
@@ -289,7 +297,7 @@ public class AutoBingoCommand implements CommandExecutor
             {
                 return false;
             }
-            Message.log("Player " + playerName + " added to team " + teamName + "");
+            sendSuccess("Player " + playerName + " added to team " + teamName + "", worldName);
         }
         return true;
     }
