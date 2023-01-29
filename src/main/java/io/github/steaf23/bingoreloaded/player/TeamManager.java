@@ -22,14 +22,14 @@ import java.util.*;
 
 public class TeamManager
 {
-    private final List<BingoTeam> activeTeams;
+    private final Set<BingoTeam> activeTeams;
     private final Scoreboard teams;
     private int maximumTeamSize;
     private String worldName;
 
     public TeamManager(Scoreboard board, String worldName)
     {
-        this.activeTeams = new ArrayList<>();
+        this.activeTeams = new HashSet<>();
         this.teams = board;
         this.worldName = worldName;
         this.maximumTeamSize = GameWorldManager.get().getGameSettings(worldName).maxTeamSize;
@@ -37,9 +37,15 @@ public class TeamManager
         createTeams();
     }
 
-    // Returns null when a player is not part of a team.
+    /**
+     *
+     * @param player
+     * @return The team of the player, null if the team is not active
+     */
     public BingoTeam getTeamOfPlayer(BingoPlayer player)
     {
+        if (!activeTeams.contains(player.team()))
+            return null;
         return player.team();
     }
 
@@ -48,7 +54,8 @@ public class TeamManager
     {
         for (BingoPlayer participant : getParticipants())
         {
-            if (participant.player().equals(player))
+            if (participant.player().equals(player) &&
+                    GameWorldManager.getWorldName(player.getWorld()).equals(worldName))
             {
                 return participant;
             }
@@ -94,7 +101,7 @@ public class TeamManager
             Message.log("Team " + FlexColor.fromName(teamName).getTranslatedName() + " does not exist, could not add " + player.getDisplayName() + " to this team!");
             return;
         }
-        if (team.getEntries().size() >= maximumTeamSize)
+        if (team.getEntries().size() >= maximumTeamSize + 1)
         {
             Message.log("Team " + FlexColor.fromName(teamName).getTranslatedName() + " has reached it's capacity of " + maximumTeamSize + " players!");
             return;
@@ -104,6 +111,7 @@ public class TeamManager
             removePlayerFromAllTeams(getBingoPlayer(player));
 
         BingoTeam bingoTeam = activateTeam(team);
+        bingoTeam.players.add(getBingoPlayer(player));
 
         if (bingoTeam != null)
         {
@@ -118,6 +126,9 @@ public class TeamManager
     {
         if (!getParticipants().contains(player))
             return;
+
+        getTeamOfPlayer(player).players.remove(player);
+
         for (Team team : teams.getTeams())
         {
             team.removeEntry(player.player().getName());
@@ -165,7 +176,7 @@ public class TeamManager
         team.card = card;
     }
 
-    public List<BingoTeam> getActiveTeams()
+    public Set<BingoTeam> getActiveTeams()
     {
         return activeTeams;
     }
@@ -234,15 +245,7 @@ public class TeamManager
 
     public Set<BingoPlayer> getPlayersOfTeam(BingoTeam team)
     {
-        Set<BingoPlayer> players = new HashSet<>();
-        for (BingoPlayer p : getParticipants())
-        {
-            if (team.equals(getTeamOfPlayer(p)))
-            {
-                players.add(p);
-            }
-        }
-        return players;
+        return team.players;
     }
 
     public BingoTeam getLeadingTeam()

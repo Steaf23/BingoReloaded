@@ -217,9 +217,7 @@ public class BingoTask implements ConfigurationSerializable
         return new NamespacedKey(BingoReloaded.get(), "task." + property);
     }
 
-
-    //TODO: Implement
-    public boolean complete(BingoPlayer player, long time, BingoTeam team)
+    public boolean complete(BingoPlayer player, long time)
     {
         if (completedBy.isPresent())
             return false;
@@ -231,7 +229,7 @@ public class BingoTask implements ConfigurationSerializable
 
         new Message("game.item.completed").color(ChatColor.GREEN)
                 .component(data.getItemDisplayName().asComponent()).color(nameColor)
-                .arg(team.getColoredName().asLegacyString())
+                .arg(player.team().getColoredName().asLegacyString())
                 .arg(timeString).color(ChatColor.WHITE)
                 .sendAll();
         return true;

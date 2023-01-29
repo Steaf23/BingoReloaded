@@ -4,7 +4,7 @@ import io.github.steaf23.bingoreloaded.data.*;
 import io.github.steaf23.bingoreloaded.gui.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.gui.cards.BingoCard;
 import io.github.steaf23.bingoreloaded.gui.cards.CardBuilder;
-import io.github.steaf23.bingoreloaded.event.BingoCardSlotCompleteEvent;
+import io.github.steaf23.bingoreloaded.event.BingoCardTaskCompleteEvent;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.player.BingoTeam;
 import io.github.steaf23.bingoreloaded.player.PlayerKit;
@@ -33,7 +33,7 @@ import java.util.*;
 
 public class BingoGame implements Listener
 {
-    public boolean inProgress;
+    private boolean inProgress;
     public GameTimer timer;
 
     private final String worldName;
@@ -427,10 +427,15 @@ public class BingoGame implements Listener
         return worldName;
     }
 
+    public boolean isInProgress()
+    {
+        return inProgress;
+    }
+
 // @EventHandlers ========================================================================
 
     @EventHandler
-    public void onCardSlotCompleteEvent(final BingoCardSlotCompleteEvent event)
+    public void onCardSlotCompleteEvent(final BingoCardTaskCompleteEvent event)
     {
         if (!getWorldName().equals(event.getWorldName()))
             return;
@@ -450,7 +455,8 @@ public class BingoGame implements Listener
     @EventHandler
     public void onPlayerDropItem(final PlayerDropItemEvent dropEvent)
     {
-        if (!getWorldName().equals(GameWorldManager.getWorldName(dropEvent.getPlayer().getWorld())))
+        BingoPlayer player = getTeamManager().getBingoPlayer(dropEvent.getPlayer());
+        if (player == null || !inProgress)
             return;
 
         if (dropEvent.getItemDrop().getItemStack().equals(settings.kit.cardItem.getAsStack()) ||
@@ -465,7 +471,7 @@ public class BingoGame implements Listener
     public void onItemInteract(final PlayerInteractEvent event)
     {
         BingoPlayer player = getTeamManager().getBingoPlayer(event.getPlayer());
-        if (player == null || !player.isInBingoWorld(getWorldName()))
+        if (player == null || !inProgress)
             return;
 
         if (event.getItem() == null || event.getHand() != EquipmentSlot.HAND || event.getItem().getType().isAir())
@@ -515,7 +521,11 @@ public class BingoGame implements Listener
     @EventHandler
     public void onInventoryClick(final InventoryClickEvent event)
     {
-        if (!getWorldName().equals(GameWorldManager.getWorldName(event.getWhoClicked().getWorld())))
+        if (!(event.getWhoClicked() instanceof Player p))
+            return;
+
+        BingoPlayer player = getTeamManager().getBingoPlayer(p);
+        if (player == null || !inProgress)
             return;
 
         ItemStack item = event.getCurrentItem();
@@ -530,7 +540,11 @@ public class BingoGame implements Listener
     @EventHandler
     public void onInventoryDrag(final InventoryDragEvent event)
     {
-        if (!getWorldName().equals(GameWorldManager.getWorldName(event.getWhoClicked().getWorld())))
+        if (!(event.getWhoClicked() instanceof Player p))
+            return;
+
+        BingoPlayer player = getTeamManager().getBingoPlayer(p);
+        if (player == null || !inProgress)
             return;
 
         if (event.getCursor() == null) return;
@@ -544,11 +558,13 @@ public class BingoGame implements Listener
     @EventHandler
     public void onEntityDamage(final EntityDamageEvent event)
     {
-        if (!getWorldName().equals(GameWorldManager.getWorldName(event.getEntity().getWorld())))
+        if (!(event.getEntity() instanceof Player p))
             return;
 
-        if (!(event.getEntity() instanceof Player player))
+        BingoPlayer player = getTeamManager().getBingoPlayer(p);
+        if (player == null || !inProgress)
             return;
+
         if (!getTeamManager().getParticipants().contains(player))
             return;
         if (event.getCause() != EntityDamageEvent.DamageCause.FALL)
@@ -563,25 +579,20 @@ public class BingoGame implements Listener
     @EventHandler
     public void onPlayerJoin(final PlayerJoinEvent event)
     {
-        if (!getWorldName().equals(GameWorldManager.getWorldName(event.getPlayer().getWorld())))
+        BingoPlayer player = getTeamManager().getBingoPlayer(event.getPlayer());
+        if (player == null || !inProgress)
             return;
+
+        Player onlinePlayer = player.player();
 
         if (inProgress)
         {
-            if (getTeamManager().getParticipants().contains(event.getPlayer()))
+            if (getTeamManager().getParticipants().contains(onlinePlayer))
             {
-                new Message("game.player.join_back").send(event.getPlayer());
+                new Message("game.player.join_back").send(onlinePlayer);
                 scoreboard.updateItemCount();
                 return;
             }
-
-            BingoTeam team = RecoveryCardData.getActiveTeamOfPlayer(event.getPlayer(), getTeamManager());
-            if (team == null)
-                return;
-
-            getTeamManager().addPlayerToTeam(event.getPlayer(), team.getName());
-            scoreboard.updateItemCount();
-            scoreboard.updateItemCount();
         }
     }
 

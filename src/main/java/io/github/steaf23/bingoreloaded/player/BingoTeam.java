@@ -13,12 +13,15 @@ import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Team;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class BingoTeam
 {
     public final Team team;
     public BingoCard card;
+    public Set<BingoPlayer> players;
     public boolean outOfTheGame = false;
 
     private FlexColor color;
@@ -28,6 +31,7 @@ public class BingoTeam
         this.team = team;
         this.card = card;
         this.color = color;
+        this.players = new HashSet<>();
     }
 
     public String getName()
@@ -38,11 +42,6 @@ public class BingoTeam
     public FlexColor getColor()
     {
         return color;
-    }
-
-    public List<OfflinePlayer> getPlayers()
-    {
-        return Arrays.stream(Bukkit.getOfflinePlayers()).filter(p -> team.getEntries().contains(p.getName())).toList();
     }
 
     public ItemText getColoredName()

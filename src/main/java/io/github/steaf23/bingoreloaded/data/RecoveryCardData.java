@@ -6,6 +6,7 @@ import io.github.steaf23.bingoreloaded.gui.cards.CardBuilder;
 import io.github.steaf23.bingoreloaded.gui.cards.CardSize;
 import io.github.steaf23.bingoreloaded.BingoGame;
 import io.github.steaf23.bingoreloaded.BingoGamemode;
+import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.player.BingoTeam;
 import io.github.steaf23.bingoreloaded.player.TeamManager;
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -129,18 +130,5 @@ public class RecoveryCardData
     {
         data.getConfig().set("ended", value);
         data.saveConfig();
-    }
-
-    public static BingoTeam getActiveTeamOfPlayer(Player player, TeamManager manager)
-    {
-        String name = player.getName();
-        for (BingoTeam t : manager.getActiveTeams())
-        {
-            if (data.getConfig().getStringList("teams." + t.getName()).contains(name))
-            {
-                return t;
-            }
-        }
-        return null;
     }
 }

@@ -124,7 +124,7 @@ public class GameWorldManager
 
     public boolean isGameWorldActive(String worldName)
     {
-        return doesGameWorldExist(worldName) && activeGames.containsKey(worldName) && activeGames.get(worldName).inProgress;
+        return doesGameWorldExist(worldName) && activeGames.containsKey(worldName) && activeGames.get(worldName).isInProgress();
     }
 
     public boolean isGameWorldActive(World world)
