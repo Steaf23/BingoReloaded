@@ -3,6 +3,7 @@ package io.github.steaf23.bingoreloaded.player;
 import io.github.steaf23.bingoreloaded.*;
 import io.github.steaf23.bingoreloaded.data.TranslationData;
 import io.github.steaf23.bingoreloaded.event.BingoParticipantsUpdatedEvent;
+import io.github.steaf23.bingoreloaded.event.BingoStartedEvent;
 import io.github.steaf23.bingoreloaded.gui.AbstractGUIInventory;
 import io.github.steaf23.bingoreloaded.gui.FilterType;
 import io.github.steaf23.bingoreloaded.gui.PaginatedPickerUI;
@@ -334,7 +335,8 @@ public class TeamManager implements Listener
             if (getParticipants().contains(player))
             {
                 new BingoMessage("game.player.join_back").send(onlinePlayer);
-//                scoreboard.updateItemCount();
+                var updatedEvent = new BingoParticipantsUpdatedEvent(worldName);
+                Bukkit.getPluginManager().callEvent(updatedEvent);
                 return;
             }
         }
