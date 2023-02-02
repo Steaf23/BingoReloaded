@@ -36,6 +36,7 @@ public class BingoMessage extends Message
     {
         super(translatePath);
     }
+
     @Override
     protected void createMessage()
     {
@@ -81,5 +82,23 @@ public class BingoMessage extends Message
     public static void error(String text)
     {
         Bukkit.getLogger().severe("[BingoReloaded]: " + text);
+    }
+
+    public void sendAll(String worldName)
+    {
+        if (!GameWorldManager.get().doesGameWorldExist(worldName))
+            return;
+
+        BingoGame game = GameWorldManager.get().getGame(worldName);
+        if (game == null)
+            return;
+
+        game.getTeamManager().getParticipants().forEach( p ->
+        {
+            if (p.gamePlayer().isPresent())
+            {
+                send(p.gamePlayer().get());
+            }
+        });
     }
 }

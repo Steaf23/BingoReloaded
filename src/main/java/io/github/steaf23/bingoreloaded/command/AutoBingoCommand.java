@@ -6,7 +6,6 @@ import io.github.steaf23.bingoreloaded.gui.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.gui.cards.CardSize;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.player.PlayerKit;
-import io.github.steaf23.bingoreloaded.util.Message;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -19,7 +18,6 @@ public class AutoBingoCommand implements CommandExecutor
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String alias, @NotNull String[] args)
     {
-        //TODO: QUADRUPLE CHECK THIS!
         // AutoBingo should only work for admins or console.
         if (commandSender instanceof Player p && !p.hasPermission("bingo.admin"))
         {
@@ -288,7 +286,7 @@ public class AutoBingoCommand implements CommandExecutor
                 return false;
             }
 
-            game.getTeamManager().removePlayerFromAllTeams(bPlayer);
+            game.getTeamManager().removePlayerFromTeam(bPlayer);
             sendSuccess("Player " + playerName + " removed from all teams", worldName);
         }
         else

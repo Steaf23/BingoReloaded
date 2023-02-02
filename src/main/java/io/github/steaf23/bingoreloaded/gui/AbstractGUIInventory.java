@@ -39,7 +39,7 @@ public abstract class AbstractGUIInventory
         inventory = Bukkit.createInventory(new GUIHolder(), size, BingoMessage.PREFIX_STRING_SHORT + ChatColor.DARK_RED + title);
         UIManager.addInventory(this);
 
-        Message.log("Constructing " + title);
+//        Message.log("Constructing " + title);
     }
 
     protected void setMaxStackSizeOverride(int maxValue)

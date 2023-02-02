@@ -5,6 +5,7 @@ import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
 import javax.annotation.Nullable;
 import java.util.Map;
@@ -33,9 +34,9 @@ public class BingoStatsData
         return Integer.parseInt(stats[statType.idx]);
     }
 
-    public static void incrementPlayerStat(BingoPlayer player, BingoStatType statType)
+    public static void incrementPlayerStat(Player player, BingoStatType statType)
     {
-        BingoStatsData.incrementPlayerStat(player.playerId(), statType, 1);
+        BingoStatsData.incrementPlayerStat(player.getUniqueId(), statType, 1);
     }
 
     public static void incrementPlayerStat(UUID playerId, BingoStatType statType, int by)

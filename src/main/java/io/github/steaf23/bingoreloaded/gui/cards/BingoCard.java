@@ -4,7 +4,6 @@ import io.github.steaf23.bingoreloaded.BingoGame;
 import io.github.steaf23.bingoreloaded.BingoMessage;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.GameWorldManager;
-import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.bingoreloaded.data.BingoCardsData;
 import io.github.steaf23.bingoreloaded.data.TaskListsData;
 import io.github.steaf23.bingoreloaded.data.TranslationData;
@@ -242,23 +241,23 @@ public class BingoCard extends AbstractGUIInventory implements Listener
             return;
 
         BingoPlayer player = game.getTeamManager().getBingoPlayer(p);
-        if (player == null || !player.isInBingoWorld(game.getWorldName()))
+        if (player == null || player.gamePlayer().isPresent())
             return;
 
-        BingoTeam team = player.team();
+        BingoTeam team = player.getTeam();
         if (team == null || team.card != this)
             return;
 
         if (event.getSlotType() == InventoryType.SlotType.RESULT && event.getClick() != ClickType.SHIFT_LEFT)
         {
-            Bukkit.getScheduler().runTask(BingoReloaded.get(), task -> {
+            BingoReloaded.scheduleTask(task -> {
                 ItemStack resultStack = p.getItemOnCursor();
                 completeItemSlot(resultStack, player, game);
             });
             return;
         }
 
-        Bukkit.getScheduler().runTask(BingoReloaded.get(), task -> {
+        BingoReloaded.scheduleTask(task -> {
             for (ItemStack stack : p.getInventory().getContents())
             {
                 if (stack != null)
@@ -280,10 +279,10 @@ public class BingoCard extends AbstractGUIInventory implements Listener
             return;
 
         BingoPlayer player = game.getTeamManager().getBingoPlayer(p);
-        if (player == null || !player.isInBingoWorld(game.getWorldName()))
+        if (player == null || !player.gamePlayer().isPresent())
             return;
 
-        BingoTeam team = player.team();
+        BingoTeam team = player.getTeam();
         if (team == null || team.card != this)
             return;
 
@@ -298,7 +297,7 @@ public class BingoCard extends AbstractGUIInventory implements Listener
             event.setCancelled(true);
             ItemStack resultStack = stack.clone();
 
-            Bukkit.getScheduler().runTask(BingoReloaded.get(), task -> {
+            BingoReloaded.scheduleTask(task -> {
                 p.getWorld().dropItem(event.getItem().getLocation(), resultStack);
                 event.getItem().remove();
             });
@@ -316,14 +315,14 @@ public class BingoCard extends AbstractGUIInventory implements Listener
         if (player == null || !game.isInProgress())
             return;
 
-        BingoTeam team = player.team();
+        BingoTeam team = player.getTeam();
         if (team == null || team.card != this)
             return;
 
         if (team.outOfTheGame)
             return;
 
-        Bukkit.getScheduler().runTask(BingoReloaded.get(), task -> {
+        BingoReloaded.scheduleTask(task -> {
             ItemStack stack = event.getItemDrop().getItemStack();
             stack = completeItemSlot(stack, player, game);
         });
@@ -340,7 +339,7 @@ public class BingoCard extends AbstractGUIInventory implements Listener
         if (player == null || !game.isInProgress())
             return;
 
-        BingoTeam team = player.team();
+        BingoTeam team = player.getTeam();
         if (team == null || team.card != this)
             return;
 
@@ -371,6 +370,9 @@ public class BingoCard extends AbstractGUIInventory implements Listener
 
     ItemStack completeItemSlot(ItemStack item, BingoPlayer player, BingoGame game)
     {
+        if (player.gamePlayer().isEmpty())
+            return item;
+
         if (game.getSettings().deathMatchItem != null)
         {
             if (item.getType() == game.getSettings().deathMatchItem)
@@ -394,8 +396,8 @@ public class BingoCard extends AbstractGUIInventory implements Listener
                     continue;
                 }
                 item.setAmount(item.getAmount() - data.getCount());
-                player.player().updateInventory();
-                var slotEvent = new BingoCardTaskCompleteEvent(task, player, hasBingo(player.team()));
+                player.gamePlayer().get().updateInventory();
+                var slotEvent = new BingoCardTaskCompleteEvent(task, player, hasBingo(player.getTeam()));
                 Bukkit.getPluginManager().callEvent(slotEvent);
                 break;
             }

@@ -88,7 +88,7 @@ public class BingoCommand implements CommandExecutor
                 if (activeGame != null)
                 {
                     BingoPlayer participant = activeGame.getTeamManager().getBingoPlayer(player);
-                    if (participant != null);
+                    if (participant != null)
                         activeGame.returnCardToPlayer(participant);
                     return true;
                 }
@@ -166,7 +166,7 @@ public class BingoCommand implements CommandExecutor
                                     Bukkit.getScoreboardManager().getNewScoreboard().registerNewTeam("orange"),
                                     null,
                                     FlexColor.ORANGE)
-                            , "world");
+                            , "world", "DumDum");
 
                     var tasks = TaskListsData.getTasks("CHEESE");
                     p.getInventory().addItem(tasks.get(0).asStack());

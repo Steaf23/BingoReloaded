@@ -2,7 +2,6 @@ package io.github.steaf23.bingoreloaded.item.tasks;
 
 import io.github.steaf23.bingoreloaded.BingoMessage;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
-import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.bingoreloaded.data.TranslationData;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
 import io.github.steaf23.bingoreloaded.item.ItemText;
@@ -97,11 +96,10 @@ public class BingoTask implements ConfigurationSerializable
         ItemStack item;
 
         // Step 1: create the item and put the new name, description and material on it.
-
         if (isVoided()) // VOIDED TASK
         {
             ItemText addedDesc = new ItemText(TranslationData.translate("game.team.voided",
-                            completedBy.get().player().getName()), ChatColor.DARK_GRAY);
+                    completedBy.get().gamePlayer().get().getName()), ChatColor.DARK_GRAY);
 
             ItemText itemName = new ItemText(ChatColor.DARK_GRAY, ChatColor.STRIKETHROUGH);
             itemName.addText("A", ChatColor.MAGIC);
@@ -113,7 +111,7 @@ public class BingoTask implements ConfigurationSerializable
         }
         else if (completedBy.isPresent()) // COMPLETED TASK
         {
-            Material completeMaterial = completedBy.get().team().getColor().glassPane;
+            Material completeMaterial = completedBy.get().getTeam().getColor().glassPane;
 
             String timeString = GameTimer.getTimeAsString(completedAt);
 
@@ -164,7 +162,7 @@ public class BingoTask implements ConfigurationSerializable
         pdcData.set(getTaskDataKey("voided"), PersistentDataType.BYTE, (byte)(voided ? 1 : 0));
         pdcData.set(getTaskDataKey("completed_at"), PersistentDataType.LONG, completedAt);
         if (completedBy.isPresent())
-            pdcData.set(getTaskDataKey("completed_by"), PersistentDataType.STRING, completedBy.get().player().getUniqueId().toString());
+            pdcData.set(getTaskDataKey("completed_by"), PersistentDataType.STRING, completedBy.get().gamePlayer().get().getUniqueId().toString());
         else
             pdcData.set(getTaskDataKey("completed_by"), PersistentDataType.STRING, "");
 
@@ -228,7 +226,7 @@ public class BingoTask implements ConfigurationSerializable
                 .component(data.getItemDisplayName().asComponent()).color(nameColor)
                 .arg(player.team().getColoredName().asLegacyString())
                 .arg(timeString).color(ChatColor.WHITE)
-                .sendAll();
+                .sendAll(player.worldName());
         return true;
     }
 

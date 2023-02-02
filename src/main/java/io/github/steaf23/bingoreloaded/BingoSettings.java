@@ -22,8 +22,12 @@ public class BingoSettings
     public int maxTeamSize;
     public int countdownGameDuration;
 
-    public BingoSettings()
+    private final String worldName;
+
+    public BingoSettings(String worldName)
     {
+        this.worldName = worldName;
+
         this.card = ConfigData.instance.selectedCard;
         this.mode = BingoGamemode.REGULAR;
         this.cardSize = CardSize.X5;
@@ -42,12 +46,12 @@ public class BingoSettings
     public void setKit(PlayerKit kit)
     {
         this.kit = kit;
-        new BingoMessage("game.settings.kit_selected").color(ChatColor.GOLD).arg(kit.displayName).sendAll();
+        new BingoMessage("game.settings.kit_selected").color(ChatColor.GOLD).arg(kit.displayName).sendAll(worldName);
     }
 
     public void setEffects(EnumSet<EffectOptionFlags> effects)
     {
         this.effects = effects;
-        new BingoMessage("game.settings.effects_selected").color(ChatColor.GOLD).sendAll();
+        new BingoMessage("game.settings.effects_selected").color(ChatColor.GOLD).sendAll(worldName);
     }
 }

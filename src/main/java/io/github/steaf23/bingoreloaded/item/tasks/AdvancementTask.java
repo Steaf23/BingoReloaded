@@ -2,6 +2,7 @@ package io.github.steaf23.bingoreloaded.item.tasks;
 
 import io.github.steaf23.bingoreloaded.data.TranslationData;
 import io.github.steaf23.bingoreloaded.item.ItemText;
+import io.github.steaf23.bingoreloaded.util.Message;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.Bukkit;
@@ -20,7 +21,15 @@ public record AdvancementTask(Advancement advancement) implements TaskData
     public ItemText getItemDisplayName()
     {
         ItemText text = new ItemText("[", ChatColor.ITALIC);
-        text.addAdvancementTitle(advancement);
+        if (advancement == null)
+        {
+            Message.log("Could not get advancement, returning null!");
+            text.addText("no advancement?");
+        }
+        else
+        {
+            text.addAdvancementTitle(advancement);
+        }
         text.addText("]");
         return text;
     }

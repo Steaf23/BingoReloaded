@@ -41,4 +41,21 @@ public class BingoTeam
     {
         return new ItemText(color.getTranslatedName(), color.chatColor, ChatColor.BOLD);
     }
+
+    public Set<BingoPlayer> getPlayers()
+    {
+        return players;
+    }
+
+    public void addPlayer(BingoPlayer player)
+    {
+        players.add(player);
+        team.addEntry(player.playerId().toString());
+    }
+
+    public void removePlayer(BingoPlayer player)
+    {
+        players.remove(player);
+        team.removeEntry(player.playerId().toString());
+    }
 }

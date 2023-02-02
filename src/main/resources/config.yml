@@ -13,6 +13,7 @@ teleportMaxDistance: 1000000
 #   - everyone apart (ALONE),
 #   - everyone with their teammates (TEAM),
 #   - no one gets teleported at all (NONE),
+#   - using any other value will make it so no one teleports at all at the start of the game.
 playerTeleportStrategy: ALL
 
 # If true, the game will send a message to players that died while playing the game
@@ -63,3 +64,10 @@ cardSeed: 0 # any whole number
 
 # Enables the /btc options for players to use to communicate with each other.
 enableTeamChat: true # true or false
+
+# If this value is not an empty string it will be sent as a command to the console.
+# Most users can ignore this setting.
+sendCommandAfterGameEnds: "" #command to send
+
+# If true, keeps the player scoreboard visible to all participants after the game has ended.
+keepScoreboardVisible: true # true or false

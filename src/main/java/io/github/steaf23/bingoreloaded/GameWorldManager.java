@@ -1,5 +1,6 @@
 package io.github.steaf23.bingoreloaded;
 
+import io.github.steaf23.bingoreloaded.event.BingoEndedEvent;
 import io.github.steaf23.bingoreloaded.util.Message;
 import org.bukkit.World;
 
@@ -35,7 +36,7 @@ public class GameWorldManager
             return false;
         }
 
-        templates.put(worldName, new BingoSettings());
+        templates.put(worldName, new BingoSettings(worldName));
         getGameSettings(worldName).maxTeamSize = maxTeamMembers;
         BingoGame newGame = new BingoGame(worldName);
         activeGames.put(worldName, newGame);
@@ -84,6 +85,7 @@ public class GameWorldManager
         }
 
         BingoGame game = activeGames.get(worldName);
+        var event = new BingoEndedEvent(game.getGameTime(), null, worldName);
         game.end();
         return true;
     }

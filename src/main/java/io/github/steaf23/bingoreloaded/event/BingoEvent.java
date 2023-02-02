@@ -7,12 +7,12 @@ import org.jetbrains.annotations.NotNull;
 
 public abstract class BingoEvent extends Event
 {
-    private final String world;
+    public final String worldName;
     private static final HandlerList HANDLERS = new HandlerList();
 
     protected BingoEvent(String worldName)
     {
-        this.world = worldName;
+        this.worldName = worldName;
     }
 
     @NotNull
@@ -25,10 +25,5 @@ public abstract class BingoEvent extends Event
     public static HandlerList getHandlerList()
     {
         return HANDLERS;
-    }
-
-    public String getWorldName()
-    {
-        return world;
     }
 }

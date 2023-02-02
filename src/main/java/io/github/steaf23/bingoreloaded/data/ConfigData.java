@@ -58,6 +58,8 @@ public class ConfigData
     public boolean savePlayerStatistics;
     public int cardSeed;
     public boolean enableTeamChat;
+    public String sendCommandAfterGameEnded;
+    public boolean keepScoreboardVisible;
 
     // TODO: make defaultBingoWorld: "world" config option
 
@@ -84,5 +86,7 @@ public class ConfigData
         this.defaultTeamSize = config.getInt("defaultTeamSize", 64);
         this.cardSeed = config.getInt("cardSeed", 0);
         this.enableTeamChat = config.getBoolean("enableTeamChat", true);
+        this.sendCommandAfterGameEnded = config.getString("sendCommandAfterGameEnds", "");
+        this.keepScoreboardVisible = config.getBoolean("keepScoreboardVisible", true);
     }
 }

@@ -144,7 +144,7 @@ public class Message
         player.spigot().sendMessage(finalMessage);
     }
 
-    public void sendAll()
+    public void sendAll(String worldName)
     {
         Bukkit.getOnlinePlayers().forEach(p -> send(p));
     }

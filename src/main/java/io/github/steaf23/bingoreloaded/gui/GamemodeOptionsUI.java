@@ -3,6 +3,7 @@ package io.github.steaf23.bingoreloaded.gui;
 import io.github.steaf23.bingoreloaded.BingoGamemode;
 import io.github.steaf23.bingoreloaded.BingoMessage;
 import io.github.steaf23.bingoreloaded.BingoSettings;
+import io.github.steaf23.bingoreloaded.GameWorldManager;
 import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.bingoreloaded.data.TranslationData;
 import io.github.steaf23.bingoreloaded.gui.cards.CardSize;
@@ -51,34 +52,36 @@ public class GamemodeOptionsUI extends AbstractGUIInventory
         BingoGamemode chosenMode = BingoGamemode.REGULAR;
         CardSize chosenSize = CardSize.X5;
 
+        String worldName = GameWorldManager.getWorldName(player.getWorld());
+
         if (slotClicked == options[0].getSlot() || slotClicked == options[4].getSlot())
         {
-            new BingoMessage("game.settings.regular_selected").color(ChatColor.GOLD).sendAll();
+            new BingoMessage("game.settings.regular_selected").color(ChatColor.GOLD).sendAll(worldName);
         }
         else if (slotClicked == options[1].getSlot() || slotClicked == options[5].getSlot())
         {
-            new BingoMessage("game.settings.lockout_selected").color(ChatColor.GOLD).sendAll();
+            new BingoMessage("game.settings.lockout_selected").color(ChatColor.GOLD).sendAll(worldName);
 
             chosenMode = BingoGamemode.LOCKOUT;
         }
         else if (slotClicked == options[2].getSlot() || slotClicked == options[6].getSlot())
         {
-            new BingoMessage("game.settings.complete_selected").color(ChatColor.GOLD).sendAll();
+            new BingoMessage("game.settings.complete_selected").color(ChatColor.GOLD).sendAll(worldName);
             chosenMode = BingoGamemode.COMPLETE;
         }
         else if (slotClicked == options[3].getSlot() || slotClicked == options[7].getSlot())
         {
-            new BingoMessage("game.settings.countdown_selected").color(ChatColor.GOLD).sendAll();
+            new BingoMessage("game.settings.countdown_selected").color(ChatColor.GOLD).sendAll(worldName);
             chosenMode = BingoGamemode.COUNTDOWN;
         }
 
         if (slotClicked == options[0].getSlot() || slotClicked == options[1].getSlot() || slotClicked == options[2].getSlot() || slotClicked == options[3].getSlot())
         {
-            new BingoMessage("game.settings.cardsize").color(ChatColor.GOLD).arg("5x5").sendAll();
+            new BingoMessage("game.settings.cardsize").color(ChatColor.GOLD).arg("5x5").sendAll(worldName);
         }
         else if (slotClicked == options[4].getSlot() || slotClicked == options[5].getSlot() || slotClicked == options[6].getSlot() || slotClicked == options[7].getSlot())
         {
-            new BingoMessage("game.settings.cardsize").color(ChatColor.GOLD).arg("3x3").sendAll();
+            new BingoMessage("game.settings.cardsize").color(ChatColor.GOLD).arg("3x3").sendAll(worldName);
             chosenSize = CardSize.X3;
         }
 

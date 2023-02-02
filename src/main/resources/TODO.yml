@@ -38,3 +38,5 @@ Don't allow the player to hold the card in the offhand!
 see what players joined what team on TAB and in team selector\
 
 generalize/centralize game in progress/ player in game checks for events
+
+check if advancements are disabled and disallow them on advancement-disabled servers

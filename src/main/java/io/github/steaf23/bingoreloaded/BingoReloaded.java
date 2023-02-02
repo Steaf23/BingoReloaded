@@ -12,6 +12,11 @@ import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.function.Consumer;
 
 public class BingoReloaded extends JavaPlugin
 {
@@ -93,5 +98,18 @@ public class BingoReloaded extends JavaPlugin
     public static BingoReloaded get()
     {
         return getPlugin(BingoReloaded.class);
+    }
+
+    public static void scheduleTask(@NotNull Consumer<BukkitTask> task)
+    {
+        BingoReloaded.scheduleTask(task, 0);
+    }
+
+    public static void scheduleTask(@NotNull Consumer<BukkitTask> task, long delay)
+    {
+        if (delay <= 0)
+            Bukkit.getScheduler().runTask(BingoReloaded.get(), task);
+        else
+            Bukkit.getScheduler().runTaskLater(BingoReloaded.get(), task, delay);
     }
 }

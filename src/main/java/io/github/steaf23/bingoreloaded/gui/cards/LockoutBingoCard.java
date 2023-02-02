@@ -51,7 +51,7 @@ public class LockoutBingoCard extends BingoCard
     @EventHandler
     public void onCardSlotCompleteEvent(final BingoCardTaskCompleteEvent event)
     {
-        BingoGame game = GameWorldManager.get().getActiveGame(event.getWorldName());
+        BingoGame game = GameWorldManager.get().getActiveGame(event.worldName);
         if (game == null)
         {
             return;
@@ -75,7 +75,7 @@ public class LockoutBingoCard extends BingoCard
     {
         new BingoMessage("game.team.dropped")
                 .arg(team.getColoredName().asLegacyString())
-                .sendAll();
+                .sendAll(teamManager.getWorldName());
         team.outOfTheGame = true;
         for (BingoTask task : tasks)
         {
@@ -84,10 +84,6 @@ public class LockoutBingoCard extends BingoCard
                 task.setVoided(true);
                 currentMaxTasks--;
             }
-        }
-        for (BingoPlayer p : teamManager.getPlayersOfTeam(team))
-        {
-            p.player().setGameMode(GameMode.SPECTATOR);
         }
         teamCount--;
     }

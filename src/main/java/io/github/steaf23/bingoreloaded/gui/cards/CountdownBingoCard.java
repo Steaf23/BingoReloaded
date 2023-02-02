@@ -28,11 +28,11 @@ public class CountdownBingoCard extends CompleteBingoCard
     @EventHandler
     public void onCountdownFinished(final CountdownTimerFinishedEvent event)
     {
-        BingoGame game = GameWorldManager.get().getActiveGame(event.getWorldName());
+        BingoGame game = GameWorldManager.get().getActiveGame(event.worldName);
         if (game == null)
             return;
 
-        if (!game.getWorldName().equals(event.getWorldName()))
+        if (!game.getWorldName().equals(event.worldName))
         {
             return;
         }

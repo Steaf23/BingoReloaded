@@ -198,7 +198,7 @@ public class BingoOptionsUI extends AbstractGUIInventory
     private void cardSelected(String cardName, String worldName)
     {
         if (cardName == null) return;
-        new Message("game.settings.card_selected").color(ChatColor.GOLD).arg(cardName).sendAll();
+        new Message("game.settings.card_selected").color(ChatColor.GOLD).arg(cardName).sendAll(worldName);
         GameWorldManager.get().getGameSettings(worldName).card = cardName;
     }
 }
