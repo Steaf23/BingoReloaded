@@ -2,8 +2,8 @@ package io.github.steaf23.bingoreloaded.player;
 
 import io.github.steaf23.bingoreloaded.*;
 import io.github.steaf23.bingoreloaded.data.TranslationData;
-import io.github.steaf23.bingoreloaded.event.BingoParticipantsUpdatedEvent;
-import io.github.steaf23.bingoreloaded.event.BingoStartedEvent;
+import io.github.steaf23.bingoreloaded.event.BingoPlayerJoinEvent;
+import io.github.steaf23.bingoreloaded.event.BingoPlayerLeaveEvent;
 import io.github.steaf23.bingoreloaded.gui.AbstractGUIInventory;
 import io.github.steaf23.bingoreloaded.gui.FilterType;
 import io.github.steaf23.bingoreloaded.gui.PaginatedPickerUI;
@@ -11,7 +11,6 @@ import io.github.steaf23.bingoreloaded.gui.cards.BingoCard;
 import io.github.steaf23.bingoreloaded.gui.cards.LockoutBingoCard;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
 import io.github.steaf23.bingoreloaded.util.FlexColor;
-import io.github.steaf23.bingoreloaded.util.Message;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -335,8 +334,8 @@ public class TeamManager implements Listener
             if (getParticipants().contains(player))
             {
                 new BingoMessage("game.player.join_back").send(onlinePlayer);
-                var updatedEvent = new BingoParticipantsUpdatedEvent(worldName);
-                Bukkit.getPluginManager().callEvent(updatedEvent);
+                var joinEvent = new BingoPlayerJoinEvent(player, worldName);
+                Bukkit.getPluginManager().callEvent(joinEvent);
                 return;
             }
         }
@@ -356,8 +355,8 @@ public class TeamManager implements Listener
             {
                 player.getTeam().team.removeEntry(event.getPlayer().getName());
                 player.takeEffects(true);
-                var updatedEvent = new BingoParticipantsUpdatedEvent(worldName);
-                Bukkit.getPluginManager().callEvent(updatedEvent);
+                var leaveEvent = new BingoPlayerLeaveEvent(player, worldName);
+                Bukkit.getPluginManager().callEvent(leaveEvent);
             }
             return;
         }
@@ -371,8 +370,8 @@ public class TeamManager implements Listener
                 {
                     player.getTeam().team.addEntry(event.getPlayer().getName());
                     player.giveEffects(GameWorldManager.get().getGameSettings(worldName).effects);
-                    var updatedEvent = new BingoParticipantsUpdatedEvent(worldName);
-                    Bukkit.getPluginManager().callEvent(updatedEvent);
+                    var joinEvent = new BingoPlayerJoinEvent(player, worldName);
+                    Bukkit.getPluginManager().callEvent(joinEvent);
                 }
             }
         }, 10);

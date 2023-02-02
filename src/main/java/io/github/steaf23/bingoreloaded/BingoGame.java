@@ -669,14 +669,11 @@ public class BingoGame implements Listener
     public void onPlayerRespawnEvent(final PlayerRespawnEvent event)
     {
         BingoPlayer player = getTeamManager().getBingoPlayer(event.getPlayer());
-        Message.log(" NO PLAYER");
         if (player == null || player.gamePlayer().isEmpty())
             return;
-        Message.log("YES PLAYER");
 
         if (deadPlayers.containsKey(player.playerId()))
         {
-            Message.log("HDJA");
             returnCardToPlayer(player);
             player.giveKit(settings.kit);
         }

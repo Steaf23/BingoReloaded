@@ -2,8 +2,8 @@ package io.github.steaf23.bingoreloaded;
 
 
 import io.github.steaf23.bingoreloaded.data.TranslationData;
-import io.github.steaf23.bingoreloaded.event.BingoEndedEvent;
-import io.github.steaf23.bingoreloaded.event.BingoParticipantsUpdatedEvent;
+import io.github.steaf23.bingoreloaded.event.BingoPlayerJoinEvent;
+import io.github.steaf23.bingoreloaded.event.BingoPlayerLeaveEvent;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.player.BingoTeam;
 import io.github.steaf23.bingoreloaded.player.TeamManager;
@@ -56,15 +56,7 @@ public class BingoScoreboard implements Listener
 
             for (BingoPlayer p : teamManager.getParticipants())
             {
-                if (p.gamePlayer().isPresent())
-                {
-                    setPlayerScoreboard(p, itemCountBoard);
-                    continue;
-                }
-                else if (p.asOnlinePlayer().isPresent() && p.asOnlinePlayer().get().getScoreboard().equals(itemCountBoard))
-                {
-                    setPlayerScoreboard(p, Bukkit.getScoreboardManager().getMainScoreboard());
-                }
+                updatePlayerScoreboard(p);
             }
         });
     }
@@ -90,14 +82,35 @@ public class BingoScoreboard implements Listener
         return teamManager;
     }
 
-    //TODO: Change to onPlayerRemoved/Added
     @EventHandler
-    public void onParticipantsUpdated(final BingoParticipantsUpdatedEvent event)
+    public void onPlayerJoinsEvent(final BingoPlayerJoinEvent event)
     {
         if (!event.worldName.equals(worldName))
             return;
 
-        updateItemCount();
+        updatePlayerScoreboard(event.player);
+    }
+
+    @EventHandler
+    public void onPlayerLeavesEvent(final BingoPlayerLeaveEvent event)
+    {
+        if (!event.worldName.equals(worldName))
+            return;
+
+        updatePlayerScoreboard(event.player);
+    }
+
+
+    private void updatePlayerScoreboard(BingoPlayer player)
+    {
+        if (player.gamePlayer().isPresent())
+        {
+            setPlayerScoreboard(player, itemCountBoard);
+        }
+        else if (player.asOnlinePlayer().isPresent() && player.asOnlinePlayer().get().getScoreboard().equals(itemCountBoard))
+        {
+            setPlayerScoreboard(player, Bukkit.getScoreboardManager().getMainScoreboard());
+        }
     }
 
     private void setPlayerScoreboard(BingoPlayer player, Scoreboard scoreboard)
