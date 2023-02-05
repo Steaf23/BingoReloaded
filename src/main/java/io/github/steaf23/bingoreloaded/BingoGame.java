@@ -3,6 +3,7 @@ package io.github.steaf23.bingoreloaded;
 import io.github.steaf23.bingoreloaded.data.*;
 import io.github.steaf23.bingoreloaded.event.BingoEndedEvent;
 import io.github.steaf23.bingoreloaded.event.BingoStartedEvent;
+import io.github.steaf23.bingoreloaded.event.UpdateStatisticEvent;
 import io.github.steaf23.bingoreloaded.gui.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.gui.cards.BingoCard;
 import io.github.steaf23.bingoreloaded.gui.cards.CardBuilder;
@@ -62,6 +63,7 @@ public class BingoGame implements Listener
                     if (p.isPresent())
                         BingoMessage.sendActionMessage(timer.getTimeDisplayMessage(), p.get());
                 }
+                updateStatisticTasks();
             }
         };
         BingoReloaded.registerListener(this);
@@ -464,6 +466,12 @@ public class BingoGame implements Listener
     public boolean isInProgress()
     {
         return inProgress;
+    }
+
+    public void updateStatisticTasks()
+    {
+        var event = new UpdateStatisticEvent(worldName);
+        Bukkit.getPluginManager().callEvent(event);
     }
 
 // @EventHandlers ========================================================================
