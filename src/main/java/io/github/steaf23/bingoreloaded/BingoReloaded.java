@@ -5,6 +5,7 @@ import io.github.steaf23.bingoreloaded.data.*;
 import io.github.steaf23.bingoreloaded.gui.UIManager;
 import io.github.steaf23.bingoreloaded.item.tasks.*;
 import io.github.steaf23.bingoreloaded.item.ItemCooldownManager;
+import io.github.steaf23.bingoreloaded.util.Message;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.PluginCommand;
@@ -76,10 +77,10 @@ public class BingoReloaded extends JavaPlugin
 //            game.resume();
 //        }
 
-        BingoMessage.log(TranslationData.translate("changed"));
+        Message.log(TranslationData.translate("changed"));
         Bukkit.getLogger().info(ChatColor.GREEN + "Enabled " + this.getName());
 
-        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "autobingo world create 3");
+//        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "autobingo world create 3");
 
     }
 

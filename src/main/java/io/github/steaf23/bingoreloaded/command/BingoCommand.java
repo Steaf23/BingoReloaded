@@ -1,7 +1,6 @@
 package io.github.steaf23.bingoreloaded.command;
 
 import io.github.steaf23.bingoreloaded.BingoGame;
-import io.github.steaf23.bingoreloaded.BingoMessage;
 import io.github.steaf23.bingoreloaded.BingoScoreboard;
 import io.github.steaf23.bingoreloaded.GameWorldManager;
 import io.github.steaf23.bingoreloaded.util.Message;
@@ -112,7 +111,7 @@ public class BingoCommand implements CommandExecutor
                 }
                 else if (activeGame == null)
                 {
-                    new BingoMessage("command.bingo.no_deathmatch").color(ChatColor.RED).send(player);
+                    new Message("command.bingo.no_deathmatch").color(ChatColor.RED).send(player);
                     return false;
                 }
 
@@ -134,7 +133,7 @@ public class BingoCommand implements CommandExecutor
                     {
                         TextComponent text = new TextComponent("Player statistics are not being tracked at this moment!");
                         text.setColor(ChatColor.RED);
-                        BingoMessage.sendDebug(text, p);
+                        Message.sendDebug(text, p);
                         return true;
                     }
                     Message msg;
@@ -188,9 +187,9 @@ public class BingoCommand implements CommandExecutor
 
             default:
                 if (commandSender instanceof Player p)
-                    new BingoMessage("command.use").color(ChatColor.RED).arg("/bingo [getcard | stats | start | end | join | back | leave | deathmatch | creator]").send(p);
+                    new Message("command.use").color(ChatColor.RED).arg("/bingo [getcard | stats | start | end | join | back | leave | deathmatch | creator]").send(p);
                 else
-                    BingoMessage.log(ChatColor.RED + "Usage: /bingo [start | end | deathmatch]");
+                    Message.log(ChatColor.RED + "Usage: /bingo [start | end | deathmatch]");
                 break;
         }
 

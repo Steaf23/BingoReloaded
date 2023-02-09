@@ -50,7 +50,7 @@ public class AutoBingoTabCompleter implements TabCompleter
                     case "card":
                         return BingoCardsData.getCardNames().stream().toList();
                     case "start":
-                        return List.of("regular", "lockout", "complete", "countdown");
+                        return List.of("regular", "lockout", "complete");
                     default:
                         return null;
                 }

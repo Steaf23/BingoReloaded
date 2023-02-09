@@ -5,6 +5,7 @@ import io.github.steaf23.bingoreloaded.data.ConfigData;
 import io.github.steaf23.bingoreloaded.gui.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.gui.cards.CardSize;
 import io.github.steaf23.bingoreloaded.player.PlayerKit;
+import io.github.steaf23.bingoreloaded.util.Message;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 
@@ -20,6 +21,7 @@ public class BingoSettings
     public EnumSet<EffectOptionFlags> effects;
     public Material deathMatchItem;
     public int maxTeamSize;
+    public boolean enableCountdown;
     public int countdownGameDuration;
 
     private final String worldName;
@@ -36,6 +38,7 @@ public class BingoSettings
         this.effects = kit.defaultEffects;
         this.maxTeamSize = ConfigData.instance.defaultTeamSize;
         this.countdownGameDuration = ConfigData.instance.defaultGameDuration;
+        this.enableCountdown = false;
     }
 
     public Material generateDeathMatchItem()
@@ -46,12 +49,12 @@ public class BingoSettings
     public void setKit(PlayerKit kit)
     {
         this.kit = kit;
-        new BingoMessage("game.settings.kit_selected").color(ChatColor.GOLD).arg(kit.displayName).sendAll(worldName);
+        new Message("game.settings.kit_selected").color(ChatColor.GOLD).arg(kit.displayName).sendAll(worldName);
     }
 
     public void setEffects(EnumSet<EffectOptionFlags> effects)
     {
         this.effects = effects;
-        new BingoMessage("game.settings.effects_selected").color(ChatColor.GOLD).sendAll(worldName);
+        new Message("game.settings.effects_selected").color(ChatColor.GOLD).sendAll(worldName);
     }
 }

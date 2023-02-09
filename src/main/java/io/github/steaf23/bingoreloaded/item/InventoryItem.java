@@ -1,12 +1,17 @@
 package io.github.steaf23.bingoreloaded.item;
 
+import io.github.steaf23.bingoreloaded.util.Message;
+import io.github.steaf23.bingoreloaded.util.PDCHelper;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataType;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 public class InventoryItem extends ItemStack
@@ -122,5 +127,32 @@ public class InventoryItem extends ItemStack
         {
             removeEnchantment(Enchantment.DURABILITY);
         }
+    }
+
+    /**
+     * Additional key that can be used for item comparison, saved in pdc
+     * @param key
+     */
+    public void setKey(@Nullable String key)
+    {
+        var meta = this.getItemMeta();
+        var pdc = meta.getPersistentDataContainer();
+        pdc.set(PDCHelper.createKey("item.compare_key"), PersistentDataType.STRING, key);
+        this.setItemMeta(meta);
+    }
+
+    public boolean isKeyEqual(ItemStack other)
+    {
+        if (other == null || other.getItemMeta() == null)
+            return false;
+
+        return getKey().equals(other.getItemMeta().getPersistentDataContainer()
+                .get(PDCHelper.createKey("item.compare_key"), PersistentDataType.STRING));
+    }
+
+    public String getKey()
+    {
+        return this.getItemMeta().getPersistentDataContainer()
+                .get(PDCHelper.createKey("item.compare_key"), PersistentDataType.STRING);
     }
 }

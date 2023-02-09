@@ -1,6 +1,7 @@
 package io.github.steaf23.bingoreloaded.item;
 
 import io.github.steaf23.bingoreloaded.data.YmlDataManager;
+import io.github.steaf23.bingoreloaded.util.Message;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -243,7 +244,7 @@ public class ItemText
     {
         String prefix = statistic.isSubstatistic() ? "stat_type.minecraft." : "stat.minecraft.";
         String result = statTranslation.getConfig().getString(statistic.name(), "");
-        return result.equals("") ? prefix + result : statistic.name();
+        return !result.equals("") ? prefix + result : statistic.name();
     }
 
     private static String itemKey(Material item)

@@ -1,6 +1,5 @@
 package io.github.steaf23.bingoreloaded.data;
 
-import io.github.steaf23.bingoreloaded.BingoMessage;
 import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import net.md_5.bungee.api.ChatColor;
@@ -68,7 +67,7 @@ public class BingoStatsData
     {
         String stats = getPlayerData(playerId);
         String[] statList = stats.split(";");
-        return new BingoMessage().untranslated("{0}'s statistics: Wins: {1}, Losses: {2}, Games finished: {3}, Tasks completed: {4}, Wand uses: {5}")
+        return new Message().untranslated("{0}'s statistics: Wins: {1}, Losses: {2}, Games finished: {3}, Tasks completed: {4}, Wand uses: {5}")
                 .color(ChatColor.GREEN)
                 .arg(Bukkit.getOfflinePlayer(playerId).getName()).color(ChatColor.YELLOW).bold()
                 .arg(statList[0]).color(ChatColor.WHITE).bold()
@@ -93,7 +92,7 @@ public class BingoStatsData
         }
         else
         {
-            return new BingoMessage().untranslated("Could not find statistics for player {0}!").color(ChatColor.RED)
+            return new Message().untranslated("Could not find statistics for player {0}!").color(ChatColor.RED)
                     .arg(playerName).color(ChatColor.WHITE);
         }
     }

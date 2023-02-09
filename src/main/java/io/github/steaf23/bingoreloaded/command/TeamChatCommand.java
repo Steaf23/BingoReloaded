@@ -78,19 +78,19 @@ public class TeamChatCommand implements Listener, CommandExecutor
             TeamManager teamManager = game.getTeamManager();
             if (!teamManager.getParticipants().contains(p))
             {
-                new BingoMessage("game.team.no_chat").color(ChatColor.RED).send(p);
+                new Message("game.team.no_chat").color(ChatColor.RED).send(p);
                 return false;
             }
 
             if (enabledPlayers.contains(p))
             {
                 enabledPlayers.remove(p);
-                new BingoMessage("game.team.chat_off").color(ChatColor.GREEN).arg("/btc").send(p);
+                new Message("game.team.chat_off").color(ChatColor.GREEN).arg("/btc").send(p);
             }
             else
             {
                 enabledPlayers.add(p);
-                new BingoMessage("game.team.chat_on").color(ChatColor.GREEN).arg("/btc").send(p);
+                new Message("game.team.chat_on").color(ChatColor.GREEN).arg("/btc").send(p);
             }
         }
         return false;

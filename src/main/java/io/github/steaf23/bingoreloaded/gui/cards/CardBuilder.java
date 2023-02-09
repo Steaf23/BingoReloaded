@@ -12,7 +12,6 @@ public class CardBuilder
                 {
                     case LOCKOUT -> new LockoutBingoCard(size, teamCount);
                     case COMPLETE -> new CompleteBingoCard(size);
-                    case COUNTDOWN -> new CountdownBingoCard(size);
                     default -> new BingoCard(size);
                 };
     }

@@ -6,6 +6,7 @@ import io.github.steaf23.bingoreloaded.gui.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.gui.cards.CardSize;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.player.PlayerKit;
+import io.github.steaf23.bingoreloaded.util.Message;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -104,8 +105,8 @@ public class AutoBingoCommand implements CommandExecutor
                             (settings.cardSeed == 0 ? " no seed" : " seed " + settings.cardSeed), worldName);
                     return true;
 
-                case "duration":
-                    if (!setCountdownGameDuration(settings, args[2]))
+                case "countdown":
+                    if (!setCountdownGameDuration(settings, args[2], args.length > 3 ? args[3] : settings.countdownGameDuration + ""))
                     {
                         sendFailed("Could not set Countdown game duration to " + args[2] + "!", worldName);
                         return false;
@@ -249,8 +250,17 @@ public class AutoBingoCommand implements CommandExecutor
         return false;
     }
 
-    public boolean setCountdownGameDuration(BingoSettings settings, String duration)
+    public boolean setCountdownGameDuration(BingoSettings settings, String enableCountdown, String duration)
     {
+        if (enableCountdown.equals("true"))
+        {
+            settings.enableCountdown = true;
+        }
+        else
+        {
+            settings.enableCountdown = false;
+        }
+
         int gameDuration = toInt(duration, 0);
         if (gameDuration > 0)
         {
@@ -325,12 +335,12 @@ public class AutoBingoCommand implements CommandExecutor
     private void sendFailed(String message, String worldName)
     {
         String text = "'" + worldName + "': " + message;
-        BingoMessage.error(text);
+        Message.error(text);
     }
 
     private void sendSuccess(String message, String worldName)
     {
         String text = "'" + worldName + "': " + message;
-        BingoMessage.log(text);
+        Message.log(text);
     }
 }

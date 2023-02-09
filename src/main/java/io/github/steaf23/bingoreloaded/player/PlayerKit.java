@@ -23,16 +23,9 @@ public enum PlayerKit
     CUSTOM(TranslationData.itemName("menu.kits.custom"), EnumSet.noneOf(EffectOptionFlags.class)),
     ;
 
-    public static final InventoryItem cardItem = new InventoryItem(8,
-            Material.MAP,
-            "" + ChatColor.DARK_PURPLE + ChatColor.ITALIC + ChatColor.BOLD + TranslationData.itemName("items.card"),
-            TranslationData.itemDescription("items.card"));
+    public static final InventoryItem cardItem = createCardItem();
 
-    public static final InventoryItem wandItem = new InventoryItem(
-            (int)(ConfigData.instance.wandCooldown * 1000),
-            Material.WARPED_FUNGUS_ON_A_STICK,
-            "" + ChatColor.DARK_PURPLE + ChatColor.ITALIC + ChatColor.BOLD + TranslationData.itemName("items.wand"),
-            TranslationData.itemDescription("items.wand")).withEnchantment(Enchantment.DURABILITY, 3);
+    public static final InventoryItem wandItem = createGoUpWand();
     public final String displayName;
     public final EnumSet<EffectOptionFlags> defaultEffects;
 
@@ -177,6 +170,22 @@ public enum PlayerKit
 
     private static InventoryItem createGoUpWand()
     {
-        return wandItem;
+        InventoryItem wand = new InventoryItem(
+                (int)(ConfigData.instance.wandCooldown * 1000),
+                Material.WARPED_FUNGUS_ON_A_STICK,
+                "" + ChatColor.DARK_PURPLE + ChatColor.ITALIC + ChatColor.BOLD + TranslationData.itemName("items.wand"),
+                TranslationData.itemDescription("items.wand")).withEnchantment(Enchantment.DURABILITY, 3);
+        wand.setKey("wand");
+        return wand;
+    }
+
+    private static InventoryItem createCardItem()
+    {
+        InventoryItem card = new InventoryItem(8,
+                Material.MAP,
+                "" + ChatColor.DARK_PURPLE + ChatColor.ITALIC + ChatColor.BOLD + TranslationData.itemName("items.card"),
+                TranslationData.itemDescription("items.card"));
+        card.setKey("card");
+        return card;
     }
 }

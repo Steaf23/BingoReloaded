@@ -1,12 +1,13 @@
 package io.github.steaf23.bingoreloaded.item.tasks;
 
-import io.github.steaf23.bingoreloaded.BingoMessage;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.TranslationData;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
 import io.github.steaf23.bingoreloaded.item.ItemText;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.util.GameTimer;
+import io.github.steaf23.bingoreloaded.util.Message;
+import io.github.steaf23.bingoreloaded.util.PDCHelper;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -70,7 +71,7 @@ public class BingoTask implements ConfigurationSerializable
         }
         else
         {
-            BingoMessage.log("This Type of data is not supported by BingoTask: '" + data + "'!");
+            Message.log("This Type of data is not supported by BingoTask: '" + data + "'!");
             this.type = TaskType.ITEM;
             this.glowing = false;
             this.nameColor = ChatColor.WHITE;
@@ -155,7 +156,7 @@ public class BingoTask implements ConfigurationSerializable
         InventoryItem finalItem = new InventoryItem(item);
         ItemMeta meta = finalItem.getItemMeta();
         PersistentDataContainer pdcData = meta.getPersistentDataContainer();
-        // Serialize specific data first, to catch discourage null pointers for incomplete implementations.
+        // Serialize specific data first, to catch null pointers from incomplete implementations.
         pdcData = data.pdcSerialize(pdcData);
         // Then serialize generic task info/ live data
         pdcData.set(getTaskDataKey("type"), PersistentDataType.STRING, type.name());
@@ -192,7 +193,7 @@ public class BingoTask implements ConfigurationSerializable
         TaskType type;
         if (typeStr.isEmpty())
         {
-            BingoMessage.log("Cannot create a valid task from this item stack!");
+            Message.log("Cannot create a valid task from this item stack!");
             return null;
         }
 
@@ -209,7 +210,7 @@ public class BingoTask implements ConfigurationSerializable
 
     public static NamespacedKey getTaskDataKey(String property)
     {
-        return new NamespacedKey(BingoReloaded.get(), "task." + property);
+        return PDCHelper.createKey("task." + property);
     }
 
     public boolean complete(BingoPlayer player, long time)
@@ -222,7 +223,7 @@ public class BingoTask implements ConfigurationSerializable
 
         String timeString = GameTimer.getTimeAsString(time);
 
-        new BingoMessage("game.item.completed").color(ChatColor.GREEN)
+        new Message("game.item.completed").color(ChatColor.GREEN)
                 .component(data.getItemDisplayName().asComponent()).color(nameColor)
                 .arg(player.team().getColoredName().asLegacyString())
                 .arg(timeString).color(ChatColor.WHITE)

@@ -88,6 +88,8 @@ public class BingoScoreboard implements Listener
         if (!event.worldName.equals(worldName))
             return;
 
+        Message.log("Player " + event.player.asOnlinePlayer().get().getDisplayName() + " joined the world", worldName);
+
         updatePlayerScoreboard(event.player);
     }
 
@@ -96,6 +98,8 @@ public class BingoScoreboard implements Listener
     {
         if (!event.worldName.equals(worldName))
             return;
+
+        Message.log("Player " + event.player.asOnlinePlayer().get().getDisplayName() + " left the world", worldName);
 
         updatePlayerScoreboard(event.player);
     }
