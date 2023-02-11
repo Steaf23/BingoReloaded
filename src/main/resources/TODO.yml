@@ -12,33 +12,18 @@ add option to send players to a world when the game ends..
 
 finish statistics
 
-allow players to join existing teams
-
-win effects plays once for every player
-
-max team size doesn't do shit
-
-rework InventoryItem slot to (x, y)
+rework InventoryItem slot to (x, y) for convenience
 
 Add dummy player class to test stuff like lockout!
 
-add command to assign a player to a team /autobingo world team <team_name> <add|remove> <player_name>
-  
-disable scoreboard and action bar messages for players outside active worlds.
-  
-fix /autobingo end command doesn't want to accept the world_name argument
-  /autobingo world end returns "Invalid number of arguments"
+add (5) custom kit slots and option to create a kit using copy inventory....
 
-add custom kit options
+update autobingo page with all new features
 
-update autobingo page with world commands and /bingo card seed command
-
-see what players joined what team on TAB and in team selector\
+see what players joined what team on TAB and in team selector
 
 generalize/centralize game in progress/ player in game checks for events
 
 check if advancements are disabled and disallow them on advancement-disabled servers
-
-default translation to english if missing
 
 put players on scoreboard under each team name

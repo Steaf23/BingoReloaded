@@ -20,7 +20,11 @@ public enum PlayerKit
     NORMAL(TranslationData.itemName("menu.kits.normal"), EnumSet.of(EffectOptionFlags.SPEED, EffectOptionFlags.NO_FALL_DAMAGE)),
     OVERPOWERED(TranslationData.itemName("menu.kits.overpowered"), EnumSet.allOf(EffectOptionFlags.class)),
     RELOADED(TranslationData.itemName("menu.kits.reloaded"), EnumSet.allOf(EffectOptionFlags.class)),
-    CUSTOM(TranslationData.itemName("menu.kits.custom"), EnumSet.noneOf(EffectOptionFlags.class)),
+    CUSTOM_1(TranslationData.itemName("menu.kits.custom") + "1", EnumSet.noneOf(EffectOptionFlags.class)),
+    CUSTOM_2(TranslationData.itemName("menu.kits.custom") + "2", EnumSet.noneOf(EffectOptionFlags.class)),
+    CUSTOM_3(TranslationData.itemName("menu.kits.custom") + "3", EnumSet.noneOf(EffectOptionFlags.class)),
+    CUSTOM_4(TranslationData.itemName("menu.kits.custom") + "4", EnumSet.noneOf(EffectOptionFlags.class)),
+    CUSTOM_5(TranslationData.itemName("menu.kits.custom") + "5", EnumSet.noneOf(EffectOptionFlags.class)),
     ;
 
     public static final InventoryItem cardItem = createCardItem();
@@ -122,7 +126,7 @@ public enum PlayerKit
                         .withAmount(64));
                 return items;
             }
-            case CUSTOM -> {
+            case CUSTOM_1 -> {
                 items = new ArrayList<>();
                 items.add(helmet
                         .withEnchantment(Enchantment.DURABILITY, 3)
@@ -163,7 +167,7 @@ public enum PlayerKit
                     case "normal" -> NORMAL;
                     case "overpowered" -> OVERPOWERED;
                     case "reloaded" -> RELOADED;
-                    case "custom" -> CUSTOM;
+                    case "custom" -> CUSTOM_1;
                     default -> HARDCORE;
                 };
     }
