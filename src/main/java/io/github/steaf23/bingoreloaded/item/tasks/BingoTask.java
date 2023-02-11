@@ -100,7 +100,7 @@ public class BingoTask implements ConfigurationSerializable
         if (isVoided()) // VOIDED TASK
         {
             ItemText addedDesc = new ItemText(TranslationData.translate("game.team.voided",
-                    completedBy.get().gamePlayer().get().getName()), ChatColor.DARK_GRAY);
+                    completedBy.get().team().getColoredName().asLegacyString()), ChatColor.DARK_GRAY);
 
             ItemText itemName = new ItemText(ChatColor.DARK_GRAY, ChatColor.STRIKETHROUGH);
             itemName.addText("A", ChatColor.MAGIC);
@@ -124,7 +124,8 @@ public class BingoTask implements ConfigurationSerializable
                 add(ChatColor.ITALIC);
             }};
             ItemText[] desc = TranslationData.translateToItemText("game.item.complete_lore", modifiers,
-                    completedBy.get().team().getColoredName(),
+                    new ItemText(completedBy.get().gamePlayer().get().getDisplayName(),
+                            completedBy.get().getTeam().getColor().chatColor, ChatColor.BOLD),
                     new ItemText(timeString, ChatColor.GOLD));
 
             item = new ItemStack(completeMaterial);
@@ -225,7 +226,7 @@ public class BingoTask implements ConfigurationSerializable
 
         new Message("game.item.completed").color(ChatColor.GREEN)
                 .component(data.getItemDisplayName().asComponent()).color(nameColor)
-                .arg(player.team().getColoredName().asLegacyString())
+                .arg(new ItemText(player.gamePlayer().get().getDisplayName(), player.team().getColor().chatColor, ChatColor.BOLD).asLegacyString())
                 .arg(timeString).color(ChatColor.WHITE)
                 .sendAll(player.worldName());
         return true;

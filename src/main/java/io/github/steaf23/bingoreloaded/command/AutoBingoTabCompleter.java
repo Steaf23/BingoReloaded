@@ -39,7 +39,7 @@ public class AutoBingoTabCompleter implements TabCompleter
                 }
                 return allWorlds;
             case 2:
-                return List.of("create", "destroy", "start", "end","kit", "effects", "card", "team_max", "duration", "team");
+                return List.of("create", "destroy", "start", "end","kit", "effects", "card", "duration", "team");
             case 3:
                 switch (args[1])
                 {

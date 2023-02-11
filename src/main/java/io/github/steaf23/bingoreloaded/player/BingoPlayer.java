@@ -113,7 +113,7 @@ public record BingoPlayer(UUID playerId, BingoTeam team, String worldName, Strin
                 }
             }
 
-            player.getInventory().setItem(8, PlayerKit.cardItem.inSlot(8));
+            player.getInventory().setItemInOffHand(PlayerKit.cardItem.inSlot(8));
         });
     }
 
@@ -134,7 +134,8 @@ public record BingoPlayer(UUID playerId, BingoTeam team, String worldName, Strin
                 player.addPotionEffect(new PotionEffect(PotionEffectType.WATER_BREATHING, 100000, 1, false, false));
             if (effects.contains(EffectOptionFlags.FIRE_RESISTANCE))
                 player.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, 100000, 1, false, false));
-
+            if (effects.contains(EffectOptionFlags.SPEED))
+                player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 100000, 1, false, false));
             player.addPotionEffect(new PotionEffect(PotionEffectType.SATURATION, 2, 100, false, false));
             player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 2, 100, false, false));
             player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, BingoReloaded.ONE_SECOND * ConfigData.instance.gracePeriod, 100, false, false));

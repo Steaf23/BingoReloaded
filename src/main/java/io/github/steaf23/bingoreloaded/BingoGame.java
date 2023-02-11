@@ -505,7 +505,10 @@ public class BingoGame implements Listener
         if (player == null || player.gamePlayer().isEmpty() || !inProgress)
             return;
 
-        if (event.getItem() == null || event.getHand() != EquipmentSlot.HAND || event.getItem().getType().isAir())
+        if (event.getItem() == null || event.getItem().getType().isAir())
+            return;
+
+        if (event.getAction() != Action.RIGHT_CLICK_AIR && event.getAction() != Action.RIGHT_CLICK_BLOCK)
             return;
 
         if (PlayerKit.cardItem.isKeyEqual(event.getItem()))
@@ -516,7 +519,6 @@ public class BingoGame implements Listener
             {
                 return;
             }
-
             BingoCard card = playerTeam.card;
 
             // if the player is actually participating, show it
@@ -535,54 +537,14 @@ public class BingoGame implements Listener
             }
         }
 
-        if (PlayerKit.wandItem.isKeyEqual(event.getItem())
-                && (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK))
+        if (PlayerKit.wandItem.isKeyEqual(event.getItem()))
         {
+            event.setCancelled(true);
             if (!inProgress)
             {
                 new Message("game.player.no_start").send(event.getPlayer());
             }
-            else if (player.useGoUpWand(event.getItem()))
-            {
-                event.setCancelled(true);
-            }
-        }
-    }
-
-    @EventHandler
-    public void onInventoryClick(final InventoryClickEvent event)
-    {
-        if (!(event.getWhoClicked() instanceof Player p))
-            return;
-
-        BingoPlayer player = getTeamManager().getBingoPlayer(p);
-        if (player == null || player.gamePlayer().isEmpty() || !inProgress)
-            return;
-
-        ItemStack item = event.getCurrentItem();
-        if (item == null) return;
-
-        if (PlayerKit.cardItem.isKeyEqual(item))
-        {
-            event.setCancelled(true);
-        }
-    }
-
-    @EventHandler
-    public void onInventoryDrag(final InventoryDragEvent event)
-    {
-        if (!(event.getWhoClicked() instanceof Player p))
-            return;
-
-        BingoPlayer player = getTeamManager().getBingoPlayer(p);
-        if (player == null || player.gamePlayer().isEmpty() || !inProgress)
-            return;
-
-        if (event.getCursor() == null) return;
-
-        if (PlayerKit.cardItem.isKeyEqual(event.getCursor()))
-        {
-            event.setCancelled(true);
+            player.useGoUpWand(event.getItem());
         }
     }
 
@@ -636,33 +598,6 @@ public class BingoGame implements Listener
                 event.getEntity().spigot().sendMessage(teleportMsg);
                 deadPlayers.put(player.playerId(), deathCoords);
             }
-        }
-    }
-
-    @EventHandler
-    public void onPlayerHoldsCard(final PlayerItemHeldEvent event)
-    {
-        if (!getWorldName().equals(GameWorldManager.getWorldName(event.getPlayer().getWorld())))
-            return;
-
-        if (!inProgress)
-            return;
-
-        BingoPlayer player = getTeamManager().getBingoPlayer(event.getPlayer());
-        if (player == null || player.gamePlayer().isEmpty())
-        {
-            return;
-        }
-
-        if (event.getNewSlot() == PlayerKit.cardItem.getSlot() && settings.effects.contains(EffectOptionFlags.CARD_SPEED))
-        {
-            event.getPlayer().addPotionEffect(
-                    new PotionEffect(PotionEffectType.SPEED, 100000, 1, false, false));
-        }
-
-        if (event.getPreviousSlot() == PlayerKit.cardItem.getSlot())
-        {
-            event.getPlayer().removePotionEffect(PotionEffectType.SPEED);
         }
     }
 

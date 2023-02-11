@@ -17,7 +17,7 @@ import java.util.List;
 public enum PlayerKit
 {
     HARDCORE(TranslationData.itemName("menu.kits.hardcore"), EnumSet.noneOf(EffectOptionFlags.class)),
-    NORMAL(TranslationData.itemName("menu.kits.normal"), EnumSet.of(EffectOptionFlags.CARD_SPEED, EffectOptionFlags.NO_FALL_DAMAGE)),
+    NORMAL(TranslationData.itemName("menu.kits.normal"), EnumSet.of(EffectOptionFlags.SPEED, EffectOptionFlags.NO_FALL_DAMAGE)),
     OVERPOWERED(TranslationData.itemName("menu.kits.overpowered"), EnumSet.allOf(EffectOptionFlags.class)),
     RELOADED(TranslationData.itemName("menu.kits.reloaded"), EnumSet.allOf(EffectOptionFlags.class)),
     CUSTOM(TranslationData.itemName("menu.kits.custom"), EnumSet.noneOf(EffectOptionFlags.class)),
@@ -72,7 +72,7 @@ public enum PlayerKit
             }
             case OVERPOWERED -> {
                 items = new ArrayList<>();
-                items.add(wandItem.inSlot(7));
+                items.add(wandItem.inSlot(8));
                 items.add(helmet
                         .withEnchantment(Enchantment.DURABILITY, 3)
                         .withEnchantment(Enchantment.WATER_WORKER, 1)
@@ -97,7 +97,7 @@ public enum PlayerKit
             }
             case RELOADED -> {
                 items = new ArrayList<>();
-                items.add(wandItem.inSlot(7));
+                items.add(wandItem.inSlot(8));
                 items.add(helmet
                         .withEnchantment(Enchantment.DURABILITY, 3)
                         .withEnchantment(Enchantment.WATER_WORKER, 1)
@@ -181,7 +181,7 @@ public enum PlayerKit
 
     private static InventoryItem createCardItem()
     {
-        InventoryItem card = new InventoryItem(8,
+        InventoryItem card = new InventoryItem(
                 Material.MAP,
                 "" + ChatColor.DARK_PURPLE + ChatColor.ITALIC + ChatColor.BOLD + TranslationData.itemName("items.card"),
                 TranslationData.itemDescription("items.card"));

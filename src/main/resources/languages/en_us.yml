@@ -60,7 +60,7 @@ game:
     lore: Obtain {0} of this item to complete this task! # 0: item count
     lore_advancement: "Click to learn more!"
     lore_statistic: "Obtain this statistic to complete the task!"
-    completed: "Completed {0} by team {1} at {2}" # 0: item name, 1: team, 2: completion time
+    completed: "Completed {0} by {1} at {2}" # 0: item name, 1: team, 2: completion time
     complete_lore: "Completed by {0} \nat {1}" # 0: team, 1: completion time
     deathmatch: "DeathMatch - Find this item to win: {0}" # 0: item name
     cooldown: "You cannot use this item for another {0} seconds!" # 0: seconds
@@ -115,7 +115,7 @@ menu:
     water_breath: "Water Breathing"
     fire_res: "Fire Resistance"
     no_fall_dmg: "No Fall Damage"
-    card_speed: "Speed When Holding Card"
+    speed: "Speed"
   kits:
     hardcore:
       name: "&4Hardcore"
