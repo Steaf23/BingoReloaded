@@ -26,13 +26,13 @@ public class Message
             .append("Bingo", ComponentBuilder.FormatRetention.NONE).color(ChatColor.DARK_AQUA).bold(true)
             .append("Reloaded", ComponentBuilder.FormatRetention.NONE).color(ChatColor.YELLOW).italic(true)
             .append("]", ComponentBuilder.FormatRetention.NONE).color(ChatColor.DARK_RED)
-            .append(" ", ComponentBuilder.FormatRetention.NONE).create();
+            .append("", ComponentBuilder.FormatRetention.NONE).create();
 
     public static final BaseComponent[] SHORT_PREFIX = new ComponentBuilder("").append("[").color(ChatColor.DARK_RED)
             .append("B", ComponentBuilder.FormatRetention.NONE).color(ChatColor.DARK_AQUA).bold(true)
             .append("R", ComponentBuilder.FormatRetention.NONE).color(ChatColor.YELLOW).italic(true)
             .append("]", ComponentBuilder.FormatRetention.NONE).color(ChatColor.DARK_RED)
-            .append(" ", ComponentBuilder.FormatRetention.NONE).create();
+            .append("", ComponentBuilder.FormatRetention.NONE).create();
 
     public static final String PREFIX_STRING = new TextComponent(PRINT_PREFIX).toLegacyText();
 
@@ -170,6 +170,8 @@ public class Message
             prefixedBase.addExtra(c);
         }
 
+        prefixedBase.addExtra(" ");
+
         createMessage();
 
         prefixedBase.addExtra(finalMessage);
@@ -215,12 +217,12 @@ public class Message
 
     public static void log(String text)
     {
-        Bukkit.getLogger().info("[BingoReloaded]: " + text);
+        Bukkit.getConsoleSender().sendMessage(PREFIX_STRING + ": " + text);
     }
 
     public static void log(String text, String worldName)
     {
-        Bukkit.getLogger().info("[BingoReloaded](" + worldName + "): " + text);
+        Bukkit.getConsoleSender().sendMessage(PREFIX_STRING + "(" + worldName + "): " + text);
     }
 
 
@@ -236,7 +238,7 @@ public class Message
 
     public static void log(BaseComponent text)
     {
-        Bukkit.getLogger().info(text.toPlainText());
+        Bukkit.getConsoleSender().sendMessage(text.toPlainText());
     }
 
     public static void sendDebug(String text, Player player)
@@ -310,7 +312,7 @@ public class Message
 
     public static TextComponent[] createHoverCommandMessage(@NonNull String translatePath, @Nullable String command)
     {
-        TextComponent prefix = new TextComponent(PREFIX_STRING + TranslationData.translate(translatePath + ".prefix"));
+        TextComponent prefix = new TextComponent(PREFIX_STRING + " " + TranslationData.translate(translatePath + ".prefix"));
         TextComponent hoverable = new TextComponent(TranslationData.translate(translatePath + ".hoverable"));
         TextComponent hover = new TextComponent(TranslationData.translate(translatePath + ".hover"));
         TextComponent suffix = new TextComponent(TranslationData.translate(translatePath + ".suffix"));

@@ -1,6 +1,7 @@
 package io.github.steaf23.bingoreloaded.data;
 
 import io.github.steaf23.bingoreloaded.item.tasks.*;
+import io.github.steaf23.bingoreloaded.util.Message;
 import org.bukkit.configuration.MemorySection;
 
 import java.util.*;
@@ -89,24 +90,44 @@ public class TaskListsData
 
         data.getConfig().set(listName + ".size", getTasks(listName).size());
         data.saveConfig();
-
-        removeEmptyLists();
     }
 
     public static boolean removeList(String listName)
     {
-        if (data.getConfig().contains(listName))
-        {
-            data.getConfig().set(listName, null);
-            data.saveConfig();
-            return true;
-        }
-        return false;
+        if (!data.getConfig().contains(listName))
+            return false;
+
+        data.getConfig().set(listName, null);
+        data.saveConfig();
+        return true;
     }
 
-    public static void removeEmptyLists()
+    public static boolean duplicateList(String listName)
     {
+        if (!data.getConfig().contains(listName))
+            return false;
 
+        var list = data.getConfig().get(listName);
+        data.getConfig().set(listName + "_copy", list);
+        data.saveConfig();
+        return true;
+    }
+
+    public static boolean renameList(String listName, String newName)
+    {
+        var defaultLists = List.of("default_items", "default_advancements", "default_statistics");
+        if (defaultLists.contains(listName) || defaultLists.contains(newName))
+            return false;
+        if (!data.getConfig().contains(listName))
+            return false;
+        if (data.getConfig().contains(newName)) // Card with newName already exists
+            return false;
+
+        var list = data.getConfig().get(listName);
+        data.getConfig().set(newName, list);
+        data.getConfig().set(listName, null);
+        data.saveConfig();
+        return true;
     }
 
     /**

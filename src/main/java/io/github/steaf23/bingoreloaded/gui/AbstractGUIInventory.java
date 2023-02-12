@@ -27,19 +27,22 @@ public abstract class AbstractGUIInventory
     public abstract void delegateClick(final InventoryClickEvent event, int slotClicked, Player player, ClickType clickType);
 
     protected static final String TITLE_PREFIX = "" + ChatColor.GOLD + ChatColor.BOLD;
-    protected Inventory inventory = null;
-
+    protected final Inventory inventory;
     private final AbstractGUIInventory parent;
     private int maxStackSizeOverride = -1; // -1 means no override (i.e. default stack sizes for all items)
 
     public AbstractGUIInventory(int size, String title, AbstractGUIInventory parent)
     {
         this.parent = parent;
-
-        inventory = Bukkit.createInventory(new GUIHolder(), size, Message.PREFIX_STRING_SHORT + ChatColor.DARK_RED + title);
+        this.inventory = Bukkit.createInventory(new GUIHolder(), size, Message.PREFIX_STRING_SHORT + " " + ChatColor.DARK_RED + title);
         UIManager.addInventory(this);
+    }
 
-//        Message.log("Constructing " + title);
+    public AbstractGUIInventory(InventoryType type, String title, AbstractGUIInventory parent)
+    {
+        this.parent = parent;
+        this.inventory = Bukkit.createInventory(new GUIHolder(), type, Message.PREFIX_STRING_SHORT + " " + ChatColor.DARK_RED + title);
+        UIManager.addInventory(this);
     }
 
     protected void setMaxStackSizeOverride(int maxValue)

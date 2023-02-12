@@ -7,6 +7,7 @@ import io.github.steaf23.bingoreloaded.gui.cards.CardSize;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.player.PlayerKit;
 import io.github.steaf23.bingoreloaded.util.Message;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -334,13 +335,11 @@ public class AutoBingoCommand implements CommandExecutor
 
     private void sendFailed(String message, String worldName)
     {
-        String text = "'" + worldName + "': " + message;
-        Message.error(text);
+        Message.log(ChatColor.RED + message, worldName);
     }
 
     private void sendSuccess(String message, String worldName)
     {
-        String text = "'" + worldName + "': " + message;
-        Message.log(text);
+        Message.log(ChatColor.GREEN + message, worldName);
     }
 }

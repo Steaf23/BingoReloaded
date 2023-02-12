@@ -15,13 +15,40 @@ public class BingoCardsData
 
     public static boolean removeCard(String cardName)
     {
-        if (data.getConfig().contains(cardName))
-        {
-            data.getConfig().set(cardName, null);
-            data.saveConfig();
-            return true;
-        }
-        return false;
+        if (!data.getConfig().contains(cardName))
+            return false;
+
+        data.getConfig().set(cardName, null);
+        data.saveConfig();
+        return true;
+    }
+
+    public static boolean duplicateCard(String cardName)
+    {
+        if (!data.getConfig().contains(cardName))
+            return false;
+
+        var card = data.getConfig().get(cardName);
+        data.getConfig().set(cardName + "_copy", card);
+        data.saveConfig();
+        return true;
+    }
+
+    public static boolean renameCard(String cardName, String newName)
+    {
+        var defaultCards = List.of("default_card");
+        if (defaultCards.contains(cardName) || defaultCards.contains(newName))
+            return false;
+        if (!data.getConfig().contains(cardName))
+            return false;
+        if (data.getConfig().contains(newName)) // Card with newName already exists
+            return false;
+
+        var card = data.getConfig().get(cardName);
+        data.getConfig().set(newName, card);
+        data.getConfig().set(cardName, null);
+        data.saveConfig();
+        return true;
     }
 
     public static Set<String> getCardNames()

@@ -78,9 +78,9 @@ public class BingoReloaded extends JavaPlugin
 //        }
 
         Message.log(TranslationData.translate("changed"));
-        Bukkit.getLogger().info(ChatColor.GREEN + "Enabled " + this.getName());
+        Message.log(ChatColor.GREEN + "Enabled " + this.getName());
 
-//        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "autobingo world create 3");
+        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "autobingo world create " + ConfigData.instance.defaultTeamSize);
 
     }
 

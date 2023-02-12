@@ -1,7 +1,3 @@
-multiworld refactor! using Multiverse plugin
-
-add option to duplicate cards/lists
-
 refactor card recovery (its shit).
 
 implement Vault plugin
@@ -27,3 +23,5 @@ generalize/centralize game in progress/ player in game checks for events
 check if advancements are disabled and disallow them on advancement-disabled servers
 
 put players on scoreboard under each team name
+
+make verboseConsole config option to print more info as the game goes on

@@ -2,6 +2,7 @@ package io.github.steaf23.bingoreloaded.gui;
 
 import io.github.steaf23.bingoreloaded.data.TranslationData;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
+import io.github.steaf23.bingoreloaded.util.Message;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -33,7 +34,7 @@ public abstract class PaginatedPickerUI extends AbstractGUIInventory
     private final List<InventoryItem> filteredItems;
     private int pageAmount;
     private int currentPage;
-    private KeyboardUI filter;
+    private UserInputUI filter;
     private String keywordFilter;
     public FilterType filterType;
 
@@ -64,11 +65,7 @@ public abstract class PaginatedPickerUI extends AbstractGUIInventory
         filteredItems = new ArrayList<>(options);
         keywordFilter = "";
         this.filterType = filterType;
-        updatePageAmount();
-
-        updatePage();
         clearFilter();
-
     }
 
     @Override
@@ -88,20 +85,7 @@ public abstract class PaginatedPickerUI extends AbstractGUIInventory
         }
         else if (slotClicked == FILTER.getSlot())
         {
-            close(player);
-            filter = new KeyboardUI(this)
-            {
-                @Override
-                public void storeResult()
-                {
-                    applyFilter(filter.getKeyword());
-                }
-            };
-            filter.open(player, keywordFilter);
-        }
-        else if (slotClicked == FILTER.getSlot())
-        {
-            clearFilter();
+            UserInputUI.open("Filter by name", this::applyFilter, player, this, keywordFilter);
         }
         else if (isSlotValidOption(slotClicked)) //If it is a normal item;
         {
@@ -205,8 +189,7 @@ public abstract class PaginatedPickerUI extends AbstractGUIInventory
         }
 
         Collections.addAll(items, newItems);
-
-        updatePage();
+        clearFilter();
     }
 
     public void removeItems(int... itemIndices)

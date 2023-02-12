@@ -72,7 +72,7 @@ menu:
   next: "Next Page"
   prev: "Prev Page"
   filter: "Filter..."
-  clear: "Clear Filter"
+  clear: "Clear Filter/ Cancel"
   completed: "Completed Tasks"
   card:
     title: "Card Viewer"
