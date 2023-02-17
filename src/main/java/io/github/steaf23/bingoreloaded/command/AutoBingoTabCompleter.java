@@ -44,7 +44,7 @@ public class AutoBingoTabCompleter implements TabCompleter
                 switch (args[1])
                 {
                     case "kit":
-                        return List.of("custom", "normal", "overpowered", "reloaded", "hardcore");
+                        return List.of("normal", "overpowered", "reloaded", "hardcore", "custom1", "custom2", "custom3", "custom4", "custom5");
                     case "effects":
                         return List.of("all", "none", "water_breathing", "night_vision", "fire_resistance", "no_fall_damage", "card_speed");
                     case "card":
