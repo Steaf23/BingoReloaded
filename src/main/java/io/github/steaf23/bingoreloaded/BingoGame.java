@@ -1,6 +1,7 @@
 package io.github.steaf23.bingoreloaded;
 
 import io.github.steaf23.bingoreloaded.data.*;
+import io.github.steaf23.bingoreloaded.event.CountdownTimerFinishedEvent;
 import io.github.steaf23.bingoreloaded.event.SendBingoGameEvent;
 import io.github.steaf23.bingoreloaded.gui.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.gui.cards.BingoCard;
@@ -77,7 +78,7 @@ public class BingoGame implements Listener
         start(0);
     }
 
-    public void start(int seed)
+    public synchronized void start(int seed)
     {
         if (settings.mode == BingoGamemode.COUNTDOWN)
         {
@@ -142,7 +143,7 @@ public class BingoGame implements Listener
         scoreboard.updateItemCount();
     }
 
-    public void end()
+    public synchronized void end()
     {
         settings.deathMatchItem = null;
         if(!inProgress)
@@ -176,6 +177,36 @@ public class BingoGame implements Listener
             }
         }
         end();
+    }
+
+    @EventHandler
+    public void onCountdownFinished(final CountdownTimerFinishedEvent event)
+    {
+        Set<BingoTeam> tiedTeams = new HashSet<>();
+        TeamManager teamManager = getTeamManager();
+        tiedTeams.add(teamManager.getLeadingTeam());
+
+        int leadingPoints = teamManager.getCompleteCount(teamManager.getLeadingTeam());
+        for (BingoTeam team : teamManager.getActiveTeams())
+        {
+            if (teamManager.getCompleteCount(team) == leadingPoints)
+            {
+                tiedTeams.add(team);
+            }
+            else
+            {
+                team.outOfTheGame = true;
+            }
+        }
+
+        if (tiedTeams.size() == 1)
+        {
+            bingo(teamManager.getLeadingTeam());
+        }
+        else
+        {
+            startDeathMatch(3);
+        }
     }
 
     public int getGameTime()

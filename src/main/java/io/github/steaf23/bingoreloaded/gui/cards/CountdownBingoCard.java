@@ -29,36 +29,6 @@ public class CountdownBingoCard extends CompleteBingoCard
     }
 
     @EventHandler
-    public void onCountdownFinished(final CountdownTimerFinishedEvent event)
-    {
-        Set<BingoTeam> tiedTeams = new HashSet<>();
-        TeamManager teamManager = game.getTeamManager();
-        tiedTeams.add(teamManager.getLeadingTeam());
-
-        int leadingPoints = teamManager.getCompleteCount(teamManager.getLeadingTeam());
-        for (BingoTeam team : teamManager.getActiveTeams())
-        {
-            if (teamManager.getCompleteCount(team) == leadingPoints)
-            {
-                tiedTeams.add(team);
-            }
-            else
-            {
-                team.outOfTheGame = true;
-            }
-        }
-
-        if (tiedTeams.size() == 1)
-        {
-            game.bingo(teamManager.getLeadingTeam());
-        }
-        else
-        {
-            game.startDeathMatch(3);
-        }
-    }
-
-    @EventHandler
     public void onBingoGameEventReceived(final ReceiveBingoGameEvent event)
     {
         if (event.eventType.equals(BingoGameEvent.ENDED))
