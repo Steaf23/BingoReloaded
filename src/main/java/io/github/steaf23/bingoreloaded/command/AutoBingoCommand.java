@@ -187,7 +187,7 @@ public class AutoBingoCommand implements CommandExecutor
     {
         try
         {
-            settings.setKit(PlayerKit.valueOf(kitName.toUpperCase()));
+            settings.setKit(PlayerKit.fromConfig(kitName));
             return true;
         }
         catch (IllegalArgumentException e)

@@ -15,6 +15,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 // Message builder class to construct and send messages to the player
@@ -243,17 +244,30 @@ public class Message
 
     public static void sendDebug(String text, Player player)
     {
-        player.spigot().sendMessage(TextComponent.fromLegacyText(text));
+        Message.sendDebug(TextComponent.fromLegacyText(text), player);
     }
 
     public static void sendDebug(BaseComponent text, Player player)
+    {
+        BaseComponent finalMsg = new TextComponent();
+        finalMsg.addExtra(PREFIX_STRING + " ");
+        finalMsg.addExtra(text);
+        player.spigot().sendMessage(finalMsg);
+    }
+
+    public static void sendDebugNoPrefix(BaseComponent text, Player player)
     {
         player.spigot().sendMessage(text);
     }
 
     public static void sendDebug(BaseComponent[] text, Player player)
     {
-        player.spigot().sendMessage(text);
+        BaseComponent finalMsg = new TextComponent();
+        finalMsg.addExtra(PREFIX_STRING + " ");
+        TextComponent allText = new TextComponent();
+        allText.setExtra(Arrays.stream(text).toList());
+        finalMsg.addExtra(allText);
+        player.spigot().sendMessage(finalMsg);
     }
 
     public static void sendActionMessage(String message, Player player)

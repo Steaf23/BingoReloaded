@@ -3,6 +3,7 @@ package io.github.steaf23.bingoreloaded.item.tasks;
 import org.bukkit.Material;
 import org.bukkit.Statistic;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
+import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.entity.EntityType;
 import org.jetbrains.annotations.NotNull;
 
@@ -10,6 +11,7 @@ import javax.annotation.Nullable;
 import java.util.*;
 import java.util.stream.Stream;
 
+@SerializableAs("Bingo.Statistic")
 public record BingoStatistic(@NotNull Statistic stat, @Nullable EntityType entityType, @Nullable Material materialType) implements ConfigurationSerializable
 {
     public enum StatisticCategory

@@ -97,7 +97,7 @@ public class BingoGame implements Listener
         }
 
         settings.deathMatchItem = null;
-        getTeamManager().updateActivePlayers();
+//        getTeamManager().updateActivePlayers();
         World world = Bukkit.getWorld(getWorldName());
         world.setStorm(false);
         world.setTime(1000);
@@ -649,6 +649,7 @@ public class BingoGame implements Listener
         TeamManager teamManager = game.getTeamManager();
         tiedTeams.add(teamManager.getLeadingTeam());
 
+        // Regular bingo cannot draw, so end the game without a winner
         if (settings.mode == BingoGamemode.REGULAR)
         {
             var endedEvent = new BingoEndedEvent(game.getGameTime(), null, game.getWorldName());
@@ -670,6 +671,7 @@ public class BingoGame implements Listener
             }
         }
 
+        // If only 1 team is "tied" for first place, make that team win the game
         if (tiedTeams.size() == 1)
         {
             game.bingo(teamManager.getLeadingTeam());

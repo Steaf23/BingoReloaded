@@ -5,6 +5,7 @@ import io.github.steaf23.bingoreloaded.gui.cards.BingoCard;
 import io.github.steaf23.bingoreloaded.gui.cards.LockoutBingoCard;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.player.BingoTeam;
+import io.github.steaf23.bingoreloaded.util.Message;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -111,7 +112,7 @@ public class CardEventManager implements Listener
             return;
 
         BingoPlayer player = game.getTeamManager().getBingoPlayer(p);
-        if (player == null || player.gamePlayer().isPresent())
+        if (player == null || !player.gamePlayer().isPresent())
             return;
 
         BingoTeam team = player.getTeam();

@@ -1,19 +1,17 @@
 package io.github.steaf23.bingoreloaded.gui.cards;
 
+
 import io.github.steaf23.bingoreloaded.BingoGame;
-import io.github.steaf23.bingoreloaded.event.BingoEndedEvent;
-import io.github.steaf23.bingoreloaded.event.CountdownTimerFinishedEvent;
-import io.github.steaf23.bingoreloaded.player.TeamManager;
-import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
-import io.github.steaf23.bingoreloaded.GameWorldManager;
 import io.github.steaf23.bingoreloaded.data.BingoCardsData;
 import io.github.steaf23.bingoreloaded.data.TaskListsData;
 import io.github.steaf23.bingoreloaded.data.TranslationData;
-import io.github.steaf23.bingoreloaded.gui.AbstractGUIInventory;
 import io.github.steaf23.bingoreloaded.event.BingoCardTaskCompleteEvent;
+import io.github.steaf23.bingoreloaded.gui.AbstractGUIInventory;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
-import io.github.steaf23.bingoreloaded.item.tasks.*;
+import io.github.steaf23.bingoreloaded.item.tasks.AdvancementTask;
+import io.github.steaf23.bingoreloaded.item.tasks.BingoTask;
+import io.github.steaf23.bingoreloaded.item.tasks.ItemTask;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.player.BingoTeam;
 import io.github.steaf23.bingoreloaded.util.Message;
@@ -23,8 +21,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -33,17 +29,13 @@ import org.bukkit.event.player.PlayerAdvancementDoneEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.inventory.ItemStack;
 
+
 import java.util.*;
 
 public class BingoCard extends AbstractGUIInventory
 {
     public CardSize size;
     public List<BingoTask> tasks = new ArrayList<>();
-
-    public boolean canDraw()
-    {
-        return false;
-    }
 
     private static final BingoTask DEFAULT_TASK = new BingoTask(new ItemTask(Material.DIRT, 1));
 
@@ -226,7 +218,7 @@ public class BingoCard extends AbstractGUIInventory
         base.addExtra("\n - ");
         base.addExtra(task.data.getDescription());
 
-        Message.sendDebug(base, player);
+        Message.sendDebugNoPrefix(base, player);
     }
 
     public BingoCard copy()

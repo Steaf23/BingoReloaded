@@ -20,12 +20,6 @@ public class LockoutBingoCard extends BingoCard
     public int teamCount;
     public int currentMaxTasks;
 
-    @Override
-    public boolean canDraw()
-    {
-        return true;
-    }
-
     public LockoutBingoCard(CardSize size, int teamCount)
     {
         super(size);

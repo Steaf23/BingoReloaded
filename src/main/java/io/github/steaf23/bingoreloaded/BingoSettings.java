@@ -4,6 +4,7 @@ import io.github.steaf23.bingoreloaded.data.BingoCardsData;
 import io.github.steaf23.bingoreloaded.data.ConfigData;
 import io.github.steaf23.bingoreloaded.gui.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.gui.cards.CardSize;
+import io.github.steaf23.bingoreloaded.player.CustomKit;
 import io.github.steaf23.bingoreloaded.player.PlayerKit;
 import io.github.steaf23.bingoreloaded.util.Message;
 import net.md_5.bungee.api.ChatColor;
@@ -49,7 +50,15 @@ public class BingoSettings
     public void setKit(PlayerKit kit)
     {
         this.kit = kit;
-        new Message("game.settings.kit_selected").color(ChatColor.GOLD).arg(kit.displayName).sendAll(worldName);
+        String kitName = switch (kit)
+        {
+            case CUSTOM_1, CUSTOM_2, CUSTOM_3, CUSTOM_4, CUSTOM_5 -> {
+                CustomKit customKit = PlayerKit.getCustomKit(kit);
+                yield customKit == null ? kit.displayName : customKit.getName();
+            }
+            default -> kit.displayName;
+        };
+        new Message("game.settings.kit_selected").color(ChatColor.GOLD).arg(ChatColor.RESET + kitName).sendAll(worldName);
     }
 
     public void setEffects(EnumSet<EffectOptionFlags> effects)

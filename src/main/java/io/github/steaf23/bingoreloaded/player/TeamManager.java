@@ -262,7 +262,7 @@ public class TeamManager implements Listener
     public BingoTeam getLeadingTeam()
     {
         Optional<BingoTeam> leadingTeam = activeTeams.stream().max(
-                (t, t2) -> t.card.getCompleteCount(t) - t2.card.getCompleteCount(t)
+                (t, t2) -> t.card.getCompleteCount(t) - t2.card.getCompleteCount(t2)
         );
         return leadingTeam.orElse(null);
     }
@@ -270,7 +270,7 @@ public class TeamManager implements Listener
     public BingoTeam getLosingTeam()
     {
         Optional<BingoTeam> losingTeam = activeTeams.stream().min(
-                (t, t2) -> t.card.getCompleteCount(t) - t2.card.getCompleteCount(t)
+                (t, t2) -> t.card.getCompleteCount(t) - t2.card.getCompleteCount(t2)
         );
         return losingTeam.orElse(null);
     }

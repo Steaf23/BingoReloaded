@@ -4,7 +4,7 @@ implement Vault plugin
 
 create lobby to vote for options and select teams pre-game and show leaderboards
 
-add option to send players to a world when the game ends..
+add option to send players to a location when the game ends..
 
 finish statistics
 
@@ -12,16 +12,16 @@ rework InventoryItem slot to (x, y) for convenience
 
 Add dummy player class to test stuff like lockout!
 
-add (5) custom kit slots and option to create a kit using copy inventory....
+add (5) custom kit slots and option to create a kit using new /bingo kit <save|remove> <slot> command....
+add /bingo kit item <item_name> command to get special items for custom kits
 
 update autobingo page with all new features
 
 see what players joined what team on TAB and in team selector
+put players on scoreboard under each team name
 
 generalize/centralize game in progress/ player in game checks for events
 
 check if advancements are disabled and disallow them on advancement-disabled servers
-
-put players on scoreboard under each team name
 
 make verboseConsole config option to print more info as the game goes on

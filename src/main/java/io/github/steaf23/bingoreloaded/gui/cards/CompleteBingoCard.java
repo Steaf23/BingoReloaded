@@ -21,12 +21,6 @@ public class CompleteBingoCard extends BingoCard
     }
 
     @Override
-    public boolean canDraw()
-    {
-        return true;
-    }
-
-    @Override
     public boolean hasBingo(BingoTeam team)
     {
         return getCompleteCount(team) == size.fullCardSize;

@@ -12,6 +12,7 @@ import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
+import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -21,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-
+@SerializableAs("Bingo.Task")
 public class BingoTask implements ConfigurationSerializable
 {
     public enum TaskType
