@@ -1,13 +1,12 @@
-package io.github.steaf23.bingoreloaded.util;
+package io.github.steaf23.bingoreloaded.hologram;
 
 import io.github.steaf23.bingoreloaded.data.YmlDataManager;
+import io.github.steaf23.bingoreloaded.util.Message;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Location;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class HologramManager

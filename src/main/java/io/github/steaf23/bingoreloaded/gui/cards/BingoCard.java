@@ -12,6 +12,7 @@ import io.github.steaf23.bingoreloaded.item.InventoryItem;
 import io.github.steaf23.bingoreloaded.item.tasks.AdvancementTask;
 import io.github.steaf23.bingoreloaded.item.tasks.BingoTask;
 import io.github.steaf23.bingoreloaded.item.tasks.ItemTask;
+import io.github.steaf23.bingoreloaded.item.tasks.TaskData;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.player.BingoTeam;
 import io.github.steaf23.bingoreloaded.util.Message;
@@ -37,20 +38,33 @@ public class BingoCard extends AbstractGUIInventory
     public CardSize size;
     public List<BingoTask> tasks = new ArrayList<>();
 
-    private static final BingoTask DEFAULT_TASK = new BingoTask(new ItemTask(Material.DIRT, 1));
+    private static final TaskData DEFAULT_TASK = new ItemTask(Material.DIRT, 1);
 
     public BingoCard(CardSize size)
     {
         super(9 * size.cardSize, TranslationData.translate("menu.card.title"), null);
         this.size = size;
-        InventoryItem cardInfoItem = new InventoryItem(0, Material.MAP, TranslationData.itemName("menu.card.info_regular"), TranslationData.itemDescription("menu.card.info_regular"));
+        InventoryItem cardInfoItem = new InventoryItem(0, Material.MAP, TranslationData.itemName("menu.card.info_regular"),
+                TranslationData.itemDescription("menu.card.info_regular"));
         addOption(cardInfoItem);
 
         this.setMaxStackSizeOverride(64);
     }
 
+    /**
+     * Generating a bingo card has a few steps:
+     *  - Create task shuffler
+     *  - Create a ticketlist. This list contains a list name for each task on the card,
+     *      based on how often an item from that list should appear on the card.
+     *  - Using the ticketlist, pick a random task from each ticketlist entry to put on the card.
+     *  - Finally shuffle the tasks and add them to the card.
+     *      If the final task count is lower than the amount of spaces available on the card, it will be filled up using default tasks.
+     * @param cardName
+     * @param seed
+     */
     public void generateCard(String cardName, int seed)
     {
+        // Create shuffler
         Random shuffler;
         if (seed == 0)
         {
@@ -61,6 +75,7 @@ public class BingoCard extends AbstractGUIInventory
             shuffler = new Random(seed);
         }
 
+        // Create ticketList
         List<String> ticketList = new ArrayList<>();
         for (String listName : BingoCardsData.getListsSortedByMin(cardName))
         {
@@ -73,7 +88,6 @@ public class BingoCard extends AbstractGUIInventory
                 ticketList.add(listName);
             }
         }
-
         List<String> overflowList = new ArrayList<>();
         for (String listName : BingoCardsData.getLists(cardName))
         {
@@ -87,13 +101,14 @@ public class BingoCard extends AbstractGUIInventory
         if (ticketList.size() > size.fullCardSize)
             ticketList = ticketList.subList(0, size.fullCardSize);
 
-        List<BingoTask> newItems = new ArrayList<>();
-        Map<String, List<BingoTask>> allTasks = new HashMap<>();
+        // Pick random tasks
+        List<TaskData> newTasks = new ArrayList<>();
+        Map<String, List<TaskData>> allTasks = new HashMap<>();
         for (String listName : ticketList)
         {
             if (!allTasks.containsKey(listName))
             {
-                List<BingoTask> listTasks = TaskListsData.getTasks(listName);
+                List<TaskData> listTasks = new ArrayList<>(TaskListsData.getTasks(listName));
                 if (listTasks.size() == 0) // Skip empty task lists.
                 {
                     continue;
@@ -101,17 +116,19 @@ public class BingoCard extends AbstractGUIInventory
                 Collections.shuffle(listTasks, shuffler);
                 allTasks.put(listName, listTasks);
             }
-            newItems.add(allTasks.get(listName).remove(allTasks.get(listName).size() - 1));
+            newTasks.add(allTasks.get(listName).remove(allTasks.get(listName).size() - 1));
         }
-
-        while (newItems.size() < size.fullCardSize)
+        while (newTasks.size() < size.fullCardSize)
         {
-            newItems.add(DEFAULT_TASK.copy());
+            newTasks.add(DEFAULT_TASK);
         }
-        newItems = newItems.subList(0, size.fullCardSize);
+        newTasks = newTasks.subList(0, size.fullCardSize);
 
-        Collections.shuffle(newItems, shuffler);
-        tasks = newItems;
+        // Shuffle and add tasks to the card.
+        Collections.shuffle(newTasks, shuffler);
+        newTasks.forEach(item ->
+                tasks.add(new BingoTask(item))
+        );
     }
 
     public void showInventory(HumanEntity player)

@@ -1,14 +1,9 @@
-package io.github.steaf23.bingoreloaded.util;
+package io.github.steaf23.bingoreloaded.hologram;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.EntityType;
 
-import javax.imageio.ImageIO;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 public class Hologram
 {

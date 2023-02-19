@@ -1,1202 +1,585 @@
 default_items:
   tasks:
-    '1620480600':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: DRIPSTONE_BLOCK
-        count: 1
-    '1379714715':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: TUFF
-        count: 64
-    '-1374898201':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: CALCITE
-        count: 1
-    '983939184':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: AMETHYST_BLOCK
-        count: 10
-    '-205070665':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: IRON_BLOCK
-        count: 1
-    '-327495597':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: COPPER_BLOCK
-        count: 1
-    '-813015281':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: GOLD_BLOCK
-        count: 1
-    '-1937761283':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: DIAMOND_BLOCK
-        count: 1
-    '-880084746':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: OAK_WOOD
-        count: 1
-    '-943751589':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: SPRUCE_WOOD
-        count: 1
-    '1702751536':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: BIRCH_WOOD
-        count: 1
-    '-1698486260':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: JUNGLE_WOOD
-        count: 1
-    '-892801089':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: ACACIA_WOOD
-        count: 1
-    '123605656':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: DARK_OAK_WOOD
-        count: 1
-    '-102436954':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: MANGROVE_WOOD
-        count: 1
-    '1820081986':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: CRIMSON_HYPHAE
-        count: 1
-    '1801360381':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: WARPED_HYPHAE
-        count: 1
-    '1911610791':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: WET_SPONGE
-        count: 1
-    '168561380':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: TINTED_GLASS
-        count: 1
-    '-1666169702':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: LAPIS_BLOCK
-        count: 1
-    '-913342127':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: SANDSTONE
-        count: 4
-    '-1670010672':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: CHISELED_SANDSTONE
-        count: 1
-    '-964155378':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: CUT_SANDSTONE
-        count: 1
-    '-387805776':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: FLOWERING_AZALEA
-        count: 1
-    '-1260564915':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: DEAD_BUSH
-        count: 1
-    '-1559921313':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: SEA_PICKLE
-        count: 1
-    '-1385615':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: SPORE_BLOSSOM
-        count: 1
-    '1801738879':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: BROWN_MUSHROOM
-        count: 1
-    '386876319':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: RED_MUSHROOM
-        count: 1
-    '-1372445012':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: CRIMSON_FUNGUS
-        count: 1
-    '214951411':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: WARPED_FUNGUS
-        count: 1
-    '-2046545744':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: WEEPING_VINES
-        count: 1
-    '1968333363':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: TWISTING_VINES
-        count: 1
-    '-593164765':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: MOSS_BLOCK
-        count: 1
-    '-1873836800':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: HANGING_ROOTS
-        count: 1
-    '1100839903':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: BAMBOO
-        count: 1
-    '1685891851':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: SMOOTH_STONE
-        count: 1
-    '221827402':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: BRICKS
-        count: 1
-    '420170126':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: BOOKSHELF
-        count: 1
-    '-351699925':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: ICE
-        count: 1
-    '1928647547':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: SNOW_BLOCK
-        count: 1
-    '-1887352954':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: CACTUS
-        count: 1
-    '-182615524':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: JUKEBOX
-        count: 1
-    '1966782700':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: JACK_O_LANTERN
-        count: 1
-    '-2021367059':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: SOUL_SAND
-        count: 1
-    '-1209159891':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: BASALT
-        count: 1
-    '-1454120658':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: GLOWSTONE
-        count: 1
-    '103670056':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: MOSSY_STONE_BRICKS
-        count: 1
-    '-405237608':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: STONE_BRICKS
-        count: 1
-    '1090311324':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: CHISELED_STONE_BRICKS
-        count: 1
-    '1760766155':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: IRON_BARS
-        count: 1
-    '863820944':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: CHAIN
-        count: 1
-    '43503781':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: GLASS_PANE
-        count: 1
-    '-1064519281':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: MELON
-        count: 1
-    '251651257':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: VINE
-        count: 1
-    '-827381301':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: GLOW_LICHEN
-        count: 1
-    '-1677296338':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: LILY_PAD
-        count: 1
-    '-1783744282':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: NETHER_BRICKS
-        count: 1
-    '-119703438':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: ENCHANTING_TABLE
-        count: 1
-    '-1404478831':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: EMERALD_BLOCK
-        count: 1
-    '-1128852132':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: PRISMARINE
-        count: 1
-    '102059286':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: SEA_LANTERN
-        count: 1
-    '-579650066':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: MAGMA_BLOCK
-        count: 1
-    '228622381':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: NETHER_WART_BLOCK
-        count: 1
-    '1676611420':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: WARPED_WART_BLOCK
-        count: 1
-    '1665493696':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: BONE_BLOCK
-        count: 1
-    '702570112':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: WHITE_GLAZED_TERRACOTTA
-        count: 1
-    '293242218':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: ORANGE_GLAZED_TERRACOTTA
-        count: 1
-    '1270541990':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: MAGENTA_GLAZED_TERRACOTTA
-        count: 1
-    '548513524':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: LIGHT_BLUE_GLAZED_TERRACOTTA
-        count: 1
-    '-128698890':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: YELLOW_GLAZED_TERRACOTTA
-        count: 1
-    '427264916':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: LIME_GLAZED_TERRACOTTA
-        count: 1
-    '-1032920682':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: PINK_GLAZED_TERRACOTTA
-        count: 1
-    '-1984885729':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: GRAY_GLAZED_TERRACOTTA
-        count: 1
-    '2136147040':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: LIGHT_GRAY_CONCRETE
-        count: 1
-    '1391459246':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: CYAN_CONCRETE
-        count: 1
-    '810932403':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: PURPLE_CONCRETE
-        count: 1
-    '-1083096314':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: BLUE_CONCRETE
-        count: 1
-    '-1396182704':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: BROWN_CONCRETE
-        count: 1
-    '-1164775962':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: GREEN_CONCRETE
-        count: 1
-    '-671146125':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: RED_CONCRETE
-        count: 1
-    '-372245372':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: BLACK_CONCRETE
-        count: 1
-    '426421406':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: REDSTONE_BLOCK
-        count: 1
-    '651109717':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: REPEATER
-        count: 1
-    '1265061159':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: COMPARATOR
-        count: 1
-    '-1822378388':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: PISTON
-        count: 1
-    '-385299244':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: HOPPER
-        count: 1
-    '-801482063':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: LECTERN
-        count: 1
-    '97218546':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: TARGET
-        count: 1
-    '-1628515727':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: SCULK_SENSOR
-        count: 1
-    '1860598246':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: TRAPPED_CHEST
-        count: 1
-    '1210631801':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: TNT
-        count: 1
-    '1340767527':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: REDSTONE_LAMP
-        count: 1
-    '134210443':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: NOTE_BLOCK
-        count: 4
-    '-484724536':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: POWERED_RAIL
-        count: 6
-    '-298261042':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: DETECTOR_RAIL
-        count: 6
-    '1364024052':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: RAIL
-        count: 32
-    '198961760':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: ACTIVATOR_RAIL
-        count: 6
-    '-12126115':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: BOW
-        count: 1
-    '439488427':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: NETHERITE_SCRAP
-        count: 1
-    '90895789':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: GOLDEN_HOE
-        count: 1
-    '-1232287312':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: IRON_HOE
-        count: 1
-    '1945386947':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: DIAMOND_HOE
-        count: 1
-    '458130307':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: LEATHER_CHESTPLATE
-        count: 1
-    '410166507':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: IRON_CHESTPLATE
-        count: 1
-    '1633516762':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: DIAMOND_CHESTPLATE
-        count: 1
-    '-393511535':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: GOLDEN_CHESTPLATE
-        count: 1
-    '1878917114':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: PAINTING
-        count: 1
-    '972593225':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: GOLDEN_APPLE
-        count: 1
-    '1470017558':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: WATER_BUCKET
-        count: 1
-    '-1265816049':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: LAVA_BUCKET
-        count: 1
-    '1395924649':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: PUFFERFISH_BUCKET
-        count: 1
-    '-758564355':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: SALMON_BUCKET
-        count: 1
-    '566656487':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: COD_BUCKET
-        count: 1
-    '-1904329129':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: TROPICAL_FISH_BUCKET
-        count: 1
-    '17177833':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: AXOLOTL_BUCKET
-        count: 1
-    '400785229':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: MILK_BUCKET
-        count: 1
-    '913716603':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: POWDER_SNOW_BUCKET
-        count: 1
-    '-726142481':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: MUD_BRICKS
-        count: 1
-    '688270413':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: DEEPSLATE_TILES
-        count: 16
-    '321387083':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: FISHING_ROD
-        count: 1
-    '-118037630':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: CLOCK
-        count: 1
-    '1162663273':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: DRIED_KELP_BLOCK
-        count: 1
-    '-20490077':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: SPYGLASS
-        count: 1
-    '956969314':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: GLOW_INK_SAC
-        count: 1
-    '-71796480':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: INK_SAC
-        count: 1
-    '-586437171':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: ENDER_PEARL
-        count: 1
-    '-1468700229':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: BLAZE_ROD
-        count: 1
-    '-532214146':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: CAULDRON
-        count: 1
-    '-142756740':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: BREWING_STAND
-        count: 1
-    '-93552924':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: ITEM_FRAME
-        count: 1
-    '1695283907':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: GLOW_ITEM_FRAME
-        count: 1
-    '1499990788':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: FLOWER_POT
-        count: 1
-    '-1903737358':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: BAKED_POTATO
-        count: 1
-    '107904610':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: POISONOUS_POTATO
-        count: 1
-    '-996288206':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: FIREWORK_ROCKET
-        count: 1
-    '1029252418':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: COOKED_RABBIT
-        count: 1
-    '412800771':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: ARMOR_STAND
-        count: 1
-    '-735908104':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: BEETROOT
-        count: 1
-    '1356014066':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: SHIELD
-        count: 1
-    '-618973792':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: HEART_OF_THE_SEA
-        count: 1
-    '361185151':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: CROSSBOW
-        count: 1
-    '424341706':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: SUSPICIOUS_STEW
-        count: 1
-    '-1887993779':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: LOOM
-        count: 1
-    '240846924':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: COMPOSTER
-        count: 1
-    '1794987347':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: BARREL
-        count: 1
-    '153083596':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: SMOKER
-        count: 1
-    '-99915871':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: BLAST_FURNACE
-        count: 1
-    '100338309':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: CARTOGRAPHY_TABLE
-        count: 1
-    '-499518659':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: FLETCHING_TABLE
-        count: 1
-    '420888216':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: GRINDSTONE
-        count: 1
-    '-2113255999':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: SMITHING_TABLE
-        count: 1
-    '-410757277':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: STONECUTTER
-        count: 1
-    '2066703195':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: GOAT_HORN
-        count: 1
-    '1727000906':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: BELL
-        count: 1
-    '363407386':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: LANTERN
-        count: 1
-    '1645521862':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: SOUL_LANTERN
-        count: 1
-    '956699239':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: BEE_NEST
-        count: 1
-    '93338610':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: CRYING_OBSIDIAN
-        count: 1
-    '2011639384':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: POINTED_DRIPSTONE
-        count: 1
-    '-26015432':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.ItemTask
-        item: ECHO_SHARD
-        count: 1
-  size: 162
+    - ==: Bingo.ItemTask
+      item: LOOM
+      count: 1
+    - ==: Bingo.ItemTask
+      item: ECHO_SHARD
+      count: 1
+    - ==: Bingo.ItemTask
+      item: HANGING_ROOTS
+      count: 1
+    - ==: Bingo.ItemTask
+      item: NOTE_BLOCK
+      count: 4
+    - ==: Bingo.ItemTask
+      item: MANGROVE_WOOD
+      count: 1
+    - ==: Bingo.ItemTask
+      item: FISHING_ROD
+      count: 1
+    - ==: Bingo.ItemTask
+      item: SNOW_BLOCK
+      count: 1
+    - ==: Bingo.ItemTask
+      item: POISONOUS_POTATO
+      count: 1
+    - ==: Bingo.ItemTask
+      item: WATER_BUCKET
+      count: 1
+    - ==: Bingo.ItemTask
+      item: DEAD_BUSH
+      count: 1
+    - ==: Bingo.ItemTask
+      item: BLUE_CONCRETE
+      count: 1
+    - ==: Bingo.ItemTask
+      item: OAK_WOOD
+      count: 1
+    - ==: Bingo.ItemTask
+      item: GOLDEN_CHESTPLATE
+      count: 1
+    - ==: Bingo.ItemTask
+      item: COD_BUCKET
+      count: 1
+    - ==: Bingo.ItemTask
+      item: WET_SPONGE
+      count: 1
+    - ==: Bingo.ItemTask
+      item: GLOWSTONE
+      count: 1
+    - ==: Bingo.ItemTask
+      item: MUD_BRICKS
+      count: 1
+    - ==: Bingo.ItemTask
+      item: BONE_BLOCK
+      count: 1
+    - ==: Bingo.ItemTask
+      item: PAINTING
+      count: 1
+    - ==: Bingo.ItemTask
+      item: LECTERN
+      count: 1
+    - ==: Bingo.ItemTask
+      item: POINTED_DRIPSTONE
+      count: 1
+    - ==: Bingo.ItemTask
+      item: HEART_OF_THE_SEA
+      count: 1
+    - ==: Bingo.ItemTask
+      item: SANDSTONE
+      count: 4
+    - ==: Bingo.ItemTask
+      item: SHIELD
+      count: 1
+    - ==: Bingo.ItemTask
+      item: BAKED_POTATO
+      count: 1
+    - ==: Bingo.ItemTask
+      item: LAPIS_BLOCK
+      count: 1
+    - ==: Bingo.ItemTask
+      item: NETHER_WART_BLOCK
+      count: 1
+    - ==: Bingo.ItemTask
+      item: CARTOGRAPHY_TABLE
+      count: 1
+    - ==: Bingo.ItemTask
+      item: DEEPSLATE_TILES
+      count: 16
+    - ==: Bingo.ItemTask
+      item: NETHERITE_SCRAP
+      count: 1
+    - ==: Bingo.ItemTask
+      item: GREEN_CONCRETE
+      count: 1
+    - ==: Bingo.ItemTask
+      item: STONE_BRICKS
+      count: 1
+    - ==: Bingo.ItemTask
+      item: CAULDRON
+      count: 1
+    - ==: Bingo.ItemTask
+      item: FLOWER_POT
+      count: 1
+    - ==: Bingo.ItemTask
+      item: GLOW_LICHEN
+      count: 1
+    - ==: Bingo.ItemTask
+      item: BROWN_CONCRETE
+      count: 1
+    - ==: Bingo.ItemTask
+      item: GLOW_INK_SAC
+      count: 1
+    - ==: Bingo.ItemTask
+      item: JUNGLE_WOOD
+      count: 1
+    - ==: Bingo.ItemTask
+      item: DIAMOND_CHESTPLATE
+      count: 1
+    - ==: Bingo.ItemTask
+      item: FLOWERING_AZALEA
+      count: 1
+    - ==: Bingo.ItemTask
+      item: REPEATER
+      count: 1
+    - ==: Bingo.ItemTask
+      item: IRON_BARS
+      count: 1
+    - ==: Bingo.ItemTask
+      item: ENDER_PEARL
+      count: 1
+    - ==: Bingo.ItemTask
+      item: AXOLOTL_BUCKET
+      count: 1
+    - ==: Bingo.ItemTask
+      item: INK_SAC
+      count: 1
+    - ==: Bingo.ItemTask
+      item: BELL
+      count: 1
+    - ==: Bingo.ItemTask
+      item: RED_MUSHROOM
+      count: 1
+    - ==: Bingo.ItemTask
+      item: IRON_CHESTPLATE
+      count: 1
+    - ==: Bingo.ItemTask
+      item: IRON_BLOCK
+      count: 1
+    - ==: Bingo.ItemTask
+      item: SOUL_LANTERN
+      count: 1
+    - ==: Bingo.ItemTask
+      item: BAMBOO
+      count: 1
+    - ==: Bingo.ItemTask
+      item: BOW
+      count: 1
+    - ==: Bingo.ItemTask
+      item: SMOKER
+      count: 1
+    - ==: Bingo.ItemTask
+      item: REDSTONE_BLOCK
+      count: 1
+    - ==: Bingo.ItemTask
+      item: POWDER_SNOW_BUCKET
+      count: 1
+    - ==: Bingo.ItemTask
+      item: PURPLE_CONCRETE
+      count: 1
+    - ==: Bingo.ItemTask
+      item: TINTED_GLASS
+      count: 1
+    - ==: Bingo.ItemTask
+      item: SEA_PICKLE
+      count: 1
+    - ==: Bingo.ItemTask
+      item: CRIMSON_FUNGUS
+      count: 1
+    - ==: Bingo.ItemTask
+      item: IRON_HOE
+      count: 1
+    - ==: Bingo.ItemTask
+      item: LEATHER_CHESTPLATE
+      count: 1
+    - ==: Bingo.ItemTask
+      item: CROSSBOW
+      count: 1
+    - ==: Bingo.ItemTask
+      item: DETECTOR_RAIL
+      count: 6
+    - ==: Bingo.ItemTask
+      item: WARPED_FUNGUS
+      count: 1
+    - ==: Bingo.ItemTask
+      item: BOOKSHELF
+      count: 1
+    - ==: Bingo.ItemTask
+      item: STONECUTTER
+      count: 1
+    - ==: Bingo.ItemTask
+      item: DIAMOND_HOE
+      count: 1
+    - ==: Bingo.ItemTask
+      item: AMETHYST_BLOCK
+      count: 10
+    - ==: Bingo.ItemTask
+      item: FIREWORK_ROCKET
+      count: 1
+    - ==: Bingo.ItemTask
+      item: BLACK_CONCRETE
+      count: 1
+    - ==: Bingo.ItemTask
+      item: MELON
+      count: 1
+    - ==: Bingo.ItemTask
+      item: CYAN_CONCRETE
+      count: 1
+    - ==: Bingo.ItemTask
+      item: TARGET
+      count: 1
+    - ==: Bingo.ItemTask
+      item: PINK_GLAZED_TERRACOTTA
+      count: 1
+    - ==: Bingo.ItemTask
+      item: ICE
+      count: 1
+    - ==: Bingo.ItemTask
+      item: SPRUCE_WOOD
+      count: 1
+    - ==: Bingo.ItemTask
+      item: WARPED_HYPHAE
+      count: 1
+    - ==: Bingo.ItemTask
+      item: BASALT
+      count: 1
+    - ==: Bingo.ItemTask
+      item: MILK_BUCKET
+      count: 1
+    - ==: Bingo.ItemTask
+      item: HOPPER
+      count: 1
+    - ==: Bingo.ItemTask
+      item: TWISTING_VINES
+      count: 1
+    - ==: Bingo.ItemTask
+      item: EMERALD_BLOCK
+      count: 1
+    - ==: Bingo.ItemTask
+      item: ORANGE_GLAZED_TERRACOTTA
+      count: 1
+    - ==: Bingo.ItemTask
+      item: DRIED_KELP_BLOCK
+      count: 1
+    - ==: Bingo.ItemTask
+      item: SEA_LANTERN
+      count: 1
+    - ==: Bingo.ItemTask
+      item: TRAPPED_CHEST
+      count: 1
+    - ==: Bingo.ItemTask
+      item: GLOW_ITEM_FRAME
+      count: 1
+    - ==: Bingo.ItemTask
+      item: SCULK_SENSOR
+      count: 1
+    - ==: Bingo.ItemTask
+      item: DARK_OAK_WOOD
+      count: 1
+    - ==: Bingo.ItemTask
+      item: CRACKED_STONE_BRICKS
+      count: 1
+    - ==: Bingo.ItemTask
+      item: LIME_GLAZED_TERRACOTTA
+      count: 1
+    - ==: Bingo.ItemTask
+      item: MOSSY_STONE_BRICKS
+      count: 1
+    - ==: Bingo.ItemTask
+      item: ITEM_FRAME
+      count: 1
+    - ==: Bingo.ItemTask
+      item: SMITHING_TABLE
+      count: 1
+    - ==: Bingo.ItemTask
+      item: WHITE_GLAZED_TERRACOTTA
+      count: 1
+    - ==: Bingo.ItemTask
+      item: BEE_NEST
+      count: 1
+    - ==: Bingo.ItemTask
+      item: CRIMSON_HYPHAE
+      count: 1
+    - ==: Bingo.ItemTask
+      item: MOSS_BLOCK
+      count: 1
+    - ==: Bingo.ItemTask
+      item: TUFF
+      count: 64
+    - ==: Bingo.ItemTask
+      item: GRINDSTONE
+      count: 1
+    - ==: Bingo.ItemTask
+      item: NETHER_BRICKS
+      count: 1
+    - ==: Bingo.ItemTask
+      item: SUSPICIOUS_STEW
+      count: 1
+    - ==: Bingo.ItemTask
+      item: LANTERN
+      count: 1
+    - ==: Bingo.ItemTask
+      item: CHISELED_SANDSTONE
+      count: 1
+    - ==: Bingo.ItemTask
+      item: JACK_O_LANTERN
+      count: 1
+    - ==: Bingo.ItemTask
+      item: PRISMARINE
+      count: 1
+    - ==: Bingo.ItemTask
+      item: COPPER_BLOCK
+      count: 1
+    - ==: Bingo.ItemTask
+      item: BRICKS
+      count: 1
+    - ==: Bingo.ItemTask
+      item: ENCHANTING_TABLE
+      count: 1
+    - ==: Bingo.ItemTask
+      item: GOLDEN_HOE
+      count: 1
+    - ==: Bingo.ItemTask
+      item: GRAY_GLAZED_TERRACOTTA
+      count: 1
+    - ==: Bingo.ItemTask
+      item: SMOOTH_STONE
+      count: 1
+    - ==: Bingo.ItemTask
+      item: CHAIN
+      count: 1
+    - ==: Bingo.ItemTask
+      item: COOKED_RABBIT
+      count: 1
+    - ==: Bingo.ItemTask
+      item: GOLDEN_APPLE
+      count: 1
+    - ==: Bingo.ItemTask
+      item: WEEPING_VINES
+      count: 1
+    - ==: Bingo.ItemTask
+      item: GOAT_HORN
+      count: 1
+    - ==: Bingo.ItemTask
+      item: BEETROOT
+      count: 1
+    - ==: Bingo.ItemTask
+      item: JUKEBOX
+      count: 1
+    - ==: Bingo.ItemTask
+      item: CUT_SANDSTONE
+      count: 1
+    - ==: Bingo.ItemTask
+      item: BLAZE_ROD
+      count: 1
+    - ==: Bingo.ItemTask
+      item: CHISELED_STONE_BRICKS
+      count: 1
+    - ==: Bingo.ItemTask
+      item: MAGENTA_GLAZED_TERRACOTTA
+      count: 1
+    - ==: Bingo.ItemTask
+      item: BROWN_MUSHROOM
+      count: 1
+    - ==: Bingo.ItemTask
+      item: SALMON_BUCKET
+      count: 1
+    - ==: Bingo.ItemTask
+      item: TNT
+      count: 1
+    - ==: Bingo.ItemTask
+      item: LIGHT_BLUE_GLAZED_TERRACOTTA
+      count: 1
+    - ==: Bingo.ItemTask
+      item: BLAST_FURNACE
+      count: 1
+    - ==: Bingo.ItemTask
+      item: CLOCK
+      count: 1
+    - ==: Bingo.ItemTask
+      item: CHAINMAIL_CHESTPLATE
+      count: 1
+    - ==: Bingo.ItemTask
+      item: PUFFERFISH_BUCKET
+      count: 1
+    - ==: Bingo.ItemTask
+      item: YELLOW_GLAZED_TERRACOTTA
+      count: 1
+    - ==: Bingo.ItemTask
+      item: MAGMA_BLOCK
+      count: 1
+    - ==: Bingo.ItemTask
+      item: BREWING_STAND
+      count: 1
+    - ==: Bingo.ItemTask
+      item: SPORE_BLOSSOM
+      count: 1
+    - ==: Bingo.ItemTask
+      item: TROPICAL_FISH_BUCKET
+      count: 1
+    - ==: Bingo.ItemTask
+      item: RED_CONCRETE
+      count: 1
+    - ==: Bingo.ItemTask
+      item: BARREL
+      count: 1
+    - ==: Bingo.ItemTask
+      item: GOLD_BLOCK
+      count: 1
+    - ==: Bingo.ItemTask
+      item: BIRCH_WOOD
+      count: 1
+    - ==: Bingo.ItemTask
+      item: POWERED_RAIL
+      count: 6
+    - ==: Bingo.ItemTask
+      item: SPYGLASS
+      count: 1
+    - ==: Bingo.ItemTask
+      item: CRYING_OBSIDIAN
+      count: 1
+    - ==: Bingo.ItemTask
+      item: ARMOR_STAND
+      count: 1
+    - ==: Bingo.ItemTask
+      item: PISTON
+      count: 1
+    - ==: Bingo.ItemTask
+      item: DIAMOND_BLOCK
+      count: 1
+    - ==: Bingo.ItemTask
+      item: CALCITE
+      count: 1
+    - ==: Bingo.ItemTask
+      item: SOUL_SAND
+      count: 1
+    - ==: Bingo.ItemTask
+      item: WARPED_WART_BLOCK
+      count: 1
+    - ==: Bingo.ItemTask
+      item: LIGHT_GRAY_CONCRETE
+      count: 1
+    - ==: Bingo.ItemTask
+      item: FLETCHING_TABLE
+      count: 1
+    - ==: Bingo.ItemTask
+      item: VINE
+      count: 1
+    - ==: Bingo.ItemTask
+      item: DRIPSTONE_BLOCK
+      count: 1
+    - ==: Bingo.ItemTask
+      item: COMPOSTER
+      count: 1
+    - ==: Bingo.ItemTask
+      item: LAVA_BUCKET
+      count: 1
+    - ==: Bingo.ItemTask
+      item: REDSTONE_LAMP
+      count: 1
+    - ==: Bingo.ItemTask
+      item: ACACIA_WOOD
+      count: 1
+    - ==: Bingo.ItemTask
+      item: GLASS_PANE
+      count: 1
+    - ==: Bingo.ItemTask
+      item: COMPARATOR
+      count: 1
+    - ==: Bingo.ItemTask
+      item: LILY_PAD
+      count: 1
+    - ==: Bingo.ItemTask
+      item: ACTIVATOR_RAIL
+      count: 6
+    - ==: Bingo.ItemTask
+      item: RAIL
+      count: 32
+    - ==: Bingo.ItemTask
+      item: CACTUS
+      count: 1
+  size: 163
 default_advancements:
   tasks:
-    '611932506':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.AdvancementTask
-        advancement: minecraft:nether/obtain_crying_obsidian
-    '1966357755':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.AdvancementTask
-        advancement: minecraft:nether/distract_piglin
-    '364310032':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.AdvancementTask
-        advancement: minecraft:story/obtain_armor
-    '650751161':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.AdvancementTask
-        advancement: minecraft:story/lava_bucket
-    '1209303731':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.AdvancementTask
-        advancement: minecraft:husbandry/ride_a_boat_with_a_goat
-    '479440046':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.AdvancementTask
-        advancement: minecraft:nether/brew_potion
-    '1056380738':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.AdvancementTask
-        advancement: minecraft:story/iron_tools
-    '1437653057':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.AdvancementTask
-        advancement: minecraft:story/deflect_arrow
-    '970840414':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.AdvancementTask
-        advancement: minecraft:husbandry/make_a_sign_glow
-    '942334999':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.AdvancementTask
-        advancement: minecraft:husbandry/tame_an_animal
-    '1054980439':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.AdvancementTask
-        advancement: minecraft:adventure/kill_mob_near_sculk_catalyst
-    '1841306650':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.AdvancementTask
-        advancement: minecraft:husbandry/fishy_business
-    '981479381':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.AdvancementTask
-        advancement: minecraft:nether/explore_nether
-    '1432714958':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.AdvancementTask
-        advancement: minecraft:adventure/fall_from_world_height
-    '1719488052':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.AdvancementTask
-        advancement: minecraft:nether/ride_strider
-    '187743789':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.AdvancementTask
-        advancement: minecraft:adventure/sniper_duel
-    '821417497':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.AdvancementTask
-        advancement: minecraft:story/upgrade_tools
-    '1318608327':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.AdvancementTask
-        advancement: minecraft:story/enter_the_nether
-    '1117304526':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.AdvancementTask
-        advancement: minecraft:story/mine_stone
-    '1280813414':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.AdvancementTask
-        advancement: minecraft:adventure/bullseye
-    '1376582635':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.AdvancementTask
-        advancement: minecraft:husbandry/tactical_fishing
-    '1593238024':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.AdvancementTask
-        advancement: minecraft:story/form_obsidian
-    '1499402718':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.AdvancementTask
-        advancement: minecraft:nether/obtain_blaze_rod
-    '682794762':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.AdvancementTask
-        advancement: minecraft:nether/loot_bastion
-    '492108372':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.AdvancementTask
-        advancement: minecraft:adventure/shoot_arrow
-    '1960553812':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.AdvancementTask
-        advancement: minecraft:story/smelt_iron
-    '1437303792':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.AdvancementTask
-        advancement: minecraft:story/shiny_gear
-    '1776094336':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.AdvancementTask
-        advancement: minecraft:adventure/summon_iron_golem
-    '1398922677':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.AdvancementTask
-        advancement: minecraft:adventure/avoid_vibration
-    '2063166336':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.AdvancementTask
-        advancement: minecraft:nether/return_to_sender
-    '1933890348':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.AdvancementTask
-        advancement: minecraft:adventure/sleep_in_bed
-    '1920755912':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.AdvancementTask
-        advancement: minecraft:story/enchant_item
-    '799903559':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.AdvancementTask
-        advancement: minecraft:adventure/voluntary_exile
-    '515462233':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.AdvancementTask
-        advancement: minecraft:adventure/spyglass_at_parrot
-    '1261517073':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.AdvancementTask
-        advancement: minecraft:adventure/kill_a_mob
-    '1511662231':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.AdvancementTask
-        advancement: minecraft:husbandry/plant_seed
-    '420366628':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.AdvancementTask
-        advancement: minecraft:nether/find_bastion
-    '2109773825':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.AdvancementTask
-        advancement: minecraft:husbandry/axolotl_in_a_bucket
-    '1304550848':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.AdvancementTask
-        advancement: minecraft:nether/obtain_ancient_debris
-    '268082392':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.AdvancementTask
-        advancement: minecraft:nether/find_fortress
-    '75438378':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.AdvancementTask
-        advancement: minecraft:story/mine_diamond
-    '1876113384':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.AdvancementTask
-        advancement: minecraft:adventure/spyglass_at_ghast
-    '750770191':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.AdvancementTask
-        advancement: minecraft:adventure/trade
-    '2012777756':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.AdvancementTask
-        advancement: minecraft:nether/fast_travel
-    '196242560':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.AdvancementTask
-        advancement: minecraft:adventure/ol_betsy
-    '2108192361':
-      ==: Bingo.Task
-      data:
-        ==: Bingo.AdvancementTask
-        advancement: minecraft:husbandry/breed_an_animal
-  size: 46
+    - ==: Bingo.AdvancementTask
+      advancement: minecraft:adventure/avoid_vibration
+    - ==: Bingo.AdvancementTask
+      advancement: minecraft:husbandry/ride_a_boat_with_a_goat
+    - ==: Bingo.AdvancementTask
+      advancement: minecraft:story/mine_diamond
+    - ==: Bingo.AdvancementTask
+      advancement: minecraft:adventure/fall_from_world_height
+    - ==: Bingo.AdvancementTask
+      advancement: minecraft:husbandry/tame_an_animal
+    - ==: Bingo.AdvancementTask
+      advancement: minecraft:story/enter_the_nether
+    - ==: Bingo.AdvancementTask
+      advancement: minecraft:adventure/voluntary_exile
+    - ==: Bingo.AdvancementTask
+      advancement: minecraft:adventure/ol_betsy
+    - ==: Bingo.AdvancementTask
+      advancement: minecraft:nether/distract_piglin
+    - ==: Bingo.AdvancementTask
+      advancement: minecraft:nether/obtain_blaze_rod
+    - ==: Bingo.AdvancementTask
+      advancement: minecraft:husbandry/make_a_sign_glow
+    - ==: Bingo.AdvancementTask
+      advancement: minecraft:nether/obtain_crying_obsidian
+    - ==: Bingo.AdvancementTask
+      advancement: minecraft:husbandry/tactical_fishing
+    - ==: Bingo.AdvancementTask
+      advancement: minecraft:adventure/summon_iron_golem
+    - ==: Bingo.AdvancementTask
+      advancement: minecraft:story/form_obsidian
+    - ==: Bingo.AdvancementTask
+      advancement: minecraft:adventure/sleep_in_bed
+    - ==: Bingo.AdvancementTask
+      advancement: minecraft:nether/return_to_sender
+    - ==: Bingo.AdvancementTask
+      advancement: minecraft:adventure/kill_a_mob
+    - ==: Bingo.AdvancementTask
+      advancement: minecraft:adventure/sniper_duel
+    - ==: Bingo.AdvancementTask
+      advancement: minecraft:husbandry/plant_seed
+    - ==: Bingo.AdvancementTask
+      advancement: minecraft:adventure/kill_mob_near_sculk_catalyst
+    - ==: Bingo.AdvancementTask
+      advancement: minecraft:adventure/spyglass_at_parrot
+    - ==: Bingo.AdvancementTask
+      advancement: minecraft:husbandry/breed_an_animal
+    - ==: Bingo.AdvancementTask
+      advancement: minecraft:story/mine_stone
+    - ==: Bingo.AdvancementTask
+      advancement: minecraft:adventure/trade
+    - ==: Bingo.AdvancementTask
+      advancement: minecraft:husbandry/axolotl_in_a_bucket
+    - ==: Bingo.AdvancementTask
+      advancement: minecraft:nether/obtain_ancient_debris
+    - ==: Bingo.AdvancementTask
+      advancement: minecraft:nether/explore_nether
+    - ==: Bingo.AdvancementTask
+      advancement: minecraft:story/smelt_iron
+    - ==: Bingo.AdvancementTask
+      advancement: minecraft:story/obtain_armor
+    - ==: Bingo.AdvancementTask
+      advancement: minecraft:adventure/spyglass_at_ghast
+    - ==: Bingo.AdvancementTask
+      advancement: minecraft:nether/brew_potion
+    - ==: Bingo.AdvancementTask
+      advancement: minecraft:nether/find_bastion
+    - ==: Bingo.AdvancementTask
+      advancement: minecraft:story/deflect_arrow
+    - ==: Bingo.AdvancementTask
+      advancement: minecraft:story/upgrade_tools
+    - ==: Bingo.AdvancementTask
+      advancement: minecraft:story/shiny_gear
+    - ==: Bingo.AdvancementTask
+      advancement: minecraft:story/lava_bucket
+    - ==: Bingo.AdvancementTask
+      advancement: minecraft:adventure/bullseye
+    - ==: Bingo.AdvancementTask
+      advancement: minecraft:nether/ride_strider
+    - ==: Bingo.AdvancementTask
+      advancement: minecraft:husbandry/fishy_business
+    - ==: Bingo.AdvancementTask
+      advancement: minecraft:nether/find_fortress
+    - ==: Bingo.AdvancementTask
+      advancement: minecraft:story/iron_tools
+    - ==: Bingo.AdvancementTask
+      advancement: minecraft:nether/loot_bastion
+    - ==: Bingo.AdvancementTask
+      advancement: minecraft:adventure/shoot_arrow
+    - ==: Bingo.AdvancementTask
+      advancement: minecraft:story/enchant_item
+  size: 45

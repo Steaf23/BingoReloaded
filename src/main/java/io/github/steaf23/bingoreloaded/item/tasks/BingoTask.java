@@ -22,8 +22,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-@SerializableAs("Bingo.Task")
-public class BingoTask implements ConfigurationSerializable
+public class BingoTask
 {
     public enum TaskType
     {
@@ -231,22 +230,6 @@ public class BingoTask implements ConfigurationSerializable
                 .arg(timeString).color(ChatColor.WHITE)
                 .sendAll(player.worldName());
         return true;
-    }
-
-    @NotNull
-    @Override
-    public Map<String, Object> serialize()
-    {
-        return new HashMap<>(){{
-           put("data", data);
-        }};
-    }
-
-    public static BingoTask deserialize(Map<String, Object> taskData)
-    {
-        return new BingoTask(
-                ((TaskData) taskData.get("data"))
-        );
     }
 
     public BingoTask copy()

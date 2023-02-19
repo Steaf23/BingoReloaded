@@ -2,7 +2,6 @@ package io.github.steaf23.bingoreloaded.gui;
 
 import io.github.steaf23.bingoreloaded.data.TranslationData;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
-import io.github.steaf23.bingoreloaded.util.Message;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -85,7 +84,7 @@ public abstract class PaginatedPickerUI extends AbstractGUIInventory
         }
         else if (slotClicked == FILTER.getSlot())
         {
-            UserInputUI.open("Filter by name", this::applyFilter, player, this, keywordFilter);
+            UserInputUI.open("Filter by name", this::applyFilter, player, this, keywordFilter.isBlank() ? "name" : keywordFilter);
         }
         else if (isSlotValidOption(slotClicked)) //If it is a normal item;
         {
@@ -145,6 +144,7 @@ public abstract class PaginatedPickerUI extends AbstractGUIInventory
                 break;
         }
 
+        currentPage = 0;
         updatePageAmount();
         updatePage();
     }
@@ -327,13 +327,11 @@ public abstract class PaginatedPickerUI extends AbstractGUIInventory
             return;
         }
 
-        int idx = items.indexOf(oldItem);
         items.set(items.indexOf(oldItem), newItem);
-        filteredItems.set(filteredItems.indexOf(oldItem), newItem);
 
-        if (selectedItems.contains(oldItem))
-        {
-            selectedItems.remove(oldItem);
-        }
+        if (filteredItems.contains(oldItem))
+            filteredItems.set(filteredItems.indexOf(oldItem), newItem);
+
+        selectedItems.remove(oldItem);
     }
 }

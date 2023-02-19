@@ -8,8 +8,6 @@ add option to send players to a location when the game ends..
 
 finish statistics
 
-rework InventoryItem slot to (x, y) for convenience
-
 Add dummy player class to test stuff like lockout!
 
 add (5) custom kit slots and option to create a kit using new /bingo kit <save|remove> <slot> command....

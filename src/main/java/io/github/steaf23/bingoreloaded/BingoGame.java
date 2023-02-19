@@ -1,20 +1,22 @@
 package io.github.steaf23.bingoreloaded;
 
 import io.github.steaf23.bingoreloaded.data.*;
+import io.github.steaf23.bingoreloaded.event.BingoCardTaskCompleteEvent;
 import io.github.steaf23.bingoreloaded.event.BingoEndedEvent;
 import io.github.steaf23.bingoreloaded.event.BingoStartedEvent;
 import io.github.steaf23.bingoreloaded.event.CountdownTimerFinishedEvent;
 import io.github.steaf23.bingoreloaded.gui.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.gui.cards.BingoCard;
 import io.github.steaf23.bingoreloaded.gui.cards.CardBuilder;
-import io.github.steaf23.bingoreloaded.event.BingoCardTaskCompleteEvent;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.player.BingoTeam;
 import io.github.steaf23.bingoreloaded.player.PlayerKit;
 import io.github.steaf23.bingoreloaded.player.TeamManager;
 import io.github.steaf23.bingoreloaded.util.*;
+import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.*;
+import org.bukkit.util.Vector;
 import org.bukkit.block.Biome;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -22,18 +24,14 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryDragEvent;
-import org.bukkit.event.player.*;
-import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
-import org.bukkit.util.Vector;
-import net.md_5.bungee.api.ChatColor;
-import org.checkerframework.checker.units.qual.C;
 
 import java.util.*;
+
 
 public class BingoGame implements Listener
 {
@@ -69,7 +67,7 @@ public class BingoGame implements Listener
         {
             timer = new CounterTimer(getWorldName());
         }
-        timer.setNotifier(notifier ->
+        timer.setNotifier(time ->
         {
             for (BingoPlayer player : getTeamManager().getParticipants())
             {
@@ -99,6 +97,10 @@ public class BingoGame implements Listener
         settings.deathMatchItem = null;
 //        getTeamManager().updateActivePlayers();
         World world = Bukkit.getWorld(getWorldName());
+        if (world == null)
+        {
+            return;
+        }
         world.setStorm(false);
         world.setTime(1000);
 
@@ -296,9 +298,9 @@ public class BingoGame implements Listener
             for (int z = -size; z < size + 1; z++)
             {
                 if (!platformLocation.getWorld().getType(
-                     (int)platformLocation.getX() + x,
-                    (int)platformLocation.getY(),
-                    (int)platformLocation.getZ() + z).isSolid())
+                        (int)platformLocation.getX() + x,
+                        (int)platformLocation.getY(),
+                        (int)platformLocation.getZ() + z).isSolid())
                 {
                     platformLocation.getWorld().setType(
                             (int)platformLocation.getX() + x,

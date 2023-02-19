@@ -55,7 +55,6 @@
             <groupId>net.wesjd</groupId>
             <artifactId>anvilgui</artifactId>
             <version>1.6.3-SNAPSHOT</version>
-            <scope>provided</scope>
         </dependency>
     </dependencies>
 

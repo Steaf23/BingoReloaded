@@ -15,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 @SerializableAs("Bingo.AdvancementTask")
 public record AdvancementTask(Advancement advancement) implements TaskData
@@ -51,6 +52,21 @@ public record AdvancementTask(Advancement advancement) implements TaskData
         BaseComponent comp = new ItemText().addAdvancementDescription(advancement).asComponent();
         comp.setColor(ChatColor.DARK_AQUA);
         return comp;
+    }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        AdvancementTask that = (AdvancementTask) o;
+        return Objects.equals(advancement, that.advancement);
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash(advancement);
     }
 
     @Override

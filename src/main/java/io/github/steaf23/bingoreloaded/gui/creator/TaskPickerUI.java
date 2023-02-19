@@ -8,6 +8,7 @@ import io.github.steaf23.bingoreloaded.item.InventoryItem;
 import io.github.steaf23.bingoreloaded.item.ItemText;
 import io.github.steaf23.bingoreloaded.item.tasks.BingoTask;
 import io.github.steaf23.bingoreloaded.item.tasks.CountableTask;
+import io.github.steaf23.bingoreloaded.item.tasks.TaskData;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -18,6 +19,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class TaskPickerUI extends PaginatedPickerUI
@@ -50,11 +52,7 @@ public class TaskPickerUI extends PaginatedPickerUI
     {
         // When entering this method, the item always needs to be selected by the end.
         // Now just check if the item was already selected prior to this moment.
-        boolean alreadySelected = true;
-        if (!getSelectedItems().contains(item))
-        {
-            alreadySelected = false;
-        }
+        boolean alreadySelected = getSelectedItems().contains(item);
 
         int newAmount = item.getAmount();
         if (alreadySelected)
@@ -64,7 +62,7 @@ public class TaskPickerUI extends PaginatedPickerUI
                 return;
         }
 
-        InventoryItem newItem = new InventoryItem(getUpdatedTaskItem(BingoTask.fromStack(item), true, newAmount))
+        InventoryItem newItem = new InventoryItem(getUpdatedTaskItem(BingoTask.fromStack(item).data, true, newAmount))
                 .inSlot(item.getSlot());
         replaceItem(newItem, newItem.getSlot());
         selectItem(newItem, true);
@@ -91,7 +89,7 @@ public class TaskPickerUI extends PaginatedPickerUI
             newAmount = Math.max(1, newAmount - by);
         }
 
-        InventoryItem newItem = new InventoryItem(getUpdatedTaskItem(BingoTask.fromStack(item), !deselect, newAmount))
+        InventoryItem newItem = new InventoryItem(getUpdatedTaskItem(BingoTask.fromStack(item).data, !deselect, newAmount))
                 .inSlot(item.getSlot());
         replaceItem(newItem, newItem.getSlot());
         selectItem(newItem, !deselect);
@@ -103,16 +101,16 @@ public class TaskPickerUI extends PaginatedPickerUI
         super.handleOpen(event);
 
         // Load selected tasks from saved data.
-        List<BingoTask> tasks = TaskListsData.getTasks(listName);
+        Set<TaskData> tasks = TaskListsData.getTasks(listName);
 
         for (InventoryItem item : getItems())
         {
-            var task = tasks.stream().filter(savedTask -> savedTask.data.isTaskEqual(BingoTask.fromStack(item).data)).findFirst();
+            var task = tasks.stream().filter(savedTask -> savedTask.isTaskEqual(BingoTask.fromStack(item).data)).findFirst();
 
             if (task.isPresent())
             {
                 int count = 1;
-                if (task.get().data instanceof CountableTask countable)
+                if (task.get() instanceof CountableTask countable)
                     count = countable.getCount();
 
                 InventoryItem newItem = new InventoryItem(getUpdatedTaskItem(task.get(), true, count));
@@ -127,54 +125,45 @@ public class TaskPickerUI extends PaginatedPickerUI
     {
         super.handleClose(event);
 
-        // Save selected items to saved data, removing any unselected tasks.
-        BingoTask[] selectedTasks = getSelectedItems().stream()
-                .map(item -> BingoTask.fromStack(item))
-                .collect(Collectors.toList()).toArray(new BingoTask[]{});
-
         TaskListsData.saveTasksFromGroup(listName,
-                getItems().stream().map(item -> BingoTask.fromStack(item)).toList(),
-                Arrays.stream(selectedTasks).toList());
+                getItems().stream().map(item -> BingoTask.fromStack(item).data).toList(),
+                getSelectedItems().stream().map(item -> BingoTask.fromStack(item).data).toList());
     }
 
     public static List<InventoryItem> asPickerItems(List<BingoTask> tasks)
     {
         List<InventoryItem> result = new ArrayList<>();
         tasks.forEach(task -> {
-            InventoryItem item = new InventoryItem(getUpdatedTaskItem(task, false, 1));
+            InventoryItem item = new InventoryItem(getUpdatedTaskItem(task.data, false, 1));
             item.highlight(false);
             result.add(item);
         });
         return result;
     }
 
-    private static ItemStack getUpdatedTaskItem(BingoTask task, boolean selected, int newCount)
+    private static ItemStack getUpdatedTaskItem(TaskData old, boolean selected, int newCount)
     {
-        var item = task.asStack();
-
-        BingoTask newTask = task;
+        TaskData newData = old;
         if (selected)
         {
-            if (task.data instanceof CountableTask countable)
+            if (newData instanceof CountableTask countable)
             {
-                newTask = new BingoTask(countable.updateTask(newCount));
+                newData = countable.updateTask(newCount);
             }
-            else
-            {
-                newTask = task;
-            }
-            item = newTask.asStack();
         }
+
+        BingoTask newTask = new BingoTask(newData);
+        var item = newTask.asStack();
 
         var meta = item.getItemMeta();
         List<String> addedLore;
         if (selected)
             addedLore = Arrays.stream(SELECTED_LORE)
-                    .map(text -> text.asLegacyString())
+                    .map(ItemText::asLegacyString)
                     .collect(Collectors.toList());
         else
             addedLore = Arrays.stream(UNSELECTED_LORE)
-                    .map(text -> text.asLegacyString())
+                    .map(ItemText::asLegacyString)
                     .collect(Collectors.toList());
         List<String> newLore = new ArrayList<>();
         newLore.add(newTask.data.getItemDescription()[0].asLegacyString());

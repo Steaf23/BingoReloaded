@@ -12,10 +12,7 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @SerializableAs("Bingo.StatisticTask")
 public record StatisticTask(BingoStatistic statistic, int count) implements CountableTask
@@ -105,6 +102,21 @@ public record StatisticTask(BingoStatistic statistic, int count) implements Coun
             return false;
 
         return statistic.equals(statisticTask.statistic);
+    }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        StatisticTask that = (StatisticTask) o;
+        return Objects.equals(statistic, that.statistic);
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash(statistic);
     }
 
     @Override

@@ -16,15 +16,39 @@ public class BingoTabCompleter implements TabCompleter
     @Override
     public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args)
     {
-        if (args.length == 1)
+        if (!(sender instanceof Player player) || player.hasPermission("bingo.admin"))
         {
-            if (sender instanceof Player player && !player.hasPermission("bingo.admin"))
+            switch (args.length)
             {
-                return List.of("join", "getcard", "back", "leave", "stats");
+                case 1 -> {
+                    return List.of("join", "getcard", "back", "leave", "stats", "end", "kit", "creator", "deathmatch");
+                }
+                case 2 -> {
+                    switch (args[0])
+                    {
+                        case "kit" -> {
+                            return List.of("add", "remove", "item");
+                        }
+                    }
+                }
+                case 3 -> {
+                    switch (args[1])
+                    {
+                        case "add", "remove" -> {
+                            return List.of("1", "2", "3", "4", "5");
+                        }
+                        case "item" -> {
+                            return List.of("wand");
+                        }
+                    }
+                }
             }
-            else
-            {
-                return List.of("join", "getcard", "back", "leave", "stats", "start", "end", "creator", "deathmatch");
+        }
+
+        switch (args.length)
+        {
+            case 1 -> {
+                return List.of("join", "getcard", "back", "leave", "stats");
             }
         }
         return null;

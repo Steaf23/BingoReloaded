@@ -44,7 +44,7 @@ public class BingoSettings
 
     public Material generateDeathMatchItem()
     {
-        return BingoCardsData.getRandomItemTask(card).material;
+        return BingoCardsData.getRandomItemTask(card).material();
     }
 
     public void setKit(PlayerKit kit)

@@ -10,10 +10,7 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @SerializableAs("Bingo.ItemTask")
 public record ItemTask(Material material, int count) implements CountableTask
@@ -83,6 +80,21 @@ public record ItemTask(Material material, int count) implements CountableTask
             put("item", material.name());
             put("count", count);
         }};
+    }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ItemTask itemTask = (ItemTask) o;
+        return material == itemTask.material;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash(material);
     }
 
     @Override
