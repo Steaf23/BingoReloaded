@@ -25,13 +25,13 @@ public class Message
 {
     public static final BaseComponent[] PRINT_PREFIX = new ComponentBuilder("").append("[").color(ChatColor.DARK_RED)
             .append("Bingo", ComponentBuilder.FormatRetention.NONE).color(ChatColor.DARK_AQUA).bold(true)
-            .append("Reloaded", ComponentBuilder.FormatRetention.NONE).color(ChatColor.YELLOW).italic(true)
+            .append("Ⓡeloaded", ComponentBuilder.FormatRetention.NONE).color(ChatColor.YELLOW).italic(true)
             .append("]", ComponentBuilder.FormatRetention.NONE).color(ChatColor.DARK_RED)
             .append("", ComponentBuilder.FormatRetention.NONE).create();
 
     public static final BaseComponent[] SHORT_PREFIX = new ComponentBuilder("").append("[").color(ChatColor.DARK_RED)
             .append("B", ComponentBuilder.FormatRetention.NONE).color(ChatColor.DARK_AQUA).bold(true)
-            .append("R", ComponentBuilder.FormatRetention.NONE).color(ChatColor.YELLOW).italic(true)
+            .append("Ⓡ", ComponentBuilder.FormatRetention.NONE).color(ChatColor.YELLOW).italic(true)
             .append("]", ComponentBuilder.FormatRetention.NONE).color(ChatColor.DARK_RED)
             .append("", ComponentBuilder.FormatRetention.NONE).create();
 
@@ -218,12 +218,12 @@ public class Message
 
     public static void log(String text)
     {
-        Bukkit.getConsoleSender().sendMessage(PREFIX_STRING + ": " + text);
+        Bukkit.getConsoleSender().sendMessage(PREFIX_STRING.replace("Ⓡ", "R") + ": " + text);
     }
 
     public static void log(String text, String worldName)
     {
-        Bukkit.getConsoleSender().sendMessage(PREFIX_STRING + "(" + worldName + "): " + text);
+        Bukkit.getConsoleSender().sendMessage(PREFIX_STRING.replace("Ⓡ", "R") + "(" + worldName + "): " + text);
     }
 
 

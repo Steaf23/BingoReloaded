@@ -1,6 +1,7 @@
 package io.github.steaf23.bingoreloaded.command;
 
 import io.github.steaf23.bingoreloaded.*;
+import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.player.BingoTeam;
 import io.github.steaf23.bingoreloaded.player.TeamManager;
 import io.github.steaf23.bingoreloaded.util.Message;
@@ -21,7 +22,7 @@ import java.util.List;
 
 public class TeamChatCommand implements Listener, CommandExecutor
 {
-    private final List<Player> enabledPlayers;
+    private final List<BingoPlayer> enabledPlayers;
 
     public TeamChatCommand()
     {
@@ -40,7 +41,8 @@ public class TeamChatCommand implements Listener, CommandExecutor
         if (game == null)
             return;
 
-        if (!enabledPlayers.contains(event.getPlayer())) return;
+        BingoPlayer player = game.getTeamManager().getBingoPlayer(event.getPlayer());
+        if (!enabledPlayers.contains(player)) return;
 
         TeamManager teamManager = game.getTeamManager();
         BingoTeam team = teamManager.getTeamOfPlayer(game.getTeamManager().getBingoPlayer(event.getPlayer()));
@@ -76,20 +78,21 @@ public class TeamChatCommand implements Listener, CommandExecutor
                 return false;
 
             TeamManager teamManager = game.getTeamManager();
-            if (!teamManager.getParticipants().contains(p))
+            BingoPlayer player = teamManager.getBingoPlayer(p);
+            if (!teamManager.getParticipants().contains(player))
             {
                 new Message("game.team.no_chat").color(ChatColor.RED).send(p);
                 return false;
             }
 
-            if (enabledPlayers.contains(p))
+            if (enabledPlayers.contains(player))
             {
-                enabledPlayers.remove(p);
+                enabledPlayers.remove(player);
                 new Message("game.team.chat_off").color(ChatColor.GREEN).arg("/btc").send(p);
             }
             else
             {
-                enabledPlayers.add(p);
+                enabledPlayers.add(player);
                 new Message("game.team.chat_on").color(ChatColor.GREEN).arg("/btc").send(p);
             }
         }

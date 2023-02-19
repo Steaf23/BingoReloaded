@@ -10,13 +10,9 @@ finish statistics
 
 Add dummy player class to test stuff like lockout!
 
-add (5) custom kit slots and option to create a kit using new /bingo kit <save|remove> <slot> command....
-add /bingo kit item <item_name> command to get special items for custom kits
-
 update autobingo page with all new features
 
 see what players joined what team on TAB and in team selector
-put players on scoreboard under each team name
 
 generalize/centralize game in progress/ player in game checks for events
 

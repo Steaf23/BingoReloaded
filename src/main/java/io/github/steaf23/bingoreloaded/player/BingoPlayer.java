@@ -37,7 +37,7 @@ import java.util.UUID;
  * @param team Team of the player
  * @param worldName World name of the game this player can play in.
  */
-public record BingoPlayer(UUID playerId, BingoTeam team, String worldName, String playerName)
+public record BingoPlayer(UUID playerId, BingoTeam team, String worldName, String playerName, String displayName)
 {
     @Nullable
     public Optional<Player> gamePlayer()

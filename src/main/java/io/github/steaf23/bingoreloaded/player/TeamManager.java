@@ -141,8 +141,10 @@ public class TeamManager implements Listener
                 .arg(bingoTeam.getColoredName().asLegacyString())
                 .send(player);
 
-        bingoTeam.addPlayer(new BingoPlayer(player.getUniqueId(), bingoTeam, worldName, player.getName()));
-
+        BingoPlayer bingoPlayer = new BingoPlayer(player.getUniqueId(), bingoTeam, worldName, player.getName(), player.getDisplayName());
+        bingoTeam.addPlayer(bingoPlayer);
+        var event = new BingoPlayerJoinEvent(bingoPlayer, worldName);
+        Bukkit.getPluginManager().callEvent(event);
         return true;
     }
 
@@ -150,6 +152,9 @@ public class TeamManager implements Listener
     {
         if (!getParticipants().contains(player))
             return;
+
+        var event = new BingoPlayerLeaveEvent(player, worldName);
+        Bukkit.getPluginManager().callEvent(event);
 
         getTeamOfPlayer(player).removePlayer(player);
     }
@@ -206,20 +211,16 @@ public class TeamManager implements Listener
             boolean found = false;
             for (BingoTeam t : activeTeams)
             {
-                for (String entry : t.team.getEntries())
+                for (var player : t.getPlayers())
                 {
-                    if (entry.equals(p.getName()))
+                    if (player.playerId().equals(p.getUniqueId()))
                     {
-                        BingoPlayer participant = new BingoPlayer(p.getUniqueId(), t, worldName, p.getName());
-                        players.add(participant);
+                        players.add(player);
                         found = true;
-                        break;
                     }
                 }
                 if (found)
-                {
                     break;
-                }
             }
         }
         return players;

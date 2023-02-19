@@ -95,7 +95,7 @@ public class BingoGame implements Listener
         }
 
         settings.deathMatchItem = null;
-//        getTeamManager().updateActivePlayers();
+        getTeamManager().updateActivePlayers();
         World world = Bukkit.getWorld(getWorldName());
         if (world == null)
         {
@@ -137,7 +137,7 @@ public class BingoGame implements Listener
 
         // Post-start Setup
         scoreboard.reset();
-        scoreboard.updateItemCount();
+        scoreboard.updateTeamScores();
         timer.start();
 
         var event = new BingoStartedEvent(worldName);
@@ -147,7 +147,7 @@ public class BingoGame implements Listener
     public void resume()
     {
         inProgress = true;
-        scoreboard.updateItemCount();
+        scoreboard.updateTeamScores();
     }
 
     public void end()
@@ -483,7 +483,7 @@ public class BingoGame implements Listener
         {
             bingo(event.getPlayer().getTeam());
         }
-        scoreboard.updateItemCount();
+        scoreboard.updateTeamScores();
     }
 
     @EventHandler

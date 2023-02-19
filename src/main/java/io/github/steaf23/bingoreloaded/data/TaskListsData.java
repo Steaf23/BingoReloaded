@@ -36,14 +36,6 @@ public class TaskListsData
         return getTasks(listName);
     }
 
-//    public static void saveTasks(String listName, TaskData... tasks)
-//    {
-//        data.getConfig().set(listName, null);
-//        data.getConfig().set(listName + ".tasks", tasks);
-//        data.getConfig().set(listName + ".size", tasks.length);
-//        data.saveConfig();
-//    }
-
     public static void saveTasksFromGroup(String listName, List<TaskData> group, List<TaskData> tasksToSave)
     {
         Set<TaskData> savedTasks = getTasks(listName);
