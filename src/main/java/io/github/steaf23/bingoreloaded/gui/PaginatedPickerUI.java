@@ -33,7 +33,7 @@ public abstract class PaginatedPickerUI extends AbstractGUIInventory
     private final List<InventoryItem> filteredItems;
     private int pageAmount;
     private int currentPage;
-    private KeyboardUI filter;
+    private UserInputUI filter;
     private String keywordFilter;
     public FilterType filterType;
 
@@ -64,11 +64,7 @@ public abstract class PaginatedPickerUI extends AbstractGUIInventory
         filteredItems = new ArrayList<>(options);
         keywordFilter = "";
         this.filterType = filterType;
-        updatePageAmount();
-
-        updatePage();
         clearFilter();
-
     }
 
     @Override
@@ -88,20 +84,7 @@ public abstract class PaginatedPickerUI extends AbstractGUIInventory
         }
         else if (slotClicked == FILTER.getSlot())
         {
-            close(player);
-            filter = new KeyboardUI(this)
-            {
-                @Override
-                public void storeResult()
-                {
-                    applyFilter(filter.getKeyword());
-                }
-            };
-            filter.open(player, keywordFilter);
-        }
-        else if (slotClicked == FILTER.getSlot())
-        {
-            clearFilter();
+            UserInputUI.open("Filter by name", this::applyFilter, player, this, keywordFilter.isBlank() ? "name" : keywordFilter);
         }
         else if (isSlotValidOption(slotClicked)) //If it is a normal item;
         {
@@ -161,6 +144,7 @@ public abstract class PaginatedPickerUI extends AbstractGUIInventory
                 break;
         }
 
+        currentPage = 0;
         updatePageAmount();
         updatePage();
     }
@@ -205,8 +189,7 @@ public abstract class PaginatedPickerUI extends AbstractGUIInventory
         }
 
         Collections.addAll(items, newItems);
-
-        updatePage();
+        clearFilter();
     }
 
     public void removeItems(int... itemIndices)
@@ -344,13 +327,11 @@ public abstract class PaginatedPickerUI extends AbstractGUIInventory
             return;
         }
 
-        int idx = items.indexOf(oldItem);
         items.set(items.indexOf(oldItem), newItem);
-        filteredItems.set(filteredItems.indexOf(oldItem), newItem);
 
-        if (selectedItems.contains(oldItem))
-        {
-            selectedItems.remove(oldItem);
-        }
+        if (filteredItems.contains(oldItem))
+            filteredItems.set(filteredItems.indexOf(oldItem), newItem);
+
+        selectedItems.remove(oldItem);
     }
 }

@@ -1,14 +1,25 @@
 package io.github.steaf23.bingoreloaded.item;
 
+import io.github.steaf23.bingoreloaded.util.Message;
+import io.github.steaf23.bingoreloaded.util.PDCHelper;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
+import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataType;
+import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nullable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+@SerializableAs("Bingo.InventoryItem")
 public class InventoryItem extends ItemStack
 {
     /**
@@ -20,6 +31,11 @@ public class InventoryItem extends ItemStack
     public InventoryItem(Material material, String name, String... description)
     {
         this(-1, material, name, description);
+    }
+
+    public InventoryItem(int slotX, int slotY, Material material, String name, String... description)
+    {
+        this(9 * slotY + slotX, material, name, description);
     }
 
     public InventoryItem(int slot, Material material, String name, String... description)
@@ -86,6 +102,11 @@ public class InventoryItem extends ItemStack
         return item;
     }
 
+    public InventoryItem inSlot(int slotX, int slotY)
+    {
+        return inSlot(9 * slotY + slotX);
+    }
+
     public int getSlot()
     {
         return slot;
@@ -122,5 +143,49 @@ public class InventoryItem extends ItemStack
         {
             removeEnchantment(Enchantment.DURABILITY);
         }
+    }
+
+    /**
+     * Additional key that can be used for item comparison, saved in pdc
+     * @param key
+     */
+    public void setKey(@Nullable String key)
+    {
+        var meta = this.getItemMeta();
+        var pdc = meta.getPersistentDataContainer();
+        pdc.set(PDCHelper.createKey("item.compare_key"), PersistentDataType.STRING, key);
+        this.setItemMeta(meta);
+    }
+
+    public boolean isKeyEqual(ItemStack other)
+    {
+        if (other == null || other.getItemMeta() == null)
+            return false;
+
+        return getKey().equals(other.getItemMeta().getPersistentDataContainer()
+                .get(PDCHelper.createKey("item.compare_key"), PersistentDataType.STRING));
+    }
+
+    public String getKey()
+    {
+        return this.getItemMeta().getPersistentDataContainer()
+                .get(PDCHelper.createKey("item.compare_key"), PersistentDataType.STRING);
+    }
+
+    @NotNull
+    @Override
+    public Map<String, Object> serialize()
+    {
+        return new HashMap<>(){{
+            put("slot", slot);
+            put("stack", getAsStack());
+        }};
+    }
+
+    public static InventoryItem deserialize(Map<String, Object> data)
+    {
+        ItemStack stack = (ItemStack)data.get("stack");
+        int slot = (int)data.get("slot");
+        return new InventoryItem(slot, stack);
     }
 }

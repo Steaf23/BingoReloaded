@@ -10,7 +10,7 @@ public enum EffectOptionFlags
     WATER_BREATHING(TranslationData.translate("menu.effects.water_breath")),
     FIRE_RESISTANCE(TranslationData.translate("menu.effects.fire_res")),
     NO_FALL_DAMAGE(TranslationData.translate("menu.effects.no_fall_dmg")),
-    CARD_SPEED(TranslationData.translate("menu.effects.card_speed"));
+    SPEED(TranslationData.translate("menu.effects.speed"));
 
     public final String name;
 

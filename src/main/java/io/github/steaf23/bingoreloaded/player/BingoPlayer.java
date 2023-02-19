@@ -6,7 +6,9 @@ import io.github.steaf23.bingoreloaded.data.BingoStatsData;
 import io.github.steaf23.bingoreloaded.data.ConfigData;
 import io.github.steaf23.bingoreloaded.gui.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.item.ItemCooldownManager;
+import io.github.steaf23.bingoreloaded.item.tasks.BingoTask;
 import io.github.steaf23.bingoreloaded.util.Message;
+import io.github.steaf23.bingoreloaded.util.PDCHelper;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.TranslatableComponent;
 import org.bukkit.*;
@@ -15,10 +17,12 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 import javax.annotation.Nullable;
+import javax.naming.Name;
 import java.util.EnumSet;
 import java.util.Optional;
 import java.util.UUID;
@@ -33,7 +37,7 @@ import java.util.UUID;
  * @param team Team of the player
  * @param worldName World name of the game this player can play in.
  */
-public record BingoPlayer(UUID playerId, BingoTeam team, String worldName, String playerName)
+public record BingoPlayer(UUID playerId, BingoTeam team, String worldName, String playerName, String displayName)
 {
     @Nullable
     public Optional<Player> gamePlayer()
@@ -67,19 +71,25 @@ public record BingoPlayer(UUID playerId, BingoTeam team, String worldName, Strin
 
         Player player = gamePlayer().get();
 
+        Message.log("Giving kit to " + player.getDisplayName(), worldName);
+
         var items = kit.getItems(team.getColor());
         player.closeInventory();
         Inventory inv = player.getInventory();
         inv.clear();
         items.forEach(i ->
         {
+            var meta = i.getItemMeta();
+
             // Show enchantments except on the wand
-            if (!PlayerKit.wandItem.getAsStack().equals(i))
+            if (!PlayerKit.wandItem.isKeyEqual(i))
             {
-                var meta = i.getItemMeta();
                 meta.removeItemFlags(ItemFlag.values());
-                i.setItemMeta(meta);
             }
+            var pdc = meta.getPersistentDataContainer();
+            pdc = PDCHelper.setBoolean(pdc, "kit.kit_item", true);
+
+            i.setItemMeta(meta);
             inv.setItem(i.getSlot(), i);
         });
     }
@@ -91,12 +101,19 @@ public record BingoPlayer(UUID playerId, BingoTeam team, String worldName, Strin
 
         Player player = gamePlayer().get();
 
-        BingoReloaded.scheduleTask(task -> {
-            ItemStack cardItem = PlayerKit.cardItem.getAsStack();
-            while (player.getInventory().contains(cardItem))
-                player.getInventory().remove(cardItem);
+        Message.log("Giving card to " + player.getDisplayName(), worldName);
 
-            player.getInventory().setItem(8, cardItem);
+        BingoReloaded.scheduleTask(task -> {
+            for (ItemStack itemStack : player.getInventory())
+            {
+                if (PlayerKit.cardItem.isKeyEqual(itemStack))
+                {
+                    player.getInventory().remove(itemStack);
+                    break;
+                }
+            }
+
+            player.getInventory().setItemInOffHand(PlayerKit.cardItem.inSlot(8));
         });
     }
 
@@ -108,6 +125,8 @@ public record BingoPlayer(UUID playerId, BingoTeam team, String worldName, Strin
         takeEffects(false);
         Player player = gamePlayer().get();
 
+        Message.log("Giving effects to " + player.getDisplayName(), worldName);
+
         BingoReloaded.scheduleTask(task -> {
             if (effects.contains(EffectOptionFlags.NIGHT_VISION))
                 player.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, 100000, 1, false, false));
@@ -115,7 +134,8 @@ public record BingoPlayer(UUID playerId, BingoTeam team, String worldName, Strin
                 player.addPotionEffect(new PotionEffect(PotionEffectType.WATER_BREATHING, 100000, 1, false, false));
             if (effects.contains(EffectOptionFlags.FIRE_RESISTANCE))
                 player.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, 100000, 1, false, false));
-
+            if (effects.contains(EffectOptionFlags.SPEED))
+                player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 100000, 1, false, false));
             player.addPotionEffect(new PotionEffect(PotionEffectType.SATURATION, 2, 100, false, false));
             player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 2, 100, false, false));
             player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, BingoReloaded.ONE_SECOND * ConfigData.instance.gracePeriod, 100, false, false));
@@ -132,6 +152,8 @@ public record BingoPlayer(UUID playerId, BingoTeam team, String worldName, Strin
         {
             if (offline().isOnline())
             {
+                Message.log("Taking effects from " + asOnlinePlayer().get().getDisplayName(), worldName);
+
                 for (PotionEffectType effect : PotionEffectType.values())
                 {
                     Bukkit.getPlayer(playerId).removePotionEffect(effect);
@@ -142,6 +164,8 @@ public record BingoPlayer(UUID playerId, BingoTeam team, String worldName, Strin
         {
             if (gamePlayer().isEmpty())
                 return;
+
+            Message.log("Taking effects from " + asOnlinePlayer().get().getDisplayName(), worldName);
 
             for (PotionEffectType effect : PotionEffectType.values())
             {
@@ -158,7 +182,7 @@ public record BingoPlayer(UUID playerId, BingoTeam team, String worldName, Strin
         String itemKey = deathMatchItem.isBlock() ? "block" : "item";
         itemKey += ".minecraft." + deathMatchItem.getKey().getKey();
 
-        new BingoMessage("game.item.deathmatch").color(ChatColor.GOLD)
+        new Message("game.item.deathmatch").color(ChatColor.GOLD)
                 .component(new TranslatableComponent(itemKey))
                 .send(gamePlayer().get());
     }
@@ -169,13 +193,13 @@ public record BingoPlayer(UUID playerId, BingoTeam team, String worldName, Strin
              return false;
 
         Player player = gamePlayer().get();
-        if (!wand.equals(PlayerKit.wandItem.getAsStack()))
+        if (!PlayerKit.wandItem.isKeyEqual(wand))
             return false;
 
         if (!ItemCooldownManager.isCooldownOver(playerId, wand))
         {
             double timeLeft = ItemCooldownManager.getTimeLeft(playerId, wand) / 1000.0;
-            new BingoMessage("game.item.cooldown").color(ChatColor.RED).arg(String.format("%.2f", timeLeft)).send(player);
+            new Message("game.item.cooldown").color(ChatColor.RED).arg(String.format("%.2f", timeLeft)).send(player);
             return false;
         }
 

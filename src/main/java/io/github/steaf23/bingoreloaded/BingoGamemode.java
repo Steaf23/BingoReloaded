@@ -7,7 +7,6 @@ public enum BingoGamemode
     REGULAR(ChatColor.GREEN + "Regular", "regular"),
     LOCKOUT(ChatColor.DARK_PURPLE + "Lockout", "lockout"),
     COMPLETE(ChatColor.DARK_AQUA + "Complete-All", "complete"),
-    COUNTDOWN(ChatColor.GOLD + "Countdown", "countdown");
     ;
 
     public final String name;

@@ -3,11 +3,15 @@ package io.github.steaf23.bingoreloaded;
 import io.github.steaf23.bingoreloaded.command.*;
 import io.github.steaf23.bingoreloaded.data.*;
 import io.github.steaf23.bingoreloaded.gui.UIManager;
+import io.github.steaf23.bingoreloaded.item.InventoryItem;
 import io.github.steaf23.bingoreloaded.item.tasks.*;
 import io.github.steaf23.bingoreloaded.item.ItemCooldownManager;
+import io.github.steaf23.bingoreloaded.player.CustomKit;
+import io.github.steaf23.bingoreloaded.util.Message;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.PluginCommand;
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
@@ -36,11 +40,12 @@ public class BingoReloaded extends JavaPlugin
         reloadConfig();
         saveDefaultConfig();
         ConfigData.instance.loadConfig(this.getConfig());
-        ConfigurationSerialization.registerClass(ItemTask.class, "Bingo.ItemTask");
-        ConfigurationSerialization.registerClass(AdvancementTask.class, "Bingo.AdvancementTask");
-        ConfigurationSerialization.registerClass(StatisticTask.class, "Bingo.StatisticTask");
-        ConfigurationSerialization.registerClass(BingoTask.class, "Bingo.Task");
-        ConfigurationSerialization.registerClass(BingoStatistic.class, "Bingo.Statistic");
+        ConfigurationSerialization.registerClass(ItemTask.class);
+        ConfigurationSerialization.registerClass(AdvancementTask.class);
+        ConfigurationSerialization.registerClass(StatisticTask.class);
+        ConfigurationSerialization.registerClass(BingoStatistic.class);
+        ConfigurationSerialization.registerClass(CustomKit.class);
+        ConfigurationSerialization.registerClass(InventoryItem.class);
 
         usesPlaceholder = Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null;
 
@@ -76,10 +81,10 @@ public class BingoReloaded extends JavaPlugin
 //            game.resume();
 //        }
 
-        BingoMessage.log(TranslationData.translate("changed"));
-        Bukkit.getLogger().info(ChatColor.GREEN + "Enabled " + this.getName());
+        Message.log(TranslationData.translate("changed"));
+        Message.log(ChatColor.GREEN + "Enabled " + this.getName());
 
-        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "autobingo world create 3");
+        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "autobingo world create " + ConfigData.instance.defaultTeamSize);
 
     }
 

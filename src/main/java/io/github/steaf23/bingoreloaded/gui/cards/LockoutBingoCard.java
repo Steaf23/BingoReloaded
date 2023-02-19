@@ -1,7 +1,7 @@
 package io.github.steaf23.bingoreloaded.gui.cards;
 
 import io.github.steaf23.bingoreloaded.BingoGame;
-import io.github.steaf23.bingoreloaded.BingoMessage;
+import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.bingoreloaded.GameWorldManager;
 import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.bingoreloaded.data.TranslationData;
@@ -48,7 +48,6 @@ public class LockoutBingoCard extends BingoCard
         return completeCount >= Math.floor(currentMaxTasks / (double) teamCount) + 1;
     }
 
-    @EventHandler
     public void onCardSlotCompleteEvent(final BingoCardTaskCompleteEvent event)
     {
         BingoGame game = GameWorldManager.get().getActiveGame(event.worldName);
@@ -73,13 +72,13 @@ public class LockoutBingoCard extends BingoCard
 
     public void dropTeam(BingoTeam team, TeamManager teamManager)
     {
-        new BingoMessage("game.team.dropped")
+        new Message("game.team.dropped")
                 .arg(team.getColoredName().asLegacyString())
                 .sendAll(teamManager.getWorldName());
         team.outOfTheGame = true;
         for (BingoTask task : tasks)
         {
-            if (task.completedBy.isPresent() &&task.completedBy.get().equals(team))
+            if (task.completedBy.isPresent() && teamManager.getPlayersOfTeam(team).contains(task.completedBy.get()))
             {
                 task.setVoided(true);
                 currentMaxTasks--;

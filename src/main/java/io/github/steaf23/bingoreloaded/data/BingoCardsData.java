@@ -2,6 +2,7 @@ package io.github.steaf23.bingoreloaded.data;
 
 import io.github.steaf23.bingoreloaded.item.tasks.BingoTask;
 import io.github.steaf23.bingoreloaded.item.tasks.ItemTask;
+import io.github.steaf23.bingoreloaded.item.tasks.TaskData;
 import org.bukkit.Material;
 
 import java.util.*;
@@ -15,13 +16,40 @@ public class BingoCardsData
 
     public static boolean removeCard(String cardName)
     {
-        if (data.getConfig().contains(cardName))
-        {
-            data.getConfig().set(cardName, null);
-            data.saveConfig();
-            return true;
-        }
-        return false;
+        if (!data.getConfig().contains(cardName))
+            return false;
+
+        data.getConfig().set(cardName, null);
+        data.saveConfig();
+        return true;
+    }
+
+    public static boolean duplicateCard(String cardName)
+    {
+        if (!data.getConfig().contains(cardName))
+            return false;
+
+        var card = data.getConfig().get(cardName);
+        data.getConfig().set(cardName + "_copy", card);
+        data.saveConfig();
+        return true;
+    }
+
+    public static boolean renameCard(String cardName, String newName)
+    {
+        var defaultCards = List.of("default_card");
+        if (defaultCards.contains(cardName) || defaultCards.contains(newName))
+            return false;
+        if (!data.getConfig().contains(cardName))
+            return false;
+        if (data.getConfig().contains(newName)) // Card with newName already exists
+            return false;
+
+        var card = data.getConfig().get(cardName);
+        data.getConfig().set(newName, card);
+        data.getConfig().set(cardName, null);
+        data.saveConfig();
+        return true;
     }
 
     public static Set<String> getCardNames()
@@ -53,17 +81,17 @@ public class BingoCardsData
         data.getConfig().set(cardName + "." + listName, null);
     }
 
-    public static BingoTask getRandomItemTask(String cardName)
+    public static ItemTask getRandomItemTask(String cardName)
     {
-        List<BingoTask> tasks = new ArrayList<>();
+        List<TaskData> tasks = new ArrayList<>();
         getLists(cardName).forEach((l) -> tasks.addAll(TaskListsData.getItemTasks(l)));
 
-        List<BingoTask> allItemTasks = tasks.stream().filter(task -> task.type == BingoTask.TaskType.ITEM).toList();
+        List<TaskData> allItemTasks = tasks.stream().filter(task -> task instanceof ItemTask).toList();
 
         if (allItemTasks.size() > 0)
-            return allItemTasks.get(Math.abs(new Random().nextInt(allItemTasks.size())));
+            return (ItemTask)allItemTasks.get(Math.abs(new Random().nextInt(allItemTasks.size())));
         else
-            return new BingoTask(new ItemTask(Material.DIAMOND_HOE, 1));
+            return new ItemTask(Material.DIAMOND_HOE, 1);
     }
 
     public static Set<String> getLists(String cardName)

@@ -24,9 +24,6 @@ public class ListValueEditorGUI extends AbstractGUIInventory
             "can appear on a card.",
             ChatColor.GRAY + "Left click - increase value",
             ChatColor.GRAY + "Right click - decrease value");
-
-    private static final InventoryItem REMOVE = new InventoryItem(13, Material.BARRIER, "" + ChatColor.RED + ChatColor.BOLD + "Remove",
-            "Click to remove this list from the bingo card");
     private final InventoryItem minCounter = new InventoryItem(20, Material.TARGET, " ");
     private final InventoryItem maxCounter = new InventoryItem(24, Material.TARGET, " ");
 
@@ -82,11 +79,6 @@ public class ListValueEditorGUI extends AbstractGUIInventory
         {
             close(player);
         }
-        else if (slotClicked == REMOVE.getSlot())
-        {
-            removeList();
-            close(player);
-        }
     }
 
     public void updateMax(int newValue)
@@ -120,10 +112,5 @@ public class ListValueEditorGUI extends AbstractGUIInventory
     {
         BingoCardsData.setList(cardEditor.cardName, listName, maxCount, minCount);
         cardEditor.updateCardDisplay();
-    }
-
-    private void removeList()
-    {
-           BingoCardsData.removeList(cardEditor.cardName, listName);
     }
 }

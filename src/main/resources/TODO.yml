@@ -1,42 +1,21 @@
-multiworld refactor! using Multiverse plugin
-
-add option to duplicate cards/lists
-
 refactor card recovery (its shit).
 
 implement Vault plugin
 
 create lobby to vote for options and select teams pre-game and show leaderboards
 
-add option to send players to a world when the game ends..
+add option to send players to a location when the game ends..
 
 finish statistics
 
-allow players to join existing teams
-
-win effects plays once for every player
-
-max team size doesn't do shit
-
-rework InventoryItem slot to (x, y)
-
 Add dummy player class to test stuff like lockout!
 
-add command to assign a player to a team /autobingo world team <team_name> <add|remove> <player_name>
-  
-disable scoreboard and action bar messages for players outside active worlds.
-  
-fix /autobingo end command doesn't want to accept the world_name argument
-  /autobingo world end returns "Invalid number of arguments"
+update autobingo page with all new features
 
-add custom kit options
-
-update autobingo page with world commands and /bingo card seed command
-
-Don't allow the player to hold the card in the offhand!
-
-see what players joined what team on TAB and in team selector before the game starts
+see what players joined what team on TAB and in team selector
 
 generalize/centralize game in progress/ player in game checks for events
 
 check if advancements are disabled and disallow them on advancement-disabled servers
+
+make verboseConsole config option to print more info as the game goes on

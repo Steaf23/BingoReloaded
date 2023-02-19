@@ -33,12 +33,20 @@ public class CardEditorUI extends PaginatedPickerUI
     @Override
     public void onOptionClickedDelegate(final InventoryClickEvent event, InventoryItem clickedOption, Player player)
     {
-        //if an ItemList attached to a card was clicked on
+        //if an ItemList attached to a card was clicked on exists
         if (clickedOption.getItemMeta() == null) return;
 
         String listName = clickedOption.getItemMeta().getDisplayName();
-        valueEditorGUI = new ListValueEditorGUI(this, listName, BingoCardsData.getListMax(cardName, listName), BingoCardsData.getListMin(cardName, listName));
-        valueEditorGUI.open(player);
+        if (event.getClick() == ClickType.LEFT)
+        {
+            valueEditorGUI = new ListValueEditorGUI(this, listName, BingoCardsData.getListMax(cardName, listName), BingoCardsData.getListMin(cardName, listName));
+            valueEditorGUI.open(player);
+        }
+        else if (event.getClick() == ClickType.RIGHT)
+        {
+            BingoCardsData.removeList(cardName, listName);
+            updateCardDisplay();
+        }
     }
 
     @Override
@@ -51,7 +59,9 @@ public class CardEditorUI extends PaginatedPickerUI
             List<InventoryItem> items = new ArrayList<>();
             for (String listName : TaskListsData.getListNames())
             {
-                items.add(new InventoryItem(Material.PAPER, listName, "This list contains " + TaskListsData.getTasks(listName).size() + " tasks", ChatColor.GRAY + "Click to select"));
+                items.add(new InventoryItem(Material.PAPER, listName,
+                        "This list contains " + TaskListsData.getTasks(listName).size() + " tasks",
+                        ChatColor.GRAY + "Click to select"));
             }
 
             PaginatedPickerUI listPicker = new PaginatedPickerUI(items, "Pick A List", this, FilterType.DISPLAY_NAME)
@@ -91,7 +101,10 @@ public class CardEditorUI extends PaginatedPickerUI
         List<InventoryItem> newItems = new ArrayList<>();
         for (String listName : BingoCardsData.getLists(cardName))
         {
-            InventoryItem item = new InventoryItem(Material.MAP, listName, "This list contains " + TaskListsData.getTasks(listName).size() + " tasks");
+            InventoryItem item = new InventoryItem(Material.MAP, listName,
+                    "This list contains " + TaskListsData.getTasks(listName).size() + " tasks",
+                    ChatColor.GRAY + "Left-click to edit distribution",
+                    ChatColor.GRAY + "Right-click to remove this list");
             item.setAmount(Math.max(1, BingoCardsData.getListMax(cardName, listName)));
             newItems.add(item);
         }

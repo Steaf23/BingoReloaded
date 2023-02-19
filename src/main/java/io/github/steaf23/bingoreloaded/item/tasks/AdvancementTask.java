@@ -8,13 +8,16 @@ import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.advancement.Advancement;
+import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
+@SerializableAs("Bingo.AdvancementTask")
 public record AdvancementTask(Advancement advancement) implements TaskData
 {
     @Override
@@ -49,6 +52,21 @@ public record AdvancementTask(Advancement advancement) implements TaskData
         BaseComponent comp = new ItemText().addAdvancementDescription(advancement).asComponent();
         comp.setColor(ChatColor.DARK_AQUA);
         return comp;
+    }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        AdvancementTask that = (AdvancementTask) o;
+        return Objects.equals(advancement, that.advancement);
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash(advancement);
     }
 
     @Override

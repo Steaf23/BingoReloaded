@@ -71,3 +71,6 @@ sendCommandAfterGameEnds: "" #command to send
 
 # If true, keeps the player scoreboard visible to all participants after the game has ended.
 keepScoreboardVisible: true # true or false
+
+# If true, will display all participants' names on the scoreboard under their team.
+showPlayerInScoreboard: true

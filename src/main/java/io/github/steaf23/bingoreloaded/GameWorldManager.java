@@ -2,6 +2,7 @@ package io.github.steaf23.bingoreloaded;
 
 import io.github.steaf23.bingoreloaded.event.BingoEndedEvent;
 import io.github.steaf23.bingoreloaded.util.Message;
+import org.bukkit.Bukkit;
 import org.bukkit.World;
 
 import java.util.HashMap;
@@ -32,7 +33,7 @@ public class GameWorldManager
     {
         if (doesGameWorldExist(worldName))
         {
-            BingoMessage.log("An instance of Bingo already exists in world '" + worldName + "'!");
+            Message.log("An instance of Bingo already exists in world '" + worldName + "'!");
             return false;
         }
 
@@ -62,13 +63,13 @@ public class GameWorldManager
     {
         if (!doesGameWorldExist(worldName))
         {
-            BingoMessage.log("Cannot start a game that doesn't exist, create it first using '/autobingo <world> create'!");
+            Message.log("Cannot start a game that doesn't exist, create it first using '/autobingo <world> create'!");
             return false;
         }
 
         if (isGameWorldActive(worldName))
         {
-            BingoMessage.log("Could not start bingo because the game is already running on world '" + worldName + "'!");
+            Message.log("Could not start bingo because the game is already running on world '" + worldName + "'!");
             return false;
         }
 
@@ -80,12 +81,13 @@ public class GameWorldManager
     {
         if (!isGameWorldActive(worldName))
         {
-            BingoMessage.log("Could not end bingo because no game was started on world '" + worldName + "'!");
+            Message.log("Could not end bingo because no game was started on world '" + worldName + "'!");
             return false;
         }
 
         BingoGame game = activeGames.get(worldName);
         var event = new BingoEndedEvent(game.getGameTime(), null, worldName);
+        Bukkit.getPluginManager().callEvent(event);
         game.end();
         return true;
     }

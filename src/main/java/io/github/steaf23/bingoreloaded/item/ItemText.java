@@ -1,6 +1,7 @@
 package io.github.steaf23.bingoreloaded.item;
 
 import io.github.steaf23.bingoreloaded.data.YmlDataManager;
+import io.github.steaf23.bingoreloaded.util.Message;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -22,11 +23,11 @@ import java.util.*;
  */
 public class ItemText
 {
-    private String type;
-    private String text;
+    private final String type;
+    private final String text;
     private String modifiers;
     private final List<ItemText> children;
-    private static YmlDataManager statTranslation = new YmlDataManager("stat_translation.yml");
+    private final static YmlDataManager statTranslation = new YmlDataManager("stat_translation.yml");
 
     public ItemText(ChatColor... modifiers)
     {
@@ -44,10 +45,7 @@ public class ItemText
         this.text = text;
         this.modifiers = modifiers;
         this.children = new ArrayList<>();
-        for (ItemText child : children)
-        {
-            this.children.add(child);
-        }
+        this.children.addAll(Arrays.asList(children));
     }
 
     public BaseComponent asComponent()
@@ -75,20 +73,20 @@ public class ItemText
 
     public String asJsonString()
     {
-        String result = "{\"" + type + "\":\"" + text + "\"" + modifiers;
+        StringBuilder result = new StringBuilder("{\"" + type + "\":\"" + text + "\"" + modifiers);
 
         if (children.size() == 0)
             return result + "}";
 
-        result += ",\"extra\":[";
+        result.append(",\"extra\":[");
         for (int i = 0; i < children.size(); i ++)
         {
-            if (i != 0) result += ",";
-            result += children.get(i).asJsonString();
+            if (i != 0) result.append(",");
+            result.append(children.get(i).asJsonString());
         }
 
-        result += "]}";
-        return result;
+        result.append("]}");
+        return result.toString();
     }
 
     public static ItemText combine(ItemText... input)
@@ -161,41 +159,46 @@ public class ItemText
 
     public static ItemStack buildItemText(ItemStack itemStack, ItemText nameText, ItemText... loreText)
     {
-        String newText = "{display:{Name:\'[" + nameText.asJsonRoot() + "]\'";
+        StringBuilder newText = new StringBuilder("{display:{Name:'[" + nameText.asJsonRoot() + "]'");
 
         if (loreText.length == 0 || (loreText.length == 1 && loreText[0].asJsonRoot().isEmpty()))
             return Bukkit.getUnsafe().modifyItemStack(itemStack, newText + "}}");
 
-        newText += ",Lore:[";
+        newText.append(",Lore:[");
         for (int i = 0; i < loreText.length; i ++)
         {
-            if (i != 0) newText += ",";
-            newText += "\'" + loreText[i].asJsonString() + "\'";
+            if (i != 0) newText.append(",");
+            newText.append("'")
+                    .append(loreText[i].asJsonString())
+                    .append("'");
         }
 
-        newText += "]}}";
+        newText.append("]}}");
 
-        return Bukkit.getUnsafe().modifyItemStack(itemStack, newText);
+        return Bukkit.getUnsafe().modifyItemStack(itemStack, newText.toString());
     }
 
     public static String createModifiers(ChatColor... modifiers)
     {
         Set<ChatColor> modifierSet = new HashSet<>(Arrays.stream(modifiers).toList());
-        String mods = "";
+        StringBuilder mods = new StringBuilder();
+
         for (ChatColor mod : modifierSet)
         {
             if (mod.getColor() != null)
             {
-                mods += ",\"color\":\"#" + Integer.toHexString(mod.getColor().getRGB()).substring(2) + "\"";
-                continue;
+                mods.append(",\"color\":\"#")
+                        .append(Integer.toHexString(mod.getColor().getRGB()).substring(2))
+                        .append("\"");
+                break;
             }
         }
-        if (modifierSet.contains(ChatColor.ITALIC)) mods += ",\"italic\":true";
-        if (modifierSet.contains(ChatColor.BOLD)) mods += ",\"bold\":true";
-        if (modifierSet.contains(ChatColor.STRIKETHROUGH)) mods += ",\"strikethrough\":true";
-        if (modifierSet.contains(ChatColor.UNDERLINE)) mods += ",\"underlined\":true";
-        if (modifierSet.contains(ChatColor.MAGIC)) mods += ",\"obfuscated\":true";
-        return mods;
+        if (modifierSet.contains(ChatColor.ITALIC)) mods.append(",\"italic\":true");
+        if (modifierSet.contains(ChatColor.BOLD)) mods.append(",\"bold\":true");
+        if (modifierSet.contains(ChatColor.STRIKETHROUGH)) mods.append(",\"strikethrough\":true");
+        if (modifierSet.contains(ChatColor.UNDERLINE)) mods.append(",\"underlined\":true");
+        if (modifierSet.contains(ChatColor.MAGIC)) mods.append(",\"obfuscated\":true");
+        return mods.toString();
     }
 
     /**
@@ -211,32 +214,29 @@ public class ItemText
             return new ItemText("translate", key, ItemText.createModifiers(modifiers));
 
         // Fill translate arguments (if any)
-        String with = ",\"with\":[";
+        StringBuilder with = new StringBuilder(",\"with\":[");
         int idx = 0;
         for (ItemText arg : jsonArgs)
         {
             if (idx > 0)
             {
-                with += ",";
+                with.append(",");
             }
-            with += arg.asJsonString();
+            with.append(arg.asJsonString());
             idx += 1;
         }
-        return new ItemText("translate", key, with + "]" + ItemText.createModifiers(modifiers));
+        return new ItemText("translate", key, with.append("]").append(ItemText.createModifiers(modifiers)).toString());
     }
 
     private static String advancementKey(@NonNull Advancement advancement)
     {
         String result = advancement.getKey().getKey().replace("/", ".");
-        switch (result) // Needed to correct Spigot on some advancement names vs how they appear in the lang files
+        result = switch (result) // Needed to correct Spigot on some advancement names vs how they appear in the lang files
         {
-            case "husbandry.obtain_netherite_hoe":
-                result = "husbandry.netherite_hoe";
-                break;
-            case "husbandry.bred_all_animals":
-                result = "husbandry.breed_all_animals";
-                break;
-        }
+            case "husbandry.obtain_netherite_hoe" -> "husbandry.netherite_hoe";
+            case "husbandry.bred_all_animals" -> "husbandry.breed_all_animals";
+            default -> result;
+        };
         return "advancements." + result;
     }
 
@@ -244,14 +244,12 @@ public class ItemText
     {
         String prefix = statistic.isSubstatistic() ? "stat_type.minecraft." : "stat.minecraft.";
         String result = statTranslation.getConfig().getString(statistic.name(), "");
-        return result != "" ? prefix + result : statistic.name();
+        return !result.equals("") ? prefix + result : statistic.name();
     }
 
     private static String itemKey(Material item)
     {
-        String key = item.isBlock() ? "block" : "item";
-        key += ".minecraft." + item.getKey().getKey();
-        return key;
+        return (item.isBlock() ? "block" : "item") + ".minecraft." + item.getKey().getKey();
     }
 
     private static String entityKey(EntityType entity)

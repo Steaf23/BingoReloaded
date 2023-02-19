@@ -1,16 +1,18 @@
 package io.github.steaf23.bingoreloaded.item.tasks;
 
-import io.github.steaf23.bingoreloaded.BingoMessage;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.TranslationData;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
 import io.github.steaf23.bingoreloaded.item.ItemText;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.util.GameTimer;
+import io.github.steaf23.bingoreloaded.util.Message;
+import io.github.steaf23.bingoreloaded.util.PDCHelper;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
+import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -20,8 +22,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-
-public class BingoTask implements ConfigurationSerializable
+public class BingoTask
 {
     public enum TaskType
     {
@@ -70,7 +71,7 @@ public class BingoTask implements ConfigurationSerializable
         }
         else
         {
-            BingoMessage.log("This Type of data is not supported by BingoTask: '" + data + "'!");
+            Message.log("This Type of data is not supported by BingoTask: '" + data + "'!");
             this.type = TaskType.ITEM;
             this.glowing = false;
             this.nameColor = ChatColor.WHITE;
@@ -99,7 +100,7 @@ public class BingoTask implements ConfigurationSerializable
         if (isVoided()) // VOIDED TASK
         {
             ItemText addedDesc = new ItemText(TranslationData.translate("game.team.voided",
-                    completedBy.get().gamePlayer().get().getName()), ChatColor.DARK_GRAY);
+                    completedBy.get().team().getColoredName().asLegacyString()), ChatColor.DARK_GRAY);
 
             ItemText itemName = new ItemText(ChatColor.DARK_GRAY, ChatColor.STRIKETHROUGH);
             itemName.addText("A", ChatColor.MAGIC);
@@ -123,7 +124,8 @@ public class BingoTask implements ConfigurationSerializable
                 add(ChatColor.ITALIC);
             }};
             ItemText[] desc = TranslationData.translateToItemText("game.item.complete_lore", modifiers,
-                    completedBy.get().team().getColoredName(),
+                    new ItemText(completedBy.get().gamePlayer().get().getDisplayName(),
+                            completedBy.get().getTeam().getColor().chatColor, ChatColor.BOLD),
                     new ItemText(timeString, ChatColor.GOLD));
 
             item = new ItemStack(completeMaterial);
@@ -155,7 +157,7 @@ public class BingoTask implements ConfigurationSerializable
         InventoryItem finalItem = new InventoryItem(item);
         ItemMeta meta = finalItem.getItemMeta();
         PersistentDataContainer pdcData = meta.getPersistentDataContainer();
-        // Serialize specific data first, to catch discourage null pointers for incomplete implementations.
+        // Serialize specific data first, to catch null pointers from incomplete implementations.
         pdcData = data.pdcSerialize(pdcData);
         // Then serialize generic task info/ live data
         pdcData.set(getTaskDataKey("type"), PersistentDataType.STRING, type.name());
@@ -192,7 +194,7 @@ public class BingoTask implements ConfigurationSerializable
         TaskType type;
         if (typeStr.isEmpty())
         {
-            BingoMessage.log("Cannot create a valid task from this item stack!");
+            Message.log("Cannot create a valid task from this item stack!");
             return null;
         }
 
@@ -209,7 +211,7 @@ public class BingoTask implements ConfigurationSerializable
 
     public static NamespacedKey getTaskDataKey(String property)
     {
-        return new NamespacedKey(BingoReloaded.get(), "task." + property);
+        return PDCHelper.createKey("task." + property);
     }
 
     public boolean complete(BingoPlayer player, long time)
@@ -222,28 +224,12 @@ public class BingoTask implements ConfigurationSerializable
 
         String timeString = GameTimer.getTimeAsString(time);
 
-        new BingoMessage("game.item.completed").color(ChatColor.GREEN)
+        new Message("game.item.completed").color(ChatColor.GREEN)
                 .component(data.getItemDisplayName().asComponent()).color(nameColor)
-                .arg(player.team().getColoredName().asLegacyString())
+                .arg(new ItemText(player.gamePlayer().get().getDisplayName(), player.team().getColor().chatColor, ChatColor.BOLD).asLegacyString())
                 .arg(timeString).color(ChatColor.WHITE)
                 .sendAll(player.worldName());
         return true;
-    }
-
-    @NotNull
-    @Override
-    public Map<String, Object> serialize()
-    {
-        return new HashMap<>(){{
-           put("data", data);
-        }};
-    }
-
-    public static BingoTask deserialize(Map<String, Object> taskData)
-    {
-        return new BingoTask(
-                ((TaskData) taskData.get("data"))
-        );
     }
 
     public BingoTask copy()

@@ -1,33 +1,29 @@
 package io.github.steaf23.bingoreloaded.command;
 
 import io.github.steaf23.bingoreloaded.BingoGame;
-import io.github.steaf23.bingoreloaded.BingoMessage;
-import io.github.steaf23.bingoreloaded.BingoScoreboard;
 import io.github.steaf23.bingoreloaded.GameWorldManager;
+import io.github.steaf23.bingoreloaded.data.TranslationData;
+import io.github.steaf23.bingoreloaded.player.PlayerKit;
+import io.github.steaf23.bingoreloaded.hologram.Hologram;
+import io.github.steaf23.bingoreloaded.hologram.HologramManager;
 import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.bingoreloaded.data.BingoStatsData;
-import io.github.steaf23.bingoreloaded.data.TaskListsData;
 import io.github.steaf23.bingoreloaded.data.ConfigData;
 import io.github.steaf23.bingoreloaded.gui.BingoOptionsUI;
 import io.github.steaf23.bingoreloaded.gui.creator.BingoCreatorUI;
-import io.github.steaf23.bingoreloaded.item.tasks.*;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
-import io.github.steaf23.bingoreloaded.player.BingoTeam;
-import io.github.steaf23.bingoreloaded.util.FlexColor;
 import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
-import org.bukkit.Statistic;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-import java.util.Optional;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 public class BingoCommand implements CommandExecutor
 {
@@ -54,8 +50,11 @@ public class BingoCommand implements CommandExecutor
         switch (args[0])
         {
             case "join":
-                if (activeGame != null)
-                    activeGame.getTeamManager().openTeamSelector(player, null);
+                if (GameWorldManager.get().doesGameWorldExist(worldName))
+                {
+                    BingoGame existingGame = GameWorldManager.get().getGame(worldName);
+                    existingGame.getTeamManager().openTeamSelector(player, null);
+                }
                 break;
             case "leave":
                 if (activeGame != null)
@@ -112,7 +111,7 @@ public class BingoCommand implements CommandExecutor
                 }
                 else if (activeGame == null)
                 {
-                    new BingoMessage("command.bingo.no_deathmatch").color(ChatColor.RED).send(player);
+                    new Message("command.bingo.no_deathmatch").color(ChatColor.RED).send(player);
                     return false;
                 }
 
@@ -128,72 +127,160 @@ public class BingoCommand implements CommandExecutor
                 break;
 
             case "stats":
-                if (commandSender instanceof Player p && p.hasPermission("bingo.player"))
+                Hologram holo = HologramManager.create("scoreboard", player.getLocation(), "LINE UNO", Message.PREFIX_STRING, "LINOS " + ChatColor.BOLD + "DOS is very long I can not see it because it goes into the sun lol");
+
+                String path = "logo.png";
+                try
                 {
-                    if (!ConfigData.instance.savePlayerStatistics)
-                    {
-                        TextComponent text = new TextComponent("Player statistics are not being tracked at this moment!");
-                        text.setColor(ChatColor.RED);
-                        BingoMessage.sendDebug(text, p);
-                        return true;
-                    }
-                    Message msg;
-                    if (args.length > 1 && p.hasPermission("bingo.admin"))
-                    {
-                        msg = BingoStatsData.getPlayerStatsFormatted(args[1]);
-                    }
-                    else
-                    {
-                        msg = BingoStatsData.getPlayerStatsFormatted(p.getUniqueId());
-                    }
-                    msg.send(p);
+                    Hologram holo2 = HologramManager.createImage("logo", player.getLocation(), path, ChatColor.WHITE);
+                } catch (IOException e)
+                {
+                    Message.log("NO IMAGE AT " + path);
+                    throw new RuntimeException(e);
+                }
+
+                if (!ConfigData.instance.savePlayerStatistics)
+                {
+                    TextComponent text = new TextComponent("Player statistics are not being tracked at this moment!");
+                    text.setColor(ChatColor.RED);
+                    Message.sendDebug(text, player);
                     return true;
+                }
+                Message msg;
+                if (args.length > 1 && player.hasPermission("bingo.admin"))
+                {
+                    msg = BingoStatsData.getPlayerStatsFormatted(args[1]);
+                }
+                else
+                {
+                    msg = BingoStatsData.getPlayerStatsFormatted(player.getUniqueId());
+                }
+                msg.send(player);
+                return true;
+
+            case "destroy":
+                if (args.length > 1 && player.hasPermission("bingo.admin"))
+                {
+                    HologramManager.destroy(args[1]);
                 }
                 break;
 
-            case "task":
-                if (commandSender instanceof Player p)
+            case "kit":
+                if (args.length <= 2)
+                    return false;
+
+                switch (args[1])
                 {
-                    TaskListsData.saveTasks("CHEESE",
-                            new BingoTask(new ItemTask(Material.BEACON)),
-                            new BingoTask(new AdvancementTask(Bukkit.getAdvancement(NamespacedKey.fromString("minecraft:nether/obtain_crying_obsidian")))),
-                            new BingoTask(new StatisticTask(new BingoStatistic(Statistic.BELL_RING), 69)),
-                            new BingoTask(new StatisticTask(new BingoStatistic(Statistic.KILL_ENTITY, EntityType.MUSHROOM_COW), 100))
-                    );
+                    case "item":
+                        givePlayerBingoItem(player, args[2]);
+                        break;
 
-                    BingoPlayer dummy = new BingoPlayer(p.getUniqueId(),
-                            new BingoTeam(
-                                    Bukkit.getScoreboardManager().getNewScoreboard().registerNewTeam("orange"),
-                                    null,
-                                    FlexColor.ORANGE)
-                            , "world", "DumDum");
+                    case "add":
+                        if (args.length < 4)
+                        {
+                            Message.sendDebug(ChatColor.RED + "Please specify a kit name for slot " + args[2], player);
+                            return false;
+                        }
+                        addPlayerKit(args[2], Arrays.stream(args).toList().subList(3, args.length), player);
+                        break;
 
-                    var tasks = TaskListsData.getTasks("CHEESE");
-                    p.getInventory().addItem(tasks.get(0).asStack());
-                    p.getInventory().addItem(tasks.get(1).asStack());
-                    p.getInventory().addItem(tasks.get(2).asStack());
-                    p.getInventory().addItem(tasks.get(3).asStack());
-                    tasks.forEach(t -> t.completedBy = Optional.ofNullable(dummy));
-                    p.getInventory().addItem(tasks.get(0).asStack());
-                    p.getInventory().addItem(tasks.get(1).asStack());
-                    p.getInventory().addItem(tasks.get(2).asStack());
-                    p.getInventory().addItem(tasks.get(3).asStack());
-                    tasks.forEach(t -> t.setVoided(true));
-                    p.getInventory().addItem(tasks.get(0).asStack());
-                    p.getInventory().addItem(tasks.get(1).asStack());
-                    p.getInventory().addItem(tasks.get(2).asStack());
-                    p.getInventory().addItem(tasks.get(3).asStack());
+                    case "remove":
+                        removePlayerKit(args[2], player);
+                        break;
                 }
                 break;
 
             default:
-                if (commandSender instanceof Player p)
-                    new BingoMessage("command.use").color(ChatColor.RED).arg("/bingo [getcard | stats | start | end | join | back | leave | deathmatch | creator]").send(p);
-                else
-                    BingoMessage.log(ChatColor.RED + "Usage: /bingo [start | end | deathmatch]");
+                new Message("command.use").color(ChatColor.RED).arg("/bingo [getcard | stats | start | end | join | back | leave | deathmatch | creator]").send(player);
                 break;
         }
 
         return false;
+    }
+
+    public void addPlayerKit(String slot, List<String> kitNameParts, Player commandSender)
+    {
+        PlayerKit kit = switch (slot)
+        {
+            case "1" -> PlayerKit.CUSTOM_1;
+            case "2" -> PlayerKit.CUSTOM_2;
+            case "3" -> PlayerKit.CUSTOM_3;
+            case "4" -> PlayerKit.CUSTOM_4;
+            case "5" -> PlayerKit.CUSTOM_5;
+            default -> {
+                Message.sendDebug(ChatColor.RED + "Invalid slot, please a slot from 1 through 5 to save this kit in", commandSender);
+                yield null;
+            }
+        };
+
+        String kitName = "";
+        for (int i = 0; i < kitNameParts.size() - 1; i++)
+        {
+            kitName += kitNameParts.get(i) + " ";
+        }
+        kitName += kitNameParts.get(kitNameParts.size() - 1);
+
+        if (!PlayerKit.assignCustomKit(kitName, kit, commandSender))
+        {
+            BaseComponent msg = new TextComponent("");
+            msg.setColor(ChatColor.RED);
+            msg.addExtra("Cannot add custom kit ");
+            msg.addExtra(TranslationData.convertColors(kitName));
+            msg.addExtra(" to slot " + slot + ", this slot already contains kit ");
+            msg.addExtra(PlayerKit.getCustomKit(kit).getName());
+            msg.addExtra(". Remove it first!");
+            Message.sendDebug(msg, commandSender);
+        }
+        else
+        {
+            BaseComponent msg = new TextComponent("");
+            msg.setColor(ChatColor.GREEN);
+            msg.addExtra("Created custom kit ");
+            msg.addExtra(TranslationData.convertColors(kitName));
+            msg.addExtra(" in slot " + slot + " from your inventory");
+            Message.sendDebug(msg, commandSender);
+        }
+    }
+
+    public void removePlayerKit(String slot, Player commandSender)
+    {
+        PlayerKit kit = switch (slot)
+        {
+            case "1" -> PlayerKit.CUSTOM_1;
+            case "2" -> PlayerKit.CUSTOM_2;
+            case "3" -> PlayerKit.CUSTOM_3;
+            case "4" -> PlayerKit.CUSTOM_4;
+            case "5" -> PlayerKit.CUSTOM_5;
+            default -> {
+                Message.sendDebug(ChatColor.RED + "Invalid slot, please a slot from 1 through 5 to save this kit in", commandSender);
+                yield null;
+            }
+        };
+
+        if (PlayerKit.getCustomKit(kit) == null)
+        {
+            BaseComponent msg = new TextComponent("");
+            msg.setColor(ChatColor.RED);
+            msg.addExtra("Cannot remove kit from slot " + slot + " because no custom kit is assigned to this slot");
+            Message.sendDebug(msg, commandSender);
+        }
+        else
+        {
+            BaseComponent msg = new TextComponent("");
+            msg.setColor(ChatColor.GREEN);
+            msg.addExtra("Removed custom kit ");
+            msg.addExtra(PlayerKit.getCustomKit(kit).getName());
+            msg.addExtra(" from slot " + slot);
+            Message.sendDebug(msg, commandSender);
+            PlayerKit.removeCustomKit(kit);
+        }
+    }
+
+    public void givePlayerBingoItem(Player player, String itemName)
+    {
+        if (itemName.equals("wand"))
+        {
+            player.getInventory().addItem(PlayerKit.wandItem);
+        }
     }
 }

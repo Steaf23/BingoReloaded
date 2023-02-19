@@ -4,6 +4,7 @@ import io.github.steaf23.bingoreloaded.BingoSettings;
 import io.github.steaf23.bingoreloaded.data.TranslationData;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
 import io.github.steaf23.bingoreloaded.util.GUIPreset5x9;
+import io.github.steaf23.bingoreloaded.util.Message;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -19,15 +20,19 @@ public class BingoOptionsExtraUI extends AbstractGUIInventory
     private final BingoSettings settings;
     private final InventoryItem exit = new InventoryItem(36,
             Material.BARRIER, TITLE_PREFIX + TranslationData.translate("menu.prev"));
-    private final InventoryItem maxTeamMembers = new InventoryItem(GUIPreset5x9.TWO_HORIZONTAL.positions[0],
+    private final InventoryItem maxTeamMembers = new InventoryItem(GUIPreset5x9.THREE_CENTER.positions[0],
             Material.ENDER_EYE, TITLE_PREFIX + "Maximum Team Size");
-    private final InventoryItem gameDuration = new InventoryItem(GUIPreset5x9.TWO_HORIZONTAL.positions[1],
-            Material.CLOCK, TITLE_PREFIX + "Countdown Duration");
+    private final InventoryItem countdown = new InventoryItem(GUIPreset5x9.THREE_CENTER.positions[1],
+            Material.CLOCK, TITLE_PREFIX + "Enable Countdown Timer");
+    private final InventoryItem gameDuration = new InventoryItem(GUIPreset5x9.THREE_CENTER.positions[2],
+            Material.RECOVERY_COMPASS, TITLE_PREFIX + "Countdown Duration");
 
     public BingoOptionsExtraUI(AbstractGUIInventory parent, BingoSettings settings)
     {
         super(45, TranslationData.translate("menu.options.title"), parent);
         this.settings = settings;
+        var meta = countdown.getItemMeta();
+        countdown.highlight(settings.enableCountdown);
     }
 
     @Override
@@ -53,6 +58,12 @@ public class BingoOptionsExtraUI extends AbstractGUIInventory
                     "§rUse the mouse buttons to increase/ decrease",
                     "the maximum amount of players per team");
             addOption(maxTeamMembers);
+        }
+        else if (slotClicked == countdown.getSlot())
+        {
+            settings.enableCountdown = !settings.enableCountdown;
+            countdown.highlight(settings.enableCountdown);
+            addOption(countdown);
         }
         else if (slotClicked == gameDuration.getSlot())
         {
@@ -100,7 +111,8 @@ public class BingoOptionsExtraUI extends AbstractGUIInventory
         fillOptions(
                 exit,
                 maxTeamMembers,
-                gameDuration
+                gameDuration,
+                countdown
         );
     }
 }

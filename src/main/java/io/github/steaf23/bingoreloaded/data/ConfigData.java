@@ -60,6 +60,7 @@ public class ConfigData
     public boolean enableTeamChat;
     public String sendCommandAfterGameEnded;
     public boolean keepScoreboardVisible;
+    public boolean showPlayerInScoreboard;
 
     // TODO: make defaultBingoWorld: "world" config option
 
@@ -88,5 +89,6 @@ public class ConfigData
         this.enableTeamChat = config.getBoolean("enableTeamChat", true);
         this.sendCommandAfterGameEnded = config.getString("sendCommandAfterGameEnds", "");
         this.keepScoreboardVisible = config.getBoolean("keepScoreboardVisible", true);
+        this.showPlayerInScoreboard = config.getBoolean("showPlayerInScoreboard", true);
     }
 }

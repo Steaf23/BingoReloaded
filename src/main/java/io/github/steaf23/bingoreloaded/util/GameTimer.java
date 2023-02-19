@@ -1,8 +1,10 @@
 package io.github.steaf23.bingoreloaded.util;
 
+import java.util.function.Consumer;
+
 public abstract class GameTimer
 {
-    protected TimeNotifier notifier;
+    protected Consumer<Long> notifier;
     private long time;
     protected String worldName;
 
@@ -23,7 +25,7 @@ public abstract class GameTimer
     protected void updateTime(long newTime)
     {
         time = newTime;
-        notifier.timeUpdated(newTime);
+        notifier.accept(newTime);
     }
 
     public static String getTimeAsString(long seconds)
@@ -42,7 +44,7 @@ public abstract class GameTimer
         return String.format("00:%02d", seconds % 60);
     }
 
-    public void setNotifier(TimeNotifier notifier)
+    public void setNotifier(Consumer<Long> notifier)
     {
         this.notifier = notifier;
     }

@@ -1,13 +1,15 @@
 package io.github.steaf23.bingoreloaded;
 
 
+import io.github.steaf23.bingoreloaded.data.ConfigData;
 import io.github.steaf23.bingoreloaded.data.TranslationData;
-import io.github.steaf23.bingoreloaded.event.BingoEndedEvent;
-import io.github.steaf23.bingoreloaded.event.BingoParticipantsUpdatedEvent;
+import io.github.steaf23.bingoreloaded.event.BingoPlayerJoinEvent;
+import io.github.steaf23.bingoreloaded.event.BingoPlayerLeaveEvent;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.player.BingoTeam;
 import io.github.steaf23.bingoreloaded.player.TeamManager;
 import io.github.steaf23.bingoreloaded.util.Message;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -15,34 +17,39 @@ import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
 
+import java.util.Objects;
+
 public class BingoScoreboard implements Listener
 {
-    private final Scoreboard itemCountBoard;
+    private final Scoreboard teamBoard;
+    private final InfoScoreboard visualBoard;
     private final TeamManager teamManager;
+    private final Objective taskObjective;
 
     public String worldName;
 
     public BingoScoreboard(String worldName)
     {
-        this.itemCountBoard = Bukkit.getScoreboardManager().getNewScoreboard();
-        this.teamManager = new TeamManager(itemCountBoard, worldName);
+        this.teamBoard = Bukkit.getScoreboardManager().getNewScoreboard();
+        this.visualBoard = new InfoScoreboard("" + ChatColor.ITALIC + ChatColor.UNDERLINE + TranslationData.translate("menu.completed"), teamBoard);
+
+        this.teamManager = new TeamManager(teamBoard, worldName);
         this.worldName = worldName;
 
-        Objective itemObjective = itemCountBoard.registerNewObjective("item_count", "bingo_item_count", TranslationData.translate("menu.completed"));
-        itemObjective.setDisplaySlot(DisplaySlot.SIDEBAR);
+        this.taskObjective = teamBoard.registerNewObjective("item_count", "bingo_item_count");
 
         reset();
         Bukkit.getPluginManager().registerEvents(this, BingoReloaded.get());
     }
 
-    public void updateItemCount()
+    public void updateTeamScores()
     {
         if (!GameWorldManager.get().isGameWorldActive(worldName))
             return;
 
         BingoReloaded.scheduleTask(task ->
         {
-            Objective objective = itemCountBoard.getObjective("item_count");
+            Objective objective = teamBoard.getObjective("item_count");
             if (objective == null)
                 return;
 
@@ -53,35 +60,58 @@ public class BingoScoreboard implements Listener
                     objective.getScore("" + t.getColor().chatColor).setScore(t.card.getCompleteCount(t));
                 }
             }
+            updateVisual();
+        });
+    }
 
-            for (BingoPlayer p : teamManager.getParticipants())
+    public void updateVisual()
+    {
+        visualBoard.clearDisplay();
+
+        boolean condensedDisplay = !ConfigData.instance.showPlayerInScoreboard
+                || teamManager.getActiveTeams().size() + teamManager.getParticipants().size() > 13;
+
+        visualBoard.setLineText(0, " ");
+        int lineIndex = 1;
+        for (BingoTeam team : teamManager.getActiveTeams())
+        {
+            String teamScoreLine = "" + ChatColor.DARK_RED + "[" + team.getColoredName().asLegacyString() + ChatColor.DARK_RED + "]" +
+                    ChatColor.WHITE + ": " + ChatColor.BOLD + taskObjective.getScore("" + team.getColor().chatColor).getScore();
+            visualBoard.setLineText(lineIndex, teamScoreLine);
+            lineIndex += 1;
+
+            if (!condensedDisplay)
             {
-                if (p.gamePlayer().isPresent())
+                for (BingoPlayer player : team.getPlayers())
                 {
-                    setPlayerScoreboard(p, itemCountBoard);
-                    continue;
-                }
-                else if (p.asOnlinePlayer().isPresent() && p.asOnlinePlayer().get().getScoreboard().equals(itemCountBoard))
-                {
-                    setPlayerScoreboard(p, Bukkit.getScoreboardManager().getMainScoreboard());
+                    String playerLine = "" + ChatColor.GRAY + ChatColor.BOLD + " ┗ " + ChatColor.RESET + player.displayName();
+                    visualBoard.setLineText(lineIndex, playerLine);
+                    lineIndex += 1;
                 }
             }
-        });
+        }
+
+        for (BingoPlayer p : teamManager.getParticipants())
+        {
+            updatePlayerScoreboard(p);
+        }
     }
 
     public void reset()
     {
         BingoReloaded.scheduleTask(task -> {
-            for (String entry : itemCountBoard.getEntries())
+            for (String entry : teamBoard.getEntries())
             {
-                itemCountBoard.resetScores(entry);
+                teamBoard.resetScores(entry);
             }
 
             for (BingoPlayer p : teamManager.getParticipants())
             {
                 if (p.gamePlayer().isPresent())
-                    setPlayerScoreboard(p, Bukkit.getScoreboardManager().getMainScoreboard());
+                    visualBoard.clearPlayerBoard(p.gamePlayer().get());
             }
+
+            updateTeamScores();
         });
     }
 
@@ -90,29 +120,37 @@ public class BingoScoreboard implements Listener
         return teamManager;
     }
 
-    //TODO: Change to onPlayerRemoved/Added
     @EventHandler
-    public void onParticipantsUpdated(final BingoParticipantsUpdatedEvent event)
+    public void onPlayerJoinsEvent(final BingoPlayerJoinEvent event)
     {
         if (!event.worldName.equals(worldName))
             return;
 
-        updateItemCount();
+        Message.log("Player " + event.player.asOnlinePlayer().get().getDisplayName() + " joined the game", worldName);
+
+        updatePlayerScoreboard(event.player);
     }
 
-    private void setPlayerScoreboard(BingoPlayer player, Scoreboard scoreboard)
+    @EventHandler
+    public void onPlayerLeavesEvent(final BingoPlayerLeaveEvent event)
     {
-        try
+        if (!event.worldName.equals(worldName))
+            return;
+
+        Message.log("Player " + event.player.asOnlinePlayer().get().getDisplayName() + " left the game", worldName);
+
+        updatePlayerScoreboard(event.player);
+    }
+
+    private void updatePlayerScoreboard(BingoPlayer player)
+    {
+        if (player.gamePlayer().isPresent())
         {
-            if (player.asOnlinePlayer().isPresent())
-            {
-                player.asOnlinePlayer().get().setScoreboard(scoreboard);
-                player.asOnlinePlayer().get().setScoreboard(scoreboard);
-            }
+            visualBoard.updatePlayerBoard(player.gamePlayer().get());
         }
-        catch (IllegalStateException exc)
+        else if (player.asOnlinePlayer().isPresent() && player.asOnlinePlayer().get().getScoreboard().equals(teamBoard))
         {
-            Message.warn("Cannot set scoreboard of invalid player: " + player.playerName());
+            visualBoard.clearPlayerBoard(player.asOnlinePlayer().get());
         }
     }
 }

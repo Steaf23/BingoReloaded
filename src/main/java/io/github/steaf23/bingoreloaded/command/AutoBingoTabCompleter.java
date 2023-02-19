@@ -39,18 +39,18 @@ public class AutoBingoTabCompleter implements TabCompleter
                 }
                 return allWorlds;
             case 2:
-                return List.of("create", "destroy", "start", "end","kit", "effects", "card", "team_max", "duration", "team");
+                return List.of("create", "destroy", "start", "end","kit", "effects", "card", "duration", "team");
             case 3:
                 switch (args[1])
                 {
                     case "kit":
-                        return List.of("custom", "normal", "overpowered", "reloaded", "hardcore");
+                        return List.of("normal", "overpowered", "reloaded", "hardcore", "custom1", "custom2", "custom3", "custom4", "custom5");
                     case "effects":
                         return List.of("all", "none", "water_breathing", "night_vision", "fire_resistance", "no_fall_damage", "card_speed");
                     case "card":
                         return BingoCardsData.getCardNames().stream().toList();
                     case "start":
-                        return List.of("regular", "lockout", "complete", "countdown");
+                        return List.of("regular", "lockout", "complete");
                     default:
                         return null;
                 }
