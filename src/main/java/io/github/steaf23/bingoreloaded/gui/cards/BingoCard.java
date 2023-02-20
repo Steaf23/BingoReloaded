@@ -9,10 +9,7 @@ import io.github.steaf23.bingoreloaded.data.TranslationData;
 import io.github.steaf23.bingoreloaded.event.BingoCardTaskCompleteEvent;
 import io.github.steaf23.bingoreloaded.gui.AbstractGUIInventory;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
-import io.github.steaf23.bingoreloaded.item.tasks.AdvancementTask;
-import io.github.steaf23.bingoreloaded.item.tasks.BingoTask;
-import io.github.steaf23.bingoreloaded.item.tasks.ItemTask;
-import io.github.steaf23.bingoreloaded.item.tasks.TaskData;
+import io.github.steaf23.bingoreloaded.item.tasks.*;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.player.BingoTeam;
 import io.github.steaf23.bingoreloaded.util.Message;
@@ -28,6 +25,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerAdvancementDoneEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.player.PlayerStatisticIncrementEvent;
 import org.bukkit.inventory.ItemStack;
 
 
@@ -308,34 +306,7 @@ public class BingoCard extends AbstractGUIInventory
         });
     }
 
-    public void onPlayerAdvancementDone(final PlayerAdvancementDoneEvent event, final BingoPlayer player, final BingoGame game)
-    {
-        if (player.team().outOfTheGame)
-            return;
-
-        if (game.getSettings().deathMatchItem != null)
-            return;
-
-        for (BingoTask task : tasks)
-        {
-            if (task.type != BingoTask.TaskType.ADVANCEMENT)
-                continue;
-
-            AdvancementTask data = (AdvancementTask) task.data;
-
-            if (data.advancement().equals(event.getAdvancement()))
-            {
-                if (!task.complete(player, game.getGameTime()))
-                    continue;
-
-                var slotEvent = new BingoCardTaskCompleteEvent(task, player, hasBingo(player.team()));
-                Bukkit.getPluginManager().callEvent(slotEvent);
-                break;
-            }
-        }
-    }
-
-    private ItemStack completeItemSlot(ItemStack item, BingoPlayer player, BingoGame game)
+    ItemStack completeItemSlot(ItemStack item, BingoPlayer player, BingoGame game)
     {
         if (player.gamePlayer().isEmpty())
             return item;
@@ -370,5 +341,60 @@ public class BingoCard extends AbstractGUIInventory
             }
         }
         return item;
+    }
+
+    public void onPlayerAdvancementDone(final PlayerAdvancementDoneEvent event, final BingoPlayer player, final BingoGame game)
+    {
+        if (player.getTeam().outOfTheGame)
+            return;
+
+        if (game.getSettings().deathMatchItem != null)
+            return;
+
+        for (BingoTask task : tasks)
+        {
+            if (task.type != BingoTask.TaskType.ADVANCEMENT)
+                continue;
+
+            AdvancementTask data = (AdvancementTask) task.data;
+
+            if (data.advancement().equals(event.getAdvancement()))
+            {
+                if (!task.complete(player, game.getGameTime()))
+                    continue;
+
+                var slotEvent = new BingoCardTaskCompleteEvent(task, player, hasBingo(player.team()));
+                Bukkit.getPluginManager().callEvent(slotEvent);
+                break;
+            }
+        }
+    }
+
+    public void onPlayerStatIncrement(final PlayerStatisticIncrementEvent event, final BingoPlayer player, final BingoGame game)
+    {
+
+        if (player.getTeam().outOfTheGame)
+            return;
+
+        if (game.getSettings().deathMatchItem != null)
+            return;
+
+        for (BingoTask task : tasks)
+        {
+            if (task.type != BingoTask.TaskType.STATISTIC)
+                continue;
+
+            StatisticTask data = (StatisticTask)task.data;
+            if (data.statistic().equals(new BingoStatistic(event.getStatistic(), event.getEntityType(), event.getMaterial())) &&
+                data.getCount() == event.getNewValue())
+            {
+                if (!task.complete(player, game.getGameTime()))
+                    continue;
+
+                var slotEvent = new BingoCardTaskCompleteEvent(task, player, hasBingo(player.getTeam()));
+                Bukkit.getPluginManager().callEvent(slotEvent);
+                break;
+            }
+        }
     }
 }

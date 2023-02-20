@@ -9,6 +9,8 @@ import io.github.steaf23.bingoreloaded.event.CountdownTimerFinishedEvent;
 import io.github.steaf23.bingoreloaded.gui.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.gui.cards.BingoCard;
 import io.github.steaf23.bingoreloaded.gui.cards.CardBuilder;
+import io.github.steaf23.bingoreloaded.event.BingoCardTaskCompleteEvent;
+import io.github.steaf23.bingoreloaded.item.tasks.StatisticTracker;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.player.BingoTeam;
 import io.github.steaf23.bingoreloaded.player.PlayerKit;
@@ -43,8 +45,8 @@ public class BingoGame implements Listener
     private BingoSettings settings;
     private final BingoScoreboard scoreboard;
     private final Map<UUID, Location> deadPlayers;
-
     private final CardEventManager cardEventManager;
+    private final StatisticTracker statTracker;
 
     public BingoGame(String worldName)
     {
@@ -53,6 +55,7 @@ public class BingoGame implements Listener
         this.scoreboard = new BingoScoreboard(worldName);
         this.deadPlayers = new HashMap<>();
         this.cardEventManager = new CardEventManager(worldName);
+        this.statTracker = new StatisticTracker(worldName);
         BingoReloaded.registerListener(this);
     }
 
@@ -119,6 +122,8 @@ public class BingoGame implements Listener
         }
         cardEventManager.setCards(cards.stream().toList());
 
+        statTracker.initialize(getTeamManager().getActiveTeams());
+
         new Message("game.start.give_cards").sendAll(worldName);
         Set<BingoPlayer> players = getTeamManager().getParticipants();
         teleportPlayersToStart(world);
@@ -155,6 +160,7 @@ public class BingoGame implements Listener
     {
         if (settings != null)
             settings.deathMatchItem = null;
+
         if(!inProgress)
             return;
 
@@ -463,12 +469,6 @@ public class BingoGame implements Listener
     public boolean isInProgress()
     {
         return inProgress;
-    }
-
-    public void updateStatisticTasks()
-    {
-        var event = new UpdateStatisticEvent(worldName);
-        Bukkit.getPluginManager().callEvent(event);
     }
 
 // @EventHandlers ========================================================================

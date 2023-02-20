@@ -4,6 +4,8 @@ import io.github.steaf23.bingoreloaded.*;
 import io.github.steaf23.bingoreloaded.data.TranslationData;
 import io.github.steaf23.bingoreloaded.event.BingoPlayerJoinEvent;
 import io.github.steaf23.bingoreloaded.event.BingoPlayerLeaveEvent;
+import io.github.steaf23.bingoreloaded.event.BingoStartedEvent;
+import io.github.steaf23.bingoreloaded.event.UpdateStatisticEvent;
 import io.github.steaf23.bingoreloaded.gui.AbstractGUIInventory;
 import io.github.steaf23.bingoreloaded.gui.FilterType;
 import io.github.steaf23.bingoreloaded.gui.PaginatedPickerUI;
@@ -321,6 +323,20 @@ public class TeamManager implements Listener
     public String getWorldName()
     {
         return worldName;
+    }
+
+    public void updateStatisticTasks()
+    {
+        for (BingoTeam team : activeTeams)
+        {
+            for (BingoPlayer p : team.players)
+            {
+                if (p.gamePlayer().isEmpty())
+                    continue;
+
+                team.card.updateStatisticProgress();
+            }
+        }
     }
 
     @EventHandler
