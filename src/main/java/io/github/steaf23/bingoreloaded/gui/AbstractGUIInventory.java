@@ -34,7 +34,7 @@ public abstract class AbstractGUIInventory
     public AbstractGUIInventory(int size, String title, AbstractGUIInventory parent)
     {
         this.parent = parent;
-        this.inventory = Bukkit.createInventory(new GUIHolder(), size, Message.PREFIX_STRING_SHORT + " " + ChatColor.DARK_RED + title);
+        this.inventory = Bukkit.createInventory(new GUIHolder(), size, title);
         UIManager.addInventory(this);
     }
 

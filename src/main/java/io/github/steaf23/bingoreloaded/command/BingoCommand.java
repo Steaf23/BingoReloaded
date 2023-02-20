@@ -3,6 +3,7 @@ package io.github.steaf23.bingoreloaded.command;
 import io.github.steaf23.bingoreloaded.BingoGame;
 import io.github.steaf23.bingoreloaded.GameWorldManager;
 import io.github.steaf23.bingoreloaded.data.TranslationData;
+import io.github.steaf23.bingoreloaded.gui.PictureUI;
 import io.github.steaf23.bingoreloaded.player.PlayerKit;
 import io.github.steaf23.bingoreloaded.hologram.Hologram;
 import io.github.steaf23.bingoreloaded.hologram.HologramManager;
@@ -189,6 +190,10 @@ public class BingoCommand implements CommandExecutor
                         break;
                 }
                 break;
+
+            case "uitest":
+                PictureUI pic = new PictureUI(null);
+                pic.open((Player)commandSender);
 
             default:
                 new Message("command.use").color(ChatColor.RED).arg("/bingo [getcard | stats | start | end | join | back | leave | deathmatch | creator]").send(player);
