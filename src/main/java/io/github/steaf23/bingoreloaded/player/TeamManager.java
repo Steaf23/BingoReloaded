@@ -315,7 +315,7 @@ public class TeamManager implements Listener
             // Add dummy entry to show the prefix on the board
             t.addEntry("" + fColor.chatColor);
         }
-        Message.log("Successfully created " + teams.getTeams().size() + " teams");
+        Message.log("Successfully created 16 teams");
     }
 
     public String getWorldName()

@@ -326,7 +326,7 @@ public class Message
 
     public static TextComponent[] createHoverCommandMessage(@NonNull String translatePath, @Nullable String command)
     {
-        TextComponent prefix = new TextComponent(PREFIX_STRING + " " + TranslationData.translate(translatePath + ".prefix"));
+        TextComponent prefix = new TextComponent(TranslationData.translate(translatePath + ".prefix"));
         TextComponent hoverable = new TextComponent(TranslationData.translate(translatePath + ".hoverable"));
         TextComponent hover = new TextComponent(TranslationData.translate(translatePath + ".hover"));
         TextComponent suffix = new TextComponent(TranslationData.translate(translatePath + ".suffix"));

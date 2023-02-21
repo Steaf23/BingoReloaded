@@ -34,14 +34,14 @@ public abstract class AbstractGUIInventory
     public AbstractGUIInventory(int size, String title, AbstractGUIInventory parent)
     {
         this.parent = parent;
-        this.inventory = Bukkit.createInventory(new GUIHolder(), size, Message.PREFIX_STRING_SHORT + " " + ChatColor.DARK_RED + title);
+        this.inventory = Bukkit.createInventory(null, size, Message.PREFIX_STRING_SHORT + " " + ChatColor.DARK_RED + title);
         UIManager.addInventory(this);
     }
 
     public AbstractGUIInventory(InventoryType type, String title, AbstractGUIInventory parent)
     {
         this.parent = parent;
-        this.inventory = Bukkit.createInventory(new GUIHolder(), type, Message.PREFIX_STRING_SHORT + " " + ChatColor.DARK_RED + title);
+        this.inventory = Bukkit.createInventory(null, type, Message.PREFIX_STRING_SHORT + " " + ChatColor.DARK_RED + title);
         UIManager.addInventory(this);
     }
 
@@ -142,10 +142,5 @@ public abstract class AbstractGUIInventory
             Bukkit.getScheduler().runTask(BingoReloaded.get(), task -> {
                 player.closeInventory();
             });
-    }
-
-    public GUIHolder getHolder()
-    {
-        return (GUIHolder)inventory.getHolder();
     }
 }
