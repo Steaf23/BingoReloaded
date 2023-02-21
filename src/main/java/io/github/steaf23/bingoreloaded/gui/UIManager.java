@@ -39,7 +39,7 @@ public class UIManager
     {
         for (var inv : inventories)
         {
-            if (inv.getHolder().equals(event.getInventory().getHolder()))
+            if (inv.equals(event.getInventory()))
             {
                 inv.handleClick(event);
                 break;
@@ -51,7 +51,7 @@ public class UIManager
     {
         for (var inv : inventories)
         {
-            if (inv.getHolder().equals(event.getInventory().getHolder()))
+            if (inv.equals(event.getInventory()))
             {
                 inv.handleDrag(event);
                 break;
@@ -63,7 +63,7 @@ public class UIManager
     {
         for (var inv : inventories)
         {
-            if (inv.getHolder().equals(event.getInventory().getHolder()))
+            if (inv.equals(event.getInventory()))
             {
                 inv.handleClose(event);
                 break;
@@ -75,7 +75,7 @@ public class UIManager
     {
         for (var inv : inventories)
         {
-            if (inv.getHolder().equals(event.getInventory().getHolder()))
+            if (inv.equals(event.getInventory()))
             {
                 inv.handleOpen(event);
                 break;
