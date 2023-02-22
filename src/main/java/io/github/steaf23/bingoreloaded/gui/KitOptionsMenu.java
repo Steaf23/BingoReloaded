@@ -11,7 +11,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
-public class KitOptionsUI extends AbstractGUIInventory
+public class KitOptionsMenu extends MenuInventory
 {
     private final BingoSettings settings;
     private static final InventoryItem HARDCORE = new InventoryItem(1, 1,
@@ -27,7 +27,7 @@ public class KitOptionsUI extends AbstractGUIInventory
             Material.CYAN_CONCRETE, PlayerKit.RELOADED.displayName,
             TranslationData.itemDescription("menu.kits.reloaded"));
 
-    public KitOptionsUI(AbstractGUIInventory parent, BingoSettings settings)
+    public KitOptionsMenu(MenuInventory parent, BingoSettings settings)
     {
         super(45, TranslationData.itemName("menu.options.kit"), parent);
         this.settings = settings;

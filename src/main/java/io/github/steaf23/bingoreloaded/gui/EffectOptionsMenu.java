@@ -14,14 +14,14 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.EnumSet;
 import java.util.List;
 
-public class EffectOptionsUI extends AbstractGUIInventory
+public class EffectOptionsMenu extends MenuInventory
 {
     private final BingoSettings settings;
     private final EnumSet<EffectOptionFlags> flags;
 
     private final InventoryItem[] options;
 
-    public EffectOptionsUI(AbstractGUIInventory parent, BingoSettings settings)
+    public EffectOptionsMenu(MenuInventory parent, BingoSettings settings)
     {
         super(45, TranslationData.translate("menu.options.effects.name"), parent);
         this.settings = settings;

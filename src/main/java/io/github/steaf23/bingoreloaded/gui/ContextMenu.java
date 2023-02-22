@@ -9,16 +9,15 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class ContextMenuUI extends AbstractGUIInventory
+public class ContextMenu extends MenuInventory
 {
     public static final int MAX_ACTIONS = 7;
     private static final InventoryItem CLOSE = new InventoryItem(8, Material.REDSTONE, TITLE_PREFIX + TranslationData.translate("menu.exit"));
     private final List<Function<ClickType, Boolean>> actions;
 
-    public ContextMenuUI(String title, AbstractGUIInventory parent)
+    public ContextMenu(String title, MenuInventory parent)
     {
         super(9, title, parent);
         this.actions = new ArrayList<>();

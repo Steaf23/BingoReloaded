@@ -1,8 +1,5 @@
 package io.github.steaf23.bingoreloaded.gui;
 
-import io.github.steaf23.bingoreloaded.BingoReloaded;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
@@ -11,26 +8,26 @@ import org.bukkit.event.inventory.InventoryOpenEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UIManager
+public class MenuManager
 {
-    private static List<AbstractGUIInventory> inventories;
+    private static List<MenuInventory> inventories;
 
-    private static UIManager INSTANCE;
+    private static MenuManager INSTANCE;
 
     public static void create()
     {
         if (INSTANCE == null)
         {
-            INSTANCE = new UIManager();
+            INSTANCE = new MenuManager();
         }
     }
 
-    public static void addInventory(AbstractGUIInventory inventory)
+    public static void addInventory(MenuInventory inventory)
     {
         inventories.add(inventory);
     }
 
-    private UIManager()
+    private MenuManager()
     {
         inventories = new ArrayList<>();
     }
@@ -39,7 +36,7 @@ public class UIManager
     {
         for (var inv : inventories)
         {
-            if (inv.equals(event.getInventory()))
+            if (inv.inventory.equals(event.getInventory()))
             {
                 inv.handleClick(event);
                 break;
@@ -51,7 +48,7 @@ public class UIManager
     {
         for (var inv : inventories)
         {
-            if (inv.equals(event.getInventory()))
+            if (inv.inventory.equals(event.getInventory()))
             {
                 inv.handleDrag(event);
                 break;
@@ -63,7 +60,7 @@ public class UIManager
     {
         for (var inv : inventories)
         {
-            if (inv.equals(event.getInventory()))
+            if (inv.inventory.equals(event.getInventory()))
             {
                 inv.handleClose(event);
                 break;
@@ -75,7 +72,7 @@ public class UIManager
     {
         for (var inv : inventories)
         {
-            if (inv.equals(event.getInventory()))
+            if (inv.inventory.equals(event.getInventory()))
             {
                 inv.handleOpen(event);
                 break;

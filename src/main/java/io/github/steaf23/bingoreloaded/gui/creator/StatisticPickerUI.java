@@ -1,8 +1,8 @@
 package io.github.steaf23.bingoreloaded.gui.creator;
 
 import io.github.steaf23.bingoreloaded.data.TranslationData;
-import io.github.steaf23.bingoreloaded.gui.AbstractGUIInventory;
-import io.github.steaf23.bingoreloaded.gui.SubMenuUI;
+import io.github.steaf23.bingoreloaded.gui.MenuInventory;
+import io.github.steaf23.bingoreloaded.gui.OptionMenu;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
 import io.github.steaf23.bingoreloaded.item.tasks.BingoStatistic;
 import io.github.steaf23.bingoreloaded.item.tasks.BingoTask;
@@ -21,14 +21,14 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 
 //TODO: add description to statistic and when to trigger them
-public class StatisticPickerUI extends SubMenuUI
+public class StatisticPickerUI extends OptionMenu
 {
     public String listName;
 
     protected static final InventoryItem BG_ITEM = new InventoryItem(Material.BLACK_STAINED_GLASS_PANE, " ", "");
     protected static final InventoryItem QUIT = new InventoryItem(49, Material.REDSTONE, "" + ChatColor.RED + ChatColor.BOLD + TranslationData.translate("menu.save_exit"), "");
 
-    public StatisticPickerUI(AbstractGUIInventory parent, String listName)
+    public StatisticPickerUI(MenuInventory parent, String listName)
     {
         super("Pick Statistics", parent);
         this.listName = listName;

@@ -10,18 +10,18 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import java.util.HashMap;
 import java.util.Map;
 
-public class SubMenuUI extends AbstractGUIInventory
+public class OptionMenu extends MenuInventory
 {
     private static final InventoryItem BACK = new InventoryItem(0, Material.BARRIER, TranslationData.itemName("menu.prev"));
-    private final Map<InventoryItem, AbstractGUIInventory> options;
+    private final Map<InventoryItem, MenuInventory> options;
 
-    public SubMenuUI(String title, AbstractGUIInventory parent)
+    public OptionMenu(String title, MenuInventory parent)
     {
         super(54, title, parent);
         this.options = new HashMap<>();
     }
 
-    public SubMenuUI addMenuOption(InventoryItem button, AbstractGUIInventory option)
+    public OptionMenu addMenuOption(InventoryItem button, MenuInventory option)
     {
         options.put(button, option);
         addOption(button);

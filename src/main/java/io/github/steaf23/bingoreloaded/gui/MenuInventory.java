@@ -2,7 +2,6 @@ package io.github.steaf23.bingoreloaded.gui;
 
 import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
-import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -16,7 +15,7 @@ import org.bukkit.inventory.ItemStack;
  * Abstract class for Inventory based GUIs.
  * Delegates click events to a separate method that Inheritors must override.
  */
-public abstract class AbstractGUIInventory
+public abstract class MenuInventory
 {
     /**
      * Event delegate to handle custom click behaviour for inventory screens.
@@ -28,21 +27,21 @@ public abstract class AbstractGUIInventory
 
     protected static final String TITLE_PREFIX = "" + ChatColor.GOLD + ChatColor.BOLD;
     protected final Inventory inventory;
-    private final AbstractGUIInventory parent;
+    private final MenuInventory parent;
     private int maxStackSizeOverride = -1; // -1 means no override (i.e. default stack sizes for all items)
 
-    public AbstractGUIInventory(int size, String title, AbstractGUIInventory parent)
+    public MenuInventory(int size, String title, MenuInventory parent)
     {
         this.parent = parent;
         this.inventory = Bukkit.createInventory(null, size, Message.PREFIX_STRING_SHORT + " " + ChatColor.DARK_RED + title);
-        UIManager.addInventory(this);
+        MenuManager.addInventory(this);
     }
 
-    public AbstractGUIInventory(InventoryType type, String title, AbstractGUIInventory parent)
+    public MenuInventory(InventoryType type, String title, MenuInventory parent)
     {
         this.parent = parent;
         this.inventory = Bukkit.createInventory(null, type, Message.PREFIX_STRING_SHORT + " " + ChatColor.DARK_RED + title);
-        UIManager.addInventory(this);
+        MenuManager.addInventory(this);
     }
 
     protected void setMaxStackSizeOverride(int maxValue)

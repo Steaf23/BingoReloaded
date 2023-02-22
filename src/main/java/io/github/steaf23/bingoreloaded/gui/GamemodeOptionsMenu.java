@@ -14,12 +14,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
-public class GamemodeOptionsUI extends AbstractGUIInventory
+public class GamemodeOptionsMenu extends MenuInventory
 {
     private final BingoSettings settings;
     private final InventoryItem[] options;
 
-    public GamemodeOptionsUI(AbstractGUIInventory parent, BingoSettings settings)
+    public GamemodeOptionsMenu(MenuInventory parent, BingoSettings settings)
     {
         super(45, TranslationData.itemName("menu.options.mode"), parent);
         this.settings = settings;

@@ -1,9 +1,9 @@
 package io.github.steaf23.bingoreloaded.gui.creator;
 
 import io.github.steaf23.bingoreloaded.data.TaskListsData;
-import io.github.steaf23.bingoreloaded.gui.AbstractGUIInventory;
+import io.github.steaf23.bingoreloaded.gui.MenuInventory;
 import io.github.steaf23.bingoreloaded.gui.FilterType;
-import io.github.steaf23.bingoreloaded.gui.PaginatedPickerUI;
+import io.github.steaf23.bingoreloaded.gui.PaginatedPickerMenu;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
 import io.github.steaf23.bingoreloaded.item.ItemText;
 import io.github.steaf23.bingoreloaded.item.tasks.BingoTask;
@@ -22,14 +22,14 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class TaskPickerUI extends PaginatedPickerUI
+public class TaskPickerUI extends PaginatedPickerMenu
 {
     private final String listName;
 
     protected static final ItemText[] SELECTED_LORE = createSelectedLore();
     protected static final ItemText[] UNSELECTED_LORE = createUnselectedLore();
 
-    public TaskPickerUI(List<BingoTask> options, String title, AbstractGUIInventory parent, String listName)
+    public TaskPickerUI(List<BingoTask> options, String title, MenuInventory parent, String listName)
     {
         super(asPickerItems(options), title, parent, FilterType.DISPLAY_NAME);
         this.listName = listName;
