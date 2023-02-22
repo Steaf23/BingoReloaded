@@ -4,9 +4,9 @@ import io.github.steaf23.bingoreloaded.*;
 import io.github.steaf23.bingoreloaded.data.TranslationData;
 import io.github.steaf23.bingoreloaded.event.BingoPlayerJoinEvent;
 import io.github.steaf23.bingoreloaded.event.BingoPlayerLeaveEvent;
-import io.github.steaf23.bingoreloaded.gui.AbstractGUIInventory;
+import io.github.steaf23.bingoreloaded.gui.MenuInventory;
 import io.github.steaf23.bingoreloaded.gui.FilterType;
-import io.github.steaf23.bingoreloaded.gui.PaginatedPickerUI;
+import io.github.steaf23.bingoreloaded.gui.PaginatedPickerMenu;
 import io.github.steaf23.bingoreloaded.gui.cards.BingoCard;
 import io.github.steaf23.bingoreloaded.gui.cards.LockoutBingoCard;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
@@ -69,7 +69,7 @@ public class TeamManager implements Listener
         return null;
     }
 
-    public void openTeamSelector(Player player, AbstractGUIInventory parentUI)
+    public void openTeamSelector(Player player, MenuInventory parentUI)
     {
         if (GameWorldManager.get().isGameWorldActive(worldName))
         {
@@ -83,7 +83,7 @@ public class TeamManager implements Listener
             optionItems.add(new InventoryItem(color.concrete, "" + color.chatColor + ChatColor.BOLD + color.getTranslatedName()));
         }
 
-        PaginatedPickerUI teamPicker = new PaginatedPickerUI(optionItems, TranslationData.itemName("menu.options.team"), parentUI, FilterType.DISPLAY_NAME)
+        PaginatedPickerMenu teamPicker = new PaginatedPickerMenu(optionItems, TranslationData.itemName("menu.options.team"), parentUI, FilterType.DISPLAY_NAME)
         {
             @Override
             public void onOptionClickedDelegate(InventoryClickEvent event, InventoryItem clickedOption, Player player)

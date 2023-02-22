@@ -10,7 +10,7 @@ import io.github.steaf23.bingoreloaded.hologram.HologramManager;
 import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.bingoreloaded.data.BingoStatsData;
 import io.github.steaf23.bingoreloaded.data.ConfigData;
-import io.github.steaf23.bingoreloaded.gui.BingoOptionsUI;
+import io.github.steaf23.bingoreloaded.gui.BingoMenu;
 import io.github.steaf23.bingoreloaded.gui.creator.BingoCreatorUI;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import net.md_5.bungee.api.ChatColor;
@@ -44,7 +44,7 @@ public class BingoCommand implements CommandExecutor
             if (!GameWorldManager.get().doesGameWorldExist(worldName))
                 return false;
 
-            BingoOptionsUI.openOptions(player);
+            BingoMenu.openOptions(player);
             return true;
         }
 

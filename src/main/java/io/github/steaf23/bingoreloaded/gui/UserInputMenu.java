@@ -13,17 +13,17 @@ import org.bukkit.inventory.ItemStack;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class UserInputUI
+public class UserInputMenu
 {
     private static final InventoryItem EMPTY = new InventoryItem(Material.ELYTRA, "" + ChatColor.GRAY + ChatColor.BOLD + TranslationData.translate("menu.clear"), "");
     private static final InventoryItem ACCEPT = new InventoryItem(Material.DIAMOND, "" + ChatColor.AQUA + ChatColor.BOLD + TranslationData.translate("menu.accept"), "");
 
-    public static void open(String title, Consumer<String> result, Player player, AbstractGUIInventory parent)
+    public static void open(String title, Consumer<String> result, Player player, MenuInventory parent)
     {
-        UserInputUI.open(title, result, player, parent, "name");
+        UserInputMenu.open(title, result, player, parent, "name");
     }
 
-    public static void open(String title, Consumer<String> result, Player player, AbstractGUIInventory parent, String startingText)
+    public static void open(String title, Consumer<String> result, Player player, MenuInventory parent, String startingText)
     {
         AnvilGUI anvil = new AnvilGUI.Builder()
                 .onComplete(completion -> {

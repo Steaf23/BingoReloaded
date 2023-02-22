@@ -18,7 +18,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BingoOptionsUI extends AbstractGUIInventory
+public class BingoMenu extends MenuInventory
 {
     private final InventoryItem start = new InventoryItem(GUIPreset5x9.SEVEN_CENTER1.positions[3],
             Material.LIME_CONCRETE, TITLE_PREFIX + TranslationData.itemName("menu.options.start"));
@@ -74,12 +74,12 @@ public class BingoOptionsUI extends AbstractGUIInventory
         }
         else if (slotClicked == KIT.getSlot())
         {
-            KitOptionsUI kitSelector = new KitOptionsUI(this, settings);
+            KitOptionsMenu kitSelector = new KitOptionsMenu(this, settings);
             kitSelector.open(player);
         }
         else if (slotClicked == MODE.getSlot())
         {
-            GamemodeOptionsUI gamemodeSelector = new GamemodeOptionsUI(this, settings);
+            GamemodeOptionsMenu gamemodeSelector = new GamemodeOptionsMenu(this, settings);
             gamemodeSelector.open(player);
         }
         else if (slotClicked == CARD.getSlot())
@@ -88,12 +88,12 @@ public class BingoOptionsUI extends AbstractGUIInventory
         }
         else if (slotClicked == EFFECTS.getSlot())
         {
-            EffectOptionsUI effectSelector = new EffectOptionsUI(this, settings);
+            EffectOptionsMenu effectSelector = new EffectOptionsMenu(this, settings);
             effectSelector.open(player);
         }
         else if (slotClicked == EXTRA.getSlot())
         {
-             BingoOptionsExtraUI extraOptions = new BingoOptionsExtraUI(this, settings);
+             ExtraBingoMenu extraOptions = new ExtraBingoMenu(this, settings);
              extraOptions.open(player);
         }
         else if (slotClicked == start.getSlot())
@@ -119,7 +119,7 @@ public class BingoOptionsUI extends AbstractGUIInventory
 
     public static void openOptions(Player player)
     {
-        BingoOptionsUI options = new BingoOptionsUI();
+        BingoMenu options = new BingoMenu();
         if (GameWorldManager.get().isGameWorldActive(player.getWorld()))
         {
             options.start.setType(Material.RED_CONCRETE);
@@ -163,7 +163,7 @@ public class BingoOptionsUI extends AbstractGUIInventory
         options.open(player);
     }
 
-    private BingoOptionsUI()
+    private BingoMenu()
     {
         super(45, TranslationData.translate("menu.options.title"), null);
     }
@@ -179,7 +179,7 @@ public class BingoOptionsUI extends AbstractGUIInventory
                             "" + BingoCardsData.getLists(cardName).size())));
         }
 
-        PaginatedPickerUI cardPicker = new PaginatedPickerUI(cards, TranslationData.itemName("menu.options.card"),this, FilterType.DISPLAY_NAME)
+        PaginatedPickerMenu cardPicker = new PaginatedPickerMenu(cards, TranslationData.itemName("menu.options.card"),this, FilterType.DISPLAY_NAME)
         {
             @Override
             public void onOptionClickedDelegate(InventoryClickEvent event, InventoryItem clickedOption, Player player)

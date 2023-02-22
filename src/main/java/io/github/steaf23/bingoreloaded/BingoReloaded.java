@@ -2,7 +2,7 @@ package io.github.steaf23.bingoreloaded;
 
 import io.github.steaf23.bingoreloaded.command.*;
 import io.github.steaf23.bingoreloaded.data.*;
-import io.github.steaf23.bingoreloaded.gui.UIManager;
+import io.github.steaf23.bingoreloaded.gui.MenuManager;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
 import io.github.steaf23.bingoreloaded.item.tasks.*;
 import io.github.steaf23.bingoreloaded.item.ItemCooldownManager;
@@ -11,12 +11,10 @@ import io.github.steaf23.bingoreloaded.util.Message;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.PluginCommand;
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 
@@ -52,7 +50,7 @@ public class BingoReloaded extends JavaPlugin
         gameManager = GameWorldManager.get();
         eventManager = new BingoEventManager();
         // create singletons.
-        UIManager.create();
+        MenuManager.create();
         ItemCooldownManager.create();
 
         PluginCommand bingoCommand = getCommand("bingo");

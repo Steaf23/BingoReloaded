@@ -1,7 +1,6 @@
 package io.github.steaf23.bingoreloaded;
 
-import io.github.steaf23.bingoreloaded.gui.UIManager;
-import org.bukkit.entity.Player;
+import io.github.steaf23.bingoreloaded.gui.MenuManager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.*;
@@ -19,7 +18,7 @@ public class BingoEventManager implements Listener
         String worldName = GameWorldManager.getWorldName(event.getWhoClicked().getWorld());
         if (GameWorldManager.get().doesGameWorldExist(worldName))
         {
-            UIManager.onInventoryClick(event);
+            MenuManager.onInventoryClick(event);
         }
     }
 
@@ -29,7 +28,7 @@ public class BingoEventManager implements Listener
         String worldName = GameWorldManager.getWorldName(event.getWhoClicked().getWorld());
         if (GameWorldManager.get().doesGameWorldExist(worldName))
         {
-            UIManager.onInventoryDrag(event);
+            MenuManager.onInventoryDrag(event);
         }
     }
 
@@ -39,7 +38,7 @@ public class BingoEventManager implements Listener
         String worldName = GameWorldManager.getWorldName(event.getPlayer().getWorld());
         if (GameWorldManager.get().doesGameWorldExist(worldName))
         {
-            UIManager.onInventoryOpen(event);
+            MenuManager.onInventoryOpen(event);
         }
     }
 
@@ -49,7 +48,7 @@ public class BingoEventManager implements Listener
         String worldName = GameWorldManager.getWorldName(event.getPlayer().getWorld());
         if (GameWorldManager.get().doesGameWorldExist(worldName))
         {
-            UIManager.onInventoryClose(event);
+            MenuManager.onInventoryClose(event);
         }
     }
 }

@@ -4,7 +4,6 @@ import io.github.steaf23.bingoreloaded.BingoSettings;
 import io.github.steaf23.bingoreloaded.data.TranslationData;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
 import io.github.steaf23.bingoreloaded.util.GUIPreset5x9;
-import io.github.steaf23.bingoreloaded.util.Message;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -12,7 +11,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 
-public class BingoOptionsExtraUI extends AbstractGUIInventory
+public class ExtraBingoMenu extends MenuInventory
 {
 
     private static final int TEAM_MAX = 64;
@@ -27,7 +26,7 @@ public class BingoOptionsExtraUI extends AbstractGUIInventory
     private final InventoryItem gameDuration = new InventoryItem(GUIPreset5x9.THREE_CENTER.positions[2],
             Material.RECOVERY_COMPASS, TITLE_PREFIX + "Countdown Duration");
 
-    public BingoOptionsExtraUI(AbstractGUIInventory parent, BingoSettings settings)
+    public ExtraBingoMenu(MenuInventory parent, BingoSettings settings)
     {
         super(45, TranslationData.translate("menu.options.title"), parent);
         this.settings = settings;

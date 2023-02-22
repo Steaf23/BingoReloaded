@@ -26,8 +26,8 @@ public class LockoutBingoCard extends BingoCard
         this.currentMaxTasks = size.fullCardSize;
         this.teamCount = teamCount;
 
-        InventoryItem cardInfo = new InventoryItem(0, Material.MAP, TranslationData.itemName("menu.card.info_lockout"), TranslationData.itemDescription("menu.card.info_lockout"));
-        addOption(cardInfo);
+        menu.setInfo(TranslationData.itemName("menu.card.info_lockout"),
+                TranslationData.itemDescription("menu.card.info_lockout"));
     }
 
     // Lockout cards cannot be copied since it should be the same instance for every player.

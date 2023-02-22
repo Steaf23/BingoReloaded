@@ -1,8 +1,8 @@
 package io.github.steaf23.bingoreloaded.gui.creator;
 
 import io.github.steaf23.bingoreloaded.data.TranslationData;
-import io.github.steaf23.bingoreloaded.gui.AbstractGUIInventory;
-import io.github.steaf23.bingoreloaded.gui.SubMenuUI;
+import io.github.steaf23.bingoreloaded.gui.MenuInventory;
+import io.github.steaf23.bingoreloaded.gui.OptionMenu;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
 import io.github.steaf23.bingoreloaded.item.tasks.*;
 import io.github.steaf23.bingoreloaded.util.FlexColor;
@@ -14,11 +14,10 @@ import org.bukkit.advancement.Advancement;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryCloseEvent;
 
 import java.util.*;
 
-public class ListEditorUI extends SubMenuUI
+public class ListEditorUI extends OptionMenu
 {
     private final String listName;
 
@@ -29,7 +28,7 @@ public class ListEditorUI extends SubMenuUI
     private static final InventoryItem SAVE = new InventoryItem(49, Material.REDSTONE, "" + ChatColor.RED + ChatColor.BOLD + TranslationData.translate("menu.save_exit"));
     private static final InventoryItem BLANK = new InventoryItem(Material.BLACK_STAINED_GLASS_PANE, " ", "");
 
-    public ListEditorUI(String listName, AbstractGUIInventory parent)
+    public ListEditorUI(String listName, MenuInventory parent)
     {
         super("Editing '" + listName + "'", parent);
         this.listName = listName;
@@ -57,9 +56,9 @@ public class ListEditorUI extends SubMenuUI
         super.delegateClick(event, slotClicked, player, clickType);
     }
 
-    public AbstractGUIInventory createStatisticsPicker()
+    public MenuInventory createStatisticsPicker()
     {
-        AbstractGUIInventory statistics = new StatisticPickerUI(this, listName);
+        MenuInventory statistics = new StatisticPickerUI(this, listName);
         return statistics;
     }
 
@@ -68,7 +67,7 @@ public class ListEditorUI extends SubMenuUI
         return new ArrayList<>();
     }
 
-    private AbstractGUIInventory createItemPicker()
+    private MenuInventory createItemPicker()
     {
         Set<Material> glassPanes = new HashSet<>();
         for (FlexColor flexColor : FlexColor.values())
@@ -89,7 +88,7 @@ public class ListEditorUI extends SubMenuUI
         return itemPicker;
     }
 
-    private AbstractGUIInventory createAdvancementPicker()
+    private MenuInventory createAdvancementPicker()
     {
         List<BingoTask> tasks = new ArrayList<>();
         for (Iterator<Advancement> it = Bukkit.advancementIterator(); it.hasNext(); )
