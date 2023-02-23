@@ -1,5 +1,6 @@
 package io.github.steaf23.bingoreloaded.gui;
 
+import io.github.steaf23.bingoreloaded.gui.textured.Textured;
 import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
@@ -33,7 +34,7 @@ public abstract class MenuInventory
     public MenuInventory(int size, String title, MenuInventory parent)
     {
         this.parent = parent;
-        this.inventory = Bukkit.createInventory(null, size, title);
+        this.inventory = setupMenu(size, title);
         MenuManager.addInventory(this);
     }
 
@@ -141,5 +142,14 @@ public abstract class MenuInventory
             Bukkit.getScheduler().runTask(BingoReloaded.get(), task -> {
                 player.closeInventory();
             });
+    }
+
+    private Inventory setupMenu(int size, String title)
+    {
+        if (!(this instanceof Textured textureMenu))
+            return Bukkit.createInventory(null, size, Message.PREFIX_STRING_SHORT + " " + ChatColor.DARK_RED + title);
+
+        String fontCharacter = textureMenu.getTexture();
+        return Bukkit.createInventory(null, 54, "§f七七七七七七七七" + fontCharacter);
     }
 }
