@@ -6,7 +6,6 @@ import io.github.steaf23.bingoreloaded.data.BingoStatsData;
 import io.github.steaf23.bingoreloaded.data.ConfigData;
 import io.github.steaf23.bingoreloaded.gui.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.item.ItemCooldownManager;
-import io.github.steaf23.bingoreloaded.item.tasks.BingoTask;
 import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.bingoreloaded.util.PDCHelper;
 import net.md_5.bungee.api.ChatColor;
@@ -17,12 +16,10 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 import javax.annotation.Nullable;
-import javax.naming.Name;
 import java.util.EnumSet;
 import java.util.Optional;
 import java.util.UUID;
@@ -46,7 +43,7 @@ public record BingoPlayer(UUID playerId, BingoTeam team, String worldName, Strin
             return Optional.ofNullable(null);
 
         Player player = Bukkit.getPlayer(playerId);
-        if (!GameWorldManager.getWorldName(player.getWorld()).equals(worldName))
+        if (!BingoGameManager.getWorldName(player.getWorld()).equals(worldName))
         {
             return Optional.ofNullable(null);
         }

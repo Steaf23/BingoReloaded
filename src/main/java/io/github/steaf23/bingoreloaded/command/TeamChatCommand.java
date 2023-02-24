@@ -37,7 +37,7 @@ public class TeamChatCommand implements Listener, CommandExecutor
     @EventHandler
     public void onPlayerSendMessage(final AsyncPlayerChatEvent event)
     {
-        BingoGame game = GameWorldManager.get().getGame(GameWorldManager.getWorldName(event.getPlayer().getWorld()));
+        BingoGame game = BingoGameManager.get().getGame(BingoGameManager.getWorldName(event.getPlayer().getWorld()));
         if (game == null)
             return;
 
@@ -73,7 +73,7 @@ public class TeamChatCommand implements Listener, CommandExecutor
     {
         if (commandSender instanceof Player p)
         {
-            BingoGame game = GameWorldManager.get().getGame(GameWorldManager.getWorldName(p.getWorld()));
+            BingoGame game = BingoGameManager.get().getGame(BingoGameManager.getWorldName(p.getWorld()));
             if (game == null)
                 return false;
 

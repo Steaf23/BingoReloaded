@@ -2,7 +2,7 @@ package io.github.steaf23.bingoreloaded.gui;
 
 import io.github.steaf23.bingoreloaded.BingoGame;
 import io.github.steaf23.bingoreloaded.BingoSettings;
-import io.github.steaf23.bingoreloaded.GameWorldManager;
+import io.github.steaf23.bingoreloaded.BingoGameManager;
 import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.bingoreloaded.data.BingoCardsData;
 import io.github.steaf23.bingoreloaded.data.TranslationData;
@@ -43,11 +43,11 @@ public class BingoMenu extends MenuInventory
     @Override
     public void delegateClick(InventoryClickEvent event, int slotClicked, Player player, ClickType clickType)
     {
-        String worldName = GameWorldManager.getWorldName(player.getWorld());
+        String worldName = BingoGameManager.getWorldName(player.getWorld());
 
         if (!player.hasPermission("bingo.settings"))
         {
-            BingoGame game = GameWorldManager.get().getGame(worldName);
+            BingoGame game = BingoGameManager.get().getGame(worldName);
 
             if (slotClicked == JOIN_P.getSlot())
             {
@@ -60,16 +60,16 @@ public class BingoMenu extends MenuInventory
             return;
         }
 
-        BingoSettings settings = GameWorldManager.get().getGameSettings(worldName);
+        BingoSettings settings = BingoGameManager.get().getGameSettings(worldName);
 
         if (slotClicked == JOIN.getSlot())
         {
-            BingoGame game = GameWorldManager.get().getGame(worldName);
+            BingoGame game = BingoGameManager.get().getGame(worldName);
             game.getTeamManager().openTeamSelector(player, this);
         }
         else if (slotClicked == LEAVE.getSlot())
         {
-            BingoGame game = GameWorldManager.get().getGame(worldName);
+            BingoGame game = BingoGameManager.get().getGame(worldName);
             game.playerQuit(game.getTeamManager().getBingoPlayer(player));
         }
         else if (slotClicked == KIT.getSlot())
@@ -98,9 +98,9 @@ public class BingoMenu extends MenuInventory
         }
         else if (slotClicked == start.getSlot())
         {
-            if (GameWorldManager.get().isGameWorldActive(player.getWorld()))
+            if (BingoGameManager.get().isGameWorldActive(player.getWorld()))
             {
-                GameWorldManager.get().endGame(GameWorldManager.getWorldName(player.getWorld()));
+                BingoGameManager.get().endGame(BingoGameManager.getWorldName(player.getWorld()));
                 start.setType(Material.LIME_CONCRETE);
                 ItemMeta meta = start.getItemMeta();
                 if (meta != null)
@@ -112,7 +112,7 @@ public class BingoMenu extends MenuInventory
             }
             else
             {
-                GameWorldManager.get().startGame(GameWorldManager.getWorldName(player.getWorld()));
+                BingoGameManager.get().startGame(BingoGameManager.getWorldName(player.getWorld()));
             }
         }
     }
@@ -120,7 +120,7 @@ public class BingoMenu extends MenuInventory
     public static void openOptions(Player player)
     {
         BingoMenu options = new BingoMenu();
-        if (GameWorldManager.get().isGameWorldActive(player.getWorld()))
+        if (BingoGameManager.get().isGameWorldActive(player.getWorld()))
         {
             options.start.setType(Material.RED_CONCRETE);
             ItemMeta meta = options.start.getItemMeta();
@@ -187,7 +187,7 @@ public class BingoMenu extends MenuInventory
                 ItemMeta meta = clickedOption.getItemMeta();
                 if (meta != null)
                 {
-                    cardSelected(meta.getDisplayName(), GameWorldManager.getWorldName(player.getWorld()));
+                    cardSelected(meta.getDisplayName(), BingoGameManager.getWorldName(player.getWorld()));
                 }
                 close(player);
             }
@@ -199,6 +199,6 @@ public class BingoMenu extends MenuInventory
     {
         if (cardName == null) return;
         new Message("game.settings.card_selected").color(ChatColor.GOLD).arg(cardName).sendAll(worldName);
-        GameWorldManager.get().getGameSettings(worldName).card = cardName;
+        BingoGameManager.get().getGameSettings(worldName).card = cardName;
     }
 }

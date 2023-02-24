@@ -1,6 +1,7 @@
 package io.github.steaf23.bingoreloaded.gui;
 
 import io.github.steaf23.bingoreloaded.gui.textured.Textured;
+import io.github.steaf23.bingoreloaded.event.managers.MenuEventManager;
 import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
@@ -35,14 +36,14 @@ public abstract class MenuInventory
     {
         this.parent = parent;
         this.inventory = setupMenu(size, title);
-        MenuManager.addInventory(this);
+        MenuEventManager.addInventory(this);
     }
 
     public MenuInventory(InventoryType type, String title, MenuInventory parent)
     {
         this.parent = parent;
         this.inventory = Bukkit.createInventory(null, type, Message.PREFIX_STRING_SHORT + " " + ChatColor.DARK_RED + title);
-        MenuManager.addInventory(this);
+        MenuEventManager.addInventory(this);
     }
 
     protected void setMaxStackSizeOverride(int maxValue)
@@ -151,5 +152,10 @@ public abstract class MenuInventory
 
         String fontCharacter = textureMenu.getTexture();
         return Bukkit.createInventory(null, 54, "§f七七七七七七七七" + fontCharacter);
+    }
+
+    public Inventory internalInventory()
+    {
+        return inventory;
     }
 }
