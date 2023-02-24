@@ -16,11 +16,10 @@ import io.github.steaf23.bingoreloaded.util.*;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.*;
+import org.bukkit.event.EventHandler;
 import org.bukkit.util.Vector;
 import org.bukkit.block.Biome;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
@@ -33,7 +32,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.*;
 
 
-public class BingoGame implements Listener
+public class BingoGame
 {
     private boolean inProgress;
     public GameTimer timer;
@@ -52,7 +51,6 @@ public class BingoGame implements Listener
         this.scoreboard = new BingoScoreboard(worldName);
         this.deadPlayers = new HashMap<>();
         this.cardEventManager = new CardEventManager(worldName);
-        BingoReloaded.registerListener(this);
     }
 
     public void start(BingoSettings settings)
@@ -464,12 +462,21 @@ public class BingoGame implements Listener
         return inProgress;
     }
 
+    public BingoScoreboard getScoreboard()
+    {
+        return scoreboard;
+    }
+
+    public CardEventManager getCardEventManager()
+    {
+        return cardEventManager;
+    }
+
 // @EventHandlers ========================================================================
 
-    @EventHandler
-    public void onCardSlotCompleteEvent(final BingoCardTaskCompleteEvent event)
+    public void handleBingoTaskComplete(final BingoCardTaskCompleteEvent event)
     {
-        if (!getWorldName().equals(event.worldName) || event.getPlayer().gamePlayer().isEmpty())
+        if (event.getPlayer().gamePlayer().isEmpty())
             return;
 
         Player player = event.getPlayer().gamePlayer().get();
@@ -486,8 +493,7 @@ public class BingoGame implements Listener
         scoreboard.updateTeamScores();
     }
 
-    @EventHandler
-    public void onPlayerDropItem(final PlayerDropItemEvent dropEvent)
+    public void handlePlayerDropItem(final PlayerDropItemEvent dropEvent)
     {
         BingoPlayer player = getTeamManager().getBingoPlayer(dropEvent.getPlayer());
         if (player == null || player.gamePlayer().isEmpty() || !inProgress)
@@ -500,8 +506,7 @@ public class BingoGame implements Listener
         }
     }
 
-    @EventHandler
-    public void onItemInteract(final PlayerInteractEvent event)
+    public void handlePlayerInteract(final PlayerInteractEvent event)
     {
         BingoPlayer player = getTeamManager().getBingoPlayer(event.getPlayer());
         if (player == null || player.gamePlayer().isEmpty() || !inProgress)
@@ -550,8 +555,7 @@ public class BingoGame implements Listener
         }
     }
 
-    @EventHandler
-    public void onEntityDamage(final EntityDamageEvent event)
+    public void handleEntityDamage(final EntityDamageEvent event)
     {
         if (!(event.getEntity() instanceof Player p))
             return;
@@ -571,12 +575,8 @@ public class BingoGame implements Listener
         }
     }
 
-    @EventHandler
-    public void onPlayerDeath(final PlayerDeathEvent event)
+    public void handlePlayerDeath(final PlayerDeathEvent event)
     {
-        if (!getWorldName().equals(GameWorldManager.getWorldName(event.getEntity().getWorld())))
-            return;
-
         BingoPlayer player = getTeamManager().getBingoPlayer(event.getEntity());
         if (player == null || player.gamePlayer().isEmpty())
             return;
@@ -603,14 +603,13 @@ public class BingoGame implements Listener
         }
     }
 
-    @EventHandler
-    public void onPlayerRespawnEvent(final PlayerRespawnEvent event)
+    public void handlePlayerRespawn(final PlayerRespawnEvent event)
     {
         BingoPlayer player = getTeamManager().getBingoPlayer(event.getPlayer());
         if (player == null || player.gamePlayer().isEmpty())
             return;
 
-        if (!GameWorldManager.get().isGameWorldActive(event.getPlayer().getWorld()))
+        if (!BingoGameManager.get().isGameWorldActive(event.getPlayer().getWorld()))
             return;
 
         Message.log("Player " + player.asOnlinePlayer().get().getDisplayName() + " respawned", worldName);
@@ -630,40 +629,27 @@ public class BingoGame implements Listener
         }
     }
 
-    @EventHandler
-    public void onGameEnded(final BingoEndedEvent event)
+    public void handleCountdownFinished(final CountdownTimerFinishedEvent event)
     {
-
-    }
-
-    @EventHandler
-    public void onCountdownFinished(final CountdownTimerFinishedEvent event)
-    {
-        BingoGame game = GameWorldManager.get().getActiveGame(event.worldName);
-        if (game == null)
+        if (!inProgress)
             return;
 
-        if (!game.getWorldName().equals(event.worldName))
-        {
-            return;
-        }
         Set<BingoTeam> tiedTeams = new HashSet<>();
-        TeamManager teamManager = game.getTeamManager();
-        tiedTeams.add(teamManager.getLeadingTeam());
+        tiedTeams.add(getTeamManager().getLeadingTeam());
 
         // Regular bingo cannot draw, so end the game without a winner
         if (settings.mode == BingoGamemode.REGULAR)
         {
-            var endedEvent = new BingoEndedEvent(game.getGameTime(), null, game.getWorldName());
+            var endedEvent = new BingoEndedEvent(getGameTime(), null, getWorldName());
             Bukkit.getPluginManager().callEvent(endedEvent);
-            game.end();
+            end();
             return;
         }
 
-        int leadingPoints = teamManager.getCompleteCount(teamManager.getLeadingTeam());
-        for (BingoTeam team : teamManager.getActiveTeams())
+        int leadingPoints = getTeamManager().getCompleteCount(getTeamManager().getLeadingTeam());
+        for (BingoTeam team : getTeamManager().getActiveTeams())
         {
-            if (teamManager.getCompleteCount(team) == leadingPoints)
+            if (getTeamManager().getCompleteCount(team) == leadingPoints)
             {
                 tiedTeams.add(team);
             }
@@ -676,11 +662,11 @@ public class BingoGame implements Listener
         // If only 1 team is "tied" for first place, make that team win the game
         if (tiedTeams.size() == 1)
         {
-            game.bingo(teamManager.getLeadingTeam());
+            bingo(getTeamManager().getLeadingTeam());
         }
         else
         {
-            game.startDeathMatch(3);
+            startDeathMatch(3);
         }
     }
 }

@@ -31,7 +31,7 @@ public class AutoBingoCommand implements CommandExecutor
             return false;
         }
         String worldName = args[0];
-        BingoSettings settings = GameWorldManager.get().getGameSettings(worldName);
+        BingoSettings settings = BingoGameManager.get().getGameSettings(worldName);
 
         // Create the actual game with settings in the world.
         if (settings == null)
@@ -152,12 +152,12 @@ public class AutoBingoCommand implements CommandExecutor
     public void create(String worldName, String maxTeamMembers)
     {
         int max = toInt(maxTeamMembers, 1);
-        GameWorldManager.get().createGame(worldName, Math.max(1, max));
+        BingoGameManager.get().createGame(worldName, Math.max(1, max));
     }
 
     public void destroy(String worldName)
     {
-        GameWorldManager.get().destroyGame(worldName);
+        BingoGameManager.get().destroyGame(worldName);
     }
 
     public boolean start(BingoSettings settings, String worldName, String gamemode, String cardSize)
@@ -180,7 +180,7 @@ public class AutoBingoCommand implements CommandExecutor
             return false;
         }
 
-        return GameWorldManager.get().startGame(worldName);
+        return BingoGameManager.get().startGame(worldName);
     }
 
     private boolean setKit(BingoSettings settings, String kitName)
@@ -273,13 +273,13 @@ public class AutoBingoCommand implements CommandExecutor
 
     public boolean setPlayerTeam(String worldName, String playerName, String teamName)
     {
-        if (!GameWorldManager.get().doesGameWorldExist(worldName))
+        if (!BingoGameManager.get().doesGameWorldExist(worldName))
         {
             sendFailed("Cannot add player to team, world '" + worldName + "' is not a bingo world!", worldName);
             return false;
         }
 
-        BingoGame game = GameWorldManager.get().getGame(worldName);
+        BingoGame game = BingoGameManager.get().getGame(worldName);
 
         Player player = Bukkit.getPlayer(playerName);
         if (player == null)
@@ -313,7 +313,7 @@ public class AutoBingoCommand implements CommandExecutor
 
     public boolean end(BingoSettings settings, String worldName)
     {
-        return GameWorldManager.get().endGame(worldName);
+        return BingoGameManager.get().endGame(worldName);
     }
 
     /**

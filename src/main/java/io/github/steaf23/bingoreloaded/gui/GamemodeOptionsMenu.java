@@ -2,7 +2,7 @@ package io.github.steaf23.bingoreloaded.gui;
 
 import io.github.steaf23.bingoreloaded.BingoGamemode;
 import io.github.steaf23.bingoreloaded.BingoSettings;
-import io.github.steaf23.bingoreloaded.GameWorldManager;
+import io.github.steaf23.bingoreloaded.BingoGameManager;
 import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.bingoreloaded.data.TranslationData;
 import io.github.steaf23.bingoreloaded.gui.cards.CardSize;
@@ -47,7 +47,7 @@ public class GamemodeOptionsMenu extends MenuInventory
         BingoGamemode chosenMode = BingoGamemode.REGULAR;
         CardSize chosenSize = CardSize.X5;
 
-        String worldName = GameWorldManager.getWorldName(player.getWorld());
+        String worldName = BingoGameManager.getWorldName(player.getWorld());
 
         if (slotClicked == options[0].getSlot() || slotClicked == options[3].getSlot())
         {

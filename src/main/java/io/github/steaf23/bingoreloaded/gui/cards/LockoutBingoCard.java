@@ -2,18 +2,12 @@ package io.github.steaf23.bingoreloaded.gui.cards;
 
 import io.github.steaf23.bingoreloaded.BingoGame;
 import io.github.steaf23.bingoreloaded.util.Message;
-import io.github.steaf23.bingoreloaded.GameWorldManager;
-import io.github.steaf23.bingoreloaded.util.Message;
+import io.github.steaf23.bingoreloaded.BingoGameManager;
 import io.github.steaf23.bingoreloaded.data.TranslationData;
 import io.github.steaf23.bingoreloaded.event.BingoCardTaskCompleteEvent;
-import io.github.steaf23.bingoreloaded.item.InventoryItem;
 import io.github.steaf23.bingoreloaded.item.tasks.BingoTask;
-import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.player.BingoTeam;
 import io.github.steaf23.bingoreloaded.player.TeamManager;
-import org.bukkit.GameMode;
-import org.bukkit.Material;
-import org.bukkit.event.EventHandler;
 
 public class LockoutBingoCard extends BingoCard
 {
@@ -50,7 +44,7 @@ public class LockoutBingoCard extends BingoCard
 
     public void onCardSlotCompleteEvent(final BingoCardTaskCompleteEvent event)
     {
-        BingoGame game = GameWorldManager.get().getActiveGame(event.worldName);
+        BingoGame game = BingoGameManager.get().getActiveGame(event.worldName);
         if (game == null)
         {
             return;

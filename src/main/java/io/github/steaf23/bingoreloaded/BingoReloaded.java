@@ -2,7 +2,7 @@ package io.github.steaf23.bingoreloaded;
 
 import io.github.steaf23.bingoreloaded.command.*;
 import io.github.steaf23.bingoreloaded.data.*;
-import io.github.steaf23.bingoreloaded.gui.MenuManager;
+import io.github.steaf23.bingoreloaded.event.managers.MenuEventManager;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
 import io.github.steaf23.bingoreloaded.item.tasks.*;
 import io.github.steaf23.bingoreloaded.item.ItemCooldownManager;
@@ -12,6 +12,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
+import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -27,10 +28,10 @@ public class BingoReloaded extends JavaPlugin
     // Amount of ticks per second.
     public static final int ONE_SECOND = 20;
 
-    public static boolean usesPlaceholder = false;
+    public static boolean usesPlaceholderAPI = false;
 
-    private GameWorldManager gameManager;
-    private BingoEventManager eventManager;
+    private BingoGameManager gameManager;
+    private MenuEventManager menuManager;
 
     @Override
     public void onEnable()
@@ -45,12 +46,12 @@ public class BingoReloaded extends JavaPlugin
         ConfigurationSerialization.registerClass(CustomKit.class);
         ConfigurationSerialization.registerClass(InventoryItem.class);
 
-        usesPlaceholder = Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null;
+        this.usesPlaceholderAPI = Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null;
 
-        gameManager = GameWorldManager.get();
-        eventManager = new BingoEventManager();
+        this.gameManager = BingoGameManager.get();
+        this.menuManager = MenuEventManager.get();
+
         // create singletons.
-        MenuManager.create();
         ItemCooldownManager.create();
 
         PluginCommand bingoCommand = getCommand("bingo");
@@ -79,6 +80,9 @@ public class BingoReloaded extends JavaPlugin
 //            game.resume();
 //        }
 
+        registerListener(gameManager.getListener());
+        registerListener(menuManager);
+
         Message.log(TranslationData.translate("changed"));
         Message.log(ChatColor.GREEN + "Enabled " + this.getName());
 
@@ -89,13 +93,21 @@ public class BingoReloaded extends JavaPlugin
     @Override
     public void onDisable()
     {
+        unregisterListener(gameManager.getListener());
+        unregisterListener(menuManager);
+
         Bukkit.getLogger().info(ChatColor.RED + "Disabled " + this.getName());
     }
 
-    public static void registerListener(Listener listener)
+    private static void registerListener(Listener listener)
     {
         Plugin plugin = Bukkit.getPluginManager().getPlugin(BingoReloaded.NAME);
         Bukkit.getPluginManager().registerEvents(listener, plugin);
+    }
+
+    private static void unregisterListener(Listener listener)
+    {
+        HandlerList.unregisterAll(listener);
     }
 
     public static BingoReloaded get()
