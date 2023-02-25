@@ -2,7 +2,7 @@ package io.github.steaf23.bingoreloaded.gui;
 
 import io.github.steaf23.bingoreloaded.BingoGame;
 import io.github.steaf23.bingoreloaded.BingoSettings;
-import io.github.steaf23.bingoreloaded.GameWorldManager;
+import io.github.steaf23.bingoreloaded.BingoGameManager;
 import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.bingoreloaded.data.BingoCardsData;
 import io.github.steaf23.bingoreloaded.data.TranslationData;
@@ -18,7 +18,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BingoOptionsUI extends AbstractGUIInventory
+public class BingoMenu extends MenuInventory
 {
     private final InventoryItem start = new InventoryItem(GUIPreset5x9.SEVEN_CENTER1.positions[3],
             Material.LIME_CONCRETE, TITLE_PREFIX + TranslationData.itemName("menu.options.start"));
@@ -43,11 +43,11 @@ public class BingoOptionsUI extends AbstractGUIInventory
     @Override
     public void delegateClick(InventoryClickEvent event, int slotClicked, Player player, ClickType clickType)
     {
-        String worldName = GameWorldManager.getWorldName(player.getWorld());
+        String worldName = BingoGameManager.getWorldName(player.getWorld());
 
         if (!player.hasPermission("bingo.settings"))
         {
-            BingoGame game = GameWorldManager.get().getGame(worldName);
+            BingoGame game = BingoGameManager.get().getGame(worldName);
 
             if (slotClicked == JOIN_P.getSlot())
             {
@@ -60,26 +60,26 @@ public class BingoOptionsUI extends AbstractGUIInventory
             return;
         }
 
-        BingoSettings settings = GameWorldManager.get().getGameSettings(worldName);
+        BingoSettings settings = BingoGameManager.get().getGameSettings(worldName);
 
         if (slotClicked == JOIN.getSlot())
         {
-            BingoGame game = GameWorldManager.get().getGame(worldName);
+            BingoGame game = BingoGameManager.get().getGame(worldName);
             game.getTeamManager().openTeamSelector(player, this);
         }
         else if (slotClicked == LEAVE.getSlot())
         {
-            BingoGame game = GameWorldManager.get().getGame(worldName);
+            BingoGame game = BingoGameManager.get().getGame(worldName);
             game.playerQuit(game.getTeamManager().getBingoPlayer(player));
         }
         else if (slotClicked == KIT.getSlot())
         {
-            KitOptionsUI kitSelector = new KitOptionsUI(this, settings);
+            KitOptionsMenu kitSelector = new KitOptionsMenu(this, settings);
             kitSelector.open(player);
         }
         else if (slotClicked == MODE.getSlot())
         {
-            GamemodeOptionsUI gamemodeSelector = new GamemodeOptionsUI(this, settings);
+            GamemodeOptionsMenu gamemodeSelector = new GamemodeOptionsMenu(this, settings);
             gamemodeSelector.open(player);
         }
         else if (slotClicked == CARD.getSlot())
@@ -88,19 +88,19 @@ public class BingoOptionsUI extends AbstractGUIInventory
         }
         else if (slotClicked == EFFECTS.getSlot())
         {
-            EffectOptionsUI effectSelector = new EffectOptionsUI(this, settings);
+            EffectOptionsMenu effectSelector = new EffectOptionsMenu(this, settings);
             effectSelector.open(player);
         }
         else if (slotClicked == EXTRA.getSlot())
         {
-             BingoOptionsExtraUI extraOptions = new BingoOptionsExtraUI(this, settings);
+             ExtraBingoMenu extraOptions = new ExtraBingoMenu(this, settings);
              extraOptions.open(player);
         }
         else if (slotClicked == start.getSlot())
         {
-            if (GameWorldManager.get().isGameWorldActive(player.getWorld()))
+            if (BingoGameManager.get().isGameWorldActive(player.getWorld()))
             {
-                GameWorldManager.get().endGame(GameWorldManager.getWorldName(player.getWorld()));
+                BingoGameManager.get().endGame(BingoGameManager.getWorldName(player.getWorld()));
                 start.setType(Material.LIME_CONCRETE);
                 ItemMeta meta = start.getItemMeta();
                 if (meta != null)
@@ -112,15 +112,15 @@ public class BingoOptionsUI extends AbstractGUIInventory
             }
             else
             {
-                GameWorldManager.get().startGame(GameWorldManager.getWorldName(player.getWorld()));
+                BingoGameManager.get().startGame(BingoGameManager.getWorldName(player.getWorld()));
             }
         }
     }
 
     public static void openOptions(Player player)
     {
-        BingoOptionsUI options = new BingoOptionsUI();
-        if (GameWorldManager.get().isGameWorldActive(player.getWorld()))
+        BingoMenu options = new BingoMenu();
+        if (BingoGameManager.get().isGameWorldActive(player.getWorld()))
         {
             options.start.setType(Material.RED_CONCRETE);
             ItemMeta meta = options.start.getItemMeta();
@@ -163,7 +163,7 @@ public class BingoOptionsUI extends AbstractGUIInventory
         options.open(player);
     }
 
-    private BingoOptionsUI()
+    private BingoMenu()
     {
         super(45, TranslationData.translate("menu.options.title"), null);
     }
@@ -179,7 +179,7 @@ public class BingoOptionsUI extends AbstractGUIInventory
                             "" + BingoCardsData.getLists(cardName).size())));
         }
 
-        PaginatedPickerUI cardPicker = new PaginatedPickerUI(cards, TranslationData.itemName("menu.options.card"),this, FilterType.DISPLAY_NAME)
+        PaginatedPickerMenu cardPicker = new PaginatedPickerMenu(cards, TranslationData.itemName("menu.options.card"),this, FilterType.DISPLAY_NAME)
         {
             @Override
             public void onOptionClickedDelegate(InventoryClickEvent event, InventoryItem clickedOption, Player player)
@@ -187,7 +187,7 @@ public class BingoOptionsUI extends AbstractGUIInventory
                 ItemMeta meta = clickedOption.getItemMeta();
                 if (meta != null)
                 {
-                    cardSelected(meta.getDisplayName(), GameWorldManager.getWorldName(player.getWorld()));
+                    cardSelected(meta.getDisplayName(), BingoGameManager.getWorldName(player.getWorld()));
                 }
                 close(player);
             }
@@ -199,6 +199,6 @@ public class BingoOptionsUI extends AbstractGUIInventory
     {
         if (cardName == null) return;
         new Message("game.settings.card_selected").color(ChatColor.GOLD).arg(cardName).sendAll(worldName);
-        GameWorldManager.get().getGameSettings(worldName).card = cardName;
+        BingoGameManager.get().getGameSettings(worldName).card = cardName;
     }
 }

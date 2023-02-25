@@ -1,32 +1,51 @@
 package io.github.steaf23.bingoreloaded;
 
-import io.github.steaf23.bingoreloaded.event.BingoEndedEvent;
+import io.github.steaf23.bingoreloaded.event.*;
+import io.github.steaf23.bingoreloaded.event.managers.BingoEventListener;
 import io.github.steaf23.bingoreloaded.util.Message;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
+import org.bukkit.event.Event;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
-public class GameWorldManager
+public class BingoGameManager
 {
-    private static GameWorldManager INSTANCE;
+    private static BingoGameManager INSTANCE;
     private Map<String, BingoSettings> templates;
     private Map<String, BingoGame> activeGames;
+    private final BingoEventListener listener;
 
-    public static GameWorldManager get()
+    public static BingoGameManager get()
     {
         if (INSTANCE == null)
         {
-            INSTANCE = new GameWorldManager();
+            INSTANCE = new BingoGameManager();
         }
         return INSTANCE;
     }
 
-    private GameWorldManager()
+    private BingoGameManager()
     {
         this.templates = new HashMap<>();
         this.activeGames = new HashMap<>();
+        this.listener = new BingoEventListener(this);
+    }
+
+    public BingoEventListener getListener()
+    {
+        return listener;
     }
 
     public boolean createGame(String worldName, int maxTeamMembers)
@@ -53,7 +72,7 @@ public class GameWorldManager
 
         if (isGameWorldActive(worldName))
             endGame(worldName);
-
+        
         templates.remove(worldName);
         activeGames.remove(worldName);
         return true;
@@ -133,7 +152,7 @@ public class GameWorldManager
 
     public boolean isGameWorldActive(World world)
     {
-        return isGameWorldActive(GameWorldManager.getWorldName(world));
+        return isGameWorldActive(BingoGameManager.getWorldName(world));
     }
 
     public boolean doesGameWorldExist(String worldName)
@@ -143,6 +162,6 @@ public class GameWorldManager
 
     public boolean doesGameWorldExist(World world)
     {
-        return doesGameWorldExist(GameWorldManager.getWorldName(world));
+        return doesGameWorldExist(BingoGameManager.getWorldName(world));
     }
 }

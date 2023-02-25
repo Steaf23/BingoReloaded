@@ -11,7 +11,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.*;
 
-public abstract class PaginatedPickerUI extends AbstractGUIInventory
+public abstract class PaginatedPickerMenu extends MenuInventory
 {
     /**
      * Called by this Inventory's ClickEvents.
@@ -33,7 +33,7 @@ public abstract class PaginatedPickerUI extends AbstractGUIInventory
     private final List<InventoryItem> filteredItems;
     private int pageAmount;
     private int currentPage;
-    private UserInputUI filter;
+    private UserInputMenu filter;
     private String keywordFilter;
     public FilterType filterType;
 
@@ -43,7 +43,7 @@ public abstract class PaginatedPickerUI extends AbstractGUIInventory
     protected static final InventoryItem CLOSE = new InventoryItem(49, Material.REDSTONE, "" + ChatColor.RED + ChatColor.BOLD + TranslationData.translate("menu.save_exit"), "");
     protected static final InventoryItem FILTER = new InventoryItem(46, Material.SPYGLASS, TITLE_PREFIX + TranslationData.translate("menu.filter"), "");
 
-    public PaginatedPickerUI(List<InventoryItem> options, String title, AbstractGUIInventory parent, FilterType filterType)
+    public PaginatedPickerMenu(List<InventoryItem> options, String title, MenuInventory parent, FilterType filterType)
     {
         super(54, title != null ? title : "Item Picker", parent);
 
@@ -84,7 +84,7 @@ public abstract class PaginatedPickerUI extends AbstractGUIInventory
         }
         else if (slotClicked == FILTER.getSlot())
         {
-            UserInputUI.open("Filter by name", this::applyFilter, player, this, keywordFilter.isBlank() ? "name" : keywordFilter);
+            UserInputMenu.open("Filter by name", this::applyFilter, player, this, keywordFilter.isBlank() ? "name" : keywordFilter);
         }
         else if (isSlotValidOption(slotClicked)) //If it is a normal item;
         {

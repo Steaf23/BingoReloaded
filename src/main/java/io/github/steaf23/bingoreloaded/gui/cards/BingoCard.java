@@ -7,7 +7,8 @@ import io.github.steaf23.bingoreloaded.data.BingoCardsData;
 import io.github.steaf23.bingoreloaded.data.TaskListsData;
 import io.github.steaf23.bingoreloaded.data.TranslationData;
 import io.github.steaf23.bingoreloaded.event.BingoCardTaskCompleteEvent;
-import io.github.steaf23.bingoreloaded.gui.AbstractGUIInventory;
+import io.github.steaf23.bingoreloaded.gui.CardMenu;
+import io.github.steaf23.bingoreloaded.gui.MenuInventory;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
 import io.github.steaf23.bingoreloaded.item.tasks.*;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
@@ -31,22 +32,22 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
 
-public class BingoCard extends AbstractGUIInventory
+public class BingoCard
 {
-    public CardSize size;
-    public List<BingoTask> tasks = new ArrayList<>();
+    public final CardSize size;
+    public List<BingoTask> tasks;
+
+    protected final CardMenu menu;
 
     private static final TaskData DEFAULT_TASK = new ItemTask(Material.DIRT, 1);
 
     public BingoCard(CardSize size)
     {
-        super(9 * size.cardSize, TranslationData.translate("menu.card.title"), null);
         this.size = size;
-        InventoryItem cardInfoItem = new InventoryItem(0, Material.MAP, TranslationData.itemName("menu.card.info_regular"),
+        this.tasks = new ArrayList<>();
+        this.menu = new CardMenu(size, TranslationData.translate("menu.card.title"));
+        menu.setInfo(TranslationData.itemName("menu.card.info_regular"),
                 TranslationData.itemDescription("menu.card.info_regular"));
-        addOption(cardInfoItem);
-
-        this.setMaxStackSizeOverride(64);
     }
 
     /**
@@ -129,15 +130,9 @@ public class BingoCard extends AbstractGUIInventory
         );
     }
 
-    public void showInventory(HumanEntity player)
+    public void showInventory(Player player)
     {
-        for (int i = 0; i < tasks.size(); i++)
-        {
-            InventoryItem item = tasks.get(i).asStack().inSlot(size.getCardInventorySlot(i));
-            addOption(item);
-        }
-
-        open(player);
+        menu.show(player, tasks);
     }
 
     public boolean hasBingo(BingoTeam team)
@@ -212,28 +207,6 @@ public class BingoCard extends AbstractGUIInventory
         }
 
         return count;
-    }
-
-    @Override
-    public void delegateClick(InventoryClickEvent event, int slotClicked, Player player, ClickType clickType)
-    {
-        if (!size.taskSlots.contains(slotClicked))
-            return;
-
-        BingoTask task = BingoTask.fromStack(event.getCurrentItem());
-        if (task == null)
-            return;
-
-        BaseComponent base = new TextComponent("\n");
-        BaseComponent name = task.data.getItemDisplayName().asComponent();
-        name.setBold(true);
-        name.setColor(task.nameColor);
-
-        base.addExtra(name);
-        base.addExtra("\n - ");
-        base.addExtra(task.data.getDescription());
-
-        Message.sendDebugNoPrefix(base, player);
     }
 
     public BingoCard copy()

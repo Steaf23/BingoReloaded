@@ -5,7 +5,6 @@ import io.github.steaf23.bingoreloaded.gui.cards.BingoCard;
 import io.github.steaf23.bingoreloaded.gui.cards.LockoutBingoCard;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.player.BingoTeam;
-import io.github.steaf23.bingoreloaded.util.Message;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -19,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class CardEventManager implements Listener
+public class CardEventManager
 {
     private final List<BingoCard> cards;
 
@@ -29,7 +28,6 @@ public class CardEventManager implements Listener
     {
         this.cards = new ArrayList<>();
         this.worldName = worldName;
-        Bukkit.getPluginManager().registerEvents(this, BingoReloaded.get());
     }
 
     public void setCards(List<BingoCard> newCards)
@@ -38,10 +36,9 @@ public class CardEventManager implements Listener
         this.cards.addAll(newCards);
     }
 
-    @EventHandler
-    public void onPlayerAdvancementDone(final PlayerAdvancementDoneEvent event)
+    public void handlePlayerAdvancementCompleted(final PlayerAdvancementDoneEvent event)
     {
-        BingoGame game = GameWorldManager.get().getActiveGame(GameWorldManager.getWorldName(event.getPlayer().getWorld()));
+        BingoGame game = BingoGameManager.get().getActiveGame(worldName);
         if (game == null)
             return;
 
@@ -60,10 +57,9 @@ public class CardEventManager implements Listener
         }
     }
 
-    @EventHandler
-    public void onPlayerDroppedItem(final PlayerDropItemEvent event)
+    public void handlePlayerDroppedItem(final PlayerDropItemEvent event)
     {
-        BingoGame game = GameWorldManager.get().getActiveGame(GameWorldManager.getWorldName(event.getPlayer().getWorld()));
+        BingoGame game = BingoGameManager.get().getActiveGame(worldName);
         if (game == null)
             return;
 
@@ -82,10 +78,9 @@ public class CardEventManager implements Listener
         }
     }
 
-    @EventHandler
-    public void onPlayerCollectItem(final EntityPickupItemEvent event)
+    public void handlePlayerPickupItem(final EntityPickupItemEvent event)
     {
-        BingoGame game = GameWorldManager.get().getActiveGame(GameWorldManager.getWorldName(event.getEntity().getWorld()));
+        BingoGame game = BingoGameManager.get().getActiveGame(worldName);
         if (game == null || !(event.getEntity() instanceof Player p))
             return;
 
@@ -104,10 +99,9 @@ public class CardEventManager implements Listener
         }
     }
 
-    @EventHandler
-    public void onInventoryClick(final InventoryClickEvent event)
+    public void handleInventoryClicked(final InventoryClickEvent event)
     {
-        BingoGame game = GameWorldManager.get().getActiveGame(GameWorldManager.getWorldName(event.getWhoClicked().getWorld()));
+        BingoGame game = BingoGameManager.get().getActiveGame(worldName);
         if (game == null || !(event.getWhoClicked() instanceof Player p))
             return;
 
@@ -126,8 +120,7 @@ public class CardEventManager implements Listener
         }
     }
 
-    @EventHandler
-    public void onTaskCompleted(final BingoCardTaskCompleteEvent event)
+    public void handleTaskCompleted(final BingoCardTaskCompleteEvent event)
     {
         for (BingoCard card : cards)
         {

@@ -2,9 +2,9 @@ package io.github.steaf23.bingoreloaded.gui.creator;
 
 import io.github.steaf23.bingoreloaded.data.BingoCardsData;
 import io.github.steaf23.bingoreloaded.data.TaskListsData;
-import io.github.steaf23.bingoreloaded.gui.AbstractGUIInventory;
+import io.github.steaf23.bingoreloaded.gui.MenuInventory;
 import io.github.steaf23.bingoreloaded.gui.FilterType;
-import io.github.steaf23.bingoreloaded.gui.PaginatedPickerUI;
+import io.github.steaf23.bingoreloaded.gui.PaginatedPickerMenu;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -17,13 +17,13 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CardEditorUI extends PaginatedPickerUI
+public class CardEditorUI extends PaginatedPickerMenu
 {
     public final String cardName;
     private static final InventoryItem ADD_LIST = new InventoryItem(51, Material.EMERALD, "" + ChatColor.GREEN + ChatColor.BOLD + "Add Item List", "");
     private ListValueEditorGUI valueEditorGUI;
 
-    public CardEditorUI(String cardName, AbstractGUIInventory parent)
+    public CardEditorUI(String cardName, MenuInventory parent)
     {
         super(new ArrayList<>(), "Editing '" + cardName + "'", parent, FilterType.DISPLAY_NAME);
         this.cardName = cardName;
@@ -64,7 +64,7 @@ public class CardEditorUI extends PaginatedPickerUI
                         ChatColor.GRAY + "Click to select"));
             }
 
-            PaginatedPickerUI listPicker = new PaginatedPickerUI(items, "Pick A List", this, FilterType.DISPLAY_NAME)
+            PaginatedPickerMenu listPicker = new PaginatedPickerMenu(items, "Pick A List", this, FilterType.DISPLAY_NAME)
             {
                 @Override
                 public void onOptionClickedDelegate(final InventoryClickEvent event, InventoryItem clickedOption, Player player)

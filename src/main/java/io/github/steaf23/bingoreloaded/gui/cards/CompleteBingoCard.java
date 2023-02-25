@@ -16,8 +16,8 @@ public class CompleteBingoCard extends BingoCard
     public CompleteBingoCard(CardSize size)
     {
         super(size);
-        InventoryItem item = new InventoryItem(0, Material.MAP, TranslationData.itemName("menu.card.info_complete"), TranslationData.itemDescription("menu.card.info_complete"));
-        addOption(item);
+        menu.setInfo(TranslationData.itemName("menu.card.info_complete"),
+                TranslationData.itemDescription("menu.card.info_complete"));
     }
 
     @Override

@@ -13,13 +13,10 @@ import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
 
-import java.util.Objects;
-
-public class BingoScoreboard implements Listener
+public class BingoScoreboard
 {
     private final Scoreboard teamBoard;
     private final InfoScoreboard visualBoard;
@@ -39,12 +36,11 @@ public class BingoScoreboard implements Listener
         this.taskObjective = teamBoard.registerNewObjective("item_count", "bingo_item_count");
 
         reset();
-        Bukkit.getPluginManager().registerEvents(this, BingoReloaded.get());
     }
 
     public void updateTeamScores()
     {
-        if (!GameWorldManager.get().isGameWorldActive(worldName))
+        if (!BingoGameManager.get().isGameWorldActive(worldName))
             return;
 
         BingoReloaded.scheduleTask(task ->
@@ -120,23 +116,15 @@ public class BingoScoreboard implements Listener
         return teamManager;
     }
 
-    @EventHandler
-    public void onPlayerJoinsEvent(final BingoPlayerJoinEvent event)
+    public void handlePlayerJoin(final BingoPlayerJoinEvent event)
     {
-        if (!event.worldName.equals(worldName))
-            return;
-
         Message.log("Player " + event.player.asOnlinePlayer().get().getDisplayName() + " joined the game", worldName);
 
         updatePlayerScoreboard(event.player);
     }
 
-    @EventHandler
-    public void onPlayerLeavesEvent(final BingoPlayerLeaveEvent event)
+    public void handlePlayerLeave(final BingoPlayerLeaveEvent event)
     {
-        if (!event.worldName.equals(worldName))
-            return;
-
         Message.log("Player " + event.player.asOnlinePlayer().get().getDisplayName() + " left the game", worldName);
 
         updatePlayerScoreboard(event.player);

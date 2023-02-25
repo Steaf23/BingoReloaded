@@ -2,7 +2,7 @@ package io.github.steaf23.bingoreloaded.gui;
 
 import io.github.steaf23.bingoreloaded.BingoGamemode;
 import io.github.steaf23.bingoreloaded.BingoSettings;
-import io.github.steaf23.bingoreloaded.GameWorldManager;
+import io.github.steaf23.bingoreloaded.BingoGameManager;
 import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.bingoreloaded.data.TranslationData;
 import io.github.steaf23.bingoreloaded.gui.cards.CardSize;
@@ -14,12 +14,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
-public class GamemodeOptionsUI extends AbstractGUIInventory
+public class GamemodeOptionsMenu extends MenuInventory
 {
     private final BingoSettings settings;
     private final InventoryItem[] options;
 
-    public GamemodeOptionsUI(AbstractGUIInventory parent, BingoSettings settings)
+    public GamemodeOptionsMenu(MenuInventory parent, BingoSettings settings)
     {
         super(45, TranslationData.itemName("menu.options.mode"), parent);
         this.settings = settings;
@@ -47,7 +47,7 @@ public class GamemodeOptionsUI extends AbstractGUIInventory
         BingoGamemode chosenMode = BingoGamemode.REGULAR;
         CardSize chosenSize = CardSize.X5;
 
-        String worldName = GameWorldManager.getWorldName(player.getWorld());
+        String worldName = BingoGameManager.getWorldName(player.getWorld());
 
         if (slotClicked == options[0].getSlot() || slotClicked == options[3].getSlot())
         {

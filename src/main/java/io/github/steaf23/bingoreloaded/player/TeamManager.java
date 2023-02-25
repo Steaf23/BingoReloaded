@@ -6,9 +6,9 @@ import io.github.steaf23.bingoreloaded.event.BingoPlayerJoinEvent;
 import io.github.steaf23.bingoreloaded.event.BingoPlayerLeaveEvent;
 import io.github.steaf23.bingoreloaded.event.BingoStartedEvent;
 import io.github.steaf23.bingoreloaded.event.UpdateStatisticEvent;
-import io.github.steaf23.bingoreloaded.gui.AbstractGUIInventory;
+import io.github.steaf23.bingoreloaded.gui.MenuInventory;
 import io.github.steaf23.bingoreloaded.gui.FilterType;
-import io.github.steaf23.bingoreloaded.gui.PaginatedPickerUI;
+import io.github.steaf23.bingoreloaded.gui.PaginatedPickerMenu;
 import io.github.steaf23.bingoreloaded.gui.cards.BingoCard;
 import io.github.steaf23.bingoreloaded.gui.cards.LockoutBingoCard;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
@@ -30,7 +30,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import javax.annotation.Nullable;
 import java.util.*;
 
-public class TeamManager implements Listener
+public class TeamManager
 {
     private final Set<BingoTeam> activeTeams;
     private final Scoreboard teams;
@@ -42,10 +42,9 @@ public class TeamManager implements Listener
         this.activeTeams = new HashSet<>();
         this.teams = board;
         this.worldName = worldName;
-        this.maximumTeamSize = GameWorldManager.get().getGameSettings(worldName).maxTeamSize;
+        this.maximumTeamSize = BingoGameManager.get().getGameSettings(worldName).maxTeamSize;
 
         createTeams();
-        Bukkit.getPluginManager().registerEvents(this, BingoReloaded.get());
     }
 
     /**
@@ -71,9 +70,9 @@ public class TeamManager implements Listener
         return null;
     }
 
-    public void openTeamSelector(Player player, AbstractGUIInventory parentUI)
+    public void openTeamSelector(Player player, MenuInventory parentUI)
     {
-        if (GameWorldManager.get().isGameWorldActive(worldName))
+        if (BingoGameManager.get().isGameWorldActive(worldName))
         {
             new Message("game.team.no_join").color(ChatColor.RED).send(player);
             return;
@@ -85,7 +84,7 @@ public class TeamManager implements Listener
             optionItems.add(new InventoryItem(color.concrete, "" + color.chatColor + ChatColor.BOLD + color.getTranslatedName()));
         }
 
-        PaginatedPickerUI teamPicker = new PaginatedPickerUI(optionItems, TranslationData.itemName("menu.options.team"), parentUI, FilterType.DISPLAY_NAME)
+        PaginatedPickerMenu teamPicker = new PaginatedPickerMenu(optionItems, TranslationData.itemName("menu.options.team"), parentUI, FilterType.DISPLAY_NAME)
         {
             @Override
             public void onOptionClickedDelegate(InventoryClickEvent event, InventoryItem clickedOption, Player player)
@@ -116,7 +115,7 @@ public class TeamManager implements Listener
             return false;
         }
 
-        if (GameWorldManager.get().isGameWorldActive(worldName) && !activeTeams.stream().anyMatch(t -> t.getColor().name.equals(teamName)))
+        if (BingoGameManager.get().isGameWorldActive(worldName) && !activeTeams.stream().anyMatch(t -> t.getColor().name.equals(teamName)))
         {
             Message.error("Team " + color.getTranslatedName() + " is not playing in this game of bingo!");
             return false;
@@ -317,7 +316,7 @@ public class TeamManager implements Listener
             // Add dummy entry to show the prefix on the board
             t.addEntry("" + fColor.chatColor);
         }
-        Message.log("Successfully created " + teams.getTeams().size() + " teams");
+        Message.log("Successfully created 16 teams");
     }
 
     public String getWorldName()
@@ -339,8 +338,7 @@ public class TeamManager implements Listener
         }
     }
 
-    @EventHandler
-    public void onPlayerJoin(final PlayerJoinEvent event)
+    public void handlePlayerJoinsServer(final PlayerJoinEvent event)
     {
         BingoPlayer player = getBingoPlayer(event.getPlayer());
         if (player == null || player.gamePlayer().isEmpty())
@@ -348,7 +346,7 @@ public class TeamManager implements Listener
 
         Player onlinePlayer = player.gamePlayer().get();
 
-        if (GameWorldManager.get().isGameWorldActive(worldName))
+        if (BingoGameManager.get().isGameWorldActive(worldName))
         {
             if (getParticipants().contains(player))
             {
@@ -360,17 +358,16 @@ public class TeamManager implements Listener
         }
     }
 
-    @EventHandler
-    public void onPlayerSwitchWorld(final PlayerChangedWorldEvent event)
+    public void handlePlayerChangedWorld(final PlayerChangedWorldEvent event)
     {
         BingoPlayer player = getBingoPlayer(event.getPlayer());
         if (player == null)
             return;
 
         // If player is leaving this game's world(s)
-        if (GameWorldManager.get().doesGameWorldExist(event.getFrom()))
+        if (BingoGameManager.get().doesGameWorldExist(event.getFrom()))
         {
-            if (GameWorldManager.getWorldName(event.getFrom()).equals(worldName))
+            if (BingoGameManager.getWorldName(event.getFrom()).equals(worldName))
             {
                 player.getTeam().team.removeEntry(event.getPlayer().getName());
                 player.takeEffects(true);
@@ -382,12 +379,12 @@ public class TeamManager implements Listener
 
         World target = event.getPlayer().getWorld();
         // If player is arriving in this world
-        if (GameWorldManager.get().doesGameWorldExist(target))
+        if (BingoGameManager.get().doesGameWorldExist(target))
         {
-            if (GameWorldManager.getWorldName(target).equals(worldName))
+            if (BingoGameManager.getWorldName(target).equals(worldName))
             {
                 player.getTeam().team.addEntry(event.getPlayer().getName());
-                player.giveEffects(GameWorldManager.get().getGameSettings(worldName).effects);
+                player.giveEffects(BingoGameManager.get().getGameSettings(worldName).effects);
                 var joinEvent = new BingoPlayerJoinEvent(player, worldName);
                 Bukkit.getPluginManager().callEvent(joinEvent);
             }

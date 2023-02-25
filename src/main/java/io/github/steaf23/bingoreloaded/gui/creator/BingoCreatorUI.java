@@ -1,13 +1,9 @@
 package io.github.steaf23.bingoreloaded.gui.creator;
 
-import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.BingoCardsData;
 import io.github.steaf23.bingoreloaded.data.TaskListsData;
-import io.github.steaf23.bingoreloaded.data.TranslationData;
 import io.github.steaf23.bingoreloaded.gui.*;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
-import io.github.steaf23.bingoreloaded.util.Message;
-import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -15,18 +11,17 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 
-import java.sql.Array;
 import java.util.ArrayList;
 import java.util.List;
 
 // This class is used to navigate through the cards and lists.
 // Uses a double ListPicker, one for cards and one for lists.
-public class BingoCreatorUI extends AbstractGUIInventory
+public class BingoCreatorUI extends MenuInventory
 {
     public static final InventoryItem CARD = new InventoryItem(11, Material.FILLED_MAP, TITLE_PREFIX + "Edit Cards", "Click to view and edit bingo cards!");
     public static final InventoryItem LIST = new InventoryItem(15, Material.PAPER, TITLE_PREFIX + "Edit Lists", "Click to view and edit bingo lists!");
 
-    public BingoCreatorUI(AbstractGUIInventory parent)
+    public BingoCreatorUI(MenuInventory parent)
     {
         super(27, "Card Creator", parent);
         fillOptions(CARD, LIST);
@@ -37,7 +32,7 @@ public class BingoCreatorUI extends AbstractGUIInventory
     {
         if (slotClicked == CARD.getSlot())
         {
-            PaginatedPickerUI cardPicker = new PaginatedPickerUI(new ArrayList<>(), "Choose A Card", this, FilterType.DISPLAY_NAME)
+            PaginatedPickerMenu cardPicker = new PaginatedPickerMenu(new ArrayList<>(), "Choose A Card", this, FilterType.DISPLAY_NAME)
             {
                 private static final InventoryItem CREATE_CARD = new InventoryItem(51, Material.EMERALD, "" + ChatColor.GREEN + ChatColor.BOLD + "New Card");
 
@@ -86,7 +81,7 @@ public class BingoCreatorUI extends AbstractGUIInventory
         }
         else if (slotClicked == LIST.getSlot())
         {
-            PaginatedPickerUI listPicker = new PaginatedPickerUI(new ArrayList<>(), "Choose A List", this, FilterType.DISPLAY_NAME)
+            PaginatedPickerMenu listPicker = new PaginatedPickerMenu(new ArrayList<>(), "Choose A List", this, FilterType.DISPLAY_NAME)
             {
                 private static final InventoryItem CREATE_LIST = new InventoryItem(51, Material.EMERALD, "" + ChatColor.GREEN + ChatColor.BOLD + "New List");
 
@@ -149,7 +144,7 @@ public class BingoCreatorUI extends AbstractGUIInventory
 
     public void createCard(Player player)
     {
-        UserInputUI.open("Enter new card name", (input) -> {
+        UserInputMenu.open("Enter new card name", (input) -> {
             if (!input.equals(""))
                 openCardEditor(input.toLowerCase().replace(" ", "_"), player);
         }, player, this);
@@ -157,15 +152,15 @@ public class BingoCreatorUI extends AbstractGUIInventory
 
     public void createList(Player player)
     {
-        UserInputUI.open("Enter new list name", (input) -> {
+        UserInputMenu.open("Enter new list name", (input) -> {
             if (!input.equals(""))
                 openListEditor(input.toLowerCase().replace(" ", "_"), player);
         }, player, this);
     }
 
-    public void createCardContext(String cardName, Player player, AbstractGUIInventory parent)
+    public void createCardContext(String cardName, Player player, MenuInventory parent)
     {
-        ContextMenuUI menu = new ContextMenuUI("What to do with '" + cardName + "'", parent);
+        ContextMenu menu = new ContextMenu("What to do with '" + cardName + "'", parent);
         menu.addAction("Remove", Material.BARRIER, (clickType) -> {
             BingoCardsData.removeCard(cardName);
             return true;
@@ -175,7 +170,7 @@ public class BingoCreatorUI extends AbstractGUIInventory
             return true;
         });
         menu.addAction("Change Name", Material.NAME_TAG, (clickType) -> {
-            UserInputUI.open("Change name to", (input) -> {
+            UserInputMenu.open("Change name to", (input) -> {
                 BingoCardsData.renameCard(cardName, input);
             }, player, parent, cardName);
             return false;
@@ -183,9 +178,9 @@ public class BingoCreatorUI extends AbstractGUIInventory
         menu.open(player);
     }
 
-    public void createListContext(String listName, Player player, AbstractGUIInventory parent)
+    public void createListContext(String listName, Player player, MenuInventory parent)
     {
-        ContextMenuUI menu = new ContextMenuUI("What to do with '" + listName + "'", parent);
+        ContextMenu menu = new ContextMenu("What to do with '" + listName + "'", parent);
         menu.addAction("Remove", Material.BARRIER, (clickType) -> {
             TaskListsData.removeList(listName);
             return true;
@@ -195,7 +190,7 @@ public class BingoCreatorUI extends AbstractGUIInventory
             return true;
         });
         menu.addAction("Change Name", Material.NAME_TAG, (clickType) -> {
-            UserInputUI.open("Change name to", (input) -> {
+            UserInputMenu.open("Change name to", (input) -> {
                 TaskListsData.renameList(listName, input);
             }, player, parent, listName);
             return false;

@@ -2,7 +2,7 @@ package io.github.steaf23.bingoreloaded.util;
 
 import io.github.steaf23.bingoreloaded.BingoGame;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
-import io.github.steaf23.bingoreloaded.GameWorldManager;
+import io.github.steaf23.bingoreloaded.BingoGameManager;
 import io.github.steaf23.bingoreloaded.data.TranslationData;
 import io.github.steaf23.bingoreloaded.player.BingoTeam;
 import me.clip.placeholderapi.PlaceholderAPI;
@@ -181,10 +181,10 @@ public class Message
 
     public void sendAll(String worldName)
     {
-        if (!GameWorldManager.get().doesGameWorldExist(worldName))
+        if (!BingoGameManager.get().doesGameWorldExist(worldName))
             return;
 
-        BingoGame game = GameWorldManager.get().getGame(worldName);
+        BingoGame game = BingoGameManager.get().getGame(worldName);
         if (game == null)
             return;
 
@@ -317,7 +317,7 @@ public class Message
     // solve placeholders from PlaceholderAPI
     protected static String solvePlaceholders(String input, Player player)
     {
-        if (BingoReloaded.usesPlaceholder)
+        if (BingoReloaded.usesPlaceholderAPI)
         {
             return PlaceholderAPI.setPlaceholders(player, input);
         }
@@ -326,7 +326,7 @@ public class Message
 
     public static TextComponent[] createHoverCommandMessage(@NonNull String translatePath, @Nullable String command)
     {
-        TextComponent prefix = new TextComponent(PREFIX_STRING + " " + TranslationData.translate(translatePath + ".prefix"));
+        TextComponent prefix = new TextComponent(TranslationData.translate(translatePath + ".prefix"));
         TextComponent hoverable = new TextComponent(TranslationData.translate(translatePath + ".hoverable"));
         TextComponent hover = new TextComponent(TranslationData.translate(translatePath + ".hover"));
         TextComponent suffix = new TextComponent(TranslationData.translate(translatePath + ".suffix"));

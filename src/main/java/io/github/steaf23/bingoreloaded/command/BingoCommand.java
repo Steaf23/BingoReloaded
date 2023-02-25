@@ -1,7 +1,7 @@
 package io.github.steaf23.bingoreloaded.command;
 
 import io.github.steaf23.bingoreloaded.BingoGame;
-import io.github.steaf23.bingoreloaded.GameWorldManager;
+import io.github.steaf23.bingoreloaded.BingoGameManager;
 import io.github.steaf23.bingoreloaded.data.TranslationData;
 import io.github.steaf23.bingoreloaded.player.PlayerKit;
 import io.github.steaf23.bingoreloaded.hologram.Hologram;
@@ -9,7 +9,7 @@ import io.github.steaf23.bingoreloaded.hologram.HologramManager;
 import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.bingoreloaded.data.BingoStatsData;
 import io.github.steaf23.bingoreloaded.data.ConfigData;
-import io.github.steaf23.bingoreloaded.gui.BingoOptionsUI;
+import io.github.steaf23.bingoreloaded.gui.BingoMenu;
 import io.github.steaf23.bingoreloaded.gui.creator.BingoCreatorUI;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import net.md_5.bungee.api.ChatColor;
@@ -35,24 +35,24 @@ public class BingoCommand implements CommandExecutor
             return false;
         }
 
-        String worldName = GameWorldManager.getWorldName(player.getWorld());
-        BingoGame activeGame = GameWorldManager.get().getActiveGame(worldName);
+        String worldName = BingoGameManager.getWorldName(player.getWorld());
+        BingoGame activeGame = BingoGameManager.get().getActiveGame(worldName);
         
         if (args.length == 0)
         {
-            if (!GameWorldManager.get().doesGameWorldExist(worldName))
+            if (!BingoGameManager.get().doesGameWorldExist(worldName))
                 return false;
 
-            BingoOptionsUI.openOptions(player);
+            BingoMenu.openOptions(player);
             return true;
         }
 
         switch (args[0])
         {
             case "join":
-                if (GameWorldManager.get().doesGameWorldExist(worldName))
+                if (BingoGameManager.get().doesGameWorldExist(worldName))
                 {
-                    BingoGame existingGame = GameWorldManager.get().getGame(worldName);
+                    BingoGame existingGame = BingoGameManager.get().getGame(worldName);
                     existingGame.getTeamManager().openTeamSelector(player, null);
                 }
                 break;
@@ -70,17 +70,17 @@ public class BingoCommand implements CommandExecutor
                     if (args.length > 1)
                     {
                         int seed = Integer.parseInt(args[1]);
-                        GameWorldManager.get().getGameSettings(worldName).cardSeed = seed;
+                        BingoGameManager.get().getGameSettings(worldName).cardSeed = seed;
                     }
 
-                    GameWorldManager.get().startGame(worldName);
+                    BingoGameManager.get().startGame(worldName);
                     return true;
                 }
                 break;
 
             case "end":
                 if (player.hasPermission("bingo.settings"))
-                    GameWorldManager.get().endGame(worldName);
+                    BingoGameManager.get().endGame(worldName);
                 break;
 
             case "getcard":
@@ -119,7 +119,7 @@ public class BingoCommand implements CommandExecutor
                 return true;
 
             case "creator":
-                if (GameWorldManager.get().doesGameWorldExist(worldName) && player.hasPermission("bingo.manager"))
+                if (BingoGameManager.get().doesGameWorldExist(worldName) && player.hasPermission("bingo.manager"))
                 {
                     BingoCreatorUI creatorUI = new BingoCreatorUI(null);
                     creatorUI.open(player);
