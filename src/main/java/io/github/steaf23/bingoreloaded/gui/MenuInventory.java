@@ -13,6 +13,10 @@ import org.bukkit.event.inventory.*;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Arrays;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
 /**
  * Abstract class for Inventory based GUIs.
  * Delegates click events to a separate method that Inheritors must override.
@@ -151,7 +155,11 @@ public abstract class MenuInventory
             return Bukkit.createInventory(null, size, Message.PREFIX_STRING_SHORT + " " + ChatColor.DARK_RED + title);
 
         String fontCharacter = textureMenu.getTexture();
-        return Bukkit.createInventory(null, 54, "§f七七七七七七七七" + fontCharacter);
+
+        char[] horizontalOffsetString = new char[textureMenu.getHorizontalImageOffset()];
+        Arrays.fill(horizontalOffsetString, '七');
+        String finalTitle = "§f" + new String(horizontalOffsetString) + fontCharacter;
+        return Bukkit.createInventory(null, 54, finalTitle);
     }
 
     public Inventory internalInventory()

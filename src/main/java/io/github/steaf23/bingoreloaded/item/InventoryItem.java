@@ -172,6 +172,13 @@ public class InventoryItem extends ItemStack
                 .get(PDCHelper.createKey("item.compare_key"), PersistentDataType.STRING);
     }
 
+    public void setModelData(int data)
+    {
+        ItemMeta meta = getItemMeta();
+        meta.setCustomModelData(data);
+        setItemMeta(meta);
+    }
+
     @NotNull
     @Override
     public Map<String, Object> serialize()

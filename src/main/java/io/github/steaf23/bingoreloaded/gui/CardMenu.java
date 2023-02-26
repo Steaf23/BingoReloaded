@@ -17,6 +17,8 @@ import java.util.List;
 
 public class CardMenu extends MenuInventory
 {
+    protected InventoryItem infoItem;
+
     private final CardSize size;
 
     public CardMenu(CardSize size, String title)
@@ -60,6 +62,7 @@ public class CardMenu extends MenuInventory
 
     public void setInfo(String name, String... description)
     {
-        InventoryItem info = new InventoryItem(0, Material.MAP, name, description);
+        infoItem = new InventoryItem(0, Material.MAP, name, description);
+        addOption(infoItem);
     }
 }

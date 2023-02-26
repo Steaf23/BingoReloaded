@@ -8,20 +8,15 @@ import io.github.steaf23.bingoreloaded.data.TaskListsData;
 import io.github.steaf23.bingoreloaded.data.TranslationData;
 import io.github.steaf23.bingoreloaded.event.BingoCardTaskCompleteEvent;
 import io.github.steaf23.bingoreloaded.gui.CardMenu;
-import io.github.steaf23.bingoreloaded.gui.MenuInventory;
-import io.github.steaf23.bingoreloaded.item.InventoryItem;
+import io.github.steaf23.bingoreloaded.gui.textured.CardTextureMenu;
 import io.github.steaf23.bingoreloaded.item.tasks.AdvancementTask;
 import io.github.steaf23.bingoreloaded.item.tasks.BingoTask;
 import io.github.steaf23.bingoreloaded.item.tasks.ItemTask;
 import io.github.steaf23.bingoreloaded.item.tasks.TaskData;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.player.BingoTeam;
-import io.github.steaf23.bingoreloaded.util.Message;
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.inventory.ClickType;
@@ -47,7 +42,14 @@ public class BingoCard
     {
         this.size = size;
         this.tasks = new ArrayList<>();
-        this.menu = new CardMenu(size, TranslationData.translate("menu.card.title"));
+        if (true)
+        {
+            this.menu = new CardTextureMenu(size, TranslationData.translate("menu.card.title"));
+        }
+        else
+        {
+            this.menu = new CardMenu(size, TranslationData.translate("menu.card.title"));
+        }
         menu.setInfo(TranslationData.itemName("menu.card.info_regular"),
                 TranslationData.itemDescription("menu.card.info_regular"));
     }
