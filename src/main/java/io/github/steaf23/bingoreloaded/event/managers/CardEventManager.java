@@ -1,10 +1,14 @@
-package io.github.steaf23.bingoreloaded;
+package io.github.steaf23.bingoreloaded.event.managers;
 
+import io.github.steaf23.bingoreloaded.BingoGame;
+import io.github.steaf23.bingoreloaded.BingoGameManager;
 import io.github.steaf23.bingoreloaded.event.BingoCardTaskCompleteEvent;
+import io.github.steaf23.bingoreloaded.event.BingoStatisticCompletedEvent;
 import io.github.steaf23.bingoreloaded.gui.cards.BingoCard;
 import io.github.steaf23.bingoreloaded.gui.cards.LockoutBingoCard;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.player.BingoTeam;
+import io.github.steaf23.bingoreloaded.util.Message;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -128,6 +132,26 @@ public class CardEventManager
             {
                 lockoutCard.onCardSlotCompleteEvent(event);
             }
+        }
+    }
+
+    public void handleStatisticCompleted(final BingoStatisticCompletedEvent event)
+    {
+        BingoGame game = BingoGameManager.get().getActiveGame(worldName);
+        if (game == null)
+            return;
+
+        if (!event.player.gamePlayer().isPresent())
+            return;
+
+        BingoTeam team = event.player.getTeam();
+        if (team == null)
+            return;
+
+        for (BingoCard card : cards)
+        {
+            if (team.card.equals(card))
+                card.onPlayerStatisticCompleted(event, event.player, game);
         }
     }
 }

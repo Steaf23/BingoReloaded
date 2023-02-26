@@ -5,9 +5,11 @@ import io.github.steaf23.bingoreloaded.event.BingoCardTaskCompleteEvent;
 import io.github.steaf23.bingoreloaded.event.BingoEndedEvent;
 import io.github.steaf23.bingoreloaded.event.BingoStartedEvent;
 import io.github.steaf23.bingoreloaded.event.CountdownTimerFinishedEvent;
+import io.github.steaf23.bingoreloaded.event.managers.CardEventManager;
 import io.github.steaf23.bingoreloaded.gui.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.gui.cards.BingoCard;
 import io.github.steaf23.bingoreloaded.gui.cards.CardBuilder;
+import io.github.steaf23.bingoreloaded.item.tasks.statistics.StatisticTracker;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.player.BingoTeam;
 import io.github.steaf23.bingoreloaded.player.PlayerKit;
@@ -16,7 +18,6 @@ import io.github.steaf23.bingoreloaded.util.*;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.*;
-import org.bukkit.event.EventHandler;
 import org.bukkit.util.Vector;
 import org.bukkit.block.Biome;
 import org.bukkit.entity.Player;
@@ -41,8 +42,8 @@ public class BingoGame
     private BingoSettings settings;
     private final BingoScoreboard scoreboard;
     private final Map<UUID, Location> deadPlayers;
-
     private final CardEventManager cardEventManager;
+    private final StatisticTracker statTracker;
 
     public BingoGame(String worldName)
     {
@@ -51,6 +52,7 @@ public class BingoGame
         this.scoreboard = new BingoScoreboard(worldName);
         this.deadPlayers = new HashMap<>();
         this.cardEventManager = new CardEventManager(worldName);
+        this.statTracker = new StatisticTracker(worldName);
     }
 
     public void start(BingoSettings settings)
@@ -71,6 +73,7 @@ public class BingoGame
             {
                 var p = player.gamePlayer();
                 p.ifPresent(value -> Message.sendActionMessage(timer.getTimeDisplayMessage(), value));
+                statTracker.updateProgress();
             }
         });
 
@@ -116,6 +119,8 @@ public class BingoGame
         }
         cardEventManager.setCards(cards.stream().toList());
 
+        statTracker.start(getTeamManager().getActiveTeams());
+
         new Message("game.start.give_cards").sendAll(worldName);
         Set<BingoPlayer> players = getTeamManager().getParticipants();
         teleportPlayersToStart(world);
@@ -152,8 +157,11 @@ public class BingoGame
     {
         if (settings != null)
             settings.deathMatchItem = null;
+
         if(!inProgress)
             return;
+
+        statTracker.reset();
 
         inProgress = false;
         TextComponent[] commandMessage = Message.createHoverCommandMessage("game.end.restart", "/bingo start");
@@ -470,6 +478,11 @@ public class BingoGame
     public CardEventManager getCardEventManager()
     {
         return cardEventManager;
+    }
+
+    public StatisticTracker getStatisticTracker()
+    {
+        return statTracker;
     }
 
 // @EventHandlers ========================================================================
