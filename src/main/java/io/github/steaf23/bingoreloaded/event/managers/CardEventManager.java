@@ -117,7 +117,6 @@ public class CardEventManager
         if (team == null)
             return;
 
-        Message.log("Game: " + game + " Settings: " + game.getSettings());
         for (BingoCard card : cards)
         {
             if (team.card.equals(card))

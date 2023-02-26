@@ -50,13 +50,13 @@ public class StatisticProgress
         setProgress(newProgress);
     }
 
-    public void setProgress(int newProgress) //could be cm
+    public void setProgress(int newProgress)
     {
         int progressDelta = newProgress - previousGlobalProgress;
 
         progressLeft -= Math.max(0, progressDelta);
 
-        previousGlobalProgress = newProgress; //could be cm
+        previousGlobalProgress = newProgress;
 
         if (done())
         {

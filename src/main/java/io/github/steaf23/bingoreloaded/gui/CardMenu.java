@@ -61,5 +61,6 @@ public class CardMenu extends MenuInventory
     public void setInfo(String name, String... description)
     {
         InventoryItem info = new InventoryItem(0, Material.MAP, name, description);
+        addOption(info);
     }
 }
