@@ -324,20 +324,6 @@ public class TeamManager
         return worldName;
     }
 
-    public void updateStatisticTasks()
-    {
-        for (BingoTeam team : activeTeams)
-        {
-            for (BingoPlayer p : team.players)
-            {
-                if (p.gamePlayer().isEmpty())
-                    continue;
-
-                team.card.updateStatisticProgress();
-            }
-        }
-    }
-
     public void handlePlayerJoinsServer(final PlayerJoinEvent event)
     {
         BingoPlayer player = getBingoPlayer(event.getPlayer());

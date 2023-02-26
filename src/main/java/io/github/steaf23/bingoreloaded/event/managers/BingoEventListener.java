@@ -173,4 +173,24 @@ public class BingoEventListener implements Listener
             game.getTeamManager().handlePlayerChangedWorld(event);
         }
     }
+
+    @EventHandler
+    public void handleStatisticIncrement(final PlayerStatisticIncrementEvent event)
+    {
+        BingoGame game = getGame(event.getPlayer().getWorld());
+        if (game != null)
+        {
+            game.getStatisticTracker().handleStatisticIncrement(event);
+        }
+    }
+
+    @EventHandler
+    public void handleStatisticCompleted(final BingoStatisticCompletedEvent event)
+    {
+        BingoGame game = getGame(event.worldName);
+        if (game != null)
+        {
+            game.getCardEventManager().handleStatisticCompleted(event);
+        }
+    }
 }

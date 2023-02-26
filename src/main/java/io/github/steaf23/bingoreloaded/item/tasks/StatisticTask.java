@@ -2,6 +2,7 @@ package io.github.steaf23.bingoreloaded.item.tasks;
 
 import io.github.steaf23.bingoreloaded.data.TranslationData;
 import io.github.steaf23.bingoreloaded.item.ItemText;
+import io.github.steaf23.bingoreloaded.item.tasks.statistics.BingoStatistic;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.Material;

@@ -1,4 +1,4 @@
-package io.github.steaf23.bingoreloaded.item.tasks;
+package io.github.steaf23.bingoreloaded.item.tasks.statistics;
 
 import org.bukkit.Material;
 import org.bukkit.Statistic;
@@ -79,6 +79,25 @@ public record BingoStatistic(@NotNull Statistic stat, @Nullable EntityType entit
     public static boolean isEntityValidForStatistic(EntityType type)
     {
         return validEntityTypes.contains(type);
+    }
+
+    /**
+     * @return True if this statistic is processed by the PlayerStatisticIncrementEvent
+     */
+    public boolean isStatisticProcessed()
+    {
+        if (getCategory() == StatisticCategory.TRAVEL)
+            return false;
+
+        return switch (stat)
+        {
+            case PLAY_ONE_MINUTE,
+                    SNEAK_TIME,
+                    TOTAL_WORLD_TIME,
+                    TIME_SINCE_REST,
+                    TIME_SINCE_DEATH -> false;
+            default -> true;
+        };
     }
 
     public static StatisticCategory determineStatCategory(Statistic stat)
@@ -342,5 +361,15 @@ public record BingoStatistic(@NotNull Statistic stat, @Nullable EntityType entit
             material = Material.valueOf((String)data.get("item"));
 
         return new BingoStatistic(stat, entity, material);
+    }
+
+    public boolean hasMaterialComponent()
+    {
+        return materialType != null;
+    }
+
+    public boolean hasEntityComponent()
+    {
+        return entityType != null;
     }
 }

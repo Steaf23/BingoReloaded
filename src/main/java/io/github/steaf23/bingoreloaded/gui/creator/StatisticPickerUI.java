@@ -4,7 +4,7 @@ import io.github.steaf23.bingoreloaded.data.TranslationData;
 import io.github.steaf23.bingoreloaded.gui.MenuInventory;
 import io.github.steaf23.bingoreloaded.gui.OptionMenu;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
-import io.github.steaf23.bingoreloaded.item.tasks.BingoStatistic;
+import io.github.steaf23.bingoreloaded.item.tasks.statistics.BingoStatistic;
 import io.github.steaf23.bingoreloaded.item.tasks.BingoTask;
 import io.github.steaf23.bingoreloaded.item.tasks.StatisticTask;
 import io.github.steaf23.bingoreloaded.util.FlexColor;

@@ -7,18 +7,14 @@ import io.github.steaf23.bingoreloaded.data.BingoCardsData;
 import io.github.steaf23.bingoreloaded.data.TaskListsData;
 import io.github.steaf23.bingoreloaded.data.TranslationData;
 import io.github.steaf23.bingoreloaded.event.BingoCardTaskCompleteEvent;
+import io.github.steaf23.bingoreloaded.event.BingoStatisticCompletedEvent;
 import io.github.steaf23.bingoreloaded.gui.CardMenu;
-import io.github.steaf23.bingoreloaded.gui.MenuInventory;
-import io.github.steaf23.bingoreloaded.item.InventoryItem;
 import io.github.steaf23.bingoreloaded.item.tasks.*;
+import io.github.steaf23.bingoreloaded.item.tasks.statistics.BingoStatistic;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.player.BingoTeam;
-import io.github.steaf23.bingoreloaded.util.Message;
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.inventory.ClickType;
@@ -235,6 +231,9 @@ public class BingoCard
         }
 
         BingoReloaded.scheduleTask(task -> {
+            if (!game.isInProgress())
+                return;
+
             for (ItemStack stack : p.getInventory().getContents())
             {
                 if (stack != null)
@@ -360,6 +359,32 @@ public class BingoCard
             StatisticTask data = (StatisticTask)task.data;
             if (data.statistic().equals(new BingoStatistic(event.getStatistic(), event.getEntityType(), event.getMaterial())) &&
                 data.getCount() == event.getNewValue())
+            {
+                if (!task.complete(player, game.getGameTime()))
+                    continue;
+
+                var slotEvent = new BingoCardTaskCompleteEvent(task, player, hasBingo(player.getTeam()));
+                Bukkit.getPluginManager().callEvent(slotEvent);
+                break;
+            }
+        }
+    }
+
+    public void onPlayerStatisticCompleted(final BingoStatisticCompletedEvent event, final BingoPlayer player, final BingoGame game)
+    {
+        if (player.getTeam().outOfTheGame)
+            return;
+
+        if (game.getSettings().deathMatchItem != null)
+            return;
+
+        for (BingoTask task : tasks)
+        {
+            if (task.type != BingoTask.TaskType.STATISTIC)
+                continue;
+
+            StatisticTask data = (StatisticTask)task.data;
+            if (data.statistic().equals(event.stat))
             {
                 if (!task.complete(player, game.getGameTime()))
                     continue;

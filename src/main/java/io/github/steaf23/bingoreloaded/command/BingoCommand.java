@@ -190,8 +190,6 @@ public class BingoCommand implements CommandExecutor
                 }
                 break;
 
-                case
-
             default:
                 new Message("command.use").color(ChatColor.RED).arg("/bingo [getcard | stats | start | end | join | back | leave | deathmatch | creator]").send(player);
                 break;
