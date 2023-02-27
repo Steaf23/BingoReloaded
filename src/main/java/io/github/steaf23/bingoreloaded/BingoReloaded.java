@@ -34,6 +34,8 @@ public class BingoReloaded extends JavaPlugin
     private BingoGameManager gameManager;
     private MenuEventManager menuManager;
 
+    private static BingoReloaded instance;
+
     @Override
     public void onEnable()
     {
@@ -113,7 +115,9 @@ public class BingoReloaded extends JavaPlugin
 
     public static BingoReloaded get()
     {
-        return getPlugin(BingoReloaded.class);
+        if (instance == null)
+            instance = getPlugin(BingoReloaded.class);
+        return instance;
     }
 
     public static void scheduleTask(@NotNull Consumer<BukkitTask> task)
