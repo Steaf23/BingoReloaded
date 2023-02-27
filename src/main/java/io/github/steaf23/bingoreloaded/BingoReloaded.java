@@ -31,6 +31,7 @@ public class BingoReloaded extends JavaPlugin
 
     public static boolean usesPlaceholderAPI = false;
 
+    private static BingoReloaded instance;
     private BingoGameManager gameManager;
     private MenuEventManager menuManager;
 
@@ -113,7 +114,9 @@ public class BingoReloaded extends JavaPlugin
 
     public static BingoReloaded get()
     {
-        return getPlugin(BingoReloaded.class);
+        if (instance == null)
+            instance = getPlugin(BingoReloaded.class);
+        return instance;
     }
 
     public static void scheduleTask(@NotNull Consumer<BukkitTask> task)
