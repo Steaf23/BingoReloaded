@@ -1,13 +1,16 @@
 package io.github.steaf23.bingoreloaded;
 
-import io.github.steaf23.bingoreloaded.command.*;
-import io.github.steaf23.bingoreloaded.data.*;
-import io.github.steaf23.bingoreloaded.event.managers.MenuEventManager;
-import io.github.steaf23.bingoreloaded.item.InventoryItem;
-import io.github.steaf23.bingoreloaded.item.tasks.*;
+import io.github.steaf23.bingoreloaded.core.command.*;
+import io.github.steaf23.bingoreloaded.core.data.ConfigData;
+import io.github.steaf23.bingoreloaded.core.data.TranslationData;
+import io.github.steaf23.bingoreloaded.core.tasks.AdvancementTask;
+import io.github.steaf23.bingoreloaded.core.tasks.ItemTask;
+import io.github.steaf23.bingoreloaded.core.tasks.StatisticTask;
+import io.github.steaf23.bingoreloaded.gui.base.MenuEventListener;
+import io.github.steaf23.bingoreloaded.gui.base.InventoryItem;
 import io.github.steaf23.bingoreloaded.item.ItemCooldownManager;
-import io.github.steaf23.bingoreloaded.item.tasks.statistics.BingoStatistic;
-import io.github.steaf23.bingoreloaded.player.CustomKit;
+import io.github.steaf23.bingoreloaded.core.tasks.statistics.BingoStatistic;
+import io.github.steaf23.bingoreloaded.core.player.CustomKit;
 import io.github.steaf23.bingoreloaded.util.Message;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -33,7 +36,7 @@ public class BingoReloaded extends JavaPlugin
 
     private static BingoReloaded instance;
     private BingoGameManager gameManager;
-    private MenuEventManager menuManager;
+    private MenuEventListener menuManager;
 
     @Override
     public void onEnable()
@@ -51,7 +54,7 @@ public class BingoReloaded extends JavaPlugin
         this.usesPlaceholderAPI = Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null;
 
         this.gameManager = BingoGameManager.get();
-        this.menuManager = MenuEventManager.get();
+        this.menuManager = MenuEventListener.get();
 
         // create singletons.
         ItemCooldownManager.create();

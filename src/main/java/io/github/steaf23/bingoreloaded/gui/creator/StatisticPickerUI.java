@@ -1,12 +1,12 @@
 package io.github.steaf23.bingoreloaded.gui.creator;
 
-import io.github.steaf23.bingoreloaded.data.TranslationData;
-import io.github.steaf23.bingoreloaded.gui.MenuInventory;
-import io.github.steaf23.bingoreloaded.gui.OptionMenu;
-import io.github.steaf23.bingoreloaded.item.InventoryItem;
-import io.github.steaf23.bingoreloaded.item.tasks.statistics.BingoStatistic;
-import io.github.steaf23.bingoreloaded.item.tasks.BingoTask;
-import io.github.steaf23.bingoreloaded.item.tasks.StatisticTask;
+import io.github.steaf23.bingoreloaded.core.data.TranslationData;
+import io.github.steaf23.bingoreloaded.gui.base.MenuInventory;
+import io.github.steaf23.bingoreloaded.gui.base.TreeMenu;
+import io.github.steaf23.bingoreloaded.gui.base.InventoryItem;
+import io.github.steaf23.bingoreloaded.core.tasks.statistics.BingoStatistic;
+import io.github.steaf23.bingoreloaded.core.tasks.BingoTask;
+import io.github.steaf23.bingoreloaded.core.tasks.StatisticTask;
 import io.github.steaf23.bingoreloaded.util.FlexColor;
 import io.github.steaf23.bingoreloaded.util.GUIPreset6x9;
 import org.bukkit.ChatColor;
@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 
 //TODO: add description to statistic and when to trigger them
-public class StatisticPickerUI extends OptionMenu
+public class StatisticPickerUI extends TreeMenu
 {
     public String listName;
 

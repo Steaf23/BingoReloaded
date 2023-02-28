@@ -17,3 +17,5 @@ generalize/centralize game in progress/ player in game checks for events
 check if advancements are disabled and disallow them on advancement-disabled servers
 
 make verboseConsole config option to print more info as the game goes on
+
+save more settings in config

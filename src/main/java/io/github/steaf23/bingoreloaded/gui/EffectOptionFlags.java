@@ -1,6 +1,6 @@
 package io.github.steaf23.bingoreloaded.gui;
 
-import io.github.steaf23.bingoreloaded.data.TranslationData;
+import io.github.steaf23.bingoreloaded.core.data.TranslationData;
 
 import java.util.EnumSet;
 

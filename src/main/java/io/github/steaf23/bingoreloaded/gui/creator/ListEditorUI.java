@@ -1,9 +1,12 @@
 package io.github.steaf23.bingoreloaded.gui.creator;
 
-import io.github.steaf23.bingoreloaded.data.TranslationData;
-import io.github.steaf23.bingoreloaded.gui.MenuInventory;
-import io.github.steaf23.bingoreloaded.gui.OptionMenu;
-import io.github.steaf23.bingoreloaded.item.InventoryItem;
+import io.github.steaf23.bingoreloaded.core.data.TranslationData;
+import io.github.steaf23.bingoreloaded.core.tasks.AdvancementTask;
+import io.github.steaf23.bingoreloaded.core.tasks.BingoTask;
+import io.github.steaf23.bingoreloaded.core.tasks.ItemTask;
+import io.github.steaf23.bingoreloaded.gui.base.MenuInventory;
+import io.github.steaf23.bingoreloaded.gui.base.TreeMenu;
+import io.github.steaf23.bingoreloaded.gui.base.InventoryItem;
 import io.github.steaf23.bingoreloaded.item.tasks.*;
 import io.github.steaf23.bingoreloaded.util.FlexColor;
 import io.github.steaf23.bingoreloaded.util.GUIPreset5x9;
@@ -17,7 +20,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 
 import java.util.*;
 
-public class ListEditorUI extends OptionMenu
+public class ListEditorUI extends TreeMenu
 {
     private final String listName;
 
