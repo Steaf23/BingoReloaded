@@ -10,7 +10,6 @@ import io.github.steaf23.bingoreloaded.core.event.BingoCardTaskCompleteEvent;
 import io.github.steaf23.bingoreloaded.core.event.BingoStatisticCompletedEvent;
 import io.github.steaf23.bingoreloaded.core.tasks.*;
 import io.github.steaf23.bingoreloaded.gui.CardMenu;
-import io.github.steaf23.bingoreloaded.item.tasks.*;
 import io.github.steaf23.bingoreloaded.core.tasks.statistics.BingoStatistic;
 import io.github.steaf23.bingoreloaded.core.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.core.player.BingoTeam;
