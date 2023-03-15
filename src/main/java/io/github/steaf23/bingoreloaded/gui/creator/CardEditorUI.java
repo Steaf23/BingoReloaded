@@ -20,13 +20,15 @@ import java.util.List;
 public class CardEditorUI extends PaginatedPickerMenu
 {
     public final String cardName;
+    public final BingoCardsData cardsData;
     private static final InventoryItem ADD_LIST = new InventoryItem(51, Material.EMERALD, "" + ChatColor.GREEN + ChatColor.BOLD + "Add Item List", "");
     private ListValueEditorGUI valueEditorGUI;
 
-    public CardEditorUI(String cardName, MenuInventory parent)
+    public CardEditorUI(String cardName, MenuInventory parent, BingoCardsData cardsData)
     {
         super(new ArrayList<>(), "Editing '" + cardName + "'", parent, FilterType.DISPLAY_NAME);
         this.cardName = cardName;
+        this.cardsData = cardsData;
         addOption(ADD_LIST);
     }
 
@@ -39,12 +41,12 @@ public class CardEditorUI extends PaginatedPickerMenu
         String listName = clickedOption.getItemMeta().getDisplayName();
         if (event.getClick() == ClickType.LEFT)
         {
-            valueEditorGUI = new ListValueEditorGUI(this, listName, BingoCardsData.getListMax(cardName, listName), BingoCardsData.getListMin(cardName, listName));
+            valueEditorGUI = new ListValueEditorGUI(this, listName, cardsData.getListMax(cardName, listName), cardsData.getListMin(cardName, listName));
             valueEditorGUI.open(player);
         }
         else if (event.getClick() == ClickType.RIGHT)
         {
-            BingoCardsData.removeList(cardName, listName);
+            cardsData.removeList(cardName, listName);
             updateCardDisplay();
         }
     }
@@ -57,10 +59,10 @@ public class CardEditorUI extends PaginatedPickerMenu
         if (slotClicked == ADD_LIST.getSlot())
         {
             List<InventoryItem> items = new ArrayList<>();
-            for (String listName : TaskListsData.getListNames())
+            for (String listName : cardsData.lists().getListNames())
             {
                 items.add(new InventoryItem(Material.PAPER, listName,
-                        "This list contains " + TaskListsData.getTasks(listName).size() + " task(s)",
+                        "This list contains " + cardsData.lists().getTasks(listName).size() + " task(s)",
                         ChatColor.GRAY + "Click to select"));
             }
 
@@ -84,7 +86,7 @@ public class CardEditorUI extends PaginatedPickerMenu
 
     public void getResultFromPicker(String result)
     {
-        BingoCardsData.setList(cardName, result, TaskListsData.getTasks(result).size(), 1);
+        cardsData.setList(cardName, result, cardsData.lists().getTasks(result).size(), 1);
     }
 
     @Override
@@ -99,13 +101,13 @@ public class CardEditorUI extends PaginatedPickerMenu
         clearItems();
 
         List<InventoryItem> newItems = new ArrayList<>();
-        for (String listName : BingoCardsData.getLists(cardName))
+        for (String listName : cardsData.getListNames(cardName))
         {
             InventoryItem item = new InventoryItem(Material.MAP, listName,
-                    "This list contains " + TaskListsData.getTasks(listName).size() + " task(s)",
+                    "This list contains " + cardsData.lists().getTasks(listName).size() + " task(s)",
                     ChatColor.GRAY + "Left-click to edit distribution",
                     ChatColor.GRAY + "Right-click to remove this list");
-            item.setAmount(Math.max(1, BingoCardsData.getListMax(cardName, listName)));
+            item.setAmount(Math.max(1, cardsData.getListMax(cardName, listName)));
             newItems.add(item);
         }
 

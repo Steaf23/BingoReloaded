@@ -1,5 +1,6 @@
 package io.github.steaf23.bingoreloaded.gui.creator;
 
+import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.core.data.TranslationData;
 import io.github.steaf23.bingoreloaded.gui.base.MenuInventory;
 import io.github.steaf23.bingoreloaded.gui.base.TreeMenu;
@@ -26,7 +27,7 @@ public class StatisticPickerUI extends TreeMenu
     public String listName;
 
     protected static final InventoryItem BG_ITEM = new InventoryItem(Material.BLACK_STAINED_GLASS_PANE, " ", "");
-    protected static final InventoryItem QUIT = new InventoryItem(49, Material.REDSTONE, "" + ChatColor.RED + ChatColor.BOLD + TranslationData.translate("menu.save_exit"), "");
+    protected static final InventoryItem QUIT = new InventoryItem(49, Material.REDSTONE, "" + ChatColor.RED + ChatColor.BOLD + BingoReloaded.data().translationData.translate("menu.save_exit"), "");
 
     public StatisticPickerUI(MenuInventory parent, String listName)
     {

@@ -2,7 +2,6 @@ package io.github.steaf23.bingoreloaded.util;
 
 import io.github.steaf23.bingoreloaded.core.BingoGame;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
-import io.github.steaf23.bingoreloaded.BingoGameManager;
 import io.github.steaf23.bingoreloaded.core.data.TranslationData;
 import io.github.steaf23.bingoreloaded.core.player.BingoTeam;
 import me.clip.placeholderapi.PlaceholderAPI;
@@ -49,16 +48,12 @@ public class Message
         this("");
     }
 
-    public Message(String translatePath)
+    /**
+     * @param text Arguments can be supplied using {n} where n is the index of the argument in the order of when they are added to this Message
+     */
+    public Message(String text)
     {
-        if (translatePath != "")
-        {
-            this.raw = TranslationData.translate(translatePath);
-        }
-        else
-        {
-            this.raw = "";
-        }
+        this.raw = text;
         this.args = new ArrayList<>();
         this.base = new TextComponent();
     }
@@ -179,12 +174,8 @@ public class Message
         finalMessage = prefixedBase;
     }
 
-    public void sendAll(String worldName)
+    public void sendAll(BingoGame game)
     {
-        if (!BingoGameManager.get().doesGameWorldExist(worldName))
-            return;
-
-        BingoGame game = BingoGameManager.get().getGame(worldName);
         if (game == null)
             return;
 
@@ -219,11 +210,13 @@ public class Message
     public static void log(String text)
     {
         Bukkit.getConsoleSender().sendMessage(PREFIX_STRING.replace("Ⓡ", "R") + ": " + text);
+//        BingoLogger.log("Message", text);
     }
 
     public static void log(String text, String worldName)
     {
         Bukkit.getConsoleSender().sendMessage(PREFIX_STRING.replace("Ⓡ", "R") + "(" + worldName + "): " + text);
+//        BingoLogger.log("Message", "(" + worldName + "): " + text);
     }
 
 
@@ -326,10 +319,10 @@ public class Message
 
     public static TextComponent[] createHoverCommandMessage(@NonNull String translatePath, @Nullable String command)
     {
-        TextComponent prefix = new TextComponent(TranslationData.translate(translatePath + ".prefix"));
-        TextComponent hoverable = new TextComponent(TranslationData.translate(translatePath + ".hoverable"));
-        TextComponent hover = new TextComponent(TranslationData.translate(translatePath + ".hover"));
-        TextComponent suffix = new TextComponent(TranslationData.translate(translatePath + ".suffix"));
+        TextComponent prefix = new TextComponent(BingoReloaded.data().translationData.translate(translatePath + ".prefix"));
+        TextComponent hoverable = new TextComponent(BingoReloaded.data().translationData.translate(translatePath + ".hoverable"));
+        TextComponent hover = new TextComponent(BingoReloaded.data().translationData.translate(translatePath + ".hover"));
+        TextComponent suffix = new TextComponent(BingoReloaded.data().translationData.translate(translatePath + ".suffix"));
 
         if (command != null)
         {

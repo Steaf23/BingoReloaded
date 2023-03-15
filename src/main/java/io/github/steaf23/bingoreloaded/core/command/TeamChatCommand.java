@@ -2,10 +2,11 @@ package io.github.steaf23.bingoreloaded.core.command;
 
 import io.github.steaf23.bingoreloaded.*;
 import io.github.steaf23.bingoreloaded.core.BingoGame;
+import io.github.steaf23.bingoreloaded.core.BingoGameManager;
 import io.github.steaf23.bingoreloaded.core.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.core.player.BingoTeam;
 import io.github.steaf23.bingoreloaded.core.player.TeamManager;
-import io.github.steaf23.bingoreloaded.util.Message;
+import io.github.steaf23.bingoreloaded.util.TranslatedMessage;
 import org.bukkit.Bukkit;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.command.Command;
@@ -23,10 +24,12 @@ import java.util.List;
 
 public class TeamChatCommand implements Listener, CommandExecutor
 {
+    private final BingoGameManager manager;
     private final List<BingoPlayer> enabledPlayers;
 
-    public TeamChatCommand()
+    public TeamChatCommand(BingoGameManager manager)
     {
+        this.manager = manager;
         this.enabledPlayers = new ArrayList<>();
 
         Plugin plugin = Bukkit.getPluginManager().getPlugin(BingoReloaded.NAME);
@@ -38,7 +41,7 @@ public class TeamChatCommand implements Listener, CommandExecutor
     @EventHandler
     public void onPlayerSendMessage(final AsyncPlayerChatEvent event)
     {
-        BingoGame game = BingoGameManager.get().getGame(BingoGameManager.getWorldName(event.getPlayer().getWorld()));
+        BingoGame game = manager.getGame(BingoGameManager.getWorldName(event.getPlayer().getWorld()));
         if (game == null)
             return;
 
@@ -74,7 +77,7 @@ public class TeamChatCommand implements Listener, CommandExecutor
     {
         if (commandSender instanceof Player p)
         {
-            BingoGame game = BingoGameManager.get().getGame(BingoGameManager.getWorldName(p.getWorld()));
+            BingoGame game = manager.getGame(BingoGameManager.getWorldName(p.getWorld()));
             if (game == null)
                 return false;
 
@@ -82,19 +85,19 @@ public class TeamChatCommand implements Listener, CommandExecutor
             BingoPlayer player = teamManager.getBingoPlayer(p);
             if (!teamManager.getParticipants().contains(player))
             {
-                new Message("game.team.no_chat").color(ChatColor.RED).send(p);
+                new TranslatedMessage("game.team.no_chat").color(ChatColor.RED).send(p);
                 return false;
             }
 
             if (enabledPlayers.contains(player))
             {
                 enabledPlayers.remove(player);
-                new Message("game.team.chat_off").color(ChatColor.GREEN).arg("/btc").send(p);
+                new TranslatedMessage("game.team.chat_off").color(ChatColor.GREEN).arg("/btc").send(p);
             }
             else
             {
                 enabledPlayers.add(player);
-                new Message("game.team.chat_on").color(ChatColor.GREEN).arg("/btc").send(p);
+                new TranslatedMessage("game.team.chat_on").color(ChatColor.GREEN).arg("/btc").send(p);
             }
         }
         return false;

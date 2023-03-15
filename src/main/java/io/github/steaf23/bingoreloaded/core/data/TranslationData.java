@@ -1,5 +1,6 @@
 package io.github.steaf23.bingoreloaded.core.data;
 
+import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.item.ItemText;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -12,11 +13,11 @@ import java.util.regex.Pattern;
 
 public class TranslationData
 {
-    private static final YmlDataManager LANGUAGE = new YmlDataManager(ConfigData.instance.language);
-    private static final YmlDataManager FALLBACK = new YmlDataManager("en_us.yml");
+    private final YmlDataManager language = new YmlDataManager(BingoReloaded.get(), BingoReloaded.config().language);
+    private final YmlDataManager fallbackLanguage = new YmlDataManager(BingoReloaded.get(), "en_us.yml");
     private static final Pattern HEX_PATTERN = Pattern.compile("\\{#[a-fA-F0-9]{6}\\}");
 
-    public static String translate(String key, String... args)
+    public String translate(String key, String... args)
     {
         String rawTranslation = get(key);
         rawTranslation = convertColors(rawTranslation);
@@ -35,7 +36,7 @@ public class TranslationData
      * @return An array of itemText where each element is a line,
      *  where each line is defined by '\n' in the translated string.
      */
-    public static ItemText[] translateToItemText(String key, Set<ChatColor> modifiers, ItemText... args)
+    public ItemText[] translateToItemText(String key, Set<ChatColor> modifiers, ItemText... args)
     {
         //TODO: fix issue where raw translations cannot convert the colors defined in lang files properly on items
         String rawTranslation = get(key);
@@ -68,12 +69,12 @@ public class TranslationData
         return result.toArray(new ItemText[]{});
     }
 
-    public static String itemName(String key)
+    public String itemName(String key)
     {
         return translate(key + ".name");
     }
 
-    public static String[] itemDescription(String key)
+    public String[] itemDescription(String key)
     {
         return translate(key + ".desc").split("\\n");
     }
@@ -99,14 +100,14 @@ public class TranslationData
         return part;
     }
 
-    private static String get(String path)
+    private String get(String path)
     {
-        String def = ChatColor.GRAY + "-- No translation for \"" + path + "\" in " + ConfigData.instance.language + " --";
+        String def = ChatColor.GRAY + "-- No translation for \"" + path + "\" in " + BingoReloaded.config().language + " --";
         // avoid weird MemorySection String prints instead of translation failed message.
-        if (LANGUAGE.getConfig().getConfigurationSection(path) == null)
-            return LANGUAGE.getConfig().getString(path, def);
-        else if (FALLBACK.getConfig().getConfigurationSection(path) == null)
-            return FALLBACK.getConfig().getString(path, def);
+        if (language.getConfig().getConfigurationSection(path) == null)
+            return language.getConfig().getString(path, def);
+        else if (fallbackLanguage.getConfig().getConfigurationSection(path) == null)
+            return fallbackLanguage.getConfig().getString(path, def);
         return def;
     }
 }

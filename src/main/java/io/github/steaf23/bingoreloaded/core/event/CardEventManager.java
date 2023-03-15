@@ -1,7 +1,6 @@
 package io.github.steaf23.bingoreloaded.core.event;
 
 import io.github.steaf23.bingoreloaded.core.BingoGame;
-import io.github.steaf23.bingoreloaded.BingoGameManager;
 import io.github.steaf23.bingoreloaded.core.cards.BingoCard;
 import io.github.steaf23.bingoreloaded.core.cards.LockoutBingoCard;
 import io.github.steaf23.bingoreloaded.core.player.BingoPlayer;
@@ -19,7 +18,6 @@ import java.util.List;
 public class CardEventManager
 {
     private final List<BingoCard> cards;
-
     private String worldName;
 
     public CardEventManager(String worldName)
@@ -34,9 +32,8 @@ public class CardEventManager
         this.cards.addAll(newCards);
     }
 
-    public void handlePlayerAdvancementCompleted(final PlayerAdvancementDoneEvent event)
+    public void handlePlayerAdvancementCompleted(final PlayerAdvancementDoneEvent event, final BingoGame game)
     {
-        BingoGame game = BingoGameManager.get().getActiveGame(worldName);
         if (game == null)
             return;
 
@@ -55,9 +52,8 @@ public class CardEventManager
         }
     }
 
-    public void handlePlayerDroppedItem(final PlayerDropItemEvent event)
+    public void handlePlayerDroppedItem(final PlayerDropItemEvent event, final BingoGame game)
     {
-        BingoGame game = BingoGameManager.get().getActiveGame(worldName);
         if (game == null)
             return;
 
@@ -76,9 +72,8 @@ public class CardEventManager
         }
     }
 
-    public void handlePlayerPickupItem(final EntityPickupItemEvent event)
+    public void handlePlayerPickupItem(final EntityPickupItemEvent event, final BingoGame game)
     {
-        BingoGame game = BingoGameManager.get().getActiveGame(worldName);
         if (game == null || !(event.getEntity() instanceof Player p))
             return;
 
@@ -97,9 +92,8 @@ public class CardEventManager
         }
     }
 
-    public void handleInventoryClicked(final InventoryClickEvent event)
+    public void handleInventoryClicked(final InventoryClickEvent event, final BingoGame game)
     {
-        BingoGame game = BingoGameManager.get().getActiveGame(worldName);
         if (game == null || !(event.getWhoClicked() instanceof Player p))
             return;
 
@@ -129,9 +123,8 @@ public class CardEventManager
         }
     }
 
-    public void handleStatisticCompleted(final BingoStatisticCompletedEvent event)
+    public void handleStatisticCompleted(final BingoStatisticCompletedEvent event, final BingoGame game)
     {
-        BingoGame game = BingoGameManager.get().getActiveGame(worldName);
         if (game == null)
             return;
 

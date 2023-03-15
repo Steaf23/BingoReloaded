@@ -1,7 +1,7 @@
 package io.github.steaf23.bingoreloaded.gui;
 
+import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.core.BingoSettings;
-import io.github.steaf23.bingoreloaded.core.data.TranslationData;
 import io.github.steaf23.bingoreloaded.gui.base.InventoryItem;
 import io.github.steaf23.bingoreloaded.gui.base.MenuInventory;
 import io.github.steaf23.bingoreloaded.util.GUIPreset5x9;
@@ -19,12 +19,11 @@ public class EffectOptionsMenu extends MenuInventory
 {
     private final BingoSettings settings;
     private final EnumSet<EffectOptionFlags> flags;
-
     private final InventoryItem[] options;
 
     public EffectOptionsMenu(MenuInventory parent, BingoSettings settings)
     {
-        super(45, TranslationData.translate("menu.options.effects.name"), parent);
+        super(45, BingoReloaded.data().translationData.translate("menu.options.effects.name"), parent);
         this.settings = settings;
 
         options = new InventoryItem[]{
@@ -39,7 +38,7 @@ public class EffectOptionsMenu extends MenuInventory
                 new InventoryItem(GUIPreset5x9.FIVE_TOP_WIDE.positions[4],
                         Material.FEATHER, ""),
                 new InventoryItem(44, Material.DIAMOND,
-                        "" + ChatColor.AQUA + ChatColor.BOLD + TranslationData.translate("menu.save_exit"))
+                        "" + ChatColor.AQUA + ChatColor.BOLD + BingoReloaded.data().translationData.translate("menu.save_exit"))
         };
         fillOptions(options);
 
@@ -84,13 +83,13 @@ public class EffectOptionsMenu extends MenuInventory
             {
                 if (flags.contains(EffectOptionFlags.values()[i]))
                 {
-                    meta.setDisplayName("" + ChatColor.GREEN + ChatColor.BOLD + EffectOptionFlags.values()[i].name + " " + TranslationData.translate("menu.effects.enabled"));
-                    meta.setLore(List.of(ChatColor.GREEN + TranslationData.translate("menu.effects.disable")));
+                    meta.setDisplayName("" + ChatColor.GREEN + ChatColor.BOLD + EffectOptionFlags.values()[i].name + " " + BingoReloaded.data().translationData.translate("menu.effects.enabled"));
+                    meta.setLore(List.of(ChatColor.GREEN + BingoReloaded.data().translationData.translate("menu.effects.disable")));
                 }
                 else
                 {
-                    meta.setDisplayName("" + ChatColor.RED + ChatColor.BOLD + EffectOptionFlags.values()[i].name + " " + TranslationData.translate("menu.effects.disabled"));
-                    meta.setLore(List.of(ChatColor.RED + TranslationData.translate("menu.effects.enable")));
+                    meta.setDisplayName("" + ChatColor.RED + ChatColor.BOLD + EffectOptionFlags.values()[i].name + " " + BingoReloaded.data().translationData.translate("menu.effects.disabled"));
+                    meta.setLore(List.of(ChatColor.RED + BingoReloaded.data().translationData.translate("menu.effects.enable")));
                 }
             }
             options[i].setItemMeta(meta);

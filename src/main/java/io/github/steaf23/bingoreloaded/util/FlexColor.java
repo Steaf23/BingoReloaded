@@ -1,5 +1,6 @@
 package io.github.steaf23.bingoreloaded.util;
 
+import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.core.data.TranslationData;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Color;
@@ -53,7 +54,7 @@ public enum FlexColor
 
     public String getTranslatedName()
     {
-        return TranslationData.translate("teams." + name);
+        return BingoReloaded.data().translationData.translate("teams." + name);
     }
 
     public static FlexColor fromName(String name)

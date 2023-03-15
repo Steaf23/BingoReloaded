@@ -2,13 +2,13 @@ package io.github.steaf23.bingoreloaded.core.player;
 
 import io.github.steaf23.bingoreloaded.*;
 import io.github.steaf23.bingoreloaded.core.BingoGame;
+import io.github.steaf23.bingoreloaded.core.BingoGameManager;
 import io.github.steaf23.bingoreloaded.core.data.BingoStatType;
-import io.github.steaf23.bingoreloaded.core.data.BingoStatsData;
-import io.github.steaf23.bingoreloaded.core.data.ConfigData;
 import io.github.steaf23.bingoreloaded.gui.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.item.ItemCooldownManager;
 import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.bingoreloaded.util.PDCHelper;
+import io.github.steaf23.bingoreloaded.util.TranslatedMessage;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.TranslatableComponent;
 import org.bukkit.*;
@@ -26,17 +26,29 @@ import java.util.Optional;
 import java.util.UUID;
 
 /**
- * This Record describes a player in a game of bingo.
- * The same BingoPlayer instance can be used for multiple games
- * as long as they are taking place in the same world and the player stays in the same team.
- * This record will still exist if the player leaves the game/world.
- * This record will exist during at least the currently ongoing game.
- * @param playerId UUID of the player
- * @param team Team of the player
- * @param worldName World name of the game this player can play in.
+ * This class describes a player in a game of bingo.
+ * This class will still exist if the player leaves the game/world.
+ * This class will exist only exist during the currently ongoing game.
  */
-public record BingoPlayer(UUID playerId, BingoTeam team, String worldName, String playerName, String displayName)
+public class BingoPlayer
 {
+    public final UUID playerId;
+    public final BingoTeam team;
+    public final BingoGame game;
+    public final String playerName;
+    public final String displayName;
+    private final ItemCooldownManager itemCooldowns;
+
+    public BingoPlayer(Player player, BingoTeam team, BingoGame game)
+    {
+        this.playerId = player.getUniqueId();
+        this.team = team;
+        this.game = game;
+        this.playerName = player.getName();
+        this.displayName = player.getDisplayName();
+        this.itemCooldowns = new ItemCooldownManager();
+    }
+
     @Nullable
     public Optional<Player> gamePlayer()
     {
@@ -44,7 +56,7 @@ public record BingoPlayer(UUID playerId, BingoTeam team, String worldName, Strin
             return Optional.ofNullable(null);
 
         Player player = Bukkit.getPlayer(playerId);
-        if (!BingoGameManager.getWorldName(player.getWorld()).equals(worldName))
+        if (!BingoGameManager.getWorldName(player.getWorld()).equals(game.getWorldName()))
         {
             return Optional.ofNullable(null);
         }
@@ -69,7 +81,7 @@ public record BingoPlayer(UUID playerId, BingoTeam team, String worldName, Strin
 
         Player player = gamePlayer().get();
 
-        Message.log("Giving kit to " + player.getDisplayName(), worldName);
+        Message.log("Giving kit to " + player.getDisplayName(), game.getWorldName());
 
         var items = kit.getItems(team.getColor());
         player.closeInventory();
@@ -99,7 +111,7 @@ public record BingoPlayer(UUID playerId, BingoTeam team, String worldName, Strin
 
         Player player = gamePlayer().get();
 
-        Message.log("Giving card to " + player.getDisplayName(), worldName);
+        Message.log("Giving card to " + player.getDisplayName(), game.getWorldName());
 
         BingoReloaded.scheduleTask(task -> {
             for (ItemStack itemStack : player.getInventory())
@@ -123,7 +135,7 @@ public record BingoPlayer(UUID playerId, BingoTeam team, String worldName, Strin
         takeEffects(false);
         Player player = gamePlayer().get();
 
-        Message.log("Giving effects to " + player.getDisplayName(), worldName);
+        Message.log("Giving effects to " + player.getDisplayName(), game.getWorldName());
 
         BingoReloaded.scheduleTask(task -> {
             if (effects.contains(EffectOptionFlags.NIGHT_VISION))
@@ -136,7 +148,7 @@ public record BingoPlayer(UUID playerId, BingoTeam team, String worldName, Strin
                 player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 100000, 1, false, false));
             player.addPotionEffect(new PotionEffect(PotionEffectType.SATURATION, 2, 100, false, false));
             player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 2, 100, false, false));
-            player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, BingoReloaded.ONE_SECOND * ConfigData.instance.gracePeriod, 100, false, false));
+            player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, BingoReloaded.ONE_SECOND * BingoReloaded.config().gracePeriod, 100, false, false));
         });
     }
 
@@ -150,7 +162,7 @@ public record BingoPlayer(UUID playerId, BingoTeam team, String worldName, Strin
         {
             if (offline().isOnline())
             {
-                Message.log("Taking effects from " + asOnlinePlayer().get().getDisplayName(), worldName);
+                Message.log("Taking effects from " + asOnlinePlayer().get().getDisplayName(), game.getWorldName());
 
                 for (PotionEffectType effect : PotionEffectType.values())
                 {
@@ -163,7 +175,7 @@ public record BingoPlayer(UUID playerId, BingoTeam team, String worldName, Strin
             if (gamePlayer().isEmpty())
                 return;
 
-            Message.log("Taking effects from " + asOnlinePlayer().get().getDisplayName(), worldName);
+            Message.log("Taking effects from " + asOnlinePlayer().get().getDisplayName(), game.getWorldName());
 
             for (PotionEffectType effect : PotionEffectType.values())
             {
@@ -180,7 +192,7 @@ public record BingoPlayer(UUID playerId, BingoTeam team, String worldName, Strin
         String itemKey = deathMatchItem.isBlock() ? "block" : "item";
         itemKey += ".minecraft." + deathMatchItem.getKey().getKey();
 
-        new Message("game.item.deathmatch").color(ChatColor.GOLD)
+        new TranslatedMessage("game.item.deathmatch").color(ChatColor.GOLD)
                 .component(new TranslatableComponent(itemKey))
                 .send(gamePlayer().get());
     }
@@ -194,27 +206,27 @@ public record BingoPlayer(UUID playerId, BingoTeam team, String worldName, Strin
         if (!PlayerKit.wandItem.isKeyEqual(wand))
             return false;
 
-        if (!ItemCooldownManager.isCooldownOver(playerId, wand))
+        if (!itemCooldowns.isCooldownOver(wand))
         {
-            double timeLeft = ItemCooldownManager.getTimeLeft(playerId, wand) / 1000.0;
-            new Message("game.item.cooldown").color(ChatColor.RED).arg(String.format("%.2f", timeLeft)).send(player);
+            double timeLeft = itemCooldowns.getTimeLeft(wand) / 1000.0;
+            new TranslatedMessage("game.item.cooldown").color(ChatColor.RED).arg(String.format("%.2f", timeLeft)).send(player);
             return false;
         }
 
         BingoReloaded.scheduleTask(task -> {
-            ItemCooldownManager.addCooldown(playerId, wand, (int)(ConfigData.instance.wandCooldown * 1000));
+            itemCooldowns.addCooldown(wand, (int)(BingoReloaded.config().wandCooldown * 1000));
 
             double distance = 0.0;
             double fallDistance = 5.0;
             // Use the wand
             if (gamePlayer().get().isSneaking())
             {
-                distance = -ConfigData.instance.wandDown;
+                distance = -BingoReloaded.config().wandDown;
                 fallDistance = 0.0;
             }
             else
             {
-                distance = ConfigData.instance.wandUp + 5;
+                distance = BingoReloaded.config().wandUp + 5;
                 fallDistance = 5.0;
             }
 
@@ -227,12 +239,12 @@ public record BingoPlayer(UUID playerId, BingoTeam team, String worldName, Strin
 
             BingoReloaded.scheduleTask(laterTask -> {
                 BingoGame.removePlatform(newLocation, 1);
-            }, Math.max(0, ConfigData.instance.platformLifetime) * BingoReloaded.ONE_SECOND);
+            }, Math.max(0, BingoReloaded.config().platformLifetime) * BingoReloaded.ONE_SECOND);
 
             player.playSound(player, Sound.ENTITY_SHULKER_TELEPORT, 0.8f, 1.0f);
             player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, BingoReloaded.ONE_SECOND * 10, 100, false, false));
 
-            BingoStatsData.incrementPlayerStat(player, BingoStatType.WAND_USES);
+            BingoReloaded.data().statsData.incrementPlayerStat(player, BingoStatType.WAND_USES);
         });
         return true;
     }
@@ -240,6 +252,6 @@ public record BingoPlayer(UUID playerId, BingoTeam team, String worldName, Strin
     @Nullable
     public BingoTeam getTeam()
     {
-        return team().players.contains(this) ? team() : null;
+        return team.players.contains(this) ? team : null;
     }
 }

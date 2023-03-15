@@ -50,12 +50,12 @@ public class BingoTeam
     public void addPlayer(BingoPlayer player)
     {
         players.add(player);
-        team.addEntry(player.playerId().toString());
+        team.addEntry(player.playerId.toString());
     }
 
     public void removePlayer(BingoPlayer player)
     {
         players.remove(player);
-        team.removeEntry(player.playerId().toString());
+        team.removeEntry(player.playerId.toString());
     }
 }

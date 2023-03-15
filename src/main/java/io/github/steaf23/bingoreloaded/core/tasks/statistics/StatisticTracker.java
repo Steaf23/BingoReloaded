@@ -1,7 +1,8 @@
 package io.github.steaf23.bingoreloaded.core.tasks.statistics;
 
 import io.github.steaf23.bingoreloaded.core.BingoGame;
-import io.github.steaf23.bingoreloaded.BingoGameManager;
+import io.github.steaf23.bingoreloaded.core.BingoGameManager;
+import io.github.steaf23.bingoreloaded.core.player.TeamManager;
 import io.github.steaf23.bingoreloaded.core.tasks.BingoTask;
 import io.github.steaf23.bingoreloaded.core.tasks.StatisticTask;
 import io.github.steaf23.bingoreloaded.core.player.BingoPlayer;
@@ -66,9 +67,8 @@ public class StatisticTracker
         statistics.clear();
     }
 
-    public void handleStatisticIncrement(final PlayerStatisticIncrementEvent event)
+    public void handleStatisticIncrement(final PlayerStatisticIncrementEvent event, BingoGame game)
     {
-        BingoGame game = BingoGameManager.get().getActiveGame(worldName);
         if (game == null)
             return;
 

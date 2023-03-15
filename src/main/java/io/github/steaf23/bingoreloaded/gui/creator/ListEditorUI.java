@@ -1,5 +1,6 @@
 package io.github.steaf23.bingoreloaded.gui.creator;
 
+import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.core.data.TranslationData;
 import io.github.steaf23.bingoreloaded.core.tasks.AdvancementTask;
 import io.github.steaf23.bingoreloaded.core.tasks.BingoTask;
@@ -27,7 +28,7 @@ public class ListEditorUI extends TreeMenu
     private static final InventoryItem ADVANCEMENTS = new InventoryItem(GUIPreset5x9.THREE_CENTER.positions[1], Material.ENDER_EYE, TITLE_PREFIX + "Advancements", "Click to add or remove advancements");
     private static final InventoryItem STATISTICS = new InventoryItem(GUIPreset5x9.THREE_CENTER.positions[2], Material.GLOBE_BANNER_PATTERN, TITLE_PREFIX + "Statistics", "Click to add or remove statistics");
 
-    private static final InventoryItem SAVE = new InventoryItem(49, Material.REDSTONE, "" + ChatColor.RED + ChatColor.BOLD + TranslationData.translate("menu.save_exit"));
+    private static final InventoryItem SAVE = new InventoryItem(49, Material.REDSTONE, "" + ChatColor.RED + ChatColor.BOLD + BingoReloaded.data().translationData.translate("menu.save_exit"));
     private static final InventoryItem BLANK = new InventoryItem(Material.BLACK_STAINED_GLASS_PANE, " ", "");
 
     public ListEditorUI(String listName, MenuInventory parent)

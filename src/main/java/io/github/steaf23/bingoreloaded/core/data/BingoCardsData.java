@@ -1,5 +1,6 @@
 package io.github.steaf23.bingoreloaded.core.data;
 
+import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.core.tasks.ItemTask;
 import io.github.steaf23.bingoreloaded.core.tasks.TaskData;
 import org.bukkit.Material;
@@ -8,12 +9,13 @@ import java.util.*;
 
 public class BingoCardsData
 {
+    private final TaskListsData listsData = new TaskListsData();
     public static final int MAX_ITEMS = 36;
     public static final int MIN_ITEMS = 1;
 
-    private static final YmlDataManager data = new YmlDataManager("cards.yml");
+    private final YmlDataManager data = new YmlDataManager(BingoReloaded.get(), "cards.yml");
 
-    public static boolean removeCard(String cardName)
+    public boolean removeCard(String cardName)
     {
         if (!data.getConfig().contains(cardName))
             return false;
@@ -23,7 +25,7 @@ public class BingoCardsData
         return true;
     }
 
-    public static boolean duplicateCard(String cardName)
+    public boolean duplicateCard(String cardName)
     {
         if (!data.getConfig().contains(cardName))
             return false;
@@ -34,7 +36,7 @@ public class BingoCardsData
         return true;
     }
 
-    public static boolean renameCard(String cardName, String newName)
+    public boolean renameCard(String cardName, String newName)
     {
         var defaultCards = List.of("default_card");
         if (defaultCards.contains(cardName) || defaultCards.contains(newName))
@@ -51,22 +53,22 @@ public class BingoCardsData
         return true;
     }
 
-    public static Set<String> getCardNames()
+    public Set<String> getCardNames()
     {
         return data.getConfig().getKeys(false);
     }
 
-    public static int getListMax(String cardName, String listName)
+    public int getListMax(String cardName, String listName)
     {
         return data.getConfig().getInt(cardName + "." + listName + ".max", MAX_ITEMS);
     }
 
-    public static int getListMin(String cardName, String listName)
+    public int getListMin(String cardName, String listName)
     {
         return data.getConfig().getInt(cardName + "." + listName + ".min", MIN_ITEMS);
     }
 
-    public static void setList(String cardName, String listName, int max, int min)
+    public void setList(String cardName, String listName, int max, int min)
     {
         data.getConfig().createSection(cardName + "." + listName, new HashMap<>(){{
             put("max", max);
@@ -75,15 +77,15 @@ public class BingoCardsData
         data.saveConfig();
     }
 
-    public static void removeList(String cardName, String listName)
+    public void removeList(String cardName, String listName)
     {
         data.getConfig().set(cardName + "." + listName, null);
     }
 
-    public static ItemTask getRandomItemTask(String cardName)
+    public ItemTask getRandomItemTask(String cardName)
     {
         List<TaskData> tasks = new ArrayList<>();
-        getLists(cardName).forEach((l) -> tasks.addAll(TaskListsData.getItemTasks(l)));
+        getListNames(cardName).forEach((l) -> tasks.addAll(listsData.getItemTasks(l)));
 
         List<TaskData> allItemTasks = tasks.stream().filter(task -> task instanceof ItemTask).toList();
 
@@ -93,7 +95,7 @@ public class BingoCardsData
             return new ItemTask(Material.DIAMOND_HOE, 1);
     }
 
-    public static Set<String> getLists(String cardName)
+    public Set<String> getListNames(String cardName)
     {
         if (data.getConfig().getConfigurationSection(cardName) == null)
             return new HashSet<>();
@@ -103,17 +105,22 @@ public class BingoCardsData
         }
     }
 
-    public static List<String> getListsSortedByMin(String cardName)
+    public List<String> getListsSortedByMin(String cardName)
     {
         List<String> result = new ArrayList<>(data.getConfig().getConfigurationSection(cardName).getKeys(false));
         result.sort((a, b) -> Integer.compare(getListMin(cardName, a), getListMin(cardName, b)));
         return result;
     }
 
-    public static List<String> getListsSortedByMax(String cardName)
+    public List<String> getListsSortedByMax(String cardName)
     {
         List<String> result = new ArrayList<>(data.getConfig().getConfigurationSection(cardName).getKeys(false));
         result.sort((a, b) -> Integer.compare(getListMax(cardName, a), getListMax(cardName, b)));
         return result;
+    }
+
+    public TaskListsData lists()
+    {
+        return listsData;
     }
 }

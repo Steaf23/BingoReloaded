@@ -1,7 +1,8 @@
 package io.github.steaf23.bingoreloaded.core.player;
 
 import io.github.steaf23.bingoreloaded.*;
-import io.github.steaf23.bingoreloaded.core.data.TranslationData;
+import io.github.steaf23.bingoreloaded.core.BingoGame;
+import io.github.steaf23.bingoreloaded.core.BingoGameManager;
 import io.github.steaf23.bingoreloaded.core.event.BingoPlayerJoinEvent;
 import io.github.steaf23.bingoreloaded.core.event.BingoPlayerLeaveEvent;
 import io.github.steaf23.bingoreloaded.gui.base.MenuInventory;
@@ -12,6 +13,7 @@ import io.github.steaf23.bingoreloaded.core.cards.LockoutBingoCard;
 import io.github.steaf23.bingoreloaded.gui.base.InventoryItem;
 import io.github.steaf23.bingoreloaded.util.FlexColor;
 import io.github.steaf23.bingoreloaded.util.Message;
+import io.github.steaf23.bingoreloaded.util.TranslatedMessage;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -30,15 +32,13 @@ public class TeamManager
 {
     private final Set<BingoTeam> activeTeams;
     private final Scoreboard teams;
-    private int maximumTeamSize;
-    private String worldName;
+    private final BingoGame game;
 
-    public TeamManager(Scoreboard board, String worldName)
+    public TeamManager(Scoreboard board, BingoGame game)
     {
         this.activeTeams = new HashSet<>();
         this.teams = board;
-        this.worldName = worldName;
-        this.maximumTeamSize = BingoGameManager.get().getGameSettings(worldName).maxTeamSize;
+        this.game = game;
 
         createTeams();
     }
@@ -50,7 +50,7 @@ public class TeamManager
      */
     public BingoTeam getTeamOfPlayer(BingoPlayer player)
     {
-        return player.team();
+        return player.getTeam();
     }
 
     @Nullable
@@ -58,7 +58,7 @@ public class TeamManager
     {
         for (BingoPlayer participant : getParticipants())
         {
-            if (participant.playerId().equals(player.getUniqueId()))
+            if (participant.playerId.equals(player.getUniqueId()))
             {
                 return participant;
             }
@@ -68,9 +68,9 @@ public class TeamManager
 
     public void openTeamSelector(Player player, MenuInventory parentUI)
     {
-        if (BingoGameManager.get().isGameWorldActive(worldName))
+        if (game.isInProgress())
         {
-            new Message("game.team.no_join").color(ChatColor.RED).send(player);
+            new TranslatedMessage("game.team.no_join").color(ChatColor.RED).send(player);
             return;
         }
 
@@ -80,7 +80,7 @@ public class TeamManager
             optionItems.add(new InventoryItem(color.concrete, "" + color.chatColor + ChatColor.BOLD + color.getTranslatedName()));
         }
 
-        PaginatedPickerMenu teamPicker = new PaginatedPickerMenu(optionItems, TranslationData.itemName("menu.options.team"), parentUI, FilterType.DISPLAY_NAME)
+        PaginatedPickerMenu teamPicker = new PaginatedPickerMenu(optionItems, BingoReloaded.data().translationData.itemName("menu.options.team"), parentUI, FilterType.DISPLAY_NAME)
         {
             @Override
             public void onOptionClickedDelegate(InventoryClickEvent event, InventoryItem clickedOption, Player player)
@@ -111,7 +111,7 @@ public class TeamManager
             return false;
         }
 
-        if (BingoGameManager.get().isGameWorldActive(worldName) && !activeTeams.stream().anyMatch(t -> t.getColor().name.equals(teamName)))
+        if (game.isInProgress() && !activeTeams.stream().anyMatch(t -> t.getColor().name.equals(teamName)))
         {
             Message.error("Team " + color.getTranslatedName() + " is not playing in this game of bingo!");
             return false;
@@ -127,6 +127,7 @@ public class TeamManager
             return false;
         }
 
+        int maximumTeamSize = game.maximumTeamSize;
         if (bingoTeam.players.size() == maximumTeamSize)
         {
             Message.error("Team " + color.getTranslatedName() + " has reached it's capacity of " + maximumTeamSize + " players!");
@@ -134,13 +135,13 @@ public class TeamManager
         }
 
         team.addEntry(player.getName());
-        new Message("game.team.join").color(ChatColor.GREEN)
+        new TranslatedMessage("game.team.join").color(ChatColor.GREEN)
                 .arg(bingoTeam.getColoredName().asLegacyString())
                 .send(player);
 
-        BingoPlayer bingoPlayer = new BingoPlayer(player.getUniqueId(), bingoTeam, worldName, player.getName(), player.getDisplayName());
+        BingoPlayer bingoPlayer = new BingoPlayer(player, bingoTeam, game);
         bingoTeam.addPlayer(bingoPlayer);
-        var event = new BingoPlayerJoinEvent(bingoPlayer, worldName);
+        var event = new BingoPlayerJoinEvent(bingoPlayer);
         Bukkit.getPluginManager().callEvent(event);
         return true;
     }
@@ -150,7 +151,7 @@ public class TeamManager
         if (!getParticipants().contains(player))
             return;
 
-        var event = new BingoPlayerLeaveEvent(player, worldName);
+        var event = new BingoPlayerLeaveEvent(player);
         Bukkit.getPluginManager().callEvent(event);
 
         getTeamOfPlayer(player).removePlayer(player);
@@ -210,7 +211,7 @@ public class TeamManager
             {
                 for (var player : t.getPlayers())
                 {
-                    if (player.playerId().equals(p.getUniqueId()))
+                    if (player.playerId.equals(p.getUniqueId()))
                     {
                         players.add(player);
                         found = true;
@@ -315,11 +316,6 @@ public class TeamManager
         Message.log("Successfully created 16 teams");
     }
 
-    public String getWorldName()
-    {
-        return worldName;
-    }
-
     public void handlePlayerJoinsServer(final PlayerJoinEvent event)
     {
         BingoPlayer player = getBingoPlayer(event.getPlayer());
@@ -328,48 +324,49 @@ public class TeamManager
 
         Player onlinePlayer = player.gamePlayer().get();
 
-        if (BingoGameManager.get().isGameWorldActive(worldName))
+        if (game.isInProgress())
         {
             if (getParticipants().contains(player))
             {
-                new Message("game.player.join_back").send(onlinePlayer);
-                var joinEvent = new BingoPlayerJoinEvent(player, worldName);
+                new TranslatedMessage("game.player.join_back").send(onlinePlayer);
+                var joinEvent = new BingoPlayerJoinEvent(player);
                 Bukkit.getPluginManager().callEvent(joinEvent);
-                return;
             }
         }
     }
 
-    public void handlePlayerChangedWorld(final PlayerChangedWorldEvent event)
+    public void handlePlayerChangedWorld(final PlayerChangedWorldEvent event, BingoGameManager gameManager)
     {
         BingoPlayer player = getBingoPlayer(event.getPlayer());
         if (player == null)
             return;
 
         // If player is leaving this game's world(s)
-        if (BingoGameManager.get().doesGameWorldExist(event.getFrom()))
+        if (game.getWorldName().equals(BingoGameManager.getWorldName(event.getFrom())))
         {
-            if (BingoGameManager.getWorldName(event.getFrom()).equals(worldName))
-            {
-                player.getTeam().team.removeEntry(event.getPlayer().getName());
-                player.takeEffects(true);
-                var leaveEvent = new BingoPlayerLeaveEvent(player, worldName);
-                Bukkit.getPluginManager().callEvent(leaveEvent);
-            }
+            player.getTeam().team.removeEntry(event.getPlayer().getName());
+            player.takeEffects(true);
+            var leaveEvent = new BingoPlayerLeaveEvent(player);
+            Bukkit.getPluginManager().callEvent(leaveEvent);
             return;
         }
 
         World target = event.getPlayer().getWorld();
         // If player is arriving in this world
-        if (BingoGameManager.get().doesGameWorldExist(target))
+        if (gameManager.doesGameWorldExist(target))
         {
-            if (BingoGameManager.getWorldName(target).equals(worldName))
+            if (BingoGameManager.getWorldName(target).equals(game.getWorldName()))
             {
                 player.getTeam().team.addEntry(event.getPlayer().getName());
-                player.giveEffects(BingoGameManager.get().getGameSettings(worldName).effects);
-                var joinEvent = new BingoPlayerJoinEvent(player, worldName);
+                player.giveEffects(game.getSettings().effects);
+                var joinEvent = new BingoPlayerJoinEvent(player);
                 Bukkit.getPluginManager().callEvent(joinEvent);
             }
         }
+    }
+
+    public BingoGame getGame()
+    {
+        return game;
     }
 }

@@ -1,5 +1,6 @@
 package io.github.steaf23.bingoreloaded.core.tasks;
 
+import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.core.data.TranslationData;
 import io.github.steaf23.bingoreloaded.item.ItemText;
 import io.github.steaf23.bingoreloaded.util.Message;
@@ -40,7 +41,7 @@ public record AdvancementTask(Advancement advancement) implements TaskData
     @Override
     public ItemText[] getItemDescription()
     {
-        ItemText desc = new ItemText(TranslationData.translate("game.item.lore_advancement"), ChatColor.DARK_AQUA);
+        ItemText desc = new ItemText(BingoReloaded.data().translationData.translate("game.item.lore_advancement"), ChatColor.DARK_AQUA);
         return new ItemText[]{desc};
     }
 

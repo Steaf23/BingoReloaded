@@ -1,6 +1,7 @@
 package io.github.steaf23.bingoreloaded.core.data;
 
 import io.github.steaf23.bingoreloaded.core.player.PlayerKit;
+import io.github.steaf23.bingoreloaded.util.Message;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import javax.annotation.Nullable;
@@ -45,7 +46,7 @@ public class ConfigData
     public int wandDown;
     public double wandCooldown;
     public int platformLifetime;
-    public PlayerKit defaultKit;
+    public String defaultKit;
     public int gracePeriod;
     //TODO: Implement option
     public boolean resetPlayerItems;
@@ -62,9 +63,10 @@ public class ConfigData
     public boolean keepScoreboardVisible;
     public boolean showPlayerInScoreboard;
 
-    // TODO: make defaultBingoWorld: "world" config option
+    public boolean useStatistics;
+    public boolean useAdvancements;
 
-    public static final ConfigData instance = new ConfigData();
+    // TODO: make defaultBingoWorld: "world" config option
 
     public void loadConfig(FileConfiguration config)
     {
@@ -77,7 +79,7 @@ public class ConfigData
         this.wandDown = config.getInt("GoUpWand.downDistance", 5);
         this.wandCooldown = config.getDouble("GoUpWand.cooldown", 5.0);
         this.platformLifetime = config.getInt("GoUPWand.platformLifetime", 10);
-        this.defaultKit = PlayerKit.fromConfig(config.getString("defaultKit", "HARDCORE"));
+        this.defaultKit = config.getString("defaultKit", "HARDCORE");
         this.gracePeriod = config.getInt("gracePeriod", 30);
         this.resetPlayerItems = config.getBoolean("resetPlayerItems", true);
         this.resetPlayerPositions = config.getBoolean("resetPlayerPositions", true);
@@ -90,5 +92,7 @@ public class ConfigData
         this.sendCommandAfterGameEnded = config.getString("sendCommandAfterGameEnds", "");
         this.keepScoreboardVisible = config.getBoolean("keepScoreboardVisible", true);
         this.showPlayerInScoreboard = config.getBoolean("showPlayerInScoreboard", true);
+        this.useStatistics = false;
+        this.useAdvancements = false;
     }
 }

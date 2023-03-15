@@ -1,13 +1,11 @@
 package io.github.steaf23.bingoreloaded.core.cards;
 
-import io.github.steaf23.bingoreloaded.core.BingoGame;
-import io.github.steaf23.bingoreloaded.util.Message;
-import io.github.steaf23.bingoreloaded.BingoGameManager;
-import io.github.steaf23.bingoreloaded.core.data.TranslationData;
+import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.core.event.BingoCardTaskCompleteEvent;
 import io.github.steaf23.bingoreloaded.core.tasks.BingoTask;
 import io.github.steaf23.bingoreloaded.core.player.BingoTeam;
 import io.github.steaf23.bingoreloaded.core.player.TeamManager;
+import io.github.steaf23.bingoreloaded.util.TranslatedMessage;
 
 public class LockoutBingoCard extends BingoCard
 {
@@ -20,8 +18,8 @@ public class LockoutBingoCard extends BingoCard
         this.currentMaxTasks = size.fullCardSize;
         this.teamCount = teamCount;
 
-        menu.setInfo(TranslationData.itemName("menu.card.info_lockout"),
-                TranslationData.itemDescription("menu.card.info_lockout"));
+        menu.setInfo(BingoReloaded.data().translationData.itemName("menu.card.info_lockout"),
+                BingoReloaded.data().translationData.itemDescription("menu.card.info_lockout"));
     }
 
     // Lockout cards cannot be copied since it should be the same instance for every player.
@@ -44,13 +42,12 @@ public class LockoutBingoCard extends BingoCard
 
     public void onCardSlotCompleteEvent(final BingoCardTaskCompleteEvent event)
     {
-        BingoGame game = BingoGameManager.get().getActiveGame(event.worldName);
-        if (game == null)
+        if (event.game == null)
         {
             return;
         }
 
-        TeamManager teamManager = game.getTeamManager();
+        TeamManager teamManager = event.game.getTeamManager();
         // get the completeCount of the team with the most items.
         BingoTeam leadingTeam = teamManager.getLeadingTeam();
         BingoTeam losingTeam = teamManager.getLosingTeam();
@@ -66,9 +63,9 @@ public class LockoutBingoCard extends BingoCard
 
     public void dropTeam(BingoTeam team, TeamManager teamManager)
     {
-        new Message("game.team.dropped")
+        new TranslatedMessage("game.team.dropped")
                 .arg(team.getColoredName().asLegacyString())
-                .sendAll(teamManager.getWorldName());
+                .sendAll(teamManager.getGame());
         team.outOfTheGame = true;
         for (BingoTask task : tasks)
         {

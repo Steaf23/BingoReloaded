@@ -1,49 +1,41 @@
 package io.github.steaf23.bingoreloaded.gui.base;
 
-import io.github.steaf23.bingoreloaded.BingoGameManager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
+import org.bukkit.inventory.InventoryView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 
 /**
  * Listens to inventory events and propagates them to the created MenuInventories if opened
  */
 public class MenuEventListener implements Listener
 {
+    // Only react to events if precondition is true.
+    private final Function<InventoryView, Boolean> menuPrecondition;
     private static List<MenuInventory> inventories;
-
-    private static MenuEventListener INSTANCE;
-
-    public static MenuEventListener get()
-    {
-        if (INSTANCE == null)
-        {
-            INSTANCE = new MenuEventListener();
-        }
-        return INSTANCE;
-    }
 
     public static void addInventory(MenuInventory inventory)
     {
         inventories.add(inventory);
     }
 
-    private MenuEventListener()
+    public MenuEventListener(Function<InventoryView, Boolean> precondition)
     {
         inventories = new ArrayList<>();
+        this.menuPrecondition = precondition;
     }
 
     @EventHandler
     public void onInventoryClick(final InventoryClickEvent event)
     {
-        String worldName = BingoGameManager.getWorldName(event.getWhoClicked().getWorld());
-        if (!BingoGameManager.get().doesGameWorldExist(worldName))
+        if (!menuPrecondition.apply(event.getView()))
         {
             return;
         }
@@ -61,8 +53,7 @@ public class MenuEventListener implements Listener
     @EventHandler
     public void onInventoryDrag(final InventoryDragEvent event)
     {
-        String worldName = BingoGameManager.getWorldName(event.getWhoClicked().getWorld());
-        if (!BingoGameManager.get().doesGameWorldExist(worldName))
+        if (!menuPrecondition.apply(event.getView()))
         {
             return;
         }
@@ -80,8 +71,7 @@ public class MenuEventListener implements Listener
     @EventHandler
     public void onInventoryOpen(final InventoryOpenEvent event)
     {
-        String worldName = BingoGameManager.getWorldName(event.getPlayer().getWorld());
-        if (!BingoGameManager.get().doesGameWorldExist(worldName))
+        if (!menuPrecondition.apply(event.getView()))
         {
             return;
         }
@@ -99,8 +89,7 @@ public class MenuEventListener implements Listener
     @EventHandler
     public void onInventoryClose(final InventoryCloseEvent event)
     {
-        String worldName = BingoGameManager.getWorldName(event.getPlayer().getWorld());
-        if (!BingoGameManager.get().doesGameWorldExist(worldName))
+        if (!menuPrecondition.apply(event.getView()))
         {
             return;
         }

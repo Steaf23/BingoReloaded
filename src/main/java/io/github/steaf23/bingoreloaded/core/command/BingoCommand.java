@@ -1,17 +1,15 @@
 package io.github.steaf23.bingoreloaded.core.command;
 
+import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.core.BingoGame;
-import io.github.steaf23.bingoreloaded.BingoGameManager;
+import io.github.steaf23.bingoreloaded.core.BingoGameManager;
 import io.github.steaf23.bingoreloaded.core.data.TranslationData;
 import io.github.steaf23.bingoreloaded.core.player.PlayerKit;
-import io.github.steaf23.bingoreloaded.hologram.Hologram;
-import io.github.steaf23.bingoreloaded.hologram.HologramManager;
 import io.github.steaf23.bingoreloaded.util.Message;
-import io.github.steaf23.bingoreloaded.core.data.BingoStatsData;
-import io.github.steaf23.bingoreloaded.core.data.ConfigData;
 import io.github.steaf23.bingoreloaded.gui.BingoMenu;
 import io.github.steaf23.bingoreloaded.gui.creator.BingoCreatorUI;
 import io.github.steaf23.bingoreloaded.core.player.BingoPlayer;
+import io.github.steaf23.bingoreloaded.util.TranslatedMessage;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -21,12 +19,18 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
 public class BingoCommand implements CommandExecutor
 {
+    private final BingoGameManager manager;
+
+    public BingoCommand(BingoGameManager manager)
+    {
+        this.manager = manager;
+    }
+
     @Override
     public boolean onCommand(@NonNull CommandSender commandSender, @NonNull Command command, @NonNull String s, String[] args)
     {
@@ -36,31 +40,27 @@ public class BingoCommand implements CommandExecutor
         }
 
         String worldName = BingoGameManager.getWorldName(player.getWorld());
-        BingoGame activeGame = BingoGameManager.get().getActiveGame(worldName);
-        
+        BingoGame game = manager.getGame(worldName);
+
+        if (game == null)
+            return false;
+
         if (args.length == 0)
         {
-            if (!BingoGameManager.get().doesGameWorldExist(worldName))
-                return false;
-
-            BingoMenu.openOptions(player);
+            BingoMenu.openOptions(player, manager);
             return true;
         }
 
         switch (args[0])
         {
             case "join":
-                if (BingoGameManager.get().doesGameWorldExist(worldName))
-                {
-                    BingoGame existingGame = BingoGameManager.get().getGame(worldName);
-                    existingGame.getTeamManager().openTeamSelector(player, null);
-                }
+                game.getTeamManager().openTeamSelector(player, null);
                 break;
             case "leave":
-                if (activeGame != null)
+                if (game.isInProgress())
                 {
-                    BingoPlayer participant = activeGame.getTeamManager().getBingoPlayer(player);
-                    activeGame.playerQuit(participant);
+                    BingoPlayer participant = game.getTeamManager().getBingoPlayer(player);
+                    game.playerQuit(participant);
                 }
                 break;
 
@@ -70,35 +70,37 @@ public class BingoCommand implements CommandExecutor
                     if (args.length > 1)
                     {
                         int seed = Integer.parseInt(args[1]);
-                        BingoGameManager.get().getGameSettings(worldName).cardSeed = seed;
+                        game.getSettings().cardSeed = seed;
                     }
 
-                    BingoGameManager.get().startGame(worldName);
+                    manager.startGame(worldName);
                     return true;
                 }
                 break;
 
+
             case "end":
                 if (player.hasPermission("bingo.settings"))
-                    BingoGameManager.get().endGame(worldName);
+                    manager.endGame(worldName);
                 break;
 
+
             case "getcard":
-                if (activeGame != null)
+                if (game.isInProgress())
                 {
-                    BingoPlayer participant = activeGame.getTeamManager().getBingoPlayer(player);
+                    BingoPlayer participant = game.getTeamManager().getBingoPlayer(player);
                     if (participant != null)
-                        activeGame.returnCardToPlayer(participant);
+                        game.returnCardToPlayer(participant);
                     return true;
                 }
                 break;
 
             case "back":
-                if (activeGame != null)
+                if (game.isInProgress())
                 {
-                    if (ConfigData.instance.teleportAfterDeath)
+                    if (BingoReloaded.config().teleportAfterDeath)
                     {
-                        activeGame.teleportPlayerAfterDeath(player);
+                        game.teleportPlayerAfterDeath(player);
                         return true;
                     }
                 }
@@ -109,37 +111,37 @@ public class BingoCommand implements CommandExecutor
                 {
                     return false;
                 }
-                else if (activeGame == null)
+                else if (!game.isInProgress())
                 {
-                    new Message("command.bingo.no_deathmatch").color(ChatColor.RED).send(player);
+                    new TranslatedMessage("command.bingo.no_deathmatch").color(ChatColor.RED).send(player);
                     return false;
                 }
 
-                activeGame.startDeathMatch(3);
+                game.startDeathMatch(3);
                 return true;
 
             case "creator":
-                if (BingoGameManager.get().doesGameWorldExist(worldName) && player.hasPermission("bingo.manager"))
+                if (player.hasPermission("bingo.manager"))
                 {
-                    BingoCreatorUI creatorUI = new BingoCreatorUI(null);
+                    BingoCreatorUI creatorUI = new BingoCreatorUI(BingoReloaded.data().cardsData, null);
                     creatorUI.open(player);
                 }
                 break;
 
             case "stats":
-                Hologram holo = HologramManager.create("scoreboard", player.getLocation(), "LINE UNO", Message.PREFIX_STRING, "LINOS " + ChatColor.BOLD + "DOS is very long I can not see it because it goes into the sun lol");
+//                Hologram holo = BingoReloaded.holograms().create("scoreboard", player.getLocation(), "LINE UNO", Message.PREFIX_STRING, "LINOS " + ChatColor.BOLD + "DOS is very long I can not see it because it goes into the sun lol");
+//
+//                String path = "logo.png";
+//                try
+//                {
+//                    Hologram holo2 = BingoReloaded.holograms().createImage("logo", player.getLocation(), path, ChatColor.WHITE);
+//                } catch (IOException e)
+//                {
+//                    Message.log("NO IMAGE AT " + path);
+//                    throw new RuntimeException(e);
+//                }
 
-                String path = "logo.png";
-                try
-                {
-                    Hologram holo2 = HologramManager.createImage("logo", player.getLocation(), path, ChatColor.WHITE);
-                } catch (IOException e)
-                {
-                    Message.log("NO IMAGE AT " + path);
-                    throw new RuntimeException(e);
-                }
-
-                if (!ConfigData.instance.savePlayerStatistics)
+                if (!BingoReloaded.config().savePlayerStatistics)
                 {
                     TextComponent text = new TextComponent("Player statistics are not being tracked at this moment!");
                     text.setColor(ChatColor.RED);
@@ -149,11 +151,11 @@ public class BingoCommand implements CommandExecutor
                 Message msg;
                 if (args.length > 1 && player.hasPermission("bingo.admin"))
                 {
-                    msg = BingoStatsData.getPlayerStatsFormatted(args[1]);
+                    msg = BingoReloaded.data().statsData.getPlayerStatsFormatted(args[1]);
                 }
                 else
                 {
-                    msg = BingoStatsData.getPlayerStatsFormatted(player.getUniqueId());
+                    msg = BingoReloaded.data().statsData.getPlayerStatsFormatted(player.getUniqueId());
                 }
                 msg.send(player);
                 return true;
@@ -161,7 +163,7 @@ public class BingoCommand implements CommandExecutor
             case "destroy":
                 if (args.length > 1 && player.hasPermission("bingo.admin"))
                 {
-                    HologramManager.destroy(args[1]);
+                    BingoReloaded.holograms().destroy(args[1]);
                 }
                 break;
 
@@ -191,7 +193,7 @@ public class BingoCommand implements CommandExecutor
                 break;
 
             default:
-                new Message("command.use").color(ChatColor.RED).arg("/bingo [getcard | stats | start | end | join | back | leave | deathmatch | creator]").send(player);
+                new TranslatedMessage("command.use").color(ChatColor.RED).arg("/bingo [getcard | stats | start | end | join | back | leave | deathmatch | creator]").send(player);
                 break;
         }
 
@@ -281,6 +283,23 @@ public class BingoCommand implements CommandExecutor
         if (itemName.equals("wand"))
         {
             player.getInventory().addItem(PlayerKit.wandItem);
+        }
+    }
+
+    /**
+     * @param in
+     * @param defaultValue
+     * @return Integer the string represents or defaultValue if a conversion failed.
+     */
+    private int toInt(String in, int defaultValue)
+    {
+        try
+        {
+            return Integer.parseInt(in);
+        }
+        catch (NumberFormatException e)
+        {
+            return defaultValue;
         }
     }
 }

@@ -1,17 +1,18 @@
 package io.github.steaf23.bingoreloaded.core.event;
 
+import io.github.steaf23.bingoreloaded.core.BingoGame;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class BingoEvent extends Event
 {
-    public final String worldName;
+    public final BingoGame game;
     private static final HandlerList HANDLERS = new HandlerList();
 
-    protected BingoEvent(String worldName)
+    protected BingoEvent(BingoGame game)
     {
-        this.worldName = worldName;
+        this.game = game;
     }
 
     @NotNull

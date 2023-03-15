@@ -1,10 +1,6 @@
 package io.github.steaf23.bingoreloaded.core;
 
-
-import io.github.steaf23.bingoreloaded.BingoGameManager;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
-import io.github.steaf23.bingoreloaded.core.data.ConfigData;
-import io.github.steaf23.bingoreloaded.core.data.TranslationData;
 import io.github.steaf23.bingoreloaded.core.event.BingoPlayerJoinEvent;
 import io.github.steaf23.bingoreloaded.core.event.BingoPlayerLeaveEvent;
 import io.github.steaf23.bingoreloaded.core.player.BingoPlayer;
@@ -15,24 +11,21 @@ import io.github.steaf23.bingoreloaded.util.Message;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.scoreboard.Objective;
+import org.bukkit.scoreboard.Score;
 import org.bukkit.scoreboard.Scoreboard;
 
 public class BingoScoreboard
 {
     private final Scoreboard teamBoard;
     private final InfoScoreboard visualBoard;
-    private final TeamManager teamManager;
     private final Objective taskObjective;
+    private final BingoGame game;
 
-    public String worldName;
-
-    public BingoScoreboard(String worldName)
+    public BingoScoreboard(BingoGame game)
     {
+        this.game = game;
         this.teamBoard = Bukkit.getScoreboardManager().getNewScoreboard();
-        this.visualBoard = new InfoScoreboard("" + ChatColor.ITALIC + ChatColor.UNDERLINE + TranslationData.translate("menu.completed"), teamBoard);
-
-        this.teamManager = new TeamManager(teamBoard, worldName);
-        this.worldName = worldName;
+        this.visualBoard = new InfoScoreboard("" + ChatColor.ITALIC + ChatColor.UNDERLINE + BingoReloaded.data().translationData.translate("menu.completed"), teamBoard);
 
         this.taskObjective = teamBoard.registerNewObjective("item_count", "bingo_item_count");
 
@@ -41,7 +34,7 @@ public class BingoScoreboard
 
     public void updateTeamScores()
     {
-        if (!BingoGameManager.get().isGameWorldActive(worldName))
+        if (!game.isInProgress())
             return;
 
         BingoReloaded.scheduleTask(task ->
@@ -50,7 +43,7 @@ public class BingoScoreboard
             if (objective == null)
                 return;
 
-            for (BingoTeam t : teamManager.getActiveTeams())
+            for (BingoTeam t : game.getTeamManager().getActiveTeams())
             {
                 if (t.card != null)
                 {
@@ -65,7 +58,9 @@ public class BingoScoreboard
     {
         visualBoard.clearDisplay();
 
-        boolean condensedDisplay = !ConfigData.instance.showPlayerInScoreboard
+        TeamManager teamManager = game.getTeamManager();
+
+        boolean condensedDisplay = !BingoReloaded.config().showPlayerInScoreboard
                 || teamManager.getActiveTeams().size() + teamManager.getParticipants().size() > 13;
 
         visualBoard.setLineText(0, " ");
@@ -81,7 +76,7 @@ public class BingoScoreboard
             {
                 for (BingoPlayer player : team.getPlayers())
                 {
-                    String playerLine = "" + ChatColor.GRAY + ChatColor.BOLD + " ┗ " + ChatColor.RESET + player.displayName();
+                    String playerLine = "" + ChatColor.GRAY + ChatColor.BOLD + " ┗ " + ChatColor.RESET + player.displayName;
                     visualBoard.setLineText(lineIndex, playerLine);
                     lineIndex += 1;
                 }
@@ -102,7 +97,7 @@ public class BingoScoreboard
                 teamBoard.resetScores(entry);
             }
 
-            for (BingoPlayer p : teamManager.getParticipants())
+            for (BingoPlayer p : game.getTeamManager().getParticipants())
             {
                 if (p.gamePlayer().isPresent())
                     visualBoard.clearPlayerBoard(p.gamePlayer().get());
@@ -112,22 +107,18 @@ public class BingoScoreboard
         });
     }
 
-    public TeamManager getTeamManager()
+    public Scoreboard getTeamBoard()
     {
-        return teamManager;
+        return teamBoard;
     }
 
     public void handlePlayerJoin(final BingoPlayerJoinEvent event)
     {
-        Message.log("Player " + event.player.asOnlinePlayer().get().getDisplayName() + " joined the game", worldName);
-
         updatePlayerScoreboard(event.player);
     }
 
     public void handlePlayerLeave(final BingoPlayerLeaveEvent event)
     {
-        Message.log("Player " + event.player.asOnlinePlayer().get().getDisplayName() + " left the game", worldName);
-
         updatePlayerScoreboard(event.player);
     }
 

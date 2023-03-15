@@ -1,5 +1,6 @@
 package io.github.steaf23.bingoreloaded.core.tasks;
 
+import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.core.data.TranslationData;
 import io.github.steaf23.bingoreloaded.item.ItemText;
 import net.md_5.bungee.api.ChatColor;
@@ -41,7 +42,7 @@ public record ItemTask(Material material, int count) implements CountableTask
         Set<ChatColor> modifiers = new HashSet<>(){{
             add(ChatColor.DARK_AQUA);
         }};
-        return TranslationData.translateToItemText("game.item.lore", modifiers, new ItemText(Integer.toString(count)));
+        return BingoReloaded.data().translationData.translateToItemText("game.item.lore", modifiers, new ItemText(Integer.toString(count)));
     }
 
     @Override

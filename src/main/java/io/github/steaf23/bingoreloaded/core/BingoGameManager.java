@@ -1,7 +1,5 @@
-package io.github.steaf23.bingoreloaded;
+package io.github.steaf23.bingoreloaded.core;
 
-import io.github.steaf23.bingoreloaded.core.BingoGame;
-import io.github.steaf23.bingoreloaded.core.BingoSettings;
 import io.github.steaf23.bingoreloaded.core.event.BingoEndedEvent;
 import io.github.steaf23.bingoreloaded.core.event.BingoEventListener;
 import io.github.steaf23.bingoreloaded.util.Message;
@@ -13,21 +11,11 @@ import java.util.Map;
 
 public class BingoGameManager
 {
-    private static BingoGameManager INSTANCE;
     private Map<String, BingoSettings> templates;
     private Map<String, BingoGame> activeGames;
     private final BingoEventListener listener;
 
-    public static BingoGameManager get()
-    {
-        if (INSTANCE == null)
-        {
-            INSTANCE = new BingoGameManager();
-        }
-        return INSTANCE;
-    }
-
-    private BingoGameManager()
+    public BingoGameManager()
     {
         this.templates = new HashMap<>();
         this.activeGames = new HashMap<>();
@@ -49,7 +37,7 @@ public class BingoGameManager
 
         templates.put(worldName, new BingoSettings(worldName));
         getGameSettings(worldName).maxTeamSize = maxTeamMembers;
-        BingoGame newGame = new BingoGame(worldName);
+        BingoGame newGame = new BingoGame(worldName, maxTeamMembers);
         activeGames.put(worldName, newGame);
         return true;
     }
@@ -96,7 +84,7 @@ public class BingoGameManager
         }
 
         BingoGame game = activeGames.get(worldName);
-        var event = new BingoEndedEvent(game.getGameTime(), null, worldName);
+        var event = new BingoEndedEvent(game.getGameTime(), null, game);
         Bukkit.getPluginManager().callEvent(event);
         game.end();
         return true;

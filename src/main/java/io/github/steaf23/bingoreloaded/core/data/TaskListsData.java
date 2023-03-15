@@ -1,5 +1,6 @@
 package io.github.steaf23.bingoreloaded.core.data;
 
+import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.core.tasks.TaskData;
 
 import java.util.HashSet;
@@ -14,9 +15,9 @@ import java.util.stream.Collectors;
  */
 public class TaskListsData
 {
-    private static final YmlDataManager data = new YmlDataManager("lists.yml");
+    private final YmlDataManager data = new YmlDataManager(BingoReloaded.get(), "lists.yml");
 
-    public static Set<TaskData> getTasks(String listName)
+    public Set<TaskData> getTasks(String listName)
     {
         if (!data.getConfig().contains(listName + ".tasks"))
             return new HashSet<>();
@@ -25,17 +26,17 @@ public class TaskListsData
         return taskList;
     }
 
-    public static int getTaskCount(String listName)
+    public int getTaskCount(String listName)
     {
         return data.getConfig().getInt(listName + ".size", 0);
     }
 
-    public static Set<TaskData> getItemTasks(String listName)
+    public Set<TaskData> getItemTasks(String listName)
     {
         return getTasks(listName);
     }
 
-    public static void saveTasksFromGroup(String listName, List<TaskData> group, List<TaskData> tasksToSave)
+    public void saveTasksFromGroup(String listName, List<TaskData> group, List<TaskData> tasksToSave)
     {
         Set<TaskData> savedTasks = getTasks(listName);
         Set<TaskData> tasksToRemove = group.stream().filter(t ->
@@ -64,7 +65,7 @@ public class TaskListsData
         data.saveConfig();
     }
 
-    public static boolean removeList(String listName)
+    public boolean removeList(String listName)
     {
         if (!data.getConfig().contains(listName))
             return false;
@@ -74,7 +75,7 @@ public class TaskListsData
         return true;
     }
 
-    public static boolean duplicateList(String listName)
+    public boolean duplicateList(String listName)
     {
         if (!data.getConfig().contains(listName))
             return false;
@@ -85,7 +86,7 @@ public class TaskListsData
         return true;
     }
 
-    public static boolean renameList(String listName, String newName)
+    public boolean renameList(String listName, String newName)
     {
         var defaultLists = List.of("default_items", "default_advancements", "default_statistics");
         if (defaultLists.contains(listName) || defaultLists.contains(newName))
@@ -105,12 +106,12 @@ public class TaskListsData
     /**
      * @return All the list names present in the lists.yml file.
      */
-    public static Set<String> getListNames()
+    public Set<String> getListNames()
     {
         return data.getConfig().getKeys(false);
     }
 
-    public static TaskData getRandomTask(String listName)
+    public TaskData getRandomTask(String listName)
     {
         Set<TaskData> tasks = getTasks(listName);
         int idx = new Random().nextInt(tasks.size());

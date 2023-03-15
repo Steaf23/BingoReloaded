@@ -1,5 +1,6 @@
 package io.github.steaf23.bingoreloaded.core.data;
 
+import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.bingoreloaded.core.cards.BingoCard;
 import io.github.steaf23.bingoreloaded.core.cards.CardBuilder;
@@ -14,9 +15,9 @@ import org.bukkit.configuration.ConfigurationSection;
 @Deprecated
 public class RecoveryCardData
 {
-    private static final YmlDataManager data = new YmlDataManager("recovered.yml");
+    private final YmlDataManager data = new YmlDataManager(BingoReloaded.get(), "recovered.yml");
 
-    public static boolean loadCards(BingoGame game)
+    public boolean loadCards(BingoGame game)
     {
         boolean success = false;
         if (data.getConfig().getBoolean("ended")) return false;
@@ -46,13 +47,13 @@ public class RecoveryCardData
         return success;
     }
 
-    public static void writeDebug(String text)
+    public void writeDebug(String text)
     {
         data.getConfig().set("testString", text);
         data.saveConfig();
     }
 
-    public static boolean fillCard(TeamManager manager, BingoTeam team, BingoCard card)
+    public boolean fillCard(TeamManager manager, BingoTeam team, BingoCard card)
     {
 //        List<?> itemNames = data.getConfig().getList("cards." + team.getName());
 //        if (itemNames == null) return false;
@@ -83,7 +84,7 @@ public class RecoveryCardData
         return true;
     }
 
-    public static void saveCards(TeamManager manager, BingoGamemode mode, CardSize size)
+    public void saveCards(TeamManager manager, BingoGamemode mode, CardSize size)
     {
 //        data.getConfig().set("gamemode", mode.getDataName());
 //        data.getConfig().set("size", size.cardSize);
@@ -118,7 +119,7 @@ public class RecoveryCardData
 //        data.saveConfig();
     }
 
-    public static void markCardEnded(boolean value)
+    public void markCardEnded(boolean value)
     {
         data.getConfig().set("ended", value);
         data.saveConfig();

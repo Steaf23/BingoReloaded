@@ -1,5 +1,6 @@
 package io.github.steaf23.bingoreloaded.core.cards;
 
+import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.core.data.TranslationData;
 import io.github.steaf23.bingoreloaded.core.tasks.BingoTask;
 import io.github.steaf23.bingoreloaded.core.player.BingoTeam;
@@ -12,8 +13,8 @@ public class CompleteBingoCard extends BingoCard
     public CompleteBingoCard(CardSize size)
     {
         super(size);
-        menu.setInfo(TranslationData.itemName("menu.card.info_complete"),
-                TranslationData.itemDescription("menu.card.info_complete"));
+        menu.setInfo(BingoReloaded.data().translationData.itemName("menu.card.info_complete"),
+                BingoReloaded.data().translationData.itemDescription("menu.card.info_complete"));
     }
 
     @Override

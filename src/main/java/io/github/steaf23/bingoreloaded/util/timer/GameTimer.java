@@ -1,24 +1,60 @@
 package io.github.steaf23.bingoreloaded.util.timer;
 
+import io.github.steaf23.bingoreloaded.BingoReloaded;
+import io.github.steaf23.bingoreloaded.core.BingoGame;
 import io.github.steaf23.bingoreloaded.util.Message;
+import net.md_5.bungee.api.ChatColor;
+import org.bukkit.Bukkit;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.util.function.Consumer;
 
 public abstract class GameTimer
 {
     protected Consumer<Long> notifier;
+    protected final BingoGame game;
     private long time;
-    protected String worldName;
+    private BukkitTask task;
 
-    public abstract void start();
-    public abstract long pause();
-    public abstract long stop();
     public abstract Message getTimeDisplayMessage();
+    public abstract int getStartDelay();
+    public abstract int getUpdateInterval();
+    public abstract int getStep();
 
-    public GameTimer(String worldName)
+    public GameTimer(BingoGame game)
     {
-        this.worldName = worldName;
+        this.game = game;
+        this.time = 0;
     }
+
+    public void start()
+    {
+        this.task = Bukkit.getScheduler().runTaskTimer(BingoReloaded.get(), () -> {
+            updateTime(time + getStep());
+        }, getStartDelay(), getUpdateInterval());
+    }
+
+    public long pause()
+    {
+        //TODO: Add timer pauses
+        return getTime();
+    }
+
+    public long stop()
+    {
+        try
+        {
+            if (task != null)
+                task.cancel();
+        }
+        catch (IllegalStateException e)
+        {
+            Message.log(ChatColor.RED + "Timer couldn't be stopped since it never started!");
+            return -1;
+        }
+        return getTime();
+    }
+
     public long getTime()
     {
         return time;

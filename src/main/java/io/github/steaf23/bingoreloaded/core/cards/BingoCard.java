@@ -41,9 +41,9 @@ public class BingoCard
     {
         this.size = size;
         this.tasks = new ArrayList<>();
-        this.menu = new CardMenu(size, TranslationData.translate("menu.card.title"));
-        menu.setInfo(TranslationData.itemName("menu.card.info_regular"),
-                TranslationData.itemDescription("menu.card.info_regular"));
+        this.menu = new CardMenu(size, BingoReloaded.data().translationData.translate("menu.card.title"));
+        menu.setInfo(BingoReloaded.data().translationData.itemName("menu.card.info_regular"),
+                BingoReloaded.data().translationData.itemDescription("menu.card.info_regular"));
     }
 
     /**
@@ -57,8 +57,9 @@ public class BingoCard
      * @param cardName
      * @param seed
      */
-    public void generateCard(String cardName, int seed)
+    public void generateCard(String cardName, int seed, BingoCardsData cardsData)
     {
+        TaskListsData listsData = cardsData.lists();
         // Create shuffler
         Random shuffler;
         if (seed == 0)
@@ -72,21 +73,21 @@ public class BingoCard
 
         // Create ticketList
         List<String> ticketList = new ArrayList<>();
-        for (String listName : BingoCardsData.getListsSortedByMin(cardName))
+        for (String listName : cardsData.getListsSortedByMin(cardName))
         {
-            if (TaskListsData.getTasks(listName).size() == 0) // Skip empty task lists.
+            if (listsData.getTasks(listName).size() == 0) // Skip empty task lists.
             {
                 continue;
             }
-            for (int i = 0; i < BingoCardsData.getListMin(cardName, listName); i++)
+            for (int i = 0; i < cardsData.getListMin(cardName, listName); i++)
             {
                 ticketList.add(listName);
             }
         }
         List<String> overflowList = new ArrayList<>();
-        for (String listName : BingoCardsData.getLists(cardName))
+        for (String listName : cardsData.getListNames(cardName))
         {
-            for (int i = 0; i < BingoCardsData.getListMax(cardName, listName) - BingoCardsData.getListMin(cardName, listName); i++)
+            for (int i = 0; i < cardsData.getListMax(cardName, listName) - cardsData.getListMin(cardName, listName); i++)
             {
                 overflowList.add(listName);
             }
@@ -103,7 +104,7 @@ public class BingoCard
         {
             if (!allTasks.containsKey(listName))
             {
-                List<TaskData> listTasks = new ArrayList<>(TaskListsData.getTasks(listName));
+                List<TaskData> listTasks = new ArrayList<>(listsData.getTasks(listName));
                 if (listTasks.size() == 0) // Skip empty task lists.
                 {
                     continue;
@@ -249,7 +250,7 @@ public class BingoCard
 
     public void onPlayerCollectItem(final EntityPickupItemEvent event, final BingoPlayer player, final BingoGame game)
     {
-        if (player.team().outOfTheGame)
+        if (player.team.outOfTheGame)
             return;
 
         ItemStack stack = event.getItem().getItemStack();
@@ -269,7 +270,7 @@ public class BingoCard
 
     public void onPlayerDroppedItem(final PlayerDropItemEvent event, final BingoPlayer player, final BingoGame game)
     {
-        if (player.team().outOfTheGame)
+        if (player.team.outOfTheGame)
             return;
 
         BingoReloaded.scheduleTask(task -> {
@@ -301,7 +302,7 @@ public class BingoCard
             ItemTask data = (ItemTask)task.data;
             if (data.material().equals(item.getType()) && data.count() <= item.getAmount())
             {
-                if (!task.complete(player, game.getGameTime()))
+                if (!task.complete(player, game))
                 {
                     continue;
                 }
@@ -332,10 +333,10 @@ public class BingoCard
 
             if (data.advancement().equals(event.getAdvancement()))
             {
-                if (!task.complete(player, game.getGameTime()))
+                if (!task.complete(player, game))
                     continue;
 
-                var slotEvent = new BingoCardTaskCompleteEvent(task, player, hasBingo(player.team()));
+                var slotEvent = new BingoCardTaskCompleteEvent(task, player, hasBingo(player.team));
                 Bukkit.getPluginManager().callEvent(slotEvent);
                 break;
             }
@@ -360,7 +361,7 @@ public class BingoCard
             if (data.statistic().equals(new BingoStatistic(event.getStatistic(), event.getEntityType(), event.getMaterial())) &&
                 data.getCount() == event.getNewValue())
             {
-                if (!task.complete(player, game.getGameTime()))
+                if (!task.complete(player, game))
                     continue;
 
                 var slotEvent = new BingoCardTaskCompleteEvent(task, player, hasBingo(player.getTeam()));
@@ -386,7 +387,7 @@ public class BingoCard
             StatisticTask data = (StatisticTask)task.data;
             if (data.statistic().equals(event.stat))
             {
-                if (!task.complete(player, game.getGameTime()))
+                if (!task.complete(player, game))
                     continue;
 
                 var slotEvent = new BingoCardTaskCompleteEvent(task, player, hasBingo(player.getTeam()));

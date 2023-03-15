@@ -6,9 +6,9 @@ public class UpdateStatisticEvent extends BingoEvent
 {
     public final BingoPlayer player;
 
-    public UpdateStatisticEvent(BingoPlayer player, String worldName)
+    public UpdateStatisticEvent(BingoPlayer player)
     {
-        super(worldName);
+        super(player.game);
         this.player = player;
     }
 }

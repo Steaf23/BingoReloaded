@@ -1,14 +1,15 @@
 package io.github.steaf23.bingoreloaded;
 
+import io.github.steaf23.bingoreloaded.core.BingoGameManager;
 import io.github.steaf23.bingoreloaded.core.command.*;
 import io.github.steaf23.bingoreloaded.core.data.ConfigData;
-import io.github.steaf23.bingoreloaded.core.data.TranslationData;
+import io.github.steaf23.bingoreloaded.core.data.DataStorage;
 import io.github.steaf23.bingoreloaded.core.tasks.AdvancementTask;
 import io.github.steaf23.bingoreloaded.core.tasks.ItemTask;
 import io.github.steaf23.bingoreloaded.core.tasks.StatisticTask;
 import io.github.steaf23.bingoreloaded.gui.base.MenuEventListener;
 import io.github.steaf23.bingoreloaded.gui.base.InventoryItem;
-import io.github.steaf23.bingoreloaded.item.ItemCooldownManager;
+import io.github.steaf23.bingoreloaded.hologram.HologramManager;
 import io.github.steaf23.bingoreloaded.core.tasks.statistics.BingoStatistic;
 import io.github.steaf23.bingoreloaded.core.player.CustomKit;
 import io.github.steaf23.bingoreloaded.util.Message;
@@ -37,13 +38,19 @@ public class BingoReloaded extends JavaPlugin
     private static BingoReloaded instance;
     private BingoGameManager gameManager;
     private MenuEventListener menuManager;
+    private HologramManager hologramManager;
+    private ConfigData config;
+    private DataStorage dataStorage;
 
-    @Override
-    public void onEnable()
+
+    public BingoReloaded()
     {
         reloadConfig();
         saveDefaultConfig();
-        ConfigData.instance.loadConfig(this.getConfig());
+    }
+    @Override
+    public void onEnable()
+    {
         ConfigurationSerialization.registerClass(ItemTask.class);
         ConfigurationSerialization.registerClass(AdvancementTask.class);
         ConfigurationSerialization.registerClass(StatisticTask.class);
@@ -51,33 +58,37 @@ public class BingoReloaded extends JavaPlugin
         ConfigurationSerialization.registerClass(CustomKit.class);
         ConfigurationSerialization.registerClass(InventoryItem.class);
 
+        this.config = new ConfigData();
+        config.loadConfig(this.getConfig());
+
         this.usesPlaceholderAPI = Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null;
 
-        this.gameManager = BingoGameManager.get();
-        this.menuManager = MenuEventListener.get();
-
-        // create singletons.
-        ItemCooldownManager.create();
+        this.dataStorage = new DataStorage();
+        this.gameManager = new BingoGameManager();
+        this.menuManager = new MenuEventListener((view) -> {
+            return gameManager.doesGameWorldExist(view.getPlayer().getWorld());
+        });
+        this.hologramManager = new HologramManager();
 
         PluginCommand bingoCommand = getCommand("bingo");
         if (bingoCommand != null)
         {
-            bingoCommand.setExecutor(new BingoCommand());
+            bingoCommand.setExecutor(new BingoCommand(gameManager));
             bingoCommand.setTabCompleter( new BingoTabCompleter());
         }
 
         PluginCommand autoBingoCommand = getCommand("autobingo");
         if (autoBingoCommand != null)
         {
-            autoBingoCommand.setExecutor(new AutoBingoCommand());
-            autoBingoCommand.setTabCompleter(new AutoBingoTabCompleter());
+            autoBingoCommand.setExecutor(new AutoBingoCommand(gameManager));
+            autoBingoCommand.setTabCompleter(new AutoBingoTabCompleter(dataStorage.cardsData));
         }
 
-        if (ConfigData.instance.enableTeamChat)
+        if (config.enableTeamChat)
         {
             PluginCommand teamChatCommand = getCommand("btc");
             if (teamChatCommand != null)
-                teamChatCommand.setExecutor(new TeamChatCommand());
+                teamChatCommand.setExecutor(new TeamChatCommand(gameManager));
         }
 
 //        if (RecoveryCardData.loadCards(game))
@@ -88,10 +99,10 @@ public class BingoReloaded extends JavaPlugin
         registerListener(gameManager.getListener());
         registerListener(menuManager);
 
-        Message.log(TranslationData.translate("changed"));
+        Message.log(BingoReloaded.data().translationData.translate("changed"));
         Message.log(ChatColor.GREEN + "Enabled " + this.getName());
 
-        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "autobingo world create " + ConfigData.instance.defaultTeamSize);
+//        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "autobingo world create " + ConfigData.instance.defaultTeamSize);
 
     }
 
@@ -120,6 +131,21 @@ public class BingoReloaded extends JavaPlugin
         if (instance == null)
             instance = getPlugin(BingoReloaded.class);
         return instance;
+    }
+
+    public static ConfigData config()
+    {
+        return get().config;
+    }
+
+    public static HologramManager holograms()
+    {
+        return get().hologramManager;
+    }
+
+    public static DataStorage data()
+    {
+        return get().dataStorage;
     }
 
     public static void scheduleTask(@NotNull Consumer<BukkitTask> task)

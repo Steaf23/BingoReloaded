@@ -1,5 +1,6 @@
 package io.github.steaf23.bingoreloaded.core.tasks;
 
+import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.core.data.TranslationData;
 import io.github.steaf23.bingoreloaded.core.tasks.statistics.BingoStatistic;
 import io.github.steaf23.bingoreloaded.item.ItemText;
@@ -81,7 +82,7 @@ public record StatisticTask(BingoStatistic statistic, int count) implements Coun
         Set<ChatColor> modifiers = new HashSet<>(){{
             add(ChatColor.DARK_AQUA);
         }};
-        return TranslationData.translateToItemText("game.item.lore_statistic", modifiers);
+        return BingoReloaded.data().translationData.translateToItemText("game.item.lore_statistic", modifiers);
     }
 
     @Override

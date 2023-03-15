@@ -10,81 +10,50 @@ import java.util.UUID;
 
 public class ItemCooldownManager
 {
-    private static Map<UUID, Map<Material, Long>> cooldownMap;
+    private Map<Material, Long> cooldownMap;
 
-    private static ItemCooldownManager INSTANCE;
-
-    public static void addCooldown(UUID playerID, ItemStack item, long cooldownMs)
+    public ItemCooldownManager()
     {
-        if (!cooldownMap.containsKey(playerID))
-        {
-            cooldownMap.put(playerID, new HashMap<>());
-        }
-        cooldownMap.get(playerID).put(item.getType(), System.currentTimeMillis() + cooldownMs);
+        cooldownMap = new HashMap<>();
     }
 
-    public static long getTimeLeft(UUID playerID, ItemStack item)
+    public void addCooldown(ItemStack item, long cooldownMs)
+    {
+        cooldownMap.put(item.getType(), System.currentTimeMillis() + cooldownMs);
+    }
+
+    public long getTimeLeft(ItemStack item)
     {
         Material material = item.getType();
-        if (!cooldownMap.containsKey(playerID))
-        {
-            return 0;
-        }
-        if (!cooldownMap.get(playerID).containsKey(material))
+        if (!cooldownMap.containsKey(material))
         {
             return 0;
         }
 
         // remove cooldowns from the map if they ran out
-        long timeLeft = cooldownMap.get(playerID).get(material) - System.currentTimeMillis();
+        long timeLeft = cooldownMap.get(material) - System.currentTimeMillis();
         if (timeLeft == 0)
         {
-            cooldownMap.get(playerID).remove(material);
-            if (cooldownMap.get(playerID).size() == 0)
-            {
-                cooldownMap.remove(playerID);
-            }
+            cooldownMap.remove(material);
         }
 
         return timeLeft > 0 ? timeLeft : 0;
     }
 
-    public static boolean isCooldownOver(UUID player, ItemStack item)
+    public boolean isCooldownOver(ItemStack item)
     {
-        return getTimeLeft(player, item) == 0;
+        return getTimeLeft(item) == 0;
     }
 
-    public static void cancelCooldown(Player player, ItemStack item)
+    public void cancelCooldown(ItemStack item)
     {
-        UUID playerID = player.getUniqueId();
         Material material = item.getType();
-        if (!cooldownMap.containsKey(playerID))
-        {
-            return;
-        }
-        if (!cooldownMap.get(playerID).containsKey(material))
+        if (!cooldownMap.containsKey(material))
         {
             return;
         }
 
         // remove cooldowns from the map
-        cooldownMap.get(playerID).remove(material);
-        if (cooldownMap.get(playerID).size() == 0)
-        {
-            cooldownMap.remove(playerID);
-        }
-    }
-
-    public static void create()
-    {
-        if (INSTANCE == null)
-        {
-            INSTANCE = new ItemCooldownManager();
-        }
-    }
-
-    private ItemCooldownManager()
-    {
-        cooldownMap = new HashMap<>();
+        cooldownMap.remove(material);
     }
 }

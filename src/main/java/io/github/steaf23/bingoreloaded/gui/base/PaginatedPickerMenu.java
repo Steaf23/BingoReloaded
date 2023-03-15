@@ -1,5 +1,6 @@
 package io.github.steaf23.bingoreloaded.gui.base;
 
+import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.core.data.TranslationData;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
@@ -37,10 +38,10 @@ public abstract class PaginatedPickerMenu extends MenuInventory
     public FilterType filterType;
 
     protected static final InventoryItem BG_ITEM = new InventoryItem(Material.BLACK_STAINED_GLASS_PANE, " ", "");
-    protected static final InventoryItem NEXT = new InventoryItem(53, Material.STRUCTURE_VOID, "" + ChatColor.LIGHT_PURPLE + ChatColor.BOLD + TranslationData.translate("menu.next"), "");
-    protected static final InventoryItem PREVIOUS = new InventoryItem(45, Material.BARRIER, "" + ChatColor.LIGHT_PURPLE + ChatColor.BOLD + TranslationData.translate("menu.prev"), "");
-    protected static final InventoryItem CLOSE = new InventoryItem(49, Material.REDSTONE, "" + ChatColor.RED + ChatColor.BOLD + TranslationData.translate("menu.save_exit"), "");
-    protected static final InventoryItem FILTER = new InventoryItem(46, Material.SPYGLASS, TITLE_PREFIX + TranslationData.translate("menu.filter"), "");
+    protected static final InventoryItem NEXT = new InventoryItem(53, Material.STRUCTURE_VOID, "" + ChatColor.LIGHT_PURPLE + ChatColor.BOLD + BingoReloaded.data().translationData.translate("menu.next"), "");
+    protected static final InventoryItem PREVIOUS = new InventoryItem(45, Material.BARRIER, "" + ChatColor.LIGHT_PURPLE + ChatColor.BOLD + BingoReloaded.data().translationData.translate("menu.prev"), "");
+    protected static final InventoryItem CLOSE = new InventoryItem(49, Material.REDSTONE, "" + ChatColor.RED + ChatColor.BOLD + BingoReloaded.data().translationData.translate("menu.save_exit"), "");
+    protected static final InventoryItem FILTER = new InventoryItem(46, Material.SPYGLASS, TITLE_PREFIX + BingoReloaded.data().translationData.translate("menu.filter"), "");
 
     public PaginatedPickerMenu(List<InventoryItem> options, String title, MenuInventory parent, FilterType filterType)
     {

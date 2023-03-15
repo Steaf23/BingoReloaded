@@ -18,13 +18,15 @@ import java.util.List;
 // Uses a double ListPicker, one for cards and one for lists.
 public class BingoCreatorUI extends MenuInventory
 {
+    private final BingoCardsData cardsData;
     public static final InventoryItem CARD = new InventoryItem(11, Material.FILLED_MAP, TITLE_PREFIX + "Edit Cards", "Click to view and edit bingo cards!");
     public static final InventoryItem LIST = new InventoryItem(15, Material.PAPER, TITLE_PREFIX + "Edit Lists", "Click to view and edit bingo lists!");
 
-    public BingoCreatorUI(MenuInventory parent)
+    public BingoCreatorUI(BingoCardsData cardsData, MenuInventory parent)
     {
         super(27, "Card Creator", parent);
         fillOptions(CARD, LIST);
+        this.cardsData = cardsData;
     }
 
     @Override
@@ -44,10 +46,10 @@ public class BingoCreatorUI extends MenuInventory
                     clearItems();
 
                     List<InventoryItem> items = new ArrayList<>();
-                    for (String card : BingoCardsData.getCardNames())
+                    for (String card : cardsData.getCardNames())
                     {
                         InventoryItem item = new InventoryItem(Material.FILLED_MAP, card,
-                                "This card contains " + BingoCardsData.getLists(card).size() + " list(s)",
+                                "This card contains " + cardsData.getListNames(card).size() + " list(s)",
                                 ChatColor.GRAY + "Right-click for more options");
                         items.add(item);
                     }
@@ -89,14 +91,16 @@ public class BingoCreatorUI extends MenuInventory
                 public void handleOpen(final InventoryOpenEvent event)
                 {
                     super.handleOpen(event);
+                    TaskListsData listsData = cardsData.lists();
+
                     addOption(CREATE_LIST);
                     clearItems();
 
                     List<InventoryItem> items = new ArrayList<>();
-                    for (String list : TaskListsData.getListNames())
+                    for (String list : listsData.getListNames())
                     {
                         InventoryItem item = new InventoryItem(Material.PAPER, list,
-                                "This list contains " + TaskListsData.getTasks(list).size() + " tasks",
+                                "This list contains " + listsData.getTasks(list).size() + " tasks",
                                 ChatColor.GRAY + "Right-click for more options");
                         items.add(item);
                     }
@@ -132,7 +136,7 @@ public class BingoCreatorUI extends MenuInventory
 
     private void openCardEditor(String cardName, Player player)
     {
-        CardEditorUI editor = new CardEditorUI(cardName, this);
+        CardEditorUI editor = new CardEditorUI(cardName, this, cardsData);
         editor.open(player);
     }
 
@@ -162,16 +166,16 @@ public class BingoCreatorUI extends MenuInventory
     {
         ContextMenu menu = new ContextMenu("What to do with '" + cardName + "'", parent);
         menu.addAction("Remove", Material.BARRIER, (clickType) -> {
-            BingoCardsData.removeCard(cardName);
+            cardsData.removeCard(cardName);
             return true;
         });
         menu.addAction("Duplicate", Material.SHULKER_SHELL, (clickType) -> {
-            BingoCardsData.duplicateCard(cardName);
+            cardsData.duplicateCard(cardName);
             return true;
         });
         menu.addAction("Change Name", Material.NAME_TAG, (clickType) -> {
             UserInputMenu.open("Change name to", (input) -> {
-                BingoCardsData.renameCard(cardName, input);
+                cardsData.renameCard(cardName, input);
             }, player, parent, cardName);
             return false;
         });
@@ -180,18 +184,20 @@ public class BingoCreatorUI extends MenuInventory
 
     public void createListContext(String listName, Player player, MenuInventory parent)
     {
+        TaskListsData listsData = cardsData.lists();
+
         ContextMenu menu = new ContextMenu("What to do with '" + listName + "'", parent);
         menu.addAction("Remove", Material.BARRIER, (clickType) -> {
-            TaskListsData.removeList(listName);
+            listsData.removeList(listName);
             return true;
         });
         menu.addAction("Duplicate", Material.SHULKER_SHELL, (clickType) -> {
-            TaskListsData.duplicateList(listName);
+            listsData.duplicateList(listName);
             return true;
         });
         menu.addAction("Change Name", Material.NAME_TAG, (clickType) -> {
             UserInputMenu.open("Change name to", (input) -> {
-                TaskListsData.renameList(listName, input);
+                listsData.renameList(listName, input);
             }, player, parent, listName);
             return false;
         });

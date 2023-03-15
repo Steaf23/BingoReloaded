@@ -1,5 +1,8 @@
 package io.github.steaf23.bingoreloaded.core.data;
 
+import io.github.steaf23.bingoreloaded.BingoReloaded;
+import io.github.steaf23.bingoreloaded.hologram.Hologram;
+import io.github.steaf23.bingoreloaded.hologram.HologramManager;
 import io.github.steaf23.bingoreloaded.util.Message;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
@@ -12,11 +15,11 @@ import java.util.UUID;
 
 public class BingoStatsData
 {
-    private static final YmlDataManager data = new YmlDataManager("player_stats.yml");
+    private final YmlDataManager data = new YmlDataManager(BingoReloaded.get(), "player_stats.yml");
 
-    public static int getPlayerStat(UUID playerId, BingoStatType statType)
+    public int getPlayerStat(UUID playerId, BingoStatType statType)
     {
-        if (!ConfigData.instance.savePlayerStatistics)
+        if (!BingoReloaded.config().savePlayerStatistics)
         {
             return -1;
         }
@@ -32,14 +35,14 @@ public class BingoStatsData
         return Integer.parseInt(stats[statType.idx]);
     }
 
-    public static void incrementPlayerStat(Player player, BingoStatType statType)
+    public void incrementPlayerStat(Player player, BingoStatType statType)
     {
-        BingoStatsData.incrementPlayerStat(player.getUniqueId(), statType, 1);
+        incrementPlayerStat(player.getUniqueId(), statType, 1);
     }
 
-    public static void incrementPlayerStat(UUID playerId, BingoStatType statType, int by)
+    public void incrementPlayerStat(UUID playerId, BingoStatType statType, int by)
     {
-        if (!ConfigData.instance.savePlayerStatistics)
+        if (!BingoReloaded.config().savePlayerStatistics)
         {
             return;
         }
@@ -56,13 +59,13 @@ public class BingoStatsData
         setPlayerData(playerId, String.join(";", stats));
     }
 
-    public static String asScoreboard(int numEntries, @Nullable BingoStatType sortedBy)
+    public Hologram asHologram(int numEntries, @Nullable BingoStatType sortedBy)
     {
         //TODO: implement
-        return "";
+        return null;
     }
 
-    public static Message getPlayerStatsFormatted(UUID playerId)
+    public Message getPlayerStatsFormatted(UUID playerId)
     {
         String stats = getPlayerData(playerId);
         String[] statList = stats.split(";");
@@ -82,7 +85,7 @@ public class BingoStatsData
      * @param playerName
      * @return
      */
-    public static Message getPlayerStatsFormatted(String playerName)
+    public Message getPlayerStatsFormatted(String playerName)
     {
         UUID playerId = getPlayerUUID(playerName);
         if (playerId != null)
@@ -96,12 +99,12 @@ public class BingoStatsData
         }
     }
 
-    private static String getPlayerData(UUID playerId)
+    private String getPlayerData(UUID playerId)
     {
         return data.getConfig().getString(playerId.toString(), "0;0;0;0;0");
     }
 
-    private static UUID getPlayerUUID(String playerName)
+    private UUID getPlayerUUID(String playerName)
     {
         Map<String, Object>  playerData = data.getConfig().getValues(false);
         for (String recordName : playerData.keySet())
@@ -115,7 +118,7 @@ public class BingoStatsData
         return null;
     }
 
-    private static void setPlayerData(UUID playerId, String statData)
+    private void setPlayerData(UUID playerId, String statData)
     {
         data.getConfig().set(playerId.toString(), statData);
         data.saveConfig();

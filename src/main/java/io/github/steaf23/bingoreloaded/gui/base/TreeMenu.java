@@ -1,5 +1,6 @@
 package io.github.steaf23.bingoreloaded.gui.base;
 
+import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.core.data.TranslationData;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -11,7 +12,7 @@ import java.util.Map;
 
 public class TreeMenu extends MenuInventory
 {
-    private static final InventoryItem BACK = new InventoryItem(0, Material.BARRIER, TranslationData.itemName("menu.prev"));
+    private static final InventoryItem BACK = new InventoryItem(0, Material.BARRIER, BingoReloaded.data().translationData.itemName("menu.prev"));
     private final Map<InventoryItem, MenuInventory> options;
 
     public TreeMenu(String title, MenuInventory parent)

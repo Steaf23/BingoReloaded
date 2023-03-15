@@ -1,60 +1,46 @@
 package io.github.steaf23.bingoreloaded.util.timer;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
+import io.github.steaf23.bingoreloaded.core.BingoGame;
 import io.github.steaf23.bingoreloaded.util.Message;
+import io.github.steaf23.bingoreloaded.util.TranslatedMessage;
 import net.md_5.bungee.api.ChatColor;
+import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 
 public class CounterTimer extends GameTimer
 {
-    private BukkitRunnable runnable;
+    private BukkitTask task;
 
-    public CounterTimer(String worldName)
+    public CounterTimer(BingoGame game)
     {
-        super(worldName);
-    }
-
-    @Override
-    public void start()
-    {
-        updateTime(0);
-        runnable = new BukkitRunnable() {
-
-            @Override
-            public void run()
-            {
-                updateTime(getTime() + 1);
-            }
-        };
-        runnable.runTaskTimer(BingoReloaded.getPlugin(BingoReloaded.class), 0, 20);
-    }
-
-    @Override
-    public long pause()
-    {
-        return getTime();
-    }
-
-    @Override
-    public long stop()
-    {
-        try
-        {
-            if (runnable != null)
-                runnable.cancel();
-        }
-        catch (IllegalStateException e)
-        {
-            Message.log(ChatColor.RED + "Timer couldn't be stopped since it never started!");
-        }
-        return getTime();
+        super(game);
     }
 
     @Override
     public Message getTimeDisplayMessage()
     {
-        return new Message("game.timer.duration")
+        return new TranslatedMessage("game.timer.duration")
                 .color(ChatColor.AQUA).bold()
                 .arg(GameTimer.getTimeAsString(getTime())).color(ChatColor.WHITE);
+    }
+
+    @Override
+    public int getStartDelay()
+    {
+        return 0;
+    }
+
+    @Override
+    public int getUpdateInterval()
+    {
+        return BingoReloaded.ONE_SECOND;
+    }
+
+    @Override
+    public int getStep()
+    {
+        return 1;
     }
 }

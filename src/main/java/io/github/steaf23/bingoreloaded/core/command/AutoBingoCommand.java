@@ -2,9 +2,9 @@ package io.github.steaf23.bingoreloaded.core.command;
 
 import io.github.steaf23.bingoreloaded.*;
 import io.github.steaf23.bingoreloaded.core.BingoGame;
+import io.github.steaf23.bingoreloaded.core.BingoGameManager;
 import io.github.steaf23.bingoreloaded.core.BingoGamemode;
 import io.github.steaf23.bingoreloaded.core.BingoSettings;
-import io.github.steaf23.bingoreloaded.core.data.BingoCardsData;
 import io.github.steaf23.bingoreloaded.gui.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.core.cards.CardSize;
 import io.github.steaf23.bingoreloaded.core.player.BingoPlayer;
@@ -20,6 +20,13 @@ import org.jetbrains.annotations.NotNull;
 
 public class AutoBingoCommand implements CommandExecutor
 {
+    private final BingoGameManager manager;
+
+    public AutoBingoCommand(BingoGameManager manager)
+    {
+        this.manager = manager;
+    }
+
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String alias, @NotNull String[] args)
     {
@@ -34,7 +41,7 @@ public class AutoBingoCommand implements CommandExecutor
             return false;
         }
         String worldName = args[0];
-        BingoSettings settings = BingoGameManager.get().getGameSettings(worldName);
+        BingoSettings settings = manager.getGameSettings(worldName);
 
         // Create the actual game with settings in the world.
         if (settings == null)
@@ -78,7 +85,7 @@ public class AutoBingoCommand implements CommandExecutor
                     return true;
 
                 case "kit":
-                    if (!setKit(settings,args[2]))
+                    if (!setKit(settings,args[2], args[1]))
                     {
                         sendFailed("Could not find Kit with name '" + args[2] + "'!", worldName);
                         return false;
@@ -91,7 +98,7 @@ public class AutoBingoCommand implements CommandExecutor
                     // If argument count is only 1, enable all, none or just the single effect typed.
                     //     Else default enable effect unless the second argument is "false".
                     boolean enable = args.length > 3 && args[3].equals("false") ? false : true;
-                    if (!setEffect(settings, args[2], enable))
+                    if (!setEffect(settings, args[2], enable, args[1]))
                     {
                         sendFailed("Invalid effect setting '" + args[2] + "' to '" + enable + "'!", worldName);
                         return false;
@@ -105,7 +112,7 @@ public class AutoBingoCommand implements CommandExecutor
                         sendFailed("Invalid card name '" + args[2] + "'!", worldName);
                         return false;
                     }
-                    sendSuccess("Playing card set to " + settings.card + " with " +
+                    sendSuccess("Playing card set to " + settings.card + " with" +
                             (settings.cardSeed == 0 ? " no seed" : " seed " + settings.cardSeed), worldName);
                     return true;
 
@@ -155,12 +162,12 @@ public class AutoBingoCommand implements CommandExecutor
     public void create(String worldName, String maxTeamMembers)
     {
         int max = toInt(maxTeamMembers, 1);
-        BingoGameManager.get().createGame(worldName, Math.max(1, max));
+        manager.createGame(worldName, Math.max(1, max));
     }
 
     public void destroy(String worldName)
     {
-        BingoGameManager.get().destroyGame(worldName);
+        manager.destroyGame(worldName);
     }
 
     public boolean start(BingoSettings settings, String worldName, String gamemode, String cardSize)
@@ -183,14 +190,14 @@ public class AutoBingoCommand implements CommandExecutor
             return false;
         }
 
-        return BingoGameManager.get().startGame(worldName);
+        return manager.startGame(worldName);
     }
 
-    private boolean setKit(BingoSettings settings, String kitName)
+    private boolean setKit(BingoSettings settings, String kitName, String worldName)
     {
         try
         {
-            settings.setKit(PlayerKit.fromConfig(kitName));
+            settings.setKit(PlayerKit.fromConfig(kitName), manager.getGame(worldName));
             return true;
         }
         catch (IllegalArgumentException e)
@@ -200,16 +207,16 @@ public class AutoBingoCommand implements CommandExecutor
 
     }
 
-    public boolean setEffect(BingoSettings settings, String effect, boolean enable)
+    public boolean setEffect(BingoSettings settings, String effect, boolean enable, String worldName)
     {
         if (effect.equals("all"))
         {
-            settings.setEffects(EffectOptionFlags.ALL_ON);
+            settings.setEffects(EffectOptionFlags.ALL_ON, manager.getGame(worldName));
             return true;
         }
         else if (effect.equals("none"))
         {
-            settings.setEffects(EffectOptionFlags.ALL_OFF);
+            settings.setEffects(EffectOptionFlags.ALL_OFF, manager.getGame(worldName));
             return true;
         }
 
@@ -234,7 +241,7 @@ public class AutoBingoCommand implements CommandExecutor
     private boolean setCard(BingoSettings settings, String cardName, String cardSeed)
     {
         int seed = toInt(cardSeed, 0);
-        if (BingoCardsData.getCardNames().contains(cardName))
+        if (BingoReloaded.data().cardsData.getCardNames().contains(cardName))
         {
             settings.card = cardName;
             settings.cardSeed = seed;
@@ -276,13 +283,13 @@ public class AutoBingoCommand implements CommandExecutor
 
     public boolean setPlayerTeam(String worldName, String playerName, String teamName)
     {
-        if (!BingoGameManager.get().doesGameWorldExist(worldName))
+        if (!manager.doesGameWorldExist(worldName))
         {
             sendFailed("Cannot add player to team, world '" + worldName + "' is not a bingo world!", worldName);
             return false;
         }
 
-        BingoGame game = BingoGameManager.get().getGame(worldName);
+        BingoGame game = manager.getGame(worldName);
 
         Player player = Bukkit.getPlayer(playerName);
         if (player == null)
@@ -316,7 +323,7 @@ public class AutoBingoCommand implements CommandExecutor
 
     public boolean end(BingoSettings settings, String worldName)
     {
-        return BingoGameManager.get().endGame(worldName);
+        return manager.endGame(worldName);
     }
 
     /**

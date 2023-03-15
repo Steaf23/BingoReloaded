@@ -1,14 +1,15 @@
 package io.github.steaf23.bingoreloaded.core.event;
 
+import io.github.steaf23.bingoreloaded.core.BingoGame;
 import org.bukkit.event.HandlerList;
 
 public class CountdownTimerFinishedEvent extends BingoEvent
 {
     private static final HandlerList HANDLERS = new HandlerList();
 
-    public CountdownTimerFinishedEvent(String worldName)
+    public CountdownTimerFinishedEvent(BingoGame game)
     {
-        super(worldName);
+        super(game);
     }
 
     @Override

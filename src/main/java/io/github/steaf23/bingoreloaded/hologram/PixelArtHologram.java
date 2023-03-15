@@ -16,9 +16,9 @@ import java.util.List;
  */
 public class PixelArtHologram extends Hologram
 {
-    public PixelArtHologram(Location location, String imagePath, ChatColor backgroundColor) throws IOException
+    public PixelArtHologram(HologramManager manager, Location location, String imagePath, ChatColor backgroundColor) throws IOException
     {
-        super(location, linesFromImage(imagePath, backgroundColor));
+        super(manager, location, linesFromImage(imagePath, backgroundColor));
     }
 
     private static String[] linesFromImage(String path, ChatColor backgroundColor) throws IOException

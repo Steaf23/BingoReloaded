@@ -19,9 +19,9 @@ public class YmlDataManager
     private FileConfiguration dataConfig = null;
     private File configFile = null;
 
-    public YmlDataManager(String fileName)
+    public YmlDataManager(Plugin plugin, String fileName)
     {
-        this.plugin = Bukkit.getPluginManager().getPlugin(BingoReloaded.NAME);
+        this.plugin = plugin;
         this.fileName = fileName;
 
         try
