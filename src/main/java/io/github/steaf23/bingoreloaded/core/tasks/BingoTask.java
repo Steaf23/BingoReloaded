@@ -1,16 +1,14 @@
 package io.github.steaf23.bingoreloaded.core.tasks;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
-import io.github.steaf23.bingoreloaded.core.BingoGame;
 import io.github.steaf23.bingoreloaded.core.data.TranslationData;
+import io.github.steaf23.bingoreloaded.core.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.core.tasks.statistics.BingoStatistic;
 import io.github.steaf23.bingoreloaded.gui.base.InventoryItem;
 import io.github.steaf23.bingoreloaded.item.ItemText;
-import io.github.steaf23.bingoreloaded.core.player.BingoPlayer;
-import io.github.steaf23.bingoreloaded.util.TranslatedMessage;
-import io.github.steaf23.bingoreloaded.util.timer.GameTimer;
 import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.bingoreloaded.util.PDCHelper;
+import io.github.steaf23.bingoreloaded.util.timer.GameTimer;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -20,7 +18,10 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 
 public class BingoTask
 {
@@ -81,7 +82,7 @@ public class BingoTask
 
     public void setVoided(boolean value)
     {
-        if (value && completedBy.isEmpty())
+        if (isCompleted())
             return;
 
         voided = value;
@@ -89,41 +90,47 @@ public class BingoTask
 
     public boolean isVoided()
     {
-        return voided && completedBy.isPresent();
+        return voided;
+    }
+
+    public boolean isCompleted()
+    {
+        return completedBy.isPresent();
     }
 
     public InventoryItem asStack()
     {
+        TranslationData translator = BingoReloaded.get().getTranslator();
         ItemStack item;
 
         // Step 1: create the item and put the new name, description and material on it.
         if (isVoided()) // VOIDED TASK
         {
-            ItemText addedDesc = new ItemText(BingoReloaded.data().translationData.translate("game.team.voided",
+            ItemText addedDesc = new ItemText(translator.translate("game.team.voided",
                     completedBy.get().team.getColoredName().asLegacyString()), ChatColor.DARK_GRAY);
 
             ItemText itemName = new ItemText(ChatColor.DARK_GRAY, ChatColor.STRIKETHROUGH);
             itemName.addText("A", ChatColor.MAGIC);
-            itemName.add(data.getItemDisplayName());
+            itemName.add(data.getItemDisplayName(translator));
             itemName.addText("A", ChatColor.MAGIC);
 
             item = new ItemStack(Material.BEDROCK);
             ItemText.buildItemText(item, itemName, addedDesc);
         }
-        else if (completedBy.isPresent()) // COMPLETED TASK
+        else if (isCompleted()) // COMPLETED TASK
         {
             Material completeMaterial = completedBy.get().getTeam().getColor().glassPane;
 
             String timeString = GameTimer.getTimeAsString(completedAt);
 
             ItemText itemName = new ItemText(ChatColor.GRAY, ChatColor.STRIKETHROUGH);
-            itemName.add(data.getItemDisplayName());
+            itemName.add(data.getItemDisplayName(translator));
 
             Set<ChatColor> modifiers = new HashSet<>(){{
                 add(ChatColor.DARK_PURPLE);
                 add(ChatColor.ITALIC);
             }};
-            ItemText[] desc = BingoReloaded.data().translationData.translateToItemText("game.item.complete_lore", modifiers,
+            ItemText[] desc = translator.translateToItemText("game.item.complete_lore", modifiers,
                     new ItemText(completedBy.get().gamePlayer().get().getDisplayName(),
                             completedBy.get().getTeam().getColor().chatColor, ChatColor.BOLD),
                     new ItemText(timeString, ChatColor.GOLD));
@@ -142,12 +149,12 @@ public class BingoTask
         else // DEFAULT TASK
         {
             ItemText itemName = new ItemText(nameColor);
-            itemName.add(data.getItemDisplayName());
+            itemName.add(data.getItemDisplayName(translator));
 
             item = new ItemStack(material);
             ItemText.buildItemText(item,
                     itemName,
-                    data.getItemDescription());
+                    data.getItemDescription(translator));
 
             item.setAmount(data.getStackSize());
         }
@@ -214,20 +221,12 @@ public class BingoTask
         return PDCHelper.createKey("task." + property);
     }
 
-    public boolean complete(BingoPlayer player, BingoGame game)
+    public boolean complete(BingoPlayer player)
     {
         if (completedBy.isPresent())
             return false;
 
         completedBy = Optional.of(player);
-
-        String timeString = GameTimer.getTimeAsString(game.getGameTime());
-
-        new TranslatedMessage("game.item.completed").color(ChatColor.GREEN)
-                .component(data.getItemDisplayName().asComponent()).color(nameColor)
-                .arg(new ItemText(player.gamePlayer().get().getDisplayName(), player.team.getColor().chatColor, ChatColor.BOLD).asLegacyString())
-                .arg(timeString).color(ChatColor.WHITE)
-                .sendAll(game);
         return true;
     }
 

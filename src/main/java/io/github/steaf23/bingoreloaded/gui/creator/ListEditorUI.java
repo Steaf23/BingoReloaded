@@ -1,15 +1,13 @@
 package io.github.steaf23.bingoreloaded.gui.creator;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
-import io.github.steaf23.bingoreloaded.core.data.TranslationData;
 import io.github.steaf23.bingoreloaded.core.tasks.AdvancementTask;
 import io.github.steaf23.bingoreloaded.core.tasks.BingoTask;
 import io.github.steaf23.bingoreloaded.core.tasks.ItemTask;
+import io.github.steaf23.bingoreloaded.gui.base.InventoryItem;
 import io.github.steaf23.bingoreloaded.gui.base.MenuInventory;
 import io.github.steaf23.bingoreloaded.gui.base.TreeMenu;
-import io.github.steaf23.bingoreloaded.gui.base.InventoryItem;
 import io.github.steaf23.bingoreloaded.util.FlexColor;
-import io.github.steaf23.bingoreloaded.util.GUIPreset5x9;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -24,11 +22,10 @@ public class ListEditorUI extends TreeMenu
 {
     private final String listName;
 
-    private static final InventoryItem ITEMS = new InventoryItem(GUIPreset5x9.THREE_CENTER.positions[0], Material.APPLE, TITLE_PREFIX + "Items", "Click to add or remove items");
-    private static final InventoryItem ADVANCEMENTS = new InventoryItem(GUIPreset5x9.THREE_CENTER.positions[1], Material.ENDER_EYE, TITLE_PREFIX + "Advancements", "Click to add or remove advancements");
-    private static final InventoryItem STATISTICS = new InventoryItem(GUIPreset5x9.THREE_CENTER.positions[2], Material.GLOBE_BANNER_PATTERN, TITLE_PREFIX + "Statistics", "Click to add or remove statistics");
-
-    private static final InventoryItem SAVE = new InventoryItem(49, Material.REDSTONE, "" + ChatColor.RED + ChatColor.BOLD + BingoReloaded.data().translationData.translate("menu.save_exit"));
+    private static final InventoryItem ITEMS = new InventoryItem(2, 2, Material.APPLE, TITLE_PREFIX + "Items", "Click to add or remove items");
+    private static final InventoryItem ADVANCEMENTS = new InventoryItem(4, 2, Material.ENDER_EYE, TITLE_PREFIX + "Advancements", "Click to add or remove advancements");
+    private static final InventoryItem STATISTICS = new InventoryItem(6, 2, Material.GLOBE_BANNER_PATTERN, TITLE_PREFIX + "Statistics", "Click to add or remove statistics");
+    private static final InventoryItem SAVE = new InventoryItem(4, 5, Material.REDSTONE, "" + ChatColor.RED + ChatColor.BOLD + BingoReloaded.translate("menu.save_exit"));
     private static final InventoryItem BLANK = new InventoryItem(Material.BLACK_STAINED_GLASS_PANE, " ", "");
 
     public ListEditorUI(String listName, MenuInventory parent)
@@ -38,15 +35,15 @@ public class ListEditorUI extends TreeMenu
         addMenuOption(ITEMS, createItemPicker());
         addMenuOption(ADVANCEMENTS, createAdvancementPicker());
         addMenuOption(STATISTICS, createStatisticsPicker());
-        fillOptions(BLANK.inSlot(45),
-                BLANK.inSlot(46),
-                BLANK.inSlot(47),
-                BLANK.inSlot(48),
+        fillOptions(BLANK.inSlot(0, 5),
+                BLANK.inSlot(1, 5),
+                BLANK.inSlot(2, 5),
+                BLANK.inSlot(3, 5),
                 SAVE,
-                BLANK.inSlot(50),
-                BLANK.inSlot(51),
-                BLANK.inSlot(52),
-                BLANK.inSlot(53));
+                BLANK.inSlot(5, 5),
+                BLANK.inSlot(6, 5),
+                BLANK.inSlot(7, 5),
+                BLANK.inSlot(8, 5));
     }
 
     @Override

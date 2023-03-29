@@ -9,8 +9,8 @@ public class BingoPlayerJoinEvent extends BingoEvent
 
     public BingoPlayerJoinEvent(BingoPlayer player)
     {
-        super(player.game);
+        super(player.session);
         this.player = player;
-        Message.log("Player " + player.displayName + " joined the game", game.getWorldName());
+        Message.log("Player " + player.displayName + " joined the game", session.worldName);
     }
 }

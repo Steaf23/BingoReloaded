@@ -1,9 +1,7 @@
 package io.github.steaf23.bingoreloaded.core;
 
-import io.github.steaf23.bingoreloaded.core.event.BingoEndedEvent;
 import io.github.steaf23.bingoreloaded.core.event.BingoEventListener;
 import io.github.steaf23.bingoreloaded.util.Message;
-import org.bukkit.Bukkit;
 import org.bukkit.World;
 
 import java.util.HashMap;
@@ -11,15 +9,13 @@ import java.util.Map;
 
 public class BingoGameManager
 {
-    private Map<String, BingoSettings> templates;
-    private Map<String, BingoGame> activeGames;
     private final BingoEventListener listener;
+    private Map<String, BingoSession> sessions;
 
     public BingoGameManager()
     {
-        this.templates = new HashMap<>();
-        this.activeGames = new HashMap<>();
         this.listener = new BingoEventListener(this);
+        this.sessions = new HashMap<>();
     }
 
     public BingoEventListener getListener()
@@ -27,39 +23,34 @@ public class BingoGameManager
         return listener;
     }
 
-    public boolean createGame(String worldName, int maxTeamMembers)
+    public boolean createSession(String worldName, int maxTeamMembers)
     {
-        if (doesGameWorldExist(worldName))
+        if (doesSessionExist(worldName))
         {
             Message.log("An instance of Bingo already exists in world '" + worldName + "'!");
             return false;
         }
 
-        templates.put(worldName, new BingoSettings(worldName));
-        getGameSettings(worldName).maxTeamSize = maxTeamMembers;
-        BingoGame newGame = new BingoGame(worldName, maxTeamMembers);
-        activeGames.put(worldName, newGame);
+        BingoSession session = new BingoSession(worldName, maxTeamMembers);
+        sessions.put(worldName, session);
         return true;
     }
 
-    public boolean destroyGame(String worldName)
+    public boolean destroySession(String worldName)
     {
-        if (!doesGameWorldExist(worldName))
+        if (!doesSessionExist(worldName))
         {
             return false;
         }
 
-        if (isGameWorldActive(worldName))
-            endGame(worldName);
-        
-        templates.remove(worldName);
-        activeGames.remove(worldName);
+        endGame(worldName);
+        sessions.remove(worldName);
         return true;
     }
 
     public boolean startGame(String worldName)
     {
-        if (!doesGameWorldExist(worldName))
+        if (!doesSessionExist(worldName))
         {
             Message.log("Cannot start a game that doesn't exist, create it first using '/autobingo <world> create'!");
             return false;
@@ -71,7 +62,7 @@ public class BingoGameManager
             return false;
         }
 
-        getGame(worldName).start(getGameSettings(worldName));
+        sessions.get(worldName).startGame();
         return true;
     }
 
@@ -83,38 +74,18 @@ public class BingoGameManager
             return false;
         }
 
-        BingoGame game = activeGames.get(worldName);
-        var event = new BingoEndedEvent(game.getGameTime(), null, game);
-        Bukkit.getPluginManager().callEvent(event);
-        game.end();
+        BingoSession session = sessions.get(worldName);
+        session.endGame();
         return true;
     }
 
-    public BingoGame getGame(String worldName)
+    public BingoSession getSession(String worldName)
     {
-        if (activeGames.containsKey(worldName))
+        if (sessions.containsKey(worldName))
         {
-            return activeGames.get(worldName);
+            return sessions.get(worldName);
         }
         return null;
-    }
-
-    public BingoGame getActiveGame(String worldName)
-    {
-        if (isGameWorldActive(worldName))
-        {
-            return activeGames.get(worldName);
-        }
-        return null;
-    }
-
-    public BingoSettings getGameSettings(String worldName)
-    {
-        if (!templates.containsKey(worldName))
-        {
-            return null;
-        }
-        return templates.get(worldName);
     }
 
     public static String getWorldName(World world)
@@ -126,7 +97,7 @@ public class BingoGameManager
 
     public boolean isGameWorldActive(String worldName)
     {
-        return doesGameWorldExist(worldName) && activeGames.containsKey(worldName) && activeGames.get(worldName).isInProgress();
+        return sessions.containsKey(worldName) && sessions.get(worldName).isRunning();
     }
 
     public boolean isGameWorldActive(World world)
@@ -134,13 +105,13 @@ public class BingoGameManager
         return isGameWorldActive(BingoGameManager.getWorldName(world));
     }
 
-    public boolean doesGameWorldExist(String worldName)
+    public boolean doesSessionExist(String worldName)
     {
-        return templates.containsKey(worldName);
+        return sessions.containsKey(worldName);
     }
 
-    public boolean doesGameWorldExist(World world)
+    public boolean doesSessionExist(World world)
     {
-        return doesGameWorldExist(BingoGameManager.getWorldName(world));
+        return doesSessionExist(BingoGameManager.getWorldName(world));
     }
 }

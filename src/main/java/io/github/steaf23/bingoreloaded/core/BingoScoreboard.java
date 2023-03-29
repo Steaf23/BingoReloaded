@@ -1,17 +1,16 @@
 package io.github.steaf23.bingoreloaded.core;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
+import io.github.steaf23.bingoreloaded.core.data.TranslationData;
 import io.github.steaf23.bingoreloaded.core.event.BingoPlayerJoinEvent;
 import io.github.steaf23.bingoreloaded.core.event.BingoPlayerLeaveEvent;
 import io.github.steaf23.bingoreloaded.core.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.core.player.BingoTeam;
 import io.github.steaf23.bingoreloaded.core.player.TeamManager;
 import io.github.steaf23.bingoreloaded.util.InfoScoreboard;
-import io.github.steaf23.bingoreloaded.util.Message;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.scoreboard.Objective;
-import org.bukkit.scoreboard.Score;
 import org.bukkit.scoreboard.Scoreboard;
 
 public class BingoScoreboard
@@ -19,13 +18,14 @@ public class BingoScoreboard
     private final Scoreboard teamBoard;
     private final InfoScoreboard visualBoard;
     private final Objective taskObjective;
-    private final BingoGame game;
+    private final BingoSession session;
 
-    public BingoScoreboard(BingoGame game)
+    public BingoScoreboard(BingoSession session)
     {
-        this.game = game;
+        TranslationData translator = BingoReloaded.get().getTranslator();
+        this.session = session;
         this.teamBoard = Bukkit.getScoreboardManager().getNewScoreboard();
-        this.visualBoard = new InfoScoreboard("" + ChatColor.ITALIC + ChatColor.UNDERLINE + BingoReloaded.data().translationData.translate("menu.completed"), teamBoard);
+        this.visualBoard = new InfoScoreboard("" + ChatColor.ITALIC + ChatColor.UNDERLINE + translator.translate("menu.completed"), teamBoard);
 
         this.taskObjective = teamBoard.registerNewObjective("item_count", "bingo_item_count");
 
@@ -34,7 +34,7 @@ public class BingoScoreboard
 
     public void updateTeamScores()
     {
-        if (!game.isInProgress())
+        if (!session.isRunning())
             return;
 
         BingoReloaded.scheduleTask(task ->
@@ -43,7 +43,7 @@ public class BingoScoreboard
             if (objective == null)
                 return;
 
-            for (BingoTeam t : game.getTeamManager().getActiveTeams())
+            for (BingoTeam t : session.teamManager.getActiveTeams())
             {
                 if (t.card != null)
                 {
@@ -58,9 +58,9 @@ public class BingoScoreboard
     {
         visualBoard.clearDisplay();
 
-        TeamManager teamManager = game.getTeamManager();
+        TeamManager teamManager = session.teamManager;
 
-        boolean condensedDisplay = !BingoReloaded.config().showPlayerInScoreboard
+        boolean condensedDisplay = !BingoReloaded.get().config().showPlayerInScoreboard
                 || teamManager.getActiveTeams().size() + teamManager.getParticipants().size() > 13;
 
         visualBoard.setLineText(0, " ");
@@ -97,7 +97,7 @@ public class BingoScoreboard
                 teamBoard.resetScores(entry);
             }
 
-            for (BingoPlayer p : game.getTeamManager().getParticipants())
+            for (BingoPlayer p : session.teamManager.getParticipants())
             {
                 if (p.gamePlayer().isPresent())
                     visualBoard.clearPlayerBoard(p.gamePlayer().get());

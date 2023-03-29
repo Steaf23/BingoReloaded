@@ -4,7 +4,6 @@ import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.core.BingoSettings;
 import io.github.steaf23.bingoreloaded.gui.base.InventoryItem;
 import io.github.steaf23.bingoreloaded.gui.base.MenuInventory;
-import io.github.steaf23.bingoreloaded.util.GUIPreset5x9;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -23,22 +22,22 @@ public class EffectOptionsMenu extends MenuInventory
 
     public EffectOptionsMenu(MenuInventory parent, BingoSettings settings)
     {
-        super(45, BingoReloaded.data().translationData.translate("menu.options.effects.name"), parent);
+        super(45, BingoReloaded.translate("menu.options.effects.name"), parent);
         this.settings = settings;
 
         options = new InventoryItem[]{
-                new InventoryItem(GUIPreset5x9.FIVE_TOP_WIDE.positions[0],
+                new InventoryItem(4, 3,
                         Material.CARROT, ""),
-                new InventoryItem(GUIPreset5x9.FIVE_TOP_WIDE.positions[1],
+                new InventoryItem(2, 3,
                         Material.PUFFERFISH, ""),
-                new InventoryItem(GUIPreset5x9.FIVE_TOP_WIDE.positions[2],
+                new InventoryItem(6, 3,
                         Material.MAGMA_CREAM, ""),
-                new InventoryItem(GUIPreset5x9.FIVE_TOP_WIDE.positions[3],
+                new InventoryItem(3, 1,
                         Material.NETHERITE_BOOTS, ""),
-                new InventoryItem(GUIPreset5x9.FIVE_TOP_WIDE.positions[4],
+                new InventoryItem(5, 1,
                         Material.FEATHER, ""),
                 new InventoryItem(44, Material.DIAMOND,
-                        "" + ChatColor.AQUA + ChatColor.BOLD + BingoReloaded.data().translationData.translate("menu.save_exit"))
+                        "" + ChatColor.AQUA + ChatColor.BOLD + BingoReloaded.translate("menu.save_exit"))
         };
         fillOptions(options);
 
@@ -83,13 +82,13 @@ public class EffectOptionsMenu extends MenuInventory
             {
                 if (flags.contains(EffectOptionFlags.values()[i]))
                 {
-                    meta.setDisplayName("" + ChatColor.GREEN + ChatColor.BOLD + EffectOptionFlags.values()[i].name + " " + BingoReloaded.data().translationData.translate("menu.effects.enabled"));
-                    meta.setLore(List.of(ChatColor.GREEN + BingoReloaded.data().translationData.translate("menu.effects.disable")));
+                    meta.setDisplayName("" + ChatColor.GREEN + ChatColor.BOLD + EffectOptionFlags.values()[i].name + " " + BingoReloaded.translate("menu.effects.enabled"));
+                    meta.setLore(List.of(ChatColor.GREEN + BingoReloaded.translate("menu.effects.disable")));
                 }
                 else
                 {
-                    meta.setDisplayName("" + ChatColor.RED + ChatColor.BOLD + EffectOptionFlags.values()[i].name + " " + BingoReloaded.data().translationData.translate("menu.effects.disabled"));
-                    meta.setLore(List.of(ChatColor.RED + BingoReloaded.data().translationData.translate("menu.effects.enable")));
+                    meta.setDisplayName("" + ChatColor.RED + ChatColor.BOLD + EffectOptionFlags.values()[i].name + " " + BingoReloaded.translate("menu.effects.disabled"));
+                    meta.setLore(List.of(ChatColor.RED + BingoReloaded.translate("menu.effects.enable")));
                 }
             }
             options[i].setItemMeta(meta);

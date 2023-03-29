@@ -3,6 +3,8 @@ package io.github.steaf23.bingoreloaded.core.event;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.core.BingoGame;
 import io.github.steaf23.bingoreloaded.core.BingoGameManager;
+import io.github.steaf23.bingoreloaded.core.BingoSession;
+import io.github.steaf23.bingoreloaded.core.tasks.statistics.StatisticTracker;
 import org.bukkit.World;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -21,15 +23,24 @@ public class BingoEventListener implements Listener
         this.gameManager = gameManager;
     }
 
-    private BingoGame getGame(World world)
+    private BingoSession getSession(World world)
     {
-        return gameManager.getGame(BingoGameManager.getWorldName(world));
+        return gameManager.getSession(BingoGameManager.getWorldName(world));
+    }
+
+    @EventHandler
+    public void handleBingoGameEnded(final BingoEndedEvent event)
+    {
+        if (event.session != null)
+        {
+            event.session.handleGameEnded(event);
+        }
     }
 
     @EventHandler
     public void handleBingoTaskComplete(final BingoCardTaskCompleteEvent event)
     {
-        BingoGame game = event.game;
+        BingoGame game = event.session != null ? event.session.game() : null;
         if (game != null)
         {
             game.handleBingoTaskComplete(event);
@@ -40,7 +51,8 @@ public class BingoEventListener implements Listener
     @EventHandler
     public void handlePlayerDropItem(final PlayerDropItemEvent event)
     {
-        BingoGame game = getGame(event.getPlayer().getWorld());
+        BingoSession session = getSession(event.getPlayer().getWorld());
+        BingoGame game = session != null ? session.game() : null;
         if (game != null)
         {
             game.handlePlayerDropItem(event);
@@ -51,7 +63,8 @@ public class BingoEventListener implements Listener
     @EventHandler
     public void handlePlayerInteract(final PlayerInteractEvent event)
     {
-        BingoGame game = getGame(event.getPlayer().getWorld());
+        BingoSession session = getSession(event.getPlayer().getWorld());
+        BingoGame game = session != null ? session.game() : null;
         if (game != null)
         {
             game.handlePlayerInteract(event);
@@ -61,7 +74,8 @@ public class BingoEventListener implements Listener
     @EventHandler
     public void handleEntityDamage(final EntityDamageEvent event)
     {
-        BingoGame game = getGame(event.getEntity().getWorld());
+        BingoSession session = getSession(event.getEntity().getWorld());
+        BingoGame game = session != null ? session.game() : null;
         if (game != null)
         {
             game.handleEntityDamage(event);
@@ -71,7 +85,8 @@ public class BingoEventListener implements Listener
     @EventHandler
     public void handlePlayerDeath(final PlayerDeathEvent event)
     {
-        BingoGame game = getGame(event.getEntity().getWorld());
+        BingoSession session = getSession(event.getEntity().getWorld());
+        BingoGame game = session != null ? session.game() : null;
         if (game != null)
         {
             game.handlePlayerDeath(event);
@@ -81,7 +96,8 @@ public class BingoEventListener implements Listener
     @EventHandler
     public void handlePlayerRespawn(final PlayerRespawnEvent event)
     {
-        BingoGame game = getGame(event.getPlayer().getWorld());
+        BingoSession session = getSession(event.getPlayer().getWorld());
+        BingoGame game = session != null ? session.game() : null;
         if (game != null)
         {
             game.handlePlayerRespawn(event, gameManager);
@@ -91,7 +107,7 @@ public class BingoEventListener implements Listener
     @EventHandler
     public void handleCountdownFinished(final CountdownTimerFinishedEvent event)
     {
-        BingoGame game = event.game;
+        BingoGame game = event.session != null ? event.session.game() : null;
         if (game != null)
         {
             game.handleCountdownFinished(event);
@@ -101,40 +117,42 @@ public class BingoEventListener implements Listener
     @EventHandler
     public void handlePlayerJoin(final BingoPlayerJoinEvent event)
     {
-        BingoGame game = event.game;
-        if (game != null)
+        BingoSession session = event.session;
+        if (session != null)
         {
-//            game.getScoreboard().handlePlayerJoin(event);
+            session.scoreboard.handlePlayerJoin(event);
         }
     }
 
     @EventHandler
     public void handlePlayerLeave(final BingoPlayerLeaveEvent event)
     {
-        BingoGame game = event.game;
-        if (game != null)
+        BingoSession session = event.session;
+        if (session != null)
         {
-//            game.getScoreboard().handlePlayerLeave(event);
+            session.scoreboard.handlePlayerLeave(event);
         }
     }
 
     @EventHandler
     public void handlePlayerAdvancementCompleted(final PlayerAdvancementDoneEvent event)
     {
-        if (!BingoReloaded.config().useAdvancements)
+        if (!BingoReloaded.get().config().useAdvancements)
             return;
 
-        BingoGame game = getGame(event.getPlayer().getWorld());
+        BingoSession session = getSession(event.getPlayer().getWorld());
+        BingoGame game = session != null ? session.game() : null;
         if (game != null)
         {
-            game.getCardEventManager().handlePlayerAdvancementCompleted(event, game);
+            game.getCardEventManager().handlePlayerAdvancementCompleted(event, getSession(event.getPlayer().getWorld()));
         }
     }
 
     @EventHandler
     public void handlePlayerPickupItem(final EntityPickupItemEvent event)
     {
-        BingoGame game = getGame(event.getEntity().getWorld());
+        BingoSession session = getSession(event.getEntity().getWorld());
+        BingoGame game = session != null ? session.game() : null;
         if (game != null)
         {
             game.getCardEventManager().handlePlayerPickupItem(event, game);
@@ -144,7 +162,8 @@ public class BingoEventListener implements Listener
     @EventHandler
     public void handleInventoryClicked(final InventoryClickEvent event)
     {
-        BingoGame game = getGame(event.getWhoClicked().getWorld());
+        BingoSession session = getSession(event.getWhoClicked().getWorld());
+        BingoGame game = session != null ? session.game() : null;
         if (game != null)
         {
             game.getCardEventManager().handleInventoryClicked(event, game);
@@ -154,46 +173,49 @@ public class BingoEventListener implements Listener
     @EventHandler
     public void handlePlayerJoinsServer(final PlayerJoinEvent event)
     {
-        BingoGame game = getGame(event.getPlayer().getWorld());
-        if (game != null)
+        BingoSession session = getSession(event.getPlayer().getWorld());
+        if (session != null)
         {
-            game.getTeamManager().handlePlayerJoinsServer(event);
+            session.teamManager.handlePlayerJoinsServer(event);
         }
     }
 
     @EventHandler
     public void handlePlayerChangedWorld(final PlayerChangedWorldEvent event)
     {
-        BingoGame game = getGame(event.getPlayer().getWorld());
-        if (game == null)
+        BingoSession session = getSession(event.getPlayer().getWorld());
+        if (session == null)
         {
-            game = getGame(event.getFrom());
-            if (game == null)
+            session = getSession(event.getFrom());
+            if (session == null)
                 return;
         }
-        game.getTeamManager().handlePlayerChangedWorld(event, gameManager);
+        session.teamManager.handlePlayerChangedWorld(event, gameManager);
     }
 
     @EventHandler
     public void handleStatisticIncrement(final PlayerStatisticIncrementEvent event)
     {
-        if (!BingoReloaded.config().useStatistics)
+        if (!BingoReloaded.get().config().useStatistics)
             return;
 
-        BingoGame game = getGame(event.getPlayer().getWorld());
+        BingoSession session = getSession(event.getPlayer().getWorld());
+        BingoGame game = session != null ? session.game() : null;
         if (game != null)
         {
-            game.getStatisticTracker().handleStatisticIncrement(event, game);
+            StatisticTracker tracker = game.getStatisticTracker();
+            if (tracker != null)
+                tracker.handleStatisticIncrement(event, game);
         }
     }
 
     @EventHandler
     public void handleStatisticCompleted(final BingoStatisticCompletedEvent event)
     {
-        if (!BingoReloaded.config().useStatistics)
+        if (!BingoReloaded.get().config().useStatistics)
             return;
 
-        BingoGame game = event.game;
+        BingoGame game = event.session != null ? event.session.game() : null;
         if (game != null)
         {
             game.getCardEventManager().handleStatisticCompleted(event, game);

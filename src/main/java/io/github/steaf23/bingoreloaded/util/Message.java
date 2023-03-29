@@ -1,7 +1,7 @@
 package io.github.steaf23.bingoreloaded.util;
 
-import io.github.steaf23.bingoreloaded.core.BingoGame;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
+import io.github.steaf23.bingoreloaded.core.BingoSession;
 import io.github.steaf23.bingoreloaded.core.data.TranslationData;
 import io.github.steaf23.bingoreloaded.core.player.BingoTeam;
 import me.clip.placeholderapi.PlaceholderAPI;
@@ -174,12 +174,12 @@ public class Message
         finalMessage = prefixedBase;
     }
 
-    public void sendAll(BingoGame game)
+    public void sendAll(BingoSession session)
     {
-        if (game == null)
+        if (session == null)
             return;
 
-        game.getTeamManager().getParticipants().forEach( p ->
+        session.teamManager.getParticipants().forEach( p ->
         {
             if (p.gamePlayer().isPresent())
             {
@@ -319,10 +319,11 @@ public class Message
 
     public static TextComponent[] createHoverCommandMessage(@NonNull String translatePath, @Nullable String command)
     {
-        TextComponent prefix = new TextComponent(BingoReloaded.data().translationData.translate(translatePath + ".prefix"));
-        TextComponent hoverable = new TextComponent(BingoReloaded.data().translationData.translate(translatePath + ".hoverable"));
-        TextComponent hover = new TextComponent(BingoReloaded.data().translationData.translate(translatePath + ".hover"));
-        TextComponent suffix = new TextComponent(BingoReloaded.data().translationData.translate(translatePath + ".suffix"));
+        TranslationData translator = BingoReloaded.get().getTranslator();
+        TextComponent prefix = new TextComponent(translator.translate(translatePath + ".prefix"));
+        TextComponent hoverable = new TextComponent(translator.translate(translatePath + ".hoverable"));
+        TextComponent hover = new TextComponent(translator.translate(translatePath + ".hover"));
+        TextComponent suffix = new TextComponent(translator.translate(translatePath + ".suffix"));
 
         if (command != null)
         {

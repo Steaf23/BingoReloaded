@@ -127,9 +127,7 @@ public abstract class MenuInventory
 
     public final void open(HumanEntity player)
     {
-        Bukkit.getScheduler().runTask(BingoReloaded.get(), task -> {
-            player.openInventory(inventory);
-        });
+        Bukkit.getScheduler().runTask(BingoReloaded.get(), task -> player.openInventory(inventory));
     }
 
     public final void close(HumanEntity player)
@@ -137,9 +135,7 @@ public abstract class MenuInventory
         if (parent != null)
             parent.open(player);
         else
-            Bukkit.getScheduler().runTask(BingoReloaded.get(), task -> {
-                player.closeInventory();
-            });
+            Bukkit.getScheduler().runTask(BingoReloaded.get(), task -> player.closeInventory());
     }
 
     public Inventory internalInventory()

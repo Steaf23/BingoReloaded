@@ -1,18 +1,18 @@
 package io.github.steaf23.bingoreloaded.core.cards;
 
 
-import io.github.steaf23.bingoreloaded.core.BingoGame;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
+import io.github.steaf23.bingoreloaded.core.BingoGame;
 import io.github.steaf23.bingoreloaded.core.data.BingoCardsData;
 import io.github.steaf23.bingoreloaded.core.data.TaskListsData;
 import io.github.steaf23.bingoreloaded.core.data.TranslationData;
 import io.github.steaf23.bingoreloaded.core.event.BingoCardTaskCompleteEvent;
 import io.github.steaf23.bingoreloaded.core.event.BingoStatisticCompletedEvent;
-import io.github.steaf23.bingoreloaded.core.tasks.*;
-import io.github.steaf23.bingoreloaded.gui.CardMenu;
-import io.github.steaf23.bingoreloaded.core.tasks.statistics.BingoStatistic;
 import io.github.steaf23.bingoreloaded.core.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.core.player.BingoTeam;
+import io.github.steaf23.bingoreloaded.core.tasks.*;
+import io.github.steaf23.bingoreloaded.core.tasks.statistics.BingoStatistic;
+import io.github.steaf23.bingoreloaded.gui.CardMenu;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -24,7 +24,6 @@ import org.bukkit.event.player.PlayerAdvancementDoneEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerStatisticIncrementEvent;
 import org.bukkit.inventory.ItemStack;
-
 
 import java.util.*;
 
@@ -39,11 +38,12 @@ public class BingoCard
 
     public BingoCard(CardSize size)
     {
+        TranslationData translator = BingoReloaded.get().getTranslator();
         this.size = size;
         this.tasks = new ArrayList<>();
-        this.menu = new CardMenu(size, BingoReloaded.data().translationData.translate("menu.card.title"));
-        menu.setInfo(BingoReloaded.data().translationData.itemName("menu.card.info_regular"),
-                BingoReloaded.data().translationData.itemDescription("menu.card.info_regular"));
+        this.menu = new CardMenu(size, translator.translate("menu.card.title"));
+        menu.setInfo(translator.itemName("menu.card.info_regular"),
+                translator.itemDescription("menu.card.info_regular"));
     }
 
     /**
@@ -57,8 +57,9 @@ public class BingoCard
      * @param cardName
      * @param seed
      */
-    public void generateCard(String cardName, int seed, BingoCardsData cardsData)
+    public void generateCard(String cardName, int seed)
     {
+        BingoCardsData cardsData = new BingoCardsData();
         TaskListsData listsData = cardsData.lists();
         // Create shuffler
         Random shuffler;
@@ -232,9 +233,6 @@ public class BingoCard
         }
 
         BingoReloaded.scheduleTask(task -> {
-            if (!game.isInProgress())
-                return;
-
             for (ItemStack stack : p.getInventory().getContents())
             {
                 if (stack != null)
@@ -302,7 +300,7 @@ public class BingoCard
             ItemTask data = (ItemTask)task.data;
             if (data.material().equals(item.getType()) && data.count() <= item.getAmount())
             {
-                if (!task.complete(player, game))
+                if (!task.complete(player))
                 {
                     continue;
                 }
@@ -333,7 +331,7 @@ public class BingoCard
 
             if (data.advancement().equals(event.getAdvancement()))
             {
-                if (!task.complete(player, game))
+                if (!task.complete(player))
                     continue;
 
                 var slotEvent = new BingoCardTaskCompleteEvent(task, player, hasBingo(player.team));
@@ -361,7 +359,7 @@ public class BingoCard
             if (data.statistic().equals(new BingoStatistic(event.getStatistic(), event.getEntityType(), event.getMaterial())) &&
                 data.getCount() == event.getNewValue())
             {
-                if (!task.complete(player, game))
+                if (!task.complete(player))
                     continue;
 
                 var slotEvent = new BingoCardTaskCompleteEvent(task, player, hasBingo(player.getTeam()));
@@ -387,7 +385,7 @@ public class BingoCard
             StatisticTask data = (StatisticTask)task.data;
             if (data.statistic().equals(event.stat))
             {
-                if (!task.complete(player, game))
+                if (!task.complete(player))
                     continue;
 
                 var slotEvent = new BingoCardTaskCompleteEvent(task, player, hasBingo(player.getTeam()));

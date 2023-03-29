@@ -13,9 +13,16 @@ import java.util.regex.Pattern;
 
 public class TranslationData
 {
-    private final YmlDataManager language = new YmlDataManager(BingoReloaded.get(), BingoReloaded.config().language);
-    private final YmlDataManager fallbackLanguage = new YmlDataManager(BingoReloaded.get(), "en_us.yml");
+    private final YmlDataManager language;
+    private final YmlDataManager fallbackLanguage;
+
     private static final Pattern HEX_PATTERN = Pattern.compile("\\{#[a-fA-F0-9]{6}\\}");
+
+    public TranslationData(BingoReloaded plugin)
+    {
+        this.language = new YmlDataManager(plugin, plugin.get().config().language);
+        this.fallbackLanguage = new YmlDataManager(BingoReloaded.get(), "languages/en_us.yml");
+    }
 
     public String translate(String key, String... args)
     {
@@ -102,7 +109,7 @@ public class TranslationData
 
     private String get(String path)
     {
-        String def = ChatColor.GRAY + "-- No translation for \"" + path + "\" in " + BingoReloaded.config().language + " --";
+        String def = "" + ChatColor.DARK_GRAY + ChatColor.STRIKETHROUGH + "`" + path + "`";
         // avoid weird MemorySection String prints instead of translation failed message.
         if (language.getConfig().getConfigurationSection(path) == null)
             return language.getConfig().getString(path, def);

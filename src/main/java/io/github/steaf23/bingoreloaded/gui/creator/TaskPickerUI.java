@@ -1,15 +1,15 @@
 package io.github.steaf23.bingoreloaded.gui.creator;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
-import io.github.steaf23.bingoreloaded.core.data.TaskListsData;
-import io.github.steaf23.bingoreloaded.gui.base.MenuInventory;
-import io.github.steaf23.bingoreloaded.gui.base.FilterType;
-import io.github.steaf23.bingoreloaded.gui.base.PaginatedPickerMenu;
-import io.github.steaf23.bingoreloaded.gui.base.InventoryItem;
-import io.github.steaf23.bingoreloaded.item.ItemText;
+import io.github.steaf23.bingoreloaded.core.data.BingoCardsData;
 import io.github.steaf23.bingoreloaded.core.tasks.BingoTask;
 import io.github.steaf23.bingoreloaded.core.tasks.CountableTask;
 import io.github.steaf23.bingoreloaded.core.tasks.TaskData;
+import io.github.steaf23.bingoreloaded.gui.base.FilterType;
+import io.github.steaf23.bingoreloaded.gui.base.InventoryItem;
+import io.github.steaf23.bingoreloaded.gui.base.MenuInventory;
+import io.github.steaf23.bingoreloaded.gui.base.PaginatedPickerMenu;
+import io.github.steaf23.bingoreloaded.item.ItemText;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -17,7 +17,10 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class TaskPickerUI extends PaginatedPickerMenu
@@ -105,19 +108,29 @@ public class TaskPickerUI extends PaginatedPickerMenu
     {
         super.handleOpen(event);
 
-        Set<TaskData> tasks = BingoReloaded.data().cardsData.lists().getTasks(listName);
+        BingoCardsData cardsData = new BingoCardsData();
+        Set<TaskData> tasks = cardsData.lists().getTasks(listName);
 
         for (InventoryItem item : getItems())
         {
-            var task = tasks.stream().filter(savedTask -> savedTask.isTaskEqual(BingoTask.fromStack(item).data)).findFirst();
+            TaskData itemData = BingoTask.fromStack(item).data;
+            boolean save = false;
+            for (var savedTask : tasks)
+            {
+                if (savedTask.isTaskEqual(itemData))
+                {
+                    save = true;
+                    break;
+                }
+            }
 
-            if (task.isPresent())
+            if (save)
             {
                 int count = 1;
-                if (task.get() instanceof CountableTask countable)
+                if (itemData instanceof CountableTask countable)
                     count = countable.getCount();
 
-                InventoryItem newItem = new InventoryItem(getUpdatedTaskItem(task.get(), true, count));
+                InventoryItem newItem = new InventoryItem(getUpdatedTaskItem(itemData, true, count));
                 replaceItem(newItem, item);
                 selectItem(newItem, true);
             }
@@ -129,7 +142,8 @@ public class TaskPickerUI extends PaginatedPickerMenu
     {
         super.handleClose(event);
 
-        BingoReloaded.data().cardsData.lists().saveTasksFromGroup(listName,
+        BingoCardsData cardsData = new BingoCardsData();
+        cardsData.lists().saveTasksFromGroup(listName,
                 getItems().stream().map(item -> BingoTask.fromStack(item).data).toList(),
                 getSelectedItems().stream().map(item -> BingoTask.fromStack(item).data).toList());
     }
@@ -170,7 +184,7 @@ public class TaskPickerUI extends PaginatedPickerMenu
                     .map(ItemText::asLegacyString)
                     .collect(Collectors.toList());
         List<String> newLore = new ArrayList<>();
-        newLore.add(newTask.data.getItemDescription()[0].asLegacyString());
+        newLore.add(newTask.data.getItemDescription(BingoReloaded.get().getTranslator())[0].asLegacyString());
         newLore.addAll(addedLore);
 
         meta.setLore(newLore);

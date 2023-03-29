@@ -1,17 +1,22 @@
 package io.github.steaf23.bingoreloaded.core.event;
 
 import io.github.steaf23.bingoreloaded.core.BingoSession;
+import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+import org.jetbrains.annotations.NotNull;
 
-public class CountdownTimerFinishedEvent extends BingoEvent
+public class BingoSessionDestroyedEvent extends Event
 {
+    public final BingoSession session;
+
     private static final HandlerList HANDLERS = new HandlerList();
 
-    public CountdownTimerFinishedEvent(BingoSession session)
+    public BingoSessionDestroyedEvent(BingoSession session)
     {
-        super(session);
+        this.session = session;
     }
 
+    @NotNull
     @Override
     public HandlerList getHandlers()
     {

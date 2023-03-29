@@ -2,7 +2,6 @@ package io.github.steaf23.bingoreloaded.gui.base;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.util.Message;
-import io.github.steaf23.bingoreloaded.core.data.TranslationData;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -14,8 +13,8 @@ import java.util.function.Consumer;
 
 public class UserInputMenu
 {
-    private static final InventoryItem EMPTY = new InventoryItem(Material.ELYTRA, "" + ChatColor.GRAY + ChatColor.BOLD + BingoReloaded.data().translationData.translate("menu.clear"), "");
-    private static final InventoryItem ACCEPT = new InventoryItem(Material.DIAMOND, "" + ChatColor.AQUA + ChatColor.BOLD + BingoReloaded.data().translationData.translate("menu.accept"), "");
+    private static final InventoryItem EMPTY = new InventoryItem(Material.ELYTRA, "" + ChatColor.GRAY + ChatColor.BOLD + BingoReloaded.translate("menu.clear"), "");
+    private static final InventoryItem ACCEPT = new InventoryItem(Material.DIAMOND, "" + ChatColor.AQUA + ChatColor.BOLD + BingoReloaded.translate("menu.accept"), "");
 
     public static void open(String title, Consumer<String> result, Player player, MenuInventory parent)
     {

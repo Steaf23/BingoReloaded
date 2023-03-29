@@ -1,7 +1,5 @@
 package io.github.steaf23.bingoreloaded.core.data;
 
-import io.github.steaf23.bingoreloaded.core.player.PlayerKit;
-import io.github.steaf23.bingoreloaded.util.Message;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import javax.annotation.Nullable;
@@ -92,7 +90,9 @@ public class ConfigData
         this.sendCommandAfterGameEnded = config.getString("sendCommandAfterGameEnds", "");
         this.keepScoreboardVisible = config.getBoolean("keepScoreboardVisible", true);
         this.showPlayerInScoreboard = config.getBoolean("showPlayerInScoreboard", true);
-        this.useStatistics = false;
-        this.useAdvancements = false;
+        //TODO: Finish implementation
+        this.useStatistics = config.getBoolean("useStatistics", true);
+        //TODO: Finish implementation
+        this.useAdvancements = config.getBoolean("useAdvancements", true);
     }
 }

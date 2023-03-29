@@ -64,7 +64,7 @@ OPEN_BARREL: open_barrel
 CHEST_OPENED: open_chest
 ENDERCHEST_OPENED: open_enderchest
 HOPPER_INSPECTED: inspect_hopper
-DROPPER_INSPECTED: inspect_hopper
+DROPPER_INSPECTED: inspect_dropper
 DISPENSER_INSPECTED: inspect_dispenser
 STRIDER_ONE_CM: strider_one_cm
 MINECART_ONE_CM: minecart_one_cm

@@ -2,7 +2,6 @@ package io.github.steaf23.bingoreloaded.core.data;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.hologram.Hologram;
-import io.github.steaf23.bingoreloaded.hologram.HologramManager;
 import io.github.steaf23.bingoreloaded.util.Message;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
@@ -19,13 +18,13 @@ public class BingoStatsData
 
     public int getPlayerStat(UUID playerId, BingoStatType statType)
     {
-        if (!BingoReloaded.config().savePlayerStatistics)
+        if (!BingoReloaded.get().config().savePlayerStatistics)
         {
             return -1;
         }
 
         if (statType == BingoStatType.PLAYED)
-            return getPlayerStat(playerId, statType.WINS) + getPlayerStat(playerId, statType.LOSSES);
+            return getPlayerStat(playerId, BingoStatType.WINS) + getPlayerStat(playerId, BingoStatType.LOSSES);
 
         if (statType.idx < 0)
             return 0;
@@ -42,7 +41,7 @@ public class BingoStatsData
 
     public void incrementPlayerStat(UUID playerId, BingoStatType statType, int by)
     {
-        if (!BingoReloaded.config().savePlayerStatistics)
+        if (!BingoReloaded.get().config().savePlayerStatistics)
         {
             return;
         }
@@ -106,7 +105,7 @@ public class BingoStatsData
 
     private UUID getPlayerUUID(String playerName)
     {
-        Map<String, Object>  playerData = data.getConfig().getValues(false);
+        Map<String, Object> playerData = data.getConfig().getValues(false);
         for (String recordName : playerData.keySet())
         {
             UUID playerId = UUID.fromString(recordName);

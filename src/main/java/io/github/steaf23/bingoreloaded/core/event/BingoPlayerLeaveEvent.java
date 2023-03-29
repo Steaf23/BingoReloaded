@@ -9,8 +9,8 @@ public class BingoPlayerLeaveEvent extends BingoEvent
 
     public BingoPlayerLeaveEvent(BingoPlayer player)
     {
-        super(player.game);
+        super(player.session);
         this.player = player;
-        Message.log("Player " + player.displayName + " left the game", game.getWorldName());
+        Message.log("Player " + player.displayName + " left the game", session.worldName);
     }
 }

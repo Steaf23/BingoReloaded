@@ -1,14 +1,14 @@
 package io.github.steaf23.bingoreloaded.core.command;
 
-import io.github.steaf23.bingoreloaded.*;
-import io.github.steaf23.bingoreloaded.core.BingoGame;
+import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.core.BingoGameManager;
+import io.github.steaf23.bingoreloaded.core.BingoSession;
 import io.github.steaf23.bingoreloaded.core.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.core.player.BingoTeam;
 import io.github.steaf23.bingoreloaded.core.player.TeamManager;
 import io.github.steaf23.bingoreloaded.util.TranslatedMessage;
-import org.bukkit.Bukkit;
 import net.md_5.bungee.api.ChatColor;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -41,15 +41,16 @@ public class TeamChatCommand implements Listener, CommandExecutor
     @EventHandler
     public void onPlayerSendMessage(final AsyncPlayerChatEvent event)
     {
-        BingoGame game = manager.getGame(BingoGameManager.getWorldName(event.getPlayer().getWorld()));
-        if (game == null)
+        BingoSession session = manager.getSession(BingoGameManager.getWorldName(event.getPlayer().getWorld()));
+        if (session == null)
             return;
 
-        BingoPlayer player = game.getTeamManager().getBingoPlayer(event.getPlayer());
+        TeamManager teamManager = session.teamManager;
+
+        BingoPlayer player = teamManager.getBingoPlayer(event.getPlayer());
         if (!enabledPlayers.contains(player)) return;
 
-        TeamManager teamManager = game.getTeamManager();
-        BingoTeam team = teamManager.getTeamOfPlayer(game.getTeamManager().getBingoPlayer(event.getPlayer()));
+        BingoTeam team = teamManager.getTeamOfPlayer(teamManager.getBingoPlayer(event.getPlayer()));
         if (team == null) return;
 
         String message = event.getMessage();
@@ -77,11 +78,11 @@ public class TeamChatCommand implements Listener, CommandExecutor
     {
         if (commandSender instanceof Player p)
         {
-            BingoGame game = manager.getGame(BingoGameManager.getWorldName(p.getWorld()));
-            if (game == null)
+            BingoSession session = manager.getSession(BingoGameManager.getWorldName(p.getWorld()));
+            if (session == null)
                 return false;
 
-            TeamManager teamManager = game.getTeamManager();
+            TeamManager teamManager = session.teamManager;
             BingoPlayer player = teamManager.getBingoPlayer(p);
             if (!teamManager.getParticipants().contains(player))
             {

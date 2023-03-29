@@ -8,7 +8,7 @@ public class UpdateStatisticEvent extends BingoEvent
 
     public UpdateStatisticEvent(BingoPlayer player)
     {
-        super(player.game);
+        super(player.session);
         this.player = player;
     }
 }

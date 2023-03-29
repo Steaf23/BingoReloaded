@@ -2,21 +2,24 @@ package io.github.steaf23.bingoreloaded;
 
 import io.github.steaf23.bingoreloaded.core.BingoGameManager;
 import io.github.steaf23.bingoreloaded.core.command.*;
+import io.github.steaf23.bingoreloaded.core.data.BingoStatType;
+import io.github.steaf23.bingoreloaded.core.data.BingoStatsData;
 import io.github.steaf23.bingoreloaded.core.data.ConfigData;
-import io.github.steaf23.bingoreloaded.core.data.DataStorage;
+import io.github.steaf23.bingoreloaded.core.data.TranslationData;
+import io.github.steaf23.bingoreloaded.core.player.CustomKit;
 import io.github.steaf23.bingoreloaded.core.tasks.AdvancementTask;
 import io.github.steaf23.bingoreloaded.core.tasks.ItemTask;
 import io.github.steaf23.bingoreloaded.core.tasks.StatisticTask;
-import io.github.steaf23.bingoreloaded.gui.base.MenuEventListener;
-import io.github.steaf23.bingoreloaded.gui.base.InventoryItem;
-import io.github.steaf23.bingoreloaded.hologram.HologramManager;
 import io.github.steaf23.bingoreloaded.core.tasks.statistics.BingoStatistic;
-import io.github.steaf23.bingoreloaded.core.player.CustomKit;
+import io.github.steaf23.bingoreloaded.gui.base.InventoryItem;
+import io.github.steaf23.bingoreloaded.gui.base.MenuEventListener;
+import io.github.steaf23.bingoreloaded.hologram.HologramManager;
 import io.github.steaf23.bingoreloaded.util.Message;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
+import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
@@ -39,8 +42,8 @@ public class BingoReloaded extends JavaPlugin
     private BingoGameManager gameManager;
     private MenuEventListener menuManager;
     private HologramManager hologramManager;
+    private TranslationData translator;
     private ConfigData config;
-    private DataStorage dataStorage;
 
 
     public BingoReloaded()
@@ -63,12 +66,12 @@ public class BingoReloaded extends JavaPlugin
 
         this.usesPlaceholderAPI = Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null;
 
-        this.dataStorage = new DataStorage();
         this.gameManager = new BingoGameManager();
         this.menuManager = new MenuEventListener((view) -> {
-            return gameManager.doesGameWorldExist(view.getPlayer().getWorld());
+            return gameManager.doesSessionExist(view.getPlayer().getWorld());
         });
         this.hologramManager = new HologramManager();
+        this.translator = new TranslationData(this);
 
         PluginCommand bingoCommand = getCommand("bingo");
         if (bingoCommand != null)
@@ -81,7 +84,7 @@ public class BingoReloaded extends JavaPlugin
         if (autoBingoCommand != null)
         {
             autoBingoCommand.setExecutor(new AutoBingoCommand(gameManager));
-            autoBingoCommand.setTabCompleter(new AutoBingoTabCompleter(dataStorage.cardsData));
+            autoBingoCommand.setTabCompleter(new AutoBingoTabCompleter());
         }
 
         if (config.enableTeamChat)
@@ -99,7 +102,7 @@ public class BingoReloaded extends JavaPlugin
         registerListener(gameManager.getListener());
         registerListener(menuManager);
 
-        Message.log(BingoReloaded.data().translationData.translate("changed"));
+        Message.log(translator.translate("changed"));
         Message.log(ChatColor.GREEN + "Enabled " + this.getName());
 
 //        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "autobingo world create " + ConfigData.instance.defaultTeamSize);
@@ -133,19 +136,30 @@ public class BingoReloaded extends JavaPlugin
         return instance;
     }
 
-    public static ConfigData config()
+    public ConfigData config()
     {
-        return get().config;
+        return config;
     }
 
-    public static HologramManager holograms()
+    public HologramManager holograms()
     {
-        return get().hologramManager;
+        return hologramManager;
     }
 
-    public static DataStorage data()
+    public TranslationData getTranslator()
     {
-        return get().dataStorage;
+        return translator;
+    }
+
+    public static String translate(String key, String... args)
+    {
+        return get().getTranslator().translate(key, args);
+    }
+
+    public static void incrementPlayerStat(Player player, BingoStatType stat)
+    {
+        BingoStatsData statsData  =new BingoStatsData();
+        statsData.incrementPlayerStat(player, stat);
     }
 
     public static void scheduleTask(@NotNull Consumer<BukkitTask> task)

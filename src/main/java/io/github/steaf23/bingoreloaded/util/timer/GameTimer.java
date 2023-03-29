@@ -1,7 +1,6 @@
 package io.github.steaf23.bingoreloaded.util.timer;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
-import io.github.steaf23.bingoreloaded.core.BingoGame;
 import io.github.steaf23.bingoreloaded.util.Message;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
@@ -12,7 +11,6 @@ import java.util.function.Consumer;
 public abstract class GameTimer
 {
     protected Consumer<Long> notifier;
-    protected final BingoGame game;
     private long time;
     private BukkitTask task;
 
@@ -21,9 +19,8 @@ public abstract class GameTimer
     public abstract int getUpdateInterval();
     public abstract int getStep();
 
-    public GameTimer(BingoGame game)
+    public GameTimer()
     {
-        this.game = game;
         this.time = 0;
     }
 
@@ -63,7 +60,8 @@ public abstract class GameTimer
     protected void updateTime(long newTime)
     {
         time = newTime;
-        notifier.accept(newTime);
+        if (notifier != null)
+            notifier.accept(newTime);
     }
 
     public static String getTimeAsString(long seconds)

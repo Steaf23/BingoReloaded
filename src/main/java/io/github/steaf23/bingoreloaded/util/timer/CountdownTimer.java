@@ -1,7 +1,7 @@
 package io.github.steaf23.bingoreloaded.util.timer;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
-import io.github.steaf23.bingoreloaded.core.BingoGame;
+import io.github.steaf23.bingoreloaded.core.BingoSession;
 import io.github.steaf23.bingoreloaded.core.event.CountdownTimerFinishedEvent;
 import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.bingoreloaded.util.TranslatedMessage;
@@ -13,18 +13,19 @@ public class CountdownTimer extends GameTimer
     private int startTime = 0;
     private int medThreshold;
     private int lowThreshold;
+    private final BingoSession session;
 
-    public CountdownTimer(int seconds, BingoGame game)
+    public CountdownTimer(int seconds, BingoSession session)
     {
-        this(seconds, 0, 0, game);
+        this(seconds, 0, 0, session);
     }
 
-    public CountdownTimer(int seconds, int medThreshold, int lowThreshold, BingoGame game)
+    public CountdownTimer(int seconds, int medThreshold, int lowThreshold, BingoSession session)
     {
-        super(game);
         this.medThreshold = medThreshold;
         this.lowThreshold = lowThreshold;
         this.startTime = seconds;
+        this.session = session;
     }
 
     public int getStartTime()
@@ -45,7 +46,7 @@ public class CountdownTimer extends GameTimer
         super.updateTime(newTime);
         if (getTime() <= 0)
         {
-            CountdownTimerFinishedEvent event = new CountdownTimerFinishedEvent(game);
+            CountdownTimerFinishedEvent event = new CountdownTimerFinishedEvent(session);
             Bukkit.getPluginManager().callEvent(event);
             stop();
         }

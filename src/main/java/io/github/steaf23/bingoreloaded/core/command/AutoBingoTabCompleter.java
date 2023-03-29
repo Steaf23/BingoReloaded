@@ -1,6 +1,5 @@
 package io.github.steaf23.bingoreloaded.core.command;
 
-import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.core.data.BingoCardsData;
 import io.github.steaf23.bingoreloaded.util.FlexColor;
 import org.bukkit.Bukkit;
@@ -17,11 +16,8 @@ import java.util.List;
 
 public class AutoBingoTabCompleter implements TabCompleter
 {
-    private final BingoCardsData cardsData;
-
-    public AutoBingoTabCompleter(BingoCardsData cardsData)
+    public AutoBingoTabCompleter()
     {
-        this.cardsData = cardsData;
     }
 
     @Nullable
@@ -55,6 +51,7 @@ public class AutoBingoTabCompleter implements TabCompleter
                     case "effects":
                         return List.of("all", "none", "water_breathing", "night_vision", "fire_resistance", "no_fall_damage", "card_speed");
                     case "card":
+                        BingoCardsData cardsData = new BingoCardsData();
                         return cardsData.getCardNames().stream().toList();
                     case "start":
                         return List.of("regular", "lockout", "complete");

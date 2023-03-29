@@ -11,7 +11,7 @@ public class BingoCardTaskCompleteEvent extends BingoEvent
 
     public BingoCardTaskCompleteEvent(BingoTask task, BingoPlayer player, boolean bingo)
     {
-        super(player.game);
+        super(player.session);
         this.player = player;
         this.task = task;
         this.bingo = bingo;

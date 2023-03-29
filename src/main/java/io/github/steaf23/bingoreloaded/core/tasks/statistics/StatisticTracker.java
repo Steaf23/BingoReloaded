@@ -1,15 +1,15 @@
 package io.github.steaf23.bingoreloaded.core.tasks.statistics;
 
 import io.github.steaf23.bingoreloaded.core.BingoGame;
-import io.github.steaf23.bingoreloaded.core.BingoGameManager;
-import io.github.steaf23.bingoreloaded.core.player.TeamManager;
-import io.github.steaf23.bingoreloaded.core.tasks.BingoTask;
-import io.github.steaf23.bingoreloaded.core.tasks.StatisticTask;
 import io.github.steaf23.bingoreloaded.core.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.core.player.BingoTeam;
+import io.github.steaf23.bingoreloaded.core.tasks.BingoTask;
+import io.github.steaf23.bingoreloaded.core.tasks.StatisticTask;
 import org.bukkit.event.player.PlayerStatisticIncrementEvent;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 public class StatisticTracker
 {
@@ -67,7 +67,7 @@ public class StatisticTracker
         statistics.clear();
     }
 
-    public void handleStatisticIncrement(final PlayerStatisticIncrementEvent event, BingoGame game)
+    public void handleStatisticIncrement(final PlayerStatisticIncrementEvent event, final BingoGame game)
     {
         if (game == null)
             return;

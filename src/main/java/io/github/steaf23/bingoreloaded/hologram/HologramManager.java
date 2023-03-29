@@ -1,7 +1,5 @@
 package io.github.steaf23.bingoreloaded.hologram;
 
-import io.github.steaf23.bingoreloaded.BingoReloaded;
-import io.github.steaf23.bingoreloaded.core.data.YmlDataManager;
 import io.github.steaf23.bingoreloaded.util.Message;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Location;
@@ -14,7 +12,7 @@ public class HologramManager
 {
     private Map<String, Hologram> holograms;
 
-    private YmlDataManager data = new YmlDataManager(BingoReloaded.get(), "holograms.yml");
+//    private YmlDataManager data = new YmlDataManager(BingoReloaded.get(), "holograms.yml");
 
     public HologramManager()
     {

@@ -41,6 +41,7 @@ game:
   player:
     leave: "You have been successfully removed from the game, use {0} to come back to me :D" # 0: /bingo command
     no_start: "The game has not started yet!"
+    no_card: "Could not find your card!"
     cooldown: "You cannot use this item for another {0} seconds!" # 0: time left
     join_back: "Welcome back, the game is still on!"
     respawn:

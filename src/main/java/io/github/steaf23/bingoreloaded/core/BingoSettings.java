@@ -1,11 +1,12 @@
 package io.github.steaf23.bingoreloaded.core;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
-import io.github.steaf23.bingoreloaded.gui.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.core.cards.CardSize;
+import io.github.steaf23.bingoreloaded.core.data.BingoCardsData;
+import io.github.steaf23.bingoreloaded.core.data.ConfigData;
 import io.github.steaf23.bingoreloaded.core.player.CustomKit;
 import io.github.steaf23.bingoreloaded.core.player.PlayerKit;
-import io.github.steaf23.bingoreloaded.util.Message;
+import io.github.steaf23.bingoreloaded.gui.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.util.TranslatedMessage;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
@@ -14,40 +15,38 @@ import java.util.EnumSet;
 
 public class BingoSettings
 {
-    public String card = BingoReloaded.config().selectedCard;
+    public String card;
     public BingoGamemode mode;
     public CardSize cardSize;
     public int cardSeed;
     public PlayerKit kit;
     public EnumSet<EffectOptionFlags> effects;
     public Material deathMatchItem;
-    public int maxTeamSize;
+    public final int maxTeamSize;
     public boolean enableCountdown;
     public int countdownGameDuration;
 
-    private final String worldName;
-
-    public BingoSettings(String worldName)
+    public BingoSettings(int maxTeamSize)
     {
-        this.worldName = worldName;
-
-        this.card = BingoReloaded.config().selectedCard;
+        ConfigData config = BingoReloaded.get().config();
+        this.card = config.selectedCard;
         this.mode = BingoGamemode.REGULAR;
         this.cardSize = CardSize.X5;
-        this.cardSeed = BingoReloaded.config().cardSeed;
-        this.kit = PlayerKit.fromConfig(BingoReloaded.config().defaultKit);
+        this.cardSeed = config.cardSeed;
+        this.kit = PlayerKit.fromConfig(config.defaultKit);
         this.effects = kit.defaultEffects;
-        this.maxTeamSize = BingoReloaded.config().defaultTeamSize;
-        this.countdownGameDuration = BingoReloaded.config().defaultGameDuration;
+        this.maxTeamSize = config.defaultTeamSize;
+        this.countdownGameDuration = config.defaultGameDuration;
         this.enableCountdown = false;
     }
 
     public Material generateDeathMatchItem()
     {
-        return BingoReloaded.data().cardsData.getRandomItemTask(card).material();
+        BingoCardsData cardsData = new BingoCardsData();
+        return cardsData.getRandomItemTask(card).material();
     }
 
-    public void setKit(PlayerKit kit, BingoGame game)
+    public void setKit(PlayerKit kit, BingoSession session)
     {
         this.kit = kit;
         String kitName = switch (kit)
@@ -58,12 +57,12 @@ public class BingoSettings
             }
             default -> kit.displayName;
         };
-        new TranslatedMessage("game.settings.kit_selected").color(ChatColor.GOLD).arg(ChatColor.RESET + kitName).sendAll(game);
+        new TranslatedMessage("game.settings.kit_selected").color(ChatColor.GOLD).arg(ChatColor.RESET + kitName).sendAll(session);
     }
 
-    public void setEffects(EnumSet<EffectOptionFlags> effects, BingoGame game)
+    public void setEffects(EnumSet<EffectOptionFlags> effects, BingoSession session)
     {
         this.effects = effects;
-        new TranslatedMessage("game.settings.effects_selected").color(ChatColor.GOLD).sendAll(game);
+        new TranslatedMessage("game.settings.effects_selected").color(ChatColor.GOLD).sendAll(session);
     }
 }

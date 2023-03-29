@@ -1,6 +1,5 @@
 package io.github.steaf23.bingoreloaded.core.tasks;
 
-import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.core.data.TranslationData;
 import io.github.steaf23.bingoreloaded.core.tasks.statistics.BingoStatistic;
 import io.github.steaf23.bingoreloaded.item.ItemText;
@@ -31,7 +30,7 @@ public record StatisticTask(BingoStatistic statistic, int count) implements Coun
     }
 
     @Override
-    public ItemText getItemDisplayName()
+    public ItemText getItemDisplayName(TranslationData translator)
     {
         ItemText amount = new ItemText(Integer.toString(count));
 
@@ -77,24 +76,18 @@ public record StatisticTask(BingoStatistic statistic, int count) implements Coun
     }
 
     @Override
-    public ItemText[] getItemDescription()
+    public ItemText[] getItemDescription(TranslationData translator)
     {
         Set<ChatColor> modifiers = new HashSet<>(){{
             add(ChatColor.DARK_AQUA);
         }};
-        return BingoReloaded.data().translationData.translateToItemText("game.item.lore_statistic", modifiers);
+        return translator.translateToItemText("game.item.lore_statistic", modifiers);
     }
 
     @Override
-    public BaseComponent getDescription()
+    public BaseComponent getDescription(TranslationData translator)
     {
-        return ItemText.combine(getItemDescription()).asComponent();
-    }
-
-    @Override
-    public int getStackSize()
-    {
-        return count;
+        return ItemText.combine(getItemDescription(translator)).asComponent();
     }
 
     @Override

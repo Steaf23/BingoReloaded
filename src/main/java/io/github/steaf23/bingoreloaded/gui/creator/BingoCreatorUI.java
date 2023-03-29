@@ -22,11 +22,11 @@ public class BingoCreatorUI extends MenuInventory
     public static final InventoryItem CARD = new InventoryItem(11, Material.FILLED_MAP, TITLE_PREFIX + "Edit Cards", "Click to view and edit bingo cards!");
     public static final InventoryItem LIST = new InventoryItem(15, Material.PAPER, TITLE_PREFIX + "Edit Lists", "Click to view and edit bingo lists!");
 
-    public BingoCreatorUI(BingoCardsData cardsData, MenuInventory parent)
+    public BingoCreatorUI(MenuInventory parent)
     {
         super(27, "Card Creator", parent);
         fillOptions(CARD, LIST);
-        this.cardsData = cardsData;
+        this.cardsData = new BingoCardsData();
     }
 
     @Override

@@ -1,6 +1,5 @@
 package io.github.steaf23.bingoreloaded.core.tasks;
 
-import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.core.data.TranslationData;
 import io.github.steaf23.bingoreloaded.item.ItemText;
 import io.github.steaf23.bingoreloaded.util.Message;
@@ -21,8 +20,13 @@ import java.util.Objects;
 @SerializableAs("Bingo.AdvancementTask")
 public record AdvancementTask(Advancement advancement) implements TaskData
 {
+    public AdvancementTask(Advancement advancement)
+    {
+        this.advancement = advancement;
+    }
+
     @Override
-    public ItemText getItemDisplayName()
+    public ItemText getItemDisplayName(TranslationData translator)
     {
         ItemText text = new ItemText("[", ChatColor.ITALIC);
         if (advancement == null)
@@ -39,16 +43,16 @@ public record AdvancementTask(Advancement advancement) implements TaskData
     }
 
     @Override
-    public ItemText[] getItemDescription()
+    public ItemText[] getItemDescription(TranslationData translator)
     {
-        ItemText desc = new ItemText(BingoReloaded.data().translationData.translate("game.item.lore_advancement"), ChatColor.DARK_AQUA);
+        ItemText desc = new ItemText(translator.translate("game.item.lore_advancement"), ChatColor.DARK_AQUA);
         return new ItemText[]{desc};
     }
 
     // This method exists because advancement descriptions can contain newlines,
     // which makes it impossible to use as item names or descriptions without getting a missing character.
     @Override
-    public BaseComponent getDescription()
+    public BaseComponent getDescription(TranslationData translator)
     {
         BaseComponent comp = new ItemText().addAdvancementDescription(advancement).asComponent();
         comp.setColor(ChatColor.DARK_AQUA);
@@ -68,12 +72,6 @@ public record AdvancementTask(Advancement advancement) implements TaskData
     public int hashCode()
     {
         return Objects.hash(advancement);
-    }
-
-    @Override
-    public int getStackSize()
-    {
-        return 1;
     }
 
     @Override

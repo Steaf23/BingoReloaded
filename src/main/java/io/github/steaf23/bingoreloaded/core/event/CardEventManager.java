@@ -1,6 +1,7 @@
 package io.github.steaf23.bingoreloaded.core.event;
 
 import io.github.steaf23.bingoreloaded.core.BingoGame;
+import io.github.steaf23.bingoreloaded.core.BingoSession;
 import io.github.steaf23.bingoreloaded.core.cards.BingoCard;
 import io.github.steaf23.bingoreloaded.core.cards.LockoutBingoCard;
 import io.github.steaf23.bingoreloaded.core.player.BingoPlayer;
@@ -32,13 +33,10 @@ public class CardEventManager
         this.cards.addAll(newCards);
     }
 
-    public void handlePlayerAdvancementCompleted(final PlayerAdvancementDoneEvent event, final BingoGame game)
+    public void handlePlayerAdvancementCompleted(final PlayerAdvancementDoneEvent event, final BingoSession session)
     {
-        if (game == null)
-            return;
-
-        BingoPlayer player = game.getTeamManager().getBingoPlayer(event.getPlayer());
-        if (player == null || !game.isInProgress())
+        BingoPlayer player = session.teamManager.getBingoPlayer(event.getPlayer());
+        if (player == null || !session.isRunning())
             return;
 
         BingoTeam team = player.getTeam();
@@ -48,15 +46,12 @@ public class CardEventManager
         for (BingoCard card : cards)
         {
             if (team.card.equals(card))
-                card.onPlayerAdvancementDone(event, player, game);
+                card.onPlayerAdvancementDone(event, player, session.game());
         }
     }
 
     public void handlePlayerDroppedItem(final PlayerDropItemEvent event, final BingoGame game)
     {
-        if (game == null)
-            return;
-
         BingoPlayer player = game.getTeamManager().getBingoPlayer(event.getPlayer());
         if (player == null || !player.gamePlayer().isPresent())
             return;
@@ -74,7 +69,7 @@ public class CardEventManager
 
     public void handlePlayerPickupItem(final EntityPickupItemEvent event, final BingoGame game)
     {
-        if (game == null || !(event.getEntity() instanceof Player p))
+        if (!(event.getEntity() instanceof Player p))
             return;
 
         BingoPlayer player = game.getTeamManager().getBingoPlayer(p);
@@ -94,7 +89,7 @@ public class CardEventManager
 
     public void handleInventoryClicked(final InventoryClickEvent event, final BingoGame game)
     {
-        if (game == null || !(event.getWhoClicked() instanceof Player p))
+        if (!(event.getWhoClicked() instanceof Player p))
             return;
 
         BingoPlayer player = game.getTeamManager().getBingoPlayer(p);
@@ -125,9 +120,6 @@ public class CardEventManager
 
     public void handleStatisticCompleted(final BingoStatisticCompletedEvent event, final BingoGame game)
     {
-        if (game == null)
-            return;
-
         if (!event.player.gamePlayer().isPresent())
             return;
 

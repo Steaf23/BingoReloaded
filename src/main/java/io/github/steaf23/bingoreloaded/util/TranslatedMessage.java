@@ -6,6 +6,6 @@ public class TranslatedMessage extends Message
 {
     public TranslatedMessage(String translatePath)
     {
-        super(BingoReloaded.data().translationData.translate(translatePath));
+        super(BingoReloaded.translate(translatePath));
     }
 }

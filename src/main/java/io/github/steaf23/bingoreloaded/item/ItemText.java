@@ -68,7 +68,6 @@ public class ItemText
             modifiers += ",\"italic\":false";
         }
         return asJsonString();
-
     }
 
     public String asJsonString()

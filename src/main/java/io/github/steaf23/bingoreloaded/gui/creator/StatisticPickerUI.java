@@ -1,15 +1,13 @@
 package io.github.steaf23.bingoreloaded.gui.creator;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
-import io.github.steaf23.bingoreloaded.core.data.TranslationData;
-import io.github.steaf23.bingoreloaded.gui.base.MenuInventory;
-import io.github.steaf23.bingoreloaded.gui.base.TreeMenu;
-import io.github.steaf23.bingoreloaded.gui.base.InventoryItem;
-import io.github.steaf23.bingoreloaded.core.tasks.statistics.BingoStatistic;
 import io.github.steaf23.bingoreloaded.core.tasks.BingoTask;
 import io.github.steaf23.bingoreloaded.core.tasks.StatisticTask;
+import io.github.steaf23.bingoreloaded.core.tasks.statistics.BingoStatistic;
+import io.github.steaf23.bingoreloaded.gui.base.InventoryItem;
+import io.github.steaf23.bingoreloaded.gui.base.MenuInventory;
+import io.github.steaf23.bingoreloaded.gui.base.TreeMenu;
 import io.github.steaf23.bingoreloaded.util.FlexColor;
-import io.github.steaf23.bingoreloaded.util.GUIPreset6x9;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Statistic;
@@ -27,24 +25,24 @@ public class StatisticPickerUI extends TreeMenu
     public String listName;
 
     protected static final InventoryItem BG_ITEM = new InventoryItem(Material.BLACK_STAINED_GLASS_PANE, " ", "");
-    protected static final InventoryItem QUIT = new InventoryItem(49, Material.REDSTONE, "" + ChatColor.RED + ChatColor.BOLD + BingoReloaded.data().translationData.translate("menu.save_exit"), "");
+    protected static final InventoryItem QUIT = new InventoryItem(49, Material.REDSTONE, "" + ChatColor.RED + ChatColor.BOLD + BingoReloaded.translate("menu.save_exit"), "");
 
     public StatisticPickerUI(MenuInventory parent, String listName)
     {
         super("Pick Statistics", parent);
         this.listName = listName;
-        addMenuOption(new InventoryItem(GUIPreset6x9.TWELVE.positions[0], Material.FEATHER, TITLE_PREFIX + "Travel"), createTravelMenu());
-        addMenuOption(new InventoryItem(GUIPreset6x9.TWELVE.positions[1], Material.DIAMOND_SWORD, TITLE_PREFIX + "Kill"), createEntityMenu(Statistic.KILL_ENTITY));
-        addMenuOption(new InventoryItem(GUIPreset6x9.TWELVE.positions[2], Material.SKELETON_SKULL, TITLE_PREFIX + "Get Killed"), createEntityMenu(Statistic.ENTITY_KILLED_BY));
-        addMenuOption(new InventoryItem(GUIPreset6x9.TWELVE.positions[3], Material.STONECUTTER, TITLE_PREFIX + "Block Interactions"), createBlockInteractMenu());
-        addMenuOption(new InventoryItem(GUIPreset6x9.TWELVE.positions[4], Material.CHEST, TITLE_PREFIX + "Container Interactions"), createContainerMenu());
-        addMenuOption(new InventoryItem(GUIPreset6x9.TWELVE.positions[5], Material.DIAMOND_PICKAXE, TITLE_PREFIX + "Mine Block"), createBlockMenu(Statistic.MINE_BLOCK));
-        addMenuOption(new InventoryItem(GUIPreset6x9.TWELVE.positions[6], Material.HOPPER, TITLE_PREFIX + "Drop Item"), createItemMenu(Statistic.DROP));
-        addMenuOption(new InventoryItem(GUIPreset6x9.TWELVE.positions[7], Material.SHEARS, TITLE_PREFIX + "Use/Place Item"), createItemMenu(Statistic.USE_ITEM));
-        addMenuOption(new InventoryItem(GUIPreset6x9.TWELVE.positions[8], Material.DEAD_BUSH, TITLE_PREFIX + "Break Item"), createItemMenu(Statistic.BREAK_ITEM));
-        addMenuOption(new InventoryItem(GUIPreset6x9.TWELVE.positions[9], Material.CRAFTING_TABLE, TITLE_PREFIX + "Craft Item"), createItemMenu(Statistic.CRAFT_ITEM));
-        addMenuOption(new InventoryItem(GUIPreset6x9.TWELVE.positions[10], Material.REDSTONE, TITLE_PREFIX + "Damage Related"), createDamageMenu());
-        addMenuOption(new InventoryItem(GUIPreset6x9.TWELVE.positions[11], Material.BAKED_POTATO, TITLE_PREFIX + "Other"), createMiscMenu());
+        addMenuOption(new InventoryItem(1, 0, Material.FEATHER, TITLE_PREFIX + "Travel"), createTravelMenu());
+        addMenuOption(new InventoryItem(3, 0, Material.DIAMOND_SWORD, TITLE_PREFIX + "Kill"), createEntityMenu(Statistic.KILL_ENTITY));
+        addMenuOption(new InventoryItem(5, 0, Material.SKELETON_SKULL, TITLE_PREFIX + "Get Killed"), createEntityMenu(Statistic.ENTITY_KILLED_BY));
+        addMenuOption(new InventoryItem(7, 0, Material.STONECUTTER, TITLE_PREFIX + "Block Interactions"), createBlockInteractMenu());
+        addMenuOption(new InventoryItem(1, 2, Material.CHEST, TITLE_PREFIX + "Container Interactions"), createContainerMenu());
+        addMenuOption(new InventoryItem(3, 2, Material.DIAMOND_PICKAXE, TITLE_PREFIX + "Mine Block"), createBlockMenu(Statistic.MINE_BLOCK));
+        addMenuOption(new InventoryItem(5, 2, Material.HOPPER, TITLE_PREFIX + "Drop Item"), createItemMenu(Statistic.DROP));
+        addMenuOption(new InventoryItem(7, 2, Material.SHEARS, TITLE_PREFIX + "Use/Place Item"), createItemMenu(Statistic.USE_ITEM));
+        addMenuOption(new InventoryItem(1, 4, Material.DEAD_BUSH, TITLE_PREFIX + "Break Item"), createItemMenu(Statistic.BREAK_ITEM));
+        addMenuOption(new InventoryItem(3, 4, Material.CRAFTING_TABLE, TITLE_PREFIX + "Craft Item"), createItemMenu(Statistic.CRAFT_ITEM));
+        addMenuOption(new InventoryItem(5, 4, Material.REDSTONE, TITLE_PREFIX + "Damage Related"), createDamageMenu());
+        addMenuOption(new InventoryItem(7, 4, Material.BAKED_POTATO, TITLE_PREFIX + "Other"), createMiscMenu());
         fillOptions(BG_ITEM.inSlot(45),
                 BG_ITEM.inSlot(46),
                 BG_ITEM.inSlot(47),
@@ -130,9 +128,10 @@ public class StatisticPickerUI extends TreeMenu
     public TaskPickerUI createTravelMenu()
     {
         List<BingoTask> tasks = new ArrayList<>();
-        BingoStatistic.getStatisticsOfCategory(BingoStatistic.StatisticCategory.TRAVEL)
-                .forEach(stat -> tasks.add(new BingoTask(new StatisticTask(new BingoStatistic(stat))))
-                );
+        for (Statistic stat : BingoStatistic.getStatisticsOfCategory(BingoStatistic.StatisticCategory.TRAVEL))
+        {
+            tasks.add(new BingoTask(new StatisticTask(new BingoStatistic(stat))));
+        }
         TaskPickerUI picker = new TaskPickerUI(tasks, "Travel Statistics", this, listName);
         return picker;
     }

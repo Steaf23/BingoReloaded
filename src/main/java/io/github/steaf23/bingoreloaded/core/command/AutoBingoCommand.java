@@ -1,10 +1,8 @@
 package io.github.steaf23.bingoreloaded.core.command;
 
 import io.github.steaf23.bingoreloaded.*;
-import io.github.steaf23.bingoreloaded.core.BingoGame;
-import io.github.steaf23.bingoreloaded.core.BingoGameManager;
-import io.github.steaf23.bingoreloaded.core.BingoGamemode;
-import io.github.steaf23.bingoreloaded.core.BingoSettings;
+import io.github.steaf23.bingoreloaded.core.*;
+import io.github.steaf23.bingoreloaded.core.data.BingoCardsData;
 import io.github.steaf23.bingoreloaded.gui.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.core.cards.CardSize;
 import io.github.steaf23.bingoreloaded.core.player.BingoPlayer;
@@ -28,7 +26,7 @@ public class AutoBingoCommand implements CommandExecutor
     }
 
     @Override
-    public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String alias, @NotNull String[] args)
+    public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command autobingo, @NotNull String alias, @NotNull String[] args)
     {
         // AutoBingo should only work for admins or console.
         if (commandSender instanceof Player p && !p.hasPermission("bingo.admin"))
@@ -36,44 +34,42 @@ public class AutoBingoCommand implements CommandExecutor
             return false;
         }
 
-        if (args.length == 0)
+        if (args.length < 2)
         {
             return false;
         }
         String worldName = args[0];
-        BingoSettings settings = manager.getGameSettings(worldName);
+        String command = args[1];
 
-        // Create the actual game with settings in the world.
-        if (settings == null)
+        if (command.equals("create"))
         {
-            if (args.length > 1 && args[1].equals("create"))
+            if (args.length != 3)
             {
-                if (args.length == 2)
-                {
-                    sendFailed("Usage: /autobingo <world_name> create <max_team_size>", worldName);
-                    return false;
-                }
-                create(worldName, args[2]);
-                sendSuccess("Connected Bingo Reloaded to this world!", worldName);
-                return true;
+                sendFailed("Usage: /autobingo <world_name> create <max_team_size>", worldName);
+                return false;
             }
+            create(worldName, args[2]);
+            sendSuccess("Connected Bingo Reloaded to this world!", worldName);
+            return true;
+        }
+        else if (command.equals("destroy"))
+        {
+            destroy(worldName);
+            sendSuccess("Disconnected Bingo Reloaded from this world!", worldName);
+            return true;
+        }
+
+        // All the other commands can only be executed if a game session exists in the given world)
+        if (!manager.doesSessionExist(worldName))
+        {
             sendFailed("Cannot perform command on a world that has not been created yet!", worldName);
             return false;
         }
-        else
-        {
-            if (args.length > 1 && args[1].equals("destroy"))
-            {
-                destroy(worldName);
-                sendSuccess("Disconnected Bingo Reloaded from this world!", worldName);
-                return true;
-            }
-        }
 
-        // All of these commands can only be executed if settings != null (i.e. if a game exists in the given world)
+        BingoSettings settings = manager.getSession(worldName).settings();
         if (args.length > 2)
         {
-            switch (args[1])
+            switch (command)
             {
                 case "start":
                     if (!start(settings, worldName, args[2], args.length > 3 ? args[3] : ""))
@@ -161,13 +157,13 @@ public class AutoBingoCommand implements CommandExecutor
 
     public void create(String worldName, String maxTeamMembers)
     {
-        int max = toInt(maxTeamMembers, 1);
-        manager.createGame(worldName, Math.max(1, max));
+        int max = toInt(maxTeamMembers, BingoReloaded.get().config().defaultTeamSize);
+        manager.createSession(worldName, Math.max(1, Math.min(64, max)));
     }
 
     public void destroy(String worldName)
     {
-        manager.destroyGame(worldName);
+        manager.destroySession(worldName);
     }
 
     public boolean start(BingoSettings settings, String worldName, String gamemode, String cardSize)
@@ -197,7 +193,7 @@ public class AutoBingoCommand implements CommandExecutor
     {
         try
         {
-            settings.setKit(PlayerKit.fromConfig(kitName), manager.getGame(worldName));
+            settings.setKit(PlayerKit.fromConfig(kitName), manager.getSession(worldName));
             return true;
         }
         catch (IllegalArgumentException e)
@@ -211,12 +207,12 @@ public class AutoBingoCommand implements CommandExecutor
     {
         if (effect.equals("all"))
         {
-            settings.setEffects(EffectOptionFlags.ALL_ON, manager.getGame(worldName));
+            settings.setEffects(EffectOptionFlags.ALL_ON, manager.getSession(worldName));
             return true;
         }
         else if (effect.equals("none"))
         {
-            settings.setEffects(EffectOptionFlags.ALL_OFF, manager.getGame(worldName));
+            settings.setEffects(EffectOptionFlags.ALL_OFF, manager.getSession(worldName));
             return true;
         }
 
@@ -241,21 +237,11 @@ public class AutoBingoCommand implements CommandExecutor
     private boolean setCard(BingoSettings settings, String cardName, String cardSeed)
     {
         int seed = toInt(cardSeed, 0);
-        if (BingoReloaded.data().cardsData.getCardNames().contains(cardName))
+        BingoCardsData cardsData = new BingoCardsData();
+        if (cardsData.getCardNames().contains(cardName))
         {
             settings.card = cardName;
             settings.cardSeed = seed;
-            return true;
-        }
-        return false;
-    }
-
-    public boolean setTeamMaximumMembers(BingoSettings settings, String memberCount)
-    {
-        int members = toInt(memberCount, 0);
-        if (members > 0)
-        {
-            settings.maxTeamSize = members;
             return true;
         }
         return false;
@@ -283,13 +269,13 @@ public class AutoBingoCommand implements CommandExecutor
 
     public boolean setPlayerTeam(String worldName, String playerName, String teamName)
     {
-        if (!manager.doesGameWorldExist(worldName))
+        if (!manager.doesSessionExist(worldName))
         {
             sendFailed("Cannot add player to team, world '" + worldName + "' is not a bingo world!", worldName);
             return false;
         }
 
-        BingoGame game = manager.getGame(worldName);
+        BingoSession session = manager.getSession(worldName);
 
         Player player = Bukkit.getPlayer(playerName);
         if (player == null)
@@ -300,19 +286,19 @@ public class AutoBingoCommand implements CommandExecutor
 
         if (teamName.toLowerCase().equals("none"))
         {
-            BingoPlayer bPlayer = game.getTeamManager().getBingoPlayer(player);
+            BingoPlayer bPlayer = session.teamManager.getBingoPlayer(player);
             if (bPlayer == null)
             {
                 sendFailed(playerName + " did not join any teams!", worldName);
                 return false;
             }
 
-            game.getTeamManager().removePlayerFromTeam(bPlayer);
+            session.teamManager.removePlayerFromTeam(bPlayer);
             sendSuccess("Player " + playerName + " removed from all teams", worldName);
         }
         else
         {
-            if (!game.getTeamManager().addPlayerToTeam(player, teamName))
+            if (!session.teamManager.addPlayerToTeam(player, teamName))
             {
                 return false;
             }

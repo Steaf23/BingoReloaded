@@ -1,14 +1,15 @@
 package io.github.steaf23.bingoreloaded.core.command;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
-import io.github.steaf23.bingoreloaded.core.BingoGame;
 import io.github.steaf23.bingoreloaded.core.BingoGameManager;
+import io.github.steaf23.bingoreloaded.core.BingoSession;
+import io.github.steaf23.bingoreloaded.core.data.BingoStatsData;
 import io.github.steaf23.bingoreloaded.core.data.TranslationData;
+import io.github.steaf23.bingoreloaded.core.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.core.player.PlayerKit;
-import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.bingoreloaded.gui.BingoMenu;
 import io.github.steaf23.bingoreloaded.gui.creator.BingoCreatorUI;
-import io.github.steaf23.bingoreloaded.core.player.BingoPlayer;
+import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.bingoreloaded.util.TranslatedMessage;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -40,27 +41,27 @@ public class BingoCommand implements CommandExecutor
         }
 
         String worldName = BingoGameManager.getWorldName(player.getWorld());
-        BingoGame game = manager.getGame(worldName);
-
-        if (game == null)
+        BingoSession session = manager.getSession(worldName);
+        if (session == null)
             return false;
 
         if (args.length == 0)
         {
-            BingoMenu.openOptions(player, manager);
+            BingoMenu.openOptions(player, session);
             return true;
         }
 
         switch (args[0])
         {
             case "join":
-                game.getTeamManager().openTeamSelector(player, null);
+                session.teamManager.openTeamSelector(player, null);
                 break;
             case "leave":
-                if (game.isInProgress())
+                if (session.isRunning())
                 {
-                    BingoPlayer participant = game.getTeamManager().getBingoPlayer(player);
-                    game.playerQuit(participant);
+                    BingoPlayer participant = session.teamManager.getBingoPlayer(player);
+                    if (participant != null)
+                        session.removePlayer(participant);
                 }
                 break;
 
@@ -70,7 +71,7 @@ public class BingoCommand implements CommandExecutor
                     if (args.length > 1)
                     {
                         int seed = Integer.parseInt(args[1]);
-                        game.getSettings().cardSeed = seed;
+                        session.settings.cardSeed = seed;
                     }
 
                     manager.startGame(worldName);
@@ -86,21 +87,21 @@ public class BingoCommand implements CommandExecutor
 
 
             case "getcard":
-                if (game.isInProgress())
+                if (session.isRunning())
                 {
-                    BingoPlayer participant = game.getTeamManager().getBingoPlayer(player);
+                    BingoPlayer participant = session.teamManager.getBingoPlayer(player);
                     if (participant != null)
-                        game.returnCardToPlayer(participant);
+                        session.game().returnCardToPlayer(participant);
                     return true;
                 }
                 break;
 
             case "back":
-                if (game.isInProgress())
+                if (session.isRunning())
                 {
-                    if (BingoReloaded.config().teleportAfterDeath)
+                    if (BingoReloaded.get().config().teleportAfterDeath)
                     {
-                        game.teleportPlayerAfterDeath(player);
+                        session.game().teleportPlayerAfterDeath(player);
                         return true;
                     }
                 }
@@ -111,19 +112,19 @@ public class BingoCommand implements CommandExecutor
                 {
                     return false;
                 }
-                else if (!game.isInProgress())
+                else if (!session.isRunning())
                 {
                     new TranslatedMessage("command.bingo.no_deathmatch").color(ChatColor.RED).send(player);
                     return false;
                 }
 
-                game.startDeathMatch(3);
+                session.game().startDeathMatch(3);
                 return true;
 
             case "creator":
                 if (player.hasPermission("bingo.manager"))
                 {
-                    BingoCreatorUI creatorUI = new BingoCreatorUI(BingoReloaded.data().cardsData, null);
+                    BingoCreatorUI creatorUI = new BingoCreatorUI(null);
                     creatorUI.open(player);
                 }
                 break;
@@ -141,21 +142,22 @@ public class BingoCommand implements CommandExecutor
 //                    throw new RuntimeException(e);
 //                }
 
-                if (!BingoReloaded.config().savePlayerStatistics)
+                if (!BingoReloaded.get().config().savePlayerStatistics)
                 {
                     TextComponent text = new TextComponent("Player statistics are not being tracked at this moment!");
                     text.setColor(ChatColor.RED);
                     Message.sendDebug(text, player);
                     return true;
                 }
+                BingoStatsData statsData = new BingoStatsData();
                 Message msg;
                 if (args.length > 1 && player.hasPermission("bingo.admin"))
                 {
-                    msg = BingoReloaded.data().statsData.getPlayerStatsFormatted(args[1]);
+                    msg = statsData.getPlayerStatsFormatted(args[1]);
                 }
                 else
                 {
-                    msg = BingoReloaded.data().statsData.getPlayerStatsFormatted(player.getUniqueId());
+                    msg = statsData.getPlayerStatsFormatted(player.getUniqueId());
                 }
                 msg.send(player);
                 return true;
@@ -163,7 +165,7 @@ public class BingoCommand implements CommandExecutor
             case "destroy":
                 if (args.length > 1 && player.hasPermission("bingo.admin"))
                 {
-                    BingoReloaded.holograms().destroy(args[1]);
+                    BingoReloaded.get().holograms().destroy(args[1]);
                 }
                 break;
 

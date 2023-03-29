@@ -1,8 +1,7 @@
 package io.github.steaf23.bingoreloaded.gui;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
-import io.github.steaf23.bingoreloaded.core.BingoGame;
-import io.github.steaf23.bingoreloaded.core.BingoSettings;
+import io.github.steaf23.bingoreloaded.core.BingoSession;
 import io.github.steaf23.bingoreloaded.core.player.CustomKit;
 import io.github.steaf23.bingoreloaded.core.player.PlayerKit;
 import io.github.steaf23.bingoreloaded.gui.base.InventoryItem;
@@ -15,27 +14,25 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 
 public class KitOptionsMenu extends MenuInventory
 {
-    private final BingoGame game;
-    private final BingoSettings settings;
+    private final BingoSession session;
 
     private static final InventoryItem HARDCORE = new InventoryItem(1, 1,
             Material.RED_CONCRETE, PlayerKit.HARDCORE.displayName,
-            BingoReloaded.data().translationData.itemDescription("menu.kits.hardcore"));
+            BingoReloaded.get().getTranslator().itemDescription("menu.kits.hardcore"));
     private static final InventoryItem NORMAL = new InventoryItem(3, 1,
             Material.YELLOW_CONCRETE, PlayerKit.NORMAL.displayName,
-            BingoReloaded.data().translationData.itemDescription("menu.kits.normal"));
+            BingoReloaded.get().getTranslator().itemDescription("menu.kits.normal"));
     private static final InventoryItem OVERPOWERED = new InventoryItem(5, 1,
             Material.PURPLE_CONCRETE, PlayerKit.OVERPOWERED.displayName,
-            BingoReloaded.data().translationData.itemDescription("menu.kits.overpowered"));
+            BingoReloaded.get().getTranslator().itemDescription("menu.kits.overpowered"));
     private static final InventoryItem RELOADED = new InventoryItem(7, 1,
             Material.CYAN_CONCRETE, PlayerKit.RELOADED.displayName,
-            BingoReloaded.data().translationData.itemDescription("menu.kits.reloaded"));
+            BingoReloaded.get().getTranslator().itemDescription("menu.kits.reloaded"));
 
-    public KitOptionsMenu(MenuInventory parent, BingoGame game, BingoSettings settings)
+    public KitOptionsMenu(MenuInventory parent, BingoSession session)
     {
-        super(45, BingoReloaded.data().translationData.itemName("menu.options.kit"), parent);
-        this.game = game;
-        this.settings = settings;
+        super(45, BingoReloaded.get().getTranslator().itemName("menu.options.kit"), parent);
+        this.session = session;
 
         fillOptions(HARDCORE, NORMAL, OVERPOWERED, RELOADED);
         for (int i = 0; i < 5; i++)
@@ -131,6 +128,6 @@ public class KitOptionsMenu extends MenuInventory
 
     private void setKit(PlayerKit kit)
     {
-        settings.setKit(kit, game);
+        session.settings.setKit(kit, session);
     }
 }

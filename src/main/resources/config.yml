@@ -50,7 +50,6 @@ language: en_us.yml
 defaultGameDuration: 20 # whole number between 1 and 60.
 
 # Default amount of players allowed per team.
-#   This option can be edited in-game but here it will be saved even after a server restart.
 defaultTeamSize: 64 # whole number between 1 and 64.
 
 # Save player statistics (stats) like wins, losses, tasks completed, etc... Used for the leaderboard. Stats are saved to player_stats.yml.
@@ -74,3 +73,9 @@ keepScoreboardVisible: true # true or false
 
 # If true, will display all participants' names on the scoreboard under their team.
 showPlayerInScoreboard: true
+
+# If true, advancements can appear on the bingo card.
+useAdvancements: true
+
+# If true, statistics can appear on the bingo card.
+useStatistics: true
