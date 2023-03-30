@@ -332,6 +332,6 @@ public class Message
         hoverable.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
                 new ComponentBuilder(hover).create()));
 
-        return new TextComponent[]{prefix, hoverable, suffix};
+        return new TextComponent[]{new TextComponent(PRINT_PREFIX), prefix, hoverable, suffix};
     }
 }

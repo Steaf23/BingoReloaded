@@ -287,9 +287,7 @@ public record BingoStatistic(@NotNull Statistic stat, @Nullable EntityType entit
                     BREAK_ITEM,
                     CRAFT_ITEM,
                     KILL_ENTITY,
-                    ENTITY_KILLED_BY -> {
-                yield rootStatMaterial(statistic);
-            }
+                    ENTITY_KILLED_BY -> rootStatMaterial(statistic);
         };
     }
 
