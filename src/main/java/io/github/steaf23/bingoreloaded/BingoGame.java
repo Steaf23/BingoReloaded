@@ -1,18 +1,19 @@
 package io.github.steaf23.bingoreloaded;
 
 import io.github.steaf23.bingoreloaded.data.*;
+import io.github.steaf23.bingoreloaded.event.BingoCardSlotCompleteEvent;
 import io.github.steaf23.bingoreloaded.event.CountdownTimerFinishedEvent;
 import io.github.steaf23.bingoreloaded.event.SendBingoGameEvent;
 import io.github.steaf23.bingoreloaded.gui.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.gui.cards.BingoCard;
 import io.github.steaf23.bingoreloaded.gui.cards.CardBuilder;
-import io.github.steaf23.bingoreloaded.event.BingoCardSlotCompleteEvent;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
 import io.github.steaf23.bingoreloaded.item.ItemTextBuilder;
 import io.github.steaf23.bingoreloaded.player.BingoTeam;
 import io.github.steaf23.bingoreloaded.player.PlayerKit;
 import io.github.steaf23.bingoreloaded.player.TeamManager;
 import io.github.steaf23.bingoreloaded.util.*;
+import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.chat.TranslatableComponent;
@@ -33,8 +34,6 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
-import net.md_5.bungee.api.ChatColor;
-import org.w3c.dom.css.Counter;
 
 import java.util.*;
 
@@ -770,8 +769,8 @@ public class BingoGame implements Listener
                 {
                     TextComponent[] teleportMsg = Message.createHoverCommandMessage("game.player.respawn", "/bingo back");
 
-                    event.getEntity().spigot().sendMessage(teleportMsg);
                     deadPlayers.put(event.getEntity().getUniqueId(), deathCoords);
+                    event.getEntity().spigot().sendMessage(teleportMsg);
                 }
             }
         }
@@ -798,10 +797,10 @@ public class BingoGame implements Listener
     @EventHandler
     public void onPlayerRespawnEvent(final PlayerRespawnEvent event)
     {
-        if (getTeamManager().getTeamOfPlayer(event.getPlayer()) == null)
-        {
-            event.getPlayer().setGameMode(GameMode.SPECTATOR);
-        }
+//        if (getTeamManager().getTeamOfPlayer(event.getPlayer()) == null)
+//        {
+//            event.getPlayer().setGameMode(GameMode.SPECTATOR);
+//        }
 
         if (deadPlayers.containsKey(event.getPlayer().getUniqueId()))
         {
