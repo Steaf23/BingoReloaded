@@ -1,12 +1,12 @@
 package io.github.steaf23.bingoreloaded.core.command;
 
-import io.github.steaf23.bingoreloaded.*;
 import io.github.steaf23.bingoreloaded.core.*;
-import io.github.steaf23.bingoreloaded.core.data.BingoCardsData;
-import io.github.steaf23.bingoreloaded.gui.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.core.cards.CardSize;
+import io.github.steaf23.bingoreloaded.core.data.BingoCardsData;
+import io.github.steaf23.bingoreloaded.core.data.BingoSettingsData;
 import io.github.steaf23.bingoreloaded.core.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.core.player.PlayerKit;
+import io.github.steaf23.bingoreloaded.gui.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.util.Message;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
@@ -15,6 +15,8 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Arrays;
 
 public class AutoBingoCommand implements CommandExecutor
 {
@@ -26,7 +28,7 @@ public class AutoBingoCommand implements CommandExecutor
     }
 
     @Override
-    public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command autobingo, @NotNull String alias, @NotNull String[] args)
+    public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command autobingoCommand, @NotNull String alias, @NotNull String[] args)
     {
         // AutoBingo should only work for admins or console.
         if (commandSender instanceof Player p && !p.hasPermission("bingo.admin"))
@@ -40,235 +42,195 @@ public class AutoBingoCommand implements CommandExecutor
         }
         String worldName = args[0];
         String command = args[1];
+        String[] extraArguments = args.length > 2 ? Arrays.copyOfRange(args, 2, args.length - 1) : new String[]{};
+        BingoSettingsBuilder settings = null;
+        BingoSession session = manager.getSession(worldName);
+        if (session != null)
+            settings = manager.getSession(worldName).settingsBuilder;
 
-        if (command.equals("create"))
+        // All commands besides "create" can only be executed if a game session exists in the given world
+        if (!command.equals("create") && !manager.doesSessionExist(worldName))
         {
-            if (args.length != 3)
-            {
-                sendFailed("Usage: /autobingo <world_name> create <max_team_size>", worldName);
-                return false;
-            }
-            create(worldName, args[2]);
-            sendSuccess("Connected Bingo Reloaded to this world!", worldName);
-            return true;
-        }
-        else if (command.equals("destroy"))
-        {
-            destroy(worldName);
-            sendSuccess("Disconnected Bingo Reloaded from this world!", worldName);
-            return true;
-        }
-
-        // All the other commands can only be executed if a game session exists in the given world)
-        if (!manager.doesSessionExist(worldName))
-        {
-            sendFailed("Cannot perform command on a world that has not been created yet!", worldName);
+            sendFailed("Cannot perform command on a world that has not been created (yet)!", worldName);
             return false;
         }
 
-        BingoSettings settings = manager.getSession(worldName).settings();
-        if (args.length > 2)
+        boolean success = switch(command)
         {
-            switch (command)
-            {
-                case "start":
-                    if (!start(settings, worldName, args[2], args.length > 3 ? args[3] : ""))
-                    {
-                        sendFailed("Invalid command, could not start game with gamemode '" + args[2] + "'!", worldName);
-                        return false;
-                    }
-                    sendSuccess("Started bingo!", worldName);
-                    return true;
-
-                case "kit":
-                    if (!setKit(settings,args[2], args[1]))
-                    {
-                        sendFailed("Could not find Kit with name '" + args[2] + "'!", worldName);
-                        return false;
-                    }
-                    sendSuccess("Kit set to " + settings.kit.displayName, worldName);
-                    return true;
-
-                case "effects":
-                    // autobingo world effect <effect_name> [true | false]
-                    // If argument count is only 1, enable all, none or just the single effect typed.
-                    //     Else default enable effect unless the second argument is "false".
-                    boolean enable = args.length > 3 && args[3].equals("false") ? false : true;
-                    if (!setEffect(settings, args[2], enable, args[1]))
-                    {
-                        sendFailed("Invalid effect setting '" + args[2] + "' to '" + enable + "'!", worldName);
-                        return false;
-                    }
-                    sendSuccess("Updated active effects to " + settings.effects, worldName);
-                    return true;
-
-                case "card":
-                    if (!setCard(settings, args[2], args.length > 3 ? args[3] : "0"))
-                    {
-                        sendFailed("Invalid card name '" + args[2] + "'!", worldName);
-                        return false;
-                    }
-                    sendSuccess("Playing card set to " + settings.card + " with" +
-                            (settings.cardSeed == 0 ? " no seed" : " seed " + settings.cardSeed), worldName);
-                    return true;
-
-                case "countdown":
-                    if (!setCountdownGameDuration(settings, args[2], args.length > 3 ? args[3] : settings.countdownGameDuration + ""))
-                    {
-                        sendFailed("Could not set Countdown game duration to " + args[2] + "!", worldName);
-                        return false;
-                    }
-                    sendSuccess("Set duration for countdown mode to " + settings.countdownGameDuration, worldName);
-                    return true;
-
-                case "team":
-                    // autobingo world team <player_name> <team_name | none>
-                    if (args.length == 3)
-                    {
-                        sendFailed("Invalid number of arguments: " + args.length + "!", worldName);
-                        return false;
-                    }
-                    return setPlayerTeam(worldName, args[2], args[3]);
-
-                default:
-                    sendFailed("Invalid command '" + args[2] + "'!", worldName);
-                    return false;
+            case "create" -> create(worldName, extraArguments);
+            case "destroy" -> destroy(worldName);
+            case "start" -> start(settings, worldName);
+            case "kit" -> setKit(settings, worldName, extraArguments);
+            case "effects" -> setEffect(settings, worldName, extraArguments);
+            case "card" -> setCard(settings, worldName, extraArguments);
+            case "countdown" -> setCountdown(settings, worldName, extraArguments);
+            case "duration" -> setDuration(settings, worldName, extraArguments);
+            case "team" -> setPlayerTeam(worldName, extraArguments);
+            case "teamsize" -> setTeamSize(settings, worldName, extraArguments);
+            case "gamemode" -> setGamemode(settings, worldName, extraArguments);
+            case "end" -> end(settings, worldName);
+            case "preset" -> preset(settings, worldName, extraArguments);
+            default -> {
+                Message.log(ChatColor.RED + "Invalid command: '" + command + "' not recognized");
+                yield false;
             }
+        };
+
+        return success;
+    }
+
+    public boolean create(String worldName, String[] extraArguments)
+    {
+        if (extraArguments.length > 1)
+        {
+            sendFailed("Expected at most 3 arguments", worldName);
+        }
+
+        String presetName = extraArguments.length == 1 ? extraArguments[0] : "";
+        manager.createSession(worldName, presetName);
+        sendSuccess("Connected Bingo Reloaded to this world!", worldName);
+        return true;
+    }
+
+    public boolean destroy(String worldName)
+    {
+        manager.destroySession(worldName);
+        sendSuccess("Disconnected Bingo Reloaded from this world!", worldName);
+        return true;
+    }
+
+    public boolean start(BingoSettingsBuilder settings, String worldName)
+    {
+        if (manager.startGame(worldName))
+        {
+            sendFailed("Could not start game", worldName);
+            return false;
         }
         else
         {
-            if (args[1].equals("end"))
-            {
-                if (!end(settings, worldName))
-                {
-                    sendFailed("Invalid command, can not end the game", worldName);
-                }
-                else
-                {
-                    sendSuccess("Game forcefully ended!", worldName);
-                    return true;
-                }
-            }
-
-            sendFailed("Invalid number of arguments: " + args.length + "!", worldName);
-            return false;
-        }
-    }
-
-    public void create(String worldName, String maxTeamMembers)
-    {
-        int max = toInt(maxTeamMembers, BingoReloaded.get().config().defaultTeamSize);
-        manager.createSession(worldName, Math.max(1, Math.min(64, max)));
-    }
-
-    public void destroy(String worldName)
-    {
-        manager.destroySession(worldName);
-    }
-
-    public boolean start(BingoSettings settings, String worldName, String gamemode, String cardSize)
-    {
-        try
-        {
-            settings.mode = BingoGamemode.fromDataString(gamemode);
-            switch (cardSize)
-            {
-                case "3":
-                    settings.cardSize = CardSize.X3;
-                    break;
-                default:
-                    settings.cardSize = CardSize.X5;
-                    break;
-            }
-        }
-        catch (IllegalArgumentException e)
-        {
-            return false;
-        }
-
-        return manager.startGame(worldName);
-    }
-
-    private boolean setKit(BingoSettings settings, String kitName, String worldName)
-    {
-        try
-        {
-            settings.setKit(PlayerKit.fromConfig(kitName), manager.getSession(worldName));
+            sendSuccess("The game has started!", worldName);
             return true;
         }
-        catch (IllegalArgumentException e)
+    }
+
+    private boolean setKit(BingoSettingsBuilder settings, String worldName, String[] extraArguments)
+    {
+        if (extraArguments.length != 1)
         {
+            sendFailed("Expected 3 arguments!", worldName);
             return false;
         }
 
+        PlayerKit kit = PlayerKit.fromConfig(extraArguments[0]);
+        settings.kit(kit);
+        sendSuccess("Kit set to " + kit.displayName, worldName);
+        return true;
     }
 
-    public boolean setEffect(BingoSettings settings, String effect, boolean enable, String worldName)
+    public boolean setEffect(BingoSettingsBuilder settings, String worldName, String[] extraArguments)
     {
+        // autobingo world effect <effect_name> [true | false]
+        // If argument count is only 1, enable all, none or just the single effect typed.
+        //     Else default enable effect unless the second argument is "false".
+
+        if (extraArguments.length == 0)
+        {
+            sendFailed("Expected at least 3 arguments!", worldName);
+            return false;
+        }
+        String effect = extraArguments[0];
+        boolean enable = extraArguments.length > 1 && extraArguments[1].equals("false") ? false : true;
+
         if (effect.equals("all"))
         {
-            settings.setEffects(EffectOptionFlags.ALL_ON, manager.getSession(worldName));
+            settings.effects(EffectOptionFlags.ALL_ON);
+            sendSuccess("Updated active effects to " + EffectOptionFlags.ALL_ON, worldName);
             return true;
         }
         else if (effect.equals("none"))
         {
-            settings.setEffects(EffectOptionFlags.ALL_OFF, manager.getSession(worldName));
+            settings.effects(EffectOptionFlags.ALL_OFF);
+            sendSuccess("Updated active effects to " + EffectOptionFlags.ALL_OFF, worldName);
             return true;
         }
 
         try
         {
-            if (enable)
-            {
-                settings.effects.add(EffectOptionFlags.valueOf(effect.toUpperCase()));
-            }
-            else
-            {
-                settings.effects.remove(EffectOptionFlags.valueOf(effect.toUpperCase()));
-            }
+            settings.toggleEffect(EffectOptionFlags.valueOf(effect.toUpperCase()), enable);
+            sendSuccess("Updated active effects to " + settings.view().effects(), worldName);
             return true;
         }
         catch (IllegalArgumentException e)
         {
+            sendFailed("Invalid effect: " + effect, worldName);
             return false;
         }
     }
 
-    private boolean setCard(BingoSettings settings, String cardName, String cardSeed)
+    private boolean setCard(BingoSettingsBuilder settings, String worldName, String[] extraArguments)
     {
-        int seed = toInt(cardSeed, 0);
+        if (extraArguments.length == 0)
+        {
+            sendFailed("Expected at least 3 arguments!", worldName);
+            return false;
+        }
+
+        String cardName = extraArguments[0];
+        int seed = extraArguments.length > 1 ? toInt(extraArguments[1], 0) : 0;
+
         BingoCardsData cardsData = new BingoCardsData();
         if (cardsData.getCardNames().contains(cardName))
         {
-            settings.card = cardName;
-            settings.cardSeed = seed;
+            settings.card(cardName).cardSeed(seed);
+            sendSuccess("Playing card set to " + cardName + " with" +
+                    (seed == 0 ? " no seed" : " seed " + seed), worldName);
             return true;
         }
+        sendFailed("No card named '" + cardName + "' was found!", worldName);
         return false;
     }
 
-    public boolean setCountdownGameDuration(BingoSettings settings, String enableCountdown, String duration)
+    public boolean setCountdown(BingoSettingsBuilder settings, String worldName, String[] extraArguments)
     {
-        if (enableCountdown.equals("true"))
+        if (extraArguments.length != 1)
         {
-            settings.enableCountdown = true;
-        }
-        else
-        {
-            settings.enableCountdown = false;
+            sendFailed("Expected 3 arguments!", worldName);
+            return false;
         }
 
-        int gameDuration = toInt(duration, 0);
+        boolean enableCountdown = extraArguments[0].equals("true");
+        settings.enableCountdown(enableCountdown);
+        sendSuccess((enableCountdown ? "Enabled" : "Disabled") + " countdown mode", worldName);
+        return true;
+    }
+
+    public boolean setDuration(BingoSettingsBuilder settings, String worldName, String[] extraArguments)
+    {
+        if (extraArguments.length != 1)
+        {
+            sendFailed("Expected 3 arguments!", worldName);
+            return false;
+        }
+
+        int gameDuration = toInt(extraArguments[0], 0);
         if (gameDuration > 0)
         {
-            settings.countdownGameDuration = gameDuration;
+            settings.countdownGameDuration(gameDuration);
+            sendSuccess("Set game duration for countdown mode to " + gameDuration, worldName);
             return true;
         }
-        return false;
+        sendFailed("Cannot set duration to " + gameDuration, worldName);
+        return true;
     }
 
-    public boolean setPlayerTeam(String worldName, String playerName, String teamName)
+    public boolean setPlayerTeam(String worldName, String[] extraArguments)
     {
+        if (extraArguments.length != 2)
+        {
+            sendFailed("Expected 4 arguments!", worldName);
+            return false;
+        }
+
         if (!manager.doesSessionExist(worldName))
         {
             sendFailed("Cannot add player to team, world '" + worldName + "' is not a bingo world!", worldName);
@@ -276,6 +238,8 @@ public class AutoBingoCommand implements CommandExecutor
         }
 
         BingoSession session = manager.getSession(worldName);
+        String playerName = extraArguments[0];
+        String teamName = extraArguments[1];
 
         Player player = Bukkit.getPlayer(playerName);
         if (player == null)
@@ -295,21 +259,104 @@ public class AutoBingoCommand implements CommandExecutor
 
             session.teamManager.removePlayerFromTeam(bPlayer);
             sendSuccess("Player " + playerName + " removed from all teams", worldName);
+            return true;
         }
-        else
+
+        if (!session.teamManager.addPlayerToTeam(player, teamName))
         {
-            if (!session.teamManager.addPlayerToTeam(player, teamName))
-            {
-                return false;
-            }
-            sendSuccess("Player " + playerName + " added to team " + teamName + "", worldName);
+            return false;
         }
+        sendSuccess("Player " + playerName + " added to team " + teamName + "", worldName);
         return true;
     }
 
-    public boolean end(BingoSettings settings, String worldName)
+    public boolean setTeamSize(BingoSettingsBuilder settings, String worldName, String[] extraArguments)
     {
-        return manager.endGame(worldName);
+        if (extraArguments.length != 1)
+        {
+            sendFailed("Expected 3 arguments!", worldName);
+            return false;
+        }
+
+        int teamSize = Math.min(64, Math.max(1, toInt(extraArguments[0], 1)));
+
+        settings.maxTeamSize(teamSize);
+        manager.getSession(worldName).teamManager.setMaxTeamSize(teamSize);
+        sendSuccess("Set maximum team size to " + teamSize + " players", worldName);
+        return true;
+    }
+
+    public boolean setGamemode(BingoSettingsBuilder settings, String worldName, String[] extraArguments)
+    {
+        if (extraArguments.length == 0)
+        {
+            sendFailed("Expected at least 3 arguments!", worldName);
+            return false;
+        }
+
+        try
+        {
+            settings.mode(BingoGamemode.fromDataString(extraArguments[0]));
+            switch (extraArguments[1])
+            {
+                case "3":
+                    settings.cardSize(CardSize.X3);
+                    break;
+                default:
+                    settings.cardSize(CardSize.X5);
+                    break;
+            }
+        }
+        catch (IllegalArgumentException e)
+        {
+            sendFailed("Cannot set gamemode to '" + extraArguments[0] + "', unknown gamemode!", worldName);
+            return false;
+        }
+        BingoSettings view = settings.view();
+        sendSuccess("Set gamemode to " + view.mode().name + " " + view.size() + "x" + view.size(), worldName);
+        return true;
+    }
+
+    public boolean end(BingoSettingsBuilder settings, String worldName)
+    {
+        if (manager.endGame(worldName))
+        {
+            sendFailed("Could not end the game", worldName);
+            return false;
+        }
+        else
+        {
+            sendSuccess("Game forcefully ended!", worldName);
+            return true;
+        }
+    }
+
+    public boolean preset(BingoSettingsBuilder settings, String worldName, String[] extraArguments)
+    {
+        if (extraArguments.length != 2)
+        {
+            sendFailed("Expected 4 arguments!", worldName);
+            return false;
+        }
+
+        BingoSettingsData settingsData = new BingoSettingsData();
+
+        String path = extraArguments[0];
+        if (path.isBlank())
+        {
+            sendFailed("Please enter a valid preset name", worldName);
+            return false;
+        }
+        if (extraArguments[0] == "save")
+        {
+            settingsData.saveSettings(path, settings);
+        }
+        else if (extraArguments[0] == "load")
+        {
+            manager.getSession(worldName).settingsBuilder.fromOther(settingsData.getSettings(path, manager.getSession(worldName)));
+        }
+
+        return true;
     }
 
     /**

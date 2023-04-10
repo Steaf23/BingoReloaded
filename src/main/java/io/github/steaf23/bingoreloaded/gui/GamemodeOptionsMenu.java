@@ -76,8 +76,8 @@ public class GamemodeOptionsMenu extends MenuInventory
             chosenSize = CardSize.X3;
         }
 
-        session.settings.mode = chosenMode;
-        session.settings.cardSize = chosenSize;
+        session.settingsBuilder.mode(chosenMode);
+        session.settingsBuilder.cardSize(chosenSize);
         close(player);
     }
 }

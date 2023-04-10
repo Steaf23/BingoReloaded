@@ -23,7 +23,7 @@ public class BingoGameManager
         return listener;
     }
 
-    public boolean createSession(String worldName, int maxTeamMembers)
+    public boolean createSession(String worldName, String presetName)
     {
         if (doesSessionExist(worldName))
         {
@@ -31,7 +31,7 @@ public class BingoGameManager
             return false;
         }
 
-        BingoSession session = new BingoSession(worldName, maxTeamMembers);
+        BingoSession session = new BingoSession(worldName);
         sessions.put(worldName, session);
         return true;
     }

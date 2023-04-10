@@ -13,7 +13,7 @@ public enum CardSize
     X6(6, 2),
     ;
 
-    public int cardSize;
+    public int size;
     public int leftSpacing;
     public int rightSpacing;
     public int fullCardSize;
@@ -22,7 +22,7 @@ public enum CardSize
 
     CardSize(int size, int leftSpacing)
     {
-        this.cardSize = size;
+        this.size = size;
         this.leftSpacing = leftSpacing;
         this.rightSpacing = 9 - size - leftSpacing;
         this.fullCardSize = (int)Math.pow(size, 2);
@@ -39,11 +39,11 @@ public enum CardSize
         int row;
         if (itemIndex == fullCardSize - 1) //set correct row for last item
         {
-            row = cardSize - 1;
+            row = size - 1;
         }
         else //set correct row for other items
         {
-            row = (int) Math.floor(itemIndex / (double)cardSize);
+            row = (int) Math.floor(itemIndex / (double)size);
         }
 
         return itemIndex + leftSpacing + row * (leftSpacing + rightSpacing);
@@ -53,7 +53,7 @@ public enum CardSize
     {
         for (CardSize size : CardSize.values())
         {
-            if (size.cardSize == width)
+            if (size.size == width)
             {
                 return size;
             }

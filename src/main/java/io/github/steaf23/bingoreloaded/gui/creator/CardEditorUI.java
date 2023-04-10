@@ -1,11 +1,10 @@
 package io.github.steaf23.bingoreloaded.gui.creator;
 
 import io.github.steaf23.bingoreloaded.core.data.BingoCardsData;
-import io.github.steaf23.bingoreloaded.core.data.TaskListsData;
-import io.github.steaf23.bingoreloaded.gui.base.MenuInventory;
 import io.github.steaf23.bingoreloaded.gui.base.FilterType;
-import io.github.steaf23.bingoreloaded.gui.base.PaginatedPickerMenu;
 import io.github.steaf23.bingoreloaded.gui.base.InventoryItem;
+import io.github.steaf23.bingoreloaded.gui.base.MenuInventory;
+import io.github.steaf23.bingoreloaded.gui.base.PaginatedPickerMenu;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -62,7 +61,7 @@ public class CardEditorUI extends PaginatedPickerMenu
             for (String listName : cardsData.lists().getListNames())
             {
                 items.add(new InventoryItem(Material.PAPER, listName,
-                        "This list contains " + cardsData.lists().getTasks(listName).size() + " task(s)",
+                        "This list contains " + cardsData.lists().getTaskCount(listName) + " task(s)",
                         ChatColor.GRAY + "Click to select"));
             }
 
@@ -86,7 +85,7 @@ public class CardEditorUI extends PaginatedPickerMenu
 
     public void getResultFromPicker(String result)
     {
-        cardsData.setList(cardName, result, cardsData.lists().getTasks(result).size(), 1);
+        cardsData.setList(cardName, result, cardsData.lists().getTaskCount(result), 1);
     }
 
     @Override
@@ -104,7 +103,7 @@ public class CardEditorUI extends PaginatedPickerMenu
         for (String listName : cardsData.getListNames(cardName))
         {
             InventoryItem item = new InventoryItem(Material.MAP, listName,
-                    "This list contains " + cardsData.lists().getTasks(listName).size() + " task(s)",
+                    "This list contains " + cardsData.lists().getTaskCount(listName) + " task(s)",
                     ChatColor.GRAY + "Left-click to edit distribution",
                     ChatColor.GRAY + "Right-click to remove this list");
             item.setAmount(Math.max(1, cardsData.getListMax(cardName, listName)));

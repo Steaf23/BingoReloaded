@@ -100,7 +100,7 @@ public class BingoCreatorUI extends MenuInventory
                     for (String list : listsData.getListNames())
                     {
                         InventoryItem item = new InventoryItem(Material.PAPER, list,
-                                "This list contains " + listsData.getTasks(list).size() + " tasks",
+                                "This list contains " + listsData.getTaskCount(list) + " tasks",
                                 ChatColor.GRAY + "Right-click for more options");
                         items.add(item);
                     }

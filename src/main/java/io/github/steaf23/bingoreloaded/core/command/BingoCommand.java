@@ -71,7 +71,7 @@ public class BingoCommand implements CommandExecutor
                     if (args.length > 1)
                     {
                         int seed = Integer.parseInt(args[1]);
-                        session.settings.cardSeed = seed;
+                        session.settingsBuilder.cardSeed(seed);
                     }
 
                     manager.startGame(worldName);

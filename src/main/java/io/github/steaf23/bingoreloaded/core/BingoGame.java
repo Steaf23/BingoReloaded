@@ -3,6 +3,7 @@ package io.github.steaf23.bingoreloaded.core;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.core.cards.BingoCard;
 import io.github.steaf23.bingoreloaded.core.cards.CardBuilder;
+import io.github.steaf23.bingoreloaded.core.data.BingoCardsData;
 import io.github.steaf23.bingoreloaded.core.data.BingoStatType;
 import io.github.steaf23.bingoreloaded.core.data.ConfigData;
 import io.github.steaf23.bingoreloaded.core.data.TranslationData;
@@ -51,12 +52,14 @@ public class BingoGame
     private final StatisticTracker statTracker;
     private GameTimer timer;
 
+    private Material deathMatchItem;
+
     public BingoGame(BingoSession session) {
         this.session = session;
         this.worldName = session.worldName;
         this.teamManager = session.teamManager;
         this.scoreboard = session.scoreboard;
-        this.settings = session.settings;
+        this.settings = session.settingsBuilder.view();
         this.deadPlayers = new HashMap<>();
         this.cardEventManager = new CardEventManager(worldName);
         if (BingoReloaded.get().config().useStatistics)
@@ -70,8 +73,8 @@ public class BingoGame
     private void start()
     {
         // Create timer
-        if (settings.enableCountdown)
-            timer = new CountdownTimer(settings.countdownGameDuration * 60, 5 * 60, 60, session);
+        if (settings.enableCountdown())
+            timer = new CountdownTimer(settings.countdownDuration() * 60, 5 * 60, 60, session);
         else
             timer = new CounterTimer();
         timer.setNotifier(time ->
@@ -86,7 +89,7 @@ public class BingoGame
                 statTracker.updateProgress();
         });
 
-        settings.deathMatchItem = null;
+        deathMatchItem = null;
         World world = Bukkit.getWorld(getWorldName());
         if (world == null)
         {
@@ -96,8 +99,8 @@ public class BingoGame
         world.setTime(1000);
 
         // Generate cards
-        BingoCard masterCard = CardBuilder.fromMode(settings.mode, settings.cardSize, getTeamManager().getActiveTeams().size());
-        masterCard.generateCard(settings.card, BingoReloaded.get().config().cardSeed);
+        BingoCard masterCard = CardBuilder.fromMode(settings.mode(), settings.size(), getTeamManager().getActiveTeams().size());
+        masterCard.generateCard(settings.card(), BingoReloaded.get().config().cardSeed);
         getTeamManager().initializeCards(masterCard);
 
         Set<BingoCard> cards = new HashSet<>();
@@ -118,7 +121,7 @@ public class BingoGame
             {
                 Player player = p.gamePlayer().get();
 
-                p.giveKit(settings.kit);
+                p.giveKit(settings.kit());
                 returnCardToPlayer(p);
                 Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "advancement revoke " + player.getName() + " everything");
                 player.setLevel(0);
@@ -213,21 +216,21 @@ public class BingoGame
         participant.giveBingoCard();
         participant.gamePlayer().get().setGameMode(GameMode.SURVIVAL);
 
-        BingoReloaded.scheduleTask(task -> participant.giveEffects(settings.effects), BingoReloaded.ONE_SECOND);
+        BingoReloaded.scheduleTask(task -> participant.giveEffects(settings.effects()), BingoReloaded.ONE_SECOND);
     }
 
     public void startDeathMatch(int countdown)
     {
         if (countdown == 0)
         {
-            settings.deathMatchItem = settings.generateDeathMatchItem();
+            deathMatchItem = new BingoCardsData().getRandomItemTask(settings.card()).material();
 
             for (BingoPlayer p : getTeamManager().getParticipants())
             {
                 if (p.gamePlayer().isEmpty())
                     continue;
 
-                p.showDeathMatchItem(settings.deathMatchItem);
+                p.showDeathMatchItem(deathMatchItem);
                 p.gamePlayer().get().sendTitle("" + ChatColor.GOLD + ChatColor.GOLD + "GO", "" + ChatColor.DARK_PURPLE + ChatColor.ITALIC + "find the item listed in the chat to win!", -1, -1, -1);
             }
             return;
@@ -443,6 +446,11 @@ public class BingoGame
         return statTracker;
     }
 
+    public Material getDeathMatchItem()
+    {
+        return deathMatchItem;
+    }
+
 // @EventHandlers ========================================================================
 
     public void handleBingoTaskComplete(final BingoCardTaskCompleteEvent event)
@@ -511,9 +519,9 @@ public class BingoGame
             // if the player is actually participating, show it
             if (card != null)
             {
-                if (settings.deathMatchItem != null)
+                if (deathMatchItem != null)
                 {
-                    player.showDeathMatchItem(settings.deathMatchItem);
+                    player.showDeathMatchItem(deathMatchItem);
                     return;
                 }
                 card.showInventory(event.getPlayer());
@@ -545,7 +553,7 @@ public class BingoGame
         if (event.getCause() != EntityDamageEvent.DamageCause.FALL)
             return;
 
-        if (settings.effects.contains(EffectOptionFlags.NO_FALL_DAMAGE))
+        if (settings.effects().contains(EffectOptionFlags.NO_FALL_DAMAGE))
         {
             event.setCancelled(true);
         }
@@ -593,12 +601,12 @@ public class BingoGame
         {
             if (deadPlayers.containsKey(player.playerId))
             {
-                player.giveKit(settings.kit);
+                player.giveKit(settings.kit());
             }
         }
         else
         {
-            player.giveKit(settings.kit);
+            player.giveKit(settings.kit());
         }
     }
 
@@ -611,7 +619,7 @@ public class BingoGame
         tiedTeams.add(getTeamManager().getLeadingTeam());
 
         // Regular bingo cannot draw, so end the game without a winner
-        if (settings.mode == BingoGamemode.REGULAR)
+        if (settings.mode() == BingoGamemode.REGULAR)
         {
             end(null);
             return;

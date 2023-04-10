@@ -1,11 +1,12 @@
 package io.github.steaf23.bingoreloaded.core.data;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
+import io.github.steaf23.bingoreloaded.core.tasks.AdvancementTask;
+import io.github.steaf23.bingoreloaded.core.tasks.StatisticTask;
 import io.github.steaf23.bingoreloaded.core.tasks.TaskData;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -17,12 +18,14 @@ public class TaskListsData
 {
     private final YmlDataManager data = new YmlDataManager(BingoReloaded.get(), "lists.yml");
 
-    public Set<TaskData> getTasks(String listName)
+    public Set<TaskData> getTasks(String listName, boolean withStatistics, boolean withAdvancements)
     {
         if (!data.getConfig().contains(listName + ".tasks"))
             return new HashSet<>();
 
-        Set<TaskData> taskList = (Set<TaskData>)data.getConfig().getList(listName + ".tasks").stream().collect(Collectors.toSet());
+        Set<TaskData> taskList = (Set<TaskData>)data.getConfig().getList(listName + ".tasks").stream().filter((i ->
+                !(i instanceof StatisticTask && !withStatistics) &&
+                !(i instanceof AdvancementTask && !withAdvancements))).collect(Collectors.toSet());
         return taskList;
     }
 
@@ -31,14 +34,9 @@ public class TaskListsData
         return data.getConfig().getInt(listName + ".size", 0);
     }
 
-    public Set<TaskData> getItemTasks(String listName)
-    {
-        return getTasks(listName);
-    }
-
     public void saveTasksFromGroup(String listName, List<TaskData> group, List<TaskData> tasksToSave)
     {
-        Set<TaskData> savedTasks = getTasks(listName);
+        Set<TaskData> savedTasks = getTasks(listName, true, true);
         Set<TaskData> tasksToRemove = group.stream().filter(t ->
         {
             return tasksToSave.stream().noneMatch(i -> i.equals(t));
@@ -109,20 +107,5 @@ public class TaskListsData
     public Set<String> getListNames()
     {
         return data.getConfig().getKeys(false);
-    }
-
-    public TaskData getRandomTask(String listName)
-    {
-        Set<TaskData> tasks = getTasks(listName);
-        int idx = new Random().nextInt(tasks.size());
-        int i = 0;
-        for (var task : tasks)
-        {
-            if (i == idx)
-            {
-                return task;
-            }
-        }
-        return tasks.stream().findFirst().get();
     }
 }

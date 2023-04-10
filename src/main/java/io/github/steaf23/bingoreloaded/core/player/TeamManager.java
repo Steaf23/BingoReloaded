@@ -33,15 +33,15 @@ public class TeamManager
     private final BingoSession session;
     private final Set<BingoTeam> activeTeams;
     private final Scoreboard teams;
-    private final int maxTeamSize;
+
+    private int maxTeamSize;
 
     public TeamManager(Scoreboard teamBoard, BingoSession session)
     {
         this.session = session;
         this.activeTeams = new HashSet<>();
         this.teams = teamBoard;
-        this.maxTeamSize = session.settings.maxTeamSize;
-
+        this.maxTeamSize = session.settingsBuilder.view().maxTeamSize();
         createTeams();
     }
 
@@ -299,6 +299,19 @@ public class TeamManager
         return team.card.getCompleteCount(team);
     }
 
+    //TODO: Create SettingsChangedEvent?
+    public void setMaxTeamSize(int maxTeamSize)
+    {
+        this.maxTeamSize = maxTeamSize;
+        getParticipants().forEach(p -> {
+            removePlayerFromTeam(p);
+            p.gamePlayer().ifPresent(gamePlayer -> new Message()
+                    .untranslated("Team sized changed, please rejoin your team of choice!")
+                    .color(ChatColor.RED)
+                    .send(gamePlayer));
+        });
+    }
+
     private void createTeams()
     {
         for (FlexColor fColor : FlexColor.values())
@@ -355,7 +368,7 @@ public class TeamManager
             if (BingoGameManager.getWorldName(target).equals(session.worldName))
             {
                 player.getTeam().team.addEntry(event.getPlayer().getName());
-                player.giveEffects(session.settings.effects);
+                player.giveEffects(session.settingsBuilder.view().effects());
                 var joinEvent = new BingoPlayerJoinEvent(player);
                 Bukkit.getPluginManager().callEvent(joinEvent);
             }

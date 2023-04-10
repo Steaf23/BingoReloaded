@@ -2,6 +2,7 @@ package io.github.steaf23.bingoreloaded.core;
 
 import io.github.steaf23.bingoreloaded.core.data.BingoCardsData;
 import io.github.steaf23.bingoreloaded.core.event.BingoEndedEvent;
+import io.github.steaf23.bingoreloaded.core.event.BingoPlayerLeaveEvent;
 import io.github.steaf23.bingoreloaded.core.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.core.player.TeamManager;
 import io.github.steaf23.bingoreloaded.util.Message;
@@ -16,15 +17,15 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 public class BingoSession
 {
     public final String worldName;
-    public final BingoSettings settings;
+    public final BingoSettingsBuilder settingsBuilder;
     public final BingoScoreboard scoreboard;
     public final TeamManager teamManager;
     private BingoGame game;
 
-    public BingoSession(String worldName, int maxTeamMembers)
+    public BingoSession(String worldName)
     {
         this.worldName = worldName;
-        this.settings = new BingoSettings(maxTeamMembers);
+        this.settingsBuilder = new BingoSettingsBuilder(this);
         this.scoreboard = new BingoScoreboard(this);
         this.teamManager = new TeamManager(scoreboard.getTeamBoard(), this);
         this.game = null;
@@ -40,17 +41,18 @@ public class BingoSession
         return game;
     }
 
-    public BingoSettings settings()
+    public BingoSettings getGameSettings()
     {
-        return settings;
+        return game == null ? null : game.getSettings();
     }
 
     public void startGame()
     {
         BingoCardsData cardsData = new BingoCardsData();
-        if (!cardsData.getCardNames().contains(settings.card))
+        BingoSettings settings = settingsBuilder.view();
+        if (!cardsData.getCardNames().contains(settings.card()))
         {
-            new TranslatedMessage("game.start.no_card").color(ChatColor.RED).arg(settings.card).sendAll(this);
+            new TranslatedMessage("game.start.no_card").color(ChatColor.RED).arg(settings.card()).sendAll(this);
             return;
         }
 
@@ -74,17 +76,18 @@ public class BingoSession
 
     public void removePlayer(@NonNull BingoPlayer player)
     {
-        if (player.offline().isOnline())
+        teamManager.removePlayerFromTeam(player);
+    }
+
+    public void handlePlayerLeft(final BingoPlayerLeaveEvent event)
+    {
+        if (event.player.offline().isOnline())
         {
-            player.takeEffects(true);
+            event.player.takeEffects(true);
         }
 
-        if (!teamManager.getParticipants().contains(player)) return;
-
-        teamManager.removePlayerFromTeam(player);
-
         if (game != null)
-            game.playerQuit(player);
+            game.playerQuit(event.player);
     }
 
     public void handleGameEnded(final BingoEndedEvent event)

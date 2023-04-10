@@ -10,8 +10,6 @@ Add dummy player class to test stuff like lockout!
 
 update autobingo page with all new features
 
-see what players joined what team on TAB and in team selector
-
 generalize/centralize game in progress/ player in game checks for events
 
 check if advancements are disabled and disallow them on advancement-disabled servers
@@ -19,3 +17,9 @@ check if advancements are disabled and disallow them on advancement-disabled ser
 make verboseConsole config option to print more info as the game goes on
 
 save more settings in config
+
+Add config, spectator after death/defeat
+
+add countdown before the game starts
+
+add /bingo getkit

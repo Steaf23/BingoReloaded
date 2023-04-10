@@ -109,7 +109,7 @@ public class TaskPickerUI extends PaginatedPickerMenu
         super.handleOpen(event);
 
         BingoCardsData cardsData = new BingoCardsData();
-        Set<TaskData> tasks = cardsData.lists().getTasks(listName);
+        Set<TaskData> tasks = cardsData.lists().getTasks(listName, true, true);
 
         for (InventoryItem item : getItems())
         {

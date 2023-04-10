@@ -3,7 +3,7 @@ package io.github.steaf23.bingoreloaded.gui;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.core.BingoGameManager;
 import io.github.steaf23.bingoreloaded.core.BingoSession;
-import io.github.steaf23.bingoreloaded.core.BingoSettings;
+import io.github.steaf23.bingoreloaded.core.BingoSettingsBuilder;
 import io.github.steaf23.bingoreloaded.core.data.BingoCardsData;
 import io.github.steaf23.bingoreloaded.core.data.TranslationData;
 import io.github.steaf23.bingoreloaded.core.player.BingoPlayer;
@@ -71,7 +71,7 @@ public class BingoMenu extends MenuInventory
             return;
         }
 
-        BingoSettings settings = session.settings;
+        BingoSettingsBuilder settings = session.settingsBuilder;
 
         if (slotClicked == JOIN.getSlot())
         {
@@ -160,7 +160,7 @@ public class BingoMenu extends MenuInventory
     {
         if (cardName == null) return;
         new TranslatedMessage("game.settings.card_selected").color(ChatColor.GOLD).arg(cardName).sendAll(session);
-        session.settings.card = cardName;
+        session.settingsBuilder.card(cardName);
     }
 
     /**

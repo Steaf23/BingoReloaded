@@ -1,68 +1,56 @@
 package io.github.steaf23.bingoreloaded.core;
 
-import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.core.cards.CardSize;
-import io.github.steaf23.bingoreloaded.core.data.BingoCardsData;
-import io.github.steaf23.bingoreloaded.core.data.ConfigData;
-import io.github.steaf23.bingoreloaded.core.player.CustomKit;
 import io.github.steaf23.bingoreloaded.core.player.PlayerKit;
 import io.github.steaf23.bingoreloaded.gui.EffectOptionFlags;
-import io.github.steaf23.bingoreloaded.util.TranslatedMessage;
-import net.md_5.bungee.api.ChatColor;
-import org.bukkit.Material;
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
+import org.bukkit.configuration.serialization.SerializableAs;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.Map;
 
-public class BingoSettings
+@SerializableAs("BingoSettings")
+public record BingoSettings(String card,
+                            BingoGamemode mode,
+                            CardSize size,
+                            int seed,
+                            PlayerKit kit,
+                            EnumSet<EffectOptionFlags> effects,
+                            int maxTeamSize,
+                            boolean enableCountdown,
+                            int countdownDuration) implements ConfigurationSerializable
 {
-    public String card;
-    public BingoGamemode mode;
-    public CardSize cardSize;
-    public int cardSeed;
-    public PlayerKit kit;
-    public EnumSet<EffectOptionFlags> effects;
-    public Material deathMatchItem;
-    public final int maxTeamSize;
-    public boolean enableCountdown;
-    public int countdownGameDuration;
-
-    public BingoSettings(int maxTeamSize)
+    @NotNull
+    @Override
+    public Map<String, Object> serialize()
     {
-        ConfigData config = BingoReloaded.get().config();
-        this.card = config.selectedCard;
-        this.mode = BingoGamemode.REGULAR;
-        this.cardSize = CardSize.X5;
-        this.cardSeed = config.cardSeed;
-        this.kit = PlayerKit.fromConfig(config.defaultKit);
-        this.effects = kit.defaultEffects;
-        this.maxTeamSize = config.defaultTeamSize;
-        this.countdownGameDuration = config.defaultGameDuration;
-        this.enableCountdown = false;
+        return new HashMap<>(){{
+            put("card", card);
+            put("mode", mode.getDataName());
+            put("size", size.size);
+            put("seed", seed);
+            put("kit", kit.configName);
+            put("effects", effects);
+            put("team_size", maxTeamSize);
+            put("duration", countdownDuration);
+            put("countdown", enableCountdown);
+        }};
     }
 
-    public Material generateDeathMatchItem()
+    public static BingoSettings deserialize(Map<String, Object> data)
     {
-        BingoCardsData cardsData = new BingoCardsData();
-        return cardsData.getRandomItemTask(card).material();
+        return new BingoSettings(
+                (String) data.get("card"),
+                BingoGamemode.fromDataString((String) data.get("mode")),
+                CardSize.fromWidth((int) data.get("size")),
+                (int) data.get("seed"),
+                PlayerKit.fromConfig((String) data.get("kit")),
+                (EnumSet<EffectOptionFlags>) data.get("effects"),
+                (int) data.get("team_size"),
+                (boolean) data.get("countdown"),
+                (int) data.get("duration")
+        );
     }
-
-    public void setKit(PlayerKit kit, BingoSession session)
-    {
-        this.kit = kit;
-        String kitName = switch (kit)
-        {
-            case CUSTOM_1, CUSTOM_2, CUSTOM_3, CUSTOM_4, CUSTOM_5 -> {
-                CustomKit customKit = PlayerKit.getCustomKit(kit);
-                yield customKit == null ? kit.displayName : customKit.getName();
-            }
-            default -> kit.displayName;
-        };
-        new TranslatedMessage("game.settings.kit_selected").color(ChatColor.GOLD).arg(ChatColor.RESET + kitName).sendAll(session);
-    }
-
-    public void setEffects(EnumSet<EffectOptionFlags> effects, BingoSession session)
-    {
-        this.effects = effects;
-        new TranslatedMessage("game.settings.effects_selected").color(ChatColor.GOLD).sendAll(session);
-    }
-}
+};

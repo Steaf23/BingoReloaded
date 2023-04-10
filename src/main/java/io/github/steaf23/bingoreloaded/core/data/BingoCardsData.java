@@ -85,7 +85,7 @@ public class BingoCardsData
     public ItemTask getRandomItemTask(String cardName)
     {
         List<TaskData> tasks = new ArrayList<>();
-        getListNames(cardName).forEach((l) -> tasks.addAll(listsData.getItemTasks(l)));
+        getListNames(cardName).forEach((l) -> tasks.addAll(listsData.getTasks(l, false, false)));
 
         List<TaskData> allItemTasks = tasks.stream().filter(task -> task instanceof ItemTask).toList();
 

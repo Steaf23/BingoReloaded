@@ -76,7 +76,7 @@ public class BingoCard
         List<String> ticketList = new ArrayList<>();
         for (String listName : cardsData.getListsSortedByMin(cardName))
         {
-            if (listsData.getTasks(listName).size() == 0) // Skip empty task lists.
+            if (listsData.getTasks(listName, BingoReloaded.get().config().useStatistics, BingoReloaded.get().config().useAdvancements).size() == 0) // Skip empty task lists.
             {
                 continue;
             }
@@ -105,7 +105,7 @@ public class BingoCard
         {
             if (!allTasks.containsKey(listName))
             {
-                List<TaskData> listTasks = new ArrayList<>(listsData.getTasks(listName));
+                List<TaskData> listTasks = new ArrayList<>(listsData.getTasks(listName, BingoReloaded.get().config().useStatistics, BingoReloaded.get().config().useAdvancements));
                 if (listTasks.size() == 0) // Skip empty task lists.
                 {
                     continue;
@@ -136,20 +136,20 @@ public class BingoCard
     public boolean hasBingo(BingoTeam team)
     {
         //check for rows and columns
-        for (int y = 0; y < size.cardSize; y++)
+        for (int y = 0; y < size.size; y++)
         {
             boolean completedRow = true;
             boolean completedCol = true;
-            for (int x = 0; x < size.cardSize; x++)
+            for (int x = 0; x < size.size; x++)
             {
-                int indexRow = size.cardSize * y + x;
+                int indexRow = size.size * y + x;
                 Optional<BingoPlayer> completedBy = tasks.get(indexRow).completedBy;
                 if (completedBy.isEmpty() || !team.players.contains(completedBy.get()))
                 {
                     completedRow = false;
                 }
 
-                int indexCol = size.cardSize * x + y;
+                int indexCol = size.size * x + y;
                 completedBy = tasks.get(indexCol).completedBy;
                 if (completedBy.isEmpty() || !team.players.contains(completedBy.get()))
                 {
@@ -165,7 +165,7 @@ public class BingoCard
 
         // check for diagonals
         boolean completedDiagonal1 = true;
-        for (int idx = 0; idx < size.fullCardSize; idx += size.cardSize + 1)
+        for (int idx = 0; idx < size.fullCardSize; idx += size.size + 1)
         {
             Optional<BingoPlayer> completedBy = tasks.get(idx).completedBy;
             if (completedBy.isEmpty() || !team.players.contains(completedBy.get()))
@@ -176,7 +176,7 @@ public class BingoCard
         }
 
         boolean completedDiagonal2 = true;
-        for (int idx = 0; idx < size.fullCardSize; idx += size.cardSize - 1)
+        for (int idx = 0; idx < size.fullCardSize; idx += size.size - 1)
         {
             if (idx != 0 && idx != size.fullCardSize - 1)
             {
@@ -282,9 +282,9 @@ public class BingoCard
         if (player.gamePlayer().isEmpty())
             return item;
 
-        if (game.getSettings().deathMatchItem != null)
+        if (game.getDeathMatchItem() != null)
         {
-            if (item.getType() == game.getSettings().deathMatchItem)
+            if (item.getType() == game.getDeathMatchItem())
             {
                 var slotEvent = new BingoCardTaskCompleteEvent(null, player, true);
                 Bukkit.getPluginManager().callEvent(slotEvent);
@@ -319,7 +319,7 @@ public class BingoCard
         if (player.getTeam().outOfTheGame)
             return;
 
-        if (game.getSettings().deathMatchItem != null)
+        if (game.getDeathMatchItem() != null)
             return;
 
         for (BingoTask task : tasks)
@@ -347,7 +347,7 @@ public class BingoCard
         if (player.getTeam().outOfTheGame)
             return;
 
-        if (game.getSettings().deathMatchItem != null)
+        if (game.getDeathMatchItem() != null)
             return;
 
         for (BingoTask task : tasks)
@@ -374,7 +374,7 @@ public class BingoCard
         if (player.getTeam().outOfTheGame)
             return;
 
-        if (game.getSettings().deathMatchItem != null)
+        if (game.getDeathMatchItem() != null)
             return;
 
         for (BingoTask task : tasks)

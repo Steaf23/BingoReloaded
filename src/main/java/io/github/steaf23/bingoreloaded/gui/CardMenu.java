@@ -20,10 +20,10 @@ public class CardMenu extends MenuInventory
 {
     private final CardSize size;
 
-    public CardMenu(CardSize size, String title)
+    public CardMenu(CardSize cardSize, String title)
     {
-        super(9 * size.cardSize, title, null);
-        this.size = size;
+        super(9 * cardSize.size, title, null);
+        this.size = cardSize;
         setMaxStackSizeOverride(64);
     }
 
