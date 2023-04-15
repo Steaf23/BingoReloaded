@@ -1,0 +1,4 @@
+name: BRMultiMode
+version: '${project.version}'
+main: io.github.steaf23.brmultimode.BRMultiMode
+api-version: 1.19

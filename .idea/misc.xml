@@ -14,6 +14,10 @@
         <option value="$PROJECT_DIR$/EasyGUI/pom.xml" />
         <option value="$PROJECT_DIR$/../EasyGUI/pom.xml" />
         <option value="$PROJECT_DIR$/../EasyMenu/pom.xml" />
+        <option value="$PROJECT_DIR$/BRCore/pom.xml" />
+        <option value="$PROJECT_DIR$/BRMultiMania/pom.xml" />
+        <option value="$PROJECT_DIR$/BRPartyMode/pom.xml" />
+        <option value="$PROJECT_DIR$/BRMultiMode/pom.xml" />
       </list>
     </option>
   </component>

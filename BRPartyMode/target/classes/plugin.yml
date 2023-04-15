@@ -1,0 +1,4 @@
+name: BRPartyMode
+version: '1.0-SNAPSHOT'
+main: io.github.steaf23.brpartymode.BRPartyMode
+api-version: 1.19
