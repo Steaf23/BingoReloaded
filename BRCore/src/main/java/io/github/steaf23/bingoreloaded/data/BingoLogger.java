@@ -1,6 +1,7 @@
 package io.github.steaf23.bingoreloaded.data;
 
 import io.github.steaf23.bingoreloaded.BingoReloadedCore;
+import io.github.steaf23.bingoreloaded.BingoReloadedExtension;
 import net.md_5.bungee.api.ChatColor;
 
 import java.io.IOException;
@@ -17,7 +18,7 @@ public class BingoLogger
         logger = Logger.getLogger("BingoReloaded");
         try
         {
-            fh = new FileHandler(BingoReloadedCore.getPlugin(BingoReloadedCore.class).getDataFolder() + "\\bingo.log", 0,1, true);
+            fh = new FileHandler(BingoReloadedExtension.getPlugin(BingoReloadedExtension.class).getDataFolder() + "\\bingo.log", 0,1, true);
         } catch (IOException e)
         {
             throw new RuntimeException(e);

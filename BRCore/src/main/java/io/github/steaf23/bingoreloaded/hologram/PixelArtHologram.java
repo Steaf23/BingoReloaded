@@ -1,6 +1,7 @@
 package io.github.steaf23.bingoreloaded.hologram;
 
 import io.github.steaf23.bingoreloaded.BingoReloadedCore;
+import io.github.steaf23.bingoreloaded.BingoReloadedExtension;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Location;
 
@@ -22,7 +23,7 @@ public class PixelArtHologram extends Hologram
 
     private static String[] linesFromImage(String path, ChatColor backgroundColor) throws IOException
     {
-        BufferedImage img = ImageIO.read(BingoReloadedCore.getPlugin(BingoReloadedCore.class).getResource(path));
+        BufferedImage img = ImageIO.read(BingoReloadedExtension.getPlugin(BingoReloadedExtension.class).getResource(path));
 
         List<String> lines = new ArrayList<>();
         int width = Math.min(16, img.getWidth());

@@ -6,12 +6,15 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="EasyMenu" />
-        <module name="BingoReloaded" />
-        <module name="GameBox" />
-        <module name="BRPartyMode" />
         <module name="BRMultiMode" />
+        <module name="BRPartyMode" />
+        <module name="BingoReloaded" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="BingoReloaded" target="17" />
+      <module name="BRMultiMode" target="17" />
+      <module name="BRPartyMode" target="17" />
+    </bytecodeTargetLevel>
   </component>
 </project>

@@ -29,7 +29,7 @@ import javax.annotation.Nullable;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class BingoReloadedCore extends JavaPlugin
+public class BingoReloadedCore
 {
     public static final String NAME = "BingoReloadedCore";
     // Amount of ticks per second.
@@ -39,19 +39,16 @@ public class BingoReloadedCore extends JavaPlugin
     private MenuEventListener menuManager;
     private HologramManager hologramManager;
     private ConfigData config;
-    private BingoReloadedExtension extensionPlugin;
-    private final Function<Player, BingoSession> bingoSessionResolver;
 
+    private final BingoReloadedExtension extensionPlugin;
 
-    public BingoReloadedCore(BingoReloadedExtension plugin, Function<Player, BingoSession> sessionResolver)
+    public BingoReloadedCore(BingoReloadedExtension extensionPlugin)
     {
-        this.extensionPlugin = plugin;
-        this.bingoSessionResolver = sessionResolver;
-        plugin.reloadConfig();
-        plugin.saveDefaultConfig();
+        this.extensionPlugin = extensionPlugin;
+        extensionPlugin.reloadConfig();
+        extensionPlugin.saveDefaultConfig();
     }
 
-    @Override
     public void onEnable()
     {
         ConfigurationSerialization.registerClass(BingoSettings.class);
@@ -74,12 +71,12 @@ public class BingoReloadedCore extends JavaPlugin
 //            game.resume();
 //        }
 
-        BingoTranslation.setLanguage(new YmlDataManager(extensionPlugin, config.language).getConfig(), new YmlDataManager(extensionPlugin, "language/en_us.yml").getConfig());
-        Message.log("" + ChatColor.GREEN + BingoTranslation.CHANGED_LANGUAGE);
+        BingoTranslation.setLanguage(createYmlDataManager(config.language).getConfig(), createYmlDataManager("languages/en_us.yml").getConfig());
+        Message.log("" + ChatColor.GREEN + BingoTranslation.CHANGED_LANGUAGE.translate());
 //        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "autobingo world create " + ConfigData.instance.defaultTeamSize);
     }
 
-    protected void registerBingoCommand(String commandName)
+    public void registerBingoCommand(String commandName, Function<Player, BingoSession> bingoSessionResolver)
     {
         registerCommand(commandName, new BingoCommand(config)
         {
@@ -91,18 +88,12 @@ public class BingoReloadedCore extends JavaPlugin
         }, new AutoBingoTabCompleter());
     }
 
-    protected void registerTeamChatCommand(String commandName)
+    public void registerTeamChatCommand(String commandName, Function<Player, BingoSession> bingoSessionResolver)
     {
         registerCommand(commandName, new TeamChatCommand(bingoSessionResolver), null);
-        if (config.enableTeamChat)
-        {
-            PluginCommand teamChatCommand = extensionPlugin.getCommand("btc");
-            if (teamChatCommand != null)
-                teamChatCommand.setExecutor(new TeamChatCommand(bingoSessionResolver));
-        }
     }
 
-    protected void registerCommand(String commandName, CommandExecutor executor, @Nullable TabCompleter tabCompleter)
+    public void registerCommand(String commandName, CommandExecutor executor, @Nullable TabCompleter tabCompleter)
     {
         PluginCommand command = extensionPlugin.getCommand(commandName);
         if (command != null)
@@ -121,10 +112,9 @@ public class BingoReloadedCore extends JavaPlugin
 
     public static YmlDataManager createYmlDataManager(String filepath)
     {
-        return new YmlDataManager(Bukkit.getPluginManager().getPlugin(BingoReloadedCore.NAME), filepath);
+        return new YmlDataManager(BingoReloadedExtension.getPlugin(BingoReloadedExtension.class), filepath);
     }
 
-    @Override
     public void onDisable()
     {
 
@@ -142,7 +132,8 @@ public class BingoReloadedCore extends JavaPlugin
 
     public static void incrementPlayerStat(Player player, BingoStatType stat)
     {
-        BingoStatsData statsData = new BingoStatsData(BingoReloadedCore.getPlugin(BingoReloadedCore.class).config.savePlayerStatistics);
+        boolean savePlayerStatistics = BingoReloadedExtension.getPlugin(BingoReloadedExtension.class).core.config.savePlayerStatistics;
+        BingoStatsData statsData = new BingoStatsData(savePlayerStatistics);
         statsData.incrementPlayerStat(player, stat);
     }
 
@@ -154,8 +145,8 @@ public class BingoReloadedCore extends JavaPlugin
     public static void scheduleTask(@NotNull Consumer<BukkitTask> task, long delay)
     {
         if (delay <= 0)
-            Bukkit.getScheduler().runTask(Bukkit.getPluginManager().getPlugin(BingoReloadedCore.NAME), task);
+            Bukkit.getScheduler().runTask(BingoReloadedExtension.getPlugin(BingoReloadedExtension.class), task);
         else
-            Bukkit.getScheduler().runTaskLater(Bukkit.getPluginManager().getPlugin(BingoReloadedCore.NAME), task, delay);
+            Bukkit.getScheduler().runTaskLater(BingoReloadedExtension.getPlugin(BingoReloadedExtension.class), task, delay);
     }
 }

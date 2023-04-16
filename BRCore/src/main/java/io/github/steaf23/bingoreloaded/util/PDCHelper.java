@@ -1,6 +1,7 @@
 package io.github.steaf23.bingoreloaded.util;
 
 import io.github.steaf23.bingoreloaded.BingoReloadedCore;
+import io.github.steaf23.bingoreloaded.BingoReloadedExtension;
 import org.bukkit.NamespacedKey;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
@@ -10,7 +11,7 @@ public class PDCHelper
 
     public static NamespacedKey createKey(String key)
     {
-        return new NamespacedKey(BingoReloadedCore.getPlugin(BingoReloadedCore.class), key);
+        return new NamespacedKey(BingoReloadedExtension.getPlugin(BingoReloadedExtension.class), key);
     }
 
     public static PersistentDataContainer setBoolean(PersistentDataContainer container, String key, boolean value)

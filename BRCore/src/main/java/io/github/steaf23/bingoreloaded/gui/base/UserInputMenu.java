@@ -1,6 +1,7 @@
 package io.github.steaf23.bingoreloaded.gui.base;
 
 import io.github.steaf23.bingoreloaded.BingoReloadedCore;
+import io.github.steaf23.bingoreloaded.BingoReloadedExtension;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.util.Message;
 import net.wesjd.anvilgui.AnvilGUI;
@@ -41,7 +42,7 @@ public class UserInputMenu
                         parent.open(p);
                 })
                 .itemOutput(ACCEPT)
-                .plugin(BingoReloadedCore.getPlugin(BingoReloadedCore.class))
+                .plugin(BingoReloadedExtension.getPlugin(BingoReloadedExtension.class))
                 .open(player);
     }
 }

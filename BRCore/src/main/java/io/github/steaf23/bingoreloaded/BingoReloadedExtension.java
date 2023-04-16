@@ -9,6 +9,6 @@ public abstract class BingoReloadedExtension extends JavaPlugin
 
     public BingoReloadedExtension()
     {
-        core = (BingoReloadedCore)Bukkit.getPluginManager().getPlugin(BingoReloadedCore.NAME);
+        core = new BingoReloadedCore(this);
     }
 }

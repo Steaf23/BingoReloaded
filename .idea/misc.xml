@@ -5,23 +5,14 @@
       <item index="0" class="java.lang.String" itemvalue="org.bukkit.event.EventHandler" />
     </list>
   </component>
-  <component name="ExternalStorageConfigurationManager" enabled="true" />
   <component name="MavenProjectsManager">
     <option name="originalFiles">
       <list>
-        <option value="$PROJECT_DIR$/pom.xml" />
-        <option value="$PROJECT_DIR$/../GameBox/pom.xml" />
-        <option value="$PROJECT_DIR$/EasyGUI/pom.xml" />
-        <option value="$PROJECT_DIR$/../EasyGUI/pom.xml" />
-        <option value="$PROJECT_DIR$/../EasyMenu/pom.xml" />
         <option value="$PROJECT_DIR$/BRCore/pom.xml" />
-        <option value="$PROJECT_DIR$/BRMultiMania/pom.xml" />
-        <option value="$PROJECT_DIR$/BRPartyMode/pom.xml" />
         <option value="$PROJECT_DIR$/BRMultiMode/pom.xml" />
+        <option value="$PROJECT_DIR$/BRPartyMode/pom.xml" />
       </list>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_17" default="true" project-jdk-name="17" project-jdk-type="JavaSDK">
-    <output url="file://$PROJECT_DIR$/../PluginDev/out" />
-  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_17" default="true" project-jdk-name="jbr-17" project-jdk-type="JavaSDK" />
 </project>
