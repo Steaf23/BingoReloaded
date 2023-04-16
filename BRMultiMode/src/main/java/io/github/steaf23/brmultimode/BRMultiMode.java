@@ -15,7 +15,7 @@ public final class BRMultiMode extends BingoReloadedExtension
     @Override
     public void onEnable()
     {
-        this.gameManager = new BingoGameManager();
+        this.gameManager = new BingoGameManager(core.config());
         this.menuManager = new MenuEventListener((view) -> {
             return gameManager.doesSessionExist(view.getPlayer().getWorld());
         });

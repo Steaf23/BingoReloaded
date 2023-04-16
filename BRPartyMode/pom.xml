@@ -31,7 +31,6 @@
             <groupId>io.github.steaf23</groupId>
             <artifactId>BingoReloaded</artifactId>
             <version>1.0-SNAPSHOT</version>
-            <scope>provided</scope>
         </dependency>
     </dependencies>
 

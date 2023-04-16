@@ -17,7 +17,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Arrays;
 
@@ -31,7 +31,7 @@ public class MultiAutoBingoCommand implements CommandExecutor
     }
 
     @Override
-    public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command autobingoCommand, @NotNull String alias, @NotNull String[] args)
+    public boolean onCommand(@NonNull CommandSender commandSender, @NonNull Command autobingoCommand, @NonNull String alias, @NonNull String[] args)
     {
         // AutoBingo should only work for admins or console.
         if (commandSender instanceof Player p && !p.hasPermission("bingo.admin"))

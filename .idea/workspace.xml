@@ -53,25 +53,25 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_ADD_EXTERNAL_FILES": "true",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "TODO_SCOPE": "All Places",
-    "jdk.selected.com.intellij.ui.dsl.builder.impl.RowImpl.sdk": "17",
-    "last_opened_file_path": "D:/Other/Work/Minecraft Modding/BingoReloaded/src/main/resources",
-    "project.structure.last.edited": "Modules",
-    "project.structure.proportion": "0.16015625",
-    "project.structure.side.proportion": "0.4945788",
-    "settings.editor.selected.configurable": "configuration.execution"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;TODO_SCOPE&quot;: &quot;All Places&quot;,
+    &quot;jdk.selected.com.intellij.ui.dsl.builder.impl.RowImpl.sdk&quot;: &quot;17&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/Other/Work/Minecraft Modding/BingoReloaded/src/main/resources&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.16015625&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.4945788&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;configuration.execution&quot;
   },
-  "keyToStringList": {
-    "jdk.preference.com.intellij.ui.dsl.builder.impl.RowImpl.sdk": [
-      "17=C:/Program Files/Java/jdk-17.0.4.1"
+  &quot;keyToStringList&quot;: {
+    &quot;jdk.preference.com.intellij.ui.dsl.builder.impl.RowImpl.sdk&quot;: [
+      &quot;17=C:/Program Files/Java/jdk-17.0.4.1&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="D:\Other\Work\Minecraft Modding\BingoReloaded\BRCore\src\main\java" />
