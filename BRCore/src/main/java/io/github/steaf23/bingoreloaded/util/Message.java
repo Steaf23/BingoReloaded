@@ -147,6 +147,22 @@ public class Message
         return this;
     }
 
+    public Message smallCaps()
+    {
+        if (args.size() == 0)
+        {
+            base.setText(SmallCaps.toSmallCaps(base.getText()));
+            return this;
+        }
+        var arg = args.get(args.size() - 1);
+        if (arg instanceof TextComponent textComponent)
+        {
+            textComponent.setText(SmallCaps.toSmallCaps(textComponent.getText()));
+        }
+        args.set(args.size() - 1, arg);
+        return this;
+    }
+
     public void send(Player player)
     {
         if (finalMessage == null)
@@ -276,13 +292,14 @@ public class Message
     protected void createMessage()
     {
         //for any given message like "{#00bb33}Completed {0} by team {1}! At {2}" split the arguments from the message.
-        String[] rawSplit = raw.split("\\{[^\\{\\}#]*\\}"); //[{#00bb33}Completed, by team, ! At]
+        String[] rawSplit = raw.split("\\{[^\\{\\}#@]*\\}"); //[{#00bb33}Completed, by team, ! At]
 
         // convert custom hex colors to legacyText: {#00bb33} -> ChatColor.of("#00bb33")
         // convert "&" to "§" and "&&" to "&"
         for (int i = 0; i < rawSplit.length; i++)
         {
             String part = BingoTranslation.convertColors(rawSplit[i]);
+            part = BingoTranslation.convertSmallCaps(part);
             rawSplit[i] = part;
         }
 

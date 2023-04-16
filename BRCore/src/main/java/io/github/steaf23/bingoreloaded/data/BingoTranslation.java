@@ -1,6 +1,8 @@
 package io.github.steaf23.bingoreloaded.data;
 
 import io.github.steaf23.bingoreloaded.item.ItemText;
+import io.github.steaf23.bingoreloaded.util.Message;
+import io.github.steaf23.bingoreloaded.util.SmallCaps;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -121,6 +123,7 @@ public enum BingoTranslation
     private String translation;
 
     private static final Pattern HEX_PATTERN = Pattern.compile("\\{#[a-fA-F0-9]{6}\\}");
+    private static final Pattern SMALL_CAPS_PATTERN = Pattern.compile("\\{@.+\\}");
 
     BingoTranslation(String key)
     {
@@ -140,6 +143,7 @@ public enum BingoTranslation
     {
         String rawTranslation = translation;
         rawTranslation = convertColors(rawTranslation);
+        rawTranslation = convertSmallCaps(rawTranslation);
 
         for (int i = 0; i < args.length; i++)
         {
@@ -159,7 +163,7 @@ public enum BingoTranslation
      * @return An array of itemText where each element is a line,
      *  where each line is split using '\n' in the translated string.
      */
-    public ItemText[] asItemText(Set<ChatColor> modifiers, ItemText... args)
+    public ItemText[] asItemText(Set<ChatColor> modifiers, boolean useSmallCaps, ItemText... args)
     {
         //TODO: fix issue where raw translations cannot convert the colors defined in lang files properly on items
         String rawTranslation = translation;
@@ -185,16 +189,24 @@ public enum BingoTranslation
                         break;
                     }
                 }
-                line.addText(pieceToAdd);
+                if (useSmallCaps)
+                    line.addSmallCapsText(pieceToAdd);
+                else
+                    line.addText(pieceToAdd);
             }
             result.add(line);
         }
         return result.toArray(new ItemText[]{});
     }
 
+    public ItemText[] asItemText(Set<ChatColor> modifiers, ItemText... args)
+    {
+        return asItemText(modifiers, false, args);
+    }
+
     /**
      * @param input The input string, can look something like this: "{#00bb33}Hello, I like to &2&lDance && &rSing!"
-     * @return Legacy text string that can be used in TextComponent.fromLegacyText()
+     * @return Legacy text string that can be used in TextComponent#fromLegacyText
      */
     public static String convertColors(String input)
     {
@@ -208,6 +220,20 @@ public enum BingoTranslation
             String match = matcher.group();
             String color = match.replaceAll("[\\{\\}]", "");
             part = part.replace(match, "" + net.md_5.bungee.api.ChatColor.of(color));
+        }
+
+        return part;
+    }
+
+    public static String convertSmallCaps(String input)
+    {
+        String part = input;
+        Matcher matcher = SMALL_CAPS_PATTERN.matcher(part);
+        while (matcher.find())
+        {
+            String match = matcher.group();
+            String result = match.replace("{@", "").replace("}", "");
+            part = part.replace(match, SmallCaps.toSmallCaps(result));
         }
 
         return part;

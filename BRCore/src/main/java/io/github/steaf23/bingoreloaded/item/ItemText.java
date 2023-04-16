@@ -2,6 +2,7 @@ package io.github.steaf23.bingoreloaded.item;
 
 import io.github.steaf23.bingoreloaded.BingoReloadedCore;
 import io.github.steaf23.bingoreloaded.data.YmlDataManager;
+import io.github.steaf23.bingoreloaded.util.SmallCaps;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -113,6 +114,11 @@ public class ItemText
     public ItemText addText(String text, ChatColor... modifiers)
     {
         return add(new ItemText("text", text, ItemText.createModifiers(modifiers)));
+    }
+
+    public ItemText addSmallCapsText(String text, ChatColor... modifiers)
+    {
+        return add(new ItemText("text", SmallCaps.toSmallCaps(text), ItemText.createModifiers(modifiers)));
     }
 
     /**

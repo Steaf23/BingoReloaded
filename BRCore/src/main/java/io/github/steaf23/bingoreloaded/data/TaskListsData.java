@@ -84,19 +84,19 @@ public class TaskListsData
         return true;
     }
 
-    public boolean renameList(String listName, String newName)
+    public boolean renameList(String oldName, String newName)
     {
         var defaultLists = List.of("default_items", "default_advancements", "default_statistics");
-        if (defaultLists.contains(listName) || defaultLists.contains(newName))
+        if (defaultLists.contains(oldName) || defaultLists.contains(newName))
             return false;
-        if (!data.getConfig().contains(listName))
+        if (!data.getConfig().contains(oldName))
             return false;
         if (data.getConfig().contains(newName)) // Card with newName already exists
             return false;
 
-        var list = data.getConfig().get(listName);
+        var list = data.getConfig().get(oldName);
         data.getConfig().set(newName, list);
-        data.getConfig().set(listName, null);
+        data.getConfig().set(oldName, null);
         data.saveConfig();
         return true;
     }
