@@ -1,6 +1,7 @@
 package io.github.steaf23.brmultimode;
 
 import io.github.steaf23.bingoreloaded.BingoSession;
+import io.github.steaf23.bingoreloaded.data.ConfigData;
 import io.github.steaf23.bingoreloaded.event.BingoEventListener;
 import io.github.steaf23.bingoreloaded.util.Message;
 import org.bukkit.World;
@@ -12,11 +13,13 @@ public class BingoGameManager
 {
     private final BingoEventListener listener;
     private Map<String, BingoSession> sessions;
+    private final ConfigData config;
 
-    public BingoGameManager()
+    public BingoGameManager(ConfigData config)
     {
-        this.listener = new BingoEventListener(world -> getSession(BingoGameManager.getWorldName(world)));
+        this.listener = new BingoEventListener(world -> getSession(BingoGameManager.getWorldName(world)), config.useAdvancements, config.useStatistics);
         this.sessions = new HashMap<>();
+        this.config = config;
     }
 
     public BingoEventListener getListener()
@@ -32,7 +35,7 @@ public class BingoGameManager
             return false;
         }
 
-        BingoSession session = new BingoSession(worldName);
+        BingoSession session = new BingoSession(worldName, config);
         sessions.put(worldName, session);
         return true;
     }

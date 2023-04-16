@@ -2,7 +2,7 @@ package io.github.steaf23.bingoreloaded.util;
 
 import io.github.steaf23.bingoreloaded.BingoReloadedCore;
 import io.github.steaf23.bingoreloaded.BingoSession;
-import io.github.steaf23.bingoreloaded.data.TranslationData;
+import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.player.BingoTeam;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.md_5.bungee.api.ChatColor;
@@ -282,7 +282,7 @@ public class Message
         // convert "&" to "§" and "&&" to "&"
         for (int i = 0; i < rawSplit.length; i++)
         {
-            String part = TranslationData.convertColors(rawSplit[i]);
+            String part = BingoTranslation.convertColors(rawSplit[i]);
             rawSplit[i] = part;
         }
 
@@ -317,13 +317,13 @@ public class Message
         return input;
     }
 
-    public static TextComponent[] createHoverCommandMessage(@NonNull String translatePath, @Nullable String command)
+    public static TextComponent[] createHoverCommandMessage(@NonNull BingoTranslation translation, @Nullable String command)
     {
-        TranslationData translator = BingoReloadedCore.get().getTranslator();
-        TextComponent prefix = new TextComponent(translator.translate(translatePath + ".prefix"));
-        TextComponent hoverable = new TextComponent(translator.translate(translatePath + ".hoverable"));
-        TextComponent hover = new TextComponent(translator.translate(translatePath + ".hover"));
-        TextComponent suffix = new TextComponent(translator.translate(translatePath + ".suffix"));
+        String[] components = translation.translate().split("//");
+        TextComponent prefix = new TextComponent(components[0]);
+        TextComponent hoverable = new TextComponent(components[1]);
+        TextComponent hover = new TextComponent(components[2]);
+        TextComponent suffix = new TextComponent(components[3]);
 
         if (command != null)
         {

@@ -13,7 +13,108 @@ import java.util.regex.Pattern;
 
 public enum BingoTranslation
 {
-    LOL("msg.join.greet"),
+    LANGUAGE_NAME("name"),
+    CHANGED_LANGUAGE("changed"),
+    COMMAND_USAGE("command.use"),
+    NO_DEATHMATCH("command.bingo.no_deathmatch"),
+    DURATION("game.timer.duration"),
+    TIME_LEFT("game.timer.time_left"),
+    KIT_SELECTED("game.settings.kit_selected"),
+    EFFECTS_SELECTED("game.settings.effects_selected"),
+    REGULAR_SELECTED("game.settings.regular_selected"),
+    LOCKOUT_SELECTED("game.settings.lockout_selected"),
+    COMPLETE_SELECTED("game.settings.complete_selected"),
+    CARD_SELECTED("game.settings.card_selected"),
+    CARDSIZE_SELECTED("game.settings.cardsize"),
+    NO_PLAYERS("game.start.no_players"),
+    ALREADY_STARTED("game.start.already_started"),
+    GIVE_CARDS("game.start.give_cards"),
+    NO_CARD("game.start.no_card"),
+    BINGO("game.end.bingo"),
+    RESTART("game.end.restart"),
+    LEAVE("game.player.leave"),
+    NOT_STARTED("game.player.no_start"),
+    NO_PLAYER_CARD("game.player.no_card"),
+    COOLDOWN("game.player.cooldown"),
+    REJOIN_SESSION("game.player.join_back"),
+    RESPAWN("game.player.respawn"),
+    NO_JOIN("game.team.no_join"),
+    JOIN("game.team.join"),
+    DROPPED("game.team.dropped"),
+    VOIDED("game.team.voided"),
+    NO_CHAT("game.team.no_chat"),
+    CHAT_OFF("game.team.chat_off"),
+    CHAT_ON("game.team.chat_on"),
+    LORE_ITEM("game.item.lore"),
+    LORE_ADVANCEMENT("game.item.lore_advancement"),
+    LORE_STATISTIC("game.item.lore_statistic"),
+    COMPLETED("game.item.completed"),
+    COMPLETED_LORE("game.item.complete_lore"),
+    DEATHMATCH("game.item.deathmatch"),
+    MENU_SAVE("menu.save"),
+    MENU_EXIT("menu.exit"),
+    MENU_SAVE_EXIT("menu.save_exit"),
+    MENU_ACCEPT("menu.accept"),
+    MENU_NEXT("menu.next"),
+    MENU_PREV("menu.prev"),
+    MENU_FILTER("menu.filter"),
+    MENU_CLEAR_FILTER("menu.clear"),
+    SCOREBOARD_TITLE("menu.completed"),
+    CARD_TITLE("menu.card.title"),
+    INFO_REGULAR_NAME("menu.card.info_regular.name"),
+    INFO_REGULAR_DESC("menu.card.info_regular.desc"),
+    INFO_LOCKOUT_NAME("menu.card.info_lockout.name"),
+    INFO_LOCKOUT_DESC("menu.card.info_regular.desc"),
+    INFO_COMPLETE_NAME("menu.card.info_complete.name"),
+    INFO_COMPLETE_DESC("menu.card.info_complete.name"),
+    OPTIONS_TITLE("menu.options.title"),
+    OPTIONS_START("menu.options.start"),
+    OPTIONS_END("menu.options.end"),
+    OPTIONS_TEAM("menu.options.team"),
+    OPTIONS_LEAVE("menu.options.leave"),
+    OPTIONS_KIT("menu.options.kit"),
+    OPTIONS_CARD("menu.options.card"),
+    OPTIONS_GAMEMODE("menu.options.mode"),
+    OPTIONS_EFFECTS("menu.options.effects"),
+    EFFECTS_ENABLE("menu.effects.enable"),
+    EFFECTS_DISABLE("menu.effects.disable"),
+    EFFECTS_ENABLED("menu.effects.enabled"),
+    EFFECTS_DISABLED("menu.effects.disabled"),
+    EFFECTS_NIGHT_VISION("menu.effect.night_vision"),
+    EFFECTS_WATER_BREATH("menu.effect.water_breath"),
+    EFFECTS_FIRE_RES("menu.effect.fire_res"),
+    EFFECTS_NO_FALL_DMG("menu.effect.no_fall_dmg"),
+    EFFECTS_SPEED("menu.effects.speed"),
+    KIT_HARDCORE_NAME("menu.kits.hardcore.name"),
+    KIT_HARDCORE_DESC("menu.kits.hardcore.desc"),
+    KIT_NORMAL_NAME("menu.kits.normal.name"),
+    KIT_NORMAL_DESC("menu.kits.normal.desc"),
+    KIT_OVERPOWERED_NAME("menu.kits.overpowered.name"),
+    KIT_OVERPOWERED_DESC("menu.kits.overpowered.desc"),
+    KIT_RELOADED_NAME("menu.kits.reloaded.name"),
+    KIT_RELOADED_DESC("menu.kits.reloaded.desc"),
+    KIT_CUSTOM_NAME("menu.kits.custom"),
+    CARD_ITEM_NAME("items.card.name"),
+    CARD_ITEM_DESC("items.card.desc"),
+    WAND_ITEM_NAME("items.wand.name"),
+    WAND_ITEM_DESC("items.wand.desc"),
+    TEAM_BROWN("teams.brown"),
+    TEAM_ORANGE("teams.orange"),
+    TEAM_PINK("teams.pink"),
+    TEAM_RED("teams.red"),
+    TEAM_WHITE("teams.white"),
+    TEAM_LIME("teams.lime"),
+    TEAM_GREEN("teams.green"),
+    TEAM_GRAY("teams.gray"),
+    TEAM_LIGHT_GRAY("teams.light_gray"),
+    TEAM_BLACK("teams.black"),
+    TEAM_YELLOW("teams.yellow"),
+    TEAM_MAGENTA("teams.magenta"),
+    TEAM_CYAN("teams.cyan"),
+    TEAM_BLUE("teams.blue"),
+    TEAM_PURPLE("teams.purple"),
+    TEAM_LIGHT_BLUE("teams.light_blue"),
+    LIST_COUNT("creator.card_item.desc"),
     ;
 
     private final String key;
@@ -27,17 +128,17 @@ public enum BingoTranslation
         this.translation = ChatColor.GRAY + key;
     }
 
-    public static void setLanguage(FileConfiguration text, FileConfiguration backupText)
+    public static void setLanguage(FileConfiguration text, FileConfiguration fallbackText)
     {
         for (BingoTranslation value : BingoTranslation.values())
         {
-
+            value.translation = text.getString(value.key, fallbackText.getString(value.key, value.translation));
         }
     }
 
-    public String translate(String key, String... args)
+    public String translate(String... args)
     {
-        String rawTranslation = get(key);
+        String rawTranslation = translation;
         rawTranslation = convertColors(rawTranslation);
 
         for (int i = 0; i < args.length; i++)
@@ -47,17 +148,21 @@ public enum BingoTranslation
         return rawTranslation;
     }
 
+    public String rawTranslation()
+    {
+        return translation;
+    }
+
     /**
      * convert translated string with arguments to ItemText and preserve argument order, like translate() does
-     * @param key
      * @param args
      * @return An array of itemText where each element is a line,
-     *  where each line is defined by '\n' in the translated string.
+     *  where each line is split using '\n' in the translated string.
      */
-    public ItemText[] translateToItemText(String key, Set<ChatColor> modifiers, ItemText... args)
+    public ItemText[] asItemText(Set<ChatColor> modifiers, ItemText... args)
     {
         //TODO: fix issue where raw translations cannot convert the colors defined in lang files properly on items
-        String rawTranslation = get(key);
+        String rawTranslation = translation;
         rawTranslation = convertColors(rawTranslation);
         TextComponent.fromLegacyText(rawTranslation);
 
@@ -87,16 +192,6 @@ public enum BingoTranslation
         return result.toArray(new ItemText[]{});
     }
 
-    public String itemName(String key)
-    {
-        return translate(key + ".name");
-    }
-
-    public String[] itemDescription(String key)
-    {
-        return translate(key + ".desc").split("\\n");
-    }
-
     /**
      * @param input The input string, can look something like this: "{#00bb33}Hello, I like to &2&lDance && &rSing!"
      * @return Legacy text string that can be used in TextComponent.fromLegacyText()
@@ -118,14 +213,13 @@ public enum BingoTranslation
         return part;
     }
 
-    private String get(String path)
+    public static BingoTranslation getByKey(String key)
     {
-        String def = "" + ChatColor.DARK_GRAY + ChatColor.STRIKETHROUGH + "`" + path + "`";
-        // avoid weird MemorySection String prints instead of translation failed message.
-        if (language.getConfig().getConfigurationSection(path) == null)
-            return language.getConfig().getString(path, def);
-        else if (fallbackLanguage.getConfig().getConfigurationSection(path) == null)
-            return fallbackLanguage.getConfig().getString(path, def);
-        return def;
+        for (BingoTranslation value : values())
+        {
+            if (value.key.equals(key))
+                return value;
+        }
+        return null;
     }
 }

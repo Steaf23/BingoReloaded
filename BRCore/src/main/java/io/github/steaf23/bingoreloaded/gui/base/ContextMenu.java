@@ -1,6 +1,6 @@
 package io.github.steaf23.bingoreloaded.gui.base;
 
-import io.github.steaf23.bingoreloaded.BingoReloadedCore;
+import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -13,7 +13,7 @@ import java.util.function.Function;
 public class ContextMenu extends MenuInventory
 {
     public static final int MAX_ACTIONS = 7;
-    private static final InventoryItem CLOSE = new InventoryItem(8, Material.REDSTONE, TITLE_PREFIX + BingoReloadedCore.translate("menu.exit"));
+    private static final InventoryItem CLOSE = new InventoryItem(8, Material.REDSTONE, TITLE_PREFIX + BingoTranslation.MENU_EXIT.translate());
     private final List<Function<ClickType, Boolean>> actions;
 
     public ContextMenu(String title, MenuInventory parent)

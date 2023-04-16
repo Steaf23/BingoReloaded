@@ -1,6 +1,6 @@
 package io.github.steaf23.bingoreloaded.player;
 
-import io.github.steaf23.bingoreloaded.data.TranslationData;
+import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.gui.base.InventoryItem;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
@@ -71,6 +71,6 @@ public record CustomKit(String name, PlayerKit slot, List<InventoryItem> items) 
 
     public String getName()
     {
-        return TranslationData.convertColors(name);
+        return BingoTranslation.convertColors(name);
     }
 }

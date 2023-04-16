@@ -1,6 +1,6 @@
 package io.github.steaf23.bingoreloaded.gui.base;
 
-import io.github.steaf23.bingoreloaded.BingoReloadedCore;
+import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -39,10 +39,10 @@ public abstract class PaginatedPickerMenu extends MenuInventory
     public FilterType filterType;
 
     protected static final InventoryItem BG_ITEM = new InventoryItem(Material.BLACK_STAINED_GLASS_PANE, " ", "");
-    protected static final InventoryItem NEXT = new InventoryItem(53, Material.STRUCTURE_VOID, "" + ChatColor.LIGHT_PURPLE + ChatColor.BOLD + BingoReloadedCore.get().translate("menu.next"), "");
-    protected static final InventoryItem PREVIOUS = new InventoryItem(45, Material.BARRIER, "" + ChatColor.LIGHT_PURPLE + ChatColor.BOLD + BingoReloadedCore.get().translate("menu.prev"), "");
-    protected static final InventoryItem CLOSE = new InventoryItem(49, Material.REDSTONE, "" + ChatColor.RED + ChatColor.BOLD + BingoReloadedCore.get().translate("menu.save_exit"), "");
-    protected static final InventoryItem FILTER = new InventoryItem(46, Material.SPYGLASS, TITLE_PREFIX + BingoReloadedCore.get().translate("menu.filter"), "");
+    protected static final InventoryItem NEXT = new InventoryItem(53, Material.STRUCTURE_VOID, "" + ChatColor.LIGHT_PURPLE + ChatColor.BOLD + BingoTranslation.MENU_NEXT.translate(), "");
+    protected static final InventoryItem PREVIOUS = new InventoryItem(45, Material.BARRIER, "" + ChatColor.LIGHT_PURPLE + ChatColor.BOLD + BingoTranslation.MENU_PREV.translate(), "");
+    protected static final InventoryItem CLOSE = new InventoryItem(49, Material.REDSTONE, "" + ChatColor.RED + ChatColor.BOLD + BingoTranslation.MENU_SAVE_EXIT.translate(), "");
+    protected static final InventoryItem FILTER = new InventoryItem(46, Material.SPYGLASS, TITLE_PREFIX + BingoTranslation.MENU_FILTER.translate(), "");
 
     public PaginatedPickerMenu(List<InventoryItem> options, String title, MenuInventory parent, FilterType filterType)
     {

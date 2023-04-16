@@ -1,7 +1,10 @@
 package io.github.steaf23.bingoreloaded;
 
 import io.github.steaf23.bingoreloaded.data.BingoCardsData;
+import io.github.steaf23.bingoreloaded.data.BingoTranslation;
+import io.github.steaf23.bingoreloaded.data.ConfigData;
 import io.github.steaf23.bingoreloaded.event.BingoEndedEvent;
+import io.github.steaf23.bingoreloaded.event.BingoPlayerJoinEvent;
 import io.github.steaf23.bingoreloaded.event.BingoPlayerLeaveEvent;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.player.TeamManager;
@@ -20,13 +23,15 @@ public class BingoSession
     public final BingoSettingsBuilder settingsBuilder;
     public final BingoScoreboard scoreboard;
     public final TeamManager teamManager;
+    private final ConfigData config;
     private BingoGame game;
 
-    public BingoSession(String worldName)
+    public BingoSession(String worldName, ConfigData config)
     {
         this.worldName = worldName;
+        this.config = config;
         this.settingsBuilder = new BingoSettingsBuilder(this);
-        this.scoreboard = new BingoScoreboard(this);
+        this.scoreboard = new BingoScoreboard(this, config.showPlayerInScoreboard);
         this.teamManager = new TeamManager(scoreboard.getTeamBoard(), this);
         this.game = null;
     }
@@ -52,7 +57,7 @@ public class BingoSession
         BingoSettings settings = settingsBuilder.view();
         if (!cardsData.getCardNames().contains(settings.card()))
         {
-            new TranslatedMessage("game.start.no_card").color(ChatColor.RED).arg(settings.card()).sendAll(this);
+            new TranslatedMessage(BingoTranslation.NO_CARD).color(ChatColor.RED).arg(settings.card()).sendAll(this);
             return;
         }
 
@@ -64,7 +69,7 @@ public class BingoSession
         teamManager.updateActivePlayers();
 
         // The game is started in the constructor
-        game = new BingoGame(this);
+        game = new BingoGame(this, config);
     }
 
     public void endGame()
@@ -88,6 +93,11 @@ public class BingoSession
 
         if (game != null)
             game.playerQuit(event.player);
+    }
+
+    public void handlePlayerLeft(final BingoPlayerJoinEvent event)
+    {
+        event.player.giveEffects(settingsBuilder.view().effects(), config.gracePeriod);
     }
 
     public void handleGameEnded(final BingoEndedEvent event)

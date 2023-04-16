@@ -2,8 +2,8 @@ package io.github.steaf23.bingoreloaded.command;
 
 import io.github.steaf23.bingoreloaded.BingoSession;
 import io.github.steaf23.bingoreloaded.data.BingoStatsData;
+import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.data.ConfigData;
-import io.github.steaf23.bingoreloaded.data.TranslationData;
 import io.github.steaf23.bingoreloaded.gui.BingoMenu;
 import io.github.steaf23.bingoreloaded.gui.creator.BingoCreatorUI;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
@@ -48,7 +48,7 @@ public abstract class BingoCommand implements CommandExecutor
 
         if (args.length == 0)
         {
-            BingoMenu.openOptions(player, session);
+            BingoMenu.openOptions(player, session, config);
             return true;
         }
 
@@ -116,7 +116,7 @@ public abstract class BingoCommand implements CommandExecutor
                 }
                 else if (!session.isRunning())
                 {
-                    new TranslatedMessage("command.bingo.no_deathmatch").color(ChatColor.RED).send(player);
+                    new TranslatedMessage(BingoTranslation.NO_DEATHMATCH).color(ChatColor.RED).send(player);
                     return false;
                 }
 
@@ -139,7 +139,7 @@ public abstract class BingoCommand implements CommandExecutor
                     Message.sendDebug(text, player);
                     return true;
                 }
-                BingoStatsData statsData = new BingoStatsData();
+                BingoStatsData statsData = new BingoStatsData(config.savePlayerStatistics);
                 Message msg;
                 if (args.length > 1 && player.hasPermission("bingo.admin"))
                 {
@@ -178,7 +178,7 @@ public abstract class BingoCommand implements CommandExecutor
                 break;
 
             default:
-                new TranslatedMessage("command.use").color(ChatColor.RED).arg("/bingo [getcard | stats | start | end | join | back | leave | deathmatch | creator]").send(player);
+                new TranslatedMessage(BingoTranslation.COMMAND_USAGE).color(ChatColor.RED).arg("/bingo [getcard | stats | start | end | join | back | leave | deathmatch | creator]").send(player);
                 break;
         }
         return true;
@@ -211,7 +211,7 @@ public abstract class BingoCommand implements CommandExecutor
             BaseComponent msg = new TextComponent("");
             msg.setColor(ChatColor.RED);
             msg.addExtra("Cannot add custom kit ");
-            msg.addExtra(TranslationData.convertColors(kitName));
+            msg.addExtra(BingoTranslation.convertColors(kitName));
             msg.addExtra(" to slot " + slot + ", this slot already contains kit ");
             msg.addExtra(PlayerKit.getCustomKit(kit).getName());
             msg.addExtra(". Remove it first!");
@@ -222,7 +222,7 @@ public abstract class BingoCommand implements CommandExecutor
             BaseComponent msg = new TextComponent("");
             msg.setColor(ChatColor.GREEN);
             msg.addExtra("Created custom kit ");
-            msg.addExtra(TranslationData.convertColors(kitName));
+            msg.addExtra(BingoTranslation.convertColors(kitName));
             msg.addExtra(" in slot " + slot + " from your inventory");
             Message.sendDebug(msg, commandSender);
         }

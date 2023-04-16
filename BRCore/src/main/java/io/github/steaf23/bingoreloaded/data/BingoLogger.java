@@ -17,7 +17,7 @@ public class BingoLogger
         logger = Logger.getLogger("BingoReloaded");
         try
         {
-            fh = new FileHandler(BingoReloadedCore.get().getDataFolder() + "\\bingo.log", 0,1, true);
+            fh = new FileHandler(BingoReloadedCore.getPlugin(BingoReloadedCore.class).getDataFolder() + "\\bingo.log", 0,1, true);
         } catch (IOException e)
         {
             throw new RuntimeException(e);

@@ -1,6 +1,5 @@
 package io.github.steaf23.bingoreloaded.tasks;
 
-import io.github.steaf23.bingoreloaded.data.TranslationData;
 import io.github.steaf23.bingoreloaded.item.ItemText;
 import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
@@ -11,9 +10,9 @@ import java.io.Serializable;
 
 public interface TaskData extends ConfigurationSerializable, Serializable
 {
-    ItemText getItemDisplayName(TranslationData translator);
-    ItemText[] getItemDescription(TranslationData translator);
-    BaseComponent getDescription(TranslationData translator);
+    ItemText getItemDisplayName();
+    ItemText[] getItemDescription();
+    BaseComponent getDescription();
     default int getStackSize()
     {
         return 1;

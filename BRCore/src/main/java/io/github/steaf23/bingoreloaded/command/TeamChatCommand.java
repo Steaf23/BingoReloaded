@@ -1,6 +1,7 @@
 package io.github.steaf23.bingoreloaded.command;
 
 import io.github.steaf23.bingoreloaded.BingoSession;
+import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.player.BingoTeam;
 import io.github.steaf23.bingoreloaded.player.TeamManager;
@@ -39,7 +40,7 @@ public class TeamChatCommand implements Listener, CommandExecutor
     @EventHandler
     public void onPlayerSendMessage(final AsyncPlayerChatEvent event)
     {
-        BingoSession session = getSession(BingoGameManager.getWorldName(event.getPlayer().getWorld()));
+        BingoSession session = getSession(event.getPlayer());
         if (session == null)
             return;
 
@@ -76,7 +77,7 @@ public class TeamChatCommand implements Listener, CommandExecutor
     {
         if (commandSender instanceof Player p)
         {
-            BingoSession session = manager.getSession(BingoGameManager.getWorldName(p.getWorld()));
+            BingoSession session = getSession(p);
             if (session == null)
                 return false;
 
@@ -84,19 +85,19 @@ public class TeamChatCommand implements Listener, CommandExecutor
             BingoPlayer player = teamManager.getBingoPlayer(p);
             if (!teamManager.getParticipants().contains(player))
             {
-                new TranslatedMessage("game.team.no_chat").color(ChatColor.RED).send(p);
+                new TranslatedMessage(BingoTranslation.NO_CHAT).color(ChatColor.RED).send(p);
                 return false;
             }
 
             if (enabledPlayers.contains(player))
             {
                 enabledPlayers.remove(player);
-                new TranslatedMessage("game.team.chat_off").color(ChatColor.GREEN).arg("/btc").send(p);
+                new TranslatedMessage(BingoTranslation.CHAT_OFF).color(ChatColor.GREEN).arg("/btc").send(p);
             }
             else
             {
                 enabledPlayers.add(player);
-                new TranslatedMessage("game.team.chat_on").color(ChatColor.GREEN).arg("/btc").send(p);
+                new TranslatedMessage(BingoTranslation.CHAT_ON).color(ChatColor.GREEN).arg("/btc").send(p);
             }
         }
         return false;

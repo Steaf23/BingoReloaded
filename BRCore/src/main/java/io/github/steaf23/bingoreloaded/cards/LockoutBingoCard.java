@@ -1,8 +1,7 @@
 package io.github.steaf23.bingoreloaded.cards;
 
-import io.github.steaf23.bingoreloaded.BingoReloadedCore;
 import io.github.steaf23.bingoreloaded.BingoSession;
-import io.github.steaf23.bingoreloaded.data.TranslationData;
+import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.event.BingoCardTaskCompleteEvent;
 import io.github.steaf23.bingoreloaded.player.BingoTeam;
 import io.github.steaf23.bingoreloaded.player.TeamManager;
@@ -20,9 +19,8 @@ public class LockoutBingoCard extends BingoCard
         this.currentMaxTasks = size.fullCardSize;
         this.teamCount = teamCount;
 
-        TranslationData translator = BingoReloadedCore.get().getTranslator();
-        menu.setInfo(translator.itemName("menu.card.info_lockout"),
-                translator.itemDescription("menu.card.info_lockout"));
+        menu.setInfo(BingoTranslation.INFO_LOCKOUT_NAME.translate(),
+                BingoTranslation.INFO_LOCKOUT_DESC.translate().split("\\n"));
     }
 
     // Lockout cards cannot be copied since it should be the same instance for every player.
@@ -66,7 +64,7 @@ public class LockoutBingoCard extends BingoCard
 
     public void dropTeam(BingoTeam team, BingoSession session)
     {
-        new TranslatedMessage("game.team.dropped")
+        new TranslatedMessage(BingoTranslation.DROPPED)
                 .arg(team.getColoredName().asLegacyString())
                 .sendAll(session);
         team.outOfTheGame = true;

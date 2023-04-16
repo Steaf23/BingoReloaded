@@ -14,11 +14,18 @@ import java.util.UUID;
 
 public class BingoStatsData
 {
-    private final YmlDataManager data = new YmlDataManager(BingoReloadedCore.get(), "player_stats.yml");
+    private final YmlDataManager data = BingoReloadedCore.createYmlDataManager("player_stats.yml");
+
+    private final boolean savePlayerStatistics;
+
+    public BingoStatsData(boolean savePlayerStatistics)
+    {
+        this.savePlayerStatistics = savePlayerStatistics;
+    }
 
     public int getPlayerStat(UUID playerId, BingoStatType statType)
     {
-        if (!BingoReloadedCore.get().config().savePlayerStatistics)
+        if (!savePlayerStatistics)
         {
             return -1;
         }
@@ -41,7 +48,7 @@ public class BingoStatsData
 
     public void incrementPlayerStat(UUID playerId, BingoStatType statType, int by)
     {
-        if (!BingoReloadedCore.get().config().savePlayerStatistics)
+        if (!savePlayerStatistics)
         {
             return;
         }

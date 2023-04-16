@@ -1,11 +1,10 @@
 package io.github.steaf23.bingoreloaded.tasks;
 
-import io.github.steaf23.bingoreloaded.BingoReloadedCore;
-import io.github.steaf23.bingoreloaded.data.TranslationData;
-import io.github.steaf23.bingoreloaded.player.BingoPlayer;
-import io.github.steaf23.bingoreloaded.tasks.statistics.BingoStatistic;
+import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.gui.base.InventoryItem;
 import io.github.steaf23.bingoreloaded.item.ItemText;
+import io.github.steaf23.bingoreloaded.player.BingoPlayer;
+import io.github.steaf23.bingoreloaded.tasks.statistics.BingoStatistic;
 import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.bingoreloaded.util.PDCHelper;
 import io.github.steaf23.bingoreloaded.util.timer.GameTimer;
@@ -100,18 +99,17 @@ public class BingoTask
 
     public InventoryItem asStack()
     {
-        TranslationData translator = BingoReloadedCore.get().getTranslator();
         ItemStack item;
 
         // Step 1: create the item and put the new name, description and material on it.
         if (isVoided()) // VOIDED TASK
         {
-            ItemText addedDesc = new ItemText(translator.translate("game.team.voided",
+            ItemText addedDesc = new ItemText(BingoTranslation.VOIDED.translate(
                     completedBy.get().team.getColoredName().asLegacyString()), ChatColor.DARK_GRAY);
 
             ItemText itemName = new ItemText(ChatColor.DARK_GRAY, ChatColor.STRIKETHROUGH);
             itemName.addText("A", ChatColor.MAGIC);
-            itemName.add(data.getItemDisplayName(translator));
+            itemName.add(data.getItemDisplayName());
             itemName.addText("A", ChatColor.MAGIC);
 
             item = new ItemStack(Material.BEDROCK);
@@ -124,13 +122,13 @@ public class BingoTask
             String timeString = GameTimer.getTimeAsString(completedAt);
 
             ItemText itemName = new ItemText(ChatColor.GRAY, ChatColor.STRIKETHROUGH);
-            itemName.add(data.getItemDisplayName(translator));
+            itemName.add(data.getItemDisplayName());
 
             Set<ChatColor> modifiers = new HashSet<>(){{
                 add(ChatColor.DARK_PURPLE);
                 add(ChatColor.ITALIC);
             }};
-            ItemText[] desc = translator.translateToItemText("game.item.complete_lore", modifiers,
+            ItemText[] desc = BingoTranslation.COMPLETED_LORE.asItemText(modifiers,
                     new ItemText(completedBy.get().gamePlayer().get().getDisplayName(),
                             completedBy.get().getTeam().getColor().chatColor, ChatColor.BOLD),
                     new ItemText(timeString, ChatColor.GOLD));
@@ -149,12 +147,12 @@ public class BingoTask
         else // DEFAULT TASK
         {
             ItemText itemName = new ItemText(nameColor);
-            itemName.add(data.getItemDisplayName(translator));
+            itemName.add(data.getItemDisplayName());
 
             item = new ItemStack(material);
             ItemText.buildItemText(item,
                     itemName,
-                    data.getItemDescription(translator));
+                    data.getItemDescription());
 
             item.setAmount(data.getStackSize());
         }

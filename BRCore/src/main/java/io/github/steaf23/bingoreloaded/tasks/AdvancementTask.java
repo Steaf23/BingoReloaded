@@ -1,6 +1,6 @@
 package io.github.steaf23.bingoreloaded.tasks;
 
-import io.github.steaf23.bingoreloaded.data.TranslationData;
+import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.item.ItemText;
 import io.github.steaf23.bingoreloaded.util.Message;
 import net.md_5.bungee.api.ChatColor;
@@ -13,9 +13,7 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 @SerializableAs("Bingo.AdvancementTask")
 public record AdvancementTask(Advancement advancement) implements TaskData
@@ -26,7 +24,7 @@ public record AdvancementTask(Advancement advancement) implements TaskData
     }
 
     @Override
-    public ItemText getItemDisplayName(TranslationData translator)
+    public ItemText getItemDisplayName()
     {
         ItemText text = new ItemText("[", ChatColor.ITALIC);
         if (advancement == null)
@@ -43,16 +41,18 @@ public record AdvancementTask(Advancement advancement) implements TaskData
     }
 
     @Override
-    public ItemText[] getItemDescription(TranslationData translator)
+    public ItemText[] getItemDescription()
     {
-        ItemText desc = new ItemText(translator.translate("game.item.lore_advancement"), ChatColor.DARK_AQUA);
-        return new ItemText[]{desc};
+        Set<ChatColor> modifiers = new HashSet<>(){{
+            add(ChatColor.DARK_AQUA);
+        }};
+        return BingoTranslation.LORE_ADVANCEMENT.asItemText(modifiers);
     }
 
     // This method exists because advancement descriptions can contain newlines,
     // which makes it impossible to use as item names or descriptions without getting a missing character.
     @Override
-    public BaseComponent getDescription(TranslationData translator)
+    public BaseComponent getDescription()
     {
         BaseComponent comp = new ItemText().addAdvancementDescription(advancement).asComponent();
         comp.setColor(ChatColor.DARK_AQUA);

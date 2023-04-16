@@ -4,8 +4,8 @@ package io.github.steaf23.bingoreloaded.cards;
 import io.github.steaf23.bingoreloaded.BingoGame;
 import io.github.steaf23.bingoreloaded.BingoReloadedCore;
 import io.github.steaf23.bingoreloaded.data.BingoCardsData;
+import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.data.TaskListsData;
-import io.github.steaf23.bingoreloaded.data.TranslationData;
 import io.github.steaf23.bingoreloaded.event.BingoCardTaskCompleteEvent;
 import io.github.steaf23.bingoreloaded.event.BingoStatisticCompletedEvent;
 import io.github.steaf23.bingoreloaded.gui.CardMenu;
@@ -38,12 +38,11 @@ public class BingoCard
 
     public BingoCard(CardSize size)
     {
-        TranslationData translator = BingoReloadedCore.get().getTranslator();
         this.size = size;
         this.tasks = new ArrayList<>();
-        this.menu = new CardMenu(size, translator.translate("menu.card.title"));
-        menu.setInfo(translator.itemName("menu.card.info_regular"),
-                translator.itemDescription("menu.card.info_regular"));
+        this.menu = new CardMenu(size, BingoTranslation.CARD_TITLE.translate());
+        menu.setInfo(BingoTranslation.INFO_REGULAR_NAME.translate(),
+                BingoTranslation.INFO_REGULAR_DESC.translate().split("\\n"));
     }
 
     /**
@@ -57,7 +56,7 @@ public class BingoCard
      * @param cardName
      * @param seed
      */
-    public void generateCard(String cardName, int seed)
+    public void generateCard(String cardName, int seed, boolean withAdvancements, boolean withStatistics)
     {
         BingoCardsData cardsData = new BingoCardsData();
         TaskListsData listsData = cardsData.lists();
@@ -76,7 +75,7 @@ public class BingoCard
         List<String> ticketList = new ArrayList<>();
         for (String listName : cardsData.getListsSortedByMin(cardName))
         {
-            if (listsData.getTasks(listName, BingoReloadedCore.get().config().useStatistics, BingoReloadedCore.get().config().useAdvancements).size() == 0) // Skip empty task lists.
+            if (listsData.getTasks(listName, withStatistics, withAdvancements).size() == 0) // Skip empty task lists.
             {
                 continue;
             }
@@ -105,7 +104,7 @@ public class BingoCard
         {
             if (!allTasks.containsKey(listName))
             {
-                List<TaskData> listTasks = new ArrayList<>(listsData.getTasks(listName, BingoReloadedCore.get().config().useStatistics, BingoReloadedCore.get().config().useAdvancements));
+                List<TaskData> listTasks = new ArrayList<>(listsData.getTasks(listName, withStatistics, withAdvancements));
                 if (listTasks.size() == 0) // Skip empty task lists.
                 {
                     continue;

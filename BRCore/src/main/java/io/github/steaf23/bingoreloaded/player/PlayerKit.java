@@ -1,7 +1,7 @@
 package io.github.steaf23.bingoreloaded.player;
 
 import io.github.steaf23.bingoreloaded.BingoReloadedCore;
-import io.github.steaf23.bingoreloaded.data.TranslationData;
+import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.data.YmlDataManager;
 import io.github.steaf23.bingoreloaded.gui.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.gui.base.InventoryItem;
@@ -18,15 +18,15 @@ import java.util.List;
 
 public enum PlayerKit
 {
-    HARDCORE("hardcore", ChatColor.BOLD + BingoReloadedCore.get().getTranslator().itemName("menu.kits.hardcore"), EnumSet.noneOf(EffectOptionFlags.class)),
-    NORMAL("normal", ChatColor.BOLD + BingoReloadedCore.get().getTranslator().itemName("menu.kits.normal"), EnumSet.of(EffectOptionFlags.SPEED, EffectOptionFlags.NO_FALL_DAMAGE)),
-    OVERPOWERED("overpowered", ChatColor.BOLD + BingoReloadedCore.get().getTranslator().itemName("menu.kits.overpowered"), EnumSet.allOf(EffectOptionFlags.class)),
-    RELOADED("reloaded", ChatColor.BOLD + BingoReloadedCore.get().getTranslator().itemName("menu.kits.reloaded"), EnumSet.allOf(EffectOptionFlags.class)),
-    CUSTOM_1("custom_1", ChatColor.BOLD + BingoReloadedCore.get().getTranslator().itemName("menu.kits.custom") + "1", EnumSet.noneOf(EffectOptionFlags.class)),
-    CUSTOM_2("custom_2", ChatColor.BOLD + BingoReloadedCore.get().getTranslator().itemName("menu.kits.custom") + "2", EnumSet.noneOf(EffectOptionFlags.class)),
-    CUSTOM_3("custom_3", ChatColor.BOLD + BingoReloadedCore.get().getTranslator().itemName("menu.kits.custom") + "3", EnumSet.noneOf(EffectOptionFlags.class)),
-    CUSTOM_4("custom_4", ChatColor.BOLD + BingoReloadedCore.get().getTranslator().itemName("menu.kits.custom") + "4", EnumSet.noneOf(EffectOptionFlags.class)),
-    CUSTOM_5("custom_5", ChatColor.BOLD + BingoReloadedCore.get().getTranslator().itemName("menu.kits.custom") + "5", EnumSet.noneOf(EffectOptionFlags.class)),
+    HARDCORE("hardcore", ChatColor.BOLD + BingoTranslation.KIT_HARDCORE_NAME.translate(), EnumSet.noneOf(EffectOptionFlags.class)),
+    NORMAL("normal", ChatColor.BOLD + BingoTranslation.KIT_NORMAL_NAME.translate(), EnumSet.of(EffectOptionFlags.SPEED, EffectOptionFlags.NO_FALL_DAMAGE)),
+    OVERPOWERED("overpowered", ChatColor.BOLD + BingoTranslation.KIT_OVERPOWERED_NAME.translate(), EnumSet.allOf(EffectOptionFlags.class)),
+    RELOADED("reloaded", ChatColor.BOLD + BingoTranslation.KIT_RELOADED_NAME.translate(), EnumSet.allOf(EffectOptionFlags.class)),
+    CUSTOM_1("custom_1", ChatColor.BOLD + BingoTranslation.KIT_CUSTOM_NAME.translate() + "1", EnumSet.noneOf(EffectOptionFlags.class)),
+    CUSTOM_2("custom_2", ChatColor.BOLD + BingoTranslation.KIT_CUSTOM_NAME.translate() + " 2", EnumSet.noneOf(EffectOptionFlags.class)),
+    CUSTOM_3("custom_3", ChatColor.BOLD + BingoTranslation.KIT_CUSTOM_NAME.translate() + " 3", EnumSet.noneOf(EffectOptionFlags.class)),
+    CUSTOM_4("custom_4", ChatColor.BOLD + BingoTranslation.KIT_CUSTOM_NAME.translate() + " 4", EnumSet.noneOf(EffectOptionFlags.class)),
+    CUSTOM_5("custom_5", ChatColor.BOLD + BingoTranslation.KIT_CUSTOM_NAME.translate() + " 5", EnumSet.noneOf(EffectOptionFlags.class)),
     ;
 
     public static final InventoryItem cardItem = createCardItem();
@@ -36,7 +36,7 @@ public enum PlayerKit
     public final String displayName;
     public final EnumSet<EffectOptionFlags> defaultEffects;
 
-    private static final YmlDataManager customKitData = new YmlDataManager(BingoReloadedCore.get(), "kits.yml");
+    private static final YmlDataManager customKitData = BingoReloadedCore.createYmlDataManager("kits.yml");
 
     PlayerKit(String configName, String displayName, EnumSet<EffectOptionFlags> defaultEffects)
     {
@@ -197,23 +197,20 @@ public enum PlayerKit
 
     private static InventoryItem createGoUpWand()
     {
-        TranslationData translator = BingoReloadedCore.get().getTranslator();
         InventoryItem wand = new InventoryItem(
-                (int)(BingoReloadedCore.get().config().wandCooldown * 1000),
                 Material.WARPED_FUNGUS_ON_A_STICK,
-                "" + ChatColor.DARK_PURPLE + ChatColor.ITALIC + ChatColor.BOLD + translator.itemName("items.wand"),
-                translator.itemDescription("items.wand")).withEnchantment(Enchantment.DURABILITY, 3);
+                "" + ChatColor.DARK_PURPLE + ChatColor.ITALIC + ChatColor.BOLD + BingoTranslation.WAND_ITEM_NAME.translate(),
+                BingoTranslation.WAND_ITEM_DESC.translate().split("\\n")).withEnchantment(Enchantment.DURABILITY, 3);
         wand.setKey("wand");
         return wand;
     }
 
     private static InventoryItem createCardItem()
     {
-        TranslationData translator = BingoReloadedCore.get().getTranslator();
         InventoryItem card = new InventoryItem(
                 Material.MAP,
-                "" + ChatColor.DARK_PURPLE + ChatColor.ITALIC + ChatColor.BOLD + translator.itemName("items.card"),
-                translator.itemDescription("items.card"));
+                "" + ChatColor.DARK_PURPLE + ChatColor.ITALIC + ChatColor.BOLD + BingoTranslation.CARD_ITEM_NAME.translate(),
+                BingoTranslation.CARD_ITEM_DESC.translate());
         card.setKey("card");
         return card;
     }

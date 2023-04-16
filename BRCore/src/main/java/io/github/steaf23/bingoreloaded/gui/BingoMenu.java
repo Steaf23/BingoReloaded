@@ -5,7 +5,8 @@ import io.github.steaf23.bingoreloaded.BingoReloadedCore;
 import io.github.steaf23.bingoreloaded.BingoSession;
 import io.github.steaf23.bingoreloaded.BingoSettingsBuilder;
 import io.github.steaf23.bingoreloaded.data.BingoCardsData;
-import io.github.steaf23.bingoreloaded.data.TranslationData;
+import io.github.steaf23.bingoreloaded.data.BingoTranslation;
+import io.github.steaf23.bingoreloaded.data.ConfigData;
 import io.github.steaf23.bingoreloaded.gui.base.FilterType;
 import io.github.steaf23.bingoreloaded.gui.base.InventoryItem;
 import io.github.steaf23.bingoreloaded.gui.base.MenuInventory;
@@ -22,36 +23,37 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
 
 public class BingoMenu extends MenuInventory
 {
     private final BingoSession session;
+    private final ConfigData config;
 
     private final InventoryItem start = new InventoryItem(4, 2,
-            Material.LIME_CONCRETE, TITLE_PREFIX + BingoReloadedCore.get().getTranslator().itemName("menu.options.start"));
+            Material.LIME_CONCRETE, TITLE_PREFIX + BingoTranslation.OPTIONS_START.translate());
     private static final InventoryItem JOIN = new InventoryItem(4, 0,
-            Material.WHITE_GLAZED_TERRACOTTA, TITLE_PREFIX + BingoReloadedCore.get().getTranslator().itemName("menu.options.team"));
+            Material.WHITE_GLAZED_TERRACOTTA, TITLE_PREFIX + BingoTranslation.OPTIONS_TEAM.translate());
     private static final InventoryItem LEAVE = new InventoryItem(2, 1,
-            Material.BARRIER, TITLE_PREFIX + BingoReloadedCore.get().getTranslator().itemName("menu.options.leave"));
+            Material.BARRIER, TITLE_PREFIX + BingoTranslation.OPTIONS_LEAVE.translate());
     private static final InventoryItem KIT = new InventoryItem(6, 1,
-            Material.IRON_INGOT, TITLE_PREFIX + BingoReloadedCore.get().getTranslator().itemName("menu.options.kit"));
+            Material.IRON_INGOT, TITLE_PREFIX + BingoTranslation.OPTIONS_KIT.translate());
     private static final InventoryItem CARD = new InventoryItem(2, 3,
-            Material.MAP, TITLE_PREFIX + BingoReloadedCore.get().getTranslator().itemName("menu.options.card"));
+            Material.MAP, TITLE_PREFIX + BingoTranslation.OPTIONS_CARD.translate());
     private static final InventoryItem MODE = new InventoryItem(6, 3,
-            Material.ENCHANTED_BOOK, TITLE_PREFIX + BingoReloadedCore.get().getTranslator().itemName("menu.options.mode"));
+            Material.ENCHANTED_BOOK, TITLE_PREFIX + BingoTranslation.OPTIONS_GAMEMODE.translate());
     private static final InventoryItem EFFECTS = new InventoryItem(4, 4,
-            Material.POTION, TITLE_PREFIX + BingoReloadedCore.get().getTranslator().itemName("menu.options.effects"));
+            Material.POTION, TITLE_PREFIX + BingoTranslation.OPTIONS_EFFECTS.translate());
     private static final InventoryItem EXTRA = new InventoryItem(44,
-            Material.STRUCTURE_VOID, TITLE_PREFIX + BingoReloadedCore.translate("menu.next"));
+            Material.STRUCTURE_VOID, TITLE_PREFIX + BingoTranslation.MENU_NEXT.translate());
 
     private static final InventoryItem JOIN_P = JOIN.inSlot(2, 2);
     private static final InventoryItem LEAVE_P = LEAVE.inSlot(6, 2);
 
-    private BingoMenu(BingoSession session)
+    private BingoMenu(BingoSession session, ConfigData config)
     {
-        super(45, BingoReloadedCore.translate("menu.options.title"), null);
+        super(45, BingoTranslation.OPTIONS_TITLE.translate(), null);
         this.session = session;
+        this.config = config;
     }
 
     @Override
@@ -116,7 +118,7 @@ public class BingoMenu extends MenuInventory
                 ItemMeta meta = start.getItemMeta();
                 if (meta != null)
                 {
-                    meta.setDisplayName(TITLE_PREFIX + BingoReloadedCore.get().getTranslator().itemName("menu.options.start"));
+                    meta.setDisplayName(TITLE_PREFIX + BingoTranslation.OPTIONS_START.translate());
                     start.setItemMeta(meta);
                 }
                 addOption(start);
@@ -130,18 +132,17 @@ public class BingoMenu extends MenuInventory
 
     private void openCardPicker(Player player)
     {
-        TranslationData translator = BingoReloadedCore.get().getTranslator();
         BingoCardsData cardsData = new BingoCardsData();
         List<InventoryItem> cards = new ArrayList<>();
 
         for (String cardName : cardsData.getCardNames())
         {
             cards.add(new InventoryItem(Material.PAPER, cardName,
-                    ChatColor.DARK_PURPLE + translator.translate("creator.card_item.desc",
+                    ChatColor.DARK_PURPLE + BingoTranslation.LIST_COUNT.translate(
                             "" + cardsData.getListNames(cardName).size())));
         }
 
-        PaginatedPickerMenu cardPicker = new PaginatedPickerMenu(cards, translator.itemName("menu.options.card"),this, FilterType.DISPLAY_NAME)
+        PaginatedPickerMenu cardPicker = new PaginatedPickerMenu(cards, BingoTranslation.OPTIONS_CARD.translate(),this, FilterType.DISPLAY_NAME)
         {
             @Override
             public void onOptionClickedDelegate(InventoryClickEvent event, InventoryItem clickedOption, Player player)
@@ -149,7 +150,7 @@ public class BingoMenu extends MenuInventory
                 ItemMeta meta = clickedOption.getItemMeta();
                 if (meta != null)
                 {
-                    cardSelected(meta.getDisplayName(), BingoGameManager.getWorldName(player.getWorld()));
+                    cardSelected(meta.getDisplayName(), BingoReloadedCore.getWorldNameOfDimension(player.getWorld()));
                 }
                 close(player);
             }
@@ -160,7 +161,7 @@ public class BingoMenu extends MenuInventory
     private void cardSelected(String cardName, String worldName)
     {
         if (cardName == null) return;
-        new TranslatedMessage("game.settings.card_selected").color(ChatColor.GOLD).arg(cardName).sendAll(session);
+        new TranslatedMessage(BingoTranslation.CARD_SELECTED).color(ChatColor.GOLD).arg(cardName).sendAll(session);
         session.settingsBuilder.card(cardName);
     }
 
@@ -169,17 +170,16 @@ public class BingoMenu extends MenuInventory
      * @param player
      * @param gameSession
      */
-    public static void openOptions(@NonNull Player player, @NonNull BingoSession gameSession)
+    public static void openOptions(@NonNull Player player, @NonNull BingoSession gameSession, ConfigData config)
     {
-        TranslationData translator = BingoReloadedCore.get().getTranslator();
-        BingoMenu options = new BingoMenu(gameSession);
+        BingoMenu options = new BingoMenu(gameSession, config);
         if (gameSession.isRunning())
         {
             options.start.setType(Material.RED_CONCRETE);
             ItemMeta meta = options.start.getItemMeta();
             if (meta != null)
             {
-                meta.setDisplayName(TITLE_PREFIX + translator.itemName("menu.options.end"));
+                meta.setDisplayName(TITLE_PREFIX + BingoTranslation.OPTIONS_END.translate());
                 options.start.setItemMeta(meta);
             }
         }
@@ -189,7 +189,7 @@ public class BingoMenu extends MenuInventory
             ItemMeta meta = options.start.getItemMeta();
             if (meta != null)
             {
-                meta.setDisplayName(TITLE_PREFIX + translator.itemName("menu.options.start"));
+                meta.setDisplayName(TITLE_PREFIX + BingoTranslation.OPTIONS_START.translate());
                 options.start.setItemMeta(meta);
             }
         }

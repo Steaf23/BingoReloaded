@@ -1,15 +1,14 @@
 package io.github.steaf23.bingoreloaded.gui.creator;
 
-import io.github.steaf23.bingoreloaded.BingoReloadedCore;
 import io.github.steaf23.bingoreloaded.data.BingoCardsData;
-import io.github.steaf23.bingoreloaded.tasks.BingoTask;
-import io.github.steaf23.bingoreloaded.tasks.CountableTask;
-import io.github.steaf23.bingoreloaded.tasks.TaskData;
 import io.github.steaf23.bingoreloaded.gui.base.FilterType;
 import io.github.steaf23.bingoreloaded.gui.base.InventoryItem;
 import io.github.steaf23.bingoreloaded.gui.base.MenuInventory;
 import io.github.steaf23.bingoreloaded.gui.base.PaginatedPickerMenu;
 import io.github.steaf23.bingoreloaded.item.ItemText;
+import io.github.steaf23.bingoreloaded.tasks.BingoTask;
+import io.github.steaf23.bingoreloaded.tasks.CountableTask;
+import io.github.steaf23.bingoreloaded.tasks.TaskData;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -184,7 +183,7 @@ public class TaskPickerUI extends PaginatedPickerMenu
                     .map(ItemText::asLegacyString)
                     .collect(Collectors.toList());
         List<String> newLore = new ArrayList<>();
-        newLore.add(newTask.data.getItemDescription(BingoReloadedCore.get().getTranslator())[0].asLegacyString());
+        newLore.add(newTask.data.getItemDescription()[0].asLegacyString());
         newLore.addAll(addedLore);
 
         meta.setLore(newLore);

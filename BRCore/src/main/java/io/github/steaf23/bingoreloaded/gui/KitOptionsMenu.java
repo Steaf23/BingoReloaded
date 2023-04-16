@@ -1,11 +1,11 @@
 package io.github.steaf23.bingoreloaded.gui;
 
-import io.github.steaf23.bingoreloaded.BingoReloadedCore;
 import io.github.steaf23.bingoreloaded.BingoSession;
-import io.github.steaf23.bingoreloaded.player.CustomKit;
-import io.github.steaf23.bingoreloaded.player.PlayerKit;
+import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.gui.base.InventoryItem;
 import io.github.steaf23.bingoreloaded.gui.base.MenuInventory;
+import io.github.steaf23.bingoreloaded.player.CustomKit;
+import io.github.steaf23.bingoreloaded.player.PlayerKit;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -18,20 +18,20 @@ public class KitOptionsMenu extends MenuInventory
 
     private static final InventoryItem HARDCORE = new InventoryItem(1, 1,
             Material.RED_CONCRETE, PlayerKit.HARDCORE.displayName,
-            BingoReloadedCore.get().getTranslator().itemDescription("menu.kits.hardcore"));
+            BingoTranslation.KIT_HARDCORE_DESC.translate().split("\\n"));
     private static final InventoryItem NORMAL = new InventoryItem(3, 1,
             Material.YELLOW_CONCRETE, PlayerKit.NORMAL.displayName,
-            BingoReloadedCore.get().getTranslator().itemDescription("menu.kits.normal"));
+            BingoTranslation.KIT_NORMAL_DESC.translate().split("\\n"));
     private static final InventoryItem OVERPOWERED = new InventoryItem(5, 1,
             Material.PURPLE_CONCRETE, PlayerKit.OVERPOWERED.displayName,
-            BingoReloadedCore.get().getTranslator().itemDescription("menu.kits.overpowered"));
+            BingoTranslation.KIT_OVERPOWERED_DESC.translate().split("\\n"));
     private static final InventoryItem RELOADED = new InventoryItem(7, 1,
             Material.CYAN_CONCRETE, PlayerKit.RELOADED.displayName,
-            BingoReloadedCore.get().getTranslator().itemDescription("menu.kits.reloaded"));
+            BingoTranslation.KIT_RELOADED_DESC.translate().split("\\n"));
 
     public KitOptionsMenu(MenuInventory parent, BingoSession session)
     {
-        super(45, BingoReloadedCore.get().getTranslator().itemName("menu.options.kit"), parent);
+        super(45, BingoTranslation.OPTIONS_KIT.translate(), parent);
         this.session = session;
 
         fillOptions(HARDCORE, NORMAL, OVERPOWERED, RELOADED);

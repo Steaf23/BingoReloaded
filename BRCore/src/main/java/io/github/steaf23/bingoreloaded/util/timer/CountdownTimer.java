@@ -2,6 +2,7 @@ package io.github.steaf23.bingoreloaded.util.timer;
 
 import io.github.steaf23.bingoreloaded.BingoReloadedCore;
 import io.github.steaf23.bingoreloaded.BingoSession;
+import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.event.CountdownTimerFinishedEvent;
 import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.bingoreloaded.util.TranslatedMessage;
@@ -60,7 +61,7 @@ public class CountdownTimer extends GameTimer
             color = ChatColor.RED;
         else if (getTime() <= medThreshold)
             color = ChatColor.GOLD;
-        return new TranslatedMessage("game.timer.time_left")
+        return new TranslatedMessage(BingoTranslation.TIME_LEFT)
                 .color(ChatColor.LIGHT_PURPLE).bold()
                 .arg(GameTimer.getTimeAsString(getTime())).color(color);
     }

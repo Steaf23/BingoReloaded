@@ -1,6 +1,6 @@
 package io.github.steaf23.bingoreloaded;
 
-import io.github.steaf23.bingoreloaded.data.TranslationData;
+import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.event.BingoPlayerJoinEvent;
 import io.github.steaf23.bingoreloaded.event.BingoPlayerLeaveEvent;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
@@ -18,13 +18,14 @@ public class BingoScoreboard
     private final InfoScoreboard visualBoard;
     private final Objective taskObjective;
     private final BingoSession session;
+    private final boolean showPlayer;
 
-    public BingoScoreboard(BingoSession session)
+    public BingoScoreboard(BingoSession session, boolean showPlayer)
     {
-        TranslationData translator = BingoReloadedCore.get().getTranslator();
         this.session = session;
+        this.showPlayer = showPlayer;
         this.teamBoard = Bukkit.getScoreboardManager().getNewScoreboard();
-        this.visualBoard = new InfoScoreboard("" + ChatColor.ITALIC + ChatColor.UNDERLINE + translator.translate("menu.completed"), teamBoard);
+        this.visualBoard = new InfoScoreboard("" + ChatColor.ITALIC + ChatColor.UNDERLINE + BingoTranslation.SCOREBOARD_TITLE.translate(), teamBoard);
 
         this.taskObjective = teamBoard.registerNewObjective("item_count", "bingo_item_count");
 
@@ -59,7 +60,7 @@ public class BingoScoreboard
 
         TeamManager teamManager = session.teamManager;
 
-        boolean condensedDisplay = !BingoReloadedCore.get().config().showPlayerInScoreboard
+        boolean condensedDisplay = !showPlayer
                 || teamManager.getActiveTeams().size() + teamManager.getParticipants().size() > 13;
 
         visualBoard.setLineText(0, " ");

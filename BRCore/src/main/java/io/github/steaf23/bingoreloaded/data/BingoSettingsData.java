@@ -12,7 +12,7 @@ public class BingoSettingsData
 
     public BingoSettingsData()
     {
-        this.data = new YmlDataManager(BingoReloadedCore.get(), "presets.yml");
+        this.data = BingoReloadedCore.createYmlDataManager("presets.yml");
     }
 
     public BingoSettings getSettings(String name, BingoSession session)

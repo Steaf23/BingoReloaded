@@ -1,12 +1,12 @@
 package io.github.steaf23.bingoreloaded.gui.creator;
 
-import io.github.steaf23.bingoreloaded.BingoReloadedCore;
-import io.github.steaf23.bingoreloaded.tasks.AdvancementTask;
-import io.github.steaf23.bingoreloaded.tasks.BingoTask;
-import io.github.steaf23.bingoreloaded.tasks.ItemTask;
+import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.gui.base.InventoryItem;
 import io.github.steaf23.bingoreloaded.gui.base.MenuInventory;
 import io.github.steaf23.bingoreloaded.gui.base.TreeMenu;
+import io.github.steaf23.bingoreloaded.tasks.AdvancementTask;
+import io.github.steaf23.bingoreloaded.tasks.BingoTask;
+import io.github.steaf23.bingoreloaded.tasks.ItemTask;
 import io.github.steaf23.bingoreloaded.util.FlexColor;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
@@ -25,7 +25,7 @@ public class ListEditorUI extends TreeMenu
     private static final InventoryItem ITEMS = new InventoryItem(2, 2, Material.APPLE, TITLE_PREFIX + "Items", "Click to add or remove items");
     private static final InventoryItem ADVANCEMENTS = new InventoryItem(4, 2, Material.ENDER_EYE, TITLE_PREFIX + "Advancements", "Click to add or remove advancements");
     private static final InventoryItem STATISTICS = new InventoryItem(6, 2, Material.GLOBE_BANNER_PATTERN, TITLE_PREFIX + "Statistics", "Click to add or remove statistics");
-    private static final InventoryItem SAVE = new InventoryItem(4, 5, Material.REDSTONE, "" + ChatColor.RED + ChatColor.BOLD + BingoReloadedCore.translate("menu.save_exit"));
+    private static final InventoryItem SAVE = new InventoryItem(4, 5, Material.REDSTONE, "" + ChatColor.RED + ChatColor.BOLD + BingoTranslation.MENU_SAVE_EXIT.translate());
     private static final InventoryItem BLANK = new InventoryItem(Material.BLACK_STAINED_GLASS_PANE, " ", "");
 
     public ListEditorUI(String listName, MenuInventory parent)

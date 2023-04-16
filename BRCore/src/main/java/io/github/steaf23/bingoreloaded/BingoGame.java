@@ -4,8 +4,8 @@ import io.github.steaf23.bingoreloaded.cards.BingoCard;
 import io.github.steaf23.bingoreloaded.cards.CardBuilder;
 import io.github.steaf23.bingoreloaded.data.BingoCardsData;
 import io.github.steaf23.bingoreloaded.data.BingoStatType;
+import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.data.ConfigData;
-import io.github.steaf23.bingoreloaded.data.TranslationData;
 import io.github.steaf23.bingoreloaded.event.*;
 import io.github.steaf23.bingoreloaded.gui.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.item.ItemText;
@@ -100,7 +100,7 @@ public class BingoGame
 
         // Generate cards
         BingoCard masterCard = CardBuilder.fromMode(settings.mode(), settings.size(), getTeamManager().getActiveTeams().size());
-        masterCard.generateCard(settings.card(), config.cardSeed);
+        masterCard.generateCard(settings.card(), config.cardSeed, config.useAdvancements, config.useStatistics);
         getTeamManager().initializeCards(masterCard);
 
         Set<BingoCard> cards = new HashSet<>();
@@ -113,7 +113,7 @@ public class BingoGame
         if (statTracker != null)
             statTracker.start(getTeamManager().getActiveTeams());
 
-        new TranslatedMessage("game.start.give_cards").sendAll(session);
+        new TranslatedMessage(BingoTranslation.GIVE_CARDS).sendAll(session);
         teleportPlayersToStart(world);
         getTeamManager().getParticipants().forEach(p ->
         {
@@ -168,7 +168,7 @@ public class BingoGame
 
     public void bingo(BingoTeam team)
     {
-        new TranslatedMessage("game.end.bingo").arg(team.getColoredName().asLegacyString()).sendAll(session);
+        new TranslatedMessage(BingoTranslation.BINGO).arg(team.getColoredName().asLegacyString()).sendAll(session);
         for (BingoPlayer p : getTeamManager().getParticipants())
         {
             if (p.gamePlayer().isEmpty())
@@ -216,7 +216,7 @@ public class BingoGame
         participant.giveBingoCard();
         participant.gamePlayer().get().setGameMode(GameMode.SURVIVAL);
 
-        BingoReloadedCore.scheduleTask(task -> participant.giveEffects(settings.effects()), BingoReloadedCore.ONE_SECOND);
+        BingoReloadedCore.scheduleTask(task -> participant.giveEffects(settings.effects(), config.gracePeriod), BingoReloadedCore.ONE_SECOND);
     }
 
     public void startDeathMatch(int countdown)
@@ -262,7 +262,7 @@ public class BingoGame
         Location location = deadPlayers.get(player.getUniqueId());
         if (location == null)
         {
-            new TranslatedMessage("menu.effects.disabled").color(ChatColor.RED).send(player);
+            new TranslatedMessage(BingoTranslation.EFFECTS_DISABLED).color(ChatColor.RED).send(player);
             return;
         }
 
@@ -458,9 +458,8 @@ public class BingoGame
 
         String timeString = GameTimer.getTimeAsString(getGameTime());
 
-        TranslationData translator = new TranslationData(config);
-        new TranslatedMessage("game.item.completed").color(ChatColor.AQUA)
-                .component(event.getTask().data.getItemDisplayName(translator).asComponent()).color(event.getTask().nameColor)
+        new TranslatedMessage(BingoTranslation.COMPLETED).color(ChatColor.AQUA)
+                .component(event.getTask().data.getItemDisplayName().asComponent()).color(event.getTask().nameColor)
                 .arg(new ItemText(event.getPlayer().gamePlayer().get().getDisplayName(), event.getPlayer().team.getColor().chatColor, ChatColor.BOLD).asLegacyString())
                 .arg(timeString).color(ChatColor.WHITE)
                 .sendAll(session);
@@ -526,14 +525,14 @@ public class BingoGame
             }
             else
             {
-                new TranslatedMessage("game.player.no_card").send(event.getPlayer());
+                new TranslatedMessage(BingoTranslation.NO_PLAYER_CARD).send(event.getPlayer());
             }
         }
 
         if (PlayerKit.wandItem.isKeyEqual(event.getItem()))
         {
             event.setCancelled(true);
-            player.useGoUpWand(event.getItem());
+            player.useGoUpWand(event.getItem(), config.wandCooldown, config.wandDown, config.wandUp, config.platformLifetime);
         }
     }
 
@@ -575,7 +574,7 @@ public class BingoGame
         Location deathCoords = event.getEntity().getLocation();
         if (config.teleportAfterDeath)
         {
-            TextComponent[] teleportMsg = Message.createHoverCommandMessage("game.player.respawn", "/bingo back");
+            TextComponent[] teleportMsg = Message.createHoverCommandMessage(BingoTranslation.RESPAWN, "/bingo back");
 
             event.getEntity().spigot().sendMessage(teleportMsg);
             deadPlayers.put(player.playerId, deathCoords);

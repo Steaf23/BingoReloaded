@@ -1,10 +1,10 @@
 package io.github.steaf23.bingoreloaded.player;
 
-import io.github.steaf23.bingoreloaded.BingoReloadedCore;
 import io.github.steaf23.bingoreloaded.BingoGame;
-import io.github.steaf23.bingoreloaded.BingoGameManager;
+import io.github.steaf23.bingoreloaded.BingoReloadedCore;
 import io.github.steaf23.bingoreloaded.BingoSession;
 import io.github.steaf23.bingoreloaded.data.BingoStatType;
+import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.gui.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.item.ItemCooldownManager;
 import io.github.steaf23.bingoreloaded.util.Message;
@@ -57,7 +57,7 @@ public class BingoPlayer
             return Optional.ofNullable(null);
 
         Player player = Bukkit.getPlayer(playerId);
-        if (!BingoGameManager.getWorldName(player.getWorld()).equals(session.worldName))
+        if (!BingoReloadedCore.getWorldNameOfDimension(player.getWorld()).equals(session.worldName))
         {
             return Optional.ofNullable(null);
         }
@@ -128,7 +128,7 @@ public class BingoPlayer
         });
     }
 
-    public void giveEffects(EnumSet<EffectOptionFlags> effects)
+    public void giveEffects(EnumSet<EffectOptionFlags> effects, int gracePeriod)
     {
         if (gamePlayer().isEmpty())
             return;
@@ -149,7 +149,7 @@ public class BingoPlayer
                 player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 100000, 1, false, false));
             player.addPotionEffect(new PotionEffect(PotionEffectType.SATURATION, 2, 100, false, false));
             player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 2, 100, false, false));
-            player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, BingoReloadedCore.ONE_SECOND * BingoReloadedCore.get().config().gracePeriod, 100, false, false));
+            player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, BingoReloadedCore.ONE_SECOND * gracePeriod, 100, false, false));
         });
     }
 
@@ -193,12 +193,12 @@ public class BingoPlayer
         String itemKey = deathMatchItem.isBlock() ? "block" : "item";
         itemKey += ".minecraft." + deathMatchItem.getKey().getKey();
 
-        new TranslatedMessage("game.item.deathmatch").color(ChatColor.GOLD)
+        new TranslatedMessage(BingoTranslation.DEATHMATCH).color(ChatColor.GOLD)
                 .component(new TranslatableComponent(itemKey))
                 .send(gamePlayer().get());
     }
 
-    public boolean useGoUpWand(ItemStack wand)
+    public boolean useGoUpWand(ItemStack wand, double wandCooldownSeconds, int downDistance, int upDistance, int platformLifetimeSeconds)
     {
         if (gamePlayer().isEmpty())
              return false;
@@ -210,24 +210,24 @@ public class BingoPlayer
         if (!itemCooldowns.isCooldownOver(wand))
         {
             double timeLeft = itemCooldowns.getTimeLeft(wand) / 1000.0;
-            new TranslatedMessage("game.item.cooldown").color(ChatColor.RED).arg(String.format("%.2f", timeLeft)).send(player);
+            new TranslatedMessage(BingoTranslation.COOLDOWN).color(ChatColor.RED).arg(String.format("%.2f", timeLeft)).send(player);
             return false;
         }
 
         BingoReloadedCore.scheduleTask(task -> {
-            itemCooldowns.addCooldown(wand, (int)(BingoReloadedCore.get().config().wandCooldown * 1000));
+            itemCooldowns.addCooldown(wand, (int)(wandCooldownSeconds * 1000));
 
             double distance = 0.0;
             double fallDistance = 5.0;
             // Use the wand
             if (gamePlayer().get().isSneaking())
             {
-                distance = -BingoReloadedCore.get().config().wandDown;
+                distance = -downDistance;
                 fallDistance = 0.0;
             }
             else
             {
-                distance = BingoReloadedCore.get().config().wandUp + 5;
+                distance = upDistance + 5;
                 fallDistance = 5.0;
             }
 
@@ -240,7 +240,7 @@ public class BingoPlayer
 
             BingoReloadedCore.scheduleTask(laterTask -> {
                 BingoGame.removePlatform(newLocation, 1);
-            }, Math.max(0, BingoReloadedCore.get().config().platformLifetime) * BingoReloadedCore.ONE_SECOND);
+            }, Math.max(0, platformLifetimeSeconds) * BingoReloadedCore.ONE_SECOND);
 
             player.playSound(player, Sound.ENTITY_SHULKER_TELEPORT, 0.8f, 1.0f);
             player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, BingoReloadedCore.ONE_SECOND * 10, 100, false, false));

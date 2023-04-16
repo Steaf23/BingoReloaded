@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
  */
 public class TaskListsData
 {
-    private final YmlDataManager data = new YmlDataManager(BingoReloadedCore.get(), "lists.yml");
+    private final YmlDataManager data = BingoReloadedCore.createYmlDataManager("lists.yml");
 
     public Set<TaskData> getTasks(String listName, boolean withStatistics, boolean withAdvancements)
     {

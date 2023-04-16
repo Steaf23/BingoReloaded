@@ -1,8 +1,6 @@
 package io.github.steaf23.bingoreloaded.event;
 
-import io.github.steaf23.bingoreloaded.BingoReloadedCore;
 import io.github.steaf23.bingoreloaded.BingoGame;
-import io.github.steaf23.bingoreloaded.BingoGameManager;
 import io.github.steaf23.bingoreloaded.BingoSession;
 import io.github.steaf23.bingoreloaded.tasks.statistics.StatisticTracker;
 import org.bukkit.World;
@@ -143,7 +141,7 @@ public class BingoEventListener implements Listener
     @EventHandler
     public void handlePlayerAdvancementCompleted(final PlayerAdvancementDoneEvent event)
     {
-        if (!BingoReloadedCore.get().config().useAdvancements)
+        if (!useAdvancements)
             return;
 
         BingoSession session = getSession(event.getPlayer().getWorld());
@@ -196,13 +194,13 @@ public class BingoEventListener implements Listener
             if (session == null)
                 return;
         }
-        session.teamManager.handlePlayerChangedWorld(event, gameManager);
+        session.teamManager.handlePlayerChangedWorld(event);
     }
 
     @EventHandler
     public void handleStatisticIncrement(final PlayerStatisticIncrementEvent event)
     {
-        if (!BingoReloadedCore.get().config().useStatistics)
+        if (!useStatistics)
             return;
 
         BingoSession session = getSession(event.getPlayer().getWorld());
@@ -218,7 +216,7 @@ public class BingoEventListener implements Listener
     @EventHandler
     public void handleStatisticCompleted(final BingoStatisticCompletedEvent event)
     {
-        if (!BingoReloadedCore.get().config().useStatistics)
+        if (!useStatistics)
             return;
 
         BingoGame game = event.session != null ? event.session.game() : null;

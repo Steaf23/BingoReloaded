@@ -22,7 +22,7 @@ public class PixelArtHologram extends Hologram
 
     private static String[] linesFromImage(String path, ChatColor backgroundColor) throws IOException
     {
-        BufferedImage img = ImageIO.read(BingoReloadedCore.get().getResource(path));
+        BufferedImage img = ImageIO.read(BingoReloadedCore.getPlugin(BingoReloadedCore.class).getResource(path));
 
         List<String> lines = new ArrayList<>();
         int width = Math.min(16, img.getWidth());

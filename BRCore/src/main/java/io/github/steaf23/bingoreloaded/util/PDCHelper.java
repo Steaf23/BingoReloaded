@@ -10,7 +10,7 @@ public class PDCHelper
 
     public static NamespacedKey createKey(String key)
     {
-        return new NamespacedKey(BingoReloadedCore.get(), key);
+        return new NamespacedKey(BingoReloadedCore.getPlugin(BingoReloadedCore.class), key);
     }
 
     public static PersistentDataContainer setBoolean(PersistentDataContainer container, String key, boolean value)

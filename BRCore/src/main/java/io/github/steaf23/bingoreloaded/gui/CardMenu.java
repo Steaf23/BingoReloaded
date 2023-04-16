@@ -1,8 +1,6 @@
 package io.github.steaf23.bingoreloaded.gui;
 
-import io.github.steaf23.bingoreloaded.BingoReloadedCore;
 import io.github.steaf23.bingoreloaded.cards.CardSize;
-import io.github.steaf23.bingoreloaded.data.TranslationData;
 import io.github.steaf23.bingoreloaded.gui.base.InventoryItem;
 import io.github.steaf23.bingoreloaded.gui.base.MenuInventory;
 import io.github.steaf23.bingoreloaded.tasks.BingoTask;
@@ -37,15 +35,14 @@ public class CardMenu extends MenuInventory
         if (task == null)
             return;
 
-        TranslationData translator = BingoReloadedCore.get().getTranslator();
         BaseComponent base = new TextComponent("\n");
-        BaseComponent name = task.data.getItemDisplayName(translator).asComponent();
+        BaseComponent name = task.data.getItemDisplayName().asComponent();
         name.setBold(true);
         name.setColor(task.nameColor);
 
         base.addExtra(name);
         base.addExtra("\n - ");
-        base.addExtra(task.data.getDescription(translator));
+        base.addExtra(task.data.getDescription());
 
         Message.sendDebugNoPrefix(base, player);
     }

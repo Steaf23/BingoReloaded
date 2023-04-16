@@ -33,22 +33,14 @@ game:
     no_card: "Cannot start game with the card '{0}' because it does not exist!" # 0: card_name
   end:
     bingo: "Congratulations! Team {0} has won the Bingo!" # 0: winning team
-    restart:
-      prefix: "&a&o&lGame has ended! Click to "
-      hoverable: "&c&oRestart!"
-      hover: "&a&o&lClick to restart using the same rules and teams!"
-      suffix: ""
+    restart: "&a&o&lGame has ended! Click to //&c&oRestart! //&a&o&lClick to restart using the same rules and teams!//"
   player:
     leave: "You have been successfully removed from the game, use {0} to come back to me :D" # 0: /bingo command
     no_start: "The game has not started yet!"
     no_card: "Could not find your card!"
     cooldown: "You cannot use this item for another {0} seconds!" # 0: time left
     join_back: "Welcome back, the game is still on!"
-    respawn:
-      prefix: ""
-      hoverable: "&3&lClick here to teleport back to where you died"
-      hover: ""
-      suffix: ""
+    respawn: "//&3&lClick here to teleport back to where you died////"
   team:
     no_join: "You cannot join an ongoing game!"
     join: "You successfully joined team {0}!" # 0: team name
@@ -64,7 +56,6 @@ game:
     completed: "Completed {0} by {1} at {2}" # 0: item name, 1: team, 2: completion time
     complete_lore: "Completed by {0} \nat {1}" # 0: team, 1: completion time
     deathmatch: "DeathMatch - Find this item to win: {0}" # 0: item name
-    cooldown: "You cannot use this item for another {0} seconds!" # 0: seconds
 menu:
   save: "Save"
   exit: "Close Menu"
@@ -91,22 +82,14 @@ menu:
       desc: "Race to complete the most tasks. \nA deathmatch will be the deciding factor in a tie after time runs out!"
   options:
     title: "Options Menu"
-    start:
-      name: "Start The Game"
-    end:
-      name: "End The Game"
-    team:
-      name: "Join A Team"
-    leave:
-      name: "Leave The Game"
-    kit:
-      name: "Starting Kit"
-    card:
-      name: "Select Card"
-    mode:
-      name: "Change Gamemode"
-    effects:
-      name: "Player Effects"
+    start: "Start The Game"
+    end: "End The Game"
+    team: "Join A Team"
+    leave: "Leave The Game"
+    kit: "Starting Kit"
+    card: "Select Card"
+    mode: "Change Gamemode"
+    effects: "Player Effects"
   effects:
     enable: "Click to ENABLE this effect option"
     disable: "Click to DISABLE this effect option"
@@ -156,8 +139,7 @@ menu:
           - Leather Helmet \n
           - Elytra (Unbreaking X) \n
           - Leather Boots"
-    custom:
-      name: "&2Overpowered Modified"
+    custom: "Custom"
 items:
   card:
     name: "Bingo Card"

@@ -1,8 +1,8 @@
 package io.github.steaf23.bingoreloaded.gui;
 
-import io.github.steaf23.bingoreloaded.BingoReloadedCore;
 import io.github.steaf23.bingoreloaded.BingoSettings;
 import io.github.steaf23.bingoreloaded.BingoSettingsBuilder;
+import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.gui.base.InventoryItem;
 import io.github.steaf23.bingoreloaded.gui.base.MenuInventory;
 import org.bukkit.Material;
@@ -19,7 +19,7 @@ public class ExtraBingoMenu extends MenuInventory
     private static final int DURATION_MAX = 60;
     private final BingoSettingsBuilder settings;
     private final InventoryItem exit = new InventoryItem(36,
-            Material.BARRIER, TITLE_PREFIX + BingoReloadedCore.translate("menu.prev"));
+            Material.BARRIER, TITLE_PREFIX + BingoTranslation.MENU_PREV.translate());
     private final InventoryItem countdown = new InventoryItem(3, 2,
             Material.CLOCK, TITLE_PREFIX + "Enable Countdown Timer");
     private final InventoryItem gameDuration = new InventoryItem(5, 2,
@@ -27,7 +27,7 @@ public class ExtraBingoMenu extends MenuInventory
 
     public ExtraBingoMenu(MenuInventory parent, BingoSettingsBuilder settings)
     {
-        super(45, BingoReloadedCore.translate("menu.options.title"), parent);
+        super(45, BingoTranslation.OPTIONS_TITLE.translate(), parent);
         this.settings = settings;
         var meta = countdown.getItemMeta();
         countdown.highlight(settings.view().enableCountdown());

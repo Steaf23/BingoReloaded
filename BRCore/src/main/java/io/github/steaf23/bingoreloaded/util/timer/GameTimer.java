@@ -26,7 +26,7 @@ public abstract class GameTimer
 
     public void start()
     {
-        this.task = Bukkit.getScheduler().runTaskTimer(BingoReloadedCore.get(), () -> {
+        this.task = Bukkit.getScheduler().runTaskTimer(BingoReloadedCore.getPlugin(BingoReloadedCore.class), () -> {
             updateTime(time + getStep());
         }, getStartDelay(), getUpdateInterval());
     }
