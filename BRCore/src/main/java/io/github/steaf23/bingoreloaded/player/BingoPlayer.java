@@ -93,7 +93,7 @@ public class BingoPlayer
             var meta = i.getItemMeta();
 
             // Show enchantments except on the wand
-            if (!PlayerKit.wandItem.isKeyEqual(i))
+            if (!PlayerKit.WAND_ITEM.isKeyEqual(i))
             {
                 meta.removeItemFlags(ItemFlag.values());
             }
@@ -117,14 +117,14 @@ public class BingoPlayer
         BingoReloadedCore.scheduleTask(task -> {
             for (ItemStack itemStack : player.getInventory())
             {
-                if (PlayerKit.cardItem.isKeyEqual(itemStack))
+                if (PlayerKit.CARD_ITEM.isKeyEqual(itemStack))
                 {
                     player.getInventory().remove(itemStack);
                     break;
                 }
             }
 
-            player.getInventory().setItemInOffHand(PlayerKit.cardItem.inSlot(8));
+            player.getInventory().setItemInOffHand(PlayerKit.CARD_ITEM.inSlot(8));
         });
     }
 
@@ -204,7 +204,7 @@ public class BingoPlayer
              return false;
 
         Player player = gamePlayer().get();
-        if (!PlayerKit.wandItem.isKeyEqual(wand))
+        if (!PlayerKit.WAND_ITEM.isKeyEqual(wand))
             return false;
 
         if (!itemCooldowns.isCooldownOver(wand))
@@ -253,6 +253,6 @@ public class BingoPlayer
     @Nullable
     public BingoTeam getTeam()
     {
-        return team.players.contains(this) ? team : null;
+        return team;
     }
 }

@@ -128,6 +128,6 @@ public class KitOptionsMenu extends MenuInventory
 
     private void setKit(PlayerKit kit)
     {
-        session.settingsBuilder.kit(kit);
+        session.settingsBuilder.kit(kit, session);
     }
 }

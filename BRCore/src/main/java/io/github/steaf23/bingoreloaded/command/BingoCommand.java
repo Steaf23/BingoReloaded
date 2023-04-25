@@ -58,14 +58,12 @@ public abstract class BingoCommand implements CommandExecutor
                 session.teamManager.openTeamSelector(player, null);
                 break;
             case "leave":
-                if (session.isRunning())
-                {
-                    BingoPlayer participant = session.teamManager.getBingoPlayer(player);
-                    if (participant != null)
-                        session.removePlayer(participant);
-                }
+            {
+                BingoPlayer participant = session.teamManager.getBingoPlayer(player);
+                if (participant != null)
+                    session.removePlayer(participant);
                 break;
-
+            }
             case "start":
                 if (player.hasPermission("bingo.settings"))
                 {
@@ -266,7 +264,7 @@ public abstract class BingoCommand implements CommandExecutor
     {
         if (itemName.equals("wand"))
         {
-            player.getInventory().addItem(PlayerKit.wandItem);
+            player.getInventory().addItem(PlayerKit.WAND_ITEM);
         }
     }
 

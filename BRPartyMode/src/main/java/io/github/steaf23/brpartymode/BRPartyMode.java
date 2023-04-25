@@ -22,13 +22,13 @@ public final class BRPartyMode extends BingoReloadedExtension
     @Override
     public void onEnable()
     {
-        this.core.onEnable();
+        this.core.onEnable(new PartyConfigData());
 
         //TODO: replace with world_name config option
         this.session = new BingoSession("world", core.config());
         this.listener = new BingoEventListener(world ->
             BingoReloadedCore.getWorldNameOfDimension(world).equals(session.worldName) ? session : null
-        , false, false);
+                , core.config().useAdvancements, core.config().useStatistics);
         this.menuManager = new MenuEventListener(inventoryView -> {
             String worldName = BingoReloadedCore.getWorldNameOfDimension(inventoryView.getPlayer().getWorld());
             return worldName.equals(session.worldName);

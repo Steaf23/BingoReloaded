@@ -2,6 +2,8 @@ package io.github.steaf23.bingoreloaded.event;
 
 import io.github.steaf23.bingoreloaded.BingoGame;
 import io.github.steaf23.bingoreloaded.BingoSession;
+import io.github.steaf23.bingoreloaded.gui.base.InventoryItem;
+import io.github.steaf23.bingoreloaded.player.PlayerKit;
 import io.github.steaf23.bingoreloaded.tasks.statistics.StatisticTracker;
 import org.bukkit.World;
 import org.bukkit.event.EventHandler;
@@ -67,8 +69,18 @@ public class BingoEventListener implements Listener
     @EventHandler
     public void handlePlayerInteract(final PlayerInteractEvent event)
     {
+        // Special case; we don't want to have any bingo cards act as an actual map...
+        if (event.getItem() != null && new InventoryItem(event.getItem()).isKeyEqual(PlayerKit.CARD_ITEM))
+            event.setCancelled(true);
+
         BingoSession session = getSession(event.getPlayer().getWorld());
-        BingoGame game = session != null ? session.game() : null;
+        if (session == null)
+        {
+            return;
+        }
+        session.teamManager.handlePlayerShowCard(event, session.game() == null ? null : session.game().getDeathMatchItem());
+
+        BingoGame game = session.game();
         if (game != null)
         {
             game.handlePlayerInteract(event);
@@ -125,6 +137,7 @@ public class BingoEventListener implements Listener
         if (session != null)
         {
             session.scoreboard.handlePlayerJoin(event);
+            session.handlePlayerJoined(event);
         }
     }
 
@@ -135,6 +148,7 @@ public class BingoEventListener implements Listener
         if (session != null)
         {
             session.scoreboard.handlePlayerLeave(event);
+            session.handlePlayerLeft(event);
         }
     }
 
@@ -223,6 +237,16 @@ public class BingoEventListener implements Listener
         if (game != null)
         {
             game.getCardEventManager().handleStatisticCompleted(event, game);
+        }
+    }
+
+    @EventHandler
+    public void handlePlayerMove(final PlayerMoveEvent event)
+    {
+        BingoSession session = getSession(event.getPlayer().getWorld());
+        if (session.isRunning())
+        {
+            session.game().handlePlayerMove(event);
         }
     }
 }

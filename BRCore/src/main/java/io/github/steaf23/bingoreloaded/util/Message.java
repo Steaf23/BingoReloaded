@@ -289,6 +289,16 @@ public class Message
         sendActionMessage(message.toLegacyString(), player);
     }
 
+    public static void sendTitleMessage(String title, String subtitle, Player player)
+    {
+        player.sendTitle(title, subtitle, -1, -1, -1);
+    }
+
+    public static void sendTitleMessage(Message title, Message subtitle, Player player)
+    {
+        sendTitleMessage(title.toLegacyString(), subtitle.toLegacyString(), player);
+    }
+
     protected void createMessage()
     {
         //for any given message like "{#00bb33}Completed {0} by team {1}! At {2}" split the arguments from the message.

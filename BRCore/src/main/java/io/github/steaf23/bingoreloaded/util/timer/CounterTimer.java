@@ -12,11 +12,12 @@ public class CounterTimer extends GameTimer
     private BukkitTask task;
 
     @Override
-    public Message getTimeDisplayMessage()
+    public Message getTimeDisplayMessage(boolean asSeconds)
     {
+        String timeString = asSeconds ? GameTimer.getSecondsString(getTime()) : GameTimer.getTimeAsString(getTime());
         return new TranslatedMessage(BingoTranslation.DURATION)
                 .color(ChatColor.AQUA).bold()
-                .arg(GameTimer.getTimeAsString(getTime())).color(ChatColor.WHITE);
+                .arg(timeString).color(ChatColor.WHITE);
     }
 
     @Override

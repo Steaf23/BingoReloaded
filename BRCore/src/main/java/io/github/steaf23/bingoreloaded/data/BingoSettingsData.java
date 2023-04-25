@@ -6,6 +6,9 @@ import io.github.steaf23.bingoreloaded.BingoSettings;
 import io.github.steaf23.bingoreloaded.BingoSettingsBuilder;
 import io.github.steaf23.bingoreloaded.util.Message;
 
+import java.util.List;
+import java.util.Set;
+
 public class BingoSettingsData
 {
     private final YmlDataManager data;
@@ -15,16 +18,16 @@ public class BingoSettingsData
         this.data = BingoReloadedCore.createYmlDataManager("presets.yml");
     }
 
-    public BingoSettings getSettings(String name, BingoSession session)
+    public BingoSettings getSettings(String name)
     {
         if (data.getConfig().contains(name))
         {
             return data.getConfig().getSerializable(name, BingoSettings.class);
         }
-        return new BingoSettingsBuilder(session).view();
+        return new BingoSettingsBuilder().view();
     }
 
-    public void saveSettings(String name, BingoSettingsBuilder settings)
+    public void saveSettings(String name, BingoSettings settings)
     {
         if (data.getConfig().contains(name))
         {
@@ -33,5 +36,17 @@ public class BingoSettingsData
         }
         data.getConfig().set(name, settings);
         data.saveConfig();
+    }
+
+    public void removeSettings(String name)
+    {
+        Message.log("Removed preset '" + name + "'");
+        data.getConfig().set(name, null);
+        data.saveConfig();
+    }
+
+    public Set<String> getPresetNames()
+    {
+        return data.getConfig().getKeys(false);
     }
 }

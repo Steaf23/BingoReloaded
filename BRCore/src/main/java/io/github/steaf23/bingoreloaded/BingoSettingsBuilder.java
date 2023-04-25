@@ -12,7 +12,6 @@ import java.util.EnumSet;
 
 public class BingoSettingsBuilder
 {
-    private final BingoSession session;
     private String card;
     private BingoGamemode mode;
     private CardSize cardSize;
@@ -23,9 +22,8 @@ public class BingoSettingsBuilder
     private boolean enableCountdown;
     private int countdownGameDuration;
 
-    public BingoSettingsBuilder(BingoSession session)
+    public BingoSettingsBuilder()
     {
-        this.session = session;
         this.card = "default_card";
         this.mode = BingoGamemode.REGULAR;
         this.cardSize = CardSize.X5;
@@ -87,7 +85,7 @@ public class BingoSettingsBuilder
         return this;
     }
 
-    public BingoSettingsBuilder kit(PlayerKit kit)
+    public BingoSettingsBuilder kit(PlayerKit kit, BingoSession session)
     {
         this.kit = kit;
         String kitName = switch (kit)
@@ -102,7 +100,7 @@ public class BingoSettingsBuilder
         return this;
     }
 
-    public BingoSettingsBuilder effects(EnumSet<EffectOptionFlags> effects)
+    public BingoSettingsBuilder effects(EnumSet<EffectOptionFlags> effects, BingoSession session)
     {
         this.effects = effects;
         new TranslatedMessage(BingoTranslation.EFFECTS_SELECTED).color(ChatColor.GOLD).sendAll(session);

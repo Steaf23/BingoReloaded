@@ -12,8 +12,8 @@ import org.bukkit.Bukkit;
 public class CountdownTimer extends GameTimer
 {
     private int startTime = 0;
-    private int medThreshold;
-    private int lowThreshold;
+    public final int medThreshold;
+    public final int lowThreshold;
     private final BingoSession session;
 
     public CountdownTimer(int seconds, BingoSession session)
@@ -47,15 +47,16 @@ public class CountdownTimer extends GameTimer
         super.updateTime(newTime);
         if (getTime() <= 0)
         {
-            CountdownTimerFinishedEvent event = new CountdownTimerFinishedEvent(session);
+            CountdownTimerFinishedEvent event = new CountdownTimerFinishedEvent(session, this);
             Bukkit.getPluginManager().callEvent(event);
             stop();
         }
     }
 
     @Override
-    public Message getTimeDisplayMessage()
+    public Message getTimeDisplayMessage(boolean asSeconds)
     {
+        String timeString = asSeconds ? GameTimer.getSecondsString(getTime()) : GameTimer.getTimeAsString(getTime());
         ChatColor color = ChatColor.WHITE;
         if (getTime() <= lowThreshold)
             color = ChatColor.RED;
@@ -63,7 +64,7 @@ public class CountdownTimer extends GameTimer
             color = ChatColor.GOLD;
         return new TranslatedMessage(BingoTranslation.TIME_LEFT)
                 .color(ChatColor.LIGHT_PURPLE).bold()
-                .arg(GameTimer.getTimeAsString(getTime())).color(color);
+                .arg(timeString).color(color);
     }
 
     @Override

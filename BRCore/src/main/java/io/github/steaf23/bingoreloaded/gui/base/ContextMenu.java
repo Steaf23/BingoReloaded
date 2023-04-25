@@ -6,6 +6,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
+import javax.naming.Context;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
@@ -48,13 +49,20 @@ public class ContextMenu extends MenuInventory
      * @param action Code to execute, return false if the inventory should not be closed by this context menu.
      *               This is useful when for example the menu gets closed by the caller instead.
      */
-    public void addAction(String name, Material material, Function<ClickType, Boolean> action)
+    public ContextMenu addAction(String name, Material material, Function<ClickType, Boolean> action)
+    {
+        addAction(new InventoryItem(actions.size(), material, TITLE_PREFIX + name), action);
+        return this;
+    }
+
+    public ContextMenu addAction(InventoryItem item, Function<ClickType, Boolean> action)
     {
         if (actions.size() >= MAX_ACTIONS)
-            return;
+            return this;
 
-        addOption(new InventoryItem(actions.size(), material, TITLE_PREFIX + name));
+        addOption(item);
         actions.add(action);
+        return this;
     }
 
     public void clearActions()

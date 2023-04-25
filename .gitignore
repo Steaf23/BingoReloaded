@@ -26,3 +26,5 @@
 hs_err_pid*
 
 /target
+BRMultiMode/target/*
+BRPartyMode/target/*

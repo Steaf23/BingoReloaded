@@ -164,43 +164,43 @@ public class BingoCreatorUI extends MenuInventory
 
     public void createCardContext(String cardName, Player player, MenuInventory parent)
     {
-        ContextMenu menu = new ContextMenu("What to do with '" + cardName + "'", parent);
-        menu.addAction("Remove", Material.BARRIER, (clickType) -> {
-            cardsData.removeCard(cardName);
-            return true;
-        });
-        menu.addAction("Duplicate", Material.SHULKER_SHELL, (clickType) -> {
-            cardsData.duplicateCard(cardName);
-            return true;
-        });
-        menu.addAction("Change Name", Material.NAME_TAG, (clickType) -> {
-            UserInputMenu.open("Change name to", (input) -> {
-                cardsData.renameCard(cardName, input);
-            }, player, parent, cardName);
-            return false;
-        });
-        menu.open(player);
+        new ContextMenu("What to do with '" + cardName + "'", parent)
+                .addAction("Remove", Material.BARRIER, (clickType) -> {
+                    cardsData.removeCard(cardName);
+                    return true;
+                })
+                .addAction("Duplicate", Material.SHULKER_SHELL, (clickType) -> {
+                    cardsData.duplicateCard(cardName);
+                    return true;
+                })
+                .addAction("Change Name", Material.NAME_TAG, (clickType) -> {
+                    UserInputMenu.open("Change name to", (input) -> {
+                        cardsData.renameCard(cardName, input);
+                        }, player, parent, cardName);
+                    return false;
+                })
+                .open(player);
     }
 
     public void createListContext(String listName, Player player, MenuInventory parent)
     {
         TaskListsData listsData = cardsData.lists();
 
-        ContextMenu menu = new ContextMenu("What to do with '" + listName + "'", parent);
-        menu.addAction("Remove", Material.BARRIER, (clickType) -> {
-            listsData.removeList(listName);
-            return true;
-        });
-        menu.addAction("Duplicate", Material.SHULKER_SHELL, (clickType) -> {
-            listsData.duplicateList(listName);
-            return true;
-        });
-        menu.addAction("Change Name", Material.NAME_TAG, (clickType) -> {
-            UserInputMenu.open("Change name to", (input) -> {
-                listsData.renameList(listName, input);
-            }, player, parent, listName);
-            return false;
-        });
-        menu.open(player);
+        new ContextMenu("What to do with '" + listName + "'", parent)
+                .addAction("Remove", Material.BARRIER, (clickType) -> {
+                    listsData.removeList(listName);
+                    return true;
+                })
+                .addAction("Duplicate", Material.SHULKER_SHELL, (clickType) -> {
+                    listsData.duplicateList(listName);
+                    return true;
+                })
+                .addAction("Change Name", Material.NAME_TAG, (clickType) -> {
+                    UserInputMenu.open("Change name to", (input) -> {
+                        listsData.renameList(listName, input);
+                    }, player, parent, listName);
+                    return false;
+                })
+                .open(player);
     }
 }

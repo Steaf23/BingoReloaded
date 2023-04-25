@@ -44,27 +44,17 @@ public class ConfigData
     public int wandDown;
     public double wandCooldown;
     public int platformLifetime;
-    public String defaultKit;
     public int gracePeriod;
-    //TODO: Implement option
-    public boolean resetPlayerItems;
-    //TODO: Implement option
-    public boolean resetPlayerPositions;
-    public String selectedCard;
     public String language;
-    public int defaultGameDuration;
-    public int defaultTeamSize;
     public boolean savePlayerStatistics;
     public int cardSeed;
     public boolean enableTeamChat;
     public String sendCommandAfterGameEnded;
     public boolean keepScoreboardVisible;
     public boolean showPlayerInScoreboard;
-
     public boolean useStatistics;
     public boolean useAdvancements;
-
-    // TODO: make defaultBingoWorld: "world" config option
+    public String defaultSettings;
 
     public void loadConfig(FileConfiguration config)
     {
@@ -77,22 +67,20 @@ public class ConfigData
         this.wandDown = config.getInt("GoUpWand.downDistance", 5);
         this.wandCooldown = config.getDouble("GoUpWand.cooldown", 5.0);
         this.platformLifetime = config.getInt("GoUPWand.platformLifetime", 10);
-        this.defaultKit = config.getString("defaultKit", "HARDCORE");
         this.gracePeriod = config.getInt("gracePeriod", 30);
-        this.resetPlayerItems = config.getBoolean("resetPlayerItems", true);
-        this.resetPlayerPositions = config.getBoolean("resetPlayerPositions", true);
-        this.selectedCard = config.getString("selectedCard", "default_card");
         this.savePlayerStatistics = config.getBoolean("savePlayerStatistics", false);
-        this.defaultGameDuration = config.getInt("defaultGameDuration", 20);
-        this.defaultTeamSize = config.getInt("defaultTeamSize", 64);
         this.cardSeed = config.getInt("cardSeed", 0);
         this.enableTeamChat = config.getBoolean("enableTeamChat", true);
         this.sendCommandAfterGameEnded = config.getString("sendCommandAfterGameEnds", "");
         this.keepScoreboardVisible = config.getBoolean("keepScoreboardVisible", true);
         this.showPlayerInScoreboard = config.getBoolean("showPlayerInScoreboard", true);
-        //TODO: Finish implementation
         this.useStatistics = config.getBoolean("useStatistics", true);
-        //TODO: Finish implementation
         this.useAdvancements = config.getBoolean("useAdvancements", true);
+        this.defaultSettings = config.getString("defaultSettingsPreset", "default_settings");
+    }
+
+    public void saveConfig()
+    {
+
     }
 }

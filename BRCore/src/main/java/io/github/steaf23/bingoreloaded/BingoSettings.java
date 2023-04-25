@@ -1,14 +1,17 @@
 package io.github.steaf23.bingoreloaded;
 
 import io.github.steaf23.bingoreloaded.cards.CardSize;
+import io.github.steaf23.bingoreloaded.data.YmlDataManager;
 import io.github.steaf23.bingoreloaded.player.PlayerKit;
 import io.github.steaf23.bingoreloaded.gui.EffectOptionFlags;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
+import org.bukkit.map.MinecraftFont;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @SerializableAs("BingoSettings")
@@ -32,7 +35,7 @@ public record BingoSettings(String card,
             put("size", size.size);
             put("seed", seed);
             put("kit", kit.configName);
-            put("effects", effects);
+            put("effects", YmlDataManager.enumSetToList(effects));
             put("team_size", maxTeamSize);
             put("duration", countdownDuration);
             put("countdown", enableCountdown);
@@ -47,7 +50,7 @@ public record BingoSettings(String card,
                 CardSize.fromWidth((int) data.get("size")),
                 (int) data.get("seed"),
                 PlayerKit.fromConfig((String) data.get("kit")),
-                (EnumSet<EffectOptionFlags>) data.get("effects"),
+                YmlDataManager.enumSetFromList(EffectOptionFlags.class, (List<String>) data.get("effects")),
                 (int) data.get("team_size"),
                 (boolean) data.get("countdown"),
                 (int) data.get("duration")

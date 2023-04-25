@@ -1,6 +1,7 @@
 package io.github.steaf23.bingoreloaded;
 
 import io.github.steaf23.bingoreloaded.data.BingoCardsData;
+import io.github.steaf23.bingoreloaded.data.BingoSettingsData;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.data.ConfigData;
 import io.github.steaf23.bingoreloaded.event.BingoEndedEvent;
@@ -11,6 +12,7 @@ import io.github.steaf23.bingoreloaded.player.TeamManager;
 import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.bingoreloaded.util.TranslatedMessage;
 import net.md_5.bungee.api.ChatColor;
+import org.bukkit.block.data.type.NoteBlock;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
@@ -30,7 +32,8 @@ public class BingoSession
     {
         this.worldName = worldName;
         this.config = config;
-        this.settingsBuilder = new BingoSettingsBuilder(this);
+        this.settingsBuilder = new BingoSettingsBuilder();
+        settingsBuilder.fromOther(new BingoSettingsData().getSettings(config.defaultSettings));
         this.scoreboard = new BingoScoreboard(this, config.showPlayerInScoreboard);
         this.teamManager = new TeamManager(scoreboard.getTeamBoard(), this);
         this.game = null;
@@ -53,6 +56,11 @@ public class BingoSession
 
     public void startGame()
     {
+        if (isRunning())
+        {
+            return;
+        }
+
         BingoCardsData cardsData = new BingoCardsData();
         BingoSettings settings = settingsBuilder.view();
         if (!cardsData.getCardNames().contains(settings.card()))
@@ -89,15 +97,17 @@ public class BingoSession
         if (event.player.offline().isOnline())
         {
             event.player.takeEffects(true);
+            new TranslatedMessage(BingoTranslation.LEAVE).send(event.player.asOnlinePlayer().get());
         }
 
         if (game != null)
             game.playerQuit(event.player);
     }
 
-    public void handlePlayerLeft(final BingoPlayerJoinEvent event)
+    public void handlePlayerJoined(final BingoPlayerJoinEvent event)
     {
-        event.player.giveEffects(settingsBuilder.view().effects(), config.gracePeriod);
+        if (isRunning())
+            event.player.giveEffects(settingsBuilder.view().effects(), config.gracePeriod);
     }
 
     public void handleGameEnded(final BingoEndedEvent event)

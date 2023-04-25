@@ -1,5 +1,6 @@
 package io.github.steaf23.bingoreloaded.gui;
 
+import io.github.steaf23.bingoreloaded.BingoSession;
 import io.github.steaf23.bingoreloaded.BingoSettingsBuilder;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.gui.base.InventoryItem;
@@ -20,10 +21,13 @@ public class EffectOptionsMenu extends MenuInventory
     private final EnumSet<EffectOptionFlags> flags;
     private final InventoryItem[] options;
 
-    public EffectOptionsMenu(MenuInventory parent, BingoSettingsBuilder settings)
+    private final BingoSession session;
+
+    public EffectOptionsMenu(MenuInventory parent, BingoSettingsBuilder settings, BingoSession session)
     {
         super(45, BingoTranslation.OPTIONS_EFFECTS.translate(), parent);
         this.settings = settings;
+        this.session = session;
 
         options = new InventoryItem[]{
                 new InventoryItem(4, 3,
@@ -58,7 +62,7 @@ public class EffectOptionsMenu extends MenuInventory
 
         if (slotClicked == options[5].getSlot())
         {
-            settings.effects(flags);
+            settings.effects(flags, session);
             close(player);
         }
     }

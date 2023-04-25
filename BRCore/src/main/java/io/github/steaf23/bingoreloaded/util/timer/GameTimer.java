@@ -15,7 +15,7 @@ public abstract class GameTimer
     private long time;
     private BukkitTask task;
 
-    public abstract Message getTimeDisplayMessage();
+    public abstract Message getTimeDisplayMessage(boolean asSeconds);
     public abstract int getStartDelay();
     public abstract int getUpdateInterval();
     public abstract int getStep();
@@ -79,6 +79,11 @@ public abstract class GameTimer
             return String.format("%02d:%02d", minutes, seconds % 60);
         }
         return String.format("00:%02d", seconds % 60);
+    }
+
+    public static String getSecondsString(long seconds)
+    {
+        return String.format("%d", seconds);
     }
 
     public void setNotifier(Consumer<Long> notifier)

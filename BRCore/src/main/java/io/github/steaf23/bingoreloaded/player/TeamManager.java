@@ -16,10 +16,12 @@ import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.bingoreloaded.util.TranslatedMessage;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
@@ -367,6 +369,39 @@ public class TeamManager
             player.getTeam().team.addEntry(event.getPlayer().getName());
             var joinEvent = new BingoPlayerJoinEvent(player);
             Bukkit.getPluginManager().callEvent(joinEvent);
+        }
+    }
+
+    public void handlePlayerShowCard(final PlayerInteractEvent event, Material deathMatchItem)
+    {
+        BingoPlayer player = getBingoPlayer(event.getPlayer());
+        if (player == null)
+            return;
+
+        if (PlayerKit.CARD_ITEM.isKeyEqual(event.getItem()))
+        {
+            event.setCancelled(true);
+            BingoTeam playerTeam = getTeamOfPlayer(player);
+            if (playerTeam == null)
+            {
+                return;
+            }
+            BingoCard card = playerTeam.card;
+
+            // if the player is actually participating, show it
+            if (card != null)
+            {
+                if (deathMatchItem != null)
+                {
+                    player.showDeathMatchItem(deathMatchItem);
+                    return;
+                }
+                card.showInventory(event.getPlayer());
+            }
+            else
+            {
+                new TranslatedMessage(BingoTranslation.NO_PLAYER_CARD).send(event.getPlayer());
+            }
         }
     }
 }

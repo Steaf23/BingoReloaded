@@ -211,6 +211,9 @@ public class BingoTask
             default ->  new BingoTask(ItemTask.fromPdc(pdcData));
         };
 
+        task.voided = voided;
+        task.completedAt = timeStr;
+
         return task;
     }
 
@@ -219,12 +222,13 @@ public class BingoTask
         return PDCHelper.createKey("task." + property);
     }
 
-    public boolean complete(BingoPlayer player)
+    public boolean complete(BingoPlayer player, long gameTime)
     {
         if (completedBy.isPresent())
             return false;
 
         completedBy = Optional.of(player);
+        completedAt = gameTime;
         return true;
     }
 

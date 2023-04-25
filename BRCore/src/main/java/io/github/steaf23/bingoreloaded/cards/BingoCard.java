@@ -299,7 +299,7 @@ public class BingoCard
             ItemTask data = (ItemTask)task.data;
             if (data.material().equals(item.getType()) && data.count() <= item.getAmount())
             {
-                if (!task.complete(player))
+                if (!task.complete(player, game.getGameTime()))
                 {
                     continue;
                 }
@@ -330,7 +330,7 @@ public class BingoCard
 
             if (data.advancement().equals(event.getAdvancement()))
             {
-                if (!task.complete(player))
+                if (!task.complete(player, game.getGameTime()))
                     continue;
 
                 var slotEvent = new BingoCardTaskCompleteEvent(task, player, hasBingo(player.team));
@@ -358,7 +358,7 @@ public class BingoCard
             if (data.statistic().equals(new BingoStatistic(event.getStatistic(), event.getEntityType(), event.getMaterial())) &&
                 data.getCount() == event.getNewValue())
             {
-                if (!task.complete(player))
+                if (!task.complete(player, game.getGameTime()))
                     continue;
 
                 var slotEvent = new BingoCardTaskCompleteEvent(task, player, hasBingo(player.getTeam()));
@@ -384,7 +384,7 @@ public class BingoCard
             StatisticTask data = (StatisticTask)task.data;
             if (data.statistic().equals(event.stat))
             {
-                if (!task.complete(player))
+                if (!task.complete(player, game.getGameTime()))
                     continue;
 
                 var slotEvent = new BingoCardTaskCompleteEvent(task, player, hasBingo(player.getTeam()));

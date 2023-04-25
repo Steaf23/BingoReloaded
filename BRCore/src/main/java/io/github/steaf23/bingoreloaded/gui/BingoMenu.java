@@ -101,12 +101,12 @@ public class BingoMenu extends MenuInventory
         }
         else if (slotClicked == EFFECTS.getSlot())
         {
-            EffectOptionsMenu effectSelector = new EffectOptionsMenu(this, settings);
+            EffectOptionsMenu effectSelector = new EffectOptionsMenu(this, settings, session);
             effectSelector.open(player);
         }
         else if (slotClicked == EXTRA.getSlot())
         {
-            ExtraBingoMenu extraOptions = new ExtraBingoMenu(this, settings);
+            ExtraBingoMenu extraOptions = new ExtraBingoMenu(this, settings, config);
             extraOptions.open(player);
         }
         else if (slotClicked == start.getSlot())

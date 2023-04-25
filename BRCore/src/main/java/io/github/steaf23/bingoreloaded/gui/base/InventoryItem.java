@@ -9,6 +9,7 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -57,7 +58,7 @@ public class InventoryItem extends ItemStack
         this.slot = slot;
     }
 
-    public InventoryItem(ItemStack item)
+    public InventoryItem(@NonNull ItemStack item)
     {
         super(item);
     }
@@ -159,10 +160,15 @@ public class InventoryItem extends ItemStack
         if (other == null || other.getItemMeta() == null)
             return false;
 
+        String key = getKey();
+        if (key == null)
+            return false;
+
         return getKey().equals(other.getItemMeta().getPersistentDataContainer()
                 .get(PDCHelper.createKey("item.compare_key"), PersistentDataType.STRING));
     }
 
+    @Nullable
     public String getKey()
     {
         return this.getItemMeta().getPersistentDataContainer()

@@ -19,7 +19,6 @@ public class PartyBingoCommand extends BingoCommand
     @Override
     public BingoSession getSession(Player player)
     {
-
         return session;
     }
 }

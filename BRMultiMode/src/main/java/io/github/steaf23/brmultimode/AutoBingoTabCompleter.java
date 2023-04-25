@@ -1,4 +1,4 @@
-package io.github.steaf23.bingoreloaded.command;
+package io.github.steaf23.brmultimode;
 
 import io.github.steaf23.bingoreloaded.data.BingoCardsData;
 import io.github.steaf23.bingoreloaded.util.FlexColor;
@@ -7,9 +7,9 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -22,7 +22,7 @@ public class AutoBingoTabCompleter implements TabCompleter
 
     @Nullable
     @Override
-    public List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String alias, @NotNull String[] args)
+    public List<String> onTabComplete(@NonNull CommandSender commandSender, @NonNull Command command, @NonNull String alias, @NonNull String[] args)
     {
         if (commandSender instanceof Player p && !p.hasPermission("bingo.admin"))
         {
@@ -42,7 +42,7 @@ public class AutoBingoTabCompleter implements TabCompleter
                 }
                 return allWorlds;
             case 2:
-                return List.of("create", "destroy", "start", "end","kit", "effects", "card", "countdown", "team");
+                return List.of("create", "destroy", "start", "end", "kit", "effects", "card", "countdown", "team");
             case 3:
                 switch (args[1])
                 {

@@ -63,8 +63,8 @@ public class MultiAutoBingoCommand implements CommandExecutor
             case "create" -> create(worldName, extraArguments);
             case "destroy" -> destroy(worldName);
             case "start" -> start(worldName);
-            case "kit" -> setKit(settings, worldName, extraArguments);
-            case "effects" -> setEffect(settings, worldName, extraArguments);
+            case "kit" -> setKit(session, settings, worldName, extraArguments);
+            case "effects" -> setEffect(session, settings, worldName, extraArguments);
             case "card" -> setCard(settings, worldName, extraArguments);
             case "countdown" -> setCountdown(settings, worldName, extraArguments);
             case "duration" -> setDuration(settings, worldName, extraArguments);
@@ -116,7 +116,7 @@ public class MultiAutoBingoCommand implements CommandExecutor
         }
     }
 
-    private boolean setKit(BingoSettingsBuilder settings, String worldName, String[] extraArguments)
+    private boolean setKit(BingoSession session, BingoSettingsBuilder settings, String worldName, String[] extraArguments)
     {
         if (extraArguments.length != 1)
         {
@@ -125,12 +125,12 @@ public class MultiAutoBingoCommand implements CommandExecutor
         }
 
         PlayerKit kit = PlayerKit.fromConfig(extraArguments[0]);
-        settings.kit(kit);
+        settings.kit(kit, session);
         sendSuccess("Kit set to " + kit.displayName, worldName);
         return true;
     }
 
-    public boolean setEffect(BingoSettingsBuilder settings, String worldName, String[] extraArguments)
+    public boolean setEffect(BingoSession session, BingoSettingsBuilder settings, String worldName, String[] extraArguments)
     {
         // autobingo world effect <effect_name> [true | false]
         // If argument count is only 1, enable all, none or just the single effect typed.
@@ -146,13 +146,13 @@ public class MultiAutoBingoCommand implements CommandExecutor
 
         if (effect.equals("all"))
         {
-            settings.effects(EffectOptionFlags.ALL_ON);
+            settings.effects(EffectOptionFlags.ALL_ON, session);
             sendSuccess("Updated active effects to " + EffectOptionFlags.ALL_ON, worldName);
             return true;
         }
         else if (effect.equals("none"))
         {
-            settings.effects(EffectOptionFlags.ALL_OFF);
+            settings.effects(EffectOptionFlags.ALL_OFF, session);
             sendSuccess("Updated active effects to " + EffectOptionFlags.ALL_OFF, worldName);
             return true;
         }
@@ -334,7 +334,7 @@ public class MultiAutoBingoCommand implements CommandExecutor
         }
     }
 
-    public boolean preset(BingoSettingsBuilder settings, String worldName, String[] extraArguments)
+    public boolean preset(BingoSettingsBuilder settingsBuilder, String worldName, String[] extraArguments)
     {
         if (extraArguments.length != 2)
         {
@@ -352,11 +352,11 @@ public class MultiAutoBingoCommand implements CommandExecutor
         }
         if (extraArguments[0] == "save")
         {
-            settingsData.saveSettings(path, settings);
+            settingsData.saveSettings(path, settingsBuilder.view());
         }
         else if (extraArguments[0] == "load")
         {
-            manager.getSession(worldName).settingsBuilder.fromOther(settingsData.getSettings(path, manager.getSession(worldName)));
+            manager.getSession(worldName).settingsBuilder.fromOther(settingsData.getSettings(path));
         }
 
         return true;

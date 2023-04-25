@@ -1,7 +1,7 @@
 package io.github.steaf23.bingoreloaded;
 
-import io.github.steaf23.bingoreloaded.command.AutoBingoTabCompleter;
 import io.github.steaf23.bingoreloaded.command.BingoCommand;
+import io.github.steaf23.bingoreloaded.command.BingoTabCompleter;
 import io.github.steaf23.bingoreloaded.command.TeamChatCommand;
 import io.github.steaf23.bingoreloaded.data.*;
 import io.github.steaf23.bingoreloaded.gui.base.InventoryItem;
@@ -21,7 +21,6 @@ import org.bukkit.command.PluginCommand;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 
@@ -49,7 +48,7 @@ public class BingoReloadedCore
         extensionPlugin.saveDefaultConfig();
     }
 
-    public void onEnable()
+    public void onEnable(ConfigData config)
     {
         ConfigurationSerialization.registerClass(BingoSettings.class);
         ConfigurationSerialization.registerClass(ItemTask.class);
@@ -59,7 +58,7 @@ public class BingoReloadedCore
         ConfigurationSerialization.registerClass(CustomKit.class);
         ConfigurationSerialization.registerClass(InventoryItem.class);
 
-        this.config = new ConfigData();
+        this.config = config;
         config.loadConfig(extensionPlugin.getConfig());
 
         usesPlaceholderAPI = Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null;
@@ -73,19 +72,6 @@ public class BingoReloadedCore
 
         BingoTranslation.setLanguage(createYmlDataManager(config.language).getConfig(), createYmlDataManager("languages/en_us.yml").getConfig());
         Message.log("" + ChatColor.GREEN + BingoTranslation.CHANGED_LANGUAGE.translate());
-//        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "autobingo world create " + ConfigData.instance.defaultTeamSize);
-    }
-
-    public void registerBingoCommand(String commandName, Function<Player, BingoSession> bingoSessionResolver)
-    {
-        registerCommand(commandName, new BingoCommand(config)
-        {
-            @Override
-            public BingoSession getSession(Player player)
-            {
-                return bingoSessionResolver.apply(player);
-            }
-        }, new AutoBingoTabCompleter());
     }
 
     public void registerTeamChatCommand(String commandName, Function<Player, BingoSession> bingoSessionResolver)

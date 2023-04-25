@@ -29,8 +29,8 @@ public enum PlayerKit
     CUSTOM_5("custom_5", ChatColor.BOLD + BingoTranslation.KIT_CUSTOM_NAME.translate() + " 5", EnumSet.noneOf(EffectOptionFlags.class)),
     ;
 
-    public static final InventoryItem cardItem = createCardItem();
-    public static final InventoryItem wandItem = createGoUpWand();
+    public static final InventoryItem CARD_ITEM = createCardItem();
+    public static final InventoryItem WAND_ITEM = createGoUpWand();
 
     public final String configName;
     public final String displayName;
@@ -82,7 +82,7 @@ public enum PlayerKit
             }
             case OVERPOWERED -> {
                 items = new ArrayList<>();
-                items.add(wandItem.inSlot(8));
+                items.add(WAND_ITEM.inSlot(8));
                 items.add(helmet
                         .withEnchantment(Enchantment.DURABILITY, 3)
                         .withEnchantment(Enchantment.WATER_WORKER, 1)
@@ -107,7 +107,7 @@ public enum PlayerKit
             }
             case RELOADED -> {
                 items = new ArrayList<>();
-                items.add(wandItem.inSlot(8));
+                items.add(WAND_ITEM.inSlot(8));
                 items.add(helmet
                         .withEnchantment(Enchantment.DURABILITY, 3)
                         .withEnchantment(Enchantment.WATER_WORKER, 1)
