@@ -1,5 +1,6 @@
 package io.github.steaf23.bingoreloaded;
 
+import io.github.steaf23.bingoreloaded.cards.CardSize;
 import io.github.steaf23.bingoreloaded.data.BingoCardsData;
 import io.github.steaf23.bingoreloaded.data.BingoSettingsData;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
@@ -7,17 +8,18 @@ import io.github.steaf23.bingoreloaded.data.ConfigData;
 import io.github.steaf23.bingoreloaded.event.BingoEndedEvent;
 import io.github.steaf23.bingoreloaded.event.BingoPlayerJoinEvent;
 import io.github.steaf23.bingoreloaded.event.BingoPlayerLeaveEvent;
+import io.github.steaf23.bingoreloaded.event.BingoSettingsUpdatedEvent;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
+import io.github.steaf23.bingoreloaded.player.PlayerKit;
 import io.github.steaf23.bingoreloaded.player.TeamManager;
 import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.bingoreloaded.util.TranslatedMessage;
 import net.md_5.bungee.api.ChatColor;
-import org.bukkit.block.data.type.NoteBlock;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  * This class represents a session of bingo games on a single world(group).
- * A game world can/ should only have 1 session as dictated by the BingoGameManager
+ * A game world can/ should only have 1 session since bingo events for a session are propagated through the world
  */
 public class BingoSession
 {
@@ -27,16 +29,19 @@ public class BingoSession
     public final TeamManager teamManager;
     private final ConfigData config;
     private BingoGame game;
+    private SettingsPreviewBoard settingsBoard;
 
     public BingoSession(String worldName, ConfigData config)
     {
         this.worldName = worldName;
         this.config = config;
-        this.settingsBuilder = new BingoSettingsBuilder();
+        this.settingsBuilder = new BingoSettingsBuilder(this);
         settingsBuilder.fromOther(new BingoSettingsData().getSettings(config.defaultSettings));
         this.scoreboard = new BingoScoreboard(this, config.showPlayerInScoreboard);
         this.teamManager = new TeamManager(scoreboard.getTeamBoard(), this);
         this.game = null;
+        this.settingsBoard = new SettingsPreviewBoard();
+        settingsBuilder.settingsUpdated();
     }
 
     public boolean isRunning()
@@ -47,11 +52,6 @@ public class BingoSession
     public BingoGame game()
     {
         return game;
-    }
-
-    public BingoSettings getGameSettings()
-    {
-        return game == null ? null : game.getSettings();
     }
 
     public void startGame()
@@ -75,6 +75,9 @@ public class BingoSession
             return;
         }
         teamManager.updateActivePlayers();
+
+        teamManager.getParticipants().forEach(p ->
+                p.gamePlayer().ifPresent(player -> settingsBoard.clearPlayerBoard(player)));
 
         // The game is started in the constructor
         game = new BingoGame(this, config);
@@ -108,12 +111,19 @@ public class BingoSession
     {
         if (isRunning())
             event.player.giveEffects(settingsBuilder.view().effects(), config.gracePeriod);
+        else
+        {
+            event.player.gamePlayer().ifPresent(p -> settingsBoard.applyToPlayer(p));
+        }
     }
 
     public void handleGameEnded(final BingoEndedEvent event)
     {
-        if (this != event.session) return;
-
         game = null;
+    }
+
+    public void handleSettingsUpdated(final BingoSettingsUpdatedEvent event)
+    {
+        settingsBoard.handleSettingsUpdated(event);
     }
 }

@@ -249,4 +249,10 @@ public class BingoEventListener implements Listener
             session.game().handlePlayerMove(event);
         }
     }
+
+    @EventHandler
+    public void handleSettingsUpdated(final BingoSettingsUpdatedEvent event)
+    {
+        event.session.handleSettingsUpdated(event);
+    }
 }

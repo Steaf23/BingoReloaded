@@ -82,7 +82,7 @@ public enum PlayerKit
             }
             case OVERPOWERED -> {
                 items = new ArrayList<>();
-                items.add(WAND_ITEM.inSlot(8));
+                items.add(WAND_ITEM.copyToSlot(8));
                 items.add(helmet
                         .withEnchantment(Enchantment.DURABILITY, 3)
                         .withEnchantment(Enchantment.WATER_WORKER, 1)
@@ -107,7 +107,7 @@ public enum PlayerKit
             }
             case RELOADED -> {
                 items = new ArrayList<>();
-                items.add(WAND_ITEM.inSlot(8));
+                items.add(WAND_ITEM.copyToSlot(8));
                 items.add(helmet
                         .withEnchantment(Enchantment.DURABILITY, 3)
                         .withEnchantment(Enchantment.WATER_WORKER, 1)

@@ -14,9 +14,9 @@ public class TreeMenu extends MenuInventory
     private static final InventoryItem BACK = new InventoryItem(0, Material.BARRIER, BingoTranslation.MENU_PREV.translate());
     private final Map<InventoryItem, MenuInventory> options;
 
-    public TreeMenu(String title, MenuInventory parent)
+    public TreeMenu(int size, String title, MenuInventory parent)
     {
-        super(54, title, parent);
+        super(size, title, parent);
         this.options = new HashMap<>();
     }
 

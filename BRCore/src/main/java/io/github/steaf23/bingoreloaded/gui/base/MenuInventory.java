@@ -59,7 +59,8 @@ public abstract class MenuInventory
         {
             event.setCancelled(true);
 
-            if (event.getRawSlot() < event.getInventory().getSize() && event.getRawSlot() >= 0)
+            if (event.getRawSlot() < event.getInventory().getSize()
+                    && event.getRawSlot() >= 0 && event.getCurrentItem() != null)
             {
                 delegateClick(event, event.getSlot(), (Player)event.getWhoClicked(), event.getClick());
             }

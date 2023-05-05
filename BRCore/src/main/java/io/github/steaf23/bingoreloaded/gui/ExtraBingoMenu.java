@@ -1,24 +1,20 @@
 package io.github.steaf23.bingoreloaded.gui;
 
-import io.github.steaf23.bingoreloaded.BingoSession;
 import io.github.steaf23.bingoreloaded.BingoSettings;
 import io.github.steaf23.bingoreloaded.BingoSettingsBuilder;
 import io.github.steaf23.bingoreloaded.data.BingoSettingsData;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.data.ConfigData;
+import io.github.steaf23.bingoreloaded.event.BingoSettingsUpdatedEvent;
 import io.github.steaf23.bingoreloaded.gui.base.*;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 
-import javax.naming.InvalidNameException;
-import java.net.InetSocketAddress;
-import java.sql.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,7 +38,7 @@ public class ExtraBingoMenu extends MenuInventory
         super(45, BingoTranslation.OPTIONS_TITLE.translate(), parent);
         this.settings = settings;
         this.config = config;
-        countdown.highlight(settings.view().enableCountdown());
+        countdown.setGlowing(settings.view().enableCountdown());
     }
 
     @Override
@@ -56,7 +52,7 @@ public class ExtraBingoMenu extends MenuInventory
         else if (slotClicked == countdown.getSlot())
         {
             settings.enableCountdown(!view.enableCountdown());
-            countdown.highlight(!view.enableCountdown());
+            countdown.setGlowing(!view.enableCountdown());
             addOption(countdown);
         }
         else if (slotClicked == gameDuration.getSlot())
@@ -179,6 +175,13 @@ public class ExtraBingoMenu extends MenuInventory
                     }, player, this, "my_settings");
                 }
                 super.delegateClick(event, slotClicked, player, clickType);
+            }
+
+            @Override
+            public void handleClose(InventoryCloseEvent event)
+            {
+                super.handleClose(event);
+                settings.settingsUpdated();
             }
         }.open(player);
     }

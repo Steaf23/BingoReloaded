@@ -2,16 +2,19 @@ package io.github.steaf23.bingoreloaded;
 
 import io.github.steaf23.bingoreloaded.cards.CardSize;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
+import io.github.steaf23.bingoreloaded.event.BingoSettingsUpdatedEvent;
 import io.github.steaf23.bingoreloaded.gui.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.player.CustomKit;
 import io.github.steaf23.bingoreloaded.player.PlayerKit;
 import io.github.steaf23.bingoreloaded.util.TranslatedMessage;
 import net.md_5.bungee.api.ChatColor;
+import org.bukkit.Bukkit;
 
 import java.util.EnumSet;
 
 public class BingoSettingsBuilder
 {
+    private final BingoSession session;
     private String card;
     private BingoGamemode mode;
     private CardSize cardSize;
@@ -22,31 +25,21 @@ public class BingoSettingsBuilder
     private boolean enableCountdown;
     private int countdownGameDuration;
 
-    public BingoSettingsBuilder()
+    public BingoSettingsBuilder(BingoSession session)
     {
-        this.card = "default_card";
-        this.mode = BingoGamemode.REGULAR;
-        this.cardSize = CardSize.X5;
-        this.cardSeed = 0;
-        this.kit = PlayerKit.OVERPOWERED;
-        this.effects = kit.defaultEffects;
-        this.maxTeamSize = 5;
-        this.countdownGameDuration = 20;
-        this.enableCountdown = false;
-    }
+        this.session = session;
 
-//    public static BingoSettingsBuilder fromConfig(BingoSession session)
-//    {
-//        ConfigData config = BingoReloadedCore.get().config();
-//        BingoSettingsBuilder settings = new BingoSettingsBuilder(session);
-//        settings.maxTeamSize = config.defaultTeamSize;
-//        settings.card = config.selectedCard;
-//        settings.cardSeed = config.cardSeed;
-//        settings.kit = PlayerKit.fromConfig(config.defaultKit);
-//        settings.effects = settings.kit.defaultEffects;
-//        settings.countdownGameDuration = config.defaultGameDuration;
-//        return settings;
-//    }
+        BingoSettings def = BingoSettings.getDefaultSettings();
+        this.card = def.card();
+        this.mode = def.mode();
+        this.cardSize = def.size();
+        this.cardSeed = def.seed();
+        this.kit = def.kit();
+        this.effects = def.effects();
+        this.maxTeamSize = def.maxTeamSize();
+        this.countdownGameDuration = def.countdownDuration();
+        this.enableCountdown = def.enableCountdown();
+    }
 
     public void fromOther(BingoSettings settings)
     {
@@ -64,24 +57,28 @@ public class BingoSettingsBuilder
     public BingoSettingsBuilder card(String card)
     {
         this.card = card;
+        settingsUpdated();
         return this;
     }
 
     public BingoSettingsBuilder mode(BingoGamemode mode)
     {
         this.mode = mode;
+        settingsUpdated();
         return this;
     }
 
     public BingoSettingsBuilder cardSize(CardSize cardSize)
     {
         this.cardSize = cardSize;
+        settingsUpdated();
         return this;
     }
 
     public BingoSettingsBuilder cardSeed(int cardSeed)
     {
         this.cardSeed = cardSeed;
+        settingsUpdated();
         return this;
     }
 
@@ -97,6 +94,7 @@ public class BingoSettingsBuilder
                     default -> kit.displayName;
                 };
         new TranslatedMessage(BingoTranslation.KIT_SELECTED).color(ChatColor.GOLD).arg(ChatColor.RESET + kitName).sendAll(session);
+        settingsUpdated();
         return this;
     }
 
@@ -104,32 +102,38 @@ public class BingoSettingsBuilder
     {
         this.effects = effects;
         new TranslatedMessage(BingoTranslation.EFFECTS_SELECTED).color(ChatColor.GOLD).sendAll(session);
+        settingsUpdated();
         return this;
     }
 
-    public void toggleEffect(EffectOptionFlags effect, boolean enable)
+    public BingoSettingsBuilder toggleEffect(EffectOptionFlags effect, boolean enable)
     {
         if (enable)
             this.effects.add(effect);
         else
             this.effects.remove(effect);
+        settingsUpdated();
+        return this;
     }
 
     public BingoSettingsBuilder maxTeamSize(int maxTeamSize)
     {
         this.maxTeamSize = maxTeamSize;
+        settingsUpdated();
         return this;
     }
 
     public BingoSettingsBuilder enableCountdown(boolean enableCountdown)
     {
         this.enableCountdown = enableCountdown;
+        settingsUpdated();
         return this;
     }
 
     public BingoSettingsBuilder countdownGameDuration(int countdownGameDuration)
     {
         this.countdownGameDuration = countdownGameDuration;
+        settingsUpdated();
         return this;
     }
 
@@ -145,5 +149,11 @@ public class BingoSettingsBuilder
                 maxTeamSize,
                 enableCountdown,
                 countdownGameDuration);
+    }
+
+    public void settingsUpdated()
+    {
+        var event = new BingoSettingsUpdatedEvent(view(), session);
+        Bukkit.getPluginManager().callEvent(event);
     }
 }

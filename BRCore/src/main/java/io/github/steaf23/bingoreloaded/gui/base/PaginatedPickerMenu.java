@@ -50,12 +50,12 @@ public abstract class PaginatedPickerMenu extends MenuInventory
 
         fillOptions(PREVIOUS,
                 FILTER,
-                BG_ITEM.inSlot(47),
-                BG_ITEM.inSlot(48),
+                BG_ITEM.copyToSlot(47),
+                BG_ITEM.copyToSlot(48),
                 CLOSE,
-                BG_ITEM.inSlot(50),
-                BG_ITEM.inSlot(51),
-                BG_ITEM.inSlot(52),
+                BG_ITEM.copyToSlot(50),
+                BG_ITEM.copyToSlot(51),
+                BG_ITEM.copyToSlot(52),
                 NEXT
         );
 
@@ -89,7 +89,7 @@ public abstract class PaginatedPickerMenu extends MenuInventory
         }
         else if (isSlotValidOption(slotClicked)) //If it is a normal item;
         {
-            onOptionClickedDelegate(event, filteredItems.get(ITEMS_PER_PAGE * currentPage + slotClicked).inSlot(slotClicked), player);
+            onOptionClickedDelegate(event, filteredItems.get(ITEMS_PER_PAGE * currentPage + slotClicked).copyToSlot(slotClicked), player);
         }
     }
 
@@ -243,7 +243,7 @@ public abstract class PaginatedPickerMenu extends MenuInventory
             selectedItems.remove(item);
         }
 
-        item.highlight(value);
+        item.setGlowing(value);
 
         items.set(items.indexOf(item), item);
         updatePage();
@@ -271,7 +271,7 @@ public abstract class PaginatedPickerMenu extends MenuInventory
         for (int i = 0; i < ITEMS_PER_PAGE; i++)
         {
             if (startingIndex + i < filteredItems.size())
-                addOption(filteredItems.get(startingIndex + i).inSlot(i));
+                addOption(filteredItems.get(startingIndex + i).copyToSlot(i));
             else
                 addOption(new InventoryItem(i, Material.AIR, "", ""));
         }

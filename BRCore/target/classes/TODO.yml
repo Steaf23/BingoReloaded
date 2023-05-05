@@ -1,6 +1,6 @@
 refactor card recovery (its shit).
 
-implement Vault plugin
+implement Vault rewards
 
 create lobby to vote for options and select teams pre-game and show leaderboards
 
@@ -10,16 +10,14 @@ Add dummy player class to test stuff like lockout!
 
 update autobingo page with all new features
 
-generalize/centralize game in progress/ player in game checks for events
-
 check if advancements are disabled and disallow them on advancement-disabled servers
 
 make verboseConsole config option to print more info as the game goes on
 
-save more settings in config
-
 Add config, spectator after death/defeat
 
-add countdown before the game starts
-
 add /bingo getkit
+
+add team creator
+
+add Free for all (probably needs a new TeamManager)

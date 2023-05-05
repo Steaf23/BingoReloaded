@@ -29,7 +29,7 @@ public class StatisticPickerUI extends TreeMenu
 
     public StatisticPickerUI(MenuInventory parent, String listName)
     {
-        super("Pick Statistics", parent);
+        super(54, "Pick Statistics", parent);
         this.listName = listName;
         addMenuOption(new InventoryItem(1, 0, Material.FEATHER, TITLE_PREFIX + "Travel"), createTravelMenu());
         addMenuOption(new InventoryItem(3, 0, Material.DIAMOND_SWORD, TITLE_PREFIX + "Kill"), createEntityMenu(Statistic.KILL_ENTITY));
@@ -43,15 +43,15 @@ public class StatisticPickerUI extends TreeMenu
         addMenuOption(new InventoryItem(3, 4, Material.CRAFTING_TABLE, TITLE_PREFIX + "Craft Item"), createItemMenu(Statistic.CRAFT_ITEM));
         addMenuOption(new InventoryItem(5, 4, Material.REDSTONE, TITLE_PREFIX + "Damage Related"), createDamageMenu());
         addMenuOption(new InventoryItem(7, 4, Material.BAKED_POTATO, TITLE_PREFIX + "Other"), createMiscMenu());
-        fillOptions(BG_ITEM.inSlot(45),
-                BG_ITEM.inSlot(46),
-                BG_ITEM.inSlot(47),
-                BG_ITEM.inSlot(48),
+        fillOptions(BG_ITEM.copyToSlot(45),
+                BG_ITEM.copyToSlot(46),
+                BG_ITEM.copyToSlot(47),
+                BG_ITEM.copyToSlot(48),
                 QUIT,
-                BG_ITEM.inSlot(50),
-                BG_ITEM.inSlot(51),
-                BG_ITEM.inSlot(52),
-                BG_ITEM.inSlot(53)
+                BG_ITEM.copyToSlot(50),
+                BG_ITEM.copyToSlot(51),
+                BG_ITEM.copyToSlot(52),
+                BG_ITEM.copyToSlot(53)
         );
     }
 

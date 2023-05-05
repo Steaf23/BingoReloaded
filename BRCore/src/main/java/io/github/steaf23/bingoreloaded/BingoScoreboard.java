@@ -126,7 +126,8 @@ public class BingoScoreboard
     {
         if (player.gamePlayer().isPresent())
         {
-            visualBoard.updatePlayerBoard(player.gamePlayer().get());
+            if (player.session.isRunning())
+                visualBoard.applyToPlayer(player.gamePlayer().get());
         }
         else if (player.asOnlinePlayer().isPresent() && player.asOnlinePlayer().get().getScoreboard().equals(teamBoard))
         {

@@ -54,17 +54,15 @@ public abstract class BingoCommand implements CommandExecutor
 
         switch (args[0])
         {
-            case "join":
-                session.teamManager.openTeamSelector(player, null);
-                break;
-            case "leave":
+            case "join" -> session.teamManager.openTeamSelector(player, null);
+            case "leave" ->
             {
                 BingoPlayer participant = session.teamManager.getBingoPlayer(player);
                 if (participant != null)
                     session.removePlayer(participant);
-                break;
             }
-            case "start":
+            case "start" ->
+            {
                 if (player.hasPermission("bingo.settings"))
                 {
                     if (args.length > 1)
@@ -76,16 +74,14 @@ public abstract class BingoCommand implements CommandExecutor
                     session.startGame();
                     return true;
                 }
-                break;
-
-
-            case "end":
+            }
+            case "end" ->
+            {
                 if (player.hasPermission("bingo.settings"))
                     session.endGame();
-                break;
-
-
-            case "getcard":
+            }
+            case "getcard" ->
+            {
                 if (session.isRunning())
                 {
                     BingoPlayer participant = session.teamManager.getBingoPlayer(player);
@@ -93,10 +89,9 @@ public abstract class BingoCommand implements CommandExecutor
                         session.game().returnCardToPlayer(participant);
                     return true;
                 }
-                break;
-
-            case "back":
-
+            }
+            case "back" ->
+            {
                 if (session.isRunning())
                 {
                     if (config.teleportAfterDeath)
@@ -105,31 +100,30 @@ public abstract class BingoCommand implements CommandExecutor
                         return true;
                     }
                 }
-                break;
-
-            case "deathmatch":
+            }
+            case "deathmatch" ->
+            {
                 if (!player.hasPermission("bingo.settings"))
                 {
                     return false;
-                }
-                else if (!session.isRunning())
+                } else if (!session.isRunning())
                 {
                     new TranslatedMessage(BingoTranslation.NO_DEATHMATCH).color(ChatColor.RED).send(player);
                     return false;
                 }
-
                 session.game().startDeathMatch(3);
                 return true;
-
-            case "creator":
+            }
+            case "creator" ->
+            {
                 if (player.hasPermission("bingo.manager"))
                 {
                     BingoCreatorUI creatorUI = new BingoCreatorUI(null);
                     creatorUI.open(player);
                 }
-                break;
-
-            case "stats":
+            }
+            case "stats" ->
+            {
                 if (!config.savePlayerStatistics)
                 {
                     TextComponent text = new TextComponent("Player statistics are not being tracked at this moment!");
@@ -137,47 +131,41 @@ public abstract class BingoCommand implements CommandExecutor
                     Message.sendDebug(text, player);
                     return true;
                 }
-                BingoStatsData statsData = new BingoStatsData(config.savePlayerStatistics);
+                BingoStatsData statsData = new BingoStatsData();
                 Message msg;
                 if (args.length > 1 && player.hasPermission("bingo.admin"))
                 {
                     msg = statsData.getPlayerStatsFormatted(args[1]);
-                }
-                else
+                } else
                 {
                     msg = statsData.getPlayerStatsFormatted(player.getUniqueId());
                 }
                 msg.send(player);
                 return true;
-
-            case "kit":
+            }
+            case "kit" ->
+            {
+                if (!player.hasPermission("bingo.manager"))
+                    return false;
                 if (args.length <= 2)
                     return false;
-
                 switch (args[1])
                 {
-                    case "item":
-                        givePlayerBingoItem(player, args[2]);
-                        break;
-
-                    case "add":
+                    case "item" -> givePlayerBingoItem(player, args[2]);
+                    case "add" ->
+                    {
                         if (args.length < 4)
                         {
                             Message.sendDebug(ChatColor.RED + "Please specify a kit name for slot " + args[2], player);
                             return false;
                         }
                         addPlayerKit(args[2], Arrays.stream(args).toList().subList(3, args.length), player);
-                        break;
-
-                    case "remove":
-                        removePlayerKit(args[2], player);
-                        break;
+                    }
+                    case "remove" -> removePlayerKit(args[2], player);
                 }
-                break;
-
-            default:
-                new TranslatedMessage(BingoTranslation.COMMAND_USAGE).color(ChatColor.RED).arg("/bingo [getcard | stats | start | end | join | back | leave | deathmatch | creator]").send(player);
-                break;
+            }
+            default ->
+                    new TranslatedMessage(BingoTranslation.COMMAND_USAGE).color(ChatColor.RED).arg("/bingo [getcard | stats | start | end | join | back | leave | deathmatch | creator]").send(player);
         }
         return true;
     }
@@ -197,19 +185,19 @@ public abstract class BingoCommand implements CommandExecutor
             }
         };
 
-        String kitName = "";
+        StringBuilder kitName = new StringBuilder();
         for (int i = 0; i < kitNameParts.size() - 1; i++)
         {
-            kitName += kitNameParts.get(i) + " ";
+            kitName.append(kitNameParts.get(i)).append(" ");
         }
-        kitName += kitNameParts.get(kitNameParts.size() - 1);
+        kitName.append(kitNameParts.get(kitNameParts.size() - 1));
 
-        if (!PlayerKit.assignCustomKit(kitName, kit, commandSender))
+        if (!PlayerKit.assignCustomKit(kitName.toString(), kit, commandSender))
         {
             BaseComponent msg = new TextComponent("");
             msg.setColor(ChatColor.RED);
             msg.addExtra("Cannot add custom kit ");
-            msg.addExtra(BingoTranslation.convertColors(kitName));
+            msg.addExtra(BingoTranslation.convertColors(kitName.toString()));
             msg.addExtra(" to slot " + slot + ", this slot already contains kit ");
             msg.addExtra(PlayerKit.getCustomKit(kit).getName());
             msg.addExtra(". Remove it first!");
@@ -220,7 +208,7 @@ public abstract class BingoCommand implements CommandExecutor
             BaseComponent msg = new TextComponent("");
             msg.setColor(ChatColor.GREEN);
             msg.addExtra("Created custom kit ");
-            msg.addExtra(BingoTranslation.convertColors(kitName));
+            msg.addExtra(BingoTranslation.convertColors(kitName.toString()));
             msg.addExtra(" in slot " + slot + " from your inventory");
             Message.sendDebug(msg, commandSender);
         }
@@ -269,8 +257,6 @@ public abstract class BingoCommand implements CommandExecutor
     }
 
     /**
-     * @param in
-     * @param defaultValue
      * @return Integer the string represents or defaultValue if a conversion failed.
      */
     private int toInt(String in, int defaultValue)

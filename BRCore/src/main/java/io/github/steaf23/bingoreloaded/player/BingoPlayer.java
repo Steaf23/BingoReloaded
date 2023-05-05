@@ -124,7 +124,7 @@ public class BingoPlayer
                 }
             }
 
-            player.getInventory().setItemInOffHand(PlayerKit.CARD_ITEM.inSlot(8));
+            player.getInventory().setItemInOffHand(PlayerKit.CARD_ITEM.copyToSlot(8));
         });
     }
 

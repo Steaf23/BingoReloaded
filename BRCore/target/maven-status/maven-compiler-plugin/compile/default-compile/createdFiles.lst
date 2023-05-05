@@ -27,6 +27,7 @@ io\github\steaf23\bingoreloaded\data\BingoCardsData.class
 io\github\steaf23\bingoreloaded\gui\base\ContextMenu.class
 io\github\steaf23\bingoreloaded\gui\creator\BingoCreatorUI$1.class
 io\github\steaf23\bingoreloaded\player\BingoPlayer.class
+io\github\steaf23\bingoreloaded\SettingsPreviewBoard.class
 io\github\steaf23\bingoreloaded\BingoGamemode.class
 io\github\steaf23\bingoreloaded\tasks\StatisticTask$3.class
 io\github\steaf23\bingoreloaded\BingoSettingsBuilder$1.class
@@ -37,6 +38,7 @@ io\github\steaf23\bingoreloaded\gui\CardMenu.class
 io\github\steaf23\bingoreloaded\item\ItemText.class
 io\github\steaf23\bingoreloaded\util\SmallCaps$1.class
 io\github\steaf23\bingoreloaded\tasks\StatisticTask$1.class
+io\github\steaf23\bingoreloaded\GamePhase.class
 io\github\steaf23\bingoreloaded\cards\BingoCard.class
 io\github\steaf23\bingoreloaded\command\TeamChatCommand.class
 io\github\steaf23\bingoreloaded\tasks\BingoTask$2.class
@@ -49,6 +51,7 @@ io\github\steaf23\bingoreloaded\player\PlayerKit$1.class
 io\github\steaf23\bingoreloaded\util\PDCHelper.class
 io\github\steaf23\bingoreloaded\event\BingoStartedEvent.class
 io\github\steaf23\bingoreloaded\hologram\PixelArtHologram.class
+io\github\steaf23\bingoreloaded\gui\VoteMenu.class
 io\github\steaf23\bingoreloaded\data\BingoStatType.class
 io\github\steaf23\bingoreloaded\data\ConfigData.class
 io\github\steaf23\bingoreloaded\BingoSession.class
@@ -99,6 +102,7 @@ io\github\steaf23\bingoreloaded\hologram\HologramManager.class
 io\github\steaf23\bingoreloaded\tasks\BingoTask.class
 io\github\steaf23\bingoreloaded\data\BingoLogger$1.class
 io\github\steaf23\bingoreloaded\gui\creator\ListValueEditorGUI.class
+io\github\steaf23\bingoreloaded\event\BingoSettingsUpdatedEvent.class
 io\github\steaf23\bingoreloaded\BingoScoreboard.class
 io\github\steaf23\bingoreloaded\data\BingoCardsData$1.class
 io\github\steaf23\bingoreloaded\tasks\ItemTask.class
@@ -114,9 +118,11 @@ io\github\steaf23\bingoreloaded\gui\creator\CardEditorUI.class
 io\github\steaf23\bingoreloaded\event\UpdateStatisticEvent.class
 io\github\steaf23\bingoreloaded\gui\creator\TaskPickerUI$1.class
 io\github\steaf23\bingoreloaded\gui\EffectOptionFlags.class
+io\github\steaf23\bingoreloaded\PregameLobby.class
 io\github\steaf23\bingoreloaded\BingoGame.class
 io\github\steaf23\bingoreloaded\tasks\statistics\BingoStatistic.class
 io\github\steaf23\bingoreloaded\cards\CardBuilder$1.class
 io\github\steaf23\bingoreloaded\item\ItemCooldownManager.class
 io\github\steaf23\bingoreloaded\gui\creator\StatisticPickerUI$1.class
 io\github\steaf23\bingoreloaded\tasks\ItemTask$1.class
+io\github\steaf23\bingoreloaded\gui\OptionMenu.class

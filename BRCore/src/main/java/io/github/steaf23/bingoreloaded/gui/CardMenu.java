@@ -52,7 +52,7 @@ public class CardMenu extends MenuInventory
         for (int i = 0; i < tasks.size(); i++)
         {
             BingoTask task = tasks.get(i);
-            addOption(task.asStack().inSlot(size.getCardInventorySlot(i)));
+            addOption(task.asStack().copyToSlot(size.getCardInventorySlot(i)));
         }
         open(player);
     }

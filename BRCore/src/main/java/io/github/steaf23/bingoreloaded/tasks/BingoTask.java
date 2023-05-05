@@ -178,7 +178,7 @@ public class BingoTask
 
         if (glowing && completedBy.isEmpty())
         {
-            finalItem.highlight(true);
+            finalItem.setGlowing(true);
         }
 
         return finalItem;

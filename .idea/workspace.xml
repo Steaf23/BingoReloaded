@@ -6,15 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="21aeef60-bb60-46ef-aba2-4e05b0c5d856" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BRCore/src/main/java/io/github/steaf23/bingoreloaded/data/BingoTranslation.java" beforeDir="false" afterPath="$PROJECT_DIR$/BRCore/src/main/java/io/github/steaf23/bingoreloaded/data/BingoTranslation.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BRCore/src/main/java/io/github/steaf23/bingoreloaded/data/TaskListsData.java" beforeDir="false" afterPath="$PROJECT_DIR$/BRCore/src/main/java/io/github/steaf23/bingoreloaded/data/TaskListsData.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BRCore/src/main/java/io/github/steaf23/bingoreloaded/item/ItemText.java" beforeDir="false" afterPath="$PROJECT_DIR$/BRCore/src/main/java/io/github/steaf23/bingoreloaded/item/ItemText.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BRCore/src/main/java/io/github/steaf23/bingoreloaded/util/Message.java" beforeDir="false" afterPath="$PROJECT_DIR$/BRCore/src/main/java/io/github/steaf23/bingoreloaded/util/Message.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BRCore/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/BRCore/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BRCore/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/BRCore/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BRPartyMode/target/BRPartyMode-1.0-SNAPSHOT.jar" beforeDir="false" afterPath="$PROJECT_DIR$/BRPartyMode/target/BRPartyMode-1.0-SNAPSHOT.jar" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BRPartyMode/target/maven-archiver/pom.properties" beforeDir="false" afterPath="$PROJECT_DIR$/BRPartyMode/target/maven-archiver/pom.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BRPartyMode/target/original-BRPartyMode-1.0-SNAPSHOT.jar" beforeDir="false" afterPath="$PROJECT_DIR$/BRPartyMode/target/original-BRPartyMode-1.0-SNAPSHOT.jar" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -44,18 +35,18 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;D:/Other/Work/Minecraft Modding/BingoReloaded&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.16015625&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.4945788&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;project.propVCSSupport.DirectoryMappings&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_ADD_EXTERNAL_FILES": "true",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "last_opened_file_path": "D:/Other/Work/Minecraft Modding/BingoReloaded",
+    "project.structure.last.edited": "Project",
+    "project.structure.proportion": "0.16015625",
+    "project.structure.side.proportion": "0.4945788",
+    "settings.editor.selected.configurable": "preferences.pluginManager"
   }
-}</component>
+}]]></component>
   <component name="RunManager">
     <configuration default="true" type="JetRunConfigurationType">
       <module name="BingoReloaded" />
@@ -81,5 +72,10 @@
       <updated>1681660801971</updated>
     </task>
     <servers />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <ignored-roots>
+      <path value="$PROJECT_DIR$" />
+    </ignored-roots>
   </component>
 </project>

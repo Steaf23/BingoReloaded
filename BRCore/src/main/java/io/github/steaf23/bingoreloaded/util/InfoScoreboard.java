@@ -34,7 +34,7 @@ public class InfoScoreboard
         }
     }
 
-    public void updatePlayerBoard(Player player)
+    public void applyToPlayer(Player player)
     {
         player.setScoreboard(board);
     }
@@ -45,8 +45,6 @@ public class InfoScoreboard
     }
 
     /**
-     * Sets a line of text on the scoreboard, to update this for visually for the player,
-     * updatePlayerBoard should be called
      * @param lineIndex
      * @param text
      */

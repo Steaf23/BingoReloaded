@@ -16,20 +16,12 @@ public class BingoStatsData
 {
     private final YmlDataManager data = BingoReloadedCore.createYmlDataManager("player_stats.yml");
 
-    private final boolean savePlayerStatistics;
-
-    public BingoStatsData(boolean savePlayerStatistics)
+    public BingoStatsData()
     {
-        this.savePlayerStatistics = savePlayerStatistics;
     }
 
     public int getPlayerStat(UUID playerId, BingoStatType statType)
     {
-        if (!savePlayerStatistics)
-        {
-            return -1;
-        }
-
         if (statType == BingoStatType.PLAYED)
             return getPlayerStat(playerId, BingoStatType.WINS) + getPlayerStat(playerId, BingoStatType.LOSSES);
 
@@ -48,11 +40,6 @@ public class BingoStatsData
 
     public void incrementPlayerStat(UUID playerId, BingoStatType statType, int by)
     {
-        if (!savePlayerStatistics)
-        {
-            return;
-        }
-
         if (statType.idx < 0)
             return;
 

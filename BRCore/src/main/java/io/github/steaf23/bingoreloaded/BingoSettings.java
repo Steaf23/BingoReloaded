@@ -25,6 +25,20 @@ public record BingoSettings(String card,
                             boolean enableCountdown,
                             int countdownDuration) implements ConfigurationSerializable
 {
+    public static BingoSettings getDefaultSettings()
+    {
+        return new BingoSettings(
+                "default_card",
+                BingoGamemode.REGULAR,
+                CardSize.X5,
+                0,
+                PlayerKit.OVERPOWERED,
+                PlayerKit.OVERPOWERED.defaultEffects,
+                5,
+                false,
+                20);
+    }
+
     @NotNull
     @Override
     public Map<String, Object> serialize()

@@ -87,22 +87,26 @@ public class InventoryItem extends ItemStack
         return new ItemStack(this);
     }
 
-
     public InventoryItem copy()
     {
-        return new InventoryItem(slot, getType(), getItemMeta().getDisplayName(), getItemMeta().getLore() == null ? new String[]{""} : getItemMeta().getLore().toArray( new String[0]));
+        return new InventoryItem(slot,
+                getType(),
+                getItemMeta().getDisplayName(),
+                getItemMeta().getLore() == null ? new String[]{""} : getItemMeta().getLore().toArray( new String[0]))
+                .setGlowing(isGlowing())
+                .setKey(getKey() == null ? "" : getKey());
     }
 
-    public InventoryItem inSlot(int slot)
+    public InventoryItem copyToSlot(int slot)
     {
         InventoryItem item = new InventoryItem(slot, this);
         item.slot = slot;
         return item;
     }
 
-    public InventoryItem inSlot(int slotX, int slotY)
+    public InventoryItem copyToSlot(int slotX, int slotY)
     {
-        return inSlot(9 * slotY + slotX);
+        return copyToSlot(9 * slotY + slotX);
     }
 
     public int getSlot()
@@ -110,7 +114,7 @@ public class InventoryItem extends ItemStack
         return slot;
     }
 
-    public void setDescription(String... description)
+    public InventoryItem setDescription(String... description)
     {
         ItemMeta meta = getItemMeta();
         if (meta != null)
@@ -120,18 +124,20 @@ public class InventoryItem extends ItemStack
             meta.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
             setItemMeta(meta);
         }
+        return this;
     }
 
-    public void setName(String name)
+    public InventoryItem setName(String name)
     {
         ItemMeta meta = getItemMeta();
         if (meta != null)
         {
             meta.setDisplayName(name);
         }
+        return this;
     }
 
-    public void highlight(boolean value)
+    public InventoryItem setGlowing(boolean value)
     {
         if (value)
         {
@@ -141,18 +147,28 @@ public class InventoryItem extends ItemStack
         {
             removeEnchantment(Enchantment.DURABILITY);
         }
+        return this;
+    }
+
+    public boolean isGlowing()
+    {
+        return getItemMeta().hasEnchant(Enchantment.DURABILITY);
     }
 
     /**
      * Additional key that can be used for item comparison, saved in pdc
      * @param key
      */
-    public void setKey(@Nullable String key)
+    public InventoryItem setKey(@Nullable String key)
     {
         var meta = this.getItemMeta();
         var pdc = meta.getPersistentDataContainer();
-        pdc.set(PDCHelper.createKey("item.compare_key"), PersistentDataType.STRING, key);
+        if (key.equals(""))
+            pdc.remove(PDCHelper.createKey("item.compare_key"));
+        else
+            pdc.set(PDCHelper.createKey("item.compare_key"), PersistentDataType.STRING, key);
         this.setItemMeta(meta);
+        return this;
     }
 
     public boolean isKeyEqual(ItemStack other)

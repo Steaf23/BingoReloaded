@@ -15,6 +15,7 @@ import java.util.regex.Pattern;
 
 public enum BingoTranslation
 {
+    UNIMPLEMENTED("UNIMPLEMENTED MESSAGE"),
     LANGUAGE_NAME("name"),
     CHANGED_LANGUAGE("changed"),
     COMMAND_USAGE("command.use"),
@@ -78,6 +79,7 @@ public enum BingoTranslation
     OPTIONS_CARD("menu.options.card"),
     OPTIONS_GAMEMODE("menu.options.mode"),
     OPTIONS_EFFECTS("menu.options.effects"),
+    OPTIONS_VOTE("menu.options.vote"),
     EFFECTS_ENABLE("menu.effects.enable"),
     EFFECTS_DISABLE("menu.effects.disable"),
     EFFECTS_ENABLED("menu.effects.enabled"),

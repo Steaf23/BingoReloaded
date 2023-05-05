@@ -65,7 +65,7 @@ public class TaskPickerUI extends PaginatedPickerMenu
 
         TaskData newData = BingoTask.fromStack(item).data;
         InventoryItem newItem = new InventoryItem(getUpdatedTaskItem(newData, true, newAmount))
-                .inSlot(item.getSlot());
+                .copyToSlot(item.getSlot());
         replaceItem(newItem, newItem.getSlot());
         selectItem(newItem, true);
 
@@ -95,7 +95,7 @@ public class TaskPickerUI extends PaginatedPickerMenu
 
         TaskData newData = BingoTask.fromStack(item).data;
         InventoryItem newItem = new InventoryItem(getUpdatedTaskItem(newData, !deselect, newAmount))
-                .inSlot(item.getSlot());
+                .copyToSlot(item.getSlot());
         replaceItem(newItem, newItem.getSlot());
         selectItem(newItem, !deselect);
 
@@ -152,7 +152,7 @@ public class TaskPickerUI extends PaginatedPickerMenu
         List<InventoryItem> result = new ArrayList<>();
         tasks.forEach(task -> {
             InventoryItem item = new InventoryItem(getUpdatedTaskItem(task.data, false, 1));
-            item.highlight(false);
+            item.setGlowing(false);
             result.add(item);
         });
         return result;

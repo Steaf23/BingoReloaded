@@ -90,6 +90,7 @@ menu:
     card: "Select Card"
     mode: "Change Gamemode"
     effects: "Player Effects"
+    vote: "Vote Gamemode"
   effects:
     enable: "Click to ENABLE this effect option"
     disable: "Click to DISABLE this effect option"

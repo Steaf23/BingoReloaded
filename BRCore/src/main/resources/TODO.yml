@@ -1,6 +1,6 @@
 refactor card recovery (its shit).
 
-implement Vault plugin
+implement Vault rewards
 
 create lobby to vote for options and select teams pre-game and show leaderboards
 
@@ -17,3 +17,7 @@ make verboseConsole config option to print more info as the game goes on
 Add config, spectator after death/defeat
 
 add /bingo getkit
+
+add team creator
+
+add Free for all (probably needs a new TeamManager)

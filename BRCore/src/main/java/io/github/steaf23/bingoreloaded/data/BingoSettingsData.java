@@ -24,7 +24,7 @@ public class BingoSettingsData
         {
             return data.getConfig().getSerializable(name, BingoSettings.class);
         }
-        return new BingoSettingsBuilder().view();
+        return BingoSettings.getDefaultSettings();
     }
 
     public void saveSettings(String name, BingoSettings settings)

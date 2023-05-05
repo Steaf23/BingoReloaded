@@ -45,9 +45,12 @@ public class BingoMenu extends MenuInventory
             Material.POTION, TITLE_PREFIX + BingoTranslation.OPTIONS_EFFECTS.translate());
     private static final InventoryItem EXTRA = new InventoryItem(44,
             Material.STRUCTURE_VOID, TITLE_PREFIX + BingoTranslation.MENU_NEXT.translate());
+    private static final InventoryItem VOTE = new InventoryItem(
+            Material.EMERALD, "" + ChatColor.GREEN + ChatColor.BOLD + BingoTranslation.OPTIONS_VOTE.translate())
+            .setGlowing(true).setKey("vote");
 
-    private static final InventoryItem JOIN_P = JOIN.inSlot(2, 2);
-    private static final InventoryItem LEAVE_P = LEAVE.inSlot(6, 2);
+    private static final InventoryItem JOIN_P = JOIN.copyToSlot(2, 2);
+    private static final InventoryItem LEAVE_P = LEAVE.copyToSlot(6, 2);
 
     private BingoMenu(BingoSession session, ConfigData config)
     {
@@ -70,6 +73,11 @@ public class BingoMenu extends MenuInventory
             {
                 if (gamePlayer != null)
                     session.removePlayer(gamePlayer);
+            }
+            else if (new InventoryItem(event.getCurrentItem()).isKeyEqual(VOTE))
+            {
+                VoteMenu menu = new VoteMenu(this);
+                menu.open(player);
             }
             return;
         }
@@ -127,6 +135,11 @@ public class BingoMenu extends MenuInventory
             {
                 session.startGame();
             }
+        }
+        else if (new InventoryItem(event.getCurrentItem()).isKeyEqual(VOTE))
+        {
+            VoteMenu menu = new VoteMenu(this);
+            menu.open(player);
         }
     }
 
@@ -205,13 +218,23 @@ public class BingoMenu extends MenuInventory
                     EFFECTS,
                     EXTRA
             );
+
+            if (!gameSession.isRunning())
+            {
+                options.addOption(VOTE.copyToSlot(8, 0));
+            }
         }
         else if (player.hasPermission("bingo.player"))
         {
             options.fillOptions(
-                    JOIN_P.inSlot(20),
-                    LEAVE_P.inSlot(24)
+                    JOIN_P,
+                    LEAVE_P
             );
+
+            if (!gameSession.isRunning())
+            {
+                options.addOption(VOTE.copyToSlot(4, 2));
+            }
         }
         options.open(player);
     }

@@ -30,20 +30,20 @@ public class ListEditorUI extends TreeMenu
 
     public ListEditorUI(String listName, MenuInventory parent)
     {
-        super("Editing '" + listName + "'", parent);
+        super(54, "Editing '" + listName + "'", parent);
         this.listName = listName;
         addMenuOption(ITEMS, createItemPicker());
         addMenuOption(ADVANCEMENTS, createAdvancementPicker());
         addMenuOption(STATISTICS, createStatisticsPicker());
-        fillOptions(BLANK.inSlot(0, 5),
-                BLANK.inSlot(1, 5),
-                BLANK.inSlot(2, 5),
-                BLANK.inSlot(3, 5),
+        fillOptions(BLANK.copyToSlot(0, 5),
+                BLANK.copyToSlot(1, 5),
+                BLANK.copyToSlot(2, 5),
+                BLANK.copyToSlot(3, 5),
                 SAVE,
-                BLANK.inSlot(5, 5),
-                BLANK.inSlot(6, 5),
-                BLANK.inSlot(7, 5),
-                BLANK.inSlot(8, 5));
+                BLANK.copyToSlot(5, 5),
+                BLANK.copyToSlot(6, 5),
+                BLANK.copyToSlot(7, 5),
+                BLANK.copyToSlot(8, 5));
     }
 
     @Override

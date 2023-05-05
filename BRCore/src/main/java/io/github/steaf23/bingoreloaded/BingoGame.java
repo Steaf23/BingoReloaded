@@ -8,6 +8,8 @@ import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.data.ConfigData;
 import io.github.steaf23.bingoreloaded.event.*;
 import io.github.steaf23.bingoreloaded.gui.EffectOptionFlags;
+import io.github.steaf23.bingoreloaded.gui.base.InventoryItem;
+import io.github.steaf23.bingoreloaded.gui.base.MenuInventory;
 import io.github.steaf23.bingoreloaded.item.ItemText;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.player.BingoTeam;
@@ -36,7 +38,7 @@ import org.bukkit.util.Vector;
 import javax.annotation.Nullable;
 import java.util.*;
 
-public class BingoGame
+public class BingoGame implements GamePhase
 {
     private final BingoSession session;
     private final String worldName;
@@ -471,11 +473,6 @@ public class BingoGame
     public String getWorldName()
     {
         return worldName;
-    }
-
-    public BingoScoreboard getScoreboard()
-    {
-        return scoreboard;
     }
 
     public CardEventManager getCardEventManager()

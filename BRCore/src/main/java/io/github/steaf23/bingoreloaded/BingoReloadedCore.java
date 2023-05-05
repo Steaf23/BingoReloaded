@@ -1,7 +1,5 @@
 package io.github.steaf23.bingoreloaded;
 
-import io.github.steaf23.bingoreloaded.command.BingoCommand;
-import io.github.steaf23.bingoreloaded.command.BingoTabCompleter;
 import io.github.steaf23.bingoreloaded.command.TeamChatCommand;
 import io.github.steaf23.bingoreloaded.data.*;
 import io.github.steaf23.bingoreloaded.gui.base.InventoryItem;
@@ -119,8 +117,11 @@ public class BingoReloadedCore
     public static void incrementPlayerStat(Player player, BingoStatType stat)
     {
         boolean savePlayerStatistics = BingoReloadedExtension.getPlugin(BingoReloadedExtension.class).core.config.savePlayerStatistics;
-        BingoStatsData statsData = new BingoStatsData(savePlayerStatistics);
-        statsData.incrementPlayerStat(player, stat);
+        if (savePlayerStatistics)
+        {
+            BingoStatsData statsData = new BingoStatsData();
+            statsData.incrementPlayerStat(player, stat);
+        }
     }
 
     public static void scheduleTask(@NotNull Consumer<BukkitTask> task)
