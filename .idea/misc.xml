@@ -8,9 +8,7 @@
   <component name="MavenProjectsManager">
     <option name="originalFiles">
       <list>
-        <option value="$PROJECT_DIR$/BRCore/pom.xml" />
-        <option value="$PROJECT_DIR$/BRMultiMode/pom.xml" />
-        <option value="$PROJECT_DIR$/BRPartyMode/pom.xml" />
+        <option value="$PROJECT_DIR$/BingoReloaded/pom.xml" />
       </list>
     </option>
   </component>

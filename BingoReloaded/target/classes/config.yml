@@ -1,0 +1,90 @@
+# IMPORTANT NOTE!: TO UPDATE THIS FILE TO THE LATEST VERSION:
+# 1) MAKE A BACKUP AND DELETE THIS FILE.
+# 2) START THE PLUGIN TO GENERATE THE NEW FILE.
+# 3) RESTORE SETTINGS ACCORDING TO THE BACKUP FILE.
+# 4) RELOAD PLUGIN AND THAT'S IT
+
+# When the game starts everyone will be teleported in a random square radius
+#   between 0 and teleportMaxDistance blocks from 0,0. (no more than 1.000.000 blocks)
+teleportMaxDistance: 1000000
+
+# Decide whether to teleport players:
+#   - everyone together (ALL),
+#   - everyone apart (ALONE),
+#   - everyone with their teammates (TEAM),
+#   - no one gets teleported at all (NONE),
+#   - using any other value will make it so no one teleports at all at the start of the game.
+playerTeleportStrategy: ALL
+
+# If true, the game will send a message to players that died while playing the game
+#   that can be used to teleport them back.
+teleportBackAfterDeathMessage: true  # true or false
+
+# Distances to teleport a player that uses the Go-Up-Wand
+GoUpWand:
+  upDistance: 75 # teleport up distance
+  downDistance: 5 # teleport down distance, watch out for the void ;)
+  cooldown: 5.0 # item cooldown in seconds
+  platformLifetime: 10 # time in seconds that placed platforms will stay before disappearing.
+
+# Decide what kit should be the default kit when loading the plugin:
+#   - (HARDCORE)
+#   - (NORMAL)
+#   - (OVERPOWERED)
+#   - (RELOADED)
+defaultKit: OVERPOWERED
+
+# The period of time (in seconds) at the start of the game when a player is protected from any damage
+#   also determines the time after which the spawn platform will disappear.
+gracePeriod: 30
+
+# The card that the game will select automatically when starting the server/ reloading the plugin
+selectedCard: default_card
+
+# The yml file that contains the language data that will be used for this plugin
+#   Choose from: en_us.yml, nl.yml, fr_fr.yml
+language: en_us.yml
+
+# Game duration (in minutes) used for Countdown cards. This setting can also be changed per game with the /bingo menu,
+#   but is provided here to set a default value.
+defaultGameDuration: 20 # whole number between 1 and 60.
+
+# Default amount of players allowed per team.
+defaultTeamSize: 64 # whole number between 1 and 64.
+
+# Save player statistics (stats) like wins, losses, tasks completed, etc... Used for the leaderboard. Stats are saved to player_stats.yml.
+#   Stats are not automatically removed if you turn this to false if it has been on true before.
+#   Turning this option on later will not retroactively fill stats for games played with stats off.
+savePlayerStatistics: false # true or false
+
+# The seed of the card that will be played.
+#   0 means the seed is not defined and cards will be generated like normal.
+cardSeed: 0 # any whole number
+
+# Enables the /btc options for players to use to communicate with each other.
+enableTeamChat: true # true or false
+
+# If this value is not an empty string it will be sent as a command to the console.
+# Most users can ignore this setting.
+sendCommandAfterGameEnds: "" #command to send
+
+# If true, keeps the player scoreboard visible to all participants after the game has ended.
+keepScoreboardVisible: true # true or false
+
+# If true, will display all participants' names on the scoreboard under their team.
+showPlayerInScoreboard: true
+
+# If true, advancements can appear on the bingo card.
+useAdvancements: true
+
+# If true, statistics can appear on the bingo card.
+useStatistics: true
+
+# Use this to configure what options players can vote on before the game
+voteList:
+  gamemodes:
+    [regular_3, lockout_3, complete_3, regular_5, lockout_5, complete_5] # regular_3 means gamemode Regular with a card size of 3x3
+  kits:
+    [hardcore, normal, overpowered, reloaded, custom_1, custom_2, custom_3, custom_4, custom_5]
+  card:
+    [default_card]
