@@ -152,7 +152,7 @@ public class ExtraBingoMenu extends MenuInventory
                 List<MenuItem> items = new ArrayList<>();
                 for (String preset : settingsData.getPresetNames())
                 {
-                    boolean def = preset.equals(config.defaultSettings);
+                    boolean def = preset.equals(config.defaultSettingsPreset);
                     MenuItem item = new MenuItem(Material.GLOBE_BANNER_PATTERN,
                             preset + (def ? ChatColor.LIGHT_PURPLE + " (default)" : ""),
                             ChatColor.GRAY + "Left-click to apply these settings",

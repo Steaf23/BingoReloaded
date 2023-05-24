@@ -1,8 +1,8 @@
 package io.github.steaf23.bingoreloaded.cards;
 
 
-import io.github.steaf23.bingoreloaded.BingoGame;
-import io.github.steaf23.bingoreloaded.BingoReloadedCore;
+import io.github.steaf23.bingoreloaded.game.BingoGame;
+import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.BingoCardsData;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.data.TaskListsData;
@@ -225,14 +225,14 @@ public class BingoCard
 
         if (event.getSlotType() == InventoryType.SlotType.RESULT && event.getClick() != ClickType.SHIFT_LEFT)
         {
-            BingoReloadedCore.scheduleTask(task -> {
+            BingoReloaded.scheduleTask(task -> {
                 ItemStack resultStack = p.getItemOnCursor();
                 completeItemSlot(resultStack, player, game);
             });
             return;
         }
 
-        BingoReloadedCore.scheduleTask(task -> {
+        BingoReloaded.scheduleTask(task -> {
             for (ItemStack stack : p.getInventory().getContents())
             {
                 if (stack != null)
@@ -259,7 +259,7 @@ public class BingoCard
             event.setCancelled(true);
             ItemStack resultStack = stack.clone();
 
-            BingoReloadedCore.scheduleTask(task -> {
+            BingoReloaded.scheduleTask(task -> {
                 player.gamePlayer().get().getWorld().dropItem(event.getItem().getLocation(), resultStack);
                 event.getItem().remove();
             });
@@ -271,7 +271,7 @@ public class BingoCard
         if (player.getTeam().outOfTheGame)
             return;
 
-        BingoReloadedCore.scheduleTask(task -> {
+        BingoReloaded.scheduleTask(task -> {
             ItemStack stack = event.getItemDrop().getItemStack();
             stack = completeItemSlot(stack, player, game);
         });

@@ -1,8 +1,8 @@
 package io.github.steaf23.bingoreloaded.player;
 
-import io.github.steaf23.bingoreloaded.BingoGame;
-import io.github.steaf23.bingoreloaded.BingoReloadedCore;
-import io.github.steaf23.bingoreloaded.BingoSession;
+import io.github.steaf23.bingoreloaded.game.BingoGame;
+import io.github.steaf23.bingoreloaded.BingoReloaded;
+import io.github.steaf23.bingoreloaded.game.BingoSession;
 import io.github.steaf23.bingoreloaded.data.BingoStatType;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.gui.EffectOptionFlags;
@@ -57,7 +57,7 @@ public class BingoPlayer implements BingoParticipant
             return Optional.ofNullable(null);
 
         Player player = Bukkit.getPlayer(playerId);
-        if (!BingoReloadedCore.getWorldNameOfDimension(player.getWorld()).equals(session.worldName))
+        if (!BingoReloaded.getWorldNameOfDimension(player.getWorld()).equals(session.worldName))
         {
             return Optional.ofNullable(null);
         }
@@ -126,7 +126,7 @@ public class BingoPlayer implements BingoParticipant
 
         Message.log("Giving card to " + player.getDisplayName(), session.worldName);
 
-        BingoReloadedCore.scheduleTask(task -> {
+        BingoReloaded.scheduleTask(task -> {
             for (ItemStack itemStack : player.getInventory())
             {
                 if (PlayerKit.CARD_ITEM.isKeyEqual(itemStack))
@@ -150,7 +150,7 @@ public class BingoPlayer implements BingoParticipant
 
         Message.log("Giving effects to " + player.getDisplayName(), session.worldName);
 
-        BingoReloadedCore.scheduleTask(task -> {
+        BingoReloaded.scheduleTask(task -> {
             if (effects.contains(EffectOptionFlags.NIGHT_VISION))
                 player.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, 100000, 1, false, false));
             if (effects.contains(EffectOptionFlags.WATER_BREATHING))
@@ -161,7 +161,7 @@ public class BingoPlayer implements BingoParticipant
                 player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 100000, 1, false, false));
             player.addPotionEffect(new PotionEffect(PotionEffectType.SATURATION, 2, 100, false, false));
             player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 2, 100, false, false));
-            player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, BingoReloadedCore.ONE_SECOND * gracePeriod, 100, false, false));
+            player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, BingoReloaded.ONE_SECOND * gracePeriod, 100, false, false));
         });
     }
 
@@ -232,7 +232,7 @@ public class BingoPlayer implements BingoParticipant
             return false;
         }
 
-        BingoReloadedCore.scheduleTask(task -> {
+        BingoReloaded.scheduleTask(task -> {
             itemCooldowns.addCooldown(wand, (int)(wandCooldownSeconds * 1000));
 
             double distance = 0.0;
@@ -256,14 +256,14 @@ public class BingoPlayer implements BingoParticipant
 
             BingoGame.spawnPlatform(newLocation, 1);
 
-            BingoReloadedCore.scheduleTask(laterTask -> {
+            BingoReloaded.scheduleTask(laterTask -> {
                 BingoGame.removePlatform(newLocation, 1);
-            }, Math.max(0, platformLifetimeSeconds) * BingoReloadedCore.ONE_SECOND);
+            }, Math.max(0, platformLifetimeSeconds) * BingoReloaded.ONE_SECOND);
 
             player.playSound(player, Sound.ENTITY_SHULKER_TELEPORT, 0.8f, 1.0f);
-            player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, BingoReloadedCore.ONE_SECOND * 10, 100, false, false));
+            player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, BingoReloaded.ONE_SECOND * 10, 100, false, false));
 
-            BingoReloadedCore.incrementPlayerStat(player, BingoStatType.WAND_USES);
+            BingoReloaded.incrementPlayerStat(player, BingoStatType.WAND_USES);
         });
         return true;
     }

@@ -1,5 +1,6 @@
-package io.github.steaf23.bingoreloaded;
+package io.github.steaf23.bingoreloaded.game;
 
+import io.github.steaf23.bingoreloaded.*;
 import io.github.steaf23.bingoreloaded.data.BingoCardsData;
 import io.github.steaf23.bingoreloaded.data.BingoSettingsData;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
@@ -8,6 +9,7 @@ import io.github.steaf23.bingoreloaded.event.BingoEndedEvent;
 import io.github.steaf23.bingoreloaded.event.BingoParticipantJoinEvent;
 import io.github.steaf23.bingoreloaded.event.BingoParticipantLeaveEvent;
 import io.github.steaf23.bingoreloaded.event.BingoSettingsUpdatedEvent;
+import io.github.steaf23.bingoreloaded.game.BingoGame;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.player.TeamManager;
@@ -35,14 +37,14 @@ public class BingoSession
         this.worldName = worldName;
         this.config = config;
         this.settingsBuilder = new BingoSettingsBuilder(this);
-        settingsBuilder.fromOther(new BingoSettingsData().getSettings(config.defaultSettings));
+        settingsBuilder.fromOther(new BingoSettingsData().getSettings(config.defaultSettingsPreset));
         this.scoreboard = new BingoScoreboard(this, config.showPlayerInScoreboard);
         this.teamManager = new TeamManager(scoreboard.getTeamBoard(), this);
         this.game = null;
         this.settingsBoard = new SettingsPreviewBoard();
         settingsBoard.showSettings(settingsBuilder.view());
 
-        BingoReloadedCore.scheduleTask((t) -> {
+        BingoReloaded.scheduleTask((t) -> {
             this.teamManager.addVirtualPlayerToTeam("testPlayer", "orange");
         }, 10);
 

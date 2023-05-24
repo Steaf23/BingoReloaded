@@ -1,6 +1,6 @@
 package io.github.steaf23.bingoreloaded.event;
 
-import io.github.steaf23.bingoreloaded.BingoSession;
+import io.github.steaf23.bingoreloaded.game.BingoSession;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;

@@ -1,7 +1,6 @@
 package io.github.steaf23.bingoreloaded.util.timer;
 
-import io.github.steaf23.bingoreloaded.BingoReloadedCore;
-import io.github.steaf23.bingoreloaded.BingoReloadedExtension;
+import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.util.Message;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
@@ -27,7 +26,7 @@ public abstract class GameTimer
 
     public void start()
     {
-        this.task = Bukkit.getScheduler().runTaskTimer(BingoReloadedExtension.getPlugin(BingoReloadedExtension.class), () -> {
+        this.task = Bukkit.getScheduler().runTaskTimer(BingoReloaded.getPlugin(BingoReloaded.class), () -> {
             updateTime(time + getStep());
         }, getStartDelay(), getUpdateInterval());
     }

@@ -1,6 +1,7 @@
 package io.github.steaf23.bingoreloaded.command;
 
-import io.github.steaf23.bingoreloaded.BingoSession;
+import io.github.steaf23.bingoreloaded.game.BingoGameManager;
+import io.github.steaf23.bingoreloaded.game.BingoSession;
 import io.github.steaf23.bingoreloaded.data.BingoStatsData;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.data.ConfigData;
@@ -23,16 +24,15 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import java.util.Arrays;
 import java.util.List;
 
-public abstract class BingoCommand implements CommandExecutor
+public class BingoCommand implements CommandExecutor
 {
-
-    public abstract BingoSession getSession(Player player);
-
     private final ConfigData config;
+    private final BingoGameManager gameManager;
 
-    public BingoCommand(ConfigData config)
+    public BingoCommand(ConfigData config, BingoGameManager gameManager)
     {
         this.config = config;
+        this.gameManager = gameManager;
     }
 
     @Override
@@ -43,7 +43,7 @@ public abstract class BingoCommand implements CommandExecutor
             return false;
         }
 
-        BingoSession session = getSession(player);
+        BingoSession session = gameManager.getSession(player);
         if (session == null)
             return false;
 

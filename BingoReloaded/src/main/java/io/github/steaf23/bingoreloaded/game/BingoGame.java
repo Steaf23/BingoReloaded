@@ -1,5 +1,6 @@
-package io.github.steaf23.bingoreloaded;
+package io.github.steaf23.bingoreloaded.game;
 
+import io.github.steaf23.bingoreloaded.*;
 import io.github.steaf23.bingoreloaded.cards.BingoCard;
 import io.github.steaf23.bingoreloaded.cards.CardBuilder;
 import io.github.steaf23.bingoreloaded.data.BingoCardsData;
@@ -58,7 +59,7 @@ public class BingoGame implements GamePhase
         this.settings = session.settingsBuilder.view();
         this.deadPlayers = new HashMap<>();
         this.cardEventManager = new CardEventManager(worldName);
-        if (config.useStatistics)
+        if (config.disableStatistics)
             this.statTracker = new StatisticTracker(worldName);
         else
             this.statTracker = null;
@@ -97,7 +98,7 @@ public class BingoGame implements GamePhase
 
         // Generate cards
         BingoCard masterCard = CardBuilder.fromMode(settings.mode(), settings.size(), getTeamManager().getActiveTeams().size());
-        masterCard.generateCard(settings.card(), config.cardSeed, config.useAdvancements, config.useStatistics);
+        masterCard.generateCard(settings.card(), settings.seed(), config.disableAdvancements, config.disableStatistics);
         getTeamManager().initializeCards(masterCard);
 
         Set<BingoCard> cards = new HashSet<>();
@@ -169,9 +170,9 @@ public class BingoGame implements GamePhase
                 });
             });
         });
-        BingoReloadedCore.scheduleTask(task -> {
+        BingoReloaded.scheduleTask(task -> {
             startingTimer.start();
-        }, 1 * BingoReloadedCore.ONE_SECOND);
+        }, 1 * BingoReloaded.ONE_SECOND);
     }
 
     public void end(@Nullable BingoTeam winningTeam)
@@ -219,11 +220,11 @@ public class BingoGame implements GamePhase
 
             if (p.getTeam().equals(team))
             {
-                BingoReloadedCore.incrementPlayerStat(player, BingoStatType.WINS);
+                BingoReloaded.incrementPlayerStat(player, BingoStatType.WINS);
             }
             else
             {
-                BingoReloadedCore.incrementPlayerStat(player, BingoStatType.LOSSES);
+                BingoReloaded.incrementPlayerStat(player, BingoStatType.LOSSES);
             }
         }
         end(team);
@@ -256,7 +257,7 @@ public class BingoGame implements GamePhase
         participant.giveBingoCard();
         participant.gamePlayer().get().setGameMode(GameMode.SURVIVAL);
 
-        BingoReloadedCore.scheduleTask(task -> participant.giveEffects(settings.effects(), config.gracePeriod), BingoReloadedCore.ONE_SECOND);
+        BingoReloaded.scheduleTask(task -> participant.giveEffects(settings.effects(), config.gracePeriod), BingoReloaded.ONE_SECOND);
     }
 
     public void startDeathMatch(int countdown)
@@ -294,9 +295,9 @@ public class BingoGame implements GamePhase
             Message.sendDebug(color + "" + countdown, p.gamePlayer().get());
         }
 
-        BingoReloadedCore.scheduleTask(task -> {
+        BingoReloaded.scheduleTask(task -> {
             startDeathMatch(countdown - 1);
-        }, BingoReloadedCore.ONE_SECOND);
+        }, BingoReloaded.ONE_SECOND);
     }
 
     public void teleportPlayerAfterDeath(Player player)
@@ -370,10 +371,10 @@ public class BingoGame implements GamePhase
                     {
                         spawnPlatform(platformLocation.clone(), 5);
 
-                        BingoReloadedCore.scheduleTask(task ->
+                        BingoReloaded.scheduleTask(task ->
                         {
                             BingoGame.removePlatform(platformLocation, 5);
-                        }, (long) (Math.max(0, config.gracePeriod - 5)) * BingoReloadedCore.ONE_SECOND);
+                        }, (long) (Math.max(0, config.gracePeriod - 5)) * BingoReloaded.ONE_SECOND);
                     }
                 }
             }
@@ -390,10 +391,10 @@ public class BingoGame implements GamePhase
                     {
                         spawnPlatform(teamLocation, 5);
 
-                        BingoReloadedCore.scheduleTask(task ->
+                        BingoReloaded.scheduleTask(task ->
                         {
                             BingoGame.removePlatform(teamLocation, 5);
-                        }, (long) (Math.max(0, config.gracePeriod - 5)) * BingoReloadedCore.ONE_SECOND);
+                        }, (long) (Math.max(0, config.gracePeriod - 5)) * BingoReloaded.ONE_SECOND);
                     }
                 }
             }
@@ -406,10 +407,10 @@ public class BingoGame implements GamePhase
                 {
                     spawnPlatform(spawnLocation, 5);
 
-                    BingoReloadedCore.scheduleTask(task ->
+                    BingoReloaded.scheduleTask(task ->
                     {
                         BingoGame.removePlatform(spawnLocation, 5);
-                    }, (long) (Math.max(0, config.gracePeriod - 5)) * BingoReloadedCore.ONE_SECOND);
+                    }, (long) (Math.max(0, config.gracePeriod - 5)) * BingoReloaded.ONE_SECOND);
                 }
             }
             default ->
@@ -514,7 +515,7 @@ public class BingoGame implements GamePhase
             return;
 
         Player player = event.getParticipant().gamePlayer().get();
-        BingoReloadedCore.incrementPlayerStat(player, BingoStatType.TASKS);
+        BingoReloaded.incrementPlayerStat(player, BingoStatType.TASKS);
     }
 
     public void handlePlayerDropItem(final PlayerDropItemEvent dropEvent)
@@ -591,7 +592,7 @@ public class BingoGame implements GamePhase
 
             event.getEntity().spigot().sendMessage(teleportMsg);
             deadPlayers.put(participant.getId(), deathCoords);
-            BingoReloadedCore.scheduleTask(task -> deadPlayers.remove(participant.getId()), 60 * BingoReloadedCore.ONE_SECOND);
+            BingoReloaded.scheduleTask(task -> deadPlayers.remove(participant.getId()), 60 * BingoReloaded.ONE_SECOND);
         }
     }
 

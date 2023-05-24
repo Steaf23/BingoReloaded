@@ -1,6 +1,6 @@
 package io.github.steaf23.bingoreloaded.data;
 
-import io.github.steaf23.bingoreloaded.BingoReloadedCore;
+import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.tasks.ItemTask;
 import io.github.steaf23.bingoreloaded.tasks.TaskData;
 import org.bukkit.Material;
@@ -13,7 +13,7 @@ public class BingoCardsData
     public static final int MAX_ITEMS = 36;
     public static final int MIN_ITEMS = 1;
 
-    private final YmlDataManager data = BingoReloadedCore.createYmlDataManager("cards.yml");
+    private final YmlDataManager data = BingoReloaded.createYmlDataManager("cards.yml");
 
     public boolean removeCard(String cardName)
     {

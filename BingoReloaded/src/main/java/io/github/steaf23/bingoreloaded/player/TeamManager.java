@@ -1,7 +1,7 @@
 package io.github.steaf23.bingoreloaded.player;
 
-import io.github.steaf23.bingoreloaded.BingoReloadedCore;
-import io.github.steaf23.bingoreloaded.BingoSession;
+import io.github.steaf23.bingoreloaded.BingoReloaded;
+import io.github.steaf23.bingoreloaded.game.BingoSession;
 import io.github.steaf23.bingoreloaded.cards.BingoCard;
 import io.github.steaf23.bingoreloaded.cards.LockoutBingoCard;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
@@ -356,7 +356,7 @@ public class TeamManager
             return;
 
         // If player is leaving this game's world(s)
-        if (session.worldName.equals(BingoReloadedCore.getWorldNameOfDimension(event.getFrom())))
+        if (session.worldName.equals(BingoReloaded.getWorldNameOfDimension(event.getFrom())))
         {
             participant.getTeam().team.removeEntry(event.getPlayer().getName());
             var leaveEvent = new BingoParticipantLeaveEvent(participant);
@@ -366,7 +366,7 @@ public class TeamManager
 
         World target = event.getPlayer().getWorld();
         // If player is arriving in this world
-        if (BingoReloadedCore.getWorldNameOfDimension(target).equals(session.worldName))
+        if (BingoReloaded.getWorldNameOfDimension(target).equals(session.worldName))
         {
             participant.getTeam().team.addEntry(event.getPlayer().getName());
             var joinEvent = new BingoParticipantJoinEvent(participant);

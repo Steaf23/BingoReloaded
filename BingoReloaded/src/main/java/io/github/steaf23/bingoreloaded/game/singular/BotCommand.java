@@ -1,11 +1,10 @@
-package io.github.steaf23.brpartymode;
+package io.github.steaf23.bingoreloaded.game.singular;
 
 import io.github.steaf23.bingoreloaded.cards.BingoCard;
 import io.github.steaf23.bingoreloaded.event.BingoCardTaskCompleteEvent;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.TeamManager;
 import io.github.steaf23.bingoreloaded.player.VirtualBingoPlayer;
-import io.github.steaf23.bingoreloaded.tasks.BingoTask;
 import io.github.steaf23.bingoreloaded.util.Message;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;

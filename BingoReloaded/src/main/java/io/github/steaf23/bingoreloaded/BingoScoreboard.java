@@ -3,6 +3,7 @@ package io.github.steaf23.bingoreloaded;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.event.BingoParticipantJoinEvent;
 import io.github.steaf23.bingoreloaded.event.BingoParticipantLeaveEvent;
+import io.github.steaf23.bingoreloaded.game.BingoSession;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.player.BingoTeam;
@@ -38,7 +39,7 @@ public class BingoScoreboard
         if (!session.isRunning())
             return;
 
-        BingoReloadedCore.scheduleTask(task ->
+        BingoReloaded.scheduleTask(task ->
         {
             Objective objective = teamBoard.getObjective("item_count");
             if (objective == null)
@@ -93,7 +94,7 @@ public class BingoScoreboard
 
     public void reset()
     {
-        BingoReloadedCore.scheduleTask(task -> {
+        BingoReloaded.scheduleTask(task -> {
             for (String entry : teamBoard.getEntries())
             {
                 teamBoard.resetScores(entry);

@@ -1,7 +1,8 @@
-package io.github.steaf23.brmultimode;
+package io.github.steaf23.bingoreloaded.game.multiple;
 
 import io.github.steaf23.bingoreloaded.BingoGamemode;
-import io.github.steaf23.bingoreloaded.BingoSession;
+import io.github.steaf23.bingoreloaded.command.AutoBingoCommand;
+import io.github.steaf23.bingoreloaded.game.BingoSession;
 import io.github.steaf23.bingoreloaded.BingoSettings;
 import io.github.steaf23.bingoreloaded.BingoSettingsBuilder;
 import io.github.steaf23.bingoreloaded.cards.CardSize;
@@ -9,24 +10,22 @@ import io.github.steaf23.bingoreloaded.data.BingoCardsData;
 import io.github.steaf23.bingoreloaded.data.BingoSettingsData;
 import io.github.steaf23.bingoreloaded.gui.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
-import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.player.PlayerKit;
 import io.github.steaf23.bingoreloaded.util.Message;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Arrays;
 
-public class MultiAutoBingoCommand implements CommandExecutor
+public class MultiAutoBingoCommand implements AutoBingoCommand
 {
-    private final BingoGameManager manager;
+    private final MultiGameManager manager;
 
-    public MultiAutoBingoCommand(BingoGameManager manager)
+    public MultiAutoBingoCommand(MultiGameManager manager)
     {
         this.manager = manager;
     }
@@ -60,25 +59,25 @@ public class MultiAutoBingoCommand implements CommandExecutor
         }
 
         boolean success = switch(command)
-        {
-            case "create" -> create(worldName, extraArguments);
-            case "destroy" -> destroy(worldName);
-            case "start" -> start(worldName);
-            case "kit" -> setKit(session, settings, worldName, extraArguments);
-            case "effects" -> setEffect(session, settings, worldName, extraArguments);
-            case "card" -> setCard(settings, worldName, extraArguments);
-            case "countdown" -> setCountdown(settings, worldName, extraArguments);
-            case "duration" -> setDuration(settings, worldName, extraArguments);
-            case "team" -> setPlayerTeam(worldName, extraArguments);
-            case "teamsize" -> setTeamSize(settings, worldName, extraArguments);
-            case "gamemode" -> setGamemode(settings, worldName, extraArguments);
-            case "end" -> end(worldName);
-            case "preset" -> preset(settings, worldName, extraArguments);
-            default -> {
-                Message.log(ChatColor.RED + "Invalid command: '" + command + "' not recognized");
-                yield false;
-            }
-        };
+                {
+                    case "create" -> create(worldName, extraArguments);
+                    case "destroy" -> destroy(worldName);
+                    case "start" -> start(worldName);
+                    case "kit" -> setKit(session, settings, worldName, extraArguments);
+                    case "effects" -> setEffect(session, settings, worldName, extraArguments);
+                    case "card" -> setCard(settings, worldName, extraArguments);
+                    case "countdown" -> setCountdown(settings, worldName, extraArguments);
+                    case "duration" -> setDuration(settings, worldName, extraArguments);
+                    case "team" -> setPlayerTeam(worldName, extraArguments);
+                    case "teamsize" -> setTeamSize(settings, worldName, extraArguments);
+                    case "gamemode" -> setGamemode(settings, worldName, extraArguments);
+                    case "end" -> end(worldName);
+                    case "preset" -> preset(settings, worldName, extraArguments);
+                    default -> {
+                        Message.log(ChatColor.RED + "Invalid command: '" + command + "' not recognized");
+                        yield false;
+                    }
+                };
 
         return success;
     }
@@ -103,6 +102,7 @@ public class MultiAutoBingoCommand implements CommandExecutor
         return true;
     }
 
+    @Override
     public boolean start(String worldName)
     {
         if (manager.startGame(worldName))
@@ -117,7 +117,8 @@ public class MultiAutoBingoCommand implements CommandExecutor
         }
     }
 
-    private boolean setKit(BingoSession session, BingoSettingsBuilder settings, String worldName, String[] extraArguments)
+    @Override
+    public boolean setKit(BingoSession session, BingoSettingsBuilder settings, String worldName, String[] extraArguments)
     {
         if (extraArguments.length != 1)
         {
@@ -131,6 +132,7 @@ public class MultiAutoBingoCommand implements CommandExecutor
         return true;
     }
 
+    @Override
     public boolean setEffect(BingoSession session, BingoSettingsBuilder settings, String worldName, String[] extraArguments)
     {
         // autobingo world effect <effect_name> [true | false]
@@ -171,7 +173,8 @@ public class MultiAutoBingoCommand implements CommandExecutor
         }
     }
 
-    private boolean setCard(BingoSettingsBuilder settings, String worldName, String[] extraArguments)
+    @Override
+    public boolean setCard(BingoSettingsBuilder settings, String worldName, String[] extraArguments)
     {
         if (extraArguments.length == 0)
         {
@@ -180,7 +183,7 @@ public class MultiAutoBingoCommand implements CommandExecutor
         }
 
         String cardName = extraArguments[0];
-        int seed = extraArguments.length > 1 ? toInt(extraArguments[1], 0) : 0;
+        int seed = extraArguments.length > 1 ? AutoBingoCommand.toInt(extraArguments[1], 0) : 0;
 
         BingoCardsData cardsData = new BingoCardsData();
         if (cardsData.getCardNames().contains(cardName))
@@ -194,6 +197,7 @@ public class MultiAutoBingoCommand implements CommandExecutor
         return false;
     }
 
+    @Override
     public boolean setCountdown(BingoSettingsBuilder settings, String worldName, String[] extraArguments)
     {
         if (extraArguments.length != 1)
@@ -208,6 +212,7 @@ public class MultiAutoBingoCommand implements CommandExecutor
         return true;
     }
 
+    @Override
     public boolean setDuration(BingoSettingsBuilder settings, String worldName, String[] extraArguments)
     {
         if (extraArguments.length != 1)
@@ -216,7 +221,7 @@ public class MultiAutoBingoCommand implements CommandExecutor
             return false;
         }
 
-        int gameDuration = toInt(extraArguments[0], 0);
+        int gameDuration = AutoBingoCommand.toInt(extraArguments[0], 0);
         if (gameDuration > 0)
         {
             settings.countdownGameDuration(gameDuration);
@@ -227,6 +232,7 @@ public class MultiAutoBingoCommand implements CommandExecutor
         return true;
     }
 
+    @Override
     public boolean setPlayerTeam(String worldName, String[] extraArguments)
     {
         if (extraArguments.length != 2)
@@ -274,6 +280,7 @@ public class MultiAutoBingoCommand implements CommandExecutor
         return true;
     }
 
+    @Override
     public boolean setTeamSize(BingoSettingsBuilder settings, String worldName, String[] extraArguments)
     {
         if (extraArguments.length != 1)
@@ -282,7 +289,7 @@ public class MultiAutoBingoCommand implements CommandExecutor
             return false;
         }
 
-        int teamSize = Math.min(64, Math.max(1, toInt(extraArguments[0], 1)));
+        int teamSize = Math.min(64, Math.max(1, AutoBingoCommand.toInt(extraArguments[0], 1)));
 
         settings.maxTeamSize(teamSize);
         manager.getSession(worldName).teamManager.setMaxTeamSize(teamSize);
@@ -290,6 +297,7 @@ public class MultiAutoBingoCommand implements CommandExecutor
         return true;
     }
 
+    @Override
     public boolean setGamemode(BingoSettingsBuilder settings, String worldName, String[] extraArguments)
     {
         if (extraArguments.length == 0)
@@ -321,6 +329,7 @@ public class MultiAutoBingoCommand implements CommandExecutor
         return true;
     }
 
+    @Override
     public boolean end(String worldName)
     {
         if (manager.endGame(worldName))
@@ -335,6 +344,7 @@ public class MultiAutoBingoCommand implements CommandExecutor
         }
     }
 
+    @Override
     public boolean preset(BingoSettingsBuilder settingsBuilder, String worldName, String[] extraArguments)
     {
         if (extraArguments.length != 2)
@@ -361,23 +371,6 @@ public class MultiAutoBingoCommand implements CommandExecutor
         }
 
         return true;
-    }
-
-    /**
-     * @param in
-     * @param defaultValue
-     * @return Integer the string represents or defaultValue if a conversion failed.
-     */
-    private int toInt(String in, int defaultValue)
-    {
-        try
-        {
-            return Integer.parseInt(in);
-        }
-        catch (NumberFormatException e)
-        {
-            return defaultValue;
-        }
     }
 
     private void sendFailed(String message, String worldName)

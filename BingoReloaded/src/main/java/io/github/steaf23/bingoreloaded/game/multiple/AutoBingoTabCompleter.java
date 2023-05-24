@@ -1,4 +1,4 @@
-package io.github.steaf23.brmultimode;
+package io.github.steaf23.bingoreloaded.game.multiple;
 
 import io.github.steaf23.bingoreloaded.data.BingoCardsData;
 import io.github.steaf23.bingoreloaded.util.FlexColor;

@@ -1,6 +1,6 @@
 package io.github.steaf23.bingoreloaded.tasks.statistics;
 
-import io.github.steaf23.bingoreloaded.BingoGame;
+import io.github.steaf23.bingoreloaded.game.BingoGame;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.player.BingoTeam;

@@ -1,6 +1,6 @@
 package io.github.steaf23.bingoreloaded.player;
 
-import io.github.steaf23.bingoreloaded.BingoSession;
+import io.github.steaf23.bingoreloaded.game.BingoSession;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;

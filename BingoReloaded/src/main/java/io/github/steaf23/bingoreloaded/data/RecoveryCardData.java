@@ -1,11 +1,11 @@
 package io.github.steaf23.bingoreloaded.data;
 
-import io.github.steaf23.bingoreloaded.BingoReloadedCore;
+import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.bingoreloaded.cards.BingoCard;
 import io.github.steaf23.bingoreloaded.cards.CardBuilder;
 import io.github.steaf23.bingoreloaded.cards.CardSize;
-import io.github.steaf23.bingoreloaded.BingoGame;
+import io.github.steaf23.bingoreloaded.game.BingoGame;
 import io.github.steaf23.bingoreloaded.BingoGamemode;
 import io.github.steaf23.bingoreloaded.player.BingoTeam;
 import io.github.steaf23.bingoreloaded.player.TeamManager;
@@ -15,7 +15,7 @@ import org.bukkit.configuration.ConfigurationSection;
 @Deprecated
 public class RecoveryCardData
 {
-    private final YmlDataManager data = BingoReloadedCore.createYmlDataManager("recovered.yml");
+    private final YmlDataManager data = BingoReloaded.createYmlDataManager("recovered.yml");
 
     public boolean loadCards(BingoGame game)
     {

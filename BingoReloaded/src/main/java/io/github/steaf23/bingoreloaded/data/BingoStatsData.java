@@ -1,6 +1,6 @@
 package io.github.steaf23.bingoreloaded.data;
 
-import io.github.steaf23.bingoreloaded.BingoReloadedCore;
+import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.hologram.Hologram;
 import io.github.steaf23.bingoreloaded.util.Message;
 import net.md_5.bungee.api.ChatColor;
@@ -14,7 +14,7 @@ import java.util.UUID;
 
 public class BingoStatsData
 {
-    private final YmlDataManager data = BingoReloadedCore.createYmlDataManager("player_stats.yml");
+    private final YmlDataManager data = BingoReloaded.createYmlDataManager("player_stats.yml");
 
     public BingoStatsData()
     {

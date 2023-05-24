@@ -1,7 +1,7 @@
 package io.github.steaf23.bingoreloaded.event;
 
-import io.github.steaf23.bingoreloaded.BingoGame;
-import io.github.steaf23.bingoreloaded.BingoSession;
+import io.github.steaf23.bingoreloaded.game.BingoGame;
+import io.github.steaf23.bingoreloaded.game.BingoSession;
 import io.github.steaf23.bingoreloaded.gui.base.MenuItem;
 import io.github.steaf23.bingoreloaded.player.PlayerKit;
 import io.github.steaf23.bingoreloaded.tasks.statistics.StatisticTracker;
@@ -19,14 +19,14 @@ import java.util.function.Function;
 public class BingoEventListener implements Listener
 {
     private final Function<World, BingoSession> sessionResolver;
-    private final boolean useAdvancements;
-    private final boolean useStatistics;
+    private final boolean disableAdvancements;
+    private final boolean disableStatistics;
 
-    public BingoEventListener(Function<World, BingoSession> sessionResolver, boolean useAdvancements, boolean useStatistics)
+    public BingoEventListener(Function<World, BingoSession> sessionResolver, boolean disableAdvancements, boolean disableStatistics)
     {
         this.sessionResolver = sessionResolver;
-        this.useAdvancements = useAdvancements;
-        this.useStatistics = useStatistics;
+        this.disableAdvancements = disableAdvancements;
+        this.disableStatistics = disableStatistics;
     }
 
     private BingoSession getSession(World world)
@@ -155,7 +155,7 @@ public class BingoEventListener implements Listener
     @EventHandler
     public void handlePlayerAdvancementCompleted(final PlayerAdvancementDoneEvent event)
     {
-        if (!useAdvancements)
+        if (disableAdvancements)
             return;
 
         BingoSession session = getSession(event.getPlayer().getWorld());
@@ -214,7 +214,7 @@ public class BingoEventListener implements Listener
     @EventHandler
     public void handleStatisticIncrement(final PlayerStatisticIncrementEvent event)
     {
-        if (!useStatistics)
+        if (disableStatistics)
             return;
 
         BingoSession session = getSession(event.getPlayer().getWorld());
@@ -230,7 +230,7 @@ public class BingoEventListener implements Listener
     @EventHandler
     public void handleStatisticCompleted(final BingoStatisticCompletedEvent event)
     {
-        if (!useStatistics)
+        if (disableStatistics)
             return;
 
         BingoGame game = event.session != null ? event.session.game() : null;

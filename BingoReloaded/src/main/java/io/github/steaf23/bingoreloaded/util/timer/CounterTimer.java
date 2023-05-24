@@ -1,6 +1,6 @@
 package io.github.steaf23.bingoreloaded.util.timer;
 
-import io.github.steaf23.bingoreloaded.BingoReloadedCore;
+import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.bingoreloaded.util.TranslatedMessage;
@@ -29,7 +29,7 @@ public class CounterTimer extends GameTimer
     @Override
     public int getUpdateInterval()
     {
-        return BingoReloadedCore.ONE_SECOND;
+        return BingoReloaded.ONE_SECOND;
     }
 
     @Override

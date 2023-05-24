@@ -1,6 +1,6 @@
 package io.github.steaf23.bingoreloaded.gui.base;
 
-import io.github.steaf23.bingoreloaded.BingoReloadedCore;
+import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.util.Message;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -130,7 +130,7 @@ public abstract class MenuInventory
 
     public final void open(HumanEntity player)
     {
-        BingoReloadedCore.scheduleTask(task -> player.openInventory(inventory));
+        BingoReloaded.scheduleTask(task -> player.openInventory(inventory));
     }
 
     public final void close(HumanEntity player)
@@ -138,7 +138,7 @@ public abstract class MenuInventory
         if (parent != null)
             parent.open(player);
         else
-            BingoReloadedCore.scheduleTask(task -> player.closeInventory());
+            BingoReloaded.scheduleTask(task -> player.closeInventory());
     }
 
     public Inventory internalInventory()

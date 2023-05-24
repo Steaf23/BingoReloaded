@@ -1,6 +1,6 @@
 package io.github.steaf23.bingoreloaded.event;
 
-import io.github.steaf23.bingoreloaded.BingoSession;
+import io.github.steaf23.bingoreloaded.game.BingoSession;
 import io.github.steaf23.bingoreloaded.player.BingoTeam;
 
 import javax.annotation.Nullable;

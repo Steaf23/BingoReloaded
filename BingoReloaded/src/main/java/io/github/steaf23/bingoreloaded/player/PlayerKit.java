@@ -1,6 +1,6 @@
 package io.github.steaf23.bingoreloaded.player;
 
-import io.github.steaf23.bingoreloaded.BingoReloadedCore;
+import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.data.YmlDataManager;
 import io.github.steaf23.bingoreloaded.gui.EffectOptionFlags;
@@ -36,7 +36,7 @@ public enum PlayerKit
     public final String displayName;
     public final EnumSet<EffectOptionFlags> defaultEffects;
 
-    private static final YmlDataManager customKitData = BingoReloadedCore.createYmlDataManager("kits.yml");
+    private static final YmlDataManager customKitData = BingoReloaded.createYmlDataManager("kits.yml");
 
     PlayerKit(String configName, String displayName, EnumSet<EffectOptionFlags> defaultEffects)
     {

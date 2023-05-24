@@ -1,8 +1,8 @@
 package io.github.steaf23.bingoreloaded.gui;
 
 
-import io.github.steaf23.bingoreloaded.BingoReloadedCore;
-import io.github.steaf23.bingoreloaded.BingoSession;
+import io.github.steaf23.bingoreloaded.BingoReloaded;
+import io.github.steaf23.bingoreloaded.game.BingoSession;
 import io.github.steaf23.bingoreloaded.BingoSettingsBuilder;
 import io.github.steaf23.bingoreloaded.data.BingoCardsData;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
@@ -163,7 +163,7 @@ public class BingoMenu extends MenuInventory
                 ItemMeta meta = clickedOption.getItemMeta();
                 if (meta != null)
                 {
-                    cardSelected(meta.getDisplayName(), BingoReloadedCore.getWorldNameOfDimension(player.getWorld()));
+                    cardSelected(meta.getDisplayName(), BingoReloaded.getWorldNameOfDimension(player.getWorld()));
                 }
                 close(player);
             }

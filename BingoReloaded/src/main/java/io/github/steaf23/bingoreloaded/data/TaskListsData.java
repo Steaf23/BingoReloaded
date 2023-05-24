@@ -1,6 +1,6 @@
 package io.github.steaf23.bingoreloaded.data;
 
-import io.github.steaf23.bingoreloaded.BingoReloadedCore;
+import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.tasks.AdvancementTask;
 import io.github.steaf23.bingoreloaded.tasks.StatisticTask;
 import io.github.steaf23.bingoreloaded.tasks.TaskData;
@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
  */
 public class TaskListsData
 {
-    private final YmlDataManager data = BingoReloadedCore.createYmlDataManager("lists.yml");
+    private final YmlDataManager data = BingoReloaded.createYmlDataManager("lists.yml");
 
     public Set<TaskData> getTasks(String listName, boolean withStatistics, boolean withAdvancements)
     {

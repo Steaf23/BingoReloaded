@@ -1,12 +1,9 @@
 package io.github.steaf23.bingoreloaded.data;
 
-import io.github.steaf23.bingoreloaded.BingoReloadedCore;
-import io.github.steaf23.bingoreloaded.BingoSession;
+import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.BingoSettings;
-import io.github.steaf23.bingoreloaded.BingoSettingsBuilder;
 import io.github.steaf23.bingoreloaded.util.Message;
 
-import java.util.List;
 import java.util.Set;
 
 public class BingoSettingsData
@@ -15,7 +12,7 @@ public class BingoSettingsData
 
     public BingoSettingsData()
     {
-        this.data = BingoReloadedCore.createYmlDataManager("presets.yml");
+        this.data = BingoReloaded.createYmlDataManager("presets.yml");
     }
 
     public BingoSettings getSettings(String name)

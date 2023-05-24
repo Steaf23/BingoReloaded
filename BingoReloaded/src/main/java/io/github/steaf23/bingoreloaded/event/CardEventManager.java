@@ -1,7 +1,7 @@
 package io.github.steaf23.bingoreloaded.event;
 
-import io.github.steaf23.bingoreloaded.BingoGame;
-import io.github.steaf23.bingoreloaded.BingoSession;
+import io.github.steaf23.bingoreloaded.game.BingoGame;
+import io.github.steaf23.bingoreloaded.game.BingoSession;
 import io.github.steaf23.bingoreloaded.cards.BingoCard;
 import io.github.steaf23.bingoreloaded.cards.LockoutBingoCard;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;

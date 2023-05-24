@@ -1,30 +1,49 @@
-package io.github.steaf23.brmultimode;
+package io.github.steaf23.bingoreloaded.game.multiple;
 
-import io.github.steaf23.bingoreloaded.BingoSession;
+import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.ConfigData;
 import io.github.steaf23.bingoreloaded.event.BingoEventListener;
+import io.github.steaf23.bingoreloaded.game.BingoGameManager;
+import io.github.steaf23.bingoreloaded.game.BingoSession;
+import io.github.steaf23.bingoreloaded.gui.base.MenuEventListener;
 import io.github.steaf23.bingoreloaded.util.Message;
+import org.bukkit.Bukkit;
 import org.bukkit.World;
+import org.bukkit.entity.Player;
+import org.bukkit.event.HandlerList;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class BingoGameManager
+public class MultiGameManager implements BingoGameManager
 {
-    private final BingoEventListener listener;
+    private final BingoEventListener eventListener;
+    private final MenuEventListener menuListener;
     private Map<String, BingoSession> sessions;
     private final ConfigData config;
 
-    public BingoGameManager(ConfigData config)
+    public MultiGameManager(BingoReloaded plugin)
     {
-        this.listener = new BingoEventListener(world -> getSession(BingoGameManager.getWorldName(world)), config.useAdvancements, config.useStatistics);
+        this.config = plugin.config();
+        this.eventListener = new BingoEventListener(world -> getSession(BingoReloaded.getWorldNameOfDimension(world)), config.disableAdvancements, config.disableStatistics);
         this.sessions = new HashMap<>();
-        this.config = config;
+        this.menuListener = new MenuEventListener(view -> doesSessionExist(view.getPlayer().getWorld()));
+
+        Bukkit.getPluginManager().registerEvents(eventListener, plugin);
+        Bukkit.getPluginManager().registerEvents(menuListener, plugin);
     }
 
-    public BingoEventListener getListener()
+    @Override
+    public BingoSession getSession(Player player)
     {
-        return listener;
+        return getSession(BingoReloaded.getWorldNameOfDimension(player.getWorld()));
+    }
+
+    @Override
+    public void onDisable()
+    {
+        HandlerList.unregisterAll(eventListener);
+        HandlerList.unregisterAll(menuListener);
     }
 
     public boolean createSession(String worldName, String presetName)
@@ -106,7 +125,7 @@ public class BingoGameManager
 
     public boolean isGameWorldActive(World world)
     {
-        return isGameWorldActive(BingoGameManager.getWorldName(world));
+        return isGameWorldActive(MultiGameManager.getWorldName(world));
     }
 
     public boolean doesSessionExist(String worldName)
@@ -116,6 +135,6 @@ public class BingoGameManager
 
     public boolean doesSessionExist(World world)
     {
-        return doesSessionExist(BingoGameManager.getWorldName(world));
+        return doesSessionExist(MultiGameManager.getWorldName(world));
     }
 }
