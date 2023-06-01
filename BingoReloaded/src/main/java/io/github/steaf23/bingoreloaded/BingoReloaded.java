@@ -5,6 +5,7 @@ import io.github.steaf23.bingoreloaded.command.BingoTabCompleter;
 import io.github.steaf23.bingoreloaded.command.TeamChatCommand;
 import io.github.steaf23.bingoreloaded.data.*;
 import io.github.steaf23.bingoreloaded.command.AutoBingoCommand;
+import io.github.steaf23.bingoreloaded.data.helper.SerializablePlayer;
 import io.github.steaf23.bingoreloaded.game.BingoGameManager;
 import io.github.steaf23.bingoreloaded.game.BingoSession;
 import io.github.steaf23.bingoreloaded.game.multiple.MultiAutoBingoCommand;
@@ -50,7 +51,8 @@ public class BingoReloaded extends JavaPlugin
         saveDefaultConfig();
     }
 
-    public void onEnable(ConfigData config)
+    @Override
+    public void onEnable()
     {
         usesPlaceholderAPI = Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null;
 
@@ -61,18 +63,22 @@ public class BingoReloaded extends JavaPlugin
         ConfigurationSerialization.registerClass(BingoStatistic.class);
         ConfigurationSerialization.registerClass(CustomKit.class);
         ConfigurationSerialization.registerClass(MenuItem.class);
+        ConfigurationSerialization.registerClass(SerializablePlayer.class);
 
-        this.config = config;
+        this.config = new ConfigData();
         config.loadConfig(getConfig());
+
+        BingoTranslation.setLanguage(createYmlDataManager(config.language).getConfig(), createYmlDataManager("languages/en_us.yml").getConfig());
+        Message.log("" + ChatColor.GREEN + BingoTranslation.CHANGED_LANGUAGE.translate());
 
         this.hologramManager = new HologramManager();
 
-        AutoBingoCommand autoBingoCommand;
+        CommandExecutor autoBingoCommand;
 
         if (config.configuration == ConfigData.PluginConfiguration.SINGULAR)
         {
             this.gameManager = new SingularGameManager(this);
-            autoBingoCommand = new SimpleAutoBingoCommand((SingularGameManager)gameManager);
+            autoBingoCommand = new SimpleAutoBingoCommand(gameManager);
         }
         else
         {
@@ -83,8 +89,6 @@ public class BingoReloaded extends JavaPlugin
         registerCommand("bingo", new BingoCommand(config, gameManager), new BingoTabCompleter());
         registerCommand("autobingo", autoBingoCommand, null);
 
-        BingoTranslation.setLanguage(createYmlDataManager(config.language).getConfig(), createYmlDataManager("languages/en_us.yml").getConfig());
-        Message.log("" + ChatColor.GREEN + BingoTranslation.CHANGED_LANGUAGE.translate());
         Message.log(ChatColor.GREEN + "Enabled " + getName());
 
 //        if (RecoveryCardData.loadCards(game))

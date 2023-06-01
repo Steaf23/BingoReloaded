@@ -8,6 +8,9 @@ import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 
+/**
+ * Only 1 InfoScoreboard can exist on a single scoreboard instance due to Team limitations I don't wanna change
+ */
 public class InfoScoreboard
 {
     private final Scoreboard board;

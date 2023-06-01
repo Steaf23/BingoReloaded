@@ -1,5 +1,6 @@
 package io.github.steaf23.bingoreloaded.command;
 
+import io.github.steaf23.bingoreloaded.data.PlayerData;
 import io.github.steaf23.bingoreloaded.game.BingoGameManager;
 import io.github.steaf23.bingoreloaded.game.BingoSession;
 import io.github.steaf23.bingoreloaded.data.BingoStatsData;
@@ -36,7 +37,7 @@ public class BingoCommand implements CommandExecutor
     }
 
     @Override
-    public boolean onCommand(@NonNull CommandSender commandSender, @NonNull Command command, @NonNull String s, String[] args)
+    public boolean onCommand(@NonNull CommandSender commandSender, @NonNull Command command, @NonNull String alias, String[] args)
     {
         if (!(commandSender instanceof Player player) || !player.hasPermission("bingo.player"))
         {
@@ -55,6 +56,8 @@ public class BingoCommand implements CommandExecutor
 
         switch (args[0])
         {
+            case "save_me" -> new PlayerData().savePlayer(session, player);
+            case "load_me" -> new PlayerData().loadPlayer(session, player);
             case "join" -> session.teamManager.openTeamSelector(player, null);
             case "leave" ->
             {

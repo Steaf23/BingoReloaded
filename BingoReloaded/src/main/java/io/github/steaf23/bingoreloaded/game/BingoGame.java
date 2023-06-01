@@ -433,7 +433,7 @@ public class BingoGame implements GamePhase
 
     private Location getRandomSpawnLocation(World world)
     {
-        Vector position = Vector.getRandom().multiply(config.teleportMaxDistance);
+        Vector position = Vector.getRandom().multiply(config.teleportMaxDistance * 2).subtract(new Vector(config.teleportMaxDistance, config.teleportMaxDistance, config.teleportMaxDistance));
         Location location = new Location(world, position.getX(), world.getHighestBlockYAt(position.getBlockX(), position.getBlockZ()), position.getZ());
 
         //find a not ocean biome to start the game in
