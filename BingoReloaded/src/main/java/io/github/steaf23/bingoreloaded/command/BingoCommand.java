@@ -56,8 +56,6 @@ public class BingoCommand implements CommandExecutor
 
         switch (args[0])
         {
-            case "save_me" -> new PlayerData().savePlayer(session, player);
-            case "load_me" -> new PlayerData().loadPlayer(session, player);
             case "join" -> session.teamManager.openTeamSelector(player, null);
             case "leave" ->
             {
