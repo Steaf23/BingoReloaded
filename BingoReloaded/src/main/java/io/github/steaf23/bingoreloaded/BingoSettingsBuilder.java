@@ -1,9 +1,11 @@
 package io.github.steaf23.bingoreloaded;
 
 import io.github.steaf23.bingoreloaded.cards.CardSize;
+import io.github.steaf23.bingoreloaded.data.BingoCardsData;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.event.BingoSettingsUpdatedEvent;
-import io.github.steaf23.bingoreloaded.game.BingoSession;
+import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
+import io.github.steaf23.bingoreloaded.gameloop.PregameLobby;
 import io.github.steaf23.bingoreloaded.gui.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.player.CustomKit;
 import io.github.steaf23.bingoreloaded.player.PlayerKit;
@@ -53,6 +55,43 @@ public class BingoSettingsBuilder
         maxTeamSize = settings.maxTeamSize();
         countdownGameDuration = settings.countdownDuration();
         enableCountdown = settings.enableCountdown();
+    }
+
+    public void applyVoteResult(PregameLobby.VoteTicket voteResult)
+    {
+        switch (voteResult.gamemode)
+        {
+            case "regular_3" -> {
+                cardSize = CardSize.X3;
+                mode = BingoGamemode.REGULAR;
+            }
+            case "regular_5" -> {
+                cardSize = CardSize.X5;
+                mode = BingoGamemode.REGULAR;
+            }
+            case "complete_3" -> {
+                cardSize = CardSize.X3;
+                mode = BingoGamemode.COMPLETE;
+            }
+            case "complete_5" -> {
+                cardSize = CardSize.X5;
+                mode = BingoGamemode.COMPLETE;
+            }
+            case "lockout_3" -> {
+                cardSize = CardSize.X3;
+                mode = BingoGamemode.LOCKOUT;
+            }
+            case "lockout_5" -> {
+                cardSize = CardSize.X5;
+                mode = BingoGamemode.LOCKOUT;
+            }
+        }
+
+        if (kit != null)
+            kit = PlayerKit.fromConfig(voteResult.kit);
+
+        if (card != null && !(new BingoCardsData().getCardNames().contains(card)))
+            card = voteResult.card;
     }
 
     public BingoSettingsBuilder card(String card)

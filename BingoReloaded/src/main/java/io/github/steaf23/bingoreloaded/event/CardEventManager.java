@@ -1,7 +1,7 @@
 package io.github.steaf23.bingoreloaded.event;
 
-import io.github.steaf23.bingoreloaded.game.BingoGame;
-import io.github.steaf23.bingoreloaded.game.BingoSession;
+import io.github.steaf23.bingoreloaded.gameloop.BingoGame;
+import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.cards.BingoCard;
 import io.github.steaf23.bingoreloaded.cards.LockoutBingoCard;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
@@ -44,10 +44,13 @@ public class CardEventManager
         if (team == null)
             return;
 
+        if (!(session.phase() instanceof BingoGame runningGame))
+            return;
+
         for (BingoCard card : cards)
         {
             if (team.card.equals(card))
-                card.onPlayerAdvancementDone(event, player, session.game());
+                card.onPlayerAdvancementDone(event, player, runningGame);
         }
     }
 

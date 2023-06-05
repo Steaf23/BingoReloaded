@@ -2,11 +2,12 @@ package io.github.steaf23.bingoreloaded.gui;
 
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
-import io.github.steaf23.bingoreloaded.game.BingoSession;
+import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.BingoSettingsBuilder;
 import io.github.steaf23.bingoreloaded.data.BingoCardsData;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.data.ConfigData;
+import io.github.steaf23.bingoreloaded.gameloop.PregameLobby;
 import io.github.steaf23.bingoreloaded.gui.base.FilterType;
 import io.github.steaf23.bingoreloaded.gui.base.MenuItem;
 import io.github.steaf23.bingoreloaded.gui.base.MenuInventory;
@@ -76,8 +77,11 @@ public class BingoMenu extends MenuInventory
             }
             else if (new MenuItem(event.getCurrentItem()).isKeyEqual(VOTE))
             {
-                VoteMenu menu = new VoteMenu(this);
-                menu.open(player);
+                if (session.phase() instanceof PregameLobby lobbyPhase)
+                {
+                    VoteMenu menu = new VoteMenu(config.voteList, this, lobbyPhase);
+                    menu.open(player);
+                }
             }
             return;
         }
@@ -138,8 +142,11 @@ public class BingoMenu extends MenuInventory
         }
         else if (new MenuItem(event.getCurrentItem()).isKeyEqual(VOTE))
         {
-            VoteMenu menu = new VoteMenu(this);
-            menu.open(player);
+            if (session.phase() instanceof PregameLobby lobbyPhase)
+            {
+                VoteMenu menu = new VoteMenu(config.voteList, this, lobbyPhase);
+                menu.open(player);
+            }
         }
     }
 
@@ -219,7 +226,7 @@ public class BingoMenu extends MenuInventory
                     EXTRA
             );
 
-            if (!gameSession.isRunning())
+            if (!gameSession.isRunning() && config.useVoteSystem)
             {
                 options.addItem(VOTE.copyToSlot(8, 0));
             }
@@ -231,7 +238,7 @@ public class BingoMenu extends MenuInventory
                     LEAVE_P
             );
 
-            if (!gameSession.isRunning())
+            if (!gameSession.isRunning() && config.useVoteSystem)
             {
                 options.addItem(VOTE.copyToSlot(4, 2));
             }

@@ -1,7 +1,7 @@
 package io.github.steaf23.bingoreloaded.util;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
-import io.github.steaf23.bingoreloaded.game.BingoSession;
+import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.player.BingoTeam;
 import me.clip.placeholderapi.PlaceholderAPI;
@@ -66,6 +66,9 @@ public class Message
 
     public Message arg(@NonNull String name)
     {
+        if (name == null)
+            return this;
+
         TextComponent arg = new TextComponent();
         for (var cmp : TextComponent.fromLegacyText(name))
         {
@@ -77,6 +80,9 @@ public class Message
 
     public Message component(@NonNull BaseComponent component)
     {
+        if (component == null)
+            return this;
+
         args.add(component);
         return this;
     }

@@ -1,4 +1,4 @@
-package io.github.steaf23.bingoreloaded.game;
+package io.github.steaf23.bingoreloaded.gameloop;
 
 import io.github.steaf23.bingoreloaded.*;
 import io.github.steaf23.bingoreloaded.cards.BingoCard;
@@ -11,6 +11,7 @@ import io.github.steaf23.bingoreloaded.event.*;
 import io.github.steaf23.bingoreloaded.gui.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.item.ItemText;
 import io.github.steaf23.bingoreloaded.player.*;
+import io.github.steaf23.bingoreloaded.tasks.BingoTask;
 import io.github.steaf23.bingoreloaded.tasks.statistics.StatisticTracker;
 import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.bingoreloaded.util.PDCHelper;
@@ -48,7 +49,7 @@ public class BingoGame implements GamePhase
     private CountdownTimer startingTimer;
     private boolean hasTimerStarted;
 
-    private Material deathMatchItem;
+    private BingoTask deathMatchTask;
 
     public BingoGame(BingoSession session, ConfigData config) {
         this.session = session;
@@ -87,7 +88,7 @@ public class BingoGame implements GamePhase
                 statTracker.updateProgress();
         });
 
-        deathMatchItem = null;
+        deathMatchTask = null;
         World world = Bukkit.getWorld(getWorldName());
         if (world == null)
         {
@@ -264,14 +265,14 @@ public class BingoGame implements GamePhase
     {
         if (countdown == 0)
         {
-            deathMatchItem = new BingoCardsData().getRandomItemTask(settings.card()).material();
+            deathMatchTask = new BingoTask(new BingoCardsData().getRandomItemTask(settings.card()));
 
             for (BingoParticipant p : getTeamManager().getParticipants())
             {
                 if (p.gamePlayer().isEmpty())
                     continue;
 
-                p.showDeathMatchItem(deathMatchItem);
+                p.showDeathMatchTask(deathMatchTask);
                 Message.sendTitleMessage(
                         "" + ChatColor.BOLD + ChatColor.GOLD + "GO",
                         "" + ChatColor.DARK_PURPLE + ChatColor.ITALIC + "find the item listed in the chat to win!",
@@ -463,11 +464,6 @@ public class BingoGame implements GamePhase
                 };
     }
 
-    public void playerQuit(BingoPlayer player)
-    {
-        deadPlayers.remove(player.getId());
-    }
-
     public String getWorldName()
     {
         return worldName;
@@ -483,9 +479,9 @@ public class BingoGame implements GamePhase
         return statTracker;
     }
 
-    public Material getDeathMatchItem()
+    public BingoTask getDeathMatchTask()
     {
-        return deathMatchItem;
+        return deathMatchTask;
     }
 
 // @EventHandlers ========================================================================
@@ -613,7 +609,7 @@ public class BingoGame implements GamePhase
 
     public void handleCountdownFinished(final CountdownTimerFinishedEvent event)
     {
-        if (!event.session.game().equals(this))
+        if (!event.session.phase().equals(this))
             return;
 
         if (event.getTimer() == timer)
@@ -676,5 +672,28 @@ public class BingoGame implements GamePhase
         newLoc.setX(event.getFrom().getX());
         newLoc.setZ(event.getFrom().getZ());
         event.setTo(newLoc);
+    }
+
+    @Override
+    public void handleParticipantJoined(BingoParticipantJoinEvent event)
+    {
+        if (!(event.participant instanceof BingoPlayer player))
+            return;
+
+        player.giveEffects(settings.effects(), config.gracePeriod);
+    }
+
+    @Override
+    public void handleParticipantLeave(BingoParticipantLeaveEvent event)
+    {
+        if (!(event.participant instanceof BingoPlayer player))
+            return;
+
+        deadPlayers.remove(player.getId());
+    }
+
+    @Override
+    public void handleSettingsUpdated(BingoSettingsUpdatedEvent event)
+    {
     }
 }

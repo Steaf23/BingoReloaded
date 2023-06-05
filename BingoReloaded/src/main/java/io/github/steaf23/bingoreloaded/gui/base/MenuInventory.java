@@ -67,6 +67,7 @@ public abstract class MenuInventory
      */
     public void onItemClicked(final InventoryClickEvent event, int slotClicked, Player player, ClickType clickType)
     {
+
     }
 
     public void handleDrag(final InventoryDragEvent event)
@@ -125,7 +126,7 @@ public abstract class MenuInventory
         ItemStack stack = inventory.getItem(slot);
         if (stack == null || stack.getType().isAir()) return null;
 
-        return new MenuItem(slot, inventory.getItem(slot));
+        return new MenuItem(slot, stack);
     }
 
     public final void open(HumanEntity player)

@@ -4,14 +4,13 @@ import io.github.steaf23.bingoreloaded.command.BingoCommand;
 import io.github.steaf23.bingoreloaded.command.BingoTabCompleter;
 import io.github.steaf23.bingoreloaded.command.TeamChatCommand;
 import io.github.steaf23.bingoreloaded.data.*;
-import io.github.steaf23.bingoreloaded.command.AutoBingoCommand;
 import io.github.steaf23.bingoreloaded.data.helper.SerializablePlayer;
-import io.github.steaf23.bingoreloaded.game.BingoGameManager;
-import io.github.steaf23.bingoreloaded.game.BingoSession;
-import io.github.steaf23.bingoreloaded.game.multiple.MultiAutoBingoCommand;
-import io.github.steaf23.bingoreloaded.game.multiple.MultiGameManager;
-import io.github.steaf23.bingoreloaded.game.singular.SimpleAutoBingoCommand;
-import io.github.steaf23.bingoreloaded.game.singular.SingularGameManager;
+import io.github.steaf23.bingoreloaded.gameloop.BingoGameManager;
+import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
+import io.github.steaf23.bingoreloaded.gameloop.multiple.MultiAutoBingoCommand;
+import io.github.steaf23.bingoreloaded.gameloop.multiple.MultiGameManager;
+import io.github.steaf23.bingoreloaded.gameloop.singular.SimpleAutoBingoCommand;
+import io.github.steaf23.bingoreloaded.gameloop.singular.SingularGameManager;
 import io.github.steaf23.bingoreloaded.gui.base.MenuItem;
 import io.github.steaf23.bingoreloaded.hologram.HologramManager;
 import io.github.steaf23.bingoreloaded.player.CustomKit;
@@ -65,8 +64,7 @@ public class BingoReloaded extends JavaPlugin
         ConfigurationSerialization.registerClass(MenuItem.class);
         ConfigurationSerialization.registerClass(SerializablePlayer.class);
 
-        this.config = new ConfigData();
-        config.loadConfig(getConfig());
+        this.config = new ConfigData(getConfig());
 
         BingoTranslation.setLanguage(createYmlDataManager(config.language).getConfig(), createYmlDataManager("languages/en_us.yml").getConfig());
         Message.log("" + ChatColor.GREEN + BingoTranslation.CHANGED_LANGUAGE.translate());

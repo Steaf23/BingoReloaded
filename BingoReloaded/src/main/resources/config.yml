@@ -79,17 +79,24 @@ enableTeamChat: true # true or false
 keepScoreboardVisible: true # true or false
 
 # If true, will display all participants' names on the scoreboard under their team.
-showPlayerInScoreboard: true
+showPlayerInScoreboard: true # true or false
 
 # If true, advancements can appear on the bingo card.
-disableAdvancements: false
+disableAdvancements: false # true or false
 
 # If true, statistics can appear on the bingo card.
-disableStatistics: false
+disableStatistics: false # true or false
 
 # ==========================================================================
 #    Public Server Configuration Options
 # ==========================================================================
 
 # If this value is not an empty string it will be sent as a command to the console.
-sendCommandAfterGameEnds: "" #command to send
+sendCommandAfterGameEnds: "" # command to send
+
+# ==========================================================================
+#    Private Server Configuration Options
+# ==========================================================================
+
+# If true, returns players to their original state after the game has ended
+restorePlayersAfterGameEnds: true # true or false

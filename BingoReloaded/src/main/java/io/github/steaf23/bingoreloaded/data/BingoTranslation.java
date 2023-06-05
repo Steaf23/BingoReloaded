@@ -22,6 +22,7 @@ public enum BingoTranslation
     NO_DEATHMATCH("command.bingo.no_deathmatch"),
     DURATION("game.timer.duration"),
     TIME_LEFT("game.timer.time_left"),
+    VOTE_NO_TEAM("game.vote.no_team"),
     KIT_SELECTED("game.settings.kit_selected"),
     EFFECTS_SELECTED("game.settings.effects_selected"),
     REGULAR_SELECTED("game.settings.regular_selected"),

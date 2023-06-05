@@ -94,7 +94,13 @@ public class MenuItem extends ItemStack
                 getItemMeta().getDisplayName(),
                 getItemMeta().getLore() == null ? new String[]{""} : getItemMeta().getLore().toArray( new String[0]))
                 .setGlowing(isGlowing())
-                .setKey(getKey() == null ? "" : getKey());
+                .setKey(getKey());
+    }
+
+    public MenuItem setSlot(int newSlot)
+    {
+        this.slot = newSlot;
+        return this;
     }
 
     public MenuItem copyToSlot(int slot)
@@ -161,6 +167,11 @@ public class MenuItem extends ItemStack
      */
     public MenuItem setKey(@Nullable String key)
     {
+        if  (key == null)
+        {
+            return this;
+        }
+
         var meta = this.getItemMeta();
         var pdc = meta.getPersistentDataContainer();
         if (key.equals(""))

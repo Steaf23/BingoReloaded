@@ -1,12 +1,13 @@
 package io.github.steaf23.bingoreloaded.player;
 
-import io.github.steaf23.bingoreloaded.game.BingoGame;
+import io.github.steaf23.bingoreloaded.gameloop.BingoGame;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
-import io.github.steaf23.bingoreloaded.game.BingoSession;
+import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.data.BingoStatType;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.gui.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.item.ItemCooldownManager;
+import io.github.steaf23.bingoreloaded.tasks.BingoTask;
 import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.bingoreloaded.util.PDCHelper;
 import io.github.steaf23.bingoreloaded.util.TranslatedMessage;
@@ -197,13 +198,13 @@ public class BingoPlayer implements BingoParticipant
         }
     }
 
-    public void showDeathMatchItem(Material deathMatchItem)
+    public void showDeathMatchTask(BingoTask task)
     {
         if (gamePlayer().isEmpty())
             return;
 
-        String itemKey = deathMatchItem.isBlock() ? "block" : "item";
-        itemKey += ".minecraft." + deathMatchItem.getKey().getKey();
+        String itemKey = task.material.isBlock() ? "block" : "item";
+        itemKey += ".minecraft." + task.material.getKey().getKey();
 
         new TranslatedMessage(BingoTranslation.DEATHMATCH).color(ChatColor.GOLD)
                 .component(new TranslatableComponent(itemKey))

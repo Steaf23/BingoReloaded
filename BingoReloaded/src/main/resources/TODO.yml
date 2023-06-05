@@ -6,18 +6,20 @@ create lobby to vote for options and select teams pre-game and show leaderboards
 
 add option to send players to a location when the game ends..
 
-Add dummy player class to test stuff like lockout!
+Test lockout using new VirtualPlayer
 
 update autobingo page with all new features
 
 check if advancements are disabled and disallow them on advancement-disabled servers
 
-make verboseConsole config option to print more info as the game goes on
-
 Add config, spectator after death/defeat
-
-add /bingo getkit
 
 add team creator
 
 add Free for all (probably needs a new TeamManager)
+
+add automatic team option 
+  - add item option (suspicious stew material probably)
+  - before the game starts, try to divide random team members amongst teams of similar sizes up to max team size
+
+default people to be in automatic team when they join

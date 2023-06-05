@@ -1,7 +1,8 @@
-package io.github.steaf23.bingoreloaded.game.singular;
+package io.github.steaf23.bingoreloaded.gameloop.singular;
 
 import io.github.steaf23.bingoreloaded.cards.BingoCard;
 import io.github.steaf23.bingoreloaded.event.BingoCardTaskCompleteEvent;
+import io.github.steaf23.bingoreloaded.gameloop.BingoGame;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.TeamManager;
 import io.github.steaf23.bingoreloaded.player.VirtualBingoPlayer;
@@ -84,6 +85,9 @@ public class BotCommand implements CommandExecutor
 
     void completeTaskByPlayer(VirtualBingoPlayer player, int taskIndex)
     {
+        if (!player.getSession().isRunning())
+            return;
+
         BingoCard card = player.getTeam().card;
 
         if (taskIndex >= card.tasks.size())
@@ -92,7 +96,7 @@ public class BotCommand implements CommandExecutor
             return;
         }
 
-        card.tasks.get(taskIndex).complete(player, player.getSession().game().getGameTime());
+        card.tasks.get(taskIndex).complete(player, ((BingoGame)player.getSession().phase()).getGameTime());
         var slotEvent = new BingoCardTaskCompleteEvent(card.tasks.get(taskIndex), player, card.hasBingo(player.getTeam()));
         Bukkit.getPluginManager().callEvent(slotEvent);
     }

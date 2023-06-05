@@ -1,6 +1,7 @@
 package io.github.steaf23.bingoreloaded.player;
 
-import io.github.steaf23.bingoreloaded.game.BingoSession;
+import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
+import io.github.steaf23.bingoreloaded.tasks.BingoTask;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -61,7 +62,7 @@ public class VirtualBingoPlayer implements BingoParticipant
     }
 
     @Override
-    public void showDeathMatchItem(Material item)
+    public void showDeathMatchTask(BingoTask task)
     {
     }
 

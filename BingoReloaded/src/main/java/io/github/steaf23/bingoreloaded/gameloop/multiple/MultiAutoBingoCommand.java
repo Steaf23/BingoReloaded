@@ -1,8 +1,8 @@
-package io.github.steaf23.bingoreloaded.game.multiple;
+package io.github.steaf23.bingoreloaded.gameloop.multiple;
 
 import io.github.steaf23.bingoreloaded.BingoGamemode;
 import io.github.steaf23.bingoreloaded.command.AutoBingoCommand;
-import io.github.steaf23.bingoreloaded.game.BingoSession;
+import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.BingoSettings;
 import io.github.steaf23.bingoreloaded.BingoSettingsBuilder;
 import io.github.steaf23.bingoreloaded.cards.CardSize;

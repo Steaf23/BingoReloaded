@@ -1,6 +1,5 @@
-package io.github.steaf23.bingoreloaded.game;
+package io.github.steaf23.bingoreloaded.gameloop;
 
-import io.github.steaf23.bingoreloaded.event.BingoEventListener;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nullable;

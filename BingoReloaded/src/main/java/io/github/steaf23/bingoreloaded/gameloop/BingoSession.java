@@ -1,4 +1,4 @@
-package io.github.steaf23.bingoreloaded.game;
+package io.github.steaf23.bingoreloaded.gameloop;
 
 import io.github.steaf23.bingoreloaded.*;
 import io.github.steaf23.bingoreloaded.data.BingoCardsData;
@@ -9,7 +9,6 @@ import io.github.steaf23.bingoreloaded.event.BingoEndedEvent;
 import io.github.steaf23.bingoreloaded.event.BingoParticipantJoinEvent;
 import io.github.steaf23.bingoreloaded.event.BingoParticipantLeaveEvent;
 import io.github.steaf23.bingoreloaded.event.BingoSettingsUpdatedEvent;
-import io.github.steaf23.bingoreloaded.game.BingoGame;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.player.TeamManager;
@@ -29,8 +28,7 @@ public class BingoSession
     public final BingoScoreboard scoreboard;
     public final TeamManager teamManager;
     private final ConfigData config;
-    private BingoGame game;
-    private SettingsPreviewBoard settingsBoard;
+    private GamePhase phase;
 
     public BingoSession(String worldName, ConfigData config)
     {
@@ -40,9 +38,7 @@ public class BingoSession
         settingsBuilder.fromOther(new BingoSettingsData().getSettings(config.defaultSettingsPreset));
         this.scoreboard = new BingoScoreboard(this, config.showPlayerInScoreboard);
         this.teamManager = new TeamManager(scoreboard.getTeamBoard(), this);
-        this.game = null;
-        this.settingsBoard = new SettingsPreviewBoard();
-        settingsBoard.showSettings(settingsBuilder.view());
+        this.phase = new PregameLobby(this);
 
         BingoReloaded.scheduleTask((t) -> {
             this.teamManager.addVirtualPlayerToTeam("testPlayer", "orange");
@@ -52,12 +48,12 @@ public class BingoSession
 
     public boolean isRunning()
     {
-        return game != null;
+        return phase instanceof BingoGame;
     }
 
-    public BingoGame game()
+    public GamePhase phase()
     {
-        return game;
+        return phase;
     }
 
     public void startGame()
@@ -65,6 +61,14 @@ public class BingoSession
         if (isRunning())
         {
             return;
+        }
+
+        PregameLobby lobby = ((PregameLobby) phase);
+
+        if (config.useVoteSystem)
+        {
+            PregameLobby.VoteTicket voteResult = lobby.getVoteResult();
+            settingsBuilder.applyVoteResult(voteResult);
         }
 
         BingoCardsData cardsData = new BingoCardsData();
@@ -82,18 +86,17 @@ public class BingoSession
         }
         teamManager.updateActivePlayers();
 
-        teamManager.getParticipants().forEach(p ->
-                p.gamePlayer().ifPresent(player -> settingsBoard.clearPlayerBoard(player)));
+        scoreboard.updateTeamScores();
 
         // The game is started in the constructor
-        game = new BingoGame(this, config);
+        phase = new BingoGame(this, config);
     }
 
     public void endGame()
     {
-        if (game == null) return;
+        if (!isRunning()) return;
 
-        game.end(null);
+        ((BingoGame)phase).end(null);
     }
 
     public void removeParticipant(@NonNull BingoParticipant player)
@@ -101,7 +104,7 @@ public class BingoSession
         teamManager.removeMemberFromTeam(player);
     }
 
-    public void handleParticipantLeft(final BingoParticipantLeaveEvent event)
+    public void handleParticipantLeave(final BingoParticipantLeaveEvent event)
     {
         if (!(event.participant instanceof BingoPlayer player))
             return;
@@ -112,30 +115,21 @@ public class BingoSession
             new TranslatedMessage(BingoTranslation.LEAVE).send(player.asOnlinePlayer().get());
         }
 
-        if (game != null)
-            game.playerQuit(player);
+        phase.handleParticipantLeave(event);
     }
 
     public void handleParticipantJoined(final BingoParticipantJoinEvent event)
     {
-        if (!(event.participant instanceof BingoPlayer player))
-            return;
-
-        if (isRunning())
-            player.giveEffects(settingsBuilder.view().effects(), config.gracePeriod);
-        else
-        {
-            player.gamePlayer().ifPresent(p -> settingsBoard.applyToPlayer(p));
-        }
+        phase.handleParticipantJoined(event);
     }
 
     public void handleGameEnded(final BingoEndedEvent event)
     {
-        game = null;
+        phase = new PregameLobby(this);
     }
 
     public void handleSettingsUpdated(final BingoSettingsUpdatedEvent event)
     {
-        settingsBoard.handleSettingsUpdated(event);
+        phase.handleSettingsUpdated(event);
     }
 }

@@ -3,6 +3,9 @@ package io.github.steaf23.bingoreloaded.data;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import javax.annotation.Nullable;
+import java.sql.Array;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ConfigData
 {
@@ -62,40 +65,66 @@ public class ConfigData
         }
     }
 
+    public class VoteList
+    {
+        public final List<String> gamemodes;
+        public final List<String> kits;
+        public final List<String> cards;
+
+        public VoteList(List<String> gamemodes, List<String> kits, List<String> cards)
+        {
+            this.gamemodes = gamemodes;
+            this.kits = kits;
+            this.cards = cards;
+        }
+    }
+
     // General options
-    public String defaultWorldName;
-    public PluginConfiguration configuration;
-    public String language;
-    public boolean savePlayerStatistics;
-    public boolean useVoteSystem;
+    public final String defaultWorldName;
+    public final PluginConfiguration configuration;
+    public final String language;
+    public final boolean savePlayerStatistics;
+    public final boolean useVoteSystem;
+    public final VoteList voteList;
 
     // Gameplay options
-    public String defaultSettingsPreset;
-    public int teleportMaxDistance;
-    public PlayerTeleportStrategy playerTeleportStrategy;
-    public boolean teleportAfterDeath;
-    public int wandUp;
-    public int wandDown;
-    public double wandCooldown;
-    public int platformLifetime;
-    public int gracePeriod;
-    public boolean enableTeamChat;
-    public boolean keepScoreboardVisible;
-    public boolean showPlayerInScoreboard;
-    public boolean disableAdvancements;
-    public boolean disableStatistics;
+    public final String defaultSettingsPreset;
+    public final int teleportMaxDistance;
+    public final PlayerTeleportStrategy playerTeleportStrategy;
+    public final boolean teleportAfterDeath;
+    public final int wandUp;
+    public final int wandDown;
+    public final double wandCooldown;
+    public final int platformLifetime;
+    public final int gracePeriod;
+    public final boolean enableTeamChat;
+    public final boolean keepScoreboardVisible;
+    public final boolean showPlayerInScoreboard;
+    public final boolean disableAdvancements;
+    public final boolean disableStatistics;
 
     // Public options
-    public String sendCommandAfterGameEnded;
+    public final String sendCommandAfterGameEnded;
 
-    public void loadConfig(FileConfiguration config)
+
+    // Private options
+    //TODO: implement
+    public final boolean restorePlayerAfterGameEnds;
+
+    public ConfigData(FileConfiguration config)
     {
+        // General
         this.defaultWorldName = config.getString("defaultWorldName", "world");
         this.configuration = PluginConfiguration.fromName(config.getString("configuration", "singular"));
         this.language = "languages/" + config.getString("language", "en_us.yml");
         this.savePlayerStatistics = config.getBoolean("savePlayerStatistics", false);
         this.useVoteSystem = config.getBoolean("useVoteSystem", false);
+        this.voteList = new VoteList(
+                config.getStringList("voteList.gamemodes"),
+                config.getStringList("voteList.kits"),
+                config.getStringList("voteList.cards"));
 
+        // Gameplay
         this.defaultSettingsPreset = config.getString("defaultSettingsPreset", "default_settings");
         this.teleportMaxDistance = config.getInt("teleportMaxDistance", 1000000);
         this.playerTeleportStrategy = PlayerTeleportStrategy.fromName(config.getString("playerTeleportStrategy", "ALL"));
@@ -111,11 +140,10 @@ public class ConfigData
         this.disableAdvancements = config.getBoolean("disableAdvancements", true);
         this.disableStatistics = config.getBoolean("disableStatistics", true);
 
+        // Public
         this.sendCommandAfterGameEnded = config.getString("sendCommandAfterGameEnds", "");
-    }
 
-    public void saveConfig()
-    {
-
+        // Private
+        this.restorePlayerAfterGameEnds = config.getBoolean("restorePlayersAfterGameEnds", true);
     }
 }

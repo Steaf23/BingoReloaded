@@ -1,7 +1,7 @@
 package io.github.steaf23.bingoreloaded.cards;
 
 
-import io.github.steaf23.bingoreloaded.game.BingoGame;
+import io.github.steaf23.bingoreloaded.gameloop.BingoGame;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.BingoCardsData;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
@@ -282,11 +282,12 @@ public class BingoCard
         if (player.gamePlayer().isEmpty())
             return item;
 
-        if (game.getDeathMatchItem() != null)
+        BingoTask deathMatchTask = game.getDeathMatchTask();
+        if (deathMatchTask != null)
         {
-            if (item.getType() == game.getDeathMatchItem())
+            if (item.getType().equals(deathMatchTask.material))
             {
-                var slotEvent = new BingoCardTaskCompleteEvent(null, player, true);
+                var slotEvent = new BingoCardTaskCompleteEvent(deathMatchTask, player, true);
                 Bukkit.getPluginManager().callEvent(slotEvent);
             }
             return item;
@@ -319,7 +320,7 @@ public class BingoCard
         if (player.getTeam().outOfTheGame)
             return;
 
-        if (game.getDeathMatchItem() != null)
+        if (game.getDeathMatchTask() != null)
             return;
 
         for (BingoTask task : tasks)
@@ -347,7 +348,7 @@ public class BingoCard
         if (player.getTeam().outOfTheGame)
             return;
 
-        if (game.getDeathMatchItem() != null)
+        if (game.getDeathMatchTask() != null)
             return;
 
         for (BingoTask task : tasks)
@@ -374,7 +375,7 @@ public class BingoCard
         if (player.getTeam().outOfTheGame)
             return;
 
-        if (game.getDeathMatchItem() != null)
+        if (game.getDeathMatchTask() != null)
             return;
 
         for (BingoTask task : tasks)

@@ -1,7 +1,7 @@
 package io.github.steaf23.bingoreloaded.event;
 
-import io.github.steaf23.bingoreloaded.game.BingoGame;
-import io.github.steaf23.bingoreloaded.game.BingoSession;
+import io.github.steaf23.bingoreloaded.gameloop.BingoGame;
+import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gui.base.MenuItem;
 import io.github.steaf23.bingoreloaded.player.PlayerKit;
 import io.github.steaf23.bingoreloaded.tasks.statistics.StatisticTracker;
@@ -46,7 +46,7 @@ public class BingoEventListener implements Listener
     @EventHandler
     public void handleBingoTaskComplete(final BingoCardTaskCompleteEvent event)
     {
-        BingoGame game = event.session != null ? event.session.game() : null;
+        BingoGame game = event.session != null && event.session.isRunning() ? (BingoGame)event.session.phase() : null;
         if (game != null)
         {
             game.handleBingoTaskComplete(event);
@@ -58,7 +58,7 @@ public class BingoEventListener implements Listener
     public void handlePlayerDropItem(final PlayerDropItemEvent event)
     {
         BingoSession session = getSession(event.getPlayer().getWorld());
-        BingoGame game = session != null ? session.game() : null;
+        BingoGame game = session != null && session.isRunning() ? (BingoGame)session.phase() : null;
         if (game != null)
         {
             game.handlePlayerDropItem(event);
@@ -78,9 +78,17 @@ public class BingoEventListener implements Listener
         {
             return;
         }
-        session.teamManager.handlePlayerShowCard(event, session.game() == null ? null : session.game().getDeathMatchItem());
 
-        BingoGame game = session.game();
+        if (session.isRunning())
+        {
+            session.teamManager.handlePlayerShowCard(event, ((BingoGame)session.phase()).getDeathMatchTask());
+        }
+        else
+        {
+            session.teamManager.handlePlayerShowCard(event, null);
+        }
+
+        BingoGame game = session.isRunning() ? (BingoGame)session.phase() : null;
         if (game != null)
         {
             game.handlePlayerInteract(event);
@@ -91,7 +99,7 @@ public class BingoEventListener implements Listener
     public void handleEntityDamage(final EntityDamageEvent event)
     {
         BingoSession session = getSession(event.getEntity().getWorld());
-        BingoGame game = session != null ? session.game() : null;
+        BingoGame game = session != null && session.isRunning() ? (BingoGame)session.phase() : null;
         if (game != null)
         {
             game.handleEntityDamage(event);
@@ -102,7 +110,7 @@ public class BingoEventListener implements Listener
     public void handlePlayerDeath(final PlayerDeathEvent event)
     {
         BingoSession session = getSession(event.getEntity().getWorld());
-        BingoGame game = session != null ? session.game() : null;
+        BingoGame game = session != null && session.isRunning() ? (BingoGame)session.phase() : null;
         if (game != null)
         {
             game.handlePlayerDeath(event);
@@ -113,7 +121,7 @@ public class BingoEventListener implements Listener
     public void handlePlayerRespawn(final PlayerRespawnEvent event)
     {
         BingoSession session = getSession(event.getPlayer().getWorld());
-        BingoGame game = session != null ? session.game() : null;
+        BingoGame game = session != null && session.isRunning() ? (BingoGame)session.phase() : null;
         if (game != null)
         {
             game.handlePlayerRespawn(event);
@@ -123,7 +131,7 @@ public class BingoEventListener implements Listener
     @EventHandler
     public void handleCountdownFinished(final CountdownTimerFinishedEvent event)
     {
-        BingoGame game = event.session != null ? event.session.game() : null;
+        BingoGame game = event.session != null && event.session.isRunning() ? (BingoGame)event.session.phase() : null;
         if (game != null)
         {
             game.handleCountdownFinished(event);
@@ -148,7 +156,7 @@ public class BingoEventListener implements Listener
         if (session != null)
         {
             session.scoreboard.handlePlayerLeave(event);
-            session.handleParticipantLeft(event);
+            session.handleParticipantLeave(event);
         }
     }
 
@@ -159,7 +167,7 @@ public class BingoEventListener implements Listener
             return;
 
         BingoSession session = getSession(event.getPlayer().getWorld());
-        BingoGame game = session != null ? session.game() : null;
+        BingoGame game = session != null && session.isRunning() ? (BingoGame)session.phase() : null;
         if (game != null)
         {
             game.getCardEventManager().handlePlayerAdvancementCompleted(event, getSession(event.getPlayer().getWorld()));
@@ -170,7 +178,7 @@ public class BingoEventListener implements Listener
     public void handlePlayerPickupItem(final EntityPickupItemEvent event)
     {
         BingoSession session = getSession(event.getEntity().getWorld());
-        BingoGame game = session != null ? session.game() : null;
+        BingoGame game = session != null && session.isRunning() ? (BingoGame)session.phase() : null;
         if (game != null)
         {
             game.getCardEventManager().handlePlayerPickupItem(event, game);
@@ -181,7 +189,7 @@ public class BingoEventListener implements Listener
     public void handleInventoryClicked(final InventoryClickEvent event)
     {
         BingoSession session = getSession(event.getWhoClicked().getWorld());
-        BingoGame game = session != null ? session.game() : null;
+        BingoGame game = session != null && session.isRunning() ? (BingoGame)session.phase() : null;
         if (game != null)
         {
             game.getCardEventManager().handleInventoryClicked(event, game);
@@ -218,7 +226,7 @@ public class BingoEventListener implements Listener
             return;
 
         BingoSession session = getSession(event.getPlayer().getWorld());
-        BingoGame game = session != null ? session.game() : null;
+        BingoGame game = session != null && session.isRunning() ? (BingoGame)session.phase() : null;
         if (game != null)
         {
             StatisticTracker tracker = game.getStatisticTracker();
@@ -233,7 +241,7 @@ public class BingoEventListener implements Listener
         if (disableStatistics)
             return;
 
-        BingoGame game = event.session != null ? event.session.game() : null;
+        BingoGame game = event.session != null && event.session.isRunning() ? (BingoGame)event.session.phase() : null;
         if (game != null)
         {
             game.getCardEventManager().handleStatisticCompleted(event, game);
@@ -246,7 +254,7 @@ public class BingoEventListener implements Listener
         BingoSession session = getSession(event.getPlayer().getWorld());
         if (session.isRunning())
         {
-            session.game().handlePlayerMove(event);
+            ((BingoGame)session.phase()).handlePlayerMove(event);
         }
     }
 

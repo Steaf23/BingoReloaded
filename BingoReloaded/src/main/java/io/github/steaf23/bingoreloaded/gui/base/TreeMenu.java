@@ -20,6 +20,7 @@ public class TreeMenu extends ActionMenu
         this.options = new HashMap<>();
     }
 
+    // TODO: write check for duplicate button slots
     public TreeMenu addMenuAction(MenuItem button, MenuInventory option)
     {
         options.put(button, option);

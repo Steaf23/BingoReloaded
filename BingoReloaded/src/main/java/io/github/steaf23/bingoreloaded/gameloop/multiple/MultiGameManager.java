@@ -1,10 +1,10 @@
-package io.github.steaf23.bingoreloaded.game.multiple;
+package io.github.steaf23.bingoreloaded.gameloop.multiple;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.ConfigData;
 import io.github.steaf23.bingoreloaded.event.BingoEventListener;
-import io.github.steaf23.bingoreloaded.game.BingoGameManager;
-import io.github.steaf23.bingoreloaded.game.BingoSession;
+import io.github.steaf23.bingoreloaded.gameloop.BingoGameManager;
+import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gui.base.MenuEventListener;
 import io.github.steaf23.bingoreloaded.util.Message;
 import org.bukkit.Bukkit;

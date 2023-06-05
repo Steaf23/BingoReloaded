@@ -1,12 +1,13 @@
 package io.github.steaf23.bingoreloaded.command;
 
-import io.github.steaf23.bingoreloaded.data.PlayerData;
-import io.github.steaf23.bingoreloaded.game.BingoGameManager;
-import io.github.steaf23.bingoreloaded.game.BingoSession;
+import io.github.steaf23.bingoreloaded.gameloop.BingoGame;
+import io.github.steaf23.bingoreloaded.gameloop.BingoGameManager;
+import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.data.BingoStatsData;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.data.ConfigData;
 import io.github.steaf23.bingoreloaded.gui.BingoMenu;
+import io.github.steaf23.bingoreloaded.gui.base.ColorPickerMenu;
 import io.github.steaf23.bingoreloaded.gui.creator.BingoCreatorUI;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
@@ -22,6 +23,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
+import java.awt.*;
 import java.util.Arrays;
 import java.util.List;
 
@@ -56,6 +58,11 @@ public class BingoCommand implements CommandExecutor
 
         switch (args[0])
         {
+            case "color" -> ColorPickerMenu.open("Pick Color:   ", (color) -> {
+                Color col = color.getColor();
+                String hex = String.format("#%02X%02X%02X", col.getRed(), col.getGreen(), col.getBlue());
+                Message.sendDebug(ChatColor.of(hex) + hex, player);
+            }, player, null);
             case "join" -> session.teamManager.openTeamSelector(player, null);
             case "leave" ->
             {
@@ -88,7 +95,7 @@ public class BingoCommand implements CommandExecutor
                 {
                     BingoParticipant participant = session.teamManager.getBingoParticipant(player);
                     if (participant != null && participant instanceof BingoPlayer bingoPlayer)
-                        session.game().returnCardToPlayer(bingoPlayer);
+                        ((BingoGame)session.phase()).returnCardToPlayer(bingoPlayer);
                     return true;
                 }
             }
@@ -98,7 +105,7 @@ public class BingoCommand implements CommandExecutor
                 {
                     if (config.teleportAfterDeath)
                     {
-                        session.game().teleportPlayerAfterDeath(player);
+                        ((BingoGame)session.phase()).teleportPlayerAfterDeath(player);
                         return true;
                     }
                 }
@@ -108,12 +115,13 @@ public class BingoCommand implements CommandExecutor
                 if (!player.hasPermission("bingo.settings"))
                 {
                     return false;
-                } else if (!session.isRunning())
+                }
+                else if (!session.isRunning())
                 {
                     new TranslatedMessage(BingoTranslation.NO_DEATHMATCH).color(ChatColor.RED).send(player);
                     return false;
                 }
-                session.game().startDeathMatch(3);
+                ((BingoGame)session.phase()).startDeathMatch(3);
                 return true;
             }
             case "creator" ->
