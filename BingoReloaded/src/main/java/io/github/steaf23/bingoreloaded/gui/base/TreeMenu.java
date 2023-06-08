@@ -11,7 +11,6 @@ import java.util.Map;
 
 public class TreeMenu extends ActionMenu
 {
-    private static final MenuItem BACK = new MenuItem(0, Material.BARRIER, BingoTranslation.MENU_PREV.translate());
     private final Map<MenuItem, MenuInventory> options;
 
     public TreeMenu(int size, String title, MenuInventory parent)
@@ -31,11 +30,7 @@ public class TreeMenu extends ActionMenu
     @Override
     public void onItemClicked(InventoryClickEvent event, int slotClicked, Player player, ClickType clickType)
     {
-        if (slotClicked == BACK.getSlot())
-        {
-            close(player);
-            return;
-        }
+        super.onItemClicked(event, slotClicked, player, clickType);
 
         for (var option : options.entrySet())
         {
