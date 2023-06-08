@@ -71,7 +71,21 @@ public class TeamManager
         optionItems.add(new MenuItem(Material.NETHER_STAR, "" + ChatColor.BOLD + ChatColor.ITALIC + BingoTranslation.TEAM_AUTO.translate()).setKey("auto"));
         for (FlexColor color : FlexColor.values())
         {
-            optionItems.add(new MenuItem(color.concrete, "" + color.chatColor + ChatColor.BOLD + color.getTranslatedName()).setKey(color.name));
+            List<String> description = new ArrayList<>();
+            for (BingoTeam team : activeTeams)
+            {
+                if (!team.getName().equals(color.name))
+                {
+                    continue;
+                }
+                for (BingoParticipant participant : team.getMembers())
+                {
+                    description.add("" + ChatColor.GRAY + ChatColor.BOLD + " ┗ " + ChatColor.RESET + ChatColor.WHITE + participant.getDisplayName());
+                }
+            }
+
+            optionItems.add(new MenuItem(color.concrete, "" + color.chatColor + ChatColor.BOLD + color.getTranslatedName(),
+                    description.toArray(new String[]{})).setKey(color.name));
         }
 
         PaginatedPickerMenu teamPicker = new PaginatedPickerMenu(optionItems, BingoTranslation.OPTIONS_TEAM.translate(), parentUI, FilterType.DISPLAY_NAME)

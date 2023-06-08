@@ -29,3 +29,5 @@ don't say you left the game when switching teams
 create message for joining the automatic team
 
 add /bingo info command to see information about current game (settings mostly)
+
+bingogame exists after it ends?
