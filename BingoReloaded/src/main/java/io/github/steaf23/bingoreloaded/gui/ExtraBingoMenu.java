@@ -20,13 +20,18 @@ import java.util.List;
 public class ExtraBingoMenu extends MenuInventory
 {
     private static final int DURATION_MAX = 60;
+    private static final int TEAMSIZE_MAX = 64;
     private final BingoSettingsBuilder settings;
     private final ConfigData config;
     private final MenuItem exit = new MenuItem(36,
             Material.BARRIER, TITLE_PREFIX + BingoTranslation.MENU_PREV.translate());
-    private final MenuItem countdown = new MenuItem(2, 2,
+    private final MenuItem teamSize = new MenuItem(2, 2,
+            Material.ENDER_EYE, TITLE_PREFIX + "Maximum Team Size",
+            ChatColor.GRAY + "(When changing this setting all currently",
+            ChatColor.GRAY + "joined players will be kicked from their teams!)");
+    private final MenuItem countdown = new MenuItem(4, 1,
             Material.CLOCK, TITLE_PREFIX + "Enable Countdown Timer");
-    private final MenuItem gameDuration = new MenuItem(4, 2,
+    private final MenuItem gameDuration = new MenuItem(4, 3,
             Material.RECOVERY_COMPASS, TITLE_PREFIX + "Countdown Duration");
 
     private final MenuItem presets = new MenuItem(6, 2,
@@ -48,6 +53,25 @@ public class ExtraBingoMenu extends MenuInventory
         {
             close(player);
         }
+        else if (slotClicked == teamSize.getSlot())
+        {
+            if (clickType == ClickType.LEFT)
+            {
+                teamSize.setAmount(Math.min(TEAMSIZE_MAX, teamSize.getAmount() + 1));
+            }
+            else if (clickType == ClickType.RIGHT)
+            {
+                teamSize.setAmount(Math.max(1, teamSize.getAmount() - 1));
+            }
+
+            teamSize.setDescription(
+                    ChatColor.GRAY + "(When changing this setting all currently",
+                    ChatColor.GRAY + "joined players will be kicked from their teams!)",
+                    "§7Maximum team size set to " + teamSize.getAmount() + " players.",
+                    "§rUse the mouse buttons to increase/ decrease",
+                    "the amount of players a team can have.");
+            addItem(teamSize);
+        }
         else if (slotClicked == countdown.getSlot())
         {
             settings.enableCountdown(!view.enableCountdown());
@@ -66,7 +90,7 @@ public class ExtraBingoMenu extends MenuInventory
             }
 
             gameDuration.setDescription(
-                    "§7Timer set to " + gameDuration.getAmount() + " minute(s) for Countdown Bingo",
+                    "§7Timer set to " + gameDuration.getAmount() + " minute(s) for Countdown Bingo.",
                     "§rUse the mouse buttons to increase/ decrease",
                     "the amount of minutes that Countdown bingo will last.");
             addItem(gameDuration);
@@ -81,6 +105,7 @@ public class ExtraBingoMenu extends MenuInventory
     public void handleClose(final InventoryCloseEvent event)
     {
         settings.countdownGameDuration(gameDuration.getAmount());
+        settings.maxTeamSize(teamSize.getAmount());
         super.handleClose(event);
     }
 
@@ -88,6 +113,14 @@ public class ExtraBingoMenu extends MenuInventory
     public void handleOpen(InventoryOpenEvent event)
     {
         super.handleOpen(event);
+        teamSize.setAmount(Math.max(0, Math.min(TEAMSIZE_MAX, settings.view().maxTeamSize())));
+        teamSize.setDescription(
+                ChatColor.GRAY + "(When changing this setting all currently",
+                ChatColor.GRAY + "joined players will be kicked from their teams!)",
+                "§7Maximum team size set to " + teamSize.getAmount() + " players.",
+                "§rUse the mouse buttons to increase/ decrease",
+                "the amount of players a team can have.");
+
         gameDuration.setAmount(Math.max(0, Math.min(DURATION_MAX, settings.view().countdownDuration())));
         gameDuration.setDescription(
                 ChatColor.GRAY + "Timer set to " + gameDuration.getAmount() + " minute(s) for Countdown Bingo",
@@ -97,7 +130,7 @@ public class ExtraBingoMenu extends MenuInventory
         presets.setDescription(
                 ChatColor.GRAY + "Click to apply settings from saved presets"
         );
-        addItems(exit, gameDuration, countdown, presets);
+        addItems(exit, teamSize, gameDuration, countdown, presets);
     }
 
     public void showPresetMenu(Player player)

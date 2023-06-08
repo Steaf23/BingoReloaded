@@ -99,7 +99,7 @@ public class BingoGame implements GamePhase
 
         // Generate cards
         BingoCard masterCard = CardBuilder.fromMode(settings.mode(), settings.size(), getTeamManager().getActiveTeams().size());
-        masterCard.generateCard(settings.card(), settings.seed(), config.disableAdvancements, config.disableStatistics);
+        masterCard.generateCard(settings.card(), settings.seed(), !config.disableAdvancements, !config.disableStatistics);
         getTeamManager().initializeCards(masterCard);
 
         Set<BingoCard> cards = new HashSet<>();

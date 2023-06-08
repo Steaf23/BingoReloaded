@@ -412,13 +412,16 @@ public class TeamManager
     public void setMaxTeamSize(int maxTeamSize)
     {
         this.maxTeamSize = maxTeamSize;
-        getParticipants().forEach(p -> {
-            removeMemberFromTeam(p);
-            p.gamePlayer().ifPresent(gamePlayer -> new Message()
-                    .untranslated(BingoTranslation.TEAM_SIZE_CHANGED.translate())
-                    .color(ChatColor.RED)
-                    .send(gamePlayer));
-        });
+        if (!session.isRunning())
+        {
+            getParticipants().forEach(p -> {
+                removeMemberFromTeam(p);
+                p.gamePlayer().ifPresent(gamePlayer -> new Message()
+                        .untranslated(BingoTranslation.TEAM_SIZE_CHANGED.translate())
+                        .color(ChatColor.RED)
+                        .send(gamePlayer));
+            });
+        }
     }
 
     @Nullable
