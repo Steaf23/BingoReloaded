@@ -18,8 +18,17 @@ add team creator
 
 add Free for all (probably needs a new TeamManager)
 
-add automatic team option 
-  - add item option (suspicious stew material probably)
-  - before the game starts, try to divide random team members amongst teams of similar sizes up to max team size
-
 default people to be in automatic team when they join
+
+show what player is in which team when joining a team
+
+add card to vote menu
+close vote menu when clicking on close
+
+add maxTeamSize back into menu
+
+don't say you left the game when switching teams
+
+create message for joining the automatic team
+
+add /bingo info command to see information about current game (settings mostly)

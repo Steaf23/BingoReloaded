@@ -49,6 +49,7 @@ game:
     no_chat: "Can't toggle team chat since you aren't in a team!"
     chat_off: "&fTeam chat is now &coff&r, use {0} to enable it again." # 0: /btc
     chat_on: "&fTeam chat is now &aon&r, use {0} to disable it." # 0: /btc
+    size_changed: "The maximum team sized has been changed, please rejoin your team of choice!"
   item:
     lore: Obtain {0} of this item to complete this task! # 0: item count
     lore_advancement: "Click to learn more!"
@@ -149,6 +150,7 @@ items:
     name: "The Go-Up-Wand"
     desc: "Right-Click To Teleport Upwards! (& hold shift to go down)"
 teams:
+  auto: "Automatic"
   brown: "Brown"
   orange: "Orange"
   pink: "Pink"

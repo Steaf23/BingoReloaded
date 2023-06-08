@@ -34,6 +34,12 @@ public class BingoTeam
         return color.name;
     }
 
+    @Override
+    public String toString()
+    {
+        return getName();
+    }
+
     public FlexColor getColor()
     {
         return color;

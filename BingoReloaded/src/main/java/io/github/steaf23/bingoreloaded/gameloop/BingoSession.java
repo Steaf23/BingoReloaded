@@ -71,6 +71,8 @@ public class BingoSession
             settingsBuilder.applyVoteResult(voteResult);
         }
 
+        teamManager.addAutoPlayersToTeams();
+
         BingoCardsData cardsData = new BingoCardsData();
         BingoSettings settings = settingsBuilder.view();
         if (!cardsData.getCardNames().contains(settings.card()))

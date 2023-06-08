@@ -37,6 +37,9 @@ public class TeamManager
     private final Set<BingoTeam> activeTeams;
     private final Scoreboard teams;
 
+    // Contains all players that will join a team automatically when the game starts
+    private final Set<UUID> automaticTeamPlayers;
+
     private int maxTeamSize;
 
     public TeamManager(Scoreboard teamBoard, BingoSession session)
@@ -45,6 +48,7 @@ public class TeamManager
         this.activeTeams = new HashSet<>();
         this.teams = teamBoard;
         this.maxTeamSize = session.settingsBuilder.view().maxTeamSize();
+        this.automaticTeamPlayers  =new HashSet<>();
         createTeams();
     }
 
@@ -64,9 +68,10 @@ public class TeamManager
     public void openTeamSelector(Player player, MenuInventory parentUI)
     {
         List<MenuItem> optionItems = new ArrayList<>();
+        optionItems.add(new MenuItem(Material.NETHER_STAR, "" + ChatColor.BOLD + ChatColor.ITALIC + BingoTranslation.TEAM_AUTO.translate()).setKey("auto"));
         for (FlexColor color : FlexColor.values())
         {
-            optionItems.add(new MenuItem(color.concrete, "" + color.chatColor + ChatColor.BOLD + color.getTranslatedName()));
+            optionItems.add(new MenuItem(color.concrete, "" + color.chatColor + ChatColor.BOLD + color.getTranslatedName()).setKey(color.name));
         }
 
         PaginatedPickerMenu teamPicker = new PaginatedPickerMenu(optionItems, BingoTranslation.OPTIONS_TEAM.translate(), parentUI, FilterType.DISPLAY_NAME)
@@ -74,7 +79,13 @@ public class TeamManager
             @Override
             public void onOptionClickedDelegate(InventoryClickEvent event, MenuItem clickedOption, Player player)
             {
-                FlexColor color = FlexColor.fromConcrete(clickedOption.getType());
+                if (clickedOption.getKey().equals("auto"))
+                {
+                    addPlayerToAutoTeam(player);
+                    return;
+                }
+
+                FlexColor color = FlexColor.fromName(clickedOption.getKey());
                 if (color == null)
                     return;
 
@@ -87,7 +98,7 @@ public class TeamManager
 
     public boolean addPlayerToTeam(Player player, String teamName)
     {
-        BingoTeam bingoTeam = getTeamFromName(teamName);
+        BingoTeam bingoTeam = activateTeamFromName(teamName);
 
         if (bingoTeam == null)
         {
@@ -114,9 +125,123 @@ public class TeamManager
         return true;
     }
 
+    public boolean addPlayerToAutoTeam(Player player)
+    {
+        BingoParticipant participant = getBingoParticipant(player);
+        if (participant != null)
+            removeMemberFromTeam(participant);
+
+        automaticTeamPlayers.add(player.getUniqueId());
+
+        BingoPlayer bingoPlayer = new BingoPlayer(player, null, session);
+        var event = new BingoParticipantJoinEvent(bingoPlayer);
+        Bukkit.getPluginManager().callEvent(event);
+        return true;
+    }
+
+    public void addAutoPlayersToTeams()
+    {
+        record TeamCount(BingoTeam team, int count){};
+
+        // 1. create list sorted by how many players are missing from each team using a bit of insertion sorting...
+        List<TeamCount> counts = new ArrayList<>();
+        for (BingoTeam team : activeTeams)
+        {
+            TeamCount newCount = new TeamCount(team, team.getMembers().size());
+            if (counts.size() == 0)
+            {
+                counts.add(newCount);
+                continue;
+            }
+            int idx = 0;
+            for (TeamCount tCount : counts)
+            {
+                if (newCount.count <= tCount.count)
+                {
+                    counts.add(idx, newCount);
+                    break;
+                }
+                idx++;
+            }
+            if (idx >= counts.size())
+            {
+                counts.add(newCount);
+            }
+        }
+        Message.log("" + counts);
+
+        // 2. fill this list 1 by 1 using players from the list of queued players.
+        // To actually implement this, we need to take the team with the least amount of players,
+        //      add a player to it, and then insert it back into the list.
+        //      when the team with the least amount of players has the same amount as the biggest team, all teams have been filled.
+
+        // Since we need to remove players from this list as we are iterating, use a direct reference to the iterator.
+        for (Iterator<UUID> uuidIterator = automaticTeamPlayers.iterator(); uuidIterator.hasNext();)
+        {
+            UUID playerId = uuidIterator.next();
+            TeamCount lowest = counts.get(0);
+
+            // If our lowest count is the same as the highest count, all incomplete teams have been filled (or we only have 1 team)
+            if (lowest.count == maxTeamSize)
+            {
+                Message.log("DAFUQ? " + lowest + " " + counts.get(counts.size() - 1));
+                break;
+            }
+
+            counts.remove(0);
+
+            Player player = Bukkit.getPlayer(playerId);
+            addPlayerToTeam(player, lowest.team.getName());
+            lowest = new TeamCount(lowest.team, lowest.count + 1);
+            uuidIterator.remove();
+
+            int idx = 0;
+            for (TeamCount tCount : counts)
+            {
+                if (lowest.count <= tCount.count)
+                {
+                    counts.add(idx, lowest);
+
+                    break;
+                }
+                idx++;
+            }
+            if (idx >= counts.size())
+            {
+                counts.add(lowest);
+            }
+
+        }
+        Message.log("" + counts);
+
+        // 3. if all teams are filled but there are still players left in the auto queue, add them to new teams.
+
+        // Create the right amount of teams to allow every auto player to play.
+        // (We do not need a break condition since we create the perfect amount of teams needed)
+        for (int teamIdx = 0; teamIdx < automaticTeamPlayers.size() / maxTeamSize; teamIdx++)
+        {
+            BingoTeam team = activateAnyTeam();
+            for (int memberIdx = 0; memberIdx < maxTeamSize; memberIdx++)
+            {
+                if (automaticTeamPlayers.size() == 0)
+                {
+                    // We are done here
+                    break;
+                }
+                // It should be impossible to have the get return null, since we are checking the collections size just above here
+                UUID uuid = automaticTeamPlayers.stream().findAny().get();
+                addPlayerToTeam(Bukkit.getPlayer(uuid), team.getName());
+                automaticTeamPlayers.remove(uuid);
+            }
+        }
+
+        Message.log("Divided all players into teams!");
+        Message.log("This should be 0: " + automaticTeamPlayers.size());
+    }
+
     public boolean addVirtualPlayerToTeam(String playerName, String teamName)
     {
-        BingoTeam bingoTeam = getTeamFromName(teamName);
+        BingoTeam bingoTeam = activateTeamFromName(teamName);
 
         if (bingoTeam == null)
         {
@@ -290,14 +415,14 @@ public class TeamManager
         getParticipants().forEach(p -> {
             removeMemberFromTeam(p);
             p.gamePlayer().ifPresent(gamePlayer -> new Message()
-                    .untranslated("Team sized changed, please rejoin your team of choice!")
+                    .untranslated(BingoTranslation.TEAM_SIZE_CHANGED.translate())
                     .color(ChatColor.RED)
                     .send(gamePlayer));
         });
     }
 
     @Nullable
-    public BingoTeam getTeamFromName(String teamName)
+    public BingoTeam activateTeamFromName(String teamName)
     {
         Team team = teams.getTeam(teamName);
         FlexColor color = FlexColor.fromName(teamName);
@@ -313,8 +438,7 @@ public class TeamManager
             return null;
         }
 
-        BingoTeam bingoTeam = activateTeam(team);
-        return bingoTeam;
+        return activateTeam(team);
     }
 
     private void createTeams()
@@ -331,6 +455,34 @@ public class TeamManager
         Message.log("Successfully created 16 teams");
     }
 
+    /**
+     *
+     * @return null if all teams are already active, else the team that was just activated
+     */
+    private BingoTeam activateAnyTeam()
+    {
+        for (FlexColor col : FlexColor.values())
+        {
+            boolean active = false;
+            for (BingoTeam team : activeTeams)
+            {
+                if (team.getName().equals(col.name))
+                {
+                    active = true;
+                    break;
+                }
+            }
+
+            if (!active)
+            {
+                return activateTeamFromName(col.name);
+            }
+        }
+
+        return null;
+    }
+
+//== EventHandlers ==========================================
     public void handlePlayerJoinsServer(final PlayerJoinEvent event)
     {
         BingoParticipant participant = getBingoParticipant(event.getPlayer());
