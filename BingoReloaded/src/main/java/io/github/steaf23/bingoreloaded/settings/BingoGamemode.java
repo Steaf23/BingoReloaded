@@ -1,4 +1,4 @@
-package io.github.steaf23.bingoreloaded;
+package io.github.steaf23.bingoreloaded.settings;
 
 import org.bukkit.ChatColor;
 

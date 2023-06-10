@@ -1,1 +1,16 @@
-# presets.yml
+default_settings:
+  ==: BingoSettings
+  mode: regular
+  duration: 20
+  effects:
+    - NIGHT_VISION
+    - WATER_BREATHING
+    - FIRE_RESISTANCE
+    - NO_FALL_DAMAGE
+    - SPEED
+  size: 5
+  seed: 0
+  team_size: 5
+  kit: overpowered
+  countdown: false
+  card: default_card

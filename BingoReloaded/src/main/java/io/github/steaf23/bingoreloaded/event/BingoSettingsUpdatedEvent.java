@@ -1,7 +1,7 @@
 package io.github.steaf23.bingoreloaded.event;
 
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
-import io.github.steaf23.bingoreloaded.BingoSettings;
+import io.github.steaf23.bingoreloaded.settings.BingoSettings;
 
 public class BingoSettingsUpdatedEvent extends BingoEvent
 {

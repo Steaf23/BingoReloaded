@@ -1,16 +1,16 @@
 package io.github.steaf23.bingoreloaded.gameloop.multiple;
 
-import io.github.steaf23.bingoreloaded.BingoGamemode;
+import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
 import io.github.steaf23.bingoreloaded.command.AutoBingoCommand;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
-import io.github.steaf23.bingoreloaded.BingoSettings;
-import io.github.steaf23.bingoreloaded.BingoSettingsBuilder;
+import io.github.steaf23.bingoreloaded.settings.BingoSettings;
+import io.github.steaf23.bingoreloaded.settings.BingoSettingsBuilder;
 import io.github.steaf23.bingoreloaded.cards.CardSize;
 import io.github.steaf23.bingoreloaded.data.BingoCardsData;
 import io.github.steaf23.bingoreloaded.data.BingoSettingsData;
 import io.github.steaf23.bingoreloaded.gui.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
-import io.github.steaf23.bingoreloaded.player.PlayerKit;
+import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import io.github.steaf23.bingoreloaded.util.Message;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
@@ -274,6 +274,7 @@ public class MultiAutoBingoCommand implements AutoBingoCommand
 
         if (!session.teamManager.addPlayerToTeam(player, teamName))
         {
+            sendFailed("Player " + player + " could not be added to team " + teamName, worldName);
             return false;
         }
         sendSuccess("Player " + playerName + " added to team " + teamName + "", worldName);
@@ -292,7 +293,6 @@ public class MultiAutoBingoCommand implements AutoBingoCommand
         int teamSize = Math.min(64, Math.max(1, AutoBingoCommand.toInt(extraArguments[0], 1)));
 
         settings.maxTeamSize(teamSize);
-        manager.getSession(worldName).teamManager.setMaxTeamSize(teamSize);
         sendSuccess("Set maximum team size to " + teamSize + " players", worldName);
         return true;
     }

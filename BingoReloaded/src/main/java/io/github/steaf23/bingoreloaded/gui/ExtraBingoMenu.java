@@ -1,7 +1,7 @@
 package io.github.steaf23.bingoreloaded.gui;
 
-import io.github.steaf23.bingoreloaded.BingoSettings;
-import io.github.steaf23.bingoreloaded.BingoSettingsBuilder;
+import io.github.steaf23.bingoreloaded.settings.BingoSettings;
+import io.github.steaf23.bingoreloaded.settings.BingoSettingsBuilder;
 import io.github.steaf23.bingoreloaded.data.BingoSettingsData;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.data.ConfigData;
@@ -152,7 +152,7 @@ public class ExtraBingoMenu extends MenuInventory
                 }
                 else if (event.isRightClick())
                 {
-                    new ContextMenu("What to do with '" + clickedOption.getItemMeta().getDisplayName() + "'", this)
+                    new ContextMenu(clickedOption.getItemMeta().getDisplayName(), this)
                             .addAction("Remove", Material.BARRIER, clickType -> {
                                 settingsData.removeSettings(clickedOption.getKey());
                                 return true;
@@ -169,6 +169,12 @@ public class ExtraBingoMenu extends MenuInventory
                                     settingsData.saveSettings(input, oldSettings);
                                 }, player, this, clickedOption.getKey());
                                 return false;
+                            })
+                            .addAction(new MenuItem(Material.GLOBE_BANNER_PATTERN, TITLE_PREFIX + "Overwrite",
+                                    "This will overwrite the settings saved in ",
+                                    clickedOption.getKey() + " with the currently selected options!"), clickType -> {
+                                settingsData.saveSettings(clickedOption.getKey(), settings.view());
+                                return true;
                             })
                             .open(player);
                 }

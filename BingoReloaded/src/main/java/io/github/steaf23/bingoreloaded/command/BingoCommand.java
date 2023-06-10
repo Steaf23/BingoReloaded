@@ -11,7 +11,7 @@ import io.github.steaf23.bingoreloaded.gui.base.ColorPickerMenu;
 import io.github.steaf23.bingoreloaded.gui.creator.BingoCreatorUI;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
-import io.github.steaf23.bingoreloaded.player.PlayerKit;
+import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.bingoreloaded.util.TranslatedMessage;
 import net.md_5.bungee.api.ChatColor;

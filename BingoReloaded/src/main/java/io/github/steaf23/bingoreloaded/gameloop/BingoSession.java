@@ -12,6 +12,8 @@ import io.github.steaf23.bingoreloaded.event.BingoSettingsUpdatedEvent;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.player.TeamManager;
+import io.github.steaf23.bingoreloaded.settings.BingoSettings;
+import io.github.steaf23.bingoreloaded.settings.BingoSettingsBuilder;
 import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.bingoreloaded.util.TranslatedMessage;
 import net.md_5.bungee.api.ChatColor;
@@ -114,7 +116,8 @@ public class BingoSession
         if (player.offline().isOnline())
         {
             player.takeEffects(true);
-            new TranslatedMessage(BingoTranslation.LEAVE).send(player.asOnlinePlayer().get());
+            if (isRunning())
+                new TranslatedMessage(BingoTranslation.LEAVE).send(player.asOnlinePlayer().get());
         }
 
         phase.handleParticipantLeave(event);
@@ -133,5 +136,7 @@ public class BingoSession
     public void handleSettingsUpdated(final BingoSettingsUpdatedEvent event)
     {
         phase.handleSettingsUpdated(event);
+        teamManager.handleSettingsUpdated(event);
+        settingsBuilder.fromOther(event.getNewSettings());
     }
 }

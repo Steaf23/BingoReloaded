@@ -1,6 +1,6 @@
 package io.github.steaf23.bingoreloaded.command;
 
-import io.github.steaf23.bingoreloaded.BingoSettingsBuilder;
+import io.github.steaf23.bingoreloaded.settings.BingoSettingsBuilder;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import org.bukkit.command.CommandExecutor;
 

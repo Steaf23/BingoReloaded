@@ -3,7 +3,7 @@ package io.github.steaf23.bingoreloaded.event;
 import io.github.steaf23.bingoreloaded.gameloop.BingoGame;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gui.base.MenuItem;
-import io.github.steaf23.bingoreloaded.player.PlayerKit;
+import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import io.github.steaf23.bingoreloaded.tasks.statistics.StatisticTracker;
 import org.bukkit.World;
 import org.bukkit.event.EventHandler;

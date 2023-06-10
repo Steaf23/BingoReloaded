@@ -17,10 +17,10 @@ public class VirtualBingoPlayer implements BingoParticipant
     private final String name;
     private final BingoSession session;
 
-    VirtualBingoPlayer(String name, BingoTeam team, BingoSession session)
+    VirtualBingoPlayer(UUID id, String name, BingoTeam team, BingoSession session)
     {
         this.team = team;
-        this.id = UUID.randomUUID();
+        this.id = id;
         this.name = name;
         this.session = session;
     }
@@ -58,7 +58,7 @@ public class VirtualBingoPlayer implements BingoParticipant
     @Override
     public String getDisplayName()
     {
-        return "[" + ChatColor.LIGHT_PURPLE + ChatColor.ITALIC + "BOT" + ChatColor.RESET + "] " + ChatColor.GRAY + name + ChatColor.RESET;
+        return ChatColor.WHITE + "[" + ChatColor.LIGHT_PURPLE + ChatColor.ITALIC + "BOT" + ChatColor.RESET + ChatColor.WHITE + "] " + ChatColor.GRAY + name + ChatColor.RESET + "";
     }
 
     @Override

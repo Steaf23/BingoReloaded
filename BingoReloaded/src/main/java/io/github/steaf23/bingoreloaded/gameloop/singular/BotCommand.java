@@ -16,6 +16,7 @@ import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import javax.annotation.Nullable;
+import java.util.UUID;
 
 public class BotCommand implements CommandExecutor
 {
@@ -41,46 +42,35 @@ public class BotCommand implements CommandExecutor
 
         switch (args[0])
         {
-            case "add":
+            case "add10" ->
+            {
+                for (int i = 0; i < 10; i++)
+                {
+                    String playerName = "testPlayer_" + i;
+                    String teamName = args[1];
+                    teamManager.addVirtualPlayerToTeam(playerName, teamName);
+                }
+            }
+            case "add" ->
             {
                 String playerName = args[1];
                 String teamName = args[2];
                 teamManager.addVirtualPlayerToTeam(playerName, teamName);
-                break;
             }
-            case "remove":
+            case "remove" ->
             {
                 String playerName = args[1];
-                teamManager.removeMemberFromTeam(getParticipantFromName(playerName));
-                break;
+                teamManager.removeMemberFromTeam(teamManager.getVirtualPlayerFromName(playerName));
             }
-            case "complete":
+            case "complete" ->
             {
-                VirtualBingoPlayer virtualPlayer = getParticipantFromName(args[1]);
+                VirtualBingoPlayer virtualPlayer = teamManager.getVirtualPlayerFromName(args[1]);
                 int taskIndex = Integer.parseInt(args[2]);
                 completeTaskByPlayer(virtualPlayer, taskIndex);
             }
         }
         Message.log("BEEP BOOP");
         return true;
-    }
-
-    @Nullable
-    public VirtualBingoPlayer getParticipantFromName(String playerName)
-    {
-        for (BingoParticipant participant : teamManager.getParticipants())
-        {
-            if (!(participant instanceof VirtualBingoPlayer virtualPlayer))
-            {
-                continue;
-            }
-
-            if (virtualPlayer.getName().equals(playerName))
-            {
-                return virtualPlayer;
-            }
-        }
-        return null;
     }
 
     void completeTaskByPlayer(VirtualBingoPlayer player, int taskIndex)

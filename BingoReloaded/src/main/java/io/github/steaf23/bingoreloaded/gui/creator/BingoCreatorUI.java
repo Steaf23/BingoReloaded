@@ -164,7 +164,7 @@ public class BingoCreatorUI extends MenuInventory
 
     public void createCardContext(String cardName, Player player, MenuInventory parent)
     {
-        new ContextMenu("What to do with '" + cardName + "'", parent)
+        new ContextMenu(cardName, parent)
                 .addAction("Remove", Material.BARRIER, (clickType) -> {
                     cardsData.removeCard(cardName);
                     return true;

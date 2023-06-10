@@ -1,10 +1,11 @@
-package io.github.steaf23.bingoreloaded.player;
+package io.github.steaf23.bingoreloaded.settings;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.data.YmlDataManager;
 import io.github.steaf23.bingoreloaded.gui.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.gui.base.MenuItem;
+import io.github.steaf23.bingoreloaded.player.CustomKit;
 import io.github.steaf23.bingoreloaded.util.FlexColor;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;

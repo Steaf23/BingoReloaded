@@ -1,6 +1,6 @@
 package io.github.steaf23.bingoreloaded.gameloop;
 
-import io.github.steaf23.bingoreloaded.SettingsPreviewBoard;
+import io.github.steaf23.bingoreloaded.settings.SettingsPreviewBoard;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.event.BingoParticipantJoinEvent;
 import io.github.steaf23.bingoreloaded.event.BingoParticipantLeaveEvent;

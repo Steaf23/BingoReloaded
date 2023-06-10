@@ -1,6 +1,6 @@
 package io.github.steaf23.bingoreloaded.cards;
 
-import io.github.steaf23.bingoreloaded.BingoGamemode;
+import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
 
 public class CardBuilder
 {
