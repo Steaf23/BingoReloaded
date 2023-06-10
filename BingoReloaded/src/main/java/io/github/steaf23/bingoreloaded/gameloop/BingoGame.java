@@ -37,6 +37,9 @@ import org.bukkit.util.Vector;
 import javax.annotation.Nullable;
 import java.util.*;
 
+import static io.github.steaf23.bingoreloaded.util.MaterialHelper.isArmor;
+import static io.github.steaf23.bingoreloaded.util.MaterialHelper.isTool;
+
 public class BingoGame implements GamePhase
 {
     private final BingoSession session;
@@ -675,6 +678,18 @@ public class BingoGame implements GamePhase
         newLoc.setX(event.getFrom().getX());
         newLoc.setZ(event.getFrom().getZ());
         event.setTo(newLoc);
+    }
+
+    public void handlePlayerItemDamaged(final PlayerItemDamageEvent event)
+    {
+        if (config.disableDurability) {
+            // Only disable durability for tools and armor due to some advancements being dependent on durability
+            // decreasing, for example "this boat has legs" https://bugs.mojang.com/browse/MC-183764
+            Material itemType = event.getItem().getType();
+            if (isTool(itemType) || isArmor(itemType)) {
+                event.setCancelled(true);
+            }
+        }
     }
 
     @Override

@@ -61,6 +61,9 @@ playerTeleportStrategy: ALL
 #   that can be used to teleport them back.
 teleportBackAfterDeathMessage: true  # true or false
 
+# If true, the game will disable durability for tools and armor while playing the game
+disableDurability: false  # true or false
+
 # Distances to teleport a player that uses the Go-Up-Wand
 GoUpWand:
   upDistance: 75 # teleport up distance
