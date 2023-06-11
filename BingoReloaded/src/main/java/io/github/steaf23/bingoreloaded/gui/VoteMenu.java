@@ -104,7 +104,7 @@ public class VoteMenu extends TreeMenu
                 });
                 itemIndex++;
             }
-            if (voteList.kits.contains("hardcore"))
+            if (voteList.kits.contains("normal"))
             {
                 kitOptions.addAction(new MenuItem(itemIndex, Material.YELLOW_DYE,
                         PlayerKit.NORMAL.displayName,
@@ -113,7 +113,7 @@ public class VoteMenu extends TreeMenu
                 });
                 itemIndex++;
             }
-            if (voteList.kits.contains("hardcore"))
+            if (voteList.kits.contains("overpowered"))
             {
                 kitOptions.addAction(new MenuItem(itemIndex, Material.PURPLE_DYE,
                         PlayerKit.OVERPOWERED.displayName,
@@ -122,7 +122,7 @@ public class VoteMenu extends TreeMenu
                 });
                 itemIndex++;
             }
-            if (voteList.kits.contains("hardcore"))
+            if (voteList.kits.contains("reloaded"))
             {
                 kitOptions.addAction(new MenuItem(itemIndex, Material.CYAN_DYE,
                         PlayerKit.RELOADED.displayName,
@@ -133,36 +133,33 @@ public class VoteMenu extends TreeMenu
             }
 
             BiConsumer<PlayerKit, Integer> addCustomKit = (kit, slot) -> {
-                if (PlayerKit.getCustomKit(kit) != null)
-                {
-                    kitOptions.addAction(new MenuItem(slot, Material.LIME_DYE,
-                            kit.displayName).setGlowing(true), (player) -> {
-                        lobby.voteKit(kit.configName, player);
-                    });
-                }
+                kitOptions.addAction(new MenuItem(slot, Material.GRAY_DYE,
+                        kit.displayName).setGlowing(true), (player) -> {
+                    lobby.voteKit(kit.configName, player);
+                });
             };
 
-            if (voteList.kits.contains("custom_1"))
+            if (voteList.kits.contains("custom_1") && PlayerKit.getCustomKit(PlayerKit.CUSTOM_1) != null)
             {
                 addCustomKit.accept(PlayerKit.CUSTOM_1, itemIndex);
                 itemIndex++;
             }
-            if (voteList.kits.contains("custom_2"))
+            if (voteList.kits.contains("custom_2") && PlayerKit.getCustomKit(PlayerKit.CUSTOM_2) != null)
             {
                 addCustomKit.accept(PlayerKit.CUSTOM_2, itemIndex);
                 itemIndex++;
             }
-            if (voteList.kits.contains("custom_3"))
+            if (voteList.kits.contains("custom_3") && PlayerKit.getCustomKit(PlayerKit.CUSTOM_3) != null)
             {
                 addCustomKit.accept(PlayerKit.CUSTOM_3, itemIndex);
                 itemIndex++;
             }
-            if (voteList.kits.contains("custom_4"))
+            if (voteList.kits.contains("custom_4") && PlayerKit.getCustomKit(PlayerKit.CUSTOM_4) != null)
             {
                 addCustomKit.accept(PlayerKit.CUSTOM_4, itemIndex);
                 itemIndex++;
             }
-            if (voteList.kits.contains("custom_5"))
+            if (voteList.kits.contains("custom_5") && PlayerKit.getCustomKit(PlayerKit.CUSTOM_5) != null)
             {
                 addCustomKit.accept(PlayerKit.CUSTOM_5, itemIndex);
                 itemIndex++;

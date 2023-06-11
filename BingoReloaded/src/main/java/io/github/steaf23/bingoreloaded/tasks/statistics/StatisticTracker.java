@@ -75,7 +75,7 @@ public class StatisticTracker
             return;
 
         BingoParticipant player = game.getTeamManager().getBingoParticipant(event.getPlayer());
-        if (player == null || !player.gamePlayer().isPresent())
+        if (player == null || !player.sessionPlayer().isPresent())
             return;
 
         BingoTeam team = player.getTeam();

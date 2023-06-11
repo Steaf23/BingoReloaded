@@ -28,7 +28,7 @@ public final class ColorPickerMenu extends MenuInventory
 
     private ColorPickerMenu(String title, Consumer<ChatColor> result, MenuInventory parent)
     {
-        super(54, title + ChatColor.BLACK + " (" + ChatColor.BOLD + ChatColor.WHITE + "████" + ChatColor.RESET + ChatColor.BLACK + ")", parent);
+        super(54, title, parent);
         this.result = result;
         this.hueItems = new ArrayList<>();
 

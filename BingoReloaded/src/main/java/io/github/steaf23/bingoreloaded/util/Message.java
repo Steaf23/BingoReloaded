@@ -203,9 +203,9 @@ public class Message
 
         session.teamManager.getParticipants().forEach( p ->
         {
-            if (p.gamePlayer().isPresent())
+            if (p.sessionPlayer().isPresent())
             {
-                send(p.gamePlayer().get());
+                send(p.sessionPlayer().get());
             }
         });
     }

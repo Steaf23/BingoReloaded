@@ -186,7 +186,7 @@ public class BingoCreatorUI extends MenuInventory
     {
         TaskListsData listsData = cardsData.lists();
 
-        new ContextMenu("What to do with '" + listName + "'", parent)
+        new ContextMenu(listName, parent)
                 .addAction("Remove", Material.BARRIER, (clickType) -> {
                     listsData.removeList(listName);
                     return true;

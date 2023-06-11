@@ -129,7 +129,7 @@ public class BingoTask
                 add(ChatColor.ITALIC);
             }};
             ItemText[] desc = BingoTranslation.COMPLETED_LORE.asItemText(modifiers,
-                    new ItemText(completedBy.get().gamePlayer().get().getDisplayName(),
+                    new ItemText(completedBy.get().getDisplayName(),
                             completedBy.get().getTeam().getColor().chatColor, ChatColor.BOLD),
                     new ItemText(timeString, ChatColor.GOLD));
 
@@ -169,7 +169,7 @@ public class BingoTask
         pdcData.set(getTaskDataKey("voided"), PersistentDataType.BYTE, (byte)(voided ? 1 : 0));
         pdcData.set(getTaskDataKey("completed_at"), PersistentDataType.LONG, completedAt);
         if (completedBy.isPresent())
-            pdcData.set(getTaskDataKey("completed_by"), PersistentDataType.STRING, completedBy.get().gamePlayer().get().getUniqueId().toString());
+            pdcData.set(getTaskDataKey("completed_by"), PersistentDataType.STRING, completedBy.get().getId().toString());
         else
             pdcData.set(getTaskDataKey("completed_by"), PersistentDataType.STRING, "");
 
@@ -189,11 +189,11 @@ public class BingoTask
         PersistentDataContainer pdcData = in.getItemMeta().getPersistentDataContainer();
 
         boolean voided = pdcData.getOrDefault(getTaskDataKey("voided"), PersistentDataType.BYTE, (byte)0) != 0;
-        UUID completedBy = null;
+        UUID completedByUUID = null;
         String idStr = pdcData.getOrDefault(getTaskDataKey("completed_by"), PersistentDataType.STRING, "");
         long timeStr = pdcData.getOrDefault(getTaskDataKey("completed_at"), PersistentDataType.LONG, -1L);
         if (idStr != "")
-            completedBy = UUID.fromString(idStr);
+            completedByUUID = UUID.fromString(idStr);
 
         String typeStr = pdcData.getOrDefault(getTaskDataKey("type"), PersistentDataType.STRING, "");
         TaskType type;
@@ -213,6 +213,7 @@ public class BingoTask
 
         task.voided = voided;
         task.completedAt = timeStr;
+        //TODO: implement completedBy deserialization (need access to teamManager to get participant object).
 
         return task;
     }
@@ -222,12 +223,12 @@ public class BingoTask
         return PDCHelper.createKey("task." + property);
     }
 
-    public boolean complete(BingoParticipant player, long gameTime)
+    public boolean complete(BingoParticipant participant, long gameTime)
     {
         if (completedBy.isPresent())
             return false;
 
-        completedBy = Optional.of(player);
+        completedBy = Optional.of(participant);
         completedAt = gameTime;
         return true;
     }

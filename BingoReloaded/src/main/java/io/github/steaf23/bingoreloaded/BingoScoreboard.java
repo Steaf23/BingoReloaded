@@ -1,8 +1,8 @@
 package io.github.steaf23.bingoreloaded;
 
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
-import io.github.steaf23.bingoreloaded.event.BingoParticipantJoinEvent;
-import io.github.steaf23.bingoreloaded.event.BingoParticipantLeaveEvent;
+import io.github.steaf23.bingoreloaded.event.PlayerJoinedSessionWorldEvent;
+import io.github.steaf23.bingoreloaded.event.PlayerLeftSessionWorldEvent;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
@@ -88,7 +88,7 @@ public class BingoScoreboard
         for (BingoParticipant p : teamManager.getParticipants())
         {
             if (p instanceof BingoPlayer bingoPlayer)
-                updatePlayerScoreboard(bingoPlayer);
+                bingoPlayer.sessionPlayer().ifPresent(visualBoard::applyToPlayer);
         }
     }
 
@@ -102,8 +102,10 @@ public class BingoScoreboard
 
             for (BingoParticipant p : session.teamManager.getParticipants())
             {
-                if (p.gamePlayer().isPresent())
-                    visualBoard.clearPlayerBoard(p.gamePlayer().get());
+                if (p instanceof BingoPlayer bingoPlayer)
+                {
+                    bingoPlayer.sessionPlayer().ifPresent(visualBoard::clearPlayerBoard);
+                }
             }
 
             updateTeamScores();
@@ -115,32 +117,13 @@ public class BingoScoreboard
         return teamBoard;
     }
 
-    public void handlePlayerJoin(final BingoParticipantJoinEvent event)
+    public void handlePlayerJoin(final PlayerJoinedSessionWorldEvent event)
     {
-        if (event.participant instanceof BingoPlayer player)
-        {
-            updatePlayerScoreboard(player);
-        }
+        visualBoard.applyToPlayer(event.getPlayer());
     }
 
-    public void handlePlayerLeave(final BingoParticipantLeaveEvent event)
+    public void handlePlayerLeave(final PlayerLeftSessionWorldEvent event)
     {
-        if (event.participant instanceof BingoPlayer player)
-        {
-            updatePlayerScoreboard(player);
-        }
-    }
-
-    private void updatePlayerScoreboard(BingoPlayer player)
-    {
-        if (player.gamePlayer().isPresent())
-        {
-            if (player.getSession().isRunning())
-                visualBoard.applyToPlayer(player.gamePlayer().get());
-        }
-        else if (player.asOnlinePlayer().isPresent() && player.asOnlinePlayer().get().getScoreboard().equals(teamBoard))
-        {
-            visualBoard.clearPlayerBoard(player.asOnlinePlayer().get());
-        }
+        visualBoard.clearPlayerBoard(event.getPlayer());
     }
 }

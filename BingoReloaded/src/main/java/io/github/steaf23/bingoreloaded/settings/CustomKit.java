@@ -1,8 +1,7 @@
-package io.github.steaf23.bingoreloaded.player;
+package io.github.steaf23.bingoreloaded.settings;
 
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.gui.base.MenuItem;
-import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.entity.Player;

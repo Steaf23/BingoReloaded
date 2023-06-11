@@ -5,18 +5,24 @@ import io.github.steaf23.bingoreloaded.data.BingoCardsData;
 import io.github.steaf23.bingoreloaded.data.BingoSettingsData;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.data.ConfigData;
-import io.github.steaf23.bingoreloaded.event.BingoEndedEvent;
-import io.github.steaf23.bingoreloaded.event.BingoParticipantJoinEvent;
-import io.github.steaf23.bingoreloaded.event.BingoParticipantLeaveEvent;
-import io.github.steaf23.bingoreloaded.event.BingoSettingsUpdatedEvent;
+import io.github.steaf23.bingoreloaded.event.*;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.player.TeamManager;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
 import io.github.steaf23.bingoreloaded.settings.BingoSettingsBuilder;
+import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.bingoreloaded.util.TranslatedMessage;
 import net.md_5.bungee.api.ChatColor;
+import org.bukkit.Bukkit;
+import org.bukkit.World;
+import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.potion.PotionEffectType;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
@@ -40,12 +46,20 @@ public class BingoSession
         settingsBuilder.fromOther(new BingoSettingsData().getSettings(config.defaultSettingsPreset));
         this.scoreboard = new BingoScoreboard(this, config.showPlayerInScoreboard);
         this.teamManager = new TeamManager(scoreboard.getTeamBoard(), this);
-        this.phase = new PregameLobby(this);
+        this.phase = new PregameLobby(this, config);
 
         BingoReloaded.scheduleTask((t) -> {
             this.teamManager.addVirtualPlayerToTeam("testPlayer", "orange");
         }, 10);
 
+        BingoReloaded.scheduleTask((t) -> {
+            World world = Bukkit.getWorld(worldName);
+            for (Player p : world.getPlayers())
+            {
+                var playerJoinEvent = new PlayerJoinedSessionWorldEvent(p, this);
+                Bukkit.getPluginManager().callEvent(playerJoinEvent);
+            }
+        }, 10);
     }
 
     public boolean isRunning()
@@ -67,10 +81,12 @@ public class BingoSession
 
         PregameLobby lobby = ((PregameLobby) phase);
 
+        BingoSettingsBuilder gameSettings = null;
+
         if (config.useVoteSystem)
         {
             PregameLobby.VoteTicket voteResult = lobby.getVoteResult();
-            settingsBuilder.applyVoteResult(voteResult);
+            gameSettings = settingsBuilder.getVoteResult(voteResult);
         }
 
         teamManager.addAutoPlayersToTeams();
@@ -91,9 +107,8 @@ public class BingoSession
         teamManager.updateActivePlayers();
 
         scoreboard.updateTeamScores();
-
         // The game is started in the constructor
-        phase = new BingoGame(this, config);
+        phase = new BingoGame(this, gameSettings == null ? settings : gameSettings.view(), config);
     }
 
     public void endGame()
@@ -108,29 +123,9 @@ public class BingoSession
         teamManager.removeMemberFromTeam(player);
     }
 
-    public void handleParticipantLeave(final BingoParticipantLeaveEvent event)
-    {
-        if (!(event.participant instanceof BingoPlayer player))
-            return;
-
-        if (player.offline().isOnline())
-        {
-            player.takeEffects(true);
-            if (isRunning())
-                new TranslatedMessage(BingoTranslation.LEAVE).send(player.asOnlinePlayer().get());
-        }
-
-        phase.handleParticipantLeave(event);
-    }
-
-    public void handleParticipantJoined(final BingoParticipantJoinEvent event)
-    {
-        phase.handleParticipantJoined(event);
-    }
-
     public void handleGameEnded(final BingoEndedEvent event)
     {
-        phase = new PregameLobby(this);
+        phase = new PregameLobby(this, config);
     }
 
     public void handleSettingsUpdated(final BingoSettingsUpdatedEvent event)
@@ -138,5 +133,73 @@ public class BingoSession
         phase.handleSettingsUpdated(event);
         teamManager.handleSettingsUpdated(event);
         settingsBuilder.fromOther(event.getNewSettings());
+    }
+
+    /**
+     * Used to reset player's scoreboard when leaving this world
+     * @param event
+     */
+    public void handlePlayerChangedWorld(final PlayerChangedWorldEvent event)
+    {
+        String sourceWorldName = BingoReloaded.getWorldNameOfDimension(event.getFrom());
+        String targetWorldName = BingoReloaded.getWorldNameOfDimension(event.getPlayer().getWorld());
+
+        // If player is leaving this game's world
+        if (sourceWorldName.equals(this.worldName))
+        {
+            if (!targetWorldName.equals(this.worldName))
+            {
+                var leftWorldEvent = new PlayerLeftSessionWorldEvent(event.getPlayer(), this);
+                Bukkit.getPluginManager().callEvent(leftWorldEvent);
+            }
+        }
+        // If player is arriving in this world
+        else if (targetWorldName.equals(this.worldName))
+        {
+            if (!sourceWorldName.equals(this.worldName))
+            {
+                var joinedWorldEvent = new PlayerJoinedSessionWorldEvent(event.getPlayer(), this);
+                Bukkit.getPluginManager().callEvent(joinedWorldEvent);
+            }
+        }
+    }
+
+    public void handlePlayerJoinsServer(final PlayerJoinEvent event)
+    {
+        var joinedWorldEvent = new PlayerJoinedSessionWorldEvent(event.getPlayer(), this);
+        Bukkit.getPluginManager().callEvent(joinedWorldEvent);
+    }
+
+    public void handlePlayerQuitsServer(final PlayerQuitEvent event)
+    {
+        var leftWorldEvent = new PlayerLeftSessionWorldEvent(event.getPlayer(), this);
+        Bukkit.getPluginManager().callEvent(leftWorldEvent);
+    }
+
+    public void handlePlayerDropItem(final PlayerDropItemEvent dropEvent)
+    {
+        if (PlayerKit.CARD_ITEM.isKeyEqual(dropEvent.getItemDrop().getItemStack()) ||
+                PlayerKit.WAND_ITEM.isKeyEqual(dropEvent.getItemDrop().getItemStack()) ||
+                PlayerKit.VOTE_ITEM.isKeyEqual(dropEvent.getItemDrop().getItemStack()) ||
+                PlayerKit.TEAM_ITEM.isKeyEqual(dropEvent.getItemDrop().getItemStack()))
+        {
+            dropEvent.setCancelled(true);
+        }
+    }
+
+    public void handlePlayerJoinedSessionWorld(final PlayerJoinedSessionWorldEvent event)
+    {
+    }
+
+    public void handlePlayerLeftSessionWorld(final PlayerLeftSessionWorldEvent event)
+    {
+        Player player = event.getPlayer();
+        for (PotionEffectType effect : PotionEffectType.values())
+        {
+            player.removePotionEffect(effect);
+        }
+
+        if (isRunning())
+            new TranslatedMessage(BingoTranslation.LEAVE).send(event.getPlayer());
     }
 }

@@ -39,7 +39,6 @@ game:
     no_start: "The game has not started yet!"
     no_card: "Could not find your card!"
     cooldown: "You cannot use this item for another {0} seconds!" # 0: time left
-    join_back: "Welcome back, the game is still on!"
     respawn: "//&3&lClick here to teleport back to where you died////"
   team:
     no_join: "You cannot join an ongoing game!"
@@ -152,6 +151,12 @@ items:
   wand:
     name: "The Go-Up-Wand"
     desc: "Right-Click To Teleport Upwards! (& hold shift to go down)"
+  vote:
+    name: "Vote"
+    desc: "Click to vote for game options"
+  team:
+    name: "Join a Team"
+    desc: "Click to select your team"
 teams:
   auto: "Automatic"
   brown: "Brown"

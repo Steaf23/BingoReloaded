@@ -57,7 +57,7 @@ public class CardEventManager
     public void handlePlayerDroppedItem(final PlayerDropItemEvent event, final BingoGame game)
     {
         BingoParticipant participant = game.getTeamManager().getBingoParticipant(event.getPlayer());
-        if (participant == null || !(participant instanceof BingoPlayer player) || !player.gamePlayer().isPresent())
+        if (participant == null || !(participant instanceof BingoPlayer player) || !player.sessionPlayer().isPresent())
             return;
 
         BingoTeam team = player.getTeam();
@@ -77,7 +77,7 @@ public class CardEventManager
             return;
 
         BingoParticipant participant = game.getTeamManager().getBingoParticipant(p);
-        if (participant == null || !(participant instanceof BingoPlayer player) || !player.gamePlayer().isPresent())
+        if (participant == null || !(participant instanceof BingoPlayer player) || !player.sessionPlayer().isPresent())
             return;
 
         BingoTeam team = player.getTeam();
@@ -97,7 +97,7 @@ public class CardEventManager
             return;
 
         BingoParticipant participant = game.getTeamManager().getBingoParticipant(p);
-        if (participant == null || !(participant instanceof BingoPlayer player) || !player.gamePlayer().isPresent())
+        if (participant == null || !(participant instanceof BingoPlayer player) || !player.sessionPlayer().isPresent())
             return;
 
         BingoTeam team = player.getTeam();
@@ -124,7 +124,7 @@ public class CardEventManager
 
     public void handleStatisticCompleted(final BingoStatisticCompletedEvent event, final BingoGame game)
     {
-        if (!event.player.gamePlayer().isPresent())
+        if (!event.player.sessionPlayer().isPresent())
             return;
 
         BingoTeam team = event.player.getTeam();
