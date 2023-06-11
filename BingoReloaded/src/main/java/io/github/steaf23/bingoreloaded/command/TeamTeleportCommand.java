@@ -48,6 +48,7 @@ public class TeamTeleportCommand implements CommandExecutor
 
             if (args.length != 2) {
                 new TranslatedMessage(BingoTranslation.TP_USAGE)
+                        .arg("/btp <teammate>")
                         .color(ChatColor.RED)
                         .send(p);
                 return true;
@@ -57,6 +58,7 @@ public class TeamTeleportCommand implements CommandExecutor
             if (teammate == null) {
                 new TranslatedMessage(BingoTranslation.TP_NOT_PLAYER)
                         .color(ChatColor.RED)
+                        .arg(args[1])
                         .send(p);
                 return true;
             }
@@ -64,6 +66,7 @@ public class TeamTeleportCommand implements CommandExecutor
             if (!team.getMembers().contains(bingoTeammate)) {
                 new TranslatedMessage(BingoTranslation.TP_NOT_TEAMMATE)
                         .color(ChatColor.RED)
+                        .arg(args[1])
                         .send(p);
                 return true;
             }

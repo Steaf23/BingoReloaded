@@ -17,3 +17,5 @@
 /bingo preset remove <preset_name>
 
 /btc
+
+/btp <teammate_name>
