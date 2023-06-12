@@ -6,7 +6,6 @@ import io.github.steaf23.bingoreloaded.event.BingoEventListener;
 import io.github.steaf23.bingoreloaded.gameloop.BingoGameManager;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gui.base.MenuEventListener;
-import io.github.steaf23.bingoreloaded.util.Message;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
@@ -21,7 +20,6 @@ public class SingularGameManager implements BingoGameManager
     {
         ConfigData config = plugin.config();
         this.session = new BingoSession(config.defaultWorldName, config);
-
 
         this.eventListener = new BingoEventListener(world ->
                 BingoReloaded.getWorldNameOfDimension(world).equals(session.worldName) ? session : null
