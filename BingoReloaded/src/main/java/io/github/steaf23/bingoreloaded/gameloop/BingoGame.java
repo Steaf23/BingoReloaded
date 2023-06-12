@@ -369,7 +369,7 @@ public class BingoGame implements GamePhase
                 for (BingoParticipant p : getTeamManager().getParticipants())
                 {
                     Location platformLocation = getRandomSpawnLocation(world);
-                    teleportPlayerToStart(p, platformLocation);
+                    teleportPlayerToStart(p, platformLocation, 5);
 
                     if (getTeamManager().getParticipants().size() > 0)
                     {
@@ -389,7 +389,7 @@ public class BingoGame implements GamePhase
                     Location teamLocation = getRandomSpawnLocation(world);
 
                     Set<BingoParticipant> players = t.getMembers();
-                    players.forEach(p -> teleportPlayerToStart(p, teamLocation));
+                    players.forEach(p -> teleportPlayerToStart(p, teamLocation, 5));
 
                     if (players.size() > 0)
                     {
@@ -406,7 +406,7 @@ public class BingoGame implements GamePhase
             {
                 Location spawnLocation = getRandomSpawnLocation(world);
                 Set<BingoParticipant> players = getTeamManager().getParticipants();
-                players.forEach(p -> teleportPlayerToStart(p, spawnLocation));
+                players.forEach(p -> teleportPlayerToStart(p, spawnLocation, 5));
                 if (getTeamManager().getParticipants().size() > 0)
                 {
                     spawnPlatform(spawnLocation, 5);
@@ -423,13 +423,14 @@ public class BingoGame implements GamePhase
         }
     }
 
-    private static void teleportPlayerToStart(BingoParticipant participant, Location to)
+    private static void teleportPlayerToStart(BingoParticipant participant, Location to, int spread)
     {
         if (participant.sessionPlayer().isEmpty())
             return;
         Player player = participant.sessionPlayer().get();
 
-        Location playerLocation = to.clone();
+        Vector placement = Vector.getRandom().multiply(spread * 2).add(new Vector(-spread, -spread, -spread));
+        Location playerLocation = to.clone().add(placement);
         playerLocation.setY(playerLocation.getY() + 10.0);
         player.teleport(playerLocation, PlayerTeleportEvent.TeleportCause.PLUGIN);
         player.setBedSpawnLocation(to.clone().add(0.0, 2.0, 0.0), true);

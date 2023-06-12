@@ -19,5 +19,3 @@ check if advancements are disabled and disallow them on advancement-disabled ser
 add team creator
 
 add Hologram wizard item to /bingo hologram to allow players to place scoreboards in the world
-
-give players random starting point when teleporting to platform, so they don't all stay in the center until the game starts
