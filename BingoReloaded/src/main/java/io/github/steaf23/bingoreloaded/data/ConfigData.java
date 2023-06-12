@@ -3,8 +3,6 @@ package io.github.steaf23.bingoreloaded.data;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import javax.annotation.Nullable;
-import java.sql.Array;
-import java.util.ArrayList;
 import java.util.List;
 
 public class ConfigData

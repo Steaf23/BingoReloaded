@@ -14,7 +14,6 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import java.util.function.Function;
 
 public class TeamTeleportCommand implements CommandExecutor
 {
@@ -37,6 +36,12 @@ public class TeamTeleportCommand implements CommandExecutor
             TeamManager teamManager = session.teamManager;
 
             BingoParticipant player = teamManager.getBingoParticipant(p);
+            if (player == null) {
+                new TranslatedMessage(BingoTranslation.TP_NO_TEAM)
+                        .color(ChatColor.RED)
+                        .send(p);
+                return true;
+            }
 
             BingoTeam team = player.getTeam();
             if (team == null) {
@@ -45,8 +50,7 @@ public class TeamTeleportCommand implements CommandExecutor
                         .send(p);
                 return true;
             }
-
-            if (args.length != 2) {
+            if (args.length != 1) {
                 new TranslatedMessage(BingoTranslation.TP_USAGE)
                         .arg("/btp <teammate>")
                         .color(ChatColor.RED)
@@ -54,11 +58,11 @@ public class TeamTeleportCommand implements CommandExecutor
                 return true;
             }
 
-            Player teammate = Bukkit.getPlayer(args[1]);
+            Player teammate = Bukkit.getPlayer(args[0]);
             if (teammate == null) {
                 new TranslatedMessage(BingoTranslation.TP_NOT_PLAYER)
                         .color(ChatColor.RED)
-                        .arg(args[1])
+                        .arg(args[0])
                         .send(p);
                 return true;
             }
@@ -66,7 +70,7 @@ public class TeamTeleportCommand implements CommandExecutor
             if (!team.getMembers().contains(bingoTeammate)) {
                 new TranslatedMessage(BingoTranslation.TP_NOT_TEAMMATE)
                         .color(ChatColor.RED)
-                        .arg(args[1])
+                        .arg(args[0])
                         .send(p);
                 return true;
             }

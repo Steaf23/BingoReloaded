@@ -43,8 +43,8 @@ public class TeamTeleportTabCompleter implements TabCompleter {
                 return null;
             }
             if (args.length == 1) {
-                List<String> teammates = new ArrayList<>(team.team.getEntries());
-                teammates.remove(p.getUniqueId().toString());
+                ArrayList<String> teammates = new ArrayList(team.getMembers().stream().map(BingoParticipant::getDisplayName).toList());
+                teammates.remove(p.getDisplayName());
                 return teammates;
             }
             return null;
