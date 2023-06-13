@@ -10,7 +10,8 @@ public enum EffectOptionFlags
     WATER_BREATHING(BingoTranslation.EFFECTS_WATER_BREATH.translate()),
     FIRE_RESISTANCE(BingoTranslation.EFFECTS_FIRE_RES.translate()),
     NO_FALL_DAMAGE(BingoTranslation.EFFECTS_NO_FALL_DMG.translate()),
-    SPEED(BingoTranslation.EFFECTS_SPEED.translate());
+    SPEED(BingoTranslation.EFFECTS_SPEED.translate()),
+    NO_DURABILITY(BingoTranslation.EFFECTS_NO_DURABILITY.translate());
 
     public final String name;
 

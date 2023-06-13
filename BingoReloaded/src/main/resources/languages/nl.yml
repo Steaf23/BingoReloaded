@@ -111,6 +111,7 @@ menu:
     water_breath: "Water Breathing"
     fire_res: "Fire Resistance"
     no_fall_dmg: "Geen Fall Damage"
+    no_durability: "Geen duurzaamheid"
     card_speed: "Speed Als Je De Kaart Vasthoud"
   kits:
     hardcore:

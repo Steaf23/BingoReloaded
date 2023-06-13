@@ -94,6 +94,7 @@ public enum BingoTranslation
     EFFECTS_FIRE_RES("menu.effects.fire_res"),
     EFFECTS_NO_FALL_DMG("menu.effects.no_fall_dmg"),
     EFFECTS_SPEED("menu.effects.speed"),
+    EFFECTS_NO_DURABILITY("menu.effects.no_durability"),
     KIT_HARDCORE_NAME("menu.kits.hardcore.name"),
     KIT_HARDCORE_DESC("menu.kits.hardcore.desc"),
     KIT_NORMAL_NAME("menu.kits.normal.name"),

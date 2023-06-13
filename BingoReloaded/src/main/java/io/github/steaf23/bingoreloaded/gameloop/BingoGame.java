@@ -682,7 +682,7 @@ public class BingoGame implements GamePhase
 
     public void handlePlayerItemDamaged(final PlayerItemDamageEvent event)
     {
-        if (config.disableDurability) {
+        if (settings.effects().contains(EffectOptionFlags.NO_DURABILITY)) {
             // Only disable durability for tools and armor due to some advancements being dependent on durability
             // decreasing, for example "this boat has legs" https://bugs.mojang.com/browse/MC-183764
             Material itemType = event.getItem().getType();

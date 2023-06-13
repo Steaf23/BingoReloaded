@@ -14,89 +14,83 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.EnumSet;
 import java.util.List;
+import java.util.stream.Stream;
 
-public class EffectOptionsMenu extends MenuInventory
-{
+public class EffectOptionsMenu extends MenuInventory {
     private final BingoSettingsBuilder settings;
     private final EnumSet<EffectOptionFlags> flags;
-    private final MenuItem[] options;
+    private final EffectOptionsMenuItem[] menuItems;
 
     private final BingoSession session;
 
-    public EffectOptionsMenu(MenuInventory parent, BingoSettingsBuilder settings, BingoSession session)
-    {
+    public EffectOptionsMenu(MenuInventory parent, BingoSettingsBuilder settings, BingoSession session) {
         super(45, BingoTranslation.OPTIONS_EFFECTS.translate(), parent);
         this.settings = settings;
         this.session = session;
 
-        options = new MenuItem[]{
-                new MenuItem(4, 3,
-                        Material.CARROT, ""),
-                new MenuItem(2, 3,
-                        Material.PUFFERFISH, ""),
-                new MenuItem(6, 3,
-                        Material.MAGMA_CREAM, ""),
-                new MenuItem(3, 1,
-                        Material.NETHERITE_BOOTS, ""),
-                new MenuItem(5, 1,
-                        Material.FEATHER, ""),
-                new MenuItem(44, Material.DIAMOND,
-                        "" + ChatColor.AQUA + ChatColor.BOLD + BingoTranslation.MENU_SAVE_EXIT.translate())
+        menuItems = new EffectOptionsMenuItem[]{
+                new EffectOptionsMenuItem(EffectOptionFlags.NIGHT_VISION, 4, 3, Material.CARROT),
+                new EffectOptionsMenuItem(EffectOptionFlags.WATER_BREATHING, 2, 3, Material.PUFFERFISH),
+                new EffectOptionsMenuItem(EffectOptionFlags.FIRE_RESISTANCE, 6, 3, Material.MAGMA_CREAM),
+                new EffectOptionsMenuItem(EffectOptionFlags.NO_FALL_DAMAGE, 2, 1, Material.NETHERITE_BOOTS),
+                new EffectOptionsMenuItem(EffectOptionFlags.SPEED, 4, 1, Material.FEATHER),
+                new EffectOptionsMenuItem(EffectOptionFlags.NO_DURABILITY, 6, 1, Material.NETHERITE_PICKAXE),
+                new EffectOptionsMenuItem(
+                        null,
+                        44, Material.DIAMOND,
+                        "" + ChatColor.AQUA + ChatColor.BOLD + BingoTranslation.MENU_SAVE_EXIT.translate()
+                )
         };
+        MenuItem[] options = Stream.of(menuItems).map(EffectOptionsMenuItem::getMenuItem).toArray(MenuItem[]::new);
         addItems(options);
 
         flags = settings.view().effects();
-        updateUI();
+        for (EffectOptionsMenuItem menuItem : menuItems) {
+            updateUI(menuItem);
+        }
     }
 
     @Override
-    public void onItemClicked(InventoryClickEvent event, int slotClicked, Player player, ClickType clickType)
-    {
-        for (int i = 0; i < options.length - 1; i++)
-        {
-            if (slotClicked == options[i].getSlot())
-            {
-                toggleOption(i);
+    public void onItemClicked(InventoryClickEvent event, int slotClicked, Player player, ClickType clickType) {
+        for (EffectOptionsMenuItem menuItem : menuItems) {
+            if (slotClicked == menuItem.getMenuItem().getSlot()) {
+                if (menuItem.getFlag() == null) {
+                    settings.effects(flags, session);
+                    close(player);
+                } else {
+                    toggleOption(menuItem);
+                }
+                return;
             }
-        }
-
-        if (slotClicked == options[5].getSlot())
-        {
-            settings.effects(flags, session);
-            close(player);
         }
     }
 
-    private void toggleOption(int index)
-    {
-        EffectOptionFlags option = EffectOptionFlags.values()[index];
-        if (flags.contains(option))
-            flags.remove(option);
+    private void toggleOption(EffectOptionsMenuItem menuItem) {
+        EffectOptionFlags flag = menuItem.getFlag();
+        if (flags.contains(flag))
+            flags.remove(flag);
         else
-            flags.add(option);
-        updateUI();
+            flags.add(flag);
+        updateUI(menuItem);
     }
 
-    public void updateUI()
-    {
-        for (int i = 0; i < options.length - 1; i++)
-        {
-            ItemMeta meta = options[i].getItemMeta();
-            if (meta != null)
-            {
-                if (flags.contains(EffectOptionFlags.values()[i]))
-                {
-                    meta.setDisplayName("" + ChatColor.GREEN + ChatColor.BOLD + EffectOptionFlags.values()[i].name + " " + BingoTranslation.EFFECTS_ENABLED.translate());
-                    meta.setLore(List.of(ChatColor.GREEN + BingoTranslation.EFFECTS_DISABLE.translate()));
-                }
-                else
-                {
-                    meta.setDisplayName("" + ChatColor.RED + ChatColor.BOLD + EffectOptionFlags.values()[i].name + " " + BingoTranslation.EFFECTS_DISABLED.translate());
-                    meta.setLore(List.of(ChatColor.RED + BingoTranslation.EFFECTS_ENABLE.translate()));
-                }
-            }
-            options[i].setItemMeta(meta);
-            addItem(options[i]);
+    public void updateUI(EffectOptionsMenuItem effectOptionsMenuItem) {
+        EffectOptionFlags flag = effectOptionsMenuItem.getFlag();
+        if (flag == null) {
+            return;
         }
+        MenuItem menuItem = effectOptionsMenuItem.getMenuItem();
+        ItemMeta meta = menuItem.getItemMeta();
+        if (meta != null) {
+            if (flags.contains(flag)) {
+                meta.setDisplayName("" + ChatColor.GREEN + ChatColor.BOLD + flag.name + " " + BingoTranslation.EFFECTS_ENABLED.translate());
+                meta.setLore(List.of(ChatColor.GREEN + BingoTranslation.EFFECTS_DISABLE.translate()));
+            } else {
+                meta.setDisplayName("" + ChatColor.RED + ChatColor.BOLD + flag.name + " " + BingoTranslation.EFFECTS_DISABLED.translate());
+                meta.setLore(List.of(ChatColor.RED + BingoTranslation.EFFECTS_ENABLE.translate()));
+            }
+        }
+        menuItem.setItemMeta(meta);
+        addItem(menuItem);
     }
 }
