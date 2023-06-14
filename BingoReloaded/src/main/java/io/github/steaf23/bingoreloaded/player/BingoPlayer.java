@@ -42,6 +42,8 @@ public class BingoPlayer implements BingoParticipant
     private final String displayName;
     private final ItemCooldownManager itemCooldowns;
 
+    private final int POTION_DURATION = 1728000; // 24 Hours
+
     public BingoPlayer(Player player, BingoTeam team, BingoSession session)
     {
         this.playerId = player.getUniqueId();
@@ -152,16 +154,15 @@ public class BingoPlayer implements BingoParticipant
 
         Message.log("Giving effects to " + player.getDisplayName(), session.worldName);
 
-        final int potionDuration = 1728000; // 24 Hours
         BingoReloaded.scheduleTask(task -> {
             if (effects.contains(EffectOptionFlags.NIGHT_VISION))
-                player.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, potionDuration, 1, false, false));
+                player.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, POTION_DURATION, 1, false, false));
             if (effects.contains(EffectOptionFlags.WATER_BREATHING))
-                player.addPotionEffect(new PotionEffect(PotionEffectType.WATER_BREATHING, potionDuration, 1, false, false));
+                player.addPotionEffect(new PotionEffect(PotionEffectType.WATER_BREATHING, POTION_DURATION, 1, false, false));
             if (effects.contains(EffectOptionFlags.FIRE_RESISTANCE))
-                player.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, potionDuration, 1, false, false));
+                player.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, POTION_DURATION, 1, false, false));
             if (effects.contains(EffectOptionFlags.SPEED))
-                player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, potionDuration, 1, false, false));
+                player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, POTION_DURATION, 1, false, false));
             player.addPotionEffect(new PotionEffect(PotionEffectType.SATURATION, 2, 100, false, false));
             player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 2, 100, false, false));
             player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, BingoReloaded.ONE_SECOND * gracePeriod, 100, false, false));
