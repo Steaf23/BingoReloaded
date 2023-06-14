@@ -9,9 +9,8 @@ public class Hologram
 {
     private boolean destroyed;
     private final List<HologramLine> lines;
-    private final HologramManager manager;
 
-    public Hologram(HologramManager manager, Location location, String... lines)
+    public Hologram(Location location, String... lines)
     {
         this.destroyed = false;
         this.lines = new ArrayList<>();
@@ -19,7 +18,6 @@ public class Hologram
         {
             addLine(location, line);
         }
-        this.manager = manager;
     }
 
     public void addLine(Location location, String line)

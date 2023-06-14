@@ -1,7 +1,5 @@
 package io.github.steaf23.bingoreloaded.gui.base;
 
-import io.github.steaf23.bingoreloaded.data.BingoTranslation;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;

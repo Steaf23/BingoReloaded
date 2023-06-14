@@ -12,7 +12,6 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;

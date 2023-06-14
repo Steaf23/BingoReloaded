@@ -1,7 +1,6 @@
 package io.github.steaf23.bingoreloaded.gui.base;
 
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
-import io.github.steaf23.bingoreloaded.util.Message;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
