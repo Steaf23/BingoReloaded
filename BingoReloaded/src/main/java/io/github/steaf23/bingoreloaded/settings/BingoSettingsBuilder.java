@@ -7,7 +7,6 @@ import io.github.steaf23.bingoreloaded.event.BingoSettingsUpdatedEvent;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gameloop.PregameLobby;
 import io.github.steaf23.bingoreloaded.gui.EffectOptionFlags;
-import io.github.steaf23.bingoreloaded.player.CustomKit;
 import io.github.steaf23.bingoreloaded.util.TranslatedMessage;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
@@ -56,41 +55,46 @@ public class BingoSettingsBuilder
         enableCountdown = settings.enableCountdown();
     }
 
-    public void applyVoteResult(PregameLobby.VoteTicket voteResult)
+    public BingoSettingsBuilder getVoteResult(PregameLobby.VoteTicket voteResult)
     {
+        BingoSettingsBuilder resultBuilder = new BingoSettingsBuilder(session);
+        resultBuilder.fromOther(view());
+
         switch (voteResult.gamemode)
         {
             case "regular_3" -> {
-                cardSize = CardSize.X3;
-                mode = BingoGamemode.REGULAR;
+                resultBuilder.cardSize = CardSize.X3;
+                resultBuilder.mode = BingoGamemode.REGULAR;
             }
             case "regular_5" -> {
-                cardSize = CardSize.X5;
-                mode = BingoGamemode.REGULAR;
+                resultBuilder.cardSize = CardSize.X5;
+                resultBuilder.mode = BingoGamemode.REGULAR;
             }
             case "complete_3" -> {
-                cardSize = CardSize.X3;
-                mode = BingoGamemode.COMPLETE;
+                resultBuilder.cardSize = CardSize.X3;
+                resultBuilder.mode = BingoGamemode.COMPLETE;
             }
             case "complete_5" -> {
-                cardSize = CardSize.X5;
-                mode = BingoGamemode.COMPLETE;
+                resultBuilder.cardSize = CardSize.X5;
+                resultBuilder.mode = BingoGamemode.COMPLETE;
             }
             case "lockout_3" -> {
-                cardSize = CardSize.X3;
-                mode = BingoGamemode.LOCKOUT;
+                resultBuilder.cardSize = CardSize.X3;
+                resultBuilder.mode = BingoGamemode.LOCKOUT;
             }
             case "lockout_5" -> {
-                cardSize = CardSize.X5;
-                mode = BingoGamemode.LOCKOUT;
+                resultBuilder.cardSize = CardSize.X5;
+                resultBuilder.mode = BingoGamemode.LOCKOUT;
             }
         }
 
-        if (kit != null)
-            kit = PlayerKit.fromConfig(voteResult.kit);
+        if (!voteResult.kit.isEmpty())
+            resultBuilder.kit = PlayerKit.fromConfig(voteResult.kit);
 
-        if (card != null && !(new BingoCardsData().getCardNames().contains(card)))
-            card = voteResult.card;
+        if (!voteResult.kit.isEmpty() && new BingoCardsData().getCardNames().contains(voteResult.card))
+            resultBuilder.card = voteResult.card;
+
+        return resultBuilder;
     }
 
     public BingoSettingsBuilder card(String card)

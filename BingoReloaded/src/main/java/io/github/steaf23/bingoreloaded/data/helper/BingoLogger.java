@@ -1,4 +1,4 @@
-package io.github.steaf23.bingoreloaded.data;
+package io.github.steaf23.bingoreloaded.data.helper;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import net.md_5.bungee.api.ChatColor;

@@ -1,7 +1,6 @@
 package io.github.steaf23.bingoreloaded.data;
 
 import io.github.steaf23.bingoreloaded.item.ItemText;
-import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.bingoreloaded.util.SmallCaps;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -22,7 +21,6 @@ public enum BingoTranslation
     NO_DEATHMATCH("command.bingo.no_deathmatch"),
     DURATION("game.timer.duration"),
     TIME_LEFT("game.timer.time_left"),
-    VOTE_NO_TEAM("game.vote.no_team"),
     KIT_SELECTED("game.settings.kit_selected"),
     EFFECTS_SELECTED("game.settings.effects_selected"),
     REGULAR_SELECTED("game.settings.regular_selected"),
@@ -40,7 +38,6 @@ public enum BingoTranslation
     NOT_STARTED("game.player.no_start"),
     NO_PLAYER_CARD("game.player.no_card"),
     COOLDOWN("game.player.cooldown"),
-    REJOIN_SESSION("game.player.join_back"),
     RESPAWN("game.player.respawn"),
     NO_JOIN("game.team.no_join"),
     JOIN("game.team.join"),
@@ -108,6 +105,10 @@ public enum BingoTranslation
     CARD_ITEM_DESC("items.card.desc"),
     WAND_ITEM_NAME("items.wand.name"),
     WAND_ITEM_DESC("items.wand.desc"),
+    VOTE_ITEM_NAME("items.vote.name"),
+    VOTE_ITEM_DESC("items.vote.desc"),
+    TEAM_ITEM_NAME("items.team.name"),
+    TEAM_ITEM_DESC("items.team.desc"),
     TEAM_AUTO("teams.auto"),
     TEAM_BROWN("teams.brown"),
     TEAM_ORANGE("teams.orange"),

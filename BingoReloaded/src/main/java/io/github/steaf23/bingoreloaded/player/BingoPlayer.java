@@ -42,6 +42,8 @@ public class BingoPlayer implements BingoParticipant
     private final String displayName;
     private final ItemCooldownManager itemCooldowns;
 
+    private final int POTION_DURATION = 1728000; // 24 Hours
+
     public BingoPlayer(Player player, BingoTeam team, BingoSession session)
     {
         this.playerId = player.getUniqueId();
@@ -52,16 +54,18 @@ public class BingoPlayer implements BingoParticipant
         this.itemCooldowns = new ItemCooldownManager();
     }
 
-    @Override
-    public Optional<Player> gamePlayer()
+    /**
+     * @return the player that belongs to this BingoPlayer, if this player is in a session world, otherwise returns null
+     */
+    public Optional<Player> sessionPlayer()
     {
         if (!offline().isOnline())
-            return Optional.ofNullable(null);
+            return Optional.empty();
 
         Player player = Bukkit.getPlayer(playerId);
         if (!BingoReloaded.getWorldNameOfDimension(player.getWorld()).equals(session.worldName))
         {
-            return Optional.ofNullable(null);
+            return Optional.empty();
         }
         return Optional.ofNullable(player);
     }
@@ -91,12 +95,12 @@ public class BingoPlayer implements BingoParticipant
 
     public void giveKit(PlayerKit kit)
     {
-        if (gamePlayer().isEmpty())
+        if (sessionPlayer().isEmpty())
             return;
 
-        Player player = gamePlayer().get();
+        Player player = sessionPlayer().get();
 
-        Message.log("Giving kit to " + player.getDisplayName(), session.worldName);
+        Message.log("Giving kit " + kit.configName + " to " + player.getDisplayName(), session.worldName);
 
         var items = kit.getItems(team.getColor());
         player.closeInventory();
@@ -121,10 +125,10 @@ public class BingoPlayer implements BingoParticipant
 
     public void giveBingoCard()
     {
-        if (gamePlayer().isEmpty())
+        if (sessionPlayer().isEmpty())
             return;
 
-        Player player = gamePlayer().get();
+        Player player = sessionPlayer().get();
 
         Message.log("Giving card to " + player.getDisplayName(), session.worldName);
 
@@ -144,23 +148,23 @@ public class BingoPlayer implements BingoParticipant
 
     public void giveEffects(EnumSet<EffectOptionFlags> effects, int gracePeriod)
     {
-        if (gamePlayer().isEmpty())
+        if (sessionPlayer().isEmpty())
             return;
 
         takeEffects(false);
-        Player player = gamePlayer().get();
+        Player player = sessionPlayer().get();
 
         Message.log("Giving effects to " + player.getDisplayName(), session.worldName);
 
         BingoReloaded.scheduleTask(task -> {
             if (effects.contains(EffectOptionFlags.NIGHT_VISION))
-                player.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, Integer.MAX_VALUE, 1, false, false));
+                player.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, POTION_DURATION, 1, false, false));
             if (effects.contains(EffectOptionFlags.WATER_BREATHING))
-                player.addPotionEffect(new PotionEffect(PotionEffectType.WATER_BREATHING, Integer.MAX_VALUE, 1, false, false));
+                player.addPotionEffect(new PotionEffect(PotionEffectType.WATER_BREATHING, POTION_DURATION, 1, false, false));
             if (effects.contains(EffectOptionFlags.FIRE_RESISTANCE))
-                player.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, Integer.MAX_VALUE, 1, false, false));
+                player.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, POTION_DURATION, 1, false, false));
             if (effects.contains(EffectOptionFlags.SPEED))
-                player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, Integer.MAX_VALUE, 1, false, false));
+                player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, POTION_DURATION, 1, false, false));
             player.addPotionEffect(new PotionEffect(PotionEffectType.SATURATION, 2, 100, false, false));
             player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 2, 100, false, false));
             player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, BingoReloaded.ONE_SECOND * gracePeriod, 100, false, false));
@@ -187,21 +191,21 @@ public class BingoPlayer implements BingoParticipant
         }
         else
         {
-            if (gamePlayer().isEmpty())
+            if (sessionPlayer().isEmpty())
                 return;
 
             Message.log("Taking effects from " + asOnlinePlayer().get().getDisplayName(), session.worldName);
 
             for (PotionEffectType effect : PotionEffectType.values())
             {
-                gamePlayer().get().removePotionEffect(effect);
+                sessionPlayer().get().removePotionEffect(effect);
             }
         }
     }
 
     public void showDeathMatchTask(BingoTask task)
     {
-        if (gamePlayer().isEmpty())
+        if (sessionPlayer().isEmpty())
             return;
 
         String itemKey = task.material.isBlock() ? "block" : "item";
@@ -209,7 +213,7 @@ public class BingoPlayer implements BingoParticipant
 
         new TranslatedMessage(BingoTranslation.DEATHMATCH).color(ChatColor.GOLD)
                 .component(new TranslatableComponent(itemKey))
-                .send(gamePlayer().get());
+                .send(sessionPlayer().get());
     }
 
     @Override
@@ -220,10 +224,10 @@ public class BingoPlayer implements BingoParticipant
 
     public boolean useGoUpWand(ItemStack wand, double wandCooldownSeconds, int downDistance, int upDistance, int platformLifetimeSeconds)
     {
-        if (gamePlayer().isEmpty())
+        if (sessionPlayer().isEmpty())
              return false;
 
-        Player player = gamePlayer().get();
+        Player player = sessionPlayer().get();
         if (!PlayerKit.WAND_ITEM.isKeyEqual(wand))
             return false;
 
@@ -240,7 +244,7 @@ public class BingoPlayer implements BingoParticipant
             double distance = 0.0;
             double fallDistance = 5.0;
             // Use the wand
-            if (gamePlayer().get().isSneaking())
+            if (sessionPlayer().get().isSneaking())
             {
                 distance = -downDistance;
                 fallDistance = 0.0;

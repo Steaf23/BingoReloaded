@@ -9,8 +9,8 @@
 # ==========================================================================
 
 # The name of the world where bingo will be played. The plugin will not create this world, so make sure to create it before using this plugin.
-# to allow the plugin to use the Nether and End dimensions, the names `<bingoWorldName>_nether` and `<bingoWorldName>_the_end` must also be valid worlds.
-bingoWorldName: world
+# to allow the plugin to use the Nether and End dimensions, the names `<defaultWorldName>_nether` and `<defaultWorldName>_the_end` must also be valid worlds.
+defaultWorldName: world
 
 # Change this to MULTIPLE in order to use the features created for managing this plugin for public server owners.
 configuration: SINGULAR

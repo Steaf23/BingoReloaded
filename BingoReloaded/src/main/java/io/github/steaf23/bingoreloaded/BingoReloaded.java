@@ -4,6 +4,7 @@ import io.github.steaf23.bingoreloaded.command.BingoCommand;
 import io.github.steaf23.bingoreloaded.command.BingoTabCompleter;
 import io.github.steaf23.bingoreloaded.command.TeamChatCommand;
 import io.github.steaf23.bingoreloaded.data.*;
+import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.data.helper.SerializablePlayer;
 import io.github.steaf23.bingoreloaded.gameloop.BingoGameManager;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
@@ -13,7 +14,8 @@ import io.github.steaf23.bingoreloaded.gameloop.singular.SimpleAutoBingoCommand;
 import io.github.steaf23.bingoreloaded.gameloop.singular.SingularGameManager;
 import io.github.steaf23.bingoreloaded.gui.base.MenuItem;
 import io.github.steaf23.bingoreloaded.hologram.HologramManager;
-import io.github.steaf23.bingoreloaded.player.CustomKit;
+import io.github.steaf23.bingoreloaded.hologram.HologramPlacer;
+import io.github.steaf23.bingoreloaded.settings.CustomKit;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
 import io.github.steaf23.bingoreloaded.tasks.AdvancementTask;
 import io.github.steaf23.bingoreloaded.tasks.ItemTask;
@@ -43,6 +45,7 @@ public class BingoReloaded extends JavaPlugin
 
     private ConfigData config;
     private HologramManager hologramManager;
+    private HologramPlacer hologramPlacer;
     private BingoGameManager gameManager;
 
     public BingoReloaded()
@@ -71,6 +74,7 @@ public class BingoReloaded extends JavaPlugin
         Message.log("" + ChatColor.GREEN + BingoTranslation.CHANGED_LANGUAGE.translate());
 
         this.hologramManager = new HologramManager();
+        this.hologramPlacer = new HologramPlacer(hologramManager);
 
         CommandExecutor autoBingoCommand;
 

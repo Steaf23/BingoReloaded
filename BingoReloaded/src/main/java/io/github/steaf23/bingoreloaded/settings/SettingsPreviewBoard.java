@@ -1,6 +1,8 @@
 package io.github.steaf23.bingoreloaded.settings;
 
+import io.github.steaf23.bingoreloaded.event.BingoParticipantLeaveEvent;
 import io.github.steaf23.bingoreloaded.event.BingoSettingsUpdatedEvent;
+import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
 import io.github.steaf23.bingoreloaded.util.InfoScoreboard;
 import net.md_5.bungee.api.ChatColor;

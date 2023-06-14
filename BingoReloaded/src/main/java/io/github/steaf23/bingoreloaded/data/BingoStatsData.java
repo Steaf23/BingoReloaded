@@ -2,6 +2,7 @@ package io.github.steaf23.bingoreloaded.data;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.hologram.Hologram;
+import io.github.steaf23.bingoreloaded.hologram.HologramBuilder;
 import io.github.steaf23.bingoreloaded.util.Message;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
@@ -52,10 +53,16 @@ public class BingoStatsData
         setPlayerData(playerId, String.join(";", stats));
     }
 
-    public Hologram asHologram(int numEntries, @Nullable BingoStatType sortedBy)
+    /**
+     * @param firstEntry index of first entry to show on the scoreboard
+     * @param entriesPerPage how many entries to show including the first entry
+     * @param sortedBy stat to sort the entries by
+     * @return
+     */
+    public HologramBuilder asHologram(int firstEntry, int entriesPerPage, @Nullable BingoStatType sortedBy)
     {
         //TODO: implement
-        return null;
+        return new HologramBuilder(BingoReloaded.getPlugin(BingoReloaded.class).holograms());
     }
 
     public Message getPlayerStatsFormatted(UUID playerId)

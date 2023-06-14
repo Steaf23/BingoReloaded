@@ -41,7 +41,7 @@ public class StatisticProgress
         if (statistic.isStatisticProcessed())
             return;
 
-        if (!player.gamePlayer().isPresent())
+        if (!player.sessionPlayer().isPresent())
             return;
 
         int newProgress = getPlayerTotalScore();
@@ -66,10 +66,10 @@ public class StatisticProgress
 
     public int getPlayerTotalScore()
     {
-        if (player.gamePlayer().isEmpty())
+        if (player.sessionPlayer().isEmpty())
             return 0;
 
-        Player gamePlayer = player.gamePlayer().get();
+        Player gamePlayer = player.sessionPlayer().get();
 
         int value = 0;
         if (statistic.hasMaterialComponent())
@@ -89,10 +89,10 @@ public class StatisticProgress
 
     public void setPlayerTotalScore(int value)
     {
-        if (player.gamePlayer().isEmpty())
+        if (player.sessionPlayer().isEmpty())
             return;
 
-        Player gamePlayer = player.gamePlayer().get();
+        Player gamePlayer = player.sessionPlayer().get();
 
         if (statistic.hasMaterialComponent())
         {

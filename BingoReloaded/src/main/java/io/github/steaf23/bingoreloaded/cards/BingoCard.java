@@ -221,7 +221,7 @@ public class BingoCard
 
     public void onInventoryClick(final InventoryClickEvent event, final BingoPlayer player, final BingoGame game)
     {
-        Player p = player.gamePlayer().get();
+        Player p = player.sessionPlayer().get();
 
         if (event.getSlotType() == InventoryType.SlotType.RESULT && event.getClick() != ClickType.SHIFT_LEFT)
         {
@@ -260,7 +260,7 @@ public class BingoCard
             ItemStack resultStack = stack.clone();
 
             BingoReloaded.scheduleTask(task -> {
-                player.gamePlayer().get().getWorld().dropItem(event.getItem().getLocation(), resultStack);
+                player.sessionPlayer().get().getWorld().dropItem(event.getItem().getLocation(), resultStack);
                 event.getItem().remove();
             });
         }
@@ -279,7 +279,7 @@ public class BingoCard
 
     ItemStack completeItemSlot(ItemStack item, BingoPlayer player, BingoGame game)
     {
-        if (player.gamePlayer().isEmpty())
+        if (player.sessionPlayer().isEmpty())
             return item;
 
         BingoTask deathMatchTask = game.getDeathMatchTask();
@@ -306,7 +306,7 @@ public class BingoCard
                     continue;
                 }
                 item.setAmount(item.getAmount() - data.getCount());
-                player.gamePlayer().get().updateInventory();
+                player.sessionPlayer().get().updateInventory();
                 var slotEvent = new BingoCardTaskCompleteEvent(task, player, hasBingo(player.getTeam()));
                 Bukkit.getPluginManager().callEvent(slotEvent);
                 break;

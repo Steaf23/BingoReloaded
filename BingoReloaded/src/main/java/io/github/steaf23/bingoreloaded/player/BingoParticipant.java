@@ -14,8 +14,8 @@ public interface BingoParticipant
     public BingoSession getSession();
     @Nullable
     public BingoTeam getTeam();
-    public Optional<Player> gamePlayer();
     public UUID getId();
+    public Optional<Player> sessionPlayer();
     public String getDisplayName();
     public void showDeathMatchTask(BingoTask task);
     public boolean alwaysActive();

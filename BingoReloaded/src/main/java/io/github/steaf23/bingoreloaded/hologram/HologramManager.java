@@ -27,7 +27,7 @@ public class HologramManager
             return holograms.get(id);
         }
 
-        Hologram holo = new Hologram(this, location, lines);
+        Hologram holo = new Hologram(location, lines);
         holograms.put(id, holo);
         return holo;
     }
@@ -40,7 +40,7 @@ public class HologramManager
             return holograms.get(id);
         }
 
-        Hologram holo = new PixelArtHologram(this, location, imagePath, backgroundColor);
+        Hologram holo = new PixelArtHologram(location, imagePath, backgroundColor);
         holograms.put(id, holo);
         return holo;
     }

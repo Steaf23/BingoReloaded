@@ -192,14 +192,14 @@ public class MenuItem extends ItemStack
             return false;
 
         return getKey().equals(other.getItemMeta().getPersistentDataContainer()
-                .get(PDCHelper.createKey("item.compare_key"), PersistentDataType.STRING));
+                .getOrDefault(PDCHelper.createKey("item.compare_key"), PersistentDataType.STRING, ""));
     }
 
     @Nullable
     public String getKey()
     {
         return this.getItemMeta().getPersistentDataContainer()
-                .get(PDCHelper.createKey("item.compare_key"), PersistentDataType.STRING);
+                .getOrDefault(PDCHelper.createKey("item.compare_key"), PersistentDataType.STRING, "");
     }
 
     @NotNull

@@ -11,6 +11,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Function;
 
 public abstract class PaginatedPickerMenu extends MenuInventory
 {
@@ -30,11 +31,12 @@ public abstract class PaginatedPickerMenu extends MenuInventory
     // All selected items in this picker
     private final List<MenuItem> selectedItems;
 
+    private Function<MenuItem, Boolean> customFilter;
+
     // All items that pass the filter, these are always the items shown to the player
     private final List<MenuItem> filteredItems;
     private int pageAmount;
     private int currentPage;
-    private UserInputMenu filter;
     private String keywordFilter;
     public FilterType filterType;
 
@@ -43,6 +45,13 @@ public abstract class PaginatedPickerMenu extends MenuInventory
     protected static final MenuItem PREVIOUS = new MenuItem(45, Material.BARRIER, "" + ChatColor.LIGHT_PURPLE + ChatColor.BOLD + BingoTranslation.MENU_PREV.translate(), "");
     protected static final MenuItem CLOSE = new MenuItem(49, Material.REDSTONE, "" + ChatColor.RED + ChatColor.BOLD + BingoTranslation.MENU_SAVE_EXIT.translate(), "");
     protected static final MenuItem FILTER = new MenuItem(46, Material.SPYGLASS, TITLE_PREFIX + BingoTranslation.MENU_FILTER.translate(), "");
+
+
+    public PaginatedPickerMenu(List<MenuItem> options, String title, MenuInventory parent, Function<MenuItem, Boolean> customFilter)
+    {
+        this(options, title, parent, FilterType.CUSTOM);
+        this.customFilter = customFilter;
+    }
 
     public PaginatedPickerMenu(List<MenuItem> options, String title, MenuInventory parent, FilterType filterType)
     {
@@ -104,45 +113,34 @@ public abstract class PaginatedPickerMenu extends MenuInventory
 
         filteredItems.clear();
 
+        Function<MenuItem, Boolean> filterCriteria;
+
+        filterCriteria =
         switch (filterType)
         {
-            case MATERIAL:
-                for (MenuItem item : items)
-                {
-                    String name = item.getType().name().replace("_", " ");
-                    if (name.toLowerCase().contains(keywordFilter.toLowerCase()))
+            case ITEM_KEY ->
+                    (item) -> item.getKey().contains(keywordFilter);
+            case MATERIAL ->
+                    (item) ->
                     {
-                        filteredItems.add(item);
-                    }
-                }
-                break;
-            case DISPLAY_NAME:
-                for (MenuItem item : items)
-                {
-                    if (ChatColor.stripColor(item.getItemMeta().getDisplayName()).toLowerCase().contains(keywordFilter.toLowerCase()))
-                    {
-                        filteredItems.add(item);
-                    }
-                }
-                break;
-            case LORE:
-                for (MenuItem item : items)
-                {
-                    if (ChatColor.stripColor(item.getItemMeta().getLore().get(0)).toLowerCase().contains(keywordFilter.toLowerCase()))
-                    {
-                        filteredItems.add(item);
-                    }
-                }
-                break;
-            case CUSTOM:
-                for (MenuItem item : items)
-                {
-                    if (passesFilter(item))
-                    {
-                        filteredItems.add(item);
-                    }
-                }
-                break;
+                        String name = item.getType().name().replace("_", " ");
+                        return name.toLowerCase().contains(keywordFilter.toLowerCase());
+                    };
+            case DISPLAY_NAME ->
+                    (item) -> ChatColor.stripColor(item.getItemMeta().getDisplayName())
+                            .toLowerCase().contains(keywordFilter.toLowerCase());
+            case LORE ->
+                    (item) -> ChatColor.stripColor(item.getItemMeta().getLore().get(0)).toLowerCase().contains(keywordFilter.toLowerCase());
+            case CUSTOM ->
+                    customFilter;
+        };
+
+        for (MenuItem item : items)
+        {
+            if (filterCriteria.apply(item))
+            {
+                filteredItems.add(item);
+            }
         }
 
         currentPage = 0;
@@ -153,16 +151,6 @@ public abstract class PaginatedPickerMenu extends MenuInventory
     public void clearFilter()
     {
         applyFilter("");
-    }
-
-    /**
-     * Implement this method if filterType is set to CUSTOM
-     * @param item
-     * @return Whether the item should be shown when this filter is applied.
-     */
-    public boolean passesFilter(MenuItem item)
-    {
-        return false;
     }
 
     public String getFilter()
@@ -302,13 +290,6 @@ public abstract class PaginatedPickerMenu extends MenuInventory
     {
         pageAmount = Math.max(1, (int)Math.ceil(filteredItems.size() / (double)ITEMS_PER_PAGE));
     }
-
-    public int getCurrentPage()
-    {
-        return currentPage;
-    }
-
-    //
 
     /**
      * Replaces the item in the given slot at the current page to the new item. Keeps the item's selection status.

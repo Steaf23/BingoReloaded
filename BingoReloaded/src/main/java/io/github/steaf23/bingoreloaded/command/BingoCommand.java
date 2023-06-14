@@ -1,5 +1,7 @@
 package io.github.steaf23.bingoreloaded.command;
 
+import io.github.steaf23.bingoreloaded.BingoReloaded;
+import io.github.steaf23.bingoreloaded.data.PlayerData;
 import io.github.steaf23.bingoreloaded.gameloop.BingoGame;
 import io.github.steaf23.bingoreloaded.gameloop.BingoGameManager;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
@@ -7,7 +9,6 @@ import io.github.steaf23.bingoreloaded.data.BingoStatsData;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.data.ConfigData;
 import io.github.steaf23.bingoreloaded.gui.BingoMenu;
-import io.github.steaf23.bingoreloaded.gui.base.ColorPickerMenu;
 import io.github.steaf23.bingoreloaded.gui.creator.BingoCreatorUI;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
@@ -17,13 +18,13 @@ import io.github.steaf23.bingoreloaded.util.TranslatedMessage;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-import java.awt.*;
 import java.util.Arrays;
 import java.util.List;
 
@@ -50,6 +51,9 @@ public class BingoCommand implements CommandExecutor
         if (session == null)
             return false;
 
+        if (!BingoReloaded.getWorldNameOfDimension(player.getWorld()).equals(session.worldName))
+            return false;
+
         if (args.length == 0)
         {
             BingoMenu.openOptions(player, session, config);
@@ -58,11 +62,6 @@ public class BingoCommand implements CommandExecutor
 
         switch (args[0])
         {
-            case "color" -> ColorPickerMenu.open("Pick Color:   ", (color) -> {
-                Color col = color.getColor();
-                String hex = String.format("#%02X%02X%02X", col.getRed(), col.getGreen(), col.getBlue());
-                Message.sendDebug(ChatColor.of(hex) + hex, player);
-            }, player, null);
             case "join" -> session.teamManager.openTeamSelector(player, null);
             case "leave" ->
             {
@@ -153,6 +152,34 @@ public class BingoCommand implements CommandExecutor
                 msg.send(player);
                 return true;
             }
+            case "saveplayer" ->
+            {
+                if (player.hasPermission("bingo.admin"))
+                {
+                    Player targetPlayer = player;
+                    if (args.length == 2)
+                    {
+                        if (Bukkit.getPlayer(args[1]) != null)
+                            targetPlayer = Bukkit.getPlayer(args[1]);
+                    }
+
+                    new PlayerData().savePlayer(targetPlayer, true);
+                }
+            }
+            case "loadplayer" ->
+            {
+                if (player.hasPermission("bingo.admin"))
+                {
+                    Player targetPlayer = player;
+                    if (args.length == 2)
+                    {
+                        if (Bukkit.getPlayer(args[1]) != null)
+                            targetPlayer = Bukkit.getPlayer(args[1]);
+                    }
+
+                    new PlayerData().loadPlayer(targetPlayer);
+                }
+            }
             case "kit" ->
             {
                 if (!player.hasPermission("bingo.manager"))
@@ -173,6 +200,10 @@ public class BingoCommand implements CommandExecutor
                     }
                     case "remove" -> removePlayerKit(args[2], player);
                 }
+            }
+            case "hologram" ->
+            {
+
             }
             default ->
                     new TranslatedMessage(BingoTranslation.COMMAND_USAGE).color(ChatColor.RED).arg("/bingo [getcard | stats | start | end | join | back | leave | deathmatch | creator]").send(player);
