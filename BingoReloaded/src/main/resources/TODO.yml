@@ -2,20 +2,22 @@ refactor card recovery (its shit).
 
 implement Vault rewards
 
+add /bingo info command to see information about current game (settings mostly) (admin use only)
+
 add Free for all (probably needs a new TeamManager)
 
-add /bingo info command to see information about current game (settings mostly)
-
-create lobby to vote for options and select teams pre-game and show leaderboards
-
-add option to send players to a location when the game ends..
+add option to restore player data after a game ends..
 
 Test lockout using new VirtualPlayer
-
-update autobingo page with all new features
 
 check if advancements are disabled and disallow them on advancement-disabled servers
 
 add team creator
 
 add Hologram wizard item to /bingo hologram to allow players to place scoreboards in the world
+
+double check translations BEFORE RELEASE
+
+update autobingo page with all new features BEFORE RELEASE
+
+update all commands list BEFORE RELEASE
