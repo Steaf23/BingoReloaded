@@ -1,6 +1,7 @@
 package io.github.steaf23.bingoreloaded.gameloop;
 
-import io.github.steaf23.bingoreloaded.*;
+import io.github.steaf23.bingoreloaded.BingoReloaded;
+import io.github.steaf23.bingoreloaded.BingoScoreboard;
 import io.github.steaf23.bingoreloaded.cards.BingoCard;
 import io.github.steaf23.bingoreloaded.cards.CardBuilder;
 import io.github.steaf23.bingoreloaded.data.BingoCardsData;
@@ -10,12 +11,16 @@ import io.github.steaf23.bingoreloaded.data.ConfigData;
 import io.github.steaf23.bingoreloaded.event.*;
 import io.github.steaf23.bingoreloaded.gui.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.item.ItemText;
-import io.github.steaf23.bingoreloaded.player.*;
+import io.github.steaf23.bingoreloaded.player.BingoParticipant;
+import io.github.steaf23.bingoreloaded.player.BingoPlayer;
+import io.github.steaf23.bingoreloaded.player.BingoTeam;
+import io.github.steaf23.bingoreloaded.player.TeamManager;
 import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import io.github.steaf23.bingoreloaded.tasks.BingoTask;
 import io.github.steaf23.bingoreloaded.tasks.statistics.StatisticTracker;
+import io.github.steaf23.bingoreloaded.util.MaterialHelper;
 import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.bingoreloaded.util.PDCHelper;
 import io.github.steaf23.bingoreloaded.util.TranslatedMessage;
@@ -664,6 +669,18 @@ public class BingoGame implements GamePhase
         newLoc.setX(event.getFrom().getX());
         newLoc.setZ(event.getFrom().getZ());
         event.setTo(newLoc);
+    }
+
+    public void handlePlayerItemDamaged(final PlayerItemDamageEvent event)
+    {
+        if (settings.effects().contains(EffectOptionFlags.NO_DURABILITY)) {
+            // Only disable durability for tools and armor due to some advancements being dependent on durability
+            // decreasing, for example "this boat has legs" https://bugs.mojang.com/browse/MC-183764
+            Material itemType = event.getItem().getType();
+            if (MaterialHelper.isTool(itemType) || MaterialHelper.isArmor(itemType)) {
+                event.setCancelled(true);
+            }
+        }
     }
 
     @Override

@@ -107,11 +107,12 @@ menu:
     disable: "Klik om dit effect UIT te zetten."
     enabled: "AAN"
     disabled: "UIT"
-    night_vision: "Night Vision"
-    water_breath: "Water Breathing"
-    fire_res: "Fire Resistance"
-    no_fall_dmg: "Geen Fall Damage"
-    card_speed: "Speed Als Je De Kaart Vasthoud"
+    night_vision: "Nachtzicht"
+    water_breath: "Wateradem"
+    fire_res: "Vuurbestendigheid"
+    no_fall_dmg: "Geen Valschade"
+    no_durability: "Oneindige duurzaamheid"
+    card_speed: "Extra snelheid"
   kits:
     hardcore:
       name: "&4Hardcore"

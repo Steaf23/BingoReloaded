@@ -113,6 +113,7 @@ menu:
     water_breath: "Respiration aquatique"
     fire_res: "Résistance au feu"
     no_fall_dmg: "Aucun dégat de chute"
+    no_durability: "Durabilité infinie"
     card_speed: "Accélération quand le joueur tient la grille"
   kits:
     hardcore:

@@ -215,6 +215,16 @@ public class BingoEventListener implements Listener
     }
 
     @EventHandler
+    public void onPlayerItemDamaged(PlayerItemDamageEvent event)
+    {
+        BingoSession session = getSession(event.getPlayer().getWorld());
+        if (session.isRunning())
+        {
+            ((BingoGame)session.phase()).handlePlayerItemDamaged(event);
+        }
+    }
+
+    @EventHandler
     public void handleStatisticIncrement(final PlayerStatisticIncrementEvent event)
     {
         if (disableStatistics)
