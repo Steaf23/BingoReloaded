@@ -24,7 +24,7 @@ public class EffectOptionsMenu extends ActionMenu {
         super(45, BingoTranslation.OPTIONS_EFFECTS.translate(), parent);
         flags = settings.view().effects();
 
-        addEffectAction(EffectOptionFlags.NIGHT_VISION, 4, 3, Material.CARROT);
+        addEffectAction(EffectOptionFlags.NIGHT_VISION, 4, 3, Material.GOLDEN_CARROT);
         addEffectAction(EffectOptionFlags.WATER_BREATHING, 2, 3, Material.PUFFERFISH);
         addEffectAction(EffectOptionFlags.FIRE_RESISTANCE, 6, 3, Material.MAGMA_CREAM);
         addEffectAction(EffectOptionFlags.NO_FALL_DAMAGE, 2, 1, Material.NETHERITE_BOOTS);

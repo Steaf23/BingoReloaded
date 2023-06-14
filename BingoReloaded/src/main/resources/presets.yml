@@ -8,6 +8,7 @@ default_settings:
     - FIRE_RESISTANCE
     - NO_FALL_DAMAGE
     - SPEED
+    - NO_DURABILITY
   size: 5
   seed: 0
   team_size: 5
