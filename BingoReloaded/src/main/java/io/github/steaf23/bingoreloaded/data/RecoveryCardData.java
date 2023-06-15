@@ -15,7 +15,7 @@ import org.bukkit.configuration.ConfigurationSection;
 @Deprecated
 public class RecoveryCardData
 {
-    private final YmlDataManager data = BingoReloaded.createYmlDataManager("recovered.yml");
+    private final YmlDataManager data = BingoReloaded.createYmlDataManager("data/recovered.yml");
 
     public boolean loadCards(BingoGame game)
     {

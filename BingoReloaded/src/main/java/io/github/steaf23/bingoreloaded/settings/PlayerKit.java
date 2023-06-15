@@ -56,7 +56,7 @@ public enum PlayerKit
     public final String displayName;
     public final EnumSet<EffectOptionFlags> defaultEffects;
 
-    private static final YmlDataManager customKitData = BingoReloaded.createYmlDataManager("kits.yml");
+    private static final YmlDataManager customKitData = BingoReloaded.createYmlDataManager("data/kits.yml");
 
     PlayerKit(String configName, String displayName, EnumSet<EffectOptionFlags> defaultEffects)
     {

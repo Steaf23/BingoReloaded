@@ -13,7 +13,7 @@ public class BingoCardsData
     public static final int MAX_ITEMS = 36;
     public static final int MIN_ITEMS = 1;
 
-    private final YmlDataManager data = BingoReloaded.createYmlDataManager("cards.yml");
+    private final YmlDataManager data = BingoReloaded.createYmlDataManager("data/cards.yml");
 
     public boolean removeCard(String cardName)
     {

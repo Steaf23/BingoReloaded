@@ -30,6 +30,7 @@ import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
+import org.cef.callback.CefContextMenuParams;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -38,10 +39,11 @@ import java.util.function.Function;
 
 public class BingoReloaded extends JavaPlugin
 {
-    public static final String NAME = "BingoReloaded";
     // Amount of ticks per second.
     public static final int ONE_SECOND = 20;
     public static boolean usesPlaceholderAPI = false;
+
+    private static BingoReloaded instance;
 
     private ConfigData config;
     private HologramManager hologramManager;
@@ -57,6 +59,8 @@ public class BingoReloaded extends JavaPlugin
     @Override
     public void onEnable()
     {
+        // Kinda ugly, but we can assume there will only be one instance of this class anyways.
+        instance = this;
         usesPlaceholderAPI = Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null;
 
         ConfigurationSerialization.registerClass(BingoSettings.class);
@@ -124,7 +128,7 @@ public class BingoReloaded extends JavaPlugin
 
     public static YmlDataManager createYmlDataManager(String filepath)
     {
-        return new YmlDataManager(getPlugin(BingoReloaded.class), filepath);
+        return new YmlDataManager(instance, filepath);
     }
 
     public void onDisable()
@@ -144,7 +148,7 @@ public class BingoReloaded extends JavaPlugin
 
     public static void incrementPlayerStat(Player player, BingoStatType stat)
     {
-        boolean savePlayerStatistics = getPlugin(BingoReloaded.class).config.savePlayerStatistics;
+        boolean savePlayerStatistics = instance.config.savePlayerStatistics;
         if (savePlayerStatistics)
         {
             BingoStatsData statsData = new BingoStatsData();
@@ -160,8 +164,8 @@ public class BingoReloaded extends JavaPlugin
     public static void scheduleTask(@NotNull Consumer<BukkitTask> task, long delay)
     {
         if (delay <= 0)
-            Bukkit.getScheduler().runTask(getPlugin(BingoReloaded.class), task);
+            Bukkit.getScheduler().runTask(instance, task);
         else
-            Bukkit.getScheduler().runTaskLater(getPlugin(BingoReloaded.class), task, delay);
+            Bukkit.getScheduler().runTaskLater(instance, task, delay);
     }
 }

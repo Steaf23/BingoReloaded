@@ -28,7 +28,7 @@ public class ItemText
     private final String text;
     private String modifiers;
     private final List<ItemText> children;
-    private final static YmlDataManager statTranslation = BingoReloaded.createYmlDataManager("stat_translation.yml");
+    private final static YmlDataManager statTranslation = BingoReloaded.createYmlDataManager("data/stat_translation.yml");
 
     public ItemText(ChatColor... modifiers)
     {
