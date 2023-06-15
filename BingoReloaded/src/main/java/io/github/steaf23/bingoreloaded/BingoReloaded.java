@@ -6,6 +6,7 @@ import io.github.steaf23.bingoreloaded.command.TeamChatCommand;
 import io.github.steaf23.bingoreloaded.data.*;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.data.helper.SerializablePlayer;
+import io.github.steaf23.bingoreloaded.data.helper.YmlDataManager;
 import io.github.steaf23.bingoreloaded.gameloop.BingoGameManager;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gameloop.multiple.MultiAutoBingoCommand;
@@ -30,7 +31,6 @@ import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
-import org.cef.callback.CefContextMenuParams;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -151,7 +151,7 @@ public class BingoReloaded extends JavaPlugin
         boolean savePlayerStatistics = instance.config.savePlayerStatistics;
         if (savePlayerStatistics)
         {
-            BingoStatsData statsData = new BingoStatsData();
+            BingoStatData statsData = new BingoStatData();
             statsData.incrementPlayerStat(player, stat);
         }
     }

@@ -1,6 +1,10 @@
 package io.github.steaf23.bingoreloaded.util;
 
+import io.github.steaf23.bingoreloaded.gui.base.MenuItem;
+import net.md_5.bungee.api.ChatColor;
+import org.bukkit.Color;
 import org.bukkit.Material;
+import org.bukkit.inventory.meta.LeatherArmorMeta;
 
 public class MaterialHelper {
 
@@ -20,6 +24,27 @@ public class MaterialHelper {
                 isGoldenArmor(material) ||
                 isDiamondArmor(material) ||
                 isNetheriteArmor(material);
+    }
+
+    /**
+     * @param part should be one of Material.LEATHER_HELMET, Material.LEATHER_CHESTPLATE, Material.LEATHER_LEGGINGS or Material.LEATHER_BOOTS
+     * @return the leather item colored with the given color. If no valid part is given, this will return a colored Material.LEATHER_CHESTPLATE
+     */
+    public static MenuItem createColoredLeather(ChatColor color, Material part)
+    {
+        switch (part) {
+            case LEATHER_HELMET, LEATHER_CHESTPLATE, LEATHER_LEGGINGS, LEATHER_BOOTS -> {}
+            default -> part = Material.LEATHER_CHESTPLATE;
+        };
+
+        String hex = color.toString();
+        MenuItem item = new MenuItem(part, ChatColor.of(hex) + hex, "");
+        if (item.getItemMeta() instanceof LeatherArmorMeta armorMeta)
+        {
+            armorMeta.setColor(org.bukkit.Color.fromRGB(color.getColor().getRed(), color.getColor().getGreen(), color.getColor().getBlue()));
+            item.setItemMeta(armorMeta);
+        }
+        return item;
     }
 
     private static Boolean isWoodenTool(Material material) {
@@ -62,7 +87,7 @@ public class MaterialHelper {
                 material == Material.DIAMOND_HOE;
     }
 
-    public static Boolean isNetheriteTool(Material material) {
+    private static Boolean isNetheriteTool(Material material) {
         return material == Material.NETHERITE_SWORD ||
                 material == Material.NETHERITE_SHOVEL ||
                 material == Material.NETHERITE_PICKAXE ||

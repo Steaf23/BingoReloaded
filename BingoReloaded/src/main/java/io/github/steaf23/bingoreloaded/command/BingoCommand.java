@@ -5,7 +5,7 @@ import io.github.steaf23.bingoreloaded.data.PlayerData;
 import io.github.steaf23.bingoreloaded.gameloop.BingoGame;
 import io.github.steaf23.bingoreloaded.gameloop.BingoGameManager;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
-import io.github.steaf23.bingoreloaded.data.BingoStatsData;
+import io.github.steaf23.bingoreloaded.data.BingoStatData;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.data.ConfigData;
 import io.github.steaf23.bingoreloaded.gui.BingoMenu;
@@ -140,7 +140,7 @@ public class BingoCommand implements CommandExecutor
                     Message.sendDebug(text, player);
                     return true;
                 }
-                BingoStatsData statsData = new BingoStatsData();
+                BingoStatData statsData = new BingoStatData();
                 Message msg;
                 if (args.length > 1 && player.hasPermission("bingo.admin"))
                 {

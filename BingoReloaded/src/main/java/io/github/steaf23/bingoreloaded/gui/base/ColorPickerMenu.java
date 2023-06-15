@@ -1,5 +1,6 @@
 package io.github.steaf23.bingoreloaded.gui.base;
 
+import io.github.steaf23.bingoreloaded.util.MaterialHelper;
 import io.github.steaf23.bingoreloaded.util.Message;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
@@ -35,7 +36,7 @@ public final class ColorPickerMenu extends MenuInventory
         for (int i = 0; i < HUE_AMOUNT; i++)
         {
             Color col = Color.getHSBColor(i * (1.0f / (HUE_AMOUNT - 1)), 1.0f, 1.0f);
-            hueItems.add(createColoredItem(col));
+            hueItems.add(MaterialHelper.createColoredLeather());
         }
 
         addItem(PREVIOUS);
@@ -82,18 +83,6 @@ public final class ColorPickerMenu extends MenuInventory
             result.accept(ChatColor.of(key));
             close(player);
         }
-    }
-
-    private static MenuItem createColoredItem(Color color)
-    {
-        String hex = String.format("#%02X%02X%02X", color.getRed(), color.getGreen(), color.getBlue());
-        MenuItem item = new MenuItem(Material.LEATHER_CHESTPLATE, ChatColor.of(hex) + hex, "").setKey(hex);
-        if (item.getItemMeta() instanceof LeatherArmorMeta armorMeta)
-        {
-            armorMeta.setColor(org.bukkit.Color.fromRGB(color.getRed(), color.getGreen(), color.getBlue()));
-            item.setItemMeta(armorMeta);
-        }
-        return item;
     }
 
     public void setHueBar(int startingFrom)

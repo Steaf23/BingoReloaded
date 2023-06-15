@@ -1,15 +1,16 @@
 package io.github.steaf23.bingoreloaded.data;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
+import io.github.steaf23.bingoreloaded.data.helper.YmlDataManager;
 import io.github.steaf23.bingoreloaded.tasks.ItemTask;
 import io.github.steaf23.bingoreloaded.tasks.TaskData;
 import org.bukkit.Material;
 
 import java.util.*;
 
-public class BingoCardsData
+public class BingoCardData
 {
-    private final TaskListsData listsData = new TaskListsData();
+    private final TaskListData listsData = new TaskListData();
     public static final int MAX_ITEMS = 36;
     public static final int MIN_ITEMS = 1;
 
@@ -119,7 +120,7 @@ public class BingoCardsData
         return result;
     }
 
-    public TaskListsData lists()
+    public TaskListData lists()
     {
         return listsData;
     }

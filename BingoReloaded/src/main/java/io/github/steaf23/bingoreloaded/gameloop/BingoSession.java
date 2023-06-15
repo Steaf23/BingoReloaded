@@ -1,7 +1,7 @@
 package io.github.steaf23.bingoreloaded.gameloop;
 
 import io.github.steaf23.bingoreloaded.*;
-import io.github.steaf23.bingoreloaded.data.BingoCardsData;
+import io.github.steaf23.bingoreloaded.data.BingoCardData;
 import io.github.steaf23.bingoreloaded.data.BingoSettingsData;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.data.ConfigData;
@@ -90,7 +90,7 @@ public class BingoSession
 
         teamManager.addAutoPlayersToTeams();
 
-        BingoCardsData cardsData = new BingoCardsData();
+        BingoCardData cardsData = new BingoCardData();
         BingoSettings settings = settingsBuilder.view();
         if (!cardsData.getCardNames().contains(settings.card()))
         {

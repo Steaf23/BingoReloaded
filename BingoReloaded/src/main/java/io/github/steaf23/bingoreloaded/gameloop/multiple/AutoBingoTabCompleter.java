@@ -1,6 +1,6 @@
 package io.github.steaf23.bingoreloaded.gameloop.multiple;
 
-import io.github.steaf23.bingoreloaded.data.BingoCardsData;
+import io.github.steaf23.bingoreloaded.data.BingoCardData;
 import io.github.steaf23.bingoreloaded.util.FlexColor;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -51,7 +51,7 @@ public class AutoBingoTabCompleter implements TabCompleter
                     case "effects":
                         return List.of("all", "none", "water_breathing", "night_vision", "fire_resistance", "no_fall_damage", "card_speed");
                     case "card":
-                        BingoCardsData cardsData = new BingoCardsData();
+                        BingoCardData cardsData = new BingoCardData();
                         return cardsData.getCardNames().stream().toList();
                     case "start":
                         return List.of("regular", "lockout", "complete");

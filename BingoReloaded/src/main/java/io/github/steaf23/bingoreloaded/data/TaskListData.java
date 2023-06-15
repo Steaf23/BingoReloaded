@@ -1,6 +1,7 @@
 package io.github.steaf23.bingoreloaded.data;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
+import io.github.steaf23.bingoreloaded.data.helper.YmlDataManager;
 import io.github.steaf23.bingoreloaded.tasks.AdvancementTask;
 import io.github.steaf23.bingoreloaded.tasks.StatisticTask;
 import io.github.steaf23.bingoreloaded.tasks.TaskData;
@@ -14,7 +15,7 @@ import java.util.stream.Collectors;
 /**
  * This class is used to interface with the lists.yml file.
  */
-public class TaskListsData
+public class TaskListData
 {
     private final YmlDataManager data = BingoReloaded.createYmlDataManager("data/lists.yml");
 

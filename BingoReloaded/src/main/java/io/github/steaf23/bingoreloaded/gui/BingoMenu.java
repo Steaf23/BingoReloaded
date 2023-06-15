@@ -4,7 +4,7 @@ package io.github.steaf23.bingoreloaded.gui;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.settings.BingoSettingsBuilder;
-import io.github.steaf23.bingoreloaded.data.BingoCardsData;
+import io.github.steaf23.bingoreloaded.data.BingoCardData;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.data.ConfigData;
 import io.github.steaf23.bingoreloaded.gameloop.PregameLobby;
@@ -152,7 +152,7 @@ public class BingoMenu extends MenuInventory
 
     private void openCardPicker(Player player)
     {
-        BingoCardsData cardsData = new BingoCardsData();
+        BingoCardData cardsData = new BingoCardData();
         List<MenuItem> cards = new ArrayList<>();
 
         for (String cardName : cardsData.getCardNames())

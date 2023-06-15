@@ -4,7 +4,7 @@ import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.BingoScoreboard;
 import io.github.steaf23.bingoreloaded.cards.BingoCard;
 import io.github.steaf23.bingoreloaded.cards.CardBuilder;
-import io.github.steaf23.bingoreloaded.data.BingoCardsData;
+import io.github.steaf23.bingoreloaded.data.BingoCardData;
 import io.github.steaf23.bingoreloaded.data.BingoStatType;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.data.ConfigData;
@@ -273,7 +273,7 @@ public class BingoGame implements GamePhase
     {
         if (countdown == 0)
         {
-            deathMatchTask = new BingoTask(new BingoCardsData().getRandomItemTask(settings.card()));
+            deathMatchTask = new BingoTask(new BingoCardData().getRandomItemTask(settings.card()));
 
             for (BingoParticipant p : getTeamManager().getParticipants())
             {
