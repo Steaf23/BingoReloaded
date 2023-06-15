@@ -36,7 +36,9 @@ public final class ColorPickerMenu extends MenuInventory
         for (int i = 0; i < HUE_AMOUNT; i++)
         {
             Color col = Color.getHSBColor(i * (1.0f / (HUE_AMOUNT - 1)), 1.0f, 1.0f);
-            hueItems.add(MaterialHelper.createColoredLeather());
+            ChatColor chatColor = ChatColor.of(col);
+            hueItems.add(MaterialHelper.createColoredLeather(chatColor, Material.LEATHER_CHESTPLATE)
+                    .setKey(chatColor.toString()));
         }
 
         addItem(PREVIOUS);
@@ -46,7 +48,9 @@ public final class ColorPickerMenu extends MenuInventory
 
         for (int i = 0; i < 45; i++)
         {
-            addItem(createColoredItem(new Color(0)));
+            ChatColor color = ChatColor.of(new Color(0));
+            addItem(MaterialHelper.createColoredLeather(color, Material.LEATHER_CHESTPLATE)
+                    .setKey(color.toString()));
         }
 
         updateDisplay(new Color(Integer.parseInt(hueItems.get(0).getKey().substring(1), 16)));
@@ -111,7 +115,11 @@ public final class ColorPickerMenu extends MenuInventory
 
                 Color targetColor = Color.getHSBColor(hue, saturation, brightness);
 
-                MenuItem item = createColoredItem(targetColor).setSlot(MenuItem.slotFromXY(x, y));
+                ChatColor chatColor = ChatColor.of(targetColor);
+
+                MenuItem item = MaterialHelper.createColoredLeather(chatColor, Material.LEATHER_CHESTPLATE)
+                        .setKey(chatColor.toString())
+                        .setSlot(MenuItem.slotFromXY(x, y));
                 addItem(item);
             }
         }
