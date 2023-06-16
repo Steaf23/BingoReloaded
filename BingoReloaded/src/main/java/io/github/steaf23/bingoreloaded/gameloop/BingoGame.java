@@ -8,6 +8,7 @@ import io.github.steaf23.bingoreloaded.data.BingoCardsData;
 import io.github.steaf23.bingoreloaded.data.BingoStatType;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.data.ConfigData;
+import io.github.steaf23.bingoreloaded.data.recoverydata.RecoveryDataManager;
 import io.github.steaf23.bingoreloaded.event.*;
 import io.github.steaf23.bingoreloaded.gui.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.item.ItemText;
@@ -37,6 +38,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 
 import javax.annotation.Nullable;
@@ -54,6 +56,7 @@ public class BingoGame implements GamePhase
     private final StatisticTracker statTracker;
     private final ConfigData config;
     private GameTimer timer;
+    private BukkitTask saveTask;
     private CountdownTimer startingTimer;
     private boolean hasTimerStarted;
 
@@ -100,6 +103,7 @@ public class BingoGame implements GamePhase
             timer = new CounterTimer();
 
         initTimerNotifier();
+        initSaveTimer();
 
         deathMatchTask = null;
         World world = Bukkit.getWorld(getWorldName());
@@ -146,6 +150,7 @@ public class BingoGame implements GamePhase
     {
         this.hasTimerStarted = false;
         initTimerNotifier();
+        initSaveTimer();
 
         deathMatchTask = null;
 
@@ -237,6 +242,13 @@ public class BingoGame implements GamePhase
         }, BingoReloaded.ONE_SECOND);
     }
 
+    private void initSaveTimer() {
+        RecoveryDataManager recoveryDataManager = new RecoveryDataManager();
+        saveTask = Bukkit.getScheduler().runTaskTimer(BingoReloaded.getPlugin(BingoReloaded.class), () -> {
+            recoveryDataManager.saveRecoveryData(session.teamManager.getLeadingTeam().card, timer, settings, statTracker);
+        }, 30 * BingoReloaded.ONE_SECOND, 30 * BingoReloaded.ONE_SECOND);
+    }
+
     private void sendBingoStartEvent() {
         var event = new BingoStartedEvent(session);
         Bukkit.getPluginManager().callEvent(event);
@@ -244,6 +256,8 @@ public class BingoGame implements GamePhase
 
     public void end(@Nullable BingoTeam winningTeam)
     {
+        new RecoveryDataManager().clearRecoveryData();
+        saveTask.cancel();
         if (statTracker != null)
             statTracker.reset();
         timer.getTimeDisplayMessage(false).sendAll(session);

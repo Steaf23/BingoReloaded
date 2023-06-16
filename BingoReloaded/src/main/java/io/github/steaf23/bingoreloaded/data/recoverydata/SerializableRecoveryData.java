@@ -4,7 +4,6 @@ import io.github.steaf23.bingoreloaded.cards.BingoCard;
 import io.github.steaf23.bingoreloaded.cards.CompleteBingoCard;
 import io.github.steaf23.bingoreloaded.cards.LockoutBingoCard;
 import io.github.steaf23.bingoreloaded.data.recoverydata.bingocard.SerializableBingoCard;
-import io.github.steaf23.bingoreloaded.data.recoverydata.bingocard.SerializableCardSize;
 import io.github.steaf23.bingoreloaded.data.recoverydata.bingocard.SerializableCompleteBingoCard;
 import io.github.steaf23.bingoreloaded.data.recoverydata.bingocard.SerializableLockoutBingoCard;
 import io.github.steaf23.bingoreloaded.data.recoverydata.timer.SerializableCountdownTimer;
@@ -88,7 +87,7 @@ public class SerializableRecoveryData implements ConfigurationSerializable {
             List<StatisticProgress> stats = Arrays.stream(statisticProgresses)
                     .map(statisticProgress -> statisticProgress.toStatisticProgress(session))
                     .toList();
-            tracker = new StatisticTracker(session.worldName, stats)
+            tracker = new StatisticTracker(session.worldName, stats);
         }
         return new RecoveryData(
                 bingoCard.toBingoCard(session),

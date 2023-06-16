@@ -83,6 +83,14 @@ public class BingoCommand implements CommandExecutor
                     return true;
                 }
             }
+            case "resume" ->
+            {
+                if (player.hasPermission("bingo.settings"))
+                {
+                    session.resumeGame();
+                    return true;
+                }
+            }
             case "end" ->
             {
                 if (player.hasPermission("bingo.settings"))
