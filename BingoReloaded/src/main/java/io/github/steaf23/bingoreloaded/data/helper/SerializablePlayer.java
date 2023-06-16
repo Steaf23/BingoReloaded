@@ -1,22 +1,16 @@
 package io.github.steaf23.bingoreloaded.data.helper;
 
-import com.google.common.util.concurrent.ClosingFuture;
-import io.github.steaf23.bingoreloaded.BingoReloaded;
-import io.github.steaf23.bingoreloaded.util.Message;
+import io.github.steaf23.bingoreloaded.player.TeamManager;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
-import java.util.function.BinaryOperator;
 
 @SerializableAs("Player")
 public class SerializablePlayer implements ConfigurationSerializable
@@ -33,6 +27,7 @@ public class SerializablePlayer implements ConfigurationSerializable
     public float xpPoints;
     public ItemStack[] inventory;
     public ItemStack[] enderInventory;
+    public String teamName;
 
     public static SerializablePlayer fromPlayer(JavaPlugin plugin, Player player)
     {
@@ -48,6 +43,13 @@ public class SerializablePlayer implements ConfigurationSerializable
         data.xpPoints = player.getExp();
         data.inventory = player.getInventory().getContents();
         data.enderInventory = player.getEnderChest().getContents();
+        return data;
+    }
+
+    public static SerializablePlayer fromPlayerAndTeam(JavaPlugin plugin, Player player, String teamName)
+    {
+        SerializablePlayer data = fromPlayer(plugin, player);
+        data.teamName = teamName;
         return data;
     }
 
@@ -77,6 +79,17 @@ public class SerializablePlayer implements ConfigurationSerializable
         player.updateInventory();
     }
 
+    public void toPlayerAndTeam(Player player, TeamManager teamManager)
+    {
+        if (!playerId.equals(player.getUniqueId()))
+            return;
+        toPlayer(player);
+
+        if (teamName != null) {
+            teamManager.addPlayerToTeam(player, teamName);
+        }
+    }
+
     @NotNull
     @Override
     public Map<String, Object> serialize()
@@ -94,6 +107,7 @@ public class SerializablePlayer implements ConfigurationSerializable
         data.put("xp_points", xpPoints);
         data.put("inventory", inventory);
         data.put("ender_inventory", enderInventory);
+        data.put("team_name", teamName);
 
         return data;
     }
@@ -112,6 +126,7 @@ public class SerializablePlayer implements ConfigurationSerializable
         player.xpPoints = ((Double)(data.getOrDefault("xp_points", 0.0f))).floatValue();
         player.inventory = ((ArrayList<ItemStack>)data.getOrDefault("inventory", null)).toArray(new ItemStack[]{});
         player.enderInventory = ((ArrayList<ItemStack>)data.getOrDefault("ender_inventory", null)).toArray(new ItemStack[]{});
+        player.teamName = (String) data.getOrDefault("team_name", null);
 
         return player;
     }

@@ -249,8 +249,9 @@ public class BingoGame implements GamePhase
             teamManager
                     .getParticipants()
                     .stream()
-                    .map(BingoParticipant::sessionPlayer)
-                    .forEach(player -> recoveryDataManager.savePlayerRecoveryData(player.orElse(null)));
+                    .filter(player -> player.getTeam() != null)
+                    .filter(player -> player instanceof BingoPlayer)
+                    .forEach(player -> recoveryDataManager.savePlayerRecoveryData(player.sessionPlayer().orElse(null), player.getTeam().getName()));
         }, 30 * BingoReloaded.ONE_SECOND, 30 * BingoReloaded.ONE_SECOND);
     }
 

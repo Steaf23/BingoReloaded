@@ -4,8 +4,8 @@ import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.cards.BingoCard;
 import io.github.steaf23.bingoreloaded.data.YmlDataManager;
 import io.github.steaf23.bingoreloaded.data.helper.SerializablePlayer;
-import io.github.steaf23.bingoreloaded.data.recoverydata.bingocard.SerializableBasicBingoCard;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
+import io.github.steaf23.bingoreloaded.player.TeamManager;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
 import io.github.steaf23.bingoreloaded.tasks.statistics.StatisticTracker;
 import io.github.steaf23.bingoreloaded.util.Message;
@@ -21,10 +21,10 @@ public class RecoveryDataManager {
         data.saveConfig();
     }
 
-    public void savePlayerRecoveryData(Player player)
+    public void savePlayerRecoveryData(Player player, String teamName)
     {
         if (player != null) {
-            data.getConfig().set(player.getUniqueId().toString(), SerializablePlayer.fromPlayer(BingoReloaded.getPlugin(BingoReloaded.class), player));
+            data.getConfig().set(player.getUniqueId().toString(), SerializablePlayer.fromPlayerAndTeam(BingoReloaded.getPlugin(BingoReloaded.class), player, teamName));
             data.saveConfig();
         }
     }
@@ -54,21 +54,18 @@ public class RecoveryDataManager {
         return serializableRecoveryData.toRecoveryData(session);
     }
 
-    public Player loadPlayerRecoveryData(Player player)
+    public void loadPlayerRecoveryData(Player player, TeamManager teamManager)
     {
-        if (player == null) {
-            Message.error("Cannot recover data for null Player");
-            return null;
+        if (player == null || teamManager == null) {
+            return;
         }
         if (!data.getConfig().contains(player.getUniqueId().toString()))
         {
             Message.error("Could not find " + player.getDisplayName() + "'s data!");
-            return null;
+            return;
         }
-
-        data.getConfig().getSerializable(player.getUniqueId().toString(), SerializablePlayer.class).toPlayer(player);
+        data.getConfig().getSerializable(player.getUniqueId().toString(), SerializablePlayer.class).toPlayerAndTeam(player, teamManager);
         data.getConfig().set(player.getUniqueId().toString(), null);
         data.saveConfig();
-        return player;
     }
 }
