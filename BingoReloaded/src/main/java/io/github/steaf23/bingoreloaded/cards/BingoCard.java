@@ -46,6 +46,14 @@ public class BingoCard
                 BingoTranslation.INFO_REGULAR_DESC.translate().split("\\n"));
     }
 
+    public BingoCard(CardSize size, List<BingoTask> tasks) {
+        this.size = size;
+        this.tasks = tasks;
+        this.menu = new CardMenu(size, BingoTranslation.CARD_TITLE.translate());
+        menu.setInfo(BingoTranslation.INFO_REGULAR_NAME.translate(),
+                BingoTranslation.INFO_REGULAR_DESC.translate().split("\\n"));
+    }
+
     /**
      * Generating a bingo card has a few steps:
      *  - Create task shuffler

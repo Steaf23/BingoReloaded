@@ -76,6 +76,20 @@ public class BingoGame implements GamePhase
         start();
     }
 
+    public BingoGame(BingoSession session, BingoSettings settings, ConfigData config, GameTimer timer, BingoCard masterCard, StatisticTracker statistics) {
+        this.session = session;
+        this.config = config;
+        this.worldName = session.worldName;
+        this.teamManager = session.teamManager;
+        this.scoreboard = session.scoreboard;
+        this.settings = settings;
+        this.deadPlayers = new HashMap<>();
+        this.cardEventManager = new CardEventManager(worldName);
+        this.statTracker = statistics;
+        this.timer = timer;
+        resume(masterCard);
+    }
+
     private void start()
     {
         this.hasTimerStarted = false;
@@ -84,17 +98,8 @@ public class BingoGame implements GamePhase
             timer = new CountdownTimer(settings.countdownDuration() * 60, 5 * 60, 60, session);
         else
             timer = new CounterTimer();
-        timer.setNotifier(time ->
-        {
-            Message timerMessage = timer.getTimeDisplayMessage(false);
-            for (BingoParticipant participant : getTeamManager().getParticipants())
-            {
-                var p = participant.sessionPlayer();
-                p.ifPresent(value -> Message.sendActionMessage(timerMessage, value));
-            }
-            if (statTracker != null)
-                statTracker.updateProgress();
-        });
+
+        initTimerNotifier();
 
         deathMatchTask = null;
         World world = Bukkit.getWorld(getWorldName());
@@ -108,14 +113,7 @@ public class BingoGame implements GamePhase
         // Generate cards
         BingoCard masterCard = CardBuilder.fromMode(settings.mode(), settings.size(), getTeamManager().getActiveTeams().size());
         masterCard.generateCard(settings.card(), settings.seed(), !config.disableAdvancements, !config.disableStatistics);
-        getTeamManager().initializeCards(masterCard);
-
-        Set<BingoCard> cards = new HashSet<>();
-        for (BingoTeam activeTeam : getTeamManager().getActiveTeams())
-        {
-            cards.add(activeTeam.card);
-        }
-        cardEventManager.setCards(cards.stream().toList());
+        initCards(masterCard);
 
         if (statTracker != null)
             statTracker.start(getTeamManager().getActiveTeams());
@@ -139,9 +137,64 @@ public class BingoGame implements GamePhase
         // Post-start Setup
         scoreboard.reset();
 
-        var event = new BingoStartedEvent(session);
-        Bukkit.getPluginManager().callEvent(event);
+        sendBingoStartEvent();
 
+        initBingoStartTimer();
+    }
+
+    private void resume(BingoCard masterCard)
+    {
+        this.hasTimerStarted = false;
+        initTimerNotifier();
+
+        deathMatchTask = null;
+
+        initCards(masterCard);
+
+        if (statTracker != null)
+            statTracker.start(getTeamManager().getActiveTeams());
+
+        getTeamManager().getParticipants().forEach(p ->
+        {
+            if (p.sessionPlayer().isPresent())
+            {
+                returnCardToPlayer((BingoPlayer) p);
+            }
+        });
+
+        // Post-start Setup
+        scoreboard.updateTeamScores();
+
+        sendBingoStartEvent();
+
+        initBingoStartTimer();
+    }
+
+    private void initTimerNotifier() {
+        timer.setNotifier(time ->
+        {
+            Message timerMessage = timer.getTimeDisplayMessage(false);
+            for (BingoParticipant participant : getTeamManager().getParticipants())
+            {
+                var p = participant.sessionPlayer();
+                p.ifPresent(value -> Message.sendActionMessage(timerMessage, value));
+            }
+            if (statTracker != null)
+                statTracker.updateProgress();
+        });
+    }
+
+    private void initCards(BingoCard masterCard) {
+        getTeamManager().initializeCards(masterCard);
+        Set<BingoCard> cards = new HashSet<>();
+        for (BingoTeam activeTeam : getTeamManager().getActiveTeams())
+        {
+            cards.add(activeTeam.card);
+        }
+        cardEventManager.setCards(cards.stream().toList());
+    }
+
+    private void initBingoStartTimer() {
         // Countdown before the game actually starts
         startingTimer = new CountdownTimer(10, 6, 3, session);
         startingTimer.setNotifier(time -> {
@@ -181,7 +234,12 @@ public class BingoGame implements GamePhase
         });
         BingoReloaded.scheduleTask(task -> {
             startingTimer.start();
-        }, 1 * BingoReloaded.ONE_SECOND);
+        }, BingoReloaded.ONE_SECOND);
+    }
+
+    private void sendBingoStartEvent() {
+        var event = new BingoStartedEvent(session);
+        Bukkit.getPluginManager().callEvent(event);
     }
 
     public void end(@Nullable BingoTeam winningTeam)

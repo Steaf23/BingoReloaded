@@ -42,7 +42,7 @@ public class CountdownTimer extends GameTimer
     }
 
     @Override
-    protected void updateTime(long newTime)
+    public void updateTime(long newTime)
     {
         super.updateTime(newTime);
         if (getTime() <= 0)

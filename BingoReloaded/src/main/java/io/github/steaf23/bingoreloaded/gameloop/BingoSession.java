@@ -5,6 +5,8 @@ import io.github.steaf23.bingoreloaded.data.BingoCardsData;
 import io.github.steaf23.bingoreloaded.data.BingoSettingsData;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.data.ConfigData;
+import io.github.steaf23.bingoreloaded.data.recoverydata.RecoveryData;
+import io.github.steaf23.bingoreloaded.data.recoverydata.RecoveryDataManager;
 import io.github.steaf23.bingoreloaded.event.*;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.TeamManager;
@@ -108,6 +110,23 @@ public class BingoSession
         scoreboard.updateTeamScores();
         // The game is started in the constructor
         phase = new BingoGame(this, gameSettings == null ? settings : gameSettings.view(), config);
+    }
+
+    public void resumeGame()
+    {
+        if (isRunning())
+        {
+            return;
+        }
+
+        RecoveryData recoveryData = new RecoveryDataManager().loadRecoveryData(this);
+        if (recoveryData == null || recoveryData.hasNull()) {
+            return;
+        }
+
+        scoreboard.updateTeamScores();
+        // The game is started in the constructor
+        phase = new BingoGame(this, recoveryData.getSettings(), config, recoveryData.getTimer(), recoveryData.getBingoCard(), recoveryData.getStatisticTracker());
     }
 
     public void endGame()

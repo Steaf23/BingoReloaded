@@ -16,6 +16,12 @@ public class CompleteBingoCard extends BingoCard
                 BingoTranslation.INFO_COMPLETE_DESC.translate().split("\\n"));
     }
 
+    public CompleteBingoCard(CardSize size, List<BingoTask> tasks) {
+        super(size, tasks);
+        menu.setInfo(BingoTranslation.INFO_COMPLETE_NAME.translate(),
+                BingoTranslation.INFO_COMPLETE_DESC.translate().split("\\n"));
+    }
+
     @Override
     public boolean hasBingo(BingoTeam team)
     {

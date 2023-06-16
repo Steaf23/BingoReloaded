@@ -57,7 +57,7 @@ public abstract class GameTimer
         return time;
     }
 
-    protected void updateTime(long newTime)
+    public void updateTime(long newTime)
     {
         time = newTime;
         if (notifier != null)
