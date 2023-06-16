@@ -9,6 +9,7 @@ import io.github.steaf23.bingoreloaded.data.recoverydata.RecoveryData;
 import io.github.steaf23.bingoreloaded.data.recoverydata.RecoveryDataManager;
 import io.github.steaf23.bingoreloaded.event.*;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
+import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.player.TeamManager;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
 import io.github.steaf23.bingoreloaded.settings.BingoSettingsBuilder;
@@ -119,11 +120,17 @@ public class BingoSession
             return;
         }
 
-        RecoveryData recoveryData = new RecoveryDataManager().loadRecoveryData(this);
+        RecoveryDataManager manager = new RecoveryDataManager();
+        RecoveryData recoveryData = manager.loadRecoveryData(this);
         if (recoveryData == null || recoveryData.hasNull()) {
             return;
         }
-
+        teamManager
+                .getParticipants()
+                .stream()
+                .filter(bingoParticipant -> bingoParticipant instanceof BingoPlayer)
+                .map(BingoParticipant::sessionPlayer)
+                .forEach(player -> manager.loadPlayerRecoveryData(player.orElse(null)));
         scoreboard.updateTeamScores();
         // The game is started in the constructor
         phase = new BingoGame(this, recoveryData.getSettings(), config, recoveryData.getTimer(), recoveryData.getBingoCard(), recoveryData.getStatisticTracker());

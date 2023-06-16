@@ -15,28 +15,44 @@ import java.util.UUID;
 
 
 @SerializableAs("BingoTask")
-public class SerializableBingoTask implements ConfigurationSerializable {
-    private UUID completedBy;
-    private final String COMPLETED_BY_ID = "completed_by";
-    private long completedAt;
-    private final String COMPLETED_AT_ID = "completed_at";
-    private boolean voided;
-    private final String VOIDED_ID = "voided";
-    private TaskData taskData;
-    private final String DATA_ID = "task_data";
+public record SerializableBingoTask(
+        UUID completedBy,
+        int completedAt,
+        boolean voided,
+        TaskData taskData
+
+) implements ConfigurationSerializable {
+
+    private static final String COMPLETED_BY_ID = "completed_by";
+
+    private static final String COMPLETED_AT_ID = "completed_at";
+
+    private static final String VOIDED_ID = "voided";
+
+    private static final String DATA_ID = "task_data";
 
     public SerializableBingoTask(BingoTask task) {
-        completedBy = task.completedBy.map(BingoParticipant::getId).orElse(null);
-        completedAt = task.completedAt;
-        voided = task.isVoided();
-        taskData = task.data;
+        this(
+            task.completedBy.map(BingoParticipant::getId).orElse(null),
+            (int) task.completedAt,
+            task.isVoided(),
+            task.data
+        );
     }
 
-    public SerializableBingoTask(Map<String, Object> data) {
-        completedBy = (UUID) data.getOrDefault(COMPLETED_BY_ID, null);
-        completedAt = (Long) data.getOrDefault(COMPLETED_AT_ID, -1L);
-        voided = (Boolean) data.getOrDefault(VOIDED_ID, false);
-        taskData = (TaskData) data.getOrDefault(DATA_ID, null);
+    public static SerializableBingoTask deserialize(Map<String, Object> data)
+    {
+        String completedByString = (String)data.getOrDefault(COMPLETED_BY_ID, null);
+        UUID completedBy = null;
+        if (completedByString != null) {
+            completedBy = UUID.fromString(completedByString);
+        }
+        return new SerializableBingoTask(
+                completedBy,
+                (Integer) data.getOrDefault(COMPLETED_AT_ID, -1),
+                (Boolean) data.getOrDefault(VOIDED_ID, false),
+                (TaskData) data.getOrDefault(DATA_ID, null)
+        );
     }
 
     @NotNull
@@ -44,7 +60,9 @@ public class SerializableBingoTask implements ConfigurationSerializable {
     public Map<String, Object> serialize() {
         Map<String, Object> data = new HashMap<>();
 
-        data.put(COMPLETED_BY_ID, completedBy);
+        if (completedBy != null) {
+            data.put(COMPLETED_BY_ID, completedBy.toString());
+        }
         data.put(COMPLETED_AT_ID, completedAt);
         data.put(VOIDED_ID, voided);
         data.put(DATA_ID, taskData);

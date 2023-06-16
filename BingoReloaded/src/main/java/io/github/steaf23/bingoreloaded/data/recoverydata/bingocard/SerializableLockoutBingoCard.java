@@ -9,43 +9,61 @@ import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static io.github.steaf23.bingoreloaded.data.recoverydata.bingocard.SerializableBasicBingoCard.BINGO_TASKS_ID;
+import static io.github.steaf23.bingoreloaded.data.recoverydata.bingocard.SerializableBasicBingoCard.CARD_SIZE_ID;
+
 @SerializableAs("LockoutBingoCard")
-public class SerializableLockoutBingoCard extends SerializableBingoCard implements ConfigurationSerializable {
-    private int teamCount;
-    private final String TEAM_COUNT_ID = "team_count";
-    private int currentMaxTasks;
-    private final String MAX_TASKS_ID = "current_max_tasks";
+public record SerializableLockoutBingoCard(
+        List<SerializableBingoTask> bingoTaskList,
+        SerializableCardSize cardSize,
+        int teamCount,
+        int currentMaxTasks
+) implements ConfigurationSerializable, SerializableBingoCard {
+    private static final String TEAM_COUNT_ID = "team_count";
+    private static final String MAX_TASKS_ID = "current_max_tasks";
 
     public SerializableLockoutBingoCard(LockoutBingoCard bingoCard) {
-        super(bingoCard);
-        teamCount = bingoCard.teamCount;
-        currentMaxTasks = bingoCard.currentMaxTasks;
+        this(
+                bingoCard.tasks
+                        .stream()
+                        .map(SerializableBingoTask::new)
+                        .toList(),
+                new SerializableCardSize(bingoCard.size),
+                bingoCard.teamCount,
+                bingoCard.currentMaxTasks
+        );
     }
 
-    public SerializableLockoutBingoCard(Map<String, Object> data) {
-        super(data);
-        teamCount = (Integer) data.getOrDefault(TEAM_COUNT_ID, 0);
-        currentMaxTasks = (Integer) data.getOrDefault(MAX_TASKS_ID, 0);
+    public static SerializableLockoutBingoCard deserialize(Map<String, Object> data)
+    {
+        return new SerializableLockoutBingoCard(
+                (List<SerializableBingoTask>) data.getOrDefault(BINGO_TASKS_ID, null),
+                (SerializableCardSize) data.getOrDefault(CARD_SIZE_ID, null),
+                (Integer) data.getOrDefault(TEAM_COUNT_ID, 0),
+                (Integer) data.getOrDefault(MAX_TASKS_ID, 0)
+        );
     }
 
     @NotNull
     @Override
     public Map<String, Object> serialize() {
-        Map<String, Object> data = super.serialize();
+        Map<String, Object> data = new HashMap<>();
 
+        data.put(BINGO_TASKS_ID, bingoTaskList);
+        data.put(CARD_SIZE_ID, cardSize);
         data.put(TEAM_COUNT_ID, teamCount);
         data.put(MAX_TASKS_ID, currentMaxTasks);
 
-        return super.serialize();
+        return data;
     }
 
     @Override
     public BingoCard toBingoCard(BingoSession session) {
-        List<BingoTask> tasks = Arrays.stream(super.bingoTaskList)
+        List<BingoTask> tasks = bingoTaskList.stream()
                 .map(bingoTask -> bingoTask.toBingoTask(session))
                 .toList();
         CardSize cardSize = this.cardSize.toCardSize();

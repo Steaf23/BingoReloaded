@@ -3,10 +3,14 @@ package io.github.steaf23.bingoreloaded.data.recoverydata;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.cards.BingoCard;
 import io.github.steaf23.bingoreloaded.data.YmlDataManager;
+import io.github.steaf23.bingoreloaded.data.helper.SerializablePlayer;
+import io.github.steaf23.bingoreloaded.data.recoverydata.bingocard.SerializableBasicBingoCard;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
 import io.github.steaf23.bingoreloaded.tasks.statistics.StatisticTracker;
+import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.bingoreloaded.util.timer.GameTimer;
+import org.bukkit.entity.Player;
 
 public class RecoveryDataManager {
     private final YmlDataManager data = BingoReloaded.createYmlDataManager("recovery.yml");
@@ -17,9 +21,21 @@ public class RecoveryDataManager {
         data.saveConfig();
     }
 
+    public void savePlayerRecoveryData(Player player)
+    {
+        if (player != null) {
+            data.getConfig().set(player.getUniqueId().toString(), SerializablePlayer.fromPlayer(BingoReloaded.getPlugin(BingoReloaded.class), player));
+            data.saveConfig();
+        }
+    }
+
     public void clearRecoveryData() {
         data.getConfig().set("recovery_data", null);
         data.saveConfig();
+    }
+
+    public boolean hasRecoveryData() {
+        return data.getConfig().contains("recovery_data");
     }
 
     /**
@@ -36,5 +52,23 @@ public class RecoveryDataManager {
         data.getConfig().set("recovery_data", null);
         data.saveConfig();
         return serializableRecoveryData.toRecoveryData(session);
+    }
+
+    public Player loadPlayerRecoveryData(Player player)
+    {
+        if (player == null) {
+            Message.error("Cannot recover data for null Player");
+            return null;
+        }
+        if (!data.getConfig().contains(player.getUniqueId().toString()))
+        {
+            Message.error("Could not find " + player.getDisplayName() + "'s data!");
+            return null;
+        }
+
+        data.getConfig().getSerializable(player.getUniqueId().toString(), SerializablePlayer.class).toPlayer(player);
+        data.getConfig().set(player.getUniqueId().toString(), null);
+        data.saveConfig();
+        return player;
     }
 }

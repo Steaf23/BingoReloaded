@@ -246,6 +246,11 @@ public class BingoGame implements GamePhase
         RecoveryDataManager recoveryDataManager = new RecoveryDataManager();
         saveTask = Bukkit.getScheduler().runTaskTimer(BingoReloaded.getPlugin(BingoReloaded.class), () -> {
             recoveryDataManager.saveRecoveryData(session.teamManager.getLeadingTeam().card, timer, settings, statTracker);
+            teamManager
+                    .getParticipants()
+                    .stream()
+                    .map(BingoParticipant::sessionPlayer)
+                    .forEach(player -> recoveryDataManager.savePlayerRecoveryData(player.orElse(null)));
         }, 30 * BingoReloaded.ONE_SECOND, 30 * BingoReloaded.ONE_SECOND);
     }
 

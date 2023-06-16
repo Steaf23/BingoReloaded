@@ -18,28 +18,40 @@ import java.util.UUID;
 
 
 @SerializableAs("StatisticProgress")
-public class SerializableStatisticProgress implements ConfigurationSerializable {
-    private UUID player;
-    private final String PLAYER_ID = "player";
-    private BingoStatistic statistic;
-    private final String STAT_ID = "statistic";
-    private int progressLeft;
-    private final String PROGRESS_ID = "progress_left";
-    private int previousGlobalProgress;
-    private final String PREV_PROGRESS_ID = "previous_global_progress";
+public record SerializableStatisticProgress(
+        UUID player,
+        BingoStatistic statistic,
+        int progressLeft,
+        int previousGlobalProgress
+) implements ConfigurationSerializable {
+    private static final String PLAYER_ID = "player";
+    private static final String STAT_ID = "statistic";
+    private static final String PROGRESS_ID = "progress_left";
+    private static final String PREV_PROGRESS_ID = "previous_global_progress";
 
     public SerializableStatisticProgress(StatisticProgress statisticProgress) {
-        player = statisticProgress.getPlayer().getId();
-        statistic = statisticProgress.getStatistic();
-        progressLeft = statisticProgress.progressLeft;
-        previousGlobalProgress = statisticProgress.previousGlobalProgress;
+        this(
+                statisticProgress.getPlayer().getId(),
+                statisticProgress.getStatistic(),
+                statisticProgress.progressLeft,
+                statisticProgress.previousGlobalProgress
+        );
     }
 
-    public SerializableStatisticProgress(Map<String, Object> data) {
-        player = (UUID) data.getOrDefault(PLAYER_ID, null);
-        progressLeft = (Integer) data.getOrDefault(PROGRESS_ID, 0);
-        previousGlobalProgress = (Integer) data.getOrDefault(PREV_PROGRESS_ID, 0);
-        statistic = (BingoStatistic) data.getOrDefault(STAT_ID, null);
+    public static SerializableStatisticProgress deserialize(Map<String, Object> data)
+    {
+        String playerString = (String)data.getOrDefault(PLAYER_ID, null);
+        UUID player = null;
+        if (playerString != null) {
+            player = UUID.fromString(playerString);
+        }
+        return new SerializableStatisticProgress(
+                player,
+                (BingoStatistic) data.getOrDefault(STAT_ID, null),
+                (Integer) data.getOrDefault(PROGRESS_ID, 0),
+                (Integer) data.getOrDefault(PREV_PROGRESS_ID, 0)
+
+        );
     }
 
     @NotNull
@@ -47,7 +59,9 @@ public class SerializableStatisticProgress implements ConfigurationSerializable 
     public Map<String, Object> serialize() {
         Map<String, Object> data = new HashMap<>();
 
-        data.put(PLAYER_ID, player);
+        if (player != null) {
+            data.put(PLAYER_ID, player.toString());
+        }
         data.put(PROGRESS_ID, progressLeft);
         data.put(PREV_PROGRESS_ID, previousGlobalProgress);
         data.put(STAT_ID, statistic);

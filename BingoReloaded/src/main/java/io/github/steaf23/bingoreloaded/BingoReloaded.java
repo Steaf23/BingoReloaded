@@ -6,6 +6,11 @@ import io.github.steaf23.bingoreloaded.command.TeamChatCommand;
 import io.github.steaf23.bingoreloaded.data.*;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.data.helper.SerializablePlayer;
+import io.github.steaf23.bingoreloaded.data.recoverydata.SerializableRecoveryData;
+import io.github.steaf23.bingoreloaded.data.recoverydata.SerializableStatisticProgress;
+import io.github.steaf23.bingoreloaded.data.recoverydata.bingocard.*;
+import io.github.steaf23.bingoreloaded.data.recoverydata.timer.SerializableCountdownTimer;
+import io.github.steaf23.bingoreloaded.data.recoverydata.timer.SerializableCounterTimer;
 import io.github.steaf23.bingoreloaded.gameloop.BingoGameManager;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gameloop.multiple.MultiAutoBingoCommand;
@@ -67,6 +72,15 @@ public class BingoReloaded extends JavaPlugin
         ConfigurationSerialization.registerClass(CustomKit.class);
         ConfigurationSerialization.registerClass(MenuItem.class);
         ConfigurationSerialization.registerClass(SerializablePlayer.class);
+        ConfigurationSerialization.registerClass(SerializableBasicBingoCard.class);
+        ConfigurationSerialization.registerClass(SerializableBingoTask.class);
+        ConfigurationSerialization.registerClass(SerializableCardSize.class);
+        ConfigurationSerialization.registerClass(SerializableCompleteBingoCard.class);
+        ConfigurationSerialization.registerClass(SerializableLockoutBingoCard.class);
+        ConfigurationSerialization.registerClass(SerializableCounterTimer.class);
+        ConfigurationSerialization.registerClass(SerializableCountdownTimer.class);
+        ConfigurationSerialization.registerClass(SerializableRecoveryData.class);
+        ConfigurationSerialization.registerClass(SerializableStatisticProgress.class);
 
         this.config = new ConfigData(getConfig());
 

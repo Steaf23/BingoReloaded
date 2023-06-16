@@ -235,6 +235,14 @@ public class BingoTask
 
     public BingoTask copy()
     {
-        return new BingoTask(data);
+        BingoTask task = new BingoTask(data);
+        if (completedBy.isPresent()) {
+                task.completedBy = completedBy;
+                task.completedAt = completedAt;
+        }
+        task.setVoided(voided);
+        return task;
     }
+
+
 }
