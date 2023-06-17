@@ -536,7 +536,7 @@ public class BingoGame implements GamePhase
         if (event.getAction() != Action.RIGHT_CLICK_AIR && event.getAction() != Action.RIGHT_CLICK_BLOCK)
             return;
 
-        if (PlayerKit.WAND_ITEM.isKeyEqual(event.getItem()))
+        if (PlayerKit.WAND_ITEM.isCompareKeyEqual(event.getItem()))
         {
             event.setCancelled(true);
             ((BingoPlayer)participant).useGoUpWand(event.getItem(), config.wandCooldown, config.wandDown, config.wandUp, config.platformLifetime);
@@ -572,7 +572,7 @@ public class BingoGame implements GamePhase
         for (ItemStack drop : event.getDrops())
         {
             if (PDCHelper.getBoolean(drop.getItemMeta().getPersistentDataContainer(), "kit.kit_item", false)
-                    || PlayerKit.CARD_ITEM.isKeyEqual(drop))
+                    || PlayerKit.CARD_ITEM.isCompareKeyEqual(drop))
             {
                 drop.setAmount(0);
             }

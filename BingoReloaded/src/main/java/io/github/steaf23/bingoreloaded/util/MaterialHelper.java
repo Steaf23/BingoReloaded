@@ -26,27 +26,6 @@ public class MaterialHelper {
                 isNetheriteArmor(material);
     }
 
-    /**
-     * @param part should be one of Material.LEATHER_HELMET, Material.LEATHER_CHESTPLATE, Material.LEATHER_LEGGINGS or Material.LEATHER_BOOTS
-     * @return the leather item colored with the given color. If no valid part is given, this will return a colored Material.LEATHER_CHESTPLATE
-     */
-    public static MenuItem createColoredLeather(ChatColor color, Material part)
-    {
-        switch (part) {
-            case LEATHER_HELMET, LEATHER_CHESTPLATE, LEATHER_LEGGINGS, LEATHER_BOOTS -> {}
-            default -> part = Material.LEATHER_CHESTPLATE;
-        };
-
-        String hex = color.toString();
-        MenuItem item = new MenuItem(part, ChatColor.of(hex) + hex, "");
-        if (item.getItemMeta() instanceof LeatherArmorMeta armorMeta)
-        {
-            armorMeta.setColor(org.bukkit.Color.fromRGB(color.getColor().getRed(), color.getColor().getGreen(), color.getColor().getBlue()));
-            item.setItemMeta(armorMeta);
-        }
-        return item;
-    }
-
     private static Boolean isWoodenTool(Material material) {
         return material == Material.WOODEN_SWORD ||
                 material == Material.WOODEN_SHOVEL ||

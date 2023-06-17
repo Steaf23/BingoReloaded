@@ -71,6 +71,7 @@ public class BingoReloaded extends JavaPlugin
         ConfigurationSerialization.registerClass(CustomKit.class);
         ConfigurationSerialization.registerClass(MenuItem.class);
         ConfigurationSerialization.registerClass(SerializablePlayer.class);
+        ConfigurationSerialization.registerClass(TeamData.TeamTemplate.class);
 
         this.config = new ConfigData(getConfig());
 

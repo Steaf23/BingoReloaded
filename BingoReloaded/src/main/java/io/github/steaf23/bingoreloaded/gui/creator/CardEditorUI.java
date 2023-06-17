@@ -110,7 +110,7 @@ public class CardEditorUI extends PaginatedPickerMenu
             newItems.add(item);
         }
 
-        addContents(newItems.toArray(new MenuItem[0]));
+        addPickerContents(newItems.toArray(new MenuItem[0]));
 
         applyFilter(getFilter());
     }

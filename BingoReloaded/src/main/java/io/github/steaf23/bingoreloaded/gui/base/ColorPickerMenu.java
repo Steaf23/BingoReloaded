@@ -1,13 +1,12 @@
 package io.github.steaf23.bingoreloaded.gui.base;
 
-import io.github.steaf23.bingoreloaded.util.MaterialHelper;
+import io.github.steaf23.bingoreloaded.util.FlexColor;
 import io.github.steaf23.bingoreloaded.util.Message;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.meta.LeatherArmorMeta;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -37,8 +36,8 @@ public final class ColorPickerMenu extends MenuInventory
         {
             Color col = Color.getHSBColor(i * (1.0f / (HUE_AMOUNT - 1)), 1.0f, 1.0f);
             ChatColor chatColor = ChatColor.of(col);
-            hueItems.add(MaterialHelper.createColoredLeather(chatColor, Material.LEATHER_CHESTPLATE)
-                    .setKey(chatColor.toString()));
+            hueItems.add(MenuItem.createColoredLeather(chatColor, Material.LEATHER_CHESTPLATE)
+                    .setCompareKey(FlexColor.asHex(chatColor)));
         }
 
         addItem(PREVIOUS);
@@ -49,11 +48,11 @@ public final class ColorPickerMenu extends MenuInventory
         for (int i = 0; i < 45; i++)
         {
             ChatColor color = ChatColor.of(new Color(0));
-            addItem(MaterialHelper.createColoredLeather(color, Material.LEATHER_CHESTPLATE)
-                    .setKey(color.toString()));
+            addItem(MenuItem.createColoredLeather(color, Material.LEATHER_CHESTPLATE)
+                    .setCompareKey(FlexColor.asHex(color)));
         }
 
-        updateDisplay(new Color(Integer.parseInt(hueItems.get(0).getKey().substring(1), 16)));
+        updateDisplay(new Color(Integer.parseInt(hueItems.get(0).getCompareKey().substring(1), 16)));
     }
 
     public static void open(String title, Consumer<ChatColor> result, Player player, MenuInventory parent)
@@ -78,14 +77,14 @@ public final class ColorPickerMenu extends MenuInventory
         }
         else if (slotClicked > 45 && slotClicked < 53)
         {
-            String hex = clickedItem.getKey();
+            String hex = clickedItem.getCompareKey();
             updateDisplay(new Color(Integer.parseInt(hex.substring(1), 16)));
         }
         else
         {
-            String key = clickedItem.getKey();
-            result.accept(ChatColor.of(key));
+            String key = clickedItem.getCompareKey();
             close(player);
+            result.accept(ChatColor.of(key));
         }
     }
 
@@ -117,8 +116,8 @@ public final class ColorPickerMenu extends MenuInventory
 
                 ChatColor chatColor = ChatColor.of(targetColor);
 
-                MenuItem item = MaterialHelper.createColoredLeather(chatColor, Material.LEATHER_CHESTPLATE)
-                        .setKey(chatColor.toString())
+                MenuItem item = MenuItem.createColoredLeather(chatColor, Material.LEATHER_CHESTPLATE)
+                        .setCompareKey(FlexColor.asHex(chatColor))
                         .setSlot(MenuItem.slotFromXY(x, y));
                 addItem(item);
             }

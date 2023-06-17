@@ -1,5 +1,6 @@
 package io.github.steaf23.bingoreloaded.gui.base;
 
+import io.github.steaf23.bingoreloaded.util.Message;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -24,6 +25,7 @@ public class MenuEventListener implements Listener
     public static void addInventory(MenuInventory inventory)
     {
         inventories.add(inventory);
+        Message.log("Amount of inventories: " + inventories.size());
     }
 
     public MenuEventListener(Function<InventoryView, Boolean> precondition)

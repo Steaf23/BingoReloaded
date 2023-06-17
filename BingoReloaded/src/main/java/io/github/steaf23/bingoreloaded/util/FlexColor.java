@@ -2,6 +2,7 @@ package io.github.steaf23.bingoreloaded.util;
 
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import net.md_5.bungee.api.ChatColor;
+
 import org.bukkit.Color;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
@@ -158,5 +159,11 @@ public enum FlexColor
 
         Message.warn("Could not find a color fitting to " + nbtColor + "(nbt) !");
         return null;
+    }
+
+    public static String asHex(ChatColor color)
+    {
+        java.awt.Color awtCol = color.getColor();
+        return String.format("#%02X%02X%02X", awtCol.getRed(), awtCol.getGreen(), awtCol.getBlue());
     }
 }

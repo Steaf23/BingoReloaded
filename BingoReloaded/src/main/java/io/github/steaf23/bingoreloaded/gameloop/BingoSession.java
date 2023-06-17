@@ -177,10 +177,10 @@ public class BingoSession
 
     public void handlePlayerDropItem(final PlayerDropItemEvent dropEvent)
     {
-        if (PlayerKit.CARD_ITEM.isKeyEqual(dropEvent.getItemDrop().getItemStack()) ||
-                PlayerKit.WAND_ITEM.isKeyEqual(dropEvent.getItemDrop().getItemStack()) ||
-                PlayerKit.VOTE_ITEM.isKeyEqual(dropEvent.getItemDrop().getItemStack()) ||
-                PlayerKit.TEAM_ITEM.isKeyEqual(dropEvent.getItemDrop().getItemStack()))
+        if (PlayerKit.CARD_ITEM.isCompareKeyEqual(dropEvent.getItemDrop().getItemStack()) ||
+                PlayerKit.WAND_ITEM.isCompareKeyEqual(dropEvent.getItemDrop().getItemStack()) ||
+                PlayerKit.VOTE_ITEM.isCompareKeyEqual(dropEvent.getItemDrop().getItemStack()) ||
+                PlayerKit.TEAM_ITEM.isCompareKeyEqual(dropEvent.getItemDrop().getItemStack()))
         {
             dropEvent.setCancelled(true);
         }

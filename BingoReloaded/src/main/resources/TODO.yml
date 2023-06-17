@@ -1,5 +1,7 @@
 refactor card recovery (its shit).
 
+refactor ContextMenu into ActionMenu (or add method to create a contextmenu from action)
+
 implement Vault rewards
 
 add /bingo info command to see information about current game (settings mostly) (admin use only)
@@ -17,6 +19,8 @@ finish multiworld and TEST (using premade worlds or multiverse?)
 add option to restore player data after a game ends..
 
 double check translations BEFORE RELEASE
+
+update TabCompleters (integrate with command executor class?) BEFORE RELEASE
 
 update autobingo page with all new features BEFORE RELEASE
 

@@ -53,7 +53,7 @@ public class BingoCreatorUI extends MenuInventory
                                 ChatColor.GRAY + "Right-click for more options");
                         items.add(item);
                     }
-                    addContents(items.toArray(new MenuItem[]{}));
+                    addPickerContents(items.toArray(new MenuItem[]{}));
                 }
 
                 @Override
@@ -104,7 +104,7 @@ public class BingoCreatorUI extends MenuInventory
                                 ChatColor.GRAY + "Right-click for more options");
                         items.add(item);
                     }
-                    addContents(items.toArray(new MenuItem[]{}));
+                    addPickerContents(items.toArray(new MenuItem[]{}));
                 }
 
                 @Override
