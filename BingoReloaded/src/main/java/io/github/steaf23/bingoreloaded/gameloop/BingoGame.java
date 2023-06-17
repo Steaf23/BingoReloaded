@@ -510,11 +510,13 @@ public class BingoGame implements GamePhase
             if (otherParticipant.sessionPlayer().isPresent())
                 otherParticipant.sessionPlayer().get().playSound(otherParticipant.sessionPlayer().get(), Sound.ENTITY_DRAGON_FIREBALL_EXPLODE, 0.8f, 1.0f);
         }
+
+        scoreboard.updateTeamScores();
+
         if (event.hasBingo())
         {
             bingo(event.getParticipant().getTeam());
         }
-        scoreboard.updateTeamScores();
 
         if (event.getParticipant().sessionPlayer().isEmpty())
             return;
