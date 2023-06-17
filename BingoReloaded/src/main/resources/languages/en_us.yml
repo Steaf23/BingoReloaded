@@ -104,6 +104,7 @@ menu:
     fire_res: "Fire Resistance"
     no_fall_dmg: "No Fall Damage"
     no_durability: "Infinite Durability"
+    keep_inventory: "Keep Inventory"
     speed: "Speed"
   kits:
     hardcore:

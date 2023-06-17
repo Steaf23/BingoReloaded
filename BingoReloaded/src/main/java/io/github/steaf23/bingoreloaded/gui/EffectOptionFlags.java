@@ -11,7 +11,8 @@ public enum EffectOptionFlags
     FIRE_RESISTANCE(BingoTranslation.EFFECTS_FIRE_RES.translate()),
     NO_FALL_DAMAGE(BingoTranslation.EFFECTS_NO_FALL_DMG.translate()),
     SPEED(BingoTranslation.EFFECTS_SPEED.translate()),
-    NO_DURABILITY(BingoTranslation.EFFECTS_NO_DURABILITY.translate());
+    NO_DURABILITY(BingoTranslation.EFFECTS_NO_DURABILITY.translate()),
+    KEEP_INVENTORY(BingoTranslation.EFFECTS_KEEP_INVENTORY.translate());
 
     public final String name;
 

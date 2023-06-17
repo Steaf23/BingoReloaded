@@ -112,6 +112,7 @@ menu:
     fire_res: "Vuurbestendigheid"
     no_fall_dmg: "Geen Valschade"
     no_durability: "Oneindige duurzaamheid"
+    keep_inventory: "Behoud inventaris"
     card_speed: "Extra snelheid"
   kits:
     hardcore:

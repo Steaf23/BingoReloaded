@@ -569,12 +569,14 @@ public class BingoGame implements GamePhase
         if (participant == null || participant.sessionPlayer().isEmpty())
             return;
 
-        for (ItemStack drop : event.getDrops())
-        {
-            if (PDCHelper.getBoolean(drop.getItemMeta().getPersistentDataContainer(), "kit.kit_item", false)
-                    || PlayerKit.CARD_ITEM.isKeyEqual(drop))
-            {
-                drop.setAmount(0);
+        if (settings.effects().contains(EffectOptionFlags.KEEP_INVENTORY)) {
+            event.setKeepInventory(true);
+        } else {
+            for (ItemStack drop : event.getDrops()) {
+                if (PDCHelper.getBoolean(drop.getItemMeta().getPersistentDataContainer(), "kit.kit_item", false)
+                        || PlayerKit.CARD_ITEM.isKeyEqual(drop)) {
+                    drop.setAmount(0);
+                }
             }
         }
 
@@ -600,8 +602,10 @@ public class BingoGame implements GamePhase
 
         Message.log("Player " + player.asOnlinePlayer().get().getDisplayName() + " respawned", worldName);
 
-        returnCardToPlayer(player);
-        player.giveKit(settings.kit());
+        if (!settings.effects().contains(EffectOptionFlags.KEEP_INVENTORY)) {
+            returnCardToPlayer(player);
+            player.giveKit(settings.kit());
+        }
     }
 
     public void handleCountdownFinished(final CountdownTimerFinishedEvent event)

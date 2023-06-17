@@ -24,12 +24,13 @@ public class EffectOptionsMenu extends ActionMenu {
         super(45, BingoTranslation.OPTIONS_EFFECTS.translate(), parent);
         flags = settings.view().effects();
 
-        addEffectAction(EffectOptionFlags.NIGHT_VISION, 4, 3, Material.GOLDEN_CARROT);
-        addEffectAction(EffectOptionFlags.WATER_BREATHING, 2, 3, Material.PUFFERFISH);
-        addEffectAction(EffectOptionFlags.FIRE_RESISTANCE, 6, 3, Material.MAGMA_CREAM);
+        addEffectAction(EffectOptionFlags.NIGHT_VISION, 5, 3, Material.GOLDEN_CARROT);
+        addEffectAction(EffectOptionFlags.WATER_BREATHING, 3, 3, Material.PUFFERFISH);
+        addEffectAction(EffectOptionFlags.FIRE_RESISTANCE, 7, 3, Material.MAGMA_CREAM);
         addEffectAction(EffectOptionFlags.NO_FALL_DAMAGE, 2, 1, Material.NETHERITE_BOOTS);
-        addEffectAction(EffectOptionFlags.SPEED, 4, 1, Material.FEATHER);
+        addEffectAction(EffectOptionFlags.SPEED, 1, 3, Material.FEATHER);
         addEffectAction(EffectOptionFlags.NO_DURABILITY, 6, 1, Material.NETHERITE_PICKAXE);
+        addEffectAction(EffectOptionFlags.KEEP_INVENTORY, 4, 1, Material.CHEST);
         addAction(
                 new MenuItem(
                         44,
