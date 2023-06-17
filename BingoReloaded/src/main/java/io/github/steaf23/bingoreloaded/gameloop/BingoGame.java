@@ -571,6 +571,7 @@ public class BingoGame implements GamePhase
 
         if (settings.effects().contains(EffectOptionFlags.KEEP_INVENTORY)) {
             event.setKeepInventory(true);
+            event.getDrops().clear();
         } else {
             for (ItemStack drop : event.getDrops())
             {
