@@ -2,7 +2,6 @@ package io.github.steaf23.bingoreloaded.event;
 
 import io.github.steaf23.bingoreloaded.gameloop.BingoGame;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
-import io.github.steaf23.bingoreloaded.gameloop.PregameLobby;
 import io.github.steaf23.bingoreloaded.gui.base.MenuItem;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import io.github.steaf23.bingoreloaded.tasks.statistics.StatisticTracker;
@@ -77,7 +76,7 @@ public class BingoEventListener implements Listener
     public void handlePlayerInteract(final PlayerInteractEvent event)
     {
         // Special case; we don't want to have any bingo cards act as an actual map...
-        if (event.getItem() != null && new MenuItem(event.getItem()).isKeyEqual(PlayerKit.CARD_ITEM))
+        if (event.getItem() != null && new MenuItem(event.getItem()).isCompareKeyEqual(PlayerKit.CARD_ITEM))
             event.setCancelled(true);
 
         BingoSession session = getSession(event.getPlayer().getWorld());

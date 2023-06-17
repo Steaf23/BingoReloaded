@@ -151,14 +151,14 @@ public class PregameLobby implements GamePhase
 
         MenuItem item = new MenuItem(event.getItem());
 
-        if (item.getKey().equals("vote"))
+        if (item.getCompareKey().equals("vote"))
         {
             event.setCancelled(true);
             VoteMenu menu = new VoteMenu(config.voteList, null, this);
             menu.open(event.getPlayer());
             return;
         }
-        else if (item.getKey().equals("team"))
+        else if (item.getCompareKey().equals("team"))
         {
             event.setCancelled(true);
             session.teamManager.openTeamSelector(event.getPlayer(), null);

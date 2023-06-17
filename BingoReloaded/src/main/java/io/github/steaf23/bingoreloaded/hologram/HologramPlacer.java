@@ -1,6 +1,5 @@
 package io.github.steaf23.bingoreloaded.hologram;
 
-import io.github.steaf23.bingoreloaded.data.BingoStatsData;
 import io.github.steaf23.bingoreloaded.gui.base.FilterType;
 import io.github.steaf23.bingoreloaded.gui.base.MenuItem;
 import io.github.steaf23.bingoreloaded.gui.base.PaginatedPickerMenu;
@@ -8,12 +7,9 @@ import io.github.steaf23.bingoreloaded.util.Message;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
-import org.bukkit.event.block.Action;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,7 +27,7 @@ public class HologramPlacer
             "" + ChatColor.AQUA + ChatColor.BOLD + "Hologram Wand",
             ChatColor.GRAY + "Right-Click in the air to select a hologram to place",
             ChatColor.GRAY + "Right-Click on a block to place selected hologram",
-            ChatColor.GRAY + "Left-Click on a block to remove any placed hologram").setKey("hologram_wand");
+            ChatColor.GRAY + "Left-Click on a block to remove any placed hologram").setCompareKey("hologram_wand");
 
     public HologramPlacer(HologramManager manager)
     {
@@ -41,7 +37,7 @@ public class HologramPlacer
 
     public void handlePlayerInteractEvent(final PlayerInteractEvent event)
     {
-        if (!HOLOGRAM_WAND.isKeyEqual(event.getItem()))
+        if (!HOLOGRAM_WAND.isCompareKeyEqual(event.getItem()))
             return;
 
         Location targetLocation = event.getClickedBlock().getLocation();
@@ -85,14 +81,14 @@ public class HologramPlacer
         };
 
         List<MenuItem> items = new ArrayList<>();
-        items.add(new MenuItem(Material.GLOBE_BANNER_PATTERN, "test").setKey("test"));
+        items.add(new MenuItem(Material.GLOBE_BANNER_PATTERN, "test").setCompareKey("test"));
 
         PaginatedPickerMenu hologramPicker = new PaginatedPickerMenu(items, "Select a Hologram", null, FilterType.ITEM_KEY)
         {
             @Override
             public void onOptionClickedDelegate(InventoryClickEvent event, MenuItem clickedOption, Player player)
             {
-                result.accept(clickedOption.getKey());
+                result.accept(clickedOption.getCompareKey());
             }
         };
     }

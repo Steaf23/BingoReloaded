@@ -90,7 +90,7 @@ public class TeamManager
     public void openTeamSelector(Player player, MenuInventory parentUI)
     {
         List<MenuItem> optionItems = new ArrayList<>();
-        optionItems.add(new MenuItem(Material.NETHER_STAR, "" + ChatColor.BOLD + ChatColor.ITALIC + BingoTranslation.TEAM_AUTO.translate()).setKey("auto"));
+        optionItems.add(new MenuItem(Material.NETHER_STAR, "" + ChatColor.BOLD + ChatColor.ITALIC + BingoTranslation.TEAM_AUTO.translate()).setCompareKey("auto"));
         for (FlexColor color : FlexColor.values())
         {
             boolean teamIsFull = false;
@@ -122,7 +122,7 @@ public class TeamManager
             }
 
             optionItems.add(new MenuItem(color.concrete, "" + color.chatColor + ChatColor.BOLD + color.getTranslatedName(),
-                    description.toArray(new String[]{})).setKey(color.name));
+                    description.toArray(new String[]{})).setCompareKey(color.name));
         }
 
         PaginatedPickerMenu teamPicker = new PaginatedPickerMenu(optionItems, BingoTranslation.OPTIONS_TEAM.translate(), parentUI, FilterType.DISPLAY_NAME)
@@ -130,7 +130,7 @@ public class TeamManager
             @Override
             public void onOptionClickedDelegate(InventoryClickEvent event, MenuItem clickedOption, Player player)
             {
-                if (clickedOption.getKey().equals("auto"))
+                if (clickedOption.getCompareKey().equals("auto"))
                 {
                     if (addPlayerToAutoTeam(player))
                     {
@@ -139,7 +139,7 @@ public class TeamManager
                     return;
                 }
 
-                FlexColor color = FlexColor.fromName(clickedOption.getKey());
+                FlexColor color = FlexColor.fromName(clickedOption.getCompareKey());
                 if (color == null)
                     return;
 
@@ -603,7 +603,7 @@ public class TeamManager
         if (participant == null)
             return;
 
-        if (PlayerKit.CARD_ITEM.isKeyEqual(event.getItem()))
+        if (PlayerKit.CARD_ITEM.isCompareKeyEqual(event.getItem()))
         {
             event.setCancelled(true);
             BingoTeam playerTeam = participant.getTeam();

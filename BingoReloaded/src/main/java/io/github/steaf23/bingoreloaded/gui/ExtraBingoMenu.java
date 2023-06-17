@@ -147,33 +147,33 @@ public class ExtraBingoMenu extends MenuInventory
             {
                 if (event.isLeftClick())
                 {
-                    settings.fromOther(settingsData.getSettings(clickedOption.getKey()));
+                    settings.fromOther(settingsData.getSettings(clickedOption.getCompareKey()));
                     close(player);
                 }
                 else if (event.isRightClick())
                 {
                     new ContextMenu(clickedOption.getItemMeta().getDisplayName(), this)
                             .addAction("Remove", Material.BARRIER, clickType -> {
-                                settingsData.removeSettings(clickedOption.getKey());
+                                settingsData.removeSettings(clickedOption.getCompareKey());
                                 return true;
                             })
                             .addAction("Duplicate", Material.SHULKER_SHELL, clickType -> {
-                                BingoSettings oldSettings = settingsData.getSettings(clickedOption.getKey());
-                                settingsData.saveSettings(clickedOption.getKey() + "_copy", oldSettings);
+                                BingoSettings oldSettings = settingsData.getSettings(clickedOption.getCompareKey());
+                                settingsData.saveSettings(clickedOption.getCompareKey() + "_copy", oldSettings);
                                 return true;
                             })
                             .addAction("Rename", Material.NAME_TAG, clickType -> {
-                                BingoSettings oldSettings = settingsData.getSettings(clickedOption.getKey());
-                                settingsData.removeSettings(clickedOption.getKey());
+                                BingoSettings oldSettings = settingsData.getSettings(clickedOption.getCompareKey());
+                                settingsData.removeSettings(clickedOption.getCompareKey());
                                 UserInputMenu.open("Rename preset...", input -> {
                                     settingsData.saveSettings(input, oldSettings);
-                                }, player, this, clickedOption.getKey());
+                                }, player, this, clickedOption.getCompareKey());
                                 return false;
                             })
                             .addAction(new MenuItem(Material.GLOBE_BANNER_PATTERN, TITLE_PREFIX + "Overwrite",
                                     "This will overwrite the settings saved in ",
-                                    clickedOption.getKey() + " with the currently selected options!"), clickType -> {
-                                settingsData.saveSettings(clickedOption.getKey(), settings.view());
+                                    clickedOption.getCompareKey() + " with the currently selected options!"), clickType -> {
+                                settingsData.saveSettings(clickedOption.getCompareKey(), settings.view());
                                 return true;
                             })
                             .open(player);
@@ -197,10 +197,10 @@ public class ExtraBingoMenu extends MenuInventory
                             ChatColor.GRAY + "Left-click to apply these settings",
                             ChatColor.GRAY + "Right-click for more options",
                             def ? ChatColor.LIGHT_PURPLE + "The default preset can be changed in the general config file" : "");
-                    item.setKey(preset);
+                    item.setCompareKey(preset);
                     items.add(item);
                 }
-                addContents(items.toArray(new MenuItem[]{}));
+                addPickerContents(items.toArray(new MenuItem[]{}));
             }
 
             @Override

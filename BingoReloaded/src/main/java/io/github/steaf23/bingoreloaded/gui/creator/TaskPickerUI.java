@@ -1,6 +1,6 @@
 package io.github.steaf23.bingoreloaded.gui.creator;
 
-import io.github.steaf23.bingoreloaded.data.BingoCardsData;
+import io.github.steaf23.bingoreloaded.data.BingoCardData;
 import io.github.steaf23.bingoreloaded.gui.base.FilterType;
 import io.github.steaf23.bingoreloaded.gui.base.MenuItem;
 import io.github.steaf23.bingoreloaded.gui.base.MenuInventory;
@@ -107,7 +107,7 @@ public class TaskPickerUI extends PaginatedPickerMenu
     {
         super.handleOpen(event);
 
-        BingoCardsData cardsData = new BingoCardsData();
+        BingoCardData cardsData = new BingoCardData();
         Set<TaskData> tasks = cardsData.lists().getTasks(listName, true, true);
 
         for (MenuItem item : getItems())
@@ -141,7 +141,7 @@ public class TaskPickerUI extends PaginatedPickerMenu
     {
         super.handleClose(event);
 
-        BingoCardsData cardsData = new BingoCardsData();
+        BingoCardData cardsData = new BingoCardData();
         cardsData.lists().saveTasksFromGroup(listName,
                 getItems().stream().map(item -> BingoTask.fromStack(item).data).toList(),
                 getSelectedItems().stream().map(item -> BingoTask.fromStack(item).data).toList());

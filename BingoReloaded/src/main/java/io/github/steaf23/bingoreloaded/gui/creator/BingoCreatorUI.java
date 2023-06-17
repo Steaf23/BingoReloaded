@@ -1,7 +1,7 @@
 package io.github.steaf23.bingoreloaded.gui.creator;
 
-import io.github.steaf23.bingoreloaded.data.BingoCardsData;
-import io.github.steaf23.bingoreloaded.data.TaskListsData;
+import io.github.steaf23.bingoreloaded.data.BingoCardData;
+import io.github.steaf23.bingoreloaded.data.TaskListData;
 import io.github.steaf23.bingoreloaded.gui.base.*;
 import io.github.steaf23.bingoreloaded.gui.base.MenuItem;
 import org.bukkit.ChatColor;
@@ -18,7 +18,7 @@ import java.util.List;
 // Uses a double ListPicker, one for cards and one for lists.
 public class BingoCreatorUI extends MenuInventory
 {
-    private final BingoCardsData cardsData;
+    private final BingoCardData cardsData;
     public static final MenuItem CARD = new MenuItem(11, Material.FILLED_MAP, TITLE_PREFIX + "Edit Cards", "Click to view and edit bingo cards!");
     public static final MenuItem LIST = new MenuItem(15, Material.PAPER, TITLE_PREFIX + "Edit Lists", "Click to view and edit bingo lists!");
 
@@ -26,7 +26,7 @@ public class BingoCreatorUI extends MenuInventory
     {
         super(27, "Card Creator", parent);
         addItems(CARD, LIST);
-        this.cardsData = new BingoCardsData();
+        this.cardsData = new BingoCardData();
     }
 
     @Override
@@ -53,7 +53,7 @@ public class BingoCreatorUI extends MenuInventory
                                 ChatColor.GRAY + "Right-click for more options");
                         items.add(item);
                     }
-                    addContents(items.toArray(new MenuItem[]{}));
+                    addPickerContents(items.toArray(new MenuItem[]{}));
                 }
 
                 @Override
@@ -91,7 +91,7 @@ public class BingoCreatorUI extends MenuInventory
                 public void handleOpen(final InventoryOpenEvent event)
                 {
                     super.handleOpen(event);
-                    TaskListsData listsData = cardsData.lists();
+                    TaskListData listsData = cardsData.lists();
 
                     addItem(CREATE_LIST);
                     clearItems();
@@ -104,7 +104,7 @@ public class BingoCreatorUI extends MenuInventory
                                 ChatColor.GRAY + "Right-click for more options");
                         items.add(item);
                     }
-                    addContents(items.toArray(new MenuItem[]{}));
+                    addPickerContents(items.toArray(new MenuItem[]{}));
                 }
 
                 @Override
@@ -184,7 +184,7 @@ public class BingoCreatorUI extends MenuInventory
 
     public void createListContext(String listName, Player player, MenuInventory parent)
     {
-        TaskListsData listsData = cardsData.lists();
+        TaskListData listsData = cardsData.lists();
 
         new ContextMenu(listName, parent)
                 .addAction("Remove", Material.BARRIER, (clickType) -> {
