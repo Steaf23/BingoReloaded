@@ -13,6 +13,11 @@ command:
     no_name: "Geef de naam van de lijst op: {0}" # 0: command
     no_remove: "'{0}' kan niet verwijderd worden, weet je zeker dat de naam klopt?" # 0: item list name
     removed: "'{0}' is succesvol verwijderd!" # 0: item list name
+  tp:
+    no_team: "Kan niet teleporteren naar een teamgenoot omdat je niet in een team zit!"
+    usage: "Utilisation: {0}"
+    not_player: "{0} is geen geldige online speler, zorg ervoor dat je hun naam correct hebt gespeld!"
+    not_teammate: "{0} zit niet in je team, je kunt alleen teleporteren naar spelers in je team"
 game:
   settings:
     kit_selected: "De {0} player kit is geselecteerd" # 0: selected kit (see "kit") below

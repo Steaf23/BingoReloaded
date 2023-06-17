@@ -13,6 +13,11 @@ command:
     no_name: "Please provide item list name: {0}" # 0: command
     no_remove: "Cannot remove '{0}', make sure you spelled it correctly!" # 0: item list name
     removed: "Item list '{0}' successfully removed!" # 0: item list name
+  tp:
+    no_team: "Can't teleport to a teammate because you are not on a team!"
+    usage: "Usage: {0}"
+    not_player: "{0} is not a valid online player, make sure you spell their name correctly!"
+    not_teammate: "{0} is not on your team, you may only teleport to players on your team"
 game:
   timer:
     duration: "Game duration: {0}" # 0: total game time duration

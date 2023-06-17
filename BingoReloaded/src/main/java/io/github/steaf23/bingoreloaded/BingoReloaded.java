@@ -1,8 +1,6 @@
 package io.github.steaf23.bingoreloaded;
 
-import io.github.steaf23.bingoreloaded.command.BingoCommand;
-import io.github.steaf23.bingoreloaded.command.BingoTabCompleter;
-import io.github.steaf23.bingoreloaded.command.TeamChatCommand;
+import io.github.steaf23.bingoreloaded.command.*;
 import io.github.steaf23.bingoreloaded.data.*;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.data.helper.SerializablePlayer;
@@ -95,6 +93,10 @@ public class BingoReloaded extends JavaPlugin
 
         registerCommand("bingo", new BingoCommand(config, gameManager), new BingoTabCompleter());
         registerCommand("autobingo", autoBingoCommand, null);
+
+        if (config.teleportToTeammates) {
+            registerCommand("btp", new TeamTeleportCommand(gameManager), new TeamTeleportTabCompleter(gameManager));
+        }
 
         Message.log(ChatColor.GREEN + "Enabled " + getName());
 

@@ -3,8 +3,6 @@ package io.github.steaf23.bingoreloaded.data;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import javax.annotation.Nullable;
-import java.sql.Array;
-import java.util.ArrayList;
 import java.util.List;
 
 public class ConfigData
@@ -92,6 +90,7 @@ public class ConfigData
     public final int teleportMaxDistance;
     public final PlayerTeleportStrategy playerTeleportStrategy;
     public final boolean teleportAfterDeath;
+    public final boolean teleportToTeammates;
     public final int wandUp;
     public final int wandDown;
     public final double wandCooldown;
@@ -129,6 +128,7 @@ public class ConfigData
         this.teleportMaxDistance = config.getInt("teleportMaxDistance", 1000000);
         this.playerTeleportStrategy = PlayerTeleportStrategy.fromName(config.getString("playerTeleportStrategy", "ALL"));
         this.teleportAfterDeath = config.getBoolean("teleportBackAfterDeathMessage", true);
+        this.teleportToTeammates = config.getBoolean("teleportToTeammates", false);
         this.wandUp = config.getInt("GoUpWand.upDistance", 75);
         this.wandDown = config.getInt("GoUpWand.downDistance", 5);
         this.wandCooldown = config.getDouble("GoUpWand.cooldown", 5.0);

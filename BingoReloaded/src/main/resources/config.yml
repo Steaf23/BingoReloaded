@@ -61,6 +61,9 @@ playerTeleportStrategy: ALL
 #   that can be used to teleport them back.
 teleportBackAfterDeathMessage: true  # true or false
 
+# If true, players will be able to teleport to teammates using the /btp command
+teleportToTeammates: false  # true or false
+
 # Distances to teleport a player that uses the Go-Up-Wand
 GoUpWand:
   upDistance: 75 # teleport up distance

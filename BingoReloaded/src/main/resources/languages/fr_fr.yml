@@ -13,6 +13,11 @@ command:
     no_name: "Veuillez indiquer le nom de la liste d'éléments: {0}" # 0: command
     no_remove: "Impossible de supprimer la liste d'éléments '{0}', vérifiez si vous avez orthographié le nom correctement!" # 0: item list name
     removed: "Liste d'éléments '{0}' supprimée avec succès!" # 0: item list name
+  tp:
+    no_team: "Impossible de se téléporter vers un coéquipier car vous ne faites pas partie d'une équipe!"
+    usage: "Utilisation: {0}"
+    not_player: "{0} n'est pas un joueur en ligne valide, assurez-vous d'avoir correctement épelé son nom!"
+    not_teammate: "{0} ne fait pas partie de votre équipe, vous ne pouvez vous téléporter qu'aux joueurs de votre équipe"
 game:
   timer:
     duration: "Durée de la partie: {0}" # 0: total game time
