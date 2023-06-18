@@ -119,7 +119,7 @@ public abstract class PaginatedPickerMenu extends MenuInventory
         switch (filterType)
         {
             case ITEM_KEY ->
-                    (item) -> item.getKey().contains(keywordFilter);
+                    (item) -> item.getCompareKey().contains(keywordFilter);
             case MATERIAL ->
                     (item) ->
                     {
@@ -163,7 +163,7 @@ public abstract class PaginatedPickerMenu extends MenuInventory
         return ITEMS_PER_PAGE * currentPage + slot < filteredItems.size();
     }
 
-    public void addContents(MenuItem... newItems)
+    public void addPickerContents(MenuItem... newItems)
     {
         //first remove any previous whitespace
         while (items.size() > 0)

@@ -1,6 +1,10 @@
 package io.github.steaf23.bingoreloaded.util;
 
+import io.github.steaf23.bingoreloaded.gui.base.MenuItem;
+import net.md_5.bungee.api.ChatColor;
+import org.bukkit.Color;
 import org.bukkit.Material;
+import org.bukkit.inventory.meta.LeatherArmorMeta;
 
 public class MaterialHelper {
 
@@ -62,7 +66,7 @@ public class MaterialHelper {
                 material == Material.DIAMOND_HOE;
     }
 
-    public static Boolean isNetheriteTool(Material material) {
+    private static Boolean isNetheriteTool(Material material) {
         return material == Material.NETHERITE_SWORD ||
                 material == Material.NETHERITE_SHOVEL ||
                 material == Material.NETHERITE_PICKAXE ||

@@ -5,10 +5,13 @@ import io.github.steaf23.bingoreloaded.data.PlayerData;
 import io.github.steaf23.bingoreloaded.gameloop.BingoGame;
 import io.github.steaf23.bingoreloaded.gameloop.BingoGameManager;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
-import io.github.steaf23.bingoreloaded.data.BingoStatsData;
+import io.github.steaf23.bingoreloaded.data.BingoStatData;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.data.ConfigData;
 import io.github.steaf23.bingoreloaded.gui.BingoMenu;
+import io.github.steaf23.bingoreloaded.gui.TeamEditorMenu;
+import io.github.steaf23.bingoreloaded.gui.base.MenuItem;
+import io.github.steaf23.bingoreloaded.gui.base2.Menu;
 import io.github.steaf23.bingoreloaded.gui.creator.BingoCreatorUI;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
@@ -19,6 +22,7 @@ import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -62,6 +66,11 @@ public class BingoCommand implements CommandExecutor
 
         switch (args[0])
         {
+            case "menutest" -> {
+                Menu menu = new Menu(gameManager.getMenuManager(), "TESTO", 3);
+                menu.addItem(new MenuItem(4, 1, Material.BEDROCK, "TESTO ROCK!").setCompareKey("heya"));
+                menu.open(player);
+            }
             case "join" -> session.teamManager.openTeamSelector(player, null);
             case "leave" ->
             {
@@ -120,14 +129,14 @@ public class BingoCommand implements CommandExecutor
             case "deathmatch" ->
             {
                 if (!player.hasPermission("bingo.settings"))
-                {
                     return false;
-                }
-                else if (!session.isRunning())
+
+                if (!session.isRunning())
                 {
                     new TranslatedMessage(BingoTranslation.NO_DEATHMATCH).color(ChatColor.RED).send(player);
                     return false;
                 }
+
                 ((BingoGame)session.phase()).startDeathMatch(3);
                 return true;
             }
@@ -148,7 +157,7 @@ public class BingoCommand implements CommandExecutor
                     Message.sendDebug(text, player);
                     return true;
                 }
-                BingoStatsData statsData = new BingoStatsData();
+                BingoStatData statsData = new BingoStatData();
                 Message msg;
                 if (args.length > 1 && player.hasPermission("bingo.admin"))
                 {
@@ -194,6 +203,7 @@ public class BingoCommand implements CommandExecutor
                     return false;
                 if (args.length <= 2)
                     return false;
+
                 switch (args[1])
                 {
                     case "item" -> givePlayerBingoItem(player, args[2]);
@@ -208,6 +218,13 @@ public class BingoCommand implements CommandExecutor
                     }
                     case "remove" -> removePlayerKit(args[2], player);
                 }
+            }
+            case "teams" ->
+            {
+                if (!player.hasPermission("bingo.admin"))
+                    return false;
+
+                new TeamEditorMenu(null).open(player);
             }
             case "hologram" ->
             {

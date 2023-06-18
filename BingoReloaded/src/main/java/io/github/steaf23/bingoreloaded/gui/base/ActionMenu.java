@@ -11,52 +11,48 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public class ActionMenu extends MenuInventory
-{
+public class ActionMenu extends MenuInventory {
     private final Map<String, Consumer<Player>> options;
 
-    public ActionMenu(int size, String title, MenuInventory parent)
-    {
+    public ActionMenu(int size, String title, MenuInventory parent) {
         super(size, title, parent);
         this.options = new HashMap<>();
     }
 
     @Override
-    public void onItemClicked(InventoryClickEvent event, int slotClicked, Player player, ClickType clickType)
-    {
-        MenuItem clickedItem = new MenuItem(event.getCurrentItem());
-        if (options.containsKey(clickedItem.getKey()))
-        {
-            options.get(clickedItem.getKey()).accept(player);
-            if (clickedItem.getKey().endsWith("_close"))
-            {
+    public void onItemClicked(InventoryClickEvent event, int slotClicked, Player player, ClickType clickType) {
+        MenuItem clickedItem = new MenuItem(slotClicked, event.getCurrentItem());
+        if (options.containsKey(clickedItem.getCompareKey())) {
+            if (clickedItem.getCompareKey().endsWith("_close")) {
                 close(player);
             }
+            Consumer<Player> action = options.get(clickedItem.getCompareKey());
+
+            if (action == null)
+                return;
+
+            action.accept(player);
         }
     }
 
-    public String addAction(MenuItem button, Consumer<Player> action)
-    {
-        return addAction(button, action, true);
+    public String addAction(MenuItem button, Consumer<Player> whenClicked) {
+        return addAction(button, whenClicked, true);
     }
 
-    public String addAction(MenuItem button, Consumer<Player> action, boolean closeWhenClicked)
-    {
+    public String addAction(MenuItem button, Consumer<Player> whenClicked, boolean closeWhenClicked) {
         String id = "action_" + options.size() + (closeWhenClicked ? "_close" : "");
-        button.setKey(id);
+        button.setCompareKey(id);
         addItem(button);
-        options.put(id, action);
+        options.put(id, whenClicked);
         return id;
     }
 
-    public String addCloseAction(int slot)
-    {
-        if (slot >= internalInventory().getSize())
-        {
+    public String addCloseAction(int slot) {
+        if (slot >= internalInventory().getSize()) {
             slot = internalInventory().getSize() - 1;
         }
 
         return addAction(new MenuItem(slot, Material.BARRIER,
-                "" + ChatColor.RED + ChatColor.BOLD + BingoTranslation.MENU_EXIT.translate()), (player) -> {});
+                "" + ChatColor.RED + ChatColor.BOLD + BingoTranslation.MENU_EXIT.translate()), (p) -> {}, true);
     }
 }

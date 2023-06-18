@@ -4,7 +4,7 @@ package io.github.steaf23.bingoreloaded.gui;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.settings.BingoSettingsBuilder;
-import io.github.steaf23.bingoreloaded.data.BingoCardsData;
+import io.github.steaf23.bingoreloaded.data.BingoCardData;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.data.ConfigData;
 import io.github.steaf23.bingoreloaded.gameloop.PregameLobby;
@@ -48,7 +48,7 @@ public class BingoMenu extends MenuInventory
             Material.STRUCTURE_VOID, TITLE_PREFIX + BingoTranslation.MENU_NEXT.translate());
     private static final MenuItem VOTE = new MenuItem(
             Material.EMERALD, "" + ChatColor.GREEN + ChatColor.BOLD + BingoTranslation.OPTIONS_VOTE.translate())
-            .setGlowing(true).setKey("vote");
+            .setGlowing(true).setCompareKey("vote");
 
     private static final MenuItem JOIN_P = JOIN.copyToSlot(2, 2);
     private static final MenuItem LEAVE_P = LEAVE.copyToSlot(6, 2);
@@ -75,7 +75,7 @@ public class BingoMenu extends MenuInventory
                 if (gamePlayer != null)
                     session.removeParticipant(gamePlayer);
             }
-            else if (new MenuItem(event.getCurrentItem()).isKeyEqual(VOTE))
+            else if (new MenuItem(event.getCurrentItem()).isCompareKeyEqual(VOTE))
             {
                 if (session.phase() instanceof PregameLobby lobbyPhase)
                 {
@@ -140,7 +140,7 @@ public class BingoMenu extends MenuInventory
                 session.startGame();
             }
         }
-        else if (new MenuItem(event.getCurrentItem()).isKeyEqual(VOTE))
+        else if (new MenuItem(event.getCurrentItem()).isCompareKeyEqual(VOTE))
         {
             if (session.phase() instanceof PregameLobby lobbyPhase)
             {
@@ -152,7 +152,7 @@ public class BingoMenu extends MenuInventory
 
     private void openCardPicker(Player player)
     {
-        BingoCardsData cardsData = new BingoCardsData();
+        BingoCardData cardsData = new BingoCardData();
         List<MenuItem> cards = new ArrayList<>();
 
         for (String cardName : cardsData.getCardNames())

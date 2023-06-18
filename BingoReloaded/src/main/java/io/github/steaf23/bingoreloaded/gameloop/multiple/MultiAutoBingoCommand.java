@@ -6,7 +6,7 @@ import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
 import io.github.steaf23.bingoreloaded.settings.BingoSettingsBuilder;
 import io.github.steaf23.bingoreloaded.cards.CardSize;
-import io.github.steaf23.bingoreloaded.data.BingoCardsData;
+import io.github.steaf23.bingoreloaded.data.BingoCardData;
 import io.github.steaf23.bingoreloaded.data.BingoSettingsData;
 import io.github.steaf23.bingoreloaded.gui.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
@@ -185,7 +185,7 @@ public class MultiAutoBingoCommand implements AutoBingoCommand
         String cardName = extraArguments[0];
         int seed = extraArguments.length > 1 ? AutoBingoCommand.toInt(extraArguments[1], 0) : 0;
 
-        BingoCardsData cardsData = new BingoCardsData();
+        BingoCardData cardsData = new BingoCardData();
         if (cardsData.getCardNames().contains(cardName))
         {
             settings.card(cardName).cardSeed(seed);

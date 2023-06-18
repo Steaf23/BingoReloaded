@@ -1,7 +1,7 @@
 package io.github.steaf23.bingoreloaded.item;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
-import io.github.steaf23.bingoreloaded.data.YmlDataManager;
+import io.github.steaf23.bingoreloaded.data.helper.YmlDataManager;
 import io.github.steaf23.bingoreloaded.util.SmallCaps;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -28,7 +28,7 @@ public class ItemText
     private final String text;
     private String modifiers;
     private final List<ItemText> children;
-    private final static YmlDataManager statTranslation = BingoReloaded.createYmlDataManager("stat_translation.yml");
+    private final static YmlDataManager statTranslation = BingoReloaded.createYmlDataManager("data/stat_translation.yml");
 
     public ItemText(ChatColor... modifiers)
     {

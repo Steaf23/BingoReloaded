@@ -1,7 +1,7 @@
 package io.github.steaf23.bingoreloaded.gameloop;
 
 import io.github.steaf23.bingoreloaded.*;
-import io.github.steaf23.bingoreloaded.data.BingoCardsData;
+import io.github.steaf23.bingoreloaded.data.BingoCardData;
 import io.github.steaf23.bingoreloaded.data.BingoSettingsData;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.data.ConfigData;
@@ -92,7 +92,7 @@ public class BingoSession
 
         teamManager.addAutoPlayersToTeams();
 
-        BingoCardsData cardsData = new BingoCardsData();
+        BingoCardData cardsData = new BingoCardData();
         BingoSettings settings = settingsBuilder.view();
         if (!cardsData.getCardNames().contains(settings.card()))
         {
@@ -200,10 +200,10 @@ public class BingoSession
 
     public void handlePlayerDropItem(final PlayerDropItemEvent dropEvent)
     {
-        if (PlayerKit.CARD_ITEM.isKeyEqual(dropEvent.getItemDrop().getItemStack()) ||
-                PlayerKit.WAND_ITEM.isKeyEqual(dropEvent.getItemDrop().getItemStack()) ||
-                PlayerKit.VOTE_ITEM.isKeyEqual(dropEvent.getItemDrop().getItemStack()) ||
-                PlayerKit.TEAM_ITEM.isKeyEqual(dropEvent.getItemDrop().getItemStack()))
+        if (PlayerKit.CARD_ITEM.isCompareKeyEqual(dropEvent.getItemDrop().getItemStack()) ||
+                PlayerKit.WAND_ITEM.isCompareKeyEqual(dropEvent.getItemDrop().getItemStack()) ||
+                PlayerKit.VOTE_ITEM.isCompareKeyEqual(dropEvent.getItemDrop().getItemStack()) ||
+                PlayerKit.TEAM_ITEM.isCompareKeyEqual(dropEvent.getItemDrop().getItemStack()))
         {
             dropEvent.setCancelled(true);
         }

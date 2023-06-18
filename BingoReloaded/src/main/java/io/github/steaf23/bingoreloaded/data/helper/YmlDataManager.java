@@ -1,4 +1,4 @@
-package io.github.steaf23.bingoreloaded.data;
+package io.github.steaf23.bingoreloaded.data.helper;
 
 import io.github.steaf23.bingoreloaded.gui.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.util.Message;

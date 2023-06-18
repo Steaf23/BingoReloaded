@@ -2,13 +2,13 @@ package io.github.steaf23.bingoreloaded.data;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.helper.SerializablePlayer;
-import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
+import io.github.steaf23.bingoreloaded.data.helper.YmlDataManager;
 import io.github.steaf23.bingoreloaded.util.Message;
 import org.bukkit.entity.Player;
 
 public class PlayerData
 {
-    private final YmlDataManager data = BingoReloaded.createYmlDataManager("players.yml");
+    private final YmlDataManager data = BingoReloaded.createYmlDataManager("data/players.yml");
 
     public void savePlayer(Player player, boolean overwriteExisting)
     {

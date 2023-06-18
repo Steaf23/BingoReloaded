@@ -6,6 +6,7 @@ import io.github.steaf23.bingoreloaded.event.BingoEventListener;
 import io.github.steaf23.bingoreloaded.gameloop.BingoGameManager;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gui.base.MenuEventListener;
+import io.github.steaf23.bingoreloaded.gui.base2.MenuManager;
 import io.github.steaf23.bingoreloaded.util.Message;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -37,6 +38,11 @@ public class MultiGameManager implements BingoGameManager
     public BingoSession getSession(Player player)
     {
         return getSession(BingoReloaded.getWorldNameOfDimension(player.getWorld()));
+    }
+
+    @Override
+    public MenuManager getMenuManager() {
+        return null;
     }
 
     @Override

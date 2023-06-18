@@ -112,7 +112,7 @@ public class BingoPlayer implements BingoParticipant
             var meta = i.getItemMeta();
 
             // Show enchantments except on the wand
-            if (!PlayerKit.WAND_ITEM.isKeyEqual(i))
+            if (!PlayerKit.WAND_ITEM.isCompareKeyEqual(i))
             {
                 meta.removeItemFlags(ItemFlag.values());
             }
@@ -136,7 +136,7 @@ public class BingoPlayer implements BingoParticipant
         BingoReloaded.scheduleTask(task -> {
             for (ItemStack itemStack : player.getInventory())
             {
-                if (PlayerKit.CARD_ITEM.isKeyEqual(itemStack))
+                if (PlayerKit.CARD_ITEM.isCompareKeyEqual(itemStack))
                 {
                     player.getInventory().remove(itemStack);
                     break;
@@ -229,7 +229,7 @@ public class BingoPlayer implements BingoParticipant
              return false;
 
         Player player = sessionPlayer().get();
-        if (!PlayerKit.WAND_ITEM.isKeyEqual(wand))
+        if (!PlayerKit.WAND_ITEM.isCompareKeyEqual(wand))
             return false;
 
         if (!itemCooldowns.isCooldownOver(wand))

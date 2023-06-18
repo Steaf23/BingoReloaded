@@ -1,6 +1,6 @@
 package io.github.steaf23.bingoreloaded.gui.creator;
 
-import io.github.steaf23.bingoreloaded.data.BingoCardsData;
+import io.github.steaf23.bingoreloaded.data.BingoCardData;
 import io.github.steaf23.bingoreloaded.gui.base.FilterType;
 import io.github.steaf23.bingoreloaded.gui.base.MenuItem;
 import io.github.steaf23.bingoreloaded.gui.base.MenuInventory;
@@ -19,11 +19,11 @@ import java.util.List;
 public class CardEditorUI extends PaginatedPickerMenu
 {
     public final String cardName;
-    public final BingoCardsData cardsData;
+    public final BingoCardData cardsData;
     private static final MenuItem ADD_LIST = new MenuItem(51, Material.EMERALD, "" + ChatColor.GREEN + ChatColor.BOLD + "Add Item List", "");
     private ListValueEditorGUI valueEditorGUI;
 
-    public CardEditorUI(String cardName, MenuInventory parent, BingoCardsData cardsData)
+    public CardEditorUI(String cardName, MenuInventory parent, BingoCardData cardsData)
     {
         super(new ArrayList<>(), "Editing '" + cardName + "'", parent, FilterType.DISPLAY_NAME);
         this.cardName = cardName;
@@ -110,7 +110,7 @@ public class CardEditorUI extends PaginatedPickerMenu
             newItems.add(item);
         }
 
-        addContents(newItems.toArray(new MenuItem[0]));
+        addPickerContents(newItems.toArray(new MenuItem[0]));
 
         applyFilter(getFilter());
     }

@@ -1,7 +1,7 @@
 package io.github.steaf23.bingoreloaded.settings;
 
 import io.github.steaf23.bingoreloaded.cards.CardSize;
-import io.github.steaf23.bingoreloaded.data.BingoCardsData;
+import io.github.steaf23.bingoreloaded.data.BingoCardData;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.event.BingoSettingsUpdatedEvent;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
@@ -91,7 +91,7 @@ public class BingoSettingsBuilder
         if (!voteResult.kit.isEmpty())
             resultBuilder.kit = PlayerKit.fromConfig(voteResult.kit);
 
-        if (!voteResult.kit.isEmpty() && new BingoCardsData().getCardNames().contains(voteResult.card))
+        if (!voteResult.kit.isEmpty() && new BingoCardData().getCardNames().contains(voteResult.card))
             resultBuilder.card = voteResult.card;
 
         return resultBuilder;

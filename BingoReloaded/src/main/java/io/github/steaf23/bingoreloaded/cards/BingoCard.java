@@ -3,9 +3,9 @@ package io.github.steaf23.bingoreloaded.cards;
 
 import io.github.steaf23.bingoreloaded.gameloop.BingoGame;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
-import io.github.steaf23.bingoreloaded.data.BingoCardsData;
+import io.github.steaf23.bingoreloaded.data.BingoCardData;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
-import io.github.steaf23.bingoreloaded.data.TaskListsData;
+import io.github.steaf23.bingoreloaded.data.TaskListData;
 import io.github.steaf23.bingoreloaded.event.BingoCardTaskCompleteEvent;
 import io.github.steaf23.bingoreloaded.event.BingoStatisticCompletedEvent;
 import io.github.steaf23.bingoreloaded.gui.CardMenu;
@@ -67,8 +67,8 @@ public class BingoCard
      */
     public void generateCard(String cardName, int seed, boolean withAdvancements, boolean withStatistics)
     {
-        BingoCardsData cardsData = new BingoCardsData();
-        TaskListsData listsData = cardsData.lists();
+        BingoCardData cardsData = new BingoCardData();
+        TaskListData listsData = cardsData.lists();
         // Create shuffler
         Random shuffler;
         if (seed == 0)
