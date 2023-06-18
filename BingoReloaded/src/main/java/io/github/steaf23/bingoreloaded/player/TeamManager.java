@@ -174,7 +174,6 @@ public class TeamManager
         if (getBingoParticipant(player) != null)
             removeMemberFromTeam(getBingoParticipant(player));
 
-        bingoTeam.team.addEntry(player.getName());
         new TranslatedMessage(BingoTranslation.JOIN).color(ChatColor.GREEN)
                 .arg(bingoTeam.getColoredName().asLegacyString())
                 .send(player);
@@ -338,7 +337,6 @@ public class TeamManager
         if (existingPlayer != null)
             removeMemberFromTeam(existingPlayer);
 
-        bingoTeam.team.addEntry(playerName);
         VirtualBingoPlayer bingoPlayer = new VirtualBingoPlayer(UUID.randomUUID(), playerName, bingoTeam, session);
         bingoTeam.addMember(bingoPlayer);
         return true;
