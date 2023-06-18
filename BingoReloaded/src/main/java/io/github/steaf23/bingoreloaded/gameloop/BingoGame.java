@@ -608,6 +608,8 @@ public class BingoGame implements GamePhase
         if (!settings.effects().contains(EffectOptionFlags.KEEP_INVENTORY)) {
             returnCardToPlayer(player);
             player.giveKit(settings.kit());
+        } else {
+            player.giveEffects(settings.effects(), 0);
         }
     }
 
