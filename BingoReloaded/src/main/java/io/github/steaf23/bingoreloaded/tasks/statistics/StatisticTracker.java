@@ -23,6 +23,12 @@ public class StatisticTracker
         this.worldName = worldName;
     }
 
+    public StatisticTracker(String worldName, List<StatisticProgress> statistics)
+    {
+        this.statistics = statistics;
+        this.worldName = worldName;
+    }
+
     public void start(Set<BingoTeam> teams)
     {
         for (BingoTeam team : teams)
@@ -92,5 +98,9 @@ public class StatisticTracker
         }
 
         statistics.removeIf(progress -> progress.progressLeft <= 0);
+    }
+
+    public List<StatisticProgress> getStatistics() {
+        return statistics;
     }
 }

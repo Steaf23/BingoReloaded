@@ -9,9 +9,9 @@ public class StatisticProgress
 {
     final BingoStatistic statistic;
     final BingoPlayer player;
-    int progressLeft;
+    public int progressLeft;
 
-    int previousGlobalProgress;
+    public int previousGlobalProgress;
 
     public StatisticProgress(BingoStatistic statistic, BingoPlayer player, int targetScore)
     {
@@ -26,6 +26,14 @@ public class StatisticProgress
         this.previousGlobalProgress = 0;
 
         setPlayerTotalScore(0);
+    }
+
+    public StatisticProgress(BingoStatistic statistic, BingoPlayer player, int progressLeft, int previousGlobalProgress)
+    {
+        this.statistic = statistic;
+        this.player = player;
+        this.progressLeft = progressLeft;
+        this.previousGlobalProgress = previousGlobalProgress;
     }
 
     public boolean done()
@@ -106,5 +114,13 @@ public class StatisticProgress
         {
             gamePlayer.setStatistic(statistic.stat(), value);
         }
+    }
+
+    public BingoPlayer getPlayer() {
+        return player;
+    }
+
+    public BingoStatistic getStatistic() {
+        return statistic;
     }
 }

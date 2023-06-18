@@ -8,6 +8,8 @@ import io.github.steaf23.bingoreloaded.player.TeamManager;
 import io.github.steaf23.bingoreloaded.tasks.BingoTask;
 import io.github.steaf23.bingoreloaded.util.TranslatedMessage;
 
+import java.util.List;
+
 public class LockoutBingoCard extends BingoCard
 {
     public int teamCount;
@@ -19,6 +21,14 @@ public class LockoutBingoCard extends BingoCard
         this.currentMaxTasks = size.fullCardSize;
         this.teamCount = teamCount;
 
+        menu.setInfo(BingoTranslation.INFO_LOCKOUT_NAME.translate(),
+                BingoTranslation.INFO_LOCKOUT_DESC.translate().split("\\n"));
+    }
+
+    public LockoutBingoCard(CardSize size, List<BingoTask> tasks, int teamCount, int currentMaxTasks) {
+        super(size, tasks);
+        this.teamCount = teamCount;
+        this.currentMaxTasks = currentMaxTasks;
         menu.setInfo(BingoTranslation.INFO_LOCKOUT_NAME.translate(),
                 BingoTranslation.INFO_LOCKOUT_DESC.translate().split("\\n"));
     }
