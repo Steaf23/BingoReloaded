@@ -81,10 +81,10 @@ keepScoreboardVisible: true # true or false
 # If true, will display all participants' names on the scoreboard under their team.
 showPlayerInScoreboard: true # true or false
 
-# If true, advancements can appear on the bingo card.
+# If false, advancements can appear on the bingo card.
 disableAdvancements: false # true or false
 
-# If true, statistics can appear on the bingo card.
+# If false, statistics can appear on the bingo card.
 disableStatistics: false # true or false
 
 # ==========================================================================
