@@ -2,7 +2,7 @@ package io.github.steaf23.bingoreloaded.data.recoverydata;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.cards.BingoCard;
-import io.github.steaf23.bingoreloaded.data.YmlDataManager;
+import io.github.steaf23.bingoreloaded.data.helper.YmlDataManager;
 import io.github.steaf23.bingoreloaded.data.helper.SerializablePlayer;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.player.TeamManager;
@@ -13,7 +13,7 @@ import io.github.steaf23.bingoreloaded.util.timer.GameTimer;
 import org.bukkit.entity.Player;
 
 public class RecoveryDataManager {
-    private final YmlDataManager data = BingoReloaded.createYmlDataManager("recovery.yml");
+    private final YmlDataManager data = BingoReloaded.createYmlDataManager("data/recovery.yml");
 
     public void saveRecoveryData(BingoCard bingoCard, GameTimer timer, BingoSettings settings, StatisticTracker statisticTracker)
     {
