@@ -58,8 +58,15 @@ public record BingoStatistic(@NotNull Statistic stat, @Nullable EntityType entit
     private static Set<EntityType> getValidEntityTypes()
     {
         Set<EntityType> types = new HashSet<>();
+        // Filter out mobs that did not have spawn eggs prior to 1.19.3
         Stream<Material> mats = Arrays.stream(Material.values())
-                .filter(mat -> mat.name().contains("_SPAWN_EGG"));
+                .filter(mat ->
+                        mat.name().contains("_SPAWN_EGG") &&
+                                !mat.name().equals("ENDER_DRAGON_SPAWN_EGG") &&
+                                !mat.name().equals("SNOW_GOLEM_SPAWN_EGG") &&
+                                !mat.name().equals("IRON_GOLEM_SPAWN_EGG") &&
+                                !mat.name().equals("WITHER_SPAWN_EGG")
+                );
         mats.forEach(mat -> {
             if (mat.name() == "MOOSHROOM_SPAWN_EGG")
             {
@@ -73,6 +80,7 @@ public record BingoStatistic(@NotNull Statistic stat, @Nullable EntityType entit
         types.add(EntityType.ENDER_DRAGON);
         types.add(EntityType.IRON_GOLEM);
         types.add(EntityType.SNOWMAN);
+        types.add(EntityType.WITHER);
         return types;
     }
 
