@@ -1,5 +1,6 @@
 package io.github.steaf23.bingoreloaded.gui.base2;
 
+import io.github.steaf23.bingoreloaded.event.PlayerLeftSessionWorldEvent;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -46,5 +47,12 @@ public class BingoMenuManager extends MenuManager
             return;
 
         super.closeAll(player);
+    }
+
+    @EventHandler
+    public void handlePlayerLeft(final PlayerLeftSessionWorldEvent event) {
+        if (activeMenus.containsKey(event.getPlayer().getUniqueId())) {
+            closeAll(event.getPlayer());
+        }
     }
 }

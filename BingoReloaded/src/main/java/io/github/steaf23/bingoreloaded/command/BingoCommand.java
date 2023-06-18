@@ -68,8 +68,14 @@ public class BingoCommand implements CommandExecutor
         {
             case "menutest" -> {
                 Menu menu = new Menu(gameManager.getMenuManager(), "TESTO", 3);
-                menu.addItem(new MenuItem(4, 1, Material.BEDROCK, "TESTO ROCK!").setCompareKey("heya"));
+                menu.addAction(new MenuItem(4, 1, Material.BEDROCK, "TESTO ROCK!").setCompareKey("heya"), (p) -> Message.log("TESTO ROCK!"));
+                menu.addCloseAction(new MenuItem(Material.BARRIER, BingoTranslation.MENU_EXIT.translate()));
                 menu.open(player);
+                Menu menu2 = new Menu(gameManager.getMenuManager(), "TESTO2", 1);
+                menu2.open(player);
+                menu2.addItem(new MenuItem(8, Material.BARRIER, "CLOSE ME!").setCompareKey("close"));
+                menu2.addCloseAction(new MenuItem(Material.BARRIER, BingoTranslation.MENU_EXIT.translate()));
+                menu.addItem(new MenuItem(8, Material.BARRIER, "SUP!").setCompareKey("suppy"));
             }
             case "join" -> session.teamManager.openTeamSelector(player, null);
             case "leave" ->

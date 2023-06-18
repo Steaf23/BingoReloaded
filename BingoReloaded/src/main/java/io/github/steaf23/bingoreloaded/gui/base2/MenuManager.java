@@ -1,18 +1,23 @@
 package io.github.steaf23.bingoreloaded.gui.base2;
 
 
+import io.github.steaf23.bingoreloaded.BingoReloaded;
+import io.github.steaf23.bingoreloaded.event.PlayerLeftSessionWorldEvent;
 import io.github.steaf23.bingoreloaded.gui.base.MenuItem;
 import io.github.steaf23.bingoreloaded.util.Message;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.*;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryView;
+import org.bukkit.event.inventory.ClickType;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 
-import java.util.*;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Stack;
+import java.util.UUID;
 
 public class MenuManager implements Listener
 {
@@ -36,7 +41,12 @@ public class MenuManager implements Listener
         }
 
         menus.pop().beforeClosing(player);
-        player.closeInventory();
+        if (menus.size() == 0) {
+            activeMenus.remove(playerId);
+            BingoReloaded.scheduleTask((task) -> player.closeInventory());
+        } else {
+            open(activeMenus.get(playerId).peek(), player);
+        }
     }
 
     public void closeAll(Player player) {
@@ -57,9 +67,18 @@ public class MenuManager implements Listener
         if (!activeMenus.containsKey(playerId))
             activeMenus.put(playerId, new Stack<>());
 
-        activeMenus.get(playerId).push(menu);
+        Stack<Menu> menuStack = activeMenus.get(playerId);
+        if (!menuStack.contains(menu)) {
+            menuStack.push(menu);
+        }
+
+        // This menu is somewhere in the middle of the menu stack, don't open it
+        if (menuStack.peek() != menu) {
+            return;
+        }
+
         menu.beforeOpening(player);
-        player.openInventory(menu.getInventory());
+        BingoReloaded.scheduleTask((task) -> player.openInventory(menu.getInventory()));
     }
 
     @EventHandler
@@ -100,6 +119,7 @@ public class MenuManager implements Listener
         }
 
         boolean cancel = menu.onDrag(event);
+        event.setCancelled(cancel);
     }
 
     @EventHandler
@@ -108,6 +128,16 @@ public class MenuManager implements Listener
         if (!activeMenus.containsKey(playerId))
             return;
 
-        closeAll((Player) event.getPlayer());
+        Menu topMenu = activeMenus.get(playerId).peek();
+        if (topMenu.getInventory() == event.getInventory()) {
+            close(topMenu, (Player) event.getPlayer());
+        }
+    }
+
+    @EventHandler
+    public void handlePlayerQuit(final PlayerQuitEvent event) {
+        if (activeMenus.containsKey(event.getPlayer().getUniqueId())) {
+            closeAll(event.getPlayer());
+        }
     }
 }
