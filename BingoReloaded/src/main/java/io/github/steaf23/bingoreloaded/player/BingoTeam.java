@@ -12,6 +12,7 @@ import java.util.Set;
 
 public class BingoTeam
 {
+    // Team used to display prefixes next to player display names
     public final Team team;
     public BingoCard card;
     public boolean outOfTheGame = false;
@@ -58,13 +59,12 @@ public class BingoTeam
     public void addMember(BingoParticipant player)
     {
         members.add(player);
-        team.addEntry(player.getId().toString());
+        team.addEntry(player.getDisplayName());
     }
 
     public void removeMember(BingoParticipant player)
     {
         members.remove(player);
-        team.removeEntry(player.getId().toString());
-        player.sessionPlayer().ifPresent(sessionPlayer -> team.removeEntry(sessionPlayer.getName()));
+        team.removeEntry(player.getDisplayName());
     }
 }
