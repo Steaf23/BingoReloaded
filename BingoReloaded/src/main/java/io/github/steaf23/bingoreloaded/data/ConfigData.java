@@ -137,8 +137,8 @@ public class ConfigData
         this.enableTeamChat = config.getBoolean("enableTeamChat", true);
         this.keepScoreboardVisible = config.getBoolean("keepScoreboardVisible", true);
         this.showPlayerInScoreboard = config.getBoolean("showPlayerInScoreboard", true);
-        this.disableAdvancements = config.getBoolean("disableAdvancements", true);
-        this.disableStatistics = config.getBoolean("disableStatistics", true);
+        this.disableAdvancements = config.getBoolean("disableAdvancements", false);
+        this.disableStatistics = config.getBoolean("disableStatistics", false);
 
         // Public
         this.sendCommandAfterGameEnded = config.getString("sendCommandAfterGameEnds", "");
