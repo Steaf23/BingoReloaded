@@ -8,8 +8,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.stream.Collectors;
 
 @SerializableAs("CardSize")
 public record SerializableCardSize(
