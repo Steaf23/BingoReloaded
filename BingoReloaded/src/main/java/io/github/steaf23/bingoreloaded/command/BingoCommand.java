@@ -10,8 +10,9 @@ import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.data.ConfigData;
 import io.github.steaf23.bingoreloaded.gui.BingoMenu;
 import io.github.steaf23.bingoreloaded.gui.TeamEditorMenu;
+import io.github.steaf23.bingoreloaded.gui.base.FilterType;
 import io.github.steaf23.bingoreloaded.gui.base.MenuItem;
-import io.github.steaf23.bingoreloaded.gui.base2.Menu;
+import io.github.steaf23.bingoreloaded.gui.base2.*;
 import io.github.steaf23.bingoreloaded.gui.creator.BingoCreatorUI;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
@@ -26,7 +27,9 @@ import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Arrays;
@@ -67,11 +70,24 @@ public class BingoCommand implements CommandExecutor
         switch (args[0])
         {
             case "menutest" -> {
-                Menu menu = new Menu(gameManager.getMenuManager(), "TESTO", 3);
+                MenuManager menuManager = gameManager.getMenuManager();
+                BasicMenu menu = new BasicMenu(menuManager, "TESTO", 3);
                 menu.addAction(new MenuItem(4, 1, Material.BEDROCK, "TESTO ROCK!").setCompareKey("heya"), (p) -> Message.log("TESTO ROCK!"));
                 menu.addCloseAction(new MenuItem(Material.BARRIER, BingoTranslation.MENU_EXIT.translate()));
+                menu.addAction(new MenuItem(Material.EMERALD, "Pick A Color :)"), p -> ColorPickerMenuNew.createAndOpen(
+                        menuManager, "Colorus Pickus", color -> {
+                            Message.log(color + "CHEESE");
+                        }, player));
+                BasicMenu pickerMenu = new PaginatedSelectionMenu(menuManager, "Pick le items", ItemSelectionHelper.getAllItems(), FilterType.MATERIAL)
+                {
+                    @Override
+                    public void onOptionClickedDelegate(InventoryClickEvent event, MenuItem clickedOption, HumanEntity player) {
+                        Message.log("Clicked on " + clickedOption.getType());
+                    }
+                };
+                menu.addAction(new MenuItem(Material.DIAMOND, "Click an item"), p -> pickerMenu.open(player));
                 menu.open(player);
-                Menu menu2 = new Menu(gameManager.getMenuManager(), "TESTO2", 1);
+                BasicMenu menu2 = new BasicMenu(menuManager, "TESTO2", 1);
                 menu2.open(player);
                 menu2.addItem(new MenuItem(8, Material.BARRIER, "CLOSE ME!").setCompareKey("close"));
                 menu2.addCloseAction(new MenuItem(Material.BARRIER, BingoTranslation.MENU_EXIT.translate()));

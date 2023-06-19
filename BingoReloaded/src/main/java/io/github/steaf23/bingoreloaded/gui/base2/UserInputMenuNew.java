@@ -1,0 +1,90 @@
+package io.github.steaf23.bingoreloaded.gui.base2;
+
+import io.github.steaf23.bingoreloaded.BingoReloaded;
+import io.github.steaf23.bingoreloaded.data.BingoTranslation;
+import io.github.steaf23.bingoreloaded.gui.base.MenuItem;
+import io.github.steaf23.bingoreloaded.util.Message;
+import net.wesjd.anvilgui.AnvilGUI;
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
+import org.bukkit.entity.HumanEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.ClickType;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Consumer;
+
+public class UserInputMenuNew implements Menu
+{
+    record MenuTemplate(String title, Consumer<String> result, String startingText, HumanEntity player) {};
+
+    private final MenuTemplate template;
+    private AnvilGUI gui;
+    private MenuManager manager;
+    private static final MenuItem EMPTY = new MenuItem(Material.ELYTRA, "" + ChatColor.GRAY + ChatColor.BOLD + BingoTranslation.MENU_CLEAR_FILTER.translate(), "");
+    private static final MenuItem ACCEPT = new MenuItem(Material.DIAMOND, "" + ChatColor.AQUA + ChatColor.BOLD + BingoTranslation.MENU_ACCEPT.translate(), "");
+
+    public UserInputMenuNew(MenuManager manager, String title, Consumer<String> result, HumanEntity player, String startingText) {
+        this.manager = manager;
+        this.template = new MenuTemplate(title, result, startingText, player);
+        this.manager.open(this, player);
+    }
+
+    public AnvilGUI openAnvilUI(String title,  Consumer<String> result, String startingText, HumanEntity player) {
+        AnvilGUI anvil = new AnvilGUI.Builder()
+                .onComplete(completion -> {
+                    result.accept(completion.getText());
+                    manager.close(this, completion.getPlayer());
+                    return new ArrayList<>();
+                })
+                .title(Message.PREFIX_STRING_SHORT + " " + ChatColor.DARK_RED + title)
+                .text(startingText)
+                .itemRight(EMPTY)
+                .itemLeft(new ItemStack(Material.ELYTRA))
+                .onRightInputClick(p -> {
+                    result.accept("");
+                    manager.close(this, p);
+                })
+                .itemOutput(ACCEPT)
+                .plugin(BingoReloaded.getPlugin(BingoReloaded.class))
+                .open((Player) player);
+        return anvil;
+    }
+
+    @Override
+    public void beforeOpening(HumanEntity player) {
+        this.gui = openAnvilUI(template.title, template.result, template.startingText, template.player);
+    }
+
+    @Override
+    public boolean onClick(InventoryClickEvent event, HumanEntity player, MenuItem clickedItem, ClickType clickType) {
+        return false;
+    }
+
+    @Override
+    public boolean onDrag(InventoryDragEvent event) {
+        return false;
+    }
+
+    @Override
+    public void beforeClosing(HumanEntity player) {
+    }
+
+    @Override
+    public Inventory getInventory() {
+        return gui == null ? null : gui.getInventory();
+    }
+
+    @Override
+    public void openInventory(HumanEntity player) {
+    }
+
+    @Override
+    public void closeInventory(HumanEntity player) {
+    }
+}
