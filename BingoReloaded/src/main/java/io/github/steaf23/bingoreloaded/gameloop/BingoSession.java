@@ -120,12 +120,12 @@ public class BingoSession
         }
 
         RecoveryDataManager manager = new RecoveryDataManager();
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            manager.loadPlayerRecoveryData(player, teamManager);
+        }
         RecoveryData recoveryData = manager.loadRecoveryData(this);
         if (recoveryData == null || recoveryData.hasNull()) {
             return;
-        }
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            manager.loadPlayerRecoveryData(player, teamManager);
         }
 
         scoreboard.updateTeamScores();
