@@ -42,7 +42,7 @@ public class MenuItem extends ItemStack
         ItemMeta meta = getItemMeta();
         if (meta != null) {
             meta.setDisplayName(name);
-            if (description.length >= 1 && description[0] != "")
+            if (description.length >= 1 && !description[0].isEmpty())
                 meta.setLore(List.of(description));
             meta.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_UNBREAKABLE, ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_DYE);
             setItemMeta(meta);
@@ -109,7 +109,7 @@ public class MenuItem extends ItemStack
     public MenuItem setDescription(String... description) {
         ItemMeta meta = getItemMeta();
         if (meta != null) {
-            if (description.length >= 1 && description[0] != "")
+            if (description.length >= 1 && !description[0].isEmpty())
                 meta.setLore(List.of(description));
             meta.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
             setItemMeta(meta);
@@ -167,7 +167,6 @@ public class MenuItem extends ItemStack
                 .getOrDefault(PDCHelper.createKey("item." + key), PersistentDataType.STRING, ""));
     }
 
-    @Nullable
     public String getStringFromPdc(String key) {
         return this.getItemMeta().getPersistentDataContainer()
                 .getOrDefault(PDCHelper.createKey("item." + key), PersistentDataType.STRING, "");
@@ -185,7 +184,6 @@ public class MenuItem extends ItemStack
         return isStringPdcEqual("compare_key", other);
     }
 
-    @Nullable
     public String getCompareKey() {
         return getStringFromPdc("compare_key");
     }
@@ -220,7 +218,6 @@ public class MenuItem extends ItemStack
             }
             default -> part = Material.LEATHER_CHESTPLATE;
         }
-        ;
 
         String hex = FlexColor.asHex(color);
         MenuItem item = new MenuItem(part, ChatColor.of(hex) + hex, "");

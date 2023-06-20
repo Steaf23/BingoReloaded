@@ -3,7 +3,7 @@ package io.github.steaf23.bingoreloaded.gui.base;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -13,17 +13,19 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 
-public abstract class PaginatedPickerMenu extends MenuInventory
+public abstract class PaginatedSelectionMenu extends BasicMenu
 {
     /**
      * Called by this Inventory's ClickEvents.
+     *
      * @param event
      * @param clickedOption item that was clicked on, it's slot being the same slot that was clicked on.
      * @param player
      */
-    public abstract void onOptionClickedDelegate(final InventoryClickEvent event, MenuItem clickedOption, Player player);
+    public abstract void onOptionClickedDelegate(final InventoryClickEvent event, MenuItem clickedOption, HumanEntity player);
 
-    public static final int ITEMS_PER_PAGE = 45;
+    // There are 5 rows of items per page
+    public static final int ITEMS_PER_PAGE = 9 * 5;
 
     // All the items that exist in this picker
     private final List<MenuItem> items;
@@ -40,33 +42,33 @@ public abstract class PaginatedPickerMenu extends MenuInventory
     private String keywordFilter;
     public FilterType filterType;
 
-    protected static final MenuItem BG_ITEM = new MenuItem(Material.BLACK_STAINED_GLASS_PANE, " ", "");
-    protected static final MenuItem NEXT = new MenuItem(53, Material.STRUCTURE_VOID, "" + ChatColor.LIGHT_PURPLE + ChatColor.BOLD + BingoTranslation.MENU_NEXT.translate(), "");
-    protected static final MenuItem PREVIOUS = new MenuItem(45, Material.BARRIER, "" + ChatColor.LIGHT_PURPLE + ChatColor.BOLD + BingoTranslation.MENU_PREV.translate(), "");
-    protected static final MenuItem CLOSE = new MenuItem(49, Material.REDSTONE, "" + ChatColor.RED + ChatColor.BOLD + BingoTranslation.MENU_SAVE_EXIT.translate(), "");
-    protected static final MenuItem FILTER = new MenuItem(46, Material.SPYGLASS, TITLE_PREFIX + BingoTranslation.MENU_FILTER.translate(), "");
+    protected static final MenuItem NEXT = new MenuItem(8, 5, Material.STRUCTURE_VOID, "" + ChatColor.LIGHT_PURPLE + ChatColor.BOLD + BingoTranslation.MENU_NEXT.translate(), "");
+    protected static final MenuItem PREVIOUS = new MenuItem(0, 5, Material.BARRIER, "" + ChatColor.LIGHT_PURPLE + ChatColor.BOLD + BingoTranslation.MENU_PREV.translate(), "");
+    protected static final MenuItem CLOSE = new MenuItem(4, 5, Material.REDSTONE, "" + ChatColor.RED + ChatColor.BOLD + BingoTranslation.MENU_SAVE_EXIT.translate(), "");
+    protected static final MenuItem FILTER = new MenuItem(1, 5, Material.SPYGLASS, TITLE_PREFIX + BingoTranslation.MENU_FILTER.translate(), "");
 
-
-    public PaginatedPickerMenu(List<MenuItem> options, String title, MenuInventory parent, Function<MenuItem, Boolean> customFilter)
-    {
-        this(options, title, parent, FilterType.CUSTOM);
+    public PaginatedSelectionMenu(MenuManager manager, String initialTitle, List<MenuItem> options, Function<MenuItem, Boolean> customFilter) {
+        this(manager, initialTitle, options, FilterType.CUSTOM);
         this.customFilter = customFilter;
     }
 
-    public PaginatedPickerMenu(List<MenuItem> options, String title, MenuInventory parent, FilterType filterType)
-    {
-        super(54, title != null ? title : "Item Picker", parent);
+    public PaginatedSelectionMenu(MenuManager manager, String initialTitle, List<MenuItem> options, FilterType filterType) {
+        super(manager, initialTitle, 6);
 
-        addItems(PREVIOUS,
-                FILTER,
-                BG_ITEM.copyToSlot(47),
-                BG_ITEM.copyToSlot(48),
-                CLOSE,
-                BG_ITEM.copyToSlot(50),
-                BG_ITEM.copyToSlot(51),
-                BG_ITEM.copyToSlot(52),
-                NEXT
+        addAction(PREVIOUS, p -> this.previousPage());
+        addAction(FILTER, p -> {
+            new UserInputMenu(manager, "Filter by name", this::applyFilter, p, keywordFilter.isBlank() ? "name" : keywordFilter);
+        });
+        addAction(NEXT, p -> this.nextPage());
+
+        addItems(
+                BLANK.copyToSlot(2, 5),
+                BLANK.copyToSlot(3, 5),
+                BLANK.copyToSlot(5, 5),
+                BLANK.copyToSlot(6, 5),
+                BLANK.copyToSlot(7, 5)
         );
+        addCloseAction(CLOSE);
 
         currentPage = 0;
         items = options;
@@ -78,34 +80,20 @@ public abstract class PaginatedPickerMenu extends MenuInventory
     }
 
     @Override
-    public void onItemClicked(InventoryClickEvent event, int slotClicked, Player player, ClickType clickType)
-    {
-        if (slotClicked == NEXT.getSlot())
+    public boolean onClick(InventoryClickEvent event, HumanEntity player, MenuItem clickedItem, ClickType clickType) {
+        boolean cancel = super.onClick(event, player, clickedItem, clickType);
+
+        boolean isValidSlot = ITEMS_PER_PAGE * currentPage + event.getRawSlot() < filteredItems.size() && event.getRawSlot() < ITEMS_PER_PAGE;
+        if (isValidSlot)
         {
-            nextPage();
+            onOptionClickedDelegate(event, clickedItem.copyToSlot(event.getRawSlot()), player);
         }
-        else if (slotClicked == PREVIOUS.getSlot())
-        {
-            previousPage();
-        }
-        else if (slotClicked == CLOSE.getSlot())
-        {
-            close(player);
-        }
-        else if (slotClicked == FILTER.getSlot())
-        {
-            UserInputMenu.open("Filter by name", this::applyFilter, player, this, keywordFilter.isBlank() ? "name" : keywordFilter);
-        }
-        else if (isSlotValidOption(slotClicked)) //If it is a normal item;
-        {
-            onOptionClickedDelegate(event, filteredItems.get(ITEMS_PER_PAGE * currentPage + slotClicked).copyToSlot(slotClicked), player);
-        }
+        return cancel;
     }
 
-    public void applyFilter(String filter)
-    {
+    public void applyFilter(String filter) {
         keywordFilter = filter;
-        MenuItem filterItem = FILTER.copy();
+        MenuItem filterItem = getItemAt(FILTER.getSlot());
         ItemMeta meta = filterItem.getItemMeta();
         meta.setLore(List.of("\"" + keywordFilter + "\""));
         filterItem.setItemMeta(meta);
@@ -116,29 +104,22 @@ public abstract class PaginatedPickerMenu extends MenuInventory
         Function<MenuItem, Boolean> filterCriteria;
 
         filterCriteria =
-        switch (filterType)
-        {
-            case ITEM_KEY ->
-                    (item) -> item.getCompareKey().contains(keywordFilter);
-            case MATERIAL ->
-                    (item) ->
+                switch (filterType) {
+                    case ITEM_KEY -> (item) -> item.getCompareKey().contains(keywordFilter);
+                    case MATERIAL -> (item) ->
                     {
                         String name = item.getType().name().replace("_", " ");
                         return name.toLowerCase().contains(keywordFilter.toLowerCase());
                     };
-            case DISPLAY_NAME ->
-                    (item) -> ChatColor.stripColor(item.getItemMeta().getDisplayName())
+                    case DISPLAY_NAME -> (item) -> ChatColor.stripColor(item.getItemMeta().getDisplayName())
                             .toLowerCase().contains(keywordFilter.toLowerCase());
-            case LORE ->
-                    (item) -> ChatColor.stripColor(item.getItemMeta().getLore().get(0)).toLowerCase().contains(keywordFilter.toLowerCase());
-            case CUSTOM ->
-                    customFilter;
-        };
+                    case LORE ->
+                            (item) -> ChatColor.stripColor(item.getItemMeta().getLore().get(0)).toLowerCase().contains(keywordFilter.toLowerCase());
+                    case CUSTOM -> customFilter;
+                };
 
-        for (MenuItem item : items)
-        {
-            if (filterCriteria.apply(item))
-            {
+        for (MenuItem item : items) {
+            if (filterCriteria.apply(item)) {
                 filteredItems.add(item);
             }
         }
@@ -148,26 +129,17 @@ public abstract class PaginatedPickerMenu extends MenuInventory
         updatePage();
     }
 
-    public void clearFilter()
-    {
+    public void clearFilter() {
         applyFilter("");
     }
 
-    public String getFilter()
-    {
+    public String getFilter() {
         return keywordFilter;
     }
 
-    protected boolean isSlotValidOption(int slot)
-    {
-        return ITEMS_PER_PAGE * currentPage + slot < filteredItems.size();
-    }
-
-    public void addPickerContents(MenuItem... newItems)
-    {
+    public void addItemsToSelect(MenuItem... newItems) {
         //first remove any previous whitespace
-        while (items.size() > 0)
-        {
+        while (items.size() > 0) {
             MenuItem lastItem = items.get(items.size() - 1);
 
             if (lastItem.getType().isAir())
@@ -181,11 +153,9 @@ public abstract class PaginatedPickerMenu extends MenuInventory
         clearFilter();
     }
 
-    public void removeItems(int... itemIndices)
-    {
+    public void removeItems(int... itemIndices) {
         //first remove any previous whitespace
-        while (items.size() > 0)
-        {
+        while (items.size() > 0) {
             MenuItem lastItem = items.get(items.size() - 1);
 
             if (lastItem.getType().isAir())
@@ -199,35 +169,27 @@ public abstract class PaginatedPickerMenu extends MenuInventory
         updatePage();
     }
 
-    public void clearItems()
-    {
+    public void clearItems() {
         items.clear();
         updatePage();
     }
 
-    public List<MenuItem> getItems()
-    {
+    public List<MenuItem> getItems() {
         return items;
     }
 
-    public List<MenuItem> getSelectedItems()
-    {
+    public List<MenuItem> getSelectedItems() {
         return selectedItems;
     }
 
-    public void selectItem(MenuItem item, boolean value)
-    {
-        if (!items.contains(item))
-        {
+    public void selectItem(MenuItem item, boolean value) {
+        if (!items.contains(item)) {
             return;
         }
 
-        if (value)
-        {
+        if (value) {
             selectedItems.add(item);
-        }
-        else
-        {
+        } else {
             selectedItems.remove(item);
         }
 
@@ -237,27 +199,23 @@ public abstract class PaginatedPickerMenu extends MenuInventory
         updatePage();
     }
 
-    protected void nextPage()
-    {
+    protected void nextPage() {
         updatePageAmount();
         currentPage = Math.floorMod(currentPage + 1, pageAmount);
         updatePage();
     }
 
-    protected void previousPage()
-    {
+    protected void previousPage() {
         updatePageAmount();
         currentPage = Math.floorMod(currentPage - 1, pageAmount);
         updatePage();
     }
 
-    protected void updatePage()
-    {
+    protected void updatePage() {
         updatePageAmount();
 
         int startingIndex = currentPage * ITEMS_PER_PAGE;
-        for (int i = 0; i < ITEMS_PER_PAGE; i++)
-        {
+        for (int i = 0; i < ITEMS_PER_PAGE; i++) {
             if (startingIndex + i < filteredItems.size())
                 addItem(filteredItems.get(startingIndex + i).copyToSlot(i));
             else
@@ -267,45 +225,40 @@ public abstract class PaginatedPickerMenu extends MenuInventory
         //Update Page description e.g. (20/23) for the Next and Previous 'buttons'.
         String pageCountDesc = String.format("%02d", currentPage + 1) + "/" + String.format("%02d", pageAmount);
 
-        MenuItem next = getOption(NEXT.getSlot());
+        MenuItem next = getItemAt(NEXT.getSlot());
         ItemMeta nextMeta = next.getItemMeta();
-        if (nextMeta != null)
-        {
+        if (nextMeta != null) {
             nextMeta.setLore(List.of(pageCountDesc));
         }
         next.setItemMeta(nextMeta);
         addItem(next);
 
-        MenuItem previous = getOption(PREVIOUS.getSlot());
+        MenuItem previous = getItemAt(PREVIOUS.getSlot());
         ItemMeta prevMeta = previous.getItemMeta();
-        if (prevMeta != null)
-        {
+        if (prevMeta != null) {
             prevMeta.setLore(List.of(pageCountDesc));
         }
         previous.setItemMeta(prevMeta);
         addItem(previous);
     }
 
-    private void updatePageAmount()
-    {
-        pageAmount = Math.max(1, (int)Math.ceil(filteredItems.size() / (double)ITEMS_PER_PAGE));
+    private void updatePageAmount() {
+        pageAmount = Math.max(1, (int) Math.ceil(filteredItems.size() / (double) ITEMS_PER_PAGE));
     }
 
     /**
      * Replaces the item in the given slot at the current page to the new item. Keeps the item's selection status.
+     *
      * @param newItem
      * @param slot
      */
-    public void replaceItem(MenuItem newItem, int slot)
-    {
+    public void replaceItem(MenuItem newItem, int slot) {
         MenuItem oldItem = filteredItems.get(ITEMS_PER_PAGE * currentPage + slot);
         replaceItem(newItem, oldItem);
     }
 
-    public void replaceItem(MenuItem newItem, MenuItem oldItem)
-    {
-        if (!items.contains(oldItem))
-        {
+    public void replaceItem(MenuItem newItem, MenuItem oldItem) {
+        if (!items.contains(oldItem)) {
             return;
         }
 

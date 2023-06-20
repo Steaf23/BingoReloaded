@@ -1,5 +1,9 @@
 package io.github.steaf23.bingoreloaded.gui;
 
+import io.github.steaf23.bingoreloaded.gui.base.BasicMenu;
+import io.github.steaf23.bingoreloaded.gui.base.MenuManager;
+import io.github.steaf23.bingoreloaded.gui.base.PaginatedSelectionMenu;
+import io.github.steaf23.bingoreloaded.gui.base.UserInputMenu;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
 import io.github.steaf23.bingoreloaded.settings.BingoSettingsBuilder;
 import io.github.steaf23.bingoreloaded.data.BingoSettingsData;
@@ -8,23 +12,24 @@ import io.github.steaf23.bingoreloaded.data.ConfigData;
 import io.github.steaf23.bingoreloaded.gui.base.*;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.event.inventory.InventoryOpenEvent;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ExtraBingoMenu extends MenuInventory
+public class ExtraBingoMenu extends BasicMenu
 {
     private static final int DURATION_MAX = 60;
     private static final int TEAMSIZE_MAX = 64;
     private final BingoSettingsBuilder settings;
     private final ConfigData config;
-    private final MenuItem exit = new MenuItem(36,
+    private static final MenuItem EXIT = new MenuItem(0, 5,
             Material.BARRIER, TITLE_PREFIX + BingoTranslation.MENU_PREV.translate());
+    private static final MenuItem PRESETS = new MenuItem(6, 2,
+            Material.MINECART, TITLE_PREFIX + "Manage Presets",
+            ChatColor.GRAY + "Click to apply settings from saved presets");
     private final MenuItem teamSize = new MenuItem(2, 2,
             Material.ENDER_EYE, TITLE_PREFIX + "Maximum Team Size",
             ChatColor.GRAY + "(When changing this setting all currently",
@@ -34,26 +39,28 @@ public class ExtraBingoMenu extends MenuInventory
     private final MenuItem gameDuration = new MenuItem(4, 3,
             Material.RECOVERY_COMPASS, TITLE_PREFIX + "Countdown Duration");
 
-    private final MenuItem presets = new MenuItem(6, 2,
-            Material.MINECART, TITLE_PREFIX + "Manage Presets");
-
-    public ExtraBingoMenu(MenuInventory parent, BingoSettingsBuilder settings, ConfigData config)
+    public ExtraBingoMenu(MenuManager menuManager, BingoSettingsBuilder settings, ConfigData config)
     {
-        super(45, BingoTranslation.OPTIONS_TITLE.translate(), parent);
+        super(menuManager, BingoTranslation.OPTIONS_TITLE.translate(), 6);
         this.settings = settings;
         this.config = config;
         countdown.setGlowing(settings.view().enableCountdown());
+
+        for (int i = 1; i < 9; i++) {
+            addItem(BLANK.copyToSlot(i, 5));
+        }
+
+        addCloseAction(EXIT);
+        addAction(PRESETS, this::showPresetMenu);
     }
 
     @Override
-    public void onItemClicked(InventoryClickEvent event, int slotClicked, Player player, ClickType clickType)
-    {
+    public boolean onClick(InventoryClickEvent event, HumanEntity player, MenuItem clickedItem, ClickType clickType) {
         BingoSettings view = settings.view();
-        if (slotClicked == exit.getSlot())
-        {
-            close(player);
-        }
-        else if (slotClicked == teamSize.getSlot())
+
+        int slotClicked = event.getRawSlot();
+
+        if (slotClicked == teamSize.getSlot())
         {
             if (clickType == ClickType.LEFT)
             {
@@ -95,24 +102,19 @@ public class ExtraBingoMenu extends MenuInventory
                     "the amount of minutes that Countdown bingo will last.");
             addItem(gameDuration);
         }
-        else if (slotClicked == presets.getSlot())
-        {
-            showPresetMenu(player);
-        }
+        return super.onClick(event, player, clickedItem, clickType);
     }
 
     @Override
-    public void handleClose(final InventoryCloseEvent event)
-    {
+    public void beforeClosing(HumanEntity player) {
+        super.beforeClosing(player);
         settings.countdownGameDuration(gameDuration.getAmount());
         settings.maxTeamSize(teamSize.getAmount());
-        super.handleClose(event);
     }
 
     @Override
-    public void handleOpen(InventoryOpenEvent event)
-    {
-        super.handleOpen(event);
+    public void beforeOpening(HumanEntity player) {
+        super.beforeOpening(player);
         teamSize.setAmount(Math.max(0, Math.min(TEAMSIZE_MAX, settings.view().maxTeamSize())));
         teamSize.setDescription(
                 ChatColor.GRAY + "(When changing this setting all currently",
@@ -127,23 +129,20 @@ public class ExtraBingoMenu extends MenuInventory
                 "" + ChatColor.RESET + ChatColor.DARK_PURPLE + "Use the mouse buttons to increase/ decrease",
                 "the amount of minutes that Countdown bingo will last.");
 
-        presets.setDescription(
-                ChatColor.GRAY + "Click to apply settings from saved presets"
-        );
-        addItems(exit, teamSize, gameDuration, countdown, presets);
+        addItems(teamSize, gameDuration, countdown);
     }
 
-    public void showPresetMenu(Player player)
+    public void showPresetMenu(HumanEntity player)
     {
         BingoSettingsData settingsData = new BingoSettingsData();
 
-        new PaginatedPickerMenu(new ArrayList<>(), "Setting Presets", this, FilterType.DISPLAY_NAME)
+        new PaginatedSelectionMenu(getMenuManager(), "Setting Presets", new ArrayList<>(), FilterType.DISPLAY_NAME)
         {
             private static final MenuItem SAVE_PRESET = new MenuItem(51, Material.EMERALD,
                     "" + ChatColor.GREEN + ChatColor.BOLD + "Add preset from current settings");
 
             @Override
-            public void onOptionClickedDelegate(InventoryClickEvent event, MenuItem clickedOption, Player player)
+            public void onOptionClickedDelegate(InventoryClickEvent event, MenuItem clickedOption, HumanEntity player)
             {
                 if (event.isLeftClick())
                 {
@@ -152,40 +151,42 @@ public class ExtraBingoMenu extends MenuInventory
                 }
                 else if (event.isRightClick())
                 {
-                    new ContextMenu(clickedOption.getItemMeta().getDisplayName(), this)
-                            .addAction("Remove", Material.BARRIER, clickType -> {
+                    BasicMenu context = new BasicMenu(getMenuManager(), clickedOption.getItemMeta().getDisplayName(), 1);
+                    context.addAction(new MenuItem(Material.BARRIER, TITLE_PREFIX + "Remove"), clickType -> {
                                 settingsData.removeSettings(clickedOption.getCompareKey());
-                                return true;
+                                context.close(player);
                             })
-                            .addAction("Duplicate", Material.SHULKER_SHELL, clickType -> {
+                            .addAction(new MenuItem(Material.SHULKER_SHELL, TITLE_PREFIX + "Duplicate"), clickType -> {
                                 BingoSettings oldSettings = settingsData.getSettings(clickedOption.getCompareKey());
                                 settingsData.saveSettings(clickedOption.getCompareKey() + "_copy", oldSettings);
-                                return true;
+                                context.close(player);
                             })
-                            .addAction("Rename", Material.NAME_TAG, clickType -> {
+                            .addAction(new MenuItem(Material.NAME_TAG, TITLE_PREFIX + "Rename"), clickType -> {
                                 BingoSettings oldSettings = settingsData.getSettings(clickedOption.getCompareKey());
                                 settingsData.removeSettings(clickedOption.getCompareKey());
-                                UserInputMenu.open("Rename preset...", input -> {
+                                new UserInputMenu(getMenuManager(), "Rename preset...", input -> {
                                     settingsData.saveSettings(input, oldSettings);
-                                }, player, this, clickedOption.getCompareKey());
-                                return false;
+                                    context.close(player);
+                                }, player, clickedOption.getCompareKey());
                             })
                             .addAction(new MenuItem(Material.GLOBE_BANNER_PATTERN, TITLE_PREFIX + "Overwrite",
                                     "This will overwrite the settings saved in ",
                                     clickedOption.getCompareKey() + " with the currently selected options!"), clickType -> {
                                 settingsData.saveSettings(clickedOption.getCompareKey(), settings.view());
-                                return true;
+                                context.close(player);
                             })
+                            .addCloseAction(new MenuItem(8, Material.DIAMOND, TITLE_PREFIX + "Exit"))
                             .open(player);
                 }
             }
 
             @Override
-            public void handleOpen(InventoryOpenEvent event)
-            {
-                super.handleOpen(event);
-
-                addItem(SAVE_PRESET);
+            public void beforeOpening(HumanEntity player) {
+                addAction(SAVE_PRESET, p -> {
+                    new UserInputMenu(getMenuManager(), "Rename preset...", input -> {
+                        settingsData.saveSettings(input, settings.view());
+                    }, player, "my_settings");
+                });
                 clearItems();
 
                 List<MenuItem> items = new ArrayList<>();
@@ -200,26 +201,15 @@ public class ExtraBingoMenu extends MenuInventory
                     item.setCompareKey(preset);
                     items.add(item);
                 }
-                addPickerContents(items.toArray(new MenuItem[]{}));
+                addItemsToSelect(items.toArray(new MenuItem[]{}));
+
+                super.beforeOpening(player);
             }
 
             @Override
-            public void onItemClicked(InventoryClickEvent event, int slotClicked, Player player, ClickType clickType)
-            {
-                if (slotClicked == SAVE_PRESET.getSlot())
-                {
-                    UserInputMenu.open("Rename preset...", input -> {
-                        settingsData.saveSettings(input, settings.view());
-                    }, player, this, "my_settings");
-                }
-                super.onItemClicked(event, slotClicked, player, clickType);
-            }
-
-            @Override
-            public void handleClose(InventoryCloseEvent event)
-            {
-                super.handleClose(event);
+            public void beforeClosing(HumanEntity player) {
                 settings.settingsUpdated();
+                super.beforeClosing(player);
             }
         }.open(player);
     }

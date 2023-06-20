@@ -6,6 +6,7 @@ import io.github.steaf23.bingoreloaded.data.BingoSettingsData;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.data.ConfigData;
 import io.github.steaf23.bingoreloaded.event.*;
+import io.github.steaf23.bingoreloaded.gui.base.MenuManager;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.TeamManager;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
@@ -35,17 +36,20 @@ public class BingoSession
     public final BingoScoreboard scoreboard;
     public final TeamManager teamManager;
     private final ConfigData config;
+    private final MenuManager menuManager;
+
     private GamePhase phase;
 
-    public BingoSession(String worldName, ConfigData config)
+    public BingoSession(MenuManager menuManager, String worldName, ConfigData config)
     {
+        this.menuManager = menuManager;
         this.worldName = worldName;
         this.config = config;
         this.settingsBuilder = new BingoSettingsBuilder(this);
         settingsBuilder.fromOther(new BingoSettingsData().getSettings(config.defaultSettingsPreset));
         this.scoreboard = new BingoScoreboard(this, config.showPlayerInScoreboard);
         this.teamManager = new TeamManager(scoreboard.getTeamBoard(), this);
-        this.phase = new PregameLobby(this, config);
+        this.phase = new PregameLobby(menuManager, this, config);
 
         BingoReloaded.scheduleTask((t) -> {
             this.teamManager.addVirtualPlayerToTeam("testPlayer", "orange");
@@ -124,7 +128,7 @@ public class BingoSession
 
     public void handleGameEnded(final BingoEndedEvent event)
     {
-        phase = new PregameLobby(this, config);
+        phase = new PregameLobby(menuManager, this, config);
     }
 
     public void handleSettingsUpdated(final BingoSettingsUpdatedEvent event)
@@ -200,5 +204,9 @@ public class BingoSession
 
         if (isRunning())
             new TranslatedMessage(BingoTranslation.LEAVE).send(event.getPlayer());
+    }
+
+    public MenuManager getMenuManager() {
+        return menuManager;
     }
 }

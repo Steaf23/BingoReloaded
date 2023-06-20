@@ -1,9 +1,7 @@
-package io.github.steaf23.bingoreloaded.gui.base2;
+package io.github.steaf23.bingoreloaded.gui.base;
 
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
-import io.github.steaf23.bingoreloaded.gui.base.MenuItem;
-import io.github.steaf23.bingoreloaded.util.Message;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -68,11 +66,15 @@ public class MenuManager implements Listener
             activeMenus.put(playerId, new Stack<>());
 
         Stack<Menu> menuStack = activeMenus.get(playerId);
+        // If we add another menu on top of a menu that should be removed, remove this menu first.
+        if (menuStack.size() > 0 && menuStack.peek().openOnce()) {
+            menuStack.pop().beforeClosing(player);
+        }
+        // If the new menu is not already in the stack, push it to the top.
         if (!menuStack.contains(menu)) {
             menuStack.push(menu);
         }
-
-        // This menu is somewhere in the middle of the menu stack, don't open it
+        // This menu is somewhere in the middle of the menu stack, don't open it.
         if (menuStack.peek() != menu) {
             return;
         }

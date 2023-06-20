@@ -1,19 +1,17 @@
 package io.github.steaf23.bingoreloaded.command;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
+import io.github.steaf23.bingoreloaded.data.BingoStatData;
+import io.github.steaf23.bingoreloaded.data.BingoTranslation;
+import io.github.steaf23.bingoreloaded.data.ConfigData;
 import io.github.steaf23.bingoreloaded.data.PlayerData;
 import io.github.steaf23.bingoreloaded.gameloop.BingoGame;
 import io.github.steaf23.bingoreloaded.gameloop.BingoGameManager;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
-import io.github.steaf23.bingoreloaded.data.BingoStatData;
-import io.github.steaf23.bingoreloaded.data.BingoTranslation;
-import io.github.steaf23.bingoreloaded.data.ConfigData;
-import io.github.steaf23.bingoreloaded.gui.BingoMenu;
+import io.github.steaf23.bingoreloaded.gui.AdminBingoMenu;
+import io.github.steaf23.bingoreloaded.gui.PlayerBingoMenu;
 import io.github.steaf23.bingoreloaded.gui.TeamEditorMenu;
-import io.github.steaf23.bingoreloaded.gui.base.FilterType;
-import io.github.steaf23.bingoreloaded.gui.base.MenuItem;
-import io.github.steaf23.bingoreloaded.gui.base2.*;
-import io.github.steaf23.bingoreloaded.gui.creator.BingoCreatorUI;
+import io.github.steaf23.bingoreloaded.gui.creator.BingoCreatorMenu;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
@@ -23,13 +21,10 @@ import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryClickEvent;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Arrays;
@@ -63,37 +58,17 @@ public class BingoCommand implements CommandExecutor
 
         if (args.length == 0)
         {
-            BingoMenu.openOptions(player, session, config);
+            if (player.hasPermission("bingo.admin")) {
+                new AdminBingoMenu(gameManager.getMenuManager(), session, config).open(player);
+            } else if (player.hasPermission("bingo.player")) {
+                new PlayerBingoMenu(gameManager.getMenuManager(), session).open(player);
+            }
             return true;
         }
 
         switch (args[0])
         {
-            case "menutest" -> {
-                MenuManager menuManager = gameManager.getMenuManager();
-                BasicMenu menu = new BasicMenu(menuManager, "TESTO", 3);
-                menu.addAction(new MenuItem(4, 1, Material.BEDROCK, "TESTO ROCK!").setCompareKey("heya"), (p) -> Message.log("TESTO ROCK!"));
-                menu.addCloseAction(new MenuItem(Material.BARRIER, BingoTranslation.MENU_EXIT.translate()));
-                menu.addAction(new MenuItem(Material.EMERALD, "Pick A Color :)"), p -> ColorPickerMenuNew.createAndOpen(
-                        menuManager, "Colorus Pickus", color -> {
-                            Message.log(color + "CHEESE");
-                        }, player));
-                BasicMenu pickerMenu = new PaginatedSelectionMenu(menuManager, "Pick le items", ItemSelectionHelper.getAllItems(), FilterType.MATERIAL)
-                {
-                    @Override
-                    public void onOptionClickedDelegate(InventoryClickEvent event, MenuItem clickedOption, HumanEntity player) {
-                        Message.log("Clicked on " + clickedOption.getType());
-                    }
-                };
-                menu.addAction(new MenuItem(Material.DIAMOND, "Click an item"), p -> pickerMenu.open(player));
-                menu.open(player);
-                BasicMenu menu2 = new BasicMenu(menuManager, "TESTO2", 1);
-                menu2.open(player);
-                menu2.addItem(new MenuItem(8, Material.BARRIER, "CLOSE ME!").setCompareKey("close"));
-                menu2.addCloseAction(new MenuItem(Material.BARRIER, BingoTranslation.MENU_EXIT.translate()));
-                menu.addItem(new MenuItem(8, Material.BARRIER, "SUP!").setCompareKey("suppy"));
-            }
-            case "join" -> session.teamManager.openTeamSelector(player, null);
+            case "join" -> session.teamManager.openTeamSelector(gameManager.getMenuManager(), player);
             case "leave" ->
             {
                 BingoParticipant participant = session.teamManager.getBingoParticipant(player);
@@ -124,7 +99,7 @@ public class BingoCommand implements CommandExecutor
                 if (session.isRunning())
                 {
                     BingoParticipant participant = session.teamManager.getBingoParticipant(player);
-                    if (participant != null && participant instanceof BingoPlayer bingoPlayer)
+                    if (participant instanceof BingoPlayer bingoPlayer)
                         ((BingoGame)session.phase()).returnCardToPlayer(bingoPlayer);
                     return true;
                 }
@@ -158,8 +133,8 @@ public class BingoCommand implements CommandExecutor
             {
                 if (player.hasPermission("bingo.manager"))
                 {
-                    BingoCreatorUI creatorUI = new BingoCreatorUI(null);
-                    creatorUI.open(player);
+                    BingoCreatorMenu creatorMenu = new BingoCreatorMenu(gameManager.getMenuManager());
+                    creatorMenu.open(player);
                 }
             }
             case "stats" ->
@@ -238,7 +213,7 @@ public class BingoCommand implements CommandExecutor
                 if (!player.hasPermission("bingo.admin"))
                     return false;
 
-                new TeamEditorMenu(null).open(player);
+                new TeamEditorMenu(gameManager.getMenuManager()).open(player);
             }
             case "hologram" ->
             {

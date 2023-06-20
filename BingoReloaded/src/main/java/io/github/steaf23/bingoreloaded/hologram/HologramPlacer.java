@@ -2,7 +2,6 @@ package io.github.steaf23.bingoreloaded.hologram;
 
 import io.github.steaf23.bingoreloaded.gui.base.FilterType;
 import io.github.steaf23.bingoreloaded.gui.base.MenuItem;
-import io.github.steaf23.bingoreloaded.gui.base.PaginatedPickerMenu;
 import io.github.steaf23.bingoreloaded.util.Message;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Location;
@@ -80,16 +79,16 @@ public class HologramPlacer
             Message.log("chillz");
         };
 
-        List<MenuItem> items = new ArrayList<>();
-        items.add(new MenuItem(Material.GLOBE_BANNER_PATTERN, "test").setCompareKey("test"));
-
-        PaginatedPickerMenu hologramPicker = new PaginatedPickerMenu(items, "Select a Hologram", null, FilterType.ITEM_KEY)
-        {
-            @Override
-            public void onOptionClickedDelegate(InventoryClickEvent event, MenuItem clickedOption, Player player)
-            {
-                result.accept(clickedOption.getCompareKey());
-            }
-        };
+//        List<MenuItem> items = new ArrayList<>();
+//        items.add(new MenuItem(Material.GLOBE_BANNER_PATTERN, "test").setCompareKey("test"));
+//
+//        PaginatedPickerMenu hologramPicker = new PaginatedPickerMenu(items, "Select a Hologram", null, FilterType.ITEM_KEY)
+//        {
+//            @Override
+//            public void onOptionClickedDelegate(InventoryClickEvent event, MenuItem clickedOption, Player player)
+//            {
+//                result.accept(clickedOption.getCompareKey());
+//            }
+//        };
     }
 }

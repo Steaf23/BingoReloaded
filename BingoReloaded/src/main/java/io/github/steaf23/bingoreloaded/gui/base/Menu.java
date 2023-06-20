@@ -1,6 +1,5 @@
-package io.github.steaf23.bingoreloaded.gui.base2;
+package io.github.steaf23.bingoreloaded.gui.base;
 
-import io.github.steaf23.bingoreloaded.gui.base.MenuItem;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -36,6 +35,13 @@ public interface Menu
 
     default void closeInventory(HumanEntity player) {
         player.closeInventory();
+    }
+
+    /**
+     * @return true if this menu should be removed if another menu opens on top of it.
+     */
+    default boolean openOnce() {
+        return false;
     }
 
     Inventory getInventory();

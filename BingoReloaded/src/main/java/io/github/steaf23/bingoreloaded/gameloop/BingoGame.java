@@ -106,7 +106,7 @@ public class BingoGame implements GamePhase
         world.setTime(1000);
 
         // Generate cards
-        BingoCard masterCard = CardBuilder.fromMode(settings.mode(), settings.size(), getTeamManager().getActiveTeams().size());
+        BingoCard masterCard = CardBuilder.fromMode(session.getMenuManager(), settings.mode(), settings.size(), getTeamManager().getActiveTeams().size());
         masterCard.generateCard(settings.card(), settings.seed(), !config.disableAdvancements, !config.disableStatistics);
         getTeamManager().initializeCards(masterCard);
 

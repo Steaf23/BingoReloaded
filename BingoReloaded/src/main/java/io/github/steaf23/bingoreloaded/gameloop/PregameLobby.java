@@ -5,9 +5,11 @@ import io.github.steaf23.bingoreloaded.data.PlayerData;
 import io.github.steaf23.bingoreloaded.event.*;
 import io.github.steaf23.bingoreloaded.gui.VoteMenu;
 import io.github.steaf23.bingoreloaded.gui.base.MenuItem;
+import io.github.steaf23.bingoreloaded.gui.base.MenuManager;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import io.github.steaf23.bingoreloaded.settings.SettingsPreviewBoard;
 import org.bukkit.Material;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
 
@@ -18,7 +20,7 @@ import java.util.UUID;
 public class PregameLobby implements GamePhase
 {
     // Each player can cast a single vote for all categories, To keep track of this a VoteTicket will be made for every player that votes on something
-    public class VoteTicket
+    public static class VoteTicket
     {
         public String gamemode = "";
         public String kit = "";
@@ -26,13 +28,15 @@ public class PregameLobby implements GamePhase
     }
 
     private final BingoSession session;
-    private SettingsPreviewBoard settingsBoard;
+    private final SettingsPreviewBoard settingsBoard;
     private final Map<UUID, VoteTicket> votes;
     private final PlayerData playerData;
     private final ConfigData config;
+    private final MenuManager menuManager;
 
-    public PregameLobby(BingoSession session, ConfigData config)
+    public PregameLobby(MenuManager menuManager, BingoSession session, ConfigData config)
     {
+        this.menuManager = menuManager;
         this.session = session;
         this.settingsBoard = new SettingsPreviewBoard();
         settingsBoard.showSettings(session.settingsBuilder.view());
@@ -41,7 +45,7 @@ public class PregameLobby implements GamePhase
         this.config = config;
     }
 
-    public void voteGamemode(String gamemode, Player player)
+    public void voteGamemode(String gamemode, HumanEntity player)
     {
         VoteTicket ticket = votes.getOrDefault(player.getUniqueId(), new VoteTicket());
 
@@ -52,7 +56,7 @@ public class PregameLobby implements GamePhase
         votes.put(player.getUniqueId(), ticket);
     }
 
-    public void voteCard(String card, Player player)
+    public void voteCard(String card, HumanEntity player)
     {
         VoteTicket ticket = votes.getOrDefault(player.getUniqueId(), new VoteTicket());
 
@@ -63,7 +67,7 @@ public class PregameLobby implements GamePhase
         votes.put(player.getUniqueId(), ticket);
     }
 
-    public void voteKit(String kit, Player player)
+    public void voteKit(String kit, HumanEntity player)
     {
         VoteTicket ticket = votes.getOrDefault(player.getUniqueId(), new VoteTicket());
 
@@ -154,15 +158,13 @@ public class PregameLobby implements GamePhase
         if (item.getCompareKey().equals("vote"))
         {
             event.setCancelled(true);
-            VoteMenu menu = new VoteMenu(config.voteList, null, this);
+            VoteMenu menu = new VoteMenu(menuManager, config.voteList, this);
             menu.open(event.getPlayer());
-            return;
         }
         else if (item.getCompareKey().equals("team"))
         {
             event.setCancelled(true);
-            session.teamManager.openTeamSelector(event.getPlayer(), null);
-            return;
+            session.teamManager.openTeamSelector(menuManager, event.getPlayer());
         }
     }
 }

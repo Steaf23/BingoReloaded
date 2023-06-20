@@ -1,4 +1,4 @@
-package io.github.steaf23.bingoreloaded.gui.base2;
+package io.github.steaf23.bingoreloaded.gui.base;
 
 import io.github.steaf23.bingoreloaded.event.PlayerLeftSessionWorldEvent;
 import org.bukkit.entity.HumanEntity;

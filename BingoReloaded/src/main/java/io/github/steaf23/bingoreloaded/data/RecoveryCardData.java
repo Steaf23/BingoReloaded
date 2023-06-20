@@ -33,17 +33,17 @@ public class RecoveryCardData
             return false;
         }
 
-        // add each team's card back
-        ConfigurationSection cards = data.getConfig().getConfigurationSection("cards");
-        if (cards == null) return false;
-        for (String key : cards.getKeys(false))
-        {
-            BingoTeam cardOwner = game.getTeamManager().activateTeamFromName(key);
-
-            BingoCard card = CardBuilder.fromMode(mode, size, game.getTeamManager().getActiveTeams().size());
-            success = fillCard(game.getTeamManager(), cardOwner, card);
-            game.getTeamManager().setCardForTeam(cardOwner, card);
-        }
+//        // add each team's card back
+//        ConfigurationSection cards = data.getConfig().getConfigurationSection("cards");
+//        if (cards == null) return false;
+//        for (String key : cards.getKeys(false))
+//        {
+//            BingoTeam cardOwner = game.getTeamManager().activateTeamFromName(key);
+//
+//            BingoCard card = CardBuilder.fromMode(mode, size, game.getTeamManager().getActiveTeams().size());
+//            success = fillCard(game.getTeamManager(), cardOwner, card);
+//            game.getTeamManager().setCardForTeam(cardOwner, card);
+//        }
 
         return success;
     }

@@ -3,16 +3,14 @@ package io.github.steaf23.bingoreloaded.gui;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.gui.base.MenuItem;
-import io.github.steaf23.bingoreloaded.gui.base.MenuInventory;
+import io.github.steaf23.bingoreloaded.gui.base.BasicMenu;
+import io.github.steaf23.bingoreloaded.gui.base.MenuManager;
 import io.github.steaf23.bingoreloaded.settings.CustomKit;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.ClickType;
-import org.bukkit.event.inventory.InventoryClickEvent;
 
-public class KitOptionsMenu extends MenuInventory
+public class KitOptionsMenu extends BasicMenu
 {
     private final BingoSession session;
 
@@ -29,101 +27,49 @@ public class KitOptionsMenu extends MenuInventory
             Material.CYAN_CONCRETE, PlayerKit.RELOADED.displayName,
             BingoTranslation.KIT_RELOADED_DESC.translate().split("\\n"));
 
-    public KitOptionsMenu(MenuInventory parent, BingoSession session)
+    public KitOptionsMenu(MenuManager menuManager, BingoSession session)
     {
-        super(45, BingoTranslation.OPTIONS_KIT.translate(), parent);
+        super(menuManager, BingoTranslation.OPTIONS_KIT.translate(), 5);
         this.session = session;
-
-        addItems(HARDCORE, NORMAL, OVERPOWERED, RELOADED);
-        for (int i = 0; i < 5; i++)
-        {
-            addItem(new MenuItem(i * 2, 3, Material.GRAY_CONCRETE,
-                    "" + ChatColor.GRAY + "Custom Kit Slot " + (i + 1),
-                    "Create a custom kit from your inventory using ",
-                    "" + ChatColor.RED + ChatColor.ITALIC + "/bingo kit add " + (i + 1) + " <name>!"));
-        }
-
-        CustomKit kit = PlayerKit.getCustomKit(PlayerKit.CUSTOM_1);
-        if (kit != null)
-            addItem(new MenuItem(0, 3, Material.WHITE_CONCRETE,
-                    ChatColor.RESET + kit.getName(), "Custom kit"));
-        kit = PlayerKit.getCustomKit(PlayerKit.CUSTOM_2);
-        if (kit != null)
-            addItem(new MenuItem(2, 3, Material.WHITE_CONCRETE,
-                    ChatColor.RESET + kit.getName(), "Custom kit"));
-        kit = PlayerKit.getCustomKit(PlayerKit.CUSTOM_3);
-        if (kit != null)
-            addItem(new MenuItem(4, 3, Material.WHITE_CONCRETE,
-                    ChatColor.RESET + kit.getName(), "Custom kit"));
-        kit = PlayerKit.getCustomKit(PlayerKit.CUSTOM_4);
-        if (kit != null)
-            addItem(new MenuItem(6, 3, Material.WHITE_CONCRETE,
-                    ChatColor.RESET + kit.getName(), "Custom kit"));
-        kit = PlayerKit.getCustomKit(PlayerKit.CUSTOM_5);
-        if (kit != null)
-            addItem(new MenuItem(8, 3, Material.WHITE_CONCRETE,
-                    ChatColor.RESET + kit.getName(), "Custom kit"));
-    }
-
-    @Override
-    public void onItemClicked(InventoryClickEvent event, int slotClicked, Player player, ClickType clickType)
-    {
-        if (slotClicked == HARDCORE.getSlot())
-        {
+        addAction(HARDCORE, p -> {
             setKit(PlayerKit.HARDCORE);
-        }
-        else if (slotClicked == NORMAL.getSlot())
-        {
+            close(p);
+        });
+        addAction(NORMAL, p -> {
             setKit(PlayerKit.NORMAL);
-        }
-        else if (slotClicked == OVERPOWERED.getSlot())
-        {
+            close(p);
+        });
+        addAction(OVERPOWERED, p -> {
             setKit(PlayerKit.OVERPOWERED);
-        }
-        else if (slotClicked == RELOADED.getSlot())
-        {
+            close(p);
+        });
+        addAction(RELOADED, p -> {
             setKit(PlayerKit.RELOADED);
+            close(p);
+        });
+        addAction(HARDCORE, p -> {
+            setKit(PlayerKit.HARDCORE);
+            close(p);
+        });
+
+        int kitIdx = 0;
+        for (PlayerKit kit : PlayerKit.customKits()) {
+            CustomKit customkit = PlayerKit.getCustomKit(kit);
+            if (customkit != null) {
+                addAction(new MenuItem(kitIdx * 2, 3, Material.WHITE_CONCRETE,
+                        ChatColor.RESET + customkit.getName(), "Custom kit"), p -> {
+                    setKit(PlayerKit.fromConfig(kit.configName));
+                    close(p);
+                });
+            } else {
+                int kitNr = kitIdx + 1;
+                addItem(new MenuItem(kitIdx * 2, 3, Material.GRAY_CONCRETE,
+                        "" + ChatColor.GRAY + "Custom Kit Slot " + kitNr,
+                        "Create a custom kit from your inventory using ",
+                        "" + ChatColor.RED + ChatColor.ITALIC + "/bingo kit add " + kitNr + " <name>!"));
+            }
+            kitIdx++;
         }
-        else if (slotClicked == 27)
-        {
-            if (event.getCurrentItem().getType() != Material.GRAY_CONCRETE)
-                setKit(PlayerKit.CUSTOM_1);
-            else
-                return;
-        }
-        else if (slotClicked == 27 + 2)
-        {
-            if (event.getCurrentItem().getType() != Material.GRAY_CONCRETE)
-                setKit(PlayerKit.CUSTOM_2);
-            else
-                return;
-        }
-        else if (slotClicked == 27 + 4)
-        {
-            if (event.getCurrentItem().getType() != Material.GRAY_CONCRETE)
-                setKit(PlayerKit.CUSTOM_3);
-            else
-                return;
-        }
-        else if (slotClicked == 27 + 6)
-        {
-            if (event.getCurrentItem().getType() != Material.GRAY_CONCRETE)
-                setKit(PlayerKit.CUSTOM_4);
-            else
-                return;
-        }
-        else if (slotClicked == 27 + 8)
-        {
-            if (event.getCurrentItem().getType() != Material.GRAY_CONCRETE)
-                setKit(PlayerKit.CUSTOM_5);
-            else
-                return;
-        }
-        else
-        {
-            return;
-        }
-        close(player);
     }
 
     private void setKit(PlayerKit kit)

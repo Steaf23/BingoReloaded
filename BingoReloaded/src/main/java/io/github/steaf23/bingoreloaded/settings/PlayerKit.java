@@ -1,5 +1,6 @@
 package io.github.steaf23.bingoreloaded.settings;
 
+import com.google.common.collect.ImmutableSet;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.data.helper.YmlDataManager;
@@ -15,6 +16,7 @@ import org.bukkit.inventory.meta.LeatherArmorMeta;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
 
 public enum PlayerKit
 {
@@ -213,6 +215,10 @@ public enum PlayerKit
     public static CustomKit getCustomKit(PlayerKit slot)
     {
         return customKitData.getConfig().getSerializable(slot.configName, CustomKit.class);
+    }
+
+    public static Set<PlayerKit> customKits() {
+        return ImmutableSet.of(CUSTOM_1, CUSTOM_2, CUSTOM_3, CUSTOM_4, CUSTOM_5);
     }
 
     private static MenuItem createGoUpWand()
