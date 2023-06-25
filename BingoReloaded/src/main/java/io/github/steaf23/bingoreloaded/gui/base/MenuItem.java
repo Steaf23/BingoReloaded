@@ -139,14 +139,14 @@ public class MenuItem extends ItemStack
         return getItemMeta().hasEnchant(Enchantment.DURABILITY);
     }
 
-    public MenuItem addStringToPdc(String key, String value) {
+    public MenuItem addStringToPdc(String key, @Nullable String value) {
         if (key == null) {
             return this;
         }
 
         var meta = this.getItemMeta();
         var pdc = meta.getPersistentDataContainer();
-        if (key.equals(""))
+        if (value == null)
             pdc.remove(PDCHelper.createKey("item." + key));
         else
             pdc.set(PDCHelper.createKey("item." + key), PersistentDataType.STRING, value);

@@ -7,6 +7,7 @@ import io.github.steaf23.bingoreloaded.tasks.TaskData;
 import org.bukkit.Material;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class BingoCardData
 {
@@ -88,7 +89,7 @@ public class BingoCardData
         List<TaskData> tasks = new ArrayList<>();
         getListNames(cardName).forEach((l) -> tasks.addAll(listsData.getTasks(l, false, false)));
 
-        List<TaskData> allItemTasks = tasks.stream().filter(task -> task instanceof ItemTask).toList();
+        List<TaskData> allItemTasks = tasks.stream().filter(task -> task instanceof ItemTask).collect(Collectors.toList());
 
         if (allItemTasks.size() > 0)
             return (ItemTask)allItemTasks.get(Math.abs(new Random().nextInt(allItemTasks.size())));

@@ -27,7 +27,7 @@ public final class ColorPickerMenu extends BasicMenu
 
     private int scrollIndex = 0;
 
-    private ColorPickerMenu(MenuManager manager, String title, Consumer<ChatColor> result) {
+    public ColorPickerMenu(MenuManager manager, String title, Consumer<ChatColor> result) {
         super(manager, title, 6);
         this.result = result;
         this.hueItems = new ArrayList<>();
@@ -74,7 +74,7 @@ public final class ColorPickerMenu extends BasicMenu
         return super.onClick(event, player, clickedItem, clickType);
     }
 
-    public void setHueBar(int startingFrom) {
+    private void setHueBar(int startingFrom) {
         if (hueItems.size() < 7) {
             Message.log("Add at least 7 hue items!");
             return;
@@ -85,7 +85,7 @@ public final class ColorPickerMenu extends BasicMenu
         }
     }
 
-    public void updateDisplay(Color color) {
+    private void updateDisplay(Color color) {
         float hue = Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), null)[0];
         for (int y = 0; y < 5; y++) {
             for (int x = 0; x < 9; x++) {

@@ -29,6 +29,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class BingoCommand implements CommandExecutor
 {
@@ -203,7 +204,7 @@ public class BingoCommand implements CommandExecutor
                             Message.sendDebug(ChatColor.RED + "Please specify a kit name for slot " + args[2], player);
                             return false;
                         }
-                        addPlayerKit(args[2], Arrays.stream(args).toList().subList(3, args.length), player);
+                        addPlayerKit(args[2], Arrays.stream(args).collect(Collectors.toList()).subList(3, args.length), player);
                     }
                     case "remove" -> removePlayerKit(args[2], player);
                 }

@@ -59,7 +59,7 @@ public class TaskListData
             }
         }
 
-        data.getConfig().set(listName + ".tasks", savedTasks.stream().toList());
+        data.getConfig().set(listName + ".tasks", savedTasks.stream().collect(Collectors.toList()));
         data.getConfig().set(listName + ".size", savedTasks.size());
         data.saveConfig();
     }

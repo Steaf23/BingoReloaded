@@ -3,15 +3,11 @@ package io.github.steaf23.bingoreloaded.data;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.helper.YmlDataManager;
 import io.github.steaf23.bingoreloaded.util.FlexColor;
-import io.github.steaf23.bingoreloaded.util.Message;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
-import org.bukkit.scoreboard.Team;
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.*;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,8 +32,6 @@ public class TeamData {
         }
     }
 
-    ;
-
     private final YmlDataManager data = BingoReloaded.createYmlDataManager("data/teams.yml");
 
     public Map<String, TeamTemplate> getTeams() {
@@ -51,6 +45,10 @@ public class TeamData {
     public void addTeam(String key, String name, ChatColor color) {
         data.getConfig().set(key, new TeamTemplate(name, color));
         data.saveConfig();
+    }
+
+    public void addTeam(String key, TeamTemplate template) {
+        addTeam(key, template.name(), template.color());
     }
 
     public TeamTemplate getTeam(String key) {
@@ -71,5 +69,16 @@ public class TeamData {
         for (FlexColor col : FlexColor.values()) {
             addTeam(col.name, col.getTranslatedName(), col.chatColor);
         }
+    }
+
+    // TODO: find cheaper way to generate valid team id
+    public String getNewTeamId() {
+        int id = 0;
+        List<String> keys = data.getConfig().getKeys(false).stream().sorted().collect(Collectors.toList());
+        while (keys.contains(String.valueOf(id))) {
+            id += 1;
+        }
+
+        return String.valueOf(id);
     }
 }

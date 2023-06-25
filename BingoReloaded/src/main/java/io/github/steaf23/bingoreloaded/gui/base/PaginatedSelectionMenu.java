@@ -1,6 +1,7 @@
 package io.github.steaf23.bingoreloaded.gui.base;
 
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
+import io.github.steaf23.bingoreloaded.util.Message;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
@@ -97,7 +98,7 @@ public abstract class PaginatedSelectionMenu extends BasicMenu
         ItemMeta meta = filterItem.getItemMeta();
         meta.setLore(List.of("\"" + keywordFilter + "\""));
         filterItem.setItemMeta(meta);
-        addItem(filterItem);
+        updateActionItem(filterItem);
 
         filteredItems.clear();
 

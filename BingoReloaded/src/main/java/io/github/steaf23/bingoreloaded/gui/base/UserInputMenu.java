@@ -33,7 +33,7 @@ public class UserInputMenu implements Menu
         this.manager.open(this, player);
     }
 
-    public AnvilGUI openAnvilUI(String title,  Consumer<String> result, String startingText, HumanEntity player) {
+    private AnvilGUI openAnvilUI(String title,  Consumer<String> result, String startingText, HumanEntity player) {
         return new AnvilGUI.Builder()
                 .onComplete(completion -> {
                     manager.close(this, completion.getPlayer());
@@ -41,7 +41,7 @@ public class UserInputMenu implements Menu
                     return new ArrayList<>();
                 })
                 .title(Message.PREFIX_STRING_SHORT + " " + ChatColor.DARK_RED + title)
-                .text(startingText)
+                .text(startingText.isEmpty() ? "name" : startingText)
                 .itemRight(EMPTY)
                 .itemLeft(new ItemStack(Material.ELYTRA))
                 .onRightInputClick(p -> {

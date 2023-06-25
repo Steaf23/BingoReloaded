@@ -1,3 +1,64 @@
+brown:
+  ==: TeamTemplate
+  color: '#734829'
+  name: Brown
+orange:
+  ==: TeamTemplate
+  color: '#F17716'
+  name: Orange
+white:
+  ==: TeamTemplate
+  color: '#EAEDED'
+  name: White
+gray:
+  ==: TeamTemplate
+  color: '#3F4548'
+  name: Gray
+light_gray:
+  ==: TeamTemplate
+  color: '#8E8F87'
+  name: Light Gray
+black:
+  ==: TeamTemplate
+  color: '#16161B'
+  name: Black
+blue:
+  ==: TeamTemplate
+  color: '#353A9E'
+  name: Blue
+light_blue:
+  ==: TeamTemplate
+  color: '#3CB0DA'
+  name: Light Blue
+green:
+  ==: TeamTemplate
+  color: '#556E1C'
+  name: Green
+lime:
+  ==: TeamTemplate
+  color: '#71BA1A'
+  name: Lime
+magenta:
+  ==: TeamTemplate
+  color: '#BE46B5'
+  name: Magenta
+purple:
+  ==: TeamTemplate
+  color: '#7B2BAD'
+  name: Purple
+pink:
+  ==: TeamTemplate
+  color: '#EE90AD'
+  name: Pink
 red:
-  color: "#ff0000"
-  name: "Red"
+  ==: TeamTemplate
+  color: '#A12823'
+  name: Red
+yellow:
+  ==: TeamTemplate
+  color: '#F9C629'
+  name: Yellow
+cyan:
+  ==: TeamTemplate
+  color: '#158A91'
+  name: Cyan

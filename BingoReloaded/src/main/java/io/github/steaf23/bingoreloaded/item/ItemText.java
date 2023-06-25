@@ -16,6 +16,7 @@ import org.bukkit.inventory.ItemStack;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * A builder used for naming items through NBT data.
@@ -52,7 +53,7 @@ public class ItemText
     public BaseComponent asComponent()
     {
         BaseComponent root = new TextComponent();
-        root.setExtra(Arrays.stream(ComponentSerializer.parse(asJsonRoot())).toList());
+        root.setExtra(Arrays.stream(ComponentSerializer.parse(asJsonRoot())).collect(Collectors.toList()));
         return root;
     }
 
@@ -185,7 +186,7 @@ public class ItemText
 
     public static String createModifiers(ChatColor... modifiers)
     {
-        Set<ChatColor> modifierSet = new HashSet<>(Arrays.stream(modifiers).toList());
+        Set<ChatColor> modifierSet = new HashSet<>(Arrays.stream(modifiers).collect(Collectors.toList()));
         StringBuilder mods = new StringBuilder();
 
         for (ChatColor mod : modifierSet)

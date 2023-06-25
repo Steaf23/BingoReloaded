@@ -13,6 +13,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class AutoBingoTabCompleter implements TabCompleter
 {
@@ -52,7 +53,7 @@ public class AutoBingoTabCompleter implements TabCompleter
                         return List.of("all", "none", "water_breathing", "night_vision", "fire_resistance", "no_fall_damage", "card_speed");
                     case "card":
                         BingoCardData cardsData = new BingoCardData();
-                        return cardsData.getCardNames().stream().toList();
+                        return cardsData.getCardNames().stream().collect(Collectors.toList());
                     case "start":
                         return List.of("regular", "lockout", "complete");
                     default:
@@ -71,7 +72,7 @@ public class AutoBingoTabCompleter implements TabCompleter
                         return List.of("3", "5");
                     case "team":
                         FlexColor[] colors = FlexColor.values();
-                        List<String> list = new ArrayList<>(Arrays.stream(colors).map(c -> c.name).toList());
+                        List<String> list = new ArrayList<>(Arrays.stream(colors).map(c -> c.name).collect(Collectors.toList()));
                         list.add(0, "none");
                         return list;
                 }
