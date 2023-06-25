@@ -301,7 +301,13 @@ public class Message
     }
 
     public static TextComponent[] createHoverCommandMessage(@NonNull BingoTranslation translation, @Nullable String command) {
-        String[] components = translation.translate().split("//");
+        // Limit -1 makes it so split returns trailing empty strings
+        String[] components = translation.translate().split("//", -1);
+
+        if (components.length != 4) {
+            Message.warn("Hover commands should contain 4 lines!, please check the language file");
+            return new TextComponent[]{};
+        }
         TextComponent prefix = new TextComponent(components[0]);
         TextComponent hoverable = new TextComponent(components[1]);
         TextComponent hover = new TextComponent(components[2]);
