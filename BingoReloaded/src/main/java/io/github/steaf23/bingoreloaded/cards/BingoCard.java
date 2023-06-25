@@ -3,12 +3,13 @@ package io.github.steaf23.bingoreloaded.cards;
 
 import io.github.steaf23.bingoreloaded.gameloop.BingoGame;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
-import io.github.steaf23.bingoreloaded.data.BingoCardsData;
+import io.github.steaf23.bingoreloaded.data.BingoCardData;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
-import io.github.steaf23.bingoreloaded.data.TaskListsData;
+import io.github.steaf23.bingoreloaded.data.TaskListData;
 import io.github.steaf23.bingoreloaded.event.BingoCardTaskCompleteEvent;
 import io.github.steaf23.bingoreloaded.event.BingoStatisticCompletedEvent;
 import io.github.steaf23.bingoreloaded.gui.CardMenu;
+import io.github.steaf23.bingoreloaded.gui.base.MenuManager;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.player.BingoTeam;
@@ -37,11 +38,11 @@ public class BingoCard
 
     private static final TaskData DEFAULT_TASK = new ItemTask(Material.DIRT, 1);
 
-    public BingoCard(CardSize size)
+    public BingoCard(MenuManager menuManager, CardSize size)
     {
         this.size = size;
         this.tasks = new ArrayList<>();
-        this.menu = new CardMenu(size, BingoTranslation.CARD_TITLE.translate());
+        this.menu = new CardMenu(menuManager, size, BingoTranslation.CARD_TITLE.translate());
         menu.setInfo(BingoTranslation.INFO_REGULAR_NAME.translate(),
                 BingoTranslation.INFO_REGULAR_DESC.translate().split("\\n"));
     }
@@ -59,8 +60,8 @@ public class BingoCard
      */
     public void generateCard(String cardName, int seed, boolean withAdvancements, boolean withStatistics)
     {
-        BingoCardsData cardsData = new BingoCardsData();
-        TaskListsData listsData = cardsData.lists();
+        BingoCardData cardsData = new BingoCardData();
+        TaskListData listsData = cardsData.lists();
         // Create shuffler
         Random shuffler;
         if (seed == 0)
@@ -209,7 +210,7 @@ public class BingoCard
 
     public BingoCard copy()
     {
-        BingoCard card = new BingoCard(this.size);
+        BingoCard card = new BingoCard(menu.getMenuManager(), this.size);
         List<BingoTask> newTasks = new ArrayList<>();
         for (BingoTask slot : tasks)
         {

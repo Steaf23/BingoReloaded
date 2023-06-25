@@ -1,6 +1,6 @@
 package io.github.steaf23.bingoreloaded.gameloop.multiple;
 
-import io.github.steaf23.bingoreloaded.data.BingoCardsData;
+import io.github.steaf23.bingoreloaded.data.BingoCardData;
 import io.github.steaf23.bingoreloaded.util.FlexColor;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -13,6 +13,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class AutoBingoTabCompleter implements TabCompleter
 {
@@ -51,8 +52,8 @@ public class AutoBingoTabCompleter implements TabCompleter
                     case "effects":
                         return List.of("all", "none", "water_breathing", "night_vision", "fire_resistance", "no_fall_damage", "card_speed");
                     case "card":
-                        BingoCardsData cardsData = new BingoCardsData();
-                        return cardsData.getCardNames().stream().toList();
+                        BingoCardData cardsData = new BingoCardData();
+                        return cardsData.getCardNames().stream().collect(Collectors.toList());
                     case "start":
                         return List.of("regular", "lockout", "complete");
                     default:
@@ -71,7 +72,7 @@ public class AutoBingoTabCompleter implements TabCompleter
                         return List.of("3", "5");
                     case "team":
                         FlexColor[] colors = FlexColor.values();
-                        List<String> list = new ArrayList<>(Arrays.stream(colors).map(c -> c.name).toList());
+                        List<String> list = new ArrayList<>(Arrays.stream(colors).map(c -> c.name).collect(Collectors.toList()));
                         list.add(0, "none");
                         return list;
                 }

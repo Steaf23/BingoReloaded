@@ -4,7 +4,7 @@ import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.BingoScoreboard;
 import io.github.steaf23.bingoreloaded.cards.BingoCard;
 import io.github.steaf23.bingoreloaded.cards.CardBuilder;
-import io.github.steaf23.bingoreloaded.data.BingoCardsData;
+import io.github.steaf23.bingoreloaded.data.BingoCardData;
 import io.github.steaf23.bingoreloaded.data.BingoStatType;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.data.ConfigData;
@@ -41,6 +41,7 @@ import org.bukkit.util.Vector;
 
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class BingoGame implements GamePhase
 {
@@ -68,7 +69,7 @@ public class BingoGame implements GamePhase
         this.settings = settings;
         this.deadPlayers = new HashMap<>();
         this.cardEventManager = new CardEventManager(worldName);
-        if (config.disableStatistics)
+        if (!config.disableStatistics)
             this.statTracker = new StatisticTracker(worldName);
         else
             this.statTracker = null;
@@ -106,7 +107,7 @@ public class BingoGame implements GamePhase
         world.setTime(1000);
 
         // Generate cards
-        BingoCard masterCard = CardBuilder.fromMode(settings.mode(), settings.size(), getTeamManager().getActiveTeams().size());
+        BingoCard masterCard = CardBuilder.fromMode(session.getMenuManager(), settings.mode(), settings.size(), getTeamManager().getActiveTeams().size());
         masterCard.generateCard(settings.card(), settings.seed(), !config.disableAdvancements, !config.disableStatistics);
         getTeamManager().initializeCards(masterCard);
 
@@ -115,7 +116,7 @@ public class BingoGame implements GamePhase
         {
             cards.add(activeTeam.card);
         }
-        cardEventManager.setCards(cards.stream().toList());
+        cardEventManager.setCards(cards.stream().collect(Collectors.toList()));
 
         if (statTracker != null)
             statTracker.start(getTeamManager().getActiveTeams());
@@ -273,7 +274,7 @@ public class BingoGame implements GamePhase
     {
         if (countdown == 0)
         {
-            deathMatchTask = new BingoTask(new BingoCardsData().getRandomItemTask(settings.card()));
+            deathMatchTask = new BingoTask(new BingoCardData().getRandomItemTask(settings.card()));
 
             for (BingoParticipant p : getTeamManager().getParticipants())
             {
@@ -510,11 +511,13 @@ public class BingoGame implements GamePhase
             if (otherParticipant.sessionPlayer().isPresent())
                 otherParticipant.sessionPlayer().get().playSound(otherParticipant.sessionPlayer().get(), Sound.ENTITY_DRAGON_FIREBALL_EXPLODE, 0.8f, 1.0f);
         }
+
+        scoreboard.updateTeamScores();
+
         if (event.hasBingo())
         {
             bingo(event.getParticipant().getTeam());
         }
-        scoreboard.updateTeamScores();
 
         if (event.getParticipant().sessionPlayer().isEmpty())
             return;
@@ -536,7 +539,7 @@ public class BingoGame implements GamePhase
         if (event.getAction() != Action.RIGHT_CLICK_AIR && event.getAction() != Action.RIGHT_CLICK_BLOCK)
             return;
 
-        if (PlayerKit.WAND_ITEM.isKeyEqual(event.getItem()))
+        if (PlayerKit.WAND_ITEM.isCompareKeyEqual(event.getItem()))
         {
             event.setCancelled(true);
             ((BingoPlayer)participant).useGoUpWand(event.getItem(), config.wandCooldown, config.wandDown, config.wandUp, config.platformLifetime);
@@ -572,7 +575,7 @@ public class BingoGame implements GamePhase
         for (ItemStack drop : event.getDrops())
         {
             if (PDCHelper.getBoolean(drop.getItemMeta().getPersistentDataContainer(), "kit.kit_item", false)
-                    || PlayerKit.CARD_ITEM.isKeyEqual(drop))
+                    || PlayerKit.CARD_ITEM.isCompareKeyEqual(drop))
             {
                 drop.setAmount(0);
             }

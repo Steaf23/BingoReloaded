@@ -1,27 +1,24 @@
 package io.github.steaf23.bingoreloaded.gui;
 
-import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
-import io.github.steaf23.bingoreloaded.gui.base.ActionMenu;
-import io.github.steaf23.bingoreloaded.settings.BingoSettingsBuilder;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
+import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
+import io.github.steaf23.bingoreloaded.gui.base.BasicMenu;
 import io.github.steaf23.bingoreloaded.gui.base.MenuItem;
-import io.github.steaf23.bingoreloaded.gui.base.MenuInventory;
+import io.github.steaf23.bingoreloaded.gui.base.MenuManager;
+import io.github.steaf23.bingoreloaded.settings.BingoSettingsBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.ClickType;
-import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.EnumSet;
 import java.util.List;
-import java.util.stream.Stream;
 
-public class EffectOptionsMenu extends ActionMenu {
+public class EffectOptionsMenu extends BasicMenu
+{
     private final EnumSet<EffectOptionFlags> flags;
 
-    public EffectOptionsMenu(MenuInventory parent, BingoSettingsBuilder settings, BingoSession session) {
-        super(45, BingoTranslation.OPTIONS_EFFECTS.translate(), parent);
+    public EffectOptionsMenu(MenuManager menuManager, BingoSettingsBuilder settings, BingoSession session) {
+        super(menuManager, BingoTranslation.OPTIONS_EFFECTS.translate(), 6);
         flags = settings.view().effects();
 
         addEffectAction(EffectOptionFlags.NIGHT_VISION, 4, 3, Material.GOLDEN_CARROT);
@@ -38,6 +35,7 @@ public class EffectOptionsMenu extends ActionMenu {
                 ),
                 (player) -> {
                     settings.effects(flags, session);
+                    close(player);
                 }
         );
     }
@@ -49,8 +47,7 @@ public class EffectOptionsMenu extends ActionMenu {
                 (player) -> {
                     toggleOption(flag);
                     updateUI(flag, item);
-                },
-                false
+                }
         );
         updateUI(flag, item);
     }
@@ -74,6 +71,6 @@ public class EffectOptionsMenu extends ActionMenu {
             }
         }
         menuItem.setItemMeta(meta);
-        addItem(menuItem);
+        updateActionItem(menuItem);
     }
 }

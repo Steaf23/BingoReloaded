@@ -1,15 +1,17 @@
 package io.github.steaf23.bingoreloaded.command;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
+import io.github.steaf23.bingoreloaded.data.BingoStatData;
+import io.github.steaf23.bingoreloaded.data.BingoTranslation;
+import io.github.steaf23.bingoreloaded.data.ConfigData;
 import io.github.steaf23.bingoreloaded.data.PlayerData;
 import io.github.steaf23.bingoreloaded.gameloop.BingoGame;
 import io.github.steaf23.bingoreloaded.gameloop.BingoGameManager;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
-import io.github.steaf23.bingoreloaded.data.BingoStatsData;
-import io.github.steaf23.bingoreloaded.data.BingoTranslation;
-import io.github.steaf23.bingoreloaded.data.ConfigData;
-import io.github.steaf23.bingoreloaded.gui.BingoMenu;
-import io.github.steaf23.bingoreloaded.gui.creator.BingoCreatorUI;
+import io.github.steaf23.bingoreloaded.gui.AdminBingoMenu;
+import io.github.steaf23.bingoreloaded.gui.PlayerBingoMenu;
+import io.github.steaf23.bingoreloaded.gui.TeamEditorMenu;
+import io.github.steaf23.bingoreloaded.gui.creator.BingoCreatorMenu;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
@@ -27,6 +29,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class BingoCommand implements CommandExecutor
 {
@@ -56,13 +59,17 @@ public class BingoCommand implements CommandExecutor
 
         if (args.length == 0)
         {
-            BingoMenu.openOptions(player, session, config);
+            if (player.hasPermission("bingo.admin")) {
+                new AdminBingoMenu(gameManager.getMenuManager(), session, config).open(player);
+            } else if (player.hasPermission("bingo.player")) {
+                new PlayerBingoMenu(gameManager.getMenuManager(), session).open(player);
+            }
             return true;
         }
 
         switch (args[0])
         {
-            case "join" -> session.teamManager.openTeamSelector(player, null);
+            case "join" -> session.teamManager.openTeamSelector(gameManager.getMenuManager(), player);
             case "leave" ->
             {
                 BingoParticipant participant = session.teamManager.getBingoParticipant(player);
@@ -93,7 +100,7 @@ public class BingoCommand implements CommandExecutor
                 if (session.isRunning())
                 {
                     BingoParticipant participant = session.teamManager.getBingoParticipant(player);
-                    if (participant != null && participant instanceof BingoPlayer bingoPlayer)
+                    if (participant instanceof BingoPlayer bingoPlayer)
                         ((BingoGame)session.phase()).returnCardToPlayer(bingoPlayer);
                     return true;
                 }
@@ -112,14 +119,14 @@ public class BingoCommand implements CommandExecutor
             case "deathmatch" ->
             {
                 if (!player.hasPermission("bingo.settings"))
-                {
                     return false;
-                }
-                else if (!session.isRunning())
+
+                if (!session.isRunning())
                 {
                     new TranslatedMessage(BingoTranslation.NO_DEATHMATCH).color(ChatColor.RED).send(player);
                     return false;
                 }
+
                 ((BingoGame)session.phase()).startDeathMatch(3);
                 return true;
             }
@@ -127,8 +134,8 @@ public class BingoCommand implements CommandExecutor
             {
                 if (player.hasPermission("bingo.manager"))
                 {
-                    BingoCreatorUI creatorUI = new BingoCreatorUI(null);
-                    creatorUI.open(player);
+                    BingoCreatorMenu creatorMenu = new BingoCreatorMenu(gameManager.getMenuManager());
+                    creatorMenu.open(player);
                 }
             }
             case "stats" ->
@@ -140,7 +147,7 @@ public class BingoCommand implements CommandExecutor
                     Message.sendDebug(text, player);
                     return true;
                 }
-                BingoStatsData statsData = new BingoStatsData();
+                BingoStatData statsData = new BingoStatData();
                 Message msg;
                 if (args.length > 1 && player.hasPermission("bingo.admin"))
                 {
@@ -186,6 +193,7 @@ public class BingoCommand implements CommandExecutor
                     return false;
                 if (args.length <= 2)
                     return false;
+
                 switch (args[1])
                 {
                     case "item" -> givePlayerBingoItem(player, args[2]);
@@ -196,10 +204,17 @@ public class BingoCommand implements CommandExecutor
                             Message.sendDebug(ChatColor.RED + "Please specify a kit name for slot " + args[2], player);
                             return false;
                         }
-                        addPlayerKit(args[2], Arrays.stream(args).toList().subList(3, args.length), player);
+                        addPlayerKit(args[2], Arrays.stream(args).collect(Collectors.toList()).subList(3, args.length), player);
                     }
                     case "remove" -> removePlayerKit(args[2], player);
                 }
+            }
+            case "teams" ->
+            {
+                if (!player.hasPermission("bingo.admin"))
+                    return false;
+
+                new TeamEditorMenu(gameManager.getMenuManager()).open(player);
             }
             case "hologram" ->
             {

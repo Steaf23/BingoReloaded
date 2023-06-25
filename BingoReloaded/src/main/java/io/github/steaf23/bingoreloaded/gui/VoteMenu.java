@@ -1,35 +1,37 @@
 package io.github.steaf23.bingoreloaded.gui;
 
+import io.github.steaf23.bingoreloaded.gui.base.BasicMenu;
+import io.github.steaf23.bingoreloaded.gui.base.MenuManager;
 import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.data.ConfigData;
 import io.github.steaf23.bingoreloaded.gameloop.PregameLobby;
 import io.github.steaf23.bingoreloaded.gui.base.MenuItem;
-import io.github.steaf23.bingoreloaded.gui.base.MenuInventory;
-import io.github.steaf23.bingoreloaded.gui.base.ActionMenu;
-import io.github.steaf23.bingoreloaded.gui.base.TreeMenu;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 
 import java.util.function.BiConsumer;
 
-public class VoteMenu extends TreeMenu
+public class VoteMenu extends BasicMenu
 {
-    private ActionMenu gamemodeOptions;
-    private ActionMenu kitOptions;
-    private ActionMenu cardOptions;
+    private BasicMenu gamemodeOptions;
+    private BasicMenu kitOptions;
+    private BasicMenu cardOptions;
     private final PregameLobby lobby;
 
-    public VoteMenu(ConfigData.VoteList voteList, MenuInventory parent, PregameLobby lobbyPhase)
+    private static final MenuItem EXIT = new MenuItem(8, Material.BARRIER,
+                    "" + ChatColor.RED + ChatColor.BOLD + BingoTranslation.MENU_EXIT.translate());
+
+    public VoteMenu(MenuManager menuManager, ConfigData.VoteList voteList, PregameLobby lobbyPhase)
     {
-        super(27, "Vote", parent);
+        super(menuManager, "Vote", 3);
 
         this.lobby = lobbyPhase;
 
         if (voteList.gamemodes.size() != 0)
         {
-            gamemodeOptions = new ActionMenu(9, "Vote for Gamemode", this);
+            gamemodeOptions = new BasicMenu(menuManager, "Vote for Gamemode", 1);
 
             int itemIndex = 0;
             if (voteList.gamemodes.contains("regular_5"))
@@ -86,13 +88,16 @@ public class VoteMenu extends TreeMenu
                 });
                 itemIndex++;
             }
-            gamemodeOptions.addCloseAction(8);
-            addMenuAction(new MenuItem(2, 1, Material.ENCHANTED_BOOK, TITLE_PREFIX + "Vote for Gamemode"), gamemodeOptions);
+            gamemodeOptions.addCloseAction(EXIT);
+
+            addAction(new MenuItem(2, 1, Material.ENCHANTED_BOOK, TITLE_PREFIX + "Vote for Gamemode"), p -> {
+                gamemodeOptions.open(p);
+            });
         }
 
         if (voteList.kits.size() != 0)
         {
-            kitOptions = new ActionMenu(9, "Vote for Kit", this);
+            kitOptions = new BasicMenu(menuManager, "Vote for Kit", 1);
 
             int itemIndex = 0;
             if (voteList.kits.contains("hardcore"))
@@ -166,14 +171,16 @@ public class VoteMenu extends TreeMenu
             }
 
             if (itemIndex < 8)
-                kitOptions.addCloseAction(8);
+                kitOptions.addCloseAction(EXIT);
 
-            addMenuAction(new MenuItem(4, 1, Material.ENCHANTED_BOOK, TITLE_PREFIX + "Vote for Kit"), kitOptions);
+            addAction(new MenuItem(4, 1, Material.ENCHANTED_BOOK, TITLE_PREFIX + "Vote for Kit"), p -> {
+                kitOptions.open(p);
+            });
         }
 
         if (voteList.cards.size() != 0)
         {
-            cardOptions = new ActionMenu(9, "Vote for Card", this);
+            cardOptions = new BasicMenu(menuManager, "Vote for Card", 1);
 
             int itemIndex = 0;
             for (String card : voteList.cards) {
@@ -189,10 +196,12 @@ public class VoteMenu extends TreeMenu
                 itemIndex++;
             }
 
-            cardOptions.addCloseAction(8);
-            addMenuAction(new MenuItem(6, 1, Material.ENCHANTED_BOOK, TITLE_PREFIX + "Vote for Card"), cardOptions);
+            cardOptions.addCloseAction(EXIT);
+            addAction(new MenuItem(6, 1, Material.ENCHANTED_BOOK, TITLE_PREFIX + "Vote for Card"), p -> {
+                cardOptions.open(p);
+            });
         }
 
-        addCloseAction(MenuItem.slotFromXY(0, 2));
+        addCloseAction(EXIT.copyToSlot(0, 2));
     }
 }

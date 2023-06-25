@@ -1,7 +1,7 @@
 package io.github.steaf23.bingoreloaded.item;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
-import io.github.steaf23.bingoreloaded.data.YmlDataManager;
+import io.github.steaf23.bingoreloaded.data.helper.YmlDataManager;
 import io.github.steaf23.bingoreloaded.util.SmallCaps;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -16,6 +16,7 @@ import org.bukkit.inventory.ItemStack;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * A builder used for naming items through NBT data.
@@ -28,7 +29,7 @@ public class ItemText
     private final String text;
     private String modifiers;
     private final List<ItemText> children;
-    private final static YmlDataManager statTranslation = BingoReloaded.createYmlDataManager("stat_translation.yml");
+    private final static YmlDataManager statTranslation = BingoReloaded.createYmlDataManager("data/stat_translation.yml");
 
     public ItemText(ChatColor... modifiers)
     {
@@ -52,7 +53,7 @@ public class ItemText
     public BaseComponent asComponent()
     {
         BaseComponent root = new TextComponent();
-        root.setExtra(Arrays.stream(ComponentSerializer.parse(asJsonRoot())).toList());
+        root.setExtra(Arrays.stream(ComponentSerializer.parse(asJsonRoot())).collect(Collectors.toList()));
         return root;
     }
 
@@ -185,7 +186,7 @@ public class ItemText
 
     public static String createModifiers(ChatColor... modifiers)
     {
-        Set<ChatColor> modifierSet = new HashSet<>(Arrays.stream(modifiers).toList());
+        Set<ChatColor> modifierSet = new HashSet<>(Arrays.stream(modifiers).collect(Collectors.toList()));
         StringBuilder mods = new StringBuilder();
 
         for (ChatColor mod : modifierSet)

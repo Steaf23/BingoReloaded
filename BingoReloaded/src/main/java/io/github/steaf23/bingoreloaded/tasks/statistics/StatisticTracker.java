@@ -11,6 +11,7 @@ import org.bukkit.event.player.PlayerStatisticIncrementEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class StatisticTracker
 {
@@ -50,7 +51,7 @@ public class StatisticTracker
     public double getProgressLeft(BingoPlayer player, BingoStatistic statistic)
     {
         List<StatisticProgress> statProgress = statistics.stream().filter(progress ->
-                progress.player.equals(player) && progress.statistic.equals(statistic)).toList();
+                progress.player.equals(player) && progress.statistic.equals(statistic)).collect(Collectors.toList());
 
         if (statProgress.size() != 1)
             return Double.MAX_VALUE;
@@ -85,7 +86,7 @@ public class StatisticTracker
         BingoStatistic stat = new BingoStatistic(event.getStatistic(), event.getEntityType(), event.getMaterial());
 
         List<StatisticProgress> matchingStatistic = statistics.stream().filter(progress ->
-                progress.player.equals(player) && progress.statistic.equals(stat)).toList();
+                progress.player.equals(player) && progress.statistic.equals(stat)).collect(Collectors.toList());
         if (matchingStatistic.size() == 1)
         {
             matchingStatistic.get(0).setProgress(event.getNewValue());

@@ -5,7 +5,7 @@ import io.github.steaf23.bingoreloaded.data.ConfigData;
 import io.github.steaf23.bingoreloaded.event.BingoEventListener;
 import io.github.steaf23.bingoreloaded.gameloop.BingoGameManager;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
-import io.github.steaf23.bingoreloaded.gui.base.MenuEventListener;
+import io.github.steaf23.bingoreloaded.gui.base.MenuManager;
 import io.github.steaf23.bingoreloaded.util.Message;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -18,7 +18,6 @@ import java.util.Map;
 public class MultiGameManager implements BingoGameManager
 {
     private final BingoEventListener eventListener;
-    private final MenuEventListener menuListener;
     private Map<String, BingoSession> sessions;
     private final ConfigData config;
 
@@ -27,10 +26,8 @@ public class MultiGameManager implements BingoGameManager
         this.config = plugin.config();
         this.eventListener = new BingoEventListener(world -> getSession(BingoReloaded.getWorldNameOfDimension(world)), config.disableAdvancements, config.disableStatistics);
         this.sessions = new HashMap<>();
-        this.menuListener = new MenuEventListener(view -> doesSessionExist(view.getPlayer().getWorld()));
 
         Bukkit.getPluginManager().registerEvents(eventListener, plugin);
-        Bukkit.getPluginManager().registerEvents(menuListener, plugin);
     }
 
     @Override
@@ -40,10 +37,14 @@ public class MultiGameManager implements BingoGameManager
     }
 
     @Override
+    public MenuManager getMenuManager() {
+        return null;
+    }
+
+    @Override
     public void onDisable()
     {
         HandlerList.unregisterAll(eventListener);
-        HandlerList.unregisterAll(menuListener);
     }
 
     public boolean createSession(String worldName, String presetName)
@@ -54,7 +55,7 @@ public class MultiGameManager implements BingoGameManager
             return false;
         }
 
-        BingoSession session = new BingoSession(worldName, config);
+        BingoSession session = new BingoSession(getMenuManager(), worldName, config);
         sessions.put(worldName, session);
         return true;
     }

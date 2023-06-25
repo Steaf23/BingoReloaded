@@ -6,6 +6,7 @@ import io.github.steaf23.bingoreloaded.command.TeamChatCommand;
 import io.github.steaf23.bingoreloaded.data.*;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.data.helper.SerializablePlayer;
+import io.github.steaf23.bingoreloaded.data.helper.YmlDataManager;
 import io.github.steaf23.bingoreloaded.gameloop.BingoGameManager;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gameloop.multiple.MultiAutoBingoCommand;
@@ -38,10 +39,11 @@ import java.util.function.Function;
 
 public class BingoReloaded extends JavaPlugin
 {
-    public static final String NAME = "BingoReloaded";
     // Amount of ticks per second.
     public static final int ONE_SECOND = 20;
     public static boolean usesPlaceholderAPI = false;
+
+    private static BingoReloaded instance;
 
     private ConfigData config;
     private HologramManager hologramManager;
@@ -57,6 +59,8 @@ public class BingoReloaded extends JavaPlugin
     @Override
     public void onEnable()
     {
+        // Kinda ugly, but we can assume there will only be one instance of this class anyways.
+        instance = this;
         usesPlaceholderAPI = Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null;
 
         ConfigurationSerialization.registerClass(BingoSettings.class);
@@ -67,6 +71,7 @@ public class BingoReloaded extends JavaPlugin
         ConfigurationSerialization.registerClass(CustomKit.class);
         ConfigurationSerialization.registerClass(MenuItem.class);
         ConfigurationSerialization.registerClass(SerializablePlayer.class);
+        ConfigurationSerialization.registerClass(TeamData.TeamTemplate.class);
 
         this.config = new ConfigData(getConfig());
 
@@ -124,7 +129,7 @@ public class BingoReloaded extends JavaPlugin
 
     public static YmlDataManager createYmlDataManager(String filepath)
     {
-        return new YmlDataManager(getPlugin(BingoReloaded.class), filepath);
+        return new YmlDataManager(instance, filepath);
     }
 
     public void onDisable()
@@ -144,10 +149,10 @@ public class BingoReloaded extends JavaPlugin
 
     public static void incrementPlayerStat(Player player, BingoStatType stat)
     {
-        boolean savePlayerStatistics = getPlugin(BingoReloaded.class).config.savePlayerStatistics;
+        boolean savePlayerStatistics = instance.config.savePlayerStatistics;
         if (savePlayerStatistics)
         {
-            BingoStatsData statsData = new BingoStatsData();
+            BingoStatData statsData = new BingoStatData();
             statsData.incrementPlayerStat(player, stat);
         }
     }
@@ -160,8 +165,8 @@ public class BingoReloaded extends JavaPlugin
     public static void scheduleTask(@NotNull Consumer<BukkitTask> task, long delay)
     {
         if (delay <= 0)
-            Bukkit.getScheduler().runTask(getPlugin(BingoReloaded.class), task);
+            Bukkit.getScheduler().runTask(instance, task);
         else
-            Bukkit.getScheduler().runTaskLater(getPlugin(BingoReloaded.class), task, delay);
+            Bukkit.getScheduler().runTaskLater(instance, task, delay);
     }
 }

@@ -1,19 +1,21 @@
 package io.github.steaf23.bingoreloaded.data;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
+import io.github.steaf23.bingoreloaded.data.helper.YmlDataManager;
 import io.github.steaf23.bingoreloaded.tasks.ItemTask;
 import io.github.steaf23.bingoreloaded.tasks.TaskData;
 import org.bukkit.Material;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
-public class BingoCardsData
+public class BingoCardData
 {
-    private final TaskListsData listsData = new TaskListsData();
+    private final TaskListData listsData = new TaskListData();
     public static final int MAX_ITEMS = 36;
     public static final int MIN_ITEMS = 1;
 
-    private final YmlDataManager data = BingoReloaded.createYmlDataManager("cards.yml");
+    private final YmlDataManager data = BingoReloaded.createYmlDataManager("data/cards.yml");
 
     public boolean removeCard(String cardName)
     {
@@ -87,7 +89,7 @@ public class BingoCardsData
         List<TaskData> tasks = new ArrayList<>();
         getListNames(cardName).forEach((l) -> tasks.addAll(listsData.getTasks(l, false, false)));
 
-        List<TaskData> allItemTasks = tasks.stream().filter(task -> task instanceof ItemTask).toList();
+        List<TaskData> allItemTasks = tasks.stream().filter(task -> task instanceof ItemTask).collect(Collectors.toList());
 
         if (allItemTasks.size() > 0)
             return (ItemTask)allItemTasks.get(Math.abs(new Random().nextInt(allItemTasks.size())));
@@ -119,7 +121,7 @@ public class BingoCardsData
         return result;
     }
 
-    public TaskListsData lists()
+    public TaskListData lists()
     {
         return listsData;
     }
