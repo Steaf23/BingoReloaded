@@ -49,7 +49,7 @@ public class BingoScoreboard
             {
                 if (t.card != null)
                 {
-                    objective.getScore("" + t.getColor().chatColor).setScore(t.card.getCompleteCount(t));
+                    objective.getScore(t.getIdentifier()).setScore(t.card.getCompleteCount(t));
                 }
             }
             updateVisual();
@@ -70,7 +70,7 @@ public class BingoScoreboard
         for (BingoTeam team : teamManager.getActiveTeams())
         {
             String teamScoreLine = "" + ChatColor.DARK_RED + "[" + team.getColoredName().asLegacyString() + ChatColor.DARK_RED + "]" +
-                    ChatColor.WHITE + ": " + ChatColor.BOLD + taskObjective.getScore("" + team.getColor().chatColor).getScore();
+                    ChatColor.WHITE + ": " + ChatColor.BOLD + taskObjective.getScore(team.getIdentifier()).getScore();
             visualBoard.setLineText(lineIndex, teamScoreLine);
             lineIndex += 1;
 

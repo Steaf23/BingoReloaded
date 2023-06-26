@@ -9,11 +9,13 @@ import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.bingoreloaded.util.PDCHelper;
 import io.github.steaf23.bingoreloaded.util.timer.GameTimer;
 import net.md_5.bungee.api.ChatColor;
+import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
@@ -117,7 +119,7 @@ public class BingoTask
         }
         else if (isCompleted()) // COMPLETED TASK
         {
-            Material completeMaterial = completedBy.get().getTeam().getColor().glassPane;
+            Material completeMaterial = Material.BARRIER;
 
             String timeString = GameTimer.getTimeAsString(completedAt);
 
@@ -130,19 +132,13 @@ public class BingoTask
             }};
             ItemText[] desc = BingoTranslation.COMPLETED_LORE.asItemText(modifiers,
                     new ItemText(completedBy.get().getDisplayName(),
-                            completedBy.get().getTeam().getColor().chatColor, ChatColor.BOLD),
+                            completedBy.get().getTeam().getColor(), ChatColor.BOLD),
                     new ItemText(timeString, ChatColor.GOLD));
 
             item = new ItemStack(completeMaterial);
             ItemText.buildItemText(item,
                     itemName,
                     desc);
-
-            ItemMeta meta = item.getItemMeta();
-            if (meta != null)
-            {
-                item.setItemMeta(meta);
-            }
         }
         else // DEFAULT TASK
         {
@@ -176,7 +172,7 @@ public class BingoTask
         meta.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES);
         finalItem.setItemMeta(meta);
 
-        if (glowing && completedBy.isEmpty())
+        if (glowing || completedBy.isPresent())
         {
             finalItem.setGlowing(true);
         }

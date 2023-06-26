@@ -16,39 +16,41 @@ public class BingoTeam
     public final Team team;
     public BingoCard card;
     public boolean outOfTheGame = false;
+    private final String id;
+    private final ChatColor color;
+    private final String name;
 
     private Set<BingoParticipant> members;
 
-
-    private FlexColor color;
-
-    public BingoTeam(Team team, BingoCard card, FlexColor color)
+    public BingoTeam(Team team, BingoCard card, ChatColor color, String id, String name)
     {
+        this.id = id;
         this.team = team;
         this.card = card;
         this.color = color;
+        this.name = name;
         this.members = new HashSet<>();
     }
 
-    public String getName()
+    public String getIdentifier()
     {
-        return color.name;
+        return id;
     }
 
     @Override
     public String toString()
     {
-        return getName();
+        return id;
     }
 
-    public FlexColor getColor()
+    public ChatColor getColor()
     {
         return color;
     }
 
     public ItemText getColoredName()
     {
-        return new ItemText(color.getTranslatedName(), color.chatColor, ChatColor.BOLD);
+        return new ItemText(name, color, ChatColor.BOLD);
     }
 
     public Set<BingoParticipant> getMembers()

@@ -502,7 +502,7 @@ public class BingoGame implements GamePhase
 
         new TranslatedMessage(BingoTranslation.COMPLETED).color(ChatColor.AQUA)
                 .component(event.getTask().data.getItemDisplayName().asComponent()).color(event.getTask().nameColor)
-                .arg(new ItemText(event.getParticipant().getDisplayName(), event.getParticipant().getTeam().getColor().chatColor, ChatColor.BOLD).asLegacyString())
+                .arg(new ItemText(event.getParticipant().getDisplayName(), event.getParticipant().getTeam().getColor(), ChatColor.BOLD).asLegacyString())
                 .arg(timeString).color(ChatColor.WHITE)
                 .sendAll(session);
 

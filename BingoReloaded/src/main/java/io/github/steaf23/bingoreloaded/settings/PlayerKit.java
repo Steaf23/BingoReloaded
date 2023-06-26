@@ -7,7 +7,7 @@ import io.github.steaf23.bingoreloaded.data.helper.YmlDataManager;
 import io.github.steaf23.bingoreloaded.gui.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.gui.base.MenuItem;
 import io.github.steaf23.bingoreloaded.util.FlexColor;
-import org.bukkit.ChatColor;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -67,13 +67,13 @@ public enum PlayerKit
         this.defaultEffects = defaultEffects;
     }
 
-    public List<MenuItem> getItems(FlexColor teamColor)
+    public List<MenuItem> getItems(ChatColor teamColor)
     {
         MenuItem helmet = new MenuItem(39, Material.LEATHER_HELMET, "");
         LeatherArmorMeta helmetMeta = (LeatherArmorMeta) helmet.getItemMeta();
         if (helmetMeta != null)
         {
-            helmetMeta.setColor(FlexColor.toBukkitColor(teamColor.chatColor.getColor()));
+            helmetMeta.setColor(FlexColor.toBukkitColor(teamColor.getColor()));
         }
         helmet.setItemMeta(helmetMeta);
 
@@ -81,7 +81,7 @@ public enum PlayerKit
         LeatherArmorMeta bootMeta = (LeatherArmorMeta) boots.getItemMeta();
         if (bootMeta != null)
         {
-            bootMeta.setColor(FlexColor.toBukkitColor(teamColor.chatColor.getColor()));
+            bootMeta.setColor(FlexColor.toBukkitColor(teamColor.getColor()));
         }
         boots.setItemMeta(bootMeta);
 

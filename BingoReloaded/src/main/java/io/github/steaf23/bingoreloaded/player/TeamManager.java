@@ -1,5 +1,6 @@
 package io.github.steaf23.bingoreloaded.player;
 
+import io.github.steaf23.bingoreloaded.data.TeamData;
 import io.github.steaf23.bingoreloaded.event.*;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.cards.BingoCard;
@@ -33,17 +34,18 @@ public class TeamManager
     private final BingoSession session;
     private final Set<BingoTeam> activeTeams;
     private final Scoreboard teams;
+    private final TeamData teamData;
 
     // Contains all players that will join a team automatically when the game starts
     private final Set<UUID> automaticTeamPlayers;
     private final Map<UUID, String> autoVirtualPlayers;
-
     private int maxTeamSize;
 
     public TeamManager(Scoreboard teamBoard, BingoSession session) {
         this.session = session;
         this.activeTeams = new HashSet<>();
         this.teams = teamBoard;
+        this.teamData = new TeamData();
         this.maxTeamSize = session.settingsBuilder.view().maxTeamSize();
         this.automaticTeamPlayers = new HashSet<>();
         this.autoVirtualPlayers = new HashMap<>();
@@ -82,11 +84,15 @@ public class TeamManager
     public void openTeamSelector(MenuManager menuManager, Player player) {
         List<MenuItem> optionItems = new ArrayList<>();
         optionItems.add(new MenuItem(Material.NETHER_STAR, "" + ChatColor.BOLD + ChatColor.ITALIC + BingoTranslation.TEAM_AUTO.translate()).setCompareKey("auto"));
-        for (FlexColor color : FlexColor.values()) {
+
+        var allTeams = teamData.getTeams();
+        for (String teamId : allTeams.keySet()) {
+            TeamData.TeamTemplate teamTemplate = allTeams.get(teamId);
+
             boolean teamIsFull = false;
             List<String> description = new ArrayList<>();
             for (BingoTeam team : activeTeams) {
-                if (!team.getName().equals(color.name))
+                if (!team.getIdentifier().equals(teamId))
                     continue;
 
                 for (BingoParticipant participant : team.getMembers()) {
@@ -105,8 +111,9 @@ public class TeamManager
                 description.add(ChatColor.GREEN + BingoTranslation.JOIN_TEAM_DESC.translate());
             }
 
-            optionItems.add(new MenuItem(color.concrete, "" + color.chatColor + ChatColor.BOLD + color.getTranslatedName(),
-                    description.toArray(new String[]{})).setCompareKey(color.name));
+            optionItems.add(MenuItem.createColoredLeather(teamTemplate.color(), Material.LEATHER_HELMET)
+                    .setName("" + teamTemplate.color() + ChatColor.BOLD + teamTemplate.name())
+                    .setDescription(description.toArray(new String[]{})).setCompareKey(teamId));
         }
 
         PaginatedSelectionMenu teamPicker = new PaginatedSelectionMenu(menuManager, BingoTranslation.OPTIONS_TEAM.translate(), optionItems, FilterType.DISPLAY_NAME)
@@ -118,11 +125,7 @@ public class TeamManager
                     return;
                 }
 
-                FlexColor color = FlexColor.fromName(clickedOption.getCompareKey());
-                if (color == null)
-                    return;
-
-                if (addPlayerToTeam((Player) player, color.name)) {
+                if (addPlayerToTeam((Player) player, clickedOption.getCompareKey())) {
                     //TODO: implement proper fix, probably involving changes to addPlayerToTeam or addAutoPlayersToTeams
                     automaticTeamPlayers.remove(player.getUniqueId());
                 }
@@ -221,11 +224,11 @@ public class TeamManager
             // Create a Substitute player when the uuid is invalid for some reason.
             boolean ok = false;
             if (autoVirtualPlayers.containsKey(playerId)) {
-                ok = addVirtualPlayerToTeam(autoVirtualPlayers.get(playerId), lowest.team.getName());
+                ok = addVirtualPlayerToTeam(autoVirtualPlayers.get(playerId), lowest.team.getIdentifier());
                 autoVirtualPlayers.remove(playerId);
             } else if (Bukkit.getPlayer(playerId) != null) {
                 Player player = Bukkit.getPlayer(playerId);
-                ok = addPlayerToTeam(player, lowest.team.getName());
+                ok = addPlayerToTeam(player, lowest.team.getIdentifier());
             }
             if (ok) {
                 lowest = new TeamCount(lowest.team, lowest.count + 1);
@@ -277,7 +280,7 @@ public class TeamManager
             return false;
         }
         if (bingoTeam.getMembers().size() == maxTeamSize) {
-            Message.error("Team " + bingoTeam.getName() + " has reached it's capacity of " + maxTeamSize + " players!");
+            Message.error("Team " + bingoTeam.getIdentifier() + " has reached it's capacity of " + maxTeamSize + " players!");
             return false;
         }
 
@@ -385,12 +388,8 @@ public class TeamManager
                 .findFirst().orElse(null);
 
         if (bTeam == null) {
-            FlexColor color = FlexColor.fromName(team.getName());
-            if (color != null) {
-                bTeam = new BingoTeam(team, null, color);
-            } else {
-                bTeam = new BingoTeam(team, null, FlexColor.WHITE);
-            }
+            TeamData.TeamTemplate template = teamData.getTeam(team.getName());
+            bTeam = new BingoTeam(team, null, template.color(), team.getName(), template.name());
 
             activeTeams.add(bTeam);
         }
@@ -404,12 +403,11 @@ public class TeamManager
     @Nullable
     public BingoTeam activateTeamFromName(String teamName) {
         Team team = teams.getTeam(teamName);
-        FlexColor color = FlexColor.fromName(teamName);
-        if (color == null || team == null) {
+        if (team == null) {
             return null;
         }
 
-        if (session.isRunning() && activeTeams.stream().noneMatch(t -> t.getColor().name.equals(teamName))) {
+        if (session.isRunning() && activeTeams.stream().noneMatch(t -> t.getIdentifier().equals(teamName))) {
             return null;
         }
 
@@ -417,13 +415,16 @@ public class TeamManager
     }
 
     private void createTeams() {
-        for (FlexColor fColor : FlexColor.values()) {
-            String name = fColor.name;
+        var savedTeams = teamData.getTeams();
+        for (String team : savedTeams.keySet()) {
+            TeamData.TeamTemplate template = savedTeams.get(team);
+
+            String name = team;
             Team t = teams.registerNewTeam(name);
-            String prefix = "" + ChatColor.DARK_RED + "[" + fColor.chatColor + ChatColor.BOLD + fColor.getTranslatedName() + ChatColor.DARK_RED + "] ";
+            String prefix = "" + ChatColor.DARK_RED + "[" + template.color() + ChatColor.BOLD + template.name() + ChatColor.DARK_RED + "] ";
             t.setPrefix(prefix);
             // Add dummy entry to show the prefix on the board
-            t.addEntry("" + fColor.chatColor);
+            t.addEntry("" + team);
         }
         Message.log("Successfully created 16 teams");
     }
@@ -432,17 +433,17 @@ public class TeamManager
      * @return null if all teams are already active, else the team that was just activated
      */
     private BingoTeam activateAnyTeam() {
-        for (FlexColor col : FlexColor.values()) {
+        for (String teamId : teamData.getTeams().keySet()) {
             boolean active = false;
             for (BingoTeam team : activeTeams) {
-                if (team.getName().equals(col.name)) {
+                if (team.getIdentifier().equals(teamId)) {
                     active = true;
                     break;
                 }
             }
 
             if (!active) {
-                return activateTeamFromName(col.name);
+                return activateTeamFromName(teamId);
             }
         }
 
