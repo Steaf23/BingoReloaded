@@ -2,8 +2,6 @@ package io.github.steaf23.bingoreloaded.event;
 
 import io.github.steaf23.bingoreloaded.gameloop.BingoGame;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
-import io.github.steaf23.bingoreloaded.gui.base.MenuItem;
-import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import io.github.steaf23.bingoreloaded.tasks.statistics.StatisticTracker;
 import org.bukkit.World;
 import org.bukkit.event.EventHandler;
@@ -13,6 +11,7 @@ import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.*;
+import org.bukkit.inventory.EquipmentSlot;
 
 import javax.annotation.Nullable;
 import java.util.function.Function;
@@ -75,12 +74,15 @@ public class BingoEventListener implements Listener
     @EventHandler
     public void handlePlayerInteract(final PlayerInteractEvent event)
     {
-        // Special case; we don't want to have any bingo cards act as an actual map...
-        if (event.getItem() != null && new MenuItem(event.getItem()).isCompareKeyEqual(PlayerKit.CARD_ITEM))
-            event.setCancelled(true);
-
         BingoSession session = getSession(event.getPlayer().getWorld());
         if (session == null)
+        {
+            return;
+        }
+
+        // Determine if the event is fired for the correct hand, to avoid duplicate events
+        if (!(event.getHand() == EquipmentSlot.HAND && event.getPlayer().getInventory().getItemInMainHand().equals(event.getItem()) ||
+                event.getHand() == EquipmentSlot.OFF_HAND && event.getPlayer().getInventory().getItemInOffHand().equals(event.getItem())))
         {
             return;
         }

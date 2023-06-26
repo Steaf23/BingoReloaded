@@ -37,10 +37,10 @@ public enum PlayerKit
             BingoTranslation.WAND_ITEM_DESC.translate().split("\\n")
     ).withEnchantment(Enchantment.DURABILITY, 3).setCompareKey("wand");
     public static final MenuItem CARD_ITEM = new MenuItem(
-            Material.MAP,
+            Material.GLOBE_BANNER_PATTERN,
             "" + ChatColor.DARK_PURPLE + ChatColor.ITALIC + ChatColor.BOLD + BingoTranslation.CARD_ITEM_NAME.translate(),
             BingoTranslation.CARD_ITEM_DESC.translate()
-    ).setCompareKey("card");
+    ).setCompareKey("card").setGlowing(true);
 
     public static final MenuItem VOTE_ITEM = new MenuItem(
             Material.EMERALD,
