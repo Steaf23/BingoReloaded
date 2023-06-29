@@ -52,10 +52,11 @@ public class BingoSession
         }, 10);
 
         BingoReloaded.scheduleTask((t) -> {
-            World world = Bukkit.getWorld(worldName);
-            for (Player p : world.getPlayers()) {
-                var playerJoinEvent = new PlayerJoinedSessionWorldEvent(p, this, p.getLocation(), p.getLocation());
-                Bukkit.getPluginManager().callEvent(playerJoinEvent);
+            for (Player p : Bukkit.getOnlinePlayers()) {
+                if (BingoReloaded.getWorldNameOfDimension(p.getWorld()).equals(worldName)) {
+                    var playerJoinEvent = new PlayerJoinedSessionWorldEvent(p, this, p.getLocation(), p.getLocation());
+                    Bukkit.getPluginManager().callEvent(playerJoinEvent);
+                }
             }
         }, 10);
     }

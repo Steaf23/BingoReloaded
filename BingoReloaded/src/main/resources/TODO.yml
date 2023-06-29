@@ -6,13 +6,13 @@ add /bingo info command to see information about current game (settings mostly) 
 
 add Free for all (probably needs a new TeamManager)
 
+Add extra post-game phase of 30 seconds
+
 Test lockout using new VirtualPlayer
 
 add Hologram wizard item to /bingo hologram to allow players to place scoreboards in the world
 
 finish multiworld and TEST (using premade worlds or multiverse?)
-
-remove voting item if voting is disabled in config
 
 add player data commands to auto bingo
 

@@ -36,11 +36,14 @@ public class ConfigData
         public final List<String> kits;
         public final List<String> cards;
 
-        public VoteList(List<String> gamemodes, List<String> kits, List<String> cards)
-        {
+        public VoteList(List<String> gamemodes, List<String> kits, List<String> cards) {
             this.gamemodes = gamemodes;
             this.kits = kits;
             this.cards = cards;
+        }
+
+        public boolean isEmpty() {
+            return this.gamemodes.size() == 0 && this.kits.size() == 0 && this.cards.size() == 0;
         }
     }
 
@@ -79,8 +82,7 @@ public class ConfigData
     public final boolean savePlayerInformation;
     public final LoadPlayerInformationStrategy loadPlayerInformationStrategy;
 
-    public ConfigData(FileConfiguration config)
-    {
+    public ConfigData(FileConfiguration config) {
         // General
         this.configuration = PluginConfiguration.valueOf(config.getString("configuration", "SINGULAR"));
         this.language = "languages/" + config.getString("language", "en_us.yml");
