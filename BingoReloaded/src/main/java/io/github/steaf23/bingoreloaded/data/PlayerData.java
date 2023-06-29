@@ -4,18 +4,19 @@ import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.helper.SerializablePlayer;
 import io.github.steaf23.bingoreloaded.data.helper.YmlDataManager;
 import io.github.steaf23.bingoreloaded.util.Message;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 public class PlayerData
 {
     private final YmlDataManager data = BingoReloaded.createYmlDataManager("data/players.yml");
 
-    public void savePlayer(Player player, boolean overwriteExisting)
+    public void savePlayer(SerializablePlayer player, boolean overwriteExisting)
     {
-        if (data.getConfig().contains(player.getUniqueId().toString()) && !overwriteExisting)
+        if (data.getConfig().contains(player.playerId.toString()) && !overwriteExisting)
             return;
 
-        data.getConfig().set(player.getUniqueId().toString(), SerializablePlayer.fromPlayer(BingoReloaded.getPlugin(BingoReloaded.class), player));
+        data.getConfig().set(player.playerId.toString(), player);
         data.saveConfig();
     }
 
@@ -24,17 +25,17 @@ public class PlayerData
      * @param player
      * @return the players new state
      */
-    public Player loadPlayer(Player player)
+    public SerializablePlayer loadPlayer(Player player)
     {
         if (!data.getConfig().contains(player.getUniqueId().toString()))
         {
-            Message.error("Could not find " + player.getDisplayName() + "'s data!");
             return null;
         }
 
-        data.getConfig().getSerializable(player.getUniqueId().toString(), SerializablePlayer.class).toPlayer(player);
+        SerializablePlayer playerData = data.getConfig().getSerializable(player.getUniqueId().toString(), SerializablePlayer.class);
+        playerData.toPlayer(player);
         data.getConfig().set(player.getUniqueId().toString(), null);
         data.saveConfig();
-        return player;
+        return playerData;
     }
 }

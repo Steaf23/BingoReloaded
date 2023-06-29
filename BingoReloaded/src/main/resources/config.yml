@@ -8,10 +8,6 @@
 #    General Configuration Options
 # ==========================================================================
 
-# The name of the world where bingo will be played. The plugin will not create this world, so make sure to create it before using this plugin.
-# to allow the plugin to use the Nether and End dimensions, the names `<defaultWorldName>_nether` and `<defaultWorldName>_the_end` must also be valid worlds.
-defaultWorldName: world
-
 # Change this to MULTIPLE in order to use the features created for managing this plugin for public server owners.
 configuration: SINGULAR
 
@@ -94,9 +90,29 @@ disableStatistics: false # true or false
 # If this value is not an empty string it will be sent as a command to the console.
 sendCommandAfterGameEnds: "" # command to send
 
+# If true this will prevent the player from receiving the voting item, allowing custom implementations using the available autobingo command.
+voteUsingCommandsOnly: false
+
+# If true this will prevent the player from receiving the team selection item, allowing custom implementations using the available autobingo command.
+selectTeamUsingCommandsOnly: false
+
 # ==========================================================================
 #    Private Server Configuration Options
 # ==========================================================================
 
-# If true, returns players to their original state after the game has ended
-restorePlayersAfterGameEnds: true # true or false
+# The name of the world where bingo will be played. The plugin will not create this world, so make sure to create it before using this plugin.
+#   to allow the plugin to use the Nether and End dimensions, the names `<defaultWorldName>_nether` and `<defaultWorldName>_the_end` must also be valid worlds.
+defaultWorldName: world
+
+# Enabling this option will save any player's state (inventory, position, spawn point, levels, etc...)
+#   when they enter this world by teleportation or otherwise.
+# NOTE: If set to false, all current player state will be removed when joining a bingo world (including inventory contents!)
+savePlayerInformation: true
+
+# This option only has an effect when savePlayerInformation is true. Determine the moment that the game will load the player's data,
+#   possibly sending them back to another world.
+# Possible values are:
+#   - AFTER_GAME: player data for all game players gets loaded as soon as the game end.
+#   - AFTER_LEAVING_WORLD: A player's data gets loaded only when they have left the bingo world
+# If this option is set to anything other than AFTER_LEAVING_WORLD and the player leaves the bingo world anyway, their data will also be loaded.
+loadPlayerInformationStrategy: AFTER_LEAVING_WORLD

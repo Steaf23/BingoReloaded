@@ -3,66 +3,31 @@ package io.github.steaf23.bingoreloaded.data;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import javax.annotation.Nullable;
-import java.sql.Array;
-import java.util.ArrayList;
 import java.util.List;
 
 public class ConfigData
 {
     public enum PluginConfiguration
     {
-        SINGULAR("singular"),
-        MULTIPLE("multiple"),
+        SINGULAR,
+        MULTIPLE,
         ;
-
-        public final String configName;
-
-        PluginConfiguration(String configName)
-        {
-            this.configName = configName;
-        }
-
-        static PluginConfiguration fromName(@Nullable String name)
-        {
-            if (name == null)
-                return SINGULAR;
-            return switch (name.toLowerCase())
-                    {
-                        case "singular" -> SINGULAR;
-                        case "multiple" -> MULTIPLE;
-                        default -> SINGULAR;
-                    };
-        }
     }
 
     public enum PlayerTeleportStrategy
     {
-        ALONE("alone"),
-        TEAM("team"),
-        ALL("all"),
-        NONE("none"),
-        CUSTOM("custom");
+        ALONE,
+        TEAM,
+        ALL,
+        NONE,
+        ;
+    }
 
-        public final String name;
-
-        PlayerTeleportStrategy(String name)
-        {
-            this.name = name;
-        }
-
-        static PlayerTeleportStrategy fromName(@Nullable String name)
-        {
-            if (name == null)
-                return ALL;
-            return switch (name.toLowerCase())
-                    {
-                        case "alone" -> ALONE;
-                        case "team" -> TEAM;
-                        case "all" -> ALL;
-                        case "custom" -> CUSTOM;
-                        default -> NONE;
-                    };
-        }
+    public enum LoadPlayerInformationStrategy
+    {
+        AFTER_GAME,
+        AFTER_LEAVING_WORLD,
+        ;
     }
 
     public class VoteList
@@ -80,7 +45,6 @@ public class ConfigData
     }
 
     // General options
-    public final String defaultWorldName;
     public final PluginConfiguration configuration;
     public final String language;
     public final boolean savePlayerStatistics;
@@ -105,17 +69,20 @@ public class ConfigData
 
     // Public options
     public final String sendCommandAfterGameEnded;
-
+    //TODO: implement
+    public final boolean voteUsingCommandsOnly;
+    public final boolean selectTeamUsingCommandsOnly;
 
     // Private options
+    public final String defaultWorldName;
     //TODO: implement
-    public final boolean restorePlayerAfterGameEnds;
+    public final boolean savePlayerInformation;
+    public final LoadPlayerInformationStrategy loadPlayerInformationStrategy;
 
     public ConfigData(FileConfiguration config)
     {
         // General
-        this.defaultWorldName = config.getString("defaultWorldName", "world");
-        this.configuration = PluginConfiguration.fromName(config.getString("configuration", "singular"));
+        this.configuration = PluginConfiguration.valueOf(config.getString("configuration", "SINGULAR"));
         this.language = "languages/" + config.getString("language", "en_us.yml");
         this.savePlayerStatistics = config.getBoolean("savePlayerStatistics", false);
         this.useVoteSystem = config.getBoolean("useVoteSystem", false);
@@ -127,7 +94,7 @@ public class ConfigData
         // Gameplay
         this.defaultSettingsPreset = config.getString("defaultSettingsPreset", "default_settings");
         this.teleportMaxDistance = config.getInt("teleportMaxDistance", 1000000);
-        this.playerTeleportStrategy = PlayerTeleportStrategy.fromName(config.getString("playerTeleportStrategy", "ALL"));
+        this.playerTeleportStrategy = PlayerTeleportStrategy.valueOf(config.getString("playerTeleportStrategy", "ALL"));
         this.teleportAfterDeath = config.getBoolean("teleportBackAfterDeathMessage", true);
         this.wandUp = config.getInt("GoUpWand.upDistance", 75);
         this.wandDown = config.getInt("GoUpWand.downDistance", 5);
@@ -142,8 +109,14 @@ public class ConfigData
 
         // Public
         this.sendCommandAfterGameEnded = config.getString("sendCommandAfterGameEnds", "");
+        this.voteUsingCommandsOnly = config.getBoolean("voteUsingCommandsOnly", false);
+        this.selectTeamUsingCommandsOnly = config.getBoolean("selectTeamsUsingCommandsOnly", false);
 
         // Private
-        this.restorePlayerAfterGameEnds = config.getBoolean("restorePlayersAfterGameEnds", true);
+        this.defaultWorldName = config.getString("defaultWorldName", "world");
+        //TODO: test this with nether/end dimension too!
+        this.savePlayerInformation = config.getBoolean("playerLoadStrategy", true);
+        this.loadPlayerInformationStrategy = LoadPlayerInformationStrategy.valueOf(
+                config.getString("loadPlayerInformationStrategy", "AFTER_LEAVING_WORLD"));
     }
 }

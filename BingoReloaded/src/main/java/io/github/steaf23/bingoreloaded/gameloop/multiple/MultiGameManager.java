@@ -2,6 +2,7 @@ package io.github.steaf23.bingoreloaded.gameloop.multiple;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.ConfigData;
+import io.github.steaf23.bingoreloaded.data.PlayerData;
 import io.github.steaf23.bingoreloaded.event.BingoEventListener;
 import io.github.steaf23.bingoreloaded.gameloop.BingoGameManager;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
@@ -20,12 +21,14 @@ public class MultiGameManager implements BingoGameManager
     private final BingoEventListener eventListener;
     private Map<String, BingoSession> sessions;
     private final ConfigData config;
+    private final PlayerData playerData;
 
     public MultiGameManager(BingoReloaded plugin)
     {
         this.config = plugin.config();
         this.eventListener = new BingoEventListener(world -> getSession(BingoReloaded.getWorldNameOfDimension(world)), config.disableAdvancements, config.disableStatistics);
         this.sessions = new HashMap<>();
+        this.playerData = new PlayerData();
 
         Bukkit.getPluginManager().registerEvents(eventListener, plugin);
     }
@@ -55,7 +58,7 @@ public class MultiGameManager implements BingoGameManager
             return false;
         }
 
-        BingoSession session = new BingoSession(getMenuManager(), worldName, config);
+        BingoSession session = new BingoSession(getMenuManager(), worldName, config, playerData);
         sessions.put(worldName, session);
         return true;
     }

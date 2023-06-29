@@ -50,15 +50,13 @@ public class BingoReloaded extends JavaPlugin
     private HologramPlacer hologramPlacer;
     private BingoGameManager gameManager;
 
-    public BingoReloaded()
-    {
+    public BingoReloaded() {
         reloadConfig();
         saveDefaultConfig();
     }
 
     @Override
-    public void onEnable()
-    {
+    public void onEnable() {
         // Kinda ugly, but we can assume there will only be one instance of this class anyways.
         instance = this;
         usesPlaceholderAPI = Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null;
@@ -83,15 +81,12 @@ public class BingoReloaded extends JavaPlugin
 
         CommandExecutor autoBingoCommand;
 
-        if (config.configuration == ConfigData.PluginConfiguration.SINGULAR)
-        {
+        if (config.configuration == ConfigData.PluginConfiguration.SINGULAR) {
             this.gameManager = new SingularGameManager(this);
             autoBingoCommand = new SimpleAutoBingoCommand(gameManager);
-        }
-        else
-        {
+        } else {
             this.gameManager = new MultiGameManager(this);
-            autoBingoCommand = new MultiAutoBingoCommand((MultiGameManager)gameManager);
+            autoBingoCommand = new MultiAutoBingoCommand((MultiGameManager) gameManager);
         }
 
         registerCommand("bingo", new BingoCommand(config, gameManager), new BingoTabCompleter());
@@ -105,65 +100,57 @@ public class BingoReloaded extends JavaPlugin
 //        }
     }
 
-    public void registerTeamChatCommand(String commandName, Function<Player, BingoSession> bingoSessionResolver)
-    {
+    public void registerTeamChatCommand(String commandName, Function<Player, BingoSession> bingoSessionResolver) {
         registerCommand(commandName, new TeamChatCommand(bingoSessionResolver), null);
     }
 
-    public void registerCommand(String commandName, CommandExecutor executor, @Nullable TabCompleter tabCompleter)
-    {
+    public void registerCommand(String commandName, CommandExecutor executor, @Nullable TabCompleter tabCompleter) {
         PluginCommand command = getCommand(commandName);
-        if (command != null)
-        {
+        if (command != null) {
             command.setExecutor(executor);
             command.setTabCompleter(tabCompleter);
         }
     }
 
-    public static String getWorldNameOfDimension(World dimension)
-    {
+    public static String getWorldNameOfDimension(World dimension) {
         return dimension.getName()
                 .replace("_nether", "")
                 .replace("_the_end", "");
     }
 
-    public static YmlDataManager createYmlDataManager(String filepath)
-    {
+    public static YmlDataManager createYmlDataManager(String filepath) {
         return new YmlDataManager(instance, filepath);
     }
 
-    public void onDisable()
-    {
+    public void onDisable() {
         gameManager.onDisable();
     }
 
-    public ConfigData config()
-    {
+    public ConfigData config() {
         return config;
     }
 
-    public HologramManager holograms()
-    {
+    public HologramManager holograms() {
         return hologramManager;
     }
 
-    public static void incrementPlayerStat(Player player, BingoStatType stat)
-    {
+    public static void incrementPlayerStat(Player player, BingoStatType stat) {
         boolean savePlayerStatistics = instance.config.savePlayerStatistics;
-        if (savePlayerStatistics)
-        {
+        if (savePlayerStatistics) {
             BingoStatData statsData = new BingoStatData();
             statsData.incrementPlayerStat(player, stat);
         }
     }
 
-    public static void scheduleTask(@NotNull Consumer<BukkitTask> task)
-    {
+    public static BingoReloaded getInstance() {
+        return instance;
+    }
+
+    public static void scheduleTask(@NotNull Consumer<BukkitTask> task) {
         BingoReloaded.scheduleTask(task, 0);
     }
 
-    public static void scheduleTask(@NotNull Consumer<BukkitTask> task, long delay)
-    {
+    public static void scheduleTask(@NotNull Consumer<BukkitTask> task, long delay) {
         if (delay <= 0)
             Bukkit.getScheduler().runTask(instance, task);
         else

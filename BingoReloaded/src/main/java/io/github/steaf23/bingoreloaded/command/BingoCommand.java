@@ -5,6 +5,7 @@ import io.github.steaf23.bingoreloaded.data.BingoStatData;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.data.ConfigData;
 import io.github.steaf23.bingoreloaded.data.PlayerData;
+import io.github.steaf23.bingoreloaded.data.helper.SerializablePlayer;
 import io.github.steaf23.bingoreloaded.gameloop.BingoGame;
 import io.github.steaf23.bingoreloaded.gameloop.BingoGameManager;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
@@ -35,11 +36,13 @@ public class BingoCommand implements CommandExecutor
 {
     private final ConfigData config;
     private final BingoGameManager gameManager;
+    private final PlayerData playerData;
 
     public BingoCommand(ConfigData config, BingoGameManager gameManager)
     {
         this.config = config;
         this.gameManager = gameManager;
+        this.playerData = new PlayerData();
     }
 
     @Override
@@ -163,28 +166,22 @@ public class BingoCommand implements CommandExecutor
             {
                 if (player.hasPermission("bingo.admin"))
                 {
-                    Player targetPlayer = player;
-                    if (args.length == 2)
-                    {
-                        if (Bukkit.getPlayer(args[1]) != null)
-                            targetPlayer = Bukkit.getPlayer(args[1]);
-                    }
+                    if (args.length != 2 || Bukkit.getPlayer(args[1]) == null)
+                        return true;
 
-                    new PlayerData().savePlayer(targetPlayer, true);
+                    Player targetPlayer = Bukkit.getPlayer(args[1]);
+                    playerData.savePlayer(SerializablePlayer.fromPlayer(BingoReloaded.getInstance(), targetPlayer), true);
                 }
             }
             case "loadplayer" ->
             {
                 if (player.hasPermission("bingo.admin"))
                 {
-                    Player targetPlayer = player;
-                    if (args.length == 2)
-                    {
-                        if (Bukkit.getPlayer(args[1]) != null)
-                            targetPlayer = Bukkit.getPlayer(args[1]);
-                    }
+                    if (args.length != 2 || Bukkit.getPlayer(args[1]) == null)
+                        return true;
 
-                    new PlayerData().loadPlayer(targetPlayer);
+                    Player targetPlayer = Bukkit.getPlayer(args[1]);
+                    playerData.loadPlayer(targetPlayer);
                 }
             }
             case "kit" ->

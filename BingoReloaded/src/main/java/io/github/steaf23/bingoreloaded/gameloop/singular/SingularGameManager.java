@@ -2,6 +2,7 @@ package io.github.steaf23.bingoreloaded.gameloop.singular;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.ConfigData;
+import io.github.steaf23.bingoreloaded.data.PlayerData;
 import io.github.steaf23.bingoreloaded.event.BingoEventListener;
 import io.github.steaf23.bingoreloaded.gameloop.BingoGameManager;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
@@ -22,7 +23,7 @@ public class SingularGameManager implements BingoGameManager
     {
         ConfigData config = plugin.config();
         this.menuManager = new BingoMenuManager(player -> canOpenMenu(player));
-        this.session = new BingoSession(menuManager, config.defaultWorldName, config);
+        this.session = new BingoSession(menuManager, config.defaultWorldName, config, new PlayerData());
 
         this.eventListener = new BingoEventListener(world ->
                 BingoReloaded.getWorldNameOfDimension(world).equals(session.worldName) ? session : null

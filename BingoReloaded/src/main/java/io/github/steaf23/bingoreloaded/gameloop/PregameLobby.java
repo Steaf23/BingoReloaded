@@ -30,7 +30,6 @@ public class PregameLobby implements GamePhase
     private final BingoSession session;
     private final SettingsPreviewBoard settingsBoard;
     private final Map<UUID, VoteTicket> votes;
-    private final PlayerData playerData;
     private final ConfigData config;
     private final MenuManager menuManager;
 
@@ -41,7 +40,6 @@ public class PregameLobby implements GamePhase
         this.settingsBoard = new SettingsPreviewBoard();
         settingsBoard.showSettings(session.settingsBuilder.view());
         this.votes = new HashMap<>();
-        this.playerData = new PlayerData();
         this.config = config;
     }
 
@@ -128,7 +126,6 @@ public class PregameLobby implements GamePhase
     public void handlePlayerJoinedSessionWorld(final PlayerJoinedSessionWorldEvent event)
     {
         settingsBoard.applyToPlayer(event.getPlayer());
-        playerData.savePlayer(event.getPlayer(), false);
         event.getPlayer().getInventory().clear();
         giveVoteItem(event.getPlayer());
         giveTeamItem(event.getPlayer());
@@ -138,7 +135,6 @@ public class PregameLobby implements GamePhase
     public void handlePlayerLeftSessionWorld(final PlayerLeftSessionWorldEvent event)
     {
         settingsBoard.clearPlayerBoard(event.getPlayer());
-        playerData.loadPlayer(event.getPlayer());
     }
 
     @Override

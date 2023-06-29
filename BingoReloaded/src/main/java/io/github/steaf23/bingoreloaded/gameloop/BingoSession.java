@@ -1,10 +1,8 @@
 package io.github.steaf23.bingoreloaded.gameloop;
 
 import io.github.steaf23.bingoreloaded.*;
-import io.github.steaf23.bingoreloaded.data.BingoCardData;
-import io.github.steaf23.bingoreloaded.data.BingoSettingsData;
-import io.github.steaf23.bingoreloaded.data.BingoTranslation;
-import io.github.steaf23.bingoreloaded.data.ConfigData;
+import io.github.steaf23.bingoreloaded.data.*;
+import io.github.steaf23.bingoreloaded.data.helper.SerializablePlayer;
 import io.github.steaf23.bingoreloaded.event.*;
 import io.github.steaf23.bingoreloaded.gui.base.MenuManager;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
@@ -18,10 +16,7 @@ import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerChangedWorldEvent;
-import org.bukkit.event.player.PlayerDropItemEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.potion.PotionEffectType;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
@@ -37,14 +32,15 @@ public class BingoSession
     public final TeamManager teamManager;
     private final ConfigData config;
     private final MenuManager menuManager;
+    private final PlayerData playerData;
 
     private GamePhase phase;
 
-    public BingoSession(MenuManager menuManager, String worldName, ConfigData config)
-    {
+    public BingoSession(MenuManager menuManager, String worldName, ConfigData config, PlayerData playerData) {
         this.menuManager = menuManager;
         this.worldName = worldName;
         this.config = config;
+        this.playerData = playerData;
         this.settingsBuilder = new BingoSettingsBuilder(this);
         settingsBuilder.fromOther(new BingoSettingsData().getSettings(config.defaultSettingsPreset));
         this.scoreboard = new BingoScoreboard(this, config.showPlayerInScoreboard);
@@ -57,28 +53,23 @@ public class BingoSession
 
         BingoReloaded.scheduleTask((t) -> {
             World world = Bukkit.getWorld(worldName);
-            for (Player p : world.getPlayers())
-            {
-                var playerJoinEvent = new PlayerJoinedSessionWorldEvent(p, this);
+            for (Player p : world.getPlayers()) {
+                var playerJoinEvent = new PlayerJoinedSessionWorldEvent(p, this, p.getLocation(), p.getLocation());
                 Bukkit.getPluginManager().callEvent(playerJoinEvent);
             }
         }, 10);
     }
 
-    public boolean isRunning()
-    {
+    public boolean isRunning() {
         return phase instanceof BingoGame;
     }
 
-    public GamePhase phase()
-    {
+    public GamePhase phase() {
         return phase;
     }
 
-    public void startGame()
-    {
-        if (isRunning())
-        {
+    public void startGame() {
+        if (isRunning()) {
             return;
         }
 
@@ -86,8 +77,7 @@ public class BingoSession
 
         BingoSettingsBuilder gameSettings = null;
 
-        if (config.useVoteSystem)
-        {
+        if (config.useVoteSystem) {
             PregameLobby.VoteTicket voteResult = lobby.getVoteResult();
             gameSettings = settingsBuilder.getVoteResult(voteResult);
         }
@@ -96,14 +86,12 @@ public class BingoSession
 
         BingoCardData cardsData = new BingoCardData();
         BingoSettings settings = settingsBuilder.view();
-        if (!cardsData.getCardNames().contains(settings.card()))
-        {
+        if (!cardsData.getCardNames().contains(settings.card())) {
             new TranslatedMessage(BingoTranslation.NO_CARD).color(ChatColor.RED).arg(settings.card()).sendAll(this);
             return;
         }
 
-        if (teamManager.getParticipants().size() == 0)
-        {
+        if (teamManager.getParticipants().size() == 0) {
             Message.log("Could not start bingo since no players have joined!", worldName);
             return;
         }
@@ -114,91 +102,95 @@ public class BingoSession
         phase = new BingoGame(this, gameSettings == null ? settings : gameSettings.view(), config);
     }
 
-    public void endGame()
-    {
+    public void endGame() {
         if (!isRunning()) return;
 
-        ((BingoGame)phase).end(null);
+        ((BingoGame) phase).end(null);
     }
 
-    public void removeParticipant(@NonNull BingoParticipant player)
-    {
+    public void removeParticipant(@NonNull BingoParticipant player) {
         teamManager.removeMemberFromTeam(player);
     }
 
-    public void handleGameEnded(final BingoEndedEvent event)
-    {
+    public void handleGameEnded(final BingoEndedEvent event) {
         phase = new PregameLobby(menuManager, this, config);
+        if (config.savePlayerInformation && config.loadPlayerInformationStrategy == ConfigData.LoadPlayerInformationStrategy.AFTER_GAME) {
+            for (Player p : Bukkit.getOnlinePlayers()) {
+                if (BingoReloaded.getWorldNameOfDimension(p.getWorld()).equals(worldName)) {
+                    playerData.loadPlayer(p);
+                }
+            }
+        }
     }
 
-    public void handleSettingsUpdated(final BingoSettingsUpdatedEvent event)
-    {
+    public void handleSettingsUpdated(final BingoSettingsUpdatedEvent event) {
         phase.handleSettingsUpdated(event);
         teamManager.handleSettingsUpdated(event);
         settingsBuilder.fromOther(event.getNewSettings());
     }
 
-    /**
-     * Used to reset player's scoreboard when leaving this world
-     * @param event
-     */
-    public void handlePlayerChangedWorld(final PlayerChangedWorldEvent event)
-    {
-        String sourceWorldName = BingoReloaded.getWorldNameOfDimension(event.getFrom());
-        String targetWorldName = BingoReloaded.getWorldNameOfDimension(event.getPlayer().getWorld());
+    public void handlePlayerTeleport(final PlayerTeleportEvent event) {
+        String sourceWorldName = BingoReloaded.getWorldNameOfDimension(event.getFrom().getWorld());
+        String targetWorldName = BingoReloaded.getWorldNameOfDimension(event.getTo().getWorld());
 
         // If player is leaving this game's world
-        if (sourceWorldName.equals(this.worldName))
-        {
-            if (!targetWorldName.equals(this.worldName))
-            {
-                var leftWorldEvent = new PlayerLeftSessionWorldEvent(event.getPlayer(), this);
-                Bukkit.getPluginManager().callEvent(leftWorldEvent);
+        if (sourceWorldName.equals(this.worldName)) {
+            if (!targetWorldName.equals(this.worldName)) {
+                BingoReloaded.scheduleTask(t -> {
+                    var leftWorldEvent = new PlayerLeftSessionWorldEvent(event.getPlayer(), this, event.getFrom(), event.getTo());
+                    Bukkit.getPluginManager().callEvent(leftWorldEvent);
+                }, 5);
             }
         }
         // If player is arriving in this world
-        else if (targetWorldName.equals(this.worldName))
-        {
-            if (!sourceWorldName.equals(this.worldName))
-            {
-                var joinedWorldEvent = new PlayerJoinedSessionWorldEvent(event.getPlayer(), this);
-                Bukkit.getPluginManager().callEvent(joinedWorldEvent);
+        else if (targetWorldName.equals(this.worldName)) {
+            if (!sourceWorldName.equals(this.worldName)) {
+                BingoReloaded.scheduleTask(t -> {
+                    var joinedWorldEvent = new PlayerJoinedSessionWorldEvent(event.getPlayer(), this, event.getFrom(), event.getTo());
+                    Bukkit.getPluginManager().callEvent(joinedWorldEvent);
+                }, 10);
             }
         }
     }
 
-    public void handlePlayerJoinsServer(final PlayerJoinEvent event)
-    {
-        var joinedWorldEvent = new PlayerJoinedSessionWorldEvent(event.getPlayer(), this);
+    public void handlePlayerJoinsServer(final PlayerJoinEvent event) {
+        var joinedWorldEvent = new PlayerJoinedSessionWorldEvent(event.getPlayer(), this, null, event.getPlayer().getLocation());
         Bukkit.getPluginManager().callEvent(joinedWorldEvent);
     }
 
-    public void handlePlayerQuitsServer(final PlayerQuitEvent event)
-    {
-        var leftWorldEvent = new PlayerLeftSessionWorldEvent(event.getPlayer(), this);
+    public void handlePlayerQuitsServer(final PlayerQuitEvent event) {
+        var leftWorldEvent = new PlayerLeftSessionWorldEvent(event.getPlayer(), this, event.getPlayer().getLocation(), null);
         Bukkit.getPluginManager().callEvent(leftWorldEvent);
     }
 
-    public void handlePlayerDropItem(final PlayerDropItemEvent dropEvent)
-    {
+    public void handlePlayerDropItem(final PlayerDropItemEvent dropEvent) {
         if (PlayerKit.CARD_ITEM.isCompareKeyEqual(dropEvent.getItemDrop().getItemStack()) ||
                 PlayerKit.WAND_ITEM.isCompareKeyEqual(dropEvent.getItemDrop().getItemStack()) ||
                 PlayerKit.VOTE_ITEM.isCompareKeyEqual(dropEvent.getItemDrop().getItemStack()) ||
-                PlayerKit.TEAM_ITEM.isCompareKeyEqual(dropEvent.getItemDrop().getItemStack()))
-        {
+                PlayerKit.TEAM_ITEM.isCompareKeyEqual(dropEvent.getItemDrop().getItemStack())) {
             dropEvent.setCancelled(true);
         }
     }
 
-    public void handlePlayerJoinedSessionWorld(final PlayerJoinedSessionWorldEvent event)
-    {
+    public void handlePlayerJoinedSessionWorld(final PlayerJoinedSessionWorldEvent event) {
+        SerializablePlayer serializablePlayer = SerializablePlayer.fromPlayer(BingoReloaded.getInstance(), event.getPlayer());
+        if (event.getSource() != null) {
+            serializablePlayer.location = event.getSource();
+        }
+
+        if (!config.savePlayerInformation)
+            return;
+
+        playerData.savePlayer(serializablePlayer, false);
+        new SerializablePlayer().reset(event.getPlayer(), event.getDestination()).toPlayer(event.getPlayer());
     }
 
-    public void handlePlayerLeftSessionWorld(final PlayerLeftSessionWorldEvent event)
-    {
+    public void handlePlayerLeftSessionWorld(final PlayerLeftSessionWorldEvent event) {
+        if (config.savePlayerInformation && event.getDestination() != null)
+            playerData.loadPlayer(event.getPlayer());
+
         Player player = event.getPlayer();
-        for (PotionEffectType effect : PotionEffectType.values())
-        {
+        for (PotionEffectType effect : PotionEffectType.values()) {
             player.removePotionEffect(effect);
         }
 

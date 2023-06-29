@@ -8,13 +8,15 @@ add Free for all (probably needs a new TeamManager)
 
 Test lockout using new VirtualPlayer
 
-add team creator
-
 add Hologram wizard item to /bingo hologram to allow players to place scoreboards in the world
 
 finish multiworld and TEST (using premade worlds or multiverse?)
 
-add option to restore player data after a game ends..
+remove voting item if voting is disabled in config
+
+add player data commands to auto bingo
+
+add player voting commands to auto bingo
 
 fix comment TODOs BEFORE RELEASE
 
