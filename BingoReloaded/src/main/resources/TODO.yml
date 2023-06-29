@@ -8,8 +8,6 @@ add Free for all (probably needs a new TeamManager)
 
 Add extra post-game phase of 30 seconds
 
-Test lockout using new VirtualPlayer
-
 add Hologram wizard item to /bingo hologram to allow players to place scoreboards in the world
 
 finish multiworld and TEST (using premade worlds or multiverse?)
@@ -17,6 +15,8 @@ finish multiworld and TEST (using premade worlds or multiverse?)
 add player data commands to auto bingo
 
 add player voting commands to auto bingo
+
+Test lockout using new VirtualPlayer BEFORE RELEASE
 
 fix comment TODOs BEFORE RELEASE
 

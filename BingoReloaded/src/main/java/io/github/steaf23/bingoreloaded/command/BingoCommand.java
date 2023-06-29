@@ -53,7 +53,7 @@ public class BingoCommand implements CommandExecutor
             return false;
         }
 
-        BingoSession session = gameManager.getSession(player);
+        BingoSession session = gameManager.getSession(BingoReloaded.getWorldNameOfDimension(player.getWorld()));
         if (session == null)
             return false;
 

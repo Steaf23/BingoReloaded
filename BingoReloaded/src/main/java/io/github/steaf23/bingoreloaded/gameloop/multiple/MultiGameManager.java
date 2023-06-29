@@ -12,6 +12,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
+import org.bukkit.generator.WorldInfo;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -23,8 +25,7 @@ public class MultiGameManager implements BingoGameManager
     private final ConfigData config;
     private final PlayerData playerData;
 
-    public MultiGameManager(BingoReloaded plugin)
-    {
+    public MultiGameManager(BingoReloaded plugin) {
         this.config = plugin.config();
         this.eventListener = new BingoEventListener(world -> getSession(BingoReloaded.getWorldNameOfDimension(world)), config.disableAdvancements, config.disableStatistics);
         this.sessions = new HashMap<>();
@@ -34,26 +35,17 @@ public class MultiGameManager implements BingoGameManager
     }
 
     @Override
-    public BingoSession getSession(Player player)
-    {
-        return getSession(BingoReloaded.getWorldNameOfDimension(player.getWorld()));
-    }
-
-    @Override
     public MenuManager getMenuManager() {
         return null;
     }
 
     @Override
-    public void onDisable()
-    {
+    public void onDisable() {
         HandlerList.unregisterAll(eventListener);
     }
 
-    public boolean createSession(String worldName, String presetName)
-    {
-        if (doesSessionExist(worldName))
-        {
+    public boolean createSession(String worldName, String presetName) {
+        if (doesSessionExist(worldName)) {
             Message.log("An instance of Bingo already exists in world '" + worldName + "'!");
             return false;
         }
@@ -63,10 +55,8 @@ public class MultiGameManager implements BingoGameManager
         return true;
     }
 
-    public boolean destroySession(String worldName)
-    {
-        if (!doesSessionExist(worldName))
-        {
+    public boolean destroySession(String worldName) {
+        if (!doesSessionExist(worldName)) {
             return false;
         }
 
@@ -75,16 +65,13 @@ public class MultiGameManager implements BingoGameManager
         return true;
     }
 
-    public boolean startGame(String worldName)
-    {
-        if (!doesSessionExist(worldName))
-        {
+    public boolean startGame(String worldName) {
+        if (!doesSessionExist(worldName)) {
             Message.log("Cannot start a game that doesn't exist, create it first using '/autobingo <world> create'!");
             return false;
         }
 
-        if (isGameWorldActive(worldName))
-        {
+        if (isGameWorldActive(worldName)) {
             Message.log("Could not start bingo because the game is already running on world '" + worldName + "'!");
             return false;
         }
@@ -93,10 +80,8 @@ public class MultiGameManager implements BingoGameManager
         return true;
     }
 
-    public boolean endGame(String worldName)
-    {
-        if (!isGameWorldActive(worldName))
-        {
+    public boolean endGame(String worldName) {
+        if (!isGameWorldActive(worldName)) {
             Message.log("Could not end bingo because no game was started on world '" + worldName + "'!");
             return false;
         }
@@ -106,39 +91,26 @@ public class MultiGameManager implements BingoGameManager
         return true;
     }
 
-    public BingoSession getSession(String worldName)
-    {
-        if (sessions.containsKey(worldName))
-        {
+    public BingoSession getSession(String worldName) {
+        if (sessions.containsKey(worldName)) {
             return sessions.get(worldName);
         }
         return null;
     }
 
-    public static String getWorldName(World world)
-    {
-        return world.getName()
-                .replace("_nether", "")
-                .replace("_the_end", "");
-    }
-
-    public boolean isGameWorldActive(String worldName)
-    {
+    public boolean isGameWorldActive(String worldName) {
         return sessions.containsKey(worldName) && sessions.get(worldName).isRunning();
     }
 
-    public boolean isGameWorldActive(World world)
-    {
-        return isGameWorldActive(MultiGameManager.getWorldName(world));
+    public boolean isGameWorldActive(World world) {
+        return isGameWorldActive(BingoReloaded.getWorldNameOfDimension(world));
     }
 
-    public boolean doesSessionExist(String worldName)
-    {
+    public boolean doesSessionExist(String worldName) {
         return sessions.containsKey(worldName);
     }
 
-    public boolean doesSessionExist(World world)
-    {
-        return doesSessionExist(MultiGameManager.getWorldName(world));
+    public boolean doesSessionExist(World world) {
+        return doesSessionExist(BingoReloaded.getWorldNameOfDimension(world));
     }
 }

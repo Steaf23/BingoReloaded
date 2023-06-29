@@ -2,6 +2,8 @@ package io.github.steaf23.bingoreloaded.command;
 
 import io.github.steaf23.bingoreloaded.settings.BingoSettingsBuilder;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
+import io.github.steaf23.bingoreloaded.util.Message;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.command.CommandExecutor;
 
 public interface AutoBingoCommand extends CommandExecutor

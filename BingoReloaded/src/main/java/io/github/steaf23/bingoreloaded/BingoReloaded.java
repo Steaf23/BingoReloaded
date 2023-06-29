@@ -83,7 +83,7 @@ public class BingoReloaded extends JavaPlugin
 
         if (config.configuration == ConfigData.PluginConfiguration.SINGULAR) {
             this.gameManager = new SingularGameManager(this);
-            autoBingoCommand = new SimpleAutoBingoCommand(gameManager);
+            autoBingoCommand = new SimpleAutoBingoCommand((SingularGameManager) gameManager);
         } else {
             this.gameManager = new MultiGameManager(this);
             autoBingoCommand = new MultiAutoBingoCommand((MultiGameManager) gameManager);
