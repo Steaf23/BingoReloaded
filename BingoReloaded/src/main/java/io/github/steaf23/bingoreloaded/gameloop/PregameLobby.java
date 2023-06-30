@@ -1,6 +1,7 @@
 package io.github.steaf23.bingoreloaded.gameloop;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
+import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.data.ConfigData;
 import io.github.steaf23.bingoreloaded.data.PlayerData;
 import io.github.steaf23.bingoreloaded.event.*;
@@ -50,6 +51,8 @@ public class PregameLobby implements GamePhase
                 }
             }
         }, 10);
+
+        settingsBoard.setStatus(BingoTranslation.WAIT_STATUS.translate());
     }
 
     public void voteGamemode(String gamemode, HumanEntity player) {
@@ -130,6 +133,14 @@ public class PregameLobby implements GamePhase
         }
     }
 
+    public void handleParticipantJoinedTeam(final ParticipantJoinedTeamEvent event) {
+        settingsBoard.setStatus(BingoTranslation.PLAYER_STATUS.translate("" + session.teamManager.getTotalParticipantCount()));
+    }
+
+    public void handleParticipantLeftTeam(final ParticipantLeftTeamEvent event) {
+        settingsBoard.setStatus(BingoTranslation.PLAYER_STATUS.translate("" + session.teamManager.getTotalParticipantCount()));
+    }
+
     @Override
     public void handlePlayerJoinedSessionWorld(final PlayerJoinedSessionWorldEvent event) {
         initializePlayer(event.getPlayer());
@@ -138,6 +149,7 @@ public class PregameLobby implements GamePhase
     @Override
     public void handlePlayerLeftSessionWorld(final PlayerLeftSessionWorldEvent event) {
         settingsBoard.clearPlayerBoard(event.getPlayer());
+        session.teamManager.removeMemberFromTeam(event.getPlayer());
     }
 
     @Override

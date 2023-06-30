@@ -2,6 +2,7 @@ package io.github.steaf23.bingoreloaded.event;
 
 import io.github.steaf23.bingoreloaded.gameloop.BingoGame;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
+import io.github.steaf23.bingoreloaded.gameloop.PregameLobby;
 import io.github.steaf23.bingoreloaded.tasks.statistics.StatisticTracker;
 import io.github.steaf23.bingoreloaded.util.Message;
 import org.bukkit.World;
@@ -291,5 +292,19 @@ public class BingoEventListener implements Listener
         event.session.phase().handlePlayerLeftSessionWorld(event);
         event.session.scoreboard.handlePlayerLeave(event);
         event.session.teamManager.handlePlayerLeftSessionWorld(event);
+    }
+
+    @EventHandler
+    public void handleParticipantJoinedTeam(final ParticipantJoinedTeamEvent event) {
+        if (event.session.phase() instanceof PregameLobby lobby) {
+            lobby.handleParticipantJoinedTeam(event);
+        }
+    }
+
+    @EventHandler
+    public void handleParticipantLeftTeam(final ParticipantLeftTeamEvent event) {
+        if (event.session.phase() instanceof PregameLobby lobby) {
+            lobby.handleParticipantLeftTeam(event);
+        }
     }
 }

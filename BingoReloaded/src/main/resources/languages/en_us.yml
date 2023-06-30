@@ -26,6 +26,10 @@ game:
     countdown_selected: "Selected Countdown Bingo. Race to complete the most tasks within the given time!"
     card_selected: "Selected '{0}' as the playing Bingo card!" # 0: card name
     cardsize: "Chosen card size: {0}" # 0: card size
+  lobby:
+    wait_status: "Waiting for players..."
+    player_status: "{0} player(s) joined a team" # 0: player count
+    starting_status: "Game starting in {0}" # 0: starting time (seconds)
   start:
     no_players: "Bingo could not be started since nobody joined :("
     already_started: "Cannot start a game of Bingo when there is already one active!"
@@ -34,6 +38,8 @@ game:
   end:
     bingo: "Congratulations! Team {0} has won the Bingo!" # 0: winning team
     restart: "&a&o&lGame has ended! Click to //&c&oRestart! //&a&o&lClick to restart using the same rules and teams!//"
+  postgame:
+    start: "This game will restart in {0} seconds" # 0: time until restart (seconds)
   player:
     leave: "You have left the game!" # 0: /bingo command
     no_start: "The game has not started yet!"

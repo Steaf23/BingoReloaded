@@ -45,7 +45,6 @@ public class BingoSession
         settingsBuilder.fromOther(new BingoSettingsData().getSettings(config.defaultSettingsPreset));
         this.scoreboard = new BingoScoreboard(this, config.showPlayerInScoreboard);
         this.teamManager = new TeamManager(scoreboard.getTeamBoard(), this);
-        this.phase = new PregameLobby(menuManager, this, config);
 
         BingoReloaded.scheduleTask((t) -> {
             this.teamManager.addVirtualPlayerToTeam("testPlayer", "orange");
@@ -59,6 +58,8 @@ public class BingoSession
                 }
             }
         }, 10);
+
+        prepareNextGame();
     }
 
     public boolean isRunning() {
@@ -109,12 +110,7 @@ public class BingoSession
         ((BingoGame) phase).end(null);
     }
 
-    public void removeParticipant(@NonNull BingoParticipant player) {
-        teamManager.removeMemberFromTeam(player);
-    }
-
-    public void handleGameEnded(final BingoEndedEvent event) {
-        phase = new PregameLobby(menuManager, this, config);
+    public void prepareNextGame() {
         if (config.savePlayerInformation && config.loadPlayerInformationStrategy == ConfigData.LoadPlayerInformationStrategy.AFTER_GAME) {
             for (Player p : Bukkit.getOnlinePlayers()) {
                 if (BingoReloaded.getWorldNameOfDimension(p.getWorld()).equals(worldName)) {
@@ -122,6 +118,16 @@ public class BingoSession
                 }
             }
         }
+
+        this.phase = new PregameLobby(menuManager, this, config);
+    }
+
+    public void removeParticipant(@NonNull BingoParticipant player) {
+        teamManager.removeMemberFromTeam(player);
+    }
+
+    public void handleGameEnded(final BingoEndedEvent event) {
+        phase = new PostGamePhase(this, 20);
     }
 
     public void handleSettingsUpdated(final BingoSettingsUpdatedEvent event) {

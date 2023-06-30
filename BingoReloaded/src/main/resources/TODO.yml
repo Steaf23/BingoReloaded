@@ -1,20 +1,16 @@
-refactor card recovery (its shit).
+(2.1) refactor card recovery (its shit).
 
-implement Vault rewards
+(2.1) implement Vault rewards
 
-add /bingo info command to see information about current game (settings mostly) (admin use only)
+(2.1) add /bingo info command to see information about current game (settings mostly) (admin use only)
 
-add Free for all (probably needs a new TeamManager)
+(2.1) add Free for all (probably needs a new TeamManager)
 
-Add extra post-game phase of 30 seconds
+(2.1) add Hologram wizard item to /bingo hologram to allow players to place scoreboards in the world
 
-add Hologram wizard item to /bingo hologram to allow players to place scoreboards in the world
+(2.1) add player voting commands to multi auto bingo
 
-finish multiworld and TEST (using premade worlds or multiverse?)
-
-add player data commands to auto bingo
-
-add player voting commands to auto bingo
+(2.1) finish multiworld and TEST (using premade worlds or multiverse?)
 
 Test lockout using new VirtualPlayer BEFORE RELEASE
 
