@@ -1,7 +1,7 @@
 package io.github.steaf23.bingoreloaded.gameloop.multiple;
 
+import io.github.steaf23.bingoreloaded.command.BingoCommand;
 import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
-import io.github.steaf23.bingoreloaded.command.AutoBingoCommand;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
 import io.github.steaf23.bingoreloaded.settings.BingoSettingsBuilder;
@@ -180,7 +180,7 @@ public class MultiAutoBingoCommand implements CommandExecutor
         }
 
         String cardName = extraArguments[0];
-        int seed = extraArguments.length > 1 ? AutoBingoCommand.toInt(extraArguments[1], 0) : 0;
+        int seed = extraArguments.length > 1 ? BingoCommand.toInt(extraArguments[1], 0) : 0;
 
         BingoCardData cardsData = new BingoCardData();
         if (cardsData.getCardNames().contains(cardName))
@@ -216,7 +216,7 @@ public class MultiAutoBingoCommand implements CommandExecutor
             return false;
         }
 
-        int gameDuration = AutoBingoCommand.toInt(extraArguments[0], 0);
+        int gameDuration = BingoCommand.toInt(extraArguments[0], 0);
         if (gameDuration > 0)
         {
             settings.countdownGameDuration(gameDuration);
@@ -283,7 +283,7 @@ public class MultiAutoBingoCommand implements CommandExecutor
             return false;
         }
 
-        int teamSize = Math.min(64, Math.max(1, AutoBingoCommand.toInt(extraArguments[0], 1)));
+        int teamSize = Math.min(64, Math.max(1, BingoCommand.toInt(extraArguments[0], 1)));
 
         settings.maxTeamSize(teamSize);
         sendSuccess("Set maximum team size to " + teamSize + " players", worldName);

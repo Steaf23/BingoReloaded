@@ -1,9 +1,12 @@
 package io.github.steaf23.bingoreloaded.gameloop.singular;
 
+import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.cards.CardSize;
-import io.github.steaf23.bingoreloaded.command.AutoBingoCommand;
+import io.github.steaf23.bingoreloaded.command.BingoCommand;
 import io.github.steaf23.bingoreloaded.data.BingoCardData;
 import io.github.steaf23.bingoreloaded.data.BingoSettingsData;
+import io.github.steaf23.bingoreloaded.data.PlayerData;
+import io.github.steaf23.bingoreloaded.data.helper.SerializablePlayer;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gui.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
@@ -56,6 +59,7 @@ public class SimpleAutoBingoCommand implements CommandExecutor
             case "gamemode" -> setGamemode(settings, extraArguments);
             case "end" -> end();
             case "preset" -> preset(settings, extraArguments);
+            case "playerdata" -> playerData(manager.getSession().getPlayerData(), extraArguments);
             default -> {
                 Message.log(ChatColor.RED + "Invalid command: '" + command + "' not recognized");
                 yield false;
@@ -65,13 +69,13 @@ public class SimpleAutoBingoCommand implements CommandExecutor
         return success;
     }
 
-    public boolean start() {
+    private boolean start() {
         manager.getSession().startGame();
         sendSuccess("The game has started!");
         return true;
     }
 
-    public boolean setKit(BingoSettingsBuilder settings, String[] extraArguments) {
+    private boolean setKit(BingoSettingsBuilder settings, String[] extraArguments) {
         if (extraArguments.length != 1) {
             sendFailed("Expected 2 arguments!");
             return false;
@@ -84,7 +88,7 @@ public class SimpleAutoBingoCommand implements CommandExecutor
         return true;
     }
 
-    public boolean setEffect(BingoSettingsBuilder settings, String[] extraArguments) {
+    private boolean setEffect(BingoSettingsBuilder settings, String[] extraArguments) {
         // autobingo effect <effect_name> [true | false]
         // If argument count is only 1, enable all, none or just the single effect typed.
         //     Else default enable effect unless the second argument is "false".
@@ -117,14 +121,14 @@ public class SimpleAutoBingoCommand implements CommandExecutor
         }
     }
 
-    public boolean setCard(BingoSettingsBuilder settings, String[] extraArguments) {
+    private boolean setCard(BingoSettingsBuilder settings, String[] extraArguments) {
         if (extraArguments.length == 0) {
             sendFailed("Expected at least 2 arguments!");
             return false;
         }
 
         String cardName = extraArguments[0];
-        int seed = extraArguments.length > 1 ? AutoBingoCommand.toInt(extraArguments[1], 0) : 0;
+        int seed = extraArguments.length > 1 ? BingoCommand.toInt(extraArguments[1], 0) : 0;
 
         BingoCardData cardsData = new BingoCardData();
         if (cardsData.getCardNames().contains(cardName)) {
@@ -137,7 +141,7 @@ public class SimpleAutoBingoCommand implements CommandExecutor
         return false;
     }
 
-    public boolean setCountdown(BingoSettingsBuilder settings, String[] extraArguments) {
+    private boolean setCountdown(BingoSettingsBuilder settings, String[] extraArguments) {
         if (extraArguments.length != 1) {
             sendFailed("Expected 2 arguments!");
             return false;
@@ -149,13 +153,13 @@ public class SimpleAutoBingoCommand implements CommandExecutor
         return true;
     }
 
-    public boolean setDuration(BingoSettingsBuilder settings, String[] extraArguments) {
+    private boolean setDuration(BingoSettingsBuilder settings, String[] extraArguments) {
         if (extraArguments.length != 1) {
             sendFailed("Expected 2 arguments!");
             return false;
         }
 
-        int gameDuration = AutoBingoCommand.toInt(extraArguments[0], 0);
+        int gameDuration = BingoCommand.toInt(extraArguments[0], 0);
         if (gameDuration > 0) {
             settings.countdownGameDuration(gameDuration);
             sendSuccess("Set game duration for countdown mode to " + gameDuration);
@@ -165,7 +169,7 @@ public class SimpleAutoBingoCommand implements CommandExecutor
         return true;
     }
 
-    public boolean setPlayerTeam(String[] extraArguments) {
+    private boolean setPlayerTeam(String[] extraArguments) {
         BingoSession session = manager.getSession();
         if (extraArguments.length != 2) {
             sendFailed("Expected 3 arguments!");
@@ -201,20 +205,20 @@ public class SimpleAutoBingoCommand implements CommandExecutor
         return true;
     }
 
-    public boolean setTeamSize(BingoSettingsBuilder settings, String[] extraArguments) {
+    private boolean setTeamSize(BingoSettingsBuilder settings, String[] extraArguments) {
         if (extraArguments.length != 1) {
             sendFailed("Expected 2 arguments!");
             return false;
         }
 
-        int teamSize = Math.min(64, Math.max(1, AutoBingoCommand.toInt(extraArguments[0], 1)));
+        int teamSize = Math.min(64, Math.max(1, BingoCommand.toInt(extraArguments[0], 1)));
 
         settings.maxTeamSize(teamSize);
         sendSuccess("Set maximum team size to " + teamSize + " players");
         return true;
     }
 
-    public boolean setGamemode(BingoSettingsBuilder settings, String[] extraArguments) {
+    private boolean setGamemode(BingoSettingsBuilder settings, String[] extraArguments) {
         if (extraArguments.length < 2) {
             sendFailed("Expected at least 2 arguments!");
             return false;
@@ -236,13 +240,13 @@ public class SimpleAutoBingoCommand implements CommandExecutor
         return true;
     }
 
-    public boolean end() {
+    private boolean end() {
         manager.getSession().endGame();
         sendSuccess("Game forcefully ended!");
         return true;
     }
 
-    public boolean preset(BingoSettingsBuilder settingsBuilder, String[] extraArguments) {
+    private boolean preset(BingoSettingsBuilder settingsBuilder, String[] extraArguments) {
         if (extraArguments.length != 2) {
             sendFailed("Expected 3 arguments!");
             return false;
@@ -263,6 +267,45 @@ public class SimpleAutoBingoCommand implements CommandExecutor
             settingsData.removeSettings(path);
         } else {
             sendFailed("command " + extraArguments[0] + " not recognized!");
+        }
+
+        return true;
+    }
+
+    private boolean playerData(PlayerData playerData, String[] extraArguments) {
+        if (extraArguments.length != 2)
+        {
+            sendFailed("Expected 3 arguments!");
+            return false;
+        }
+
+        String subCommand = extraArguments[0];
+        String playerName = extraArguments[1];
+
+        Player player = Bukkit.getPlayer(playerName);
+        if (player == null) {
+            sendFailed("Player '" + playerName + "' not found");
+            return false;
+        }
+
+        switch (subCommand)
+        {
+            case "save" -> {
+                sendSuccess("Saved player data for " + playerName);
+                playerData.savePlayer(SerializablePlayer.fromPlayer(BingoReloaded.getInstance(), player), true);
+            }
+            case "load" -> {
+                sendSuccess("Loaded player data for " + playerName);
+                playerData.loadPlayer(player);
+            }
+            case "remove" -> {
+                sendSuccess("Removed player data for " + playerName);
+                playerData.removePlayer(player.getUniqueId());
+            }
+            default -> {
+                sendFailed("Unrecognized sub command '" + subCommand + "'");
+                return false;
+            }
         }
 
         return true;

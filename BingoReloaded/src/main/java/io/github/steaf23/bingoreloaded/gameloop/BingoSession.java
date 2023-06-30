@@ -202,4 +202,8 @@ public class BingoSession
     public MenuManager getMenuManager() {
         return menuManager;
     }
+
+    public PlayerData getPlayerData() {
+        return playerData;
+    }
 }

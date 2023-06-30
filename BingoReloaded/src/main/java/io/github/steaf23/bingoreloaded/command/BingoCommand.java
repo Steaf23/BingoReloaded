@@ -162,28 +162,6 @@ public class BingoCommand implements CommandExecutor
                 msg.send(player);
                 return true;
             }
-            case "saveplayer" ->
-            {
-                if (player.hasPermission("bingo.admin"))
-                {
-                    if (args.length != 2 || Bukkit.getPlayer(args[1]) == null)
-                        return true;
-
-                    Player targetPlayer = Bukkit.getPlayer(args[1]);
-                    playerData.savePlayer(SerializablePlayer.fromPlayer(BingoReloaded.getInstance(), targetPlayer), true);
-                }
-            }
-            case "loadplayer" ->
-            {
-                if (player.hasPermission("bingo.admin"))
-                {
-                    if (args.length != 2 || Bukkit.getPlayer(args[1]) == null)
-                        return true;
-
-                    Player targetPlayer = Bukkit.getPlayer(args[1]);
-                    playerData.loadPlayer(targetPlayer);
-                }
-            }
             case "kit" ->
             {
                 if (!player.hasPermission("bingo.manager"))
@@ -312,7 +290,7 @@ public class BingoCommand implements CommandExecutor
     /**
      * @return Integer the string represents or defaultValue if a conversion failed.
      */
-    private int toInt(String in, int defaultValue)
+    public static int toInt(String in, int defaultValue)
     {
         try
         {
