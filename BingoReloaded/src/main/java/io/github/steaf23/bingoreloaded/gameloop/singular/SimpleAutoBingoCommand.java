@@ -3,6 +3,7 @@ package io.github.steaf23.bingoreloaded.gameloop.singular;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.cards.CardSize;
 import io.github.steaf23.bingoreloaded.command.BingoCommand;
+import io.github.steaf23.bingoreloaded.command.SubCommand;
 import io.github.steaf23.bingoreloaded.data.BingoCardData;
 import io.github.steaf23.bingoreloaded.data.BingoSettingsData;
 import io.github.steaf23.bingoreloaded.data.PlayerData;
@@ -14,59 +15,183 @@ import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
 import io.github.steaf23.bingoreloaded.settings.BingoSettingsBuilder;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
-import io.github.steaf23.bingoreloaded.util.Message;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
-public class SimpleAutoBingoCommand implements CommandExecutor
+public class SimpleAutoBingoCommand implements TabExecutor
 {
     private final SingularGameManager manager;
+    private final SubCommand command;
+
+    private CommandSender currentSender;
 
     public SimpleAutoBingoCommand(SingularGameManager manager) {
         this.manager = manager;
+
+        this.command = new SubCommand("autobingo");
+
+        command.addSubCommand(new SubCommand("start", args -> {
+            return start();
+        }));
+
+        command.addSubCommand(new SubCommand("kit", args -> {
+            BingoSettingsBuilder settings = manager.getSession().settingsBuilder;
+            return setKit(settings, args);
+        }
+        ).addTabCompletion(args ->
+                List.of("hardcore", "normal", "overpowered", "reloaded",
+                        "custom_1", "custom_2", "custom_3", "custom_4", "custom_5")
+        ).addUsage("autobingo kit kit_name"));
+
+        command.addSubCommand(new SubCommand("effects", args -> {
+            BingoSettingsBuilder settings = manager.getSession().settingsBuilder;
+            return setEffect(settings, args);
+        }
+        ).addTabCompletion(args -> {
+            if (args.length <= 1) {
+                List<String> effects = Arrays.stream(EffectOptionFlags.values())
+                        .map(v -> v.toString().toLowerCase())
+                        .collect(Collectors.toList());
+                effects.add("none");
+                effects.add("all");
+                return effects;
+            } else {
+                if (!args[0].equals("none") && !args[0].equals("all")) {
+                    return List.of("true", "false");
+                }
+            }
+            return List.of();
+        }
+        ).addUsage("autobingo effects effect_name [true | false]"));
+
+        command.addSubCommand(new SubCommand("card", args -> {
+            BingoSettingsBuilder settings = manager.getSession().settingsBuilder;
+            return setCard(settings, args);
+        }
+        ).addTabCompletion(args -> {
+            return new BingoCardData().getCardNames().stream().collect(Collectors.toList());
+        }
+        ).addUsage("autobingo card card_name"));
+
+        command.addSubCommand(new SubCommand("countdown", args -> {
+            BingoSettingsBuilder settings = manager.getSession().settingsBuilder;
+            return setCountdown(settings, args);
+        }
+        ).addTabCompletion(args -> {
+            return List.of("true", "false");
+        }
+        ).addUsage("autobingo countdown <true | false>"));
+
+        command.addSubCommand(new SubCommand("duration", args -> {
+            BingoSettingsBuilder settings = manager.getSession().settingsBuilder;
+            return setDuration(settings, args);
+        }
+        ).addUsage("autobingo duration <minutes>"));
+
+        command.addSubCommand(new SubCommand("team", args -> {
+            return setPlayerTeam(args);
+        }
+        ).addUsage("autobingo team <player_name> <team_name | none>"));
+
+        command.addSubCommand(new SubCommand("teamsize", args -> {
+            BingoSettingsBuilder settings = manager.getSession().settingsBuilder;
+            return setTeamSize(settings, args);
+        }
+        ).addUsage("autobingo teamsize <size>"));
+
+        command.addSubCommand(new SubCommand("gamemode", args -> {
+            BingoSettingsBuilder settings = manager.getSession().settingsBuilder;
+            return setGamemode(settings, args);
+        }
+        ).addUsage("autobingo gamemode <gamemode>"));
+
+        command.addSubCommand(new SubCommand("end", args -> {
+            return end();
+        }));
+
+        BingoSettingsData settingsData = new BingoSettingsData();
+
+        command.addSubCommand(new SubCommand("preset")
+                .addSubCommand(new SubCommand("save", args -> {
+                    BingoSettingsBuilder settings = manager.getSession().settingsBuilder;
+                    String path = String.join(" ", args);
+                    if (path.isBlank()) {
+                        sendFailed("Please enter a valid preset name");
+                        return false;
+                    }
+                    settingsData.saveSettings(path, settings.view());
+                    return true;
+                }
+                ).addUsage("autobingo preset save <preset_name>"))
+                .addSubCommand(new SubCommand("load", args -> {
+                    BingoSettingsBuilder settings = manager.getSession().settingsBuilder;
+                    String path = String.join(" ", args);
+                    if (path.isBlank()) {
+                        sendFailed("Please enter a valid preset name");
+                        return false;
+                    }
+                    settings.fromOther(settingsData.getSettings(path));
+                    return true;
+                }
+                ).addTabCompletion(args -> {
+                    return settingsData.getPresetNames().stream().collect(Collectors.toList());
+                }
+                ).addUsage("autobingo preset load <preset_name>"))
+                .addSubCommand(new SubCommand("remove", args -> {
+                    String path = String.join(" ", args);
+                    if (path.isBlank()) {
+                        sendFailed("Please enter a valid preset name");
+                        return false;
+                    }
+                    settingsData.removeSettings(path);
+                    return true;
+                }
+                ).addTabCompletion(args -> {
+                    return settingsData.getPresetNames().stream().collect(Collectors.toList());
+                }).addUsage("autobingo preset remove <preset_name>"))
+        );
+
+        command.addSubCommand(new SubCommand("playerdata", args -> {
+            return playerData(manager.getSession().getPlayerData(), args);
+        }
+        ).addTabCompletion(args -> {
+            return List.of("load", "save", "remove");
+        }
+        ).addUsage("autbingo playerdata <load|save|remove> player_name"));
     }
 
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command autobingoCommand, @NotNull String alias, @NotNull String[] args) {
         // AutoBingo should only work for admins or console.
+        currentSender = commandSender;
         if (commandSender instanceof Player p && !p.hasPermission("bingo.admin")) {
             return false;
         }
 
-        if (args.length < 1) {
-            return false;
+        if (!command.execute(args)) {
+            commandSender.sendMessage(ChatColor.RED + "    Usage: " + command.usage(args));
         }
-        String command = args[0];
-        String[] extraArguments = args.length > 1 ? Arrays.copyOfRange(args, 1, args.length) : new String[]{};
-        BingoSettingsBuilder settings = manager.getSession().settingsBuilder;
+        return true;
+    }
 
-        boolean success = switch (command) {
-            case "start" -> start();
-            case "kit" -> setKit(settings, extraArguments);
-            case "effects" -> setEffect(settings, extraArguments);
-            case "card" -> setCard(settings, extraArguments);
-            case "countdown" -> setCountdown(settings, extraArguments);
-            case "duration" -> setDuration(settings, extraArguments);
-            case "team" -> setPlayerTeam(extraArguments);
-            case "teamsize" -> setTeamSize(settings, extraArguments);
-            case "gamemode" -> setGamemode(settings, extraArguments);
-            case "end" -> end();
-            case "preset" -> preset(settings, extraArguments);
-            case "playerdata" -> playerData(manager.getSession().getPlayerData(), extraArguments);
-            default -> {
-                Message.log(ChatColor.RED + "Invalid command: '" + command + "' not recognized");
-                yield false;
-            }
-        };
+    @Nullable
+    @Override
+    public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
+        if (!(sender instanceof CommandSender)) {
+            return null;
+        }
 
-        return success;
+        return this.command.tabComplete(args);
     }
 
     private boolean start() {
@@ -246,32 +371,6 @@ public class SimpleAutoBingoCommand implements CommandExecutor
         return true;
     }
 
-    private boolean preset(BingoSettingsBuilder settingsBuilder, String[] extraArguments) {
-        if (extraArguments.length != 2) {
-            sendFailed("Expected 3 arguments!");
-            return false;
-        }
-
-        BingoSettingsData settingsData = new BingoSettingsData();
-
-        String path = extraArguments[1];
-        if (path.isBlank()) {
-            sendFailed("Please enter a valid preset name");
-            return false;
-        }
-        if (extraArguments[0].equals("save")) {
-            settingsData.saveSettings(path, settingsBuilder.view());
-        } else if (extraArguments[0].equals("load")) {
-            settingsBuilder.fromOther(settingsData.getSettings(path));
-        } else if (extraArguments[0].equals("remove")) {
-            settingsData.removeSettings(path);
-        } else {
-            sendFailed("command " + extraArguments[0] + " not recognized!");
-        }
-
-        return true;
-    }
-
     private boolean playerData(PlayerData playerData, String[] extraArguments) {
         if (extraArguments.length != 2)
         {
@@ -312,10 +411,10 @@ public class SimpleAutoBingoCommand implements CommandExecutor
     }
 
     private void sendFailed(String message) {
-        Message.log(ChatColor.RED + message);
+        currentSender.sendMessage(ChatColor.RED + message);
     }
 
     private void sendSuccess(String message) {
-        Message.log(ChatColor.GREEN + message);
+        currentSender.sendMessage(ChatColor.GREEN + message);
     }
 }

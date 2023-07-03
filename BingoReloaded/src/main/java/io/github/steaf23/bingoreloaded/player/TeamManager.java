@@ -492,6 +492,10 @@ public class TeamManager
         return getParticipants().size() + automaticTeamPlayers.size() + autoVirtualPlayers.size();
     }
 
+    public BingoSession getSession() {
+        return session;
+    }
+
     //== EventHandlers ==========================================
     public void handleSettingsUpdated(BingoSettingsUpdatedEvent event) {
         int newTeamSize = event.getNewSettings().maxTeamSize();

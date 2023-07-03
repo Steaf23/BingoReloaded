@@ -17,12 +17,16 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
+import java.util.List;
 
-public class MultiAutoBingoCommand implements CommandExecutor
+public class MultiAutoBingoCommand implements TabExecutor
 {
     private final MultiGameManager manager;
 
@@ -371,5 +375,11 @@ public class MultiAutoBingoCommand implements CommandExecutor
     private void sendSuccess(String message, String worldName)
     {
         Message.log(ChatColor.GREEN + message, worldName);
+    }
+
+    @Nullable
+    @Override
+    public List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
+        return null;
     }
 }

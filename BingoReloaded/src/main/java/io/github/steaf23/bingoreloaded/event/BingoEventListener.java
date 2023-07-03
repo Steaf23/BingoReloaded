@@ -53,7 +53,6 @@ public class BingoEventListener implements Listener
         if (game != null)
         {
             game.handleBingoTaskComplete(event);
-            game.getCardEventManager().handleTaskCompleted(event);
         }
     }
 

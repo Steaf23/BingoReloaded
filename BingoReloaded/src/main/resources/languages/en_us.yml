@@ -39,7 +39,7 @@ game:
     bingo: "Congratulations! Team {0} has won the Bingo!" # 0: winning team
     restart: "&a&o&lGame has ended! Click to //&c&oRestart! //&a&o&lClick to restart using the same rules and teams!//"
   postgame:
-    start: "This game will restart in {0} seconds" # 0: time until restart (seconds)
+    start: "This game will close in {0} seconds" # 0: time until restart (seconds)
   player:
     leave: "You have left the game!" # 0: /bingo command
     no_start: "The game has not started yet!"

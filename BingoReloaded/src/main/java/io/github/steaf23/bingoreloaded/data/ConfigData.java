@@ -72,13 +72,11 @@ public class ConfigData
 
     // Public options
     public final String sendCommandAfterGameEnded;
-    //TODO: implement
     public final boolean voteUsingCommandsOnly;
     public final boolean selectTeamUsingCommandsOnly;
 
     // Private options
     public final String defaultWorldName;
-    //TODO: implement
     public final boolean savePlayerInformation;
     public final LoadPlayerInformationStrategy loadPlayerInformationStrategy;
 

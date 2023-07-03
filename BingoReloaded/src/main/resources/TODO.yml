@@ -29,3 +29,7 @@ update all commands list BEFORE RELEASE
 check if advancements are disabled and disallow them on advancement-disabled servers BEFORE RELEASE
 
 Update Readme.md BEFORE RELEASE
+
+update setting preset screen when adding new preset
+
+fix selection next/prev page buttons

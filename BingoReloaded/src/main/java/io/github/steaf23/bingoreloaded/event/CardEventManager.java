@@ -111,17 +111,6 @@ public class CardEventManager
         }
     }
 
-    public void handleTaskCompleted(final BingoCardTaskCompleteEvent event)
-    {
-        for (BingoCard card : cards)
-        {
-            if (card instanceof LockoutBingoCard lockoutCard)
-            {
-                lockoutCard.onCardSlotCompleteEvent(event);
-            }
-        }
-    }
-
     public void handleStatisticCompleted(final BingoStatisticCompletedEvent event, final BingoGame game)
     {
         if (!event.player.sessionPlayer().isPresent())

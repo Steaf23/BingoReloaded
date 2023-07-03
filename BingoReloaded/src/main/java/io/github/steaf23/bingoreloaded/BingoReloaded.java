@@ -1,7 +1,6 @@
 package io.github.steaf23.bingoreloaded;
 
 import io.github.steaf23.bingoreloaded.command.BingoCommand;
-import io.github.steaf23.bingoreloaded.command.BingoTabCompleter;
 import io.github.steaf23.bingoreloaded.command.TeamChatCommand;
 import io.github.steaf23.bingoreloaded.data.*;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
@@ -79,7 +78,7 @@ public class BingoReloaded extends JavaPlugin
         this.hologramManager = new HologramManager();
         this.hologramPlacer = new HologramPlacer(hologramManager);
 
-        CommandExecutor autoBingoCommand;
+        TabExecutor autoBingoCommand;
 
         if (config.configuration == ConfigData.PluginConfiguration.SINGULAR) {
             this.gameManager = new SingularGameManager(this);
@@ -89,8 +88,8 @@ public class BingoReloaded extends JavaPlugin
             autoBingoCommand = new MultiAutoBingoCommand((MultiGameManager) gameManager);
         }
 
-        registerCommand("bingo", new BingoCommand(config, gameManager), new BingoTabCompleter());
-        registerCommand("autobingo", autoBingoCommand, null);
+        registerCommand("bingo", new BingoCommand(config, gameManager));
+        registerCommand("autobingo", autoBingoCommand);
 
         Message.log(ChatColor.GREEN + "Enabled " + getName());
 
@@ -101,14 +100,14 @@ public class BingoReloaded extends JavaPlugin
     }
 
     public void registerTeamChatCommand(String commandName, Function<Player, BingoSession> bingoSessionResolver) {
-        registerCommand(commandName, new TeamChatCommand(bingoSessionResolver), null);
+        registerCommand(commandName, new TeamChatCommand(bingoSessionResolver));
     }
 
-    public void registerCommand(String commandName, CommandExecutor executor, @Nullable TabCompleter tabCompleter) {
+    public void registerCommand(String commandName, TabExecutor executor) {
         PluginCommand command = getCommand(commandName);
         if (command != null) {
             command.setExecutor(executor);
-            command.setTabCompleter(tabCompleter);
+            command.setTabCompleter(executor);
         }
     }
 

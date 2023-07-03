@@ -1,7 +1,6 @@
 package io.github.steaf23.bingoreloaded.gameloop;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
-import io.github.steaf23.bingoreloaded.BingoScoreboard;
 import io.github.steaf23.bingoreloaded.cards.BingoCard;
 import io.github.steaf23.bingoreloaded.cards.CardBuilder;
 import io.github.steaf23.bingoreloaded.data.BingoCardData;
@@ -107,7 +106,7 @@ public class BingoGame implements GamePhase
         world.setTime(1000);
 
         // Generate cards
-        BingoCard masterCard = CardBuilder.fromMode(session.getMenuManager(), settings.mode(), settings.size(), getTeamManager().getActiveTeams().size());
+        BingoCard masterCard = CardBuilder.fromMode(session.getMenuManager(), settings.mode(), settings.size(), getTeamManager().getActiveTeams().size(), getTeamManager());
         masterCard.generateCard(settings.card(), settings.seed(), !config.disableAdvancements, !config.disableStatistics);
         getTeamManager().initializeCards(masterCard);
 
@@ -518,6 +517,7 @@ public class BingoGame implements GamePhase
         {
             bingo(event.getParticipant().getTeam());
         }
+
 
         if (event.getParticipant().sessionPlayer().isEmpty())
             return;
