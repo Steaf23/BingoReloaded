@@ -23,6 +23,7 @@ public class SubCommand
         this.subCommands = new ArrayList<>();
         this.name = name;
         this.action = action;
+        this.tabCompletionForArgs = args -> List.of();
     }
 
     public SubCommand(String name) {
