@@ -332,6 +332,10 @@ public record BingoStatistic(@NotNull Statistic stat, @Nullable EntityType entit
                 {
                     return Material.DRAGON_EGG;
                 }
+                else if (statistic.entityType == EntityType.WITHER)
+                {
+                    return Material.NETHER_STAR;
+                }
 
                 Material spawnEgg = Material.valueOf(statistic.entityType.name() + "_SPAWN_EGG");
                 return spawnEgg;

@@ -70,11 +70,10 @@ public class BingoSession
     }
 
     public void startGame() {
-        if (isRunning()) {
+        if (!(phase instanceof PregameLobby lobby)) {
+            Message.error("Cannot start a game on this world if it is not in the lobby phase!");
             return;
         }
-
-        PregameLobby lobby = ((PregameLobby) phase);
 
         BingoSettingsBuilder gameSettings = null;
 

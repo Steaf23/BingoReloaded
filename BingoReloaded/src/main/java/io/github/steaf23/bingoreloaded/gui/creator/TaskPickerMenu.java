@@ -35,13 +35,12 @@ public class TaskPickerMenu extends PaginatedSelectionMenu
 
     @Override
     public void onOptionClickedDelegate(InventoryClickEvent event, MenuItem clickedOption, HumanEntity player) {
-        TaskData newData = switch (event.getClick()) {
+        switch (event.getClick()) {
             case LEFT -> incrementItemCount(clickedOption, 1);
             case SHIFT_LEFT -> incrementItemCount(clickedOption, 10);
             case RIGHT -> decrementItemCount(clickedOption, 1);
             case SHIFT_RIGHT -> decrementItemCount(clickedOption, 10);
-            default -> null;
-        };
+        }
     }
 
     public TaskData incrementItemCount(MenuItem item, int by) {
@@ -100,17 +99,17 @@ public class TaskPickerMenu extends PaginatedSelectionMenu
 
         for (MenuItem item : getItems()) {
             TaskData itemData = BingoTask.fromStack(item).data;
-            boolean save = false;
-            for (var savedTask : tasks) {
-                if (savedTask.isTaskEqual(itemData)) {
-                    save = true;
+            TaskData savedTask = null;
+            for (var t : tasks) {
+                if (t.isTaskEqual(itemData)) {
+                    savedTask = t;
                     break;
                 }
             }
 
-            if (save) {
+            if (savedTask != null) {
                 int count = 1;
-                if (itemData instanceof CountableTask countable)
+                if (savedTask instanceof CountableTask countable)
                     count = countable.getCount();
 
                 MenuItem newItem = new MenuItem(getUpdatedTaskItem(itemData, true, count));
@@ -152,21 +151,24 @@ public class TaskPickerMenu extends PaginatedSelectionMenu
         var item = newTask.asStack();
 
         var meta = item.getItemMeta();
-        List<String> addedLore;
-        if (selected)
-            addedLore = Arrays.stream(SELECTED_LORE)
-                    .map(ItemText::asLegacyString)
-                    .collect(Collectors.toList());
-        else
-            addedLore = Arrays.stream(UNSELECTED_LORE)
-                    .map(ItemText::asLegacyString)
-                    .collect(Collectors.toList());
-        List<String> newLore = new ArrayList<>();
-        newLore.add(newTask.data.getItemDescription()[0].asLegacyString());
-        newLore.addAll(addedLore);
+        if (meta != null)
+        {
+            List<String> addedLore;
+            if (selected)
+                addedLore = Arrays.stream(SELECTED_LORE)
+                        .map(ItemText::asLegacyString)
+                        .collect(Collectors.toList());
+            else
+                addedLore = Arrays.stream(UNSELECTED_LORE)
+                        .map(ItemText::asLegacyString)
+                        .collect(Collectors.toList());
+            List<String> newLore = new ArrayList<>();
+            newLore.add(newTask.data.getItemDescription()[0].asLegacyString());
+            newLore.addAll(addedLore);
 
-        meta.setLore(newLore);
-        item.setItemMeta(meta);
+            meta.setLore(newLore);
+            item.setItemMeta(meta);
+        }
         return item;
     }
 

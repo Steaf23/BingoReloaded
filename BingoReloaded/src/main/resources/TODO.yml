@@ -12,13 +12,16 @@
 
 (2.1) finish multiworld and TEST (using premade worlds or multiverse?)
 
+update setting preset screen when adding new preset
+
+players lose all items when leaving and rejoining the server
+player data does not get loaded/ saved correctly at all
+
 Test lockout using new VirtualPlayer BEFORE RELEASE
 
 fix comment TODOs BEFORE RELEASE
 
 double check translations BEFORE RELEASE
-
-update TabCompleters (integrate with command executor class?) BEFORE RELEASE
 
 Fix bingo creator not showing updated lists/cards immediately after creating them (only after reopening menu) BEFORE RELEASE
 
@@ -29,7 +32,3 @@ update all commands list BEFORE RELEASE
 check if advancements are disabled and disallow them on advancement-disabled servers BEFORE RELEASE
 
 Update Readme.md BEFORE RELEASE
-
-update setting preset screen when adding new preset
-
-fix selection next/prev page buttons

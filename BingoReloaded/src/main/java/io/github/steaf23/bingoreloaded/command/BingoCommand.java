@@ -285,7 +285,7 @@ public class BingoCommand implements TabExecutor
                     }
                 }
             }
-            return null;
+            return List.of();
         }
 
         switch (args.length) {
@@ -293,6 +293,6 @@ public class BingoCommand implements TabExecutor
                 return List.of("join", "getcard", "back", "leave", "stats");
             }
         }
-        return null;
+        return List.of();
     }
 }

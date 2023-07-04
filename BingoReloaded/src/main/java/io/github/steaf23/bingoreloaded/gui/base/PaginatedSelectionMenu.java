@@ -232,7 +232,7 @@ public abstract class PaginatedSelectionMenu extends BasicMenu
             nextMeta.setLore(List.of(pageCountDesc));
         }
         next.setItemMeta(nextMeta);
-        addItem(next);
+        updateActionItem(next);
 
         MenuItem previous = getItemAt(PREVIOUS.getSlot());
         ItemMeta prevMeta = previous.getItemMeta();
@@ -240,7 +240,7 @@ public abstract class PaginatedSelectionMenu extends BasicMenu
             prevMeta.setLore(List.of(pageCountDesc));
         }
         previous.setItemMeta(prevMeta);
-        addItem(previous);
+        updateActionItem(previous);
     }
 
     private void updatePageAmount() {

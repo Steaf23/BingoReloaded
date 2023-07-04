@@ -583,3 +583,167 @@ default_advancements:
     - ==: Bingo.AdvancementTask
       advancement: minecraft:story/enchant_item
   size: 45
+default_statistics:
+  tasks:
+    - ==: Bingo.StatisticTask
+      statistic:
+        ==: Bingo.Statistic
+        statistic: ANIMALS_BRED
+        item: ''
+        entity: ''
+      count: 2
+    - ==: Bingo.StatisticTask
+      statistic:
+        ==: Bingo.Statistic
+        statistic: PIG_ONE_CM
+        item: ''
+        entity: ''
+      count: 5
+    - ==: Bingo.StatisticTask
+      statistic:
+        ==: Bingo.Statistic
+        statistic: KILL_ENTITY
+        item: ''
+        entity: SNOWMAN
+      count: 1
+    - ==: Bingo.StatisticTask
+      statistic:
+        ==: Bingo.Statistic
+        statistic: USE_ITEM
+        item: SHEARS
+        entity: ''
+      count: 1
+    - ==: Bingo.StatisticTask
+      statistic:
+        ==: Bingo.Statistic
+        statistic: KILL_ENTITY
+        item: ''
+        entity: DROWNED
+      count: 8
+    - ==: Bingo.StatisticTask
+      statistic:
+        ==: Bingo.Statistic
+        statistic: FLOWER_POTTED
+        item: ''
+        entity: ''
+      count: 3
+    - ==: Bingo.StatisticTask
+      statistic:
+        ==: Bingo.Statistic
+        statistic: RAID_TRIGGER
+        item: ''
+        entity: ''
+      count: 1
+    - ==: Bingo.StatisticTask
+      statistic:
+        ==: Bingo.Statistic
+        statistic: ARMOR_CLEANED
+        item: ''
+        entity: ''
+      count: 1
+    - ==: Bingo.StatisticTask
+      statistic:
+        ==: Bingo.Statistic
+        statistic: ENTITY_KILLED_BY
+        item: ''
+        entity: IRON_GOLEM
+      count: 1
+    - ==: Bingo.StatisticTask
+      statistic:
+        ==: Bingo.Statistic
+        statistic: SLEEP_IN_BED
+        item: ''
+        entity: ''
+      count: 1
+    - ==: Bingo.StatisticTask
+      statistic:
+        ==: Bingo.Statistic
+        statistic: MINE_BLOCK
+        item: CRIMSON_NYLIUM
+        entity: ''
+      count: 20
+    - ==: Bingo.StatisticTask
+      statistic:
+        ==: Bingo.Statistic
+        statistic: WALK_UNDER_WATER_ONE_CM
+        item: ''
+        entity: ''
+      count: 15
+    - ==: Bingo.StatisticTask
+      statistic:
+        ==: Bingo.Statistic
+        statistic: CAULDRON_FILLED
+        item: ''
+        entity: ''
+      count: 3
+    - ==: Bingo.StatisticTask
+      statistic:
+        ==: Bingo.Statistic
+        statistic: MINE_BLOCK
+        item: BUDDING_AMETHYST
+        entity: ''
+      count: 5
+    - ==: Bingo.StatisticTask
+      statistic:
+        ==: Bingo.Statistic
+        statistic: MOB_KILLS
+        item: ''
+        entity: ''
+      count: 32
+    - ==: Bingo.StatisticTask
+      statistic:
+        ==: Bingo.Statistic
+        statistic: KILL_ENTITY
+        item: ''
+        entity: BAT
+      count: 1
+    - ==: Bingo.StatisticTask
+      statistic:
+        ==: Bingo.Statistic
+        statistic: ENTITY_KILLED_BY
+        item: ''
+        entity: CREEPER
+      count: 1
+    - ==: Bingo.StatisticTask
+      statistic:
+        ==: Bingo.Statistic
+        statistic: KILL_ENTITY
+        item: ''
+        entity: CREEPER
+      count: 1
+    - ==: Bingo.StatisticTask
+      statistic:
+        ==: Bingo.Statistic
+        statistic: TRADED_WITH_VILLAGER
+        item: ''
+        entity: ''
+      count: 1
+    - ==: Bingo.StatisticTask
+      statistic:
+        ==: Bingo.Statistic
+        statistic: KILL_ENTITY
+        item: ''
+        entity: WITHER_SKELETON
+      count: 5
+    - ==: Bingo.StatisticTask
+      statistic:
+        ==: Bingo.Statistic
+        statistic: MINE_BLOCK
+        item: WARPED_NYLIUM
+        entity: ''
+      count: 20
+    - ==: Bingo.StatisticTask
+      statistic:
+        ==: Bingo.Statistic
+        statistic: DROP
+        item: DROPPER
+        entity: ''
+      count: 5
+    - ==: Bingo.StatisticTask
+      statistic:
+        ==: Bingo.Statistic
+        statistic: BELL_RING
+        item: ''
+        entity: ''
+      count: 10
+  size: 23

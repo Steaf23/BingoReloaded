@@ -5,3 +5,6 @@ default_card:
   default_advancements:
     min: 3
     max: 8
+  default_statistics:
+    min: 5
+    max: 10
