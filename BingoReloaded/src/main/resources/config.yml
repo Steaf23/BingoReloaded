@@ -8,7 +8,7 @@
 #    General Configuration Options
 # ==========================================================================
 
-# Change this to MULTIPLE in order to use the features created for managing this plugin for public server owners.
+# Change this to MULTIPLE in order to use the features created for managing this plugin for public server owners. (UNIMPLEMENTED! COMING SOON!)
 configuration: SINGULAR
 
 # The yml file that contains the language data that will be used for this plugin
@@ -84,19 +84,6 @@ disableAdvancements: false # true or false
 disableStatistics: false # true or false
 
 # ==========================================================================
-#    Public Server Configuration Options
-# ==========================================================================
-
-# If this value is not an empty string it will be sent as a command to the console.
-sendCommandAfterGameEnds: "" # command to send
-
-# If true this will prevent the player from receiving the voting item, allowing custom implementations using the available autobingo command.
-voteUsingCommandsOnly: false
-
-# If true this will prevent the player from receiving the team selection item, allowing custom implementations using the available autobingo command.
-selectTeamUsingCommandsOnly: false
-
-# ==========================================================================
 #    Private Server Configuration Options
 # ==========================================================================
 
@@ -116,3 +103,16 @@ savePlayerInformation: true
 #   - AFTER_LEAVING_WORLD: A player's data gets loaded only when they have left the bingo world
 # If this option is set to anything other than AFTER_LEAVING_WORLD and the player leaves the bingo world anyway, their data will also be loaded.
 loadPlayerInformationStrategy: AFTER_LEAVING_WORLD
+
+# ==========================================================================
+#    Extra Configuration Options (These options are added for server owners to control the flow of the game using commands as a primary focus)
+# ==========================================================================
+
+# If this value is not an empty string it will be sent as a command to the console.
+sendCommandAfterGameEnds: "" # command to send
+
+# If true this will prevent the player from receiving the voting item, allowing custom implementations using the available autobingo command.
+voteUsingCommandsOnly: false
+
+# If true this will prevent the player from receiving the team selection item, allowing custom implementations using the available autobingo command.
+selectTeamUsingCommandsOnly: false

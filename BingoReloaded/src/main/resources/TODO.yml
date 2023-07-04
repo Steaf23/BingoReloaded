@@ -17,6 +17,10 @@ update setting preset screen when adding new preset
 players lose all items when leaving and rejoining the server
 player data does not get loaded/ saved correctly at all
 
+check in lockout if all spaces are completed, if there is no winner, there must be a tie, so start a deathmatch
+
+add config option for variable starting time
+
 Test lockout using new VirtualPlayer BEFORE RELEASE
 
 fix comment TODOs BEFORE RELEASE
