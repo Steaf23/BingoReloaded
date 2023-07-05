@@ -143,7 +143,7 @@ public class BingoGame implements GamePhase
         Bukkit.getPluginManager().callEvent(event);
 
         // Countdown before the game actually starts
-        startingTimer = new CountdownTimer(10, 6, 3, session);
+        startingTimer = new CountdownTimer(Math.max(1, config.startingCountdownTime), 6, 3, session);
         startingTimer.setNotifier(time -> {
             String timeString = GameTimer.getSecondsString(time);
             if (time == 0)

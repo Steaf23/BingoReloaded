@@ -83,6 +83,12 @@ disableAdvancements: false # true or false
 # If false, statistics can appear on the bingo card.
 disableStatistics: false # true or false
 
+# The amount of time in seconds before the game starts.
+startingCountdownTime: 10
+
+# The amount of time in seconds before a new game gets opened after the previous one has ended (the post-game phase)
+gameRestartTime: 20
+
 # ==========================================================================
 #    Private Server Configuration Options
 # ==========================================================================

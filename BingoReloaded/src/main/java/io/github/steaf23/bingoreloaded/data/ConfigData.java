@@ -69,6 +69,8 @@ public class ConfigData
     public final boolean showPlayerInScoreboard;
     public final boolean disableAdvancements;
     public final boolean disableStatistics;
+    public final int startingCountdownTime;
+    public final int gameRestartTime;
 
     // Public options
     public final String sendCommandAfterGameEnded;
@@ -108,6 +110,8 @@ public class ConfigData
         this.showPlayerInScoreboard = config.getBoolean("showPlayerInScoreboard", true);
         this.disableAdvancements = config.getBoolean("disableAdvancements", false);
         this.disableStatistics = config.getBoolean("disableStatistics", false);
+        this.startingCountdownTime = config.getInt("startingCountdownTime", 10);
+        this.gameRestartTime = config.getInt("gameRestartTime", 20);
 
         // Public
         this.sendCommandAfterGameEnded = config.getString("sendCommandAfterGameEnds", "");

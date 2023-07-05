@@ -18,6 +18,11 @@ public class PostGamePhase implements GamePhase
     public PostGamePhase(BingoSession session, int durationSeconds) {
         this.session = session;
         this.timer = new CountdownTimer(durationSeconds, session);
+        if (durationSeconds <= 0) {
+            session.prepareNextGame();
+            timer.stop();
+            return;
+        }
         timer.start();
         timer.setNotifier(this::onTimerTicks);
         restartMessage(durationSeconds).sendAll(session);

@@ -12,6 +12,8 @@
 
 (2.1) finish multiworld and TEST (using premade worlds or multiverse?)
 
+(2.1) Fix bingo creator not showing updated lists/cards immediately after creating them (only after reopening menu) BEFORE RELEASE
+
 update setting preset screen when adding new preset
 
 players lose all items when leaving and rejoining the server
@@ -19,21 +21,15 @@ player data does not get loaded/ saved correctly at all
 
 check in lockout if all spaces are completed, if there is no winner, there must be a tie, so start a deathmatch
 
-add config option for variable starting time/ post game phase
-
-check if useVoteSystem is actually working
+add automatic start game to lobby phase
 
 add autobingo vote command 
-
-make item distribution based on card size as well
 
 Test lockout using new VirtualPlayer BEFORE RELEASE
 
 fix comment TODOs BEFORE RELEASE
 
 double check translations BEFORE RELEASE
-
-Fix bingo creator not showing updated lists/cards immediately after creating them (only after reopening menu) BEFORE RELEASE
 
 update autobingo page with all new features BEFORE RELEASE
 

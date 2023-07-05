@@ -125,7 +125,7 @@ public class BingoSession
     }
 
     public void handleGameEnded(final BingoEndedEvent event) {
-        phase = new PostGamePhase(this, 20);
+        phase = new PostGamePhase(this, config.gameRestartTime);
     }
 
     public void handleSettingsUpdated(final BingoSettingsUpdatedEvent event) {
