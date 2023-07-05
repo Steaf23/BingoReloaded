@@ -19,7 +19,13 @@ player data does not get loaded/ saved correctly at all
 
 check in lockout if all spaces are completed, if there is no winner, there must be a tie, so start a deathmatch
 
-add config option for variable starting time
+add config option for variable starting time/ post game phase
+
+check if useVoteSystem is actually working
+
+add autobingo vote command 
+
+make item distribution based on card size as well
 
 Test lockout using new VirtualPlayer BEFORE RELEASE
 

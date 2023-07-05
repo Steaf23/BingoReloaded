@@ -22,7 +22,7 @@ language: en_us.yml
 savePlayerStatistics: false # true or false
 
 # If true, allows players to vote on certain options before the game starts.
-useVoteSystem: false
+useVoteSystem: true
 
 # Use this to configure what options can be voted on.
 voteList:

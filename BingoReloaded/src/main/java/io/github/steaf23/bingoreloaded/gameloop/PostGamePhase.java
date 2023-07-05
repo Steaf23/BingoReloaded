@@ -20,12 +20,12 @@ public class PostGamePhase implements GamePhase
         this.timer = new CountdownTimer(durationSeconds, session);
         timer.start();
         timer.setNotifier(this::onTimerTicks);
-        new TranslatedMessage(BingoTranslation.POST_GAME_START).color(ChatColor.RED).arg("" + durationSeconds).color(ChatColor.BLUE).sendAll(session);
+        restartMessage(durationSeconds).sendAll(session);
     }
 
     @Override
     public void handlePlayerJoinedSessionWorld(PlayerJoinedSessionWorldEvent event) {
-
+        restartMessage(this.timer.getTime()).send(event.getPlayer());
     }
 
     @Override
@@ -49,7 +49,11 @@ public class PostGamePhase implements GamePhase
             timer.stop();
         }
         else if (timeLeft == 5) {
-            new TranslatedMessage(BingoTranslation.POST_GAME_START).color(ChatColor.RED).arg("" + 5).color(ChatColor.BLUE).sendAll(session);
+            restartMessage(timeLeft).sendAll(session);
         }
+    }
+
+    public Message restartMessage(long timeLeft) {
+        return new TranslatedMessage(BingoTranslation.POST_GAME_START).color(ChatColor.RED).arg("" + timeLeft).color(ChatColor.BLUE);
     }
 }

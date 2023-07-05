@@ -10,6 +10,7 @@ import io.github.steaf23.bingoreloaded.gui.base.MenuItem;
 import io.github.steaf23.bingoreloaded.gui.base.MenuManager;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import io.github.steaf23.bingoreloaded.settings.SettingsPreviewBoard;
+import io.github.steaf23.bingoreloaded.util.Message;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
@@ -56,6 +57,11 @@ public class PregameLobby implements GamePhase
     }
 
     public void voteGamemode(String gamemode, HumanEntity player) {
+        if (!config.useVoteSystem) {
+            Message.warn("Players cannot vote because useVoteSystem is false!");
+            return;
+        }
+
         VoteTicket ticket = votes.getOrDefault(player.getUniqueId(), new VoteTicket());
 
         if (!gamemode.equals(ticket.gamemode)) {
@@ -65,6 +71,11 @@ public class PregameLobby implements GamePhase
     }
 
     public void voteCard(String card, HumanEntity player) {
+        if (!config.useVoteSystem) {
+            Message.warn("Players cannot vote because useVoteSystem is false!");
+            return;
+        }
+
         VoteTicket ticket = votes.getOrDefault(player.getUniqueId(), new VoteTicket());
 
         if (!card.equals(ticket.card)) {
@@ -74,6 +85,11 @@ public class PregameLobby implements GamePhase
     }
 
     public void voteKit(String kit, HumanEntity player) {
+        if (!config.useVoteSystem) {
+            Message.warn("Players cannot vote because useVoteSystem is false!");
+            return;
+        }
+
         VoteTicket ticket = votes.getOrDefault(player.getUniqueId(), new VoteTicket());
 
         if (!kit.equals(ticket.kit)) {
@@ -125,7 +141,7 @@ public class PregameLobby implements GamePhase
         settingsBoard.applyToPlayer(player);
         player.getInventory().clear();
 
-        if (!config.voteUsingCommandsOnly && !config.voteList.isEmpty()) {
+        if (config.useVoteSystem && !config.voteUsingCommandsOnly && !config.voteList.isEmpty()) {
             giveVoteItem(player);
         }
         if (!config.selectTeamUsingCommandsOnly) {
