@@ -53,22 +53,23 @@ public record StatisticTask(BingoStatistic statistic, int count) implements Coun
                 }
                 else
                 {
-                    text.add(amount);
-                    text.addText(" ");
                     text.addStatistic(statistic.stat());
                     text.addText(" ");
                     text.addItemName(statistic.materialType());
+                    text.addText(": ");
+                    text.add(amount);
                 }
             }
             case TRAVEL -> {
-                text.add(new ItemText(Integer.toString(count * 10)));
-                text.addText(" Blocks ");
                 text.addStatistic(statistic.stat());
+                text.addText(": ");
+                text.add(new ItemText(Integer.toString(count * 10)));
+                text.addText(" Blocks");
             }
             default -> {
-                text.add(amount);
-                text.addText(" ");
                 text.addStatistic(statistic.stat());
+                text.addText(": ");
+                text.add(amount);
             }
         }
         text.addText("*");

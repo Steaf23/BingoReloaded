@@ -75,6 +75,9 @@ public class BingoSession
             return;
         }
 
+        // First make sure the previous phase (PregameLobby) is ended.
+        phase.end();
+
         BingoSettingsBuilder gameSettings = null;
 
         if (config.useVoteSystem) {
@@ -105,7 +108,7 @@ public class BingoSession
     public void endGame() {
         if (!isRunning()) return;
 
-        ((BingoGame) phase).end(null);
+        phase.end();
     }
 
     public void prepareNextGame() {
@@ -117,7 +120,12 @@ public class BingoSession
             }
         }
 
-        this.phase = new PregameLobby(menuManager, this, config);
+        // When we came from the PostGamePhase we need to make sure to end it properly
+        if (phase != null) {
+            phase.end();
+        }
+
+        phase = new PregameLobby(menuManager, this, config);
     }
 
     public void removeParticipant(@NonNull BingoParticipant player) {

@@ -12,20 +12,17 @@
 
 (2.1) finish multiworld and TEST (using premade worlds or multiverse?)
 
-(2.1) Fix bingo creator not showing updated lists/cards immediately after creating them (only after reopening menu) BEFORE RELEASE
+(2.1) Fix bingo creator not showing updated lists/cards immediately after creating them (only after reopening menu)
 
 update setting preset screen when adding new preset
 
 players lose all items when leaving and rejoining the server
 player data does not get loaded/ saved correctly at all
 
-check in lockout if all spaces are completed, if there is no winner, there must be a tie, so start a deathmatch
-
 add automatic start game to lobby phase
 
-add autobingo vote command 
-
 Test lockout using new VirtualPlayer BEFORE RELEASE
+check in lockout if all spaces are completed, if there is no winner, there must be a tie, so start a deathmatch
 
 fix comment TODOs BEFORE RELEASE
 
@@ -38,3 +35,5 @@ update all commands list BEFORE RELEASE
 check if advancements are disabled and disallow them on advancement-disabled servers BEFORE RELEASE
 
 Update Readme.md BEFORE RELEASE
+
+use task scheduler to see how many timer tasks dont get deleted BEFORE RELEASE

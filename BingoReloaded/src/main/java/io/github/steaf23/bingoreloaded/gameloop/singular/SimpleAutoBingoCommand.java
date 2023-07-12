@@ -9,12 +9,14 @@ import io.github.steaf23.bingoreloaded.data.BingoSettingsData;
 import io.github.steaf23.bingoreloaded.data.PlayerData;
 import io.github.steaf23.bingoreloaded.data.helper.SerializablePlayer;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
+import io.github.steaf23.bingoreloaded.gameloop.PregameLobby;
 import io.github.steaf23.bingoreloaded.gui.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
 import io.github.steaf23.bingoreloaded.settings.BingoSettingsBuilder;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
+import io.github.steaf23.bingoreloaded.util.Message;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -51,7 +53,7 @@ public class SimpleAutoBingoCommand implements TabExecutor
         ).addTabCompletion(args ->
                 List.of("hardcore", "normal", "overpowered", "reloaded",
                         "custom_1", "custom_2", "custom_3", "custom_4", "custom_5")
-        ).addUsage("autobingo kit kit_name"));
+        ).addUsage("kit_name"));
 
         command.addSubCommand(new SubCommand("effects", args -> {
             BingoSettingsBuilder settings = manager.getSession().settingsBuilder;
@@ -72,7 +74,7 @@ public class SimpleAutoBingoCommand implements TabExecutor
             }
             return List.of();
         }
-        ).addUsage("autobingo effects effect_name [true | false]"));
+        ).addUsage("effect_name [true | false]"));
 
         command.addSubCommand(new SubCommand("card", args -> {
             BingoSettingsBuilder settings = manager.getSession().settingsBuilder;
@@ -81,7 +83,7 @@ public class SimpleAutoBingoCommand implements TabExecutor
         ).addTabCompletion(args -> {
             return new BingoCardData().getCardNames().stream().collect(Collectors.toList());
         }
-        ).addUsage("autobingo card card_name"));
+        ).addUsage("card_name"));
 
         command.addSubCommand(new SubCommand("countdown", args -> {
             BingoSettingsBuilder settings = manager.getSession().settingsBuilder;
@@ -90,30 +92,30 @@ public class SimpleAutoBingoCommand implements TabExecutor
         ).addTabCompletion(args -> {
             return List.of("true", "false");
         }
-        ).addUsage("autobingo countdown <true | false>"));
+        ).addUsage("<true | false>"));
 
         command.addSubCommand(new SubCommand("duration", args -> {
             BingoSettingsBuilder settings = manager.getSession().settingsBuilder;
             return setDuration(settings, args);
         }
-        ).addUsage("autobingo duration <minutes>"));
+        ).addUsage("<minutes>"));
 
         command.addSubCommand(new SubCommand("team", args -> {
             return setPlayerTeam(args);
         }
-        ).addUsage("autobingo team <player_name> <team_name | none>"));
+        ).addUsage("<player_name> <team_name | none>"));
 
         command.addSubCommand(new SubCommand("teamsize", args -> {
             BingoSettingsBuilder settings = manager.getSession().settingsBuilder;
             return setTeamSize(settings, args);
         }
-        ).addUsage("autobingo teamsize <size>"));
+        ).addUsage("<size>"));
 
         command.addSubCommand(new SubCommand("gamemode", args -> {
             BingoSettingsBuilder settings = manager.getSession().settingsBuilder;
             return setGamemode(settings, args);
         }
-        ).addUsage("autobingo gamemode <gamemode>"));
+        ).addUsage("<gamemode>"));
 
         command.addSubCommand(new SubCommand("end", args -> {
             return end();
@@ -167,7 +169,28 @@ public class SimpleAutoBingoCommand implements TabExecutor
         ).addTabCompletion(args -> {
             return List.of("load", "save", "remove");
         }
-        ).addUsage("autbingo playerdata <load|save|remove> player_name"));
+        ).addUsage("<load|save|remove> player_name"));
+
+        command.addSubCommand(new SubCommand("vote", args -> {
+            return voteForPlayer(args);
+        }
+        ).addTabCompletion(args -> {
+            var voteList = manager.getConfig().voteList;
+            if (args.length <= 1) {
+                return null;
+            } else if (args.length == 2) {
+                return List.of("kits", "gamemodes", "cards");
+            } else if (args.length == 3) {
+                return switch (args[1]) {
+                    case "kits" -> voteList.kits;
+                    case "gamemodes" -> voteList.gamemodes;
+                    case "cards" -> voteList.cards;
+                    default -> List.of();
+                };
+            }
+            return List.of();
+        }
+        ).addUsage("<player_name> <vote_category> <vote_for>"));
     }
 
     @Override
@@ -179,7 +202,7 @@ public class SimpleAutoBingoCommand implements TabExecutor
         }
 
         if (!command.execute(args)) {
-            commandSender.sendMessage(ChatColor.RED + "    Usage: " + command.usage(args));
+            commandSender.sendMessage(ChatColor.DARK_GRAY + " - " + ChatColor.RED + "Usage: " + command.usage(args));
         }
         return true;
     }
@@ -187,10 +210,6 @@ public class SimpleAutoBingoCommand implements TabExecutor
     @Nullable
     @Override
     public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
-        if (!(sender instanceof CommandSender)) {
-            return null;
-        }
-
         return this.command.tabComplete(args);
     }
 
@@ -310,7 +329,7 @@ public class SimpleAutoBingoCommand implements TabExecutor
             return false;
         }
 
-        if (teamName.toLowerCase().equals("none")) {
+        if (teamName.equalsIgnoreCase("none")) {
             BingoParticipant participant = session.teamManager.getBingoParticipant(player);
             if (participant == null) {
                 sendFailed(playerName + " did not join any teams!");
@@ -407,6 +426,33 @@ public class SimpleAutoBingoCommand implements TabExecutor
             }
         }
 
+        return true;
+    }
+
+    public boolean voteForPlayer(String... args) {
+        if (args.length != 3) {
+            return false;
+        }
+
+        Player player = Bukkit.getPlayer(args[0]);
+        if (player == null) {
+            sendFailed("Player '" + args[0] + "' does not exist!");
+            return false;
+        }
+
+        String category = args[1];
+        String voteFor = args[2];
+        if (manager.getSession().phase() instanceof PregameLobby lobby) {
+            switch (category) {
+                case "kits" -> lobby.voteKit(voteFor, player);
+                case "gamemodes" -> lobby.voteGamemode(voteFor, player);
+                case "cards" -> lobby.voteCard(voteFor, player);
+                default -> {
+                    sendFailed("Cannot vote for '" + category + "' category does not exist!");
+                    return false;
+                }
+            }
+        }
         return true;
     }
 

@@ -21,6 +21,19 @@ language: en_us.yml
 #   (Turning this option on later will not retroactively fill stats for games played with stats off).
 savePlayerStatistics: false # true or false
 
+# ==========================================================================
+#    Lobby Configuration Options
+# ==========================================================================
+
+# Amount of players needed to automatically start a game, set to 0 to never start a game automatically
+minimumPlayerCount: 4
+
+# The amount of time in seconds the lobby will wait for extra players when the minimum player count has been reached
+playerWaitTime: 30
+
+# The amount of time in seconds before a new game gets opened after the previous one has ended (the post-game phase)
+gameRestartTime: 20
+
 # If true, allows players to vote on certain options before the game starts.
 useVoteSystem: true
 
@@ -36,6 +49,9 @@ voteList:
 # ==========================================================================
 #    Gameplay Configuration Options
 # ==========================================================================
+
+# The amount of time in seconds before the game will release the players.
+startingCountdownTime: 10
 
 # This preset will be loaded when the plugin loads. This preset can also be changed in the in-game settings menu using /bingo.
 # This preset contains options that can be changed in between every game, like the gamemode or kits used.
@@ -82,12 +98,6 @@ disableAdvancements: false # true or false
 
 # If false, statistics can appear on the bingo card.
 disableStatistics: false # true or false
-
-# The amount of time in seconds before the game starts.
-startingCountdownTime: 10
-
-# The amount of time in seconds before a new game gets opened after the previous one has ended (the post-game phase)
-gameRestartTime: 20
 
 # ==========================================================================
 #    Private Server Configuration Options

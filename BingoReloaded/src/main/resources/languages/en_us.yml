@@ -29,7 +29,7 @@ game:
   lobby:
     wait_status: "Waiting for players..."
     player_status: "{0} player(s) joined a team" # 0: player count
-    starting_status: "Game starting in {0}" # 0: starting time (seconds)
+    starting_status: "Game starting in {0} seconds!" # 0: starting time (seconds)
   start:
     no_players: "Bingo could not be started since nobody joined :("
     already_started: "Cannot start a game of Bingo when there is already one active!"

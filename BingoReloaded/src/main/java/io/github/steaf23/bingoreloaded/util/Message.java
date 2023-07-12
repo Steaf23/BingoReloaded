@@ -172,16 +172,19 @@ public class Message
         finalMessage = prefixedBase;
     }
 
+    /**
+     * Send this message to all players in the given session's world(s).
+     * @param session
+     */
     public void sendAll(BingoSession session) {
         if (session == null)
             return;
 
-        session.teamManager.getParticipants().forEach(p ->
-        {
-            if (p.sessionPlayer().isPresent()) {
-                send(p.sessionPlayer().get());
+        for (Player p : Bukkit.getOnlinePlayers()) {
+            if (BingoReloaded.getWorldNameOfDimension(p.getWorld()).equals(session.worldName)) {
+                send(p);
             }
-        });
+        }
     }
 
     public void send(BingoTeam team) {

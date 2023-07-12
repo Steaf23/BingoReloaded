@@ -1,13 +1,8 @@
 package io.github.steaf23.bingoreloaded.command;
 
-import io.github.steaf23.bingoreloaded.util.Message;
-import org.bukkit.command.CommandSender;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.BiFunction;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -63,7 +58,7 @@ public class SubCommand
     }
 
     public List<String> tabComplete(String... arguments) {
-        if (subCommands.size() == 0 && arguments.length < 2) {
+        if (subCommands.size() == 0) {
             return tabCompletionForArgs.apply(arguments);
         }
 
@@ -78,8 +73,6 @@ public class SubCommand
 
         return List.of();
     }
-
-    ;
 
     public SubCommand getSubCommand(String name) {
         for (SubCommand subCommand : subCommands) {
@@ -96,7 +89,7 @@ public class SubCommand
 
     private String determineUsage(String... arguments) {
         if (subCommands.size() == 0) {
-            return usage;
+            return name + " " + usage;
         }
 
         SubCommand cmd = getSubCommand(arguments[0]);
@@ -105,9 +98,8 @@ public class SubCommand
         }
 
         if (arguments.length == 1) {
-            String options = name + " <" + String.join(" | ", subCommands.stream().map(subCommand -> subCommand.name)
+            return name + " <" + String.join(" | ", subCommands.stream().map(subCommand -> subCommand.name)
                     .collect(Collectors.toList())) + ">";
-            return options;
         }
 
         return "";

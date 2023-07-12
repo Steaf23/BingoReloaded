@@ -122,7 +122,9 @@ public class BingoReloaded extends JavaPlugin
     }
 
     public void onDisable() {
-        gameManager.onDisable();
+        if (gameManager != null) {
+            gameManager.onDisable();
+        }
     }
 
     public ConfigData config() {

@@ -40,6 +40,11 @@ public class MultiGameManager implements BingoGameManager
     }
 
     @Override
+    public ConfigData getConfig() {
+        return config;
+    }
+
+    @Override
     public void onDisable() {
         HandlerList.unregisterAll(eventListener);
     }

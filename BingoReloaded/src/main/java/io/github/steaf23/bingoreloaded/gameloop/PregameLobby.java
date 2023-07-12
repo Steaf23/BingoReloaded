@@ -3,7 +3,6 @@ package io.github.steaf23.bingoreloaded.gameloop;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.data.ConfigData;
-import io.github.steaf23.bingoreloaded.data.PlayerData;
 import io.github.steaf23.bingoreloaded.event.*;
 import io.github.steaf23.bingoreloaded.gui.VoteMenu;
 import io.github.steaf23.bingoreloaded.gui.base.MenuItem;
@@ -11,6 +10,9 @@ import io.github.steaf23.bingoreloaded.gui.base.MenuManager;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import io.github.steaf23.bingoreloaded.settings.SettingsPreviewBoard;
 import io.github.steaf23.bingoreloaded.util.Message;
+import io.github.steaf23.bingoreloaded.util.TranslatedMessage;
+import io.github.steaf23.bingoreloaded.util.timer.CountdownTimer;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
@@ -36,6 +38,7 @@ public class PregameLobby implements GamePhase
     private final Map<UUID, VoteTicket> votes;
     private final ConfigData config;
     private final MenuManager menuManager;
+    private final CountdownTimer playerCountTimer;
 
     public PregameLobby(MenuManager menuManager, BingoSession session, ConfigData config) {
         this.menuManager = menuManager;
@@ -44,6 +47,18 @@ public class PregameLobby implements GamePhase
         settingsBoard.showSettings(session.settingsBuilder.view());
         this.votes = new HashMap<>();
         this.config = config;
+        this.playerCountTimer = new CountdownTimer(config.playerWaitTime, session);
+        playerCountTimer.setNotifier(time -> {
+            if (time == 10) {
+                new TranslatedMessage(BingoTranslation.STARTING_STATUS).arg("" + time).color(ChatColor.GOLD).sendAll(session);
+            }
+            if (time == 0) {
+                session.startGame();
+            }
+            else if (time <= 5) {
+                new TranslatedMessage(BingoTranslation.STARTING_STATUS).arg("" + time).color(ChatColor.RED).sendAll(session);
+            }
+        });
 
         BingoReloaded.scheduleTask((t) -> {
             for (Player p : Bukkit.getOnlinePlayers()) {
@@ -151,10 +166,32 @@ public class PregameLobby implements GamePhase
 
     public void handleParticipantJoinedTeam(final ParticipantJoinedTeamEvent event) {
         settingsBoard.setStatus(BingoTranslation.PLAYER_STATUS.translate("" + session.teamManager.getTotalParticipantCount()));
+
+        if (playerCountTimer.isRunning() && playerCountTimer.getTime() > 10)
+        {
+            event.getParticipant().sessionPlayer().ifPresent(p -> {
+                new TranslatedMessage(BingoTranslation.STARTING_STATUS).arg("" + config.playerWaitTime).color(ChatColor.GOLD).send(p);
+            });
+        }
+
+        // Don't run automatic timer when minPlayerCount is 0
+        if (config.minimumPlayerCount != 0 && session.teamManager.getTotalParticipantCount() >= config.minimumPlayerCount && !playerCountTimer.isRunning()) {
+            playerCountTimer.start();
+            new TranslatedMessage(BingoTranslation.STARTING_STATUS).arg("" + config.playerWaitTime).color(ChatColor.GOLD).sendAll(session);
+        }
     }
 
     public void handleParticipantLeftTeam(final ParticipantLeftTeamEvent event) {
         settingsBoard.setStatus(BingoTranslation.PLAYER_STATUS.translate("" + session.teamManager.getTotalParticipantCount()));
+
+        if (session.teamManager.getTotalParticipantCount() < config.minimumPlayerCount && playerCountTimer.isRunning()) {
+            playerCountTimer.stop();
+        }
+    }
+
+    @Override
+    public void end() {
+        playerCountTimer.stop();
     }
 
     @Override

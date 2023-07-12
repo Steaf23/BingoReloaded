@@ -22,13 +22,16 @@ public abstract class GameTimer
     public GameTimer()
     {
         this.time = 0;
+        this.task = null;
     }
 
     public void start()
     {
+        stop();
         this.task = Bukkit.getScheduler().runTaskTimer(BingoReloaded.getPlugin(BingoReloaded.class), () -> {
             updateTime(time + getStep());
         }, getStartDelay(), getUpdateInterval());
+
     }
 
     public long pause()
@@ -88,5 +91,9 @@ public abstract class GameTimer
     public void setNotifier(Consumer<Long> notifier)
     {
         this.notifier = notifier;
+    }
+
+    public boolean isRunning() {
+        return task != null && !task.isCancelled();
     }
 }

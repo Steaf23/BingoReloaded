@@ -186,6 +186,9 @@ public class BingoGame implements GamePhase
 
     public void end(@Nullable BingoTeam winningTeam)
     {
+        // If the starting timer was still running
+        startingTimer.stop();
+
         if (statTracker != null)
             statTracker.reset();
         timer.getTimeDisplayMessage(false).sendAll(session);
@@ -684,6 +687,11 @@ public class BingoGame implements GamePhase
                 event.setCancelled(true);
             }
         }
+    }
+
+    @Override
+    public void end() {
+        end(null);
     }
 
     @Override

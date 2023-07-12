@@ -34,6 +34,9 @@ public class CountdownTimer extends GameTimer
         return startTime;
     }
 
+    /**
+     * Attempts to start the timer, if this timer is already running it will be restarted.
+     */
     @Override
     public void start()
     {

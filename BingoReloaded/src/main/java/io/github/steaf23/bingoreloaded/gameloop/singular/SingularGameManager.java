@@ -18,9 +18,10 @@ public class SingularGameManager implements BingoGameManager
     private final BingoEventListener eventListener;
     private final BingoSession session;
     private final BingoMenuManager menuManager;
+    private final ConfigData config;
 
     public SingularGameManager(BingoReloaded plugin) {
-        ConfigData config = plugin.config();
+        this.config = plugin.config();
         this.menuManager = new BingoMenuManager(player -> canOpenMenu(player));
         this.session = new BingoSession(menuManager, config.defaultWorldName, config, new PlayerData());
 
@@ -46,6 +47,11 @@ public class SingularGameManager implements BingoGameManager
     @Override
     public MenuManager getMenuManager() {
         return menuManager;
+    }
+
+    @Override
+    public ConfigData getConfig() {
+        return config;
     }
 
     @Override

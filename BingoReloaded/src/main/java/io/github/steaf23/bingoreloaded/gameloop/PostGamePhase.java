@@ -29,6 +29,10 @@ public class PostGamePhase implements GamePhase
     }
 
     @Override
+    public void end() {
+    }
+
+    @Override
     public void handlePlayerJoinedSessionWorld(PlayerJoinedSessionWorldEvent event) {
         restartMessage(this.timer.getTime()).send(event.getPlayer());
     }

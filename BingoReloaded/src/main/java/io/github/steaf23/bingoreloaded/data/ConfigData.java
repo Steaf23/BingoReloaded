@@ -51,10 +51,16 @@ public class ConfigData
     public final PluginConfiguration configuration;
     public final String language;
     public final boolean savePlayerStatistics;
+
+    // Lobby options
+    public final int minimumPlayerCount;
+    public final int playerWaitTime;
+    public final int gameRestartTime;
     public final boolean useVoteSystem;
     public final VoteList voteList;
 
     // Gameplay options
+    public final int startingCountdownTime;
     public final String defaultSettingsPreset;
     public final int teleportMaxDistance;
     public final PlayerTeleportStrategy playerTeleportStrategy;
@@ -69,18 +75,16 @@ public class ConfigData
     public final boolean showPlayerInScoreboard;
     public final boolean disableAdvancements;
     public final boolean disableStatistics;
-    public final int startingCountdownTime;
-    public final int gameRestartTime;
-
-    // Public options
-    public final String sendCommandAfterGameEnded;
-    public final boolean voteUsingCommandsOnly;
-    public final boolean selectTeamUsingCommandsOnly;
 
     // Private options
     public final String defaultWorldName;
     public final boolean savePlayerInformation;
     public final LoadPlayerInformationStrategy loadPlayerInformationStrategy;
+
+    // Public options
+    public final String sendCommandAfterGameEnded;
+    public final boolean voteUsingCommandsOnly;
+    public final boolean selectTeamUsingCommandsOnly;
 
     public ConfigData(FileConfiguration config) {
         // General
@@ -89,6 +93,11 @@ public class ConfigData
         this.configuration = PluginConfiguration.SINGULAR;
         this.language = "languages/" + config.getString("language", "en_us.yml");
         this.savePlayerStatistics = config.getBoolean("savePlayerStatistics", false);
+
+        // Lobby
+        this.minimumPlayerCount = Math.max(0, config.getInt("minimumPlayerCount", 4));
+        this.playerWaitTime = Math.max(0, config.getInt("playerWaitTime", 30));
+        this.gameRestartTime = Math.max(0, config.getInt("gameRestartTime", 20));
         this.useVoteSystem = config.getBoolean("useVoteSystem", false);
         this.voteList = new VoteList(
                 config.getStringList("voteList.gamemodes"),
@@ -96,27 +105,21 @@ public class ConfigData
                 config.getStringList("voteList.cards"));
 
         // Gameplay
+        this.startingCountdownTime = Math.max(0, config.getInt("startingCountdownTime", 10));
         this.defaultSettingsPreset = config.getString("defaultSettingsPreset", "default_settings");
-        this.teleportMaxDistance = config.getInt("teleportMaxDistance", 1000000);
+        this.teleportMaxDistance = Math.max(0, config.getInt("teleportMaxDistance", 1000000));
         this.playerTeleportStrategy = PlayerTeleportStrategy.valueOf(config.getString("playerTeleportStrategy", "ALL"));
         this.teleportAfterDeath = config.getBoolean("teleportBackAfterDeathMessage", true);
         this.wandUp = config.getInt("GoUpWand.upDistance", 75);
         this.wandDown = config.getInt("GoUpWand.downDistance", 5);
         this.wandCooldown = config.getDouble("GoUpWand.cooldown", 5.0);
-        this.platformLifetime = config.getInt("GoUPWand.platformLifetime", 10);
-        this.gracePeriod = config.getInt("gracePeriod", 30);
+        this.platformLifetime = Math.max(0, config.getInt("GoUPWand.platformLifetime", 10));
+        this.gracePeriod = Math.max(0, config.getInt("gracePeriod", 30));
         this.enableTeamChat = config.getBoolean("enableTeamChat", true);
         this.keepScoreboardVisible = config.getBoolean("keepScoreboardVisible", true);
         this.showPlayerInScoreboard = config.getBoolean("showPlayerInScoreboard", true);
         this.disableAdvancements = config.getBoolean("disableAdvancements", false);
         this.disableStatistics = config.getBoolean("disableStatistics", false);
-        this.startingCountdownTime = config.getInt("startingCountdownTime", 10);
-        this.gameRestartTime = config.getInt("gameRestartTime", 20);
-
-        // Public
-        this.sendCommandAfterGameEnded = config.getString("sendCommandAfterGameEnds", "");
-        this.voteUsingCommandsOnly = config.getBoolean("voteUsingCommandsOnly", false);
-        this.selectTeamUsingCommandsOnly = config.getBoolean("selectTeamsUsingCommandsOnly", false);
 
         // Private
         this.defaultWorldName = config.getString("defaultWorldName", "world");
@@ -124,5 +127,10 @@ public class ConfigData
         this.savePlayerInformation = config.getBoolean("playerLoadStrategy", true);
         this.loadPlayerInformationStrategy = LoadPlayerInformationStrategy.valueOf(
                 config.getString("loadPlayerInformationStrategy", "AFTER_LEAVING_WORLD"));
+
+        // Public
+        this.sendCommandAfterGameEnded = config.getString("sendCommandAfterGameEnds", "");
+        this.voteUsingCommandsOnly = config.getBoolean("voteUsingCommandsOnly", false);
+        this.selectTeamUsingCommandsOnly = config.getBoolean("selectTeamsUsingCommandsOnly", false);
     }
 }
