@@ -30,6 +30,7 @@ import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
+import org.bukkit.scoreboard.Team;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -90,6 +91,9 @@ public class BingoReloaded extends JavaPlugin
 
         registerCommand("bingo", new BingoCommand(config, gameManager));
         registerCommand("autobingo", autoBingoCommand);
+        if (config.enableTeamChat) {
+            registerCommand("btc", new TeamChatCommand(player -> gameManager.getSession(BingoReloaded.getWorldNameOfDimension(player.getWorld()))));
+        }
 
         Message.log(ChatColor.GREEN + "Enabled " + getName());
 

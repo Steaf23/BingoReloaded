@@ -114,6 +114,6 @@ public class TeamChatCommand implements Listener, TabExecutor
     @Nullable
     @Override
     public List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
-        return null;
+        return List.of();
     }
 }

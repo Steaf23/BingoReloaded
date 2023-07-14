@@ -50,7 +50,7 @@ public class TeamEditorMenu extends PaginatedSelectionMenu
             TeamData.TeamTemplate template = teamMap.get(key);
             items.add(MenuItem.createColoredLeather(template.color(), Material.LEATHER_HELMET)
                     .setName("" + ChatColor.RESET + template.color() + ChatColor.BOLD + template.name())
-                    .setDescription("" + ChatColor.GRAY + ChatColor.ITALIC + key)
+                    .setDescription("id: " + ChatColor.GRAY + ChatColor.ITALIC + key)
                     .setCompareKey(key));
         }
         addItemsToSelect(items.toArray(new MenuItem[]{}));

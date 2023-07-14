@@ -131,11 +131,7 @@ public class TeamManager
                     return;
                 }
 
-                if (addPlayerToTeam((Player) player, clickedOption.getCompareKey())) {
-                    //TODO: implement proper fix, probably involving changes to addPlayerToTeam or addAutoPlayersToTeams
-                    automaticTeamPlayers.remove(player.getUniqueId());
-                }
-
+                addPlayerToTeam((Player) player, clickedOption.getCompareKey());
                 openTeamSelector(menuManager, (Player) player);
             }
 
@@ -151,6 +147,8 @@ public class TeamManager
         //TODO: maybe combine both functions into 1?
         if (teamName.equals("auto"))
             return addPlayerToAutoTeam(player);
+
+        automaticTeamPlayers.remove(player.getUniqueId());
 
         BingoTeam bingoTeam = activateTeamFromName(teamName);
 
@@ -222,7 +220,6 @@ public class TeamManager
         for (Iterator<UUID> uuidIterator = automaticTeamPlayers.iterator(); uuidIterator.hasNext(); ) {
             UUID playerId = uuidIterator.next();
             TeamCount lowest = counts.get(0);
-
             // If our lowest count is the same as the highest count, all incomplete teams have been filled
             if (lowest.count == maxTeamSize) {
                 // If there are still players left in the queue, create a new team

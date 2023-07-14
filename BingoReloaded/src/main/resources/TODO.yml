@@ -19,12 +19,14 @@ update setting preset screen when adding new preset
 players lose all items when leaving and rejoining the server
 player data does not get loaded/ saved correctly at all
 
-add automatic start game to lobby phase
+test automatic start game to lobby phase
 
 Test lockout using new VirtualPlayer BEFORE RELEASE
 check in lockout if all spaces are completed, if there is no winner, there must be a tie, so start a deathmatch
 
-fix comment TODOs BEFORE RELEASE
+test /btc BEFORE RELEASE
+
+check comment TODOs BEFORE RELEASE
 
 double check translations BEFORE RELEASE
 
