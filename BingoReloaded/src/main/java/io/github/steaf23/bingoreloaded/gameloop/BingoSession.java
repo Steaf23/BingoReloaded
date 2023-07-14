@@ -75,9 +75,6 @@ public class BingoSession
             return;
         }
 
-        // First make sure the previous phase (PregameLobby) is ended.
-        phase.end();
-
         BingoSettingsBuilder gameSettings = null;
 
         if (config.useVoteSystem) {
@@ -101,6 +98,9 @@ public class BingoSession
         teamManager.updateActivePlayers();
 
         scoreboard.updateTeamScores();
+
+        // First make sure the previous phase (PregameLobby) is ended.
+        phase.end();
         // The game is started in the constructor
         phase = new BingoGame(this, gameSettings == null ? settings : gameSettings.view(), config);
     }

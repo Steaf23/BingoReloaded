@@ -175,6 +175,7 @@ public class TeamManager
     }
 
     private boolean addPlayerToAutoTeam(Player player) {
+        Message.log("Adding player?");
         BingoParticipant participant = getBingoParticipant(player);
         if (participant != null)
             removeMemberFromTeam(participant);
@@ -190,6 +191,7 @@ public class TeamManager
     public void addAutoPlayersToTeams() {
         record TeamCount(BingoTeam team, int count) {}
 
+        Message.log("Adding auto players!");
         // 1. create list sorted by how many players are missing from each team using a bit of insertion sorting...
         List<TeamCount> counts = new ArrayList<>();
         for (BingoTeam team : activeTeams) {
@@ -216,9 +218,9 @@ public class TeamManager
         //      add a player to it, and then insert it back into the list.
         //      when the team with the least amount of players has the same amount as the biggest team, all teams have been filled.
 
+        HashSet<UUID> autoPlayersCopy = new HashSet<>(automaticTeamPlayers);
         // Since we need to remove players from this list as we are iterating, use a direct reference to the iterator.
-        for (Iterator<UUID> uuidIterator = automaticTeamPlayers.iterator(); uuidIterator.hasNext(); ) {
-            UUID playerId = uuidIterator.next();
+        for (UUID playerId : autoPlayersCopy) {
             TeamCount lowest = counts.get(0);
             // If our lowest count is the same as the highest count, all incomplete teams have been filled
             if (lowest.count == maxTeamSize) {
@@ -247,7 +249,7 @@ public class TeamManager
             }
             if (ok) {
                 lowest = new TeamCount(lowest.team, lowest.count + 1);
-                uuidIterator.remove();
+                automaticTeamPlayers.remove(playerId);
             }
 
             // Insert the lowest back into the team counts

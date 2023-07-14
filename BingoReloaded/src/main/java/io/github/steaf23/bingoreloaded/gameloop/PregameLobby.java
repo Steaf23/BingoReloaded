@@ -40,6 +40,8 @@ public class PregameLobby implements GamePhase
     private final MenuManager menuManager;
     private final CountdownTimer playerCountTimer;
 
+    private boolean gameStarted = false;
+
     public PregameLobby(MenuManager menuManager, BingoSession session, ConfigData config) {
         this.menuManager = menuManager;
         this.session = session;
@@ -53,6 +55,7 @@ public class PregameLobby implements GamePhase
                 new TranslatedMessage(BingoTranslation.STARTING_STATUS).arg("" + time).color(ChatColor.GOLD).sendAll(session);
             }
             if (time == 0) {
+                gameStarted = true;
                 session.startGame();
             }
             else if (time <= 5) {
@@ -60,15 +63,23 @@ public class PregameLobby implements GamePhase
             }
         });
 
+        settingsBoard.setStatus(BingoTranslation.WAIT_STATUS.translate());
+
         BingoReloaded.scheduleTask((t) -> {
+            if (gameStarted)
+            {
+                return;
+            }
+
             for (Player p : Bukkit.getOnlinePlayers()) {
                 if (BingoReloaded.getWorldNameOfDimension(p.getWorld()).equals(session.worldName)) {
                     initializePlayer(p.getPlayer());
                 }
             }
-        }, 10);
 
-        settingsBoard.setStatus(BingoTranslation.WAIT_STATUS.translate());
+            // start a new timer in a task since the session will still assume the game is not in the lobby phase
+            BingoReloaded.scheduleTask(task -> startPlayerCountTimerIfMinCountReached());
+        }, 10);
     }
 
     public void voteGamemode(String gamemode, HumanEntity player) {
@@ -174,9 +185,24 @@ public class PregameLobby implements GamePhase
             });
         }
 
-        // Don't run automatic timer when minPlayerCount is 0
-        if (config.minimumPlayerCount != 0 && session.teamManager.getTotalParticipantCount() >= config.minimumPlayerCount && !playerCountTimer.isRunning()) {
-            playerCountTimer.start();
+        startPlayerCountTimerIfMinCountReached();
+    }
+
+    private void startPlayerCountTimerIfMinCountReached() {
+        if (config.minimumPlayerCount == 0 || gameStarted) {
+            return;
+        }
+
+        if (session.teamManager.getTotalParticipantCount() < config.minimumPlayerCount) {
+            return;
+        }
+
+        if (playerCountTimer.isRunning()) {
+            return;
+        }
+
+        playerCountTimer.start();
+        if (playerCountTimer.getTime() > 10) {
             new TranslatedMessage(BingoTranslation.STARTING_STATUS).arg("" + config.playerWaitTime).color(ChatColor.GOLD).sendAll(session);
         }
     }

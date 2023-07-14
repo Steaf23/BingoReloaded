@@ -41,6 +41,11 @@ public class CountdownTimer extends GameTimer
     public void start()
     {
         updateTime(startTime);
+
+        if (startTime == 0) {
+            stop();
+            return;
+        }
         super.start();
     }
 
