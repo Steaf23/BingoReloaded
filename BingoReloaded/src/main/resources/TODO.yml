@@ -14,25 +14,17 @@
 
 (2.1) Fix bingo creator not showing updated lists/cards immediately after creating them (only after reopening menu)
 
-update setting preset screen when adding new preset
-
 players lose all items when leaving and rejoining the server
 player data does not get loaded/ saved correctly at all
 
-test automatic start game to lobby phase
-
 Test lockout using new VirtualPlayer BEFORE RELEASE
 check in lockout if all spaces are completed, if there is no winner, there must be a tie, so start a deathmatch
-
-test /btc BEFORE RELEASE
 
 check comment TODOs BEFORE RELEASE
 
 double check translations BEFORE RELEASE
 
 update autobingo page with all new features BEFORE RELEASE
-
-update all commands list BEFORE RELEASE
 
 check if advancements are disabled and disallow them on advancement-disabled servers BEFORE RELEASE
 

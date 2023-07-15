@@ -53,7 +53,7 @@ public class SimpleAutoBingoCommand implements TabExecutor
         ).addTabCompletion(args ->
                 List.of("hardcore", "normal", "overpowered", "reloaded",
                         "custom_1", "custom_2", "custom_3", "custom_4", "custom_5")
-        ).addUsage("kit_name"));
+        ).addUsage("<kit_name>"));
 
         command.addSubCommand(new SubCommand("effects", args -> {
             BingoSettingsBuilder settings = manager.getSession().settingsBuilder;
@@ -74,7 +74,7 @@ public class SimpleAutoBingoCommand implements TabExecutor
             }
             return List.of();
         }
-        ).addUsage("effect_name [true | false]"));
+        ).addUsage("<effect_name> [true | false]"));
 
         command.addSubCommand(new SubCommand("card", args -> {
             BingoSettingsBuilder settings = manager.getSession().settingsBuilder;
@@ -83,7 +83,7 @@ public class SimpleAutoBingoCommand implements TabExecutor
         ).addTabCompletion(args -> {
             return new BingoCardData().getCardNames().stream().collect(Collectors.toList());
         }
-        ).addUsage("card_name"));
+        ).addUsage("<card_name>"));
 
         command.addSubCommand(new SubCommand("countdown", args -> {
             BingoSettingsBuilder settings = manager.getSession().settingsBuilder;
@@ -169,7 +169,7 @@ public class SimpleAutoBingoCommand implements TabExecutor
         ).addTabCompletion(args -> {
             return List.of("load", "save", "remove");
         }
-        ).addUsage("<load|save|remove> player_name"));
+        ).addUsage("<load | save | remove> player_name"));
 
         command.addSubCommand(new SubCommand("vote", args -> {
             return voteForPlayer(args);

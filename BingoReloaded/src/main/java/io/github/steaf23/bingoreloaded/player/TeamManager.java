@@ -175,7 +175,6 @@ public class TeamManager
     }
 
     private boolean addPlayerToAutoTeam(Player player) {
-        Message.log("Adding player?");
         BingoParticipant participant = getBingoParticipant(player);
         if (participant != null)
             removeMemberFromTeam(participant);
@@ -191,7 +190,6 @@ public class TeamManager
     public void addAutoPlayersToTeams() {
         record TeamCount(BingoTeam team, int count) {}
 
-        Message.log("Adding auto players!");
         // 1. create list sorted by how many players are missing from each team using a bit of insertion sorting...
         List<TeamCount> counts = new ArrayList<>();
         for (BingoTeam team : activeTeams) {

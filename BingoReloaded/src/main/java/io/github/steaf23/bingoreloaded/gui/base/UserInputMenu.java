@@ -36,8 +36,8 @@ public class UserInputMenu implements Menu
     private AnvilGUI openAnvilUI(String title,  Consumer<String> result, String startingText, HumanEntity player) {
         return new AnvilGUI.Builder()
                 .onComplete(completion -> {
-                    manager.close(this, completion.getPlayer());
                     result.accept(completion.getText());
+                    manager.close(this, completion.getPlayer());
                     return new ArrayList<>();
                 })
                 .title(Message.PREFIX_STRING_SHORT + " " + ChatColor.DARK_RED + title)
@@ -45,8 +45,8 @@ public class UserInputMenu implements Menu
                 .itemRight(EMPTY)
                 .itemLeft(new ItemStack(Material.ELYTRA))
                 .onRightInputClick(p -> {
-                    manager.close(this, p);
                     result.accept("");
+                    manager.close(this, p);
                 })
                 .itemOutput(ACCEPT)
                 .plugin(BingoReloaded.getPlugin(BingoReloaded.class))

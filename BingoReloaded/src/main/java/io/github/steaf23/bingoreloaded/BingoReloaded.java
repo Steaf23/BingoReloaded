@@ -92,7 +92,9 @@ public class BingoReloaded extends JavaPlugin
         registerCommand("bingo", new BingoCommand(config, gameManager));
         registerCommand("autobingo", autoBingoCommand);
         if (config.enableTeamChat) {
-            registerCommand("btc", new TeamChatCommand(player -> gameManager.getSession(BingoReloaded.getWorldNameOfDimension(player.getWorld()))));
+            TeamChatCommand command = new TeamChatCommand(player -> gameManager.getSession(BingoReloaded.getWorldNameOfDimension(player.getWorld())));
+            registerCommand("btc", command);
+            Bukkit.getPluginManager().registerEvents(command, this);
         }
 
         Message.log(ChatColor.GREEN + "Enabled " + getName());
