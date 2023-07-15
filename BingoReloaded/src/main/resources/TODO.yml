@@ -17,10 +17,9 @@
 players lose all items when leaving and rejoining the server
 player data does not get loaded/ saved correctly at all
 
-Test lockout using new VirtualPlayer BEFORE RELEASE
-check in lockout if all spaces are completed, if there is no winner, there must be a tie, so start a deathmatch
-
 check comment TODOs BEFORE RELEASE
+
+check mesages sent when choosing gamemode in bingo menu vs autobingo
 
 double check translations BEFORE RELEASE
 
@@ -31,3 +30,5 @@ check if advancements are disabled and disallow them on advancement-disabled ser
 Update Readme.md BEFORE RELEASE
 
 use task scheduler to see how many timer tasks dont get deleted BEFORE RELEASE
+
+disable BingoBot BEFORE RELEASE

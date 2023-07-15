@@ -283,7 +283,7 @@ public class TeamManager
         autoVirtualPlayers.put(player.getId(), player.getName());
         automaticTeamPlayers.add(player.getId());
 
-        var joinEvent = new ParticipantJoinedTeamEvent(participant, session);
+        var joinEvent = new ParticipantJoinedTeamEvent(player, session);
         Bukkit.getPluginManager().callEvent(joinEvent);
         return true;
     }

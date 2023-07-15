@@ -5,6 +5,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 
 public interface GamePhase
 {
+    void setup();
     /**
      * To be called when this phase needs to (forcefully) end.
      */

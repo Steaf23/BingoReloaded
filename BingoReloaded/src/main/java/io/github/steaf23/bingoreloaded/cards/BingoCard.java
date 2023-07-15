@@ -15,6 +15,7 @@ import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.player.BingoTeam;
 import io.github.steaf23.bingoreloaded.tasks.*;
 import io.github.steaf23.bingoreloaded.tasks.statistics.BingoStatistic;
+import io.github.steaf23.bingoreloaded.util.Message;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -254,9 +255,6 @@ public class BingoCard
 
     public void onPlayerCollectItem(final EntityPickupItemEvent event, final BingoPlayer player, final BingoGame game)
     {
-        if (player.getTeam().outOfTheGame)
-            return;
-
         ItemStack stack = event.getItem().getItemStack();
         int amount = stack.getAmount();
         stack = completeItemSlot(stack, player, game);
@@ -274,9 +272,6 @@ public class BingoCard
 
     public void onPlayerDroppedItem(final PlayerDropItemEvent event, final BingoPlayer player, final BingoGame game)
     {
-        if (player.getTeam().outOfTheGame)
-            return;
-
         BingoReloaded.scheduleTask(task -> {
             ItemStack stack = event.getItemDrop().getItemStack();
             stack = completeItemSlot(stack, player, game);
@@ -285,8 +280,13 @@ public class BingoCard
 
     ItemStack completeItemSlot(ItemStack item, BingoPlayer player, BingoGame game)
     {
-        if (player.sessionPlayer().isEmpty())
+        if (player.sessionPlayer().isEmpty()) {
             return item;
+        }
+
+        if (player.getTeam().outOfTheGame) {
+            return item;
+        }
 
         BingoTask deathMatchTask = game.getDeathMatchTask();
         if (deathMatchTask != null)
@@ -350,7 +350,6 @@ public class BingoCard
 
     public void onPlayerStatIncrement(final PlayerStatisticIncrementEvent event, final BingoPlayer player, final BingoGame game)
     {
-
         if (player.getTeam().outOfTheGame)
             return;
 

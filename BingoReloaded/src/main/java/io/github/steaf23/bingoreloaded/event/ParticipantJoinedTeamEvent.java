@@ -1,9 +1,9 @@
 package io.github.steaf23.bingoreloaded.event;
 
-import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.BingoTeam;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 
@@ -14,7 +14,7 @@ public class ParticipantJoinedTeamEvent extends BingoEvent
 
     private final boolean joinedAutoTeam;
 
-    public ParticipantJoinedTeamEvent(BingoParticipant participant, @Nullable BingoTeam team, BingoSession session) {
+    public ParticipantJoinedTeamEvent(@NotNull BingoParticipant participant, @Nullable BingoTeam team, BingoSession session) {
         super(session);
         this.participant = participant;
         this.team = team;

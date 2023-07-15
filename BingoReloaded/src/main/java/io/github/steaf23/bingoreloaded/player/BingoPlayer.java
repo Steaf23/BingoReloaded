@@ -211,7 +211,7 @@ public class BingoPlayer implements BingoParticipant
         String itemKey = task.material.isBlock() ? "block" : "item";
         itemKey += ".minecraft." + task.material.getKey().getKey();
 
-        new TranslatedMessage(BingoTranslation.DEATHMATCH).color(ChatColor.GOLD)
+        new TranslatedMessage(BingoTranslation.DEATHMATCH_ITEM).color(ChatColor.GOLD)
                 .component(new TranslatableComponent(itemKey))
                 .send(sessionPlayer().get());
     }

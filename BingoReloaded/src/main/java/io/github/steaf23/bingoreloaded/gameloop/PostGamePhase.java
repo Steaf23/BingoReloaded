@@ -1,5 +1,6 @@
 package io.github.steaf23.bingoreloaded.gameloop;
 
+import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.event.BingoSettingsUpdatedEvent;
 import io.github.steaf23.bingoreloaded.event.PlayerJoinedSessionWorldEvent;
@@ -18,14 +19,18 @@ public class PostGamePhase implements GamePhase
     public PostGamePhase(BingoSession session, int durationSeconds) {
         this.session = session;
         this.timer = new CountdownTimer(durationSeconds, session);
-        if (durationSeconds <= 0) {
+    }
+
+    @Override
+    public void setup() {
+        if (timer.getTime() <= 0) {
             session.prepareNextGame();
             timer.stop();
             return;
         }
         timer.start();
         timer.setNotifier(this::onTimerTicks);
-        restartMessage(durationSeconds).sendAll(session);
+        restartMessage(timer.getTime()).sendAll(session);
     }
 
     @Override

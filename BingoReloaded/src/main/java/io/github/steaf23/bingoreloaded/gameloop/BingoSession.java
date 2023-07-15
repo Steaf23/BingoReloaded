@@ -101,8 +101,9 @@ public class BingoSession
 
         // First make sure the previous phase (PregameLobby) is ended.
         phase.end();
-        // The game is started in the constructor
+
         phase = new BingoGame(this, gameSettings == null ? settings : gameSettings.view(), config);
+        phase.setup();
     }
 
     public void endGame() {
@@ -126,6 +127,7 @@ public class BingoSession
         }
 
         phase = new PregameLobby(menuManager, this, config);
+        phase.setup();
     }
 
     public void removeParticipant(@NonNull BingoParticipant player) {
@@ -134,6 +136,7 @@ public class BingoSession
 
     public void handleGameEnded(final BingoEndedEvent event) {
         phase = new PostGamePhase(this, config.gameRestartTime);
+        phase.setup();
     }
 
     public void handleSettingsUpdated(final BingoSettingsUpdatedEvent event) {

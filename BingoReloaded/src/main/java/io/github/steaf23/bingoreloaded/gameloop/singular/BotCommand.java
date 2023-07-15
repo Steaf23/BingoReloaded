@@ -63,7 +63,10 @@ public class BotCommand implements TabExecutor
             case "remove" ->
             {
                 String playerName = args[1];
-                teamManager.removeMemberFromTeam(teamManager.getVirtualPlayerFromName(playerName));
+                VirtualBingoPlayer player = teamManager.getVirtualPlayerFromName(playerName);
+                if (player != null) {
+                    teamManager.removeMemberFromTeam(teamManager.getVirtualPlayerFromName(playerName));
+                }
             }
             case "complete" ->
             {

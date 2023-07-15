@@ -46,7 +46,6 @@ public class PregameLobby implements GamePhase
         this.menuManager = menuManager;
         this.session = session;
         this.settingsBoard = new SettingsPreviewBoard();
-        settingsBoard.showSettings(session.settingsBuilder.view());
         this.votes = new HashMap<>();
         this.config = config;
         this.playerCountTimer = new CountdownTimer(config.playerWaitTime, session);
@@ -62,24 +61,6 @@ public class PregameLobby implements GamePhase
                 new TranslatedMessage(BingoTranslation.STARTING_STATUS).arg("" + time).color(ChatColor.RED).sendAll(session);
             }
         });
-
-        settingsBoard.setStatus(BingoTranslation.WAIT_STATUS.translate());
-
-        BingoReloaded.scheduleTask((t) -> {
-            if (gameStarted)
-            {
-                return;
-            }
-
-            for (Player p : Bukkit.getOnlinePlayers()) {
-                if (BingoReloaded.getWorldNameOfDimension(p.getWorld()).equals(session.worldName)) {
-                    initializePlayer(p.getPlayer());
-                }
-            }
-
-            // start a new timer in a task since the session will still assume the game is not in the lobby phase
-            BingoReloaded.scheduleTask(task -> startPlayerCountTimerIfMinCountReached());
-        }, 10);
     }
 
     public void voteGamemode(String gamemode, HumanEntity player) {
@@ -210,9 +191,35 @@ public class PregameLobby implements GamePhase
     public void handleParticipantLeftTeam(final ParticipantLeftTeamEvent event) {
         settingsBoard.setStatus(BingoTranslation.PLAYER_STATUS.translate("" + session.teamManager.getTotalParticipantCount()));
 
-        if (session.teamManager.getTotalParticipantCount() < config.minimumPlayerCount && playerCountTimer.isRunning()) {
-            playerCountTimer.stop();
-        }
+        // Schedule check in the future since a player can switch teams where they will briefly leave the team
+        // and lower the participant count to possibly stop the timer.
+        BingoReloaded.scheduleTask(t -> {
+            if (session.teamManager.getTotalParticipantCount() < config.minimumPlayerCount && playerCountTimer.isRunning()) {
+                playerCountTimer.stop();
+            }
+        });
+    }
+
+    @Override
+    public void setup() {
+        settingsBoard.showSettings(session.settingsBuilder.view());
+        settingsBoard.setStatus(BingoTranslation.WAIT_STATUS.translate());
+
+        BingoReloaded.scheduleTask((t) -> {
+            if (gameStarted)
+            {
+                return;
+            }
+
+            for (Player p : Bukkit.getOnlinePlayers()) {
+                if (BingoReloaded.getWorldNameOfDimension(p.getWorld()).equals(session.worldName)) {
+                    initializePlayer(p.getPlayer());
+                }
+            }
+
+            // start a new timer in a task since the session will still assume the game is not in the lobby phase
+            startPlayerCountTimerIfMinCountReached();
+        }, 10);
     }
 
     @Override

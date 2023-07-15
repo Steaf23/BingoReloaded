@@ -76,7 +76,7 @@ public class HologramPlacer
     private void selectHologram(Player player)
     {
         Consumer<String> result = (hologram) -> {
-            Message.log("chillz");
+            Message.log("test hologram");
         };
 
 //        List<MenuItem> items = new ArrayList<>();
