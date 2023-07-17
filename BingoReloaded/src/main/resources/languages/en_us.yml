@@ -30,6 +30,9 @@ game:
     wait_status: "Waiting for players..."
     player_status: "{0} player(s) joined a team" # 0: player count
     starting_status: "Game starting in {0} seconds!" # 0: starting time (seconds)
+    vote_kit: "Vote for a Kit"
+    vote_gamemode: "Vote for a Gamemode"
+    vote_card: "Vote for a Card"
   start:
     no_players: "Bingo could not be started since nobody joined :("
     already_started: "Cannot start a game of Bingo when there is already one active!"
@@ -43,7 +46,7 @@ game:
   deathmatch:
     start: "Several teams have completed the same amount of tasks, starting Deathmatch to break the tie!"
     search: "Find the item listed in chat to win the game!"
-    item: "DeathMatch - Find this item to win: {0}" # 0: item name
+    item: "DeathMatch - Be the first to get this item to win: {0}" # 0: item name
   player:
     leave: "You have left the game!" # 0: /bingo command
     no_start: "The game has not started yet!"
@@ -60,8 +63,8 @@ game:
     chat_off: "&fTeam chat is now &coff&r, use {0} to enable it again." # 0: /btc
     chat_on: "&fTeam chat is now &aon&r, use {0} to disable it." # 0: /btc
     size_changed: "The maximum team sized has been changed, please rejoin your team of choice!"
-    full_team_desc: "This team is full!"
-    join_team_desc: "Click to join this team!"
+    full_team_desc: "This team is full"
+    join_team_desc: "Click to join this team"
   item:
     lore: Obtain {0} of this item to complete this task! # 0: item count
     lore_advancement: "Click to learn more!"
@@ -102,7 +105,7 @@ menu:
     card: "Select Card"
     mode: "Change Gamemode"
     effects: "Player Effects"
-    vote: "Vote Gamemode"
+    vote: "Vote For Settings"
   effects:
     enable: "Click to ENABLE this effect option"
     disable: "Click to DISABLE this effect option"

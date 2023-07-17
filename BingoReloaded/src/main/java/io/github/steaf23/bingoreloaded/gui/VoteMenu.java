@@ -25,13 +25,13 @@ public class VoteMenu extends BasicMenu
 
     public VoteMenu(MenuManager menuManager, ConfigData.VoteList voteList, PregameLobby lobbyPhase)
     {
-        super(menuManager, "Vote", 3);
+        super(menuManager, BingoTranslation.OPTIONS_VOTE.translate(), 3);
 
         this.lobby = lobbyPhase;
 
         if (voteList.gamemodes.size() != 0)
         {
-            gamemodeOptions = new BasicMenu(menuManager, "Vote for Gamemode", 1);
+            gamemodeOptions = new BasicMenu(menuManager, BingoTranslation.VOTE_GAMEMODE.translate(), 1);
 
             int itemIndex = 0;
             if (voteList.gamemodes.contains("regular_5"))
@@ -90,14 +90,14 @@ public class VoteMenu extends BasicMenu
             }
             gamemodeOptions.addCloseAction(EXIT);
 
-            addAction(new MenuItem(2, 1, Material.ENCHANTED_BOOK, TITLE_PREFIX + "Vote for Gamemode"), p -> {
+            addAction(new MenuItem(2, 1, Material.ENCHANTED_BOOK, TITLE_PREFIX + BingoTranslation.VOTE_GAMEMODE.translate()), p -> {
                 gamemodeOptions.open(p);
             });
         }
 
         if (voteList.kits.size() != 0)
         {
-            kitOptions = new BasicMenu(menuManager, "Vote for Kit", 1);
+            kitOptions = new BasicMenu(menuManager, BingoTranslation.VOTE_KIT.translate(), 1);
 
             int itemIndex = 0;
             if (voteList.kits.contains("hardcore"))
@@ -173,14 +173,14 @@ public class VoteMenu extends BasicMenu
             if (itemIndex < 8)
                 kitOptions.addCloseAction(EXIT);
 
-            addAction(new MenuItem(4, 1, Material.ENCHANTED_BOOK, TITLE_PREFIX + "Vote for Kit"), p -> {
+            addAction(new MenuItem(4, 1, Material.ENCHANTED_BOOK, TITLE_PREFIX + BingoTranslation.VOTE_KIT.translate()), p -> {
                 kitOptions.open(p);
             });
         }
 
         if (voteList.cards.size() != 0)
         {
-            cardOptions = new BasicMenu(menuManager, "Vote for Card", 1);
+            cardOptions = new BasicMenu(menuManager, BingoTranslation.VOTE_CARD.translate(), 1);
 
             int itemIndex = 0;
             for (String card : voteList.cards) {
@@ -197,7 +197,7 @@ public class VoteMenu extends BasicMenu
             }
 
             cardOptions.addCloseAction(EXIT);
-            addAction(new MenuItem(6, 1, Material.ENCHANTED_BOOK, TITLE_PREFIX + "Vote for Card"), p -> {
+            addAction(new MenuItem(6, 1, Material.ENCHANTED_BOOK, TITLE_PREFIX + BingoTranslation.VOTE_CARD.translate()), p -> {
                 cardOptions.open(p);
             });
         }

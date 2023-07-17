@@ -30,3 +30,7 @@ Update Readme.md BEFORE RELEASE
 use task scheduler to see how many timer tasks dont get deleted BEFORE RELEASE
 
 disable BingoBot BEFORE RELEASE
+
+add back title prefix for menus
+
+fix player wait time??
