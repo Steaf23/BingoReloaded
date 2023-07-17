@@ -23,7 +23,7 @@ public class SingularGameManager implements BingoGameManager
     public SingularGameManager(BingoReloaded plugin) {
         this.config = plugin.config();
         this.menuManager = new BingoMenuManager(player -> canOpenMenu(player));
-        this.session = new BingoSession(menuManager, config.defaultWorldName, config, new PlayerData());
+        this.session = new BingoSession(this, menuManager, config.defaultWorldName, config, new PlayerData());
 
         this.eventListener = new BingoEventListener(world ->
                 BingoReloaded.getWorldNameOfDimension(world).equals(session.worldName) ? session : null
@@ -37,6 +37,9 @@ public class SingularGameManager implements BingoGameManager
 
     @Override
     public BingoSession getSession(String worldName) {
+        if (!session.worldName.equals(worldName)) {
+            return null;
+        }
         return session;
     }
 

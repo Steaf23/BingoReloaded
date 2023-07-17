@@ -516,7 +516,6 @@ public class TeamManager
         if (participant == null)
             return;
 
-        removeMemberFromTeam(participant);
         participant.getTeam().team.removeEntry(event.getPlayer().getName());
     }
 

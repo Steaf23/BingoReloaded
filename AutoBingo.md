@@ -41,7 +41,7 @@ Just like the /bingo menu settings, these commands apply to any future games of 
     - 'reloaded'
     - 'custom_1' through 'custom_5' (if undefined defaults to hardcore)
 
-- ### `/autobingo <world_name> effects <effect_name | all | none> [true | false]`
+- ### `/autobingo effects <effect_name | all | none> [true | false]`
 	Select the effects to use in the bingo game.
 
 	Arguments:
@@ -103,7 +103,7 @@ Just like the /bingo menu settings, these commands apply to any future games of 
   
 - ### `/autobingo playerdata <load | save | remove> <player_name>`
 	Manage player data manually, should be used if the config options don't provide enough freedom in how you want to use player data.
-  (or when you need to recover data in ceratin situations).
+  (or when you need to recover data in certain situations).
 
 	Arguments:
   - *Required** `<load | save | remove>`: Specify whether to load, save, or remove player data.

@@ -14,12 +14,10 @@
 
 (2.1) Fix bingo creator not showing updated lists/cards immediately after creating them (only after reopening menu)
 
-players lose all items when leaving and rejoining the server
-player data does not get loaded/ saved correctly at all
-
 check comment TODOs BEFORE RELEASE
 
-check mesages sent when choosing gamemode in bingo menu vs autobingo
+check messages sent when choosing gamemode in bingo menu vs autobingo
+add "settings changed" message when settings get changed
 
 double check translations BEFORE RELEASE
 

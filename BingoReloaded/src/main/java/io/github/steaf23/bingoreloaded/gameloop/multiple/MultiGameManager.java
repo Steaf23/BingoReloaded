@@ -55,7 +55,7 @@ public class MultiGameManager implements BingoGameManager
             return false;
         }
 
-        BingoSession session = new BingoSession(getMenuManager(), worldName, config, playerData);
+        BingoSession session = new BingoSession(this, getMenuManager(), worldName, config, playerData);
         sessions.put(worldName, session);
         return true;
     }
