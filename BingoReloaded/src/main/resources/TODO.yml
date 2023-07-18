@@ -19,8 +19,6 @@ check comment TODOs BEFORE RELEASE
 check messages sent when choosing gamemode in bingo menu vs autobingo
 add "settings changed" message when settings get changed
 
-double check translations BEFORE RELEASE
-
 update autobingo page with all new features BEFORE RELEASE
 
 check if advancements are disabled and disallow them on advancement-disabled servers BEFORE RELEASE

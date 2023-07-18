@@ -23,9 +23,15 @@ game:
     regular_selected: "Bingo classique sélectionné Complétez une ligne pour gagner (horizontale, verticale ou diagonale)!"
     lockout_selected: "Bingo avec verrouillage sélectionné Complétez et verrouillez un maximum de cases sur la grille pour gagner!"
     complete_selected: "Bingo grille intégrale sélectionnée. Complétez toutes les cases de la grille pour gagner!"
-    countdown_selected: "Selected Countdown Bingo. Race to complete the most tasks within the given time!"
     card_selected: "Grille de Bingo '{0}' sélectionnée pour la partie!" # 0: card name
     cardsize: "Taille de grille sélectionnée: {0}" # 0: card size
+  lobby:
+    wait_status: "En attendant les joueurs..."
+    player_status: "2 joueur(s) ont rejoint une équipe" # 0: player count
+    starting_status: "Le jeu commence dans {0} secondes!" # 0: starting time (seconds)
+    vote_kit: "Votez pour un kit"
+    vote_gamemode: "Votez pour un mode de jeu"
+    vote_card: "Votez pour une carte"
   start:
     no_players: "Le Bingo ne peut pas démarrer car aucun joueur n'a rejoint la partie :("
     already_started: "Impossible de démarrer une nouvelle partie car il y en a une déjà en cours!"
@@ -33,35 +39,37 @@ game:
     no_card: "Impossible de démarrer la partie en utilisant la grille '{0}' car elle n'existe pas!" # 0: card_name
   end:
     bingo: "Félicitations! L'équipe {0} a remporté la partie de Bingo!" # 0: winning team
-    restart:
-      prefix: "&a&o&lLa partie est terminée! Cliquez sur "
-      hoverable: "&c&oRelancer!"
-      hover: "&a&o&lCliquez sur relancer pour utiliser les mêmes règles et les mêmes équipes!"
-      suffix: ""
+    restart: "&a&o&lLa partie est terminée! Cliquez sur //&c&oRelancer!//&a&o&lCliquez sur relancer pour utiliser les mêmes règles et les mêmes équipes!//"
+  postgame:
+    start: "Ce jeu va rouvrir dans {0} secondes" # 0: time until restart (seconds)
+  deathmatch:
+    start: "Plusieurs équipes ont accompli le même nombre de tâches, commençant Deathmatch pour briser l'égalité!"
+    search: "Trouvez l'objet listé dans le chat pour gagner la partie !"
+    item: "Deathmatch - Trouvez cet élément pour gagner: {0}" # 0: item name
   player:
     leave: "Vous avez été enlevé de la partie avec succès, utilisez {0} pour revenir :D" # 0: /bingo command
     no_start: "La partie n'a pas encore commencée!"
+    no_card: "Impossible de trouver votre carte !"
     cooldown: "Vous ne pouvez plus utiliser cet élément durant les {0} prochaines secondes!" # 0: time left
-    join_back: "Bon retour, la partie est toujours en cours!"
-    respawn:
-      prefix: ""
-      hoverable: "&3&lCliquez ici pour vous téléporter à l'endroit de votre mort"
-      hover: ""
-      suffix: ""
+    respawn: "//&3&lCliquez ici pour vous téléporter à l'endroit de votre mort////"
   team:
     no_join: "Vous ne pouvez pas rejoindre une partie en cours!"
     join: "Vous avez intégré l'équipe {0} avec succès!" # 0: team name
+    join_auto: "Vous rejoindrez automatiquement une équipe au début du jeu!"
     dropped: "L'équipe {0} ne peut plus gagner, ils sont ejectés de la partie en cours!" # 0: team name
+    voided: "L'équipe {0} est hors jeu!" # 0: team name
     no_chat: "Vous ne pouvez pas activer ou désactiver le chat d'équipe car vous n'êtes pas dans une équipe!"
     chat_off: "&fLe chat d'équipe est désormais &cdésactivé&r, utilisez la commande {0} pour le réactiver." # 0: /btc
     chat_on: "&fLe chat d'équipe est désormais &aactivé&r, utilisez la commande {0} pour le désactiver." # 0: /btc
+    size_changed: "La taille maximale de l'équipe a été modifiée, veuillez rejoindre l'équipe de votre choix!"
+    full_team_desc: "This team is full"
+    join_team_desc: "Click to join this team"
   item:
     lore: Amassez {0} de cet élément pour compléter cette tâche! # 0: item count
     lore_advancement: "Cliquez pour plus de détails!"
+    lore_statistic: "Obtenez cette statistique pour terminer la tâche!"
     completed: "{0} completé par l'équipe {1} à {2}" # 0: item name, 1: team, 2: completion time
     complete_lore: "Completé par {0} \nà {1}" # 0: team, 1: completion time
-    deathmatch: "Mort subite - Trouvez cet élément pour gagner: {0}" # 0: item name
-    cooldown: "Vous ne pouvez plus utiliser cet élément durant les {0} prochaines secondes!" # 0: seconds
 menu:
   save: "Sauvegarder"
   exit: "Fermer le menu"
@@ -88,22 +96,15 @@ menu:
       desc: "Race to complete the most tasks. \nA deathmatch will be the deciding factor in a tie after time runs out!"
   options:
     title: "Options"
-    start:
-      name: "Démarrer la partie"
-    end:
-      name: "Terminer la partie"
-    team:
-      name: "Rejoindre une équipe"
-    leave:
-      name: "Quitter la partie"
-    kit:
-      name: "Kit de démarrage"
-    card:
-      name: "Sélectionner une grille"
-    mode:
-      name: "Mode de jeu"
-    effects:
-      name: "Effets"
+    start: "Démarrer la partie"
+    end: "Terminer la partie"
+    team: "Rejoindre une équipe"
+    leave: "Quitter la partie"
+    kit: "Kit de démarrage"
+    card: "Sélectionner une grille"
+    mode: "Mode de jeu"
+    effects: "Effets"
+    vote: "Vote"
   effects:
     enable: "Cliquez pour ACTIVER cet effet"
     disable: "Cliquez pour DESACTIVER cet effet"
@@ -114,7 +115,7 @@ menu:
     fire_res: "Résistance au feu"
     no_fall_dmg: "Aucun dégat de chute"
     no_durability: "Durabilité infinie"
-    card_speed: "Accélération quand le joueur tient la grille"
+    speed: "Accélération"
   kits:
     hardcore:
       name: "&4Hardcore"
@@ -162,6 +163,7 @@ items:
     name: "La Baguette d'Envol"
     desc: "Cliquez avec le bouton de droite pour vous envoler dans les cieux! (& maintenez shift pour descendre)"
 teams:
+  auto: "Automatique"
   brown: "Marron"
   orange: "Orange"
   pink: "Rose"

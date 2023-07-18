@@ -23,7 +23,6 @@ game:
     regular_selected: "Regular Bingo is geselecteerd. Maak 1 rij vol om te winnen (horizontaal, verticaal of diagonaal)!"
     lockout_selected: "Lockout Bingo is geselecteerd. Strijd om de meeste taken te voltooien en speel je tegenstanders weg!"
     complete_selected: "Complete-All Bingo is geselecteerd. Het team dat alle taken het snelst voltooid wint!"
-    countdown_selected: "Countdown Bingo is geselecteerd. Het team dat de meeste taken binnen de gegeven tijd voltooid wint het spel!"
     card_selected: "Selected '{0}' as the playing Bingo card!" # 0: card name
     cardsize: "Gekozen bingo kaart dimensies: {0}" # 0: card size
   lobby:
@@ -116,7 +115,7 @@ menu:
     fire_res: "Vuurbestendigheid"
     no_fall_dmg: "Geen Valschade"
     no_durability: "Oneindige duurzaamheid"
-    card_speed: "Extra snelheid"
+    speed: "Extra snelheid"
   kits:
     hardcore:
       name: "&4Hardcore"

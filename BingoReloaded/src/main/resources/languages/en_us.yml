@@ -23,7 +23,6 @@ game:
     regular_selected: "Selected Regular Bingo. Complete one line to win (horizontal, vertical or diagonal)!"
     lockout_selected: "Selected Lockout Bingo. Compete to complete the majority of the card to win!"
     complete_selected: "Selected Complete-All Bingo. Complete all tasks on the card to win!"
-    countdown_selected: "Selected Countdown Bingo. Race to complete the most tasks within the given time!"
     card_selected: "Selected '{0}' as the playing Bingo card!" # 0: card name
     cardsize: "Chosen card size: {0}" # 0: card size
   lobby:
