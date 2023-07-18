@@ -7,6 +7,7 @@ import io.github.steaf23.bingoreloaded.gui.base.BasicMenu;
 import io.github.steaf23.bingoreloaded.gui.base.MenuManager;
 import io.github.steaf23.bingoreloaded.settings.CustomKit;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
+import io.github.steaf23.bingoreloaded.util.Message;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 
@@ -14,23 +15,24 @@ public class KitOptionsMenu extends BasicMenu
 {
     private final BingoSession session;
 
-    private static final MenuItem HARDCORE = new MenuItem(1, 1,
-            Material.RED_CONCRETE, PlayerKit.HARDCORE.displayName,
-            BingoTranslation.KIT_HARDCORE_DESC.translate().split("\\n"));
-    private static final MenuItem NORMAL = new MenuItem(3, 1,
-            Material.YELLOW_CONCRETE, PlayerKit.NORMAL.displayName,
-            BingoTranslation.KIT_NORMAL_DESC.translate().split("\\n"));
-    private static final MenuItem OVERPOWERED = new MenuItem(5, 1,
-            Material.PURPLE_CONCRETE, PlayerKit.OVERPOWERED.displayName,
-            BingoTranslation.KIT_OVERPOWERED_DESC.translate().split("\\n"));
-    private static final MenuItem RELOADED = new MenuItem(7, 1,
-            Material.CYAN_CONCRETE, PlayerKit.RELOADED.displayName,
-            BingoTranslation.KIT_RELOADED_DESC.translate().split("\\n"));
-
     public KitOptionsMenu(MenuManager menuManager, BingoSession session)
     {
         super(menuManager, BingoTranslation.OPTIONS_KIT.translate(), 5);
         this.session = session;
+
+        MenuItem HARDCORE = new MenuItem(1, 1,
+                Material.RED_CONCRETE, PlayerKit.HARDCORE.getDisplayName(),
+                BingoTranslation.KIT_HARDCORE_DESC.translate().split("\\n"));
+        MenuItem NORMAL = new MenuItem(3, 1,
+                Material.YELLOW_CONCRETE, PlayerKit.NORMAL.getDisplayName(),
+                BingoTranslation.KIT_NORMAL_DESC.translate().split("\\n"));
+        MenuItem OVERPOWERED = new MenuItem(5, 1,
+                Material.PURPLE_CONCRETE, PlayerKit.OVERPOWERED.getDisplayName(),
+                BingoTranslation.KIT_OVERPOWERED_DESC.translate().split("\\n"));
+        MenuItem RELOADED = new MenuItem(7, 1,
+                Material.CYAN_CONCRETE, PlayerKit.RELOADED.getDisplayName(),
+                BingoTranslation.KIT_RELOADED_DESC.translate().split("\\n"));
+
         addAction(HARDCORE, p -> {
             setKit(PlayerKit.HARDCORE);
             close(p);

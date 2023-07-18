@@ -29,7 +29,7 @@ public class SingularGameManager implements BingoGameManager
                 BingoReloaded.getWorldNameOfDimension(world).equals(session.worldName) ? session : null
                 , config.disableAdvancements, config.disableStatistics);
 
-        plugin.registerCommand("bingobot", new BotCommand(session.teamManager));
+//        plugin.registerCommand("bingobot", new BotCommand(session.teamManager));
 
         Bukkit.getPluginManager().registerEvents(eventListener, plugin);
         Bukkit.getPluginManager().registerEvents(menuManager, plugin);

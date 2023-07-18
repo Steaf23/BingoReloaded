@@ -15,7 +15,6 @@ import io.github.steaf23.bingoreloaded.util.Message;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
@@ -131,7 +130,7 @@ public class MultiAutoBingoCommand implements TabExecutor
 
         PlayerKit kit = PlayerKit.fromConfig(extraArguments[0]);
         settings.kit(kit, session);
-        sendSuccess("Kit set to " + kit.displayName, worldName);
+        sendSuccess("Kit set to " + kit.getDisplayName(), worldName);
         return true;
     }
 
@@ -321,7 +320,7 @@ public class MultiAutoBingoCommand implements TabExecutor
             return false;
         }
         BingoSettings view = settings.view();
-        sendSuccess("Set gamemode to " + view.mode().name + " " + view.size() + "x" + view.size(), worldName);
+        sendSuccess("Set gamemode to " + view.mode().displayName + " " + view.size() + "x" + view.size(), worldName);
         return true;
     }
 

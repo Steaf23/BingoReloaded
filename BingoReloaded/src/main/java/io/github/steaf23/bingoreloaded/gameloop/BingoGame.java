@@ -102,8 +102,9 @@ public class BingoGame implements GamePhase
         world.setTime(1000);
 
         // Generate cards
+        boolean useAdvancements = !(BingoReloaded.areAdvancementsDisabled() || config.disableAdvancements);
         BingoCard masterCard = CardBuilder.fromMode(session.getMenuManager(), settings.mode(), settings.size(), getTeamManager().getActiveTeams().size(), getTeamManager());
-        masterCard.generateCard(settings.card(), settings.seed(), !config.disableAdvancements, !config.disableStatistics);
+        masterCard.generateCard(settings.card(), settings.seed(), useAdvancements, !config.disableStatistics);
         getTeamManager().initializeCards(masterCard);
 
         Set<BingoCard> cards = new HashSet<>();
@@ -561,7 +562,7 @@ public class BingoGame implements GamePhase
     }
 
     public void handleCountdownFinished(final CountdownTimerFinishedEvent event) {
-        if (!event.session.phase().equals(this))
+        if (!event.getSession().phase().equals(this))
             return;
 
         if (event.getTimer() == timer) {

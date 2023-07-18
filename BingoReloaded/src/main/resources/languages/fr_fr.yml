@@ -17,15 +17,8 @@ game:
   timer:
     duration: "Durée de la partie: {0}" # 0: total game time
     time_left: "Temps restant: {0}" # 0: total game time
-  settings:
-    kit_selected: "Kit de démarrage {0} sélectionné" # 0: selected kit (see "kit") below
-    effects_selected: "Options d'effets sélectionnées, consultez les dans les /bingo options"
-    regular_selected: "Bingo classique sélectionné Complétez une ligne pour gagner (horizontale, verticale ou diagonale)!"
-    lockout_selected: "Bingo avec verrouillage sélectionné Complétez et verrouillez un maximum de cases sur la grille pour gagner!"
-    complete_selected: "Bingo grille intégrale sélectionnée. Complétez toutes les cases de la grille pour gagner!"
-    card_selected: "Grille de Bingo '{0}' sélectionnée pour la partie!" # 0: card name
-    cardsize: "Taille de grille sélectionnée: {0}" # 0: card size
   lobby:
+    settings_updated: "Les paramètres du jeu ont été mis à jour, consultez le tableau des scores!"
     wait_status: "En attendant les joueurs..."
     player_status: "2 joueur(s) ont rejoint une équipe" # 0: player count
     starting_status: "Le jeu commence dans {0} secondes!" # 0: starting time (seconds)

@@ -23,7 +23,7 @@ public class PostGamePhase implements GamePhase
 
     @Override
     public void setup() {
-        if (timer.getTime() <= 0) {
+        if (timer.getStartTime() <= 0) {
             session.prepareNextGame();
             timer.stop();
             return;

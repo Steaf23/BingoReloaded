@@ -17,15 +17,8 @@ game:
   timer:
     duration: "Speelduur: {0}"
     time_left: "Resterende tijd: {0}"
-  settings:
-    kit_selected: "De {0} player kit is geselecteerd" # 0: selected kit (see "kit") below
-    effects_selected: "Effect opties zijn geselecteerd, bekijk ze in met /bingo"
-    regular_selected: "Regular Bingo is geselecteerd. Maak 1 rij vol om te winnen (horizontaal, verticaal of diagonaal)!"
-    lockout_selected: "Lockout Bingo is geselecteerd. Strijd om de meeste taken te voltooien en speel je tegenstanders weg!"
-    complete_selected: "Complete-All Bingo is geselecteerd. Het team dat alle taken het snelst voltooid wint!"
-    card_selected: "Selected '{0}' as the playing Bingo card!" # 0: card name
-    cardsize: "Gekozen bingo kaart dimensies: {0}" # 0: card size
   lobby:
+    settings_updated: "De instellingen zijn aangepast, check het score bord"
     wait_status: "Wachten op meer spelers..."
     player_status: "{0} spelers aanwezig" # 0: player count
     starting_status: "Het spel begint in {0} seconde(n)!" # 0: starting time (seconds)

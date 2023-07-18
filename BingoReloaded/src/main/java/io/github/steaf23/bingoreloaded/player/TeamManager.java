@@ -190,6 +190,13 @@ public class TeamManager
     public void addAutoPlayersToTeams() {
         record TeamCount(BingoTeam team, int count) {}
 
+        int totalPlayers = teams.getTeams().size() * maxTeamSize;
+        int availablePlayers = totalPlayers - getTotalParticipantCount();
+        if (automaticTeamPlayers.size() > availablePlayers) {
+            Message.error("Could not fit every player into a team, consider changing the team size or adding more teams");
+            return;
+        }
+
         // 1. create list sorted by how many players are missing from each team using a bit of insertion sorting...
         List<TeamCount> counts = new ArrayList<>();
         for (BingoTeam team : activeTeams) {
@@ -226,7 +233,8 @@ public class TeamManager
                 if (automaticTeamPlayers.size() > 0) {
                     BingoTeam newTeam = activateAnyTeam();
                     if (newTeam == null) {
-                        //TODO: handle this error! too many teams...?
+                        Message.error("Could not fit every player into a team, since there is not enough room!");
+                        break;
                     }
                     counts.add(0, new TeamCount(newTeam, 0));
                     lowest = counts.get(0);
@@ -503,8 +511,8 @@ public class TeamManager
         if (!session.isRunning()) {
             getParticipants().forEach(p -> {
                 removeMemberFromTeam(p);
-                p.sessionPlayer().ifPresent(gamePlayer -> new Message()
-                        .untranslated(BingoTranslation.TEAM_SIZE_CHANGED.translate())
+                p.sessionPlayer().ifPresent(gamePlayer ->
+                        new TranslatedMessage(BingoTranslation.TEAM_SIZE_CHANGED)
                         .color(ChatColor.RED)
                         .send(gamePlayer));
             });

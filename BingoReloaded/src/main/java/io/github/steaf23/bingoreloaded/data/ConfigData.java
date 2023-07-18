@@ -123,7 +123,6 @@ public class ConfigData
 
         // Private
         this.defaultWorldName = config.getString("defaultWorldName", "world");
-        //TODO: test this with nether/end dimension too!
         this.savePlayerInformation = config.getBoolean("playerLoadStrategy", true);
         this.loadPlayerInformationStrategy = LoadPlayerInformationStrategy.valueOf(
                 config.getString("loadPlayerInformationStrategy", "AFTER_LEAVING_WORLD"));

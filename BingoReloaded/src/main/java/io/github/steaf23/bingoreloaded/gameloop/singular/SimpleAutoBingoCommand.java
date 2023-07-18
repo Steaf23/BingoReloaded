@@ -16,7 +16,6 @@ import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
 import io.github.steaf23.bingoreloaded.settings.BingoSettingsBuilder;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
-import io.github.steaf23.bingoreloaded.util.Message;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -228,7 +227,7 @@ public class SimpleAutoBingoCommand implements TabExecutor
         BingoSession session = manager.getSession();
         PlayerKit kit = PlayerKit.fromConfig(extraArguments[0]);
         settings.kit(kit, session);
-        sendSuccess("Kit set to " + kit.displayName);
+        sendSuccess("Kit set to " + kit.getDisplayName());
         return true;
     }
 
@@ -380,7 +379,7 @@ public class SimpleAutoBingoCommand implements TabExecutor
             return false;
         }
         BingoSettings view = settings.view();
-        sendSuccess("Set gamemode to " + view.mode().name + " " + view.size().size + "x" + view.size().size);
+        sendSuccess("Set gamemode to " + view.mode().displayName + " " + view.size().size + "x" + view.size().size);
         return true;
     }
 

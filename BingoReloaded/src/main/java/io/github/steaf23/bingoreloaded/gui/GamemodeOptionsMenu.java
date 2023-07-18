@@ -44,7 +44,6 @@ public class GamemodeOptionsMenu extends BasicMenu
 
     @Override
     public boolean onClick(InventoryClickEvent event, HumanEntity player, MenuItem clickedItem, ClickType clickType) {
-        //TODO: move messages to BingoSettings
         BingoGamemode chosenMode = BingoGamemode.REGULAR;
         CardSize chosenSize = CardSize.X5;
 
@@ -53,27 +52,23 @@ public class GamemodeOptionsMenu extends BasicMenu
         int slotClicked = event.getRawSlot();
         if (slotClicked == options[0].getSlot() || slotClicked == options[3].getSlot())
         {
-            new TranslatedMessage(BingoTranslation.REGULAR_SELECTED).color(ChatColor.GOLD).sendAll(session);
+            chosenMode = BingoGamemode.REGULAR;
         }
         else if (slotClicked == options[1].getSlot() || slotClicked == options[4].getSlot())
         {
-            new TranslatedMessage(BingoTranslation.LOCKOUT_SELECTED).color(ChatColor.GOLD).sendAll(session);
-
             chosenMode = BingoGamemode.LOCKOUT;
         }
         else if (slotClicked == options[2].getSlot() || slotClicked == options[5].getSlot())
         {
-            new TranslatedMessage(BingoTranslation.COMPLETE_SELECTED).color(ChatColor.GOLD).sendAll(session);
             chosenMode = BingoGamemode.COMPLETE;
         }
 
         if (slotClicked == options[0].getSlot() || slotClicked == options[1].getSlot() || slotClicked == options[2].getSlot())
         {
-            new TranslatedMessage(BingoTranslation.CARDSIZE_SELECTED).color(ChatColor.GOLD).arg("5x5").sendAll(session);
+            chosenSize = CardSize.X5;
         }
         else if (slotClicked == options[3].getSlot() || slotClicked == options[4].getSlot() || slotClicked == options[5].getSlot())
         {
-            new TranslatedMessage(BingoTranslation.CARDSIZE_SELECTED).color(ChatColor.GOLD).arg("3x3").sendAll(session);
             chosenSize = CardSize.X3;
         }
 

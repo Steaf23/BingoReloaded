@@ -7,12 +7,16 @@ import org.jetbrains.annotations.NotNull;
 
 public abstract class BingoEvent extends Event
 {
-    public final BingoSession session;
+    private final BingoSession session;
     private static final HandlerList HANDLERS = new HandlerList();
 
     protected BingoEvent(BingoSession session)
     {
         this.session = session;
+    }
+
+    public BingoSession getSession() {
+        return session;
     }
 
     @NotNull

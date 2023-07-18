@@ -24,11 +24,11 @@ public enum PlayerKit
     NORMAL("normal", ChatColor.BOLD + BingoTranslation.KIT_NORMAL_NAME.translate(), EnumSet.of(EffectOptionFlags.SPEED, EffectOptionFlags.NO_FALL_DAMAGE)),
     OVERPOWERED("overpowered", ChatColor.BOLD + BingoTranslation.KIT_OVERPOWERED_NAME.translate(), EnumSet.allOf(EffectOptionFlags.class)),
     RELOADED("reloaded", ChatColor.BOLD + BingoTranslation.KIT_RELOADED_NAME.translate(), EnumSet.allOf(EffectOptionFlags.class)),
-    CUSTOM_1("custom_1", ChatColor.BOLD + BingoTranslation.KIT_CUSTOM_NAME.translate() + " 1", EnumSet.noneOf(EffectOptionFlags.class)),
-    CUSTOM_2("custom_2", ChatColor.BOLD + BingoTranslation.KIT_CUSTOM_NAME.translate() + " 2", EnumSet.noneOf(EffectOptionFlags.class)),
-    CUSTOM_3("custom_3", ChatColor.BOLD + BingoTranslation.KIT_CUSTOM_NAME.translate() + " 3", EnumSet.noneOf(EffectOptionFlags.class)),
-    CUSTOM_4("custom_4", ChatColor.BOLD + BingoTranslation.KIT_CUSTOM_NAME.translate() + " 4", EnumSet.noneOf(EffectOptionFlags.class)),
-    CUSTOM_5("custom_5", ChatColor.BOLD + BingoTranslation.KIT_CUSTOM_NAME.translate() + " 5", EnumSet.noneOf(EffectOptionFlags.class)),
+    CUSTOM_1("custom_1", "", EnumSet.noneOf(EffectOptionFlags.class)),
+    CUSTOM_2("custom_2", "", EnumSet.noneOf(EffectOptionFlags.class)),
+    CUSTOM_3("custom_3", "", EnumSet.noneOf(EffectOptionFlags.class)),
+    CUSTOM_4("custom_4", "", EnumSet.noneOf(EffectOptionFlags.class)),
+    CUSTOM_5("custom_5", "", EnumSet.noneOf(EffectOptionFlags.class)),
     ;
 
     public static final MenuItem WAND_ITEM = new MenuItem(
@@ -55,7 +55,7 @@ public enum PlayerKit
     ).setCompareKey("team");
 
     public final String configName;
-    public final String displayName;
+    private final String displayName;
     public final EnumSet<EffectOptionFlags> defaultEffects;
 
     private static final YmlDataManager customKitData = BingoReloaded.createYmlDataManager("data/kits.yml");
@@ -65,6 +65,13 @@ public enum PlayerKit
         this.configName = configName;
         this.displayName = displayName;
         this.defaultEffects = defaultEffects;
+    }
+
+    public String getDisplayName() {
+        if (customKits().contains(this)) {
+            return getCustomKit(this).name();
+        }
+        return displayName;
     }
 
     public List<MenuItem> getItems(ChatColor teamColor)
@@ -182,11 +189,11 @@ public enum PlayerKit
             case "normal" -> NORMAL;
             case "overpowered" -> OVERPOWERED;
             case "reloaded" -> RELOADED;
-            case "custom", "custom1" -> CUSTOM_1;
-            case "custom2" -> CUSTOM_2;
-            case "custom3" -> CUSTOM_3;
-            case "custom4" -> CUSTOM_4;
-            case "custom5" -> CUSTOM_5;
+            case "custom", "custom_1" -> CUSTOM_1;
+            case "custom_2" -> CUSTOM_2;
+            case "custom_3" -> CUSTOM_3;
+            case "custom_4" -> CUSTOM_4;
+            case "custom_5" -> CUSTOM_5;
             default -> HARDCORE;
         };
     }

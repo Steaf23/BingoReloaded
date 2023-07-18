@@ -99,53 +99,55 @@ public class BingoSettingsBuilder
 
     public BingoSettingsBuilder card(String card)
     {
-        this.card = card;
-        settingsUpdated();
+        if (this.card != card) {
+            this.card = card;
+            settingsUpdated();
+        }
         return this;
     }
 
     public BingoSettingsBuilder mode(BingoGamemode mode)
     {
-        this.mode = mode;
-        settingsUpdated();
+        if (this.mode != mode) {
+            this.mode = mode;
+            settingsUpdated();
+        }
         return this;
     }
 
     public BingoSettingsBuilder cardSize(CardSize cardSize)
     {
-        this.cardSize = cardSize;
-        settingsUpdated();
+        if (this.cardSize != cardSize) {
+            this.cardSize = cardSize;
+            settingsUpdated();
+        }
         return this;
     }
 
     public BingoSettingsBuilder cardSeed(int cardSeed)
     {
-        this.cardSeed = cardSeed;
-        settingsUpdated();
+        if (this.cardSeed != cardSeed) {
+            this.cardSeed = cardSeed;
+            settingsUpdated();
+        }
         return this;
     }
 
     public BingoSettingsBuilder kit(PlayerKit kit, BingoSession session)
     {
-        this.kit = kit;
-        String kitName = switch (kit)
-                {
-                    case CUSTOM_1, CUSTOM_2, CUSTOM_3, CUSTOM_4, CUSTOM_5 -> {
-                        CustomKit customKit = PlayerKit.getCustomKit(kit);
-                        yield customKit == null ? kit.displayName : customKit.getName();
-                    }
-                    default -> kit.displayName;
-                };
-        new TranslatedMessage(BingoTranslation.KIT_SELECTED).color(ChatColor.GOLD).arg(ChatColor.RESET + kitName).sendAll(session);
-        settingsUpdated();
+        if (this.kit != kit) {
+            this.kit = kit;
+            settingsUpdated();
+        }
         return this;
     }
 
     public BingoSettingsBuilder effects(EnumSet<EffectOptionFlags> effects, BingoSession session)
     {
-        this.effects = effects;
-        new TranslatedMessage(BingoTranslation.EFFECTS_SELECTED).color(ChatColor.GOLD).sendAll(session);
-        settingsUpdated();
+        if (this.effects != effects) {
+            this.effects = effects;
+            settingsUpdated();
+        }
         return this;
     }
 
@@ -161,22 +163,28 @@ public class BingoSettingsBuilder
 
     public BingoSettingsBuilder maxTeamSize(int maxTeamSize)
     {
-        this.maxTeamSize = maxTeamSize;
-        settingsUpdated();
+        if (this.maxTeamSize != maxTeamSize) {
+            this.maxTeamSize = maxTeamSize;
+            settingsUpdated();
+        }
         return this;
     }
 
     public BingoSettingsBuilder enableCountdown(boolean enableCountdown)
     {
-        this.enableCountdown = enableCountdown;
-        settingsUpdated();
+        if (this.enableCountdown != enableCountdown) {
+            this.enableCountdown = enableCountdown;
+            settingsUpdated();
+        }
         return this;
     }
 
     public BingoSettingsBuilder countdownGameDuration(int countdownGameDuration)
     {
-        this.countdownGameDuration = countdownGameDuration;
-        settingsUpdated();
+        if (this.countdownGameDuration != countdownGameDuration) {
+            this.countdownGameDuration = countdownGameDuration;
+            settingsUpdated();
+        }
         return this;
     }
 

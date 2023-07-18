@@ -7,6 +7,7 @@ import io.github.steaf23.bingoreloaded.event.*;
 import io.github.steaf23.bingoreloaded.gui.VoteMenu;
 import io.github.steaf23.bingoreloaded.gui.base.MenuItem;
 import io.github.steaf23.bingoreloaded.gui.base.MenuManager;
+import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import io.github.steaf23.bingoreloaded.settings.SettingsPreviewBoard;
 import io.github.steaf23.bingoreloaded.util.Message;
@@ -20,6 +21,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -70,11 +72,25 @@ public class PregameLobby implements GamePhase
         }
 
         VoteTicket ticket = votes.getOrDefault(player.getUniqueId(), new VoteTicket());
-
-        if (!gamemode.equals(ticket.gamemode)) {
-            ticket.gamemode = gamemode;
+        if (gamemode.equals(ticket.gamemode)) {
+            return;
         }
+
+        ticket.gamemode = gamemode;
         votes.put(player.getUniqueId(), ticket);
+
+        int count = 0;
+        for (VoteTicket t : votes.values()) {
+            if (t.gamemode.equals(gamemode)) {
+                count++;
+            }
+        }
+
+        String[] tuple = gamemode.split("_");
+        if (tuple.length != 2) {
+            return;
+        }
+        sendVoteCountMessage(count, BingoGamemode.fromDataString(tuple[0]).displayName + " " + tuple[1] + "x" + tuple[1]);
     }
 
     public void voteCard(String card, HumanEntity player) {
@@ -84,11 +100,20 @@ public class PregameLobby implements GamePhase
         }
 
         VoteTicket ticket = votes.getOrDefault(player.getUniqueId(), new VoteTicket());
-
-        if (!card.equals(ticket.card)) {
-            ticket.card = card;
+        if (card.equals(ticket.card)) {
+            return;
         }
+
+        ticket.card = card;
         votes.put(player.getUniqueId(), ticket);
+
+        int count = 0;
+        for (VoteTicket t : votes.values()) {
+            if (t.card.equals(card)) {
+                count++;
+            }
+        }
+        sendVoteCountMessage(count, card);
     }
 
     public void voteKit(String kit, HumanEntity player) {
@@ -98,11 +123,25 @@ public class PregameLobby implements GamePhase
         }
 
         VoteTicket ticket = votes.getOrDefault(player.getUniqueId(), new VoteTicket());
-
-        if (!kit.equals(ticket.kit)) {
-            ticket.kit = kit;
+        if (kit.equals(ticket.kit)) {
+            return;
         }
+
+        ticket.kit = kit;
         votes.put(player.getUniqueId(), ticket);
+
+        int count = 0;
+        for (VoteTicket t : votes.values()) {
+            if (t.kit.equals(kit)) {
+                count++;
+            }
+        }
+        sendVoteCountMessage(count, PlayerKit.fromConfig(kit).getDisplayName());
+    }
+
+    public void sendVoteCountMessage(int count, String voteItem) {
+        new TranslatedMessage(BingoTranslation.VOTE_COUNT).arg(String.valueOf(count)).color(ChatColor.GOLD).arg(voteItem)
+                .sendAll(session);
     }
 
     public VoteTicket getVoteResult() {

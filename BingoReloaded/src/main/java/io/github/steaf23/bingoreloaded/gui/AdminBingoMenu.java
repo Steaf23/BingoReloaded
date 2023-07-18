@@ -114,7 +114,6 @@ public class AdminBingoMenu extends BasicMenu
 
     private void cardSelected(String cardName) {
         if (cardName == null) return;
-        new TranslatedMessage(BingoTranslation.CARD_SELECTED).color(ChatColor.GOLD).arg(cardName).sendAll(session);
         session.settingsBuilder.card(cardName);
     }
 }

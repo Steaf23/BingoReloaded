@@ -1,9 +1,9 @@
 package io.github.steaf23.bingoreloaded.settings;
 
+import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.event.BingoSettingsUpdatedEvent;
-import io.github.steaf23.bingoreloaded.player.BingoPlayer;
-import io.github.steaf23.bingoreloaded.settings.BingoSettings;
 import io.github.steaf23.bingoreloaded.util.InfoScoreboard;
+import io.github.steaf23.bingoreloaded.util.TranslatedMessage;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -24,7 +24,8 @@ public class SettingsPreviewBoard extends InfoScoreboard
 
     public void handleSettingsUpdated(final BingoSettingsUpdatedEvent event)
     {
-       showSettings(event.getNewSettings());
+        new TranslatedMessage(BingoTranslation.SETTINGS_UPDATED).sendAll(event.getSession());
+        showSettings(event.getNewSettings());
     }
 
     public void showSettings(BingoSettings settings)
@@ -33,9 +34,9 @@ public class SettingsPreviewBoard extends InfoScoreboard
         setLineText(0, " ");
         setLineText(2, " ");
         setLineText(3,  ChatColor.BOLD + "Gamemode:");
-        setLineText(4, " - " + settings.mode().name + " " + settings.size().size + "x" + settings.size().size);
+        setLineText(4, " - " + settings.mode().displayName + " " + settings.size().size + "x" + settings.size().size);
         setLineText(5, ChatColor.BOLD + "Kit:");
-        setLineText(6, " - " + settings.kit().displayName);
+        setLineText(6, " - " + settings.kit().getDisplayName());
         setLineText(7, ChatColor.BOLD + "Effects:");
         int idx = 8;
         if (settings.effects().size() == 0)

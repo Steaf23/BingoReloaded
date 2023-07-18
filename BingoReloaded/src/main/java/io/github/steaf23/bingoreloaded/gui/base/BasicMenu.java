@@ -19,6 +19,8 @@ import java.util.function.Consumer;
 
 public class BasicMenu implements Menu
 {
+    public static String pluginTitlePrefix = "";
+
     private static int ID_COUNTER = 0;
 
     protected static final String TITLE_PREFIX = "" + ChatColor.GOLD + ChatColor.BOLD;
@@ -32,11 +34,11 @@ public class BasicMenu implements Menu
     private final Map<String, Consumer<HumanEntity>> actions;
 
     public BasicMenu(MenuManager manager, String initialTitle, int rows) {
-        this(manager, Bukkit.createInventory(null, rows * 9, initialTitle));
+        this(manager, Bukkit.createInventory(null, rows * 9, pluginTitlePrefix + initialTitle));
     }
 
     public BasicMenu(MenuManager manager, String initialTitle, InventoryType type) {
-        this(manager, Bukkit.createInventory(null, type, initialTitle));
+        this(manager, Bukkit.createInventory(null, type, pluginTitlePrefix + initialTitle));
     }
 
     // Used for common setup

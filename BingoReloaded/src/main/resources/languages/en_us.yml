@@ -17,21 +17,15 @@ game:
   timer:
     duration: "Game duration: {0}" # 0: total game time duration
     time_left: "Time remaining: {0}" # 0: total game time left (for Countdown cards)
-  settings:
-    kit_selected: "Selected {0} player kit" # 0: selected kit (see "kit") below
-    effects_selected: "Selected Effect options, view them in the /bingo options"
-    regular_selected: "Selected Regular Bingo. Complete one line to win (horizontal, vertical or diagonal)!"
-    lockout_selected: "Selected Lockout Bingo. Compete to complete the majority of the card to win!"
-    complete_selected: "Selected Complete-All Bingo. Complete all tasks on the card to win!"
-    card_selected: "Selected '{0}' as the playing Bingo card!" # 0: card name
-    cardsize: "Chosen card size: {0}" # 0: card size
   lobby:
+    settings_updated: "Game settings have been updated, check the scoreboard!"
     wait_status: "Waiting for players..."
     player_status: "{0} player(s) joined a team" # 0: player count
     starting_status: "Game starting in {0} seconds!" # 0: starting time (seconds)
     vote_kit: "Vote for a Kit"
     vote_gamemode: "Vote for a Gamemode"
     vote_card: "Vote for a Card"
+    vote_count: "{0} player(s) voted for {1}" # 0: player count, 1: vote item
   start:
     no_players: "Bingo could not be started since nobody joined :("
     already_started: "Cannot start a game of Bingo when there is already one active!"

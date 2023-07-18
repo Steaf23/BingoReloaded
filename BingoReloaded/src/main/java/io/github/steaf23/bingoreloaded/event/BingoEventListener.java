@@ -40,16 +40,17 @@ public class BingoEventListener implements Listener
     @EventHandler
     public void handleBingoGameEnded(final BingoEndedEvent event)
     {
-        if (event.session != null)
+        if (event.getSession() != null)
         {
-            event.session.handleGameEnded(event);
+            event.getSession().handleGameEnded(event);
         }
     }
 
     @EventHandler
     public void handleBingoTaskComplete(final BingoCardTaskCompleteEvent event)
     {
-        BingoGame game = event.session != null && event.session.isRunning() ? (BingoGame)event.session.phase() : null;
+        BingoSession session = event.getSession();
+        BingoGame game = session != null && session.isRunning() ? (BingoGame)session.phase() : null;
         if (game != null)
         {
             game.handleBingoTaskComplete(event);
@@ -136,7 +137,7 @@ public class BingoEventListener implements Listener
     @EventHandler
     public void handleCountdownFinished(final CountdownTimerFinishedEvent event)
     {
-        BingoGame game = event.session != null && event.session.isRunning() ? (BingoGame)event.session.phase() : null;
+        BingoGame game = event.getSession() != null && event.getSession().isRunning() ? (BingoGame)event.getSession().phase() : null;
         if (game != null)
         {
             game.handleCountdownFinished(event);
@@ -249,7 +250,8 @@ public class BingoEventListener implements Listener
         if (disableStatistics)
             return;
 
-        BingoGame game = event.session != null && event.session.isRunning() ? (BingoGame)event.session.phase() : null;
+        BingoSession session = event.getSession();
+        BingoGame game = session != null && session.isRunning() ? (BingoGame)session.phase() : null;
         if (game != null)
         {
             game.getCardEventManager().handleStatisticCompleted(event, game);
@@ -272,37 +274,37 @@ public class BingoEventListener implements Listener
     @EventHandler
     public void handleSettingsUpdated(final BingoSettingsUpdatedEvent event)
     {
-        event.session.handleSettingsUpdated(event);
+        event.getSession().handleSettingsUpdated(event);
     }
 
     @EventHandler
     public void handlePlayerJoinedSessionWorld(final PlayerJoinedSessionWorldEvent event)
     {
-        event.session.handlePlayerJoinedSessionWorld(event);
-        event.session.phase().handlePlayerJoinedSessionWorld(event);
-        event.session.scoreboard.handlePlayerJoin(event);
-        event.session.teamManager.handlePlayerJoinedSessionWorld(event);
+        event.getSession().handlePlayerJoinedSessionWorld(event);
+        event.getSession().phase().handlePlayerJoinedSessionWorld(event);
+        event.getSession().scoreboard.handlePlayerJoin(event);
+        event.getSession().teamManager.handlePlayerJoinedSessionWorld(event);
     }
 
     @EventHandler
     public void handlePlayerLeftSessionWorld(final PlayerLeftSessionWorldEvent event)
     {
-        event.session.handlePlayerLeftSessionWorld(event);
-        event.session.phase().handlePlayerLeftSessionWorld(event);
-        event.session.scoreboard.handlePlayerLeave(event);
-        event.session.teamManager.handlePlayerLeftSessionWorld(event);
+        event.getSession().handlePlayerLeftSessionWorld(event);
+        event.getSession().phase().handlePlayerLeftSessionWorld(event);
+        event.getSession().scoreboard.handlePlayerLeave(event);
+        event.getSession().teamManager.handlePlayerLeftSessionWorld(event);
     }
 
     @EventHandler
     public void handleParticipantJoinedTeam(final ParticipantJoinedTeamEvent event) {
-        if (event.session.phase() instanceof PregameLobby lobby) {
+        if (event.getSession().phase() instanceof PregameLobby lobby) {
             lobby.handleParticipantJoinedTeam(event);
         }
     }
 
     @EventHandler
     public void handleParticipantLeftTeam(final ParticipantLeftTeamEvent event) {
-        if (event.session.phase() instanceof PregameLobby lobby) {
+        if (event.getSession().phase() instanceof PregameLobby lobby) {
             lobby.handleParticipantLeftTeam(event);
         }
     }

@@ -204,7 +204,7 @@ public class BingoTask
         {
             case ADVANCEMENT -> new BingoTask(AdvancementTask.fromPdc(pdcData));
             case STATISTIC -> new BingoTask(StatisticTask.fromPdc(pdcData));
-            default ->  new BingoTask(ItemTask.fromPdc(pdcData));
+            default -> new BingoTask(ItemTask.fromPdc(pdcData));
         };
 
         task.voided = voided;

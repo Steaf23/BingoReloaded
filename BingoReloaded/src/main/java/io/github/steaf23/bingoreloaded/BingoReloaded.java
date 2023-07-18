@@ -12,6 +12,7 @@ import io.github.steaf23.bingoreloaded.gameloop.multiple.MultiAutoBingoCommand;
 import io.github.steaf23.bingoreloaded.gameloop.multiple.MultiGameManager;
 import io.github.steaf23.bingoreloaded.gameloop.singular.SimpleAutoBingoCommand;
 import io.github.steaf23.bingoreloaded.gameloop.singular.SingularGameManager;
+import io.github.steaf23.bingoreloaded.gui.base.BasicMenu;
 import io.github.steaf23.bingoreloaded.gui.base.MenuItem;
 import io.github.steaf23.bingoreloaded.hologram.HologramManager;
 import io.github.steaf23.bingoreloaded.hologram.HologramPlacer;
@@ -24,6 +25,7 @@ import io.github.steaf23.bingoreloaded.tasks.statistics.BingoStatistic;
 import io.github.steaf23.bingoreloaded.util.Message;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
+import org.bukkit.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.command.*;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
@@ -57,9 +59,11 @@ public class BingoReloaded extends JavaPlugin
 
     @Override
     public void onEnable() {
-        // Kinda ugly, but we can assume there will only be one instance of this class anyways.
+        // Kinda ugly, but we can assume there will only be one instance of this class anyway.
         instance = this;
         usesPlaceholderAPI = Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null;
+
+        BasicMenu.pluginTitlePrefix = Message.PREFIX_STRING_SHORT + " " + ChatColor.DARK_RED;
 
         ConfigurationSerialization.registerClass(BingoSettings.class);
         ConfigurationSerialization.registerClass(ItemTask.class);
@@ -147,6 +151,10 @@ public class BingoReloaded extends JavaPlugin
             BingoStatData statsData = new BingoStatData();
             statsData.incrementPlayerStat(player, stat);
         }
+    }
+
+    public static boolean areAdvancementsDisabled() {
+        return !Bukkit.advancementIterator().hasNext() || Bukkit.advancementIterator().next() == null;
     }
 
     public static BingoReloaded getInstance() {

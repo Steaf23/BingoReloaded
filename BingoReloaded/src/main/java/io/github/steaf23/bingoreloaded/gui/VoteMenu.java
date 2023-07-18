@@ -37,54 +37,60 @@ public class VoteMenu extends BasicMenu
             if (voteList.gamemodes.contains("regular_5"))
             {
                 gamemodeOptions.addAction(new MenuItem(itemIndex, Material.LIME_CONCRETE,
-                        ChatColor.BOLD + BingoGamemode.REGULAR.name + " - 5x5",
+                        ChatColor.BOLD + BingoGamemode.REGULAR.displayName + " - 5x5",
                         BingoTranslation.INFO_REGULAR_DESC.translate().split("\\n")), (player) -> {
                     lobby.voteGamemode("regular_5", player);
+                    gamemodeOptions.close(player);
                 });
                 itemIndex++;
             }
             if (voteList.gamemodes.contains("regular_3"))
             {
                 gamemodeOptions.addAction(new MenuItem(itemIndex, Material.GREEN_CONCRETE,
-                        ChatColor.BOLD + BingoGamemode.REGULAR.name + " - 3x3",
+                        ChatColor.BOLD + BingoGamemode.REGULAR.displayName + " - 3x3",
                         BingoTranslation.INFO_REGULAR_DESC.translate().split("\\n")), (player) -> {
                     lobby.voteGamemode("regular_3", player);
+                    gamemodeOptions.close(player);
                 });
                 itemIndex++;
             }
             if (voteList.gamemodes.contains("lockout_5"))
             {
                 gamemodeOptions.addAction(new MenuItem(itemIndex, Material.PINK_CONCRETE,
-                        ChatColor.BOLD + BingoGamemode.LOCKOUT.name + " - 5x5",
+                        ChatColor.BOLD + BingoGamemode.LOCKOUT.displayName + " - 5x5",
                         BingoTranslation.INFO_LOCKOUT_DESC.translate().split("\\n")), (player) -> {
                     lobby.voteGamemode("lockout_5", player);
+                    gamemodeOptions.close(player);
                 });
                 itemIndex++;
             }
             if (voteList.gamemodes.contains("lockout_3"))
             {
                 gamemodeOptions.addAction(new MenuItem(itemIndex, Material.PURPLE_CONCRETE,
-                        ChatColor.BOLD + BingoGamemode.LOCKOUT.name + " - 3x3",
+                        ChatColor.BOLD + BingoGamemode.LOCKOUT.displayName + " - 3x3",
                         BingoTranslation.INFO_LOCKOUT_DESC.translate().split("\\n")), (player) -> {
                     lobby.voteGamemode("lockout_3", player);
+                    gamemodeOptions.close(player);
                 });
                 itemIndex++;
             }
             if (voteList.gamemodes.contains("complete_5"))
             {
                 gamemodeOptions.addAction(new MenuItem(itemIndex, Material.LIGHT_BLUE_CONCRETE,
-                        ChatColor.BOLD + BingoGamemode.COMPLETE.name + " - 5x5",
+                        ChatColor.BOLD + BingoGamemode.COMPLETE.displayName + " - 5x5",
                         BingoTranslation.INFO_COMPLETE_DESC.translate().split("\\n")), (player) -> {
                     lobby.voteGamemode("complete_5", player);
+                    gamemodeOptions.close(player);
                 });
                 itemIndex++;
             }
             if (voteList.gamemodes.contains("complete_3"))
             {
                 gamemodeOptions.addAction(new MenuItem(itemIndex, Material.BLUE_CONCRETE,
-                        ChatColor.BOLD + BingoGamemode.COMPLETE.name + " - 3x3",
+                        ChatColor.BOLD + BingoGamemode.COMPLETE.displayName + " - 3x3",
                         BingoTranslation.INFO_COMPLETE_DESC.translate().split("\\n")), (player) -> {
                     lobby.voteGamemode("complete_3", player);
+                    gamemodeOptions.close(player);
                 });
                 itemIndex++;
             }
@@ -103,44 +109,49 @@ public class VoteMenu extends BasicMenu
             if (voteList.kits.contains("hardcore"))
             {
                 kitOptions.addAction(new MenuItem(itemIndex, Material.RED_DYE,
-                        PlayerKit.HARDCORE.displayName,
+                        PlayerKit.HARDCORE.getDisplayName(),
                         BingoTranslation.KIT_HARDCORE_DESC.translate().split("\\n")).setGlowing(true), (player) -> {
                     lobby.voteKit(PlayerKit.HARDCORE.configName, player);
+                    kitOptions.close(player);
                 });
                 itemIndex++;
             }
             if (voteList.kits.contains("normal"))
             {
                 kitOptions.addAction(new MenuItem(itemIndex, Material.YELLOW_DYE,
-                        PlayerKit.NORMAL.displayName,
+                        PlayerKit.NORMAL.getDisplayName(),
                         BingoTranslation.KIT_NORMAL_DESC.translate().split("\\n")).setGlowing(true), (player) -> {
                     lobby.voteKit(PlayerKit.NORMAL.configName, player);
+                    kitOptions.close(player);
                 });
                 itemIndex++;
             }
             if (voteList.kits.contains("overpowered"))
             {
                 kitOptions.addAction(new MenuItem(itemIndex, Material.PURPLE_DYE,
-                        PlayerKit.OVERPOWERED.displayName,
+                        PlayerKit.OVERPOWERED.getDisplayName(),
                         BingoTranslation.KIT_OVERPOWERED_DESC.translate().split("\\n")).setGlowing(true), (player) -> {
                     lobby.voteKit(PlayerKit.OVERPOWERED.configName, player);
+                    kitOptions.close(player);
                 });
                 itemIndex++;
             }
             if (voteList.kits.contains("reloaded"))
             {
                 kitOptions.addAction(new MenuItem(itemIndex, Material.CYAN_DYE,
-                        PlayerKit.RELOADED.displayName,
+                        PlayerKit.RELOADED.getDisplayName(),
                         BingoTranslation.KIT_RELOADED_DESC.translate().split("\\n")).setGlowing(true), (player) -> {
                     lobby.voteKit(PlayerKit.RELOADED.configName, player);
+                    kitOptions.close(player);
                 });
                 itemIndex++;
             }
 
             BiConsumer<PlayerKit, Integer> addCustomKit = (kit, slot) -> {
                 kitOptions.addAction(new MenuItem(slot, Material.GRAY_DYE,
-                        kit.displayName).setGlowing(true), (player) -> {
+                        kit.getDisplayName()).setGlowing(true), (player) -> {
                     lobby.voteKit(kit.configName, player);
+                    kitOptions.close(player);
                 });
             };
 
@@ -191,6 +202,7 @@ public class VoteMenu extends BasicMenu
                 // Add the menu item to the cardOptions menu
                 cardOptions.addAction(menuItem, (player) -> {
                     lobby.voteCard(card, player);
+                    cardOptions.close(player);
                 });
 
                 itemIndex++;

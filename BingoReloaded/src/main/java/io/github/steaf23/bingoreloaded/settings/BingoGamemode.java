@@ -9,12 +9,12 @@ public enum BingoGamemode
     COMPLETE(ChatColor.DARK_AQUA + "Complete-All", "complete"),
     ;
 
-    public final String name;
+    public final String displayName;
     private final String dataName;
 
-    BingoGamemode(String name, String dataName)
+    BingoGamemode(String displayName, String dataName)
     {
-        this.name = name;
+        this.displayName = displayName;
         this.dataName = dataName;
     }
 
