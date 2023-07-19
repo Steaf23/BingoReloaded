@@ -7,6 +7,7 @@ import io.github.steaf23.bingoreloaded.event.*;
 import io.github.steaf23.bingoreloaded.gui.base.MenuManager;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.TeamManager;
+import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
 import io.github.steaf23.bingoreloaded.settings.BingoSettingsBuilder;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
@@ -48,10 +49,6 @@ public class BingoSession
         this.teamManager = new TeamManager(scoreboard.getTeamBoard(), this);
 
         BingoReloaded.scheduleTask((t) -> {
-            this.teamManager.addVirtualPlayerToTeam("testPlayer", "orange");
-        }, 10);
-
-        BingoReloaded.scheduleTask((t) -> {
             for (Player p : Bukkit.getOnlinePlayers()) {
                 if (BingoReloaded.getWorldNameOfDimension(p.getWorld()).equals(worldName)) {
                     var playerJoinEvent = new PlayerJoinedSessionWorldEvent(p, this, p.getLocation(), p.getLocation(), true);
@@ -82,6 +79,18 @@ public class BingoSession
         if (config.useVoteSystem) {
             PregameLobby.VoteTicket voteResult = lobby.getVoteResult();
             gameSettings = settingsBuilder.getVoteResult(voteResult);
+            new Message(" ").sendAll(this);
+            if (!voteResult.gamemode.isEmpty()) {
+                var tuple = voteResult.gamemode.split("_");
+                new TranslatedMessage(BingoTranslation.VOTE_WON).arg(BingoTranslation.OPTIONS_GAMEMODE.translate()).arg(BingoGamemode.fromDataString(tuple[0] + " " + tuple[1] + "x" + tuple[1]).displayName).sendAll(this);
+            }
+            if (!voteResult.kit.isEmpty()) {
+                new TranslatedMessage(BingoTranslation.VOTE_WON).arg(BingoTranslation.OPTIONS_KIT.translate()).arg(PlayerKit.fromConfig(voteResult.kit).getDisplayName()).sendAll(this);
+            }
+            if (!voteResult.card.isEmpty()) {
+                new TranslatedMessage(BingoTranslation.VOTE_WON).arg(BingoTranslation.OPTIONS_CARD.translate()).arg(voteResult.card).sendAll(this);
+            }
+            new Message(" ").sendAll(this);
         }
 
         teamManager.addAutoPlayersToTeams();

@@ -25,7 +25,8 @@ game:
     vote_kit: "Vote for a Kit"
     vote_gamemode: "Vote for a Gamemode"
     vote_card: "Vote for a Card"
-    vote_count: "{0} player(s) voted for {1}" # 0: player count, 1: vote item
+    vote_count: "{0} player(s) voted for {1} {2}" # 0: player count, 1: vote category, 2: vote item
+    vote_won: "{0} {1} received the most votes!" # 0: vote category, 1: vote item
   start:
     no_players: "Bingo could not be started since nobody joined :("
     already_started: "Cannot start a game of Bingo when there is already one active!"
@@ -85,18 +86,15 @@ menu:
     info_complete:
       name: "Complete-All Bingo Card"
       desc: "First team to complete all tasks wins."
-    info_countdown:
-      name: "Countdown Bingo Card"
-      desc: "Race to complete the most tasks. \nA deathmatch will be the deciding factor in a tie after time runs out!"
   options:
     title: "Options Menu"
     start: "Start The Game"
     end: "End The Game"
     team: "Join A Team"
     leave: "Leave The Game"
-    kit: "Starting Kit"
-    card: "Select Card"
-    mode: "Change Gamemode"
+    kit: "Kit"
+    card: "Card"
+    mode: "Gamemode"
     effects: "Player Effects"
     vote: "Vote For Settings"
   effects:

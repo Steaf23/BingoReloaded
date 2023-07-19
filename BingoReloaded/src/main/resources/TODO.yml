@@ -14,10 +14,6 @@
 
 (2.1) Fix bingo creator not showing updated lists/cards immediately after creating them (only after reopening menu)
 
+(2.1) vote item does not appear when starting server sometimes
+
 Update Readme.md BEFORE RELEASE
-
-double check if settingsboard status gets updated
-
-vote item does not appear when starting server
-
-add vote message tranlations

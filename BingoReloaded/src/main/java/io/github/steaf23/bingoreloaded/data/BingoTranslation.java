@@ -29,6 +29,7 @@ public enum BingoTranslation
     VOTE_KIT("game.lobby.vote_kit"),
     VOTE_CARD("game.lobby.vote_card"),
     VOTE_COUNT("game.lobby.vote_count"),
+    VOTE_WON("game.lobby.vote_won"),
     NO_PLAYERS("game.start.no_players"),
     ALREADY_STARTED("game.start.already_started"),
     GIVE_CARDS("game.start.give_cards"),

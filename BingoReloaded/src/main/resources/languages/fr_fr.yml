@@ -25,6 +25,8 @@ game:
     vote_kit: "Votez pour un kit"
     vote_gamemode: "Votez pour un mode de jeu"
     vote_card: "Votez pour une carte"
+    vote_count: "{0} joueurs ont voté pour {1} {2}" # 0: player count, 1: vote category, 2: vote item
+    vote_won: "{0} {1} a reçu le plus de votes!" # 0: vote category, 1: vote item
   start:
     no_players: "Le Bingo ne peut pas démarrer car aucun joueur n'a rejoint la partie :("
     already_started: "Impossible de démarrer une nouvelle partie car il y en a une déjà en cours!"
@@ -84,17 +86,14 @@ menu:
     info_complete:
       name: "Grille de Bingo intégrale"
       desc: "La première équipe à compléter la totalité de la grille gagne."
-    info_countdown:
-      name: "Grille de Bingo Compte à rebours"
-      desc: "Race to complete the most tasks. \nA deathmatch will be the deciding factor in a tie after time runs out!"
   options:
     title: "Options"
     start: "Démarrer la partie"
     end: "Terminer la partie"
     team: "Rejoindre une équipe"
     leave: "Quitter la partie"
-    kit: "Kit de démarrage"
-    card: "Sélectionner une grille"
+    kit: "Kit"
+    card: "Carte"
     mode: "Mode de jeu"
     effects: "Effets"
     vote: "Vote"

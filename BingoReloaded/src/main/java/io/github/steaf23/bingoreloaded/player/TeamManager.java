@@ -82,7 +82,10 @@ public class TeamManager
 
     public void openTeamSelector(MenuManager menuManager, Player player) {
         List<MenuItem> optionItems = new ArrayList<>();
-        optionItems.add(new MenuItem(Material.NETHER_STAR, "" + ChatColor.BOLD + ChatColor.ITALIC + BingoTranslation.TEAM_AUTO.translate()).setCompareKey("auto"));
+        optionItems.add(new MenuItem(Material.NETHER_STAR, "" + ChatColor.BOLD + ChatColor.ITALIC + BingoTranslation.TEAM_AUTO.translate())
+                .setCompareKey("item_auto"));
+        optionItems.add(new MenuItem(Material.TNT, "" + ChatColor.BOLD + ChatColor.ITALIC + BingoTranslation.OPTIONS_LEAVE.translate())
+                .setGlowing(true).setCompareKey("item_leave"));
 
         var allTeams = teamData.getTeams();
         for (String teamId : allTeams.keySet()) {
@@ -125,8 +128,13 @@ public class TeamManager
         {
             @Override
             public void onOptionClickedDelegate(InventoryClickEvent event, MenuItem clickedOption, HumanEntity player) {
-                if (clickedOption.getCompareKey().equals("auto")) {
+                if (clickedOption.getCompareKey().equals("item_auto")) {
                     addPlayerToAutoTeam((Player) player);
+                    openTeamSelector(menuManager, (Player) player);
+                    return;
+                }
+                else if (clickedOption.getCompareKey().equals("item_leave")) {
+                    removeMemberFromTeam((Player) player);
                     openTeamSelector(menuManager, (Player) player);
                     return;
                 }

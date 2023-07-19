@@ -25,6 +25,8 @@ game:
     vote_kit: "Stem op een Kit"
     vote_gamemode: "Stem op een Spelmodus"
     vote_card: "Stem op een Kaart"
+    vote_count: "{0} spelers hebben gestemd op {1} {2}" # 0: player count, 1: vote category, 2: vote item
+    vote_won: "{0} {1} kreeg de meeste stemmen!" # 0: vote category, 1: vote item
   start:
     no_players: "Bingo kan niet gestart worden als er niemand gejoined is :(."
     already_started: "Bingo kan niet gestart worden omdat er al een spel bezig is"
@@ -84,18 +86,15 @@ menu:
     info_complete:
       name: "Volle Bingo Kaart"
       desc: "Het eerste team met een volle kaart wint."
-    info_countdown:
-      name: "Countdown Bingo Kaart"
-      desc: "Strijd voor de meeste taken binnen de gegeven tijd. \nEen deathmatch zal de winnaar bekend maken bij gelijkspel!"
   options:
     title: "Opties"
     start: "Start Het Spel"
     end: "Beëindig Het Spel"
     team: "Kies Een Team"
     leave: "Verlaat Het Spel"
-    kit: "Kies Kits"
-    card: "Kies De Kaart"
-    mode: "Kies De Gamemode"
+    kit: "Uitrusting"
+    card: "Kaart"
+    mode: "Spelmodus"
     effects: "Effecten"
     vote: "Stem voor instellingen"
   effects:
