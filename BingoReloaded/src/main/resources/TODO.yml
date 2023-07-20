@@ -16,9 +16,6 @@
 
 (2.1) vote item does not appear when starting server sometimes
 
-Update Readme.md BEFORE RELEASE
-
-Update to 1.120 BEFORE RELEASE
-
-players leaving autoteam dont get reported to setting preview.. (does not get removed as participant?)
-
+(2.1) Auto team is not treated like a proper team, meaning events involving auto team will be convoluted and leave participants as null
+(participants cannot be made from the autoteam)
+adding a participantCountChanged event would help with a lot of this probably

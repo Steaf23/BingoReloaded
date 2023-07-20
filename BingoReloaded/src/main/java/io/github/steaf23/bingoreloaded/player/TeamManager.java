@@ -339,23 +339,32 @@ public class TeamManager
         return true;
     }
 
-    public boolean removeMemberFromTeam(Player player) {
+    public void removeMemberFromTeam(Player player) {
+        // TODO: this does not work for virtual players!
+        // Make sure to call event even if player was part of auto team
+        if (automaticTeamPlayers.contains(player.getUniqueId()))
+        {
+            automaticTeamPlayers.remove(player.getUniqueId());
+            autoVirtualPlayers.remove(player.getUniqueId());
+
+            var leaveEvent = new ParticipantLeftTeamEvent(null, session);
+            Bukkit.getPluginManager().callEvent(leaveEvent);
+            return;
+        }
+
         BingoParticipant participant = getBingoParticipant(player);
         if (participant != null) {
-            return removeMemberFromTeam(getBingoParticipant(player));
+            removeMemberFromTeam(getBingoParticipant(player));
         } else {
-            return false;
+            return;
         }
     }
 
     public boolean removeMemberFromTeam(BingoParticipant player) {
+        automaticTeamPlayers.remove(player.getId());
+        autoVirtualPlayers.remove(player.getId());
 
-        if (automaticTeamPlayers.contains(player.getId()))
-        {
-            automaticTeamPlayers.remove(player.getId());
-            autoVirtualPlayers.remove(player.getId());
-        }
-        else if (getParticipants().contains(player)) {
+        if (getParticipants().contains(player)) {
             player.getTeam().removeMember(player);
         }
         else {
