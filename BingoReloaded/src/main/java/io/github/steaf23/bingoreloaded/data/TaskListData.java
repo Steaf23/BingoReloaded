@@ -13,11 +13,11 @@ import java.util.stream.Collectors;
 
 
 /**
- * This class is used to interface with the lists.yml file.
+ * This class is used to interface with the lists_x.yml file.
  */
 public class TaskListData
 {
-    private final YmlDataManager data = BingoReloaded.createYmlDataManager("data/lists.yml");
+    private final YmlDataManager data = BingoReloaded.createYmlDataManager("data/" + BingoReloaded.getDefaultTasksVersion());
 
     public Set<TaskData> getTasks(String listName, boolean withStatistics, boolean withAdvancements)
     {
@@ -103,7 +103,7 @@ public class TaskListData
     }
 
     /**
-     * @return All the list names present in the lists.yml file.
+     * @return All the list names present in the lists_x.yml file.
      */
     public Set<String> getListNames()
     {

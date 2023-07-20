@@ -160,6 +160,9 @@ public class TeamManager
 
         BingoTeam bingoTeam = activateTeamFromName(teamName);
 
+        if (bingoTeam.hasPlayer(player)) {
+            return false;
+        }
         if (bingoTeam == null) {
             return false;
         }
@@ -186,6 +189,11 @@ public class TeamManager
         BingoParticipant participant = getBingoParticipant(player);
         if (participant != null)
             removeMemberFromTeam(participant);
+
+
+        if (automaticTeamPlayers.contains(player.getUniqueId())) {
+            return true;
+        }
 
         automaticTeamPlayers.add(player.getUniqueId());
         new TranslatedMessage(BingoTranslation.JOIN_AUTO).color(ChatColor.GREEN).send(player);
@@ -234,9 +242,9 @@ public class TeamManager
         HashSet<UUID> autoPlayersCopy = new HashSet<>(automaticTeamPlayers);
         // Since we need to remove players from this list as we are iterating, use a direct reference to the iterator.
         for (UUID playerId : autoPlayersCopy) {
-            TeamCount lowest = counts.get(0);
+            TeamCount lowest = counts.size() > 0 ? counts.get(0) : null;
             // If our lowest count is the same as the highest count, all incomplete teams have been filled
-            if (lowest.count == maxTeamSize) {
+            if (counts.size() == 0 || lowest.count == maxTeamSize) {
                 // If there are still players left in the queue, create a new team
                 if (automaticTeamPlayers.size() > 0) {
                     BingoTeam newTeam = activateAnyTeam();
@@ -341,13 +349,19 @@ public class TeamManager
     }
 
     public boolean removeMemberFromTeam(BingoParticipant player) {
-        automaticTeamPlayers.remove(player.getId());
-        autoVirtualPlayers.remove(player.getId());
 
-        if (!getParticipants().contains(player))
+        if (automaticTeamPlayers.contains(player.getId()))
+        {
+            automaticTeamPlayers.remove(player.getId());
+            autoVirtualPlayers.remove(player.getId());
+        }
+        else if (getParticipants().contains(player)) {
+            player.getTeam().removeMember(player);
+        }
+        else {
             return false;
+        }
 
-        player.getTeam().removeMember(player);
         var leaveEvent = new ParticipantLeftTeamEvent(player, player.getTeam(), session);
         Bukkit.getPluginManager().callEvent(leaveEvent);
         return true;

@@ -41,6 +41,10 @@ import java.util.function.Function;
 
 public class BingoReloaded extends JavaPlugin
 {
+    public static final String CARD_1_18 = "lists_1_18.yml";
+    public static final String CARD_1_19 = "lists_1_19.yml";
+    public static final String CARD_1_20 = "lists_1_20.yml";
+
     // Amount of ticks per second.
     public static final int ONE_SECOND = 20;
     public static boolean usesPlaceholderAPI = false;
@@ -170,5 +174,19 @@ public class BingoReloaded extends JavaPlugin
             Bukkit.getScheduler().runTask(instance, task);
         else
             Bukkit.getScheduler().runTaskLater(instance, task, delay);
+    }
+
+    public static String getDefaultTasksVersion() {
+        String version = Bukkit.getVersion();
+        if (version.contains("(MC: 1.18")) {
+            return CARD_1_18;
+        }
+        else if (version.contains("(MC: 1.19")) {
+            return CARD_1_19;
+        }
+        else if (version.contains("(MC: 1.20")) {
+            return CARD_1_20;
+        }
+        return CARD_1_18;
     }
 }

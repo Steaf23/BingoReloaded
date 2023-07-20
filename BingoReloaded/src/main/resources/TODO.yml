@@ -17,3 +17,8 @@
 (2.1) vote item does not appear when starting server sometimes
 
 Update Readme.md BEFORE RELEASE
+
+Update to 1.120 BEFORE RELEASE
+
+players leaving autoteam dont get reported to setting preview.. (does not get removed as participant?)
+

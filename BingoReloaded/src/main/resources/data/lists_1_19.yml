@@ -1,0 +1,749 @@
+default_items:
+  tasks:
+    - ==: Bingo.ItemTask
+      item: LOOM
+      count: 1
+    - ==: Bingo.ItemTask
+      item: ECHO_SHARD
+      count: 1
+    - ==: Bingo.ItemTask
+      item: HANGING_ROOTS
+      count: 1
+    - ==: Bingo.ItemTask
+      item: NOTE_BLOCK
+      count: 4
+    - ==: Bingo.ItemTask
+      item: MANGROVE_WOOD
+      count: 1
+    - ==: Bingo.ItemTask
+      item: FISHING_ROD
+      count: 1
+    - ==: Bingo.ItemTask
+      item: SNOW_BLOCK
+      count: 1
+    - ==: Bingo.ItemTask
+      item: POISONOUS_POTATO
+      count: 1
+    - ==: Bingo.ItemTask
+      item: WATER_BUCKET
+      count: 1
+    - ==: Bingo.ItemTask
+      item: DEAD_BUSH
+      count: 1
+    - ==: Bingo.ItemTask
+      item: BLUE_CONCRETE
+      count: 1
+    - ==: Bingo.ItemTask
+      item: OAK_WOOD
+      count: 1
+    - ==: Bingo.ItemTask
+      item: GOLDEN_CHESTPLATE
+      count: 1
+    - ==: Bingo.ItemTask
+      item: COD_BUCKET
+      count: 1
+    - ==: Bingo.ItemTask
+      item: WET_SPONGE
+      count: 1
+    - ==: Bingo.ItemTask
+      item: GLOWSTONE
+      count: 1
+    - ==: Bingo.ItemTask
+      item: MUD_BRICKS
+      count: 1
+    - ==: Bingo.ItemTask
+      item: BONE_BLOCK
+      count: 1
+    - ==: Bingo.ItemTask
+      item: PAINTING
+      count: 1
+    - ==: Bingo.ItemTask
+      item: LECTERN
+      count: 1
+    - ==: Bingo.ItemTask
+      item: POINTED_DRIPSTONE
+      count: 1
+    - ==: Bingo.ItemTask
+      item: HEART_OF_THE_SEA
+      count: 1
+    - ==: Bingo.ItemTask
+      item: SANDSTONE
+      count: 4
+    - ==: Bingo.ItemTask
+      item: SHIELD
+      count: 1
+    - ==: Bingo.ItemTask
+      item: BAKED_POTATO
+      count: 1
+    - ==: Bingo.ItemTask
+      item: LAPIS_BLOCK
+      count: 1
+    - ==: Bingo.ItemTask
+      item: NETHER_WART_BLOCK
+      count: 1
+    - ==: Bingo.ItemTask
+      item: CARTOGRAPHY_TABLE
+      count: 1
+    - ==: Bingo.ItemTask
+      item: DEEPSLATE_TILES
+      count: 16
+    - ==: Bingo.ItemTask
+      item: NETHERITE_SCRAP
+      count: 1
+    - ==: Bingo.ItemTask
+      item: GREEN_CONCRETE
+      count: 1
+    - ==: Bingo.ItemTask
+      item: STONE_BRICKS
+      count: 1
+    - ==: Bingo.ItemTask
+      item: CAULDRON
+      count: 1
+    - ==: Bingo.ItemTask
+      item: FLOWER_POT
+      count: 1
+    - ==: Bingo.ItemTask
+      item: GLOW_LICHEN
+      count: 1
+    - ==: Bingo.ItemTask
+      item: BROWN_CONCRETE
+      count: 1
+    - ==: Bingo.ItemTask
+      item: GLOW_INK_SAC
+      count: 1
+    - ==: Bingo.ItemTask
+      item: JUNGLE_WOOD
+      count: 1
+    - ==: Bingo.ItemTask
+      item: DIAMOND_CHESTPLATE
+      count: 1
+    - ==: Bingo.ItemTask
+      item: FLOWERING_AZALEA
+      count: 1
+    - ==: Bingo.ItemTask
+      item: REPEATER
+      count: 1
+    - ==: Bingo.ItemTask
+      item: IRON_BARS
+      count: 1
+    - ==: Bingo.ItemTask
+      item: ENDER_PEARL
+      count: 1
+    - ==: Bingo.ItemTask
+      item: AXOLOTL_BUCKET
+      count: 1
+    - ==: Bingo.ItemTask
+      item: INK_SAC
+      count: 1
+    - ==: Bingo.ItemTask
+      item: BELL
+      count: 1
+    - ==: Bingo.ItemTask
+      item: RED_MUSHROOM
+      count: 1
+    - ==: Bingo.ItemTask
+      item: IRON_CHESTPLATE
+      count: 1
+    - ==: Bingo.ItemTask
+      item: IRON_BLOCK
+      count: 1
+    - ==: Bingo.ItemTask
+      item: SOUL_LANTERN
+      count: 1
+    - ==: Bingo.ItemTask
+      item: BAMBOO
+      count: 1
+    - ==: Bingo.ItemTask
+      item: BOW
+      count: 1
+    - ==: Bingo.ItemTask
+      item: SMOKER
+      count: 1
+    - ==: Bingo.ItemTask
+      item: REDSTONE_BLOCK
+      count: 1
+    - ==: Bingo.ItemTask
+      item: POWDER_SNOW_BUCKET
+      count: 1
+    - ==: Bingo.ItemTask
+      item: PURPLE_CONCRETE
+      count: 1
+    - ==: Bingo.ItemTask
+      item: TINTED_GLASS
+      count: 1
+    - ==: Bingo.ItemTask
+      item: SEA_PICKLE
+      count: 1
+    - ==: Bingo.ItemTask
+      item: CRIMSON_FUNGUS
+      count: 1
+    - ==: Bingo.ItemTask
+      item: IRON_HOE
+      count: 1
+    - ==: Bingo.ItemTask
+      item: LEATHER_CHESTPLATE
+      count: 1
+    - ==: Bingo.ItemTask
+      item: CROSSBOW
+      count: 1
+    - ==: Bingo.ItemTask
+      item: DETECTOR_RAIL
+      count: 6
+    - ==: Bingo.ItemTask
+      item: WARPED_FUNGUS
+      count: 1
+    - ==: Bingo.ItemTask
+      item: BOOKSHELF
+      count: 1
+    - ==: Bingo.ItemTask
+      item: STONECUTTER
+      count: 1
+    - ==: Bingo.ItemTask
+      item: DIAMOND_HOE
+      count: 1
+    - ==: Bingo.ItemTask
+      item: AMETHYST_BLOCK
+      count: 10
+    - ==: Bingo.ItemTask
+      item: FIREWORK_ROCKET
+      count: 1
+    - ==: Bingo.ItemTask
+      item: BLACK_CONCRETE
+      count: 1
+    - ==: Bingo.ItemTask
+      item: MELON
+      count: 1
+    - ==: Bingo.ItemTask
+      item: CYAN_CONCRETE
+      count: 1
+    - ==: Bingo.ItemTask
+      item: TARGET
+      count: 1
+    - ==: Bingo.ItemTask
+      item: PINK_GLAZED_TERRACOTTA
+      count: 1
+    - ==: Bingo.ItemTask
+      item: ICE
+      count: 1
+    - ==: Bingo.ItemTask
+      item: SPRUCE_WOOD
+      count: 1
+    - ==: Bingo.ItemTask
+      item: WARPED_HYPHAE
+      count: 1
+    - ==: Bingo.ItemTask
+      item: BASALT
+      count: 1
+    - ==: Bingo.ItemTask
+      item: MILK_BUCKET
+      count: 1
+    - ==: Bingo.ItemTask
+      item: HOPPER
+      count: 1
+    - ==: Bingo.ItemTask
+      item: TWISTING_VINES
+      count: 1
+    - ==: Bingo.ItemTask
+      item: EMERALD_BLOCK
+      count: 1
+    - ==: Bingo.ItemTask
+      item: ORANGE_GLAZED_TERRACOTTA
+      count: 1
+    - ==: Bingo.ItemTask
+      item: DRIED_KELP_BLOCK
+      count: 1
+    - ==: Bingo.ItemTask
+      item: SEA_LANTERN
+      count: 1
+    - ==: Bingo.ItemTask
+      item: TRAPPED_CHEST
+      count: 1
+    - ==: Bingo.ItemTask
+      item: GLOW_ITEM_FRAME
+      count: 1
+    - ==: Bingo.ItemTask
+      item: SCULK_SENSOR
+      count: 1
+    - ==: Bingo.ItemTask
+      item: DARK_OAK_WOOD
+      count: 1
+    - ==: Bingo.ItemTask
+      item: CRACKED_STONE_BRICKS
+      count: 1
+    - ==: Bingo.ItemTask
+      item: LIME_GLAZED_TERRACOTTA
+      count: 1
+    - ==: Bingo.ItemTask
+      item: MOSSY_STONE_BRICKS
+      count: 1
+    - ==: Bingo.ItemTask
+      item: ITEM_FRAME
+      count: 1
+    - ==: Bingo.ItemTask
+      item: SMITHING_TABLE
+      count: 1
+    - ==: Bingo.ItemTask
+      item: WHITE_GLAZED_TERRACOTTA
+      count: 1
+    - ==: Bingo.ItemTask
+      item: BEE_NEST
+      count: 1
+    - ==: Bingo.ItemTask
+      item: CRIMSON_HYPHAE
+      count: 1
+    - ==: Bingo.ItemTask
+      item: MOSS_BLOCK
+      count: 1
+    - ==: Bingo.ItemTask
+      item: TUFF
+      count: 64
+    - ==: Bingo.ItemTask
+      item: GRINDSTONE
+      count: 1
+    - ==: Bingo.ItemTask
+      item: NETHER_BRICKS
+      count: 1
+    - ==: Bingo.ItemTask
+      item: SUSPICIOUS_STEW
+      count: 1
+    - ==: Bingo.ItemTask
+      item: LANTERN
+      count: 1
+    - ==: Bingo.ItemTask
+      item: CHISELED_SANDSTONE
+      count: 1
+    - ==: Bingo.ItemTask
+      item: JACK_O_LANTERN
+      count: 1
+    - ==: Bingo.ItemTask
+      item: PRISMARINE
+      count: 1
+    - ==: Bingo.ItemTask
+      item: COPPER_BLOCK
+      count: 1
+    - ==: Bingo.ItemTask
+      item: BRICKS
+      count: 1
+    - ==: Bingo.ItemTask
+      item: ENCHANTING_TABLE
+      count: 1
+    - ==: Bingo.ItemTask
+      item: GOLDEN_HOE
+      count: 1
+    - ==: Bingo.ItemTask
+      item: GRAY_GLAZED_TERRACOTTA
+      count: 1
+    - ==: Bingo.ItemTask
+      item: SMOOTH_STONE
+      count: 1
+    - ==: Bingo.ItemTask
+      item: CHAIN
+      count: 1
+    - ==: Bingo.ItemTask
+      item: COOKED_RABBIT
+      count: 1
+    - ==: Bingo.ItemTask
+      item: GOLDEN_APPLE
+      count: 1
+    - ==: Bingo.ItemTask
+      item: WEEPING_VINES
+      count: 1
+    - ==: Bingo.ItemTask
+      item: GOAT_HORN
+      count: 1
+    - ==: Bingo.ItemTask
+      item: BEETROOT
+      count: 1
+    - ==: Bingo.ItemTask
+      item: JUKEBOX
+      count: 1
+    - ==: Bingo.ItemTask
+      item: CUT_SANDSTONE
+      count: 1
+    - ==: Bingo.ItemTask
+      item: BLAZE_ROD
+      count: 1
+    - ==: Bingo.ItemTask
+      item: CHISELED_STONE_BRICKS
+      count: 1
+    - ==: Bingo.ItemTask
+      item: MAGENTA_GLAZED_TERRACOTTA
+      count: 1
+    - ==: Bingo.ItemTask
+      item: BROWN_MUSHROOM
+      count: 1
+    - ==: Bingo.ItemTask
+      item: SALMON_BUCKET
+      count: 1
+    - ==: Bingo.ItemTask
+      item: TNT
+      count: 1
+    - ==: Bingo.ItemTask
+      item: LIGHT_BLUE_GLAZED_TERRACOTTA
+      count: 1
+    - ==: Bingo.ItemTask
+      item: BLAST_FURNACE
+      count: 1
+    - ==: Bingo.ItemTask
+      item: CLOCK
+      count: 1
+    - ==: Bingo.ItemTask
+      item: CHAINMAIL_CHESTPLATE
+      count: 1
+    - ==: Bingo.ItemTask
+      item: PUFFERFISH_BUCKET
+      count: 1
+    - ==: Bingo.ItemTask
+      item: YELLOW_GLAZED_TERRACOTTA
+      count: 1
+    - ==: Bingo.ItemTask
+      item: MAGMA_BLOCK
+      count: 1
+    - ==: Bingo.ItemTask
+      item: BREWING_STAND
+      count: 1
+    - ==: Bingo.ItemTask
+      item: SPORE_BLOSSOM
+      count: 1
+    - ==: Bingo.ItemTask
+      item: TROPICAL_FISH_BUCKET
+      count: 1
+    - ==: Bingo.ItemTask
+      item: RED_CONCRETE
+      count: 1
+    - ==: Bingo.ItemTask
+      item: BARREL
+      count: 1
+    - ==: Bingo.ItemTask
+      item: GOLD_BLOCK
+      count: 1
+    - ==: Bingo.ItemTask
+      item: BIRCH_WOOD
+      count: 1
+    - ==: Bingo.ItemTask
+      item: POWERED_RAIL
+      count: 6
+    - ==: Bingo.ItemTask
+      item: SPYGLASS
+      count: 1
+    - ==: Bingo.ItemTask
+      item: CRYING_OBSIDIAN
+      count: 1
+    - ==: Bingo.ItemTask
+      item: ARMOR_STAND
+      count: 1
+    - ==: Bingo.ItemTask
+      item: PISTON
+      count: 1
+    - ==: Bingo.ItemTask
+      item: DIAMOND_BLOCK
+      count: 1
+    - ==: Bingo.ItemTask
+      item: CALCITE
+      count: 1
+    - ==: Bingo.ItemTask
+      item: SOUL_SAND
+      count: 1
+    - ==: Bingo.ItemTask
+      item: WARPED_WART_BLOCK
+      count: 1
+    - ==: Bingo.ItemTask
+      item: LIGHT_GRAY_CONCRETE
+      count: 1
+    - ==: Bingo.ItemTask
+      item: FLETCHING_TABLE
+      count: 1
+    - ==: Bingo.ItemTask
+      item: VINE
+      count: 1
+    - ==: Bingo.ItemTask
+      item: DRIPSTONE_BLOCK
+      count: 1
+    - ==: Bingo.ItemTask
+      item: COMPOSTER
+      count: 1
+    - ==: Bingo.ItemTask
+      item: LAVA_BUCKET
+      count: 1
+    - ==: Bingo.ItemTask
+      item: REDSTONE_LAMP
+      count: 1
+    - ==: Bingo.ItemTask
+      item: ACACIA_WOOD
+      count: 1
+    - ==: Bingo.ItemTask
+      item: GLASS_PANE
+      count: 1
+    - ==: Bingo.ItemTask
+      item: COMPARATOR
+      count: 1
+    - ==: Bingo.ItemTask
+      item: LILY_PAD
+      count: 1
+    - ==: Bingo.ItemTask
+      item: ACTIVATOR_RAIL
+      count: 6
+    - ==: Bingo.ItemTask
+      item: RAIL
+      count: 32
+    - ==: Bingo.ItemTask
+      item: CACTUS
+      count: 1
+  size: 163
+default_advancements:
+  tasks:
+    - ==: Bingo.AdvancementTask
+      advancement: minecraft:adventure/avoid_vibration
+    - ==: Bingo.AdvancementTask
+      advancement: minecraft:husbandry/ride_a_boat_with_a_goat
+    - ==: Bingo.AdvancementTask
+      advancement: minecraft:story/mine_diamond
+    - ==: Bingo.AdvancementTask
+      advancement: minecraft:adventure/fall_from_world_height
+    - ==: Bingo.AdvancementTask
+      advancement: minecraft:husbandry/tame_an_animal
+    - ==: Bingo.AdvancementTask
+      advancement: minecraft:story/enter_the_nether
+    - ==: Bingo.AdvancementTask
+      advancement: minecraft:adventure/voluntary_exile
+    - ==: Bingo.AdvancementTask
+      advancement: minecraft:adventure/ol_betsy
+    - ==: Bingo.AdvancementTask
+      advancement: minecraft:nether/distract_piglin
+    - ==: Bingo.AdvancementTask
+      advancement: minecraft:nether/obtain_blaze_rod
+    - ==: Bingo.AdvancementTask
+      advancement: minecraft:husbandry/make_a_sign_glow
+    - ==: Bingo.AdvancementTask
+      advancement: minecraft:nether/obtain_crying_obsidian
+    - ==: Bingo.AdvancementTask
+      advancement: minecraft:husbandry/tactical_fishing
+    - ==: Bingo.AdvancementTask
+      advancement: minecraft:adventure/summon_iron_golem
+    - ==: Bingo.AdvancementTask
+      advancement: minecraft:story/form_obsidian
+    - ==: Bingo.AdvancementTask
+      advancement: minecraft:adventure/sleep_in_bed
+    - ==: Bingo.AdvancementTask
+      advancement: minecraft:nether/return_to_sender
+    - ==: Bingo.AdvancementTask
+      advancement: minecraft:adventure/kill_a_mob
+    - ==: Bingo.AdvancementTask
+      advancement: minecraft:adventure/sniper_duel
+    - ==: Bingo.AdvancementTask
+      advancement: minecraft:husbandry/plant_seed
+    - ==: Bingo.AdvancementTask
+      advancement: minecraft:adventure/kill_mob_near_sculk_catalyst
+    - ==: Bingo.AdvancementTask
+      advancement: minecraft:adventure/spyglass_at_parrot
+    - ==: Bingo.AdvancementTask
+      advancement: minecraft:husbandry/breed_an_animal
+    - ==: Bingo.AdvancementTask
+      advancement: minecraft:story/mine_stone
+    - ==: Bingo.AdvancementTask
+      advancement: minecraft:adventure/trade
+    - ==: Bingo.AdvancementTask
+      advancement: minecraft:husbandry/axolotl_in_a_bucket
+    - ==: Bingo.AdvancementTask
+      advancement: minecraft:nether/obtain_ancient_debris
+    - ==: Bingo.AdvancementTask
+      advancement: minecraft:nether/explore_nether
+    - ==: Bingo.AdvancementTask
+      advancement: minecraft:story/smelt_iron
+    - ==: Bingo.AdvancementTask
+      advancement: minecraft:story/obtain_armor
+    - ==: Bingo.AdvancementTask
+      advancement: minecraft:adventure/spyglass_at_ghast
+    - ==: Bingo.AdvancementTask
+      advancement: minecraft:nether/brew_potion
+    - ==: Bingo.AdvancementTask
+      advancement: minecraft:nether/find_bastion
+    - ==: Bingo.AdvancementTask
+      advancement: minecraft:story/deflect_arrow
+    - ==: Bingo.AdvancementTask
+      advancement: minecraft:story/upgrade_tools
+    - ==: Bingo.AdvancementTask
+      advancement: minecraft:story/shiny_gear
+    - ==: Bingo.AdvancementTask
+      advancement: minecraft:story/lava_bucket
+    - ==: Bingo.AdvancementTask
+      advancement: minecraft:adventure/bullseye
+    - ==: Bingo.AdvancementTask
+      advancement: minecraft:nether/ride_strider
+    - ==: Bingo.AdvancementTask
+      advancement: minecraft:husbandry/fishy_business
+    - ==: Bingo.AdvancementTask
+      advancement: minecraft:nether/find_fortress
+    - ==: Bingo.AdvancementTask
+      advancement: minecraft:story/iron_tools
+    - ==: Bingo.AdvancementTask
+      advancement: minecraft:nether/loot_bastion
+    - ==: Bingo.AdvancementTask
+      advancement: minecraft:adventure/shoot_arrow
+    - ==: Bingo.AdvancementTask
+      advancement: minecraft:story/enchant_item
+  size: 45
+default_statistics:
+  tasks:
+    - ==: Bingo.StatisticTask
+      statistic:
+        ==: Bingo.Statistic
+        statistic: ANIMALS_BRED
+        item: ''
+        entity: ''
+      count: 2
+    - ==: Bingo.StatisticTask
+      statistic:
+        ==: Bingo.Statistic
+        statistic: PIG_ONE_CM
+        item: ''
+        entity: ''
+      count: 5
+    - ==: Bingo.StatisticTask
+      statistic:
+        ==: Bingo.Statistic
+        statistic: KILL_ENTITY
+        item: ''
+        entity: SNOWMAN
+      count: 1
+    - ==: Bingo.StatisticTask
+      statistic:
+        ==: Bingo.Statistic
+        statistic: USE_ITEM
+        item: SHEARS
+        entity: ''
+      count: 1
+    - ==: Bingo.StatisticTask
+      statistic:
+        ==: Bingo.Statistic
+        statistic: KILL_ENTITY
+        item: ''
+        entity: DROWNED
+      count: 8
+    - ==: Bingo.StatisticTask
+      statistic:
+        ==: Bingo.Statistic
+        statistic: FLOWER_POTTED
+        item: ''
+        entity: ''
+      count: 3
+    - ==: Bingo.StatisticTask
+      statistic:
+        ==: Bingo.Statistic
+        statistic: RAID_TRIGGER
+        item: ''
+        entity: ''
+      count: 1
+    - ==: Bingo.StatisticTask
+      statistic:
+        ==: Bingo.Statistic
+        statistic: ARMOR_CLEANED
+        item: ''
+        entity: ''
+      count: 1
+    - ==: Bingo.StatisticTask
+      statistic:
+        ==: Bingo.Statistic
+        statistic: ENTITY_KILLED_BY
+        item: ''
+        entity: IRON_GOLEM
+      count: 1
+    - ==: Bingo.StatisticTask
+      statistic:
+        ==: Bingo.Statistic
+        statistic: SLEEP_IN_BED
+        item: ''
+        entity: ''
+      count: 1
+    - ==: Bingo.StatisticTask
+      statistic:
+        ==: Bingo.Statistic
+        statistic: MINE_BLOCK
+        item: CRIMSON_NYLIUM
+        entity: ''
+      count: 20
+    - ==: Bingo.StatisticTask
+      statistic:
+        ==: Bingo.Statistic
+        statistic: WALK_UNDER_WATER_ONE_CM
+        item: ''
+        entity: ''
+      count: 15
+    - ==: Bingo.StatisticTask
+      statistic:
+        ==: Bingo.Statistic
+        statistic: CAULDRON_FILLED
+        item: ''
+        entity: ''
+      count: 3
+    - ==: Bingo.StatisticTask
+      statistic:
+        ==: Bingo.Statistic
+        statistic: MINE_BLOCK
+        item: BUDDING_AMETHYST
+        entity: ''
+      count: 5
+    - ==: Bingo.StatisticTask
+      statistic:
+        ==: Bingo.Statistic
+        statistic: MOB_KILLS
+        item: ''
+        entity: ''
+      count: 32
+    - ==: Bingo.StatisticTask
+      statistic:
+        ==: Bingo.Statistic
+        statistic: KILL_ENTITY
+        item: ''
+        entity: BAT
+      count: 1
+    - ==: Bingo.StatisticTask
+      statistic:
+        ==: Bingo.Statistic
+        statistic: ENTITY_KILLED_BY
+        item: ''
+        entity: CREEPER
+      count: 1
+    - ==: Bingo.StatisticTask
+      statistic:
+        ==: Bingo.Statistic
+        statistic: KILL_ENTITY
+        item: ''
+        entity: CREEPER
+      count: 1
+    - ==: Bingo.StatisticTask
+      statistic:
+        ==: Bingo.Statistic
+        statistic: TRADED_WITH_VILLAGER
+        item: ''
+        entity: ''
+      count: 1
+    - ==: Bingo.StatisticTask
+      statistic:
+        ==: Bingo.Statistic
+        statistic: KILL_ENTITY
+        item: ''
+        entity: WITHER_SKELETON
+      count: 5
+    - ==: Bingo.StatisticTask
+      statistic:
+        ==: Bingo.Statistic
+        statistic: MINE_BLOCK
+        item: WARPED_NYLIUM
+        entity: ''
+      count: 20
+    - ==: Bingo.StatisticTask
+      statistic:
+        ==: Bingo.Statistic
+        statistic: DROP
+        item: DROPPER
+        entity: ''
+      count: 5
+    - ==: Bingo.StatisticTask
+      statistic:
+        ==: Bingo.Statistic
+        statistic: BELL_RING
+        item: ''
+        entity: ''
+      count: 10
+  size: 23

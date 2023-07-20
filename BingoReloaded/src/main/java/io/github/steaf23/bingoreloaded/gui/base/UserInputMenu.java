@@ -15,6 +15,9 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.function.Consumer;
 
 public class UserInputMenu implements Menu
@@ -35,18 +38,25 @@ public class UserInputMenu implements Menu
 
     private AnvilGUI openAnvilUI(String title,  Consumer<String> result, String startingText, HumanEntity player) {
         return new AnvilGUI.Builder()
-                .onComplete(completion -> {
-                    result.accept(completion.getText());
-                    manager.close(this, completion.getPlayer());
-                    return new ArrayList<>();
+                .onClose(state -> {
+                    manager.close(this, state.getPlayer());
                 })
                 .title(Message.PREFIX_STRING_SHORT + " " + ChatColor.DARK_RED + title)
                 .text(startingText.isEmpty() ? "name" : startingText)
                 .itemRight(EMPTY)
                 .itemLeft(new ItemStack(Material.ELYTRA))
-                .onRightInputClick(p -> {
-                    result.accept("");
-                    manager.close(this, p);
+                .onClick((slot, state) -> {
+                    if (slot == AnvilGUI.Slot.INPUT_RIGHT) {
+                        manager.close(this, state.getPlayer());
+                        result.accept("");
+                        return Collections.emptyList();
+                    }
+                    else if (slot == AnvilGUI.Slot.OUTPUT) {
+                        manager.close(this, state.getPlayer());
+                        result.accept(state.getText());
+                        return Collections.emptyList();
+                    }
+                    return Collections.emptyList();
                 })
                 .itemOutput(ACCEPT)
                 .plugin(BingoReloaded.getPlugin(BingoReloaded.class))

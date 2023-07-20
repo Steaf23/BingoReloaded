@@ -100,8 +100,6 @@ public class BingoPlayer implements BingoParticipant
 
         Player player = sessionPlayer().get();
 
-        Message.log("Giving kit " + kit.configName + " to " + player.getDisplayName(), session.worldName);
-
         var items = kit.getItems(team.getColor());
         player.closeInventory();
         Inventory inv = player.getInventory();
@@ -130,8 +128,6 @@ public class BingoPlayer implements BingoParticipant
 
         Player player = sessionPlayer().get();
 
-        Message.log("Giving card to " + player.getDisplayName(), session.worldName);
-
         BingoReloaded.scheduleTask(task -> {
             for (ItemStack itemStack : player.getInventory())
             {
@@ -153,8 +149,6 @@ public class BingoPlayer implements BingoParticipant
 
         takeEffects(false);
         Player player = sessionPlayer().get();
-
-        Message.log("Giving effects to " + player.getDisplayName(), session.worldName);
 
         BingoReloaded.scheduleTask(task -> {
             if (effects.contains(EffectOptionFlags.NIGHT_VISION))
@@ -181,8 +175,6 @@ public class BingoPlayer implements BingoParticipant
         {
             if (offline().isOnline())
             {
-                Message.log("Taking effects from " + asOnlinePlayer().get().getDisplayName(), session.worldName);
-
                 for (PotionEffectType effect : PotionEffectType.values())
                 {
                     Bukkit.getPlayer(playerId).removePotionEffect(effect);
@@ -193,8 +185,6 @@ public class BingoPlayer implements BingoParticipant
         {
             if (sessionPlayer().isEmpty())
                 return;
-
-            Message.log("Taking effects from " + asOnlinePlayer().get().getDisplayName(), session.worldName);
 
             for (PotionEffectType effect : PotionEffectType.values())
             {
