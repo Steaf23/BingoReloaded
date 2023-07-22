@@ -1,0 +1,184 @@
+name: "Português (Brasil)"
+changed: "Idioma configurado para Português (Brasil)"
+command:
+  use: "Use: {0}" # 0: cmd usage
+  bingo:
+    use: "Use: {0}" # 0: /bingo usage
+    no_deathmatch: "Não é possível iniciar a Morte Súbita quando não há um jogo ativo!"
+  card:
+    no_name: "Favor providenciar o nome da cartela: {0}" # 0: command
+    no_remove: "Não foi possível remover '{0}', veja se você digitou corretamente!" # 0: card name
+    removed: "Cartela '{0}' removida com sucesso!" # 0: card name
+  list:
+    no_name: "Favor providenciar o nome da lista de itens: {0}" # 0: command
+    no_remove: "Não foi possível remover '{0}', veja se você digitou corretamente!" # 0: item list name
+    removed: "Lista de itens '{0}' removida com sucesso!" # 0: item list name
+game:
+  timer:
+    duration: "Duração do jogo: {0}" # 0: total game time duration
+    time_left: "Tempo restante: {0}" # 0: total game time left (for Countdown cards)
+  lobby:
+    settings_updated: "Configurações do jogo atualizadas, verifique o scoreboard!"
+    wait_status: "Esperando por jogadores..."
+    player_status: "{0} jogador(es) entraram em um time" # 0: player count
+    starting_status: "Jogo começando em {0} segundos!" # 0: starting time (seconds)
+    vote_kit: "Vote em um Kit"
+    vote_gamemode: "Vote em um Modo de Jogo"
+    vote_card: "Vote em uma Cartela"
+    vote_count: "{0} jogador(es) votaram em {1} {2}" # 0: player count, 1: vote category, 2: vote item
+    vote_won: "{0} {1} recebeu o maior número de votos!" # 0: vote category, 1: vote item
+  start:
+    no_players: "O Bingo não pôde ser iniciado, pois ninguém entrou :("
+    already_started: "Não é possível iniciar um jogo de Bingo quando um já está ativo!"
+    give_cards: "Entregando Cartelas e Kits aos participantes!"
+    no_card: "Não foi possível iniciar o jogo com a Cartela '{0}', pois ela não existe!" # 0: card_name
+  end:
+    bingo: "Parabéns! Time {0} venceu o Bingo!" # 0: winning team
+    restart: "&a&o&lFim de jogo! Clique para //&c&oReiniciar! //&a&o&lClique para reiniciar usando as mesmas regras e times!//"
+  postgame:
+    start: "Este jogo vai reabrir em {0} segundos" # 0: time until restart (seconds)
+  deathmatch:
+    start: Vários times completaram a mesma quantidade de tarefas, iniciando a Morte Súbita para desempatar!"
+    search: Encontre o item listado no chat para vencer o jogo!"
+    item: "Morte Súbita - Seja o primeiro a obter este item para vencer: {0}" # 0: item name
+  player:
+    leave: "Você saiu do jogo!" # 0: /bingo command
+    no_start: "Este jogo ainda não começou!"
+    no_card: "Não foi possível encontrar sua Cartela!"
+    cooldown: "Espere {0} segundos para usar este item novamente!" # 0: time left
+    respawn: "//&3&lClique aqui para teleportar de volta ao local de sua morte////"
+  team:
+    no_join: "Você não pode se juntar a um jogo em progresso!"
+    join: "Você entrou no time {0}!" # 0: team name
+    join_auto: "Você entrará em um time automaticamente quando o jogo começar!"
+    dropped: "Time {0} não consegue mais ganhar, está fora do jogo!" # 0: team name
+    voided: "Time {0} está fora do jogo!" # 0: team name
+    no_chat: "Não é possível ligar o chat de time, pois você não está em um time!"
+    chat_off: "&fChat de time está &cdesligado&r, use {0} para ativá-lo novamente." # 0: /btc
+    chat_on: "&fChat de time está &aligado&r, use {0} para desativá-lo." # 0: /btc
+    size_changed: "O tamanho máximo dos times foi alterado, por favor entre novamente no time de sua escolha!"
+    full_team_desc: "Este time está cheio"
+    join_team_desc: Clique para se juntar a este time"
+  item:
+    lore: Obtenha {0} deste item para completar a tarefa! # 0: item count
+    lore_advancement: "Clique para ver mais!"
+    lore_statistic: "Obtenha esta estatística para completar a tarefa!"
+    completed: "{0} completo por {1} em {2}" # 0: item name, 1: team, 2: completion time
+    complete_lore: "Completo pelo time {0} \nem {1}" # 0: team, 1: completion time
+menu:
+  save: "Salvar"
+  exit: Fechar Menu"
+  save_exit: "Salvar && Sair"
+  accept: "Aceitar && Fechar"
+  next: "Próxima Página"
+  prev: "Página Anterior"
+  filter: "Filtro..."
+  clear: "Limpar Filtro/ Cancelar"
+  completed: "Tarefas Completas"
+  card:
+    title: "Cartela"
+    info_regular:
+      name: "Cartela Normal"
+      desc: "Vence o primeiro time a completar uma linha. \nLinhas podem ser verticais, horizontais \nou diagonais."
+    info_lockout:
+      name: "Cartela Lockout"
+      desc: "Vence o time que mais completar tarefas. \nQuando uma tarefa é completa \nela não pode ser completada por outro time."
+    info_complete:
+      name: "Cartela Cheia"
+      desc: "Vence o primeiro time a completar todas as tarefas."
+  options:
+    title: "Menu de Opções"
+    start: "Iniciar o Jogo"
+    end: "Finalizar o Jogo"
+    team: "Entrar em um Time"
+    leave: "Sair do Jogo"
+    kit: "Kit"
+    card: "Cartela"
+    mode: "Modo de Jogo"
+    effects: "Efeitos de Jogador"
+    vote: "Vote em Opções"
+  effects:
+    enable: "Clique para ATIVAR esta opção de efeito"
+    disable: "Clique para DESATIVAR esta opção de efeito"
+    enabled: "ATIVADO"
+    disabled: "DESATIVADO"
+    night_vision: "Visão Noturna"
+    water_breath: "Respiração Aquática"
+    fire_res: "Resistência ao Fogo"
+    no_fall_dmg: "Sem Dano de Queda"
+    no_durability: "Durabilidade Infinita"
+    speed: "Velocidade"
+  kits:
+    hardcore:
+      name: "&4Hardcore"
+      desc: "Este kit contém: \n
+      \n
+          - Nada, boa sorte!"
+    normal:
+      name: "&eNormal"
+      desc: "Este kit contém: \n
+      \n
+          - Machado de Ferro \n
+          - Picareta de Ferro \n
+          - Pá de Ferro (Toque Suave) \n
+          - 32 Batatas Assadas \n
+          - Capacete de Couro \n
+          - Botas de Couro"
+    overpowered:
+      name: "&5Overpowered"
+      desc: "Este kit contém: \n
+      \n
+          - Machado de Netherita \n
+          - Picareta de Netherita (Fortuna) \n
+          - Pá de Netherita (Toque Suave) \n
+          - 64 Cenouras Douradas \n
+          - A Varinha da Subida \n
+          - Capacete de Couro \n
+          - Botas de Couro"
+    reloaded:
+      name: "&3Reloaded"
+      desc: "Este kit contém: \n
+      \n
+          - Machado de Netherita \n
+          - Picareta de Netherita (Fortune) \n
+          - Pá de Netherita (Silk Touch) \n
+          - 64 Cenouras Douradas \n
+          - A Varinha da Subida \n
+          - Capacete de Couro \n
+          - Élitro (Durabilidade X) \n
+          - Botas de Couro'"
+    custom: "Custom"
+items:
+  card:
+    name: "Cartela de Bingo"
+    desc: "Clique para abrir a Cartela de Bingo!"
+  wand:
+    name: "A Varinha da Subida"
+    desc: "Clique direito para teleportar para cima! (& segure shift para descer)"
+  vote:
+    name: "Vote"
+    desc: "Clique para votar nas opções de jogo!"
+  team:
+    name: "Entrar em um time"
+    desc: "Clique para escolher seu time"
+teams:
+  auto: "Automático"
+  brown: "Marrom"
+  orange: "Laranja"
+  pink: "Rosa"
+  red: "Vermelho"
+  white: "Branco"
+  lime: "Verde-Limão"
+  green: "Verde"
+  gray: "Cinza"
+  light_gray: "Cinza Claro"
+  black: "Preto"
+  yellow: "Amarelo"
+  magenta: "Magenta"
+  cyan: "Ciano"
+  blue: "Azul"
+  purple: "Roxo"
+  light_blue: "Azul Claro"
+creator:
+  card_item:
+    desc: "Contém {0} lista(s)" # 0: list count
