@@ -233,6 +233,10 @@ public class BingoGame implements GamePhase
         return settings;
     }
 
+    public ConfigData getConfig() {
+        return config;
+    }
+
     public TeamManager getTeamManager() {
         return teamManager;
     }
