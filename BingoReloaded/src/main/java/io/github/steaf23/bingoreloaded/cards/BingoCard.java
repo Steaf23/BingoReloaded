@@ -311,8 +311,11 @@ public class BingoCard
                 {
                     continue;
                 }
-                item.setAmount(item.getAmount() - data.getCount());
-                player.sessionPlayer().get().updateInventory();
+                if (game.getSettings().deleteTaskItems())
+                {
+                    item.setAmount(item.getAmount() - data.getCount());
+                    player.sessionPlayer().get().updateInventory();
+                }
                 var slotEvent = new BingoCardTaskCompleteEvent(task, player, hasBingo(player.getTeam()));
                 Bukkit.getPluginManager().callEvent(slotEvent);
                 break;

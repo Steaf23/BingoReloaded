@@ -39,12 +39,18 @@ public class ExtraBingoMenu extends BasicMenu
     private final MenuItem gameDuration = new MenuItem(4, 3,
             Material.RECOVERY_COMPASS, TITLE_PREFIX + "Countdown Duration");
 
+    private final MenuItem deleteTaskItems = new MenuItem(0, 0,
+            Material.CACTUS, TITLE_PREFIX + "Delete Task Items",
+            ChatColor.GRAY + "Once a player completes an \"Obtain Item\"",
+            ChatColor.GRAY + "task, remove the items from their inventory.");
+
     public ExtraBingoMenu(MenuManager menuManager, BingoSettingsBuilder settings, ConfigData config)
     {
         super(menuManager, BingoTranslation.OPTIONS_TITLE.translate(), 6);
         this.settings = settings;
         this.config = config;
         countdown.setGlowing(settings.view().enableCountdown());
+        deleteTaskItems.setGlowing(settings.view().deleteTaskItems());
 
         for (int i = 1; i < 9; i++) {
             addItem(BLANK.copyToSlot(i, 5));
@@ -102,6 +108,12 @@ public class ExtraBingoMenu extends BasicMenu
                     "the amount of minutes that Countdown bingo will last.");
             addItem(gameDuration);
         }
+        else if (slotClicked == deleteTaskItems.getSlot())
+        {
+            settings.deleteTaskItems(!view.deleteTaskItems());
+            deleteTaskItems.setGlowing(!view.deleteTaskItems());
+            addItem(deleteTaskItems);
+        }
         return super.onClick(event, player, clickedItem, clickType);
     }
 
@@ -129,7 +141,7 @@ public class ExtraBingoMenu extends BasicMenu
                 "" + ChatColor.RESET + ChatColor.DARK_PURPLE + "Use the mouse buttons to increase/ decrease",
                 "the amount of minutes that Countdown bingo will last.");
 
-        addItems(teamSize, gameDuration, countdown);
+        addItems(teamSize, gameDuration, countdown, deleteTaskItems);
     }
 
     public void showPresetMenu(HumanEntity player)
