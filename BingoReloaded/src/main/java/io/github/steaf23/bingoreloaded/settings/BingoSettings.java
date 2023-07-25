@@ -21,8 +21,7 @@ public record BingoSettings(String card,
                             EnumSet<EffectOptionFlags> effects,
                             int maxTeamSize,
                             boolean enableCountdown,
-                            int countdownDuration,
-                            boolean deleteTaskItems) implements ConfigurationSerializable
+                            int countdownDuration) implements ConfigurationSerializable
 {
     public static BingoSettings getDefaultSettings()
     {
@@ -35,8 +34,7 @@ public record BingoSettings(String card,
                 PlayerKit.OVERPOWERED.defaultEffects,
                 5,
                 false,
-                20,
-                true);
+                20);
     }
 
     @NotNull
@@ -53,7 +51,6 @@ public record BingoSettings(String card,
             put("team_size", maxTeamSize);
             put("duration", countdownDuration);
             put("countdown", enableCountdown);
-            put("delete_task_items", deleteTaskItems);
         }};
     }
 
@@ -68,8 +65,7 @@ public record BingoSettings(String card,
                 YmlDataManager.enumSetFromList(EffectOptionFlags.class, (List<String>) data.get("effects")),
                 (int) data.get("team_size"),
                 (boolean) data.get("countdown"),
-                (int) data.get("duration"),
-                (boolean) data.get("delete_task_items")
+                (int) data.get("duration")
         );
     }
 };

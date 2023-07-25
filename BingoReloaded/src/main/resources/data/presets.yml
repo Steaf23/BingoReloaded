@@ -15,4 +15,3 @@ default_settings:
   kit: overpowered
   countdown: false
   card: default_card
-  delete_task_items: true

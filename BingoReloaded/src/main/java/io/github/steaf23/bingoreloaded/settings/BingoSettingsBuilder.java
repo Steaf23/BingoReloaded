@@ -25,7 +25,6 @@ public class BingoSettingsBuilder
     private int maxTeamSize;
     private boolean enableCountdown;
     private int countdownGameDuration;
-    private boolean deleteTaskItems;
 
     public BingoSettingsBuilder(BingoSession session)
     {
@@ -41,7 +40,6 @@ public class BingoSettingsBuilder
         this.maxTeamSize = def.maxTeamSize();
         this.countdownGameDuration = def.countdownDuration();
         this.enableCountdown = def.enableCountdown();
-        this.deleteTaskItems = def.deleteTaskItems();
     }
 
     public void fromOther(BingoSettings settings)
@@ -190,15 +188,6 @@ public class BingoSettingsBuilder
         return this;
     }
 
-    public BingoSettingsBuilder deleteTaskItems(boolean deleteTaskItems)
-    {
-        if (this.deleteTaskItems != deleteTaskItems) {
-            this.deleteTaskItems = deleteTaskItems;
-            settingsUpdated();
-        }
-        return this;
-    }
-
     public BingoSettings view()
     {
         return new BingoSettings(
@@ -210,8 +199,7 @@ public class BingoSettingsBuilder
                 effects,
                 maxTeamSize,
                 enableCountdown,
-                countdownGameDuration,
-                deleteTaskItems);
+                countdownGameDuration);
     }
 
     public void settingsUpdated()
