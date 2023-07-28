@@ -70,6 +70,7 @@ public class ConfigData
     public final double wandCooldown;
     public final int platformLifetime;
     public final int gracePeriod;
+    public final boolean removeTaskItems;
     public final boolean enableTeamChat;
     public final boolean keepScoreboardVisible;
     public final boolean showPlayerInScoreboard;
@@ -115,6 +116,7 @@ public class ConfigData
         this.wandCooldown = config.getDouble("GoUpWand.cooldown", 5.0);
         this.platformLifetime = Math.max(0, config.getInt("GoUPWand.platformLifetime", 10));
         this.gracePeriod = Math.max(0, config.getInt("gracePeriod", 30));
+        this.removeTaskItems = config.getBoolean("removeTaskItems", true);
         this.enableTeamChat = config.getBoolean("enableTeamChat", true);
         this.keepScoreboardVisible = config.getBoolean("keepScoreboardVisible", true);
         this.showPlayerInScoreboard = config.getBoolean("showPlayerInScoreboard", true);

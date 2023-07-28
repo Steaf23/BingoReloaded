@@ -84,6 +84,9 @@ GoUpWand:
 #   also determines the time after which the spawn platform will disappear.
 gracePeriod: 30
 
+# If false, items from "Obtain Item" tasks will not be removed from the player's inventory.
+removeTaskItems: true # true or false
+
 # Enables the /btc options for players to use to communicate with each other.
 enableTeamChat: true # true or false
 
