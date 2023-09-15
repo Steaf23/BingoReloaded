@@ -19,3 +19,9 @@
 (2.1) Auto team is not treated like a proper team, meaning events involving auto team will be convoluted and leave participants as null
 (participants cannot be made from the autoteam)
 adding a participantCountChanged event would help with a lot of this probably
+
+(2.x) Add support for Folia
+
+(2.1) add option to translate statistics explicitly
+
+(2.1) task list is not always selected correctly

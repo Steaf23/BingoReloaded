@@ -27,7 +27,7 @@ public class RecoveryCardData
         BingoGamemode mode = BingoGamemode.fromDataString(data.getConfig().getString("gamemode"));
         CardSize size = CardSize.fromWidth(data.getConfig().getInt("size"));
 
-        if (game.getTeamManager().getActiveTeams().size() == 0)
+        if (game.getTeamManager().getActiveTeams().teamCount() == 0)
         {
             Message.log(ChatColor.RED + "Could not resume game, no teams have joined the last game?!");
             return false;

@@ -23,61 +23,57 @@ public class BingoTeam
 
     private Set<BingoParticipant> members;
 
-    public BingoTeam(Team team, BingoCard card, ChatColor color, String id, String name)
-    {
-        this.id = id;
+    public BingoTeam(Team team, ChatColor color, String name) {
+        this.id = team.getName();
         this.team = team;
-        this.card = card;
+        this.card = null;
         this.color = color;
         this.name = name;
         this.members = new HashSet<>();
     }
 
-    public String getIdentifier()
-    {
+    public String getIdentifier() {
         return id;
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return id;
     }
 
-    public ChatColor getColor()
-    {
+    public ChatColor getColor() {
         return color;
     }
 
-    public ItemText getColoredName()
-    {
+    public ItemText getColoredName() {
         return new ItemText(name, color, ChatColor.BOLD);
     }
 
-    public Set<BingoParticipant> getMembers()
-    {
+    public Set<BingoParticipant> getMembers() {
         return members;
     }
 
-    public void addMember(BingoParticipant player)
-    {
+    public void addMember(BingoParticipant player) {
         members.add(player);
         team.addEntry(player.getDisplayName());
     }
 
-    public void removeMember(BingoParticipant player)
-    {
+    public void removeMember(BingoParticipant player) {
         members.remove(player);
         team.removeEntry(player.getDisplayName());
     }
 
     public boolean hasPlayer(Player player) {
         for (BingoParticipant member : members) {
-            if (member.getId().equals(player.getUniqueId()))
-            {
+            if (member.getId().equals(player.getUniqueId())) {
                 return true;
             }
         }
         return false;
     }
+
+    public int getCompleteCount() {
+        return card.getCompleteCount(this);
+    }
+
 }

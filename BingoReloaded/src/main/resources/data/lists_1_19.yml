@@ -637,13 +637,6 @@ default_statistics:
     - ==: Bingo.StatisticTask
       statistic:
         ==: Bingo.Statistic
-        statistic: ARMOR_CLEANED
-        item: ''
-        entity: ''
-      count: 1
-    - ==: Bingo.StatisticTask
-      statistic:
-        ==: Bingo.Statistic
         statistic: ENTITY_KILLED_BY
         item: ''
         entity: IRON_GOLEM

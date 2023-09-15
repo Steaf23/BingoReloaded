@@ -6,9 +6,9 @@ import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
 
 public class CardBuilder
 {
-    public static BingoCard fromMode(MenuManager menuManager, BingoGamemode mode, CardSize size, int teamCount, TeamManager teamManager) {
+    public static BingoCard fromMode(MenuManager menuManager, BingoGamemode mode, CardSize size, TeamManager teamManager) {
         return switch (mode) {
-            case LOCKOUT -> new LockoutBingoCard(menuManager, size, teamCount, teamManager);
+            case LOCKOUT -> new LockoutBingoCard(menuManager, size, teamManager.getSession(), teamManager.getActiveTeams());
             case COMPLETE -> new CompleteBingoCard(menuManager, size);
             default -> new BingoCard(menuManager, size);
         };

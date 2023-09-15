@@ -64,7 +64,7 @@ public class BingoScoreboard
         TeamManager teamManager = session.teamManager;
 
         boolean condensedDisplay = !showPlayer
-                || teamManager.getActiveTeams().size() + teamManager.getParticipants().size() > 13;
+                || teamManager.getTeamCount() + teamManager.getParticipants().size() > 13;
 
         visualBoard.setLineText(0, " ");
         int lineIndex = 1;

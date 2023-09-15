@@ -27,11 +27,12 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class TeamManager
 {
     private final BingoSession session;
-    private final Set<BingoTeam> activeTeams;
+    private final BingoTeamContainer activeTeams1;
     private final Scoreboard teams;
     private final TeamData teamData;
 
@@ -42,23 +43,13 @@ public class TeamManager
 
     public TeamManager(Scoreboard teamBoard, BingoSession session) {
         this.session = session;
-        this.activeTeams = new HashSet<>();
         this.teams = teamBoard;
         this.teamData = new TeamData();
         this.maxTeamSize = session.settingsBuilder.view().maxTeamSize();
         this.automaticTeamPlayers = new HashSet<>();
         this.autoVirtualPlayers = new HashMap<>();
+        this.activeTeams1 = new BingoTeamContainer();
         createTeams();
-    }
-
-    @Nullable
-    public BingoParticipant getBingoParticipant(@NonNull UUID participantId) {
-        for (BingoParticipant participant : getParticipants()) {
-            if (participant.getId().equals(participantId)) {
-                return participant;
-            }
-        }
-        return null;
     }
 
     @Nullable
@@ -77,7 +68,12 @@ public class TeamManager
 
     @Nullable
     public BingoParticipant getBingoParticipant(@NonNull Player player) {
-        return getBingoParticipant(player.getUniqueId());
+        for (BingoParticipant participant : getParticipants()) {
+            if (participant.getId().equals(player.getUniqueId())) {
+                return participant;
+            }
+        }
+        return null;
     }
 
     public void openTeamSelector(MenuManager menuManager, Player player) {
@@ -94,14 +90,14 @@ public class TeamManager
 
             boolean teamIsFull = false;
             List<String> description = new ArrayList<>();
-            for (BingoTeam team : activeTeams) {
+
+            for (BingoTeam team : activeTeams1.getTeams()) {
                 if (!team.getIdentifier().equals(teamId))
                     continue;
 
                 for (BingoParticipant participant : team.getMembers()) {
                     description.add("" + ChatColor.GRAY + ChatColor.BOLD + " ┗ " + ChatColor.RESET + ChatColor.WHITE + participant.getDisplayName());
-                    if (participant.getId().equals(player.getUniqueId()))
-                    {
+                    if (participant.getId().equals(player.getUniqueId())) {
                         playersTeam = true;
                     }
                 }
@@ -132,8 +128,7 @@ public class TeamManager
                     addPlayerToAutoTeam((Player) player);
                     openTeamSelector(menuManager, (Player) player);
                     return;
-                }
-                else if (clickedOption.getCompareKey().equals("item_leave")) {
+                } else if (clickedOption.getCompareKey().equals("item_leave")) {
                     removeMemberFromTeam((Player) player);
                     openTeamSelector(menuManager, (Player) player);
                     return;
@@ -204,7 +199,9 @@ public class TeamManager
     }
 
     public void addAutoPlayersToTeams() {
-        record TeamCount(BingoTeam team, int count) {}
+        record TeamCount(BingoTeam team, int count)
+        {
+        }
 
         int totalPlayers = teams.getTeams().size() * maxTeamSize;
         int availablePlayers = totalPlayers - getTotalParticipantCount();
@@ -215,7 +212,7 @@ public class TeamManager
 
         // 1. create list sorted by how many players are missing from each team using a bit of insertion sorting...
         List<TeamCount> counts = new ArrayList<>();
-        for (BingoTeam team : activeTeams) {
+        for (BingoTeam team : activeTeams1.getTeams()) {
             TeamCount newCount = new TeamCount(team, team.getMembers().size());
             if (counts.size() == 0) {
                 counts.add(newCount);
@@ -342,8 +339,7 @@ public class TeamManager
     public void removeMemberFromTeam(Player player) {
         // TODO: this does not work for virtual players!
         // Make sure to call event even if player was part of auto team
-        if (automaticTeamPlayers.contains(player.getUniqueId()))
-        {
+        if (automaticTeamPlayers.contains(player.getUniqueId())) {
             automaticTeamPlayers.remove(player.getUniqueId());
             autoVirtualPlayers.remove(player.getUniqueId());
 
@@ -366,8 +362,7 @@ public class TeamManager
 
         if (getParticipants().contains(player)) {
             player.getTeam().removeMember(player);
-        }
-        else {
+        } else {
             return false;
         }
 
@@ -376,24 +371,20 @@ public class TeamManager
         return true;
     }
 
-    public void removeEmptyTeams() {
-        activeTeams.removeIf(team -> team.getMembers().size() == 0);
-    }
-
     public void initializeCards(BingoCard masterCard) {
         if (masterCard instanceof LockoutBingoCard lockoutCard) {
-            lockoutCard.teamCount = activeTeams.size();
+            lockoutCard.teamCount = activeTeams1.teamCount();
         }
-        activeTeams.forEach((t) -> {
+        activeTeams1.getTeams().forEach((t) -> {
             t.outOfTheGame = false;
             t.card = masterCard.copy();
         });
 
     }
 
-    public Set<BingoTeam> getActiveTeams() {
-        return activeTeams;
-    }
+//    public Set<BingoTeam> getActiveTeams() {
+//        return activeTeams;
+//    }
 
 
     /**
@@ -402,73 +393,42 @@ public class TeamManager
      * @return Set of BingoPlayers that have joined a team.
      */
     public Set<BingoParticipant> getParticipants() {
-        Set<BingoParticipant> players = new HashSet<>();
-        for (BingoTeam activeTeam : activeTeams) {
-            players.addAll(activeTeam.getMembers());
-        }
-        for (Player p : Bukkit.getOnlinePlayers()) {
-            boolean found = false;
-            for (BingoTeam t : activeTeams) {
-                for (var player : t.getMembers()) {
-                    if (player.getId().equals(p.getUniqueId())) {
-                        players.add(player);
-                        found = true;
-                    }
-                }
-                if (found)
-                    break;
-            }
-        }
-        return players;
+        return activeTeams1.getAllParticipants();
     }
 
     public void updateActivePlayers() {
-        for (BingoTeam team : activeTeams) {
-            for (BingoParticipant participant : team.getMembers()) {
-                if (participant.sessionPlayer().isEmpty() && !participant.alwaysActive()) {
-                    removeMemberFromTeam(participant);
-                }
+        for (BingoParticipant participant : activeTeams1.getAllParticipants()) {
+            if (participant.sessionPlayer().isEmpty() && !participant.alwaysActive()) {
+                removeMemberFromTeam(participant);
             }
         }
 
-        removeEmptyTeams();
+        activeTeams1.removeEmptyTeams();
     }
 
     public Set<BingoParticipant> getParticipantsOfTeam(BingoTeam team) {
         return team.getMembers();
     }
 
-    public BingoTeam getLeadingTeam() {
-        Optional<BingoTeam> leadingTeam = activeTeams.stream().max(
-                Comparator.comparingInt(t -> t.card.getCompleteCount(t))
-        );
-        return leadingTeam.orElse(null);
+    public int getTeamCount() {
+        return activeTeams1.teamCount();
     }
 
-    public BingoTeam getLosingTeam() {
-        Optional<BingoTeam> losingTeam = activeTeams.stream().min(
-                Comparator.comparingInt(t -> t.card.getCompleteCount(t))
-        );
-        return losingTeam.orElse(null);
+    public BingoTeamContainer getActiveTeams()
+    {
+        return activeTeams1;
     }
 
     public BingoTeam activateTeam(Team team) {
-        BingoTeam bTeam;
-        bTeam = activeTeams.stream().filter(
-                        (t) -> t.team.getName().equals(team.getName()))
-                .findFirst().orElse(null);
+        Optional<BingoTeam> existingTeam = activeTeams1.getById(team.getName());
+        if (existingTeam.isPresent())
+            return existingTeam.get();
 
-        if (bTeam == null) {
-            TeamData.TeamTemplate template = teamData.getTeam(team.getName());
-            bTeam = new BingoTeam(team, null, template.color(), team.getName(), template.name());
+        TeamData.TeamTemplate template = teamData.getTeam(team.getName());
+        BingoTeam bTeam = new BingoTeam(team, template.color(), template.name());
 
-            activeTeams.add(bTeam);
-        }
+        activeTeams1.addTeam(bTeam);
         return bTeam;
-    }
-
-    public int getCompleteCount(BingoTeam team) {
-        return team.card.getCompleteCount(team);
     }
 
     @Nullable
@@ -478,7 +438,7 @@ public class TeamManager
             return null;
         }
 
-        if (session.isRunning() && activeTeams.stream().noneMatch(t -> t.getIdentifier().equals(teamName))) {
+        if (session.isRunning() && !activeTeams1.containsId(teamName)) {
             return null;
         }
 
@@ -505,15 +465,7 @@ public class TeamManager
      */
     private BingoTeam activateAnyTeam() {
         for (String teamId : teamData.getTeams().keySet()) {
-            boolean active = false;
-            for (BingoTeam team : activeTeams) {
-                if (team.getIdentifier().equals(teamId)) {
-                    active = true;
-                    break;
-                }
-            }
-
-            if (!active) {
+            if (!activeTeams1.containsId(teamId)) {
                 return activateTeamFromName(teamId);
             }
         }
@@ -544,8 +496,8 @@ public class TeamManager
                 removeMemberFromTeam(p);
                 p.sessionPlayer().ifPresent(gamePlayer ->
                         new TranslatedMessage(BingoTranslation.TEAM_SIZE_CHANGED)
-                        .color(ChatColor.RED)
-                        .send(gamePlayer));
+                                .color(ChatColor.RED)
+                                .send(gamePlayer));
             });
         }
     }

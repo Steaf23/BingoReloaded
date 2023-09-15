@@ -5,6 +5,7 @@ import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.event.BingoCardTaskCompleteEvent;
 import io.github.steaf23.bingoreloaded.gui.base.MenuManager;
 import io.github.steaf23.bingoreloaded.player.BingoTeam;
+import io.github.steaf23.bingoreloaded.player.BingoTeamContainer;
 import io.github.steaf23.bingoreloaded.player.TeamManager;
 import io.github.steaf23.bingoreloaded.tasks.BingoTask;
 import io.github.steaf23.bingoreloaded.util.Message;
@@ -14,14 +15,15 @@ public class LockoutBingoCard extends BingoCard
 {
     public int teamCount;
     public int currentMaxTasks;
+    private final BingoSession session;
+    private final BingoTeamContainer teams;
 
-    private final TeamManager teamManager;
-
-    public LockoutBingoCard(MenuManager menuManager, CardSize size, int teamCount, TeamManager teamManager) {
+    public LockoutBingoCard(MenuManager menuManager, CardSize size, BingoSession session, BingoTeamContainer teams) {
         super(menuManager, size);
         this.currentMaxTasks = size.fullCardSize;
-        this.teamCount = teamCount;
-        this.teamManager = teamManager;
+        this.teamCount = teams.teamCount();
+        this.session = session;
+        this.teams = teams;
 
         menu.setInfo(BingoTranslation.INFO_LOCKOUT_NAME.translate(),
                 BingoTranslation.INFO_LOCKOUT_DESC.translate().split("\\n"));
@@ -36,14 +38,14 @@ public class LockoutBingoCard extends BingoCard
     @Override
     public boolean hasBingo(BingoTeam team) {
         // get the completeCount of the team with the most items.
-        BingoTeam leadingTeam = teamManager.getLeadingTeam();
-        BingoTeam losingTeam = teamManager.getLosingTeam();
+        BingoTeam leadingTeam = teams.getLeadingTeam();
+        BingoTeam losingTeam = teams.getLosingTeam();
 
-        int itemsLeft = size.fullCardSize - getTotalCompleteCount();
+        int itemsLeft = size.fullCardSize - teams.getTotalCompleteCount();
 
         // if amount on items cannot get up to amount of items of the team with the most items, this team cannot win anymore.
-        if (itemsLeft + getCompleteCount(losingTeam) < getCompleteCount(leadingTeam)) {
-            dropTeam(losingTeam, teamManager.getSession());
+        if (itemsLeft + losingTeam.getCompleteCount() < leadingTeam.getCompleteCount()) {
+            dropTeam(losingTeam, session);
         }
 
         if (teamCount < 2) {
@@ -55,7 +57,7 @@ public class LockoutBingoCard extends BingoCard
         }
 
         // Only pick a bingo winner when there are only 2 teams remaining
-        int completeCount = getCompleteCount(team);
+        int completeCount = team.getCompleteCount();
         return completeCount > (currentMaxTasks / 2);
     }
 
@@ -74,13 +76,5 @@ public class LockoutBingoCard extends BingoCard
             }
         }
         teamCount--;
-    }
-
-    public int getTotalCompleteCount() {
-        int total = 0;
-        for (BingoTeam t : teamManager.getActiveTeams()) {
-            total += getCompleteCount(t);
-        }
-        return total;
     }
 }

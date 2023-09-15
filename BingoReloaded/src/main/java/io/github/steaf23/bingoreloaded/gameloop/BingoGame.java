@@ -103,7 +103,7 @@ public class BingoGame implements GamePhase
 
         // Generate cards
         boolean useAdvancements = !(BingoReloaded.areAdvancementsDisabled() || config.disableAdvancements);
-        BingoCard masterCard = CardBuilder.fromMode(session.getMenuManager(), settings.mode(), settings.size(), getTeamManager().getActiveTeams().size(), getTeamManager());
+        BingoCard masterCard = CardBuilder.fromMode(session.getMenuManager(), settings.mode(), settings.size(), getTeamManager());
         masterCard.generateCard(settings.card(), settings.seed(), useAdvancements, !config.disableStatistics);
         getTeamManager().initializeCards(masterCard);
 
@@ -483,12 +483,12 @@ public class BingoGame implements GamePhase
         }
 
         // Start death match when all tasks have been completed in lockout
-        BingoCard card = teamManager.getLeadingTeam().card;
+        BingoCard card = teamManager.getActiveTeams().getLeadingTeam().card;
         if (!(card instanceof LockoutBingoCard lockoutCard)) {
             return;
         }
 
-        if (lockoutCard.getTotalCompleteCount() == lockoutCard.size.fullCardSize) {
+        if (teamManager.getActiveTeams().getTotalCompleteCount() == lockoutCard.size.fullCardSize) {
             startDeathMatch(5);
         }
     }
@@ -570,8 +570,10 @@ public class BingoGame implements GamePhase
             return;
 
         if (event.getTimer() == timer) {
+            BingoTeam leadingTeam = getTeamManager().getActiveTeams().getLeadingTeam();
+
             Set<BingoTeam> tiedTeams = new HashSet<>();
-            tiedTeams.add(getTeamManager().getLeadingTeam());
+            tiedTeams.add(leadingTeam);
 
             // Regular bingo cannot draw, so end the game without a winner
             if (settings.mode() == BingoGamemode.REGULAR) {
@@ -579,9 +581,9 @@ public class BingoGame implements GamePhase
                 return;
             }
 
-            int leadingPoints = getTeamManager().getCompleteCount(getTeamManager().getLeadingTeam());
+            int leadingPoints = leadingTeam.getCompleteCount();
             for (BingoTeam team : getTeamManager().getActiveTeams()) {
-                if (getTeamManager().getCompleteCount(team) == leadingPoints) {
+                if (team.getCompleteCount() == leadingPoints) {
                     tiedTeams.add(team);
                 } else {
                     team.outOfTheGame = true;
@@ -590,7 +592,7 @@ public class BingoGame implements GamePhase
 
             // If only 1 team is "tied" for first place, make that team win the game
             if (tiedTeams.size() == 1) {
-                bingo(getTeamManager().getLeadingTeam());
+                bingo(leadingTeam);
             } else {
                 startDeathMatch(5);
             }
@@ -641,7 +643,7 @@ public class BingoGame implements GamePhase
 
     @Override
     public void handlePlayerJoinedSessionWorld(final PlayerJoinedSessionWorldEvent event) {
-        BingoParticipant participant = teamManager.getBingoParticipant(event.getPlayer().getUniqueId());
+        BingoParticipant participant = teamManager.getBingoParticipant(event.getPlayer());
         if (!(participant instanceof BingoPlayer player))
             return;
 

@@ -4,6 +4,7 @@ import io.github.steaf23.bingoreloaded.gameloop.BingoGame;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.player.BingoTeam;
+import io.github.steaf23.bingoreloaded.player.BingoTeamContainer;
 import io.github.steaf23.bingoreloaded.tasks.BingoTask;
 import io.github.steaf23.bingoreloaded.tasks.StatisticTask;
 import org.bukkit.event.player.PlayerStatisticIncrementEvent;
@@ -24,7 +25,7 @@ public class StatisticTracker
         this.worldName = worldName;
     }
 
-    public void start(Set<BingoTeam> teams)
+    public void start(BingoTeamContainer teams)
     {
         for (BingoTeam team : teams)
         {
