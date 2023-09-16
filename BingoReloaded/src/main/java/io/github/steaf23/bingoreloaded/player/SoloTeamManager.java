@@ -5,17 +5,12 @@ import net.md_5.bungee.api.ChatColor;
 import org.bukkit.scoreboard.Scoreboard;
 
 import javax.annotation.Nullable;
-import java.awt.*;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Optional;
 
 /**
  * Similar to TeamManager but each team can only have 1 member, the team's name being the name of the member.
  */
-public class SoloTeamManager
-{
+public class SoloTeamManager {
     private BingoTeamContainer teams;
     private Scoreboard teamBoard;
 
@@ -27,8 +22,7 @@ public class SoloTeamManager
 
     void removePlayer(BingoParticipant participant) {
         for (BingoTeam team : teams) {
-            if (team.getMembers().contains(participant))
-            {
+            if (team.getMembers().contains(participant)) {
                 team.removeMember(participant);
             }
         }
@@ -58,6 +52,25 @@ public class SoloTeamManager
     ChatColor determineTeamColor() {
         // pick a new color based on participant count,
         // works kinda like how you choose pivots for quicksort in that no 2 similar colors should be selected one after another
+        int max = 256;
+
+        int divider = 1;
+        int multiplier = 1;
+
+        int amount = (teams.teamCount() % max) + 1;
+        for (int i = 0; i < amount; i++) {
+            if (divider > 1) {
+                multiplier += 2;
+            }
+            if (i >= divider) {
+                divider *= 2;
+                multiplier = 1;
+            }
+        }
+
+        int hue = max / divider * multiplier;
+        //TODO: create color from hue value
+
         return ChatColor.of("#004400");
     }
 }
