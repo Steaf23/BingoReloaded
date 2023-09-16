@@ -181,9 +181,9 @@ public class SimpleAutoBingoCommand implements TabExecutor
                 return List.of("kits", "gamemodes", "cards");
             } else if (args.length == 3) {
                 return switch (args[1]) {
-                    case "kits" -> voteList.kits;
-                    case "gamemodes" -> voteList.gamemodes;
-                    case "cards" -> voteList.cards;
+                    case "kits" -> voteList.kits();
+                    case "gamemodes" -> voteList.gamemodes();
+                    case "cards" -> voteList.cards();
                     default -> List.of();
                 };
             }

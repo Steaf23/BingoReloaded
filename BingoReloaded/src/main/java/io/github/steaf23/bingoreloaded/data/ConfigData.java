@@ -2,7 +2,6 @@ package io.github.steaf23.bingoreloaded.data;
 
 import org.bukkit.configuration.file.FileConfiguration;
 
-import javax.annotation.Nullable;
 import java.util.List;
 
 public class ConfigData
@@ -30,22 +29,12 @@ public class ConfigData
         ;
     }
 
-    public class VoteList
-    {
-        public final List<String> gamemodes;
-        public final List<String> kits;
-        public final List<String> cards;
-
-        public VoteList(List<String> gamemodes, List<String> kits, List<String> cards) {
-            this.gamemodes = gamemodes;
-            this.kits = kits;
-            this.cards = cards;
-        }
+    public record VoteList(List<String> gamemodes, List<String> kits, List<String> cards) {
 
         public boolean isEmpty() {
-            return this.gamemodes.size() == 0 && this.kits.size() == 0 && this.cards.size() == 0;
+                return this.gamemodes.isEmpty() && this.kits.isEmpty() && this.cards.isEmpty();
+            }
         }
-    }
 
     // General options
     public final PluginConfiguration configuration;

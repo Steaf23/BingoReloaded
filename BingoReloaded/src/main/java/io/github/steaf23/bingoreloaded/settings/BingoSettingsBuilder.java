@@ -2,16 +2,14 @@ package io.github.steaf23.bingoreloaded.settings;
 
 import io.github.steaf23.bingoreloaded.cards.CardSize;
 import io.github.steaf23.bingoreloaded.data.BingoCardData;
-import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.event.BingoSettingsUpdatedEvent;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gameloop.PregameLobby;
 import io.github.steaf23.bingoreloaded.gui.EffectOptionFlags;
-import io.github.steaf23.bingoreloaded.util.TranslatedMessage;
-import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 
 import java.util.EnumSet;
+import java.util.Objects;
 
 public class BingoSettingsBuilder
 {
@@ -99,7 +97,7 @@ public class BingoSettingsBuilder
 
     public BingoSettingsBuilder card(String card)
     {
-        if (this.card != card) {
+        if (!Objects.equals(this.card, card)) {
             this.card = card;
             settingsUpdated();
         }

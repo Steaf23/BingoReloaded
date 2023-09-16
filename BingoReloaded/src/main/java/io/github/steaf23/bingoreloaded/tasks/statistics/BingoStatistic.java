@@ -68,7 +68,7 @@ public record BingoStatistic(@NotNull Statistic stat, @Nullable EntityType entit
                                 !mat.name().equals("WITHER_SPAWN_EGG")
                 );
         mats.forEach(mat -> {
-            if (mat.name() == "MOOSHROOM_SPAWN_EGG")
+            if (mat.name().equals("MOOSHROOM_SPAWN_EGG"))
             {
                 types.add(EntityType.MUSHROOM_COW);
             }

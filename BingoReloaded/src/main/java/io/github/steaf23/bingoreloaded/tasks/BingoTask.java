@@ -9,13 +9,11 @@ import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.bingoreloaded.util.PDCHelper;
 import io.github.steaf23.bingoreloaded.util.timer.GameTimer;
 import net.md_5.bungee.api.ChatColor;
-import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
@@ -33,7 +31,7 @@ public class BingoTask
         ADVANCEMENT,
     }
 
-    public Optional<BingoParticipant> completedBy;
+    private BingoParticipant completedBy;
     public long completedAt;
     private boolean voided;
 
@@ -46,7 +44,7 @@ public class BingoTask
     public BingoTask(TaskData data)
     {
         this.data = data;
-        this.completedBy = Optional.ofNullable(null);
+        this.completedBy = null;
         this.voided = false;
         this.completedAt = -1L;
 
@@ -57,7 +55,7 @@ public class BingoTask
             this.material = itemTask.material();
             this.glowing = false;
         }
-        else if (data instanceof AdvancementTask advTask)
+        else if (data instanceof AdvancementTask)
         {
             this.type = TaskType.ADVANCEMENT;
             this.nameColor = ChatColor.GREEN;
@@ -96,18 +94,17 @@ public class BingoTask
 
     public boolean isCompleted()
     {
-        return completedBy.isPresent();
+        return completedBy != null;
     }
 
     public MenuItem asStack()
     {
         ItemStack item;
-
         // Step 1: create the item and put the new name, description and material on it.
         if (isVoided()) // VOIDED TASK
         {
             ItemText addedDesc = new ItemText(BingoTranslation.VOIDED.translate(
-                    completedBy.get().getTeam().getColoredName().asLegacyString()), ChatColor.DARK_GRAY);
+                    completedBy.getTeam().getColoredName().asLegacyString()), ChatColor.DARK_GRAY);
 
             ItemText itemName = new ItemText(ChatColor.DARK_GRAY, ChatColor.STRIKETHROUGH);
             itemName.addText("A", ChatColor.MAGIC);
@@ -131,8 +128,8 @@ public class BingoTask
                 add(ChatColor.ITALIC);
             }};
             ItemText[] desc = BingoTranslation.COMPLETED_LORE.asItemText(modifiers,
-                    new ItemText(completedBy.get().getDisplayName(),
-                            completedBy.get().getTeam().getColor(), ChatColor.BOLD),
+                    new ItemText(completedBy.getDisplayName(),
+                            completedBy.getTeam().getColor(), ChatColor.BOLD),
                     new ItemText(timeString, ChatColor.GOLD));
 
             item = new ItemStack(completeMaterial);
@@ -164,15 +161,15 @@ public class BingoTask
         pdcData.set(getTaskDataKey("type"), PersistentDataType.STRING, type.name());
         pdcData.set(getTaskDataKey("voided"), PersistentDataType.BYTE, (byte)(voided ? 1 : 0));
         pdcData.set(getTaskDataKey("completed_at"), PersistentDataType.LONG, completedAt);
-        if (completedBy.isPresent())
-            pdcData.set(getTaskDataKey("completed_by"), PersistentDataType.STRING, completedBy.get().getId().toString());
+        if (isCompleted())
+            pdcData.set(getTaskDataKey("completed_by"), PersistentDataType.STRING, completedBy.getId().toString());
         else
             pdcData.set(getTaskDataKey("completed_by"), PersistentDataType.STRING, "");
 
         meta.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES);
         finalItem.setItemMeta(meta);
 
-        if (glowing || completedBy.isPresent())
+        if (glowing || isCompleted())
         {
             finalItem.setGlowing(true);
         }
@@ -188,7 +185,7 @@ public class BingoTask
         UUID completedByUUID = null;
         String idStr = pdcData.getOrDefault(getTaskDataKey("completed_by"), PersistentDataType.STRING, "");
         long timeStr = pdcData.getOrDefault(getTaskDataKey("completed_at"), PersistentDataType.LONG, -1L);
-        if (idStr != "")
+        if (!idStr.isEmpty())
             completedByUUID = UUID.fromString(idStr);
 
         String typeStr = pdcData.getOrDefault(getTaskDataKey("type"), PersistentDataType.STRING, "");
@@ -221,10 +218,10 @@ public class BingoTask
 
     public boolean complete(BingoParticipant participant, long gameTime)
     {
-        if (completedBy.isPresent())
+        if (isCompleted())
             return false;
 
-        completedBy = Optional.of(participant);
+        completedBy = participant;
         completedAt = gameTime;
         return true;
     }
@@ -232,5 +229,9 @@ public class BingoTask
     public BingoTask copy()
     {
         return new BingoTask(data);
+    }
+
+    public Optional<BingoParticipant> getCompletedBy() {
+        return Optional.ofNullable(completedBy);
     }
 }

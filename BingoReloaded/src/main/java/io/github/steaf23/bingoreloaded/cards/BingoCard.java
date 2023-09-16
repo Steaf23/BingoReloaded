@@ -1,13 +1,13 @@
 package io.github.steaf23.bingoreloaded.cards;
 
 
-import io.github.steaf23.bingoreloaded.gameloop.BingoGame;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.BingoCardData;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.data.TaskListData;
 import io.github.steaf23.bingoreloaded.event.BingoCardTaskCompleteEvent;
 import io.github.steaf23.bingoreloaded.event.BingoStatisticCompletedEvent;
+import io.github.steaf23.bingoreloaded.gameloop.BingoGame;
 import io.github.steaf23.bingoreloaded.gui.CardMenu;
 import io.github.steaf23.bingoreloaded.gui.base.MenuManager;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
@@ -15,7 +15,6 @@ import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.player.BingoTeam;
 import io.github.steaf23.bingoreloaded.tasks.*;
 import io.github.steaf23.bingoreloaded.tasks.statistics.BingoStatistic;
-import io.github.steaf23.bingoreloaded.util.Message;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -29,6 +28,7 @@ import org.bukkit.event.player.PlayerStatisticIncrementEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
+
 
 public class BingoCard
 {
@@ -150,14 +150,14 @@ public class BingoCard
             for (int x = 0; x < size.size; x++)
             {
                 int indexRow = size.size * y + x;
-                Optional<BingoParticipant> completedBy = tasks.get(indexRow).completedBy;
+                Optional<BingoParticipant> completedBy = tasks.get(indexRow).getCompletedBy();
                 if (completedBy.isEmpty() || !team.getMembers().contains(completedBy.get()))
                 {
                     completedRow = false;
                 }
 
                 int indexCol = size.size * x + y;
-                completedBy = tasks.get(indexCol).completedBy;
+                completedBy = tasks.get(indexCol).getCompletedBy();
                 if (completedBy.isEmpty() || !team.getMembers().contains(completedBy.get()))
                 {
                     completedCol = false;
@@ -174,7 +174,7 @@ public class BingoCard
         boolean completedDiagonal1 = true;
         for (int idx = 0; idx < size.fullCardSize; idx += size.size + 1)
         {
-            Optional<BingoParticipant> completedBy = tasks.get(idx).completedBy;
+            Optional<BingoParticipant> completedBy = tasks.get(idx).getCompletedBy();
             if (completedBy.isEmpty() || !team.getMembers().contains(completedBy.get()))
             {
                 completedDiagonal1 = false;
@@ -187,7 +187,7 @@ public class BingoCard
         {
             if (idx != 0 && idx != size.fullCardSize - 1)
             {
-                Optional<BingoParticipant> completedBy = tasks.get(idx).completedBy;
+                Optional<BingoParticipant> completedBy = tasks.get(idx).getCompletedBy();
                 if (completedBy.isEmpty() || !team.getMembers().contains(completedBy.get()))
                 {
                     completedDiagonal2 = false;
@@ -207,7 +207,7 @@ public class BingoCard
         int count = 0;
         for (var task : tasks)
         {
-            if (task.completedBy.isPresent() && team.getMembers().contains(task.completedBy.get()))
+            if (task.getCompletedBy().isPresent() && team.getMembers().contains(task.getCompletedBy().get()))
                 count++;
         }
 
@@ -264,7 +264,7 @@ public class BingoCard
             ItemStack resultStack = stack.clone();
 
             BingoReloaded.scheduleTask(task -> {
-                player.sessionPlayer().get().getWorld().dropItem(event.getItem().getLocation(), resultStack);
+                player.sessionPlayer().ifPresent(p -> p.getWorld().dropItem(event.getItem().getLocation(), resultStack));
                 event.getItem().remove();
             });
         }
