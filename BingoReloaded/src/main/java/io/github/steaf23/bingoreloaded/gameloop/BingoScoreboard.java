@@ -4,18 +4,18 @@ import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.event.PlayerJoinedSessionWorldEvent;
 import io.github.steaf23.bingoreloaded.event.PlayerLeftSessionWorldEvent;
-import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
-import io.github.steaf23.bingoreloaded.player.BingoTeam;
-import io.github.steaf23.bingoreloaded.player.TeamManager;
+import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
+import io.github.steaf23.bingoreloaded.player.team.TeamManager;
 import io.github.steaf23.bingoreloaded.util.InfoScoreboard;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
-public class BingoScoreboard
+public class BingoScoreboard implements SessionMember
 {
     private final Scoreboard teamBoard;
     private final InfoScoreboard visualBoard;
@@ -126,5 +126,15 @@ public class BingoScoreboard
     public void handlePlayerLeave(final PlayerLeftSessionWorldEvent event)
     {
         visualBoard.clearPlayerBoard(event.getPlayer());
+    }
+
+    @Override
+    public @Nullable BingoSession getSession() {
+        return session;
+    }
+
+    @Override
+    public void setup() {
+        reset();
     }
 }

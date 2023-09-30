@@ -10,6 +10,7 @@ import io.github.steaf23.bingoreloaded.util.TranslatedMessage;
 import io.github.steaf23.bingoreloaded.util.timer.CountdownTimer;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 public class PostGamePhase implements GamePhase
 {
@@ -19,6 +20,11 @@ public class PostGamePhase implements GamePhase
     public PostGamePhase(BingoSession session, int durationSeconds) {
         this.session = session;
         this.timer = new CountdownTimer(durationSeconds, session);
+    }
+
+    @Override
+    public @Nullable BingoSession getSession() {
+        return session;
     }
 
     @Override

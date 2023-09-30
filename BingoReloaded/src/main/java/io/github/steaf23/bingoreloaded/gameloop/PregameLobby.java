@@ -3,7 +3,9 @@ package io.github.steaf23.bingoreloaded.gameloop;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.data.ConfigData;
+import io.github.steaf23.bingoreloaded.data.TeamData;
 import io.github.steaf23.bingoreloaded.event.*;
+import io.github.steaf23.bingoreloaded.gui.TeamSelectionMenu;
 import io.github.steaf23.bingoreloaded.gui.VoteMenu;
 import io.github.steaf23.bingoreloaded.gui.base.MenuItem;
 import io.github.steaf23.bingoreloaded.gui.base.MenuManager;
@@ -19,6 +21,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.HashMap;
 import java.util.List;
@@ -33,6 +36,10 @@ public class PregameLobby implements GamePhase
         public String gamemode = "";
         public String kit = "";
         public String card = "";
+
+        public boolean isEmpty() {
+            return gamemode.isEmpty() && kit.isEmpty() && card.isEmpty();
+        }
     }
 
     private final BingoSession session;
@@ -59,8 +66,7 @@ public class PregameLobby implements GamePhase
             if (time == 0) {
                 gameStarted = true;
                 session.startGame();
-            }
-            else if (time <= 5) {
+            } else if (time <= 5) {
                 new TranslatedMessage(BingoTranslation.STARTING_STATUS).arg("" + time).color(ChatColor.RED).sendAll(session);
             }
         });
@@ -114,7 +120,7 @@ public class PregameLobby implements GamePhase
                 count++;
             }
         }
-        sendVoteCountMessage(count, BingoTranslation.OPTIONS_CARD.translate(),  card);
+        sendVoteCountMessage(count, BingoTranslation.OPTIONS_CARD.translate(), card);
     }
 
     public void voteKit(String kit, HumanEntity player) {
@@ -200,10 +206,9 @@ public class PregameLobby implements GamePhase
         if (event.getParticipant() != null) {
             event.getParticipant().sessionPlayer().ifPresent(p -> settingsBoard.applyToPlayer(p));
         }
-        settingsBoard.setStatus(BingoTranslation.PLAYER_STATUS.translate("" + session.teamManager.getTotalParticipantCount()));
+        settingsBoard.setStatus(BingoTranslation.PLAYER_STATUS.translate("" + session.teamManager.getParticipants().size()));
 
-        if (playerCountTimer.isRunning() && playerCountTimer.getTime() > 10)
-        {
+        if (playerCountTimer.isRunning() && playerCountTimer.getTime() > 10) {
             event.getParticipant().sessionPlayer().ifPresent(p -> {
                 new TranslatedMessage(BingoTranslation.STARTING_STATUS).arg("" + playerCountTimer.getTime()).color(ChatColor.GOLD).send(p);
             });
@@ -217,7 +222,7 @@ public class PregameLobby implements GamePhase
             return;
         }
 
-        if (session.teamManager.getTotalParticipantCount() < config.minimumPlayerCount) {
+        if (session.teamManager.getParticipants().size() < config.minimumPlayerCount) {
             return;
         }
 
@@ -232,35 +237,41 @@ public class PregameLobby implements GamePhase
     }
 
     public void handleParticipantLeftTeam(final ParticipantLeftTeamEvent event) {
-        if (session.teamManager.getTotalParticipantCount() == 0) {
+        int playerCount = session.teamManager.getParticipants().size();
+
+        if (playerCount == 0) {
             settingsBoard.setStatus(BingoTranslation.WAIT_STATUS.translate());
-        }
-        else {
-            settingsBoard.setStatus(BingoTranslation.PLAYER_STATUS.translate("" + session.teamManager.getTotalParticipantCount()));
+        } else {
+            settingsBoard.setStatus(BingoTranslation.PLAYER_STATUS.translate("" + playerCount));
         }
 
         // Schedule check in the future since a player can switch teams where they will briefly leave the team
         // and lower the participant count to possibly stop the timer.
         BingoReloaded.scheduleTask(t -> {
-            if (session.teamManager.getTotalParticipantCount() < config.minimumPlayerCount && playerCountTimer.isRunning()) {
+            if (playerCount < config.minimumPlayerCount && playerCountTimer.isRunning()) {
                 playerCountTimer.stop();
             }
         });
     }
 
     @Override
+    public @Nullable BingoSession getSession() {
+        return session;
+    }
+
+    @Override
     public void setup() {
+        int playerCount = session.teamManager.getParticipants().size();
+
         settingsBoard.showSettings(session.settingsBuilder.view());
-        if (session.teamManager.getTotalParticipantCount() == 0) {
+        if (playerCount == 0) {
             settingsBoard.setStatus(BingoTranslation.WAIT_STATUS.translate());
-        }
-        else {
-            settingsBoard.setStatus(BingoTranslation.PLAYER_STATUS.translate("" + session.teamManager.getTotalParticipantCount()));
+        } else {
+            settingsBoard.setStatus(BingoTranslation.PLAYER_STATUS.translate("" + playerCount));
         }
 
         BingoReloaded.scheduleTask((t) -> {
-            if (gameStarted)
-            {
+            if (gameStarted) {
                 return;
             }
 
@@ -288,7 +299,7 @@ public class PregameLobby implements GamePhase
     @Override
     public void handlePlayerLeftSessionWorld(final PlayerLeftSessionWorldEvent event) {
         settingsBoard.clearPlayerBoard(event.getPlayer());
-        session.teamManager.removeMemberFromTeam(event.getPlayer());
+        session.teamManager.removeMemberFromTeam(session.teamManager.getPlayerAsParticipant(event.getPlayer()));
     }
 
     @Override
@@ -309,7 +320,8 @@ public class PregameLobby implements GamePhase
             menu.open(event.getPlayer());
         } else if (item.getCompareKey().equals("team")) {
             event.setCancelled(true);
-            session.teamManager.openTeamSelector(menuManager, event.getPlayer());
+            TeamSelectionMenu teamSelection = new TeamSelectionMenu(menuManager, session.teamManager);
+            teamSelection.open(event.getPlayer());
         }
     }
 }

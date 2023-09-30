@@ -1,6 +1,7 @@
 package io.github.steaf23.bingoreloaded.gameloop.multiple;
 
 import io.github.steaf23.bingoreloaded.command.BingoCommand;
+import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
@@ -221,7 +222,7 @@ public class MultiAutoBingoCommand implements TabExecutor {
         }
 
         if (teamName.equalsIgnoreCase("none")) {
-            BingoParticipant participant = session.teamManager.getBingoParticipant(player);
+            BingoParticipant participant = session.teamManager.getPlayerAsParticipant(player);
             if (participant == null) {
                 sendFailed(playerName + " did not join any teams!", worldName);
                 return false;
@@ -232,7 +233,8 @@ public class MultiAutoBingoCommand implements TabExecutor {
             return true;
         }
 
-        if (!session.teamManager.addPlayerToTeam(player, teamName)) {
+        BingoPlayer bingoPlayer = new BingoPlayer(player, session);
+        if (!session.teamManager.addMemberToTeam(bingoPlayer, teamName)) {
             sendFailed("Player " + player + " could not be added to team " + teamName, worldName);
             return false;
         }

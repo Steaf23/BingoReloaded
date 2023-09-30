@@ -21,10 +21,11 @@ public class PlayerBingoMenu extends BasicMenu
         super(manager, BingoTranslation.OPTIONS_TITLE.translate(), 3);
 
         addAction(JOIN, p -> {
-            session.teamManager.openTeamSelector(getMenuManager(), (Player) p);
+            TeamSelectionMenu teamSelection = new TeamSelectionMenu(manager, session.teamManager);
+            teamSelection.open(p);
         });
         addAction(LEAVE, p -> {
-            BingoParticipant gamePlayer = session.teamManager.getBingoParticipant((Player) p);
+            BingoParticipant gamePlayer = session.teamManager.getPlayerAsParticipant((Player) p);
             if (gamePlayer != null)
                 session.removeParticipant(gamePlayer);
         });

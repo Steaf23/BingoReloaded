@@ -47,9 +47,12 @@ public class AdminBingoMenu extends BasicMenu
             addItem(BLANK.copyToSlot(i, 5));
         }
 
-        addAction(JOIN, p -> session.teamManager.openTeamSelector(getMenuManager(), (Player) p));
+        addAction(JOIN, p -> {
+            TeamSelectionMenu selectionMenu = new TeamSelectionMenu(menuManager, session.teamManager);
+            selectionMenu.open(p);
+        });
         addAction(LEAVE, p -> {
-            BingoParticipant gamePlayer = session.teamManager.getBingoParticipant((Player) p);
+            BingoParticipant gamePlayer = session.teamManager.getPlayerAsParticipant((Player) p);
             if (gamePlayer != null)
                 session.removeParticipant(gamePlayer);
         });

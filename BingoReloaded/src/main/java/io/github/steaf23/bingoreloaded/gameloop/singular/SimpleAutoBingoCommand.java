@@ -12,6 +12,7 @@ import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gameloop.PregameLobby;
 import io.github.steaf23.bingoreloaded.gui.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
+import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
 import io.github.steaf23.bingoreloaded.settings.BingoSettingsBuilder;
@@ -329,7 +330,7 @@ public class SimpleAutoBingoCommand implements TabExecutor
         }
 
         if (teamName.equalsIgnoreCase("none")) {
-            BingoParticipant participant = session.teamManager.getBingoParticipant(player);
+            BingoParticipant participant = session.teamManager.getPlayerAsParticipant(player);
             if (participant == null) {
                 sendFailed(playerName + " did not join any teams!");
                 return false;
@@ -340,7 +341,8 @@ public class SimpleAutoBingoCommand implements TabExecutor
             return true;
         }
 
-        if (!session.teamManager.addPlayerToTeam(player, teamName)) {
+        BingoPlayer bingoPlayer = new BingoPlayer(player, session);
+        if (!session.teamManager.addMemberToTeam(bingoPlayer, teamName)) {
             sendFailed("Player " + player + " could not be added to team " + teamName);
             return false;
         }

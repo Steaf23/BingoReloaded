@@ -1,6 +1,7 @@
 package io.github.steaf23.bingoreloaded.player;
 
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
+import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.tasks.BingoTask;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
@@ -13,6 +14,7 @@ public interface BingoParticipant
     BingoSession getSession();
     @Nullable
     BingoTeam getTeam();
+    void setTeam(BingoTeam team);
     UUID getId();
     Optional<Player> sessionPlayer();
     String getDisplayName();

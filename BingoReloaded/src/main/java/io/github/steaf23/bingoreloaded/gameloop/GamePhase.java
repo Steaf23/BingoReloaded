@@ -3,7 +3,7 @@ package io.github.steaf23.bingoreloaded.gameloop;
 import io.github.steaf23.bingoreloaded.event.*;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-public interface GamePhase
+public interface GamePhase extends SessionMember
 {
     void setup();
     /**

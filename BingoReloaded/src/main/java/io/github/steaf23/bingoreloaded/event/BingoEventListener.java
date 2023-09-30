@@ -89,15 +89,6 @@ public class BingoEventListener implements Listener
             return;
         }
 
-        if (session.isRunning())
-        {
-            session.teamManager.handlePlayerShowCard(event, ((BingoGame)session.phase()).getDeathMatchTask());
-        }
-        else
-        {
-            session.teamManager.handlePlayerShowCard(event, null);
-        }
-
         session.phase().handlePlayerInteract(event);
     }
 

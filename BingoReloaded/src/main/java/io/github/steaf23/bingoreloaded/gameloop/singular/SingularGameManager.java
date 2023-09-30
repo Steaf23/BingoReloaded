@@ -4,16 +4,15 @@ import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.ConfigData;
 import io.github.steaf23.bingoreloaded.data.PlayerData;
 import io.github.steaf23.bingoreloaded.event.BingoEventListener;
-import io.github.steaf23.bingoreloaded.gameloop.BingoGameManager;
+import io.github.steaf23.bingoreloaded.gameloop.SessionManager;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gui.base.BingoMenuManager;
 import io.github.steaf23.bingoreloaded.gui.base.MenuManager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.HumanEntity;
-import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 
-public class SingularGameManager implements BingoGameManager
+public class SingularGameManager implements SessionManager
 {
     private final BingoEventListener eventListener;
     private final BingoSession session;

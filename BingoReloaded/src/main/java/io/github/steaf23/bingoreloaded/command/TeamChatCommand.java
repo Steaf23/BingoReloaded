@@ -4,13 +4,12 @@ import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
-import io.github.steaf23.bingoreloaded.player.BingoTeam;
-import io.github.steaf23.bingoreloaded.player.TeamManager;
+import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
+import io.github.steaf23.bingoreloaded.player.team.TeamManager;
 import io.github.steaf23.bingoreloaded.util.TranslatedMessage;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
@@ -50,7 +49,7 @@ public class TeamChatCommand implements Listener, TabExecutor
 
         TeamManager teamManager = session.teamManager;
 
-        BingoParticipant player = teamManager.getBingoParticipant(event.getPlayer());
+        BingoParticipant player = teamManager.getPlayerAsParticipant(event.getPlayer());
         if (!enabledPlayers.contains(player)) return;
 
         BingoTeam team = player.getTeam();
@@ -86,7 +85,7 @@ public class TeamChatCommand implements Listener, TabExecutor
                 return false;
 
             TeamManager teamManager = session.teamManager;
-            BingoParticipant participant = teamManager.getBingoParticipant(p);
+            BingoParticipant participant = teamManager.getPlayerAsParticipant(p);
 
             if (!(participant instanceof BingoPlayer player))
                 return false;

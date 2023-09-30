@@ -49,7 +49,7 @@ public class BingoCreatorMenu extends BasicMenu
                             ChatColor.GRAY + "Right-click for more options");
                     items.add(item);
                 }
-                addItemsToSelect(items.toArray(new MenuItem[]{}));
+                addItemsToSelect(items);
             }
 
             @Override
@@ -82,7 +82,7 @@ public class BingoCreatorMenu extends BasicMenu
                             ChatColor.GRAY + "Right-click for more options");
                     items.add(item);
                 }
-                addItemsToSelect(items.toArray(new MenuItem[]{}));
+                addItemsToSelect(items);
             }
 
             @Override

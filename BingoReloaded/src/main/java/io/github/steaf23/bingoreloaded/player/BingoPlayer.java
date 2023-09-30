@@ -7,9 +7,9 @@ import io.github.steaf23.bingoreloaded.data.BingoStatType;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.gui.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.item.ItemCooldownManager;
+import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import io.github.steaf23.bingoreloaded.tasks.BingoTask;
-import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.bingoreloaded.util.PDCHelper;
 import io.github.steaf23.bingoreloaded.util.TranslatedMessage;
 import net.md_5.bungee.api.ChatColor;
@@ -35,19 +35,18 @@ import java.util.UUID;
  */
 public class BingoPlayer implements BingoParticipant
 {
+    private BingoTeam team;
     public final String playerName;
     private final BingoSession session;
-    private final BingoTeam team;
     private final UUID playerId;
     private final String displayName;
     private final ItemCooldownManager itemCooldowns;
 
     private final int POTION_DURATION = 1728000; // 24 Hours
 
-    public BingoPlayer(Player player, BingoTeam team, BingoSession session)
+    public BingoPlayer(Player player, BingoSession session)
     {
         this.playerId = player.getUniqueId();
-        this.team = team;
         this.session = session;
         this.playerName = player.getName();
         this.displayName = player.getDisplayName();
@@ -275,5 +274,10 @@ public class BingoPlayer implements BingoParticipant
     public BingoTeam getTeam()
     {
         return team;
+    }
+
+    @Override
+    public void setTeam(BingoTeam team) {
+        this.team = team;
     }
 }

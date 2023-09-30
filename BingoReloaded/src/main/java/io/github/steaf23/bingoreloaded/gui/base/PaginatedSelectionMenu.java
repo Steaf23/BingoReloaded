@@ -10,6 +10,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
@@ -138,7 +139,7 @@ public abstract class PaginatedSelectionMenu extends BasicMenu
         return keywordFilter;
     }
 
-    public void addItemsToSelect(MenuItem... newItems) {
+    public void addItemsToSelect(Collection<MenuItem> newItems) {
         //first remove any previous whitespace
         while (items.size() > 0) {
             MenuItem lastItem = items.get(items.size() - 1);
@@ -150,7 +151,7 @@ public abstract class PaginatedSelectionMenu extends BasicMenu
                 break;
         }
 
-        Collections.addAll(items, newItems);
+        items.addAll(newItems);
         clearFilter();
     }
 

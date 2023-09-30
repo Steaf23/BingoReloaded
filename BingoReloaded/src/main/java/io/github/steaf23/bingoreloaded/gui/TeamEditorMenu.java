@@ -53,7 +53,7 @@ public class TeamEditorMenu extends PaginatedSelectionMenu
                     .setDescription("id: " + ChatColor.GRAY + ChatColor.ITALIC + key)
                     .setCompareKey(key));
         }
-        addItemsToSelect(items.toArray(new MenuItem[]{}));
+        addItemsToSelect(items);
     }
 
     public BasicMenu createTeamEditor(String teamKey) {

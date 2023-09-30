@@ -48,11 +48,11 @@ public class BasicMenu implements Menu
         this.actions = new HashMap<>();
     }
 
-    public void open(HumanEntity player) {
+    public final void open(HumanEntity player) {
         manager.open(this, player);
     }
 
-    public void close(HumanEntity player) {
+    public final void close(HumanEntity player) {
         manager.close(this, player);
     }
 
@@ -112,11 +112,10 @@ public class BasicMenu implements Menu
         return addAction(item, this::close);
     }
 
-    public BasicMenu addItems(@NotNull MenuItem... items) {
+    public void addItems(@NotNull MenuItem... items) {
         for (MenuItem item : items) {
             addItem(item);
         }
-        return this;
     }
 
     public MenuItem getItemAt(int slotIndex) {

@@ -2,7 +2,7 @@ package io.github.steaf23.bingoreloaded.event;
 
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
-import io.github.steaf23.bingoreloaded.player.BingoTeam;
+import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;

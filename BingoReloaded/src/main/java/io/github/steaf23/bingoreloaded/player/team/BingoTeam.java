@@ -1,15 +1,18 @@
-package io.github.steaf23.bingoreloaded.player;
+package io.github.steaf23.bingoreloaded.player.team;
 
 import io.github.steaf23.bingoreloaded.cards.BingoCard;
 
 import io.github.steaf23.bingoreloaded.item.ItemText;
+import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.util.FlexColor;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Team;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 public class BingoTeam
 {
@@ -55,6 +58,7 @@ public class BingoTeam
 
     public void addMember(BingoParticipant player) {
         members.add(player);
+        player.setTeam(this);
         team.addEntry(player.getDisplayName());
     }
 
@@ -63,9 +67,9 @@ public class BingoTeam
         team.removeEntry(player.getDisplayName());
     }
 
-    public boolean hasPlayer(Player player) {
+    public boolean hasMember(UUID memberId) {
         for (BingoParticipant member : members) {
-            if (member.getId().equals(player.getUniqueId())) {
+            if (member.getId().equals(memberId)) {
                 return true;
             }
         }
@@ -76,4 +80,8 @@ public class BingoTeam
         return card.getCompleteCount(this);
     }
 
+    public Team getScoreboardTeam()
+    {
+        return team;
+    }
 }

@@ -3,7 +3,7 @@ package io.github.steaf23.bingoreloaded.util;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
-import io.github.steaf23.bingoreloaded.player.BingoTeam;
+import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ChatMessageType;
@@ -153,7 +153,10 @@ public class Message
         if (finalMessage == null) {
             //TODO: solving placeholders should be done last, however that is quite a bit more complicated
             raw = solvePlaceholders(raw, player);
-            createPrefixedMessage();
+            if (raw.isBlank())
+                createMessage();
+            else
+                createPrefixedMessage();
         }
         player.spigot().sendMessage(finalMessage);
     }

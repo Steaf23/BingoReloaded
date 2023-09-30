@@ -6,7 +6,9 @@ import io.github.steaf23.bingoreloaded.data.helper.SerializablePlayer;
 import io.github.steaf23.bingoreloaded.event.*;
 import io.github.steaf23.bingoreloaded.gui.base.MenuManager;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
-import io.github.steaf23.bingoreloaded.player.TeamManager;
+import io.github.steaf23.bingoreloaded.player.team.BasicTeamManager;
+import io.github.steaf23.bingoreloaded.player.team.SoloTeamManager;
+import io.github.steaf23.bingoreloaded.player.team.TeamManager;
 import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
 import io.github.steaf23.bingoreloaded.settings.BingoSettingsBuilder;
@@ -33,11 +35,11 @@ public class BingoSession
     private final ConfigData config;
     private final MenuManager menuManager;
     private final PlayerData playerData;
-    private final BingoGameManager gameManager;
+    private final SessionManager gameManager;
 
     private GamePhase phase;
 
-    public BingoSession(BingoGameManager gameManager, MenuManager menuManager, String worldName, ConfigData config, PlayerData playerData) {
+    public BingoSession(SessionManager gameManager, MenuManager menuManager, String worldName, ConfigData config, PlayerData playerData) {
         this.gameManager = gameManager;
         this.menuManager = menuManager;
         this.worldName = worldName;
@@ -45,8 +47,9 @@ public class BingoSession
         this.playerData = playerData;
         this.settingsBuilder = new BingoSettingsBuilder(this);
         settingsBuilder.fromOther(new BingoSettingsData().getSettings(config.defaultSettingsPreset));
-        this.scoreboard = new BingoScoreboard(this, config.showPlayerInScoreboard);
-        this.teamManager = new TeamManager(scoreboard.getTeamBoard(), this);
+        this.scoreboard = new BingoScoreboard(this, config.showPlayerInScoreboard && false);
+        this.teamManager = new SoloTeamManager(scoreboard.getTeamBoard(), this);
+//        this.teamManager = new BasicTeamManager(scoreboard.getTeamBoard(), this);
 
         BingoReloaded.scheduleTask((t) -> {
             for (Player p : Bukkit.getOnlinePlayers()) {
@@ -74,26 +77,7 @@ public class BingoSession
             return;
         }
 
-        BingoSettingsBuilder gameSettings = null;
-
-        if (config.useVoteSystem) {
-            PregameLobby.VoteTicket voteResult = lobby.getVoteResult();
-            gameSettings = settingsBuilder.getVoteResult(voteResult);
-            new Message(" ").sendAll(this);
-            if (!voteResult.gamemode.isEmpty()) {
-                var tuple = voteResult.gamemode.split("_");
-                new TranslatedMessage(BingoTranslation.VOTE_WON).arg(BingoTranslation.OPTIONS_GAMEMODE.translate()).arg(BingoGamemode.fromDataString(tuple[0] + " " + tuple[1] + "x" + tuple[1]).displayName).sendAll(this);
-            }
-            if (!voteResult.kit.isEmpty()) {
-                new TranslatedMessage(BingoTranslation.VOTE_WON).arg(BingoTranslation.OPTIONS_KIT.translate()).arg(PlayerKit.fromConfig(voteResult.kit).getDisplayName()).sendAll(this);
-            }
-            if (!voteResult.card.isEmpty()) {
-                new TranslatedMessage(BingoTranslation.VOTE_WON).arg(BingoTranslation.OPTIONS_CARD.translate()).arg(voteResult.card).sendAll(this);
-            }
-            new Message(" ").sendAll(this);
-        }
-
-        teamManager.addAutoPlayersToTeams();
+        BingoSettingsBuilder gameSettings = determineSettingsByVote(lobby);
 
         BingoCardData cardsData = new BingoCardData();
         BingoSettings settings = settingsBuilder.view();
@@ -102,11 +86,11 @@ public class BingoSession
             return;
         }
 
+        teamManager.setup();
         if (teamManager.getParticipants().size() == 0) {
             Message.log("Could not start bingo since no players have joined!", worldName);
             return;
         }
-        teamManager.updateActivePlayers();
 
         scoreboard.updateTeamScores();
 
@@ -236,5 +220,32 @@ public class BingoSession
 
     public PlayerData getPlayerData() {
         return playerData;
+    }
+
+    private BingoSettingsBuilder determineSettingsByVote(PregameLobby lobby) {
+        if (!config.useVoteSystem) {
+            return null;
+        }
+
+        PregameLobby.VoteTicket voteResult = lobby.getVoteResult();
+        if (voteResult.isEmpty()) {
+            return null;
+        }
+
+        BingoSettingsBuilder result = settingsBuilder.getVoteResult(voteResult);
+        new Message(" ").sendAll(this);
+        if (!voteResult.gamemode.isEmpty()) {
+            var tuple = voteResult.gamemode.split("_");
+            new TranslatedMessage(BingoTranslation.VOTE_WON).arg(BingoTranslation.OPTIONS_GAMEMODE.translate()).arg(BingoGamemode.fromDataString(tuple[0] + " " + tuple[1] + "x" + tuple[1]).displayName).sendAll(this);
+        }
+        if (!voteResult.kit.isEmpty()) {
+            new TranslatedMessage(BingoTranslation.VOTE_WON).arg(BingoTranslation.OPTIONS_KIT.translate()).arg(PlayerKit.fromConfig(voteResult.kit).getDisplayName()).sendAll(this);
+        }
+        if (!voteResult.card.isEmpty()) {
+            new TranslatedMessage(BingoTranslation.VOTE_WON).arg(BingoTranslation.OPTIONS_CARD.translate()).arg(voteResult.card).italic().sendAll(this);
+        }
+        new Message(" ").sendAll(this);
+
+        return result;
     }
 }

@@ -201,7 +201,7 @@ public class ExtraBingoMenu extends BasicMenu
                     item.setCompareKey(preset);
                     items.add(item);
                 }
-                addItemsToSelect(items.toArray(new MenuItem[]{}));
+                addItemsToSelect(items);
 
                 super.beforeOpening(player);
             }

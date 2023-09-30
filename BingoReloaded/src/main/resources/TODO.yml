@@ -25,3 +25,13 @@ adding a participantCountChanged event would help with a lot of this probably
 (2.1) add option to translate statistics explicitly
 
 (2.1) task list is not always selected correctly
+
+(2.1) add command to see all teams
+
+(2.1) add command to pause automatic bingo games (/bingo pause)
+
+(2.1) drop item in card slot when using /bingo getcard if there was no card in that slot
+
+fix card not opening after game ends (maybe handle in session instead of bingo game??)
+
+last line of team scoreboard should show something like "and x others.."

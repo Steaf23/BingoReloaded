@@ -73,7 +73,7 @@ public class CardEditorMenu extends PaginatedSelectionMenu
             newItems.add(item);
         }
 
-        addItemsToSelect(newItems.toArray(new MenuItem[0]));
+        addItemsToSelect(newItems);
 
         applyFilter(getFilter());
     }

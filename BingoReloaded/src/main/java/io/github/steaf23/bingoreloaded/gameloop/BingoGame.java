@@ -13,8 +13,8 @@ import io.github.steaf23.bingoreloaded.gui.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.item.ItemText;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
-import io.github.steaf23.bingoreloaded.player.BingoTeam;
-import io.github.steaf23.bingoreloaded.player.TeamManager;
+import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
+import io.github.steaf23.bingoreloaded.player.team.TeamManager;
 import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
@@ -38,8 +38,8 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -105,7 +105,13 @@ public class BingoGame implements GamePhase
         boolean useAdvancements = !(BingoReloaded.areAdvancementsDisabled() || config.disableAdvancements);
         BingoCard masterCard = CardBuilder.fromMode(session.getMenuManager(), settings.mode(), settings.size(), getTeamManager());
         masterCard.generateCard(settings.card(), settings.seed(), useAdvancements, !config.disableStatistics);
-        getTeamManager().initializeCards(masterCard);
+        if (masterCard instanceof LockoutBingoCard lockoutCard) {
+            lockoutCard.teamCount = teamManager.getTeamCount();
+        }
+        teamManager.getActiveTeams().forEach(t -> {
+            t.outOfTheGame = false;
+            t.card = masterCard.copy();
+        });
 
         Set<BingoCard> cards = new HashSet<>();
         for (BingoTeam activeTeam : getTeamManager().getActiveTeams()) {
@@ -200,6 +206,8 @@ public class BingoGame implements GamePhase
             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
         }
 
+        new Message(" ").sendAll(session);
+
         var event = new BingoEndedEvent(getGameTime(), winningTeam, session);
         Bukkit.getPluginManager().callEvent(event);
     }
@@ -253,8 +261,7 @@ public class BingoGame implements GamePhase
 
     public void startDeathMatch(int seconds) {
         new TranslatedMessage(BingoTranslation.DEATHMATCH_START).sendAll(session);
-        for (BingoParticipant p : teamManager.getParticipants())
-        {
+        for (BingoParticipant p : teamManager.getParticipants()) {
             p.sessionPlayer().ifPresent(player -> player.playSound(player, Sound.ENTITY_PARROT_IMITATE_GHAST, 0.8f, 1.0f));
         }
 
@@ -495,7 +502,7 @@ public class BingoGame implements GamePhase
 
     @Override
     public void handlePlayerInteract(final PlayerInteractEvent event) {
-        BingoParticipant participant = getTeamManager().getBingoParticipant(event.getPlayer());
+        BingoParticipant participant = getTeamManager().getPlayerAsParticipant(event.getPlayer());
         if (participant == null || participant.sessionPlayer().isEmpty())
             return;
 
@@ -508,6 +515,25 @@ public class BingoGame implements GamePhase
         if (PlayerKit.WAND_ITEM.isCompareKeyEqual(event.getItem())) {
             event.setCancelled(true);
             ((BingoPlayer) participant).useGoUpWand(event.getItem(), config.wandCooldown, config.wandDown, config.wandUp, config.platformLifetime);
+        } else if (PlayerKit.CARD_ITEM.isCompareKeyEqual(event.getItem())) {
+            // Show bingo card to player
+            event.setCancelled(true);
+            BingoTeam playerTeam = participant.getTeam();
+            if (playerTeam == null) {
+                return;
+            }
+            BingoCard card = playerTeam.card;
+
+            // if the player is actually participating, show it
+            if (card != null) {
+                if (deathMatchTask != null) {
+                    participant.showDeathMatchTask(deathMatchTask);
+                    return;
+                }
+                card.showInventory(event.getPlayer());
+            } else {
+                new TranslatedMessage(BingoTranslation.NO_PLAYER_CARD).send(event.getPlayer());
+            }
         }
     }
 
@@ -515,7 +541,7 @@ public class BingoGame implements GamePhase
         if (!(event.getEntity() instanceof Player p))
             return;
 
-        BingoParticipant participant = getTeamManager().getBingoParticipant(p);
+        BingoParticipant participant = getTeamManager().getPlayerAsParticipant(p);
         if (participant == null || participant.sessionPlayer().isEmpty())
             return;
 
@@ -530,7 +556,7 @@ public class BingoGame implements GamePhase
     }
 
     public void handlePlayerDeath(final PlayerDeathEvent event) {
-        BingoParticipant participant = getTeamManager().getBingoParticipant(event.getEntity());
+        BingoParticipant participant = getTeamManager().getPlayerAsParticipant(event.getEntity());
         if (participant == null || participant.sessionPlayer().isEmpty())
             return;
 
@@ -552,7 +578,7 @@ public class BingoGame implements GamePhase
     }
 
     public void handlePlayerRespawn(final PlayerRespawnEvent event) {
-        BingoParticipant participant = getTeamManager().getBingoParticipant(event.getPlayer());
+        BingoParticipant participant = getTeamManager().getPlayerAsParticipant(event.getPlayer());
         if (participant == null || participant.sessionPlayer().isEmpty())
             return;
 
@@ -610,7 +636,7 @@ public class BingoGame implements GamePhase
         if (hasTimerStarted)
             return;
 
-        BingoParticipant participant = teamManager.getBingoParticipant(event.getPlayer());
+        BingoParticipant participant = teamManager.getPlayerAsParticipant(event.getPlayer());
         if (participant == null)
             return;
 
@@ -643,7 +669,7 @@ public class BingoGame implements GamePhase
 
     @Override
     public void handlePlayerJoinedSessionWorld(final PlayerJoinedSessionWorldEvent event) {
-        BingoParticipant participant = teamManager.getBingoParticipant(event.getPlayer());
+        BingoParticipant participant = teamManager.getPlayerAsParticipant(event.getPlayer());
         if (!(participant instanceof BingoPlayer player))
             return;
 
@@ -656,5 +682,10 @@ public class BingoGame implements GamePhase
 
     @Override
     public void handleSettingsUpdated(BingoSettingsUpdatedEvent event) {
+    }
+
+    @Override
+    public @Nullable BingoSession getSession() {
+        return session;
     }
 }

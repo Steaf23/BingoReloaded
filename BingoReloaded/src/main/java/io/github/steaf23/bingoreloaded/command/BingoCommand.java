@@ -5,13 +5,13 @@ import io.github.steaf23.bingoreloaded.data.BingoStatData;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.data.ConfigData;
 import io.github.steaf23.bingoreloaded.data.PlayerData;
-import io.github.steaf23.bingoreloaded.data.helper.SerializablePlayer;
 import io.github.steaf23.bingoreloaded.gameloop.BingoGame;
-import io.github.steaf23.bingoreloaded.gameloop.BingoGameManager;
+import io.github.steaf23.bingoreloaded.gameloop.SessionManager;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gui.AdminBingoMenu;
 import io.github.steaf23.bingoreloaded.gui.PlayerBingoMenu;
 import io.github.steaf23.bingoreloaded.gui.TeamEditorMenu;
+import io.github.steaf23.bingoreloaded.gui.TeamSelectionMenu;
 import io.github.steaf23.bingoreloaded.gui.creator.BingoCreatorMenu;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
@@ -21,12 +21,9 @@ import io.github.steaf23.bingoreloaded.util.TranslatedMessage;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
-import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.jetbrains.annotations.NotNull;
@@ -39,10 +36,10 @@ import java.util.stream.Collectors;
 public class BingoCommand implements TabExecutor
 {
     private final ConfigData config;
-    private final BingoGameManager gameManager;
+    private final SessionManager gameManager;
     private final PlayerData playerData;
 
-    public BingoCommand(ConfigData config, BingoGameManager gameManager) {
+    public BingoCommand(ConfigData config, SessionManager gameManager) {
         this.config = config;
         this.gameManager = gameManager;
         this.playerData = new PlayerData();
@@ -71,9 +68,12 @@ public class BingoCommand implements TabExecutor
         }
 
         switch (args[0]) {
-            case "join" -> session.teamManager.openTeamSelector(gameManager.getMenuManager(), player);
+            case "join" -> {
+                TeamSelectionMenu menu = new TeamSelectionMenu(gameManager.getMenuManager(), session.teamManager);
+                menu.open(player);
+            }
             case "leave" -> {
-                BingoParticipant participant = session.teamManager.getBingoParticipant(player);
+                BingoParticipant participant = session.teamManager.getPlayerAsParticipant(player);
                 if (participant != null)
                     session.removeParticipant(participant);
             }
@@ -94,7 +94,7 @@ public class BingoCommand implements TabExecutor
             }
             case "getcard" -> {
                 if (session.isRunning()) {
-                    BingoParticipant participant = session.teamManager.getBingoParticipant(player);
+                    BingoParticipant participant = session.teamManager.getPlayerAsParticipant(player);
                     if (participant instanceof BingoPlayer bingoPlayer)
                         ((BingoGame) session.phase()).returnCardToPlayer(bingoPlayer);
                     return true;
