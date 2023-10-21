@@ -65,7 +65,7 @@ public record AdvancementTask(Advancement advancement) implements TaskData
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AdvancementTask that = (AdvancementTask) o;
-        return Objects.equals(advancement, that.advancement);
+        return Objects.equals(advancement.getKey(), that.advancement.getKey());
     }
 
     @Override

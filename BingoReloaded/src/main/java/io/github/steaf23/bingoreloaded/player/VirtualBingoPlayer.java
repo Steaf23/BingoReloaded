@@ -1,12 +1,15 @@
 package io.github.steaf23.bingoreloaded.player;
 
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
+import io.github.steaf23.bingoreloaded.gui.EffectOptionFlags;
+import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import io.github.steaf23.bingoreloaded.tasks.BingoTask;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.EnumSet;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -70,5 +73,21 @@ public class VirtualBingoPlayer implements BingoParticipant
     public boolean alwaysActive()
     {
         return true;
+    }
+
+    @Override
+    public void giveBingoCard() {
+    }
+
+    @Override
+    public void giveEffects(EnumSet<EffectOptionFlags> effects, int gracePeriod) {
+    }
+
+    @Override
+    public void takeEffects(boolean force) {
+    }
+
+    @Override
+    public void giveKit(PlayerKit kit) {
     }
 }

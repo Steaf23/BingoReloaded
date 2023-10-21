@@ -123,9 +123,12 @@ public class BingoGame implements GamePhase
             if (p.sessionPlayer().isPresent()) {
                 Player player = p.sessionPlayer().get();
 
-                ((BingoPlayer) p).giveKit(settings.kit());
+                p.giveKit(settings.kit());
                 returnCardToPlayer((BingoPlayer) p);
-                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "advancement revoke " + player.getName() + " everything");
+                if (useAdvancements)
+                {
+                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "advancement revoke " + player.getName() + " everything");
+                }
                 player.setLevel(0);
                 player.setExp(0.0f);
             }
@@ -237,7 +240,7 @@ public class BingoGame implements GamePhase
         return teamManager;
     }
 
-    public void returnCardToPlayer(BingoPlayer participant) {
+    public void returnCardToPlayer(BingoParticipant participant) {
         if (participant.sessionPlayer().isEmpty())
             return;
 
