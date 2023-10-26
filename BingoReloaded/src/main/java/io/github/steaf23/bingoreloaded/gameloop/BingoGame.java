@@ -494,6 +494,9 @@ public class BingoGame implements GamePhase
 
     @Override
     public void handlePlayerInteract(final PlayerInteractEvent event) {
+        if (!hasTimerStarted)
+            return;
+
         BingoParticipant participant = getTeamManager().getBingoParticipant(event.getPlayer());
         if (participant == null || participant.sessionPlayer().isEmpty())
             return;
@@ -546,6 +549,7 @@ public class BingoGame implements GamePhase
 
             event.getEntity().spigot().sendMessage(teleportMsg);
             deadPlayers.put(participant.getId(), deathCoords);
+            // TODO: don't do this, this can prevent the respawn teleport from working when dying in quick succession
             BingoReloaded.scheduleTask(task -> deadPlayers.remove(participant.getId()), 60 * BingoReloaded.ONE_SECOND);
         }
     }
