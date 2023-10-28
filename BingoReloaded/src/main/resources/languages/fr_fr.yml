@@ -109,6 +109,7 @@ menu:
     no_fall_dmg: "Aucun dégat de chute"
     no_durability: "Durabilité infinie"
     speed: "Accélération"
+    keep_inventory: "Maintenir l'inventaire"
   kits:
     hardcore:
       name: "&4Hardcore"

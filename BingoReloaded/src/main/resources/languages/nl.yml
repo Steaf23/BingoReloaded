@@ -109,6 +109,7 @@ menu:
     no_fall_dmg: "Geen Valschade"
     no_durability: "Oneindige duurzaamheid"
     speed: "Extra snelheid"
+    keep_inventory: "Behoud inventaris"
   kits:
     hardcore:
       name: "&4Hardcore"
