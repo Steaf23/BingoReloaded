@@ -160,6 +160,7 @@ public class Message
 
     public void createPrefixedMessage() {
         TextComponent prefixedBase = new TextComponent();
+
         for (BaseComponent c : PRINT_PREFIX) {
             prefixedBase.addExtra(c);
         }
@@ -272,8 +273,7 @@ public class Message
         // convert custom hex colors to legacyText: {#00bb33} -> ChatColor.of("#00bb33")
         // convert "&" to "§" and "&&" to "&"
         for (int i = 0; i < rawSplit.length; i++) {
-            String part = BingoTranslation.convertColors(rawSplit[i]);
-            part = BingoTranslation.convertSmallCaps(part);
+            String part = Message.convertConfigString(rawSplit[i]);
             rawSplit[i] = part;
         }
 
@@ -302,6 +302,20 @@ public class Message
         }
         return input;
     }
+
+    /**
+     * Convert input string to a presentable string replacing color codes and small caps codes
+     *
+     * @return
+     */
+    public static String convertConfigString(String input)
+    {
+        String out = input;
+        out = BingoTranslation.convertColors(out);
+        out = BingoTranslation.convertSmallCaps(out);
+        return out;
+    }
+
 
     public static TextComponent[] createHoverCommandMessage(@NonNull BingoTranslation translation, @Nullable String command) {
         // Limit -1 makes it so split returns trailing empty strings
