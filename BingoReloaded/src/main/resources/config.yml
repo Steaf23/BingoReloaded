@@ -73,6 +73,9 @@ playerTeleportStrategy: ALL
 #   that can be used to teleport them back.
 teleportBackAfterDeathMessage: true  # true or false
 
+# Amount of time the command is valid after a player dies, if they click the message after this time or use /bingo back, nothing will happen
+teleportAfterDeathPeriod: 60 # amount of time in seconds
+
 # Distances to teleport a player that uses the Go-Up-Wand
 GoUpWand:
   upDistance: 75 # teleport up distance

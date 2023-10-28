@@ -44,6 +44,7 @@ public enum BingoTranslation
     NO_PLAYER_CARD("game.player.no_card"),
     COOLDOWN("game.player.cooldown"),
     RESPAWN("game.player.respawn"),
+    RESPAWN_EXPIRED("game.player.respawn_expired"),
     NO_JOIN("game.team.no_join"),
     JOIN("game.team.join"),
     JOIN_AUTO("game.team.join_auto"),

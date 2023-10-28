@@ -225,15 +225,15 @@ public class BingoPlayer implements BingoParticipant
         if (!PlayerKit.WAND_ITEM.isCompareKeyEqual(wand))
             return false;
 
-        if (!itemCooldowns.isCooldownOver(wand))
+        if (!itemCooldowns.isCooldownOver(wand.getType()))
         {
-            double timeLeft = itemCooldowns.getTimeLeft(wand) / 1000.0;
+            double timeLeft = itemCooldowns.getTimeLeft(wand.getType()) / 1000.0;
             new TranslatedMessage(BingoTranslation.COOLDOWN).color(ChatColor.RED).arg(String.format("%.2f", timeLeft)).send(player);
             return false;
         }
 
         BingoReloaded.scheduleTask(task -> {
-            itemCooldowns.addCooldown(wand, (int)(wandCooldownSeconds * 1000));
+            itemCooldowns.addCooldown(wand.getType(), (int)(wandCooldownSeconds * 1000));
 
             double distance = 0.0;
             double fallDistance = 5.0;

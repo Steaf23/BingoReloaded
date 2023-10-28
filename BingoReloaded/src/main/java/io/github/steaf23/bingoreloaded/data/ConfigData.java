@@ -65,6 +65,7 @@ public class ConfigData
     public final int teleportMaxDistance;
     public final PlayerTeleportStrategy playerTeleportStrategy;
     public final boolean teleportAfterDeath;
+    public final int teleportAfterDeathPeriod;
     public final int wandUp;
     public final int wandDown;
     public final double wandCooldown;
@@ -110,6 +111,7 @@ public class ConfigData
         this.teleportMaxDistance = Math.max(0, config.getInt("teleportMaxDistance", 1000000));
         this.playerTeleportStrategy = PlayerTeleportStrategy.valueOf(config.getString("playerTeleportStrategy", "ALL"));
         this.teleportAfterDeath = config.getBoolean("teleportBackAfterDeathMessage", true);
+        this.teleportAfterDeathPeriod = config.getInt("teleportAfterDeathPeriod", 60);
         this.wandUp = config.getInt("GoUpWand.upDistance", 75);
         this.wandDown = config.getInt("GoUpWand.downDistance", 5);
         this.wandCooldown = config.getDouble("GoUpWand.cooldown", 5.0);

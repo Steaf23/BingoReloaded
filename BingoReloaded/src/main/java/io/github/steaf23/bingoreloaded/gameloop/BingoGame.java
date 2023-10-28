@@ -11,10 +11,7 @@ import io.github.steaf23.bingoreloaded.data.ConfigData;
 import io.github.steaf23.bingoreloaded.event.*;
 import io.github.steaf23.bingoreloaded.gui.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.item.ItemText;
-import io.github.steaf23.bingoreloaded.player.BingoParticipant;
-import io.github.steaf23.bingoreloaded.player.BingoPlayer;
-import io.github.steaf23.bingoreloaded.player.BingoTeam;
-import io.github.steaf23.bingoreloaded.player.TeamManager;
+import io.github.steaf23.bingoreloaded.player.*;
 import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
@@ -37,6 +34,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 
 import javax.annotation.Nullable;
@@ -50,7 +48,7 @@ public class BingoGame implements GamePhase
     private final BingoSettings settings;
     private final BingoScoreboard scoreboard;
     private final TeamManager teamManager;
-    private final Map<UUID, Location> deadPlayers;
+    private final PlayerRespawnManager respawnManager;
     private final CardEventManager cardEventManager;
     private final StatisticTracker statTracker;
     private final ConfigData config;
@@ -67,12 +65,13 @@ public class BingoGame implements GamePhase
         this.teamManager = session.teamManager;
         this.scoreboard = session.scoreboard;
         this.settings = settings;
-        this.deadPlayers = new HashMap<>();
         this.cardEventManager = new CardEventManager(worldName);
         if (!config.disableStatistics)
             this.statTracker = new StatisticTracker(worldName);
         else
             this.statTracker = null;
+
+        this.respawnManager = new PlayerRespawnManager(BingoReloaded.getInstance(), config.teleportAfterDeathPeriod);
     }
 
     private void start() {
@@ -301,14 +300,12 @@ public class BingoGame implements GamePhase
 
     public void teleportPlayerAfterDeath(Player player) {
         if (player == null) return;
-        Location location = deadPlayers.get(player.getUniqueId());
-        if (location == null) {
-            new TranslatedMessage(BingoTranslation.EFFECTS_DISABLED).color(ChatColor.RED).send(player);
-            return;
-        }
-
-        player.teleport(deadPlayers.get(player.getUniqueId()), PlayerTeleportEvent.TeleportCause.PLUGIN);
-        deadPlayers.remove(player.getUniqueId());
+        respawnManager.removeDeadPlayer(player.getUniqueId()).ifPresentOrElse(location -> {
+                    player.teleport(location, PlayerTeleportEvent.TeleportCause.PLUGIN);
+                },
+                () -> {
+            new TranslatedMessage(BingoTranslation.RESPAWN_EXPIRED).color(ChatColor.RED).send(player);
+        });
     }
 
     public static void spawnPlatform(Location platformLocation, int size) {
@@ -548,9 +545,7 @@ public class BingoGame implements GamePhase
             TextComponent[] teleportMsg = Message.createHoverCommandMessage(BingoTranslation.RESPAWN, "/bingo back");
 
             event.getEntity().spigot().sendMessage(teleportMsg);
-            deadPlayers.put(participant.getId(), deathCoords);
-            // TODO: don't do this, this can prevent the respawn teleport from working when dying in quick succession
-            BingoReloaded.scheduleTask(task -> deadPlayers.remove(participant.getId()), 60 * BingoReloaded.ONE_SECOND);
+            respawnManager.addPlayer(event.getEntity().getUniqueId(), deathCoords);
         }
     }
 

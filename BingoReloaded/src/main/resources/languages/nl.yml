@@ -47,6 +47,7 @@ game:
     no_card: "Jouw kaart kan niet gevonden worden!"
     cooldown: "Je kan dit item niet gebruiken voor {0} seconden!" # 0: time left
     respawn: "//&3&lKlik hier om terug te gaan naar waar je dood bent gegaan!////"
+    respawn_expired: "Teleportatie naar waar je dood bent gegaan is verlopen!"
   team:
     no_join: "Je kan niet midden in een spel meedoen!"
     join: "Je zit nu in team {0}!" # 0: team name
