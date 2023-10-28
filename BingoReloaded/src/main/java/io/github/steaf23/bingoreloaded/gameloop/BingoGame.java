@@ -419,9 +419,15 @@ public class BingoGame implements GamePhase
         return location;
     }
 
+    /**
+     * Counts RIVER as ocean biome!
+     * @param biome biome to check
+     * @return true if this plugin consider biome to be an ocean-like biome
+     */
     private static boolean isOceanBiome(Biome biome) {
         return switch (biome) {
             case OCEAN,
+                    RIVER,
                     DEEP_COLD_OCEAN,
                     COLD_OCEAN,
                     DEEP_OCEAN,

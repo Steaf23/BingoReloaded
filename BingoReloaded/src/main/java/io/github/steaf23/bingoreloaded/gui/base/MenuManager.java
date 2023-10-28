@@ -2,6 +2,8 @@ package io.github.steaf23.bingoreloaded.gui.base;
 
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
+import io.github.steaf23.bingoreloaded.util.Message;
+import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -94,12 +96,14 @@ public class MenuManager implements Listener
             return;
         }
 
+        event.setCancelled(true);
+
         // ignore annoying double clicks..
         if (event.getClick() == ClickType.DOUBLE_CLICK)
             return;
 
         if (event.getInventory().getSize() < event.getRawSlot()
-                || event.getRawSlot() < 0 || event.getCurrentItem() == null)
+                || event.getRawSlot() < 0 || event.getCurrentItem() == null || event.getCurrentItem().getType() == Material.AIR)
             return;
 
         boolean cancel = menu.onClick(event,
