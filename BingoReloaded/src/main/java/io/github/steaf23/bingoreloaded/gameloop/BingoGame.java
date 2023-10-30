@@ -12,6 +12,8 @@ import io.github.steaf23.bingoreloaded.event.*;
 import io.github.steaf23.bingoreloaded.gui.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.item.ItemText;
 import io.github.steaf23.bingoreloaded.player.*;
+import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
+import io.github.steaf23.bingoreloaded.player.team.TeamManager;
 import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
@@ -511,7 +513,7 @@ public class BingoGame implements GamePhase
         if (!hasTimerStarted)
             return;
 
-        BingoParticipant participant = getTeamManager().getBingoParticipant(event.getPlayer());
+        BingoParticipant participant = getTeamManager().getPlayerAsParticipant(event.getPlayer());
         if (participant == null || participant.sessionPlayer().isEmpty())
             return;
 
