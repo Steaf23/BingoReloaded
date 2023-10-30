@@ -47,6 +47,7 @@ game:
     no_card: "Impossible de trouver votre carte !"
     cooldown: "Vous ne pouvez plus utiliser cet élément durant les {0} prochaines secondes!" # 0: time left
     respawn: "//&3&lCliquez ici pour vous téléporter à l'endroit de votre mort////"
+    respawn_expired: "La téléportation vers le lieu de la mort a expiré!"
   team:
     no_join: "Vous ne pouvez pas rejoindre une partie en cours!"
     join: "Vous avez intégré l'équipe {0} avec succès!" # 0: team name
@@ -108,6 +109,7 @@ menu:
     no_fall_dmg: "Aucun dégat de chute"
     no_durability: "Durabilité infinie"
     speed: "Accélération"
+    keep_inventory: "Maintenir l'inventaire"
   kits:
     hardcore:
       name: "&4Hardcore"

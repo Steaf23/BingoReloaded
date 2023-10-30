@@ -1,6 +1,7 @@
 package io.github.steaf23.bingoreloaded.data;
 
 import io.github.steaf23.bingoreloaded.item.ItemText;
+import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.bingoreloaded.util.SmallCaps;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -44,6 +45,7 @@ public enum BingoTranslation
     NO_PLAYER_CARD("game.player.no_card"),
     COOLDOWN("game.player.cooldown"),
     RESPAWN("game.player.respawn"),
+    RESPAWN_EXPIRED("game.player.respawn_expired"),
     NO_JOIN("game.team.no_join"),
     JOIN("game.team.join"),
     JOIN_AUTO("game.team.join_auto"),
@@ -97,6 +99,7 @@ public enum BingoTranslation
     EFFECTS_NO_FALL_DMG("menu.effects.no_fall_dmg"),
     EFFECTS_SPEED("menu.effects.speed"),
     EFFECTS_NO_DURABILITY("menu.effects.no_durability"),
+    EFFECTS_KEEP_INVENTORY("menu.effects.keep_inventory"),
     KIT_HARDCORE_NAME("menu.kits.hardcore.name"),
     KIT_HARDCORE_DESC("menu.kits.hardcore.desc"),
     KIT_NORMAL_NAME("menu.kits.normal.name"),
@@ -156,9 +159,7 @@ public enum BingoTranslation
 
     public String translate(String... args)
     {
-        String rawTranslation = translation;
-        rawTranslation = convertColors(rawTranslation);
-        rawTranslation = convertSmallCaps(rawTranslation);
+        String rawTranslation = Message.convertConfigString(translation);
 
         for (int i = 0; i < args.length; i++)
         {

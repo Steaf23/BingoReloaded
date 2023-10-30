@@ -17,14 +17,13 @@ public class ItemCooldownManager
         cooldownMap = new HashMap<>();
     }
 
-    public void addCooldown(ItemStack item, long cooldownMs)
+    public void addCooldown(Material material, long cooldownMs)
     {
-        cooldownMap.put(item.getType(), System.currentTimeMillis() + cooldownMs);
+        cooldownMap.put(material, System.currentTimeMillis() + cooldownMs);
     }
 
-    public long getTimeLeft(ItemStack item)
+    public long getTimeLeft(Material material)
     {
-        Material material = item.getType();
         if (!cooldownMap.containsKey(material))
         {
             return 0;
@@ -40,14 +39,13 @@ public class ItemCooldownManager
         return timeLeft > 0 ? timeLeft : 0;
     }
 
-    public boolean isCooldownOver(ItemStack item)
+    public boolean isCooldownOver(Material material)
     {
-        return getTimeLeft(item) == 0;
+        return getTimeLeft(material) == 0;
     }
 
-    public void cancelCooldown(ItemStack item)
+    public void cancelCooldown(Material material)
     {
-        Material material = item.getType();
         if (!cooldownMap.containsKey(material))
         {
             return;

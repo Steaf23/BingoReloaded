@@ -162,7 +162,7 @@ public class BasicMenu implements Menu
 
     /**
      * @param event
-     * @return true if this even should be cancelled
+     * @return true if this event should be cancelled
      */
     @Override
     public boolean onDrag(final InventoryDragEvent event) {

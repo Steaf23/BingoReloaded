@@ -300,7 +300,8 @@ public class BingoCard
 
             AdvancementTask data = (AdvancementTask) task.data;
 
-            if (data.advancement().equals(event.getAdvancement())) {
+            if (data.advancement().getKey().equals(event.getAdvancement().getKey()))
+            {
                 if (!task.complete(player, game.getGameTime()))
                     continue;
 
