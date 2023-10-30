@@ -36,7 +36,7 @@ public class CardEditorMenu extends PaginatedSelectionMenu
     public void onOptionClickedDelegate(final InventoryClickEvent event, MenuItem clickedOption, HumanEntity player)
     {
         //if an ItemList attached to a card was clicked on exists
-        if (clickedOption.getItemMeta() == null) return;
+        if (!clickedOption.hasItemMeta()) return;
 
         String listName = clickedOption.getItemMeta().getDisplayName();
         if (event.getClick() == ClickType.LEFT)

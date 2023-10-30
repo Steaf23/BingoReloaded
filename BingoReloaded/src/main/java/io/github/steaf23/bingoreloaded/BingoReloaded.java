@@ -28,6 +28,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.command.*;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
+import org.bukkit.entity.BlockDisplay;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
@@ -53,13 +54,10 @@ public class BingoReloaded extends JavaPlugin
     private HologramPlacer hologramPlacer;
     private SessionManager gameManager;
 
-    public BingoReloaded() {
-        reloadConfig();
-        saveDefaultConfig();
-    }
-
     @Override
     public void onEnable() {
+        reloadConfig();
+        saveDefaultConfig();
         // Kinda ugly, but we can assume there will only be one instance of this class anyway.
         instance = this;
         usesPlaceholderAPI = Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null;

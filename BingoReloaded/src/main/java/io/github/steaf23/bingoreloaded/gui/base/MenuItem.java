@@ -79,10 +79,11 @@ public class MenuItem extends ItemStack
     }
 
     public MenuItem copy() {
+        ItemMeta meta = getItemMeta();
         return new MenuItem(slot,
                 getType(),
-                getItemMeta().getDisplayName(),
-                getItemMeta().getLore() == null ? new String[]{""} : getItemMeta().getLore().toArray(new String[0]))
+                meta.getDisplayName(),
+                meta.getLore() == null ? new String[]{""} : getItemMeta().getLore().toArray(new String[0]))
                 .setGlowing(isGlowing())
                 .setCompareKey(getCompareKey());
     }
@@ -156,7 +157,7 @@ public class MenuItem extends ItemStack
 
     public boolean isStringPdcEqual(String key, ItemStack other)
     {
-        if (other == null || other.getItemMeta() == null)
+        if (other == null || !other.hasItemMeta())
             return false;
 
         String stringPdc = getStringFromPdc(key);

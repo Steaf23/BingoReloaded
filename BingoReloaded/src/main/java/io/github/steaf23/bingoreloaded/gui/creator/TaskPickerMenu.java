@@ -150,7 +150,7 @@ public class TaskPickerMenu extends PaginatedSelectionMenu
         BingoTask newTask = new BingoTask(newData);
         var item = newTask.asStack();
 
-        var meta = item.getItemMeta();
+        var meta = item.hasItemMeta() ? item.getItemMeta() : null;
         if (meta != null)
         {
             List<String> addedLore;
