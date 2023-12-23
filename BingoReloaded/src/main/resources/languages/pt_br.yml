@@ -161,24 +161,6 @@ items:
   team:
     name: "Entrar em um time"
     desc: "Clique para escolher seu time"
-teams:
-  auto: "Automático"
-  brown: "Marrom"
-  orange: "Laranja"
-  pink: "Rosa"
-  red: "Vermelho"
-  white: "Branco"
-  lime: "Verde-Limão"
-  green: "Verde"
-  gray: "Cinza"
-  light_gray: "Cinza Claro"
-  black: "Preto"
-  yellow: "Amarelo"
-  magenta: "Magenta"
-  cyan: "Ciano"
-  blue: "Azul"
-  purple: "Roxo"
-  light_blue: "Azul Claro"
 creator:
   card_item:
     desc: "Contém {0} lista(s)" # 0: list count

@@ -6,7 +6,6 @@ import io.github.steaf23.bingoreloaded.data.helper.SerializablePlayer;
 import io.github.steaf23.bingoreloaded.event.*;
 import io.github.steaf23.bingoreloaded.gui.base.MenuManager;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
-import io.github.steaf23.bingoreloaded.player.team.BasicTeamManager;
 import io.github.steaf23.bingoreloaded.player.team.SoloTeamManager;
 import io.github.steaf23.bingoreloaded.player.team.TeamManager;
 import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
@@ -34,12 +33,12 @@ public class BingoSession
     public final TeamManager teamManager;
     private final ConfigData config;
     private final MenuManager menuManager;
-    private final PlayerData playerData;
+    private final PlayerSerializationData playerData;
     private final SessionManager gameManager;
 
     private GamePhase phase;
 
-    public BingoSession(SessionManager gameManager, MenuManager menuManager, String worldName, ConfigData config, PlayerData playerData) {
+    public BingoSession(SessionManager gameManager, MenuManager menuManager, String worldName, ConfigData config, PlayerSerializationData playerData) {
         this.gameManager = gameManager;
         this.menuManager = menuManager;
         this.worldName = worldName;
@@ -218,7 +217,7 @@ public class BingoSession
         return menuManager;
     }
 
-    public PlayerData getPlayerData() {
+    public PlayerSerializationData getPlayerData() {
         return playerData;
     }
 

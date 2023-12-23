@@ -162,24 +162,6 @@ items:
   team:
     name: "Kies Team"
     desc: "Klik om bij een team aan te sluiten"
-teams:
-  auto: "Automatisch"
-  brown: "Bruin"
-  orange: "Oranje"
-  pink: "Roze"
-  red: "Rood"
-  white: "Wit"
-  lime: "Lichtgroen"
-  green: "Groen"
-  gray: "Grijs"
-  light_gray: "Lichtgrijs"
-  black: "Zwart"
-  yellow: "Geel"
-  magenta: "Magenta"
-  cyan: "Cyaan"
-  blue: "Blauw"
-  purple: "Paars"
-  light_blue: "Lightblauw"
 creator:
   card_item:
     desc: "Bevat {0} lijst(en)" # 0: list count

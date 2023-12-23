@@ -78,6 +78,7 @@ public class ExtraBingoMenu extends BasicMenu
                     "§rUse the mouse buttons to increase/ decrease",
                     "the amount of players a team can have.");
             addItem(teamSize);
+            settings.maxTeamSize(teamSize.getAmount());
         }
         else if (slotClicked == countdown.getSlot())
         {
@@ -101,6 +102,7 @@ public class ExtraBingoMenu extends BasicMenu
                     "§rUse the mouse buttons to increase/ decrease",
                     "the amount of minutes that Countdown bingo will last.");
             addItem(gameDuration);
+            settings.countdownGameDuration(gameDuration.getAmount());
         }
         return super.onClick(event, player, clickedItem, clickType);
     }
@@ -108,8 +110,6 @@ public class ExtraBingoMenu extends BasicMenu
     @Override
     public void beforeClosing(HumanEntity player) {
         super.beforeClosing(player);
-        settings.countdownGameDuration(gameDuration.getAmount());
-        settings.maxTeamSize(teamSize.getAmount());
     }
 
     @Override

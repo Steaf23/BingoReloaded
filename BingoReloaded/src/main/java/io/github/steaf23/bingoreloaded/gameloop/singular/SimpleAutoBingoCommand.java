@@ -6,7 +6,7 @@ import io.github.steaf23.bingoreloaded.command.BingoCommand;
 import io.github.steaf23.bingoreloaded.command.SubCommand;
 import io.github.steaf23.bingoreloaded.data.BingoCardData;
 import io.github.steaf23.bingoreloaded.data.BingoSettingsData;
-import io.github.steaf23.bingoreloaded.data.PlayerData;
+import io.github.steaf23.bingoreloaded.data.PlayerSerializationData;
 import io.github.steaf23.bingoreloaded.data.helper.SerializablePlayer;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gameloop.PregameLobby;
@@ -391,7 +391,7 @@ public class SimpleAutoBingoCommand implements TabExecutor
         return true;
     }
 
-    private boolean playerData(PlayerData playerData, String[] extraArguments) {
+    private boolean playerData(PlayerSerializationData playerData, String[] extraArguments) {
         if (extraArguments.length != 2)
         {
             sendFailed("Expected 3 arguments!");

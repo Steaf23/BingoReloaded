@@ -1,6 +1,7 @@
 package io.github.steaf23.bingoreloaded.data;
 
 import io.github.steaf23.bingoreloaded.item.ItemText;
+import io.github.steaf23.bingoreloaded.util.CollectionHelper;
 import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.bingoreloaded.util.SmallCaps;
 import net.md_5.bungee.api.ChatColor;
@@ -8,6 +9,7 @@ import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -118,22 +120,6 @@ public enum BingoTranslation
     TEAM_ITEM_NAME("items.team.name"),
     TEAM_ITEM_DESC("items.team.desc"),
     TEAM_AUTO("teams.auto"),
-    TEAM_BROWN("teams.brown"),
-    TEAM_ORANGE("teams.orange"),
-    TEAM_PINK("teams.pink"),
-    TEAM_RED("teams.red"),
-    TEAM_WHITE("teams.white"),
-    TEAM_LIME("teams.lime"),
-    TEAM_GREEN("teams.green"),
-    TEAM_GRAY("teams.gray"),
-    TEAM_LIGHT_GRAY("teams.light_gray"),
-    TEAM_BLACK("teams.black"),
-    TEAM_YELLOW("teams.yellow"),
-    TEAM_MAGENTA("teams.magenta"),
-    TEAM_CYAN("teams.cyan"),
-    TEAM_BLUE("teams.blue"),
-    TEAM_PURPLE("teams.purple"),
-    TEAM_LIGHT_BLUE("teams.light_blue"),
     LIST_COUNT("creator.card_item.desc"),
     ;
 
@@ -142,6 +128,7 @@ public enum BingoTranslation
 
     private static final Pattern HEX_PATTERN = Pattern.compile("\\{#[a-fA-F0-9]{6}\\}");
     private static final Pattern SMALL_CAPS_PATTERN = Pattern.compile("\\{@.+\\}");
+    private static final Pattern SUBSTITUTE_PATTERN = Pattern.compile("\\{\\$(?<key>[\\w.]+)\\((?<args>.+)\\)\\}");
 
     BingoTranslation(String key)
     {
@@ -157,15 +144,22 @@ public enum BingoTranslation
         }
     }
 
-    public String translate(String... args)
+    public String translate(boolean isSubstitution, String... args)
     {
         String rawTranslation = Message.convertConfigString(translation);
+        rawTranslation = convertSubstitution(translation);
 
         for (int i = 0; i < args.length; i++)
         {
             rawTranslation = rawTranslation.replace("{" + i + "}", args[i]);
         }
         return rawTranslation;
+    }
+
+
+    public String translate(String... args)
+    {
+        return translate(false, args);
     }
 
     public String rawTranslation()
@@ -250,6 +244,30 @@ public enum BingoTranslation
             String match = matcher.group();
             String result = match.replace("{@", "").replace("}", "");
             part = part.replace(match, SmallCaps.toSmallCaps(result));
+        }
+
+        return part;
+    }
+
+    public static String convertSubstitution(String input, String... args)
+    {
+        String part = input;
+        Matcher matcher = SUBSTITUTE_PATTERN.matcher(part);
+        while (matcher.find())
+        {
+            String match = matcher.group();
+            String key = matcher.group("key");
+            String path = key.replace("{$", "").replace("}", "");
+
+            String[] addedArgs = matcher.group("args").split(",");
+            String[] allArgs = CollectionHelper.concatWithArrayCopy(args, addedArgs);
+
+            for (BingoTranslation value : BingoTranslation.values()) {
+                if (path.equals(value.key)) {
+                    part = part.replace(match, value.translate(true, allArgs));
+                    break;
+                }
+            }
         }
 
         return part;

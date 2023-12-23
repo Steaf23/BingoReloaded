@@ -156,24 +156,6 @@ items:
   wand:
     name: "La Baguette d'Envol"
     desc: "Cliquez avec le bouton de droite pour vous envoler dans les cieux! (& maintenez shift pour descendre)"
-teams:
-  auto: "Automatique"
-  brown: "Marron"
-  orange: "Orange"
-  pink: "Rose"
-  red: "Rouge"
-  white: "Blanc"
-  lime: "Vert clair"
-  green: "Vert"
-  gray: "Gris"
-  light_gray: "Gris clair"
-  black: "Noir"
-  yellow: "Jaune"
-  magenta: "Magenta"
-  cyan: "Cyan"
-  blue: "Bleu"
-  purple: "Violet"
-  light_blue: "Bleu clair"
 creator:
   card_item:
     desc: "Contient {0} liste(s)" # 0: list count

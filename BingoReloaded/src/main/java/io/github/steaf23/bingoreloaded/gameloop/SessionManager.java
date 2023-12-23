@@ -8,11 +8,13 @@ import javax.annotation.Nullable;
 public interface SessionManager
 {
     @Nullable
-    BingoSession getSession(String worldName);
+    BingoSession getSession(String sessionId);
 
     MenuManager getMenuManager();
 
     ConfigData getConfig();
 
     void onDisable();
+
+    int sessionCount();
 }

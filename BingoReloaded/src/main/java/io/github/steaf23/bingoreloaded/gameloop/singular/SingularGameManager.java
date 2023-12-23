@@ -2,7 +2,7 @@ package io.github.steaf23.bingoreloaded.gameloop.singular;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.ConfigData;
-import io.github.steaf23.bingoreloaded.data.PlayerData;
+import io.github.steaf23.bingoreloaded.data.PlayerSerializationData;
 import io.github.steaf23.bingoreloaded.event.BingoEventListener;
 import io.github.steaf23.bingoreloaded.gameloop.SessionManager;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
@@ -22,7 +22,7 @@ public class SingularGameManager implements SessionManager
     public SingularGameManager(BingoReloaded plugin) {
         this.config = plugin.config();
         this.menuManager = new BingoMenuManager(player -> canOpenMenu(player));
-        this.session = new BingoSession(this, menuManager, config.defaultWorldName, config, new PlayerData());
+        this.session = new BingoSession(this, menuManager, config.defaultWorldName, config, new PlayerSerializationData());
 
         this.eventListener = new BingoEventListener(world ->
                 BingoReloaded.getWorldNameOfDimension(world).equals(session.worldName) ? session : null
@@ -59,6 +59,11 @@ public class SingularGameManager implements SessionManager
     @Override
     public void onDisable() {
         HandlerList.unregisterAll(eventListener);
+    }
+
+    @Override
+    public int sessionCount() {
+        return 1;
     }
 
     public boolean canOpenMenu(HumanEntity player) {

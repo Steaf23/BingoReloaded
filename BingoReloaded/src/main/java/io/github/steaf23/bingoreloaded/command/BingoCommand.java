@@ -4,7 +4,7 @@ import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.BingoStatData;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.data.ConfigData;
-import io.github.steaf23.bingoreloaded.data.PlayerData;
+import io.github.steaf23.bingoreloaded.data.PlayerSerializationData;
 import io.github.steaf23.bingoreloaded.gameloop.BingoGame;
 import io.github.steaf23.bingoreloaded.gameloop.SessionManager;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
@@ -37,12 +37,12 @@ public class BingoCommand implements TabExecutor
 {
     private final ConfigData config;
     private final SessionManager gameManager;
-    private final PlayerData playerData;
+    private final PlayerSerializationData playerData;
 
     public BingoCommand(ConfigData config, SessionManager gameManager) {
         this.config = config;
         this.gameManager = gameManager;
-        this.playerData = new PlayerData();
+        this.playerData = new PlayerSerializationData();
     }
 
     @Override

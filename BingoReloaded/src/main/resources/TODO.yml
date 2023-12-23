@@ -2,6 +2,8 @@
 
 (2.1) implement Vault rewards
 
+add proper placeholder support
+
 (2.1) add /bingo info command to see information about current game (settings mostly) (admin use only)
 
 (2.1) add Free for all (probably needs a new TeamManager)
@@ -35,3 +37,23 @@ adding a participantCountChanged event would help with a lot of this probably
 fix card not opening after game ends (maybe handle in session instead of bingo game??)
 
 last line of team scoreboard should show something like "and x others.."
+
+add config option to completely disable scoreboard
+
+add configurator for scoreboard
+
+add dummy card to kit creator
+
+add substitute translations in translate file
+
+create new gamemode; Hot-Swap
+
+add reload config command
+
+end game when only 1 team remains
+
+force end when no players are online
+
+fix bingo end causing error in console when used incorrectly
+
+??? add new way for users to create custom tasks involving a lot of head aches on my part but should be the ultimate final task type

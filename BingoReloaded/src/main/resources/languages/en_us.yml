@@ -88,7 +88,7 @@ menu:
       name: "Complete-All Bingo Card"
       desc: "First team to complete all tasks wins."
   options:
-    title: "Options Menu"
+    title: "{$menu.card.save}"
     start: "Start The Game"
     end: "End The Game"
     team: "Join A Team"
@@ -163,24 +163,6 @@ items:
   team:
     name: "Join a Team"
     desc: "Click to select your team"
-teams:
-  auto: "Automatic"
-  brown: "Brown"
-  orange: "Orange"
-  pink: "Pink"
-  red: "Red"
-  white: "White"
-  lime: "Lime"
-  green: "Green"
-  gray: "Gray"
-  light_gray: "Light Gray"
-  black: "Black"
-  yellow: "Yellow"
-  magenta: "Magenta"
-  cyan: "Cyan"
-  blue: "Blue"
-  purple: "Purple"
-  light_blue: "Light Blue"
 creator:
   card_item:
     desc: "Contains {0} list(s)" # 0: list count
