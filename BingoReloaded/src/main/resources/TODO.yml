@@ -56,6 +56,4 @@ force end when no players are online
 
 fix bingo end causing error in console when used incorrectly
 
-add bingoReloaded message prefixes to translation file
-
 ??? add new way for users to create custom tasks involving a lot of head aches on my part but should be the ultimate final task type
