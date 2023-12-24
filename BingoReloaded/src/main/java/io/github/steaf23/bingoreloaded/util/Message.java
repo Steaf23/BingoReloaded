@@ -23,22 +23,7 @@ import java.util.stream.Collectors;
 // Similar to ComponentBuilder, but can parse language yml files better.
 public class Message
 {
-    public static final BaseComponent[] PRINT_PREFIX = new ComponentBuilder("").append("[").color(ChatColor.DARK_RED)
-            .append("Bingo", ComponentBuilder.FormatRetention.NONE).color(ChatColor.DARK_AQUA).bold(true)
-            .append("Ⓡeloaded", ComponentBuilder.FormatRetention.NONE).color(ChatColor.YELLOW).italic(true)
-            .append("]", ComponentBuilder.FormatRetention.NONE).color(ChatColor.DARK_RED)
-            .append("", ComponentBuilder.FormatRetention.NONE).create();
-
-    public static final BaseComponent[] SHORT_PREFIX = new ComponentBuilder("").append("[").color(ChatColor.DARK_RED)
-            .append("B", ComponentBuilder.FormatRetention.NONE).color(ChatColor.DARK_AQUA).bold(true)
-            .append("Ⓡ", ComponentBuilder.FormatRetention.NONE).color(ChatColor.YELLOW).italic(true)
-            .append("]", ComponentBuilder.FormatRetention.NONE).color(ChatColor.DARK_RED)
-            .append("", ComponentBuilder.FormatRetention.NONE).create();
-
-    public static final String PREFIX_STRING = new TextComponent(PRINT_PREFIX).toLegacyText();
-
-    public static final String PREFIX_STRING_SHORT = new TextComponent(SHORT_PREFIX).toLegacyText();
-
+    public static final String LOG_PREFIX = BingoTranslation.convertColors("&3&o[BingoReloaded]&r");
     protected String raw;
     protected List<BaseComponent> args;
     protected TextComponent base;
@@ -164,11 +149,7 @@ public class Message
     public void createPrefixedMessage() {
         TextComponent prefixedBase = new TextComponent();
 
-        for (BaseComponent c : PRINT_PREFIX) {
-            prefixedBase.addExtra(c);
-        }
-
-        prefixedBase.addExtra(" ");
+        prefixedBase.addExtra(new TextComponent(BingoTranslation.MESSAGE_PREFIX.translate()));
 
         createMessage();
 
@@ -178,6 +159,7 @@ public class Message
 
     /**
      * Send this message to all players in the given session's world(s).
+     *
      * @param session
      */
     public void sendAll(BingoSession session) {
@@ -207,12 +189,12 @@ public class Message
     }
 
     public static void log(String text) {
-        Bukkit.getConsoleSender().sendMessage(PREFIX_STRING.replace("Ⓡ", "R") + ": " + text);
+        Bukkit.getConsoleSender().sendMessage(LOG_PREFIX + ": " + text);
 //        BingoLogger.log("Message", text);
     }
 
     public static void log(String text, String worldName) {
-        Bukkit.getConsoleSender().sendMessage(PREFIX_STRING.replace("Ⓡ", "R") + "(" + worldName + "): " + text);
+        Bukkit.getConsoleSender().sendMessage(LOG_PREFIX + "(" + worldName + "): " + text);
 //        BingoLogger.log("Message", "(" + worldName + "): " + text);
     }
 
@@ -235,7 +217,7 @@ public class Message
 
     public static void sendDebug(BaseComponent text, Player player) {
         BaseComponent finalMsg = new TextComponent();
-        finalMsg.addExtra(PREFIX_STRING + " ");
+        finalMsg.addExtra(LOG_PREFIX + " ");
         finalMsg.addExtra(text);
         player.spigot().sendMessage(finalMsg);
     }
@@ -246,7 +228,7 @@ public class Message
 
     public static void sendDebug(BaseComponent[] text, Player player) {
         BaseComponent finalMsg = new TextComponent();
-        finalMsg.addExtra(PREFIX_STRING + " ");
+        finalMsg.addExtra(LOG_PREFIX + " ");
         TextComponent allText = new TextComponent();
         allText.setExtra(Arrays.stream(text).collect(Collectors.toList()));
         finalMsg.addExtra(allText);
@@ -311,8 +293,7 @@ public class Message
      *
      * @return
      */
-    public static String convertConfigString(String input)
-    {
+    public static String convertConfigString(String input) {
         String out = input;
         out = BingoTranslation.convertColors(out);
         out = BingoTranslation.convertSmallCaps(out);
@@ -339,6 +320,6 @@ public class Message
         hoverable.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
                 new ComponentBuilder(hover).create()));
 
-        return new TextComponent[]{new TextComponent(PRINT_PREFIX), prefix, hoverable, suffix};
+        return new TextComponent[]{new TextComponent(BingoTranslation.MESSAGE_PREFIX.translate()), prefix, hoverable, suffix};
     }
 }

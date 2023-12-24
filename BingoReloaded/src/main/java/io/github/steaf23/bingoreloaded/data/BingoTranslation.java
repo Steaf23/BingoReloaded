@@ -9,7 +9,6 @@ import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -18,6 +17,9 @@ import java.util.regex.Pattern;
 public enum BingoTranslation
 {
     UNIMPLEMENTED("UNIMPLEMENTED MESSAGE"),
+    SETTINGS_SCOREBOARD_TITLE("branding.scoreboard_title"),
+    MESSAGE_PREFIX("branding.message_prefix"),
+    MENU_PREFIX("branding.menu_prefix"),
     LANGUAGE_NAME("name"),
     CHANGED_LANGUAGE("changed"),
     COMMAND_USAGE("command.use"),
@@ -73,7 +75,7 @@ public enum BingoTranslation
     MENU_PREV("menu.prev"),
     MENU_FILTER("menu.filter"),
     MENU_CLEAR_FILTER("menu.clear"),
-    SCOREBOARD_TITLE("menu.completed"),
+    GAME_SCOREBOARD_TITLE("menu.completed"),
     CARD_TITLE("menu.card.title"),
     INFO_REGULAR_NAME("menu.card.info_regular.name"),
     INFO_REGULAR_DESC("menu.card.info_regular.desc"),
@@ -144,10 +146,10 @@ public enum BingoTranslation
         }
     }
 
-    public String translate(boolean isSubstitution, String... args)
+    private String translate(boolean isSubstitution, String... args)
     {
         String rawTranslation = Message.convertConfigString(translation);
-        rawTranslation = convertSubstitution(translation);
+//        rawTranslation = convertSubstitution(translation);
 
         for (int i = 0; i < args.length; i++)
         {

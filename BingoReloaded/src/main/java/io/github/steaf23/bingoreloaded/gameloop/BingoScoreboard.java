@@ -11,6 +11,7 @@ import io.github.steaf23.bingoreloaded.player.team.TeamManager;
 import io.github.steaf23.bingoreloaded.util.InfoScoreboard;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
+import org.bukkit.scoreboard.Criteria;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -28,9 +29,9 @@ public class BingoScoreboard implements SessionMember
         this.session = session;
         this.showPlayer = showPlayer;
         this.teamBoard = Bukkit.getScoreboardManager().getNewScoreboard();
-        this.visualBoard = new InfoScoreboard("" + ChatColor.ITALIC + ChatColor.UNDERLINE + BingoTranslation.SCOREBOARD_TITLE.translate(), teamBoard);
+        this.visualBoard = new InfoScoreboard("" + ChatColor.ITALIC + ChatColor.UNDERLINE + BingoTranslation.GAME_SCOREBOARD_TITLE.translate(), teamBoard);
 
-        this.taskObjective = teamBoard.registerNewObjective("item_count", "bingo_item_count");
+        this.taskObjective = teamBoard.registerNewObjective("item_count", Criteria.DUMMY, "item_count");
 
         reset();
     }

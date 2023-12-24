@@ -22,7 +22,9 @@ import java.util.function.Consumer;
 
 public class UserInputMenu implements Menu
 {
-    record MenuTemplate(String title, Consumer<String> result, String startingText, HumanEntity player) {}
+    record MenuTemplate(String title, Consumer<String> result, String startingText, HumanEntity player)
+    {
+    }
 
     private final MenuTemplate template;
     private AnvilGUI gui;
@@ -36,12 +38,12 @@ public class UserInputMenu implements Menu
         this.manager.open(this, player);
     }
 
-    private AnvilGUI openAnvilUI(String title,  Consumer<String> result, String startingText, HumanEntity player) {
+    private AnvilGUI openAnvilUI(String title, Consumer<String> result, String startingText, HumanEntity player) {
         return new AnvilGUI.Builder()
                 .onClose(state -> {
                     manager.close(this, state.getPlayer());
                 })
-                .title(Message.PREFIX_STRING_SHORT + " " + ChatColor.DARK_RED + title)
+                .title(BasicMenu.pluginTitlePrefix + title)
                 .text(startingText.isEmpty() ? "name" : startingText)
                 .itemRight(EMPTY)
                 .itemLeft(new ItemStack(Material.ELYTRA))
@@ -50,8 +52,7 @@ public class UserInputMenu implements Menu
                         manager.close(this, state.getPlayer());
                         result.accept("");
                         return Collections.emptyList();
-                    }
-                    else if (slot == AnvilGUI.Slot.OUTPUT) {
+                    } else if (slot == AnvilGUI.Slot.OUTPUT) {
                         manager.close(this, state.getPlayer());
                         result.accept(state.getText());
                         return Collections.emptyList();

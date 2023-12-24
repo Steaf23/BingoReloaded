@@ -5,7 +5,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 
 public interface GamePhase extends SessionMember
 {
-    void setup();
     /**
      * To be called when this phase needs to (forcefully) end.
      */

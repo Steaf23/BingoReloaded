@@ -19,7 +19,7 @@ public class SettingsPreviewBoard extends InfoScoreboard
 
     public SettingsPreviewBoard()
     {
-        super(new TextComponent(TITLE).toLegacyText(), Bukkit.getScoreboardManager().getNewScoreboard());
+        super(BingoTranslation.SETTINGS_SCOREBOARD_TITLE.translate(), Bukkit.getScoreboardManager().getNewScoreboard());
     }
 
     public void handleSettingsUpdated(final BingoSettingsUpdatedEvent event)

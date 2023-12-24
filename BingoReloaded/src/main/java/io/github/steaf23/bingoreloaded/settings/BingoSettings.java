@@ -68,4 +68,4 @@ public record BingoSettings(String card,
                 (int) data.get("duration")
         );
     }
-};
+}

@@ -18,13 +18,13 @@ add proper placeholder support
 
 (2.1) vote item does not appear when starting server sometimes
 
-(2.1) Auto team is not treated like a proper team, meaning events involving auto team will be convoluted and leave participants as null
-(participants cannot be made from the autoteam)
-adding a participantCountChanged event would help with a lot of this probably
+#? (2.1) Auto team is not treated like a proper team, meaning events involving auto team will be convoluted and leave participants as null
+#(participants cannot be made from the autoteam)
+#adding a participantCountChanged event would help with a lot of this probably
 
 (2.x) Add support for Folia
 
-(2.1) add option to translate statistics explicitly
+#? (2.1) add option to translate statistics explicitly 
 
 (2.1) task list is not always selected correctly
 
@@ -42,7 +42,7 @@ add config option to completely disable scoreboard
 
 add configurator for scoreboard
 
-add dummy card to kit creator
+add dummy card to kit creator, to configure card slot as well
 
 add substitute translations in translate file
 
@@ -55,5 +55,7 @@ end game when only 1 team remains
 force end when no players are online
 
 fix bingo end causing error in console when used incorrectly
+
+add bingoReloaded message prefixes to translation file
 
 ??? add new way for users to create custom tasks involving a lot of head aches on my part but should be the ultimate final task type

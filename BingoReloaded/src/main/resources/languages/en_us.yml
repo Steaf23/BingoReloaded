@@ -1,5 +1,9 @@
 name: "English"
 changed: "Language configured to English!"
+branding:
+  scoreboard_title: "&3&lBingo&r&e&oⓇeloaded&r&4"
+  message_prefix: "&r&4[&3&lBingo&r&e&oⓇeloaded&r&4]&r: "
+  menu_prefix: "&r&4[&3&lB&r&e&oⓇ&r&4] &4"
 command:
   use: "Usage: {0}" # 0: cmd usage
   bingo:
@@ -88,7 +92,7 @@ menu:
       name: "Complete-All Bingo Card"
       desc: "First team to complete all tasks wins."
   options:
-    title: "{$menu.card.save}"
+    title: "Options Menu"
     start: "Start The Game"
     end: "End The Game"
     team: "Join A Team"
@@ -166,3 +170,5 @@ items:
 creator:
   card_item:
     desc: "Contains {0} list(s)" # 0: list count
+teams:
+  auto: "Automatic"

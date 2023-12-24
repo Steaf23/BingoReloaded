@@ -62,8 +62,6 @@ public class BingoReloaded extends JavaPlugin
         instance = this;
         usesPlaceholderAPI = Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null;
 
-        BasicMenu.pluginTitlePrefix = Message.PREFIX_STRING_SHORT + " " + ChatColor.DARK_RED;
-
         ConfigurationSerialization.registerClass(BingoSettings.class);
         ConfigurationSerialization.registerClass(ItemTask.class);
         ConfigurationSerialization.registerClass(AdvancementTask.class);
@@ -77,6 +75,7 @@ public class BingoReloaded extends JavaPlugin
         this.config = new ConfigData(getConfig());
 
         BingoTranslation.setLanguage(createYmlDataManager(config.language).getConfig(), createYmlDataManager("languages/en_us.yml").getConfig());
+        BasicMenu.pluginTitlePrefix = BingoTranslation.MENU_PREFIX.translate();
         Message.log("" + ChatColor.GREEN + BingoTranslation.CHANGED_LANGUAGE.translate());
 
         this.hologramManager = new HologramManager();
@@ -175,11 +174,9 @@ public class BingoReloaded extends JavaPlugin
         String version = Bukkit.getVersion();
         if (version.contains("(MC: 1.18")) {
             return CARD_1_18;
-        }
-        else if (version.contains("(MC: 1.19")) {
+        } else if (version.contains("(MC: 1.19")) {
             return CARD_1_19;
-        }
-        else if (version.contains("(MC: 1.20")) {
+        } else if (version.contains("(MC: 1.20")) {
             return CARD_1_20;
         }
         return CARD_1_18;

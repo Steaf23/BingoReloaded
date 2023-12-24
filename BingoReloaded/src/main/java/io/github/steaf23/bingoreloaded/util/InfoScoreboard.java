@@ -3,10 +3,7 @@ package io.github.steaf23.bingoreloaded.util;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-import org.bukkit.scoreboard.DisplaySlot;
-import org.bukkit.scoreboard.Objective;
-import org.bukkit.scoreboard.Scoreboard;
-import org.bukkit.scoreboard.Team;
+import org.bukkit.scoreboard.*;
 
 /**
  * Only 1 InfoScoreboard can exist on a single scoreboard instance due to Team limitations I don't wanna change
@@ -19,7 +16,7 @@ public class InfoScoreboard
     public InfoScoreboard(String title, Scoreboard board)
     {
         this.board = board;
-        this.sidebar = board.registerNewObjective("info", "dummy", title);
+        this.sidebar = board.registerNewObjective("info", Criteria.DUMMY, title);
         sidebar.setDisplaySlot(DisplaySlot.SIDEBAR);
 
         for (int i = 0; i < 15; i++)
