@@ -46,7 +46,6 @@ import java.util.stream.Collectors;
 public class BingoGame implements GamePhase
 {
     private final BingoSession session;
-    private final String worldName;
     private final BingoSettings settings;
     private final BingoScoreboard scoreboard;
     private final TeamManager teamManager;
@@ -63,13 +62,12 @@ public class BingoGame implements GamePhase
     public BingoGame(BingoSession session, BingoSettings settings, ConfigData config) {
         this.session = session;
         this.config = config;
-        this.worldName = session.worldName;
         this.teamManager = session.teamManager;
         this.scoreboard = session.scoreboard;
         this.settings = settings;
-        this.cardEventManager = new CardEventManager(worldName);
+        this.cardEventManager = new CardEventManager();
         if (!config.disableStatistics)
-            this.statTracker = new StatisticTracker(worldName);
+            this.statTracker = new StatisticTracker();
         else
             this.statTracker = null;
 
@@ -95,7 +93,7 @@ public class BingoGame implements GamePhase
         });
 
         deathMatchTask = null;
-        World world = Bukkit.getWorld(getWorldName());
+        World world = session.getOverworld();
         if (world == null) {
             return;
         }
@@ -453,10 +451,6 @@ public class BingoGame implements GamePhase
         };
     }
 
-    public String getWorldName() {
-        return worldName;
-    }
-
     public CardEventManager getCardEventManager() {
         return cardEventManager;
     }
@@ -600,7 +594,7 @@ public class BingoGame implements GamePhase
         if (!(participant instanceof BingoPlayer player))
             return;
 
-        Message.log("Player " + player.asOnlinePlayer().get().getDisplayName() + " respawned", worldName);
+        Message.log("Player " + player.asOnlinePlayer().get().getDisplayName() + " respawned", session.getOverworld().getName());
 
         if (!settings.effects().contains(EffectOptionFlags.KEEP_INVENTORY)) {
             returnCardToPlayer(player);

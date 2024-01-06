@@ -33,3 +33,6 @@ commands:
   bingobot:
     permission: bingo.admin
     description: Create fake players to join teams and complete tasks, for debugging purposes
+  bingotest:
+    permission: bingo.admin
+    description: Test commands, for debugging only.

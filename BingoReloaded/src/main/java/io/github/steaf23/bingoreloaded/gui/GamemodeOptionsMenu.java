@@ -47,8 +47,6 @@ public class GamemodeOptionsMenu extends BasicMenu
         BingoGamemode chosenMode = BingoGamemode.REGULAR;
         CardSize chosenSize = CardSize.X5;
 
-        String worldName = BingoReloaded.getWorldNameOfDimension(player.getWorld());
-
         int slotClicked = event.getRawSlot();
         if (slotClicked == options[0].getSlot() || slotClicked == options[3].getSlot())
         {

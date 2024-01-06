@@ -7,6 +7,7 @@ public enum BingoGamemode
     REGULAR(ChatColor.GREEN + "Regular", "regular"),
     LOCKOUT(ChatColor.DARK_PURPLE + "Lockout", "lockout"),
     COMPLETE(ChatColor.DARK_AQUA + "Complete-All", "complete"),
+    HOTSWAP(ChatColor.GOLD + "Hot-Swap", "hotswap"),
     ;
 
     public final String displayName;

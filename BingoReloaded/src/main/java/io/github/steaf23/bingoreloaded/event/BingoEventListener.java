@@ -6,6 +6,7 @@ import io.github.steaf23.bingoreloaded.gameloop.PregameLobby;
 import io.github.steaf23.bingoreloaded.tasks.statistics.StatisticTracker;
 import io.github.steaf23.bingoreloaded.util.Message;
 import org.bukkit.World;
+import org.bukkit.block.data.type.Bed;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -298,5 +299,9 @@ public class BingoEventListener implements Listener
         if (event.getSession().phase() instanceof PregameLobby lobby) {
             lobby.handleParticipantLeftTeam(event);
         }
+    }
+
+    public void handleParticipantCountChangedEvent(final ParticipantCountChangedEvent event) {
+        event.getSession().handleParticipantCountChangedEvent(event);
     }
 }

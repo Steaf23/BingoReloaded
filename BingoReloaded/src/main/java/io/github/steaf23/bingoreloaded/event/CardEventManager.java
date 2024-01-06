@@ -19,12 +19,10 @@ import java.util.List;
 public class CardEventManager
 {
     private final List<BingoCard> cards;
-    private String worldName;
 
-    public CardEventManager(String worldName)
+    public CardEventManager()
     {
         this.cards = new ArrayList<>();
-        this.worldName = worldName;
     }
 
     public void setCards(List<BingoCard> newCards)

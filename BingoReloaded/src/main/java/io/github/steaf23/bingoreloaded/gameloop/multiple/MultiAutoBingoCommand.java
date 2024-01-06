@@ -44,34 +44,34 @@ public class MultiAutoBingoCommand implements TabExecutor {
         if (args.length < 2) {
             return false;
         }
-        String worldName = args[0];
+        String sessionName = args[0];
         String command = args[1];
         String[] extraArguments = args.length > 2 ? Arrays.copyOfRange(args, 2, args.length - 1) : new String[]{};
         BingoSettingsBuilder settings = null;
-        BingoSession session = manager.getSession(worldName);
+        BingoSession session = manager.getSession(sessionName);
         if (session != null)
-            settings = manager.getSession(worldName).settingsBuilder;
+            settings = manager.getSession(sessionName).settingsBuilder;
 
         // All commands besides "create" can only be executed if a game session exists in the given world
-        if (!command.equals("create") && !manager.doesSessionExist(worldName)) {
-            sendFailed("Cannot perform command on a world that has not been created (yet)!", worldName);
+        if (!command.equals("create") && manager.getSession(sessionName) == null) {
+            sendFailed("Cannot perform command on a session world that has no valid session!", sessionName);
             return false;
         }
 
         boolean success = switch (command) {
-            case "create" -> create(worldName, extraArguments);
-            case "destroy" -> destroy(worldName);
-            case "start" -> start(worldName);
-            case "kit" -> setKit(session, settings, worldName, extraArguments);
-            case "effects" -> setEffect(session, settings, worldName, extraArguments);
-            case "card" -> setCard(settings, worldName, extraArguments);
-            case "countdown" -> setCountdown(settings, worldName, extraArguments);
-            case "duration" -> setDuration(settings, worldName, extraArguments);
-            case "team" -> setPlayerTeam(worldName, extraArguments);
-            case "teamsize" -> setTeamSize(settings, worldName, extraArguments);
-            case "gamemode" -> setGamemode(settings, worldName, extraArguments);
-            case "end" -> end(worldName);
-            case "preset" -> preset(settings, worldName, extraArguments);
+            case "create" -> create(sessionName);
+            case "destroy" -> destroy(sessionName);
+            case "start" -> start(sessionName);
+            case "kit" -> setKit(session, settings, sessionName, extraArguments);
+            case "effects" -> setEffect(session, settings, sessionName, extraArguments);
+            case "card" -> setCard(settings, sessionName, extraArguments);
+            case "countdown" -> setCountdown(settings, sessionName, extraArguments);
+            case "duration" -> setDuration(settings, sessionName, extraArguments);
+            case "team" -> setPlayerTeam(sessionName, extraArguments);
+            case "teamsize" -> setTeamSize(settings, sessionName, extraArguments);
+            case "gamemode" -> setGamemode(settings, sessionName, extraArguments);
+            case "end" -> end(sessionName);
+            case "preset" -> preset(settings, sessionName, extraArguments);
             default -> {
                 Message.log(ChatColor.RED + "Invalid command: '" + command + "' not recognized");
                 yield false;
@@ -81,13 +81,8 @@ public class MultiAutoBingoCommand implements TabExecutor {
         return success;
     }
 
-    public boolean create(String worldName, String[] extraArguments) {
-        if (extraArguments.length > 1) {
-            sendFailed("Expected at most 3 arguments", worldName);
-        }
-
-        String presetName = extraArguments.length == 1 ? extraArguments[0] : "";
-        manager.createSession(worldName, presetName);
+    public boolean create(String worldName) {
+        manager.createSession(worldName);
         sendSuccess("Connected Bingo Reloaded to this world!", worldName);
         return true;
     }
@@ -200,45 +195,45 @@ public class MultiAutoBingoCommand implements TabExecutor {
         return true;
     }
 
-    public boolean setPlayerTeam(String worldName, String[] extraArguments) {
+    public boolean setPlayerTeam(String sessionName, String[] extraArguments) {
         if (extraArguments.length != 2) {
-            sendFailed("Expected 4 arguments!", worldName);
+            sendFailed("Expected 4 arguments!", sessionName);
             return false;
         }
 
-        if (!manager.doesSessionExist(worldName)) {
-            sendFailed("Cannot add player to team, world '" + worldName + "' is not a bingo world!", worldName);
+        if (manager.getSession(sessionName) == null) {
+            sendFailed("Cannot add player to team, world '" + sessionName + "' is not a bingo world!", sessionName);
             return false;
         }
 
-        BingoSession session = manager.getSession(worldName);
+        BingoSession session = manager.getSession(sessionName);
         String playerName = extraArguments[0];
         String teamName = extraArguments[1];
 
         Player player = Bukkit.getPlayer(playerName);
         if (player == null) {
-            sendFailed("Cannot add " + playerName + " to team, player does not exist/ is not online!", worldName);
+            sendFailed("Cannot add " + playerName + " to team, player does not exist/ is not online!", sessionName);
             return false;
         }
 
         if (teamName.equalsIgnoreCase("none")) {
             BingoParticipant participant = session.teamManager.getPlayerAsParticipant(player);
             if (participant == null) {
-                sendFailed(playerName + " did not join any teams!", worldName);
+                sendFailed(playerName + " did not join any teams!", sessionName);
                 return false;
             }
 
             session.teamManager.removeMemberFromTeam(participant);
-            sendSuccess("Player " + playerName + " removed from all teams", worldName);
+            sendSuccess("Player " + playerName + " removed from all teams", sessionName);
             return true;
         }
 
         BingoPlayer bingoPlayer = new BingoPlayer(player, session);
         if (!session.teamManager.addMemberToTeam(bingoPlayer, teamName)) {
-            sendFailed("Player " + player + " could not be added to team " + teamName, worldName);
+            sendFailed("Player " + player + " could not be added to team " + teamName, sessionName);
             return false;
         }
-        sendSuccess("Player " + playerName + " added to team " + teamName + "", worldName);
+        sendSuccess("Player " + playerName + " added to team " + teamName + "", sessionName);
         return true;
     }
 
@@ -287,9 +282,9 @@ public class MultiAutoBingoCommand implements TabExecutor {
         }
     }
 
-    public boolean preset(BingoSettingsBuilder settingsBuilder, String worldName, String[] extraArguments) {
+    public boolean preset(BingoSettingsBuilder settingsBuilder, String sessionName, String[] extraArguments) {
         if (extraArguments.length != 2) {
-            sendFailed("Expected 4 arguments!", worldName);
+            sendFailed("Expected 4 arguments!", sessionName);
             return false;
         }
 
@@ -297,24 +292,24 @@ public class MultiAutoBingoCommand implements TabExecutor {
 
         String path = extraArguments[0];
         if (path.isBlank()) {
-            sendFailed("Please enter a valid preset name", worldName);
+            sendFailed("Please enter a valid preset name", sessionName);
             return false;
         }
         if (extraArguments[0].equals("save")) {
             settingsData.saveSettings(path, settingsBuilder.view());
         } else if (extraArguments[0].equals("load")) {
-            Objects.requireNonNull(manager.getSession(worldName)).settingsBuilder.fromOther(settingsData.getSettings(path));
+            Objects.requireNonNull(manager.getSession(sessionName)).settingsBuilder.fromOther(settingsData.getSettings(path));
         }
 
         return true;
     }
 
-    private void sendFailed(String message, String worldName) {
-        Message.log(ChatColor.RED + message, worldName);
+    private void sendFailed(String message, String sessionName) {
+        Message.log(ChatColor.RED + message, sessionName);
     }
 
-    private void sendSuccess(String message, String worldName) {
-        Message.log(ChatColor.GREEN + message, worldName);
+    private void sendSuccess(String message, String sessionName) {
+        Message.log(ChatColor.GREEN + message, sessionName);
     }
 
     @Nullable

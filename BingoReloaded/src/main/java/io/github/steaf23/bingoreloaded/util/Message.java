@@ -167,7 +167,7 @@ public class Message
             return;
 
         for (Player p : Bukkit.getOnlinePlayers()) {
-            if (BingoReloaded.getWorldNameOfDimension(p.getWorld()).equals(session.worldName)) {
+            if (session.hasPlayer(p)) {
                 send(p);
             }
         }

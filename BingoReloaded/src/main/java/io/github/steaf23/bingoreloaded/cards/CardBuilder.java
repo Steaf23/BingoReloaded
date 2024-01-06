@@ -10,6 +10,7 @@ public class CardBuilder
         return switch (mode) {
             case LOCKOUT -> new LockoutBingoCard(menuManager, size, teamManager.getSession(), teamManager.getActiveTeams());
             case COMPLETE -> new CompleteBingoCard(menuManager, size);
+            case HOTSWAP -> new HotswapBingoCard(menuManager, size, 10);
             default -> new BingoCard(menuManager, size);
         };
     }

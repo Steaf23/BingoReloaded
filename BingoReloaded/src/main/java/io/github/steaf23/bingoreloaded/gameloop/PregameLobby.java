@@ -276,7 +276,7 @@ public class PregameLobby implements GamePhase
             }
 
             for (Player p : Bukkit.getOnlinePlayers()) {
-                if (BingoReloaded.getWorldNameOfDimension(p.getWorld()).equals(session.worldName)) {
+                if (session.hasPlayer(p)) {
                     initializePlayer(p.getPlayer());
                 }
             }

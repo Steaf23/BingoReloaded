@@ -19,6 +19,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
@@ -335,6 +336,8 @@ public class BasicTeamManager implements TeamManager
             return;
 
         participant.getTeam().team.removeEntry(event.getPlayer().getName());
+        Event e = new ParticipantCountChangedEvent(session, getTotalParticipantCount() + 1, getTotalParticipantCount());
+        Bukkit.getPluginManager().callEvent(e);
     }
 
     @Override

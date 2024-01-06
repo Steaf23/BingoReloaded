@@ -62,7 +62,7 @@ public class BingoPlayer implements BingoParticipant
             return Optional.empty();
 
         Player player = Bukkit.getPlayer(playerId);
-        if (!BingoReloaded.getWorldNameOfDimension(player.getWorld()).equals(session.worldName))
+        if (!session.hasPlayer(player))
         {
             return Optional.empty();
         }

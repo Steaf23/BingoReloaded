@@ -16,12 +16,10 @@ import java.util.stream.Collectors;
 public class StatisticTracker
 {
     private final List<StatisticProgress> statistics;
-    private final String worldName;
 
-    public StatisticTracker(String worldName)
+    public StatisticTracker()
     {
         this.statistics = new ArrayList<>();
-        this.worldName = worldName;
     }
 
     public void start(BingoTeamContainer teams)

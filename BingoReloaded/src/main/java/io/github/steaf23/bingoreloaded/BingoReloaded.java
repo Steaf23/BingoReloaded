@@ -1,11 +1,14 @@
 package io.github.steaf23.bingoreloaded;
 
 import io.github.steaf23.bingoreloaded.command.BingoCommand;
+import io.github.steaf23.bingoreloaded.command.BingoTestCommand;
 import io.github.steaf23.bingoreloaded.command.TeamChatCommand;
 import io.github.steaf23.bingoreloaded.data.*;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.data.helper.SerializablePlayer;
 import io.github.steaf23.bingoreloaded.data.helper.YmlDataManager;
+import io.github.steaf23.bingoreloaded.data.world.SimpleWorldFactory;
+import io.github.steaf23.bingoreloaded.data.world.WorldFactory;
 import io.github.steaf23.bingoreloaded.gameloop.SessionManager;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gameloop.multiple.MultiAutoBingoCommand;
@@ -28,7 +31,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.command.*;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
-import org.bukkit.entity.BlockDisplay;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
@@ -46,6 +48,8 @@ public class BingoReloaded extends JavaPlugin
     // Amount of ticks per second.
     public static final int ONE_SECOND = 20;
     public static boolean usesPlaceholderAPI = false;
+
+    public WorldFactory worldData;
 
     private static BingoReloaded instance;
 
@@ -80,6 +84,8 @@ public class BingoReloaded extends JavaPlugin
 
         this.hologramManager = new HologramManager();
         this.hologramPlacer = new HologramPlacer(hologramManager);
+        this.worldData = new SimpleWorldFactory(this);
+        worldData.clearWorlds();
 
         TabExecutor autoBingoCommand;
 
@@ -93,8 +99,9 @@ public class BingoReloaded extends JavaPlugin
 
         registerCommand("bingo", new BingoCommand(config, gameManager));
         registerCommand("autobingo", autoBingoCommand);
+        registerCommand("bingotest", new BingoTestCommand(this));
         if (config.enableTeamChat) {
-            TeamChatCommand command = new TeamChatCommand(player -> gameManager.getSession(BingoReloaded.getWorldNameOfDimension(player.getWorld())));
+            TeamChatCommand command = new TeamChatCommand(player -> gameManager.getSessionFromWorld(player.getWorld()));
             registerCommand("btc", command);
             Bukkit.getPluginManager().registerEvents(command, this);
         }
@@ -117,12 +124,6 @@ public class BingoReloaded extends JavaPlugin
             command.setExecutor(executor);
             command.setTabCompleter(executor);
         }
-    }
-
-    public static String getWorldNameOfDimension(World dimension) {
-        return dimension.getName()
-                .replace("_nether", "")
-                .replace("_the_end", "");
     }
 
     public static YmlDataManager createYmlDataManager(String filepath) {

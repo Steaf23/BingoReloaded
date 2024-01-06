@@ -48,24 +48,27 @@ public class BingoTeamContainer implements Iterable<BingoTeam>
     }
 
     public Set<BingoParticipant> getAllParticipants() {
-        Set<BingoParticipant> players = new HashSet<>();
+        Set<BingoParticipant> allPlayers = new HashSet<>();
         for (BingoTeam activeTeam : teams) {
-            players.addAll(activeTeam.getMembers());
+            allPlayers.addAll(activeTeam.getMembers());
         }
+
+        Set<BingoParticipant> playingPlayers = new HashSet<>();
         for (Player p : Bukkit.getOnlinePlayers()) {
             boolean found = false;
             for (BingoTeam t : teams) {
                 for (var player : t.getMembers()) {
                     if (player.getId().equals(p.getUniqueId())) {
-                        players.add(player);
+                        playingPlayers.add(player);
                         found = true;
+                        break;
                     }
                 }
                 if (found)
                     break;
             }
         }
-        return players;
+        return playingPlayers;
     }
 
     public void removeEmptyTeams() {

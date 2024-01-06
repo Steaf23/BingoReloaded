@@ -16,10 +16,14 @@ import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.bingoreloaded.util.TranslatedMessage;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.*;
 import org.bukkit.potion.PotionEffectType;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.units.qual.A;
+
+import java.util.UUID;
 
 /**
  * This class represents a session of bingo games on a single world(group).
@@ -27,7 +31,6 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  */
 public class BingoSession
 {
-    public final String worldName;
     public final BingoSettingsBuilder settingsBuilder;
     public final BingoScoreboard scoreboard;
     public final TeamManager teamManager;
@@ -36,29 +39,32 @@ public class BingoSession
     private final PlayerSerializationData playerData;
     private final SessionManager gameManager;
 
+    // A bingo session controls 1 group of worlds
+    private final WorldGroup worlds;
     private GamePhase phase;
 
-    public BingoSession(SessionManager gameManager, MenuManager menuManager, String worldName, ConfigData config, PlayerSerializationData playerData) {
+    public BingoSession(SessionManager gameManager, MenuManager menuManager, WorldGroup worlds, ConfigData config, PlayerSerializationData playerData) {
         this.gameManager = gameManager;
         this.menuManager = menuManager;
-        this.worldName = worldName;
+        this.worlds = worlds;
         this.config = config;
         this.playerData = playerData;
         this.settingsBuilder = new BingoSettingsBuilder(this);
         settingsBuilder.fromOther(new BingoSettingsData().getSettings(config.defaultSettingsPreset));
         this.scoreboard = new BingoScoreboard(this, config.showPlayerInScoreboard && false);
         this.teamManager = new SoloTeamManager(scoreboard.getTeamBoard(), this);
-//        this.teamManager = new BasicTeamManager(scoreboard.getTeamBoard(), this);
+//      this.teamManager = new BasicTeamManager(scoreboard.getTeamBoard(), this);
 
         BingoReloaded.scheduleTask((t) -> {
             for (Player p : Bukkit.getOnlinePlayers()) {
-                if (BingoReloaded.getWorldNameOfDimension(p.getWorld()).equals(worldName)) {
+                if (hasPlayer(p)) {
                     var playerJoinEvent = new PlayerJoinedSessionWorldEvent(p, this, p.getLocation(), p.getLocation(), true);
                     Bukkit.getPluginManager().callEvent(playerJoinEvent);
                 }
             }
         }, 10);
 
+        this.worlds.create();
         prepareNextGame();
     }
 
@@ -87,7 +93,7 @@ public class BingoSession
 
         teamManager.setup();
         if (teamManager.getParticipants().size() == 0) {
-            Message.log("Could not start bingo since no players have joined!", worldName);
+            Message.log("Could not start bingo since no players have joined!", worlds.getName());
             return;
         }
 
@@ -109,7 +115,7 @@ public class BingoSession
     public void prepareNextGame() {
         if (config.savePlayerInformation && config.loadPlayerInformationStrategy == ConfigData.LoadPlayerInformationStrategy.AFTER_GAME) {
             for (Player p : Bukkit.getOnlinePlayers()) {
-                if (BingoReloaded.getWorldNameOfDimension(p.getWorld()).equals(worldName)) {
+                if (hasPlayer(p)) {
                     playerData.loadPlayer(p);
                 }
             }
@@ -140,12 +146,12 @@ public class BingoSession
     }
 
     public void handlePlayerTeleport(final PlayerTeleportEvent event) {
-        String sourceWorldName = BingoReloaded.getWorldNameOfDimension(event.getFrom().getWorld());
-        String targetWorldName = BingoReloaded.getWorldNameOfDimension(event.getTo().getWorld());
+        UUID sourceWorldId = event.getFrom().getWorld().getUID();
+        UUID targetWorldId = event.getTo().getWorld().getUID();
 
         // If player is leaving this game's world
-        if (sourceWorldName.equals(this.worldName)) {
-            if (!targetWorldName.equals(this.worldName)) {
+        if (worlds.hasWorld(sourceWorldId)) {
+            if (!worlds.hasWorld(targetWorldId)) {
                 BingoReloaded.scheduleTask(t -> {
                     var leftWorldEvent = new PlayerLeftSessionWorldEvent(event.getPlayer(), this, event.getFrom(), event.getTo());
                     Bukkit.getPluginManager().callEvent(leftWorldEvent);
@@ -153,10 +159,10 @@ public class BingoSession
             }
         }
         // If player is arriving in this world
-        else if (targetWorldName.equals(this.worldName)) {
-            if (!sourceWorldName.equals(this.worldName)) {
+        else if (worlds.hasWorld(targetWorldId)) {
+            if (!worlds.hasWorld(sourceWorldId)) {
                 BingoReloaded.scheduleTask(t -> {
-                    boolean sourceIsBingoWorld = gameManager.getSession(sourceWorldName) != null;
+                    boolean sourceIsBingoWorld = gameManager.getSessionFromWorld(event.getFrom().getWorld()) != null;
                     var joinedWorldEvent = new PlayerJoinedSessionWorldEvent(event.getPlayer(), this, event.getFrom(), event.getTo(), sourceIsBingoWorld);
                     Bukkit.getPluginManager().callEvent(joinedWorldEvent);
                 }, 10);
@@ -209,8 +215,15 @@ public class BingoSession
             player.removePotionEffect(effect);
         }
 
-        if (isRunning())
+        if (isRunning()) {
             new TranslatedMessage(BingoTranslation.LEAVE).send(event.getPlayer());
+        }
+    }
+
+    public void handleParticipantCountChangedEvent(final ParticipantCountChangedEvent event) {
+        if (isRunning() && teamManager.getParticipants().size() == 0) {
+            endGame();
+        }
     }
 
     public MenuManager getMenuManager() {
@@ -219,6 +232,14 @@ public class BingoSession
 
     public PlayerSerializationData getPlayerData() {
         return playerData;
+    }
+
+    public World getOverworld() {
+        return worlds.getOverworld();
+    }
+
+    public boolean ownsWorld(World world) {
+        return worlds.hasWorld(world.getUID());
     }
 
     private BingoSettingsBuilder determineSettingsByVote(PregameLobby lobby) {
@@ -246,5 +267,9 @@ public class BingoSession
         new Message(" ").sendAll(this);
 
         return result;
+    }
+
+    public boolean hasPlayer(Player p) {
+        return ownsWorld(p.getWorld());
     }
 }

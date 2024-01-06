@@ -51,11 +51,9 @@ public class BingoCommand implements TabExecutor
             return false;
         }
 
-        BingoSession session = gameManager.getSession(BingoReloaded.getWorldNameOfDimension(player.getWorld()));
+        BingoSession session = gameManager.getSessionFromWorld(player.getWorld());
+        Message.log(String.valueOf(session == null));
         if (session == null)
-            return false;
-
-        if (!BingoReloaded.getWorldNameOfDimension(player.getWorld()).equals(session.worldName))
             return false;
 
         if (args.length == 0) {
