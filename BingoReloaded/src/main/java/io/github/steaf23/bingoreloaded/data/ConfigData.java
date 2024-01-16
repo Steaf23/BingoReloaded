@@ -123,6 +123,6 @@ public class ConfigData
         // Public
         this.sendCommandAfterGameEnded = config.getString("sendCommandAfterGameEnds", "");
         this.voteUsingCommandsOnly = config.getBoolean("voteUsingCommandsOnly", false);
-        this.selectTeamUsingCommandsOnly = config.getBoolean("selectTeamsUsingCommandsOnly", false);
+        this.selectTeamUsingCommandsOnly = config.getBoolean("selectTeamUsingCommandsOnly", false);
     }
 }
