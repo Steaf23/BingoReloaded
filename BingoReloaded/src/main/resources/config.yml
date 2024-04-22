@@ -137,4 +137,4 @@ sendCommandAfterGameEnds: "" # command to send
 voteUsingCommandsOnly: false
 
 # If true this will prevent the player from receiving the team selection item, allowing custom implementations using the available autobingo command.
-selectTeamUsingCommandsOnly: false
+selectTeamsUsingCommandsOnly: false
