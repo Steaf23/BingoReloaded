@@ -3,7 +3,6 @@ package io.github.steaf23.bingoreloaded.gameloop;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.data.ConfigData;
-import io.github.steaf23.bingoreloaded.data.TeamData;
 import io.github.steaf23.bingoreloaded.event.*;
 import io.github.steaf23.bingoreloaded.gui.TeamSelectionMenu;
 import io.github.steaf23.bingoreloaded.gui.VoteMenu;
@@ -24,7 +23,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -197,7 +195,7 @@ public class PregameLobby implements GamePhase
         if (config.useVoteSystem && !config.voteUsingCommandsOnly && !config.voteList.isEmpty()) {
             giveVoteItem(player);
         }
-        if (!config.selectTeamUsingCommandsOnly) {
+        if (!config.selectTeamsUsingCommandsOnly) {
             giveTeamItem(player);
         }
     }

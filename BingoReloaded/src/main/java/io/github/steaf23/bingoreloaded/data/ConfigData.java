@@ -75,7 +75,7 @@ public class ConfigData
     // Public options
     public final String sendCommandAfterGameEnded;
     public final boolean voteUsingCommandsOnly;
-    public final boolean selectTeamUsingCommandsOnly;
+    public final boolean selectTeamsUsingCommandsOnly;
 
     public ConfigData(FileConfiguration config) {
         // General
@@ -123,6 +123,6 @@ public class ConfigData
         // Public
         this.sendCommandAfterGameEnded = config.getString("sendCommandAfterGameEnds", "");
         this.voteUsingCommandsOnly = config.getBoolean("voteUsingCommandsOnly", false);
-        this.selectTeamUsingCommandsOnly = config.getBoolean("selectTeamsUsingCommandsOnly", false);
+        this.selectTeamsUsingCommandsOnly = config.getBoolean("selectTeamsUsingCommandsOnly", false);
     }
 }
