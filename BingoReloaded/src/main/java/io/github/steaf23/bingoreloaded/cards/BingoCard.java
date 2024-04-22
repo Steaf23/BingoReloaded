@@ -79,14 +79,12 @@ public class BingoCard
             }
 
             int proportionalMin = Math.max(1, cardsData.getListMin(cardName, listName));
-            for (int i = 0; i < proportionalMin; i++)
-            {
+            for (int i = 0; i < proportionalMin; i++) {
                 ticketList.add(listName);
             }
         }
         List<String> overflowList = new ArrayList<>();
-        for (String listName : cardsData.getListNames(cardName))
-        {
+        for (String listName : cardsData.getListNames(cardName)) {
             int proportionalMin = Math.max(1, cardsData.getListMin(cardName, listName));
             int proportionalMax = cardsData.getListMax(cardName, listName);
 
