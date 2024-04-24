@@ -3,13 +3,12 @@ package io.github.steaf23.bingoreloaded.gameloop.singular;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.ConfigData;
 import io.github.steaf23.bingoreloaded.data.PlayerSerializationData;
+import io.github.steaf23.bingoreloaded.data.world.WorldManager;
 import io.github.steaf23.bingoreloaded.event.BingoEventListener;
 import io.github.steaf23.bingoreloaded.gameloop.SessionManager;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
-import io.github.steaf23.bingoreloaded.gameloop.WorldGroup;
 import io.github.steaf23.bingoreloaded.gui.base.BingoMenuManager;
 import io.github.steaf23.bingoreloaded.gui.base.MenuManager;
-import io.github.steaf23.bingoreloaded.util.Message;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.HumanEntity;
@@ -29,7 +28,7 @@ public class SingularGameManager implements SessionManager
     public SingularGameManager(BingoReloaded plugin) {
         this.config = plugin.config();
         this.menuManager = new BingoMenuManager(player -> canOpenMenu(player));
-        this.session = new BingoSession(this, menuManager, new WorldGroup(plugin.worldData, config.defaultWorldName), config, new PlayerSerializationData());
+        this.session = new BingoSession(this, menuManager, WorldManager.getOrCreateWorldGroup(plugin, config.defaultWorldName), config, new PlayerSerializationData());
         this.sessionName = config.defaultWorldName;
         this.eventListener = new BingoEventListener(world ->
                 session.ownsWorld(world) ? session : null

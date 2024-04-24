@@ -3,6 +3,7 @@ package io.github.steaf23.bingoreloaded.gameloop;
 import io.github.steaf23.bingoreloaded.*;
 import io.github.steaf23.bingoreloaded.data.*;
 import io.github.steaf23.bingoreloaded.data.helper.SerializablePlayer;
+import io.github.steaf23.bingoreloaded.data.world.WorldGroup;
 import io.github.steaf23.bingoreloaded.event.*;
 import io.github.steaf23.bingoreloaded.gui.base.MenuManager;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
@@ -21,7 +22,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.*;
 import org.bukkit.potion.PotionEffectType;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.units.qual.A;
 
 import java.util.UUID;
 
@@ -63,8 +63,6 @@ public class BingoSession
                 }
             }
         }, 10);
-
-        this.worlds.create();
         prepareNextGame();
     }
 

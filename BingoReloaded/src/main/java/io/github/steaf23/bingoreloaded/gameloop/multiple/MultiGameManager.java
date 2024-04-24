@@ -3,10 +3,11 @@ package io.github.steaf23.bingoreloaded.gameloop.multiple;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.ConfigData;
 import io.github.steaf23.bingoreloaded.data.PlayerSerializationData;
+import io.github.steaf23.bingoreloaded.data.world.WorldManager;
 import io.github.steaf23.bingoreloaded.event.BingoEventListener;
 import io.github.steaf23.bingoreloaded.gameloop.SessionManager;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
-import io.github.steaf23.bingoreloaded.gameloop.WorldGroup;
+import io.github.steaf23.bingoreloaded.data.world.WorldGroup;
 import io.github.steaf23.bingoreloaded.gui.base.MenuManager;
 import io.github.steaf23.bingoreloaded.util.Message;
 import org.bukkit.Bukkit;
@@ -15,7 +16,6 @@ import org.bukkit.event.HandlerList;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 public class MultiGameManager implements SessionManager
 {
@@ -62,7 +62,7 @@ public class MultiGameManager implements SessionManager
             return false;
         }
 
-        BingoSession session = new BingoSession(this, getMenuManager(), new WorldGroup(plugin.worldData, sessionName), config, playerData);
+        BingoSession session = new BingoSession(this, getMenuManager(), WorldManager.getOrCreateWorldGroup(plugin, sessionName), config, playerData);
         sessions.put(sessionName, session);
         return true;
     }

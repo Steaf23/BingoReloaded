@@ -4,11 +4,9 @@ import io.github.steaf23.bingoreloaded.command.BingoCommand;
 import io.github.steaf23.bingoreloaded.command.BingoTestCommand;
 import io.github.steaf23.bingoreloaded.command.TeamChatCommand;
 import io.github.steaf23.bingoreloaded.data.*;
-import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.data.helper.SerializablePlayer;
 import io.github.steaf23.bingoreloaded.data.helper.YmlDataManager;
-import io.github.steaf23.bingoreloaded.data.world.SimpleWorldFactory;
-import io.github.steaf23.bingoreloaded.data.world.WorldFactory;
+import io.github.steaf23.bingoreloaded.data.world.WorldManager;
 import io.github.steaf23.bingoreloaded.gameloop.SessionManager;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gameloop.multiple.MultiAutoBingoCommand;
@@ -28,7 +26,6 @@ import io.github.steaf23.bingoreloaded.tasks.statistics.BingoStatistic;
 import io.github.steaf23.bingoreloaded.util.Message;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
-import org.bukkit.World;
 import org.bukkit.command.*;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.entity.Player;
@@ -41,15 +38,11 @@ import java.util.function.Function;
 
 public class BingoReloaded extends JavaPlugin
 {
-    public static final String CARD_1_18 = "lists_1_18.yml";
-    public static final String CARD_1_19 = "lists_1_19.yml";
-    public static final String CARD_1_20 = "lists_1_20.yml";
+    public static final String CARD_1_20_4 = "lists_1_20.yml";
 
     // Amount of ticks per second.
     public static final int ONE_SECOND = 20;
     public static boolean usesPlaceholderAPI = false;
-
-    public WorldFactory worldData;
 
     private static BingoReloaded instance;
 
@@ -84,8 +77,7 @@ public class BingoReloaded extends JavaPlugin
 
         this.hologramManager = new HologramManager();
         this.hologramPlacer = new HologramPlacer(hologramManager);
-        this.worldData = new SimpleWorldFactory(this);
-        worldData.clearWorlds();
+        WorldManager.clearWorlds(this);
 
         TabExecutor autoBingoCommand;
 
@@ -173,13 +165,6 @@ public class BingoReloaded extends JavaPlugin
 
     public static String getDefaultTasksVersion() {
         String version = Bukkit.getVersion();
-        if (version.contains("(MC: 1.18")) {
-            return CARD_1_18;
-        } else if (version.contains("(MC: 1.19")) {
-            return CARD_1_19;
-        } else if (version.contains("(MC: 1.20")) {
-            return CARD_1_20;
-        }
-        return CARD_1_18;
+        return CARD_1_20_4;
     }
 }
