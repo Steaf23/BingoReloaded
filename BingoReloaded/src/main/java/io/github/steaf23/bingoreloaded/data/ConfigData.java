@@ -79,9 +79,7 @@ public class ConfigData
 
     public ConfigData(FileConfiguration config) {
         // General
-        // TODO: implement in 2.1
-//        this.configuration = PluginConfiguration.valueOf(config.getString("configuration", "SINGULAR"));
-        this.configuration = PluginConfiguration.SINGULAR;
+        this.configuration = PluginConfiguration.valueOf(config.getString("configuration", "SINGULAR"));
         this.language = "languages/" + config.getString("language", "en_us.yml");
         this.savePlayerStatistics = config.getBoolean("savePlayerStatistics", false);
 

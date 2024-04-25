@@ -11,10 +11,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.UUID;
 
-public class WorldManager
+public class WorldData
 {
     /**
      * Removes all worlds in the pluginFolder/worlds folder

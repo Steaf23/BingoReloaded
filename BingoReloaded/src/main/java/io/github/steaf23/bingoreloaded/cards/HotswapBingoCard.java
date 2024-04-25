@@ -1,6 +1,5 @@
 package io.github.steaf23.bingoreloaded.cards;
 
-import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.gui.base.MenuManager;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 

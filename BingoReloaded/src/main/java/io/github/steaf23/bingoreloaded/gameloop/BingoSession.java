@@ -5,6 +5,10 @@ import io.github.steaf23.bingoreloaded.data.*;
 import io.github.steaf23.bingoreloaded.data.helper.SerializablePlayer;
 import io.github.steaf23.bingoreloaded.data.world.WorldGroup;
 import io.github.steaf23.bingoreloaded.event.*;
+import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
+import io.github.steaf23.bingoreloaded.gameloop.phase.GamePhase;
+import io.github.steaf23.bingoreloaded.gameloop.phase.PostGamePhase;
+import io.github.steaf23.bingoreloaded.gameloop.phase.PregameLobby;
 import io.github.steaf23.bingoreloaded.gui.base.MenuManager;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.team.SoloTeamManager;
@@ -22,12 +26,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.*;
 import org.bukkit.potion.PotionEffectType;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
-import java.util.UUID;
+import org.jetbrains.annotations.NotNull;
 
 /**
- * This class represents a session of bingo games on a single world(group).
- * A game world can/ should only have 1 session since bingo events for a session are propagated through the world
+ * This class represents a session of a bingo game on a single world(group).
+ * A game world must only have 1 session since bingo events for a session are propagated through the world
  */
 public class BingoSession
 {
@@ -37,13 +40,13 @@ public class BingoSession
     private final ConfigData config;
     private final MenuManager menuManager;
     private final PlayerSerializationData playerData;
-    private final SessionManager gameManager;
+    private final GameManager gameManager;
 
     // A bingo session controls 1 group of worlds
     private final WorldGroup worlds;
     private GamePhase phase;
 
-    public BingoSession(SessionManager gameManager, MenuManager menuManager, WorldGroup worlds, ConfigData config, PlayerSerializationData playerData) {
+    public BingoSession(GameManager gameManager, MenuManager menuManager, @NotNull WorldGroup worlds, ConfigData config, PlayerSerializationData playerData) {
         this.gameManager = gameManager;
         this.menuManager = menuManager;
         this.worlds = worlds;
@@ -144,12 +147,12 @@ public class BingoSession
     }
 
     public void handlePlayerTeleport(final PlayerTeleportEvent event) {
-        UUID sourceWorldId = event.getFrom().getWorld().getUID();
-        UUID targetWorldId = event.getTo().getWorld().getUID();
+        World sourceWorld = event.getFrom().getWorld();
+        World targetWorld = event.getTo().getWorld();
 
         // If player is leaving this game's world
-        if (worlds.hasWorld(sourceWorldId)) {
-            if (!worlds.hasWorld(targetWorldId)) {
+        if (ownsWorld(sourceWorld)) {
+            if (!ownsWorld(targetWorld)) {
                 BingoReloaded.scheduleTask(t -> {
                     var leftWorldEvent = new PlayerLeftSessionWorldEvent(event.getPlayer(), this, event.getFrom(), event.getTo());
                     Bukkit.getPluginManager().callEvent(leftWorldEvent);
@@ -157,8 +160,8 @@ public class BingoSession
             }
         }
         // If player is arriving in this world
-        else if (worlds.hasWorld(targetWorldId)) {
-            if (!worlds.hasWorld(sourceWorldId)) {
+        else if (ownsWorld(targetWorld)) {
+            if (!ownsWorld(sourceWorld)) {
                 BingoReloaded.scheduleTask(t -> {
                     boolean sourceIsBingoWorld = gameManager.getSessionFromWorld(event.getFrom().getWorld()) != null;
                     var joinedWorldEvent = new PlayerJoinedSessionWorldEvent(event.getPlayer(), this, event.getFrom(), event.getTo(), sourceIsBingoWorld);

@@ -6,14 +6,12 @@ import io.github.steaf23.bingoreloaded.command.TeamChatCommand;
 import io.github.steaf23.bingoreloaded.data.*;
 import io.github.steaf23.bingoreloaded.data.helper.SerializablePlayer;
 import io.github.steaf23.bingoreloaded.data.helper.YmlDataManager;
-import io.github.steaf23.bingoreloaded.data.world.WorldManager;
-import io.github.steaf23.bingoreloaded.gameloop.SessionManager;
-import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
+import io.github.steaf23.bingoreloaded.data.world.WorldData;
+import io.github.steaf23.bingoreloaded.gameloop.GameManager;
 import io.github.steaf23.bingoreloaded.gameloop.multiple.MultiAutoBingoCommand;
-import io.github.steaf23.bingoreloaded.gameloop.multiple.MultiGameManager;
 import io.github.steaf23.bingoreloaded.gameloop.singular.SimpleAutoBingoCommand;
-import io.github.steaf23.bingoreloaded.gameloop.singular.SingularGameManager;
 import io.github.steaf23.bingoreloaded.gui.base.BasicMenu;
+import io.github.steaf23.bingoreloaded.gui.base.BingoMenuManager;
 import io.github.steaf23.bingoreloaded.gui.base.MenuItem;
 import io.github.steaf23.bingoreloaded.hologram.HologramManager;
 import io.github.steaf23.bingoreloaded.hologram.HologramPlacer;
@@ -29,12 +27,12 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.*;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.entity.Player;
+import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 public class BingoReloaded extends JavaPlugin
 {
@@ -49,7 +47,8 @@ public class BingoReloaded extends JavaPlugin
     private ConfigData config;
     private HologramManager hologramManager;
     private HologramPlacer hologramPlacer;
-    private SessionManager gameManager;
+    private GameManager gameManager;
+    private BingoMenuManager menuManager;
 
     @Override
     public void onEnable() {
@@ -77,19 +76,22 @@ public class BingoReloaded extends JavaPlugin
 
         this.hologramManager = new HologramManager();
         this.hologramPlacer = new HologramPlacer(hologramManager);
-        WorldManager.clearWorlds(this);
+        WorldData.clearWorlds(this);
 
         TabExecutor autoBingoCommand;
 
+        this.menuManager = new BingoMenuManager();
+
+        this.gameManager = new GameManager(this, config, menuManager);
         if (config.configuration == ConfigData.PluginConfiguration.SINGULAR) {
-            this.gameManager = new SingularGameManager(this);
-            autoBingoCommand = new SimpleAutoBingoCommand((SingularGameManager) gameManager);
+            autoBingoCommand = new SimpleAutoBingoCommand(gameManager);
         } else {
-            this.gameManager = new MultiGameManager(this);
-            autoBingoCommand = new MultiAutoBingoCommand((MultiGameManager) gameManager);
+            autoBingoCommand = new MultiAutoBingoCommand(gameManager);
         }
 
-        registerCommand("bingo", new BingoCommand(config, gameManager));
+        menuManager.setPlayerOpenPredicate(player -> player instanceof Player p && this.gameManager.canPlayerOpenMenu(p, null));
+
+        registerCommand("bingo", new BingoCommand(config, gameManager, menuManager));
         registerCommand("autobingo", autoBingoCommand);
         registerCommand("bingotest", new BingoTestCommand(this));
         if (config.enableTeamChat) {
@@ -104,10 +106,8 @@ public class BingoReloaded extends JavaPlugin
 //        {
 //            game.resume();
 //        }
-    }
 
-    public void registerTeamChatCommand(String commandName, Function<Player, BingoSession> bingoSessionResolver) {
-        registerCommand(commandName, new TeamChatCommand(bingoSessionResolver));
+        Bukkit.getPluginManager().registerEvents(menuManager, this);
     }
 
     public void registerCommand(String commandName, TabExecutor executor) {
@@ -124,8 +124,10 @@ public class BingoReloaded extends JavaPlugin
 
     public void onDisable() {
         if (gameManager != null) {
-            gameManager.onDisable();
+            gameManager.onPluginDisable();
         }
+
+        HandlerList.unregisterAll(menuManager);
     }
 
     public ConfigData config() {

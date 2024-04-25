@@ -1,9 +1,10 @@
-package io.github.steaf23.bingoreloaded.gameloop;
+package io.github.steaf23.bingoreloaded.gameloop.phase;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.data.ConfigData;
 import io.github.steaf23.bingoreloaded.event.*;
+import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gui.TeamSelectionMenu;
 import io.github.steaf23.bingoreloaded.gui.VoteMenu;
 import io.github.steaf23.bingoreloaded.gui.base.MenuItem;

@@ -6,10 +6,12 @@ import io.github.steaf23.bingoreloaded.command.BingoCommand;
 import io.github.steaf23.bingoreloaded.command.SubCommand;
 import io.github.steaf23.bingoreloaded.data.BingoCardData;
 import io.github.steaf23.bingoreloaded.data.BingoSettingsData;
+import io.github.steaf23.bingoreloaded.data.ConfigData;
 import io.github.steaf23.bingoreloaded.data.PlayerSerializationData;
 import io.github.steaf23.bingoreloaded.data.helper.SerializablePlayer;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
-import io.github.steaf23.bingoreloaded.gameloop.PregameLobby;
+import io.github.steaf23.bingoreloaded.gameloop.GameManager;
+import io.github.steaf23.bingoreloaded.gameloop.phase.PregameLobby;
 import io.github.steaf23.bingoreloaded.gui.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
@@ -32,12 +34,12 @@ import java.util.stream.Collectors;
 
 public class SimpleAutoBingoCommand implements TabExecutor
 {
-    private final SingularGameManager manager;
+    private final GameManager manager;
     private final SubCommand command;
 
     private CommandSender currentSender;
 
-    public SimpleAutoBingoCommand(SingularGameManager manager) {
+    public SimpleAutoBingoCommand(GameManager manager) {
         this.manager = manager;
 
         this.command = new SubCommand("autobingo");
@@ -175,7 +177,7 @@ public class SimpleAutoBingoCommand implements TabExecutor
             return voteForPlayer(args);
         }
         ).addTabCompletion(args -> {
-            var voteList = manager.getConfig().voteList;
+            ConfigData.VoteList voteList = manager.getGameConfig().voteList;
             if (args.length <= 1) {
                 return null;
             } else if (args.length == 2) {

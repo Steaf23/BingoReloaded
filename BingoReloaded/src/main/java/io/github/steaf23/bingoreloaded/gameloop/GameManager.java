@@ -1,59 +1,42 @@
-package io.github.steaf23.bingoreloaded.gameloop.multiple;
+package io.github.steaf23.bingoreloaded.gameloop;
 
-import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.ConfigData;
 import io.github.steaf23.bingoreloaded.data.PlayerSerializationData;
-import io.github.steaf23.bingoreloaded.data.world.WorldManager;
+import io.github.steaf23.bingoreloaded.data.world.WorldData;
 import io.github.steaf23.bingoreloaded.event.BingoEventListener;
-import io.github.steaf23.bingoreloaded.gameloop.SessionManager;
-import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
-import io.github.steaf23.bingoreloaded.data.world.WorldGroup;
+import io.github.steaf23.bingoreloaded.gui.base.Menu;
 import io.github.steaf23.bingoreloaded.gui.base.MenuManager;
 import io.github.steaf23.bingoreloaded.util.Message;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
+import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class MultiGameManager implements SessionManager
+public class GameManager
 {
-    private final BingoEventListener eventListener;
-    private Map<String, BingoSession> sessions;
+    private final JavaPlugin plugin;
     private final ConfigData config;
+    private final MenuManager menuManager;
+
+    private final Map<String, BingoSession> sessions;
     private final PlayerSerializationData playerData;
+    private final BingoEventListener eventListener;
 
-    private final BingoReloaded plugin;
-
-    public MultiGameManager(BingoReloaded plugin) {
+    public GameManager(@NotNull JavaPlugin plugin, ConfigData config, MenuManager menus) {
         this.plugin = plugin;
-        this.config = plugin.config();
-        this.eventListener = new BingoEventListener(world -> getSessionFromWorld(world), config.disableAdvancements, config.disableStatistics);
+        this.config = config;
+        this.menuManager = menus;
+
         this.sessions = new HashMap<>();
         this.playerData = new PlayerSerializationData();
+        this.eventListener = new BingoEventListener(this::getSessionFromWorld, config.disableAdvancements, config.disableStatistics);
 
         Bukkit.getPluginManager().registerEvents(eventListener, plugin);
-    }
-
-    @Override
-    public MenuManager getMenuManager() {
-        return null;
-    }
-
-    @Override
-    public ConfigData getConfig() {
-        return config;
-    }
-
-    @Override
-    public void onDisable() {
-        HandlerList.unregisterAll(eventListener);
-    }
-
-    @Override
-    public int sessionCount() {
-        return sessions.size();
     }
 
     public boolean createSession(String sessionName) {
@@ -62,7 +45,7 @@ public class MultiGameManager implements SessionManager
             return false;
         }
 
-        BingoSession session = new BingoSession(this, getMenuManager(), WorldManager.getOrCreateWorldGroup(plugin, sessionName), config, playerData);
+        BingoSession session = new BingoSession(this, menuManager, WorldData.getOrCreateWorldGroup(plugin, sessionName), config, playerData);
         sessions.put(sessionName, session);
         return true;
     }
@@ -83,7 +66,7 @@ public class MultiGameManager implements SessionManager
             return false;
         }
 
-        if (isGameWorldActive(sessionName)) {
+        if (isSessionRunning(sessionName)) {
             Message.log("Could not start bingo because the game is already running on world '" + sessionName + "'!");
             return false;
         }
@@ -93,7 +76,7 @@ public class MultiGameManager implements SessionManager
     }
 
     public boolean endGame(String sessionName) {
-        if (!isGameWorldActive(sessionName)) {
+        if (!isSessionRunning(sessionName)) {
             Message.log("Could not end bingo because no game was started on world '" + sessionName + "'!");
             return false;
         }
@@ -101,6 +84,10 @@ public class MultiGameManager implements SessionManager
         BingoSession session = sessions.get(sessionName);
         session.endGame();
         return true;
+    }
+
+    public BingoSession getSession() {
+        return getSession(config.defaultWorldName);
     }
 
     public BingoSession getSession(String sessionName) {
@@ -121,7 +108,19 @@ public class MultiGameManager implements SessionManager
         return null;
     }
 
-    public boolean isGameWorldActive(String sessionName) {
+    public void onPluginDisable() {
+        HandlerList.unregisterAll(eventListener);
+    }
+
+    public ConfigData getGameConfig() {
+        return config;
+    }
+
+    public boolean isSessionRunning(String sessionName) {
         return sessions.containsKey(sessionName) && sessions.get(sessionName).isRunning();
+    }
+
+    public boolean canPlayerOpenMenu(Player player, Menu menu) {
+        return getSessionFromWorld(player.getWorld()) != null;
     }
 }

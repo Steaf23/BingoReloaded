@@ -1,6 +1,7 @@
-package io.github.steaf23.bingoreloaded.gameloop;
+package io.github.steaf23.bingoreloaded.gameloop.phase;
 
 import io.github.steaf23.bingoreloaded.event.*;
+import io.github.steaf23.bingoreloaded.gameloop.SessionMember;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 public interface GamePhase extends SessionMember

@@ -12,8 +12,12 @@ public class BingoMenuManager extends MenuManager
 {
     private Function<HumanEntity, Boolean> playerPredicate;
 
-    public BingoMenuManager(Function<HumanEntity, Boolean> playerPredicate)
+    public BingoMenuManager()
     {
+        this.playerPredicate = player -> { return false; };
+    }
+
+    public void setPlayerOpenPredicate(Function<HumanEntity, Boolean> playerPredicate) {
         this.playerPredicate = playerPredicate;
     }
 

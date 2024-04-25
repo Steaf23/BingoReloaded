@@ -13,7 +13,6 @@ import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
-import javax.xml.xpath.XPathEvaluationResult;
 import java.util.ArrayList;
 import java.util.List;
 

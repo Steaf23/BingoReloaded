@@ -1,7 +1,7 @@
 package io.github.steaf23.bingoreloaded.command;
 
 
-import io.github.steaf23.bingoreloaded.data.world.WorldManager;
+import io.github.steaf23.bingoreloaded.data.world.WorldData;
 import io.github.steaf23.bingoreloaded.util.Message;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -40,7 +40,7 @@ public class BingoTestCommand implements TabExecutor
 
 
                 String worldName = args[1];
-                boolean doesWorldExist = WorldManager.doesWorldExist(plugin, worldName);
+                boolean doesWorldExist = WorldData.doesWorldExist(plugin, worldName);
                 switch (args[2])
                 {
                     case "tp":
@@ -52,21 +52,21 @@ public class BingoTestCommand implements TabExecutor
                             Message.log("Cannot TP player to non-existing world " + worldName);
                             return false;
                         }
-                        WorldManager.getOrCreateWorldGroup(plugin, worldName).teleportPlayer(p);
+                        WorldData.getOrCreateWorldGroup(plugin, worldName).teleportPlayer(p);
                         break;
                     case "create":
                         if (doesWorldExist)
                         {
                             Message.log("Cannot create world " + worldName + ", because it already exists!");
                         }
-                        WorldManager.getOrCreateWorldGroup(plugin, worldName);
+                        WorldData.getOrCreateWorldGroup(plugin, worldName);
                         break;
                     case "destroy":
                         if (!doesWorldExist) {
                             Message.log("Cannot remove non-existing world " + worldName);
                             return false;
                         }
-                        WorldManager.destroyWorldGroup(plugin, WorldManager.getOrCreateWorldGroup(plugin, worldName));
+                        WorldData.destroyWorldGroup(plugin, WorldData.getOrCreateWorldGroup(plugin, worldName));
                         break;
                 }
             }

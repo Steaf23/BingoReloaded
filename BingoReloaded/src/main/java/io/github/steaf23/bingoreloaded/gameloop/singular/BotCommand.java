@@ -2,10 +2,8 @@ package io.github.steaf23.bingoreloaded.gameloop.singular;
 
 import io.github.steaf23.bingoreloaded.cards.BingoCard;
 import io.github.steaf23.bingoreloaded.event.BingoCardTaskCompleteEvent;
-import io.github.steaf23.bingoreloaded.gameloop.BingoGame;
-import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
+import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
-import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.player.team.TeamManager;
 import io.github.steaf23.bingoreloaded.player.VirtualBingoPlayer;
 import io.github.steaf23.bingoreloaded.util.Message;

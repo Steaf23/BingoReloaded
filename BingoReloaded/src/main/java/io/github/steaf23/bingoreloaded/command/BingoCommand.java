@@ -1,17 +1,17 @@
 package io.github.steaf23.bingoreloaded.command;
 
-import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.BingoStatData;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.data.ConfigData;
 import io.github.steaf23.bingoreloaded.data.PlayerSerializationData;
-import io.github.steaf23.bingoreloaded.gameloop.BingoGame;
-import io.github.steaf23.bingoreloaded.gameloop.SessionManager;
+import io.github.steaf23.bingoreloaded.gameloop.GameManager;
+import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gui.AdminBingoMenu;
 import io.github.steaf23.bingoreloaded.gui.PlayerBingoMenu;
 import io.github.steaf23.bingoreloaded.gui.TeamEditorMenu;
 import io.github.steaf23.bingoreloaded.gui.TeamSelectionMenu;
+import io.github.steaf23.bingoreloaded.gui.base.MenuManager;
 import io.github.steaf23.bingoreloaded.gui.creator.BingoCreatorMenu;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
@@ -36,12 +36,14 @@ import java.util.stream.Collectors;
 public class BingoCommand implements TabExecutor
 {
     private final ConfigData config;
-    private final SessionManager gameManager;
+    private final GameManager gameManager;
+    private final MenuManager menuManager;
     private final PlayerSerializationData playerData;
 
-    public BingoCommand(ConfigData config, SessionManager gameManager) {
+    public BingoCommand(ConfigData config, GameManager gameManager, MenuManager menuManager) {
         this.config = config;
         this.gameManager = gameManager;
+        this.menuManager = menuManager;
         this.playerData = new PlayerSerializationData();
     }
 
@@ -58,16 +60,16 @@ public class BingoCommand implements TabExecutor
 
         if (args.length == 0) {
             if (player.hasPermission("bingo.admin")) {
-                new AdminBingoMenu(gameManager.getMenuManager(), session, config).open(player);
+                new AdminBingoMenu(menuManager, session, config).open(player);
             } else if (player.hasPermission("bingo.player")) {
-                new PlayerBingoMenu(gameManager.getMenuManager(), session).open(player);
+                new PlayerBingoMenu(menuManager, session).open(player);
             }
             return true;
         }
 
         switch (args[0]) {
             case "join" -> {
-                TeamSelectionMenu menu = new TeamSelectionMenu(gameManager.getMenuManager(), session.teamManager);
+                TeamSelectionMenu menu = new TeamSelectionMenu(menuManager, session.teamManager);
                 menu.open(player);
             }
             case "leave" -> {
@@ -120,7 +122,7 @@ public class BingoCommand implements TabExecutor
             }
             case "creator" -> {
                 if (player.hasPermission("bingo.manager")) {
-                    BingoCreatorMenu creatorMenu = new BingoCreatorMenu(gameManager.getMenuManager());
+                    BingoCreatorMenu creatorMenu = new BingoCreatorMenu(menuManager);
                     creatorMenu.open(player);
                 }
             }
@@ -163,7 +165,7 @@ public class BingoCommand implements TabExecutor
                 if (!player.hasPermission("bingo.admin"))
                     return false;
 
-                new TeamEditorMenu(gameManager.getMenuManager()).open(player);
+                new TeamEditorMenu(menuManager).open(player);
             }
             case "hologram" -> {
 
