@@ -9,7 +9,7 @@ import io.github.steaf23.bingoreloaded.event.BingoCardTaskCompleteEvent;
 import io.github.steaf23.bingoreloaded.event.BingoStatisticCompletedEvent;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.gui.CardMenu;
-import io.github.steaf23.bingoreloaded.gui.base.MenuManager;
+import io.github.steaf23.bingoreloaded.gui.base.MenuBoard;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
@@ -39,10 +39,10 @@ public class BingoCard
 
     private static final TaskData DEFAULT_TASK = new ItemTask(Material.DIRT, 1);
 
-    public BingoCard(MenuManager menuManager, CardSize size) {
+    public BingoCard(MenuBoard menuBoard, CardSize size) {
         this.size = size;
         this.tasks = new ArrayList<>();
-        this.menu = new CardMenu(menuManager, size, BingoTranslation.CARD_TITLE.translate());
+        this.menu = new CardMenu(menuBoard, size, BingoTranslation.CARD_TITLE.translate());
         menu.setInfo(BingoTranslation.INFO_REGULAR_NAME.translate(),
                 BingoTranslation.INFO_REGULAR_DESC.translate().split("\\n"));
     }

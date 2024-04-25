@@ -3,7 +3,7 @@ package io.github.steaf23.bingoreloaded.gui.creator;
 import io.github.steaf23.bingoreloaded.data.BingoCardData;
 import io.github.steaf23.bingoreloaded.gui.base.FilterType;
 import io.github.steaf23.bingoreloaded.gui.base.MenuItem;
-import io.github.steaf23.bingoreloaded.gui.base.MenuManager;
+import io.github.steaf23.bingoreloaded.gui.base.MenuBoard;
 import io.github.steaf23.bingoreloaded.gui.base.PaginatedSelectionMenu;
 import io.github.steaf23.bingoreloaded.item.ItemText;
 import io.github.steaf23.bingoreloaded.tasks.BingoTask;
@@ -27,7 +27,7 @@ public class TaskPickerMenu extends PaginatedSelectionMenu
     protected static final ItemText[] SELECTED_LORE = createSelectedLore();
     protected static final ItemText[] UNSELECTED_LORE = createUnselectedLore();
 
-    public TaskPickerMenu(MenuManager manager, String title, List<BingoTask> options, String listName) {
+    public TaskPickerMenu(MenuBoard manager, String title, List<BingoTask> options, String listName) {
         super(manager, title, asPickerItems(options), FilterType.DISPLAY_NAME);
         this.listName = listName;
         this.setMaxStackSizeOverride(64);

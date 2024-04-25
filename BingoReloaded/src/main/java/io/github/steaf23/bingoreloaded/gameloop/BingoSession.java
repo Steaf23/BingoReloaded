@@ -9,7 +9,7 @@ import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.gameloop.phase.GamePhase;
 import io.github.steaf23.bingoreloaded.gameloop.phase.PostGamePhase;
 import io.github.steaf23.bingoreloaded.gameloop.phase.PregameLobby;
-import io.github.steaf23.bingoreloaded.gui.base.MenuManager;
+import io.github.steaf23.bingoreloaded.gui.base.MenuBoard;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.team.SoloTeamManager;
 import io.github.steaf23.bingoreloaded.player.team.TeamManager;
@@ -38,7 +38,7 @@ public class BingoSession
     public final BingoScoreboard scoreboard;
     public final TeamManager teamManager;
     private final ConfigData config;
-    private final MenuManager menuManager;
+    private final MenuBoard menuBoard;
     private final PlayerSerializationData playerData;
     private final GameManager gameManager;
 
@@ -46,9 +46,9 @@ public class BingoSession
     private final WorldGroup worlds;
     private GamePhase phase;
 
-    public BingoSession(GameManager gameManager, MenuManager menuManager, @NotNull WorldGroup worlds, ConfigData config, PlayerSerializationData playerData) {
+    public BingoSession(GameManager gameManager, MenuBoard menuBoard, @NotNull WorldGroup worlds, ConfigData config, PlayerSerializationData playerData) {
         this.gameManager = gameManager;
-        this.menuManager = menuManager;
+        this.menuBoard = menuBoard;
         this.worlds = worlds;
         this.config = config;
         this.playerData = playerData;
@@ -127,7 +127,7 @@ public class BingoSession
             phase.end();
         }
 
-        phase = new PregameLobby(menuManager, this, config);
+        phase = new PregameLobby(menuBoard, this, config);
         phase.setup();
     }
 
@@ -227,8 +227,8 @@ public class BingoSession
         }
     }
 
-    public MenuManager getMenuManager() {
-        return menuManager;
+    public MenuBoard getMenuManager() {
+        return menuBoard;
     }
 
     public PlayerSerializationData getPlayerData() {

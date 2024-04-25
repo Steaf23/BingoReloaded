@@ -8,11 +8,11 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 
 import java.util.function.Function;
 
-public class BingoMenuManager extends MenuManager
+public class BingoMenuBoard extends MenuBoard
 {
     private Function<HumanEntity, Boolean> playerPredicate;
 
-    public BingoMenuManager()
+    public BingoMenuBoard()
     {
         this.playerPredicate = player -> { return false; };
     }

@@ -11,7 +11,7 @@ import io.github.steaf23.bingoreloaded.gameloop.GameManager;
 import io.github.steaf23.bingoreloaded.gameloop.multiple.MultiAutoBingoCommand;
 import io.github.steaf23.bingoreloaded.gameloop.singular.SimpleAutoBingoCommand;
 import io.github.steaf23.bingoreloaded.gui.base.BasicMenu;
-import io.github.steaf23.bingoreloaded.gui.base.BingoMenuManager;
+import io.github.steaf23.bingoreloaded.gui.base.BingoMenuBoard;
 import io.github.steaf23.bingoreloaded.gui.base.MenuItem;
 import io.github.steaf23.bingoreloaded.hologram.HologramManager;
 import io.github.steaf23.bingoreloaded.hologram.HologramPlacer;
@@ -48,7 +48,7 @@ public class BingoReloaded extends JavaPlugin
     private HologramManager hologramManager;
     private HologramPlacer hologramPlacer;
     private GameManager gameManager;
-    private BingoMenuManager menuManager;
+    private BingoMenuBoard menuBoard;
 
     @Override
     public void onEnable() {
@@ -80,18 +80,18 @@ public class BingoReloaded extends JavaPlugin
 
         TabExecutor autoBingoCommand;
 
-        this.menuManager = new BingoMenuManager();
+        this.menuBoard = new BingoMenuBoard();
 
-        this.gameManager = new GameManager(this, config, menuManager);
+        this.gameManager = new GameManager(this, config, menuBoard);
         if (config.configuration == ConfigData.PluginConfiguration.SINGULAR) {
             autoBingoCommand = new SimpleAutoBingoCommand(gameManager);
         } else {
             autoBingoCommand = new MultiAutoBingoCommand(gameManager);
         }
 
-        menuManager.setPlayerOpenPredicate(player -> player instanceof Player p && this.gameManager.canPlayerOpenMenu(p, null));
+        menuBoard.setPlayerOpenPredicate(player -> player instanceof Player p && this.gameManager.canPlayerOpenMenu(p, null));
 
-        registerCommand("bingo", new BingoCommand(config, gameManager, menuManager));
+        registerCommand("bingo", new BingoCommand(config, gameManager, menuBoard));
         registerCommand("autobingo", autoBingoCommand);
         registerCommand("bingotest", new BingoTestCommand(this));
         if (config.enableTeamChat) {
@@ -107,7 +107,7 @@ public class BingoReloaded extends JavaPlugin
 //            game.resume();
 //        }
 
-        Bukkit.getPluginManager().registerEvents(menuManager, this);
+        Bukkit.getPluginManager().registerEvents(menuBoard, this);
     }
 
     public void registerCommand(String commandName, TabExecutor executor) {
@@ -127,7 +127,7 @@ public class BingoReloaded extends JavaPlugin
             gameManager.onPluginDisable();
         }
 
-        HandlerList.unregisterAll(menuManager);
+        HandlerList.unregisterAll(menuBoard);
     }
 
     public ConfigData config() {

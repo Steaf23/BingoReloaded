@@ -17,12 +17,12 @@ import java.util.Map;
 import java.util.Stack;
 import java.util.UUID;
 
-public class MenuManager implements Listener
+public class MenuBoard implements Listener
 {
     // Stores all currently open inventories by all players, using a stack system we can easily add or remove child inventories.
     Map<UUID, Stack<Menu>> activeMenus;
 
-    public MenuManager() {
+    public MenuBoard() {
         this.activeMenus = new HashMap<>();
     }
 

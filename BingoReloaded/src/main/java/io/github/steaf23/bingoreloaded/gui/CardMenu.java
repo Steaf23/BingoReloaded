@@ -3,7 +3,7 @@ package io.github.steaf23.bingoreloaded.gui;
 import io.github.steaf23.bingoreloaded.cards.CardSize;
 import io.github.steaf23.bingoreloaded.gui.base.MenuItem;
 import io.github.steaf23.bingoreloaded.gui.base.BasicMenu;
-import io.github.steaf23.bingoreloaded.gui.base.MenuManager;
+import io.github.steaf23.bingoreloaded.gui.base.MenuBoard;
 import io.github.steaf23.bingoreloaded.tasks.BingoTask;
 import io.github.steaf23.bingoreloaded.util.Message;
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -20,9 +20,9 @@ public class CardMenu extends BasicMenu
 {
     private final CardSize size;
 
-    public CardMenu(MenuManager menuManager, CardSize cardSize, String title)
+    public CardMenu(MenuBoard menuBoard, CardSize cardSize, String title)
     {
-        super(menuManager, title, cardSize.size);
+        super(menuBoard, title, cardSize.size);
         this.size = cardSize;
         setMaxStackSizeOverride(64);
     }

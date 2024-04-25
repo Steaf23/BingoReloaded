@@ -24,11 +24,11 @@ public class UserInputMenu implements Menu
 
     private final MenuTemplate template;
     private AnvilGUI gui;
-    private final MenuManager manager;
+    private final MenuBoard manager;
     private static final MenuItem EMPTY = new MenuItem(Material.ELYTRA, "" + ChatColor.GRAY + ChatColor.BOLD + BingoTranslation.MENU_CLEAR_FILTER.translate(), "");
     private static final MenuItem ACCEPT = new MenuItem(Material.DIAMOND, "" + ChatColor.AQUA + ChatColor.BOLD + BingoTranslation.MENU_ACCEPT.translate(), "");
 
-    public UserInputMenu(MenuManager manager, String title, Consumer<String> result, HumanEntity player, String startingText) {
+    public UserInputMenu(MenuBoard manager, String title, Consumer<String> result, HumanEntity player, String startingText) {
         this.manager = manager;
         this.template = new MenuTemplate(title, result, startingText, player);
         this.manager.open(this, player);

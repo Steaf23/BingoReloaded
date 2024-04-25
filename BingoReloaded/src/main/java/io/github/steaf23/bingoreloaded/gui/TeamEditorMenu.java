@@ -26,7 +26,7 @@ public class TeamEditorMenu extends PaginatedSelectionMenu
     private static final MenuItem CREATE_TEAM = new MenuItem(6, 5, Material.EMERALD,
             "" + ChatColor.GREEN + ChatColor.BOLD + "Create New Team");
 
-    public TeamEditorMenu(MenuManager manager) {
+    public TeamEditorMenu(MenuBoard manager) {
         super(manager, "Edit Teams", new ArrayList<>(), FilterType.DISPLAY_NAME);
         this.teamData = new TeamData();
 

@@ -20,7 +20,7 @@ public class TeamSelectionMenu extends PaginatedSelectionMenu
 {
     private final TeamManager teamManager;
 
-    public TeamSelectionMenu(MenuManager manager, TeamManager teamManager) {
+    public TeamSelectionMenu(MenuBoard manager, TeamManager teamManager) {
         super(manager, BingoTranslation.OPTIONS_TEAM.translate(), new ArrayList<>(), FilterType.DISPLAY_NAME);
         this.teamManager = teamManager;
     }

@@ -4,7 +4,7 @@ import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gui.base.BasicMenu;
 import io.github.steaf23.bingoreloaded.gui.base.MenuItem;
-import io.github.steaf23.bingoreloaded.gui.base.MenuManager;
+import io.github.steaf23.bingoreloaded.gui.base.MenuBoard;
 import io.github.steaf23.bingoreloaded.settings.BingoSettingsBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -17,8 +17,8 @@ public class EffectOptionsMenu extends BasicMenu
 {
     private final EnumSet<EffectOptionFlags> flags;
 
-    public EffectOptionsMenu(MenuManager menuManager, BingoSettingsBuilder settings, BingoSession session) {
-        super(menuManager, BingoTranslation.OPTIONS_EFFECTS.translate(), 6);
+    public EffectOptionsMenu(MenuBoard menuBoard, BingoSettingsBuilder settings, BingoSession session) {
+        super(menuBoard, BingoTranslation.OPTIONS_EFFECTS.translate(), 6);
         flags = settings.view().effects();
 
         addEffectAction(EffectOptionFlags.NIGHT_VISION, 5, 3, Material.GOLDEN_CARROT);

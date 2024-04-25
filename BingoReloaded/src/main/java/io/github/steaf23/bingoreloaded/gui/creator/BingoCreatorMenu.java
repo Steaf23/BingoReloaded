@@ -5,7 +5,7 @@ import io.github.steaf23.bingoreloaded.data.TaskListData;
 import io.github.steaf23.bingoreloaded.gui.base.*;
 import io.github.steaf23.bingoreloaded.gui.base.MenuItem;
 import io.github.steaf23.bingoreloaded.gui.base.BasicMenu;
-import io.github.steaf23.bingoreloaded.gui.base.MenuManager;
+import io.github.steaf23.bingoreloaded.gui.base.MenuBoard;
 import io.github.steaf23.bingoreloaded.gui.base.PaginatedSelectionMenu;
 import io.github.steaf23.bingoreloaded.gui.base.UserInputMenu;
 import org.bukkit.ChatColor;
@@ -25,7 +25,7 @@ public class BingoCreatorMenu extends BasicMenu
     public static final MenuItem CARD = new MenuItem(11, Material.FILLED_MAP, TITLE_PREFIX + "Edit Cards", "Click to view and edit bingo cards!");
     public static final MenuItem LIST = new MenuItem(15, Material.PAPER, TITLE_PREFIX + "Edit Lists", "Click to view and edit bingo lists!");
 
-    public BingoCreatorMenu(MenuManager manager) {
+    public BingoCreatorMenu(MenuBoard manager) {
         super(manager, "Card Creator", 3);
         addAction(CARD, p -> createCardPicker().open(p));
         addAction(LIST, p -> createListPicker().open(p));

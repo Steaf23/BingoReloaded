@@ -47,12 +47,12 @@ public abstract class PaginatedSelectionMenu extends BasicMenu
     protected static final MenuItem CLOSE = new MenuItem(4, 5, Material.REDSTONE, "" + ChatColor.RED + ChatColor.BOLD + BingoTranslation.MENU_SAVE_EXIT.translate(), "");
     protected static final MenuItem FILTER = new MenuItem(1, 5, Material.SPYGLASS, TITLE_PREFIX + BingoTranslation.MENU_FILTER.translate(), "");
 
-    public PaginatedSelectionMenu(MenuManager manager, String initialTitle, List<MenuItem> options, Function<MenuItem, Boolean> customFilter) {
+    public PaginatedSelectionMenu(MenuBoard manager, String initialTitle, List<MenuItem> options, Function<MenuItem, Boolean> customFilter) {
         this(manager, initialTitle, options, FilterType.CUSTOM);
         this.customFilter = customFilter;
     }
 
-    public PaginatedSelectionMenu(MenuManager manager, String initialTitle, List<MenuItem> options, FilterType filterType) {
+    public PaginatedSelectionMenu(MenuBoard manager, String initialTitle, List<MenuItem> options, FilterType filterType) {
         super(manager, initialTitle, 6);
 
         addAction(PREVIOUS, p -> this.previousPage());

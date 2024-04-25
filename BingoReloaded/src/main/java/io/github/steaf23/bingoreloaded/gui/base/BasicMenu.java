@@ -28,21 +28,21 @@ public class BasicMenu implements Menu
     protected static MenuItem BLANK = new MenuItem(Material.BLACK_STAINED_GLASS_PANE, " ");
 
     private final Inventory inventory;
-    private final MenuManager manager;
+    private final MenuBoard manager;
     private int maxStackSizeOverride = -1; // -1 means no override (i.e. default stack sizes for all items)
 
     private final Map<String, Consumer<HumanEntity>> actions;
 
-    public BasicMenu(MenuManager manager, String initialTitle, int rows) {
+    public BasicMenu(MenuBoard manager, String initialTitle, int rows) {
         this(manager, Bukkit.createInventory(null, rows * 9, pluginTitlePrefix + initialTitle));
     }
 
-    public BasicMenu(MenuManager manager, String initialTitle, InventoryType type) {
+    public BasicMenu(MenuBoard manager, String initialTitle, InventoryType type) {
         this(manager, Bukkit.createInventory(null, type, pluginTitlePrefix + initialTitle));
     }
 
     // Used for common setup
-    private BasicMenu(MenuManager manager, Inventory inventory) {
+    private BasicMenu(MenuBoard manager, Inventory inventory) {
         this.inventory = inventory;
         this.manager = manager;
         this.actions = new HashMap<>();
@@ -136,7 +136,7 @@ public class BasicMenu implements Menu
         return this.inventory;
     }
 
-    public MenuManager getMenuManager() {
+    public MenuBoard getMenuManager() {
         return this.manager;
     }
 

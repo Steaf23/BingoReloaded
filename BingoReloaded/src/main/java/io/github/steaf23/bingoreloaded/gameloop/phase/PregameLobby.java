@@ -8,7 +8,7 @@ import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gui.TeamSelectionMenu;
 import io.github.steaf23.bingoreloaded.gui.VoteMenu;
 import io.github.steaf23.bingoreloaded.gui.base.MenuItem;
-import io.github.steaf23.bingoreloaded.gui.base.MenuManager;
+import io.github.steaf23.bingoreloaded.gui.base.MenuBoard;
 import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import io.github.steaf23.bingoreloaded.settings.SettingsPreviewBoard;
@@ -45,13 +45,13 @@ public class PregameLobby implements GamePhase
     private final SettingsPreviewBoard settingsBoard;
     private final Map<UUID, VoteTicket> votes;
     private final ConfigData config;
-    private final MenuManager menuManager;
+    private final MenuBoard menuBoard;
     private final CountdownTimer playerCountTimer;
 
     private boolean gameStarted = false;
 
-    public PregameLobby(MenuManager menuManager, BingoSession session, ConfigData config) {
-        this.menuManager = menuManager;
+    public PregameLobby(MenuBoard menuBoard, BingoSession session, ConfigData config) {
+        this.menuBoard = menuBoard;
         this.session = session;
         this.settingsBoard = new SettingsPreviewBoard();
         this.votes = new HashMap<>();
@@ -315,11 +315,11 @@ public class PregameLobby implements GamePhase
 
         if (item.getCompareKey().equals("vote")) {
             event.setCancelled(true);
-            VoteMenu menu = new VoteMenu(menuManager, config.voteList, this);
+            VoteMenu menu = new VoteMenu(menuBoard, config.voteList, this);
             menu.open(event.getPlayer());
         } else if (item.getCompareKey().equals("team")) {
             event.setCancelled(true);
-            TeamSelectionMenu teamSelection = new TeamSelectionMenu(menuManager, session.teamManager);
+            TeamSelectionMenu teamSelection = new TeamSelectionMenu(menuBoard, session.teamManager);
             teamSelection.open(event.getPlayer());
         }
     }

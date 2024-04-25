@@ -27,7 +27,7 @@ public final class ColorPickerMenu extends BasicMenu
 
     private int scrollIndex = 0;
 
-    public ColorPickerMenu(MenuManager manager, String title, Consumer<ChatColor> result) {
+    public ColorPickerMenu(MenuBoard manager, String title, Consumer<ChatColor> result) {
         super(manager, title, 6);
         this.result = result;
         this.hueItems = new ArrayList<>();

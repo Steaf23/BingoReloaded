@@ -1,7 +1,7 @@
 package io.github.steaf23.bingoreloaded.gui;
 
 import io.github.steaf23.bingoreloaded.gui.base.BasicMenu;
-import io.github.steaf23.bingoreloaded.gui.base.MenuManager;
+import io.github.steaf23.bingoreloaded.gui.base.MenuBoard;
 import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.cards.CardSize;
@@ -17,9 +17,9 @@ public class GamemodeOptionsMenu extends BasicMenu
     private final MenuItem[] options;
     private final BingoSession session;
 
-    public GamemodeOptionsMenu(MenuManager menuManager, BingoSession session)
+    public GamemodeOptionsMenu(MenuBoard menuBoard, BingoSession session)
     {
-        super(menuManager, BingoTranslation.OPTIONS_GAMEMODE.translate(), 5);
+        super(menuBoard, BingoTranslation.OPTIONS_GAMEMODE.translate(), 5);
         this.session = session;
 
         options = new MenuItem[]{

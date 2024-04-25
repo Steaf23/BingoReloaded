@@ -38,8 +38,8 @@ public class AdminBingoMenu extends BasicMenu
     private static final MenuItem EXTRA = new MenuItem(8, 5,
             Material.STRUCTURE_VOID, TITLE_PREFIX + BingoTranslation.MENU_NEXT.translate());
 
-    public AdminBingoMenu(MenuManager menuManager, BingoSession session, ConfigData config) {
-        super(menuManager, BingoTranslation.OPTIONS_TITLE.translate(), 6);
+    public AdminBingoMenu(MenuBoard menuBoard, BingoSession session, ConfigData config) {
+        super(menuBoard, BingoTranslation.OPTIONS_TITLE.translate(), 6);
         this.session = session;
 
         for (int i = 0; i < 8; i++) {
@@ -47,7 +47,7 @@ public class AdminBingoMenu extends BasicMenu
         }
 
         addAction(JOIN, p -> {
-            TeamSelectionMenu selectionMenu = new TeamSelectionMenu(menuManager, session.teamManager);
+            TeamSelectionMenu selectionMenu = new TeamSelectionMenu(menuBoard, session.teamManager);
             selectionMenu.open(p);
         });
         addAction(LEAVE, p -> {

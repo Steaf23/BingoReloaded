@@ -1,7 +1,7 @@
 package io.github.steaf23.bingoreloaded.gui;
 
 import io.github.steaf23.bingoreloaded.gui.base.BasicMenu;
-import io.github.steaf23.bingoreloaded.gui.base.MenuManager;
+import io.github.steaf23.bingoreloaded.gui.base.MenuBoard;
 import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.data.ConfigData;
@@ -23,15 +23,15 @@ public class VoteMenu extends BasicMenu
     private static final MenuItem EXIT = new MenuItem(8, Material.BARRIER,
                     "" + ChatColor.RED + ChatColor.BOLD + BingoTranslation.MENU_EXIT.translate());
 
-    public VoteMenu(MenuManager menuManager, ConfigData.VoteList voteList, PregameLobby lobbyPhase)
+    public VoteMenu(MenuBoard menuBoard, ConfigData.VoteList voteList, PregameLobby lobbyPhase)
     {
-        super(menuManager, BingoTranslation.OPTIONS_VOTE.translate(), 3);
+        super(menuBoard, BingoTranslation.OPTIONS_VOTE.translate(), 3);
 
         this.lobby = lobbyPhase;
 
         if (!voteList.gamemodes().isEmpty())
         {
-            gamemodeOptions = new BasicMenu(menuManager, BingoTranslation.VOTE_GAMEMODE.translate(), 1);
+            gamemodeOptions = new BasicMenu(menuBoard, BingoTranslation.VOTE_GAMEMODE.translate(), 1);
 
             int itemIndex = 0;
             if (voteList.gamemodes().contains("regular_5"))
@@ -102,7 +102,7 @@ public class VoteMenu extends BasicMenu
 
         if (!voteList.kits().isEmpty())
         {
-            kitOptions = new BasicMenu(menuManager, BingoTranslation.VOTE_KIT.translate(), 1);
+            kitOptions = new BasicMenu(menuBoard, BingoTranslation.VOTE_KIT.translate(), 1);
 
             int itemIndex = 0;
             if (voteList.kits().contains("hardcore"))
@@ -190,7 +190,7 @@ public class VoteMenu extends BasicMenu
 
         if (!voteList.isEmpty())
         {
-            cardOptions = new BasicMenu(menuManager, BingoTranslation.VOTE_CARD.translate(), 1);
+            cardOptions = new BasicMenu(menuBoard, BingoTranslation.VOTE_CARD.translate(), 1);
 
             int itemIndex = 0;
             for (String card : voteList.cards()) {

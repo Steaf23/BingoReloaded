@@ -3,7 +3,7 @@ package io.github.steaf23.bingoreloaded.gui.creator;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.gui.base.MenuItem;
 import io.github.steaf23.bingoreloaded.gui.base.BasicMenu;
-import io.github.steaf23.bingoreloaded.gui.base.MenuManager;
+import io.github.steaf23.bingoreloaded.gui.base.MenuBoard;
 import io.github.steaf23.bingoreloaded.tasks.BingoTask;
 import io.github.steaf23.bingoreloaded.tasks.StatisticTask;
 import io.github.steaf23.bingoreloaded.tasks.statistics.BingoStatistic;
@@ -25,9 +25,9 @@ public class StatisticSelectionMenu extends BasicMenu
     protected static final MenuItem BG_ITEM = new MenuItem(Material.BLACK_STAINED_GLASS_PANE, " ", "");
     protected static final MenuItem QUIT = new MenuItem(49, Material.REDSTONE, "" + ChatColor.RED + ChatColor.BOLD + BingoTranslation.MENU_SAVE_EXIT.translate(), "");
 
-    public StatisticSelectionMenu(MenuManager menuManager, String listName)
+    public StatisticSelectionMenu(MenuBoard menuBoard, String listName)
     {
-        super(menuManager, "Pick Statistics", 6);
+        super(menuBoard, "Pick Statistics", 6);
         this.listName = listName;
         addAction(new MenuItem(1, 0, Material.FEATHER, TITLE_PREFIX + "Travel"), p -> createTravelMenu().open(p));
         addAction(new MenuItem(3, 0, Material.DIAMOND_SWORD, TITLE_PREFIX + "Kill"), p -> createEntityMenu(Statistic.KILL_ENTITY).open(p));

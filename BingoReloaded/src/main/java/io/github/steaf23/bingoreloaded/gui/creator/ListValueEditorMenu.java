@@ -3,7 +3,7 @@ package io.github.steaf23.bingoreloaded.gui.creator;
 import io.github.steaf23.bingoreloaded.data.BingoCardData;
 import io.github.steaf23.bingoreloaded.gui.base.MenuItem;
 import io.github.steaf23.bingoreloaded.gui.base.BasicMenu;
-import io.github.steaf23.bingoreloaded.gui.base.MenuManager;
+import io.github.steaf23.bingoreloaded.gui.base.MenuBoard;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
@@ -33,8 +33,8 @@ public class ListValueEditorMenu extends BasicMenu
     public int maxCount = BingoCardData.MAX_ITEMS;
     private final String listName;
 
-    public ListValueEditorMenu(MenuManager menuManager, CardEditorMenu parent, String listName, int maxStart, int minStart) {
-        super(menuManager, "Updating Values", 6);
+    public ListValueEditorMenu(MenuBoard menuBoard, CardEditorMenu parent, String listName, int maxStart, int minStart) {
+        super(menuBoard, "Updating Values", 6);
         this.cardEditor = parent;
         this.listName = listName;
 

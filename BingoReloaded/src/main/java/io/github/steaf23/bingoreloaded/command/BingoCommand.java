@@ -11,7 +11,7 @@ import io.github.steaf23.bingoreloaded.gui.AdminBingoMenu;
 import io.github.steaf23.bingoreloaded.gui.PlayerBingoMenu;
 import io.github.steaf23.bingoreloaded.gui.TeamEditorMenu;
 import io.github.steaf23.bingoreloaded.gui.TeamSelectionMenu;
-import io.github.steaf23.bingoreloaded.gui.base.MenuManager;
+import io.github.steaf23.bingoreloaded.gui.base.MenuBoard;
 import io.github.steaf23.bingoreloaded.gui.creator.BingoCreatorMenu;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
@@ -37,13 +37,13 @@ public class BingoCommand implements TabExecutor
 {
     private final ConfigData config;
     private final GameManager gameManager;
-    private final MenuManager menuManager;
+    private final MenuBoard menuBoard;
     private final PlayerSerializationData playerData;
 
-    public BingoCommand(ConfigData config, GameManager gameManager, MenuManager menuManager) {
+    public BingoCommand(ConfigData config, GameManager gameManager, MenuBoard menuBoard) {
         this.config = config;
         this.gameManager = gameManager;
-        this.menuManager = menuManager;
+        this.menuBoard = menuBoard;
         this.playerData = new PlayerSerializationData();
     }
 
@@ -60,16 +60,16 @@ public class BingoCommand implements TabExecutor
 
         if (args.length == 0) {
             if (player.hasPermission("bingo.admin")) {
-                new AdminBingoMenu(menuManager, session, config).open(player);
+                new AdminBingoMenu(menuBoard, session, config).open(player);
             } else if (player.hasPermission("bingo.player")) {
-                new PlayerBingoMenu(menuManager, session).open(player);
+                new PlayerBingoMenu(menuBoard, session).open(player);
             }
             return true;
         }
 
         switch (args[0]) {
             case "join" -> {
-                TeamSelectionMenu menu = new TeamSelectionMenu(menuManager, session.teamManager);
+                TeamSelectionMenu menu = new TeamSelectionMenu(menuBoard, session.teamManager);
                 menu.open(player);
             }
             case "leave" -> {
@@ -122,7 +122,7 @@ public class BingoCommand implements TabExecutor
             }
             case "creator" -> {
                 if (player.hasPermission("bingo.manager")) {
-                    BingoCreatorMenu creatorMenu = new BingoCreatorMenu(menuManager);
+                    BingoCreatorMenu creatorMenu = new BingoCreatorMenu(menuBoard);
                     creatorMenu.open(player);
                 }
             }
@@ -165,7 +165,7 @@ public class BingoCommand implements TabExecutor
                 if (!player.hasPermission("bingo.admin"))
                     return false;
 
-                new TeamEditorMenu(menuManager).open(player);
+                new TeamEditorMenu(menuBoard).open(player);
             }
             case "hologram" -> {
 

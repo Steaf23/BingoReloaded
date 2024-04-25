@@ -4,7 +4,7 @@ import io.github.steaf23.bingoreloaded.data.BingoCardData;
 import io.github.steaf23.bingoreloaded.gui.base.FilterType;
 import io.github.steaf23.bingoreloaded.gui.base.MenuItem;
 import io.github.steaf23.bingoreloaded.gui.base.BasicMenu;
-import io.github.steaf23.bingoreloaded.gui.base.MenuManager;
+import io.github.steaf23.bingoreloaded.gui.base.MenuBoard;
 import io.github.steaf23.bingoreloaded.gui.base.PaginatedSelectionMenu;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -22,9 +22,9 @@ public class CardEditorMenu extends PaginatedSelectionMenu
     public final BingoCardData cardsData;
     private static final MenuItem ADD_LIST = new MenuItem(51, Material.EMERALD, "" + ChatColor.GREEN + ChatColor.BOLD + "Add Item List", "");
 
-    public CardEditorMenu(MenuManager menuManager, String cardName, BingoCardData cardsData)
+    public CardEditorMenu(MenuBoard menuBoard, String cardName, BingoCardData cardsData)
     {
-        super(menuManager, "Editing '" + cardName + "'", new ArrayList<>(), FilterType.DISPLAY_NAME);
+        super(menuBoard, "Editing '" + cardName + "'", new ArrayList<>(), FilterType.DISPLAY_NAME);
         this.cardName = cardName;
         this.cardsData = cardsData;
         addAction(ADD_LIST, p -> createListPicker(result -> {

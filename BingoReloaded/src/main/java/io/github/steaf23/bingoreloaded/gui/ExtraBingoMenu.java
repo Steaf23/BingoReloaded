@@ -1,7 +1,7 @@
 package io.github.steaf23.bingoreloaded.gui;
 
 import io.github.steaf23.bingoreloaded.gui.base.BasicMenu;
-import io.github.steaf23.bingoreloaded.gui.base.MenuManager;
+import io.github.steaf23.bingoreloaded.gui.base.MenuBoard;
 import io.github.steaf23.bingoreloaded.gui.base.PaginatedSelectionMenu;
 import io.github.steaf23.bingoreloaded.gui.base.UserInputMenu;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
@@ -39,9 +39,9 @@ public class ExtraBingoMenu extends BasicMenu
     private final MenuItem gameDuration = new MenuItem(4, 3,
             Material.RECOVERY_COMPASS, TITLE_PREFIX + "Countdown Duration");
 
-    public ExtraBingoMenu(MenuManager menuManager, BingoSettingsBuilder settings, ConfigData config)
+    public ExtraBingoMenu(MenuBoard menuBoard, BingoSettingsBuilder settings, ConfigData config)
     {
-        super(menuManager, BingoTranslation.OPTIONS_TITLE.translate(), 6);
+        super(menuBoard, BingoTranslation.OPTIONS_TITLE.translate(), 6);
         this.settings = settings;
         this.config = config;
         countdown.setGlowing(settings.view().enableCountdown());

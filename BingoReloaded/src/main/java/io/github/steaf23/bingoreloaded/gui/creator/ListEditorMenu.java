@@ -3,7 +3,7 @@ package io.github.steaf23.bingoreloaded.gui.creator;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.gui.base.MenuItem;
 import io.github.steaf23.bingoreloaded.gui.base.BasicMenu;
-import io.github.steaf23.bingoreloaded.gui.base.MenuManager;
+import io.github.steaf23.bingoreloaded.gui.base.MenuBoard;
 import io.github.steaf23.bingoreloaded.tasks.AdvancementTask;
 import io.github.steaf23.bingoreloaded.tasks.BingoTask;
 import io.github.steaf23.bingoreloaded.tasks.ItemTask;
@@ -25,7 +25,7 @@ public class ListEditorMenu extends BasicMenu
     private static final MenuItem SAVE = new MenuItem(4, 5, Material.REDSTONE, "" + ChatColor.RED + ChatColor.BOLD + BingoTranslation.MENU_SAVE_EXIT.translate());
     private static final MenuItem BLANK = new MenuItem(Material.BLACK_STAINED_GLASS_PANE, " ", "");
 
-    public ListEditorMenu(MenuManager manager, String listName) {
+    public ListEditorMenu(MenuBoard manager, String listName) {
         super(manager, "Editing '" + listName + "'", 6);
         this.listName = listName;
         addAction(ITEMS, p -> createItemPicker(manager).open(p));
@@ -42,11 +42,11 @@ public class ListEditorMenu extends BasicMenu
                 BLANK.copyToSlot(8, 5));
     }
 
-    public BasicMenu createStatisticsPicker(MenuManager menuManager) {
-        return new StatisticSelectionMenu(menuManager, listName);
+    public BasicMenu createStatisticsPicker(MenuBoard menuBoard) {
+        return new StatisticSelectionMenu(menuBoard, listName);
     }
 
-    private BasicMenu createItemPicker(MenuManager menuManager) {
+    private BasicMenu createItemPicker(MenuBoard menuBoard) {
         Set<Material> glassPanes = new HashSet<>();
         for (FlexColor flexColor : FlexColor.values()) {
             glassPanes.add(flexColor.glassPane);
@@ -59,10 +59,10 @@ public class ListEditorMenu extends BasicMenu
             }
         }
 
-        return new TaskPickerMenu(menuManager, "Select Items", tasks, listName);
+        return new TaskPickerMenu(menuBoard, "Select Items", tasks, listName);
     }
 
-    private BasicMenu createAdvancementPicker(MenuManager menuManager) {
+    private BasicMenu createAdvancementPicker(MenuBoard menuBoard) {
         List<BingoTask> tasks = new ArrayList<>();
         for (Iterator<Advancement> it = Bukkit.advancementIterator(); it.hasNext(); ) {
             Advancement a = it.next();
@@ -75,6 +75,6 @@ public class ListEditorMenu extends BasicMenu
             tasks.add(new BingoTask(task));
         }
 
-        return new TaskPickerMenu(menuManager, "Add Advancements", tasks, listName);
+        return new TaskPickerMenu(menuBoard, "Add Advancements", tasks, listName);
     }
 }

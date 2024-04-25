@@ -5,7 +5,7 @@ import io.github.steaf23.bingoreloaded.data.PlayerSerializationData;
 import io.github.steaf23.bingoreloaded.data.world.WorldData;
 import io.github.steaf23.bingoreloaded.event.BingoEventListener;
 import io.github.steaf23.bingoreloaded.gui.base.Menu;
-import io.github.steaf23.bingoreloaded.gui.base.MenuManager;
+import io.github.steaf23.bingoreloaded.gui.base.MenuBoard;
 import io.github.steaf23.bingoreloaded.util.Message;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -21,16 +21,16 @@ public class GameManager
 {
     private final JavaPlugin plugin;
     private final ConfigData config;
-    private final MenuManager menuManager;
+    private final MenuBoard menuBoard;
 
     private final Map<String, BingoSession> sessions;
     private final PlayerSerializationData playerData;
     private final BingoEventListener eventListener;
 
-    public GameManager(@NotNull JavaPlugin plugin, ConfigData config, MenuManager menus) {
+    public GameManager(@NotNull JavaPlugin plugin, ConfigData config, MenuBoard menus) {
         this.plugin = plugin;
         this.config = config;
-        this.menuManager = menus;
+        this.menuBoard = menus;
 
         this.sessions = new HashMap<>();
         this.playerData = new PlayerSerializationData();
@@ -45,7 +45,7 @@ public class GameManager
             return false;
         }
 
-        BingoSession session = new BingoSession(this, menuManager, WorldData.getOrCreateWorldGroup(plugin, sessionName), config, playerData);
+        BingoSession session = new BingoSession(this, menuBoard, WorldData.getOrCreateWorldGroup(plugin, sessionName), config, playerData);
         sessions.put(sessionName, session);
         return true;
     }
