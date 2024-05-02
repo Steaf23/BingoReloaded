@@ -109,10 +109,6 @@ public class GameManager
         return true;
     }
 
-    public BingoSession getSession() {
-        return singular ? getSession(SINGULAR_WORLDNAME) : null;
-    }
-
     public BingoSession getSession(String sessionName) {
         if (sessions.containsKey(sessionName)) {
             return sessions.get(sessionName);
