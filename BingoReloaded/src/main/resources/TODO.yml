@@ -6,8 +6,6 @@ add proper placeholder support
 
 (2.1) add /bingo info command to see information about current game (settings mostly) (admin use only)
 
-(2.1) add Free for all (probably needs a new TeamManager)
-
 (2.1) add Hologram wizard item to /bingo hologram to allow players to place scoreboards in the world
 
 (2.1) add player voting commands to multi auto bingo
@@ -57,10 +55,3 @@ force end when no players are online
 fix bingo end causing error in console when used incorrectly
 
 ??? add new way for users to create custom tasks involving a lot of head aches on my part but should be the ultimate final task type
-
-
-dont select custom kit in autobingo if kit does not exist!
-
-leave teams in solo team manager causes crash?
-
-fix leaving/joining teams in solo team manager with autobingo commands...
