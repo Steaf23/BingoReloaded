@@ -161,4 +161,8 @@ public class BingoReloaded extends JavaPlugin
     public static String getDefaultTasksVersion() {
         return CARD_1_20_4;
     }
+
+    public GameManager getGameManager() {
+        return gameManager;
+    }
 }

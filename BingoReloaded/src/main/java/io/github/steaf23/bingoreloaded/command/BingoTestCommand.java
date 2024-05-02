@@ -1,8 +1,15 @@
 package io.github.steaf23.bingoreloaded.command;
 
 
+import io.github.steaf23.bingoreloaded.BingoReloaded;
+import io.github.steaf23.bingoreloaded.cards.BingoCard;
 import io.github.steaf23.bingoreloaded.data.world.WorldData;
+import io.github.steaf23.bingoreloaded.event.BingoCardTaskCompleteEvent;
+import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
+import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.util.Message;
+import net.md_5.bungee.api.ChatColor;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
@@ -70,6 +77,20 @@ public class BingoTestCommand implements TabExecutor
                         break;
                 }
             }
+            case "complete" -> {
+                Player player = Bukkit.getPlayer(args[1]);
+                if (player == null)
+                    return false;
+
+                // Grossly beautiful line of code...
+                BingoParticipant virtualPlayer = BingoReloaded.getInstance().getGameManager().getSession("world").teamManager.getPlayerAsParticipant(player);
+                int taskIndex = Integer.parseInt(args[2]);
+                if (virtualPlayer == null) {
+                    Message.error("Cannot complete task " + args[2] + " for non existing player: " + args[1]);
+                    break;
+                }
+                completeTaskByPlayer(virtualPlayer, taskIndex);
+            }
         }
         return true;
     }
@@ -77,5 +98,21 @@ public class BingoTestCommand implements TabExecutor
     @Override
     public List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
         return null;
+    }
+
+    void completeTaskByPlayer(BingoParticipant player, int taskIndex) {
+        if (!player.getSession().isRunning())
+            return;
+
+        BingoCard card = player.getTeam().card;
+
+        if (taskIndex >= card.tasks.size()) {
+            Message.log(ChatColor.RED + "index out of bounds for task list!");
+            return;
+        }
+
+        card.tasks.get(taskIndex).complete(player, ((BingoGame) player.getSession().phase()).getGameTime());
+        var slotEvent = new BingoCardTaskCompleteEvent(card.tasks.get(taskIndex), player, card.hasBingo(player.getTeam()));
+        Bukkit.getPluginManager().callEvent(slotEvent);
     }
 }
