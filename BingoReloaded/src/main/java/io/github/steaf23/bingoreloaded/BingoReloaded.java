@@ -8,8 +8,7 @@ import io.github.steaf23.bingoreloaded.data.helper.SerializablePlayer;
 import io.github.steaf23.bingoreloaded.data.helper.YmlDataManager;
 import io.github.steaf23.bingoreloaded.data.world.WorldData;
 import io.github.steaf23.bingoreloaded.gameloop.GameManager;
-import io.github.steaf23.bingoreloaded.gameloop.multiple.MultiAutoBingoCommand;
-import io.github.steaf23.bingoreloaded.gameloop.singular.SimpleAutoBingoCommand;
+import io.github.steaf23.bingoreloaded.command.AutoBingoCommand;
 import io.github.steaf23.bingoreloaded.gui.base.BasicMenu;
 import io.github.steaf23.bingoreloaded.gui.base.BingoMenuBoard;
 import io.github.steaf23.bingoreloaded.gui.base.MenuItem;
@@ -78,16 +77,10 @@ public class BingoReloaded extends JavaPlugin
         this.hologramPlacer = new HologramPlacer(hologramManager);
         WorldData.clearWorlds(this);
 
-        TabExecutor autoBingoCommand;
-
         this.menuBoard = new BingoMenuBoard();
 
-        this.gameManager = new GameManager(this, config, menuBoard);
-        if (config.configuration == ConfigData.PluginConfiguration.SINGULAR) {
-            autoBingoCommand = new SimpleAutoBingoCommand(gameManager);
-        } else {
-            autoBingoCommand = new MultiAutoBingoCommand(gameManager);
-        }
+        this.gameManager = new GameManager(this, config.configuration == ConfigData.PluginConfiguration.SINGULAR, config, menuBoard);
+        TabExecutor autoBingoCommand = new AutoBingoCommand(gameManager);
 
         menuBoard.setPlayerOpenPredicate(player -> player instanceof Player p && this.gameManager.canPlayerOpenMenu(p, null));
 
@@ -166,7 +159,6 @@ public class BingoReloaded extends JavaPlugin
     }
 
     public static String getDefaultTasksVersion() {
-        String version = Bukkit.getVersion();
         return CARD_1_20_4;
     }
 }

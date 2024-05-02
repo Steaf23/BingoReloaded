@@ -34,7 +34,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class BingoSession
 {
-    public final BingoSettingsBuilder settingsBuilder;
+    public BingoSettingsBuilder settingsBuilder;
     public final BingoScoreboard scoreboard;
     public final TeamManager teamManager;
     private final ConfigData config;
@@ -52,8 +52,6 @@ public class BingoSession
         this.worlds = worlds;
         this.config = config;
         this.playerData = playerData;
-        this.settingsBuilder = new BingoSettingsBuilder(this);
-        settingsBuilder.fromOther(new BingoSettingsData().getSettings(config.defaultSettingsPreset));
         this.scoreboard = new BingoScoreboard(this, config.showPlayerInScoreboard && false);
         this.teamManager = new SoloTeamManager(scoreboard.getTeamBoard(), this);
 //      this.teamManager = new BasicTeamManager(scoreboard.getTeamBoard(), this);
@@ -128,6 +126,11 @@ public class BingoSession
         }
 
         phase = new PregameLobby(menuBoard, this, config);
+
+        if (settingsBuilder == null) {
+            this.settingsBuilder = new BingoSettingsBuilder(this);
+            settingsBuilder.fromOther(new BingoSettingsData().getSettings(config.defaultSettingsPreset));
+        }
         phase.setup();
     }
 
@@ -143,7 +146,6 @@ public class BingoSession
     public void handleSettingsUpdated(final BingoSettingsUpdatedEvent event) {
         phase.handleSettingsUpdated(event);
         teamManager.handleSettingsUpdated(event);
-        settingsBuilder.fromOther(event.getNewSettings());
     }
 
     public void handlePlayerTeleport(final PlayerTeleportEvent event) {

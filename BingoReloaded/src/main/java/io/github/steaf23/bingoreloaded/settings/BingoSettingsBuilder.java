@@ -51,6 +51,7 @@ public class BingoSettingsBuilder
         maxTeamSize = settings.maxTeamSize();
         countdownGameDuration = settings.countdownDuration();
         enableCountdown = settings.enableCountdown();
+        settingsUpdated();
     }
 
     public BingoSettingsBuilder getVoteResult(PregameLobby.VoteTicket voteResult)
@@ -131,7 +132,7 @@ public class BingoSettingsBuilder
         return this;
     }
 
-    public BingoSettingsBuilder kit(PlayerKit kit, BingoSession session)
+    public BingoSettingsBuilder kit(PlayerKit kit)
     {
         if (this.kit != kit) {
             this.kit = kit;
@@ -140,7 +141,7 @@ public class BingoSettingsBuilder
         return this;
     }
 
-    public BingoSettingsBuilder effects(EnumSet<EffectOptionFlags> effects, BingoSession session)
+    public BingoSettingsBuilder effects(EnumSet<EffectOptionFlags> effects)
     {
         if (this.effects != effects) {
             this.effects = effects;

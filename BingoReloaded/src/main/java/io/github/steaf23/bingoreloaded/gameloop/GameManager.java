@@ -14,11 +14,15 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class GameManager
 {
+    private static final String SINGULAR_WORLDNAME = "world";
+    private final boolean singular;
     private final JavaPlugin plugin;
     private final ConfigData config;
     private final MenuBoard menuBoard;
@@ -27,19 +31,31 @@ public class GameManager
     private final PlayerSerializationData playerData;
     private final BingoEventListener eventListener;
 
-    public GameManager(@NotNull JavaPlugin plugin, ConfigData config, MenuBoard menus) {
+    public GameManager(@NotNull JavaPlugin plugin, boolean singular, ConfigData config, MenuBoard menus) {
         this.plugin = plugin;
         this.config = config;
         this.menuBoard = menus;
+        this.singular = singular;
 
         this.sessions = new HashMap<>();
         this.playerData = new PlayerSerializationData();
         this.eventListener = new BingoEventListener(this::getSessionFromWorld, config.disableAdvancements, config.disableStatistics);
 
+        if (singular)
+        {
+            BingoSession session = new BingoSession(this, menuBoard, WorldData.getOrCreateWorldGroup(plugin, SINGULAR_WORLDNAME), config, playerData);
+            sessions.put(SINGULAR_WORLDNAME, session);
+        }
         Bukkit.getPluginManager().registerEvents(eventListener, plugin);
     }
 
     public boolean createSession(String sessionName) {
+        if (singular)
+        {
+            Message.error("This command is not available when using configuration singular!");
+            return false;
+        }
+
         if (sessions.containsKey(sessionName)) {
             Message.log("An instance of Bingo already exists in world '" + sessionName + "'!");
             return false;
@@ -51,11 +67,18 @@ public class GameManager
     }
 
     public boolean destroySession(String sessionName) {
+        if (singular)
+        {
+            Message.error("This command is not available when using configuration singular!");
+            return false;
+        }
+
         if (!sessions.containsKey(sessionName)) {
             return false;
         }
 
         endGame(sessionName);
+        WorldData.destroyWorldGroup(plugin, WorldData.getOrCreateWorldGroup(plugin, sessionName));
         sessions.remove(sessionName);
         return true;
     }
@@ -87,7 +110,7 @@ public class GameManager
     }
 
     public BingoSession getSession() {
-        return getSession(config.defaultWorldName);
+        return singular ? getSession(SINGULAR_WORLDNAME) : null;
     }
 
     public BingoSession getSession(String sessionName) {
@@ -122,5 +145,14 @@ public class GameManager
 
     public boolean canPlayerOpenMenu(Player player, Menu menu) {
         return getSessionFromWorld(player.getWorld()) != null;
+    }
+
+    public boolean isConfigurationSingular()
+    {
+        return singular;
+    }
+
+    public Collection<String> getSessionNames() {
+        return sessions.keySet();
     }
 }

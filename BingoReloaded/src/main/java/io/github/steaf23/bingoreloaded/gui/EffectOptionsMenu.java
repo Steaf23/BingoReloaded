@@ -35,7 +35,7 @@ public class EffectOptionsMenu extends BasicMenu
                         "" + ChatColor.AQUA + ChatColor.BOLD + BingoTranslation.MENU_SAVE_EXIT.translate()
                 ),
                 (player) -> {
-                    settings.effects(flags, session);
+                    settings.effects(flags);
                     close(player);
                 }
         );

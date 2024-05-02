@@ -75,6 +75,6 @@ public class KitOptionsMenu extends BasicMenu
 
     private void setKit(PlayerKit kit)
     {
-        session.settingsBuilder.kit(kit, session);
+        session.settingsBuilder.kit(kit);
     }
 }

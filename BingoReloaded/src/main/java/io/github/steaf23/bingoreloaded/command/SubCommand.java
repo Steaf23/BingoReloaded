@@ -8,16 +8,17 @@ import java.util.stream.Collectors;
 
 public class SubCommand
 {
-    private final String name;
+    protected final List<SubCommand> subCommands;
+    protected final String name;
     private final Function<String[], Boolean> action;
-    private final List<SubCommand> subCommands;
-    private String usage;
-    private Function<String[], List<String>> tabCompletionForArgs;
+    protected String usage;
+    protected Function<String[], List<String>> tabCompletionForArgs;
 
     public SubCommand(String name, Function<String[], Boolean> action) {
         this.subCommands = new ArrayList<>();
         this.name = name;
         this.action = action;
+        this.usage = "";
         this.tabCompletionForArgs = args -> List.of();
     }
 
@@ -87,7 +88,7 @@ public class SubCommand
         return "/" + determineUsage(arguments);
     }
 
-    private String determineUsage(String... arguments) {
+    protected String determineUsage(String... arguments) {
         if (subCommands.size() == 0) {
             return name + " " + usage;
         }

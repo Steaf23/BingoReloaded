@@ -13,6 +13,7 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
@@ -68,7 +69,7 @@ public enum PlayerKit
     }
 
     public String getDisplayName() {
-        if (customKits().contains(this)) {
+        if (getCustomKit(this) != null) {
             return getCustomKit(this).name();
         }
         return displayName;
@@ -219,7 +220,7 @@ public enum PlayerKit
         return true;
     }
 
-    public static CustomKit getCustomKit(PlayerKit slot)
+    public static @Nullable CustomKit getCustomKit(PlayerKit slot)
     {
         return customKitData.getConfig().getSerializable(slot.configName, CustomKit.class);
     }

@@ -11,40 +11,35 @@ public class BingoSettingsData
 {
     private final YmlDataManager data;
 
-    public BingoSettingsData()
-    {
+    public BingoSettingsData() {
         this.data = BingoReloaded.createYmlDataManager("data/presets.yml");
     }
 
-    public BingoSettings getSettings(String name)
-    {
-        if (data.getConfig().contains(name))
-        {
+    public BingoSettings getSettings(String name) {
+        if (data.getConfig().contains(name)) {
             return data.getConfig().getSerializable(name, BingoSettings.class);
         }
         return BingoSettings.getDefaultSettings();
     }
 
-    public void saveSettings(String name, BingoSettings settings)
-    {
-        if (data.getConfig().contains(name))
-        {
-            Message.log("Overwritten saved preset '" + name + "'");
+    public void saveSettings(String name, BingoSettings settings) {
+        if (data.getConfig().contains(name)) {
+            Message.log("Overwritten saved preset '" + name + "' with current settings");
             data.getConfig().set(name, null);
+        } else {
+            Message.log("Saved preset '" + name + "'");
         }
         data.getConfig().set(name, settings);
         data.saveConfig();
     }
 
-    public void removeSettings(String name)
-    {
+    public void removeSettings(String name) {
         Message.log("Removed preset '" + name + "'");
         data.getConfig().set(name, null);
         data.saveConfig();
     }
 
-    public Set<String> getPresetNames()
-    {
+    public Set<String> getPresetNames() {
         return data.getConfig().getKeys(false);
     }
 }

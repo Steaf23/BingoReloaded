@@ -19,7 +19,11 @@ public enum BingoGamemode
         this.dataName = dataName;
     }
 
-    public static BingoGamemode fromDataString(String data)
+    public static BingoGamemode fromDataString(String data) {
+        return fromDataString(data, false);
+    }
+
+    public static BingoGamemode fromDataString(String data, boolean strict)
     {
         for (BingoGamemode mode : BingoGamemode.values())
         {
@@ -29,8 +33,12 @@ public enum BingoGamemode
             }
         }
 
+        if (strict) {
+            return null;
+        }
         return BingoGamemode.REGULAR;
     }
+
 
     public String getDataName()
     {

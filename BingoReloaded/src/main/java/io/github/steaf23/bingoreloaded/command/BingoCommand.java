@@ -15,6 +15,7 @@ import io.github.steaf23.bingoreloaded.gui.base.MenuBoard;
 import io.github.steaf23.bingoreloaded.gui.creator.BingoCreatorMenu;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
+import io.github.steaf23.bingoreloaded.settings.CustomKit;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.bingoreloaded.util.TranslatedMessage;
@@ -188,6 +189,10 @@ public class BingoCommand implements TabExecutor
                 yield null;
             }
         };
+        if (kit == null)
+        {
+            return;
+        }
 
         StringBuilder kitName = new StringBuilder();
         for (int i = 0; i < kitNameParts.size() - 1; i++) {
@@ -226,8 +231,14 @@ public class BingoCommand implements TabExecutor
                 yield null;
             }
         };
+        if (kit == null)
+        {
+            return;
+        }
 
-        if (PlayerKit.getCustomKit(kit) == null) {
+        CustomKit customKit = PlayerKit.getCustomKit(kit);
+
+        if (customKit == null) {
             BaseComponent msg = new TextComponent("");
             msg.setColor(ChatColor.RED);
             msg.addExtra("Cannot remove kit from slot " + slot + " because no custom kit is assigned to this slot");
@@ -236,7 +247,7 @@ public class BingoCommand implements TabExecutor
             BaseComponent msg = new TextComponent("");
             msg.setColor(ChatColor.GREEN);
             msg.addExtra("Removed custom kit ");
-            msg.addExtra(PlayerKit.getCustomKit(kit).getName());
+            msg.addExtra(customKit.getName());
             msg.addExtra(" from slot " + slot);
             Message.sendDebug(msg, commandSender);
             PlayerKit.removeCustomKit(kit);
@@ -268,19 +279,17 @@ public class BingoCommand implements TabExecutor
                 return List.of("join", "getcard", "back", "leave", "stats", "end", "kit", "deathmatch", "creator", "teams");
             }
 
-            switch (args[0]) {
-                case "kit" -> {
-                    if (args.length == 2) {
-                        return List.of("add", "remove", "item");
-                    }
-                    if (args.length == 3) {
-                        switch (args[1]) {
-                            case "add", "remove" -> {
-                                return List.of("1", "2", "3", "4", "5");
-                            }
-                            case "item" -> {
-                                return List.of("wand");
-                            }
+            if (args[0].equals("kit")) {
+                if (args.length == 2) {
+                    return List.of("add", "remove", "item");
+                }
+                if (args.length == 3) {
+                    switch (args[1]) {
+                        case "add", "remove" -> {
+                            return List.of("1", "2", "3", "4", "5");
+                        }
+                        case "item" -> {
+                            return List.of("wand");
                         }
                     }
                 }
@@ -288,10 +297,8 @@ public class BingoCommand implements TabExecutor
             return List.of();
         }
 
-        switch (args.length) {
-            case 1 -> {
-                return List.of("join", "getcard", "back", "leave", "stats");
-            }
+        if (args.length == 1) {
+            return List.of("join", "getcard", "back", "leave", "stats");
         }
         return List.of();
     }
