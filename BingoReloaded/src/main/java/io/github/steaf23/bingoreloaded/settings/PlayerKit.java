@@ -25,11 +25,11 @@ public enum PlayerKit
     NORMAL("normal", ChatColor.BOLD + BingoTranslation.KIT_NORMAL_NAME.translate(), EnumSet.of(EffectOptionFlags.SPEED, EffectOptionFlags.NO_FALL_DAMAGE)),
     OVERPOWERED("overpowered", ChatColor.BOLD + BingoTranslation.KIT_OVERPOWERED_NAME.translate(), EnumSet.allOf(EffectOptionFlags.class)),
     RELOADED("reloaded", ChatColor.BOLD + BingoTranslation.KIT_RELOADED_NAME.translate(), EnumSet.allOf(EffectOptionFlags.class)),
-    CUSTOM_1("custom_1", "", EnumSet.noneOf(EffectOptionFlags.class)),
-    CUSTOM_2("custom_2", "", EnumSet.noneOf(EffectOptionFlags.class)),
-    CUSTOM_3("custom_3", "", EnumSet.noneOf(EffectOptionFlags.class)),
-    CUSTOM_4("custom_4", "", EnumSet.noneOf(EffectOptionFlags.class)),
-    CUSTOM_5("custom_5", "", EnumSet.noneOf(EffectOptionFlags.class)),
+    CUSTOM_1("custom_1", "CUSTOM 1", EnumSet.noneOf(EffectOptionFlags.class)),
+    CUSTOM_2("custom_2", "CUSTOM 2", EnumSet.noneOf(EffectOptionFlags.class)),
+    CUSTOM_3("custom_3", "CUSTOM 3", EnumSet.noneOf(EffectOptionFlags.class)),
+    CUSTOM_4("custom_4", "CUSTOM 4", EnumSet.noneOf(EffectOptionFlags.class)),
+    CUSTOM_5("custom_5", "CUSTOM 5", EnumSet.noneOf(EffectOptionFlags.class)),
     ;
 
     public static final MenuItem WAND_ITEM = new MenuItem(

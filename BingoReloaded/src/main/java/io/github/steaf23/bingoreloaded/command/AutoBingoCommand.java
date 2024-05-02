@@ -22,6 +22,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -37,24 +38,16 @@ public class AutoBingoCommand implements TabExecutor
         this.manager = manager;
 
         command = new DeferredCommand("autobingo", "world")
-                .addTabCompletion(args -> {
-                    return manager.getSessionNames().stream().toList();
-                });
+                .addTabCompletion(args -> manager.getSessionNames().stream().toList());
 
 
-        command.addSubCommand(new SubCommand("create", args -> {
-            return create(args[0]);
-        }));
+        command.addSubCommand(new SubCommand("create", args -> create(args[0])));
 
 
-        command.addSubCommand(new SubCommand("destroy", args -> {
-            return destroy(args[0]);
-        }));
+        command.addSubCommand(new SubCommand("destroy", args -> destroy(args[0])));
 
 
-        command.addSubCommand(new SubCommand("start", args -> {
-            return start(args[0]);
-        }));
+        command.addSubCommand(new SubCommand("start", args -> start(args[0])));
 
 
         command.addSubCommand(new SubCommand("kit", args -> {
@@ -140,9 +133,7 @@ public class AutoBingoCommand implements TabExecutor
             }
             return setPlayerTeam(args[0], Arrays.copyOfRange(args, 1, args.length));
         }).addUsage("<player_name> <team_name>")
-                        .addTabCompletion(args -> {
-                            return args.length == 2 || args.length == 3 ? List.of("") : List.of();
-                        }));
+                        .addTabCompletion(args -> args.length == 2 || args.length == 3 ? List.of("") : List.of()));
 
 
         command.addSubCommand(new SubCommand("teamsize", args -> {
@@ -165,18 +156,14 @@ public class AutoBingoCommand implements TabExecutor
             }
             return setGamemode(settings, args[0], Arrays.copyOfRange(args, 1, args.length));
         }).addUsage("<regular | lockout | complete | hotswap> [3 | 5]")
-                .addTabCompletion(args -> {
-                    return switch (args.length) {
-                        case 2 -> List.of("regular", "lockout", "complete", "hotswap");
-                        case 3 -> List.of("3", "5");
-                        default -> List.of();
-                    };
+                .addTabCompletion(args -> switch (args.length) {
+                    case 2 -> List.of("regular", "lockout", "complete", "hotswap");
+                    case 3 -> List.of("3", "5");
+                    default -> List.of();
                 }));
 
 
-        command.addSubCommand(new SubCommand("end", args -> {
-            return end(args[0]);
-        }));
+        command.addSubCommand(new SubCommand("end", args -> end(args[0])));
 
 
         command.addSubCommand(new SubCommand("preset", args -> {
@@ -192,7 +179,7 @@ public class AutoBingoCommand implements TabExecutor
                     BingoSettingsData settingsData = new BingoSettingsData();
                     return switch (args.length) {
                         case 2 -> List.of("save", "load", "remove");
-                        case 3 -> settingsData.getPresetNames().stream().collect(Collectors.toList());
+                        case 3 -> new ArrayList<>(settingsData.getPresetNames());
                         default -> List.of();
                     };
                 }));
@@ -211,45 +198,6 @@ public class AutoBingoCommand implements TabExecutor
             commandSender.sendMessage(ChatColor.DARK_GRAY + " - " + ChatColor.RED + "Usage: " + command.usage(args));
         }
         return true;
-
-//        if (args.length < 2) {
-//            return false;
-//        }
-//        String sessionName = args[0];
-//        String command = args[1];
-//        String[] extraArguments = args.length > 2 ? Arrays.copyOfRange(args, 2, args.length - 1) : new String[]{};
-//        BingoSettingsBuilder settings = null;
-//        BingoSession session = manager.getSession(sessionName);
-//        if (session != null)
-//            settings = manager.getSession(sessionName).settingsBuilder;
-//
-//        // All commands besides "create" can only be executed if a game session exists in the given world
-//        if (!command.equals("create") && manager.getSession(sessionName) == null) {
-//            sendFailed("Cannot perform command on a session world that has no valid session!", sessionName);
-//            return false;
-//        }
-//
-//        boolean success = switch (command) {
-//            case "create" -> create(sessionName);
-//            case "destroy" -> destroy(sessionName);
-//            case "start" -> start(sessionName);
-//            case "kit" -> setKit(session, settings, sessionName, extraArguments);
-//            case "effects" -> setEffect(session, settings, sessionName, extraArguments);
-//            case "card" -> setCard(settings, sessionName, extraArguments);
-//            case "countdown" -> setCountdown(settings, sessionName, extraArguments);
-//            case "duration" -> setDuration(settings, sessionName, extraArguments);
-//            case "team" -> setPlayerTeam(sessionName, extraArguments);
-//            case "teamsize" -> setTeamSize(settings, sessionName, extraArguments);
-//            case "gamemode" -> setGamemode(settings, sessionName, extraArguments);
-//            case "end" -> end(sessionName);
-//            case "preset" -> preset(settings, sessionName, extraArguments);
-//            default -> {
-//                Message.log(ChatColor.RED + "Invalid command: '" + command + "' not recognized");
-//                yield false;
-//            }
-//        };
-//
-//        return success;
     }
 
     private BingoSettingsBuilder getSettingsBuilder(String sessionName) {
@@ -294,6 +242,13 @@ public class AutoBingoCommand implements TabExecutor
         }
 
         PlayerKit kit = PlayerKit.fromConfig(extraArguments[0]);
+
+        if (PlayerKit.customKits().contains(kit) && PlayerKit.getCustomKit(kit) == null)
+        {
+            // Invalid custom kit selected, not possible!
+            sendFailed("Cannot set kit to " + kit.getDisplayName() + ". This custom kit is not defined. To create custom kits first, use /bingo kit.", worldName);
+            return false;
+        }
         settings.kit(kit);
         sendSuccess("Kit set to " + kit.getDisplayName(), worldName);
         return true;
@@ -309,7 +264,7 @@ public class AutoBingoCommand implements TabExecutor
             return false;
         }
         String effect = extraArguments[0];
-        boolean enable = extraArguments.length > 1 && extraArguments[1].equals("false") ? false : true;
+        boolean enable = extraArguments.length == 1 || !extraArguments[1].equals("false");
 
         if (effect.equals("all")) {
             settings.effects(EffectOptionFlags.ALL_ON);
@@ -412,9 +367,12 @@ public class AutoBingoCommand implements TabExecutor
             sendSuccess("Player " + playerName + " removed from all teams", sessionName);
             return true;
         }
-
-        BingoPlayer bingoPlayer = new BingoPlayer(player, session);
-        if (!session.teamManager.addMemberToTeam(bingoPlayer, teamName)) {
+        BingoParticipant participant = session.teamManager.getPlayerAsParticipant(player);
+        if (participant == null)
+        {
+            participant = new BingoPlayer(player, session);
+        }
+        if (!session.teamManager.addMemberToTeam(participant, teamName)) {
             sendFailed("Player " + player + " could not be added to team " + teamName, sessionName);
             return false;
         }

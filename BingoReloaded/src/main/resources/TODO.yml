@@ -57,3 +57,10 @@ force end when no players are online
 fix bingo end causing error in console when used incorrectly
 
 ??? add new way for users to create custom tasks involving a lot of head aches on my part but should be the ultimate final task type
+
+
+dont select custom kit in autobingo if kit does not exist!
+
+leave teams in solo team manager causes crash?
+
+fix leaving/joining teams in solo team manager with autobingo commands...

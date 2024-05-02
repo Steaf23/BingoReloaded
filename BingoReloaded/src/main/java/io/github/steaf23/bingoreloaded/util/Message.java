@@ -190,12 +190,10 @@ public class Message
 
     public static void log(String text) {
         Bukkit.getConsoleSender().sendMessage(LOG_PREFIX + ": " + text);
-//        BingoLogger.log("Message", text);
     }
 
     public static void log(String text, String worldName) {
         Bukkit.getConsoleSender().sendMessage(LOG_PREFIX + "(" + worldName + "): " + text);
-//        BingoLogger.log("Message", "(" + worldName + "): " + text);
     }
 
 
@@ -217,7 +215,7 @@ public class Message
 
     public static void sendDebug(BaseComponent text, Player player) {
         BaseComponent finalMsg = new TextComponent();
-        finalMsg.addExtra(LOG_PREFIX + " ");
+        finalMsg.addExtra(new TextComponent(BingoTranslation.MESSAGE_PREFIX.translate()));
         finalMsg.addExtra(text);
         player.spigot().sendMessage(finalMsg);
     }
@@ -228,7 +226,7 @@ public class Message
 
     public static void sendDebug(BaseComponent[] text, Player player) {
         BaseComponent finalMsg = new TextComponent();
-        finalMsg.addExtra(LOG_PREFIX + " ");
+        finalMsg.addExtra(new TextComponent(BingoTranslation.MESSAGE_PREFIX.translate()));
         TextComponent allText = new TextComponent();
         allText.setExtra(Arrays.stream(text).collect(Collectors.toList()));
         finalMsg.addExtra(allText);
