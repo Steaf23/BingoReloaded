@@ -174,11 +174,11 @@ public class AutoBingoCommand implements TabExecutor
                 return false;
             }
             return preset(settings, args[0], Arrays.copyOfRange(args, 1, args.length));
-        }).addUsage("<save | load | remove> <preset_name>")
+        }).addUsage("<save | load | remove | default> <preset_name>")
                 .addTabCompletion(args -> {
                     BingoSettingsData settingsData = new BingoSettingsData();
                     return switch (args.length) {
-                        case 2 -> List.of("save", "load", "remove");
+                        case 2 -> List.of("save", "load", "remove", "default");
                         case 3 -> new ArrayList<>(settingsData.getPresetNames());
                         default -> List.of();
                     };
@@ -443,12 +443,22 @@ public class AutoBingoCommand implements TabExecutor
         }
 
         switch (extraArguments[0]) {
-            case "save" ->
+            case "save" -> {
                 settingsData.saveSettings(path, settingsBuilder.view());
-            case "load" ->
+                sendSuccess("Saved settings to '" + path + "'.", sessionName);
+            }
+            case "load" -> {
                 settingsBuilder.fromOther(settingsData.getSettings(path));
-            case "remove" ->
+                sendSuccess("Loaded settings from '" + path + "'.", sessionName);
+            }
+            case "remove" -> {
                 settingsData.removeSettings(path);
+                sendSuccess("Removed settings preset '" + path + "'.", sessionName);
+            }
+            case "default" -> {
+                settingsData.setDefaultSettings(path);
+                sendSuccess("Set '" + path + "' as default settings for new worlds.", sessionName);
+            }
         }
 
         return true;

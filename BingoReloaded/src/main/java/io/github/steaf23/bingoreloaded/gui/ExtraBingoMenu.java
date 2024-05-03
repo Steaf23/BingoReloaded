@@ -175,6 +175,10 @@ public class ExtraBingoMenu extends BasicMenu
                                 settingsData.saveSettings(clickedOption.getCompareKey(), settings.view());
                                 context.close(player);
                             })
+                            .addAction(new MenuItem(Material.AMETHYST_SHARD, TITLE_PREFIX + "Set As Default"), clickType -> {
+                                settingsData.setDefaultSettings(clickedOption.getCompareKey());
+                                context.close(player);
+                            })
                             .addCloseAction(new MenuItem(8, Material.DIAMOND, TITLE_PREFIX + "Exit"))
                             .open(player);
                 }
@@ -192,12 +196,11 @@ public class ExtraBingoMenu extends BasicMenu
                 List<MenuItem> items = new ArrayList<>();
                 for (String preset : settingsData.getPresetNames())
                 {
-                    boolean def = preset.equals(config.defaultSettingsPreset);
+                    boolean def = preset.equals(settingsData.getDefaultSettingsName());
                     MenuItem item = new MenuItem(Material.GLOBE_BANNER_PATTERN,
                             preset + (def ? ChatColor.LIGHT_PURPLE + " (default)" : ""),
                             ChatColor.GRAY + "Left-click to apply these settings",
-                            ChatColor.GRAY + "Right-click for more options",
-                            def ? ChatColor.LIGHT_PURPLE + "The default preset can be changed in the general config file" : "");
+                            ChatColor.GRAY + "Right-click for more options");
                     item.setCompareKey(preset);
                     items.add(item);
                 }

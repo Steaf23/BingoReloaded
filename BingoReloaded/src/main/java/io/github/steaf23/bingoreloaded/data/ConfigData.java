@@ -50,7 +50,6 @@ public class ConfigData
 
     // Gameplay options
     public final int startingCountdownTime;
-    public final String defaultSettingsPreset;
     public final int teleportMaxDistance;
     public final PlayerTeleportStrategy playerTeleportStrategy;
     public final boolean teleportAfterDeath;
@@ -95,7 +94,6 @@ public class ConfigData
 
         // Gameplay
         this.startingCountdownTime = Math.max(0, config.getInt("startingCountdownTime", 10));
-        this.defaultSettingsPreset = config.getString("defaultSettingsPreset", "default_settings");
         this.teleportMaxDistance = Math.max(0, config.getInt("teleportMaxDistance", 1000000));
         this.playerTeleportStrategy = PlayerTeleportStrategy.valueOf(config.getString("playerTeleportStrategy", "ALL"));
         this.teleportAfterDeath = config.getBoolean("teleportBackAfterDeathMessage", true);

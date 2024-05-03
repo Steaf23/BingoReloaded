@@ -73,10 +73,6 @@ voteList:
 # The amount of time in seconds before the game will release the players.
 startingCountdownTime: 10
 
-# This preset will be loaded when the plugin loads. This preset can also be changed in the in-game settings menu using /bingo.
-# This preset contains options that can be changed in between every game, like the gamemode or kits used.
-defaultSettingsPreset: default_settings
-
 # When the game starts everyone will be teleported in a random square radius
 #   between 0 and teleportMaxDistance blocks from 0,0. (no more than 1.000.000 blocks)
 teleportMaxDistance: 1000000

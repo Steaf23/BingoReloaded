@@ -129,7 +129,6 @@ public class BingoSession
 
         if (settingsBuilder == null) {
             this.settingsBuilder = new BingoSettingsBuilder(this);
-            settingsBuilder.fromOther(new BingoSettingsData().getSettings(config.defaultSettingsPreset));
         }
         phase.setup();
     }

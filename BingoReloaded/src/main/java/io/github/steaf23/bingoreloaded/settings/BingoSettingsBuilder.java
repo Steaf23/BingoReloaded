@@ -2,6 +2,7 @@ package io.github.steaf23.bingoreloaded.settings;
 
 import io.github.steaf23.bingoreloaded.cards.CardSize;
 import io.github.steaf23.bingoreloaded.data.BingoCardData;
+import io.github.steaf23.bingoreloaded.data.BingoSettingsData;
 import io.github.steaf23.bingoreloaded.event.BingoSettingsUpdatedEvent;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gameloop.phase.PregameLobby;
@@ -28,7 +29,7 @@ public class BingoSettingsBuilder
     {
         this.session = session;
 
-        BingoSettings def = BingoSettings.getDefaultSettings();
+        BingoSettings def = new BingoSettingsData().getDefaultSettings();
         this.card = def.card();
         this.mode = def.mode();
         this.cardSize = def.size();

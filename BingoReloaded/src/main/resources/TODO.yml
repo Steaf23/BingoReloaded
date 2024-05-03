@@ -10,7 +10,7 @@ add proper placeholder support
 
 (2.1) add player voting commands to multi auto bingo
 
-(2.1) finish multiworld and TEST (using premade worlds or multiverse?)
+(2.1) finish multiworld and TEST
 
 (2.1) Fix bingo creator not showing updated lists/cards immediately after creating them (only after reopening menu)
 
@@ -55,3 +55,6 @@ force end when no players are online
 fix bingo end causing error in console when used incorrectly
 
 ??? add new way for users to create custom tasks involving a lot of head aches on my part but should be the ultimate final task type
+
+items despawn bug??
+(player does not receive kit again either)

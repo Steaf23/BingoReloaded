@@ -1,3 +1,4 @@
+default: default_settings
 default_settings:
   ==: BingoSettings
   mode: regular
