@@ -35,6 +35,9 @@ public class AdminBingoMenu extends BasicMenu
             Material.ENCHANTED_BOOK, TITLE_PREFIX + BingoTranslation.OPTIONS_GAMEMODE.translate());
     private static final MenuItem EFFECTS = new MenuItem(4, 4,
             Material.POTION, TITLE_PREFIX + BingoTranslation.OPTIONS_EFFECTS.translate());
+    private static final MenuItem PRESETS = new MenuItem(0, 5,
+            Material.CHEST_MINECART, TITLE_PREFIX + "Setting Presets",
+            org.bukkit.ChatColor.GRAY + "Click to apply settings from saved presets");
     private static final MenuItem EXTRA = new MenuItem(8, 5,
             Material.STRUCTURE_VOID, TITLE_PREFIX + BingoTranslation.MENU_NEXT.translate());
 
@@ -42,7 +45,7 @@ public class AdminBingoMenu extends BasicMenu
         super(menuBoard, BingoTranslation.OPTIONS_TITLE.translate(), 6);
         this.session = session;
 
-        for (int i = 0; i < 8; i++) {
+        for (int i = 1; i < 8; i++) {
             addItem(BLANK.copyToSlot(i, 5));
         }
 
@@ -59,6 +62,7 @@ public class AdminBingoMenu extends BasicMenu
         addAction(MODE, p -> new GamemodeOptionsMenu(getMenuManager(), session).open(p));
         addAction(CARD, this::openCardPicker);
         addAction(EFFECTS, p -> new EffectOptionsMenu(getMenuManager(), session.settingsBuilder, session).open(p));
+        addAction(PRESETS, p -> new SettingsPresetMenu(getMenuManager(), session.settingsBuilder).open(p));
         addAction(EXTRA, p -> new ExtraBingoMenu(getMenuManager(), session.settingsBuilder, config).open(p));
 
         updateStartButton();

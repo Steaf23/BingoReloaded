@@ -27,9 +27,6 @@ public class ExtraBingoMenu extends BasicMenu
     private final ConfigData config;
     private static final MenuItem EXIT = new MenuItem(0, 5,
             Material.BARRIER, TITLE_PREFIX + BingoTranslation.MENU_PREV.translate());
-    private static final MenuItem PRESETS = new MenuItem(6, 2,
-            Material.MINECART, TITLE_PREFIX + "Manage Presets",
-            ChatColor.GRAY + "Click to apply settings from saved presets");
     private final MenuItem teamSize = new MenuItem(2, 2,
             Material.ENDER_EYE, TITLE_PREFIX + "Maximum Team Size",
             ChatColor.GRAY + "(When changing this setting all currently",
@@ -51,7 +48,6 @@ public class ExtraBingoMenu extends BasicMenu
         }
 
         addCloseAction(EXIT);
-        addAction(PRESETS, this::showPresetMenu);
     }
 
     @Override
@@ -134,86 +130,6 @@ public class ExtraBingoMenu extends BasicMenu
 
     public void showPresetMenu(HumanEntity player)
     {
-        BingoSettingsData settingsData = new BingoSettingsData();
-
-        new PaginatedSelectionMenu(getMenuManager(), "Setting Presets", new ArrayList<>(), FilterType.DISPLAY_NAME)
-        {
-            private static final MenuItem SAVE_PRESET = new MenuItem(51, Material.EMERALD,
-                    "" + ChatColor.GREEN + ChatColor.BOLD + "Add preset from current settings");
-
-            @Override
-            public void onOptionClickedDelegate(InventoryClickEvent event, MenuItem clickedOption, HumanEntity player)
-            {
-                if (event.isLeftClick())
-                {
-                    settings.fromOther(settingsData.getSettings(clickedOption.getCompareKey()));
-                    close(player);
-                }
-                else if (event.isRightClick())
-                {
-                    BasicMenu context = new BasicMenu(getMenuManager(), clickedOption.getItemMeta().getDisplayName(), 1);
-                    context.addAction(new MenuItem(Material.BARRIER, TITLE_PREFIX + "Remove"), clickType -> {
-                                settingsData.removeSettings(clickedOption.getCompareKey());
-                                context.close(player);
-                            })
-                            .addAction(new MenuItem(Material.SHULKER_SHELL, TITLE_PREFIX + "Duplicate"), clickType -> {
-                                BingoSettings oldSettings = settingsData.getSettings(clickedOption.getCompareKey());
-                                settingsData.saveSettings(clickedOption.getCompareKey() + "_copy", oldSettings);
-                                context.close(player);
-                            })
-                            .addAction(new MenuItem(Material.NAME_TAG, TITLE_PREFIX + "Rename"), clickType -> {
-                                BingoSettings oldSettings = settingsData.getSettings(clickedOption.getCompareKey());
-                                settingsData.removeSettings(clickedOption.getCompareKey());
-                                new UserInputMenu(getMenuManager(), "Rename preset...", input -> {
-                                    settingsData.saveSettings(input, oldSettings);
-                                    context.close(player);
-                                }, player, clickedOption.getCompareKey());
-                            })
-                            .addAction(new MenuItem(Material.GLOBE_BANNER_PATTERN, TITLE_PREFIX + "Overwrite",
-                                    "This will overwrite the settings saved in ",
-                                    clickedOption.getCompareKey() + " with the currently selected options!"), clickType -> {
-                                settingsData.saveSettings(clickedOption.getCompareKey(), settings.view());
-                                context.close(player);
-                            })
-                            .addAction(new MenuItem(Material.AMETHYST_SHARD, TITLE_PREFIX + "Set As Default"), clickType -> {
-                                settingsData.setDefaultSettings(clickedOption.getCompareKey());
-                                context.close(player);
-                            })
-                            .addCloseAction(new MenuItem(8, Material.DIAMOND, TITLE_PREFIX + "Exit"))
-                            .open(player);
-                }
-            }
-
-            @Override
-            public void beforeOpening(HumanEntity player) {
-                addAction(SAVE_PRESET, p -> {
-                    new UserInputMenu(getMenuManager(), "Rename preset...", input -> {
-                        settingsData.saveSettings(input, settings.view());
-                    }, player, "my_settings");
-                });
-                clearItems();
-
-                List<MenuItem> items = new ArrayList<>();
-                for (String preset : settingsData.getPresetNames())
-                {
-                    boolean def = preset.equals(settingsData.getDefaultSettingsName());
-                    MenuItem item = new MenuItem(Material.GLOBE_BANNER_PATTERN,
-                            preset + (def ? ChatColor.LIGHT_PURPLE + " (default)" : ""),
-                            ChatColor.GRAY + "Left-click to apply these settings",
-                            ChatColor.GRAY + "Right-click for more options");
-                    item.setCompareKey(preset);
-                    items.add(item);
-                }
-                addItemsToSelect(items);
-
-                super.beforeOpening(player);
-            }
-
-            @Override
-            public void beforeClosing(HumanEntity player) {
-                settings.settingsUpdated();
-                super.beforeClosing(player);
-            }
-        }.open(player);
+        new SettingsPresetMenu(getMenuManager(), settings).open(player);
     }
 }

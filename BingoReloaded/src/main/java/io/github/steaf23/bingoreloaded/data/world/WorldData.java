@@ -98,7 +98,7 @@ public class WorldData
         boolean stillLoaded = unloadedWorld != null || !worldUnloaded;
         if (stillLoaded) {
             // Players are still in the world, it could not be unloaded
-            Message.error("Could not remove " + worldName + ", world could not be unloaded (Maybe there are still players present?). (Please report!)");
+            Message.error("Could not remove " + worldName + ", world could not be unloaded (Maybe there are still players present?).");
             return false;
         }
 
