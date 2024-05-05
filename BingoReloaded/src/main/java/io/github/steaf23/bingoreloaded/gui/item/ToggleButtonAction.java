@@ -1,6 +1,7 @@
 package io.github.steaf23.bingoreloaded.gui.item;
 
 import io.github.steaf23.bingoreloaded.gui.base.BasicMenu;
+import io.github.steaf23.bingoreloaded.gui.base.Menu;
 import io.github.steaf23.bingoreloaded.gui.base.item.MenuAction;
 
 import java.util.function.Consumer;
@@ -17,6 +18,8 @@ public class ToggleButtonAction extends MenuAction
     public ToggleButtonAction(boolean startEnabled, Consumer<Boolean> callback) {
         this.enabled = startEnabled;
         this.callback = callback;
+
+        item.setDescription(Menu.inputButtonText("Click") + "toggle value");
     }
 
     @Override

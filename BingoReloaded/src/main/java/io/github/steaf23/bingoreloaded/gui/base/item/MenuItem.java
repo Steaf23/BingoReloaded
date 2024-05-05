@@ -70,7 +70,6 @@ public class MenuItem
         action.use(arguments);
     }
 
-
     public MenuItem withEnchantment(Enchantment enchantment, int level) {
         stack.addEnchantment(enchantment, level);
         return this;

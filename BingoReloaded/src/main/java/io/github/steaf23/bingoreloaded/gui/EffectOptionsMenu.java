@@ -59,7 +59,6 @@ public class EffectOptionsMenu extends BasicMenu
     }
 
     public void updateUI(EffectOptionFlags flag, MenuItem menuItem) {
-        //TODO: refactor with MenuControl!
         if (flags.contains(flag)) {
             menuItem.setName("" + ChatColor.GREEN + ChatColor.BOLD + flag.name + " " + BingoTranslation.EFFECTS_ENABLED.translate());
             menuItem.setDescription(ChatColor.GREEN + BingoTranslation.EFFECTS_DISABLE.translate());
@@ -67,6 +66,5 @@ public class EffectOptionsMenu extends BasicMenu
             menuItem.setName("" + ChatColor.RED + ChatColor.BOLD + flag.name + " " + BingoTranslation.EFFECTS_DISABLED.translate());
             menuItem.setDescription(ChatColor.RED + BingoTranslation.EFFECTS_ENABLE.translate());
         }
-//        updateActionItem(menuItem);
     }
 }

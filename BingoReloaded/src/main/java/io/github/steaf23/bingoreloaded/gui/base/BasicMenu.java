@@ -2,7 +2,6 @@ package io.github.steaf23.bingoreloaded.gui.base;
 
 import io.github.steaf23.bingoreloaded.gui.base.item.MenuAction;
 import io.github.steaf23.bingoreloaded.gui.base.item.MenuItem;
-import io.github.steaf23.bingoreloaded.util.ExtraMath;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -17,16 +16,13 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 public class BasicMenu implements Menu
 {
-    public record ActionArguments(HumanEntity player, ClickType clickType) {}
+    public record ActionArguments(HumanEntity player, ClickType clickType, MenuItem item) {}
 
     public static String pluginTitlePrefix = "";
-
-    private static int ID_COUNTER = 0;
 
     protected static final String TITLE_PREFIX = "" + ChatColor.GOLD + ChatColor.BOLD;
 
@@ -105,9 +101,6 @@ public class BasicMenu implements Menu
     }
 
     public BasicMenu addAction(@NotNull MenuItem item, Consumer<ActionArguments> action) {
-        String actionId = "" + ID_COUNTER;
-        ID_COUNTER++;
-
         item.setAction(new MenuAction()
         {
             @Override
@@ -120,61 +113,29 @@ public class BasicMenu implements Menu
         return this;
     }
 
-    public BasicMenu addSpinBoxAction(@NotNull MenuItem item, int minValue, int maxValue, int initialValue, BiConsumer<ActionArguments, Integer> action) {
-        //TODO: refactor into MenuControl!
-
-        // Ensure min value is never bigger than max value and the value is between 1 and 64
-        final int finalMin = ExtraMath.clamped(minValue, 1, maxValue);
-        final int finalMax = ExtraMath.clamped(maxValue, minValue, 64);
-
-        int initialAmount = ExtraMath.clamped(initialValue, finalMin, finalMax);
-        MenuItem initializedItem = item.setAmount(initialAmount);
-        initializedItem.setDescription(Menu.inputButtonText("Left Click") + "increase",
-                Menu.inputButtonText("Right Click") + "decrease",
-                Menu.inputButtonText("Hold Shift") + "edit faster");
-
-        return addAction(initializedItem, arguments -> {
-            ClickType clickType = arguments.clickType;
-            int byAmount = 1;
-            if (clickType.isShiftClick())
-            {
-                byAmount = 10;
-            }
-            if (clickType.isRightClick())
-            {
-                byAmount *= -1;
-            }
-
-            int newAmount = ExtraMath.clamped(initializedItem.getAmount() + byAmount, finalMin, finalMax);
-//            updateActionItem(initializedItem.setAmount(newAmount));
-            action.accept(arguments, newAmount);
-        });
-    }
-
-    public BasicMenu addToggleAction(@NotNull MenuItem item, boolean initialValue, BiConsumer<ActionArguments, Boolean> action) {
-        //TODO: refactor into MenuControl!
-
-        MenuItem initialItem = item.setGlowing(initialValue);
-        initialItem.setDescription(Menu.inputButtonText("Click") + "toggle value");
-        return addAction(initialItem, arguments -> {
-            boolean newValue = !initialItem.isGlowing();
-//            updateActionItem(initialItem.setGlowing(newValue));
-            action.accept(arguments, newValue);
-        });
+    public BasicMenu addAction(@NotNull MenuItem item, MenuAction action) {
+        item.setAction(action);
+        addItem(item);
+        return this;
     }
 
     public BasicMenu addCloseAction(@NotNull MenuItem item) {
-        return addAction(item, this::close);
+        item.setAction(new MenuAction()
+        {
+            @Override
+            public void use(ActionArguments arguments) {
+                close(arguments);
+            }
+        });
+        addItem(item);
+
+        return this;
     }
 
     public void addItems(@NotNull MenuItem... items) {
         for (MenuItem item : items) {
             addItem(item);
         }
-    }
-
-    public MenuItem getItemAt(int slotIndex) {
-        return new MenuItem(slotIndex, getInventory().getItem(slotIndex));
     }
 
     public BasicMenu removeItem(int slotIdx) {
@@ -204,7 +165,7 @@ public class BasicMenu implements Menu
         for (MenuItem item : items) {
             if (item.getSlot() == clickedSlot)
             {
-                item.useItem(new ActionArguments(player, clickType));
+                item.useItem(new ActionArguments(player, clickType, item));
                 //TODO: find a way to update itemstack automatically on change, no matter where!
                 inventory.setItem(item.getSlot(), item.getStack());
             }
@@ -212,10 +173,6 @@ public class BasicMenu implements Menu
         return true;
     }
 
-    /**
-     * @param event
-     * @return true if this event should be cancelled
-     */
     @Override
     public boolean onDrag(final InventoryDragEvent event) {
         return true;

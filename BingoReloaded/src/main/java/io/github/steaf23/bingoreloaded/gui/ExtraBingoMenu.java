@@ -43,10 +43,14 @@ public class ExtraBingoMenu extends BasicMenu
         BingoSettings initialSettings = settings.view();
 
         MenuItem teamSizeItem = TEAM_SIZE.copy();
-        teamSizeItem.setAction(new SpinBoxButtonAction(1, TEAMSIZE_MAX, settings.view().maxTeamSize(), settings::maxTeamSize));
+        teamSizeItem.setAction(new SpinBoxButtonAction(1, TEAMSIZE_MAX, settings.view().maxTeamSize(), (value, item) -> {
+            settings.maxTeamSize(value);
+        }));
 
         MenuItem durationItem = DURATION.copy();
-        durationItem.setAction(new SpinBoxButtonAction(1, DURATION_MAX, settings.view().countdownDuration(), settings::countdownGameDuration));
+        durationItem.setAction(new SpinBoxButtonAction(1, DURATION_MAX, settings.view().countdownDuration(), (value, item) -> {
+            settings.countdownGameDuration(value);
+        }));
 
         MenuItem countDownItem = COUNTDOWN.copy();
         countDownItem.setAction(new ToggleButtonAction(settings::enableCountdown));
@@ -55,59 +59,7 @@ public class ExtraBingoMenu extends BasicMenu
         addCloseAction(EXIT);
     }
 
-    @Override
-    public boolean onClick(InventoryClickEvent event, HumanEntity player, int clickedSlot, ClickType clickType) {
-        BingoSettings view = settings.view();
-
-        int slotClicked = event.getRawSlot();
-
-//        if (slotClicked == teamSize.getSlot())
-//        {
-//            if (clickType == ClickType.LEFT)
-//            {
-//                teamSize.setAmount(Math.min(TEAMSIZE_MAX, teamSize.getAmount() + 1));
-//            }
-//            else if (clickType == ClickType.RIGHT)
-//            {
-//                teamSize.setAmount(Math.max(1, teamSize.getAmount() - 1));
-//            }
-//
-//            teamSize.setDescription(
-//                    ChatColor.GRAY + "(When changing this setting all currently",
-//                    ChatColor.GRAY + "joined players will be kicked from their teams!)",
-//                    "§7Maximum team size set to " + teamSize.getAmount() + " players.",
-//                    "§rUse the mouse buttons to increase/ decrease",
-//                    "the amount of players a team can have.");
-//            addItem(teamSize);
-//            settings.maxTeamSize(teamSize.getAmount());
-//        }
-//        else if (slotClicked == countdown.getSlot())
-//        {
-//            settings.enableCountdown(!view.enableCountdown());
-//            countdown.setGlowing(!view.enableCountdown());
-//            addItem(countdown);
-//        }
-//        else if (slotClicked == gameDuration.getSlot())
-//        {
-//            if (clickType == ClickType.LEFT)
-//            {
-//                gameDuration.setAmount(Math.min(DURATION_MAX, gameDuration.getAmount() + 1));
-//            }
-//            else if (clickType == ClickType.RIGHT)
-//            {
-//                gameDuration.setAmount(Math.max(1, gameDuration.getAmount() - 1));
-//            }
-//
-//            gameDuration.setDescription(
-//                    "§7Timer set to " + gameDuration.getAmount() + " minute(s) for Countdown Bingo.",
-//                    "§rUse the mouse buttons to increase/ decrease",
-//                    "the amount of minutes that Countdown bingo will last.");
-//            addItem(gameDuration);
-//            settings.countdownGameDuration(gameDuration.getAmount());
-//        }
-        return super.onClick(event, player, clickedSlot, clickType);
-    }
-
+    //TODO: update item description in menu action!
     @Override
     public void beforeOpening(HumanEntity player) {
         super.beforeOpening(player);

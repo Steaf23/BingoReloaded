@@ -17,7 +17,7 @@ import java.util.function.Function;
 public abstract class PaginatedSelectionMenu extends BasicMenu
 {
     /**
-     * Called by this Inventory's ClickEvents.
+     * Called by this Inventory's click event whenever an item in the page window gets clicked.
      *
      * @param event
      * @param clickedOption item that was clicked on, it's slot being the same slot that was clicked on.
@@ -43,6 +43,10 @@ public abstract class PaginatedSelectionMenu extends BasicMenu
     private String keywordFilter;
     public FilterType filterType;
 
+    private final MenuItem filterItem;
+    private final MenuItem nextPageItem;
+    private final MenuItem previousPageItem;
+
     protected static final MenuItem NEXT = new MenuItem(8, 5, Material.STRUCTURE_VOID, "" + ChatColor.LIGHT_PURPLE + ChatColor.BOLD + BingoTranslation.MENU_NEXT.translate(), "");
     protected static final MenuItem PREVIOUS = new MenuItem(0, 5, Material.BARRIER, "" + ChatColor.LIGHT_PURPLE + ChatColor.BOLD + BingoTranslation.MENU_PREV.translate(), "");
     protected static final MenuItem CLOSE = new MenuItem(4, 5, Material.REDSTONE, "" + ChatColor.RED + ChatColor.BOLD + BingoTranslation.MENU_SAVE_EXIT.translate(), "");
@@ -56,11 +60,15 @@ public abstract class PaginatedSelectionMenu extends BasicMenu
     public PaginatedSelectionMenu(MenuBoard board, String initialTitle, List<MenuItem> options, FilterType filterType) {
         super(board, initialTitle, 6);
 
-        addAction(PREVIOUS, args -> this.previousPage());
-        addAction(FILTER, args -> {
+        this.filterItem = FILTER.copy();
+        this.nextPageItem = NEXT.copy();
+        this.previousPageItem = PREVIOUS.copy();
+
+        addAction(nextPageItem, args -> this.previousPage());
+        addAction(filterItem, args -> {
             new UserInputMenu(board, "Filter by name", this::applyFilter, args.player(), keywordFilter.isBlank() ? "name" : keywordFilter);
         });
-        addAction(NEXT, args -> this.nextPage());
+        addAction(previousPageItem, args -> this.nextPage());
 
         addItems(
                 BLANK.copyToSlot(2, 5),
@@ -94,13 +102,10 @@ public abstract class PaginatedSelectionMenu extends BasicMenu
     }
 
     public void applyFilter(String filter) {
-        //TODO: refactor with MenuControl!
         keywordFilter = filter;
-        MenuItem filterItem = getItemAt(FILTER.getSlot());
-        ItemMeta meta = filterItem.getStack().getItemMeta();
-        meta.setLore(List.of("\"" + keywordFilter + "\""));
-        filterItem.getStack().setItemMeta(meta);
-//        updateActionItem(filterItem);
+        filterItem.setDescription("\"" + keywordFilter + "\"");
+        //TODO: automate addItem?
+//        addItem(filterItem);
 
         filteredItems.clear();
 
@@ -213,7 +218,6 @@ public abstract class PaginatedSelectionMenu extends BasicMenu
     }
 
     protected void updatePage() {
-        //TODO: refactor with MenuControl!
         updatePageAmount();
 
         int startingIndex = currentPage * ITEMS_PER_PAGE;
@@ -227,13 +231,10 @@ public abstract class PaginatedSelectionMenu extends BasicMenu
         //Update Page description e.g. (20/23) for the Next and Previous 'buttons'.
         String pageCountDesc = String.format("%02d", currentPage + 1) + "/" + String.format("%02d", pageAmount);
 
-        MenuItem next = getItemAt(NEXT.getSlot());
-        next.setDescription(pageCountDesc);
-//        updateActionItem(next);
-
-        MenuItem previous = getItemAt(PREVIOUS.getSlot());
-        previous.setDescription(pageCountDesc);
-//        updateActionItem(previous);
+        //TODO: update item automatically..?
+        nextPageItem.setDescription(pageCountDesc);
+        previousPageItem.setDescription(pageCountDesc);
+        addItems(nextPageItem, previousPageItem);
     }
 
     private void updatePageAmount() {

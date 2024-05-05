@@ -20,10 +20,10 @@ public class ComboBoxButtonAction extends MenuAction
     @Override
     public void use(BasicMenu.ActionArguments arguments) {
         if (arguments.clickType().isLeftClick()) {
-            selectedIndex = (selectedIndex + 1) % options.size();
+            selectedIndex = Math.floorMod(selectedIndex + 1, options.size());
         }
         else if (arguments.clickType().isRightClick()) {
-            selectedIndex = (selectedIndex - 1) % options.size();
+            selectedIndex = Math.floorMod(selectedIndex - 1, options.size());
         }
 
         callback.accept(options.get(selectedIndex));

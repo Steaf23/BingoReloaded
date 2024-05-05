@@ -93,10 +93,10 @@ public class TeamEditorMenu extends PaginatedSelectionMenu
 
             // Change the team name
             MenuItem teamNameItem = new MenuItem(2, 1, Material.WRITABLE_BOOK, templateToEdit.name());
-            teamNameItem.setAction(new NameEditAction("Edit team name", getMenuBoard(), value -> {
+            teamNameItem.setAction(new NameEditAction("Edit team name", getMenuBoard(), (value, item) -> {
                 templateToEdit = new TeamData.TeamTemplate(value, templateToEdit.color());
                 //TODO: find a way to do addItem(teamNameItem); automatically??
-                addItem(teamNameItem);
+                addItem(item);
             }));
 
             addItem(teamNameItem);
@@ -112,7 +112,7 @@ public class TeamEditorMenu extends PaginatedSelectionMenu
                     templateToEdit = new TeamData.TeamTemplate(templateToEdit.name(), result);
 
                     // Update menu item
-                    MenuItem newItem = MenuItem.createColoredLeather(templateToEdit.color(), Material.LEATHER_CHESTPLATE)
+                    args.item() = MenuItem.createColoredLeather(templateToEdit.color(), Material.LEATHER_CHESTPLATE)
                             .setName("" + templateToEdit.color() + ChatColor.BOLD + "Color")
                             .setSlot(MenuItem.slotFromXY(4, 1));
 //                        this.updateActionItem(newItem);
