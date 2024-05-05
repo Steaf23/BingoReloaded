@@ -212,6 +212,8 @@ public class BasicMenu implements Menu
             if (item.getSlot() == clickedSlot)
             {
                 item.useItem(new ActionArguments(player, clickType));
+                //TODO: find a way to update itemstack automatically on change, no matter where!
+                inventory.setItem(item.getSlot(), item.getStack());
             }
         }
         return true;

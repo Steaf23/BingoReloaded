@@ -3,6 +3,7 @@ package io.github.steaf23.bingoreloaded.gui;
 import io.github.steaf23.bingoreloaded.gui.base.BasicMenu;
 import io.github.steaf23.bingoreloaded.gui.base.MenuBoard;
 import io.github.steaf23.bingoreloaded.gui.base.item.MenuItem;
+import io.github.steaf23.bingoreloaded.gui.item.ToggleButtonAction;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
 import io.github.steaf23.bingoreloaded.settings.BingoSettingsBuilder;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
@@ -48,10 +49,8 @@ public class ExtraBingoMenu extends BasicMenu
         addSpinBoxAction(DURATION, 1, DURATION_MAX, initialSettings.countdownDuration(), (arguments, value) -> {
             settings.countdownGameDuration(value);
         });
-        addToggleAction(COUNTDOWN, initialSettings.enableCountdown(), (arguments, value) -> {
-            settings.enableCountdown(value);
-        });
-
+        addItem(COUNTDOWN);
+        COUNTDOWN.setAction(new ToggleButtonAction(settings::enableCountdown));
         addCloseAction(EXIT);
     }
 
