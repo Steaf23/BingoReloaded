@@ -1,10 +1,6 @@
 package io.github.steaf23.bingoreloaded.util;
 
-import io.github.steaf23.bingoreloaded.gui.base.MenuItem;
-import net.md_5.bungee.api.ChatColor;
-import org.bukkit.Color;
 import org.bukkit.Material;
-import org.bukkit.inventory.meta.LeatherArmorMeta;
 
 public class MaterialHelper {
 

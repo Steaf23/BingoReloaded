@@ -7,7 +7,7 @@ import io.github.steaf23.bingoreloaded.event.*;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gui.TeamSelectionMenu;
 import io.github.steaf23.bingoreloaded.gui.VoteMenu;
-import io.github.steaf23.bingoreloaded.gui.base.MenuItem;
+import io.github.steaf23.bingoreloaded.gui.base.item.MenuItem;
 import io.github.steaf23.bingoreloaded.gui.base.MenuBoard;
 import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
@@ -182,11 +182,11 @@ public class PregameLobby implements GamePhase
     }
 
     private void giveVoteItem(Player player) {
-        player.getInventory().addItem(PlayerKit.VOTE_ITEM);
+        player.getInventory().addItem(PlayerKit.VOTE_ITEM.getStack());
     }
 
     private void giveTeamItem(Player player) {
-        player.getInventory().addItem(PlayerKit.TEAM_ITEM);
+        player.getInventory().addItem(PlayerKit.TEAM_ITEM.getStack());
     }
 
     private void initializePlayer(Player player) {

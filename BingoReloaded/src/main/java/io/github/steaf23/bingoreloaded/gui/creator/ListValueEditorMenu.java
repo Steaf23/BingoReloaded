@@ -1,7 +1,7 @@
 package io.github.steaf23.bingoreloaded.gui.creator;
 
 import io.github.steaf23.bingoreloaded.data.BingoCardData;
-import io.github.steaf23.bingoreloaded.gui.base.MenuItem;
+import io.github.steaf23.bingoreloaded.gui.base.item.MenuItem;
 import io.github.steaf23.bingoreloaded.gui.base.BasicMenu;
 import io.github.steaf23.bingoreloaded.gui.base.MenuBoard;
 import org.bukkit.ChatColor;
@@ -9,9 +9,6 @@ import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.meta.ItemMeta;
-
-import java.util.List;
 
 public class ListValueEditorMenu extends BasicMenu
 {
@@ -50,7 +47,7 @@ public class ListValueEditorMenu extends BasicMenu
     }
 
     @Override
-    public boolean onClick(InventoryClickEvent event, HumanEntity player, MenuItem clickedItem, ClickType clickType) {
+    public boolean onClick(InventoryClickEvent event, HumanEntity player, int clickedSlot, ClickType clickType) {
         if (event.getRawSlot() == maxCounter.getSlot()) {
             if (clickType.isLeftClick()) {
                 updateMax(maxCount + 1);
@@ -65,32 +62,34 @@ public class ListValueEditorMenu extends BasicMenu
                 updateMin(minCount - 1);
             }
         }
-        return super.onClick(event, player, clickedItem, clickType);
+        return super.onClick(event, player, clickedSlot, clickType);
     }
 
     public void updateMax(int newValue) {
-        // Set the max count to be between MIN_ITEMS and the amount of tasks in that list if it's smaller than MAX_ITEMS.
-        maxCount = Math.floorMod(newValue - minCount, Math.max(1, Math.min(BingoCardData.MAX_ITEMS, cardEditor.cardsData.lists().getTaskCount(listName))) - minCount + 1) + minCount;
-        maxCounter.setAmount(maxCount);
-        ItemMeta meta = maxCounter.getItemMeta();
-
-        if (meta == null) return;
-        meta.setDisplayName(TITLE_PREFIX + maxCount);
-        meta.setLore(List.of("Not more than " + maxCount + " item(s) ", "will be picked from this list"));
-        maxCounter.setItemMeta(meta);
-        addItem(maxCounter);
+        // TODO: REFACTOR!
+//        // Set the max count to be between MIN_ITEMS and the amount of tasks in that list if it's smaller than MAX_ITEMS.
+//        maxCount = Math.floorMod(newValue - minCount, Math.max(1, Math.min(BingoCardData.MAX_ITEMS, cardEditor.cardsData.lists().getTaskCount(listName))) - minCount + 1) + minCount;
+//        maxCounter.setAmount(maxCount);
+//        ItemMeta meta = maxCounter.getItemMeta();
+//
+//        if (meta == null) return;
+//        meta.setDisplayName(TITLE_PREFIX + maxCount);
+//        meta.setLore(List.of("Not more than " + maxCount + " item(s) ", "will be picked from this list"));
+//        maxCounter.setItemMeta(meta);
+//        addItem(maxCounter);
     }
 
     public void updateMin(int newValue) {
-        minCount = Math.floorMod(newValue - 1, maxCount) + 1;
-        minCounter.setAmount(minCount);
-        ItemMeta meta = minCounter.getItemMeta();
-
-        if (meta == null) return;
-        meta.setDisplayName(TITLE_PREFIX + minCount);
-        meta.setLore(List.of("Not less than " + minCount + " item(s) ", "will be picked from this list"));
-        minCounter.setItemMeta(meta);
-        addItem(minCounter);
+        // TODO: REFACTOR!
+//        minCount = Math.floorMod(newValue - 1, maxCount) + 1;
+//        minCounter.setAmount(minCount);
+//        ItemMeta meta = minCounter.getItemMeta();
+//
+//        if (meta == null) return;
+//        meta.setDisplayName(TITLE_PREFIX + minCount);
+//        meta.setLore(List.of("Not less than " + minCount + " item(s) ", "will be picked from this list"));
+//        minCounter.setItemMeta(meta);
+//        addItem(minCounter);
     }
 
     private void setValueForList() {

@@ -1,31 +1,29 @@
-package io.github.steaf23.bingoreloaded.gui.base;
+package io.github.steaf23.bingoreloaded.gui.base.item;
 
+import io.github.steaf23.bingoreloaded.gui.base.BasicMenu;
 import io.github.steaf23.bingoreloaded.util.FlexColor;
 import io.github.steaf23.bingoreloaded.util.PDCHelper;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.persistence.PersistentDataType;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-@SerializableAs("Bingo.MenuItem")
-public class MenuItem extends ItemStack
+public class MenuItem
 {
     /**
      * Describes the slot the item should be in when put in any inventory.
      */
     private int slot = -1;
+    private ItemStack stack;
+    private MenuAction action;
 
     public MenuItem(Material material, String name, String... description) {
         this(-1, material, name, description);
@@ -36,56 +34,67 @@ public class MenuItem extends ItemStack
     }
 
     public MenuItem(int slot, Material material, String name, String... description) {
-        super(material);
+        this.stack = new ItemStack(material);
         this.slot = slot;
 
-        ItemMeta meta = getItemMeta();
+        ItemMeta meta = stack.getItemMeta();
         if (meta != null) {
             meta.setDisplayName(name);
             if (description.length >= 1 && !description[0].isEmpty())
                 meta.setLore(List.of(description));
             meta.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_UNBREAKABLE, ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_DYE);
-            setItemMeta(meta);
+            stack.setItemMeta(meta);
         }
     }
 
-    public MenuItem(int slot, ItemStack item) {
-        this(item);
+    public MenuItem(int slot, @NotNull ItemStack item) {
+        this.stack = item;
         this.slot = slot;
     }
 
-    public MenuItem(@NonNull ItemStack item) {
-        super(item);
+    public MenuItem(@NotNull ItemStack item) {
+        this.stack = item;
+    }
+
+    public MenuItem setAction(MenuAction action) {
+        this.action = action;
+        return this;
+    }
+
+    public void useItem(BasicMenu.ActionArguments arguments) {
+        if (action == null)
+        {
+            return;
+        }
+        action.use(this, arguments);
     }
 
 
     public MenuItem withEnchantment(Enchantment enchantment, int level) {
-        addEnchantment(enchantment, level);
+        stack.addEnchantment(enchantment, level);
         return this;
     }
 
     public MenuItem withIllegalEnchantment(Enchantment enchantment, int level) {
-        addUnsafeEnchantment(enchantment, level);
+        stack.addUnsafeEnchantment(enchantment, level);
         return this;
     }
 
-    public MenuItem withAmount(int amount) {
-        setAmount(amount);
+    public MenuItem setAmount(int amount) {
+        stack.setAmount(amount);
         return this;
     }
 
-    public ItemStack getAsStack() {
-        return new ItemStack(this);
+    public ItemStack getStack() {
+        return stack;
+    }
+
+    public SlottedItem createPlayerItem() {
+        return new SlottedItem(slot, stack);
     }
 
     public MenuItem copy() {
-        ItemMeta meta = getItemMeta();
-        return new MenuItem(slot,
-                getType(),
-                meta.getDisplayName(),
-                meta.getLore() == null ? new String[]{""} : getItemMeta().getLore().toArray(new String[0]))
-                .setGlowing(isGlowing())
-                .setCompareKey(getCompareKey());
+        return new MenuItem(slot, stack.clone());
     }
 
     public MenuItem setSlot(int newSlot) {
@@ -94,7 +103,7 @@ public class MenuItem extends ItemStack
     }
 
     public MenuItem copyToSlot(int slot) {
-        MenuItem item = new MenuItem(slot, this);
+        MenuItem item = new MenuItem(slot, stack.clone());
         item.slot = slot;
         return item;
     }
@@ -108,36 +117,36 @@ public class MenuItem extends ItemStack
     }
 
     public MenuItem setDescription(String... description) {
-        ItemMeta meta = getItemMeta();
+        ItemMeta meta = stack.getItemMeta();
         if (meta != null) {
             if (description.length >= 1 && !description[0].isEmpty())
                 meta.setLore(List.of(description));
             meta.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
-            setItemMeta(meta);
+            stack.setItemMeta(meta);
         }
         return this;
     }
 
     public MenuItem setName(String name) {
-        ItemMeta meta = getItemMeta();
+        ItemMeta meta = stack.getItemMeta();
         if (meta != null) {
             meta.setDisplayName(name);
-            setItemMeta(meta);
+            stack.setItemMeta(meta);
         }
         return this;
     }
 
     public MenuItem setGlowing(boolean value) {
         if (value) {
-            addUnsafeEnchantment(Enchantment.DURABILITY, 1);
+            stack.addUnsafeEnchantment(Enchantment.DURABILITY, 1);
         } else {
-            removeEnchantment(Enchantment.DURABILITY);
+            stack.removeEnchantment(Enchantment.DURABILITY);
         }
         return this;
     }
 
     public boolean isGlowing() {
-        return getItemMeta().hasEnchant(Enchantment.DURABILITY);
+        return stack.getItemMeta().hasEnchant(Enchantment.DURABILITY);
     }
 
     public MenuItem addStringToPdc(String key, @Nullable String value) {
@@ -145,13 +154,13 @@ public class MenuItem extends ItemStack
             return this;
         }
 
-        var meta = this.getItemMeta();
+        var meta = stack.getItemMeta();
         var pdc = meta.getPersistentDataContainer();
         if (value == null)
             pdc.remove(PDCHelper.createKey("item." + key));
         else
             pdc.set(PDCHelper.createKey("item." + key), PersistentDataType.STRING, value);
-        this.setItemMeta(meta);
+        stack.setItemMeta(meta);
         return this;
     }
 
@@ -169,7 +178,7 @@ public class MenuItem extends ItemStack
     }
 
     public String getStringFromPdc(String key) {
-        return this.getItemMeta().getPersistentDataContainer()
+        return stack.getItemMeta().getPersistentDataContainer()
                 .getOrDefault(PDCHelper.createKey("item." + key), PersistentDataType.STRING, "");
     }
 
@@ -189,20 +198,17 @@ public class MenuItem extends ItemStack
         return getStringFromPdc("compare_key");
     }
 
-    @NotNull
-    @Override
-    public Map<String, Object> serialize() {
-        return new HashMap<>()
-        {{
-            put("slot", slot);
-            put("stack", getAsStack());
-        }};
+    public int getAmount() {
+        return stack.getAmount();
     }
 
-    public static MenuItem deserialize(Map<String, Object> data) {
-        ItemStack stack = (ItemStack) data.get("stack");
-        int slot = (int) data.get("slot");
-        return new MenuItem(slot, stack);
+    public Material getMaterial() {
+        return stack.getType();
+    }
+
+    public String getName() {
+        String name = stack.getItemMeta().getDisplayName();
+        return name == null ? "" : name;
     }
 
     public static int slotFromXY(int slotX, int slotY) {
@@ -222,9 +228,10 @@ public class MenuItem extends ItemStack
 
         String hex = FlexColor.asHex(color);
         MenuItem item = new MenuItem(part, ChatColor.of(hex) + hex, "");
-        if (item.getItemMeta() instanceof LeatherArmorMeta armorMeta) {
+        ItemStack stack = item.getStack();
+        if (stack.getItemMeta() instanceof LeatherArmorMeta armorMeta) {
             armorMeta.setColor(org.bukkit.Color.fromRGB(color.getColor().getRed(), color.getColor().getGreen(), color.getColor().getBlue()));
-            item.setItemMeta(armorMeta);
+            stack.setItemMeta(armorMeta);
         }
         return item;
     }

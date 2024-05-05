@@ -2,7 +2,7 @@ package io.github.steaf23.bingoreloaded.gui.creator;
 
 import io.github.steaf23.bingoreloaded.data.BingoCardData;
 import io.github.steaf23.bingoreloaded.gui.base.FilterType;
-import io.github.steaf23.bingoreloaded.gui.base.MenuItem;
+import io.github.steaf23.bingoreloaded.gui.base.item.MenuItem;
 import io.github.steaf23.bingoreloaded.gui.base.BasicMenu;
 import io.github.steaf23.bingoreloaded.gui.base.MenuBoard;
 import io.github.steaf23.bingoreloaded.gui.base.PaginatedSelectionMenu;
@@ -35,10 +35,12 @@ public class CardEditorMenu extends PaginatedSelectionMenu
     @Override
     public void onOptionClickedDelegate(final InventoryClickEvent event, MenuItem clickedOption, HumanEntity player)
     {
+        String listName = clickedOption.getName();
         //if an ItemList attached to a card was clicked on exists
-        if (!clickedOption.hasItemMeta()) return;
+        if (listName.isEmpty()) {
+            return;
+        }
 
-        String listName = clickedOption.getItemMeta().getDisplayName();
         if (event.getClick() == ClickType.LEFT)
         {
             new ListValueEditorMenu(getMenuManager(), this, listName,

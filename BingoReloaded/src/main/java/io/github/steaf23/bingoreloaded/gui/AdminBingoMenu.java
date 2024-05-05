@@ -6,13 +6,13 @@ import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.data.ConfigData;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gui.base.*;
+import io.github.steaf23.bingoreloaded.gui.base.item.MenuItem;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,8 +53,8 @@ public class AdminBingoMenu extends BasicMenu
             TeamSelectionMenu selectionMenu = new TeamSelectionMenu(menuBoard, session.teamManager);
             selectionMenu.open(p);
         });
-        addAction(LEAVE, p -> {
-            BingoParticipant gamePlayer = session.teamManager.getPlayerAsParticipant((Player) p);
+        addAction(LEAVE, arguments -> {
+            BingoParticipant gamePlayer = session.teamManager.getPlayerAsParticipant((Player) arguments.player());
             if (gamePlayer != null)
                 session.removeParticipant(gamePlayer);
         });
@@ -68,7 +68,8 @@ public class AdminBingoMenu extends BasicMenu
         updateStartButton();
     }
 
-    private void openCardPicker(HumanEntity player) {
+    private void openCardPicker(ActionArguments arguments) {
+        HumanEntity player = arguments.player();
         BingoCardData cardsData = new BingoCardData();
         List<MenuItem> cards = new ArrayList<>();
 
@@ -82,9 +83,8 @@ public class AdminBingoMenu extends BasicMenu
         {
             @Override
             public void onOptionClickedDelegate(InventoryClickEvent event, MenuItem clickedOption, HumanEntity player) {
-                ItemMeta meta = clickedOption.getItemMeta();
-                if (meta != null) {
-                    cardSelected(meta.getDisplayName());
+                if (!clickedOption.getName().isEmpty()) {
+                    cardSelected(clickedOption.getName());
                 }
                 close(player);
             }
@@ -94,19 +94,9 @@ public class AdminBingoMenu extends BasicMenu
 
     private void updateStartButton() {
         if (session.isRunning()) {
-            start.setType(Material.RED_CONCRETE);
-            ItemMeta meta = start.getItemMeta();
-            if (meta != null) {
-                meta.setDisplayName(TITLE_PREFIX + BingoTranslation.OPTIONS_END.translate());
-                start.setItemMeta(meta);
-            }
+            MenuItem item = new MenuItem(Material.RED_CONCRETE, TITLE_PREFIX + BingoTranslation.OPTIONS_END.translate());
         } else {
-            start.setType(Material.LIME_CONCRETE);
-            ItemMeta meta = start.getItemMeta();
-            if (meta != null) {
-                meta.setDisplayName(TITLE_PREFIX + BingoTranslation.OPTIONS_START.translate());
-                start.setItemMeta(meta);
-            }
+            MenuItem item = new MenuItem(Material.LIME_CONCRETE, TITLE_PREFIX + BingoTranslation.OPTIONS_START.translate());
         }
         addAction(start, p -> {
             if (session.isRunning()) {

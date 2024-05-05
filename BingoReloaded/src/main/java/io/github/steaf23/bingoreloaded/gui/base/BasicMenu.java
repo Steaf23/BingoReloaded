@@ -1,6 +1,8 @@
 package io.github.steaf23.bingoreloaded.gui.base;
 
-import io.github.steaf23.bingoreloaded.util.Message;
+import io.github.steaf23.bingoreloaded.gui.base.item.MenuAction;
+import io.github.steaf23.bingoreloaded.gui.base.item.MenuItem;
+import io.github.steaf23.bingoreloaded.util.ExtraMath;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -10,15 +12,18 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 public class BasicMenu implements Menu
 {
+    public record ActionArguments(HumanEntity player, ClickType clickType) {}
+
     public static String pluginTitlePrefix = "";
 
     private static int ID_COUNTER = 0;
@@ -30,8 +35,8 @@ public class BasicMenu implements Menu
     private final Inventory inventory;
     private final MenuBoard manager;
     private int maxStackSizeOverride = -1; // -1 means no override (i.e. default stack sizes for all items)
+    private final List<MenuItem> items;
 
-    private final Map<String, Consumer<HumanEntity>> actions;
 
     public BasicMenu(MenuBoard manager, String initialTitle, int rows) {
         this(manager, Bukkit.createInventory(null, rows * 9, pluginTitlePrefix + initialTitle));
@@ -45,67 +50,117 @@ public class BasicMenu implements Menu
     private BasicMenu(MenuBoard manager, Inventory inventory) {
         this.inventory = inventory;
         this.manager = manager;
-        this.actions = new HashMap<>();
+        this.items = new ArrayList<>();
     }
 
     public final void open(HumanEntity player) {
         manager.open(this, player);
     }
 
+    public final void open(ActionArguments arguments) {
+        manager.open(this, arguments.player);
+    }
+
     public final void close(HumanEntity player) {
         manager.close(this, player);
     }
 
-    public BasicMenu addItem(@NotNull MenuItem item) {
+    public final void close(ActionArguments arguments) {
+        manager.close(this, arguments.player);
+    }
+
+    public @Nullable MenuItem getItemAtSlot(int slot) {
+        for (MenuItem item : items) {
+            if (item.getSlot() == slot)
+            {
+                return item;
+            }
+        }
+        return null;
+    }
+
+    public BasicMenu addItem(@NotNull MenuItem item, boolean replaceExisting) {
         if (maxStackSizeOverride != -1)
             inventory.setMaxStackSize(maxStackSizeOverride);
 
+        if (!replaceExisting && inventory.getItem(item.getSlot()) != null) {
+            return this;
+        }
+
+        items.removeIf(i -> i.getSlot() == item.getSlot());
+        items.add(item);
+
         if (item.getSlot() == -1) {
-            inventory.addItem(item);
+            inventory.addItem(item.getStack());
         } else {
-            ItemStack existingItem = inventory.getItem(item.getSlot());
-            if (existingItem != null) {
-                // Remove any actions on the existing space
-                String actionId = new MenuItem(existingItem).getStringFromPdc("action");
-                actions.remove(actionId);
-            }
             // Replace/ set new item in its target slot
-            inventory.setItem(item.getSlot(), item);
+            inventory.setItem(item.getSlot(), item.getStack());
         }
 
         return this;
     }
 
-    public BasicMenu addAction(@NotNull MenuItem item, Consumer<HumanEntity> action) {
+    public BasicMenu addItem(@NotNull MenuItem item) {
+        return addItem(item, true);
+    }
+
+    public BasicMenu addAction(@NotNull MenuItem item, Consumer<ActionArguments> action) {
         String actionId = "" + ID_COUNTER;
         ID_COUNTER++;
 
-        item.addStringToPdc("action", actionId);
+        item.setAction(new MenuAction()
+        {
+            @Override
+            public void use(MenuItem item, ActionArguments arguments) {
+                action.accept(arguments);
+            }
+        });
         addItem(item);
 
-        // Add actions after we add the item, since otherwise it will be removed
-        actions.put(actionId, action);
         return this;
     }
 
-    public BasicMenu updateActionItem(@NotNull MenuItem newItem) {
-        ItemStack oldItem = inventory.getItem(newItem.getSlot());
-        if (oldItem == null) {
-            Message.log("Could not update action item, no action was placed on this slot!");
-            return this;
-        }
+    public BasicMenu addSpinBoxAction(@NotNull MenuItem item, int minValue, int maxValue, int initialValue, BiConsumer<ActionArguments, Integer> action) {
+        //TODO: refactor into MenuControl!
 
-        String actionId = new MenuItem(oldItem).getStringFromPdc("action");
+        // Ensure min value is never bigger than max value and the value is between 1 and 64
+        final int finalMin = ExtraMath.clamped(minValue, 1, maxValue);
+        final int finalMax = ExtraMath.clamped(maxValue, minValue, 64);
 
-        if (actionId.isEmpty()) {
-            Message.log("Could not update action item, no action was placed on this slot!");
-            return this;
-        }
+        int initialAmount = ExtraMath.clamped(initialValue, finalMin, finalMax);
+        MenuItem initializedItem = item.setAmount(initialAmount);
+        initializedItem.setDescription(Menu.inputButtonText("Left Click") + "increase",
+                Menu.inputButtonText("Right Click") + "decrease",
+                Menu.inputButtonText("Hold Shift") + "edit faster");
 
-        Consumer<HumanEntity> action = actions.get(actionId);
-        actions.remove(actionId);
-        addAction(newItem, action);
-        return this;
+        return addAction(initializedItem, arguments -> {
+            ClickType clickType = arguments.clickType;
+            int byAmount = 1;
+            if (clickType.isShiftClick())
+            {
+                byAmount = 10;
+            }
+            if (clickType.isRightClick())
+            {
+                byAmount *= -1;
+            }
+
+            int newAmount = ExtraMath.clamped(initializedItem.getAmount() + byAmount, finalMin, finalMax);
+//            updateActionItem(initializedItem.setAmount(newAmount));
+            action.accept(arguments, newAmount);
+        });
+    }
+
+    public BasicMenu addToggleAction(@NotNull MenuItem item, boolean initialValue, BiConsumer<ActionArguments, Boolean> action) {
+        //TODO: refactor into MenuControl!
+
+        MenuItem initialItem = item.setGlowing(initialValue);
+        initialItem.setDescription(Menu.inputButtonText("Click") + "toggle value");
+        return addAction(initialItem, arguments -> {
+            boolean newValue = !initialItem.isGlowing();
+//            updateActionItem(initialItem.setGlowing(newValue));
+            action.accept(arguments, newValue);
+        });
     }
 
     public BasicMenu addCloseAction(@NotNull MenuItem item) {
@@ -147,15 +202,17 @@ public class BasicMenu implements Menu
     /**
      * @param event
      * @param player
-     * @param clickedItem
+     * @param clickedSlot
      * @param clickType
      * @return true if this event should be cancelled
      */
     @Override
-    public boolean onClick(final InventoryClickEvent event, HumanEntity player, MenuItem clickedItem, ClickType clickType) {
-        String actionId = clickedItem.getStringFromPdc("action");
-        if (actions.containsKey(actionId)) {
-            actions.get(actionId).accept(player);
+    public boolean onClick(final InventoryClickEvent event, HumanEntity player, int clickedSlot, ClickType clickType) {
+        for (MenuItem item : items) {
+            if (item.getSlot() == clickedSlot)
+            {
+                item.useItem(new ActionArguments(player, clickType));
+            }
         }
         return true;
     }

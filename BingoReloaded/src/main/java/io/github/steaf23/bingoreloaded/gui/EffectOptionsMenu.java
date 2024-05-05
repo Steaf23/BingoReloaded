@@ -3,15 +3,13 @@ package io.github.steaf23.bingoreloaded.gui;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gui.base.BasicMenu;
-import io.github.steaf23.bingoreloaded.gui.base.MenuItem;
+import io.github.steaf23.bingoreloaded.gui.base.item.MenuItem;
 import io.github.steaf23.bingoreloaded.gui.base.MenuBoard;
 import io.github.steaf23.bingoreloaded.settings.BingoSettingsBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.EnumSet;
-import java.util.List;
 
 public class EffectOptionsMenu extends BasicMenu
 {
@@ -34,9 +32,9 @@ public class EffectOptionsMenu extends BasicMenu
                         Material.DIAMOND,
                         "" + ChatColor.AQUA + ChatColor.BOLD + BingoTranslation.MENU_SAVE_EXIT.translate()
                 ),
-                (player) -> {
+                (arguments) -> {
                     settings.effects(flags);
-                    close(player);
+                    close(arguments.player());
                 }
         );
     }
@@ -61,17 +59,14 @@ public class EffectOptionsMenu extends BasicMenu
     }
 
     public void updateUI(EffectOptionFlags flag, MenuItem menuItem) {
-        ItemMeta meta = menuItem.getItemMeta();
-        if (meta != null) {
-            if (flags.contains(flag)) {
-                meta.setDisplayName("" + ChatColor.GREEN + ChatColor.BOLD + flag.name + " " + BingoTranslation.EFFECTS_ENABLED.translate());
-                meta.setLore(List.of(ChatColor.GREEN + BingoTranslation.EFFECTS_DISABLE.translate()));
-            } else {
-                meta.setDisplayName("" + ChatColor.RED + ChatColor.BOLD + flag.name + " " + BingoTranslation.EFFECTS_DISABLED.translate());
-                meta.setLore(List.of(ChatColor.RED + BingoTranslation.EFFECTS_ENABLE.translate()));
-            }
+        //TODO: refactor with MenuControl!
+        if (flags.contains(flag)) {
+            menuItem.setName("" + ChatColor.GREEN + ChatColor.BOLD + flag.name + " " + BingoTranslation.EFFECTS_ENABLED.translate());
+            menuItem.setDescription(ChatColor.GREEN + BingoTranslation.EFFECTS_DISABLE.translate());
+        } else {
+            menuItem.setName("" + ChatColor.RED + ChatColor.BOLD + flag.name + " " + BingoTranslation.EFFECTS_DISABLED.translate());
+            menuItem.setDescription(ChatColor.RED + BingoTranslation.EFFECTS_ENABLE.translate());
         }
-        menuItem.setItemMeta(meta);
-        updateActionItem(menuItem);
+//        updateActionItem(menuItem);
     }
 }

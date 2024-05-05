@@ -1,7 +1,8 @@
 package io.github.steaf23.bingoreloaded.settings;
 
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
-import io.github.steaf23.bingoreloaded.gui.base.MenuItem;
+import io.github.steaf23.bingoreloaded.gui.base.item.MenuItem;
+import io.github.steaf23.bingoreloaded.gui.base.item.SlottedItem;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.entity.Player;
@@ -14,9 +15,8 @@ import java.util.List;
 import java.util.Map;
 
 @SerializableAs("Bingo.CustomKit")
-public record CustomKit(String name, PlayerKit slot, List<MenuItem> items) implements ConfigurationSerializable
+public record CustomKit(String name, PlayerKit slot, List<SlottedItem> items) implements ConfigurationSerializable
 {
-
     @NotNull
     @Override
     public Map<String, Object> serialize()
@@ -53,17 +53,17 @@ public record CustomKit(String name, PlayerKit slot, List<MenuItem> items) imple
             case 5 -> PlayerKit.CUSTOM_5;
             default -> throw new IllegalStateException("Unexpected value: " + (int) data.get("slot"));
         };
-        return new CustomKit((String)data.get("name"), kit, (List<MenuItem>)data.get("items"));
+        return new CustomKit((String)data.get("name"), kit, (List<SlottedItem>)data.get("items"));
     }
 
     public static CustomKit fromPlayerInventory(Player player, String kitName, PlayerKit kitSlot)
     {
-        List<MenuItem> items = new ArrayList<>();
+        List<SlottedItem> items = new ArrayList<>();
         int slot = 0;
         for (ItemStack itemStack : player.getInventory())
         {
             if (itemStack != null)
-                items.add(new MenuItem(slot, itemStack));
+                items.add(new SlottedItem(slot, itemStack));
             slot += 1;
         }
         return new CustomKit(kitName, kitSlot, items);

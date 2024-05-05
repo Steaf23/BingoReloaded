@@ -2,6 +2,7 @@ package io.github.steaf23.bingoreloaded.gui;
 
 import io.github.steaf23.bingoreloaded.data.BingoSettingsData;
 import io.github.steaf23.bingoreloaded.gui.base.*;
+import io.github.steaf23.bingoreloaded.gui.base.item.MenuItem;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
 import io.github.steaf23.bingoreloaded.settings.BingoSettingsBuilder;
 import org.bukkit.ChatColor;
@@ -11,7 +12,6 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
 
 public class SettingsPresetMenu extends PaginatedSelectionMenu
 {
@@ -38,7 +38,7 @@ public class SettingsPresetMenu extends PaginatedSelectionMenu
         }
         else if (event.isRightClick())
         {
-            BasicMenu context = new BasicMenu(getMenuManager(), clickedOption.getItemMeta().getDisplayName(), 1);
+            BasicMenu context = new BasicMenu(getMenuManager(), clickedOption.getName(), 1);
             context.addAction(new MenuItem(Material.BARRIER, TITLE_PREFIX + "Remove"), clickType -> {
                         settingsData.removeSettings(clickedOption.getCompareKey());
                         context.close(player);

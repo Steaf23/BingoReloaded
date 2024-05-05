@@ -2,6 +2,7 @@ package io.github.steaf23.bingoreloaded.gui.base;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
+import io.github.steaf23.bingoreloaded.gui.base.item.MenuItem;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -41,7 +42,7 @@ public class UserInputMenu implements Menu
                 })
                 .title(BasicMenu.pluginTitlePrefix + title)
                 .text(startingText.isEmpty() ? "name" : startingText)
-                .itemRight(EMPTY)
+                .itemRight(EMPTY.getStack())
                 .itemLeft(new ItemStack(Material.ELYTRA))
                 .onClick((slot, state) -> {
                     if (slot == AnvilGUI.Slot.INPUT_RIGHT) {
@@ -55,7 +56,7 @@ public class UserInputMenu implements Menu
                     }
                     return Collections.emptyList();
                 })
-                .itemOutput(ACCEPT)
+                .itemOutput(ACCEPT.getStack())
                 .plugin(BingoReloaded.getPlugin(BingoReloaded.class))
                 .open((Player) player);
     }
@@ -66,7 +67,7 @@ public class UserInputMenu implements Menu
     }
 
     @Override
-    public boolean onClick(InventoryClickEvent event, HumanEntity player, MenuItem clickedItem, ClickType clickType) {
+    public boolean onClick(InventoryClickEvent event, HumanEntity player, int clickedSlot, ClickType clickType) {
         return false;
     }
 

@@ -6,10 +6,11 @@ import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.data.ConfigData;
 import io.github.steaf23.bingoreloaded.gameloop.phase.PregameLobby;
-import io.github.steaf23.bingoreloaded.gui.base.MenuItem;
+import io.github.steaf23.bingoreloaded.gui.base.item.MenuItem;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.entity.HumanEntity;
 
 import java.util.function.BiConsumer;
 
@@ -38,7 +39,8 @@ public class VoteMenu extends BasicMenu
             {
                 gamemodeOptions.addAction(new MenuItem(itemIndex, Material.LIME_CONCRETE,
                         ChatColor.BOLD + BingoGamemode.REGULAR.displayName + " - 5x5",
-                        BingoTranslation.INFO_REGULAR_DESC.translate().split("\\n")), (player) -> {
+                        BingoTranslation.INFO_REGULAR_DESC.translate().split("\\n")), (args) -> {
+                    HumanEntity player = args.player();
                     lobby.voteGamemode("regular_5", player);
                     gamemodeOptions.close(player);
                 });
@@ -48,7 +50,8 @@ public class VoteMenu extends BasicMenu
             {
                 gamemodeOptions.addAction(new MenuItem(itemIndex, Material.GREEN_CONCRETE,
                         ChatColor.BOLD + BingoGamemode.REGULAR.displayName + " - 3x3",
-                        BingoTranslation.INFO_REGULAR_DESC.translate().split("\\n")), (player) -> {
+                        BingoTranslation.INFO_REGULAR_DESC.translate().split("\\n")), (args) -> {
+                    HumanEntity player = args.player();
                     lobby.voteGamemode("regular_3", player);
                     gamemodeOptions.close(player);
                 });
@@ -58,7 +61,8 @@ public class VoteMenu extends BasicMenu
             {
                 gamemodeOptions.addAction(new MenuItem(itemIndex, Material.PINK_CONCRETE,
                         ChatColor.BOLD + BingoGamemode.LOCKOUT.displayName + " - 5x5",
-                        BingoTranslation.INFO_LOCKOUT_DESC.translate().split("\\n")), (player) -> {
+                        BingoTranslation.INFO_LOCKOUT_DESC.translate().split("\\n")), (args) -> {
+                    HumanEntity player = args.player();
                     lobby.voteGamemode("lockout_5", player);
                     gamemodeOptions.close(player);
                 });
@@ -68,7 +72,8 @@ public class VoteMenu extends BasicMenu
             {
                 gamemodeOptions.addAction(new MenuItem(itemIndex, Material.PURPLE_CONCRETE,
                         ChatColor.BOLD + BingoGamemode.LOCKOUT.displayName + " - 3x3",
-                        BingoTranslation.INFO_LOCKOUT_DESC.translate().split("\\n")), (player) -> {
+                        BingoTranslation.INFO_LOCKOUT_DESC.translate().split("\\n")), (args) -> {
+                    HumanEntity player = args.player();
                     lobby.voteGamemode("lockout_3", player);
                     gamemodeOptions.close(player);
                 });
@@ -78,7 +83,8 @@ public class VoteMenu extends BasicMenu
             {
                 gamemodeOptions.addAction(new MenuItem(itemIndex, Material.LIGHT_BLUE_CONCRETE,
                         ChatColor.BOLD + BingoGamemode.COMPLETE.displayName + " - 5x5",
-                        BingoTranslation.INFO_COMPLETE_DESC.translate().split("\\n")), (player) -> {
+                        BingoTranslation.INFO_COMPLETE_DESC.translate().split("\\n")), (args) -> {
+                    HumanEntity player = args.player();
                     lobby.voteGamemode("complete_5", player);
                     gamemodeOptions.close(player);
                 });
@@ -88,7 +94,8 @@ public class VoteMenu extends BasicMenu
             {
                 gamemodeOptions.addAction(new MenuItem(itemIndex, Material.BLUE_CONCRETE,
                         ChatColor.BOLD + BingoGamemode.COMPLETE.displayName + " - 3x3",
-                        BingoTranslation.INFO_COMPLETE_DESC.translate().split("\\n")), (player) -> {
+                        BingoTranslation.INFO_COMPLETE_DESC.translate().split("\\n")), (args) -> {
+                    HumanEntity player = args.player();
                     lobby.voteGamemode("complete_3", player);
                     gamemodeOptions.close(player);
                 });
@@ -109,7 +116,8 @@ public class VoteMenu extends BasicMenu
             {
                 kitOptions.addAction(new MenuItem(itemIndex, Material.RED_DYE,
                         PlayerKit.HARDCORE.getDisplayName(),
-                        BingoTranslation.KIT_HARDCORE_DESC.translate().split("\\n")).setGlowing(true), (player) -> {
+                        BingoTranslation.KIT_HARDCORE_DESC.translate().split("\\n")).setGlowing(true), (args) -> {
+                    HumanEntity player = args.player();
                     lobby.voteKit(PlayerKit.HARDCORE.configName, player);
                     kitOptions.close(player);
                 });
@@ -119,7 +127,8 @@ public class VoteMenu extends BasicMenu
             {
                 kitOptions.addAction(new MenuItem(itemIndex, Material.YELLOW_DYE,
                         PlayerKit.NORMAL.getDisplayName(),
-                        BingoTranslation.KIT_NORMAL_DESC.translate().split("\\n")).setGlowing(true), (player) -> {
+                        BingoTranslation.KIT_NORMAL_DESC.translate().split("\\n")).setGlowing(true), (args) -> {
+                    HumanEntity player = args.player();
                     lobby.voteKit(PlayerKit.NORMAL.configName, player);
                     kitOptions.close(player);
                 });
@@ -129,7 +138,8 @@ public class VoteMenu extends BasicMenu
             {
                 kitOptions.addAction(new MenuItem(itemIndex, Material.PURPLE_DYE,
                         PlayerKit.OVERPOWERED.getDisplayName(),
-                        BingoTranslation.KIT_OVERPOWERED_DESC.translate().split("\\n")).setGlowing(true), (player) -> {
+                        BingoTranslation.KIT_OVERPOWERED_DESC.translate().split("\\n")).setGlowing(true), (args) -> {
+                    HumanEntity player = args.player();
                     lobby.voteKit(PlayerKit.OVERPOWERED.configName, player);
                     kitOptions.close(player);
                 });
@@ -139,7 +149,8 @@ public class VoteMenu extends BasicMenu
             {
                 kitOptions.addAction(new MenuItem(itemIndex, Material.CYAN_DYE,
                         PlayerKit.RELOADED.getDisplayName(),
-                        BingoTranslation.KIT_RELOADED_DESC.translate().split("\\n")).setGlowing(true), (player) -> {
+                        BingoTranslation.KIT_RELOADED_DESC.translate().split("\\n")).setGlowing(true), (args) -> {
+                    HumanEntity player = args.player();
                     lobby.voteKit(PlayerKit.RELOADED.configName, player);
                     kitOptions.close(player);
                 });
@@ -148,7 +159,8 @@ public class VoteMenu extends BasicMenu
 
             BiConsumer<PlayerKit, Integer> addCustomKit = (kit, slot) -> {
                 kitOptions.addAction(new MenuItem(slot, Material.GRAY_DYE,
-                        kit.getDisplayName()).setGlowing(true), (player) -> {
+                        kit.getDisplayName()).setGlowing(true), (args) -> {
+                    HumanEntity player = args.player();
                     lobby.voteKit(kit.configName, player);
                     kitOptions.close(player);
                 });
@@ -199,7 +211,8 @@ public class VoteMenu extends BasicMenu
                 MenuItem menuItem = new MenuItem(itemIndex, material, displayName);
 
                 // Add the menu item to the cardOptions menu
-                cardOptions.addAction(menuItem, (player) -> {
+                cardOptions.addAction(menuItem, (args) -> {
+                    HumanEntity player = args.player();
                     lobby.voteCard(card, player);
                     cardOptions.close(player);
                 });

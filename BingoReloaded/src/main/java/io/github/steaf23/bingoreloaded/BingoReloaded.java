@@ -11,7 +11,8 @@ import io.github.steaf23.bingoreloaded.gameloop.GameManager;
 import io.github.steaf23.bingoreloaded.command.AutoBingoCommand;
 import io.github.steaf23.bingoreloaded.gui.base.BasicMenu;
 import io.github.steaf23.bingoreloaded.gui.base.BingoMenuBoard;
-import io.github.steaf23.bingoreloaded.gui.base.MenuItem;
+import io.github.steaf23.bingoreloaded.gui.base.item.MenuItem;
+import io.github.steaf23.bingoreloaded.gui.base.item.SlottedItem;
 import io.github.steaf23.bingoreloaded.hologram.HologramManager;
 import io.github.steaf23.bingoreloaded.hologram.HologramPlacer;
 import io.github.steaf23.bingoreloaded.settings.CustomKit;
@@ -39,9 +40,9 @@ public class BingoReloaded extends JavaPlugin
 
     // Amount of ticks per second.
     public static final int ONE_SECOND = 20;
-    public static boolean usesPlaceholderAPI = false;
+    public static boolean PLACEHOLDER_API_ENABLED = false;
 
-    private static BingoReloaded instance;
+    private static BingoReloaded INSTANCE;
 
     private ConfigData config;
     private HologramManager hologramManager;
@@ -54,8 +55,8 @@ public class BingoReloaded extends JavaPlugin
         reloadConfig();
         saveDefaultConfig();
         // Kinda ugly, but we can assume there will only be one instance of this class anyway.
-        instance = this;
-        usesPlaceholderAPI = Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null;
+        INSTANCE = this;
+        PLACEHOLDER_API_ENABLED = Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null;
 
         ConfigurationSerialization.registerClass(BingoSettings.class);
         ConfigurationSerialization.registerClass(ItemTask.class);
@@ -63,7 +64,7 @@ public class BingoReloaded extends JavaPlugin
         ConfigurationSerialization.registerClass(StatisticTask.class);
         ConfigurationSerialization.registerClass(BingoStatistic.class);
         ConfigurationSerialization.registerClass(CustomKit.class);
-        ConfigurationSerialization.registerClass(MenuItem.class);
+        ConfigurationSerialization.registerClass(SlottedItem.class);
         ConfigurationSerialization.registerClass(SerializablePlayer.class);
         ConfigurationSerialization.registerClass(TeamData.TeamTemplate.class);
 
@@ -112,7 +113,7 @@ public class BingoReloaded extends JavaPlugin
     }
 
     public static YmlDataManager createYmlDataManager(String filepath) {
-        return new YmlDataManager(instance, filepath);
+        return new YmlDataManager(INSTANCE, filepath);
     }
 
     public void onDisable() {
@@ -132,7 +133,7 @@ public class BingoReloaded extends JavaPlugin
     }
 
     public static void incrementPlayerStat(Player player, BingoStatType stat) {
-        boolean savePlayerStatistics = instance.config.savePlayerStatistics;
+        boolean savePlayerStatistics = INSTANCE.config.savePlayerStatistics;
         if (savePlayerStatistics) {
             BingoStatData statsData = new BingoStatData();
             statsData.incrementPlayerStat(player, stat);
@@ -144,7 +145,7 @@ public class BingoReloaded extends JavaPlugin
     }
 
     public static BingoReloaded getInstance() {
-        return instance;
+        return INSTANCE;
     }
 
     public static void scheduleTask(@NotNull Consumer<BukkitTask> task) {
@@ -153,9 +154,9 @@ public class BingoReloaded extends JavaPlugin
 
     public static void scheduleTask(@NotNull Consumer<BukkitTask> task, long delay) {
         if (delay <= 0)
-            Bukkit.getScheduler().runTask(instance, task);
+            Bukkit.getScheduler().runTask(INSTANCE, task);
         else
-            Bukkit.getScheduler().runTaskLater(instance, task, delay);
+            Bukkit.getScheduler().runTaskLater(INSTANCE, task, delay);
     }
 
     public static String getDefaultTasksVersion() {

@@ -256,7 +256,7 @@ public class BingoCommand implements TabExecutor
 
     public void givePlayerBingoItem(Player player, String itemName) {
         if (itemName.equals("wand")) {
-            player.getInventory().addItem(PlayerKit.WAND_ITEM);
+            player.getInventory().addItem(PlayerKit.WAND_ITEM.getStack());
         }
     }
 

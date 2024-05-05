@@ -2,7 +2,7 @@ package io.github.steaf23.bingoreloaded.gui.creator;
 
 import io.github.steaf23.bingoreloaded.data.BingoCardData;
 import io.github.steaf23.bingoreloaded.gui.base.FilterType;
-import io.github.steaf23.bingoreloaded.gui.base.MenuItem;
+import io.github.steaf23.bingoreloaded.gui.base.item.MenuItem;
 import io.github.steaf23.bingoreloaded.gui.base.MenuBoard;
 import io.github.steaf23.bingoreloaded.gui.base.PaginatedSelectionMenu;
 import io.github.steaf23.bingoreloaded.item.ItemText;
@@ -12,7 +12,7 @@ import io.github.steaf23.bingoreloaded.tasks.TaskData;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -55,8 +55,8 @@ public class TaskPickerMenu extends PaginatedSelectionMenu
                 return null;
         }
 
-        TaskData newData = BingoTask.fromStack(item).data;
-        MenuItem newItem = new MenuItem(getUpdatedTaskItem(newData, true, newAmount))
+        TaskData newData = BingoTask.fromMenuItem(item).data;
+        MenuItem newItem = getUpdatedTaskItem(newData, true, newAmount)
                 .copyToSlot(item.getSlot());
         replaceItem(newItem, newItem.getSlot());
         selectItem(newItem, true);
@@ -81,8 +81,8 @@ public class TaskPickerMenu extends PaginatedSelectionMenu
             newAmount = Math.max(1, newAmount - by);
         }
 
-        TaskData newData = BingoTask.fromStack(item).data;
-        MenuItem newItem = new MenuItem(getUpdatedTaskItem(newData, !deselect, newAmount))
+        TaskData newData = BingoTask.fromMenuItem(item).data;
+        MenuItem newItem = getUpdatedTaskItem(newData, !deselect, newAmount)
                 .copyToSlot(item.getSlot());
         replaceItem(newItem, newItem.getSlot());
         selectItem(newItem, !deselect);
@@ -97,8 +97,8 @@ public class TaskPickerMenu extends PaginatedSelectionMenu
         BingoCardData cardsData = new BingoCardData();
         Set<TaskData> tasks = cardsData.lists().getTasks(listName, true, true);
 
-        for (MenuItem item : getItems()) {
-            TaskData itemData = BingoTask.fromStack(item).data;
+        for (MenuItem item : getAllItems()) {
+            TaskData itemData = BingoTask.fromMenuItem(item).data;
             TaskData savedTask = null;
             for (var t : tasks) {
                 if (t.isTaskEqual(itemData)) {
@@ -112,7 +112,7 @@ public class TaskPickerMenu extends PaginatedSelectionMenu
                 if (savedTask instanceof CountableTask countable)
                     count = countable.getCount();
 
-                MenuItem newItem = new MenuItem(getUpdatedTaskItem(itemData, true, count));
+                MenuItem newItem = getUpdatedTaskItem(itemData, true, count);
                 replaceItem(newItem, item);
                 selectItem(newItem, true);
             }
@@ -125,21 +125,21 @@ public class TaskPickerMenu extends PaginatedSelectionMenu
 
         BingoCardData cardsData = new BingoCardData();
         cardsData.lists().saveTasksFromGroup(listName,
-                getItems().stream().map(item -> BingoTask.fromStack(item).data).collect(Collectors.toList()),
-                getSelectedItems().stream().map(item -> BingoTask.fromStack(item).data).collect(Collectors.toList()));
+                getAllItems().stream().map(item -> BingoTask.fromMenuItem(item).data).collect(Collectors.toList()),
+                getSelectedItems().stream().map(item -> BingoTask.fromMenuItem(item).data).collect(Collectors.toList()));
     }
 
     public static List<MenuItem> asPickerItems(List<BingoTask> tasks) {
         List<MenuItem> result = new ArrayList<>();
         tasks.forEach(task -> {
-            MenuItem item = new MenuItem(getUpdatedTaskItem(task.data, false, 1));
+            MenuItem item = getUpdatedTaskItem(task.data, false, 1);
             item.setGlowing(false);
             result.add(item);
         });
         return result;
     }
 
-    private static ItemStack getUpdatedTaskItem(TaskData old, boolean selected, int newCount) {
+    private static MenuItem getUpdatedTaskItem(TaskData old, boolean selected, int newCount) {
         TaskData newData = old;
         if (selected) {
             if (newData instanceof CountableTask countable) {
@@ -148,9 +148,9 @@ public class TaskPickerMenu extends PaginatedSelectionMenu
         }
 
         BingoTask newTask = new BingoTask(newData);
-        var item = newTask.asStack();
+        MenuItem item = newTask.asMenuItem();
 
-        var meta = item.hasItemMeta() ? item.getItemMeta() : null;
+        ItemMeta meta = item.getStack().hasItemMeta() ? item.getStack().getItemMeta() : null;
         if (meta != null)
         {
             List<String> addedLore;
@@ -167,7 +167,7 @@ public class TaskPickerMenu extends PaginatedSelectionMenu
             newLore.addAll(addedLore);
 
             meta.setLore(newLore);
-            item.setItemMeta(meta);
+            item.getStack().setItemMeta(meta);
         }
         return item;
     }

@@ -5,6 +5,5 @@ public enum FilterType
     ITEM_KEY,
     DISPLAY_NAME,
     MATERIAL,
-    LORE,
     CUSTOM,
 }

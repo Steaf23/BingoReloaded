@@ -3,6 +3,7 @@ package io.github.steaf23.bingoreloaded.gui;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.data.TeamData;
 import io.github.steaf23.bingoreloaded.gui.base.*;
+import io.github.steaf23.bingoreloaded.gui.base.item.MenuItem;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
@@ -71,20 +72,22 @@ public class TeamEditorMenu extends PaginatedSelectionMenu
                     }
                 }
 
+                //TODO: refactor with MenuControl!
+
                 // Add action to change the team's name.
-                addAction(new MenuItem(2, 1, Material.WRITABLE_BOOK, templateToEdit.name()), (p) -> {
+                addAction(new MenuItem(2, 1, Material.WRITABLE_BOOK, templateToEdit.name()), (args) -> {
                     new UserInputMenu(getMenuManager(), "Edit team name", (result) -> {
                         // Update template
                         templateToEdit = new TeamData.TeamTemplate(result, templateToEdit.color());
 
                         // Update menu item
-                        this.updateActionItem(new MenuItem(2, 1, Material.WRITABLE_BOOK, templateToEdit.name()));
-                    }, p, templateToEdit.name());
+//                        this.updateActionItem(new MenuItem(2, 1, Material.WRITABLE_BOOK, templateToEdit.name()));
+                    }, args.player(), templateToEdit.name());
                 });
                 // Add action to change the team's color.
                 addAction(MenuItem.createColoredLeather(templateToEdit.color(), Material.LEATHER_CHESTPLATE)
                         .setName("" + templateToEdit.color() + ChatColor.BOLD + "Color")
-                        .setSlot(MenuItem.slotFromXY(4, 1)), (p) -> {
+                        .setSlot(MenuItem.slotFromXY(4, 1)), (args) -> {
                     new ColorPickerMenu(getMenuManager(), "Pick team color", (result) -> {
                         // Update template
                         templateToEdit = new TeamData.TeamTemplate(templateToEdit.name(), result);
@@ -93,8 +96,8 @@ public class TeamEditorMenu extends PaginatedSelectionMenu
                         MenuItem newItem = MenuItem.createColoredLeather(templateToEdit.color(), Material.LEATHER_CHESTPLATE)
                                 .setName("" + templateToEdit.color() + ChatColor.BOLD + "Color")
                                 .setSlot(MenuItem.slotFromXY(4, 1));
-                        this.updateActionItem(newItem);
-                    }).open(p);
+//                        this.updateActionItem(newItem);
+                    }).open(args);
                 });
                 addCloseAction(new MenuItem(6, 1, Material.BARRIER,
                         "" + ChatColor.RED + ChatColor.BOLD + BingoTranslation.MENU_EXIT.translate()));

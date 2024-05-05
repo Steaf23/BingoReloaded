@@ -3,7 +3,7 @@ package io.github.steaf23.bingoreloaded.gui.creator;
 import io.github.steaf23.bingoreloaded.data.BingoCardData;
 import io.github.steaf23.bingoreloaded.data.TaskListData;
 import io.github.steaf23.bingoreloaded.gui.base.*;
-import io.github.steaf23.bingoreloaded.gui.base.MenuItem;
+import io.github.steaf23.bingoreloaded.gui.base.item.MenuItem;
 import io.github.steaf23.bingoreloaded.gui.base.BasicMenu;
 import io.github.steaf23.bingoreloaded.gui.base.MenuBoard;
 import io.github.steaf23.bingoreloaded.gui.base.PaginatedSelectionMenu;
@@ -39,7 +39,7 @@ public class BingoCreatorMenu extends BasicMenu
 
             @Override
             public void beforeOpening(HumanEntity player) {
-                addAction(CREATE_CARD, p -> createCard(p));
+                addAction(CREATE_CARD, args -> createCard(args.player()));
                 clearItems();
 
                 List<MenuItem> items = new ArrayList<>();
@@ -55,9 +55,9 @@ public class BingoCreatorMenu extends BasicMenu
             @Override
             public void onOptionClickedDelegate(InventoryClickEvent event, MenuItem clickedOption, HumanEntity player) {
                 if (event.getClick() == ClickType.LEFT) {
-                    openCardEditor(clickedOption.getItemMeta().getDisplayName(), player);
+                    openCardEditor(clickedOption.getName(), player);
                 } else if (event.getClick() == ClickType.RIGHT) {
-                    createCardContext(clickedOption.getItemMeta().getDisplayName()).open(player);
+                    createCardContext(clickedOption.getName()).open(player);
                 }
             }
         };
@@ -88,9 +88,9 @@ public class BingoCreatorMenu extends BasicMenu
             @Override
             public void onOptionClickedDelegate(InventoryClickEvent event, MenuItem clickedOption, HumanEntity player) {
                 if (event.getClick() == ClickType.LEFT) {
-                    openListEditor(clickedOption.getItemMeta().getDisplayName(), player);
+                    openListEditor(clickedOption.getName(), player);
                 } else if (event.getClick() == ClickType.RIGHT) {
-                    createListContext(clickedOption.getItemMeta().getDisplayName()).open(player);
+                    createListContext(clickedOption.getName()).open(player);
                 }
             }
         };
@@ -122,19 +122,19 @@ public class BingoCreatorMenu extends BasicMenu
 
     public BasicMenu createCardContext(String cardName) {
         BasicMenu context = new BasicMenu(getMenuManager(), cardName, 1);
-        context.addAction(new MenuItem(Material.BARRIER, TITLE_PREFIX + "Remove"), (p) -> {
+        context.addAction(new MenuItem(Material.BARRIER, TITLE_PREFIX + "Remove"), (args) -> {
                     cardsData.removeCard(cardName);
-                    context.close(p);
+                    context.close(args);
                 })
-                .addAction(new MenuItem(Material.SHULKER_SHELL, TITLE_PREFIX + "Duplicate"), (p) -> {
+                .addAction(new MenuItem(Material.SHULKER_SHELL, TITLE_PREFIX + "Duplicate"), (args) -> {
                     cardsData.duplicateCard(cardName);
-                    context.close(p);
+                    context.close(args);
                 })
-                .addAction(new MenuItem(Material.NAME_TAG, TITLE_PREFIX + "Change Name"), (p) -> {
+                .addAction(new MenuItem(Material.NAME_TAG, TITLE_PREFIX + "Change Name"), (args) -> {
                     new UserInputMenu(getMenuManager(), "Change name to", (input) -> {
                         cardsData.renameCard(cardName, input);
-                        context.close(p);
-                    }, p, cardName);
+                        context.close(args);
+                    }, args.player(), cardName);
                 })
                 .addCloseAction(new MenuItem(8, Material.DIAMOND, TITLE_PREFIX + "Exit"));
         return context;
@@ -144,19 +144,19 @@ public class BingoCreatorMenu extends BasicMenu
         TaskListData listsData = cardsData.lists();
 
         BasicMenu context = new BasicMenu(getMenuManager(), listName, 1);
-        context.addAction(new MenuItem(Material.BARRIER, TITLE_PREFIX + "Remove"), (p) -> {
+        context.addAction(new MenuItem(Material.BARRIER, TITLE_PREFIX + "Remove"), (args) -> {
                     listsData.removeList(listName);
-                    context.close(p);
+                    context.close(args);
                 })
-                .addAction(new MenuItem(Material.SHULKER_SHELL, TITLE_PREFIX + "Duplicate"), (p) -> {
+                .addAction(new MenuItem(Material.SHULKER_SHELL, TITLE_PREFIX + "Duplicate"), (args) -> {
                     listsData.duplicateList(listName);
-                    context.close(p);
+                    context.close(args);
                 })
-                .addAction(new MenuItem(Material.NAME_TAG, TITLE_PREFIX + "Change Name"), (p) -> {
+                .addAction(new MenuItem(Material.NAME_TAG, TITLE_PREFIX + "Change Name"), (args) -> {
                     new UserInputMenu(getMenuManager(), "Change name to", (input) -> {
                         listsData.renameList(listName, input);
-                        context.close(p);
-                    }, p, listName);
+                        context.close(args);
+                    }, args.player(), listName);
                 })
                 .addCloseAction(new MenuItem(8, Material.DIAMOND, TITLE_PREFIX + "Exit"));
         return context;

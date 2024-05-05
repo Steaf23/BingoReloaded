@@ -5,19 +5,19 @@ import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.data.helper.YmlDataManager;
 import io.github.steaf23.bingoreloaded.gui.EffectOptionFlags;
-import io.github.steaf23.bingoreloaded.gui.base.MenuItem;
-import io.github.steaf23.bingoreloaded.util.FlexColor;
+import io.github.steaf23.bingoreloaded.gui.base.item.MenuItem;
+import io.github.steaf23.bingoreloaded.gui.base.item.SlottedItem;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.meta.LeatherArmorMeta;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public enum PlayerKit
 {
@@ -75,29 +75,15 @@ public enum PlayerKit
         return displayName;
     }
 
-    public List<MenuItem> getItems(ChatColor teamColor)
+    public List<SlottedItem> getItems(ChatColor teamColor)
     {
-        MenuItem helmet = new MenuItem(39, Material.LEATHER_HELMET, "");
-        LeatherArmorMeta helmetMeta = (LeatherArmorMeta) helmet.getItemMeta();
-        if (helmetMeta != null)
-        {
-            helmetMeta.setColor(FlexColor.toBukkitColor(teamColor.getColor()));
-        }
-        helmet.setItemMeta(helmetMeta);
+        MenuItem helmet = MenuItem.createColoredLeather(ChatColor.of(teamColor.getColor()), Material.LEATHER_HELMET).setSlot(39).setName("");
+        MenuItem boots = MenuItem.createColoredLeather(ChatColor.of(teamColor.getColor()), Material.LEATHER_BOOTS).setSlot(36).setName("");
 
-        MenuItem boots = new MenuItem(36, Material.LEATHER_BOOTS, "");
-        LeatherArmorMeta bootMeta = (LeatherArmorMeta) boots.getItemMeta();
-        if (bootMeta != null)
-        {
-            bootMeta.setColor(FlexColor.toBukkitColor(teamColor.getColor()));
-        }
-        boots.setItemMeta(bootMeta);
-
-        List<MenuItem> items;
+        List<MenuItem> items = new ArrayList<>();
         switch (this)
         {
             case NORMAL -> {
-                items = new ArrayList<>();
                 items.add(helmet
                         .withEnchantment(Enchantment.WATER_WORKER, 1));
                 items.add(boots
@@ -107,11 +93,9 @@ public enum PlayerKit
                 items.add(new MenuItem(2, Material.IRON_SHOVEL, "")
                         .withEnchantment(Enchantment.SILK_TOUCH, 1));
                 items.add(new MenuItem(3, Material.COOKED_PORKCHOP, "")
-                        .withAmount(32));
-                return items;
+                        .setAmount(32));
             }
             case OVERPOWERED -> {
-                items = new ArrayList<>();
                 items.add(WAND_ITEM.copyToSlot(8));
                 items.add(helmet
                         .withEnchantment(Enchantment.DURABILITY, 3)
@@ -132,11 +116,9 @@ public enum PlayerKit
                         .withEnchantment(Enchantment.SILK_TOUCH, 1)
                         .withEnchantment(Enchantment.DIG_SPEED, 5));
                 items.add(new MenuItem(3, Material.GOLDEN_CARROT, "")
-                        .withAmount(64));
-                return items;
+                        .setAmount(64));
             }
             case RELOADED -> {
-                items = new ArrayList<>();
                 items.add(WAND_ITEM.copyToSlot(8));
                 items.add(helmet
                         .withEnchantment(Enchantment.DURABILITY, 3)
@@ -159,26 +141,19 @@ public enum PlayerKit
                         .withEnchantment(Enchantment.SILK_TOUCH, 1)
                         .withEnchantment(Enchantment.DIG_SPEED, 5));
                 items.add(new MenuItem(3, Material.ENCHANTED_GOLDEN_APPLE, "")
-                        .withAmount(64));
-                return items;
+                        .setAmount(64));
             }
             case CUSTOM_1, CUSTOM_2, CUSTOM_3, CUSTOM_4, CUSTOM_5 -> {
                 CustomKit kit = customKitData.getConfig().getSerializable(configName, CustomKit.class);
                 if (kit != null)
                 {
-                    items = kit.items();
+                    return kit.items();
                 }
-                else
-                {
-                    items = new ArrayList<>();
-                }
-                return items;
-            }
-            default -> {
-                items = new ArrayList<>();
-                return items;
             }
         }
+
+        List<SlottedItem> playerItems = items.stream().map(MenuItem::createPlayerItem).collect(Collectors.toList());
+        return playerItems;
     }
 
     public static PlayerKit fromConfig(String name)
@@ -227,25 +202,5 @@ public enum PlayerKit
 
     public static Set<PlayerKit> customKits() {
         return ImmutableSet.of(CUSTOM_1, CUSTOM_2, CUSTOM_3, CUSTOM_4, CUSTOM_5);
-    }
-
-    private static MenuItem createGoUpWand()
-    {
-        MenuItem wand = new MenuItem(
-                Material.WARPED_FUNGUS_ON_A_STICK,
-                "" + ChatColor.DARK_PURPLE + ChatColor.ITALIC + ChatColor.BOLD + BingoTranslation.WAND_ITEM_NAME.translate(),
-                BingoTranslation.WAND_ITEM_DESC.translate().split("\\n")).withEnchantment(Enchantment.DURABILITY, 3);
-        wand.setCompareKey("wand");
-        return wand;
-    }
-
-    private static MenuItem createCardItem()
-    {
-        MenuItem card = new MenuItem(
-                Material.MAP,
-                "" + ChatColor.DARK_PURPLE + ChatColor.ITALIC + ChatColor.BOLD + BingoTranslation.CARD_ITEM_NAME.translate(),
-                BingoTranslation.CARD_ITEM_DESC.translate());
-        card.setCompareKey("card");
-        return card;
     }
 }

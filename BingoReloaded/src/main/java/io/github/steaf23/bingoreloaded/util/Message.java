@@ -280,7 +280,7 @@ public class Message
 
     // solve placeholders from PlaceholderAPI
     protected static String solvePlaceholders(String input, Player player) {
-        if (BingoReloaded.usesPlaceholderAPI) {
+        if (BingoReloaded.PLACEHOLDER_API_ENABLED) {
             return PlaceholderAPI.setPlaceholders(player, input);
         }
         return input;

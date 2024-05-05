@@ -106,18 +106,18 @@ public class BingoPlayer implements BingoParticipant
         inv.clear();
         items.forEach(i ->
         {
-            var meta = i.getItemMeta();
+            var meta = i.stack().getItemMeta();
 
             // Show enchantments except on the wand
-            if (!PlayerKit.WAND_ITEM.isCompareKeyEqual(i))
+            if (!PlayerKit.WAND_ITEM.isCompareKeyEqual(i.stack()))
             {
                 meta.removeItemFlags(ItemFlag.values());
             }
             var pdc = meta.getPersistentDataContainer();
             pdc = PDCHelper.setBoolean(pdc, "kit.kit_item", true);
 
-            i.setItemMeta(meta);
-            inv.setItem(i.getSlot(), i);
+            i.stack().setItemMeta(meta);
+            inv.setItem(i.slot(), i.stack());
         });
     }
 
@@ -139,7 +139,7 @@ public class BingoPlayer implements BingoParticipant
                 }
             }
 
-            player.getInventory().setItemInOffHand(PlayerKit.CARD_ITEM.copyToSlot(8));
+            player.getInventory().setItemInOffHand(PlayerKit.CARD_ITEM.getStack());
         });
     }
 

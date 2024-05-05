@@ -1,6 +1,7 @@
 package io.github.steaf23.bingoreloaded.gui.base;
 
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
+import io.github.steaf23.bingoreloaded.gui.base.item.MenuItem;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
@@ -28,7 +29,7 @@ public abstract class PaginatedSelectionMenu extends BasicMenu
     public static final int ITEMS_PER_PAGE = 9 * 5;
 
     // All the items that exist in this picker
-    private final List<MenuItem> items;
+    private final List<MenuItem> allItems;
 
     // All selected items in this picker
     private final List<MenuItem> selectedItems;
@@ -55,11 +56,11 @@ public abstract class PaginatedSelectionMenu extends BasicMenu
     public PaginatedSelectionMenu(MenuBoard board, String initialTitle, List<MenuItem> options, FilterType filterType) {
         super(board, initialTitle, 6);
 
-        addAction(PREVIOUS, p -> this.previousPage());
-        addAction(FILTER, p -> {
-            new UserInputMenu(board, "Filter by name", this::applyFilter, p, keywordFilter.isBlank() ? "name" : keywordFilter);
+        addAction(PREVIOUS, args -> this.previousPage());
+        addAction(FILTER, args -> {
+            new UserInputMenu(board, "Filter by name", this::applyFilter, args.player(), keywordFilter.isBlank() ? "name" : keywordFilter);
         });
-        addAction(NEXT, p -> this.nextPage());
+        addAction(NEXT, args -> this.nextPage());
 
         addItems(
                 BLANK.copyToSlot(2, 5),
@@ -71,7 +72,7 @@ public abstract class PaginatedSelectionMenu extends BasicMenu
         addCloseAction(CLOSE);
 
         currentPage = 0;
-        items = options;
+        allItems = options;
         selectedItems = new ArrayList<>();
         filteredItems = new ArrayList<>(options);
         keywordFilter = "";
@@ -80,24 +81,26 @@ public abstract class PaginatedSelectionMenu extends BasicMenu
     }
 
     @Override
-    public boolean onClick(InventoryClickEvent event, HumanEntity player, MenuItem clickedItem, ClickType clickType) {
-        boolean cancel = super.onClick(event, player, clickedItem, clickType);
+    public boolean onClick(InventoryClickEvent event, HumanEntity player, int clickedSlot, ClickType clickType) {
+        boolean cancel = super.onClick(event, player, clickedSlot, clickType);
 
         boolean isValidSlot = ITEMS_PER_PAGE * currentPage + event.getRawSlot() < filteredItems.size() && event.getRawSlot() < ITEMS_PER_PAGE;
+        MenuItem item = allItems.get(ITEMS_PER_PAGE * currentPage + event.getRawSlot());
         if (isValidSlot)
         {
-            onOptionClickedDelegate(event, clickedItem.copyToSlot(event.getRawSlot()), player);
+            onOptionClickedDelegate(event, item, player);
         }
         return cancel;
     }
 
     public void applyFilter(String filter) {
+        //TODO: refactor with MenuControl!
         keywordFilter = filter;
         MenuItem filterItem = getItemAt(FILTER.getSlot());
-        ItemMeta meta = filterItem.getItemMeta();
+        ItemMeta meta = filterItem.getStack().getItemMeta();
         meta.setLore(List.of("\"" + keywordFilter + "\""));
-        filterItem.setItemMeta(meta);
-        updateActionItem(filterItem);
+        filterItem.getStack().setItemMeta(meta);
+//        updateActionItem(filterItem);
 
         filteredItems.clear();
 
@@ -108,17 +111,15 @@ public abstract class PaginatedSelectionMenu extends BasicMenu
                     case ITEM_KEY -> (item) -> item.getCompareKey().contains(keywordFilter);
                     case MATERIAL -> (item) ->
                     {
-                        String name = item.getType().name().replace("_", " ");
+                        String name = item.getMaterial().name().replace("_", " ");
                         return name.toLowerCase().contains(keywordFilter.toLowerCase());
                     };
-                    case DISPLAY_NAME -> (item) -> ChatColor.stripColor(item.getItemMeta().getDisplayName())
+                    case DISPLAY_NAME -> (item) -> ChatColor.stripColor(item.getName())
                             .toLowerCase().contains(keywordFilter.toLowerCase());
-                    case LORE ->
-                            (item) -> ChatColor.stripColor(item.getItemMeta().getLore().get(0)).toLowerCase().contains(keywordFilter.toLowerCase());
                     case CUSTOM -> customFilter;
                 };
 
-        for (MenuItem item : items) {
+        for (MenuItem item : allItems) {
             if (filterCriteria.apply(item)) {
                 filteredItems.add(item);
             }
@@ -139,43 +140,43 @@ public abstract class PaginatedSelectionMenu extends BasicMenu
 
     public void addItemsToSelect(Collection<MenuItem> newItems) {
         //first remove any previous whitespace
-        while (items.size() > 0) {
-            MenuItem lastItem = items.get(items.size() - 1);
+        while (allItems.size() > 0) {
+            MenuItem lastItem = allItems.get(allItems.size() - 1);
 
-            if (lastItem.getType().isAir())
-                items.remove(lastItem);
+            if (lastItem.getMaterial().isAir())
+                allItems.remove(lastItem);
             else
 
                 break;
         }
 
-        items.addAll(newItems);
+        allItems.addAll(newItems);
         clearFilter();
     }
 
     public void removeItems(int... itemIndices) {
         //first remove any previous whitespace
-        while (items.size() > 0) {
-            MenuItem lastItem = items.get(items.size() - 1);
+        while (allItems.size() > 0) {
+            MenuItem lastItem = allItems.get(allItems.size() - 1);
 
-            if (lastItem.getType().isAir())
-                items.remove(lastItem);
+            if (lastItem.getMaterial().isAir())
+                allItems.remove(lastItem);
             else
                 break;
         }
         for (int i : itemIndices)
-            items.remove(i);
+            allItems.remove(i);
 
         updatePage();
     }
 
     public void clearItems() {
-        items.clear();
+        allItems.clear();
         updatePage();
     }
 
-    public List<MenuItem> getItems() {
-        return items;
+    public List<MenuItem> getAllItems() {
+        return allItems;
     }
 
     public List<MenuItem> getSelectedItems() {
@@ -183,7 +184,7 @@ public abstract class PaginatedSelectionMenu extends BasicMenu
     }
 
     public void selectItem(MenuItem item, boolean value) {
-        if (!items.contains(item)) {
+        if (!allItems.contains(item)) {
             return;
         }
 
@@ -195,7 +196,7 @@ public abstract class PaginatedSelectionMenu extends BasicMenu
 
         item.setGlowing(value);
 
-        items.set(items.indexOf(item), item);
+        allItems.set(allItems.indexOf(item), item);
         updatePage();
     }
 
@@ -212,6 +213,7 @@ public abstract class PaginatedSelectionMenu extends BasicMenu
     }
 
     protected void updatePage() {
+        //TODO: refactor with MenuControl!
         updatePageAmount();
 
         int startingIndex = currentPage * ITEMS_PER_PAGE;
@@ -226,20 +228,12 @@ public abstract class PaginatedSelectionMenu extends BasicMenu
         String pageCountDesc = String.format("%02d", currentPage + 1) + "/" + String.format("%02d", pageAmount);
 
         MenuItem next = getItemAt(NEXT.getSlot());
-        ItemMeta nextMeta = next.getItemMeta();
-        if (nextMeta != null) {
-            nextMeta.setLore(List.of(pageCountDesc));
-        }
-        next.setItemMeta(nextMeta);
-        updateActionItem(next);
+        next.setDescription(pageCountDesc);
+//        updateActionItem(next);
 
         MenuItem previous = getItemAt(PREVIOUS.getSlot());
-        ItemMeta prevMeta = previous.getItemMeta();
-        if (prevMeta != null) {
-            prevMeta.setLore(List.of(pageCountDesc));
-        }
-        previous.setItemMeta(prevMeta);
-        updateActionItem(previous);
+        previous.setDescription(pageCountDesc);
+//        updateActionItem(previous);
     }
 
     private void updatePageAmount() {
@@ -258,11 +252,11 @@ public abstract class PaginatedSelectionMenu extends BasicMenu
     }
 
     public void replaceItem(MenuItem newItem, MenuItem oldItem) {
-        if (!items.contains(oldItem)) {
+        if (!allItems.contains(oldItem)) {
             return;
         }
 
-        items.set(items.indexOf(oldItem), newItem);
+        allItems.set(allItems.indexOf(oldItem), newItem);
 
         if (filteredItems.contains(oldItem))
             filteredItems.set(filteredItems.indexOf(oldItem), newItem);

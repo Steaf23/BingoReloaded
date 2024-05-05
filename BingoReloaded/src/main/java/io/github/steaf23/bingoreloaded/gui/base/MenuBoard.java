@@ -2,6 +2,7 @@ package io.github.steaf23.bingoreloaded.gui.base;
 
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
+import io.github.steaf23.bingoreloaded.gui.base.item.MenuItem;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.EventHandler;
@@ -107,7 +108,7 @@ public class MenuBoard implements Listener
 
         boolean cancel = menu.onClick(event,
                 event.getWhoClicked(),
-                new MenuItem(event.getRawSlot(), event.getCurrentItem()),
+                event.getRawSlot(),
                 event.getClick());
         event.setCancelled(cancel);
     }

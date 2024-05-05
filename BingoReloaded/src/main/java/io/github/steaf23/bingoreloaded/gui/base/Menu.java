@@ -1,5 +1,7 @@
 package io.github.steaf23.bingoreloaded.gui.base;
 
+import io.github.steaf23.bingoreloaded.gui.base.item.MenuItem;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -14,11 +16,11 @@ public interface Menu
      * Implementations should return if the event should be cancelled.
      * @param event
      * @param player
-     * @param clickedItem
+     * @param clickedSlot
      * @param clickType
      * @return
      */
-    boolean onClick(final InventoryClickEvent event, HumanEntity player, MenuItem clickedItem, ClickType clickType);
+    boolean onClick(final InventoryClickEvent event, HumanEntity player, int clickedSlot, ClickType clickType);
 
     /**
      * Implementations should return if the event should be cancelled.
@@ -45,4 +47,8 @@ public interface Menu
     }
 
     Inventory getInventory();
+
+    static String inputButtonText(String buttonText) {
+        return ChatColor.DARK_GRAY + "<" + ChatColor.GRAY + buttonText + ChatColor.DARK_GRAY + ">" + ChatColor.WHITE + ": ";
+    }
 }
