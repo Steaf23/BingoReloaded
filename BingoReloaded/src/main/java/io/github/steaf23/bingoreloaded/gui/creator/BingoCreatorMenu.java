@@ -33,7 +33,7 @@ public class BingoCreatorMenu extends BasicMenu
     }
 
     private BasicMenu createCardPicker() {
-        return new PaginatedSelectionMenu(getMenuManager(), "Choose A Card", new ArrayList<>(), FilterType.DISPLAY_NAME)
+        return new PaginatedSelectionMenu(getMenuBoard(), "Choose A Card", new ArrayList<>(), FilterType.DISPLAY_NAME)
         {
             private static final MenuItem CREATE_CARD = new MenuItem(51, Material.EMERALD, "" + ChatColor.GREEN + ChatColor.BOLD + "New Card");
 
@@ -64,7 +64,7 @@ public class BingoCreatorMenu extends BasicMenu
     }
 
     private BasicMenu createListPicker() {
-        return new PaginatedSelectionMenu(getMenuManager(), "Choose A List", new ArrayList<>(), FilterType.DISPLAY_NAME)
+        return new PaginatedSelectionMenu(getMenuBoard(), "Choose A List", new ArrayList<>(), FilterType.DISPLAY_NAME)
         {
             private static final MenuItem CREATE_LIST = new MenuItem(51, Material.EMERALD, "" + ChatColor.GREEN + ChatColor.BOLD + "New List");
 
@@ -97,31 +97,31 @@ public class BingoCreatorMenu extends BasicMenu
     }
 
     private void openCardEditor(String cardName, HumanEntity player) {
-        CardEditorMenu editor = new CardEditorMenu(getMenuManager(), cardName, cardsData);
+        CardEditorMenu editor = new CardEditorMenu(getMenuBoard(), cardName, cardsData);
         editor.open(player);
     }
 
     private void openListEditor(String listName, HumanEntity player) {
-        ListEditorMenu editor = new ListEditorMenu(getMenuManager(), listName);
+        ListEditorMenu editor = new ListEditorMenu(getMenuBoard(), listName);
         editor.open(player);
     }
 
     public void createCard(HumanEntity player) {
-        new UserInputMenu(getMenuManager(), "Enter new card name", (input) -> {
+        new UserInputMenu(getMenuBoard(), "Enter new card name", (input) -> {
             if (!input.equals(""))
                 openCardEditor(input.toLowerCase().replace(" ", "_"), player);
         }, player, "name");
     }
 
     public void createList(HumanEntity player) {
-        new UserInputMenu(getMenuManager(), "Enter new list name", (input) -> {
+        new UserInputMenu(getMenuBoard(), "Enter new list name", (input) -> {
             if (!input.equals(""))
                 openListEditor(input.toLowerCase().replace(" ", "_"), player);
         }, player, "name");
     }
 
     public BasicMenu createCardContext(String cardName) {
-        BasicMenu context = new BasicMenu(getMenuManager(), cardName, 1);
+        BasicMenu context = new BasicMenu(getMenuBoard(), cardName, 1);
         context.addAction(new MenuItem(Material.BARRIER, TITLE_PREFIX + "Remove"), (args) -> {
                     cardsData.removeCard(cardName);
                     context.close(args);
@@ -131,7 +131,7 @@ public class BingoCreatorMenu extends BasicMenu
                     context.close(args);
                 })
                 .addAction(new MenuItem(Material.NAME_TAG, TITLE_PREFIX + "Change Name"), (args) -> {
-                    new UserInputMenu(getMenuManager(), "Change name to", (input) -> {
+                    new UserInputMenu(getMenuBoard(), "Change name to", (input) -> {
                         cardsData.renameCard(cardName, input);
                         context.close(args);
                     }, args.player(), cardName);
@@ -143,7 +143,7 @@ public class BingoCreatorMenu extends BasicMenu
     public BasicMenu createListContext(String listName) {
         TaskListData listsData = cardsData.lists();
 
-        BasicMenu context = new BasicMenu(getMenuManager(), listName, 1);
+        BasicMenu context = new BasicMenu(getMenuBoard(), listName, 1);
         context.addAction(new MenuItem(Material.BARRIER, TITLE_PREFIX + "Remove"), (args) -> {
                     listsData.removeList(listName);
                     context.close(args);
@@ -153,7 +153,7 @@ public class BingoCreatorMenu extends BasicMenu
                     context.close(args);
                 })
                 .addAction(new MenuItem(Material.NAME_TAG, TITLE_PREFIX + "Change Name"), (args) -> {
-                    new UserInputMenu(getMenuManager(), "Change name to", (input) -> {
+                    new UserInputMenu(getMenuBoard(), "Change name to", (input) -> {
                         listsData.renameList(listName, input);
                         context.close(args);
                     }, args.player(), listName);

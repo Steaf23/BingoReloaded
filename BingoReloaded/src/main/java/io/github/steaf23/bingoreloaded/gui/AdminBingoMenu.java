@@ -5,8 +5,12 @@ import io.github.steaf23.bingoreloaded.data.BingoCardData;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.data.ConfigData;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
-import io.github.steaf23.bingoreloaded.gui.base.*;
+import io.github.steaf23.bingoreloaded.gui.base.BasicMenu;
+import io.github.steaf23.bingoreloaded.gui.base.FilterType;
+import io.github.steaf23.bingoreloaded.gui.base.MenuBoard;
+import io.github.steaf23.bingoreloaded.gui.base.PaginatedSelectionMenu;
 import io.github.steaf23.bingoreloaded.gui.base.item.MenuItem;
+import io.github.steaf23.bingoreloaded.gui.item.ComboBoxButtonAction;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
@@ -21,8 +25,10 @@ public class AdminBingoMenu extends BasicMenu
 {
     private final BingoSession session;
 
-    private final MenuItem start = new MenuItem(4, 2,
+    private static final MenuItem START = new MenuItem(4, 2,
             Material.LIME_CONCRETE, TITLE_PREFIX + BingoTranslation.OPTIONS_START.translate());
+    private static final MenuItem END = new MenuItem(4, 2,
+            Material.RED_CONCRETE, TITLE_PREFIX + BingoTranslation.OPTIONS_END.translate());
     private static final MenuItem JOIN = new MenuItem(4, 0,
             Material.WHITE_GLAZED_TERRACOTTA, TITLE_PREFIX + BingoTranslation.OPTIONS_TEAM.translate());
     private static final MenuItem LEAVE = new MenuItem(2, 1,
@@ -58,14 +64,24 @@ public class AdminBingoMenu extends BasicMenu
             if (gamePlayer != null)
                 session.removeParticipant(gamePlayer);
         });
-        addAction(KIT, p -> new KitOptionsMenu(getMenuManager(), session).open(p));
-        addAction(MODE, p -> new GamemodeOptionsMenu(getMenuManager(), session).open(p));
+        addAction(KIT, p -> new KitOptionsMenu(getMenuBoard(), session).open(p));
+        addAction(MODE, p -> new GamemodeOptionsMenu(getMenuBoard(), session).open(p));
         addAction(CARD, this::openCardPicker);
-        addAction(EFFECTS, p -> new EffectOptionsMenu(getMenuManager(), session.settingsBuilder, session).open(p));
-        addAction(PRESETS, p -> new SettingsPresetMenu(getMenuManager(), session.settingsBuilder).open(p));
-        addAction(EXTRA, p -> new ExtraBingoMenu(getMenuManager(), session.settingsBuilder, config).open(p));
+        addAction(EFFECTS, p -> new EffectOptionsMenu(getMenuBoard(), session.settingsBuilder, session).open(p));
+        addAction(PRESETS, p -> new SettingsPresetMenu(getMenuBoard(), session.settingsBuilder).open(p));
+        addAction(EXTRA, p -> new ExtraBingoMenu(getMenuBoard(), session.settingsBuilder).open(p));
 
-        updateStartButton();
+        MenuItem centerButton = START.copy();
+        centerButton.setAction(new ComboBoxButtonAction(List.of("start", "end"), value -> {
+            if (value.equals("start")) {
+                centerButton.replaceStack(START);
+                session.startGame();
+            }
+            else if (value.equals("end")) {
+                centerButton.replaceStack(END);
+                session.endGame();
+            }
+        }));
     }
 
     private void openCardPicker(ActionArguments arguments) {
@@ -79,7 +95,7 @@ public class AdminBingoMenu extends BasicMenu
                             "" + cardsData.getListNames(cardName).size())));
         }
 
-        BasicMenu cardPicker = new PaginatedSelectionMenu(getMenuManager(), "Choose A Card", cards, FilterType.DISPLAY_NAME)
+        BasicMenu cardPicker = new PaginatedSelectionMenu(getMenuBoard(), "Choose A Card", cards, FilterType.DISPLAY_NAME)
         {
             @Override
             public void onOptionClickedDelegate(InventoryClickEvent event, MenuItem clickedOption, HumanEntity player) {
@@ -90,22 +106,6 @@ public class AdminBingoMenu extends BasicMenu
             }
         };
         cardPicker.open(player);
-    }
-
-    private void updateStartButton() {
-        if (session.isRunning()) {
-            MenuItem item = new MenuItem(Material.RED_CONCRETE, TITLE_PREFIX + BingoTranslation.OPTIONS_END.translate());
-        } else {
-            MenuItem item = new MenuItem(Material.LIME_CONCRETE, TITLE_PREFIX + BingoTranslation.OPTIONS_START.translate());
-        }
-        addAction(start, p -> {
-            if (session.isRunning()) {
-                session.endGame();
-            } else {
-                session.startGame();
-            }
-            updateStartButton();
-        });
     }
 
     private void cardSelected(String cardName) {

@@ -6,6 +6,7 @@ import io.github.steaf23.bingoreloaded.util.FlexColor;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
+import org.bukkit.scoreboard.Team;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -51,8 +52,8 @@ public class TeamData {
         addTeam(key, template.name(), template.color());
     }
 
-    public TeamTemplate getTeam(String key) {
-        return data.getConfig().getSerializable(key, TeamTemplate.class, null);
+    public TeamTemplate getTeam(String key, TeamTemplate def) {
+        return data.getConfig().getSerializable(key, TeamTemplate.class, def);
     }
 
     public void removeTeam(String key) {

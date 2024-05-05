@@ -247,7 +247,7 @@ public class BasicTeamManager implements TeamManager
         if (existingTeam.isPresent())
             return existingTeam.get();
 
-        TeamData.TeamTemplate template = teamData.getTeam(team.getName());
+        TeamData.TeamTemplate template = teamData.getTeam(team.getName(), null);
         BingoTeam bTeam = new BingoTeam(team, template.color(), template.name());
 
         activeTeams.addTeam(bTeam);

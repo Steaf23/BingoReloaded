@@ -26,7 +26,7 @@ public class CompleteBingoCard extends BingoCard
     @Override
     public CompleteBingoCard copy()
     {
-        CompleteBingoCard card = new CompleteBingoCard(menu.getMenuManager(), this.size);
+        CompleteBingoCard card = new CompleteBingoCard(menu.getMenuBoard(), this.size);
         List<BingoTask> newTasks = new ArrayList<>();
         for (var t : tasks)
         {

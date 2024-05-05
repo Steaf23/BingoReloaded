@@ -43,7 +43,7 @@ public class CardEditorMenu extends PaginatedSelectionMenu
 
         if (event.getClick() == ClickType.LEFT)
         {
-            new ListValueEditorMenu(getMenuManager(), this, listName,
+            new ListValueEditorMenu(getMenuBoard(), this, listName,
                     cardsData.getListMax(cardName, listName),
                     cardsData.getListMin(cardName, listName)).open(player);
         }
@@ -89,7 +89,7 @@ public class CardEditorMenu extends PaginatedSelectionMenu
                     ChatColor.GRAY + "Click to select").setCompareKey(listName));
         }
 
-        return new PaginatedSelectionMenu(CardEditorMenu.this.getMenuManager(), "Pick A List", items, FilterType.DISPLAY_NAME)
+        return new PaginatedSelectionMenu(CardEditorMenu.this.getMenuBoard(), "Pick A List", items, FilterType.DISPLAY_NAME)
         {
             @Override
             public void onOptionClickedDelegate(final InventoryClickEvent event, MenuItem clickedOption, HumanEntity player)

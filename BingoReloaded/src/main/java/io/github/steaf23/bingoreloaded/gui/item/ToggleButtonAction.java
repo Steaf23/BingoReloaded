@@ -2,11 +2,10 @@ package io.github.steaf23.bingoreloaded.gui.item;
 
 import io.github.steaf23.bingoreloaded.gui.base.BasicMenu;
 import io.github.steaf23.bingoreloaded.gui.base.item.MenuAction;
-import io.github.steaf23.bingoreloaded.gui.base.item.MenuItem;
 
 import java.util.function.Consumer;
 
-public class ToggleButtonAction implements MenuAction
+public class ToggleButtonAction extends MenuAction
 {
     private boolean enabled;
     private final Consumer<Boolean> callback;
@@ -21,7 +20,7 @@ public class ToggleButtonAction implements MenuAction
     }
 
     @Override
-    public void use(MenuItem item, BasicMenu.ActionArguments arguments) {
+    public void use(BasicMenu.ActionArguments arguments) {
         enabled = !enabled;
         item.setGlowing(enabled);
         callback.accept(enabled);

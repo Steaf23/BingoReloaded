@@ -38,7 +38,7 @@ public class SettingsPresetMenu extends PaginatedSelectionMenu
         }
         else if (event.isRightClick())
         {
-            BasicMenu context = new BasicMenu(getMenuManager(), clickedOption.getName(), 1);
+            BasicMenu context = new BasicMenu(getMenuBoard(), clickedOption.getName(), 1);
             context.addAction(new MenuItem(Material.BARRIER, TITLE_PREFIX + "Remove"), clickType -> {
                         settingsData.removeSettings(clickedOption.getCompareKey());
                         context.close(player);
@@ -51,7 +51,7 @@ public class SettingsPresetMenu extends PaginatedSelectionMenu
                     .addAction(new MenuItem(Material.NAME_TAG, TITLE_PREFIX + "Rename"), clickType -> {
                         BingoSettings oldSettings = settingsData.getSettings(clickedOption.getCompareKey());
                         settingsData.removeSettings(clickedOption.getCompareKey());
-                        new UserInputMenu(getMenuManager(), "Rename preset...", input -> {
+                        new UserInputMenu(getMenuBoard(), "Rename preset...", input -> {
                             settingsData.saveSettings(input, oldSettings);
                             context.close(player);
                         }, player, clickedOption.getCompareKey());
@@ -74,7 +74,7 @@ public class SettingsPresetMenu extends PaginatedSelectionMenu
     @Override
     public void beforeOpening(HumanEntity player) {
         addAction(SAVE_PRESET, p -> {
-            new UserInputMenu(getMenuManager(), "Rename preset...", input -> {
+            new UserInputMenu(getMenuBoard(), "Rename preset...", input -> {
                 settingsData.saveSettings(input, settingsBuilder.view());
             }, player, "my_settings");
         });

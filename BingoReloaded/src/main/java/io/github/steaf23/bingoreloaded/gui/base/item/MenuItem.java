@@ -58,6 +58,7 @@ public class MenuItem
 
     public MenuItem setAction(MenuAction action) {
         this.action = action;
+        action.setItem(this);
         return this;
     }
 
@@ -66,7 +67,7 @@ public class MenuItem
         {
             return;
         }
-        action.use(this, arguments);
+        action.use(arguments);
     }
 
 
@@ -207,8 +208,20 @@ public class MenuItem
     }
 
     public String getName() {
-        String name = stack.getItemMeta().getDisplayName();
-        return name == null ? "" : name;
+        return stack.getItemMeta() == null ? stack.getItemMeta().getDisplayName() : "";
+    }
+
+    /**
+     * Replaces the existing stack with a completely new stack, losing all data attached to the stack (including PDC!)
+     */
+    public MenuItem replaceStack(ItemStack newStack) {
+        stack = newStack;
+        return this;
+    }
+
+    public MenuItem replaceStack(MenuItem newStack) {
+        stack = newStack.getStack();
+        return this;
     }
 
     public static int slotFromXY(int slotX, int slotY) {

@@ -1,13 +1,14 @@
 package io.github.steaf23.bingoreloaded.gui;
 
+import io.github.steaf23.bingoreloaded.data.BingoTranslation;
+import io.github.steaf23.bingoreloaded.data.ConfigData;
 import io.github.steaf23.bingoreloaded.gui.base.BasicMenu;
 import io.github.steaf23.bingoreloaded.gui.base.MenuBoard;
 import io.github.steaf23.bingoreloaded.gui.base.item.MenuItem;
+import io.github.steaf23.bingoreloaded.gui.item.SpinBoxButtonAction;
 import io.github.steaf23.bingoreloaded.gui.item.ToggleButtonAction;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
 import io.github.steaf23.bingoreloaded.settings.BingoSettingsBuilder;
-import io.github.steaf23.bingoreloaded.data.BingoTranslation;
-import io.github.steaf23.bingoreloaded.data.ConfigData;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
@@ -19,7 +20,6 @@ public class ExtraBingoMenu extends BasicMenu
     private static final int DURATION_MAX = 60;
     private static final int TEAMSIZE_MAX = 64;
     private final BingoSettingsBuilder settings;
-    private final ConfigData config;
     private static final MenuItem EXIT = new MenuItem(0, 5,
             Material.BARRIER, TITLE_PREFIX + BingoTranslation.MENU_PREV.translate());
     private static final MenuItem TEAM_SIZE = new MenuItem(2, 2,
@@ -31,11 +31,10 @@ public class ExtraBingoMenu extends BasicMenu
     private static final MenuItem DURATION = new MenuItem(4, 3,
             Material.RECOVERY_COMPASS, TITLE_PREFIX + "Countdown Duration");
 
-    public ExtraBingoMenu(MenuBoard menuBoard, BingoSettingsBuilder settings, ConfigData config)
+    public ExtraBingoMenu(MenuBoard menuBoard, BingoSettingsBuilder settings)
     {
         super(menuBoard, BingoTranslation.OPTIONS_TITLE.translate(), 6);
         this.settings = settings;
-        this.config = config;
 
         for (int i = 1; i < 9; i++) {
             addItem(BLANK.copyToSlot(i, 5));
@@ -43,14 +42,16 @@ public class ExtraBingoMenu extends BasicMenu
 
         BingoSettings initialSettings = settings.view();
 
-        addSpinBoxAction(TEAM_SIZE, 1, TEAMSIZE_MAX, initialSettings.countdownDuration(), (arguments, value) -> {
-            settings.maxTeamSize(value);
-        });
-        addSpinBoxAction(DURATION, 1, DURATION_MAX, initialSettings.countdownDuration(), (arguments, value) -> {
-            settings.countdownGameDuration(value);
-        });
-        addItem(COUNTDOWN);
-        COUNTDOWN.setAction(new ToggleButtonAction(settings::enableCountdown));
+        MenuItem teamSizeItem = TEAM_SIZE.copy();
+        teamSizeItem.setAction(new SpinBoxButtonAction(1, TEAMSIZE_MAX, settings.view().maxTeamSize(), settings::maxTeamSize));
+
+        MenuItem durationItem = DURATION.copy();
+        durationItem.setAction(new SpinBoxButtonAction(1, DURATION_MAX, settings.view().countdownDuration(), settings::countdownGameDuration));
+
+        MenuItem countDownItem = COUNTDOWN.copy();
+        countDownItem.setAction(new ToggleButtonAction(settings::enableCountdown));
+
+        addItems(teamSizeItem, durationItem, countDownItem);
         addCloseAction(EXIT);
     }
 

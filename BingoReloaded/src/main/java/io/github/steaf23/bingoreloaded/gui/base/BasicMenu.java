@@ -111,7 +111,7 @@ public class BasicMenu implements Menu
         item.setAction(new MenuAction()
         {
             @Override
-            public void use(MenuItem item, ActionArguments arguments) {
+            public void use(ActionArguments arguments) {
                 action.accept(arguments);
             }
         });
@@ -191,7 +191,7 @@ public class BasicMenu implements Menu
         return this.inventory;
     }
 
-    public MenuBoard getMenuManager() {
+    public MenuBoard getMenuBoard() {
         return this.manager;
     }
 
@@ -199,13 +199,6 @@ public class BasicMenu implements Menu
     public void beforeOpening(HumanEntity player) {
     }
 
-    /**
-     * @param event
-     * @param player
-     * @param clickedSlot
-     * @param clickType
-     * @return true if this event should be cancelled
-     */
     @Override
     public boolean onClick(final InventoryClickEvent event, HumanEntity player, int clickedSlot, ClickType clickType) {
         for (MenuItem item : items) {

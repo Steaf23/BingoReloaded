@@ -2,7 +2,6 @@ package io.github.steaf23.bingoreloaded.gui.item;
 
 import io.github.steaf23.bingoreloaded.gui.base.BasicMenu;
 import io.github.steaf23.bingoreloaded.gui.base.item.MenuAction;
-import io.github.steaf23.bingoreloaded.gui.base.item.MenuItem;
 import io.github.steaf23.bingoreloaded.tasks.BingoTask;
 import io.github.steaf23.bingoreloaded.util.Message;
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -10,7 +9,7 @@ import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-public class TaskItemAction implements MenuAction
+public class TaskItemAction extends MenuAction
 {
     private final BingoTask task;
 
@@ -19,7 +18,7 @@ public class TaskItemAction implements MenuAction
     }
 
     @Override
-    public void use(MenuItem item, BasicMenu.ActionArguments arguments) {
+    public void use(BasicMenu.ActionArguments arguments) {
         BaseComponent base = new TextComponent("\n");
         BaseComponent name = task.data.getItemDisplayName().asComponent();
         name.setBold(true);

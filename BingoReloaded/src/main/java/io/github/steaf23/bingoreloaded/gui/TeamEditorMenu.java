@@ -4,6 +4,7 @@ import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.data.TeamData;
 import io.github.steaf23.bingoreloaded.gui.base.*;
 import io.github.steaf23.bingoreloaded.gui.base.item.MenuItem;
+import io.github.steaf23.bingoreloaded.gui.item.NameEditAction;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
@@ -13,6 +14,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 public class TeamEditorMenu extends PaginatedSelectionMenu
 {
@@ -57,59 +59,9 @@ public class TeamEditorMenu extends PaginatedSelectionMenu
     }
 
     public BasicMenu createTeamEditor(String teamKey) {
-        return new BasicMenu(TeamEditorMenu.this.getMenuManager(), "Edit Team", 3)
-        {
-            private TeamData.TeamTemplate templateToEdit = null;
-
-            @Override
-            public void beforeOpening(HumanEntity player) {
-                if (templateToEdit == null) {
-                    Map<String, TeamData.TeamTemplate> teams = teamData.getTeams();
-                    if (teams.containsKey(teamKey)) {
-                        templateToEdit = teams.get(teamKey);
-                    } else {
-                        templateToEdit = DEFAULT_NEW_TEAM;
-                    }
-                }
-
-                //TODO: refactor with MenuControl!
-
-                // Add action to change the team's name.
-                addAction(new MenuItem(2, 1, Material.WRITABLE_BOOK, templateToEdit.name()), (args) -> {
-                    new UserInputMenu(getMenuManager(), "Edit team name", (result) -> {
-                        // Update template
-                        templateToEdit = new TeamData.TeamTemplate(result, templateToEdit.color());
-
-                        // Update menu item
-//                        this.updateActionItem(new MenuItem(2, 1, Material.WRITABLE_BOOK, templateToEdit.name()));
-                    }, args.player(), templateToEdit.name());
-                });
-                // Add action to change the team's color.
-                addAction(MenuItem.createColoredLeather(templateToEdit.color(), Material.LEATHER_CHESTPLATE)
-                        .setName("" + templateToEdit.color() + ChatColor.BOLD + "Color")
-                        .setSlot(MenuItem.slotFromXY(4, 1)), (args) -> {
-                    new ColorPickerMenu(getMenuManager(), "Pick team color", (result) -> {
-                        // Update template
-                        templateToEdit = new TeamData.TeamTemplate(templateToEdit.name(), result);
-
-                        // Update menu item
-                        MenuItem newItem = MenuItem.createColoredLeather(templateToEdit.color(), Material.LEATHER_CHESTPLATE)
-                                .setName("" + templateToEdit.color() + ChatColor.BOLD + "Color")
-                                .setSlot(MenuItem.slotFromXY(4, 1));
-//                        this.updateActionItem(newItem);
-                    }).open(args);
-                });
-                addCloseAction(new MenuItem(6, 1, Material.BARRIER,
-                        "" + ChatColor.RED + ChatColor.BOLD + BingoTranslation.MENU_EXIT.translate()));
-                super.beforeOpening(player);
-            }
-
-            @Override
-            public void beforeClosing(HumanEntity player) {
-                teamData.addTeam(teamKey.isEmpty() ? teamData.getNewTeamId() : teamKey, templateToEdit);
-                super.beforeClosing(player);
-            }
-        };
+        return new TeamEdit(getMenuBoard(), teamData.getTeam(teamKey, DEFAULT_NEW_TEAM), editedTemplate -> {
+            teamData.addTeam(teamKey, editedTemplate);
+        });
     }
 
     @Override
@@ -127,5 +79,54 @@ public class TeamEditorMenu extends PaginatedSelectionMenu
     public void beforeOpening(HumanEntity player) {
         updateDisplay();
         super.beforeOpening(player);
+    }
+
+    static class TeamEdit extends BasicMenu
+    {
+        private final Consumer<TeamData.TeamTemplate> finishedCallback;
+        private TeamData.TeamTemplate templateToEdit;
+
+        public TeamEdit(MenuBoard manager, TeamData.TeamTemplate teamToEdit, Consumer<TeamData.TeamTemplate> callback) {
+            super(manager, "Edit team", 3);
+            this.templateToEdit = teamToEdit;
+            this.finishedCallback = callback;
+
+            // Change the team name
+            MenuItem teamNameItem = new MenuItem(2, 1, Material.WRITABLE_BOOK, templateToEdit.name());
+            teamNameItem.setAction(new NameEditAction("Edit team name", getMenuBoard(), value -> {
+                templateToEdit = new TeamData.TeamTemplate(value, templateToEdit.color());
+                //TODO: find a way to do addItem(teamNameItem); automatically??
+                addItem(teamNameItem);
+            }));
+
+            addItem(teamNameItem);
+
+            //TODO: Refactor using MenuControl?
+
+            // Add action to change the team's color.
+            addAction(MenuItem.createColoredLeather(templateToEdit.color(), Material.LEATHER_CHESTPLATE)
+                    .setName("" + templateToEdit.color() + ChatColor.BOLD + "Color")
+                    .setSlot(MenuItem.slotFromXY(4, 1)), (args) -> {
+                new ColorPickerMenu(getMenuBoard(), "Pick team color", (result) -> {
+                    // Update template
+                    templateToEdit = new TeamData.TeamTemplate(templateToEdit.name(), result);
+
+                    // Update menu item
+                    MenuItem newItem = MenuItem.createColoredLeather(templateToEdit.color(), Material.LEATHER_CHESTPLATE)
+                            .setName("" + templateToEdit.color() + ChatColor.BOLD + "Color")
+                            .setSlot(MenuItem.slotFromXY(4, 1));
+//                        this.updateActionItem(newItem);
+                }).open(args);
+            });
+
+            addCloseAction(new MenuItem(6, 1, Material.BARRIER,
+                    "" + ChatColor.RED + ChatColor.BOLD + BingoTranslation.MENU_EXIT.translate()));
+        }
+
+        @Override
+        public void beforeClosing(HumanEntity player) {
+            super.beforeClosing(player);
+            finishedCallback.accept(templateToEdit);
+        }
     }
 }

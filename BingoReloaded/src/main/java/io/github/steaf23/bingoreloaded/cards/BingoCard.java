@@ -190,7 +190,7 @@ public class BingoCard
     }
 
     public BingoCard copy() {
-        BingoCard card = new BingoCard(menu.getMenuManager(), this.size);
+        BingoCard card = new BingoCard(menu.getMenuBoard(), this.size);
         List<BingoTask> newTasks = new ArrayList<>();
         for (BingoTask slot : tasks) {
             newTasks.add(slot.copy());
