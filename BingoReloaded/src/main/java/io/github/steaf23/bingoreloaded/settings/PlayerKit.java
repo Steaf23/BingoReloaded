@@ -6,7 +6,7 @@ import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.data.helper.YmlDataManager;
 import io.github.steaf23.bingoreloaded.gui.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.gui.base.item.MenuItem;
-import io.github.steaf23.bingoreloaded.gui.base.item.SlottedItem;
+import io.github.steaf23.bingoreloaded.gui.base.item.SerializableItem;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -75,7 +75,7 @@ public enum PlayerKit
         return displayName;
     }
 
-    public List<SlottedItem> getItems(ChatColor teamColor)
+    public List<SerializableItem> getItems(ChatColor teamColor)
     {
         MenuItem helmet = MenuItem.createColoredLeather(ChatColor.of(teamColor.getColor()), Material.LEATHER_HELMET).setSlot(39).setName("");
         MenuItem boots = MenuItem.createColoredLeather(ChatColor.of(teamColor.getColor()), Material.LEATHER_BOOTS).setSlot(36).setName("");
@@ -152,7 +152,7 @@ public enum PlayerKit
             }
         }
 
-        List<SlottedItem> playerItems = items.stream().map(MenuItem::createPlayerItem).collect(Collectors.toList());
+        List<SerializableItem> playerItems = items.stream().map(MenuItem::createPlayerItem).collect(Collectors.toList());
         return playerItems;
     }
 

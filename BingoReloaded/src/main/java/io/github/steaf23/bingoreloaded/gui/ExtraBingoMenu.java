@@ -53,7 +53,10 @@ public class ExtraBingoMenu extends BasicMenu
         }));
 
         MenuItem countDownItem = COUNTDOWN.copy();
-        countDownItem.setAction(new ToggleButtonAction(settings::enableCountdown));
+        countDownItem.setAction(new ToggleButtonAction(enable -> {
+            settings.enableCountdown(enable);
+            return countDownItem;
+        }));
 
         addItems(teamSizeItem, durationItem, countDownItem);
         addCloseAction(EXIT);
@@ -64,13 +67,13 @@ public class ExtraBingoMenu extends BasicMenu
     public void beforeOpening(HumanEntity player) {
         super.beforeOpening(player);
 //        teamSize.setAmount(Math.max(0, Math.min(TEAMSIZE_MAX, settings.view().maxTeamSize())));
-//        teamSize.setDescription(
+//        teamSize.addDescription(
 //                ChatColor.GRAY + "(When changing this setting all currently",
 //                ChatColor.GRAY + "joined players will be kicked from their teams!)",
 //                ChatColor.DARK_PURPLE + "Maximum team size set to " + teamSize.getAmount() + " players.");
 //
 //        gameDuration.setAmount(Math.max(0, Math.min(DURATION_MAX, settings.view().countdownDuration())));
-//        gameDuration.setDescription(
+//        gameDuration.addDescription(
 //                ChatColor.GRAY + "Timer set to " + gameDuration.getAmount() + " minute(s) for Bingo games",
 //                "" + ChatColor.RESET + ChatColor.DARK_PURPLE + "Use the mouse buttons to increase/ decrease",
 //                "the amount of minutes that Bingo will last.");

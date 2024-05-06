@@ -3,6 +3,7 @@ package io.github.steaf23.bingoreloaded.gui;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.data.TeamData;
 import io.github.steaf23.bingoreloaded.gui.base.*;
+import io.github.steaf23.bingoreloaded.gui.base.item.MenuAction;
 import io.github.steaf23.bingoreloaded.gui.base.item.MenuItem;
 import io.github.steaf23.bingoreloaded.gui.item.NameEditAction;
 import net.md_5.bungee.api.ChatColor;
@@ -13,8 +14,8 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class TeamEditorMenu extends PaginatedSelectionMenu
 {
@@ -52,7 +53,7 @@ public class TeamEditorMenu extends PaginatedSelectionMenu
             TeamData.TeamTemplate template = teamMap.get(key);
             items.add(MenuItem.createColoredLeather(template.color(), Material.LEATHER_HELMET)
                     .setName("" + ChatColor.RESET + template.color() + ChatColor.BOLD + template.name())
-                    .setDescription("id: " + ChatColor.GRAY + ChatColor.ITALIC + key)
+                    .setLore("id: " + ChatColor.GRAY + ChatColor.ITALIC + key)
                     .setCompareKey(key));
         }
         addItemsToSelect(items);
@@ -101,21 +102,20 @@ public class TeamEditorMenu extends PaginatedSelectionMenu
 
             addItem(teamNameItem);
 
-            //TODO: Refactor using MenuControl?
-
             // Add action to change the team's color.
-            addAction(MenuItem.createColoredLeather(templateToEdit.color(), Material.LEATHER_CHESTPLATE)
-                    .setName("" + templateToEdit.color() + ChatColor.BOLD + "Color")
-                    .setSlot(MenuItem.slotFromXY(4, 1)), (args) -> {
+            MenuItem teamColorItem = new MenuItem(4, 1, Material.LEATHER_CHESTPLATE, "" + templateToEdit.color() + ChatColor.BOLD + "Color")
+                    .setLeatherColor(templateToEdit.color());
+
+            // TODO: maybe find a less cursed way to fix this?
+            addAction(teamColorItem, args -> {
                 new ColorPickerMenu(getMenuBoard(), "Pick team color", (result) -> {
                     // Update template
                     templateToEdit = new TeamData.TeamTemplate(templateToEdit.name(), result);
 
                     // Update menu item
-                    args.item() = MenuItem.createColoredLeather(templateToEdit.color(), Material.LEATHER_CHESTPLATE)
-                            .setName("" + templateToEdit.color() + ChatColor.BOLD + "Color")
-                            .setSlot(MenuItem.slotFromXY(4, 1));
-//                        this.updateActionItem(newItem);
+                    teamColorItem.setLeatherColor(templateToEdit.color())
+                            .setName("" + templateToEdit.color() + ChatColor.BOLD + "Color");
+                    this.addItem(teamColorItem);
                 }).open(args);
             });
 

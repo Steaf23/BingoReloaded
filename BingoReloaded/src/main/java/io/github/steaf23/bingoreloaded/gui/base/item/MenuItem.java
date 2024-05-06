@@ -14,16 +14,26 @@ import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MenuItem
 {
+    // higher priorities appear lower on the item description
+    record DescriptionSection(int priority, String... text)
+    {
+    }
+
     /**
      * Describes the slot the item should be in when put in any inventory.
      */
     private int slot = -1;
     private ItemStack stack;
     private MenuAction action;
+    // all description sections, stored by name.
+    private final Map<String, DescriptionSection> descriptionSections;
 
     public MenuItem(Material material, String name, String... description) {
         this(-1, material, name, description);
@@ -36,24 +46,34 @@ public class MenuItem
     public MenuItem(int slot, Material material, String name, String... description) {
         this.stack = new ItemStack(material);
         this.slot = slot;
+        this.descriptionSections = new HashMap<>();
+
+        if (description.length >= 1 && !description[0].isEmpty()) {
+            // constructor description is default lore, create with priority 0 as baseline for other sections
+            descriptionSections.put("lore", new DescriptionSection(0, description));
+        }
 
         ItemMeta meta = stack.getItemMeta();
         if (meta != null) {
             meta.setDisplayName(name);
-            if (description.length >= 1 && !description[0].isEmpty())
-                meta.setLore(List.of(description));
             meta.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_UNBREAKABLE, ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_DYE);
             stack.setItemMeta(meta);
         }
     }
 
+    /**
+     * When constructed from a pre-existing item stack, lore is copied from the stack and used as the lore section of the menu item.
+     * @param slot
+     * @param item
+     */
     public MenuItem(int slot, @NotNull ItemStack item) {
         this.stack = item;
         this.slot = slot;
+        this.descriptionSections = new HashMap<>();
     }
 
     public MenuItem(@NotNull ItemStack item) {
-        this.stack = item;
+        this(-1, item);
     }
 
     public MenuItem setAction(MenuAction action) {
@@ -63,8 +83,7 @@ public class MenuItem
     }
 
     public void useItem(BasicMenu.ActionArguments arguments) {
-        if (action == null)
-        {
+        if (action == null) {
             return;
         }
         action.use(arguments);
@@ -85,12 +104,35 @@ public class MenuItem
         return this;
     }
 
-    public ItemStack getStack() {
-        return stack;
+    public ItemStack buildStack() {
+        // To create the description, sort the sections based on priority and place all lines under each other.
+        List<String> description = new ArrayList<>();
+        descriptionSections.values().stream().sorted((a, b) -> {
+            return a.priority - b.priority;
+        }).forEach(section -> {
+            for (String line : section.text) {
+                description.add(line);
+            }
+            description.add(" ");
+        });
+
+        if (description.size() > 0)
+        {
+            description.remove(description.size() - 1);
+        }
+
+        ItemStack copy = stack.clone();
+        ItemMeta meta = copy.getItemMeta();
+        if (meta != null && description.size() > 0)
+        {
+            meta.setLore(description);
+            copy.setItemMeta(meta);
+        }
+        return copy;
     }
 
-    public SlottedItem createPlayerItem() {
-        return new SlottedItem(slot, stack);
+    public SerializableItem createPlayerItem() {
+        return new SerializableItem(slot, buildStack());
     }
 
     public MenuItem copy() {
@@ -104,7 +146,6 @@ public class MenuItem
 
     public MenuItem copyToSlot(int slot) {
         MenuItem item = new MenuItem(slot, stack.clone());
-        item.slot = slot;
         return item;
     }
 
@@ -116,15 +157,21 @@ public class MenuItem
         return slot;
     }
 
-    public MenuItem setDescription(String... description) {
-        ItemMeta meta = stack.getItemMeta();
-        if (meta != null) {
-            if (description.length >= 1 && !description[0].isEmpty())
-                meta.setLore(List.of(description));
-            meta.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
-            stack.setItemMeta(meta);
+    public MenuItem addDescription(String name, int priority, String... description) {
+        if (description.length < 1 || description[0].isEmpty()) {
+            return this;
         }
+
+        descriptionSections.put(name, new DescriptionSection(priority, description));
         return this;
+    }
+
+    public MenuItem setLore(String... lore) {
+        return addDescription("lore", 0, lore);
+    }
+
+    public void removeDescription(String name) {
+        descriptionSections.remove(name);
     }
 
     public MenuItem setName(String name) {
@@ -164,8 +211,7 @@ public class MenuItem
         return this;
     }
 
-    public boolean isStringPdcEqual(String key, ItemStack other)
-    {
+    public boolean isStringPdcEqual(String key, ItemStack other) {
         if (other == null || !other.hasItemMeta())
             return false;
 
@@ -184,6 +230,7 @@ public class MenuItem
 
     /**
      * Additional key that can be used for item comparison, saved in pdc
+     *
      * @param key
      */
     public MenuItem setCompareKey(@Nullable String key) {
@@ -219,7 +266,7 @@ public class MenuItem
     }
 
     public MenuItem replaceStack(MenuItem newStack) {
-        stack = newStack.getStack();
+        stack = newStack.stack;
         return this;
     }
 
@@ -240,11 +287,20 @@ public class MenuItem
 
         String hex = FlexColor.asHex(color);
         MenuItem item = new MenuItem(part, ChatColor.of(hex) + hex, "");
-        ItemStack stack = item.getStack();
+        ItemStack stack = item.stack;
         if (stack.getItemMeta() instanceof LeatherArmorMeta armorMeta) {
             armorMeta.setColor(org.bukkit.Color.fromRGB(color.getColor().getRed(), color.getColor().getGreen(), color.getColor().getBlue()));
             stack.setItemMeta(armorMeta);
         }
         return item;
+    }
+
+    public MenuItem setLeatherColor(ChatColor color) {
+        String hex = FlexColor.asHex(color);
+        if (stack.getItemMeta() instanceof LeatherArmorMeta armorMeta) {
+            armorMeta.setColor(org.bukkit.Color.fromRGB(color.getColor().getRed(), color.getColor().getGreen(), color.getColor().getBlue()));
+            stack.setItemMeta(armorMeta);
+        }
+        return this;
     }
 }

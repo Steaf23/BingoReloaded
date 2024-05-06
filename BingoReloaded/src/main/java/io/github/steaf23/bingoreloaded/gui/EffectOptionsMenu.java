@@ -61,10 +61,10 @@ public class EffectOptionsMenu extends BasicMenu
     public void updateUI(EffectOptionFlags flag, MenuItem menuItem) {
         if (flags.contains(flag)) {
             menuItem.setName("" + ChatColor.GREEN + ChatColor.BOLD + flag.name + " " + BingoTranslation.EFFECTS_ENABLED.translate());
-            menuItem.setDescription(ChatColor.GREEN + BingoTranslation.EFFECTS_DISABLE.translate());
+            menuItem.setLore(ChatColor.GREEN + BingoTranslation.EFFECTS_DISABLE.translate());
         } else {
             menuItem.setName("" + ChatColor.RED + ChatColor.BOLD + flag.name + " " + BingoTranslation.EFFECTS_DISABLED.translate());
-            menuItem.setDescription(ChatColor.RED + BingoTranslation.EFFECTS_ENABLE.translate());
+            menuItem.setLore(ChatColor.RED + BingoTranslation.EFFECTS_ENABLE.translate());
         }
     }
 }

@@ -94,7 +94,7 @@ public class TeamSelectionMenu extends PaginatedSelectionMenu
 
             optionItems.add(MenuItem.createColoredLeather(teamTemplate.color(), Material.LEATHER_HELMET)
                     .setName("" + teamTemplate.color() + ChatColor.BOLD + teamTemplate.name())
-                    .setDescription(description.toArray(new String[]{})).setCompareKey(teamId)
+                    .setLore(description.toArray(new String[]{})).setCompareKey(teamId)
                     .setGlowing(playersTeam));
         }
 

@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @SerializableAs("Bingo.MenuItem")
-public record SlottedItem(int slot, ItemStack stack) implements ConfigurationSerializable
+public record SerializableItem(int slot, ItemStack stack) implements ConfigurationSerializable
 {
     @NotNull
     public Map<String, Object> serialize() {
@@ -20,9 +20,9 @@ public record SlottedItem(int slot, ItemStack stack) implements ConfigurationSer
         }};
     }
 
-    public static SlottedItem deserialize(Map<String, Object> data) {
+    public static SerializableItem deserialize(Map<String, Object> data) {
         ItemStack stack = (ItemStack) data.get("stack");
         int slot = (int) data.get("slot");
-        return new SlottedItem(slot, stack);
+        return new SerializableItem(slot, stack);
     }
 }

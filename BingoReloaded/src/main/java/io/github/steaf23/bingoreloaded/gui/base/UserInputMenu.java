@@ -25,38 +25,38 @@ public class UserInputMenu implements Menu
 
     private final MenuTemplate template;
     private AnvilGUI gui;
-    private final MenuBoard manager;
+    private final MenuBoard board;
     private static final MenuItem EMPTY = new MenuItem(Material.ELYTRA, "" + ChatColor.GRAY + ChatColor.BOLD + BingoTranslation.MENU_CLEAR_FILTER.translate(), "");
     private static final MenuItem ACCEPT = new MenuItem(Material.DIAMOND, "" + ChatColor.AQUA + ChatColor.BOLD + BingoTranslation.MENU_ACCEPT.translate(), "");
 
     public UserInputMenu(MenuBoard manager, String title, Consumer<String> result, HumanEntity player, String startingText) {
-        this.manager = manager;
+        this.board = manager;
         this.template = new MenuTemplate(title, result, startingText, player);
-        this.manager.open(this, player);
+        this.board.open(this, player);
     }
 
     private AnvilGUI openAnvilUI(String title, Consumer<String> result, String startingText, HumanEntity player) {
         return new AnvilGUI.Builder()
                 .onClose(state -> {
-                    manager.close(this, state.getPlayer());
+                    board.close(this, state.getPlayer());
                 })
                 .title(BasicMenu.pluginTitlePrefix + title)
                 .text(startingText.isEmpty() ? "name" : startingText)
-                .itemRight(EMPTY.getStack())
+                .itemRight(EMPTY.buildStack())
                 .itemLeft(new ItemStack(Material.ELYTRA))
                 .onClick((slot, state) -> {
                     if (slot == AnvilGUI.Slot.INPUT_RIGHT) {
-                        manager.close(this, state.getPlayer());
+                        board.close(this, state.getPlayer());
                         result.accept("");
                         return Collections.emptyList();
                     } else if (slot == AnvilGUI.Slot.OUTPUT) {
-                        manager.close(this, state.getPlayer());
+                        board.close(this, state.getPlayer());
                         result.accept(state.getText());
                         return Collections.emptyList();
                     }
                     return Collections.emptyList();
                 })
-                .itemOutput(ACCEPT.getStack())
+                .itemOutput(ACCEPT.buildStack())
                 .plugin(BingoReloaded.getPlugin(BingoReloaded.class))
                 .open((Player) player);
     }
@@ -91,6 +91,11 @@ public class UserInputMenu implements Menu
 
     @Override
     public void closeInventory(HumanEntity player) {
+    }
+
+    @Override
+    public MenuBoard getMenuBoard() {
+        return board;
     }
 
     @Override

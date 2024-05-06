@@ -7,7 +7,6 @@ import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -93,17 +92,17 @@ public abstract class PaginatedSelectionMenu extends BasicMenu
         boolean cancel = super.onClick(event, player, clickedSlot, clickType);
 
         boolean isValidSlot = ITEMS_PER_PAGE * currentPage + event.getRawSlot() < filteredItems.size() && event.getRawSlot() < ITEMS_PER_PAGE;
-        MenuItem item = allItems.get(ITEMS_PER_PAGE * currentPage + event.getRawSlot());
         if (isValidSlot)
         {
-            onOptionClickedDelegate(event, item, player);
+            MenuItem item = allItems.get(ITEMS_PER_PAGE * currentPage + event.getRawSlot());
+            onOptionClickedDelegate(event, item.setSlot(clickedSlot), player);
         }
         return cancel;
     }
 
     public void applyFilter(String filter) {
         keywordFilter = filter;
-        filterItem.setDescription("\"" + keywordFilter + "\"");
+        filterItem.setLore("\"" + keywordFilter + "\"");
         //TODO: automate addItem?
 //        addItem(filterItem);
 
@@ -232,8 +231,8 @@ public abstract class PaginatedSelectionMenu extends BasicMenu
         String pageCountDesc = String.format("%02d", currentPage + 1) + "/" + String.format("%02d", pageAmount);
 
         //TODO: update item automatically..?
-        nextPageItem.setDescription(pageCountDesc);
-        previousPageItem.setDescription(pageCountDesc);
+        nextPageItem.setLore(pageCountDesc);
+        previousPageItem.setLore(pageCountDesc);
         addItems(nextPageItem, previousPageItem);
     }
 

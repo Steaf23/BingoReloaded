@@ -139,7 +139,7 @@ public class BingoPlayer implements BingoParticipant
                 }
             }
 
-            player.getInventory().setItemInOffHand(PlayerKit.CARD_ITEM.getStack());
+            player.getInventory().setItemInOffHand(PlayerKit.CARD_ITEM.buildStack());
         });
     }
 

@@ -20,7 +20,7 @@ import java.util.function.Consumer;
 
 public class BasicMenu implements Menu
 {
-    public record ActionArguments(HumanEntity player, ClickType clickType, MenuItem item) {}
+    public record ActionArguments(HumanEntity player, ClickType clickType) {}
 
     public static String pluginTitlePrefix = "";
 
@@ -87,10 +87,10 @@ public class BasicMenu implements Menu
         items.add(item);
 
         if (item.getSlot() == -1) {
-            inventory.addItem(item.getStack());
+            inventory.addItem(item.buildStack());
         } else {
             // Replace/ set new item in its target slot
-            inventory.setItem(item.getSlot(), item.getStack());
+            inventory.setItem(item.getSlot(), item.buildStack());
         }
 
         return this;
@@ -165,9 +165,9 @@ public class BasicMenu implements Menu
         for (MenuItem item : items) {
             if (item.getSlot() == clickedSlot)
             {
-                item.useItem(new ActionArguments(player, clickType, item));
+                item.useItem(new ActionArguments(player, clickType));
                 //TODO: find a way to update itemstack automatically on change, no matter where!
-                inventory.setItem(item.getSlot(), item.getStack());
+                inventory.setItem(item.getSlot(), item.buildStack());
             }
         }
         return true;

@@ -29,7 +29,10 @@ public class SpinBoxButtonAction extends MenuAction {
         super.setItem(item);
         item.setAmount(value);
 
-        item.setDescription();
+        item.addDescription("input", 10,
+                Menu.inputButtonText("Left Click") + "increase",
+                Menu.inputButtonText("Right Click") + "decrease",
+                Menu.inputButtonText("Hold Shift") + "edit faster");
     }
 
     @Override
@@ -48,15 +51,5 @@ public class SpinBoxButtonAction extends MenuAction {
             item.setAmount(value);
         }
         callback.accept(value, item);
-    }
-
-    public void updateDescription(String... newDescription) {
-        List<String> newDesc = Arrays.stream(newDescription).toList();
-        newDesc.addAll(List.of(
-                Menu.inputButtonText("Left Click") + "increase",
-                Menu.inputButtonText("Right Click") + "decrease",
-                Menu.inputButtonText("Hold Shift") + "edit faster"
-        ));
-        item.setDescription(newDesc.toArray(new String[]{}));
     }
 }

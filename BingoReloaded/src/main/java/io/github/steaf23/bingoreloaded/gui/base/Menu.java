@@ -39,6 +39,8 @@ public interface Menu
         player.closeInventory();
     }
 
+    public MenuBoard getMenuBoard();
+
     /**
      * @return true if this menu should be removed if another menu opens on top of it.
      */

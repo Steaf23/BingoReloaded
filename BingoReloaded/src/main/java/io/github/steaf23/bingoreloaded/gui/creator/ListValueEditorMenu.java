@@ -7,11 +7,6 @@ import io.github.steaf23.bingoreloaded.gui.base.MenuBoard;
 import io.github.steaf23.bingoreloaded.gui.item.SpinBoxButtonAction;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.entity.HumanEntity;
-import org.bukkit.event.inventory.ClickType;
-import org.bukkit.event.inventory.InventoryClickEvent;
-
-import java.util.List;
 
 public class ListValueEditorMenu extends BasicMenu
 {
@@ -39,13 +34,13 @@ public class ListValueEditorMenu extends BasicMenu
         MenuItem minCounter = new MenuItem(20, Material.TARGET, " ");
         addAction(minCounter, new SpinBoxButtonAction(BingoCardData.MIN_ITEMS, maxCount, minStart, (value, item) -> {
             item.setName(TITLE_PREFIX + minCount);
-            item.setDescription("Not less than " + minCount + " item(s) ", "will be picked from this list");
+            item.setLore("Not more than" + minCount + " item(s) ", "will be picked from this list");
         }));
 
         MenuItem maxCounter = new MenuItem(24, Material.TARGET, " ");
         addAction(maxCounter, new SpinBoxButtonAction(minCount, Math.min(BingoCardData.MAX_ITEMS, cardEditor.cardsData.lists().getTaskCount(listName)), maxStart, (value, item) -> {
             item.setName(TITLE_PREFIX + maxCount);
-            item.setDescription("Not more than " + maxCount + " item(s) ", "will be picked from this list");
+            item.setLore("Not more than " + maxCount + " item(s) ", "will be picked from this list");
         }));
 
         addAction(SAVE, p -> {

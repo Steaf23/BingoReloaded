@@ -182,7 +182,7 @@ public class BingoTask
 
     public static @Nullable BingoTask fromMenuItem(MenuItem in)
     {
-        PersistentDataContainer pdcData = in.getStack().getItemMeta().getPersistentDataContainer();
+        PersistentDataContainer pdcData = in.buildStack().getItemMeta().getPersistentDataContainer();
 
         boolean voided = pdcData.getOrDefault(getTaskDataKey("voided"), PersistentDataType.BYTE, (byte)0) != 0;
         UUID completedByUUID = null;

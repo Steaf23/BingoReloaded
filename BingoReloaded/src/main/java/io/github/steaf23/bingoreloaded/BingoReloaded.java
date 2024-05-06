@@ -11,8 +11,7 @@ import io.github.steaf23.bingoreloaded.gameloop.GameManager;
 import io.github.steaf23.bingoreloaded.command.AutoBingoCommand;
 import io.github.steaf23.bingoreloaded.gui.base.BasicMenu;
 import io.github.steaf23.bingoreloaded.gui.base.BingoMenuBoard;
-import io.github.steaf23.bingoreloaded.gui.base.item.MenuItem;
-import io.github.steaf23.bingoreloaded.gui.base.item.SlottedItem;
+import io.github.steaf23.bingoreloaded.gui.base.item.SerializableItem;
 import io.github.steaf23.bingoreloaded.hologram.HologramManager;
 import io.github.steaf23.bingoreloaded.hologram.HologramPlacer;
 import io.github.steaf23.bingoreloaded.settings.CustomKit;
@@ -64,7 +63,7 @@ public class BingoReloaded extends JavaPlugin
         ConfigurationSerialization.registerClass(StatisticTask.class);
         ConfigurationSerialization.registerClass(BingoStatistic.class);
         ConfigurationSerialization.registerClass(CustomKit.class);
-        ConfigurationSerialization.registerClass(SlottedItem.class);
+        ConfigurationSerialization.registerClass(SerializableItem.class);
         ConfigurationSerialization.registerClass(SerializablePlayer.class);
         ConfigurationSerialization.registerClass(TeamData.TeamTemplate.class);
 

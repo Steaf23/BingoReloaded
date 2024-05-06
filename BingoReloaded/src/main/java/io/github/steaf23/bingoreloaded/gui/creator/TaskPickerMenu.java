@@ -12,7 +12,6 @@ import io.github.steaf23.bingoreloaded.tasks.TaskData;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -150,25 +149,22 @@ public class TaskPickerMenu extends PaginatedSelectionMenu
         BingoTask newTask = new BingoTask(newData);
         MenuItem item = newTask.asMenuItem();
 
-        ItemMeta meta = item.getStack().hasItemMeta() ? item.getStack().getItemMeta() : null;
-        if (meta != null)
-        {
-            List<String> addedLore;
-            if (selected)
-                addedLore = Arrays.stream(SELECTED_LORE)
-                        .map(ItemText::asLegacyString)
-                        .collect(Collectors.toList());
-            else
-                addedLore = Arrays.stream(UNSELECTED_LORE)
-                        .map(ItemText::asLegacyString)
-                        .collect(Collectors.toList());
-            List<String> newLore = new ArrayList<>();
-            newLore.add(newTask.data.getItemDescription()[0].asLegacyString());
-            newLore.addAll(addedLore);
+        String[] addedLore;
+        if (selected)
+            addedLore = Arrays.stream(SELECTED_LORE)
+                    .map(ItemText::asLegacyString)
+                    .toList().toArray(new String[]{});
+        else
+            addedLore = Arrays.stream(UNSELECTED_LORE)
+                    .map(ItemText::asLegacyString)
+                    .toList().toArray(new String[]{});
 
-            meta.setLore(newLore);
-            item.getStack().setItemMeta(meta);
-        }
+        String[] taskDescription = Arrays.stream(newTask.data.getItemDescription())
+                .map(ItemText::asLegacyString)
+                .toList().toArray(new String[]{});
+
+        item.setLore(taskDescription);
+        item.addDescription("selected", 5, addedLore);
         return item;
     }
 
