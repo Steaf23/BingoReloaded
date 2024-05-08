@@ -1,8 +1,8 @@
-package io.github.steaf23.bingoreloaded.gui.base;
+package io.github.steaf23.easymenulib.menu;
 
-import io.github.steaf23.bingoreloaded.BingoReloaded;
-import io.github.steaf23.bingoreloaded.data.BingoTranslation;
-import io.github.steaf23.bingoreloaded.gui.base.item.MenuItem;
+import io.github.steaf23.easymenulib.EasyMenuLibrary;
+import io.github.steaf23.easymenulib.menu.item.MenuItem;
+import io.github.steaf23.easymenulib.util.EasyMenuTranslationKey;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -26,8 +26,8 @@ public class UserInputMenu implements Menu
     private final MenuTemplate template;
     private AnvilGUI gui;
     private final MenuBoard board;
-    private static final MenuItem EMPTY = new MenuItem(Material.ELYTRA, "" + ChatColor.GRAY + ChatColor.BOLD + BingoTranslation.MENU_CLEAR_FILTER.translate(), "");
-    private static final MenuItem ACCEPT = new MenuItem(Material.DIAMOND, "" + ChatColor.AQUA + ChatColor.BOLD + BingoTranslation.MENU_ACCEPT.translate(), "");
+    private static final MenuItem EMPTY = new MenuItem(Material.ELYTRA, "" + ChatColor.GRAY + ChatColor.BOLD + EasyMenuTranslationKey.MENU_CLEAR_FILTER.translate(), "");
+    private static final MenuItem ACCEPT = new MenuItem(Material.DIAMOND, "" + ChatColor.AQUA + ChatColor.BOLD + EasyMenuTranslationKey.MENU_ACCEPT.translate(), "");
 
     public UserInputMenu(MenuBoard manager, String title, Consumer<String> result, HumanEntity player, String startingText) {
         this.board = manager;
@@ -57,7 +57,7 @@ public class UserInputMenu implements Menu
                     return Collections.emptyList();
                 })
                 .itemOutput(ACCEPT.buildStack())
-                .plugin(BingoReloaded.getPlugin(BingoReloaded.class))
+                .plugin(EasyMenuLibrary.getPlugin())
                 .open((Player) player);
     }
 

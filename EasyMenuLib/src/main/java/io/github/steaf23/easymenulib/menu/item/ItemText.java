@@ -1,8 +1,7 @@
-package io.github.steaf23.bingoreloaded.item;
+package io.github.steaf23.easymenulib.menu.item;
 
-import io.github.steaf23.bingoreloaded.BingoReloaded;
-import io.github.steaf23.bingoreloaded.data.helper.YmlDataManager;
-import io.github.steaf23.bingoreloaded.util.SmallCaps;
+import io.github.steaf23.easymenulib.util.SmallCaps;
+import io.github.steaf23.easymenulib.util.StatisticsKeyConverter;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -29,7 +28,6 @@ public class ItemText
     private final String text;
     private String modifiers;
     private final List<ItemText> children;
-    private final static YmlDataManager statTranslation = BingoReloaded.createYmlDataManager("data/stat_translation.yml");
 
     public ItemText(ChatColor... modifiers)
     {
@@ -249,7 +247,7 @@ public class ItemText
     private static String statisticKey(Statistic statistic)
     {
         String prefix = statistic.isSubstatistic() ? "stat_type.minecraft." : "stat.minecraft.";
-        String result = statTranslation.getConfig().getString(statistic.name(), "");
+        String result = StatisticsKeyConverter.getMinecraftTranslationKey(statistic);
         return !result.equals("") ? prefix + result : statistic.name();
     }
 

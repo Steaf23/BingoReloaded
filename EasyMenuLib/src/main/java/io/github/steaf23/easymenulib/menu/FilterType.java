@@ -1,4 +1,4 @@
-package io.github.steaf23.bingoreloaded.gui.base;
+package io.github.steaf23.easymenulib.menu;
 
 public enum FilterType
 {

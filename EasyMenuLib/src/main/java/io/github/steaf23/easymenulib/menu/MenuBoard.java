@@ -1,8 +1,8 @@
-package io.github.steaf23.bingoreloaded.gui.base;
+package io.github.steaf23.easymenulib.menu;
 
 
-import io.github.steaf23.bingoreloaded.BingoReloaded;
-import io.github.steaf23.bingoreloaded.gui.base.item.MenuItem;
+import io.github.steaf23.easymenulib.EasyMenuLibrary;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.EventHandler;
@@ -21,7 +21,7 @@ import java.util.UUID;
 public class MenuBoard implements Listener
 {
     // Stores all currently open inventories by all players, using a stack system we can easily add or remove child inventories.
-    Map<UUID, Stack<Menu>> activeMenus;
+    protected Map<UUID, Stack<Menu>> activeMenus;
 
     public MenuBoard() {
         this.activeMenus = new HashMap<>();
@@ -43,7 +43,7 @@ public class MenuBoard implements Listener
         menuToClose.beforeClosing(player);
         if (menus.size() == 0) {
             activeMenus.remove(playerId);
-            BingoReloaded.scheduleTask((task) -> menuToClose.closeInventory(player));
+            Bukkit.getScheduler().runTask(EasyMenuLibrary.getPlugin(), task -> menuToClose.closeInventory(player));
         } else {
             open(activeMenus.get(playerId).peek(), player);
         }
@@ -82,7 +82,7 @@ public class MenuBoard implements Listener
         }
 
         menu.beforeOpening(player);
-        BingoReloaded.scheduleTask((task) -> menu.openInventory(player));
+        Bukkit.getScheduler().runTask(EasyMenuLibrary.getPlugin(), task -> menu.openInventory(player));
     }
 
     @EventHandler

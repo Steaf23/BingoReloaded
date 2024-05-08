@@ -1,6 +1,7 @@
-package io.github.steaf23.bingoreloaded.gui.base.item;
+package io.github.steaf23.easymenulib.menu.item.action;
 
-import io.github.steaf23.bingoreloaded.gui.base.BasicMenu;
+import io.github.steaf23.easymenulib.menu.BasicMenu;
+import io.github.steaf23.easymenulib.menu.item.MenuItem;
 import org.jetbrains.annotations.NotNull;
 
 /**

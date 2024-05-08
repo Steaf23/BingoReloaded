@@ -1,9 +1,12 @@
 package io.github.steaf23.bingoreloaded.data;
 
+import com.google.common.base.CaseFormat;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.helper.YmlDataManager;
-import io.github.steaf23.bingoreloaded.util.FlexColor;
+import io.github.steaf23.easymenulib.util.FlexColor;
 import net.md_5.bungee.api.ChatColor;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.WordUtils;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.scoreboard.Team;
@@ -68,7 +71,7 @@ public class TeamData {
         data.saveConfig();
 
         for (FlexColor col : FlexColor.values()) {
-            addTeam(col.name, col.getTranslatedName(), col.chatColor);
+            addTeam(col.name, WordUtils.capitalize(col.name.replace("_", " ")), col.chatColor);
         }
     }
 

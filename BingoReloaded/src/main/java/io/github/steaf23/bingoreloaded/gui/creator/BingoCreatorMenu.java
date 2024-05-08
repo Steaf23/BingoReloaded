@@ -2,12 +2,8 @@ package io.github.steaf23.bingoreloaded.gui.creator;
 
 import io.github.steaf23.bingoreloaded.data.BingoCardData;
 import io.github.steaf23.bingoreloaded.data.TaskListData;
-import io.github.steaf23.bingoreloaded.gui.base.*;
-import io.github.steaf23.bingoreloaded.gui.base.item.MenuItem;
-import io.github.steaf23.bingoreloaded.gui.base.BasicMenu;
-import io.github.steaf23.bingoreloaded.gui.base.MenuBoard;
-import io.github.steaf23.bingoreloaded.gui.base.PaginatedSelectionMenu;
-import io.github.steaf23.bingoreloaded.gui.base.UserInputMenu;
+import io.github.steaf23.easymenulib.menu.*;
+import io.github.steaf23.easymenulib.menu.item.MenuItem;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;

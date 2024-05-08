@@ -1,14 +1,14 @@
 package io.github.steaf23.bingoreloaded.gui.creator;
 
 import io.github.steaf23.bingoreloaded.data.BingoCardData;
-import io.github.steaf23.bingoreloaded.gui.base.FilterType;
-import io.github.steaf23.bingoreloaded.gui.base.item.MenuItem;
-import io.github.steaf23.bingoreloaded.gui.base.MenuBoard;
-import io.github.steaf23.bingoreloaded.gui.base.PaginatedSelectionMenu;
-import io.github.steaf23.bingoreloaded.item.ItemText;
 import io.github.steaf23.bingoreloaded.tasks.BingoTask;
 import io.github.steaf23.bingoreloaded.tasks.CountableTask;
 import io.github.steaf23.bingoreloaded.tasks.TaskData;
+import io.github.steaf23.easymenulib.menu.FilterType;
+import io.github.steaf23.easymenulib.menu.MenuBoard;
+import io.github.steaf23.easymenulib.menu.PaginatedSelectionMenu;
+import io.github.steaf23.easymenulib.menu.item.ItemText;
+import io.github.steaf23.easymenulib.menu.item.MenuItem;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.inventory.InventoryClickEvent;

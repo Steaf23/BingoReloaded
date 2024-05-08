@@ -9,9 +9,7 @@ import io.github.steaf23.bingoreloaded.data.helper.YmlDataManager;
 import io.github.steaf23.bingoreloaded.data.world.WorldData;
 import io.github.steaf23.bingoreloaded.gameloop.GameManager;
 import io.github.steaf23.bingoreloaded.command.AutoBingoCommand;
-import io.github.steaf23.bingoreloaded.gui.base.BasicMenu;
-import io.github.steaf23.bingoreloaded.gui.base.BingoMenuBoard;
-import io.github.steaf23.bingoreloaded.gui.base.item.SerializableItem;
+import io.github.steaf23.bingoreloaded.gui.BingoMenuBoard;
 import io.github.steaf23.bingoreloaded.hologram.HologramManager;
 import io.github.steaf23.bingoreloaded.hologram.HologramPlacer;
 import io.github.steaf23.bingoreloaded.settings.CustomKit;
@@ -21,6 +19,9 @@ import io.github.steaf23.bingoreloaded.tasks.ItemTask;
 import io.github.steaf23.bingoreloaded.tasks.StatisticTask;
 import io.github.steaf23.bingoreloaded.tasks.statistics.BingoStatistic;
 import io.github.steaf23.bingoreloaded.util.Message;
+import io.github.steaf23.easymenulib.EasyMenuLibrary;
+import io.github.steaf23.easymenulib.menu.BasicMenu;
+import io.github.steaf23.easymenulib.menu.item.SerializableItem;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.command.*;
@@ -56,6 +57,18 @@ public class BingoReloaded extends JavaPlugin
         // Kinda ugly, but we can assume there will only be one instance of this class anyway.
         INSTANCE = this;
         PLACEHOLDER_API_ENABLED = Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null;
+
+        EasyMenuLibrary.setPlugin(this);
+        EasyMenuLibrary.setItemTranslation(key -> {
+            return switch (key) {
+                case MENU_PREVIOUS -> BingoTranslation.MENU_PREV.translate();
+                case MENU_NEXT -> BingoTranslation.MENU_NEXT.translate();
+                case MENU_ACCEPT -> BingoTranslation.MENU_ACCEPT.translate();
+                case MENU_SAVE_EXIT -> BingoTranslation.MENU_SAVE_EXIT.translate();
+                case MENU_FILTER -> BingoTranslation.MENU_FILTER.translate();
+                case MENU_CLEAR_FILTER -> BingoTranslation.MENU_CLEAR_FILTER.translate();
+            };
+        });
 
         ConfigurationSerialization.registerClass(BingoSettings.class);
         ConfigurationSerialization.registerClass(ItemTask.class);

@@ -1,7 +1,7 @@
-package io.github.steaf23.bingoreloaded.gui.base;
+package io.github.steaf23.easymenulib.menu;
 
-import io.github.steaf23.bingoreloaded.gui.base.item.MenuAction;
-import io.github.steaf23.bingoreloaded.gui.base.item.MenuItem;
+import io.github.steaf23.easymenulib.menu.item.MenuItem;
+import io.github.steaf23.easymenulib.menu.item.action.MenuAction;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -15,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -162,7 +163,7 @@ public class BasicMenu implements Menu
 
     @Override
     public boolean onClick(final InventoryClickEvent event, HumanEntity player, int clickedSlot, ClickType clickType) {
-        for (MenuItem item : items) {
+        for (MenuItem item : new ArrayList<MenuItem>(items)) {
             if (item.getSlot() == clickedSlot)
             {
                 item.useItem(new ActionArguments(player, clickType));

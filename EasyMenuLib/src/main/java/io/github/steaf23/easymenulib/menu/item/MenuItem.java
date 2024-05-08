@@ -1,8 +1,9 @@
-package io.github.steaf23.bingoreloaded.gui.base.item;
+package io.github.steaf23.easymenulib.menu.item;
 
-import io.github.steaf23.bingoreloaded.gui.base.BasicMenu;
-import io.github.steaf23.bingoreloaded.util.FlexColor;
-import io.github.steaf23.bingoreloaded.util.PDCHelper;
+import io.github.steaf23.easymenulib.menu.BasicMenu;
+import io.github.steaf23.easymenulib.menu.item.action.MenuAction;
+import io.github.steaf23.easymenulib.util.FlexColor;
+import io.github.steaf23.easymenulib.util.PDCHelper;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;

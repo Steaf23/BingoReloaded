@@ -1,8 +1,8 @@
 package io.github.steaf23.bingoreloaded.cards;
 
-import io.github.steaf23.bingoreloaded.gui.base.MenuBoard;
 import io.github.steaf23.bingoreloaded.player.team.TeamManager;
 import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
+import io.github.steaf23.easymenulib.menu.MenuBoard;
 
 public class CardBuilder
 {

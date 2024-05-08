@@ -1,15 +1,13 @@
-package io.github.steaf23.bingoreloaded.gui.item;
+package io.github.steaf23.easymenulib.menu.item.action;
 
-import io.github.steaf23.bingoreloaded.data.TeamData;
-import io.github.steaf23.bingoreloaded.gui.base.BasicMenu;
-import io.github.steaf23.bingoreloaded.gui.base.MenuBoard;
-import io.github.steaf23.bingoreloaded.gui.base.UserInputMenu;
-import io.github.steaf23.bingoreloaded.gui.base.item.MenuAction;
-import io.github.steaf23.bingoreloaded.gui.base.item.MenuItem;
+
+import io.github.steaf23.easymenulib.menu.BasicMenu;
+import io.github.steaf23.easymenulib.menu.MenuBoard;
+import io.github.steaf23.easymenulib.menu.UserInputMenu;
+import io.github.steaf23.easymenulib.menu.item.MenuItem;
 import org.bukkit.entity.HumanEntity;
 
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 public class NameEditAction extends MenuAction
 {

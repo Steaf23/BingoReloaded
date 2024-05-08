@@ -1,6 +1,5 @@
-package io.github.steaf23.bingoreloaded.gui.base;
+package io.github.steaf23.easymenulib.menu;
 
-import io.github.steaf23.bingoreloaded.gui.base.item.MenuItem;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.inventory.ClickType;

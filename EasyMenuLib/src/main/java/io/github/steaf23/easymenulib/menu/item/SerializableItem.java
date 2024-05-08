@@ -1,4 +1,4 @@
-package io.github.steaf23.bingoreloaded.gui.base.item;
+package io.github.steaf23.easymenulib.menu.item;
 
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;

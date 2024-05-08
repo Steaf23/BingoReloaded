@@ -1,9 +1,9 @@
 package io.github.steaf23.bingoreloaded.cards;
 
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
-import io.github.steaf23.bingoreloaded.gui.base.MenuBoard;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.tasks.BingoTask;
+import io.github.steaf23.easymenulib.menu.MenuBoard;
 
 import java.util.ArrayList;
 import java.util.List;

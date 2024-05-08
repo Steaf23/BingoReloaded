@@ -1,8 +1,8 @@
-package io.github.steaf23.bingoreloaded.util;
+package io.github.steaf23.easymenulib.util;
 
-import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import net.md_5.bungee.api.ChatColor;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
@@ -52,21 +52,6 @@ public enum FlexColor
         this.beds = null;
     }
 
-    public String getTranslatedName()
-    {
-        String def = "" + chatColor + ChatColor.BOLD + name;
-        BingoTranslation translation = BingoTranslation.getByKey("teams." + name);
-        if (translation == null)
-            return def;
-
-        String translatedName = translation.translate();
-        if (translatedName.length() >= 64)
-        {
-            return def;
-        }
-        return translatedName;
-    }
-
     public static FlexColor fromName(String name)
     {
         for (FlexColor c : FlexColor.values())
@@ -77,7 +62,7 @@ public enum FlexColor
             }
         }
 
-        Message.warn("Could not find a color fitting to " + name + "!");
+        Bukkit.getLogger().warning("Could not find a color fitting to " + name + "!");
         return null;
     }
 
@@ -89,7 +74,7 @@ public enum FlexColor
                 return flexColor;
         }
 
-        Message.warn("Could not find a color fitting to " + color + "(chat color)!");
+        Bukkit.getLogger().warning("Could not find a color fitting to " + color + "(chat color)!");
         return null;
     }
 
@@ -109,7 +94,7 @@ public enum FlexColor
                 return flexColor;
         }
 
-        Message.warn("Could not find a color fitting to " + dye.name() + "(dye) !");
+        Bukkit.getLogger().warning("Could not find a color fitting to " + dye.name() + "(dye) !");
         return null;
     }
 
@@ -121,7 +106,7 @@ public enum FlexColor
                 return flexColor;
         }
 
-        Message.warn("Could not find a color fitting to " + concrete.name() + "(concrete) !");
+        Bukkit.getLogger().warning("Could not find a color fitting to " + concrete.name() + "(concrete) !");
         return null;
     }
 
@@ -133,7 +118,7 @@ public enum FlexColor
                 return flexColor;
         }
 
-        Message.warn("Could not find a color fitting to " + glassPane.name() + "(glass pane) !");
+        Bukkit.getLogger().warning("Could not find a color fitting to " + glassPane.name() + "(glass pane) !");
         return null;
     }
 
@@ -145,7 +130,7 @@ public enum FlexColor
                 return flexColor;
         }
 
-        Message.warn("Could not find a color fitting to " + banner.name() + "(banner) !");
+        Bukkit.getLogger().warning("Could not find a color fitting to " + banner.name() + "(banner) !");
         return null;
     }
 
@@ -157,7 +142,7 @@ public enum FlexColor
                 return flexColor;
         }
 
-        Message.warn("Could not find a color fitting to " + nbtColor + "(nbt) !");
+        Bukkit.getLogger().warning("Could not find a color fitting to " + nbtColor + "(nbt) !");
         return null;
     }
 

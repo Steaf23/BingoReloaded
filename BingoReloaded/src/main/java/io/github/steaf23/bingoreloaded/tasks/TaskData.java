@@ -1,6 +1,6 @@
 package io.github.steaf23.bingoreloaded.tasks;
 
-import io.github.steaf23.bingoreloaded.item.ItemText;
+import io.github.steaf23.easymenulib.menu.item.ItemText;
 import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.persistence.PersistentDataContainer;

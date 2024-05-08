@@ -1,7 +1,8 @@
-package io.github.steaf23.bingoreloaded.gui.base;
+package io.github.steaf23.easymenulib.menu;
 
-import io.github.steaf23.bingoreloaded.data.BingoTranslation;
-import io.github.steaf23.bingoreloaded.gui.base.item.MenuItem;
+import io.github.steaf23.easymenulib.EasyMenuLibrary;
+import io.github.steaf23.easymenulib.menu.item.MenuItem;
+import io.github.steaf23.easymenulib.util.EasyMenuTranslationKey;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
@@ -46,10 +47,10 @@ public abstract class PaginatedSelectionMenu extends BasicMenu
     private final MenuItem nextPageItem;
     private final MenuItem previousPageItem;
 
-    protected static final MenuItem NEXT = new MenuItem(8, 5, Material.STRUCTURE_VOID, "" + ChatColor.LIGHT_PURPLE + ChatColor.BOLD + BingoTranslation.MENU_NEXT.translate(), "");
-    protected static final MenuItem PREVIOUS = new MenuItem(0, 5, Material.BARRIER, "" + ChatColor.LIGHT_PURPLE + ChatColor.BOLD + BingoTranslation.MENU_PREV.translate(), "");
-    protected static final MenuItem CLOSE = new MenuItem(4, 5, Material.REDSTONE, "" + ChatColor.RED + ChatColor.BOLD + BingoTranslation.MENU_SAVE_EXIT.translate(), "");
-    protected static final MenuItem FILTER = new MenuItem(1, 5, Material.SPYGLASS, TITLE_PREFIX + BingoTranslation.MENU_FILTER.translate(), "");
+    protected static final MenuItem NEXT = new MenuItem(8, 5, Material.STRUCTURE_VOID, "" + ChatColor.LIGHT_PURPLE + ChatColor.BOLD + EasyMenuTranslationKey.MENU_NEXT.translate(), "");
+    protected static final MenuItem PREVIOUS = new MenuItem(0, 5, Material.BARRIER, "" + ChatColor.LIGHT_PURPLE + ChatColor.BOLD + EasyMenuTranslationKey.MENU_PREVIOUS.translate(), "");
+    protected static final MenuItem CLOSE = new MenuItem(4, 5, Material.REDSTONE, "" + ChatColor.RED + ChatColor.BOLD + EasyMenuTranslationKey.MENU_SAVE_EXIT.translate(), "");
+    protected static final MenuItem FILTER = new MenuItem(1, 5, Material.SPYGLASS, TITLE_PREFIX + EasyMenuTranslationKey.MENU_FILTER.translate(), "");
 
     public PaginatedSelectionMenu(MenuBoard board, String initialTitle, List<MenuItem> options, Function<MenuItem, Boolean> customFilter) {
         this(board, initialTitle, options, FilterType.CUSTOM);
@@ -63,11 +64,11 @@ public abstract class PaginatedSelectionMenu extends BasicMenu
         this.nextPageItem = NEXT.copy();
         this.previousPageItem = PREVIOUS.copy();
 
-        addAction(nextPageItem, args -> this.previousPage());
+        addAction(nextPageItem, args -> this.nextPage());
         addAction(filterItem, args -> {
             new UserInputMenu(board, "Filter by name", this::applyFilter, args.player(), keywordFilter.isBlank() ? "name" : keywordFilter);
         });
-        addAction(previousPageItem, args -> this.nextPage());
+        addAction(previousPageItem, args -> this.previousPage());
 
         addItems(
                 BLANK.copyToSlot(2, 5),

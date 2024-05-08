@@ -1,17 +1,15 @@
-package io.github.steaf23.bingoreloaded.gui.item;
+package io.github.steaf23.easymenulib.menu.item.action;
 
-import io.github.steaf23.bingoreloaded.gui.base.BasicMenu;
-import io.github.steaf23.bingoreloaded.gui.base.Menu;
-import io.github.steaf23.bingoreloaded.gui.base.item.MenuAction;
-import io.github.steaf23.bingoreloaded.gui.base.item.MenuItem;
-import io.github.steaf23.bingoreloaded.util.ExtraMath;
+import io.github.steaf23.easymenulib.menu.BasicMenu;
+import io.github.steaf23.easymenulib.menu.Menu;
+import io.github.steaf23.easymenulib.menu.item.MenuItem;
+import io.github.steaf23.easymenulib.util.ExtraMath;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.function.BiConsumer;
 
-public class SpinBoxButtonAction extends MenuAction {
+public class SpinBoxButtonAction extends MenuAction
+{
     private int value;
     private final int min;
     private final int max;

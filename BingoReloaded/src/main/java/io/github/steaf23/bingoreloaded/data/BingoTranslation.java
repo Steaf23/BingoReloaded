@@ -1,9 +1,9 @@
 package io.github.steaf23.bingoreloaded.data;
 
-import io.github.steaf23.bingoreloaded.item.ItemText;
 import io.github.steaf23.bingoreloaded.util.CollectionHelper;
 import io.github.steaf23.bingoreloaded.util.Message;
-import io.github.steaf23.bingoreloaded.util.SmallCaps;
+import io.github.steaf23.easymenulib.menu.item.ItemText;
+import io.github.steaf23.easymenulib.util.SmallCaps;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -148,7 +148,7 @@ public enum BingoTranslation
 
     private String translate(boolean isSubstitution, String... args)
     {
-        String rawTranslation = Message.convertConfigString(translation);
+        String rawTranslation = BingoTranslation.convertConfigString(translation);
 //        rawTranslation = convertSubstitution(translation);
 
         for (int i = 0; i < args.length; i++)
@@ -283,5 +283,17 @@ public enum BingoTranslation
                 return value;
         }
         return null;
+    }
+
+    /**
+     * Convert input string to a presentable string replacing color codes and small caps codes
+     *
+     * @return
+     */
+    public static String convertConfigString(String input) {
+        String out = input;
+        out = BingoTranslation.convertColors(out);
+        out = BingoTranslation.convertSmallCaps(out);
+        return out;
     }
 }

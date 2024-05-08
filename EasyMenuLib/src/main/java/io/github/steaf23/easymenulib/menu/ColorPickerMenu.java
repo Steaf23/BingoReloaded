@@ -1,10 +1,9 @@
-package io.github.steaf23.bingoreloaded.gui.base;
+package io.github.steaf23.easymenulib.menu;
 
-
-import io.github.steaf23.bingoreloaded.gui.base.item.MenuItem;
-import io.github.steaf23.bingoreloaded.util.FlexColor;
-import io.github.steaf23.bingoreloaded.util.Message;
+import io.github.steaf23.easymenulib.util.FlexColor;
+import io.github.steaf23.easymenulib.menu.item.MenuItem;
 import net.md_5.bungee.api.ChatColor;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.inventory.ClickType;
@@ -17,8 +16,8 @@ import java.util.function.Consumer;
 
 public final class ColorPickerMenu extends BasicMenu
 {
-    private static final io.github.steaf23.bingoreloaded.gui.base.item.MenuItem NEXT = new io.github.steaf23.bingoreloaded.gui.base.item.MenuItem(53, Material.STRUCTURE_VOID, "" + ChatColor.LIGHT_PURPLE + ChatColor.BOLD + "Scroll Left", "");
-    private static final io.github.steaf23.bingoreloaded.gui.base.item.MenuItem PREVIOUS = new io.github.steaf23.bingoreloaded.gui.base.item.MenuItem(45, Material.BARRIER, "" + ChatColor.LIGHT_PURPLE + ChatColor.BOLD + "Scroll Right", "");
+    private static final MenuItem NEXT = new MenuItem(53, Material.STRUCTURE_VOID, "" + ChatColor.LIGHT_PURPLE + ChatColor.BOLD + "Scroll Left", "");
+    private static final MenuItem PREVIOUS = new MenuItem(45, Material.BARRIER, "" + ChatColor.LIGHT_PURPLE + ChatColor.BOLD + "Scroll Right", "");
 
     private static final int HUE_AMOUNT = 25;
 
@@ -36,7 +35,7 @@ public final class ColorPickerMenu extends BasicMenu
         for (int i = 0; i < HUE_AMOUNT; i++) {
             Color col = Color.getHSBColor(i * (1.0f / (HUE_AMOUNT - 1)), 1.0f, 1.0f);
             ChatColor chatColor = ChatColor.of(col);
-            hueItems.add(io.github.steaf23.bingoreloaded.gui.base.item.MenuItem.createColoredLeather(chatColor, Material.LEATHER_CHESTPLATE)
+            hueItems.add(io.github.steaf23.easymenulib.menu.item.MenuItem.createColoredLeather(chatColor, Material.LEATHER_CHESTPLATE)
                     .setCompareKey(FlexColor.asHex(chatColor)));
         }
 
@@ -47,7 +46,7 @@ public final class ColorPickerMenu extends BasicMenu
 
         for (int i = 0; i < 45; i++) {
             ChatColor color = ChatColor.of(new Color(0));
-            addItem(io.github.steaf23.bingoreloaded.gui.base.item.MenuItem.createColoredLeather(color, Material.LEATHER_CHESTPLATE)
+            addItem(MenuItem.createColoredLeather(color, Material.LEATHER_CHESTPLATE)
                     .setCompareKey(FlexColor.asHex(color)));
         }
 
@@ -80,7 +79,7 @@ public final class ColorPickerMenu extends BasicMenu
 
     private void setHueBar(int startingFrom) {
         if (hueItems.size() < 7) {
-            Message.log("Add at least 7 hue items!");
+            Bukkit.getLogger().severe("Add at least 7 hue items!");
             return;
         }
 
@@ -100,9 +99,9 @@ public final class ColorPickerMenu extends BasicMenu
 
                 ChatColor chatColor = ChatColor.of(targetColor);
 
-                io.github.steaf23.bingoreloaded.gui.base.item.MenuItem item = io.github.steaf23.bingoreloaded.gui.base.item.MenuItem.createColoredLeather(chatColor, Material.LEATHER_CHESTPLATE)
+                MenuItem item = MenuItem.createColoredLeather(chatColor, Material.LEATHER_CHESTPLATE)
                         .setCompareKey(FlexColor.asHex(chatColor))
-                        .setSlot(io.github.steaf23.bingoreloaded.gui.base.item.MenuItem.slotFromXY(x, y));
+                        .setSlot(MenuItem.slotFromXY(x, y));
                 addItem(item);
             }
         }

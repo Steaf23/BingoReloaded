@@ -1,4 +1,4 @@
-package io.github.steaf23.bingoreloaded.util;
+package io.github.steaf23.easymenulib.util;
 
 public class ExtraMath
 {
