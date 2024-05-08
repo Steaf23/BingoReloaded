@@ -10,10 +10,6 @@ public class EasyMenuLibrary
     private static JavaPlugin plugin;
     private static Function<EasyMenuTranslationKey, String> translateFunction;
 
-    public static String test() {
-        return "YEEET";
-    }
-
     public static void setPlugin(final JavaPlugin plugin) {
         EasyMenuLibrary.plugin = plugin;
     }
