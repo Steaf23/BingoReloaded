@@ -32,15 +32,15 @@ public class ListValueEditorMenu extends BasicMenu
         this.listName = listName;
 
         MenuItem minCounter = new MenuItem(20, Material.TARGET, " ");
-        addAction(minCounter, new SpinBoxButtonAction(BingoCardData.MIN_ITEMS, maxCount, minStart, (value, item) -> {
-            item.setName(TITLE_PREFIX + minCount);
-            item.setLore("Not more than" + minCount + " item(s) ", "will be picked from this list");
+        addAction(minCounter, new SpinBoxButtonAction(BingoCardData.MIN_ITEMS, maxCount, minStart, value -> {
+            minCounter.setName(TITLE_PREFIX + minCount);
+            minCounter.setLore("Not more than" + minCount + " item(s) ", "will be picked from this list");
         }));
 
         MenuItem maxCounter = new MenuItem(24, Material.TARGET, " ");
-        addAction(maxCounter, new SpinBoxButtonAction(minCount, Math.min(BingoCardData.MAX_ITEMS, cardEditor.cardsData.lists().getTaskCount(listName)), maxStart, (value, item) -> {
-            item.setName(TITLE_PREFIX + maxCount);
-            item.setLore("Not more than " + maxCount + " item(s) ", "will be picked from this list");
+        addAction(maxCounter, new SpinBoxButtonAction(minCount, Math.min(BingoCardData.MAX_ITEMS, cardEditor.cardsData.lists().getTaskCount(listName)), maxStart, value -> {
+            maxCounter.setName(TITLE_PREFIX + maxCount);
+            maxCounter.setLore("Not more than " + maxCount + " item(s) ", "will be picked from this list");
         }));
 
         addAction(SAVE, p -> {

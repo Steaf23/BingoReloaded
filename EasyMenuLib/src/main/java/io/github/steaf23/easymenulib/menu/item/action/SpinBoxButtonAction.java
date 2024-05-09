@@ -7,15 +7,16 @@ import io.github.steaf23.easymenulib.util.ExtraMath;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 public class SpinBoxButtonAction extends MenuAction
 {
     private int value;
     private final int min;
     private final int max;
-    private final BiConsumer<Integer, MenuItem> callback;
+    private final Consumer<Integer> callback;
 
-    public SpinBoxButtonAction(int minValue, int maxValue, int initialValue, BiConsumer<Integer, MenuItem> callback) {
+    public SpinBoxButtonAction(int minValue, int maxValue, int initialValue, Consumer<Integer> callback) {
         this.min = ExtraMath.clamped(minValue, 1, maxValue);
         this.max = ExtraMath.clamped(maxValue, minValue, 64);
         this.value = ExtraMath.clamped(initialValue, min, max);
@@ -48,6 +49,6 @@ public class SpinBoxButtonAction extends MenuAction
         if (item != null) {
             item.setAmount(value);
         }
-        callback.accept(value, item);
+        callback.accept(value);
     }
 }

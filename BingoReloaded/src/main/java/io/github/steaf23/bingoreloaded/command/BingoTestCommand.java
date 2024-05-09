@@ -8,12 +8,22 @@ import io.github.steaf23.bingoreloaded.event.BingoCardTaskCompleteEvent;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.util.Message;
+import io.github.steaf23.easymenulib.menu.BasicMenu;
+import io.github.steaf23.easymenulib.menu.Menu;
+import io.github.steaf23.easymenulib.menu.MenuBoard;
+import io.github.steaf23.easymenulib.menu.item.MenuItem;
+import io.github.steaf23.easymenulib.menu.item.action.ComboBoxButtonAction;
+import io.github.steaf23.easymenulib.menu.item.action.SpinBoxButtonAction;
+import io.github.steaf23.easymenulib.menu.item.action.ToggleButtonAction;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.jetbrains.annotations.NotNull;
@@ -22,10 +32,12 @@ import java.util.List;
 
 public class BingoTestCommand implements TabExecutor
 {
-    private final JavaPlugin plugin;
+    private final BingoReloaded plugin;
+    private final MenuBoard board;
 
-    public BingoTestCommand(JavaPlugin plugin) {
+    public BingoTestCommand(BingoReloaded plugin, MenuBoard board) {
         this.plugin = plugin;
+        this.board = board;
     }
 
     @Override
@@ -34,36 +46,32 @@ public class BingoTestCommand implements TabExecutor
             return false;
         }
 
-        if (args.length < 3) {
+        if (args.length == 0) {
             return false;
         }
 
         switch (args[0]) {
             case "world" -> {
-                if (args.length < 3)
-                {
+                if (args.length < 3) {
                     break;
                 }
 
 
                 String worldName = args[1];
                 boolean doesWorldExist = WorldData.doesWorldExist(plugin, worldName);
-                switch (args[2])
-                {
+                switch (args[2]) {
                     case "tp":
                         if (!(commandSender instanceof Player p)) {
                             return false;
                         }
-                        if (!doesWorldExist)
-                        {
+                        if (!doesWorldExist) {
                             Message.log("Cannot TP player to non-existing world " + worldName);
                             return false;
                         }
                         WorldData.getOrCreateWorldGroup(plugin, worldName).teleportPlayer(p);
                         break;
                     case "create":
-                        if (doesWorldExist)
-                        {
+                        if (doesWorldExist) {
                             Message.log("Cannot create world " + worldName + ", because it already exists!");
                         }
                         WorldData.getOrCreateWorldGroup(plugin, worldName);
@@ -78,6 +86,10 @@ public class BingoTestCommand implements TabExecutor
                 }
             }
             case "complete" -> {
+                if (args.length < 3) {
+                    break;
+                }
+
                 Player player = Bukkit.getPlayer(args[1]);
                 if (player == null)
                     return false;
@@ -90,6 +102,42 @@ public class BingoTestCommand implements TabExecutor
                     break;
                 }
                 completeTaskByPlayer(virtualPlayer, taskIndex);
+            }
+            case "menu" -> {
+                Player player = commandSender instanceof Player p ? p : null;
+                if (player == null)
+                    return false;
+
+                BasicMenu menu = new BasicMenu(board, "Easy Menu Lib Test", 6);
+
+                menu.addItem(new MenuItem(0, 0, Material.BEDROCK, "" + ChatColor.RED + ChatColor.UNDERLINE + "Some name??"));
+
+                menu.addAction(new MenuItem(1, 0, Material.ACACIA_BOAT, "" + ChatColor.LIGHT_PURPLE + ChatColor.ITALIC + "Toggle Action", "Toggle me :D"),
+                        new ToggleButtonAction(toggled -> {
+                            Message.sendDebug("I am toggled and " + toggled, player);
+                        }));
+
+                MenuItem spinboxItem = new MenuItem(2, 0, Material.LEAD, "Spinbox action", "I have value >:)");
+                spinboxItem.setAction(new SpinBoxButtonAction(13, 34, 2, value -> {
+                    Message.sendDebug("I have a value of " + value, player);
+                }));
+                menu.addItem(spinboxItem);
+                menu.addAction(new MenuItem(3, 0, Material.SAND, "I should not exist..."), arguments -> {
+                    Message.sendDebug("but yet I am alive ;(", player);
+                });
+
+                MenuItem comboItem = new MenuItem(3, 0, Material.YELLOW_CONCRETE, "I am actually 4 items", "fr fr");
+                menu.addAction(comboItem, new ComboBoxButtonAction(selection -> {
+                    Message.sendDebug("You have selected " + selection, player);
+                })
+                        .addOption("Cheese", new ItemStack(Material.YELLOW_CONCRETE))
+                        .addOption("Potato", new ItemStack(Material.POISONOUS_POTATO))
+                        .addOption("Tomato", new ItemStack(Material.RED_CONCRETE))
+                        .addOption("Carrotato", new ItemStack(Material.ORANGE_CONCRETE))
+                        .selectOption("Tomato"));
+
+                menu.open(player);
+                Message.log("Opened menu");
             }
         }
         return true;

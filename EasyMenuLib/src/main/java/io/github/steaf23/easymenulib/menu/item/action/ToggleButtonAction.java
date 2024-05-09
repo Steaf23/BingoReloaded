@@ -5,18 +5,19 @@ import io.github.steaf23.easymenulib.menu.Menu;
 import io.github.steaf23.easymenulib.menu.item.MenuItem;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class ToggleButtonAction extends MenuAction
 {
     private boolean enabled;
-    private final Function<Boolean, MenuItem> callback;
+    private final Consumer<Boolean> callback;
 
-    public ToggleButtonAction(Function<Boolean, MenuItem> callback) {
+    public ToggleButtonAction(Consumer<Boolean> callback) {
         this(false, callback);
     }
 
-    public ToggleButtonAction(boolean startEnabled, Function<Boolean, MenuItem> callback) {
+    public ToggleButtonAction(boolean startEnabled, Consumer<Boolean> callback) {
         this.enabled = startEnabled;
         this.callback = callback;
     }
@@ -35,7 +36,7 @@ public class ToggleButtonAction extends MenuAction
     @Override
     public void use(BasicMenu.ActionArguments arguments) {
         enabled = !enabled;
-        item = callback.apply(enabled);
         item.setGlowing(enabled);
+        callback.accept(enabled);
     }
 }

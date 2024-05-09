@@ -40,19 +40,18 @@ public class ExtraBingoMenu extends BasicMenu
         BingoSettings initialSettings = settings.view();
 
         MenuItem teamSizeItem = TEAM_SIZE.copy();
-        teamSizeItem.setAction(new SpinBoxButtonAction(1, TEAMSIZE_MAX, settings.view().maxTeamSize(), (value, item) -> {
+        teamSizeItem.setAction(new SpinBoxButtonAction(1, TEAMSIZE_MAX, settings.view().maxTeamSize(), value -> {
             settings.maxTeamSize(value);
         }));
 
         MenuItem durationItem = DURATION.copy();
-        durationItem.setAction(new SpinBoxButtonAction(1, DURATION_MAX, settings.view().countdownDuration(), (value, item) -> {
+        durationItem.setAction(new SpinBoxButtonAction(1, DURATION_MAX, settings.view().countdownDuration(), value -> {
             settings.countdownGameDuration(value);
         }));
 
         MenuItem countDownItem = COUNTDOWN.copy();
         countDownItem.setAction(new ToggleButtonAction(enable -> {
             settings.enableCountdown(enable);
-            return countDownItem;
         }));
 
         addItems(teamSizeItem, durationItem, countDownItem);

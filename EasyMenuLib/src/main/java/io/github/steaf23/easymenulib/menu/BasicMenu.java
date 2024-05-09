@@ -26,7 +26,6 @@ public class BasicMenu implements Menu
     public static String pluginTitlePrefix = "";
 
     protected static final String TITLE_PREFIX = "" + ChatColor.GOLD + ChatColor.BOLD;
-
     protected static MenuItem BLANK = new MenuItem(Material.BLACK_STAINED_GLASS_PANE, " ");
 
     private final Inventory inventory;

@@ -72,16 +72,18 @@ public class AdminBingoMenu extends BasicMenu
         addAction(EXTRA, p -> new ExtraBingoMenu(getMenuBoard(), session.settingsBuilder).open(p));
 
         MenuItem centerButton = START.copy();
-        centerButton.setAction(new ComboBoxButtonAction(List.of("start", "end"), value -> {
-            if (value.equals("start")) {
-                centerButton.replaceStack(START);
+        centerButton.setAction(new ComboBoxButtonAction(value -> {
+            if (value.equals("end")) {
                 session.startGame();
             }
-            else if (value.equals("end")) {
-                centerButton.replaceStack(END);
+            else if (value.equals("start")) {
                 session.endGame();
             }
-        }));
+        })
+                .addOption("start", START.buildStack())
+                .addOption("end", END.buildStack())
+                .selectOption(session.isRunning() ? "end" : "start"));
+        addItem(centerButton);
     }
 
     private void openCardPicker(ActionArguments arguments) {
