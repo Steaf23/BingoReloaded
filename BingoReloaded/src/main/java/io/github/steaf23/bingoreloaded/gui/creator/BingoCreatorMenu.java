@@ -1,6 +1,7 @@
 package io.github.steaf23.bingoreloaded.gui.creator;
 
 import io.github.steaf23.bingoreloaded.data.BingoCardData;
+import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.data.TaskListData;
 import io.github.steaf23.easymenulib.menu.*;
 import io.github.steaf23.easymenulib.menu.item.MenuItem;
@@ -118,21 +119,21 @@ public class BingoCreatorMenu extends BasicMenu
 
     public BasicMenu createCardContext(String cardName) {
         BasicMenu context = new BasicMenu(getMenuBoard(), cardName, 1);
-        context.addAction(new MenuItem(Material.BARRIER, TITLE_PREFIX + "Remove"), (args) -> {
+        context.addAction(new MenuItem(0, Material.BARRIER, TITLE_PREFIX + "Remove"), (args) -> {
                     cardsData.removeCard(cardName);
                     context.close(args);
                 })
-                .addAction(new MenuItem(Material.SHULKER_SHELL, TITLE_PREFIX + "Duplicate"), (args) -> {
+                .addAction(new MenuItem(1, Material.SHULKER_SHELL, TITLE_PREFIX + "Duplicate"), (args) -> {
                     cardsData.duplicateCard(cardName);
                     context.close(args);
                 })
-                .addAction(new MenuItem(Material.NAME_TAG, TITLE_PREFIX + "Change Name"), (args) -> {
+                .addAction(new MenuItem(2, Material.NAME_TAG, TITLE_PREFIX + "Change Name"), (args) -> {
                     new UserInputMenu(getMenuBoard(), "Change name to", (input) -> {
                         cardsData.renameCard(cardName, input);
                         context.close(args);
                     }, args.player(), cardName);
                 })
-                .addCloseAction(new MenuItem(8, Material.DIAMOND, TITLE_PREFIX + "Exit"));
+                .addCloseAction(new MenuItem(8, Material.DIAMOND, TITLE_PREFIX + BingoTranslation.MENU_EXIT.translate()));
         return context;
     }
 
@@ -140,15 +141,15 @@ public class BingoCreatorMenu extends BasicMenu
         TaskListData listsData = cardsData.lists();
 
         BasicMenu context = new BasicMenu(getMenuBoard(), listName, 1);
-        context.addAction(new MenuItem(Material.BARRIER, TITLE_PREFIX + "Remove"), (args) -> {
+        context.addAction(new MenuItem(0, Material.BARRIER, TITLE_PREFIX + "Remove"), (args) -> {
                     listsData.removeList(listName);
                     context.close(args);
                 })
-                .addAction(new MenuItem(Material.SHULKER_SHELL, TITLE_PREFIX + "Duplicate"), (args) -> {
+                .addAction(new MenuItem(1, Material.SHULKER_SHELL, TITLE_PREFIX + "Duplicate"), (args) -> {
                     listsData.duplicateList(listName);
                     context.close(args);
                 })
-                .addAction(new MenuItem(Material.NAME_TAG, TITLE_PREFIX + "Change Name"), (args) -> {
+                .addAction(new MenuItem(2, Material.NAME_TAG, TITLE_PREFIX + "Change Name"), (args) -> {
                     new UserInputMenu(getMenuBoard(), "Change name to", (input) -> {
                         listsData.renameList(listName, input);
                         context.close(args);

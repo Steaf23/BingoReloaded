@@ -37,7 +37,7 @@ public class MenuItem
     private final Map<String, DescriptionSection> descriptionSections;
 
     public MenuItem(Material material, String name, String... description) {
-        this(-1, material, name, description);
+        this(0, material, name, description);
     }
 
     public MenuItem(int slotX, int slotY, Material material, String name, String... description) {

@@ -104,7 +104,7 @@ public class BingoGame implements GamePhase
 
         // Generate cards
         boolean useAdvancements = !(BingoReloaded.areAdvancementsDisabled() || config.disableAdvancements);
-        BingoCard masterCard = CardBuilder.fromMode(session.getMenuManager(), settings.mode(), settings.size(), getTeamManager());
+        BingoCard masterCard = CardBuilder.fromSettings(session.getMenuManager(), settings, getTeamManager());
         masterCard.generateCard(settings.card(), settings.seed(), useAdvancements, !config.disableStatistics);
         if (masterCard instanceof LockoutBingoCard lockoutCard) {
             lockoutCard.teamCount = teamManager.getTeamCount();

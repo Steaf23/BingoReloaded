@@ -120,8 +120,10 @@ public class BingoTestCommand implements TabExecutor
                 MenuItem spinboxItem = new MenuItem(2, 0, Material.LEAD, "Spinbox action", "I have value >:)");
                 spinboxItem.setAction(new SpinBoxButtonAction(13, 34, 2, value -> {
                     Message.sendDebug("I have a value of " + value, player);
+                    spinboxItem.setLore("I have a value of " + value + "!");
                 }));
                 menu.addItem(spinboxItem);
+
                 menu.addAction(new MenuItem(3, 0, Material.SAND, "I should not exist..."), arguments -> {
                     Message.sendDebug("but yet I am alive ;(", player);
                 });

@@ -86,12 +86,8 @@ public class BasicMenu implements Menu
         items.removeIf(i -> i.getSlot() == item.getSlot());
         items.add(item);
 
-        if (item.getSlot() == -1) {
-            inventory.addItem(item.buildStack());
-        } else {
-            // Replace/ set new item in its target slot
-            inventory.setItem(item.getSlot(), item.buildStack());
-        }
+        // Replace/ set new item in its target slot
+        inventory.setItem(item.getSlot(), item.buildStack());
 
         return this;
     }

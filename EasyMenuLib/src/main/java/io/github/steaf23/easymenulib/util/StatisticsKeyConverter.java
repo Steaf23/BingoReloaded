@@ -42,7 +42,7 @@ public class StatisticsKeyConverter
             Map.entry(Statistic.BANNER_CLEANED, "clean_banner"),
             Map.entry(Statistic.ITEM_ENCHANTED, "enchant_item"),
             Map.entry(Statistic.TIME_SINCE_REST, "time_since_rest"),
-            Map.entry(Statistic.RAID_WIN, "raid_winFf"),
+            Map.entry(Statistic.RAID_WIN, "raid_win"),
             Map.entry(Statistic.TARGET_HIT, "target_hit"),
             Map.entry(Statistic.CLEAN_SHULKER_BOX, "clean_shulker_box"),
             Map.entry(Statistic.CAKE_SLICES_EATEN, "eat_cake_slice"),
@@ -97,6 +97,6 @@ public class StatisticsKeyConverter
      * @return translation key usable when translating statistics in translation components
      */
     public static String getMinecraftTranslationKey(Statistic statistic) {
-        return statistic.getKey().getKey();
+        return statistics.getOrDefault(statistic, statistic.name());
     }
 }

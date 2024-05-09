@@ -20,7 +20,9 @@ public class HotswapBingoCard extends BingoCard
         this.winningScore = winningScore;
         this.taskTimer = new CounterTimer();
         taskTimer.start();
-        menu.setInfo("HotSwap", "Items will get replaced when they expire after a random amount of time. Gather the most points to win!");
+        menu.setInfo("HotSwap",
+                "Items will get replaced when they expire after some amount of time. ",
+                "First team to complete " + winningScore + " tasks wins!");
     }
 
     @Override

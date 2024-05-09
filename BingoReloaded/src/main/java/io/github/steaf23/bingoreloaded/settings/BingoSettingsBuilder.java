@@ -24,6 +24,7 @@ public class BingoSettingsBuilder
     private int maxTeamSize;
     private boolean enableCountdown;
     private int countdownGameDuration;
+    private int hotswapGoal;
 
     public BingoSettingsBuilder(BingoSession session)
     {
@@ -39,6 +40,7 @@ public class BingoSettingsBuilder
         this.maxTeamSize = def.maxTeamSize();
         this.countdownGameDuration = def.countdownDuration();
         this.enableCountdown = def.enableCountdown();
+        this.hotswapGoal = def.hotswapGoal();
     }
 
     public void fromOther(BingoSettings settings)
@@ -52,6 +54,7 @@ public class BingoSettingsBuilder
         maxTeamSize = settings.maxTeamSize();
         countdownGameDuration = settings.countdownDuration();
         enableCountdown = settings.enableCountdown();
+        hotswapGoal = settings.hotswapGoal();
         settingsUpdated();
     }
 
@@ -188,6 +191,14 @@ public class BingoSettingsBuilder
         return this;
     }
 
+    public BingoSettingsBuilder hotswapGoal(int hotswapGoal) {
+        if (this.hotswapGoal != hotswapGoal) {
+            this.hotswapGoal = hotswapGoal;
+            settingsUpdated();
+        }
+        return this;
+    }
+
     public BingoSettings view()
     {
         return new BingoSettings(
@@ -199,7 +210,8 @@ public class BingoSettingsBuilder
                 effects,
                 maxTeamSize,
                 enableCountdown,
-                countdownGameDuration);
+                countdownGameDuration,
+                hotswapGoal);
     }
 
     public void settingsUpdated()

@@ -146,6 +146,10 @@ public class SoloTeamManager implements TeamManager
             }
         }
         teams.removeEmptyTeams();
+        if (member == null) {
+            return true;
+        }
+
         member.sessionPlayer().ifPresent(player -> {
             new TranslatedMessage(BingoTranslation.LEAVE).color(ChatColor.RED).send(player);
         });
