@@ -12,9 +12,10 @@ import org.bukkit.Statistic;
 import org.bukkit.advancement.Advancement;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
-import org.checkerframework.checker.nullness.qual.NonNull;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -141,12 +142,12 @@ public class ItemText
         return addTranslation(itemKey(item));
     }
 
-    public ItemText addAdvancementTitle(@NonNull Advancement advancement)
+    public ItemText addAdvancementTitle(@NotNull Advancement advancement)
     {
         return addTranslation(advancementKey(advancement) + ".title");
     }
 
-    public ItemText addAdvancementDescription(@NonNull Advancement advancement)
+    public ItemText addAdvancementDescription(@NotNull Advancement advancement)
     {
         return addTranslation(advancementKey(advancement) + ".description");
     }
@@ -232,7 +233,7 @@ public class ItemText
         return new ItemText("translate", key, with.append("]").append(ItemText.createModifiers(modifiers)).toString());
     }
 
-    private static String advancementKey(@NonNull Advancement advancement)
+    private static String advancementKey(@NotNull Advancement advancement)
     {
         String result = advancement.getKey().getKey().replace("/", ".");
         result = switch (result) // Needed to correct Spigot on some advancement names vs how they appear in the lang files

@@ -77,7 +77,7 @@ public class AdminBingoMenu extends BasicMenu
             }
         });
         addAction(CARD, this::openCardPicker);
-        addAction(EFFECTS, arguments -> new EffectOptionsMenu(getMenuBoard(), session.settingsBuilder, session).open(arguments.player()));
+        addAction(EFFECTS, arguments -> new EffectOptionsMenu(getMenuBoard(), session.settingsBuilder).open(arguments.player()));
         addAction(PRESETS, arguments -> new SettingsPresetMenu(getMenuBoard(), session.settingsBuilder).open(arguments.player()));
 
         MenuItem teamSizeItem = TEAM_SIZE.copy();
