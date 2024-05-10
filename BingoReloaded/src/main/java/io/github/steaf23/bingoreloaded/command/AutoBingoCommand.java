@@ -211,7 +211,7 @@ public class AutoBingoCommand implements TabExecutor
             return true;
         }
 
-        sendFailed("Could not create session", worldName);
+        sendFailed("Could not create session, see console for details.", worldName);
         return false;
     }
 
@@ -221,7 +221,7 @@ public class AutoBingoCommand implements TabExecutor
             return true;
         }
 
-        sendFailed("Could not destroy session", worldName);
+        sendFailed("Could not destroy session, see console for details.", worldName);
         return false;
     }
 
@@ -231,7 +231,7 @@ public class AutoBingoCommand implements TabExecutor
             return true;
         }
 
-        sendFailed("Could not start game", worldName);
+        sendFailed("Could not start game, see console for details.", worldName);
         return false;
     }
 
@@ -423,7 +423,7 @@ public class AutoBingoCommand implements TabExecutor
             sendSuccess("Game forcefully ended!", worldName);
             return true;
         } else {
-            sendFailed("Could not end the game", worldName);
+            sendFailed("Could not end the game, see console for details.", worldName);
             return false;
         }
     }

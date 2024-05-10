@@ -3,6 +3,7 @@ package io.github.steaf23.bingoreloaded.gameloop;
 import io.github.steaf23.bingoreloaded.data.ConfigData;
 import io.github.steaf23.bingoreloaded.data.PlayerSerializationData;
 import io.github.steaf23.bingoreloaded.data.world.WorldData;
+import io.github.steaf23.bingoreloaded.data.world.WorldGroup;
 import io.github.steaf23.bingoreloaded.event.BingoEventListener;
 import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.easymenulib.menu.Menu;
@@ -21,64 +22,50 @@ import java.util.Map;
 
 public class GameManager
 {
-    private static final String SINGULAR_WORLDNAME = "world";
-    private final boolean singular;
+    protected final Map<String, BingoSession> sessions;
+
     private final JavaPlugin plugin;
     private final ConfigData config;
     private final MenuBoard menuBoard;
 
-    private final Map<String, BingoSession> sessions;
     private final PlayerSerializationData playerData;
     private final BingoEventListener eventListener;
 
-    public GameManager(@NotNull JavaPlugin plugin, boolean singular, ConfigData config, MenuBoard menus) {
+    public GameManager(@NotNull JavaPlugin plugin, ConfigData config, MenuBoard menuBoard) {
         this.plugin = plugin;
         this.config = config;
-        this.menuBoard = menus;
-        this.singular = singular;
+        this.menuBoard = menuBoard;
 
         this.sessions = new HashMap<>();
         this.playerData = new PlayerSerializationData();
         this.eventListener = new BingoEventListener(this::getSessionFromWorld, config.disableAdvancements, config.disableStatistics);
 
-        if (singular)
-        {
-            BingoSession session = new BingoSession(this, menuBoard, WorldData.getOrCreateWorldGroup(plugin, SINGULAR_WORLDNAME), config, playerData);
-            sessions.put(SINGULAR_WORLDNAME, session);
-        }
         Bukkit.getPluginManager().registerEvents(eventListener, plugin);
     }
 
     public boolean createSession(String sessionName) {
-        if (singular)
-        {
-            Message.error("This command is not available when using configuration singular!");
-            return false;
-        }
-
         if (sessions.containsKey(sessionName)) {
             Message.log("An instance of Bingo already exists in world '" + sessionName + "'!");
             return false;
         }
 
-        BingoSession session = new BingoSession(this, menuBoard, WorldData.getOrCreateWorldGroup(plugin, sessionName), config, playerData);
+        BingoSession session = new BingoSession(this, menuBoard, WorldData.createWorldGroup(plugin, sessionName), config, playerData);
         sessions.put(sessionName, session);
         return true;
     }
 
     public boolean destroySession(String sessionName) {
-        if (singular)
-        {
-            Message.error("This command is not available when using configuration singular!");
-            return false;
-        }
-
         if (!sessions.containsKey(sessionName)) {
             return false;
         }
 
         endGame(sessionName);
-        WorldData.destroyWorldGroup(plugin, WorldData.getOrCreateWorldGroup(plugin, sessionName));
+        WorldGroup group = WorldData.getWorldGroup(plugin, sessionName);
+        if (group == null) {
+            Message.error("Could not destroy worlds from session properly. (Please report!)");
+            return false;
+        }
+        WorldData.destroyWorldGroup(plugin, WorldData.getWorldGroup(plugin, sessionName));
         sessions.remove(sessionName);
         return true;
     }
@@ -143,12 +130,11 @@ public class GameManager
         return getSessionFromWorld(player.getWorld()) != null;
     }
 
-    public boolean isConfigurationSingular()
-    {
-        return singular;
-    }
-
     public Collection<String> getSessionNames() {
         return sessions.keySet();
+    }
+
+    protected PlayerSerializationData getPlayerData() {
+        return playerData;
     }
 }

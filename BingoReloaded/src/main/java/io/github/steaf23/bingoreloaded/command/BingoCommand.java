@@ -55,7 +55,6 @@ public class BingoCommand implements TabExecutor
         }
 
         BingoSession session = gameManager.getSessionFromWorld(player.getWorld());
-        Message.log(String.valueOf(session == null));
         if (session == null)
             return false;
 
@@ -238,20 +237,18 @@ public class BingoCommand implements TabExecutor
 
         CustomKit customKit = PlayerKit.getCustomKit(kit);
 
+        BaseComponent msg = new TextComponent("");
         if (customKit == null) {
-            BaseComponent msg = new TextComponent("");
             msg.setColor(ChatColor.RED);
             msg.addExtra("Cannot remove kit from slot " + slot + " because no custom kit is assigned to this slot");
-            Message.sendDebug(msg, commandSender);
         } else {
-            BaseComponent msg = new TextComponent("");
             msg.setColor(ChatColor.GREEN);
             msg.addExtra("Removed custom kit ");
             msg.addExtra(customKit.getName());
             msg.addExtra(" from slot " + slot);
-            Message.sendDebug(msg, commandSender);
             PlayerKit.removeCustomKit(kit);
         }
+        Message.sendDebug(msg, commandSender);
     }
 
     public void givePlayerBingoItem(Player player, String itemName) {

@@ -9,6 +9,7 @@ import io.github.steaf23.bingoreloaded.data.helper.YmlDataManager;
 import io.github.steaf23.bingoreloaded.data.world.WorldData;
 import io.github.steaf23.bingoreloaded.gameloop.GameManager;
 import io.github.steaf23.bingoreloaded.command.AutoBingoCommand;
+import io.github.steaf23.bingoreloaded.gameloop.SingularGameManager;
 import io.github.steaf23.bingoreloaded.gui.BingoMenuBoard;
 import io.github.steaf23.bingoreloaded.hologram.HologramManager;
 import io.github.steaf23.bingoreloaded.hologram.HologramPlacer;
@@ -92,7 +93,13 @@ public class BingoReloaded extends JavaPlugin
 
         this.menuBoard = new BingoMenuBoard();
 
-        this.gameManager = new GameManager(this, config.configuration == ConfigData.PluginConfiguration.SINGULAR, config, menuBoard);
+        if (config.configuration == ConfigData.PluginConfiguration.SINGULAR) {
+            this.gameManager = new SingularGameManager(this, config, menuBoard);
+        }
+        else {
+            this.gameManager = new GameManager(this, config, menuBoard);
+        }
+
         TabExecutor autoBingoCommand = new AutoBingoCommand(gameManager);
 
         menuBoard.setPlayerOpenPredicate(player -> player instanceof Player p && this.gameManager.canPlayerOpenMenu(p, null));

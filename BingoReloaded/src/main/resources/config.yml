@@ -13,12 +13,14 @@
 #       This makes is good to just play a few rounds with some friends without worrying about the world configurations
 #       This can also be used for bigger server networks where each server represents an instance of the game.
 #   - MULTIPLE: The plugin creates worlds specifically for the purpose of playing bingo.
-#       The main world can be converted to a lobby world or a lobby world can be assigned specifically
+#       The main world can be converted to a lobby world but this is not required.
 configuration: SINGULAR
 
-# The name of the world where bingo will be played. The plugin will not create this world, so make sure to create it before running this plugin.
-#   to allow the plugin to use the Nether and End dimensions, the names `<defaultWorldName>_nether` and `<defaultWorldName>_the_end` must also be valid worlds.
-#   if configuration is set to MULTIPLE, this world is used as the lobby world. Plugin commands do not work outside of this world or those created by the plugin itself.
+# This option means different things for each configuration:
+#   - SINGULAR: This world is the one where bingo is played. The plugin will not create this world, so make sure to create it before running this plugin.
+#     to allow the plugin to use the Nether and End dimensions, the names `<defaultWorldName>_nether` and `<defaultWorldName>_the_end` must also be valid worlds.
+#   - MULTIPLE: This world is used more like a lobby world, however it is not required. Using auto bingo commands the actual game worlds will be created automatically.
+#     In this case, players can be teleported to any active game world using the /autobingo teleport command
 defaultWorldName: world
 
 # The yml file that contains the language data that will be used for this plugin

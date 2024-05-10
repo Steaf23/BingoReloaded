@@ -4,12 +4,12 @@ package io.github.steaf23.bingoreloaded.command;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.cards.BingoCard;
 import io.github.steaf23.bingoreloaded.data.world.WorldData;
+import io.github.steaf23.bingoreloaded.data.world.WorldGroup;
 import io.github.steaf23.bingoreloaded.event.BingoCardTaskCompleteEvent;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.easymenulib.menu.BasicMenu;
-import io.github.steaf23.easymenulib.menu.Menu;
 import io.github.steaf23.easymenulib.menu.MenuBoard;
 import io.github.steaf23.easymenulib.menu.item.MenuItem;
 import io.github.steaf23.easymenulib.menu.item.action.ComboBoxButtonAction;
@@ -21,10 +21,8 @@ import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
-import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.jetbrains.annotations.NotNull;
 
@@ -58,30 +56,30 @@ public class BingoTestCommand implements TabExecutor
 
 
                 String worldName = args[1];
-                boolean doesWorldExist = WorldData.doesWorldExist(plugin, worldName);
+                WorldGroup group = WorldData.getWorldGroup(plugin, worldName);
                 switch (args[2]) {
                     case "tp":
                         if (!(commandSender instanceof Player p)) {
                             return false;
                         }
-                        if (!doesWorldExist) {
+                        if (group == null) {
                             Message.log("Cannot TP player to non-existing world " + worldName);
                             return false;
                         }
-                        WorldData.getOrCreateWorldGroup(plugin, worldName).teleportPlayer(p);
+                        group.teleportPlayer(p);
                         break;
                     case "create":
-                        if (doesWorldExist) {
+                        if (group != null) {
                             Message.log("Cannot create world " + worldName + ", because it already exists!");
                         }
-                        WorldData.getOrCreateWorldGroup(plugin, worldName);
+                        WorldData.createWorldGroup(plugin, worldName);
                         break;
                     case "destroy":
-                        if (!doesWorldExist) {
+                        if (group == null) {
                             Message.log("Cannot remove non-existing world " + worldName);
                             return false;
                         }
-                        WorldData.destroyWorldGroup(plugin, WorldData.getOrCreateWorldGroup(plugin, worldName));
+                        WorldData.destroyWorldGroup(plugin, WorldData.getWorldGroup(plugin, worldName));
                         break;
                 }
             }

@@ -4,6 +4,7 @@ import io.github.steaf23.bingoreloaded.util.Message;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerTeleportEvent;
 
 import java.util.UUID;
 
@@ -14,8 +15,7 @@ import java.util.UUID;
 public record WorldGroup(String worldName, UUID overworldId, UUID netherId, UUID endId)
 {
     public void teleportPlayer(Player player) {
-        Message.log("OW: " + getOverworld().getUID().toString(), worldName);
-        player.teleport(Bukkit.getWorld(overworldId).getSpawnLocation());
+        player.teleport(Bukkit.getWorld(overworldId).getSpawnLocation(), PlayerTeleportEvent.TeleportCause.NETHER_PORTAL);
     }
 
     public String getName() {

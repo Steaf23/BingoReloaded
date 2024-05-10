@@ -9,6 +9,7 @@ import org.bukkit.World;
 import org.bukkit.WorldCreator;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.UUID;
@@ -41,11 +42,30 @@ public class WorldData
      * @param worldName
      * @return created WorldGroup
      */
-    public static WorldGroup getOrCreateWorldGroup(@NotNull JavaPlugin plugin, String worldName) {
+    public static WorldGroup createWorldGroup(@NotNull JavaPlugin plugin, String worldName) {
         World overworld = createWorld(plugin, worldName, World.Environment.NORMAL);
         World nether = createWorld(plugin, worldName + "_nether", World.Environment.NETHER);
         World end = createWorld(plugin, worldName + "_the_end", World.Environment.THE_END);
         return new WorldGroup(worldName, overworld.getUID(), nether.getUID(), end.getUID());
+    }
+
+    public static @Nullable WorldGroup getWorldGroup(@NotNull JavaPlugin plugin, String worldName) {
+        World overworld = Bukkit.getWorld(getWorldsFolder(plugin) + worldName);
+        World nether = Bukkit.getWorld(getWorldsFolder(plugin) + worldName + "_nether");
+        World theEnd = Bukkit.getWorld(getWorldsFolder(plugin) + worldName + "_the_end");
+
+        if (overworld == null) {
+            Message.error("Could not fetch world group; " + worldName + " does not exist. Make sure the world exists and reload the plugin.");
+            return null;
+        } else if (nether == null) {
+            Message.error("Could not fetch world group; " + worldName + "_nether does not exist. Make sure the world exists and reload the plugin.");
+            return null;
+        } else if (theEnd == null) {
+            Message.error("Could not fetch world group; " + worldName + "_the_end does not exist. Make sure the world exists and reload the plugin.");
+            return null;
+        }
+        WorldGroup group = new WorldGroup(worldName, overworld.getUID(), nether.getUID(), theEnd.getUID());
+        return group;
     }
 
     /**
@@ -54,7 +74,7 @@ public class WorldData
      * @param worldGroup
      * @return true if the worlds in the world group could be destroyed correctly
      */
-    public static boolean destroyWorldGroup(@NotNull JavaPlugin plugin, WorldGroup worldGroup) {
+    public static boolean destroyWorldGroup(@NotNull JavaPlugin plugin, @NotNull WorldGroup worldGroup) {
         boolean success = destroyWorld(plugin, worldGroup.worldName());
         success = success && destroyWorld(plugin, worldGroup.worldName() + "_nether");
         success = success && destroyWorld(plugin, worldGroup.worldName() + "_the_end");
@@ -65,11 +85,6 @@ public class WorldData
         return plugin.getDataFolder().getPath().replace("\\", "/") + "/worlds/";
     }
 
-    public static boolean doesWorldExist(@NotNull JavaPlugin plugin, String worldName) {
-        String worldFolder = getWorldsFolder(plugin);
-        return Bukkit.getWorld(worldFolder + worldName) != null;
-    }
-
     private static World createWorld(@NotNull JavaPlugin plugin, String worldName, World.Environment environment) {
         String worldFolder = getWorldsFolder(plugin);
         WorldCreator creator = new WorldCreator(worldFolder + worldName);
@@ -78,7 +93,6 @@ public class WorldData
     }
 
     private static boolean destroyWorld(@NotNull JavaPlugin plugin, String worldName) {
-        Message.log("Removing " + worldName);
         String worldsFolder = getWorldsFolder(plugin);
 
         World bukkitWorld = Bukkit.getWorld(worldsFolder + worldName);
