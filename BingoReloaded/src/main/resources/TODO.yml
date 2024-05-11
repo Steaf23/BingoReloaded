@@ -43,7 +43,3 @@ add dummy card to kit creator, to configure card slot as well
 
 (2.1) add proper placeholder support
   - create placeholder for player team
-
-Add config option to
-  - end game when only 1 team remains
-  - force end when no players are online
