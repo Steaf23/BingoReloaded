@@ -1,8 +1,11 @@
 package io.github.steaf23.bingoreloaded.command;
 
+import com.sun.nio.sctp.SendFailedNotification;
 import io.github.steaf23.bingoreloaded.cards.CardSize;
 import io.github.steaf23.bingoreloaded.data.BingoCardData;
 import io.github.steaf23.bingoreloaded.data.BingoSettingsData;
+import io.github.steaf23.bingoreloaded.data.world.WorldData;
+import io.github.steaf23.bingoreloaded.data.world.WorldGroup;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gameloop.GameManager;
 import io.github.steaf23.bingoreloaded.gui.EffectOptionFlags;
@@ -14,10 +17,12 @@ import io.github.steaf23.bingoreloaded.settings.BingoSettingsBuilder;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -52,8 +57,7 @@ public class AutoBingoCommand implements TabExecutor
 
         command.addSubCommand(new SubCommand("kit", args -> {
             var settings = getSettingsBuilder(args[0]);
-            if (settings == null)
-            {
+            if (settings == null) {
                 sendFailed("Invalid world/ session name: " + args[0], args[0]);
                 return false;
             }
@@ -67,8 +71,7 @@ public class AutoBingoCommand implements TabExecutor
 
         command.addSubCommand(new SubCommand("effects", args -> {
             var settings = getSettingsBuilder(args[0]);
-            if (settings == null)
-            {
+            if (settings == null) {
                 sendFailed("Invalid world/ session name: " + args[0], args[0]);
                 return false;
             }
@@ -93,8 +96,7 @@ public class AutoBingoCommand implements TabExecutor
 
         command.addSubCommand(new SubCommand("card", args -> {
             var settings = getSettingsBuilder(args[0]);
-            if (settings == null)
-            {
+            if (settings == null) {
                 sendFailed("Invalid world/ session name: " + args[0], args[0]);
                 return false;
             }
@@ -104,8 +106,7 @@ public class AutoBingoCommand implements TabExecutor
 
         command.addSubCommand(new SubCommand("countdown", args -> {
             var settings = getSettingsBuilder(args[0]);
-            if (settings == null)
-            {
+            if (settings == null) {
                 sendFailed("Invalid world/ session name: " + args[0], args[0]);
                 return false;
             }
@@ -115,8 +116,7 @@ public class AutoBingoCommand implements TabExecutor
 
         command.addSubCommand(new SubCommand("duration", args -> {
             var settings = getSettingsBuilder(args[0]);
-            if (settings == null)
-            {
+            if (settings == null) {
                 sendFailed("Invalid world/ session name: " + args[0], args[0]);
                 return false;
             }
@@ -126,20 +126,18 @@ public class AutoBingoCommand implements TabExecutor
 
         command.addSubCommand(new SubCommand("team", args -> {
             var settings = getSettingsBuilder(args[0]);
-            if (settings == null)
-            {
+            if (settings == null) {
                 sendFailed("Invalid world/ session name: " + args[0], args[0]);
                 return false;
             }
             return setPlayerTeam(args[0], Arrays.copyOfRange(args, 1, args.length));
         }).addUsage("<player_name> <team_name>")
-                        .addTabCompletion(args -> args.length == 2 || args.length == 3 ? List.of("") : List.of()));
+                .addTabCompletion(args -> args.length == 2 || args.length == 3 ? List.of("") : List.of()));
 
 
         command.addSubCommand(new SubCommand("teamsize", args -> {
             var settings = getSettingsBuilder(args[0]);
-            if (settings == null)
-            {
+            if (settings == null) {
                 sendFailed("Invalid world/ session name: " + args[0], args[0]);
                 return false;
             }
@@ -149,8 +147,7 @@ public class AutoBingoCommand implements TabExecutor
 
         command.addSubCommand(new SubCommand("gamemode", args -> {
             var settings = getSettingsBuilder(args[0]);
-            if (settings == null)
-            {
+            if (settings == null) {
                 sendFailed("Invalid world/ session name: " + args[0], args[0]);
                 return false;
             }
@@ -168,8 +165,7 @@ public class AutoBingoCommand implements TabExecutor
 
         command.addSubCommand(new SubCommand("preset", args -> {
             var settings = getSettingsBuilder(args[0]);
-            if (settings == null)
-            {
+            if (settings == null) {
                 sendFailed("Invalid world/ session name: " + args[0], args[0]);
                 return false;
             }
@@ -183,6 +179,30 @@ public class AutoBingoCommand implements TabExecutor
                         default -> List.of();
                     };
                 }));
+
+
+        command.addSubCommand(new SubCommand("addplayer", args -> {
+            return addPlayerToSession(args);
+        }).addUsage("<player_name>").addTabCompletion(args -> {
+            if (args.length == 2) {
+                return null;
+            } else {
+                return List.of();
+            }
+        }));
+
+
+        command.addSubCommand(new SubCommand("kickplayer", args -> {
+            return removePlayerFromSession(args);
+        }).addUsage("<player_name> <target_world_name>").addTabCompletion(args -> {
+            if (args.length == 2) {
+                return null;
+            } else if (args.length == 3) {
+                return Bukkit.getWorlds().stream().map(w -> w.getName()).toList();
+            } else {
+                return List.of();
+            }
+        }));
     }
 
     @Override
@@ -243,8 +263,7 @@ public class AutoBingoCommand implements TabExecutor
 
         PlayerKit kit = PlayerKit.fromConfig(extraArguments[0]);
 
-        if (PlayerKit.customKits().contains(kit) && PlayerKit.getCustomKit(kit) == null)
-        {
+        if (PlayerKit.customKits().contains(kit) && PlayerKit.getCustomKit(kit) == null) {
             // Invalid custom kit selected, not possible!
             sendFailed("Cannot set kit to " + kit.getDisplayName() + ". This custom kit is not defined. To create custom kits first, use /bingo kit.", worldName);
             return false;
@@ -368,8 +387,7 @@ public class AutoBingoCommand implements TabExecutor
             return true;
         }
         BingoParticipant participant = session.teamManager.getPlayerAsParticipant(player);
-        if (participant == null)
-        {
+        if (participant == null) {
             participant = new BingoPlayer(player, session);
         }
         if (!session.teamManager.addMemberToTeam(participant, teamName)) {
@@ -400,8 +418,7 @@ public class AutoBingoCommand implements TabExecutor
         }
 
         BingoGamemode mode = BingoGamemode.fromDataString(extraArguments[0], true);
-        if (mode == null)
-        {
+        if (mode == null) {
             sendFailed("Unknown gamemode '" + extraArguments[0] + "'", worldName);
             return false;
         }
@@ -461,6 +478,62 @@ public class AutoBingoCommand implements TabExecutor
             }
         }
 
+        return true;
+    }
+
+    private boolean addPlayerToSession(String... args) {
+        String worldName = args[0];
+        if (args.length != 2) {
+            sendFailed("Expected 3 arguments!", worldName);
+            return false;
+        }
+
+        String playerName = args[1];
+        Player player = Bukkit.getPlayer(playerName);
+        if (player == null) {
+            sendFailed("Player " + playerName + " could not be found.", worldName);
+            return false;
+        }
+        if (!manager.teleportPlayerToSession(player, worldName)) {
+            sendFailed("Could not teleport player to invalid world.", worldName);
+            return false;
+        }
+        sendSuccess("Teleported " + playerName + " to " + worldName, worldName);
+        return true;
+    }
+
+    private boolean removePlayerFromSession(String... args) {
+        String worldName = args[0];
+        if (args.length != 3) {
+            sendFailed("Expected 4 arguments!", worldName);
+            return false;
+        }
+
+        String playerName = args[1];
+        Player player = Bukkit.getPlayer(playerName);
+        if (player == null) {
+            sendFailed("Player " + playerName + " could not be found.", worldName);
+            return false;
+        }
+
+        BingoSession session = manager.getSession(worldName);
+        if (session == null || !session.ownsWorld(player.getWorld())) {
+            sendFailed("Player cannot be teleported. " + playerName + " is not in " + worldName, worldName);
+            return false;
+        }
+
+        String targetWorldName = args[2];
+        World world = Bukkit.getWorld(targetWorldName);
+        if (world == null) {
+            sendFailed("Could not teleport player to invalid world " + targetWorldName + ".", worldName);
+            return false;
+        }
+
+        if (!player.teleport(world.getSpawnLocation(), PlayerTeleportEvent.TeleportCause.PLUGIN)) {
+            sendFailed("Could not teleport player to " + targetWorldName + ".", worldName);
+            return false;
+        }
+        sendSuccess("Teleported " + playerName + " to " + targetWorldName, worldName);
         return true;
     }
 

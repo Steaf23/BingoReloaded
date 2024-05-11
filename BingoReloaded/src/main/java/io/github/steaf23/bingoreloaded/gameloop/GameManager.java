@@ -130,6 +130,16 @@ public class GameManager
         return getSessionFromWorld(player.getWorld()) != null;
     }
 
+    public boolean teleportPlayerToSession(Player player, String sessionName) {
+        WorldGroup bingoWorld = WorldData.getWorldGroup(plugin, sessionName);
+        if (bingoWorld == null) {
+            return false;
+        }
+
+        bingoWorld.teleportPlayer(player);
+        return true;
+    }
+
     public Collection<String> getSessionNames() {
         return sessions.keySet();
     }
