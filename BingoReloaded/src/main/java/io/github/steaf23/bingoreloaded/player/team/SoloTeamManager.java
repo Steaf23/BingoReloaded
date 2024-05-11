@@ -1,11 +1,13 @@
 package io.github.steaf23.bingoreloaded.player.team;
 
+import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.data.TeamData;
 import io.github.steaf23.bingoreloaded.event.ParticipantJoinedTeamEvent;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.VirtualBingoPlayer;
 import io.github.steaf23.bingoreloaded.util.Message;
+import io.github.steaf23.bingoreloaded.util.TranslatedMessage;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.scoreboard.Scoreboard;
@@ -17,7 +19,7 @@ import java.util.Optional;
 import java.util.Set;
 
 /**
- * Similar to TeamManager but each team can only have 1 member, the team's name being the name of the member.
+ * Similar to BasicTeamManager but each team can only have 1 member, the team's name being the name of the member.
  */
 public class SoloTeamManager implements TeamManager
 {
@@ -25,7 +27,6 @@ public class SoloTeamManager implements TeamManager
     private final Scoreboard teamBoard;
     private final BingoSession session;
     private final TeamData teamData;
-    private Set<BingoParticipant> joinedPlayers;
 
     public SoloTeamManager(Scoreboard teamBoard, BingoSession session)
     {
@@ -102,7 +103,7 @@ public class SoloTeamManager implements TeamManager
     /**
      * We don't care about the team unless it's auto, else we just add a new team
      * @param player
-     * @param teamId
+     * @param teamId ignored for solo team manager, since teams are managed per player.
      * @return
      */
     @Override
@@ -126,6 +127,12 @@ public class SoloTeamManager implements TeamManager
         team.addMember(player);
         teams.addTeam(team);
 
+        player.sessionPlayer().ifPresent(p -> {
+            new TranslatedMessage(BingoTranslation.JOIN).color(ChatColor.GREEN)
+                    .arg(team.getColoredName().asLegacyString())
+                    .send(p);
+        });
+
         var joinEvent = new ParticipantJoinedTeamEvent(player, team, session);
         Bukkit.getPluginManager().callEvent(joinEvent);
         return true;
@@ -136,11 +143,18 @@ public class SoloTeamManager implements TeamManager
         for (BingoTeam team : teams) {
             if (team.getMembers().contains(member)) {
                 team.removeMember(member);
-                team.getScoreboardTeam().unregister();
             }
         }
         teams.removeEmptyTeams();
-        return false;
+        if (member == null) {
+            return true;
+        }
+
+        member.sessionPlayer().ifPresent(player -> {
+            new TranslatedMessage(BingoTranslation.LEAVE).color(ChatColor.RED).send(player);
+        });
+
+        return true;
     }
 
     @Override

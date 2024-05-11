@@ -31,9 +31,9 @@ public class PlayerSerializationData
         }
 
         SerializablePlayer playerData = data.getConfig().getSerializable(player.getUniqueId().toString(), SerializablePlayer.class);
-        playerData.toPlayer(player);
         data.getConfig().set(player.getUniqueId().toString(), null);
         data.saveConfig();
+        playerData.toPlayer(player);
         return playerData;
     }
 

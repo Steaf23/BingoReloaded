@@ -93,7 +93,7 @@ public class SerializablePlayer implements ConfigurationSerializable
             player.getInventory().setContents(inventory);
         }
         player.getEnderChest().clear();
-        if (enderInventory == null)
+        if (enderInventory != null)
         {
             player.getEnderChest().setContents(enderInventory);
         }

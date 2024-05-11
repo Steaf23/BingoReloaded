@@ -18,7 +18,7 @@
 *.zip
 *.tar.gz
 *.rar
-.idea/*
+**/.idea/*
 
 /out
 
@@ -28,3 +28,4 @@ hs_err_pid*
 */target
 qodana.yaml
 BingoReloaded/BingoReloaded.iml
+EasyMenuLib/EasyMenuLib.iml

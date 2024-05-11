@@ -1,10 +1,9 @@
 package io.github.steaf23.bingoreloaded.event;
 
-import io.github.steaf23.bingoreloaded.gameloop.BingoGame;
+import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
-import io.github.steaf23.bingoreloaded.gameloop.PregameLobby;
+import io.github.steaf23.bingoreloaded.gameloop.phase.PregameLobby;
 import io.github.steaf23.bingoreloaded.tasks.statistics.StatisticTracker;
-import io.github.steaf23.bingoreloaded.util.Message;
 import org.bukkit.World;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -298,5 +297,9 @@ public class BingoEventListener implements Listener
         if (event.getSession().phase() instanceof PregameLobby lobby) {
             lobby.handleParticipantLeftTeam(event);
         }
+    }
+
+    public void handleParticipantCountChangedEvent(final ParticipantCountChangedEvent event) {
+        event.getSession().handleParticipantCountChangedEvent(event);
     }
 }

@@ -2,12 +2,11 @@ package io.github.steaf23.bingoreloaded.gui;
 
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
-import io.github.steaf23.bingoreloaded.gui.base.MenuItem;
-import io.github.steaf23.bingoreloaded.gui.base.BasicMenu;
-import io.github.steaf23.bingoreloaded.gui.base.MenuManager;
 import io.github.steaf23.bingoreloaded.settings.CustomKit;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
-import io.github.steaf23.bingoreloaded.util.Message;
+import io.github.steaf23.easymenulib.menu.BasicMenu;
+import io.github.steaf23.easymenulib.menu.MenuBoard;
+import io.github.steaf23.easymenulib.menu.item.MenuItem;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 
@@ -15,9 +14,9 @@ public class KitOptionsMenu extends BasicMenu
 {
     private final BingoSession session;
 
-    public KitOptionsMenu(MenuManager menuManager, BingoSession session)
+    public KitOptionsMenu(MenuBoard menuBoard, BingoSession session)
     {
-        super(menuManager, BingoTranslation.OPTIONS_KIT.translate(), 5);
+        super(menuBoard, BingoTranslation.OPTIONS_KIT.translate(), 5);
         this.session = session;
 
         MenuItem HARDCORE = new MenuItem(1, 1,
@@ -76,6 +75,6 @@ public class KitOptionsMenu extends BasicMenu
 
     private void setKit(PlayerKit kit)
     {
-        session.settingsBuilder.kit(kit, session);
+        session.settingsBuilder.kit(kit);
     }
 }

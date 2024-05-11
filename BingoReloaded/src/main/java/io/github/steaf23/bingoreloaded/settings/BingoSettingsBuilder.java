@@ -2,10 +2,12 @@ package io.github.steaf23.bingoreloaded.settings;
 
 import io.github.steaf23.bingoreloaded.cards.CardSize;
 import io.github.steaf23.bingoreloaded.data.BingoCardData;
+import io.github.steaf23.bingoreloaded.data.BingoSettingsData;
 import io.github.steaf23.bingoreloaded.event.BingoSettingsUpdatedEvent;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
-import io.github.steaf23.bingoreloaded.gameloop.PregameLobby;
+import io.github.steaf23.bingoreloaded.gameloop.phase.PregameLobby;
 import io.github.steaf23.bingoreloaded.gui.EffectOptionFlags;
+import io.github.steaf23.bingoreloaded.util.Message;
 import org.bukkit.Bukkit;
 
 import java.util.EnumSet;
@@ -23,12 +25,13 @@ public class BingoSettingsBuilder
     private int maxTeamSize;
     private boolean enableCountdown;
     private int countdownGameDuration;
+    private int hotswapGoal;
 
     public BingoSettingsBuilder(BingoSession session)
     {
         this.session = session;
 
-        BingoSettings def = BingoSettings.getDefaultSettings();
+        BingoSettings def = new BingoSettingsData().getDefaultSettings();
         this.card = def.card();
         this.mode = def.mode();
         this.cardSize = def.size();
@@ -38,6 +41,7 @@ public class BingoSettingsBuilder
         this.maxTeamSize = def.maxTeamSize();
         this.countdownGameDuration = def.countdownDuration();
         this.enableCountdown = def.enableCountdown();
+        this.hotswapGoal = def.hotswapGoal();
     }
 
     public void fromOther(BingoSettings settings)
@@ -51,6 +55,8 @@ public class BingoSettingsBuilder
         maxTeamSize = settings.maxTeamSize();
         countdownGameDuration = settings.countdownDuration();
         enableCountdown = settings.enableCountdown();
+        hotswapGoal = settings.hotswapGoal();
+        settingsUpdated();
     }
 
     public BingoSettingsBuilder getVoteResult(PregameLobby.VoteTicket voteResult)
@@ -58,33 +64,26 @@ public class BingoSettingsBuilder
         BingoSettingsBuilder resultBuilder = new BingoSettingsBuilder(session);
         resultBuilder.fromOther(view());
 
-        switch (voteResult.gamemode)
-        {
-            case "regular_3" -> {
-                resultBuilder.cardSize = CardSize.X3;
-                resultBuilder.mode = BingoGamemode.REGULAR;
-            }
-            case "regular_5" -> {
-                resultBuilder.cardSize = CardSize.X5;
-                resultBuilder.mode = BingoGamemode.REGULAR;
-            }
-            case "complete_3" -> {
-                resultBuilder.cardSize = CardSize.X3;
-                resultBuilder.mode = BingoGamemode.COMPLETE;
-            }
-            case "complete_5" -> {
-                resultBuilder.cardSize = CardSize.X5;
-                resultBuilder.mode = BingoGamemode.COMPLETE;
-            }
-            case "lockout_3" -> {
-                resultBuilder.cardSize = CardSize.X3;
-                resultBuilder.mode = BingoGamemode.LOCKOUT;
-            }
-            case "lockout_5" -> {
-                resultBuilder.cardSize = CardSize.X5;
-                resultBuilder.mode = BingoGamemode.LOCKOUT;
-            }
+        String[] tuple = voteResult.gamemode.split("_");
+        if (tuple.length != 2) {
+            Message.error("Could not read vote results. (Please report!)");
+            return resultBuilder;
         }
+        int cardWidth = 0;
+        try {
+            cardWidth = Integer.valueOf(tuple[1]);
+        } catch (NumberFormatException e) {
+            Message.error("Could not read card size. (Please report!)");
+        }
+        if (cardWidth == 0) {
+            return resultBuilder;
+        }
+
+        BingoGamemode mode = BingoGamemode.fromDataString(tuple[0]);
+        CardSize size = CardSize.fromWidth(cardWidth);
+
+        resultBuilder.mode = mode;
+        resultBuilder.cardSize = size;
 
         if (!voteResult.kit.isEmpty())
             resultBuilder.kit = PlayerKit.fromConfig(voteResult.kit);
@@ -131,7 +130,7 @@ public class BingoSettingsBuilder
         return this;
     }
 
-    public BingoSettingsBuilder kit(PlayerKit kit, BingoSession session)
+    public BingoSettingsBuilder kit(PlayerKit kit)
     {
         if (this.kit != kit) {
             this.kit = kit;
@@ -140,7 +139,7 @@ public class BingoSettingsBuilder
         return this;
     }
 
-    public BingoSettingsBuilder effects(EnumSet<EffectOptionFlags> effects, BingoSession session)
+    public BingoSettingsBuilder effects(EnumSet<EffectOptionFlags> effects)
     {
         if (this.effects != effects) {
             this.effects = effects;
@@ -186,6 +185,14 @@ public class BingoSettingsBuilder
         return this;
     }
 
+    public BingoSettingsBuilder hotswapGoal(int hotswapGoal) {
+        if (this.hotswapGoal != hotswapGoal) {
+            this.hotswapGoal = hotswapGoal;
+            settingsUpdated();
+        }
+        return this;
+    }
+
     public BingoSettings view()
     {
         return new BingoSettings(
@@ -197,7 +204,8 @@ public class BingoSettingsBuilder
                 effects,
                 maxTeamSize,
                 enableCountdown,
-                countdownGameDuration);
+                countdownGameDuration,
+                hotswapGoal);
     }
 
     public void settingsUpdated()

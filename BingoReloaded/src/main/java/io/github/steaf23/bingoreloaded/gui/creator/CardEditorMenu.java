@@ -1,11 +1,11 @@
 package io.github.steaf23.bingoreloaded.gui.creator;
 
 import io.github.steaf23.bingoreloaded.data.BingoCardData;
-import io.github.steaf23.bingoreloaded.gui.base.FilterType;
-import io.github.steaf23.bingoreloaded.gui.base.MenuItem;
-import io.github.steaf23.bingoreloaded.gui.base.BasicMenu;
-import io.github.steaf23.bingoreloaded.gui.base.MenuManager;
-import io.github.steaf23.bingoreloaded.gui.base.PaginatedSelectionMenu;
+import io.github.steaf23.easymenulib.menu.BasicMenu;
+import io.github.steaf23.easymenulib.menu.FilterType;
+import io.github.steaf23.easymenulib.menu.MenuBoard;
+import io.github.steaf23.easymenulib.menu.PaginatedSelectionMenu;
+import io.github.steaf23.easymenulib.menu.item.MenuItem;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
@@ -22,9 +22,9 @@ public class CardEditorMenu extends PaginatedSelectionMenu
     public final BingoCardData cardsData;
     private static final MenuItem ADD_LIST = new MenuItem(51, Material.EMERALD, "" + ChatColor.GREEN + ChatColor.BOLD + "Add Item List", "");
 
-    public CardEditorMenu(MenuManager menuManager, String cardName, BingoCardData cardsData)
+    public CardEditorMenu(MenuBoard menuBoard, String cardName, BingoCardData cardsData)
     {
-        super(menuManager, "Editing '" + cardName + "'", new ArrayList<>(), FilterType.DISPLAY_NAME);
+        super(menuBoard, "Editing '" + cardName + "'", new ArrayList<>(), FilterType.DISPLAY_NAME);
         this.cardName = cardName;
         this.cardsData = cardsData;
         addAction(ADD_LIST, p -> createListPicker(result -> {
@@ -35,13 +35,15 @@ public class CardEditorMenu extends PaginatedSelectionMenu
     @Override
     public void onOptionClickedDelegate(final InventoryClickEvent event, MenuItem clickedOption, HumanEntity player)
     {
+        String listName = clickedOption.getName();
         //if an ItemList attached to a card was clicked on exists
-        if (!clickedOption.hasItemMeta()) return;
+        if (listName.isEmpty()) {
+            return;
+        }
 
-        String listName = clickedOption.getItemMeta().getDisplayName();
         if (event.getClick() == ClickType.LEFT)
         {
-            new ListValueEditorMenu(getMenuManager(), this, listName,
+            new ListValueEditorMenu(getMenuBoard(), this, listName,
                     cardsData.getListMax(cardName, listName),
                     cardsData.getListMin(cardName, listName)).open(player);
         }
@@ -87,7 +89,7 @@ public class CardEditorMenu extends PaginatedSelectionMenu
                     ChatColor.GRAY + "Click to select").setCompareKey(listName));
         }
 
-        return new PaginatedSelectionMenu(CardEditorMenu.this.getMenuManager(), "Pick A List", items, FilterType.DISPLAY_NAME)
+        return new PaginatedSelectionMenu(CardEditorMenu.this.getMenuBoard(), "Pick A List", items, FilterType.DISPLAY_NAME)
         {
             @Override
             public void onOptionClickedDelegate(final InventoryClickEvent event, MenuItem clickedOption, HumanEntity player)

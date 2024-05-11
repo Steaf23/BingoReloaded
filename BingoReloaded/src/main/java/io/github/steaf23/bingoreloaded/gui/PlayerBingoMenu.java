@@ -2,10 +2,10 @@ package io.github.steaf23.bingoreloaded.gui;
 
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
-import io.github.steaf23.bingoreloaded.gui.base.BasicMenu;
-import io.github.steaf23.bingoreloaded.gui.base.MenuItem;
-import io.github.steaf23.bingoreloaded.gui.base.MenuManager;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
+import io.github.steaf23.easymenulib.menu.BasicMenu;
+import io.github.steaf23.easymenulib.menu.MenuBoard;
+import io.github.steaf23.easymenulib.menu.item.MenuItem;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
@@ -17,15 +17,15 @@ public class PlayerBingoMenu extends BasicMenu
     private static final MenuItem LEAVE = new MenuItem(6, 1,
             Material.BARRIER, TITLE_PREFIX + BingoTranslation.OPTIONS_LEAVE.translate());
 
-    public PlayerBingoMenu(MenuManager manager, BingoSession session) {
+    public PlayerBingoMenu(MenuBoard manager, BingoSession session) {
         super(manager, BingoTranslation.OPTIONS_TITLE.translate(), 3);
 
-        addAction(JOIN, p -> {
+        addAction(JOIN, args -> {
             TeamSelectionMenu teamSelection = new TeamSelectionMenu(manager, session.teamManager);
-            teamSelection.open(p);
+            teamSelection.open(args.player());
         });
-        addAction(LEAVE, p -> {
-            BingoParticipant gamePlayer = session.teamManager.getPlayerAsParticipant((Player) p);
+        addAction(LEAVE, args -> {
+            BingoParticipant gamePlayer = session.teamManager.getPlayerAsParticipant((Player) args.player());
             if (gamePlayer != null)
                 session.removeParticipant(gamePlayer);
         });

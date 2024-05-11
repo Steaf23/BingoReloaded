@@ -2,18 +2,20 @@ package io.github.steaf23.bingoreloaded.gui;
 
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.data.TeamData;
-import io.github.steaf23.bingoreloaded.gui.base.*;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.player.team.TeamManager;
+import io.github.steaf23.easymenulib.menu.FilterType;
+import io.github.steaf23.easymenulib.menu.MenuBoard;
+import io.github.steaf23.easymenulib.menu.PaginatedSelectionMenu;
+import io.github.steaf23.easymenulib.menu.item.MenuItem;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
-import javax.xml.xpath.XPathEvaluationResult;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,7 +23,7 @@ public class TeamSelectionMenu extends PaginatedSelectionMenu
 {
     private final TeamManager teamManager;
 
-    public TeamSelectionMenu(MenuManager manager, TeamManager teamManager) {
+    public TeamSelectionMenu(MenuBoard manager, TeamManager teamManager) {
         super(manager, BingoTranslation.OPTIONS_TEAM.translate(), new ArrayList<>(), FilterType.DISPLAY_NAME);
         this.teamManager = teamManager;
     }
@@ -94,7 +96,7 @@ public class TeamSelectionMenu extends PaginatedSelectionMenu
 
             optionItems.add(MenuItem.createColoredLeather(teamTemplate.color(), Material.LEATHER_HELMET)
                     .setName("" + teamTemplate.color() + ChatColor.BOLD + teamTemplate.name())
-                    .setDescription(description.toArray(new String[]{})).setCompareKey(teamId)
+                    .setLore(description.toArray(new String[]{})).setCompareKey(teamId)
                     .setGlowing(playersTeam));
         }
 

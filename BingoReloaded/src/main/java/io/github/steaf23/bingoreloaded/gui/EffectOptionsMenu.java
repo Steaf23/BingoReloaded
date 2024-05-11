@@ -2,24 +2,29 @@ package io.github.steaf23.bingoreloaded.gui;
 
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
-import io.github.steaf23.bingoreloaded.gui.base.BasicMenu;
-import io.github.steaf23.bingoreloaded.gui.base.MenuItem;
-import io.github.steaf23.bingoreloaded.gui.base.MenuManager;
 import io.github.steaf23.bingoreloaded.settings.BingoSettingsBuilder;
+import io.github.steaf23.easymenulib.menu.BasicMenu;
+import io.github.steaf23.easymenulib.menu.MenuBoard;
+import io.github.steaf23.easymenulib.menu.item.MenuItem;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.entity.HumanEntity;
 
 import java.util.EnumSet;
-import java.util.List;
 
 public class EffectOptionsMenu extends BasicMenu
 {
     private final EnumSet<EffectOptionFlags> flags;
+    private final BingoSettingsBuilder settingsBuilder;
 
-    public EffectOptionsMenu(MenuManager menuManager, BingoSettingsBuilder settings, BingoSession session) {
-        super(menuManager, BingoTranslation.OPTIONS_EFFECTS.translate(), 6);
+    public EffectOptionsMenu(MenuBoard menuBoard, BingoSettingsBuilder settings) {
+        super(menuBoard, BingoTranslation.OPTIONS_EFFECTS.translate(), 6);
+        this.settingsBuilder = settings;
         flags = settings.view().effects();
+
+        for (int i = 0; i < 8; i++) {
+            addItem(new MenuItem(i, 5, Material.BLACK_STAINED_GLASS_PANE, " "));
+        }
 
         addEffectAction(EffectOptionFlags.NIGHT_VISION, 5, 3, Material.GOLDEN_CARROT);
         addEffectAction(EffectOptionFlags.WATER_BREATHING, 3, 3, Material.PUFFERFISH);
@@ -28,29 +33,18 @@ public class EffectOptionsMenu extends BasicMenu
         addEffectAction(EffectOptionFlags.SPEED, 1, 3, Material.FEATHER);
         addEffectAction(EffectOptionFlags.NO_DURABILITY, 6, 1, Material.NETHERITE_PICKAXE);
         addEffectAction(EffectOptionFlags.KEEP_INVENTORY, 4, 1, Material.CHEST);
-        addAction(
-                new MenuItem(
-                        44,
-                        Material.DIAMOND,
-                        "" + ChatColor.AQUA + ChatColor.BOLD + BingoTranslation.MENU_SAVE_EXIT.translate()
-                ),
-                (player) -> {
-                    settings.effects(flags, session);
-                    close(player);
-                }
-        );
+        addCloseAction(new MenuItem(8, 5, Material.DIAMOND, "" + ChatColor.AQUA + ChatColor.BOLD + BingoTranslation.MENU_SAVE_EXIT.translate()));
     }
 
     private void addEffectAction(EffectOptionFlags flag, int slotX, int slotY, Material material) {
         MenuItem item = new MenuItem(slotX, slotY, material, "");
-        addAction(
-                item,
-                (player) -> {
+        updateUI(flag, item);
+        addAction(item,
+                player -> {
                     toggleOption(flag);
                     updateUI(flag, item);
                 }
         );
-        updateUI(flag, item);
     }
 
     private void toggleOption(EffectOptionFlags flag) {
@@ -61,17 +55,18 @@ public class EffectOptionsMenu extends BasicMenu
     }
 
     public void updateUI(EffectOptionFlags flag, MenuItem menuItem) {
-        ItemMeta meta = menuItem.getItemMeta();
-        if (meta != null) {
-            if (flags.contains(flag)) {
-                meta.setDisplayName("" + ChatColor.GREEN + ChatColor.BOLD + flag.name + " " + BingoTranslation.EFFECTS_ENABLED.translate());
-                meta.setLore(List.of(ChatColor.GREEN + BingoTranslation.EFFECTS_DISABLE.translate()));
-            } else {
-                meta.setDisplayName("" + ChatColor.RED + ChatColor.BOLD + flag.name + " " + BingoTranslation.EFFECTS_DISABLED.translate());
-                meta.setLore(List.of(ChatColor.RED + BingoTranslation.EFFECTS_ENABLE.translate()));
-            }
+        if (flags.contains(flag)) {
+            menuItem.setName("" + ChatColor.GREEN + ChatColor.BOLD + flag.name + " " + BingoTranslation.EFFECTS_ENABLED.translate());
+            menuItem.setLore(ChatColor.GREEN + BingoTranslation.EFFECTS_DISABLE.translate());
+        } else {
+            menuItem.setName("" + ChatColor.RED + ChatColor.BOLD + flag.name + " " + BingoTranslation.EFFECTS_DISABLED.translate());
+            menuItem.setLore(ChatColor.RED + BingoTranslation.EFFECTS_ENABLE.translate());
         }
-        menuItem.setItemMeta(meta);
-        updateActionItem(menuItem);
+    }
+
+    @Override
+    public void beforeClosing(HumanEntity player) {
+        settingsBuilder.effects(flags);
+        super.beforeClosing(player);
     }
 }

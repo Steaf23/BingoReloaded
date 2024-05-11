@@ -8,11 +8,23 @@
 #    General Configuration Options
 # ==========================================================================
 
-# Change this to MULTIPLE in order to use the features created for managing this plugin for public server owners. (UNIMPLEMENTED! COMING SOON!)
+# Choose between:
+#   - SINGULAR: The main server world is repurposed for the use of bingo. This mode assumes that bingo is the only gamemode or gameplay option on the server
+#       This makes is good to just play a few rounds with some friends without worrying about the world configurations
+#       This can also be used for bigger server networks where each server represents an instance of the game.
+#   - MULTIPLE: The plugin creates worlds specifically for the purpose of playing bingo.
+#       The main world can be converted to a lobby world but this is not required.
 configuration: SINGULAR
 
+# This option means different things for each configuration:
+#   - SINGULAR: This world is the one where bingo is played. The plugin will not create this world, so make sure to create it before running this plugin.
+#     to allow the plugin to use the Nether and End dimensions, the names `<defaultWorldName>_nether` and `<defaultWorldName>_the_end` must also be valid worlds.
+#   - MULTIPLE: This world is used more like a lobby world, however it is not required. Using auto bingo commands the actual game worlds will be created automatically.
+#     In this case, players can be teleported to any active game world using the /autobingo teleport command
+defaultWorldName: world
+
 # The yml file that contains the language data that will be used for this plugin
-#   Choose from: en_us.yml, nl.yml, fr_fr.yml,
+#   Choose from: en_us.yml, nl.yml, fr_fr.yml, pt_br.yml
 #     or make your own by using the existing ones as an example
 language: en_us.yml
 
@@ -21,9 +33,19 @@ language: en_us.yml
 #   (Turning this option on later will not retroactively fill stats for games played with stats off).
 savePlayerStatistics: false # true or false
 
+# If this value is not an empty string it will be sent as a command to the console.
+sendCommandAfterGameEnds: "" # command to send
+
+# If true this will prevent the player from receiving the voting item, allowing custom implementations using the available autobingo command.
+voteUsingCommandsOnly: false
+
+# If true this will prevent the player from receiving the team selection item, allowing custom implementations using the available autobingo command.
+selectTeamsUsingCommandsOnly: false
+
 # ==========================================================================
 #    Lobby Configuration Options
 # ==========================================================================
+# (Lobby configuration options apply to the world specified by defaultWorldName)
 
 # Amount of players needed to automatically start a game, set to 0 to never start a game automatically
 minimumPlayerCount: 4
@@ -40,7 +62,7 @@ useVoteSystem: true
 # Use this to configure what options can be voted on.
 voteList:
   gamemodes:
-    [regular_3, lockout_3, complete_3, regular_5, lockout_5, complete_5] # regular_3 means gamemode Regular with a card size of 3x3
+    [regular_3, lockout_3, complete_3, hotswap_3, regular_5, lockout_5, complete_5, hotswap_5] # where regular_3 means gamemode Regular with a card size of 3x3
   kits:
     [hardcore, normal, overpowered, reloaded, custom_1, custom_2, custom_3, custom_4, custom_5]
   cards:
@@ -52,10 +74,6 @@ voteList:
 
 # The amount of time in seconds before the game will release the players.
 startingCountdownTime: 10
-
-# This preset will be loaded when the plugin loads. This preset can also be changed in the in-game settings menu using /bingo.
-# This preset contains options that can be changed in between every game, like the gamemode or kits used.
-defaultSettingsPreset: default_settings
 
 # When the game starts everyone will be teleported in a random square radius
 #   between 0 and teleportMaxDistance blocks from 0,0. (no more than 1.000.000 blocks)
@@ -106,12 +124,11 @@ disableAdvancements: false # true or false
 disableStatistics: false # true or false
 
 # ==========================================================================
-#    Private Server Configuration Options
+#    Player Data Configuration Options
 # ==========================================================================
-
-# The name of the world where bingo will be played. The plugin will not create this world, so make sure to create it before using this plugin.
-#   to allow the plugin to use the Nether and End dimensions, the names `<defaultWorldName>_nether` and `<defaultWorldName>_the_end` must also be valid worlds.
-defaultWorldName: world
+# For the purpose of loading and saving player data, any world outside the selected world in defaultWorldName or the worlds created by the plugin itself,
+#   is considered a plugin world and player data will not be saved there. When a player travels to a plugin world from the outside, player information can be retained.
+#   This data can then be restored when entering any non-plugin world again.
 
 # Enabling this option will save any player's state (inventory, position, spawn point, levels, etc...)
 #   when they enter this world by teleportation or otherwise.
@@ -124,17 +141,9 @@ savePlayerInformation: true
 #   - AFTER_GAME: player data for all game players gets loaded as soon as the game end.
 #   - AFTER_LEAVING_WORLD: A player's data gets loaded only when they have left the bingo world
 # If this option is set to anything other than AFTER_LEAVING_WORLD and the player leaves the bingo world anyway, their data will also be loaded.
+#   (To prevent this from happening at all, disable savePlayerInformation)
 loadPlayerInformationStrategy: AFTER_LEAVING_WORLD
 
 # ==========================================================================
-#    Extra Configuration Options (These options are added for server owners to control the flow of the game using commands as a primary focus)
+#    MULTIPLE: Public Server Configuration Options
 # ==========================================================================
-
-# If this value is not an empty string it will be sent as a command to the console.
-sendCommandAfterGameEnds: "" # command to send
-
-# If true this will prevent the player from receiving the voting item, allowing custom implementations using the available autobingo command.
-voteUsingCommandsOnly: false
-
-# If true this will prevent the player from receiving the team selection item, allowing custom implementations using the available autobingo command.
-selectTeamsUsingCommandsOnly: false

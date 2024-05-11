@@ -4,11 +4,6 @@ import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.data.TeamData;
 import io.github.steaf23.bingoreloaded.event.*;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
-import io.github.steaf23.bingoreloaded.gui.TeamSelectionMenu;
-import io.github.steaf23.bingoreloaded.gui.base.FilterType;
-import io.github.steaf23.bingoreloaded.gui.base.MenuItem;
-import io.github.steaf23.bingoreloaded.gui.base.MenuManager;
-import io.github.steaf23.bingoreloaded.gui.base.PaginatedSelectionMenu;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.player.VirtualBingoPlayer;
@@ -16,13 +11,9 @@ import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.bingoreloaded.util.TranslatedMessage;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.entity.HumanEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.Event;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.*;
@@ -256,7 +247,7 @@ public class BasicTeamManager implements TeamManager
         if (existingTeam.isPresent())
             return existingTeam.get();
 
-        TeamData.TeamTemplate template = teamData.getTeam(team.getName());
+        TeamData.TeamTemplate template = teamData.getTeam(team.getName(), null);
         BingoTeam bTeam = new BingoTeam(team, template.color(), template.name());
 
         activeTeams.addTeam(bTeam);
@@ -335,6 +326,8 @@ public class BasicTeamManager implements TeamManager
             return;
 
         participant.getTeam().team.removeEntry(event.getPlayer().getName());
+        Event e = new ParticipantCountChangedEvent(session, getTotalParticipantCount() + 1, getTotalParticipantCount());
+        Bukkit.getPluginManager().callEvent(e);
     }
 
     @Override

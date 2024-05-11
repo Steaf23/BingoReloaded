@@ -91,6 +91,9 @@ menu:
     info_complete:
       name: "Complete-All Bingo Card"
       desc: "First team to complete all tasks wins."
+    info_hotswap:
+      name: "Hot-Swap Bingo Card"
+      desc: "Items will get replaced when they expire \nafter some amount of time.\nFirst team to complete {0} tasks wins!" #0: winning score
   options:
     title: "Options Menu"
     start: "Start The Game"

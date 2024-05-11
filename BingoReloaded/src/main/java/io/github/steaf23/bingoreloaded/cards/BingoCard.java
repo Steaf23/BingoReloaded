@@ -7,14 +7,14 @@ import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.data.TaskListData;
 import io.github.steaf23.bingoreloaded.event.BingoCardTaskCompleteEvent;
 import io.github.steaf23.bingoreloaded.event.BingoStatisticCompletedEvent;
-import io.github.steaf23.bingoreloaded.gameloop.BingoGame;
+import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.gui.CardMenu;
-import io.github.steaf23.bingoreloaded.gui.base.MenuManager;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.tasks.*;
 import io.github.steaf23.bingoreloaded.tasks.statistics.BingoStatistic;
+import io.github.steaf23.easymenulib.menu.MenuBoard;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -39,10 +39,10 @@ public class BingoCard
 
     private static final TaskData DEFAULT_TASK = new ItemTask(Material.DIRT, 1);
 
-    public BingoCard(MenuManager menuManager, CardSize size) {
+    public BingoCard(MenuBoard menuBoard, CardSize size) {
         this.size = size;
         this.tasks = new ArrayList<>();
-        this.menu = new CardMenu(menuManager, size, BingoTranslation.CARD_TITLE.translate());
+        this.menu = new CardMenu(menuBoard, size, BingoTranslation.CARD_TITLE.translate());
         menu.setInfo(BingoTranslation.INFO_REGULAR_NAME.translate(),
                 BingoTranslation.INFO_REGULAR_DESC.translate().split("\\n"));
     }
@@ -79,14 +79,12 @@ public class BingoCard
             }
 
             int proportionalMin = Math.max(1, cardsData.getListMin(cardName, listName));
-            for (int i = 0; i < proportionalMin; i++)
-            {
+            for (int i = 0; i < proportionalMin; i++) {
                 ticketList.add(listName);
             }
         }
         List<String> overflowList = new ArrayList<>();
-        for (String listName : cardsData.getListNames(cardName))
-        {
+        for (String listName : cardsData.getListNames(cardName)) {
             int proportionalMin = Math.max(1, cardsData.getListMin(cardName, listName));
             int proportionalMax = cardsData.getListMax(cardName, listName);
 
@@ -192,7 +190,7 @@ public class BingoCard
     }
 
     public BingoCard copy() {
-        BingoCard card = new BingoCard(menu.getMenuManager(), this.size);
+        BingoCard card = new BingoCard(menu.getMenuBoard(), this.size);
         List<BingoTask> newTasks = new ArrayList<>();
         for (BingoTask slot : tasks) {
             newTasks.add(slot.copy());

@@ -1,6 +1,6 @@
 package io.github.steaf23.bingoreloaded.tasks.statistics;
 
-import io.github.steaf23.bingoreloaded.gameloop.BingoGame;
+import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
@@ -16,12 +16,10 @@ import java.util.stream.Collectors;
 public class StatisticTracker
 {
     private final List<StatisticProgress> statistics;
-    private final String worldName;
 
-    public StatisticTracker(String worldName)
+    public StatisticTracker()
     {
         this.statistics = new ArrayList<>();
-        this.worldName = worldName;
     }
 
     public void start(BingoTeamContainer teams)

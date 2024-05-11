@@ -2,9 +2,9 @@ package io.github.steaf23.bingoreloaded.player.team;
 
 import io.github.steaf23.bingoreloaded.cards.BingoCard;
 
-import io.github.steaf23.bingoreloaded.item.ItemText;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
-import io.github.steaf23.bingoreloaded.util.FlexColor;
+import io.github.steaf23.bingoreloaded.util.Message;
+import io.github.steaf23.easymenulib.menu.item.ItemText;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Team;
@@ -64,7 +64,10 @@ public class BingoTeam
 
     public void removeMember(BingoParticipant player) {
         members.remove(player);
-        team.removeEntry(player.getDisplayName());
+        // Team is not registered anymore, if we try to unregister again, we will get errors
+        if (team.getScoreboard().getTeam(id) != null) {
+            team.removeEntry(player.getDisplayName());
+        }
     }
 
     public boolean hasMember(UUID memberId) {

@@ -1,13 +1,13 @@
 package io.github.steaf23.bingoreloaded.gui.creator;
 
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
-import io.github.steaf23.bingoreloaded.gui.base.MenuItem;
-import io.github.steaf23.bingoreloaded.gui.base.BasicMenu;
-import io.github.steaf23.bingoreloaded.gui.base.MenuManager;
 import io.github.steaf23.bingoreloaded.tasks.BingoTask;
 import io.github.steaf23.bingoreloaded.tasks.StatisticTask;
 import io.github.steaf23.bingoreloaded.tasks.statistics.BingoStatistic;
-import io.github.steaf23.bingoreloaded.util.FlexColor;
+import io.github.steaf23.easymenulib.menu.BasicMenu;
+import io.github.steaf23.easymenulib.menu.MenuBoard;
+import io.github.steaf23.easymenulib.menu.item.MenuItem;
+import io.github.steaf23.easymenulib.util.FlexColor;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Statistic;
@@ -25,9 +25,9 @@ public class StatisticSelectionMenu extends BasicMenu
     protected static final MenuItem BG_ITEM = new MenuItem(Material.BLACK_STAINED_GLASS_PANE, " ", "");
     protected static final MenuItem QUIT = new MenuItem(49, Material.REDSTONE, "" + ChatColor.RED + ChatColor.BOLD + BingoTranslation.MENU_SAVE_EXIT.translate(), "");
 
-    public StatisticSelectionMenu(MenuManager menuManager, String listName)
+    public StatisticSelectionMenu(MenuBoard menuBoard, String listName)
     {
-        super(menuManager, "Pick Statistics", 6);
+        super(menuBoard, "Pick Statistics", 6);
         this.listName = listName;
         addAction(new MenuItem(1, 0, Material.FEATHER, TITLE_PREFIX + "Travel"), p -> createTravelMenu().open(p));
         addAction(new MenuItem(3, 0, Material.DIAMOND_SWORD, TITLE_PREFIX + "Kill"), p -> createEntityMenu(Statistic.KILL_ENTITY).open(p));
@@ -67,7 +67,7 @@ public class StatisticSelectionMenu extends BasicMenu
         List<BingoTask> tasks = new ArrayList<>();
         entities.forEach(e -> tasks.add(new BingoTask(new StatisticTask(new BingoStatistic(stat, e)))));
 
-        TaskPickerMenu picker = new TaskPickerMenu(getMenuManager(), "Select Entities", tasks, listName);
+        TaskPickerMenu picker = new TaskPickerMenu(getMenuBoard(), "Select Entities", tasks, listName);
         return picker;
     }
 
@@ -88,7 +88,7 @@ public class StatisticSelectionMenu extends BasicMenu
                 tasks.add(new BingoTask(new StatisticTask(new BingoStatistic(stat, m))));
             }
         }
-        TaskPickerMenu picker = new TaskPickerMenu(getMenuManager(), "Select Blocks", tasks, listName);
+        TaskPickerMenu picker = new TaskPickerMenu(getMenuBoard(), "Select Blocks", tasks, listName);
         return picker;
     }
 
@@ -108,7 +108,7 @@ public class StatisticSelectionMenu extends BasicMenu
                 tasks.add(new BingoTask(new StatisticTask(new BingoStatistic(stat, m))));
             }
         }
-        TaskPickerMenu picker = new TaskPickerMenu(getMenuManager(), "Select Items", tasks, listName);
+        TaskPickerMenu picker = new TaskPickerMenu(getMenuBoard(), "Select Items", tasks, listName);
         return picker;
     }
 
@@ -119,7 +119,7 @@ public class StatisticSelectionMenu extends BasicMenu
         {
             tasks.add(new BingoTask(new StatisticTask(new BingoStatistic(stat))));
         }
-        TaskPickerMenu picker = new TaskPickerMenu(getMenuManager(), "Travel Statistics", tasks, listName);
+        TaskPickerMenu picker = new TaskPickerMenu(getMenuBoard(), "Travel Statistics", tasks, listName);
         return picker;
     }
 
@@ -129,7 +129,7 @@ public class StatisticSelectionMenu extends BasicMenu
         BingoStatistic.getStatisticsOfCategory(BingoStatistic.StatisticCategory.CONTAINER_INTERACT)
                 .forEach(stat -> tasks.add(new BingoTask(new StatisticTask(new BingoStatistic(stat))))
                 );
-        TaskPickerMenu picker = new TaskPickerMenu(getMenuManager(), "Container Statistics", tasks, listName);
+        TaskPickerMenu picker = new TaskPickerMenu(getMenuBoard(), "Container Statistics", tasks, listName);
         return picker;
     }
 
@@ -139,7 +139,7 @@ public class StatisticSelectionMenu extends BasicMenu
         BingoStatistic.getStatisticsOfCategory(BingoStatistic.StatisticCategory.BLOCK_INTERACT)
                 .forEach(stat -> tasks.add(new BingoTask(new StatisticTask(new BingoStatistic(stat))))
                 );
-        TaskPickerMenu picker = new TaskPickerMenu(getMenuManager(),  "Select Blocks", tasks, listName);
+        TaskPickerMenu picker = new TaskPickerMenu(getMenuBoard(),  "Select Blocks", tasks, listName);
         return picker;
     }
 
@@ -149,7 +149,7 @@ public class StatisticSelectionMenu extends BasicMenu
         BingoStatistic.getStatisticsOfCategory(BingoStatistic.StatisticCategory.DAMAGE)
                 .forEach(stat -> tasks.add(new BingoTask(new StatisticTask(new BingoStatistic(stat))))
                 );
-        TaskPickerMenu picker = new TaskPickerMenu(getMenuManager(), "Damage Statistics", tasks, listName);
+        TaskPickerMenu picker = new TaskPickerMenu(getMenuBoard(), "Damage Statistics", tasks, listName);
         return picker;
     }
 
@@ -170,7 +170,7 @@ public class StatisticSelectionMenu extends BasicMenu
                     };
                 }
                 );
-        TaskPickerMenu picker = new TaskPickerMenu(getMenuManager(), "Other Statistics", tasks, listName);
+        TaskPickerMenu picker = new TaskPickerMenu(getMenuBoard(), "Other Statistics", tasks, listName);
         return picker;
     }
 

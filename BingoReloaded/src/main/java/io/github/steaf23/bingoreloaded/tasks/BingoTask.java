@@ -1,13 +1,14 @@
 package io.github.steaf23.bingoreloaded.tasks;
 
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
-import io.github.steaf23.bingoreloaded.gui.base.MenuItem;
-import io.github.steaf23.bingoreloaded.item.ItemText;
+import io.github.steaf23.bingoreloaded.gui.item.TaskItemAction;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.tasks.statistics.BingoStatistic;
 import io.github.steaf23.bingoreloaded.util.Message;
-import io.github.steaf23.bingoreloaded.util.PDCHelper;
 import io.github.steaf23.bingoreloaded.util.timer.GameTimer;
+import io.github.steaf23.easymenulib.menu.item.ItemText;
+import io.github.steaf23.easymenulib.menu.item.MenuItem;
+import io.github.steaf23.easymenulib.util.PDCHelper;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -17,6 +18,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
+import javax.annotation.Nullable;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -97,7 +99,7 @@ public class BingoTask
         return completedBy != null;
     }
 
-    public MenuItem asStack()
+    public MenuItem asMenuItem()
     {
         ItemStack item;
         // Step 1: create the item and put the new name, description and material on it.
@@ -152,8 +154,7 @@ public class BingoTask
 
         // STEP 2: Add additional stuff like pdc data and glowing effect.
 
-        MenuItem finalItem = new MenuItem(item);
-        ItemMeta meta = finalItem.getItemMeta();
+        ItemMeta meta = item.getItemMeta();
         PersistentDataContainer pdcData = meta.getPersistentDataContainer();
         // Serialize specific data first, to catch null pointers from incomplete implementations.
         pdcData = data.pdcSerialize(pdcData);
@@ -166,20 +167,22 @@ public class BingoTask
         else
             pdcData.set(getTaskDataKey("completed_by"), PersistentDataType.STRING, "");
 
-        meta.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES);
-        finalItem.setItemMeta(meta);
+        meta.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_UNBREAKABLE, ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_DYE);
+        item.setItemMeta(meta);
 
+        MenuItem finalItem = new MenuItem(item);
         if (glowing || isCompleted())
         {
             finalItem.setGlowing(true);
         }
 
+        finalItem.setAction(new TaskItemAction(this));
         return finalItem;
     }
 
-    public static BingoTask fromStack(ItemStack in)
+    public static @Nullable BingoTask fromMenuItem(MenuItem in)
     {
-        PersistentDataContainer pdcData = in.getItemMeta().getPersistentDataContainer();
+        PersistentDataContainer pdcData = in.buildStack().getItemMeta().getPersistentDataContainer();
 
         boolean voided = pdcData.getOrDefault(getTaskDataKey("voided"), PersistentDataType.BYTE, (byte)0) != 0;
         UUID completedByUUID = null;

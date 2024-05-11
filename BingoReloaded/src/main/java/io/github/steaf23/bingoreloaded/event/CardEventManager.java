@@ -1,6 +1,6 @@
 package io.github.steaf23.bingoreloaded.event;
 
-import io.github.steaf23.bingoreloaded.gameloop.BingoGame;
+import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.cards.BingoCard;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
@@ -19,12 +19,10 @@ import java.util.List;
 public class CardEventManager
 {
     private final List<BingoCard> cards;
-    private String worldName;
 
-    public CardEventManager(String worldName)
+    public CardEventManager()
     {
         this.cards = new ArrayList<>();
-        this.worldName = worldName;
     }
 
     public void setCards(List<BingoCard> newCards)

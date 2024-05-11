@@ -4,6 +4,7 @@ import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
+import io.github.steaf23.easymenulib.util.SmallCaps;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ChatMessageType;
@@ -167,7 +168,7 @@ public class Message
             return;
 
         for (Player p : Bukkit.getOnlinePlayers()) {
-            if (BingoReloaded.getWorldNameOfDimension(p.getWorld()).equals(session.worldName)) {
+            if (session.hasPlayer(p)) {
                 send(p);
             }
         }
@@ -190,12 +191,10 @@ public class Message
 
     public static void log(String text) {
         Bukkit.getConsoleSender().sendMessage(LOG_PREFIX + ": " + text);
-//        BingoLogger.log("Message", text);
     }
 
     public static void log(String text, String worldName) {
         Bukkit.getConsoleSender().sendMessage(LOG_PREFIX + "(" + worldName + "): " + text);
-//        BingoLogger.log("Message", "(" + worldName + "): " + text);
     }
 
 
@@ -217,7 +216,7 @@ public class Message
 
     public static void sendDebug(BaseComponent text, Player player) {
         BaseComponent finalMsg = new TextComponent();
-        finalMsg.addExtra(LOG_PREFIX + " ");
+        finalMsg.addExtra(new TextComponent(BingoTranslation.MESSAGE_PREFIX.translate()));
         finalMsg.addExtra(text);
         player.spigot().sendMessage(finalMsg);
     }
@@ -228,7 +227,7 @@ public class Message
 
     public static void sendDebug(BaseComponent[] text, Player player) {
         BaseComponent finalMsg = new TextComponent();
-        finalMsg.addExtra(LOG_PREFIX + " ");
+        finalMsg.addExtra(new TextComponent(BingoTranslation.MESSAGE_PREFIX.translate()));
         TextComponent allText = new TextComponent();
         allText.setExtra(Arrays.stream(text).collect(Collectors.toList()));
         finalMsg.addExtra(allText);
@@ -258,7 +257,7 @@ public class Message
         // convert custom hex colors to legacyText: {#00bb33} -> ChatColor.of("#00bb33")
         // convert "&" to "§" and "&&" to "&"
         for (int i = 0; i < rawSplit.length; i++) {
-            String part = Message.convertConfigString(rawSplit[i]);
+            String part = BingoTranslation.convertConfigString(rawSplit[i]);
             rawSplit[i] = part;
         }
 
@@ -282,22 +281,10 @@ public class Message
 
     // solve placeholders from PlaceholderAPI
     protected static String solvePlaceholders(String input, Player player) {
-        if (BingoReloaded.usesPlaceholderAPI) {
+        if (BingoReloaded.PLACEHOLDER_API_ENABLED) {
             return PlaceholderAPI.setPlaceholders(player, input);
         }
         return input;
-    }
-
-    /**
-     * Convert input string to a presentable string replacing color codes and small caps codes
-     *
-     * @return
-     */
-    public static String convertConfigString(String input) {
-        String out = input;
-        out = BingoTranslation.convertColors(out);
-        out = BingoTranslation.convertSmallCaps(out);
-        return out;
     }
 
 
