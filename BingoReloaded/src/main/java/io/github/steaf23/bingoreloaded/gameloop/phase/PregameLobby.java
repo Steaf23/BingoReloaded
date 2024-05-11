@@ -168,6 +168,8 @@ public class PregameLobby implements GamePhase
         outcome.kit = getKeyWithHighestValue(kits);
         outcome.card = getKeyWithHighestValue(cards);
 
+        Message.log("VOTE: " + outcome.gamemode);
+
         return outcome;
     }
 

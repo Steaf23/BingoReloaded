@@ -83,6 +83,8 @@ public enum BingoTranslation
     INFO_LOCKOUT_DESC("menu.card.info_lockout.desc"),
     INFO_COMPLETE_NAME("menu.card.info_complete.name"),
     INFO_COMPLETE_DESC("menu.card.info_complete.desc"),
+    INFO_HOTSWAP_NAME("menu.card.info_hotswap.name"),
+    INFO_HOTSWAP_DESC("menu.card.info_hotswap.desc"),
     OPTIONS_TITLE("menu.options.title"),
     OPTIONS_START("menu.options.start"),
     OPTIONS_END("menu.options.end"),

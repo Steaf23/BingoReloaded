@@ -1,5 +1,6 @@
 package io.github.steaf23.bingoreloaded.cards;
 
+import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.bingoreloaded.util.timer.CounterTimer;
@@ -20,9 +21,8 @@ public class HotswapBingoCard extends BingoCard
         this.winningScore = winningScore;
         this.taskTimer = new CounterTimer();
         taskTimer.start();
-        menu.setInfo("HotSwap",
-                "Items will get replaced when they expire after some amount of time. ",
-                "First team to complete " + winningScore + " tasks wins!");
+        menu.setInfo(BingoTranslation.INFO_HOTSWAP_NAME.translate(),
+                BingoTranslation.INFO_HOTSWAP_DESC.translate(String.valueOf(winningScore)).split("\\n"));
     }
 
     @Override

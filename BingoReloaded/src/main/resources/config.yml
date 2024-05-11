@@ -62,7 +62,7 @@ useVoteSystem: true
 # Use this to configure what options can be voted on.
 voteList:
   gamemodes:
-    [regular_3, lockout_3, complete_3, regular_5, lockout_5, complete_5] # where regular_3 means gamemode Regular with a card size of 3x3
+    [regular_3, lockout_3, complete_3, hotswap_3, regular_5, lockout_5, complete_5, hotswap_5] # where regular_3 means gamemode Regular with a card size of 3x3
   kits:
     [hardcore, normal, overpowered, reloaded, custom_1, custom_2, custom_3, custom_4, custom_5]
   cards:

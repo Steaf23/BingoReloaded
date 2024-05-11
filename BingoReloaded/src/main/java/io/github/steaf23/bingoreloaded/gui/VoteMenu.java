@@ -100,6 +100,27 @@ public class VoteMenu extends BasicMenu
                     gamemodeOptions.close(player);
                 });
             }
+            if (voteList.gamemodes().contains("hotswap_5"))
+            {
+                gamemodeOptions.addAction(new MenuItem(itemIndex, Material.YELLOW_CONCRETE,
+                        ChatColor.BOLD + BingoGamemode.HOTSWAP.displayName + " - 5x5",
+                        BingoTranslation.INFO_HOTSWAP_DESC.translate(String.valueOf(lobby.getSession().settingsBuilder.view().hotswapGoal())).split("\\n")), (args) -> {
+                    HumanEntity player = args.player();
+                    lobby.voteGamemode("hotswap_5", player);
+                    gamemodeOptions.close(player);
+                });
+                itemIndex++;
+            }
+            if (voteList.gamemodes().contains("hotswap_3"))
+            {
+                gamemodeOptions.addAction(new MenuItem(itemIndex, Material.ORANGE_CONCRETE,
+                        ChatColor.BOLD + BingoGamemode.HOTSWAP.displayName + " - 3x3",
+                        BingoTranslation.INFO_HOTSWAP_DESC.translate(String.valueOf(lobby.getSession().settingsBuilder.view().hotswapGoal())).split("\\n")), (args) -> {
+                    HumanEntity player = args.player();
+                    lobby.voteGamemode("hotswap_3", player);
+                    gamemodeOptions.close(player);
+                });
+            }
             gamemodeOptions.addCloseAction(EXIT);
 
             addAction(new MenuItem(2, 1, Material.ENCHANTED_BOOK, TITLE_PREFIX + BingoTranslation.VOTE_GAMEMODE.translate()), p -> {

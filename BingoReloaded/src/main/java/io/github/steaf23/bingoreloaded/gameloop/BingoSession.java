@@ -258,7 +258,7 @@ public class BingoSession
         new Message(" ").sendAll(this);
         if (!voteResult.gamemode.isEmpty()) {
             var tuple = voteResult.gamemode.split("_");
-            new TranslatedMessage(BingoTranslation.VOTE_WON).arg(BingoTranslation.OPTIONS_GAMEMODE.translate()).arg(BingoGamemode.fromDataString(tuple[0] + " " + tuple[1] + "x" + tuple[1]).displayName).sendAll(this);
+            new TranslatedMessage(BingoTranslation.VOTE_WON).arg(BingoTranslation.OPTIONS_GAMEMODE.translate()).arg(BingoGamemode.fromDataString(tuple[0]).displayName + " " + tuple[1] + "x" + tuple[1]).sendAll(this);
         }
         if (!voteResult.kit.isEmpty()) {
             new TranslatedMessage(BingoTranslation.VOTE_WON).arg(BingoTranslation.OPTIONS_KIT.translate()).arg(PlayerKit.fromConfig(voteResult.kit).getDisplayName()).sendAll(this);
