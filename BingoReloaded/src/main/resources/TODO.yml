@@ -47,6 +47,3 @@ add dummy card to kit creator, to configure card slot as well
 Add config option to
   - end game when only 1 team remains
   - force end when no players are online
-
-items despawn bug??
-(player does not receive kit again either)

@@ -159,7 +159,7 @@ public class SoloTeamManager implements TeamManager
 
     @Override
     public int getMaxTeamSize() {
-        return session.settingsBuilder.view().maxTeamSize();
+        return 1;
     }
 }
 

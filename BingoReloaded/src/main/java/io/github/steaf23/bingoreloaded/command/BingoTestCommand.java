@@ -49,40 +49,6 @@ public class BingoTestCommand implements TabExecutor
         }
 
         switch (args[0]) {
-            case "world" -> {
-                if (args.length < 3) {
-                    break;
-                }
-
-
-                String worldName = args[1];
-                WorldGroup group = WorldData.getWorldGroup(plugin, worldName);
-                switch (args[2]) {
-                    case "tp":
-                        if (!(commandSender instanceof Player p)) {
-                            return false;
-                        }
-                        if (group == null) {
-                            Message.log("Cannot TP player to non-existing world " + worldName);
-                            return false;
-                        }
-                        group.teleportPlayer(p);
-                        break;
-                    case "create":
-                        if (group != null) {
-                            Message.log("Cannot create world " + worldName + ", because it already exists!");
-                        }
-                        WorldData.createWorldGroup(plugin, worldName);
-                        break;
-                    case "destroy":
-                        if (group == null) {
-                            Message.log("Cannot remove non-existing world " + worldName);
-                            return false;
-                        }
-                        WorldData.destroyWorldGroup(plugin, WorldData.getWorldGroup(plugin, worldName));
-                        break;
-                }
-            }
             case "complete" -> {
                 if (args.length < 3) {
                     break;

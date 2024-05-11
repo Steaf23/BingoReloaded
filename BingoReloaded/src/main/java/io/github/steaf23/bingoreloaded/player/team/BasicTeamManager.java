@@ -30,13 +30,11 @@ public class BasicTeamManager implements TeamManager
 
     // Contains all players that will join a team automatically when the game starts
     private final Map<UUID, String> automaticTeamPlayers;
-    private int maxTeamSize;
 
     public BasicTeamManager(Scoreboard teamBoard, BingoSession session) {
         this.session = session;
         this.teams = teamBoard;
         this.teamData = new TeamData();
-        this.maxTeamSize = session.settingsBuilder.view().maxTeamSize();
         this.automaticTeamPlayers = new HashMap<>();
         this.activeTeams = new BingoTeamContainer();
         createTeams();
@@ -61,7 +59,7 @@ public class BasicTeamManager implements TeamManager
         {
         }
 
-        int totalPlayers = teams.getTeams().size() * maxTeamSize;
+        int totalPlayers = teams.getTeams().size() * getMaxTeamSize();
         int availablePlayers = totalPlayers - getTotalParticipantCount();
         if (automaticTeamPlayers.size() > availablePlayers) {
             Message.error("Could not fit every player into a team, consider changing the team size or adding more teams");
@@ -100,7 +98,7 @@ public class BasicTeamManager implements TeamManager
             String playerName = autoPlayersCopy.get(playerId);
             TeamCount lowest = counts.size() > 0 ? counts.get(0) : null;
             // If our lowest count is the same as the highest count, all incomplete teams have been filled
-            if (counts.size() == 0 || lowest.count == maxTeamSize) {
+            if (counts.size() == 0 || lowest.count == getMaxTeamSize()) {
                 // If there are still players left in the queue, create a new team
                 if (automaticTeamPlayers.size() > 0) {
                     BingoTeam newTeam = activateAnyTeam();
@@ -166,7 +164,7 @@ public class BasicTeamManager implements TeamManager
 
     @Override
     public int getMaxTeamSize() {
-        return maxTeamSize;
+        return session.settingsBuilder.view().maxTeamSize();
     }
 
     @Override
@@ -202,7 +200,7 @@ public class BasicTeamManager implements TeamManager
         if (bingoTeam == null) {
             return false;
         }
-        if (bingoTeam.getMembers().size() == maxTeamSize) {
+        if (bingoTeam.getMembers().size() == getMaxTeamSize()) {
             return false;
         }
 
@@ -304,10 +302,9 @@ public class BasicTeamManager implements TeamManager
     @Override
     public void handleSettingsUpdated(BingoSettingsUpdatedEvent event) {
         int newTeamSize = event.getNewSettings().maxTeamSize();
-        if (newTeamSize == maxTeamSize)
+        if (newTeamSize == getMaxTeamSize())
             return;
 
-        this.maxTeamSize = newTeamSize;
         if (!session.isRunning()) {
             getParticipants().forEach(p -> {
                 removeMemberFromTeam(p);

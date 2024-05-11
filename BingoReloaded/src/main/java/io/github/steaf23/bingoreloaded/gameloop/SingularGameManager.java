@@ -15,7 +15,7 @@ public class SingularGameManager extends GameManager
     public SingularGameManager(@NotNull JavaPlugin plugin, ConfigData config, MenuBoard menuBoard) {
         super(plugin, config, menuBoard);
 
-        WorldGroup group = WorldData.getWorldGroup(plugin, config.defaultWorldName);
+        WorldGroup group = createWorldGroupFromExistingWorlds();
         if (group == null) {
             return;
         }

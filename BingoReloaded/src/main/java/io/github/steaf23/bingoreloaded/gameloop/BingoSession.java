@@ -10,6 +10,7 @@ import io.github.steaf23.bingoreloaded.gameloop.phase.GamePhase;
 import io.github.steaf23.bingoreloaded.gameloop.phase.PostGamePhase;
 import io.github.steaf23.bingoreloaded.gameloop.phase.PregameLobby;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
+import io.github.steaf23.bingoreloaded.player.team.BasicTeamManager;
 import io.github.steaf23.bingoreloaded.player.team.SoloTeamManager;
 import io.github.steaf23.bingoreloaded.player.team.TeamManager;
 import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
@@ -53,8 +54,8 @@ public class BingoSession
         this.config = config;
         this.playerData = playerData;
         this.scoreboard = new BingoScoreboard(this, config.showPlayerInScoreboard && false);
-        this.teamManager = new SoloTeamManager(scoreboard.getTeamBoard(), this);
-//      this.teamManager = new BasicTeamManager(scoreboard.getTeamBoard(), this);
+//        this.teamManager = new SoloTeamManager(scoreboard.getTeamBoard(), this);
+        this.teamManager = new BasicTeamManager(scoreboard.getTeamBoard(), this);
 
         BingoReloaded.scheduleTask((t) -> {
             for (Player p : Bukkit.getOnlinePlayers()) {
