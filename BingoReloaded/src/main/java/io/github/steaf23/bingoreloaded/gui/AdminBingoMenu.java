@@ -27,14 +27,12 @@ public class AdminBingoMenu extends BasicMenu
     private static final int DURATION_MAX = 60;
     private static final int TEAMSIZE_MAX = 64;
 
-    private static final MenuItem START = new MenuItem(4, 0,
+    private static final MenuItem START = new MenuItem(6, 0,
             Material.LIME_CONCRETE, TITLE_PREFIX + BingoTranslation.OPTIONS_START.translate());
-    private static final MenuItem END = new MenuItem(4, 0,
+    private static final MenuItem END = new MenuItem(6, 0,
             Material.RED_CONCRETE, TITLE_PREFIX + BingoTranslation.OPTIONS_END.translate());
-    private static final MenuItem JOIN = new MenuItem(6, 0,
+    private static final MenuItem JOIN = new MenuItem(2, 0,
             Material.WHITE_GLAZED_TERRACOTTA, TITLE_PREFIX + BingoTranslation.OPTIONS_TEAM.translate());
-    private static final MenuItem LEAVE = new MenuItem(2, 0,
-            Material.BARRIER, TITLE_PREFIX + BingoTranslation.OPTIONS_LEAVE.translate());
     private static final MenuItem CARD = new MenuItem(1, 2,
             Material.MAP, TITLE_PREFIX + BingoTranslation.OPTIONS_CARD.translate());
     private static final MenuItem KIT = new MenuItem(3, 2,
@@ -61,11 +59,6 @@ public class AdminBingoMenu extends BasicMenu
         addAction(JOIN, p -> {
             TeamSelectionMenu selectionMenu = new TeamSelectionMenu(menuBoard, session.teamManager);
             selectionMenu.open(p);
-        });
-        addAction(LEAVE, arguments -> {
-            BingoParticipant gamePlayer = session.teamManager.getPlayerAsParticipant((Player) arguments.player());
-            if (gamePlayer != null)
-                session.removeParticipant(gamePlayer);
         });
         addAction(KIT, arguments -> new KitOptionsMenu(getMenuBoard(), session).open(arguments.player()));
         addAction(MODE, arguments -> {

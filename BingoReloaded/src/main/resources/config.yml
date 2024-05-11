@@ -47,6 +47,11 @@ selectTeamsUsingCommandsOnly: false
 # ==========================================================================
 # (Lobby configuration options apply to the world specified by defaultWorldName)
 
+# If true, existing teams will not be used. Instead, each player is in their own team, and they get a color assigned automatically.
+# This also allows for an unlimited amount of players/teams in a single game.
+# Additionally, players cannot decide to join a team, they can only opt in or opt out of playing the game.
+singlePlayerTeams: false
+
 # Amount of players needed to automatically start a game, set to 0 to never start a game automatically
 minimumPlayerCount: 4
 
@@ -105,7 +110,7 @@ GoUpWand:
 #   also determines the time after which the spawn platform will disappear.
 gracePeriod: 30
 
-# If false, items from "Obtain Item" tasks will not be removed from the player's inventory.
+# If true, items from "Obtain Item" tasks will be consumed from the player's inventory when it's completed.
 removeTaskItems: true # true or false
 
 # Enables the /btc options for players to use to communicate with each other.
@@ -122,6 +127,9 @@ disableAdvancements: false # true or false
 
 # If false, statistics can appear on the bingo card.
 disableStatistics: false # true or false
+
+# If true, bingo games will end automatically when there is only 1 team left online in the world or when everyone has left.
+endGameWithoutTeams: true # true or false
 
 # ==========================================================================
 #    Player Data Configuration Options
@@ -143,7 +151,3 @@ savePlayerInformation: true
 # If this option is set to anything other than AFTER_LEAVING_WORLD and the player leaves the bingo world anyway, their data will also be loaded.
 #   (To prevent this from happening at all, disable savePlayerInformation)
 loadPlayerInformationStrategy: AFTER_LEAVING_WORLD
-
-# ==========================================================================
-#    MULTIPLE: Public Server Configuration Options
-# ==========================================================================

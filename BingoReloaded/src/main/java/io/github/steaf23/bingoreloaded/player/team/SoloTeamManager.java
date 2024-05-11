@@ -2,7 +2,10 @@ package io.github.steaf23.bingoreloaded.player.team;
 
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.data.TeamData;
+import io.github.steaf23.bingoreloaded.event.ParticipantCountChangedEvent;
 import io.github.steaf23.bingoreloaded.event.ParticipantJoinedTeamEvent;
+import io.github.steaf23.bingoreloaded.event.PlayerJoinedSessionWorldEvent;
+import io.github.steaf23.bingoreloaded.event.PlayerLeftSessionWorldEvent;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.VirtualBingoPlayer;
@@ -10,11 +13,14 @@ import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.bingoreloaded.util.TranslatedMessage;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
+import org.bukkit.event.Event;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -87,12 +93,11 @@ public class SoloTeamManager implements TeamManager
 
     @Override
     public void setup() {
-
     }
 
     @Override
-    public TeamData getTeamData() {
-        return teamData;
+    public Map<String, TeamData.TeamTemplate> getJoinableTeams() {
+        return Map.of();
     }
 
     @Override
@@ -101,18 +106,14 @@ public class SoloTeamManager implements TeamManager
     }
 
     /**
-     * We don't care about the team unless it's auto, else we just add a new team
-     * @param player
+     * @param player player to create a team for
      * @param teamId ignored for solo team manager, since teams are managed per player.
      * @return
      */
     @Override
     public boolean addMemberToTeam(BingoParticipant player, String teamId) {
-        if (teamId.equals("auto")) {
-            return false;
-        }
+        removeMemberFromTeamSilently(player);
 
-        removeMemberFromTeam(player);
         ChatColor teamColor = determineTeamColor();
         Team boardTeam = teamBoard.getTeam(player.getId().toString());
         if (boardTeam == null) {
@@ -140,12 +141,7 @@ public class SoloTeamManager implements TeamManager
 
     @Override
     public boolean removeMemberFromTeam(@Nullable BingoParticipant member) {
-        for (BingoTeam team : teams) {
-            if (team.getMembers().contains(member)) {
-                team.removeMember(member);
-            }
-        }
-        teams.removeEmptyTeams();
+        removeMemberFromTeamSilently(member);
         if (member == null) {
             return true;
         }
@@ -160,6 +156,38 @@ public class SoloTeamManager implements TeamManager
     @Override
     public int getMaxTeamSize() {
         return 1;
+    }
+
+
+    @Override
+    public void handlePlayerJoinedSessionWorld(PlayerJoinedSessionWorldEvent event) {
+        BingoParticipant participant = getPlayerAsParticipant(event.getPlayer());
+        if (participant == null)
+            return;
+
+        int onlineParticipants = getOnlineParticipants().size();
+        Event e = new ParticipantCountChangedEvent(session, onlineParticipants, onlineParticipants - 1);
+        Bukkit.getPluginManager().callEvent(e);
+    }
+
+    @Override
+    public void handlePlayerLeftSessionWorld(PlayerLeftSessionWorldEvent event) {
+        BingoParticipant participant = getPlayerAsParticipant(event.getPlayer());
+        if (participant == null)
+            return;
+
+        int onlineParticipants = getOnlineParticipants().size();
+        Event e = new ParticipantCountChangedEvent(session, onlineParticipants, onlineParticipants + 1);
+        Bukkit.getPluginManager().callEvent(e);
+    }
+
+    private void removeMemberFromTeamSilently(@NotNull BingoParticipant member) {
+        for (BingoTeam team : teams) {
+            if (team.getMembers().contains(member)) {
+                team.removeMember(member);
+            }
+        }
+        teams.removeEmptyTeams();
     }
 }
 

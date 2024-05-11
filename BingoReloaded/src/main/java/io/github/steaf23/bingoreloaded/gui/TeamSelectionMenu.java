@@ -1,11 +1,13 @@
 package io.github.steaf23.bingoreloaded.gui;
 
+import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.data.TeamData;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.player.team.TeamManager;
+import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.easymenulib.menu.FilterType;
 import io.github.steaf23.easymenulib.menu.MenuBoard;
 import io.github.steaf23.easymenulib.menu.PaginatedSelectionMenu;
@@ -38,19 +40,14 @@ public class TeamSelectionMenu extends PaginatedSelectionMenu
 
         if (clickedOption.getCompareKey().equals("item_auto")) {
             teamManager.addMemberToTeam(participant, "auto");
-            close(player);
-            open(player);
             return;
         } else if (clickedOption.getCompareKey().equals("item_leave")) {
             teamManager.removeMemberFromTeam(participant);
-            close(player);
-            open(player);
             return;
         }
 
         teamManager.addMemberToTeam(participant, clickedOption.getCompareKey());
-        close(player);
-        open(player);
+        reopen(player);
     }
 
     @Override
@@ -63,7 +60,7 @@ public class TeamSelectionMenu extends PaginatedSelectionMenu
         optionItems.add(new MenuItem(Material.TNT, "" + ChatColor.BOLD + ChatColor.ITALIC + BingoTranslation.OPTIONS_LEAVE.translate())
                 .setGlowing(true).setCompareKey("item_leave"));
 
-        var allTeams = teamManager.getTeamData().getTeams();
+        var allTeams = teamManager.getJoinableTeams();
         for (String teamId : allTeams.keySet()) {
             boolean playersTeam = false;
             TeamData.TeamTemplate teamTemplate = allTeams.get(teamId);
@@ -102,10 +99,5 @@ public class TeamSelectionMenu extends PaginatedSelectionMenu
 
         clearItems();
         addItemsToSelect(optionItems);
-    }
-
-    @Override
-    public boolean openOnce() {
-        return true;
     }
 }

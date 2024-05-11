@@ -65,6 +65,10 @@ public class BasicMenu implements Menu
         manager.close(this, arguments.player);
     }
 
+    public final void reopen(HumanEntity player) {
+        beforeOpening(player);
+    }
+
     public @Nullable MenuItem getItemAtSlot(int slot) {
         for (MenuItem item : items) {
             if (item.getSlot() == slot)

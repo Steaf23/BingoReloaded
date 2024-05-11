@@ -7,6 +7,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class BingoTeamContainer implements Iterable<BingoTeam>
 {
@@ -53,6 +54,18 @@ public class BingoTeamContainer implements Iterable<BingoTeam>
             allPlayers.addAll(activeTeam.getMembers());
         }
         return allPlayers;
+    }
+
+    public Set<BingoParticipant> getAllOnlineParticipants() {
+        return getAllParticipants().stream()
+                .filter(p -> p.sessionPlayer().isPresent() || p.alwaysActive())
+                .collect(Collectors.toSet());
+    }
+
+    public long getOnlineTeamCount() {
+        return teams.stream()
+                .filter(t -> t.getMembers().stream().anyMatch(player -> player.sessionPlayer().isPresent() || player.alwaysActive()))
+                .count();
     }
 
     public void removeEmptyTeams() {

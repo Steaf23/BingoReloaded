@@ -60,7 +60,7 @@ public class BasicTeamManager implements TeamManager
         }
 
         int totalPlayers = teams.getTeams().size() * getMaxTeamSize();
-        int availablePlayers = totalPlayers - getTotalParticipantCount();
+        int availablePlayers = totalPlayers - (getParticipants().size() + automaticTeamPlayers.size());
         if (automaticTeamPlayers.size() > availablePlayers) {
             Message.error("Could not fit every player into a team, consider changing the team size or adding more teams");
             return;
@@ -221,8 +221,8 @@ public class BasicTeamManager implements TeamManager
     }
 
     @Override
-    public TeamData getTeamData() {
-        return teamData;
+    public Map<String, TeamData.TeamTemplate> getJoinableTeams() {
+        return teamData.getTeams();
     }
 
     @Override
@@ -277,8 +277,8 @@ public class BasicTeamManager implements TeamManager
         return null;
     }
 
-    private int getTotalParticipantCount() {
-        return getParticipants().size() + automaticTeamPlayers.size();
+    private int getOnlineParticipantCount() {
+        return getOnlineParticipants().size() + automaticTeamPlayers.size();
     }
 
     @Override
@@ -323,7 +323,8 @@ public class BasicTeamManager implements TeamManager
             return;
 
         participant.getTeam().team.removeEntry(event.getPlayer().getName());
-        Event e = new ParticipantCountChangedEvent(session, getTotalParticipantCount() + 1, getTotalParticipantCount());
+        int onlineParticipants = getOnlineParticipantCount();
+        Event e = new ParticipantCountChangedEvent(session, onlineParticipants, onlineParticipants - 1);
         Bukkit.getPluginManager().callEvent(e);
     }
 
@@ -333,7 +334,11 @@ public class BasicTeamManager implements TeamManager
         if (participant == null) {
             if (!session.isRunning()) {
                 BingoPlayer player = new BingoPlayer(event.getPlayer(), session);
-                addMemberToTeam(player, "auto");
+                if (addMemberToTeam(player, "auto")) {
+                    int onlineParticipants = getOnlineParticipantCount();
+                    Event e = new ParticipantCountChangedEvent(session, onlineParticipants, onlineParticipants + 1);
+                    Bukkit.getPluginManager().callEvent(e);
+                }
             }
             return;
         }

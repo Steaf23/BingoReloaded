@@ -12,22 +12,25 @@ import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
+import java.util.Map;
 import java.util.Set;
 
 public interface TeamManager extends SessionMember
 {
-    default Set<BingoParticipant> getParticipants()
-    {
+    default Set<BingoParticipant> getParticipants() {
         return getActiveTeams().getAllParticipants();
     }
 
-    TeamData getTeamData();
+    default Set<BingoParticipant> getOnlineParticipants() {
+        return getActiveTeams().getAllOnlineParticipants();
+    }
+
+    Map<String, TeamData.TeamTemplate> getJoinableTeams();
 
     BingoTeamContainer getActiveTeams();
 
     @Nullable
-    default BingoParticipant getPlayerAsParticipant(@NonNull Player player)
-    {
+    default BingoParticipant getPlayerAsParticipant(@NonNull Player player) {
         for (BingoParticipant participant : getParticipants()) {
             if (participant.getId().equals(player.getUniqueId())) {
                 return participant;
@@ -36,8 +39,7 @@ public interface TeamManager extends SessionMember
         return null;
     }
 
-    default int getTeamCount()
-    {
+    default int getTeamCount() {
         return getActiveTeams().teamCount();
     }
 
@@ -56,10 +58,13 @@ public interface TeamManager extends SessionMember
 
     int getMaxTeamSize();
 
-    default void handleSettingsUpdated(final BingoSettingsUpdatedEvent event) {}
+    default void handleSettingsUpdated(final BingoSettingsUpdatedEvent event) {
+    }
 
-    default void handlePlayerJoinedSessionWorld(final PlayerJoinedSessionWorldEvent event) {}
+    default void handlePlayerJoinedSessionWorld(final PlayerJoinedSessionWorldEvent event) {
+    }
 
-    default void handlePlayerLeftSessionWorld(final PlayerLeftSessionWorldEvent event) {}
+    default void handlePlayerLeftSessionWorld(final PlayerLeftSessionWorldEvent event) {
+    }
 
 }

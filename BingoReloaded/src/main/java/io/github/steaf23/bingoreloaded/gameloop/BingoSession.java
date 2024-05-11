@@ -54,8 +54,13 @@ public class BingoSession
         this.config = config;
         this.playerData = playerData;
         this.scoreboard = new BingoScoreboard(this, config.showPlayerInScoreboard && false);
-//        this.teamManager = new SoloTeamManager(scoreboard.getTeamBoard(), this);
-        this.teamManager = new BasicTeamManager(scoreboard.getTeamBoard(), this);
+        if (config.singlePlayerTeams) {
+            this.teamManager = new SoloTeamManager(scoreboard.getTeamBoard(), this);
+        }
+        else {
+            this.teamManager = new BasicTeamManager(scoreboard.getTeamBoard(), this);
+        }
+
 
         BingoReloaded.scheduleTask((t) -> {
             for (Player p : Bukkit.getOnlinePlayers()) {
@@ -224,7 +229,19 @@ public class BingoSession
     }
 
     public void handleParticipantCountChangedEvent(final ParticipantCountChangedEvent event) {
-        if (isRunning() && teamManager.getParticipants().size() == 0) {
+        if (!isRunning()) {
+            return;
+        }
+
+        if (!config.endGameWithoutTeams) {
+            return;
+        }
+
+        if (teamManager.getActiveTeams().getOnlineTeamCount() <= 1) {
+            endGame();
+        }
+
+        if (event.newAmount == 0) {
             endGame();
         }
     }

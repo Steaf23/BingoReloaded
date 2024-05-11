@@ -38,10 +38,15 @@ public class ConfigData
 
     // General options
     public final PluginConfiguration configuration;
+    public final String defaultWorldName;
     public final String language;
     public final boolean savePlayerStatistics;
+    public final String sendCommandAfterGameEnded;
+    public final boolean voteUsingCommandsOnly;
+    public final boolean selectTeamsUsingCommandsOnly;
 
     // Lobby options
+    public final boolean singlePlayerTeams;
     public final int minimumPlayerCount;
     public final int playerWaitTime;
     public final int gameRestartTime;
@@ -65,24 +70,24 @@ public class ConfigData
     public final boolean showPlayerInScoreboard;
     public final boolean disableAdvancements;
     public final boolean disableStatistics;
+    public final boolean endGameWithoutTeams;
 
-    // Private options
-    public final String defaultWorldName;
+    // Player data options
     public final boolean savePlayerInformation;
     public final LoadPlayerInformationStrategy loadPlayerInformationStrategy;
-
-    // Public options
-    public final String sendCommandAfterGameEnded;
-    public final boolean voteUsingCommandsOnly;
-    public final boolean selectTeamsUsingCommandsOnly;
 
     public ConfigData(FileConfiguration config) {
         // General
         this.configuration = PluginConfiguration.valueOf(config.getString("configuration", "SINGULAR"));
+        this.defaultWorldName = config.getString("defaultWorldName", "world");
         this.language = "languages/" + config.getString("language", "en_us.yml");
         this.savePlayerStatistics = config.getBoolean("savePlayerStatistics", false);
+        this.sendCommandAfterGameEnded = config.getString("sendCommandAfterGameEnds", "");
+        this.voteUsingCommandsOnly = config.getBoolean("voteUsingCommandsOnly", false);
+        this.selectTeamsUsingCommandsOnly = config.getBoolean("selectTeamsUsingCommandsOnly", false);
 
         // Lobby
+        this.singlePlayerTeams = config.getBoolean("singlePlayerTeams", false);
         this.minimumPlayerCount = Math.max(0, config.getInt("minimumPlayerCount", 4));
         this.playerWaitTime = Math.max(0, config.getInt("playerWaitTime", 30));
         this.gameRestartTime = Math.max(0, config.getInt("gameRestartTime", 20));
@@ -109,16 +114,11 @@ public class ConfigData
         this.showPlayerInScoreboard = config.getBoolean("showPlayerInScoreboard", true);
         this.disableAdvancements = config.getBoolean("disableAdvancements", false);
         this.disableStatistics = config.getBoolean("disableStatistics", false);
+        this.endGameWithoutTeams = config.getBoolean("endGameWithoutTeams", true);
 
-        // Private
-        this.defaultWorldName = config.getString("defaultWorldName", "world");
+        // Player
         this.savePlayerInformation = config.getBoolean("playerLoadStrategy", true);
         this.loadPlayerInformationStrategy = LoadPlayerInformationStrategy.valueOf(
                 config.getString("loadPlayerInformationStrategy", "AFTER_LEAVING_WORLD"));
-
-        // Public
-        this.sendCommandAfterGameEnded = config.getString("sendCommandAfterGameEnds", "");
-        this.voteUsingCommandsOnly = config.getBoolean("voteUsingCommandsOnly", false);
-        this.selectTeamsUsingCommandsOnly = config.getBoolean("selectTeamsUsingCommandsOnly", false);
     }
 }
