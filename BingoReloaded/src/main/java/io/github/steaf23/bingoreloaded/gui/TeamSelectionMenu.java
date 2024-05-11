@@ -17,6 +17,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,9 +41,11 @@ public class TeamSelectionMenu extends PaginatedSelectionMenu
 
         if (clickedOption.getCompareKey().equals("item_auto")) {
             teamManager.addMemberToTeam(participant, "auto");
+            reopen(player);
             return;
         } else if (clickedOption.getCompareKey().equals("item_leave")) {
             teamManager.removeMemberFromTeam(participant);
+            reopen(player);
             return;
         }
 
@@ -93,7 +96,8 @@ public class TeamSelectionMenu extends PaginatedSelectionMenu
 
             optionItems.add(MenuItem.createColoredLeather(teamTemplate.color(), Material.LEATHER_HELMET)
                     .setName("" + teamTemplate.color() + ChatColor.BOLD + teamTemplate.name())
-                    .setLore(description.toArray(new String[]{})).setCompareKey(teamId)
+                    .setLore(description.toArray(new String[]{}))
+                    .setCompareKey(teamId)
                     .setGlowing(playersTeam));
         }
 

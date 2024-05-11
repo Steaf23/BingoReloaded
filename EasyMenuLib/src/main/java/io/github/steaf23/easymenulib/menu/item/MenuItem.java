@@ -15,10 +15,7 @@ import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class MenuItem
 {
@@ -30,7 +27,7 @@ public class MenuItem
     /**
      * Describes the slot the item should be in when put in any inventory.
      */
-    private int slot = -1;
+    private int slot;
     private ItemStack stack;
     private MenuAction action;
     // all description sections, stored by name.
@@ -108,23 +105,19 @@ public class MenuItem
     public ItemStack buildStack() {
         // To create the description, sort the sections based on priority and place all lines under each other.
         List<String> description = new ArrayList<>();
-        descriptionSections.values().stream().sorted((a, b) -> {
-            return a.priority - b.priority;
-        }).forEach(section -> {
-            for (String line : section.text) {
-                description.add(line);
-            }
+        descriptionSections.values().stream().sorted(Comparator.comparingInt(a -> a.priority)).forEach(section -> {
+            description.addAll(Arrays.asList(section.text));
             description.add(" ");
         });
 
-        if (description.size() > 0)
+        if (!description.isEmpty())
         {
             description.remove(description.size() - 1);
         }
 
         ItemStack copy = stack.clone();
         ItemMeta meta = copy.getItemMeta();
-        if (meta != null && description.size() > 0)
+        if (meta != null && !description.isEmpty())
         {
             meta.setLore(description);
             copy.setItemMeta(meta);
@@ -147,6 +140,10 @@ public class MenuItem
 
     public MenuItem copyToSlot(int slot) {
         MenuItem item = new MenuItem(slot, stack.clone());
+        item.action = action;
+        for (String key : descriptionSections.keySet()) {
+            item.descriptionSections.put(key, descriptionSections.get(key));
+        }
         return item;
     }
 
@@ -297,7 +294,6 @@ public class MenuItem
     }
 
     public MenuItem setLeatherColor(ChatColor color) {
-        String hex = FlexColor.asHex(color);
         if (stack.getItemMeta() instanceof LeatherArmorMeta armorMeta) {
             armorMeta.setColor(org.bukkit.Color.fromRGB(color.getColor().getRed(), color.getColor().getGreen(), color.getColor().getBlue()));
             stack.setItemMeta(armorMeta);

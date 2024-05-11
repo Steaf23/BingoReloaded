@@ -1,5 +1,6 @@
 package io.github.steaf23.easymenulib.menu;
 
+import io.github.steaf23.easymenulib.EasyMenuLibrary;
 import io.github.steaf23.easymenulib.menu.item.MenuItem;
 import io.github.steaf23.easymenulib.menu.item.action.MenuAction;
 import org.bukkit.Bukkit;
@@ -66,7 +67,9 @@ public class BasicMenu implements Menu
     }
 
     public final void reopen(HumanEntity player) {
-        beforeOpening(player);
+        Bukkit.getScheduler().runTask(EasyMenuLibrary.getPlugin(), t -> {
+            beforeOpening(player);
+        });
     }
 
     public @Nullable MenuItem getItemAtSlot(int slot) {

@@ -156,6 +156,7 @@ public class BasicTeamManager implements TeamManager
         } else {
             return false;
         }
+        activeTeams.removeEmptyTeams();
 
         var leaveEvent = new ParticipantLeftTeamEvent(player, player.getTeam(), session);
         Bukkit.getPluginManager().callEvent(leaveEvent);
@@ -174,9 +175,9 @@ public class BasicTeamManager implements TeamManager
 
     @Override
     public boolean addMemberToTeam(BingoParticipant participant, String teamId) {
-        if (teamId.equals("auto")) {
-            removeMemberFromTeam(participant);
+        removeMemberFromTeam(participant);
 
+        if (teamId.equals("auto")) {
             if (automaticTeamPlayers.containsKey(participant.getId())) {
                 return false;
             }
@@ -204,7 +205,6 @@ public class BasicTeamManager implements TeamManager
             return false;
         }
 
-        removeMemberFromTeam(participant);
         automaticTeamPlayers.remove(participant.getId());
 
         participant.sessionPlayer().ifPresent(p -> {
