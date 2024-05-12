@@ -19,10 +19,12 @@ import io.github.steaf23.bingoreloaded.tasks.AdvancementTask;
 import io.github.steaf23.bingoreloaded.tasks.ItemTask;
 import io.github.steaf23.bingoreloaded.tasks.StatisticTask;
 import io.github.steaf23.bingoreloaded.tasks.statistics.BingoStatistic;
+import io.github.steaf23.bingoreloaded.util.BingoReloadedPlaceholderExpansion;
 import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.easymenulib.EasyMenuLibrary;
 import io.github.steaf23.easymenulib.menu.BasicMenu;
 import io.github.steaf23.easymenulib.menu.item.SerializableItem;
+import me.clip.placeholderapi.PlaceholderAPI;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.command.*;
@@ -58,6 +60,10 @@ public class BingoReloaded extends JavaPlugin
         // Kinda ugly, but we can assume there will only be one instance of this class anyway.
         INSTANCE = this;
         PLACEHOLDER_API_ENABLED = Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null;
+        if (PLACEHOLDER_API_ENABLED) {
+            new BingoReloadedPlaceholderExpansion(this).register();
+            Message.log(ChatColor.GREEN + "Enabled Bingo Reloaded Placeholder expansion");
+        }
 
         EasyMenuLibrary.setPlugin(this);
         EasyMenuLibrary.setItemTranslation(key -> {

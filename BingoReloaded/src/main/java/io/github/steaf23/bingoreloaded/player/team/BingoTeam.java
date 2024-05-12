@@ -48,6 +48,10 @@ public class BingoTeam
         return color;
     }
 
+    public String getName() {
+        return name;
+    }
+
     public ItemText getColoredName() {
         return new ItemText(name, color, ChatColor.BOLD);
     }

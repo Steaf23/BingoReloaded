@@ -1,0 +1,18 @@
+# All available placeholders are listed below under teh placeholders section.
+# The way you can use these placeholders is using the prefix bingoreloaded.
+# For example %bingoreloaded_team_full% will be replaced by the bingo team name that player is in.
+# These placeholders can also be used in the translation file if you wanted.
+
+placeholders:
+  # Full team prefix. This should be used most of the time when you want to show the team that the player is in.
+  team_full:
+    format: "&4[{0}&l{1}&4]&r" # {0}: team_color, {1}: team_name
+  # Team color only. This can be used to color other text in the color of the player's team by using similar to a '&'-color prefix.
+  team_color:
+    format: "{0}" # {0}: team color
+  # Team name only. Could be useful if you just want to list the team's name without color or other markup.
+  team_name:
+    format: "{0}" # {0}: team name
+  # Name of the session/world that the player is in.
+  session_name:
+    format: "({0})" # {0}: session/world name

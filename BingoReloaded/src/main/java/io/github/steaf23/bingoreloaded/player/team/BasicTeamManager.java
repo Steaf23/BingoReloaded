@@ -207,16 +207,16 @@ public class BasicTeamManager implements TeamManager
 
         automaticTeamPlayers.remove(participant.getId());
 
+        bingoTeam.addMember(participant);
+
+        var joinEvent = new ParticipantJoinedTeamEvent(participant, bingoTeam, session);
+        Bukkit.getPluginManager().callEvent(joinEvent);
+
         participant.sessionPlayer().ifPresent(p -> {
             new TranslatedMessage(BingoTranslation.JOIN).color(ChatColor.GREEN)
                     .arg(bingoTeam.getColoredName().asLegacyString())
                     .send(p);
         });
-
-        bingoTeam.addMember(participant);
-
-        var joinEvent = new ParticipantJoinedTeamEvent(participant, bingoTeam, session);
-        Bukkit.getPluginManager().callEvent(joinEvent);
         return true;
     }
 

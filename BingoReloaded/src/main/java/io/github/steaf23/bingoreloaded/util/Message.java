@@ -137,22 +137,20 @@ public class Message
 
     public void send(Player player) {
         if (finalMessage == null) {
-            //TODO: solving placeholders should be done last, however that is quite a bit more complicated
-            raw = solvePlaceholders(raw, player);
             if (raw.isBlank())
-                createMessage();
+                createMessage(player);
             else
-                createPrefixedMessage();
+                createPrefixedMessage(player);
         }
         player.spigot().sendMessage(finalMessage);
     }
 
-    public void createPrefixedMessage() {
+    public void createPrefixedMessage(Player player) {
         TextComponent prefixedBase = new TextComponent();
 
         prefixedBase.addExtra(new TextComponent(BingoTranslation.MESSAGE_PREFIX.translate()));
 
-        createMessage();
+        createMessage(player);
 
         prefixedBase.addExtra(finalMessage);
         finalMessage = prefixedBase;
@@ -183,9 +181,9 @@ public class Message
         }
     }
 
-    public String toLegacyString() {
+    public String toLegacyString(Player player) {
         if (finalMessage == null)
-            createMessage();
+            createMessage(player);
         return finalMessage.toLegacyText();
     }
 
@@ -239,7 +237,7 @@ public class Message
     }
 
     public static void sendActionMessage(Message message, Player player) {
-        sendActionMessage(message.toLegacyString(), player);
+        sendActionMessage(message.toLegacyString(player), player);
     }
 
     public static void sendTitleMessage(String title, String subtitle, Player player) {
@@ -247,10 +245,10 @@ public class Message
     }
 
     public static void sendTitleMessage(Message title, Message subtitle, Player player) {
-        sendTitleMessage(title.toLegacyString(), subtitle.toLegacyString(), player);
+        sendTitleMessage(title.toLegacyString(player), subtitle.toLegacyString(player), player);
     }
 
-    protected void createMessage() {
+    protected void createMessage(Player player) {
         //for any given message like "{#00bb33}Completed {0} by team {1}! At {2}" split the arguments from the message.
         String[] rawSplit = raw.split("\\{[^\\{\\}#@]*\\}"); //[{#00bb33}Completed, by team, ! At]
 
@@ -266,8 +264,8 @@ public class Message
         // for each translated part of the message
         int i = 0;
         while (i < rawSplit.length) {
-            for (var bc : TextComponent.fromLegacyText(rawSplit[i])) {
-                bc.copyFormatting(prevLegacy, ComponentBuilder.FormatRetention.ALL, false);
+            for (var bc : TextComponent.fromLegacyText(solvePlaceholders(rawSplit[i], player))) {
+                bc.copyFormatting(prevLegacy, ComponentBuilder.FormatRetention.NONE, false);
                 prevLegacy = bc;
                 base.addExtra(bc);
             }
@@ -275,6 +273,11 @@ public class Message
                 base.addExtra(args.get(i));
             }
             i++;
+        }
+
+        if (i == 0 && args.size() > 0) {
+            for (int j = 0; j < args.size(); j++)
+                base.addExtra(args.get(j));
         }
         finalMessage = base;
     }

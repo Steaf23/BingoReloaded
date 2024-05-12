@@ -14,6 +14,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -112,6 +113,14 @@ public class GameManager
             }
         }
         return null;
+    }
+
+    public String getNameOfSession(@Nullable BingoSession session) {
+        if (session == null) {
+            return "";
+        }
+
+        return getSessionNames().stream().filter(name -> getSession(name) != null).findFirst().orElse("");
     }
 
     public void onPluginDisable() {
