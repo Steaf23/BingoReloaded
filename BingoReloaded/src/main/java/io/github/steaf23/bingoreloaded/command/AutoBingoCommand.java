@@ -4,10 +4,12 @@ import com.sun.nio.sctp.SendFailedNotification;
 import io.github.steaf23.bingoreloaded.cards.CardSize;
 import io.github.steaf23.bingoreloaded.data.BingoCardData;
 import io.github.steaf23.bingoreloaded.data.BingoSettingsData;
+import io.github.steaf23.bingoreloaded.data.ConfigData;
 import io.github.steaf23.bingoreloaded.data.world.WorldData;
 import io.github.steaf23.bingoreloaded.data.world.WorldGroup;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gameloop.GameManager;
+import io.github.steaf23.bingoreloaded.gameloop.phase.PregameLobby;
 import io.github.steaf23.bingoreloaded.gui.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
@@ -15,6 +17,7 @@ import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
 import io.github.steaf23.bingoreloaded.settings.BingoSettingsBuilder;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
+import io.github.steaf23.bingoreloaded.util.Message;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -202,6 +205,26 @@ public class AutoBingoCommand implements TabExecutor
             } else {
                 return List.of();
             }
+        }));
+
+
+        command.addSubCommand(new SubCommand("vote", args -> {
+            return voteForPlayer(args);
+        }).addUsage("<player_name> <vote_category> <vote_for>").addTabCompletion(args -> {
+            ConfigData.VoteList voteList = manager.getGameConfig().voteList;
+            if (args.length <= 2) {
+                return null;
+            } else if (args.length == 3) {
+                return List.of("kits", "gamemodes", "cards");
+            } else if (args.length == 4) {
+                return switch (args[2]) {
+                    case "kits" -> voteList.kits();
+                    case "gamemodes" -> voteList.gamemodes();
+                    case "cards" -> voteList.cards();
+                    default -> List.of();
+                };
+            }
+            return List.of();
         }));
     }
 
@@ -534,6 +557,59 @@ public class AutoBingoCommand implements TabExecutor
             return false;
         }
         sendSuccess("Teleported " + playerName + " to " + targetWorldName, worldName);
+        return true;
+    }
+
+    private Boolean voteForPlayer(String[] args) {
+        String sessionName = args[0];
+        if (args.length != 4) {
+            sendFailed("Expected 5 arguments!", sessionName);
+            return false;
+        }
+
+        Message.log(Arrays.stream(args).toList().toString());
+
+        Player player = Bukkit.getPlayer(args[1]);
+        if (player == null) {
+            sendFailed("Player '" + args[1] + "' does not exist!", sessionName);
+            return false;
+        }
+
+        String category = args[2];
+        String voteFor = args[3];
+        if (!(manager.getSession(sessionName).phase() instanceof PregameLobby lobby)) {
+            sendFailed("Cannot vote for player, game is not in lobby phase.", sessionName);
+            return false;
+        }
+
+        switch (category) {
+            case "kits" -> {
+                if (!manager.getGameConfig().voteList.kits().contains(voteFor)) {
+                    sendFailed("Cannot vote for kit " + voteFor + ", kit does not appear in vote list.", sessionName);
+                    return false;
+                }
+                lobby.voteKit(voteFor, player);
+            }
+            case "gamemodes" -> {
+                if (!manager.getGameConfig().voteList.gamemodes().contains(voteFor)) {
+                    sendFailed("Cannot vote for gamemode " + voteFor + ", gamemode does not appear in vote list.", sessionName);
+                    return false;
+                }
+                lobby.voteGamemode(voteFor, player);
+            }
+            case "cards" -> {
+                if (!manager.getGameConfig().voteList.cards().contains(voteFor)) {
+                    sendFailed("Cannot vote for card " + voteFor + ", card does not appear in vote list.", sessionName);
+                    return false;
+                }
+                lobby.voteCard(voteFor, player);
+            }
+            default -> {
+                sendFailed("Cannot vote for '" + category + "', category does not exist!", sessionName);
+                return false;
+            }
+        }
+        sendSuccess(player.getDisplayName() + " voted for " + category + " " + voteFor, sessionName);
         return true;
     }
 

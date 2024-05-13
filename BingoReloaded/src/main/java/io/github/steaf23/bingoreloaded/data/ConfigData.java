@@ -29,12 +29,12 @@ public class ConfigData
         ;
     }
 
-    public record VoteList(List<String> gamemodes, List<String> kits, List<String> cards) {
-
+    public record VoteList(List<String> gamemodes, List<String> kits, List<String> cards)
+    {
         public boolean isEmpty() {
-                return this.gamemodes.isEmpty() && this.kits.isEmpty() && this.cards.isEmpty();
-            }
+            return this.gamemodes.isEmpty() && this.kits.isEmpty() && this.cards.isEmpty();
         }
+    }
 
     // General options
     public final PluginConfiguration configuration;

@@ -38,8 +38,3 @@ create new gamemode; Hot-Swap
 fix card not opening after game ends (maybe handle in session instead of bingo game??)
 
 add dummy card to kit creator, to configure card slot as well
-
-(2.1) add player voting commands to multi auto bingo
-
-(2.1) add proper placeholder support
-  - create placeholder for player team
