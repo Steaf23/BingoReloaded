@@ -94,8 +94,10 @@ public class BingoCommand implements TabExecutor
             case "getcard" -> {
                 if (session.isRunning()) {
                     BingoParticipant participant = session.teamManager.getPlayerAsParticipant(player);
-                    if (participant instanceof BingoPlayer bingoPlayer)
-                        ((BingoGame) session.phase()).returnCardToPlayer(bingoPlayer);
+                    if (participant instanceof BingoPlayer bingoPlayer) {
+                        int cardSlot = session.settingsBuilder.view().kit().getCardSlot();
+                        ((BingoGame) session.phase()).returnCardToPlayer(cardSlot, bingoPlayer);
+                    }
                     return true;
                 }
             }
@@ -254,6 +256,9 @@ public class BingoCommand implements TabExecutor
         if (itemName.equals("wand")) {
             player.getInventory().addItem(PlayerKit.WAND_ITEM.buildStack());
         }
+        else if (itemName.equals("card")) {
+            player.getInventory().addItem(PlayerKit.CARD_ITEM.buildStack());
+        }
     }
 
     /**
@@ -285,7 +290,7 @@ public class BingoCommand implements TabExecutor
                             return List.of("1", "2", "3", "4", "5");
                         }
                         case "item" -> {
-                            return List.of("wand");
+                            return List.of("wand", "card");
                         }
                     }
                 }

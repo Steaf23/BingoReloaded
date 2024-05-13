@@ -130,7 +130,7 @@ public class BingoGame implements GamePhase
                 Player player = p.sessionPlayer().get();
 
                 p.giveKit(settings.kit());
-                returnCardToPlayer(p);
+                returnCardToPlayer(settings.kit().getCardSlot(), p);
                 if (useAdvancements)
                 {
                     Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "advancement revoke " + player.getName() + " everything");
@@ -246,11 +246,11 @@ public class BingoGame implements GamePhase
         return teamManager;
     }
 
-    public void returnCardToPlayer(BingoParticipant participant) {
+    public void returnCardToPlayer(int cardSlot, BingoParticipant participant) {
         if (participant.sessionPlayer().isEmpty())
             return;
 
-        participant.giveBingoCard();
+        participant.giveBingoCard(cardSlot);
         participant.sessionPlayer().get().setGameMode(GameMode.SURVIVAL);
 
         BingoReloaded.scheduleTask(task -> participant.giveEffects(settings.effects(), config.gracePeriod), BingoReloaded.ONE_SECOND);
@@ -577,7 +577,7 @@ public class BingoGame implements GamePhase
             return;
 
         if (!settings.effects().contains(EffectOptionFlags.KEEP_INVENTORY)) {
-            returnCardToPlayer(player);
+            returnCardToPlayer(settings.kit().getCardSlot(), player);
             player.giveKit(settings.kit());
         } else {
             player.giveEffects(settings.effects(), 0);

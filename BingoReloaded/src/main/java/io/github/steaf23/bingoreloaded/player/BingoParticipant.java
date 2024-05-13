@@ -24,7 +24,7 @@ public interface BingoParticipant
     void showDeathMatchTask(BingoTask task);
     boolean alwaysActive();
 
-    void giveBingoCard();
+    void giveBingoCard(int cardSlot);
     void giveEffects(EnumSet<EffectOptionFlags> effects, int gracePeriod);
     void takeEffects(boolean force);
     void giveKit(PlayerKit kit);

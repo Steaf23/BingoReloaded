@@ -156,6 +156,20 @@ public enum PlayerKit
         return playerItems;
     }
 
+    public int getCardSlot() {
+        if (isCustomKit()) {
+            return getCustomKit(this).cardSlot();
+        }
+        else {
+            // off-hand slot: 40
+            return 40;
+        }
+    }
+
+    public boolean isCustomKit() {
+        return customKits().contains(this);
+    }
+
     public static PlayerKit fromConfig(String name)
     {
         if (name == null)

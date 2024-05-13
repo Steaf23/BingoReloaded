@@ -23,18 +23,15 @@
 
 (2.1) add command to pause automatic bingo games (/bingo pause)
 
-(2.1) drop item in card slot when using /bingo getcard if there was no card in that slot
-
 add reload config command
 
 last line of team scoreboard should show something like "and x others.."
 
 improve scoreboard 
+  - fix scoreboard not parsing kit name formatting correctly (for custom kits).
   - add config option to completely disable scoreboard
   - add configurator for scoreboard
 
 create new gamemode; Hot-Swap
 
 fix card not opening after game ends (maybe handle in session instead of bingo game??)
-
-add dummy card to kit creator, to configure card slot as well

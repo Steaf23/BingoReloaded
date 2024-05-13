@@ -17,6 +17,7 @@ import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.TranslatableComponent;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
@@ -26,9 +27,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.EnumSet;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * This class describes a player in a single bingo session.
@@ -124,7 +123,7 @@ public class BingoPlayer implements BingoParticipant
     }
 
     @Override
-    public void giveBingoCard()
+    public void giveBingoCard(int cardSlot)
     {
         if (sessionPlayer().isEmpty())
             return;
@@ -140,8 +139,14 @@ public class BingoPlayer implements BingoParticipant
                     break;
                 }
             }
-
-            player.getInventory().setItemInOffHand(PlayerKit.CARD_ITEM.buildStack());
+            ItemStack existingItem = player.getInventory().getItem(cardSlot);
+            player.getInventory().setItem(cardSlot, PlayerKit.CARD_ITEM.buildStack());
+            if (existingItem != null && !existingItem.getType().isAir()) {
+                Map<Integer, ItemStack> leftOver = player.getInventory().addItem(existingItem);
+                for (ItemStack stack : leftOver.values()) {
+                    player.getWorld().dropItem(player.getLocation(), stack);
+                }
+            }
         });
     }
 

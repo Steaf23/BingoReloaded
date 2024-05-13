@@ -80,7 +80,7 @@ public class VirtualBingoPlayer implements BingoParticipant
     }
 
     @Override
-    public void giveBingoCard() {
+    public void giveBingoCard(int cardSlot) {
     }
 
     @Override
