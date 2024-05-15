@@ -67,7 +67,7 @@ public class BingoEventListener implements Listener
         session.handlePlayerDropItem(event);
 
         BingoGame game = session.isRunning() ? (BingoGame)session.phase() : null;
-        if (game != null)
+        if (game != null && game.hasStarted())
         {
             game.getCardEventManager().handlePlayerDroppedItem(event, game);
         }
@@ -143,7 +143,7 @@ public class BingoEventListener implements Listener
 
         BingoSession session = getSession(event.getPlayer().getWorld());
         BingoGame game = session != null && session.isRunning() ? (BingoGame)session.phase() : null;
-        if (game != null)
+        if (game != null && game.hasStarted())
         {
             game.getCardEventManager().handlePlayerAdvancementCompleted(event, getSession(event.getPlayer().getWorld()));
         }
@@ -154,7 +154,7 @@ public class BingoEventListener implements Listener
     {
         BingoSession session = getSession(event.getEntity().getWorld());
         BingoGame game = session != null && session.isRunning() ? (BingoGame)session.phase() : null;
-        if (game != null)
+        if (game != null && game.hasStarted())
         {
             game.getCardEventManager().handlePlayerPickupItem(event, game);
         }
@@ -165,7 +165,7 @@ public class BingoEventListener implements Listener
     {
         BingoSession session = getSession(event.getWhoClicked().getWorld());
         BingoGame game = session != null && session.isRunning() ? (BingoGame)session.phase() : null;
-        if (game != null)
+        if (game != null && game.hasStarted())
         {
             game.getCardEventManager().handleInventoryClicked(event, game);
         }
@@ -243,7 +243,7 @@ public class BingoEventListener implements Listener
 
         BingoSession session = event.getSession();
         BingoGame game = session != null && session.isRunning() ? (BingoGame)session.phase() : null;
-        if (game != null)
+        if (game != null && game.hasStarted())
         {
             game.getCardEventManager().handleStatisticCompleted(event, game);
         }

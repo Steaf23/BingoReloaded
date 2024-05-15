@@ -1,5 +1,6 @@
 package io.github.steaf23.bingoreloaded.player;
 
+import io.github.steaf23.bingoreloaded.cards.BingoCard;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
@@ -11,13 +12,11 @@ import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import io.github.steaf23.bingoreloaded.tasks.BingoTask;
 import io.github.steaf23.bingoreloaded.util.TranslatedMessage;
-//import io.github.steaf23.easymenulib.util.PDCHelper;
 import io.github.steaf23.easymenulib.util.PDCHelper;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.TranslatableComponent;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
@@ -67,7 +66,7 @@ public class BingoPlayer implements BingoParticipant
         {
             return Optional.empty();
         }
-        return Optional.ofNullable(player);
+        return Optional.of(player);
     }
 
     @Override
@@ -80,12 +79,6 @@ public class BingoPlayer implements BingoParticipant
     public String getDisplayName()
     {
         return displayName;
-    }
-
-    @Nullable
-    public Optional<Player> asOnlinePlayer()
-    {
-        return Optional.ofNullable(Bukkit.getPlayer(playerId));
     }
 
     public OfflinePlayer offline()
@@ -175,7 +168,6 @@ public class BingoPlayer implements BingoParticipant
     }
 
     /**
-     *
      * @param force ignore if the player is actually in the world playing the game at this moment.
      */
     @Override
@@ -214,6 +206,30 @@ public class BingoPlayer implements BingoParticipant
         new TranslatedMessage(BingoTranslation.DEATHMATCH_ITEM).color(ChatColor.GOLD)
                 .component(new TranslatableComponent(itemKey))
                 .send(sessionPlayer().get());
+    }
+
+    @Override
+    public void showCard(BingoTask deathMatchTask) {
+        BingoTeam playerTeam = getTeam();
+        if (playerTeam == null) {
+            return;
+        }
+        BingoCard card = playerTeam.card;
+
+        sessionPlayer().ifPresent(player -> {
+            if (deathMatchTask != null) {
+                showDeathMatchTask(deathMatchTask);
+                return;
+            }
+
+            // if the player is actually participating, show it
+            if (card == null) {
+                new TranslatedMessage(BingoTranslation.NO_PLAYER_CARD).send(player);
+                return;
+            }
+
+            card.showInventory(player);
+        });
     }
 
     @Override
@@ -264,7 +280,7 @@ public class BingoPlayer implements BingoParticipant
 
             BingoReloaded.scheduleTask(laterTask -> {
                 BingoGame.removePlatform(newLocation, 1);
-            }, Math.max(0, platformLifetimeSeconds) * BingoReloaded.ONE_SECOND);
+            }, (long) Math.max(0, platformLifetimeSeconds) * BingoReloaded.ONE_SECOND);
 
             player.playSound(player, Sound.ENTITY_SHULKER_TELEPORT, 0.8f, 1.0f);
             player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, BingoReloaded.ONE_SECOND * 10, 100, false, false));

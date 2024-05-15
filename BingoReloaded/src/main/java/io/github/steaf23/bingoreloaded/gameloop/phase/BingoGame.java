@@ -56,7 +56,7 @@ public class BingoGame implements GamePhase
     private final ConfigData config;
     private GameTimer timer;
     private CountdownTimer startingTimer;
-    private boolean hasTimerStarted;
+    private boolean gameStarted;
 
     private BingoTask deathMatchTask;
 
@@ -76,7 +76,7 @@ public class BingoGame implements GamePhase
     }
 
     private void start() {
-        this.hasTimerStarted = false;
+        this.gameStarted = false;
         // Create timer
         if (settings.enableCountdown())
             timer = new CountdownTimer(settings.countdownDuration() * 60, 5 * 60, 60, session);
@@ -176,6 +176,10 @@ public class BingoGame implements GamePhase
                     }));
         });
         BingoReloaded.scheduleTask(task -> startingTimer.start(), BingoReloaded.ONE_SECOND);
+    }
+
+    public boolean hasStarted() {
+        return gameStarted;
     }
 
     public void end(@Nullable BingoTeam winningTeam) {
@@ -486,9 +490,6 @@ public class BingoGame implements GamePhase
 
     @Override
     public void handlePlayerInteract(final PlayerInteractEvent event) {
-        if (!hasTimerStarted)
-            return;
-
         BingoParticipant participant = getTeamManager().getPlayerAsParticipant(event.getPlayer());
         if (participant == null || participant.sessionPlayer().isEmpty())
             return;
@@ -500,27 +501,15 @@ public class BingoGame implements GamePhase
             return;
 
         if (PlayerKit.WAND_ITEM.isCompareKeyEqual(event.getItem())) {
+            if (!gameStarted)
+                return;
+
             event.setCancelled(true);
             ((BingoPlayer) participant).useGoUpWand(event.getItem(), config.wandCooldown, config.wandDown, config.wandUp, config.platformLifetime);
         } else if (PlayerKit.CARD_ITEM.isCompareKeyEqual(event.getItem())) {
             // Show bingo card to player
             event.setCancelled(true);
-            BingoTeam playerTeam = participant.getTeam();
-            if (playerTeam == null) {
-                return;
-            }
-            BingoCard card = playerTeam.card;
-
-            // if the player is actually participating, show it
-            if (card != null) {
-                if (deathMatchTask != null) {
-                    participant.showDeathMatchTask(deathMatchTask);
-                    return;
-                }
-                card.showInventory(event.getPlayer());
-            } else {
-                new TranslatedMessage(BingoTranslation.NO_PLAYER_CARD).send(event.getPlayer());
-            }
+            participant.showCard(deathMatchTask);
         }
     }
 
@@ -617,7 +606,7 @@ public class BingoGame implements GamePhase
             }
         } else if (event.getTimer() == startingTimer) {
             timer.start();
-            hasTimerStarted = true;
+            gameStarted = true;
             teamManager.getParticipants().forEach(p -> p.sessionPlayer().ifPresent(gamePlayer -> {
                 gamePlayer.playSound(gamePlayer, Sound.ENTITY_FIREWORK_ROCKET_LARGE_BLAST, 0.8f, 1.0f);
                 gamePlayer.playSound(gamePlayer, Sound.ENTITY_FIREWORK_ROCKET_LAUNCH, 0.8f, 1.0f);
@@ -626,7 +615,7 @@ public class BingoGame implements GamePhase
     }
 
     public void handlePlayerMove(final PlayerMoveEvent event) {
-        if (hasTimerStarted)
+        if (gameStarted)
             return;
 
         BingoParticipant participant = teamManager.getPlayerAsParticipant(event.getPlayer());

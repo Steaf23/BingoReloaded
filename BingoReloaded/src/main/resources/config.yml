@@ -49,7 +49,7 @@ selectTeamsUsingCommandsOnly: false
 
 # If true, existing teams will not be used. Instead, each player is in their own team, and they get a color assigned automatically.
 # This also allows for an unlimited amount of players/teams in a single game.
-# Additionally, players cannot decide to join a team, they can only opt in or opt out of playing the game.
+# Additionally, players cannot decide to join a particular team, they can only opt in or opt out of playing the game.
 singlePlayerTeams: false
 
 # Amount of players needed to automatically start a game, set to 0 to never start a game automatically

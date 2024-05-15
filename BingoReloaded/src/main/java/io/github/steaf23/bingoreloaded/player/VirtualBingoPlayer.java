@@ -20,28 +20,24 @@ public class VirtualBingoPlayer implements BingoParticipant
     private final String name;
     private final BingoSession session;
 
-    public VirtualBingoPlayer(UUID id, String name, BingoSession session)
-    {
+    public VirtualBingoPlayer(UUID id, String name, BingoSession session) {
         this.id = id;
         this.name = name;
         this.session = session;
     }
 
-    public String getName()
-    {
+    public String getName() {
         return name;
     }
 
     @Override
-    public BingoSession getSession()
-    {
+    public BingoSession getSession() {
         return session;
     }
 
     @Nullable
     @Override
-    public BingoTeam getTeam()
-    {
+    public BingoTeam getTeam() {
         return team;
     }
 
@@ -51,31 +47,30 @@ public class VirtualBingoPlayer implements BingoParticipant
     }
 
     @Override
-    public Optional<Player> sessionPlayer()
-    {
+    public Optional<Player> sessionPlayer() {
         return Optional.empty();
     }
 
     @Override
-    public UUID getId()
-    {
+    public UUID getId() {
         return id;
     }
 
     @Override
-    public String getDisplayName()
-    {
+    public String getDisplayName() {
         return ChatColor.WHITE + "[" + ChatColor.LIGHT_PURPLE + ChatColor.ITALIC + "BOT" + ChatColor.RESET + ChatColor.WHITE + "] " + ChatColor.GRAY + name + ChatColor.RESET + "";
     }
 
     @Override
-    public void showDeathMatchTask(BingoTask task)
-    {
+    public void showDeathMatchTask(BingoTask task) {
     }
 
     @Override
-    public boolean alwaysActive()
-    {
+    public void showCard(BingoTask deathMatchTask) {
+    }
+
+    @Override
+    public boolean alwaysActive() {
         return true;
     }
 

@@ -6,10 +6,15 @@ import io.github.steaf23.bingoreloaded.event.PlayerJoinedSessionWorldEvent;
 import io.github.steaf23.bingoreloaded.event.PlayerLeftSessionWorldEvent;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gameloop.phase.GamePhase;
+import io.github.steaf23.bingoreloaded.player.BingoParticipant;
+import io.github.steaf23.bingoreloaded.player.BingoPlayer;
+import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
+import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.bingoreloaded.util.TranslatedMessage;
 import io.github.steaf23.bingoreloaded.util.timer.CountdownTimer;
 import net.md_5.bungee.api.ChatColor;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -42,6 +47,9 @@ public class PostGamePhase implements GamePhase
 
     @Override
     public void end() {
+        for (BingoTeam team : session.teamManager.getActiveTeams()) {
+            team.card = null;
+        }
     }
 
     @Override
@@ -61,7 +69,21 @@ public class PostGamePhase implements GamePhase
 
     @Override
     public void handlePlayerInteract(PlayerInteractEvent event) {
+        BingoParticipant participant = session.teamManager.getPlayerAsParticipant(event.getPlayer());
+        if (participant == null || participant.sessionPlayer().isEmpty())
+            return;
 
+        if (event.getItem() == null || event.getItem().getType().isAir())
+            return;
+
+        if (event.getAction() != Action.RIGHT_CLICK_AIR && event.getAction() != Action.RIGHT_CLICK_BLOCK)
+            return;
+
+        if (PlayerKit.CARD_ITEM.isCompareKeyEqual(event.getItem())) {
+            // Show bingo card to player
+            event.setCancelled(true);
+            participant.showCard(null);
+        }
     }
 
     private void onTimerTicks(long timeLeft) {

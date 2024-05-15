@@ -22,6 +22,7 @@ public interface BingoParticipant
     Optional<Player> sessionPlayer();
     String getDisplayName();
     void showDeathMatchTask(BingoTask task);
+    void showCard(BingoTask deathMatchTask);
     boolean alwaysActive();
 
     void giveBingoCard(int cardSlot);

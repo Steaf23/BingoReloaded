@@ -14,6 +14,10 @@
 
 (2.x) vote item does not appear when starting server sometimes
 
+(2.x) add small biomes option using datapack
+
+(2.x) add reload config command
+
 
 (2.1) Fix bingo creator not showing updated lists/cards immediately after creating them (only after reopening menu)
 
@@ -23,15 +27,12 @@
 
 (2.1) add command to pause automatic bingo games (/bingo pause)
 
-add reload config command
-
-last line of team scoreboard should show something like "and x others.."
+auto team does not count towards minimumPlayerCount in lobby
 
 improve scoreboard 
   - fix scoreboard not parsing kit name formatting correctly (for custom kits).
   - add config option to completely disable scoreboard
   - add configurator for scoreboard
+  - last line of team scoreboard should show something like "and x others.."
 
 create new gamemode; Hot-Swap
-
-fix card not opening after game ends (maybe handle in session instead of bingo game??)
