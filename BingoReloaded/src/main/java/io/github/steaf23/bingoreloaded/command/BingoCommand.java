@@ -91,6 +91,12 @@ public class BingoCommand implements TabExecutor
                 if (player.hasPermission("bingo.settings"))
                     session.endGame();
             }
+            case "wait" -> {
+                if (player.hasPermission("bingo.settings")) {
+                    session.pauseAutomaticStart();
+                    Message.sendDebug("Toggled automatic starting timer", player);
+                }
+            }
             case "getcard" -> {
                 if (session.isRunning()) {
                     BingoParticipant participant = session.teamManager.getPlayerAsParticipant(player);

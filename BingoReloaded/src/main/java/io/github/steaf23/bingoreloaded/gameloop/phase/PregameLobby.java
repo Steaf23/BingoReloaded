@@ -48,6 +48,7 @@ public class PregameLobby implements GamePhase
     private final MenuBoard menuBoard;
     private final CountdownTimer playerCountTimer;
 
+    private boolean playerCountTimerPaused = false;
     private boolean gameStarted = false;
 
     public PregameLobby(MenuBoard menuBoard, BingoSession session, ConfigData config) {
@@ -216,6 +217,33 @@ public class PregameLobby implements GamePhase
         startPlayerCountTimerIfMinCountReached();
     }
 
+    public void pausePlayerCountTimer() {
+        playerCountTimerPaused = true;
+        playerCountTimer.stop();
+        settingsBoard.setStatus(BingoTranslation.WAIT_STATUS.translate());
+    }
+
+    public void resumePlayerCountTimer() {
+        playerCountTimerPaused = false;
+        startPlayerCountTimerIfMinCountReached();
+
+        int playerCount = session.teamManager.getParticipants().size();
+        if (playerCount == 0) {
+            settingsBoard.setStatus(BingoTranslation.WAIT_STATUS.translate());
+        } else {
+            settingsBoard.setStatus(BingoTranslation.PLAYER_STATUS.translate("" + playerCount));
+        }
+    }
+
+    public void playerCountTimerTogglePause() {
+        if (playerCountTimerPaused) {
+            resumePlayerCountTimer();
+        }
+        else {
+            pausePlayerCountTimer();
+        }
+    }
+
     private void startPlayerCountTimerIfMinCountReached() {
         if (config.minimumPlayerCount == 0 || gameStarted) {
             return;
@@ -225,7 +253,7 @@ public class PregameLobby implements GamePhase
             return;
         }
 
-        if (playerCountTimer.isRunning()) {
+        if (playerCountTimer.isRunning() || playerCountTimerPaused) {
             return;
         }
 

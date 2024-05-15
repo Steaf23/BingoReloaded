@@ -18,14 +18,14 @@
 
 (2.x) add reload config command
 
+(2.x) add progress view to countable tasks
+
 
 (2.1) Fix bingo creator not showing updated lists/cards immediately after creating them (only after reopening menu)
 
 (2.1) task list is not always selected correctly ?? (needs more testing)
 
 (2.1) add command to see all teams
-
-(2.1) add command to pause automatic bingo games (/bingo pause)
 
 auto team does not count towards minimumPlayerCount in lobby
 

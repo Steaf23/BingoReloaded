@@ -117,6 +117,14 @@ public class BingoSession
         phase.end();
     }
 
+    public void pauseAutomaticStart() {
+        if (!(phase instanceof PregameLobby lobbyPhase)) {
+            return;
+        }
+
+        lobbyPhase.playerCountTimerTogglePause();
+    }
+
     public void prepareNextGame() {
         if (config.savePlayerInformation && config.loadPlayerInformationStrategy == ConfigData.LoadPlayerInformationStrategy.AFTER_GAME) {
             for (Player p : Bukkit.getOnlinePlayers()) {
