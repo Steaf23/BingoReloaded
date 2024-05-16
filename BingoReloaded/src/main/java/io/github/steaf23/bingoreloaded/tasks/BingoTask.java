@@ -19,10 +19,7 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
 import javax.annotation.Nullable;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 public class BingoTask
 {
@@ -105,8 +102,7 @@ public class BingoTask
         // Step 1: create the item and put the new name, description and material on it.
         if (isVoided()) // VOIDED TASK
         {
-            ItemText addedDesc = new ItemText(BingoTranslation.VOIDED.translate(
-                    completedBy.getTeam().getColoredName().asLegacyString()), ChatColor.DARK_GRAY);
+            ItemText addedDesc = new ItemText(BingoTranslation.VOIDED.translate(), ChatColor.DARK_GRAY);
 
             ItemText itemName = new ItemText(ChatColor.DARK_GRAY, ChatColor.STRIKETHROUGH);
             itemName.addText("A", ChatColor.MAGIC);
@@ -171,7 +167,7 @@ public class BingoTask
         item.setItemMeta(meta);
 
         MenuItem finalItem = new MenuItem(item);
-        if (glowing || isCompleted())
+        if ((glowing || isCompleted()) && !isVoided())
         {
             finalItem.setGlowing(true);
         }

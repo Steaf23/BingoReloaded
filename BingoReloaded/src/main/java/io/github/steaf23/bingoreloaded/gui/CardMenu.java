@@ -14,32 +14,51 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class CardMenu extends BasicMenu
 {
     private final CardSize size;
+    private List<BingoTask> tasks;
 
     public CardMenu(MenuBoard menuBoard, CardSize cardSize, String title)
     {
         super(menuBoard, title, cardSize.size);
         this.size = cardSize;
+        this.tasks = new ArrayList<>();
         setMaxStackSizeOverride(64);
     }
 
     public void show(Player player, List<BingoTask> tasks)
     {
-        for (int i = 0; i < tasks.size(); i++)
-        {
-            BingoTask task = tasks.get(i);
-            addItem(task.asMenuItem().setSlot(size.getCardInventorySlot(i)));
-        }
         open(player);
+    }
+
+    public void updateTasks(List<BingoTask> tasks) {
+        this.tasks = tasks;
     }
 
     public void setInfo(String name, String... description)
     {
         MenuItem info = new MenuItem(0, Material.MAP, name, description);
         addItem(info);
+    }
+
+    protected CardSize getSize() {
+        return size;
+    }
+
+    protected List<BingoTask> getTasks() {
+        return tasks;
+    }
+
+    @Override
+    public void beforeOpening(HumanEntity player) {
+        for (int i = 0; i < tasks.size(); i++)
+        {
+            BingoTask task = tasks.get(i);
+            addItem(task.asMenuItem().setSlot(size.getCardInventorySlot(i)));
+        }
     }
 }

@@ -24,6 +24,7 @@ import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.easymenulib.EasyMenuLibrary;
 import io.github.steaf23.easymenulib.menu.BasicMenu;
 import io.github.steaf23.easymenulib.menu.item.SerializableItem;
+import io.github.steaf23.easymenulib.util.ChatColorGradient;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;

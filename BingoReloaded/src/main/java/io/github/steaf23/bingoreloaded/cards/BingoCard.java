@@ -40,9 +40,13 @@ public class BingoCard
     private static final TaskData DEFAULT_TASK = new ItemTask(Material.DIRT, 1);
 
     public BingoCard(MenuBoard menuBoard, CardSize size) {
+        this(new CardMenu(menuBoard, size, BingoTranslation.CARD_TITLE.translate()), size);
+    }
+
+    public BingoCard(CardMenu menu, CardSize size) {
         this.size = size;
         this.tasks = new ArrayList<>();
-        this.menu = new CardMenu(menuBoard, size, BingoTranslation.CARD_TITLE.translate());
+        this.menu = menu;
         menu.setInfo(BingoTranslation.INFO_REGULAR_NAME.translate(),
                 BingoTranslation.INFO_REGULAR_DESC.translate().split("\\n"));
     }
@@ -125,7 +129,8 @@ public class BingoCard
     }
 
     public void showInventory(Player player) {
-        menu.show(player, tasks);
+        menu.updateTasks(tasks);
+        menu.open(player);
     }
 
     public boolean hasBingo(BingoTeam team) {
