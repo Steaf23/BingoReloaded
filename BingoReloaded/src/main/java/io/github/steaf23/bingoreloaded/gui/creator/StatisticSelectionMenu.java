@@ -6,7 +6,7 @@ import io.github.steaf23.bingoreloaded.tasks.StatisticTask;
 import io.github.steaf23.bingoreloaded.tasks.statistics.BingoStatistic;
 import io.github.steaf23.easymenulib.menu.BasicMenu;
 import io.github.steaf23.easymenulib.menu.MenuBoard;
-import io.github.steaf23.easymenulib.menu.item.MenuItem;
+import io.github.steaf23.easymenulib.menu.item.ItemTemplate;
 import io.github.steaf23.easymenulib.util.FlexColor;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -22,25 +22,25 @@ public class StatisticSelectionMenu extends BasicMenu
 {
     public String listName;
 
-    protected static final MenuItem BG_ITEM = new MenuItem(Material.BLACK_STAINED_GLASS_PANE, " ", "");
-    protected static final MenuItem QUIT = new MenuItem(49, Material.REDSTONE, "" + ChatColor.RED + ChatColor.BOLD + BingoTranslation.MENU_SAVE_EXIT.translate(), "");
+    protected static final ItemTemplate BG_ITEM = new ItemTemplate(Material.BLACK_STAINED_GLASS_PANE, " ", "");
+    protected static final ItemTemplate QUIT = new ItemTemplate(49, Material.REDSTONE, "" + ChatColor.RED + ChatColor.BOLD + BingoTranslation.MENU_SAVE_EXIT.translate(), "");
 
     public StatisticSelectionMenu(MenuBoard menuBoard, String listName)
     {
         super(menuBoard, "Pick Statistics", 6);
         this.listName = listName;
-        addAction(new MenuItem(1, 0, Material.FEATHER, TITLE_PREFIX + "Travel"), p -> createTravelMenu().open(p));
-        addAction(new MenuItem(3, 0, Material.DIAMOND_SWORD, TITLE_PREFIX + "Kill"), p -> createEntityMenu(Statistic.KILL_ENTITY).open(p));
-        addAction(new MenuItem(5, 0, Material.SKELETON_SKULL, TITLE_PREFIX + "Get Killed"), p -> createEntityMenu(Statistic.ENTITY_KILLED_BY).open(p));
-        addAction(new MenuItem(7, 0, Material.STONECUTTER, TITLE_PREFIX + "Block Interactions"), p -> createBlockInteractMenu().open(p));
-        addAction(new MenuItem(1, 2, Material.CHEST, TITLE_PREFIX + "Container Interactions"), p -> createContainerMenu().open(p));
-        addAction(new MenuItem(3, 2, Material.DIAMOND_PICKAXE, TITLE_PREFIX + "Mine Block"), p -> createBlockMenu(Statistic.MINE_BLOCK).open(p));
-        addAction(new MenuItem(5, 2, Material.HOPPER, TITLE_PREFIX + "Drop Item"), p -> createItemMenu(Statistic.DROP).open(p));
-        addAction(new MenuItem(7, 2, Material.SHEARS, TITLE_PREFIX + "Use/Place Item"), p -> createItemMenu(Statistic.USE_ITEM).open(p));
-        addAction(new MenuItem(1, 4, Material.DEAD_BUSH, TITLE_PREFIX + "Break Item"), p -> createItemMenu(Statistic.BREAK_ITEM).open(p));
-        addAction(new MenuItem(3, 4, Material.CRAFTING_TABLE, TITLE_PREFIX + "Craft Item"), p -> createItemMenu(Statistic.CRAFT_ITEM).open(p));
-        addAction(new MenuItem(5, 4, Material.REDSTONE, TITLE_PREFIX + "Damage Related"), p -> createDamageMenu().open(p));
-        addAction(new MenuItem(7, 4, Material.BAKED_POTATO, TITLE_PREFIX + "Other"), p -> createMiscMenu().open(p));
+        addAction(new ItemTemplate(1, 0, Material.FEATHER, TITLE_PREFIX + "Travel"), p -> createTravelMenu().open(p));
+        addAction(new ItemTemplate(3, 0, Material.DIAMOND_SWORD, TITLE_PREFIX + "Kill"), p -> createEntityMenu(Statistic.KILL_ENTITY).open(p));
+        addAction(new ItemTemplate(5, 0, Material.SKELETON_SKULL, TITLE_PREFIX + "Get Killed"), p -> createEntityMenu(Statistic.ENTITY_KILLED_BY).open(p));
+        addAction(new ItemTemplate(7, 0, Material.STONECUTTER, TITLE_PREFIX + "Block Interactions"), p -> createBlockInteractMenu().open(p));
+        addAction(new ItemTemplate(1, 2, Material.CHEST, TITLE_PREFIX + "Container Interactions"), p -> createContainerMenu().open(p));
+        addAction(new ItemTemplate(3, 2, Material.DIAMOND_PICKAXE, TITLE_PREFIX + "Mine Block"), p -> createBlockMenu(Statistic.MINE_BLOCK).open(p));
+        addAction(new ItemTemplate(5, 2, Material.HOPPER, TITLE_PREFIX + "Drop Item"), p -> createItemMenu(Statistic.DROP).open(p));
+        addAction(new ItemTemplate(7, 2, Material.SHEARS, TITLE_PREFIX + "Use/Place Item"), p -> createItemMenu(Statistic.USE_ITEM).open(p));
+        addAction(new ItemTemplate(1, 4, Material.DEAD_BUSH, TITLE_PREFIX + "Break Item"), p -> createItemMenu(Statistic.BREAK_ITEM).open(p));
+        addAction(new ItemTemplate(3, 4, Material.CRAFTING_TABLE, TITLE_PREFIX + "Craft Item"), p -> createItemMenu(Statistic.CRAFT_ITEM).open(p));
+        addAction(new ItemTemplate(5, 4, Material.REDSTONE, TITLE_PREFIX + "Damage Related"), p -> createDamageMenu().open(p));
+        addAction(new ItemTemplate(7, 4, Material.BAKED_POTATO, TITLE_PREFIX + "Other"), p -> createMiscMenu().open(p));
         addCloseAction(QUIT);
         addItems(BG_ITEM.copyToSlot(45),
                 BG_ITEM.copyToSlot(46),

@@ -7,9 +7,13 @@ import io.github.steaf23.bingoreloaded.tasks.TaskData;
 import io.github.steaf23.easymenulib.menu.FilterType;
 import io.github.steaf23.easymenulib.menu.MenuBoard;
 import io.github.steaf23.easymenulib.menu.PaginatedSelectionMenu;
-import io.github.steaf23.easymenulib.menu.item.ItemText;
-import io.github.steaf23.easymenulib.menu.item.MenuItem;
+import io.github.steaf23.easymenulib.menu.item.ItemTemplate;
+
+import io.github.steaf23.easymenulib.util.ChatComponentUtils;
 import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
@@ -23,8 +27,8 @@ public class TaskPickerMenu extends PaginatedSelectionMenu
 {
     private final String listName;
 
-    protected static final ItemText[] SELECTED_LORE = createSelectedLore();
-    protected static final ItemText[] UNSELECTED_LORE = createUnselectedLore();
+    protected static final BaseComponent[] SELECTED_LORE = createSelectedLore();
+    protected static final BaseComponent[] UNSELECTED_LORE = createUnselectedLore();
 
     public TaskPickerMenu(MenuBoard manager, String title, List<BingoTask> options, String listName) {
         super(manager, title, asPickerItems(options), FilterType.DISPLAY_NAME);
@@ -33,7 +37,7 @@ public class TaskPickerMenu extends PaginatedSelectionMenu
     }
 
     @Override
-    public void onOptionClickedDelegate(InventoryClickEvent event, MenuItem clickedOption, HumanEntity player) {
+    public void onOptionClickedDelegate(InventoryClickEvent event, ItemTemplate clickedOption, HumanEntity player) {
         switch (event.getClick()) {
             case LEFT -> incrementItemCount(clickedOption, 1);
             case SHIFT_LEFT -> incrementItemCount(clickedOption, 10);
@@ -42,7 +46,7 @@ public class TaskPickerMenu extends PaginatedSelectionMenu
         }
     }
 
-    public TaskData incrementItemCount(MenuItem item, int by) {
+    public TaskData incrementItemCount(ItemTemplate item, int by) {
         // When entering this method, the item always needs to be selected by the end.
         // Now just check if the item was already selected prior to this moment.
         boolean alreadySelected = getSelectedItems().contains(item);
@@ -54,8 +58,8 @@ public class TaskPickerMenu extends PaginatedSelectionMenu
                 return null;
         }
 
-        TaskData newData = BingoTask.fromMenuItem(item).data;
-        MenuItem newItem = getUpdatedTaskItem(newData, true, newAmount)
+        TaskData newData = BingoTask.fromItem(item.buildItem()).data;
+        ItemTemplate newItem = getUpdatedTaskItem(newData, true, newAmount)
                 .copyToSlot(item.getSlot());
         replaceItem(newItem, newItem.getSlot());
         selectItem(newItem, true);
@@ -63,7 +67,7 @@ public class TaskPickerMenu extends PaginatedSelectionMenu
         return newData;
     }
 
-    public TaskData decrementItemCount(MenuItem item, int by) {
+    public TaskData decrementItemCount(ItemTemplate item, int by) {
         // When entering this method the item could already be deselected, in which case we return;
         boolean deselect = false;
         if (!getSelectedItems().contains(item)) {
@@ -80,8 +84,8 @@ public class TaskPickerMenu extends PaginatedSelectionMenu
             newAmount = Math.max(1, newAmount - by);
         }
 
-        TaskData newData = BingoTask.fromMenuItem(item).data;
-        MenuItem newItem = getUpdatedTaskItem(newData, !deselect, newAmount)
+        TaskData newData = BingoTask.fromItem(item.buildItem()).data;
+        ItemTemplate newItem = getUpdatedTaskItem(newData, !deselect, newAmount)
                 .copyToSlot(item.getSlot());
         replaceItem(newItem, newItem.getSlot());
         selectItem(newItem, !deselect);
@@ -96,8 +100,8 @@ public class TaskPickerMenu extends PaginatedSelectionMenu
         BingoCardData cardsData = new BingoCardData();
         Set<TaskData> tasks = cardsData.lists().getTasks(listName, true, true);
 
-        for (MenuItem item : getAllItems()) {
-            TaskData itemData = BingoTask.fromMenuItem(item).data;
+        for (ItemTemplate item : getAllItems()) {
+            TaskData itemData = BingoTask.fromItem(item.buildItem()).data;
             TaskData savedTask = null;
             for (var t : tasks) {
                 if (t.isTaskEqual(itemData)) {
@@ -111,7 +115,7 @@ public class TaskPickerMenu extends PaginatedSelectionMenu
                 if (savedTask instanceof CountableTask countable)
                     count = countable.getCount();
 
-                MenuItem newItem = getUpdatedTaskItem(itemData, true, count);
+                ItemTemplate newItem = getUpdatedTaskItem(itemData, true, count);
                 replaceItem(newItem, item);
                 selectItem(newItem, true);
             }
@@ -124,21 +128,21 @@ public class TaskPickerMenu extends PaginatedSelectionMenu
 
         BingoCardData cardsData = new BingoCardData();
         cardsData.lists().saveTasksFromGroup(listName,
-                getAllItems().stream().map(item -> BingoTask.fromMenuItem(item).data).collect(Collectors.toList()),
-                getSelectedItems().stream().map(item -> BingoTask.fromMenuItem(item).data).collect(Collectors.toList()));
+                getAllItems().stream().map(item -> BingoTask.fromItem(item.buildItem()).data).collect(Collectors.toList()),
+                getSelectedItems().stream().map(item -> BingoTask.fromItem(item.buildItem()).data).collect(Collectors.toList()));
     }
 
-    public static List<MenuItem> asPickerItems(List<BingoTask> tasks) {
-        List<MenuItem> result = new ArrayList<>();
+    public static List<ItemTemplate> asPickerItems(List<BingoTask> tasks) {
+        List<ItemTemplate> result = new ArrayList<>();
         tasks.forEach(task -> {
-            MenuItem item = getUpdatedTaskItem(task.data, false, 1);
+            ItemTemplate item = getUpdatedTaskItem(task.data, false, 1);
             item.setGlowing(false);
             result.add(item);
         });
         return result;
     }
 
-    private static MenuItem getUpdatedTaskItem(TaskData old, boolean selected, int newCount) {
+    private static ItemTemplate getUpdatedTaskItem(TaskData old, boolean selected, int newCount) {
         TaskData newData = old;
         if (selected) {
             if (newData instanceof CountableTask countable) {
@@ -147,37 +151,30 @@ public class TaskPickerMenu extends PaginatedSelectionMenu
         }
 
         BingoTask newTask = new BingoTask(newData);
-        MenuItem item = newTask.asMenuItem();
+        ItemTemplate item = newTask.toItem();
+        item.setAction(null);
 
-        String[] addedLore;
+        BaseComponent[] addedLore;
         if (selected)
-            addedLore = Arrays.stream(SELECTED_LORE)
-                    .map(ItemText::asLegacyString)
-                    .toList().toArray(new String[]{});
+            addedLore = SELECTED_LORE;
         else
-            addedLore = Arrays.stream(UNSELECTED_LORE)
-                    .map(ItemText::asLegacyString)
-                    .toList().toArray(new String[]{});
+            addedLore = UNSELECTED_LORE;
 
-        String[] taskDescription = Arrays.stream(newTask.data.getItemDescription())
-                .map(ItemText::asLegacyString)
-                .toList().toArray(new String[]{});
-
-        item.setLore(taskDescription);
+        item.setLore(newTask.data.getItemDescription());
         item.addDescription("selected", 5, addedLore);
         return item;
     }
 
-    private static ItemText[] createSelectedLore() {
-        var text = new ItemText(" - ", ChatColor.WHITE, ChatColor.ITALIC);
-        text.addText("This task has been added to the list", ChatColor.DARK_PURPLE);
-        return new ItemText[]{text};
+    private static BaseComponent[] createSelectedLore() {
+        ComponentBuilder builder = new ComponentBuilder(" - ").color(ChatColor.WHITE).italic(true)
+                .append("This task has been added to the list").color(ChatColor.DARK_PURPLE);
+        return new BaseComponent[]{builder.build()};
     }
 
-    private static ItemText[] createUnselectedLore() {
-        var text = new ItemText(" - ", ChatColor.WHITE, ChatColor.ITALIC);
-        text.addText("Click to make this task", ChatColor.GRAY);
-        var text2 = new ItemText("   appear on bingo cards", ChatColor.GRAY, ChatColor.ITALIC);
-        return new ItemText[]{text, text2};
+    private static BaseComponent[] createUnselectedLore() {
+        BaseComponent text = ChatComponentUtils.convert(" - ", ChatColor.WHITE, ChatColor.ITALIC);
+        text.addExtra(ChatComponentUtils.convert("Click to make this task", ChatColor.GRAY));
+        BaseComponent text2 = ChatComponentUtils.convert("   appear on bingo cards", ChatColor.GRAY, ChatColor.ITALIC);
+        return new BaseComponent[]{text, text2};
     }
 }

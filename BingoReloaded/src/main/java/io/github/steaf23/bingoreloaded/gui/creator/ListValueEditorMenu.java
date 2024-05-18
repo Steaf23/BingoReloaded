@@ -3,16 +3,18 @@ package io.github.steaf23.bingoreloaded.gui.creator;
 import io.github.steaf23.bingoreloaded.data.BingoCardData;
 import io.github.steaf23.easymenulib.menu.BasicMenu;
 import io.github.steaf23.easymenulib.menu.MenuBoard;
-import io.github.steaf23.easymenulib.menu.item.MenuItem;
+import io.github.steaf23.easymenulib.menu.item.ItemTemplate;
 import io.github.steaf23.easymenulib.menu.item.action.SpinBoxButtonAction;
+import io.github.steaf23.easymenulib.util.ChatComponentUtils;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 
 public class ListValueEditorMenu extends BasicMenu
 {
-    private static final MenuItem CANCEL = new MenuItem(39, Material.REDSTONE, "" + ChatColor.RED + ChatColor.BOLD + "Cancel");
-    private static final MenuItem SAVE = new MenuItem(41, Material.DIAMOND, "" + ChatColor.AQUA + ChatColor.BOLD + "Save");
-    private static final MenuItem INFO = new MenuItem(0, Material.MAP,
+    private static final ItemTemplate CANCEL = new ItemTemplate(39, Material.REDSTONE, "" + ChatColor.RED + ChatColor.BOLD + "Cancel");
+    private static final ItemTemplate SAVE = new ItemTemplate(41, Material.DIAMOND, "" + ChatColor.AQUA + ChatColor.BOLD + "Save");
+    private static final ItemTemplate INFO = new ItemTemplate(0, Material.MAP,
             ChatColor.BOLD + "Edit list values",
             "Here you can change how often",
             "an item from this list ",
@@ -31,16 +33,16 @@ public class ListValueEditorMenu extends BasicMenu
         this.cardEditor = parent;
         this.listName = listName;
 
-        MenuItem minCounter = new MenuItem(20, Material.TARGET, " ");
+        ItemTemplate minCounter = new ItemTemplate(20, Material.TARGET, " ");
         addAction(minCounter, new SpinBoxButtonAction(BingoCardData.MIN_ITEMS, maxCount, minStart, value -> {
-            minCounter.setName(TITLE_PREFIX + minCount);
-            minCounter.setLore("Not more than" + minCount + " item(s) ", "will be picked from this list");
+            minCounter.setName(TextComponent.fromLegacy(TITLE_PREFIX + minCount));
+            minCounter.setLore(ChatComponentUtils.createComponentsFromString("Not more than" + minCount + " item(s) ", "will be picked from this list"));
         }));
 
-        MenuItem maxCounter = new MenuItem(24, Material.TARGET, " ");
+        ItemTemplate maxCounter = new ItemTemplate(24, Material.TARGET, " ");
         addAction(maxCounter, new SpinBoxButtonAction(minCount, Math.min(BingoCardData.MAX_ITEMS, cardEditor.cardsData.lists().getTaskCount(listName)), maxStart, value -> {
-            maxCounter.setName(TITLE_PREFIX + maxCount);
-            maxCounter.setLore("Not more than " + maxCount + " item(s) ", "will be picked from this list");
+            maxCounter.setName(TextComponent.fromLegacy(TITLE_PREFIX + maxCount));
+            maxCounter.setLore(ChatComponentUtils.createComponentsFromString("Not more than " + maxCount + " item(s) ", "will be picked from this list"));
         }));
 
         addAction(SAVE, p -> {

@@ -14,7 +14,7 @@ import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.bingoreloaded.util.TranslatedMessage;
 import io.github.steaf23.bingoreloaded.util.timer.CountdownTimer;
 import io.github.steaf23.easymenulib.menu.MenuBoard;
-import io.github.steaf23.easymenulib.menu.item.MenuItem;
+import io.github.steaf23.easymenulib.menu.item.ItemTemplate;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -183,11 +183,11 @@ public class PregameLobby implements GamePhase
     }
 
     private void giveVoteItem(Player player) {
-        player.getInventory().addItem(PlayerKit.VOTE_ITEM.buildStack());
+        player.getInventory().addItem(PlayerKit.VOTE_ITEM.buildItem());
     }
 
     private void giveTeamItem(Player player) {
-        player.getInventory().addItem(PlayerKit.TEAM_ITEM.buildStack());
+        player.getInventory().addItem(PlayerKit.TEAM_ITEM.buildItem());
     }
 
     private void initializePlayer(Player player) {
@@ -339,13 +339,11 @@ public class PregameLobby implements GamePhase
         if (event.getItem() == null || event.getItem().getType() == Material.AIR)
             return;
 
-        MenuItem item = new MenuItem(event.getItem());
-
-        if (item.getCompareKey().equals("vote")) {
+        if (ItemTemplate.isCompareKeyEqual(event.getItem(), "vote")) {
             event.setCancelled(true);
             VoteMenu menu = new VoteMenu(menuBoard, config.voteList, this);
             menu.open(event.getPlayer());
-        } else if (item.getCompareKey().equals("team")) {
+        } else if (ItemTemplate.isCompareKeyEqual(event.getItem(), "team")) {
             event.setCancelled(true);
             TeamSelectionMenu teamSelection = new TeamSelectionMenu(menuBoard, session.teamManager);
             teamSelection.open(event.getPlayer());

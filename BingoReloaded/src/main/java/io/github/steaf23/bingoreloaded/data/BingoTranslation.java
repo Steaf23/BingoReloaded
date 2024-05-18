@@ -2,10 +2,13 @@ package io.github.steaf23.bingoreloaded.data;
 
 import io.github.steaf23.bingoreloaded.util.CollectionHelper;
 import io.github.steaf23.bingoreloaded.util.Message;
-import io.github.steaf23.easymenulib.menu.item.ItemText;
+import io.github.steaf23.easymenulib.util.ChatComponentUtils;
 import io.github.steaf23.easymenulib.util.SmallCaps;
 import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.TextComponent;
+import net.milkbowl.vault.chat.Chat;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import java.util.ArrayList;
@@ -177,19 +180,19 @@ public enum BingoTranslation
      * @return An array of itemText where each element is a line,
      *  where each line is split using '\n' in the translated string.
      */
-    public ItemText[] asItemText(Set<ChatColor> modifiers, boolean useSmallCaps, ItemText... args)
+    public BaseComponent[] asComponent(Set<ChatColor> modifiers, boolean useSmallCaps, BaseComponent... args)
     {
         //TODO: fix issue where raw translations cannot convert the colors defined in lang files properly on items
         String rawTranslation = translation;
         rawTranslation = convertColors(rawTranslation);
         TextComponent.fromLegacyText(rawTranslation);
 
-        List<ItemText> result = new ArrayList<>();
+        List<BaseComponent> result = new ArrayList<>();
         String[] lines = rawTranslation.split("\\n");
         String[] pieces;
         for (int i = 0; i < lines.length; i++)
         {
-            ItemText line = new ItemText(modifiers.toArray(new ChatColor[]{}));
+            ComponentBuilder lineBuilder = ChatComponentUtils.formattedBuilder(modifiers.toArray(new ChatColor[]{}));
             pieces = lines[i].split("\\{");
             for (String piece : pieces)
             {
@@ -198,24 +201,24 @@ public enum BingoTranslation
                 {
                     if (pieceToAdd.contains(argIdx + "}"))
                     {
-                        line.add(args[argIdx]);
+                        lineBuilder.append(args[argIdx]);
                         pieceToAdd = pieceToAdd.replace(i + "}", "");
                         break;
                     }
                 }
                 if (useSmallCaps)
-                    line.addSmallCapsText(pieceToAdd);
+                    lineBuilder.append(ChatComponentUtils.smallCaps(pieceToAdd));
                 else
-                    line.addText(pieceToAdd);
+                    lineBuilder.append(pieceToAdd);
             }
-            result.add(line);
+            result.add(lineBuilder.build());
         }
-        return result.toArray(new ItemText[]{});
+        return result.toArray(new BaseComponent[]{});
     }
 
-    public ItemText[] asItemText(Set<ChatColor> modifiers, ItemText... args)
+    public BaseComponent[] asComponent(Set<ChatColor> modifiers, BaseComponent... args)
     {
-        return asItemText(modifiers, false, args);
+        return asComponent(modifiers, false, args);
     }
 
     /**

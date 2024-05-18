@@ -5,7 +5,7 @@ import io.github.steaf23.bingoreloaded.tasks.BingoTask;
 import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.easymenulib.menu.BasicMenu;
 import io.github.steaf23.easymenulib.menu.MenuBoard;
-import io.github.steaf23.easymenulib.menu.item.MenuItem;
+import io.github.steaf23.easymenulib.menu.item.ItemTemplate;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Material;
@@ -41,7 +41,7 @@ public class CardMenu extends BasicMenu
 
     public void setInfo(String name, String... description)
     {
-        MenuItem info = new MenuItem(0, Material.MAP, name, description);
+        ItemTemplate info = new ItemTemplate(0, Material.MAP, name, description);
         addItem(info);
     }
 
@@ -58,7 +58,7 @@ public class CardMenu extends BasicMenu
         for (int i = 0; i < tasks.size(); i++)
         {
             BingoTask task = tasks.get(i);
-            addItem(task.asMenuItem().setSlot(size.getCardInventorySlot(i)));
+            addItem(task.toItem().setSlot(size.getCardInventorySlot(i)));
         }
     }
 }

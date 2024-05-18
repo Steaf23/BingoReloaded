@@ -11,16 +11,19 @@ import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.easymenulib.menu.BasicMenu;
 import io.github.steaf23.easymenulib.menu.MenuBoard;
-import io.github.steaf23.easymenulib.menu.item.MenuItem;
+import io.github.steaf23.easymenulib.menu.item.ItemTemplate;
 import io.github.steaf23.easymenulib.menu.item.action.ComboBoxButtonAction;
 import io.github.steaf23.easymenulib.menu.item.action.SpinBoxButtonAction;
 import io.github.steaf23.easymenulib.menu.item.action.ToggleButtonAction;
+import io.github.steaf23.easymenulib.util.ChatComponentUtils;
 import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -74,32 +77,32 @@ public class BingoTestCommand implements TabExecutor
 
                 BasicMenu menu = new BasicMenu(board, "Easy Menu Lib Test", 6);
 
-                menu.addItem(new MenuItem(0, 0, Material.BEDROCK, "" + ChatColor.RED + ChatColor.UNDERLINE + "Some name??"));
+                menu.addItem(new ItemTemplate(0, 0, Material.BEDROCK, "" + ChatColor.RED + ChatColor.UNDERLINE + "Some name??"));
 
-                menu.addAction(new MenuItem(1, 0, Material.ACACIA_BOAT, "" + ChatColor.LIGHT_PURPLE + ChatColor.ITALIC + "Toggle Action", "Toggle me :D"),
+                menu.addAction(new ItemTemplate(1, 0, Material.ACACIA_BOAT, "" + ChatColor.LIGHT_PURPLE + ChatColor.ITALIC + "Toggle Action", "Toggle me :D"),
                         new ToggleButtonAction(toggled -> {
                             Message.sendDebug("I am toggled and " + toggled, player);
                         }));
 
-                MenuItem spinboxItem = new MenuItem(2, 0, Material.LEAD, "Spinbox action", "I have value >:)");
+                ItemTemplate spinboxItem = new ItemTemplate(2, 0, Material.LEAD, "Spinbox action", "I have value >:)");
                 spinboxItem.setAction(new SpinBoxButtonAction(13, 34, 2, value -> {
                     Message.sendDebug("I have a value of " + value, player);
-                    spinboxItem.setLore("I have a value of " + value + "!");
+                    spinboxItem.setLore(new TextComponent("I have a value of " + value + "!"));
                 }));
                 menu.addItem(spinboxItem);
 
-                menu.addAction(new MenuItem(3, 0, Material.SAND, "I should not exist..."), arguments -> {
+                menu.addAction(new ItemTemplate(3, 0, Material.SAND, "I should not exist..."), arguments -> {
                     Message.sendDebug("but yet I am alive ;(", player);
                 });
 
-                MenuItem comboItem = new MenuItem(3, 0, Material.YELLOW_CONCRETE, "I am actually 4 items", "fr fr");
+                ItemTemplate comboItem = new ItemTemplate(3, 0, Material.YELLOW_CONCRETE, "I am actually 4 items", "fr fr");
                 menu.addAction(comboItem, new ComboBoxButtonAction(selection -> {
                     Message.sendDebug("You have selected " + selection, player);
                 })
-                        .addOption("Cheese", new ItemStack(Material.YELLOW_CONCRETE))
-                        .addOption("Potato", new ItemStack(Material.POISONOUS_POTATO))
-                        .addOption("Tomato", new ItemStack(Material.RED_CONCRETE))
-                        .addOption("Carrotato", new ItemStack(Material.ORANGE_CONCRETE))
+                        .addOption("Cheese", new ItemTemplate(Material.YELLOW_CONCRETE))
+                        .addOption("Potato", new ItemTemplate(Material.POISONOUS_POTATO))
+                        .addOption("Tomato", new ItemTemplate(Material.RED_CONCRETE))
+                        .addOption("Carrotato", new ItemTemplate(Material.ORANGE_CONCRETE))
                         .selectOption("Tomato"));
 
                 menu.open(player);

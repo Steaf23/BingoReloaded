@@ -1,9 +1,11 @@
 package io.github.steaf23.bingoreloaded.tasks;
 
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
-import io.github.steaf23.easymenulib.menu.item.ItemText;
+import io.github.steaf23.easymenulib.util.ChatComponentUtils;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.persistence.PersistentDataContainer;
@@ -27,31 +29,31 @@ public record ItemTask(Material material, int count) implements CountableTask
     }
 
     @Override
-    public ItemText getItemDisplayName()
+    public BaseComponent getName()
     {
-        ItemText text = new ItemText();
-        text.addText(Integer.toString(count) + "x ");
-        text.addItemName(material);
-        return text;
+        ComponentBuilder builder = new ComponentBuilder().color(ChatColor.YELLOW);
+        builder.append(count + "x ")
+                .append(ChatComponentUtils.itemName(material));
+        return builder.build();
     }
 
     @Override
-    public ItemText[] getItemDescription()
+    public BaseComponent[] getItemDescription()
     {
         Set<ChatColor> modifiers = new HashSet<>(){{
             add(ChatColor.DARK_AQUA);
         }};
-        return BingoTranslation.LORE_ITEM.asItemText(modifiers, new ItemText(Integer.toString(count)));
+        return BingoTranslation.LORE_ITEM.asComponent(modifiers, new TextComponent(Integer.toString(count)));
     }
 
     @Override
-    public BaseComponent getDescription()
+    public BaseComponent getChatDescription()
     {
-        return ItemText.combine(getItemDescription()).asComponent();
+        return new ComponentBuilder().append(getItemDescription()).build();
     }
 
     @Override
-    public PersistentDataContainer pdcSerialize(PersistentDataContainer stream)
+    public @NotNull PersistentDataContainer pdcSerialize(PersistentDataContainer stream)
     {
         stream.set(BingoTask.getTaskDataKey("item"),  PersistentDataType.STRING, material.name());
         stream.set(BingoTask.getTaskDataKey("count"),  PersistentDataType.INTEGER, count);
@@ -62,8 +64,7 @@ public record ItemTask(Material material, int count) implements CountableTask
     {
         Material item = Material.valueOf(pdc.getOrDefault(BingoTask.getTaskDataKey("item"), PersistentDataType.STRING, "BEDROCK"));
         int count = pdc.getOrDefault(BingoTask.getTaskDataKey("count"), PersistentDataType.INTEGER, 1);
-        ItemTask rec = new ItemTask(item, count);
-        return rec;
+        return new ItemTask(item, count);
     }
 
     @NotNull

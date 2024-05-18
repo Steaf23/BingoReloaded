@@ -5,18 +5,18 @@ import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.data.helper.YmlDataManager;
 import io.github.steaf23.bingoreloaded.gui.EffectOptionFlags;
-import io.github.steaf23.easymenulib.menu.item.MenuItem;
-import io.github.steaf23.easymenulib.menu.item.SerializableItem;
+import io.github.steaf23.bingoreloaded.gui.item.SerializableItem;
+import io.github.steaf23.easymenulib.menu.item.*;
+import io.github.steaf23.easymenulib.util.ChatComponentUtils;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.EnumSet;
+import java.awt.*;
+import java.util.*;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 public enum PlayerKit
@@ -32,28 +32,35 @@ public enum PlayerKit
     CUSTOM_5("custom_5", "CUSTOM 5", EnumSet.noneOf(EffectOptionFlags.class)),
     ;
 
-    public static final MenuItem WAND_ITEM = new MenuItem(
+    public static final ItemTemplate WAND_ITEM = new ItemTemplate(
             Material.WARPED_FUNGUS_ON_A_STICK,
-            "" + ChatColor.DARK_PURPLE + ChatColor.ITALIC + ChatColor.BOLD + BingoTranslation.WAND_ITEM_NAME.translate(),
-            BingoTranslation.WAND_ITEM_DESC.translate().split("\\n")
-    ).withEnchantment(Enchantment.DURABILITY, 3).setCompareKey("wand");
-    public static final MenuItem CARD_ITEM = new MenuItem(
+            ChatComponentUtils.convert(BingoTranslation.WAND_ITEM_NAME.translate(), ChatColor.DARK_PURPLE, ChatColor.ITALIC, ChatColor.BOLD),
+            ChatComponentUtils.createComponentsFromString(BingoTranslation.WAND_ITEM_DESC.translate().split("\\n"))
+    )
+            .addEnchantment(Enchantment.DURABILITY, 3)
+            .setCompareKey("wand");
+
+    public static final ItemTemplate CARD_ITEM = new ItemTemplate(
             Material.GLOBE_BANNER_PATTERN,
-            "" + ChatColor.DARK_PURPLE + ChatColor.ITALIC + ChatColor.BOLD + BingoTranslation.CARD_ITEM_NAME.translate(),
-            BingoTranslation.CARD_ITEM_DESC.translate()
-    ).setCompareKey("card").setGlowing(true);
+            ChatComponentUtils.convert(BingoTranslation.CARD_ITEM_NAME.translate(), ChatColor.DARK_PURPLE, ChatColor.ITALIC, ChatColor.BOLD),
+            ChatComponentUtils.createComponentsFromString(BingoTranslation.CARD_ITEM_DESC.translate().split("\\n"))
+    )
+            .setGlowing(true)
+            .setCompareKey("card");
 
-    public static final MenuItem VOTE_ITEM = new MenuItem(
+    public static final ItemTemplate VOTE_ITEM = new ItemTemplate(
             Material.EMERALD,
-            "" + ChatColor.GREEN + ChatColor.BOLD + BingoTranslation.VOTE_ITEM_NAME.translate(),
-            BingoTranslation.VOTE_ITEM_DESC.translate().split("\\n")
-    ).setCompareKey("vote");
+            ChatComponentUtils.convert(BingoTranslation.VOTE_ITEM_NAME.translate(), ChatColor.GREEN, ChatColor.BOLD),
+            ChatComponentUtils.createComponentsFromString(BingoTranslation.VOTE_ITEM_DESC.translate().split("\\n"))
+    )
+            .setCompareKey("vote");
 
-    public static final MenuItem TEAM_ITEM = new MenuItem(
+    public static final ItemTemplate TEAM_ITEM = new ItemTemplate(
             Material.WHITE_GLAZED_TERRACOTTA,
-            "" + ChatColor.AQUA + ChatColor.BOLD + BingoTranslation.TEAM_ITEM_NAME.translate(),
-            BingoTranslation.TEAM_ITEM_DESC.translate().split("\\n")
-    ).setCompareKey("team");
+            ChatComponentUtils.convert(BingoTranslation.TEAM_ITEM_NAME.translate(), ChatColor.AQUA, ChatColor.BOLD),
+            ChatComponentUtils.createComponentsFromString(BingoTranslation.TEAM_ITEM_DESC.translate().split("\\n"))
+    )
+            .setCompareKey("team");
 
     public final String configName;
     private final String displayName;
@@ -77,70 +84,72 @@ public enum PlayerKit
 
     public List<SerializableItem> getItems(ChatColor teamColor)
     {
-        MenuItem helmet = MenuItem.createColoredLeather(ChatColor.of(teamColor.getColor()), Material.LEATHER_HELMET).setSlot(39).setName("");
-        MenuItem boots = MenuItem.createColoredLeather(ChatColor.of(teamColor.getColor()), Material.LEATHER_BOOTS).setSlot(36).setName("");
+        ItemTemplate helmet = new ItemTemplate(39, Material.LEATHER_HELMET)
+                .setLeatherColor(ChatColor.of(teamColor.getColor()));
+        ItemTemplate boots = new ItemTemplate(36, Material.LEATHER_BOOTS)
+                .setLeatherColor(ChatColor.of(teamColor.getColor()));
 
-        List<MenuItem> items = new ArrayList<>();
+        List<ItemTemplate> items = new ArrayList<>();
         switch (this)
         {
             case NORMAL -> {
                 items.add(helmet
-                        .withEnchantment(Enchantment.WATER_WORKER, 1));
+                        .addEnchantment(Enchantment.WATER_WORKER, 1));
                 items.add(boots
-                        .withEnchantment(Enchantment.DEPTH_STRIDER, 3));
-                items.add(new MenuItem(1, Material.IRON_PICKAXE, ""));
-                items.add(new MenuItem(0, Material.IRON_AXE, ""));
-                items.add(new MenuItem(2, Material.IRON_SHOVEL, "")
-                        .withEnchantment(Enchantment.SILK_TOUCH, 1));
-                items.add(new MenuItem(3, Material.COOKED_PORKCHOP, "")
+                        .addEnchantment(Enchantment.DEPTH_STRIDER, 3));
+                items.add(new ItemTemplate(1, Material.IRON_PICKAXE));
+                items.add(new ItemTemplate(0, Material.IRON_AXE));
+                items.add(new ItemTemplate(2, Material.IRON_SHOVEL)
+                        .addEnchantment(Enchantment.SILK_TOUCH, 1));
+                items.add(new ItemTemplate(3, Material.COOKED_PORKCHOP)
                         .setAmount(32));
             }
             case OVERPOWERED -> {
                 items.add(WAND_ITEM.copyToSlot(8));
                 items.add(helmet
-                        .withEnchantment(Enchantment.DURABILITY, 3)
-                        .withEnchantment(Enchantment.WATER_WORKER, 1)
-                        .withEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 4));
+                        .addEnchantment(Enchantment.DURABILITY, 3)
+                        .addEnchantment(Enchantment.WATER_WORKER, 1)
+                        .addEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 4));
                 items.add(boots
-                        .withEnchantment(Enchantment.DURABILITY, 3)
-                        .withEnchantment(Enchantment.DEPTH_STRIDER, 3)
-                        .withEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 4));
-                items.add(new MenuItem(1, Material.NETHERITE_PICKAXE, "")
-                        .withEnchantment(Enchantment.LOOT_BONUS_BLOCKS, 3)
-                        .withEnchantment(Enchantment.DIG_SPEED, 5));
-                items.add(new MenuItem(0, Material.NETHERITE_AXE, "")
-                        .withIllegalEnchantment(Enchantment.LOOT_BONUS_MOBS, 3)
-                        .withIllegalEnchantment(Enchantment.DAMAGE_ALL, 5)
-                        .withEnchantment(Enchantment.DIG_SPEED, 5));
-                items.add(new MenuItem(2, Material.NETHERITE_SHOVEL, "")
-                        .withEnchantment(Enchantment.SILK_TOUCH, 1)
-                        .withEnchantment(Enchantment.DIG_SPEED, 5));
-                items.add(new MenuItem(3, Material.GOLDEN_CARROT, "")
+                        .addEnchantment(Enchantment.DURABILITY, 3)
+                        .addEnchantment(Enchantment.DEPTH_STRIDER, 3)
+                        .addEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 4));
+                items.add(new ItemTemplate(1, Material.NETHERITE_PICKAXE)
+                        .addEnchantment(Enchantment.LOOT_BONUS_BLOCKS, 3)
+                        .addEnchantment(Enchantment.DIG_SPEED, 5));
+                items.add(new ItemTemplate(0, Material.NETHERITE_AXE)
+                        .addEnchantment(Enchantment.LOOT_BONUS_MOBS, 3)
+                        .addEnchantment(Enchantment.DAMAGE_ALL, 5)
+                        .addEnchantment(Enchantment.DIG_SPEED, 5));
+                items.add(new ItemTemplate(2, Material.NETHERITE_SHOVEL)
+                        .addEnchantment(Enchantment.SILK_TOUCH, 1)
+                        .addEnchantment(Enchantment.DIG_SPEED, 5));
+                items.add(new ItemTemplate(3, Material.GOLDEN_CARROT)
                         .setAmount(64));
             }
             case RELOADED -> {
                 items.add(WAND_ITEM.copyToSlot(8));
                 items.add(helmet
-                        .withEnchantment(Enchantment.DURABILITY, 3)
-                        .withEnchantment(Enchantment.WATER_WORKER, 1)
-                        .withEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 4));
+                        .addEnchantment(Enchantment.DURABILITY, 3)
+                        .addEnchantment(Enchantment.WATER_WORKER, 1)
+                        .addEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 4));
                 items.add(boots
-                        .withEnchantment(Enchantment.DURABILITY, 3)
-                        .withEnchantment(Enchantment.DEPTH_STRIDER, 3)
-                        .withEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 4));
-                items.add(new MenuItem(38, Material.ELYTRA, "")
-                        .withIllegalEnchantment(Enchantment.DURABILITY, 10));
-                items.add(new MenuItem(0, Material.NETHERITE_AXE, "")
-                        .withIllegalEnchantment(Enchantment.LOOT_BONUS_MOBS, 3)
-                        .withIllegalEnchantment(Enchantment.DAMAGE_ALL, 5)
-                        .withEnchantment(Enchantment.DIG_SPEED, 5));
-                items.add(new MenuItem(1, Material.NETHERITE_PICKAXE, "")
-                        .withIllegalEnchantment(Enchantment.LOOT_BONUS_BLOCKS, 3)
-                        .withIllegalEnchantment(Enchantment.DIG_SPEED, 5));
-                items.add(new MenuItem(2, Material.NETHERITE_SHOVEL, "")
-                        .withEnchantment(Enchantment.SILK_TOUCH, 1)
-                        .withEnchantment(Enchantment.DIG_SPEED, 5));
-                items.add(new MenuItem(3, Material.ENCHANTED_GOLDEN_APPLE, "")
+                        .addEnchantment(Enchantment.DURABILITY, 3)
+                        .addEnchantment(Enchantment.DEPTH_STRIDER, 3)
+                        .addEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 4));
+                items.add(new ItemTemplate(38, Material.ELYTRA)
+                        .addEnchantment(Enchantment.DURABILITY, 10));
+                items.add(new ItemTemplate(0, Material.NETHERITE_AXE)
+                        .addEnchantment(Enchantment.LOOT_BONUS_MOBS, 3)
+                        .addEnchantment(Enchantment.DAMAGE_ALL, 5)
+                        .addEnchantment(Enchantment.DIG_SPEED, 5));
+                items.add(new ItemTemplate(1, Material.NETHERITE_PICKAXE)
+                        .addEnchantment(Enchantment.LOOT_BONUS_BLOCKS, 3)
+                        .addEnchantment(Enchantment.DIG_SPEED, 5));
+                items.add(new ItemTemplate(2, Material.NETHERITE_SHOVEL)
+                        .addEnchantment(Enchantment.SILK_TOUCH, 1)
+                        .addEnchantment(Enchantment.DIG_SPEED, 5));
+                items.add(new ItemTemplate(3, Material.ENCHANTED_GOLDEN_APPLE)
                         .setAmount(64));
             }
             case CUSTOM_1, CUSTOM_2, CUSTOM_3, CUSTOM_4, CUSTOM_5 -> {
@@ -152,7 +161,7 @@ public enum PlayerKit
             }
         }
 
-        List<SerializableItem> playerItems = items.stream().map(MenuItem::createPlayerItem).collect(Collectors.toList());
+        List<SerializableItem> playerItems = items.stream().map(SerializableItem::fromItemTemplate).collect(Collectors.toList());
         return playerItems;
     }
 

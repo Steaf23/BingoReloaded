@@ -46,7 +46,7 @@ public class SoloTeamManager implements TeamManager
     BingoParticipant getPlayer(BingoTeam team) {
         Optional<BingoParticipant> participant = team.getMembers().stream().findFirst();
         if (participant.isEmpty()) {
-            Message.error("Team " + team.getColoredName().asLegacyString() + "does not have a player!");
+            Message.error("Team " + team.getColoredName().toLegacyText() + "does not have a player!");
             return null;
         }
         return team.getMembers().stream().findFirst().get();
@@ -130,7 +130,7 @@ public class SoloTeamManager implements TeamManager
 
         player.sessionPlayer().ifPresent(p -> {
             new TranslatedMessage(BingoTranslation.JOIN).color(ChatColor.GREEN)
-                    .arg(team.getColoredName().asLegacyString())
+                    .arg(team.getColoredName())
                     .send(p);
         });
 

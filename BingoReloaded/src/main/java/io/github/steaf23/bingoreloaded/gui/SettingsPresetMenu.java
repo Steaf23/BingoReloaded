@@ -4,7 +4,7 @@ import io.github.steaf23.bingoreloaded.data.BingoSettingsData;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
 import io.github.steaf23.bingoreloaded.settings.BingoSettingsBuilder;
 import io.github.steaf23.easymenulib.menu.*;
-import io.github.steaf23.easymenulib.menu.item.MenuItem;
+import io.github.steaf23.easymenulib.menu.item.ItemTemplate;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
@@ -25,11 +25,11 @@ public class SettingsPresetMenu extends PaginatedSelectionMenu
         this.settingsBuilder = settingsBuilder;
     }
 
-    private static final MenuItem SAVE_PRESET = new MenuItem(51, Material.EMERALD,
+    private static final ItemTemplate SAVE_PRESET = new ItemTemplate(51, Material.EMERALD,
             "" + ChatColor.GREEN + ChatColor.BOLD + "Add preset from current settings");
 
     @Override
-    public void onOptionClickedDelegate(InventoryClickEvent event, MenuItem clickedOption, HumanEntity player)
+    public void onOptionClickedDelegate(InventoryClickEvent event, ItemTemplate clickedOption, HumanEntity player)
     {
         if (event.isLeftClick())
         {
@@ -39,16 +39,16 @@ public class SettingsPresetMenu extends PaginatedSelectionMenu
         else if (event.isRightClick())
         {
             BasicMenu context = new BasicMenu(getMenuBoard(), clickedOption.getName(), 1);
-            context.addAction(new MenuItem(0, Material.BARRIER, TITLE_PREFIX + "Remove"), clickType -> {
+            context.addAction(new ItemTemplate(0, Material.BARRIER, TITLE_PREFIX + "Remove"), clickType -> {
                         settingsData.removeSettings(clickedOption.getCompareKey());
                         context.close(player);
                     })
-                    .addAction(new MenuItem(1, Material.SHULKER_SHELL, TITLE_PREFIX + "Duplicate"), clickType -> {
+                    .addAction(new ItemTemplate(1, Material.SHULKER_SHELL, TITLE_PREFIX + "Duplicate"), clickType -> {
                         BingoSettings oldSettings = settingsData.getSettings(clickedOption.getCompareKey());
                         settingsData.saveSettings(clickedOption.getCompareKey() + "_copy", oldSettings);
                         context.close(player);
                     })
-                    .addAction(new MenuItem(2, Material.NAME_TAG, TITLE_PREFIX + "Rename"), clickType -> {
+                    .addAction(new ItemTemplate(2, Material.NAME_TAG, TITLE_PREFIX + "Rename"), clickType -> {
                         BingoSettings oldSettings = settingsData.getSettings(clickedOption.getCompareKey());
                         settingsData.removeSettings(clickedOption.getCompareKey());
                         new UserInputMenu(getMenuBoard(), "Rename preset...", input -> {
@@ -56,17 +56,17 @@ public class SettingsPresetMenu extends PaginatedSelectionMenu
                             context.close(player);
                         }, player, clickedOption.getCompareKey());
                     })
-                    .addAction(new MenuItem(3, Material.GLOBE_BANNER_PATTERN, TITLE_PREFIX + "Overwrite",
+                    .addAction(new ItemTemplate(3, Material.GLOBE_BANNER_PATTERN, TITLE_PREFIX + "Overwrite",
                             "This will overwrite the settings saved in ",
                             clickedOption.getCompareKey() + " with the currently selected options!"), clickType -> {
                         settingsData.saveSettings(clickedOption.getCompareKey(), settingsBuilder.view());
                         context.close(player);
                     })
-                    .addAction(new MenuItem(4, Material.AMETHYST_SHARD, TITLE_PREFIX + "Set As Default"), clickType -> {
+                    .addAction(new ItemTemplate(4, Material.AMETHYST_SHARD, TITLE_PREFIX + "Set As Default"), clickType -> {
                         settingsData.setDefaultSettings(clickedOption.getCompareKey());
                         context.close(player);
                     })
-                    .addCloseAction(new MenuItem(8, Material.DIAMOND, TITLE_PREFIX + "Exit"))
+                    .addCloseAction(new ItemTemplate(8, Material.DIAMOND, TITLE_PREFIX + "Exit"))
                     .open(player);
         }
     }
@@ -80,11 +80,11 @@ public class SettingsPresetMenu extends PaginatedSelectionMenu
         });
         clearItems();
 
-        List<MenuItem> items = new ArrayList<>();
+        List<ItemTemplate> items = new ArrayList<>();
         for (String preset : settingsData.getPresetNames())
         {
             boolean def = preset.equals(settingsData.getDefaultSettingsName());
-            MenuItem item = new MenuItem(Material.GLOBE_BANNER_PATTERN,
+            ItemTemplate item = new ItemTemplate(Material.GLOBE_BANNER_PATTERN,
                     preset + (def ? ChatColor.LIGHT_PURPLE + " (default)" : ""),
                     ChatColor.GRAY + "Left-click to apply these settings",
                     ChatColor.GRAY + "Right-click for more options");

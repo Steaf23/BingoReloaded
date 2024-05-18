@@ -63,7 +63,7 @@ public class LockoutBingoCard extends BingoCard
             return;
         }
         new TranslatedMessage(BingoTranslation.DROPPED)
-                .arg(team.getColoredName().asLegacyString())
+                .arg(team.getColoredName())
                 .sendAll(session);
         team.outOfTheGame = true;
         for (BingoTask task : tasks) {

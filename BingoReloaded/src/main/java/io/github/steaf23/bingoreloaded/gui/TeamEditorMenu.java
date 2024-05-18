@@ -3,8 +3,9 @@ package io.github.steaf23.bingoreloaded.gui;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.data.TeamData;
 import io.github.steaf23.easymenulib.menu.*;
-import io.github.steaf23.easymenulib.menu.item.MenuItem;
+import io.github.steaf23.easymenulib.menu.item.ItemTemplate;
 import io.github.steaf23.easymenulib.menu.item.action.NameEditAction;
+import io.github.steaf23.easymenulib.util.ChatComponentUtils;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
@@ -21,11 +22,11 @@ public class TeamEditorMenu extends PaginatedSelectionMenu
 
     private static final TeamData.TeamTemplate DEFAULT_NEW_TEAM = new TeamData.TeamTemplate("MyTeam", ChatColor.of("#808080"));
 
-    private static final MenuItem RESTORE_DEFAULT = new MenuItem(2, 5, Material.TNT,
+    private static final ItemTemplate RESTORE_DEFAULT = new ItemTemplate(2, 5, Material.TNT,
             "" + ChatColor.RED + ChatColor.BOLD + "Restore Default Teams",
             "This option will remove all created teams!");
 
-    private static final MenuItem CREATE_TEAM = new MenuItem(6, 5, Material.EMERALD,
+    private static final ItemTemplate CREATE_TEAM = new ItemTemplate(6, 5, Material.EMERALD,
             "" + ChatColor.GREEN + ChatColor.BOLD + "Create New Team");
 
     public TeamEditorMenu(MenuBoard manager) {
@@ -44,14 +45,14 @@ public class TeamEditorMenu extends PaginatedSelectionMenu
     public void updateDisplay() {
         clearFilter();
         clearItems();
-        List<MenuItem> items = new ArrayList<>();
+        List<ItemTemplate> items = new ArrayList<>();
 
         var teamMap = teamData.getTeams();
         for (String key : teamMap.keySet()) {
             TeamData.TeamTemplate template = teamMap.get(key);
-            items.add(MenuItem.createColoredLeather(template.color(), Material.LEATHER_HELMET)
-                    .setName("" + ChatColor.RESET + template.color() + ChatColor.BOLD + template.name())
-                    .setLore("id: " + ChatColor.GRAY + ChatColor.ITALIC + key)
+            items.add(ItemTemplate.createColoredLeather(template.color(), Material.LEATHER_HELMET)
+                    .setName(ChatComponentUtils.convert("" + ChatColor.RESET + template.color() + ChatColor.BOLD + template.name()))
+                    .setLore(ChatComponentUtils.convert("id: " + ChatColor.GRAY + ChatColor.ITALIC + key))
                     .setCompareKey(key));
         }
         addItemsToSelect(items);
@@ -64,7 +65,7 @@ public class TeamEditorMenu extends PaginatedSelectionMenu
     }
 
     @Override
-    public void onOptionClickedDelegate(InventoryClickEvent event, MenuItem clickedOption, HumanEntity player) {
+    public void onOptionClickedDelegate(InventoryClickEvent event, ItemTemplate clickedOption, HumanEntity player) {
         String key = clickedOption.getCompareKey();
         if (event.getClick() == ClickType.RIGHT) {
             teamData.removeTeam(key);
@@ -91,7 +92,7 @@ public class TeamEditorMenu extends PaginatedSelectionMenu
             this.finishedCallback = callback;
 
             // Change the team name
-            MenuItem teamNameItem = new MenuItem(2, 1, Material.WRITABLE_BOOK, templateToEdit.name());
+            ItemTemplate teamNameItem = new ItemTemplate(2, 1, Material.WRITABLE_BOOK, templateToEdit.name());
             teamNameItem.setAction(new NameEditAction("Edit team name", getMenuBoard(), (value, item) -> {
                 templateToEdit = new TeamData.TeamTemplate(value, templateToEdit.color());
                 //TODO: find a way to do addItem(teamNameItem); automatically??
@@ -101,7 +102,7 @@ public class TeamEditorMenu extends PaginatedSelectionMenu
             addItem(teamNameItem);
 
             // Add action to change the team's color.
-            MenuItem teamColorItem = new MenuItem(4, 1, Material.LEATHER_CHESTPLATE, "" + templateToEdit.color() + ChatColor.BOLD + "Color")
+            ItemTemplate teamColorItem = new ItemTemplate(4, 1, Material.LEATHER_CHESTPLATE, "" + templateToEdit.color() + ChatColor.BOLD + "Color")
                     .setLeatherColor(templateToEdit.color());
 
             // TODO: maybe find a less cursed way to fix this?
@@ -112,12 +113,12 @@ public class TeamEditorMenu extends PaginatedSelectionMenu
 
                     // Update menu item
                     teamColorItem.setLeatherColor(templateToEdit.color())
-                            .setName("" + templateToEdit.color() + ChatColor.BOLD + "Color");
+                            .setName(ChatComponentUtils.convert("" + templateToEdit.color() + ChatColor.BOLD + "Color"));
                     this.addItem(teamColorItem);
                 }).open(args);
             });
 
-            addCloseAction(new MenuItem(6, 1, Material.BARRIER,
+            addCloseAction(new ItemTemplate(6, 1, Material.BARRIER,
                     "" + ChatColor.RED + ChatColor.BOLD + BingoTranslation.MENU_EXIT.translate()));
         }
 

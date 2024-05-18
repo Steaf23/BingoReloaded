@@ -70,7 +70,7 @@ public class TeamChatCommand implements Listener, TabExecutor
 
             if (!member.isOnline()) continue;
 
-            member.sendMessage(ChatColor.DARK_RED + "[" + team.getColoredName().asLegacyString() + ChatColor.DARK_RED + "]" +
+            member.sendMessage(ChatColor.DARK_RED + "[" + team.getColoredName().toLegacyText() + ChatColor.DARK_RED + "]" +
                     ChatColor.RESET  + "<" + player.getName() + "> " + message);
         }
     }

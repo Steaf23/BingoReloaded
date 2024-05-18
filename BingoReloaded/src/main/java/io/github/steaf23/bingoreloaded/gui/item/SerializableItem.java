@@ -1,5 +1,6 @@
-package io.github.steaf23.easymenulib.menu.item;
+package io.github.steaf23.bingoreloaded.gui.item;
 
+import io.github.steaf23.easymenulib.menu.item.ItemTemplate;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.inventory.ItemStack;
@@ -24,5 +25,9 @@ public record SerializableItem(int slot, ItemStack stack) implements Configurati
         ItemStack stack = (ItemStack) data.get("stack");
         int slot = (int) data.get("slot");
         return new SerializableItem(slot, stack);
+    }
+
+    public static SerializableItem fromItemTemplate(ItemTemplate template) {
+        return new SerializableItem(template.getSlot(), template.buildItem());
     }
 }

@@ -1,9 +1,11 @@
 package io.github.steaf23.easymenulib.menu;
 
-import io.github.steaf23.easymenulib.EasyMenuLibrary;
-import io.github.steaf23.easymenulib.menu.item.MenuItem;
+import io.github.steaf23.easymenulib.menu.item.ItemTemplate;
+import io.github.steaf23.easymenulib.util.ChatComponentUtils;
 import io.github.steaf23.easymenulib.util.EasyMenuTranslationKey;
 import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.inventory.ClickType;
@@ -23,41 +25,41 @@ public abstract class PaginatedSelectionMenu extends BasicMenu
      * @param clickedOption item that was clicked on, it's slot being the same slot that was clicked on.
      * @param player
      */
-    public abstract void onOptionClickedDelegate(final InventoryClickEvent event, MenuItem clickedOption, HumanEntity player);
+    public abstract void onOptionClickedDelegate(final InventoryClickEvent event, ItemTemplate clickedOption, HumanEntity player);
 
     // There are 5 rows of items per page
     public static final int ITEMS_PER_PAGE = 9 * 5;
 
     // All the items that exist in this picker
-    private final List<MenuItem> allItems;
+    private final List<ItemTemplate> allItems;
 
     // All selected items in this picker
-    private final List<MenuItem> selectedItems;
+    private final List<ItemTemplate> selectedItems;
 
-    private Function<MenuItem, Boolean> customFilter;
+    private Function<ItemTemplate, Boolean> customFilter;
 
     // All items that pass the filter, these are always the items shown to the player
-    private final List<MenuItem> filteredItems;
+    private final List<ItemTemplate> filteredItems;
     private int pageAmount;
     private int currentPage;
     private String keywordFilter;
     public FilterType filterType;
 
-    private final MenuItem filterItem;
-    private final MenuItem nextPageItem;
-    private final MenuItem previousPageItem;
+    private final ItemTemplate filterItem;
+    private final ItemTemplate nextPageItem;
+    private final ItemTemplate previousPageItem;
 
-    protected static final MenuItem NEXT = new MenuItem(8, 5, Material.STRUCTURE_VOID, "" + ChatColor.LIGHT_PURPLE + ChatColor.BOLD + EasyMenuTranslationKey.MENU_NEXT.translate(), "");
-    protected static final MenuItem PREVIOUS = new MenuItem(0, 5, Material.BARRIER, "" + ChatColor.LIGHT_PURPLE + ChatColor.BOLD + EasyMenuTranslationKey.MENU_PREVIOUS.translate(), "");
-    protected static final MenuItem CLOSE = new MenuItem(4, 5, Material.REDSTONE, "" + ChatColor.RED + ChatColor.BOLD + EasyMenuTranslationKey.MENU_SAVE_EXIT.translate(), "");
-    protected static final MenuItem FILTER = new MenuItem(1, 5, Material.SPYGLASS, TITLE_PREFIX + EasyMenuTranslationKey.MENU_FILTER.translate(), "");
+    protected static final ItemTemplate NEXT = new ItemTemplate(8, 5, Material.STRUCTURE_VOID, ChatComponentUtils.convert(EasyMenuTranslationKey.MENU_NEXT.translate(), ChatColor.LIGHT_PURPLE, ChatColor.BOLD));
+    protected static final ItemTemplate PREVIOUS = new ItemTemplate(0, 5, Material.BARRIER, ChatComponentUtils.convert(EasyMenuTranslationKey.MENU_PREVIOUS.translate(), ChatColor.LIGHT_PURPLE, ChatColor.BOLD));
+    protected static final ItemTemplate CLOSE = new ItemTemplate(4, 5, Material.REDSTONE, ChatComponentUtils.convert(EasyMenuTranslationKey.MENU_SAVE_EXIT.translate(), ChatColor.RED, ChatColor.BOLD));
+    protected static final ItemTemplate FILTER = new ItemTemplate(1, 5, Material.SPYGLASS, ChatComponentUtils.convert(EasyMenuTranslationKey.MENU_FILTER.translate(), TITLE_PREFIX_ARRAY));
 
-    public PaginatedSelectionMenu(MenuBoard board, String initialTitle, List<MenuItem> options, Function<MenuItem, Boolean> customFilter) {
+    public PaginatedSelectionMenu(MenuBoard board, String initialTitle, List<ItemTemplate> options, Function<ItemTemplate, Boolean> customFilter) {
         this(board, initialTitle, options, FilterType.CUSTOM);
         this.customFilter = customFilter;
     }
 
-    public PaginatedSelectionMenu(MenuBoard board, String initialTitle, List<MenuItem> options, FilterType filterType) {
+    public PaginatedSelectionMenu(MenuBoard board, String initialTitle, List<ItemTemplate> options, FilterType filterType) {
         super(board, initialTitle, 6);
 
         this.filterItem = FILTER.copy();
@@ -95,7 +97,7 @@ public abstract class PaginatedSelectionMenu extends BasicMenu
         boolean isValidSlot = ITEMS_PER_PAGE * currentPage + event.getRawSlot() < filteredItems.size() && event.getRawSlot() < ITEMS_PER_PAGE;
         if (isValidSlot)
         {
-            MenuItem item = allItems.get(ITEMS_PER_PAGE * currentPage + event.getRawSlot());
+            ItemTemplate item = allItems.get(ITEMS_PER_PAGE * currentPage + event.getRawSlot());
             onOptionClickedDelegate(event, item.setSlot(clickedSlot), player);
         }
         return cancel;
@@ -103,13 +105,13 @@ public abstract class PaginatedSelectionMenu extends BasicMenu
 
     public void applyFilter(String filter) {
         keywordFilter = filter;
-        filterItem.setLore("\"" + keywordFilter + "\"");
+        filterItem.setLore(TextComponent.fromLegacy("{" + keywordFilter + "}"));
         //TODO: automate addItem?
 //        addItem(filterItem);
 
         filteredItems.clear();
 
-        Function<MenuItem, Boolean> filterCriteria;
+        Function<ItemTemplate, Boolean> filterCriteria;
 
         filterCriteria =
                 switch (filterType) {
@@ -124,7 +126,7 @@ public abstract class PaginatedSelectionMenu extends BasicMenu
                     case CUSTOM -> customFilter;
                 };
 
-        for (MenuItem item : allItems) {
+        for (ItemTemplate item : allItems) {
             if (filterCriteria.apply(item)) {
                 filteredItems.add(item);
             }
@@ -143,12 +145,12 @@ public abstract class PaginatedSelectionMenu extends BasicMenu
         return keywordFilter;
     }
 
-    public void addItemsToSelect(Collection<MenuItem> newItems) {
+    public void addItemsToSelect(Collection<ItemTemplate> newItems) {
         //first remove any previous whitespace
         while (allItems.size() > 0) {
-            MenuItem lastItem = allItems.get(allItems.size() - 1);
+            ItemTemplate lastItem = allItems.get(allItems.size() - 1);
 
-            if (lastItem.getMaterial().isAir())
+            if (lastItem.isEmpty())
                 allItems.remove(lastItem);
             else
 
@@ -162,9 +164,9 @@ public abstract class PaginatedSelectionMenu extends BasicMenu
     public void removeItems(int... itemIndices) {
         //first remove any previous whitespace
         while (allItems.size() > 0) {
-            MenuItem lastItem = allItems.get(allItems.size() - 1);
+            ItemTemplate lastItem = allItems.get(allItems.size() - 1);
 
-            if (lastItem.getMaterial().isAir())
+            if (lastItem.isEmpty())
                 allItems.remove(lastItem);
             else
                 break;
@@ -180,15 +182,15 @@ public abstract class PaginatedSelectionMenu extends BasicMenu
         updatePage();
     }
 
-    public List<MenuItem> getAllItems() {
+    public List<ItemTemplate> getAllItems() {
         return allItems;
     }
 
-    public List<MenuItem> getSelectedItems() {
+    public List<ItemTemplate> getSelectedItems() {
         return selectedItems;
     }
 
-    public void selectItem(MenuItem item, boolean value) {
+    public void selectItem(ItemTemplate item, boolean value) {
         if (!allItems.contains(item)) {
             return;
         }
@@ -225,11 +227,11 @@ public abstract class PaginatedSelectionMenu extends BasicMenu
             if (startingIndex + i < filteredItems.size())
                 addItem(filteredItems.get(startingIndex + i).copyToSlot(i));
             else
-                addItem(new MenuItem(i, Material.AIR, "", ""));
+                addItem(ItemTemplate.EMPTY);
         }
 
         //Update Page description e.g. (20/23) for the Next and Previous 'buttons'.
-        String pageCountDesc = String.format("%02d", currentPage + 1) + "/" + String.format("%02d", pageAmount);
+        BaseComponent pageCountDesc = ChatComponentUtils.convert(String.format("%02d", currentPage + 1) + "/" + String.format("%02d", pageAmount));
 
         //TODO: update item automatically..?
         nextPageItem.setLore(pageCountDesc);
@@ -247,12 +249,12 @@ public abstract class PaginatedSelectionMenu extends BasicMenu
      * @param newItem
      * @param slot
      */
-    public void replaceItem(MenuItem newItem, int slot) {
-        MenuItem oldItem = filteredItems.get(ITEMS_PER_PAGE * currentPage + slot);
+    public void replaceItem(ItemTemplate newItem, int slot) {
+        ItemTemplate oldItem = filteredItems.get(ITEMS_PER_PAGE * currentPage + slot);
         replaceItem(newItem, oldItem);
     }
 
-    public void replaceItem(MenuItem newItem, MenuItem oldItem) {
+    public void replaceItem(ItemTemplate newItem, ItemTemplate oldItem) {
         if (!allItems.contains(oldItem)) {
             return;
         }

@@ -214,7 +214,7 @@ public class BasicTeamManager implements TeamManager
 
         participant.sessionPlayer().ifPresent(p -> {
             new TranslatedMessage(BingoTranslation.JOIN).color(ChatColor.GREEN)
-                    .arg(bingoTeam.getColoredName().asLegacyString())
+                    .arg(bingoTeam.getColoredName())
                     .send(p);
         });
         return true;

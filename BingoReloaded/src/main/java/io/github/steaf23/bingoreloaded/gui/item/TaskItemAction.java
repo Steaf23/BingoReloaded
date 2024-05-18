@@ -20,13 +20,12 @@ public class TaskItemAction extends MenuAction
     @Override
     public void use(BasicMenu.ActionArguments arguments) {
         BaseComponent base = new TextComponent("\n");
-        BaseComponent name = task.data.getItemDisplayName().asComponent();
+        BaseComponent name = task.data.getName();
         name.setBold(true);
-        name.setColor(task.nameColor);
 
         base.addExtra(name);
         base.addExtra("\n - ");
-        base.addExtra(task.data.getDescription());
+        base.addExtra(task.data.getChatDescription());
 
         Message.sendDebugNoPrefix(base, (Player) arguments.player());
     }

@@ -49,21 +49,11 @@ public class Message
     }
 
     public Message arg(@NonNull String name) {
-        if (name == null)
-            return this;
-
-        TextComponent arg = new TextComponent();
-        for (var cmp : TextComponent.fromLegacyText(name)) {
-            arg.addExtra(cmp);
-        }
-        args.add(arg);
+        args.add(TextComponent.fromLegacy(name));
         return this;
     }
 
-    public Message component(@NonNull BaseComponent component) {
-        if (component == null)
-            return this;
-
+    public Message arg(@NonNull BaseComponent component) {
         args.add(component);
         return this;
     }

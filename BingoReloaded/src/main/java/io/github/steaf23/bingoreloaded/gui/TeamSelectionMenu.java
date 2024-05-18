@@ -11,7 +11,8 @@ import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.easymenulib.menu.FilterType;
 import io.github.steaf23.easymenulib.menu.MenuBoard;
 import io.github.steaf23.easymenulib.menu.PaginatedSelectionMenu;
-import io.github.steaf23.easymenulib.menu.item.MenuItem;
+import io.github.steaf23.easymenulib.menu.item.ItemTemplate;
+import io.github.steaf23.easymenulib.util.ChatComponentUtils;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
@@ -32,7 +33,7 @@ public class TeamSelectionMenu extends PaginatedSelectionMenu
     }
 
     @Override
-    public void onOptionClickedDelegate(InventoryClickEvent event, MenuItem clickedOption, HumanEntity player) {
+    public void onOptionClickedDelegate(InventoryClickEvent event, ItemTemplate clickedOption, HumanEntity player) {
         BingoParticipant participant = teamManager.getPlayerAsParticipant((Player) player);
         if (participant == null)
         {
@@ -57,10 +58,10 @@ public class TeamSelectionMenu extends PaginatedSelectionMenu
     public void beforeOpening(HumanEntity player) {
         super.beforeOpening(player);
 
-        List<MenuItem> optionItems = new ArrayList<>();
-        optionItems.add(new MenuItem(Material.NETHER_STAR, "" + ChatColor.BOLD + ChatColor.ITALIC + BingoTranslation.TEAM_AUTO.translate())
+        List<ItemTemplate> optionItems = new ArrayList<>();
+        optionItems.add(new ItemTemplate(Material.NETHER_STAR, "" + ChatColor.BOLD + ChatColor.ITALIC + BingoTranslation.TEAM_AUTO.translate())
                 .setCompareKey("item_auto"));
-        optionItems.add(new MenuItem(Material.TNT, "" + ChatColor.BOLD + ChatColor.ITALIC + BingoTranslation.OPTIONS_LEAVE.translate())
+        optionItems.add(new ItemTemplate(Material.TNT, "" + ChatColor.BOLD + ChatColor.ITALIC + BingoTranslation.OPTIONS_LEAVE.translate())
                 .setGlowing(true).setCompareKey("item_leave"));
 
         var allTeams = teamManager.getJoinableTeams();
@@ -94,9 +95,9 @@ public class TeamSelectionMenu extends PaginatedSelectionMenu
                 description.add(ChatColor.GREEN + BingoTranslation.JOIN_TEAM_DESC.translate());
             }
 
-            optionItems.add(MenuItem.createColoredLeather(teamTemplate.color(), Material.LEATHER_HELMET)
-                    .setName("" + teamTemplate.color() + ChatColor.BOLD + teamTemplate.name())
-                    .setLore(description.toArray(new String[]{}))
+            optionItems.add(ItemTemplate.createColoredLeather(teamTemplate.color(), Material.LEATHER_HELMET)
+                    .setName(ChatComponentUtils.convert("" + teamTemplate.color() + ChatColor.BOLD + teamTemplate.name()))
+                    .setLore(ChatComponentUtils.createComponentsFromString(description.toArray(new String[]{})))
                     .setCompareKey(teamId)
                     .setGlowing(playersTeam));
         }

@@ -5,7 +5,7 @@ import io.github.steaf23.easymenulib.menu.BasicMenu;
 import io.github.steaf23.easymenulib.menu.FilterType;
 import io.github.steaf23.easymenulib.menu.MenuBoard;
 import io.github.steaf23.easymenulib.menu.PaginatedSelectionMenu;
-import io.github.steaf23.easymenulib.menu.item.MenuItem;
+import io.github.steaf23.easymenulib.menu.item.ItemTemplate;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
@@ -20,7 +20,7 @@ public class CardEditorMenu extends PaginatedSelectionMenu
 {
     public final String cardName;
     public final BingoCardData cardsData;
-    private static final MenuItem ADD_LIST = new MenuItem(51, Material.EMERALD, "" + ChatColor.GREEN + ChatColor.BOLD + "Add Item List", "");
+    private static final ItemTemplate ADD_LIST = new ItemTemplate(51, Material.EMERALD, "" + ChatColor.GREEN + ChatColor.BOLD + "Add Item List", "");
 
     public CardEditorMenu(MenuBoard menuBoard, String cardName, BingoCardData cardsData)
     {
@@ -33,7 +33,7 @@ public class CardEditorMenu extends PaginatedSelectionMenu
     }
 
     @Override
-    public void onOptionClickedDelegate(final InventoryClickEvent event, MenuItem clickedOption, HumanEntity player)
+    public void onOptionClickedDelegate(final InventoryClickEvent event, ItemTemplate clickedOption, HumanEntity player)
     {
         String listName = clickedOption.getName();
         //if an ItemList attached to a card was clicked on exists
@@ -64,10 +64,10 @@ public class CardEditorMenu extends PaginatedSelectionMenu
     {
         clearItems();
 
-        List<MenuItem> newItems = new ArrayList<>();
+        List<ItemTemplate> newItems = new ArrayList<>();
         for (String listName : cardsData.getListNames(cardName))
         {
-            MenuItem item = new MenuItem(Material.MAP, listName,
+            ItemTemplate item = new ItemTemplate(Material.MAP, listName,
                     "This list contains " + cardsData.lists().getTaskCount(listName) + " task(s)",
                     ChatColor.GRAY + "Left-click to edit distribution",
                     ChatColor.GRAY + "Right-click to remove this list");
@@ -81,10 +81,10 @@ public class CardEditorMenu extends PaginatedSelectionMenu
     }
 
     private BasicMenu createListPicker(Consumer<String> result) {
-        List<MenuItem> items = new ArrayList<>();
+        List<ItemTemplate> items = new ArrayList<>();
         for (String listName : cardsData.lists().getListNames())
         {
-            items.add(new MenuItem(Material.PAPER, listName,
+            items.add(new ItemTemplate(Material.PAPER, listName,
                     "This list contains " + cardsData.lists().getTaskCount(listName) + " task(s)",
                     ChatColor.GRAY + "Click to select").setCompareKey(listName));
         }
@@ -92,7 +92,7 @@ public class CardEditorMenu extends PaginatedSelectionMenu
         return new PaginatedSelectionMenu(CardEditorMenu.this.getMenuBoard(), "Pick A List", items, FilterType.DISPLAY_NAME)
         {
             @Override
-            public void onOptionClickedDelegate(final InventoryClickEvent event, MenuItem clickedOption, HumanEntity player)
+            public void onOptionClickedDelegate(final InventoryClickEvent event, ItemTemplate clickedOption, HumanEntity player)
             {
                 result.accept(clickedOption.getCompareKey());
                 close(player);

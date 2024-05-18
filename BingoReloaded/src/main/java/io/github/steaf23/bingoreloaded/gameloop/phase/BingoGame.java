@@ -26,7 +26,7 @@ import io.github.steaf23.bingoreloaded.util.TranslatedMessage;
 import io.github.steaf23.bingoreloaded.util.timer.CountdownTimer;
 import io.github.steaf23.bingoreloaded.util.timer.CounterTimer;
 import io.github.steaf23.bingoreloaded.util.timer.GameTimer;
-import io.github.steaf23.easymenulib.menu.item.ItemText;
+import io.github.steaf23.easymenulib.util.ChatComponentUtils;
 import io.github.steaf23.easymenulib.util.PDCHelper;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -214,7 +214,7 @@ public class BingoGame implements GamePhase
     }
 
     public void bingo(BingoTeam team) {
-        new TranslatedMessage(BingoTranslation.BINGO).arg(team.getColoredName().asLegacyString()).sendAll(session);
+        new TranslatedMessage(BingoTranslation.BINGO).arg(team.getColoredName()).sendAll(session);
         for (BingoParticipant p : getTeamManager().getParticipants()) {
             if (p.sessionPlayer().isEmpty())
                 continue;
@@ -456,8 +456,8 @@ public class BingoGame implements GamePhase
         String timeString = GameTimer.getTimeAsString(getGameTime());
 
         new TranslatedMessage(BingoTranslation.COMPLETED).color(ChatColor.AQUA)
-                .component(event.getTask().data.getItemDisplayName().asComponent()).color(event.getTask().nameColor)
-                .arg(new ItemText(event.getParticipant().getDisplayName(), event.getParticipant().getTeam().getColor(), ChatColor.BOLD).asLegacyString())
+                .arg(event.getTask().data.getName())
+                .arg(ChatComponentUtils.convert(event.getParticipant().getDisplayName(), event.getParticipant().getTeam().getColor(), ChatColor.BOLD))
                 .arg(timeString).color(ChatColor.WHITE)
                 .sendAll(session);
 

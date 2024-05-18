@@ -1,7 +1,7 @@
 package io.github.steaf23.bingoreloaded.hologram;
 
 import io.github.steaf23.bingoreloaded.util.Message;
-import io.github.steaf23.easymenulib.menu.item.MenuItem;
+import io.github.steaf23.easymenulib.menu.item.ItemTemplate;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -18,7 +18,7 @@ public class HologramPlacer
     // Store a map of block positions and hologram id's for lookup purposes
     private final Map<Location, String> placedHolograms;
 
-    public final static MenuItem HOLOGRAM_WAND = new MenuItem(Material.BLAZE_ROD,
+    public final static ItemTemplate HOLOGRAM_WAND = new ItemTemplate(Material.BLAZE_ROD,
             "" + ChatColor.AQUA + ChatColor.BOLD + "Hologram Wand",
             ChatColor.GRAY + "Right-Click in the air to select a hologram to place",
             ChatColor.GRAY + "Right-Click on a block to place selected hologram",
@@ -75,13 +75,13 @@ public class HologramPlacer
             Message.log("test hologram");
         };
 
-//        List<MenuItem> items = new ArrayList<>();
-//        items.add(new MenuItem(Material.GLOBE_BANNER_PATTERN, "test").setCompareKey("test"));
+//        List<ItemTemplate> items = new ArrayList<>();
+//        items.add(new ItemTemplate(Material.GLOBE_BANNER_PATTERN, "test").setCompareKey("test"));
 //
 //        PaginatedPickerMenu hologramPicker = new PaginatedPickerMenu(items, "Select a Hologram", null, FilterType.ITEM_KEY)
 //        {
 //            @Override
-//            public void onOptionClickedDelegate(InventoryClickEvent event, MenuItem clickedOption, Player player)
+//            public void onOptionClickedDelegate(InventoryClickEvent event, ItemTemplate clickedOption, Player player)
 //            {
 //                result.accept(clickedOption.getCompareKey());
 //            }

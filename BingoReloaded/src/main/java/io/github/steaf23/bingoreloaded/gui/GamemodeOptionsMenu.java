@@ -6,7 +6,7 @@ import io.github.steaf23.bingoreloaded.cards.CardSize;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.easymenulib.menu.BasicMenu;
 import io.github.steaf23.easymenulib.menu.MenuBoard;
-import io.github.steaf23.easymenulib.menu.item.MenuItem;
+import io.github.steaf23.easymenulib.menu.item.ItemTemplate;
 import org.bukkit.Material;
 
 public class GamemodeOptionsMenu extends BasicMenu
@@ -18,21 +18,21 @@ public class GamemodeOptionsMenu extends BasicMenu
         super(menuBoard, BingoTranslation.OPTIONS_GAMEMODE.translate(), 5);
         this.session = session;
 
-        addAction(new MenuItem(1, 1,
+        addAction(new ItemTemplate(1, 1,
                 Material.LIME_CONCRETE, TITLE_PREFIX + "Regular 5x5"), arguments -> selectGamemode(arguments, BingoGamemode.REGULAR, CardSize.X5));
-        addAction(new MenuItem(3, 1,
+        addAction(new ItemTemplate(3, 1,
                 Material.MAGENTA_CONCRETE, TITLE_PREFIX + "Lockout 5x5"), arguments -> selectGamemode(arguments, BingoGamemode.LOCKOUT, CardSize.X5));
-        addAction(new MenuItem(5, 1,
+        addAction(new ItemTemplate(5, 1,
                 Material.LIGHT_BLUE_CONCRETE, TITLE_PREFIX + "Complete-All 5x5"), arguments -> selectGamemode(arguments, BingoGamemode.COMPLETE, CardSize.X5));
-        addAction(new MenuItem(7, 1,
+        addAction(new ItemTemplate(7, 1,
                 Material.YELLOW_CONCRETE, TITLE_PREFIX + "HotSwap 5x5"), arguments -> selectGamemode(arguments, BingoGamemode.HOTSWAP, CardSize.X5));
-        addAction(new MenuItem(1, 3,
+        addAction(new ItemTemplate(1, 3,
                 Material.GREEN_CONCRETE, TITLE_PREFIX + "Regular 3x3"), arguments -> selectGamemode(arguments, BingoGamemode.REGULAR, CardSize.X3));
-        addAction( new MenuItem(3, 3,
+        addAction( new ItemTemplate(3, 3,
                 Material.PURPLE_CONCRETE, TITLE_PREFIX + "Lockout 3x3"), arguments -> selectGamemode(arguments, BingoGamemode.LOCKOUT, CardSize.X3));
-        addAction(new MenuItem(5, 3,
+        addAction(new ItemTemplate(5, 3,
                 Material.CYAN_CONCRETE, TITLE_PREFIX + "Complete-All 3x3"), arguments -> selectGamemode(arguments, BingoGamemode.COMPLETE, CardSize.X3));
-        addAction(new MenuItem(7, 3,
+        addAction(new ItemTemplate(7, 3,
                 Material.ORANGE_CONCRETE, TITLE_PREFIX + "HotSwap 3x3"), arguments -> selectGamemode(arguments, BingoGamemode.HOTSWAP, CardSize.X3));
     }
 

@@ -5,8 +5,9 @@ import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.settings.BingoSettingsBuilder;
 import io.github.steaf23.easymenulib.menu.BasicMenu;
 import io.github.steaf23.easymenulib.menu.MenuBoard;
-import io.github.steaf23.easymenulib.menu.item.MenuItem;
-import org.bukkit.ChatColor;
+import io.github.steaf23.easymenulib.menu.item.ItemTemplate;
+import io.github.steaf23.easymenulib.util.ChatComponentUtils;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
 
@@ -23,7 +24,7 @@ public class EffectOptionsMenu extends BasicMenu
         flags = settings.view().effects();
 
         for (int i = 0; i < 8; i++) {
-            addItem(new MenuItem(i, 5, Material.BLACK_STAINED_GLASS_PANE, " "));
+            addItem(new ItemTemplate(i, 5, Material.BLACK_STAINED_GLASS_PANE, " "));
         }
 
         addEffectAction(EffectOptionFlags.NIGHT_VISION, 5, 3, Material.GOLDEN_CARROT);
@@ -33,11 +34,11 @@ public class EffectOptionsMenu extends BasicMenu
         addEffectAction(EffectOptionFlags.SPEED, 1, 3, Material.FEATHER);
         addEffectAction(EffectOptionFlags.NO_DURABILITY, 6, 1, Material.NETHERITE_PICKAXE);
         addEffectAction(EffectOptionFlags.KEEP_INVENTORY, 4, 1, Material.CHEST);
-        addCloseAction(new MenuItem(8, 5, Material.DIAMOND, "" + ChatColor.AQUA + ChatColor.BOLD + BingoTranslation.MENU_SAVE_EXIT.translate()));
+        addCloseAction(new ItemTemplate(8, 5, Material.DIAMOND, "" + ChatColor.AQUA + ChatColor.BOLD + BingoTranslation.MENU_SAVE_EXIT.translate()));
     }
 
     private void addEffectAction(EffectOptionFlags flag, int slotX, int slotY, Material material) {
-        MenuItem item = new MenuItem(slotX, slotY, material, "");
+        ItemTemplate item = new ItemTemplate(slotX, slotY, material, "");
         updateUI(flag, item);
         addAction(item,
                 player -> {
@@ -54,13 +55,13 @@ public class EffectOptionsMenu extends BasicMenu
             flags.add(flag);
     }
 
-    public void updateUI(EffectOptionFlags flag, MenuItem menuItem) {
+    public void updateUI(EffectOptionFlags flag, ItemTemplate ItemTemplate) {
         if (flags.contains(flag)) {
-            menuItem.setName("" + ChatColor.GREEN + ChatColor.BOLD + flag.name + " " + BingoTranslation.EFFECTS_ENABLED.translate());
-            menuItem.setLore(ChatColor.GREEN + BingoTranslation.EFFECTS_DISABLE.translate());
+            ItemTemplate.setName(ChatComponentUtils.convert("" + ChatColor.GREEN + ChatColor.BOLD + flag.name + " " + BingoTranslation.EFFECTS_ENABLED.translate()));
+            ItemTemplate.setLore(ChatComponentUtils.convert("" + ChatColor.GREEN + BingoTranslation.EFFECTS_DISABLE.translate()));
         } else {
-            menuItem.setName("" + ChatColor.RED + ChatColor.BOLD + flag.name + " " + BingoTranslation.EFFECTS_DISABLED.translate());
-            menuItem.setLore(ChatColor.RED + BingoTranslation.EFFECTS_ENABLE.translate());
+            ItemTemplate.setName(ChatComponentUtils.convert("" + ChatColor.RED + ChatColor.BOLD + flag.name + " " + BingoTranslation.EFFECTS_DISABLED.translate()));
+            ItemTemplate.setLore(ChatComponentUtils.convert("" + ChatColor.RED + BingoTranslation.EFFECTS_ENABLE.translate()));
         }
     }
 

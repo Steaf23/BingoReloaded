@@ -2,9 +2,11 @@ package io.github.steaf23.bingoreloaded.tasks;
 
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.tasks.statistics.BingoStatistic;
-import io.github.steaf23.easymenulib.menu.item.ItemText;
+import io.github.steaf23.easymenulib.util.ChatComponentUtils;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Material;
 import org.bukkit.Statistic;
 import org.bukkit.configuration.serialization.SerializableAs;
@@ -30,65 +32,65 @@ public record StatisticTask(BingoStatistic statistic, int count) implements Coun
     }
 
     @Override
-    public ItemText getItemDisplayName()
+    public BaseComponent getName()
     {
-        ItemText amount = new ItemText(Integer.toString(count));
+        TextComponent amount = new TextComponent(Integer.toString(count));
 
-        ItemText text = new ItemText("*", ChatColor.ITALIC);
+        ComponentBuilder builder = new ComponentBuilder("*").color(ChatColor.LIGHT_PURPLE).italic(true);
 
         switch (statistic.getCategory())
         {
             case ROOT_STATISTIC -> {
                 if (statistic.stat() == Statistic.ENTITY_KILLED_BY || statistic.stat() == Statistic.KILL_ENTITY)
                 {
-                    ItemText entityName = new ItemText().addEntityName(statistic.entityType());
-                    ItemText[] inPlaceArguments =
+                    BaseComponent entityName = ChatComponentUtils.entityName(statistic.entityType());
+                    BaseComponent[] inPlaceArguments =
                             switch (statistic.stat())
                                     {
-                                        case KILL_ENTITY -> new ItemText[]{amount, entityName};
-                                        case ENTITY_KILLED_BY -> new ItemText[]{entityName, amount};
-                                        default -> new ItemText[]{};
+                                        case KILL_ENTITY -> new BaseComponent[]{amount, entityName};
+                                        case ENTITY_KILLED_BY -> new BaseComponent[]{entityName, amount};
+                                        default -> new BaseComponent[]{};
                                     };
-                    text.addStatistic(statistic.stat(), inPlaceArguments);
+                    builder.append(ChatComponentUtils.statistic(statistic.stat(), inPlaceArguments));
                 }
                 else
                 {
-                    text.addStatistic(statistic.stat());
-                    text.addText(" ");
-                    text.addItemName(statistic.materialType());
-                    text.addText(": ");
-                    text.add(amount);
+                    builder.append(ChatComponentUtils.statistic(statistic.stat()))
+                            .append(" ")
+                            .append(ChatComponentUtils.itemName(statistic.materialType()))
+                            .append(": ")
+                            .append(amount);
                 }
             }
             case TRAVEL -> {
-                text.addStatistic(statistic.stat());
-                text.addText(": ");
-                text.add(new ItemText(Integer.toString(count * 10)));
-                text.addText(" Blocks");
+                builder.append(ChatComponentUtils.statistic(statistic.stat()))
+                        .append(": ")
+                        .append(new TextComponent(Integer.toString(count * 10)))
+                        .append(" Blocks");
             }
             default -> {
-                text.addStatistic(statistic.stat());
-                text.addText(": ");
-                text.add(amount);
+                builder.append(ChatComponentUtils.statistic(statistic.stat()))
+                        .append(": ")
+                        .append(amount);
             }
         }
-        text.addText("*");
-        return text;
+        builder.append("*");
+        return builder.build();
     }
 
     @Override
-    public ItemText[] getItemDescription()
+    public BaseComponent[] getItemDescription()
     {
         Set<ChatColor> modifiers = new HashSet<>(){{
             add(ChatColor.DARK_AQUA);
         }};
-        return BingoTranslation.LORE_STATISTIC.asItemText(modifiers);
+        return BingoTranslation.LORE_STATISTIC.asComponent(modifiers);
     }
 
     @Override
-    public BaseComponent getDescription()
+    public BaseComponent getChatDescription()
     {
-        return ItemText.combine(getItemDescription()).asComponent();
+        return new ComponentBuilder().append(getItemDescription()).build();
     }
 
     @Override

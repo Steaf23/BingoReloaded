@@ -42,7 +42,7 @@ public class HotswapCardMenu extends CardMenu
         for (int i = 0; i < getTasks().size(); i++)
         {
             BingoTask task = getTasks().get(i);
-            addItem(task.asMenuItem()
+            addItem(task.toItem()
                     .setSlot(getSize().getCardInventorySlot(i))
                     .addDescription("time", -1, getColorForTaskTime(i) + GameTimer.getTimeAsString(taskExpiration.get(i))));
         }

@@ -1,9 +1,9 @@
 package io.github.steaf23.bingoreloaded.settings;
 
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
+import io.github.steaf23.bingoreloaded.gui.item.SerializableItem;
 import io.github.steaf23.bingoreloaded.util.Message;
-import io.github.steaf23.easymenulib.menu.item.MenuItem;
-import io.github.steaf23.easymenulib.menu.item.SerializableItem;
+import io.github.steaf23.easymenulib.menu.item.ItemTemplate;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
@@ -68,7 +68,7 @@ public record CustomKit(String name, PlayerKit slot, List<SerializableItem> item
         {
             if (itemStack != null) {
                 // if this item is the card, save the slot instead and disregard the item itself.
-                if (new MenuItem(itemStack).getCompareKey().equals(PlayerKit.CARD_ITEM.getCompareKey())) {
+                if (PlayerKit.CARD_ITEM.isCompareKeyEqual(itemStack)) {
                     cardSlot = slot;
                 }
                 else {
@@ -78,7 +78,7 @@ public record CustomKit(String name, PlayerKit slot, List<SerializableItem> item
             slot += 1;
         }
 
-        if (!new MenuItem(player.getInventory().getItem(cardSlot)).getCompareKey().equals(PlayerKit.CARD_ITEM.getCompareKey())) {
+        if (!PlayerKit.CARD_ITEM.isCompareKeyEqual(player.getInventory().getItem(cardSlot))) {
             Message.sendDebug(ChatColor.RED + "Found item in off-hand slot when saving kit. This item will be replaced by the card item. " +
                     "Either place the card item in another slot or remove the item from the off-hand slot", player);
         }

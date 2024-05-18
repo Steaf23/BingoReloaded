@@ -2,9 +2,10 @@ package io.github.steaf23.bingoreloaded.tasks;
 
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.util.Message;
-import io.github.steaf23.easymenulib.menu.item.ItemText;
+import io.github.steaf23.easymenulib.util.ChatComponentUtils;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.advancement.Advancement;
@@ -24,39 +25,37 @@ public record AdvancementTask(Advancement advancement) implements TaskData
     }
 
     @Override
-    public ItemText getItemDisplayName()
+    public BaseComponent getName()
     {
-        ItemText text = new ItemText("[", ChatColor.ITALIC);
+        var builder = new ComponentBuilder("[").color(ChatColor.GREEN).italic(true);
+
         if (advancement == null)
         {
             Message.log("Could not get advancement, returning null!");
-            text.addText("no advancement?");
+            builder.append("no advancement?");
         }
         else
         {
-            text.addAdvancementTitle(advancement);
+            builder.append(ChatComponentUtils.advancementTitle(advancement));
         }
-        text.addText("]");
-        return text;
+        builder.append("]");
+        return builder.build();
     }
 
     @Override
-    public ItemText[] getItemDescription()
+    public BaseComponent[] getItemDescription()
     {
-        Set<ChatColor> modifiers = new HashSet<>(){{
-            add(ChatColor.DARK_AQUA);
-        }};
-        return BingoTranslation.LORE_ADVANCEMENT.asItemText(modifiers);
+        return BingoTranslation.LORE_ADVANCEMENT.asComponent(Set.of(ChatColor.DARK_AQUA));
     }
 
     // This method exists because advancement descriptions can contain newlines,
     // which makes it impossible to use as item names or descriptions without getting a missing character.
     @Override
-    public BaseComponent getDescription()
+    public BaseComponent getChatDescription()
     {
-        BaseComponent comp = new ItemText().addAdvancementDescription(advancement).asComponent();
-        comp.setColor(ChatColor.DARK_AQUA);
-        return comp;
+        BaseComponent component = ChatComponentUtils.advancementDescription(advancement);
+        component.setColor(ChatColor.DARK_AQUA);
+        return component;
     }
 
     @Override

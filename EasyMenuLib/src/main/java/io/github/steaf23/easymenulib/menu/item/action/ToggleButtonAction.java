@@ -2,11 +2,10 @@ package io.github.steaf23.easymenulib.menu.item.action;
 
 import io.github.steaf23.easymenulib.menu.BasicMenu;
 import io.github.steaf23.easymenulib.menu.Menu;
-import io.github.steaf23.easymenulib.menu.item.MenuItem;
+import io.github.steaf23.easymenulib.menu.item.ItemTemplate;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 public class ToggleButtonAction extends MenuAction
 {
@@ -23,7 +22,7 @@ public class ToggleButtonAction extends MenuAction
     }
 
     @Override
-    public void setItem(@NotNull MenuItem item) {
+    public void setItem(@NotNull ItemTemplate item) {
         super.setItem(item);
         item.setGlowing(enabled);
 

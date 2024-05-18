@@ -1,10 +1,12 @@
 package io.github.steaf23.easymenulib.menu;
 
 import io.github.steaf23.easymenulib.EasyMenuLibrary;
-import io.github.steaf23.easymenulib.menu.item.MenuItem;
+import io.github.steaf23.easymenulib.menu.item.ItemTemplate;
 import io.github.steaf23.easymenulib.menu.item.action.MenuAction;
+import io.github.steaf23.easymenulib.util.ChatComponentUtils;
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.inventory.ClickType;
@@ -16,7 +18,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -27,12 +28,13 @@ public class BasicMenu implements Menu
     public static String pluginTitlePrefix = "";
 
     protected static final String TITLE_PREFIX = "" + ChatColor.GOLD + ChatColor.BOLD;
-    protected static MenuItem BLANK = new MenuItem(Material.BLACK_STAINED_GLASS_PANE, " ");
+    protected static final ChatColor[] TITLE_PREFIX_ARRAY = new ChatColor[] {ChatColor.GOLD, ChatColor.BOLD};
+    protected static ItemTemplate BLANK = new ItemTemplate(Material.BLACK_STAINED_GLASS_PANE, "");
 
     private final Inventory inventory;
     private final MenuBoard manager;
     private int maxStackSizeOverride = -1; // -1 means no override (i.e. default stack sizes for all items)
-    private final List<MenuItem> items;
+    private final List<ItemTemplate> items;
 
 
     public BasicMenu(MenuBoard manager, String initialTitle, int rows) {
@@ -72,8 +74,8 @@ public class BasicMenu implements Menu
         });
     }
 
-    public @Nullable MenuItem getItemAtSlot(int slot) {
-        for (MenuItem item : items) {
+    public @Nullable ItemTemplate getItemAtSlot(int slot) {
+        for (ItemTemplate item : items) {
             if (item.getSlot() == slot)
             {
                 return item;
@@ -82,7 +84,7 @@ public class BasicMenu implements Menu
         return null;
     }
 
-    public BasicMenu addItem(@NotNull MenuItem item, boolean replaceExisting) {
+    public BasicMenu addItem(@NotNull ItemTemplate item, boolean replaceExisting) {
         if (maxStackSizeOverride != -1)
             inventory.setMaxStackSize(maxStackSizeOverride);
 
@@ -94,16 +96,16 @@ public class BasicMenu implements Menu
         items.add(item);
 
         // Replace/ set new item in its target slot
-        inventory.setItem(item.getSlot(), item.buildStack());
+        inventory.setItem(item.getSlot(), item.buildItem());
 
         return this;
     }
 
-    public BasicMenu addItem(@NotNull MenuItem item) {
+    public BasicMenu addItem(@NotNull ItemTemplate item) {
         return addItem(item, true);
     }
 
-    public BasicMenu addAction(@NotNull MenuItem item, Consumer<ActionArguments> action) {
+    public BasicMenu addAction(@NotNull ItemTemplate item, Consumer<ActionArguments> action) {
         item.setAction(new MenuAction()
         {
             @Override
@@ -116,13 +118,13 @@ public class BasicMenu implements Menu
         return this;
     }
 
-    public BasicMenu addAction(@NotNull MenuItem item, MenuAction action) {
+    public BasicMenu addAction(@NotNull ItemTemplate item, MenuAction action) {
         item.setAction(action);
         addItem(item);
         return this;
     }
 
-    public BasicMenu addCloseAction(@NotNull MenuItem item) {
+    public BasicMenu addCloseAction(@NotNull ItemTemplate item) {
         item.setAction(new MenuAction()
         {
             @Override
@@ -135,8 +137,8 @@ public class BasicMenu implements Menu
         return this;
     }
 
-    public void addItems(@NotNull MenuItem... items) {
-        for (MenuItem item : items) {
+    public void addItems(@NotNull ItemTemplate... items) {
+        for (ItemTemplate item : items) {
             addItem(item);
         }
     }
@@ -165,12 +167,12 @@ public class BasicMenu implements Menu
 
     @Override
     public boolean onClick(final InventoryClickEvent event, HumanEntity player, int clickedSlot, ClickType clickType) {
-        for (MenuItem item : new ArrayList<MenuItem>(items)) {
+        for (ItemTemplate item : new ArrayList<ItemTemplate>(items)) {
             if (item.getSlot() == clickedSlot)
             {
                 item.useItem(new ActionArguments(player, clickType));
                 //TODO: find a way to update itemstack automatically on change, no matter where!
-                inventory.setItem(item.getSlot(), item.buildStack());
+                inventory.setItem(item.getSlot(), item.buildItem());
             }
         }
         return true;

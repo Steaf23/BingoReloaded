@@ -4,8 +4,9 @@ import io.github.steaf23.bingoreloaded.cards.BingoCard;
 
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.util.Message;
-import io.github.steaf23.easymenulib.menu.item.ItemText;
 import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Team;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -52,8 +53,10 @@ public class BingoTeam
         return name;
     }
 
-    public ItemText getColoredName() {
-        return new ItemText(name, color, ChatColor.BOLD);
+    public BaseComponent getColoredName() {
+        return new ComponentBuilder(name)
+                .color(color)
+                .bold(true).build();
     }
 
     public Set<BingoParticipant> getMembers() {

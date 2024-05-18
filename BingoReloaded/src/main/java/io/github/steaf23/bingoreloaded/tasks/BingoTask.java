@@ -6,10 +6,14 @@ import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.tasks.statistics.BingoStatistic;
 import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.bingoreloaded.util.timer.GameTimer;
-import io.github.steaf23.easymenulib.menu.item.ItemText;
-import io.github.steaf23.easymenulib.menu.item.MenuItem;
+import io.github.steaf23.easymenulib.menu.Menu;
+import io.github.steaf23.easymenulib.menu.item.ItemTemplate;
+import io.github.steaf23.easymenulib.util.ChatComponentUtils;
 import io.github.steaf23.easymenulib.util.PDCHelper;
 import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemFlag;
@@ -36,7 +40,6 @@ public class BingoTask
 
     public final TaskType type;
     public final TaskData data;
-    public final ChatColor nameColor;
     public final Material material;
     public final boolean glowing;
 
@@ -50,21 +53,18 @@ public class BingoTask
         if (data instanceof ItemTask itemTask)
         {
             this.type = TaskType.ITEM;
-            this.nameColor = ChatColor.YELLOW;
             this.material = itemTask.material();
             this.glowing = false;
         }
         else if (data instanceof AdvancementTask)
         {
             this.type = TaskType.ADVANCEMENT;
-            this.nameColor = ChatColor.GREEN;
             this.material = Material.FILLED_MAP;
             this.glowing = true;
         }
         else if (data instanceof StatisticTask statTask)
         {
             this.type = TaskType.STATISTIC;
-            this.nameColor = ChatColor.LIGHT_PURPLE;
             this.material = BingoStatistic.getMaterial(statTask.statistic());
             this.glowing = true;
         }
@@ -73,7 +73,6 @@ public class BingoTask
             Message.log("This Type of data is not supported by BingoTask: '" + data + "'!");
             this.type = TaskType.ITEM;
             this.glowing = false;
-            this.nameColor = ChatColor.WHITE;
             this.material = Material.BEDROCK;
         }
     }
@@ -96,21 +95,22 @@ public class BingoTask
         return completedBy != null;
     }
 
-    public MenuItem asMenuItem()
+    public ItemTemplate toItem()
     {
-        ItemStack item;
+        ItemTemplate item;
         // Step 1: create the item and put the new name, description and material on it.
         if (isVoided()) // VOIDED TASK
         {
-            ItemText addedDesc = new ItemText(BingoTranslation.VOIDED.translate(), ChatColor.DARK_GRAY);
+            item = new ItemTemplate(Material.BEDROCK, "");
+            BaseComponent[] addedDesc = BingoTranslation.VOIDED.asComponent(Set.of(ChatColor.DARK_GRAY));
 
-            ItemText itemName = new ItemText(ChatColor.DARK_GRAY, ChatColor.STRIKETHROUGH);
-            itemName.addText("A", ChatColor.MAGIC);
-            itemName.add(data.getItemDisplayName());
-            itemName.addText("A", ChatColor.MAGIC);
+            ComponentBuilder nameBuilder = new ComponentBuilder().color(ChatColor.DARK_GRAY).strikethrough(true);
+            nameBuilder.append("A").obfuscated(true);
+            nameBuilder.append(data.getName());
+            nameBuilder.append("A").obfuscated(true);
 
-            item = new ItemStack(Material.BEDROCK);
-            ItemText.buildItemText(item, itemName, addedDesc);
+            item.setName(nameBuilder.build());
+            item.setLore(addedDesc);
         }
         else if (isCompleted()) // COMPLETED TASK
         {
@@ -118,67 +118,60 @@ public class BingoTask
 
             String timeString = GameTimer.getTimeAsString(completedAt);
 
-            ItemText itemName = new ItemText(ChatColor.GRAY, ChatColor.STRIKETHROUGH);
-            itemName.add(data.getItemDisplayName());
+            ComponentBuilder nameBuilder = new ComponentBuilder().color(ChatColor.GRAY).strikethrough(true);
+            nameBuilder.append(data.getName());
 
             Set<ChatColor> modifiers = new HashSet<>(){{
                 add(ChatColor.DARK_PURPLE);
                 add(ChatColor.ITALIC);
             }};
-            ItemText[] desc = BingoTranslation.COMPLETED_LORE.asItemText(modifiers,
-                    new ItemText(completedBy.getDisplayName(),
+            BaseComponent[] desc = BingoTranslation.COMPLETED_LORE.asComponent(Set.of(ChatColor.DARK_PURPLE, ChatColor.ITALIC),
+                    ChatComponentUtils.convert(completedBy.getDisplayName(),
                             completedBy.getTeam().getColor(), ChatColor.BOLD),
-                    new ItemText(timeString, ChatColor.GOLD));
+                    ChatComponentUtils.convert(timeString, ChatColor.GOLD));
 
-            item = new ItemStack(completeMaterial);
-            ItemText.buildItemText(item,
-                    itemName,
-                    desc);
+            item = new ItemTemplate(completeMaterial, "");
+            item.setName(nameBuilder.build());
+            item.setLore(desc);
         }
         else // DEFAULT TASK
         {
-            ItemText itemName = new ItemText(nameColor);
-            itemName.add(data.getItemDisplayName());
-
-            item = new ItemStack(material);
-            ItemText.buildItemText(item,
-                    itemName,
-                    data.getItemDescription());
+            item = new ItemTemplate(material, "");
+            item.setName(data.getName());
+            item.setLore(data.getItemDescription());
 
             item.setAmount(data.getStackSize());
         }
 
         // STEP 2: Add additional stuff like pdc data and glowing effect.
 
-        ItemMeta meta = item.getItemMeta();
-        PersistentDataContainer pdcData = meta.getPersistentDataContainer();
-        // Serialize specific data first, to catch null pointers from incomplete implementations.
-        pdcData = data.pdcSerialize(pdcData);
-        // Then serialize generic task info/ live data
-        pdcData.set(getTaskDataKey("type"), PersistentDataType.STRING, type.name());
-        pdcData.set(getTaskDataKey("voided"), PersistentDataType.BYTE, (byte)(voided ? 1 : 0));
-        pdcData.set(getTaskDataKey("completed_at"), PersistentDataType.LONG, completedAt);
-        if (isCompleted())
-            pdcData.set(getTaskDataKey("completed_by"), PersistentDataType.STRING, completedBy.getId().toString());
-        else
-            pdcData.set(getTaskDataKey("completed_by"), PersistentDataType.STRING, "");
+        item.addMetaModifier(meta -> {
+            PersistentDataContainer pdcData = meta.getPersistentDataContainer();
+            // Serialize specific data first, to catch null pointers from incomplete implementations.
+            pdcData = data.pdcSerialize(pdcData);
+            // Then serialize generic task info/ live data
+            pdcData.set(getTaskDataKey("type"), PersistentDataType.STRING, type.name());
+            pdcData.set(getTaskDataKey("voided"), PersistentDataType.BYTE, (byte)(voided ? 1 : 0));
+            pdcData.set(getTaskDataKey("completed_at"), PersistentDataType.LONG, completedAt);
+            if (isCompleted())
+                pdcData.set(getTaskDataKey("completed_by"), PersistentDataType.STRING, completedBy.getId().toString());
+            else
+                pdcData.set(getTaskDataKey("completed_by"), PersistentDataType.STRING, "");
+            return meta;
+        });
 
-        meta.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_UNBREAKABLE, ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_DYE);
-        item.setItemMeta(meta);
-
-        MenuItem finalItem = new MenuItem(item);
         if ((glowing || isCompleted()) && !isVoided())
         {
-            finalItem.setGlowing(true);
+            item.setGlowing(true);
         }
 
-        finalItem.setAction(new TaskItemAction(this));
-        return finalItem;
+        item.setAction(new TaskItemAction(this));
+        return item;
     }
 
-    public static @Nullable BingoTask fromMenuItem(MenuItem in)
+    public static @Nullable BingoTask fromItem(ItemStack in)
     {
-        PersistentDataContainer pdcData = in.buildStack().getItemMeta().getPersistentDataContainer();
+        PersistentDataContainer pdcData = in.getItemMeta().getPersistentDataContainer();
 
         boolean voided = pdcData.getOrDefault(getTaskDataKey("voided"), PersistentDataType.BYTE, (byte)0) != 0;
         UUID completedByUUID = null;

@@ -133,7 +133,7 @@ public class BingoPlayer implements BingoParticipant
                 }
             }
             ItemStack existingItem = player.getInventory().getItem(cardSlot);
-            player.getInventory().setItem(cardSlot, PlayerKit.CARD_ITEM.buildStack());
+            player.getInventory().setItem(cardSlot, PlayerKit.CARD_ITEM.buildItem());
             if (existingItem != null && !existingItem.getType().isAir()) {
                 Map<Integer, ItemStack> leftOver = player.getInventory().addItem(existingItem);
                 for (ItemStack stack : leftOver.values()) {
@@ -204,7 +204,7 @@ public class BingoPlayer implements BingoParticipant
         itemKey += ".minecraft." + task.material.getKey().getKey();
 
         new TranslatedMessage(BingoTranslation.DEATHMATCH_ITEM).color(ChatColor.GOLD)
-                .component(new TranslatableComponent(itemKey))
+                .arg(new TranslatableComponent(itemKey))
                 .send(sessionPlayer().get());
     }
 

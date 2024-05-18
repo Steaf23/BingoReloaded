@@ -1,7 +1,8 @@
 package io.github.steaf23.easymenulib.menu;
 
+import io.github.steaf23.easymenulib.menu.item.ItemTemplate;
+import io.github.steaf23.easymenulib.util.ChatComponentUtils;
 import io.github.steaf23.easymenulib.util.FlexColor;
-import io.github.steaf23.easymenulib.menu.item.MenuItem;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -16,14 +17,14 @@ import java.util.function.Consumer;
 
 public final class ColorPickerMenu extends BasicMenu
 {
-    private static final MenuItem NEXT = new MenuItem(53, Material.STRUCTURE_VOID, "" + ChatColor.LIGHT_PURPLE + ChatColor.BOLD + "Scroll Left", "");
-    private static final MenuItem PREVIOUS = new MenuItem(45, Material.BARRIER, "" + ChatColor.LIGHT_PURPLE + ChatColor.BOLD + "Scroll Right", "");
+    private static final ItemTemplate NEXT = new ItemTemplate(53, Material.STRUCTURE_VOID, ChatComponentUtils.convert("Scroll Left", ChatColor.LIGHT_PURPLE, ChatColor.BOLD));
+    private static final ItemTemplate PREVIOUS = new ItemTemplate(45, Material.BARRIER, ChatComponentUtils.convert("Scroll Right", ChatColor.LIGHT_PURPLE, ChatColor.BOLD));
 
     private static final int HUE_AMOUNT = 25;
 
     private final Consumer<ChatColor> result;
 
-    private final List<MenuItem> hueItems;
+    private final List<ItemTemplate> hueItems;
 
     private int scrollIndex = 0;
 
@@ -35,7 +36,7 @@ public final class ColorPickerMenu extends BasicMenu
         for (int i = 0; i < HUE_AMOUNT; i++) {
             Color col = Color.getHSBColor(i * (1.0f / (HUE_AMOUNT - 1)), 1.0f, 1.0f);
             ChatColor chatColor = ChatColor.of(col);
-            hueItems.add(io.github.steaf23.easymenulib.menu.item.MenuItem.createColoredLeather(chatColor, Material.LEATHER_CHESTPLATE)
+            hueItems.add(ItemTemplate.createColoredLeather(chatColor, Material.LEATHER_CHESTPLATE)
                     .setCompareKey(FlexColor.asHex(chatColor)));
         }
 
@@ -46,7 +47,7 @@ public final class ColorPickerMenu extends BasicMenu
 
         for (int i = 0; i < 45; i++) {
             ChatColor color = ChatColor.of(new Color(0));
-            addItem(MenuItem.createColoredLeather(color, Material.LEATHER_CHESTPLATE)
+            addItem(ItemTemplate.createColoredLeather(color, Material.LEATHER_CHESTPLATE)
                     .setCompareKey(FlexColor.asHex(color)));
         }
 
@@ -55,7 +56,7 @@ public final class ColorPickerMenu extends BasicMenu
 
     @Override
     public boolean onClick(InventoryClickEvent event, HumanEntity player, int clickedSlot, ClickType clickType) {
-        MenuItem item = getItemAtSlot(clickedSlot);
+        ItemTemplate item = getItemAtSlot(clickedSlot);
         if (item == null) {
             return super.onClick(event, player, clickedSlot, clickType);
         }
@@ -99,9 +100,9 @@ public final class ColorPickerMenu extends BasicMenu
 
                 ChatColor chatColor = ChatColor.of(targetColor);
 
-                MenuItem item = MenuItem.createColoredLeather(chatColor, Material.LEATHER_CHESTPLATE)
+                ItemTemplate item = ItemTemplate.createColoredLeather(chatColor, Material.LEATHER_CHESTPLATE)
                         .setCompareKey(FlexColor.asHex(chatColor))
-                        .setSlot(MenuItem.slotFromXY(x, y));
+                        .setSlot(ItemTemplate.slotFromXY(x, y));
                 addItem(item);
             }
         }

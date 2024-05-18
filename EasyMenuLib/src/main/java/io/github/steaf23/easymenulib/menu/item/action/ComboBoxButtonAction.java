@@ -1,7 +1,7 @@
 package io.github.steaf23.easymenulib.menu.item.action;
 
 import io.github.steaf23.easymenulib.menu.BasicMenu;
-import io.github.steaf23.easymenulib.menu.item.MenuItem;
+import io.github.steaf23.easymenulib.menu.item.ItemTemplate;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -14,12 +14,12 @@ public class ComboBoxButtonAction extends MenuAction
     private int selectedIndex;
     private final Consumer<String> callback;
     private final List<String> options;
-    private final List<ItemStack> stacks;
+    private final List<ItemTemplate> optionData;
 
     public ComboBoxButtonAction(Consumer<String> callback) {
         this.callback = callback;
         this.options = new ArrayList<>();
-        this.stacks = new ArrayList<>();
+        this.optionData = new ArrayList<>();
     }
 
     @Override
@@ -31,13 +31,13 @@ public class ComboBoxButtonAction extends MenuAction
             selectedIndex = Math.floorMod(selectedIndex - 1, options.size());
         }
 
-        item.replaceStack(stacks.get(selectedIndex));
+        setItem(optionData.get(selectedIndex));
         callback.accept(options.get(selectedIndex));
     }
 
-    public ComboBoxButtonAction addOption(String name, ItemStack stack) {
+    public ComboBoxButtonAction addOption(String name, ItemTemplate data) {
         options.add(name);
-        stacks.add(stack);
+        optionData.add(data);
         return this;
     }
 
@@ -53,11 +53,5 @@ public class ComboBoxButtonAction extends MenuAction
         int index = options.indexOf(option);
         selectedIndex = index;
         return this;
-    }
-
-    @Override
-    public void setItem(@NotNull MenuItem item) {
-        super.setItem(item);
-        item.replaceStack(stacks.get(selectedIndex));
     }
 }

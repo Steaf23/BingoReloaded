@@ -6,7 +6,7 @@ import io.github.steaf23.bingoreloaded.tasks.BingoTask;
 import io.github.steaf23.bingoreloaded.tasks.ItemTask;
 import io.github.steaf23.easymenulib.menu.BasicMenu;
 import io.github.steaf23.easymenulib.menu.MenuBoard;
-import io.github.steaf23.easymenulib.menu.item.MenuItem;
+import io.github.steaf23.easymenulib.menu.item.ItemTemplate;
 import io.github.steaf23.easymenulib.util.FlexColor;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
@@ -19,11 +19,11 @@ public class ListEditorMenu extends BasicMenu
 {
     private final String listName;
 
-    private static final MenuItem ITEMS = new MenuItem(2, 2, Material.APPLE, TITLE_PREFIX + "Items", "Click to add or remove items");
-    private static final MenuItem ADVANCEMENTS = new MenuItem(4, 2, Material.ENDER_EYE, TITLE_PREFIX + "Advancements", "Click to add or remove advancements");
-    private static final MenuItem STATISTICS = new MenuItem(6, 2, Material.GLOBE_BANNER_PATTERN, TITLE_PREFIX + "Statistics", "Click to add or remove statistics");
-    private static final MenuItem SAVE = new MenuItem(4, 5, Material.REDSTONE, "" + ChatColor.RED + ChatColor.BOLD + BingoTranslation.MENU_SAVE_EXIT.translate());
-    private static final MenuItem BLANK = new MenuItem(Material.BLACK_STAINED_GLASS_PANE, " ", "");
+    private static final ItemTemplate ITEMS = new ItemTemplate(2, 2, Material.APPLE, TITLE_PREFIX + "Items", "Click to add or remove items");
+    private static final ItemTemplate ADVANCEMENTS = new ItemTemplate(4, 2, Material.ENDER_EYE, TITLE_PREFIX + "Advancements", "Click to add or remove advancements");
+    private static final ItemTemplate STATISTICS = new ItemTemplate(6, 2, Material.GLOBE_BANNER_PATTERN, TITLE_PREFIX + "Statistics", "Click to add or remove statistics");
+    private static final ItemTemplate SAVE = new ItemTemplate(4, 5, Material.REDSTONE, "" + ChatColor.RED + ChatColor.BOLD + BingoTranslation.MENU_SAVE_EXIT.translate());
+    private static final ItemTemplate BLANK = new ItemTemplate(Material.BLACK_STAINED_GLASS_PANE, " ", "");
 
     public ListEditorMenu(MenuBoard manager, String listName) {
         super(manager, "Editing '" + listName + "'", 6);

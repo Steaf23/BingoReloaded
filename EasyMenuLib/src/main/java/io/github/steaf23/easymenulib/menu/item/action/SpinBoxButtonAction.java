@@ -2,11 +2,10 @@ package io.github.steaf23.easymenulib.menu.item.action;
 
 import io.github.steaf23.easymenulib.menu.BasicMenu;
 import io.github.steaf23.easymenulib.menu.Menu;
-import io.github.steaf23.easymenulib.menu.item.MenuItem;
+import io.github.steaf23.easymenulib.menu.item.ItemTemplate;
 import io.github.steaf23.easymenulib.util.ExtraMath;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 public class SpinBoxButtonAction extends MenuAction
@@ -24,7 +23,7 @@ public class SpinBoxButtonAction extends MenuAction
     }
 
     @Override
-    public void setItem(@NotNull MenuItem item) {
+    public void setItem(@NotNull ItemTemplate item) {
         super.setItem(item);
         item.setAmount(value);
 

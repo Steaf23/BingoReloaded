@@ -71,7 +71,7 @@ public class BingoScoreboard implements SessionMember
         int lineIndex = 1;
         for (BingoTeam team : teamManager.getActiveTeams())
         {
-            String teamScoreLine = "" + ChatColor.DARK_RED + "[" + team.getColoredName().asLegacyString() + ChatColor.DARK_RED + "]" +
+            String teamScoreLine = "" + ChatColor.DARK_RED + "[" + team.getColoredName().toLegacyText() + ChatColor.DARK_RED + "]" +
                     ChatColor.WHITE + ": " + ChatColor.BOLD + taskObjective.getScore(team.getIdentifier()).getScore();
             visualBoard.setLineText(lineIndex, teamScoreLine);
             lineIndex += 1;
