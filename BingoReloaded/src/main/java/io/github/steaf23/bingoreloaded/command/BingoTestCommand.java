@@ -8,6 +8,7 @@ import io.github.steaf23.bingoreloaded.data.world.WorldGroup;
 import io.github.steaf23.bingoreloaded.event.BingoCardTaskCompleteEvent;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
+import io.github.steaf23.bingoreloaded.tasks.BingoTask;
 import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.easymenulib.menu.BasicMenu;
 import io.github.steaf23.easymenulib.menu.MenuBoard;
@@ -123,13 +124,14 @@ public class BingoTestCommand implements TabExecutor
 
         BingoCard card = player.getTeam().card;
 
-        if (taskIndex >= card.tasks.size()) {
+        if (taskIndex >= card.getTasks().size()) {
             Message.log(ChatColor.RED + "index out of bounds for task list!");
             return;
         }
 
-        card.tasks.get(taskIndex).complete(player, ((BingoGame) player.getSession().phase()).getGameTime());
-        var slotEvent = new BingoCardTaskCompleteEvent(card.tasks.get(taskIndex), player, card.hasBingo(player.getTeam()));
+        BingoTask task = card.getTasks().get(taskIndex);
+        task.complete(player, ((BingoGame) player.getSession().phase()).getGameTime());
+        var slotEvent = new BingoCardTaskCompleteEvent(task, player, card.hasBingo(player.getTeam()));
         Bukkit.getPluginManager().callEvent(slotEvent);
     }
 }

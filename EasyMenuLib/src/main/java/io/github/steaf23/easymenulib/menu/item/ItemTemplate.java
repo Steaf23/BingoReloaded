@@ -225,13 +225,13 @@ public class ItemTemplate
 
     public ItemTemplate copy() {
         ItemTemplate copy = new ItemTemplate(slot, material, name);
-        copy.description = description;
+        copy.description.putAll(description);
         copy.amount = amount;
         copy.glowing = glowing;
         copy.compareKey = compareKey;
         copy.action = action;
-        copy.enchantments = enchantments;
-        copy.metaModifiers = metaModifiers;
+        copy.enchantments.putAll(enchantments);
+        copy.metaModifiers.addAll(metaModifiers);
         return copy;
     }
 

@@ -58,7 +58,7 @@ public class PregameLobby implements GamePhase
         this.votes = new HashMap<>();
         this.config = config;
         this.playerCountTimer = new CountdownTimer(config.playerWaitTime, session);
-        playerCountTimer.setNotifier(time -> {
+        playerCountTimer.addNotifier(time -> {
             settingsBoard.setStatus(BingoTranslation.STARTING_STATUS.translate(String.valueOf(time)));
             if (time == 10) {
                 new TranslatedMessage(BingoTranslation.STARTING_STATUS).arg("" + time).color(ChatColor.GOLD).sendAll(session);

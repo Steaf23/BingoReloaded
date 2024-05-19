@@ -66,7 +66,7 @@ public class LockoutBingoCard extends BingoCard
                 .arg(team.getColoredName())
                 .sendAll(session);
         team.outOfTheGame = true;
-        for (BingoTask task : tasks) {
+        for (BingoTask task : getTasks()) {
             if (task.isCompleted() && team.getMembers().contains(task.getCompletedBy().orElseGet(() -> null))) {
                 task.setVoided(true);
                 currentMaxTasks--;

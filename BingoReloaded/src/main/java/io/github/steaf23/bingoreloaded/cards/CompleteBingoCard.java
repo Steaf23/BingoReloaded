@@ -28,11 +28,11 @@ public class CompleteBingoCard extends BingoCard
     {
         CompleteBingoCard card = new CompleteBingoCard(menu.getMenuBoard(), this.size);
         List<BingoTask> newTasks = new ArrayList<>();
-        for (var t : tasks)
+        for (var t : getTasks())
         {
             newTasks.add(t.copy());
         }
-        card.tasks = newTasks;
+        card.setTasks(newTasks);
         return card;
     }
 }

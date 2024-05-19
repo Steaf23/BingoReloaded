@@ -107,7 +107,7 @@ public abstract class PaginatedSelectionMenu extends BasicMenu
         keywordFilter = filter;
         filterItem.setLore(TextComponent.fromLegacy("{" + keywordFilter + "}"));
         //TODO: automate addItem?
-//        addItem(filterItem);
+        addItem(filterItem);
 
         filteredItems.clear();
 
@@ -227,7 +227,7 @@ public abstract class PaginatedSelectionMenu extends BasicMenu
             if (startingIndex + i < filteredItems.size())
                 addItem(filteredItems.get(startingIndex + i).copyToSlot(i));
             else
-                addItem(ItemTemplate.EMPTY);
+                addItem(ItemTemplate.EMPTY.copyToSlot(i));
         }
 
         //Update Page description e.g. (20/23) for the Next and Previous 'buttons'.

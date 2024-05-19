@@ -82,7 +82,7 @@ public class BingoGame implements GamePhase
             timer = new CountdownTimer(settings.countdownDuration() * 60, 5 * 60, 60, session);
         else
             timer = new CounterTimer();
-        timer.setNotifier(time ->
+        timer.addNotifier(time ->
         {
             Message timerMessage = timer.getTimeDisplayMessage(false);
             for (BingoParticipant participant : getTeamManager().getParticipants()) {
@@ -103,7 +103,7 @@ public class BingoGame implements GamePhase
 
         // Generate cards
         boolean useAdvancements = !(BingoReloaded.areAdvancementsDisabled() || config.disableAdvancements);
-        BingoCard masterCard = CardBuilder.fromSettings(session.getMenuManager(), settings, getTeamManager());
+        BingoCard masterCard = CardBuilder.fromSettings(session.getMenuManager(), settings, getTeamManager(), timer);
         masterCard.generateCard(settings.card(), settings.seed(), useAdvancements, !config.disableStatistics);
         if (masterCard instanceof LockoutBingoCard lockoutCard) {
             lockoutCard.teamCount = teamManager.getTeamCount();
@@ -148,7 +148,7 @@ public class BingoGame implements GamePhase
 
         // Countdown before the game actually starts
         startingTimer = new CountdownTimer(Math.max(1, config.startingCountdownTime), 6, 3, session);
-        startingTimer.setNotifier(time -> {
+        startingTimer.addNotifier(time -> {
             String timeString = GameTimer.getSecondsString(time);
             if (time == 0)
                 timeString = "" + ChatColor.RESET + ChatColor.BOLD + ChatColor.GREEN + "GO";
@@ -169,11 +169,13 @@ public class BingoGame implements GamePhase
             teamManager.getParticipants().forEach(p ->
                     p.sessionPlayer().ifPresent(player -> {
                         Message.sendTitleMessage(timeDisplay, new Message(), player);
-                        if (time <= startingTimer.lowThreshold && time > 0) {
-                            player.playSound(player, Sound.BLOCK_NOTE_BLOCK_BIT, 1.2f - time / 10.0f + 0.2f, pitch);
-                            player.playSound(player, Sound.BLOCK_NOTE_BLOCK_PLING, 1.2f - time / 10.0f + 0.2f, pitch);
-                        }
                     }));
+            if (time <= startingTimer.lowThreshold && time > 0) {
+                var soundEvent = new BingoPlaySoundEvent(session, Sound.BLOCK_NOTE_BLOCK_BIT, 1.2f - time / 10.0f + 0.2f, pitch);
+                var soundEvent2 = new BingoPlaySoundEvent(session, Sound.BLOCK_NOTE_BLOCK_PLING, 1.2f - time / 10.0f + 0.2f, pitch);
+                Bukkit.getPluginManager().callEvent(soundEvent);
+                Bukkit.getPluginManager().callEvent(soundEvent2);
+            }
         });
         BingoReloaded.scheduleTask(task -> startingTimer.start(), BingoReloaded.ONE_SECOND);
     }
@@ -196,11 +198,11 @@ public class BingoGame implements GamePhase
         }
 
         getTeamManager().getParticipants().forEach(p -> {
-            if (p instanceof BingoPlayer bingoPlayer) {
-                bingoPlayer.takeEffects(false);
-                p.sessionPlayer().ifPresent(player -> player.playSound(player, Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 0.8f, 1.0f));
-            }
+                p.takeEffects(false);
         });
+
+        var soundEvent = new BingoPlaySoundEvent(session, Sound.ENTITY_LIGHTNING_BOLT_THUNDER);
+        Bukkit.getPluginManager().callEvent(soundEvent);
 
         String command = config.sendCommandAfterGameEnded;
         if (!command.isEmpty()) {
@@ -220,7 +222,6 @@ public class BingoGame implements GamePhase
                 continue;
 
             Player player = p.sessionPlayer().get();
-            player.playSound(player, Sound.UI_TOAST_CHALLENGE_COMPLETE, 0.75f, 1.0f);
 
             if (team.equals(p.getTeam())) {
                 BingoReloaded.incrementPlayerStat(player, BingoStatType.WINS);
@@ -228,6 +229,8 @@ public class BingoGame implements GamePhase
                 BingoReloaded.incrementPlayerStat(player, BingoStatType.LOSSES);
             }
         }
+        var event = new BingoPlaySoundEvent(session, Sound.UI_TOAST_CHALLENGE_COMPLETE, 0.75f, 1.0f);
+        Bukkit.getPluginManager().callEvent(event);
         end(team);
     }
 
@@ -262,9 +265,9 @@ public class BingoGame implements GamePhase
 
     public void startDeathMatch(int seconds) {
         new TranslatedMessage(BingoTranslation.DEATHMATCH_START).sendAll(session);
-        for (BingoParticipant p : teamManager.getParticipants()) {
-            p.sessionPlayer().ifPresent(player -> player.playSound(player, Sound.ENTITY_PARROT_IMITATE_GHAST, 0.8f, 1.0f));
-        }
+
+        var soundEvent = new BingoPlaySoundEvent(session, Sound.ENTITY_PARROT_IMITATE_GHAST);
+        Bukkit.getPluginManager().callEvent(soundEvent);
 
         startDeathMatchRecurse(seconds);
     }
@@ -284,9 +287,10 @@ public class BingoGame implements GamePhase
                         "" + ChatColor.BOLD + ChatColor.GOLD + "GO",
                         "" + ChatColor.DARK_PURPLE + ChatColor.ITALIC + BingoTranslation.DEATHMATCH_SEARCH.translate(),
                         p.sessionPlayer().get());
-
-                player.playSound(player, Sound.ENTITY_GHAST_SHOOT, 0.8f, 1.0f);
             }
+
+            var event = new BingoPlaySoundEvent(session, Sound.ENTITY_GHAST_SHOOT);
+            Bukkit.getPluginManager().callEvent(event);
             return;
         }
 
@@ -461,10 +465,8 @@ public class BingoGame implements GamePhase
                 .arg(timeString).color(ChatColor.WHITE)
                 .sendAll(session);
 
-        for (BingoParticipant otherParticipant : getTeamManager().getParticipants()) {
-            if (otherParticipant.sessionPlayer().isPresent())
-                otherParticipant.sessionPlayer().get().playSound(otherParticipant.sessionPlayer().get(), Sound.ENTITY_DRAGON_FIREBALL_EXPLODE, 0.8f, 1.0f);
-        }
+        var soundEvent = new BingoPlaySoundEvent(session, Sound.ENTITY_DRAGON_FIREBALL_EXPLODE);
+        Bukkit.getPluginManager().callEvent(soundEvent);
 
         scoreboard.updateTeamScores();
 
@@ -607,10 +609,10 @@ public class BingoGame implements GamePhase
         } else if (event.getTimer() == startingTimer) {
             timer.start();
             gameStarted = true;
-            teamManager.getParticipants().forEach(p -> p.sessionPlayer().ifPresent(gamePlayer -> {
-                gamePlayer.playSound(gamePlayer, Sound.ENTITY_FIREWORK_ROCKET_LARGE_BLAST, 0.8f, 1.0f);
-                gamePlayer.playSound(gamePlayer, Sound.ENTITY_FIREWORK_ROCKET_LAUNCH, 0.8f, 1.0f);
-            }));
+            var soundEvent = new BingoPlaySoundEvent(session, Sound.ENTITY_FIREWORK_ROCKET_LARGE_BLAST);
+            var soundEvent2 = new BingoPlaySoundEvent(session, Sound.ENTITY_FIREWORK_ROCKET_LAUNCH);
+            Bukkit.getPluginManager().callEvent(soundEvent);
+            Bukkit.getPluginManager().callEvent(soundEvent2);
         }
     }
 

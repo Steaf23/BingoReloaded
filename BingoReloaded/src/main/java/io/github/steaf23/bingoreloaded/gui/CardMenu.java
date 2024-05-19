@@ -13,6 +13,7 @@ import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,13 +31,16 @@ public class CardMenu extends BasicMenu
         setMaxStackSizeOverride(64);
     }
 
-    public void show(Player player, List<BingoTask> tasks)
-    {
-        open(player);
-    }
-
     public void updateTasks(List<BingoTask> tasks) {
         this.tasks = tasks;
+        for (int i = 0; i < tasks.size(); i++)
+        {
+            addItem(getItemFromTask(i).setSlot(size.getCardInventorySlot(i)));
+        }
+    }
+
+    public @NotNull ItemTemplate getItemFromTask(int taskIndex) {
+        return tasks.get(taskIndex).toItem();
     }
 
     public void setInfo(String name, String... description)
@@ -45,20 +49,11 @@ public class CardMenu extends BasicMenu
         addItem(info);
     }
 
-    protected CardSize getSize() {
-        return size;
-    }
-
-    protected List<BingoTask> getTasks() {
-        return tasks;
-    }
-
     @Override
     public void beforeOpening(HumanEntity player) {
         for (int i = 0; i < tasks.size(); i++)
         {
-            BingoTask task = tasks.get(i);
-            addItem(task.toItem().setSlot(size.getCardInventorySlot(i)));
+            addItem(getItemFromTask(i).setSlot(size.getCardInventorySlot(i)));
         }
     }
 }

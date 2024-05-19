@@ -26,7 +26,7 @@ public class StatisticTracker
     {
         for (BingoTeam team : teams)
         {
-            for (BingoTask task : team.card.tasks)
+            for (BingoTask task : team.card.getTasks())
             {
                 if (task.type != BingoTask.TaskType.STATISTIC)
                     continue;

@@ -57,7 +57,6 @@ game:
     join: "You successfully joined team {0}!" # 0: team name
     join_auto: "You will be joining a team automatically when the game starts!"
     dropped: "Team {0} cannot win anymore, they are out of the game!" # 0: team name
-    voided: "This task cannot be completed anymore!"
     no_chat: "Can't toggle team chat since you aren't in a team!"
     chat_off: "&fTeam chat is now &coff&r, use {0} to enable it again." # 0: /btc
     chat_on: "&fTeam chat is now &aon&r, use {0} to disable it." # 0: /btc
@@ -65,7 +64,10 @@ game:
     full_team_desc: "This team is full"
     join_team_desc: "Click to join this team"
   item:
-    lore: Obtain {0} of this item to complete this task! # 0: item count
+    voided: "This task cannot be completed anymore!"
+    expire: "Expires in: {0}" # 0: time left
+    recover: "Regenerates in: {0}" # 0: time left
+    lore: "Obtain {0} of this item to complete this task!" # 0: item count
     lore_advancement: "Click to learn more!"
     lore_statistic: "Obtain this statistic to complete the task!"
     completed: "Completed {0} by {1} at {2}" # 0: item name, 1: team, 2: completion time

@@ -38,5 +38,6 @@ improve scoreboard
   - last line of team scoreboard should show something like "and x others.."
 
 create new gamemode; Hot-Swap
+  - How to deal with advancement/statistic tracking when tasks are being created all the time?
 
 double game settings updated message when changing mode to different mode + size

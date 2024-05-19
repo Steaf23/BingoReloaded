@@ -106,7 +106,7 @@ public class BingoTask
 
             ComponentBuilder nameBuilder = new ComponentBuilder().color(ChatColor.DARK_GRAY).strikethrough(true);
             nameBuilder.append("A").obfuscated(true);
-            nameBuilder.append(data.getName());
+            nameBuilder.append(data.getName()).obfuscated(false);
             nameBuilder.append("A").obfuscated(true);
 
             item.setName(nameBuilder.build());
@@ -210,7 +210,7 @@ public class BingoTask
 
     public boolean complete(BingoParticipant participant, long gameTime)
     {
-        if (isCompleted())
+        if (isCompleted() || isVoided())
             return false;
 
         completedBy = participant;

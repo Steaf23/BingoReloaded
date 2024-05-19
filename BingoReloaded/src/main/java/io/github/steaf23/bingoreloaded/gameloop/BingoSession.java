@@ -42,6 +42,7 @@ public class BingoSession
     private final MenuBoard menuBoard;
     private final PlayerSerializationData playerData;
     private final GameManager gameManager;
+    private final BingoSoundPlayer soundPlayer;
 
     // A bingo session controls 1 group of worlds
     private final WorldGroup worlds;
@@ -54,6 +55,7 @@ public class BingoSession
         this.config = config;
         this.playerData = playerData;
         this.scoreboard = new BingoScoreboard(this, config.showPlayerInScoreboard && false);
+        this.soundPlayer = new BingoSoundPlayer(this);
         if (config.singlePlayerTeams) {
             this.teamManager = new SoloTeamManager(scoreboard.getTeamBoard(), this);
         }
@@ -159,6 +161,10 @@ public class BingoSession
     public void handleSettingsUpdated(final BingoSettingsUpdatedEvent event) {
         phase.handleSettingsUpdated(event);
         teamManager.handleSettingsUpdated(event);
+    }
+
+    public void handlePlaySoundEvent(final BingoPlaySoundEvent event) {
+        soundPlayer.playSoundToEveryone(event.getSound(), event.getLoudness(), event.getPitch());
     }
 
     public void handlePlayerTeleport(final PlayerTeleportEvent event) {

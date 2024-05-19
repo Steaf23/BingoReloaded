@@ -5,6 +5,7 @@ import io.github.steaf23.bingoreloaded.data.helper.YmlDataManager;
 import io.github.steaf23.bingoreloaded.tasks.ItemTask;
 import io.github.steaf23.bingoreloaded.tasks.TaskData;
 import org.bukkit.Material;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -86,13 +87,17 @@ public class BingoCardData
 
     public ItemTask getRandomItemTask(String cardName)
     {
+        return getRandomItemTask(cardName, new Random());
+    }
+
+    public ItemTask getRandomItemTask(String cardName, @NotNull Random generator) {
         List<TaskData> tasks = new ArrayList<>();
         getListNames(cardName).forEach((l) -> tasks.addAll(listsData.getTasks(l, false, false)));
 
         List<TaskData> allItemTasks = tasks.stream().filter(task -> task instanceof ItemTask).collect(Collectors.toList());
 
         if (allItemTasks.size() > 0)
-            return (ItemTask)allItemTasks.get(Math.abs(new Random().nextInt(allItemTasks.size())));
+            return (ItemTask)allItemTasks.get(Math.abs(generator.nextInt(allItemTasks.size())));
         else
             return new ItemTask(Material.DIAMOND_HOE, 1);
     }

@@ -3,14 +3,18 @@ package io.github.steaf23.bingoreloaded.util.timer;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.util.Message;
 import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitTask;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Consumer;
 
 public abstract class GameTimer
 {
-    protected Consumer<Long> notifier;
+    private final List<Consumer<Long>> notifiers;
     private long time;
     private BukkitTask task;
 
@@ -23,6 +27,7 @@ public abstract class GameTimer
     {
         this.time = 0;
         this.task = null;
+        this.notifiers = new ArrayList<>();
     }
 
     public void start()
@@ -63,8 +68,9 @@ public abstract class GameTimer
     protected void updateTime(long newTime)
     {
         time = newTime;
-        if (notifier != null)
+        for (var notifier : notifiers) {
             notifier.accept(newTime);
+        }
     }
 
     public static String getTimeAsString(long seconds)
@@ -83,14 +89,18 @@ public abstract class GameTimer
         return String.format("00:%02d", seconds % 60);
     }
 
+    public static BaseComponent getTimeAsComponent(long seconds) {
+        return new TextComponent(getTimeAsString(seconds));
+    }
+
     public static String getSecondsString(long seconds)
     {
         return String.format("%d", seconds);
     }
 
-    public void setNotifier(Consumer<Long> notifier)
+    public void addNotifier(Consumer<Long> notifier)
     {
-        this.notifier = notifier;
+        this.notifiers.add(notifier);
     }
 
     public boolean isRunning() {

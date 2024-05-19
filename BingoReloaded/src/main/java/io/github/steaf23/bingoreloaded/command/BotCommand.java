@@ -6,6 +6,7 @@ import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.team.TeamManager;
 import io.github.steaf23.bingoreloaded.player.VirtualBingoPlayer;
+import io.github.steaf23.bingoreloaded.tasks.BingoTask;
 import io.github.steaf23.bingoreloaded.util.Message;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
@@ -85,13 +86,14 @@ public class BotCommand implements TabExecutor
 
         BingoCard card = player.getTeam().card;
 
-        if (taskIndex >= card.tasks.size()) {
+        if (taskIndex >= card.getTasks().size()) {
             Message.log(ChatColor.RED + "index out of bounds for task list!");
             return;
         }
 
-        card.tasks.get(taskIndex).complete(player, ((BingoGame) player.getSession().phase()).getGameTime());
-        var slotEvent = new BingoCardTaskCompleteEvent(card.tasks.get(taskIndex), player, card.hasBingo(player.getTeam()));
+        BingoTask task = card.getTasks().get(taskIndex);
+        task.complete(player, ((BingoGame) player.getSession().phase()).getGameTime());
+        var slotEvent = new BingoCardTaskCompleteEvent(task, player, card.hasBingo(player.getTeam()));
         Bukkit.getPluginManager().callEvent(slotEvent);
     }
 
