@@ -20,6 +20,7 @@ import io.github.steaf23.bingoreloaded.settings.BingoSettings;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import io.github.steaf23.bingoreloaded.tasks.BingoTask;
 import io.github.steaf23.bingoreloaded.tasks.statistics.StatisticTracker;
+import io.github.steaf23.bingoreloaded.util.ActionBarManager;
 import io.github.steaf23.bingoreloaded.util.MaterialHelper;
 import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.bingoreloaded.util.TranslatedMessage;
@@ -57,6 +58,7 @@ public class BingoGame implements GamePhase
     private GameTimer timer;
     private CountdownTimer startingTimer;
     private boolean gameStarted;
+    private final ActionBarManager actionBarManager;
 
     private BingoTask deathMatchTask;
 
@@ -67,6 +69,7 @@ public class BingoGame implements GamePhase
         this.scoreboard = session.scoreboard;
         this.settings = settings;
         this.cardEventManager = new CardEventManager();
+        this.actionBarManager = new ActionBarManager(session);
         if (!config.disableStatistics)
             this.statTracker = new StatisticTracker();
         else
@@ -85,10 +88,8 @@ public class BingoGame implements GamePhase
         timer.addNotifier(time ->
         {
             Message timerMessage = timer.getTimeDisplayMessage(false);
-            for (BingoParticipant participant : getTeamManager().getParticipants()) {
-                var p = participant.sessionPlayer();
-                p.ifPresent(value -> Message.sendActionMessage(timerMessage, value));
-            }
+            actionBarManager.requestMessage(timerMessage::asComponent, 0);
+            actionBarManager.update();
             if (statTracker != null)
                 statTracker.updateProgress();
         });
@@ -103,7 +104,7 @@ public class BingoGame implements GamePhase
 
         // Generate cards
         boolean useAdvancements = !(BingoReloaded.areAdvancementsDisabled() || config.disableAdvancements);
-        BingoCard masterCard = CardBuilder.fromSettings(session.getMenuManager(), settings, getTeamManager(), timer);
+        BingoCard masterCard = CardBuilder.fromGame(session.getMenuManager(), this);
         masterCard.generateCard(settings.card(), settings.seed(), useAdvancements, !config.disableStatistics);
         if (masterCard instanceof LockoutBingoCard lockoutCard) {
             lockoutCard.teamCount = teamManager.getTeamCount();
@@ -251,6 +252,14 @@ public class BingoGame implements GamePhase
 
     public TeamManager getTeamManager() {
         return teamManager;
+    }
+
+    public GameTimer getTimer() {
+        return timer;
+    }
+
+    public ActionBarManager getActionBar() {
+        return actionBarManager;
     }
 
     public void returnCardToPlayer(int cardSlot, BingoParticipant participant) {

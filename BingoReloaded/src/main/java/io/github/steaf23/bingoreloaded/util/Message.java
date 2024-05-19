@@ -177,6 +177,12 @@ public class Message
         return finalMessage.toLegacyText();
     }
 
+    public BaseComponent asComponent(Player player) {
+        if (finalMessage == null)
+            createMessage(player);
+        return finalMessage;
+    }
+
     public static void log(String text) {
         Bukkit.getConsoleSender().sendMessage(LOG_PREFIX + ": " + text);
     }

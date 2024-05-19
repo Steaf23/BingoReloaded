@@ -1,17 +1,17 @@
 package io.github.steaf23.bingoreloaded.cards;
 
-import io.github.steaf23.bingoreloaded.player.team.TeamManager;
+import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
-import io.github.steaf23.bingoreloaded.util.timer.GameTimer;
 import io.github.steaf23.easymenulib.menu.MenuBoard;
 
 public class CardBuilder
 {
-    public static BingoCard fromSettings(MenuBoard menuBoard, BingoSettings settings, TeamManager teamManager, GameTimer timer) {
+    public static BingoCard fromGame(MenuBoard menuBoard, BingoGame game) {
+        BingoSettings settings = game.getSettings();
         return switch (settings.mode()) {
-            case LOCKOUT -> new LockoutBingoCard(menuBoard, settings.size(), teamManager.getSession(), teamManager.getActiveTeams());
+            case LOCKOUT -> new LockoutBingoCard(menuBoard, settings.size(), game.getSession(), game.getTeamManager().getActiveTeams());
             case COMPLETE -> new CompleteBingoCard(menuBoard, settings.size());
-            case HOTSWAP -> new HotswapBingoCard(menuBoard, settings.size(), timer, teamManager.getSession(), settings.hotswapGoal());
+            case HOTSWAP -> new HotswapBingoCard(menuBoard, settings.size(), game, settings.hotswapGoal());
             default -> new BingoCard(menuBoard, settings.size());
         };
     }
