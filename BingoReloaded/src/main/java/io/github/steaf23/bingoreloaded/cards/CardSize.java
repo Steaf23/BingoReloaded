@@ -61,4 +61,9 @@ public enum CardSize
 
         return CardSize.X5;
     }
+
+    @Override
+    public String toString() {
+        return size + "x" + size;
+    }
 }

@@ -24,6 +24,13 @@ public interface BingoParticipant
     void showDeathMatchTask(BingoTask task);
     void showCard(BingoTask deathMatchTask);
     boolean alwaysActive();
+    default int getAmountOfTaskCompleted() {
+        BingoTeam team = getTeam();
+        if (team == null) {
+            return 0;
+        }
+        return team.card.getCompleteCount(this);
+    }
 
     void giveBingoCard(int cardSlot);
     void giveEffects(EnumSet<EffectOptionFlags> effects, int gracePeriod);

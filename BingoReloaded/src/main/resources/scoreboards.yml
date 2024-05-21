@@ -1,2 +1,28 @@
 lobby:
-  "Kits: d"
+    board: [
+        "{wait_status}"
+        " ",
+        "&lGamemode:",
+        " - {gamemode} {card_size}",
+        "&lKit:",
+        " - {kit}",
+        "{effects2}",
+        "&lTeam Size:",
+        " - {team_size}",
+        "&lTime:",
+        " - {time}",
+    ]
+    sections:
+        wait_status: "&c{status}"
+        effects: [
+            "&lEffects:",
+            " - {water_breathing}, {speed}",
+            "   {fire_resist}, {no_fall_dmg}",
+            "   {no_durability}, {night_vision}",
+            "   {keep_inventory}",
+            "   {all_none}",
+        ]
+        effects2: [
+            "&lEffects:",
+            "- {effects_summary}"
+        ]

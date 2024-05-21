@@ -26,6 +26,7 @@ import org.bukkit.event.player.PlayerAdvancementDoneEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerStatisticIncrementEvent;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
@@ -191,7 +192,10 @@ public class BingoCard
      * @param team The team.
      * @return The amount of completed items for the given team.
      */
-    public int getCompleteCount(BingoTeam team) {
+    public int getCompleteCount(@Nullable BingoTeam team) {
+        if (team == null) {
+            return 0;
+        }
         int count = 0;
         for (var task : getTasks()) {
             if (task.getCompletedBy().isPresent() && team.getMembers().contains(task.getCompletedBy().get()))
@@ -199,6 +203,11 @@ public class BingoCard
         }
 
         return count;
+    }
+
+    public int getCompleteCount(@Nullable BingoParticipant participant) {
+        return (int) getTasks().stream()
+                .filter(t -> t.getCompletedBy().isPresent() && t.getCompletedBy().get().equals(participant)).count();
     }
 
     public BingoCard copy() {

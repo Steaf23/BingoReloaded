@@ -41,3 +41,5 @@ create new gamemode; Hot-Swap
   - How to deal with advancement/statistic tracking when tasks are being created all the time?
 
 double game settings updated message when changing mode to different mode + size
+
+spinbox actions all get put to the same value per menu?
