@@ -21,6 +21,9 @@
 (2.x) add progress view to countable tasks
 
 
+Decrease the amount of spam messages when changing settings
+  - double game settings updated message when changing mode to different mode + size
+
 Fix bingo creator not showing updated lists/cards immediately after creating them (only after reopening menu)
 
 task list is not always selected correctly ?? (needs more testing)
@@ -39,7 +42,3 @@ improve scoreboard
 
 create new gamemode; Hot-Swap
   - How to deal with advancement/statistic tracking when tasks are being created all the time?
-
-double game settings updated message when changing mode to different mode + size
-
-spinbox actions all get put to the same value per menu?

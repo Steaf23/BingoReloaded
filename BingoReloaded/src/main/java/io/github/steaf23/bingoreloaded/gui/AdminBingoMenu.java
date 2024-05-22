@@ -85,7 +85,7 @@ public class AdminBingoMenu extends BasicMenu
         }));
 
         ItemTemplate durationItem = DURATION.copy();
-        int duration = session.settingsBuilder.view().maxTeamSize();
+        int duration = session.settingsBuilder.view().countdownDuration();
         updateDurationLore(durationItem, duration);
         durationItem.setAction(new SpinBoxButtonAction(1, DURATION_MAX, duration, value -> {
             session.settingsBuilder.countdownGameDuration(value);

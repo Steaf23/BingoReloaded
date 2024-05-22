@@ -41,17 +41,22 @@ public record StatisticTask(BingoStatistic statistic, int count) implements Coun
         switch (statistic.getCategory())
         {
             case ROOT_STATISTIC -> {
-                if (statistic.stat() == Statistic.ENTITY_KILLED_BY || statistic.stat() == Statistic.KILL_ENTITY)
+                if (statistic.stat() == Statistic.KILL_ENTITY)
                 {
                     BaseComponent entityName = ChatComponentUtils.entityName(statistic.entityType());
-                    BaseComponent[] inPlaceArguments =
-                            switch (statistic.stat())
-                                    {
-                                        case KILL_ENTITY -> new BaseComponent[]{amount, entityName};
-                                        case ENTITY_KILLED_BY -> new BaseComponent[]{entityName, amount};
-                                        default -> new BaseComponent[]{};
-                                    };
-                    builder.append(ChatComponentUtils.statistic(statistic.stat(), inPlaceArguments));
+                    BaseComponent[] inPlaceArguments = new BaseComponent[]{amount, new TextComponent("")};
+                    builder.append(ChatComponentUtils.statistic(statistic.stat(), inPlaceArguments))
+                            .append(" (")
+                            .append(entityName)
+                            .append(")");
+                }
+                else if (statistic.stat() == Statistic.ENTITY_KILLED_BY) {
+                    BaseComponent entityName = ChatComponentUtils.entityName(statistic.entityType());
+                    BaseComponent[] inPlaceArguments = new BaseComponent[]{new TextComponent(""), amount};
+                    builder.append("(")
+                            .append(entityName)
+                            .append(") ")
+                            .append(ChatComponentUtils.statistic(statistic.stat(), inPlaceArguments));
                 }
                 else
                 {
