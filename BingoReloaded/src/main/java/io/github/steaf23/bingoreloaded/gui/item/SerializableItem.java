@@ -1,6 +1,6 @@
 package io.github.steaf23.bingoreloaded.gui.item;
 
-import io.github.steaf23.easymenulib.menu.item.ItemTemplate;
+import io.github.steaf23.easymenulib.inventory.item.ItemTemplate;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.inventory.ItemStack;

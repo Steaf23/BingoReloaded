@@ -23,7 +23,8 @@ import io.github.steaf23.bingoreloaded.tasks.statistics.BingoStatistic;
 import io.github.steaf23.bingoreloaded.util.BingoReloadedPlaceholderExpansion;
 import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.easymenulib.EasyMenuLibrary;
-import io.github.steaf23.easymenulib.menu.BasicMenu;
+import io.github.steaf23.easymenulib.inventory.BasicMenu;
+import io.github.steaf23.easymenulib.scoreboard.HUDRegistry;
 import io.github.steaf23.easymenulib.util.ChatColorGradient;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.md_5.bungee.api.ChatColor;
@@ -53,6 +54,7 @@ public class BingoReloaded extends JavaPlugin
     private HologramPlacer hologramPlacer;
     private GameManager gameManager;
     private BingoMenuBoard menuBoard;
+    private HUDRegistry hudRegistry;
 
     @Override
     public void onEnable() {
@@ -99,12 +101,13 @@ public class BingoReloaded extends JavaPlugin
         WorldData.clearWorlds(this);
 
         this.menuBoard = new BingoMenuBoard();
+        this.hudRegistry = new HUDRegistry();
 
         if (config.configuration == ConfigData.PluginConfiguration.SINGULAR) {
-            this.gameManager = new SingularGameManager(this, config, menuBoard);
+            this.gameManager = new SingularGameManager(this, config, menuBoard, hudRegistry);
         }
         else {
-            this.gameManager = new GameManager(this, config, menuBoard);
+            this.gameManager = new GameManager(this, config, menuBoard, hudRegistry);
         }
 
         TabExecutor autoBingoCommand = new AutoBingoCommand(gameManager);
@@ -128,6 +131,7 @@ public class BingoReloaded extends JavaPlugin
 //        }
 
         Bukkit.getPluginManager().registerEvents(menuBoard, this);
+        Bukkit.getPluginManager().registerEvents(hudRegistry, this);
     }
 
     public void registerCommand(String commandName, TabExecutor executor) {

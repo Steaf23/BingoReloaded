@@ -2,7 +2,7 @@ package io.github.steaf23.bingoreloaded.cards;
 
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
-import io.github.steaf23.easymenulib.menu.MenuBoard;
+import io.github.steaf23.easymenulib.inventory.MenuBoard;
 
 public class CardBuilder
 {

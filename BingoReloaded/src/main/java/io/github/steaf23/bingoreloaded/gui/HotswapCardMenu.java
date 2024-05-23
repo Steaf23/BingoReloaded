@@ -4,8 +4,8 @@ import io.github.steaf23.bingoreloaded.cards.CardSize;
 import io.github.steaf23.bingoreloaded.cards.HotswapBingoCard;
 import io.github.steaf23.bingoreloaded.cards.HotswapTaskHolder;
 import io.github.steaf23.bingoreloaded.tasks.BingoTask;
-import io.github.steaf23.easymenulib.menu.MenuBoard;
-import io.github.steaf23.easymenulib.menu.item.ItemTemplate;
+import io.github.steaf23.easymenulib.inventory.MenuBoard;
+import io.github.steaf23.easymenulib.inventory.item.ItemTemplate;
 
 import java.util.List;
 

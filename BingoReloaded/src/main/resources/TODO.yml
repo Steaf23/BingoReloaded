@@ -28,9 +28,7 @@ Fix bingo creator not showing updated lists/cards immediately after creating the
 
 task list is not always selected correctly ?? (needs more testing)
 
-statistic tasks broken on some client languages?? (observed with French) (needs more testing)
-
-add command to see all teams
+add command to see all teams with players in it from lobby
 
 auto team does not count towards minimumPlayerCount in lobby
 
@@ -42,3 +40,5 @@ improve scoreboard
 
 create new gamemode; Hot-Swap
   - How to deal with advancement/statistic tracking when tasks are being created all the time?
+
+leaving players dont cancel game when countdown timer hasnt finished yet

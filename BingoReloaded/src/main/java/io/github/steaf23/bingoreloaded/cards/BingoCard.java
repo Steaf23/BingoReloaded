@@ -14,7 +14,7 @@ import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.tasks.*;
 import io.github.steaf23.bingoreloaded.tasks.statistics.BingoStatistic;
-import io.github.steaf23.easymenulib.menu.MenuBoard;
+import io.github.steaf23.easymenulib.inventory.MenuBoard;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;

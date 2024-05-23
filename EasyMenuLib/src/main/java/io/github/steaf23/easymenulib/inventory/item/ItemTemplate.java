@@ -1,7 +1,7 @@
-package io.github.steaf23.easymenulib.menu.item;
+package io.github.steaf23.easymenulib.inventory.item;
 
-import io.github.steaf23.easymenulib.menu.BasicMenu;
-import io.github.steaf23.easymenulib.menu.item.action.MenuAction;
+import io.github.steaf23.easymenulib.inventory.BasicMenu;
+import io.github.steaf23.easymenulib.inventory.item.action.MenuAction;
 import io.github.steaf23.easymenulib.util.ChatComponentUtils;
 import io.github.steaf23.easymenulib.util.ExtraMath;
 import io.github.steaf23.easymenulib.util.FlexColor;
@@ -9,7 +9,6 @@ import io.github.steaf23.easymenulib.util.PDCHelper;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
@@ -20,10 +19,8 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.w3c.dom.Text;
 
 import java.util.*;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class ItemTemplate

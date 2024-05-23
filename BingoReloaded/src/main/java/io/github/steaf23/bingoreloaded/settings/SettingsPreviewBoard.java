@@ -2,19 +2,17 @@ package io.github.steaf23.bingoreloaded.settings;
 
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.event.BingoSettingsUpdatedEvent;
-import io.github.steaf23.bingoreloaded.util.InfoScoreboard;
 import io.github.steaf23.bingoreloaded.util.TranslatedMessage;
+import io.github.steaf23.easymenulib.scoreboard.HUDRegistry;
+import io.github.steaf23.easymenulib.scoreboard.SidebarHUD;
 import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
-import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 
-public class SettingsPreviewBoard extends InfoScoreboard
+public class SettingsPreviewBoard extends SidebarHUD
 {
-    public SettingsPreviewBoard()
+    public SettingsPreviewBoard(HUDRegistry registry)
     {
-        super(BingoTranslation.SETTINGS_SCOREBOARD_TITLE.translate(), Bukkit.getScoreboardManager().getNewScoreboard());
+        super(registry, BingoTranslation.SETTINGS_SCOREBOARD_TITLE.translate());
     }
 
     public void handleSettingsUpdated(final BingoSettingsUpdatedEvent event)
@@ -25,18 +23,18 @@ public class SettingsPreviewBoard extends InfoScoreboard
 
     public void showSettings(BingoSettings settings)
     {
-        clearDisplay();
-        setLineText(0, " ");
-        setLineText(2, " ");
-        setLineText(3,  ChatColor.BOLD + "Gamemode:");
-        setLineText(4, " - " + settings.mode().displayName + " " + settings.size().size + "x" + settings.size().size);
-        setLineText(5, ChatColor.BOLD + "Kit:");
-        setLineText(6, " - " + settings.kit().getDisplayName());
-        setLineText(7, ChatColor.BOLD + "Effects:");
+        clear();
+        setText(0, " ");
+        setText(2, " ");
+        setText(3, ChatColor.BOLD + "Gamemode:");
+        setText(4, " - " + settings.mode().displayName + " " + settings.size().size + "x" + settings.size().size);
+        setText(5, ChatColor.BOLD + "Kit:");
+        setText(6, " - " + settings.kit().getDisplayName());
+        setText(7, ChatColor.BOLD + "Effects:");
         int idx = 8;
         if (settings.effects().size() == 0)
         {
-            setLineText(idx, " - " + ChatColor.GRAY + " None");
+            setText(idx, " - " + ChatColor.GRAY + " None");
             idx ++;
         }
         else
@@ -51,25 +49,25 @@ public class SettingsPreviewBoard extends InfoScoreboard
                 String prefix = firstLine ? " - " : "   ";
                 if (effectCount > effectPair * 2 + 1) {
                     String effectNameRight = effects.get(effectPair * 2 + 1).name;
-                    setLineText(idx, prefix + ChatColor.GRAY + effectNameLeft + ", " + effectNameRight);
+                    setText(idx, prefix + ChatColor.GRAY + effectNameLeft + ", " + effectNameRight);
                 } else {
-                    setLineText(idx, prefix + ChatColor.GRAY + effectNameLeft);
+                    setText(idx, prefix + ChatColor.GRAY + effectNameLeft);
                 }
                 firstLine = false;
                 idx++;
             }
         }
 
-        setLineText(idx, ChatColor.BOLD + "Team Size:");
-        setLineText(idx + 1, " - " + settings.maxTeamSize() + " players");
+        setText(idx, ChatColor.BOLD + "Team Size:");
+        setText(idx + 1, " - " + settings.maxTeamSize() + " players");
         if (settings.enableCountdown())
         {
-            setLineText(idx + 2, ChatColor.BOLD + "Time:");
-            setLineText(idx + 3, " - " + settings.countdownDuration() + " minutes");
+            setText(idx + 2, ChatColor.BOLD + "Time:");
+            setText(idx + 3, " - " + settings.countdownDuration() + " minutes");
         }
     }
 
     public void setStatus(String newStatus) {
-        setLineText(1, ChatColor.RED + newStatus);
+        setText(1, ChatColor.RED + newStatus);
     }
 }

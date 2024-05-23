@@ -3,7 +3,6 @@ package io.github.steaf23.bingoreloaded.settings;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.gui.item.SerializableItem;
 import io.github.steaf23.bingoreloaded.util.Message;
-import io.github.steaf23.easymenulib.menu.item.ItemTemplate;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;

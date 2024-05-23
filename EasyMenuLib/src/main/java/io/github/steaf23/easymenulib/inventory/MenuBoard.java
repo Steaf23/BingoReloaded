@@ -1,4 +1,4 @@
-package io.github.steaf23.easymenulib.menu;
+package io.github.steaf23.easymenulib.inventory;
 
 
 import io.github.steaf23.easymenulib.EasyMenuLibrary;

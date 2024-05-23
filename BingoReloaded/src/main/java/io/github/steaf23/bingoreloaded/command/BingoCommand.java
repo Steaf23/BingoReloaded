@@ -17,7 +17,7 @@ import io.github.steaf23.bingoreloaded.settings.CustomKit;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.bingoreloaded.util.TranslatedMessage;
-import io.github.steaf23.easymenulib.menu.MenuBoard;
+import io.github.steaf23.easymenulib.inventory.MenuBoard;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;

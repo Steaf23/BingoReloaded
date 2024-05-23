@@ -19,7 +19,8 @@ import io.github.steaf23.bingoreloaded.settings.BingoSettingsBuilder;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.bingoreloaded.util.TranslatedMessage;
-import io.github.steaf23.easymenulib.menu.MenuBoard;
+import io.github.steaf23.easymenulib.inventory.MenuBoard;
+import io.github.steaf23.easymenulib.scoreboard.HUDRegistry;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -40,6 +41,7 @@ public class BingoSession
     public final TeamManager teamManager;
     private final ConfigData config;
     private final MenuBoard menuBoard;
+    private final HUDRegistry hudRegistry;
     private final PlayerSerializationData playerData;
     private final GameManager gameManager;
     private final BingoSoundPlayer soundPlayer;
@@ -48,13 +50,14 @@ public class BingoSession
     private final WorldGroup worlds;
     private GamePhase phase;
 
-    public BingoSession(GameManager gameManager, MenuBoard menuBoard, @NotNull WorldGroup worlds, ConfigData config, PlayerSerializationData playerData) {
+    public BingoSession(GameManager gameManager, MenuBoard menuBoard, HUDRegistry hudRegistry, @NotNull WorldGroup worlds, ConfigData config, PlayerSerializationData playerData) {
         this.gameManager = gameManager;
         this.menuBoard = menuBoard;
+        this.hudRegistry = hudRegistry;
         this.worlds = worlds;
         this.config = config;
         this.playerData = playerData;
-        this.scoreboard = new BingoScoreboard(this, config.showPlayerInScoreboard && false);
+        this.scoreboard = new BingoScoreboard(hudRegistry, this, config.showPlayerInScoreboard && false);
         this.soundPlayer = new BingoSoundPlayer(this);
         if (config.singlePlayerTeams) {
             this.teamManager = new SoloTeamManager(scoreboard.getTeamBoard(), this);
@@ -141,7 +144,7 @@ public class BingoSession
             phase.end();
         }
 
-        phase = new PregameLobby(menuBoard, this, config);
+        phase = new PregameLobby(menuBoard, hudRegistry, this, config);
 
         if (settingsBuilder == null) {
             this.settingsBuilder = new BingoSettingsBuilder(this);

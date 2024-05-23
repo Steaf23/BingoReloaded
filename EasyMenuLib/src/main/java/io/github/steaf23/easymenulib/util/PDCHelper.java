@@ -1,13 +1,10 @@
 package io.github.steaf23.easymenulib.util;
 
 import io.github.steaf23.easymenulib.EasyMenuLibrary;
-import io.github.steaf23.easymenulib.menu.item.ItemTemplate;
 import org.bukkit.NamespacedKey;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.Nullable;
-
-import java.awt.*;
 
 public class PDCHelper
 {

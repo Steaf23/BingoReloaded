@@ -42,6 +42,9 @@ voteUsingCommandsOnly: false
 # If true this will prevent the player from receiving the team selection item, allowing custom implementations using the available autobingo command.
 selectTeamsUsingCommandsOnly: false
 
+# If true disables the scoreboard sidebar completely, useful for server (networks) with a pre-existing sidebar scoreboard.
+disableScoreboardSidebar: false
+
 # ==========================================================================
 #    Lobby Configuration Options
 # ==========================================================================

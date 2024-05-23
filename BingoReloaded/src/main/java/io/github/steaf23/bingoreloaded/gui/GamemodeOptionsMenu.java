@@ -4,9 +4,9 @@ import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.cards.CardSize;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
-import io.github.steaf23.easymenulib.menu.BasicMenu;
-import io.github.steaf23.easymenulib.menu.MenuBoard;
-import io.github.steaf23.easymenulib.menu.item.ItemTemplate;
+import io.github.steaf23.easymenulib.inventory.BasicMenu;
+import io.github.steaf23.easymenulib.inventory.MenuBoard;
+import io.github.steaf23.easymenulib.inventory.item.ItemTemplate;
 import org.bukkit.Material;
 
 public class GamemodeOptionsMenu extends BasicMenu

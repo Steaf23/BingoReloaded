@@ -1,16 +1,17 @@
 lobby:
-    board: [
+    title: "{$branding.scoreboard_title}"
+    sidebar: [
         "{wait_status}"
         " ",
         "&lGamemode:",
-        " - {gamemode} {card_size}",
+        " - %bingoreloaded_setting_gamemode% %bingoreloaded_setting_cardsize%",
         "&lKit:",
-        " - {kit}",
+        " - %bingoreloaded_setting_kit%",
         "{effects2}",
         "&lTeam Size:",
-        " - {team_size}",
+        " - %bingoreloaded_setting_teamsize%",
         "&lTime:",
-        " - {time}",
+        " - %bingoreloaded_setting_duration%",
     ]
     sections:
         wait_status: "&c{status}"
@@ -24,5 +25,5 @@ lobby:
         ]
         effects2: [
             "&lEffects:",
-            "- {effects_summary}"
+            "- %bingoreloaded_settings_effects%"
         ]

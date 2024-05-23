@@ -13,8 +13,9 @@ import io.github.steaf23.bingoreloaded.settings.SettingsPreviewBoard;
 import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.bingoreloaded.util.TranslatedMessage;
 import io.github.steaf23.bingoreloaded.util.timer.CountdownTimer;
-import io.github.steaf23.easymenulib.menu.MenuBoard;
-import io.github.steaf23.easymenulib.menu.item.ItemTemplate;
+import io.github.steaf23.easymenulib.inventory.MenuBoard;
+import io.github.steaf23.easymenulib.inventory.item.ItemTemplate;
+import io.github.steaf23.easymenulib.scoreboard.HUDRegistry;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -51,10 +52,10 @@ public class PregameLobby implements GamePhase
     private boolean playerCountTimerPaused = false;
     private boolean gameStarted = false;
 
-    public PregameLobby(MenuBoard menuBoard, BingoSession session, ConfigData config) {
+    public PregameLobby(MenuBoard menuBoard, HUDRegistry hudRegistry, BingoSession session, ConfigData config) {
         this.menuBoard = menuBoard;
         this.session = session;
-        this.settingsBoard = new SettingsPreviewBoard();
+        this.settingsBoard = new SettingsPreviewBoard(hudRegistry);
         this.votes = new HashMap<>();
         this.config = config;
         this.playerCountTimer = new CountdownTimer(config.playerWaitTime, session);
@@ -191,7 +192,7 @@ public class PregameLobby implements GamePhase
     }
 
     private void initializePlayer(Player player) {
-        settingsBoard.applyToPlayer(player);
+        settingsBoard.subscribePlayer(player);
         player.getInventory().clear();
 
         if (config.useVoteSystem && !config.voteUsingCommandsOnly && !config.voteList.isEmpty()) {
@@ -204,7 +205,7 @@ public class PregameLobby implements GamePhase
 
     public void handleParticipantJoinedTeam(final ParticipantJoinedTeamEvent event) {
         if (event.getParticipant() != null) {
-            event.getParticipant().sessionPlayer().ifPresent(p -> settingsBoard.applyToPlayer(p));
+            event.getParticipant().sessionPlayer().ifPresent(p -> settingsBoard.subscribePlayer(p));
         }
         settingsBoard.setStatus(BingoTranslation.PLAYER_STATUS.translate("" + session.teamManager.getParticipants().size()));
 
@@ -316,6 +317,7 @@ public class PregameLobby implements GamePhase
     @Override
     public void end() {
         playerCountTimer.stop();
+        settingsBoard.unsubscribeAll();
     }
 
     @Override
@@ -325,7 +327,7 @@ public class PregameLobby implements GamePhase
 
     @Override
     public void handlePlayerLeftSessionWorld(final PlayerLeftSessionWorldEvent event) {
-        settingsBoard.clearPlayerBoard(event.getPlayer());
+        settingsBoard.unsubscribePlayer(event.getPlayer());
         session.teamManager.removeMemberFromTeam(session.teamManager.getPlayerAsParticipant(event.getPlayer()));
     }
 

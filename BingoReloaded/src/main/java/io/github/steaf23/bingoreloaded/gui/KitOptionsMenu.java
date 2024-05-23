@@ -4,9 +4,9 @@ import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.settings.CustomKit;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
-import io.github.steaf23.easymenulib.menu.BasicMenu;
-import io.github.steaf23.easymenulib.menu.MenuBoard;
-import io.github.steaf23.easymenulib.menu.item.ItemTemplate;
+import io.github.steaf23.easymenulib.inventory.BasicMenu;
+import io.github.steaf23.easymenulib.inventory.MenuBoard;
+import io.github.steaf23.easymenulib.inventory.item.ItemTemplate;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 

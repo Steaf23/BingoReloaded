@@ -1,9 +1,7 @@
-package io.github.steaf23.easymenulib.menu.item.action;
+package io.github.steaf23.easymenulib.inventory.item.action;
 
-import io.github.steaf23.easymenulib.menu.BasicMenu;
-import io.github.steaf23.easymenulib.menu.item.ItemTemplate;
-import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
+import io.github.steaf23.easymenulib.inventory.BasicMenu;
+import io.github.steaf23.easymenulib.inventory.item.ItemTemplate;
 
 import java.util.ArrayList;
 import java.util.List;

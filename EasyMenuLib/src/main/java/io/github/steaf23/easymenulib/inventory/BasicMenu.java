@@ -1,11 +1,9 @@
-package io.github.steaf23.easymenulib.menu;
+package io.github.steaf23.easymenulib.inventory;
 
 import io.github.steaf23.easymenulib.EasyMenuLibrary;
-import io.github.steaf23.easymenulib.menu.item.ItemTemplate;
-import io.github.steaf23.easymenulib.menu.item.action.MenuAction;
-import io.github.steaf23.easymenulib.util.ChatComponentUtils;
+import io.github.steaf23.easymenulib.inventory.item.ItemTemplate;
+import io.github.steaf23.easymenulib.inventory.item.action.MenuAction;
 import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;

@@ -2,8 +2,8 @@ package io.github.steaf23.bingoreloaded.gui.item;
 
 import io.github.steaf23.bingoreloaded.tasks.BingoTask;
 import io.github.steaf23.bingoreloaded.util.Message;
-import io.github.steaf23.easymenulib.menu.BasicMenu;
-import io.github.steaf23.easymenulib.menu.item.action.MenuAction;
+import io.github.steaf23.easymenulib.inventory.BasicMenu;
+import io.github.steaf23.easymenulib.inventory.item.action.MenuAction;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.entity.Player;

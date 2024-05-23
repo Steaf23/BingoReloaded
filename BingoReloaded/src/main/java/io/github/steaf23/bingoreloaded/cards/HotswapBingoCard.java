@@ -13,7 +13,7 @@ import io.github.steaf23.bingoreloaded.tasks.ItemTask;
 import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.bingoreloaded.util.timer.CounterTimer;
 import io.github.steaf23.bingoreloaded.util.timer.GameTimer;
-import io.github.steaf23.easymenulib.menu.MenuBoard;
+import io.github.steaf23.easymenulib.inventory.MenuBoard;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.TextComponent;

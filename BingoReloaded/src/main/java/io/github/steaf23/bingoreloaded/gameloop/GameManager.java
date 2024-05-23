@@ -6,8 +6,9 @@ import io.github.steaf23.bingoreloaded.data.world.WorldData;
 import io.github.steaf23.bingoreloaded.data.world.WorldGroup;
 import io.github.steaf23.bingoreloaded.event.BingoEventListener;
 import io.github.steaf23.bingoreloaded.util.Message;
-import io.github.steaf23.easymenulib.menu.Menu;
-import io.github.steaf23.easymenulib.menu.MenuBoard;
+import io.github.steaf23.easymenulib.inventory.Menu;
+import io.github.steaf23.easymenulib.inventory.MenuBoard;
+import io.github.steaf23.easymenulib.scoreboard.HUDRegistry;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -27,14 +28,16 @@ public class GameManager
     private final JavaPlugin plugin;
     private final ConfigData config;
     private final MenuBoard menuBoard;
+    private final HUDRegistry hudRegistry;
 
     private final PlayerSerializationData playerData;
     private final BingoEventListener eventListener;
 
-    public GameManager(@NotNull JavaPlugin plugin, ConfigData config, MenuBoard menuBoard) {
+    public GameManager(@NotNull JavaPlugin plugin, ConfigData config, MenuBoard menuBoard, HUDRegistry hudRegistry) {
         this.plugin = plugin;
         this.config = config;
         this.menuBoard = menuBoard;
+        this.hudRegistry = hudRegistry;
 
         this.sessions = new HashMap<>();
         this.playerData = new PlayerSerializationData();
@@ -49,7 +52,7 @@ public class GameManager
             return false;
         }
 
-        BingoSession session = new BingoSession(this, menuBoard, WorldData.createWorldGroup(plugin, sessionName), config, playerData);
+        BingoSession session = new BingoSession(this, menuBoard, hudRegistry, WorldData.createWorldGroup(plugin, sessionName), config, playerData);
         sessions.put(sessionName, session);
         return true;
     }

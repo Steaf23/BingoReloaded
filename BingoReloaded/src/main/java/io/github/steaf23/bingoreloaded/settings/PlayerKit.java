@@ -6,7 +6,7 @@ import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.data.helper.YmlDataManager;
 import io.github.steaf23.bingoreloaded.gui.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.gui.item.SerializableItem;
-import io.github.steaf23.easymenulib.menu.item.*;
+import io.github.steaf23.easymenulib.inventory.item.ItemTemplate;
 import io.github.steaf23.easymenulib.util.ChatComponentUtils;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;

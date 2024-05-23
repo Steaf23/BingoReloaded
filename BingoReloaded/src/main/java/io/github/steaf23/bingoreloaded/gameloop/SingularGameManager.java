@@ -4,7 +4,8 @@ import io.github.steaf23.bingoreloaded.data.ConfigData;
 import io.github.steaf23.bingoreloaded.data.world.WorldData;
 import io.github.steaf23.bingoreloaded.data.world.WorldGroup;
 import io.github.steaf23.bingoreloaded.util.Message;
-import io.github.steaf23.easymenulib.menu.MenuBoard;
+import io.github.steaf23.easymenulib.inventory.MenuBoard;
+import io.github.steaf23.easymenulib.scoreboard.HUDRegistry;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -12,15 +13,15 @@ import org.jetbrains.annotations.NotNull;
 
 public class SingularGameManager extends GameManager
 {
-    public SingularGameManager(@NotNull JavaPlugin plugin, ConfigData config, MenuBoard menuBoard) {
-        super(plugin, config, menuBoard);
+    public SingularGameManager(@NotNull JavaPlugin plugin, ConfigData config, MenuBoard menuBoard, HUDRegistry hudRegistry) {
+        super(plugin, config, menuBoard, hudRegistry);
 
         WorldGroup group = createWorldGroupFromExistingWorlds();
         if (group == null) {
             return;
         }
 
-        BingoSession session = new BingoSession(this, menuBoard, group, config, getPlayerData());
+        BingoSession session = new BingoSession(this, menuBoard, hudRegistry, group, config, getPlayerData());
         sessions.put(config.defaultWorldName, session);
     }
 

@@ -3,7 +3,7 @@ package io.github.steaf23.bingoreloaded.cards;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.tasks.BingoTask;
 import io.github.steaf23.bingoreloaded.util.timer.GameTimer;
-import io.github.steaf23.easymenulib.menu.item.ItemTemplate;
+import io.github.steaf23.easymenulib.inventory.item.ItemTemplate;
 import io.github.steaf23.easymenulib.util.ChatColorGradient;
 import io.github.steaf23.easymenulib.util.ExtraMath;
 import net.md_5.bungee.api.ChatColor;

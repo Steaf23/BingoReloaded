@@ -1,7 +1,7 @@
 package io.github.steaf23.bingoreloaded.hologram;
 
 import io.github.steaf23.bingoreloaded.util.Message;
-import io.github.steaf23.easymenulib.menu.item.ItemTemplate;
+import io.github.steaf23.easymenulib.inventory.item.ItemTemplate;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;

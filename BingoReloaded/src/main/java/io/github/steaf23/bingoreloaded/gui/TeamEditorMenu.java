@@ -2,9 +2,9 @@ package io.github.steaf23.bingoreloaded.gui;
 
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.data.TeamData;
-import io.github.steaf23.easymenulib.menu.*;
-import io.github.steaf23.easymenulib.menu.item.ItemTemplate;
-import io.github.steaf23.easymenulib.menu.item.action.NameEditAction;
+import io.github.steaf23.easymenulib.inventory.*;
+import io.github.steaf23.easymenulib.inventory.item.ItemTemplate;
+import io.github.steaf23.easymenulib.inventory.item.action.NameEditAction;
 import io.github.steaf23.easymenulib.util.ChatComponentUtils;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;

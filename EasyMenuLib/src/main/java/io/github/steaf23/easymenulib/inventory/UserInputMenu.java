@@ -1,7 +1,7 @@
-package io.github.steaf23.easymenulib.menu;
+package io.github.steaf23.easymenulib.inventory;
 
 import io.github.steaf23.easymenulib.EasyMenuLibrary;
-import io.github.steaf23.easymenulib.menu.item.ItemTemplate;
+import io.github.steaf23.easymenulib.inventory.item.ItemTemplate;
 import io.github.steaf23.easymenulib.util.ChatComponentUtils;
 import io.github.steaf23.easymenulib.util.EasyMenuTranslationKey;
 import net.md_5.bungee.api.ChatColor;

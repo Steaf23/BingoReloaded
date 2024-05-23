@@ -1,10 +1,10 @@
-package io.github.steaf23.easymenulib.menu.item.action;
+package io.github.steaf23.easymenulib.inventory.item.action;
 
 
-import io.github.steaf23.easymenulib.menu.BasicMenu;
-import io.github.steaf23.easymenulib.menu.MenuBoard;
-import io.github.steaf23.easymenulib.menu.UserInputMenu;
-import io.github.steaf23.easymenulib.menu.item.ItemTemplate;
+import io.github.steaf23.easymenulib.inventory.BasicMenu;
+import io.github.steaf23.easymenulib.inventory.MenuBoard;
+import io.github.steaf23.easymenulib.inventory.UserInputMenu;
+import io.github.steaf23.easymenulib.inventory.item.ItemTemplate;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.entity.HumanEntity;
 
