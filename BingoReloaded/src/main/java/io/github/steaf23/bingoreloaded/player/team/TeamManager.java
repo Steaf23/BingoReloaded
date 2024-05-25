@@ -17,6 +17,10 @@ import java.util.Set;
 
 public interface TeamManager extends SessionMember
 {
+    default int getParticipantCount() {
+        return getParticipants().size();
+    }
+
     default Set<BingoParticipant> getParticipants() {
         return getActiveTeams().getAllParticipants();
     }

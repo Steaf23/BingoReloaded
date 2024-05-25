@@ -31,15 +31,9 @@ task list is not always selected correctly ?? (needs more testing)
 add command to see all teams with players in it from lobby
 create hover message when starting game to see settings chosen..
 
-auto team does not count towards minimumPlayerCount in lobby
-
-improve scoreboard 
-  - fix scoreboard not parsing kit name formatting correctly (for custom kits).
+improve scoreboard
+  - rework team board with new scoreboard
   - last line of team scoreboard should show something like "and x others.."
 
 create new gamemode; Hot-Swap
   - How to deal with advancement/statistic tracking when tasks are being created all the time?
-
-leaving players dont cancel game when countdown timer hasnt finished yet
-
-fix wait status in scoreboard, doesnt update properly when switching teams

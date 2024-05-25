@@ -60,7 +60,7 @@ public class BasicTeamManager implements TeamManager
         }
 
         int totalPlayers = teams.getTeams().size() * getMaxTeamSize();
-        int availablePlayers = totalPlayers - (getParticipants().size() + automaticTeamPlayers.size());
+        int availablePlayers = totalPlayers - getParticipantCount();
         if (automaticTeamPlayers.size() > availablePlayers) {
             Message.error("Could not fit every player into a team, consider changing the team size or adding more teams");
             return;
@@ -149,7 +149,11 @@ public class BasicTeamManager implements TeamManager
     public boolean removeMemberFromTeam(@Nullable BingoParticipant player) {
         if (player == null) return false;
 
-        automaticTeamPlayers.remove(player.getId());
+        if (automaticTeamPlayers.remove(player.getId()) != null) {
+            var leaveEvent = new ParticipantLeftTeamEvent(player, session);
+            Bukkit.getPluginManager().callEvent(leaveEvent);
+            return true;
+        }
 
         if (getParticipants().contains(player)) {
             player.getTeam().removeMember(player);
@@ -279,6 +283,11 @@ public class BasicTeamManager implements TeamManager
 
     private int getOnlineParticipantCount() {
         return getOnlineParticipants().size() + automaticTeamPlayers.size();
+    }
+
+    @Override
+    public int getParticipantCount() {
+        return activeTeams.getAllParticipants().size() + automaticTeamPlayers.size();
     }
 
     @Override

@@ -66,7 +66,7 @@ public class BingoScoreboard implements SessionMember
         TeamManager teamManager = session.teamManager;
 
         boolean condensedDisplay = !showPlayer
-                || teamManager.getTeamCount() + teamManager.getParticipants().size() > 13;
+                || teamManager.getTeamCount() + teamManager.getParticipantCount() > 13;
 
         hud.setText(0, " ");
         int lineIndex = 1;

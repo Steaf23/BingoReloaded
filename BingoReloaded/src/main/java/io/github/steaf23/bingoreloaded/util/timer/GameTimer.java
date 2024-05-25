@@ -57,6 +57,7 @@ public abstract class GameTimer
             Message.log(ChatColor.RED + "Timer couldn't be stopped since it never started!");
             return -1;
         }
+        task = null;
         return getTime();
     }
 

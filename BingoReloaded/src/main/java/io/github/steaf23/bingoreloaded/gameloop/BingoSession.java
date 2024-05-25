@@ -102,7 +102,7 @@ public class BingoSession
         }
 
         teamManager.setup();
-        if (teamManager.getParticipants().size() == 0) {
+        if (teamManager.getParticipantCount() == 0) {
             Message.log("Could not start bingo since no players have joined!", worlds.getName());
             return;
         }

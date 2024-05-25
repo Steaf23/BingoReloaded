@@ -68,6 +68,7 @@ public class PregameLobby implements GamePhase
         }
 
         playerCountTimer.addNotifier(time -> {
+            Message.log("Starting status...");
             settingsHUD.setStatus(BingoTranslation.STARTING_STATUS.translate(String.valueOf(time)));
             if (time == 10) {
                 new TranslatedMessage(BingoTranslation.STARTING_STATUS).arg("" + time).color(ChatColor.GOLD).sendAll(session);
@@ -215,7 +216,7 @@ public class PregameLobby implements GamePhase
         if (event.getParticipant() != null) {
             event.getParticipant().sessionPlayer().ifPresent(p -> settingsHUD.addPlayer(p));
         }
-        settingsHUD.setStatus(BingoTranslation.PLAYER_STATUS.translate("" + session.teamManager.getParticipants().size()));
+        settingsHUD.setStatus(BingoTranslation.PLAYER_STATUS.translate("" + session.teamManager.getParticipantCount()));
 
         if (playerCountTimer.isRunning() && playerCountTimer.getTime() > 10) {
             event.getParticipant().sessionPlayer().ifPresent(p -> {
@@ -234,14 +235,15 @@ public class PregameLobby implements GamePhase
 
     public void resumePlayerCountTimer() {
         playerCountTimerPaused = false;
-        startPlayerCountTimerIfMinCountReached();
 
-        int playerCount = session.teamManager.getParticipants().size();
+        int playerCount = session.teamManager.getParticipantCount();
         if (playerCount == 0) {
             settingsHUD.setStatus(BingoTranslation.WAIT_STATUS.translate());
         } else {
             settingsHUD.setStatus(BingoTranslation.PLAYER_STATUS.translate("" + playerCount));
         }
+
+        startPlayerCountTimerIfMinCountReached();
     }
 
     public void playerCountTimerTogglePause() {
@@ -258,7 +260,7 @@ public class PregameLobby implements GamePhase
             return;
         }
 
-        if (session.teamManager.getParticipants().size() < config.minimumPlayerCount) {
+        if (session.teamManager.getParticipantCount() < config.minimumPlayerCount) {
             return;
         }
 
@@ -273,7 +275,7 @@ public class PregameLobby implements GamePhase
     }
 
     public void handleParticipantLeftTeam(final ParticipantLeftTeamEvent event) {
-        int playerCount = session.teamManager.getParticipants().size();
+        int playerCount = session.teamManager.getParticipantCount();
 
         if (playerCount == 0) {
             settingsHUD.setStatus(BingoTranslation.WAIT_STATUS.translate());
@@ -284,7 +286,7 @@ public class PregameLobby implements GamePhase
         // Schedule check in the future since a player can switch teams where they will briefly leave the team
         // and lower the participant count to possibly stop the timer.
         BingoReloaded.scheduleTask(t -> {
-            if (playerCount < config.minimumPlayerCount && playerCountTimer.isRunning()) {
+            if (session.teamManager.getParticipantCount() < config.minimumPlayerCount && playerCountTimer.isRunning()) {
                 playerCountTimer.stop();
             }
         });
@@ -297,7 +299,7 @@ public class PregameLobby implements GamePhase
 
     @Override
     public void setup() {
-        int playerCount = session.teamManager.getParticipants().size();
+        int playerCount = session.teamManager.getParticipantCount();
 
         settingsHUD.updateSettings(session.settingsBuilder.view());
         if (playerCount == 0) {
