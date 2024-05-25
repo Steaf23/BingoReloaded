@@ -68,7 +68,6 @@ public class PregameLobby implements GamePhase
         }
 
         playerCountTimer.addNotifier(time -> {
-            Message.log("Starting status...");
             settingsHUD.setStatus(BingoTranslation.STARTING_STATUS.translate(String.valueOf(time)));
             if (time == 10) {
                 new TranslatedMessage(BingoTranslation.STARTING_STATUS).arg("" + time).color(ChatColor.GOLD).sendAll(session);

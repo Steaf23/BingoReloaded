@@ -178,7 +178,7 @@ public class BingoCommand implements TabExecutor
 
             }
             default ->
-                    new TranslatedMessage(BingoTranslation.COMMAND_USAGE).color(ChatColor.RED).arg("/bingo [getcard | stats | start | end | join | back | leave | deathmatch | creator | teams]").send(player);
+                    new TranslatedMessage(BingoTranslation.COMMAND_USAGE).color(ChatColor.RED).arg("/bingo [getcard | stats | start | end | join | back | leave | deathmatch | creator | teams | kit | wait]").send(player);
         }
         return true;
     }
@@ -283,7 +283,7 @@ public class BingoCommand implements TabExecutor
     public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
         if (!(sender instanceof Player player) || player.hasPermission("bingo.admin")) {
             if (args.length <= 1) {
-                return List.of("join", "getcard", "back", "leave", "stats", "end", "kit", "deathmatch", "creator", "teams");
+                return List.of("join", "getcard", "back", "leave", "stats", "end", "wait", "kit", "deathmatch", "creator", "teams");
             }
 
             if (args[0].equals("kit")) {
