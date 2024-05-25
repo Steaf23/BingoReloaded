@@ -1,7 +1,6 @@
-package io.github.steaf23.bingoreloaded.gui;
+package io.github.steaf23.bingoreloaded.gui.inventory;
 
 import io.github.steaf23.bingoreloaded.cards.CardSize;
-import io.github.steaf23.bingoreloaded.cards.HotswapBingoCard;
 import io.github.steaf23.bingoreloaded.cards.HotswapTaskHolder;
 import io.github.steaf23.bingoreloaded.tasks.BingoTask;
 import io.github.steaf23.easymenulib.inventory.MenuBoard;

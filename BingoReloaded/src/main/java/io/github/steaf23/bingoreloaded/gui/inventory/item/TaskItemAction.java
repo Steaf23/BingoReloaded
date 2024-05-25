@@ -1,4 +1,4 @@
-package io.github.steaf23.bingoreloaded.gui.item;
+package io.github.steaf23.bingoreloaded.gui.inventory.item;
 
 import io.github.steaf23.bingoreloaded.tasks.BingoTask;
 import io.github.steaf23.bingoreloaded.util.Message;

@@ -1,29 +1,11 @@
 lobby:
-    title: "{$branding.scoreboard_title}"
-    sidebar: [
-        "{wait_status}"
-        " ",
-        "&lGamemode:",
-        " - %bingoreloaded_setting_gamemode% %bingoreloaded_setting_cardsize%",
-        "&lKit:",
-        " - %bingoreloaded_setting_kit%",
-        "{effects2}",
-        "&lTeam Size:",
-        " - %bingoreloaded_setting_teamsize%",
-        "&lTime:",
-        " - %bingoreloaded_setting_duration%",
-    ]
-    sections:
-        wait_status: "&c{status}"
-        effects: [
-            "&lEffects:",
-            " - {water_breathing}, {speed}",
-            "   {fire_resist}, {no_fall_dmg}",
-            "   {no_durability}, {night_vision}",
-            "   {keep_inventory}",
-            "   {all_none}",
-        ]
-        effects2: [
-            "&lEffects:",
-            "- %bingoreloaded_settings_effects%"
-        ]
+    title: "%bingoreloaded_team_color%AYO{$branding.scoreboard_title}"
+    sidebar:
+        - " "
+        - "&c{status}"
+        - " "
+        - "&lGamemode: {gamemode} {card_size}"
+        - "&lKit: {kit}"
+        - "&lEffects: {effects}"
+        - "&lTeam Size: {team_size}"
+        - "&lTime: {duration}"

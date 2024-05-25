@@ -12,6 +12,7 @@ import net.milkbowl.vault.chat.Chat;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -137,53 +138,40 @@ public enum BingoTranslation
 
     private static final Pattern HEX_PATTERN = Pattern.compile("\\{#[a-fA-F0-9]{6}\\}");
     private static final Pattern SMALL_CAPS_PATTERN = Pattern.compile("\\{@.+\\}");
-    private static final Pattern SUBSTITUTE_PATTERN = Pattern.compile("\\{\\$(?<key>[\\w.]+)\\((?<args>.+)\\)\\}");
+    private static final Pattern SUBSTITUTE_PATTERN = Pattern.compile("\\{\\$(?<key>[\\w.]+)(\\((?<args>.+)\\))?\\}");
 
-    BingoTranslation(String key)
-    {
+    BingoTranslation(String key) {
         this.key = key;
         this.translation = ChatColor.GRAY + key;
     }
 
-    public static void setLanguage(FileConfiguration text, FileConfiguration fallbackText)
-    {
-        for (BingoTranslation value : BingoTranslation.values())
-        {
+    public static void setLanguage(FileConfiguration text, FileConfiguration fallbackText) {
+        for (BingoTranslation value : BingoTranslation.values()) {
             value.translation = text.getString(value.key, fallbackText.getString(value.key, value.translation));
         }
     }
 
-    private String translate(boolean isSubstitution, String... args)
-    {
+    public String translate(String... args) {
         String rawTranslation = BingoTranslation.convertConfigString(translation);
-//        rawTranslation = convertSubstitution(translation);
 
-        for (int i = 0; i < args.length; i++)
-        {
+        for (int i = 0; i < args.length; i++) {
             rawTranslation = rawTranslation.replace("{" + i + "}", args[i]);
         }
         return rawTranslation;
     }
 
-
-    public String translate(String... args)
-    {
-        return translate(false, args);
-    }
-
-    public String rawTranslation()
-    {
+    public String rawTranslation() {
         return translation;
     }
 
     /**
      * convert translated string with arguments to ItemText and preserve argument order, like translate() does
+     *
      * @param args
      * @return An array of itemText where each element is a line,
-     *  where each line is split using '\n' in the translated string.
+     * where each line is split using '\n' in the translated string.
      */
-    public BaseComponent[] asComponent(Set<ChatColor> modifiers, boolean useSmallCaps, BaseComponent... args)
-    {
+    public BaseComponent[] asComponent(Set<ChatColor> modifiers, boolean useSmallCaps, BaseComponent... args) {
         //TODO: fix issue where raw translations cannot convert the colors defined in lang files properly on items
         String rawTranslation = translation;
         rawTranslation = convertColors(rawTranslation);
@@ -192,17 +180,13 @@ public enum BingoTranslation
         List<BaseComponent> result = new ArrayList<>();
         String[] lines = rawTranslation.split("\\n");
         String[] pieces;
-        for (int i = 0; i < lines.length; i++)
-        {
+        for (int i = 0; i < lines.length; i++) {
             ComponentBuilder lineBuilder = ChatComponentUtils.formattedBuilder(modifiers.toArray(new ChatColor[]{}));
             pieces = lines[i].split("\\{");
-            for (String piece : pieces)
-            {
+            for (String piece : pieces) {
                 String pieceToAdd = piece;
-                for (int argIdx = 0; argIdx < args.length; argIdx++)
-                {
-                    if (pieceToAdd.contains(argIdx + "}"))
-                    {
+                for (int argIdx = 0; argIdx < args.length; argIdx++) {
+                    if (pieceToAdd.contains(argIdx + "}")) {
                         lineBuilder.append(args[argIdx]);
                         pieceToAdd = pieceToAdd.replace(i + "}", "");
                         break;
@@ -218,8 +202,7 @@ public enum BingoTranslation
         return result.toArray(new BaseComponent[]{});
     }
 
-    public BaseComponent[] asComponent(Set<ChatColor> modifiers, BaseComponent... args)
-    {
+    public BaseComponent[] asComponent(Set<ChatColor> modifiers, BaseComponent... args) {
         return asComponent(modifiers, false, args);
     }
 
@@ -227,15 +210,13 @@ public enum BingoTranslation
      * @param input The input string, can look something like this: "{#00bb33}Hello, I like to &2&lDance && &rSing!"
      * @return Legacy text string that can be used in TextComponent#fromLegacyText
      */
-    public static String convertColors(String input)
-    {
+    public static String convertColors(String input) {
         String part = input;
         part = part.replaceAll("(?<!&)&(?!&)", "§");
         part = part.replaceAll("&&", "&");
 
         Matcher matcher = HEX_PATTERN.matcher(part);
-        while (matcher.find())
-        {
+        while (matcher.find()) {
             String match = matcher.group();
             String color = match.replaceAll("[\\{\\}]", "");
             part = part.replace(match, "" + net.md_5.bungee.api.ChatColor.of(color));
@@ -244,12 +225,10 @@ public enum BingoTranslation
         return part;
     }
 
-    public static String convertSmallCaps(String input)
-    {
+    public static String convertSmallCaps(String input) {
         String part = input;
         Matcher matcher = SMALL_CAPS_PATTERN.matcher(part);
-        while (matcher.find())
-        {
+        while (matcher.find()) {
             String match = matcher.group();
             String result = match.replace("{@", "").replace("}", "");
             part = part.replace(match, SmallCaps.toSmallCaps(result));
@@ -258,34 +237,44 @@ public enum BingoTranslation
         return part;
     }
 
-    public static String convertSubstitution(String input, String... args)
-    {
+    public static String convertSubstitution(String input, String... args) {
         String part = input;
         Matcher matcher = SUBSTITUTE_PATTERN.matcher(part);
-        while (matcher.find())
-        {
+        Set<String> matchedKeys = new HashSet<>();
+
+        while (matcher.find()) {
             String match = matcher.group();
             String key = matcher.group("key");
             String path = key.replace("{$", "").replace("}", "");
 
-            String[] addedArgs = matcher.group("args").split(",");
+            if (matchedKeys.contains(path)) {
+                Message.warn("recursive translation substitution found on " + path);
+                break;
+            }
+
+            matchedKeys.add(path);
+
+            String argsGroup = matcher.group("args");
+            String[] addedArgs = new String[0];
+            if (argsGroup != null) {
+                addedArgs = argsGroup.split(",");
+            }
             String[] allArgs = CollectionHelper.concatWithArrayCopy(args, addedArgs);
 
-            for (BingoTranslation value : BingoTranslation.values()) {
-                if (path.equals(value.key)) {
-                    part = part.replace(match, value.translate(true, allArgs));
-                    break;
-                }
+            BingoTranslation actualTranslation = getByKey(path);
+            if (actualTranslation == null) {
+                //invalid key, remove brackets and continue...
+                part = part.replace(key, path);
+                continue;
             }
+            part = part.replace(match, actualTranslation.translate(allArgs));
         }
 
         return part;
     }
 
-    public static BingoTranslation getByKey(String key)
-    {
-        for (BingoTranslation value : values())
-        {
+    public static BingoTranslation getByKey(String key) {
+        for (BingoTranslation value : values()) {
             if (value.key.equals(key))
                 return value;
         }
@@ -301,6 +290,7 @@ public enum BingoTranslation
         String out = input;
         out = BingoTranslation.convertColors(out);
         out = BingoTranslation.convertSmallCaps(out);
+        out = BingoTranslation.convertSubstitution(out);
         return out;
     }
 }

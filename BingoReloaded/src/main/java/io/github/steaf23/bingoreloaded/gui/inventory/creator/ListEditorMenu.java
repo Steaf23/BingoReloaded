@@ -1,4 +1,4 @@
-package io.github.steaf23.bingoreloaded.gui.creator;
+package io.github.steaf23.bingoreloaded.gui.inventory.creator;
 
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.tasks.AdvancementTask;

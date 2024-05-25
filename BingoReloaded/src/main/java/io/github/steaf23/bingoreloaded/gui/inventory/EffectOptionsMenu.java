@@ -1,7 +1,6 @@
-package io.github.steaf23.bingoreloaded.gui;
+package io.github.steaf23.bingoreloaded.gui.inventory;
 
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
-import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.settings.BingoSettingsBuilder;
 import io.github.steaf23.easymenulib.inventory.BasicMenu;
 import io.github.steaf23.easymenulib.inventory.MenuBoard;

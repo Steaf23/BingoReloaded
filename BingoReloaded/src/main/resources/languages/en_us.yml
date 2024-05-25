@@ -121,12 +121,12 @@ menu:
     speed: "Speed"
   kits:
     hardcore:
-      name: "&4Hardcore"
+      name: "&4&lHardcore"
       desc: "This kit includes: \n
       \n
           - Nothing, good luck!"
     normal:
-      name: "&eNormal"
+      name: "&e&lNormal"
       desc: "This kit includes: \n
       \n
           - Iron Axe \n
@@ -136,7 +136,7 @@ menu:
           - Leather Helmet \n
           - Leather Boots"
     overpowered:
-      name: "&5Overpowered"
+      name: "&5&lOverpowered"
       desc: "This kit includes: \n
       \n
           - Netherite Axe \n
@@ -147,7 +147,7 @@ menu:
           - Leather Helmet \n
           - Leather Boots"
     reloaded:
-      name: "&3Reloaded"
+      name: "&3&lReloaded"
       desc: "This kit includes: \n
       \n
           - Netherite Axe \n

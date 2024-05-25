@@ -43,11 +43,6 @@ public class Message
         this.base = new TextComponent();
     }
 
-    public Message untranslated(String message) {
-        raw = message;
-        return this;
-    }
-
     public Message arg(@NonNull String name) {
         args.add(TextComponent.fromLegacy(name));
         return this;
@@ -172,9 +167,7 @@ public class Message
     }
 
     public String toLegacyString(Player player) {
-        if (finalMessage == null)
-            createMessage(player);
-        return finalMessage.toLegacyText();
+        return asComponent(player).toLegacyText();
     }
 
     public BaseComponent asComponent(Player player) {
@@ -246,7 +239,7 @@ public class Message
 
     protected void createMessage(Player player) {
         //for any given message like "{#00bb33}Completed {0} by team {1}! At {2}" split the arguments from the message.
-        String[] rawSplit = raw.split("\\{[^\\{\\}#@]*\\}"); //[{#00bb33}Completed, by team, ! At]
+        String[] rawSplit = raw.split("\\{[^\\{\\}#@$]*\\}"); //[{#00bb33}Completed, by team, ! At]
 
         // convert custom hex colors to legacyText: {#00bb33} -> ChatColor.of("#00bb33")
         // convert "&" to "§" and "&&" to "&"

@@ -11,7 +11,7 @@ import io.github.steaf23.bingoreloaded.data.ConfigData;
 import io.github.steaf23.bingoreloaded.event.*;
 import io.github.steaf23.bingoreloaded.gameloop.BingoScoreboard;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
-import io.github.steaf23.bingoreloaded.gui.EffectOptionFlags;
+import io.github.steaf23.bingoreloaded.gui.inventory.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.player.*;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.player.team.TeamManager;
@@ -166,7 +166,7 @@ public class BingoGame implements GamePhase
                 pitch = 0.890899f;
             }
 
-            Message timeDisplay = new Message().untranslated(timeString).bold().color(color);
+            Message timeDisplay = new Message(timeString).bold().color(color);
             teamManager.getParticipants().forEach(p ->
                     p.sessionPlayer().ifPresent(player -> {
                         Message.sendTitleMessage(timeDisplay, new Message(), player);

@@ -96,7 +96,7 @@ public class BingoReloadedPlaceholderExpansion extends PlaceholderExpansion
     @Override
     public @Nullable String onRequest(OfflinePlayer player, @NotNull String params) {
         BingoReloadedPlaceholder placeholder = BingoReloadedPlaceholder.fromString(params);
-        if (params == null) {
+        if (placeholder == null) {
             Message.error("unexpected placeholder '" + params + "' not found in bingo reloaded.");
             return null;
         }
@@ -227,7 +227,6 @@ public class BingoReloadedPlaceholderExpansion extends PlaceholderExpansion
             BingoParticipant participant = session.teamManager.getPlayerAsParticipant(onlinePlayer);
             if (participant != null) {
                 String text = placeholderFromTeam(participant.getTeam(), getName, getColor);
-                Message.log(text);
                 return text;
             }
             return noTeamPlaceholder;
@@ -254,15 +253,15 @@ public class BingoReloadedPlaceholderExpansion extends PlaceholderExpansion
         String result = "";
         if (getColor && getName) {
             return createLegacyTextFromMessage(getPlaceholderFormat(BingoReloadedPlaceholder.TEAM_FULL),
-                    placeholderFromTeam(team, true, false),
-                    placeholderFromTeam(team, false, true));
+                    team.getColor().toString(),
+                    team.getName().toString());
         }
 
         if (getColor) {
-            return team.getColor().toString();
+            return createLegacyTextFromMessage(getPlaceholderFormat(BingoReloadedPlaceholder.TEAM_COLOR), team.getColor().toString());
         }
         if (getName) {
-            return team.getName().toString();
+            return createLegacyTextFromMessage(getPlaceholderFormat(BingoReloadedPlaceholder.TEAM_NAME), team.getName().toString());
         }
         return "";
     }

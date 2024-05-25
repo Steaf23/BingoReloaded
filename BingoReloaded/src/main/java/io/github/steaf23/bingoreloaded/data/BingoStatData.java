@@ -69,7 +69,7 @@ public class BingoStatData
     {
         String stats = getPlayerData(playerId);
         String[] statList = stats.split(";");
-        return new Message().untranslated("{0}'s statistics: Wins: {1}, Losses: {2}, Games finished: {3}, Tasks completed: {4}, Wand uses: {5}")
+        return new Message("{0}'s statistics: Wins: {1}, Losses: {2}, Games finished: {3}, Tasks completed: {4}, Wand uses: {5}")
                 .color(ChatColor.GREEN)
                 .arg(Bukkit.getOfflinePlayer(playerId).getName()).color(ChatColor.YELLOW).bold()
                 .arg(statList[0]).color(ChatColor.WHITE).bold()
@@ -94,7 +94,7 @@ public class BingoStatData
         }
         else
         {
-            return new Message().untranslated("Could not find statistics for player {0}!").color(ChatColor.RED)
+            return new Message("Could not find statistics for player {0}!").color(ChatColor.RED)
                     .arg(playerName).color(ChatColor.WHITE);
         }
     }

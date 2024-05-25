@@ -5,11 +5,11 @@ import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.data.ConfigData;
 import io.github.steaf23.bingoreloaded.event.*;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
-import io.github.steaf23.bingoreloaded.gui.TeamSelectionMenu;
-import io.github.steaf23.bingoreloaded.gui.VoteMenu;
+import io.github.steaf23.bingoreloaded.gui.hud.BingoSettingsHUDManager;
+import io.github.steaf23.bingoreloaded.gui.inventory.TeamSelectionMenu;
+import io.github.steaf23.bingoreloaded.gui.inventory.VoteMenu;
 import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
-import io.github.steaf23.bingoreloaded.settings.SettingsPreviewBoard;
 import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.bingoreloaded.util.TranslatedMessage;
 import io.github.steaf23.bingoreloaded.util.timer.CountdownTimer;
@@ -43,11 +43,12 @@ public class PregameLobby implements GamePhase
     }
 
     private final BingoSession session;
-    private final SettingsPreviewBoard settingsBoard;
     private final Map<UUID, VoteTicket> votes;
     private final ConfigData config;
     private final MenuBoard menuBoard;
     private final CountdownTimer playerCountTimer;
+
+    private final BingoSettingsHUDManager settingsHUD;
 
     private boolean playerCountTimerPaused = false;
     private boolean gameStarted = false;
@@ -55,12 +56,12 @@ public class PregameLobby implements GamePhase
     public PregameLobby(MenuBoard menuBoard, HUDRegistry hudRegistry, BingoSession session, ConfigData config) {
         this.menuBoard = menuBoard;
         this.session = session;
-        this.settingsBoard = new SettingsPreviewBoard(hudRegistry);
         this.votes = new HashMap<>();
         this.config = config;
         this.playerCountTimer = new CountdownTimer(config.playerWaitTime, session);
+        this.settingsHUD = new BingoSettingsHUDManager(hudRegistry);
         playerCountTimer.addNotifier(time -> {
-            settingsBoard.setStatus(BingoTranslation.STARTING_STATUS.translate(String.valueOf(time)));
+            settingsHUD.setStatus(BingoTranslation.STARTING_STATUS.translate(String.valueOf(time)));
             if (time == 10) {
                 new TranslatedMessage(BingoTranslation.STARTING_STATUS).arg("" + time).color(ChatColor.GOLD).sendAll(session);
             }
@@ -192,7 +193,7 @@ public class PregameLobby implements GamePhase
     }
 
     private void initializePlayer(Player player) {
-        settingsBoard.subscribePlayer(player);
+        settingsHUD.addPlayer(player);
         player.getInventory().clear();
 
         if (config.useVoteSystem && !config.voteUsingCommandsOnly && !config.voteList.isEmpty()) {
@@ -205,9 +206,9 @@ public class PregameLobby implements GamePhase
 
     public void handleParticipantJoinedTeam(final ParticipantJoinedTeamEvent event) {
         if (event.getParticipant() != null) {
-            event.getParticipant().sessionPlayer().ifPresent(p -> settingsBoard.subscribePlayer(p));
+            event.getParticipant().sessionPlayer().ifPresent(p -> settingsHUD.addPlayer(p));
         }
-        settingsBoard.setStatus(BingoTranslation.PLAYER_STATUS.translate("" + session.teamManager.getParticipants().size()));
+        settingsHUD.setStatus(BingoTranslation.PLAYER_STATUS.translate("" + session.teamManager.getParticipants().size()));
 
         if (playerCountTimer.isRunning() && playerCountTimer.getTime() > 10) {
             event.getParticipant().sessionPlayer().ifPresent(p -> {
@@ -221,7 +222,7 @@ public class PregameLobby implements GamePhase
     public void pausePlayerCountTimer() {
         playerCountTimerPaused = true;
         playerCountTimer.stop();
-        settingsBoard.setStatus(BingoTranslation.WAIT_STATUS.translate());
+        settingsHUD.setStatus(BingoTranslation.WAIT_STATUS.translate());
     }
 
     public void resumePlayerCountTimer() {
@@ -230,9 +231,9 @@ public class PregameLobby implements GamePhase
 
         int playerCount = session.teamManager.getParticipants().size();
         if (playerCount == 0) {
-            settingsBoard.setStatus(BingoTranslation.WAIT_STATUS.translate());
+            settingsHUD.setStatus(BingoTranslation.WAIT_STATUS.translate());
         } else {
-            settingsBoard.setStatus(BingoTranslation.PLAYER_STATUS.translate("" + playerCount));
+            settingsHUD.setStatus(BingoTranslation.PLAYER_STATUS.translate("" + playerCount));
         }
     }
 
@@ -268,9 +269,9 @@ public class PregameLobby implements GamePhase
         int playerCount = session.teamManager.getParticipants().size();
 
         if (playerCount == 0) {
-            settingsBoard.setStatus(BingoTranslation.WAIT_STATUS.translate());
+            settingsHUD.setStatus(BingoTranslation.WAIT_STATUS.translate());
         } else {
-            settingsBoard.setStatus(BingoTranslation.PLAYER_STATUS.translate("" + playerCount));
+            settingsHUD.setStatus(BingoTranslation.PLAYER_STATUS.translate("" + playerCount));
         }
 
         // Schedule check in the future since a player can switch teams where they will briefly leave the team
@@ -291,11 +292,11 @@ public class PregameLobby implements GamePhase
     public void setup() {
         int playerCount = session.teamManager.getParticipants().size();
 
-        settingsBoard.showSettings(session.settingsBuilder.view());
+        settingsHUD.updateSettings(session.settingsBuilder.view());
         if (playerCount == 0) {
-            settingsBoard.setStatus(BingoTranslation.WAIT_STATUS.translate());
+            settingsHUD.setStatus(BingoTranslation.WAIT_STATUS.translate());
         } else {
-            settingsBoard.setStatus(BingoTranslation.PLAYER_STATUS.translate("" + playerCount));
+            settingsHUD.setStatus(BingoTranslation.PLAYER_STATUS.translate("" + playerCount));
         }
 
         BingoReloaded.scheduleTask((t) -> {
@@ -312,12 +313,14 @@ public class PregameLobby implements GamePhase
             // start a new timer in a task since the session will still assume the game is not in the lobby phase
             startPlayerCountTimerIfMinCountReached();
         }, 10);
+
+
     }
 
     @Override
     public void end() {
         playerCountTimer.stop();
-        settingsBoard.unsubscribeAll();
+        settingsHUD.removeAllPlayers();
     }
 
     @Override
@@ -327,13 +330,13 @@ public class PregameLobby implements GamePhase
 
     @Override
     public void handlePlayerLeftSessionWorld(final PlayerLeftSessionWorldEvent event) {
-        settingsBoard.unsubscribePlayer(event.getPlayer());
+        settingsHUD.removePlayer(event.getPlayer());
         session.teamManager.removeMemberFromTeam(session.teamManager.getPlayerAsParticipant(event.getPlayer()));
     }
 
     @Override
     public void handleSettingsUpdated(final BingoSettingsUpdatedEvent event) {
-        settingsBoard.handleSettingsUpdated(event);
+        settingsHUD.updateSettings(event.getNewSettings());
     }
 
     @Override

@@ -12,13 +12,7 @@ public class SettingsPreviewBoard extends SidebarHUD
 {
     public SettingsPreviewBoard(HUDRegistry registry)
     {
-        super(registry, BingoTranslation.SETTINGS_SCOREBOARD_TITLE.translate());
-    }
-
-    public void handleSettingsUpdated(final BingoSettingsUpdatedEvent event)
-    {
-        new TranslatedMessage(BingoTranslation.SETTINGS_UPDATED).sendAll(event.getSession());
-        showSettings(event.getNewSettings());
+        super(BingoTranslation.SETTINGS_SCOREBOARD_TITLE.translate());
     }
 
     public void showSettings(BingoSettings settings)

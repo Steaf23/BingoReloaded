@@ -30,7 +30,7 @@ public class BingoScoreboard implements SessionMember
         this.session = session;
         this.showPlayer = showPlayer;
         this.teamBoard = Bukkit.getScoreboardManager().getNewScoreboard();
-        this.hud = new SidebarHUD(registry, "" + ChatColor.ITALIC + ChatColor.UNDERLINE + BingoTranslation.GAME_SCOREBOARD_TITLE.translate());
+        this.hud = new SidebarHUD("" + ChatColor.ITALIC + ChatColor.UNDERLINE + BingoTranslation.GAME_SCOREBOARD_TITLE.translate());
 
         this.taskObjective = teamBoard.registerNewObjective("item_count", Criteria.DUMMY, "item_count");
 
@@ -91,7 +91,7 @@ public class BingoScoreboard implements SessionMember
         for (BingoParticipant p : teamManager.getParticipants())
         {
             if (p instanceof BingoPlayer bingoPlayer)
-                bingoPlayer.sessionPlayer().ifPresent(hud::subscribePlayer);
+                bingoPlayer.sessionPlayer().ifPresent(hud::applyToPlayer);
         }
     }
 
@@ -107,7 +107,7 @@ public class BingoScoreboard implements SessionMember
             {
                 if (p instanceof BingoPlayer bingoPlayer)
                 {
-                    bingoPlayer.sessionPlayer().ifPresent(hud::unsubscribePlayer);
+                    bingoPlayer.sessionPlayer().ifPresent(hud::removeFromPlayer);
                 }
             }
 
@@ -122,12 +122,12 @@ public class BingoScoreboard implements SessionMember
 
     public void handlePlayerJoin(final PlayerJoinedSessionWorldEvent event)
     {
-        hud.subscribePlayer(event.getPlayer());
+        hud.applyToPlayer(event.getPlayer());
     }
 
     public void handlePlayerLeave(final PlayerLeftSessionWorldEvent event)
     {
-        hud.unsubscribePlayer(event.getPlayer());
+        hud.removeFromPlayer(event.getPlayer());
     }
 
     @Override

@@ -9,13 +9,13 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-public class SidebarHUD implements HeadsUpDisplay
+public class SidebarHUD
 {
     private final Set<UUID> subscribers;
     private Scoreboard board;
     private Objective sidebar;
 
-    public SidebarHUD(HUDRegistry registry, String initialTitle) {
+    public SidebarHUD(String initialTitle) {
         this.board = Bukkit.getScoreboardManager().getNewScoreboard();
         this.sidebar = board.registerNewObjective("info", Criteria.DUMMY, initialTitle);
         sidebar.setDisplaySlot(DisplaySlot.SIDEBAR);
@@ -26,8 +26,6 @@ public class SidebarHUD implements HeadsUpDisplay
             team.addEntry(getEntry(i));
             setText(i, "");
         }
-
-        registry.addDisplay(this);
     }
 
     public void clear() {
@@ -36,19 +34,20 @@ public class SidebarHUD implements HeadsUpDisplay
         }
     }
 
-    @Override
-    public void subscribePlayer(Player player) {
+    public void applyToPlayer(Player player) {
         subscribers.add(player.getUniqueId());
         player.setScoreboard(board);
     }
 
-    @Override
-    public void unsubscribePlayer(Player player) {
+    public void removeFromPlayer(Player player) {
         subscribers.remove(player.getUniqueId());
         player.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
     }
 
-    @Override
+    public void setTitle(String title) {
+        sidebar.setDisplayName(title);
+    }
+
     public void setText(int lineNumber, String text) {
         if (lineNumber < 0 || lineNumber > 14)
         {
@@ -64,23 +63,15 @@ public class SidebarHUD implements HeadsUpDisplay
             sidebar.getScore(getEntry(lineNumber)).setScore(0);
     }
 
-    @Override
-    public void setText(int pageNumber, int lineNumber, String text) {
-        Bukkit.getLogger().info("SidebarHUD only contains 1 page");
-        setText(lineNumber, text);
-    }
-
-    @Override
-    public boolean isPlayerSubscribed(Player player) {
+    public boolean isPlayerAdded(Player player) {
         return subscribers.contains(player.getUniqueId());
     }
 
-    @Override
-    public void unsubscribeAll() {
+    public void removeAll() {
         for (UUID sub : subscribers) {
             Player player = Bukkit.getPlayer(sub);
             if (player != null) {
-                unsubscribePlayer(player);
+                removeFromPlayer(player);
             }
         }
         subscribers.clear();

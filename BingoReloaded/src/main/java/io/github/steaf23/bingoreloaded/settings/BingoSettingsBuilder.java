@@ -6,7 +6,7 @@ import io.github.steaf23.bingoreloaded.data.BingoSettingsData;
 import io.github.steaf23.bingoreloaded.event.BingoSettingsUpdatedEvent;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gameloop.phase.PregameLobby;
-import io.github.steaf23.bingoreloaded.gui.EffectOptionFlags;
+import io.github.steaf23.bingoreloaded.gui.inventory.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.util.Message;
 import org.bukkit.Bukkit;
 
@@ -141,7 +141,7 @@ public class BingoSettingsBuilder
 
     public BingoSettingsBuilder effects(EnumSet<EffectOptionFlags> effects)
     {
-        if (this.effects != effects) {
+        if (this.effects.equals(effects)) {
             this.effects = effects;
             settingsUpdated();
         }
