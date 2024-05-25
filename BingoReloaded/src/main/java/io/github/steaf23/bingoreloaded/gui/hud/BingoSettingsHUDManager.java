@@ -89,7 +89,7 @@ public class BingoSettingsHUDManager
         if (huds.stream().filter(hud -> player.getUniqueId().equals(hud.getPlayerId())).count() > 0) {
             return;
         }
-        PlayerHUD hud = new BingoStatusHUD(player, true, "HUD - TEST", settingsBoardTemplate);
+        PlayerHUD hud = new BingoStatusHUD(player, "Bingo Settings", settingsBoardTemplate);
         registry.addPlayerHUD(hud);
         huds.add(hud);
     }

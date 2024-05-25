@@ -44,6 +44,7 @@ public class ConfigData
     public final String sendCommandAfterGameEnded;
     public final boolean voteUsingCommandsOnly;
     public final boolean selectTeamsUsingCommandsOnly;
+    public final boolean disableScoreboardSidebar;
 
     // Lobby options
     public final boolean singlePlayerTeams;
@@ -85,6 +86,7 @@ public class ConfigData
         this.sendCommandAfterGameEnded = config.getString("sendCommandAfterGameEnds", "");
         this.voteUsingCommandsOnly = config.getBoolean("voteUsingCommandsOnly", false);
         this.selectTeamsUsingCommandsOnly = config.getBoolean("selectTeamsUsingCommandsOnly", false);
+        this.disableScoreboardSidebar = config.getBoolean("disableScoreboardSidebar", false);
 
         // Lobby
         this.singlePlayerTeams = config.getBoolean("singlePlayerTeams", false);

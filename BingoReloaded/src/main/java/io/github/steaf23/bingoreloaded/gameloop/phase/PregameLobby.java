@@ -6,6 +6,7 @@ import io.github.steaf23.bingoreloaded.data.ConfigData;
 import io.github.steaf23.bingoreloaded.event.*;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gui.hud.BingoSettingsHUDManager;
+import io.github.steaf23.bingoreloaded.gui.hud.DisabledBingoSettingsHUDManager;
 import io.github.steaf23.bingoreloaded.gui.inventory.TeamSelectionMenu;
 import io.github.steaf23.bingoreloaded.gui.inventory.VoteMenu;
 import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
@@ -59,7 +60,13 @@ public class PregameLobby implements GamePhase
         this.votes = new HashMap<>();
         this.config = config;
         this.playerCountTimer = new CountdownTimer(config.playerWaitTime, session);
-        this.settingsHUD = new BingoSettingsHUDManager(hudRegistry);
+        if (config.disableScoreboardSidebar) {
+            this.settingsHUD = new DisabledBingoSettingsHUDManager(hudRegistry);
+        }
+        else {
+            this.settingsHUD = new BingoSettingsHUDManager(hudRegistry);
+        }
+
         playerCountTimer.addNotifier(time -> {
             settingsHUD.setStatus(BingoTranslation.STARTING_STATUS.translate(String.valueOf(time)));
             if (time == 10) {

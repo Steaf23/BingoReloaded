@@ -8,16 +8,14 @@ import java.util.UUID;
 public class PlayerHUD
 {
     protected final SidebarHUD sidebar;
-    protected final boolean sidebarEnabled;
     private final UUID playerId;
 
-    public PlayerHUD(UUID player, boolean enableSidebar) {
-        this(player, enableSidebar, new SidebarHUD(""));
+    public PlayerHUD(UUID player) {
+        this(player, new SidebarHUD(""));
     }
 
-    public PlayerHUD(UUID player, boolean enableSidebar, SidebarHUD sidebar) {
+    public PlayerHUD(UUID player, SidebarHUD sidebar) {
         this.playerId = player;
-        this.sidebarEnabled = enableSidebar;
         this.sidebar = sidebar;
     }
 

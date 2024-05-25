@@ -13,8 +13,8 @@ public class BingoStatusHUD extends PlayerHUD
 {
     private final ScoreboardData.SidebarTemplate template;
 
-    public BingoStatusHUD(Player player, boolean enableSidebar, String initialTitle, ScoreboardData.SidebarTemplate template) {
-        super(player.getUniqueId(), enableSidebar, new SidebarHUD(initialTitle));
+    public BingoStatusHUD(Player player, String initialTitle, ScoreboardData.SidebarTemplate template) {
+        super(player.getUniqueId(), new SidebarHUD(initialTitle));
 
         this.template = template;
         update();
