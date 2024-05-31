@@ -1,7 +1,6 @@
 package io.github.steaf23.bingoreloaded.tasks;
 
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
-import io.github.steaf23.bingoreloaded.tasks.statistics.BingoStatistic;
 import io.github.steaf23.easymenulib.util.ChatComponentUtils;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;

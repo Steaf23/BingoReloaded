@@ -146,7 +146,11 @@ public class BasicTeamManager implements TeamManager
     }
 
     @Override
-    public boolean removeMemberFromTeam(@Nullable BingoParticipant player) {
+    public boolean removeMemberFromTeam(@Nullable BingoParticipant member) {
+        return removeMemberFromTeam(member, true);
+    }
+
+    public boolean removeMemberFromTeam(@Nullable BingoParticipant player, boolean clearEmptyTeams) {
         if (player == null) return false;
 
         if (automaticTeamPlayers.remove(player.getId()) != null) {
@@ -155,14 +159,17 @@ public class BasicTeamManager implements TeamManager
             return true;
         }
 
+        BingoTeam team = player.getTeam();
         if (getParticipants().contains(player)) {
             player.getTeam().removeMember(player);
         } else {
             return false;
         }
-        activeTeams.removeEmptyTeams();
+        if (clearEmptyTeams) {
+            activeTeams.removeEmptyTeams();
+        }
 
-        var leaveEvent = new ParticipantLeftTeamEvent(player, player.getTeam(), session);
+        var leaveEvent = new ParticipantLeftTeamEvent(player, team, session);
         Bukkit.getPluginManager().callEvent(leaveEvent);
         return true;
     }
@@ -179,12 +186,11 @@ public class BasicTeamManager implements TeamManager
 
     @Override
     public boolean addMemberToTeam(BingoParticipant participant, String teamId) {
-        removeMemberFromTeam(participant);
-
         if (teamId.equals("auto")) {
             if (automaticTeamPlayers.containsKey(participant.getId())) {
                 return false;
             }
+            removeMemberFromTeam(participant);
 
             automaticTeamPlayers.put(participant.getId(), participant.getDisplayName());
             participant.sessionPlayer().ifPresent(p -> {
@@ -199,19 +205,22 @@ public class BasicTeamManager implements TeamManager
 
         BingoTeam bingoTeam = activateTeamFromId(teamId);
 
-        if (bingoTeam.hasMember(participant.getId())) {
+        if (bingoTeam == null) {
             return false;
         }
-        if (bingoTeam == null) {
+        if (bingoTeam.hasMember(participant.getId())) {
             return false;
         }
         if (bingoTeam.getMembers().size() == getMaxTeamSize()) {
             return false;
         }
 
-        automaticTeamPlayers.remove(participant.getId());
+        // We can only clear empty teams once we added the participant to the new team.
+        removeMemberFromTeam(participant, false);
 
         bingoTeam.addMember(participant);
+
+        activeTeams.removeEmptyTeams();
 
         var joinEvent = new ParticipantJoinedTeamEvent(participant, bingoTeam, session);
         Bukkit.getPluginManager().callEvent(joinEvent);
@@ -271,7 +280,7 @@ public class BasicTeamManager implements TeamManager
         Message.log("Successfully created 16 teams");
     }
 
-    private BingoTeam activateAnyTeam() {
+    private @Nullable BingoTeam activateAnyTeam() {
         for (String teamId : teamData.getTeams().keySet()) {
             if (!activeTeams.containsId(teamId)) {
                 return activateTeamFromId(teamId);

@@ -13,7 +13,9 @@ import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.tasks.*;
-import io.github.steaf23.bingoreloaded.tasks.statistics.BingoStatistic;
+import io.github.steaf23.bingoreloaded.tasks.BingoStatistic;
+import io.github.steaf23.bingoreloaded.tasks.tracker.TaskProgressTracker;
+import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.easymenulib.inventory.MenuBoard;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -34,20 +36,22 @@ import java.util.*;
 public class BingoCard
 {
     public final CardSize size;
+    protected final TaskProgressTracker progressTracker;
     private List<BingoTask> tasks;
 
     protected final CardMenu menu;
 
     private static final TaskData DEFAULT_TASK = new ItemTask(Material.DIRT, 1);
 
-    public BingoCard(MenuBoard menuBoard, CardSize size) {
-        this(new CardMenu(menuBoard, size, BingoTranslation.CARD_TITLE.translate()), size);
+    public BingoCard(MenuBoard menuBoard, CardSize size, TaskProgressTracker progressTracker) {
+        this(new CardMenu(menuBoard, size, BingoTranslation.CARD_TITLE.translate()), size, progressTracker);
     }
 
-    public BingoCard(CardMenu menu, CardSize size) {
+    public BingoCard(CardMenu menu, CardSize size, TaskProgressTracker progressTracker) {
         this.size = size;
         this.tasks = new ArrayList<>();
         this.menu = menu;
+        this.progressTracker = progressTracker;
         menu.setInfo(BingoTranslation.INFO_REGULAR_NAME.translate(),
                 BingoTranslation.INFO_REGULAR_DESC.translate().split("\\n"));
     }
@@ -115,7 +119,12 @@ public class BingoCard
                 Collections.shuffle(listTasks, shuffler);
                 allTasks.put(listName, listTasks);
             }
-            newTasks.add(allTasks.get(listName).remove(allTasks.get(listName).size() - 1));
+            if (allTasks.get(listName).size() != 0) {
+                newTasks.add(allTasks.get(listName).remove(allTasks.get(listName).size() - 1));
+            }
+            else {
+                Message.error("Found empty task list '" + listName + "'.");
+            }
         }
         while (newTasks.size() < size.fullCardSize) {
             newTasks.add(DEFAULT_TASK);
@@ -211,7 +220,7 @@ public class BingoCard
     }
 
     public BingoCard copy() {
-        BingoCard card = new BingoCard(menu.getMenuBoard(), this.size);
+        BingoCard card = new BingoCard(menu.getMenuBoard(), this.size, this.progressTracker);
         List<BingoTask> newTasks = new ArrayList<>();
         for (BingoTask slot : getTasks()) {
             newTasks.add(slot.copy());
@@ -220,167 +229,5 @@ public class BingoCard
         return card;
     }
 
-    public void onInventoryClick(final InventoryClickEvent event, final BingoPlayer player, final BingoGame game) {
-        Player p = player.sessionPlayer().get();
-
-        if (event.getSlotType() == InventoryType.SlotType.RESULT && event.getClick() != ClickType.SHIFT_LEFT) {
-            BingoReloaded.scheduleTask(task -> {
-                ItemStack resultStack = p.getItemOnCursor();
-                completeItemSlot(resultStack, player, game);
-            });
-            return;
-        }
-
-        BingoReloaded.scheduleTask(task -> {
-            for (ItemStack stack : p.getInventory().getContents()) {
-                if (stack != null) {
-                    stack = completeItemSlot(stack, player, game);
-                }
-            }
-
-            ItemStack stack = p.getItemOnCursor();
-            stack = completeItemSlot(stack, player, game);
-        });
-    }
-
-    public void onPlayerCollectItem(final EntityPickupItemEvent event, final BingoPlayer player, final BingoGame game) {
-        ItemStack stack = event.getItem().getItemStack();
-        int amount = stack.getAmount();
-        stack = completeItemSlot(stack, player, game);
-        if (amount != stack.getAmount()) {
-            event.setCancelled(true);
-            ItemStack resultStack = stack.clone();
-
-            if (resultStack.getType() == Material.AIR || resultStack.getAmount() <= 0) {
-                return;
-            }
-
-            BingoReloaded.scheduleTask(task -> {
-                player.sessionPlayer().ifPresent(p -> p.getWorld().dropItem(event.getItem().getLocation(), resultStack));
-                event.getItem().remove();
-            });
-        }
-    }
-
-    public void onPlayerDroppedItem(final PlayerDropItemEvent event, final BingoPlayer player, final BingoGame game) {
-        BingoReloaded.scheduleTask(task -> {
-            ItemStack stack = event.getItemDrop().getItemStack();
-            stack = completeItemSlot(stack, player, game);
-        });
-    }
-
-    ItemStack completeItemSlot(ItemStack item, BingoPlayer player, BingoGame game) {
-        if (player.sessionPlayer().isEmpty()) {
-            return item;
-        }
-
-        if (player.getTeam().outOfTheGame) {
-            return item;
-        }
-
-        BingoTask deathMatchTask = game.getDeathMatchTask();
-        if (deathMatchTask != null) {
-            if (item.getType().equals(deathMatchTask.material)) {
-                var slotEvent = new BingoCardTaskCompleteEvent(deathMatchTask, player, true);
-                Bukkit.getPluginManager().callEvent(slotEvent);
-            }
-            return item;
-        }
-
-        for (BingoTask task : getTasks()) {
-            if (task.type != BingoTask.TaskType.ITEM)
-                continue;
-
-            ItemTask data = (ItemTask) task.data;
-            if (data.material().equals(item.getType()) && data.count() <= item.getAmount()) {
-                if (!tryCompleteTask(player, task, game.getGameTime())) {
-                    continue;
-                }
-                if (game.getConfig().removeTaskItems) {
-                    item.setAmount(item.getAmount() - data.getCount());
-                    player.sessionPlayer().get().updateInventory();
-                }
-                var slotEvent = new BingoCardTaskCompleteEvent(task, player, hasBingo(player.getTeam()));
-                Bukkit.getPluginManager().callEvent(slotEvent);
-                break;
-            }
-        }
-        return item;
-    }
-
-    public boolean tryCompleteTask(BingoParticipant player, BingoTask task, long timeSeconds) {
-        return task.complete(player, timeSeconds);
-    }
-
-    public void onPlayerAdvancementDone(final PlayerAdvancementDoneEvent event, final BingoPlayer player, final BingoGame game) {
-        if (player.getTeam().outOfTheGame)
-            return;
-
-        if (game.getDeathMatchTask() != null)
-            return;
-
-        for (BingoTask task : getTasks()) {
-            if (task.type != BingoTask.TaskType.ADVANCEMENT)
-                continue;
-
-            AdvancementTask data = (AdvancementTask) task.data;
-
-            if (data.advancement().getKey().equals(event.getAdvancement().getKey()))
-            {
-                if (!task.complete(player, game.getGameTime()))
-                    continue;
-
-                var slotEvent = new BingoCardTaskCompleteEvent(task, player, hasBingo(player.getTeam()));
-                Bukkit.getPluginManager().callEvent(slotEvent);
-                break;
-            }
-        }
-    }
-
-    public void onPlayerStatIncrement(final PlayerStatisticIncrementEvent event, final BingoPlayer player, final BingoGame game) {
-        if (player.getTeam().outOfTheGame)
-            return;
-
-        if (game.getDeathMatchTask() != null)
-            return;
-
-        for (BingoTask task : getTasks()) {
-            if (task.type != BingoTask.TaskType.STATISTIC)
-                continue;
-
-            StatisticTask data = (StatisticTask) task.data;
-            if (data.statistic().equals(new BingoStatistic(event.getStatistic(), event.getEntityType(), event.getMaterial())) &&
-                    data.getCount() == event.getNewValue()) {
-                if (!task.complete(player, game.getGameTime()))
-                    continue;
-
-                var slotEvent = new BingoCardTaskCompleteEvent(task, player, hasBingo(player.getTeam()));
-                Bukkit.getPluginManager().callEvent(slotEvent);
-                break;
-            }
-        }
-    }
-
-    public void onPlayerStatisticCompleted(final BingoStatisticCompletedEvent event, final BingoPlayer player, final BingoGame game) {
-        if (player.getTeam().outOfTheGame)
-            return;
-
-        if (game.getDeathMatchTask() != null)
-            return;
-
-        for (BingoTask task : getTasks()) {
-            if (task.type != BingoTask.TaskType.STATISTIC)
-                continue;
-
-            StatisticTask data = (StatisticTask) task.data;
-            if (data.statistic().equals(event.stat)) {
-                if (!task.complete(player, game.getGameTime()))
-                    continue;
-
-                var slotEvent = new BingoCardTaskCompleteEvent(task, player, hasBingo(player.getTeam()));
-                Bukkit.getPluginManager().callEvent(slotEvent);
-                break;
-            }
-        }
-    }
+    public void handleTaskCompleted(BingoParticipant player, BingoTask task, long timeSeconds) {}
 }

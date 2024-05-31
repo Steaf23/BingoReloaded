@@ -75,6 +75,7 @@ public class BingoTeam
         if (team.getScoreboard().getTeam(id) != null) {
             team.removeEntry(player.getDisplayName());
         }
+        player.setTeam(null);
     }
 
     public boolean hasMember(UUID memberId) {

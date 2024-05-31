@@ -29,6 +29,7 @@ import org.bukkit.event.player.*;
 import org.bukkit.potion.PotionEffectType;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * This class represents a session of a bingo game on a single world(group).
@@ -308,5 +309,9 @@ public class BingoSession
 
     public boolean hasPlayer(Player p) {
         return ownsWorld(p.getWorld());
+    }
+
+    public @Nullable GamePhase getPhase() {
+        return phase;
     }
 }

@@ -312,4 +312,9 @@ public class BingoPlayer implements BingoParticipant
     public void setTeam(BingoTeam team) {
         this.team = team;
     }
+
+    @Override
+    public String toString() {
+        return getDisplayName();
+    }
 }

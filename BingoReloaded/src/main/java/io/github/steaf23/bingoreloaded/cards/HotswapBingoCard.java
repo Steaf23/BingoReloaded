@@ -8,6 +8,7 @@ import io.github.steaf23.bingoreloaded.gui.inventory.HotswapCardMenu;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.tasks.BingoTask;
+import io.github.steaf23.bingoreloaded.tasks.tracker.TaskProgressTracker;
 import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.bingoreloaded.util.timer.GameTimer;
 import io.github.steaf23.easymenulib.inventory.MenuBoard;
@@ -38,12 +39,12 @@ public class HotswapBingoCard extends BingoCard
     // Used to call the play sound event for expiring tasks
     private final BingoGame game;
 
-    public HotswapBingoCard(MenuBoard menuBoard, CardSize size, BingoGame game) {
-        this(menuBoard, size, game, -1);
+    public HotswapBingoCard(MenuBoard menuBoard, CardSize size, BingoGame game, TaskProgressTracker progressTracker) {
+        this(menuBoard, size, game, progressTracker, -1);
     }
 
-    public HotswapBingoCard(MenuBoard menuBoard, CardSize size, BingoGame game, int winningScore) {
-        super(new HotswapCardMenu(menuBoard, size, BingoTranslation.CARD_TITLE.translate()), size);
+    public HotswapBingoCard(MenuBoard menuBoard, CardSize size, BingoGame game, TaskProgressTracker progressTracker, int winningScore) {
+        super(new HotswapCardMenu(menuBoard, size, BingoTranslation.CARD_TITLE.translate()), size, progressTracker);
         this.winningScore = winningScore;
         this.taskTimer = game.getTimer();
         this.randomExpiryProvider = new Random();
@@ -102,12 +103,8 @@ public class HotswapBingoCard extends BingoCard
     }
 
     @Override
-    public boolean tryCompleteTask(BingoParticipant player, BingoTask task, long timeSeconds) {
-        boolean success = super.tryCompleteTask(player, task, timeSeconds);
-        if (success) {
-            completedTasks.add(task);
-        }
-        return success;
+    public void handleTaskCompleted(BingoParticipant player, BingoTask task, long timeSeconds) {
+        completedTasks.add(task);
     }
 
     @Override
@@ -138,6 +135,7 @@ public class HotswapBingoCard extends BingoCard
                     lastRecoverdTask = newTask;
                     int expirationTime = randomExpiryProvider.nextInt(minExpirationTime, (maxExpirationTime + 1)) * 60;
                     taskHolders.set(idx, new HotswapTaskHolder(newTask, expirationTime, recoveryTimeSeconds));
+                    progressTracker.startTrackingTask(newTask);
                 } else {
                     taskExpiredCount++;
                     lastExpiredTask = holder.task;
@@ -155,11 +153,11 @@ public class HotswapBingoCard extends BingoCard
             if (taskExpiredCount == 1) {
                 BingoTask taskToSend = lastExpiredTask;
                 game.getActionBar().requestMessage(p ->
-                                new ComponentBuilder().bold(true).append(taskToSend.data.getName()).append(new TextComponent(" Expired")).color(ChatColor.DARK_GRAY).build()
+                                new ComponentBuilder().bold(true).append(taskToSend.data.getName()).append(new TextComponent(" Expired")).color(ChatColor.of("#e85e21")).build()
                         , 1, 3);
             }
             else {
-                game.getActionBar().requestMessage(p -> new ComponentBuilder().bold(true).append("Multiple Tasks Expired").color(ChatColor.DARK_GRAY).build(), 1, 3);
+                game.getActionBar().requestMessage(p -> new ComponentBuilder().bold(true).append("Multiple Tasks Expired").color(ChatColor.of("#e85e21")).build(), 1, 3);
             }
         }
         if (taskRecoveredCount > 0) {

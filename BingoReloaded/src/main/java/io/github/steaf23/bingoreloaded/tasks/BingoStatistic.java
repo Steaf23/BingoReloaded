@@ -1,4 +1,4 @@
-package io.github.steaf23.bingoreloaded.tasks.statistics;
+package io.github.steaf23.bingoreloaded.tasks;
 
 import org.bukkit.Material;
 import org.bukkit.Statistic;
@@ -92,7 +92,7 @@ public record BingoStatistic(@NotNull Statistic stat, @Nullable EntityType entit
     /**
      * @return True if this statistic is processed by the PlayerStatisticIncrementEvent
      */
-    public boolean isStatisticProcessed()
+    public boolean getsUpdatedWithIncrementEvent()
     {
         if (getCategory() == StatisticCategory.TRAVEL)
             return false;

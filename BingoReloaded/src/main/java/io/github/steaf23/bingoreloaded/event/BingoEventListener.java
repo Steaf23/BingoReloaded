@@ -3,8 +3,7 @@ package io.github.steaf23.bingoreloaded.event;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gameloop.phase.PregameLobby;
-import io.github.steaf23.bingoreloaded.tasks.statistics.StatisticTracker;
-import io.github.steaf23.bingoreloaded.util.Message;
+import io.github.steaf23.bingoreloaded.tasks.tracker.StatisticTracker;
 import org.bukkit.World;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -47,8 +46,7 @@ public class BingoEventListener implements Listener
     }
 
     @EventHandler
-    public void handleBingoTaskComplete(final BingoCardTaskCompleteEvent event)
-    {
+    public void handleTaskProgressCompleted(final BingoTaskProgressCompletedEvent event) {
         BingoSession session = event.getSession();
         BingoGame game = session != null && session.isRunning() ? (BingoGame)session.phase() : null;
         if (game != null)
@@ -69,7 +67,7 @@ public class BingoEventListener implements Listener
         BingoGame game = session.isRunning() ? (BingoGame)session.phase() : null;
         if (game != null && game.hasStarted())
         {
-            game.getCardEventManager().handlePlayerDroppedItem(event, game);
+            game.getProgressTracker().handlePlayerDroppedItem(event);
         }
     }
 
@@ -145,7 +143,7 @@ public class BingoEventListener implements Listener
         BingoGame game = session != null && session.isRunning() ? (BingoGame)session.phase() : null;
         if (game != null && game.hasStarted())
         {
-            game.getCardEventManager().handlePlayerAdvancementCompleted(event, getSession(event.getPlayer().getWorld()));
+            game.getProgressTracker().handlePlayerAdvancementDone(event);
         }
     }
 
@@ -156,7 +154,7 @@ public class BingoEventListener implements Listener
         BingoGame game = session != null && session.isRunning() ? (BingoGame)session.phase() : null;
         if (game != null && game.hasStarted())
         {
-            game.getCardEventManager().handlePlayerPickupItem(event, game);
+            game.getProgressTracker().handlePlayerPickupItem(event);
         }
     }
 
@@ -167,7 +165,7 @@ public class BingoEventListener implements Listener
         BingoGame game = session != null && session.isRunning() ? (BingoGame)session.phase() : null;
         if (game != null && game.hasStarted())
         {
-            game.getCardEventManager().handleInventoryClicked(event, game);
+            game.getProgressTracker().handleInventoryClicked(event);
         }
     }
 
@@ -229,23 +227,7 @@ public class BingoEventListener implements Listener
         BingoGame game = session != null && session.isRunning() ? (BingoGame)session.phase() : null;
         if (game != null)
         {
-            StatisticTracker tracker = game.getStatisticTracker();
-            if (tracker != null)
-                tracker.handleStatisticIncrement(event, game);
-        }
-    }
-
-    @EventHandler
-    public void handleStatisticCompleted(final BingoStatisticCompletedEvent event)
-    {
-        if (disableStatistics)
-            return;
-
-        BingoSession session = event.getSession();
-        BingoGame game = session != null && session.isRunning() ? (BingoGame)session.phase() : null;
-        if (game != null && game.hasStarted())
-        {
-            game.getCardEventManager().handleStatisticCompleted(event, game);
+            game.getProgressTracker().handlePlayerStatIncrement(event);
         }
     }
 
