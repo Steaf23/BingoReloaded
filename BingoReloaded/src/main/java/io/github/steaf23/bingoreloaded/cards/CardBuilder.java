@@ -11,7 +11,7 @@ public class CardBuilder
         return switch (settings.mode()) {
             case LOCKOUT -> new LockoutBingoCard(menuBoard, settings.size(), game.getSession(), game.getTeamManager().getActiveTeams(), game.getProgressTracker());
             case COMPLETE -> new CompleteBingoCard(menuBoard, settings.size(), game.getProgressTracker());
-            case HOTSWAP -> new HotswapBingoCard(menuBoard, settings.size(), game, game.getProgressTracker(), settings.hotswapGoal());
+            case HOTSWAP -> new HotswapBingoCard(menuBoard, settings.size(), game, game.getProgressTracker(), settings.hotswapGoal(), game.getConfig().hotswapMode);
             default -> new BingoCard(menuBoard, settings.size(), game.getProgressTracker());
         };
     }

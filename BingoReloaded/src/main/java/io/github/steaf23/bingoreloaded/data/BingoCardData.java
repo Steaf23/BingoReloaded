@@ -2,6 +2,7 @@ package io.github.steaf23.bingoreloaded.data;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.helper.YmlDataManager;
+import io.github.steaf23.bingoreloaded.tasks.BingoTask;
 import io.github.steaf23.bingoreloaded.tasks.ItemTask;
 import io.github.steaf23.bingoreloaded.tasks.TaskData;
 import org.bukkit.Material;
@@ -103,15 +104,19 @@ public class BingoCardData
     }
 
     public TaskData getRandomTask(String cardName, @NotNull Random generator, boolean withStatistics, boolean withAdvancements) {
-        List<TaskData> tasks = new ArrayList<>();
-        getListNames(cardName).forEach((l) -> tasks.addAll(listsData.getTasks(l, withStatistics, withAdvancements)));
-
-        List<TaskData> allTasks = tasks;
+        List<TaskData> allTasks = getAllTasks(cardName, withStatistics, withAdvancements);
 
         if (allTasks.size() > 0)
             return allTasks.get(Math.abs(generator.nextInt(allTasks.size())));
         else
             return new ItemTask(Material.DIRT, 1);
+    }
+
+
+    public List<TaskData> getAllTasks(String cardName, boolean withStatistics, boolean withAdvancements) {
+        List<TaskData> tasks = new ArrayList<>();
+        getListNames(cardName).forEach((l) -> tasks.addAll(listsData.getTasks(l, withStatistics, withAdvancements)));
+        return tasks;
     }
 
     public Set<String> getListNames(String cardName)

@@ -36,6 +36,8 @@ public class ConfigData
         }
     }
 
+    public record HotswapConfig (int minimumExpiration, int maximumExpiration, int recoveryTime){}
+
     // General options
     public final PluginConfiguration configuration;
     public final String defaultWorldName;
@@ -72,6 +74,7 @@ public class ConfigData
     public final boolean disableAdvancements;
     public final boolean disableStatistics;
     public final boolean endGameWithoutTeams;
+    public final HotswapConfig hotswapMode;
 
     // Player data options
     public final boolean savePlayerInformation;
@@ -117,6 +120,10 @@ public class ConfigData
         this.disableAdvancements = config.getBoolean("disableAdvancements", false);
         this.disableStatistics = config.getBoolean("disableStatistics", false);
         this.endGameWithoutTeams = config.getBoolean("endGameWithoutTeams", true);
+        this.hotswapMode = new HotswapConfig(
+                config.getInt("hotswapMode.minimumExpirationTime", 5),
+                config.getInt("hotswapMode.maximumExpirationTime", 15),
+                config.getInt("hotswapMode.recoverTime", 10));
 
         // Player
         this.savePlayerInformation = config.getBoolean("playerLoadStrategy", true);

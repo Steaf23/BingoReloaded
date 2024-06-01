@@ -97,7 +97,7 @@ public class BingoTask
         // Step 1: create the item and put the new name, description and material on it.
         if (isVoided()) // VOIDED TASK
         {
-            item = new ItemTemplate(Material.BEDROCK, "");
+            item = new ItemTemplate(Material.STRUCTURE_VOID, "");
             BaseComponent[] addedDesc = BingoTranslation.VOIDED.asComponent(Set.of(ChatColor.DARK_GRAY));
 
             ComponentBuilder nameBuilder = new ComponentBuilder().color(ChatColor.DARK_GRAY).strikethrough(true);
@@ -107,6 +107,7 @@ public class BingoTask
 
             item.setName(nameBuilder.build());
             item.setLore(addedDesc);
+            item.setGlowing(true);
         }
         else if (isCompleted()) // COMPLETED TASK
         {

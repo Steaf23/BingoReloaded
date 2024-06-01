@@ -2,12 +2,15 @@ package io.github.steaf23.bingoreloaded.cards;
 
 import io.github.steaf23.bingoreloaded.data.BingoCardData;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
+import io.github.steaf23.bingoreloaded.data.ConfigData;
 import io.github.steaf23.bingoreloaded.event.BingoPlaySoundEvent;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.gui.inventory.HotswapCardMenu;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.tasks.BingoTask;
+import io.github.steaf23.bingoreloaded.tasks.ItemTask;
+import io.github.steaf23.bingoreloaded.tasks.TaskData;
 import io.github.steaf23.bingoreloaded.tasks.tracker.TaskProgressTracker;
 import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.bingoreloaded.util.timer.GameTimer;
@@ -16,6 +19,7 @@ import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.Sound;
 
 import java.util.*;
@@ -27,9 +31,9 @@ public class HotswapBingoCard extends BingoCard
     private final GameTimer taskTimer;
 
     private final Random randomExpiryProvider;
-    private final int minExpirationTime = 1;
-    private final int maxExpirationTime = 1;
-    private final int recoveryTimeSeconds = 5;
+    private final int minExpirationTime;
+    private final int maxExpirationTime;
+    private final int recoveryTimeSeconds;
 
     private final List<HotswapTaskHolder> taskHolders;
     private Supplier<BingoTask> bingoTaskGenerator;
@@ -39,11 +43,10 @@ public class HotswapBingoCard extends BingoCard
     // Used to call the play sound event for expiring tasks
     private final BingoGame game;
 
-    public HotswapBingoCard(MenuBoard menuBoard, CardSize size, BingoGame game, TaskProgressTracker progressTracker) {
-        this(menuBoard, size, game, progressTracker, -1);
-    }
+    // List used to draw random tasks from
+    private final List<TaskData> randomTasks;
 
-    public HotswapBingoCard(MenuBoard menuBoard, CardSize size, BingoGame game, TaskProgressTracker progressTracker, int winningScore) {
+    public HotswapBingoCard(MenuBoard menuBoard, CardSize size, BingoGame game, TaskProgressTracker progressTracker, int winningScore, ConfigData.HotswapConfig config) {
         super(new HotswapCardMenu(menuBoard, size, BingoTranslation.CARD_TITLE.translate()), size, progressTracker);
         this.winningScore = winningScore;
         this.taskTimer = game.getTimer();
@@ -53,6 +56,10 @@ public class HotswapBingoCard extends BingoCard
         this.bingoTaskGenerator = () -> null;
         this.cardData = new BingoCardData();
         this.game = game;
+        this.minExpirationTime = config.minimumExpiration();
+        this.maxExpirationTime = config.maximumExpiration();
+        this.recoveryTimeSeconds = config.recoveryTime();
+        this.randomTasks = new ArrayList<>();
         taskTimer.addNotifier(this::updateTaskExpiration);
         menu.setInfo(BingoTranslation.INFO_HOTSWAP_NAME.translate(),
                 BingoTranslation.INFO_HOTSWAP_DESC.translate(String.valueOf(winningScore)).split("\\n"));
@@ -88,7 +95,15 @@ public class HotswapBingoCard extends BingoCard
         }
 
         bingoTaskGenerator = () -> {
-            return new BingoTask(cardData.getRandomTask(cardName, randomExpiryProvider, withStatistics, withAdvancements));
+            if (randomTasks.isEmpty()) {
+                randomTasks.addAll(cardData.getAllTasks(cardName, withStatistics, withAdvancements));
+                Collections.shuffle(randomTasks, randomExpiryProvider);
+            }
+            if (randomTasks.isEmpty()) {
+                return new BingoTask(new ItemTask(Material.DIRT, 1));
+            }
+
+            return new BingoTask(randomTasks.remove(randomTasks.size() - 1));
         };
     }
 
@@ -96,7 +111,7 @@ public class HotswapBingoCard extends BingoCard
     public void setTasks(List<BingoTask> tasks) {
         taskHolders.clear();
         for (BingoTask task : tasks) {
-            int expirationTime = randomExpiryProvider.nextInt(minExpirationTime, (maxExpirationTime + 1)) * 60;
+            int expirationTime = randomExpiryProvider.nextInt(minExpirationTime * 60, (maxExpirationTime * 60) + 1);
             taskHolders.add(new HotswapTaskHolder(task, expirationTime, recoveryTimeSeconds));
         }
         ((HotswapCardMenu)menu).updateTaskHolders(taskHolders);

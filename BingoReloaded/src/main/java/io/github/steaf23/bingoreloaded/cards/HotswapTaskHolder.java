@@ -8,14 +8,12 @@ import io.github.steaf23.easymenulib.util.ChatColorGradient;
 import io.github.steaf23.easymenulib.util.ExtraMath;
 import net.md_5.bungee.api.ChatColor;
 
-import java.util.Random;
 import java.util.Set;
-import java.util.function.Supplier;
 
 public class HotswapTaskHolder
 {
     public BingoTask task;
-    public int expirationTimeMinutes;
+    public int expirationTimeSeconds;
     public int recoveryTime;
     public int currentTime;
     public boolean recovering;
@@ -28,7 +26,7 @@ public class HotswapTaskHolder
 
     public HotswapTaskHolder(BingoTask task, int expirationTimeMinutes, int recoverTime) {
         this.task = task;
-        this.expirationTimeMinutes = expirationTimeMinutes;
+        this.expirationTimeSeconds = expirationTimeMinutes;
         this.recoveryTime = recoverTime;
         this.currentTime = expirationTimeMinutes;
         this.recovering = false;
@@ -55,6 +53,6 @@ public class HotswapTaskHolder
     }
 
     private ChatColor getColorForExpirationTime() {
-        return EXPIRATION_GRADIENT.sample(ExtraMath.map(currentTime, 0.0f, expirationTimeMinutes, 1.0f, 0.0f));
+        return EXPIRATION_GRADIENT.sample(ExtraMath.map(currentTime, 0.0f, expirationTimeSeconds, 1.0f, 0.0f));
     }
 }
