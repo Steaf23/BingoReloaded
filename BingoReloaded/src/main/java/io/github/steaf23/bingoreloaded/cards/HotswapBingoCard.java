@@ -81,14 +81,14 @@ public class HotswapBingoCard extends BingoCard
      */
     @Override
     public void generateCard(String cardName, int seed, boolean withAdvancements, boolean withStatistics) {
-        super.generateCard(cardName, seed, false, false);
+        super.generateCard(cardName, seed, withAdvancements, withStatistics);
 
         if (seed != 0) {
             randomExpiryProvider.setSeed(seed);
         }
 
         bingoTaskGenerator = () -> {
-            return new BingoTask(cardData.getRandomItemTask(cardName, randomExpiryProvider));
+            return new BingoTask(cardData.getRandomTask(cardName, randomExpiryProvider, withStatistics, withAdvancements));
         };
     }
 
@@ -141,6 +141,7 @@ public class HotswapBingoCard extends BingoCard
                     lastExpiredTask = holder.task;
                     holder.task.setVoided(true);
                     holder.startRecovering();
+                    progressTracker.removeTask(holder.task);
                 }
             }
             idx++;

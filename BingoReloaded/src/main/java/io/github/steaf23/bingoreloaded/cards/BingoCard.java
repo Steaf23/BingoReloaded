@@ -1,33 +1,18 @@
 package io.github.steaf23.bingoreloaded.cards;
 
 
-import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.BingoCardData;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.data.TaskListData;
-import io.github.steaf23.bingoreloaded.event.BingoCardTaskCompleteEvent;
-import io.github.steaf23.bingoreloaded.event.BingoStatisticCompletedEvent;
-import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.gui.inventory.CardMenu;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
-import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.tasks.*;
-import io.github.steaf23.bingoreloaded.tasks.BingoStatistic;
 import io.github.steaf23.bingoreloaded.tasks.tracker.TaskProgressTracker;
 import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.easymenulib.inventory.MenuBoard;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.event.entity.EntityPickupItemEvent;
-import org.bukkit.event.inventory.ClickType;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryType;
-import org.bukkit.event.player.PlayerAdvancementDoneEvent;
-import org.bukkit.event.player.PlayerDropItemEvent;
-import org.bukkit.event.player.PlayerStatisticIncrementEvent;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -133,7 +118,7 @@ public class BingoCard
 
         // Shuffle and add tasks to the card.
         Collections.shuffle(newTasks, shuffler);
-        setTasks(newTasks.stream().map(data -> new BingoTask(data)).toList());
+        setTasks(newTasks.stream().map(BingoTask::new).toList());
     }
 
     public void showInventory(Player player) {

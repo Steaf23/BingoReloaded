@@ -15,4 +15,12 @@ public class BingoStatisticCompletedEvent extends BingoEvent
         this.stat = stat;
         this.player = player;
     }
+
+    public BingoParticipant getParticipant() {
+        return player;
+    }
+
+    public BingoStatistic getStatistic() {
+        return stat;
+    }
 }

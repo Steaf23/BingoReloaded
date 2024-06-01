@@ -99,7 +99,19 @@ public class BingoCardData
         if (allItemTasks.size() > 0)
             return (ItemTask)allItemTasks.get(Math.abs(generator.nextInt(allItemTasks.size())));
         else
-            return new ItemTask(Material.DIAMOND_HOE, 1);
+            return new ItemTask(Material.DIRT, 1);
+    }
+
+    public TaskData getRandomTask(String cardName, @NotNull Random generator, boolean withStatistics, boolean withAdvancements) {
+        List<TaskData> tasks = new ArrayList<>();
+        getListNames(cardName).forEach((l) -> tasks.addAll(listsData.getTasks(l, withStatistics, withAdvancements)));
+
+        List<TaskData> allTasks = tasks;
+
+        if (allTasks.size() > 0)
+            return allTasks.get(Math.abs(generator.nextInt(allTasks.size())));
+        else
+            return new ItemTask(Material.DIRT, 1);
     }
 
     public Set<String> getListNames(String cardName)

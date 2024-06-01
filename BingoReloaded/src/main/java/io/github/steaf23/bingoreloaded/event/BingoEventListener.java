@@ -4,6 +4,7 @@ import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gameloop.phase.PregameLobby;
 import io.github.steaf23.bingoreloaded.tasks.tracker.StatisticTracker;
+import io.github.steaf23.bingoreloaded.util.Message;
 import org.bukkit.World;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -228,6 +229,20 @@ public class BingoEventListener implements Listener
         if (game != null)
         {
             game.getProgressTracker().handlePlayerStatIncrement(event);
+        }
+    }
+
+    @EventHandler
+    public void handleBingoStatisticCompleted(final BingoStatisticCompletedEvent event)
+    {
+        if (disableStatistics)
+            return;
+
+        BingoSession session = event.getSession();
+        BingoGame game = session != null && session.isRunning() ? (BingoGame)session.phase() : null;
+        if (game != null)
+        {
+            game.getProgressTracker().handleBingoStatisticCompleted(event);
         }
     }
 

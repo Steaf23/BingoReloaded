@@ -2,6 +2,7 @@ package io.github.steaf23.bingoreloaded.tasks.tracker;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.event.BingoCardTaskCompleteEvent;
+import io.github.steaf23.bingoreloaded.event.BingoStatisticCompletedEvent;
 import io.github.steaf23.bingoreloaded.event.BingoTaskProgressCompletedEvent;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
@@ -57,11 +58,13 @@ public class TaskProgressTracker
     }
 
     private final BingoGame game;
-    private Map<BingoTask, List<TaskProgress>> progressMap;
+    private final Map<BingoTask, List<TaskProgress>> progressMap;
+    private final StatisticTracker statisticTracker;
 
     public TaskProgressTracker(BingoGame game) {
         this.game = game;
         this.progressMap = new HashMap<>();
+        this.statisticTracker = new StatisticTracker();
     }
 
     public void startTrackingTask(BingoTask task) {
@@ -83,15 +86,15 @@ public class TaskProgressTracker
                     progress.getAwardedCriteria().forEach(progress::revokeCriteria);
                 });
             } else if (task.type == BingoTask.TaskType.STATISTIC) {
-                // travel statistics are counted * 1000
                 StatisticTask statisticTask = (StatisticTask) task.data;
-                if (statisticTask.statistic().getCategory() == BingoStatistic.StatisticCategory.TRAVEL)
-                {
-                    finalCount *= 1000;
-                }
+                // travel statistics are counted * 1000
+//                if (statisticTask.statistic().getCategory() == BingoStatistic.StatisticCategory.TRAVEL)
+//                {
+//                    finalCount *= 1000;
+//                }
 
-                // reset statistic to 0 for player
-                setPlayerStatistic(statisticTask.statistic(), participant, 0);
+                // the stat tracker will reset progress to 0 for every statistic added.
+                statisticTracker.addStatistic(statisticTask, participant);
             } else {
                 // No progress to reset for item tasks
             }
@@ -125,8 +128,8 @@ public class TaskProgressTracker
         });
     }
 
-    public void handlePlayerStatIncrement(final PlayerStatisticIncrementEvent event) {
-        BingoParticipant participant = getValidParticipant(event.getPlayer());
+    public void handleBingoStatisticCompleted(final BingoStatisticCompletedEvent event) {
+        BingoParticipant participant = getValidParticipant(event.getParticipant());
         if (participant == null) {
             return;
         }
@@ -138,17 +141,20 @@ public class TaskProgressTracker
             if (task.type != BingoTask.TaskType.STATISTIC) {
                 return false;
             }
-            BingoStatistic statistic = new BingoStatistic(event.getStatistic(), event.getEntityType(), event.getMaterial());
+            BingoStatistic statistic = event.getStatistic();
             StatisticTask data = (StatisticTask) task.data;
 
-            if (!data.statistic().equals(statistic) ||
-                    data.getCount() != event.getNewValue()) {
+            if (!data.statistic().equals(statistic)) {
                 return false;
             }
 
-            progress.addProgress(data.getCount());
+            progress.setProgress(data.getCount());
             return tryCompleteTask(task, progress);
         });
+    }
+
+    public void handlePlayerStatIncrement(final PlayerStatisticIncrementEvent event) {
+        statisticTracker.handleStatisticIncrement(event, game);
     }
 
     private ItemStack completeItemSlot(ItemStack item, BingoParticipant participant) {
@@ -304,7 +310,14 @@ public class TaskProgressTracker
     }
 
     public void updateStatisticProgress() {
-        //TODO: update progress of periodic statistic tasks..
+        statisticTracker.updateProgress();
+    }
+
+    public void removeTask(BingoTask task) {
+        progressMap.remove(task);
+        if (task.type == BingoTask.TaskType.STATISTIC) {
+            statisticTracker.removeStatistic((StatisticTask) task.data);
+        }
     }
 
     private boolean tryCompleteTask(BingoTask task, TaskProgress progress) {
@@ -327,6 +340,10 @@ public class TaskProgressTracker
         var progressCompletedEvent = new BingoTaskProgressCompletedEvent(player.getSession(), task);
         Bukkit.getPluginManager().callEvent(progressCompletedEvent);
         return true;
+    }
+
+    private @Nullable BingoParticipant getValidParticipant(@Nullable BingoParticipant participant) {
+        return getValidParticipant(participant.sessionPlayer().orElseGet(null));
     }
 
     private @Nullable BingoParticipant getValidParticipant(@Nullable Player player) {

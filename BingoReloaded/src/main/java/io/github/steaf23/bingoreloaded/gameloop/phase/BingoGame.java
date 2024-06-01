@@ -123,10 +123,6 @@ public class BingoGame implements GamePhase
 
                 p.giveKit(settings.kit());
                 returnCardToPlayer(settings.kit().getCardSlot(), p);
-                if (useAdvancements)
-                {
-                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "advancement revoke " + player.getName() + " everything");
-                }
                 player.setLevel(0);
                 player.setExp(0.0f);
             }
