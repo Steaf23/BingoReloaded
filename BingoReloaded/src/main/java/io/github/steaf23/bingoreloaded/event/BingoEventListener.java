@@ -4,6 +4,7 @@ import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gameloop.phase.PregameLobby;
 import io.github.steaf23.bingoreloaded.tasks.tracker.StatisticTracker;
+import io.github.steaf23.bingoreloaded.util.BingoReloadedPlaceholderExpansion;
 import io.github.steaf23.bingoreloaded.util.Message;
 import org.bukkit.World;
 import org.bukkit.event.EventHandler;
@@ -53,6 +54,16 @@ public class BingoEventListener implements Listener
         if (game != null)
         {
             game.handleBingoTaskComplete(event);
+        }
+    }
+
+    @EventHandler
+    public void handleDeathmatchTaskCompleted(final BingoDeathmatchTaskCompletedEvent event) {
+        BingoSession session = event.getSession();
+        BingoGame game = session != null && session.isRunning() ? (BingoGame)session.phase() : null;
+        if (game != null)
+        {
+            game.handleDeathmatchTaskComplete(event);
         }
     }
 
@@ -270,7 +281,6 @@ public class BingoEventListener implements Listener
     {
         event.getSession().handlePlayerJoinedSessionWorld(event);
         event.getSession().phase().handlePlayerJoinedSessionWorld(event);
-        event.getSession().scoreboard.handlePlayerJoin(event);
         event.getSession().teamManager.handlePlayerJoinedSessionWorld(event);
     }
 
@@ -279,7 +289,6 @@ public class BingoEventListener implements Listener
     {
         event.getSession().handlePlayerLeftSessionWorld(event);
         event.getSession().phase().handlePlayerLeftSessionWorld(event);
-        event.getSession().scoreboard.handlePlayerLeave(event);
         event.getSession().teamManager.handlePlayerLeftSessionWorld(event);
     }
 

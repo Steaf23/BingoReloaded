@@ -34,14 +34,3 @@ add command to see all teams with players in it from lobby
 create hover message when starting game to see settings chosen..
 
 link nether and end portals in world-groups.
-
-improve scoreboard
-  - rework team board with new scoreboard
-  - sort teams on score count
-  - last line of team scoreboard should show something like "and x others.."
-
-create new gamemode; Hot-Swap
-  - How to deal with advancement/statistic tracking when tasks are being created all the time?
-    - Advancements can be revoked when an advancement task appears
-    - Statistics can be reset when a statistic task appears?
-      ( probably rework statistics progress system...

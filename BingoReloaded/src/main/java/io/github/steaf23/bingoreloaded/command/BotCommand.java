@@ -1,7 +1,8 @@
 package io.github.steaf23.bingoreloaded.command;
 
+import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.cards.BingoCard;
-import io.github.steaf23.bingoreloaded.event.BingoCardTaskCompleteEvent;
+import io.github.steaf23.bingoreloaded.event.BingoTaskProgressCompletedEvent;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.team.TeamManager;
@@ -27,6 +28,7 @@ public class BotCommand implements TabExecutor
 
     public BotCommand(TeamManager teamManager) {
         this.teamManager = teamManager;
+        BingoReloaded.getInstance().registerCommand("bingobot", this);
     }
 
     @Override
@@ -93,15 +95,18 @@ public class BotCommand implements TabExecutor
 
         BingoTask task = card.getTasks().get(taskIndex);
         task.complete(player, ((BingoGame) player.getSession().phase()).getGameTime());
-        var slotEvent = new BingoCardTaskCompleteEvent(task, player, card.hasBingo(player.getTeam()));
+        var slotEvent = new BingoTaskProgressCompletedEvent(player.getSession(), task);
         Bukkit.getPluginManager().callEvent(slotEvent);
     }
 
     @Nullable
     private BingoParticipant getVirtualPlayerFromName(String name) {
         for (BingoParticipant participant : teamManager.getParticipants()) {
-            if (participant instanceof VirtualBingoPlayer virtualPlayer && virtualPlayer.getName().equalsIgnoreCase(name)) {
-                return participant;
+            if (participant instanceof VirtualBingoPlayer virtualPlayer) {
+                Message.log("name: " + name + " virtual: " + virtualPlayer.getName());
+                if (virtualPlayer.getName().equalsIgnoreCase(name)) {
+                    return participant;
+                }
             }
         }
 

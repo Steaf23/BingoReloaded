@@ -4,6 +4,7 @@ import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.data.TeamData;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
+import io.github.steaf23.bingoreloaded.player.team.BasicTeamManager;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.player.team.TeamManager;
 import io.github.steaf23.easymenulib.inventory.FilterType;
@@ -14,11 +15,15 @@ import io.github.steaf23.easymenulib.util.ChatComponentUtils;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.checkerframework.checker.units.qual.A;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 
 public class TeamSelectionMenu extends PaginatedSelectionMenu
 {
@@ -56,8 +61,22 @@ public class TeamSelectionMenu extends PaginatedSelectionMenu
         super.beforeOpening(player);
 
         List<ItemTemplate> optionItems = new ArrayList<>();
-        optionItems.add(new ItemTemplate(Material.NETHER_STAR, "" + ChatColor.BOLD + ChatColor.ITALIC + BingoTranslation.TEAM_AUTO.translate())
-                .setCompareKey("item_auto"));
+        ItemTemplate autoItem = new ItemTemplate(Material.NETHER_STAR, "" + ChatColor.BOLD + ChatColor.ITALIC + BingoTranslation.TEAM_AUTO.translate())
+                .setCompareKey("item_auto");
+        if (teamManager instanceof BasicTeamManager basicManager && player instanceof Player gamePlayer) {
+            Set<UUID> autoPlayers = basicManager.getParticipantsInAutoTeam();
+            List<String> description = new ArrayList<>();
+            if (autoPlayers.contains(player.getUniqueId())) {
+                description.add("" + ChatColor.GRAY + ChatColor.BOLD + " ┗ " + ChatColor.RESET + ChatColor.WHITE + gamePlayer.getDisplayName());
+                description.add(" ");
+                description.add("" + ChatColor.DARK_GRAY + BingoTranslation.COUNT_MORE.translate(Integer.toString(autoPlayers.size() - 1)));
+            }
+            else {
+                description.add("" + ChatColor.DARK_GRAY + BingoTranslation.COUNT_MORE.translate(Integer.toString(autoPlayers.size())));
+            }
+            autoItem.addDescription("joined", 1, description.toArray(new String[]{}));
+        }
+        optionItems.add(autoItem);
         optionItems.add(new ItemTemplate(Material.TNT, "" + ChatColor.BOLD + ChatColor.ITALIC + BingoTranslation.OPTIONS_LEAVE.translate())
                 .setGlowing(true).setCompareKey("item_leave"));
 

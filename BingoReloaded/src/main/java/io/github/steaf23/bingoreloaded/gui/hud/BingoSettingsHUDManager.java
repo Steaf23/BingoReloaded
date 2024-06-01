@@ -5,8 +5,10 @@ import io.github.steaf23.bingoreloaded.gui.inventory.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
 import io.github.steaf23.easymenulib.scoreboard.HUDRegistry;
 import io.github.steaf23.easymenulib.scoreboard.PlayerHUD;
+import io.github.steaf23.easymenulib.scoreboard.PlayerHUDGroup;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -17,28 +19,26 @@ import java.util.Map;
 /**
  * Manager of multiple player HUDs, to show similar contents, but allows for per-player options as well
  */
-public class BingoSettingsHUDManager
+public class BingoSettingsHUDManager extends PlayerHUDGroup
 {
-    private final List<PlayerHUD> huds;
-    private final HUDRegistry registry;
     private final ScoreboardData.SidebarTemplate settingsBoardTemplate;
-    private final Map<String, String> registeredFields;
 
     public BingoSettingsHUDManager(HUDRegistry registry) {
-        this.huds = new ArrayList<>();
-        this.registry = registry;
-        this.registeredFields = new HashMap<>();
+        super(registry);
         this.settingsBoardTemplate = new ScoreboardData().loadTemplate("lobby", registeredFields);
 
         setStatus("");
         updateSettings(null);
     }
 
+    @Override
+    protected PlayerHUD createHUDForPlayer(Player player) {
+        return new TemplatedPlayerHUD(player, "Bingo Settings", settingsBoardTemplate);
+    }
+
     public void setStatus(String status) {
         registeredFields.put("status", status);
-        for (PlayerHUD hud : huds) {
-            hud.update();
-        }
+        updateVisible();
     }
 
     public void updateSettings(@Nullable BingoSettings settings) {
@@ -49,7 +49,7 @@ public class BingoSettingsHUDManager
         registeredFields.put("card_size", settings.size().toString());
         registeredFields.put("kit", settings.kit().getDisplayName());
         registeredFields.put("team_size", Integer.toString(settings.maxTeamSize()));
-        registeredFields.put("duration", Integer.toString(settings.countdownDuration()));
+        registeredFields.put("duration", settings.enableCountdown() ? Integer.toString(settings.countdownDuration()) : "∞");
 
         String effects = "";
         if (settings.effects().size() == 0)
@@ -79,31 +79,7 @@ public class BingoSettingsHUDManager
         }
         registeredFields.put("effects", effects);
 
-        for (PlayerHUD hud : huds) {
-            hud.update();
-        }
+        updateVisible();
     }
 
-    public void addPlayer(Player player) {
-        // Don't re-add players if they are already added
-        if (huds.stream().filter(hud -> player.getUniqueId().equals(hud.getPlayerId())).count() > 0) {
-            return;
-        }
-        PlayerHUD hud = new BingoStatusHUD(player, "Bingo Settings", settingsBoardTemplate);
-        registry.addPlayerHUD(hud);
-        huds.add(hud);
-    }
-
-    public void removePlayer(Player player) {
-        registry.removePlayerHUD(player.getUniqueId());
-        huds.removeIf(h -> h.getPlayerId().equals(player));
-    }
-
-    public void removeAllPlayers() {
-        for (PlayerHUD hud : huds) {
-            registry.removePlayerHUD(hud.getPlayerId());
-        }
-
-        huds.clear();
-    }
 }

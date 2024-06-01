@@ -1,40 +1,38 @@
 package io.github.steaf23.bingoreloaded.gameloop;
 
-import io.github.steaf23.bingoreloaded.BingoReloaded;
-import io.github.steaf23.bingoreloaded.data.BingoTranslation;
-import io.github.steaf23.bingoreloaded.event.PlayerJoinedSessionWorldEvent;
-import io.github.steaf23.bingoreloaded.event.PlayerLeftSessionWorldEvent;
+import io.github.steaf23.bingoreloaded.data.ScoreboardData;
+import io.github.steaf23.bingoreloaded.gui.hud.TemplatedPlayerHUD;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
-import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.player.team.TeamManager;
+import io.github.steaf23.bingoreloaded.util.BingoReloadedPlaceholderExpansion;
 import io.github.steaf23.easymenulib.scoreboard.HUDRegistry;
-import io.github.steaf23.easymenulib.scoreboard.SidebarHUD;
+import io.github.steaf23.easymenulib.scoreboard.PlayerHUD;
+import io.github.steaf23.easymenulib.scoreboard.PlayerHUDGroup;
 import net.md_5.bungee.api.ChatColor;
-import org.bukkit.Bukkit;
-import org.bukkit.scoreboard.Criteria;
-import org.bukkit.scoreboard.Objective;
-import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
-public class BingoScoreboard implements SessionMember
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+public class BingoScoreboard extends PlayerHUDGroup implements SessionMember
 {
-    private final Scoreboard teamBoard;
-    private final SidebarHUD hud;
-    private final Objective taskObjective;
+    // map of team IDs and their scores
+    private final Map<String, Integer> teamScores;
     private final BingoSession session;
-    private final boolean showPlayer;
+    private final boolean showPlayerNames;
+    private final ScoreboardData.SidebarTemplate template;
 
-    public BingoScoreboard(HUDRegistry registry, BingoSession session, boolean showPlayer)
-    {
+    public BingoScoreboard(HUDRegistry registry, BingoSession session, boolean showPlayerNames) {
+        super(registry);
+
         this.session = session;
-        this.showPlayer = showPlayer;
-        this.teamBoard = Bukkit.getScoreboardManager().getNewScoreboard();
-        this.hud = new SidebarHUD("" + ChatColor.ITALIC + ChatColor.UNDERLINE + BingoTranslation.GAME_SCOREBOARD_TITLE.translate());
-
-        this.taskObjective = teamBoard.registerNewObjective("item_count", Criteria.DUMMY, "item_count");
-
-        reset();
+        this.teamScores = new HashMap<>();
+        this.showPlayerNames = showPlayerNames;
+        this.template = new ScoreboardData().loadTemplate("game", registeredFields);
     }
 
     public void updateTeamScores()
@@ -42,92 +40,44 @@ public class BingoScoreboard implements SessionMember
         if (!session.isRunning())
             return;
 
-        BingoReloaded.scheduleTask(task ->
+        for (BingoTeam t : session.teamManager.getActiveTeams())
         {
-            Objective objective = teamBoard.getObjective("item_count");
-            if (objective == null)
-                return;
-
-            for (BingoTeam t : session.teamManager.getActiveTeams())
+            if (t.card != null)
             {
-                if (t.card != null)
-                {
-                    objective.getScore(t.getIdentifier()).setScore(t.card.getCompleteCount(t));
-                }
+                teamScores.put(t.getIdentifier(),t.card.getCompleteCount(t));
             }
-            updateVisual();
-        });
-    }
+        }
 
-    public void updateVisual()
-    {
-        hud.clear();
+        StringBuilder teamInfoString = new StringBuilder();
 
         TeamManager teamManager = session.teamManager;
 
-        boolean condensedDisplay = !showPlayer
-                || teamManager.getTeamCount() + teamManager.getParticipantCount() > 13;
+        // try to save space on the sidebar
+        int spaceLeft = 15 - template.lines().length;
+        boolean condensedDisplay = !showPlayerNames
+                || teamManager.getTeamCount() + teamManager.getParticipantCount() > spaceLeft;
 
-        hud.setText(0, " ");
-        int lineIndex = 1;
-        for (BingoTeam team : teamManager.getActiveTeams())
-        {
-            String teamScoreLine = "" + ChatColor.DARK_RED + "[" + team.getColoredName().toLegacyText() + ChatColor.DARK_RED + "]" +
-                    ChatColor.WHITE + ": " + ChatColor.BOLD + taskObjective.getScore(team.getIdentifier()).getScore();
-            hud.setText(lineIndex, teamScoreLine);
-            lineIndex += 1;
+        teamManager.getActiveTeams().getTeams().stream()
+                .sorted(Comparator.comparingInt(BingoTeam::getCompleteCount).reversed())
+                .forEach(team -> {
+                    String teamScoreLine = "" + team.getColoredName().toLegacyText() + ChatColor.RESET +
+                            ChatColor.WHITE + ": " + ChatColor.BOLD + teamScores.get(team.getIdentifier());
+                    teamInfoString.append(teamScoreLine);
+                    teamInfoString.append("\n");
 
-            if (!condensedDisplay)
-            {
-                for (BingoParticipant player : team.getMembers())
-                {
-                    String playerLine = "" + ChatColor.GRAY + ChatColor.BOLD + " ┗ " + ChatColor.RESET + player.getDisplayName();
-                    hud.setText(lineIndex, playerLine);
-                    lineIndex += 1;
-                }
-            }
-        }
+                    if (!condensedDisplay)
+                    {
+                        for (BingoParticipant player : team.getMembers())
+                        {
+                            String playerLine = "" + ChatColor.GRAY + ChatColor.BOLD + " ┗ " + ChatColor.RESET + player.getDisplayName();
+                            teamInfoString.append(playerLine);
+                            teamInfoString.append("\n");
+                        }
+                    }
+                });
 
-        for (BingoParticipant p : teamManager.getParticipants())
-        {
-            if (p instanceof BingoPlayer bingoPlayer)
-                bingoPlayer.sessionPlayer().ifPresent(hud::applyToPlayer);
-        }
-    }
-
-    public void reset()
-    {
-        BingoReloaded.scheduleTask(task -> {
-            for (String entry : teamBoard.getEntries())
-            {
-                teamBoard.resetScores(entry);
-            }
-
-            for (BingoParticipant p : session.teamManager.getParticipants())
-            {
-                if (p instanceof BingoPlayer bingoPlayer)
-                {
-                    bingoPlayer.sessionPlayer().ifPresent(hud::removeFromPlayer);
-                }
-            }
-
-            updateTeamScores();
-        });
-    }
-
-    public Scoreboard getTeamBoard()
-    {
-        return teamBoard;
-    }
-
-    public void handlePlayerJoin(final PlayerJoinedSessionWorldEvent event)
-    {
-        hud.applyToPlayer(event.getPlayer());
-    }
-
-    public void handlePlayerLeave(final PlayerLeftSessionWorldEvent event)
-    {
-        hud.removeFromPlayer(event.getPlayer());
+        registeredFields.put("team_info", teamInfoString.toString());
+        updateVisible();
     }
 
     @Override
@@ -137,6 +87,12 @@ public class BingoScoreboard implements SessionMember
 
     @Override
     public void setup() {
-        reset();
+        this.teamScores.clear();
+        updateTeamScores();
+    }
+
+    @Override
+    protected PlayerHUD createHUDForPlayer(Player player) {
+        return new TemplatedPlayerHUD(player, "Team Score", template);
     }
 }

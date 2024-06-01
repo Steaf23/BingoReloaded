@@ -86,6 +86,7 @@ public class BingoGame implements GamePhase
             actionBarManager.requestMessage(timerMessage::asComponent, 0);
             actionBarManager.update();
             getProgressTracker().updateStatisticProgress();
+            scoreboard.updateVisible();
         });
 
         deathMatchTask = null;
@@ -125,11 +126,12 @@ public class BingoGame implements GamePhase
                 returnCardToPlayer(settings.kit().getCardSlot(), p);
                 player.setLevel(0);
                 player.setExp(0.0f);
+                scoreboard.addPlayer(player);
             }
         });
 
         // Post-start Setup
-        scoreboard.reset();
+        scoreboard.setup();
 
         var event = new BingoStartedEvent(session);
         Bukkit.getPluginManager().callEvent(event);
@@ -179,7 +181,7 @@ public class BingoGame implements GamePhase
         timer.stop();
 
         if (!config.keepScoreboardVisible) {
-            scoreboard.reset();
+            scoreboard.setup();
         }
 
         getTeamManager().getParticipants().forEach(p -> p.takeEffects(false));
@@ -445,7 +447,7 @@ public class BingoGame implements GamePhase
 
     public void handleBingoTaskComplete(final BingoTaskProgressCompletedEvent event) {
         String timeString = GameTimer.getTimeAsString(getGameTime());
-        BingoParticipant participant = event.getTask().getCompletedBy().orElseGet(null);
+        BingoParticipant participant = event.getTask().getCompletedBy().orElse(null);
         if (participant == null) {
             // I guess it was not actually completed?
             Message.warn("Task not completed correctly...? (Please report!)");
@@ -481,6 +483,18 @@ public class BingoGame implements GamePhase
         if (teamManager.getActiveTeams().getTotalCompleteCount() == lockoutCard.size.fullCardSize) {
             startDeathMatch(5);
         }
+    }
+
+    public void handleDeathmatchTaskComplete(final BingoDeathmatchTaskCompletedEvent event) {
+        String timeString = GameTimer.getTimeAsString(getGameTime());
+        BingoParticipant participant = event.getTask().getCompletedBy().orElse(null);
+        if (participant == null) {
+            // I guess it was not actually completed?
+            Message.warn("Task not completed correctly...? (Please report!)");
+            return;
+        }
+
+        bingo(participant.getTeam());
     }
 
     @Override

@@ -3,9 +3,7 @@ package io.github.steaf23.bingoreloaded.command;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.cards.BingoCard;
-import io.github.steaf23.bingoreloaded.data.world.WorldData;
-import io.github.steaf23.bingoreloaded.data.world.WorldGroup;
-import io.github.steaf23.bingoreloaded.event.BingoCardTaskCompleteEvent;
+import io.github.steaf23.bingoreloaded.event.BingoTaskProgressCompletedEvent;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.tasks.BingoTask;
@@ -16,7 +14,6 @@ import io.github.steaf23.easymenulib.inventory.item.ItemTemplate;
 import io.github.steaf23.easymenulib.inventory.item.action.ComboBoxButtonAction;
 import io.github.steaf23.easymenulib.inventory.item.action.SpinBoxButtonAction;
 import io.github.steaf23.easymenulib.inventory.item.action.ToggleButtonAction;
-import io.github.steaf23.easymenulib.util.ChatComponentUtils;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
@@ -24,9 +21,7 @@ import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
-import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.jetbrains.annotations.NotNull;
 
@@ -131,7 +126,7 @@ public class BingoTestCommand implements TabExecutor
 
         BingoTask task = card.getTasks().get(taskIndex);
         task.complete(player, ((BingoGame) player.getSession().phase()).getGameTime());
-        var slotEvent = new BingoCardTaskCompleteEvent(task, player, card.hasBingo(player.getTeam()));
+        var slotEvent = new BingoTaskProgressCompletedEvent(player.getSession(), task);
         Bukkit.getPluginManager().callEvent(slotEvent);
     }
 }

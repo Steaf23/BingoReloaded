@@ -12,6 +12,7 @@ import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
+import io.github.steaf23.bingoreloaded.util.timer.GameTimer;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -126,12 +127,13 @@ public class BingoReloadedPlaceholderExpansion extends PlaceholderExpansion
                 }
                 boolean running = session.isRunning();
                 if (session.phase() instanceof BingoGame game) {
-                    yield Long.toString(game.getGameTime());
+                    yield GameTimer.getTimeAsString(game.getGameTime());
                 }
                 yield "-";
             }
             case GAME_STATUS -> {
                 //TODO: implement
+                Message.error("placeholder bingoreloaded_game_status is not implemented yet!");
                 yield "-";
             }
             case SETTING_GAMEMODE -> {
@@ -172,6 +174,7 @@ public class BingoReloadedPlaceholderExpansion extends PlaceholderExpansion
             }
             case SETTING_EFFECTS -> {
                 //TODO: implement
+                Message.error("placeholder bingoreloaded_setting_effect is not implemented yet!");
                 yield "-";
             }
             case SETTING_HOTSWAP_WINSCORE -> {

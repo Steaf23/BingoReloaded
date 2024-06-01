@@ -27,6 +27,7 @@ public class BasicTeamManager implements TeamManager
     private final BingoTeamContainer activeTeams;
     private final Scoreboard teams;
     private final TeamData teamData;
+    private int maxTeamSize;
 
     // Contains all players that will join a team automatically when the game starts
     private final Map<UUID, String> automaticTeamPlayers;
@@ -37,6 +38,7 @@ public class BasicTeamManager implements TeamManager
         this.teamData = new TeamData();
         this.automaticTeamPlayers = new HashMap<>();
         this.activeTeams = new BingoTeamContainer();
+        this.maxTeamSize = session.settingsBuilder.view().maxTeamSize();
         createTeams();
     }
 
@@ -59,10 +61,9 @@ public class BasicTeamManager implements TeamManager
         {
         }
 
-        int totalPlayers = teams.getTeams().size() * getMaxTeamSize();
-        int availablePlayers = totalPlayers - getParticipantCount();
+        int availablePlayers = getCapacity() - activeTeams.getAllParticipants().size();
         if (automaticTeamPlayers.size() > availablePlayers) {
-            Message.error("Could not fit every player into a team, consider changing the team size or adding more teams");
+            Message.error("Could not fit every player into a team (Please report!)");
             return;
         }
 
@@ -176,7 +177,13 @@ public class BasicTeamManager implements TeamManager
 
     @Override
     public int getMaxTeamSize() {
-        return session.settingsBuilder.view().maxTeamSize();
+        return maxTeamSize;
+    }
+
+    @Override
+    public int getCapacity() {
+        int totalPlayers = teams.getTeams().size() * getMaxTeamSize();
+        return totalPlayers;
     }
 
     @Override
@@ -186,13 +193,23 @@ public class BasicTeamManager implements TeamManager
 
     @Override
     public boolean addMemberToTeam(BingoParticipant participant, String teamId) {
+        int participantCount = getParticipantCount();
+
         if (teamId.equals("auto")) {
             if (automaticTeamPlayers.containsKey(participant.getId())) {
                 return false;
             }
             removeMemberFromTeam(participant);
+            if (participantCount == getParticipantCount() && participantCount >= getCapacity()) {
+                return false;
+            }
 
-            automaticTeamPlayers.put(participant.getId(), participant.getDisplayName());
+
+            String name = participant.getDisplayName();
+            if (participant instanceof VirtualBingoPlayer virtualPlayer) {
+                name = virtualPlayer.getName();
+            }
+            automaticTeamPlayers.put(participant.getId(), name);
             participant.sessionPlayer().ifPresent(p -> {
                 new TranslatedMessage(BingoTranslation.JOIN_AUTO).color(ChatColor.GREEN)
                         .send(p);
@@ -217,6 +234,10 @@ public class BasicTeamManager implements TeamManager
 
         // We can only clear empty teams once we added the participant to the new team.
         removeMemberFromTeam(participant, false);
+        if (participantCount == getParticipantCount() && participantCount >= getCapacity()) {
+            activeTeams.removeEmptyTeams();
+            return false;
+        }
 
         bingoTeam.addMember(participant);
 
@@ -304,6 +325,10 @@ public class BasicTeamManager implements TeamManager
         return session;
     }
 
+    public Set<UUID> getParticipantsInAutoTeam() {
+        return automaticTeamPlayers.keySet();
+    }
+
     @Override
     public void setup() {
         addAutoPlayersToTeams();
@@ -323,6 +348,12 @@ public class BasicTeamManager implements TeamManager
         if (newTeamSize == getMaxTeamSize())
             return;
 
+        if (maxTeamSize < newTeamSize) {
+            maxTeamSize = newTeamSize;
+            return;
+        }
+
+        maxTeamSize = newTeamSize;
         if (!session.isRunning()) {
             getParticipants().forEach(p -> {
                 removeMemberFromTeam(p);

@@ -131,6 +131,7 @@ public enum BingoTranslation
     TEAM_ITEM_DESC("items.team.desc"),
     TEAM_AUTO("teams.auto"),
     LIST_COUNT("creator.card_item.desc"),
+    COUNT_MORE("menu.count_more"),
     ;
 
     private final String key;

@@ -1,11 +1,30 @@
 lobby:
-    title: "%bingoreloaded_team_color%AYO{$branding.scoreboard_title}"
+# Scoreboard variables:
+# - {status}: displays status of current game (like waiting for players or how many players joined the game)
+# - {gamemode}: selected gamemode
+# - {card_size}: selected card size
+# - {kit}: selected kit
+# - {effects}: selected effects (multiline)
+# - {team_size}: selected maximum team size
+# - {duration}: selected duration (or ∞ if countdown mode is not enabled)
+
+    title: "{$branding.scoreboard_title}"
     sidebar:
         - " "
         - "&c{status}"
         - " "
-        - "&lGamemode: {gamemode} {card_size}"
-        - "&lKit: {kit}"
-        - "&lEffects: {effects}"
-        - "&lTeam Size: {team_size}"
-        - "&lTime: {duration}"
+        - "&lGamemode:&r {gamemode} {card_size}"
+        - "&lKit:&r {kit}"
+        - "&lEffects:&r {effects}"
+        - "&lTeam Size:&r {team_size}"
+        - "&lTime:&r {duration}"
+
+game:
+# Scoreboard variables:
+# - {team_info}: displays currently playing teams and optionally team members if enough space is left (multiline)
+
+    title: "&n&o{$menu.completed}"
+    sidebar:
+        - " "
+        - "{team_info}"
+        - " "

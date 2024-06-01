@@ -62,6 +62,9 @@ public interface TeamManager extends SessionMember
 
     int getMaxTeamSize();
 
+    int getCapacity();
+
+
     default void handleSettingsUpdated(final BingoSettingsUpdatedEvent event) {
     }
 

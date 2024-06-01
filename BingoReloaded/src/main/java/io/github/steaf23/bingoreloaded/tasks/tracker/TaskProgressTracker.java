@@ -1,15 +1,12 @@
 package io.github.steaf23.bingoreloaded.tasks.tracker;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
-import io.github.steaf23.bingoreloaded.event.BingoCardTaskCompleteEvent;
+import io.github.steaf23.bingoreloaded.event.BingoDeathmatchTaskCompletedEvent;
 import io.github.steaf23.bingoreloaded.event.BingoStatisticCompletedEvent;
 import io.github.steaf23.bingoreloaded.event.BingoTaskProgressCompletedEvent;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
-import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.tasks.*;
-import io.github.steaf23.bingoreloaded.util.Message;
-import io.github.steaf23.easymenulib.util.ExtraMath;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.advancement.AdvancementProgress;
@@ -25,10 +22,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
-import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 public class TaskProgressTracker
 {
@@ -169,7 +163,8 @@ public class TaskProgressTracker
         BingoTask deathMatchTask = game.getDeathMatchTask();
         if (deathMatchTask != null) {
             if (item.getType().equals(deathMatchTask.material)) {
-                var slotEvent = new BingoCardTaskCompleteEvent(deathMatchTask, participant, true);
+                deathMatchTask.complete(participant, game.getGameTime());
+                var slotEvent = new BingoDeathmatchTaskCompletedEvent(participant.getSession(), deathMatchTask);
                 Bukkit.getPluginManager().callEvent(slotEvent);
             }
             return item;

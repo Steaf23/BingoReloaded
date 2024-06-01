@@ -82,6 +82,7 @@ menu:
   filter: "Filter..."
   clear: "Clear Filter/ Cancel"
   completed: "Completed Tasks"
+  count_more: "and {0} more..." # 0: amount
   card:
     title: "Card Viewer"
     info_regular:

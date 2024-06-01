@@ -158,6 +158,11 @@ public class SoloTeamManager implements TeamManager
         return 1;
     }
 
+    @Override
+    public int getCapacity() {
+        return Integer.MAX_VALUE;
+    }
+
 
     @Override
     public void handlePlayerJoinedSessionWorld(PlayerJoinedSessionWorldEvent event) {

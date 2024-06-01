@@ -1,6 +1,7 @@
 package io.github.steaf23.bingoreloaded.gameloop;
 
 import io.github.steaf23.bingoreloaded.*;
+import io.github.steaf23.bingoreloaded.command.BotCommand;
 import io.github.steaf23.bingoreloaded.data.*;
 import io.github.steaf23.bingoreloaded.data.helper.SerializablePlayer;
 import io.github.steaf23.bingoreloaded.data.world.WorldGroup;
@@ -27,6 +28,7 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.*;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scoreboard.Scoreboard;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -46,6 +48,7 @@ public class BingoSession
     private final PlayerSerializationData playerData;
     private final GameManager gameManager;
     private final BingoSoundPlayer soundPlayer;
+    private final BotCommand botCommand;
 
     // A bingo session controls 1 group of worlds
     private final WorldGroup worlds;
@@ -58,15 +61,18 @@ public class BingoSession
         this.worlds = worlds;
         this.config = config;
         this.playerData = playerData;
-        this.scoreboard = new BingoScoreboard(hudRegistry, this, config.showPlayerInScoreboard && false);
+        this.scoreboard = new BingoScoreboard(hudRegistry, this, config.showPlayerInScoreboard);
         this.soundPlayer = new BingoSoundPlayer(this);
+        this.settingsBuilder = new BingoSettingsBuilder(this);
+        Scoreboard board = Bukkit.getScoreboardManager().getNewScoreboard();
         if (config.singlePlayerTeams) {
-            this.teamManager = new SoloTeamManager(scoreboard.getTeamBoard(), this);
+            this.teamManager = new SoloTeamManager(board, this);
         }
         else {
-            this.teamManager = new BasicTeamManager(scoreboard.getTeamBoard(), this);
+            this.teamManager = new BasicTeamManager(board, this);
         }
 
+        this.botCommand = new BotCommand(teamManager);
 
         BingoReloaded.scheduleTask((t) -> {
             for (Player p : Bukkit.getOnlinePlayers()) {
@@ -146,10 +152,6 @@ public class BingoSession
         }
 
         phase = new PregameLobby(menuBoard, hudRegistry, this, config);
-
-        if (settingsBuilder == null) {
-            this.settingsBuilder = new BingoSettingsBuilder(this);
-        }
         phase.setup();
     }
 
@@ -228,6 +230,10 @@ public class BingoSession
         if (!event.sourceIsBingoWorld()) {
             playerData.savePlayer(serializablePlayer, false);
         }
+
+        if (isRunning()) {
+            scoreboard.addPlayer(event.getPlayer());
+        }
     }
 
     public void handlePlayerLeftSessionWorld(final PlayerLeftSessionWorldEvent event) {
@@ -244,6 +250,8 @@ public class BingoSession
         if (isRunning()) {
             new TranslatedMessage(BingoTranslation.LEAVE).send(event.getPlayer());
         }
+
+        scoreboard.removePlayer(player);
     }
 
     public void handleParticipantCountChangedEvent(final ParticipantCountChangedEvent event) {
