@@ -8,9 +8,9 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Created for the sake of disabling the scoreboard if desired.
  */
-public class DisabledBingoSettingsHUDManager extends BingoSettingsHUDManager
+public class DisabledBingoSettingsHUDGroup extends BingoSettingsHUDGroup
 {
-    public DisabledBingoSettingsHUDManager(HUDRegistry registry) {
+    public DisabledBingoSettingsHUDGroup(HUDRegistry registry) {
         super(registry);
     }
 

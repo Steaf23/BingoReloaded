@@ -9,7 +9,7 @@ import io.github.steaf23.bingoreloaded.data.BingoStatType;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.data.ConfigData;
 import io.github.steaf23.bingoreloaded.event.*;
-import io.github.steaf23.bingoreloaded.gameloop.BingoScoreboard;
+import io.github.steaf23.bingoreloaded.gui.hud.BingoGameHUDGroup;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gui.inventory.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.player.*;
@@ -30,6 +30,8 @@ import io.github.steaf23.bingoreloaded.util.timer.GameTimer;
 import io.github.steaf23.easymenulib.util.ChatComponentUtils;
 import io.github.steaf23.easymenulib.util.PDCHelper;
 import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.*;
 import org.bukkit.block.Biome;
@@ -49,7 +51,7 @@ public class BingoGame implements GamePhase
 {
     private final BingoSession session;
     private final BingoSettings settings;
-    private final BingoScoreboard scoreboard;
+    private final BingoGameHUDGroup scoreboard;
     private final TeamManager teamManager;
     private final PlayerRespawnManager respawnManager;
     private final TaskProgressTracker progressTracker;
@@ -117,6 +119,19 @@ public class BingoGame implements GamePhase
 
         new TranslatedMessage(BingoTranslation.GIVE_CARDS).sendAll(session);
         teleportPlayersToStart(world);
+
+        BaseComponent hoverMessage = new ComponentBuilder()
+                .append(BingoTranslation.OPTIONS_GAMEMODE.translate()).append(": ").append(settings.mode().displayName).append(" ").append(settings.size().toString()).append("\n")
+                .append(BingoTranslation.OPTIONS_KIT.translate()).append(": ").append(settings.kit().getDisplayName()).append("\n")
+                .append(BingoTranslation.OPTIONS_EFFECTS.translate()).append(": ").append(EffectOptionFlags.effectsToString(settings.effects()))
+                .append(BingoTranslation.DURATION.translate(settings.enableCountdown() ? GameTimer.getTimeAsString(settings.countdownDuration() * 60) : "∞"))
+                .build();
+        BaseComponent[] settingsMessage = Message.createHoverCommandMessage(
+                new TextComponent(),
+                new TextComponent(BingoTranslation.SETTINGS_HOVER.translate()),
+                hoverMessage,
+                new TextComponent(), null);
+
         getTeamManager().getParticipants().forEach(p ->
         {
             if (p.sessionPlayer().isPresent()) {
@@ -127,6 +142,9 @@ public class BingoGame implements GamePhase
                 player.setLevel(0);
                 player.setExp(0.0f);
                 scoreboard.addPlayer(player);
+                player.spigot().sendMessage(new TextComponent());
+                player.spigot().sendMessage(settingsMessage);
+                player.spigot().sendMessage(new TextComponent());
             }
         });
 
@@ -559,7 +577,7 @@ public class BingoGame implements GamePhase
 
         Location deathCoords = event.getEntity().getLocation();
         if (config.teleportAfterDeath) {
-            TextComponent[] teleportMsg = Message.createHoverCommandMessage(BingoTranslation.RESPAWN, "/bingo back");
+            BaseComponent[] teleportMsg = Message.createHoverCommandMessage(BingoTranslation.RESPAWN, "/bingo back");
 
             event.getEntity().spigot().sendMessage(teleportMsg);
             respawnManager.addPlayer(event.getEntity().getUniqueId(), deathCoords);

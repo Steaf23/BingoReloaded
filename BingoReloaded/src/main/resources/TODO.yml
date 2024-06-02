@@ -20,11 +20,10 @@
 
 (2.x) add progress view to countable tasks
 
+Update translations
 
 Fix bingo creator not showing updated lists/cards immediately after creating them (only after reopening menu)
 
 fix generating task list without advancements and statistics, turning what would be stats/advs into dirt..
 
 add command to see all teams with players in it from lobby
-
-create hover message when starting game to see settings chosen..

@@ -12,6 +12,7 @@ import net.md_5.bungee.api.chat.*;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -280,7 +281,7 @@ public class Message
     }
 
 
-    public static TextComponent[] createHoverCommandMessage(@NonNull BingoTranslation translation, @Nullable String command) {
+    public static BaseComponent[] createHoverCommandMessage(@NonNull BingoTranslation translation, @Nullable String command) {
         // Limit -1 makes it so split returns trailing empty strings
         String[] components = translation.translate().split("//", -1);
 
@@ -293,12 +294,16 @@ public class Message
         TextComponent hover = new TextComponent(components[2]);
         TextComponent suffix = new TextComponent(components[3]);
 
+        return createHoverCommandMessage(prefix, hoverable, hover, suffix, command);
+    }
+
+    public static BaseComponent[] createHoverCommandMessage(@NonNull BaseComponent prefix, @NotNull BaseComponent hoverable, @NotNull BaseComponent hover, @NotNull BaseComponent suffix, @Nullable String command) {
         if (command != null) {
             hoverable.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, command));
         }
         hoverable.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
                 new ComponentBuilder(hover).create()));
 
-        return new TextComponent[]{new TextComponent(BingoTranslation.MESSAGE_PREFIX.translate()), prefix, hoverable, suffix};
+        return new BaseComponent[]{new TextComponent(BingoTranslation.MESSAGE_PREFIX.translate()), prefix, hoverable, suffix};
     }
 }

@@ -1,11 +1,11 @@
-package io.github.steaf23.bingoreloaded.gameloop;
+package io.github.steaf23.bingoreloaded.gui.hud;
 
 import io.github.steaf23.bingoreloaded.data.ScoreboardData;
-import io.github.steaf23.bingoreloaded.gui.hud.TemplatedPlayerHUD;
+import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
+import io.github.steaf23.bingoreloaded.gameloop.SessionMember;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.player.team.TeamManager;
-import io.github.steaf23.bingoreloaded.util.BingoReloadedPlaceholderExpansion;
 import io.github.steaf23.easymenulib.scoreboard.HUDRegistry;
 import io.github.steaf23.easymenulib.scoreboard.PlayerHUD;
 import io.github.steaf23.easymenulib.scoreboard.PlayerHUDGroup;
@@ -15,10 +15,9 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-public class BingoScoreboard extends PlayerHUDGroup implements SessionMember
+public class BingoGameHUDGroup extends PlayerHUDGroup implements SessionMember
 {
     // map of team IDs and their scores
     private final Map<String, Integer> teamScores;
@@ -26,7 +25,7 @@ public class BingoScoreboard extends PlayerHUDGroup implements SessionMember
     private final boolean showPlayerNames;
     private final ScoreboardData.SidebarTemplate template;
 
-    public BingoScoreboard(HUDRegistry registry, BingoSession session, boolean showPlayerNames) {
+    public BingoGameHUDGroup(HUDRegistry registry, BingoSession session, boolean showPlayerNames) {
         super(registry);
 
         this.session = session;

@@ -5,8 +5,8 @@ import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.data.ConfigData;
 import io.github.steaf23.bingoreloaded.event.*;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
-import io.github.steaf23.bingoreloaded.gui.hud.BingoSettingsHUDManager;
-import io.github.steaf23.bingoreloaded.gui.hud.DisabledBingoSettingsHUDManager;
+import io.github.steaf23.bingoreloaded.gui.hud.BingoSettingsHUDGroup;
+import io.github.steaf23.bingoreloaded.gui.hud.DisabledBingoSettingsHUDGroup;
 import io.github.steaf23.bingoreloaded.gui.inventory.TeamSelectionMenu;
 import io.github.steaf23.bingoreloaded.gui.inventory.VoteMenu;
 import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
@@ -49,7 +49,7 @@ public class PregameLobby implements GamePhase
     private final MenuBoard menuBoard;
     private final CountdownTimer playerCountTimer;
 
-    private final BingoSettingsHUDManager settingsHUD;
+    private final BingoSettingsHUDGroup settingsHUD;
 
     private boolean playerCountTimerPaused = false;
     private boolean gameStarted = false;
@@ -61,10 +61,10 @@ public class PregameLobby implements GamePhase
         this.config = config;
         this.playerCountTimer = new CountdownTimer(config.playerWaitTime, session);
         if (config.disableScoreboardSidebar) {
-            this.settingsHUD = new DisabledBingoSettingsHUDManager(hudRegistry);
+            this.settingsHUD = new DisabledBingoSettingsHUDGroup(hudRegistry);
         }
         else {
-            this.settingsHUD = new BingoSettingsHUDManager(hudRegistry);
+            this.settingsHUD = new BingoSettingsHUDGroup(hudRegistry);
         }
 
         playerCountTimer.addNotifier(time -> {

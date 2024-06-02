@@ -36,9 +36,9 @@ game:
     already_started: "Cannot start a game of Bingo when there is already one active!"
     give_cards: "Giving all participants Kits and Cards!"
     no_card: "Cannot start game with the card '{0}' because it does not exist!" # 0: card_name
+    chosen_settings: "Starting bingo game! &6Move your cursor here&r to view all settings."
   end:
     bingo: "Congratulations! Team {0} has won the Bingo!" # 0: winning team
-    restart: "&a&o&lGame has ended! Click to //&c&oRestart! //&a&o&lClick to restart using the same rules and teams!//"
   postgame:
     start: "This game will re-open in {0} seconds" # 0: time until restart (seconds)
   deathmatch:
@@ -97,6 +97,7 @@ menu:
     info_hotswap:
       name: "Hot-Swap Bingo Card"
       desc: "Items will get replaced when they expire \nafter some amount of time.\nFirst team to complete {0} tasks wins!" #0: winning score
+      desc_alt: "Items will get replaced when they expire \nafter some amount of time.\nTeam to complete the most tasks within {0} minutes wins!" #0: time
   options:
     title: "Options Menu"
     start: "Start The Game"
@@ -108,6 +109,11 @@ menu:
     mode: "Gamemode"
     effects: "Player Effects"
     vote: "Vote For Settings"
+    modes:
+      regular: "&aRegular"
+      lockout: "&5Lockout"
+      complete: "&3Complete-All"
+      hotswap: "&6Hot-Swap"
   effects:
     enable: "Click to ENABLE this effect option"
     disable: "Click to DISABLE this effect option"

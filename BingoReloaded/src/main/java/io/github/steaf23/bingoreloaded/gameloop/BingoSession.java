@@ -10,6 +10,7 @@ import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.gameloop.phase.GamePhase;
 import io.github.steaf23.bingoreloaded.gameloop.phase.PostGamePhase;
 import io.github.steaf23.bingoreloaded.gameloop.phase.PregameLobby;
+import io.github.steaf23.bingoreloaded.gui.hud.BingoGameHUDGroup;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.team.BasicTeamManager;
 import io.github.steaf23.bingoreloaded.player.team.SoloTeamManager;
@@ -41,7 +42,7 @@ import org.jetbrains.annotations.Nullable;
 public class BingoSession
 {
     public BingoSettingsBuilder settingsBuilder;
-    public final BingoScoreboard scoreboard;
+    public final BingoGameHUDGroup scoreboard;
     public final TeamManager teamManager;
     private final ConfigData config;
     private final MenuBoard menuBoard;
@@ -62,7 +63,7 @@ public class BingoSession
         this.worlds = worlds;
         this.config = config;
         this.playerData = playerData;
-        this.scoreboard = new BingoScoreboard(hudRegistry, this, config.showPlayerInScoreboard);
+        this.scoreboard = new BingoGameHUDGroup(hudRegistry, this, config.showPlayerInScoreboard);
         this.soundPlayer = new BingoSoundPlayer(this);
         this.settingsBuilder = new BingoSettingsBuilder(this);
         Scoreboard board = Bukkit.getScoreboardManager().getNewScoreboard();
