@@ -69,6 +69,7 @@ public class GameManager
             return false;
         }
         WorldData.destroyWorldGroup(plugin, WorldData.getWorldGroup(plugin, sessionName));
+        sessions.get(sessionName).destroy();
         sessions.remove(sessionName);
         return true;
     }

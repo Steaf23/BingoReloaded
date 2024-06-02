@@ -271,6 +271,15 @@ public class BingoEventListener implements Listener
     }
 
     @EventHandler
+    public void handlePlayerPortal(final PlayerPortalEvent event) {
+        BingoSession session = getSession(event.getFrom().getWorld());
+        if (session == null)
+            return;
+
+        session.handlePlayerPortalEvent(event);
+    }
+
+    @EventHandler
     public void handleSettingsUpdated(final BingoSettingsUpdatedEvent event)
     {
         event.getSession().handleSettingsUpdated(event);

@@ -24,6 +24,7 @@ import io.github.steaf23.easymenulib.inventory.MenuBoard;
 import io.github.steaf23.easymenulib.scoreboard.HUDRegistry;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.*;
@@ -272,6 +273,47 @@ public class BingoSession
         }
     }
 
+    public void handlePlayerPortalEvent(final PlayerPortalEvent event) {
+        World origin = event.getFrom().getWorld();
+        World target = event.getTo().getWorld();
+
+        Location targetlocation = event.getTo();
+        if (origin.getUID().equals(worlds.overworldId())) {
+            // coming from the OW we can go to either the nether or the end
+            if (target.getEnvironment() == World.Environment.NETHER) {
+                // Nether
+                targetlocation.setWorld(worlds.getNetherWorld());
+            }
+            else if (target.getEnvironment() == World.Environment.THE_END) {
+                // The End
+                targetlocation.setWorld(worlds.getEndWorld());
+            }
+            else {
+                Message.error("could not catch player going through portal (Please report!)");
+            }
+        }
+        else if (origin.getUID().equals(worlds.netherId())) {
+            // coming from the nether we can only go to the OW
+            targetlocation.setWorld(worlds.getOverworld());
+        }
+        else if (origin.getUID().equals(worlds.endId())) {
+            // coming from the end we can go to either the overworld or to the end spawn from an outer portal.
+            if (target.getEnvironment() == World.Environment.NORMAL) {
+                // Overworld
+                targetlocation.setWorld(worlds.getOverworld());
+            }
+            else if (target.getEnvironment() == World.Environment.THE_END) {
+                // The End
+                targetlocation.setWorld(worlds.getEndWorld());
+            }
+            else {
+                Message.error("could not catch player going through portal (Please report!)");
+            }
+        }
+
+        event.setTo(targetlocation);
+    }
+
     public MenuBoard getMenuManager() {
         return menuBoard;
     }
@@ -321,5 +363,8 @@ public class BingoSession
 
     public @Nullable GamePhase getPhase() {
         return phase;
+    }
+
+    public void destroy() {
     }
 }

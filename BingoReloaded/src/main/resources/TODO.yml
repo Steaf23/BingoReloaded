@@ -21,16 +21,10 @@
 (2.x) add progress view to countable tasks
 
 
-Decrease the amount of spam messages when changing settings
-  - double game settings updated message when changing mode to different mode + size
-
 Fix bingo creator not showing updated lists/cards immediately after creating them (only after reopening menu)
 
-task list is not always selected correctly ?? (needs more testing)
-
-you can join the same team in a row from the team selection menu
+fix generating task list without advancements and statistics, turning what would be stats/advs into dirt..
 
 add command to see all teams with players in it from lobby
-create hover message when starting game to see settings chosen..
 
-link nether and end portals in world-groups.
+create hover message when starting game to see settings chosen..
