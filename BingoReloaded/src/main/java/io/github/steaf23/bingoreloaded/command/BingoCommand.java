@@ -20,9 +20,11 @@ import io.github.steaf23.bingoreloaded.util.TranslatedMessage;
 import io.github.steaf23.easymenulib.inventory.MenuBoard;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -168,17 +170,33 @@ public class BingoCommand implements TabExecutor
                     case "remove" -> removePlayerKit(args[2], player);
                 }
             }
-            case "teams" -> {
+            case "teamedit" -> {
                 if (!player.hasPermission("bingo.admin"))
                     return false;
 
                 new TeamEditorMenu(menuBoard).open(player);
             }
+            case "teams" -> {
+                if (!player.hasPermission("bingo.admin")) {
+                    return false;
+                }
+
+                Message.sendDebug("Here are all the teams with at least 1 player:", player);
+                session.teamManager.getActiveTeams().getTeams().forEach(team -> {
+                    if (team.getMembers().isEmpty()) {
+                        return;
+                    }
+                    player.spigot().sendMessage(new ComponentBuilder(" - ").append(team.getColoredName()).append(": " + team.getMembers().stream()
+                            .map(p -> p.getDisplayName())
+                            .collect(Collectors.joining(", "))).build());
+                });
+
+            }
             case "hologram" -> {
 
             }
             default ->
-                    new TranslatedMessage(BingoTranslation.COMMAND_USAGE).color(ChatColor.RED).arg("/bingo [getcard | stats | start | end | join | back | leave | deathmatch | creator | teams | kit | wait]").send(player);
+                    new TranslatedMessage(BingoTranslation.COMMAND_USAGE).color(ChatColor.RED).arg("/bingo [getcard | stats | start | end | join | back | leave | deathmatch | creator | teams | kit | wait | teamedit]").send(player);
         }
         return true;
     }
@@ -195,8 +213,7 @@ public class BingoCommand implements TabExecutor
                 yield null;
             }
         };
-        if (kit == null)
-        {
+        if (kit == null) {
             return;
         }
 
@@ -237,8 +254,7 @@ public class BingoCommand implements TabExecutor
                 yield null;
             }
         };
-        if (kit == null)
-        {
+        if (kit == null) {
             return;
         }
 
@@ -261,8 +277,7 @@ public class BingoCommand implements TabExecutor
     public void givePlayerBingoItem(Player player, String itemName) {
         if (itemName.equals("wand")) {
             player.getInventory().addItem(PlayerKit.WAND_ITEM.buildItem());
-        }
-        else if (itemName.equals("card")) {
+        } else if (itemName.equals("card")) {
             player.getInventory().addItem(PlayerKit.CARD_ITEM.buildItem());
         }
     }
@@ -283,7 +298,7 @@ public class BingoCommand implements TabExecutor
     public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
         if (!(sender instanceof Player player) || player.hasPermission("bingo.admin")) {
             if (args.length <= 1) {
-                return List.of("join", "getcard", "back", "leave", "stats", "end", "wait", "kit", "deathmatch", "creator", "teams");
+                return List.of("join", "getcard", "back", "leave", "stats", "end", "wait", "kit", "deathmatch", "creator", "teams", "teamedit");
             }
 
             if (args[0].equals("kit")) {

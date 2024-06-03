@@ -103,7 +103,6 @@ public class BotCommand implements TabExecutor
     private BingoParticipant getVirtualPlayerFromName(String name) {
         for (BingoParticipant participant : teamManager.getParticipants()) {
             if (participant instanceof VirtualBingoPlayer virtualPlayer) {
-                Message.log("name: " + name + " virtual: " + virtualPlayer.getName());
                 if (virtualPlayer.getName().equalsIgnoreCase(name)) {
                     return participant;
                 }
