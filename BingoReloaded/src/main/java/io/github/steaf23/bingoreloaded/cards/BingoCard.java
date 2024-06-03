@@ -64,11 +64,19 @@ public class BingoCard
             shuffler = new Random(seed);
         }
 
+        Map<String, List<TaskData>> taskMap = new HashMap<>();
+        for (String listName : cardsData.getListNames(cardName)) {
+            List<TaskData> tasks = new ArrayList<>(listsData.getTasks(listName, withStatistics, withAdvancements));
+            if (!tasks.isEmpty()) {
+                Collections.shuffle(tasks, shuffler);
+                taskMap.put(listName, tasks);
+            }
+        }
+
         // Create ticketList
         List<String> ticketList = new ArrayList<>();
         for (String listName : cardsData.getListsSortedByMin(cardName)) {
-            if (listsData.getTasks(listName, withStatistics, withAdvancements).size() == 0) // Skip empty task lists.
-            {
+            if (!taskMap.containsKey(listName)) {
                 continue;
             }
 
@@ -79,9 +87,14 @@ public class BingoCard
         }
         List<String> overflowList = new ArrayList<>();
         for (String listName : cardsData.getListNames(cardName)) {
+            if (!taskMap.containsKey(listName)) {
+                continue;
+            }
+
             int proportionalMin = Math.max(1, cardsData.getListMin(cardName, listName));
             int proportionalMax = cardsData.getListMax(cardName, listName);
 
+            Message.log("Max of " + listName + ": " + proportionalMax);
             for (int i = 0; i < proportionalMax - proportionalMin; i++) {
                 overflowList.add(listName);
             }
@@ -93,19 +106,12 @@ public class BingoCard
 
         // Pick random tasks
         List<TaskData> newTasks = new ArrayList<>();
-        Map<String, List<TaskData>> allTasks = new HashMap<>();
         for (String listName : ticketList) {
-            if (!allTasks.containsKey(listName)) {
-                List<TaskData> listTasks = new ArrayList<>(listsData.getTasks(listName, withStatistics, withAdvancements));
-                if (listTasks.size() == 0) // Skip empty task lists.
-                {
-                    continue;
-                }
-                Collections.shuffle(listTasks, shuffler);
-                allTasks.put(listName, listTasks);
-            }
-            if (allTasks.get(listName).size() != 0) {
-                newTasks.add(allTasks.get(listName).remove(allTasks.get(listName).size() - 1));
+            // pop the first task in the list (which is random because we shuffled it beforehand) and add it to our final tasks
+            List<TaskData> tasks = taskMap.get(listName);
+            if (tasks.size() != 0) {
+                newTasks.add(tasks.remove(tasks.size() - 1));
+                Message.error("" + taskMap.get(listName).size());
             }
             else {
                 Message.error("Found empty task list '" + listName + "'.");
