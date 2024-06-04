@@ -21,7 +21,9 @@
 
 (2.x) add progress view to tasks
 
+(2.x) rework yml data managers to add syncs between instances, now you can get outdated data in older references if newer ones have changed the data.
+
+(2.x) on paginated menu apply filter, maybe change the item names to color the filtered phrase differently.
+
 
 Update translations
-
-Fix bingo creator not showing updated lists/cards immediately after creating them (only after reopening menu) (same for setting presets?)

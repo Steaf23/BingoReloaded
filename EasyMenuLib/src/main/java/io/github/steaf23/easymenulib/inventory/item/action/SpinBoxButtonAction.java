@@ -28,9 +28,9 @@ public class SpinBoxButtonAction extends MenuAction
         item.setAmount(value);
 
         item.addDescription("input", 10,
-                Menu.inputButtonText("Left Click") + "increase",
-                Menu.inputButtonText("Right Click") + "decrease",
-                Menu.inputButtonText("Hold Shift") + "edit faster");
+                Menu.INPUT_LEFT_CLICK + "increase",
+                Menu.INPUT_RIGHT_CLICK + "decrease",
+                Menu.INPUT_SHIFT_CLICK + "edit faster");
     }
 
     @Override

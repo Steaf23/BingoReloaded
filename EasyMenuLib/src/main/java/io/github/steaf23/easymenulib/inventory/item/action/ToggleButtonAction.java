@@ -27,9 +27,7 @@ public class ToggleButtonAction extends MenuAction
         item.setGlowing(enabled);
 
         item.addDescription("input", 10,
-                Menu.inputButtonText("Left Click") + "increase",
-                Menu.inputButtonText("Right Click") + "decrease",
-                Menu.inputButtonText("Hold Shift") + "edit faster");
+                Menu.INPUT_LEFT_CLICK + "toggle");
     }
 
     @Override

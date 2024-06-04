@@ -38,7 +38,7 @@ public class AdminBingoMenu extends BasicMenu
             Material.LEATHER_HELMET, TITLE_PREFIX + BingoTranslation.OPTIONS_KIT.translate());
     private static final ItemTemplate MODE = new ItemTemplate(1, 4,
             Material.ENCHANTED_BOOK, TITLE_PREFIX + BingoTranslation.OPTIONS_GAMEMODE.translate())
-            .addDescription("input", 10, Menu.inputButtonText("Right Click") + "gamemode specific settings");
+            .addDescription("input", 10, Menu.INPUT_RIGHT_CLICK + "gamemode specific settings");
     private static final ItemTemplate EFFECTS = new ItemTemplate(3, 4,
             Material.POTION, TITLE_PREFIX + BingoTranslation.OPTIONS_EFFECTS.translate());
     private static final ItemTemplate COUNTDOWN = new ItemTemplate(5, 2,
@@ -48,8 +48,7 @@ public class AdminBingoMenu extends BasicMenu
     private static final ItemTemplate TEAM_SIZE = new ItemTemplate(7, 2,
             Material.ENDER_EYE, TITLE_PREFIX + "Maximum Team Size");
     private static final ItemTemplate PRESETS = new ItemTemplate(7, 4,
-            Material.CHEST_MINECART, TITLE_PREFIX + "Setting Presets",
-            org.bukkit.ChatColor.GRAY + "Click to apply settings from saved presets");
+            Material.CHEST_MINECART, TITLE_PREFIX + "Setting Presets");
 
     public AdminBingoMenu(MenuBoard menuBoard, BingoSession session, ConfigData config) {
         super(menuBoard, BingoTranslation.OPTIONS_TITLE.translate(), 6);

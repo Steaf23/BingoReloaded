@@ -73,9 +73,10 @@ public class SettingsPresetMenu extends PaginatedSelectionMenu
 
     @Override
     public void beforeOpening(HumanEntity player) {
-        addAction(SAVE_PRESET, p -> {
+        addAction(SAVE_PRESET, arguments -> {
             new UserInputMenu(getMenuBoard(), "Rename preset...", input -> {
                 settingsData.saveSettings(input, settingsBuilder.view());
+                beforeOpening(arguments.player());
             }, player, "my_settings");
         });
         clearItems();
@@ -85,9 +86,10 @@ public class SettingsPresetMenu extends PaginatedSelectionMenu
         {
             boolean def = preset.equals(settingsData.getDefaultSettingsName());
             ItemTemplate item = new ItemTemplate(Material.GLOBE_BANNER_PATTERN,
-                    preset + (def ? ChatColor.LIGHT_PURPLE + " (default)" : ""),
-                    ChatColor.GRAY + "Left-click to apply these settings",
-                    ChatColor.GRAY + "Right-click for more options");
+                    preset + (def ? ChatColor.LIGHT_PURPLE + " (default)" : ""));
+            item.addDescription("input", 5,
+                    Menu.INPUT_LEFT_CLICK + "apply this preset",
+                    Menu.INPUT_RIGHT_CLICK + "more options");
             item.setCompareKey(preset);
             items.add(item);
         }

@@ -46,6 +46,9 @@ public class UserInputMenu implements Menu
                 .itemLeft(new ItemStack(Material.ELYTRA))
                 .onClick((slot, state) -> {
                     if (slot == AnvilGUI.Slot.INPUT_RIGHT) {
+                        // First close the anvil menu, then apply changes.
+                        // Callers that want to react to the value changed when their menu gets reopened have to reopen their menu again...
+                        // If we accept the result first we cant properly close out of it with linear code in some cases.
                         board.close(this, state.getPlayer());
                         result.accept("");
                         return Collections.emptyList();

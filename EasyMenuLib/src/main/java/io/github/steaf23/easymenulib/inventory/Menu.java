@@ -49,7 +49,11 @@ public interface Menu
 
     Inventory getInventory();
 
-    static String inputButtonText(String buttonText) {
+    private static String inputButtonText(String buttonText) {
         return ChatColor.DARK_GRAY + "<" + ChatColor.GRAY + buttonText + ChatColor.DARK_GRAY + ">" + ChatColor.WHITE + ": ";
     }
+
+    public static String INPUT_LEFT_CLICK = inputButtonText("Left Click");
+    public static String INPUT_RIGHT_CLICK = inputButtonText("Right Click");
+    public static String INPUT_SHIFT_CLICK = inputButtonText("Hold Shift");
 }

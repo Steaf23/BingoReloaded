@@ -3,11 +3,13 @@ package io.github.steaf23.bingoreloaded.gui.inventory.creator;
 import io.github.steaf23.bingoreloaded.data.BingoCardData;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.data.TaskListData;
+import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.easymenulib.inventory.*;
 import io.github.steaf23.easymenulib.inventory.item.ItemTemplate;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
@@ -42,8 +44,8 @@ public class BingoCreatorMenu extends BasicMenu
                 List<ItemTemplate> items = new ArrayList<>();
                 for (String card : cardsData.getCardNames()) {
                     ItemTemplate item = new ItemTemplate(Material.FILLED_MAP, card,
-                            "This card contains " + cardsData.getListNames(card).size() + " list(s)",
-                            ChatColor.GRAY + "Right-click for more options");
+                            "This card contains " + cardsData.getListNames(card).size() + " list(s)");
+                            item.addDescription("input", 5, Menu.INPUT_RIGHT_CLICK + "more options");
                     items.add(item);
                 }
                 addItemsToSelect(items);
@@ -67,7 +69,7 @@ public class BingoCreatorMenu extends BasicMenu
 
             @Override
             public void beforeOpening(HumanEntity player) {
-                TaskListData listsData = cardsData.lists();
+                TaskListData listsData = new TaskListData();
 
                 addAction(CREATE_LIST, p -> createList(player));
                 clearItems();
@@ -76,7 +78,7 @@ public class BingoCreatorMenu extends BasicMenu
                 for (String list : listsData.getListNames()) {
                     ItemTemplate item = new ItemTemplate(Material.PAPER, list,
                             "This list contains " + listsData.getTaskCount(list) + " tasks");
-                    item.addDescription("input", 5, Menu.inputButtonText("Right Click") + "more options");
+                    item.addDescription("input", 5, Menu.INPUT_RIGHT_CLICK + "more options");
                     items.add(item);
                 }
                 addItemsToSelect(items);
@@ -94,11 +96,21 @@ public class BingoCreatorMenu extends BasicMenu
     }
 
     private void openCardEditor(String cardName, HumanEntity player) {
+        if (cardName.equals("default_card")) {
+            Message.sendDebug("Cannot edit default card, use right click to duplicate them instead!", (Player)player);
+            Message.error("Cannot edit default card, use right click to duplicate them instead!");
+            return;
+        }
         CardEditorMenu editor = new CardEditorMenu(getMenuBoard(), cardName, cardsData);
         editor.open(player);
     }
 
     private void openListEditor(String listName, HumanEntity player) {
+        if (listName.equals("default_advancements") || listName.equals("default_items") || listName.equals("default_statistics")) {
+            Message.sendDebug("Cannot edit default lists, use right click to duplicate them instead!", (Player)player);
+            Message.error("Cannot edit default lists, use right click to duplicate them instead!");
+            return;
+        }
         ListEditorMenu editor = new ListEditorMenu(getMenuBoard(), listName);
         editor.open(player);
     }

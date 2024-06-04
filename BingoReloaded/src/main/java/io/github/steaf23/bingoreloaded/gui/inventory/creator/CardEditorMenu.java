@@ -1,10 +1,7 @@
 package io.github.steaf23.bingoreloaded.gui.inventory.creator;
 
 import io.github.steaf23.bingoreloaded.data.BingoCardData;
-import io.github.steaf23.easymenulib.inventory.BasicMenu;
-import io.github.steaf23.easymenulib.inventory.FilterType;
-import io.github.steaf23.easymenulib.inventory.MenuBoard;
-import io.github.steaf23.easymenulib.inventory.PaginatedSelectionMenu;
+import io.github.steaf23.easymenulib.inventory.*;
 import io.github.steaf23.easymenulib.inventory.item.ItemTemplate;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -68,9 +65,10 @@ public class CardEditorMenu extends PaginatedSelectionMenu
         for (String listName : cardsData.getListNames(cardName))
         {
             ItemTemplate item = new ItemTemplate(Material.MAP, listName,
-                    "This list contains " + cardsData.lists().getTaskCount(listName) + " task(s)",
-                    ChatColor.GRAY + "Left-click to edit distribution",
-                    ChatColor.GRAY + "Right-click to remove this list");
+                    "This list contains " + cardsData.lists().getTaskCount(listName) + " task(s)");
+            item.addDescription("input", 5,
+                    Menu.INPUT_LEFT_CLICK + "edit distribution",
+                    Menu.INPUT_RIGHT_CLICK + "remove this list");
             item.setAmount(Math.max(1, cardsData.getListMax(cardName, listName)));
             newItems.add(item);
         }

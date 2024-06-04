@@ -5,6 +5,7 @@ import io.github.steaf23.bingoreloaded.data.helper.YmlDataManager;
 import io.github.steaf23.bingoreloaded.tasks.AdvancementTask;
 import io.github.steaf23.bingoreloaded.tasks.StatisticTask;
 import io.github.steaf23.bingoreloaded.tasks.TaskData;
+import io.github.steaf23.bingoreloaded.util.Message;
 
 import java.util.HashSet;
 import java.util.List;
@@ -69,6 +70,11 @@ public class TaskListData
         if (!data.getConfig().contains(listName))
             return false;
 
+        var defaultLists = List.of("default_items", "default_advancements", "default_statistics");
+        if (defaultLists.contains(listName)) {
+            Message.error("Cannot remove default lists!");
+            return false;
+        }
         data.getConfig().set(listName, null);
         data.saveConfig();
         return true;
@@ -80,7 +86,11 @@ public class TaskListData
             return false;
 
         var list = data.getConfig().get(listName);
-        data.getConfig().set(listName + "_copy", list);
+        String newName = listName + "_copy";
+        if (data.getConfig().contains(newName)) // Card with newName already exists
+            return false;
+
+        data.getConfig().set(newName, list);
         data.saveConfig();
         return true;
     }

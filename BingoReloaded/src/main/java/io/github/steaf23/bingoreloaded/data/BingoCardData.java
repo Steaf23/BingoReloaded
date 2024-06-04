@@ -5,6 +5,7 @@ import io.github.steaf23.bingoreloaded.data.helper.YmlDataManager;
 import io.github.steaf23.bingoreloaded.tasks.BingoTask;
 import io.github.steaf23.bingoreloaded.tasks.ItemTask;
 import io.github.steaf23.bingoreloaded.tasks.TaskData;
+import io.github.steaf23.bingoreloaded.util.Message;
 import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
 
@@ -23,6 +24,11 @@ public class BingoCardData
     {
         if (!data.getConfig().contains(cardName))
             return false;
+
+        if (cardName.equals("default_card")) {
+            Message.error("Cannot remove default card!");
+            return false;
+        }
 
         data.getConfig().set(cardName, null);
         data.saveConfig();
