@@ -92,6 +92,7 @@ public enum BingoTranslation
     INFO_COMPLETE_DESC("menu.card.info_complete.desc"),
     INFO_HOTSWAP_NAME("menu.card.info_hotswap.name"),
     INFO_HOTSWAP_DESC("menu.card.info_hotswap.desc"),
+    INFO_HOTSWAP_COUNTDOWN("menu.card.info_hotswap.desc_alt"),
     OPTIONS_TITLE("menu.options.title"),
     OPTIONS_START("menu.options.start"),
     OPTIONS_END("menu.options.end"),

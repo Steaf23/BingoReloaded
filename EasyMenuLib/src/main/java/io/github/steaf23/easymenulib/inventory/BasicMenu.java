@@ -34,13 +34,16 @@ public class BasicMenu implements Menu
     private int maxStackSizeOverride = -1; // -1 means no override (i.e. default stack sizes for all items)
     private final List<ItemTemplate> items;
 
+    private String title;
 
     public BasicMenu(MenuBoard manager, String initialTitle, int rows) {
         this(manager, Bukkit.createInventory(null, rows * 9, pluginTitlePrefix + initialTitle));
+        this.title = initialTitle;
     }
 
     public BasicMenu(MenuBoard manager, String initialTitle, InventoryType type) {
         this(manager, Bukkit.createInventory(null, type, pluginTitlePrefix + initialTitle));
+        this.title = initialTitle;
     }
 
     // Used for common setup
@@ -48,6 +51,7 @@ public class BasicMenu implements Menu
         this.inventory = inventory;
         this.manager = manager;
         this.items = new ArrayList<>();
+        this.title = "";
     }
 
     public final void open(HumanEntity player) {
@@ -183,5 +187,10 @@ public class BasicMenu implements Menu
 
     @Override
     public void beforeClosing(HumanEntity player) {
+    }
+
+    @Override
+    public String toString() {
+        return "BasicMenu{" + this.title + "}";
     }
 }

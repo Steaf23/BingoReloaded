@@ -21,10 +21,7 @@
 
 (2.x) add progress view to tasks
 
-hotswap settings item doesn't get updated lore when clicked
-
-change hotswap win condition if timer is enabled
 
 Update translations
 
-Fix bingo creator not showing updated lists/cards immediately after creating them (only after reopening menu)
+Fix bingo creator not showing updated lists/cards immediately after creating them (only after reopening menu) (same for setting presets?)

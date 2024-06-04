@@ -176,7 +176,7 @@ public class AdminBingoMenu extends BasicMenu
                 new SpinBoxButtonAction(1, 64, hotswapGoal, value -> {
                     session.settingsBuilder.hotswapGoal(value);
                     hotswapGoalItem.setLore(ChatComponentUtils.createComponentsFromString(
-                            "Complete " + hotswapGoal + " tasks to win hot-swap.",
+                            "Complete " + value + " tasks to win hot-swap.",
                             "Only effective if countdown mode is disabled"));
                 }));
 

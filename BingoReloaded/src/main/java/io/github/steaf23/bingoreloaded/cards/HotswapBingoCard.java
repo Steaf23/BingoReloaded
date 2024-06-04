@@ -48,7 +48,6 @@ public class HotswapBingoCard extends BingoCard
 
     public HotswapBingoCard(MenuBoard menuBoard, CardSize size, BingoGame game, TaskProgressTracker progressTracker, int winningScore, ConfigData.HotswapConfig config) {
         super(new HotswapCardMenu(menuBoard, size, BingoTranslation.CARD_TITLE.translate()), size, progressTracker);
-        this.winningScore = winningScore;
         this.taskTimer = game.getTimer();
         this.randomExpiryProvider = new Random();
         this.taskHolders = new ArrayList<>();
@@ -61,8 +60,18 @@ public class HotswapBingoCard extends BingoCard
         this.recoveryTimeSeconds = config.recoveryTime();
         this.randomTasks = new ArrayList<>();
         taskTimer.addNotifier(this::updateTaskExpiration);
+
+        boolean countdownEnabled = game.getSettings().enableCountdown();
+        this.winningScore = countdownEnabled ? -1 : winningScore;
+
+        String[] description = new String[]{};
+        if (countdownEnabled) {
+            description = BingoTranslation.INFO_HOTSWAP_COUNTDOWN.translate(String.valueOf(game.getSettings().countdownDuration())).split("\\n");
+        } else {
+            description = BingoTranslation.INFO_HOTSWAP_DESC.translate(String.valueOf(winningScore)).split("\\n");
+        }
         menu.setInfo(BingoTranslation.INFO_HOTSWAP_NAME.translate(),
-                BingoTranslation.INFO_HOTSWAP_DESC.translate(String.valueOf(winningScore)).split("\\n"));
+                description);
     }
 
     @Override

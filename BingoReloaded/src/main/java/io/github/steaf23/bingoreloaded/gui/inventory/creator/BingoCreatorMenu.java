@@ -75,8 +75,8 @@ public class BingoCreatorMenu extends BasicMenu
                 List<ItemTemplate> items = new ArrayList<>();
                 for (String list : listsData.getListNames()) {
                     ItemTemplate item = new ItemTemplate(Material.PAPER, list,
-                            "This list contains " + listsData.getTaskCount(list) + " tasks",
-                            ChatColor.GRAY + "Right-click for more options");
+                            "This list contains " + listsData.getTaskCount(list) + " tasks");
+                    item.addDescription("input", 5, Menu.inputButtonText("Right Click") + "more options");
                     items.add(item);
                 }
                 addItemsToSelect(items);

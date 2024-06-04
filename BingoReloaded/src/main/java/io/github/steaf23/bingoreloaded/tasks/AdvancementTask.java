@@ -64,13 +64,13 @@ public record AdvancementTask(Advancement advancement) implements TaskData
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AdvancementTask that = (AdvancementTask) o;
-        return Objects.equals(advancement.getKey(), that.advancement.getKey());
+        return advancement.getKey().equals(that.advancement.getKey());
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash(advancement);
+        return advancement.getKey().hashCode();
     }
 
     @Override

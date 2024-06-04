@@ -79,7 +79,7 @@ public abstract class PaginatedSelectionMenu extends BasicMenu
                 BLANK.copyToSlot(6, 5),
                 BLANK.copyToSlot(7, 5)
         );
-        addCloseAction(CLOSE);
+        addCloseAction(CLOSE.copy());
 
         currentPage = 0;
         allItems = options;

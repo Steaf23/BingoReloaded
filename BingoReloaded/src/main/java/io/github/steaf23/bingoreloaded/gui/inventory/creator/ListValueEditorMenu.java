@@ -33,16 +33,24 @@ public class ListValueEditorMenu extends BasicMenu
         this.cardEditor = parent;
         this.listName = listName;
 
+        this.minCount = minStart;
+        this.maxCount = maxStart;
         ItemTemplate minCounter = new ItemTemplate(20, Material.TARGET, " ");
+        minCounter.setName(TextComponent.fromLegacy(TITLE_PREFIX + minCount));
+        minCounter.setLore(ChatComponentUtils.createComponentsFromString("Not less than " + minCount + " item(s) ", "will be picked from this list"));
         addAction(minCounter, new SpinBoxButtonAction(BingoCardData.MIN_ITEMS, maxCount, minStart, value -> {
-            minCounter.setName(TextComponent.fromLegacy(TITLE_PREFIX + minCount));
-            minCounter.setLore(ChatComponentUtils.createComponentsFromString("Not more than" + minCount + " item(s) ", "will be picked from this list"));
+            minCounter.setName(TextComponent.fromLegacy(TITLE_PREFIX + value));
+            minCounter.setLore(ChatComponentUtils.createComponentsFromString("Not less than " + value + " item(s) ", "will be picked from this list"));
+            minCount = value;
         }));
 
         ItemTemplate maxCounter = new ItemTemplate(24, Material.TARGET, " ");
+        maxCounter.setName(TextComponent.fromLegacy(TITLE_PREFIX + maxCount));
+        maxCounter.setLore(ChatComponentUtils.createComponentsFromString("Not more than " + maxCount + " item(s) ", "will be picked from this list"));
         addAction(maxCounter, new SpinBoxButtonAction(minCount, Math.min(BingoCardData.MAX_ITEMS, cardEditor.cardsData.lists().getTaskCount(listName)), maxStart, value -> {
-            maxCounter.setName(TextComponent.fromLegacy(TITLE_PREFIX + maxCount));
-            maxCounter.setLore(ChatComponentUtils.createComponentsFromString("Not more than " + maxCount + " item(s) ", "will be picked from this list"));
+            maxCounter.setName(TextComponent.fromLegacy(TITLE_PREFIX + value));
+            maxCounter.setLore(ChatComponentUtils.createComponentsFromString("Not more than " + value + " item(s) ", "will be picked from this list"));
+            maxCount = value;
         }));
 
         addAction(SAVE, p -> {

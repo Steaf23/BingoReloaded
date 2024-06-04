@@ -94,7 +94,6 @@ public class BingoCard
             int proportionalMin = Math.max(1, cardsData.getListMin(cardName, listName));
             int proportionalMax = cardsData.getListMax(cardName, listName);
 
-            Message.log("Max of " + listName + ": " + proportionalMax);
             for (int i = 0; i < proportionalMax - proportionalMin; i++) {
                 overflowList.add(listName);
             }
@@ -111,7 +110,6 @@ public class BingoCard
             List<TaskData> tasks = taskMap.get(listName);
             if (tasks.size() != 0) {
                 newTasks.add(tasks.remove(tasks.size() - 1));
-                Message.error("" + taskMap.get(listName).size());
             }
             else {
                 Message.error("Found empty task list '" + listName + "'.");
