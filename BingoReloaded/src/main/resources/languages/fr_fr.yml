@@ -1,5 +1,9 @@
 name: "Français"
 changed: "Langue changée en Français!"
+branding:
+  scoreboard_title: "&3&lBingo&r&e&oⓇeloaded&r&4"
+  message_prefix: "&r&4[&3&lBingo&r&e&oⓇeloaded&r&4]&r: "
+  menu_prefix: "&r&4[&3&lB&r&e&oⓇ&r&4] &4"
 command:
   use: "Utilisation: {0}" # 0: cmd usage
   bingo:
@@ -32,9 +36,9 @@ game:
     already_started: "Impossible de démarrer une nouvelle partie car il y en a une déjà en cours!"
     give_cards: "Tous les participants reçoivent un kit de démarrage et une grille de Bingo!"
     no_card: "Impossible de démarrer la partie en utilisant la grille '{0}' car elle n'existe pas!" # 0: card_name
+    chosen_settings: "Démarrage du jeu de bingo! &6Déplacez votre curseur ici&r pour voir tous les paramètres."
   end:
     bingo: "Félicitations! L'équipe {0} a remporté la partie de Bingo!" # 0: winning team
-    restart: "&a&o&lLa partie est terminée! Cliquez sur //&c&oRelancer!//&a&o&lCliquez sur relancer pour utiliser les mêmes règles et les mêmes équipes!//"
   postgame:
     start: "Ce jeu va rouvrir dans {0} secondes" # 0: time until restart (seconds)
   deathmatch:
@@ -53,7 +57,6 @@ game:
     join: "Vous avez intégré l'équipe {0} avec succès!" # 0: team name
     join_auto: "Vous rejoindrez automatiquement une équipe au début du jeu!"
     dropped: "L'équipe {0} ne peut plus gagner, ils sont ejectés de la partie en cours!" # 0: team name
-    voided: "L'équipe {0} est hors jeu!" # 0: team name
     no_chat: "Vous ne pouvez pas activer ou désactiver le chat d'équipe car vous n'êtes pas dans une équipe!"
     chat_off: "&fLe chat d'équipe est désormais &cdésactivé&r, utilisez la commande {0} pour le réactiver." # 0: /btc
     chat_on: "&fLe chat d'équipe est désormais &aactivé&r, utilisez la commande {0} pour le désactiver." # 0: /btc
@@ -61,6 +64,13 @@ game:
     full_team_desc: "This team is full"
     join_team_desc: "Click to join this team"
   item:
+    voided: "Cette tâche ne peut plus être complétée!"
+    expire: "Expire dans: {0}" # 0: time left
+    recover: "Recharge dans: {0}" # 0: time left
+    single_expired: "{0} Expirée" # 0: task
+    single_added: "{0} Ajoutée" # 0: task
+    multiple_expired: "Plusieurs tâches expirées"
+    multiple_added: "Ajout de plusieurs nouvelles tâches"
     lore: Amassez {0} de cet élément pour compléter cette tâche! # 0: item count
     lore_advancement: "Cliquez pour plus de détails!"
     lore_statistic: "Obtenez cette statistique pour terminer la tâche!"
@@ -76,17 +86,22 @@ menu:
   filter: "Filtrer..."
   clear: "Effacer le Filtre"
   completed: "Tâches complétées"
+  count_more: "et {0} autres..." # 0: amount
   card:
     title: "Grille"
     info_regular:
-      name: "Grille de Bingo classique"
+      name: "Carte de Bingo Classique"
       desc: "La première équipe à terminer une ligne gagne. \nLes lignes peuvent se faire horizontalement, verticalement \nou en diagonale."
     info_lockout:
-      name: "Grille de Bingo avec verrouillage"
+      name: "Carte de Bingo Lockout"
       desc: "Complétez le plus d'éléments possible pour gagner. \nQuand un élément est complété \nil ne peut plus être complété par une autre équipe."
     info_complete:
-      name: "Grille de Bingo intégrale"
+      name: "Carte de Bingo Toutes-Complétées"
       desc: "La première équipe à compléter la totalité de la grille gagne."
+    info_hotswap:
+      name: "Carte Bingo Hot-Swap"
+      desc: "Les tâches seront remplacées lorsqu'elles expirent \naprès un certain laps de temps. \nLa première équipe à accomplir {0} tâches gagne !" #0: winning score
+      desc_alt: "Les tâches seront remplacées lorsqu'elles expirent \naprès un certain laps de temps. \nL'équipe qui accomplit le plus de tâches dans les {0} minutes gagne !" #0: time
   options:
     title: "Options"
     start: "Démarrer la partie"
@@ -98,6 +113,11 @@ menu:
     mode: "Mode de jeu"
     effects: "Effets"
     vote: "Vote"
+    modes:
+      regular: "&aClassique"
+      lockout: "&5Lockout"
+      complete: "&3Toutes-Complétées"
+      hotswap: "&6Hot-Swap"
   effects:
     enable: "Cliquez pour ACTIVER cet effet"
     disable: "Cliquez pour DESACTIVER cet effet"
@@ -108,8 +128,8 @@ menu:
     fire_res: "Résistance au feu"
     no_fall_dmg: "Aucun dégat de chute"
     no_durability: "Durabilité infinie"
-    speed: "Accélération"
     keep_inventory: "Maintenir l'inventaire"
+    speed: "Accélération"
   kits:
     hardcore:
       name: "&4Hardcore"
@@ -149,13 +169,16 @@ menu:
           - Casque en cuir \n
           - Elytres (Solidité X) \n
           - Bottes en cuir"
+    custom: "Sur mesure"
 items:
   card:
-    name: "Grille de Bingo"
-    desc: "Cliquez pour ouvrir la grille de Bingo!"
+    name: "Carte de Bingo"
+    desc: "Cliquez pour ouvrir la Carte de Bingo!"
   wand:
     name: "La Baguette d'Envol"
     desc: "Cliquez avec le bouton de droite pour vous envoler dans les cieux! (& maintenez shift pour descendre)"
 creator:
   card_item:
     desc: "Contient {0} liste(s)" # 0: list count
+teams:
+  automatic: "Automatique"

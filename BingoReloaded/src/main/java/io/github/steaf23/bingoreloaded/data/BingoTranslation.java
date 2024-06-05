@@ -20,7 +20,6 @@ import java.util.regex.Pattern;
 
 public enum BingoTranslation
 {
-    UNIMPLEMENTED("UNIMPLEMENTED MESSAGE"),
     SETTINGS_SCOREBOARD_TITLE("branding.scoreboard_title"),
     MESSAGE_PREFIX("branding.message_prefix"),
     MENU_PREFIX("branding.menu_prefix"),
@@ -69,6 +68,10 @@ public enum BingoTranslation
     VOIDED("game.item.voided"),
     HOTSWAP_EXPIRE("game.item.expire"),
     HOTSWAP_RECOVER("game.item.recover"),
+    HOTSWAP_SINGLE_EXPIRED("game.item.single_expired"),
+    HOTSWAP_SINGLE_ADDED("game.item.single_added"),
+    HOTSWAP_MULTIPLE_EXPIRED("game.item.multiple_expired"),
+    HOTSWAP_MULTIPLE_ADDED("game.item.multiple_added"),
     LORE_ITEM("game.item.lore"),
     LORE_ADVANCEMENT("game.item.lore_advancement"),
     LORE_STATISTIC("game.item.lore_statistic"),

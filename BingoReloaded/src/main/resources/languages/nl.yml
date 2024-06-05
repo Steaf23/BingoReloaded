@@ -1,5 +1,9 @@
 name: "Nederlands"
 changed: "Taal staat op Nederlands!"
+branding:
+  scoreboard_title: "&3&lBingo&r&e&oⓇeloaded&r&4"
+  message_prefix: "&r&4[&3&lBingo&r&e&oⓇeloaded&r&4]&r: "
+  menu_prefix: "&r&4[&3&lB&r&e&oⓇ&r&4] &4"
 command:
   use: "Gebruik: {0}" # 0: cmd usage
   bingo:
@@ -18,9 +22,9 @@ game:
     duration: "Speelduur: {0}"
     time_left: "Resterende tijd: {0}"
   lobby:
-    settings_updated: "De instellingen zijn aangepast, check het score bord"
+    settings_updated: "De instellingen zijn aangepast, zie de informatie balk"
     wait_status: "Wachten op meer spelers..."
-    player_status: "{0} spelers aanwezig" # 0: player count
+    player_status: "{0} speler(s) aanwezig" # 0: player count
     starting_status: "Het spel begint in {0} seconde(n)!" # 0: starting time (seconds)
     vote_kit: "Stem op een Kit"
     vote_gamemode: "Stem op een Spelmodus"
@@ -32,9 +36,9 @@ game:
     already_started: "Bingo kan niet gestart worden omdat er al een spel bezig is"
     give_cards: "Alle kits en bingo kaarten worden nu uitgedeeld!"
     no_card: "Bingo kan niet gestart worden met de kaart '{0}' want deze kaart bestaat niet!" # 0: card_name
+    chosen_settings: Bingo-spel starten! &6Beweeg je cursor hier&r om alle instellingen te bekijken."
   end:
     bingo: "Gefeliciteerd, team {0} heeft het spel gewonnen!" # 0: winning team
-    restart: "&a&o&lHet spel is beëindigd! Om opnieuw te starten, klik //&c&oHier!//&a&o&lKlik om een nieuw spel met dezelfde regels en teams te starten//"
   postgame:
     start: "Het spel zal geopend worden in {0} seconde(n)" # 0: time until restart (seconds)
   deathmatch:
@@ -53,7 +57,6 @@ game:
     join: "Je zit nu in team {0}!" # 0: team name
     join_auto: "Je word automatisch in een team gegooid als het spel start!"
     dropped: "Team {0} kan niet meer winnen, zij liggen uit het spel!" # 0: team name
-    voided: "Team {0} ligt uit het spel!" # 0: team name
     no_chat: "Team chat kan niet uit/aan gezet worden, omdat je niet in een team zit..."
     chat_off: "&fTeam chat staat nu &cuit&r, gebruik {0} om team chat aan te zetten!" # 0: /btc
     chat_on: "&fTeam chat staat nu &aaan&r, gebruik {0} om team chat uit te schakelen!" # 0: /btc
@@ -61,6 +64,13 @@ game:
     full_team_desc: "Dit team zit vol"
     join_team_desc: "Klik om in dit team te komen"
   item:
+    voided: "Deze taak kan niet meer voltooid worden!"
+    expire: "Verloopt in: {0}" # 0: time left
+    recover: "Vervangen in: {0}" # 0: time left
+    single_expired: "{0} Verlopen" # 0: task
+    single_added: "{0} Toegevoegd" # 0: task
+    multiple_expired: "Meerdere taken verlopen"
+    multiple_added: "Meerdere nieuwe taken vervangen"
     lore: Verzamel {0} van dit item om deze taak te voltooien! # 0: item count
     lore_advancement: "Klik voor meer informatie!"
     lore_statistic: "Behaal deze statistiek om de taak te voltooien!"
@@ -76,6 +86,7 @@ menu:
   filter: "Filter..."
   clear: "Wis Filter"
   completed: "Taken Voltooid"
+  count_more: "en {0} anderen..." # 0: amount
   card:
     title: "Bingo Kaart"
     info_regular:
@@ -87,17 +98,26 @@ menu:
     info_complete:
       name: "Volle Bingo Kaart"
       desc: "Het eerste team met een volle kaart wint."
+    info_hotswap:
+      name: "Hot-Swap Bingo Kaart"
+      desc: "Taken veranderen na een bepaalde tijd. \nHet team dat als eerst {0} taken voltooid wint!" # 0: winning score
+      desc_alt: "Taken veranderen na een bepaalde tijd. \nHet team dat de meeste taken binnen de tijd voltooid wint!"#0: time
   options:
     title: "Opties"
     start: "Start Het Spel"
     end: "Beëindig Het Spel"
     team: "Kies Een Team"
     leave: "Verlaat Het Spel"
-    kit: "Uitrusting"
+    kit: "Kit"
     card: "Kaart"
     mode: "Spelmodus"
     effects: "Effecten"
     vote: "Stem voor instellingen"
+    modes:
+      regular: "&aKlassiek"
+      lockout: "&5Lockout"
+      complete: "&3Volle Kaart"
+      hotswap: "&6Hot-Swap"
   effects:
     enable: "Klik on dit effect AAN te zetten."
     disable: "Klik om dit effect UIT te zetten."
@@ -108,8 +128,8 @@ menu:
     fire_res: "Vuurbestendigheid"
     no_fall_dmg: "Geen Valschade"
     no_durability: "Oneindige duurzaamheid"
-    speed: "Extra snelheid"
     keep_inventory: "Behoud inventaris"
+    speed: "Extra snel"
   kits:
     hardcore:
       name: "&4Hardcore"
@@ -149,12 +169,13 @@ menu:
           - Leather Helmet \n
           - Elytra (Unbreaking X) \n
           - Leather Boots"
+    custom: ""
 items:
   card:
     name: "Bingo Kaart"
     desc: "Klik om de kaart te openen!"
   wand:
-    name: "The Go-Up-Wand"
+    name: "De Go-Up-Wand"
     desc: "Teleporteer omhoog met rechter-muisklik! \n(& gebruik shift om naar beneden te gaan)"
   vote:
     name: "Stem"
@@ -165,3 +186,5 @@ items:
 creator:
   card_item:
     desc: "Bevat {0} lijst(en)" # 0: list count
+teams:
+  auto: "Automatisch"

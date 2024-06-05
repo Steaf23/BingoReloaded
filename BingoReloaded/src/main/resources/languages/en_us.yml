@@ -22,7 +22,7 @@ game:
     duration: "Game duration: {0}" # 0: total game time duration
     time_left: "Time remaining: {0}" # 0: total game time left (for Countdown cards)
   lobby:
-    settings_updated: "Game settings have been updated, check the scoreboard!"
+    settings_updated: "Game settings have been updated, check the information sidebar!"
     wait_status: "Waiting for players..."
     player_status: "{0} player(s) joined a team" # 0: player count
     starting_status: "Game starting in {0} seconds!" # 0: starting time (seconds)
@@ -40,7 +40,7 @@ game:
   end:
     bingo: "Congratulations! Team {0} has won the Bingo!" # 0: winning team
   postgame:
-    start: "This game will re-open in {0} seconds" # 0: time until restart (seconds)
+    start: "Dit spel heropent over {0} seconden" # 0: time until restart (seconds)
   deathmatch:
     start: "Several teams have completed the same amount of tasks, starting Deathmatch to break the tie!"
     search: "Find the item listed in chat to win the game!"
@@ -51,7 +51,7 @@ game:
     no_card: "Could not find your card!"
     cooldown: "You cannot use this item for another {0} seconds!" # 0: time left
     respawn: "//&3&lClick here to teleport back to where you died////"
-    respawn_expired: "Teleport to death location has expired!"
+    respawn_expired: "O teleporte para a localização da morte expirou!"
   team:
     no_join: "You cannot join an ongoing game!"
     join: "You successfully joined team {0}!" # 0: team name
@@ -67,6 +67,10 @@ game:
     voided: "This task cannot be completed anymore!"
     expire: "Expires in: {0}" # 0: time left
     recover: "Regenerates in: {0}" # 0: time left
+    single_expired: "{0} Expired" # 0: task
+    single_added: "{0} Added" # 0: task
+    multiple_expired: "Multiple Tasks Expired"
+    multiple_added: "Added Multiple New Tasks"
     lore: "Obtain {0} of this item to complete this task!" # 0: item count
     lore_advancement: "Click to learn more!"
     lore_statistic: "Obtain this statistic to complete the task!"
@@ -82,7 +86,7 @@ menu:
   filter: "Filter..."
   clear: "Clear Filter/ Cancel"
   completed: "Completed Tasks"
-  count_more: "and {0} more..." # 0: amount
+  count_more: "and {0} others..." # 0: amount
   card:
     title: "Card Viewer"
     info_regular:
@@ -96,8 +100,8 @@ menu:
       desc: "First team to complete all tasks wins."
     info_hotswap:
       name: "Hot-Swap Bingo Card"
-      desc: "Items will get replaced when they expire \nafter some amount of time.\nFirst team to complete {0} tasks wins!" #0: winning score
-      desc_alt: "Items will get replaced when they expire \nafter some amount of time.\nTeam to complete the most tasks within {0} minutes wins!" #0: time
+      desc: "Tasks will get replaced when they expire \nafter some amount of time.\nFirst team to complete {0} tasks wins!" #0: winning score
+      desc_alt: "Tasks will get replaced when they expire \nafter some amount of time.\nTeam to complete the most tasks within {0} minutes wins!" #0: time
   options:
     title: "Options Menu"
     start: "Start The Game"

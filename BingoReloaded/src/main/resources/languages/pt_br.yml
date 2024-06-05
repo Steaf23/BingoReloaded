@@ -1,5 +1,9 @@
 name: "Português (Brasil)"
 changed: "Idioma configurado para Português (Brasil)"
+branding:
+  scoreboard_title: "&3&lBingo&r&e&oⓇeloaded&r&4"
+  message_prefix: "&r&4[&3&lBingo&r&e&oⓇeloaded&r&4]&r: "
+  menu_prefix: "&r&4[&3&lB&r&e&oⓇ&r&4] &4"
 command:
   use: "Use: {0}" # 0: cmd usage
   bingo:
@@ -32,9 +36,9 @@ game:
     already_started: "Não é possível iniciar um jogo de Bingo quando um já está ativo!"
     give_cards: "Entregando Cartelas e Kits aos participantes!"
     no_card: "Não foi possível iniciar o jogo com a Cartela '{0}', pois ela não existe!" # 0: card_name
+    chosen_settings: "Iniciando o jogo de bingo! &6Mova o seu cursor aqui&r para ver todas as configurações."
   end:
     bingo: "Parabéns! Time {0} venceu o Bingo!" # 0: winning team
-    restart: "&a&o&lFim de jogo! Clique para //&c&oReiniciar! //&a&o&lClique para reiniciar usando as mesmas regras e times!//"
   postgame:
     start: "Este jogo vai reabrir em {0} segundos" # 0: time until restart (seconds)
   deathmatch:
@@ -52,7 +56,6 @@ game:
     join: "Você entrou no time {0}!" # 0: team name
     join_auto: "Você entrará em um time automaticamente quando o jogo começar!"
     dropped: "Time {0} não consegue mais ganhar, está fora do jogo!" # 0: team name
-    voided: "Time {0} está fora do jogo!" # 0: team name
     no_chat: "Não é possível ligar o chat de time, pois você não está em um time!"
     chat_off: "&fChat de time está &cdesligado&r, use {0} para ativá-lo novamente." # 0: /btc
     chat_on: "&fChat de time está &aligado&r, use {0} para desativá-lo." # 0: /btc
@@ -60,6 +63,13 @@ game:
     full_team_desc: "Este time está cheio"
     join_team_desc: Clique para se juntar a este time"
   item:
+    voided: "Esta tarefa não pode mais ser concluída!"
+    expire: "Expira em: {0}" # 0: time left
+    recover: "Regenera em: {0}" # 0: time left
+    single_expired: "{0} Expirou" # 0: task
+    single_added: "{0} Adicionada" # 0: task
+    multiple_expired: "Várias Tarefas Expiraram"
+    multiple_added: "Adicionadas Múltiplas Novas Tarefas"
     lore: Obtenha {0} deste item para completar a tarefa! # 0: item count
     lore_advancement: "Clique para ver mais!"
     lore_statistic: "Obtenha esta estatística para completar a tarefa!"
@@ -75,17 +85,22 @@ menu:
   filter: "Filtro..."
   clear: "Limpar Filtro/ Cancelar"
   completed: "Tarefas Completas"
+  count_more: "e {0} outros..." # 0: amount
   card:
-    title: "Cartela"
+    title: "Cartão de Bingo"
     info_regular:
-      name: "Cartela Normal"
+      name: "Cartão de Bingo Normal"
       desc: "Vence o primeiro time a completar uma linha. \nLinhas podem ser verticais, horizontais \nou diagonais."
     info_lockout:
-      name: "Cartela Lockout"
+      name: "Cartão de Bingo Lockout"
       desc: "Vence o time que mais completar tarefas. \nQuando uma tarefa é completa \nela não pode ser completada por outro time."
     info_complete:
-      name: "Cartela Cheia"
+      name: "Cartão de Bingo Blackout"
       desc: "Vence o primeiro time a completar todas as tarefas."
+    info_hotswap:
+      name: "Cartão de Bingo Hot-Swap"
+      desc: "As tarefas serão substituídas quando expirarem \napós um determinado período de tempo.\nA primeira equipe a completar {0} tarefas vence!" #0: winning score
+      desc_alt: "As tarefas serão substituídas quando expirarem \napós um determinado período de tempo.\nA equipe que completar a maioria das tarefas dentro de {0} minutos vence!" #0: time
   options:
     title: "Menu de Opções"
     start: "Iniciar o Jogo"
@@ -97,6 +112,11 @@ menu:
     mode: "Modo de Jogo"
     effects: "Efeitos de Jogador"
     vote: "Vote em Opções"
+    modes:
+      regular: "&aNormal"
+      lockout: "&5Lockout"
+      complete: "&3Blackout"
+      hotswap: "&6Hot-Swap"
   effects:
     enable: "Clique para ATIVAR esta opção de efeito"
     disable: "Clique para DESATIVAR esta opção de efeito"
@@ -107,6 +127,7 @@ menu:
     fire_res: "Resistência ao Fogo"
     no_fall_dmg: "Sem Dano de Queda"
     no_durability: "Durabilidade Infinita"
+    keep_inventory: "Manter Inventário"
     speed: "Velocidade"
   kits:
     hardcore:
@@ -164,3 +185,5 @@ items:
 creator:
   card_item:
     desc: "Contém {0} lista(s)" # 0: list count
+team:
+  auto: "Automático"

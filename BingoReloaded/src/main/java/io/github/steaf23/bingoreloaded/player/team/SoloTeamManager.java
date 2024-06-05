@@ -141,10 +141,11 @@ public class SoloTeamManager implements TeamManager
 
     @Override
     public boolean removeMemberFromTeam(@Nullable BingoParticipant member) {
-        removeMemberFromTeamSilently(member);
         if (member == null) {
-            return true;
+            return false;
         }
+
+        removeMemberFromTeamSilently(member);
 
         member.sessionPlayer().ifPresent(player -> {
             new TranslatedMessage(BingoTranslation.LEAVE).color(ChatColor.RED).send(player);

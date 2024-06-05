@@ -178,11 +178,11 @@ public class HotswapBingoCard extends BingoCard
             if (taskExpiredCount == 1) {
                 BingoTask taskToSend = lastExpiredTask;
                 game.getActionBar().requestMessage(p ->
-                                new ComponentBuilder().bold(true).append(taskToSend.data.getName()).append(new TextComponent(" Expired")).color(ChatColor.of("#e85e21")).build()
+                                new ComponentBuilder().bold(true).append(BingoTranslation.HOTSWAP_SINGLE_EXPIRED.asComponent(Set.of(ChatColor.of("#e85e21")), taskToSend.data.getName())).build()
                         , 1, 3);
             }
             else {
-                game.getActionBar().requestMessage(p -> new ComponentBuilder().bold(true).append("Multiple Tasks Expired").color(ChatColor.of("#e85e21")).build(), 1, 3);
+                game.getActionBar().requestMessage(p -> new ComponentBuilder().bold(true).append(BingoTranslation.HOTSWAP_MULTIPLE_EXPIRED.asComponent(Set.of(ChatColor.of("#e85e21")))).build(), 1, 3);
             }
         }
         if (taskRecoveredCount > 0) {
@@ -192,11 +192,11 @@ public class HotswapBingoCard extends BingoCard
             if (taskRecoveredCount == 1) {
                 BingoTask taskToSend = lastRecoverdTask;
                 game.getActionBar().requestMessage(p ->
-                                new ComponentBuilder().bold(true).append(taskToSend.data.getName()).append(new TextComponent(" Added")).color(ChatColor.of("#5cb1ff")).build()
+                                new ComponentBuilder().bold(true).append(BingoTranslation.HOTSWAP_SINGLE_ADDED.asComponent(Set.of(ChatColor.of("#5cb1ff")), taskToSend.data.getName())).build()
                         , 2, 3);
             }
             else {
-                game.getActionBar().requestMessage(p -> new ComponentBuilder().bold(true).append("Added Multiple New Tasks").color(ChatColor.of("#5cb1ff")).build(), 2, 3);
+                game.getActionBar().requestMessage(p -> new ComponentBuilder().bold(true).append(BingoTranslation.HOTSWAP_MULTIPLE_ADDED.asComponent(Set.of(ChatColor.of("#5cb1ff")))).build(), 2, 3);
             }
         }
         ((HotswapCardMenu)menu).updateTaskHolders(taskHolders);
