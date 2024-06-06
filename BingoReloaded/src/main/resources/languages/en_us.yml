@@ -40,7 +40,7 @@ game:
   end:
     bingo: "Congratulations! Team {0} has won the Bingo!" # 0: winning team
   postgame:
-    start: "Dit spel heropent over {0} seconden" # 0: time until restart (seconds)
+    start: "This game will re-open in {0} seconds" # 0: time until restart (seconds)
   deathmatch:
     start: "Several teams have completed the same amount of tasks, starting Deathmatch to break the tie!"
     search: "Find the item listed in chat to win the game!"
@@ -51,7 +51,7 @@ game:
     no_card: "Could not find your card!"
     cooldown: "You cannot use this item for another {0} seconds!" # 0: time left
     respawn: "//&3&lClick here to teleport back to where you died////"
-    respawn_expired: "O teleporte para a localização da morte expirou!"
+    respawn_expired: "Teleport to death location has expired!"
   team:
     no_join: "You cannot join an ongoing game!"
     join: "You successfully joined team {0}!" # 0: team name

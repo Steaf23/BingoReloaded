@@ -39,6 +39,8 @@ public class HotswapTaskHolder
         }
         else {
             item.addDescription("time", 1, BingoTranslation.HOTSWAP_EXPIRE.asComponent(Set.of(getColorForExpirationTime()), GameTimer.getTimeAsComponent(currentTime)));
+            item.setMaxDamage(expirationTimeSeconds);
+            item.setDamage(currentTime);
         }
         return item;
     }

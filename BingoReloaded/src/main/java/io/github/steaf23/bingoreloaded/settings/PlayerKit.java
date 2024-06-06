@@ -37,7 +37,7 @@ public enum PlayerKit
             ChatComponentUtils.convert(BingoTranslation.WAND_ITEM_NAME.translate(), ChatColor.DARK_PURPLE, ChatColor.ITALIC, ChatColor.BOLD),
             ChatComponentUtils.createComponentsFromString(BingoTranslation.WAND_ITEM_DESC.translate().split("\\n"))
     )
-            .addEnchantment(Enchantment.DURABILITY, 3)
+            .addEnchantment(Enchantment.UNBREAKING, 3)
             .setCompareKey("wand");
 
     public static final ItemTemplate CARD_ITEM = new ItemTemplate(
@@ -94,7 +94,7 @@ public enum PlayerKit
         {
             case NORMAL -> {
                 items.add(helmet
-                        .addEnchantment(Enchantment.WATER_WORKER, 1));
+                        .addEnchantment(Enchantment.AQUA_AFFINITY, 1));
                 items.add(boots
                         .addEnchantment(Enchantment.DEPTH_STRIDER, 3));
                 items.add(new ItemTemplate(1, Material.IRON_PICKAXE));
@@ -107,48 +107,46 @@ public enum PlayerKit
             case OVERPOWERED -> {
                 items.add(WAND_ITEM.copyToSlot(8));
                 items.add(helmet
-                        .addEnchantment(Enchantment.DURABILITY, 3)
-                        .addEnchantment(Enchantment.WATER_WORKER, 1)
-                        .addEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 4));
+                        .addEnchantment(Enchantment.UNBREAKING, 3)
+                        .addEnchantment(Enchantment.AQUA_AFFINITY, 1)
+                        .addEnchantment(Enchantment.PROTECTION, 4));
                 items.add(boots
-                        .addEnchantment(Enchantment.DURABILITY, 3)
+                        .addEnchantment(Enchantment.UNBREAKING, 3)
                         .addEnchantment(Enchantment.DEPTH_STRIDER, 3)
-                        .addEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 4));
+                        .addEnchantment(Enchantment.PROTECTION, 4));
                 items.add(new ItemTemplate(1, Material.NETHERITE_PICKAXE)
-                        .addEnchantment(Enchantment.LOOT_BONUS_BLOCKS, 3)
-                        .addEnchantment(Enchantment.DIG_SPEED, 5));
+                        .addEnchantment(Enchantment.FORTUNE, 3)
+                        .addEnchantment(Enchantment.EFFICIENCY, 5));
                 items.add(new ItemTemplate(0, Material.NETHERITE_AXE)
-                        .addEnchantment(Enchantment.LOOT_BONUS_MOBS, 3)
-                        .addEnchantment(Enchantment.DAMAGE_ALL, 5)
-                        .addEnchantment(Enchantment.DIG_SPEED, 5));
+                        .addEnchantment(Enchantment.LOOTING, 3)
+                        .addEnchantment(Enchantment.SHARPNESS, 5)
+                        .addEnchantment(Enchantment.EFFICIENCY, 5));
                 items.add(new ItemTemplate(2, Material.NETHERITE_SHOVEL)
                         .addEnchantment(Enchantment.SILK_TOUCH, 1)
-                        .addEnchantment(Enchantment.DIG_SPEED, 5));
+                        .addEnchantment(Enchantment.EFFICIENCY, 5));
                 items.add(new ItemTemplate(3, Material.GOLDEN_CARROT)
                         .setAmount(64));
             }
             case RELOADED -> {
                 items.add(WAND_ITEM.copyToSlot(8));
                 items.add(helmet
-                        .addEnchantment(Enchantment.DURABILITY, 3)
-                        .addEnchantment(Enchantment.WATER_WORKER, 1)
-                        .addEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 4));
+                        .addEnchantment(Enchantment.UNBREAKING, 3)
+                        .addEnchantment(Enchantment.AQUA_AFFINITY, 1)
+                        .addEnchantment(Enchantment.PROTECTION, 4));
                 items.add(boots
-                        .addEnchantment(Enchantment.DURABILITY, 3)
+                        .addEnchantment(Enchantment.UNBREAKING, 3)
                         .addEnchantment(Enchantment.DEPTH_STRIDER, 3)
-                        .addEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 4));
-                items.add(new ItemTemplate(38, Material.ELYTRA)
-                        .addEnchantment(Enchantment.DURABILITY, 10));
-                items.add(new ItemTemplate(0, Material.NETHERITE_AXE)
-                        .addEnchantment(Enchantment.LOOT_BONUS_MOBS, 3)
-                        .addEnchantment(Enchantment.DAMAGE_ALL, 5)
-                        .addEnchantment(Enchantment.DIG_SPEED, 5));
+                        .addEnchantment(Enchantment.PROTECTION, 4));
                 items.add(new ItemTemplate(1, Material.NETHERITE_PICKAXE)
-                        .addEnchantment(Enchantment.LOOT_BONUS_BLOCKS, 3)
-                        .addEnchantment(Enchantment.DIG_SPEED, 5));
+                        .addEnchantment(Enchantment.FORTUNE, 3)
+                        .addEnchantment(Enchantment.EFFICIENCY, 5));
+                items.add(new ItemTemplate(0, Material.NETHERITE_AXE)
+                        .addEnchantment(Enchantment.LOOTING, 3)
+                        .addEnchantment(Enchantment.SHARPNESS, 5)
+                        .addEnchantment(Enchantment.EFFICIENCY, 5));
                 items.add(new ItemTemplate(2, Material.NETHERITE_SHOVEL)
                         .addEnchantment(Enchantment.SILK_TOUCH, 1)
-                        .addEnchantment(Enchantment.DIG_SPEED, 5));
+                        .addEnchantment(Enchantment.EFFICIENCY, 5));
                 items.add(new ItemTemplate(3, Material.ENCHANTED_GOLDEN_APPLE)
                         .setAmount(64));
             }

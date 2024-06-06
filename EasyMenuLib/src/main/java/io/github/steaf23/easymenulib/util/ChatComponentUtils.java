@@ -30,21 +30,21 @@ public class ChatComponentUtils
 
     public static @NotNull ItemStack itemStackFromComponent(@NotNull Material material, @Nullable BaseComponent name, BaseComponent... lore) {
         StringBuilder jsonData = new StringBuilder(material.toString().toLowerCase());
-        jsonData.append("{display:{");
+        jsonData.append("[");
         if (name != null) {
             BaseComponent nameWrapper = new TextComponent();
             nameWrapper.setItalic(false);
             nameWrapper.addExtra(name);
-            jsonData.append("Name:'[" + ComponentSerializer.toJson(nameWrapper).toString() + "]'");
+            jsonData.append("custom_name='[" + ComponentSerializer.toJson(nameWrapper).toString() + "]'");
         }
 
         if (lore.length == 0 || (lore.length == 1 && lore[0].toPlainText().isEmpty()))
-            return Bukkit.getItemFactory().createItemStack(jsonData.append("}}").toString());
+            return Bukkit.getItemFactory().createItemStack(jsonData.append("]").toString());
 
         if (name != null) {
             jsonData.append(",");
         }
-        jsonData.append("Lore:[");
+        jsonData.append("lore=[");
         for (int i = 0; i < lore.length; i ++)
         {
             if (i != 0) {
@@ -58,7 +58,7 @@ public class ChatComponentUtils
                     .append(ComponentSerializer.toJson(lineWrapper).toString())
                     .append("'");
         }
-        jsonData.append("]}}");
+        jsonData.append("]]");
 
         return Bukkit.getItemFactory().createItemStack(jsonData.toString());
     }

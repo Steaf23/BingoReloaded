@@ -9,7 +9,10 @@ import io.github.steaf23.easymenulib.util.PDCHelper;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -43,6 +46,8 @@ public class ItemTemplate
     private String compareKey = null;
     private Map<Enchantment, Integer> enchantments = new HashMap<>();
     private List<Function<ItemMeta, ItemMeta>> metaModifiers = new ArrayList<>();
+    private Integer maxDamage = null;
+    private int currentDamage = 0;
 
     private MenuAction action;
 
@@ -206,6 +211,15 @@ public class ItemTemplate
         return this;
     }
 
+    public void setDamage(int byAmount) {
+        currentDamage = Math.max(currentDamage - byAmount, 0);
+    }
+
+    public void setMaxDamage(@Nullable Integer damage) {
+        maxDamage = damage;
+        currentDamage = maxDamage == null ? 0 : maxDamage;
+    }
+
     public void useItem(BasicMenu.ActionArguments arguments) {
         if (action == null) {
             return;
@@ -230,6 +244,8 @@ public class ItemTemplate
         copy.action = action;
         copy.enchantments.putAll(enchantments);
         copy.metaModifiers.addAll(metaModifiers);
+        copy.maxDamage = maxDamage;
+        copy.currentDamage = currentDamage;
         return copy;
     }
 
@@ -265,28 +281,30 @@ public class ItemTemplate
         stack.setAmount(amount);
 
         if (glowing) {
-            stack.addUnsafeEnchantment(Enchantment.DURABILITY, 1);
+            stack.addUnsafeEnchantment(Enchantment.UNBREAKING, 1);
         }
 
         ItemMeta stackMeta = stack.getItemMeta();
         if (stackMeta == null) {
             return stack;
         }
+
+        if (maxDamage != null) {
+            if (stackMeta instanceof Damageable) {
+                ((Damageable)stackMeta).setMaxDamage(maxDamage);
+                ((Damageable)stackMeta).setDamage(currentDamage);
+            }
+        }
         PersistentDataContainer pdc = stackMeta.getPersistentDataContainer();
         pdc = PDCHelper.addStringToPdc(pdc, "compare_key", compareKey);
 
-        stackMeta.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_UNBREAKABLE, ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_DYE);
+        stackMeta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_UNBREAKABLE, ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_DYE);
+        stackMeta.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, new AttributeModifier("dummy", 1.0, AttributeModifier.Operation.ADD_NUMBER));
+        for (Function<ItemMeta, ItemMeta> modifier : metaModifiers) {
+            stackMeta = modifier.apply(stackMeta);
+        }
         stack.setItemMeta(stackMeta);
         stack.addUnsafeEnchantments(enchantments);
-
-        ItemMeta modifiedMeta = stack.getItemMeta();
-        if (modifiedMeta != null) {
-            for (Function<ItemMeta, ItemMeta> modifier : metaModifiers) {
-                modifiedMeta = modifier.apply(modifiedMeta);
-            }
-            stack.setItemMeta(modifiedMeta);
-        }
-
         return stack;
     }
 
@@ -303,5 +321,4 @@ public class ItemTemplate
         item.setLeatherColor(color);
         return item;
     }
-
 }

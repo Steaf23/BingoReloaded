@@ -67,19 +67,13 @@ public record BingoStatistic(@NotNull Statistic stat, @Nullable EntityType entit
                                 !mat.name().equals("IRON_GOLEM_SPAWN_EGG") &&
                                 !mat.name().equals("WITHER_SPAWN_EGG")
                 );
+        // Note: pre 1.20.5 mooshroom spawn egg needed to be parsed by hand
         mats.forEach(mat -> {
-            if (mat.name().equals("MOOSHROOM_SPAWN_EGG"))
-            {
-                types.add(EntityType.MUSHROOM_COW);
-            }
-            else
-            {
-                types.add(EntityType.valueOf(mat.name().replace("_SPAWN_EGG", "")));
-            }
+            types.add(EntityType.valueOf(mat.name().replace("_SPAWN_EGG", "")));
         });
         types.add(EntityType.ENDER_DRAGON);
         types.add(EntityType.IRON_GOLEM);
-        types.add(EntityType.SNOWMAN);
+        types.add(EntityType.SNOW_GOLEM);
         types.add(EntityType.WITHER);
         return types;
     }
@@ -316,15 +310,11 @@ public record BingoStatistic(@NotNull Statistic stat, @Nullable EntityType entit
         {
             for (Material mat : Material.values())
             {
-                if (statistic.entityType == EntityType.MUSHROOM_COW)
-                {
-                    return Material.MOOSHROOM_SPAWN_EGG;
-                }
-                else if (statistic.entityType == EntityType.IRON_GOLEM)
+                if (statistic.entityType == EntityType.IRON_GOLEM)
                 {
                     return Material.POPPY;
                 }
-                else if (statistic.entityType == EntityType.SNOWMAN)
+                else if (statistic.entityType == EntityType.SNOW_GOLEM)
                 {
                     return Material.CARVED_PUMPKIN;
                 }
