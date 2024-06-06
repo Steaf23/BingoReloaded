@@ -11,6 +11,7 @@ import org.bukkit.Material;
 import org.bukkit.Statistic;
 import org.bukkit.advancement.Advancement;
 import org.bukkit.entity.EntityType;
+import org.bukkit.inventory.ItemFactory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
@@ -27,8 +28,9 @@ public class ChatComponentUtils
         return Arrays.stream(strings).map(TextComponent::fromLegacy).toList().toArray(new BaseComponent[]{});
     }
 
-    public static @NotNull ItemStack applyToStack(@NotNull ItemStack stack, @Nullable BaseComponent name, BaseComponent... lore) {
-        StringBuilder jsonData = new StringBuilder("{display:{");
+    public static @NotNull ItemStack itemStackFromComponent(@NotNull Material material, @Nullable BaseComponent name, BaseComponent... lore) {
+        StringBuilder jsonData = new StringBuilder(material.toString().toLowerCase());
+        jsonData.append("{display:{");
         if (name != null) {
             BaseComponent nameWrapper = new TextComponent();
             nameWrapper.setItalic(false);
@@ -37,7 +39,7 @@ public class ChatComponentUtils
         }
 
         if (lore.length == 0 || (lore.length == 1 && lore[0].toPlainText().isEmpty()))
-            return Bukkit.getUnsafe().modifyItemStack(stack, jsonData.append("}}").toString());
+            return Bukkit.getItemFactory().createItemStack(jsonData.append("}}").toString());
 
         if (name != null) {
             jsonData.append(",");
@@ -58,7 +60,7 @@ public class ChatComponentUtils
         }
         jsonData.append("]}}");
 
-        return Bukkit.getUnsafe().modifyItemStack(stack, jsonData.toString());
+        return Bukkit.getItemFactory().createItemStack(jsonData.toString());
     }
 
     public static BaseComponent convert(String text, ChatColor... modifiers) {
@@ -156,11 +158,7 @@ public class ChatComponentUtils
 
     private static String entityKey(EntityType entity)
     {
-        return switch (entity)
-        {
-            case MUSHROOM_COW -> "entity.minecraft.mooshroom";
-            case SNOWMAN -> "entity.minecraft.snow_golem";
-            default -> "entity.minecraft." + entity.name().toLowerCase();
-        };
+        // Note: before 1.20.6 , mooshroom and snow_golem needed to be translated manually.
+        return "entity.minecraft." + entity.name().toLowerCase();
     }
 }

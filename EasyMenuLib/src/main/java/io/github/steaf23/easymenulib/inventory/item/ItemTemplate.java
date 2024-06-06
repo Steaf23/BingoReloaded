@@ -13,6 +13,7 @@ import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.persistence.PersistentDataContainer;
@@ -248,8 +249,6 @@ public class ItemTemplate
     }
 
     public ItemStack buildItem() {
-        ItemStack stack = new ItemStack(material, amount);
-
         // To create the description, sort the sections based on priority and place all lines under each other.
         List<BaseComponent> descriptionList = new ArrayList<>();
         description.values().stream().sorted(Comparator.comparingInt(a -> a.priority)).forEach(section -> {
@@ -262,7 +261,8 @@ public class ItemTemplate
             descriptionList.remove(descriptionList.size() - 1);
         }
         BaseComponent[] descriptionComponent = descriptionList.isEmpty() ? new BaseComponent[]{} : descriptionList.toArray(new BaseComponent[]{});
-        ChatComponentUtils.applyToStack(stack, name, descriptionComponent);
+        ItemStack stack = ChatComponentUtils.itemStackFromComponent(material, name, descriptionComponent);
+        stack.setAmount(amount);
 
         if (glowing) {
             stack.addUnsafeEnchantment(Enchantment.DURABILITY, 1);
