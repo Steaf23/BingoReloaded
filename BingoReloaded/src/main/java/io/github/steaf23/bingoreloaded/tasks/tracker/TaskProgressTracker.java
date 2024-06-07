@@ -1,6 +1,7 @@
 package io.github.steaf23.bingoreloaded.tasks.tracker;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
+import io.github.steaf23.bingoreloaded.cards.BingoCard;
 import io.github.steaf23.bingoreloaded.event.BingoDeathmatchTaskCompletedEvent;
 import io.github.steaf23.bingoreloaded.event.BingoStatisticCompletedEvent;
 import io.github.steaf23.bingoreloaded.event.BingoTaskProgressCompletedEvent;
@@ -65,7 +66,8 @@ public class TaskProgressTracker
         progressMap.put(task, new ArrayList<>());
         for (BingoParticipant participant : game.getTeamManager().getParticipants()) {
             // only track progress if the participant has to complete the task.
-            if (!participant.getTeam().card.getTasks().contains(task)) {
+            BingoCard card = participant.getTeam().getCard();
+            if (card == null || !card.getTasks().contains(task)) {
                 continue;
             }
 
@@ -329,7 +331,7 @@ public class TaskProgressTracker
             return false;
 
         if (player.getTeam() != null) {
-            player.getTeam().card.handleTaskCompleted(player, task, game.getGameTime());
+            player.getTeam().getCard().handleTaskCompleted(player, task, game.getGameTime());
         }
 
         var progressCompletedEvent = new BingoTaskProgressCompletedEvent(player.getSession(), task);

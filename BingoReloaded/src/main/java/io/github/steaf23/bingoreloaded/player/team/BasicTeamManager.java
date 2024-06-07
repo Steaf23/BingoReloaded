@@ -204,7 +204,6 @@ public class BasicTeamManager implements TeamManager
                 return false;
             }
 
-
             String name = participant.getDisplayName();
             if (participant instanceof VirtualBingoPlayer virtualPlayer) {
                 name = virtualPlayer.getName();

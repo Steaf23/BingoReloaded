@@ -126,7 +126,7 @@ public class ConfigData
                 config.getInt("hotswapMode.recoverTime", 10));
 
         // Player
-        this.savePlayerInformation = config.getBoolean("playerLoadStrategy", true);
+        this.savePlayerInformation = config.getBoolean("savePlayerInformation", true);
         this.loadPlayerInformationStrategy = LoadPlayerInformationStrategy.valueOf(
                 config.getString("loadPlayerInformationStrategy", "AFTER_LEAVING_WORLD"));
     }

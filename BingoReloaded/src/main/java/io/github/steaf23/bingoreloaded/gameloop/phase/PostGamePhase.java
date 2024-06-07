@@ -46,7 +46,7 @@ public class PostGamePhase implements GamePhase
     @Override
     public void end() {
         for (BingoTeam team : session.teamManager.getActiveTeams()) {
-            team.card = null;
+            team.setCard(null);
         }
     }
 

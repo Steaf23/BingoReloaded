@@ -3,7 +3,6 @@ package io.github.steaf23.bingoreloaded.command;
 import io.github.steaf23.bingoreloaded.data.BingoStatData;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.data.ConfigData;
-import io.github.steaf23.bingoreloaded.data.PlayerSerializationData;
 import io.github.steaf23.bingoreloaded.gameloop.GameManager;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
@@ -40,13 +39,11 @@ public class BingoCommand implements TabExecutor
     private final ConfigData config;
     private final GameManager gameManager;
     private final MenuBoard menuBoard;
-    private final PlayerSerializationData playerData;
 
     public BingoCommand(ConfigData config, GameManager gameManager, MenuBoard menuBoard) {
         this.config = config;
         this.gameManager = gameManager;
         this.menuBoard = menuBoard;
-        this.playerData = new PlayerSerializationData();
     }
 
     @Override

@@ -109,8 +109,8 @@ public class BingoGame implements GamePhase
         Set<BingoCard> uniqueCards = new HashSet<>();
         getTeamManager().getActiveTeams().forEach(t -> {
             t.outOfTheGame = false;
-            t.card = masterCard.copy();
-            uniqueCards.add(t.card);
+            t.setCard(masterCard.copy());
+            uniqueCards.add(t.getCard());
         });
 
         for (BingoCard card : uniqueCards) {
@@ -327,7 +327,7 @@ public class BingoGame implements GamePhase
                 () -> new TranslatedMessage(BingoTranslation.RESPAWN_EXPIRED).color(ChatColor.RED).send(player));
     }
 
-    public static void spawnPlatform(Location platformLocation, int size) {
+    public static void spawnPlatform(Location platformLocation, int size, boolean clearArea) {
         for (int x = -size; x < size + 1; x++) {
             for (int z = -size; z < size + 1; z++) {
                 if (!platformLocation.getWorld().getType(
@@ -339,6 +339,20 @@ public class BingoGame implements GamePhase
                             (int) platformLocation.getY(),
                             (int) platformLocation.getZ() + z,
                             Material.WHITE_STAINED_GLASS);
+                }
+            }
+        }
+
+        if (clearArea) {
+            for (int y = 1; y < 6; y++) {
+                for (int x = -size; x < size + 1; x++) {
+                    for (int z = -size; z < size + 1; z++) {
+                        platformLocation.getWorld().setType(
+                                (int) platformLocation.getX() + x,
+                                (int) platformLocation.getY() + y,
+                                (int) platformLocation.getZ() + z,
+                                Material.AIR);
+                    }
                 }
             }
         }
@@ -369,7 +383,7 @@ public class BingoGame implements GamePhase
                     teleportPlayerToStart(p, platformLocation, 5);
 
                     if (!getTeamManager().getParticipants().isEmpty()) {
-                        spawnPlatform(platformLocation.clone(), 5);
+                        spawnPlatform(platformLocation.clone(), 5, true);
 
                         BingoReloaded.scheduleTask(task ->
                                 BingoGame.removePlatform(platformLocation, 5), (long) (Math.max(0, config.gracePeriod - 5)) * BingoReloaded.ONE_SECOND);
@@ -384,7 +398,7 @@ public class BingoGame implements GamePhase
                     players.forEach(p -> teleportPlayerToStart(p, teamLocation, 5));
 
                     if (!players.isEmpty()) {
-                        spawnPlatform(teamLocation, 5);
+                        spawnPlatform(teamLocation, 5, true);
 
                         BingoReloaded.scheduleTask(task ->
                                 BingoGame.removePlatform(teamLocation, 5), (long) (Math.max(0, config.gracePeriod - 5)) * BingoReloaded.ONE_SECOND);
@@ -396,7 +410,7 @@ public class BingoGame implements GamePhase
                 Set<BingoParticipant> players = getTeamManager().getParticipants();
                 players.forEach(p -> teleportPlayerToStart(p, spawnLocation, 5));
                 if (!getTeamManager().getParticipants().isEmpty()) {
-                    spawnPlatform(spawnLocation, 5);
+                    spawnPlatform(spawnLocation, 5, true);
 
                     BingoReloaded.scheduleTask(task ->
                             BingoGame.removePlatform(spawnLocation, 5), (long) (Math.max(0, config.gracePeriod - 5)) * BingoReloaded.ONE_SECOND);
@@ -487,13 +501,13 @@ public class BingoGame implements GamePhase
             BingoReloaded.incrementPlayerStat(player, BingoStatType.TASKS);
         });
 
-        if (participant.getTeam().card.hasBingo(participant.getTeam())) {
+        if (participant.getTeam().getCard().hasBingo(participant.getTeam())) {
             bingo(participant.getTeam());
             return;
         }
 
         // Start death match when all tasks have been completed in lockout
-        BingoCard card = teamManager.getActiveTeams().getLeadingTeam().card;
+        BingoCard card = teamManager.getActiveTeams().getLeadingTeam().getCard();
         if (!(card instanceof LockoutBingoCard lockoutCard)) {
             return;
         }

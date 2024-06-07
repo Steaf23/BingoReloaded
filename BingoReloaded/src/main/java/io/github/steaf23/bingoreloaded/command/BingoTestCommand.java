@@ -117,9 +117,9 @@ public class BingoTestCommand implements TabExecutor
         if (!player.getSession().isRunning())
             return;
 
-        BingoCard card = player.getTeam().card;
+        BingoCard card = player.getTeam().getCard();
 
-        if (taskIndex >= card.getTasks().size()) {
+        if (card == null || taskIndex >= card.getTasks().size()) {
             Message.log(ChatColor.RED + "index out of bounds for task list!");
             return;
         }

@@ -44,7 +44,7 @@ public class SerializablePlayer implements ConfigurationSerializable
         data.health = player.getHealth();
         data.hunger = player.getFoodLevel();
         data.gamemode = player.getGameMode();
-        data.spawnPoint = player.getBedSpawnLocation();
+        data.spawnPoint = player.getRespawnLocation();
         data.xpLevel = player.getLevel();
         data.xpPoints = player.getExp();
         data.inventory = player.getInventory().getContents();
@@ -58,32 +58,38 @@ public class SerializablePlayer implements ConfigurationSerializable
      * @param location
      * @return
      */
-    public SerializablePlayer reset(Player player, Location location)
+    public static SerializablePlayer reset(JavaPlugin plugin, Player player, Location location)
     {
-        this.location = location;
-        playerId = player.getUniqueId();
-        health = 20.0;
-        hunger = 20;
-        gamemode = player.getGameMode();
-        spawnPoint = null;
-        xpLevel = 0;
-        xpPoints = 0.0f;
-        inventory = new ItemStack[player.getInventory().getSize()];
-        enderInventory = new ItemStack[player.getInventory().getSize()];
-        return this;
+        SerializablePlayer data = new SerializablePlayer();
+        data.pluginVersion = plugin.getDescription().getVersion();
+        data.location = location;
+        data.playerId = player.getUniqueId();
+        data.health = 20.0;
+        data.hunger = 20;
+        data.gamemode = player.getGameMode();
+        data.spawnPoint = null;
+        data.xpLevel = 0;
+        data.xpPoints = 0.0f;
+        data.inventory = new ItemStack[player.getInventory().getSize()];
+        data.enderInventory = new ItemStack[player.getEnderChest().getSize()];
+        return data;
     }
 
-    public void toPlayer(Player player)
+    private SerializablePlayer() {
+    }
+
+    public void apply(Player player)
     {
         if (!playerId.equals(player.getUniqueId()))
             return;
 
+        Message.log("Player pos event before apply: " + location.getX() + " " + location.getZ());
         player.teleport(location, PlayerTeleportEvent.TeleportCause.PLUGIN);
 
         player.setHealth(health);
         player.setFoodLevel(hunger);
         player.setGameMode(gamemode);
-        player.setBedSpawnLocation(spawnPoint);
+        player.setRespawnLocation(spawnPoint, true);
         player.setLevel(xpLevel);
         player.setExp(xpPoints);
 

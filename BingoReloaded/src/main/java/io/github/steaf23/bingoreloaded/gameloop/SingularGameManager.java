@@ -21,7 +21,7 @@ public class SingularGameManager extends GameManager
             return;
         }
 
-        BingoSession session = new BingoSession(this, menuBoard, hudRegistry, group, config, getPlayerData());
+        BingoSession session = new BingoSession(this, menuBoard, hudRegistry, group, config);
         sessions.put(config.defaultWorldName, session);
     }
 

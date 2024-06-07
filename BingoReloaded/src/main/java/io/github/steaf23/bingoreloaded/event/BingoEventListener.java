@@ -1,5 +1,6 @@
 package io.github.steaf23.bingoreloaded.event;
 
+import io.github.steaf23.bingoreloaded.gameloop.GameManager;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gameloop.phase.PregameLobby;
@@ -15,27 +16,28 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.EquipmentSlot;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.function.Function;
 
 public class BingoEventListener implements Listener
 {
-    private final Function<World, BingoSession> sessionResolver;
     private final boolean disableAdvancements;
     private final boolean disableStatistics;
+    private final GameManager gameManager;
 
-    public BingoEventListener(Function<World, BingoSession> sessionResolver, boolean disableAdvancements, boolean disableStatistics)
+    public BingoEventListener(GameManager gameManager, boolean disableAdvancements, boolean disableStatistics)
     {
-        this.sessionResolver = sessionResolver;
+        this.gameManager = gameManager;
         this.disableAdvancements = disableAdvancements;
         this.disableStatistics = disableStatistics;
     }
 
     @Nullable
-    private BingoSession getSession(World world)
+    private BingoSession getSession(@NotNull World world)
     {
-        return sessionResolver.apply(world);
+        return gameManager.getSessionFromWorld(world);
     }
 
     @EventHandler
@@ -184,39 +186,19 @@ public class BingoEventListener implements Listener
     @EventHandler
     public void handlePlayerJoinsServer(final PlayerJoinEvent event)
     {
-        BingoSession session = getSession(event.getPlayer().getWorld());
-        if (session == null)
-            return;
-
-        session.handlePlayerJoinsServer(event);
+        gameManager.handlePlayerJoinsServer(event);
     }
 
     @EventHandler
     public void handlePlayerQuitsServer(final PlayerQuitEvent event)
     {
-        BingoSession session = getSession(event.getPlayer().getWorld());
-        if (session == null)
-            return;
-
-        session.handlePlayerQuitsServer(event);
+        gameManager.handlePlayerQuitsServer(event);
     }
 
     @EventHandler
     public void handlePlayerTeleport(final PlayerTeleportEvent event)
     {
-        // This event is special in the sense we need to catch the session both
-        //    as the player is teleporting into a bingo world and teleporting out of a bingo world
-        BingoSession session = getSession(event.getTo().getWorld());
-        if (session != null)
-        {
-            session.handlePlayerTeleport(event);
-        }
-
-        session = getSession(event.getFrom().getWorld());
-        if (session != null)
-        {
-            session.handlePlayerTeleport(event);
-        }
+        gameManager.handlePlayerTeleport(event);
     }
 
     @EventHandler

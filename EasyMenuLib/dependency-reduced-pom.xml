@@ -8,7 +8,7 @@
     <plugins>
       <plugin>
         <artifactId>maven-shade-plugin</artifactId>
-        <version>3.3.0</version>
+        <version>3.5.0</version>
         <executions>
           <execution>
             <phase>package</phase>
@@ -27,7 +27,7 @@
                   <artifact>*:*</artifact>
                   <excludeDefaults>false</excludeDefaults>
                   <includes>
-                    <include>io.github.steaf23.easymenulib.anvilgui</include>
+                    <include>net/wesjd/anvilgui/**</include>
                   </includes>
                 </filter>
               </filters>
@@ -41,6 +41,10 @@
     <repository>
       <id>spigot-repo</id>
       <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+    </repository>
+    <repository>
+      <id>codemc-snapshots</id>
+      <url>https://repo.codemc.io/repository/maven-snapshots/</url>
     </repository>
   </repositories>
   <dependencies>

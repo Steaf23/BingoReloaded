@@ -10,6 +10,7 @@ import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Team;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -19,7 +20,7 @@ public class BingoTeam
 {
     // Team used to display prefixes next to player display names
     public final Team team;
-    public BingoCard card;
+    private BingoCard card;
     public boolean outOfTheGame = false;
     private final String id;
     private final ChatColor color;
@@ -34,6 +35,14 @@ public class BingoTeam
         this.color = color;
         this.name = name;
         this.members = new HashSet<>();
+    }
+
+    public @Nullable BingoCard getCard() {
+        return card;
+    }
+
+    public void setCard(BingoCard card) {
+        this.card = card;
     }
 
     public String getIdentifier() {
@@ -88,6 +97,10 @@ public class BingoTeam
     }
 
     public int getCompleteCount() {
+        if (card == null) {
+            Message.error("Cannot get complete count of team " + getColoredName() + " (Please report!)");
+            return 0;
+        }
         return card.getCompleteCount(this);
     }
 

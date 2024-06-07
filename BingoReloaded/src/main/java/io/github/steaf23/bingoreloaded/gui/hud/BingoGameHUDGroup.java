@@ -41,9 +41,9 @@ public class BingoGameHUDGroup extends PlayerHUDGroup implements SessionMember
 
         for (BingoTeam t : session.teamManager.getActiveTeams())
         {
-            if (t.card != null)
+            if (t.getCard() != null)
             {
-                teamScores.put(t.getIdentifier(),t.card.getCompleteCount(t));
+                teamScores.put(t.getIdentifier(), t.getCard().getCompleteCount(t));
             }
         }
 

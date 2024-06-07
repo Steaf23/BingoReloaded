@@ -10,25 +10,13 @@ import javax.annotation.Nullable;
 public class PlayerLeftSessionWorldEvent extends BingoEvent
 {
     private final Player player;
-    private final Location source;
-    private final Location destination;
 
-    public PlayerLeftSessionWorldEvent(Player player, BingoSession session, @Nullable Location source, @Nullable Location destination) {
+    public PlayerLeftSessionWorldEvent(Player player, BingoSession session) {
         super(session);
         this.player = player;
-        this.source = source;
-        this.destination = destination;
     }
 
     public Player getPlayer() {
         return player;
-    }
-
-    public Location getSource() {
-        return source;
-    }
-
-    public Location getDestination() {
-        return destination;
     }
 }

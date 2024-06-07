@@ -1,5 +1,6 @@
 package io.github.steaf23.bingoreloaded.player;
 
+import io.github.steaf23.bingoreloaded.cards.BingoCard;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gui.inventory.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
@@ -29,7 +30,11 @@ public interface BingoParticipant
         if (team == null) {
             return 0;
         }
-        return team.card.getCompleteCount(this);
+        BingoCard card = team.getCard();
+        if (card == null) {
+            return 0;
+        }
+        return card.getCompleteCount(this);
     }
 
     void giveBingoCard(int cardSlot);

@@ -214,7 +214,7 @@ public class BingoPlayer implements BingoParticipant
         if (playerTeam == null) {
             return;
         }
-        BingoCard card = playerTeam.card;
+        BingoCard card = playerTeam.getCard();
 
         sessionPlayer().ifPresent(player -> {
             if (deathMatchTask != null) {
@@ -281,7 +281,7 @@ public class BingoPlayer implements BingoParticipant
             player.teleport(newLocation, PlayerTeleportEvent.TeleportCause.PLUGIN);
             newLocation.setY(newLocation.getY() - fallDistance);
 
-            BingoGame.spawnPlatform(newLocation, 1);
+            BingoGame.spawnPlatform(newLocation, 1, true);
 
             BingoReloaded.scheduleTask(laterTask -> {
                 BingoGame.removePlatform(newLocation, 1);

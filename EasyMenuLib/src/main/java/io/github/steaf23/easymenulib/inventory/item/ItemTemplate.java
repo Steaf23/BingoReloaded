@@ -290,10 +290,11 @@ public class ItemTemplate
         }
 
         if (maxDamage != null) {
-            if (stackMeta instanceof Damageable) {
-                ((Damageable)stackMeta).setMaxDamage(maxDamage);
-                ((Damageable)stackMeta).setDamage(currentDamage);
-            }
+            // FIXME: Re-add when spigot fixes spawn egg bug
+//            if (stackMeta instanceof Damageable) {
+//                ((Damageable)stackMeta).setMaxDamage(maxDamage);
+//                ((Damageable)stackMeta).setDamage(currentDamage);
+//            }
         }
         PersistentDataContainer pdc = stackMeta.getPersistentDataContainer();
         pdc = PDCHelper.addStringToPdc(pdc, "compare_key", compareKey);
