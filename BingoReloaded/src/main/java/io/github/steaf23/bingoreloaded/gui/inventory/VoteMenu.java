@@ -99,6 +99,7 @@ public class VoteMenu extends BasicMenu
                     lobby.voteGamemode("complete_3", player);
                     gamemodeOptions.close(player);
                 });
+                itemIndex++;
             }
             if (voteList.gamemodes().contains("hotswap_5"))
             {
@@ -120,6 +121,7 @@ public class VoteMenu extends BasicMenu
                     lobby.voteGamemode("hotswap_3", player);
                     gamemodeOptions.close(player);
                 });
+                itemIndex++;
             }
             gamemodeOptions.addCloseAction(EXIT);
 

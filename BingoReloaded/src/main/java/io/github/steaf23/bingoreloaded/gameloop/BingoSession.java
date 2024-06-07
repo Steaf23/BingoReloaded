@@ -154,6 +154,11 @@ public class BingoSession
         phase.setup();
     }
 
+    /**
+     * Remove participant from an active game or lobby as if they chose leave game in the team selector.
+     * Does not force the player out of the world (use removePlayer for that instead)
+     * @param player participant to remove from the active game or lobby.
+     */
     public void removeParticipant(@NonNull BingoParticipant player) {
         teamManager.removeMemberFromTeam(player);
     }
@@ -209,6 +214,7 @@ public class BingoSession
             new TranslatedMessage(BingoTranslation.LEAVE).send(event.getPlayer());
         }
         else {
+            // remove player from session if it isn't in progress
             BingoParticipant participant = teamManager.getPlayerAsParticipant(event.getPlayer());
             teamManager.removeMemberFromTeam(participant);
         }

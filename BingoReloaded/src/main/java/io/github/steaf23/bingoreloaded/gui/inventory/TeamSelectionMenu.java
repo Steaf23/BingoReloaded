@@ -69,10 +69,10 @@ public class TeamSelectionMenu extends PaginatedSelectionMenu
             if (autoPlayers.contains(player.getUniqueId())) {
                 description.add("" + ChatColor.GRAY + ChatColor.BOLD + " ┗ " + ChatColor.RESET + ChatColor.WHITE + gamePlayer.getDisplayName());
                 description.add(" ");
-                description.add("" + ChatColor.DARK_GRAY + BingoTranslation.COUNT_MORE.translate(Integer.toString(autoPlayers.size() - 1)));
+                description.add("" + ChatColor.GRAY + BingoTranslation.COUNT_MORE.translate(Integer.toString(autoPlayers.size() - 1)));
             }
             else {
-                description.add("" + ChatColor.DARK_GRAY + BingoTranslation.COUNT_MORE.translate(Integer.toString(autoPlayers.size())));
+                description.add("" + ChatColor.GRAY + BingoTranslation.COUNT_MORE.translate(Integer.toString(autoPlayers.size())));
             }
             autoItem.addDescription("joined", 1, description.toArray(new String[]{}));
         }

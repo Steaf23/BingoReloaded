@@ -136,8 +136,8 @@ endGameWithoutTeams: true # true or false
 
 # Settings that only apply when playing the Hotswap gamemode
 hotswapMode:
-  minimumExpirationTime: 5 # Minimum amount of time in minutes that an task can expire in
-  maximumExpirationTime: 15 # Maximum amount of time in minutes that an task can expire in
+  minimumExpirationTime: 3 # Minimum amount of time in minutes that an task can expire in
+  maximumExpirationTime: 20 # Maximum amount of time in minutes that an task can expire in
   recoverTime: 10 # Time in seconds that a completed/expired task needs to be replaced with a new task
 
 # ==========================================================================

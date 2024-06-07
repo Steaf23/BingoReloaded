@@ -146,6 +146,10 @@ public class BingoGame implements GamePhase
                 player.spigot().sendMessage(settingsMessage);
                 player.spigot().sendMessage(new TextComponent());
             }
+            else {
+                // If the player is not online, we can remove them from the game, as they probably did not intend on playing in this session
+                session.removeParticipant(p);
+            }
         });
 
         // Post-start Setup

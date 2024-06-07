@@ -121,8 +121,8 @@ public class ConfigData
         this.disableStatistics = config.getBoolean("disableStatistics", false);
         this.endGameWithoutTeams = config.getBoolean("endGameWithoutTeams", true);
         this.hotswapMode = new HotswapConfig(
-                config.getInt("hotswapMode.minimumExpirationTime", 5),
-                config.getInt("hotswapMode.maximumExpirationTime", 15),
+                config.getInt("hotswapMode.minimumExpirationTime", 3),
+                config.getInt("hotswapMode.maximumExpirationTime", 20),
                 config.getInt("hotswapMode.recoverTime", 10));
 
         // Player

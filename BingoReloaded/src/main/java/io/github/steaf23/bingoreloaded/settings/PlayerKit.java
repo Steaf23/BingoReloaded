@@ -137,6 +137,8 @@ public enum PlayerKit
                         .addEnchantment(Enchantment.UNBREAKING, 3)
                         .addEnchantment(Enchantment.DEPTH_STRIDER, 3)
                         .addEnchantment(Enchantment.PROTECTION, 4));
+                items.add(new ItemTemplate(38, Material.ELYTRA)
+                        .addEnchantment(Enchantment.UNBREAKING, 10));
                 items.add(new ItemTemplate(1, Material.NETHERITE_PICKAXE)
                         .addEnchantment(Enchantment.FORTUNE, 3)
                         .addEnchantment(Enchantment.EFFICIENCY, 5));

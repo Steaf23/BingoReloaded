@@ -1,10 +1,12 @@
 package io.github.steaf23.bingoreloaded.gui.hud;
 
+import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.ScoreboardData;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gameloop.SessionMember;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
+import io.github.steaf23.bingoreloaded.player.team.SoloTeamManager;
 import io.github.steaf23.bingoreloaded.player.team.TeamManager;
 import io.github.steaf23.easymenulib.scoreboard.HUDRegistry;
 import io.github.steaf23.easymenulib.scoreboard.PlayerHUD;
@@ -54,7 +56,8 @@ public class BingoGameHUDGroup extends PlayerHUDGroup implements SessionMember
         // try to save space on the sidebar
         int spaceLeft = 15 - template.lines().length;
         boolean condensedDisplay = !showPlayerNames
-                || teamManager.getTeamCount() + teamManager.getParticipantCount() > spaceLeft;
+                || teamManager.getTeamCount() + teamManager.getParticipantCount() > spaceLeft
+                || teamManager instanceof SoloTeamManager;
 
         teamManager.getActiveTeams().getTeams().stream()
                 .sorted(Comparator.comparingInt(BingoTeam::getCompleteCount).reversed())

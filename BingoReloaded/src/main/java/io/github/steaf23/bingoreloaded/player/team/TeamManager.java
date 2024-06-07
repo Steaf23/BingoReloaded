@@ -6,8 +6,6 @@ import io.github.steaf23.bingoreloaded.event.PlayerJoinedSessionWorldEvent;
 import io.github.steaf23.bingoreloaded.event.PlayerLeftSessionWorldEvent;
 import io.github.steaf23.bingoreloaded.gameloop.SessionMember;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
-import io.github.steaf23.bingoreloaded.util.Message;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -33,6 +31,10 @@ public interface TeamManager extends SessionMember
 
     BingoTeamContainer getActiveTeams();
 
+    /**
+     * Attempts to retrieve the given player as a BingoParticipant.
+     * Player does not have to be in the correct session world for this to work.
+     */
     @Nullable
     default BingoParticipant getPlayerAsParticipant(@NonNull Player player) {
         for (BingoParticipant participant : getParticipants()) {
@@ -48,14 +50,11 @@ public interface TeamManager extends SessionMember
     }
 
     /**
-     * @param player
-     * @param teamId
      * @return true if the player could be added to the team successfully
      */
     boolean addMemberToTeam(BingoParticipant player, String teamId);
 
     /**
-     * @param member
      * @return true if the player could be removed from all teams successfully
      */
     boolean removeMemberFromTeam(@Nullable BingoParticipant member);

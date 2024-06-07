@@ -10,6 +10,8 @@ import io.github.steaf23.bingoreloaded.event.BingoEventListener;
 import io.github.steaf23.bingoreloaded.event.PlayerJoinedSessionWorldEvent;
 import io.github.steaf23.bingoreloaded.event.PlayerLeftSessionWorldEvent;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
+import io.github.steaf23.bingoreloaded.player.BingoPlayer;
+import io.github.steaf23.bingoreloaded.player.team.BasicTeamManager;
 import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.easymenulib.inventory.Menu;
 import io.github.steaf23.easymenulib.inventory.MenuBoard;
@@ -166,9 +168,17 @@ public class GameManager
     public @Nullable BingoSession getSessionOfPlayer(Player player) {
         for (String sessionName : sessions.keySet()) {
             BingoSession session = sessions.get(sessionName);
+            Message.log("participants:  " + session.teamManager.getParticipants());
             BingoParticipant participant = session.teamManager.getPlayerAsParticipant(player);
             if (participant != null) {
                 return session;
+            }
+
+            //TODO: fix this??? maybe create a proper special team from automatic (or add it to teammanager interface), as this is kind of messy like this...
+            if (session.teamManager instanceof BasicTeamManager teamManager) {
+                if (teamManager.getParticipantsInAutoTeam().contains(player.getUniqueId())) {
+                    return session;
+                }
             }
         }
 
@@ -230,6 +240,21 @@ public class GameManager
                 SerializablePlayer serializablePlayer = SerializablePlayer.fromPlayer(plugin, event.getPlayer());
                 serializablePlayer.location = event.getFrom();
                 playerData.savePlayer(serializablePlayer, false);
+            }
+
+            // If the player was already playing in another session, remove them from that game first
+            BingoSession previousSession = getSessionOfPlayer(event.getPlayer());
+            if (previousSession != null) {
+                BingoParticipant participant = previousSession.teamManager.getPlayerAsParticipant(event.getPlayer());
+                if (participant != null) {
+                    previousSession.removeParticipant(participant);
+                }
+                else {
+                    // FIXME: remove when refactoring auto team
+                    // Maybe we can cheat it by creating a new team and then seeing if the player can be removed from automatic players...
+                    BingoPlayer playerProxy = new BingoPlayer(event.getPlayer(), previousSession);
+                    previousSession.removeParticipant(playerProxy);
+                }
             }
 
             // set spawn point of player in session world
