@@ -57,24 +57,15 @@ public record BingoStatistic(@NotNull Statistic stat, @Nullable EntityType entit
 
     private static Set<EntityType> getValidEntityTypes()
     {
+        // This is the reason we cant support 1.19.2 or below, since we would have to manually add ender dragon and wither spawn eggs.
         Set<EntityType> types = new HashSet<>();
-        // Filter out mobs that did not have spawn eggs prior to 1.19.3
-        Stream<Material> mats = Arrays.stream(Material.values())
+        Arrays.stream(Material.values())
                 .filter(mat ->
-                        mat.name().contains("_SPAWN_EGG") &&
-                                !mat.name().equals("ENDER_DRAGON_SPAWN_EGG") &&
-                                !mat.name().equals("SNOW_GOLEM_SPAWN_EGG") &&
-                                !mat.name().equals("IRON_GOLEM_SPAWN_EGG") &&
-                                !mat.name().equals("WITHER_SPAWN_EGG")
-                );
+                        mat.name().contains("_SPAWN_EGG"))
+                .forEach(mat -> {
+                    types.add(EntityType.valueOf(mat.name().replace("_SPAWN_EGG", "")));
+                });
         // Note: pre 1.20.5 mooshroom spawn egg needed to be parsed by hand
-        mats.forEach(mat -> {
-            types.add(EntityType.valueOf(mat.name().replace("_SPAWN_EGG", "")));
-        });
-        types.add(EntityType.ENDER_DRAGON);
-        types.add(EntityType.IRON_GOLEM);
-        types.add(EntityType.SNOW_GOLEM);
-        types.add(EntityType.WITHER);
         return types;
     }
 
@@ -308,28 +299,8 @@ public record BingoStatistic(@NotNull Statistic stat, @Nullable EntityType entit
         else if (statistic.entityType != null &&
                 statistic.stat.getType() == Statistic.Type.ENTITY)
         {
-            for (Material mat : Material.values())
-            {
-                if (statistic.entityType == EntityType.IRON_GOLEM)
-                {
-                    return Material.POPPY;
-                }
-                else if (statistic.entityType == EntityType.SNOW_GOLEM)
-                {
-                    return Material.CARVED_PUMPKIN;
-                }
-                else if (statistic.entityType == EntityType.ENDER_DRAGON)
-                {
-                    return Material.DRAGON_EGG;
-                }
-                else if (statistic.entityType == EntityType.WITHER)
-                {
-                    return Material.NETHER_STAR;
-                }
-
-                Material spawnEgg = Material.valueOf(statistic.entityType.name() + "_SPAWN_EGG");
-                return spawnEgg;
-            }
+            Material spawnEgg = Material.valueOf(statistic.entityType.name() + "_SPAWN_EGG");
+            return spawnEgg;
         }
 
         return Material.GLOBE_BANNER_PATTERN;
