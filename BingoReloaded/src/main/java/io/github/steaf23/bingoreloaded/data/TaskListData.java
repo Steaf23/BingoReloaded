@@ -24,7 +24,6 @@ public class TaskListData
             "default_statistics",
             "default_items_hardcore",
             "default_advancements_hardcore",
-            "default_statistics_hardcore",
             "default_statistics_hardcore"
     );
 
