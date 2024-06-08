@@ -14,6 +14,10 @@ import java.util.stream.Collectors;
 
 public class BingoCardData
 {
+    public static final Set<String> DEFAULT_CARD_NAMES = Set.of(
+            "default_card",
+            "default_card_hardcore"
+    );
     private final TaskListData listsData = new TaskListData();
     public static final int MAX_ITEMS = 36;
     public static final int MIN_ITEMS = 1;
@@ -25,7 +29,7 @@ public class BingoCardData
         if (!data.getConfig().contains(cardName))
             return false;
 
-        if (cardName.equals("default_card")) {
+        if (DEFAULT_CARD_NAMES.contains(cardName)) {
             Message.error("Cannot remove default card!");
             return false;
         }
@@ -48,8 +52,7 @@ public class BingoCardData
 
     public boolean renameCard(String cardName, String newName)
     {
-        var defaultCards = List.of("default_card");
-        if (defaultCards.contains(cardName) || defaultCards.contains(newName))
+        if (DEFAULT_CARD_NAMES.contains(cardName) || DEFAULT_CARD_NAMES.contains(newName))
             return false;
         if (!data.getConfig().contains(cardName))
             return false;

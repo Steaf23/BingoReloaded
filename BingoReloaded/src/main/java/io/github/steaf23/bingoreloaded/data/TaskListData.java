@@ -18,6 +18,16 @@ import java.util.stream.Collectors;
  */
 public class TaskListData
 {
+    public static final Set<String> DEFAULT_LIST_NAMES = Set.of(
+            "default_items",
+            "default_advancements",
+            "default_statistics",
+            "default_items_hardcore",
+            "default_advancements_hardcore",
+            "default_statistics_hardcore",
+            "default_statistics_hardcore"
+    );
+
     private final YmlDataManager data = BingoReloaded.createYmlDataManager("data/" + BingoReloaded.getDefaultTasksVersion());
 
     public Set<TaskData> getTasks(String listName, boolean withStatistics, boolean withAdvancements)
@@ -70,8 +80,7 @@ public class TaskListData
         if (!data.getConfig().contains(listName))
             return false;
 
-        var defaultLists = List.of("default_items", "default_advancements", "default_statistics");
-        if (defaultLists.contains(listName)) {
+        if (DEFAULT_LIST_NAMES.contains(listName)) {
             Message.error("Cannot remove default lists!");
             return false;
         }
@@ -97,8 +106,7 @@ public class TaskListData
 
     public boolean renameList(String oldName, String newName)
     {
-        var defaultLists = List.of("default_items", "default_advancements", "default_statistics");
-        if (defaultLists.contains(oldName) || defaultLists.contains(newName))
+        if (DEFAULT_LIST_NAMES.contains(oldName) || DEFAULT_LIST_NAMES.contains(newName))
             return false;
         if (!data.getConfig().contains(oldName))
             return false;

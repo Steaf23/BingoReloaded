@@ -96,7 +96,7 @@ public class BingoCreatorMenu extends BasicMenu
     }
 
     private void openCardEditor(String cardName, HumanEntity player) {
-        if (cardName.equals("default_card")) {
+        if (BingoCardData.DEFAULT_CARD_NAMES.contains(cardName)) {
             Message.sendDebug("Cannot edit default card, use right click to duplicate them instead!", (Player)player);
             Message.error("Cannot edit default card, use right click to duplicate them instead!");
             return;
@@ -106,7 +106,7 @@ public class BingoCreatorMenu extends BasicMenu
     }
 
     private void openListEditor(String listName, HumanEntity player) {
-        if (listName.equals("default_advancements") || listName.equals("default_items") || listName.equals("default_statistics")) {
+        if (TaskListData.DEFAULT_LIST_NAMES.contains(listName)) {
             Message.sendDebug("Cannot edit default lists, use right click to duplicate them instead!", (Player)player);
             Message.error("Cannot edit default lists, use right click to duplicate them instead!");
             return;
