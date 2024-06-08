@@ -192,11 +192,11 @@ public class PregameLobby implements GamePhase
     }
 
     private void giveVoteItem(Player player) {
-        player.getInventory().addItem(PlayerKit.VOTE_ITEM.buildItem());
+        player.getInventory().addItem(PlayerKit.VOTE_ITEM.buildItem(false));
     }
 
     private void giveTeamItem(Player player) {
-        player.getInventory().addItem(PlayerKit.TEAM_ITEM.buildItem());
+        player.getInventory().addItem(PlayerKit.TEAM_ITEM.buildItem(false));
     }
 
     private void initializePlayer(Player player) {

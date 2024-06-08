@@ -11,7 +11,9 @@ import io.github.steaf23.bingoreloaded.gameloop.phase.GamePhase;
 import io.github.steaf23.bingoreloaded.gameloop.phase.PostGamePhase;
 import io.github.steaf23.bingoreloaded.gameloop.phase.PregameLobby;
 import io.github.steaf23.bingoreloaded.gui.hud.BingoGameHUDGroup;
+import io.github.steaf23.bingoreloaded.gui.hud.DisabledBingoGameHUDGroup;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
+import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.player.team.BasicTeamManager;
 import io.github.steaf23.bingoreloaded.player.team.SoloTeamManager;
 import io.github.steaf23.bingoreloaded.player.team.TeamManager;
@@ -61,7 +63,11 @@ public class BingoSession
         this.hudRegistry = hudRegistry;
         this.worlds = worlds;
         this.config = config;
-        this.scoreboard = new BingoGameHUDGroup(hudRegistry, this, config.showPlayerInScoreboard);
+        if (config.disableScoreboardSidebar) {
+            this.scoreboard =  new DisabledBingoGameHUDGroup(hudRegistry, this, config.showPlayerInScoreboard);
+        } else {
+            this.scoreboard = new BingoGameHUDGroup(hudRegistry, this, config.showPlayerInScoreboard);
+        }
         this.soundPlayer = new BingoSoundPlayer(this);
         this.settingsBuilder = new BingoSettingsBuilder(this);
         Scoreboard board = Bukkit.getScoreboardManager().getNewScoreboard();
@@ -137,13 +143,14 @@ public class BingoSession
     }
 
     public void prepareNextGame() {
-//        if (config.savePlayerInformation && config.loadPlayerInformationStrategy == ConfigData.LoadPlayerInformationStrategy.AFTER_GAME) {
-//            for (Player p : Bukkit.getOnlinePlayers()) {
-//                if (hasPlayer(p)) {
-//                    playerData.loadPlayer(p);
-//                }
-//            }
-//        }
+        var event = new PrepareNextBingoGameEvent(this);
+        Bukkit.getPluginManager().callEvent(event);
+
+        getOverworld().getPlayers().forEach(p -> {
+            if (teamManager.getPlayerAsParticipant(p) == null) {
+                teamManager.addMemberToTeam(new BingoPlayer(p, this), "auto");
+            }
+        });
 
         // When we came from the PostGamePhase we need to make sure to end it properly
         if (phase != null) {

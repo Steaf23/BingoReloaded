@@ -28,6 +28,6 @@ public record SerializableItem(int slot, ItemStack stack) implements Configurati
     }
 
     public static SerializableItem fromItemTemplate(ItemTemplate template) {
-        return new SerializableItem(template.getSlot(), template.buildItem());
+        return new SerializableItem(template.getSlot(), template.buildItem(false));
     }
 }

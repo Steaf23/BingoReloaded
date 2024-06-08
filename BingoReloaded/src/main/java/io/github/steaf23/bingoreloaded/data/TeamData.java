@@ -3,6 +3,7 @@ package io.github.steaf23.bingoreloaded.data;
 import com.google.common.base.CaseFormat;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.helper.YmlDataManager;
+import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.easymenulib.util.FlexColor;
 import net.md_5.bungee.api.ChatColor;
 import org.apache.commons.lang.StringUtils;
@@ -46,12 +47,15 @@ public class TeamData {
         return teams;
     }
 
-    public void addTeam(String key, String name, ChatColor color) {
+    public void addTeam(@NotNull String key, String name, ChatColor color) {
+        if (key.isEmpty()) {
+            key = getNewTeamId();
+        }
         data.getConfig().set(key, new TeamTemplate(name, color));
         data.saveConfig();
     }
 
-    public void addTeam(String key, TeamTemplate template) {
+    public void addTeam(@NotNull String key, TeamTemplate template) {
         addTeam(key, template.name(), template.color());
     }
 

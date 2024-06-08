@@ -11,6 +11,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,7 +59,7 @@ public class TeamEditorMenu extends PaginatedSelectionMenu
         addItemsToSelect(items);
     }
 
-    public BasicMenu createTeamEditor(String teamKey) {
+    public BasicMenu createTeamEditor(@NotNull String teamKey) {
         return new TeamEdit(getMenuBoard(), teamData.getTeam(teamKey, DEFAULT_NEW_TEAM), editedTemplate -> {
             teamData.addTeam(teamKey, editedTemplate);
         });

@@ -9,6 +9,7 @@ import io.github.steaf23.bingoreloaded.data.world.WorldGroup;
 import io.github.steaf23.bingoreloaded.event.BingoEventListener;
 import io.github.steaf23.bingoreloaded.event.PlayerJoinedSessionWorldEvent;
 import io.github.steaf23.bingoreloaded.event.PlayerLeftSessionWorldEvent;
+import io.github.steaf23.bingoreloaded.event.PrepareNextBingoGameEvent;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.player.team.BasicTeamManager;
@@ -276,6 +277,17 @@ public class GameManager
 
         if (sourceSession != null) {
             sourceSession.removePlayer(event.getPlayer());
+        }
+    }
+
+    public void handlePrepareNextBingoGame(final PrepareNextBingoGameEvent event) {
+        if (config.savePlayerInformation && config.loadPlayerInformationStrategy == ConfigData.LoadPlayerInformationStrategy.AFTER_GAME) {
+            for (BingoParticipant participant : event.getSession().teamManager.getParticipants()) {
+                participant.sessionPlayer().ifPresent(player -> {
+                    event.getSession().teamManager.removeMemberFromTeam(participant);
+                    playerData.loadPlayer(player);
+                });
+            }
         }
     }
 }

@@ -171,6 +171,9 @@ public class BasicTeamManager implements TeamManager
         }
 
         var leaveEvent = new ParticipantLeftTeamEvent(player, team, session);
+        player.sessionPlayer().ifPresent(p -> {
+            new TranslatedMessage(BingoTranslation.LEAVE).color(ChatColor.RED).send(p);
+        });
         Bukkit.getPluginManager().callEvent(leaveEvent);
         return true;
     }

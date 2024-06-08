@@ -306,4 +306,9 @@ public class BingoEventListener implements Listener
     public void handleBingoPlaySoundEvent(final BingoPlaySoundEvent event) {
         event.getSession().handlePlaySoundEvent(event);
     }
+
+    @EventHandler
+    public void handlePrepareNextBingoGameEvent(final PrepareNextBingoGameEvent event) {
+        gameManager.handlePrepareNextBingoGame(event);
+    }
 }

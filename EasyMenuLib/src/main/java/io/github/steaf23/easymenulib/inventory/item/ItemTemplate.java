@@ -265,6 +265,10 @@ public class ItemTemplate
     }
 
     public ItemStack buildItem() {
+        return buildItem(true);
+    }
+
+    public ItemStack buildItem(boolean hideAttributes) {
         // To create the description, sort the sections based on priority and place all lines under each other.
         List<BaseComponent> descriptionList = new ArrayList<>();
         description.values().stream().sorted(Comparator.comparingInt(a -> a.priority)).forEach(section -> {
@@ -299,8 +303,13 @@ public class ItemTemplate
         PersistentDataContainer pdc = stackMeta.getPersistentDataContainer();
         pdc = PDCHelper.addStringToPdc(pdc, "compare_key", compareKey);
 
-        stackMeta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_UNBREAKABLE, ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_DYE);
-        stackMeta.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, new AttributeModifier("dummy", 1.0, AttributeModifier.Operation.ADD_NUMBER));
+        stackMeta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_UNBREAKABLE, ItemFlag.HIDE_DYE);
+
+        if (hideAttributes) {
+            stackMeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+            stackMeta.addAttributeModifier(Attribute.GENERIC_SCALE, new AttributeModifier("dummy", 0, AttributeModifier.Operation.MULTIPLY_SCALAR_1));
+        }
+
         for (Function<ItemMeta, ItemMeta> modifier : metaModifiers) {
             stackMeta = modifier.apply(stackMeta);
         }
