@@ -36,6 +36,7 @@ import java.util.function.Consumer;
 
 public class BingoReloaded extends JavaPlugin
 {
+    public static final String CARD_1_19_3 = "lists_1_19_yml";
     public static final String CARD_1_20_4 = "lists_1_20.yml";
 
     // Amount of ticks per second.
@@ -185,6 +186,12 @@ public class BingoReloaded extends JavaPlugin
     }
 
     public static String getDefaultTasksVersion() {
+        String version = Bukkit.getVersion();
+        if (version.contains("(MC: 1.19")) {
+            return CARD_1_19_3;
+        } else if (version.contains("(MC: 1.20")) {
+            return CARD_1_20_4;
+        }
         return CARD_1_20_4;
     }
 

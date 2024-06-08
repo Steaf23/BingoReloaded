@@ -105,7 +105,7 @@ public class BingoTask
             nameBuilder.append(data.getName()).obfuscated(false);
             nameBuilder.append("A").obfuscated(true);
 
-            item.setName(nameBuilder.build());
+            item.setName(nameBuilder.create());
             item.setLore(addedDesc);
             item.setGlowing(true);
         }
@@ -128,7 +128,7 @@ public class BingoTask
                     ChatComponentUtils.convert(timeString, ChatColor.GOLD));
 
             item = new ItemTemplate(completeMaterial, "");
-            item.setName(nameBuilder.build());
+            item.setName(nameBuilder.create());
             item.setLore(desc);
         }
         else // DEFAULT TASK

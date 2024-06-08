@@ -166,7 +166,7 @@ public class TaskPickerMenu extends PaginatedSelectionMenu
     private static BaseComponent[] createSelectedLore() {
         ComponentBuilder builder = new ComponentBuilder(" - ").color(ChatColor.WHITE).italic(true)
                 .append("This task has been added to the list").color(ChatColor.DARK_PURPLE);
-        return new BaseComponent[]{builder.build()};
+        return builder.create();
     }
 
     private static BaseComponent[] createUnselectedLore() {

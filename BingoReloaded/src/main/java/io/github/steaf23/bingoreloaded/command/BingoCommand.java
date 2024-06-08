@@ -185,7 +185,7 @@ public class BingoCommand implements TabExecutor
                     }
                     player.spigot().sendMessage(new ComponentBuilder(" - ").append(team.getColoredName()).append(": " + team.getMembers().stream()
                             .map(p -> p.getDisplayName())
-                            .collect(Collectors.joining(", "))).build());
+                            .collect(Collectors.joining(", "))).create());
                 });
 
             }

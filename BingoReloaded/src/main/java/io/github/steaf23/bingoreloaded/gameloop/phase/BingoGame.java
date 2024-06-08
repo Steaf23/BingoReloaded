@@ -85,7 +85,7 @@ public class BingoGame implements GamePhase
         timer.addNotifier(time ->
         {
             Message timerMessage = timer.getTimeDisplayMessage(false);
-            actionBarManager.requestMessage(timerMessage::asComponent, 0);
+            actionBarManager.requestMessage(timerMessage::asComponents, 0);
             actionBarManager.update();
             getProgressTracker().updateStatisticProgress();
             scoreboard.updateVisible();
@@ -120,16 +120,16 @@ public class BingoGame implements GamePhase
         new TranslatedMessage(BingoTranslation.GIVE_CARDS).sendAll(session);
         teleportPlayersToStart(world);
 
-        BaseComponent hoverMessage = new ComponentBuilder()
+        BaseComponent[] hoverMessage = new ComponentBuilder()
                 .append(BingoTranslation.OPTIONS_GAMEMODE.translate()).append(": ").append(settings.mode().displayName).append(" ").append(settings.size().toString()).append("\n")
                 .append(BingoTranslation.OPTIONS_KIT.translate()).append(": ").append(settings.kit().getDisplayName()).append("\n")
                 .append(BingoTranslation.OPTIONS_EFFECTS.translate()).append(": ").append(EffectOptionFlags.effectsToString(settings.effects()))
                 .append(BingoTranslation.DURATION.translate(settings.enableCountdown() ? GameTimer.getTimeAsString(settings.countdownDuration() * 60) : "∞"))
-                .build();
+                .create();
         BaseComponent[] settingsMessage = Message.createHoverCommandMessage(
                 new TextComponent(),
                 new TextComponent(BingoTranslation.SETTINGS_HOVER.translate()),
-                hoverMessage,
+                ChatComponentUtils.concatComponents(hoverMessage),
                 new TextComponent(), null);
 
         getTeamManager().getParticipants().forEach(p ->
@@ -434,7 +434,7 @@ public class BingoGame implements GamePhase
         Location playerLocation = to.clone().add(placement);
         playerLocation.setY(playerLocation.getY() + 10.0);
         player.teleport(playerLocation, PlayerTeleportEvent.TeleportCause.PLUGIN);
-        player.setRespawnLocation(to.clone().add(0.0, 2.0, 0.0), true);
+        player.setBedSpawnLocation(to.clone().add(0.0, 2.0, 0.0), true);
     }
 
     private Location getRandomSpawnLocation(World world) {

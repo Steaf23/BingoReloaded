@@ -6,7 +6,7 @@
 
     <groupId>io.github.steaf23</groupId>
     <artifactId>BingoReloaded</artifactId>
-    <version>2.1.0</version>
+    <version>2.1.0a</version>
 
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
@@ -42,7 +42,7 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.20.6-R0.1-SNAPSHOT</version>
+            <version>1.19.4-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -60,7 +60,7 @@
         <dependency>
             <groupId>io.github.steaf23</groupId>
             <artifactId>easymenulib</artifactId>
-            <version>1.0.0</version>
+            <version>1.0.0a</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>

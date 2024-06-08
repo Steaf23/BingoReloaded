@@ -163,7 +163,7 @@ public class BingoPlayer implements BingoParticipant
                 player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, POTION_DURATION, 1, false, false));
             player.addPotionEffect(new PotionEffect(PotionEffectType.SATURATION, 2, 100, false, false));
             player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 2, 100, false, false));
-            player.addPotionEffect(new PotionEffect(PotionEffectType.RESISTANCE, BingoReloaded.ONE_SECOND * gracePeriod, 100, false, false));
+            player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, BingoReloaded.ONE_SECOND * gracePeriod, 100, false, false));
         });
     }
 
@@ -288,7 +288,7 @@ public class BingoPlayer implements BingoParticipant
             }, (long) Math.max(0, platformLifetimeSeconds) * BingoReloaded.ONE_SECOND);
 
             player.playSound(player, Sound.ENTITY_SHULKER_TELEPORT, 0.8f, 1.0f);
-            player.addPotionEffect(new PotionEffect(PotionEffectType.RESISTANCE, BingoReloaded.ONE_SECOND * 10, 100, false, false));
+            player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, BingoReloaded.ONE_SECOND * 10, 100, false, false));
 
             BingoReloaded.incrementPlayerStat(player, BingoStatType.WAND_USES);
         });

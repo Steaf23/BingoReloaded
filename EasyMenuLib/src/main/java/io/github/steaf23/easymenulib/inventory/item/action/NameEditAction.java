@@ -5,6 +5,7 @@ import io.github.steaf23.easymenulib.inventory.BasicMenu;
 import io.github.steaf23.easymenulib.inventory.MenuBoard;
 import io.github.steaf23.easymenulib.inventory.UserInputMenu;
 import io.github.steaf23.easymenulib.inventory.item.ItemTemplate;
+import io.github.steaf23.easymenulib.util.ChatComponentUtils;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.entity.HumanEntity;
 
@@ -32,7 +33,7 @@ public class NameEditAction extends MenuAction
     protected void renameItem(String format, HumanEntity player) {
         new UserInputMenu(board, prompt, (result) -> {
             value = result;
-            item.setName(TextComponent.fromLegacy(format + value));
+            item.setName(TextComponent.fromLegacyText(format + value));
             callback.accept(value, item);
         }, player, value);
     }

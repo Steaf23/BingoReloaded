@@ -44,7 +44,7 @@ public class SerializablePlayer implements ConfigurationSerializable
         data.health = player.getHealth();
         data.hunger = player.getFoodLevel();
         data.gamemode = player.getGameMode();
-        data.spawnPoint = player.getRespawnLocation();
+        data.spawnPoint = player.getBedSpawnLocation();
         data.xpLevel = player.getLevel();
         data.xpPoints = player.getExp();
         data.inventory = player.getInventory().getContents();
@@ -89,7 +89,7 @@ public class SerializablePlayer implements ConfigurationSerializable
         player.setHealth(health);
         player.setFoodLevel(hunger);
         player.setGameMode(gamemode);
-        player.setRespawnLocation(spawnPoint, true);
+        player.setBedSpawnLocation(spawnPoint, true);
         player.setLevel(xpLevel);
         player.setExp(xpPoints);
 

@@ -4,6 +4,7 @@ import io.github.steaf23.bingoreloaded.cards.BingoCard;
 
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.util.Message;
+import io.github.steaf23.easymenulib.util.ChatComponentUtils;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -63,9 +64,9 @@ public class BingoTeam
     }
 
     public BaseComponent getColoredName() {
-        return new ComponentBuilder(name)
+        return ChatComponentUtils.concatComponents(new ComponentBuilder(name)
                 .color(color)
-                .bold(true).build();
+                .bold(true).create());
     }
 
     public Set<BingoParticipant> getMembers() {

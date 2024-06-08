@@ -259,7 +259,7 @@ public class GameManager
             }
 
             // set spawn point of player in session world
-            event.getPlayer().setRespawnLocation(targetSession.getOverworld().getSpawnLocation(), true);
+            event.getPlayer().setBedSpawnLocation(targetSession.getOverworld().getSpawnLocation(), true);
             targetSession.addPlayer(event.getPlayer());
         }
     }

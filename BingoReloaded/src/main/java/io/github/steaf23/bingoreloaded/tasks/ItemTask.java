@@ -34,7 +34,7 @@ public record ItemTask(Material material, int count) implements CountableTask
         ComponentBuilder builder = new ComponentBuilder().color(ChatColor.YELLOW);
         builder.append(count + "x ")
                 .append(ChatComponentUtils.itemName(material));
-        return builder.build();
+        return ChatComponentUtils.concatComponents(builder.create());
     }
 
     @Override
@@ -49,7 +49,7 @@ public record ItemTask(Material material, int count) implements CountableTask
     @Override
     public BaseComponent getChatDescription()
     {
-        return new ComponentBuilder().append(getItemDescription()).build();
+        return ChatComponentUtils.concatComponents(new ComponentBuilder().append(getItemDescription()).create());
     }
 
     @Override

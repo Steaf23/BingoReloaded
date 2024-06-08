@@ -79,7 +79,7 @@ public record StatisticTask(BingoStatistic statistic, int count) implements Coun
             }
         }
         builder.append("*");
-        return builder.build();
+        return ChatComponentUtils.concatComponents(builder.create());
     }
 
     @Override
@@ -94,7 +94,7 @@ public record StatisticTask(BingoStatistic statistic, int count) implements Coun
     @Override
     public BaseComponent getChatDescription()
     {
-        return new ComponentBuilder().append(getItemDescription()).build();
+        return ChatComponentUtils.concatComponents(new ComponentBuilder().append(getItemDescription()).create());
     }
 
     @Override

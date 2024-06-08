@@ -6,6 +6,7 @@ import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.chat.TranslatableComponent;
 import net.md_5.bungee.chat.ComponentSerializer;
+import net.md_5.bungee.chat.TextComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Statistic;
@@ -14,6 +15,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.w3c.dom.Text;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -23,26 +25,28 @@ import java.util.stream.Collectors;
 public class ChatComponentUtils
 {
     public static BaseComponent[] createComponentsFromString(String... strings) {
-        return Arrays.stream(strings).map(TextComponent::fromLegacy).toList().toArray(new BaseComponent[]{});
+        return Arrays.stream(strings).map( a -> {
+            return ChatComponentUtils.concatComponents(TextComponent.fromLegacyText(a));
+        }).toList().toArray(new BaseComponent[]{});
     }
 
     public static @NotNull ItemStack itemStackFromComponent(@NotNull Material material, @Nullable BaseComponent name, BaseComponent... lore) {
         StringBuilder jsonData = new StringBuilder(material.toString().toLowerCase());
-        jsonData.append("[");
+        jsonData.append("{display:{");
         if (name != null) {
             BaseComponent nameWrapper = new TextComponent();
             nameWrapper.setItalic(false);
             nameWrapper.addExtra(name);
-            jsonData.append("custom_name='[" + ComponentSerializer.toJson(nameWrapper).toString() + "]'");
+            jsonData.append("Name:'[" + ChatComponentUtils.toJsonString(nameWrapper) + "]'");
         }
 
         if (lore.length == 0 || (lore.length == 1 && lore[0].toPlainText().isEmpty()))
-            return Bukkit.getItemFactory().createItemStack(jsonData.append("]").toString());
+            return Bukkit.getItemFactory().createItemStack(jsonData.append("}}").toString());
 
         if (name != null) {
             jsonData.append(",");
         }
-        jsonData.append("lore=[");
+        jsonData.append("Lore:[");
         for (int i = 0; i < lore.length; i ++)
         {
             if (i != 0) {
@@ -53,16 +57,20 @@ public class ChatComponentUtils
             lineWrapper.setItalic(false);
             lineWrapper.addExtra(lore[i]);
             jsonData.append("'")
-                    .append(ComponentSerializer.toJson(lineWrapper).toString())
+                    .append(ChatComponentUtils.toJsonString(lineWrapper))
                     .append("'");
         }
-        jsonData.append("]]");
+        jsonData.append("]}}");
 
         return Bukkit.getItemFactory().createItemStack(jsonData.toString());
     }
 
+    public static String toJsonString(BaseComponent component) {
+        return ComponentSerializer.toString(component).replace("\\u", "\\\\u");
+    }
+
     public static BaseComponent convert(String text, ChatColor... modifiers) {
-        BaseComponent component = TextComponent.fromLegacy(text);
+        BaseComponent component = ChatComponentUtils.concatComponents(TextComponent.fromLegacyText(text));
         return ChatComponentUtils.modify(component, modifiers);
     }
 
@@ -101,6 +109,12 @@ public class ChatComponentUtils
         if (modifierSet.contains(ChatColor.UNDERLINE)) builder.underlined(true);
         if (modifierSet.contains(ChatColor.MAGIC)) builder.obfuscated(true);
         return builder;
+    }
+
+    public static BaseComponent concatComponents(BaseComponent... components) {
+        BaseComponent result = new TextComponent();
+        result.setExtra(Arrays.stream(components).toList());
+        return result;
     }
 
     public static BaseComponent itemName(Material item)

@@ -4,6 +4,7 @@ import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
+import io.github.steaf23.easymenulib.util.ChatComponentUtils;
 import io.github.steaf23.easymenulib.util.SmallCaps;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.md_5.bungee.api.ChatColor;
@@ -45,7 +46,7 @@ public class Message
     }
 
     public Message arg(@NonNull String name) {
-        args.add(TextComponent.fromLegacy(name));
+        args.add(ChatComponentUtils.concatComponents(TextComponent.fromLegacyText(name)));
         return this;
     }
 
@@ -175,6 +176,10 @@ public class Message
         if (finalMessage == null)
             createMessage(player);
         return finalMessage;
+    }
+
+    public BaseComponent[] asComponents(Player player) {
+        return new BaseComponent[]{asComponent(player)};
     }
 
     public static void log(String text) {

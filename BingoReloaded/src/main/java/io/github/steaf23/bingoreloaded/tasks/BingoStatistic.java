@@ -63,6 +63,10 @@ public record BingoStatistic(@NotNull Statistic stat, @Nullable EntityType entit
                 .filter(mat ->
                         mat.name().contains("_SPAWN_EGG"))
                 .forEach(mat -> {
+                    if (mat == Material.MOOSHROOM_SPAWN_EGG) {
+                        types.add(EntityType.MUSHROOM_COW);
+                        return;
+                    }
                     types.add(EntityType.valueOf(mat.name().replace("_SPAWN_EGG", "")));
                 });
         // Note: pre 1.20.5 mooshroom spawn egg needed to be parsed by hand

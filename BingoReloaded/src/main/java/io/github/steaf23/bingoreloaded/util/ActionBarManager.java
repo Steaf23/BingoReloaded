@@ -18,10 +18,10 @@ import java.util.function.Function;
  */
 public class ActionBarManager
 {
-    private record ActionBarMessage(Function<Player, BaseComponent> messageTemplate, int priority, int lingerTime, int insertionTime) {}
+    private record ActionBarMessage(Function<Player, BaseComponent[]> messageTemplate, int priority, int lingerTime, int insertionTime) {}
     private final BingoSession session;
     private int tickCounter;
-    private BaseComponent currentMessage;
+    private BaseComponent[] currentMessage;
 
     private final PriorityQueue<ActionBarMessage> messages;
 
@@ -34,11 +34,11 @@ public class ActionBarManager
      * requests an actionbar message. No linger time is specified making it last only until it fades or gets replaced in update by a new message
      * @param priority
      */
-    public void requestMessage(Function<Player, BaseComponent> messageTemplate, int priority) {
+    public void requestMessage(Function<Player, BaseComponent[]> messageTemplate, int priority) {
         requestMessage(messageTemplate, priority, 0);
     }
 
-    public void requestMessage(Function<Player, BaseComponent> messageTemplate, int priority, int lingerTime) {
+    public void requestMessage(Function<Player, BaseComponent[]> messageTemplate, int priority, int lingerTime) {
         messages.add(new ActionBarMessage(messageTemplate, priority, lingerTime, tickCounter));
     }
 

@@ -75,15 +75,15 @@ public class ItemTemplate
     }
 
     public ItemTemplate(int slotX, int slotY, Material material, String name, String... lore) {
-        this(ItemTemplate.slotFromXY(slotX, slotY), material, TextComponent.fromLegacy(name), ChatComponentUtils.createComponentsFromString(lore));
+        this(ItemTemplate.slotFromXY(slotX, slotY), material, ChatComponentUtils.concatComponents(TextComponent.fromLegacyText(name)), ChatComponentUtils.createComponentsFromString(lore));
     }
 
     public ItemTemplate(int slot, Material material, String name, String... lore) {
-        this(slot, material, TextComponent.fromLegacy(name), ChatComponentUtils.createComponentsFromString(lore));
+        this(slot, material, ChatComponentUtils.concatComponents(TextComponent.fromLegacyText(name)), ChatComponentUtils.createComponentsFromString(lore));
     }
 
     public ItemTemplate(Material material, String name, String... lore) {
-        this(material, TextComponent.fromLegacy(name), ChatComponentUtils.createComponentsFromString(lore));
+        this(material, ChatComponentUtils.concatComponents(TextComponent.fromLegacyText(name)), ChatComponentUtils.createComponentsFromString(lore));
     }
 
     public ItemTemplate(int slot, Material material, BaseComponent name, BaseComponent... lore) {
@@ -100,6 +100,10 @@ public class ItemTemplate
     public ItemTemplate setName(@Nullable BaseComponent name) {
         this.name = name;
         return this;
+    }
+
+    public ItemTemplate setName(@Nullable BaseComponent[] name) {
+        return setName(ChatComponentUtils.concatComponents(name));
     }
 
     public ItemTemplate setLore(BaseComponent... lore) {
@@ -285,7 +289,7 @@ public class ItemTemplate
         stack.setAmount(amount);
 
         if (glowing) {
-            stack.addUnsafeEnchantment(Enchantment.UNBREAKING, 1);
+            stack.addUnsafeEnchantment(Enchantment.DURABILITY, 1);
         }
 
         ItemMeta stackMeta = stack.getItemMeta();
@@ -303,11 +307,10 @@ public class ItemTemplate
         PersistentDataContainer pdc = stackMeta.getPersistentDataContainer();
         pdc = PDCHelper.addStringToPdc(pdc, "compare_key", compareKey);
 
-        stackMeta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_UNBREAKABLE, ItemFlag.HIDE_DYE);
+        stackMeta.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_UNBREAKABLE, ItemFlag.HIDE_DYE);
 
         if (hideAttributes) {
             stackMeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
-            stackMeta.addAttributeModifier(Attribute.GENERIC_SCALE, new AttributeModifier("dummy", 0, AttributeModifier.Operation.MULTIPLY_SCALAR_1));
         }
 
         for (Function<ItemMeta, ItemMeta> modifier : metaModifiers) {

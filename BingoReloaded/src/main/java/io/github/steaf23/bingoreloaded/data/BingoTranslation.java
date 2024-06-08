@@ -207,7 +207,7 @@ public enum BingoTranslation
                 else
                     lineBuilder.append(pieceToAdd);
             }
-            result.add(lineBuilder.build());
+            result.add(ChatComponentUtils.concatComponents(lineBuilder.create()));
         }
         return result.toArray(new BaseComponent[]{});
     }

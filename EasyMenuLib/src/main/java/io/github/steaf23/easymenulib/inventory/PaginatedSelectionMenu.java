@@ -105,7 +105,7 @@ public abstract class PaginatedSelectionMenu extends BasicMenu
 
     public void applyFilter(String filter) {
         keywordFilter = filter;
-        filterItem.setLore(TextComponent.fromLegacy("{" + keywordFilter + "}"));
+        filterItem.setLore(TextComponent.fromLegacyText("{" + keywordFilter + "}"));
         //TODO: automate addItem?
         addItem(filterItem);
 

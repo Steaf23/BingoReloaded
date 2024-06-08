@@ -39,7 +39,7 @@ public record AdvancementTask(Advancement advancement) implements TaskData
             builder.append(ChatComponentUtils.advancementTitle(advancement));
         }
         builder.append("]");
-        return builder.build();
+        return ChatComponentUtils.concatComponents(builder.create());
     }
 
     @Override
