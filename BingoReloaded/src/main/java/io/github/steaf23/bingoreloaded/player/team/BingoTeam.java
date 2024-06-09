@@ -7,9 +7,7 @@ import io.github.steaf23.bingoreloaded.util.Message;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
-import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Team;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
@@ -26,7 +24,7 @@ public class BingoTeam
     private final ChatColor color;
     private final String name;
 
-    private Set<BingoParticipant> members;
+    private final Set<BingoParticipant> members;
 
     public BingoTeam(Team team, ChatColor color, String name) {
         this.id = team.getName();
@@ -75,7 +73,7 @@ public class BingoTeam
     public void addMember(BingoParticipant player) {
         members.add(player);
         player.setTeam(this);
-        team.addEntry(player.getDisplayName());
+        player.sessionPlayer().ifPresentOrElse(p -> team.addEntry(p.getName()), () -> team.addEntry(player.getDisplayName()));
     }
 
     public void removeMember(BingoParticipant player) {

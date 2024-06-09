@@ -204,7 +204,6 @@ public class BingoSession
     }
 
     public void handlePlayerJoinedSessionWorld(final PlayerJoinedSessionWorldEvent event) {
-        Message.log(event.getPlayer().getDisplayName() + " has joined bingo on world " + worlds.getName());
         if (isRunning()) {
             scoreboard.addPlayer(event.getPlayer());
         }
