@@ -2,11 +2,13 @@ package io.github.steaf23.bingoreloaded.gui.inventory;
 
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.data.TeamData;
+import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.player.team.BasicTeamManager;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.player.team.TeamManager;
+import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.easymenulib.inventory.FilterType;
 import io.github.steaf23.easymenulib.inventory.MenuBoard;
 import io.github.steaf23.easymenulib.inventory.PaginatedSelectionMenu;
@@ -20,18 +22,17 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.checkerframework.checker.units.qual.A;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 public class TeamSelectionMenu extends PaginatedSelectionMenu
 {
+    private final BingoSession session;
     private final TeamManager teamManager;
 
-    public TeamSelectionMenu(MenuBoard manager, TeamManager teamManager) {
+    public TeamSelectionMenu(MenuBoard manager, BingoSession session) {
         super(manager, BingoTranslation.OPTIONS_TEAM.translate(), new ArrayList<>(), FilterType.DISPLAY_NAME);
-        this.teamManager = teamManager;
+        this.session = session;
+        this.teamManager = session.teamManager;
     }
 
     @Override
@@ -39,7 +40,7 @@ public class TeamSelectionMenu extends PaginatedSelectionMenu
         BingoParticipant participant = teamManager.getPlayerAsParticipant((Player) player);
         if (participant == null)
         {
-            participant = new BingoPlayer((Player) player, teamManager.getSession());
+            participant = new BingoPlayer((Player) player, session);
         }
 
         if (clickedOption.getCompareKey().equals("item_auto")) {
@@ -63,16 +64,30 @@ public class TeamSelectionMenu extends PaginatedSelectionMenu
         List<ItemTemplate> optionItems = new ArrayList<>();
         ItemTemplate autoItem = new ItemTemplate(Material.NETHER_STAR, "" + ChatColor.BOLD + ChatColor.ITALIC + BingoTranslation.TEAM_AUTO.translate())
                 .setCompareKey("item_auto");
-        if (teamManager instanceof BasicTeamManager basicManager && player instanceof Player gamePlayer) {
-            Set<UUID> autoPlayers = basicManager.getParticipantsInAutoTeam();
+        if (player instanceof Player gamePlayer) {
+            Optional<BingoTeam> autoTeamOpt = teamManager.getActiveTeams().getTeams().stream()
+                    .filter(t -> t.getIdentifier().equals("auto")).findAny();
+
+            if (autoTeamOpt.isEmpty()) {
+                Message.error("Cannot find any teams to join! Wait for the game to re-open (if it still happens after the game is re-opened, Please report!)");
+                return;
+            }
+
+            BingoTeam autoTeam = autoTeamOpt.get();
+
+            boolean playerInAutoTeam = false;
+            if (autoTeam != null && autoTeam.hasMember(player.getUniqueId())) {
+                playerInAutoTeam = true;
+            }
+            int autoTeamMemberCount = autoTeam == null ? 0 : autoTeam.getMembers().size();
             List<String> description = new ArrayList<>();
-            if (autoPlayers.contains(player.getUniqueId())) {
+            if (playerInAutoTeam) {
                 description.add("" + ChatColor.GRAY + ChatColor.BOLD + " ┗ " + ChatColor.RESET + ChatColor.WHITE + gamePlayer.getDisplayName());
                 description.add(" ");
-                description.add("" + ChatColor.GRAY + BingoTranslation.COUNT_MORE.translate(Integer.toString(autoPlayers.size() - 1)));
+                description.add("" + ChatColor.GRAY + BingoTranslation.COUNT_MORE.translate(Integer.toString(autoTeamMemberCount - 1)));
             }
             else {
-                description.add("" + ChatColor.GRAY + BingoTranslation.COUNT_MORE.translate(Integer.toString(autoPlayers.size())));
+                description.add("" + ChatColor.GRAY + BingoTranslation.COUNT_MORE.translate(Integer.toString(autoTeamMemberCount)));
             }
             autoItem.addDescription("joined", 1, description.toArray(new String[]{}));
         }

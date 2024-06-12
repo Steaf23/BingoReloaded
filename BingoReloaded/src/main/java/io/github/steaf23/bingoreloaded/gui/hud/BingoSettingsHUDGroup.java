@@ -1,5 +1,6 @@
 package io.github.steaf23.bingoreloaded.gui.hud;
 
+import io.github.steaf23.bingoreloaded.data.ConfigData;
 import io.github.steaf23.bingoreloaded.data.ScoreboardData;
 import io.github.steaf23.bingoreloaded.gui.inventory.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
@@ -10,6 +11,7 @@ import net.md_5.bungee.api.ChatColor;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.ObjectInputFilter;
 import java.util.List;
 
 /**
@@ -24,7 +26,6 @@ public class BingoSettingsHUDGroup extends PlayerHUDGroup
         this.settingsBoardTemplate = new ScoreboardData().loadTemplate("lobby", registeredFields);
 
         setStatus("");
-        updateSettings(null);
     }
 
     @Override
@@ -37,15 +38,12 @@ public class BingoSettingsHUDGroup extends PlayerHUDGroup
         updateVisible();
     }
 
-    public void updateSettings(@Nullable BingoSettings settings) {
-        if (settings == null) {
-            return;
-        }
+    public void updateSettings(@Nullable BingoSettings settings, ConfigData config) {
         registeredFields.put("gamemode", settings.mode().displayName);
         registeredFields.put("card_size", settings.size().toString());
         registeredFields.put("kit", settings.kit().getDisplayName());
-        registeredFields.put("team_size", Integer.toString(settings.maxTeamSize()));
-        registeredFields.put("duration", settings.enableCountdown() ? Integer.toString(settings.countdownDuration()) : "∞");
+        registeredFields.put("team_size", config.singlePlayerTeams ? ChatColor.AQUA + "1" : Integer.toString(settings.maxTeamSize()));
+        registeredFields.put("duration", settings.enableCountdown() ? Integer.toString(settings.countdownDuration()) : ChatColor.AQUA + "∞");
 
         String effects = EffectOptionFlags.effectsToString(settings.effects());
         registeredFields.put("effects", effects);

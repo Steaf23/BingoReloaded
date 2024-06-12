@@ -8,6 +8,7 @@ import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.player.team.TeamManager;
 import io.github.steaf23.bingoreloaded.util.TranslatedMessage;
 import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -63,16 +64,19 @@ public class TeamChatCommand implements Listener, TabExecutor
 
     public void sendMessage(BingoTeam team, Player player, String message)
     {
-        for (String entry : team.team.getEntries())
-        {
-            Player member = Bukkit.getPlayer(entry);
-            if (member == null) continue;
+        team.getMembers()
+                .forEach(member -> {
+                    if (member.sessionPlayer().isEmpty()) {
+                        return;
+                    }
 
-            if (!member.isOnline()) continue;
-
-            member.sendMessage(ChatColor.DARK_RED + "[" + team.getColoredName().toLegacyText() + ChatColor.DARK_RED + "]" +
-                    ChatColor.RESET  + "<" + player.getName() + "> " + message);
-        }
+                    Player receivingPlayer = member.sessionPlayer().get();
+                    receivingPlayer.spigot().sendMessage(new ComponentBuilder()
+                            .append(team.getPrefix())
+                            .append(ChatColor.RESET + "<" + player.getDisplayName() + "> ")
+                            .append(message)
+                            .build());
+                });
     }
 
     @Override

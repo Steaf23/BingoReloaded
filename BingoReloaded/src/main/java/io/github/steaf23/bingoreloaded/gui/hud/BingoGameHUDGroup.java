@@ -8,10 +8,14 @@ import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.player.team.SoloTeamManager;
 import io.github.steaf23.bingoreloaded.player.team.TeamManager;
+import io.github.steaf23.bingoreloaded.util.BingoPlaceholderFormatter;
+import io.github.steaf23.bingoreloaded.util.BingoReloadedPlaceholderExpansion;
+import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.easymenulib.scoreboard.HUDRegistry;
 import io.github.steaf23.easymenulib.scoreboard.PlayerHUD;
 import io.github.steaf23.easymenulib.scoreboard.PlayerHUDGroup;
 import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -27,6 +31,8 @@ public class BingoGameHUDGroup extends PlayerHUDGroup implements SessionMember
     private final boolean showPlayerNames;
     private final ScoreboardData.SidebarTemplate template;
 
+    private final BingoPlaceholderFormatter formatter;
+
     public BingoGameHUDGroup(HUDRegistry registry, BingoSession session, boolean showPlayerNames) {
         super(registry);
 
@@ -34,6 +40,7 @@ public class BingoGameHUDGroup extends PlayerHUDGroup implements SessionMember
         this.teamScores = new HashMap<>();
         this.showPlayerNames = showPlayerNames;
         this.template = new ScoreboardData().loadTemplate("game", registeredFields);
+        this.formatter = new BingoPlaceholderFormatter();
     }
 
     public void updateTeamScores()
@@ -59,10 +66,11 @@ public class BingoGameHUDGroup extends PlayerHUDGroup implements SessionMember
                 || teamManager.getTeamCount() + teamManager.getParticipantCount() > spaceLeft
                 || teamManager instanceof SoloTeamManager;
 
+        String format = formatter.format(BingoReloadedPlaceholderExpansion.BingoReloadedPlaceholder.TEAM_FULL);
         teamManager.getActiveTeams().getTeams().stream()
                 .sorted(Comparator.comparingInt(BingoTeam::getCompleteCount).reversed())
                 .forEach(team -> {
-                    String teamScoreLine = "" + team.getColoredName().toLegacyText() + ChatColor.RESET +
+                    String teamScoreLine = "" + BingoReloadedPlaceholderExpansion.createLegacyTextFromMessage(format, team.getColor().toString(), team.getName()) + ChatColor.RESET +
                             ChatColor.WHITE + ": " + ChatColor.BOLD + teamScores.get(team.getIdentifier());
                     teamInfoString.append(teamScoreLine);
                     teamInfoString.append("\n");

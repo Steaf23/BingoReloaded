@@ -271,30 +271,22 @@ public class BingoEventListener implements Listener
     public void handlePlayerJoinedSessionWorld(final PlayerJoinedSessionWorldEvent event)
     {
         event.getSession().handlePlayerJoinedSessionWorld(event);
-        event.getSession().phase().handlePlayerJoinedSessionWorld(event);
-        event.getSession().teamManager.handlePlayerJoinedSessionWorld(event);
     }
 
     @EventHandler
     public void handlePlayerLeftSessionWorld(final PlayerLeftSessionWorldEvent event)
     {
         event.getSession().handlePlayerLeftSessionWorld(event);
-        event.getSession().phase().handlePlayerLeftSessionWorld(event);
-        event.getSession().teamManager.handlePlayerLeftSessionWorld(event);
     }
 
     @EventHandler
     public void handleParticipantJoinedTeam(final ParticipantJoinedTeamEvent event) {
-        if (event.getSession().phase() instanceof PregameLobby lobby) {
-            lobby.handleParticipantJoinedTeam(event);
-        }
+        event.getSession().handleParticipantJoinedTeam(event);
     }
 
     @EventHandler
     public void handleParticipantLeftTeam(final ParticipantLeftTeamEvent event) {
-        if (event.getSession().phase() instanceof PregameLobby lobby) {
-            lobby.handleParticipantLeftTeam(event);
-        }
+        event.getSession().handleParticipantLeftTeam(event);
     }
 
     @EventHandler

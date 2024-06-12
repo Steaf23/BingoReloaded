@@ -1,5 +1,8 @@
 package io.github.steaf23.bingoreloaded;
 
+import com.github.retrooper.packetevents.PacketEvents;
+import com.github.retrooper.packetevents.wrapper.PacketWrapper;
+import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
 import io.github.steaf23.bingoreloaded.command.*;
 import io.github.steaf23.bingoreloaded.data.*;
 import io.github.steaf23.bingoreloaded.data.helper.SerializablePlayer;
@@ -52,7 +55,17 @@ public class BingoReloaded extends JavaPlugin
     private HUDRegistry hudRegistry;
 
     @Override
+    public void onLoad() {
+        PacketEvents.setAPI(SpigotPacketEventsBuilder.build(this));
+        PacketEvents.getAPI().getSettings().reEncodeByDefault(false)
+                .checkForUpdates(true)
+                .bStats(true);
+        PacketEvents.getAPI().load();
+    }
+
+    @Override
     public void onEnable() {
+        PacketEvents.getAPI().init();
         reloadConfig();
         saveDefaultConfig();
         // Kinda ugly, but we can assume there will only be one instance of this class anyway.
@@ -147,6 +160,7 @@ public class BingoReloaded extends JavaPlugin
         }
 
         HandlerList.unregisterAll(menuBoard);
+        PacketEvents.getAPI().terminate();
     }
 
     public ConfigData config() {
@@ -190,5 +204,9 @@ public class BingoReloaded extends JavaPlugin
 
     public GameManager getGameManager() {
         return gameManager;
+    }
+
+    public static void sendPacket(Player player, PacketWrapper packet) {
+        PacketEvents.getAPI().getPlayerManager().sendPacket(player, packet);
     }
 }

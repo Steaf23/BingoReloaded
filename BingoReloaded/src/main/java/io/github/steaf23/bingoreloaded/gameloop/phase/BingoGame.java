@@ -694,6 +694,17 @@ public class BingoGame implements GamePhase
         end(null);
     }
 
+
+    @Override
+    public void handleSettingsUpdated(BingoSettingsUpdatedEvent event) {
+    }
+
+    @Override
+    public @Nullable BingoSession getSession() {
+        return session;
+    }
+
+    // Take care of player effects =======================
     @Override
     public void handlePlayerJoinedSessionWorld(final PlayerJoinedSessionWorldEvent event) {
         BingoParticipant participant = teamManager.getPlayerAsParticipant(event.getPlayer());
@@ -705,14 +716,26 @@ public class BingoGame implements GamePhase
 
     @Override
     public void handlePlayerLeftSessionWorld(final PlayerLeftSessionWorldEvent event) {
+        BingoParticipant participant = teamManager.getPlayerAsParticipant(event.getPlayer());
+        if (!(participant instanceof BingoPlayer player))
+            return;
+
+        player.takeEffects(false);
     }
 
     @Override
-    public void handleSettingsUpdated(BingoSettingsUpdatedEvent event) {
+    public void handleParticipantJoinedTeam(ParticipantJoinedTeamEvent event) {
+        if (!(event.getParticipant() instanceof BingoPlayer player))
+            return;
+
+        player.giveEffects(settings.effects(), config.gracePeriod);
     }
 
     @Override
-    public @Nullable BingoSession getSession() {
-        return session;
+    public void handleParticipantLeftTeam(ParticipantLeftTeamEvent event) {
+        if (!(event.getParticipant() instanceof BingoPlayer player))
+            return;
+
+        player.takeEffects(false);
     }
 }

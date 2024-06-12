@@ -60,14 +60,14 @@ public class BingoCommand implements TabExecutor
             if (player.hasPermission("bingo.admin")) {
                 new AdminBingoMenu(menuBoard, session, config).open(player);
             } else if (player.hasPermission("bingo.player")) {
-                new TeamSelectionMenu(menuBoard, session.teamManager).open(player);
+                new TeamSelectionMenu(menuBoard, session).open(player);
             }
             return true;
         }
 
         switch (args[0]) {
             case "join" -> {
-                TeamSelectionMenu menu = new TeamSelectionMenu(menuBoard, session.teamManager);
+                TeamSelectionMenu menu = new TeamSelectionMenu(menuBoard, session);
                 menu.open(player);
             }
             case "leave" -> {

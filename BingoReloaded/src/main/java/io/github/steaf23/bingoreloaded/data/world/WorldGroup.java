@@ -6,6 +6,8 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -36,5 +38,13 @@ public record WorldGroup(String worldName, UUID overworldId, UUID netherId, UUID
 
     public boolean hasWorld(UUID uuid) {
         return overworldId.equals(uuid) || netherId.equals(uuid) || endId.equals(uuid);
+    }
+
+    public Set<Player> getPlayers() {
+        Set<Player> players = new HashSet<>();
+        players.addAll(getOverworld().getPlayers());
+        players.addAll(getNetherWorld().getPlayers());
+        players.addAll(getEndWorld().getPlayers());
+        return players;
     }
 }

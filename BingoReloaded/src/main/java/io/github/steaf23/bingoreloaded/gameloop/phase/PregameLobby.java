@@ -1,5 +1,8 @@
 package io.github.steaf23.bingoreloaded.gameloop.phase;
 
+import com.github.retrooper.packetevents.wrapper.PacketWrapper;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerTeams;
+import io.github.retrooper.packetevents.adventure.serializer.gson.GsonComponentSerializer;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.data.ConfigData;
@@ -9,20 +12,34 @@ import io.github.steaf23.bingoreloaded.gui.hud.BingoSettingsHUDGroup;
 import io.github.steaf23.bingoreloaded.gui.hud.DisabledBingoSettingsHUDGroup;
 import io.github.steaf23.bingoreloaded.gui.inventory.TeamSelectionMenu;
 import io.github.steaf23.bingoreloaded.gui.inventory.VoteMenu;
+import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
+import io.github.steaf23.bingoreloaded.util.BingoPlaceholderFormatter;
+import io.github.steaf23.bingoreloaded.util.BingoReloadedPlaceholderExpansion;
 import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.bingoreloaded.util.TranslatedMessage;
 import io.github.steaf23.bingoreloaded.util.timer.CountdownTimer;
 import io.github.steaf23.easymenulib.inventory.MenuBoard;
 import io.github.steaf23.easymenulib.inventory.item.ItemTemplate;
 import io.github.steaf23.easymenulib.scoreboard.HUDRegistry;
+import io.github.steaf23.easymenulib.util.FlexColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSerializer;
+import net.kyori.adventure.text.serializer.json.JSONComponentSerializer;
+import net.kyori.adventure.util.RGBLike;
 import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.chat.ComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.scoreboard.Team;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.HashMap;
@@ -211,21 +228,6 @@ public class PregameLobby implements GamePhase
         }
     }
 
-    public void handleParticipantJoinedTeam(final ParticipantJoinedTeamEvent event) {
-        if (event.getParticipant() != null) {
-            event.getParticipant().sessionPlayer().ifPresent(p -> settingsHUD.addPlayer(p));
-        }
-        settingsHUD.setStatus(BingoTranslation.PLAYER_STATUS.translate("" + session.teamManager.getParticipantCount()));
-
-        if (playerCountTimer.isRunning() && playerCountTimer.getTime() > 10) {
-            event.getParticipant().sessionPlayer().ifPresent(p -> {
-                new TranslatedMessage(BingoTranslation.STARTING_STATUS).arg("" + playerCountTimer.getTime()).color(ChatColor.GOLD).send(p);
-            });
-        }
-
-        startPlayerCountTimerIfMinCountReached();
-    }
-
     public void pausePlayerCountTimer() {
         playerCountTimerPaused = true;
         playerCountTimer.stop();
@@ -273,24 +275,6 @@ public class PregameLobby implements GamePhase
         }
     }
 
-    public void handleParticipantLeftTeam(final ParticipantLeftTeamEvent event) {
-        int playerCount = session.teamManager.getParticipantCount();
-
-        if (playerCount == 0) {
-            settingsHUD.setStatus(BingoTranslation.WAIT_STATUS.translate());
-        } else {
-            settingsHUD.setStatus(BingoTranslation.PLAYER_STATUS.translate("" + playerCount));
-        }
-
-        // Schedule check in the future since a player can switch teams where they will briefly leave the team
-        // and lower the participant count to possibly stop the timer.
-        BingoReloaded.scheduleTask(t -> {
-            if (session.teamManager.getParticipantCount() < config.minimumPlayerCount && playerCountTimer.isRunning()) {
-                playerCountTimer.stop();
-            }
-        });
-    }
-
     @Override
     public @Nullable BingoSession getSession() {
         return session;
@@ -300,7 +284,7 @@ public class PregameLobby implements GamePhase
     public void setup() {
         int playerCount = session.teamManager.getParticipantCount();
 
-        settingsHUD.updateSettings(session.settingsBuilder.view());
+        settingsHUD.updateSettings(session.settingsBuilder.view(), config);
         if (playerCount == 0) {
             settingsHUD.setStatus(BingoTranslation.WAIT_STATUS.translate());
         } else {
@@ -344,7 +328,7 @@ public class PregameLobby implements GamePhase
 
     @Override
     public void handleSettingsUpdated(final BingoSettingsUpdatedEvent event) {
-        settingsHUD.updateSettings(event.getNewSettings());
+        settingsHUD.updateSettings(event.getNewSettings(), config);
     }
 
     @Override
@@ -358,8 +342,43 @@ public class PregameLobby implements GamePhase
             menu.open(event.getPlayer());
         } else if (ItemTemplate.isCompareKeyEqual(event.getItem(), "team")) {
             event.setCancelled(true);
-            TeamSelectionMenu teamSelection = new TeamSelectionMenu(menuBoard, session.teamManager);
+            TeamSelectionMenu teamSelection = new TeamSelectionMenu(menuBoard, session);
             teamSelection.open(event.getPlayer());
         }
+    }
+
+    @Override
+    public void handleParticipantJoinedTeam(final ParticipantJoinedTeamEvent event) {
+        if (event.getParticipant() != null) {
+            event.getParticipant().sessionPlayer().ifPresent(p -> settingsHUD.addPlayer(p));
+        }
+        settingsHUD.setStatus(BingoTranslation.PLAYER_STATUS.translate("" + session.teamManager.getParticipantCount()));
+
+        if (playerCountTimer.isRunning() && playerCountTimer.getTime() > 10) {
+            event.getParticipant().sessionPlayer().ifPresent(p -> {
+                new TranslatedMessage(BingoTranslation.STARTING_STATUS).arg("" + playerCountTimer.getTime()).color(ChatColor.GOLD).send(p);
+            });
+        }
+
+        startPlayerCountTimerIfMinCountReached();
+    }
+
+    @Override
+    public void handleParticipantLeftTeam(final ParticipantLeftTeamEvent event) {
+        int playerCount = session.teamManager.getParticipantCount();
+
+        if (playerCount == 0) {
+            settingsHUD.setStatus(BingoTranslation.WAIT_STATUS.translate());
+        } else {
+            settingsHUD.setStatus(BingoTranslation.PLAYER_STATUS.translate("" + playerCount));
+        }
+
+        // Schedule check in the future since a player can switch teams where they will briefly leave the team
+        // and lower the participant count to possibly stop the timer.
+        BingoReloaded.scheduleTask(t -> {
+            if (session.teamManager.getParticipantCount() < config.minimumPlayerCount && playerCountTimer.isRunning()) {
+                playerCountTimer.stop();
+            }
+        });
     }
 }

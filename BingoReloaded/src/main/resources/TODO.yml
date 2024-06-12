@@ -33,6 +33,9 @@
   - to see values of config values
   - to change these values
 
-bring back team ranks in TAB list
+(2.x) add spam prevention on player gui's/ options
 
-soloteammanager team colors dont work..
+remove repeating tasks from hot swap?? 
+  - Start out by removing tasks from the shuffe list that were already in the card currently.
+
+remove team display when player leaves world (at any point)

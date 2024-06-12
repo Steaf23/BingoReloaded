@@ -8,16 +8,17 @@ import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.bukkit.scoreboard.Team;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class BingoTeam
 {
-    // Team used to display prefixes next to player display names
-    public final Team team;
+    private BaseComponent prefix;
     private BingoCard card;
     public boolean outOfTheGame = false;
     private final String id;
@@ -26,13 +27,13 @@ public class BingoTeam
 
     private final Set<BingoParticipant> members;
 
-    public BingoTeam(Team team, ChatColor color, String name) {
-        this.id = team.getName();
-        this.team = team;
+    public BingoTeam(String identifier, ChatColor color, String name, BaseComponent prefix) {
+        this.id = identifier;
         this.card = null;
         this.color = color;
         this.name = name;
         this.members = new HashSet<>();
+        this.prefix = prefix;
     }
 
     public @Nullable BingoCard getCard() {
@@ -73,16 +74,23 @@ public class BingoTeam
     public void addMember(BingoParticipant player) {
         members.add(player);
         player.setTeam(this);
-        player.sessionPlayer().ifPresentOrElse(p -> team.addEntry(p.getName()), () -> team.addEntry(player.getDisplayName()));
     }
 
-    public void removeMember(BingoParticipant player) {
-        members.remove(player);
-        // Team is not registered anymore, if we try to unregister again, we will get errors
-        if (team.getScoreboard().getTeam(id) != null) {
-            team.removeEntry(player.getDisplayName());
-        }
+    public boolean removeMember(@NotNull BingoParticipant player) {
+        boolean success = members.remove(player);
         player.setTeam(null);
+        return success;
+    }
+
+    public boolean removeMember(@NotNull UUID uuid) {
+        for (BingoParticipant participant : members) {
+            if (participant.getId().equals(uuid)) {
+                boolean success = members.remove(participant);
+                participant.setTeam(null);
+                return success;
+            }
+        }
+        return false;
     }
 
     public boolean hasMember(UUID memberId) {
@@ -102,8 +110,18 @@ public class BingoTeam
         return card.getCompleteCount(this);
     }
 
-    public Team getScoreboardTeam()
-    {
-        return team;
+    public Set<String> getMemberNames() {
+        return members.stream()
+                .map(participant -> {
+                    if (participant.sessionPlayer().isEmpty()) {
+                        return participant.getDisplayName();
+                    } else {
+                        return participant.sessionPlayer().get().getName();
+                    }
+                }).collect(Collectors.toSet());
+    }
+
+    public BaseComponent getPrefix() {
+        return prefix;
     }
 }

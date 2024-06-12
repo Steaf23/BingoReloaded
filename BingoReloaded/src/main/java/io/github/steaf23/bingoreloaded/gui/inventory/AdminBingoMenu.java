@@ -55,7 +55,7 @@ public class AdminBingoMenu extends BasicMenu
         this.session = session;
 
         addAction(JOIN, p -> {
-            TeamSelectionMenu selectionMenu = new TeamSelectionMenu(menuBoard, session.teamManager);
+            TeamSelectionMenu selectionMenu = new TeamSelectionMenu(menuBoard, session);
             selectionMenu.open(p);
         });
         addAction(KIT, arguments -> new KitOptionsMenu(getMenuBoard(), session).open(arguments.player()));

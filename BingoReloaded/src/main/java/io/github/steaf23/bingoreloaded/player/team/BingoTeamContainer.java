@@ -1,12 +1,10 @@
 package io.github.steaf23.bingoreloaded.player.team;
 
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
-import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class BingoTeamContainer implements Iterable<BingoTeam>
@@ -23,6 +21,10 @@ public class BingoTeamContainer implements Iterable<BingoTeam>
 
     public void addTeam(BingoTeam team) {
         teams.add(team);
+    }
+
+    public void removeTeam(BingoTeam team) {
+        teams.remove(team);
     }
 
     public BingoTeam getLeadingTeam() {
@@ -68,8 +70,8 @@ public class BingoTeamContainer implements Iterable<BingoTeam>
                 .count();
     }
 
-    public void removeEmptyTeams() {
-        teams.removeIf(team -> team.getMembers().size() == 0);
+    public void removeEmptyTeams(String... exceptions) {
+        teams.removeIf(team -> team.getMembers().isEmpty() && Arrays.stream(exceptions).noneMatch(Predicate.isEqual(team.getIdentifier())));
     }
 
     public Set<BingoTeam> getTeams()
