@@ -37,9 +37,11 @@ savePlayerStatistics: false # true or false
 sendCommandAfterGameEnds: "" # command to send
 
 # If true this will prevent the player from receiving the voting item, allowing custom implementations using the available autobingo command.
+# Note: This will also disallow the use of the /bingo vote command such that only /autobingo <world_name> vote can be used to vote on behalf of a player.
 voteUsingCommandsOnly: false
 
 # If true this will prevent the player from receiving the team selection item, allowing custom implementations using the available autobingo command.
+# Note: /bingo join will still be allowed, and so is joining using /bingo and selecting the Join Team option.
 selectTeamsUsingCommandsOnly: false
 
 # If true disables the scoreboard sidebar completely, useful for server (networks) with a pre-existing sidebar scoreboard.

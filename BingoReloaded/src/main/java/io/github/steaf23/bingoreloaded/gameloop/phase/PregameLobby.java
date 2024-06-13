@@ -38,6 +38,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.scoreboard.Team;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -336,11 +337,15 @@ public class PregameLobby implements GamePhase
         if (event.getItem() == null || event.getItem().getType() == Material.AIR)
             return;
 
-        if (ItemTemplate.isCompareKeyEqual(event.getItem(), "vote")) {
+        if (event.getAction() != Action.RIGHT_CLICK_AIR && event.getAction() != Action.RIGHT_CLICK_BLOCK) {
+            return;
+        }
+
+        if (PlayerKit.VOTE_ITEM.isCompareKeyEqual(event.getItem())) {
             event.setCancelled(true);
             VoteMenu menu = new VoteMenu(menuBoard, config.voteList, this);
             menu.open(event.getPlayer());
-        } else if (ItemTemplate.isCompareKeyEqual(event.getItem(), "team")) {
+        } else if (PlayerKit.TEAM_ITEM.isCompareKeyEqual(event.getItem())) {
             event.setCancelled(true);
             TeamSelectionMenu teamSelection = new TeamSelectionMenu(menuBoard, session);
             teamSelection.open(event.getPlayer());
