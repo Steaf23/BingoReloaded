@@ -3,6 +3,7 @@ package io.github.steaf23.bingoreloaded.command;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.cards.BingoCard;
 import io.github.steaf23.bingoreloaded.event.BingoTaskProgressCompletedEvent;
+import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.team.TeamManager;
@@ -24,10 +25,11 @@ import java.util.UUID;
 
 public class BotCommand implements TabExecutor
 {
+    private BingoSession session;
     private TeamManager teamManager;
 
-    public BotCommand(TeamManager teamManager) {
-        this.teamManager = teamManager;
+    public BotCommand(BingoSession session) {
+        this.teamManager = session.teamManager;
         BingoReloaded.getInstance().registerCommand("bingobot", this);
     }
 
@@ -48,7 +50,7 @@ public class BotCommand implements TabExecutor
                     String teamName = args[1];
                     BingoParticipant virtualPlayer = getVirtualPlayerFromName(playerName);
                     if (virtualPlayer == null) {
-                        virtualPlayer = new VirtualBingoPlayer(UUID.randomUUID(), playerName, teamManager.getSession());
+                        virtualPlayer = new VirtualBingoPlayer(UUID.randomUUID(), playerName, session);
                     }
                     teamManager.addMemberToTeam(virtualPlayer, teamName);
                 }
@@ -58,7 +60,7 @@ public class BotCommand implements TabExecutor
                 String teamName = args[2];
                 BingoParticipant virtualPlayer = getVirtualPlayerFromName(playerName);
                 if (virtualPlayer == null) {
-                    virtualPlayer = new VirtualBingoPlayer(UUID.randomUUID(), playerName, teamManager.getSession());
+                    virtualPlayer = new VirtualBingoPlayer(UUID.randomUUID(), playerName, session);
                 }
                 teamManager.addMemberToTeam(virtualPlayer, teamName);
             }
@@ -101,15 +103,9 @@ public class BotCommand implements TabExecutor
 
     @Nullable
     private BingoParticipant getVirtualPlayerFromName(String name) {
-        for (BingoParticipant participant : teamManager.getParticipants()) {
-            if (participant instanceof VirtualBingoPlayer virtualPlayer) {
-                if (virtualPlayer.getName().equalsIgnoreCase(name)) {
-                    return participant;
-                }
-            }
-        }
-
-        return null;
+        return teamManager.getParticipants().stream()
+                .filter(p -> p.getName().equals(name))
+                .findAny().orElse(null);
     }
 
     @Nullable

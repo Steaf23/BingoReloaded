@@ -70,6 +70,11 @@ public class BingoPlayer implements BingoParticipant
     }
 
     @Override
+    public String getName() {
+        return playerName;
+    }
+
+    @Override
     public UUID getId()
     {
         return playerId;

@@ -2,17 +2,18 @@ package io.github.steaf23.bingoreloaded.player.team;
 
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.data.TeamData;
-import io.github.steaf23.bingoreloaded.event.ParticipantCountChangedEvent;
-import io.github.steaf23.bingoreloaded.event.ParticipantJoinedTeamEvent;
-import io.github.steaf23.bingoreloaded.event.PlayerJoinedSessionWorldEvent;
-import io.github.steaf23.bingoreloaded.event.PlayerLeftSessionWorldEvent;
+import io.github.steaf23.bingoreloaded.event.*;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
+import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.player.VirtualBingoPlayer;
-import io.github.steaf23.bingoreloaded.util.Message;
-import io.github.steaf23.bingoreloaded.util.TranslatedMessage;
+import io.github.steaf23.bingoreloaded.util.*;
 import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
@@ -20,26 +21,34 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.rmi.server.UID;
+import java.util.*;
 
+//TODO: REWRITE THIS SHAIT (redo auto team with participant queue??)
 /**
  * Similar to BasicTeamManager but each team can only have 1 member, the team's name being the name of the member.
  */
 public class SoloTeamManager implements TeamManager
 {
     private final BingoTeamContainer teams;
-    private final Scoreboard teamBoard;
     private final BingoSession session;
     private final TeamData teamData;
+    private final BingoTeam autoTeam;
 
-    public SoloTeamManager(Scoreboard teamBoard, BingoSession session)
+    public SoloTeamManager(BingoSession session)
     {
-        this.teamBoard = teamBoard;
         this.session = session;
         this.teamData = new TeamData();
         this.teams = new BingoTeamContainer();
+
+        this.autoTeam = new BingoTeam("auto", ChatColor.of("#fdffa8"), BingoTranslation.TEAM_AUTO.translate(), createPrefix(ChatColor.of("#fdffa8")));
+        this.teams.addTeam(autoTeam);
+    }
+
+    private BaseComponent createPrefix(ChatColor color) {
+        String prefixFormat = new BingoPlaceholderFormatter().format(BingoReloadedPlaceholderExpansion.BingoReloadedPlaceholder.TEAM_FULL);
+        BaseComponent prefix = TextComponent.fromLegacy(BingoReloadedPlaceholderExpansion.createLegacyTextFromMessage(prefixFormat, color.toString(), "✦") + " ");
+        return prefix;
     }
 
     @Nullable
@@ -87,12 +96,40 @@ public class SoloTeamManager implements TeamManager
     }
 
     @Override
-    public @Nullable BingoSession getSession() {
-        return session;
+    public void setup() {
+        teams.removeTeam(autoTeam);
+        for (BingoParticipant participant : new HashSet<BingoParticipant>(autoTeam.getMembers())) {
+            autoTeam.removeMember(participant);
+            setupParticipant(participant);
+        }
     }
 
     @Override
-    public void setup() {
+    public void reset() {
+        for (BingoTeam team : new HashSet<BingoTeam>(teams.getTeams())) {
+            for (BingoParticipant member : new HashSet<BingoParticipant>(team.getMembers())) {
+                removeMemberFromTeam(member);
+            }
+            teams.removeTeam(team);
+        }
+        teams.addTeam(autoTeam);
+    }
+
+    public void setupParticipant(BingoParticipant participant) {
+        ChatColor teamColor = determineTeamColor();
+        // create a team where the id is the same as the participant's id, which is good enough for our use case.
+        BingoTeam team = new BingoTeam(participant.getId().toString(), teamColor, participant.getDisplayName(), createPrefix(teamColor));
+        team.addMember(participant);
+        teams.addTeam(team);
+
+        participant.sessionPlayer().ifPresent(p -> {
+            new TranslatedMessage(BingoTranslation.JOIN).color(ChatColor.GREEN)
+                    .arg(team.getColoredName())
+                    .send(p);
+        });
+
+        var joinEvent = new ParticipantJoinedTeamEvent(participant, team, session);
+        Bukkit.getPluginManager().callEvent(joinEvent);
     }
 
     @Override
@@ -112,30 +149,20 @@ public class SoloTeamManager implements TeamManager
      */
     @Override
     public boolean addMemberToTeam(BingoParticipant player, String teamId) {
-        removeMemberFromTeamSilently(player);
+        if (session.isRunning()) {
+            return false;
+        }
+        autoTeam.addMember(player);
 
-        ChatColor teamColor = determineTeamColor();
-        Team boardTeam = teamBoard.getTeam(player.getId().toString());
-        if (boardTeam == null) {
-            boardTeam = teamBoard.registerNewTeam(player.getId().toString());
-        }
-        String displayName = player.getDisplayName();
-        if (player instanceof VirtualBingoPlayer fakePlayer)
-        {
-            displayName = fakePlayer.getName();
-        }
-        BingoTeam team = new BingoTeam(boardTeam, teamColor, displayName);
-        team.addMember(player);
-        teams.addTeam(team);
+        var joinEvent = new ParticipantJoinedTeamEvent(player, session);
+        Bukkit.getPluginManager().callEvent(joinEvent);
+        int memberCount = getParticipantCount();
+        var countChangedEvent = new ParticipantCountChangedEvent(session, memberCount - 1, memberCount);
 
         player.sessionPlayer().ifPresent(p -> {
-            new TranslatedMessage(BingoTranslation.JOIN).color(ChatColor.GREEN)
-                    .arg(team.getColoredName())
+            new TranslatedMessage(BingoTranslation.JOIN_AUTO).color(ChatColor.GREEN)
                     .send(p);
         });
-
-        var joinEvent = new ParticipantJoinedTeamEvent(player, team, session);
-        Bukkit.getPluginManager().callEvent(joinEvent);
         return true;
     }
 
@@ -146,11 +173,14 @@ public class SoloTeamManager implements TeamManager
         }
 
         removeMemberFromTeamSilently(member);
+        var leaveEvent = new ParticipantLeftTeamEvent(member, session);
+        Bukkit.getPluginManager().callEvent(leaveEvent);
+        int memberCount = getParticipantCount();
+        var countChangedEvent = new ParticipantCountChangedEvent(session, memberCount + 1, memberCount);
 
         member.sessionPlayer().ifPresent(player -> {
             new TranslatedMessage(BingoTranslation.LEAVE).color(ChatColor.RED).send(player);
         });
-
         return true;
     }
 
@@ -160,40 +190,48 @@ public class SoloTeamManager implements TeamManager
     }
 
     @Override
-    public int getCapacity() {
+    public int getTotalParticipantCapacity() {
         return Integer.MAX_VALUE;
     }
 
 
     @Override
     public void handlePlayerJoinedSessionWorld(PlayerJoinedSessionWorldEvent event) {
-        BingoParticipant participant = getPlayerAsParticipant(event.getPlayer());
-        if (participant == null)
-            return;
+        Message.log(ChatColor.GOLD + event.getPlayer().getDisplayName() + " joined world", session.getOverworld().getName());
 
-        int onlineParticipants = getOnlineParticipants().size();
-        Event e = new ParticipantCountChangedEvent(session, onlineParticipants, onlineParticipants - 1);
-        Bukkit.getPluginManager().callEvent(e);
+        BingoParticipant participant = getPlayerAsParticipant(event.getPlayer());
+        if (participant != null) {
+            participant.sessionPlayer().ifPresent(player -> {
+                if (!session.isRunning()) {
+                    return;
+                }
+                new TranslatedMessage(BingoTranslation.JOIN).color(ChatColor.GREEN)
+                        .arg(participant.getTeam().getColoredName())
+                        .send(player);
+            });
+            return;
+        }
+
+        if (session.isRunning()) {
+            new TranslatedMessage(BingoTranslation.NO_JOIN).send(event.getPlayer());
+            return;
+        }
+
+        if (getPlayerAsParticipant(event.getPlayer()) == null) {
+            addMemberToTeam(new BingoPlayer(event.getPlayer(), session), "auto");
+        }
     }
 
     @Override
     public void handlePlayerLeftSessionWorld(PlayerLeftSessionWorldEvent event) {
-        BingoParticipant participant = getPlayerAsParticipant(event.getPlayer());
-        if (participant == null)
-            return;
-
-        int onlineParticipants = getOnlineParticipants().size();
-        Event e = new ParticipantCountChangedEvent(session, onlineParticipants, onlineParticipants + 1);
-        Bukkit.getPluginManager().callEvent(e);
+        Message.log(ChatColor.GOLD + event.getPlayer().getDisplayName() + " left world", session.getOverworld().getName());
     }
 
     private void removeMemberFromTeamSilently(@NotNull BingoParticipant member) {
         for (BingoTeam team : teams) {
-            if (team.getMembers().contains(member)) {
-                team.removeMember(member);
-            }
+            team.removeMember(member);
         }
-        teams.removeEmptyTeams();
+        teams.removeEmptyTeams("auto");
     }
 }
 

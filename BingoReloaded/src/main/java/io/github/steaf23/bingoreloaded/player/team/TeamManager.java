@@ -12,9 +12,13 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
-public interface TeamManager extends SessionMember
+public interface TeamManager
 {
+    void setup();
+    void reset();
+
     default int getParticipantCount() {
         return getParticipants().size();
     }
@@ -23,10 +27,11 @@ public interface TeamManager extends SessionMember
         return getActiveTeams().getAllParticipants();
     }
 
-    default Set<BingoParticipant> getOnlineParticipants() {
-        return getActiveTeams().getAllOnlineParticipants();
-    }
-
+    /**
+     * Returns a map of team identifiers and templates for all teams can be joined by the player when trying to join the game.
+     * Used by the team selection menu
+     * @return
+     */
     Map<String, TeamData.TeamTemplate> getJoinableTeams();
 
     BingoTeamContainer getActiveTeams();
@@ -61,7 +66,7 @@ public interface TeamManager extends SessionMember
 
     int getMaxTeamSize();
 
-    int getCapacity();
+    int getTotalParticipantCapacity();
 
 
     default void handleSettingsUpdated(final BingoSettingsUpdatedEvent event) {

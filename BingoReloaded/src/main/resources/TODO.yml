@@ -32,3 +32,5 @@
 (2.x) add /bingoconfig command
   - to see values of config values
   - to change these values
+
+(2.x) add spam prevention on player gui's/ options

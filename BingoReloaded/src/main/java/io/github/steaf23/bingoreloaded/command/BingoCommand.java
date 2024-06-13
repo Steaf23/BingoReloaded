@@ -6,9 +6,11 @@ import io.github.steaf23.bingoreloaded.data.ConfigData;
 import io.github.steaf23.bingoreloaded.gameloop.GameManager;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
+import io.github.steaf23.bingoreloaded.gameloop.phase.PregameLobby;
 import io.github.steaf23.bingoreloaded.gui.inventory.AdminBingoMenu;
 import io.github.steaf23.bingoreloaded.gui.inventory.TeamEditorMenu;
 import io.github.steaf23.bingoreloaded.gui.inventory.TeamSelectionMenu;
+import io.github.steaf23.bingoreloaded.gui.inventory.VoteMenu;
 import io.github.steaf23.bingoreloaded.gui.inventory.creator.BingoCreatorMenu;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
@@ -60,14 +62,25 @@ public class BingoCommand implements TabExecutor
             if (player.hasPermission("bingo.admin")) {
                 new AdminBingoMenu(menuBoard, session, config).open(player);
             } else if (player.hasPermission("bingo.player")) {
-                new TeamSelectionMenu(menuBoard, session.teamManager).open(player);
+                new TeamSelectionMenu(menuBoard, session).open(player);
             }
             return true;
         }
 
         switch (args[0]) {
             case "join" -> {
-                TeamSelectionMenu menu = new TeamSelectionMenu(menuBoard, session.teamManager);
+                TeamSelectionMenu menu = new TeamSelectionMenu(menuBoard, session);
+                menu.open(player);
+            }
+            case "vote" -> {
+                if (!(session.phase() instanceof PregameLobby lobby)) {
+                    return true;
+                }
+                if (!config.useVoteSystem || config.voteUsingCommandsOnly || config.voteList.isEmpty()) {
+                    Message.sendDebug(ChatColor.RED + "Voting is disabled!", player);
+                    return true;
+                }
+                VoteMenu menu = new VoteMenu(menuBoard, config.voteList, lobby);
                 menu.open(player);
             }
             case "leave" -> {
@@ -192,8 +205,13 @@ public class BingoCommand implements TabExecutor
             case "hologram" -> {
 
             }
-            default ->
-                    new TranslatedMessage(BingoTranslation.COMMAND_USAGE).color(ChatColor.RED).arg("/bingo [getcard | stats | start | end | join | back | leave | deathmatch | creator | teams | kit | wait | teamedit]").send(player);
+            default -> {
+                if (player.hasPermission("bingo.admin")) {
+                    new TranslatedMessage(BingoTranslation.COMMAND_USAGE).color(ChatColor.RED).arg("/bingo [getcard | stats | start | end | join | vote | back | leave | deathmatch | creator | teams | kit | wait | teamedit]").send(player);
+                } else {
+                    new TranslatedMessage(BingoTranslation.COMMAND_USAGE).color(ChatColor.RED).arg("/bingo [getcard | stats | join | vote | back | leave]").send(player);
+                }
+            }
         }
         return true;
     }
@@ -295,7 +313,7 @@ public class BingoCommand implements TabExecutor
     public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
         if (!(sender instanceof Player player) || player.hasPermission("bingo.admin")) {
             if (args.length <= 1) {
-                return List.of("join", "getcard", "back", "leave", "stats", "end", "wait", "kit", "deathmatch", "creator", "teams", "teamedit");
+                return List.of("join", "vote", "getcard", "back", "leave", "stats", "end", "wait", "kit", "deathmatch", "creator", "teams", "teamedit");
             }
 
             if (args[0].equals("kit")) {
@@ -317,7 +335,7 @@ public class BingoCommand implements TabExecutor
         }
 
         if (args.length == 1) {
-            return List.of("join", "getcard", "back", "leave", "stats");
+            return List.of("join", "vote", "getcard", "back", "leave", "stats");
         }
         return List.of();
     }

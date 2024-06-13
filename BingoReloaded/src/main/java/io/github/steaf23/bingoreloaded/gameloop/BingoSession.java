@@ -1,5 +1,8 @@
 package io.github.steaf23.bingoreloaded.gameloop;
 
+import com.github.retrooper.packetevents.PacketEvents;
+import com.github.retrooper.packetevents.wrapper.PacketWrapper;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerTeams;
 import io.github.steaf23.bingoreloaded.*;
 import io.github.steaf23.bingoreloaded.command.BotCommand;
 import io.github.steaf23.bingoreloaded.data.*;
@@ -12,6 +15,7 @@ import io.github.steaf23.bingoreloaded.gameloop.phase.PostGamePhase;
 import io.github.steaf23.bingoreloaded.gameloop.phase.PregameLobby;
 import io.github.steaf23.bingoreloaded.gui.hud.BingoGameHUDGroup;
 import io.github.steaf23.bingoreloaded.gui.hud.DisabledBingoGameHUDGroup;
+import io.github.steaf23.bingoreloaded.gui.hud.TeamDisplay;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.player.team.BasicTeamManager;
@@ -23,8 +27,11 @@ import io.github.steaf23.bingoreloaded.settings.BingoSettingsBuilder;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.bingoreloaded.util.TranslatedMessage;
+import io.github.steaf23.easymenulib.EasyMenuLibrary;
 import io.github.steaf23.easymenulib.inventory.MenuBoard;
 import io.github.steaf23.easymenulib.scoreboard.HUDRegistry;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -33,9 +40,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.*;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.Team;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
+import java.util.Set;
 
 /**
  * This class represents a session of a bingo game on a single world(group).
@@ -52,6 +63,7 @@ public class BingoSession
     private final GameManager gameManager;
     private final BingoSoundPlayer soundPlayer;
     private final BotCommand botCommand;
+    private final TeamDisplay teamDisplay;
 
     // A bingo session controls 1 group of worlds
     private final WorldGroup worlds;
@@ -70,15 +82,16 @@ public class BingoSession
         }
         this.soundPlayer = new BingoSoundPlayer(this);
         this.settingsBuilder = new BingoSettingsBuilder(this);
-        Scoreboard board = Bukkit.getScoreboardManager().getNewScoreboard();
         if (config.singlePlayerTeams) {
-            this.teamManager = new SoloTeamManager(board, this);
+            this.teamManager = new SoloTeamManager(this);
         }
         else {
-            this.teamManager = new BasicTeamManager(board, this);
+            this.teamManager = new BasicTeamManager(this);
         }
 
-        this.botCommand = new BotCommand(teamManager);
+        this.botCommand = new BotCommand(this);
+        this.teamDisplay = new TeamDisplay(this);
+        this.phase = null;
 
         BingoReloaded.scheduleTask((t) -> {
             for (Player p : Bukkit.getOnlinePlayers()) {
@@ -143,14 +156,9 @@ public class BingoSession
     }
 
     public void prepareNextGame() {
+        teamManager.reset();
         var event = new PrepareNextBingoGameEvent(this);
         Bukkit.getPluginManager().callEvent(event);
-
-        getOverworld().getPlayers().forEach(p -> {
-            if (teamManager.getPlayerAsParticipant(p) == null) {
-                teamManager.addMemberToTeam(new BingoPlayer(p, this), "auto");
-            }
-        });
 
         // When we came from the PostGamePhase we need to make sure to end it properly
         if (phase != null) {
@@ -159,6 +167,12 @@ public class BingoSession
 
         phase = new PregameLobby(menuBoard, hudRegistry, this, config);
         phase.setup();
+
+        getOverworld().getPlayers().forEach(p -> {
+            if (teamManager.getPlayerAsParticipant(p) == null) {
+                teamManager.addMemberToTeam(new BingoPlayer(p, this), "auto");
+            }
+        });
     }
 
     /**
@@ -204,29 +218,48 @@ public class BingoSession
     }
 
     public void handlePlayerJoinedSessionWorld(final PlayerJoinedSessionWorldEvent event) {
-        Message.log(event.getPlayer().getDisplayName() + " has joined bingo on world " + worlds.getName());
-        if (isRunning()) {
-            scoreboard.addPlayer(event.getPlayer());
-        }
+        BingoReloaded.scheduleTask(t -> {
+            teamManager.handlePlayerJoinedSessionWorld(event);
+            phase.handlePlayerJoinedSessionWorld(event);
+
+            if (isRunning()) {
+                scoreboard.addPlayer(event.getPlayer());
+            }
+            teamDisplay.update();
+        });
     }
 
     public void handlePlayerLeftSessionWorld(final PlayerLeftSessionWorldEvent event) {
+        // Clear player's teams before anything else.
+        // This is because they might join another bingo as a result of leaving this one, so we have to remove the player's team display at this moment
+        teamDisplay.clearTeamsForPlayer(event.getPlayer());
 
-        Player player = event.getPlayer();
-        for (PotionEffectType effect : PotionEffectType.values()) {
-            player.removePotionEffect(effect);
-        }
+        BingoReloaded.scheduleTask(t -> {
+            teamManager.handlePlayerLeftSessionWorld(event);
+            phase.handlePlayerLeftSessionWorld(event);
 
-        if (isRunning()) {
-            new TranslatedMessage(BingoTranslation.LEAVE).send(event.getPlayer());
-        }
-        else {
-            // remove player from session if it isn't in progress
-            BingoParticipant participant = teamManager.getPlayerAsParticipant(event.getPlayer());
-            teamManager.removeMemberFromTeam(participant);
-        }
+            Player player = event.getPlayer();
+            for (PotionEffectType effect : PotionEffectType.values()) {
+                player.removePotionEffect(effect);
+            }
 
-        scoreboard.removePlayer(player);
+            if (isRunning()) {
+                new TranslatedMessage(BingoTranslation.LEAVE).send(event.getPlayer());
+            }
+
+            scoreboard.removePlayer(player);
+            teamDisplay.update();
+        });
+    }
+
+    public void handleParticipantJoinedTeam(final ParticipantJoinedTeamEvent event) {
+        phase.handleParticipantJoinedTeam(event);
+        teamDisplay.update();
+    }
+
+    public void handleParticipantLeftTeam(final ParticipantLeftTeamEvent event) {
+        phase.handleParticipantLeftTeam(event);
+        teamDisplay.update();
     }
 
     public void handleParticipantCountChangedEvent(final ParticipantCountChangedEvent event) {
@@ -336,5 +369,10 @@ public class BingoSession
     }
 
     public void destroy() {
+        teamDisplay.reset();
+    }
+
+    public Set<Player> getPlayersInWorld() {
+        return worlds.getPlayers();
     }
 }

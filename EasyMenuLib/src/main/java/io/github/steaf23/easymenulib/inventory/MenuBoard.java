@@ -13,15 +13,14 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Stack;
-import java.util.UUID;
+import java.util.*;
 
 public class MenuBoard implements Listener
 {
     // Stores all currently open inventories by all players, using a stack system we can easily add or remove child inventories.
     protected Map<UUID, Stack<Menu>> activeMenus;
+
+    private static final Set<ClickType> CLICK_TYPES_TO_IGNORE = Set.of(ClickType.DOUBLE_CLICK, ClickType.DROP, ClickType.CREATIVE, ClickType.CONTROL_DROP, ClickType.SWAP_OFFHAND);
 
     public MenuBoard() {
         this.activeMenus = new HashMap<>();
@@ -98,8 +97,8 @@ public class MenuBoard implements Listener
 
         event.setCancelled(true);
 
-        // ignore annoying double clicks..
-        if (event.getClick() == ClickType.DOUBLE_CLICK)
+        // ignore click types that break everything
+        if (CLICK_TYPES_TO_IGNORE.contains(event.getClick()))
             return;
 
         if (event.getInventory().getSize() < event.getRawSlot()

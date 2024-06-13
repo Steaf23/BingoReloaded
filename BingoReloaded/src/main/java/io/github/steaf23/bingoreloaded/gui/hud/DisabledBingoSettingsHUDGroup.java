@@ -1,5 +1,6 @@
 package io.github.steaf23.bingoreloaded.gui.hud;
 
+import io.github.steaf23.bingoreloaded.data.ConfigData;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
 import io.github.steaf23.easymenulib.scoreboard.HUDRegistry;
 import org.bukkit.entity.Player;
@@ -27,7 +28,7 @@ public class DisabledBingoSettingsHUDGroup extends BingoSettingsHUDGroup
     }
 
     @Override
-    public void updateSettings(@Nullable BingoSettings settings) {
+    public void updateSettings(@Nullable BingoSettings settings, ConfigData config) {
     }
 
     @Override

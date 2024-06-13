@@ -142,6 +142,10 @@ public class GameManager
 
     public void onPluginDisable() {
         HandlerList.unregisterAll(eventListener);
+
+        for (String session : sessions.keySet()) {
+            sessions.get(session).destroy();
+        }
     }
 
     public ConfigData getGameConfig() {
@@ -169,17 +173,9 @@ public class GameManager
     public @Nullable BingoSession getSessionOfPlayer(Player player) {
         for (String sessionName : sessions.keySet()) {
             BingoSession session = sessions.get(sessionName);
-            Message.log("participants:  " + session.teamManager.getParticipants());
             BingoParticipant participant = session.teamManager.getPlayerAsParticipant(player);
             if (participant != null) {
                 return session;
-            }
-
-            //TODO: fix this??? maybe create a proper special team from automatic (or add it to teammanager interface), as this is kind of messy like this...
-            if (session.teamManager instanceof BasicTeamManager teamManager) {
-                if (teamManager.getParticipantsInAutoTeam().contains(player.getUniqueId())) {
-                    return session;
-                }
             }
         }
 

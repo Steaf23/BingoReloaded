@@ -3,6 +3,7 @@ package io.github.steaf23.bingoreloaded.util;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
+import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.easymenulib.util.ChatComponentUtils;
 import io.github.steaf23.easymenulib.util.SmallCaps;
@@ -160,12 +161,8 @@ public class Message
     }
 
     public void send(BingoTeam team) {
-        for (String pName : team.team.getEntries()) {
-            Player p = Bukkit.getPlayer(pName);
-            if (p != null) {
-                send(p);
-            }
-        }
+        team.getMembers()
+                .forEach(p -> p.sessionPlayer().ifPresent(this::send));
     }
 
     public String toLegacyString(Player player) {

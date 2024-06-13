@@ -4,6 +4,7 @@ author: Steven
 main: io.github.steaf23.bingoreloaded.BingoReloaded
 api-version: 1.19
 
+depend: [packetevents]
 softdepend: [PlaceholderAPI]
 
 permissions:

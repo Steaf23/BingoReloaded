@@ -83,7 +83,6 @@ public class SerializablePlayer implements ConfigurationSerializable
         if (!playerId.equals(player.getUniqueId()))
             return;
 
-        Message.log("Player pos event before apply: " + location.getX() + " " + location.getZ());
         player.teleport(location, PlayerTeleportEvent.TeleportCause.PLUGIN);
 
         player.setHealth(health);

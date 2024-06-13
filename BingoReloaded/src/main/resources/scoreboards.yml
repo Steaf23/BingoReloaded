@@ -28,3 +28,4 @@ game:
         - " "
         - "{team_info}"
         - " "
+        - "&lGoal:&r {win_goal}"

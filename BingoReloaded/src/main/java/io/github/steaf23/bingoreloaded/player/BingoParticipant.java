@@ -21,6 +21,7 @@ public interface BingoParticipant
     void setTeam(BingoTeam team);
     UUID getId();
     Optional<Player> sessionPlayer();
+    String getName();
     String getDisplayName();
     void showDeathMatchTask(BingoTask task);
     void showCard(BingoTask deathMatchTask);

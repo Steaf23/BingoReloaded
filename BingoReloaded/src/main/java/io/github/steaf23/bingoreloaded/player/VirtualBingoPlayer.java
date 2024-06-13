@@ -26,6 +26,7 @@ public class VirtualBingoPlayer implements BingoParticipant
         this.session = session;
     }
 
+    @Override
     public String getName() {
         return name;
     }
@@ -58,7 +59,7 @@ public class VirtualBingoPlayer implements BingoParticipant
 
     @Override
     public String getDisplayName() {
-        return ChatColor.WHITE + "[" + ChatColor.LIGHT_PURPLE + ChatColor.ITALIC + "BOT" + ChatColor.RESET + ChatColor.WHITE + "] " + ChatColor.GRAY + name + ChatColor.RESET + "";
+        return ChatColor.WHITE + "[" + ChatColor.LIGHT_PURPLE + ChatColor.ITALIC + "DUMMY" + ChatColor.RESET + ChatColor.WHITE + "] " + ChatColor.GRAY + name + ChatColor.RESET + "";
     }
 
     @Override
