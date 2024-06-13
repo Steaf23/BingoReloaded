@@ -8,6 +8,7 @@ import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.player.VirtualBingoPlayer;
 import io.github.steaf23.bingoreloaded.util.*;
+import io.github.steaf23.easymenulib.util.ChatComponentUtils;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -24,7 +25,6 @@ import java.awt.*;
 import java.rmi.server.UID;
 import java.util.*;
 
-//TODO: REWRITE THIS SHAIT (redo auto team with participant queue??)
 /**
  * Similar to BasicTeamManager but each team can only have 1 member, the team's name being the name of the member.
  */
@@ -47,7 +47,7 @@ public class SoloTeamManager implements TeamManager
 
     private BaseComponent createPrefix(ChatColor color) {
         String prefixFormat = new BingoPlaceholderFormatter().format(BingoReloadedPlaceholderExpansion.BingoReloadedPlaceholder.TEAM_FULL);
-        BaseComponent prefix = TextComponent.fromLegacy(BingoReloadedPlaceholderExpansion.createLegacyTextFromMessage(prefixFormat, color.toString(), "✦") + " ");
+        BaseComponent prefix = ChatComponentUtils.concatComponents(TextComponent.fromLegacyText(BingoReloadedPlaceholderExpansion.createLegacyTextFromMessage(prefixFormat, color.toString(), "✦") + " "));
         return prefix;
     }
 

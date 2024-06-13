@@ -39,7 +39,6 @@ import java.util.function.Consumer;
 
 public class BingoReloaded extends JavaPlugin
 {
-    public static final String CARD_1_18 = "lists_1_18.yml";
     public static final String CARD_1_20_4 = "lists_1_20.yml";
     public static final String CARD_1_21 = "lists_1_21.yml";
     public static final String CARD_1_19_4 = "lists_1_19.yml";
@@ -203,10 +202,7 @@ public class BingoReloaded extends JavaPlugin
 
     public static String getDefaultTasksVersion() {
         String version = Bukkit.getVersion();
-        if (version.contains("(MC: 1.18")) {
-            return CARD_1_18;
-        }
-        else if (version.contains("(MC: 1.19")) {
+        if (version.contains("(MC: 1.19")) {
             return CARD_1_19_4;
         }
         else if (version.contains("(MC: 1.20")) {
@@ -215,7 +211,7 @@ public class BingoReloaded extends JavaPlugin
         else if (version.contains("(MC: 1.21")) {
             return CARD_1_21;
         }
-        return CARD_1_18;
+        return CARD_1_19_4;
     }
 
     public GameManager getGameManager() {

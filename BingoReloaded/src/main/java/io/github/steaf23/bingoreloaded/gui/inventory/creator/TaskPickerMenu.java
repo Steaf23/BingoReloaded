@@ -166,12 +166,12 @@ public class TaskPickerMenu extends PaginatedSelectionMenu
     private static BaseComponent[] createSelectedLore() {
         ComponentBuilder builder = new ComponentBuilder(" - ").color(ChatColor.WHITE).italic(true)
                 .append("This task has been added to the list").color(ChatColor.DARK_PURPLE);
-        return builder.create();
+        return new BaseComponent[] {ChatComponentUtils.concatComponents(builder.create())};
     }
 
     private static BaseComponent[] createUnselectedLore() {
-        BaseComponent text = ChatComponentUtils.convert(" - ", ChatColor.WHITE, ChatColor.ITALIC);
-        text.addExtra(ChatComponentUtils.convert("Click to make this task", ChatColor.GRAY));
+        BaseComponent text = ChatComponentUtils.concatComponents(new ComponentBuilder(" - ").color(ChatColor.WHITE).italic(true)
+                .append("Click to make this task").color(ChatColor.GRAY).create());
         BaseComponent text2 = ChatComponentUtils.convert("   appear on bingo cards", ChatColor.GRAY, ChatColor.ITALIC);
         return new BaseComponent[]{text, text2};
     }

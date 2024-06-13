@@ -170,7 +170,13 @@ public class ChatComponentUtils
 
     private static String entityKey(EntityType entity)
     {
-        // Note: before 1.20.6 , mooshroom and snow_golem needed to be translated manually.
+        //BACKPORTED: before 1.20.6 , mooshroom and snow_golem needed to be translated manually.
+        if (entity == EntityType.MUSHROOM_COW) {
+            return "entity.minecraft.mooshroom";
+        }
+        if (entity == EntityType.SNOWMAN) {
+            return "entity.minecraft.snow_golem";
+        }
         return "entity.minecraft." + entity.name().toLowerCase();
     }
 }

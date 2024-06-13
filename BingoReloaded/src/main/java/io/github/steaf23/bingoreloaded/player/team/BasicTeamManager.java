@@ -11,6 +11,7 @@ import io.github.steaf23.bingoreloaded.util.BingoPlaceholderFormatter;
 import io.github.steaf23.bingoreloaded.util.BingoReloadedPlaceholderExpansion;
 import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.bingoreloaded.util.TranslatedMessage;
+import io.github.steaf23.easymenulib.util.ChatComponentUtils;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -47,13 +48,13 @@ public class BasicTeamManager implements TeamManager
 
     private BaseComponent createAutoPrefix(ChatColor color) {
         String prefixFormat = new BingoPlaceholderFormatter().format(BingoReloadedPlaceholderExpansion.BingoReloadedPlaceholder.TEAM_FULL);
-        BaseComponent prefix = TextComponent.fromLegacy(BingoReloadedPlaceholderExpansion.createLegacyTextFromMessage(prefixFormat, color.toString(), "✦") + " ");
+        BaseComponent prefix = ChatComponentUtils.concatComponents(TextComponent.fromLegacyText(BingoReloadedPlaceholderExpansion.createLegacyTextFromMessage(prefixFormat, color.toString(), "✦") + " "));
         return prefix;
     }
 
     private BaseComponent createPrefix(TeamData.TeamTemplate template) {
         String prefixFormat = new BingoPlaceholderFormatter().format(BingoReloadedPlaceholderExpansion.BingoReloadedPlaceholder.TEAM_FULL);
-        BaseComponent prefix = TextComponent.fromLegacy(BingoReloadedPlaceholderExpansion.createLegacyTextFromMessage(prefixFormat, template.color().toString(), template.name()) + " ");
+        BaseComponent prefix = ChatComponentUtils.concatComponents(TextComponent.fromLegacyText(BingoReloadedPlaceholderExpansion.createLegacyTextFromMessage(prefixFormat, template.color().toString(), template.name()) + " "));
         return prefix;
     }
 

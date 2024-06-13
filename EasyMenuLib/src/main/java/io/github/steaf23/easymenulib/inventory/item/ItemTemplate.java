@@ -299,10 +299,11 @@ public class ItemTemplate
 
         if (maxDamage != null) {
             // NOTE: still broken in older versions (pre 1.20.6-1.21-ish) for spawn eggs.
-            if (stackMeta instanceof Damageable) {
-                ((Damageable)stackMeta).setMaxDamage(maxDamage);
-                ((Damageable)stackMeta).setDamage(currentDamage);
-            }
+            // BACKPORTED: disabled maxDamage because it doesn't exist pre 1.20.6
+//            if (stackMeta instanceof Damageable) {
+//                ((Damageable)stackMeta).setMaxDamage(maxDamage);
+//                ((Damageable)stackMeta).setDamage(currentDamage);
+//            }
         }
         PersistentDataContainer pdc = stackMeta.getPersistentDataContainer();
         pdc = PDCHelper.addStringToPdc(pdc, "compare_key", compareKey);

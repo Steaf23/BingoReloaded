@@ -67,9 +67,13 @@ public record BingoStatistic(@NotNull Statistic stat, @Nullable EntityType entit
                         types.add(EntityType.MUSHROOM_COW);
                         return;
                     }
+                    if (mat == Material.SNOW_GOLEM_SPAWN_EGG) {
+                        types.add(EntityType.SNOWMAN);
+                        return;
+                    }
                     types.add(EntityType.valueOf(mat.name().replace("_SPAWN_EGG", "")));
                 });
-        // Note: pre 1.20.5 mooshroom spawn egg needed to be parsed by hand
+        // BACKPORTED: pre 1.20.5 mooshroom spawn egg needed to be parsed by hand
         return types;
     }
 
@@ -303,6 +307,13 @@ public record BingoStatistic(@NotNull Statistic stat, @Nullable EntityType entit
         else if (statistic.entityType != null &&
                 statistic.stat.getType() == Statistic.Type.ENTITY)
         {
+            //BACKPORTED: Old enum values...
+            if (statistic.entityType.name().equals("SNOWMAN")) {
+                return Material.SNOW_GOLEM_SPAWN_EGG;
+            }
+            if (statistic.entityType.name().equals("MUSHROOM_COW")) {
+                return Material.MOOSHROOM_SPAWN_EGG;
+            }
             Material spawnEgg = Material.valueOf(statistic.entityType.name() + "_SPAWN_EGG");
             return spawnEgg;
         }

@@ -75,7 +75,7 @@ public class TeamChatCommand implements Listener, TabExecutor
                             .append(team.getPrefix())
                             .append(ChatColor.RESET + "<" + player.getDisplayName() + "> ")
                             .append(message)
-                            .build());
+                            .create());
                 });
     }
 
