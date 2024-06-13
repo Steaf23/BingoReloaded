@@ -199,6 +199,7 @@ public class BingoReloaded extends JavaPlugin
     }
 
     public static String getDefaultTasksVersion() {
+        Message.log(Bukkit.getVersion());
         return CARD_1_20_4;
     }
 

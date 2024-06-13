@@ -138,9 +138,10 @@ endGameWithoutTeams: true # true or false
 
 # Settings that only apply when playing the Hotswap gamemode
 hotswapMode:
-  minimumExpirationTime: 3 # Minimum amount of time in minutes that an task can expire in
-  maximumExpirationTime: 30 # Maximum amount of time in minutes that an task can expire in
+  minimumExpirationTime: 3 # Minimum amount of time in minutes that a task can expire in
+  maximumExpirationTime: 30 # Maximum amount of time in minutes that a task can expire in
   recoverTime: 15 # Time in seconds that a completed/expired task needs to be replaced with a new task
+  showExpirationAsDurability: true # Attempts to show expiration time as durability of the item. This feature only works on Minecraft 1.21+ and late versions of 1.20.6.
 
 # ==========================================================================
 #    Player Data Configuration Options

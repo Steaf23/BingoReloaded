@@ -153,7 +153,7 @@ public class BingoGame implements GamePhase
         });
 
         // Post-start Setup
-        scoreboard.setup();
+        scoreboard.setup(settings);
 
         var event = new BingoStartedEvent(session);
         Bukkit.getPluginManager().callEvent(event);
@@ -203,7 +203,7 @@ public class BingoGame implements GamePhase
         timer.stop();
 
         if (!config.keepScoreboardVisible) {
-            scoreboard.setup();
+            scoreboard.setup(settings);
         }
 
         getTeamManager().getParticipants().forEach(p -> p.takeEffects(false));

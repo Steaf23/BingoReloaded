@@ -8,6 +8,8 @@ import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.player.team.SoloTeamManager;
 import io.github.steaf23.bingoreloaded.player.team.TeamManager;
+import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
+import io.github.steaf23.bingoreloaded.settings.BingoSettings;
 import io.github.steaf23.bingoreloaded.util.BingoPlaceholderFormatter;
 import io.github.steaf23.bingoreloaded.util.BingoReloadedPlaceholderExpansion;
 import io.github.steaf23.bingoreloaded.util.Message;
@@ -23,7 +25,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
-public class BingoGameHUDGroup extends PlayerHUDGroup implements SessionMember
+public class BingoGameHUDGroup extends PlayerHUDGroup
 {
     // map of team IDs and their scores
     private final Map<String, Integer> teamScores;
@@ -41,6 +43,23 @@ public class BingoGameHUDGroup extends PlayerHUDGroup implements SessionMember
         this.showPlayerNames = showPlayerNames;
         this.template = new ScoreboardData().loadTemplate("game", registeredFields);
         this.formatter = new BingoPlaceholderFormatter();
+    }
+
+    public void updateWinScore(BingoSettings settings) {
+        String score = "-";
+        switch (settings.mode()) {
+            case HOTSWAP -> {
+                if (settings.enableCountdown()) {
+                    break;
+                }
+
+                score = Integer.toString(settings.hotswapGoal());
+            }
+            case REGULAR -> score = "-----";
+            case COMPLETE, LOCKOUT -> score = Integer.toString(settings.size().fullCardSize);
+        }
+        registeredFields.put("win_goal", score);
+        updateVisible();
     }
 
     public void updateTeamScores()
@@ -90,15 +109,10 @@ public class BingoGameHUDGroup extends PlayerHUDGroup implements SessionMember
         updateVisible();
     }
 
-    @Override
-    public @Nullable BingoSession getSession() {
-        return session;
-    }
-
-    @Override
-    public void setup() {
+    public void setup(BingoSettings settings) {
         this.teamScores.clear();
         updateTeamScores();
+        updateWinScore(settings);
     }
 
     @Override

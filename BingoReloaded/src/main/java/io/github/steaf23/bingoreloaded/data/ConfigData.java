@@ -36,7 +36,7 @@ public class ConfigData
         }
     }
 
-    public record HotswapConfig (int minimumExpiration, int maximumExpiration, int recoveryTime){}
+    public record HotswapConfig (int minimumExpiration, int maximumExpiration, int recoveryTime, boolean showExpirationAsDurability){}
 
     // General options
     public final PluginConfiguration configuration;
@@ -123,7 +123,8 @@ public class ConfigData
         this.hotswapMode = new HotswapConfig(
                 config.getInt("hotswapMode.minimumExpirationTime", 3),
                 config.getInt("hotswapMode.maximumExpirationTime", 20),
-                config.getInt("hotswapMode.recoverTime", 10));
+                config.getInt("hotswapMode.recoverTime", 10),
+                config.getBoolean("hotswapMode.showExpirationAsDurability", true));
 
         // Player
         this.savePlayerInformation = config.getBoolean("savePlayerInformation", true);

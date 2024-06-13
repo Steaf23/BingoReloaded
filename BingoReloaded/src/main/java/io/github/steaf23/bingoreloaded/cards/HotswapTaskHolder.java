@@ -18,18 +18,21 @@ public class HotswapTaskHolder
     public int currentTime;
     public boolean recovering;
 
+    private final boolean showExpirationAsDurability;
+
     private static final ChatColorGradient EXPIRATION_GRADIENT = new ChatColorGradient()
             .addColor(ChatColor.of("#ffd200"), 0.0f)
             .addColor(ChatColor.of("#e85e21"), 0.5f)
             .addColor(ChatColor.of("#750e0e"), 0.8f)
             .addColor(ChatColor.DARK_GRAY, 1.0f);
 
-    public HotswapTaskHolder(BingoTask task, int expirationTimeMinutes, int recoverTime) {
+    public HotswapTaskHolder(BingoTask task, int expirationTimeMinutes, int recoverTime, boolean showExpirationAsDurability) {
         this.task = task;
         this.expirationTimeSeconds = expirationTimeMinutes;
         this.recoveryTime = recoverTime;
         this.currentTime = expirationTimeMinutes;
         this.recovering = false;
+        this.showExpirationAsDurability = showExpirationAsDurability;
     }
 
     public ItemTemplate convertToItem() {
@@ -39,8 +42,10 @@ public class HotswapTaskHolder
         }
         else {
             item.addDescription("time", 1, BingoTranslation.HOTSWAP_EXPIRE.asComponent(Set.of(getColorForExpirationTime()), GameTimer.getTimeAsComponent(currentTime)));
-            item.setMaxDamage(expirationTimeSeconds);
-            item.setDamage(currentTime);
+            if (showExpirationAsDurability) {
+                item.setMaxDamage(expirationTimeSeconds);
+                item.setDamage(currentTime);
+            }
         }
         return item;
     }

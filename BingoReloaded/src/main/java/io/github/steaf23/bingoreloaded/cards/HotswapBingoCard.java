@@ -34,6 +34,7 @@ public class HotswapBingoCard extends BingoCard
     private final int minExpirationTime;
     private final int maxExpirationTime;
     private final int recoveryTimeSeconds;
+    private final boolean showExpirationAsDurability;
 
     private final List<HotswapTaskHolder> taskHolders;
     private Supplier<BingoTask> bingoTaskGenerator;
@@ -58,6 +59,7 @@ public class HotswapBingoCard extends BingoCard
         this.minExpirationTime = config.minimumExpiration();
         this.maxExpirationTime = config.maximumExpiration();
         this.recoveryTimeSeconds = config.recoveryTime();
+        this.showExpirationAsDurability = config.showExpirationAsDurability();
         this.randomTasks = new ArrayList<>();
         taskTimer.addNotifier(this::updateTaskExpiration);
 
@@ -134,7 +136,7 @@ public class HotswapBingoCard extends BingoCard
         taskHolders.clear();
         for (BingoTask task : tasks) {
             int expirationTime = randomExpiryProvider.nextInt(minExpirationTime * 60, (maxExpirationTime * 60) + 1);
-            taskHolders.add(new HotswapTaskHolder(task, expirationTime, recoveryTimeSeconds));
+            taskHolders.add(new HotswapTaskHolder(task, expirationTime, recoveryTimeSeconds, showExpirationAsDurability));
         }
         ((HotswapCardMenu)menu).updateTaskHolders(taskHolders);
     }
@@ -171,7 +173,7 @@ public class HotswapBingoCard extends BingoCard
                     }
                     lastRecoverdTask = newTask;
                     int expirationTime = randomExpiryProvider.nextInt(minExpirationTime, (maxExpirationTime + 1)) * 60;
-                    taskHolders.set(idx, new HotswapTaskHolder(newTask, expirationTime, recoveryTimeSeconds));
+                    taskHolders.set(idx, new HotswapTaskHolder(newTask, expirationTime, recoveryTimeSeconds, showExpirationAsDurability));
                     progressTracker.startTrackingTask(newTask);
                 } else {
                     taskExpiredCount++;
