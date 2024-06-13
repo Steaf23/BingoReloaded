@@ -106,6 +106,19 @@ public class HotswapBingoCard extends BingoCard
         bingoTaskGenerator = () -> {
             if (randomTasks.isEmpty()) {
                 randomTasks.addAll(cardData.getAllTasks(cardName, withStatistics, withAdvancements));
+                // Do not add the tasks that are currently on the card.
+                // This will result in less duplicates overall when cycling through tasks.
+                randomTasks.removeIf(data -> {
+                    for (BingoTask task : getTasks()) {
+                        if (task.data.isTaskEqual(data)) {
+                            return true;
+                        }
+                    }
+                    return false;
+                });
+                if (randomTasks.size() == 0) {
+
+                }
                 Collections.shuffle(randomTasks, randomExpiryProvider);
             }
             if (randomTasks.isEmpty()) {
