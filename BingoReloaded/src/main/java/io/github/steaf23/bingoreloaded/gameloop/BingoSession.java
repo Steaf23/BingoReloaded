@@ -230,6 +230,10 @@ public class BingoSession
     }
 
     public void handlePlayerLeftSessionWorld(final PlayerLeftSessionWorldEvent event) {
+        // Clear player's teams before anything else.
+        // This is because they might join another bingo as a result of leaving this one, so we have to remove the player's team display at this moment
+        teamDisplay.clearTeamsForPlayer(event.getPlayer());
+
         BingoReloaded.scheduleTask(t -> {
             teamManager.handlePlayerLeftSessionWorld(event);
             phase.handlePlayerLeftSessionWorld(event);

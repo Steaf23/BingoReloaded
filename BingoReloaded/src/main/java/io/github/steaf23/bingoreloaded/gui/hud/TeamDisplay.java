@@ -73,22 +73,6 @@ public class TeamDisplay
         for (TeamInfo team : newTeams) {
             createTeamForPlayer(team, player);
         }
-
-        // Add automatic team if appropriate
-        //TODO: checks and balances
-//        Set<UUID> automaticPlayers = manager.getParticipantsInAutoTeam();
-//        if (automaticPlayers.size() > 0) {
-//            List<String> playerNames = new ArrayList<>();
-//            for (UUID id : automaticPlayers) {
-//                Player otherPlayer = Bukkit.getPlayer(id);
-//                if (otherPlayer != null) {
-//                    playerNames.add(otherPlayer.getName());
-//                }
-//            }
-//            TeamInfo info = new TeamInfo(ChatColor.of("#fdffa8") + "auto", "auto", autoPrefix, null, playerNames);
-//            createTeamForPlayer(info, player);
-//            createdTeams.get(player.getUniqueId()).add(info);
-//        }
     }
 
     public TeamInfo teamInfoFromBingoTeam(BingoTeam team) {

@@ -294,11 +294,11 @@ public class ItemTemplate
         }
 
         if (maxDamage != null) {
-            // FIXME: Re-add when spigot fixes spawn egg bug
-//            if (stackMeta instanceof Damageable) {
-//                ((Damageable)stackMeta).setMaxDamage(maxDamage);
-//                ((Damageable)stackMeta).setDamage(currentDamage);
-//            }
+            // NOTE: still broken in older versions (pre 1.20.6-1.21-ish) for spawn eggs.
+            if (stackMeta instanceof Damageable) {
+                ((Damageable)stackMeta).setMaxDamage(maxDamage);
+                ((Damageable)stackMeta).setDamage(currentDamage);
+            }
         }
         PersistentDataContainer pdc = stackMeta.getPersistentDataContainer();
         pdc = PDCHelper.addStringToPdc(pdc, "compare_key", compareKey);
