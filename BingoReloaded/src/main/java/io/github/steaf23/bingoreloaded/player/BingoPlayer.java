@@ -113,7 +113,8 @@ public class BingoPlayer implements BingoParticipant
                 meta.removeItemFlags(ItemFlag.values());
             }
             var pdc = meta.getPersistentDataContainer();
-            pdc.set(PDCHelper.createKey("kit.kit_item"), PersistentDataType.BOOLEAN, true);
+            //BACKPORTED: pdc type boolean does not exit in pre 1.20.5 API
+            PDCHelper.setBoolean(pdc, "kit.kit_item", true);
 
             i.stack().setItemMeta(meta);
             inv.setItem(i.slot(), i.stack());

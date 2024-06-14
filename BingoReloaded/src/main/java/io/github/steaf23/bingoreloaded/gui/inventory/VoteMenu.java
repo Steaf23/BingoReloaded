@@ -30,7 +30,7 @@ public class VoteMenu extends BasicMenu
 
         this.lobby = lobbyPhase;
 
-        if (!voteList.gamemodes().isEmpty())
+        if (voteList.gamemodes().size() > 1)
         {
             gamemodeOptions = new BasicMenu(menuBoard, BingoTranslation.VOTE_GAMEMODE.translate(), 1);
 
@@ -123,14 +123,14 @@ public class VoteMenu extends BasicMenu
                 });
                 itemIndex++;
             }
-            gamemodeOptions.addCloseAction(EXIT);
+            gamemodeOptions.addCloseAction(EXIT.copy());
 
             addAction(new ItemTemplate(2, 1, Material.ENCHANTED_BOOK, TITLE_PREFIX + BingoTranslation.VOTE_GAMEMODE.translate()), p -> {
                 gamemodeOptions.open(p);
             });
         }
 
-        if (!voteList.kits().isEmpty())
+        if (voteList.kits().size() > 1)
         {
             kitOptions = new BasicMenu(menuBoard, BingoTranslation.VOTE_KIT.translate(), 1);
 
@@ -216,14 +216,14 @@ public class VoteMenu extends BasicMenu
             }
 
             if (itemIndex < 8)
-                kitOptions.addCloseAction(EXIT);
+                kitOptions.addCloseAction(EXIT.copy());
 
             addAction(new ItemTemplate(4, 1, Material.ENCHANTED_BOOK, TITLE_PREFIX + BingoTranslation.VOTE_KIT.translate()), p -> {
                 kitOptions.open(p);
             });
         }
 
-        if (!voteList.isEmpty())
+        if (voteList.cards().size() > 1)
         {
             cardOptions = new BasicMenu(menuBoard, BingoTranslation.VOTE_CARD.translate(), 1);
 
@@ -243,7 +243,7 @@ public class VoteMenu extends BasicMenu
                 itemIndex++;
             }
 
-            cardOptions.addCloseAction(EXIT);
+            cardOptions.addCloseAction(EXIT.copy());
             addAction(new ItemTemplate(6, 1, Material.ENCHANTED_BOOK, TITLE_PREFIX + BingoTranslation.VOTE_CARD.translate()), p -> {
                 cardOptions.open(p);
             });

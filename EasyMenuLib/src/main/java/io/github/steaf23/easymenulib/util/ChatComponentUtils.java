@@ -35,7 +35,7 @@ public class ChatComponentUtils
         jsonData.append("{display:{");
         if (name != null) {
             BaseComponent nameWrapper = new TextComponent();
-            nameWrapper.setItalic(false);
+            nameWrapper.setItalic(Boolean.valueOf(false));
             nameWrapper.addExtra(name);
             jsonData.append("Name:'[" + ChatComponentUtils.toJsonString(nameWrapper) + "]'");
         }
@@ -54,7 +54,7 @@ public class ChatComponentUtils
             }
 
             BaseComponent lineWrapper = new TextComponent();
-            lineWrapper.setItalic(false);
+            lineWrapper.setItalic(Boolean.valueOf(false));
             lineWrapper.addExtra(lore[i]);
             jsonData.append("'")
                     .append(ChatComponentUtils.toJsonString(lineWrapper))
@@ -84,11 +84,11 @@ public class ChatComponentUtils
                 break;
             }
         }
-        if (modifierSet.contains(ChatColor.ITALIC)) component.setItalic(true);
-        if (modifierSet.contains(ChatColor.BOLD)) component.setBold(true);
-        if (modifierSet.contains(ChatColor.STRIKETHROUGH)) component.setStrikethrough(true);
-        if (modifierSet.contains(ChatColor.UNDERLINE)) component.setUnderlined(true);
-        if (modifierSet.contains(ChatColor.MAGIC)) component.setObfuscated(true);
+        if (modifierSet.contains(ChatColor.ITALIC)) component.setItalic(Boolean.valueOf(true));
+        if (modifierSet.contains(ChatColor.BOLD)) component.setBold(Boolean.valueOf(true));
+        if (modifierSet.contains(ChatColor.STRIKETHROUGH)) component.setStrikethrough(Boolean.valueOf(true));
+        if (modifierSet.contains(ChatColor.UNDERLINE)) component.setUnderlined(Boolean.valueOf(true));
+        if (modifierSet.contains(ChatColor.MAGIC)) component.setObfuscated(Boolean.valueOf(true));
         return component;
     }
 

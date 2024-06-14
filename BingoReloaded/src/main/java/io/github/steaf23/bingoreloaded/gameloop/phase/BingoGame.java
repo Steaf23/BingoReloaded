@@ -586,7 +586,8 @@ public class BingoGame implements GamePhase
             event.getDrops().clear();
         } else {
             for (ItemStack drop : event.getDrops()) {
-                if (drop.getItemMeta().getPersistentDataContainer().getOrDefault(PDCHelper.createKey("kit.kit_item"), PersistentDataType.BOOLEAN, false)
+                //BACKPORTED: pdc type boolean does not exit in pre 1.20.5 API
+                if (PDCHelper.getBoolean(drop.getItemMeta().getPersistentDataContainer(), "kit.kit_item", false)
                         || PlayerKit.CARD_ITEM.isCompareKeyEqual(drop)) {
                     drop.setAmount(0);
                 }
