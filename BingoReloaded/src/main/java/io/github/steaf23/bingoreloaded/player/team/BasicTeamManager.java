@@ -7,8 +7,7 @@ import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.player.VirtualBingoPlayer;
-import io.github.steaf23.bingoreloaded.util.BingoPlaceholderFormatter;
-import io.github.steaf23.bingoreloaded.util.BingoReloadedPlaceholderExpansion;
+import io.github.steaf23.bingoreloaded.placeholder.BingoPlaceholderFormatter;
 import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.bingoreloaded.util.TranslatedMessage;
 import io.github.steaf23.easymenulib.util.ChatComponentUtils;
@@ -16,9 +15,6 @@ import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
-import org.bukkit.event.Event;
-import org.bukkit.scoreboard.Scoreboard;
-import org.bukkit.scoreboard.Team;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.*;
@@ -47,14 +43,14 @@ public class BasicTeamManager implements TeamManager
     }
 
     private BaseComponent createAutoPrefix(ChatColor color) {
-        String prefixFormat = new BingoPlaceholderFormatter().format(BingoReloadedPlaceholderExpansion.BingoReloadedPlaceholder.TEAM_FULL);
-        BaseComponent prefix = ChatComponentUtils.concatComponents(TextComponent.fromLegacyText(BingoReloadedPlaceholderExpansion.createLegacyTextFromMessage(prefixFormat, color.toString(), "✦") + " "));
+        String prefixFormat = new BingoPlaceholderFormatter().getTeamFullFormat();
+        BaseComponent prefix = ChatComponentUtils.concatComponents(TextComponent.fromLegacyText(BingoPlaceholderFormatter.createLegacyTextFromMessage(prefixFormat, color.toString(), "✦") + " "));
         return prefix;
     }
 
     private BaseComponent createPrefix(TeamData.TeamTemplate template) {
-        String prefixFormat = new BingoPlaceholderFormatter().format(BingoReloadedPlaceholderExpansion.BingoReloadedPlaceholder.TEAM_FULL);
-        BaseComponent prefix = ChatComponentUtils.concatComponents(TextComponent.fromLegacyText(BingoReloadedPlaceholderExpansion.createLegacyTextFromMessage(prefixFormat, template.color().toString(), template.name()) + " "));
+        String prefixFormat = new BingoPlaceholderFormatter().getTeamFullFormat();
+        BaseComponent prefix = ChatComponentUtils.concatComponents(TextComponent.fromLegacyText(BingoPlaceholderFormatter.createLegacyTextFromMessage(prefixFormat, template.color().toString(), template.name()) + " "));
         return prefix;
     }
 
