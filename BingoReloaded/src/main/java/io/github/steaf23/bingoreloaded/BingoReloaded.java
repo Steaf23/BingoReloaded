@@ -1,7 +1,5 @@
 package io.github.steaf23.bingoreloaded;
 
-import com.github.retrooper.packetevents.PacketEvents;
-import com.github.retrooper.packetevents.wrapper.PacketWrapper;
 import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
 import io.github.steaf23.bingoreloaded.command.*;
 import io.github.steaf23.bingoreloaded.data.*;
@@ -24,6 +22,8 @@ import io.github.steaf23.bingoreloaded.placeholder.BingoReloadedPlaceholderExpan
 import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.easymenulib.EasyMenuLibrary;
 import io.github.steaf23.easymenulib.inventory.BasicMenu;
+import io.github.steaf23.easymenulib.packetevents.PacketEvents;
+import io.github.steaf23.easymenulib.packetevents.wrapper.PacketWrapper;
 import io.github.steaf23.easymenulib.scoreboard.HUDRegistry;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
@@ -57,16 +57,11 @@ public class BingoReloaded extends JavaPlugin
 
     @Override
     public void onLoad() {
-        PacketEvents.setAPI(SpigotPacketEventsBuilder.build(this));
-        PacketEvents.getAPI().getSettings().reEncodeByDefault(false)
-                .checkForUpdates(true)
-                .bStats(true);
-        PacketEvents.getAPI().load();
+        EasyMenuLibrary.setPlugin(this);
     }
 
     @Override
     public void onEnable() {
-        PacketEvents.getAPI().init();
         reloadConfig();
         saveDefaultConfig();
         // Kinda ugly, but we can assume there will only be one instance of this class anyway.
@@ -77,7 +72,6 @@ public class BingoReloaded extends JavaPlugin
             Message.log(ChatColor.GREEN + "Enabled Bingo Reloaded Placeholder expansion");
         }
 
-        EasyMenuLibrary.setPlugin(this);
         EasyMenuLibrary.setItemTranslation(key -> {
             return switch (key) {
                 case MENU_PREVIOUS -> BingoTranslation.MENU_PREV.translate();

@@ -34,3 +34,5 @@
   - to change these values
 
 (2.x) add spam prevention on player gui's/ options
+
+(2.x) setting bed spawn during game and breaking the bed causes player to respawn away from game start location

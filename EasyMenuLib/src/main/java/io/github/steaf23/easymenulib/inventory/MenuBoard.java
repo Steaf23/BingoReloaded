@@ -1,6 +1,10 @@
 package io.github.steaf23.easymenulib.inventory;
 
 
+import com.github.retrooper.packetevents.event.SimplePacketListenerAbstract;
+import com.github.retrooper.packetevents.event.simple.PacketPlayReceiveEvent;
+import com.github.retrooper.packetevents.protocol.packettype.PacketType;
+import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientNameItem;
 import io.github.steaf23.easymenulib.EasyMenuLibrary;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -15,7 +19,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.util.*;
 
-public class MenuBoard implements Listener
+public class MenuBoard extends SimplePacketListenerAbstract implements Listener
 {
     // Stores all currently open inventories by all players, using a stack system we can easily add or remove child inventories.
     protected Map<UUID, Stack<Menu>> activeMenus;
@@ -40,7 +44,7 @@ public class MenuBoard implements Listener
 
         Menu menuToClose = menus.pop();
         menuToClose.beforeClosing(player);
-        if (menus.size() == 0) {
+        if (menus.isEmpty()) {
             activeMenus.remove(playerId);
             Bukkit.getScheduler().runTask(EasyMenuLibrary.getPlugin(), task -> menuToClose.closeInventory(player));
         } else {
@@ -54,7 +58,7 @@ public class MenuBoard implements Listener
             return;
 
         Stack<Menu> menus = activeMenus.get(playerId);
-        while (activeMenus.get(playerId).size() > 0) {
+        while (!activeMenus.get(playerId).isEmpty()) {
             menus.pop().beforeClosing(player);
         }
         activeMenus.remove(playerId);
@@ -68,7 +72,7 @@ public class MenuBoard implements Listener
 
         Stack<Menu> menuStack = activeMenus.get(playerId);
         // If we add another menu on top of a menu that should be removed, remove this menu first.
-        if (menuStack.size() > 0 && menuStack.peek().openOnce()) {
+        if (!menuStack.isEmpty() && menuStack.peek().openOnce()) {
             menuStack.pop().beforeClosing(player);
         }
         // If the new menu is not already in the stack, push it to the top.
@@ -143,6 +147,24 @@ public class MenuBoard implements Listener
     public void handlePlayerQuit(final PlayerQuitEvent event) {
         if (activeMenus.containsKey(event.getPlayer().getUniqueId())) {
             closeAll(event.getPlayer());
+        }
+    }
+
+    //Packet events listener =========================================
+
+    @Override
+    public void onPacketPlayReceive(PacketPlayReceiveEvent event) {
+        if (event.getPacketType() == PacketType.Play.Client.NAME_ITEM) {
+            WrapperPlayClientNameItem nameItem = new WrapperPlayClientNameItem(event);
+
+            Stack<Menu> menus = activeMenus.get(event.getUser().getUUID());
+            if (menus.size() == 0) {
+                return;
+            }
+
+            if (menus.peek() instanceof UserInputMenu inputMenu) {
+                inputMenu.handleTextChanged(nameItem.getItemName());
+            }
         }
     }
 }

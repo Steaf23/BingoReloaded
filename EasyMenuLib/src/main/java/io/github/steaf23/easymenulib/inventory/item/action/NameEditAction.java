@@ -34,6 +34,7 @@ public class NameEditAction extends MenuAction
             value = result;
             item.setName(TextComponent.fromLegacy(format + value));
             callback.accept(value, item);
-        }, player, value);
+        }, value)
+                .open(player);
     }
 }

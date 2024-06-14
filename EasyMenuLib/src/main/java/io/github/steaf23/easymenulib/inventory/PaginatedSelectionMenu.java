@@ -68,7 +68,8 @@ public abstract class PaginatedSelectionMenu extends BasicMenu
 
         addAction(nextPageItem, args -> this.nextPage());
         addAction(filterItem, args -> {
-            new UserInputMenu(board, "Filter by name", this::applyFilter, args.player(), keywordFilter.isBlank() ? "name" : keywordFilter);
+            new UserInputMenu(board, "Filter by name", this::applyFilter, keywordFilter.isBlank() ? "name" : keywordFilter)
+                    .open(args.player());
         });
         addAction(previousPageItem, args -> this.previousPage());
 

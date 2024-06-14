@@ -18,19 +18,10 @@
             <configuration>
               <relocations>
                 <relocation>
-                  <pattern>net.wesjd.anvilgui</pattern>
-                  <shadedPattern>io.github.steaf23.easymenulib.anvilgui</shadedPattern>
+                  <pattern>com.github.retrooper.packetevents</pattern>
+                  <shadedPattern>io.github.steaf23.easymenulib.packetevents</shadedPattern>
                 </relocation>
               </relocations>
-              <filters>
-                <filter>
-                  <artifact>*:*</artifact>
-                  <excludeDefaults>false</excludeDefaults>
-                  <includes>
-                    <include>net/wesjd/anvilgui/**</include>
-                  </includes>
-                </filter>
-              </filters>
             </configuration>
           </execution>
         </executions>
@@ -45,6 +36,10 @@
     <repository>
       <id>codemc-snapshots</id>
       <url>https://repo.codemc.io/repository/maven-snapshots/</url>
+    </repository>
+    <repository>
+      <id>codemc-releases</id>
+      <url>https://repo.codemc.io/repository/maven-releases/</url>
     </repository>
   </repositories>
   <dependencies>

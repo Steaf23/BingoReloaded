@@ -1,12 +1,13 @@
 package io.github.steaf23.bingoreloaded.gui.hud;
 
-import com.github.retrooper.packetevents.wrapper.PacketWrapper;
-import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerTeams;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.player.team.TeamManager;
 import io.github.steaf23.bingoreloaded.util.ComponentConverter;
+import io.github.steaf23.easymenulib.EasyMenuLibrary;
+import io.github.steaf23.easymenulib.packetevents.wrapper.PacketWrapper;
+import io.github.steaf23.easymenulib.packetevents.wrapper.play.server.WrapperPlayServerTeams;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -82,12 +83,12 @@ public class TeamDisplay
         );
         PacketWrapper packet = new WrapperPlayServerTeams(team.identifier(), WrapperPlayServerTeams.TeamMode.CREATE, info, team.entries());
 
-        BingoReloaded.sendPacket(player, packet);
+        EasyMenuLibrary.sendPlayerPacket(player, packet);
     }
 
     public void removeTeamForPlayer(String teamIdentifier, Player player) {
         PacketWrapper packet = new WrapperPlayServerTeams(teamIdentifier, WrapperPlayServerTeams.TeamMode.REMOVE, Optional.empty());
-        BingoReloaded.sendPacket(player, packet);
+        EasyMenuLibrary.sendPlayerPacket(player, packet);
     }
 
     public void clearTeamsForPlayer(@NotNull Player player) {

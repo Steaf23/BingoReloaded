@@ -39,10 +39,6 @@
   </build>
   <repositories>
     <repository>
-      <id>codemc-releases</id>
-      <url>https://repo.codemc.io/repository/maven-releases/</url>
-    </repository>
-    <repository>
       <id>spigot-repo</id>
       <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
     </repository>
@@ -76,12 +72,6 @@
       <groupId>com.github.MilkBowl</groupId>
       <artifactId>VaultAPI</artifactId>
       <version>1.7</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.github.retrooper.packetevents</groupId>
-      <artifactId>spigot</artifactId>
-      <version>2.3.0</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>
