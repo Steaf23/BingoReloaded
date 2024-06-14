@@ -2,24 +2,13 @@ package io.github.steaf23.bingoreloaded.gui.hud;
 
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerTeams;
-import io.github.retrooper.packetevents.adventure.serializer.gson.GsonComponentSerializer;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
-import io.github.steaf23.bingoreloaded.player.team.BasicTeamManager;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.player.team.TeamManager;
-import io.github.steaf23.bingoreloaded.util.BingoPlaceholderFormatter;
-import io.github.steaf23.bingoreloaded.util.BingoReloadedPlaceholderExpansion;
 import io.github.steaf23.bingoreloaded.util.ComponentConverter;
-import io.github.steaf23.bingoreloaded.util.Message;
 import net.kyori.adventure.text.Component;
-import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.TextComponent;
-import net.md_5.bungee.chat.ComponentSerializer;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.scoreboard.Team;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

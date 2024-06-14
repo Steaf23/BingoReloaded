@@ -3,10 +3,6 @@ package io.github.steaf23.bingoreloaded.event;
 import io.github.steaf23.bingoreloaded.gameloop.GameManager;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
-import io.github.steaf23.bingoreloaded.gameloop.phase.PregameLobby;
-import io.github.steaf23.bingoreloaded.tasks.tracker.StatisticTracker;
-import io.github.steaf23.bingoreloaded.util.BingoReloadedPlaceholderExpansion;
-import io.github.steaf23.bingoreloaded.util.Message;
 import org.bukkit.World;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -19,7 +15,6 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
-import java.util.function.Function;
 
 public class BingoEventListener implements Listener
 {
