@@ -180,6 +180,23 @@ public class BingoReloaded extends JavaPlugin
         }
     }
 
+    public static void setPlayerStat(Player player, BingoStatType stat, int value) {
+        boolean savePlayerStatistics = INSTANCE.config.savePlayerStatistics;
+        if (savePlayerStatistics) {
+            BingoStatData statsData = new BingoStatData();
+            statsData.setPlayerStat(player.getUniqueId(), stat, value);
+        }
+    }
+
+    public static int getPlayerStat(Player player, BingoStatType stat) {
+        boolean savePlayerStatistics = INSTANCE.config.savePlayerStatistics;
+        if (savePlayerStatistics) {
+            BingoStatData statsData = new BingoStatData();
+            return statsData.getPlayerStat(player.getUniqueId(), stat);
+        }
+        return 0;
+    }
+
     public static boolean areAdvancementsDisabled() {
         return !Bukkit.advancementIterator().hasNext() || Bukkit.advancementIterator().next() == null;
     }

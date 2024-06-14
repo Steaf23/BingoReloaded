@@ -10,6 +10,7 @@ import io.github.steaf23.bingoreloaded.gameloop.GameManager;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
+import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import io.github.steaf23.bingoreloaded.util.timer.GameTimer;
@@ -70,12 +71,10 @@ public class BingoReloadedPlaceholderExpansion extends PlaceholderExpansion
     }
 
     private final BingoReloaded plugin;
-    private final BingoStatData statData;
     private final BingoPlaceholderFormatter formatter;
 
     public BingoReloadedPlaceholderExpansion(BingoReloaded plugin) {
         this.plugin = plugin;
-        this.statData = new BingoStatData();
         this.formatter = new BingoPlaceholderFormatter();
     }
 
@@ -188,7 +187,7 @@ public class BingoReloadedPlaceholderExpansion extends PlaceholderExpansion
                     yield "-";
                 }
                 else {
-                    yield settings.enableCountdown() ? "-" : Integer.toString(settings.hotswapGoal());
+                    yield settings.enableCountdown() || settings.mode() != BingoGamemode.HOTSWAP ? "-" : Integer.toString(settings.hotswapGoal());
                 }
             }
             case SETTING_SEED -> {
@@ -289,6 +288,7 @@ public class BingoReloadedPlaceholderExpansion extends PlaceholderExpansion
     }
 
     private String getPlayerStatPlaceholder(OfflinePlayer player, BingoStatType statType) {
+        BingoStatData statData = new BingoStatData();
         return Integer.toString(statData.getPlayerStat(player.getUniqueId(), statType));
     }
 

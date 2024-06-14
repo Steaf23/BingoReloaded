@@ -21,6 +21,7 @@ import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.Supplier;
@@ -220,5 +221,10 @@ public class HotswapBingoCard extends BingoCard
     @Override
     public int getCompleteCount(BingoTeam team) {
         return (int) completedTasks.stream().filter(task -> task.getCompletedBy().isPresent() && task.getCompletedBy().get().getTeam().equals(team)).count();
+    }
+
+    public int getCompleteCount(@Nullable BingoParticipant participant) {
+        return (int) completedTasks.stream()
+                .filter(t -> t.getCompletedBy().isPresent() && t.getCompletedBy().get().getId().equals(participant.getId())).count();
     }
 }

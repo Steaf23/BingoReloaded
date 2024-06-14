@@ -205,7 +205,7 @@ public class BingoCard
 
     public int getCompleteCount(@Nullable BingoParticipant participant) {
         return (int) getTasks().stream()
-                .filter(t -> t.getCompletedBy().isPresent() && t.getCompletedBy().get().equals(participant)).count();
+                .filter(t -> t.getCompletedBy().isPresent() && t.getCompletedBy().get().getId().equals(participant.getId())).count();
     }
 
     public BingoCard copy() {

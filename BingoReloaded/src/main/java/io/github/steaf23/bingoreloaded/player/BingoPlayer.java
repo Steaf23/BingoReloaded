@@ -243,11 +243,6 @@ public class BingoPlayer implements BingoParticipant
         return false;
     }
 
-    @Override
-    public int getAmountOfTaskCompleted() {
-        return 0;
-    }
-
     public boolean useGoUpWand(ItemStack wand, double wandCooldownSeconds, int downDistance, int upDistance, int platformLifetimeSeconds)
     {
         if (sessionPlayer().isEmpty())
