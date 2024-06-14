@@ -249,6 +249,18 @@ public class BingoSession
 
             scoreboard.removePlayer(player);
             teamDisplay.update();
+
+            if (!config.endGameWithoutTeams) {
+                return;
+            }
+
+            if (teamManager.getActiveTeams().getOnlineTeamCount() <= 1) {
+                endGame();
+            }
+
+            if (teamManager.getActiveTeams().getAllOnlineParticipants().isEmpty()) {
+                endGame();
+            }
         });
     }
 
@@ -260,24 +272,6 @@ public class BingoSession
     public void handleParticipantLeftTeam(final ParticipantLeftTeamEvent event) {
         phase.handleParticipantLeftTeam(event);
         teamDisplay.update();
-    }
-
-    public void handleParticipantCountChangedEvent(final ParticipantCountChangedEvent event) {
-        if (!isRunning()) {
-            return;
-        }
-
-        if (!config.endGameWithoutTeams) {
-            return;
-        }
-
-        if (teamManager.getActiveTeams().getOnlineTeamCount() <= 1) {
-            endGame();
-        }
-
-        if (event.newAmount == 0) {
-            endGame();
-        }
     }
 
     public void handlePlayerPortalEvent(final PlayerPortalEvent event) {

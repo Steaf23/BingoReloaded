@@ -291,7 +291,6 @@ public class BingoEventListener implements Listener
 
     @EventHandler
     public void handleParticipantCountChangedEvent(final ParticipantCountChangedEvent event) {
-        event.getSession().handleParticipantCountChangedEvent(event);
     }
 
     @EventHandler
