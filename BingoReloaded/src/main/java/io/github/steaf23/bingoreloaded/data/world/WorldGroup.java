@@ -20,10 +20,6 @@ public record WorldGroup(String worldName, UUID overworldId, UUID netherId, UUID
         player.teleport(Bukkit.getWorld(overworldId).getSpawnLocation(), PlayerTeleportEvent.TeleportCause.NETHER_PORTAL);
     }
 
-    public String getName() {
-        return worldName;
-    }
-
     public World getOverworld() {
         return overworldId == null ? null : Bukkit.getWorld(overworldId);
     }

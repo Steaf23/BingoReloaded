@@ -128,7 +128,7 @@ public class BingoSession
 
         teamManager.setup();
         if (teamManager.getParticipantCount() == 0) {
-            Message.log("Could not start bingo since no players have joined!", worlds.getName());
+            Message.log("Could not start bingo since no players have joined!", worlds.worldName());
             return;
         }
 
@@ -256,10 +256,14 @@ public class BingoSession
 
             if (teamManager.getActiveTeams().getOnlineTeamCount() <= 1) {
                 endGame();
+                Message.log(ChatColor.RED + "Ended game because there is no competition anymore.", worlds.worldName());
+                return;
             }
 
             if (teamManager.getActiveTeams().getAllOnlineParticipants().isEmpty()) {
                 endGame();
+                Message.log(ChatColor.RED + "Ended game because there is no competition anymore.", worlds.worldName());
+                return;
             }
         });
     }
