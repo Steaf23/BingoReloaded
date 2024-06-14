@@ -29,7 +29,7 @@ placeholders:
   current_time:
     format: "{0}"
 
-  # Shows the status of the game, (i.e. waiting for players, or in progress, or waiting for new game, etc), of the world the player is in.
+  # Shows the status of the game, (i.e. waiting for players, or in progress, or waiting for new game, etc), of the world the player is in. NOT IMPLEMENTED YET
   game_status:
     format: "{0}"
 
@@ -49,11 +49,11 @@ placeholders:
   setting_duration:
     format: "{0}"
 
-  # The currently selected effects of the session the player is in.
+  # The currently selected effects of the session the player is in. NOT IMPLEMENTED YET
   setting_effects:
     format: "{0}"
 
-  # The currently selected score to win hotswap, '-' if countdown is enabled.
+  # The currently selected score to win hotswap, '-' if countdown is enabled or hotswap is not being played.
   setting_hotswap_winscore:
     format: "{0}"
 

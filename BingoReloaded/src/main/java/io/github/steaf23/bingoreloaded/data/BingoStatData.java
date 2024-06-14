@@ -41,13 +41,17 @@ public class BingoStatData
 
     public void incrementPlayerStat(UUID playerId, BingoStatType statType, int by)
     {
+       setPlayerStat(playerId, statType, getPlayerStat(playerId, statType) + by);
+    }
+
+    public void setPlayerStat(UUID playerId, BingoStatType statType, int value) {
         if (statType.idx < 0)
             return;
 
         String statsString = getPlayerData(playerId);
         String[] stats = statsString.split(";");
         int stat = Integer.parseInt(stats[statType.idx]);
-        String newStat = Integer.toString(stat + by);
+        String newStat = Integer.toString(value);
         stats[statType.idx] = newStat;
 
         setPlayerData(playerId, String.join(";", stats));
@@ -69,13 +73,14 @@ public class BingoStatData
     {
         String stats = getPlayerData(playerId);
         String[] statList = stats.split(";");
-        return new Message("{0}'s statistics: Wins: {1}, Losses: {2}, Games finished: {3}, Tasks completed: {4}, Wand uses: {5}")
+        return new Message("{0}'s statistics: Wins: {1}, Losses: {2}, Games finished: {3}, Tasks completed: {4}, Tasks Completed Record: {5}, Wand uses: {6}")
                 .color(ChatColor.GREEN)
                 .arg(Bukkit.getOfflinePlayer(playerId).getName()).color(ChatColor.YELLOW).bold()
                 .arg(statList[0]).color(ChatColor.WHITE).bold()
                 .arg(statList[1]).color(ChatColor.WHITE).bold()
                 .arg(Integer.toString(Integer.parseInt(statList[0]) + Integer.parseInt(statList[1]))).color(ChatColor.WHITE).bold()
                 .arg(statList[2]).color(ChatColor.WHITE).bold()
+                .arg(statList[3]).color(ChatColor.WHITE).bold()
                 .arg(statList[4]).color(ChatColor.WHITE).bold();
     }
 

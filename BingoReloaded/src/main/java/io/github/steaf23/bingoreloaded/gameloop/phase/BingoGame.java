@@ -206,7 +206,15 @@ public class BingoGame implements GamePhase
             scoreboard.setup(settings);
         }
 
-        getTeamManager().getParticipants().forEach(p -> p.takeEffects(false));
+        getTeamManager().getParticipants().forEach(p -> {
+            p.takeEffects(false);
+            p.sessionPlayer().ifPresent(player -> {
+                int tasksCompleted = p.getAmountOfTaskCompleted();
+                if (tasksCompleted > BingoReloaded.getPlayerStat(player, BingoStatType.RECORD_TASKS)) {
+                    BingoReloaded.setPlayerStat(player, BingoStatType.RECORD_TASKS, tasksCompleted);
+                }
+            });
+        });
 
         var soundEvent = new BingoPlaySoundEvent(session, Sound.ENTITY_LIGHTNING_BOLT_THUNDER);
         Bukkit.getPluginManager().callEvent(soundEvent);
