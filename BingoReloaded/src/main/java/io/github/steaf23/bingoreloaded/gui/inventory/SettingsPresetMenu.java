@@ -54,7 +54,8 @@ public class SettingsPresetMenu extends PaginatedSelectionMenu
                         new UserInputMenu(getMenuBoard(), "Rename preset...", input -> {
                             settingsData.saveSettings(input, oldSettings);
                             context.close(player);
-                        }, player, clickedOption.getCompareKey());
+                        }, clickedOption.getCompareKey())
+                                .open(player);
                     })
                     .addAction(new ItemTemplate(3, Material.GLOBE_BANNER_PATTERN, TITLE_PREFIX + "Overwrite",
                             "This will overwrite the settings saved in ",
@@ -77,7 +78,8 @@ public class SettingsPresetMenu extends PaginatedSelectionMenu
             new UserInputMenu(getMenuBoard(), "Rename preset...", input -> {
                 settingsData.saveSettings(input, settingsBuilder.view());
                 beforeOpening(arguments.player());
-            }, player, "my_settings");
+            }, "my_settings")
+                    .open(player);
         });
         clearItems();
 

@@ -23,7 +23,11 @@ public class ListEditorMenu extends BasicMenu
     private static final ItemTemplate ADVANCEMENTS = new ItemTemplate(4, 2, Material.ENDER_EYE, TITLE_PREFIX + "Advancements", "Click to add or remove advancements");
     private static final ItemTemplate STATISTICS = new ItemTemplate(6, 2, Material.GLOBE_BANNER_PATTERN, TITLE_PREFIX + "Statistics", "Click to add or remove statistics");
     private static final ItemTemplate SAVE = new ItemTemplate(4, 5, Material.REDSTONE, "" + ChatColor.RED + ChatColor.BOLD + BingoTranslation.MENU_SAVE_EXIT.translate());
-    private static final ItemTemplate BLANK = new ItemTemplate(Material.BLACK_STAINED_GLASS_PANE, " ", "");
+    private static final ItemTemplate BLANK = new ItemTemplate(Material.BLACK_STAINED_GLASS_PANE, " ", "")
+            .addMetaModifier(meta -> {
+                meta.setHideTooltip(true);
+                return meta;
+            });
 
     public ListEditorMenu(MenuBoard manager, String listName) {
         super(manager, "Editing '" + listName + "'", 6);

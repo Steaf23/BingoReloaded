@@ -119,14 +119,16 @@ public class BingoCreatorMenu extends BasicMenu
         new UserInputMenu(getMenuBoard(), "Enter new card name", (input) -> {
             if (!input.equals(""))
                 openCardEditor(input.toLowerCase().replace(" ", "_"), player);
-        }, player, "name");
+        }, "name")
+                .open(player);
     }
 
     public void createList(HumanEntity player) {
         new UserInputMenu(getMenuBoard(), "Enter new list name", (input) -> {
             if (!input.equals(""))
                 openListEditor(input.toLowerCase().replace(" ", "_"), player);
-        }, player, "name");
+        }, "name")
+                .open(player);
     }
 
     public BasicMenu createCardContext(String cardName) {
@@ -143,7 +145,8 @@ public class BingoCreatorMenu extends BasicMenu
                     new UserInputMenu(getMenuBoard(), "Change name to", (input) -> {
                         cardsData.renameCard(cardName, input);
                         context.close(args);
-                    }, args.player(), cardName);
+                    }, cardName)
+                            .open(args.player());
                 })
                 .addCloseAction(new ItemTemplate(8, Material.DIAMOND, TITLE_PREFIX + BingoTranslation.MENU_EXIT.translate()));
         return context;
@@ -165,7 +168,8 @@ public class BingoCreatorMenu extends BasicMenu
                     new UserInputMenu(getMenuBoard(), "Change name to", (input) -> {
                         listsData.renameList(listName, input);
                         context.close(args);
-                    }, args.player(), listName);
+                    }, listName)
+                            .open(args.player());
                 })
                 .addCloseAction(new ItemTemplate(8, Material.DIAMOND, TITLE_PREFIX + "Exit"));
         return context;

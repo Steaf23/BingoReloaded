@@ -27,7 +27,11 @@ public class BasicMenu implements Menu
 
     protected static final String TITLE_PREFIX = "" + ChatColor.GOLD + ChatColor.BOLD;
     protected static final ChatColor[] TITLE_PREFIX_ARRAY = new ChatColor[] {ChatColor.GOLD, ChatColor.BOLD};
-    protected static ItemTemplate BLANK = new ItemTemplate(Material.BLACK_STAINED_GLASS_PANE, "");
+    protected static ItemTemplate BLANK = new ItemTemplate(Material.BLACK_STAINED_GLASS_PANE, "")
+            .addMetaModifier(meta -> {
+                meta.setHideTooltip(true);
+                return meta;
+            });
 
     private final Inventory inventory;
     private final MenuBoard manager;

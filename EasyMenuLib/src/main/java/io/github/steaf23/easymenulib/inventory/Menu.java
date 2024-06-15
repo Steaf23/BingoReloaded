@@ -30,14 +30,6 @@ public interface Menu
 
     void beforeClosing(HumanEntity player);
 
-    default void openInventory(HumanEntity player) {
-        player.openInventory(getInventory());
-    }
-
-    default void closeInventory(HumanEntity player) {
-        player.closeInventory();
-    }
-
     public MenuBoard getMenuBoard();
 
     /**

@@ -9,12 +9,10 @@ import io.github.steaf23.easymenulib.EasyMenuLibrary;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.ClickType;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.event.inventory.InventoryDragEvent;
+import org.bukkit.event.inventory.*;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.util.*;
@@ -46,7 +44,7 @@ public class MenuBoard extends SimplePacketListenerAbstract implements Listener
         menuToClose.beforeClosing(player);
         if (menus.isEmpty()) {
             activeMenus.remove(playerId);
-            Bukkit.getScheduler().runTask(EasyMenuLibrary.getPlugin(), task -> menuToClose.closeInventory(player));
+            Bukkit.getScheduler().runTask(EasyMenuLibrary.getPlugin(), task -> player.closeInventory());
         } else {
             open(activeMenus.get(playerId).peek(), player);
         }
@@ -85,7 +83,7 @@ public class MenuBoard extends SimplePacketListenerAbstract implements Listener
         }
 
         menu.beforeOpening(player);
-        Bukkit.getScheduler().runTask(EasyMenuLibrary.getPlugin(), task -> menu.openInventory(player));
+        Bukkit.getScheduler().runTask(EasyMenuLibrary.getPlugin(), task -> player.openInventory(menu.getInventory()));
     }
 
     @EventHandler
@@ -147,6 +145,14 @@ public class MenuBoard extends SimplePacketListenerAbstract implements Listener
     public void handlePlayerQuit(final PlayerQuitEvent event) {
         if (activeMenus.containsKey(event.getPlayer().getUniqueId())) {
             closeAll(event.getPlayer());
+        }
+    }
+
+    @EventHandler
+    public void handlePrepareAnvilEvent(final PrepareAnvilEvent event) {
+        UUID playerId = event.getView().getPlayer().getUniqueId();
+        if (!activeMenus.containsKey(event.getView().getPlayer().getUniqueId())) {
+            return;
         }
     }
 
