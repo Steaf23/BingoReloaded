@@ -38,9 +38,7 @@ public class TeamEditorMenu extends PaginatedSelectionMenu
             teamData.reset();
             updateDisplay();
         });
-        addAction(CREATE_TEAM, p -> {
-            createTeamEditor("").open(p);
-        });
+        addAction(CREATE_TEAM, p -> createTeamEditor("").open(p));
     }
 
     public void updateDisplay() {
@@ -60,9 +58,7 @@ public class TeamEditorMenu extends PaginatedSelectionMenu
     }
 
     public BasicMenu createTeamEditor(@NotNull String teamKey) {
-        return new TeamEdit(getMenuBoard(), teamData.getTeam(teamKey, DEFAULT_NEW_TEAM), editedTemplate -> {
-            teamData.addTeam(teamKey, editedTemplate);
-        });
+        return new TeamEdit(getMenuBoard(), teamData.getTeam(teamKey, DEFAULT_NEW_TEAM), editedTemplate -> teamData.addTeam(teamKey, editedTemplate));
     }
 
     @Override

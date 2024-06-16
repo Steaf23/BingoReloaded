@@ -1,6 +1,5 @@
 package io.github.steaf23.bingoreloaded.gui.hud;
 
-import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.player.team.TeamManager;
@@ -51,7 +50,7 @@ public class TeamDisplay
 
         Set<TeamInfo> knownTeams = createdTeams.getOrDefault(player.getUniqueId(), Set.of());
         for (TeamInfo t : knownTeams) {
-            boolean removeTeam = !activeTeams.contains(t);
+            boolean removeTeam = activeTeams.stream().noneMatch(bTeam -> bTeam.getIdentifier().equals(t.identifier()));
 
             if (removeTeam) {
                 removeTeamForPlayer(t.identifier(), player);
@@ -65,12 +64,12 @@ public class TeamDisplay
         }
     }
 
-    public TeamInfo teamInfoFromBingoTeam(BingoTeam team) {
+    private TeamInfo teamInfoFromBingoTeam(BingoTeam team) {
         TeamInfo info = new TeamInfo(team.getIdentifier(), team.getName(), ComponentConverter.bungeeComponentToAdventure(team.getPrefix()), null, team.getMemberNames());
         return info;
     }
 
-    public void createTeamForPlayer(TeamInfo team, Player player) {
+    private void createTeamForPlayer(TeamInfo team, Player player) {
         //TODO: un-curse this team prefix shitshow & adventure component conversion
         WrapperPlayServerTeams.ScoreBoardTeamInfo info = new WrapperPlayServerTeams.ScoreBoardTeamInfo(
                 Component.text(team.displayName()),
@@ -81,13 +80,13 @@ public class TeamDisplay
                 null,
                 WrapperPlayServerTeams.OptionData.NONE
         );
-        PacketWrapper packet = new WrapperPlayServerTeams(team.identifier(), WrapperPlayServerTeams.TeamMode.CREATE, info, team.entries());
+        PacketWrapper<WrapperPlayServerTeams> packet = new WrapperPlayServerTeams(team.identifier(), WrapperPlayServerTeams.TeamMode.CREATE, info, team.entries());
 
         EasyMenuLibrary.sendPlayerPacket(player, packet);
     }
 
     public void removeTeamForPlayer(String teamIdentifier, Player player) {
-        PacketWrapper packet = new WrapperPlayServerTeams(teamIdentifier, WrapperPlayServerTeams.TeamMode.REMOVE, Optional.empty());
+        PacketWrapper<WrapperPlayServerTeams> packet = new WrapperPlayServerTeams(teamIdentifier, WrapperPlayServerTeams.TeamMode.REMOVE, Optional.empty());
         EasyMenuLibrary.sendPlayerPacket(player, packet);
     }
 

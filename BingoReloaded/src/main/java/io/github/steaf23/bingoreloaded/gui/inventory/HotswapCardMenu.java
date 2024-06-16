@@ -5,6 +5,7 @@ import io.github.steaf23.bingoreloaded.cards.HotswapTaskHolder;
 import io.github.steaf23.bingoreloaded.tasks.BingoTask;
 import io.github.steaf23.easymenulib.inventory.MenuBoard;
 import io.github.steaf23.easymenulib.inventory.item.ItemTemplate;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -28,7 +29,7 @@ public class HotswapCardMenu extends CardMenu
     }
 
     @Override
-    public ItemTemplate getItemFromTask(int taskIndex) {
+    public @NotNull ItemTemplate getItemFromTask(int taskIndex) {
         HotswapTaskHolder holder = taskHolders.get(taskIndex);
         return holder.convertToItem();
     }
