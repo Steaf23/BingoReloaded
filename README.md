@@ -1,1 +1,1 @@
-[View wiki here](https://github.com/Steaf23/BingoReloaded/wiki/Bingo-Reloaded)
+[View wiki here](https://github.com/Steaf23/BingoReloaded/wiki/Home)
