@@ -30,7 +30,7 @@ public class TeamSelectionMenu extends PaginatedSelectionMenu
     private final TeamManager teamManager;
 
     public TeamSelectionMenu(MenuBoard manager, BingoSession session) {
-        super(manager, BingoTranslation.OPTIONS_TEAM.translate(), new ArrayList<>(), FilterType.DISPLAY_NAME);
+        super(manager, BingoTranslation.OPTIONS_TEAM.translate(), new ArrayList<>(), FilterType.NONE);
         this.session = session;
         this.teamManager = session.teamManager;
     }

@@ -58,23 +58,23 @@ public class BasicMenu implements Menu
         this.title = "";
     }
 
-    public final void open(HumanEntity player) {
+    public void open(HumanEntity player) {
         manager.open(this, player);
     }
 
-    public final void open(ActionArguments arguments) {
+    public void open(ActionArguments arguments) {
         manager.open(this, arguments.player);
     }
 
-    public final void close(HumanEntity player) {
+    public void close(HumanEntity player) {
         manager.close(this, player);
     }
 
-    public final void close(ActionArguments arguments) {
+    public void close(ActionArguments arguments) {
         manager.close(this, arguments.player);
     }
 
-    public final void reopen(HumanEntity player) {
+    public void reopen(HumanEntity player) {
         Bukkit.getScheduler().runTask(EasyMenuLibrary.getPlugin(), t -> {
             beforeOpening(player);
         });

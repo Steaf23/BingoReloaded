@@ -62,6 +62,7 @@ public class BingoReloaded extends JavaPlugin
 
     @Override
     public void onEnable() {
+        EasyMenuLibrary.onPluginEnable();
         reloadConfig();
         saveDefaultConfig();
         // Kinda ugly, but we can assume there will only be one instance of this class anyway.
@@ -223,9 +224,5 @@ public class BingoReloaded extends JavaPlugin
 
     public GameManager getGameManager() {
         return gameManager;
-    }
-
-    public static void sendPacket(Player player, PacketWrapper packet) {
-        PacketEvents.getAPI().getPlayerManager().sendPacket(player, packet);
     }
 }

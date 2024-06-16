@@ -1,19 +1,24 @@
 package io.github.steaf23.easymenulib.inventory;
 
 
+import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.event.SimplePacketListenerAbstract;
 import com.github.retrooper.packetevents.event.simple.PacketPlayReceiveEvent;
+import com.github.retrooper.packetevents.event.simple.PacketPlaySendEvent;
 import com.github.retrooper.packetevents.protocol.packettype.PacketType;
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientNameItem;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSetSlot;
 import io.github.steaf23.easymenulib.EasyMenuLibrary;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.*;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
 
@@ -26,6 +31,7 @@ public class MenuBoard extends SimplePacketListenerAbstract implements Listener
 
     public MenuBoard() {
         this.activeMenus = new HashMap<>();
+        PacketEvents.getAPI().getEventManager().registerListener(this);
     }
 
     public void close(Menu menu, HumanEntity player) {
@@ -148,14 +154,6 @@ public class MenuBoard extends SimplePacketListenerAbstract implements Listener
         }
     }
 
-    @EventHandler
-    public void handlePrepareAnvilEvent(final PrepareAnvilEvent event) {
-        UUID playerId = event.getView().getPlayer().getUniqueId();
-        if (!activeMenus.containsKey(event.getView().getPlayer().getUniqueId())) {
-            return;
-        }
-    }
-
     //Packet events listener =========================================
 
     @Override
@@ -164,13 +162,15 @@ public class MenuBoard extends SimplePacketListenerAbstract implements Listener
             WrapperPlayClientNameItem nameItem = new WrapperPlayClientNameItem(event);
 
             Stack<Menu> menus = activeMenus.get(event.getUser().getUUID());
-            if (menus.size() == 0) {
+            if (menus == null || menus.size() == 0) {
                 return;
             }
 
             if (menus.peek() instanceof UserInputMenu inputMenu) {
                 inputMenu.handleTextChanged(nameItem.getItemName());
             }
+
+            event.setCancelled(true);
         }
     }
 }

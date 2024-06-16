@@ -28,7 +28,6 @@ public class EasyMenuLibrary
                 .checkForUpdates(true)
                 .bStats(true);
         PacketEvents.getAPI().load();
-        PacketEvents.getAPI().init();
     }
 
     public static JavaPlugin getPlugin() {
@@ -45,5 +44,9 @@ public class EasyMenuLibrary
 
     public static void sendPlayerPacket(Player player, PacketWrapper packet) {
         PacketEvents.getAPI().getPlayerManager().sendPacket(player, packet);
+    }
+
+    public static void onPluginEnable() {
+        PacketEvents.getAPI().init();
     }
 }

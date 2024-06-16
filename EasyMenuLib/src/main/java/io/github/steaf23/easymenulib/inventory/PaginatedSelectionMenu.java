@@ -6,6 +6,7 @@ import io.github.steaf23.easymenulib.util.EasyMenuTranslationKey;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.inventory.ClickType;
@@ -65,12 +66,17 @@ public abstract class PaginatedSelectionMenu extends BasicMenu
         this.filterItem = FILTER.copy();
         this.nextPageItem = NEXT.copy();
         this.previousPageItem = PREVIOUS.copy();
+        this.filterType = filterType;
 
         addAction(nextPageItem, args -> this.nextPage());
-        addAction(filterItem, args -> {
-            new UserInputMenu(board, "Filter by name", this::applyFilter, keywordFilter.isBlank() ? "name" : keywordFilter)
-                    .open(args.player());
-        });
+        if (filterType == FilterType.NONE) {
+            addItem(BLANK.copyToSlot(1, 5));
+        } else {
+            addAction(filterItem, args -> {
+                new UserInputMenu(board, "Filter by name", this::applyFilter, keywordFilter.isBlank() ? "name" : keywordFilter)
+                        .open(args.player());
+            });
+        }
         addAction(previousPageItem, args -> this.previousPage());
 
         addItems(
@@ -87,7 +93,6 @@ public abstract class PaginatedSelectionMenu extends BasicMenu
         selectedItems = new ArrayList<>();
         filteredItems = new ArrayList<>(options);
         keywordFilter = "";
-        this.filterType = filterType;
         clearFilter();
     }
 
@@ -98,13 +103,17 @@ public abstract class PaginatedSelectionMenu extends BasicMenu
         boolean isValidSlot = ITEMS_PER_PAGE * currentPage + event.getRawSlot() < filteredItems.size() && event.getRawSlot() < ITEMS_PER_PAGE;
         if (isValidSlot)
         {
-            ItemTemplate item = allItems.get(ITEMS_PER_PAGE * currentPage + event.getRawSlot());
+            ItemTemplate item = filteredItems.get(ITEMS_PER_PAGE * currentPage + event.getRawSlot());
             onOptionClickedDelegate(event, item.setSlot(clickedSlot), player);
         }
         return cancel;
     }
 
     public void applyFilter(String filter) {
+        if (filterType == FilterType.NONE) {
+            return;
+        }
+
         keywordFilter = filter;
         filterItem.setLore(TextComponent.fromLegacy("{" + keywordFilter + "}"));
         //TODO: automate addItem?
@@ -116,6 +125,7 @@ public abstract class PaginatedSelectionMenu extends BasicMenu
 
         filterCriteria =
                 switch (filterType) {
+                    case NONE -> item -> true;
                     case ITEM_KEY -> (item) -> item.getCompareKey().contains(keywordFilter);
                     case MATERIAL -> (item) ->
                     {
@@ -136,10 +146,6 @@ public abstract class PaginatedSelectionMenu extends BasicMenu
         currentPage = 0;
         updatePageAmount();
         updatePage();
-    }
-
-    public void clearFilter() {
-        applyFilter("");
     }
 
     public String getFilter() {
@@ -266,5 +272,15 @@ public abstract class PaginatedSelectionMenu extends BasicMenu
             filteredItems.set(filteredItems.indexOf(oldItem), newItem);
 
         selectedItems.remove(oldItem);
+    }
+
+    public void clearFilter() {
+        if (filterType == FilterType.NONE) {
+            // When we have no filter type, all items pass the filter
+            filteredItems.clear();
+            filteredItems.addAll(allItems);
+            updatePage();
+        }
+        applyFilter("");
     }
 }
