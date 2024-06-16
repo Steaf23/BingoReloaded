@@ -24,7 +24,7 @@ configuration: SINGULAR
 defaultWorldName: world
 
 # The yml file that contains the language data that will be used for this plugin
-#   Choose from: en_us.yml, nl.yml, fr_fr.yml, pt_br.yml
+#   Choose from: en_us.yml, nl.yml, fr_fr.yml, pt_br.yml, du.yml, zh_cn.yml
 #     or make your own by using the existing ones as an example
 language: en_us.yml
 

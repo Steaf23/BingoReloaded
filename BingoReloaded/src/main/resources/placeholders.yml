@@ -4,6 +4,10 @@
 # These placeholders can also be used in the translation file if you wanted.
 # When a placeholder is not available (e.g. current_tasks_team because no game is running), the placeholder will return '-' instead
 
+# Formats support using small capital letters using {@}: {@This text will be in small caps}
+# Formats support using translation keys {$}: {$game.lobby.wait_status} -> "Waiting for players..."
+# For more information about formatting yml files in Bingo Reloaded, read https://github.com/Steaf23/BingoReloaded/wiki/Text-Formatting
+
 placeholders:
   # Full team prefix. This should be used most of the time when you want to show the team that the player is in.
   team_full:

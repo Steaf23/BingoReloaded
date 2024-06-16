@@ -22,6 +22,7 @@ lobby:
 game:
 # Scoreboard variables:
 # - {team_info}: displays currently playing teams and optionally team members if enough space is left (multiline)
+# - {win_goal}: amount of points required to win, set to "-----" for regular bingo.
 
     title: "&n&o{$menu.completed}"
     sidebar:
