@@ -1,17 +1,20 @@
 package io.github.steaf23.easymenulib.inventory;
 
 import io.github.steaf23.easymenulib.inventory.item.ItemTemplate;
+import io.github.steaf23.easymenulib.util.ChatComponentUtils;
 import io.github.steaf23.easymenulib.util.EasyMenuTranslationKey;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.TextComponent;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
-import org.bukkit.event.inventory.ClickType;
-import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
-import org.bukkit.inventory.AnvilInventory;
+import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.List;
 import java.util.function.Consumer;
 
 public class UserInputMenu extends BasicMenu
@@ -30,14 +33,16 @@ public class UserInputMenu extends BasicMenu
         this.text = "";
 
         addItem(namedItem.setName(Component.text(startingText)));
-        addAction(save, args -> {
-            text = ((AnvilInventory)getInventory()).getRenameText();
-            close(args.player());
-        });
+        addCloseAction(save);
         addAction(clear, args -> {
             text = "";
             close(args.player());
         });
+    }
+
+    public void handleTextChanged(String newText) {
+        this.text = newText;
+        addItem(save.setLore(Component.text(text)));
     }
 
     /**

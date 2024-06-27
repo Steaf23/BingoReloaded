@@ -27,10 +27,14 @@ public class MenuBoard implements Listener
     // Stores all currently open inventories by all players, using a stack system we can easily add or remove child inventories.
     protected final Map<UUID, Stack<Menu>> activeMenus;
 
+    private final MenuPacketListener packetListener;
+
     private static final Set<ClickType> CLICK_TYPES_TO_IGNORE = Set.of(ClickType.DOUBLE_CLICK, ClickType.DROP, ClickType.CREATIVE, ClickType.CONTROL_DROP, ClickType.SWAP_OFFHAND);
 
     public MenuBoard() {
         this.activeMenus = new HashMap<>();
+        this.packetListener = new MenuPacketListener(activeMenus);
+        PacketEvents.getAPI().getEventManager().registerListener(packetListener);
     }
 
     public void close(Menu menu, HumanEntity player) {
@@ -150,23 +154,6 @@ public class MenuBoard implements Listener
     public void handlePlayerQuit(final PlayerQuitEvent event) {
         if (activeMenus.containsKey(event.getPlayer().getUniqueId())) {
             closeAll(event.getPlayer());
-        }
-    }
-
-    @EventHandler
-    public void handlePrepareAnvilEvent(final PrepareAnvilEvent event) {
-        HumanEntity player = event.getViewers().stream().findFirst().get();
-        if (player == null) {
-            return;
-        }
-
-        if (!activeMenus.containsKey(player.getUniqueId())) {
-            return;
-        }
-
-        Menu topMenu = activeMenus.get(player.getUniqueId()).peek();
-        if (topMenu.getInventory().equals(event.getInventory())) {
-            event.getInventory().setRepairCost(0);
         }
     }
 }
