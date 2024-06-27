@@ -17,7 +17,7 @@ public class SidebarHUD
     private Scoreboard board;
     private Objective sidebar;
 
-    public SidebarHUD(String initialTitle) {
+    public SidebarHUD(Component initialTitle) {
         this.board = Bukkit.getScoreboardManager().getNewScoreboard();
         this.sidebar = board.registerNewObjective("info", Criteria.DUMMY, initialTitle);
         sidebar.setDisplaySlot(DisplaySlot.SIDEBAR);

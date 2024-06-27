@@ -46,8 +46,9 @@ public class BingoReloaded extends JavaPlugin
     private static BingoReloaded INSTANCE;
 
     private ConfigData config;
-    private HologramManager hologramManager;
-    private HologramPlacer hologramPlacer;
+    //FIXME: update after refactor
+//    private HologramManager hologramManager;
+//    private HologramPlacer hologramPlacer;
     private GameManager gameManager;
     private BingoMenuBoard menuBoard;
     private HUDRegistry hudRegistry;
@@ -94,11 +95,11 @@ public class BingoReloaded extends JavaPlugin
         this.config = new ConfigData(getConfig());
 
         BingoTranslation.setLanguage(createYmlDataManager(config.language).getConfig(), createYmlDataManager("languages/en_us.yml").getConfig());
-        BasicMenu.pluginTitlePrefix = BingoTranslation.MENU_PREFIX.translate();
+        BasicMenu.pluginTitlePrefix = BingoTranslation.MENU_PREFIX.asSingleComponent();
         Message.log("" + ChatColor.GREEN + BingoTranslation.CHANGED_LANGUAGE.translate());
 
-        this.hologramManager = new HologramManager();
-        this.hologramPlacer = new HologramPlacer(hologramManager);
+//        this.hologramManager = new HologramManager();
+//        this.hologramPlacer = new HologramPlacer(hologramManager);
         WorldData.clearWorlds(this);
 
         this.menuBoard = new BingoMenuBoard();
@@ -159,9 +160,9 @@ public class BingoReloaded extends JavaPlugin
         return config;
     }
 
-    public HologramManager holograms() {
-        return hologramManager;
-    }
+//    public HologramManager holograms() {
+//        return hologramManager;
+//    }
 
     public static void incrementPlayerStat(Player player, BingoStatType stat) {
         boolean savePlayerStatistics = INSTANCE.config.savePlayerStatistics;

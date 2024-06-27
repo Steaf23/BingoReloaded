@@ -27,7 +27,7 @@ public class ListEditorMenu extends BasicMenu
     private static final ItemTemplate SAVE = new ItemTemplate(4, 5, Material.REDSTONE, Component.text(BingoTranslation.MENU_SAVE_EXIT.translate()).color(NamedTextColor.RED).decorate(TextDecoration.BOLD));
 
     public ListEditorMenu(MenuBoard manager, String listName) {
-        super(manager, "Editing '" + listName + "'", 6);
+        super(manager, Component.text("Editing '" + listName + "'"), 6);
         this.listName = listName;
         addAction(ITEMS, p -> createItemPicker(manager).open(p));
         addAction(ADVANCEMENTS, p -> createAdvancementPicker(manager).open(p));

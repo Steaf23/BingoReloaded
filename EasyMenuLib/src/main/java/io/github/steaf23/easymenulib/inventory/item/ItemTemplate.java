@@ -88,6 +88,10 @@ public class ItemTemplate
         return name == null ? "" : ((TextComponent) name).content();
     }
 
+    public Component getName() {
+        return name;
+    }
+
     public ItemTemplate setName(@Nullable Component name) {
         this.name = name;
         return this;

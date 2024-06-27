@@ -64,12 +64,12 @@ public abstract class PaginatedSelectionMenu extends BasicMenu
             Component.text(EasyMenuTranslationKey.MENU_FILTER.translate())
                     .color(NamedTextColor.GOLD).decorate(TextDecoration.BOLD));
 
-    public PaginatedSelectionMenu(MenuBoard board, String initialTitle, List<ItemTemplate> options, Function<ItemTemplate, Boolean> customFilter) {
+    public PaginatedSelectionMenu(MenuBoard board, Component initialTitle, List<ItemTemplate> options, Function<ItemTemplate, Boolean> customFilter) {
         this(board, initialTitle, options, FilterType.CUSTOM);
         this.customFilter = customFilter;
     }
 
-    public PaginatedSelectionMenu(MenuBoard board, String initialTitle, List<ItemTemplate> options, FilterType filterType) {
+    public PaginatedSelectionMenu(MenuBoard board, Component initialTitle, List<ItemTemplate> options, FilterType filterType) {
         super(board, initialTitle, 6);
 
         this.filterItem = FILTER.copy();
@@ -82,7 +82,7 @@ public abstract class PaginatedSelectionMenu extends BasicMenu
             addItem(BLANK.copyToSlot(1, 5));
         } else {
             addAction(filterItem, args -> {
-                new UserInputMenu(board, "Filter by name", this::applyFilter, keywordFilter.isBlank() ? "name" : keywordFilter)
+                new UserInputMenu(board, Component.text("Filter by name"), this::applyFilter, keywordFilter.isBlank() ? "name" : keywordFilter)
                         .open(args.player());
             });
         }

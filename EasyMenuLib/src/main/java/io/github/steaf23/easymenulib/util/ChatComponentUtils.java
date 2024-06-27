@@ -28,78 +28,6 @@ public class ChatComponentUtils
         return Arrays.stream(strings).map(s -> LegacyComponentSerializer.legacySection().deserialize(s)).toList().toArray(new Component[]{});
     }
 
-    public static @NotNull ItemStack itemStackFromComponent(@NotNull Material material, @Nullable BaseComponent name, BaseComponent... lore) {
-        StringBuilder jsonData = new StringBuilder(material.toString().toLowerCase());
-        jsonData.append("[");
-        if (name != null) {
-            BaseComponent nameWrapper = new TextComponent();
-            nameWrapper.setItalic(false);
-            nameWrapper.addExtra(name);
-            jsonData.append("custom_name='[" + ComponentSerializer.toJson(nameWrapper).toString() + "]'");
-        }
-
-        if (lore.length == 0 || (lore.length == 1 && lore[0].toPlainText().isEmpty()))
-            return Bukkit.getItemFactory().createItemStack(jsonData.append("]").toString());
-
-        if (name != null) {
-            jsonData.append(",");
-        }
-        jsonData.append("lore=[");
-        for (int i = 0; i < lore.length; i ++)
-        {
-            if (i != 0) {
-                jsonData.append(",");
-            }
-
-            BaseComponent lineWrapper = new TextComponent();
-            lineWrapper.setItalic(false);
-            lineWrapper.addExtra(lore[i]);
-            jsonData.append("'")
-                    .append(ComponentSerializer.toJson(lineWrapper).toString())
-                    .append("'");
-        }
-        jsonData.append("]]");
-
-        return Bukkit.getItemFactory().createItemStack(jsonData.toString());
-    }
-
-    public static BaseComponent modify(BaseComponent component, ChatColor... modifiers) {
-        Set<ChatColor> modifierSet = new HashSet<>(Arrays.stream(modifiers).collect(Collectors.toList()));
-        for (ChatColor mod : modifierSet)
-        {
-            if (mod.getColor() != null)
-            {
-                component.setColor(mod);
-                break;
-            }
-        }
-        if (modifierSet.contains(ChatColor.ITALIC)) component.setItalic(true);
-        if (modifierSet.contains(ChatColor.BOLD)) component.setBold(true);
-        if (modifierSet.contains(ChatColor.STRIKETHROUGH)) component.setStrikethrough(true);
-        if (modifierSet.contains(ChatColor.UNDERLINE)) component.setUnderlined(true);
-        if (modifierSet.contains(ChatColor.MAGIC)) component.setObfuscated(true);
-        return component;
-    }
-
-    public static ComponentBuilder formattedBuilder(ChatColor... modifiers) {
-        ComponentBuilder builder = new ComponentBuilder();
-        Set<ChatColor> modifierSet = new HashSet<>(Arrays.stream(modifiers).collect(Collectors.toList()));
-        for (ChatColor mod : modifierSet)
-        {
-            if (mod.getColor() != null)
-            {
-                builder.color(mod);
-                break;
-            }
-        }
-        if (modifierSet.contains(ChatColor.ITALIC)) builder.italic(true);
-        if (modifierSet.contains(ChatColor.BOLD)) builder.bold(true);
-        if (modifierSet.contains(ChatColor.STRIKETHROUGH)) builder.strikethrough(true);
-        if (modifierSet.contains(ChatColor.UNDERLINE)) builder.underlined(true);
-        if (modifierSet.contains(ChatColor.MAGIC)) builder.obfuscated(true);
-        return builder;
-    }
-
     public static Component itemName(Material item)
     {
         return Component.translatable(itemKey(item));
@@ -118,13 +46,9 @@ public class ChatComponentUtils
         return Component.translatable(statisticKey(statistic), with);
     }
 
-    public static BaseComponent entityName(EntityType entity)
+    public static Component entityName(EntityType entity)
     {
-        return new TranslatableComponent(entityKey(entity));
-    }
-
-    public static BaseComponent smallCaps(String text) {
-        return new TextComponent(SmallCaps.toSmallCaps(text));
+        return Component.translatable(entityKey(entity));
     }
 
     private static String advancementKey(@NotNull Advancement advancement)

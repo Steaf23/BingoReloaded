@@ -66,7 +66,7 @@ public class BingoStatData
     public HologramBuilder asHologram(int firstEntry, int entriesPerPage, @Nullable BingoStatType sortedBy)
     {
         //TODO: implement
-        return new HologramBuilder(BingoReloaded.getPlugin(BingoReloaded.class).holograms());
+        return new HologramBuilder(null);
     }
 
     public Message getPlayerStatsFormatted(UUID playerId)

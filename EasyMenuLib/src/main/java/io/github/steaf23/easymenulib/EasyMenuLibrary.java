@@ -25,8 +25,7 @@ public class EasyMenuLibrary
 
         PacketEvents.setAPI(SpigotPacketEventsBuilder.build(plugin));
         PacketEvents.getAPI().getSettings().reEncodeByDefault(false)
-                .checkForUpdates(true)
-                .bStats(true);
+                .checkForUpdates(true);
         PacketEvents.getAPI().load();
     }
 

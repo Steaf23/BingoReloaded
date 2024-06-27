@@ -30,12 +30,12 @@ public class VoteMenu extends BasicMenu
             BingoTranslation.MENU_EXIT.asSingleComponent().color(NamedTextColor.RED).decorate(TextDecoration.BOLD));
 
     public VoteMenu(MenuBoard menuBoard, ConfigData.VoteList voteList, PregameLobby lobbyPhase) {
-        super(menuBoard, BingoTranslation.OPTIONS_VOTE.translate(), 3);
+        super(menuBoard, BingoTranslation.OPTIONS_VOTE.asSingleComponent(), 3);
 
         this.lobby = lobbyPhase;
 
         if (voteList.gamemodes().size() > 1) {
-            gamemodeOptions = new BasicMenu(menuBoard, BingoTranslation.VOTE_GAMEMODE.translate(), 1);
+            gamemodeOptions = new BasicMenu(menuBoard, BingoTranslation.VOTE_GAMEMODE.asSingleComponent(), 1);
 
             //FIXME: use gamemode translations
             int itemIndex = 0;
@@ -127,7 +127,7 @@ public class VoteMenu extends BasicMenu
         }
 
         if (voteList.kits().size() > 1) {
-            kitOptions = new BasicMenu(menuBoard, BingoTranslation.VOTE_KIT.translate(), 1);
+            kitOptions = new BasicMenu(menuBoard, BingoTranslation.VOTE_KIT.asSingleComponent(), 1);
 
             int itemIndex = 0;
             if (voteList.kits().contains("hardcore")) {
@@ -210,7 +210,7 @@ public class VoteMenu extends BasicMenu
         }
 
         if (voteList.cards().size() > 1) {
-            cardOptions = new BasicMenu(menuBoard, BingoTranslation.VOTE_CARD.translate(), 1);
+            cardOptions = new BasicMenu(menuBoard, BingoTranslation.VOTE_CARD.asSingleComponent(), 1);
 
             int itemIndex = 0;
             for (String card : voteList.cards()) {

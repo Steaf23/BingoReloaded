@@ -28,7 +28,7 @@ public class StatisticSelectionMenu extends BasicMenu
 
     public StatisticSelectionMenu(MenuBoard menuBoard, String listName)
     {
-        super(menuBoard, "Pick Statistics", 6);
+        super(menuBoard, Component.text("Pick Statistics"), 6);
         this.listName = listName;
         addAction(new ItemTemplate(1, 0, Material.FEATHER, BasicMenu.applyTitleFormat("Travel")), p -> createTravelMenu().open(p));
         addAction(new ItemTemplate(3, 0, Material.DIAMOND_SWORD, BasicMenu.applyTitleFormat("Kill")), p -> createEntityMenu(Statistic.KILL_ENTITY).open(p));

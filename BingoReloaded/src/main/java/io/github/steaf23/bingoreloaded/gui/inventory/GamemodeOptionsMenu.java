@@ -15,7 +15,7 @@ public class GamemodeOptionsMenu extends BasicMenu
 
     public GamemodeOptionsMenu(MenuBoard menuBoard, BingoSession session)
     {
-        super(menuBoard, BingoTranslation.OPTIONS_GAMEMODE.translate(), 5);
+        super(menuBoard, BingoTranslation.OPTIONS_GAMEMODE.asSingleComponent(), 5);
         this.session = session;
 
         addAction(new ItemTemplate(1, 1,

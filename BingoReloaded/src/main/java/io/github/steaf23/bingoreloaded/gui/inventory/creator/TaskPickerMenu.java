@@ -10,6 +10,7 @@ import io.github.steaf23.easymenulib.inventory.MenuBoard;
 import io.github.steaf23.easymenulib.inventory.PaginatedSelectionMenu;
 import io.github.steaf23.easymenulib.inventory.item.ItemTemplate;
 import io.github.steaf23.easymenulib.util.ChatComponentUtils;
+import net.kyori.adventure.text.Component;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
@@ -26,7 +27,7 @@ public class TaskPickerMenu extends PaginatedSelectionMenu
 //    protected static final BaseComponent[] UNSELECTED_LORE = createUnselectedLore();
 
     public TaskPickerMenu(MenuBoard manager, String title, List<BingoTask> options, String listName) {
-        super(manager, title, asPickerItems(options), FilterType.DISPLAY_NAME);
+        super(manager, Component.text(title), asPickerItems(options), FilterType.DISPLAY_NAME);
         this.listName = listName;
         this.setMaxStackSizeOverride(64);
     }

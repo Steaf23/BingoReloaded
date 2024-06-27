@@ -23,7 +23,7 @@ public class SettingsPresetMenu extends PaginatedSelectionMenu
     private final BingoSettingsData settingsData;
 
     public SettingsPresetMenu(MenuBoard board, BingoSettingsBuilder settingsBuilder) {
-        super(board, "Setting Presets", new ArrayList<>(), FilterType.ITEM_KEY);
+        super(board, Component.text("Setting Presets"), new ArrayList<>(), FilterType.ITEM_KEY);
 
         this.settingsData = new BingoSettingsData();
         this.settingsBuilder = settingsBuilder;
@@ -42,7 +42,7 @@ public class SettingsPresetMenu extends PaginatedSelectionMenu
         }
         else if (event.isRightClick())
         {
-            BasicMenu context = new BasicMenu(getMenuBoard(), clickedOption.getPlainTextName(), 1);
+            BasicMenu context = new BasicMenu(getMenuBoard(), clickedOption.getName(), 1);
             context.addAction(new ItemTemplate(0, Material.BARRIER, BasicMenu.applyTitleFormat("Remove")), clickType -> {
                         settingsData.removeSettings(clickedOption.getCompareKey());
                         context.close(player);
@@ -55,7 +55,7 @@ public class SettingsPresetMenu extends PaginatedSelectionMenu
                     .addAction(new ItemTemplate(2, Material.NAME_TAG, BasicMenu.applyTitleFormat("Rename")), clickType -> {
                         BingoSettings oldSettings = settingsData.getSettings(clickedOption.getCompareKey());
                         settingsData.removeSettings(clickedOption.getCompareKey());
-                        new UserInputMenu(getMenuBoard(), "Rename preset...", input -> {
+                        new UserInputMenu(getMenuBoard(), Component.text("Rename preset..."), input -> {
                             settingsData.saveSettings(input, oldSettings);
                             context.close(player);
                         }, clickedOption.getCompareKey())
@@ -79,7 +79,7 @@ public class SettingsPresetMenu extends PaginatedSelectionMenu
     @Override
     public void beforeOpening(HumanEntity player) {
         addAction(SAVE_PRESET, arguments -> {
-            new UserInputMenu(getMenuBoard(), "Rename preset...", input -> {
+            new UserInputMenu(getMenuBoard(), Component.text("Rename preset..."), input -> {
                 settingsData.saveSettings(input, settingsBuilder.view());
                 beforeOpening(arguments.player());
             }, "my_settings")

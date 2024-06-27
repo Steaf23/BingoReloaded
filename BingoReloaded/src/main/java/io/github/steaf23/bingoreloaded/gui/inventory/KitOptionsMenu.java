@@ -19,7 +19,7 @@ public class KitOptionsMenu extends BasicMenu
 
     public KitOptionsMenu(MenuBoard menuBoard, BingoSession session)
     {
-        super(menuBoard, BingoTranslation.OPTIONS_KIT.translate(), 5);
+        super(menuBoard, BingoTranslation.OPTIONS_KIT.asSingleComponent(), 5);
         this.session = session;
 
         ItemTemplate HARDCORE = new ItemTemplate(1, 1,

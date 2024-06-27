@@ -20,7 +20,7 @@ public class CardMenu extends BasicMenu
 
     public CardMenu(MenuBoard menuBoard, CardSize cardSize, String title)
     {
-        super(menuBoard, title, cardSize.size);
+        super(menuBoard, Component.text(title), cardSize.size);
         this.size = cardSize;
         this.tasks = new ArrayList<>();
         setMaxStackSizeOverride(64);

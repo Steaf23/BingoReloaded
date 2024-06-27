@@ -35,7 +35,7 @@ public class TeamEditorMenu extends PaginatedSelectionMenu
             Component.text("Create New Team").color(NamedTextColor.GREEN).decorate(TextDecoration.BOLD));
 
     public TeamEditorMenu(MenuBoard manager) {
-        super(manager, "Edit Teams", new ArrayList<>(), FilterType.DISPLAY_NAME);
+        super(manager, Component.text("Edit Teams"), new ArrayList<>(), FilterType.DISPLAY_NAME);
         this.teamData = new TeamData();
 
         addAction(RESTORE_DEFAULT, p -> {
@@ -88,13 +88,13 @@ public class TeamEditorMenu extends PaginatedSelectionMenu
         private TeamData.TeamTemplate templateToEdit;
 
         public TeamEdit(MenuBoard manager, TeamData.TeamTemplate teamToEdit, Consumer<TeamData.TeamTemplate> callback) {
-            super(manager, "Edit team", 3);
+            super(manager, Component.text("Edit team"), 3);
             this.templateToEdit = teamToEdit;
             this.finishedCallback = callback;
 
             // Change the team name
             ItemTemplate teamNameItem = new ItemTemplate(2, 1, Material.WRITABLE_BOOK, Component.text(templateToEdit.name()));
-            teamNameItem.setAction(new NameEditAction("Edit team name", getMenuBoard(), (value, item) -> {
+            teamNameItem.setAction(new NameEditAction(Component.text("Edit team name"), getMenuBoard(), (value, item) -> {
                 templateToEdit = new TeamData.TeamTemplate(value, templateToEdit.color());
                 //TODO: find a way to do addItem(teamNameItem); automatically??
                 addItem(item);
@@ -108,7 +108,7 @@ public class TeamEditorMenu extends PaginatedSelectionMenu
 
             // TODO: maybe find a less cursed way to fix this?
             addAction(teamColorItem, args -> {
-                new ColorPickerMenu(getMenuBoard(), "Pick team color", (result) -> {
+                new ColorPickerMenu(getMenuBoard(), Component.text("Pick team color"), (result) -> {
                     // Update template
                     templateToEdit = new TeamData.TeamTemplate(templateToEdit.name(), result);
 

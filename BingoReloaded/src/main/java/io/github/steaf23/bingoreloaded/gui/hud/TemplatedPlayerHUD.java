@@ -13,7 +13,7 @@ public class TemplatedPlayerHUD extends PlayerHUD
     private final ScoreboardData.SidebarTemplate template;
 
     public TemplatedPlayerHUD(Player player, String initialTitle, ScoreboardData.SidebarTemplate template) {
-        super(player.getUniqueId(), new SidebarHUD(initialTitle));
+        super(player.getUniqueId(), new SidebarHUD(Component.text(initialTitle)));
 
         this.template = template;
         update();

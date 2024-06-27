@@ -15,9 +15,9 @@ public class NameEditAction extends MenuAction
     private String value;
     private final BiConsumer<String, ItemTemplate> callback;
     private final MenuBoard board;
-    private final String prompt;
+    private final Component prompt;
 
-    public NameEditAction(String prompt, MenuBoard board, BiConsumer<String, ItemTemplate> callback) {
+    public NameEditAction(Component prompt, MenuBoard board, BiConsumer<String, ItemTemplate> callback) {
         this.callback = callback;
         this.board = board;
         this.prompt = prompt;

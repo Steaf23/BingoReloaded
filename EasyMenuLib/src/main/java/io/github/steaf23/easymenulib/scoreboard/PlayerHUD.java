@@ -1,5 +1,6 @@
 package io.github.steaf23.easymenulib.scoreboard;
 
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -11,7 +12,7 @@ public class PlayerHUD
     private final UUID playerId;
 
     public PlayerHUD(UUID player) {
-        this(player, new SidebarHUD(""));
+        this(player, new SidebarHUD(Component.empty()));
     }
 
     public PlayerHUD(UUID player, SidebarHUD sidebar) {

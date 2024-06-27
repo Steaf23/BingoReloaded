@@ -6,6 +6,7 @@ import io.github.steaf23.easymenulib.inventory.MenuBoard;
 import io.github.steaf23.easymenulib.inventory.item.ItemTemplate;
 import io.github.steaf23.easymenulib.inventory.item.action.SpinBoxButtonAction;
 import io.github.steaf23.easymenulib.util.ChatComponentUtils;
+import net.kyori.adventure.text.Component;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -30,7 +31,7 @@ public class ListValueEditorMenu extends BasicMenu
 //    private final String listName;
 //
     public ListValueEditorMenu(MenuBoard menuBoard, CardEditorMenu parent, String listName, int maxStart, int minStart) {
-        super(menuBoard, "Updating Values", 6);
+        super(menuBoard, Component.text("Updating Values"), 6);
 //        this.cardEditor = parent;
 //        this.listName = listName;
 //

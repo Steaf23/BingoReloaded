@@ -6,7 +6,11 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
+import org.bukkit.entity.HumanEntity;
+import org.bukkit.event.inventory.ClickType;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.inventory.AnvilInventory;
 
 import java.util.function.Consumer;
 
@@ -19,23 +23,21 @@ public class UserInputMenu extends BasicMenu
     private final ItemTemplate save = new ItemTemplate(2, Material.EMERALD, Component.text(EasyMenuTranslationKey.MENU_ACCEPT.translate()).color(NamedTextColor.GREEN).decorate(TextDecoration.BOLD));
     private final ItemTemplate clear = new ItemTemplate(1, Material.HOPPER, Component.text(EasyMenuTranslationKey.MENU_CLEAR_FILTER.translate()).color(NamedTextColor.GRAY).decorate(TextDecoration.BOLD));
 
-    public UserInputMenu(MenuBoard manager, String initialTitle, Consumer<String> result, String startingText) {
+    public UserInputMenu(MenuBoard manager, Component initialTitle, Consumer<String> result, String startingText) {
         super(manager, initialTitle, InventoryType.ANVIL);
 
         this.resultAction = result;
         this.text = "";
 
         addItem(namedItem.setName(Component.text(startingText)));
-        addCloseAction(save);
+        addAction(save, args -> {
+            text = ((AnvilInventory)getInventory()).getRenameText();
+            close(args.player());
+        });
         addAction(clear, args -> {
             text = "";
             close(args.player());
         });
-    }
-
-    public void handleTextChanged(String newText) {
-        this.text = newText;
-        addItem(save.setLore(Component.text(text)));
     }
 
     /**

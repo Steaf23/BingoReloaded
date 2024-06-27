@@ -26,7 +26,7 @@ public class BingoCreatorMenu extends BasicMenu
     public static final ItemTemplate LIST = new ItemTemplate(15, Material.PAPER, BasicMenu.applyTitleFormat("Edit Lists"), Component.text("Click to view and edit bingo lists!"));
 
     public BingoCreatorMenu(MenuBoard manager) {
-        super(manager, "Card Creator", 3);
+        super(manager, Component.text("Card Creator"), 3);
         this.cardsData = new BingoCardData();
 //        addAction(CARD, p -> createCardPicker().open(p));
 //        addAction(LIST, p -> createListPicker().open(p));

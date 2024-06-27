@@ -1,5 +1,7 @@
 package io.github.steaf23.easymenulib.inventory;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.inventory.ClickType;
@@ -41,11 +43,16 @@ public interface Menu
 
     Inventory getInventory();
 
-    private static String inputButtonText(String buttonText) {
-        return ChatColor.DARK_GRAY + "<" + ChatColor.GRAY + buttonText + ChatColor.DARK_GRAY + ">" + ChatColor.WHITE + ": ";
+    private static Component inputButtonText(String buttonText) {
+        return Component.text()
+                .append(Component.text("<").color(NamedTextColor.DARK_GRAY))
+                .append(Component.text(buttonText).color(NamedTextColor.GRAY))
+                .append(Component.text(">").color(NamedTextColor.DARK_GRAY))
+                .append(Component.text(": ").color(NamedTextColor.WHITE))
+                .build();
     }
 
-    public static String INPUT_LEFT_CLICK = inputButtonText("Left Click");
-    public static String INPUT_RIGHT_CLICK = inputButtonText("Right Click");
-    public static String INPUT_SHIFT_CLICK = inputButtonText("Hold Shift");
+    public static Component INPUT_LEFT_CLICK = inputButtonText("Left Click");
+    public static Component INPUT_RIGHT_CLICK = inputButtonText("Right Click");
+    public static Component INPUT_SHIFT_CLICK = inputButtonText("Hold Shift");
 }

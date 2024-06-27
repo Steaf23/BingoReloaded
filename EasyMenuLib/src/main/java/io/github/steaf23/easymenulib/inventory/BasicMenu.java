@@ -25,7 +25,7 @@ public class BasicMenu implements Menu
 {
     public record ActionArguments(HumanEntity player, ClickType clickType) {}
 
-    public static String pluginTitlePrefix = "";
+    public static Component pluginTitlePrefix = Component.empty();
 
     protected static final Component applyTitleFormat(Component to) {
         return to.color(NamedTextColor.GOLD).decorate(TextDecoration.BOLD);
@@ -46,15 +46,15 @@ public class BasicMenu implements Menu
     private int maxStackSizeOverride = -1; // -1 means no override (i.e. default stack sizes for all items)
     private final List<ItemTemplate> items;
 
-    private String title;
+    private Component title;
 
-    public BasicMenu(MenuBoard manager, String initialTitle, int rows) {
-        this(manager, Bukkit.createInventory(null, rows * 9, pluginTitlePrefix + initialTitle));
+    public BasicMenu(MenuBoard manager, Component initialTitle, int rows) {
+        this(manager, Bukkit.createInventory(null, rows * 9, Component.text().append(pluginTitlePrefix).append(initialTitle).build()));
         this.title = initialTitle;
     }
 
-    public BasicMenu(MenuBoard manager, String initialTitle, InventoryType type) {
-        this(manager, Bukkit.createInventory(null, type, pluginTitlePrefix + initialTitle));
+    public BasicMenu(MenuBoard manager, Component initialTitle, InventoryType type) {
+        this(manager, Bukkit.createInventory(null, type, Component.text().append(pluginTitlePrefix).append(initialTitle).build()));
         this.title = initialTitle;
     }
 
@@ -63,7 +63,6 @@ public class BasicMenu implements Menu
         this.inventory = inventory;
         this.manager = manager;
         this.items = new ArrayList<>();
-        this.title = "";
     }
 
     public void open(HumanEntity player) {

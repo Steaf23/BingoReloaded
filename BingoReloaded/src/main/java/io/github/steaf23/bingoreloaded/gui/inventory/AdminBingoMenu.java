@@ -55,7 +55,7 @@ public class AdminBingoMenu extends BasicMenu
             Material.CHEST_MINECART, BasicMenu.applyTitleFormat("Setting Presets"));
 
     public AdminBingoMenu(MenuBoard menuBoard, BingoSession session, ConfigData config) {
-        super(menuBoard, BingoTranslation.OPTIONS_TITLE.translate(), 6);
+        super(menuBoard, BingoTranslation.OPTIONS_TITLE.asSingleComponent(), 6);
         this.session = session;
 
         addAction(JOIN, p -> {
@@ -126,7 +126,7 @@ public class AdminBingoMenu extends BasicMenu
                             .color(NamedTextColor.DARK_PURPLE))));
         }
 
-        BasicMenu cardPicker = new PaginatedSelectionMenu(getMenuBoard(), "Choose A Card", cards, FilterType.DISPLAY_NAME)
+        BasicMenu cardPicker = new PaginatedSelectionMenu(getMenuBoard(), Component.text("Choose A Card"), cards, FilterType.DISPLAY_NAME)
         {
             @Override
             public void onOptionClickedDelegate(InventoryClickEvent event, ItemTemplate clickedOption, HumanEntity player) {
@@ -170,7 +170,7 @@ public class AdminBingoMenu extends BasicMenu
     }
 
     private void showGamemodeSettings(HumanEntity player) {
-        BasicMenu menu = new BasicMenu(getMenuBoard(), "", 1);
+        BasicMenu menu = new BasicMenu(getMenuBoard(), Component.empty(), 1);
 
         int hotswapGoal = session.settingsBuilder.view().hotswapGoal();
         ItemTemplate hotswapGoalItem = new ItemTemplate(0, Material.FIRE_CHARGE, Component.text("Hot-Swap Win Score"),

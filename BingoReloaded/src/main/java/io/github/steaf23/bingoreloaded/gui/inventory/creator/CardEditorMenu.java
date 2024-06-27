@@ -24,7 +24,7 @@ public class CardEditorMenu extends PaginatedSelectionMenu
 
     public CardEditorMenu(MenuBoard menuBoard, String cardName, BingoCardData cardsData)
     {
-        super(menuBoard, "Editing '" + cardName + "'", new ArrayList<>(), FilterType.DISPLAY_NAME);
+        super(menuBoard, Component.text("Editing '" + cardName + "'"), new ArrayList<>(), FilterType.DISPLAY_NAME);
         this.cardName = cardName;
         this.cardsData = cardsData;
         addAction(ADD_LIST, p -> createListPicker(result -> {
@@ -90,7 +90,7 @@ public class CardEditorMenu extends PaginatedSelectionMenu
                     Component.text("Click to select").color(NamedTextColor.GRAY)).setCompareKey(listName));
         }
 
-        return new PaginatedSelectionMenu(CardEditorMenu.this.getMenuBoard(), "Pick A List", items, FilterType.DISPLAY_NAME)
+        return new PaginatedSelectionMenu(CardEditorMenu.this.getMenuBoard(), Component.text("Pick A List"), items, FilterType.DISPLAY_NAME)
         {
             @Override
             public void onOptionClickedDelegate(final InventoryClickEvent event, ItemTemplate clickedOption, HumanEntity player)

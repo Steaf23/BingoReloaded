@@ -22,7 +22,7 @@ public class EffectOptionsMenu extends BasicMenu
     private final BingoSettingsBuilder settingsBuilder;
 
     public EffectOptionsMenu(MenuBoard menuBoard, BingoSettingsBuilder settings) {
-        super(menuBoard, BingoTranslation.OPTIONS_EFFECTS.translate(), 6);
+        super(menuBoard, BingoTranslation.OPTIONS_EFFECTS.asSingleComponent(), 6);
         this.settingsBuilder = settings;
         flags = settings.view().effects();
 
