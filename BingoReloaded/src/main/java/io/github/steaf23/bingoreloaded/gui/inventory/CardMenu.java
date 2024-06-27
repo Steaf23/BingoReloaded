@@ -5,6 +5,7 @@ import io.github.steaf23.bingoreloaded.tasks.BingoTask;
 import io.github.steaf23.easymenulib.inventory.BasicMenu;
 import io.github.steaf23.easymenulib.inventory.MenuBoard;
 import io.github.steaf23.easymenulib.inventory.item.ItemTemplate;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
 import org.jetbrains.annotations.NotNull;
@@ -37,7 +38,7 @@ public class CardMenu extends BasicMenu
         return tasks.get(taskIndex).toItem();
     }
 
-    public void setInfo(String name, String... description)
+    public void setInfo(Component name, Component... description)
     {
         ItemTemplate info = new ItemTemplate(0, Material.MAP, name, description);
         addItem(info);

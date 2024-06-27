@@ -15,6 +15,10 @@ import io.github.steaf23.bingoreloaded.tasks.tracker.TaskProgressTracker;
 import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.bingoreloaded.util.timer.GameTimer;
 import io.github.steaf23.easymenulib.inventory.MenuBoard;
+import io.github.steaf23.easymenulib.util.ChatComponentUtils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -73,8 +77,8 @@ public class HotswapBingoCard extends BingoCard
         } else {
             description = BingoTranslation.INFO_HOTSWAP_DESC.translate(String.valueOf(winningScore)).split("\\n");
         }
-        menu.setInfo(BingoTranslation.INFO_HOTSWAP_NAME.translate(),
-                description);
+        menu.setInfo(Component.text().append(BingoTranslation.INFO_HOTSWAP_NAME.asComponent()).build(),
+                ChatComponentUtils.createComponentsFromString(description));
     }
 
     @Override
@@ -194,11 +198,12 @@ public class HotswapBingoCard extends BingoCard
             if (taskExpiredCount == 1) {
                 BingoTask taskToSend = lastExpiredTask;
                 game.getActionBar().requestMessage(p ->
-                                new ComponentBuilder().bold(true).append(BingoTranslation.HOTSWAP_SINGLE_EXPIRED.asComponent(Set.of(ChatColor.of("#e85e21")), taskToSend.data.getName())).build()
-                        , 1, 3);
+                                Component.text().decorate(TextDecoration.BOLD).append(BingoTranslation.HOTSWAP_SINGLE_EXPIRED.asSingleComponent(taskToSend.data.getName()).color(TextColor.fromHexString("#e85e21"))).build(),
+                        1, 3);
             }
             else {
-                game.getActionBar().requestMessage(p -> new ComponentBuilder().bold(true).append(BingoTranslation.HOTSWAP_MULTIPLE_EXPIRED.asComponent(Set.of(ChatColor.of("#e85e21")))).build(), 1, 3);
+                game.getActionBar().requestMessage(p -> Component.text().decorate(TextDecoration.BOLD).append(BingoTranslation.HOTSWAP_MULTIPLE_EXPIRED.asSingleComponent().color(TextColor.fromHexString("#e85e21"))).build(),
+                        1, 3);
             }
         }
         if (taskRecoveredCount > 0) {
@@ -208,11 +213,12 @@ public class HotswapBingoCard extends BingoCard
             if (taskRecoveredCount == 1) {
                 BingoTask taskToSend = lastRecoverdTask;
                 game.getActionBar().requestMessage(p ->
-                                new ComponentBuilder().bold(true).append(BingoTranslation.HOTSWAP_SINGLE_ADDED.asComponent(Set.of(ChatColor.of("#5cb1ff")), taskToSend.data.getName())).build()
-                        , 2, 3);
+                                Component.text().decorate(TextDecoration.BOLD).append(BingoTranslation.HOTSWAP_SINGLE_ADDED.asSingleComponent(taskToSend.data.getName()).color(TextColor.fromHexString("#5cb1ff"))).build(),
+                        2, 3);
             }
             else {
-                game.getActionBar().requestMessage(p -> new ComponentBuilder().bold(true).append(BingoTranslation.HOTSWAP_MULTIPLE_ADDED.asComponent(Set.of(ChatColor.of("#5cb1ff")))).build(), 2, 3);
+                game.getActionBar().requestMessage(p -> Component.text().decorate(TextDecoration.BOLD).append(BingoTranslation.HOTSWAP_MULTIPLE_ADDED.asSingleComponent().color(TextColor.fromHexString("#5cb1ff"))).build(),
+                        1, 3);
             }
         }
         ((HotswapCardMenu)menu).updateTaskHolders(taskHolders);

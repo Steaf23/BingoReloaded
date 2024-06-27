@@ -9,9 +9,11 @@ import io.github.steaf23.bingoreloaded.util.timer.GameTimer;
 import io.github.steaf23.easymenulib.inventory.item.ItemTemplate;
 import io.github.steaf23.easymenulib.util.ChatComponentUtils;
 import io.github.steaf23.easymenulib.util.PDCHelper;
-import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentBuilder;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
@@ -97,13 +99,15 @@ public class BingoTask
         // Step 1: create the item and put the new name, description and material on it.
         if (isVoided()) // VOIDED TASK
         {
-            item = new ItemTemplate(Material.STRUCTURE_VOID, "");
-            BaseComponent[] addedDesc = BingoTranslation.VOIDED.asComponent(Set.of(ChatColor.DARK_GRAY));
+            item = new ItemTemplate(Material.STRUCTURE_VOID, null);
+            //FIXME: make desc dark gray
+            Component[] addedDesc = BingoTranslation.VOIDED.asComponent();
 
-            ComponentBuilder nameBuilder = new ComponentBuilder().color(ChatColor.DARK_GRAY).strikethrough(true);
-            nameBuilder.append("A").obfuscated(true);
-            nameBuilder.append(data.getName()).obfuscated(false);
-            nameBuilder.append("A").obfuscated(true);
+            ComponentBuilder nameBuilder = Component.text()
+                    .color(NamedTextColor.DARK_GRAY).decorate(TextDecoration.STRIKETHROUGH);
+            nameBuilder.append(Component.text("A").decorate(TextDecoration.OBFUSCATED));
+            nameBuilder.append(data.getName());
+            nameBuilder.append(Component.text("A").decorate(TextDecoration.OBFUSCATED));
 
             item.setName(nameBuilder.build());
             item.setLore(addedDesc);
@@ -115,28 +119,26 @@ public class BingoTask
 
             String timeString = GameTimer.getTimeAsString(completedAt);
 
-            ComponentBuilder nameBuilder = new ComponentBuilder().color(ChatColor.GRAY).strikethrough(true);
+            ComponentBuilder nameBuilder = Component.text()
+                    .color(NamedTextColor.GRAY).decorate(TextDecoration.STRIKETHROUGH);
             nameBuilder.append(data.getName());
 
-            Set<ChatColor> modifiers = new HashSet<>(){{
-                add(ChatColor.DARK_PURPLE);
-                add(ChatColor.ITALIC);
-            }};
-            BaseComponent[] desc = BingoTranslation.COMPLETED_LORE.asComponent(Set.of(ChatColor.DARK_PURPLE, ChatColor.ITALIC),
-                    ChatComponentUtils.convert(completedBy.getDisplayName(),
-                            completedBy.getTeam().getColor(), ChatColor.BOLD),
-                    ChatComponentUtils.convert(timeString, ChatColor.GOLD));
+//            Set<TextColor> modifiers = new HashSet<>(){{
+//                add(ChatColor.DARK_PURPLE);
+//                add(ChatColor.ITALIC);
+//            }};
+            //FIXME: return to multiline component
+            Component[] desc = BingoTranslation.COMPLETED_LORE.asComponent(
+                    Component.text(completedBy.getDisplayName()).color(completedBy.getTeam().getColor()).decorate(TextDecoration.BOLD)
+                            .color(NamedTextColor.DARK_PURPLE).decorate(TextDecoration.ITALIC),
+                    Component.text(timeString).decorate(TextDecoration.BOLD)
+                            .color(NamedTextColor.DARK_PURPLE).decorate(TextDecoration.ITALIC));
 
-            item = new ItemTemplate(completeMaterial, "");
-            item.setName(nameBuilder.build());
-            item.setLore(desc);
+            item = new ItemTemplate(completeMaterial, nameBuilder.build(), desc);
         }
         else // DEFAULT TASK
         {
-            item = new ItemTemplate(material, "");
-            item.setName(data.getName());
-            item.setLore(data.getItemDescription());
-
+            item = new ItemTemplate(material, data.getName(), data.getItemDescription());
             item.setAmount(data.getStackSize());
         }
 

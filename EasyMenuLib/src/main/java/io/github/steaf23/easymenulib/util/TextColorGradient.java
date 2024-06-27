@@ -1,12 +1,12 @@
 package io.github.steaf23.easymenulib.util;
 
-import net.md_5.bungee.api.ChatColor;
-import org.bukkit.Bukkit;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import org.jetbrains.annotations.NotNull;
 
 
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,11 +15,11 @@ import java.util.stream.Collectors;
 /**
  * Class used to create and sample from a gradient, returning bungee.api.ChatColors
  */
-public class ChatColorGradient
+public class TextColorGradient
 {
-    Map<ChatColor, Float> colors;
+    Map<TextColor, Float> colors;
 
-    public ChatColorGradient() {
+    public TextColorGradient() {
         colors = new HashMap<>();
     }
 
@@ -30,7 +30,7 @@ public class ChatColorGradient
      * @param position
      * @param color
      */
-    public ChatColorGradient addColor(@NotNull ChatColor color, float position) throws IllegalArgumentException {
+    public TextColorGradient addColor(@NotNull TextColor color, float position) throws IllegalArgumentException {
         if (position < 0.0 || position > 1.0) {
             throw new IllegalArgumentException("position must be between 0.0 and 1.0.");
         }
@@ -43,7 +43,7 @@ public class ChatColorGradient
      * @param color
      * @return false if the gradient does not contain the given color
      */
-    public boolean removeColor(@NotNull ChatColor color) {
+    public boolean removeColor(@NotNull TextColor color) {
         return colors.remove(color) != null;
     }
 
@@ -53,24 +53,24 @@ public class ChatColorGradient
      * @param position
      * @return
      */
-    public ChatColor sample(float position) {
+    public TextColor sample(float position) {
         if (colors.size() == 0) {
-            return ChatColor.WHITE;
+            return NamedTextColor.WHITE;
         }
 
         if (colors.size() == 1) {
             return colors.keySet().stream().toList().get(0);
         }
 
-        List<ChatColor> sortedColors = colors.entrySet()
+        List<TextColor> sortedColors = colors.entrySet()
                 .stream()
                 .sorted(Map.Entry.comparingByValue())
                 .map(Map.Entry::getKey)
                 .collect(Collectors.toList());
 
         // find 2 colors closest to the actual position
-        ChatColor leftColor = sortedColors.get(0);
-        ChatColor rightColor = sortedColors.get(1);
+        TextColor leftColor = sortedColors.get(0);
+        TextColor rightColor = sortedColors.get(1);
         for (int i = 0; i < sortedColors.size() - 1; i++) {
             if (position >= colors.get(sortedColors.get(i)) && position <= colors.get(sortedColors.get(i + 1))) {
                 leftColor = sortedColors.get(i);
@@ -85,10 +85,10 @@ public class ChatColorGradient
         return lerpChatColor(leftColor, rightColor, lerpValue);
     }
 
-    static public ChatColor lerpChatColor(@NotNull ChatColor left, @NotNull ChatColor right, float value) {
-        int red = (int)ExtraMath.lerp(left.getColor().getRed(), right.getColor().getRed(), value);
-        int green = (int)ExtraMath.lerp(left.getColor().getGreen(), right.getColor().getGreen(), value);
-        int blue = (int)ExtraMath.lerp(left.getColor().getBlue(), right.getColor().getBlue(), value);
-        return ChatColor.of(new Color(ExtraMath.clamped(red, 0, 255), ExtraMath.clamped(green, 0, 255), ExtraMath.clamped(blue, 0, 255)));
+    static public TextColor lerpChatColor(@NotNull TextColor left, @NotNull TextColor right, float value) {
+        int red = (int)ExtraMath.lerp(left.red(), right.red(), value);
+        int green = (int)ExtraMath.lerp(left.green(), right.green(), value);
+        int blue = (int)ExtraMath.lerp(left.blue(), right.blue(), value);
+        return TextColor.color(ExtraMath.clamped(red, 0, 255), ExtraMath.clamped(green, 0, 255), ExtraMath.clamped(blue, 0, 255));
     }
 }

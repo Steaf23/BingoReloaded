@@ -67,42 +67,43 @@ public class BingoTestCommand implements TabExecutor
                 completeTaskByPlayer(virtualPlayer, taskIndex);
             }
             case "menu" -> {
-                Player player = commandSender instanceof Player p ? p : null;
-                if (player == null)
-                    return false;
-
-                BasicMenu menu = new BasicMenu(board, "Easy Menu Lib Test", 6);
-
-                menu.addItem(new ItemTemplate(0, 0, Material.BEDROCK, "" + ChatColor.RED + ChatColor.UNDERLINE + "Some name??"));
-
-                menu.addAction(new ItemTemplate(1, 0, Material.ACACIA_BOAT, "" + ChatColor.LIGHT_PURPLE + ChatColor.ITALIC + "Toggle Action", "Toggle me :D"),
-                        new ToggleButtonAction(toggled -> {
-                            Message.sendDebug("I am toggled and " + toggled, player);
-                        }));
-
-                ItemTemplate spinboxItem = new ItemTemplate(2, 0, Material.LEAD, "Spinbox action", "I have value >:)");
-                spinboxItem.setAction(new SpinBoxButtonAction(13, 34, 2, value -> {
-                    Message.sendDebug("I have a value of " + value, player);
-                    spinboxItem.setLore(new TextComponent("I have a value of " + value + "!"));
-                }));
-                menu.addItem(spinboxItem);
-
-                menu.addAction(new ItemTemplate(3, 0, Material.SAND, "I should not exist..."), arguments -> {
-                    Message.sendDebug("but yet I am alive ;(", player);
-                });
-
-                ItemTemplate comboItem = new ItemTemplate(3, 0, Material.YELLOW_CONCRETE, "I am actually 4 items", "fr fr");
-                menu.addAction(comboItem, new ComboBoxButtonAction(selection -> {
-                    Message.sendDebug("You have selected " + selection, player);
-                })
-                        .addOption("Cheese", new ItemTemplate(Material.YELLOW_CONCRETE))
-                        .addOption("Potato", new ItemTemplate(Material.POISONOUS_POTATO))
-                        .addOption("Tomato", new ItemTemplate(Material.RED_CONCRETE))
-                        .addOption("Carrotato", new ItemTemplate(Material.ORANGE_CONCRETE))
-                        .selectOption("Tomato"));
-
-                menu.open(player);
-                Message.log("Opened menu");
+                //FIXME: redo or remove?
+//                Player player = commandSender instanceof Player p ? p : null;
+//                if (player == null)
+//                    return false;
+//
+//                BasicMenu menu = new BasicMenu(board, "Easy Menu Lib Test", 6);
+//
+//                menu.addItem(new ItemTemplate(0, 0, Material.BEDROCK, "" + ChatColor.RED + ChatColor.UNDERLINE + "Some name??"));
+//
+//                menu.addAction(new ItemTemplate(1, 0, Material.ACACIA_BOAT, "" + ChatColor.LIGHT_PURPLE + ChatColor.ITALIC + "Toggle Action", "Toggle me :D"),
+//                        new ToggleButtonAction(toggled -> {
+//                            Message.sendDebug("I am toggled and " + toggled, player);
+//                        }));
+//
+//                ItemTemplate spinboxItem = new ItemTemplate(2, 0, Material.LEAD, "Spinbox action", "I have value >:)");
+//                spinboxItem.setAction(new SpinBoxButtonAction(13, 34, 2, value -> {
+//                    Message.sendDebug("I have a value of " + value, player);
+//                    spinboxItem.setLore(new TextComponent("I have a value of " + value + "!"));
+//                }));
+//                menu.addItem(spinboxItem);
+//
+//                menu.addAction(new ItemTemplate(3, 0, Material.SAND, "I should not exist..."), arguments -> {
+//                    Message.sendDebug("but yet I am alive ;(", player);
+//                });
+//
+//                ItemTemplate comboItem = new ItemTemplate(3, 0, Material.YELLOW_CONCRETE, "I am actually 4 items", "fr fr");
+//                menu.addAction(comboItem, new ComboBoxButtonAction(selection -> {
+//                    Message.sendDebug("You have selected " + selection, player);
+//                })
+//                        .addOption("Cheese", new ItemTemplate(Material.YELLOW_CONCRETE))
+//                        .addOption("Potato", new ItemTemplate(Material.POISONOUS_POTATO))
+//                        .addOption("Tomato", new ItemTemplate(Material.RED_CONCRETE))
+//                        .addOption("Carrotato", new ItemTemplate(Material.ORANGE_CONCRETE))
+//                        .selectOption("Tomato"));
+//
+//                menu.open(player);
+//                Message.log("Opened menu");
             }
         }
         return true;

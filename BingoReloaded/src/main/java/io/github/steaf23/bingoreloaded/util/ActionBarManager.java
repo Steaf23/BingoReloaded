@@ -1,12 +1,10 @@
 package io.github.steaf23.bingoreloaded.util;
 
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
-import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.chat.BaseComponent;
+import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 
 import java.util.*;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
@@ -18,10 +16,9 @@ import java.util.function.Function;
  */
 public class ActionBarManager
 {
-    private record ActionBarMessage(Function<Player, BaseComponent> messageTemplate, int priority, int lingerTime, int insertionTime) {}
+    private record ActionBarMessage(Function<Player, Component> messageTemplate, int priority, int lingerTime, int insertionTime) {}
     private final BingoSession session;
     private int tickCounter;
-    private BaseComponent currentMessage;
 
     private final PriorityQueue<ActionBarMessage> messages;
 
@@ -34,11 +31,11 @@ public class ActionBarManager
      * requests an actionbar message. No linger time is specified making it last only until it fades or gets replaced in update by a new message
      * @param priority
      */
-    public void requestMessage(Function<Player, BaseComponent> messageTemplate, int priority) {
+    public void requestMessage(Function<Player, Component> messageTemplate, int priority) {
         requestMessage(messageTemplate, priority, 0);
     }
 
-    public void requestMessage(Function<Player, BaseComponent> messageTemplate, int priority, int lingerTime) {
+    public void requestMessage(Function<Player, Component> messageTemplate, int priority, int lingerTime) {
         messages.add(new ActionBarMessage(messageTemplate, priority, lingerTime, tickCounter));
     }
 
@@ -56,7 +53,7 @@ public class ActionBarManager
         ActionBarMessage messageToShow = topMessage;
         session.teamManager.getParticipants().forEach(p -> {
             p.sessionPlayer().ifPresent(player -> {
-                player.spigot().sendMessage(ChatMessageType.ACTION_BAR, messageToShow.messageTemplate.apply(player));
+                player.sendActionBar(messageToShow.messageTemplate.apply(player));
             });
         });
 

@@ -4,11 +4,13 @@ import io.github.steaf23.bingoreloaded.tasks.BingoTask;
 import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.easymenulib.inventory.BasicMenu;
 import io.github.steaf23.easymenulib.inventory.item.action.MenuAction;
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.TextComponent;
+
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+//TODO: test
 public class TaskItemAction extends MenuAction
 {
     private final BingoTask task;
@@ -19,13 +21,13 @@ public class TaskItemAction extends MenuAction
 
     @Override
     public void use(BasicMenu.ActionArguments arguments) {
-        BaseComponent base = new TextComponent("\n");
-        BaseComponent name = task.data.getName();
-        name.setBold(true);
+        Component base = Component.text("\n");
+        Component name = task.data.getName();
+        name.decorate(TextDecoration.BOLD);
 
-        base.addExtra(name);
-        base.addExtra("\n - ");
-        base.addExtra(task.data.getChatDescription());
+        base.append(name);
+        base.append(Component.text("\n - "));
+        base.append(task.data.getChatDescription());
 
         Message.sendDebugNoPrefix(base, (Player) arguments.player());
     }

@@ -2,42 +2,47 @@ package io.github.steaf23.easymenulib.inventory;
 
 import io.github.steaf23.easymenulib.inventory.item.ItemTemplate;
 import io.github.steaf23.easymenulib.util.ChatComponentUtils;
-import io.github.steaf23.easymenulib.util.FlexColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.w3c.dom.Text;
 
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
+//TODO: TEST new components
 public final class ColorPickerMenu extends BasicMenu
 {
-    private static final ItemTemplate NEXT = new ItemTemplate(53, Material.STRUCTURE_VOID, ChatComponentUtils.convert("Scroll Left", ChatColor.LIGHT_PURPLE, ChatColor.BOLD));
-    private static final ItemTemplate PREVIOUS = new ItemTemplate(45, Material.BARRIER, ChatComponentUtils.convert("Scroll Right", ChatColor.LIGHT_PURPLE, ChatColor.BOLD));
+    private static final ItemTemplate NEXT = new ItemTemplate(53, Material.STRUCTURE_VOID, Component.text("Scroll Left").color(NamedTextColor.LIGHT_PURPLE).decorate(TextDecoration.BOLD));
+    private static final ItemTemplate PREVIOUS = new ItemTemplate(45, Material.BARRIER, Component.text("Scroll Right").color(NamedTextColor.LIGHT_PURPLE).decorate(TextDecoration.BOLD));
 
     private static final int HUE_AMOUNT = 25;
 
-    private final Consumer<ChatColor> result;
+    private final Consumer<TextColor> result;
 
     private final List<ItemTemplate> hueItems;
 
     private int scrollIndex = 0;
 
-    public ColorPickerMenu(MenuBoard manager, String title, Consumer<ChatColor> result) {
+    public ColorPickerMenu(MenuBoard manager, String title, Consumer<TextColor> result) {
         super(manager, title, 6);
         this.result = result;
         this.hueItems = new ArrayList<>();
 
         for (int i = 0; i < HUE_AMOUNT; i++) {
             Color col = Color.getHSBColor(i * (1.0f / (HUE_AMOUNT - 1)), 1.0f, 1.0f);
-            ChatColor chatColor = ChatColor.of(col);
-            hueItems.add(ItemTemplate.createColoredLeather(chatColor, Material.LEATHER_CHESTPLATE)
-                    .setCompareKey(FlexColor.asHex(chatColor)));
+            TextColor textColor = TextColor.color(col.getRGB());
+            hueItems.add(ItemTemplate.createColoredLeather(textColor, Material.LEATHER_CHESTPLATE)
+                    .setCompareKey(textColor.asHexString()));
         }
 
         addItem(PREVIOUS);
@@ -46,9 +51,9 @@ public final class ColorPickerMenu extends BasicMenu
         setHueBar(0);
 
         for (int i = 0; i < 45; i++) {
-            ChatColor color = ChatColor.of(new Color(0));
+            TextColor color = TextColor.color(0);
             addItem(ItemTemplate.createColoredLeather(color, Material.LEATHER_CHESTPLATE)
-                    .setCompareKey(FlexColor.asHex(color)));
+                    .setCompareKey(color.asHexString()));
         }
 
         updateDisplay(new Color(Integer.parseInt(hueItems.get(0).getCompareKey().substring(1), 16)));
@@ -73,7 +78,7 @@ public final class ColorPickerMenu extends BasicMenu
         } else {
             String key = item.getCompareKey();
             close(player);
-            result.accept(ChatColor.of(key));
+            result.accept(TextColor.fromHexString(key));
         }
         return super.onClick(event, player, clickedSlot, clickType);
     }
@@ -98,10 +103,10 @@ public final class ColorPickerMenu extends BasicMenu
 
                 Color targetColor = Color.getHSBColor(hue, saturation, brightness);
 
-                ChatColor chatColor = ChatColor.of(targetColor);
+                TextColor textColor = TextColor.color(targetColor.getRGB());
 
-                ItemTemplate item = ItemTemplate.createColoredLeather(chatColor, Material.LEATHER_CHESTPLATE)
-                        .setCompareKey(FlexColor.asHex(chatColor))
+                ItemTemplate item = ItemTemplate.createColoredLeather(textColor, Material.LEATHER_CHESTPLATE)
+                        .setCompareKey(textColor.asHexString())
                         .setSlot(ItemTemplate.slotFromXY(x, y));
                 addItem(item);
             }

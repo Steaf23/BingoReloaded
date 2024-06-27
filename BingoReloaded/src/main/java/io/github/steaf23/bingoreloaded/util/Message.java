@@ -7,9 +7,14 @@ import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.easymenulib.util.SmallCaps;
 import me.clip.placeholderapi.PlaceholderAPI;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.event.HoverEvent;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import net.kyori.adventure.title.TitlePart;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.chat.*;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -28,9 +33,9 @@ public class Message
 {
     public static final String LOG_PREFIX = BingoTranslation.convertColors("&3&o[BingoReloaded]&r");
     protected String raw;
-    protected List<BaseComponent> args;
-    protected TextComponent base;
-    protected BaseComponent finalMessage;
+    protected List<Component> args;
+    protected Component base;
+    protected Component finalMessage;
 
     public Message() {
         this("");
@@ -42,83 +47,16 @@ public class Message
     public Message(String text) {
         this.raw = text;
         this.args = new ArrayList<>();
-        this.base = new TextComponent();
+        this.base = Component.empty();
     }
 
     public Message arg(@NonNull String name) {
-        args.add(TextComponent.fromLegacy(name));
+        args.add(LegacyComponentSerializer.legacySection().deserialize(name));
         return this;
     }
 
-    public Message arg(@NonNull BaseComponent component) {
-        args.add(component);
-        return this;
-    }
-
-    public Message color(@NonNull ChatColor color) {
-        if (args.size() == 0) {
-            base.setColor(color);
-            return this;
-        }
-        args.get(args.size() - 1).setColor(color);
-        return this;
-    }
-
-    public Message bold() {
-        if (args.size() == 0) {
-            base.setBold(true);
-            return this;
-        }
-        args.get(args.size() - 1).setBold(true);
-        return this;
-    }
-
-    public Message italic() {
-        if (args.size() == 0) {
-            base.setItalic(true);
-            return this;
-        }
-        args.get(args.size() - 1).setItalic(true);
-        return this;
-    }
-
-    public Message underline() {
-        if (args.size() == 0) {
-            base.setUnderlined(true);
-            return this;
-        }
-        args.get(args.size() - 1).setUnderlined(true);
-        return this;
-    }
-
-    public Message strikethrough() {
-        if (args.size() == 0) {
-            base.setStrikethrough(true);
-            return this;
-        }
-        args.get(args.size() - 1).setStrikethrough(true);
-        return this;
-    }
-
-    public Message obfuscate() {
-        if (args.size() == 0) {
-            base.setObfuscated(true);
-            return this;
-        }
-        args.get(args.size() - 1).setObfuscated(true);
-        return this;
-    }
-
-    public Message smallCaps() {
-        if (args.size() == 0) {
-            base.setText(SmallCaps.toSmallCaps(base.getText()));
-            return this;
-        }
-        var arg = args.get(args.size() - 1);
-        if (arg instanceof TextComponent textComponent) {
-            textComponent.setText(SmallCaps.toSmallCaps(textComponent.getText()));
-        }
-        args.set(args.size() - 1, arg);
+    public Message arg(@NonNull Component argument) {
+        args.add(argument);
         return this;
     }
 
@@ -129,18 +67,17 @@ public class Message
             else
                 createPrefixedMessage(player);
         }
-        player.spigot().sendMessage(finalMessage);
+        player.sendMessage(finalMessage);
     }
 
     public void createPrefixedMessage(Player player) {
-        TextComponent prefixedBase = new TextComponent();
-
-        prefixedBase.addExtra(new TextComponent(BingoTranslation.MESSAGE_PREFIX.translate()));
+        TextComponent.Builder prefixedBase = Component.text()
+                .append(BingoTranslation.MESSAGE_PREFIX.asComponent());
 
         createMessage(player);
 
-        prefixedBase.addExtra(finalMessage);
-        finalMessage = prefixedBase;
+        prefixedBase.append(finalMessage);
+        finalMessage = prefixedBase.build();
     }
 
     /**
@@ -164,11 +101,7 @@ public class Message
                 .forEach(p -> p.sessionPlayer().ifPresent(this::send));
     }
 
-    public String toLegacyString(Player player) {
-        return asComponent(player).toLegacyText();
-    }
-
-    public BaseComponent asComponent(Player player) {
+    public Component asComponent(Player player) {
         if (finalMessage == null)
             createMessage(player);
         return finalMessage;
@@ -191,81 +124,65 @@ public class Message
         Bukkit.getLogger().severe("[BingoReloaded]: " + text);
     }
 
-    public static void log(BaseComponent text) {
-        Bukkit.getConsoleSender().sendMessage(text.toPlainText());
+    public static void log(Component text) {
+        Bukkit.getConsoleSender().sendMessage(text);
     }
 
     public static void sendDebug(String text, Player player) {
-        Message.sendDebug(TextComponent.fromLegacyText(text), player);
+        Message.sendDebug(LegacyComponentSerializer.legacySection().deserialize(text), player);
     }
 
-    public static void sendDebug(BaseComponent text, Player player) {
-        BaseComponent finalMsg = new TextComponent();
-        finalMsg.addExtra(new TextComponent(BingoTranslation.MESSAGE_PREFIX.translate()));
-        finalMsg.addExtra(text);
-        player.spigot().sendMessage(finalMsg);
+    public static void sendDebug(Component text, Player player) {
+        TextComponent.Builder finalMsg = Component.text();
+        finalMsg.append(Component.text(BingoTranslation.MESSAGE_PREFIX.translate()));
+        finalMsg.append(text);
+        player.sendMessage(finalMsg.build());
     }
 
-    public static void sendDebugNoPrefix(BaseComponent text, Player player) {
-        player.spigot().sendMessage(text);
+    public static void sendDebugNoPrefix(Component text, Player player) {
+        player.sendMessage(text);
     }
 
-    public static void sendDebug(BaseComponent[] text, Player player) {
-        BaseComponent finalMsg = new TextComponent();
-        finalMsg.addExtra(new TextComponent(BingoTranslation.MESSAGE_PREFIX.translate()));
-        TextComponent allText = new TextComponent();
-        allText.setExtra(Arrays.stream(text).collect(Collectors.toList()));
-        finalMsg.addExtra(allText);
-        player.spigot().sendMessage(finalMsg);
+    public static void sendTitleMessage(Component title, Component subtitle, Player player) {
+        player.sendTitlePart(TitlePart.TITLE, title);
+        player.sendTitlePart(TitlePart.SUBTITLE, subtitle);
     }
 
-    public static void sendActionMessage(String message, Player player) {
-        player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent[]{new TextComponent(message)});
-    }
-
-    public static void sendActionMessage(Message message, Player player) {
-        sendActionMessage(message.toLegacyString(player), player);
-    }
-
-    public static void sendTitleMessage(String title, String subtitle, Player player) {
-        player.sendTitle(title, subtitle, -1, -1, -1);
-    }
-
-    public static void sendTitleMessage(Message title, Message subtitle, Player player) {
-        sendTitleMessage(title.toLegacyString(player), subtitle.toLegacyString(player), player);
+    public static void sendAll(Component message, BingoSession session) {
+        session.getPlayersInWorld().forEach(p -> p.sendMessage(message));
     }
 
     protected void createMessage(Player player) {
-        //for any given message like "{#00bb33}Completed {0} by team {1}! At {2}" split the arguments from the message.
-        String[] rawSplit = raw.split("\\{[^\\{\\}#@$]*\\}"); //[{#00bb33}Completed, by team, ! At]
-
-        // convert custom hex colors to legacyText: {#00bb33} -> ChatColor.of("#00bb33")
-        // convert "&" to "§" and "&&" to "&"
-        for (int i = 0; i < rawSplit.length; i++) {
-            String part = BingoTranslation.convertConfigString(rawSplit[i]);
-            rawSplit[i] = part;
-        }
-
-        // keep the previous message part for format retention
-        BaseComponent prevLegacy = new TextComponent();
-        // for each translated part of the message
-        int i = 0;
-        while (i < rawSplit.length) {
-            for (var bc : TextComponent.fromLegacyText(solvePlaceholders(rawSplit[i], player))) {
-                bc.copyFormatting(prevLegacy, ComponentBuilder.FormatRetention.NONE, false);
-                prevLegacy = bc;
-                base.addExtra(bc);
-            }
-            if (args.size() > i) {
-                base.addExtra(args.get(i));
-            }
-            i++;
-        }
-
-        if (i == 0 && args.size() > 0) {
-            for (int j = 0; j < args.size(); j++)
-                base.addExtra(args.get(j));
-        }
+//        //for any given message like "{#00bb33}Completed {0} by team {1}! At {2}" split the arguments from the message.
+//        String[] rawSplit = raw.split("\\{[^\\{\\}#@$]*\\}"); //[{#00bb33}Completed, by team, ! At]
+//
+//        // convert custom hex colors to legacyText: {#00bb33} -> ChatColor.of("#00bb33")
+//        // convert "&" to "§" and "&&" to "&"
+//        for (int i = 0; i < rawSplit.length; i++) {
+//            String part = BingoTranslation.convertConfigString(rawSplit[i]);
+//            rawSplit[i] = part;
+//        }
+//
+//        // keep the previous message part for format retention
+//        BaseComponent prevLegacy = new TextComponent();
+//        // for each translated part of the message
+//        int i = 0;
+//        while (i < rawSplit.length) {
+//            for (var bc : TextComponent.fromLegacyText(solvePlaceholders(rawSplit[i], player))) {
+//                bc.copyFormatting(prevLegacy, ComponentBuilder.FormatRetention.NONE, false);
+//                prevLegacy = bc;
+//                base.addExtra(bc);
+//            }
+//            if (args.size() > i) {
+//                base.addExtra(args.get(i));
+//            }
+//            i++;
+//        }
+//
+//        if (i == 0 && args.size() > 0) {
+//            for (int j = 0; j < args.size(); j++)
+//                base.addExtra(args.get(j));
+//        }
         finalMessage = base;
     }
 
@@ -278,29 +195,28 @@ public class Message
     }
 
 
-    public static BaseComponent[] createHoverCommandMessage(@NonNull BingoTranslation translation, @Nullable String command) {
+    public static Component createHoverCommandMessage(@NonNull BingoTranslation translation, @Nullable String command) {
         // Limit -1 makes it so split returns trailing empty strings
         String[] components = translation.translate().split("//", -1);
 
         if (components.length != 4) {
             Message.warn("Hover commands should contain 4 lines!, please check the language file");
-            return new TextComponent[]{};
+            return Component.empty();
         }
-        TextComponent prefix = new TextComponent(components[0]);
-        TextComponent hoverable = new TextComponent(components[1]);
-        TextComponent hover = new TextComponent(components[2]);
-        TextComponent suffix = new TextComponent(components[3]);
+        Component prefix = Component.text(components[0]);
+        Component hoverable = Component.text(components[1]);
+        Component hover = Component.text(components[2]);
+        Component suffix = Component.text(components[3]);
 
         return createHoverCommandMessage(prefix, hoverable, hover, suffix, command);
     }
 
-    public static BaseComponent[] createHoverCommandMessage(@NonNull BaseComponent prefix, @NotNull BaseComponent hoverable, @NotNull BaseComponent hover, @NotNull BaseComponent suffix, @Nullable String command) {
+    public static Component createHoverCommandMessage(@NonNull Component prefix, @NotNull Component hoverable, @NotNull Component hover, @NotNull Component suffix, @Nullable String command) {
         if (command != null) {
-            hoverable.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, command));
+            hoverable.clickEvent(ClickEvent.clickEvent(ClickEvent.Action.RUN_COMMAND, command));
         }
-        hoverable.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                new ComponentBuilder(hover).create()));
+        hoverable.hoverEvent(HoverEvent.hoverEvent(HoverEvent.Action.SHOW_TEXT, hover));
 
-        return new BaseComponent[]{new TextComponent(BingoTranslation.MESSAGE_PREFIX.translate()), prefix, hoverable, suffix};
+        return Component.text().append(BingoTranslation.MESSAGE_PREFIX.asComponent(prefix, hoverable, suffix)).build();
     }
 }

@@ -10,9 +10,6 @@ import io.github.steaf23.easymenulib.inventory.MenuBoard;
 import io.github.steaf23.easymenulib.inventory.PaginatedSelectionMenu;
 import io.github.steaf23.easymenulib.inventory.item.ItemTemplate;
 import io.github.steaf23.easymenulib.util.ChatComponentUtils;
-import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
@@ -25,8 +22,8 @@ public class TaskPickerMenu extends PaginatedSelectionMenu
 {
     private final String listName;
 
-    protected static final BaseComponent[] SELECTED_LORE = createSelectedLore();
-    protected static final BaseComponent[] UNSELECTED_LORE = createUnselectedLore();
+//    protected static final BaseComponent[] SELECTED_LORE = createSelectedLore();
+//    protected static final BaseComponent[] UNSELECTED_LORE = createUnselectedLore();
 
     public TaskPickerMenu(MenuBoard manager, String title, List<BingoTask> options, String listName) {
         super(manager, title, asPickerItems(options), FilterType.DISPLAY_NAME);
@@ -152,27 +149,28 @@ public class TaskPickerMenu extends PaginatedSelectionMenu
         ItemTemplate item = newTask.toItem();
         item.setAction(null);
 
-        BaseComponent[] addedLore;
-        if (selected)
-            addedLore = SELECTED_LORE;
-        else
-            addedLore = UNSELECTED_LORE;
-
-        item.setLore(newTask.data.getItemDescription());
-        item.addDescription("selected", 5, addedLore);
+        //FIXME: reimplement
+//        BaseComponent[] addedLore;
+//        if (selected)
+//            addedLore = SELECTED_LORE;
+//        else
+//            addedLore = UNSELECTED_LORE;
+//
+//        item.setLore(newTask.data.getItemDescription());
+//        item.addDescription("selected", 5, addedLore);
         return item;
     }
 
-    private static BaseComponent[] createSelectedLore() {
-        ComponentBuilder builder = new ComponentBuilder(" - ").color(ChatColor.WHITE).italic(true)
-                .append("This task has been added to the list").color(ChatColor.DARK_PURPLE);
-        return new BaseComponent[]{builder.build()};
-    }
-
-    private static BaseComponent[] createUnselectedLore() {
-        BaseComponent text = ChatComponentUtils.convert(" - ", ChatColor.WHITE, ChatColor.ITALIC);
-        text.addExtra(ChatComponentUtils.convert("Click to make this task", ChatColor.GRAY));
-        BaseComponent text2 = ChatComponentUtils.convert("   appear on bingo cards", ChatColor.GRAY, ChatColor.ITALIC);
-        return new BaseComponent[]{text, text2};
-    }
+//    private static BaseComponent[] createSelectedLore() {
+//        ComponentBuilder builder = new ComponentBuilder(" - ").color(ChatColor.WHITE).italic(true)
+//                .append("This task has been added to the list").color(ChatColor.DARK_PURPLE);
+//        return new BaseComponent[]{builder.build()};
+//    }
+//
+//    private static BaseComponent[] createUnselectedLore() {
+//        BaseComponent text = ChatComponentUtils.convert(" - ", ChatColor.WHITE, ChatColor.ITALIC);
+//        text.addExtra(ChatComponentUtils.convert("Click to make this task", ChatColor.GRAY));
+//        BaseComponent text2 = ChatComponentUtils.convert("   appear on bingo cards", ChatColor.GRAY, ChatColor.ITALIC);
+//        return new BaseComponent[]{text, text2};
+//    }
 }

@@ -13,6 +13,7 @@ import io.github.steaf23.bingoreloaded.settings.BingoSettings;
 import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.bingoreloaded.util.timer.GameTimer;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -97,7 +98,8 @@ public class BingoReloadedPlaceholderExpansion extends PlaceholderExpansion
                     yield "-";
                 }
                 else {
-                    yield settings.mode().displayName;
+                    //FIXME: add displayname
+                    yield settings.mode().getDataName();
                 }
             }
             case SETTING_CARDSIZE -> {
@@ -115,7 +117,7 @@ public class BingoReloadedPlaceholderExpansion extends PlaceholderExpansion
                     yield "-";
                 }
                 else {
-                    yield settings.kit().getDisplayName();
+                    yield LegacyComponentSerializer.legacySection().serialize(settings.kit().getDisplayName());
                 }
             }
             case SETTING_DURATION -> {

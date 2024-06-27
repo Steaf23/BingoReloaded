@@ -1,12 +1,10 @@
 package io.github.steaf23.easymenulib.inventory;
 
 import io.github.steaf23.easymenulib.inventory.item.ItemTemplate;
-import io.github.steaf23.easymenulib.util.ChatComponentUtils;
 import io.github.steaf23.easymenulib.util.EasyMenuTranslationKey;
-import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.TextComponent;
-import org.bukkit.Bukkit;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.inventory.ClickType;
@@ -50,10 +48,21 @@ public abstract class PaginatedSelectionMenu extends BasicMenu
     private final ItemTemplate nextPageItem;
     private final ItemTemplate previousPageItem;
 
-    protected static final ItemTemplate NEXT = new ItemTemplate(8, 5, Material.STRUCTURE_VOID, ChatComponentUtils.convert(EasyMenuTranslationKey.MENU_NEXT.translate(), ChatColor.LIGHT_PURPLE, ChatColor.BOLD));
-    protected static final ItemTemplate PREVIOUS = new ItemTemplate(0, 5, Material.BARRIER, ChatComponentUtils.convert(EasyMenuTranslationKey.MENU_PREVIOUS.translate(), ChatColor.LIGHT_PURPLE, ChatColor.BOLD));
-    protected static final ItemTemplate CLOSE = new ItemTemplate(4, 5, Material.REDSTONE, ChatComponentUtils.convert(EasyMenuTranslationKey.MENU_SAVE_EXIT.translate(), ChatColor.RED, ChatColor.BOLD));
-    protected static final ItemTemplate FILTER = new ItemTemplate(1, 5, Material.SPYGLASS, ChatComponentUtils.convert(EasyMenuTranslationKey.MENU_FILTER.translate(), TITLE_PREFIX_ARRAY));
+    protected static final ItemTemplate NEXT = new ItemTemplate(8, 5, Material.STRUCTURE_VOID,
+            Component.text(EasyMenuTranslationKey.MENU_NEXT.translate())
+                    .color(NamedTextColor.LIGHT_PURPLE).decorate(TextDecoration.BOLD));
+
+    protected static final ItemTemplate PREVIOUS = new ItemTemplate(0, 5, Material.BARRIER,
+            Component.text(EasyMenuTranslationKey.MENU_PREVIOUS.translate())
+                    .color(NamedTextColor.LIGHT_PURPLE).decorate(TextDecoration.BOLD));
+
+    protected static final ItemTemplate CLOSE = new ItemTemplate(4, 5, Material.REDSTONE,
+            Component.text(EasyMenuTranslationKey.MENU_SAVE_EXIT.translate())
+                    .color(NamedTextColor.RED).decorate(TextDecoration.BOLD));
+
+    protected static final ItemTemplate FILTER = new ItemTemplate(1, 5, Material.SPYGLASS,
+            Component.text(EasyMenuTranslationKey.MENU_FILTER.translate())
+                    .color(NamedTextColor.GOLD).decorate(TextDecoration.BOLD));
 
     public PaginatedSelectionMenu(MenuBoard board, String initialTitle, List<ItemTemplate> options, Function<ItemTemplate, Boolean> customFilter) {
         this(board, initialTitle, options, FilterType.CUSTOM);
@@ -115,7 +124,7 @@ public abstract class PaginatedSelectionMenu extends BasicMenu
         }
 
         keywordFilter = filter;
-        filterItem.setLore(TextComponent.fromLegacy("{" + keywordFilter + "}"));
+        filterItem.setLore(Component.text("{" + keywordFilter + "}"));
         //TODO: automate addItem?
         addItem(filterItem);
 
@@ -132,7 +141,7 @@ public abstract class PaginatedSelectionMenu extends BasicMenu
                         String name = item.getMaterial().name().replace("_", " ");
                         return name.toLowerCase().contains(keywordFilter.toLowerCase());
                     };
-                    case DISPLAY_NAME -> (item) -> ChatColor.stripColor(item.getName())
+                    case DISPLAY_NAME -> (item) -> item.getPlainTextName()
                             .toLowerCase().contains(keywordFilter.toLowerCase());
                     case CUSTOM -> customFilter;
                 };
@@ -154,8 +163,8 @@ public abstract class PaginatedSelectionMenu extends BasicMenu
 
     public void addItemsToSelect(Collection<ItemTemplate> newItems) {
         //first remove any previous whitespace
-        while (allItems.size() > 0) {
-            ItemTemplate lastItem = allItems.get(allItems.size() - 1);
+        while (!allItems.isEmpty()) {
+            ItemTemplate lastItem = allItems.getLast();
 
             if (lastItem.isEmpty())
                 allItems.remove(lastItem);
@@ -170,8 +179,8 @@ public abstract class PaginatedSelectionMenu extends BasicMenu
 
     public void removeItems(int... itemIndices) {
         //first remove any previous whitespace
-        while (allItems.size() > 0) {
-            ItemTemplate lastItem = allItems.get(allItems.size() - 1);
+        while (!allItems.isEmpty()) {
+            ItemTemplate lastItem = allItems.getLast();
 
             if (lastItem.isEmpty())
                 allItems.remove(lastItem);
@@ -238,7 +247,7 @@ public abstract class PaginatedSelectionMenu extends BasicMenu
         }
 
         //Update Page description e.g. (20/23) for the Next and Previous 'buttons'.
-        BaseComponent pageCountDesc = ChatComponentUtils.convert(String.format("%02d", currentPage + 1) + "/" + String.format("%02d", pageAmount));
+        Component pageCountDesc = Component.text(String.format("%02d", currentPage + 1) + "/" + String.format("%02d", pageAmount));
 
         //TODO: update item automatically..?
         nextPageItem.setLore(pageCountDesc);

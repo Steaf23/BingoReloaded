@@ -25,6 +25,9 @@ import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.bingoreloaded.util.TranslatedMessage;
 import io.github.steaf23.easymenulib.inventory.MenuBoard;
 import io.github.steaf23.easymenulib.scoreboard.HUDRegistry;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -112,7 +115,7 @@ public class BingoSession
         BingoCardData cardsData = new BingoCardData();
         BingoSettings settings = settingsBuilder.view();
         if (!cardsData.getCardNames().contains(settings.card())) {
-            new TranslatedMessage(BingoTranslation.NO_CARD).color(ChatColor.RED).arg(settings.card()).sendAll(this);
+            Message.sendAll(BingoTranslation.NO_CARD.asSingleComponent(Component.text(settings.card())).color(NamedTextColor.RED), this);
             return;
         }
 
@@ -335,13 +338,14 @@ public class BingoSession
         new Message(" ").sendAll(this);
         if (!voteResult.gamemode.isEmpty()) {
             var tuple = voteResult.gamemode.split("_");
-            new TranslatedMessage(BingoTranslation.VOTE_WON).arg(BingoTranslation.OPTIONS_GAMEMODE.translate()).arg(BingoGamemode.fromDataString(tuple[0]).displayName + " " + tuple[1] + "x" + tuple[1]).sendAll(this);
+            //FIXME: use gamemode display name from config
+            new TranslatedMessage(BingoTranslation.VOTE_WON).arg(BingoTranslation.OPTIONS_GAMEMODE.translate()).arg(tuple[0] + " " + tuple[1] + "x" + tuple[1]).sendAll(this);
         }
         if (!voteResult.kit.isEmpty()) {
             new TranslatedMessage(BingoTranslation.VOTE_WON).arg(BingoTranslation.OPTIONS_KIT.translate()).arg(PlayerKit.fromConfig(voteResult.kit).getDisplayName()).sendAll(this);
         }
         if (!voteResult.card.isEmpty()) {
-            new TranslatedMessage(BingoTranslation.VOTE_WON).arg(BingoTranslation.OPTIONS_CARD.translate()).arg(voteResult.card).italic().sendAll(this);
+            Message.sendAll(BingoTranslation.VOTE_WON.asSingleComponent(BingoTranslation.OPTIONS_CARD.asSingleComponent(), Component.text(voteResult.card).decorate(TextDecoration.ITALIC)), this);
         }
         new Message(" ").sendAll(this);
 

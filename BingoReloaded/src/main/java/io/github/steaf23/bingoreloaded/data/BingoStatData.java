@@ -71,17 +71,19 @@ public class BingoStatData
 
     public Message getPlayerStatsFormatted(UUID playerId)
     {
-        String stats = getPlayerData(playerId);
-        String[] statList = stats.split(";");
-        return new Message("{0}'s statistics: Wins: {1}, Losses: {2}, Games finished: {3}, Tasks completed: {4}, Tasks Completed Record: {5}, Wand uses: {6}")
-                .color(ChatColor.GREEN)
-                .arg(Bukkit.getOfflinePlayer(playerId).getName()).color(ChatColor.YELLOW).bold()
-                .arg(statList[0]).color(ChatColor.WHITE).bold()
-                .arg(statList[1]).color(ChatColor.WHITE).bold()
-                .arg(Integer.toString(Integer.parseInt(statList[0]) + Integer.parseInt(statList[1]))).color(ChatColor.WHITE).bold()
-                .arg(statList[2]).color(ChatColor.WHITE).bold()
-                .arg(statList[3]).color(ChatColor.WHITE).bold()
-                .arg(statList[4]).color(ChatColor.WHITE).bold();
+        //FIXME: reimplement
+        return null;
+//        String stats = getPlayerData(playerId);
+//        String[] statList = stats.split(";");
+//        return new Message("{0}'s statistics: Wins: {1}, Losses: {2}, Games finished: {3}, Tasks completed: {4}, Tasks Completed Record: {5}, Wand uses: {6}")
+//                .color(ChatColor.GREEN)
+//                .arg(Bukkit.getOfflinePlayer(playerId).getName()).color(ChatColor.YELLOW).bold()
+//                .arg(statList[0]).color(ChatColor.WHITE).bold()
+//                .arg(statList[1]).color(ChatColor.WHITE).bold()
+//                .arg(Integer.toString(Integer.parseInt(statList[0]) + Integer.parseInt(statList[1]))).color(ChatColor.WHITE).bold()
+//                .arg(statList[2]).color(ChatColor.WHITE).bold()
+//                .arg(statList[3]).color(ChatColor.WHITE).bold()
+//                .arg(statList[4]).color(ChatColor.WHITE).bold();
     }
 
     /**
@@ -92,16 +94,17 @@ public class BingoStatData
      */
     public Message getPlayerStatsFormatted(String playerName)
     {
-        UUID playerId = getPlayerUUID(playerName);
-        if (playerId != null)
-        {
-            return getPlayerStatsFormatted(playerId);
-        }
-        else
-        {
-            return new Message("Could not find statistics for player {0}!").color(ChatColor.RED)
-                    .arg(playerName).color(ChatColor.WHITE);
-        }
+        return null;
+//        UUID playerId = getPlayerUUID(playerName);
+//        if (playerId != null)
+//        {
+//            return getPlayerStatsFormatted(playerId);
+//        }
+//        else
+//        {
+//            return new Message("Could not find statistics for player {0}!").color(ChatColor.RED)
+//                    .arg(playerName).color(ChatColor.WHITE);
+//        }
     }
 
     private String getPlayerData(UUID playerId)

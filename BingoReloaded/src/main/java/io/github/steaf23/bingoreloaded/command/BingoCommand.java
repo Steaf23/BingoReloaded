@@ -19,6 +19,8 @@ import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.bingoreloaded.util.TranslatedMessage;
 import io.github.steaf23.easymenulib.inventory.MenuBoard;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -132,7 +134,8 @@ public class BingoCommand implements TabExecutor
                     return false;
 
                 if (!session.isRunning()) {
-                    new TranslatedMessage(BingoTranslation.NO_DEATHMATCH).color(ChatColor.RED).send(player);
+                    //FIXME: reimplement
+//                    new TranslatedMessage(BingoTranslation.NO_DEATHMATCH).color(ChatColor.RED).send(player);
                     return false;
                 }
 
@@ -147,8 +150,8 @@ public class BingoCommand implements TabExecutor
             }
             case "stats" -> {
                 if (!config.savePlayerStatistics) {
-                    TextComponent text = new TextComponent("Player statistics are not being tracked at this moment!");
-                    text.setColor(ChatColor.RED);
+                    Component text = Component.text("Player statistics are not being tracked at this moment!")
+                            .color(NamedTextColor.RED);
                     Message.sendDebug(text, player);
                     return true;
                 }
@@ -196,9 +199,9 @@ public class BingoCommand implements TabExecutor
                     if (team.getMembers().isEmpty()) {
                         return;
                     }
-                    player.spigot().sendMessage(new ComponentBuilder(" - ").append(team.getColoredName()).append(": " + team.getMembers().stream()
+                    player.sendMessage(Component.text(" - ").append(team.getColoredName()).append(Component.text(": " + team.getMembers().stream()
                             .map(p -> p.getDisplayName())
-                            .collect(Collectors.joining(", "))).build());
+                            .collect(Collectors.joining(", ")))));
                 });
 
             }
@@ -207,9 +210,10 @@ public class BingoCommand implements TabExecutor
             }
             default -> {
                 if (player.hasPermission("bingo.admin")) {
-                    new TranslatedMessage(BingoTranslation.COMMAND_USAGE).color(ChatColor.RED).arg("/bingo [getcard | stats | start | end | join | vote | back | leave | deathmatch | creator | teams | kit | wait | teamedit]").send(player);
+                    //FIXME: reimplement
+//                    new TranslatedMessage(BingoTranslation.COMMAND_USAGE).color(ChatColor.RED).arg("/bingo [getcard | stats | start | end | join | vote | back | leave | deathmatch | creator | teams | kit | wait | teamedit]").send(player);
                 } else {
-                    new TranslatedMessage(BingoTranslation.COMMAND_USAGE).color(ChatColor.RED).arg("/bingo [getcard | stats | join | vote | back | leave]").send(player);
+//                    new TranslatedMessage(BingoTranslation.COMMAND_USAGE).color(ChatColor.RED).arg("/bingo [getcard | stats | join | vote | back | leave]").send(player);
                 }
             }
         }
@@ -239,21 +243,22 @@ public class BingoCommand implements TabExecutor
         kitName.append(kitNameParts.get(kitNameParts.size() - 1));
 
         if (!PlayerKit.assignCustomKit(kitName.toString(), kit, commandSender)) {
-            BaseComponent msg = new TextComponent("");
-            msg.setColor(ChatColor.RED);
-            msg.addExtra("Cannot add custom kit ");
-            msg.addExtra(BingoTranslation.convertColors(kitName.toString()));
-            msg.addExtra(" to slot " + slot + ", this slot already contains kit ");
-            msg.addExtra(PlayerKit.getCustomKit(kit).getName());
-            msg.addExtra(". Remove it first!");
-            Message.sendDebug(msg, commandSender);
+            //FIXME: reimplement
+//            BaseComponent msg = new TextComponent("");
+//            msg.setColor(ChatColor.RED);
+//            msg.addExtra("Cannot add custom kit ");
+//            msg.addExtra(BingoTranslation.convertColors(kitName.toString()));
+//            msg.addExtra(" to slot " + slot + ", this slot already contains kit ");
+//            msg.addExtra(PlayerKit.getCustomKit(kit).getName());
+//            msg.addExtra(". Remove it first!");
+//            Message.sendDebug(msg, commandSender);
         } else {
-            BaseComponent msg = new TextComponent("");
-            msg.setColor(ChatColor.GREEN);
-            msg.addExtra("Created custom kit ");
-            msg.addExtra(BingoTranslation.convertColors(kitName.toString()));
-            msg.addExtra(" in slot " + slot + " from your inventory");
-            Message.sendDebug(msg, commandSender);
+//            BaseComponent msg = new TextComponent("");
+//            msg.setColor(ChatColor.GREEN);
+//            msg.addExtra("Created custom kit ");
+//            msg.addExtra(BingoTranslation.convertColors(kitName.toString()));
+//            msg.addExtra(" in slot " + slot + " from your inventory");
+//            Message.sendDebug(msg, commandSender);
         }
     }
 
@@ -286,7 +291,7 @@ public class BingoCommand implements TabExecutor
             msg.addExtra(" from slot " + slot);
             PlayerKit.removeCustomKit(kit);
         }
-        Message.sendDebug(msg, commandSender);
+//        Message.sendDebug(msg, commandSender);
     }
 
     public void givePlayerBingoItem(Player player, String itemName) {

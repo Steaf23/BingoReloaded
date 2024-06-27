@@ -8,12 +8,18 @@ import io.github.steaf23.bingoreloaded.placeholder.BingoPlaceholderFormatter;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.util.*;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentBuilder;
+import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import net.kyori.adventure.util.HSVLike;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.jetbrains.annotations.NotNull;
+
 
 import java.awt.*;
 import java.util.*;
@@ -35,13 +41,14 @@ public class SoloTeamManager implements TeamManager
         this.teamData = new TeamData();
         this.teams = new BingoTeamContainer();
 
-        this.autoTeam = new BingoTeam("auto", ChatColor.of("#fdffa8"), BingoTranslation.TEAM_AUTO.translate(), createPrefix(ChatColor.of("#fdffa8")));
+        TextColor autoTeamColor = TextColor.fromHexString("#fdffa8");
+        this.autoTeam = new BingoTeam("auto", autoTeamColor, BingoTranslation.TEAM_AUTO.translate(), createPrefix(autoTeamColor));
         this.teams.addTeam(autoTeam);
     }
 
-    private BaseComponent createPrefix(ChatColor color) {
+    private Component createPrefix(TextColor color) {
         String prefixFormat = new BingoPlaceholderFormatter().getTeamFullFormat();
-        BaseComponent prefix = TextComponent.fromLegacy(BingoPlaceholderFormatter.createLegacyTextFromMessage(prefixFormat, color.toString(), "✦") + " ");
+        Component prefix = LegacyComponentSerializer.legacySection().deserialize(BingoPlaceholderFormatter.createLegacyTextFromMessage(prefixFormat, color.toString(), "✦") + " ");
         return prefix;
     }
 
@@ -49,7 +56,7 @@ public class SoloTeamManager implements TeamManager
     BingoParticipant getPlayer(BingoTeam team) {
         Optional<BingoParticipant> participant = team.getMembers().stream().findFirst();
         if (participant.isEmpty()) {
-            Message.error("Team " + team.getColoredName().toLegacyText() + "does not have a player!");
+            Message.error("Team " + LegacyComponentSerializer.legacySection().serialize(team.getColoredName()) + "does not have a player!");
             return null;
         }
         return team.getMembers().stream().findFirst().get();
@@ -65,7 +72,7 @@ public class SoloTeamManager implements TeamManager
         return null;
     }
 
-    private ChatColor determineTeamColor() {
+    private TextColor determineTeamColor() {
         // pick a new color based on participant count,
         // works kinda like how you choose pivots for quicksort in that no 2 similar colors should be selected one after another
         int max = 256;
@@ -85,8 +92,7 @@ public class SoloTeamManager implements TeamManager
         }
         int hue = max / divider * multiplier;
 
-        Color col = Color.getHSBColor(hue / 256.0f, 0.7f, 1.0f);
-        return ChatColor.of(col);
+        return TextColor.color(HSVLike.hsvLike(hue / 256.0f, 0.7f, 1.0f));
     }
 
     @Override
@@ -110,16 +116,17 @@ public class SoloTeamManager implements TeamManager
     }
 
     public void setupParticipant(BingoParticipant participant) {
-        ChatColor teamColor = determineTeamColor();
+        TextColor teamColor = determineTeamColor();
         // create a team where the id is the same as the participant's id, which is good enough for our use case.
         BingoTeam team = new BingoTeam(participant.getId().toString(), teamColor, participant.getDisplayName(), createPrefix(teamColor));
         team.addMember(participant);
         teams.addTeam(team);
 
         participant.sessionPlayer().ifPresent(p -> {
-            new TranslatedMessage(BingoTranslation.JOIN).color(ChatColor.GREEN)
-                    .arg(team.getColoredName())
-                    .send(p);
+            //FIXME: re-add
+//            new TranslatedMessage(BingoTranslation.JOIN).color(ChatColor.GREEN)
+//                    .arg(team.getColoredName())
+//                    .send(p);
         });
 
         var joinEvent = new ParticipantJoinedTeamEvent(participant, team, session);
@@ -154,8 +161,8 @@ public class SoloTeamManager implements TeamManager
         var countChangedEvent = new ParticipantCountChangedEvent(session, memberCount - 1, memberCount);
 
         player.sessionPlayer().ifPresent(p -> {
-            new TranslatedMessage(BingoTranslation.JOIN_AUTO).color(ChatColor.GREEN)
-                    .send(p);
+//            new TranslatedMessage(BingoTranslation.JOIN_AUTO).color(ChatColor.GREEN)
+//                    .send(p);
         });
         return true;
     }
@@ -173,7 +180,7 @@ public class SoloTeamManager implements TeamManager
         var countChangedEvent = new ParticipantCountChangedEvent(session, memberCount + 1, memberCount);
 
         member.sessionPlayer().ifPresent(player -> {
-            new TranslatedMessage(BingoTranslation.LEAVE).color(ChatColor.RED).send(player);
+//            new TranslatedMessage(BingoTranslation.LEAVE).color(ChatColor.RED).send(player);
         });
         return true;
     }
@@ -199,9 +206,9 @@ public class SoloTeamManager implements TeamManager
                 if (!session.isRunning()) {
                     return;
                 }
-                new TranslatedMessage(BingoTranslation.JOIN).color(ChatColor.GREEN)
-                        .arg(participant.getTeam().getColoredName())
-                        .send(player);
+//                new TranslatedMessage(BingoTranslation.JOIN).color(ChatColor.GREEN)
+//                        .arg(participant.getTeam().getColoredName())
+//                        .send(player);
             });
             return;
         }

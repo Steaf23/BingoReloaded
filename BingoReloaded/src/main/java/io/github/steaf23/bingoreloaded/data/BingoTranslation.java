@@ -2,18 +2,13 @@ package io.github.steaf23.bingoreloaded.data;
 
 import io.github.steaf23.bingoreloaded.util.CollectionHelper;
 import io.github.steaf23.bingoreloaded.util.Message;
-import io.github.steaf23.easymenulib.util.ChatComponentUtils;
 import io.github.steaf23.easymenulib.util.SmallCaps;
-import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
-import net.md_5.bungee.api.chat.TextComponent;
-import net.milkbowl.vault.chat.Chat;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.configuration.file.FileConfiguration;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -146,13 +141,13 @@ public enum BingoTranslation
     private final String key;
     private String translation;
 
-    private static final Pattern HEX_PATTERN = Pattern.compile("\\{#[a-fA-F0-9]{6}\\}");
-    private static final Pattern SMALL_CAPS_PATTERN = Pattern.compile("\\{@.+\\}");
-    private static final Pattern SUBSTITUTE_PATTERN = Pattern.compile("\\{\\$(?<key>[\\w.]+)(\\((?<args>.+)\\))?\\}");
+    private static final Pattern HEX_PATTERN = Pattern.compile("\\{#[a-fA-F0-9]{6}}");
+    private static final Pattern SMALL_CAPS_PATTERN = Pattern.compile("\\{@.+}");
+    private static final Pattern SUBSTITUTE_PATTERN = Pattern.compile("\\{\\$(?<key>[\\w.]+)(\\((?<args>.+)\\))?}");
 
     BingoTranslation(String key) {
         this.key = key;
-        this.translation = ChatColor.GRAY + key;
+        this.translation = NamedTextColor.GRAY + key;
     }
 
     public static void setLanguage(FileConfiguration text, FileConfiguration fallbackText) {
@@ -175,47 +170,47 @@ public enum BingoTranslation
     }
 
     /**
-     * convert translated string with arguments to ItemText and preserve argument order, like translate() does
+     * convert translated string with arguments to Component and preserve argument order, like translate() does
      *
      * @param args
      * @return An array of itemText where each element is a line,
      * where each line is split using '\n' in the translated string.
      */
-    public BaseComponent[] asComponent(Set<ChatColor> modifiers, boolean useSmallCaps, BaseComponent... args) {
-        //TODO: fix issue where raw translations cannot convert the colors defined in lang files properly on items
-        String rawTranslation = translation;
-        rawTranslation = convertColors(rawTranslation);
-        TextComponent.fromLegacyText(rawTranslation);
-
-        List<BaseComponent> result = new ArrayList<>();
-        String[] lines = rawTranslation.split("\\n");
-        String[] pieces;
-        for (int i = 0; i < lines.length; i++) {
-            ComponentBuilder lineBuilder = ChatComponentUtils.formattedBuilder(modifiers.toArray(new ChatColor[]{}));
-            pieces = lines[i].split("\\{");
-            for (String piece : pieces) {
-                String pieceToAdd = piece;
-                for (int argIdx = 0; argIdx < args.length; argIdx++) {
-                    if (pieceToAdd.contains(argIdx + "}")) {
-                        lineBuilder.append(args[argIdx]);
-                        pieceToAdd = pieceToAdd.replace(i + "}", "");
-                        break;
-                    }
-                }
-                if (useSmallCaps)
-                    lineBuilder.append(ChatComponentUtils.smallCaps(pieceToAdd));
-                else
-                    lineBuilder.append(pieceToAdd);
-            }
-            result.add(lineBuilder.build());
-        }
-        return result.toArray(new BaseComponent[]{});
+    public Component[] asComponent(Component... args) {
+//        //TODO: fix issue where raw translations cannot convert the colors defined in lang files properly on items
+            //FIXME: reimplement using adventure component
+//        String rawTranslation = translation;
+//        rawTranslation = convertColors(rawTranslation);
+//
+//
+//        Component c = new ComponentBuilder<>();
+//        String[] lines = rawTranslation.split("\\n");
+//        String[] pieces;
+//        for (int i = 0; i < lines.length; i++) {
+//            pieces = lines[i].split("\\{");
+//            for (String piece : pieces) {
+//                String pieceToAdd = piece;
+//                for (int argIdx = 0; argIdx < args.length; argIdx++) {
+//                    if (pieceToAdd.contains(argIdx + "}")) {
+//                        lineBuilder.append(args[argIdx]);
+//                        pieceToAdd = pieceToAdd.replace(i + "}", "");
+//                        break;
+//                    }
+//                }
+//                if (useSmallCaps)
+//                    lineBuilder.append(ChatComponentUtils.smallCaps(pieceToAdd));
+//                else
+//                    lineBuilder.append(pieceToAdd);
+//            }
+//            result.add(lineBuilder.build());
+//        }
+//        return result.toArray(new BaseComponent[]{});
+        return new Component[]{Component.text(translation)};
     }
 
-    public BaseComponent[] asComponent(Set<ChatColor> modifiers, BaseComponent... args) {
-        return asComponent(modifiers, false, args);
+    public Component asSingleComponent(Component... args) {
+        return Component.text().append(asComponent(args)).build();
     }
-
     /**
      * @param input The input string, can look something like this: "{#00bb33}Hello, I like to &2&lDance && &rSing!"
      * @return Legacy text string that can be used in TextComponent#fromLegacyText
@@ -228,8 +223,8 @@ public enum BingoTranslation
         Matcher matcher = HEX_PATTERN.matcher(part);
         while (matcher.find()) {
             String match = matcher.group();
-            String color = match.replaceAll("[\\{\\}]", "");
-            part = part.replace(match, "" + net.md_5.bungee.api.ChatColor.of(color));
+            String color = match.replaceAll("[{#}]", "");
+            part = part.replace(match, "" + TextColor.fromHexString(color));
         }
 
         return part;

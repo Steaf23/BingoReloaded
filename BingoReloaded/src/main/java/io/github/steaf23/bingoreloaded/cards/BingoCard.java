@@ -11,6 +11,8 @@ import io.github.steaf23.bingoreloaded.tasks.*;
 import io.github.steaf23.bingoreloaded.tasks.tracker.TaskProgressTracker;
 import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.easymenulib.inventory.MenuBoard;
+import io.github.steaf23.easymenulib.util.ChatComponentUtils;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
@@ -37,8 +39,8 @@ public class BingoCard
         this.tasks = new ArrayList<>();
         this.menu = menu;
         this.progressTracker = progressTracker;
-        menu.setInfo(BingoTranslation.INFO_REGULAR_NAME.translate(),
-                BingoTranslation.INFO_REGULAR_DESC.translate().split("\\n"));
+        menu.setInfo(Component.text().append(BingoTranslation.INFO_REGULAR_NAME.asComponent()).build(),
+                ChatComponentUtils.createComponentsFromString(BingoTranslation.INFO_REGULAR_DESC.translate().split("\\n")));
     }
 
     /**

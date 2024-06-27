@@ -13,11 +13,14 @@ import io.github.steaf23.easymenulib.inventory.MenuBoard;
 import io.github.steaf23.easymenulib.inventory.PaginatedSelectionMenu;
 import io.github.steaf23.easymenulib.inventory.item.ItemTemplate;
 import io.github.steaf23.easymenulib.util.ChatComponentUtils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextDecoration;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.w3c.dom.Text;
 
 import java.util.*;
 
@@ -59,7 +62,7 @@ public class TeamSelectionMenu extends PaginatedSelectionMenu
         super.beforeOpening(player);
 
         List<ItemTemplate> optionItems = new ArrayList<>();
-        ItemTemplate autoItem = new ItemTemplate(Material.NETHER_STAR, "" + ChatColor.BOLD + ChatColor.ITALIC + BingoTranslation.TEAM_AUTO.translate())
+        ItemTemplate autoItem = new ItemTemplate(Material.NETHER_STAR, BingoTranslation.TEAM_AUTO.asSingleComponent().decorate(TextDecoration.BOLD, TextDecoration.ITALIC))
                 .setCompareKey("item_auto");
         if (player instanceof Player gamePlayer) {
             Optional<BingoTeam> autoTeamOpt = teamManager.getActiveTeams().getTeams().stream()
@@ -89,7 +92,7 @@ public class TeamSelectionMenu extends PaginatedSelectionMenu
             autoItem.addDescription("joined", 1, description.toArray(new String[]{}));
         }
         optionItems.add(autoItem);
-        optionItems.add(new ItemTemplate(Material.TNT, "" + ChatColor.BOLD + ChatColor.ITALIC + BingoTranslation.OPTIONS_LEAVE.translate())
+        optionItems.add(new ItemTemplate(Material.TNT, BingoTranslation.OPTIONS_LEAVE.asSingleComponent().decorate(TextDecoration.BOLD, TextDecoration.ITALIC))
                 .setGlowing(true).setCompareKey("item_leave"));
 
         var allTeams = teamManager.getJoinableTeams();
@@ -124,7 +127,7 @@ public class TeamSelectionMenu extends PaginatedSelectionMenu
             }
 
             optionItems.add(ItemTemplate.createColoredLeather(teamTemplate.color(), Material.LEATHER_HELMET)
-                    .setName(ChatComponentUtils.convert("" + teamTemplate.color() + ChatColor.BOLD + teamTemplate.name()))
+                    .setName(Component.text(teamTemplate.name()).color(teamTemplate.color()).decorate(TextDecoration.BOLD))
                     .setLore(ChatComponentUtils.createComponentsFromString(description.toArray(new String[]{})))
                     .setCompareKey(teamId)
                     .setGlowing(playersTeam));

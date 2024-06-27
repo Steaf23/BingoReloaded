@@ -3,6 +3,9 @@ package io.github.steaf23.bingoreloaded.tasks;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.easymenulib.util.ChatComponentUtils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -25,36 +28,37 @@ public record AdvancementTask(Advancement advancement) implements TaskData
     }
 
     @Override
-    public BaseComponent getName()
+    public Component getName()
     {
-        var builder = new ComponentBuilder("[").color(ChatColor.GREEN).italic(true);
+        var builder = Component.text("[").color(NamedTextColor.GREEN).decorate(TextDecoration.ITALIC);
 
         if (advancement == null)
         {
             Message.log("Could not get advancement, returning null!");
-            builder.append("no advancement?");
+            builder.append(Component.text("no advancement?"));
         }
         else
         {
             builder.append(ChatComponentUtils.advancementTitle(advancement));
         }
-        builder.append("]");
-        return builder.build();
+        builder.append(Component.text("]"));
+        return builder;
     }
 
     @Override
-    public BaseComponent[] getItemDescription()
+    public Component[] getItemDescription()
     {
-        return BingoTranslation.LORE_ADVANCEMENT.asComponent(Set.of(ChatColor.DARK_AQUA));
+        //FIXME: make dark aqua
+        return BingoTranslation.LORE_ADVANCEMENT.asComponent();
     }
 
     // This method exists because advancement descriptions can contain newlines,
     // which makes it impossible to use as item names or descriptions without getting a missing character.
     @Override
-    public BaseComponent getChatDescription()
+    public Component getChatDescription()
     {
-        BaseComponent component = ChatComponentUtils.advancementDescription(advancement);
-        component.setColor(ChatColor.DARK_AQUA);
+        Component component = ChatComponentUtils.advancementDescription(advancement)
+                .color(NamedTextColor.DARK_AQUA);
         return component;
     }
 

@@ -16,6 +16,8 @@ import io.github.steaf23.bingoreloaded.util.TranslatedMessage;
 import io.github.steaf23.bingoreloaded.util.timer.CountdownTimer;
 import io.github.steaf23.easymenulib.inventory.MenuBoard;
 import io.github.steaf23.easymenulib.scoreboard.HUDRegistry;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -68,15 +70,15 @@ public class PregameLobby implements GamePhase
         }
 
         playerCountTimer.addNotifier(time -> {
-            settingsHUD.setStatus(BingoTranslation.STARTING_STATUS.translate(String.valueOf(time)));
+            settingsHUD.setStatus(BingoTranslation.STARTING_STATUS.asSingleComponent(Component.text(String.valueOf(time))));
             if (time == 10) {
-                new TranslatedMessage(BingoTranslation.STARTING_STATUS).arg("" + time).color(ChatColor.GOLD).sendAll(session);
+                new TranslatedMessage(BingoTranslation.STARTING_STATUS).arg(Component.text(time).color(NamedTextColor.GOLD)).sendAll(session);
             }
             if (time == 0) {
                 gameStarted = true;
                 session.startGame();
             } else if (time <= 5) {
-                new TranslatedMessage(BingoTranslation.STARTING_STATUS).arg("" + time).color(ChatColor.RED).sendAll(session);
+                new TranslatedMessage(BingoTranslation.STARTING_STATUS).arg(Component.text(time).color(NamedTextColor.RED)).sendAll(session);
             }
         });
     }
@@ -106,7 +108,8 @@ public class PregameLobby implements GamePhase
         if (tuple.length != 2) {
             return;
         }
-        sendVoteCountMessage(count, BingoTranslation.OPTIONS_GAMEMODE.translate(), BingoGamemode.fromDataString(tuple[0]).displayName + " " + tuple[1] + "x" + tuple[1]);
+        //FIXME: use gamemode display name from config
+        sendVoteCountMessage(count, BingoTranslation.OPTIONS_GAMEMODE.translate(), tuple[0] + " " + tuple[1] + "x" + tuple[1]);
     }
 
     public void voteCard(String card, HumanEntity player) {
@@ -152,11 +155,12 @@ public class PregameLobby implements GamePhase
                 count++;
             }
         }
-        sendVoteCountMessage(count, BingoTranslation.OPTIONS_KIT.translate(), PlayerKit.fromConfig(kit).getDisplayName());
+        //FIXME: use actual name
+        sendVoteCountMessage(count, BingoTranslation.OPTIONS_KIT.translate(), PlayerKit.fromConfig(kit).configName);
     }
 
     public void sendVoteCountMessage(int count, String category, String voteItem) {
-        new TranslatedMessage(BingoTranslation.VOTE_COUNT).arg(String.valueOf(count)).color(ChatColor.GOLD).arg(category).arg(voteItem)
+        new TranslatedMessage(BingoTranslation.VOTE_COUNT).arg(Component.text(count).color(NamedTextColor.GOLD)).arg(category).arg(voteItem)
                 .sendAll(session);
     }
 
@@ -254,7 +258,7 @@ public class PregameLobby implements GamePhase
 
         playerCountTimer.start();
         if (playerCountTimer.getTime() > 10) {
-            new TranslatedMessage(BingoTranslation.STARTING_STATUS).arg("" + config.playerWaitTime).color(ChatColor.GOLD).sendAll(session);
+            new TranslatedMessage(BingoTranslation.STARTING_STATUS).arg(Component.text(config.playerWaitTime).color(NamedTextColor.GOLD)).sendAll(session);
         }
     }
 
@@ -339,11 +343,11 @@ public class PregameLobby implements GamePhase
         if (event.getParticipant() != null) {
             event.getParticipant().sessionPlayer().ifPresent(p -> settingsHUD.addPlayer(p));
         }
-        settingsHUD.setStatus(BingoTranslation.PLAYER_STATUS.translate("" + session.teamManager.getParticipantCount()));
+        settingsHUD.setStatus(BingoTranslation.PLAYER_STATUS.asSingleComponent(Component.text(session.teamManager.getParticipantCount())));
 
         if (playerCountTimer.isRunning() && playerCountTimer.getTime() > 10) {
             event.getParticipant().sessionPlayer().ifPresent(p -> {
-                new TranslatedMessage(BingoTranslation.STARTING_STATUS).arg("" + playerCountTimer.getTime()).color(ChatColor.GOLD).send(p);
+                new TranslatedMessage(BingoTranslation.STARTING_STATUS).arg(Component.text(playerCountTimer.getTime()).color(NamedTextColor.GOLD)).send(p);
             });
         }
 
@@ -355,9 +359,9 @@ public class PregameLobby implements GamePhase
         int playerCount = session.teamManager.getParticipantCount();
 
         if (playerCount == 0) {
-            settingsHUD.setStatus(BingoTranslation.WAIT_STATUS.translate());
+            settingsHUD.setStatus(BingoTranslation.WAIT_STATUS.asSingleComponent());
         } else {
-            settingsHUD.setStatus(BingoTranslation.PLAYER_STATUS.translate("" + playerCount));
+            settingsHUD.setStatus(BingoTranslation.PLAYER_STATUS.asSingleComponent(Component.text("" + playerCount)));
         }
 
         // Schedule check in the future since a player can switch teams where they will briefly leave the team

@@ -3,7 +3,9 @@ package io.github.steaf23.easymenulib.inventory;
 import io.github.steaf23.easymenulib.EasyMenuLibrary;
 import io.github.steaf23.easymenulib.inventory.item.ItemTemplate;
 import io.github.steaf23.easymenulib.inventory.item.action.MenuAction;
-import net.md_5.bungee.api.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
@@ -25,9 +27,15 @@ public class BasicMenu implements Menu
 
     public static String pluginTitlePrefix = "";
 
-    protected static final String TITLE_PREFIX = "" + ChatColor.GOLD + ChatColor.BOLD;
-    protected static final ChatColor[] TITLE_PREFIX_ARRAY = new ChatColor[] {ChatColor.GOLD, ChatColor.BOLD};
-    protected static ItemTemplate BLANK = new ItemTemplate(Material.BLACK_STAINED_GLASS_PANE, "")
+    protected static final Component applyTitleFormat(Component to) {
+        return to.color(NamedTextColor.GOLD).decorate(TextDecoration.BOLD);
+    }
+
+    protected static final Component applyTitleFormat(String to) {
+        return Component.text(to).color(NamedTextColor.GOLD).decorate(TextDecoration.BOLD);
+    }
+
+    protected static ItemTemplate BLANK = new ItemTemplate(Material.BLACK_STAINED_GLASS_PANE, null)
             .addMetaModifier(meta -> {
                 meta.setHideTooltip(true);
                 return meta;

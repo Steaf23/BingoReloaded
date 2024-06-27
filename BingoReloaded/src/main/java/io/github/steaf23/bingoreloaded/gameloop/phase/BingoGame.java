@@ -29,6 +29,9 @@ import io.github.steaf23.bingoreloaded.util.timer.CounterTimer;
 import io.github.steaf23.bingoreloaded.util.timer.GameTimer;
 import io.github.steaf23.easymenulib.util.ChatComponentUtils;
 import io.github.steaf23.easymenulib.util.PDCHelper;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -84,8 +87,8 @@ public class BingoGame implements GamePhase
             timer = new CounterTimer();
         timer.addNotifier(time ->
         {
-            Message timerMessage = timer.getTimeDisplayMessage(false);
-            actionBarManager.requestMessage(timerMessage::asComponent, 0);
+            Component timerMessage = timer.getTimeDisplayMessage(false);
+            actionBarManager.requestMessage(p -> timerMessage, 0);
             actionBarManager.update();
             getProgressTracker().updateStatisticProgress();
             scoreboard.updateVisible();
@@ -120,17 +123,18 @@ public class BingoGame implements GamePhase
         new TranslatedMessage(BingoTranslation.GIVE_CARDS).sendAll(session);
         teleportPlayersToStart(world);
 
-        BaseComponent hoverMessage = new ComponentBuilder()
-                .append(BingoTranslation.OPTIONS_GAMEMODE.translate()).append(": ").append(settings.mode().displayName).append(" ").append(settings.size().toString()).append("\n")
-                .append(BingoTranslation.OPTIONS_KIT.translate()).append(": ").append(settings.kit().getDisplayName()).append("\n")
-                .append(BingoTranslation.OPTIONS_EFFECTS.translate()).append(": ").append(EffectOptionFlags.effectsToString(settings.effects()))
-                .append(BingoTranslation.DURATION.translate(settings.enableCountdown() ? GameTimer.getTimeAsString(settings.countdownDuration() * 60) : "∞"))
-                .build();
-        BaseComponent[] settingsMessage = Message.createHoverCommandMessage(
-                new TextComponent(),
-                new TextComponent(BingoTranslation.SETTINGS_HOVER.translate()),
-                hoverMessage,
-                new TextComponent(), null);
+        //FIXME: reimplement
+//        BaseComponent hoverMessage = new ComponentBuilder()
+//                .append(BingoTranslation.OPTIONS_GAMEMODE.translate()).append(": ").append(settings.mode().displayName).append(" ").append(settings.size().toString()).append("\n")
+//                .append(BingoTranslation.OPTIONS_KIT.translate()).append(": ").append(settings.kit().getDisplayName()).append("\n")
+//                .append(BingoTranslation.OPTIONS_EFFECTS.translate()).append(": ").append(EffectOptionFlags.effectsToString(settings.effects()))
+//                .append(BingoTranslation.DURATION.translate(settings.enableCountdown() ? GameTimer.getTimeAsString(settings.countdownDuration() * 60) : "∞"))
+//                .build();
+//        BaseComponent[] settingsMessage = Message.createHoverCommandMessage(
+//                new TextComponent(),
+//                new TextComponent(BingoTranslation.SETTINGS_HOVER.translate()),
+//                hoverMessage,
+//                new TextComponent(), null);
 
         getTeamManager().getParticipants().forEach(p ->
         {
@@ -142,9 +146,9 @@ public class BingoGame implements GamePhase
                 player.setLevel(0);
                 player.setExp(0.0f);
                 scoreboard.addPlayer(player);
-                player.spigot().sendMessage(new TextComponent());
-                player.spigot().sendMessage(settingsMessage);
-                player.spigot().sendMessage(new TextComponent());
+//                player.spigot().sendMessage(new TextComponent());
+//                player.spigot().sendMessage(settingsMessage);
+//                player.spigot().sendMessage(new TextComponent());
             }
             else {
                 // If the player is not online, we can remove them from the game, as they probably did not intend on playing in this session
@@ -177,17 +181,18 @@ public class BingoGame implements GamePhase
                 pitch = 0.890899f;
             }
 
-            Message timeDisplay = new Message(timeString).bold().color(color);
-            teamManager.getParticipants().forEach(p ->
-                    p.sessionPlayer().ifPresent(player -> {
-                        Message.sendTitleMessage(timeDisplay, new Message(), player);
-                    }));
-            if (time <= startingTimer.lowThreshold && time > 0) {
-                var soundEvent = new BingoPlaySoundEvent(session, Sound.BLOCK_NOTE_BLOCK_BIT, 1.2f - time / 10.0f + 0.2f, pitch);
-                var soundEvent2 = new BingoPlaySoundEvent(session, Sound.BLOCK_NOTE_BLOCK_PLING, 1.2f - time / 10.0f + 0.2f, pitch);
-                Bukkit.getPluginManager().callEvent(soundEvent);
-                Bukkit.getPluginManager().callEvent(soundEvent2);
-            }
+            //FIXME: reimplement
+//            Message timeDisplay = new Message(timeString).bold().color(color);
+//            teamManager.getParticipants().forEach(p ->
+//                    p.sessionPlayer().ifPresent(player -> {
+//                        Message.sendTitleMessage(timeDisplay, new Message(), player);
+//                    }));
+//            if (time <= startingTimer.lowThreshold && time > 0) {
+//                var soundEvent = new BingoPlaySoundEvent(session, Sound.BLOCK_NOTE_BLOCK_BIT, 1.2f - time / 10.0f + 0.2f, pitch);
+//                var soundEvent2 = new BingoPlaySoundEvent(session, Sound.BLOCK_NOTE_BLOCK_PLING, 1.2f - time / 10.0f + 0.2f, pitch);
+//                Bukkit.getPluginManager().callEvent(soundEvent);
+//                Bukkit.getPluginManager().callEvent(soundEvent2);
+//            }
         });
         BingoReloaded.scheduleTask(task -> startingTimer.start(), BingoReloaded.ONE_SECOND);
     }
@@ -199,7 +204,7 @@ public class BingoGame implements GamePhase
     public void end(@Nullable BingoTeam winningTeam) {
         // If the starting timer was still running
         startingTimer.stop();
-        timer.getTimeDisplayMessage(false).sendAll(session);
+        Message.sendAll(timer.getTimeDisplayMessage(false), session);
         timer.stop();
 
         if (!config.keepScoreboardVisible) {
@@ -307,8 +312,8 @@ public class BingoGame implements GamePhase
 
                 p.showDeathMatchTask(deathMatchTask);
                 Message.sendTitleMessage(
-                        "" + ChatColor.BOLD + ChatColor.GOLD + "GO",
-                        "" + ChatColor.DARK_PURPLE + ChatColor.ITALIC + BingoTranslation.DEATHMATCH_SEARCH.translate(),
+                        Component.text("GO").color(NamedTextColor.GOLD).decorate(TextDecoration.BOLD),
+                        BingoTranslation.DEATHMATCH_SEARCH.asSingleComponent().color(NamedTextColor.DARK_PURPLE).decorate(TextDecoration.ITALIC),
                         p.sessionPlayer().get());
             }
 
@@ -326,7 +331,7 @@ public class BingoGame implements GamePhase
             if (p.sessionPlayer().isEmpty())
                 continue;
 
-            Message.sendTitleMessage(color + "" + countdown, "", p.sessionPlayer().get());
+            Message.sendTitleMessage(Component.text(color + "" + countdown), Component.empty(), p.sessionPlayer().get());
             Message.sendDebug(color + "" + countdown, p.sessionPlayer().get());
         }
 
@@ -335,8 +340,8 @@ public class BingoGame implements GamePhase
 
     public void teleportPlayerAfterDeath(Player player) {
         if (player == null) return;
-        respawnManager.removeDeadPlayer(player.getUniqueId()).ifPresentOrElse(location -> player.teleport(location, PlayerTeleportEvent.TeleportCause.PLUGIN),
-                () -> new TranslatedMessage(BingoTranslation.RESPAWN_EXPIRED).color(ChatColor.RED).send(player));
+        respawnManager.removeDeadPlayer(player.getUniqueId()).ifPresent(location -> player.teleport(location, PlayerTeleportEvent.TeleportCause.PLUGIN));
+        //FIXME: reimplement ifPresentOrElse: new TranslatedMessage(BingoTranslation.RESPAWN_EXPIRED).color(ChatColor.RED).send(player));
     }
 
     public static void spawnPlatform(Location platformLocation, int size, boolean clearArea) {
@@ -497,12 +502,13 @@ public class BingoGame implements GamePhase
             Message.warn("Task not completed correctly...? (Please report!)");
             return;
         }
-
-        new TranslatedMessage(BingoTranslation.COMPLETED).color(ChatColor.AQUA)
-                .arg(event.getTask().data.getName())
-                .arg(ChatComponentUtils.convert(participant.getDisplayName(), participant.getTeam().getColor(), ChatColor.BOLD))
-                .arg(timeString).color(ChatColor.WHITE)
-                .sendAll(session);
+        //FIXME: reimplement
+//
+//        new TranslatedMessage(BingoTranslation.COMPLETED).color(ChatColor.AQUA)
+//                .arg(event.getTask().data.getName())
+//                .arg(ChatComponentUtils.convert(participant.getDisplayName(), participant.getTeam().getColor(), ChatColor.BOLD))
+//                .arg(timeString).color(ChatColor.WHITE)
+//                .sendAll(session);
 
         var soundEvent = new BingoPlaySoundEvent(session, Sound.ENTITY_DRAGON_FIREBALL_EXPLODE);
         Bukkit.getPluginManager().callEvent(soundEvent);
@@ -603,9 +609,9 @@ public class BingoGame implements GamePhase
 
         Location deathCoords = event.getEntity().getLocation();
         if (config.teleportAfterDeath) {
-            BaseComponent[] teleportMsg = Message.createHoverCommandMessage(BingoTranslation.RESPAWN, "/bingo back");
+            Component teleportMsg = Message.createHoverCommandMessage(BingoTranslation.RESPAWN, "/bingo back");
 
-            event.getEntity().spigot().sendMessage(teleportMsg);
+            event.getEntity().sendMessage(teleportMsg);
             respawnManager.addPlayer(event.getEntity().getUniqueId(), deathCoords);
         }
     }

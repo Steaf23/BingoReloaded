@@ -2,12 +2,12 @@ package io.github.steaf23.bingoreloaded.data.world;
 
 import io.github.steaf23.bingoreloaded.data.helper.ResourceFileHelper;
 import io.github.steaf23.bingoreloaded.util.Message;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import org.codehaus.plexus.util.FileUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -24,7 +24,7 @@ public class WorldData
     public static boolean clearWorlds(@NotNull JavaPlugin plugin) {
         String worldFolder = getWorldsFolder(plugin);
         File worldsFolderDir = FileUtils.getFile(worldFolder);
-        for (File f : FileUtils.listFilesAndDirs(worldsFolderDir, FileFilterUtils.directoryFileFilter(), null)) {
+        for (File f : worldsFolderDir.listFiles(File::isDirectory)) {
             if (f.equals(worldsFolderDir)) continue;
 
             String worldName = f.getName();

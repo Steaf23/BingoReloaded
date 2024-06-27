@@ -1,15 +1,18 @@
 package io.github.steaf23.easymenulib.inventory.item;
 
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.Multimap;
 import io.github.steaf23.easymenulib.inventory.BasicMenu;
 import io.github.steaf23.easymenulib.inventory.item.action.MenuAction;
 import io.github.steaf23.easymenulib.util.ChatComponentUtils;
 import io.github.steaf23.easymenulib.util.ExtraMath;
-import io.github.steaf23.easymenulib.util.FlexColor;
 import io.github.steaf23.easymenulib.util.PDCHelper;
-import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.TextComponent;
-import org.bukkit.Bukkit;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.TextColor;
+
+import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
@@ -33,19 +36,19 @@ public class ItemTemplate
     public static final Set<Material> LEATHER_ARMOR = Set.of(Material.LEATHER_CHESTPLATE, Material.LEATHER_BOOTS, Material.LEATHER_LEGGINGS, Material.LEATHER_HELMET);
 
     // higher priorities appear lower on the item description
-    record DescriptionSection(int priority, BaseComponent[] text)
+    record DescriptionSection(int priority, Component[] text)
     {
     }
 
     private int slot = 0;
     private Material material;
-    private BaseComponent name;
-    private Map<String, DescriptionSection> description = new HashMap<>();
+    private Component name;
+    private final Map<String, DescriptionSection> description = new HashMap<>();
     private int amount = 1;
     private boolean glowing = false;
     private String compareKey = null;
-    private Map<Enchantment, Integer> enchantments = new HashMap<>();
-    private List<Function<ItemMeta, ItemMeta>> metaModifiers = new ArrayList<>();
+    private final Map<Enchantment, Integer> enchantments = new HashMap<>();
+    private final List<Function<ItemMeta, ItemMeta>> metaModifiers = new ArrayList<>();
     private Integer maxDamage = null;
     private int currentDamage = 0;
 
@@ -55,7 +58,7 @@ public class ItemTemplate
         this.material = material;
     }
 
-    public ItemTemplate(Material material, BaseComponent name, BaseComponent... lore) {
+    public ItemTemplate(Material material, @Nullable Component name, Component... lore) {
         this.material = material;
         this.name = name;
         setLore(lore);
@@ -70,39 +73,27 @@ public class ItemTemplate
         this(ItemTemplate.slotFromXY(slotX, slotY), material);
     }
 
-    public ItemTemplate(int slotX, int slotY, Material material, BaseComponent name, BaseComponent... lore) {
+    public ItemTemplate(int slotX, int slotY, Material material, Component name, Component... lore) {
         this(ItemTemplate.slotFromXY(slotX, slotY), material, name, lore);
     }
 
-    public ItemTemplate(int slotX, int slotY, Material material, String name, String... lore) {
-        this(ItemTemplate.slotFromXY(slotX, slotY), material, TextComponent.fromLegacy(name), ChatComponentUtils.createComponentsFromString(lore));
-    }
-
-    public ItemTemplate(int slot, Material material, String name, String... lore) {
-        this(slot, material, TextComponent.fromLegacy(name), ChatComponentUtils.createComponentsFromString(lore));
-    }
-
-    public ItemTemplate(Material material, String name, String... lore) {
-        this(material, TextComponent.fromLegacy(name), ChatComponentUtils.createComponentsFromString(lore));
-    }
-
-    public ItemTemplate(int slot, Material material, BaseComponent name, BaseComponent... lore) {
+    public ItemTemplate(int slot, Material material, Component name, Component... lore) {
         this.slot = slot;
         this.material = material;
         this.name = name;
         setLore(lore);
     }
 
-    public @NotNull String getName() {
-        return name == null ? "" : name.toPlainText();
+    public @NotNull String getPlainTextName() {
+        return name == null ? "" : ((TextComponent) name).content();
     }
 
-    public ItemTemplate setName(@Nullable BaseComponent name) {
+    public ItemTemplate setName(@Nullable Component name) {
         this.name = name;
         return this;
     }
 
-    public ItemTemplate setLore(BaseComponent... lore) {
+    public ItemTemplate setLore(Component... lore) {
         if (lore.length == 0)
             return this;
 
@@ -113,7 +104,7 @@ public class ItemTemplate
         return addDescription(name, priority, ChatComponentUtils.createComponentsFromString(description));
     }
 
-    public ItemTemplate addDescription(String name, int priority, BaseComponent... description) {
+    public ItemTemplate addDescription(String name, int priority, Component... description) {
         if (description.length < 1) {
             return this;
         }
@@ -187,10 +178,10 @@ public class ItemTemplate
                 .get(PDCHelper.createKey("item.compare_key"), PersistentDataType.STRING));
     }
 
-    public ItemTemplate setLeatherColor(@NotNull ChatColor color) {
+    public ItemTemplate setLeatherColor(@NotNull TextColor color) {
         return addMetaModifier(meta -> {
             if (meta instanceof LeatherArmorMeta armorMeta) {
-                armorMeta.setColor(org.bukkit.Color.fromRGB(color.getColor().getRed(), color.getColor().getGreen(), color.getColor().getBlue()));
+                armorMeta.setColor(Color.fromRGB(color.red(), color.green(), color.blue()));
                 return armorMeta;
             }
             return meta;
@@ -270,19 +261,16 @@ public class ItemTemplate
 
     public ItemStack buildItem(boolean hideAttributes) {
         // To create the description, sort the sections based on priority and place all lines under each other.
-        List<BaseComponent> descriptionList = new ArrayList<>();
+        List<Component> descriptionList = new ArrayList<>();
         description.values().stream().sorted(Comparator.comparingInt(a -> a.priority)).forEach(section -> {
             descriptionList.addAll(Arrays.stream(section.text).toList());
-            descriptionList.add(new TextComponent(" "));
+            descriptionList.add(Component.text(" "));
         });
 
-        if (!descriptionList.isEmpty())
-        {
+        if (!descriptionList.isEmpty()) {
             descriptionList.remove(descriptionList.size() - 1);
         }
-        BaseComponent[] descriptionComponent = descriptionList.isEmpty() ? new BaseComponent[]{} : descriptionList.toArray(new BaseComponent[]{});
-        ItemStack stack = ChatComponentUtils.itemStackFromComponent(material, name, descriptionComponent);
-        stack.setAmount(amount);
+        ItemStack stack = new ItemStack(material, amount);
 
         if (glowing) {
             stack.addUnsafeEnchantment(Enchantment.UNBREAKING, 1);
@@ -291,6 +279,11 @@ public class ItemTemplate
         ItemMeta stackMeta = stack.getItemMeta();
         if (stackMeta == null) {
             return stack;
+        }
+
+        stackMeta.displayName(name);
+        if (!descriptionList.isEmpty()) {
+            stackMeta.lore(descriptionList);
         }
 
         if (maxDamage != null) {
@@ -304,10 +297,10 @@ public class ItemTemplate
         pdc = PDCHelper.addStringToPdc(pdc, "compare_key", compareKey);
 
         stackMeta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_UNBREAKABLE, ItemFlag.HIDE_DYE);
-
         if (hideAttributes) {
+            //FIXME: maybe change in the future if we need to have items to be used by the player with invisible attributes
+            stackMeta.setAttributeModifiers(ImmutableMultimap.of());
             stackMeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
-            stackMeta.addAttributeModifier(Attribute.GENERIC_SCALE, new AttributeModifier("dummy", 0, AttributeModifier.Operation.MULTIPLY_SCALAR_1));
         }
 
         for (Function<ItemMeta, ItemMeta> modifier : metaModifiers) {
@@ -322,12 +315,13 @@ public class ItemTemplate
         return 9 * slotY + slotX;
     }
 
-    public static @Nullable ItemTemplate createColoredLeather(ChatColor color, Material leatherMaterial) {
+    public static @Nullable ItemTemplate createColoredLeather(TextColor color, Material leatherMaterial) {
         if (!LEATHER_ARMOR.contains(leatherMaterial)) {
             leatherMaterial = Material.LEATHER_CHESTPLATE;
         }
 
-        ItemTemplate item = new ItemTemplate(leatherMaterial, ChatComponentUtils.convert(FlexColor.asHex(color), color));
+        //TODO: test this
+        ItemTemplate item = new ItemTemplate(leatherMaterial, Component.text(color.asHexString()).color(color));
         item.setLeatherColor(color);
         return item;
     }

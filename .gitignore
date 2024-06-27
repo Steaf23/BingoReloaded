@@ -29,3 +29,6 @@ hs_err_pid*
 qodana.yaml
 BingoReloaded/BingoReloaded.iml
 EasyMenuLib/EasyMenuLib.iml
+**/.gradle
+/BingoReloaded/build
+/EasyMenuLib/build

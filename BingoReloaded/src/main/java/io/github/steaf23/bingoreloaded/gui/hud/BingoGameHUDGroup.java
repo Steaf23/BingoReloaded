@@ -11,6 +11,7 @@ import io.github.steaf23.bingoreloaded.placeholder.BingoPlaceholderFormatter;
 import io.github.steaf23.easymenulib.scoreboard.HUDRegistry;
 import io.github.steaf23.easymenulib.scoreboard.PlayerHUD;
 import io.github.steaf23.easymenulib.scoreboard.PlayerHUDGroup;
+import net.kyori.adventure.text.Component;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -51,7 +52,7 @@ public class BingoGameHUDGroup extends PlayerHUDGroup
             case REGULAR -> score = "-----";
             case COMPLETE, LOCKOUT -> score = Integer.toString(settings.size().fullCardSize);
         }
-        registeredFields.put("win_goal", score);
+        registeredFields.put("win_goal", Component.text(score));
         updateVisible();
     }
 
@@ -98,7 +99,8 @@ public class BingoGameHUDGroup extends PlayerHUDGroup
                     }
                 });
 
-        registeredFields.put("team_info", teamInfoString.toString());
+        //FIXME: find a way to fix this
+        registeredFields.put("team_info", Component.text(teamInfoString.toString()));
         updateVisible();
     }
 

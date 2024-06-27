@@ -6,6 +6,10 @@ import io.github.steaf23.easymenulib.inventory.*;
 import io.github.steaf23.easymenulib.inventory.item.ItemTemplate;
 import io.github.steaf23.easymenulib.inventory.item.action.NameEditAction;
 import io.github.steaf23.easymenulib.util.ChatComponentUtils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
@@ -21,14 +25,14 @@ public class TeamEditorMenu extends PaginatedSelectionMenu
 {
     private final TeamData teamData;
 
-    private static final TeamData.TeamTemplate DEFAULT_NEW_TEAM = new TeamData.TeamTemplate("MyTeam", ChatColor.of("#808080"));
+    private static final TeamData.TeamTemplate DEFAULT_NEW_TEAM = new TeamData.TeamTemplate("MyTeam", TextColor.fromHexString("#808080"));
 
     private static final ItemTemplate RESTORE_DEFAULT = new ItemTemplate(2, 5, Material.TNT,
-            "" + ChatColor.RED + ChatColor.BOLD + "Restore Default Teams",
-            "This option will remove all created teams!");
+            Component.text("Restore Default Teams").color(NamedTextColor.RED).decorate(TextDecoration.BOLD),
+            Component.text("This option will remove all created teams!"));
 
     private static final ItemTemplate CREATE_TEAM = new ItemTemplate(6, 5, Material.EMERALD,
-            "" + ChatColor.GREEN + ChatColor.BOLD + "Create New Team");
+            Component.text("Create New Team").color(NamedTextColor.GREEN).decorate(TextDecoration.BOLD));
 
     public TeamEditorMenu(MenuBoard manager) {
         super(manager, "Edit Teams", new ArrayList<>(), FilterType.DISPLAY_NAME);
@@ -50,8 +54,8 @@ public class TeamEditorMenu extends PaginatedSelectionMenu
         for (String key : teamMap.keySet()) {
             TeamData.TeamTemplate template = teamMap.get(key);
             items.add(ItemTemplate.createColoredLeather(template.color(), Material.LEATHER_HELMET)
-                    .setName(ChatComponentUtils.convert("" + ChatColor.RESET + template.color() + ChatColor.BOLD + template.name()))
-                    .setLore(ChatComponentUtils.convert("id: " + ChatColor.GRAY + ChatColor.ITALIC + key))
+                    .setName(Component.text(template.name()).color(template.color()).decorate(TextDecoration.BOLD))
+                    .setLore(Component.text("id: ").append(Component.text(key).color(NamedTextColor.GRAY).decorate(TextDecoration.ITALIC)))
                     .setCompareKey(key));
         }
         addItemsToSelect(items);
@@ -89,7 +93,7 @@ public class TeamEditorMenu extends PaginatedSelectionMenu
             this.finishedCallback = callback;
 
             // Change the team name
-            ItemTemplate teamNameItem = new ItemTemplate(2, 1, Material.WRITABLE_BOOK, templateToEdit.name());
+            ItemTemplate teamNameItem = new ItemTemplate(2, 1, Material.WRITABLE_BOOK, Component.text(templateToEdit.name()));
             teamNameItem.setAction(new NameEditAction("Edit team name", getMenuBoard(), (value, item) -> {
                 templateToEdit = new TeamData.TeamTemplate(value, templateToEdit.color());
                 //TODO: find a way to do addItem(teamNameItem); automatically??
@@ -99,7 +103,7 @@ public class TeamEditorMenu extends PaginatedSelectionMenu
             addItem(teamNameItem);
 
             // Add action to change the team's color.
-            ItemTemplate teamColorItem = new ItemTemplate(4, 1, Material.LEATHER_CHESTPLATE, "" + templateToEdit.color() + ChatColor.BOLD + "Color")
+            ItemTemplate teamColorItem = new ItemTemplate(4, 1, Material.LEATHER_CHESTPLATE, Component.text("Color").color(templateToEdit.color()).decorate(TextDecoration.BOLD))
                     .setLeatherColor(templateToEdit.color());
 
             // TODO: maybe find a less cursed way to fix this?
@@ -110,13 +114,13 @@ public class TeamEditorMenu extends PaginatedSelectionMenu
 
                     // Update menu item
                     teamColorItem.setLeatherColor(templateToEdit.color())
-                            .setName(ChatComponentUtils.convert("" + templateToEdit.color() + ChatColor.BOLD + "Color"));
+                            .setName(Component.text("Color").color(templateToEdit.color()).decorate(TextDecoration.BOLD));
                     this.addItem(teamColorItem);
                 }).open(args);
             });
 
             addCloseAction(new ItemTemplate(6, 1, Material.BARRIER,
-                    "" + ChatColor.RED + ChatColor.BOLD + BingoTranslation.MENU_EXIT.translate()));
+                    Component.text(BingoTranslation.MENU_EXIT.translate()).color(NamedTextColor.RED).decorate(TextDecoration.BOLD)));
         }
 
         @Override

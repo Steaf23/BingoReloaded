@@ -8,6 +8,8 @@ import io.github.steaf23.bingoreloaded.tasks.BingoTask;
 import io.github.steaf23.bingoreloaded.tasks.tracker.TaskProgressTracker;
 import io.github.steaf23.bingoreloaded.util.TranslatedMessage;
 import io.github.steaf23.easymenulib.inventory.MenuBoard;
+import io.github.steaf23.easymenulib.util.ChatComponentUtils;
+import net.kyori.adventure.text.Component;
 
 public class LockoutBingoCard extends BingoCard
 {
@@ -23,8 +25,8 @@ public class LockoutBingoCard extends BingoCard
         this.session = session;
         this.teams = teams;
 
-        menu.setInfo(BingoTranslation.INFO_LOCKOUT_NAME.translate(),
-                BingoTranslation.INFO_LOCKOUT_DESC.translate().split("\\n"));
+        menu.setInfo(Component.text().append(BingoTranslation.INFO_LOCKOUT_NAME.asComponent()).build(),
+                ChatComponentUtils.createComponentsFromString(BingoTranslation.INFO_LOCKOUT_DESC.translate().split("\\n")));
     }
 
     // Lockout cards cannot be copied since it should be the same instance for every player.

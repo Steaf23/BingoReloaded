@@ -95,6 +95,7 @@ public class PostGamePhase implements GamePhase
     }
 
     public Message restartMessage(long timeLeft) {
-        return new TranslatedMessage(BingoTranslation.POST_GAME_START).color(ChatColor.RED).arg("" + timeLeft).color(ChatColor.BLUE);
+        //FIXME: re-add colors
+        return new TranslatedMessage(BingoTranslation.POST_GAME_START).arg("" + timeLeft);
     }
 }

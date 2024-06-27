@@ -4,6 +4,7 @@ import io.github.steaf23.bingoreloaded.data.ScoreboardData;
 import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.easymenulib.scoreboard.PlayerHUD;
 import io.github.steaf23.easymenulib.scoreboard.SidebarHUD;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -25,36 +26,37 @@ public class TemplatedPlayerHUD extends PlayerHUD
             return;
         }
 
-        sidebar.setTitle(new Message(template.title()).toLegacyString(player));
+        sidebar.setTitle(new Message(template.title()).asComponent(player));
 
-        sidebar.clear();
-        int lineNumber = 0;
-        boolean full = false;
-        int templateIndex = 0;
-        for (String line : template.lines()) {
-            // convert colors, placeholders, etc..
-            for (String arg : template.arguments().keySet()) {
-                line = line.replace("{" + arg + "}", template.arguments().get(arg));
-            }
-            for (String linePart : line.split("\\n")) {
-                // for each part we need to check if we have enough space left after adding every extra line, expanding downwards
-                int spaceForLine = 15 - lineNumber - (template.lines().length - templateIndex);
-                if (spaceForLine < 0) {
-                    break;
-                }
-                linePart = new Message(linePart).toLegacyString(player);
-                sidebar.setText(lineNumber, linePart);
-                lineNumber++;
-                if (lineNumber == 15) {
-                    full = true;
-                    break;
-                }
-            }
-            if (full) {
-                break;
-            }
-            templateIndex++;
-        }
+        //FIXME figure out a way to do this now with Components instead..
+//        sidebar.clear();
+//        int lineNumber = 0;
+//        boolean full = false;
+//        int templateIndex = 0;
+//        for (String line : template.lines()) {
+//            // convert colors, placeholders, etc..
+//            for (String arg : template.arguments().keySet()) {
+//                line = line.replace("{" + arg + "}", template.arguments().get(arg));
+//            }
+//            for (String linePart : line.split("\\n")) {
+//                // for each part we need to check if we have enough space left after adding every extra line, expanding downwards
+//                int spaceForLine = 15 - lineNumber - (template.lines().length - templateIndex);
+//                if (spaceForLine < 0) {
+//                    break;
+//                }
+//                Component part = new Message(linePart).asComponent(player);
+//                sidebar.setText(lineNumber, part);
+//                lineNumber++;
+//                if (lineNumber == 15) {
+//                    full = true;
+//                    break;
+//                }
+//            }
+//            if (full) {
+//                break;
+//            }
+//            templateIndex++;
+//        }
 
         super.update();
     }

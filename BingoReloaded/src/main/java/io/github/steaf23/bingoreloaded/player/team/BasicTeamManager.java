@@ -10,6 +10,9 @@ import io.github.steaf23.bingoreloaded.player.VirtualBingoPlayer;
 import io.github.steaf23.bingoreloaded.placeholder.BingoPlaceholderFormatter;
 import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.bingoreloaded.util.TranslatedMessage;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -38,18 +41,19 @@ public class BasicTeamManager implements TeamManager
         this.joinableTeams = teamData.getTeams();
         Message.log("Loaded " + joinableTeams.size() + " team(s)");
 
-        this.autoTeam = new BingoTeam("auto", ChatColor.of("#fdffa8"), BingoTranslation.TEAM_AUTO.translate(), createAutoPrefix(ChatColor.of("#fdffa8")));
+        TextColor autoTeamColor = TextColor.fromHexString("#fdffa8");
+        this.autoTeam = new BingoTeam("auto", autoTeamColor, BingoTranslation.TEAM_AUTO.translate(), createAutoPrefix(autoTeamColor));
     }
 
-    private BaseComponent createAutoPrefix(ChatColor color) {
+    private Component createAutoPrefix(TextColor color) {
         String prefixFormat = new BingoPlaceholderFormatter().getTeamFullFormat();
-        BaseComponent prefix = TextComponent.fromLegacy(BingoPlaceholderFormatter.createLegacyTextFromMessage(prefixFormat, color.toString(), "✦") + " ");
+        Component prefix = LegacyComponentSerializer.legacySection().deserialize(BingoPlaceholderFormatter.createLegacyTextFromMessage(prefixFormat, color.toString(), "✦") + " ");
         return prefix;
     }
 
-    private BaseComponent createPrefix(TeamData.TeamTemplate template) {
+    private Component createPrefix(TeamData.TeamTemplate template) {
         String prefixFormat = new BingoPlaceholderFormatter().getTeamFullFormat();
-        BaseComponent prefix = TextComponent.fromLegacy(BingoPlaceholderFormatter.createLegacyTextFromMessage(prefixFormat, template.color().toString(), template.name()) + " ");
+        Component prefix = LegacyComponentSerializer.legacySection().deserialize(BingoPlaceholderFormatter.createLegacyTextFromMessage(prefixFormat, template.color().toString(), template.name()) + " ");
         return prefix;
     }
 
@@ -184,7 +188,7 @@ public class BasicTeamManager implements TeamManager
         Bukkit.getPluginManager().callEvent(leaveEvent);
 
         player.sessionPlayer().ifPresent(p -> {
-            new TranslatedMessage(BingoTranslation.LEAVE).color(ChatColor.RED).send(p);
+//            new TranslatedMessage(BingoTranslation.LEAVE).color(ChatColor.RED).send(p);
         });
         return true;
     }
@@ -239,14 +243,15 @@ public class BasicTeamManager implements TeamManager
 
         if (teamId.equals("auto")) {
             participant.sessionPlayer().ifPresent(p -> {
-                new TranslatedMessage(BingoTranslation.JOIN_AUTO).color(ChatColor.GREEN)
-                        .send(p);
+                //FIXME: re-add
+//                new TranslatedMessage(BingoTranslation.JOIN_AUTO).color(ChatColor.GREEN)
+//                        .send(p);
             });
         } else {
             participant.sessionPlayer().ifPresent(p -> {
-                new TranslatedMessage(BingoTranslation.JOIN).color(ChatColor.GREEN)
-                        .arg(bingoTeam.getColoredName())
-                        .send(p);
+//                new TranslatedMessage(BingoTranslation.JOIN).color(ChatColor.GREEN)
+//                        .arg(bingoTeam.getColoredName())
+//                        .send(p);
             });
         }
         return true;
@@ -330,10 +335,10 @@ public class BasicTeamManager implements TeamManager
         if (!session.isRunning()) {
             getParticipants().forEach(p -> {
                 addMemberToTeam(p, "auto");
-                p.sessionPlayer().ifPresent(gamePlayer ->
-                        new TranslatedMessage(BingoTranslation.TEAM_SIZE_CHANGED)
-                                .color(ChatColor.RED)
-                                .send(gamePlayer));
+//                p.sessionPlayer().ifPresent(gamePlayer ->
+//                        new TranslatedMessage(BingoTranslation.TEAM_SIZE_CHANGED)
+//                                .color(ChatColor.RED)
+//                                .send(gamePlayer));
             });
         }
     }
@@ -353,9 +358,9 @@ public class BasicTeamManager implements TeamManager
                 if (!session.isRunning()) {
                     return;
                 }
-                new TranslatedMessage(BingoTranslation.JOIN).color(ChatColor.GREEN)
-                        .arg(participant.getTeam().getColoredName())
-                        .send(player);
+//                new TranslatedMessage(BingoTranslation.JOIN).color(ChatColor.GREEN)
+//                        .arg(participant.getTeam().getColoredName())
+//                        .send(player);
             });
             return;
         }

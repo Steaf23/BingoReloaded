@@ -22,16 +22,19 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
 
-public class MenuBoard extends SimplePacketListenerAbstract implements Listener
+public class MenuBoard implements Listener
 {
     // Stores all currently open inventories by all players, using a stack system we can easily add or remove child inventories.
-    protected Map<UUID, Stack<Menu>> activeMenus;
+    protected final Map<UUID, Stack<Menu>> activeMenus;
+
+    private final MenuPacketListener packetListener;
 
     private static final Set<ClickType> CLICK_TYPES_TO_IGNORE = Set.of(ClickType.DOUBLE_CLICK, ClickType.DROP, ClickType.CREATIVE, ClickType.CONTROL_DROP, ClickType.SWAP_OFFHAND);
 
     public MenuBoard() {
         this.activeMenus = new HashMap<>();
-        PacketEvents.getAPI().getEventManager().registerListener(this);
+        this.packetListener = new MenuPacketListener(activeMenus);
+        PacketEvents.getAPI().getEventManager().registerListener(packetListener);
     }
 
     public void close(Menu menu, HumanEntity player) {
@@ -151,26 +154,6 @@ public class MenuBoard extends SimplePacketListenerAbstract implements Listener
     public void handlePlayerQuit(final PlayerQuitEvent event) {
         if (activeMenus.containsKey(event.getPlayer().getUniqueId())) {
             closeAll(event.getPlayer());
-        }
-    }
-
-    //Packet events listener =========================================
-
-    @Override
-    public void onPacketPlayReceive(PacketPlayReceiveEvent event) {
-        if (event.getPacketType() == PacketType.Play.Client.NAME_ITEM) {
-            WrapperPlayClientNameItem nameItem = new WrapperPlayClientNameItem(event);
-
-            Stack<Menu> menus = activeMenus.get(event.getUser().getUUID());
-            if (menus == null || menus.size() == 0) {
-                return;
-            }
-
-            if (menus.peek() instanceof UserInputMenu inputMenu) {
-                inputMenu.handleTextChanged(nameItem.getItemName());
-            }
-
-            event.setCancelled(true);
         }
     }
 }

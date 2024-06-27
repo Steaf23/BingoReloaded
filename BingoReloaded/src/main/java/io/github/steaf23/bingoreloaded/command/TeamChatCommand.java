@@ -64,19 +64,20 @@ public class TeamChatCommand implements Listener, TabExecutor
 
     public void sendMessage(BingoTeam team, Player player, String message)
     {
-        team.getMembers()
-                .forEach(member -> {
-                    if (member.sessionPlayer().isEmpty()) {
-                        return;
-                    }
-
-                    Player receivingPlayer = member.sessionPlayer().get();
-                    receivingPlayer.spigot().sendMessage(new ComponentBuilder()
-                            .append(team.getPrefix())
-                            .append(ChatColor.RESET + "<" + player.getDisplayName() + "> ")
-                            .append(message)
-                            .build());
-                });
+        //FIXME: reimplement
+//        team.getMembers()
+//                .forEach(member -> {
+//                    if (member.sessionPlayer().isEmpty()) {
+//                        return;
+//                    }
+//
+//                    Player receivingPlayer = member.sessionPlayer().get();
+//                    receivingPlayer.spigot().sendMessage(new ComponentBuilder()
+//                            .append(team.getPrefix())
+//                            .append(ChatColor.RESET + "<" + player.getDisplayName() + "> ")
+//                            .append(message)
+//                            .build());
+//                });
     }
 
     @Override
@@ -94,22 +95,23 @@ public class TeamChatCommand implements Listener, TabExecutor
             if (!(participant instanceof BingoPlayer player))
                 return false;
 
-            if (!teamManager.getParticipants().contains(player))
-            {
-                new TranslatedMessage(BingoTranslation.NO_CHAT).color(ChatColor.RED).send(p);
-                return false;
-            }
-
-            if (enabledPlayers.contains(player))
-            {
-                enabledPlayers.remove(player);
-                new TranslatedMessage(BingoTranslation.CHAT_OFF).color(ChatColor.GREEN).arg("/btc").send(p);
-            }
-            else
-            {
-                enabledPlayers.add(player);
-                new TranslatedMessage(BingoTranslation.CHAT_ON).color(ChatColor.GREEN).arg("/btc").send(p);
-            }
+            //FIXME: reimplement
+//            if (!teamManager.getParticipants().contains(player))
+//            {
+//                new TranslatedMessage(BingoTranslation.NO_CHAT).color(ChatColor.RED).send(p);
+//                return false;
+//            }
+//
+//            if (enabledPlayers.contains(player))
+//            {
+//                enabledPlayers.remove(player);
+//                new TranslatedMessage(BingoTranslation.CHAT_OFF).color(ChatColor.GREEN).arg("/btc").send(p);
+//            }
+//            else
+//            {
+//                enabledPlayers.add(player);
+//                new TranslatedMessage(BingoTranslation.CHAT_ON).color(ChatColor.GREEN).arg("/btc").send(p);
+//            }
         }
         return false;
     }

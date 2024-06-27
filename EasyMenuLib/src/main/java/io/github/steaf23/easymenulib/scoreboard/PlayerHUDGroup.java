@@ -1,5 +1,6 @@
 package io.github.steaf23.easymenulib.scoreboard;
 
+import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -9,7 +10,7 @@ import java.util.Map;
 
 public abstract class PlayerHUDGroup
 {
-    protected final Map<String, String> registeredFields;
+    protected final Map<String, Component> registeredFields;
     private final List<PlayerHUD> huds;
     private final HUDRegistry registry;
 

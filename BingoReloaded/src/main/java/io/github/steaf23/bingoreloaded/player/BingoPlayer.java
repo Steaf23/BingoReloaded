@@ -13,6 +13,8 @@ import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import io.github.steaf23.bingoreloaded.tasks.BingoTask;
 import io.github.steaf23.bingoreloaded.util.TranslatedMessage;
 import io.github.steaf23.easymenulib.util.PDCHelper;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.TranslatableComponent;
 import org.bukkit.*;
@@ -207,10 +209,9 @@ public class BingoPlayer implements BingoParticipant
 
         String itemKey = task.material.isBlock() ? "block" : "item";
         itemKey += ".minecraft." + task.material.getKey().getKey();
-
-        new TranslatedMessage(BingoTranslation.DEATHMATCH_ITEM).color(ChatColor.GOLD)
-                .arg(new TranslatableComponent(itemKey))
-                .send(sessionPlayer().get());
+        sessionPlayer().get()
+                .sendMessage(BingoTranslation.DEATHMATCH_ITEM.asSingleComponent(Component.translatable(itemKey))
+                        .color(NamedTextColor.GOLD));
     }
 
     @Override
@@ -255,7 +256,8 @@ public class BingoPlayer implements BingoParticipant
         if (!itemCooldowns.isCooldownOver(wand.getType()))
         {
             double timeLeft = itemCooldowns.getTimeLeft(wand.getType()) / 1000.0;
-            new TranslatedMessage(BingoTranslation.COOLDOWN).color(ChatColor.RED).arg(String.format("%.2f", timeLeft)).send(player);
+            player.sendMessage(BingoTranslation.COOLDOWN.asSingleComponent(Component.text(String.format("%.2f", timeLeft)))
+                    .color(NamedTextColor.RED));
             return false;
         }
 

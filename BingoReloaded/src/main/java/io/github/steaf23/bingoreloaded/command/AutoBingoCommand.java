@@ -451,7 +451,7 @@ public class AutoBingoCommand implements TabExecutor
         }
 
         BingoSettings view = settings.view();
-        sendSuccess("Set gamemode to " + view.mode().displayName + " " + view.size().size + "x" + view.size().size, worldName);
+        sendSuccess("Set gamemode to " + view.mode() + " " + view.size().size + "x" + view.size().size, worldName);
         return true;
     }
 

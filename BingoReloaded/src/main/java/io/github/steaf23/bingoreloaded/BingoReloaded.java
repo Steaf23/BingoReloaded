@@ -1,6 +1,5 @@
 package io.github.steaf23.bingoreloaded;
 
-import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
 import io.github.steaf23.bingoreloaded.command.*;
 import io.github.steaf23.bingoreloaded.data.*;
 import io.github.steaf23.bingoreloaded.data.helper.SerializablePlayer;
@@ -22,8 +21,6 @@ import io.github.steaf23.bingoreloaded.placeholder.BingoReloadedPlaceholderExpan
 import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.easymenulib.EasyMenuLibrary;
 import io.github.steaf23.easymenulib.inventory.BasicMenu;
-import io.github.steaf23.easymenulib.packetevents.PacketEvents;
-import io.github.steaf23.easymenulib.packetevents.wrapper.PacketWrapper;
 import io.github.steaf23.easymenulib.scoreboard.HUDRegistry;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
@@ -156,7 +153,6 @@ public class BingoReloaded extends JavaPlugin
         }
 
         HandlerList.unregisterAll(menuBoard);
-        PacketEvents.getAPI().terminate();
     }
 
     public ConfigData config() {

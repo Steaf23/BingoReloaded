@@ -2,6 +2,9 @@ package io.github.steaf23.bingoreloaded.tasks;
 
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.easymenulib.util.ChatComponentUtils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -31,70 +34,73 @@ public record StatisticTask(BingoStatistic statistic, int count) implements Coun
     }
 
     @Override
-    public BaseComponent getName()
+    public Component getName()
     {
         TextComponent amount = new TextComponent(Integer.toString(count));
 
-        ComponentBuilder builder = new ComponentBuilder("*").color(ChatColor.LIGHT_PURPLE).italic(true);
+        Component nameComponent = Component.text("*").color(NamedTextColor.LIGHT_PURPLE).decorate(TextDecoration.ITALIC);
 
-        switch (statistic.getCategory())
-        {
-            case ROOT_STATISTIC -> {
-                if (statistic.stat() == Statistic.KILL_ENTITY)
-                {
-                    BaseComponent entityName = ChatComponentUtils.entityName(statistic.entityType());
-                    BaseComponent[] inPlaceArguments = new BaseComponent[]{amount, new TextComponent("")};
-                    builder.append(ChatComponentUtils.statistic(statistic.stat(), inPlaceArguments))
-                            .append(" (")
-                            .append(entityName)
-                            .append(")");
-                }
-                else if (statistic.stat() == Statistic.ENTITY_KILLED_BY) {
-                    BaseComponent entityName = ChatComponentUtils.entityName(statistic.entityType());
-                    BaseComponent[] inPlaceArguments = new BaseComponent[]{new TextComponent(""), amount};
-                    builder.append("(")
-                            .append(entityName)
-                            .append(") ")
-                            .append(ChatComponentUtils.statistic(statistic.stat(), inPlaceArguments));
-                }
-                else
-                {
-                    builder.append(ChatComponentUtils.statistic(statistic.stat()))
-                            .append(" ")
-                            .append(ChatComponentUtils.itemName(statistic.materialType()))
-                            .append(": ")
-                            .append(amount);
-                }
-            }
-            case TRAVEL -> {
-                builder.append(ChatComponentUtils.statistic(statistic.stat()))
-                        .append(": ")
-                        .append(new TextComponent(Integer.toString(count * 10)))
-                        .append(" Blocks");
-            }
-            default -> {
-                builder.append(ChatComponentUtils.statistic(statistic.stat()))
-                        .append(": ")
-                        .append(amount);
-            }
-        }
-        builder.append("*");
-        return builder.build();
+        return nameComponent;
+
+        //FIXME: reimplement
+//
+//        switch (statistic.getCategory())
+//        {
+//            case ROOT_STATISTIC -> {
+//                if (statistic.stat() == Statistic.KILL_ENTITY)
+//                {
+//                    BaseComponent entityName = ChatComponentUtils.entityName(statistic.entityType());
+//                    BaseComponent[] inPlaceArguments = new BaseComponent[]{amount, new TextComponent("")};
+//                    builder.append(ChatComponentUtils.statistic(statistic.stat(), inPlaceArguments))
+//                            .append(" (")
+//                            .append(entityName)
+//                            .append(")");
+//                }
+//                else if (statistic.stat() == Statistic.ENTITY_KILLED_BY) {
+//                    BaseComponent entityName = ChatComponentUtils.entityName(statistic.entityType());
+//                    BaseComponent[] inPlaceArguments = new BaseComponent[]{new TextComponent(""), amount};
+//                    builder.append("(")
+//                            .append(entityName)
+//                            .append(") ")
+//                            .append(ChatComponentUtils.statistic(statistic.stat(), inPlaceArguments));
+//                }
+//                else
+//                {
+//                    builder.append(ChatComponentUtils.statistic(statistic.stat()))
+//                            .append(" ")
+//                            .append(ChatComponentUtils.itemName(statistic.materialType()))
+//                            .append(": ")
+//                            .append(amount);
+//                }
+//            }
+//            case TRAVEL -> {
+//                builder.append(ChatComponentUtils.statistic(statistic.stat()))
+//                        .append(": ")
+//                        .append(new TextComponent(Integer.toString(count * 10)))
+//                        .append(" Blocks");
+//            }
+//            default -> {
+//                builder.append(ChatComponentUtils.statistic(statistic.stat()))
+//                        .append(": ")
+//                        .append(amount);
+//            }
+//        }
+//        builder.append("*");
+//        return builder.build();
     }
 
     @Override
-    public BaseComponent[] getItemDescription()
+    public Component[] getItemDescription()
     {
-        Set<ChatColor> modifiers = new HashSet<>(){{
-            add(ChatColor.DARK_AQUA);
-        }};
-        return BingoTranslation.LORE_STATISTIC.asComponent(modifiers);
+        //FIXME: make dark aqua
+        //TODO: make MultilineComponent builder class??
+        return BingoTranslation.LORE_STATISTIC.asComponent();
     }
 
     @Override
-    public BaseComponent getChatDescription()
+    public Component getChatDescription()
     {
-        return new ComponentBuilder().append(getItemDescription()).build();
+        return Component.text().append(getItemDescription()).build();
     }
 
     @Override

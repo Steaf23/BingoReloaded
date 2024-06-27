@@ -1,9 +1,11 @@
 package io.github.steaf23.easymenulib.scoreboard;
 
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.*;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -24,13 +26,13 @@ public class SidebarHUD
         for (int i = 0; i < 15; i++) {
             Team team = board.registerNewTeam("LINE_" + i);
             team.addEntry(getEntry(i));
-            setText(i, "");
+            setText(i, null);
         }
     }
 
     public void clear() {
         for (int i = 0; i < 15; i++) {
-            setText(i, "");
+            setText(i, null);
         }
     }
 
@@ -44,11 +46,11 @@ public class SidebarHUD
         player.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
     }
 
-    public void setTitle(String title) {
-        sidebar.setDisplayName(title);
+    public void setTitle(Component title) {
+        sidebar.displayName(title);
     }
 
-    public void setText(int lineNumber, String text) {
+    public void setText(int lineNumber, @Nullable Component text) {
         if (lineNumber < 0 || lineNumber > 14)
         {
             Bukkit.getLogger().warning("Line index " + lineNumber + " out of range for text display (use 0-14)");
@@ -56,8 +58,8 @@ public class SidebarHUD
         }
 
         Team team = board.getTeam("LINE_" + lineNumber);
-        team.setPrefix(text);
-        if (text.isEmpty())
+        team.prefix(text);
+        if (text == null)
             board.resetScores(getEntry(lineNumber));
         else
             sidebar.getScore(getEntry(lineNumber)).setScore(0);

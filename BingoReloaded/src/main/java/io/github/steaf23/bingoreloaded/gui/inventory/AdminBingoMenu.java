@@ -11,6 +11,9 @@ import io.github.steaf23.easymenulib.inventory.item.action.ComboBoxButtonAction;
 import io.github.steaf23.easymenulib.inventory.item.action.SpinBoxButtonAction;
 import io.github.steaf23.easymenulib.inventory.item.action.ToggleButtonAction;
 import io.github.steaf23.easymenulib.util.ChatComponentUtils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
@@ -27,28 +30,29 @@ public class AdminBingoMenu extends BasicMenu
     private static final int TEAMSIZE_MAX = 64;
 
     private static final ItemTemplate START = new ItemTemplate(6, 0,
-            Material.LIME_CONCRETE, TITLE_PREFIX + BingoTranslation.OPTIONS_START.translate());
+            Material.LIME_CONCRETE, BasicMenu.applyTitleFormat(BingoTranslation.OPTIONS_START.translate()));
     private static final ItemTemplate END = new ItemTemplate(6, 0,
-            Material.RED_CONCRETE, TITLE_PREFIX + BingoTranslation.OPTIONS_END.translate());
+            Material.RED_CONCRETE, BasicMenu.applyTitleFormat(BingoTranslation.OPTIONS_END.translate()));
     private static final ItemTemplate JOIN = new ItemTemplate(2, 0,
-            Material.WHITE_GLAZED_TERRACOTTA, TITLE_PREFIX + BingoTranslation.OPTIONS_TEAM.translate());
+            Material.WHITE_GLAZED_TERRACOTTA, BasicMenu.applyTitleFormat(BingoTranslation.OPTIONS_TEAM.translate()));
     private static final ItemTemplate CARD = new ItemTemplate(1, 2,
-            Material.MAP, TITLE_PREFIX + BingoTranslation.OPTIONS_CARD.translate());
+            Material.MAP, BasicMenu.applyTitleFormat(BingoTranslation.OPTIONS_CARD.translate()));
     private static final ItemTemplate KIT = new ItemTemplate(3, 2,
-            Material.LEATHER_HELMET, TITLE_PREFIX + BingoTranslation.OPTIONS_KIT.translate());
+            Material.LEATHER_HELMET, BasicMenu.applyTitleFormat(BingoTranslation.OPTIONS_KIT.translate()));
     private static final ItemTemplate MODE = new ItemTemplate(1, 4,
-            Material.ENCHANTED_BOOK, TITLE_PREFIX + BingoTranslation.OPTIONS_GAMEMODE.translate())
-            .addDescription("input", 10, Menu.INPUT_RIGHT_CLICK + "gamemode specific settings");
+            Material.ENCHANTED_BOOK, BasicMenu.applyTitleFormat(BingoTranslation.OPTIONS_GAMEMODE.translate()));
+    //FIXME: re-add
+//            .addDescription("input", 10, Menu.INPUT_RIGHT_CLICK + "gamemode specific settings");
     private static final ItemTemplate EFFECTS = new ItemTemplate(3, 4,
-            Material.POTION, TITLE_PREFIX + BingoTranslation.OPTIONS_EFFECTS.translate());
+            Material.POTION, BasicMenu.applyTitleFormat(BingoTranslation.OPTIONS_EFFECTS.translate()));
     private static final ItemTemplate COUNTDOWN = new ItemTemplate(5, 2,
-            Material.CLOCK, TITLE_PREFIX + "Enable Countdown Timer");
+            Material.CLOCK, BasicMenu.applyTitleFormat("Enable Countdown Timer"));
     private static final ItemTemplate DURATION = new ItemTemplate(5, 4,
-            Material.RECOVERY_COMPASS, TITLE_PREFIX + "Countdown Duration");
+            Material.RECOVERY_COMPASS, BasicMenu.applyTitleFormat("Countdown Duration"));
     private static final ItemTemplate TEAM_SIZE = new ItemTemplate(7, 2,
-            Material.ENDER_EYE, TITLE_PREFIX + "Maximum Team Size");
+            Material.ENDER_EYE, BasicMenu.applyTitleFormat("Maximum Team Size"));
     private static final ItemTemplate PRESETS = new ItemTemplate(7, 4,
-            Material.CHEST_MINECART, TITLE_PREFIX + "Setting Presets");
+            Material.CHEST_MINECART, BasicMenu.applyTitleFormat("Setting Presets"));
 
     public AdminBingoMenu(MenuBoard menuBoard, BingoSession session, ConfigData config) {
         super(menuBoard, BingoTranslation.OPTIONS_TITLE.translate(), 6);
@@ -117,17 +121,18 @@ public class AdminBingoMenu extends BasicMenu
         List<ItemTemplate> cards = new ArrayList<>();
 
         for (String cardName : cardsData.getCardNames()) {
-            cards.add(new ItemTemplate(Material.PAPER, cardName,
-                    ChatColor.DARK_PURPLE + BingoTranslation.LIST_COUNT.translate(
-                            "" + cardsData.getListNames(cardName).size())));
+            cards.add(new ItemTemplate(Material.PAPER, Component.text(cardName),
+                    BingoTranslation.LIST_COUNT.asSingleComponent(Component.text(cardsData.getListNames(cardName).size())
+                            .color(NamedTextColor.DARK_PURPLE))));
         }
 
         BasicMenu cardPicker = new PaginatedSelectionMenu(getMenuBoard(), "Choose A Card", cards, FilterType.DISPLAY_NAME)
         {
             @Override
             public void onOptionClickedDelegate(InventoryClickEvent event, ItemTemplate clickedOption, HumanEntity player) {
-                if (!clickedOption.getName().isEmpty()) {
-                    cardSelected(clickedOption.getName());
+                String name = clickedOption.getPlainTextName();
+                if (!name.isEmpty()) {
+                    cardSelected(name);
                 }
                 close(player);
             }
@@ -168,9 +173,9 @@ public class AdminBingoMenu extends BasicMenu
         BasicMenu menu = new BasicMenu(getMenuBoard(), "", 1);
 
         int hotswapGoal = session.settingsBuilder.view().hotswapGoal();
-        ItemTemplate hotswapGoalItem = new ItemTemplate(0, Material.FIRE_CHARGE, "Hot-Swap Win Score",
-                "Complete " + hotswapGoal + " tasks to win hot-swap.",
-                "Only effective if countdown mode is disabled");
+        ItemTemplate hotswapGoalItem = new ItemTemplate(0, Material.FIRE_CHARGE, Component.text("Hot-Swap Win Score"),
+                Component.text("Complete " + hotswapGoal + " tasks to win hot-swap."),
+                Component.text("Only effective if countdown mode is disabled"));
         menu.addAction(hotswapGoalItem,
                 new SpinBoxButtonAction(1, 64, hotswapGoal, value -> {
                     session.settingsBuilder.hotswapGoal(value);
@@ -179,7 +184,7 @@ public class AdminBingoMenu extends BasicMenu
                             "Only effective if countdown mode is disabled"));
                 }));
 
-        menu.addCloseAction(new ItemTemplate(8, Material.BARRIER, TITLE_PREFIX + ChatColor.LIGHT_PURPLE + BingoTranslation.MENU_EXIT.translate()));
+        menu.addCloseAction(new ItemTemplate(8, Material.BARRIER, Component.text(BingoTranslation.MENU_EXIT.translate()).color(NamedTextColor.LIGHT_PURPLE).decorate(TextDecoration.BOLD)));
         menu.open(player);
     }
 }

@@ -6,6 +6,10 @@ import io.github.steaf23.easymenulib.inventory.BasicMenu;
 import io.github.steaf23.easymenulib.inventory.MenuBoard;
 import io.github.steaf23.easymenulib.inventory.item.ItemTemplate;
 import io.github.steaf23.easymenulib.util.ChatComponentUtils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
@@ -23,7 +27,7 @@ public class EffectOptionsMenu extends BasicMenu
         flags = settings.view().effects();
 
         for (int i = 0; i < 8; i++) {
-            addItem(new ItemTemplate(i, 5, Material.BLACK_STAINED_GLASS_PANE, " "));
+            addItem(BLANK.copyToSlot(i, 5));
         }
 
         addEffectAction(EffectOptionFlags.NIGHT_VISION, 5, 3, Material.GOLDEN_CARROT);
@@ -33,11 +37,11 @@ public class EffectOptionsMenu extends BasicMenu
         addEffectAction(EffectOptionFlags.SPEED, 1, 3, Material.FEATHER);
         addEffectAction(EffectOptionFlags.NO_DURABILITY, 6, 1, Material.NETHERITE_PICKAXE);
         addEffectAction(EffectOptionFlags.KEEP_INVENTORY, 4, 1, Material.CHEST);
-        addCloseAction(new ItemTemplate(8, 5, Material.DIAMOND, "" + ChatColor.AQUA + ChatColor.BOLD + BingoTranslation.MENU_SAVE_EXIT.translate()));
+        addCloseAction(new ItemTemplate(8, 5, Material.DIAMOND, BingoTranslation.MENU_SAVE_EXIT.asSingleComponent().color(NamedTextColor.AQUA).decorate(TextDecoration.BOLD)));
     }
 
     private void addEffectAction(EffectOptionFlags flag, int slotX, int slotY, Material material) {
-        ItemTemplate item = new ItemTemplate(slotX, slotY, material, "");
+        ItemTemplate item = new ItemTemplate(slotX, slotY, material, null);
         updateUI(flag, item);
         addAction(item,
                 player -> {
@@ -56,11 +60,11 @@ public class EffectOptionsMenu extends BasicMenu
 
     public void updateUI(EffectOptionFlags flag, ItemTemplate ItemTemplate) {
         if (flags.contains(flag)) {
-            ItemTemplate.setName(ChatComponentUtils.convert("" + ChatColor.GREEN + ChatColor.BOLD + flag.name + " " + BingoTranslation.EFFECTS_ENABLED.translate()));
-            ItemTemplate.setLore(ChatComponentUtils.convert("" + ChatColor.GREEN + BingoTranslation.EFFECTS_DISABLE.translate()));
+            ItemTemplate.setName(LegacyComponentSerializer.legacySection().deserialize("" + ChatColor.GREEN + ChatColor.BOLD + flag.name + " " + BingoTranslation.EFFECTS_ENABLED.translate()));
+            ItemTemplate.setLore(LegacyComponentSerializer.legacySection().deserialize("" + ChatColor.GREEN + BingoTranslation.EFFECTS_DISABLE.translate()));
         } else {
-            ItemTemplate.setName(ChatComponentUtils.convert("" + ChatColor.RED + ChatColor.BOLD + flag.name + " " + BingoTranslation.EFFECTS_DISABLED.translate()));
-            ItemTemplate.setLore(ChatComponentUtils.convert("" + ChatColor.RED + BingoTranslation.EFFECTS_ENABLE.translate()));
+            ItemTemplate.setName(LegacyComponentSerializer.legacySection().deserialize("" + ChatColor.RED + ChatColor.BOLD + flag.name + " " + BingoTranslation.EFFECTS_DISABLED.translate()));
+            ItemTemplate.setLore(LegacyComponentSerializer.legacySection().deserialize("" + ChatColor.RED + BingoTranslation.EFFECTS_ENABLE.translate()));
         }
     }
 

@@ -16,7 +16,6 @@ import io.github.steaf23.bingoreloaded.player.team.BasicTeamManager;
 import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.easymenulib.inventory.Menu;
 import io.github.steaf23.easymenulib.inventory.MenuBoard;
-import io.github.steaf23.easymenulib.packetevents.PacketEvents;
 import io.github.steaf23.easymenulib.scoreboard.HUDRegistry;
 import org.bukkit.Bukkit;
 import org.bukkit.World;

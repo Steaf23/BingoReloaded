@@ -5,6 +5,8 @@ import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.tasks.BingoTask;
 import io.github.steaf23.bingoreloaded.tasks.tracker.TaskProgressTracker;
 import io.github.steaf23.easymenulib.inventory.MenuBoard;
+import io.github.steaf23.easymenulib.util.ChatComponentUtils;
+import net.kyori.adventure.text.Component;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,8 +16,8 @@ public class CompleteBingoCard extends BingoCard
     public CompleteBingoCard(MenuBoard menuBoard, CardSize size, TaskProgressTracker progressTracker)
     {
         super(menuBoard, size, progressTracker);
-        menu.setInfo(BingoTranslation.INFO_COMPLETE_NAME.translate(),
-                BingoTranslation.INFO_COMPLETE_DESC.translate().split("\\n"));
+        menu.setInfo(Component.text().append(BingoTranslation.INFO_COMPLETE_NAME.asComponent()).build(),
+                ChatComponentUtils.createComponentsFromString(BingoTranslation.INFO_COMPLETE_DESC.translate().split("\\n")));
     }
 
     @Override

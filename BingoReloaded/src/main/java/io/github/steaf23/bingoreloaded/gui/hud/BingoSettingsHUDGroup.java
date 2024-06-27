@@ -7,12 +7,11 @@ import io.github.steaf23.bingoreloaded.settings.BingoSettings;
 import io.github.steaf23.easymenulib.scoreboard.HUDRegistry;
 import io.github.steaf23.easymenulib.scoreboard.PlayerHUD;
 import io.github.steaf23.easymenulib.scoreboard.PlayerHUDGroup;
-import net.md_5.bungee.api.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
-
-import java.io.ObjectInputFilter;
-import java.util.List;
 
 /**
  * Manager of multiple player HUDs, to show similar contents, but allows for per-player options as well
@@ -25,7 +24,7 @@ public class BingoSettingsHUDGroup extends PlayerHUDGroup
         super(registry);
         this.settingsBoardTemplate = new ScoreboardData().loadTemplate("lobby", registeredFields);
 
-        setStatus("");
+        setStatus((Component)null);
     }
 
     @Override
@@ -33,20 +32,28 @@ public class BingoSettingsHUDGroup extends PlayerHUDGroup
         return new TemplatedPlayerHUD(player, "Bingo Settings", settingsBoardTemplate);
     }
 
-    public void setStatus(String status) {
+    //FIXME: write proper fix
+    public void setStatus(@Nullable String status) {
+        registeredFields.put("status", LegacyComponentSerializer.legacySection().deserialize(status));
+        updateVisible();
+    }
+
+    public void setStatus(@Nullable Component status) {
         registeredFields.put("status", status);
         updateVisible();
     }
 
     public void updateSettings(@Nullable BingoSettings settings, ConfigData config) {
-        registeredFields.put("gamemode", settings.mode().displayName);
-        registeredFields.put("card_size", settings.size().toString());
+        //FIXME: use gamemode display name from config
+        registeredFields.put("gamemode", Component.text(settings.mode().getDataName()));
+        registeredFields.put("card_size", Component.text(settings.size().toString()));
         registeredFields.put("kit", settings.kit().getDisplayName());
-        registeredFields.put("team_size", config.singlePlayerTeams ? ChatColor.AQUA + "1" : Integer.toString(settings.maxTeamSize()));
-        registeredFields.put("duration", settings.enableCountdown() ? Integer.toString(settings.countdownDuration()) : ChatColor.AQUA + "∞");
+        registeredFields.put("team_size", config.singlePlayerTeams ? Component.text("1").color(NamedTextColor.AQUA) : Component.text(Integer.toString(settings.maxTeamSize())));
+        registeredFields.put("duration", settings.enableCountdown() ? Component.text(Integer.toString(settings.maxTeamSize())) : Component.text("∞").color(NamedTextColor.AQUA));
 
+        //FIXME: i dont even know where to start translating this code to component shebang
         String effects = EffectOptionFlags.effectsToString(settings.effects());
-        registeredFields.put("effects", effects);
+        registeredFields.put("effects", Component.text(effects));
 
         updateVisible();
     }

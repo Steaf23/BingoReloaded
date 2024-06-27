@@ -1,5 +1,7 @@
 package io.github.steaf23.easymenulib.util;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -22,8 +24,8 @@ import java.util.stream.Collectors;
 
 public class ChatComponentUtils
 {
-    public static BaseComponent[] createComponentsFromString(String... strings) {
-        return Arrays.stream(strings).map(TextComponent::fromLegacy).toList().toArray(new BaseComponent[]{});
+    public static Component[] createComponentsFromString(String... strings) {
+        return Arrays.stream(strings).map(s -> LegacyComponentSerializer.legacySection().deserialize(s)).toList().toArray(new Component[]{});
     }
 
     public static @NotNull ItemStack itemStackFromComponent(@NotNull Material material, @Nullable BaseComponent name, BaseComponent... lore) {
@@ -59,11 +61,6 @@ public class ChatComponentUtils
         jsonData.append("]]");
 
         return Bukkit.getItemFactory().createItemStack(jsonData.toString());
-    }
-
-    public static BaseComponent convert(String text, ChatColor... modifiers) {
-        BaseComponent component = TextComponent.fromLegacy(text);
-        return ChatComponentUtils.modify(component, modifiers);
     }
 
     public static BaseComponent modify(BaseComponent component, ChatColor... modifiers) {
@@ -103,22 +100,22 @@ public class ChatComponentUtils
         return builder;
     }
 
-    public static BaseComponent itemName(Material item)
+    public static Component itemName(Material item)
     {
-        return new TranslatableComponent(itemKey(item));
+        return Component.translatable(itemKey(item));
     }
 
-    public static BaseComponent advancementTitle(@NotNull Advancement advancement) {
-        return new TranslatableComponent(advancementKey(advancement) + ".title");
+    public static Component advancementTitle(@NotNull Advancement advancement) {
+        return Component.translatable(advancementKey(advancement) + ".description");
     }
 
-    public static BaseComponent advancementDescription(@NotNull Advancement advancement) {
-        return new TranslatableComponent(advancementKey(advancement) + ".description");
+    public static Component advancementDescription(@NotNull Advancement advancement) {
+        return Component.translatable(advancementKey(advancement) + ".description");
     }
 
-    public static BaseComponent statistic(Statistic statistic, BaseComponent... with)
+    public static Component statistic(Statistic statistic, Component... with)
     {
-        return new TranslatableComponent(statisticKey(statistic), with);
+        return Component.translatable(statisticKey(statistic), with);
     }
 
     public static BaseComponent entityName(EntityType entity)

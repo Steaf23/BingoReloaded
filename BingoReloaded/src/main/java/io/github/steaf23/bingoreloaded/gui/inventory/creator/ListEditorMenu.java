@@ -7,8 +7,10 @@ import io.github.steaf23.bingoreloaded.tasks.ItemTask;
 import io.github.steaf23.easymenulib.inventory.BasicMenu;
 import io.github.steaf23.easymenulib.inventory.MenuBoard;
 import io.github.steaf23.easymenulib.inventory.item.ItemTemplate;
-import io.github.steaf23.easymenulib.util.FlexColor;
-import net.md_5.bungee.api.ChatColor;
+import io.github.steaf23.easymenulib.util.BlockColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.advancement.Advancement;
@@ -19,15 +21,10 @@ public class ListEditorMenu extends BasicMenu
 {
     private final String listName;
 
-    private static final ItemTemplate ITEMS = new ItemTemplate(2, 2, Material.APPLE, TITLE_PREFIX + "Items", "Click to add or remove items");
-    private static final ItemTemplate ADVANCEMENTS = new ItemTemplate(4, 2, Material.ENDER_EYE, TITLE_PREFIX + "Advancements", "Click to add or remove advancements");
-    private static final ItemTemplate STATISTICS = new ItemTemplate(6, 2, Material.GLOBE_BANNER_PATTERN, TITLE_PREFIX + "Statistics", "Click to add or remove statistics");
-    private static final ItemTemplate SAVE = new ItemTemplate(4, 5, Material.REDSTONE, "" + ChatColor.RED + ChatColor.BOLD + BingoTranslation.MENU_SAVE_EXIT.translate());
-    private static final ItemTemplate BLANK = new ItemTemplate(Material.BLACK_STAINED_GLASS_PANE, " ", "")
-            .addMetaModifier(meta -> {
-                meta.setHideTooltip(true);
-                return meta;
-            });
+    private static final ItemTemplate ITEMS = new ItemTemplate(2, 2, Material.APPLE, BasicMenu.applyTitleFormat("Items"), Component.text("Click to add or remove items"));
+    private static final ItemTemplate ADVANCEMENTS = new ItemTemplate(4, 2, Material.ENDER_EYE, BasicMenu.applyTitleFormat("Advancements"), Component.text("Click to add or remove advancements"));
+    private static final ItemTemplate STATISTICS = new ItemTemplate(6, 2, Material.GLOBE_BANNER_PATTERN, BasicMenu.applyTitleFormat("Statistics"), Component.text("Click to add or remove statistics"));
+    private static final ItemTemplate SAVE = new ItemTemplate(4, 5, Material.REDSTONE, Component.text(BingoTranslation.MENU_SAVE_EXIT.translate()).color(NamedTextColor.RED).decorate(TextDecoration.BOLD));
 
     public ListEditorMenu(MenuBoard manager, String listName) {
         super(manager, "Editing '" + listName + "'", 6);
@@ -52,8 +49,8 @@ public class ListEditorMenu extends BasicMenu
 
     private BasicMenu createItemPicker(MenuBoard menuBoard) {
         Set<Material> glassPanes = new HashSet<>();
-        for (FlexColor flexColor : FlexColor.values()) {
-            glassPanes.add(flexColor.glassPane);
+        for (BlockColor blockColor : BlockColor.values()) {
+            glassPanes.add(blockColor.glassPane);
         }
 
         List<BingoTask> tasks = new ArrayList<>();
