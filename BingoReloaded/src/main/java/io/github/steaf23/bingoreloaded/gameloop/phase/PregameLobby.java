@@ -10,11 +10,10 @@ import io.github.steaf23.bingoreloaded.gui.hud.DisabledBingoSettingsHUDGroup;
 import io.github.steaf23.bingoreloaded.gui.inventory.TeamSelectionMenu;
 import io.github.steaf23.bingoreloaded.gui.inventory.VoteMenu;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
-import io.github.steaf23.bingoreloaded.util.Message;
-import io.github.steaf23.bingoreloaded.util.TranslatedMessage;
 import io.github.steaf23.bingoreloaded.util.timer.CountdownTimer;
 import io.github.steaf23.playerdisplay.inventory.MenuBoard;
 import io.github.steaf23.playerdisplay.scoreboard.HUDRegistry;
+import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
@@ -83,7 +82,7 @@ public class PregameLobby implements GamePhase
 
     public void voteGamemode(String gamemode, HumanEntity player) {
         if (!config.useVoteSystem) {
-            Message.warn("Players cannot vote because useVoteSystem is false!");
+            ConsoleMessenger.warn("Players cannot vote because useVoteSystem is set to false in config.yml!");
             return;
         }
 
@@ -112,7 +111,7 @@ public class PregameLobby implements GamePhase
 
     public void voteCard(String card, HumanEntity player) {
         if (!config.useVoteSystem) {
-            Message.warn("Players cannot vote because useVoteSystem is false!");
+            ConsoleMessenger.warn("Players cannot vote because useVoteSystem is set to false in config.yml!");
             return;
         }
 
@@ -135,7 +134,7 @@ public class PregameLobby implements GamePhase
 
     public void voteKit(String kit, HumanEntity player) {
         if (!config.useVoteSystem) {
-            Message.warn("Players cannot vote because useVoteSystem is false!");
+            ConsoleMessenger.warn("Players cannot vote because useVoteSystem is set to false in config.yml!");
             return;
         }
 

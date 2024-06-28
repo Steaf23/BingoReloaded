@@ -3,8 +3,8 @@ package io.github.steaf23.bingoreloaded.data;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.helper.YmlDataManager;
 import io.github.steaf23.bingoreloaded.hologram.HologramBuilder;
-import io.github.steaf23.bingoreloaded.util.Message;
-import net.md_5.bungee.api.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -69,10 +69,10 @@ public class BingoStatData
         return new HologramBuilder(null);
     }
 
-    public Message getPlayerStatsFormatted(UUID playerId)
+    public Component getPlayerStatsFormatted(UUID playerId)
     {
         //FIXME: reimplement
-        return null;
+        return Component.empty();
 //        String stats = getPlayerData(playerId);
 //        String[] statList = stats.split(";");
 //        return new Message("{0}'s statistics: Wins: {1}, Losses: {2}, Games finished: {3}, Tasks completed: {4}, Tasks Completed Record: {5}, Wand uses: {6}")
@@ -92,19 +92,20 @@ public class BingoStatData
      * @param playerName
      * @return
      */
-    public Message getPlayerStatsFormatted(String playerName)
+    public Component getPlayerStatsFormatted(String playerName)
     {
-        return null;
-//        UUID playerId = getPlayerUUID(playerName);
-//        if (playerId != null)
-//        {
-//            return getPlayerStatsFormatted(playerId);
-//        }
-//        else
-//        {
-//            return new Message("Could not find statistics for player {0}!").color(ChatColor.RED)
-//                    .arg(playerName).color(ChatColor.WHITE);
-//        }
+        UUID playerId = getPlayerUUID(playerName);
+        if (playerId != null)
+        {
+            return getPlayerStatsFormatted(playerId);
+        }
+        else
+        {
+            return Component.text("Could not find statistics for player ")
+                    .append(Component.text(playerName).color(NamedTextColor.WHITE))
+                    .append(Component.text("!"))
+                    .color(NamedTextColor.RED);
+        }
     }
 
     private String getPlayerData(UUID playerId)

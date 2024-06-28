@@ -11,8 +11,8 @@ import io.github.steaf23.bingoreloaded.item.ItemCooldownManager;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import io.github.steaf23.bingoreloaded.tasks.BingoTask;
-import io.github.steaf23.bingoreloaded.util.TranslatedMessage;
 import io.github.steaf23.playerdisplay.util.PDCHelper;
+import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
@@ -24,6 +24,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -316,5 +317,10 @@ public class BingoPlayer implements BingoParticipant
     @Override
     public String toString() {
         return getDisplayName();
+    }
+
+    @Override
+    public @NotNull Audience audience() {
+        return sessionPlayer().isPresent() ? sessionPlayer().get() : Audience.empty();
     }
 }

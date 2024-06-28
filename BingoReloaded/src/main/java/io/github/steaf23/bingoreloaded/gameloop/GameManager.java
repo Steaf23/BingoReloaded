@@ -5,14 +5,14 @@ import io.github.steaf23.bingoreloaded.data.PlayerSerializationData;
 import io.github.steaf23.bingoreloaded.data.helper.SerializablePlayer;
 import io.github.steaf23.bingoreloaded.data.world.WorldData;
 import io.github.steaf23.bingoreloaded.data.world.WorldGroup;
-import io.github.steaf23.bingoreloaded.event.BingoEventListener;
+import io.github.steaf23.bingoreloaded.event.core.BingoEventListener;
 import io.github.steaf23.bingoreloaded.event.PrepareNextBingoGameEvent;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
-import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.playerdisplay.inventory.Menu;
 import io.github.steaf23.playerdisplay.inventory.MenuBoard;
 import io.github.steaf23.playerdisplay.scoreboard.HUDRegistry;
+import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -59,7 +59,7 @@ public class GameManager
 
     public boolean createSession(String sessionName) {
         if (sessions.containsKey(sessionName)) {
-            Message.log("An instance of Bingo already exists in world '" + sessionName + "'!");
+            ConsoleMessenger.error("An instance of Bingo already exists in world '" + sessionName + "'!");
             return false;
         }
 
@@ -76,7 +76,7 @@ public class GameManager
         endGame(sessionName);
         WorldGroup group = WorldData.getWorldGroup(plugin, sessionName);
         if (group == null) {
-            Message.error("Could not destroy worlds from session properly. (Please report!)");
+            ConsoleMessenger.bug("Could not destroy worlds from session properly", this);
             return false;
         }
         WorldData.destroyWorldGroup(plugin, WorldData.getWorldGroup(plugin, sessionName));
@@ -87,12 +87,12 @@ public class GameManager
 
     public boolean startGame(String sessionName) {
         if (!sessions.containsKey(sessionName)) {
-            Message.log("Cannot start a game that doesn't exist, create it first using '/autobingo <world> create'!");
+            ConsoleMessenger.log("Cannot start a game that doesn't exist, create it first using '/autobingo <world> create'!");
             return false;
         }
 
         if (isSessionRunning(sessionName)) {
-            Message.log("Could not start bingo because the game is already running on world '" + sessionName + "'!");
+            ConsoleMessenger.log("Could not start bingo because the game is already running on world '" + sessionName + "'!");
             return false;
         }
 
@@ -102,7 +102,7 @@ public class GameManager
 
     public boolean endGame(String sessionName) {
         if (!isSessionRunning(sessionName)) {
-            Message.log("Could not end bingo because no game was started on world '" + sessionName + "'!");
+            ConsoleMessenger.log("Could not end bingo because no game was started on world '" + sessionName + "'!");
             return false;
         }
 
@@ -197,11 +197,11 @@ public class GameManager
         }
 
         if (sourceWorld == null) {
-            Message.error("Source world is invalid (Please report!)");
+            ConsoleMessenger.bug("Source world is invalid", this);
             return;
         }
         if (targetWorld == null) {
-            Message.error("Target world is invalid (Please report!)");
+            ConsoleMessenger.bug("Target world is invalid", this);
             return;
         }
 
@@ -218,7 +218,7 @@ public class GameManager
                 teleportingPlayer = true;
                 if (playerData.loadPlayer(event.getPlayer()) == null) {
                     // Player data was not saved for some reason?
-                    Message.error("No saved player data could be found for " + event.getPlayer().getDisplayName() + ", resetting data (Please report!).");
+                    ConsoleMessenger.bug("No saved player data could be found for " + event.getPlayer().getDisplayName() + ", resetting data", this);
                     // Using the boolean we can check if we were already teleporting the player.
                     SerializablePlayer.reset(plugin, event.getPlayer(), event.getTo()).apply(event.getPlayer());
                 }

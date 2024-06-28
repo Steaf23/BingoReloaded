@@ -6,7 +6,7 @@ import io.github.steaf23.bingoreloaded.gui.inventory.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import io.github.steaf23.bingoreloaded.tasks.BingoTask;
-import io.github.steaf23.bingoreloaded.util.Message;
+import net.kyori.adventure.audience.ForwardingAudience;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
@@ -14,7 +14,7 @@ import java.util.EnumSet;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface BingoParticipant
+public interface BingoParticipant extends ForwardingAudience.Single
 {
     BingoSession getSession();
     @Nullable

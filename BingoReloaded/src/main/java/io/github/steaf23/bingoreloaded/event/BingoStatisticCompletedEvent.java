@@ -1,7 +1,7 @@
 package io.github.steaf23.bingoreloaded.event;
 
+import io.github.steaf23.bingoreloaded.event.core.BingoEvent;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
-import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.tasks.BingoStatistic;
 
 public class BingoStatisticCompletedEvent extends BingoEvent

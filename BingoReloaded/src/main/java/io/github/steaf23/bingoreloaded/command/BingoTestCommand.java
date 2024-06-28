@@ -7,8 +7,8 @@ import io.github.steaf23.bingoreloaded.event.BingoTaskProgressCompletedEvent;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.tasks.BingoTask;
-import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.playerdisplay.inventory.MenuBoard;
+import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -54,7 +54,7 @@ public class BingoTestCommand implements TabExecutor
                 BingoParticipant virtualPlayer = BingoReloaded.getInstance().getGameManager().getSession("world").teamManager.getPlayerAsParticipant(player);
                 int taskIndex = Integer.parseInt(args[2]);
                 if (virtualPlayer == null) {
-                    Message.error("Cannot complete task " + args[2] + " for non existing player: " + args[1]);
+                    ConsoleMessenger.error("Cannot complete task " + args[2] + " for non existing player: " + args[1]);
                     break;
                 }
                 completeTaskByPlayer(virtualPlayer, taskIndex);
@@ -114,7 +114,7 @@ public class BingoTestCommand implements TabExecutor
         BingoCard card = player.getTeam().getCard();
 
         if (card == null || taskIndex >= card.getTasks().size()) {
-            Message.log(ChatColor.RED + "index out of bounds for task list!");
+            ConsoleMessenger.log(ChatColor.RED + "index out of bounds for task list!");
             return;
         }
 

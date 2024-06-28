@@ -5,8 +5,10 @@ import io.github.steaf23.bingoreloaded.gui.inventory.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import io.github.steaf23.bingoreloaded.tasks.BingoTask;
+import net.kyori.adventure.audience.Audience;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.EnumSet;
@@ -89,5 +91,10 @@ public class VirtualBingoPlayer implements BingoParticipant
 
     @Override
     public void giveKit(PlayerKit kit) {
+    }
+
+    @Override
+    public @NotNull Audience audience() {
+        return Audience.empty();
     }
 }

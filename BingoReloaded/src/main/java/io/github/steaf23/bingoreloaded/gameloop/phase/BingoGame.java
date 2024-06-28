@@ -22,11 +22,10 @@ import io.github.steaf23.bingoreloaded.tasks.BingoTask;
 import io.github.steaf23.bingoreloaded.tasks.tracker.TaskProgressTracker;
 import io.github.steaf23.bingoreloaded.util.ActionBarManager;
 import io.github.steaf23.bingoreloaded.util.MaterialHelper;
-import io.github.steaf23.bingoreloaded.util.Message;
-import io.github.steaf23.bingoreloaded.util.TranslatedMessage;
 import io.github.steaf23.bingoreloaded.util.timer.CountdownTimer;
 import io.github.steaf23.bingoreloaded.util.timer.CounterTimer;
 import io.github.steaf23.bingoreloaded.util.timer.GameTimer;
+import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import io.github.steaf23.playerdisplay.util.PDCHelper;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -495,7 +494,7 @@ public class BingoGame implements GamePhase
         BingoParticipant participant = event.getTask().getCompletedBy().orElse(null);
         if (participant == null) {
             // I guess it was not actually completed?
-            Message.warn("Task not completed correctly...? (Please report!)");
+            ConsoleMessenger.bug("Task not completed correctly...?", this);
             return;
         }
         //FIXME: reimplement
@@ -536,7 +535,7 @@ public class BingoGame implements GamePhase
         BingoParticipant participant = event.getTask().getCompletedBy().orElse(null);
         if (participant == null) {
             // I guess it was not actually completed?
-            Message.warn("Task not completed correctly...? (Please report!)");
+            ConsoleMessenger.bug("Task not completed correctly...?", this);
             return;
         }
 

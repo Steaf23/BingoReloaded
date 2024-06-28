@@ -1,4 +1,4 @@
-package io.github.steaf23.bingoreloaded.command;
+package io.github.steaf23.bingoreloaded.command.core;
 
 import java.util.ArrayList;
 import java.util.Arrays;

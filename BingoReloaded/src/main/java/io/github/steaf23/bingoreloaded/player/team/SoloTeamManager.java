@@ -8,6 +8,7 @@ import io.github.steaf23.bingoreloaded.placeholder.BingoPlaceholderFormatter;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.util.*;
+import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentBuilder;
 import net.kyori.adventure.text.format.TextColor;
@@ -56,7 +57,7 @@ public class SoloTeamManager implements TeamManager
     BingoParticipant getPlayer(BingoTeam team) {
         Optional<BingoParticipant> participant = team.getMembers().stream().findFirst();
         if (participant.isEmpty()) {
-            Message.error("Team " + LegacyComponentSerializer.legacySection().serialize(team.getColoredName()) + "does not have a player!");
+            ConsoleMessenger.error("Team " + LegacyComponentSerializer.legacySection().serialize(team.getColoredName()) + "does not have a player!");
             return null;
         }
         return team.getMembers().stream().findFirst().get();
@@ -198,7 +199,7 @@ public class SoloTeamManager implements TeamManager
 
     @Override
     public void handlePlayerJoinedSessionWorld(PlayerJoinedSessionWorldEvent event) {
-        Message.log(ChatColor.GOLD + event.getPlayer().getDisplayName() + " joined world", session.getOverworld().getName());
+        ConsoleMessenger.log(ChatColor.GOLD + event.getPlayer().getDisplayName() + " joined world", session.getOverworld().getName());
 
         BingoParticipant participant = getPlayerAsParticipant(event.getPlayer());
         if (participant != null) {
@@ -225,7 +226,7 @@ public class SoloTeamManager implements TeamManager
 
     @Override
     public void handlePlayerLeftSessionWorld(PlayerLeftSessionWorldEvent event) {
-        Message.log(ChatColor.GOLD + event.getPlayer().getDisplayName() + " left world", session.getOverworld().getName());
+        ConsoleMessenger.log(ChatColor.GOLD + event.getPlayer().getDisplayName() + " left world", session.getOverworld().getName());
     }
 
     private void removeMemberFromTeamSilently(@NotNull BingoParticipant member) {

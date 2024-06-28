@@ -8,15 +8,14 @@ import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.player.VirtualBingoPlayer;
 import io.github.steaf23.bingoreloaded.placeholder.BingoPlaceholderFormatter;
-import io.github.steaf23.bingoreloaded.util.Message;
-import io.github.steaf23.bingoreloaded.util.TranslatedMessage;
+import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
+import org.bukkit.plugin.messaging.Messenger;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.*;
@@ -39,7 +38,7 @@ public class BasicTeamManager implements TeamManager
         this.activeTeams = new BingoTeamContainer();
         this.maxTeamSize = session.settingsBuilder.view().maxTeamSize();
         this.joinableTeams = teamData.getTeams();
-        Message.log("Loaded " + joinableTeams.size() + " team(s)");
+        ConsoleMessenger.log("Loaded " + joinableTeams.size() + " team(s)");
 
         TextColor autoTeamColor = TextColor.fromHexString("#fdffa8");
         this.autoTeam = new BingoTeam("auto", autoTeamColor, BingoTranslation.TEAM_AUTO.translate(), createAutoPrefix(autoTeamColor));
@@ -86,7 +85,7 @@ public class BasicTeamManager implements TeamManager
 
         int availablePlayers = getTotalParticipantCapacity() - activeTeams.getAllParticipants().size();
         if (automaticTeamPlayers.size() > availablePlayers) {
-            Message.error("Could not fit every player into a team (Please report!)");
+            ConsoleMessenger.error("Could not fit every player into a team (Please report!)");
             return;
         }
 
@@ -132,7 +131,7 @@ public class BasicTeamManager implements TeamManager
                 if (automaticTeamPlayers.size() > 0) {
                     BingoTeam newTeam = activateAnyTeam();
                     if (newTeam == null) {
-                        Message.error("Could not fit every player into a team, since there is not enough room!");
+                        ConsoleMessenger.warn("Could not fit every player into a team, since there is not enough room!");
                         break;
                     }
                     counts.add(0, new TeamCount(newTeam, 0));
@@ -229,7 +228,7 @@ public class BasicTeamManager implements TeamManager
         removeMemberFromTeam(participant, false);
         if (participantCount == getParticipantCount() && participantCount >= getTotalParticipantCapacity()) {
             //TODO: translate this
-            Message.log(ChatColor.RED + "All teams are full!");
+            ConsoleMessenger.log(NamedTextColor.RED + "All teams are full!");
             activeTeams.removeEmptyTeams("auto");
             return false;
         }
@@ -345,12 +344,12 @@ public class BasicTeamManager implements TeamManager
 
     @Override
     public void handlePlayerLeftSessionWorld(final PlayerLeftSessionWorldEvent event) {
-        Message.log(ChatColor.GOLD + event.getPlayer().getDisplayName() + " left world", session.getOverworld().getName());
+        ConsoleMessenger.log(ChatColor.GOLD + event.getPlayer().getDisplayName() + " left world", session.getOverworld().getName());
     }
 
     @Override
     public void handlePlayerJoinedSessionWorld(final PlayerJoinedSessionWorldEvent event) {
-        Message.log(ChatColor.GOLD + event.getPlayer().getDisplayName() + " joined world", session.getOverworld().getName());
+        ConsoleMessenger.log(ChatColor.GOLD + event.getPlayer().getDisplayName() + " joined world", session.getOverworld().getName());
 
         BingoParticipant participant = getPlayerAsParticipant(event.getPlayer());
         if (participant != null) {

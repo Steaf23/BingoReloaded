@@ -12,10 +12,10 @@ import io.github.steaf23.bingoreloaded.tasks.BingoTask;
 import io.github.steaf23.bingoreloaded.tasks.ItemTask;
 import io.github.steaf23.bingoreloaded.tasks.TaskData;
 import io.github.steaf23.bingoreloaded.tasks.tracker.TaskProgressTracker;
-import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.bingoreloaded.util.timer.GameTimer;
 import io.github.steaf23.playerdisplay.inventory.MenuBoard;
 import io.github.steaf23.playerdisplay.util.ChatComponentUtils;
+import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -171,7 +171,7 @@ public class HotswapBingoCard extends BingoCard
                     // Recovery finished, replace task with a new one.
                     BingoTask newTask = bingoTaskGenerator.get();
                     if (newTask == null) {
-                        Message.error("Cannot generate new task for hot-swap, (Please report!)");
+                        ConsoleMessenger.bug("Cannot generate new task for hot-swap", this);
                     }
                     lastRecoverdTask = newTask;
                     int expirationTime = randomExpiryProvider.nextInt(minExpirationTime, (maxExpirationTime + 1)) * 60;

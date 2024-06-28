@@ -42,16 +42,16 @@ public interface Menu
 
     Inventory getInventory();
 
-    private static Component inputButtonText(String buttonText) {
+    private static Component inputButtonText(Component buttonText) {
         return Component.text()
                 .append(Component.text("<").color(NamedTextColor.DARK_GRAY))
-                .append(Component.text(buttonText).color(NamedTextColor.GRAY))
+                .append(buttonText.color(NamedTextColor.GRAY))
                 .append(Component.text(">").color(NamedTextColor.DARK_GRAY))
                 .append(Component.text(": ").color(NamedTextColor.WHITE))
                 .build();
     }
 
-    public static Component INPUT_LEFT_CLICK = inputButtonText("Left Click");
-    public static Component INPUT_RIGHT_CLICK = inputButtonText("Right Click");
-    public static Component INPUT_SHIFT_CLICK = inputButtonText("Hold Shift");
+    public static Component INPUT_LEFT_CLICK = inputButtonText(Component.keybind("key.attack"));
+    public static Component INPUT_RIGHT_CLICK = inputButtonText(Component.keybind("key.use"));
+    public static Component INPUT_SHIFT_CLICK = inputButtonText(Component.keybind("key.crouch"));
 }

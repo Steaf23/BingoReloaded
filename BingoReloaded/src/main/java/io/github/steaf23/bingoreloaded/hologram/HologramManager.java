@@ -1,6 +1,6 @@
 package io.github.steaf23.bingoreloaded.hologram;
 
-import io.github.steaf23.bingoreloaded.util.Message;
+import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Location;
 
@@ -23,7 +23,7 @@ public class HologramManager
     {
         if (holograms.containsKey(id))
         {
-            Message.warn("Hologram with id " + id + " already exists");
+            ConsoleMessenger.warn("Hologram with id " + id + " already exists");
             return holograms.get(id);
         }
 
@@ -36,7 +36,7 @@ public class HologramManager
     {
         if (holograms.containsKey(id))
         {
-            Message.warn("Hologram with id " + id + " already exists");
+            ConsoleMessenger.warn("Hologram with id " + id + " already exists");
             return holograms.get(id);
         }
 
@@ -54,7 +54,7 @@ public class HologramManager
         }
         else
         {
-            Message.warn("Hologram with id " + id + " does not exist");
+            ConsoleMessenger.warn("Hologram with id " + id + " does not exist");
         }
     }
 }

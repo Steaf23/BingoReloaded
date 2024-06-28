@@ -3,7 +3,9 @@ package io.github.steaf23.bingoreloaded.player.team;
 import io.github.steaf23.bingoreloaded.cards.BingoCard;
 
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
-import io.github.steaf23.bingoreloaded.util.Message;
+import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
+import net.kyori.adventure.audience.Audience;
+import net.kyori.adventure.audience.ForwardingAudience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -15,7 +17,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-public class BingoTeam
+public class BingoTeam implements ForwardingAudience
 {
     private BingoCard card;
     public boolean outOfTheGame = false;
@@ -101,7 +103,7 @@ public class BingoTeam
 
     public int getCompleteCount() {
         if (card == null) {
-            Message.error("Cannot get complete count of team " + getColoredName() + " (Please report!)");
+            ConsoleMessenger.bug("Cannot get complete count of team " + getColoredName(), this);
             return 0;
         }
         return card.getCompleteCount(this);
@@ -120,5 +122,10 @@ public class BingoTeam
 
     public Component getPrefix() {
         return prefix;
+    }
+
+    @Override
+    public @NotNull Iterable<? extends Audience> audiences() {
+        return getMembers();
     }
 }

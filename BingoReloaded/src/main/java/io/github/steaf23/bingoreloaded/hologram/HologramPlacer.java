@@ -1,6 +1,6 @@
 package io.github.steaf23.bingoreloaded.hologram;
 
-import io.github.steaf23.bingoreloaded.util.Message;
+import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -73,7 +73,7 @@ public class HologramPlacer
     private void selectHologram(Player player)
     {
         Consumer<String> result = (hologram) -> {
-            Message.log("test hologram");
+            ConsoleMessenger.log("test hologram");
         };
 
 //        List<ItemTemplate> items = new ArrayList<>();

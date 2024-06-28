@@ -5,7 +5,7 @@ import io.github.steaf23.bingoreloaded.data.helper.YmlDataManager;
 import io.github.steaf23.bingoreloaded.tasks.AdvancementTask;
 import io.github.steaf23.bingoreloaded.tasks.StatisticTask;
 import io.github.steaf23.bingoreloaded.tasks.TaskData;
-import io.github.steaf23.bingoreloaded.util.Message;
+import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 
 import java.util.HashSet;
 import java.util.List;
@@ -80,7 +80,7 @@ public class TaskListData
             return false;
 
         if (DEFAULT_LIST_NAMES.contains(listName)) {
-            Message.error("Cannot remove default lists!");
+            ConsoleMessenger.error("Cannot remove default lists!");
             return false;
         }
         data.getConfig().set(listName, null);

@@ -10,8 +10,8 @@ import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
-import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.bingoreloaded.util.timer.GameTimer;
+import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
@@ -54,7 +54,7 @@ public class BingoReloadedPlaceholderExpansion extends PlaceholderExpansion
     public @Nullable String onRequest(OfflinePlayer player, @NotNull String params) {
         BingoReloadedPlaceholder placeholder = BingoReloadedPlaceholder.fromString(params);
         if (placeholder == null) {
-            Message.error("unexpected placeholder '" + params + "' not found in bingo reloaded.");
+            ConsoleMessenger.error("unexpected placeholder '" + params + "' not found in bingo reloaded.");
             return null;
         }
 
@@ -89,7 +89,7 @@ public class BingoReloadedPlaceholderExpansion extends PlaceholderExpansion
             }
             case GAME_STATUS -> {
                 //TODO: implement
-                Message.error("placeholder bingoreloaded_game_status is not implemented yet!");
+                ConsoleMessenger.error("placeholder bingoreloaded_game_status is not implemented yet!");
                 yield "-";
             }
             case SETTING_GAMEMODE -> {
@@ -131,7 +131,7 @@ public class BingoReloadedPlaceholderExpansion extends PlaceholderExpansion
             }
             case SETTING_EFFECTS -> {
                 //TODO: implement
-                Message.error("placeholder bingoreloaded_setting_effect is not implemented yet!");
+                ConsoleMessenger.error("placeholder bingoreloaded_setting_effect is not implemented yet!");
                 yield "-";
             }
             case SETTING_HOTSWAP_WINSCORE -> {

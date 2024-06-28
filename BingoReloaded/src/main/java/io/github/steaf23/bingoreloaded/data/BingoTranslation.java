@@ -1,7 +1,7 @@
 package io.github.steaf23.bingoreloaded.data;
 
 import io.github.steaf23.bingoreloaded.util.CollectionHelper;
-import io.github.steaf23.bingoreloaded.util.Message;
+import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import io.github.steaf23.playerdisplay.util.SmallCaps;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -253,7 +253,7 @@ public enum BingoTranslation
             String path = key.replace("{$", "").replace("}", "");
 
             if (matchedKeys.contains(path)) {
-                Message.warn("recursive translation substitution found on " + path);
+                ConsoleMessenger.warn("Recursive translation substitution found on " + path + ". Please check your translation file. If this was not you, please report it.");
                 break;
             }
 

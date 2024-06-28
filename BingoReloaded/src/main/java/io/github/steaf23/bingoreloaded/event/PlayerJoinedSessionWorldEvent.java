@@ -1,12 +1,8 @@
 package io.github.steaf23.bingoreloaded.event;
 
+import io.github.steaf23.bingoreloaded.event.core.BingoEvent;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
-import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.WorldType;
 import org.bukkit.entity.Player;
-
-import javax.annotation.Nullable;
 
 public class PlayerJoinedSessionWorldEvent extends BingoEvent
 {

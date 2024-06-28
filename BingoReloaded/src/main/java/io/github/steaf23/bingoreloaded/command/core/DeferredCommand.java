@@ -1,6 +1,6 @@
-package io.github.steaf23.bingoreloaded.command;
+package io.github.steaf23.bingoreloaded.command.core;
 
-import io.github.steaf23.bingoreloaded.util.Message;
+import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 
 import java.util.Arrays;
 import java.util.List;
@@ -50,7 +50,7 @@ public class DeferredCommand extends SubCommand
     public boolean execute(String... arguments) {
         // A substitute can't exist when there is nothing to defer it to (this is a developer mistake)
         if (subCommands.size() == 0) {
-            Message.error("Wrongly formatted command by plugin (Please report, this is a developer mistake!)");
+            ConsoleMessenger.bug("Wrongly formatted command by plugin {this is a developer mistake!}", this);
             return false;
         }
 

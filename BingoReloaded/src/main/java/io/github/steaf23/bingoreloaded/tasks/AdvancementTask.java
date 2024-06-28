@@ -1,8 +1,8 @@
 package io.github.steaf23.bingoreloaded.tasks;
 
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
-import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.playerdisplay.util.ChatComponentUtils;
+import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -31,7 +31,7 @@ public record AdvancementTask(Advancement advancement) implements TaskData
 
         if (advancement == null)
         {
-            Message.log("Could not get advancement, returning null!");
+            ConsoleMessenger.log("Could not get advancement, returning null!");
             builder.append(Component.text("no advancement?"));
         }
         else

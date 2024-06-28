@@ -16,11 +16,11 @@ import io.github.steaf23.bingoreloaded.tasks.ItemTask;
 import io.github.steaf23.bingoreloaded.tasks.StatisticTask;
 import io.github.steaf23.bingoreloaded.tasks.BingoStatistic;
 import io.github.steaf23.bingoreloaded.placeholder.BingoReloadedPlaceholderExpansion;
-import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.playerdisplay.PlayerDisplay;
 import io.github.steaf23.playerdisplay.inventory.BasicMenu;
 import io.github.steaf23.playerdisplay.scoreboard.HUDRegistry;
-import net.md_5.bungee.api.ChatColor;
+import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.command.*;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
@@ -53,6 +53,8 @@ public class BingoReloaded extends JavaPlugin
 
     @Override
     public void onLoad() {
+        ConsoleMessenger.pluginPrefix = "[" + getName() + "]";
+        BasicMenu.pluginTitlePrefix = BingoTranslation.MENU_PREFIX.asSingleComponent();
         PlayerDisplay.setPlugin(this);
     }
 
@@ -66,7 +68,7 @@ public class BingoReloaded extends JavaPlugin
         PLACEHOLDER_API_ENABLED = Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null;
         if (PLACEHOLDER_API_ENABLED) {
             new BingoReloadedPlaceholderExpansion(this).register();
-            Message.log(ChatColor.GREEN + "Enabled Bingo Reloaded Placeholder expansion");
+            ConsoleMessenger.log(NamedTextColor.GREEN + "Enabled Bingo Reloaded Placeholder expansion");
         }
 
         PlayerDisplay.setItemTranslation(key -> {
@@ -93,8 +95,7 @@ public class BingoReloaded extends JavaPlugin
         this.config = new ConfigData(getConfig());
 
         BingoTranslation.setLanguage(createYmlDataManager(config.language).getConfig(), createYmlDataManager("languages/en_us.yml").getConfig());
-        BasicMenu.pluginTitlePrefix = BingoTranslation.MENU_PREFIX.asSingleComponent();
-        Message.log("" + ChatColor.GREEN + BingoTranslation.CHANGED_LANGUAGE.translate());
+        ConsoleMessenger.log(NamedTextColor.GREEN + BingoTranslation.CHANGED_LANGUAGE.translate());
 
 //        this.hologramManager = new HologramManager();
 //        this.hologramPlacer = new HologramPlacer(hologramManager);
@@ -123,7 +124,7 @@ public class BingoReloaded extends JavaPlugin
             Bukkit.getPluginManager().registerEvents(command, this);
         }
 
-        Message.log(ChatColor.GREEN + "Enabled " + getName());
+        ConsoleMessenger.log(NamedTextColor.GREEN + "Enabled " + getName());
 
 //        if (RecoveryCardData.loadCards(game))
 //        {

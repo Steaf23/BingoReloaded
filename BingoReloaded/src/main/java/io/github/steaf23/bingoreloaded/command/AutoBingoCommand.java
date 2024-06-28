@@ -1,6 +1,8 @@
 package io.github.steaf23.bingoreloaded.command;
 
 import io.github.steaf23.bingoreloaded.cards.CardSize;
+import io.github.steaf23.bingoreloaded.command.core.DeferredCommand;
+import io.github.steaf23.bingoreloaded.command.core.SubCommand;
 import io.github.steaf23.bingoreloaded.data.BingoCardData;
 import io.github.steaf23.bingoreloaded.data.BingoSettingsData;
 import io.github.steaf23.bingoreloaded.data.ConfigData;
@@ -14,7 +16,6 @@ import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
 import io.github.steaf23.bingoreloaded.settings.BingoSettingsBuilder;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
-import io.github.steaf23.bingoreloaded.util.Message;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -563,8 +564,6 @@ public class AutoBingoCommand implements TabExecutor
             sendFailed("Expected 5 arguments!", sessionName);
             return false;
         }
-
-        Message.log(Arrays.stream(args).toList().toString());
 
         Player player = Bukkit.getPlayer(args[1]);
         if (player == null) {

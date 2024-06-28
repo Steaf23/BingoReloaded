@@ -2,9 +2,9 @@ package io.github.steaf23.bingoreloaded.gameloop;
 
 import io.github.steaf23.bingoreloaded.data.ConfigData;
 import io.github.steaf23.bingoreloaded.data.world.WorldGroup;
-import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.playerdisplay.inventory.MenuBoard;
 import io.github.steaf23.playerdisplay.scoreboard.HUDRegistry;
+import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -26,13 +26,13 @@ public class SingularGameManager extends GameManager
 
     @Override
     public boolean destroySession(String sessionName) {
-        Message.error("This command is not available when using configuration singular!");
+        ConsoleMessenger.error("This command is not available when using configuration singular!");
         return false;
     }
 
     @Override
     public boolean createSession(String sessionName) {
-        Message.error("This command is not available when using configuration singular!");
+        ConsoleMessenger.error("This command is not available when using configuration singular!");
         return false;
     }
 
@@ -42,13 +42,13 @@ public class SingularGameManager extends GameManager
         World theEnd = Bukkit.getWorld(getGameConfig().defaultWorldName + "_the_end");
 
         if (overworld == null) {
-            Message.error("Could not create world group from existing world; " + getGameConfig().defaultWorldName + " does not exist. Make sure the world exists and reload the plugin.");
+            ConsoleMessenger.error("Could not create world group from existing world; " + getGameConfig().defaultWorldName + " does not exist. Make sure the world exists and reload the plugin.");
             return null;
         } else if (nether == null) {
-            Message.error("Could not create world group from existing world; " + getGameConfig().defaultWorldName + "_nether does not exist. Make sure the world exists and reload the plugin.");
+            ConsoleMessenger.error("Could not create world group from existing world; " + getGameConfig().defaultWorldName + "_nether does not exist. Make sure the world exists and reload the plugin.");
             return null;
         } else if (theEnd == null) {
-            Message.error("Could not create world group from existing world; " + getGameConfig().defaultWorldName + "_the_end does not exist. Make sure the world exists and reload the plugin.");
+            ConsoleMessenger.error("Could not create world group from existing world; " + getGameConfig().defaultWorldName + "_the_end does not exist. Make sure the world exists and reload the plugin.");
             return null;
         }
         WorldGroup group = new WorldGroup(getGameConfig().defaultWorldName, overworld.getUID(), nether.getUID(), theEnd.getUID());

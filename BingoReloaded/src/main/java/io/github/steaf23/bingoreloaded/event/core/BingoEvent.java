@@ -1,4 +1,4 @@
-package io.github.steaf23.bingoreloaded.event;
+package io.github.steaf23.bingoreloaded.event.core;
 
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import org.bukkit.event.Event;

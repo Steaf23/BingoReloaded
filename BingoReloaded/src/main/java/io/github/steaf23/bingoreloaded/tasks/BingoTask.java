@@ -3,9 +3,9 @@ package io.github.steaf23.bingoreloaded.tasks;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.gui.inventory.item.TaskItemAction;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
-import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.bingoreloaded.util.timer.GameTimer;
 import io.github.steaf23.playerdisplay.inventory.item.ItemTemplate;
+import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import io.github.steaf23.playerdisplay.util.PDCHelper;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentBuilder;
@@ -65,7 +65,7 @@ public class BingoTask
         }
         else
         {
-            Message.log("This Type of data is not supported by BingoTask: '" + data + "'!");
+            ConsoleMessenger.log("This Type of data is not supported by BingoTask: '" + data + "'!");
             this.type = TaskType.ITEM;
             this.glowing = false;
             this.material = Material.BEDROCK;
@@ -180,7 +180,7 @@ public class BingoTask
         TaskType type;
         if (typeStr.isEmpty())
         {
-            Message.log("Cannot create a valid task from this item stack!");
+            ConsoleMessenger.log("Cannot create a valid task from this item stack!");
             return null;
         }
 

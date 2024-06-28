@@ -9,14 +9,15 @@ import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.tasks.*;
 import io.github.steaf23.bingoreloaded.tasks.tracker.TaskProgressTracker;
-import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.playerdisplay.inventory.MenuBoard;
 import io.github.steaf23.playerdisplay.util.ChatComponentUtils;
+import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.Console;
 import java.util.*;
 
 
@@ -114,7 +115,7 @@ public class BingoCard
                 newTasks.add(tasks.remove(tasks.size() - 1));
             }
             else {
-                Message.error("Found empty task list '" + listName + "'.");
+                ConsoleMessenger.error("Found empty task list '" + listName + "'.");
             }
         }
         while (newTasks.size() < size.fullCardSize) {

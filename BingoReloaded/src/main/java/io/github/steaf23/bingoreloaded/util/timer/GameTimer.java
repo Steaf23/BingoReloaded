@@ -1,11 +1,9 @@
 package io.github.steaf23.bingoreloaded.util.timer;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
-import io.github.steaf23.bingoreloaded.util.Message;
+import io.github.steaf23.bingoreloaded.ConsoleMessenger;
 import net.kyori.adventure.text.Component;
 import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -55,7 +53,7 @@ public abstract class GameTimer
         }
         catch (IllegalStateException e)
         {
-            Message.log(ChatColor.RED + "Timer couldn't be stopped since it never started!");
+            ConsoleMessenger.bug("A Timer couldn't be stopped since it never started!", this);
             return -1;
         }
         task = null;
