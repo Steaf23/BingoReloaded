@@ -2,16 +2,10 @@ package io.github.steaf23.bingoreloaded.data;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.helper.YmlDataManager;
-import io.github.steaf23.bingoreloaded.util.Message;
-import io.github.steaf23.easymenulib.scoreboard.HUDRegistry;
-import io.github.steaf23.easymenulib.scoreboard.SidebarHUD;
 import net.kyori.adventure.text.Component;
-import org.bukkit.configuration.file.FileConfiguration;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 public class ScoreboardData
 {

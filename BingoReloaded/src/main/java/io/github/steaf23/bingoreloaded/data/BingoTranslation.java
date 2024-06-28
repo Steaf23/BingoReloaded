@@ -2,7 +2,7 @@ package io.github.steaf23.bingoreloaded.data;
 
 import io.github.steaf23.bingoreloaded.util.CollectionHelper;
 import io.github.steaf23.bingoreloaded.util.Message;
-import io.github.steaf23.easymenulib.util.SmallCaps;
+import io.github.steaf23.playerdisplay.util.SmallCaps;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;

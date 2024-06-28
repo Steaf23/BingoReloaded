@@ -1,15 +1,8 @@
 package io.github.steaf23.bingoreloaded.gui.inventory.creator;
 
-import io.github.steaf23.bingoreloaded.data.BingoCardData;
-import io.github.steaf23.easymenulib.inventory.BasicMenu;
-import io.github.steaf23.easymenulib.inventory.MenuBoard;
-import io.github.steaf23.easymenulib.inventory.item.ItemTemplate;
-import io.github.steaf23.easymenulib.inventory.item.action.SpinBoxButtonAction;
-import io.github.steaf23.easymenulib.util.ChatComponentUtils;
+import io.github.steaf23.playerdisplay.inventory.BasicMenu;
+import io.github.steaf23.playerdisplay.inventory.MenuBoard;
 import net.kyori.adventure.text.Component;
-import net.md_5.bungee.api.chat.TextComponent;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
 
 //FIXME: help
 public class ListValueEditorMenu extends BasicMenu

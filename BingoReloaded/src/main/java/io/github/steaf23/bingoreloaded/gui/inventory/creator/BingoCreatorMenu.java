@@ -1,21 +1,10 @@
 package io.github.steaf23.bingoreloaded.gui.inventory.creator;
 
 import io.github.steaf23.bingoreloaded.data.BingoCardData;
-import io.github.steaf23.bingoreloaded.data.BingoTranslation;
-import io.github.steaf23.bingoreloaded.data.TaskListData;
-import io.github.steaf23.bingoreloaded.util.Message;
-import io.github.steaf23.easymenulib.inventory.*;
-import io.github.steaf23.easymenulib.inventory.item.ItemTemplate;
+import io.github.steaf23.playerdisplay.inventory.*;
+import io.github.steaf23.playerdisplay.inventory.item.ItemTemplate;
 import net.kyori.adventure.text.Component;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.entity.HumanEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.ClickType;
-import org.bukkit.event.inventory.InventoryClickEvent;
-
-import java.util.ArrayList;
-import java.util.List;
 
 // This class is used to navigate through the cards and lists.
 // Uses a double ListPicker, one for cards and one for lists.

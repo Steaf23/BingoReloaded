@@ -1,7 +1,7 @@
 package io.github.steaf23.bingoreloaded.gui.hud;
 
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
-import io.github.steaf23.easymenulib.scoreboard.HUDRegistry;
+import io.github.steaf23.playerdisplay.scoreboard.HUDRegistry;
 import org.bukkit.entity.Player;
 
 /**

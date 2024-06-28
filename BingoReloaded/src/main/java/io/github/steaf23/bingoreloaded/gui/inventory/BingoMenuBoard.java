@@ -1,8 +1,8 @@
 package io.github.steaf23.bingoreloaded.gui.inventory;
 
 import io.github.steaf23.bingoreloaded.event.PlayerLeftSessionWorldEvent;
-import io.github.steaf23.easymenulib.inventory.Menu;
-import io.github.steaf23.easymenulib.inventory.MenuBoard;
+import io.github.steaf23.playerdisplay.inventory.Menu;
+import io.github.steaf23.playerdisplay.inventory.MenuBoard;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;

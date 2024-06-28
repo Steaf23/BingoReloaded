@@ -2,8 +2,8 @@ package io.github.steaf23.bingoreloaded.gui.hud;
 
 import io.github.steaf23.bingoreloaded.data.ScoreboardData;
 import io.github.steaf23.bingoreloaded.util.Message;
-import io.github.steaf23.easymenulib.scoreboard.PlayerHUD;
-import io.github.steaf23.easymenulib.scoreboard.SidebarHUD;
+import io.github.steaf23.playerdisplay.scoreboard.PlayerHUD;
+import io.github.steaf23.playerdisplay.scoreboard.SidebarHUD;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;

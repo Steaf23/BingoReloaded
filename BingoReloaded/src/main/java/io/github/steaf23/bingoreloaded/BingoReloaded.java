@@ -9,8 +9,6 @@ import io.github.steaf23.bingoreloaded.gameloop.GameManager;
 import io.github.steaf23.bingoreloaded.gameloop.SingularGameManager;
 import io.github.steaf23.bingoreloaded.gui.inventory.BingoMenuBoard;
 import io.github.steaf23.bingoreloaded.gui.inventory.item.SerializableItem;
-import io.github.steaf23.bingoreloaded.hologram.HologramManager;
-import io.github.steaf23.bingoreloaded.hologram.HologramPlacer;
 import io.github.steaf23.bingoreloaded.settings.CustomKit;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
 import io.github.steaf23.bingoreloaded.tasks.AdvancementTask;
@@ -19,9 +17,9 @@ import io.github.steaf23.bingoreloaded.tasks.StatisticTask;
 import io.github.steaf23.bingoreloaded.tasks.BingoStatistic;
 import io.github.steaf23.bingoreloaded.placeholder.BingoReloadedPlaceholderExpansion;
 import io.github.steaf23.bingoreloaded.util.Message;
-import io.github.steaf23.easymenulib.EasyMenuLibrary;
-import io.github.steaf23.easymenulib.inventory.BasicMenu;
-import io.github.steaf23.easymenulib.scoreboard.HUDRegistry;
+import io.github.steaf23.playerdisplay.PlayerDisplay;
+import io.github.steaf23.playerdisplay.inventory.BasicMenu;
+import io.github.steaf23.playerdisplay.scoreboard.HUDRegistry;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.command.*;
@@ -55,12 +53,12 @@ public class BingoReloaded extends JavaPlugin
 
     @Override
     public void onLoad() {
-        EasyMenuLibrary.setPlugin(this);
+        PlayerDisplay.setPlugin(this);
     }
 
     @Override
     public void onEnable() {
-        EasyMenuLibrary.onPluginEnable();
+        PlayerDisplay.onPluginEnable();
         reloadConfig();
         saveDefaultConfig();
         // Kinda ugly, but we can assume there will only be one instance of this class anyway.
@@ -71,7 +69,7 @@ public class BingoReloaded extends JavaPlugin
             Message.log(ChatColor.GREEN + "Enabled Bingo Reloaded Placeholder expansion");
         }
 
-        EasyMenuLibrary.setItemTranslation(key -> {
+        PlayerDisplay.setItemTranslation(key -> {
             return switch (key) {
                 case MENU_PREVIOUS -> BingoTranslation.MENU_PREV.translate();
                 case MENU_NEXT -> BingoTranslation.MENU_NEXT.translate();

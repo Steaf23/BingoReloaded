@@ -1,17 +1,12 @@
 package io.github.steaf23.bingoreloaded.data;
 
-import com.google.common.base.CaseFormat;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.helper.YmlDataManager;
-import io.github.steaf23.bingoreloaded.util.Message;
-import io.github.steaf23.easymenulib.util.BlockColor;
+import io.github.steaf23.playerdisplay.util.BlockColor;
 import net.kyori.adventure.text.format.TextColor;
-import net.md_5.bungee.api.ChatColor;
 import org.apache.commons.text.WordUtils;
-import org.bukkit.block.Block;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
-import org.bukkit.scoreboard.Team;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
