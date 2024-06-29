@@ -2,7 +2,7 @@ package io.github.steaf23.bingoreloaded.util.timer;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
-import io.github.steaf23.bingoreloaded.data.BingoTranslation;
+import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.event.CountdownTimerFinishedEvent;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -70,7 +70,7 @@ public class CountdownTimer extends GameTimer
             color = NamedTextColor.RED;
         else if (getTime() <= medThreshold)
             color = NamedTextColor.GOLD;
-        return BingoTranslation.TIME_LEFT.asSingleComponent(Component.text(timeString).color(color))
+        return BingoMessage.TIME_LEFT.asPhrase(Component.text(timeString).color(color))
                 .color(NamedTextColor.LIGHT_PURPLE)
                 .decorate(TextDecoration.BOLD);
     }

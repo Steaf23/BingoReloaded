@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 
 public class TeamDisplay
 {
-    private record TeamInfo(String identifier, String displayName, @Nullable Component prefix, @Nullable Component suffix, Collection<String> entries) {}
+    private record TeamInfo(String identifier, Component displayName, @Nullable Component prefix, @Nullable Component suffix, Collection<String> entries) {}
 
     private final BingoSession session;
     private final TeamManager manager;
@@ -69,7 +69,7 @@ public class TeamDisplay
     private void createTeamForPlayer(TeamInfo team, Player player) {
         TeamPacketHelper.createTeamVisibleToPlayer(player,
                 team.identifier(),
-                Component.text(team.displayName()),
+                team.displayName(),
                 team.prefix(),
                 team.suffix(),
                 team.entries());

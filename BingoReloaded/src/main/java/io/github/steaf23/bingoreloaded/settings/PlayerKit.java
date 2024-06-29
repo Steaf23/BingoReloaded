@@ -2,12 +2,11 @@ package io.github.steaf23.bingoreloaded.settings;
 
 import com.google.common.collect.ImmutableSet;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
-import io.github.steaf23.bingoreloaded.data.BingoTranslation;
+import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.helper.YmlDataManager;
 import io.github.steaf23.bingoreloaded.gui.inventory.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.gui.inventory.item.SerializableItem;
 import io.github.steaf23.playerdisplay.inventory.item.ItemTemplate;
-import io.github.steaf23.playerdisplay.util.ChatComponentUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
@@ -24,10 +23,10 @@ import java.util.stream.Collectors;
 
 public enum PlayerKit
 {
-    HARDCORE("hardcore", BingoTranslation.KIT_HARDCORE_NAME.asSingleComponent(), EnumSet.noneOf(EffectOptionFlags.class)),
-    NORMAL("normal", BingoTranslation.KIT_NORMAL_NAME.asSingleComponent(), EnumSet.of(EffectOptionFlags.SPEED, EffectOptionFlags.NO_FALL_DAMAGE)),
-    OVERPOWERED("overpowered", BingoTranslation.KIT_OVERPOWERED_NAME.asSingleComponent(), EnumSet.allOf(EffectOptionFlags.class)),
-    RELOADED("reloaded", BingoTranslation.KIT_RELOADED_NAME.asSingleComponent(), EnumSet.allOf(EffectOptionFlags.class)),
+    HARDCORE("hardcore", BingoMessage.KIT_HARDCORE_NAME.asPhrase(), EnumSet.noneOf(EffectOptionFlags.class)),
+    NORMAL("normal", BingoMessage.KIT_NORMAL_NAME.asPhrase(), EnumSet.of(EffectOptionFlags.SPEED, EffectOptionFlags.NO_FALL_DAMAGE)),
+    OVERPOWERED("overpowered", BingoMessage.KIT_OVERPOWERED_NAME.asPhrase(), EnumSet.allOf(EffectOptionFlags.class)),
+    RELOADED("reloaded", BingoMessage.KIT_RELOADED_NAME.asPhrase(), EnumSet.allOf(EffectOptionFlags.class)),
     CUSTOM_1("custom_1", Component.text("CUSTOM 1"), EnumSet.noneOf(EffectOptionFlags.class)),
     CUSTOM_2("custom_2", Component.text("CUSTOM 2"), EnumSet.noneOf(EffectOptionFlags.class)),
     CUSTOM_3("custom_3", Component.text("CUSTOM 3"), EnumSet.noneOf(EffectOptionFlags.class)),
@@ -37,32 +36,28 @@ public enum PlayerKit
 
     public static final ItemTemplate WAND_ITEM = new ItemTemplate(
             Material.WARPED_FUNGUS_ON_A_STICK,
-            Component.text(BingoTranslation.WAND_ITEM_NAME.translate()).color(NamedTextColor.DARK_PURPLE).decorate(TextDecoration.BOLD, TextDecoration.ITALIC),
-            ChatComponentUtils.createComponentsFromString(BingoTranslation.WAND_ITEM_DESC.translate().split("\\n"))
-    )
+            BingoMessage.WAND_ITEM_NAME.asPhrase().color(NamedTextColor.DARK_PURPLE).decorate(TextDecoration.BOLD, TextDecoration.ITALIC),
+            BingoMessage.WAND_ITEM_DESC.asMultiline())
             .addEnchantment(Enchantment.UNBREAKING, 3)
             .setCompareKey("wand");
 
     public static final ItemTemplate CARD_ITEM = new ItemTemplate(
             Material.GLOBE_BANNER_PATTERN,
-            Component.text(BingoTranslation.CARD_ITEM_NAME.translate()).color(NamedTextColor.DARK_PURPLE).decorate(TextDecoration.BOLD, TextDecoration.ITALIC),
-            ChatComponentUtils.createComponentsFromString(BingoTranslation.CARD_ITEM_DESC.translate().split("\\n"))
-    )
+            BingoMessage.CARD_ITEM_NAME.asPhrase().color(NamedTextColor.DARK_PURPLE).decorate(TextDecoration.BOLD, TextDecoration.ITALIC),
+            BingoMessage.CARD_ITEM_DESC.asMultiline())
             .setGlowing(true)
             .setCompareKey("card");
 
     public static final ItemTemplate VOTE_ITEM = new ItemTemplate(
             Material.EMERALD,
-            Component.text(BingoTranslation.VOTE_ITEM_NAME.translate()).color(NamedTextColor.DARK_PURPLE).decorate(TextDecoration.BOLD, TextDecoration.ITALIC),
-            ChatComponentUtils.createComponentsFromString(BingoTranslation.VOTE_ITEM_DESC.translate().split("\\n"))
-    )
+            BingoMessage.VOTE_ITEM_NAME.asPhrase().color(NamedTextColor.DARK_PURPLE).decorate(TextDecoration.BOLD, TextDecoration.ITALIC),
+            BingoMessage.VOTE_ITEM_DESC.asMultiline())
             .setCompareKey("vote");
 
     public static final ItemTemplate TEAM_ITEM = new ItemTemplate(
             Material.WHITE_GLAZED_TERRACOTTA,
-            Component.text(BingoTranslation.TEAM_ITEM_NAME.translate()).color(NamedTextColor.DARK_PURPLE).decorate(TextDecoration.BOLD, TextDecoration.ITALIC),
-            ChatComponentUtils.createComponentsFromString(BingoTranslation.TEAM_ITEM_DESC.translate().split("\\n"))
-    )
+            BingoMessage.TEAM_ITEM_NAME.asPhrase().color(NamedTextColor.DARK_PURPLE).decorate(TextDecoration.BOLD, TextDecoration.ITALIC),
+            BingoMessage.TEAM_ITEM_DESC.asMultiline())
             .setCompareKey("team");
 
     public final String configName;

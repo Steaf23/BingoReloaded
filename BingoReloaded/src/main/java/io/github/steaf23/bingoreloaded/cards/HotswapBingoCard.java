@@ -1,7 +1,7 @@
 package io.github.steaf23.bingoreloaded.cards;
 
 import io.github.steaf23.bingoreloaded.data.BingoCardData;
-import io.github.steaf23.bingoreloaded.data.BingoTranslation;
+import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.ConfigData;
 import io.github.steaf23.bingoreloaded.event.BingoPlaySoundEvent;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
@@ -14,7 +14,6 @@ import io.github.steaf23.bingoreloaded.tasks.TaskData;
 import io.github.steaf23.bingoreloaded.tasks.tracker.TaskProgressTracker;
 import io.github.steaf23.bingoreloaded.util.timer.GameTimer;
 import io.github.steaf23.playerdisplay.inventory.MenuBoard;
-import io.github.steaf23.playerdisplay.util.ChatComponentUtils;
 import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
@@ -50,7 +49,7 @@ public class HotswapBingoCard extends BingoCard
     private final List<TaskData> randomTasks;
 
     public HotswapBingoCard(MenuBoard menuBoard, CardSize size, BingoGame game, TaskProgressTracker progressTracker, int winningScore, ConfigData.HotswapConfig config) {
-        super(new HotswapCardMenu(menuBoard, size, BingoTranslation.CARD_TITLE.translate()), size, progressTracker);
+        super(new HotswapCardMenu(menuBoard, size), size, progressTracker);
         this.taskTimer = game.getTimer();
         this.randomExpiryProvider = new Random();
         this.taskHolders = new ArrayList<>();
@@ -68,14 +67,13 @@ public class HotswapBingoCard extends BingoCard
         boolean countdownEnabled = game.getSettings().enableCountdown();
         this.winningScore = countdownEnabled ? -1 : winningScore;
 
-        String[] description = new String[]{};
+        Component[] description;
         if (countdownEnabled) {
-            description = BingoTranslation.INFO_HOTSWAP_COUNTDOWN.translate(String.valueOf(game.getSettings().countdownDuration())).split("\\n");
+            description = BingoMessage.INFO_HOTSWAP_COUNTDOWN.asMultiline(Component.text(game.getSettings().countdownDuration()));
         } else {
-            description = BingoTranslation.INFO_HOTSWAP_DESC.translate(String.valueOf(winningScore)).split("\\n");
+            description = BingoMessage.INFO_HOTSWAP_DESC.asMultiline(Component.text(winningScore));
         }
-        menu.setInfo(Component.text().append(BingoTranslation.INFO_HOTSWAP_NAME.asComponent()).build(),
-                ChatComponentUtils.createComponentsFromString(description));
+        menu.setInfo(BingoMessage.INFO_HOTSWAP_NAME.asPhrase(), description);
     }
 
     @Override
@@ -195,11 +193,11 @@ public class HotswapBingoCard extends BingoCard
             if (taskExpiredCount == 1) {
                 BingoTask taskToSend = lastExpiredTask;
                 game.getActionBar().requestMessage(p ->
-                                Component.text().decorate(TextDecoration.BOLD).append(BingoTranslation.HOTSWAP_SINGLE_EXPIRED.asSingleComponent(taskToSend.data.getName()).color(TextColor.fromHexString("#e85e21"))).build(),
+                                Component.text().decorate(TextDecoration.BOLD).append(BingoMessage.HOTSWAP_SINGLE_EXPIRED.asPhrase(taskToSend.data.getName()).color(TextColor.fromHexString("#e85e21"))).build(),
                         1, 3);
             }
             else {
-                game.getActionBar().requestMessage(p -> Component.text().decorate(TextDecoration.BOLD).append(BingoTranslation.HOTSWAP_MULTIPLE_EXPIRED.asSingleComponent().color(TextColor.fromHexString("#e85e21"))).build(),
+                game.getActionBar().requestMessage(p -> Component.text().decorate(TextDecoration.BOLD).append(BingoMessage.HOTSWAP_MULTIPLE_EXPIRED.asPhrase().color(TextColor.fromHexString("#e85e21"))).build(),
                         1, 3);
             }
         }
@@ -210,11 +208,11 @@ public class HotswapBingoCard extends BingoCard
             if (taskRecoveredCount == 1) {
                 BingoTask taskToSend = lastRecoverdTask;
                 game.getActionBar().requestMessage(p ->
-                                Component.text().decorate(TextDecoration.BOLD).append(BingoTranslation.HOTSWAP_SINGLE_ADDED.asSingleComponent(taskToSend.data.getName()).color(TextColor.fromHexString("#5cb1ff"))).build(),
+                                Component.text().decorate(TextDecoration.BOLD).append(BingoMessage.HOTSWAP_SINGLE_ADDED.asPhrase(taskToSend.data.getName()).color(TextColor.fromHexString("#5cb1ff"))).build(),
                         2, 3);
             }
             else {
-                game.getActionBar().requestMessage(p -> Component.text().decorate(TextDecoration.BOLD).append(BingoTranslation.HOTSWAP_MULTIPLE_ADDED.asSingleComponent().color(TextColor.fromHexString("#5cb1ff"))).build(),
+                game.getActionBar().requestMessage(p -> Component.text().decorate(TextDecoration.BOLD).append(BingoMessage.HOTSWAP_MULTIPLE_ADDED.asPhrase().color(TextColor.fromHexString("#5cb1ff"))).build(),
                         1, 3);
             }
         }

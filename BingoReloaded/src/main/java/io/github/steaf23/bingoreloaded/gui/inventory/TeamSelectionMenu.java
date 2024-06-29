@@ -1,6 +1,6 @@
 package io.github.steaf23.bingoreloaded.gui.inventory;
 
-import io.github.steaf23.bingoreloaded.data.BingoTranslation;
+import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.TeamData;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
@@ -11,7 +11,7 @@ import io.github.steaf23.playerdisplay.inventory.FilterType;
 import io.github.steaf23.playerdisplay.inventory.MenuBoard;
 import io.github.steaf23.playerdisplay.inventory.PaginatedSelectionMenu;
 import io.github.steaf23.playerdisplay.inventory.item.ItemTemplate;
-import io.github.steaf23.playerdisplay.util.ChatComponentUtils;
+import io.github.steaf23.playerdisplay.util.ComponentUtils;
 import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -29,7 +29,7 @@ public class TeamSelectionMenu extends PaginatedSelectionMenu
     private final TeamManager teamManager;
 
     public TeamSelectionMenu(MenuBoard manager, BingoSession session) {
-        super(manager, BingoTranslation.OPTIONS_TEAM.asSingleComponent(), new ArrayList<>(), FilterType.NONE);
+        super(manager, BingoMessage.OPTIONS_TEAM.asPhrase(), new ArrayList<>(), FilterType.NONE);
         this.session = session;
         this.teamManager = session.teamManager;
     }
@@ -61,7 +61,7 @@ public class TeamSelectionMenu extends PaginatedSelectionMenu
         super.beforeOpening(player);
 
         List<ItemTemplate> optionItems = new ArrayList<>();
-        ItemTemplate autoItem = new ItemTemplate(Material.NETHER_STAR, BingoTranslation.TEAM_AUTO.asSingleComponent().decorate(TextDecoration.BOLD, TextDecoration.ITALIC))
+        ItemTemplate autoItem = new ItemTemplate(Material.NETHER_STAR, BingoMessage.TEAM_AUTO.asPhrase().decorate(TextDecoration.BOLD, TextDecoration.ITALIC))
                 .setCompareKey("item_auto");
         if (player instanceof Player gamePlayer) {
             Optional<BingoTeam> autoTeamOpt = teamManager.getActiveTeams().getTeams().stream()
@@ -84,15 +84,15 @@ public class TeamSelectionMenu extends PaginatedSelectionMenu
             if (playerInAutoTeam) {
                 description.add("" + ChatColor.GRAY + ChatColor.BOLD + " ┗ " + ChatColor.RESET + ChatColor.WHITE + gamePlayer.getDisplayName());
                 description.add(" ");
-                description.add("" + ChatColor.GRAY + BingoTranslation.COUNT_MORE.translate(Integer.toString(autoTeamMemberCount - 1)));
+                description.add("" + ChatColor.GRAY + BingoMessage.COUNT_MORE.asPhrase(Component.text(Integer.toString(autoTeamMemberCount - 1))));
             }
             else {
-                description.add("" + ChatColor.GRAY + BingoTranslation.COUNT_MORE.translate(Integer.toString(autoTeamMemberCount)));
+                description.add("" + ChatColor.GRAY + BingoMessage.COUNT_MORE.asPhrase(Component.text(Integer.toString(autoTeamMemberCount))));
             }
             autoItem.addDescription("joined", 1, description.toArray(new String[]{}));
         }
         optionItems.add(autoItem);
-        optionItems.add(new ItemTemplate(Material.TNT, BingoTranslation.OPTIONS_LEAVE.asSingleComponent().decorate(TextDecoration.BOLD, TextDecoration.ITALIC))
+        optionItems.add(new ItemTemplate(Material.TNT, BingoMessage.OPTIONS_LEAVE.asPhrase().decorate(TextDecoration.BOLD, TextDecoration.ITALIC))
                 .setGlowing(true).setCompareKey("item_leave"));
 
         var allTeams = teamManager.getJoinableTeams();
@@ -101,6 +101,7 @@ public class TeamSelectionMenu extends PaginatedSelectionMenu
             TeamData.TeamTemplate teamTemplate = allTeams.get(teamId);
 
             boolean teamIsFull = false;
+            //FIXME: redo description with components
             List<String> description = new ArrayList<>();
 
             for (BingoTeam team : teamManager.getActiveTeams()) {
@@ -121,14 +122,14 @@ public class TeamSelectionMenu extends PaginatedSelectionMenu
 
             description.add(" ");
             if (teamIsFull) {
-                description.add(ChatColor.RED + BingoTranslation.FULL_TEAM_DESC.translate());
+                description.add("" + ChatColor.RED + BingoMessage.JOIN_TEAM_DESC.asPhrase());
             } else {
-                description.add(ChatColor.GREEN + BingoTranslation.JOIN_TEAM_DESC.translate());
+                description.add("" + ChatColor.GREEN + BingoMessage.JOIN_TEAM_DESC.asPhrase());
             }
 
             optionItems.add(ItemTemplate.createColoredLeather(teamTemplate.color(), Material.LEATHER_HELMET)
                     .setName(Component.text(teamTemplate.name()).color(teamTemplate.color()).decorate(TextDecoration.BOLD))
-                    .setLore(ChatComponentUtils.createComponentsFromString(description.toArray(new String[]{})))
+                    .setLore(ComponentUtils.createComponentsFromString(description.toArray(new String[]{})))
                     .setCompareKey(teamId)
                     .setGlowing(playersTeam));
         }

@@ -1,6 +1,6 @@
 package io.github.steaf23.bingoreloaded.gui.inventory.creator;
 
-import io.github.steaf23.bingoreloaded.data.BingoTranslation;
+import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.tasks.BingoTask;
 import io.github.steaf23.bingoreloaded.tasks.StatisticTask;
 import io.github.steaf23.bingoreloaded.tasks.BingoStatistic;
@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 public class StatisticSelectionMenu extends BasicMenu
 {
     public String listName;
-    protected static final ItemTemplate QUIT = new ItemTemplate(49, Material.REDSTONE, Component.text(BingoTranslation.MENU_SAVE_EXIT.translate()).color(NamedTextColor.RED).decorate(TextDecoration.BOLD));
+    protected static final ItemTemplate QUIT = new ItemTemplate(49, Material.REDSTONE, BingoMessage.MENU_SAVE_EXIT.asPhrase().color(NamedTextColor.RED).decorate(TextDecoration.BOLD));
 
     public StatisticSelectionMenu(MenuBoard menuBoard, String listName)
     {

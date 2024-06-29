@@ -38,6 +38,7 @@ public class BingoSettingsHUDGroup extends PlayerHUDGroup
         updateVisible();
     }
 
+    //FIXME: add fancy way to use this with player context, as at this point we know it will be made for a specific player anyways
     public void setStatus(@Nullable Component status) {
         registeredFields.put("status", status);
         updateVisible();

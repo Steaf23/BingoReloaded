@@ -7,6 +7,7 @@ import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import io.github.steaf23.bingoreloaded.tasks.BingoTask;
 import net.kyori.adventure.audience.ForwardingAudience;
+import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
@@ -23,7 +24,7 @@ public interface BingoParticipant extends ForwardingAudience.Single
     UUID getId();
     Optional<Player> sessionPlayer();
     String getName();
-    String getDisplayName();
+    Component getDisplayName();
     void showDeathMatchTask(BingoTask task);
     void showCard(BingoTask deathMatchTask);
     boolean alwaysActive();

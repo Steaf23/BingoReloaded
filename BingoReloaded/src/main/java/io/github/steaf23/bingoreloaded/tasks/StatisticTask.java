@@ -1,10 +1,12 @@
 package io.github.steaf23.bingoreloaded.tasks;
 
-import io.github.steaf23.bingoreloaded.data.BingoTranslation;
+import io.github.steaf23.bingoreloaded.data.BingoMessage;
+import io.github.steaf23.playerdisplay.util.ComponentUtils;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
-import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.Material;
 import org.bukkit.Statistic;
 import org.bukkit.configuration.serialization.SerializableAs;
@@ -32,65 +34,60 @@ public record StatisticTask(BingoStatistic statistic, int count) implements Coun
     @Override
     public Component getName()
     {
-        TextComponent amount = new TextComponent(Integer.toString(count));
+        Component amount = Component.text(count);
 
-        Component nameComponent = Component.text("*").color(NamedTextColor.LIGHT_PURPLE).decorate(TextDecoration.ITALIC);
+        TextComponent.Builder builder = Component.text().append(Component.text("*"))
+                .color(NamedTextColor.LIGHT_PURPLE).decorate(TextDecoration.ITALIC);
 
-        return nameComponent;
-
-        //FIXME: reimplement
-//
-//        switch (statistic.getCategory())
-//        {
-//            case ROOT_STATISTIC -> {
-//                if (statistic.stat() == Statistic.KILL_ENTITY)
-//                {
-//                    BaseComponent entityName = ChatComponentUtils.entityName(statistic.entityType());
-//                    BaseComponent[] inPlaceArguments = new BaseComponent[]{amount, new TextComponent("")};
-//                    builder.append(ChatComponentUtils.statistic(statistic.stat(), inPlaceArguments))
-//                            .append(" (")
-//                            .append(entityName)
-//                            .append(")");
-//                }
-//                else if (statistic.stat() == Statistic.ENTITY_KILLED_BY) {
-//                    BaseComponent entityName = ChatComponentUtils.entityName(statistic.entityType());
-//                    BaseComponent[] inPlaceArguments = new BaseComponent[]{new TextComponent(""), amount};
-//                    builder.append("(")
-//                            .append(entityName)
-//                            .append(") ")
-//                            .append(ChatComponentUtils.statistic(statistic.stat(), inPlaceArguments));
-//                }
-//                else
-//                {
-//                    builder.append(ChatComponentUtils.statistic(statistic.stat()))
-//                            .append(" ")
-//                            .append(ChatComponentUtils.itemName(statistic.materialType()))
-//                            .append(": ")
-//                            .append(amount);
-//                }
-//            }
-//            case TRAVEL -> {
-//                builder.append(ChatComponentUtils.statistic(statistic.stat()))
-//                        .append(": ")
-//                        .append(new TextComponent(Integer.toString(count * 10)))
-//                        .append(" Blocks");
-//            }
-//            default -> {
-//                builder.append(ChatComponentUtils.statistic(statistic.stat()))
-//                        .append(": ")
-//                        .append(amount);
-//            }
-//        }
-//        builder.append("*");
-//        return builder.build();
+        switch (statistic.getCategory())
+        {
+            case ROOT_STATISTIC -> {
+                if (statistic.stat() == Statistic.KILL_ENTITY)
+                {
+                    Component entityName = ComponentUtils.entityName(statistic.entityType());
+                    Component[] inPlaceArguments = new Component[]{amount, Component.empty()};
+                    builder.append(ComponentUtils.statistic(statistic.stat(), inPlaceArguments))
+                            .append(Component.text(" ("))
+                            .append(entityName)
+                            .append(Component.text(")"));
+                }
+                else if (statistic.stat() == Statistic.ENTITY_KILLED_BY) {
+                    Component entityName = ComponentUtils.entityName(statistic.entityType());
+                    Component[] inPlaceArguments = new Component[]{Component.empty(), amount, Component.empty()};
+                    builder.append(Component.text(" ("))
+                            .append(entityName)
+                            .append(Component.text(")"))
+                            .append(ComponentUtils.statistic(statistic.stat(), inPlaceArguments));
+                }
+                else
+                {
+                    builder.append(ComponentUtils.statistic(statistic.stat()))
+                            .append(Component.text(" "))
+                            .append(ComponentUtils.itemName(statistic.materialType()))
+                            .append(Component.text(": "))
+                            .append(amount);
+                }
+            }
+            case TRAVEL -> {
+                builder.append(ComponentUtils.statistic(statistic.stat()))
+                        .append(Component.text(": "))
+                        .append(Component.text(count * 10))
+                        .append(Component.text(" Blocks"));
+            }
+            default -> {
+                builder.append(ComponentUtils.statistic(statistic.stat()))
+                        .append(Component.text(": "))
+                        .append(amount);
+            }
+        }
+        builder.append(Component.text("*"));
+        return builder.build();
     }
 
     @Override
     public Component[] getItemDescription()
     {
-        //FIXME: make dark aqua
-        //TODO: make MultilineComponent builder class??
-        return BingoTranslation.LORE_STATISTIC.asComponent();
+        return BingoMessage.LORE_STATISTIC.asMultiline(NamedTextColor.DARK_AQUA);
     }
 
     @Override

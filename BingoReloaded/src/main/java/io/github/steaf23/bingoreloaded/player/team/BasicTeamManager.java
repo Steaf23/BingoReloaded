@@ -1,6 +1,6 @@
 package io.github.steaf23.bingoreloaded.player.team;
 
-import io.github.steaf23.bingoreloaded.data.BingoTranslation;
+import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.TeamData;
 import io.github.steaf23.bingoreloaded.event.*;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
@@ -13,9 +13,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
-import org.bukkit.plugin.messaging.Messenger;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.*;
@@ -41,7 +39,7 @@ public class BasicTeamManager implements TeamManager
         ConsoleMessenger.log("Loaded " + joinableTeams.size() + " team(s)");
 
         TextColor autoTeamColor = TextColor.fromHexString("#fdffa8");
-        this.autoTeam = new BingoTeam("auto", autoTeamColor, BingoTranslation.TEAM_AUTO.translate(), createAutoPrefix(autoTeamColor));
+        this.autoTeam = new BingoTeam("auto", autoTeamColor, BingoMessage.TEAM_AUTO.asPhrase(), createAutoPrefix(autoTeamColor));
     }
 
     private Component createAutoPrefix(TextColor color) {
@@ -75,13 +73,14 @@ public class BasicTeamManager implements TeamManager
         {
         }
 
-        BingoTeam automaticTeam = activeTeams.getTeams().stream().filter(t -> t.getIdentifier().equals("auto")).findFirst().get();
-        if (automaticTeam == null || automaticTeam.getMembers().size() == 0) {
+        Optional<BingoTeam> automaticTeamOpt = activeTeams.getTeams().stream().filter(t -> t.getIdentifier().equals("auto")).findFirst();
+        if (automaticTeamOpt.isEmpty() || automaticTeamOpt.get().getMembers().isEmpty()) {
             return;
         }
 
+        BingoTeam automaticTeam = automaticTeamOpt.get();
         // FIXME: maybe actually find out what happens if this isn't a copy and how to simplify the code with that information.
-        Set<BingoParticipant> automaticTeamPlayers = new HashSet<BingoParticipant>(automaticTeam.getMembers());
+        Set<BingoParticipant> automaticTeamPlayers = new HashSet<>(automaticTeam.getMembers());
 
         int availablePlayers = getTotalParticipantCapacity() - activeTeams.getAllParticipants().size();
         if (automaticTeamPlayers.size() > availablePlayers) {
@@ -97,7 +96,7 @@ public class BasicTeamManager implements TeamManager
             }
 
             TeamCount newCount = new TeamCount(team, team.getMembers().size());
-            if (counts.size() == 0) {
+            if (counts.isEmpty()) {
                 counts.add(newCount);
                 continue;
             }
@@ -124,22 +123,22 @@ public class BasicTeamManager implements TeamManager
         for (BingoParticipant participant : autoPlayersCopy) {
             automaticTeam.removeMember(participant);
 
-            TeamCount lowest = counts.size() > 0 ? counts.get(0) : null;
+            TeamCount lowest = !counts.isEmpty() ? counts.getFirst() : null;
             // If our lowest count is the same as the highest count, all incomplete teams have been filled
-            if (counts.size() == 0 || lowest.count == getMaxTeamSize()) {
+            if (counts.isEmpty() || lowest.count == getMaxTeamSize()) {
                 // If there are still players left in the queue, create a new team
-                if (automaticTeamPlayers.size() > 0) {
+                if (!automaticTeamPlayers.isEmpty()) {
                     BingoTeam newTeam = activateAnyTeam();
                     if (newTeam == null) {
                         ConsoleMessenger.warn("Could not fit every player into a team, since there is not enough room!");
                         break;
                     }
-                    counts.add(0, new TeamCount(newTeam, 0));
-                    lowest = counts.get(0);
+                    counts.addFirst(new TeamCount(newTeam, 0));
+                    lowest = counts.getFirst();
                 }
             }
 
-            counts.remove(0);
+            counts.removeFirst();
             // After this point in the iteration, lowest will reference the team that will get inserted into counts at the end of the iteration.
 
             boolean ok = addMemberToTeam(participant, lowest.team.getIdentifier());
@@ -199,7 +198,7 @@ public class BasicTeamManager implements TeamManager
 
     @Override
     public int getTotalParticipantCapacity() {
-        int totalPlayers = joinableTeams.size() - 1 * getMaxTeamSize();
+        int totalPlayers = (joinableTeams.size() - 1) * getMaxTeamSize();
         return totalPlayers;
     }
 
@@ -241,17 +240,9 @@ public class BasicTeamManager implements TeamManager
         Bukkit.getPluginManager().callEvent(joinEvent);
 
         if (teamId.equals("auto")) {
-            participant.sessionPlayer().ifPresent(p -> {
-                //FIXME: re-add
-//                new TranslatedMessage(BingoTranslation.JOIN_AUTO).color(ChatColor.GREEN)
-//                        .send(p);
-            });
+            BingoMessage.JOIN_AUTO.sendToAudience(participant, NamedTextColor.GREEN);
         } else {
-            participant.sessionPlayer().ifPresent(p -> {
-//                new TranslatedMessage(BingoTranslation.JOIN).color(ChatColor.GREEN)
-//                        .arg(bingoTeam.getColoredName())
-//                        .send(p);
-            });
+            BingoMessage.JOIN.sendToAudience(participant, NamedTextColor.GREEN);
         }
         return true;
     }
@@ -281,7 +272,7 @@ public class BasicTeamManager implements TeamManager
         if (existingTeam.isPresent())
             return existingTeam.get();
 
-        BingoTeam bTeam = new BingoTeam(teamId, team.color(), team.name(), createPrefix(team));
+        BingoTeam bTeam = new BingoTeam(teamId, team.color(), Component.text(team.name()), createPrefix(team));
 
         activeTeams.addTeam(bTeam);
         return bTeam;
@@ -334,22 +325,19 @@ public class BasicTeamManager implements TeamManager
         if (!session.isRunning()) {
             getParticipants().forEach(p -> {
                 addMemberToTeam(p, "auto");
-//                p.sessionPlayer().ifPresent(gamePlayer ->
-//                        new TranslatedMessage(BingoTranslation.TEAM_SIZE_CHANGED)
-//                                .color(ChatColor.RED)
-//                                .send(gamePlayer));
             });
+            BingoMessage.TEAM_SIZE_CHANGED.sendToAudience(session, NamedTextColor.RED);
         }
     }
 
     @Override
     public void handlePlayerLeftSessionWorld(final PlayerLeftSessionWorldEvent event) {
-        ConsoleMessenger.log(ChatColor.GOLD + event.getPlayer().getDisplayName() + " left world", session.getOverworld().getName());
+        ConsoleMessenger.log(Component.text(event.getPlayer().getDisplayName() + " left world").color(NamedTextColor.GOLD), session.getOverworld().getName());
     }
 
     @Override
     public void handlePlayerJoinedSessionWorld(final PlayerJoinedSessionWorldEvent event) {
-        ConsoleMessenger.log(ChatColor.GOLD + event.getPlayer().getDisplayName() + " joined world", session.getOverworld().getName());
+        ConsoleMessenger.log(Component.text(event.getPlayer().getDisplayName() + " joined world").color(NamedTextColor.GOLD), session.getOverworld().getName());
 
         BingoParticipant participant = getPlayerAsParticipant(event.getPlayer());
         if (participant != null) {
@@ -357,15 +345,13 @@ public class BasicTeamManager implements TeamManager
                 if (!session.isRunning()) {
                     return;
                 }
-//                new TranslatedMessage(BingoTranslation.JOIN).color(ChatColor.GREEN)
-//                        .arg(participant.getTeam().getColoredName())
-//                        .send(player);
+                BingoMessage.JOIN.sendToAudience(player, NamedTextColor.GREEN, participant.getTeam().getColoredName());
             });
             return;
         }
 
         if (session.isRunning()) {
-            new TranslatedMessage(BingoTranslation.NO_JOIN).send(event.getPlayer());
+            BingoMessage.NO_JOIN.sendToAudience(event.getPlayer());
             return;
         }
 

@@ -4,6 +4,7 @@ import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
 import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
 import io.github.steaf23.playerdisplay.util.PlayerDisplayTranslationKey;
+import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -12,7 +13,7 @@ import java.util.function.Function;
 public class PlayerDisplay
 {
     private static JavaPlugin plugin;
-    private static Function<PlayerDisplayTranslationKey, String> translateFunction;
+    private static Function<PlayerDisplayTranslationKey, Component> translateFunction;
 
     /**
      * Should be called on plugin load (i.e. as fast as possible after the server has started up)
@@ -31,11 +32,11 @@ public class PlayerDisplay
         return plugin;
     }
 
-    public static void setItemTranslation(Function<PlayerDisplayTranslationKey, String> translateFunction) {
+    public static void setItemTranslation(Function<PlayerDisplayTranslationKey, Component> translateFunction) {
         PlayerDisplay.translateFunction = translateFunction;
     }
 
-    public static String translateKey(PlayerDisplayTranslationKey key) {
+    public static Component translateKey(PlayerDisplayTranslationKey key) {
         return translateFunction.apply(key);
     }
 

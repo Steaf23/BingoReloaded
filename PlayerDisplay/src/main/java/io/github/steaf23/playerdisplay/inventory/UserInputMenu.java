@@ -16,8 +16,8 @@ public class UserInputMenu extends BasicMenu
     private String text;
 
     private final ItemTemplate namedItem = new ItemTemplate(0, Material.NAME_TAG, null);
-    private final ItemTemplate save = new ItemTemplate(2, Material.EMERALD, Component.text(PlayerDisplayTranslationKey.MENU_ACCEPT.translate()).color(NamedTextColor.GREEN).decorate(TextDecoration.BOLD));
-    private final ItemTemplate clear = new ItemTemplate(1, Material.HOPPER, Component.text(PlayerDisplayTranslationKey.MENU_CLEAR_FILTER.translate()).color(NamedTextColor.GRAY).decorate(TextDecoration.BOLD));
+    private final ItemTemplate save = new ItemTemplate(2, Material.EMERALD, PlayerDisplayTranslationKey.MENU_ACCEPT.translate().color(NamedTextColor.GREEN).decorate(TextDecoration.BOLD));
+    private final ItemTemplate clear = new ItemTemplate(1, Material.HOPPER, PlayerDisplayTranslationKey.MENU_CLEAR_FILTER.translate().color(NamedTextColor.GRAY).decorate(TextDecoration.BOLD));
 
     public UserInputMenu(MenuBoard manager, Component initialTitle, Consumer<String> result, String startingText) {
         super(manager, initialTitle, InventoryType.ANVIL);

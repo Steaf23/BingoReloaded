@@ -2,7 +2,7 @@ package io.github.steaf23.bingoreloaded.cards;
 
 
 import io.github.steaf23.bingoreloaded.data.BingoCardData;
-import io.github.steaf23.bingoreloaded.data.BingoTranslation;
+import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.TaskListData;
 import io.github.steaf23.bingoreloaded.gui.inventory.CardMenu;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
@@ -10,14 +10,11 @@ import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.tasks.*;
 import io.github.steaf23.bingoreloaded.tasks.tracker.TaskProgressTracker;
 import io.github.steaf23.playerdisplay.inventory.MenuBoard;
-import io.github.steaf23.playerdisplay.util.ChatComponentUtils;
 import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
-import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.Console;
 import java.util.*;
 
 
@@ -32,7 +29,7 @@ public class BingoCard
     private static final TaskData DEFAULT_TASK = new ItemTask(Material.DIRT, 1);
 
     public BingoCard(MenuBoard menuBoard, CardSize size, TaskProgressTracker progressTracker) {
-        this(new CardMenu(menuBoard, size, BingoTranslation.CARD_TITLE.translate()), size, progressTracker);
+        this(new CardMenu(menuBoard, size), size, progressTracker);
     }
 
     public BingoCard(CardMenu menu, CardSize size, TaskProgressTracker progressTracker) {
@@ -40,8 +37,8 @@ public class BingoCard
         this.tasks = new ArrayList<>();
         this.menu = menu;
         this.progressTracker = progressTracker;
-        menu.setInfo(Component.text().append(BingoTranslation.INFO_REGULAR_NAME.asComponent()).build(),
-                ChatComponentUtils.createComponentsFromString(BingoTranslation.INFO_REGULAR_DESC.translate().split("\\n")));
+        menu.setInfo(BingoMessage.INFO_REGULAR_NAME.asPhrase(),
+                BingoMessage.INFO_REGULAR_DESC.asMultiline());
     }
 
     /**

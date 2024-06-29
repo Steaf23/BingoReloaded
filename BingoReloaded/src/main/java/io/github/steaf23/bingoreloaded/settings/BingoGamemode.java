@@ -1,18 +1,25 @@
 package io.github.steaf23.bingoreloaded.settings;
 
-public enum BingoGamemode
+import io.github.steaf23.bingoreloaded.data.BingoMessage;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentLike;
+import org.jetbrains.annotations.NotNull;
+
+public enum BingoGamemode implements ComponentLike
 {
-    REGULAR("regular"),
-    LOCKOUT("lockout"),
-    COMPLETE("complete"),
-    HOTSWAP("hotswap"),
+    REGULAR("regular", BingoMessage.MODE_REGULAR.asPhrase()),
+    LOCKOUT("lockout", BingoMessage.MODE_LOCKOUT.asPhrase()),
+    COMPLETE("complete", BingoMessage.MODE_COMPLETE.asPhrase()),
+    HOTSWAP("hotswap", BingoMessage.MODE_HOTSWAP.asPhrase()),
     ;
 
     private final String configName;
+    private final Component displayName;
 
-    BingoGamemode(String configName)
+    BingoGamemode(String configName, Component displayName)
     {
         this.configName = configName;
+        this.displayName = displayName;
     }
 
     public static BingoGamemode fromDataString(String data) {
@@ -39,5 +46,10 @@ public enum BingoGamemode
     public String getDataName()
     {
         return configName;
+    }
+
+    @Override
+    public @NotNull Component asComponent() {
+        return displayName;
     }
 }

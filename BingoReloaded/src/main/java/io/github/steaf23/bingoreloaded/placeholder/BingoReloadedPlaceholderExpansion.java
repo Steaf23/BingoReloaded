@@ -225,7 +225,8 @@ public class BingoReloadedPlaceholderExpansion extends PlaceholderExpansion
             return BingoPlaceholderFormatter.createLegacyTextFromMessage(getPlaceholderFormat(BingoReloadedPlaceholder.TEAM_COLOR), team.getColor().toString());
         }
         if (getName) {
-            return BingoPlaceholderFormatter.createLegacyTextFromMessage(getPlaceholderFormat(BingoReloadedPlaceholder.TEAM_NAME), team.getName());
+            //FIXME: update when createLegacyTextFromMessage is refactored
+//            return BingoPlaceholderFormatter.createLegacyTextFromMessage(getPlaceholderFormat(BingoReloadedPlaceholder.TEAM_NAME), team.getName());
         }
         return "";
     }

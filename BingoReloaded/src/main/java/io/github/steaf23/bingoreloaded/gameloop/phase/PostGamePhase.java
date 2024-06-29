@@ -1,6 +1,6 @@
 package io.github.steaf23.bingoreloaded.gameloop.phase;
 
-import io.github.steaf23.bingoreloaded.data.BingoTranslation;
+import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.event.BingoSettingsUpdatedEvent;
 import io.github.steaf23.bingoreloaded.event.PlayerJoinedSessionWorldEvent;
 import io.github.steaf23.bingoreloaded.event.PlayerLeftSessionWorldEvent;
@@ -9,6 +9,8 @@ import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import io.github.steaf23.bingoreloaded.util.timer.CountdownTimer;
+import net.kyori.adventure.audience.Audience;
+import net.kyori.adventure.text.Component;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -37,7 +39,7 @@ public class PostGamePhase implements GamePhase
         }
         timer.start();
         timer.addNotifier(this::onTimerTicks);
-        restartMessage(timer.getTime()).sendAll(session);
+        sendRestartMessage(timer.getTime(), session);
     }
 
     @Override
@@ -49,7 +51,7 @@ public class PostGamePhase implements GamePhase
 
     @Override
     public void handlePlayerJoinedSessionWorld(PlayerJoinedSessionWorldEvent event) {
-        restartMessage(this.timer.getTime()).send(event.getPlayer());
+        sendRestartMessage(this.timer.getTime(), event.getPlayer());
     }
 
     @Override
@@ -87,12 +89,12 @@ public class PostGamePhase implements GamePhase
             timer.stop();
         }
         else if (timeLeft == 5) {
-            restartMessage(timeLeft).sendAll(session);
+            sendRestartMessage(timeLeft, session);
         }
     }
 
-    public Message restartMessage(long timeLeft) {
+    public void sendRestartMessage(long timeLeft, Audience audience) {
         //FIXME: re-add colors
-        return new TranslatedMessage(BingoTranslation.POST_GAME_START).arg("" + timeLeft);
+        BingoMessage.POST_GAME_START.sendToAudience(audience, Component.text(timeLeft));
     }
 }

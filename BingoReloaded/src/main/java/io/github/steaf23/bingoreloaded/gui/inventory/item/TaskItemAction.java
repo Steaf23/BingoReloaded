@@ -28,6 +28,6 @@ public class TaskItemAction extends MenuAction
         base.append(Component.text("\n - "));
         base.append(task.data.getChatDescription());
 
-        Message.sendDebugNoPrefix(base, (Player) arguments.player());
+        arguments.player().sendMessage(base);
     }
 }

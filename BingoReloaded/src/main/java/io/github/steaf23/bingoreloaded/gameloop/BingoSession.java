@@ -17,9 +17,11 @@ import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.player.team.BasicTeamManager;
 import io.github.steaf23.bingoreloaded.player.team.SoloTeamManager;
 import io.github.steaf23.bingoreloaded.player.team.TeamManager;
+import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
 import io.github.steaf23.bingoreloaded.settings.BingoSettingsBuilder;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
+import io.github.steaf23.bingoreloaded.util.BingoPlayerSender;
 import io.github.steaf23.playerdisplay.inventory.MenuBoard;
 import io.github.steaf23.playerdisplay.scoreboard.HUDRegistry;
 import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
@@ -113,7 +115,7 @@ public class BingoSession implements ForwardingAudience
         BingoCardData cardsData = new BingoCardData();
         BingoSettings settings = settingsBuilder.view();
         if (!cardsData.getCardNames().contains(settings.card())) {
-            Message.sendAll(BingoTranslation.NO_CARD.asSingleComponent(Component.text(settings.card())).color(NamedTextColor.RED), this);
+            BingoMessage.NO_CARD.sendToAudience(this, NamedTextColor.RED, Component.text(settings.card()));
             return;
         }
 
@@ -235,7 +237,7 @@ public class BingoSession implements ForwardingAudience
             }
 
             if (isRunning()) {
-                new TranslatedMessage(BingoTranslation.LEAVE).send(event.getPlayer());
+                BingoMessage.LEAVE.sendToAudience(event.getPlayer());
             }
 
             scoreboard.removePlayer(player);
@@ -333,19 +335,27 @@ public class BingoSession implements ForwardingAudience
         }
 
         BingoSettingsBuilder result = settingsBuilder.getVoteResult(voteResult);
-        new Message(" ").sendAll(this);
+        BingoPlayerSender.sendMessage(Component.text(" "), this);
         if (!voteResult.gamemode.isEmpty()) {
             var tuple = voteResult.gamemode.split("_");
             //FIXME: use gamemode display name from config
-            new TranslatedMessage(BingoTranslation.VOTE_WON).arg(BingoTranslation.OPTIONS_GAMEMODE.translate()).arg(tuple[0] + " " + tuple[1] + "x" + tuple[1]).sendAll(this);
+            BingoMessage.VOTE_WON.sendToAudience(this,
+                    BingoMessage.OPTIONS_GAMEMODE.asPhrase(),
+                    Component.text()
+                            .append(BingoGamemode.fromDataString(tuple[0]).asComponent())
+                            .append(Component.text(" " + tuple[1] + "x" + tuple[1])).build());
         }
         if (!voteResult.kit.isEmpty()) {
-            new TranslatedMessage(BingoTranslation.VOTE_WON).arg(BingoTranslation.OPTIONS_KIT.translate()).arg(PlayerKit.fromConfig(voteResult.kit).getDisplayName()).sendAll(this);
+            BingoMessage.VOTE_WON.sendToAudience(this,
+                    BingoMessage.OPTIONS_KIT.asPhrase(),
+                    PlayerKit.fromConfig(voteResult.kit).getDisplayName());
         }
         if (!voteResult.card.isEmpty()) {
-            Message.sendAll(BingoTranslation.VOTE_WON.asSingleComponent(BingoTranslation.OPTIONS_CARD.asSingleComponent(), Component.text(voteResult.card).decorate(TextDecoration.ITALIC)), this);
+            BingoMessage.VOTE_WON.sendToAudience(this,
+                    BingoMessage.OPTIONS_CARD.asPhrase(),
+                    Component.text(voteResult.card).decorate(TextDecoration.ITALIC));
         }
-        new Message(" ").sendAll(this);
+        BingoPlayerSender.sendMessage(Component.text(" "), this);
 
         return result;
     }

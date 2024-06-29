@@ -1,6 +1,7 @@
 package io.github.steaf23.playerdisplay.util;
 
 import io.github.steaf23.playerdisplay.PlayerDisplay;
+import net.kyori.adventure.text.Component;
 
 public enum PlayerDisplayTranslationKey
 {
@@ -11,7 +12,7 @@ public enum PlayerDisplayTranslationKey
     MENU_FILTER,
     MENU_CLEAR_FILTER;
 
-    public String translate() {
+    public Component translate() {
         return PlayerDisplay.translateKey(this);
     }
 }

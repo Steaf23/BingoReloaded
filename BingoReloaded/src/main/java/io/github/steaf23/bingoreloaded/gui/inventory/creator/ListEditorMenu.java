@@ -1,6 +1,6 @@
 package io.github.steaf23.bingoreloaded.gui.inventory.creator;
 
-import io.github.steaf23.bingoreloaded.data.BingoTranslation;
+import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.tasks.AdvancementTask;
 import io.github.steaf23.bingoreloaded.tasks.BingoTask;
 import io.github.steaf23.bingoreloaded.tasks.ItemTask;
@@ -24,7 +24,7 @@ public class ListEditorMenu extends BasicMenu
     private static final ItemTemplate ITEMS = new ItemTemplate(2, 2, Material.APPLE, BasicMenu.applyTitleFormat("Items"), Component.text("Click to add or remove items"));
     private static final ItemTemplate ADVANCEMENTS = new ItemTemplate(4, 2, Material.ENDER_EYE, BasicMenu.applyTitleFormat("Advancements"), Component.text("Click to add or remove advancements"));
     private static final ItemTemplate STATISTICS = new ItemTemplate(6, 2, Material.GLOBE_BANNER_PATTERN, BasicMenu.applyTitleFormat("Statistics"), Component.text("Click to add or remove statistics"));
-    private static final ItemTemplate SAVE = new ItemTemplate(4, 5, Material.REDSTONE, Component.text(BingoTranslation.MENU_SAVE_EXIT.translate()).color(NamedTextColor.RED).decorate(TextDecoration.BOLD));
+    private static final ItemTemplate SAVE = new ItemTemplate(4, 5, Material.REDSTONE, BingoMessage.MENU_SAVE_EXIT.asPhrase().color(NamedTextColor.RED).decorate(TextDecoration.BOLD));
 
     public ListEditorMenu(MenuBoard manager, String listName) {
         super(manager, Component.text("Editing '" + listName + "'"), 6);

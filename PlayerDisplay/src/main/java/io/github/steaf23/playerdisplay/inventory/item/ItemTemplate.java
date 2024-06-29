@@ -3,7 +3,7 @@ package io.github.steaf23.playerdisplay.inventory.item;
 import com.google.common.collect.ImmutableMultimap;
 import io.github.steaf23.playerdisplay.inventory.BasicMenu;
 import io.github.steaf23.playerdisplay.inventory.item.action.MenuAction;
-import io.github.steaf23.playerdisplay.util.ChatComponentUtils;
+import io.github.steaf23.playerdisplay.util.ComponentUtils;
 import io.github.steaf23.playerdisplay.util.ExtraMath;
 import io.github.steaf23.playerdisplay.util.PDCHelper;
 import net.kyori.adventure.text.Component;
@@ -101,7 +101,7 @@ public class ItemTemplate
     }
 
     public ItemTemplate addDescription(String name, int priority, String... description) {
-        return addDescription(name, priority, ChatComponentUtils.createComponentsFromString(description));
+        return addDescription(name, priority, ComponentUtils.createComponentsFromString(description));
     }
 
     public ItemTemplate addDescription(String name, int priority, Component... description) {

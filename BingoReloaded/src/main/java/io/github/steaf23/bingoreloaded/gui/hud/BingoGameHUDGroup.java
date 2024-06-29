@@ -83,9 +83,9 @@ public class BingoGameHUDGroup extends PlayerHUDGroup
         teamManager.getActiveTeams().getTeams().stream()
                 .sorted(Comparator.comparingInt(BingoTeam::getCompleteCount).reversed())
                 .forEach(team -> {
-                    String teamScoreLine = "" + BingoPlaceholderFormatter.createLegacyTextFromMessage(format, team.getColor().toString(), team.getName()) + ChatColor.RESET +
-                            ChatColor.WHITE + ": " + ChatColor.BOLD + teamScores.get(team.getIdentifier());
-                    teamInfoString.append(teamScoreLine);
+//                    String teamScoreLine = "" + BingoPlaceholderFormatter.createLegacyTextFromMessage(format, team.getColor().toString(), team.getName()) + ChatColor.RESET +
+//                            ChatColor.WHITE + ": " + ChatColor.BOLD + teamScores.get(team.getIdentifier());
+//                    teamInfoString.append(teamScoreLine);
                     teamInfoString.append("\n");
 
                     if (!condensedDisplay)

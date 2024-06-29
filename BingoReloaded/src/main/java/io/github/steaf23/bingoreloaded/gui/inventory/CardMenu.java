@@ -1,6 +1,7 @@
 package io.github.steaf23.bingoreloaded.gui.inventory;
 
 import io.github.steaf23.bingoreloaded.cards.CardSize;
+import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.tasks.BingoTask;
 import io.github.steaf23.playerdisplay.inventory.BasicMenu;
 import io.github.steaf23.playerdisplay.inventory.MenuBoard;
@@ -18,9 +19,9 @@ public class CardMenu extends BasicMenu
     private final CardSize size;
     private List<BingoTask> tasks;
 
-    public CardMenu(MenuBoard menuBoard, CardSize cardSize, String title)
+    public CardMenu(MenuBoard menuBoard, CardSize cardSize)
     {
-        super(menuBoard, Component.text(title), cardSize.size);
+        super(menuBoard, BingoMessage.CARD_TITLE.asPhrase(), cardSize.size);
         this.size = cardSize;
         this.tasks = new ArrayList<>();
         setMaxStackSizeOverride(64);

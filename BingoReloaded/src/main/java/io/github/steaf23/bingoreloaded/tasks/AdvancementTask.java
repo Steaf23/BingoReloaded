@@ -1,7 +1,7 @@
 package io.github.steaf23.bingoreloaded.tasks;
 
-import io.github.steaf23.bingoreloaded.data.BingoTranslation;
-import io.github.steaf23.playerdisplay.util.ChatComponentUtils;
+import io.github.steaf23.bingoreloaded.data.BingoMessage;
+import io.github.steaf23.playerdisplay.util.ComponentUtils;
 import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -36,7 +36,7 @@ public record AdvancementTask(Advancement advancement) implements TaskData
         }
         else
         {
-            builder.append(ChatComponentUtils.advancementTitle(advancement));
+            builder.append(ComponentUtils.advancementTitle(advancement));
         }
         builder.append(Component.text("]"));
         return builder;
@@ -45,8 +45,7 @@ public record AdvancementTask(Advancement advancement) implements TaskData
     @Override
     public Component[] getItemDescription()
     {
-        //FIXME: make dark aqua
-        return BingoTranslation.LORE_ADVANCEMENT.asComponent();
+        return BingoMessage.LORE_ADVANCEMENT.asMultiline(NamedTextColor.DARK_AQUA);
     }
 
     // This method exists because advancement descriptions can contain newlines,
@@ -54,7 +53,7 @@ public record AdvancementTask(Advancement advancement) implements TaskData
     @Override
     public Component getChatDescription()
     {
-        Component component = ChatComponentUtils.advancementDescription(advancement)
+        Component component = ComponentUtils.advancementDescription(advancement)
                 .color(NamedTextColor.DARK_AQUA);
         return component;
     }

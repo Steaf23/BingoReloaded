@@ -1,31 +1,25 @@
 package io.github.steaf23.bingoreloaded.player.team;
 
-import io.github.steaf23.bingoreloaded.data.BingoTranslation;
+import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.TeamData;
 import io.github.steaf23.bingoreloaded.event.*;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.placeholder.BingoPlaceholderFormatter;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
-import io.github.steaf23.bingoreloaded.util.*;
 import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.ComponentBuilder;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.kyori.adventure.util.HSVLike;
 import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.jetbrains.annotations.NotNull;
 
 
-import java.awt.*;
 import java.util.*;
 
-//TODO: REWRITE THIS SHAIT (redo auto team with participant queue??)
 /**
  * Similar to BasicTeamManager but each team can only have 1 member, the team's name being the name of the member.
  */
@@ -43,7 +37,7 @@ public class SoloTeamManager implements TeamManager
         this.teams = new BingoTeamContainer();
 
         TextColor autoTeamColor = TextColor.fromHexString("#fdffa8");
-        this.autoTeam = new BingoTeam("auto", autoTeamColor, BingoTranslation.TEAM_AUTO.translate(), createPrefix(autoTeamColor));
+        this.autoTeam = new BingoTeam("auto", autoTeamColor, BingoMessage.TEAM_AUTO.asPhrase(), createPrefix(autoTeamColor));
         this.teams.addTeam(autoTeam);
     }
 
@@ -215,7 +209,7 @@ public class SoloTeamManager implements TeamManager
         }
 
         if (session.isRunning()) {
-            new TranslatedMessage(BingoTranslation.NO_JOIN).send(event.getPlayer());
+            BingoMessage.NO_JOIN.sendToAudience(event.getPlayer());
             return;
         }
 

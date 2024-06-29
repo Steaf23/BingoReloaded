@@ -1,7 +1,7 @@
 package io.github.steaf23.bingoreloaded.placeholder;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
-import io.github.steaf23.bingoreloaded.data.BingoTranslation;
+import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.helper.YmlDataManager;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -24,6 +24,7 @@ public class BingoPlaceholderFormatter
         return format;
     }
 
+    //FIXME: use components for this...
     public static String createLegacyTextFromMessage(String message, String... args) {
         //for any given message like "{#00bb33}Completed {0} by team {1}! At {2}" split the arguments from the message.
         String[] rawSplit = message.split("\\{[^\\{\\}#@]*\\}"); //[{#00bb33}Completed, by team, ! At]
@@ -31,7 +32,7 @@ public class BingoPlaceholderFormatter
         // convert custom hex colors to legacyText: {#00bb33} -> ChatColor.of("#00bb33")
         // convert "&" to "§" and "&&" to "&"
         for (int i = 0; i < rawSplit.length; i++) {
-            String part = BingoTranslation.convertConfigString(rawSplit[i]);
+            String part = BingoMessage.convertConfigString(rawSplit[i]);
             rawSplit[i] = part;
         }
 

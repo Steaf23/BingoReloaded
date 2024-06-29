@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 
-public class ChatComponentUtils
+public class ComponentUtils
 {
     public static Component[] createComponentsFromString(String... strings) {
         return Arrays.stream(strings).map(s -> LegacyComponentSerializer.legacySection().deserialize(s)).toList().toArray(new Component[]{});

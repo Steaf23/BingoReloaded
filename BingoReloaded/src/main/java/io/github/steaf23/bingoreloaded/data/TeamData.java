@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-//TODO: test
 public class TeamData {
     @SerializableAs("TeamTemplate")
     public record TeamTemplate(String name, TextColor color) implements ConfigurationSerializable {

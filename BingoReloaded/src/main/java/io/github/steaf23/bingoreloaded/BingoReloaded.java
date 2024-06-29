@@ -20,6 +20,7 @@ import io.github.steaf23.playerdisplay.PlayerDisplay;
 import io.github.steaf23.playerdisplay.inventory.BasicMenu;
 import io.github.steaf23.playerdisplay.scoreboard.HUDRegistry;
 import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.command.*;
@@ -54,7 +55,7 @@ public class BingoReloaded extends JavaPlugin
     @Override
     public void onLoad() {
         ConsoleMessenger.pluginPrefix = "[" + getName() + "]";
-        BasicMenu.pluginTitlePrefix = BingoTranslation.MENU_PREFIX.asSingleComponent();
+        BasicMenu.pluginTitlePrefix = BingoMessage.MENU_PREFIX.asPhrase();
         PlayerDisplay.setPlugin(this);
     }
 
@@ -73,12 +74,12 @@ public class BingoReloaded extends JavaPlugin
 
         PlayerDisplay.setItemTranslation(key -> {
             return switch (key) {
-                case MENU_PREVIOUS -> BingoTranslation.MENU_PREV.translate();
-                case MENU_NEXT -> BingoTranslation.MENU_NEXT.translate();
-                case MENU_ACCEPT -> BingoTranslation.MENU_ACCEPT.translate();
-                case MENU_SAVE_EXIT -> BingoTranslation.MENU_SAVE_EXIT.translate();
-                case MENU_FILTER -> BingoTranslation.MENU_FILTER.translate();
-                case MENU_CLEAR_FILTER -> BingoTranslation.MENU_CLEAR_FILTER.translate();
+                case MENU_PREVIOUS -> BingoMessage.MENU_PREV.asPhrase();
+                case MENU_NEXT -> BingoMessage.MENU_NEXT.asPhrase();
+                case MENU_ACCEPT -> BingoMessage.MENU_ACCEPT.asPhrase();
+                case MENU_SAVE_EXIT -> BingoMessage.MENU_SAVE_EXIT.asPhrase();
+                case MENU_FILTER -> BingoMessage.MENU_FILTER.asPhrase();
+                case MENU_CLEAR_FILTER -> BingoMessage.MENU_CLEAR_FILTER.asPhrase();
             };
         });
 
@@ -94,8 +95,8 @@ public class BingoReloaded extends JavaPlugin
 
         this.config = new ConfigData(getConfig());
 
-        BingoTranslation.setLanguage(createYmlDataManager(config.language).getConfig(), createYmlDataManager("languages/en_us.yml").getConfig());
-        ConsoleMessenger.log(NamedTextColor.GREEN + BingoTranslation.CHANGED_LANGUAGE.translate());
+        BingoMessage.setLanguage(createYmlDataManager(config.language).getConfig(), createYmlDataManager("languages/en_us.yml").getConfig());
+        ConsoleMessenger.log(BingoMessage.CHANGED_LANGUAGE.asPhrase().color(NamedTextColor.GREEN));
 
 //        this.hologramManager = new HologramManager();
 //        this.hologramPlacer = new HologramPlacer(hologramManager);
@@ -124,7 +125,7 @@ public class BingoReloaded extends JavaPlugin
             Bukkit.getPluginManager().registerEvents(command, this);
         }
 
-        ConsoleMessenger.log(NamedTextColor.GREEN + "Enabled " + getName());
+        ConsoleMessenger.log(Component.text("Enabled " + getName()).color(NamedTextColor.GREEN));
 
 //        if (RecoveryCardData.loadCards(game))
 //        {

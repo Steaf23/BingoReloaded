@@ -13,8 +13,8 @@ public class HotswapCardMenu extends CardMenu
 {
     private List<HotswapTaskHolder> taskHolders;
 
-    public HotswapCardMenu(MenuBoard menuBoard, CardSize cardSize, String title) {
-        super(menuBoard, cardSize, title);
+    public HotswapCardMenu(MenuBoard menuBoard, CardSize cardSize) {
+        super(menuBoard, cardSize);
     }
 
     // Override to only allow tasks getting updated from the task holders.

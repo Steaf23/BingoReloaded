@@ -1,6 +1,6 @@
 package io.github.steaf23.bingoreloaded.cards;
 
-import io.github.steaf23.bingoreloaded.data.BingoTranslation;
+import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.tasks.BingoTask;
 import io.github.steaf23.bingoreloaded.util.timer.GameTimer;
 import io.github.steaf23.playerdisplay.inventory.item.ItemTemplate;
@@ -37,10 +37,10 @@ public class HotswapTaskHolder
     public ItemTemplate convertToItem() {
         ItemTemplate item = task.toItem();
         if (isRecovering()) {
-            item.addDescription("time", 1, BingoTranslation.HOTSWAP_RECOVER.asSingleComponent().color(TextColor.fromHexString("#5cb1ff")), GameTimer.getTimeAsComponent(currentTime));
+            item.addDescription("time", 1, BingoMessage.HOTSWAP_RECOVER.asPhrase().color(TextColor.fromHexString("#5cb1ff")), GameTimer.getTimeAsComponent(currentTime));
         }
         else {
-            item.addDescription("time", 1, BingoTranslation.HOTSWAP_EXPIRE.asSingleComponent().color(getColorForExpirationTime()), GameTimer.getTimeAsComponent(currentTime));
+            item.addDescription("time", 1, BingoMessage.HOTSWAP_EXPIRE.asPhrase().color(getColorForExpirationTime()), GameTimer.getTimeAsComponent(currentTime));
             if (showExpirationAsDurability) {
                 item.setMaxDamage(expirationTimeSeconds);
                 item.setDamage(currentTime);

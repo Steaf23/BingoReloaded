@@ -38,6 +38,10 @@ public class ConsoleMessenger
         Bukkit.getLogger().info(pluginPrefix + LegacyComponentSerializer.legacySection().serialize(message));
     }
 
+    public static void log(Component message, String source) {
+        Bukkit.getLogger().info(pluginPrefix + NamedTextColor.GREEN + "(" + source + "): " + NamedTextColor.WHITE + message);
+    }
+
     public static void log(Component message, Component source) {
         Bukkit.getLogger().info(pluginPrefix + NamedTextColor.GREEN + "(" + source + "): " + NamedTextColor.WHITE + message);
     }

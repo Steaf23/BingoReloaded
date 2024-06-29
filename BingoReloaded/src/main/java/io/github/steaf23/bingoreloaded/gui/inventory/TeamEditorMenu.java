@@ -1,6 +1,6 @@
 package io.github.steaf23.bingoreloaded.gui.inventory;
 
-import io.github.steaf23.bingoreloaded.data.BingoTranslation;
+import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.TeamData;
 import io.github.steaf23.playerdisplay.inventory.*;
 import io.github.steaf23.playerdisplay.inventory.item.ItemTemplate;
@@ -118,7 +118,7 @@ public class TeamEditorMenu extends PaginatedSelectionMenu
             });
 
             addCloseAction(new ItemTemplate(6, 1, Material.BARRIER,
-                    Component.text(BingoTranslation.MENU_EXIT.translate()).color(NamedTextColor.RED).decorate(TextDecoration.BOLD)));
+                    BingoMessage.MENU_EXIT.asPhrase().color(NamedTextColor.RED).decorate(TextDecoration.BOLD)));
         }
 
         @Override

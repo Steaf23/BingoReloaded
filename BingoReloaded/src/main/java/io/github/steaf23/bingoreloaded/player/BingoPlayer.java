@@ -5,7 +5,7 @@ import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.data.BingoStatType;
-import io.github.steaf23.bingoreloaded.data.BingoTranslation;
+import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.gui.inventory.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.item.ItemCooldownManager;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
@@ -82,9 +82,9 @@ public class BingoPlayer implements BingoParticipant
     }
 
     @Override
-    public String getDisplayName()
+    public Component getDisplayName()
     {
-        return displayName;
+        return Component.text(displayName);
     }
 
     public OfflinePlayer offline()
@@ -209,7 +209,7 @@ public class BingoPlayer implements BingoParticipant
         String itemKey = task.material.isBlock() ? "block" : "item";
         itemKey += ".minecraft." + task.material.getKey().getKey();
         sessionPlayer().get()
-                .sendMessage(BingoTranslation.DEATHMATCH_ITEM.asSingleComponent(Component.translatable(itemKey))
+                .sendMessage(BingoMessage.DEATHMATCH_ITEM.asPhrase(Component.translatable(itemKey))
                         .color(NamedTextColor.GOLD));
     }
 
@@ -229,7 +229,7 @@ public class BingoPlayer implements BingoParticipant
 
             // if the player is actually participating, show it
             if (card == null) {
-                new TranslatedMessage(BingoTranslation.NO_PLAYER_CARD).send(player);
+                BingoMessage.NO_PLAYER_CARD.sendToAudience(player);
                 return;
             }
 
@@ -255,7 +255,7 @@ public class BingoPlayer implements BingoParticipant
         if (!itemCooldowns.isCooldownOver(wand.getType()))
         {
             double timeLeft = itemCooldowns.getTimeLeft(wand.getType()) / 1000.0;
-            player.sendMessage(BingoTranslation.COOLDOWN.asSingleComponent(Component.text(String.format("%.2f", timeLeft)))
+            player.sendMessage(BingoMessage.COOLDOWN.asPhrase(Component.text(String.format("%.2f", timeLeft)))
                     .color(NamedTextColor.RED));
             return false;
         }
@@ -316,7 +316,7 @@ public class BingoPlayer implements BingoParticipant
 
     @Override
     public String toString() {
-        return getDisplayName();
+        return displayName;
     }
 
     @Override

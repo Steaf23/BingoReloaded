@@ -1,7 +1,7 @@
 package io.github.steaf23.bingoreloaded.tasks;
 
-import io.github.steaf23.bingoreloaded.data.BingoTranslation;
-import io.github.steaf23.playerdisplay.util.ChatComponentUtils;
+import io.github.steaf23.bingoreloaded.data.BingoMessage;
+import io.github.steaf23.playerdisplay.util.ComponentUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
@@ -31,14 +31,13 @@ public record ItemTask(Material material, int count) implements CountableTask
     {
         return Component.text().color(NamedTextColor.YELLOW)
                 .append(Component.text(count + "x "))
-                .append(ChatComponentUtils.itemName(material)).build();
+                .append(ComponentUtils.itemName(material)).build();
     }
 
     @Override
     public Component[] getItemDescription()
     {
-        //FIXME: make dark aqua
-        return BingoTranslation.LORE_ITEM.asComponent(Component.text(count));
+        return BingoMessage.LORE_ITEM.asMultiline(NamedTextColor.DARK_AQUA, Component.text(count));
     }
 
     @Override

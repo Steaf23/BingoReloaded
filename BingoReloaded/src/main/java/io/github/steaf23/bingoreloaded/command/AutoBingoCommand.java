@@ -16,7 +16,9 @@ import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
 import io.github.steaf23.bingoreloaded.settings.BingoSettingsBuilder;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
-import net.md_5.bungee.api.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.command.Command;
@@ -236,7 +238,7 @@ public class AutoBingoCommand implements TabExecutor
         currentSender = commandSender;
 
         if (!command.execute(args)) {
-            commandSender.sendMessage(ChatColor.DARK_GRAY + " - " + ChatColor.RED + "Usage: " + command.usage(args));
+            commandSender.sendMessage(MiniMessage.miniMessage().deserialize("<darK_gray> - <red>Usage: " + command.usage(args)));
         }
         return true;
     }
@@ -610,11 +612,11 @@ public class AutoBingoCommand implements TabExecutor
     }
 
     private void sendFailed(String message, String sessionName) {
-        currentSender.sendMessage("(" + sessionName + ") " + ChatColor.RED + message);
+        currentSender.sendMessage(Component.text("(" + sessionName + ") ").append(Component.text(message).color(NamedTextColor.RED)));
     }
 
     private void sendSuccess(String message, String sessionName) {
-        currentSender.sendMessage("(" + sessionName + ") " + ChatColor.GREEN + message);
+        currentSender.sendMessage(Component.text("(" + sessionName + ") ").append(Component.text(message).color(NamedTextColor.GREEN)));
     }
 
     @Nullable

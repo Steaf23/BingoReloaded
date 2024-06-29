@@ -1,11 +1,14 @@
 package io.github.steaf23.bingoreloaded.gui.hud;
 
+import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.ScoreboardData;
 import io.github.steaf23.playerdisplay.scoreboard.PlayerHUD;
 import io.github.steaf23.playerdisplay.scoreboard.SidebarHUD;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+
+import java.util.List;
 
 public class TemplatedPlayerHUD extends PlayerHUD
 {
@@ -25,7 +28,12 @@ public class TemplatedPlayerHUD extends PlayerHUD
             return;
         }
 
-        sidebar.setTitle(new Message(template.title()).asComponent(player));
+        Component title = Component.empty();
+        List<Component> titleComponents = BingoMessage.convertForPlayer(template.title(), player);
+        if (titleComponents.size() > 0) {
+            title = titleComponents.get(0);
+        }
+        sidebar.setTitle(title);
 
         //FIXME figure out a way to do this now with Components instead..
 //        sidebar.clear();

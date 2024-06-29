@@ -23,12 +23,12 @@ public class BingoTeam implements ForwardingAudience
     public boolean outOfTheGame = false;
     private final String id;
     private final TextColor color;
-    private final String name;
+    private final Component name;
     private final Component prefix;
 
     private final Set<BingoParticipant> members;
 
-    public BingoTeam(String identifier, TextColor color, String name, Component prefix) {
+    public BingoTeam(String identifier, TextColor color, Component name, Component prefix) {
         this.id = identifier;
         this.card = null;
         this.color = color;
@@ -58,12 +58,12 @@ public class BingoTeam implements ForwardingAudience
         return color;
     }
 
-    public String getName() {
+    public Component getName() {
         return name;
     }
 
     public Component getColoredName() {
-        return Component.text(name).color(color).decorate(TextDecoration.BOLD);
+        return name.color(color).decorate(TextDecoration.BOLD);
     }
 
     public Set<BingoParticipant> getMembers() {
@@ -112,11 +112,7 @@ public class BingoTeam implements ForwardingAudience
     public Set<String> getMemberNames() {
         return members.stream()
                 .map(participant -> {
-                    if (participant.sessionPlayer().isEmpty()) {
-                        return participant.getDisplayName();
-                    } else {
-                        return participant.sessionPlayer().get().getName();
-                    }
+                    return participant.getName();
                 }).collect(Collectors.toSet());
     }
 

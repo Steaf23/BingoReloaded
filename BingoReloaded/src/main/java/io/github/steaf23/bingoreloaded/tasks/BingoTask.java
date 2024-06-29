@@ -1,6 +1,6 @@
 package io.github.steaf23.bingoreloaded.tasks;
 
-import io.github.steaf23.bingoreloaded.data.BingoTranslation;
+import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.gui.inventory.item.TaskItemAction;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.util.timer.GameTimer;
@@ -98,7 +98,7 @@ public class BingoTask
         {
             item = new ItemTemplate(Material.STRUCTURE_VOID, null);
             //FIXME: make desc dark gray
-            Component[] addedDesc = BingoTranslation.VOIDED.asComponent();
+            Component[] addedDesc = BingoMessage.VOIDED.asMultiline();
 
             ComponentBuilder nameBuilder = Component.text()
                     .color(NamedTextColor.DARK_GRAY).decorate(TextDecoration.STRIKETHROUGH);
@@ -120,13 +120,8 @@ public class BingoTask
                     .color(NamedTextColor.GRAY).decorate(TextDecoration.STRIKETHROUGH);
             nameBuilder.append(data.getName());
 
-//            Set<TextColor> modifiers = new HashSet<>(){{
-//                add(ChatColor.DARK_PURPLE);
-//                add(ChatColor.ITALIC);
-//            }};
-            //FIXME: return to multiline component
-            Component[] desc = BingoTranslation.COMPLETED_LORE.asComponent(
-                    Component.text(completedBy.getDisplayName()).color(completedBy.getTeam().getColor()).decorate(TextDecoration.BOLD)
+            Component[] desc = BingoMessage.COMPLETED_LORE.asMultiline(
+                    completedBy.getDisplayName().color(completedBy.getTeam().getColor()).decorate(TextDecoration.BOLD)
                             .color(NamedTextColor.DARK_PURPLE).decorate(TextDecoration.ITALIC),
                     Component.text(timeString).decorate(TextDecoration.BOLD)
                             .color(NamedTextColor.DARK_PURPLE).decorate(TextDecoration.ITALIC));

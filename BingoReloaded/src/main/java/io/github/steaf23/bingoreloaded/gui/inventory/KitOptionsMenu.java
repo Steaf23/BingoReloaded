@@ -1,7 +1,7 @@
 package io.github.steaf23.bingoreloaded.gui.inventory;
 
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
-import io.github.steaf23.bingoreloaded.data.BingoTranslation;
+import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.settings.CustomKit;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import io.github.steaf23.playerdisplay.inventory.BasicMenu;
@@ -18,21 +18,21 @@ public class KitOptionsMenu extends BasicMenu
 
     public KitOptionsMenu(MenuBoard menuBoard, BingoSession session)
     {
-        super(menuBoard, BingoTranslation.OPTIONS_KIT.asSingleComponent(), 5);
+        super(menuBoard, BingoMessage.OPTIONS_KIT.asPhrase(), 5);
         this.session = session;
 
         ItemTemplate HARDCORE = new ItemTemplate(1, 1,
                 Material.RED_CONCRETE, PlayerKit.HARDCORE.getDisplayName(),
-                BingoTranslation.KIT_HARDCORE_DESC.asComponent());
+                BingoMessage.KIT_HARDCORE_DESC.asMultiline());
         ItemTemplate NORMAL = new ItemTemplate(3, 1,
                 Material.YELLOW_CONCRETE, PlayerKit.NORMAL.getDisplayName(),
-                BingoTranslation.KIT_NORMAL_DESC.asComponent());
+                BingoMessage.KIT_NORMAL_DESC.asMultiline());
         ItemTemplate OVERPOWERED = new ItemTemplate(5, 1,
                 Material.PURPLE_CONCRETE, PlayerKit.OVERPOWERED.getDisplayName(),
-                BingoTranslation.KIT_OVERPOWERED_DESC.asComponent());
+                BingoMessage.KIT_OVERPOWERED_DESC.asMultiline());
         ItemTemplate RELOADED = new ItemTemplate(7, 1,
                 Material.CYAN_CONCRETE, PlayerKit.RELOADED.getDisplayName(),
-                BingoTranslation.KIT_RELOADED_DESC.asComponent());
+                BingoMessage.KIT_RELOADED_DESC.asMultiline());
 
         addAction(HARDCORE, p -> {
             setKit(PlayerKit.HARDCORE);

@@ -49,19 +49,19 @@ public abstract class PaginatedSelectionMenu extends BasicMenu
     private final ItemTemplate previousPageItem;
 
     protected static final ItemTemplate NEXT = new ItemTemplate(8, 5, Material.STRUCTURE_VOID,
-            Component.text(PlayerDisplayTranslationKey.MENU_NEXT.translate())
+            PlayerDisplayTranslationKey.MENU_NEXT.translate()
                     .color(NamedTextColor.LIGHT_PURPLE).decorate(TextDecoration.BOLD));
 
     protected static final ItemTemplate PREVIOUS = new ItemTemplate(0, 5, Material.BARRIER,
-            Component.text(PlayerDisplayTranslationKey.MENU_PREVIOUS.translate())
+            PlayerDisplayTranslationKey.MENU_PREVIOUS.translate()
                     .color(NamedTextColor.LIGHT_PURPLE).decorate(TextDecoration.BOLD));
 
     protected static final ItemTemplate CLOSE = new ItemTemplate(4, 5, Material.REDSTONE,
-            Component.text(PlayerDisplayTranslationKey.MENU_SAVE_EXIT.translate())
+            PlayerDisplayTranslationKey.MENU_SAVE_EXIT.translate()
                     .color(NamedTextColor.RED).decorate(TextDecoration.BOLD));
 
     protected static final ItemTemplate FILTER = new ItemTemplate(1, 5, Material.SPYGLASS,
-            Component.text(PlayerDisplayTranslationKey.MENU_FILTER.translate())
+            PlayerDisplayTranslationKey.MENU_FILTER.translate()
                     .color(NamedTextColor.GOLD).decorate(TextDecoration.BOLD));
 
     public PaginatedSelectionMenu(MenuBoard board, Component initialTitle, List<ItemTemplate> options, Function<ItemTemplate, Boolean> customFilter) {

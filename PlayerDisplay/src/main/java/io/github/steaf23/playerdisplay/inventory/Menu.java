@@ -53,5 +53,5 @@ public interface Menu
 
     public static Component INPUT_LEFT_CLICK = inputButtonText(Component.keybind("key.attack"));
     public static Component INPUT_RIGHT_CLICK = inputButtonText(Component.keybind("key.use"));
-    public static Component INPUT_SHIFT_CLICK = inputButtonText(Component.keybind("key.crouch"));
+    public static Component INPUT_SHIFT_CLICK = inputButtonText(Component.keybind("Hold Shift"));
 }

@@ -1,6 +1,7 @@
 package io.github.steaf23.bingoreloaded.command;
 
 import io.github.steaf23.bingoreloaded.data.BingoStatData;
+import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.ConfigData;
 import io.github.steaf23.bingoreloaded.gameloop.GameManager;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
@@ -15,8 +16,10 @@ import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.settings.CustomKit;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
+import io.github.steaf23.bingoreloaded.util.BingoPlayerSender;
 import io.github.steaf23.playerdisplay.inventory.MenuBoard;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.JoinConfiguration;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -74,7 +77,7 @@ public class BingoCommand implements TabExecutor
                     return true;
                 }
                 if (!config.useVoteSystem || config.voteUsingCommandsOnly || config.voteList.isEmpty()) {
-                    Message.sendDebug(ChatColor.RED + "Voting is disabled!", player);
+                    BingoPlayerSender.sendMessage(Component.text("Voting is disabled!").color(NamedTextColor.RED), player);
                     return true;
                 }
                 VoteMenu menu = new VoteMenu(menuBoard, config.voteList, lobby);
@@ -103,7 +106,7 @@ public class BingoCommand implements TabExecutor
             case "wait" -> {
                 if (player.hasPermission("bingo.settings")) {
                     session.pauseAutomaticStart();
-                    Message.sendDebug("Toggled automatic starting timer", player);
+                    BingoPlayerSender.sendMessage(Component.text("Toggled automatic starting timer"), player);
                 }
             }
             case "getcard" -> {
@@ -147,17 +150,17 @@ public class BingoCommand implements TabExecutor
                 if (!config.savePlayerStatistics) {
                     Component text = Component.text("Player statistics are not being tracked at this moment!")
                             .color(NamedTextColor.RED);
-                    Message.sendDebug(text, player);
+                    BingoPlayerSender.sendMessage(text, player);
                     return true;
                 }
                 BingoStatData statsData = new BingoStatData();
-                Message msg;
+                Component msg;
                 if (args.length > 1 && player.hasPermission("bingo.admin")) {
                     msg = statsData.getPlayerStatsFormatted(args[1]);
                 } else {
                     msg = statsData.getPlayerStatsFormatted(player.getUniqueId());
                 }
-                msg.send(player);
+                BingoPlayerSender.sendMessage(msg, player);
                 return true;
             }
             case "kit" -> {
@@ -170,7 +173,7 @@ public class BingoCommand implements TabExecutor
                     case "item" -> givePlayerBingoItem(player, args[2]);
                     case "add" -> {
                         if (args.length < 4) {
-                            Message.sendDebug(ChatColor.RED + "Please specify a kit name for slot " + args[2], player);
+                            BingoPlayerSender.sendMessage(Component.text("Please specify a kit name for slot " + args[2]).color(NamedTextColor.RED), player);
                             return false;
                         }
                         addPlayerKit(args[2], Arrays.stream(args).collect(Collectors.toList()).subList(3, args.length), player);
@@ -189,14 +192,16 @@ public class BingoCommand implements TabExecutor
                     return false;
                 }
 
-                Message.sendDebug("Here are all the teams with at least 1 player:", player);
+                BingoPlayerSender.sendMessage(Component.text("Here are all the teams with at least 1 player:"), player);
                 session.teamManager.getActiveTeams().getTeams().forEach(team -> {
                     if (team.getMembers().isEmpty()) {
                         return;
                     }
-                    player.sendMessage(Component.text(" - ").append(team.getColoredName()).append(Component.text(": " + team.getMembers().stream()
-                            .map(p -> p.getDisplayName())
-                            .collect(Collectors.joining(", ")))));
+                    player.sendMessage(Component.text(" - ").append(team.getColoredName()).append(Component.text(": ")
+                            .append(Component.join(JoinConfiguration.separator(Component.text(", ")),
+                                    team.getMembers().stream()
+                                    .map(BingoParticipant::getDisplayName)
+                                    .toList()))));
                 });
 
             }
@@ -206,9 +211,9 @@ public class BingoCommand implements TabExecutor
             default -> {
                 if (player.hasPermission("bingo.admin")) {
                     //FIXME: reimplement
-//                    new TranslatedMessage(BingoTranslation.COMMAND_USAGE).color(ChatColor.RED).arg("/bingo [getcard | stats | start | end | join | vote | back | leave | deathmatch | creator | teams | kit | wait | teamedit]").send(player);
+                    BingoMessage.COMMAND_USAGE.sendToAudience(player, NamedTextColor.RED, Component.text("/bingo [getcard | stats | start | end | join | vote | back | leave | deathmatch | creator | teams | kit | wait | teamedit]"));
                 } else {
-//                    new TranslatedMessage(BingoTranslation.COMMAND_USAGE).color(ChatColor.RED).arg("/bingo [getcard | stats | join | vote | back | leave]").send(player);
+                    BingoMessage.COMMAND_USAGE.sendToAudience(player, NamedTextColor.RED, Component.text("/bingo [getcard | stats | join | vote | back | leave]"));
                 }
             }
         }
@@ -223,7 +228,7 @@ public class BingoCommand implements TabExecutor
             case "4" -> PlayerKit.CUSTOM_4;
             case "5" -> PlayerKit.CUSTOM_5;
             default -> {
-                Message.sendDebug(ChatColor.RED + "Invalid slot, please a slot from 1 through 5 to save this kit in", commandSender);
+                BingoPlayerSender.sendMessage(Component.text("Invalid slot, please a slot from 1 through 5 to save this kit in").color(NamedTextColor.RED), commandSender);
                 yield null;
             }
         };
@@ -265,7 +270,7 @@ public class BingoCommand implements TabExecutor
             case "4" -> PlayerKit.CUSTOM_4;
             case "5" -> PlayerKit.CUSTOM_5;
             default -> {
-                Message.sendDebug(ChatColor.RED + "Invalid slot, please a slot from 1 through 5 to save this kit in", commandSender);
+                BingoPlayerSender.sendMessage(Component.text("Invalid slot, please a slot from 1 through 5 to save this kit in").color(NamedTextColor.RED), commandSender);
                 yield null;
             }
         };

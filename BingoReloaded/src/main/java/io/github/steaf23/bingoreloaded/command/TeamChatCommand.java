@@ -1,10 +1,13 @@
 package io.github.steaf23.bingoreloaded.command;
 
+import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.player.team.TeamManager;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
@@ -59,20 +62,11 @@ public class TeamChatCommand implements Listener, TabExecutor
 
     public void sendMessage(BingoTeam team, Player player, String message)
     {
-        //FIXME: reimplement
-//        team.getMembers()
-//                .forEach(member -> {
-//                    if (member.sessionPlayer().isEmpty()) {
-//                        return;
-//                    }
-//
-//                    Player receivingPlayer = member.sessionPlayer().get();
-//                    receivingPlayer.spigot().sendMessage(new ComponentBuilder()
-//                            .append(team.getPrefix())
-//                            .append(ChatColor.RESET + "<" + player.getDisplayName() + "> ")
-//                            .append(message)
-//                            .build());
-//                });
+        team.sendMessage(Component.text()
+                .append(team.getPrefix())
+                .append(Component.text("<" + player.displayName() + "> "))
+                .append(Component.text(message))
+                .build());
     }
 
     @Override
@@ -90,23 +84,22 @@ public class TeamChatCommand implements Listener, TabExecutor
             if (!(participant instanceof BingoPlayer player))
                 return false;
 
-            //FIXME: reimplement
-//            if (!teamManager.getParticipants().contains(player))
-//            {
-//                new TranslatedMessage(BingoTranslation.NO_CHAT).color(ChatColor.RED).send(p);
-//                return false;
-//            }
-//
-//            if (enabledPlayers.contains(player))
-//            {
-//                enabledPlayers.remove(player);
-//                new TranslatedMessage(BingoTranslation.CHAT_OFF).color(ChatColor.GREEN).arg("/btc").send(p);
-//            }
-//            else
-//            {
-//                enabledPlayers.add(player);
-//                new TranslatedMessage(BingoTranslation.CHAT_ON).color(ChatColor.GREEN).arg("/btc").send(p);
-//            }
+            if (!teamManager.getParticipants().contains(player))
+            {
+                BingoMessage.NO_CHAT.sendToAudience(player, NamedTextColor.RED);
+                return false;
+            }
+
+            if (enabledPlayers.contains(player))
+            {
+                enabledPlayers.remove(player);
+                BingoMessage.CHAT_OFF.sendToAudience(player, NamedTextColor.GREEN, Component.text("/btc").color(NamedTextColor.GRAY));
+            }
+            else
+            {
+                enabledPlayers.add(player);
+                BingoMessage.CHAT_ON.sendToAudience(player, NamedTextColor.GREEN, Component.text("/btc").color(NamedTextColor.GRAY));
+            }
         }
         return false;
     }
