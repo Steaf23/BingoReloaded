@@ -27,7 +27,8 @@ public record AdvancementTask(Advancement advancement) implements TaskData
     @Override
     public Component getName()
     {
-        var builder = Component.text("[").color(NamedTextColor.GREEN).decorate(TextDecoration.ITALIC);
+        var builder = Component.text().append(Component.text("["))
+                .color(NamedTextColor.GREEN).decorate(TextDecoration.ITALIC);
 
         if (advancement == null)
         {
@@ -39,7 +40,7 @@ public record AdvancementTask(Advancement advancement) implements TaskData
             builder.append(ComponentUtils.advancementTitle(advancement));
         }
         builder.append(Component.text("]"));
-        return builder;
+        return builder.build();
     }
 
     @Override

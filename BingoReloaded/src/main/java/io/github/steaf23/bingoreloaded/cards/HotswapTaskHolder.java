@@ -37,10 +37,10 @@ public class HotswapTaskHolder
     public ItemTemplate convertToItem() {
         ItemTemplate item = task.toItem();
         if (isRecovering()) {
-            item.addDescription("time", 1, BingoMessage.HOTSWAP_RECOVER.asPhrase().color(TextColor.fromHexString("#5cb1ff")), GameTimer.getTimeAsComponent(currentTime));
+            item.addDescription("time", 1, BingoMessage.HOTSWAP_RECOVER.asPhrase(GameTimer.getTimeAsComponent(currentTime)).color(TextColor.fromHexString("#5cb1ff")));
         }
         else {
-            item.addDescription("time", 1, BingoMessage.HOTSWAP_EXPIRE.asPhrase().color(getColorForExpirationTime()), GameTimer.getTimeAsComponent(currentTime));
+            item.addDescription("time", 1, BingoMessage.HOTSWAP_EXPIRE.asPhrase(GameTimer.getTimeAsComponent(currentTime)).color(getColorForExpirationTime()));
             if (showExpirationAsDurability) {
                 item.setMaxDamage(expirationTimeSeconds);
                 item.setDamage(currentTime);

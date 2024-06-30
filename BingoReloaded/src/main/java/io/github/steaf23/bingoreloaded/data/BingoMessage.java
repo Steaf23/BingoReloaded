@@ -1,5 +1,6 @@
 package io.github.steaf23.bingoreloaded.data;
 
+import io.github.steaf23.bingoreloaded.util.BingoPlayerSender;
 import io.github.steaf23.bingoreloaded.util.CollectionHelper;
 import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import io.github.steaf23.playerdisplay.util.TinyCaps;
@@ -157,7 +158,7 @@ public enum BingoMessage
 
     BingoMessage(String key) {
         this.key = key;
-        this.translation = NamedTextColor.GRAY + key;
+        this.translation = key;
     }
 
     public static void setLanguage(FileConfiguration text, FileConfiguration fallbackText) {
@@ -262,6 +263,7 @@ public enum BingoMessage
         //Untangle the mess before sending it.
         String translated = rawTranslation();
 
+
         audience.forEachAudience(innerAudience -> {
             //Translate and send in steps
             //1. Solve placeholders first (so they can be nested into arguments in the following formats).
@@ -270,26 +272,10 @@ public enum BingoMessage
                 playerMessage = PlaceholderAPI.setPlaceholders(player, playerMessage);
             }
 
-            //2. Solve bingoreloaded (legacy) formatting into minimessage format.
-            var lines = convertConfigStringToMini(playerMessage);
-            for (String line : lines) {
-                //3. Solve minimessage formatting
+            Component[] components = configStringAsMultiline(playerMessage, color, withArguments);
 
-                // create tag resolvers for each argument, which will appear as <0>, <1> etc... in the mini message string and be replaced by the correct components.
-                List<TagResolver> resolvers = new ArrayList<>();
-                for (int i = 0; i < withArguments.length; i++) {
-                    resolvers.add(Placeholder.component(Integer.toString(i), withArguments[i]));
-                }
-                resolvers.add(TinyCaps.TAG_RESOLVER);
-//                resolvers.add(BingoTranslation.SUBSTITUTE_RESOLVER);
-                Component c = MiniMessage.miniMessage().deserialize(playerMessage, innerAudience,
-                        resolvers.toArray(TagResolver[]::new));
-
-                if (color != null) {
-                    audience.sendMessage(c.color(color).decorate(decorations.toArray(TextDecoration[]::new)));
-                } else {
-                    audience.sendMessage(c.decorate(decorations.toArray(TextDecoration[]::new)));
-                }
+            for (Component c : components) {
+                innerAudience.sendMessage(BingoMessage.MESSAGE_PREFIX.asPhrase().append(c.decorate(decorations.toArray(TextDecoration[]::new))));
             }
         });
     }
@@ -318,34 +304,16 @@ public enum BingoMessage
      * @param withArguments
      * @return
      */
-    public List<Component> convertForPlayer(Player player, Component... withArguments) {
+    public Component[] convertForPlayer(Player player, Component... withArguments) {
         //1. Solve placeholders first (so they can be nested into arguments in the following formats).
         String playerMessage = rawTranslation();
         return convertForPlayer(playerMessage, player, withArguments);
     }
 
-    public static List<Component> convertForPlayer(String input, Player player, Component... withArguments) {
+    public static Component[] convertForPlayer(String input, Player player, Component... withArguments) {
         input = PlaceholderAPI.setPlaceholders(player, input);
 
-        List<Component> components = new ArrayList<>();
-        //2. Solve bingoreloaded (legacy) formatting into minimessage format.
-        var lines = BingoMessage.convertConfigStringToMini(input);
-        for (String line : lines) {
-            //3. Solve minimessage formatting
-
-            // create tag resolvers for each argument, which will appear as <0>, <1> etc... in the mini message string and be replaced by the correct components.
-            List<TagResolver> resolvers = new ArrayList<>();
-            for (int i = 0; i < withArguments.length; i++) {
-                resolvers.add(Placeholder.component(Integer.toString(i), withArguments[i]));
-            }
-            resolvers.add(TinyCaps.TAG_RESOLVER);
-//                resolvers.add(BingoTranslation.SUBSTITUTE_RESOLVER);
-            Component c = MiniMessage.miniMessage().deserialize(input, player,
-                    resolvers.toArray(TagResolver[]::new));
-
-            components.add(c);
-        }
-        return components;
+        return configStringAsMultiline(input, null, withArguments);
     }
 
     //TODO: find way to optimize phrases by only creating them on plugin load/ language change? (maybe save phrase w/o args in a map to return those instead?)
@@ -368,9 +336,13 @@ public enum BingoMessage
     }
 
     public Component[] asMultiline(TextColor color, Component... arguments) {
+        return configStringAsMultiline(rawTranslation(), color, arguments);
+    }
+
+    public static Component[] configStringAsMultiline(String input, TextColor color, Component... arguments) {
         List<Component> result = new ArrayList<>();
 
-        for (String converted : convertConfigStringToMini(rawTranslation())) {
+        for (String converted : convertConfigStringToMini(input)) {
             // create tag resolvers for each argument, which will appear as <0>, <1> etc... in the mini message string and be replaced by the correct components.
             List<TagResolver> resolvers = new ArrayList<>();
             for (int i = 0; i < arguments.length; i++) {
@@ -401,12 +373,13 @@ public enum BingoMessage
         String[] messages = message.split("\\n");
         return Arrays.stream(messages).map(line -> {
             // replace colors
-
             line = replaceColors(line, color -> "<" + color + ">");
 
             //NOTE: small caps and substitution can also be done by replacing it into minimessage tags, but doing it directly is probably faster.
             line = convertSmallCaps(line);
             line = convertSubstitution(line);
+
+            line = line.replace("{", "<").replace("}", ">");
             return line;
         }).toList();
     }

@@ -22,7 +22,7 @@ public class ComponentUtils
     }
 
     public static Component advancementTitle(@NotNull Advancement advancement) {
-        return Component.translatable(advancementKey(advancement) + ".description");
+        return Component.translatable(advancementKey(advancement) + ".title");
     }
 
     public static Component advancementDescription(@NotNull Advancement advancement) {

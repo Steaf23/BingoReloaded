@@ -22,6 +22,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import java.util.ArrayList;
 import java.util.List;
 
+//FIXME: improve formatting using components..
 public class AdminBingoMenu extends BasicMenu
 {
     private final BingoSession session;

@@ -45,30 +45,28 @@ public class BingoTask
         this.voided = false;
         this.completedAt = -1L;
 
-        if (data instanceof ItemTask itemTask)
-        {
-            this.type = TaskType.ITEM;
-            this.material = itemTask.material();
-            this.glowing = false;
-        }
-        else if (data instanceof AdvancementTask)
-        {
-            this.type = TaskType.ADVANCEMENT;
-            this.material = Material.FILLED_MAP;
-            this.glowing = true;
-        }
-        else if (data instanceof StatisticTask statTask)
-        {
-            this.type = TaskType.STATISTIC;
-            this.material = BingoStatistic.getMaterial(statTask.statistic());
-            this.glowing = true;
-        }
-        else
-        {
-            ConsoleMessenger.log("This Type of data is not supported by BingoTask: '" + data + "'!");
-            this.type = TaskType.ITEM;
-            this.glowing = false;
-            this.material = Material.BEDROCK;
+        switch (data) {
+            case ItemTask itemTask -> {
+                this.type = TaskType.ITEM;
+                this.material = itemTask.material();
+                this.glowing = false;
+            }
+            case AdvancementTask ignored -> {
+                this.type = TaskType.ADVANCEMENT;
+                this.material = Material.FILLED_MAP;
+                this.glowing = true;
+            }
+            case StatisticTask statTask -> {
+                this.type = TaskType.STATISTIC;
+                this.material = BingoStatistic.getMaterial(statTask.statistic());
+                this.glowing = true;
+            }
+            case null, default -> {
+                ConsoleMessenger.log("This Type of data is not supported by BingoTask: '" + data + "'!");
+                this.type = TaskType.ITEM;
+                this.glowing = false;
+                this.material = Material.BEDROCK;
+            }
         }
     }
 
@@ -97,13 +95,12 @@ public class BingoTask
         if (isVoided()) // VOIDED TASK
         {
             item = new ItemTemplate(Material.STRUCTURE_VOID, null);
-            //FIXME: make desc dark gray
-            Component[] addedDesc = BingoMessage.VOIDED.asMultiline();
+            Component[] addedDesc = BingoMessage.VOIDED.asMultiline(NamedTextColor.DARK_GRAY);
 
             ComponentBuilder nameBuilder = Component.text()
                     .color(NamedTextColor.DARK_GRAY).decorate(TextDecoration.STRIKETHROUGH);
             nameBuilder.append(Component.text("A").decorate(TextDecoration.OBFUSCATED));
-            nameBuilder.append(data.getName());
+            nameBuilder.append(data.getName().color(NamedTextColor.DARK_GRAY));
             nameBuilder.append(Component.text("A").decorate(TextDecoration.OBFUSCATED));
 
             item.setName(nameBuilder.build());
@@ -120,11 +117,14 @@ public class BingoTask
                     .color(NamedTextColor.GRAY).decorate(TextDecoration.STRIKETHROUGH);
             nameBuilder.append(data.getName());
 
-            Component[] desc = BingoMessage.COMPLETED_LORE.asMultiline(
-                    completedBy.getDisplayName().color(completedBy.getTeam().getColor()).decorate(TextDecoration.BOLD)
-                            .color(NamedTextColor.DARK_PURPLE).decorate(TextDecoration.ITALIC),
-                    Component.text(timeString).decorate(TextDecoration.BOLD)
-                            .color(NamedTextColor.DARK_PURPLE).decorate(TextDecoration.ITALIC));
+            Component[] desc = BingoMessage.COMPLETED_LORE.asMultiline(NamedTextColor.DARK_PURPLE,
+                    completedBy.getDisplayName()
+                            .color(completedBy.getTeam().getColor())
+                            .decorate(TextDecoration.BOLD)
+                            .decorate(TextDecoration.ITALIC),
+                    Component.text(timeString)
+                            .color(NamedTextColor.GOLD)
+                            .decorate(TextDecoration.ITALIC));
 
             item = new ItemTemplate(completeMaterial, nameBuilder.build(), desc);
         }

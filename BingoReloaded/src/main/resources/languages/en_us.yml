@@ -1,9 +1,9 @@
 name: "English"
 changed: "Language configured to English!"
 branding:
-  scoreboard_title: "&3&lBingo&r&e&oⓇeloaded&r&4"
-  message_prefix: "&r&4[&3&lBingo&r&e&oⓇeloaded&r&4]&r: "
-  menu_prefix: "&r&4[&3&lB&r&e&oⓇ&r&4] &4"
+  scoreboard_title: "<dark_aqua><bold>Bingo<reset><yellow><italic>Ⓡeloaded<reset>"
+  message_prefix: "<dark_red>[<dark_aqua><bold>Bingo</bold></dark_aqua><yellow><italic>Ⓡeloaded</italic></yellow>]</dark_red>: "
+  menu_prefix: "<dark_red>[<dark_aqua><bold>B</bold></dark_aqua><yellow><italic>Ⓡ</italic></yellow>]</dark_red>: <dark_gray>"
 command:
   use: "Usage: {0}" # 0: cmd usage
   bingo:
@@ -41,7 +41,7 @@ game:
     no_start: "The game has not started yet!" # DYNAMIC
     no_card: "Could not find your card!" # DYNAMIC
     cooldown: "You cannot use this item for another {0} seconds!" # DYNAMIC 0: time left
-    respawn: "//&3&lClick here to teleport back to where you died////" # DYNAMIC
+    respawn: "//<dark_aqua><bold>Click here to teleport back to where you died////" # DYNAMIC
     respawn_expired: "Teleport to death location has expired!" # DYNAMIC
   team:
     no_join: "You cannot join an ongoing game!" # DYNAMIC
@@ -49,8 +49,8 @@ game:
     join_auto: "You will be joining a team automatically when the game starts!" # DYNAMIC
     dropped: "Team {0} cannot win anymore, they are out of the game!" # DYNAMIC 0: team name
     no_chat: "Can't toggle team chat since you aren't in a team!" # DYNAMIC
-    chat_off: "&fTeam chat is now &coff&r, use {0} to enable it again." # DYNAMIC 0: /btc
-    chat_on: "&fTeam chat is now &aon&r, use {0} to disable it." # DYNAMIC 0: /btc
+    chat_off: "Team chat is now <red>off</red>, use {0} to enable it again." # DYNAMIC 0: /btc
+    chat_on: "Team chat is now <green>on</green>, use {0} to disable it." # DYNAMIC 0: /btc
     size_changed: "The maximum team sized has been changed, please rejoin your team of choice!" # DYNAMIC
     full_team_desc: "This team is full"
     join_team_desc: "Click to join this team"
@@ -105,10 +105,10 @@ menu:
     effects: "Player Effects"
     vote: "Vote For Settings"
     modes:
-      regular: "&aRegular"
-      lockout: "&5Lockout"
-      complete: "&3Complete-All"
-      hotswap: "&6Hot-Swap"
+      regular: "<green>Regular</green>"
+      lockout: "<dark_purple>Lockout</dark_purple>"
+      complete: "<dark_aqua>Complete-All</dark_aqua>"
+      hotswap: "<gold>Hot-Swap</gold>"
   effects:
     enable: "Click to ENABLE this effect option"
     disable: "Click to DISABLE this effect option"
@@ -123,12 +123,12 @@ menu:
     speed: "Speed"
   kits:
     hardcore:
-      name: "&4&lHardcore"
+      name: "<dark_red><bold>Hardcore"
       desc: "This kit includes: \n
       \n
           - Nothing, good luck!"
     normal:
-      name: "&e&lNormal"
+      name: "<yellow><bold>Normal"
       desc: "This kit includes: \n
       \n
           - Iron Axe \n
@@ -138,7 +138,7 @@ menu:
           - Leather Helmet \n
           - Leather Boots"
     overpowered:
-      name: "&5&lOverpowered"
+      name: "<dark_purple><bold>Overpowered"
       desc: "This kit includes: \n
       \n
           - Netherite Axe \n
@@ -149,7 +149,7 @@ menu:
           - Leather Helmet \n
           - Leather Boots"
     reloaded:
-      name: "&3&lReloaded"
+      name: "<dark_aqua><bold>Reloaded"
       desc: "This kit includes: \n
       \n
           - Netherite Axe \n

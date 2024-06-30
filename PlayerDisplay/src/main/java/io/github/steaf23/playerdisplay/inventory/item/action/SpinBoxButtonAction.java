@@ -4,6 +4,7 @@ import io.github.steaf23.playerdisplay.inventory.BasicMenu;
 import io.github.steaf23.playerdisplay.inventory.Menu;
 import io.github.steaf23.playerdisplay.inventory.item.ItemTemplate;
 import io.github.steaf23.playerdisplay.util.ExtraMath;
+import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
@@ -28,9 +29,9 @@ public class SpinBoxButtonAction extends MenuAction
         item.setAmount(value);
 
         item.addDescription("input", 10,
-                Menu.INPUT_LEFT_CLICK + "increase",
-                Menu.INPUT_RIGHT_CLICK + "decrease",
-                Menu.INPUT_SHIFT_CLICK + "edit faster");
+                Menu.INPUT_LEFT_CLICK.append(Component.text("increase")),
+                Menu.INPUT_RIGHT_CLICK.append(Component.text("decrease")),
+                Menu.INPUT_SHIFT_CLICK.append(Component.text("edit faster")));
     }
 
     @Override

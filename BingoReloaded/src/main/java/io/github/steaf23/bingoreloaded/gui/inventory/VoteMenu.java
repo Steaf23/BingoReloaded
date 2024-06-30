@@ -80,7 +80,7 @@ public class VoteMenu extends BasicMenu
             if (voteList.gamemodes().contains("complete_5")) {
                 gamemodeOptions.addAction(new ItemTemplate(itemIndex, Material.LIGHT_BLUE_CONCRETE,
                         BingoGamemode.COMPLETE.asComponent().decorate(TextDecoration.BOLD).append(Component.text(" - 5x5")),
-                        BingoMessage.INFO_COMPLETE_NAME.asMultiline()), (args) -> {
+                        BingoMessage.INFO_COMPLETE_DESC.asMultiline()), (args) -> {
                     HumanEntity player = args.player();
                     lobby.voteGamemode("complete_5", player);
                     gamemodeOptions.close(player);
@@ -90,7 +90,7 @@ public class VoteMenu extends BasicMenu
             if (voteList.gamemodes().contains("complete_3")) {
                 gamemodeOptions.addAction(new ItemTemplate(itemIndex, Material.BLUE_CONCRETE,
                         BingoGamemode.COMPLETE.asComponent().decorate(TextDecoration.BOLD).append(Component.text(" - 3x3")),
-                        BingoMessage.INFO_COMPLETE_NAME.asMultiline()), (args) -> {
+                        BingoMessage.INFO_COMPLETE_DESC.asMultiline()), (args) -> {
                     HumanEntity player = args.player();
                     lobby.voteGamemode("complete_3", player);
                     gamemodeOptions.close(player);

@@ -3,6 +3,7 @@ package io.github.steaf23.bingoreloaded.data;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.helper.YmlDataManager;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
+import io.github.steaf23.bingoreloaded.settings.BingoSettingsBuilder;
 import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 
 import javax.annotation.Nullable;
@@ -17,7 +18,7 @@ public class BingoSettingsData
         this.data = BingoReloaded.createYmlDataManager("data/presets.yml");
     }
 
-    public BingoSettings getSettings(String name) {
+    public @Nullable BingoSettings getSettings(String name) {
         if (name.equals("default"))
         {
             ConsoleMessenger.error("Cannot load settings named 'default'.");
@@ -27,7 +28,10 @@ public class BingoSettingsData
         if (data.getConfig().contains(name)) {
             return data.getConfig().getSerializable(name, BingoSettings.class);
         }
-        return getDefaultSettings();
+        else if (!getDefaultSettingsName().isEmpty()) {
+            return data.getConfig().getSerializable(getDefaultSettingsName(), BingoSettings.class);
+        }
+        return null;
     }
 
     public void saveSettings(String name, BingoSettings settings) {

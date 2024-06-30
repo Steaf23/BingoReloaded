@@ -8,8 +8,10 @@ import io.github.steaf23.playerdisplay.util.ExtraMath;
 import io.github.steaf23.playerdisplay.util.PDCHelper;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -263,7 +265,7 @@ public class ItemTemplate
         // To create the description, sort the sections based on priority and place all lines under each other.
         List<Component> descriptionList = new ArrayList<>();
         description.values().stream().sorted(Comparator.comparingInt(a -> a.priority)).forEach(section -> {
-            descriptionList.addAll(Arrays.stream(section.text).toList());
+            descriptionList.addAll(Arrays.stream(section.text).map(c -> c.colorIfAbsent(NamedTextColor.WHITE).decorationIfAbsent(TextDecoration.ITALIC, TextDecoration.State.FALSE)).toList());
             descriptionList.add(Component.text(" "));
         });
 
@@ -281,7 +283,9 @@ public class ItemTemplate
             return stack;
         }
 
-        stackMeta.displayName(name);
+        if (name != null) {
+            stackMeta.displayName(name.colorIfAbsent(NamedTextColor.WHITE).decorationIfAbsent(TextDecoration.ITALIC, TextDecoration.State.FALSE));
+        }
         if (!descriptionList.isEmpty()) {
             stackMeta.lore(descriptionList);
         }

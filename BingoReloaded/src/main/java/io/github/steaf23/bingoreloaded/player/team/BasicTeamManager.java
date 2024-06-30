@@ -12,6 +12,7 @@ import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -44,13 +45,13 @@ public class BasicTeamManager implements TeamManager
 
     private Component createAutoPrefix(TextColor color) {
         String prefixFormat = new BingoPlaceholderFormatter().getTeamFullFormat();
-        Component prefix = LegacyComponentSerializer.legacySection().deserialize(BingoPlaceholderFormatter.createLegacyTextFromMessage(prefixFormat, color.toString(), "✦") + " ");
+        Component prefix = MiniMessage.miniMessage().deserialize(BingoPlaceholderFormatter.createLegacyTextFromMessage(prefixFormat, "<" + color.toString() + ">", "✦") + " ");
         return prefix;
     }
 
     private Component createPrefix(TeamData.TeamTemplate template) {
         String prefixFormat = new BingoPlaceholderFormatter().getTeamFullFormat();
-        Component prefix = LegacyComponentSerializer.legacySection().deserialize(BingoPlaceholderFormatter.createLegacyTextFromMessage(prefixFormat, template.color().toString(), template.name()) + " ");
+        Component prefix = MiniMessage.miniMessage().deserialize(BingoPlaceholderFormatter.createLegacyTextFromMessage(prefixFormat, "<" + template.color().toString() + ">", template.name()) + " ");
         return prefix;
     }
 
@@ -242,7 +243,7 @@ public class BasicTeamManager implements TeamManager
         if (teamId.equals("auto")) {
             BingoMessage.JOIN_AUTO.sendToAudience(participant, NamedTextColor.GREEN);
         } else {
-            BingoMessage.JOIN.sendToAudience(participant, NamedTextColor.GREEN);
+            BingoMessage.JOIN.sendToAudience(participant, NamedTextColor.GREEN, bingoTeam.getColoredName());
         }
         return true;
     }

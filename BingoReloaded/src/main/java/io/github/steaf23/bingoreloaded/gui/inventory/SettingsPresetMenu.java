@@ -94,8 +94,8 @@ public class SettingsPresetMenu extends PaginatedSelectionMenu
             ItemTemplate item = new ItemTemplate(Material.GLOBE_BANNER_PATTERN,
                     LegacyComponentSerializer.legacySection().deserialize(preset + (def ? ChatColor.LIGHT_PURPLE + " (default)" : "")));
             item.addDescription("input", 5,
-                    Menu.INPUT_LEFT_CLICK + "apply this preset",
-                    Menu.INPUT_RIGHT_CLICK + "more options");
+                    Menu.INPUT_LEFT_CLICK.append(Component.text("apply this preset")),
+                    Menu.INPUT_RIGHT_CLICK.append(Component.text("more options")));
             item.setCompareKey(preset);
             items.add(item);
         }

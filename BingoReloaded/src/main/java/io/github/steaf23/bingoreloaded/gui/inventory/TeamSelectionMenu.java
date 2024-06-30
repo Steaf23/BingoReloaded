@@ -14,8 +14,9 @@ import io.github.steaf23.playerdisplay.inventory.item.ItemTemplate;
 import io.github.steaf23.playerdisplay.util.ComponentUtils;
 import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
-import net.md_5.bungee.api.ChatColor;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
@@ -27,6 +28,8 @@ public class TeamSelectionMenu extends PaginatedSelectionMenu
 {
     private final BingoSession session;
     private final TeamManager teamManager;
+
+    private static final Component PLAYER_PREFIX = MiniMessage.miniMessage().deserialize("<gray><bold> ┗ </bold></gray><white>");
 
     public TeamSelectionMenu(MenuBoard manager, BingoSession session) {
         super(manager, BingoMessage.OPTIONS_TEAM.asPhrase(), new ArrayList<>(), FilterType.NONE);
@@ -80,16 +83,16 @@ public class TeamSelectionMenu extends PaginatedSelectionMenu
                 playerInAutoTeam = true;
             }
             int autoTeamMemberCount = autoTeam == null ? 0 : autoTeam.getMembers().size();
-            List<String> description = new ArrayList<>();
+            List<Component> description = new ArrayList<>();
             if (playerInAutoTeam) {
-                description.add("" + ChatColor.GRAY + ChatColor.BOLD + " ┗ " + ChatColor.RESET + ChatColor.WHITE + gamePlayer.getDisplayName());
-                description.add(" ");
-                description.add("" + ChatColor.GRAY + BingoMessage.COUNT_MORE.asPhrase(Component.text(Integer.toString(autoTeamMemberCount - 1))));
+                description.add(PLAYER_PREFIX.append(gamePlayer.displayName()));
+                description.add(Component.text(" "));
+                description.add(BingoMessage.COUNT_MORE.asPhrase(Component.text(Integer.toString(autoTeamMemberCount - 1))).color(NamedTextColor.GRAY));
             }
             else {
-                description.add("" + ChatColor.GRAY + BingoMessage.COUNT_MORE.asPhrase(Component.text(Integer.toString(autoTeamMemberCount))));
+                description.add(BingoMessage.COUNT_MORE.asPhrase(Component.text(Integer.toString(autoTeamMemberCount))).color(NamedTextColor.GRAY));
             }
-            autoItem.addDescription("joined", 1, description.toArray(new String[]{}));
+            autoItem.setLore(description.toArray(Component[]::new));
         }
         optionItems.add(autoItem);
         optionItems.add(new ItemTemplate(Material.TNT, BingoMessage.OPTIONS_LEAVE.asPhrase().decorate(TextDecoration.BOLD, TextDecoration.ITALIC))
@@ -101,15 +104,14 @@ public class TeamSelectionMenu extends PaginatedSelectionMenu
             TeamData.TeamTemplate teamTemplate = allTeams.get(teamId);
 
             boolean teamIsFull = false;
-            //FIXME: redo description with components
-            List<String> description = new ArrayList<>();
+            List<Component> players = new ArrayList<>();
 
             for (BingoTeam team : teamManager.getActiveTeams()) {
                 if (!team.getIdentifier().equals(teamId))
                     continue;
 
                 for (BingoParticipant participant : team.getMembers()) {
-                    description.add("" + ChatColor.GRAY + ChatColor.BOLD + " ┗ " + ChatColor.RESET + ChatColor.WHITE + participant.getDisplayName());
+                    players.add(PLAYER_PREFIX.append(participant.getDisplayName()));
                     if (participant.getId().equals(player.getUniqueId())) {
                         playersTeam = true;
                     }
@@ -120,18 +122,19 @@ public class TeamSelectionMenu extends PaginatedSelectionMenu
                 }
             }
 
-            description.add(" ");
+            Component teamStatus;
             if (teamIsFull) {
-                description.add("" + ChatColor.RED + BingoMessage.JOIN_TEAM_DESC.asPhrase());
+                teamStatus = BingoMessage.FULL_TEAM_DESC.asPhrase().color(NamedTextColor.RED);
             } else {
-                description.add("" + ChatColor.GREEN + BingoMessage.JOIN_TEAM_DESC.asPhrase());
+                teamStatus = BingoMessage.JOIN_TEAM_DESC.asPhrase().color(NamedTextColor.GREEN);
             }
 
             optionItems.add(ItemTemplate.createColoredLeather(teamTemplate.color(), Material.LEATHER_HELMET)
                     .setName(Component.text(teamTemplate.name()).color(teamTemplate.color()).decorate(TextDecoration.BOLD))
-                    .setLore(ComponentUtils.createComponentsFromString(description.toArray(new String[]{})))
+                    .setLore(players.toArray(Component[]::new))
                     .setCompareKey(teamId)
-                    .setGlowing(playersTeam));
+                    .setGlowing(playersTeam)
+                    .addDescription("status", 1, teamStatus));
         }
 
         clearItems();

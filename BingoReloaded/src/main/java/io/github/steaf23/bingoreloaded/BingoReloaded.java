@@ -22,6 +22,7 @@ import io.github.steaf23.playerdisplay.scoreboard.HUDRegistry;
 import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.command.*;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
@@ -54,8 +55,6 @@ public class BingoReloaded extends JavaPlugin
 
     @Override
     public void onLoad() {
-        ConsoleMessenger.pluginPrefix = "[" + getName() + "]";
-        BasicMenu.pluginTitlePrefix = BingoMessage.MENU_PREFIX.asPhrase();
         PlayerDisplay.setPlugin(this);
     }
 
@@ -98,6 +97,7 @@ public class BingoReloaded extends JavaPlugin
         BingoMessage.setLanguage(createYmlDataManager(config.language).getConfig(), createYmlDataManager("languages/en_us.yml").getConfig());
         ConsoleMessenger.log(BingoMessage.CHANGED_LANGUAGE.asPhrase().color(NamedTextColor.GREEN));
 
+        BasicMenu.pluginTitlePrefix = BingoMessage.MENU_PREFIX.asPhrase();
 //        this.hologramManager = new HologramManager();
 //        this.hologramPlacer = new HologramPlacer(hologramManager);
         WorldData.clearWorlds(this);

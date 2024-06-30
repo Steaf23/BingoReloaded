@@ -4,6 +4,7 @@ import io.github.steaf23.bingoreloaded.tasks.BingoTask;
 import io.github.steaf23.playerdisplay.inventory.BasicMenu;
 import io.github.steaf23.playerdisplay.inventory.item.action.MenuAction;
 
+import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.entity.Player;
@@ -20,14 +21,8 @@ public class TaskItemAction extends MenuAction
 
     @Override
     public void use(BasicMenu.ActionArguments arguments) {
-        Component base = Component.text("\n");
-        Component name = task.data.getName();
-        name.decorate(TextDecoration.BOLD);
-
-        base.append(name);
-        base.append(Component.text("\n - "));
-        base.append(task.data.getChatDescription());
-
-        arguments.player().sendMessage(base);
+        arguments.player().sendMessage(Component.empty());
+        arguments.player().sendMessage(task.data.getName().decorate(TextDecoration.BOLD));
+        arguments.player().sendMessage(Component.text(" - ").append(task.data.getChatDescription()));
     }
 }

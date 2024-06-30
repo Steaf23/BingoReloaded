@@ -238,7 +238,7 @@ public class AutoBingoCommand implements TabExecutor
         currentSender = commandSender;
 
         if (!command.execute(args)) {
-            commandSender.sendMessage(MiniMessage.miniMessage().deserialize("<darK_gray> - <red>Usage: " + command.usage(args)));
+            commandSender.sendMessage(MiniMessage.miniMessage().deserialize("<dark_gray> - <red>Usage: " + command.usage(args)));
         }
         return true;
     }

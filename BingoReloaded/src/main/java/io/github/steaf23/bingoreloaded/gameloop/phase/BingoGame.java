@@ -161,7 +161,7 @@ public class BingoGame implements GamePhase
         // Countdown before the game actually starts
         startingTimer = new CountdownTimer(Math.max(1, config.startingCountdownTime), 6, 3, session);
         startingTimer.addNotifier(time -> {
-            Component timeComponent = GameTimer.getTimeAsComponent(time);
+            Component timeComponent = Component.text(time);
             if (time == 0) {
                 timeComponent = Component.text("GO").color(NamedTextColor.GREEN).decorate(TextDecoration.BOLD);
                 BingoPlayerSender.sendTitle(timeComponent, session);

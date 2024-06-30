@@ -70,8 +70,8 @@ public class CardEditorMenu extends PaginatedSelectionMenu
             ItemTemplate item = new ItemTemplate(Material.MAP, Component.text(listName),
                     Component.text("This list contains " + cardsData.lists().getTaskCount(listName) + " task(s)"));
             item.addDescription("input", 5,
-                    Menu.INPUT_LEFT_CLICK + "edit distribution",
-                    Menu.INPUT_RIGHT_CLICK + "remove this list");
+                    Menu.INPUT_LEFT_CLICK.append(Component.text("edit distribution")),
+                    Menu.INPUT_RIGHT_CLICK.append(Component.text("remove this list")));
             item.setAmount(Math.max(1, cardsData.getListMax(cardName, listName)));
             newItems.add(item);
         }

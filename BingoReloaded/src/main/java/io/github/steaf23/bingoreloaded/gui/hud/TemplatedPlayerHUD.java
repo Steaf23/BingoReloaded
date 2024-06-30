@@ -29,9 +29,9 @@ public class TemplatedPlayerHUD extends PlayerHUD
         }
 
         Component title = Component.empty();
-        List<Component> titleComponents = BingoMessage.convertForPlayer(template.title(), player);
-        if (titleComponents.size() > 0) {
-            title = titleComponents.get(0);
+        Component[] titleComponents = BingoMessage.convertForPlayer(template.title(), player);
+        if (titleComponents.length > 0) {
+            title = titleComponents[0];
         }
         sidebar.setTitle(title);
 
