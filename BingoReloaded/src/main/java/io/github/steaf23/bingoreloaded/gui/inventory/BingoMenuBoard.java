@@ -4,7 +4,6 @@ import io.github.steaf23.bingoreloaded.event.PlayerLeftSessionWorldEvent;
 import io.github.steaf23.playerdisplay.inventory.Menu;
 import io.github.steaf23.playerdisplay.inventory.MenuBoard;
 import org.bukkit.entity.HumanEntity;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
@@ -16,7 +15,7 @@ public class BingoMenuBoard extends MenuBoard
 
     public BingoMenuBoard()
     {
-        this.playerPredicate = player -> { return false; };
+        this.playerPredicate = player -> false;
     }
 
     public void setPlayerOpenPredicate(Function<HumanEntity, Boolean> playerPredicate) {
@@ -26,7 +25,7 @@ public class BingoMenuBoard extends MenuBoard
     @Override
     @EventHandler
     public void handleInventoryClick(InventoryClickEvent event) {
-        if (!playerPredicate.apply((Player)event.getWhoClicked()))
+        if (!playerPredicate.apply(event.getWhoClicked()))
             return;
 
         super.handleInventoryClick(event);

@@ -286,10 +286,6 @@ public class BingoEventListener implements Listener
     }
 
     @EventHandler
-    public void handleParticipantCountChangedEvent(final ParticipantCountChangedEvent event) {
-    }
-
-    @EventHandler
     public void handleBingoPlaySoundEvent(final BingoPlaySoundEvent event) {
         event.getSession().handlePlaySoundEvent(event);
     }

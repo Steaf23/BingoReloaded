@@ -22,7 +22,6 @@ import io.github.steaf23.playerdisplay.scoreboard.HUDRegistry;
 import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.command.*;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
@@ -46,9 +45,6 @@ public class BingoReloaded extends JavaPlugin
     private static BingoReloaded INSTANCE;
 
     private ConfigData config;
-    //FIXME: update after refactor
-//    private HologramManager hologramManager;
-//    private HologramPlacer hologramPlacer;
     private GameManager gameManager;
     private BingoMenuBoard menuBoard;
     private HUDRegistry hudRegistry;
@@ -98,8 +94,6 @@ public class BingoReloaded extends JavaPlugin
         ConsoleMessenger.log(BingoMessage.CHANGED_LANGUAGE.asPhrase().color(NamedTextColor.GREEN));
 
         BasicMenu.pluginTitlePrefix = BingoMessage.MENU_PREFIX.asPhrase();
-//        this.hologramManager = new HologramManager();
-//        this.hologramPlacer = new HologramPlacer(hologramManager);
         WorldData.clearWorlds(this);
 
         this.menuBoard = new BingoMenuBoard();
@@ -126,11 +120,6 @@ public class BingoReloaded extends JavaPlugin
         }
 
         ConsoleMessenger.log(Component.text("Enabled " + getName()).color(NamedTextColor.GREEN));
-
-//        if (RecoveryCardData.loadCards(game))
-//        {
-//            game.resume();
-//        }
 
         Bukkit.getPluginManager().registerEvents(menuBoard, this);
         Bukkit.getPluginManager().registerEvents(hudRegistry, this);
@@ -159,10 +148,6 @@ public class BingoReloaded extends JavaPlugin
     public ConfigData config() {
         return config;
     }
-
-//    public HologramManager holograms() {
-//        return hologramManager;
-//    }
 
     public static void incrementPlayerStat(Player player, BingoStatType stat) {
         boolean savePlayerStatistics = INSTANCE.config.savePlayerStatistics;

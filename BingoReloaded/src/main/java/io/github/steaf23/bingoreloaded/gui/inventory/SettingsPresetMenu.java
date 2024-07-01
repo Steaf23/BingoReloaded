@@ -33,15 +33,11 @@ public class SettingsPresetMenu extends PaginatedSelectionMenu
             Component.text("Add preset from current settings").color(NamedTextColor.GREEN).decorate(TextDecoration.BOLD));
 
     @Override
-    public void onOptionClickedDelegate(InventoryClickEvent event, ItemTemplate clickedOption, HumanEntity player)
-    {
-        if (event.isLeftClick())
-        {
+    public void onOptionClickedDelegate(InventoryClickEvent event, ItemTemplate clickedOption, HumanEntity player) {
+        if (event.isLeftClick()) {
             settingsBuilder.fromOther(settingsData.getSettings(clickedOption.getCompareKey()));
             close(player);
-        }
-        else if (event.isRightClick())
-        {
+        } else if (event.isRightClick()) {
             BasicMenu context = new BasicMenu(getMenuBoard(), clickedOption.getName(), 1);
             context.addAction(new ItemTemplate(0, Material.BARRIER, BasicMenu.applyTitleFormat("Remove")), clickType -> {
                         settingsData.removeSettings(clickedOption.getCompareKey());
@@ -88,15 +84,17 @@ public class SettingsPresetMenu extends PaginatedSelectionMenu
         clearItems();
 
         List<ItemTemplate> items = new ArrayList<>();
-        for (String preset : settingsData.getPresetNames())
-        {
+        for (String preset : settingsData.getPresetNames()) {
             boolean def = preset.equals(settingsData.getDefaultSettingsName());
-            ItemTemplate item = new ItemTemplate(Material.GLOBE_BANNER_PATTERN,
-                    LegacyComponentSerializer.legacySection().deserialize(preset + (def ? ChatColor.LIGHT_PURPLE + " (default)" : "")));
-            item.addDescription("input", 5,
-                    Menu.INPUT_LEFT_CLICK.append(Component.text("apply this preset")),
-                    Menu.INPUT_RIGHT_CLICK.append(Component.text("more options")));
-            item.setCompareKey(preset);
+            Component name = LegacyComponentSerializer.legacySection().deserialize(preset);
+            if (def) {
+                name = name.append(Component.text("(default)").color(NamedTextColor.LIGHT_PURPLE));
+            }
+            ItemTemplate item = new ItemTemplate(Material.GLOBE_BANNER_PATTERN, name)
+                    .addDescription("input", 5,
+                            Menu.INPUT_LEFT_CLICK.append(Component.text("apply this preset")),
+                            Menu.INPUT_RIGHT_CLICK.append(Component.text("more options")))
+                    .setCompareKey(preset);
             items.add(item);
         }
         addItemsToSelect(items);

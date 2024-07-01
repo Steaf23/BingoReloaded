@@ -26,7 +26,7 @@ public class TeamPacketHelper
     }
 
     public static void removeTeamVisibleToPlayer(Player player, String identifier) {
-        PacketWrapper<WrapperPlayServerTeams> packet = new WrapperPlayServerTeams(identifier, WrapperPlayServerTeams.TeamMode.REMOVE, Optional.empty());
+        PacketWrapper<WrapperPlayServerTeams> packet = new WrapperPlayServerTeams(identifier, WrapperPlayServerTeams.TeamMode.REMOVE, (WrapperPlayServerTeams.ScoreBoardTeamInfo)null);
         PlayerDisplay.sendPlayerPacket(player, packet);
     }
 }

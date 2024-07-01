@@ -5,15 +5,13 @@ import io.github.steaf23.bingoreloaded.data.TeamData;
 import io.github.steaf23.bingoreloaded.event.*;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
-import io.github.steaf23.bingoreloaded.player.BingoPlayer;
-import io.github.steaf23.bingoreloaded.player.VirtualBingoPlayer;
 import io.github.steaf23.bingoreloaded.placeholder.BingoPlaceholderFormatter;
+import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -28,7 +26,7 @@ public class BasicTeamManager implements TeamManager
     private final BingoTeamContainer activeTeams;
     private final TeamData teamData;
     private int maxTeamSize;
-    private Map<String, TeamData.TeamTemplate> joinableTeams;
+    private final Map<String, TeamData.TeamTemplate> joinableTeams;
     private final BingoTeam autoTeam;
 
     public BasicTeamManager(BingoSession session) {
@@ -53,20 +51,6 @@ public class BasicTeamManager implements TeamManager
         String prefixFormat = new BingoPlaceholderFormatter().getTeamFullFormat();
         Component prefix = MiniMessage.miniMessage().deserialize(BingoPlaceholderFormatter.createLegacyTextFromMessage(prefixFormat, "<" + template.color().toString() + ">", template.name()) + " ");
         return prefix;
-    }
-
-    @Nullable
-    public VirtualBingoPlayer getVirtualPlayerFromName(String playerName) {
-        for (BingoParticipant participant : getParticipants()) {
-            if (!(participant instanceof VirtualBingoPlayer virtualPlayer)) {
-                continue;
-            }
-
-            if (virtualPlayer.getName().equals(playerName)) {
-                return virtualPlayer;
-            }
-        }
-        return null;
     }
 
     private void addAutoPlayersToTeams() {
@@ -199,8 +183,7 @@ public class BasicTeamManager implements TeamManager
 
     @Override
     public int getTotalParticipantCapacity() {
-        int totalPlayers = (joinableTeams.size() - 1) * getMaxTeamSize();
-        return totalPlayers;
+        return (joinableTeams.size() - 1) * getMaxTeamSize();
     }
 
     @Override
@@ -289,10 +272,6 @@ public class BasicTeamManager implements TeamManager
         return null;
     }
 
-    private int getOnlineParticipantCount() {
-        return getActiveTeams().getAllOnlineParticipants().size();
-    }
-
     @Override
     public int getParticipantCount() {
         return activeTeams.getAllParticipants().size();
@@ -324,30 +303,26 @@ public class BasicTeamManager implements TeamManager
 
         maxTeamSize = newTeamSize;
         if (!session.isRunning()) {
-            getParticipants().forEach(p -> {
-                addMemberToTeam(p, "auto");
-            });
+            getParticipants().forEach(p -> addMemberToTeam(p, "auto"));
             BingoMessage.TEAM_SIZE_CHANGED.sendToAudience(session, NamedTextColor.RED);
         }
     }
 
     @Override
     public void handlePlayerLeftSessionWorld(final PlayerLeftSessionWorldEvent event) {
-        ConsoleMessenger.log(Component.text(event.getPlayer().getDisplayName() + " left world").color(NamedTextColor.GOLD), session.getOverworld().getName());
+        ConsoleMessenger.log(event.getPlayer().displayName().append(Component.text(" left world")).color(NamedTextColor.GOLD), session.getOverworld().getName());
     }
 
     @Override
     public void handlePlayerJoinedSessionWorld(final PlayerJoinedSessionWorldEvent event) {
-        ConsoleMessenger.log(Component.text(event.getPlayer().getDisplayName() + " joined world").color(NamedTextColor.GOLD), session.getOverworld().getName());
+        ConsoleMessenger.log(event.getPlayer().displayName().append(Component.text(" joined world")).color(NamedTextColor.GOLD), session.getOverworld().getName());
 
         BingoParticipant participant = getPlayerAsParticipant(event.getPlayer());
         if (participant != null) {
-            participant.sessionPlayer().ifPresent(player -> {
-                if (!session.isRunning()) {
-                    return;
-                }
-                BingoMessage.JOIN.sendToAudience(player, NamedTextColor.GREEN, participant.getTeam().getColoredName());
-            });
+            if (!session.isRunning()) {
+                return;
+            }
+            BingoMessage.JOIN.sendToAudience(participant, NamedTextColor.GREEN, participant.getTeam().getColoredName());
             return;
         }
 

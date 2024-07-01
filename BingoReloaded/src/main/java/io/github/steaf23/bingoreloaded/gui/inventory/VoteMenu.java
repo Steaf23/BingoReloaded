@@ -8,11 +8,9 @@ import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import io.github.steaf23.playerdisplay.inventory.BasicMenu;
 import io.github.steaf23.playerdisplay.inventory.MenuBoard;
 import io.github.steaf23.playerdisplay.inventory.item.ItemTemplate;
-import io.github.steaf23.playerdisplay.util.ComponentUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
 
@@ -119,9 +117,8 @@ public class VoteMenu extends BasicMenu
             }
             gamemodeOptions.addCloseAction(EXIT.copy());
 
-            addAction(new ItemTemplate(2, 1, Material.ENCHANTED_BOOK, BasicMenu.applyTitleFormat(BingoMessage.VOTE_GAMEMODE.asPhrase())), p -> {
-                gamemodeOptions.open(p);
-            });
+            addAction(new ItemTemplate(2, 1, Material.ENCHANTED_BOOK, BasicMenu.applyTitleFormat(BingoMessage.VOTE_GAMEMODE.asPhrase())),
+                    p -> gamemodeOptions.open(p));
         }
 
         if (voteList.kits().size() > 1) {
@@ -202,9 +199,8 @@ public class VoteMenu extends BasicMenu
             if (itemIndex < 8)
                 kitOptions.addCloseAction(EXIT.copy());
 
-            addAction(new ItemTemplate(4, 1, Material.ENCHANTED_BOOK, BasicMenu.applyTitleFormat(BingoMessage.VOTE_KIT.asPhrase())), p -> {
-                kitOptions.open(p);
-            });
+            addAction(new ItemTemplate(4, 1, Material.ENCHANTED_BOOK, BasicMenu.applyTitleFormat(BingoMessage.VOTE_KIT.asPhrase())),
+                    p -> kitOptions.open(p));
         }
 
         if (voteList.cards().size() > 1) {
@@ -226,9 +222,8 @@ public class VoteMenu extends BasicMenu
             }
 
             cardOptions.addCloseAction(EXIT.copy());
-            addAction(new ItemTemplate(6, 1, Material.ENCHANTED_BOOK, BasicMenu.applyTitleFormat(BingoMessage.VOTE_CARD.asPhrase())), p -> {
-                cardOptions.open(p);
-            });
+            addAction(new ItemTemplate(6, 1, Material.ENCHANTED_BOOK, BasicMenu.applyTitleFormat(BingoMessage.VOTE_CARD.asPhrase())),
+                    p -> cardOptions.open(p));
         }
 
         addCloseAction(EXIT.copyToSlot(0, 2));

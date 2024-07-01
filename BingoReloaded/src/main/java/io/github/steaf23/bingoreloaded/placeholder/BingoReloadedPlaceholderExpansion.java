@@ -81,7 +81,6 @@ public class BingoReloadedPlaceholderExpansion extends PlaceholderExpansion
                 if (session == null) {
                     yield "-";
                 }
-                boolean running = session.isRunning();
                 if (session.phase() instanceof BingoGame game) {
                     yield GameTimer.getTimeAsString(game.getGameTime());
                 }
@@ -99,7 +98,7 @@ public class BingoReloadedPlaceholderExpansion extends PlaceholderExpansion
                 }
                 else {
                     //FIXME: add displayname
-                    yield settings.mode().getDataName();
+                    yield LegacyComponentSerializer.legacySection().serialize(settings.mode().asComponent());
                 }
             }
             case SETTING_CARDSIZE -> {
@@ -186,8 +185,7 @@ public class BingoReloadedPlaceholderExpansion extends PlaceholderExpansion
             BingoSession session = gameManager.getSessionFromWorld(onlinePlayer.getWorld());
             BingoParticipant participant = session.teamManager.getPlayerAsParticipant(onlinePlayer);
             if (participant != null) {
-                String text = placeholderFromTeam(participant.getTeam(), getName, getColor);
-                return text;
+                return placeholderFromTeam(participant.getTeam(), getName, getColor);
             }
             return noTeamPlaceholder;
         }
@@ -252,8 +250,7 @@ public class BingoReloadedPlaceholderExpansion extends PlaceholderExpansion
         // If a player is online, we can the team from the participant object
         Player onlinePlayer = Bukkit.getPlayer(player.getUniqueId());
         if (onlinePlayer != null) {
-            BingoSession session = gameManager.getSessionFromWorld(onlinePlayer.getWorld());
-            return session;
+            return gameManager.getSessionFromWorld(onlinePlayer.getWorld());
         }
 
         // When a player is either not online or in the auto team, we have to get the team manually.
@@ -276,8 +273,7 @@ public class BingoReloadedPlaceholderExpansion extends PlaceholderExpansion
         Player onlinePlayer = Bukkit.getPlayer(player.getUniqueId());
         if (onlinePlayer != null) {
             BingoSession session = gameManager.getSessionFromWorld(onlinePlayer.getWorld());
-            BingoParticipant participant = session.teamManager.getPlayerAsParticipant(onlinePlayer);
-            return participant;
+            return session.teamManager.getPlayerAsParticipant(onlinePlayer);
         }
 
         // When a player is either not online or in the auto team, we have to get the team manually.

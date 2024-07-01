@@ -21,9 +21,7 @@ import io.github.steaf23.playerdisplay.inventory.MenuBoard;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.JoinConfiguration;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.TextComponent;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
@@ -132,8 +130,7 @@ public class BingoCommand implements TabExecutor
                     return false;
 
                 if (!session.isRunning()) {
-                    //FIXME: reimplement
-//                    new TranslatedMessage(BingoTranslation.NO_DEATHMATCH).color(ChatColor.RED).send(player);
+                    BingoMessage.NO_DEATHMATCH.sendToAudience(player, NamedTextColor.RED);
                     return false;
                 }
 
@@ -210,7 +207,6 @@ public class BingoCommand implements TabExecutor
             }
             default -> {
                 if (player.hasPermission("bingo.admin")) {
-                    //FIXME: reimplement
                     BingoMessage.COMMAND_USAGE.sendToAudience(player, NamedTextColor.RED, Component.text("/bingo [getcard | stats | start | end | join | vote | back | leave | deathmatch | creator | teams | kit | wait | teamedit]"));
                 } else {
                     BingoMessage.COMMAND_USAGE.sendToAudience(player, NamedTextColor.RED, Component.text("/bingo [getcard | stats | join | vote | back | leave]"));
@@ -240,25 +236,18 @@ public class BingoCommand implements TabExecutor
         for (int i = 0; i < kitNameParts.size() - 1; i++) {
             kitName.append(kitNameParts.get(i)).append(" ");
         }
-        kitName.append(kitNameParts.get(kitNameParts.size() - 1));
+        kitName.append(kitNameParts.getLast());
 
         if (!PlayerKit.assignCustomKit(kitName.toString(), kit, commandSender)) {
-            //FIXME: reimplement
-//            BaseComponent msg = new TextComponent("");
-//            msg.setColor(ChatColor.RED);
-//            msg.addExtra("Cannot add custom kit ");
-//            msg.addExtra(BingoTranslation.convertColors(kitName.toString()));
-//            msg.addExtra(" to slot " + slot + ", this slot already contains kit ");
-//            msg.addExtra(PlayerKit.getCustomKit(kit).getName());
-//            msg.addExtra(". Remove it first!");
-//            Message.sendDebug(msg, commandSender);
+            Component message = MiniMessage.miniMessage()
+                    .deserialize("<red>Cannot add custom kit " + kitName + " to slot " + slot + ", this slot already contains kit ")
+                    .append(Component.text(PlayerKit.getCustomKit(kit).name()))
+                    .append(Component.text(". Remove it first!"));
+            BingoPlayerSender.sendMessage(message, commandSender);
         } else {
-//            BaseComponent msg = new TextComponent("");
-//            msg.setColor(ChatColor.GREEN);
-//            msg.addExtra("Created custom kit ");
-//            msg.addExtra(BingoTranslation.convertColors(kitName.toString()));
-//            msg.addExtra(" in slot " + slot + " from your inventory");
-//            Message.sendDebug(msg, commandSender);
+            Component message = MiniMessage.miniMessage()
+                    .deserialize("<green>Created custom kit " + kitName + " in slot " + slot + " from your inventory");
+            BingoPlayerSender.sendMessage(message, commandSender);
         }
     }
 
@@ -279,19 +268,17 @@ public class BingoCommand implements TabExecutor
         }
 
         CustomKit customKit = PlayerKit.getCustomKit(kit);
-
-        BaseComponent msg = new TextComponent("");
         if (customKit == null) {
-            msg.setColor(ChatColor.RED);
-            msg.addExtra("Cannot remove kit from slot " + slot + " because no custom kit is assigned to this slot");
+            Component message = MiniMessage.miniMessage()
+                    .deserialize("<red>Cannot remove kit from slot " + slot + " because no custom kit is assigned to this slot");
+            BingoPlayerSender.sendMessage(message, commandSender);
         } else {
-            msg.setColor(ChatColor.GREEN);
-            msg.addExtra("Removed custom kit ");
-            msg.addExtra(customKit.getName());
-            msg.addExtra(" from slot " + slot);
             PlayerKit.removeCustomKit(kit);
+
+            Component message = MiniMessage.miniMessage()
+                    .deserialize("<green>Removed custom kit " + customKit.getName() + " from slot " + slot);
+            BingoPlayerSender.sendMessage(message, commandSender);
         }
-//        Message.sendDebug(msg, commandSender);
     }
 
     public void givePlayerBingoItem(Player player, String itemName) {

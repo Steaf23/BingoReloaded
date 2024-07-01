@@ -111,9 +111,7 @@ public class BingoTeam implements ForwardingAudience
 
     public Set<String> getMemberNames() {
         return members.stream()
-                .map(participant -> {
-                    return participant.getName();
-                }).collect(Collectors.toSet());
+                .map(BingoParticipant::getName).collect(Collectors.toSet());
     }
 
     public Component getPrefix() {

@@ -11,7 +11,6 @@ import io.github.steaf23.playerdisplay.inventory.FilterType;
 import io.github.steaf23.playerdisplay.inventory.MenuBoard;
 import io.github.steaf23.playerdisplay.inventory.PaginatedSelectionMenu;
 import io.github.steaf23.playerdisplay.inventory.item.ItemTemplate;
-import io.github.steaf23.playerdisplay.util.ComponentUtils;
 import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -78,11 +77,8 @@ public class TeamSelectionMenu extends PaginatedSelectionMenu
 
             BingoTeam autoTeam = autoTeamOpt.get();
 
-            boolean playerInAutoTeam = false;
-            if (autoTeam != null && autoTeam.hasMember(player.getUniqueId())) {
-                playerInAutoTeam = true;
-            }
-            int autoTeamMemberCount = autoTeam == null ? 0 : autoTeam.getMembers().size();
+            boolean playerInAutoTeam = autoTeam.hasMember(player.getUniqueId());
+            int autoTeamMemberCount = autoTeam.getMembers().size();
             List<Component> description = new ArrayList<>();
             if (playerInAutoTeam) {
                 description.add(PLAYER_PREFIX.append(gamePlayer.displayName()));

@@ -9,6 +9,7 @@ import io.github.steaf23.bingoreloaded.data.BingoStatType;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.ConfigData;
 import io.github.steaf23.bingoreloaded.event.*;
+import io.github.steaf23.bingoreloaded.gameloop.GameManager;
 import io.github.steaf23.bingoreloaded.gui.hud.BingoGameHUDGroup;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gui.inventory.EffectOptionFlags;
@@ -120,12 +121,18 @@ public class BingoGame implements GamePhase
         teleportPlayersToStart(world);
 
         //FIXME: reimplement
-//        BaseComponent hoverMessage = new ComponentBuilder()
-//                .append(BingoTranslation.OPTIONS_GAMEMODE.translate()).append(": ").append(settings.mode().displayName).append(" ").append(settings.size().toString()).append("\n")
-//                .append(BingoTranslation.OPTIONS_KIT.translate()).append(": ").append(settings.kit().getDisplayName()).append("\n")
-//                .append(BingoTranslation.OPTIONS_EFFECTS.translate()).append(": ").append(EffectOptionFlags.effectsToString(settings.effects()))
-//                .append(BingoTranslation.DURATION.translate(settings.enableCountdown() ? GameTimer.getTimeAsString(settings.countdownDuration() * 60) : "∞"))
-//                .build();
+        Component hoverMessage = Component.text()
+                .append(BingoMessage.OPTIONS_GAMEMODE.asPhrase()).append(Component.text(": "))
+                .append(settings.mode().asComponent())
+                .append(Component.text(" "))
+                .append(settings.size().asComponent()).append(Component.text("\n"))
+                .append(BingoMessage.OPTIONS_KIT.asPhrase()).append(Component.text(": "))
+                .append(settings.kit().getDisplayName()).append(Component.text("\n"))
+                .append(BingoMessage.OPTIONS_EFFECTS.asPhrase()).append(Component.text(": "))
+                .append(Component.text(EffectOptionFlags.effectsToString(settings.effects())))
+                .append(BingoMessage.DURATION.asPhrase(settings.enableCountdown() ?
+                        GameTimer.getTimeAsComponent(settings.countdownDuration() * 60) : Component.text("∞")))
+                .build();
 //        BaseComponent[] settingsMessage = Message.createHoverCommandMessage(
 //                new TextComponent(),
 //                new TextComponent(BingoTranslation.SETTINGS_HOVER.translate()),
@@ -145,8 +152,7 @@ public class BingoGame implements GamePhase
 //                player.spigot().sendMessage(new TextComponent());
 //                player.spigot().sendMessage(settingsMessage);
 //                player.spigot().sendMessage(new TextComponent());
-            }
-            else {
+            } else {
                 // If the player is not online, we can remove them from the game, as they probably did not intend on playing in this session
                 session.removeParticipant(p);
             }
@@ -310,8 +316,6 @@ public class BingoGame implements GamePhase
                 if (p.sessionPlayer().isEmpty())
                     continue;
 
-                Player player = p.sessionPlayer().get();
-
                 p.showDeathMatchTask(deathMatchTask);
             }
 
@@ -327,8 +331,8 @@ public class BingoGame implements GamePhase
             default -> NamedTextColor.GREEN;
         };
 
-        BingoPlayerSender.sendTitle(countdownComponent, session);
-        BingoPlayerSender.sendMessage(countdownComponent, session);
+        BingoPlayerSender.sendTitle(countdownComponent.color(color), session);
+        BingoPlayerSender.sendMessage(countdownComponent.color(color), session);
 
         BingoReloaded.scheduleTask(task -> startDeathMatchRecurse(countdown - 1), BingoReloaded.ONE_SECOND);
     }
@@ -460,21 +464,22 @@ public class BingoGame implements GamePhase
 
     /**
      * Counts RIVER as ocean biome!
+     *
      * @param biome biome to check
      * @return true if this plugin consider biome to be an ocean-like biome
      */
     private static boolean isOceanBiome(Biome biome) {
         return switch (biome) {
             case OCEAN,
-                    RIVER,
-                    DEEP_COLD_OCEAN,
-                    COLD_OCEAN,
-                    DEEP_OCEAN,
-                    FROZEN_OCEAN,
-                    DEEP_FROZEN_OCEAN,
-                    LUKEWARM_OCEAN,
-                    DEEP_LUKEWARM_OCEAN,
-                    WARM_OCEAN -> true;
+                 RIVER,
+                 DEEP_COLD_OCEAN,
+                 COLD_OCEAN,
+                 DEEP_OCEAN,
+                 FROZEN_OCEAN,
+                 DEEP_FROZEN_OCEAN,
+                 LUKEWARM_OCEAN,
+                 DEEP_LUKEWARM_OCEAN,
+                 WARM_OCEAN -> true;
             default -> false;
         };
     }
@@ -508,7 +513,7 @@ public class BingoGame implements GamePhase
 
         scoreboard.updateTeamScores();
 
-        participant.sessionPlayer().ifPresent( player -> {
+        participant.sessionPlayer().ifPresent(player -> {
             BingoReloaded.incrementPlayerStat(player, BingoStatType.TASKS);
         });
 

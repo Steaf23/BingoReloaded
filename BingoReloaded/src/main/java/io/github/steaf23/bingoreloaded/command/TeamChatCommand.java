@@ -6,6 +6,7 @@ import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.player.team.TeamManager;
+import io.papermc.paper.event.player.AsyncChatEvent;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.command.Command;
@@ -14,7 +15,6 @@ import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -40,7 +40,7 @@ public class TeamChatCommand implements Listener, TabExecutor
     }
 
     @EventHandler
-    public void onPlayerSendMessage(final AsyncPlayerChatEvent event)
+    public void onPlayerSendMessage(final AsyncChatEvent event)
     {
         BingoSession session = getSession(event.getPlayer());
         if (session == null)
@@ -49,23 +49,22 @@ public class TeamChatCommand implements Listener, TabExecutor
         TeamManager teamManager = session.teamManager;
 
         BingoParticipant player = teamManager.getPlayerAsParticipant(event.getPlayer());
-        if (!enabledPlayers.contains(player)) return;
+        if (!(player instanceof BingoPlayer) || !enabledPlayers.contains(player)) return;
 
         BingoTeam team = player.getTeam();
         if (team == null) return;
 
-        String message = event.getMessage();
-        sendMessage(team, event.getPlayer(), message);
+        sendMessage(team, event.getPlayer(), event.message());
 
         event.setCancelled(true);
     }
 
-    public void sendMessage(BingoTeam team, Player player, String message)
+    public void sendMessage(BingoTeam team, Player player, Component message)
     {
         team.sendMessage(Component.text()
                 .append(team.getPrefix())
                 .append(Component.text("<" + player.displayName() + "> "))
-                .append(Component.text(message))
+                .append(message)
                 .build());
     }
 

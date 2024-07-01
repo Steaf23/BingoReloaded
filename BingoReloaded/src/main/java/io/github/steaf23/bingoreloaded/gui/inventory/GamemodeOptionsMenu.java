@@ -40,6 +40,5 @@ public class GamemodeOptionsMenu extends BasicMenu
         session.settingsBuilder.mode(chosenMode);
         session.settingsBuilder.cardSize(chosenSize);
         close(arguments.player());
-        return;
     }
 }

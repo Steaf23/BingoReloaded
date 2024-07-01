@@ -32,19 +32,6 @@ public class HologramManager
         return holo;
     }
 
-    public Hologram createImage(String id, Location location, String imagePath, ChatColor backgroundColor) throws IOException
-    {
-        if (holograms.containsKey(id))
-        {
-            ConsoleMessenger.warn("Hologram with id " + id + " already exists");
-            return holograms.get(id);
-        }
-
-        Hologram holo = new PixelArtHologram(location, imagePath, backgroundColor);
-        holograms.put(id, holo);
-        return holo;
-    }
-
     public void destroy(String id)
     {
         if (holograms.containsKey(id))

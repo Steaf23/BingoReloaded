@@ -14,7 +14,7 @@ import io.github.steaf23.playerdisplay.util.ComponentUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
-import net.md_5.bungee.api.ChatColor;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -22,7 +22,6 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-//FIXME: improve formatting using components..
 public class AdminBingoMenu extends BasicMenu
 {
     private final BingoSession session;
@@ -146,27 +145,23 @@ public class AdminBingoMenu extends BasicMenu
     }
 
     private void updateDurationLore(ItemTemplate item, int duration) {
-        item.setLore(ComponentUtils.createComponentsFromString(
-                ChatColor.DARK_PURPLE + "Timer set to " + duration + " minute(s)",
-                "for bingo games on countdown mode"));
+        item.setLore(Component.text("Timer set to " + duration + " minutes(s)").color(NamedTextColor.DARK_PURPLE),
+                Component.text("for bingo games on countdown mode").color(NamedTextColor.DARK_PURPLE));
     }
 
     private void updateCountdownEnabledLore(ItemTemplate item, boolean enabled) {
         if (enabled) {
-            item.setLore(ComponentUtils.createComponentsFromString(
-                    ChatColor.DARK_PURPLE + "Countdown mode is " + ChatColor.GREEN + "ENABLED"));
+            item.setLore(MiniMessage.miniMessage().deserialize("<dark_purple>Countdown mode is <green>ENABLED</green>"));
         }
         else {
-            item.setLore(ComponentUtils.createComponentsFromString(
-                    ChatColor.DARK_PURPLE + "Countdown mode is " + ChatColor.RED + "DISABLED"));
+            item.setLore(MiniMessage.miniMessage().deserialize("<dark_purple>Countdown mode is <red>DISABLED</green>"));
         }
     }
 
     private void updateTeamSizeLore(ItemTemplate item, int value) {
-        item.setLore(ComponentUtils.createComponentsFromString(
-                ChatColor.GRAY + "(When changing this setting all currently",
-                ChatColor.GRAY + "joined players will be kicked from their teams!)",
-                ChatColor.DARK_PURPLE + "Maximum team size set to " + value + " players."));
+        item.setLore(Component.text("(When changing this setting all currently").color(NamedTextColor.GRAY),
+                Component.text("joined players will be kicked from their teams!)").color(NamedTextColor.GRAY),
+                Component.text("Maximum team size set to " + value + " players.").color(NamedTextColor.DARK_PURPLE));
     }
 
     private void showGamemodeSettings(HumanEntity player) {

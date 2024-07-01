@@ -4,13 +4,10 @@ import io.github.steaf23.bingoreloaded.tasks.BingoTask;
 import io.github.steaf23.playerdisplay.inventory.BasicMenu;
 import io.github.steaf23.playerdisplay.inventory.item.action.MenuAction;
 
-import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-//TODO: test
 public class TaskItemAction extends MenuAction
 {
     private final BingoTask task;

@@ -14,10 +14,8 @@ import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
 import org.bukkit.Statistic;
 import org.bukkit.entity.EntityType;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 // TODO: add description to statistic and when to trigger them
 public class StatisticSelectionMenu extends BasicMenu
@@ -53,22 +51,16 @@ public class StatisticSelectionMenu extends BasicMenu
         );
     }
 
-    public void addStatisticsToSave(@NotNull List<BingoStatistic> statistics)
-    {
-        statistics.addAll(statistics);
-    }
-
     private TaskPickerMenu createEntityMenu(Statistic stat)
     {
         List<EntityType> entities = Arrays.stream(EntityType.values())
-                .filter(type -> BingoStatistic.isEntityValidForStatistic(type))
-                .collect(Collectors.toList());
+                .filter(BingoStatistic::isEntityValidForStatistic)
+                .toList();
 
         List<BingoTask> tasks = new ArrayList<>();
         entities.forEach(e -> tasks.add(new BingoTask(new StatisticTask(new BingoStatistic(stat, e)))));
 
-        TaskPickerMenu picker = new TaskPickerMenu(getMenuBoard(), "Select Entities", tasks, listName);
-        return picker;
+        return new TaskPickerMenu(getMenuBoard(), "Select Entities", tasks, listName);
     }
 
     private TaskPickerMenu createBlockMenu(Statistic stat)
@@ -88,8 +80,7 @@ public class StatisticSelectionMenu extends BasicMenu
                 tasks.add(new BingoTask(new StatisticTask(new BingoStatistic(stat, m))));
             }
         }
-        TaskPickerMenu picker = new TaskPickerMenu(getMenuBoard(), "Select Blocks", tasks, listName);
-        return picker;
+        return new TaskPickerMenu(getMenuBoard(), "Select Blocks", tasks, listName);
     }
 
     private TaskPickerMenu createItemMenu(Statistic stat)
@@ -108,8 +99,7 @@ public class StatisticSelectionMenu extends BasicMenu
                 tasks.add(new BingoTask(new StatisticTask(new BingoStatistic(stat, m))));
             }
         }
-        TaskPickerMenu picker = new TaskPickerMenu(getMenuBoard(), "Select Items", tasks, listName);
-        return picker;
+        return new TaskPickerMenu(getMenuBoard(), "Select Items", tasks, listName);
     }
 
     public TaskPickerMenu createTravelMenu()
@@ -119,8 +109,7 @@ public class StatisticSelectionMenu extends BasicMenu
         {
             tasks.add(new BingoTask(new StatisticTask(new BingoStatistic(stat))));
         }
-        TaskPickerMenu picker = new TaskPickerMenu(getMenuBoard(), "Travel Statistics", tasks, listName);
-        return picker;
+        return new TaskPickerMenu(getMenuBoard(), "Travel Statistics", tasks, listName);
     }
 
     private TaskPickerMenu createContainerMenu()
@@ -129,8 +118,7 @@ public class StatisticSelectionMenu extends BasicMenu
         BingoStatistic.getStatisticsOfCategory(BingoStatistic.StatisticCategory.CONTAINER_INTERACT)
                 .forEach(stat -> tasks.add(new BingoTask(new StatisticTask(new BingoStatistic(stat))))
                 );
-        TaskPickerMenu picker = new TaskPickerMenu(getMenuBoard(), "Container Statistics", tasks, listName);
-        return picker;
+        return new TaskPickerMenu(getMenuBoard(), "Container Statistics", tasks, listName);
     }
 
     private TaskPickerMenu createBlockInteractMenu()
@@ -139,8 +127,7 @@ public class StatisticSelectionMenu extends BasicMenu
         BingoStatistic.getStatisticsOfCategory(BingoStatistic.StatisticCategory.BLOCK_INTERACT)
                 .forEach(stat -> tasks.add(new BingoTask(new StatisticTask(new BingoStatistic(stat))))
                 );
-        TaskPickerMenu picker = new TaskPickerMenu(getMenuBoard(),  "Select Blocks", tasks, listName);
-        return picker;
+        return new TaskPickerMenu(getMenuBoard(),  "Select Blocks", tasks, listName);
     }
 
     private TaskPickerMenu createDamageMenu()
@@ -149,8 +136,7 @@ public class StatisticSelectionMenu extends BasicMenu
         BingoStatistic.getStatisticsOfCategory(BingoStatistic.StatisticCategory.DAMAGE)
                 .forEach(stat -> tasks.add(new BingoTask(new StatisticTask(new BingoStatistic(stat))))
                 );
-        TaskPickerMenu picker = new TaskPickerMenu(getMenuBoard(), "Damage Statistics", tasks, listName);
-        return picker;
+        return new TaskPickerMenu(getMenuBoard(), "Damage Statistics", tasks, listName);
     }
 
     private TaskPickerMenu createMiscMenu()
@@ -167,11 +153,9 @@ public class StatisticSelectionMenu extends BasicMenu
                                 TOTAL_WORLD_TIME,
                                 LEAVE_GAME -> {}
                         default -> tasks.add(new BingoTask(new StatisticTask(new BingoStatistic(stat))));
-                    };
-                }
-                );
-        TaskPickerMenu picker = new TaskPickerMenu(getMenuBoard(), "Other Statistics", tasks, listName);
-        return picker;
+                    }
+                });
+        return new TaskPickerMenu(getMenuBoard(), "Other Statistics", tasks, listName);
     }
 
 }
