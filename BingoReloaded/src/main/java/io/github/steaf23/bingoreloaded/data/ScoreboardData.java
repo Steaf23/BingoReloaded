@@ -9,11 +9,12 @@ import java.util.Map;
 
 public class ScoreboardData
 {
-    public record SidebarTemplate(String title, Map<String, Component> arguments, String... lines) {}
+    // Arguments can be multiline, which is why every argument needs to be saved as a Component array
+    public record SidebarTemplate(String title, Map<String, Component[]> arguments, String... lines) {}
 
     private final YmlDataManager data = BingoReloaded.createYmlDataManager("scoreboards.yml");
 
-    public SidebarTemplate loadTemplate(String name, Map<String, Component> arguments) {
+    public SidebarTemplate loadTemplate(String name, Map<String, Component[]> arguments) {
         String title = data.getConfig().getString(name + ".title", "");
         List<String> sidebar = data.getConfig().getStringList(name + ".sidebar");
 

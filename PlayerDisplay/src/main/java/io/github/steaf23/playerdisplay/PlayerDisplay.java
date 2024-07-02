@@ -4,7 +4,11 @@ import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
 import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
 import io.github.steaf23.playerdisplay.util.PlayerDisplayTranslationKey;
+import io.github.steaf23.playerdisplay.util.TinyCaps;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import net.kyori.adventure.text.minimessage.tag.standard.StandardTags;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -12,6 +16,12 @@ import java.util.function.Function;
 
 public class PlayerDisplay
 {
+    public static final MiniMessage MINI_BUILDER = MiniMessage.builder()
+            .tags(TagResolver.builder()
+                    .resolvers(StandardTags.defaults(), TinyCaps.TAG_RESOLVER)
+                    .build())
+            .build();
+
     private static JavaPlugin plugin;
     private static Function<PlayerDisplayTranslationKey, Component> translateFunction;
 

@@ -8,16 +8,16 @@ import io.github.steaf23.bingoreloaded.player.team.SoloTeamManager;
 import io.github.steaf23.bingoreloaded.player.team.TeamManager;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
 import io.github.steaf23.bingoreloaded.placeholder.BingoPlaceholderFormatter;
+import io.github.steaf23.playerdisplay.PlayerDisplay;
 import io.github.steaf23.playerdisplay.scoreboard.HUDRegistry;
 import io.github.steaf23.playerdisplay.scoreboard.PlayerHUD;
 import io.github.steaf23.playerdisplay.scoreboard.PlayerHUDGroup;
 import net.kyori.adventure.text.Component;
-import net.md_5.bungee.api.ChatColor;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.entity.Player;
 
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class BingoGameHUDGroup extends PlayerHUDGroup
 {
@@ -28,6 +28,7 @@ public class BingoGameHUDGroup extends PlayerHUDGroup
     private final ScoreboardData.SidebarTemplate template;
 
     private final BingoPlaceholderFormatter formatter;
+    private static final Component PLAYER_PREFIX = PlayerDisplay.MINI_BUILDER.deserialize("<gray><bold> ┗ </bold></gray><white>");
 
     public BingoGameHUDGroup(HUDRegistry registry, BingoSession session, boolean showPlayerNames) {
         super(registry);
@@ -52,24 +53,21 @@ public class BingoGameHUDGroup extends PlayerHUDGroup
             case REGULAR -> score = "-----";
             case COMPLETE, LOCKOUT -> score = Integer.toString(settings.size().fullCardSize);
         }
-        registeredFields.put("win_goal", Component.text(score));
+        addSidebarArgument("win_goal", Component.text(score));
         updateVisible();
     }
 
-    public void updateTeamScores()
-    {
+    public void updateTeamScores() {
         if (!session.isRunning())
             return;
 
-        for (BingoTeam t : session.teamManager.getActiveTeams())
-        {
-            if (t.getCard() != null)
-            {
+        for (BingoTeam t : session.teamManager.getActiveTeams()) {
+            if (t.getCard() != null) {
                 teamScores.put(t.getIdentifier(), t.getCard().getCompleteCount(t));
             }
         }
 
-        StringBuilder teamInfoString = new StringBuilder();
+        List<Component> teamInfo = new ArrayList<>();
 
         TeamManager teamManager = session.teamManager;
 
@@ -83,24 +81,19 @@ public class BingoGameHUDGroup extends PlayerHUDGroup
         teamManager.getActiveTeams().getTeams().stream()
                 .sorted(Comparator.comparingInt(BingoTeam::getCompleteCount).reversed())
                 .forEach(team -> {
-//                    String teamScoreLine = "" + BingoPlaceholderFormatter.createLegacyTextFromMessage(format, team.getColor().toString(), team.getName()) + ChatColor.RESET +
-//                            ChatColor.WHITE + ": " + ChatColor.BOLD + teamScores.get(team.getIdentifier());
-//                    teamInfoString.append(teamScoreLine);
-                    teamInfoString.append("\n");
+                    Component teamScore = team.getPrefix()
+                            .append(Component.text(": ", NamedTextColor.WHITE)
+                                    .append(Component.text(teamScores.get(team.getIdentifier())).decorate(TextDecoration.BOLD)));
+                    teamInfo.add(teamScore);
 
-                    if (!condensedDisplay)
-                    {
-                        for (BingoParticipant player : team.getMembers())
-                        {
-                            String playerLine = "" + ChatColor.GRAY + ChatColor.BOLD + " ┗ " + ChatColor.RESET + player.getDisplayName();
-                            teamInfoString.append(playerLine);
-                            teamInfoString.append("\n");
+                    if (!condensedDisplay) {
+                        for (BingoParticipant player : team.getMembers()) {
+                            teamScore.append(PLAYER_PREFIX).append(player.getDisplayName());
                         }
                     }
                 });
 
-        //FIXME: find a way to fix this
-        registeredFields.put("team_info", Component.text(teamInfoString.toString()));
+        addSidebarArgument("team_info", teamInfo.toArray(Component[]::new));
         updateVisible();
     }
 

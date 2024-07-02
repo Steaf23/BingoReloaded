@@ -7,6 +7,7 @@ import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.placeholder.BingoPlaceholderFormatter;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
+import io.github.steaf23.playerdisplay.PlayerDisplay;
 import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -41,7 +42,7 @@ public class SoloTeamManager implements TeamManager
 
     private Component createPrefix(TextColor color) {
         String prefixFormat = new BingoPlaceholderFormatter().getTeamFullFormat();
-        Component prefix = MiniMessage.miniMessage().deserialize(BingoPlaceholderFormatter.createLegacyTextFromMessage(prefixFormat, "<" + color.toString() + ">", "✦") + " ");
+        Component prefix = PlayerDisplay.MINI_BUILDER.deserialize(BingoPlaceholderFormatter.createLegacyTextFromMessage(prefixFormat, "<" + color.toString() + ">", "✦") + " ");
         return prefix;
     }
 

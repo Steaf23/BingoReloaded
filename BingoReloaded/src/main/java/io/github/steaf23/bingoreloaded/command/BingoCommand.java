@@ -17,6 +17,7 @@ import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.settings.CustomKit;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import io.github.steaf23.bingoreloaded.util.BingoPlayerSender;
+import io.github.steaf23.playerdisplay.PlayerDisplay;
 import io.github.steaf23.playerdisplay.inventory.MenuBoard;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.JoinConfiguration;
@@ -239,13 +240,13 @@ public class BingoCommand implements TabExecutor
         kitName.append(kitNameParts.getLast());
 
         if (!PlayerKit.assignCustomKit(kitName.toString(), kit, commandSender)) {
-            Component message = MiniMessage.miniMessage()
+            Component message = PlayerDisplay.MINI_BUILDER
                     .deserialize("<red>Cannot add custom kit " + kitName + " to slot " + slot + ", this slot already contains kit ")
                     .append(Component.text(PlayerKit.getCustomKit(kit).name()))
                     .append(Component.text(". Remove it first!"));
             BingoPlayerSender.sendMessage(message, commandSender);
         } else {
-            Component message = MiniMessage.miniMessage()
+            Component message = PlayerDisplay.MINI_BUILDER
                     .deserialize("<green>Created custom kit " + kitName + " in slot " + slot + " from your inventory");
             BingoPlayerSender.sendMessage(message, commandSender);
         }
@@ -269,13 +270,13 @@ public class BingoCommand implements TabExecutor
 
         CustomKit customKit = PlayerKit.getCustomKit(kit);
         if (customKit == null) {
-            Component message = MiniMessage.miniMessage()
+            Component message = PlayerDisplay.MINI_BUILDER
                     .deserialize("<red>Cannot remove kit from slot " + slot + " because no custom kit is assigned to this slot");
             BingoPlayerSender.sendMessage(message, commandSender);
         } else {
             PlayerKit.removeCustomKit(kit);
 
-            Component message = MiniMessage.miniMessage()
+            Component message = PlayerDisplay.MINI_BUILDER
                     .deserialize("<green>Removed custom kit " + customKit.getName() + " from slot " + slot);
             BingoPlayerSender.sendMessage(message, commandSender);
         }

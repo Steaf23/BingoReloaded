@@ -14,35 +14,35 @@ public class ConsoleMessenger
 
     public static void log(String message) {
         PlayerDisplay.getPlugin().getComponentLogger().info(
-                MiniMessage.miniMessage().deserialize(message));
+                PlayerDisplay.MINI_BUILDER.deserialize(message));
     }
 
     public static void warn(String message) {
         PlayerDisplay.getPlugin().getComponentLogger().info(
-                MiniMessage.miniMessage().deserialize(message));
+                PlayerDisplay.MINI_BUILDER.deserialize(message));
     }
 
     public static void error(String message) {
         PlayerDisplay.getPlugin().getComponentLogger().error(
-                MiniMessage.miniMessage().deserialize(message));
+                PlayerDisplay.MINI_BUILDER.deserialize(message));
     }
 
     public static void log(String message, String source) {
         PlayerDisplay.getPlugin().getComponentLogger().info(
                 Component.text("(" + source + "): ")
-                        .append(MiniMessage.miniMessage().deserialize(message)));
+                        .append(PlayerDisplay.MINI_BUILDER.deserialize(message)));
     }
 
     public static void warn(String message, String source) {
         PlayerDisplay.getPlugin().getComponentLogger().warn(
                 Component.text("(" + source + "): ")
-                        .append(MiniMessage.miniMessage().deserialize(message)));
+                        .append(PlayerDisplay.MINI_BUILDER.deserialize(message)));
     }
 
     public static void error(String message, String source) {
         PlayerDisplay.getPlugin().getComponentLogger().error(
                 Component.text("(" + source + "): ")
-                        .append(MiniMessage.miniMessage().deserialize(message)));
+                        .append(PlayerDisplay.MINI_BUILDER.deserialize(message)));
     }
 
     public static void log(Component message) {
@@ -63,7 +63,12 @@ public class ConsoleMessenger
 
     public static void bug(String message, Object source) {
         PlayerDisplay.getPlugin().getComponentLogger().error(
-                MiniMessage.miniMessage().deserialize(message)
+                PlayerDisplay.MINI_BUILDER.deserialize(message)
                         .append(Component.text(" in " + source.getClass().getName() + "(Please report!)")));
+    }
+
+    public static void bug(Component message, Object source) {
+        PlayerDisplay.getPlugin().getComponentLogger().error(
+                message.append(Component.text(" in " + source.getClass().getName() + "(Please report!)")));
     }
 }

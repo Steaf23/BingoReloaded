@@ -9,7 +9,6 @@ import io.github.steaf23.bingoreloaded.data.BingoStatType;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.ConfigData;
 import io.github.steaf23.bingoreloaded.event.*;
-import io.github.steaf23.bingoreloaded.gameloop.GameManager;
 import io.github.steaf23.bingoreloaded.gui.hud.BingoGameHUDGroup;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gui.inventory.EffectOptionFlags;
@@ -30,6 +29,7 @@ import io.github.steaf23.bingoreloaded.util.timer.GameTimer;
 import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import io.github.steaf23.playerdisplay.util.PDCHelper;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.JoinConfiguration;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -129,7 +129,7 @@ public class BingoGame implements GamePhase
                 .append(BingoMessage.OPTIONS_KIT.asPhrase()).append(Component.text(": "))
                 .append(settings.kit().getDisplayName()).append(Component.text("\n"))
                 .append(BingoMessage.OPTIONS_EFFECTS.asPhrase()).append(Component.text(": "))
-                .append(Component.text(EffectOptionFlags.effectsToString(settings.effects())))
+                .append(Component.join(JoinConfiguration.separator(Component.text("\n")), EffectOptionFlags.effectsToText(settings.effects())))
                 .append(BingoMessage.DURATION.asPhrase(settings.enableCountdown() ?
                         GameTimer.getTimeAsComponent(settings.countdownDuration() * 60) : Component.text("∞")))
                 .build();

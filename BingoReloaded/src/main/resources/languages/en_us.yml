@@ -70,8 +70,8 @@ game:
 menu:
   save: "Save"
   exit: "Close Menu"
-  save_exit: "Save && Exit"
-  accept: "Accept && Close"
+  save_exit: "Save & Exit"
+  accept: "Accept & Close"
   next: "Next Page"
   prev: "Prev Page"
   filter: "Filter..."

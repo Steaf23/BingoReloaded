@@ -63,7 +63,7 @@ public class TeamChatCommand implements Listener, TabExecutor
     {
         team.sendMessage(Component.text()
                 .append(team.getPrefix())
-                .append(Component.text("<" + player.displayName() + "> "))
+                .append(Component.text("<").append(player.displayName()).append(Component.text("> ")))
                 .append(message)
                 .build());
     }

@@ -1,6 +1,8 @@
 package io.github.steaf23.bingoreloaded.data;
 
+import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.util.CollectionHelper;
+import io.github.steaf23.playerdisplay.PlayerDisplay;
 import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import io.github.steaf23.playerdisplay.util.TinyCaps;
 import me.clip.placeholderapi.PlaceholderAPI;
@@ -175,9 +177,6 @@ public enum BingoMessage
      */
     public static String convertColors(String input) {
         String part = input;
-        part = part.replaceAll("(?<!&)&(?!&)", "§");
-        part = part.replaceAll("&&", "&");
-
         return replaceColors(part, color -> "" + TextColor.fromHexString(color));
     }
 
@@ -266,7 +265,7 @@ public enum BingoMessage
             //Translate and send in steps
             //1. Solve placeholders first (so they can be nested into arguments in the following formats).
             String playerMessage = translated;
-            if (innerAudience instanceof Player player) {
+            if (innerAudience instanceof Player player && BingoReloaded.PLACEHOLDER_API_ENABLED) {
                 playerMessage = PlaceholderAPI.setPlaceholders(player, playerMessage);
             }
 
@@ -309,14 +308,13 @@ public enum BingoMessage
     }
 
     public static Component[] convertForPlayer(String input, Player player, Component... withArguments) {
-        input = PlaceholderAPI.setPlaceholders(player, input);
+        if (BingoReloaded.PLACEHOLDER_API_ENABLED)
+            input = PlaceholderAPI.setPlaceholders(player, input);
 
         return configStringAsMultiline(input, null, withArguments);
     }
 
     //TODO: find way to optimize phrases by only creating them on plugin load/ language change? (maybe save phrase w/o args in a map to return those instead?)
-    //FIXME: implement arguments
-
     /**
      * Phrases are interpreted without context (player) so placeholders and tags relying on targets cannot be used. Their result is stored in a single line, stripped of \n
      *
@@ -329,8 +327,7 @@ public enum BingoMessage
         for (int i = 0; i < arguments.length; i++) {
             resolvers.add(Placeholder.component(Integer.toString(i), arguments[i]));
         }
-        resolvers.add(TinyCaps.TAG_RESOLVER);
-        return MiniMessage.miniMessage().deserialize(converted, resolvers.toArray(TagResolver[]::new));
+        return PlayerDisplay.MINI_BUILDER.deserialize(converted, resolvers.toArray(TagResolver[]::new));
     }
 
     public Component[] asMultiline(TextColor color, Component... arguments) {
@@ -346,8 +343,7 @@ public enum BingoMessage
             for (int i = 0; i < arguments.length; i++) {
                 resolvers.add(Placeholder.component(Integer.toString(i), arguments[i]));
             }
-            resolvers.add(TinyCaps.TAG_RESOLVER);
-            Component c = MiniMessage.miniMessage().deserialize(converted, resolvers.toArray(TagResolver[]::new));
+            Component c = PlayerDisplay.MINI_BUILDER.deserialize(converted, resolvers.toArray(TagResolver[]::new));
             if (color != null) {
                 result.add(c.color(color));
             } else {
@@ -370,16 +366,20 @@ public enum BingoMessage
     private static List<String> convertConfigStringToMini(String message) {
         String[] messages = message.split("\\n");
         return Arrays.stream(messages).map(line -> {
-            // replace colors
-            line = replaceColors(line, color -> "<" + color + ">");
-
-            //NOTE: small caps and substitution can also be done by replacing it into minimessage tags, but doing it directly is probably faster.
-            line = convertSmallCaps(line);
-            line = convertSubstitution(line);
-
-            line = line.replace("{", "<").replace("}", ">");
-            return line;
+           return convertConfigStringToSingleMini(line);
         }).toList();
+    }
+
+    public static String convertConfigStringToSingleMini(String message) {
+        // replace colors
+        message = replaceColors(message, color -> "<" + color + ">");
+
+        //NOTE: small caps and substitution can also be done by replacing it into minimessage tags, but doing it directly is probably faster.
+        message = convertSmallCaps(message);
+        message = convertSubstitution(message);
+
+        message = message.replace("{", "<").replace("}", ">");
+        return message;
     }
 
     /**

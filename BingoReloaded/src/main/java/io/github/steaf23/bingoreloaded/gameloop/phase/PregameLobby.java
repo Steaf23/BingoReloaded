@@ -9,6 +9,7 @@ import io.github.steaf23.bingoreloaded.gui.hud.BingoSettingsHUDGroup;
 import io.github.steaf23.bingoreloaded.gui.hud.DisabledBingoSettingsHUDGroup;
 import io.github.steaf23.bingoreloaded.gui.inventory.TeamSelectionMenu;
 import io.github.steaf23.bingoreloaded.gui.inventory.VoteMenu;
+import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import io.github.steaf23.bingoreloaded.util.BingoPlayerSender;
 import io.github.steaf23.bingoreloaded.util.timer.CountdownTimer;
@@ -106,8 +107,7 @@ public class PregameLobby implements GamePhase
         if (tuple.length != 2) {
             return;
         }
-        //FIXME: use gamemode display name from config
-        sendVoteCountMessage(count, BingoMessage.OPTIONS_GAMEMODE.asPhrase(), tuple[0] + " " + tuple[1] + "x" + tuple[1]);
+        sendVoteCountMessage(count, BingoMessage.OPTIONS_GAMEMODE.asPhrase(), BingoGamemode.fromDataString(tuple[0]).asComponent().append(Component.text(" " + tuple[1] + "x" + tuple[1])));
     }
 
     public void voteCard(String card, HumanEntity player) {
@@ -130,7 +130,7 @@ public class PregameLobby implements GamePhase
                 count++;
             }
         }
-        sendVoteCountMessage(count, BingoMessage.OPTIONS_CARD.asPhrase(), card);
+        sendVoteCountMessage(count, BingoMessage.OPTIONS_CARD.asPhrase(), Component.text(card));
     }
 
     public void voteKit(String kit, HumanEntity player) {
@@ -153,15 +153,14 @@ public class PregameLobby implements GamePhase
                 count++;
             }
         }
-        //FIXME: use actual name
-        sendVoteCountMessage(count, BingoMessage.OPTIONS_KIT.asPhrase(), PlayerKit.fromConfig(kit).configName);
+        sendVoteCountMessage(count, BingoMessage.OPTIONS_KIT.asPhrase(), PlayerKit.fromConfig(kit).getDisplayName());
     }
 
-    public void sendVoteCountMessage(int count, Component category, String voteItem) {
+    public void sendVoteCountMessage(int count, Component category, Component voteItem) {
         BingoMessage.VOTE_COUNT.sendToAudience(session,
                 Component.text(count).color(NamedTextColor.GOLD),
                 category,
-                Component.text(voteItem));
+                voteItem);
     }
 
     public VoteTicket getVoteResult() {

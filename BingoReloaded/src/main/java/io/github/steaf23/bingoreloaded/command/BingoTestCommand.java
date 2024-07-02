@@ -9,7 +9,8 @@ import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.tasks.BingoTask;
 import io.github.steaf23.playerdisplay.inventory.MenuBoard;
 import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
-import net.md_5.bungee.api.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -114,7 +115,7 @@ public class BingoTestCommand implements TabExecutor
         BingoCard card = player.getTeam().getCard();
 
         if (card == null || taskIndex >= card.getTasks().size()) {
-            ConsoleMessenger.log(ChatColor.RED + "index out of bounds for task list!");
+            ConsoleMessenger.log(Component.text("index out of bounds for task list!").color(NamedTextColor.RED));
             return;
         }
 

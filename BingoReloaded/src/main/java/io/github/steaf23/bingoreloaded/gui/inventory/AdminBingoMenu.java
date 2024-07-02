@@ -5,6 +5,7 @@ import io.github.steaf23.bingoreloaded.data.BingoCardData;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.ConfigData;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
+import io.github.steaf23.playerdisplay.PlayerDisplay;
 import io.github.steaf23.playerdisplay.inventory.*;
 import io.github.steaf23.playerdisplay.inventory.item.ItemTemplate;
 import io.github.steaf23.playerdisplay.inventory.item.action.ComboBoxButtonAction;
@@ -151,10 +152,10 @@ public class AdminBingoMenu extends BasicMenu
 
     private void updateCountdownEnabledLore(ItemTemplate item, boolean enabled) {
         if (enabled) {
-            item.setLore(MiniMessage.miniMessage().deserialize("<dark_purple>Countdown mode is <green>ENABLED</green>"));
+            item.setLore(PlayerDisplay.MINI_BUILDER.deserialize("<dark_purple>Countdown mode is <green>ENABLED</green>"));
         }
         else {
-            item.setLore(MiniMessage.miniMessage().deserialize("<dark_purple>Countdown mode is <red>DISABLED</green>"));
+            item.setLore(PlayerDisplay.MINI_BUILDER.deserialize("<dark_purple>Countdown mode is <red>DISABLED</green>"));
         }
     }
 

@@ -7,6 +7,7 @@ import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.player.team.TeamManager;
+import io.github.steaf23.playerdisplay.PlayerDisplay;
 import io.github.steaf23.playerdisplay.inventory.FilterType;
 import io.github.steaf23.playerdisplay.inventory.MenuBoard;
 import io.github.steaf23.playerdisplay.inventory.PaginatedSelectionMenu;
@@ -28,7 +29,7 @@ public class TeamSelectionMenu extends PaginatedSelectionMenu
     private final BingoSession session;
     private final TeamManager teamManager;
 
-    private static final Component PLAYER_PREFIX = MiniMessage.miniMessage().deserialize("<gray><bold> ┗ </bold></gray><white>");
+    private static final Component PLAYER_PREFIX = PlayerDisplay.MINI_BUILDER.deserialize("<gray><bold> ┗ </bold></gray><white>");
 
     public TeamSelectionMenu(MenuBoard manager, BingoSession session) {
         super(manager, BingoMessage.OPTIONS_TEAM.asPhrase(), new ArrayList<>(), FilterType.NONE);

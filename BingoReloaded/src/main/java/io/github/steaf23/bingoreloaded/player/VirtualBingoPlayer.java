@@ -5,6 +5,7 @@ import io.github.steaf23.bingoreloaded.gui.inventory.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import io.github.steaf23.bingoreloaded.tasks.BingoTask;
+import io.github.steaf23.playerdisplay.PlayerDisplay;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -65,7 +66,7 @@ public class VirtualBingoPlayer implements BingoParticipant
 
     @Override
     public Component getDisplayName() {
-        return MiniMessage.miniMessage().deserialize("<white>[<light_purple>DUMMY<white>] <gray>" + name + " <reset>");
+        return PlayerDisplay.MINI_BUILDER.deserialize("<white>[<light_purple><tiny:'DUMMY'><white>] <gray>" + name + " <reset>");
     }
 
     @Override

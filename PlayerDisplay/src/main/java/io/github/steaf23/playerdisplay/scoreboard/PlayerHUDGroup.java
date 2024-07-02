@@ -10,7 +10,7 @@ import java.util.Map;
 
 public abstract class PlayerHUDGroup
 {
-    protected final Map<String, Component> registeredFields;
+    protected final Map<String, Component[]> registeredFields;
     private final List<PlayerHUD> huds;
     private final HUDRegistry registry;
 
@@ -47,5 +47,9 @@ public abstract class PlayerHUDGroup
 
     public void updateVisible() {
         huds.forEach(PlayerHUD::update);
+    }
+
+    public void addSidebarArgument(String key, Component... text) {
+        registeredFields.put(key, text);
     }
 }

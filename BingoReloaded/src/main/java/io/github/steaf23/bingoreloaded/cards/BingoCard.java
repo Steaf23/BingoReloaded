@@ -108,7 +108,7 @@ public class BingoCard
         for (String listName : ticketList) {
             // pop the first task in the list (which is random because we shuffled it beforehand) and add it to our final tasks
             List<TaskData> tasks = taskMap.get(listName);
-            if (tasks.size() != 0) {
+            if (!tasks.isEmpty()) {
                 newTasks.add(tasks.remove(tasks.size() - 1));
             }
             else {

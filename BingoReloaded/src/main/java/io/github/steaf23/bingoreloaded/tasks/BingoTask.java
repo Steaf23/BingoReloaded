@@ -8,7 +8,7 @@ import io.github.steaf23.playerdisplay.inventory.item.ItemTemplate;
 import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import io.github.steaf23.playerdisplay.util.PDCHelper;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.ComponentBuilder;
+import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
@@ -97,7 +97,7 @@ public class BingoTask
             item = new ItemTemplate(Material.STRUCTURE_VOID, null);
             Component[] addedDesc = BingoMessage.VOIDED.asMultiline(NamedTextColor.DARK_GRAY);
 
-            ComponentBuilder nameBuilder = Component.text()
+            TextComponent.Builder nameBuilder = Component.text()
                     .color(NamedTextColor.DARK_GRAY).decorate(TextDecoration.STRIKETHROUGH);
             nameBuilder.append(Component.text("A").decorate(TextDecoration.OBFUSCATED));
             nameBuilder.append(data.getName().color(NamedTextColor.DARK_GRAY));
@@ -113,7 +113,7 @@ public class BingoTask
 
             String timeString = GameTimer.getTimeAsString(completedAt);
 
-            ComponentBuilder nameBuilder = Component.text()
+            TextComponent.Builder nameBuilder = Component.text()
                     .color(NamedTextColor.GRAY).decorate(TextDecoration.STRIKETHROUGH);
             nameBuilder.append(data.getName());
 

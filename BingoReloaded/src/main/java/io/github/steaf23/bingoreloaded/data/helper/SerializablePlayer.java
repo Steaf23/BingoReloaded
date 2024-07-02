@@ -31,7 +31,7 @@ public class SerializablePlayer implements ConfigurationSerializable
     public static SerializablePlayer fromPlayer(JavaPlugin plugin, Player player)
     {
         SerializablePlayer data = new SerializablePlayer();
-        data.pluginVersion = plugin.getDescription().getVersion();
+        data.pluginVersion = plugin.getPluginMeta().getVersion();
         data.playerId = player.getUniqueId();
         data.location = player.getLocation();
         data.health = player.getHealth();
@@ -54,7 +54,7 @@ public class SerializablePlayer implements ConfigurationSerializable
     public static SerializablePlayer reset(JavaPlugin plugin, Player player, Location location)
     {
         SerializablePlayer data = new SerializablePlayer();
-        data.pluginVersion = plugin.getDescription().getVersion();
+        data.pluginVersion = plugin.getPluginMeta().getVersion();
         data.location = location;
         data.playerId = player.getUniqueId();
         data.health = 20.0;

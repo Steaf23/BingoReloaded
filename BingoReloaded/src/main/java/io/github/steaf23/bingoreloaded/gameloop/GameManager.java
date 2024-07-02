@@ -13,6 +13,7 @@ import io.github.steaf23.playerdisplay.inventory.Menu;
 import io.github.steaf23.playerdisplay.inventory.MenuBoard;
 import io.github.steaf23.playerdisplay.scoreboard.HUDRegistry;
 import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -218,7 +219,7 @@ public class GameManager
                 teleportingPlayer = true;
                 if (playerData.loadPlayer(event.getPlayer()) == null) {
                     // Player data was not saved for some reason?
-                    ConsoleMessenger.bug("No saved player data could be found for " + event.getPlayer().getDisplayName() + ", resetting data", this);
+                    ConsoleMessenger.bug(Component.text("No saved player data could be found for ").append(event.getPlayer().displayName()).append(Component.text(", resetting data")), this);
                     // Using the boolean we can check if we were already teleporting the player.
                     SerializablePlayer.reset(plugin, event.getPlayer(), event.getTo()).apply(event.getPlayer());
                 }

@@ -25,6 +25,8 @@ import io.github.steaf23.bingoreloaded.util.BingoPlayerSender;
 import io.github.steaf23.playerdisplay.inventory.MenuBoard;
 import io.github.steaf23.playerdisplay.scoreboard.HUDRegistry;
 import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
+import io.papermc.paper.registry.RegistryAccess;
+import io.papermc.paper.registry.RegistryKey;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.audience.ForwardingAudience;
 import net.kyori.adventure.sound.Sound;
@@ -232,9 +234,7 @@ public class BingoSession implements ForwardingAudience
             phase.handlePlayerLeftSessionWorld(event);
 
             Player player = event.getPlayer();
-            for (PotionEffectType effect : PotionEffectType.values()) {
-                player.removePotionEffect(effect);
-            }
+            player.clearActivePotionEffects();
 
             if (isRunning()) {
                 BingoMessage.LEAVE.sendToAudience(event.getPlayer());

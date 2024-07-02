@@ -20,8 +20,12 @@ import io.github.steaf23.playerdisplay.PlayerDisplay;
 import io.github.steaf23.playerdisplay.inventory.BasicMenu;
 import io.github.steaf23.playerdisplay.scoreboard.HUDRegistry;
 import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
+import io.github.steaf23.playerdisplay.util.TinyCaps;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import net.kyori.adventure.text.minimessage.tag.standard.StandardTags;
 import org.bukkit.Bukkit;
 import org.bukkit.command.*;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
@@ -101,8 +105,7 @@ public class BingoReloaded extends JavaPlugin
 
         if (config.configuration == ConfigData.PluginConfiguration.SINGULAR) {
             this.gameManager = new SingularGameManager(this, config, menuBoard, hudRegistry);
-        }
-        else {
+        } else {
             this.gameManager = new GameManager(this, config, menuBoard, hudRegistry);
         }
 
@@ -197,8 +200,7 @@ public class BingoReloaded extends JavaPlugin
         String version = Bukkit.getVersion();
         if (version.contains("(MC: 1.20")) {
             return CARD_1_20_6;
-        }
-        else if (version.contains("(MC: 1.21")) {
+        } else if (version.contains("(MC: 1.21")) {
             return CARD_1_21;
         }
         return CARD_1_20_6;

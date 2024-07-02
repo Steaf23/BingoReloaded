@@ -12,6 +12,8 @@ import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import io.github.steaf23.bingoreloaded.tasks.BingoTask;
 import io.github.steaf23.playerdisplay.util.PDCHelper;
+import io.papermc.paper.registry.RegistryAccess;
+import io.papermc.paper.registry.RegistryKey;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -40,7 +42,7 @@ public class BingoPlayer implements BingoParticipant
     public final String playerName;
     private final BingoSession session;
     private final UUID playerId;
-    private final String displayName;
+    private final Component displayName;
     private final ItemCooldownManager itemCooldowns;
 
     private final int POTION_DURATION = 1728000; // 24 Hours
@@ -50,7 +52,7 @@ public class BingoPlayer implements BingoParticipant
         this.playerId = player.getUniqueId();
         this.session = session;
         this.playerName = player.getName();
-        this.displayName = player.getDisplayName();
+        this.displayName = player.displayName();
         this.itemCooldowns = new ItemCooldownManager();
     }
 
@@ -84,7 +86,7 @@ public class BingoPlayer implements BingoParticipant
     @Override
     public Component getDisplayName()
     {
-        return Component.text(displayName);
+        return displayName;
     }
 
     public OfflinePlayer offline()
@@ -183,10 +185,7 @@ public class BingoPlayer implements BingoParticipant
         {
             if (offline().isOnline())
             {
-                for (PotionEffectType effect : PotionEffectType.values())
-                {
-                    Bukkit.getPlayer(playerId).removePotionEffect(effect);
-                }
+                Bukkit.getPlayer(playerId).clearActivePotionEffects();
             }
         }
         else
@@ -194,10 +193,7 @@ public class BingoPlayer implements BingoParticipant
             if (sessionPlayer().isEmpty())
                 return;
 
-            for (PotionEffectType effect : PotionEffectType.values())
-            {
-                sessionPlayer().get().removePotionEffect(effect);
-            }
+            sessionPlayer().get().clearActivePotionEffects();
         }
     }
 
@@ -316,7 +312,7 @@ public class BingoPlayer implements BingoParticipant
 
     @Override
     public String toString() {
-        return displayName;
+        return playerName;
     }
 
     @Override
