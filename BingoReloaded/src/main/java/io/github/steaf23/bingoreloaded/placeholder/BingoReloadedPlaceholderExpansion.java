@@ -1,6 +1,7 @@
 package io.github.steaf23.bingoreloaded.placeholder;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
+import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.BingoStatData;
 import io.github.steaf23.bingoreloaded.data.BingoStatType;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
@@ -11,9 +12,11 @@ import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
 import io.github.steaf23.bingoreloaded.util.timer.GameTimer;
+import io.github.steaf23.playerdisplay.PlayerDisplay;
 import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -60,105 +63,107 @@ public class BingoReloadedPlaceholderExpansion extends PlaceholderExpansion
             return null;
         }
 
-        String rawPlaceholder = switch (placeholder) {
+        Component defaultComponent = Component.text("-");
+
+        Component placeholderComponent = switch (placeholder) {
             case TEAM_FULL -> getPlayerTeamPlaceholder(player, true, true);
             case TEAM_COLOR -> getPlayerTeamPlaceholder(player, false, true);
             case TEAM_NAME -> getPlayerTeamPlaceholder(player, true, false);
             case CURRENT_TASKS_TEAM -> {
                 BingoTeam team = getPlayerTeam(player);
                 if (team == null) {
-                    yield "-";
+                    yield defaultComponent;
                 }
-                yield Integer.toString(team.getCompleteCount());
+                yield Component.text(team.getCompleteCount());
             }
             case CURRENT_TASKS_PLAYER -> {
                 BingoParticipant participant = getParticipant(player);
                 if (participant == null) {
-                    yield "-";
+                    yield defaultComponent;
                 }
-                yield Integer.toString(participant.getAmountOfTaskCompleted());
+                yield Component.text(participant.getAmountOfTaskCompleted());
             }
             case CURRENT_TIME -> {
                 BingoSession session = getSession(player);
                 if (session == null) {
-                    yield "-";
+                    yield defaultComponent;
                 }
                 if (session.phase() instanceof BingoGame game) {
-                    yield GameTimer.getTimeAsString(game.getGameTime());
+                    yield GameTimer.getTimeAsComponent(game.getGameTime());
                 }
-                yield "-";
+                yield defaultComponent;
             }
             case GAME_STATUS -> {
                 //TODO: implement
                 ConsoleMessenger.error("placeholder bingoreloaded_game_status is not implemented yet!");
-                yield "-";
+                yield defaultComponent;
             }
             case SETTING_GAMEMODE -> {
                 BingoSettings settings = getSettings(player);
                 if (settings == null) {
-                    yield "-";
+                    yield defaultComponent;
                 }
                 else {
-                    yield LegacyComponentSerializer.legacySection().serialize(settings.mode().asComponent());
+                    yield settings.mode().asComponent();
                 }
             }
             case SETTING_CARDSIZE -> {
                 BingoSettings settings = getSettings(player);
                 if (settings == null) {
-                    yield "-";
+                    yield defaultComponent;
                 }
                 else {
-                    yield settings.size().toString();
+                    yield settings.size().asComponent();
                 }
             }
             case SETTING_KIT -> {
                 BingoSettings settings = getSettings(player);
                 if (settings == null) {
-                    yield "-";
+                    yield defaultComponent;
                 }
                 else {
-                    yield LegacyComponentSerializer.legacySection().serialize(settings.kit().getDisplayName());
+                    yield settings.kit().getDisplayName();
                 }
             }
             case SETTING_DURATION -> {
                 BingoSettings settings = getSettings(player);
                 if (settings == null) {
-                    yield "-";
+                    yield defaultComponent;
                 }
                 else {
-                    yield settings.enableCountdown() ? Integer.toString(settings.countdownDuration()) : "-";
+                    yield settings.enableCountdown() ? Component.text(settings.countdownDuration()) : defaultComponent;
                 }
             }
             case SETTING_EFFECTS -> {
                 //TODO: implement
                 ConsoleMessenger.error("placeholder bingoreloaded_setting_effect is not implemented yet!");
-                yield "-";
+                yield defaultComponent;
             }
             case SETTING_HOTSWAP_WINSCORE -> {
                 BingoSettings settings = getSettings(player);
                 if (settings == null) {
-                    yield "-";
+                    yield defaultComponent;
                 }
                 else {
-                    yield settings.enableCountdown() || settings.mode() != BingoGamemode.HOTSWAP ? "-" : Integer.toString(settings.hotswapGoal());
+                    yield settings.enableCountdown() || settings.mode() != BingoGamemode.HOTSWAP ? defaultComponent : Component.text(settings.hotswapGoal());
                 }
             }
             case SETTING_SEED -> {
                 BingoSettings settings = getSettings(player);
                 if (settings == null) {
-                    yield "-";
+                    yield defaultComponent;
                 }
                 else {
-                    yield Integer.toString(settings.seed());
+                    yield Component.text(settings.seed());
                 }
             }
             case SETTING_TEAMSIZE -> {
                 BingoSettings settings = getSettings(player);
                 if (settings == null) {
-                    yield "-";
+                    yield defaultComponent;
                 }
                 else {
-                    yield Integer.toString(settings.maxTeamSize());
+                    yield Component.text(settings.maxTeamSize());
                 }
             }
             case SESSION_NAME -> getPlayerSessionPlaceholder(player);
@@ -171,14 +176,14 @@ public class BingoReloadedPlaceholderExpansion extends PlaceholderExpansion
         };
 
         if (placeholder == BingoReloadedPlaceholder.TEAM_FULL) {
-            return rawPlaceholder;
+            return LegacyComponentSerializer.legacySection().serialize(placeholderComponent) + "§r";
         }
-        return BingoPlaceholderFormatter.createLegacyTextFromMessage(getPlaceholderFormat(placeholder), rawPlaceholder);
+        return LegacyComponentSerializer.legacySection().serialize(BingoMessage.createPhrase(getPlaceholderFormat(placeholder), placeholderComponent)) + "§r";
     }
 
-    private String getPlayerTeamPlaceholder(OfflinePlayer player, boolean getName, boolean getColor) {
+    private Component getPlayerTeamPlaceholder(OfflinePlayer player, boolean getName, boolean getColor) {
         GameManager gameManager = plugin.getGameManager();
-        String noTeamPlaceholder = "";
+        Component noTeamPlaceholder = Component.empty();
 
         // If a player is online, we can the team from the participant object
         Player onlinePlayer = Bukkit.getPlayer(player.getUniqueId());
@@ -208,37 +213,37 @@ public class BingoReloadedPlaceholderExpansion extends PlaceholderExpansion
         return noTeamPlaceholder;
     }
 
-    private String getPlayerStatPlaceholder(OfflinePlayer player, BingoStatType statType) {
+    private Component getPlayerStatPlaceholder(OfflinePlayer player, BingoStatType statType) {
         BingoStatData statData = new BingoStatData();
-        return Integer.toString(statData.getPlayerStat(player.getUniqueId(), statType));
+        return Component.text(statData.getPlayerStat(player.getUniqueId(), statType));
     }
 
-    private String placeholderFromTeam(@NotNull BingoTeam team, boolean getName, boolean getColor) {
+    private Component placeholderFromTeam(@NotNull BingoTeam team, boolean getName, boolean getColor) {
         if (getColor && getName) {
-            return BingoPlaceholderFormatter.createLegacyTextFromMessage(getPlaceholderFormat(BingoReloadedPlaceholder.TEAM_FULL),
-                    LegacyComponentSerializer.legacySection().serialize(Component.text("w", team.getColor())),
-                    LegacyComponentSerializer.legacySection().serialize(team.getName()));
+            //FIXME: weird manual argument shifting is required because of how the color argument works, as we cannot easily get a standalone color...
+            return BingoMessage.createPhrase(getPlaceholderFormat(BingoReloadedPlaceholder.TEAM_FULL).replace("{0}", "<" + team.getColor().toString() + ">").replace("{1}", "<0>"),
+                    placeholderFromTeam(team, true, false));
         }
 
         if (getColor) {
-            return BingoPlaceholderFormatter.createLegacyTextFromMessage(getPlaceholderFormat(BingoReloadedPlaceholder.TEAM_COLOR), team.getColor().toString());
+            return Component.empty();
+//            return BingoMessage.createPhrase(getPlaceholderFormat(BingoReloadedPlaceholder.TEAM_COLOR), Component.text("<" + team.getColor().toString() + ">"));
         }
         if (getName) {
-            //FIXME: update when createLegacyTextFromMessage is refactored
-//            return BingoPlaceholderFormatter.createLegacyTextFromMessage(getPlaceholderFormat(BingoReloadedPlaceholder.TEAM_NAME), team.getName());
+            return BingoMessage.createPhrase(getPlaceholderFormat(BingoReloadedPlaceholder.TEAM_NAME), team.getName());
         }
-        return "";
+        return Component.empty();
     }
 
-    private String getPlayerSessionPlaceholder(OfflinePlayer player) {
+    private Component getPlayerSessionPlaceholder(OfflinePlayer player) {
         BingoSession session = getSession(player);
-        String noSessionPlaceholder = "-";
+        Component noSessionPlaceholder = Component.empty();
 
         if (session == null) {
             return noSessionPlaceholder;
         }
 
-        return BingoPlaceholderFormatter.createLegacyTextFromMessage(getPlaceholderFormat(BingoReloadedPlaceholder.SESSION_NAME), plugin.getGameManager().getNameOfSession(session));
+        return BingoMessage.createPhrase(getPlaceholderFormat(BingoReloadedPlaceholder.SESSION_NAME), Component.text(plugin.getGameManager().getNameOfSession(session)));
     }
 
     private String getPlaceholderFormat(BingoReloadedPlaceholder placeholder) {

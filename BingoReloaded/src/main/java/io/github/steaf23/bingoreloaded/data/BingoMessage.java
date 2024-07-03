@@ -325,7 +325,11 @@ public enum BingoMessage
      * @return the phrased version of the translation as a component.
      */
     public Component asPhrase(Component... arguments) {
-        String converted = String.join("", convertConfigStringToMini(rawTranslation()));
+        return BingoMessage.createPhrase(rawTranslation(), arguments);
+    }
+
+    public static Component createPhrase(String input, Component... arguments) {
+        String converted = String.join("", convertConfigStringToMini(input));
         // create tag resolvers for each argument, which will appear as <0>, <1> etc... in the mini message string and be replaced by the correct components.
         List<TagResolver> resolvers = new ArrayList<>();
         for (int i = 0; i < arguments.length; i++) {

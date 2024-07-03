@@ -32,7 +32,7 @@ public class BingoSettingsHUDGroup extends PlayerHUDGroup
     }
 
     public void setStatus(@Nullable Component status) {
-        addSidebarArgument("status", status);
+        addSidebarArgument("status", status == null ? status : status.color(NamedTextColor.RED));
         updateVisible();
     }
 

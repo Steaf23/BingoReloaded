@@ -69,5 +69,5 @@ public enum BlockColor
         Bukkit.getLogger().warning("Could not find a color fitting to " + dye.name() + "(dye) !");
         return null;
     }
-    //FIXME: finish all colored blocks
+    //TODO: finish all colored blocks
 }

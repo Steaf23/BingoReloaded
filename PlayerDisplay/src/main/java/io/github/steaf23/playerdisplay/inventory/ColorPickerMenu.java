@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-//TODO: TEST new components
 public final class ColorPickerMenu extends BasicMenu
 {
     private static final ItemTemplate NEXT = new ItemTemplate(53, Material.STRUCTURE_VOID, Component.text("Scroll Left").color(NamedTextColor.LIGHT_PURPLE).decorate(TextDecoration.BOLD));

@@ -12,6 +12,12 @@ public class BingoPlayerSender
         audience.sendMessage(Component.text().append(prefix, message).build());
     }
 
+    public static void sendMessage(Component[] message, Audience audience) {
+        for (Component c : message) {
+            BingoPlayerSender.sendMessage(c, audience);
+        }
+    }
+
     public static void sendTitle(Component title, Audience audience) {
         audience.sendTitlePart(TitlePart.TITLE, title);
     }

@@ -11,7 +11,7 @@ lobby:
     title: "{$branding.scoreboard_title}"
     sidebar:
         - " "
-        - "<red>{status}"
+        - "{status}"
         - " "
         - "<bold>Gamemode:</bold> {gamemode} {card_size}"
         - "<bold>Kit:</bold> {kit}"

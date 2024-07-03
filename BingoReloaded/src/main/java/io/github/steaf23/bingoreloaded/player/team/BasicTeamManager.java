@@ -44,13 +44,13 @@ public class BasicTeamManager implements TeamManager
 
     private Component createAutoPrefix(TextColor color) {
         String prefixFormat = new BingoPlaceholderFormatter().getTeamFullFormat();
-        Component prefix = PlayerDisplay.MINI_BUILDER.deserialize(BingoPlaceholderFormatter.createLegacyTextFromMessage(prefixFormat, "<" + color.toString() + ">", "✦") + " ");
+        Component prefix = BingoMessage.createPhrase(prefixFormat.replace("{0}", "<" + color.toString() + ">").replace("{1}", "✦") + " ");
         return prefix;
     }
 
     private Component createPrefix(TeamData.TeamTemplate template) {
         String prefixFormat = new BingoPlaceholderFormatter().getTeamFullFormat();
-        Component prefix = PlayerDisplay.MINI_BUILDER.deserialize(BingoPlaceholderFormatter.createLegacyTextFromMessage(prefixFormat, "<" + template.color().toString() + ">", template.name()) + " ");
+        Component prefix = BingoMessage.createPhrase(prefixFormat.replace("{0}", "<" + template.color().toString() + ">").replace("{1}", template.name()) + " ");
         return prefix;
     }
 

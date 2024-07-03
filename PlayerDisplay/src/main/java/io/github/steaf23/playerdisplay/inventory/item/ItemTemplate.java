@@ -297,7 +297,7 @@ public class ItemTemplate
 
         stackMeta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_UNBREAKABLE, ItemFlag.HIDE_DYE);
         if (hideAttributes) {
-            //TODO: maybe change in the future if we need to have items to be used by the player with invisible attributes
+            //TODO: change if there is a need for items to be used by the player with invisible attributes
             stackMeta.setAttributeModifiers(ImmutableMultimap.of());
             stackMeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
         }
@@ -319,7 +319,6 @@ public class ItemTemplate
             leatherMaterial = Material.LEATHER_CHESTPLATE;
         }
 
-        //TODO: test this
         ItemTemplate item = new ItemTemplate(leatherMaterial, Component.text(color.asHexString()).color(color));
         item.setLeatherColor(color);
         return item;

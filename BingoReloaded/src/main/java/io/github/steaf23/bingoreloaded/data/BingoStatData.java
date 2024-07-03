@@ -3,12 +3,15 @@ package io.github.steaf23.bingoreloaded.data;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.helper.YmlDataManager;
 import io.github.steaf23.bingoreloaded.hologram.HologramBuilder;
+import io.github.steaf23.bingoreloaded.util.BingoPlayerSender;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nullable;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.UUID;
 
@@ -71,19 +74,18 @@ public class BingoStatData
 
     public Component getPlayerStatsFormatted(UUID playerId)
     {
-        //FIXME: reimplement
-        return Component.empty();
-//        String stats = getPlayerData(playerId);
-//        String[] statList = stats.split(";");
-//        return new Message("{0}'s statistics: Wins: {1}, Losses: {2}, Games finished: {3}, Tasks completed: {4}, Tasks Completed Record: {5}, Wand uses: {6}")
-//                .color(ChatColor.GREEN)
-//                .arg(Bukkit.getOfflinePlayer(playerId).getName()).color(ChatColor.YELLOW).bold()
-//                .arg(statList[0]).color(ChatColor.WHITE).bold()
-//                .arg(statList[1]).color(ChatColor.WHITE).bold()
-//                .arg(Integer.toString(Integer.parseInt(statList[0]) + Integer.parseInt(statList[1]))).color(ChatColor.WHITE).bold()
-//                .arg(statList[2]).color(ChatColor.WHITE).bold()
-//                .arg(statList[3]).color(ChatColor.WHITE).bold()
-//                .arg(statList[4]).color(ChatColor.WHITE).bold();
+        String stats = getPlayerData(playerId);
+        String[] statList = stats.split(";");
+        Component[] text = BingoMessage.configStringAsMultiline("{0}'s statistics: Wins: {1}, Losses: {2}, Games finished: {3}, Tasks completed: {4}, Tasks Completed Record: {5}, Wand uses: {6}", NamedTextColor.GREEN,
+                Component.text(Bukkit.getOfflinePlayer(playerId).getName(), NamedTextColor.YELLOW, TextDecoration.BOLD),
+                Component.text(statList[0], NamedTextColor.WHITE, TextDecoration.BOLD),
+                Component.text(statList[1], NamedTextColor.WHITE, TextDecoration.BOLD),
+                Component.text(Integer.parseInt(statList[0]) + Integer.parseInt(statList[1]), NamedTextColor.WHITE, TextDecoration.BOLD),
+                Component.text(statList[2], NamedTextColor.WHITE, TextDecoration.BOLD),
+                Component.text(statList[3], NamedTextColor.WHITE, TextDecoration.BOLD),
+                Component.text(statList[4], NamedTextColor.WHITE, TextDecoration.BOLD));
+
+        return Arrays.stream(text).reduce(Component::append).get();
     }
 
     /**
