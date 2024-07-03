@@ -13,6 +13,7 @@ import io.github.steaf23.bingoreloaded.settings.BingoSettings;
 import io.github.steaf23.bingoreloaded.util.timer.GameTimer;
 import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -20,6 +21,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+//FIXME: parse format from minimessage to component back to legacy-section
 public class BingoReloadedPlaceholderExpansion extends PlaceholderExpansion
 {
     private final BingoReloaded plugin;
@@ -97,7 +99,6 @@ public class BingoReloadedPlaceholderExpansion extends PlaceholderExpansion
                     yield "-";
                 }
                 else {
-                    //FIXME: add displayname
                     yield LegacyComponentSerializer.legacySection().serialize(settings.mode().asComponent());
                 }
             }
@@ -215,8 +216,8 @@ public class BingoReloadedPlaceholderExpansion extends PlaceholderExpansion
     private String placeholderFromTeam(@NotNull BingoTeam team, boolean getName, boolean getColor) {
         if (getColor && getName) {
             return BingoPlaceholderFormatter.createLegacyTextFromMessage(getPlaceholderFormat(BingoReloadedPlaceholder.TEAM_FULL),
-                    team.getColor().toString(),
-                    team.getName().toString());
+                    LegacyComponentSerializer.legacySection().serialize(Component.text("w", team.getColor())),
+                    LegacyComponentSerializer.legacySection().serialize(team.getName()));
         }
 
         if (getColor) {

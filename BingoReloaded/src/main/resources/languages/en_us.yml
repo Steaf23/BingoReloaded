@@ -23,11 +23,11 @@ game:
     vote_count: "{0} player(s) voted for {1} {2}" # DYNAMIC 0: player count, 1: vote category, 2: vote item
     vote_won: "{0} {1} received the most votes!" # DYNAMIC 0: vote category, 1: vote item
   start:
-    no_players: "Bingo could not be started since nobody joined :("
-    already_started: "Cannot start a game of Bingo when there is already one active!"
-    give_cards: "Giving all participants Kits and Cards!"
-    no_card: "Cannot start game with the card '{0}' because it does not exist!" # 0: card_name
-    chosen_settings: "Starting bingo game! &6Move your cursor here&r to view all settings."
+    no_players: "Bingo could not be started since nobody joined :(" # DYNAMIC (current unused)
+    already_started: "Cannot start a game of Bingo when there is already one active!" # DYNAMIC (currently unused)
+    give_cards: "Giving all participants Kits and Cards!" # DYNAMIC
+    no_card: "Cannot start game with the card '{0}' because it does not exist!" # DYNAMIC 0: card_name
+    chosen_settings: "Starting bingo game! <gold>Move your cursor here</gold> to view all settings."
   end:
     bingo: "Congratulations! Team {0} has won the Bingo!" # DYNAMIC 0: winning team
   postgame:
@@ -41,7 +41,7 @@ game:
     no_start: "The game has not started yet!" # DYNAMIC
     no_card: "Could not find your card!" # DYNAMIC
     cooldown: "You cannot use this item for another {0} seconds!" # DYNAMIC 0: time left
-    respawn: "//<dark_aqua><bold>Click here to teleport back to where you died////" # DYNAMIC
+    respawn: "<dark_aqua><bold>Click here to teleport back to where you died" # DYNAMIC
     respawn_expired: "Teleport to death location has expired!" # DYNAMIC
   team:
     no_join: "You cannot join an ongoing game!" # DYNAMIC

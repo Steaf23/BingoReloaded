@@ -30,6 +30,7 @@ import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import io.github.steaf23.playerdisplay.util.PDCHelper;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.JoinConfiguration;
+import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -120,7 +121,6 @@ public class BingoGame implements GamePhase
         BingoMessage.GIVE_CARDS.sendToAudience(session);
         teleportPlayersToStart(world);
 
-        //FIXME: reimplement
         Component hoverMessage = Component.text()
                 .append(BingoMessage.OPTIONS_GAMEMODE.asPhrase()).append(Component.text(": "))
                 .append(settings.mode().asComponent())
@@ -128,16 +128,17 @@ public class BingoGame implements GamePhase
                 .append(settings.size().asComponent()).append(Component.text("\n"))
                 .append(BingoMessage.OPTIONS_KIT.asPhrase()).append(Component.text(": "))
                 .append(settings.kit().getDisplayName()).append(Component.text("\n"))
-                .append(BingoMessage.OPTIONS_EFFECTS.asPhrase()).append(Component.text(": "))
-                .append(Component.join(JoinConfiguration.separator(Component.text("\n")), EffectOptionFlags.effectsToText(settings.effects())))
+                .append(BingoMessage.OPTIONS_EFFECTS.asPhrase()).append(Component.text(": \n"))
+                .append(Component.join(JoinConfiguration.separator(Component.text("\n")), EffectOptionFlags.effectsToText(settings.effects()))).append(Component.text("\n"))
                 .append(BingoMessage.DURATION.asPhrase(settings.enableCountdown() ?
                         GameTimer.getTimeAsComponent(settings.countdownDuration() * 60) : Component.text("∞")))
                 .build();
-//        BaseComponent[] settingsMessage = Message.createHoverCommandMessage(
-//                new TextComponent(),
-//                new TextComponent(BingoTranslation.SETTINGS_HOVER.translate()),
-//                hoverMessage,
-//                new TextComponent(), null);
+        BingoPlayerSender.sendMessage(BingoMessage.createHoverCommandMessage(
+                Component.empty(),
+                BingoMessage.SETTINGS_HOVER.asPhrase(),
+                HoverEvent.showText(hoverMessage),
+                Component.empty(),
+                ""), session);
 
         getTeamManager().getParticipants().forEach(p ->
         {
@@ -149,10 +150,7 @@ public class BingoGame implements GamePhase
                 player.setLevel(0);
                 player.setExp(0.0f);
                 scoreboard.addPlayer(player);
-//                player.spigot().sendMessage(new TextComponent());
-//                player.spigot().sendMessage(settingsMessage);
-//                player.spigot().sendMessage(new TextComponent());
-            } else {
+            } else if (!p.alwaysActive()){
                 // If the player is not online, we can remove them from the game, as they probably did not intend on playing in this session
                 session.removeParticipant(p);
             }
@@ -184,8 +182,6 @@ public class BingoGame implements GamePhase
             } else {
                 pitch = 0.890899f;
             }
-
-            //FIXME: reimplement
 
             BingoPlayerSender.sendTitle(timeComponent.color(color), session);
 
@@ -607,7 +603,14 @@ public class BingoGame implements GamePhase
 
         Location deathCoords = event.getEntity().getLocation();
         if (config.teleportAfterDeath) {
-            BingoMessage.RESPAWN.sendHoverCommandMessageToAudience("/bingo back", event.getEntity());
+            Component hoverable = Arrays.stream(BingoMessage.RESPAWN.convertForPlayer(event.getPlayer())).reduce(Component::append).get();
+            BingoPlayerSender.sendMessage(BingoMessage.createHoverCommandMessage(
+                    Component.empty(),
+                    hoverable,
+                    null,
+                    Component.empty(),
+                    "/bingo back"),
+                    event.getPlayer());
             respawnManager.addPlayer(event.getEntity().getUniqueId(), deathCoords);
         }
     }

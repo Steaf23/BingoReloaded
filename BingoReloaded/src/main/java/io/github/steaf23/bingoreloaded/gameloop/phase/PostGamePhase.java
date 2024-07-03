@@ -11,6 +11,7 @@ import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import io.github.steaf23.bingoreloaded.util.timer.CountdownTimer;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -94,7 +95,6 @@ public class PostGamePhase implements GamePhase
     }
 
     public void sendRestartMessage(long timeLeft, Audience audience) {
-        //FIXME: re-add colors
-        BingoMessage.POST_GAME_START.sendToAudience(audience, Component.text(timeLeft));
+        BingoMessage.POST_GAME_START.sendToAudience(audience, NamedTextColor.RED, Component.text(timeLeft).color(NamedTextColor.BLUE));
     }
 }

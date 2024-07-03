@@ -6,6 +6,7 @@ import io.github.steaf23.bingoreloaded.data.ScoreboardData;
 import io.github.steaf23.playerdisplay.PlayerDisplay;
 import io.github.steaf23.playerdisplay.scoreboard.PlayerHUD;
 import io.github.steaf23.playerdisplay.scoreboard.SidebarHUD;
+import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import io.github.steaf23.playerdisplay.util.TinyCaps;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.text.Component;
@@ -14,6 +15,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -64,22 +66,29 @@ public class TemplatedPlayerHUD extends PlayerHUD
             // If we enter the while condition, we have to add the last part of the line to the end of the last component added by this line, be it an argument or a piece of text.
             boolean appendToLastComponent = false;
             while (matcher.find()) {
-                appendToLastComponent = true;
                 String match = matcher.group();
                 String key = match.replace("{", "").replace("}", "");
-                String[] lineParts = line.split(match, 1);
+                String[] lineParts = line.split(Pattern.quote(match), 2);
                 // cut out the left side of the line, up to the match from the original line, and continue matching...
                 String beforeMatch = lineParts[0];
                 String before = BingoMessage.convertConfigStringToSingleMini(beforeMatch);
-                Component componentToAdd = PlayerDisplay.MINI_BUILDER.deserialize(before);
+                Component componentToAdd;
+                if (appendToLastComponent) {
+                    // Here a single line has multiple arguments, we want to try to keep them on the same line when the argument permits.
+                    componentToAdd = components.removeLast();
+                } else {
+                    componentToAdd = Component.empty();
+                }
+                componentToAdd = componentToAdd.append(PlayerDisplay.MINI_BUILDER.deserialize(before));
 
+                appendToLastComponent = true;
                 Component[] argument = template.arguments().getOrDefault(key, new Component[]{});
                 if (argument.length != 0) {
                     // Append the first argument to the same component to stay in one line as much as possible.
-                    // Any subsequent component will be placed in the next line
+                    // Any subsequent component of the argument will be placed on a next line
                     for (Component arg : argument) {
                         // We cannot afford to add more argument lines, we have to crop it in order to fit the remaining lines
-                        if (15 - components.size() - template.lines().length - lineIndex <= 0) {
+                        if (15 - components.size() - (template.lines().length - lineIndex) <= 0) {
                             break;
                         }
 
@@ -89,11 +98,13 @@ public class TemplatedPlayerHUD extends PlayerHUD
                 } else {
                     components.add(componentToAdd);
                 }
+
                 //reduce line to everything on right side of the match.
-                line = line.substring(beforeMatch.length() + match.length() - 1);
+                line = line.substring(beforeMatch.length() + match.length());
             }
             // add what's left of the line as another component
             if (line.isEmpty()) {
+                lineIndex++;
                 continue;
             }
 

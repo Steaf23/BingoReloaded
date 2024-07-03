@@ -297,7 +297,7 @@ public class ItemTemplate
 
         stackMeta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_UNBREAKABLE, ItemFlag.HIDE_DYE);
         if (hideAttributes) {
-            //FIXME: maybe change in the future if we need to have items to be used by the player with invisible attributes
+            //TODO: maybe change in the future if we need to have items to be used by the player with invisible attributes
             stackMeta.setAttributeModifiers(ImmutableMultimap.of());
             stackMeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
         }

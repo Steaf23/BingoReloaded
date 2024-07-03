@@ -8,13 +8,18 @@ import io.github.steaf23.playerdisplay.util.TinyCaps;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.event.HoverEvent;
+import net.kyori.adventure.text.event.HoverEventSource;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import net.md_5.bungee.api.chat.hover.content.Text;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.function.Function;
@@ -289,9 +294,8 @@ public enum BingoMessage
         sendToAudience(audience, null, decorations, withArguments);
     }
 
-    public void sendHoverCommandMessageToAudience(String command, Audience audience, Component... withArguments) {
-        //FIXME: implement hover command message from translation
-        sendToAudience(audience, withArguments);
+    public static Component createHoverCommandMessage(Component prefix, Component hoverable, HoverEvent hover, Component postfix, @NotNull String command) {
+        return prefix.append(hoverable.clickEvent(ClickEvent.runCommand(command)).hoverEvent(hover)).append(postfix);
     }
 
     /**

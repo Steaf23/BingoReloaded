@@ -338,7 +338,6 @@ public class BingoSession implements ForwardingAudience
         BingoPlayerSender.sendMessage(Component.text(" "), this);
         if (!voteResult.gamemode.isEmpty()) {
             var tuple = voteResult.gamemode.split("_");
-            //FIXME: use gamemode display name from config
             BingoMessage.VOTE_WON.sendToAudience(this,
                     BingoMessage.OPTIONS_GAMEMODE.asPhrase(),
                     Component.text()

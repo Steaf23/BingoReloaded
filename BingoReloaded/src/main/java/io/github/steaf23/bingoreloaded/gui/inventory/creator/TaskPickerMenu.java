@@ -149,7 +149,6 @@ public class TaskPickerMenu extends PaginatedSelectionMenu
         ItemTemplate item = newTask.toItem();
         item.setAction(null);
 
-        //FIXME: reimplement
         Component[] addedLore;
         if (selected)
             addedLore = SELECTED_LORE;

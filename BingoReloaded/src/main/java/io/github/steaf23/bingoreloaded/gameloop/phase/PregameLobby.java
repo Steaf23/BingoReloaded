@@ -1,6 +1,7 @@
 package io.github.steaf23.bingoreloaded.gameloop.phase;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
+import io.github.steaf23.bingoreloaded.cards.CardSize;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.ConfigData;
 import io.github.steaf23.bingoreloaded.event.*;
@@ -107,7 +108,10 @@ public class PregameLobby implements GamePhase
         if (tuple.length != 2) {
             return;
         }
-        sendVoteCountMessage(count, BingoMessage.OPTIONS_GAMEMODE.asPhrase(), BingoGamemode.fromDataString(tuple[0]).asComponent().append(Component.text(" " + tuple[1] + "x" + tuple[1])));
+        sendVoteCountMessage(count, BingoMessage.OPTIONS_GAMEMODE.asPhrase(),
+                BingoGamemode.fromDataString(tuple[0]).asComponent()
+                        .append(Component.text(" ")
+                        .append(CardSize.fromWidth(Integer.valueOf(tuple[1])).asComponent())));
     }
 
     public void voteCard(String card, HumanEntity player) {

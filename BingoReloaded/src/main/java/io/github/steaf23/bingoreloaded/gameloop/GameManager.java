@@ -244,7 +244,6 @@ public class GameManager
                     previousSession.removeParticipant(participant);
                 }
                 else {
-                    // FIXME: remove when refactoring auto team
                     // Maybe we can cheat it by creating a new team and then seeing if the player can be removed from automatic players...
                     BingoPlayer playerProxy = new BingoPlayer(event.getPlayer(), previousSession);
                     previousSession.removeParticipant(playerProxy);

@@ -12,6 +12,7 @@ import io.github.steaf23.playerdisplay.PlayerDisplay;
 import io.github.steaf23.playerdisplay.scoreboard.HUDRegistry;
 import io.github.steaf23.playerdisplay.scoreboard.PlayerHUD;
 import io.github.steaf23.playerdisplay.scoreboard.PlayerHUDGroup;
+import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -77,6 +78,8 @@ public class BingoGameHUDGroup extends PlayerHUDGroup
                 || teamManager.getTeamCount() + teamManager.getParticipantCount() > spaceLeft
                 || teamManager instanceof SoloTeamManager;
 
+        ConsoleMessenger.log(teamManager.getTeamCount() + " + " + teamManager.getParticipantCount() + " > " + spaceLeft + " : " + condensedDisplay);
+
         String format = formatter.getTeamFullFormat();
         teamManager.getActiveTeams().getTeams().stream()
                 .sorted(Comparator.comparingInt(BingoTeam::getCompleteCount).reversed())
@@ -88,7 +91,7 @@ public class BingoGameHUDGroup extends PlayerHUDGroup
 
                     if (!condensedDisplay) {
                         for (BingoParticipant player : team.getMembers()) {
-                            teamScore.append(PLAYER_PREFIX).append(player.getDisplayName());
+                            teamInfo.add(PLAYER_PREFIX.append(player.getDisplayName()));
                         }
                     }
                 });

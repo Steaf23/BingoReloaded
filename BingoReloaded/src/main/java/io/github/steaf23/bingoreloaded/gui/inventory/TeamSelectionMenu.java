@@ -15,6 +15,7 @@ import io.github.steaf23.playerdisplay.inventory.item.ItemTemplate;
 import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Material;
@@ -64,7 +65,7 @@ public class TeamSelectionMenu extends PaginatedSelectionMenu
         super.beforeOpening(player);
 
         List<ItemTemplate> optionItems = new ArrayList<>();
-        ItemTemplate autoItem = new ItemTemplate(Material.NETHER_STAR, BingoMessage.TEAM_AUTO.asPhrase().decorate(TextDecoration.BOLD, TextDecoration.ITALIC))
+        ItemTemplate autoItem = new ItemTemplate(Material.NETHER_STAR, BingoMessage.TEAM_AUTO.asPhrase().color(TextColor.fromHexString("#fdffa8")).decorate(TextDecoration.BOLD, TextDecoration.ITALIC))
                 .setCompareKey("item_auto");
         if (player instanceof Player gamePlayer) {
             Optional<BingoTeam> autoTeamOpt = teamManager.getActiveTeams().getTeams().stream()
@@ -92,7 +93,7 @@ public class TeamSelectionMenu extends PaginatedSelectionMenu
             autoItem.setLore(description.toArray(Component[]::new));
         }
         optionItems.add(autoItem);
-        optionItems.add(new ItemTemplate(Material.TNT, BingoMessage.OPTIONS_LEAVE.asPhrase().decorate(TextDecoration.BOLD, TextDecoration.ITALIC))
+        optionItems.add(new ItemTemplate(Material.TNT, BingoMessage.OPTIONS_LEAVE.asPhrase().color(NamedTextColor.AQUA).decorate(TextDecoration.BOLD, TextDecoration.ITALIC))
                 .setGlowing(true).setCompareKey("item_leave"));
 
         var allTeams = teamManager.getJoinableTeams();
