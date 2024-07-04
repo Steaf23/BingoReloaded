@@ -14,6 +14,7 @@ import net.kyori.adventure.text.event.HoverEventSource;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.md_5.bungee.api.chat.hover.content.Text;
@@ -197,62 +198,12 @@ public enum BingoMessage
         return part;
     }
 
-    //FIXME: test or refactor
-    public static String convertSubstitution(String input, String... args) {
-        String part = input;
-        Matcher matcher = SUBSTITUTE_PATTERN.matcher(part);
-        Set<String> matchedKeys = new HashSet<>();
-
-        while (matcher.find()) {
-            String match = matcher.group();
-            String key = matcher.group("key");
-            String path = key.replace("{$", "").replace("}", "");
-
-            if (matchedKeys.contains(path)) {
-                ConsoleMessenger.warn("Recursive translation substitution found on " + path + ". Please check your translation file. If this was not you, please report it.");
-                break;
-            }
-
-            matchedKeys.add(path);
-
-            String argsGroup = matcher.group("args");
-            String[] addedArgs = new String[0];
-            if (argsGroup != null) {
-                addedArgs = argsGroup.split(",");
-            }
-            String[] allArgs = CollectionHelper.concatWithArrayCopy(args, addedArgs);
-
-            BingoMessage actualTranslation = getByKey(path);
-            if (actualTranslation == null) {
-                //invalid key, remove brackets and continue...
-                part = part.replace(key, path);
-                continue;
-            }
-//            part = part.replace(match, actualTranslation.translate(allArgs));
-        }
-
-        return part;
-    }
-
     public static BingoMessage getByKey(String key) {
         for (BingoMessage value : values()) {
             if (value.key.equals(key))
                 return value;
         }
         return null;
-    }
-
-    /**
-     * Convert input string to a minimessage string replacing color codes and small caps codes
-     *
-     * @return
-     */
-    public static String convertConfigString(String input) {
-        String out = input;
-        out = BingoMessage.convertColors(out);
-        out = BingoMessage.convertSmallCaps(out);
-        out = BingoMessage.convertSubstitution(out);
-        return out;
     }
 
     /**
@@ -319,23 +270,36 @@ public enum BingoMessage
     }
 
     //TODO: find way to optimize phrases by only creating them on plugin load/ language change? (maybe save phrase w/o args in a map to return those instead?)
+
     /**
      * Phrases are interpreted without context (player) so placeholders and tags relying on targets cannot be used. Their result is stored in a single line, stripped of \n
      *
      * @return the phrased version of the translation as a component.
      */
     public Component asPhrase(Component... arguments) {
-        return BingoMessage.createPhrase(rawTranslation(), arguments);
+        return asPhrase(false, arguments);
     }
 
-    public static Component createPhrase(String input, Component... arguments) {
+    public Component asPhrase(boolean recursed, Component... arguments) {
+        return BingoMessage.createPhrase(rawTranslation(), !recursed, arguments);
+    }
+
+    public static Component createPhrase(String input, boolean allowSubstitution, Component... arguments) {
         String converted = String.join("", convertConfigStringToMini(input));
         // create tag resolvers for each argument, which will appear as <0>, <1> etc... in the mini message string and be replaced by the correct components.
         List<TagResolver> resolvers = new ArrayList<>();
         for (int i = 0; i < arguments.length; i++) {
             resolvers.add(Placeholder.component(Integer.toString(i), arguments[i]));
         }
+        if (allowSubstitution) {
+            resolvers.add(SUBSTITUTE_RESOLVER);
+        }
+
         return PlayerDisplay.MINI_BUILDER.deserialize(converted, resolvers.toArray(TagResolver[]::new));
+    }
+
+    public static Component createPhrase(String input, Component... arguments) {
+        return createPhrase(input, true, arguments);
     }
 
     public Component[] asMultiline(TextColor color, Component... arguments) {
@@ -351,6 +315,7 @@ public enum BingoMessage
             for (int i = 0; i < arguments.length; i++) {
                 resolvers.add(Placeholder.component(Integer.toString(i), arguments[i]));
             }
+            resolvers.add(SUBSTITUTE_RESOLVER);
             Component c = PlayerDisplay.MINI_BUILDER.deserialize(converted, resolvers.toArray(TagResolver[]::new));
             if (color != null) {
                 result.add(c.color(color));
@@ -374,7 +339,7 @@ public enum BingoMessage
     private static List<String> convertConfigStringToMini(String message) {
         String[] messages = message.split("\\n");
         return Arrays.stream(messages).map(line -> {
-           return convertConfigStringToSingleMini(line);
+            return convertConfigStringToSingleMini(line);
         }).toList();
     }
 
@@ -384,7 +349,7 @@ public enum BingoMessage
 
         //NOTE: small caps and substitution can also be done by replacing it into minimessage tags, but doing it directly is probably faster.
         message = convertSmallCaps(message);
-        message = convertSubstitution(message);
+        message = replaceSubstitutionTags(message);
 
         message = message.replace("{", "<").replace("}", ">");
         return message;
@@ -412,15 +377,44 @@ public enum BingoMessage
         return result;
     }
 
-    //TODO: finish sub resolver
+    private static String replaceSubstitutionTags(String input) {
+        Matcher matcher = SUBSTITUTE_PATTERN.matcher(input);
 
-    /**
-     * @return
-     */
+        while (matcher.find()) {
+            String match = matcher.group();
+            String key = matcher.group("key");
+            String path = key.replace("{$", "").replace("}", "");
+            String args = matcher.group("args");
+
+            if (args == null || args.isEmpty()) {
+                input = input.replace(match, "<bingo_translate:'" + path + "'>");
+            } else {
+                input = input.replace(match, "<bingo_translate:'" + path + "':'" + matcher.group("args") + "'>");
+            }
+        }
+        return input;
+    }
+
+    //FIXME: Fool proof this against infinite cycles (add new tag and preprocess existing tag into other one??)
     private static TagResolver substituteResolver() {
-        return TagResolver.resolver("sub", (args, ctx) -> {
-//            ctx.deserialize()
-            return null;
-        });
+        return TagResolver.resolver(TagResolver.resolver("bingo_translate", (args, ctx) -> {
+                    if (!args.hasNext()) {
+                        return Tag.preProcessParsed("");
+                    }
+
+                    String key = args.pop().toString();
+                    if (!args.hasNext()) {
+                        return Tag.inserting(BingoMessage.getByKey(key).asPhrase(true));
+                    }
+
+                    String translateWith = args.pop().toString();
+                    return Tag.inserting(BingoMessage.getByKey(key).asPhrase(true, Arrays.stream(translateWith
+                                    .split(","))
+                            .map(a -> PlayerDisplay.MINI_BUILDER.deserialize(a, SUBSTITUTE_RESOLVER))
+                            .toArray(Component[]::new)));
+                }),
+                TagResolver.resolver("bingo_translate_recurse", (args, ctx) -> {
+                    return Tag.preProcessParsed("DD");
+                }));
     }
 }

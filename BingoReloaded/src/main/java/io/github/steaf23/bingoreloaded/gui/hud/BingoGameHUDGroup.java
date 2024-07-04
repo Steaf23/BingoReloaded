@@ -78,8 +78,6 @@ public class BingoGameHUDGroup extends PlayerHUDGroup
                 || teamManager.getTeamCount() + teamManager.getParticipantCount() > spaceLeft
                 || teamManager instanceof SoloTeamManager;
 
-        ConsoleMessenger.log(teamManager.getTeamCount() + " + " + teamManager.getParticipantCount() + " > " + spaceLeft + " : " + condensedDisplay);
-
         String format = formatter.getTeamFullFormat();
         teamManager.getActiveTeams().getTeams().stream()
                 .sorted(Comparator.comparingInt(BingoTeam::getCompleteCount).reversed())
