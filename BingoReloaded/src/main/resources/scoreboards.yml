@@ -11,22 +11,22 @@ lobby:
     title: "{$branding.scoreboard_title}"
     sidebar:
         - " "
-        - "&c{status}"
+        - "{status}"
         - " "
-        - "&lGamemode:&r {gamemode} {card_size}"
-        - "&lKit:&r {kit}"
-        - "&lEffects:&r {effects}"
-        - "&lTeam Size:&r {team_size}"
-        - "&lTime:&r {duration}"
+        - "<bold>Gamemode:</bold> {gamemode} {card_size}"
+        - "<bold>Kit:</bold> {kit}"
+        - "<bold>Effects:</bold> {effects}"
+        - "<bold>Team Size:</bold> {team_size}"
+        - "<bold>Time:</bold> {duration}"
 
 game:
 # Scoreboard variables:
 # - {team_info}: displays currently playing teams and optionally team members if enough space is left (multiline)
 # - {win_goal}: amount of points required to win, set to "-----" for regular bingo.
 
-    title: "&n&o{$menu.completed}"
+    title: "<underlined><italic>{$menu.completed}"
     sidebar:
         - " "
         - "{team_info}"
         - " "
-        - "&lGoal:&r {win_goal}"
+        - "<bold>Goal:</bold> {win_goal}"

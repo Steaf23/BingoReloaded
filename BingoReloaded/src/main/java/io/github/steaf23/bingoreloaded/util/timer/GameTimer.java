@@ -1,10 +1,9 @@
 package io.github.steaf23.bingoreloaded.util.timer;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
-import io.github.steaf23.bingoreloaded.util.Message;
+import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
+import net.kyori.adventure.text.Component;
 import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -18,7 +17,7 @@ public abstract class GameTimer
     private long time;
     private BukkitTask task;
 
-    public abstract Message getTimeDisplayMessage(boolean asSeconds);
+    public abstract Component getTimeDisplayMessage(boolean asSeconds);
     public abstract int getStartDelay();
     public abstract int getUpdateInterval();
     public abstract int getStep();
@@ -54,7 +53,7 @@ public abstract class GameTimer
         }
         catch (IllegalStateException e)
         {
-            Message.log(ChatColor.RED + "Timer couldn't be stopped since it never started!");
+            ConsoleMessenger.bug("A Timer couldn't be stopped since it never started!", this);
             return -1;
         }
         task = null;
@@ -90,8 +89,8 @@ public abstract class GameTimer
         return String.format("00:%02d", seconds % 60);
     }
 
-    public static BaseComponent getTimeAsComponent(long seconds) {
-        return new TextComponent(getTimeAsString(seconds));
+    public static Component getTimeAsComponent(long seconds) {
+        return Component.text(getTimeAsString(seconds));
     }
 
     public static String getSecondsString(long seconds)

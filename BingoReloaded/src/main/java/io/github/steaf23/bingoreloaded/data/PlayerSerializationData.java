@@ -3,7 +3,6 @@ package io.github.steaf23.bingoreloaded.data;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.helper.SerializablePlayer;
 import io.github.steaf23.bingoreloaded.data.helper.YmlDataManager;
-import io.github.steaf23.bingoreloaded.util.Message;
 import org.bukkit.entity.Player;
 
 import java.util.UUID;

@@ -2,14 +2,16 @@ package io.github.steaf23.bingoreloaded.settings;
 
 import com.google.common.collect.ImmutableSet;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
-import io.github.steaf23.bingoreloaded.data.BingoTranslation;
+import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.helper.YmlDataManager;
 import io.github.steaf23.bingoreloaded.gui.inventory.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.gui.inventory.item.SerializableItem;
-import io.github.steaf23.easymenulib.inventory.item.ItemTemplate;
-import io.github.steaf23.easymenulib.util.ChatComponentUtils;
-import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.chat.ComponentBuilder;
+import io.github.steaf23.playerdisplay.inventory.item.ItemTemplate;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -21,73 +23,69 @@ import java.util.stream.Collectors;
 
 public enum PlayerKit
 {
-    HARDCORE("hardcore", BingoTranslation.KIT_HARDCORE_NAME.translate(), EnumSet.noneOf(EffectOptionFlags.class)),
-    NORMAL("normal", BingoTranslation.KIT_NORMAL_NAME.translate(), EnumSet.of(EffectOptionFlags.SPEED, EffectOptionFlags.NO_FALL_DAMAGE)),
-    OVERPOWERED("overpowered", BingoTranslation.KIT_OVERPOWERED_NAME.translate(), EnumSet.allOf(EffectOptionFlags.class)),
-    RELOADED("reloaded", BingoTranslation.KIT_RELOADED_NAME.translate(), EnumSet.allOf(EffectOptionFlags.class)),
-    CUSTOM_1("custom_1", "CUSTOM 1", EnumSet.noneOf(EffectOptionFlags.class)),
-    CUSTOM_2("custom_2", "CUSTOM 2", EnumSet.noneOf(EffectOptionFlags.class)),
-    CUSTOM_3("custom_3", "CUSTOM 3", EnumSet.noneOf(EffectOptionFlags.class)),
-    CUSTOM_4("custom_4", "CUSTOM 4", EnumSet.noneOf(EffectOptionFlags.class)),
-    CUSTOM_5("custom_5", "CUSTOM 5", EnumSet.noneOf(EffectOptionFlags.class)),
+    HARDCORE("hardcore", BingoMessage.KIT_HARDCORE_NAME.asPhrase(), EnumSet.noneOf(EffectOptionFlags.class)),
+    NORMAL("normal", BingoMessage.KIT_NORMAL_NAME.asPhrase(), EnumSet.of(EffectOptionFlags.SPEED, EffectOptionFlags.NO_FALL_DAMAGE)),
+    OVERPOWERED("overpowered", BingoMessage.KIT_OVERPOWERED_NAME.asPhrase(), EnumSet.allOf(EffectOptionFlags.class)),
+    RELOADED("reloaded", BingoMessage.KIT_RELOADED_NAME.asPhrase(), EnumSet.allOf(EffectOptionFlags.class)),
+    CUSTOM_1("custom_1", Component.text("CUSTOM 1"), EnumSet.noneOf(EffectOptionFlags.class)),
+    CUSTOM_2("custom_2", Component.text("CUSTOM 2"), EnumSet.noneOf(EffectOptionFlags.class)),
+    CUSTOM_3("custom_3", Component.text("CUSTOM 3"), EnumSet.noneOf(EffectOptionFlags.class)),
+    CUSTOM_4("custom_4", Component.text("CUSTOM 4"), EnumSet.noneOf(EffectOptionFlags.class)),
+    CUSTOM_5("custom_5", Component.text("CUSTOM 5"), EnumSet.noneOf(EffectOptionFlags.class)),
     ;
 
     public static final ItemTemplate WAND_ITEM = new ItemTemplate(
             Material.WARPED_FUNGUS_ON_A_STICK,
-            ChatComponentUtils.convert(BingoTranslation.WAND_ITEM_NAME.translate(), ChatColor.DARK_PURPLE, ChatColor.ITALIC, ChatColor.BOLD),
-            ChatComponentUtils.createComponentsFromString(BingoTranslation.WAND_ITEM_DESC.translate().split("\\n"))
-    )
+            BingoMessage.WAND_ITEM_NAME.asPhrase().color(NamedTextColor.DARK_PURPLE).decorate(TextDecoration.BOLD, TextDecoration.ITALIC),
+            BingoMessage.WAND_ITEM_DESC.asMultiline())
             .addEnchantment(Enchantment.UNBREAKING, 3)
             .setCompareKey("wand");
 
     public static final ItemTemplate CARD_ITEM = new ItemTemplate(
             Material.GLOBE_BANNER_PATTERN,
-            ChatComponentUtils.convert(BingoTranslation.CARD_ITEM_NAME.translate(), ChatColor.DARK_PURPLE, ChatColor.ITALIC, ChatColor.BOLD),
-            ChatComponentUtils.createComponentsFromString(BingoTranslation.CARD_ITEM_DESC.translate().split("\\n"))
-    )
+            BingoMessage.CARD_ITEM_NAME.asPhrase().color(NamedTextColor.DARK_PURPLE).decorate(TextDecoration.BOLD, TextDecoration.ITALIC),
+            BingoMessage.CARD_ITEM_DESC.asMultiline())
             .setGlowing(true)
             .setCompareKey("card");
 
     public static final ItemTemplate VOTE_ITEM = new ItemTemplate(
             Material.EMERALD,
-            ChatComponentUtils.convert(BingoTranslation.VOTE_ITEM_NAME.translate(), ChatColor.GREEN, ChatColor.BOLD),
-            ChatComponentUtils.createComponentsFromString(BingoTranslation.VOTE_ITEM_DESC.translate().split("\\n"))
-    )
+            BingoMessage.VOTE_ITEM_NAME.asPhrase().color(NamedTextColor.DARK_PURPLE).decorate(TextDecoration.BOLD, TextDecoration.ITALIC),
+            BingoMessage.VOTE_ITEM_DESC.asMultiline())
             .setCompareKey("vote");
 
     public static final ItemTemplate TEAM_ITEM = new ItemTemplate(
             Material.WHITE_GLAZED_TERRACOTTA,
-            ChatComponentUtils.convert(BingoTranslation.TEAM_ITEM_NAME.translate(), ChatColor.AQUA, ChatColor.BOLD),
-            ChatComponentUtils.createComponentsFromString(BingoTranslation.TEAM_ITEM_DESC.translate().split("\\n"))
-    )
+            BingoMessage.TEAM_ITEM_NAME.asPhrase().color(NamedTextColor.DARK_PURPLE).decorate(TextDecoration.BOLD, TextDecoration.ITALIC),
+            BingoMessage.TEAM_ITEM_DESC.asMultiline())
             .setCompareKey("team");
 
     public final String configName;
-    private final String displayName;
+    private final Component displayName;
     public final EnumSet<EffectOptionFlags> defaultEffects;
 
     private static final YmlDataManager customKitData = BingoReloaded.createYmlDataManager("data/kits.yml");
 
-    PlayerKit(String configName, String displayName, EnumSet<EffectOptionFlags> defaultEffects)
+    PlayerKit(String configName, Component displayName, EnumSet<EffectOptionFlags> defaultEffects)
     {
         this.configName = configName;
         this.displayName = displayName;
         this.defaultEffects = defaultEffects;
     }
 
-    public String getDisplayName() {
+    public Component getDisplayName() {
         if (getCustomKit(this) != null) {
-            return getCustomKit(this).name();
+            return LegacyComponentSerializer.legacySection().deserialize(getCustomKit(this).name());
         }
         return displayName;
     }
 
-    public List<SerializableItem> getItems(ChatColor teamColor)
+    public List<SerializableItem> getItems(TextColor teamColor)
     {
         ItemTemplate helmet = new ItemTemplate(39, Material.LEATHER_HELMET)
-                .setLeatherColor(ChatColor.of(teamColor.getColor()));
+                .setLeatherColor(teamColor);
         ItemTemplate boots = new ItemTemplate(36, Material.LEATHER_BOOTS)
-                .setLeatherColor(ChatColor.of(teamColor.getColor()));
+                .setLeatherColor(teamColor);
 
         List<ItemTemplate> items = new ArrayList<>();
         switch (this)

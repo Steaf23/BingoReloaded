@@ -1,11 +1,11 @@
 package io.github.steaf23.bingoreloaded.tasks;
 
-import io.github.steaf23.bingoreloaded.data.BingoTranslation;
-import io.github.steaf23.bingoreloaded.util.Message;
-import io.github.steaf23.easymenulib.util.ChatComponentUtils;
-import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
+import io.github.steaf23.bingoreloaded.data.BingoMessage;
+import io.github.steaf23.playerdisplay.util.ComponentUtils;
+import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.advancement.Advancement;
@@ -25,36 +25,37 @@ public record AdvancementTask(Advancement advancement) implements TaskData
     }
 
     @Override
-    public BaseComponent getName()
+    public Component getName()
     {
-        var builder = new ComponentBuilder("[").color(ChatColor.GREEN).italic(true);
+        var builder = Component.text().append(Component.text("["))
+                .color(NamedTextColor.GREEN).decorate(TextDecoration.ITALIC);
 
         if (advancement == null)
         {
-            Message.log("Could not get advancement, returning null!");
-            builder.append("no advancement?");
+            ConsoleMessenger.log("Could not get advancement, returning null!");
+            builder.append(Component.text("no advancement?"));
         }
         else
         {
-            builder.append(ChatComponentUtils.advancementTitle(advancement));
+            builder.append(ComponentUtils.advancementTitle(advancement));
         }
-        builder.append("]");
+        builder.append(Component.text("]"));
         return builder.build();
     }
 
     @Override
-    public BaseComponent[] getItemDescription()
+    public Component[] getItemDescription()
     {
-        return BingoTranslation.LORE_ADVANCEMENT.asComponent(Set.of(ChatColor.DARK_AQUA));
+        return BingoMessage.LORE_ADVANCEMENT.asMultiline(NamedTextColor.DARK_AQUA);
     }
 
     // This method exists because advancement descriptions can contain newlines,
     // which makes it impossible to use as item names or descriptions without getting a missing character.
     @Override
-    public BaseComponent getChatDescription()
+    public Component getChatDescription()
     {
-        BaseComponent component = ChatComponentUtils.advancementDescription(advancement);
-        component.setColor(ChatColor.DARK_AQUA);
+        Component component = ComponentUtils.advancementDescription(advancement)
+                .color(NamedTextColor.DARK_AQUA);
         return component;
     }
 

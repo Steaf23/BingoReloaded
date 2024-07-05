@@ -3,10 +3,7 @@ package io.github.steaf23.bingoreloaded.gui.hud;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.player.team.TeamManager;
-import io.github.steaf23.bingoreloaded.util.ComponentConverter;
-import io.github.steaf23.easymenulib.EasyMenuLibrary;
-import io.github.steaf23.easymenulib.packetevents.wrapper.PacketWrapper;
-import io.github.steaf23.easymenulib.packetevents.wrapper.play.server.WrapperPlayServerTeams;
+import io.github.steaf23.playerdisplay.scoreboard.TeamPacketHelper;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -17,7 +14,7 @@ import java.util.stream.Collectors;
 
 public class TeamDisplay
 {
-    private record TeamInfo(String identifier, String displayName, @Nullable Component prefix, @Nullable Component suffix, Collection<String> entries) {}
+    private record TeamInfo(String identifier, Component displayName, @Nullable Component prefix, @Nullable Component suffix, Collection<String> entries) {}
 
     private final BingoSession session;
     private final TeamManager manager;
@@ -65,29 +62,21 @@ public class TeamDisplay
     }
 
     private TeamInfo teamInfoFromBingoTeam(BingoTeam team) {
-        TeamInfo info = new TeamInfo(team.getIdentifier(), team.getName(), ComponentConverter.bungeeComponentToAdventure(team.getPrefix()), null, team.getMemberNames());
+        TeamInfo info = new TeamInfo(team.getIdentifier(), team.getName(), team.getPrefix(), null, team.getMemberNames());
         return info;
     }
 
     private void createTeamForPlayer(TeamInfo team, Player player) {
-        //TODO: un-curse this team prefix shitshow & adventure component conversion
-        WrapperPlayServerTeams.ScoreBoardTeamInfo info = new WrapperPlayServerTeams.ScoreBoardTeamInfo(
-                Component.text(team.displayName()),
+        TeamPacketHelper.createTeamVisibleToPlayer(player,
+                team.identifier(),
+                team.displayName(),
                 team.prefix(),
                 team.suffix(),
-                WrapperPlayServerTeams.NameTagVisibility.ALWAYS,
-                WrapperPlayServerTeams.CollisionRule.ALWAYS,
-                null,
-                WrapperPlayServerTeams.OptionData.NONE
-        );
-        PacketWrapper<WrapperPlayServerTeams> packet = new WrapperPlayServerTeams(team.identifier(), WrapperPlayServerTeams.TeamMode.CREATE, info, team.entries());
-
-        EasyMenuLibrary.sendPlayerPacket(player, packet);
+                team.entries());
     }
 
     public void removeTeamForPlayer(String teamIdentifier, Player player) {
-        PacketWrapper<WrapperPlayServerTeams> packet = new WrapperPlayServerTeams(teamIdentifier, WrapperPlayServerTeams.TeamMode.REMOVE, Optional.empty());
-        EasyMenuLibrary.sendPlayerPacket(player, packet);
+        TeamPacketHelper.removeTeamVisibleToPlayer(player, teamIdentifier);
     }
 
     public void clearTeamsForPlayer(@NotNull Player player) {

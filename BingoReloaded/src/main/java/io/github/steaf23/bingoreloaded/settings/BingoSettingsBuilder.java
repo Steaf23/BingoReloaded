@@ -7,7 +7,7 @@ import io.github.steaf23.bingoreloaded.event.BingoSettingsUpdatedEvent;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gameloop.phase.PregameLobby;
 import io.github.steaf23.bingoreloaded.gui.inventory.EffectOptionFlags;
-import io.github.steaf23.bingoreloaded.util.Message;
+import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import org.bukkit.Bukkit;
 
 import java.util.EnumSet;
@@ -66,14 +66,14 @@ public class BingoSettingsBuilder
 
         String[] tuple = voteResult.gamemode.split("_");
         if (tuple.length != 2) {
-            Message.error("Could not read vote results. (Please report!)");
+            ConsoleMessenger.bug("Could not read vote results", this);
             return resultBuilder;
         }
         int cardWidth = 0;
         try {
             cardWidth = Integer.valueOf(tuple[1]);
         } catch (NumberFormatException e) {
-            Message.error("Could not read card size. (Please report!)");
+            ConsoleMessenger.bug("Could not read card size", this);
         }
         if (cardWidth == 0) {
             return resultBuilder;

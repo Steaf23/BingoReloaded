@@ -1,6 +1,5 @@
 package io.github.steaf23.bingoreloaded.data.world;
 
-import io.github.steaf23.bingoreloaded.util.Message;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;

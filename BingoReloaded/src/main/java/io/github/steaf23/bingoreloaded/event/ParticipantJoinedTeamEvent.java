@@ -1,5 +1,6 @@
 package io.github.steaf23.bingoreloaded.event;
 
+import io.github.steaf23.bingoreloaded.event.core.BingoEvent;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;

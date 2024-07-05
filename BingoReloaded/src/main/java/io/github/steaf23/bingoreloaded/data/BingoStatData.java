@@ -3,12 +3,15 @@ package io.github.steaf23.bingoreloaded.data;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.helper.YmlDataManager;
 import io.github.steaf23.bingoreloaded.hologram.HologramBuilder;
-import io.github.steaf23.bingoreloaded.util.Message;
-import net.md_5.bungee.api.ChatColor;
+import io.github.steaf23.bingoreloaded.util.BingoPlayerSender;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nullable;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.UUID;
 
@@ -66,22 +69,23 @@ public class BingoStatData
     public HologramBuilder asHologram(int firstEntry, int entriesPerPage, @Nullable BingoStatType sortedBy)
     {
         //TODO: implement
-        return new HologramBuilder(BingoReloaded.getPlugin(BingoReloaded.class).holograms());
+        return new HologramBuilder(null);
     }
 
-    public Message getPlayerStatsFormatted(UUID playerId)
+    public Component getPlayerStatsFormatted(UUID playerId)
     {
         String stats = getPlayerData(playerId);
         String[] statList = stats.split(";");
-        return new Message("{0}'s statistics: Wins: {1}, Losses: {2}, Games finished: {3}, Tasks completed: {4}, Tasks Completed Record: {5}, Wand uses: {6}")
-                .color(ChatColor.GREEN)
-                .arg(Bukkit.getOfflinePlayer(playerId).getName()).color(ChatColor.YELLOW).bold()
-                .arg(statList[0]).color(ChatColor.WHITE).bold()
-                .arg(statList[1]).color(ChatColor.WHITE).bold()
-                .arg(Integer.toString(Integer.parseInt(statList[0]) + Integer.parseInt(statList[1]))).color(ChatColor.WHITE).bold()
-                .arg(statList[2]).color(ChatColor.WHITE).bold()
-                .arg(statList[3]).color(ChatColor.WHITE).bold()
-                .arg(statList[4]).color(ChatColor.WHITE).bold();
+        Component[] text = BingoMessage.configStringAsMultiline("{0}'s statistics: Wins: {1}, Losses: {2}, Games finished: {3}, Tasks completed: {4}, Tasks Completed Record: {5}, Wand uses: {6}", NamedTextColor.GREEN,
+                Component.text(Bukkit.getOfflinePlayer(playerId).getName(), NamedTextColor.YELLOW, TextDecoration.BOLD),
+                Component.text(statList[0], NamedTextColor.WHITE, TextDecoration.BOLD),
+                Component.text(statList[1], NamedTextColor.WHITE, TextDecoration.BOLD),
+                Component.text(Integer.parseInt(statList[0]) + Integer.parseInt(statList[1]), NamedTextColor.WHITE, TextDecoration.BOLD),
+                Component.text(statList[2], NamedTextColor.WHITE, TextDecoration.BOLD),
+                Component.text(statList[3], NamedTextColor.WHITE, TextDecoration.BOLD),
+                Component.text(statList[4], NamedTextColor.WHITE, TextDecoration.BOLD));
+
+        return Arrays.stream(text).reduce(Component::append).get();
     }
 
     /**
@@ -90,7 +94,7 @@ public class BingoStatData
      * @param playerName
      * @return
      */
-    public Message getPlayerStatsFormatted(String playerName)
+    public Component getPlayerStatsFormatted(String playerName)
     {
         UUID playerId = getPlayerUUID(playerName);
         if (playerId != null)
@@ -99,8 +103,10 @@ public class BingoStatData
         }
         else
         {
-            return new Message("Could not find statistics for player {0}!").color(ChatColor.RED)
-                    .arg(playerName).color(ChatColor.WHITE);
+            return Component.text("Could not find statistics for player ")
+                    .append(Component.text(playerName).color(NamedTextColor.WHITE))
+                    .append(Component.text("!"))
+                    .color(NamedTextColor.RED);
         }
     }
 

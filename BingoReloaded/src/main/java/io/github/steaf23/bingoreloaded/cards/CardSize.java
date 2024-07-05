@@ -1,9 +1,13 @@
 package io.github.steaf23.bingoreloaded.cards;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentLike;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.HashSet;
 import java.util.Set;
 
-public enum CardSize
+public enum CardSize implements ComponentLike
 {
     X1(1, 4),
     X2(2, 4),
@@ -13,10 +17,10 @@ public enum CardSize
     X6(6, 2),
     ;
 
-    public int size;
-    public int leftSpacing;
-    public int rightSpacing;
-    public int fullCardSize;
+    public final int size;
+    public final int leftSpacing;
+    public final int rightSpacing;
+    public final int fullCardSize;
 
     public final Set<Integer> taskSlots;
 
@@ -63,7 +67,7 @@ public enum CardSize
     }
 
     @Override
-    public String toString() {
-        return size + "x" + size;
+    public @NotNull Component asComponent() {
+        return Component.text(size + "x" + size);
     }
 }

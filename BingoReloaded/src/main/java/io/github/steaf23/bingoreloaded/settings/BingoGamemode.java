@@ -1,22 +1,25 @@
 package io.github.steaf23.bingoreloaded.settings;
 
-import org.bukkit.ChatColor;
+import io.github.steaf23.bingoreloaded.data.BingoMessage;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentLike;
+import org.jetbrains.annotations.NotNull;
 
-public enum BingoGamemode
+public enum BingoGamemode implements ComponentLike
 {
-    REGULAR(ChatColor.GREEN + "Regular", "regular"),
-    LOCKOUT(ChatColor.DARK_PURPLE + "Lockout", "lockout"),
-    COMPLETE(ChatColor.DARK_AQUA + "Complete-All", "complete"),
-    HOTSWAP(ChatColor.GOLD + "Hot-Swap", "hotswap"),
+    REGULAR("regular", BingoMessage.MODE_REGULAR.asPhrase()),
+    LOCKOUT("lockout", BingoMessage.MODE_LOCKOUT.asPhrase()),
+    COMPLETE("complete", BingoMessage.MODE_COMPLETE.asPhrase()),
+    HOTSWAP("hotswap", BingoMessage.MODE_HOTSWAP.asPhrase()),
     ;
 
-    public final String displayName;
-    private final String dataName;
+    private final String configName;
+    private final Component displayName;
 
-    BingoGamemode(String displayName, String dataName)
+    BingoGamemode(String configName, Component displayName)
     {
+        this.configName = configName;
         this.displayName = displayName;
-        this.dataName = dataName;
     }
 
     public static BingoGamemode fromDataString(String data) {
@@ -27,7 +30,7 @@ public enum BingoGamemode
     {
         for (BingoGamemode mode : BingoGamemode.values())
         {
-            if (mode.dataName.equals(data))
+            if (mode.configName.equals(data))
             {
                 return mode;
             }
@@ -42,6 +45,11 @@ public enum BingoGamemode
 
     public String getDataName()
     {
-        return dataName;
+        return configName;
+    }
+
+    @Override
+    public @NotNull Component asComponent() {
+        return displayName;
     }
 }

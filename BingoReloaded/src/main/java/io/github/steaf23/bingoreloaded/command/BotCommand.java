@@ -9,7 +9,9 @@ import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.team.TeamManager;
 import io.github.steaf23.bingoreloaded.player.VirtualBingoPlayer;
 import io.github.steaf23.bingoreloaded.tasks.BingoTask;
-import io.github.steaf23.bingoreloaded.util.Message;
+import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -75,7 +77,7 @@ public class BotCommand implements TabExecutor
                 BingoParticipant virtualPlayer = getVirtualPlayerFromName(args[1]);
                 int taskIndex = Integer.parseInt(args[2]);
                 if (virtualPlayer == null) {
-                    Message.error("Cannot complete task " + args[2] + " for non existing virtual player: " + args[1]);
+                    ConsoleMessenger.error("Cannot complete task " + args[2] + " for non existing virtual player: " + args[1]);
                     break;
                 }
                 completeTaskByPlayer(virtualPlayer, taskIndex);
@@ -91,7 +93,7 @@ public class BotCommand implements TabExecutor
         BingoCard card = player.getTeam().getCard();
 
         if (card == null || taskIndex >= card.getTasks().size()) {
-            Message.log(ChatColor.RED + "index out of bounds for task list!");
+            ConsoleMessenger.log(Component.text("index out of bounds for task list!").color(NamedTextColor.RED));
             return;
         }
 

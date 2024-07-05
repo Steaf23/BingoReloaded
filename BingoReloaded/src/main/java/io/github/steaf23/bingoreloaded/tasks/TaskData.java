@@ -1,6 +1,6 @@
 package io.github.steaf23.bingoreloaded.tasks;
 
-import net.md_5.bungee.api.chat.BaseComponent;
+import net.kyori.adventure.text.Component;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.jetbrains.annotations.NotNull;
@@ -9,9 +9,9 @@ import java.io.Serializable;
 
 public interface TaskData extends ConfigurationSerializable, Serializable
 {
-    BaseComponent getName();
-    BaseComponent getChatDescription();
-    BaseComponent[] getItemDescription();
+    Component getName();
+    Component getChatDescription();
+    Component[] getItemDescription();
     default int getStackSize()
     {
         return 1;

@@ -2,11 +2,11 @@ package io.github.steaf23.bingoreloaded.util.timer;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
-import io.github.steaf23.bingoreloaded.data.BingoTranslation;
+import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.event.CountdownTimerFinishedEvent;
-import io.github.steaf23.bingoreloaded.util.Message;
-import io.github.steaf23.bingoreloaded.util.TranslatedMessage;
-import net.md_5.bungee.api.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 
 public class CountdownTimer extends GameTimer
@@ -62,17 +62,17 @@ public class CountdownTimer extends GameTimer
     }
 
     @Override
-    public Message getTimeDisplayMessage(boolean asSeconds)
+    public Component getTimeDisplayMessage(boolean asSeconds)
     {
         String timeString = asSeconds ? GameTimer.getSecondsString(getTime()) : GameTimer.getTimeAsString(getTime());
-        ChatColor color = ChatColor.WHITE;
+        NamedTextColor color = NamedTextColor.WHITE;
         if (getTime() <= lowThreshold)
-            color = ChatColor.RED;
+            color = NamedTextColor.RED;
         else if (getTime() <= medThreshold)
-            color = ChatColor.GOLD;
-        return new TranslatedMessage(BingoTranslation.TIME_LEFT)
-                .color(ChatColor.LIGHT_PURPLE).bold()
-                .arg(timeString).color(color);
+            color = NamedTextColor.GOLD;
+        return BingoMessage.TIME_LEFT.asPhrase(Component.text(timeString).color(color))
+                .color(NamedTextColor.LIGHT_PURPLE)
+                .decorate(TextDecoration.BOLD);
     }
 
     @Override

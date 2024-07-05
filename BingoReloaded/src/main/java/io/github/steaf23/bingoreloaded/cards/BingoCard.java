@@ -2,15 +2,15 @@ package io.github.steaf23.bingoreloaded.cards;
 
 
 import io.github.steaf23.bingoreloaded.data.BingoCardData;
-import io.github.steaf23.bingoreloaded.data.BingoTranslation;
+import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.TaskListData;
 import io.github.steaf23.bingoreloaded.gui.inventory.CardMenu;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.tasks.*;
 import io.github.steaf23.bingoreloaded.tasks.tracker.TaskProgressTracker;
-import io.github.steaf23.bingoreloaded.util.Message;
-import io.github.steaf23.easymenulib.inventory.MenuBoard;
+import io.github.steaf23.playerdisplay.inventory.MenuBoard;
+import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
@@ -29,7 +29,7 @@ public class BingoCard
     private static final TaskData DEFAULT_TASK = new ItemTask(Material.DIRT, 1);
 
     public BingoCard(MenuBoard menuBoard, CardSize size, TaskProgressTracker progressTracker) {
-        this(new CardMenu(menuBoard, size, BingoTranslation.CARD_TITLE.translate()), size, progressTracker);
+        this(new CardMenu(menuBoard, size), size, progressTracker);
     }
 
     public BingoCard(CardMenu menu, CardSize size, TaskProgressTracker progressTracker) {
@@ -37,8 +37,8 @@ public class BingoCard
         this.tasks = new ArrayList<>();
         this.menu = menu;
         this.progressTracker = progressTracker;
-        menu.setInfo(BingoTranslation.INFO_REGULAR_NAME.translate(),
-                BingoTranslation.INFO_REGULAR_DESC.translate().split("\\n"));
+        menu.setInfo(BingoMessage.INFO_REGULAR_NAME.asPhrase(),
+                BingoMessage.INFO_REGULAR_DESC.asMultiline());
     }
 
     /**
@@ -108,11 +108,11 @@ public class BingoCard
         for (String listName : ticketList) {
             // pop the first task in the list (which is random because we shuffled it beforehand) and add it to our final tasks
             List<TaskData> tasks = taskMap.get(listName);
-            if (tasks.size() != 0) {
+            if (!tasks.isEmpty()) {
                 newTasks.add(tasks.remove(tasks.size() - 1));
             }
             else {
-                Message.error("Found empty task list '" + listName + "'.");
+                ConsoleMessenger.error("Found empty task list '" + listName + "'.");
             }
         }
         while (newTasks.size() < size.fullCardSize) {

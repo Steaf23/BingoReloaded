@@ -1,6 +1,6 @@
 package io.github.steaf23.bingoreloaded.data.helper;
 
-import io.github.steaf23.bingoreloaded.util.Message;
+import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
@@ -31,7 +31,7 @@ public class YmlDataManager
         }
         catch(IllegalArgumentException exc)
         {
-            Message.log(exc.getMessage());
+            ConsoleMessenger.log(exc.getMessage());
         }
     }
 
@@ -66,7 +66,7 @@ public class YmlDataManager
         }
         catch (IOException e)
         {
-            Message.log(e.getMessage());
+            ConsoleMessenger.log(e.getMessage());
         }
     }
 

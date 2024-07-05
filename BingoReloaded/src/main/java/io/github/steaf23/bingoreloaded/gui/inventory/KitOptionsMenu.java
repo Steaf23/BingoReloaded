@@ -1,13 +1,15 @@
 package io.github.steaf23.bingoreloaded.gui.inventory;
 
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
-import io.github.steaf23.bingoreloaded.data.BingoTranslation;
+import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.settings.CustomKit;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
-import io.github.steaf23.easymenulib.inventory.BasicMenu;
-import io.github.steaf23.easymenulib.inventory.MenuBoard;
-import io.github.steaf23.easymenulib.inventory.item.ItemTemplate;
-import net.md_5.bungee.api.ChatColor;
+import io.github.steaf23.playerdisplay.inventory.BasicMenu;
+import io.github.steaf23.playerdisplay.inventory.MenuBoard;
+import io.github.steaf23.playerdisplay.inventory.item.ItemTemplate;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
 
 public class KitOptionsMenu extends BasicMenu
@@ -16,21 +18,21 @@ public class KitOptionsMenu extends BasicMenu
 
     public KitOptionsMenu(MenuBoard menuBoard, BingoSession session)
     {
-        super(menuBoard, BingoTranslation.OPTIONS_KIT.translate(), 5);
+        super(menuBoard, BingoMessage.OPTIONS_KIT.asPhrase(), 5);
         this.session = session;
 
         ItemTemplate HARDCORE = new ItemTemplate(1, 1,
                 Material.RED_CONCRETE, PlayerKit.HARDCORE.getDisplayName(),
-                BingoTranslation.KIT_HARDCORE_DESC.translate().split("\\n"));
+                BingoMessage.KIT_HARDCORE_DESC.asMultiline());
         ItemTemplate NORMAL = new ItemTemplate(3, 1,
                 Material.YELLOW_CONCRETE, PlayerKit.NORMAL.getDisplayName(),
-                BingoTranslation.KIT_NORMAL_DESC.translate().split("\\n"));
+                BingoMessage.KIT_NORMAL_DESC.asMultiline());
         ItemTemplate OVERPOWERED = new ItemTemplate(5, 1,
                 Material.PURPLE_CONCRETE, PlayerKit.OVERPOWERED.getDisplayName(),
-                BingoTranslation.KIT_OVERPOWERED_DESC.translate().split("\\n"));
+                BingoMessage.KIT_OVERPOWERED_DESC.asMultiline());
         ItemTemplate RELOADED = new ItemTemplate(7, 1,
                 Material.CYAN_CONCRETE, PlayerKit.RELOADED.getDisplayName(),
-                BingoTranslation.KIT_RELOADED_DESC.translate().split("\\n"));
+                BingoMessage.KIT_RELOADED_DESC.asMultiline());
 
         addAction(HARDCORE, p -> {
             setKit(PlayerKit.HARDCORE);
@@ -58,16 +60,16 @@ public class KitOptionsMenu extends BasicMenu
             CustomKit customkit = PlayerKit.getCustomKit(kit);
             if (customkit != null) {
                 addAction(new ItemTemplate(kitIdx * 2, 3, Material.WHITE_CONCRETE,
-                        ChatColor.RESET + customkit.getName(), "Custom kit"), p -> {
+                        Component.text(customkit.getName()), Component.text("Custom kit")), p -> {
                     setKit(PlayerKit.fromConfig(kit.configName));
                     close(p);
                 });
             } else {
                 int kitNr = kitIdx + 1;
                 addItem(new ItemTemplate(kitIdx * 2, 3, Material.GRAY_CONCRETE,
-                        "" + ChatColor.GRAY + "Custom Kit Slot " + kitNr,
-                        "Create a custom kit from your inventory using ",
-                        "" + ChatColor.RED + ChatColor.ITALIC + "/bingo kit add " + kitNr + " <name>!"));
+                        Component.text("Custom Kit Slot " + kitNr).color(NamedTextColor.GRAY),
+                        Component.text("Create a custom kit from your inventory using "),
+                        Component.text("/bingo kit add " + kitNr + " <name>!").color(NamedTextColor.RED).decorate(TextDecoration.ITALIC)));
             }
             kitIdx++;
         }

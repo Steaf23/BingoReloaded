@@ -1,24 +1,26 @@
 package io.github.steaf23.bingoreloaded.player.team;
 
-import io.github.steaf23.bingoreloaded.data.BingoTranslation;
+import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.TeamData;
 import io.github.steaf23.bingoreloaded.event.*;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.placeholder.BingoPlaceholderFormatter;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
-import io.github.steaf23.bingoreloaded.util.*;
-import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.TextComponent;
+import io.github.steaf23.playerdisplay.PlayerDisplay;
+import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.util.HSVLike;
 import org.bukkit.Bukkit;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.*;
+
 import java.util.*;
 
-//TODO: REWRITE THIS SHAIT (redo auto team with participant queue??)
 /**
  * Similar to BasicTeamManager but each team can only have 1 member, the team's name being the name of the member.
  */
@@ -26,46 +28,25 @@ public class SoloTeamManager implements TeamManager
 {
     private final BingoTeamContainer teams;
     private final BingoSession session;
-    private final TeamData teamData;
     private final BingoTeam autoTeam;
 
     public SoloTeamManager(BingoSession session)
     {
         this.session = session;
-        this.teamData = new TeamData();
         this.teams = new BingoTeamContainer();
 
-        this.autoTeam = new BingoTeam("auto", ChatColor.of("#fdffa8"), BingoTranslation.TEAM_AUTO.translate(), createPrefix(ChatColor.of("#fdffa8")));
+        TextColor autoTeamColor = TextColor.fromHexString("#fdffa8");
+        this.autoTeam = new BingoTeam("auto", autoTeamColor, BingoMessage.TEAM_AUTO.asPhrase(), createPrefix(autoTeamColor));
         this.teams.addTeam(autoTeam);
     }
 
-    private BaseComponent createPrefix(ChatColor color) {
+    private Component createPrefix(TextColor color) {
         String prefixFormat = new BingoPlaceholderFormatter().getTeamFullFormat();
-        BaseComponent prefix = TextComponent.fromLegacy(BingoPlaceholderFormatter.createLegacyTextFromMessage(prefixFormat, color.toString(), "✦") + " ");
+        Component prefix = BingoMessage.createPhrase(prefixFormat.replace("{0}", "<" + color.toString() + ">").replace("{1}", "✦") + " ");
         return prefix;
     }
 
-    @Nullable
-    BingoParticipant getPlayer(BingoTeam team) {
-        Optional<BingoParticipant> participant = team.getMembers().stream().findFirst();
-        if (participant.isEmpty()) {
-            Message.error("Team " + team.getColoredName().toLegacyText() + "does not have a player!");
-            return null;
-        }
-        return team.getMembers().stream().findFirst().get();
-    }
-
-    @Nullable
-    BingoTeam getTeamOfPlayer(BingoParticipant participant) {
-        for (BingoTeam team : teams) {
-            if (team.getMembers().contains(participant)) {
-                return team;
-            }
-        }
-        return null;
-    }
-
-    private ChatColor determineTeamColor() {
+    private TextColor determineTeamColor() {
         // pick a new color based on participant count,
         // works kinda like how you choose pivots for quicksort in that no 2 similar colors should be selected one after another
         int max = 256;
@@ -85,14 +66,13 @@ public class SoloTeamManager implements TeamManager
         }
         int hue = max / divider * multiplier;
 
-        Color col = Color.getHSBColor(hue / 256.0f, 0.7f, 1.0f);
-        return ChatColor.of(col);
+        return TextColor.color(HSVLike.hsvLike(hue / 256.0f, 0.7f, 1.0f));
     }
 
     @Override
     public void setup() {
         teams.removeTeam(autoTeam);
-        for (BingoParticipant participant : new HashSet<BingoParticipant>(autoTeam.getMembers())) {
+        for (BingoParticipant participant : new HashSet<>(autoTeam.getMembers())) {
             autoTeam.removeMember(participant);
             setupParticipant(participant);
         }
@@ -100,8 +80,8 @@ public class SoloTeamManager implements TeamManager
 
     @Override
     public void reset() {
-        for (BingoTeam team : new HashSet<BingoTeam>(teams.getTeams())) {
-            for (BingoParticipant member : new HashSet<BingoParticipant>(team.getMembers())) {
+        for (BingoTeam team : new HashSet<>(teams.getTeams())) {
+            for (BingoParticipant member : new HashSet<>(team.getMembers())) {
                 removeMemberFromTeam(member);
             }
             teams.removeTeam(team);
@@ -110,17 +90,13 @@ public class SoloTeamManager implements TeamManager
     }
 
     public void setupParticipant(BingoParticipant participant) {
-        ChatColor teamColor = determineTeamColor();
+        TextColor teamColor = determineTeamColor();
         // create a team where the id is the same as the participant's id, which is good enough for our use case.
         BingoTeam team = new BingoTeam(participant.getId().toString(), teamColor, participant.getDisplayName(), createPrefix(teamColor));
         team.addMember(participant);
         teams.addTeam(team);
 
-        participant.sessionPlayer().ifPresent(p -> {
-            new TranslatedMessage(BingoTranslation.JOIN).color(ChatColor.GREEN)
-                    .arg(team.getColoredName())
-                    .send(p);
-        });
+        BingoMessage.JOIN.sendToAudience(participant, NamedTextColor.GREEN, participant.getTeam().getColoredName());
 
         var joinEvent = new ParticipantJoinedTeamEvent(participant, team, session);
         Bukkit.getPluginManager().callEvent(joinEvent);
@@ -150,13 +126,8 @@ public class SoloTeamManager implements TeamManager
 
         var joinEvent = new ParticipantJoinedTeamEvent(player, session);
         Bukkit.getPluginManager().callEvent(joinEvent);
-        int memberCount = getParticipantCount();
-        var countChangedEvent = new ParticipantCountChangedEvent(session, memberCount - 1, memberCount);
 
-        player.sessionPlayer().ifPresent(p -> {
-            new TranslatedMessage(BingoTranslation.JOIN_AUTO).color(ChatColor.GREEN)
-                    .send(p);
-        });
+        BingoMessage.JOIN_AUTO.sendToAudience(player, NamedTextColor.GREEN);
         return true;
     }
 
@@ -169,12 +140,8 @@ public class SoloTeamManager implements TeamManager
         removeMemberFromTeamSilently(member);
         var leaveEvent = new ParticipantLeftTeamEvent(member, session);
         Bukkit.getPluginManager().callEvent(leaveEvent);
-        int memberCount = getParticipantCount();
-        var countChangedEvent = new ParticipantCountChangedEvent(session, memberCount + 1, memberCount);
 
-        member.sessionPlayer().ifPresent(player -> {
-            new TranslatedMessage(BingoTranslation.LEAVE).color(ChatColor.RED).send(player);
-        });
+        BingoMessage.LEAVE.sendToAudience(member, NamedTextColor.RED);
         return true;
     }
 
@@ -191,23 +158,19 @@ public class SoloTeamManager implements TeamManager
 
     @Override
     public void handlePlayerJoinedSessionWorld(PlayerJoinedSessionWorldEvent event) {
-        Message.log(ChatColor.GOLD + event.getPlayer().getDisplayName() + " joined world", session.getOverworld().getName());
+        ConsoleMessenger.log(event.getPlayer().displayName().append(Component.text(" joined world")), session.getOverworld().getName());
 
         BingoParticipant participant = getPlayerAsParticipant(event.getPlayer());
         if (participant != null) {
-            participant.sessionPlayer().ifPresent(player -> {
-                if (!session.isRunning()) {
-                    return;
-                }
-                new TranslatedMessage(BingoTranslation.JOIN).color(ChatColor.GREEN)
-                        .arg(participant.getTeam().getColoredName())
-                        .send(player);
-            });
+            if (!session.isRunning()) {
+                return;
+            }
+            BingoMessage.JOIN.sendToAudience(participant, NamedTextColor.GREEN, participant.getTeam().getColoredName());
             return;
         }
 
         if (session.isRunning()) {
-            new TranslatedMessage(BingoTranslation.NO_JOIN).send(event.getPlayer());
+            BingoMessage.NO_JOIN.sendToAudience(event.getPlayer());
             return;
         }
 
@@ -218,7 +181,7 @@ public class SoloTeamManager implements TeamManager
 
     @Override
     public void handlePlayerLeftSessionWorld(PlayerLeftSessionWorldEvent event) {
-        Message.log(ChatColor.GOLD + event.getPlayer().getDisplayName() + " left world", session.getOverworld().getName());
+        ConsoleMessenger.log(event.getPlayer().displayName().append(Component.text(" left world")), session.getOverworld().getName());
     }
 
     private void removeMemberFromTeamSilently(@NotNull BingoParticipant member) {

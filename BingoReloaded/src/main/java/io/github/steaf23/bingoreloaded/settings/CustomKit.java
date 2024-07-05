@@ -1,9 +1,7 @@
 package io.github.steaf23.bingoreloaded.settings;
 
-import io.github.steaf23.bingoreloaded.data.BingoTranslation;
+import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.gui.inventory.item.SerializableItem;
-import io.github.steaf23.bingoreloaded.util.Message;
-import net.md_5.bungee.api.ChatColor;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.entity.Player;
@@ -34,8 +32,9 @@ public record CustomKit(String name, PlayerKit slot, List<SerializableItem> item
             default -> 0;
         };
 
+        assert slotId != 0;
         if (slotId == 0)
-            return null;
+            return data;
 
         data.put("name", name);
         data.put("slot", slotId);
@@ -77,15 +76,11 @@ public record CustomKit(String name, PlayerKit slot, List<SerializableItem> item
             slot += 1;
         }
 
-        if (!PlayerKit.CARD_ITEM.isCompareKeyEqual(player.getInventory().getItem(cardSlot))) {
-            Message.sendDebug(ChatColor.RED + "Found item in off-hand slot when saving kit. This item will be replaced by the card item. " +
-                    "Either place the card item in another slot or remove the item from the off-hand slot", player);
-        }
         return new CustomKit(kitName, kitSlot, items, cardSlot);
     }
 
     public String getName()
     {
-        return BingoTranslation.convertColors(name);
+        return BingoMessage.convertColors(name);
     }
 }

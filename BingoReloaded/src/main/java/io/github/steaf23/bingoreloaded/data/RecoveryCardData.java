@@ -2,7 +2,6 @@ package io.github.steaf23.bingoreloaded.data;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.helper.YmlDataManager;
-import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.bingoreloaded.cards.BingoCard;
 import io.github.steaf23.bingoreloaded.cards.CardSize;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
@@ -21,13 +20,13 @@ public class RecoveryCardData
         boolean success = false;
         if (data.getConfig().getBoolean("ended")) return false;
 
-        Message.log(ChatColor.GREEN + "The last game did not finish, attempting to recover bingo card...");
+//        Message.log(ChatColor.GREEN + "The last game did not finish, attempting to recover bingo card...");
         BingoGamemode mode = BingoGamemode.fromDataString(data.getConfig().getString("gamemode"));
         CardSize size = CardSize.fromWidth(data.getConfig().getInt("size"));
 
         if (game.getTeamManager().getActiveTeams().teamCount() == 0)
         {
-            Message.log(ChatColor.RED + "Could not resume game, no teams have joined the last game?!");
+//            Message.log(ChatColor.RED + "Could not resume game, no teams have joined the last game?!");
             return false;
         }
 

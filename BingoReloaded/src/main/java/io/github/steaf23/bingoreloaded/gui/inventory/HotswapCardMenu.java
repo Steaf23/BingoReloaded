@@ -3,8 +3,8 @@ package io.github.steaf23.bingoreloaded.gui.inventory;
 import io.github.steaf23.bingoreloaded.cards.CardSize;
 import io.github.steaf23.bingoreloaded.cards.HotswapTaskHolder;
 import io.github.steaf23.bingoreloaded.tasks.BingoTask;
-import io.github.steaf23.easymenulib.inventory.MenuBoard;
-import io.github.steaf23.easymenulib.inventory.item.ItemTemplate;
+import io.github.steaf23.playerdisplay.inventory.MenuBoard;
+import io.github.steaf23.playerdisplay.inventory.item.ItemTemplate;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -13,8 +13,8 @@ public class HotswapCardMenu extends CardMenu
 {
     private List<HotswapTaskHolder> taskHolders;
 
-    public HotswapCardMenu(MenuBoard menuBoard, CardSize cardSize, String title) {
-        super(menuBoard, cardSize, title);
+    public HotswapCardMenu(MenuBoard menuBoard, CardSize cardSize) {
+        super(menuBoard, cardSize);
     }
 
     // Override to only allow tasks getting updated from the task holders.

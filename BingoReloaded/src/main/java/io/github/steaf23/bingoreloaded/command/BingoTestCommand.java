@@ -7,21 +7,17 @@ import io.github.steaf23.bingoreloaded.event.BingoTaskProgressCompletedEvent;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.tasks.BingoTask;
-import io.github.steaf23.bingoreloaded.util.Message;
-import io.github.steaf23.easymenulib.inventory.BasicMenu;
-import io.github.steaf23.easymenulib.inventory.MenuBoard;
-import io.github.steaf23.easymenulib.inventory.item.ItemTemplate;
-import io.github.steaf23.easymenulib.inventory.item.action.ComboBoxButtonAction;
-import io.github.steaf23.easymenulib.inventory.item.action.SpinBoxButtonAction;
-import io.github.steaf23.easymenulib.inventory.item.action.ToggleButtonAction;
-import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.chat.TextComponent;
+import io.github.steaf23.playerdisplay.inventory.MenuBoard;
+import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
+import org.bukkit.EntityEffect;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.jetbrains.annotations.NotNull;
 
@@ -61,48 +57,10 @@ public class BingoTestCommand implements TabExecutor
                 BingoParticipant virtualPlayer = BingoReloaded.getInstance().getGameManager().getSession("world").teamManager.getPlayerAsParticipant(player);
                 int taskIndex = Integer.parseInt(args[2]);
                 if (virtualPlayer == null) {
-                    Message.error("Cannot complete task " + args[2] + " for non existing player: " + args[1]);
+                    ConsoleMessenger.error("Cannot complete task " + args[2] + " for non existing player: " + args[1]);
                     break;
                 }
                 completeTaskByPlayer(virtualPlayer, taskIndex);
-            }
-            case "menu" -> {
-                Player player = commandSender instanceof Player p ? p : null;
-                if (player == null)
-                    return false;
-
-                BasicMenu menu = new BasicMenu(board, "Easy Menu Lib Test", 6);
-
-                menu.addItem(new ItemTemplate(0, 0, Material.BEDROCK, "" + ChatColor.RED + ChatColor.UNDERLINE + "Some name??"));
-
-                menu.addAction(new ItemTemplate(1, 0, Material.ACACIA_BOAT, "" + ChatColor.LIGHT_PURPLE + ChatColor.ITALIC + "Toggle Action", "Toggle me :D"),
-                        new ToggleButtonAction(toggled -> {
-                            Message.sendDebug("I am toggled and " + toggled, player);
-                        }));
-
-                ItemTemplate spinboxItem = new ItemTemplate(2, 0, Material.LEAD, "Spinbox action", "I have value >:)");
-                spinboxItem.setAction(new SpinBoxButtonAction(13, 34, 2, value -> {
-                    Message.sendDebug("I have a value of " + value, player);
-                    spinboxItem.setLore(new TextComponent("I have a value of " + value + "!"));
-                }));
-                menu.addItem(spinboxItem);
-
-                menu.addAction(new ItemTemplate(3, 0, Material.SAND, "I should not exist..."), arguments -> {
-                    Message.sendDebug("but yet I am alive ;(", player);
-                });
-
-                ItemTemplate comboItem = new ItemTemplate(3, 0, Material.YELLOW_CONCRETE, "I am actually 4 items", "fr fr");
-                menu.addAction(comboItem, new ComboBoxButtonAction(selection -> {
-                    Message.sendDebug("You have selected " + selection, player);
-                })
-                        .addOption("Cheese", new ItemTemplate(Material.YELLOW_CONCRETE))
-                        .addOption("Potato", new ItemTemplate(Material.POISONOUS_POTATO))
-                        .addOption("Tomato", new ItemTemplate(Material.RED_CONCRETE))
-                        .addOption("Carrotato", new ItemTemplate(Material.ORANGE_CONCRETE))
-                        .selectOption("Tomato"));
-
-                menu.open(player);
-                Message.log("Opened menu");
             }
         }
         return true;
@@ -120,7 +78,7 @@ public class BingoTestCommand implements TabExecutor
         BingoCard card = player.getTeam().getCard();
 
         if (card == null || taskIndex >= card.getTasks().size()) {
-            Message.log(ChatColor.RED + "index out of bounds for task list!");
+            ConsoleMessenger.log(Component.text("index out of bounds for task list!").color(NamedTextColor.RED));
             return;
         }
 

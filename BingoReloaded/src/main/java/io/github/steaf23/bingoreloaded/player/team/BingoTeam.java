@@ -3,11 +3,12 @@ package io.github.steaf23.bingoreloaded.player.team;
 import io.github.steaf23.bingoreloaded.cards.BingoCard;
 
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
-import io.github.steaf23.bingoreloaded.util.Message;
-import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
-import org.bukkit.scoreboard.Team;
+import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
+import net.kyori.adventure.audience.Audience;
+import net.kyori.adventure.audience.ForwardingAudience;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -16,18 +17,18 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-public class BingoTeam
+public class BingoTeam implements ForwardingAudience
 {
-    private BaseComponent prefix;
     private BingoCard card;
     public boolean outOfTheGame = false;
     private final String id;
-    private final ChatColor color;
-    private final String name;
+    private final TextColor color;
+    private final Component name;
+    private final Component prefix;
 
     private final Set<BingoParticipant> members;
 
-    public BingoTeam(String identifier, ChatColor color, String name, BaseComponent prefix) {
+    public BingoTeam(String identifier, TextColor color, Component name, Component prefix) {
         this.id = identifier;
         this.card = null;
         this.color = color;
@@ -53,18 +54,16 @@ public class BingoTeam
         return id;
     }
 
-    public ChatColor getColor() {
+    public TextColor getColor() {
         return color;
     }
 
-    public String getName() {
+    public Component getName() {
         return name;
     }
 
-    public BaseComponent getColoredName() {
-        return new ComponentBuilder(name)
-                .color(color)
-                .bold(true).build();
+    public Component getColoredName() {
+        return name.color(color).decorate(TextDecoration.BOLD);
     }
 
     public Set<BingoParticipant> getMembers() {
@@ -104,7 +103,7 @@ public class BingoTeam
 
     public int getCompleteCount() {
         if (card == null) {
-            Message.error("Cannot get complete count of team " + getColoredName() + " (Please report!)");
+            ConsoleMessenger.bug("Cannot get complete count of team " + getColoredName(), this);
             return 0;
         }
         return card.getCompleteCount(this);
@@ -112,16 +111,15 @@ public class BingoTeam
 
     public Set<String> getMemberNames() {
         return members.stream()
-                .map(participant -> {
-                    if (participant.sessionPlayer().isEmpty()) {
-                        return participant.getDisplayName();
-                    } else {
-                        return participant.sessionPlayer().get().getName();
-                    }
-                }).collect(Collectors.toSet());
+                .map(BingoParticipant::getName).collect(Collectors.toSet());
     }
 
-    public BaseComponent getPrefix() {
+    public Component getPrefix() {
         return prefix;
+    }
+
+    @Override
+    public @NotNull Iterable<? extends Audience> audiences() {
+        return getMembers();
     }
 }

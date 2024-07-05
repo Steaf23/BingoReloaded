@@ -1,13 +1,12 @@
 package io.github.steaf23.bingoreloaded.cards;
 
-import io.github.steaf23.bingoreloaded.data.BingoTranslation;
+import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeamContainer;
 import io.github.steaf23.bingoreloaded.tasks.BingoTask;
 import io.github.steaf23.bingoreloaded.tasks.tracker.TaskProgressTracker;
-import io.github.steaf23.bingoreloaded.util.TranslatedMessage;
-import io.github.steaf23.easymenulib.inventory.MenuBoard;
+import io.github.steaf23.playerdisplay.inventory.MenuBoard;
 
 public class LockoutBingoCard extends BingoCard
 {
@@ -23,8 +22,8 @@ public class LockoutBingoCard extends BingoCard
         this.session = session;
         this.teams = teams;
 
-        menu.setInfo(BingoTranslation.INFO_LOCKOUT_NAME.translate(),
-                BingoTranslation.INFO_LOCKOUT_DESC.translate().split("\\n"));
+        menu.setInfo(BingoMessage.INFO_LOCKOUT_NAME.asPhrase(),
+                BingoMessage.INFO_LOCKOUT_DESC.asMultiline());
     }
 
     // Lockout cards cannot be copied since it should be the same instance for every player.
@@ -63,9 +62,7 @@ public class LockoutBingoCard extends BingoCard
         if (team.outOfTheGame) {
             return;
         }
-        new TranslatedMessage(BingoTranslation.DROPPED)
-                .arg(team.getColoredName())
-                .sendAll(session);
+        BingoMessage.DROPPED.sendToAudience(session, team.getColoredName());
         team.outOfTheGame = true;
         for (BingoTask task : getTasks()) {
             if (task.isCompleted() && team.getMembers().contains(task.getCompletedBy().orElseGet(() -> null))) {

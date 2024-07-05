@@ -1,11 +1,9 @@
 package io.github.steaf23.bingoreloaded.tasks;
 
-import io.github.steaf23.bingoreloaded.data.BingoTranslation;
-import io.github.steaf23.easymenulib.util.ChatComponentUtils;
-import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
-import net.md_5.bungee.api.chat.TextComponent;
+import io.github.steaf23.bingoreloaded.data.BingoMessage;
+import io.github.steaf23.playerdisplay.util.ComponentUtils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.persistence.PersistentDataContainer;
@@ -29,27 +27,23 @@ public record ItemTask(Material material, int count) implements CountableTask
     }
 
     @Override
-    public BaseComponent getName()
+    public Component getName()
     {
-        ComponentBuilder builder = new ComponentBuilder().color(ChatColor.YELLOW);
-        builder.append(count + "x ")
-                .append(ChatComponentUtils.itemName(material));
-        return builder.build();
+        return Component.text().color(NamedTextColor.YELLOW)
+                .append(Component.text(count + "x "))
+                .append(ComponentUtils.itemName(material)).build();
     }
 
     @Override
-    public BaseComponent[] getItemDescription()
+    public Component[] getItemDescription()
     {
-        Set<ChatColor> modifiers = new HashSet<>(){{
-            add(ChatColor.DARK_AQUA);
-        }};
-        return BingoTranslation.LORE_ITEM.asComponent(modifiers, new TextComponent(Integer.toString(count)));
+        return BingoMessage.LORE_ITEM.asMultiline(NamedTextColor.DARK_AQUA, Component.text(count));
     }
 
     @Override
-    public BaseComponent getChatDescription()
+    public Component getChatDescription()
     {
-        return new ComponentBuilder().append(getItemDescription()).build();
+        return Component.text().append(getItemDescription()).build();
     }
 
     @Override

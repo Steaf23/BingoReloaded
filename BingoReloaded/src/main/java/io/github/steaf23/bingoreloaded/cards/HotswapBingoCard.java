@@ -1,7 +1,7 @@
 package io.github.steaf23.bingoreloaded.cards;
 
 import io.github.steaf23.bingoreloaded.data.BingoCardData;
-import io.github.steaf23.bingoreloaded.data.BingoTranslation;
+import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.ConfigData;
 import io.github.steaf23.bingoreloaded.event.BingoPlaySoundEvent;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
@@ -12,12 +12,12 @@ import io.github.steaf23.bingoreloaded.tasks.BingoTask;
 import io.github.steaf23.bingoreloaded.tasks.ItemTask;
 import io.github.steaf23.bingoreloaded.tasks.TaskData;
 import io.github.steaf23.bingoreloaded.tasks.tracker.TaskProgressTracker;
-import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.bingoreloaded.util.timer.GameTimer;
-import io.github.steaf23.easymenulib.inventory.MenuBoard;
-import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.chat.ComponentBuilder;
-import net.md_5.bungee.api.chat.TextComponent;
+import io.github.steaf23.playerdisplay.inventory.MenuBoard;
+import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -49,7 +49,7 @@ public class HotswapBingoCard extends BingoCard
     private final List<TaskData> randomTasks;
 
     public HotswapBingoCard(MenuBoard menuBoard, CardSize size, BingoGame game, TaskProgressTracker progressTracker, int winningScore, ConfigData.HotswapConfig config) {
-        super(new HotswapCardMenu(menuBoard, size, BingoTranslation.CARD_TITLE.translate()), size, progressTracker);
+        super(new HotswapCardMenu(menuBoard, size), size, progressTracker);
         this.taskTimer = game.getTimer();
         this.randomExpiryProvider = new Random();
         this.taskHolders = new ArrayList<>();
@@ -67,14 +67,13 @@ public class HotswapBingoCard extends BingoCard
         boolean countdownEnabled = game.getSettings().enableCountdown();
         this.winningScore = countdownEnabled ? -1 : winningScore;
 
-        String[] description = new String[]{};
+        Component[] description;
         if (countdownEnabled) {
-            description = BingoTranslation.INFO_HOTSWAP_COUNTDOWN.translate(String.valueOf(game.getSettings().countdownDuration())).split("\\n");
+            description = BingoMessage.INFO_HOTSWAP_COUNTDOWN.asMultiline(Component.text(game.getSettings().countdownDuration()));
         } else {
-            description = BingoTranslation.INFO_HOTSWAP_DESC.translate(String.valueOf(winningScore)).split("\\n");
+            description = BingoMessage.INFO_HOTSWAP_DESC.asMultiline(Component.text(winningScore));
         }
-        menu.setInfo(BingoTranslation.INFO_HOTSWAP_NAME.translate(),
-                description);
+        menu.setInfo(BingoMessage.INFO_HOTSWAP_NAME.asPhrase(), description);
     }
 
     @Override
@@ -170,7 +169,7 @@ public class HotswapBingoCard extends BingoCard
                     // Recovery finished, replace task with a new one.
                     BingoTask newTask = bingoTaskGenerator.get();
                     if (newTask == null) {
-                        Message.error("Cannot generate new task for hot-swap, (Please report!)");
+                        ConsoleMessenger.bug("Cannot generate new task for hot-swap", this);
                     }
                     lastRecoverdTask = newTask;
                     int expirationTime = randomExpiryProvider.nextInt(minExpirationTime, (maxExpirationTime + 1)) * 60;
@@ -194,11 +193,12 @@ public class HotswapBingoCard extends BingoCard
             if (taskExpiredCount == 1) {
                 BingoTask taskToSend = lastExpiredTask;
                 game.getActionBar().requestMessage(p ->
-                                new ComponentBuilder().bold(true).append(BingoTranslation.HOTSWAP_SINGLE_EXPIRED.asComponent(Set.of(ChatColor.of("#e85e21")), taskToSend.data.getName())).build()
-                        , 1, 3);
+                                Component.text().decorate(TextDecoration.BOLD).append(BingoMessage.HOTSWAP_SINGLE_EXPIRED.asPhrase(taskToSend.data.getName()).color(TextColor.fromHexString("#e85e21"))).build(),
+                        1, 3);
             }
             else {
-                game.getActionBar().requestMessage(p -> new ComponentBuilder().bold(true).append(BingoTranslation.HOTSWAP_MULTIPLE_EXPIRED.asComponent(Set.of(ChatColor.of("#e85e21")))).build(), 1, 3);
+                game.getActionBar().requestMessage(p -> Component.text().decorate(TextDecoration.BOLD).append(BingoMessage.HOTSWAP_MULTIPLE_EXPIRED.asPhrase().color(TextColor.fromHexString("#e85e21"))).build(),
+                        1, 3);
             }
         }
         if (taskRecoveredCount > 0) {
@@ -208,11 +208,12 @@ public class HotswapBingoCard extends BingoCard
             if (taskRecoveredCount == 1) {
                 BingoTask taskToSend = lastRecoverdTask;
                 game.getActionBar().requestMessage(p ->
-                                new ComponentBuilder().bold(true).append(BingoTranslation.HOTSWAP_SINGLE_ADDED.asComponent(Set.of(ChatColor.of("#5cb1ff")), taskToSend.data.getName())).build()
-                        , 2, 3);
+                                Component.text().decorate(TextDecoration.BOLD).append(BingoMessage.HOTSWAP_SINGLE_ADDED.asPhrase(taskToSend.data.getName()).color(TextColor.fromHexString("#5cb1ff"))).build(),
+                        2, 3);
             }
             else {
-                game.getActionBar().requestMessage(p -> new ComponentBuilder().bold(true).append(BingoTranslation.HOTSWAP_MULTIPLE_ADDED.asComponent(Set.of(ChatColor.of("#5cb1ff")))).build(), 2, 3);
+                game.getActionBar().requestMessage(p -> Component.text().decorate(TextDecoration.BOLD).append(BingoMessage.HOTSWAP_MULTIPLE_ADDED.asPhrase().color(TextColor.fromHexString("#5cb1ff"))).build(),
+                        1, 3);
             }
         }
         ((HotswapCardMenu)menu).updateTaskHolders(taskHolders);

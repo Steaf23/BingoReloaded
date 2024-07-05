@@ -1,6 +1,8 @@
 package io.github.steaf23.bingoreloaded.command;
 
 import io.github.steaf23.bingoreloaded.cards.CardSize;
+import io.github.steaf23.bingoreloaded.command.core.DeferredCommand;
+import io.github.steaf23.bingoreloaded.command.core.SubCommand;
 import io.github.steaf23.bingoreloaded.data.BingoCardData;
 import io.github.steaf23.bingoreloaded.data.BingoSettingsData;
 import io.github.steaf23.bingoreloaded.data.ConfigData;
@@ -14,8 +16,10 @@ import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
 import io.github.steaf23.bingoreloaded.settings.BingoSettingsBuilder;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
-import io.github.steaf23.bingoreloaded.util.Message;
-import net.md_5.bungee.api.ChatColor;
+import io.github.steaf23.playerdisplay.PlayerDisplay;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.command.Command;
@@ -235,7 +239,7 @@ public class AutoBingoCommand implements TabExecutor
         currentSender = commandSender;
 
         if (!command.execute(args)) {
-            commandSender.sendMessage(ChatColor.DARK_GRAY + " - " + ChatColor.RED + "Usage: " + command.usage(args));
+            commandSender.sendMessage(PlayerDisplay.MINI_BUILDER.deserialize("<dark_gray> - <red>Usage: " + command.usage(args)));
         }
         return true;
     }
@@ -451,7 +455,7 @@ public class AutoBingoCommand implements TabExecutor
         }
 
         BingoSettings view = settings.view();
-        sendSuccess("Set gamemode to " + view.mode().displayName + " " + view.size().size + "x" + view.size().size, worldName);
+        sendSuccess("Set gamemode to " + view.mode() + " " + view.size().size + "x" + view.size().size, worldName);
         return true;
     }
 
@@ -564,8 +568,6 @@ public class AutoBingoCommand implements TabExecutor
             return false;
         }
 
-        Message.log(Arrays.stream(args).toList().toString());
-
         Player player = Bukkit.getPlayer(args[1]);
         if (player == null) {
             sendFailed("Player '" + args[1] + "' does not exist!", sessionName);
@@ -606,16 +608,24 @@ public class AutoBingoCommand implements TabExecutor
                 return false;
             }
         }
-        sendSuccess(player.getDisplayName() + " voted for " + category + " " + voteFor, sessionName);
+        sendSuccess(player.displayName().append(Component.text(" voted for " + category + " " + voteFor)), sessionName);
         return true;
     }
 
-    private void sendFailed(String message, String sessionName) {
-        currentSender.sendMessage("(" + sessionName + ") " + ChatColor.RED + message);
+    private void sendSuccess(String message, String sessionName) {
+        sendSuccess(Component.text(message), sessionName);
     }
 
-    private void sendSuccess(String message, String sessionName) {
-        currentSender.sendMessage("(" + sessionName + ") " + ChatColor.GREEN + message);
+    private void sendFailed(String message, String sessionName) {
+        sendFailed(Component.text(message), sessionName);
+    }
+
+    private void sendSuccess(Component message, String sessionName) {
+        currentSender.sendMessage(Component.text("(" + sessionName + ") ").append(message.color(NamedTextColor.GREEN)));
+    }
+
+    private void sendFailed(Component message, String sessionName) {
+        currentSender.sendMessage(Component.text("(" + sessionName + ") ").append(message.color(NamedTextColor.RED)));
     }
 
     @Nullable

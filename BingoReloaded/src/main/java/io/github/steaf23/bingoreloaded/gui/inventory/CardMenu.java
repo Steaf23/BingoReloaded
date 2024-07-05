@@ -1,10 +1,12 @@
 package io.github.steaf23.bingoreloaded.gui.inventory;
 
 import io.github.steaf23.bingoreloaded.cards.CardSize;
+import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.tasks.BingoTask;
-import io.github.steaf23.easymenulib.inventory.BasicMenu;
-import io.github.steaf23.easymenulib.inventory.MenuBoard;
-import io.github.steaf23.easymenulib.inventory.item.ItemTemplate;
+import io.github.steaf23.playerdisplay.inventory.BasicMenu;
+import io.github.steaf23.playerdisplay.inventory.MenuBoard;
+import io.github.steaf23.playerdisplay.inventory.item.ItemTemplate;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
 import org.jetbrains.annotations.NotNull;
@@ -17,9 +19,9 @@ public class CardMenu extends BasicMenu
     private final CardSize size;
     private List<BingoTask> tasks;
 
-    public CardMenu(MenuBoard menuBoard, CardSize cardSize, String title)
+    public CardMenu(MenuBoard menuBoard, CardSize cardSize)
     {
-        super(menuBoard, title, cardSize.size);
+        super(menuBoard, BingoMessage.CARD_TITLE.asPhrase(), cardSize.size);
         this.size = cardSize;
         this.tasks = new ArrayList<>();
         setMaxStackSizeOverride(64);
@@ -37,7 +39,7 @@ public class CardMenu extends BasicMenu
         return tasks.get(taskIndex).toItem();
     }
 
-    public void setInfo(String name, String... description)
+    public void setInfo(Component name, Component... description)
     {
         ItemTemplate info = new ItemTemplate(0, Material.MAP, name, description);
         addItem(info);

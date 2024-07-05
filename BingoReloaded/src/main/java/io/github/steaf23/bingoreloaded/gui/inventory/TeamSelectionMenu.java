@@ -1,19 +1,23 @@
 package io.github.steaf23.bingoreloaded.gui.inventory;
 
-import io.github.steaf23.bingoreloaded.data.BingoTranslation;
+import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.TeamData;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.player.team.TeamManager;
-import io.github.steaf23.bingoreloaded.util.Message;
-import io.github.steaf23.easymenulib.inventory.FilterType;
-import io.github.steaf23.easymenulib.inventory.MenuBoard;
-import io.github.steaf23.easymenulib.inventory.PaginatedSelectionMenu;
-import io.github.steaf23.easymenulib.inventory.item.ItemTemplate;
-import io.github.steaf23.easymenulib.util.ChatComponentUtils;
-import net.md_5.bungee.api.ChatColor;
+import io.github.steaf23.playerdisplay.PlayerDisplay;
+import io.github.steaf23.playerdisplay.inventory.FilterType;
+import io.github.steaf23.playerdisplay.inventory.MenuBoard;
+import io.github.steaf23.playerdisplay.inventory.PaginatedSelectionMenu;
+import io.github.steaf23.playerdisplay.inventory.item.ItemTemplate;
+import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
@@ -26,8 +30,10 @@ public class TeamSelectionMenu extends PaginatedSelectionMenu
     private final BingoSession session;
     private final TeamManager teamManager;
 
+    private static final Component PLAYER_PREFIX = PlayerDisplay.MINI_BUILDER.deserialize("<gray><bold> ┗ </bold></gray><white>");
+
     public TeamSelectionMenu(MenuBoard manager, BingoSession session) {
-        super(manager, BingoTranslation.OPTIONS_TEAM.translate(), new ArrayList<>(), FilterType.NONE);
+        super(manager, BingoMessage.OPTIONS_TEAM.asPhrase(), new ArrayList<>(), FilterType.NONE);
         this.session = session;
         this.teamManager = session.teamManager;
     }
@@ -59,37 +65,35 @@ public class TeamSelectionMenu extends PaginatedSelectionMenu
         super.beforeOpening(player);
 
         List<ItemTemplate> optionItems = new ArrayList<>();
-        ItemTemplate autoItem = new ItemTemplate(Material.NETHER_STAR, "" + ChatColor.BOLD + ChatColor.ITALIC + BingoTranslation.TEAM_AUTO.translate())
+        ItemTemplate autoItem = new ItemTemplate(Material.NETHER_STAR, BingoMessage.TEAM_AUTO.asPhrase().color(TextColor.fromHexString("#fdffa8")).decorate(TextDecoration.BOLD, TextDecoration.ITALIC))
                 .setCompareKey("item_auto");
         if (player instanceof Player gamePlayer) {
             Optional<BingoTeam> autoTeamOpt = teamManager.getActiveTeams().getTeams().stream()
                     .filter(t -> t.getIdentifier().equals("auto")).findAny();
 
             if (autoTeamOpt.isEmpty()) {
-                Message.error("Cannot find any teams to join! Wait for the game to re-open (if it still happens after the game is re-opened, Please report!)");
+                //FIXME: maybe send the player a message instead?
+                ConsoleMessenger.error("Cannot find any teams to join! Wait for the game to re-open (if it still happens after the game is re-opened, Please report!)");
                 return;
             }
 
             BingoTeam autoTeam = autoTeamOpt.get();
 
-            boolean playerInAutoTeam = false;
-            if (autoTeam != null && autoTeam.hasMember(player.getUniqueId())) {
-                playerInAutoTeam = true;
-            }
-            int autoTeamMemberCount = autoTeam == null ? 0 : autoTeam.getMembers().size();
-            List<String> description = new ArrayList<>();
+            boolean playerInAutoTeam = autoTeam.hasMember(player.getUniqueId());
+            int autoTeamMemberCount = autoTeam.getMembers().size();
+            List<Component> description = new ArrayList<>();
             if (playerInAutoTeam) {
-                description.add("" + ChatColor.GRAY + ChatColor.BOLD + " ┗ " + ChatColor.RESET + ChatColor.WHITE + gamePlayer.getDisplayName());
-                description.add(" ");
-                description.add("" + ChatColor.GRAY + BingoTranslation.COUNT_MORE.translate(Integer.toString(autoTeamMemberCount - 1)));
+                description.add(PLAYER_PREFIX.append(gamePlayer.displayName()));
+                description.add(Component.text(" "));
+                description.add(BingoMessage.COUNT_MORE.asPhrase(Component.text(Integer.toString(autoTeamMemberCount - 1))).color(NamedTextColor.GRAY));
             }
             else {
-                description.add("" + ChatColor.GRAY + BingoTranslation.COUNT_MORE.translate(Integer.toString(autoTeamMemberCount)));
+                description.add(BingoMessage.COUNT_MORE.asPhrase(Component.text(Integer.toString(autoTeamMemberCount))).color(NamedTextColor.GRAY));
             }
-            autoItem.addDescription("joined", 1, description.toArray(new String[]{}));
+            autoItem.setLore(description.toArray(Component[]::new));
         }
         optionItems.add(autoItem);
-        optionItems.add(new ItemTemplate(Material.TNT, "" + ChatColor.BOLD + ChatColor.ITALIC + BingoTranslation.OPTIONS_LEAVE.translate())
+        optionItems.add(new ItemTemplate(Material.TNT, BingoMessage.OPTIONS_LEAVE.asPhrase().color(NamedTextColor.AQUA).decorate(TextDecoration.BOLD, TextDecoration.ITALIC))
                 .setGlowing(true).setCompareKey("item_leave"));
 
         var allTeams = teamManager.getJoinableTeams();
@@ -98,14 +102,14 @@ public class TeamSelectionMenu extends PaginatedSelectionMenu
             TeamData.TeamTemplate teamTemplate = allTeams.get(teamId);
 
             boolean teamIsFull = false;
-            List<String> description = new ArrayList<>();
+            List<Component> players = new ArrayList<>();
 
             for (BingoTeam team : teamManager.getActiveTeams()) {
                 if (!team.getIdentifier().equals(teamId))
                     continue;
 
                 for (BingoParticipant participant : team.getMembers()) {
-                    description.add("" + ChatColor.GRAY + ChatColor.BOLD + " ┗ " + ChatColor.RESET + ChatColor.WHITE + participant.getDisplayName());
+                    players.add(PLAYER_PREFIX.append(participant.getDisplayName()));
                     if (participant.getId().equals(player.getUniqueId())) {
                         playersTeam = true;
                     }
@@ -116,18 +120,19 @@ public class TeamSelectionMenu extends PaginatedSelectionMenu
                 }
             }
 
-            description.add(" ");
+            Component teamStatus;
             if (teamIsFull) {
-                description.add(ChatColor.RED + BingoTranslation.FULL_TEAM_DESC.translate());
+                teamStatus = BingoMessage.FULL_TEAM_DESC.asPhrase().color(NamedTextColor.RED);
             } else {
-                description.add(ChatColor.GREEN + BingoTranslation.JOIN_TEAM_DESC.translate());
+                teamStatus = BingoMessage.JOIN_TEAM_DESC.asPhrase().color(NamedTextColor.GREEN);
             }
 
             optionItems.add(ItemTemplate.createColoredLeather(teamTemplate.color(), Material.LEATHER_HELMET)
-                    .setName(ChatComponentUtils.convert("" + teamTemplate.color() + ChatColor.BOLD + teamTemplate.name()))
-                    .setLore(ChatComponentUtils.createComponentsFromString(description.toArray(new String[]{})))
+                    .setName(Component.text(teamTemplate.name()).color(teamTemplate.color()).decorate(TextDecoration.BOLD))
+                    .setLore(players.toArray(Component[]::new))
                     .setCompareKey(teamId)
-                    .setGlowing(playersTeam));
+                    .setGlowing(playersTeam)
+                    .addDescription("status", 1, teamStatus));
         }
 
         clearItems();

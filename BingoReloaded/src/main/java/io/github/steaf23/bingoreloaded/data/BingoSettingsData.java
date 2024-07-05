@@ -3,7 +3,8 @@ package io.github.steaf23.bingoreloaded.data;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.helper.YmlDataManager;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
-import io.github.steaf23.bingoreloaded.util.Message;
+import io.github.steaf23.bingoreloaded.settings.BingoSettingsBuilder;
+import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 
 import javax.annotation.Nullable;
 import java.util.Set;
@@ -17,30 +18,33 @@ public class BingoSettingsData
         this.data = BingoReloaded.createYmlDataManager("data/presets.yml");
     }
 
-    public BingoSettings getSettings(String name) {
+    public @Nullable BingoSettings getSettings(String name) {
         if (name.equals("default"))
         {
-            Message.error("Cannot load settings named 'default'.");
+            ConsoleMessenger.error("Cannot load settings named 'default'.");
             return null;
         }
 
         if (data.getConfig().contains(name)) {
             return data.getConfig().getSerializable(name, BingoSettings.class);
         }
-        return getDefaultSettings();
+        else if (!getDefaultSettingsName().isEmpty()) {
+            return data.getConfig().getSerializable(getDefaultSettingsName(), BingoSettings.class);
+        }
+        return null;
     }
 
     public void saveSettings(String name, BingoSettings settings) {
         if (name.equals("default"))
         {
-            Message.error("Cannot use name 'default'.");
+            ConsoleMessenger.error("Cannot use name 'default'.");
             return;
         }
         if (data.getConfig().contains(name)) {
-            Message.log("Overwritten saved preset '" + name + "' with current settings");
+            ConsoleMessenger.log("Overwritten saved preset '" + name + "' with current settings");
             data.getConfig().set(name, null);
         } else {
-            Message.log("Saved preset '" + name + "'");
+            ConsoleMessenger.log("Saved preset '" + name + "'");
         }
         data.getConfig().set(name, settings);
         data.saveConfig();
@@ -49,7 +53,7 @@ public class BingoSettingsData
     public void removeSettings(String name) {
         if (name.equals("default_settings"))
         {
-            Message.error("Cannot remove default settings!");
+            ConsoleMessenger.error("Cannot remove default settings!");
             return;
         }
 
@@ -58,7 +62,7 @@ public class BingoSettingsData
         {
             setDefaultSettings("default_settings");
         }
-        Message.log("Removed preset '" + name + "'");
+        ConsoleMessenger.log("Removed preset '" + name + "'");
         data.getConfig().set(name, null);
         data.saveConfig();
     }

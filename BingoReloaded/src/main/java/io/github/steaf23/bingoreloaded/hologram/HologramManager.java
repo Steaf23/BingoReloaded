@@ -1,6 +1,6 @@
 package io.github.steaf23.bingoreloaded.hologram;
 
-import io.github.steaf23.bingoreloaded.util.Message;
+import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Location;
 
@@ -23,24 +23,11 @@ public class HologramManager
     {
         if (holograms.containsKey(id))
         {
-            Message.warn("Hologram with id " + id + " already exists");
+            ConsoleMessenger.warn("Hologram with id " + id + " already exists");
             return holograms.get(id);
         }
 
         Hologram holo = new Hologram(location, lines);
-        holograms.put(id, holo);
-        return holo;
-    }
-
-    public Hologram createImage(String id, Location location, String imagePath, ChatColor backgroundColor) throws IOException
-    {
-        if (holograms.containsKey(id))
-        {
-            Message.warn("Hologram with id " + id + " already exists");
-            return holograms.get(id);
-        }
-
-        Hologram holo = new PixelArtHologram(location, imagePath, backgroundColor);
         holograms.put(id, holo);
         return holo;
     }
@@ -54,7 +41,7 @@ public class HologramManager
         }
         else
         {
-            Message.warn("Hologram with id " + id + " does not exist");
+            ConsoleMessenger.warn("Hologram with id " + id + " does not exist");
         }
     }
 }

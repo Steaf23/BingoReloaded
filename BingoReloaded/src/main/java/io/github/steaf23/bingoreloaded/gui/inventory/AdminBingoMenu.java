@@ -2,16 +2,20 @@ package io.github.steaf23.bingoreloaded.gui.inventory;
 
 
 import io.github.steaf23.bingoreloaded.data.BingoCardData;
-import io.github.steaf23.bingoreloaded.data.BingoTranslation;
+import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.ConfigData;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
-import io.github.steaf23.easymenulib.inventory.*;
-import io.github.steaf23.easymenulib.inventory.item.ItemTemplate;
-import io.github.steaf23.easymenulib.inventory.item.action.ComboBoxButtonAction;
-import io.github.steaf23.easymenulib.inventory.item.action.SpinBoxButtonAction;
-import io.github.steaf23.easymenulib.inventory.item.action.ToggleButtonAction;
-import io.github.steaf23.easymenulib.util.ChatComponentUtils;
-import net.md_5.bungee.api.ChatColor;
+import io.github.steaf23.playerdisplay.PlayerDisplay;
+import io.github.steaf23.playerdisplay.inventory.*;
+import io.github.steaf23.playerdisplay.inventory.item.ItemTemplate;
+import io.github.steaf23.playerdisplay.inventory.item.action.ComboBoxButtonAction;
+import io.github.steaf23.playerdisplay.inventory.item.action.SpinBoxButtonAction;
+import io.github.steaf23.playerdisplay.inventory.item.action.ToggleButtonAction;
+import io.github.steaf23.playerdisplay.util.ComponentUtils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -27,31 +31,31 @@ public class AdminBingoMenu extends BasicMenu
     private static final int TEAMSIZE_MAX = 64;
 
     private static final ItemTemplate START = new ItemTemplate(6, 0,
-            Material.LIME_CONCRETE, TITLE_PREFIX + BingoTranslation.OPTIONS_START.translate());
+            Material.LIME_CONCRETE, BasicMenu.applyTitleFormat(BingoMessage.OPTIONS_START.asPhrase()));
     private static final ItemTemplate END = new ItemTemplate(6, 0,
-            Material.RED_CONCRETE, TITLE_PREFIX + BingoTranslation.OPTIONS_END.translate());
+            Material.RED_CONCRETE, BasicMenu.applyTitleFormat(BingoMessage.OPTIONS_END.asPhrase()));
     private static final ItemTemplate JOIN = new ItemTemplate(2, 0,
-            Material.WHITE_GLAZED_TERRACOTTA, TITLE_PREFIX + BingoTranslation.OPTIONS_TEAM.translate());
+            Material.WHITE_GLAZED_TERRACOTTA, BasicMenu.applyTitleFormat(BingoMessage.OPTIONS_TEAM.asPhrase()));
     private static final ItemTemplate CARD = new ItemTemplate(1, 2,
-            Material.MAP, TITLE_PREFIX + BingoTranslation.OPTIONS_CARD.translate());
+            Material.MAP, BasicMenu.applyTitleFormat(BingoMessage.OPTIONS_CARD.asPhrase()));
     private static final ItemTemplate KIT = new ItemTemplate(3, 2,
-            Material.LEATHER_HELMET, TITLE_PREFIX + BingoTranslation.OPTIONS_KIT.translate());
+            Material.LEATHER_HELMET, BasicMenu.applyTitleFormat(BingoMessage.OPTIONS_KIT.asPhrase()));
     private static final ItemTemplate MODE = new ItemTemplate(1, 4,
-            Material.ENCHANTED_BOOK, TITLE_PREFIX + BingoTranslation.OPTIONS_GAMEMODE.translate())
-            .addDescription("input", 10, Menu.INPUT_RIGHT_CLICK + "gamemode specific settings");
+            Material.ENCHANTED_BOOK, BasicMenu.applyTitleFormat(BingoMessage.OPTIONS_GAMEMODE.asPhrase()))
+            .addDescription("input", 10, Menu.INPUT_RIGHT_CLICK.append(Component.text("gamemode specific settings")));
     private static final ItemTemplate EFFECTS = new ItemTemplate(3, 4,
-            Material.POTION, TITLE_PREFIX + BingoTranslation.OPTIONS_EFFECTS.translate());
+            Material.POTION, BasicMenu.applyTitleFormat(BingoMessage.OPTIONS_EFFECTS.asPhrase()));
     private static final ItemTemplate COUNTDOWN = new ItemTemplate(5, 2,
-            Material.CLOCK, TITLE_PREFIX + "Enable Countdown Timer");
+            Material.CLOCK, BasicMenu.applyTitleFormat("Enable Countdown Timer"));
     private static final ItemTemplate DURATION = new ItemTemplate(5, 4,
-            Material.RECOVERY_COMPASS, TITLE_PREFIX + "Countdown Duration");
+            Material.RECOVERY_COMPASS, BasicMenu.applyTitleFormat("Countdown Duration"));
     private static final ItemTemplate TEAM_SIZE = new ItemTemplate(7, 2,
-            Material.ENDER_EYE, TITLE_PREFIX + "Maximum Team Size");
+            Material.ENDER_EYE, BasicMenu.applyTitleFormat("Maximum Team Size"));
     private static final ItemTemplate PRESETS = new ItemTemplate(7, 4,
-            Material.CHEST_MINECART, TITLE_PREFIX + "Setting Presets");
+            Material.CHEST_MINECART, BasicMenu.applyTitleFormat("Setting Presets"));
 
     public AdminBingoMenu(MenuBoard menuBoard, BingoSession session, ConfigData config) {
-        super(menuBoard, BingoTranslation.OPTIONS_TITLE.translate(), 6);
+        super(menuBoard, BingoMessage.OPTIONS_TITLE.asPhrase(), 6);
         this.session = session;
 
         addAction(JOIN, p -> {
@@ -117,17 +121,18 @@ public class AdminBingoMenu extends BasicMenu
         List<ItemTemplate> cards = new ArrayList<>();
 
         for (String cardName : cardsData.getCardNames()) {
-            cards.add(new ItemTemplate(Material.PAPER, cardName,
-                    ChatColor.DARK_PURPLE + BingoTranslation.LIST_COUNT.translate(
-                            "" + cardsData.getListNames(cardName).size())));
+            cards.add(new ItemTemplate(Material.PAPER, Component.text(cardName),
+                    BingoMessage.LIST_COUNT.asPhrase(Component.text(cardsData.getListNames(cardName).size())
+                            .color(NamedTextColor.DARK_PURPLE))));
         }
 
-        BasicMenu cardPicker = new PaginatedSelectionMenu(getMenuBoard(), "Choose A Card", cards, FilterType.DISPLAY_NAME)
+        BasicMenu cardPicker = new PaginatedSelectionMenu(getMenuBoard(), Component.text("Choose A Card"), cards, FilterType.DISPLAY_NAME)
         {
             @Override
             public void onOptionClickedDelegate(InventoryClickEvent event, ItemTemplate clickedOption, HumanEntity player) {
-                if (!clickedOption.getName().isEmpty()) {
-                    cardSelected(clickedOption.getName());
+                String name = clickedOption.getPlainTextName();
+                if (!name.isEmpty()) {
+                    cardSelected(name);
                 }
                 close(player);
             }
@@ -141,45 +146,41 @@ public class AdminBingoMenu extends BasicMenu
     }
 
     private void updateDurationLore(ItemTemplate item, int duration) {
-        item.setLore(ChatComponentUtils.createComponentsFromString(
-                ChatColor.DARK_PURPLE + "Timer set to " + duration + " minute(s)",
-                "for bingo games on countdown mode"));
+        item.setLore(Component.text("Timer set to " + duration + " minutes(s)").color(NamedTextColor.DARK_PURPLE),
+                Component.text("for bingo games on countdown mode").color(NamedTextColor.DARK_PURPLE));
     }
 
     private void updateCountdownEnabledLore(ItemTemplate item, boolean enabled) {
         if (enabled) {
-            item.setLore(ChatComponentUtils.createComponentsFromString(
-                    ChatColor.DARK_PURPLE + "Countdown mode is " + ChatColor.GREEN + "ENABLED"));
+            item.setLore(PlayerDisplay.MINI_BUILDER.deserialize("<dark_purple>Countdown mode is <green>ENABLED</green>"));
         }
         else {
-            item.setLore(ChatComponentUtils.createComponentsFromString(
-                    ChatColor.DARK_PURPLE + "Countdown mode is " + ChatColor.RED + "DISABLED"));
+            item.setLore(PlayerDisplay.MINI_BUILDER.deserialize("<dark_purple>Countdown mode is <red>DISABLED</green>"));
         }
     }
 
     private void updateTeamSizeLore(ItemTemplate item, int value) {
-        item.setLore(ChatComponentUtils.createComponentsFromString(
-                ChatColor.GRAY + "(When changing this setting all currently",
-                ChatColor.GRAY + "joined players will be kicked from their teams!)",
-                ChatColor.DARK_PURPLE + "Maximum team size set to " + value + " players."));
+        item.setLore(Component.text("(When changing this setting all currently").color(NamedTextColor.GRAY),
+                Component.text("joined players will be kicked from their teams!)").color(NamedTextColor.GRAY),
+                Component.text("Maximum team size set to " + value + " players.").color(NamedTextColor.DARK_PURPLE));
     }
 
     private void showGamemodeSettings(HumanEntity player) {
-        BasicMenu menu = new BasicMenu(getMenuBoard(), "", 1);
+        BasicMenu menu = new BasicMenu(getMenuBoard(), Component.empty(), 1);
 
         int hotswapGoal = session.settingsBuilder.view().hotswapGoal();
-        ItemTemplate hotswapGoalItem = new ItemTemplate(0, Material.FIRE_CHARGE, "Hot-Swap Win Score",
-                "Complete " + hotswapGoal + " tasks to win hot-swap.",
-                "Only effective if countdown mode is disabled");
+        ItemTemplate hotswapGoalItem = new ItemTemplate(0, Material.FIRE_CHARGE, Component.text("Hot-Swap Win Score"),
+                Component.text("Complete " + hotswapGoal + " tasks to win hot-swap."),
+                Component.text("Only effective if countdown mode is disabled"));
         menu.addAction(hotswapGoalItem,
                 new SpinBoxButtonAction(1, 64, hotswapGoal, value -> {
                     session.settingsBuilder.hotswapGoal(value);
-                    hotswapGoalItem.setLore(ChatComponentUtils.createComponentsFromString(
+                    hotswapGoalItem.setLore(ComponentUtils.createComponentsFromString(
                             "Complete " + value + " tasks to win hot-swap.",
                             "Only effective if countdown mode is disabled"));
                 }));
 
-        menu.addCloseAction(new ItemTemplate(8, Material.BARRIER, TITLE_PREFIX + ChatColor.LIGHT_PURPLE + BingoTranslation.MENU_EXIT.translate()));
+        menu.addCloseAction(new ItemTemplate(8, Material.BARRIER, BingoMessage.MENU_EXIT.asPhrase().color(NamedTextColor.LIGHT_PURPLE).decorate(TextDecoration.BOLD)));
         menu.open(player);
     }
 }

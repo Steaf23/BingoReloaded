@@ -1,24 +1,26 @@
 package io.github.steaf23.bingoreloaded.gui.inventory;
 
-import io.github.steaf23.bingoreloaded.data.BingoTranslation;
-import net.md_5.bungee.api.ChatColor;
+import io.github.steaf23.bingoreloaded.data.BingoMessage;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 
+import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 
 public enum EffectOptionFlags
 {
-    NIGHT_VISION(BingoTranslation.EFFECTS_NIGHT_VISION.translate()),
-    WATER_BREATHING(BingoTranslation.EFFECTS_WATER_BREATH.translate()),
-    FIRE_RESISTANCE(BingoTranslation.EFFECTS_FIRE_RES.translate()),
-    NO_FALL_DAMAGE(BingoTranslation.EFFECTS_NO_FALL_DMG.translate()),
-    SPEED(BingoTranslation.EFFECTS_SPEED.translate()),
-    NO_DURABILITY(BingoTranslation.EFFECTS_NO_DURABILITY.translate()),
-    KEEP_INVENTORY(BingoTranslation.EFFECTS_KEEP_INVENTORY.translate());
+    NIGHT_VISION(BingoMessage.EFFECTS_NIGHT_VISION.asPhrase()),
+    WATER_BREATHING(BingoMessage.EFFECTS_WATER_BREATH.asPhrase()),
+    FIRE_RESISTANCE(BingoMessage.EFFECTS_FIRE_RES.asPhrase()),
+    NO_FALL_DAMAGE(BingoMessage.EFFECTS_NO_FALL_DMG.asPhrase()),
+    SPEED(BingoMessage.EFFECTS_SPEED.asPhrase()),
+    NO_DURABILITY(BingoMessage.EFFECTS_NO_DURABILITY.asPhrase()),
+    KEEP_INVENTORY(BingoMessage.EFFECTS_KEEP_INVENTORY.asPhrase());
 
-    public final String name;
+    public final Component name;
 
-    EffectOptionFlags(String name)
+    EffectOptionFlags(Component name)
     {
         this.name = name;
     }
@@ -26,15 +28,14 @@ public enum EffectOptionFlags
     public static final EnumSet<EffectOptionFlags> ALL_ON = EnumSet.allOf(EffectOptionFlags.class);
     public static final EnumSet<EffectOptionFlags> ALL_OFF = EnumSet.noneOf(EffectOptionFlags.class);
 
-    public static String effectsToString(EnumSet<EffectOptionFlags> effects) {
-        String result = "";
+    public static Component[] effectsToText(EnumSet<EffectOptionFlags> effects) {
+        List<Component> result = new ArrayList<>();
         if (effects.size() == 0)
         {
-            result = ChatColor.GRAY + "None";
+            result.add(Component.text("None", NamedTextColor.GRAY));
         }
         else
         {
-            result = "\n";
             // Display effects in pairs of 2 per line to save space
             int effectIdx = 0;
             List<EffectOptionFlags> allEffects = effects.stream().toList();
@@ -42,18 +43,18 @@ public enum EffectOptionFlags
 
             boolean firstLine = true;
             for (int effectPair = 0; effectPair < effectCount / 2.0; effectPair++) {
-                String effectNameLeft = allEffects.get(effectPair * 2).name;
-                String prefix = firstLine ? " - " : "   ";
+                Component effectNameLeft = allEffects.get(effectPair * 2).name;
+                Component prefix = Component.text(firstLine ? " - " : "   ");
                 if (effectCount > effectPair * 2 + 1) {
-                    String effectNameRight = allEffects.get(effectPair * 2 + 1).name;
-                    result += prefix + ChatColor.GRAY + effectNameLeft + ", " + effectNameRight + "\n";
+                    Component effectNameRight = allEffects.get(effectPair * 2 + 1).name;
+                    result.add(prefix.append(effectNameLeft.color(NamedTextColor.GRAY).append(Component.text(", ")).append(effectNameRight)));
                 } else {
-                    result += prefix + ChatColor.GRAY + effectNameLeft + "\n";
+                    result.add(prefix.append(effectNameLeft.color(NamedTextColor.GRAY)));
                 }
                 firstLine = false;
             }
         }
 
-        return result;
+        return result.toArray(Component[]::new);
     }
 }

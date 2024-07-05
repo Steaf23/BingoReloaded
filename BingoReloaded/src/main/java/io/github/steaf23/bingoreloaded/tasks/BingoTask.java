@@ -1,17 +1,16 @@
 package io.github.steaf23.bingoreloaded.tasks;
 
-import io.github.steaf23.bingoreloaded.data.BingoTranslation;
+import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.gui.inventory.item.TaskItemAction;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
-import io.github.steaf23.bingoreloaded.tasks.tracker.TaskProgressTracker;
-import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.bingoreloaded.util.timer.GameTimer;
-import io.github.steaf23.easymenulib.inventory.item.ItemTemplate;
-import io.github.steaf23.easymenulib.util.ChatComponentUtils;
-import io.github.steaf23.easymenulib.util.PDCHelper;
-import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
+import io.github.steaf23.playerdisplay.inventory.item.ItemTemplate;
+import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
+import io.github.steaf23.playerdisplay.util.PDCHelper;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
@@ -46,30 +45,28 @@ public class BingoTask
         this.voided = false;
         this.completedAt = -1L;
 
-        if (data instanceof ItemTask itemTask)
-        {
-            this.type = TaskType.ITEM;
-            this.material = itemTask.material();
-            this.glowing = false;
-        }
-        else if (data instanceof AdvancementTask)
-        {
-            this.type = TaskType.ADVANCEMENT;
-            this.material = Material.FILLED_MAP;
-            this.glowing = true;
-        }
-        else if (data instanceof StatisticTask statTask)
-        {
-            this.type = TaskType.STATISTIC;
-            this.material = BingoStatistic.getMaterial(statTask.statistic());
-            this.glowing = true;
-        }
-        else
-        {
-            Message.log("This Type of data is not supported by BingoTask: '" + data + "'!");
-            this.type = TaskType.ITEM;
-            this.glowing = false;
-            this.material = Material.BEDROCK;
+        switch (data) {
+            case ItemTask itemTask -> {
+                this.type = TaskType.ITEM;
+                this.material = itemTask.material();
+                this.glowing = false;
+            }
+            case AdvancementTask ignored -> {
+                this.type = TaskType.ADVANCEMENT;
+                this.material = Material.FILLED_MAP;
+                this.glowing = true;
+            }
+            case StatisticTask statTask -> {
+                this.type = TaskType.STATISTIC;
+                this.material = BingoStatistic.getMaterial(statTask.statistic());
+                this.glowing = true;
+            }
+            case null, default -> {
+                ConsoleMessenger.log("This Type of data is not supported by BingoTask: '" + data + "'!");
+                this.type = TaskType.ITEM;
+                this.glowing = false;
+                this.material = Material.BEDROCK;
+            }
         }
     }
 
@@ -97,13 +94,14 @@ public class BingoTask
         // Step 1: create the item and put the new name, description and material on it.
         if (isVoided()) // VOIDED TASK
         {
-            item = new ItemTemplate(Material.STRUCTURE_VOID, "");
-            BaseComponent[] addedDesc = BingoTranslation.VOIDED.asComponent(Set.of(ChatColor.DARK_GRAY));
+            item = new ItemTemplate(Material.STRUCTURE_VOID, null);
+            Component[] addedDesc = BingoMessage.VOIDED.asMultiline(NamedTextColor.DARK_GRAY);
 
-            ComponentBuilder nameBuilder = new ComponentBuilder().color(ChatColor.DARK_GRAY).strikethrough(true);
-            nameBuilder.append("A").obfuscated(true);
-            nameBuilder.append(data.getName()).obfuscated(false);
-            nameBuilder.append("A").obfuscated(true);
+            TextComponent.Builder nameBuilder = Component.text()
+                    .color(NamedTextColor.DARK_GRAY).decorate(TextDecoration.STRIKETHROUGH);
+            nameBuilder.append(Component.text("A").decorate(TextDecoration.OBFUSCATED));
+            nameBuilder.append(data.getName().color(NamedTextColor.DARK_GRAY));
+            nameBuilder.append(Component.text("A").decorate(TextDecoration.OBFUSCATED));
 
             item.setName(nameBuilder.build());
             item.setLore(addedDesc);
@@ -115,28 +113,24 @@ public class BingoTask
 
             String timeString = GameTimer.getTimeAsString(completedAt);
 
-            ComponentBuilder nameBuilder = new ComponentBuilder().color(ChatColor.GRAY).strikethrough(true);
+            TextComponent.Builder nameBuilder = Component.text()
+                    .color(NamedTextColor.GRAY).decorate(TextDecoration.STRIKETHROUGH);
             nameBuilder.append(data.getName());
 
-            Set<ChatColor> modifiers = new HashSet<>(){{
-                add(ChatColor.DARK_PURPLE);
-                add(ChatColor.ITALIC);
-            }};
-            BaseComponent[] desc = BingoTranslation.COMPLETED_LORE.asComponent(Set.of(ChatColor.DARK_PURPLE, ChatColor.ITALIC),
-                    ChatComponentUtils.convert(completedBy.getDisplayName(),
-                            completedBy.getTeam().getColor(), ChatColor.BOLD),
-                    ChatComponentUtils.convert(timeString, ChatColor.GOLD));
+            Component[] desc = BingoMessage.COMPLETED_LORE.asMultiline(NamedTextColor.DARK_PURPLE,
+                    completedBy.getDisplayName()
+                            .color(completedBy.getTeam().getColor())
+                            .decorate(TextDecoration.BOLD)
+                            .decorate(TextDecoration.ITALIC),
+                    Component.text(timeString)
+                            .color(NamedTextColor.GOLD)
+                            .decorate(TextDecoration.ITALIC));
 
-            item = new ItemTemplate(completeMaterial, "");
-            item.setName(nameBuilder.build());
-            item.setLore(desc);
+            item = new ItemTemplate(completeMaterial, nameBuilder.build(), desc);
         }
         else // DEFAULT TASK
         {
-            item = new ItemTemplate(material, "");
-            item.setName(data.getName());
-            item.setLore(data.getItemDescription());
-
+            item = new ItemTemplate(material, data.getName(), data.getItemDescription());
             item.setAmount(data.getStackSize());
         }
 
@@ -181,7 +175,7 @@ public class BingoTask
         TaskType type;
         if (typeStr.isEmpty())
         {
-            Message.log("Cannot create a valid task from this item stack!");
+            ConsoleMessenger.log("Cannot create a valid task from this item stack!");
             return null;
         }
 

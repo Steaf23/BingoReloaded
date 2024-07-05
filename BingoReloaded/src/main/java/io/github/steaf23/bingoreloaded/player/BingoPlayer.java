@@ -5,16 +5,18 @@ import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.data.BingoStatType;
-import io.github.steaf23.bingoreloaded.data.BingoTranslation;
+import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.gui.inventory.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.item.ItemCooldownManager;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import io.github.steaf23.bingoreloaded.tasks.BingoTask;
-import io.github.steaf23.bingoreloaded.util.TranslatedMessage;
-import io.github.steaf23.easymenulib.util.PDCHelper;
-import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.chat.TranslatableComponent;
+import io.github.steaf23.playerdisplay.util.PDCHelper;
+import io.papermc.paper.registry.RegistryAccess;
+import io.papermc.paper.registry.RegistryKey;
+import net.kyori.adventure.audience.Audience;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
@@ -24,6 +26,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -39,7 +42,7 @@ public class BingoPlayer implements BingoParticipant
     public final String playerName;
     private final BingoSession session;
     private final UUID playerId;
-    private final String displayName;
+    private final Component displayName;
     private final ItemCooldownManager itemCooldowns;
 
     private final int POTION_DURATION = 1728000; // 24 Hours
@@ -49,7 +52,7 @@ public class BingoPlayer implements BingoParticipant
         this.playerId = player.getUniqueId();
         this.session = session;
         this.playerName = player.getName();
-        this.displayName = player.getDisplayName();
+        this.displayName = player.displayName();
         this.itemCooldowns = new ItemCooldownManager();
     }
 
@@ -81,7 +84,7 @@ public class BingoPlayer implements BingoParticipant
     }
 
     @Override
-    public String getDisplayName()
+    public Component getDisplayName()
     {
         return displayName;
     }
@@ -182,10 +185,7 @@ public class BingoPlayer implements BingoParticipant
         {
             if (offline().isOnline())
             {
-                for (PotionEffectType effect : PotionEffectType.values())
-                {
-                    Bukkit.getPlayer(playerId).removePotionEffect(effect);
-                }
+                Bukkit.getPlayer(playerId).clearActivePotionEffects();
             }
         }
         else
@@ -193,10 +193,7 @@ public class BingoPlayer implements BingoParticipant
             if (sessionPlayer().isEmpty())
                 return;
 
-            for (PotionEffectType effect : PotionEffectType.values())
-            {
-                sessionPlayer().get().removePotionEffect(effect);
-            }
+            sessionPlayer().get().clearActivePotionEffects();
         }
     }
 
@@ -207,10 +204,9 @@ public class BingoPlayer implements BingoParticipant
 
         String itemKey = task.material.isBlock() ? "block" : "item";
         itemKey += ".minecraft." + task.material.getKey().getKey();
-
-        new TranslatedMessage(BingoTranslation.DEATHMATCH_ITEM).color(ChatColor.GOLD)
-                .arg(new TranslatableComponent(itemKey))
-                .send(sessionPlayer().get());
+        sessionPlayer().get()
+                .sendMessage(BingoMessage.DEATHMATCH_ITEM.asPhrase(Component.translatable(itemKey))
+                        .color(NamedTextColor.GOLD));
     }
 
     @Override
@@ -229,7 +225,7 @@ public class BingoPlayer implements BingoParticipant
 
             // if the player is actually participating, show it
             if (card == null) {
-                new TranslatedMessage(BingoTranslation.NO_PLAYER_CARD).send(player);
+                BingoMessage.NO_PLAYER_CARD.sendToAudience(player);
                 return;
             }
 
@@ -255,7 +251,8 @@ public class BingoPlayer implements BingoParticipant
         if (!itemCooldowns.isCooldownOver(wand.getType()))
         {
             double timeLeft = itemCooldowns.getTimeLeft(wand.getType()) / 1000.0;
-            new TranslatedMessage(BingoTranslation.COOLDOWN).color(ChatColor.RED).arg(String.format("%.2f", timeLeft)).send(player);
+            player.sendMessage(BingoMessage.COOLDOWN.asPhrase(Component.text(String.format("%.2f", timeLeft)))
+                    .color(NamedTextColor.RED));
             return false;
         }
 
@@ -315,6 +312,11 @@ public class BingoPlayer implements BingoParticipant
 
     @Override
     public String toString() {
-        return getDisplayName();
+        return playerName;
+    }
+
+    @Override
+    public @NotNull Audience audience() {
+        return sessionPlayer().isPresent() ? sessionPlayer().get() : Audience.empty();
     }
 }

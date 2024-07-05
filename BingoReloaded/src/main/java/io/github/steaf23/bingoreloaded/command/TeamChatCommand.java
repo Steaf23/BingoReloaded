@@ -1,22 +1,20 @@
 package io.github.steaf23.bingoreloaded.command;
 
+import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
-import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.player.team.TeamManager;
-import io.github.steaf23.bingoreloaded.util.TranslatedMessage;
-import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.chat.ComponentBuilder;
-import org.bukkit.Bukkit;
+import io.papermc.paper.event.player.AsyncChatEvent;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -42,7 +40,7 @@ public class TeamChatCommand implements Listener, TabExecutor
     }
 
     @EventHandler
-    public void onPlayerSendMessage(final AsyncPlayerChatEvent event)
+    public void onPlayerSendMessage(final AsyncChatEvent event)
     {
         BingoSession session = getSession(event.getPlayer());
         if (session == null)
@@ -51,32 +49,23 @@ public class TeamChatCommand implements Listener, TabExecutor
         TeamManager teamManager = session.teamManager;
 
         BingoParticipant player = teamManager.getPlayerAsParticipant(event.getPlayer());
-        if (!enabledPlayers.contains(player)) return;
+        if (!(player instanceof BingoPlayer) || !enabledPlayers.contains(player)) return;
 
         BingoTeam team = player.getTeam();
         if (team == null) return;
 
-        String message = event.getMessage();
-        sendMessage(team, event.getPlayer(), message);
+        sendMessage(team, event.getPlayer(), event.message());
 
         event.setCancelled(true);
     }
 
-    public void sendMessage(BingoTeam team, Player player, String message)
+    public void sendMessage(BingoTeam team, Player player, Component message)
     {
-        team.getMembers()
-                .forEach(member -> {
-                    if (member.sessionPlayer().isEmpty()) {
-                        return;
-                    }
-
-                    Player receivingPlayer = member.sessionPlayer().get();
-                    receivingPlayer.spigot().sendMessage(new ComponentBuilder()
-                            .append(team.getPrefix())
-                            .append(ChatColor.RESET + "<" + player.getDisplayName() + "> ")
-                            .append(message)
-                            .build());
-                });
+        team.sendMessage(Component.text()
+                .append(team.getPrefix())
+                .append(Component.text("<").append(player.displayName()).append(Component.text("> ")))
+                .append(message)
+                .build());
     }
 
     @Override
@@ -96,19 +85,19 @@ public class TeamChatCommand implements Listener, TabExecutor
 
             if (!teamManager.getParticipants().contains(player))
             {
-                new TranslatedMessage(BingoTranslation.NO_CHAT).color(ChatColor.RED).send(p);
+                BingoMessage.NO_CHAT.sendToAudience(player, NamedTextColor.RED);
                 return false;
             }
 
             if (enabledPlayers.contains(player))
             {
                 enabledPlayers.remove(player);
-                new TranslatedMessage(BingoTranslation.CHAT_OFF).color(ChatColor.GREEN).arg("/btc").send(p);
+                BingoMessage.CHAT_OFF.sendToAudience(player, NamedTextColor.GREEN, Component.text("/btc").color(NamedTextColor.GRAY));
             }
             else
             {
                 enabledPlayers.add(player);
-                new TranslatedMessage(BingoTranslation.CHAT_ON).color(ChatColor.GREEN).arg("/btc").send(p);
+                BingoMessage.CHAT_ON.sendToAudience(player, NamedTextColor.GREEN, Component.text("/btc").color(NamedTextColor.GRAY));
             }
         }
         return false;

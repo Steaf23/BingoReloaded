@@ -1,13 +1,13 @@
 package io.github.steaf23.bingoreloaded.data.world;
 
 import io.github.steaf23.bingoreloaded.data.helper.ResourceFileHelper;
-import io.github.steaf23.bingoreloaded.util.Message;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.filefilter.FileFilterUtils;
+import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import org.codehaus.plexus.util.FileUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -24,7 +24,13 @@ public class WorldData
     public static boolean clearWorlds(@NotNull JavaPlugin plugin) {
         String worldFolder = getWorldsFolder(plugin);
         File worldsFolderDir = FileUtils.getFile(worldFolder);
-        for (File f : FileUtils.listFilesAndDirs(worldsFolderDir, FileFilterUtils.directoryFileFilter(), null)) {
+        if (!worldsFolderDir.exists()) {
+            if (!worldsFolderDir.mkdirs()) {
+                return false;
+            }
+        }
+
+        for (File f : worldsFolderDir.listFiles(File::isDirectory)) {
             if (f.equals(worldsFolderDir)) continue;
 
             String worldName = f.getName();
@@ -55,13 +61,13 @@ public class WorldData
         World theEnd = Bukkit.getWorld(getWorldsFolder(plugin) + worldName + "_the_end");
 
         if (overworld == null) {
-            Message.error("Could not fetch world group; " + worldName + " does not exist. Make sure the world exists and reload the plugin.");
+            ConsoleMessenger.error("Could not fetch world group; " + worldName + " does not exist. Make sure the world exists and reload the plugin.");
             return null;
         } else if (nether == null) {
-            Message.error("Could not fetch world group; " + worldName + "_nether does not exist. Make sure the world exists and reload the plugin.");
+            ConsoleMessenger.error("Could not fetch world group; " + worldName + "_nether does not exist. Make sure the world exists and reload the plugin.");
             return null;
         } else if (theEnd == null) {
-            Message.error("Could not fetch world group; " + worldName + "_the_end does not exist. Make sure the world exists and reload the plugin.");
+            ConsoleMessenger.error("Could not fetch world group; " + worldName + "_the_end does not exist. Make sure the world exists and reload the plugin.");
             return null;
         }
         WorldGroup group = new WorldGroup(worldName, overworld.getUID(), nether.getUID(), theEnd.getUID());
@@ -100,7 +106,7 @@ public class WorldData
         {
             if (!ResourceFileHelper.deleteFolderRecurse(worldsFolder + worldName))
             {
-                Message.error("Could not remove folder for " + worldName + ", cannot find the folder of this world (it might already be removed) or the folder could not be accessed. (Please report!)");
+                ConsoleMessenger.bug("Could not remove folder for " + worldName + ", cannot find the folder of this world (it might already be removed) or the folder could not be accessed", plugin);
             }
             return false;
         }
@@ -112,13 +118,13 @@ public class WorldData
         boolean stillLoaded = unloadedWorld != null || !worldUnloaded;
         if (stillLoaded) {
             // Players are still in the world, it could not be unloaded
-            Message.error("Could not remove " + worldName + ", world could not be unloaded (Maybe there are still players present?).");
+            ConsoleMessenger.error("Could not remove " + worldName + ", world could not be unloaded (Maybe there are still players present?).");
             return false;
         }
 
         if (!ResourceFileHelper.deleteFolderRecurse(worldsFolder + worldName))
         {
-            Message.error("Could not remove folder for " + worldName + ", cannot find the folder of this world (it might already be removed) or the folder could not be accessed. (Please report!)");
+            ConsoleMessenger.bug("Could not remove folder for " + worldName + ", cannot find the folder of this world (it might already be removed) or the folder could not be accessed", plugin);
         }
         return true;
     }

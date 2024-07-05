@@ -1,16 +1,12 @@
 package io.github.steaf23.bingoreloaded.data;
 
-import com.google.common.base.CaseFormat;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.helper.YmlDataManager;
-import io.github.steaf23.bingoreloaded.util.Message;
-import io.github.steaf23.easymenulib.util.FlexColor;
-import net.md_5.bungee.api.ChatColor;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.WordUtils;
+import io.github.steaf23.playerdisplay.util.BlockColor;
+import net.kyori.adventure.text.format.TextColor;
+import org.apache.commons.text.WordUtils;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
-import org.bukkit.scoreboard.Team;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -20,19 +16,19 @@ import java.util.stream.Collectors;
 
 public class TeamData {
     @SerializableAs("TeamTemplate")
-    public record TeamTemplate(String name, ChatColor color) implements ConfigurationSerializable {
+    public record TeamTemplate(String name, TextColor color) implements ConfigurationSerializable {
         @NotNull
         @Override
         public Map<String, Object> serialize() {
             Map<String, Object> data = new HashMap<>();
             data.put("name", name);
-            data.put("color", FlexColor.asHex(color));
+            data.put("color", color.asHexString());
             return data;
         }
 
         public static TeamTemplate deserialize(Map<String, Object> data) {
             String name = (String) data.getOrDefault("name", "");
-            ChatColor color = ChatColor.of((String) data.getOrDefault("color", "#808080"));
+            TextColor color = TextColor.fromHexString((String) data.getOrDefault("color", "#808080"));
             return new TeamTemplate(name, color);
         }
     }
@@ -47,7 +43,7 @@ public class TeamData {
         return teams;
     }
 
-    public void addTeam(@NotNull String key, String name, ChatColor color) {
+    public void addTeam(@NotNull String key, String name, TextColor color) {
         if (key.isEmpty()) {
             key = getNewTeamId();
         }
@@ -74,8 +70,8 @@ public class TeamData {
         }
         data.saveConfig();
 
-        for (FlexColor col : FlexColor.values()) {
-            addTeam(col.name, WordUtils.capitalize(col.name.replace("_", " ")), col.chatColor);
+        for (BlockColor col : BlockColor.values()) {
+            addTeam(col.name, WordUtils.capitalize(col.name.replace("_", " ")), col.textColor);
         }
     }
 

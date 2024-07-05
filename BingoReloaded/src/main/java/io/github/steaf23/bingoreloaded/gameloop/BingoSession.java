@@ -21,11 +21,18 @@ import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
 import io.github.steaf23.bingoreloaded.settings.BingoSettingsBuilder;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
-import io.github.steaf23.bingoreloaded.util.Message;
-import io.github.steaf23.bingoreloaded.util.TranslatedMessage;
-import io.github.steaf23.easymenulib.inventory.MenuBoard;
-import io.github.steaf23.easymenulib.scoreboard.HUDRegistry;
-import net.md_5.bungee.api.ChatColor;
+import io.github.steaf23.bingoreloaded.util.BingoPlayerSender;
+import io.github.steaf23.playerdisplay.inventory.MenuBoard;
+import io.github.steaf23.playerdisplay.scoreboard.HUDRegistry;
+import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
+import io.papermc.paper.registry.RegistryAccess;
+import io.papermc.paper.registry.RegistryKey;
+import net.kyori.adventure.audience.Audience;
+import net.kyori.adventure.audience.ForwardingAudience;
+import net.kyori.adventure.sound.Sound;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -42,7 +49,7 @@ import java.util.Set;
  * This class represents a session of a bingo game on a single world(group).
  * A game world must only have 1 session since bingo events for a session are propagated through the world
  */
-public class BingoSession
+public class BingoSession implements ForwardingAudience
 {
     public BingoSettingsBuilder settingsBuilder;
     public final BingoGameHUDGroup scoreboard;
@@ -51,7 +58,6 @@ public class BingoSession
     private final MenuBoard menuBoard;
     private final HUDRegistry hudRegistry;
     private final GameManager gameManager;
-    private final BingoSoundPlayer soundPlayer;
     private final BotCommand botCommand;
     private final TeamDisplay teamDisplay;
 
@@ -70,7 +76,6 @@ public class BingoSession
         } else {
             this.scoreboard = new BingoGameHUDGroup(hudRegistry, this, config.showPlayerInScoreboard);
         }
-        this.soundPlayer = new BingoSoundPlayer(this);
         this.settingsBuilder = new BingoSettingsBuilder(this);
         if (config.singlePlayerTeams) {
             this.teamManager = new SoloTeamManager(this);
@@ -103,7 +108,7 @@ public class BingoSession
 
     public void startGame() {
         if (!(phase instanceof PregameLobby lobby)) {
-            Message.error("Cannot start a game on this world if it is not in the lobby phase!");
+            ConsoleMessenger.error("Cannot start a game on this world if it is not in the lobby phase!");
             return;
         }
 
@@ -112,13 +117,13 @@ public class BingoSession
         BingoCardData cardsData = new BingoCardData();
         BingoSettings settings = settingsBuilder.view();
         if (!cardsData.getCardNames().contains(settings.card())) {
-            new TranslatedMessage(BingoTranslation.NO_CARD).color(ChatColor.RED).arg(settings.card()).sendAll(this);
+            BingoMessage.NO_CARD.sendToAudience(this, NamedTextColor.RED, Component.text(settings.card()));
             return;
         }
 
         teamManager.setup();
         if (teamManager.getParticipantCount() == 0) {
-            Message.log("Could not start bingo since no players have joined!", worlds.worldName());
+            ConsoleMessenger.log("Could not start bingo since no players have joined!", worlds.worldName());
             return;
         }
 
@@ -185,7 +190,7 @@ public class BingoSession
     }
 
     public void handlePlaySoundEvent(final BingoPlaySoundEvent event) {
-        soundPlayer.playSoundToEveryone(event.getSound(), event.getLoudness(), event.getPitch());
+        playSound(Sound.sound().type(event.getSound()).volume(event.getLoudness()).pitch(event.getPitch()).build());
     }
 
     public void addPlayer(Player player) {
@@ -229,12 +234,10 @@ public class BingoSession
             phase.handlePlayerLeftSessionWorld(event);
 
             Player player = event.getPlayer();
-            for (PotionEffectType effect : PotionEffectType.values()) {
-                player.removePotionEffect(effect);
-            }
+            player.clearActivePotionEffects();
 
             if (isRunning()) {
-                new TranslatedMessage(BingoTranslation.LEAVE).send(event.getPlayer());
+                BingoMessage.LEAVE.sendToAudience(event.getPlayer());
             }
 
             scoreboard.removePlayer(player);
@@ -246,13 +249,13 @@ public class BingoSession
 
             if (teamManager.getActiveTeams().getOnlineTeamCount() <= 1) {
                 endGame();
-                Message.log(ChatColor.RED + "Ended game because there is no competition anymore.", worlds.worldName());
+                ConsoleMessenger.log(Component.text("Ended game because there is no competition anymore.").color(NamedTextColor.LIGHT_PURPLE), Component.text(worlds.worldName()));
                 return;
             }
 
             if (teamManager.getActiveTeams().getAllOnlineParticipants().isEmpty()) {
                 endGame();
-                Message.log(ChatColor.RED + "Ended game because there is no competition anymore.", worlds.worldName());
+                ConsoleMessenger.log(Component.text("Ended game because there is no competition anymore.").color(NamedTextColor.LIGHT_PURPLE), Component.text(worlds.worldName()));
                 return;
             }
         });
@@ -284,7 +287,7 @@ public class BingoSession
                 targetlocation.setWorld(worlds.getEndWorld());
             }
             else {
-                Message.error("could not catch player going through portal (Please report!)");
+                ConsoleMessenger.bug("Could not catch player going through portal", this);
             }
         }
         else if (origin.getUID().equals(worlds.netherId())) {
@@ -302,7 +305,7 @@ public class BingoSession
                 targetlocation.setWorld(worlds.getEndWorld());
             }
             else {
-                Message.error("could not catch player going through portal (Please report!)");
+                ConsoleMessenger.bug("Could not catch player going through portal", this);
             }
         }
 
@@ -332,18 +335,26 @@ public class BingoSession
         }
 
         BingoSettingsBuilder result = settingsBuilder.getVoteResult(voteResult);
-        new Message(" ").sendAll(this);
+        BingoPlayerSender.sendMessage(Component.text(" "), this);
         if (!voteResult.gamemode.isEmpty()) {
             var tuple = voteResult.gamemode.split("_");
-            new TranslatedMessage(BingoTranslation.VOTE_WON).arg(BingoTranslation.OPTIONS_GAMEMODE.translate()).arg(BingoGamemode.fromDataString(tuple[0]).displayName + " " + tuple[1] + "x" + tuple[1]).sendAll(this);
+            BingoMessage.VOTE_WON.sendToAudience(this,
+                    BingoMessage.OPTIONS_GAMEMODE.asPhrase(),
+                    Component.text()
+                            .append(BingoGamemode.fromDataString(tuple[0]).asComponent())
+                            .append(Component.text(" " + tuple[1] + "x" + tuple[1])).build());
         }
         if (!voteResult.kit.isEmpty()) {
-            new TranslatedMessage(BingoTranslation.VOTE_WON).arg(BingoTranslation.OPTIONS_KIT.translate()).arg(PlayerKit.fromConfig(voteResult.kit).getDisplayName()).sendAll(this);
+            BingoMessage.VOTE_WON.sendToAudience(this,
+                    BingoMessage.OPTIONS_KIT.asPhrase(),
+                    PlayerKit.fromConfig(voteResult.kit).getDisplayName());
         }
         if (!voteResult.card.isEmpty()) {
-            new TranslatedMessage(BingoTranslation.VOTE_WON).arg(BingoTranslation.OPTIONS_CARD.translate()).arg(voteResult.card).italic().sendAll(this);
+            BingoMessage.VOTE_WON.sendToAudience(this,
+                    BingoMessage.OPTIONS_CARD.asPhrase(),
+                    Component.text(voteResult.card).decorate(TextDecoration.ITALIC));
         }
-        new Message(" ").sendAll(this);
+        BingoPlayerSender.sendMessage(Component.text(" "), this);
 
         return result;
     }
@@ -362,5 +373,10 @@ public class BingoSession
 
     public Set<Player> getPlayersInWorld() {
         return worlds.getPlayers();
+    }
+
+    @Override
+    public @NotNull Iterable<? extends Audience> audiences() {
+        return teamManager.getParticipants();
     }
 }
