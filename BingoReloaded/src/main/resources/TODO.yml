@@ -3,7 +3,7 @@
 3.0 (?) create language option per player
 3.0 (?) create LITE mode, where players can join bingo in the middle of a survival world, without needing to be teleported to any other world
 
-(2.x) Add support for Folia
+3.0 Add support for Folia
 
 (2.x) implement Vault rewards
 
@@ -25,7 +25,7 @@
 
 (2.x) on paginated menu apply filter, maybe change the item names to color the filtered phrase differently.
 
-(2.x) add way to reopen menu for all players that are in it
+(2.x) add way to reopen/sync menu for all players that are in it
 
 (2.x) add /bingoconfig command
   - to see values of config values

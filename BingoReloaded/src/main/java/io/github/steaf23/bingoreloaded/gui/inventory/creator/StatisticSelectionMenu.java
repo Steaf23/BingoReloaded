@@ -17,7 +17,6 @@ import org.bukkit.entity.EntityType;
 
 import java.util.*;
 
-// TODO: add description to statistic and when to trigger them
 public class StatisticSelectionMenu extends BasicMenu
 {
     public String listName;

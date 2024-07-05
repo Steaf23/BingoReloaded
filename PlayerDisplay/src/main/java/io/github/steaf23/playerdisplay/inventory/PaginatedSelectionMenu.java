@@ -249,7 +249,6 @@ public abstract class PaginatedSelectionMenu extends BasicMenu
         //Update Page description e.g. (20/23) for the Next and Previous 'buttons'.
         Component pageCountDesc = Component.text(String.format("%02d", currentPage + 1) + "/" + String.format("%02d", pageAmount));
 
-        //TODO: update item automatically..?
         nextPageItem.setLore(pageCountDesc);
         previousPageItem.setLore(pageCountDesc);
         addItems(nextPageItem, previousPageItem);

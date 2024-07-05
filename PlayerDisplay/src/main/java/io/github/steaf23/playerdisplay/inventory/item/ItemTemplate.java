@@ -11,6 +11,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 
 import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -82,7 +83,7 @@ public class ItemTemplate
     }
 
     public @NotNull String getPlainTextName() {
-        return name == null ? "" : ((TextComponent) name).content();
+        return name == null ? "" : PlainTextComponentSerializer.plainText().serialize(name);
     }
 
     public Component getName() {
@@ -297,7 +298,7 @@ public class ItemTemplate
 
         stackMeta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_UNBREAKABLE, ItemFlag.HIDE_DYE);
         if (hideAttributes) {
-            //TODO: change if there is a need for items to be used by the player with invisible attributes
+            //TODO: change if there is a need for items to be used by the player with hidden attributes
             stackMeta.setAttributeModifiers(ImmutableMultimap.of());
             stackMeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
         }
