@@ -162,6 +162,8 @@ public enum BingoMessage
 
     private static final TagResolver SUBSTITUTE_RESOLVER = substituteResolver();
 
+    private static final Map<String, Component> cachedPhrases = new HashMap<>();
+
     BingoMessage(String key) {
         this.key = key;
         this.translation = key;
@@ -269,8 +271,6 @@ public enum BingoMessage
         return configStringAsMultiline(input, null, withArguments);
     }
 
-    //TODO: find way to optimize phrases by only creating them on plugin load/ language change? (maybe save phrase w/o args in a map to return those instead?)
-
     /**
      * Phrases are interpreted without context (player) so placeholders and tags relying on targets cannot be used. Their result is stored in a single line, stripped of \n
      *
@@ -285,6 +285,10 @@ public enum BingoMessage
     }
 
     public static Component createPhrase(String input, boolean allowSubstitution, Component... arguments) {
+        if (cachedPhrases.containsKey(input)) {
+            return cachedPhrases.get(input);
+        }
+
         String converted = String.join("", convertConfigStringToMini(input));
         // create tag resolvers for each argument, which will appear as <0>, <1> etc... in the mini message string and be replaced by the correct components.
         List<TagResolver> resolvers = new ArrayList<>();
@@ -295,7 +299,12 @@ public enum BingoMessage
             resolvers.add(SUBSTITUTE_RESOLVER);
         }
 
-        return PlayerDisplay.MINI_BUILDER.deserialize(converted, resolvers.toArray(TagResolver[]::new));
+        Component phrase = PlayerDisplay.MINI_BUILDER.deserialize(converted, resolvers.toArray(TagResolver[]::new));
+        if (arguments.length == 0) {
+            //caching only works without arguments
+            cachedPhrases.put(input, phrase);
+        }
+        return phrase;
     }
 
     public static Component createPhrase(String input, Component... arguments) {
