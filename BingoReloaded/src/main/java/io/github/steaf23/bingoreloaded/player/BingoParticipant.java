@@ -1,11 +1,11 @@
 package io.github.steaf23.bingoreloaded.player;
 
-import io.github.steaf23.bingoreloaded.cards.BingoCard;
+import io.github.steaf23.bingoreloaded.cards.TaskCard;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gui.inventory.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
-import io.github.steaf23.bingoreloaded.tasks.BingoTask;
+import io.github.steaf23.bingoreloaded.tasks.GameTask;
 import net.kyori.adventure.audience.ForwardingAudience;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
@@ -25,15 +25,15 @@ public interface BingoParticipant extends ForwardingAudience.Single
     Optional<Player> sessionPlayer();
     String getName();
     Component getDisplayName();
-    void showDeathMatchTask(BingoTask task);
-    void showCard(BingoTask deathMatchTask);
+    void showDeathMatchTask(GameTask task);
+    void showCard(GameTask deathMatchTask);
     boolean alwaysActive();
     default int getAmountOfTaskCompleted() {
         BingoTeam team = getTeam();
         if (team == null) {
             return 0;
         }
-        BingoCard card = team.getCard();
+        TaskCard card = team.getCard();
         if (card == null) {
             return 0;
         }

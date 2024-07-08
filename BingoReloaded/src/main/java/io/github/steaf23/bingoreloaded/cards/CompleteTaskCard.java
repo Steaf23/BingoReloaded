@@ -1,34 +1,34 @@
 package io.github.steaf23.bingoreloaded.cards;
 
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
+import io.github.steaf23.bingoreloaded.gui.inventory.CardMenu;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
-import io.github.steaf23.bingoreloaded.tasks.BingoTask;
+import io.github.steaf23.bingoreloaded.tasks.GameTask;
 import io.github.steaf23.bingoreloaded.tasks.tracker.TaskProgressTracker;
-import io.github.steaf23.playerdisplay.inventory.MenuBoard;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class CompleteBingoCard extends BingoCard
+public class CompleteTaskCard extends TaskCard
 {
-    public CompleteBingoCard(MenuBoard menuBoard, CardSize size, TaskProgressTracker progressTracker)
+    public CompleteTaskCard(@NotNull CardMenu menu, CardSize size)
     {
-        super(menuBoard, size, progressTracker);
+        super(menu, size);
         menu.setInfo(BingoMessage.INFO_COMPLETE_NAME.asPhrase(),
                 BingoMessage.INFO_COMPLETE_DESC.asMultiline());
     }
 
     @Override
-    public boolean hasBingo(BingoTeam team)
-    {
+    public boolean hasTeamWon(BingoTeam team) {
         return getCompleteCount(team) == size.fullCardSize;
     }
 
     @Override
-    public CompleteBingoCard copy()
+    public CompleteTaskCard copy()
     {
-        CompleteBingoCard card = new CompleteBingoCard(menu.getMenuBoard(), this.size, this.progressTracker);
-        List<BingoTask> newTasks = new ArrayList<>();
+        CompleteTaskCard card = new CompleteTaskCard(menu.copy(), this.size);
+        List<GameTask> newTasks = new ArrayList<>();
         for (var t : getTasks())
         {
             newTasks.add(t.copy());

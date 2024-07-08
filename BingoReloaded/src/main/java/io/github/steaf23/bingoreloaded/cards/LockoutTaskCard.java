@@ -2,21 +2,22 @@ package io.github.steaf23.bingoreloaded.cards;
 
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
+import io.github.steaf23.bingoreloaded.gui.inventory.CardMenu;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeamContainer;
-import io.github.steaf23.bingoreloaded.tasks.BingoTask;
+import io.github.steaf23.bingoreloaded.tasks.GameTask;
 import io.github.steaf23.bingoreloaded.tasks.tracker.TaskProgressTracker;
-import io.github.steaf23.playerdisplay.inventory.MenuBoard;
+import org.jetbrains.annotations.NotNull;
 
-public class LockoutBingoCard extends BingoCard
+public class LockoutTaskCard extends TaskCard
 {
     public int teamCount;
     public int currentMaxTasks;
     private final BingoSession session;
     private final BingoTeamContainer teams;
 
-    public LockoutBingoCard(MenuBoard menuBoard, CardSize size, BingoSession session, BingoTeamContainer teams, TaskProgressTracker progressTracker) {
-        super(menuBoard, size, progressTracker);
+    public LockoutTaskCard(@NotNull CardMenu menu, CardSize size, BingoSession session, BingoTeamContainer teams) {
+        super(menu, size);
         this.currentMaxTasks = size.fullCardSize;
         this.teamCount = teams.teamCount();
         this.session = session;
@@ -26,14 +27,8 @@ public class LockoutBingoCard extends BingoCard
                 BingoMessage.INFO_LOCKOUT_DESC.asMultiline());
     }
 
-    // Lockout cards cannot be copied since it should be the same instance for every player.
     @Override
-    public LockoutBingoCard copy() {
-        return this;
-    }
-
-    @Override
-    public boolean hasBingo(BingoTeam team) {
+    public boolean hasTeamWon(BingoTeam team) {
         // get the completeCount of the team with the most items.
         BingoTeam leadingTeam = teams.getLeadingTeam();
         BingoTeam losingTeam = teams.getLosingTeam();
@@ -58,13 +53,20 @@ public class LockoutBingoCard extends BingoCard
         return completeCount > (currentMaxTasks / 2);
     }
 
+    // Lockout cards cannot be copied since it should be the same instance for every player.
+    @Override
+    public LockoutTaskCard copy() {
+        return this;
+    }
+
+
     public void dropTeam(BingoTeam team, BingoSession session) {
         if (team.outOfTheGame) {
             return;
         }
         BingoMessage.DROPPED.sendToAudience(session, team.getColoredName());
         team.outOfTheGame = true;
-        for (BingoTask task : getTasks()) {
+        for (GameTask task : getTasks()) {
             if (task.isCompleted() && team.getMembers().contains(task.getCompletedBy().orElseGet(() -> null))) {
                 task.setVoided(true);
                 currentMaxTasks--;

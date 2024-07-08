@@ -49,6 +49,7 @@ public class ItemTemplate
     private final List<Function<ItemMeta, ItemMeta>> metaModifiers = new ArrayList<>();
     private Integer maxDamage = null;
     private int currentDamage = 0;
+    private int customModelData = 0;
 
     private MenuAction action;
 
@@ -209,6 +210,11 @@ public class ItemTemplate
         currentDamage = maxDamage == null ? 0 : maxDamage;
     }
 
+    public ItemTemplate setCustomModelData(int data) {
+        this.customModelData = data;
+        return this;
+    }
+
     public void useItem(BasicMenu.ActionArguments arguments) {
         if (action == null) {
             return;
@@ -235,6 +241,7 @@ public class ItemTemplate
         copy.metaModifiers.addAll(metaModifiers);
         copy.maxDamage = maxDamage;
         copy.currentDamage = currentDamage;
+        copy.customModelData = customModelData;
         return copy;
     }
 
@@ -302,6 +309,8 @@ public class ItemTemplate
             stackMeta.setAttributeModifiers(ImmutableMultimap.of());
             stackMeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
         }
+
+        stackMeta.setCustomModelData(customModelData);
 
         for (Function<ItemMeta, ItemMeta> modifier : metaModifiers) {
             stackMeta = modifier.apply(stackMeta);

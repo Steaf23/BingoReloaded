@@ -11,7 +11,6 @@ import org.bukkit.ChatColor;
 
 public class ConsoleMessenger
 {
-
     public static void log(String message) {
         PlayerDisplay.getPlugin().getComponentLogger().info(
                 PlayerDisplay.MINI_BUILDER.deserialize(message));

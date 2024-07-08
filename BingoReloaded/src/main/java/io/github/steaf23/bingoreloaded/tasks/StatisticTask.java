@@ -6,7 +6,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
-import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.Material;
 import org.bukkit.Statistic;
 import org.bukkit.configuration.serialization.SerializableAs;
@@ -123,34 +122,34 @@ public record StatisticTask(BingoStatistic statistic, int count) implements Coun
     @Override
     public PersistentDataContainer pdcSerialize(PersistentDataContainer stream)
     {
-        stream.set(BingoTask.getTaskDataKey("statistic"), PersistentDataType.STRING, statistic.stat().name());
+        stream.set(GameTask.getTaskDataKey("statistic"), PersistentDataType.STRING, statistic.stat().name());
         if (statistic.materialType() != null)
         {
-            stream.set(BingoTask.getTaskDataKey("item"),  PersistentDataType.STRING, statistic.materialType().name());
+            stream.set(GameTask.getTaskDataKey("item"),  PersistentDataType.STRING, statistic.materialType().name());
         }
         if (statistic.entityType() != null)
         {
-            stream.set(BingoTask.getTaskDataKey("entity"), PersistentDataType.STRING, statistic.entityType().name());
+            stream.set(GameTask.getTaskDataKey("entity"), PersistentDataType.STRING, statistic.entityType().name());
         }
-        stream.set(BingoTask.getTaskDataKey("count"),  PersistentDataType.INTEGER, count);
+        stream.set(GameTask.getTaskDataKey("count"),  PersistentDataType.INTEGER, count);
         return stream;
     }
 
     public static StatisticTask fromPdc(PersistentDataContainer pdc)
     {
-        Statistic stat = Statistic.valueOf(pdc.getOrDefault(BingoTask.getTaskDataKey("statistic"), PersistentDataType.STRING, "stat.minecraft.bell_ring"));
+        Statistic stat = Statistic.valueOf(pdc.getOrDefault(GameTask.getTaskDataKey("statistic"), PersistentDataType.STRING, "stat.minecraft.bell_ring"));
 
         Material item = null;
-        if (pdc.has(BingoTask.getTaskDataKey("item"), PersistentDataType.STRING))
+        if (pdc.has(GameTask.getTaskDataKey("item"), PersistentDataType.STRING))
         {
-            item = Material.valueOf(pdc.get(BingoTask.getTaskDataKey("item"), PersistentDataType.STRING));
+            item = Material.valueOf(pdc.get(GameTask.getTaskDataKey("item"), PersistentDataType.STRING));
         }
         EntityType entity = null;
-        if (pdc.has(BingoTask.getTaskDataKey("entity"), PersistentDataType.STRING))
+        if (pdc.has(GameTask.getTaskDataKey("entity"), PersistentDataType.STRING))
         {
-            entity = EntityType.valueOf(pdc.get(BingoTask.getTaskDataKey("entity"), PersistentDataType.STRING));
+            entity = EntityType.valueOf(pdc.get(GameTask.getTaskDataKey("entity"), PersistentDataType.STRING));
         }
-        int count = pdc.getOrDefault(BingoTask.getTaskDataKey("count"), PersistentDataType.INTEGER, 1);
+        int count = pdc.getOrDefault(GameTask.getTaskDataKey("count"), PersistentDataType.INTEGER, 1);
 
         StatisticTask task = new StatisticTask(new BingoStatistic(stat, entity, item), count);
         return task;

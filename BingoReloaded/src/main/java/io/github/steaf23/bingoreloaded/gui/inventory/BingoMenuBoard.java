@@ -15,6 +15,7 @@ public class BingoMenuBoard extends MenuBoard
 
     public BingoMenuBoard()
     {
+        super();
         this.playerPredicate = player -> false;
     }
 

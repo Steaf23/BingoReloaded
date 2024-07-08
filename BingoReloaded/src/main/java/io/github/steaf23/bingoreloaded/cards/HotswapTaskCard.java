@@ -5,15 +5,14 @@ import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.ConfigData;
 import io.github.steaf23.bingoreloaded.event.BingoPlaySoundEvent;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
-import io.github.steaf23.bingoreloaded.gui.inventory.HotswapCardMenu;
+import io.github.steaf23.bingoreloaded.gui.inventory.card.HotswapCardMenu;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
-import io.github.steaf23.bingoreloaded.tasks.BingoTask;
+import io.github.steaf23.bingoreloaded.tasks.GameTask;
 import io.github.steaf23.bingoreloaded.tasks.ItemTask;
 import io.github.steaf23.bingoreloaded.tasks.TaskData;
 import io.github.steaf23.bingoreloaded.tasks.tracker.TaskProgressTracker;
 import io.github.steaf23.bingoreloaded.util.timer.GameTimer;
-import io.github.steaf23.playerdisplay.inventory.MenuBoard;
 import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
@@ -21,12 +20,13 @@ import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.Supplier;
 
-public class HotswapBingoCard extends BingoCard
+public class HotswapTaskCard extends TaskCard
 {
     private final int winningScore;
     private final GameTimer taskTimer;
@@ -38,18 +38,19 @@ public class HotswapBingoCard extends BingoCard
     private final boolean showExpirationAsDurability;
 
     private final List<HotswapTaskHolder> taskHolders;
-    private Supplier<BingoTask> bingoTaskGenerator;
+    private Supplier<GameTask> bingoTaskGenerator;
 
-    private final List<BingoTask> completedTasks;
+    private final List<GameTask> completedTasks;
     private final BingoCardData cardData;
     // Used to call the play sound event for expiring tasks
     private final BingoGame game;
+    private final TaskProgressTracker progressTracker;
 
     // List used to draw random tasks from
     private final List<TaskData> randomTasks;
 
-    public HotswapBingoCard(MenuBoard menuBoard, CardSize size, BingoGame game, TaskProgressTracker progressTracker, int winningScore, ConfigData.HotswapConfig config) {
-        super(new HotswapCardMenu(menuBoard, size), size, progressTracker);
+    public HotswapTaskCard(@NotNull HotswapCardMenu menu, CardSize size, BingoGame game, TaskProgressTracker progressTracker, int winningScore, ConfigData.HotswapConfig config) {
+        super(menu, size);
         this.taskTimer = game.getTimer();
         this.randomExpiryProvider = new Random();
         this.taskHolders = new ArrayList<>();
@@ -57,6 +58,7 @@ public class HotswapBingoCard extends BingoCard
         this.bingoTaskGenerator = () -> null;
         this.cardData = new BingoCardData();
         this.game = game;
+        this.progressTracker = progressTracker;
         this.minExpirationTime = config.minimumExpiration();
         this.maxExpirationTime = config.maximumExpiration();
         this.recoveryTimeSeconds = config.recoveryTime();
@@ -77,16 +79,16 @@ public class HotswapBingoCard extends BingoCard
     }
 
     @Override
-    public boolean hasBingo(BingoTeam team) {
+    public boolean hasTeamWon(BingoTeam team) {
         if (winningScore == -1) {
             return false;
         }
         return getCompleteCount(team) == winningScore;
     }
 
-    // Lockout cards cannot be copied since it should be the same instance for every player.
+    // Hotswap cards cannot be copied since it should be the same instance for every player.
     @Override
-    public HotswapBingoCard copy() {
+    public HotswapTaskCard copy() {
         return this;
     }
 
@@ -111,7 +113,7 @@ public class HotswapBingoCard extends BingoCard
                 // Do not add the tasks that are currently on the card.
                 // This will result in less duplicates overall when cycling through tasks.
                 randomTasks.removeIf(data -> {
-                    for (BingoTask task : getTasks()) {
+                    for (GameTask task : getTasks()) {
                         if (task.data.isTaskEqual(data)) {
                             return true;
                         }
@@ -124,17 +126,17 @@ public class HotswapBingoCard extends BingoCard
                 Collections.shuffle(randomTasks, randomExpiryProvider);
             }
             if (randomTasks.isEmpty()) {
-                return new BingoTask(new ItemTask(Material.DIRT, 1));
+                return new GameTask(new ItemTask(Material.DIRT, 1));
             }
 
-            return new BingoTask(randomTasks.remove(randomTasks.size() - 1));
+            return new GameTask(randomTasks.remove(randomTasks.size() - 1));
         };
     }
 
     @Override
-    public void setTasks(List<BingoTask> tasks) {
+    public void setTasks(List<GameTask> tasks) {
         taskHolders.clear();
-        for (BingoTask task : tasks) {
+        for (GameTask task : tasks) {
             int expirationTime = randomExpiryProvider.nextInt(minExpirationTime * 60, (maxExpirationTime * 60) + 1);
             taskHolders.add(new HotswapTaskHolder(task, expirationTime, recoveryTimeSeconds, showExpirationAsDurability));
         }
@@ -142,12 +144,12 @@ public class HotswapBingoCard extends BingoCard
     }
 
     @Override
-    public void handleTaskCompleted(BingoParticipant player, BingoTask task, long timeSeconds) {
+    public void handleTaskCompleted(BingoParticipant player, GameTask task, long timeSeconds) {
         completedTasks.add(task);
     }
 
     @Override
-    public List<BingoTask> getTasks() {
+    public List<GameTask> getTasks() {
         return taskHolders.stream().map(holder -> holder.task).toList();
     }
 
@@ -155,8 +157,8 @@ public class HotswapBingoCard extends BingoCard
         int idx = 0;
         int taskExpiredCount = 0;
         int taskRecoveredCount = 0;
-        BingoTask lastExpiredTask = null;
-        BingoTask lastRecoverdTask = null;
+        GameTask lastExpiredTask = null;
+        GameTask lastRecoverdTask = null;
         for (HotswapTaskHolder holder : taskHolders) {
             holder.currentTime -= 1;
             if (!holder.isRecovering() && holder.task.isCompleted()) { // start recovering item when it's been completed
@@ -167,7 +169,7 @@ public class HotswapBingoCard extends BingoCard
                 if (holder.isRecovering()) {
                     taskRecoveredCount++;
                     // Recovery finished, replace task with a new one.
-                    BingoTask newTask = bingoTaskGenerator.get();
+                    GameTask newTask = bingoTaskGenerator.get();
                     if (newTask == null) {
                         ConsoleMessenger.bug("Cannot generate new task for hot-swap", this);
                     }
@@ -191,7 +193,7 @@ public class HotswapBingoCard extends BingoCard
             Bukkit.getPluginManager().callEvent(event);
 
             if (taskExpiredCount == 1) {
-                BingoTask taskToSend = lastExpiredTask;
+                GameTask taskToSend = lastExpiredTask;
                 game.getActionBar().requestMessage(p ->
                                 Component.text().decorate(TextDecoration.BOLD).append(BingoMessage.HOTSWAP_SINGLE_EXPIRED.asPhrase(taskToSend.data.getName()).color(TextColor.fromHexString("#e85e21"))).build(),
                         1, 3);
@@ -206,7 +208,7 @@ public class HotswapBingoCard extends BingoCard
             Bukkit.getPluginManager().callEvent(event);
 
             if (taskRecoveredCount == 1) {
-                BingoTask taskToSend = lastRecoverdTask;
+                GameTask taskToSend = lastRecoverdTask;
                 game.getActionBar().requestMessage(p ->
                                 Component.text().decorate(TextDecoration.BOLD).append(BingoMessage.HOTSWAP_SINGLE_ADDED.asPhrase(taskToSend.data.getName()).color(TextColor.fromHexString("#5cb1ff"))).build(),
                         2, 3);

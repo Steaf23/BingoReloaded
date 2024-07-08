@@ -1,9 +1,9 @@
 package io.github.steaf23.bingoreloaded.gameloop.phase;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
-import io.github.steaf23.bingoreloaded.cards.BingoCard;
+import io.github.steaf23.bingoreloaded.cards.TaskCard;
 import io.github.steaf23.bingoreloaded.cards.CardBuilder;
-import io.github.steaf23.bingoreloaded.cards.LockoutBingoCard;
+import io.github.steaf23.bingoreloaded.cards.LockoutTaskCard;
 import io.github.steaf23.bingoreloaded.data.BingoCardData;
 import io.github.steaf23.bingoreloaded.data.BingoStatType;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
@@ -18,7 +18,7 @@ import io.github.steaf23.bingoreloaded.player.team.TeamManager;
 import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
-import io.github.steaf23.bingoreloaded.tasks.BingoTask;
+import io.github.steaf23.bingoreloaded.tasks.GameTask;
 import io.github.steaf23.bingoreloaded.tasks.tracker.TaskProgressTracker;
 import io.github.steaf23.bingoreloaded.util.ActionBarManager;
 import io.github.steaf23.bingoreloaded.util.BingoPlayerSender;
@@ -62,7 +62,7 @@ public class BingoGame implements GamePhase
     private boolean gameStarted;
     private final ActionBarManager actionBarManager;
 
-    private BingoTask deathMatchTask;
+    private GameTask deathMatchTask;
 
     public BingoGame(BingoSession session, BingoSettings settings, ConfigData config) {
         this.session = session;
@@ -102,19 +102,20 @@ public class BingoGame implements GamePhase
 
         // Generate cards
         boolean useAdvancements = !(BingoReloaded.areAdvancementsDisabled() || config.disableAdvancements);
-        BingoCard masterCard = CardBuilder.fromGame(session.getMenuManager(), this);
+        //TODO create viewType config option, but for now try to use textured for testing.
+        TaskCard masterCard = CardBuilder.fromGame(session.getMenuManager(), this, true);
         masterCard.generateCard(settings.card(), settings.seed(), useAdvancements, !config.disableStatistics);
-        if (masterCard instanceof LockoutBingoCard lockoutCard) {
+        if (masterCard instanceof LockoutTaskCard lockoutCard) {
             lockoutCard.teamCount = getTeamManager().getTeamCount();
         }
-        Set<BingoCard> uniqueCards = new HashSet<>();
+        Set<TaskCard> uniqueCards = new HashSet<>();
         getTeamManager().getActiveTeams().forEach(t -> {
             t.outOfTheGame = false;
             t.setCard(masterCard.copy());
             uniqueCards.add(t.getCard());
         });
 
-        for (BingoCard card : uniqueCards) {
+        for (TaskCard card : uniqueCards) {
             card.getTasks().forEach(t -> getProgressTracker().startTrackingTask(t));
         }
 
@@ -300,7 +301,7 @@ public class BingoGame implements GamePhase
     //FIXME: don't use recursion to create tasks..
     private void startDeathMatchRecurse(int countdown) {
         if (countdown == 0) {
-            deathMatchTask = new BingoTask(new BingoCardData().getRandomItemTask(settings.card()));
+            deathMatchTask = new GameTask(new BingoCardData().getRandomItemTask(settings.card()));
 
             BingoPlayerSender.sendTitle(
                     Component.text("GO").color(NamedTextColor.GOLD).decorate(TextDecoration.BOLD),
@@ -480,7 +481,7 @@ public class BingoGame implements GamePhase
         };
     }
 
-    public BingoTask getDeathMatchTask() {
+    public GameTask getDeathMatchTask() {
         return deathMatchTask;
     }
 
@@ -513,14 +514,14 @@ public class BingoGame implements GamePhase
             BingoReloaded.incrementPlayerStat(player, BingoStatType.TASKS);
         });
 
-        if (participant.getTeam().getCard().hasBingo(participant.getTeam())) {
+        if (participant.getTeam().getCard().hasTeamWon(participant.getTeam())) {
             bingo(participant.getTeam());
             return;
         }
 
         // Start death match when all tasks have been completed in lockout
-        BingoCard card = teamManager.getActiveTeams().getLeadingTeam().getCard();
-        if (!(card instanceof LockoutBingoCard lockoutCard)) {
+        TaskCard card = teamManager.getActiveTeams().getLeadingTeam().getCard();
+        if (!(card instanceof LockoutTaskCard lockoutCard)) {
             return;
         }
 

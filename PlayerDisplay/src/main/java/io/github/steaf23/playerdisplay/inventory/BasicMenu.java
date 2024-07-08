@@ -27,11 +27,11 @@ public class BasicMenu implements Menu
 
     public static Component pluginTitlePrefix = Component.empty();
 
-    protected static final Component applyTitleFormat(Component to) {
+    protected static Component applyTitleFormat(Component to) {
         return to.color(NamedTextColor.GOLD).decorate(TextDecoration.BOLD);
     }
 
-    protected static final Component applyTitleFormat(String to) {
+    protected static Component applyTitleFormat(String to) {
         return Component.text(to).color(NamedTextColor.GOLD).decorate(TextDecoration.BOLD);
     }
 
@@ -51,6 +51,16 @@ public class BasicMenu implements Menu
     public BasicMenu(MenuBoard manager, Component initialTitle, int rows) {
         this(manager, Bukkit.createInventory(null, rows * 9, Component.text().append(pluginTitlePrefix).append(initialTitle).build()));
         this.title = initialTitle;
+    }
+
+    /**
+     * Useful for textured menus, sets title as component string without prefix, to put custom fonts in the title.
+     * @param manager
+     * @param initialTitle
+     */
+    protected BasicMenu(MenuBoard manager, Component initialTitle, boolean prefix) {
+        this(manager, Bukkit.createInventory(null, 6 * 9, prefix ? Component.text().append(pluginTitlePrefix).append(initialTitle).build() : initialTitle));
+        this.title = Component.empty();
     }
 
     public BasicMenu(MenuBoard manager, Component initialTitle, InventoryType type) {
@@ -82,9 +92,7 @@ public class BasicMenu implements Menu
     }
 
     public void reopen(HumanEntity player) {
-        Bukkit.getScheduler().runTask(PlayerDisplay.getPlugin(), t -> {
-            beforeOpening(player);
-        });
+        Bukkit.getScheduler().runTask(PlayerDisplay.getPlugin(), t -> beforeOpening(player));
     }
 
     public @Nullable ItemTemplate getItemAtSlot(int slot) {
@@ -99,9 +107,9 @@ public class BasicMenu implements Menu
 
     public BasicMenu addItem(@NotNull ItemTemplate item, boolean replaceExisting) {
         if (maxStackSizeOverride != -1)
-            inventory.setMaxStackSize(maxStackSizeOverride);
+            getInventory().setMaxStackSize(maxStackSizeOverride);
 
-        if (!replaceExisting && inventory.getItem(item.getSlot()) != null) {
+        if (!replaceExisting && getInventory().getItem(item.getSlot()) != null) {
             return this;
         }
 
@@ -109,7 +117,7 @@ public class BasicMenu implements Menu
         items.add(item);
 
         // Replace/ set new item in its target slot
-        inventory.setItem(item.getSlot(), item.buildItem());
+        getInventory().setItem(item.getSlot(), item.buildItem());
 
         return this;
     }
@@ -157,17 +165,12 @@ public class BasicMenu implements Menu
     }
 
     public BasicMenu removeItem(int slotIdx) {
-        inventory.setItem(slotIdx, null);
+        getInventory().setItem(slotIdx, null);
         return this;
     }
 
     protected void setMaxStackSizeOverride(int maxValue) {
         maxStackSizeOverride = Math.min(64, Math.max(1, maxValue));
-    }
-
-    @Override
-    public Inventory getInventory() {
-        return this.inventory;
     }
 
     public MenuBoard getMenuBoard() {
@@ -180,12 +183,12 @@ public class BasicMenu implements Menu
 
     @Override
     public boolean onClick(final InventoryClickEvent event, HumanEntity player, int clickedSlot, ClickType clickType) {
-        for (ItemTemplate item : new ArrayList<ItemTemplate>(items)) {
+        for (ItemTemplate item : new ArrayList<>(items)) {
             if (item.getSlot() == clickedSlot)
             {
                 item.useItem(new ActionArguments(player, clickType));
                 //TODO: find a way to update itemstack automatically on change, no matter where!
-                inventory.setItem(item.getSlot(), item.buildItem());
+                getInventory().setItem(item.getSlot(), item.buildItem());
             }
         }
         return true;
@@ -198,6 +201,11 @@ public class BasicMenu implements Menu
 
     @Override
     public void beforeClosing(HumanEntity player) {
+    }
+
+    @Override
+    public @NotNull Inventory getInventory() {
+        return inventory;
     }
 
     @Override

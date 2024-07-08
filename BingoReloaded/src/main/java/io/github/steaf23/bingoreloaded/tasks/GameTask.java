@@ -20,7 +20,7 @@ import org.bukkit.persistence.PersistentDataType;
 import javax.annotation.Nullable;
 import java.util.*;
 
-public class BingoTask
+public class GameTask
 {
     public enum TaskType
     {
@@ -38,7 +38,7 @@ public class BingoTask
     public final Material material;
     public final boolean glowing;
 
-    public BingoTask(TaskData data)
+    public GameTask(TaskData data)
     {
         this.data = data;
         this.completedBy = null;
@@ -160,7 +160,7 @@ public class BingoTask
         return item;
     }
 
-    public static @Nullable BingoTask fromItem(ItemStack in)
+    public static @Nullable GameTask fromItem(ItemStack in)
     {
         PersistentDataContainer pdcData = in.getItemMeta().getPersistentDataContainer();
 
@@ -180,11 +180,11 @@ public class BingoTask
         }
 
         type = TaskType.valueOf(typeStr);
-        BingoTask task = switch (type)
+        GameTask task = switch (type)
         {
-            case ADVANCEMENT -> new BingoTask(AdvancementTask.fromPdc(pdcData));
-            case STATISTIC -> new BingoTask(StatisticTask.fromPdc(pdcData));
-            default -> new BingoTask(ItemTask.fromPdc(pdcData));
+            case ADVANCEMENT -> new GameTask(AdvancementTask.fromPdc(pdcData));
+            case STATISTIC -> new GameTask(StatisticTask.fromPdc(pdcData));
+            default -> new GameTask(ItemTask.fromPdc(pdcData));
         };
 
         task.voided = voided;
@@ -209,9 +209,9 @@ public class BingoTask
         return true;
     }
 
-    public BingoTask copy()
+    public GameTask copy()
     {
-        return new BingoTask(data);
+        return new GameTask(data);
     }
 
     public Optional<BingoParticipant> getCompletedBy() {

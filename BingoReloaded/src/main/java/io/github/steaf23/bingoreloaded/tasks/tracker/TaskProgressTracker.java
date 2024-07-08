@@ -1,7 +1,7 @@
 package io.github.steaf23.bingoreloaded.tasks.tracker;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
-import io.github.steaf23.bingoreloaded.cards.BingoCard;
+import io.github.steaf23.bingoreloaded.cards.TaskCard;
 import io.github.steaf23.bingoreloaded.event.BingoDeathmatchTaskCompletedEvent;
 import io.github.steaf23.bingoreloaded.event.BingoStatisticCompletedEvent;
 import io.github.steaf23.bingoreloaded.event.BingoTaskProgressCompletedEvent;
@@ -53,7 +53,7 @@ public class TaskProgressTracker
     }
 
     private final BingoGame game;
-    private final Map<BingoTask, List<TaskProgress>> progressMap;
+    private final Map<GameTask, List<TaskProgress>> progressMap;
     private final StatisticTracker statisticTracker;
 
     public TaskProgressTracker(BingoGame game) {
@@ -62,11 +62,11 @@ public class TaskProgressTracker
         this.statisticTracker = new StatisticTracker();
     }
 
-    public void startTrackingTask(BingoTask task) {
+    public void startTrackingTask(GameTask task) {
         progressMap.put(task, new ArrayList<>());
         for (BingoParticipant participant : game.getTeamManager().getParticipants()) {
             // only track progress if the participant has to complete the task.
-            BingoCard card = participant.getTeam().getCard();
+            TaskCard card = participant.getTeam().getCard();
             if (card == null || !card.getTasks().contains(task)) {
                 continue;
             }
@@ -74,14 +74,14 @@ public class TaskProgressTracker
             int finalCount = task.getCount();
 
             // reset any progress already made beforehand
-            if (task.type == BingoTask.TaskType.ADVANCEMENT) {
+            if (task.type == GameTask.TaskType.ADVANCEMENT) {
                 // revoke advancement from player
                 AdvancementTask advancementTask = (AdvancementTask) task.data;
                 participant.sessionPlayer().ifPresent(player -> {
                     AdvancementProgress progress = player.getAdvancementProgress(advancementTask.advancement());
                     progress.getAwardedCriteria().forEach(progress::revokeCriteria);
                 });
-            } else if (task.type == BingoTask.TaskType.STATISTIC) {
+            } else if (task.type == GameTask.TaskType.STATISTIC) {
                 StatisticTask statisticTask = (StatisticTask) task.data;
                 // travel statistics are counted * 1000
 //                if (statisticTask.statistic().getCategory() == BingoStatistic.StatisticCategory.TRAVEL)
@@ -110,7 +110,7 @@ public class TaskProgressTracker
             return;
 
         updateProgressFromEvent(participant, (task, progress) -> {
-            if (task.type != BingoTask.TaskType.ADVANCEMENT) {
+            if (task.type != GameTask.TaskType.ADVANCEMENT) {
                 return false;
             }
             AdvancementTask data = (AdvancementTask) task.data;
@@ -134,7 +134,7 @@ public class TaskProgressTracker
             return;
 
         updateProgressFromEvent(participant, (task, progress) -> {
-            if (task.type != BingoTask.TaskType.STATISTIC) {
+            if (task.type != GameTask.TaskType.STATISTIC) {
                 return false;
             }
             BingoStatistic statistic = event.getStatistic();
@@ -162,7 +162,7 @@ public class TaskProgressTracker
             return item;
         }
 
-        BingoTask deathMatchTask = game.getDeathMatchTask();
+        GameTask deathMatchTask = game.getDeathMatchTask();
         if (deathMatchTask != null) {
             if (item.getType().equals(deathMatchTask.material)) {
                 deathMatchTask.complete(participant, game.getGameTime());
@@ -172,15 +172,15 @@ public class TaskProgressTracker
             return item;
         }
 
-        Set<BingoTask> tasksToRemove = new HashSet<>();
-        for (BingoTask task : progressMap.keySet()) {
+        Set<GameTask> tasksToRemove = new HashSet<>();
+        for (GameTask task : progressMap.keySet()) {
             List<TaskProgress> progressList = progressMap.get(task);
             for (TaskProgress progress : progressMap.get(task)) {
                 if (!progress.participant.equals(participant)) {
                     continue;
                 }
 
-                if (task.type != BingoTask.TaskType.ITEM) {
+                if (task.type != GameTask.TaskType.ITEM) {
                     continue;
                 }
                 ItemTask data = (ItemTask) task.data;
@@ -207,7 +207,7 @@ public class TaskProgressTracker
         tasksToRemove.forEach(t -> progressMap.remove(t));
 
         updateProgressFromEvent(participant, (task, progress) -> {
-            if (task.type != BingoTask.TaskType.ITEM) {
+            if (task.type != GameTask.TaskType.ITEM) {
                 return false;
             }
             ItemTask data = (ItemTask) task.data;
@@ -310,14 +310,14 @@ public class TaskProgressTracker
         statisticTracker.updateProgress();
     }
 
-    public void removeTask(BingoTask task) {
+    public void removeTask(GameTask task) {
         progressMap.remove(task);
-        if (task.type == BingoTask.TaskType.STATISTIC) {
+        if (task.type == GameTask.TaskType.STATISTIC) {
             statisticTracker.removeStatistic((StatisticTask) task.data);
         }
     }
 
-    private boolean tryCompleteTask(BingoTask task, TaskProgress progress) {
+    private boolean tryCompleteTask(GameTask task, TaskProgress progress) {
         if (!progress.isDone()) {
             return false;
         }
@@ -387,9 +387,9 @@ public class TaskProgressTracker
      * @param participant
      * @param updateFunction
      */
-    private void updateProgressFromEvent(BingoParticipant participant, BiFunction<BingoTask, TaskProgress, Boolean> updateFunction) {
-        Set<BingoTask> tasksToRemove = new HashSet<>();
-        for (BingoTask task : progressMap.keySet()) {
+    private void updateProgressFromEvent(BingoParticipant participant, BiFunction<GameTask, TaskProgress, Boolean> updateFunction) {
+        Set<GameTask> tasksToRemove = new HashSet<>();
+        for (GameTask task : progressMap.keySet()) {
             List<TaskProgress> progressList = progressMap.get(task);
             for (TaskProgress progress : progressMap.get(task)) {
                 if (!progress.participant.equals(participant)) {

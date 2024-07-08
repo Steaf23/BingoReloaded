@@ -9,7 +9,6 @@ import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.tasks.*;
 import io.github.steaf23.bingoreloaded.tasks.tracker.TaskProgressTracker;
-import io.github.steaf23.playerdisplay.inventory.MenuBoard;
 import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -18,28 +17,25 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
 
-public class BingoCard
+public abstract class TaskCard
 {
     public final CardSize size;
-    protected final TaskProgressTracker progressTracker;
-    private List<BingoTask> tasks;
+    private final List<GameTask> tasks;
 
     protected final CardMenu menu;
 
     private static final TaskData DEFAULT_TASK = new ItemTask(Material.DIRT, 1);
 
-    public BingoCard(MenuBoard menuBoard, CardSize size, TaskProgressTracker progressTracker) {
-        this(new CardMenu(menuBoard, size), size, progressTracker);
-    }
-
-    public BingoCard(CardMenu menu, CardSize size, TaskProgressTracker progressTracker) {
+    public TaskCard(CardMenu menu, CardSize size) {
         this.size = size;
         this.tasks = new ArrayList<>();
         this.menu = menu;
-        this.progressTracker = progressTracker;
         menu.setInfo(BingoMessage.INFO_REGULAR_NAME.asPhrase(),
                 BingoMessage.INFO_REGULAR_DESC.asMultiline());
     }
+
+    public abstract boolean hasTeamWon(BingoTeam team);
+    public abstract TaskCard copy();
 
     /**
      * Generating a bingo card has a few steps:
@@ -122,7 +118,7 @@ public class BingoCard
 
         // Shuffle and add tasks to the card.
         Collections.shuffle(newTasks, shuffler);
-        setTasks(newTasks.stream().map(BingoTask::new).toList());
+        setTasks(newTasks.stream().map(GameTask::new).toList());
     }
 
     public void showInventory(Player player) {
@@ -130,60 +126,14 @@ public class BingoCard
         menu.open(player);
     }
 
-    public List<BingoTask> getTasks() {
+    public List<GameTask> getTasks() {
         return tasks;
     }
 
-    public void setTasks(List<BingoTask> tasks) {
-        this.tasks = tasks;
-    }
-
-    public boolean hasBingo(BingoTeam team) {
-        List<BingoTask> allTasks = getTasks();
-        //check for rows and columns
-        for (int y = 0; y < size.size; y++) {
-            boolean completedRow = true;
-            boolean completedCol = true;
-            for (int x = 0; x < size.size; x++) {
-                int indexRow = size.size * y + x;
-                Optional<BingoParticipant> completedBy = allTasks.get(indexRow).getCompletedBy();
-                if (completedBy.isEmpty() || !team.getMembers().contains(completedBy.get())) {
-                    completedRow = false;
-                }
-
-                int indexCol = size.size * x + y;
-                completedBy = allTasks.get(indexCol).getCompletedBy();
-                if (completedBy.isEmpty() || !team.getMembers().contains(completedBy.get())) {
-                    completedCol = false;
-                }
-            }
-
-            if (completedRow || completedCol) {
-                return true;
-            }
-        }
-
-        // check for diagonals
-        boolean completedDiagonal1 = true;
-        for (int idx = 0; idx < size.fullCardSize; idx += size.size + 1) {
-            Optional<BingoParticipant> completedBy = allTasks.get(idx).getCompletedBy();
-            if (completedBy.isEmpty() || !team.getMembers().contains(completedBy.get())) {
-                completedDiagonal1 = false;
-                break;
-            }
-        }
-
-        boolean completedDiagonal2 = true;
-        for (int idx = 0; idx < size.fullCardSize; idx += size.size - 1) {
-            if (idx != 0 && idx != size.fullCardSize - 1) {
-                Optional<BingoParticipant> completedBy = allTasks.get(idx).getCompletedBy();
-                if (completedBy.isEmpty() || !team.getMembers().contains(completedBy.get())) {
-                    completedDiagonal2 = false;
-                    break;
-                }
-            }
-        }
-        return completedDiagonal1 || completedDiagonal2;
+    public void setTasks(List<GameTask> tasks) {
+        this.tasks.clear();
+        this.tasks.addAll(tasks);
+        this.menu.updateTasks(tasks);
     }
 
     /**
@@ -208,15 +158,5 @@ public class BingoCard
                 .filter(t -> t.getCompletedBy().isPresent() && t.getCompletedBy().get().getId().equals(participant.getId())).count();
     }
 
-    public BingoCard copy() {
-        BingoCard card = new BingoCard(menu.getMenuBoard(), this.size, this.progressTracker);
-        List<BingoTask> newTasks = new ArrayList<>();
-        for (BingoTask slot : getTasks()) {
-            newTasks.add(slot.copy());
-        }
-        card.setTasks(newTasks);
-        return card;
-    }
-
-    public void handleTaskCompleted(BingoParticipant player, BingoTask task, long timeSeconds) {}
+    public void handleTaskCompleted(BingoParticipant player, GameTask task, long timeSeconds) {}
 }

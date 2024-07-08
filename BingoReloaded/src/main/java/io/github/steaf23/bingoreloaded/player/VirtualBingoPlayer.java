@@ -4,14 +4,10 @@ import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gui.inventory.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
-import io.github.steaf23.bingoreloaded.tasks.BingoTask;
+import io.github.steaf23.bingoreloaded.tasks.GameTask;
 import io.github.steaf23.playerdisplay.PlayerDisplay;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.TextDecoration;
-import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.md_5.bungee.api.ChatColor;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -70,11 +66,11 @@ public class VirtualBingoPlayer implements BingoParticipant
     }
 
     @Override
-    public void showDeathMatchTask(BingoTask task) {
+    public void showDeathMatchTask(GameTask task) {
     }
 
     @Override
-    public void showCard(BingoTask deathMatchTask) {
+    public void showCard(GameTask deathMatchTask) {
     }
 
     @Override

@@ -1,6 +1,6 @@
 package io.github.steaf23.bingoreloaded.player.team;
 
-import io.github.steaf23.bingoreloaded.cards.BingoCard;
+import io.github.steaf23.bingoreloaded.cards.TaskCard;
 
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 
 public class BingoTeam implements ForwardingAudience
 {
-    private BingoCard card;
+    private TaskCard card;
     public boolean outOfTheGame = false;
     private final String id;
     private final TextColor color;
@@ -37,11 +37,11 @@ public class BingoTeam implements ForwardingAudience
         this.prefix = prefix;
     }
 
-    public @Nullable BingoCard getCard() {
+    public @Nullable TaskCard getCard() {
         return card;
     }
 
-    public void setCard(BingoCard card) {
+    public void setCard(TaskCard card) {
         this.card = card;
     }
 

@@ -1,7 +1,7 @@
 package io.github.steaf23.bingoreloaded.gui.inventory.creator;
 
 import io.github.steaf23.bingoreloaded.data.BingoCardData;
-import io.github.steaf23.bingoreloaded.tasks.BingoTask;
+import io.github.steaf23.bingoreloaded.tasks.GameTask;
 import io.github.steaf23.bingoreloaded.tasks.CountableTask;
 import io.github.steaf23.bingoreloaded.tasks.TaskData;
 
@@ -13,7 +13,6 @@ import io.github.steaf23.playerdisplay.inventory.item.ItemTemplate;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
@@ -29,7 +28,7 @@ public class TaskPickerMenu extends PaginatedSelectionMenu
     protected static final Component[] SELECTED_LORE = createSelectedLore();
     protected static final Component[] UNSELECTED_LORE = createUnselectedLore();
 
-    public TaskPickerMenu(MenuBoard manager, String title, List<BingoTask> options, String listName) {
+    public TaskPickerMenu(MenuBoard manager, String title, List<GameTask> options, String listName) {
         super(manager, Component.text(title), asPickerItems(options), FilterType.DISPLAY_NAME);
         this.listName = listName;
         this.setMaxStackSizeOverride(64);
@@ -57,7 +56,7 @@ public class TaskPickerMenu extends PaginatedSelectionMenu
                 return;
         }
 
-        TaskData newData = BingoTask.fromItem(item.buildItem()).data;
+        TaskData newData = GameTask.fromItem(item.buildItem()).data;
         ItemTemplate newItem = getUpdatedTaskItem(newData, true, newAmount)
                 .copyToSlot(item.getSlot());
         replaceItem(newItem, newItem.getSlot());
@@ -81,7 +80,7 @@ public class TaskPickerMenu extends PaginatedSelectionMenu
             newAmount = Math.max(1, newAmount - by);
         }
 
-        TaskData newData = BingoTask.fromItem(item.buildItem()).data;
+        TaskData newData = GameTask.fromItem(item.buildItem()).data;
         ItemTemplate newItem = getUpdatedTaskItem(newData, !deselect, newAmount)
                 .copyToSlot(item.getSlot());
         replaceItem(newItem, newItem.getSlot());
@@ -96,7 +95,7 @@ public class TaskPickerMenu extends PaginatedSelectionMenu
         Set<TaskData> tasks = cardsData.lists().getTasks(listName, true, true);
 
         for (ItemTemplate item : getAllItems()) {
-            TaskData itemData = BingoTask.fromItem(item.buildItem()).data;
+            TaskData itemData = GameTask.fromItem(item.buildItem()).data;
             TaskData savedTask = null;
             for (var t : tasks) {
                 if (t.isTaskEqual(itemData)) {
@@ -123,11 +122,11 @@ public class TaskPickerMenu extends PaginatedSelectionMenu
 
         BingoCardData cardsData = new BingoCardData();
         cardsData.lists().saveTasksFromGroup(listName,
-                getAllItems().stream().map(item -> BingoTask.fromItem(item.buildItem()).data).collect(Collectors.toList()),
-                getSelectedItems().stream().map(item -> BingoTask.fromItem(item.buildItem()).data).collect(Collectors.toList()));
+                getAllItems().stream().map(item -> GameTask.fromItem(item.buildItem()).data).collect(Collectors.toList()),
+                getSelectedItems().stream().map(item -> GameTask.fromItem(item.buildItem()).data).collect(Collectors.toList()));
     }
 
-    public static List<ItemTemplate> asPickerItems(List<BingoTask> tasks) {
+    public static List<ItemTemplate> asPickerItems(List<GameTask> tasks) {
         List<ItemTemplate> result = new ArrayList<>();
         tasks.forEach(task -> {
             ItemTemplate item = getUpdatedTaskItem(task.data, false, 1);
@@ -145,7 +144,7 @@ public class TaskPickerMenu extends PaginatedSelectionMenu
             }
         }
 
-        BingoTask newTask = new BingoTask(newData);
+        GameTask newTask = new GameTask(newData);
         ItemTemplate item = newTask.toItem();
         item.setAction(null);
 

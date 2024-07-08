@@ -1,6 +1,6 @@
 package io.github.steaf23.bingoreloaded.player;
 
-import io.github.steaf23.bingoreloaded.cards.BingoCard;
+import io.github.steaf23.bingoreloaded.cards.TaskCard;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
@@ -10,10 +10,8 @@ import io.github.steaf23.bingoreloaded.gui.inventory.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.item.ItemCooldownManager;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
-import io.github.steaf23.bingoreloaded.tasks.BingoTask;
+import io.github.steaf23.bingoreloaded.tasks.GameTask;
 import io.github.steaf23.playerdisplay.util.PDCHelper;
-import io.papermc.paper.registry.RegistryAccess;
-import io.papermc.paper.registry.RegistryKey;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -197,7 +195,7 @@ public class BingoPlayer implements BingoParticipant
         }
     }
 
-    public void showDeathMatchTask(BingoTask task)
+    public void showDeathMatchTask(GameTask task)
     {
         if (sessionPlayer().isEmpty())
             return;
@@ -210,12 +208,12 @@ public class BingoPlayer implements BingoParticipant
     }
 
     @Override
-    public void showCard(BingoTask deathMatchTask) {
+    public void showCard(GameTask deathMatchTask) {
         BingoTeam playerTeam = getTeam();
         if (playerTeam == null) {
             return;
         }
-        BingoCard card = playerTeam.getCard();
+        TaskCard card = playerTeam.getCard();
 
         sessionPlayer().ifPresent(player -> {
             if (deathMatchTask != null) {
