@@ -139,7 +139,7 @@ public class BingoReloaded extends JavaPlugin
 
         bstatsMetrics = new Metrics(this, 22586);
         bstatsMetrics.addCustomChart(new Metrics.SimplePie("selected_language", () -> {
-            return config.language.replace(".yml", "");
+            return config.language.replace(".yml", "").replace("languages/", "");
         }));
         bstatsMetrics.addCustomChart(new Metrics.SimplePie("plugin_configuration", () -> {
             return config.configuration == ConfigData.PluginConfiguration.SINGULAR ? "Singular" : "Multiple";
