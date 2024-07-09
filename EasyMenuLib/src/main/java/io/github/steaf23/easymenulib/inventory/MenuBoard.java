@@ -1,6 +1,7 @@
 package io.github.steaf23.easymenulib.inventory;
 
 
+import com.github.retrooper.packetevents.PacketEvents;
 import io.github.steaf23.easymenulib.EasyMenuLibrary;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -27,7 +28,8 @@ public class MenuBoard implements Listener
     public MenuBoard() {
         this.activeMenus = new HashMap<>();
         this.packetListener = new MenuPacketListener(activeMenus);
-        PacketEvents.getAPI().getEventManager().registerListener(packetListener);
+        //IN 2.1b no packet listener is needed
+//        PacketEvents.getAPI().getEventManager().registerListener(packetListener);
     }
 
     public void close(Menu menu, HumanEntity player) {

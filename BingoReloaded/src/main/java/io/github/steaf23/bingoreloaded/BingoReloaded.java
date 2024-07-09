@@ -1,6 +1,9 @@
 package io.github.steaf23.bingoreloaded;
 
 
+import com.github.retrooper.packetevents.PacketEvents;
+import com.github.retrooper.packetevents.wrapper.PacketWrapper;
+import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
 import io.github.steaf23.bingoreloaded.command.*;
 import io.github.steaf23.bingoreloaded.data.*;
 import io.github.steaf23.bingoreloaded.data.helper.SerializablePlayer;
@@ -133,7 +136,7 @@ public class BingoReloaded extends JavaPlugin
             registerCommand("btc", command);
             Bukkit.getPluginManager().registerEvents(command, this);
         }
-
+        
         Message.log(ChatColor.GREEN + "Enabled " + getName());
 
 //        if (RecoveryCardData.loadCards(game))
@@ -146,7 +149,7 @@ public class BingoReloaded extends JavaPlugin
 
         bstatsMetrics = new Metrics(this, 22586);
         bstatsMetrics.addCustomChart(new Metrics.SimplePie("selected_language", () -> {
-            return config.language.replace(".yml", "");
+            return config.language.replace(".yml", "").replace("languages/", "");
         }));
         bstatsMetrics.addCustomChart(new Metrics.SimplePie("plugin_configuration", () -> {
             return config.configuration == ConfigData.PluginConfiguration.SINGULAR ? "Singular" : "Multiple";
