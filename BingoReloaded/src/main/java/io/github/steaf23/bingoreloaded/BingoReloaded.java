@@ -1,8 +1,6 @@
 package io.github.steaf23.bingoreloaded;
 
-import com.github.retrooper.packetevents.PacketEvents;
-import com.github.retrooper.packetevents.wrapper.PacketWrapper;
-import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
+
 import io.github.steaf23.bingoreloaded.command.*;
 import io.github.steaf23.bingoreloaded.data.*;
 import io.github.steaf23.bingoreloaded.data.helper.SerializablePlayer;
@@ -22,6 +20,7 @@ import io.github.steaf23.bingoreloaded.tasks.StatisticTask;
 import io.github.steaf23.bingoreloaded.tasks.BingoStatistic;
 import io.github.steaf23.bingoreloaded.placeholder.BingoReloadedPlaceholderExpansion;
 import io.github.steaf23.bingoreloaded.util.Message;
+import io.github.steaf23.bingoreloaded.util.bstats.Metrics;
 import io.github.steaf23.easymenulib.EasyMenuLibrary;
 import io.github.steaf23.easymenulib.inventory.BasicMenu;
 import io.github.steaf23.easymenulib.scoreboard.HUDRegistry;
@@ -55,6 +54,8 @@ public class BingoReloaded extends JavaPlugin
     private GameManager gameManager;
     private BingoMenuBoard menuBoard;
     private HUDRegistry hudRegistry;
+
+    private Metrics bstatsMetrics;
 
     @Override
     public void onLoad() {
@@ -142,6 +143,14 @@ public class BingoReloaded extends JavaPlugin
 
         Bukkit.getPluginManager().registerEvents(menuBoard, this);
         Bukkit.getPluginManager().registerEvents(hudRegistry, this);
+
+        bstatsMetrics = new Metrics(this, 22586);
+        bstatsMetrics.addCustomChart(new Metrics.SimplePie("selected_language", () -> {
+            return config.language.replace(".yml", "");
+        }));
+        bstatsMetrics.addCustomChart(new Metrics.SimplePie("plugin_configuration", () -> {
+            return config.configuration == ConfigData.PluginConfiguration.SINGULAR ? "Singular" : "Multiple";
+        }));
     }
 
     public void registerCommand(String commandName, TabExecutor executor) {
@@ -162,7 +171,6 @@ public class BingoReloaded extends JavaPlugin
         }
 
         HandlerList.unregisterAll(menuBoard);
-        PacketEvents.getAPI().terminate();
     }
 
     public ConfigData config() {

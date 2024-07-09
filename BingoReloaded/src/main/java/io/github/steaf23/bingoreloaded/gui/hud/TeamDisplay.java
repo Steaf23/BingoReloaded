@@ -1,12 +1,12 @@
 package io.github.steaf23.bingoreloaded.gui.hud;
 
-import com.github.retrooper.packetevents.wrapper.PacketWrapper;
-import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerTeams;
-import io.github.steaf23.bingoreloaded.BingoReloaded;
+
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.player.team.TeamManager;
 import io.github.steaf23.bingoreloaded.util.ComponentConverter;
+import io.github.steaf23.easymenulib.EasyMenuLibrary;
+import io.github.steaf23.easymenulib.scoreboard.TeamPacketHelper;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -69,25 +69,12 @@ public class TeamDisplay
         return info;
     }
 
-    public void createTeamForPlayer(TeamInfo team, Player player) {
-        //TODO: un-curse this team prefix shitshow & adventure component conversion
-        WrapperPlayServerTeams.ScoreBoardTeamInfo info = new WrapperPlayServerTeams.ScoreBoardTeamInfo(
-                Component.text(team.displayName()),
-                team.prefix(),
-                team.suffix(),
-                WrapperPlayServerTeams.NameTagVisibility.ALWAYS,
-                WrapperPlayServerTeams.CollisionRule.ALWAYS,
-                null,
-                WrapperPlayServerTeams.OptionData.NONE
-        );
-        PacketWrapper packet = new WrapperPlayServerTeams(team.identifier(), WrapperPlayServerTeams.TeamMode.CREATE, info, team.entries());
-
-        BingoReloaded.sendPacket(player, packet);
+    private void createTeamForPlayer(TeamInfo team, Player player) {
+        TeamPacketHelper.createTeamVisibleToPlayer(player, team.identifier(), Component.text(team.displayName()), team.prefix(), team.suffix(), team.entries());
     }
 
     public void removeTeamForPlayer(String teamIdentifier, Player player) {
-        PacketWrapper packet = new WrapperPlayServerTeams(teamIdentifier, WrapperPlayServerTeams.TeamMode.REMOVE, Optional.empty());
-        BingoReloaded.sendPacket(player, packet);
+        TeamPacketHelper.removeTeamVisibleToPlayer(player, teamIdentifier);
     }
 
     public void clearTeamsForPlayer(@NotNull Player player) {

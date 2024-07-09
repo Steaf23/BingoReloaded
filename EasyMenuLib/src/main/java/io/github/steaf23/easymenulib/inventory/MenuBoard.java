@@ -20,10 +20,14 @@ public class MenuBoard implements Listener
     // Stores all currently open inventories by all players, using a stack system we can easily add or remove child inventories.
     protected Map<UUID, Stack<Menu>> activeMenus;
 
+    private final MenuPacketListener packetListener;
+
     private static final Set<ClickType> CLICK_TYPES_TO_IGNORE = Set.of(ClickType.DOUBLE_CLICK, ClickType.DROP, ClickType.CREATIVE, ClickType.CONTROL_DROP, ClickType.SWAP_OFFHAND);
 
     public MenuBoard() {
         this.activeMenus = new HashMap<>();
+        this.packetListener = new MenuPacketListener(activeMenus);
+        PacketEvents.getAPI().getEventManager().registerListener(packetListener);
     }
 
     public void close(Menu menu, HumanEntity player) {
