@@ -1,0 +1,9 @@
+# Mappings for font characters used by textures as defined by Pack\assets\minecraft\font\default.json. When editing this file, make sure to edit default.json too to match it!
+regular_3: "\uE031"
+regular_5: "\uE032"
+lockout_3: "\uE033"
+lockout_5: "\uE034"
+complete_3: "\uE035"
+complete_5: "\uE036"
+hotswap_3: "\uE037"
+hotswap_5: "\uE038"

@@ -16,6 +16,8 @@ import io.github.steaf23.bingoreloaded.tasks.ItemTask;
 import io.github.steaf23.bingoreloaded.tasks.StatisticTask;
 import io.github.steaf23.bingoreloaded.tasks.BingoStatistic;
 import io.github.steaf23.bingoreloaded.placeholder.BingoReloadedPlaceholderExpansion;
+import io.github.steaf23.bingoreloaded.data.FontMappingData;
+import io.github.steaf23.bingoreloaded.util.bstats.Metrics;
 import io.github.steaf23.playerdisplay.PlayerDisplay;
 import io.github.steaf23.playerdisplay.inventory.BasicMenu;
 import io.github.steaf23.playerdisplay.scoreboard.HUDRegistry;
@@ -48,6 +50,9 @@ public class BingoReloaded extends JavaPlugin
     private GameManager gameManager;
     private BingoMenuBoard menuBoard;
     private HUDRegistry hudRegistry;
+    private FontMappingData characterMappings;
+
+    private Metrics bStatsMetrics;
 
     @Override
     public void onLoad() {
@@ -64,7 +69,7 @@ public class BingoReloaded extends JavaPlugin
         PLACEHOLDER_API_ENABLED = Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null;
         if (PLACEHOLDER_API_ENABLED) {
             new BingoReloadedPlaceholderExpansion(this).register();
-            ConsoleMessenger.log(NamedTextColor.GREEN + "Enabled Bingo Reloaded Placeholder expansion");
+            ConsoleMessenger.log(Component.text("Enabled Bingo Reloaded Placeholder expansion").color(NamedTextColor.GREEN));
         }
 
         PlayerDisplay.setItemTranslation(key -> {
@@ -98,6 +103,7 @@ public class BingoReloaded extends JavaPlugin
 
         this.menuBoard = new BingoMenuBoard();
         this.hudRegistry = new HUDRegistry();
+        this.characterMappings = new FontMappingData();
 
         if (config.configuration == ConfigData.PluginConfiguration.SINGULAR) {
             this.gameManager = new SingularGameManager(this, config, menuBoard, hudRegistry);
@@ -122,6 +128,14 @@ public class BingoReloaded extends JavaPlugin
 
         Bukkit.getPluginManager().registerEvents(menuBoard, this);
         Bukkit.getPluginManager().registerEvents(hudRegistry, this);
+
+        bStatsMetrics = new Metrics(this, 22586);
+        bStatsMetrics.addCustomChart(new Metrics.SimplePie("selected_language", () -> {
+            return config.language.replace(".yml", "").replace("languages/", "");
+        }));
+        bStatsMetrics.addCustomChart(new Metrics.SimplePie("plugin_configuration", () -> {
+            return config.configuration == ConfigData.PluginConfiguration.SINGULAR ? "Singular" : "Multiple";
+        }));
     }
 
     public void registerCommand(String commandName, TabExecutor executor) {
@@ -204,5 +218,9 @@ public class BingoReloaded extends JavaPlugin
 
     public GameManager getGameManager() {
         return gameManager;
+    }
+
+    public FontMappingData getCharacterMappings() {
+        return characterMappings;
     }
 }

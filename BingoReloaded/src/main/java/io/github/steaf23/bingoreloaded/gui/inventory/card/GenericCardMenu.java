@@ -3,6 +3,7 @@ package io.github.steaf23.bingoreloaded.gui.inventory.card;
 import io.github.steaf23.bingoreloaded.cards.CardSize;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.gui.inventory.CardMenu;
+import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
 import io.github.steaf23.bingoreloaded.tasks.GameTask;
 import io.github.steaf23.playerdisplay.inventory.BasicMenu;
 import io.github.steaf23.playerdisplay.inventory.MenuBoard;
@@ -21,12 +22,14 @@ import java.util.List;
 public class GenericCardMenu extends BasicMenu implements CardMenu
 {
     protected final CardSize size;
+    protected final BingoGamemode mode;
     protected List<GameTask> tasks;
 
-    public GenericCardMenu(MenuBoard menuBoard, CardSize cardSize)
+    public GenericCardMenu(MenuBoard menuBoard, BingoGamemode mode, CardSize cardSize)
     {
         super(menuBoard, BingoMessage.CARD_TITLE.asPhrase(), cardSize.size);
         this.size = cardSize;
+        this.mode = mode;
         this.tasks = new ArrayList<>();
         setMaxStackSizeOverride(64);
     }
@@ -41,7 +44,7 @@ public class GenericCardMenu extends BasicMenu implements CardMenu
 
     @Override
     public CardMenu copy() {
-        return new GenericCardMenu(getMenuBoard(), size);
+        return new GenericCardMenu(getMenuBoard(), mode, size);
     }
 
     public @NotNull ItemTemplate getItemFromTask(int taskIndex) {
@@ -52,7 +55,7 @@ public class GenericCardMenu extends BasicMenu implements CardMenu
     public void setInfo(Component name, Component... description)
     {
         ItemTemplate info = new ItemTemplate(0, Material.MAP,
-                name.decorate(TextDecoration.BOLD),
+                name.decorate(TextDecoration.BOLD).color(mode.getColor()),
                 MultilineComponent.from(NamedTextColor.YELLOW, TextDecoration.ITALIC, description));
         addItem(info);
     }

@@ -1,6 +1,8 @@
 package io.github.steaf23.bingoreloaded.gui.inventory.card;
 
+import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.cards.CardSize;
+import io.github.steaf23.bingoreloaded.data.FontMappingData;
 import io.github.steaf23.bingoreloaded.gui.inventory.CardMenu;
 import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
 import io.github.steaf23.bingoreloaded.tasks.GameTask;
@@ -71,36 +73,26 @@ public class TexturedCardMenu extends BasicMenu implements CardMenu
 
     public void setInfo(Component name, Component... description) {
         ItemTemplate info = new ItemTemplate(0, Material.MAP,
-                name.decorate(TextDecoration.BOLD),
+                name.decorate(TextDecoration.BOLD).color(mode.getColor()),
                 MultilineComponent.from(NamedTextColor.YELLOW, TextDecoration.ITALIC, description))
                 .setCustomModelData(1011);
         addItem(info);
     }
 
     /**
-     * As defined by Pack\assets\minecraft\font\default.json
-     *
      * @param mode
      * @param size
      * @return
      */
     public static String getTextureFromMode(BingoGamemode mode, CardSize size) {
+        FontMappingData mappings = BingoReloaded.getInstance().getCharacterMappings();
         if (size == CardSize.X3) {
-            return switch (mode) {
-                case REGULAR -> "\uE031";
-                case LOCKOUT -> "\uE033";
-                case COMPLETE -> "\uE035";
-                case HOTSWAP -> "\uE037";
-            };
+            return mappings.mapCharacter(mode.getDataName() + "_3");
+
         } else if (size == CardSize.X5) {
-            return switch (mode) {
-                case REGULAR -> "\uE032";
-                case LOCKOUT -> "\uE034";
-                case COMPLETE -> "\uE036";
-                case HOTSWAP -> "\uE038";
-            };
+            return mappings.mapCharacter(mode.getDataName() + "_5");
         }
 
-        return "\uE032";
+        return "regular_5";
     }
 }

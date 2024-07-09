@@ -42,10 +42,10 @@ public class CardBuilder
             } else if (settings.size() == CardSize.X5) {
                 menu = new TexturedCardMenu(menuBoard, settings.mode(), settings.size());
             } else {
-                menu = new GenericCardMenu(menuBoard, settings.size());
+                menu = new GenericCardMenu(menuBoard, settings.mode(), settings.size());
             }
         } else {
-            menu = new GenericCardMenu(menuBoard, settings.size());
+            menu = new GenericCardMenu(menuBoard, settings.mode(), settings.size());
         }
         return menu;
     }
