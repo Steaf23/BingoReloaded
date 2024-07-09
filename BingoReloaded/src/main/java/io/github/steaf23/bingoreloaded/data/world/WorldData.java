@@ -24,6 +24,9 @@ public class WorldData
     public static boolean clearWorlds(@NotNull JavaPlugin plugin) {
         String worldFolder = getWorldsFolder(plugin);
         File worldsFolderDir = FileUtils.getFile(worldFolder);
+        if (!worldsFolderDir.exists()) {
+            worldsFolderDir.mkdirs();
+        }
         for (File f : FileUtils.listFilesAndDirs(worldsFolderDir, FileFilterUtils.directoryFileFilter(), null)) {
             if (f.equals(worldsFolderDir)) continue;
 
