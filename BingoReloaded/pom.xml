@@ -6,7 +6,7 @@
 
     <groupId>io.github.steaf23</groupId>
     <artifactId>BingoReloaded</artifactId>
-    <version>2.1.1b</version>
+    <version>2.1.2b</version>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
