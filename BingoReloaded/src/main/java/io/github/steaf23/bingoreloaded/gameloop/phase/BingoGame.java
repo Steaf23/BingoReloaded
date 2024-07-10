@@ -61,6 +61,8 @@ public class BingoGame implements GamePhase
     private CountdownTimer startingTimer;
     private boolean gameStarted;
     private final ActionBarManager actionBarManager;
+    //Used to override bed spawns if they get broken to reset spawn point to game spawn point.
+    private final Map<UUID, Location> playerSpawnPoints;
 
     private GameTask deathMatchTask;
 
@@ -74,6 +76,7 @@ public class BingoGame implements GamePhase
         this.progressTracker = new TaskProgressTracker(this);
 
         this.respawnManager = new PlayerRespawnManager(BingoReloaded.getInstance(), config.teleportAfterDeathPeriod);
+        this.playerSpawnPoints = new HashMap<>();
     }
 
     private void start() {
@@ -434,7 +437,7 @@ public class BingoGame implements GamePhase
         }
     }
 
-    private static void teleportPlayerToStart(BingoParticipant participant, Location to, int spread) {
+    private void teleportPlayerToStart(BingoParticipant participant, Location to, int spread) {
         if (participant.sessionPlayer().isEmpty())
             return;
         Player player = participant.sessionPlayer().get();
@@ -443,7 +446,9 @@ public class BingoGame implements GamePhase
         Location playerLocation = to.clone().add(placement);
         playerLocation.setY(playerLocation.getY() + 10.0);
         player.teleport(playerLocation, PlayerTeleportEvent.TeleportCause.PLUGIN);
-        player.setRespawnLocation(to.clone().add(0.0, 2.0, 0.0), true);
+        Location spawnLocation = to.clone().add(0.0, 2.0, 0.0);
+        player.setRespawnLocation(spawnLocation, true);
+        playerSpawnPoints.put(player.getUniqueId(), spawnLocation);
     }
 
     private Location getRandomSpawnLocation(World world) {
@@ -629,6 +634,13 @@ public class BingoGame implements GamePhase
             player.giveKit(settings.kit());
         } else {
             player.giveEffects(settings.effects(), 0);
+        }
+
+        boolean correctRespawnPoint = !event.isBedSpawn() && !event.isAnchorSpawn() && event.getPlayer().getRespawnLocation() == null;
+        if (correctRespawnPoint && playerSpawnPoints.containsKey(player.getId())) {
+            Location newSpawnLocation = playerSpawnPoints.get(player.getId());
+            event.setRespawnLocation(newSpawnLocation);
+            event.getPlayer().setRespawnLocation(newSpawnLocation, true);
         }
     }
 
