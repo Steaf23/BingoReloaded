@@ -1,4 +1,4 @@
-package io.github.steaf23.bingoreloaded.gui.inventory;
+package io.github.steaf23.bingoreloaded.gui.inventory.card;
 
 import io.github.steaf23.bingoreloaded.tasks.GameTask;
 import net.kyori.adventure.text.Component;

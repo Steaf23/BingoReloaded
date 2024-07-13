@@ -16,7 +16,7 @@ import io.github.steaf23.bingoreloaded.tasks.ItemTask;
 import io.github.steaf23.bingoreloaded.tasks.StatisticTask;
 import io.github.steaf23.bingoreloaded.tasks.BingoStatistic;
 import io.github.steaf23.bingoreloaded.placeholder.BingoReloadedPlaceholderExpansion;
-import io.github.steaf23.bingoreloaded.data.FontMappingData;
+import io.github.steaf23.bingoreloaded.data.CustomTextureData;
 import io.github.steaf23.bingoreloaded.util.bstats.Metrics;
 import io.github.steaf23.playerdisplay.PlayerDisplay;
 import io.github.steaf23.playerdisplay.inventory.BasicMenu;
@@ -50,7 +50,7 @@ public class BingoReloaded extends JavaPlugin
     private GameManager gameManager;
     private BingoMenuBoard menuBoard;
     private HUDRegistry hudRegistry;
-    private FontMappingData characterMappings;
+    private CustomTextureData textureData;
 
     private Metrics bStatsMetrics;
 
@@ -103,7 +103,7 @@ public class BingoReloaded extends JavaPlugin
 
         this.menuBoard = new BingoMenuBoard();
         this.hudRegistry = new HUDRegistry();
-        this.characterMappings = new FontMappingData();
+        this.textureData = new CustomTextureData();
 
         if (config.configuration == ConfigData.PluginConfiguration.SINGULAR) {
             this.gameManager = new SingularGameManager(this, config, menuBoard, hudRegistry);
@@ -220,7 +220,7 @@ public class BingoReloaded extends JavaPlugin
         return gameManager;
     }
 
-    public FontMappingData getCharacterMappings() {
-        return characterMappings;
+    public CustomTextureData getTextureData() {
+        return textureData;
     }
 }

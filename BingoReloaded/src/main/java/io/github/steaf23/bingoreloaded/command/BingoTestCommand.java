@@ -3,6 +3,7 @@ package io.github.steaf23.bingoreloaded.command;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.cards.TaskCard;
+import io.github.steaf23.bingoreloaded.data.CustomTextureData;
 import io.github.steaf23.bingoreloaded.event.BingoTaskProgressCompletedEvent;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
@@ -10,6 +11,7 @@ import io.github.steaf23.bingoreloaded.tasks.GameTask;
 import io.github.steaf23.playerdisplay.inventory.MenuBoard;
 import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
 import org.bukkit.command.Command;
@@ -30,6 +32,8 @@ public class BingoTestCommand implements TabExecutor
         this.plugin = plugin;
         this.board = board;
     }
+
+    static int counter = 0;
 
     @Override
     public boolean onCommand(@NonNull CommandSender commandSender, @NonNull Command command, @NonNull String s, String[] args) {
@@ -64,6 +68,17 @@ public class BingoTestCommand implements TabExecutor
                 if (!(commandSender instanceof Player p)) {
                     return false;
                 }
+
+                CustomTextureData.Texture test = BingoReloaded.getInstance().getTextureData().getTexture("test");
+                TextComponent.Builder title = Component.text().color(NamedTextColor.WHITE);
+                if (test == null) {
+                    return false;
+                }
+
+                title.append(Component.translatable("space." + (test.menuOffset())));
+
+                var inv = Bukkit.createInventory(null, 9*6, title.append(Component.text("\uE030").append(Component.translatable("space.-" + (test.textureEnd() + 2)))).append(Component.text("\uE030")).build());
+                p.openInventory(inv);
             }
         }
         return true;

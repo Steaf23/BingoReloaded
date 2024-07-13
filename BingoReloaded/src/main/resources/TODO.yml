@@ -47,3 +47,5 @@
 (2.x) add support to use minimessage from commands like setting team or kit name
 
 3.0 (?) add custom resource pack
+
+() fix bg where auto team members is limited by max team size setting (this should not matter)

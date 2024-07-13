@@ -2,11 +2,10 @@ package io.github.steaf23.bingoreloaded.cards;
 
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
-import io.github.steaf23.bingoreloaded.gui.inventory.CardMenu;
+import io.github.steaf23.bingoreloaded.gui.inventory.card.CardMenu;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeamContainer;
 import io.github.steaf23.bingoreloaded.tasks.GameTask;
-import io.github.steaf23.bingoreloaded.tasks.tracker.TaskProgressTracker;
 import org.jetbrains.annotations.NotNull;
 
 public class LockoutTaskCard extends TaskCard

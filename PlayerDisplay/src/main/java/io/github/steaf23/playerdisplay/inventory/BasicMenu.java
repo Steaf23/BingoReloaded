@@ -3,12 +3,14 @@ package io.github.steaf23.playerdisplay.inventory;
 import io.github.steaf23.playerdisplay.PlayerDisplay;
 import io.github.steaf23.playerdisplay.inventory.item.ItemTemplate;
 import io.github.steaf23.playerdisplay.inventory.item.action.MenuAction;
+import io.github.steaf23.playerdisplay.inventory.item.action.MenuItemGroup;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
@@ -44,7 +46,7 @@ public class BasicMenu implements Menu
     private final Inventory inventory;
     private final MenuBoard manager;
     private int maxStackSizeOverride = -1; // -1 means no override (i.e. default stack sizes for all items)
-    private final List<ItemTemplate> items;
+    private MenuItemGroup itemGroup;
 
     private Component title;
 
@@ -58,7 +60,7 @@ public class BasicMenu implements Menu
      * @param manager
      * @param initialTitle
      */
-    protected BasicMenu(MenuBoard manager, Component initialTitle, boolean prefix) {
+    public BasicMenu(MenuBoard manager, Component initialTitle, boolean prefix) {
         this(manager, Bukkit.createInventory(null, 6 * 9, prefix ? Component.text().append(pluginTitlePrefix).append(initialTitle).build() : initialTitle));
         this.title = Component.empty();
     }
@@ -72,7 +74,7 @@ public class BasicMenu implements Menu
     private BasicMenu(MenuBoard manager, Inventory inventory) {
         this.inventory = inventory;
         this.manager = manager;
-        this.items = new ArrayList<>();
+        this.itemGroup = new MenuItemGroup();
     }
 
     public void open(HumanEntity player) {
@@ -96,7 +98,7 @@ public class BasicMenu implements Menu
     }
 
     public @Nullable ItemTemplate getItemAtSlot(int slot) {
-        for (ItemTemplate item : items) {
+        for (ItemTemplate item : itemGroup.items) {
             if (item.getSlot() == slot)
             {
                 return item;
@@ -113,8 +115,7 @@ public class BasicMenu implements Menu
             return this;
         }
 
-        items.removeIf(i -> i.getSlot() == item.getSlot());
-        items.add(item);
+        itemGroup.addItem(item);
 
         // Replace/ set new item in its target slot
         getInventory().setItem(item.getSlot(), item.buildItem());
@@ -183,15 +184,7 @@ public class BasicMenu implements Menu
 
     @Override
     public boolean onClick(final InventoryClickEvent event, HumanEntity player, int clickedSlot, ClickType clickType) {
-        for (ItemTemplate item : new ArrayList<>(items)) {
-            if (item.getSlot() == clickedSlot)
-            {
-                item.useItem(new ActionArguments(player, clickType));
-                //TODO: find a way to update itemstack automatically on change, no matter where!
-                getInventory().setItem(item.getSlot(), item.buildItem());
-            }
-        }
-        return true;
+        return itemGroup.handleClick(event, player, clickedSlot, clickType);
     }
 
     @Override
