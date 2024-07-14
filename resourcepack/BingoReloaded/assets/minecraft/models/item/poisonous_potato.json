@@ -1,0 +1,11 @@
+{
+    "parent": "minecraft:item/generated",
+    "textures": {
+        "layer0": "minecraft:item/poisonous_potato"
+    },
+    "overrides": [
+        {"predicate": {"custom_model_data":1010}, "model": "bingoreloaded:gui/invisibleitem"},
+        {"predicate": {"custom_model_data":1011}, "model": "bingoreloaded:item/info"},
+        {"predicate": {"custom_model_data":1012}, "model": "bingoreloaded:item/task_completed"}
+        ]
+}

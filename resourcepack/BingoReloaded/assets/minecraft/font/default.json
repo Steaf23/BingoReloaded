@@ -1,0 +1,25 @@
+{
+  "providers": [
+    {
+      "type": "bitmap",
+      "file": "bingoreloaded:gui/pixel.png",
+      "ascent": -2000,
+      "height": -3,
+      "chars": ["\uE001"]
+    },
+    {"type": "bitmap", "file": "bingoreloaded:gui/test.png", "ascent": 0, "height": 16, "chars": ["\uE030"]},
+    {"type": "bitmap", "file": "bingoreloaded:gui/card_3.png", "ascent": 43, "height": 256, "chars": ["\uE031"]},
+    {"type": "bitmap", "file": "bingoreloaded:gui/card_5.png", "ascent": 43, "height": 256, "chars": ["\uE032"]},
+    {"type": "bitmap", "file": "bingoreloaded:gui/banner_regular.png", "ascent": 43, "height": 256, "chars": ["\uE033"]},
+    {"type": "bitmap", "file": "bingoreloaded:gui/banner_lockout.png", "ascent": 43, "height": 256, "chars": ["\uE034"]},
+    {"type": "bitmap", "file": "bingoreloaded:gui/banner_complete.png", "ascent": 43, "height": 256, "chars": ["\uE035"]},
+    {"type": "bitmap", "file": "bingoreloaded:gui/hotswap_card_3.png", "ascent": 43, "height": 256, "chars": ["\uE036"]},
+    {"type": "bitmap", "file": "bingoreloaded:gui/hotswap_card_5.png", "ascent": 43, "height": 256, "chars": ["\uE037"]},
+    {"type": "bitmap", "file": "bingoreloaded:gui/slot_background.png", "height": 24, "ascent": -3, "chars": ["\uE0A1"]},
+    {"type": "bitmap", "file": "bingoreloaded:gui/slot_background.png", "height": 24, "ascent": -21, "chars": ["\uE0A2"]},
+    {"type": "bitmap", "file": "bingoreloaded:gui/slot_background.png", "height": 24, "ascent": -39, "chars": ["\uE0A3"]},
+    {"type": "bitmap", "file": "bingoreloaded:gui/slot_background.png", "height": 24, "ascent": -57, "chars": ["\uE0A4"]},
+    {"type": "bitmap", "file": "bingoreloaded:gui/slot_background.png", "height": 24, "ascent": -75, "chars": ["\uE0A5"]},
+    {"type": "bitmap", "file": "bingoreloaded:gui/slot_background.png", "height": 24, "ascent": -93, "chars": ["\uE0A6"]}       
+  ]
+}

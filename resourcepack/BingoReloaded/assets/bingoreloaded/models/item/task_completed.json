@@ -1,0 +1,12 @@
+{
+	"parent": "minecraft:item/generated",
+	"textures": {
+		"layer0": "bingoreloaded:item/task_completed"
+	},
+	"display": {
+		"gui": {
+			"scale": [1.25, 1.25, 1.25]
+		}
+	}
+	
+}

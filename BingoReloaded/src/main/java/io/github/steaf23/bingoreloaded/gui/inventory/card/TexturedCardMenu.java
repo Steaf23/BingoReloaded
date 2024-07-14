@@ -42,8 +42,6 @@ public class TexturedCardMenu implements Menu, CardMenu
 
     private ItemTemplate info;
 
-    private static final int CARD_TEXTURE_START = 48;
-
     public static final ItemTemplate DUMMY_ITEM = new ItemTemplate(Material.POISONOUS_POTATO);
 
     public TexturedCardMenu(MenuBoard board, BingoGamemode mode, CardSize size) {
@@ -185,7 +183,6 @@ public class TexturedCardMenu implements Menu, CardMenu
 
     public void addItem(@NotNull ItemTemplate item) {
         itemGroup.addItem(item);
-        // Replace/ set new item in its target slot
         getInventory().setItem(item.getSlot(), item.buildItem());
     }
 
