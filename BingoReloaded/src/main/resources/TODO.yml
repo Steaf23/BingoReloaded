@@ -32,8 +32,6 @@
 
 (2.x) add spam prevention on player gui's/ options
 
-(2.x) setting bed spawn during game and breaking the bed causes player to respawn away from game start location
-
 (2.x) add /autobingo playerdata command (
 #- ### `/autobingo <world_name> playerdata <load | save | remove> <player_name>`
 #  Manage player data manually, should be used if the config options don't provide enough freedom in how you want to use player data.
@@ -48,4 +46,6 @@
 
 3.0 (?) add custom resource pack
 
-() fix bg where auto team members is limited by max team size setting (this should not matter)
+() fix bug where auto team members is limited by max team size setting (this should not matter)
+
+() reimplement resource pack spacing inside the resource pack instead of using a separate pack

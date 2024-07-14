@@ -29,6 +29,8 @@ import io.papermc.paper.registry.RegistryAccess;
 import io.papermc.paper.registry.RegistryKey;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.audience.ForwardingAudience;
+import net.kyori.adventure.resource.ResourcePackInfo;
+import net.kyori.adventure.resource.ResourcePackRequest;
 import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -196,6 +198,8 @@ public class BingoSession implements ForwardingAudience
     public void addPlayer(Player player) {
         var joinedWorldEvent = new PlayerJoinedSessionWorldEvent(player, this);
         Bukkit.getPluginManager().callEvent(joinedWorldEvent);
+
+        BingoReloaded.sendResourcePack(player);
     }
 
     public void removePlayer(Player player) {

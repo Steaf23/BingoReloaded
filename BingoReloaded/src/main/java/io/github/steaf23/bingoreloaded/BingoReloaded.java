@@ -22,6 +22,8 @@ import io.github.steaf23.playerdisplay.PlayerDisplay;
 import io.github.steaf23.playerdisplay.inventory.BasicMenu;
 import io.github.steaf23.playerdisplay.scoreboard.HUDRegistry;
 import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
+import net.kyori.adventure.resource.ResourcePackInfo;
+import net.kyori.adventure.resource.ResourcePackRequest;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
@@ -33,10 +35,17 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 
+import java.net.URI;
 import java.util.function.Consumer;
 
 public class BingoReloaded extends JavaPlugin
 {
+    public static final String RESOURCE_PACK_URL = "https://github.com/Steaf23/BingoReloaded/raw/menu-frontend-split-for-resource-pack/resourcepack/BingoReloaded.zip";
+    public static final String RESOURCE_PACK_HASH = "6fb0aa69a5c6076eb8d55d964493195588676301";
+    public static final ResourcePackInfo RESOURCE_PACK = ResourcePackInfo.resourcePackInfo()
+            .uri(URI.create(RESOURCE_PACK_URL))
+            .hash(RESOURCE_PACK_HASH).build();
+
     public static final String CARD_1_20_6 = "lists_1_20.yml";
     public static final String CARD_1_21 = "lists_1_21.yml";
 
@@ -214,6 +223,13 @@ public class BingoReloaded extends JavaPlugin
             return CARD_1_21;
         }
         return CARD_1_20_6;
+    }
+
+    public static void sendResourcePack(Player player) {
+        player.sendResourcePacks(ResourcePackRequest.resourcePackRequest()
+                .packs(RESOURCE_PACK)
+                .required(true)
+                .build());
     }
 
     public GameManager getGameManager() {
