@@ -56,9 +56,9 @@ public class ListValueEditorMenu extends BasicMenu
             maxCount = value;
         }));
 
-        addAction(SAVE, p -> {
+        addAction(SAVE, arguments -> {
             setValueForList();
-            close(p);
+            close(arguments.player());
         });
         addItem(INFO);
         addCloseAction(CANCEL);

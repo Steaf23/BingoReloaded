@@ -25,7 +25,7 @@ public class NameEditAction extends MenuAction
     }
 
     @Override
-    public void use(BasicMenu.ActionArguments arguments) {
+    public void use(ActionArguments arguments) {
         renameItem(arguments.player());
     }
 

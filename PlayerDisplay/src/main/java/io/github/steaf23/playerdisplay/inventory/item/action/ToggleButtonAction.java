@@ -32,7 +32,7 @@ public class ToggleButtonAction extends MenuAction
     }
 
     @Override
-    public void use(BasicMenu.ActionArguments arguments) {
+    public void use(ActionArguments arguments) {
         enabled = !enabled;
         if (item != null) {
             item.setGlowing(enabled);

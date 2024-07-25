@@ -29,9 +29,9 @@ public class ListEditorMenu extends BasicMenu
     public ListEditorMenu(MenuBoard manager, String listName) {
         super(manager, Component.text("Editing '" + listName + "'"), 6);
         this.listName = listName;
-        addAction(ITEMS, p -> createItemPicker(manager).open(p));
-        addAction(ADVANCEMENTS, p -> createAdvancementPicker(manager).open(p));
-        addAction(STATISTICS, p -> createStatisticsPicker(manager).open(p));
+        addAction(ITEMS, arguments -> createItemPicker(manager).open(arguments.player()));
+        addAction(ADVANCEMENTS, arguments -> createAdvancementPicker(manager).open(arguments.player()));
+        addAction(STATISTICS, arguments -> createStatisticsPicker(manager).open(arguments.player()));
         addCloseAction(SAVE);
         addItems(BLANK.copyToSlot(0, 5),
                 BLANK.copyToSlot(1, 5),

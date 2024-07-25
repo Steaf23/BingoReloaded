@@ -25,8 +25,6 @@ import java.util.function.Consumer;
 
 public class BasicMenu implements Menu
 {
-    public record ActionArguments(HumanEntity player, ClickType clickType) {}
-
     public static Component pluginTitlePrefix = Component.empty();
 
     protected static Component applyTitleFormat(Component to) {
@@ -81,16 +79,8 @@ public class BasicMenu implements Menu
         manager.open(this, player);
     }
 
-    public void open(ActionArguments arguments) {
-        manager.open(this, arguments.player);
-    }
-
     public void close(HumanEntity player) {
         manager.close(this, player);
-    }
-
-    public void close(ActionArguments arguments) {
-        manager.close(this, arguments.player);
     }
 
     public void reopen(HumanEntity player) {
@@ -127,7 +117,7 @@ public class BasicMenu implements Menu
         return addItem(item, true);
     }
 
-    public BasicMenu addAction(@NotNull ItemTemplate item, Consumer<ActionArguments> action) {
+    public BasicMenu addAction(@NotNull ItemTemplate item, Consumer<MenuAction.ActionArguments> action) {
         item.setAction(new MenuAction()
         {
             @Override
@@ -151,7 +141,7 @@ public class BasicMenu implements Menu
         {
             @Override
             public void use(ActionArguments arguments) {
-                close(arguments);
+                close(arguments.player());
             }
         });
         addItem(item);

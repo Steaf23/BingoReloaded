@@ -26,18 +26,18 @@ public class StatisticSelectionMenu extends BasicMenu
     {
         super(menuBoard, Component.text("Pick Statistics"), 6);
         this.listName = listName;
-        addAction(new ItemTemplate(1, 0, Material.FEATHER, BasicMenu.applyTitleFormat("Travel")), p -> createTravelMenu().open(p));
-        addAction(new ItemTemplate(3, 0, Material.DIAMOND_SWORD, BasicMenu.applyTitleFormat("Kill")), p -> createEntityMenu(Statistic.KILL_ENTITY).open(p));
-        addAction(new ItemTemplate(5, 0, Material.SKELETON_SKULL, BasicMenu.applyTitleFormat("Get Killed")), p -> createEntityMenu(Statistic.ENTITY_KILLED_BY).open(p));
-        addAction(new ItemTemplate(7, 0, Material.STONECUTTER, BasicMenu.applyTitleFormat("Block Interactions")), p -> createBlockInteractMenu().open(p));
-        addAction(new ItemTemplate(1, 2, Material.CHEST, BasicMenu.applyTitleFormat("Container Interactions")), p -> createContainerMenu().open(p));
-        addAction(new ItemTemplate(3, 2, Material.DIAMOND_PICKAXE, BasicMenu.applyTitleFormat("Mine Block")), p -> createBlockMenu(Statistic.MINE_BLOCK).open(p));
-        addAction(new ItemTemplate(5, 2, Material.HOPPER, BasicMenu.applyTitleFormat("Drop Item")), p -> createItemMenu(Statistic.DROP).open(p));
-        addAction(new ItemTemplate(7, 2, Material.SHEARS, BasicMenu.applyTitleFormat("Use/Place Item")), p -> createItemMenu(Statistic.USE_ITEM).open(p));
-        addAction(new ItemTemplate(1, 4, Material.DEAD_BUSH, BasicMenu.applyTitleFormat("Break Item")), p -> createItemMenu(Statistic.BREAK_ITEM).open(p));
-        addAction(new ItemTemplate(3, 4, Material.CRAFTING_TABLE, BasicMenu.applyTitleFormat("Craft Item")), p -> createItemMenu(Statistic.CRAFT_ITEM).open(p));
-        addAction(new ItemTemplate(5, 4, Material.REDSTONE, BasicMenu.applyTitleFormat("Damage Related")), p -> createDamageMenu().open(p));
-        addAction(new ItemTemplate(7, 4, Material.BAKED_POTATO, BasicMenu.applyTitleFormat("Other")), p -> createMiscMenu().open(p));
+        addAction(new ItemTemplate(1, 0, Material.FEATHER, BasicMenu.applyTitleFormat("Travel")), args -> createTravelMenu().open(args.player()));
+        addAction(new ItemTemplate(3, 0, Material.DIAMOND_SWORD, BasicMenu.applyTitleFormat("Kill")), args -> createEntityMenu(Statistic.KILL_ENTITY).open(args.player()));
+        addAction(new ItemTemplate(5, 0, Material.SKELETON_SKULL, BasicMenu.applyTitleFormat("Get Killed")), args -> createEntityMenu(Statistic.ENTITY_KILLED_BY).open(args.player()));
+        addAction(new ItemTemplate(7, 0, Material.STONECUTTER, BasicMenu.applyTitleFormat("Block Interactions")), args -> createBlockInteractMenu().open(args.player()));
+        addAction(new ItemTemplate(1, 2, Material.CHEST, BasicMenu.applyTitleFormat("Container Interactions")), args -> createContainerMenu().open(args.player()));
+        addAction(new ItemTemplate(3, 2, Material.DIAMOND_PICKAXE, BasicMenu.applyTitleFormat("Mine Block")), args -> createBlockMenu(Statistic.MINE_BLOCK).open(args.player()));
+        addAction(new ItemTemplate(5, 2, Material.HOPPER, BasicMenu.applyTitleFormat("Drop Item")), args -> createItemMenu(Statistic.DROP).open(args.player()));
+        addAction(new ItemTemplate(7, 2, Material.SHEARS, BasicMenu.applyTitleFormat("Use/Place Item")), args -> createItemMenu(Statistic.USE_ITEM).open(args.player()));
+        addAction(new ItemTemplate(1, 4, Material.DEAD_BUSH, BasicMenu.applyTitleFormat("Break Item")), args -> createItemMenu(Statistic.BREAK_ITEM).open(args.player()));
+        addAction(new ItemTemplate(3, 4, Material.CRAFTING_TABLE, BasicMenu.applyTitleFormat("Craft Item")), args -> createItemMenu(Statistic.CRAFT_ITEM).open(args.player()));
+        addAction(new ItemTemplate(5, 4, Material.REDSTONE, BasicMenu.applyTitleFormat("Damage Related")), args -> createDamageMenu().open(args.player()));
+        addAction(new ItemTemplate(7, 4, Material.BAKED_POTATO, BasicMenu.applyTitleFormat("Other")), args -> createMiscMenu().open(args.player()));
         addCloseAction(QUIT);
         addItems(BLANK.copyToSlot(45),
                 BLANK.copyToSlot(46),

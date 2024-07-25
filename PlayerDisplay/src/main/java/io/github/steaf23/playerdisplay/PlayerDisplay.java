@@ -24,6 +24,7 @@ public class PlayerDisplay
 
     private static JavaPlugin plugin;
     private static Function<PlayerDisplayTranslationKey, Component> translateFunction;
+    private static boolean USE_CUSTOM_TEXTURES;
 
     /**
      * Should be called on plugin load (i.e. as fast as possible after the server has started up)
@@ -56,5 +57,13 @@ public class PlayerDisplay
 
     public static void onPluginEnable() {
         PacketEvents.getAPI().init();
+    }
+
+    public static void setUseCustomTextures(boolean useCustomTextures) {
+        USE_CUSTOM_TEXTURES = useCustomTextures;
+    }
+
+    public static boolean useCustomTextures() {
+        return USE_CUSTOM_TEXTURES;
     }
 }

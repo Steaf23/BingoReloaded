@@ -1,11 +1,13 @@
 package io.github.steaf23.playerdisplay.inventory;
 
 import io.github.steaf23.playerdisplay.inventory.item.ItemTemplate;
+import io.github.steaf23.playerdisplay.inventory.item.action.MenuAction;
 import io.github.steaf23.playerdisplay.util.PlayerDisplayTranslationKey;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.inventory.InventoryType;
 
 import java.util.function.Consumer;
@@ -40,11 +42,10 @@ public class UserInputMenu extends BasicMenu
 
     /**
      * For user input text, we want to accept the text as late as possible, this will allow the following menu or receiver of this result to use it when it's ready.
-     * @param arguments
      */
     @Override
-    public void close(ActionArguments arguments) {
-        super.close(arguments);
+    public void close(HumanEntity player) {
+        super.close(player);
         resultAction.accept(text);
     }
 }

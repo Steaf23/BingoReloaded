@@ -118,7 +118,7 @@ public class VoteMenu extends BasicMenu
             gamemodeOptions.addCloseAction(EXIT.copy());
 
             addAction(new ItemTemplate(2, 1, Material.ENCHANTED_BOOK, BasicMenu.applyTitleFormat(BingoMessage.VOTE_GAMEMODE.asPhrase())),
-                    p -> gamemodeOptions.open(p));
+                    args -> gamemodeOptions.open(args.player()));
         }
 
         if (voteList.kits().size() > 1) {
@@ -200,7 +200,7 @@ public class VoteMenu extends BasicMenu
                 kitOptions.addCloseAction(EXIT.copy());
 
             addAction(new ItemTemplate(4, 1, Material.ENCHANTED_BOOK, BasicMenu.applyTitleFormat(BingoMessage.VOTE_KIT.asPhrase())),
-                    p -> kitOptions.open(p));
+                    arguments -> kitOptions.open(arguments.player()));
         }
 
         if (voteList.cards().size() > 1) {
@@ -223,7 +223,7 @@ public class VoteMenu extends BasicMenu
 
             cardOptions.addCloseAction(EXIT.copy());
             addAction(new ItemTemplate(6, 1, Material.ENCHANTED_BOOK, BasicMenu.applyTitleFormat(BingoMessage.VOTE_CARD.asPhrase())),
-                    p -> cardOptions.open(p));
+                    args -> cardOptions.open(args.player()));
         }
 
         addCloseAction(EXIT.copyToSlot(0, 2));

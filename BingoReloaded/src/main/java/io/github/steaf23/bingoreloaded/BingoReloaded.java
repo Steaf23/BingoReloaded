@@ -216,16 +216,19 @@ public class BingoReloaded extends JavaPlugin
     }
 
     public static String getDefaultTasksVersion() {
-        String version = Bukkit.getVersion();
-        if (version.contains("(MC: 1.20")) {
+        String version = Bukkit.getMinecraftVersion();
+        if (version.contains("1.20")) {
             return CARD_1_20_6;
-        } else if (version.contains("(MC: 1.21")) {
+        } else if (version.contains("1.21")) {
             return CARD_1_21;
         }
         return CARD_1_20_6;
     }
 
     public static void sendResourcePack(Player player) {
+        if (!PlayerDisplay.useCustomTextures()) {
+            return;
+        }
         player.sendResourcePacks(ResourcePackRequest.resourcePackRequest()
                 .packs(RESOURCE_PACK)
                 .required(true)

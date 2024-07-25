@@ -11,6 +11,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+/**
+ * Represents a container for items that can have MenuActions when clicked.
+ */
 public class MenuItemGroup
 {
     public final List<ItemTemplate> items;
@@ -21,9 +24,8 @@ public class MenuItemGroup
 
     public boolean handleClick(final InventoryClickEvent event, HumanEntity player, int clickedSlot, ClickType clickType) {
         for (ItemTemplate item : new ArrayList<>(items)) {
-            if (item.getSlot() == clickedSlot)
-            {
-                item.useItem(new BasicMenu.ActionArguments(player, clickType));
+            if (item.getSlot() == clickedSlot) {
+                item.useItem(new MenuAction.ActionArguments(player, clickType));
                 //TODO: find a way to update itemstack automatically on change, no matter where!
                 event.getInventory().setItem(item.getSlot(), item.buildItem());
             }

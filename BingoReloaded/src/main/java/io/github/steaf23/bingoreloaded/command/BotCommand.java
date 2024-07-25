@@ -56,6 +56,17 @@ public class BotCommand implements TabExecutor
                     teamManager.addMemberToTeam(virtualPlayer, teamName);
                 }
             }
+            case "add100" -> {
+                for (int i = 0; i < 100; i++) {
+                    String playerName = "testPlayer_" + i;
+                    String teamName = args[1];
+                    BingoParticipant virtualPlayer = getVirtualPlayerFromName(playerName);
+                    if (virtualPlayer == null) {
+                        virtualPlayer = new VirtualBingoPlayer(UUID.randomUUID(), playerName, session);
+                    }
+                    teamManager.addMemberToTeam(virtualPlayer, teamName);
+                }
+            }
             case "add" -> {
                 String playerName = args[1];
                 String teamName = args[2];
