@@ -150,7 +150,7 @@ public class BingoEventListener implements Listener
 
         BingoSession session = getSession(event.getPlayer().getWorld());
         BingoGame game = session != null && session.isRunning() ? (BingoGame)session.phase() : null;
-        if (game != null && game.hasStarted())
+        if (game != null)
         {
             game.getProgressTracker().handlePlayerAdvancementDone(event);
         }
