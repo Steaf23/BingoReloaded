@@ -11,6 +11,7 @@ import io.github.steaf23.easymenulib.util.ChatComponentUtils;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.bukkit.Material;
+import org.bukkit.Server;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 
@@ -156,7 +157,10 @@ public enum PlayerKit
                 CustomKit kit = customKitData.getConfig().getSerializable(configName, CustomKit.class);
                 if (kit != null)
                 {
-                    return kit.items();
+                    // Color colored items according to the team color.
+                    return kit.items().stream()
+                            .map(item -> new SerializableItem(item.slot(), ItemTemplate.colorItemStack(item.stack(), teamColor)))
+                            .toList();
                 }
             }
         }
