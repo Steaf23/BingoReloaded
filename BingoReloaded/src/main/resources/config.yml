@@ -47,6 +47,11 @@ selectTeamsUsingCommandsOnly: false
 # If true disables the scoreboard sidebar completely, useful for server (networks) with a pre-existing sidebar scoreboard.
 disableScoreboardSidebar: false
 
+# If true sends all players the resource pack made for bingo reloaded. This pack has visual changes only.
+# The resource pack is sent to any player joining a world where bingo can be played and gets removed when they leave.
+# If set to false will use the fallback menus and items without losing functionality.
+useIncludedResourcepack: true
+
 # ==========================================================================
 #    Lobby Configuration Options
 # ==========================================================================

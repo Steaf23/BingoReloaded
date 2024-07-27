@@ -81,6 +81,8 @@ public class BingoReloaded extends JavaPlugin
             ConsoleMessenger.log(Component.text("Enabled Bingo Reloaded Placeholder expansion").color(NamedTextColor.GREEN));
         }
 
+        PlayerDisplay.setUseCustomTextures(config.useIncludedResourcepack);
+
         PlayerDisplay.setItemTranslation(key -> {
             return switch (key) {
                 case MENU_PREVIOUS -> BingoMessage.MENU_PREV.asPhrase();

@@ -38,6 +38,7 @@ import io.github.steaf23.bingoreloaded.util.MaterialHelper;
 import io.github.steaf23.bingoreloaded.util.timer.CountdownTimer;
 import io.github.steaf23.bingoreloaded.util.timer.CounterTimer;
 import io.github.steaf23.bingoreloaded.util.timer.GameTimer;
+import io.github.steaf23.playerdisplay.PlayerDisplay;
 import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import io.github.steaf23.playerdisplay.util.PDCHelper;
 import net.kyori.adventure.text.Component;
@@ -127,7 +128,7 @@ public class BingoGame implements GamePhase
         // Generate cards
         boolean useAdvancements = !(BingoReloaded.areAdvancementsDisabled() || config.disableAdvancements);
         //TODO create viewType config option, but for now try to use textured for testing.
-        TaskCard masterCard = CardFactory.fromGame(session.getMenuManager(), this, true);
+        TaskCard masterCard = CardFactory.fromGame(session.getMenuManager(), this, PlayerDisplay.useCustomTextures());
         masterCard.generateCard(settings.card(), settings.seed(), useAdvancements, !config.disableStatistics);
         if (masterCard instanceof LockoutTaskCard lockoutCard) {
             lockoutCard.teamCount = getTeamManager().getTeamCount();

@@ -1,7 +1,8 @@
 package io.github.steaf23.playerdisplay.scoreboard;
 
+import io.github.steaf23.playerdisplay.PlayerDisplay;
+import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -15,8 +16,8 @@ import java.util.UUID;
 public class SidebarHUD
 {
     private final Set<UUID> subscribers;
-    private Scoreboard board;
-    private Objective sidebar;
+    private final Scoreboard board;
+    private final Objective sidebar;
 
     public SidebarHUD(Component initialTitle) {
         this.board = Bukkit.getScoreboardManager().getNewScoreboard();
@@ -54,7 +55,7 @@ public class SidebarHUD
     public void setText(int lineNumber, @Nullable Component text) {
         if (lineNumber < 0 || lineNumber > 14)
         {
-            Bukkit.getLogger().warning("Line index " + lineNumber + " out of range for text display (use 0-14)");
+            ConsoleMessenger.warn("Line index " + lineNumber + " out of range for text display (use 0-14)");
             return;
         }
 

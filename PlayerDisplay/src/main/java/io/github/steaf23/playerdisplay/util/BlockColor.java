@@ -1,7 +1,6 @@
 package io.github.steaf23.playerdisplay.util;
 
 import net.kyori.adventure.text.format.TextColor;
-import org.bukkit.Bukkit;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
 
@@ -54,7 +53,7 @@ public enum BlockColor
             }
         }
 
-        Bukkit.getLogger().warning("Could not find a color fitting to " + name + "!");
+        ConsoleMessenger.warn("Could not find a color fitting to " + name + "!");
         return null;
     }
 
@@ -66,7 +65,7 @@ public enum BlockColor
                 return flexColor;
         }
 
-        Bukkit.getLogger().warning("Could not find a color fitting to " + dye.name() + "(dye) !");
+        ConsoleMessenger.warn("Could not find a color fitting to " + dye.name() + "(dye) !");
         return null;
     }
     //TODO: finish all colored blocks
