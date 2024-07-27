@@ -68,9 +68,9 @@ public class BasicTeamManager implements TeamManager
         // FIXME: maybe actually find out what happens if this isn't a copy and how to simplify the code with that information.
         Set<BingoParticipant> automaticTeamPlayers = new HashSet<>(automaticTeam.getMembers());
 
-        int availablePlayers = getTotalParticipantCapacity() - activeTeams.getAllParticipants().size();
-        if (automaticTeamPlayers.size() > availablePlayers) {
-            ConsoleMessenger.error("Could not fit every player into a team (Please report!)");
+        int overflowPlayers = getTotalParticipantCapacity() - activeTeams.getAllParticipants().size();
+        if (overflowPlayers < 0) {
+            ConsoleMessenger.error("Can not fit every player into a team (Please report!)");
             return;
         }
 
@@ -184,7 +184,7 @@ public class BasicTeamManager implements TeamManager
 
     @Override
     public int getTotalParticipantCapacity() {
-        return (joinableTeams.size() - 1) * getMaxTeamSize();
+        return joinableTeams.size() * getMaxTeamSize();
     }
 
     @Override
@@ -204,15 +204,18 @@ public class BasicTeamManager implements TeamManager
         if (bingoTeam.hasMember(participant.getId())) {
             return false;
         }
-        if (bingoTeam.getMembers().size() == getMaxTeamSize()) {
+        // Players should always be able to join the auto team
+        if (bingoTeam.getMembers().size() == getMaxTeamSize() && !bingoTeam.equals(autoTeam)) {
             return false;
         }
 
         // We can only clear empty teams once we added the participant to the new team.
         removeMemberFromTeam(participant, false);
+        // If after trying to remove the participant from the teams, the participant count did not change, it means the player was not part of a team already
         if (participantCount == getParticipantCount() && participantCount >= getTotalParticipantCapacity()) {
             //TODO: translate this
-            ConsoleMessenger.log(NamedTextColor.RED + "All teams are full!");
+            ConsoleMessenger.log("" + participantCount);
+            ConsoleMessenger.log(Component.text("All teams are full!").color(NamedTextColor.RED));
             activeTeams.removeEmptyTeams("auto");
             return false;
         }

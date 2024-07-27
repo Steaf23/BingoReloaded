@@ -105,10 +105,10 @@ menu:
     effects: "Player Effects"
     vote: "Vote For Settings"
     modes:
-      regular: "<green>Regular</green>"
-      lockout: "<dark_purple>Lockout</dark_purple>"
-      complete: "<dark_aqua>Complete-All</dark_aqua>"
-      hotswap: "<gold>Hot-Swap</gold>"
+      regular: "Regular"
+      lockout: "Lockout"
+      complete: "Complete-All"
+      hotswap: "Hot-Swap"
   effects:
     enable: "Click to ENABLE this effect option"
     disable: "Click to DISABLE this effect option"

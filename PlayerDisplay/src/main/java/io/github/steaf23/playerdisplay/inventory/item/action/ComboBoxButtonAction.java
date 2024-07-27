@@ -21,7 +21,7 @@ public class ComboBoxButtonAction extends MenuAction
     }
 
     @Override
-    public void use(BasicMenu.ActionArguments arguments) {
+    public void use(ActionArguments arguments) {
         if (arguments.clickType().isLeftClick()) {
             selectedIndex = Math.floorMod(selectedIndex + 1, options.size());
         }

@@ -28,8 +28,8 @@ public class BingoCreatorMenu extends BasicMenu
     public BingoCreatorMenu(MenuBoard manager) {
         super(manager, Component.text("Card Creator"), 3);
         this.cardsData = new BingoCardData();
-        addAction(CARD, p -> createCardPicker().open(p));
-        addAction(LIST, p -> createListPicker().open(p));
+        addAction(CARD, arguments -> createCardPicker().open(arguments.player()));
+        addAction(LIST, arguments -> createListPicker().open(arguments.player()));
     }
 
     private BasicMenu createCardPicker() {
@@ -137,16 +137,16 @@ public class BingoCreatorMenu extends BasicMenu
         BasicMenu context = new BasicMenu(getMenuBoard(), Component.text(cardName), 1);
         context.addAction(new ItemTemplate(0, Material.BARRIER, BasicMenu.applyTitleFormat("Remove")), (args) -> {
                     cardsData.removeCard(cardName);
-                    context.close(args);
+                    context.close(args.player());
                 })
                 .addAction(new ItemTemplate(1, Material.SHULKER_SHELL, BasicMenu.applyTitleFormat("Duplicate")), (args) -> {
                     cardsData.duplicateCard(cardName);
-                    context.close(args);
+                    context.close(args.player());
                 })
                 .addAction(new ItemTemplate(2, Material.NAME_TAG, BasicMenu.applyTitleFormat("Change Name")), (args) -> {
                     new UserInputMenu(getMenuBoard(), Component.text("Change name to"), (input) -> {
                         cardsData.renameCard(cardName, input);
-                        context.close(args);
+                        context.close(args.player());
                     }, cardName)
                             .open(args.player());
                 })
@@ -160,16 +160,16 @@ public class BingoCreatorMenu extends BasicMenu
         BasicMenu context = new BasicMenu(getMenuBoard(), Component.text(listName), 1);
         context.addAction(new ItemTemplate(0, Material.BARRIER, BasicMenu.applyTitleFormat("Remove")), (args) -> {
                     listsData.removeList(listName);
-                    context.close(args);
+                    context.close(args.player());
                 })
                 .addAction(new ItemTemplate(1, Material.SHULKER_SHELL, BasicMenu.applyTitleFormat("Duplicate")), (args) -> {
                     listsData.duplicateList(listName);
-                    context.close(args);
+                    context.close(args.player());
                 })
                 .addAction(new ItemTemplate(2, Material.NAME_TAG, BasicMenu.applyTitleFormat("Change Name")), (args) -> {
                     new UserInputMenu(getMenuBoard(), Component.text("Change name to"), (input) -> {
                         listsData.renameList(listName, input);
-                        context.close(args);
+                        context.close(args.player());
                     }, listName)
                             .open(args.player());
                 })

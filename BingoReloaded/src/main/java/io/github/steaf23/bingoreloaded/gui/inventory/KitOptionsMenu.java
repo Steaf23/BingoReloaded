@@ -34,25 +34,25 @@ public class KitOptionsMenu extends BasicMenu
                 Material.CYAN_CONCRETE, PlayerKit.RELOADED.getDisplayName(),
                 BingoMessage.KIT_RELOADED_DESC.asMultiline());
 
-        addAction(HARDCORE, p -> {
+        addAction(HARDCORE, args -> {
             setKit(PlayerKit.HARDCORE);
-            close(p);
+            close(args.player());
         });
-        addAction(NORMAL, p -> {
+        addAction(NORMAL, args -> {
             setKit(PlayerKit.NORMAL);
-            close(p);
+            close(args.player());
         });
-        addAction(OVERPOWERED, p -> {
+        addAction(OVERPOWERED, args -> {
             setKit(PlayerKit.OVERPOWERED);
-            close(p);
+            close(args.player());
         });
-        addAction(RELOADED, p -> {
+        addAction(RELOADED, args -> {
             setKit(PlayerKit.RELOADED);
-            close(p);
+            close(args.player());
         });
-        addAction(HARDCORE, p -> {
+        addAction(HARDCORE, args -> {
             setKit(PlayerKit.HARDCORE);
-            close(p);
+            close(args.player());
         });
 
         int kitIdx = 0;
@@ -60,9 +60,9 @@ public class KitOptionsMenu extends BasicMenu
             CustomKit customkit = PlayerKit.getCustomKit(kit);
             if (customkit != null) {
                 addAction(new ItemTemplate(kitIdx * 2, 3, Material.WHITE_CONCRETE,
-                        Component.text(customkit.getName()), Component.text("Custom kit")), p -> {
+                        Component.text(customkit.getName()), Component.text("Custom kit")), args -> {
                     setKit(PlayerKit.fromConfig(kit.configName));
-                    close(p);
+                    close(args.player());
                 });
             } else {
                 int kitNr = kitIdx + 1;

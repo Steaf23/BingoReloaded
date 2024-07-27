@@ -9,13 +9,13 @@ import io.github.steaf23.playerdisplay.PlayerDisplay;
 import io.github.steaf23.playerdisplay.inventory.*;
 import io.github.steaf23.playerdisplay.inventory.item.ItemTemplate;
 import io.github.steaf23.playerdisplay.inventory.item.action.ComboBoxButtonAction;
+import io.github.steaf23.playerdisplay.inventory.item.action.MenuAction;
 import io.github.steaf23.playerdisplay.inventory.item.action.SpinBoxButtonAction;
 import io.github.steaf23.playerdisplay.inventory.item.action.ToggleButtonAction;
 import io.github.steaf23.playerdisplay.util.ComponentUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -58,9 +58,9 @@ public class AdminBingoMenu extends BasicMenu
         super(menuBoard, BingoMessage.OPTIONS_TITLE.asPhrase(), 6);
         this.session = session;
 
-        addAction(JOIN, p -> {
+        addAction(JOIN, arguments -> {
             TeamSelectionMenu selectionMenu = new TeamSelectionMenu(menuBoard, session);
-            selectionMenu.open(p);
+            selectionMenu.open(arguments.player());
         });
         addAction(KIT, arguments -> new KitOptionsMenu(getMenuBoard(), session).open(arguments.player()));
         addAction(MODE, arguments -> {
@@ -115,7 +115,7 @@ public class AdminBingoMenu extends BasicMenu
         addItem(centerButton);
     }
 
-    private void openCardPicker(ActionArguments arguments) {
+    private void openCardPicker(MenuAction.ActionArguments arguments) {
         HumanEntity player = arguments.player();
         BingoCardData cardsData = new BingoCardData();
         List<ItemTemplate> cards = new ArrayList<>();

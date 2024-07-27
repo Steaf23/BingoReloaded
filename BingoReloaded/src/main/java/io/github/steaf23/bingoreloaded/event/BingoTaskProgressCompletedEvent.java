@@ -2,18 +2,18 @@ package io.github.steaf23.bingoreloaded.event;
 
 import io.github.steaf23.bingoreloaded.event.core.BingoEvent;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
-import io.github.steaf23.bingoreloaded.tasks.BingoTask;
+import io.github.steaf23.bingoreloaded.tasks.GameTask;
 
 public class BingoTaskProgressCompletedEvent extends BingoEvent
 {
-    private final BingoTask task;
+    private final GameTask task;
 
-    public BingoTaskProgressCompletedEvent(BingoSession session, BingoTask task) {
+    public BingoTaskProgressCompletedEvent(BingoSession session, GameTask task) {
         super(session);
         this.task = task;
     }
 
-    public BingoTask getTask() {
+    public GameTask getTask() {
         return task;
     }
 }

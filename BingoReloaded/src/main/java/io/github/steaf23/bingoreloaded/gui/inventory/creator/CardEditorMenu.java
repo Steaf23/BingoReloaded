@@ -27,9 +27,9 @@ public class CardEditorMenu extends PaginatedSelectionMenu
         super(menuBoard, Component.text("Editing '" + cardName + "'"), new ArrayList<>(), FilterType.DISPLAY_NAME);
         this.cardName = cardName;
         this.cardsData = cardsData;
-        addAction(ADD_LIST, p -> createListPicker(result -> {
+        addAction(ADD_LIST, arguments -> createListPicker(result -> {
             cardsData.setList(cardName, result, cardsData.lists().getTaskCount(result), 1);
-        }).open(p));
+        }).open(arguments.player()));
     }
 
     @Override

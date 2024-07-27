@@ -1,7 +1,7 @@
 package io.github.steaf23.bingoreloaded.cards;
 
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
-import io.github.steaf23.bingoreloaded.tasks.BingoTask;
+import io.github.steaf23.bingoreloaded.tasks.GameTask;
 import io.github.steaf23.bingoreloaded.util.timer.GameTimer;
 import io.github.steaf23.playerdisplay.inventory.item.ItemTemplate;
 import io.github.steaf23.playerdisplay.util.TextColorGradient;
@@ -11,7 +11,7 @@ import net.kyori.adventure.text.format.TextColor;
 
 public class HotswapTaskHolder
 {
-    public BingoTask task;
+    public GameTask task;
     public int expirationTimeSeconds;
     public int recoveryTime;
     public int currentTime;
@@ -25,7 +25,7 @@ public class HotswapTaskHolder
             .addColor(TextColor.fromHexString("#750e0e"), 0.8f)
             .addColor(NamedTextColor.DARK_GRAY, 1.0f);
 
-    public HotswapTaskHolder(BingoTask task, int expirationTimeMinutes, int recoverTime, boolean showExpirationAsDurability) {
+    public HotswapTaskHolder(GameTask task, int expirationTimeMinutes, int recoverTime, boolean showExpirationAsDurability) {
         this.task = task;
         this.expirationTimeSeconds = expirationTimeMinutes;
         this.recoveryTime = recoverTime;

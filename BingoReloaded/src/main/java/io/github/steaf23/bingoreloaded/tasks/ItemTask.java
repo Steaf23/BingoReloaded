@@ -49,15 +49,15 @@ public record ItemTask(Material material, int count) implements CountableTask
     @Override
     public @NotNull PersistentDataContainer pdcSerialize(PersistentDataContainer stream)
     {
-        stream.set(BingoTask.getTaskDataKey("item"),  PersistentDataType.STRING, material.name());
-        stream.set(BingoTask.getTaskDataKey("count"),  PersistentDataType.INTEGER, count);
+        stream.set(GameTask.getTaskDataKey("item"),  PersistentDataType.STRING, material.name());
+        stream.set(GameTask.getTaskDataKey("count"),  PersistentDataType.INTEGER, count);
         return stream;
     }
 
     public static ItemTask fromPdc(PersistentDataContainer pdc)
     {
-        Material item = Material.valueOf(pdc.getOrDefault(BingoTask.getTaskDataKey("item"), PersistentDataType.STRING, "BEDROCK"));
-        int count = pdc.getOrDefault(BingoTask.getTaskDataKey("count"), PersistentDataType.INTEGER, 1);
+        Material item = Material.valueOf(pdc.getOrDefault(GameTask.getTaskDataKey("item"), PersistentDataType.STRING, "BEDROCK"));
+        int count = pdc.getOrDefault(GameTask.getTaskDataKey("count"), PersistentDataType.INTEGER, 1);
         return new ItemTask(item, count);
     }
 

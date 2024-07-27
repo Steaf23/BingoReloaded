@@ -47,6 +47,7 @@ public class ConfigData
     public final boolean voteUsingCommandsOnly;
     public final boolean selectTeamsUsingCommandsOnly;
     public final boolean disableScoreboardSidebar;
+    public final boolean useIncludedResourcepack;
 
     // Lobby options
     public final boolean singlePlayerTeams;
@@ -90,6 +91,7 @@ public class ConfigData
         this.voteUsingCommandsOnly = config.getBoolean("voteUsingCommandsOnly", false);
         this.selectTeamsUsingCommandsOnly = config.getBoolean("selectTeamsUsingCommandsOnly", false);
         this.disableScoreboardSidebar = config.getBoolean("disableScoreboardSidebar", false);
+        this.useIncludedResourcepack = config.getBoolean("useIncludedResourcepack", true);
 
         // Lobby
         this.singlePlayerTeams = config.getBoolean("singlePlayerTeams", false);

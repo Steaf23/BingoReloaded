@@ -36,11 +36,11 @@ public class TeamEditorMenu extends PaginatedSelectionMenu
         super(manager, Component.text("Edit Teams"), new ArrayList<>(), FilterType.DISPLAY_NAME);
         this.teamData = new TeamData();
 
-        addAction(RESTORE_DEFAULT, p -> {
+        addAction(RESTORE_DEFAULT, arguments -> {
             teamData.reset();
             updateDisplay();
         });
-        addAction(CREATE_TEAM, p -> createTeamEditor("").open(p));
+        addAction(CREATE_TEAM, arguments -> createTeamEditor("").open(arguments.player()));
     }
 
     public void updateDisplay() {
@@ -114,7 +114,7 @@ public class TeamEditorMenu extends PaginatedSelectionMenu
                     teamColorItem.setLeatherColor(templateToEdit.color())
                             .setName(Component.text("Color").color(templateToEdit.color()).decorate(TextDecoration.BOLD));
                     this.addItem(teamColorItem);
-                }).open(args);
+                }).open(args.player());
             });
 
             addCloseAction(new ItemTemplate(6, 1, Material.BARRIER,

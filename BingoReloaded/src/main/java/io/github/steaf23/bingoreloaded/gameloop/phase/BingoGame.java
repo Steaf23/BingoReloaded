@@ -1,24 +1,36 @@
 package io.github.steaf23.bingoreloaded.gameloop.phase;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
-import io.github.steaf23.bingoreloaded.cards.BingoCard;
-import io.github.steaf23.bingoreloaded.cards.CardBuilder;
-import io.github.steaf23.bingoreloaded.cards.LockoutBingoCard;
+import io.github.steaf23.bingoreloaded.cards.TaskCard;
+import io.github.steaf23.bingoreloaded.cards.CardFactory;
+import io.github.steaf23.bingoreloaded.cards.LockoutTaskCard;
 import io.github.steaf23.bingoreloaded.data.BingoCardData;
 import io.github.steaf23.bingoreloaded.data.BingoStatType;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.ConfigData;
-import io.github.steaf23.bingoreloaded.event.*;
+import io.github.steaf23.bingoreloaded.event.BingoDeathmatchTaskCompletedEvent;
+import io.github.steaf23.bingoreloaded.event.BingoEndedEvent;
+import io.github.steaf23.bingoreloaded.event.BingoPlaySoundEvent;
+import io.github.steaf23.bingoreloaded.event.BingoSettingsUpdatedEvent;
+import io.github.steaf23.bingoreloaded.event.BingoStartedEvent;
+import io.github.steaf23.bingoreloaded.event.BingoTaskProgressCompletedEvent;
+import io.github.steaf23.bingoreloaded.event.CountdownTimerFinishedEvent;
+import io.github.steaf23.bingoreloaded.event.ParticipantJoinedTeamEvent;
+import io.github.steaf23.bingoreloaded.event.ParticipantLeftTeamEvent;
+import io.github.steaf23.bingoreloaded.event.PlayerJoinedSessionWorldEvent;
+import io.github.steaf23.bingoreloaded.event.PlayerLeftSessionWorldEvent;
 import io.github.steaf23.bingoreloaded.gui.hud.BingoGameHUDGroup;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gui.inventory.EffectOptionFlags;
-import io.github.steaf23.bingoreloaded.player.*;
+import io.github.steaf23.bingoreloaded.player.BingoParticipant;
+import io.github.steaf23.bingoreloaded.player.BingoPlayer;
+import io.github.steaf23.bingoreloaded.player.PlayerRespawnManager;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.player.team.TeamManager;
 import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
-import io.github.steaf23.bingoreloaded.tasks.BingoTask;
+import io.github.steaf23.bingoreloaded.tasks.GameTask;
 import io.github.steaf23.bingoreloaded.tasks.tracker.TaskProgressTracker;
 import io.github.steaf23.bingoreloaded.util.ActionBarManager;
 import io.github.steaf23.bingoreloaded.util.BingoPlayerSender;
@@ -26,6 +38,7 @@ import io.github.steaf23.bingoreloaded.util.MaterialHelper;
 import io.github.steaf23.bingoreloaded.util.timer.CountdownTimer;
 import io.github.steaf23.bingoreloaded.util.timer.CounterTimer;
 import io.github.steaf23.bingoreloaded.util.timer.GameTimer;
+import io.github.steaf23.playerdisplay.PlayerDisplay;
 import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import io.github.steaf23.playerdisplay.util.PDCHelper;
 import net.kyori.adventure.text.Component;
@@ -34,13 +47,22 @@ import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Sound;
+import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.player.*;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerItemDamageEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.Vector;
@@ -61,8 +83,10 @@ public class BingoGame implements GamePhase
     private CountdownTimer startingTimer;
     private boolean gameStarted;
     private final ActionBarManager actionBarManager;
+    //Used to override bed spawns if they get broken to reset spawn point to game spawn point.
+    private final Map<UUID, Location> playerSpawnPoints;
 
-    private BingoTask deathMatchTask;
+    private GameTask deathMatchTask;
 
     public BingoGame(BingoSession session, BingoSettings settings, ConfigData config) {
         this.session = session;
@@ -74,6 +98,7 @@ public class BingoGame implements GamePhase
         this.progressTracker = new TaskProgressTracker(this);
 
         this.respawnManager = new PlayerRespawnManager(BingoReloaded.getInstance(), config.teleportAfterDeathPeriod);
+        this.playerSpawnPoints = new HashMap<>();
     }
 
     private void start() {
@@ -102,19 +127,20 @@ public class BingoGame implements GamePhase
 
         // Generate cards
         boolean useAdvancements = !(BingoReloaded.areAdvancementsDisabled() || config.disableAdvancements);
-        BingoCard masterCard = CardBuilder.fromGame(session.getMenuManager(), this);
+        //TODO create viewType config option, but for now try to use textured for testing.
+        TaskCard masterCard = CardFactory.fromGame(session.getMenuManager(), this, PlayerDisplay.useCustomTextures());
         masterCard.generateCard(settings.card(), settings.seed(), useAdvancements, !config.disableStatistics);
-        if (masterCard instanceof LockoutBingoCard lockoutCard) {
+        if (masterCard instanceof LockoutTaskCard lockoutCard) {
             lockoutCard.teamCount = getTeamManager().getTeamCount();
         }
-        Set<BingoCard> uniqueCards = new HashSet<>();
+        Set<TaskCard> uniqueCards = new HashSet<>();
         getTeamManager().getActiveTeams().forEach(t -> {
             t.outOfTheGame = false;
             t.setCard(masterCard.copy());
             uniqueCards.add(t.getCard());
         });
 
-        for (BingoCard card : uniqueCards) {
+        for (TaskCard card : uniqueCards) {
             card.getTasks().forEach(t -> getProgressTracker().startTrackingTask(t));
         }
 
@@ -300,7 +326,7 @@ public class BingoGame implements GamePhase
     //FIXME: don't use recursion to create tasks..
     private void startDeathMatchRecurse(int countdown) {
         if (countdown == 0) {
-            deathMatchTask = new BingoTask(new BingoCardData().getRandomItemTask(settings.card()));
+            deathMatchTask = new GameTask(new BingoCardData().getRandomItemTask(settings.card()));
 
             BingoPlayerSender.sendTitle(
                     Component.text("GO").color(NamedTextColor.GOLD).decorate(TextDecoration.BOLD),
@@ -433,7 +459,7 @@ public class BingoGame implements GamePhase
         }
     }
 
-    private static void teleportPlayerToStart(BingoParticipant participant, Location to, int spread) {
+    private void teleportPlayerToStart(BingoParticipant participant, Location to, int spread) {
         if (participant.sessionPlayer().isEmpty())
             return;
         Player player = participant.sessionPlayer().get();
@@ -442,7 +468,9 @@ public class BingoGame implements GamePhase
         Location playerLocation = to.clone().add(placement);
         playerLocation.setY(playerLocation.getY() + 10.0);
         player.teleport(playerLocation, PlayerTeleportEvent.TeleportCause.PLUGIN);
-        player.setRespawnLocation(to.clone().add(0.0, 2.0, 0.0), true);
+        Location spawnLocation = to.clone().add(0.0, 2.0, 0.0);
+        player.setRespawnLocation(spawnLocation, true);
+        playerSpawnPoints.put(player.getUniqueId(), spawnLocation);
     }
 
     private Location getRandomSpawnLocation(World world) {
@@ -480,7 +508,7 @@ public class BingoGame implements GamePhase
         };
     }
 
-    public BingoTask getDeathMatchTask() {
+    public GameTask getDeathMatchTask() {
         return deathMatchTask;
     }
 
@@ -513,14 +541,14 @@ public class BingoGame implements GamePhase
             BingoReloaded.incrementPlayerStat(player, BingoStatType.TASKS);
         });
 
-        if (participant.getTeam().getCard().hasBingo(participant.getTeam())) {
+        if (participant.getTeam().getCard().hasTeamWon(participant.getTeam())) {
             bingo(participant.getTeam());
             return;
         }
 
         // Start death match when all tasks have been completed in lockout
-        BingoCard card = teamManager.getActiveTeams().getLeadingTeam().getCard();
-        if (!(card instanceof LockoutBingoCard lockoutCard)) {
+        TaskCard card = teamManager.getActiveTeams().getLeadingTeam().getCard();
+        if (!(card instanceof LockoutTaskCard lockoutCard)) {
             return;
         }
 
@@ -628,6 +656,13 @@ public class BingoGame implements GamePhase
             player.giveKit(settings.kit());
         } else {
             player.giveEffects(settings.effects(), 0);
+        }
+
+        boolean correctRespawnPoint = !event.isBedSpawn() && !event.isAnchorSpawn() && event.getPlayer().getRespawnLocation() == null;
+        if (correctRespawnPoint && playerSpawnPoints.containsKey(player.getId())) {
+            Location newSpawnLocation = playerSpawnPoints.get(player.getId());
+            event.setRespawnLocation(newSpawnLocation);
+            event.getPlayer().setRespawnLocation(newSpawnLocation, true);
         }
     }
 

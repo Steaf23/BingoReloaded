@@ -83,14 +83,14 @@ public record AdvancementTask(Advancement advancement) implements TaskData
     @Override
     public PersistentDataContainer pdcSerialize(PersistentDataContainer stream)
     {
-        stream.set(BingoTask.getTaskDataKey("advancement"), PersistentDataType.STRING, advancement.getKey().toString());
+        stream.set(GameTask.getTaskDataKey("advancement"), PersistentDataType.STRING, advancement.getKey().toString());
         return stream;
     }
 
     public static AdvancementTask fromPdc(PersistentDataContainer pdc)
     {
         Advancement a = Bukkit.getAdvancement(NamespacedKey.fromString(
-                        pdc.getOrDefault(BingoTask.getTaskDataKey("advancement"), PersistentDataType.STRING, "minecraft:story/mine_stone")));
+                        pdc.getOrDefault(GameTask.getTaskDataKey("advancement"), PersistentDataType.STRING, "minecraft:story/mine_stone")));
         AdvancementTask task = new AdvancementTask(a);
         return task;
     }

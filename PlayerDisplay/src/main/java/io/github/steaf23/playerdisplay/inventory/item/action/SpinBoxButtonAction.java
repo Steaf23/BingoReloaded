@@ -35,7 +35,7 @@ public class SpinBoxButtonAction extends MenuAction
     }
 
     @Override
-    public void use(BasicMenu.ActionArguments arguments) {
+    public void use(ActionArguments arguments) {
         int changeBy = 1;
         if (arguments.clickType().isShiftClick()) {
             changeBy = 10;

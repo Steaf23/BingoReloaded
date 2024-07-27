@@ -1,18 +1,17 @@
 package io.github.steaf23.bingoreloaded.command;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
-import io.github.steaf23.bingoreloaded.cards.BingoCard;
+import io.github.steaf23.bingoreloaded.cards.TaskCard;
 import io.github.steaf23.bingoreloaded.event.BingoTaskProgressCompletedEvent;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.team.TeamManager;
 import io.github.steaf23.bingoreloaded.player.VirtualBingoPlayer;
-import io.github.steaf23.bingoreloaded.tasks.BingoTask;
+import io.github.steaf23.bingoreloaded.tasks.GameTask;
 import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -57,6 +56,17 @@ public class BotCommand implements TabExecutor
                     teamManager.addMemberToTeam(virtualPlayer, teamName);
                 }
             }
+            case "add100" -> {
+                for (int i = 0; i < 100; i++) {
+                    String playerName = "testPlayer_" + i;
+                    String teamName = args[1];
+                    BingoParticipant virtualPlayer = getVirtualPlayerFromName(playerName);
+                    if (virtualPlayer == null) {
+                        virtualPlayer = new VirtualBingoPlayer(UUID.randomUUID(), playerName, session);
+                    }
+                    teamManager.addMemberToTeam(virtualPlayer, teamName);
+                }
+            }
             case "add" -> {
                 String playerName = args[1];
                 String teamName = args[2];
@@ -90,14 +100,14 @@ public class BotCommand implements TabExecutor
         if (!player.getSession().isRunning())
             return;
 
-        BingoCard card = player.getTeam().getCard();
+        TaskCard card = player.getTeam().getCard();
 
         if (card == null || taskIndex >= card.getTasks().size()) {
             ConsoleMessenger.log(Component.text("index out of bounds for task list!").color(NamedTextColor.RED));
             return;
         }
 
-        BingoTask task = card.getTasks().get(taskIndex);
+        GameTask task = card.getTasks().get(taskIndex);
         task.complete(player, ((BingoGame) player.getSession().phase()).getGameTime());
         var slotEvent = new BingoTaskProgressCompletedEvent(player.getSession(), task);
         Bukkit.getPluginManager().callEvent(slotEvent);

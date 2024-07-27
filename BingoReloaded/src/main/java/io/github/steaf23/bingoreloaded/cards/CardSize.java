@@ -9,12 +9,8 @@ import java.util.Set;
 
 public enum CardSize implements ComponentLike
 {
-    X1(1, 4),
-    X2(2, 4),
     X3(3, 3),
-    X4(4, 3),
     X5(5, 2),
-    X6(6, 2),
     ;
 
     public final int size;
@@ -50,7 +46,8 @@ public enum CardSize implements ComponentLike
             row = (int) Math.floor(itemIndex / (double)size);
         }
 
-        return itemIndex + leftSpacing + row * (leftSpacing + rightSpacing);
+        int finalIndex = itemIndex + leftSpacing + row * (leftSpacing + rightSpacing);
+        return this == CardSize.X3 ? finalIndex + 9 : finalIndex;
     }
 
     public static CardSize fromWidth(int width)

@@ -2,7 +2,7 @@ package io.github.steaf23.bingoreloaded.gui.inventory.creator;
 
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.tasks.AdvancementTask;
-import io.github.steaf23.bingoreloaded.tasks.BingoTask;
+import io.github.steaf23.bingoreloaded.tasks.GameTask;
 import io.github.steaf23.bingoreloaded.tasks.ItemTask;
 import io.github.steaf23.playerdisplay.inventory.BasicMenu;
 import io.github.steaf23.playerdisplay.inventory.MenuBoard;
@@ -29,9 +29,9 @@ public class ListEditorMenu extends BasicMenu
     public ListEditorMenu(MenuBoard manager, String listName) {
         super(manager, Component.text("Editing '" + listName + "'"), 6);
         this.listName = listName;
-        addAction(ITEMS, p -> createItemPicker(manager).open(p));
-        addAction(ADVANCEMENTS, p -> createAdvancementPicker(manager).open(p));
-        addAction(STATISTICS, p -> createStatisticsPicker(manager).open(p));
+        addAction(ITEMS, arguments -> createItemPicker(manager).open(arguments.player()));
+        addAction(ADVANCEMENTS, arguments -> createAdvancementPicker(manager).open(arguments.player()));
+        addAction(STATISTICS, arguments -> createStatisticsPicker(manager).open(arguments.player()));
         addCloseAction(SAVE);
         addItems(BLANK.copyToSlot(0, 5),
                 BLANK.copyToSlot(1, 5),
@@ -53,10 +53,10 @@ public class ListEditorMenu extends BasicMenu
             glassPanes.add(blockColor.glassPane);
         }
 
-        List<BingoTask> tasks = new ArrayList<>();
+        List<GameTask> tasks = new ArrayList<>();
         for (Material m : Material.values()) {
             if (!m.name().contains("LEGACY_") && !glassPanes.contains(m) && m.isItem() && !m.isAir()) {
-                tasks.add(new BingoTask(new ItemTask(m, 1)));
+                tasks.add(new GameTask(new ItemTask(m, 1)));
             }
         }
 
@@ -64,7 +64,7 @@ public class ListEditorMenu extends BasicMenu
     }
 
     private BasicMenu createAdvancementPicker(MenuBoard menuBoard) {
-        List<BingoTask> tasks = new ArrayList<>();
+        List<GameTask> tasks = new ArrayList<>();
         for (Iterator<Advancement> it = Bukkit.advancementIterator(); it.hasNext(); ) {
             Advancement a = it.next();
             String key = a.getKey().getKey();
@@ -73,7 +73,7 @@ public class ListEditorMenu extends BasicMenu
             }
 
             AdvancementTask task = new AdvancementTask(a);
-            tasks.add(new BingoTask(task));
+            tasks.add(new GameTask(task));
         }
 
         return new TaskPickerMenu(menuBoard, "Add Advancements", tasks, listName);

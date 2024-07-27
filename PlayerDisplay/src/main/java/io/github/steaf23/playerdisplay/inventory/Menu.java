@@ -7,9 +7,12 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.Inventory;
+import org.jetbrains.annotations.NotNull;
 
 public interface Menu
 {
+    MenuBoard getMenuBoard();
+
     void beforeOpening(HumanEntity player);
 
     /**
@@ -31,16 +34,12 @@ public interface Menu
 
     void beforeClosing(HumanEntity player);
 
-    public MenuBoard getMenuBoard();
-
     /**
      * @return true if this menu should be removed if another menu opens on top of it.
      */
     default boolean openOnce() {
         return false;
     }
-
-    Inventory getInventory();
 
     private static Component inputButtonText(Component buttonText) {
         return Component.text()
@@ -50,6 +49,9 @@ public interface Menu
                 .append(Component.text(": ").color(NamedTextColor.WHITE))
                 .build();
     }
+
+    @NotNull
+    public Inventory getInventory();
 
     public static Component INPUT_LEFT_CLICK = inputButtonText(Component.keybind("key.attack"));
     public static Component INPUT_RIGHT_CLICK = inputButtonText(Component.keybind("key.use"));
