@@ -140,10 +140,6 @@ public class BingoGame implements GamePhase
             uniqueCards.add(t.getCard());
         });
 
-        for (TaskCard card : uniqueCards) {
-            card.getTasks().forEach(t -> getProgressTracker().startTrackingTask(t));
-        }
-
         BingoMessage.GIVE_CARDS.sendToAudience(session);
         teleportPlayersToStart(world);
 
@@ -181,6 +177,10 @@ public class BingoGame implements GamePhase
                 session.removeParticipant(p);
             }
         });
+
+        for (TaskCard card : uniqueCards) {
+            card.getTasks().forEach(t -> getProgressTracker().startTrackingTask(t));
+        }
 
         // Post-start Setup
         scoreboard.setup(settings);

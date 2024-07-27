@@ -155,7 +155,7 @@ public class AdminBingoMenu extends BasicMenu
             item.setLore(PlayerDisplay.MINI_BUILDER.deserialize("<dark_purple>Countdown mode is <green>ENABLED</green>"));
         }
         else {
-            item.setLore(PlayerDisplay.MINI_BUILDER.deserialize("<dark_purple>Countdown mode is <red>DISABLED</green>"));
+            item.setLore(PlayerDisplay.MINI_BUILDER.deserialize("<dark_purple>Countdown mode is <red>DISABLED</red>"));
         }
     }
 
