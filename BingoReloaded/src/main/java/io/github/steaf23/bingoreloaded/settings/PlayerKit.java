@@ -13,6 +13,7 @@ import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Material;
+import org.bukkit.Server;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 
@@ -154,7 +155,10 @@ public enum PlayerKit
                 CustomKit kit = customKitData.getConfig().getSerializable(configName, CustomKit.class);
                 if (kit != null)
                 {
-                    return kit.items();
+                    // Color colored items according to the team color.
+                    return kit.items().stream()
+                            .map(item -> new SerializableItem(item.slot(), ItemTemplate.colorItemStack(item.stack(), teamColor)))
+                            .toList();
                 }
             }
         }

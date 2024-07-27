@@ -435,4 +435,14 @@ public class ItemTemplate
         item.setLeatherColor(color);
         return item;
     }
+
+    public static ItemStack colorItemStack(ItemStack input, TextColor color) {
+        input = input.clone();
+        input.editMeta(meta -> {
+            if (meta instanceof LeatherArmorMeta armorMeta) {
+                armorMeta.setColor(Color.fromRGB(color.red(), color.green(), color.blue()));
+            }
+        });
+        return input;
+    }
 }
