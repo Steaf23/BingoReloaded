@@ -43,7 +43,7 @@ public class ConfigData
     public final String defaultWorldName;
     public final String language;
     public final boolean savePlayerStatistics;
-    public final String sendCommandAfterGameEnded;
+    public final String sendCommandAfterGameEnds;
     public final boolean voteUsingCommandsOnly;
     public final boolean selectTeamsUsingCommandsOnly;
     public final boolean disableScoreboardSidebar;
@@ -87,7 +87,7 @@ public class ConfigData
         this.defaultWorldName = config.getString("defaultWorldName", "world");
         this.language = "languages/" + config.getString("language", "en_us.yml");
         this.savePlayerStatistics = config.getBoolean("savePlayerStatistics", false);
-        this.sendCommandAfterGameEnded = config.getString("sendCommandAfterGameEnds", "");
+        this.sendCommandAfterGameEnds = config.getString("sendCommandAfterGameEnds", "");
         this.voteUsingCommandsOnly = config.getBoolean("voteUsingCommandsOnly", false);
         this.selectTeamsUsingCommandsOnly = config.getBoolean("selectTeamsUsingCommandsOnly", false);
         this.disableScoreboardSidebar = config.getBoolean("disableScoreboardSidebar", false);

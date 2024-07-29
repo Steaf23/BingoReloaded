@@ -179,7 +179,7 @@ public class BingoCommand implements TabExecutor
                 }
             }
             case "teamedit" -> {
-                if (!player.hasPermission("bingo.admin"))
+                if (!player.hasPermission("bingo.manager"))
                     return false;
 
                 new TeamEditorMenu(menuBoard).open(player);

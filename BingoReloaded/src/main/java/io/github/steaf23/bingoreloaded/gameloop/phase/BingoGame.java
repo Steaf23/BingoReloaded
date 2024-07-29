@@ -248,7 +248,7 @@ public class BingoGame implements GamePhase
         var soundEvent = new BingoPlaySoundEvent(session, Sound.ENTITY_LIGHTNING_BOLT_THUNDER);
         Bukkit.getPluginManager().callEvent(soundEvent);
 
-        String command = config.sendCommandAfterGameEnded;
+        String command = config.sendCommandAfterGameEnds;
         if (!command.isEmpty()) {
             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
         }
@@ -558,11 +558,15 @@ public class BingoGame implements GamePhase
     }
 
     public void handleDeathmatchTaskComplete(final BingoDeathmatchTaskCompletedEvent event) {
-        String timeString = GameTimer.getTimeAsString(getGameTime());
         BingoParticipant participant = event.getTask().getCompletedBy().orElse(null);
         if (participant == null) {
             // I guess it was not actually completed?
             ConsoleMessenger.bug("Task not completed correctly...?", this);
+            return;
+        }
+
+        if (participant.getTeam() == null) {
+            ConsoleMessenger.bug("Player " + participant.getName() + " completing Deathmatch task is not in a team?", this);
             return;
         }
 
