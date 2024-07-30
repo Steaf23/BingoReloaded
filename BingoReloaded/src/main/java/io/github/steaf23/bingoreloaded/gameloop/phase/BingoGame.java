@@ -150,7 +150,7 @@ public class BingoGame implements GamePhase
             }
         });
 
-        for (TaskCard card : uniqueCards) {
+        for (BingoCard card : uniqueCards) {
             card.getTasks().forEach(t -> getProgressTracker().startTrackingTask(t));
         }
 
