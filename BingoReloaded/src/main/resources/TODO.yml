@@ -44,3 +44,7 @@
 #    - *Required** `<load | save | remove>`: Specify whether to load, save, or remove player data.
 #    - *Required** `<player_name>`: The name of the player whose data will be loaded, saved, or removed.
 )
+
+
+
+FIX empty team list when trying to game was tried to get started without any teams

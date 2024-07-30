@@ -25,10 +25,11 @@ import java.util.UUID;
 
 public class BotCommand implements TabExecutor
 {
-    private BingoSession session;
-    private TeamManager teamManager;
+    private final BingoSession session;
+    private final TeamManager teamManager;
 
     public BotCommand(BingoSession session) {
+        this.session = session;
         this.teamManager = session.teamManager;
         BingoReloaded.getInstance().registerCommand("bingobot", this);
     }
@@ -63,6 +64,30 @@ public class BotCommand implements TabExecutor
                     virtualPlayer = new VirtualBingoPlayer(UUID.randomUUID(), playerName, session);
                 }
                 teamManager.addMemberToTeam(virtualPlayer, teamName);
+            }
+            case "fill" -> {
+                Message.log("CAPACITY: " + teamManager.getTotalParticipantCapacity());
+                for (String teamId : teamManager.getJoinableTeams().keySet()) {
+                    for (int i = 0; i < teamManager.getMaxTeamSize(); i++) {
+                        String name = "test_" + teamId + "_" + i;
+                        BingoParticipant virtualPlayer = getVirtualPlayerFromName(name);
+                        if (virtualPlayer == null) {
+                            virtualPlayer = new VirtualBingoPlayer(UUID.randomUUID(), name, session);
+                        }
+                        teamManager.addMemberToTeam(virtualPlayer, teamId);
+                    }
+                }
+            }
+            case "fillauto" -> {
+                Message.log("CAPACITY: " + teamManager.getTotalParticipantCapacity());
+                for (int i = 0; i < teamManager.getTotalParticipantCapacity() + 3; i++) {
+                    String name = "test_" + i;
+                    BingoParticipant virtualPlayer = getVirtualPlayerFromName(name);
+                    if (virtualPlayer == null) {
+                        virtualPlayer = new VirtualBingoPlayer(UUID.randomUUID(), name, session);
+                    }
+                    teamManager.addMemberToTeam(virtualPlayer, "auto");
+                }
             }
             case "remove" -> {
                 String playerName = args[1];

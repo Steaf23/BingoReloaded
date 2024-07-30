@@ -112,6 +112,7 @@ public class BingoSession
         BingoCardData cardsData = new BingoCardData();
         BingoSettings settings = settingsBuilder.view();
         if (!cardsData.getCardNames().contains(settings.card())) {
+            Message.error("No cards found, can not start game!");
             new TranslatedMessage(BingoTranslation.NO_CARD).color(ChatColor.RED).arg(settings.card()).sendAll(this);
             return;
         }
