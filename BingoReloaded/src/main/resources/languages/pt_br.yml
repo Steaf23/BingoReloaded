@@ -1,9 +1,9 @@
 name: "Português (Brasil)"
 changed: "Idioma configurado para Português (Brasil)"
 branding:
-  scoreboard_title: "&3&lBingo&r&e&oⓇeloaded&r&4"
-  message_prefix: "&r&4[&3&lBingo&r&e&oⓇeloaded&r&4]&r: "
-  menu_prefix: "&r&4[&3&lB&r&e&oⓇ&r&4] &4"
+  scoreboard_title: "<dark_aqua><bold>Bingo<reset><yellow><italic>Ⓡeloaded<reset>"
+  message_prefix: "<dark_red>[<dark_aqua><bold>Bingo</bold></dark_aqua><yellow><italic>Ⓡeloaded</italic></yellow>]</dark_red>: "
+  menu_prefix: "<dark_red>[<dark_aqua><bold>B</bold></dark_aqua><yellow><italic>Ⓡ</italic></yellow>]</dark_red>: <dark_gray>"
 command:
   use: "Use: {0}" # 0: cmd usage
   bingo:
@@ -36,7 +36,7 @@ game:
     already_started: "Não é possível iniciar um jogo de Bingo quando um já está ativo!"
     give_cards: "Entregando Cartelas e Kits aos participantes!"
     no_card: "Não foi possível iniciar o jogo com a Cartela '{0}', pois ela não existe!" # 0: card_name
-    chosen_settings: "Iniciando o jogo de bingo! &6Mova o seu cursor aqui&r para ver todas as configurações."
+    chosen_settings: "Iniciando o jogo de bingo! <gold>Mova o seu cursor aqui</gold> para ver todas as configurações."
   end:
     bingo: "Parabéns! Time {0} venceu o Bingo!" # 0: winning team
   postgame:
@@ -50,15 +50,15 @@ game:
     no_start: "Este jogo ainda não começou!"
     no_card: "Não foi possível encontrar sua Cartela!"
     cooldown: "Espere {0} segundos para usar este item novamente!" # 0: time left
-    respawn: "//&3&lClique aqui para teleportar de volta ao local de sua morte////"
+    respawn: "<dark_aqua><bold>Clique aqui para teleportar de volta ao local de sua morte"
   team:
     no_join: "Você não pode se juntar a um jogo em progresso!"
     join: "Você entrou no time {0}!" # 0: team name
     join_auto: "Você entrará em um time automaticamente quando o jogo começar!"
     dropped: "Time {0} não consegue mais ganhar, está fora do jogo!" # 0: team name
     no_chat: "Não é possível ligar o chat de time, pois você não está em um time!"
-    chat_off: "&fChat de time está &cdesligado&r, use {0} para ativá-lo novamente." # 0: /btc
-    chat_on: "&fChat de time está &aligado&r, use {0} para desativá-lo." # 0: /btc
+    chat_off: "Chat de time está <red>desligado</red>, use {0} para ativá-lo novamente." # 0: /btc
+    chat_on: "Chat de time está <green>ligado</green>, use {0} para desativá-lo." # 0: /btc
     size_changed: "O tamanho máximo dos times foi alterado, por favor entre novamente no time de sua escolha!"
     full_team_desc: "Este time está cheio"
     join_team_desc: Clique para se juntar a este time"
@@ -78,8 +78,8 @@ game:
 menu:
   save: "Salvar"
   exit: Fechar Menu"
-  save_exit: "Salvar && Sair"
-  accept: "Aceitar && Fechar"
+  save_exit: "Salvar & Sair"
+  accept: "Aceitar & Fechar"
   next: "Próxima Página"
   prev: "Página Anterior"
   filter: "Filtro..."
@@ -113,10 +113,10 @@ menu:
     effects: "Efeitos de Jogador"
     vote: "Vote em Opções"
     modes:
-      regular: "&aNormal"
-      lockout: "&5Lockout"
-      complete: "&3Blackout"
-      hotswap: "&6Hot-Swap"
+      regular: "Normal"
+      lockout: "Lockout"
+      complete: "Blackout"
+      hotswap: "Hot-Swap"
   effects:
     enable: "Clique para ATIVAR esta opção de efeito"
     disable: "Clique para DESATIVAR esta opção de efeito"
@@ -131,12 +131,12 @@ menu:
     speed: "Velocidade"
   kits:
     hardcore:
-      name: "&4Hardcore"
+      name: "<dark_red><bold>Hardcore"
       desc: "Este kit contém: \n
       \n
           - Nada, boa sorte!"
     normal:
-      name: "&eNormal"
+      name: "<yellow><bold>Normal"
       desc: "Este kit contém: \n
       \n
           - Machado de Ferro \n
@@ -146,7 +146,7 @@ menu:
           - Capacete de Couro \n
           - Botas de Couro"
     overpowered:
-      name: "&5Overpowered"
+      name: "<dark_purple><bold>Overpowered"
       desc: "Este kit contém: \n
       \n
           - Machado de Netherita \n
@@ -157,7 +157,7 @@ menu:
           - Capacete de Couro \n
           - Botas de Couro"
     reloaded:
-      name: "&3Reloaded"
+      name: "<dark_aqua><bold>Reloaded"
       desc: "Este kit contém: \n
       \n
           - Machado de Netherita \n

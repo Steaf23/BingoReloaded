@@ -1,9 +1,9 @@
 name: "Deutsch"
 changed: "Sprache auf Deutsch eingestellt!"
 branding:
-  scoreboard_title: "&3&lBingo&r&e&oⓇeloaded&r&4"
-  message_prefix: "&r&4[&3&lBingo&r&e&oⓇeloaded&r&4]&r: "
-  menu_prefix: "&r&4[&3&lB&r&e&oⓇ&r&4] &4"
+  scoreboard_title: "<dark_aqua><bold>Bingo<reset><yellow><italic>Ⓡeloaded<reset>"
+  message_prefix: "<dark_red>[<dark_aqua><bold>Bingo</bold></dark_aqua><yellow><italic>Ⓡeloaded</italic></yellow>]</dark_red>: "
+  menu_prefix: "<dark_red>[<dark_aqua><bold>B</bold></dark_aqua><yellow><italic>Ⓡ</italic></yellow>]</dark_red>: <dark_gray>"
 command:
   use: "Verwendung: {0}" # 0: cmd usage
   bingo:
@@ -36,7 +36,7 @@ game:
     already_started: "Ein Spiel kann nicht gestartet werden, wenn bereits ein Spiel läuft!"
     give_cards: "Alle Teilnehmer erhalten Ausrüstung und eine Bingokarte!"
     no_card: "Das Spiel kann mit der Karte '{0}' nicht gestartet werden, da die Karte nicht existiert!" # 0: card_name
-    chosen_settings: "Bingo-Spiel startet! &6Bewege deinen Cursor hierher&r, um alle Einstellungen anzusehen."
+    chosen_settings: "Bingo-Spiel startet! <gold>Bewege deinen Cursor hierher</gold>, um alle Einstellungen anzusehen."
   end:
     bingo: "Herzlichen Glückwunsch! Team {0} hat das Bingo gewonnen!" # 0: winning team
   postgame:
@@ -50,7 +50,7 @@ game:
     no_start: "Das Spiel hat noch nicht begonnen!"
     no_card: "Ich kann Ihre Karte nicht finden!"
     cooldown: "Sie können diesen Gegenstand {0} Sekunden lang nicht verwenden!" # 0: time left
-    respawn: "//&3&lKlicken sie hier, um sich dorthin zurück zu teleportieren, wo sie gestorben sind////"
+    respawn: "<dark_aqua><bold>Klicken sie hier, um sich dorthin zurück zu teleportieren, wo sie gestorben sind"
     respawn_expired: "Der Teleport zur Todesstelle ist abgelaufen!"
   team:
     no_join: "Sie können keinem Spiel beitreten, das bereits läuft!"
@@ -58,8 +58,8 @@ game:
     join_auto: "Sobald das Spiel beginnt, werden Sie automatisch einer Gruppe hinzugefügt!"
     dropped: "Gruppe {0} kann nicht mehr gewinnen, sie wurde aus dem Spiel geworfen!" # 0: team name
     no_chat: "Der Gruppenchat kann nicht genutzt werden, da Sie keiner Gruppe angehören!"
-    chat_off: "&fDer Gruppenchat ist jetzt deaktiviert. &cdeaktiviert&r, Verwenden Sie {0}, um ihn wieder zu aktivieren" # 0: /btc
-    chat_on: "&fDer Gruppenchat ist jetzt &aaktiviert&r, aktiviert. Verwenden Sie {0}, um ihn zu deaktivieren." # 0: /btc
+    chat_off: "Der Gruppenchat ist jetzt deaktiviert. <red>deaktiviert</red>, Verwenden Sie {0}, um ihn wieder zu aktivieren" # 0: /btc
+    chat_on: "Der Gruppenchat ist jetzt <green>aktiviert</green>, aktiviert. Verwenden Sie {0}, um ihn zu deaktivieren." # 0: /btc
     size_changed: "Die maximale Gruppengröße wurde angepasst. Wählen Sie Ihr Team erneut aus!"
     full_team_desc: "Diese Gruppe ist voll"
     join_team_desc: "Klicken Sie, um dieser Gruppe hinzuzufügen"
@@ -79,8 +79,8 @@ game:
 menu:
   save: "Speichern"
   exit: "Menü schließen"
-  save_exit: "Speichern && Beenden"
-  accept: "Akzeptieren && Schließen"
+  save_exit: "Speichern & Beenden"
+  accept: "Akzeptieren & Schließen"
   next: "Nächste Seite"
   prev: "Vorherige Seite"
   filter: "Filtern..."
@@ -114,10 +114,10 @@ menu:
     effects: "Spielereffekte"
     vote: "Für Einstellungen abstimmen"
     modes:
-      regular: "&aRegulär"
-      lockout: "&5Lockout"
-      complete: "&3Komplett"
-      hotswap: "&6Hot-Swap"
+      regular: "Regulär"
+      lockout: "Lockout"
+      complete: "Komplett"
+      hotswap: "Hot-Swap"
   effects:
     enable: "Klicken, um diese Effektoption zu AKTIVIEREN"
     disable: "Klicken, um diese Effektoption zu DEAKTIVIEREN"
@@ -132,12 +132,12 @@ menu:
     speed: "Geschwindigkeit"
   kits:
     hardcore:
-      name: "&4Hardcore"
+      name: "<dark_red><bold>Hardcore"
       desc: "Diese Ausrüstung umfasst: \n
       \n
           - Nichts, tschüss und danke!"
     normal:
-      name: "&e&lNormal"
+      name: "<yellow><bold>Normal"
       desc: "Diese Ausrüstung umfasst: \n
       \n
           - Iron Axe \n
@@ -147,7 +147,7 @@ menu:
           - Leather Helmet \n
           - Leather Boots"
     overpowered:
-      name: "&5&lOverpowered"
+      name: "<dark_purple><bold>Overpowered"
       desc: "Diese Ausrüstung umfasst: \n
       \n
           - Netherite Axe \n
@@ -158,7 +158,7 @@ menu:
           - Leather Helmet \n
           - Leather Boots"
     reloaded:
-      name: "&3&lReloaded"
+      name: "<dark_aqua><bold>Reloaded"
       desc: "Diese Ausrüstung umfasst: \n
       \n
           - Netherite Axe \n

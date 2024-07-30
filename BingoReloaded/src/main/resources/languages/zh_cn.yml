@@ -1,9 +1,9 @@
 name: "中文"
 changed: "语言配置为中文！"
 branding:
-  scoreboard_title: "&3&lBingo&r&e&oⓇeloaded&r&4"
-  message_prefix: "&r&4[&3&lBingo&r&e&oⓇeloaded&r&4]&r: "
-  menu_prefix: "&r&4[&3&lB&r&e&oⓇ&r&4] &4"
+  scoreboard_title: "<dark_aqua><bold>Bingo<reset><yellow><italic>Ⓡeloaded<reset>"
+  message_prefix: "<dark_red>[<dark_aqua><bold>Bingo</bold></dark_aqua><yellow><italic>Ⓡeloaded</italic></yellow>]</dark_red>: "
+  menu_prefix: "<dark_red>[<dark_aqua><bold>B</bold></dark_aqua><yellow><italic>Ⓡ</italic></yellow>]</dark_red>: <dark_gray>"
 command:
   use: "使用方法: {0}" # 0: cmd usage
   bingo:
@@ -36,7 +36,7 @@ game:
     already_started: "无法同时进行多场 BINGO 游戏！"
     give_cards: "已向所有参与玩家发放初始套件和卡片！"
     no_card: "无法使用不存在卡片 '{0}' 开始游戏！" # 0: card_name
-    chosen_settings: "BINGO 游戏启动中！ &6将光标移至 这里&r 来查看所有设置。"
+    chosen_settings: "BINGO 游戏启动中！ <gold>将光标移至 这里</gold> 来查看所有设置。"
   end:
     bingo: "恭喜队伍 {0} 赢得了本次 BINGO 游戏的胜利！" # 0: winning team
   postgame:
@@ -50,7 +50,7 @@ game:
     no_start: "游戏还未开始！"
     no_card: "无法找到你的卡片！"
     cooldown: "道具冷却中，{0} 秒内你无法使用该物品！" # 0: time left
-    respawn: "//&3&l点击这里返回死亡地点////"
+    respawn: "<dark_aqua><bold>点击这里返回死亡地点"
     respawn_expired: "传送至死亡地点已失效！"
   team:
     no_join: "你无法加入正在进行中的游戏！"
@@ -58,8 +58,8 @@ game:
     join_auto: "游戏开始后，你将自动加入一个队伍！"
     dropped: "队伍 {0} 无法获得胜利，他们已经出局了！" # 0: team name
     no_chat: "无法切换队伍聊天，因为你不在一个队伍中！"
-    chat_off: "&f队伍聊天 &c已关闭&r，使用 {0} 重启队伍聊天。" # 0: /btc
-    chat_on: "&f队伍聊天 &a已开启&r，使用 {0} 关闭队伍聊天." # 0: /btc
+    chat_off: "队伍聊天 <red>已关闭</red>，使用 {0} 重启队伍聊天。" # 0: /btc
+    chat_on: "队伍聊天 <green>已开启</green>，使用 {0} 关闭队伍聊天." # 0: /btc
     size_changed: "队伍人数上限已更改，请重新加入您选择的队伍！"
     full_team_desc: "此队已满！"
     join_team_desc: "点击以加入该队伍"
@@ -114,10 +114,10 @@ menu:
     effects: "玩家效果"
     vote: "投票选择设置"
     modes:
-      regular: "&aRegular"
-      lockout: "&5Lockout"
-      complete: "&3Complete-All"
-      hotswap: "&6Hot-Swap"
+      regular: "Regular"
+      lockout: "Lockout"
+      complete: "Complete-All"
+      hotswap: "Hot-Swap"
   effects:
     enable: "点击以启用该效果"
     disable: "点击以关闭该效果"
@@ -132,12 +132,12 @@ menu:
     speed: "速度"
   kits:
     hardcore:
-      name: "&4硬核"
+      name: "<dark_red><bold>硬核"
       desc: "该初始套件包括：\n
       \n
           - 啥也没有，祝你好运！"
     normal:
-      name: "&e正常"
+      name: "<yellow><bold>正常"
       desc: "该初始套件包括：\n
       \n
           - 铁斧 \n
@@ -147,7 +147,7 @@ menu:
           - 皮革帽子 \n
           - 皮革靴子"
     overpowered:
-      name: "&5超强"
+      name: "<dark_purple><bold>超强"
       desc: "该初始套件包括：\n
       \n
           - 下界合金斧 \n
@@ -158,7 +158,7 @@ menu:
           - 皮革帽子 \n
           - 皮革靴子"
     reloaded:
-      name: "&3无敌（含鞘翅）"
+      name: "<dark_aqua><bold>无敌（含鞘翅）"
       desc: "该初始套件包括：\n
       \n
           - 下界合金斧 \n

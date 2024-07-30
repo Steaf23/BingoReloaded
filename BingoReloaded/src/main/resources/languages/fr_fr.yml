@@ -1,9 +1,9 @@
 name: "Français"
 changed: "Langue changée en Français!"
 branding:
-  scoreboard_title: "&3&lBingo&r&e&oⓇeloaded&r&4"
-  message_prefix: "&r&4[&3&lBingo&r&e&oⓇeloaded&r&4]&r: "
-  menu_prefix: "&r&4[&3&lB&r&e&oⓇ&r&4] &4"
+  scoreboard_title: "<dark_aqua><bold>Bingo<reset><yellow><italic>Ⓡeloaded<reset>"
+  message_prefix: "<dark_red>[<dark_aqua><bold>Bingo</bold></dark_aqua><yellow><italic>Ⓡeloaded</italic></yellow>]</dark_red>: "
+  menu_prefix: "<dark_red>[<dark_aqua><bold>B</bold></dark_aqua><yellow><italic>Ⓡ</italic></yellow>]</dark_red>: <dark_gray>"
 command:
   use: "Utilisation: {0}" # 0: cmd usage
   bingo:
@@ -36,7 +36,7 @@ game:
     already_started: "Impossible de démarrer une nouvelle partie car il y en a une déjà en cours!"
     give_cards: "Tous les participants reçoivent un kit de démarrage et une grille de Bingo!"
     no_card: "Impossible de démarrer la partie en utilisant la grille '{0}' car elle n'existe pas!" # 0: card_name
-    chosen_settings: "Démarrage du jeu de bingo! &6Déplacez votre curseur ici&r pour voir tous les paramètres."
+    chosen_settings: "Démarrage du jeu de bingo! <gold>Déplacez votre curseur ici</gold> pour voir tous les paramètres."
   end:
     bingo: "Félicitations! L'équipe {0} a remporté la partie de Bingo!" # 0: winning team
   postgame:
@@ -50,7 +50,7 @@ game:
     no_start: "La partie n'a pas encore commencée!"
     no_card: "Impossible de trouver votre carte !"
     cooldown: "Vous ne pouvez plus utiliser cet élément durant les {0} prochaines secondes!" # 0: time left
-    respawn: "//&3&lCliquez ici pour vous téléporter à l'endroit de votre mort////"
+    respawn: "<dark_aqua><bold>Cliquez ici pour vous téléporter à l'endroit de votre mort"
     respawn_expired: "La téléportation vers le lieu de la mort a expiré!"
   team:
     no_join: "Vous ne pouvez pas rejoindre une partie en cours!"
@@ -58,8 +58,8 @@ game:
     join_auto: "Vous rejoindrez automatiquement une équipe au début du jeu!"
     dropped: "L'équipe {0} ne peut plus gagner, ils sont ejectés de la partie en cours!" # 0: team name
     no_chat: "Vous ne pouvez pas activer ou désactiver le chat d'équipe car vous n'êtes pas dans une équipe!"
-    chat_off: "&fLe chat d'équipe est désormais &cdésactivé&r, utilisez la commande {0} pour le réactiver." # 0: /btc
-    chat_on: "&fLe chat d'équipe est désormais &aactivé&r, utilisez la commande {0} pour le désactiver." # 0: /btc
+    chat_off: "Le chat d'équipe est désormais <red>désactivé</red>, utilisez la commande {0} pour le réactiver." # 0: /btc
+    chat_on: "Le chat d'équipe est désormais <green>activé</green>, utilisez la commande {0} pour le désactiver." # 0: /btc
     size_changed: "La taille maximale de l'équipe a été modifiée, veuillez rejoindre l'équipe de votre choix!"
     full_team_desc: "This team is full"
     join_team_desc: "Click to join this team"
@@ -79,8 +79,8 @@ game:
 menu:
   save: "Sauvegarder"
   exit: "Fermer le menu"
-  save_exit: "Sauvegarder && Quitter"
-  accept: "Accepter && Fermer"
+  save_exit: "Sauvegarder & Quitter"
+  accept: "Accepter & Fermer"
   next: "Page Suivante"
   prev: "Page Précédente"
   filter: "Filtrer..."
@@ -114,10 +114,10 @@ menu:
     effects: "Effets"
     vote: "Vote"
     modes:
-      regular: "&aClassique"
-      lockout: "&5Lockout"
-      complete: "&3Toutes-Complétées"
-      hotswap: "&6Hot-Swap"
+      regular: "Classique"
+      lockout: "Lockout"
+      complete: "Toutes-Complétées"
+      hotswap: "Hot-Swap"
   effects:
     enable: "Cliquez pour ACTIVER cet effet"
     disable: "Cliquez pour DESACTIVER cet effet"
@@ -132,12 +132,12 @@ menu:
     speed: "Accélération"
   kits:
     hardcore:
-      name: "&4Hardcore"
+      name: "<dark_red><bold>Hardcore"
       desc: "Ce kit contient: \n
       \n
           - Rien du tout, bonne chance!"
     normal:
-      name: "&eNormal"
+      name: "<yellow><bold>Normal"
       desc: "Ce kit contient: \n
       \n
           - Hache en fer \n
@@ -147,7 +147,7 @@ menu:
           - Casque en cuir \n
           - Bottes en cuir"
     overpowered:
-      name: "&5Surpuissant"
+      name: "<dark_purple><bold>Surpuissant"
       desc: "Ce kit contient: \n
       \n
           - Hache en Netherite \n
@@ -158,7 +158,7 @@ menu:
           - Casque en cuir \n
           - Bottes en cuir"
     reloaded:
-      name: "&3Reloaded"
+      name: "<dark_aqua><bold>Reloaded"
       desc: "Ce kit contient: \n
       \n
           - Hache en Netherite \n
