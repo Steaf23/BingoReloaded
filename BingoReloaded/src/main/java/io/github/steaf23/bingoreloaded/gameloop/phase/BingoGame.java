@@ -148,8 +148,7 @@ public class BingoGame implements GamePhase
                 player.spigot().sendMessage(new TextComponent());
                 player.spigot().sendMessage(settingsMessage);
                 player.spigot().sendMessage(new TextComponent());
-            }
-            else {
+            } else if (!p.alwaysActive()) {
                 // If the player is not online, we can remove them from the game, as they probably did not intend on playing in this session
                 session.removeParticipant(p);
             }
@@ -465,21 +464,22 @@ public class BingoGame implements GamePhase
 
     /**
      * Counts RIVER as ocean biome!
+     *
      * @param biome biome to check
      * @return true if this plugin consider biome to be an ocean-like biome
      */
     private static boolean isOceanBiome(Biome biome) {
         return switch (biome) {
             case OCEAN,
-                    RIVER,
-                    DEEP_COLD_OCEAN,
-                    COLD_OCEAN,
-                    DEEP_OCEAN,
-                    FROZEN_OCEAN,
-                    DEEP_FROZEN_OCEAN,
-                    LUKEWARM_OCEAN,
-                    DEEP_LUKEWARM_OCEAN,
-                    WARM_OCEAN -> true;
+                 RIVER,
+                 DEEP_COLD_OCEAN,
+                 COLD_OCEAN,
+                 DEEP_OCEAN,
+                 FROZEN_OCEAN,
+                 DEEP_FROZEN_OCEAN,
+                 LUKEWARM_OCEAN,
+                 DEEP_LUKEWARM_OCEAN,
+                 WARM_OCEAN -> true;
             default -> false;
         };
     }
@@ -514,7 +514,7 @@ public class BingoGame implements GamePhase
 
         scoreboard.updateTeamScores();
 
-        participant.sessionPlayer().ifPresent( player -> {
+        participant.sessionPlayer().ifPresent(player -> {
             BingoReloaded.incrementPlayerStat(player, BingoStatType.TASKS);
         });
 
