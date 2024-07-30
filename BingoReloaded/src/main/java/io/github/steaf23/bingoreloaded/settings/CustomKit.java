@@ -77,10 +77,6 @@ public record CustomKit(String name, PlayerKit slot, List<SerializableItem> item
             slot += 1;
         }
 
-        if (!PlayerKit.CARD_ITEM.isCompareKeyEqual(player.getInventory().getItem(cardSlot))) {
-            Message.sendDebug(ChatColor.RED + "Found item in off-hand slot when saving kit. This item will be replaced by the card item. " +
-                    "Either place the card item in another slot or remove the item from the off-hand slot", player);
-        }
         return new CustomKit(kitName, kitSlot, items, cardSlot);
     }
 

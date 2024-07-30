@@ -8,12 +8,17 @@ import io.github.steaf23.bingoreloaded.gui.inventory.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.gui.inventory.item.SerializableItem;
 import io.github.steaf23.easymenulib.inventory.item.ItemTemplate;
 import io.github.steaf23.easymenulib.util.ChatComponentUtils;
+import net.kyori.adventure.text.format.TextColor;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ComponentBuilder;
+import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.Server;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.LeatherArmorMeta;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -159,7 +164,7 @@ public enum PlayerKit
                 {
                     // Color colored items according to the team color.
                     return kit.items().stream()
-                            .map(item -> new SerializableItem(item.slot(), ItemTemplate.colorItemStack(item.stack(), teamColor)))
+                            .map(item -> new SerializableItem(item.slot(), PlayerKit.colorItemStack(item.stack(), teamColor)))
                             .toList();
                 }
             }
@@ -229,5 +234,19 @@ public enum PlayerKit
 
     public static Set<PlayerKit> customKits() {
         return ImmutableSet.of(CUSTOM_1, CUSTOM_2, CUSTOM_3, CUSTOM_4, CUSTOM_5);
+    }
+
+    public static ItemStack colorItemStack(ItemStack input, ChatColor teamColor) {
+        input = input.clone();
+        ItemMeta meta = input.getItemMeta();
+        if (meta != null)
+        {
+            if (meta instanceof LeatherArmorMeta armorMeta) {
+                var color = teamColor.getColor();
+                armorMeta.setColor(Color.fromRGB(color.getRed(), color.getGreen(), color.getBlue()));
+                input.setItemMeta(armorMeta);
+            }
+        }
+        return input;
     }
 }
