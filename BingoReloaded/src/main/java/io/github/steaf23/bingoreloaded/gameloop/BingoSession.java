@@ -117,17 +117,17 @@ public class BingoSession
             return;
         }
 
-        teamManager.setup();
         if (teamManager.getParticipantCount() == 0) {
             Message.log("Could not start bingo since no players have joined!", worlds.worldName());
+            teamManager.reset();
             return;
         }
 
+        teamManager.setup();
         scoreboard.updateTeamScores();
 
         // First make sure the previous phase (PregameLobby) is ended.
         phase.end();
-
         phase = new BingoGame(this, gameSettings == null ? settings : gameSettings.view(), config);
         phase.setup();
     }
