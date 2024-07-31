@@ -79,7 +79,6 @@ public class TinyCaps
     /**
      * Tag resolver for MiniMessage. Can be used by typing
      *  {@code <tiny:'some text'>} which will convert the text {@code some text} into tiny caps
-     * @return
      */
     private static TagResolver tagResolver() {
         return TagResolver.resolver("tiny", (args, ctx) -> {

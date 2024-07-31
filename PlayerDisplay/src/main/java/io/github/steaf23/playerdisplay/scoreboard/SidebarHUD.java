@@ -1,12 +1,15 @@
 package io.github.steaf23.playerdisplay.scoreboard;
 
-import io.github.steaf23.playerdisplay.PlayerDisplay;
 import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-import org.bukkit.scoreboard.*;
+import org.bukkit.scoreboard.Criteria;
+import org.bukkit.scoreboard.DisplaySlot;
+import org.bukkit.scoreboard.Objective;
+import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.Team;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
@@ -67,7 +70,7 @@ public class SidebarHUD
             sidebar.getScore(getEntry(lineNumber)).setScore(0);
     }
 
-    public boolean isPlayerAdded(Player player) {
+    public boolean isAppliedToPlayer(Player player) {
         return subscribers.contains(player.getUniqueId());
     }
 

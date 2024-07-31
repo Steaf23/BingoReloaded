@@ -10,6 +10,7 @@ import io.github.steaf23.playerdisplay.scoreboard.PlayerHUDGroup;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -36,7 +37,7 @@ public class BingoSettingsHUDGroup extends PlayerHUDGroup
         updateVisible();
     }
 
-    public void updateSettings(@Nullable BingoSettings settings, ConfigData config) {
+    public void updateSettings(@NotNull BingoSettings settings, ConfigData config) {
         addSidebarArgument("gamemode", settings.mode().asComponent());
         addSidebarArgument("card_size", settings.size().asComponent());
         addSidebarArgument("kit", settings.kit().getDisplayName());

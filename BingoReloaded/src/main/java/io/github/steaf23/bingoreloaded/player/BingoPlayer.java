@@ -1,11 +1,11 @@
 package io.github.steaf23.bingoreloaded.player;
 
-import io.github.steaf23.bingoreloaded.cards.TaskCard;
-import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
-import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
-import io.github.steaf23.bingoreloaded.data.BingoStatType;
+import io.github.steaf23.bingoreloaded.cards.TaskCard;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
+import io.github.steaf23.bingoreloaded.data.BingoStatType;
+import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
+import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.gui.inventory.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.item.ItemCooldownManager;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
@@ -15,7 +15,10 @@ import io.github.steaf23.playerdisplay.util.PDCHelper;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.Inventory;
@@ -27,7 +30,10 @@ import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.EnumSet;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 
 /**
  * This class describes a player in a single bingo session.
@@ -63,7 +69,7 @@ public class BingoPlayer implements BingoParticipant
             return Optional.empty();
 
         Player player = Bukkit.getPlayer(playerId);
-        if (!session.hasPlayer(player))
+        if (player == null || !session.hasPlayer(player))
         {
             return Optional.empty();
         }
@@ -181,9 +187,9 @@ public class BingoPlayer implements BingoParticipant
     {
         if (force)
         {
-            if (offline().isOnline())
-            {
-                Bukkit.getPlayer(playerId).clearActivePotionEffects();
+            Player p = Bukkit.getPlayer(playerId);
+            if (p != null) {
+                p.clearActivePotionEffects();
             }
         }
         else
@@ -237,30 +243,30 @@ public class BingoPlayer implements BingoParticipant
         return false;
     }
 
-    public boolean useGoUpWand(ItemStack wand, double wandCooldownSeconds, int downDistance, int upDistance, int platformLifetimeSeconds)
+    public void useGoUpWand(ItemStack wand, double wandCooldownSeconds, int downDistance, int upDistance, int platformLifetimeSeconds)
     {
         if (sessionPlayer().isEmpty())
-             return false;
+             return;
 
         Player player = sessionPlayer().get();
         if (!PlayerKit.WAND_ITEM.isCompareKeyEqual(wand))
-            return false;
+            return;
 
         if (!itemCooldowns.isCooldownOver(wand.getType()))
         {
             double timeLeft = itemCooldowns.getTimeLeft(wand.getType()) / 1000.0;
             player.sendMessage(BingoMessage.COOLDOWN.asPhrase(Component.text(String.format("%.2f", timeLeft)))
                     .color(NamedTextColor.RED));
-            return false;
+            return;
         }
 
         BingoReloaded.scheduleTask(task -> {
             itemCooldowns.addCooldown(wand.getType(), (int)(wandCooldownSeconds * 1000));
 
-            double distance = 0.0;
-            double fallDistance = 5.0;
+            double distance;
+            double fallDistance;
             // Use the wand
-            if (sessionPlayer().get().isSneaking())
+            if (sessionPlayer().isPresent() && sessionPlayer().get().isSneaking())
             {
                 distance = -downDistance;
                 fallDistance = 0.0;
@@ -287,7 +293,6 @@ public class BingoPlayer implements BingoParticipant
 
             BingoReloaded.incrementPlayerStat(player, BingoStatType.WAND_USES);
         });
-        return true;
     }
 
     @Override

@@ -9,7 +9,11 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class TeamDisplay
@@ -38,8 +42,6 @@ public class TeamDisplay
 
     /**
      * Creates new entry in teams map if the player was not present before.
-     * @param player
-     * @param activeTeams
      */
     public void addTeamsForPlayer(Player player, Set<BingoTeam> activeTeams) {
         // Compare the cached teams with the actual team manager's team state.
@@ -62,8 +64,7 @@ public class TeamDisplay
     }
 
     private TeamInfo teamInfoFromBingoTeam(BingoTeam team) {
-        TeamInfo info = new TeamInfo(team.getIdentifier(), team.getName(), team.getPrefix(), null, team.getMemberNames());
-        return info;
+        return new TeamInfo(team.getIdentifier(), team.getName(), team.getPrefix(), null, team.getMemberNames());
     }
 
     private void createTeamForPlayer(TeamInfo team, Player player) {

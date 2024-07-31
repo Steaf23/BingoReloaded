@@ -30,14 +30,13 @@ public enum EffectOptionFlags
 
     public static Component[] effectsToText(EnumSet<EffectOptionFlags> effects) {
         List<Component> result = new ArrayList<>();
-        if (effects.size() == 0)
+        if (effects.isEmpty())
         {
             result.add(Component.text("None", NamedTextColor.GRAY));
         }
         else
         {
             // Display effects in pairs of 2 per line to save space
-            int effectIdx = 0;
             List<EffectOptionFlags> allEffects = effects.stream().toList();
             int effectCount = allEffects.size();
 

@@ -20,7 +20,7 @@ public class SingularGameManager extends GameManager
             return;
         }
 
-        BingoSession session = new BingoSession(this, menuBoard, hudRegistry, group, config);
+        BingoSession session = new BingoSession(menuBoard, hudRegistry, group, config);
         sessions.put(config.defaultWorldName, session);
     }
 
@@ -51,7 +51,6 @@ public class SingularGameManager extends GameManager
             ConsoleMessenger.error("Could not create world group from existing world; " + getGameConfig().defaultWorldName + "_the_end does not exist. Make sure the world exists and reload the plugin.");
             return null;
         }
-        WorldGroup group = new WorldGroup(getGameConfig().defaultWorldName, overworld.getUID(), nether.getUID(), theEnd.getUID());
-        return group;
+        return new WorldGroup(getGameConfig().defaultWorldName, overworld.getUID(), nether.getUID(), theEnd.getUID());
     }
 }

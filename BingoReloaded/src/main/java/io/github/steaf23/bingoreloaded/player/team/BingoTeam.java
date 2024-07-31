@@ -1,7 +1,6 @@
 package io.github.steaf23.bingoreloaded.player.team;
 
 import io.github.steaf23.bingoreloaded.cards.TaskCard;
-
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import net.kyori.adventure.audience.Audience;
@@ -75,21 +74,9 @@ public class BingoTeam implements ForwardingAudience
         player.setTeam(this);
     }
 
-    public boolean removeMember(@NotNull BingoParticipant player) {
-        boolean success = members.remove(player);
+    public void removeMember(@NotNull BingoParticipant player) {
+        members.remove(player);
         player.setTeam(null);
-        return success;
-    }
-
-    public boolean removeMember(@NotNull UUID uuid) {
-        for (BingoParticipant participant : members) {
-            if (participant.getId().equals(uuid)) {
-                boolean success = members.remove(participant);
-                participant.setTeam(null);
-                return success;
-            }
-        }
-        return false;
     }
 
     public boolean hasMember(UUID memberId) {

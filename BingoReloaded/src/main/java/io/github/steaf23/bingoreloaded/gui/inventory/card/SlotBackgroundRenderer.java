@@ -1,16 +1,12 @@
 package io.github.steaf23.bingoreloaded.gui.inventory.card;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
-import io.github.steaf23.bingoreloaded.data.CustomTextureData;
+import io.github.steaf23.bingoreloaded.data.TexturedMenuData;
 import io.github.steaf23.bingoreloaded.gui.inventory.core.TexturedTitleBuilder;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
-import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 public class SlotBackgroundRenderer
 {
@@ -27,7 +23,7 @@ public class SlotBackgroundRenderer
         int spaces = 0;
 
         for (int y = 0; y < 6; y++) {
-            CustomTextureData.Texture slotTexture = getTextureForRow(y);
+            TexturedMenuData.Texture slotTexture = getTextureForRow(y);
             for (int x = 0; x < 9; x++) {
                 int index = x + (y * 9);
                 if (!slots.containsKey(index)) {
@@ -45,7 +41,7 @@ public class SlotBackgroundRenderer
         return result.build();
     }
 
-    public static CustomTextureData.Texture getTextureForRow(int row) {
+    public static TexturedMenuData.Texture getTextureForRow(int row) {
         return BingoReloaded.getInstance().getTextureData().getTexture("slot_row_" + row);
     }
 }

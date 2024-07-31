@@ -1,6 +1,5 @@
 package io.github.steaf23.playerdisplay.scoreboard;
 
-import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -10,10 +9,6 @@ public class PlayerHUD
 {
     protected final SidebarHUD sidebar;
     private final UUID playerId;
-
-    public PlayerHUD(UUID player) {
-        this(player, new SidebarHUD(Component.empty()));
-    }
 
     public PlayerHUD(UUID player, SidebarHUD sidebar) {
         this.playerId = player;

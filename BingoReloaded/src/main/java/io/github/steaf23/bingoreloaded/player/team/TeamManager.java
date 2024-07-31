@@ -4,7 +4,6 @@ import io.github.steaf23.bingoreloaded.data.TeamData;
 import io.github.steaf23.bingoreloaded.event.BingoSettingsUpdatedEvent;
 import io.github.steaf23.bingoreloaded.event.PlayerJoinedSessionWorldEvent;
 import io.github.steaf23.bingoreloaded.event.PlayerLeftSessionWorldEvent;
-import io.github.steaf23.bingoreloaded.gameloop.SessionMember;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -12,7 +11,6 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
 
 public interface TeamManager
 {
@@ -28,9 +26,8 @@ public interface TeamManager
     }
 
     /**
-     * Returns a map of team identifiers and templates for all teams can be joined by the player when trying to join the game.
-     * Used by the team selection menu
-     * @return
+     * @return map of team identifiers and templates for all teams can be joined by the player when trying to join the game.
+     * Used by the team selection menu.
      */
     Map<String, TeamData.TeamTemplate> getJoinableTeams();
 

@@ -8,7 +8,12 @@ import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Random;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class BingoCardData
@@ -105,7 +110,7 @@ public class BingoCardData
 
         List<TaskData> allItemTasks = tasks.stream().filter(task -> task instanceof ItemTask).collect(Collectors.toList());
 
-        if (allItemTasks.size() > 0)
+        if (!allItemTasks.isEmpty())
             return (ItemTask)allItemTasks.get(Math.abs(generator.nextInt(allItemTasks.size())));
         else
             return new ItemTask(Material.DIRT, 1);
@@ -114,7 +119,7 @@ public class BingoCardData
     public TaskData getRandomTask(String cardName, @NotNull Random generator, boolean withStatistics, boolean withAdvancements) {
         List<TaskData> allTasks = getAllTasks(cardName, withStatistics, withAdvancements);
 
-        if (allTasks.size() > 0)
+        if (!allTasks.isEmpty())
             return allTasks.get(Math.abs(generator.nextInt(allTasks.size())));
         else
             return new ItemTask(Material.DIRT, 1);

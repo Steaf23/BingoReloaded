@@ -4,8 +4,8 @@ import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
-import io.github.steaf23.bingoreloaded.tasks.StatisticTask;
 import io.github.steaf23.bingoreloaded.tasks.BingoStatistic;
+import io.github.steaf23.bingoreloaded.tasks.StatisticTask;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerStatisticIncrementEvent;
 
@@ -25,12 +25,12 @@ public class StatisticTracker
     public double getProgressLeft(BingoPlayer player, BingoStatistic statistic)
     {
         List<StatisticProgress> statProgress = statistics.stream().filter(progress ->
-                progress.getParticipant().equals(player) && progress.getStatistic().equals(statistic)).collect(Collectors.toList());
+                progress.getParticipant().equals(player) && progress.getStatistic().equals(statistic)).toList();
 
         if (statProgress.size() != 1)
             return Double.MAX_VALUE;
 
-        return statProgress.get(0).getProgressLeft();
+        return statProgress.getFirst().getProgressLeft();
     }
 
     public void addStatistic(StatisticTask statTask, BingoParticipant participant) {
@@ -63,7 +63,7 @@ public class StatisticTracker
             return;
 
         BingoParticipant player = game.getTeamManager().getPlayerAsParticipant(event.getPlayer());
-        if (player == null || !player.sessionPlayer().isPresent())
+        if (player == null || player.sessionPlayer().isEmpty())
             return;
 
         BingoTeam team = player.getTeam();
@@ -73,10 +73,10 @@ public class StatisticTracker
         BingoStatistic stat = new BingoStatistic(event.getStatistic(), event.getEntityType(), event.getMaterial());
 
         List<StatisticProgress> matchingStatistic = statistics.stream().filter(progress ->
-                progress.getParticipant().equals(player) && progress.getStatistic().equals(stat)).collect(Collectors.toList());
+                progress.getParticipant().equals(player) && progress.getStatistic().equals(stat)).toList();
         if (matchingStatistic.size() == 1)
         {
-            matchingStatistic.get(0).setProgress(event.getNewValue());
+            matchingStatistic.getFirst().setProgress(event.getNewValue());
         }
 
         statistics.removeIf(StatisticProgress::done);

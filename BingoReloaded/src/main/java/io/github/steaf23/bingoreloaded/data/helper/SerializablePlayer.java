@@ -10,7 +10,10 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 @SerializableAs("Player")
 public class SerializablePlayer implements ConfigurationSerializable
@@ -47,9 +50,6 @@ public class SerializablePlayer implements ConfigurationSerializable
 
     /**
      * Reset all player data and set location
-     * @param player
-     * @param location
-     * @return
      */
     public static SerializablePlayer reset(JavaPlugin plugin, Player player, Location location)
     {

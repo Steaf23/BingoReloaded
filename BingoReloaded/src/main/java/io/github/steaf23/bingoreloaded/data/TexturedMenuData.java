@@ -5,15 +5,11 @@ import io.github.steaf23.bingoreloaded.data.helper.YmlDataManager;
 import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import org.jetbrains.annotations.Nullable;
 
-public class CustomTextureData
+public class TexturedMenuData
 {
     public record Texture (String character, int textureEnd, int menuOffset){}
 
     private final YmlDataManager data = BingoReloaded.createYmlDataManager("data/textures.yml");
-
-    public String mapCharacter(String key) {
-        return data.getConfig().getString(key, "");
-    }
 
     public @Nullable Texture getTexture(String name) {
         if (!data.getConfig().contains(name)) {

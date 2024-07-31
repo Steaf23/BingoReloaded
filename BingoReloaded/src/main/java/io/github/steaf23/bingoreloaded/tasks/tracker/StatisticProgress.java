@@ -67,7 +67,7 @@ public class StatisticProgress
             return 0;
         }
 
-        int value = 0;
+        int value;
         if (statistic.hasMaterialComponent())
         {
             value = gamePlayer.getStatistic(statistic.stat(), statistic.materialType());

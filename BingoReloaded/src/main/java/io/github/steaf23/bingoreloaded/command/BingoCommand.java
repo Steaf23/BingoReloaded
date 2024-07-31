@@ -1,11 +1,11 @@
 package io.github.steaf23.bingoreloaded.command;
 
-import io.github.steaf23.bingoreloaded.data.BingoStatData;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
+import io.github.steaf23.bingoreloaded.data.BingoStatData;
 import io.github.steaf23.bingoreloaded.data.ConfigData;
+import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gameloop.GameManager;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
-import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gameloop.phase.PregameLobby;
 import io.github.steaf23.bingoreloaded.gui.inventory.AdminBingoMenu;
 import io.github.steaf23.bingoreloaded.gui.inventory.TeamEditorMenu;
@@ -58,7 +58,7 @@ public class BingoCommand implements TabExecutor
 
         if (args.length == 0) {
             if (player.hasPermission("bingo.admin")) {
-                new AdminBingoMenu(menuBoard, session, config).open(player);
+                new AdminBingoMenu(menuBoard, session).open(player);
             } else if (player.hasPermission("bingo.player")) {
                 new TeamSelectionMenu(menuBoard, session).open(player);
             }

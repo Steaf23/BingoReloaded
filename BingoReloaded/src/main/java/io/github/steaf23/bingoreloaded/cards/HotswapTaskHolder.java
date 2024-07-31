@@ -4,8 +4,8 @@ import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.tasks.GameTask;
 import io.github.steaf23.bingoreloaded.util.timer.GameTimer;
 import io.github.steaf23.playerdisplay.inventory.item.ItemTemplate;
-import io.github.steaf23.playerdisplay.util.TextColorGradient;
 import io.github.steaf23.playerdisplay.util.ExtraMath;
+import io.github.steaf23.playerdisplay.util.TextColorGradient;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 

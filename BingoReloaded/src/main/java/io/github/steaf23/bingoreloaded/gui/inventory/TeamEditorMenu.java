@@ -2,7 +2,11 @@ package io.github.steaf23.bingoreloaded.gui.inventory;
 
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.TeamData;
-import io.github.steaf23.playerdisplay.inventory.*;
+import io.github.steaf23.playerdisplay.inventory.BasicMenu;
+import io.github.steaf23.playerdisplay.inventory.ColorPickerMenu;
+import io.github.steaf23.playerdisplay.inventory.FilterType;
+import io.github.steaf23.playerdisplay.inventory.MenuBoard;
+import io.github.steaf23.playerdisplay.inventory.PaginatedSelectionMenu;
 import io.github.steaf23.playerdisplay.inventory.item.ItemTemplate;
 import io.github.steaf23.playerdisplay.inventory.item.action.NameEditAction;
 import net.kyori.adventure.text.Component;

@@ -1,7 +1,15 @@
 package io.github.steaf23.bingoreloaded;
 
-import io.github.steaf23.bingoreloaded.command.*;
-import io.github.steaf23.bingoreloaded.data.*;
+import io.github.steaf23.bingoreloaded.command.AutoBingoCommand;
+import io.github.steaf23.bingoreloaded.command.BingoCommand;
+import io.github.steaf23.bingoreloaded.command.BingoTestCommand;
+import io.github.steaf23.bingoreloaded.command.TeamChatCommand;
+import io.github.steaf23.bingoreloaded.data.BingoMessage;
+import io.github.steaf23.bingoreloaded.data.BingoStatData;
+import io.github.steaf23.bingoreloaded.data.BingoStatType;
+import io.github.steaf23.bingoreloaded.data.ConfigData;
+import io.github.steaf23.bingoreloaded.data.TexturedMenuData;
+import io.github.steaf23.bingoreloaded.data.TeamData;
 import io.github.steaf23.bingoreloaded.data.helper.SerializablePlayer;
 import io.github.steaf23.bingoreloaded.data.helper.YmlDataManager;
 import io.github.steaf23.bingoreloaded.data.world.WorldData;
@@ -9,14 +17,13 @@ import io.github.steaf23.bingoreloaded.gameloop.GameManager;
 import io.github.steaf23.bingoreloaded.gameloop.SingularGameManager;
 import io.github.steaf23.bingoreloaded.gui.inventory.BingoMenuBoard;
 import io.github.steaf23.bingoreloaded.gui.inventory.item.SerializableItem;
-import io.github.steaf23.bingoreloaded.settings.CustomKit;
+import io.github.steaf23.bingoreloaded.placeholder.BingoReloadedPlaceholderExpansion;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
+import io.github.steaf23.bingoreloaded.settings.CustomKit;
 import io.github.steaf23.bingoreloaded.tasks.AdvancementTask;
+import io.github.steaf23.bingoreloaded.tasks.BingoStatistic;
 import io.github.steaf23.bingoreloaded.tasks.ItemTask;
 import io.github.steaf23.bingoreloaded.tasks.StatisticTask;
-import io.github.steaf23.bingoreloaded.tasks.BingoStatistic;
-import io.github.steaf23.bingoreloaded.placeholder.BingoReloadedPlaceholderExpansion;
-import io.github.steaf23.bingoreloaded.data.CustomTextureData;
 import io.github.steaf23.bingoreloaded.util.bstats.Metrics;
 import io.github.steaf23.playerdisplay.PlayerDisplay;
 import io.github.steaf23.playerdisplay.inventory.BasicMenu;
@@ -27,7 +34,8 @@ import net.kyori.adventure.resource.ResourcePackRequest;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
-import org.bukkit.command.*;
+import org.bukkit.command.PluginCommand;
+import org.bukkit.command.TabExecutor;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
@@ -58,10 +66,7 @@ public class BingoReloaded extends JavaPlugin
     private ConfigData config;
     private GameManager gameManager;
     private BingoMenuBoard menuBoard;
-    private HUDRegistry hudRegistry;
-    private CustomTextureData textureData;
-
-    private Metrics bStatsMetrics;
+    private TexturedMenuData textureData;
 
     @Override
     public void onLoad() {
@@ -111,10 +116,9 @@ public class BingoReloaded extends JavaPlugin
         BasicMenu.pluginTitlePrefix = BingoMessage.MENU_PREFIX.asPhrase();
         WorldData.clearWorlds(this);
 
+        this.textureData = new TexturedMenuData();
         this.menuBoard = new BingoMenuBoard();
-        this.hudRegistry = new HUDRegistry();
-        this.textureData = new CustomTextureData();
-
+        HUDRegistry hudRegistry = new HUDRegistry();
         if (config.configuration == ConfigData.PluginConfiguration.SINGULAR) {
             this.gameManager = new SingularGameManager(this, config, menuBoard, hudRegistry);
         } else {
@@ -123,11 +127,12 @@ public class BingoReloaded extends JavaPlugin
 
         TabExecutor autoBingoCommand = new AutoBingoCommand(gameManager);
 
-        menuBoard.setPlayerOpenPredicate(player -> player instanceof Player p && this.gameManager.canPlayerOpenMenu(p, null));
+        menuBoard.setPlayerOpenPredicate(player -> player instanceof Player p && this.gameManager.canPlayerOpenMenus(p));
 
         registerCommand("bingo", new BingoCommand(config, gameManager, menuBoard));
         registerCommand("autobingo", autoBingoCommand);
         registerCommand("bingotest", new BingoTestCommand(this, menuBoard));
+//        registerCommand("bingobot", new BotCommand(gameManager));
         if (config.enableTeamChat) {
             TeamChatCommand command = new TeamChatCommand(player -> gameManager.getSessionFromWorld(player.getWorld()));
             registerCommand("btc", command);
@@ -139,7 +144,7 @@ public class BingoReloaded extends JavaPlugin
         Bukkit.getPluginManager().registerEvents(menuBoard, this);
         Bukkit.getPluginManager().registerEvents(hudRegistry, this);
 
-        bStatsMetrics = new Metrics(this, 22586);
+        Metrics bStatsMetrics = new Metrics(this, 22586);
         bStatsMetrics.addCustomChart(new Metrics.SimplePie("selected_language", () -> {
             return config.language.replace(".yml", "").replace("languages/", "");
         }));
@@ -240,7 +245,7 @@ public class BingoReloaded extends JavaPlugin
         return gameManager;
     }
 
-    public CustomTextureData getTextureData() {
+    public TexturedMenuData getTextureData() {
         return textureData;
     }
 }

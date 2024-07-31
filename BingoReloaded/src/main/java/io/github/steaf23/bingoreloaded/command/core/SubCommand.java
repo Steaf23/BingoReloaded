@@ -43,7 +43,7 @@ public class SubCommand
     }
 
     public boolean execute(String... arguments) {
-        if (subCommands.size() == 0) {
+        if (subCommands.isEmpty()) {
             return action.apply(arguments);
         }
 
@@ -59,7 +59,7 @@ public class SubCommand
     }
 
     public List<String> tabComplete(String... arguments) {
-        if (subCommands.size() == 0) {
+        if (subCommands.isEmpty()) {
             return tabCompletionForArgs.apply(arguments);
         }
 
@@ -89,7 +89,7 @@ public class SubCommand
     }
 
     protected String determineUsage(String... arguments) {
-        if (subCommands.size() == 0) {
+        if (subCommands.isEmpty()) {
             return name + " " + usage;
         }
 
@@ -99,8 +99,8 @@ public class SubCommand
         }
 
         if (arguments.length == 1) {
-            return name + " <" + String.join(" | ", subCommands.stream().map(subCommand -> subCommand.name)
-                    .collect(Collectors.toList())) + ">";
+            return name + " <" + subCommands.stream().map(subCommand -> subCommand.name)
+                    .collect(Collectors.joining(" | ")) + ">";
         }
 
         return "";

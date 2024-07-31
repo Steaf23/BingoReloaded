@@ -12,11 +12,9 @@ import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
 import io.github.steaf23.bingoreloaded.util.timer.GameTimer;
-import io.github.steaf23.playerdisplay.PlayerDisplay;
 import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -189,11 +187,14 @@ public class BingoReloadedPlaceholderExpansion extends PlaceholderExpansion
         Player onlinePlayer = Bukkit.getPlayer(player.getUniqueId());
         if (onlinePlayer != null) {
             BingoSession session = gameManager.getSessionFromWorld(onlinePlayer.getWorld());
-            BingoParticipant participant = session.teamManager.getPlayerAsParticipant(onlinePlayer);
-            if (participant != null) {
-                return placeholderFromTeam(participant.getTeam(), getName, getColor);
+            if (session == null) {
+                return noTeamPlaceholder;
             }
-            return noTeamPlaceholder;
+            BingoParticipant participant = session.teamManager.getPlayerAsParticipant(onlinePlayer);
+            if (participant == null || participant.getTeam() == null) {
+                return noTeamPlaceholder;
+            }
+            return placeholderFromTeam(participant.getTeam(), getName, getColor);
         }
 
         // When a player is either not online or in the auto team, we have to get the team manually.
@@ -279,6 +280,9 @@ public class BingoReloadedPlaceholderExpansion extends PlaceholderExpansion
         Player onlinePlayer = Bukkit.getPlayer(player.getUniqueId());
         if (onlinePlayer != null) {
             BingoSession session = gameManager.getSessionFromWorld(onlinePlayer.getWorld());
+            if (session == null) {
+                return null;
+            }
             return session.teamManager.getPlayerAsParticipant(onlinePlayer);
         }
 
@@ -301,8 +305,7 @@ public class BingoReloadedPlaceholderExpansion extends PlaceholderExpansion
             return null;
         }
 
-        BingoTeam team = participant.getTeam();
-        return team;
+        return participant.getTeam();
     }
 
     private @Nullable BingoSettings getSettings(OfflinePlayer player) {

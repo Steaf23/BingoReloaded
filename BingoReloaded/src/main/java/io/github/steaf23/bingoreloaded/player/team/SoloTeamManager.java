@@ -2,24 +2,25 @@ package io.github.steaf23.bingoreloaded.player.team;
 
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.TeamData;
-import io.github.steaf23.bingoreloaded.event.*;
+import io.github.steaf23.bingoreloaded.event.ParticipantJoinedTeamEvent;
+import io.github.steaf23.bingoreloaded.event.ParticipantLeftTeamEvent;
+import io.github.steaf23.bingoreloaded.event.PlayerJoinedSessionWorldEvent;
+import io.github.steaf23.bingoreloaded.event.PlayerLeftSessionWorldEvent;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.placeholder.BingoPlaceholderFormatter;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
-import io.github.steaf23.playerdisplay.PlayerDisplay;
 import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.util.HSVLike;
 import org.bukkit.Bukkit;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.jetbrains.annotations.NotNull;
 
-
-import java.util.*;
+import java.util.HashSet;
+import java.util.Map;
 
 /**
  * Similar to BasicTeamManager but each team can only have 1 member, the team's name being the name of the member.
@@ -30,20 +31,21 @@ public class SoloTeamManager implements TeamManager
     private final BingoSession session;
     private final BingoTeam autoTeam;
 
-    public SoloTeamManager(BingoSession session)
-    {
+    public SoloTeamManager(BingoSession session) {
         this.session = session;
         this.teams = new BingoTeamContainer();
 
         TextColor autoTeamColor = TextColor.fromHexString("#fdffa8");
+        if (autoTeamColor == null) {
+            autoTeamColor = NamedTextColor.WHITE;
+        }
         this.autoTeam = new BingoTeam("auto", autoTeamColor, BingoMessage.TEAM_AUTO.asPhrase(), createPrefix(autoTeamColor));
         this.teams.addTeam(autoTeam);
     }
 
     private Component createPrefix(TextColor color) {
         String prefixFormat = new BingoPlaceholderFormatter().getTeamFullFormat();
-        Component prefix = BingoMessage.createPhrase(prefixFormat.replace("{0}", "<" + color.toString() + ">").replace("{1}", "✦") + " ");
-        return prefix;
+        return BingoMessage.createPhrase(prefixFormat.replace("{0}", "<" + color.toString() + ">").replace("{1}", "✦") + " ");
     }
 
     private TextColor determineTeamColor() {
@@ -115,7 +117,6 @@ public class SoloTeamManager implements TeamManager
     /**
      * @param player player to create a team for
      * @param teamId ignored for solo team manager, since teams are managed per player.
-     * @return
      */
     @Override
     public boolean addMemberToTeam(BingoParticipant player, String teamId) {

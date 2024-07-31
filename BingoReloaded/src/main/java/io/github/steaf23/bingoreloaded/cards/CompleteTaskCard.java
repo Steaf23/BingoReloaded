@@ -19,7 +19,7 @@ public class CompleteTaskCard extends TaskCard
     }
 
     @Override
-    public boolean hasTeamWon(BingoTeam team) {
+    public boolean hasTeamWon(@NotNull BingoTeam team) {
         return getCompleteCount(team) == size.fullCardSize;
     }
 

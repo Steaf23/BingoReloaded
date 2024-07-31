@@ -1,6 +1,5 @@
 package io.github.steaf23.playerdisplay.inventory.item.action;
 
-import io.github.steaf23.playerdisplay.inventory.BasicMenu;
 import io.github.steaf23.playerdisplay.inventory.item.ItemTemplate;
 
 import java.util.ArrayList;

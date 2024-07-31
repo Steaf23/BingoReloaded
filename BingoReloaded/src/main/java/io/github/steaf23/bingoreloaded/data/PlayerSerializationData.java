@@ -4,6 +4,7 @@ import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.helper.SerializablePlayer;
 import io.github.steaf23.bingoreloaded.data.helper.YmlDataManager;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
@@ -22,15 +23,17 @@ public class PlayerSerializationData
     /**
      * Loads player information from the players.yml. Also removes this player's data from the saved players list
      *
-     * @param player
      * @return the players new state
      */
-    public SerializablePlayer loadPlayer(Player player) {
+    public @Nullable SerializablePlayer loadPlayer(Player player) {
         if (!data.getConfig().contains(player.getUniqueId().toString())) {
             return null;
         }
 
         SerializablePlayer playerData = data.getConfig().getSerializable(player.getUniqueId().toString(), SerializablePlayer.class);
+        if (playerData == null) {
+            return null;
+        }
         data.getConfig().set(player.getUniqueId().toString(), null);
         data.saveConfig();
         playerData.apply(player);

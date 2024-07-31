@@ -19,7 +19,6 @@ import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import io.github.steaf23.playerdisplay.PlayerDisplay;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.command.Command;
@@ -27,6 +26,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.generator.WorldInfo;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -185,9 +185,7 @@ public class AutoBingoCommand implements TabExecutor
                 }));
 
 
-        command.addSubCommand(new SubCommand("addplayer", args -> {
-            return addPlayerToSession(args);
-        }).addUsage("<player_name>").addTabCompletion(args -> {
+        command.addSubCommand(new SubCommand("addplayer", this::addPlayerToSession).addUsage("<player_name>").addTabCompletion(args -> {
             if (args.length == 2) {
                 return null;
             } else {
@@ -196,22 +194,18 @@ public class AutoBingoCommand implements TabExecutor
         }));
 
 
-        command.addSubCommand(new SubCommand("kickplayer", args -> {
-            return removePlayerFromSession(args);
-        }).addUsage("<player_name> <target_world_name>").addTabCompletion(args -> {
+        command.addSubCommand(new SubCommand("kickplayer", this::removePlayerFromSession).addUsage("<player_name> <target_world_name>").addTabCompletion(args -> {
             if (args.length == 2) {
                 return null;
             } else if (args.length == 3) {
-                return Bukkit.getWorlds().stream().map(w -> w.getName()).toList();
+                return Bukkit.getWorlds().stream().map(WorldInfo::getName).toList();
             } else {
                 return List.of();
             }
         }));
 
 
-        command.addSubCommand(new SubCommand("vote", args -> {
-            return voteForPlayer(args);
-        }).addUsage("<player_name> <vote_category> <vote_for>").addTabCompletion(args -> {
+        command.addSubCommand(new SubCommand("vote", this::voteForPlayer).addUsage("<player_name> <vote_category> <vote_for>").addTabCompletion(args -> {
             ConfigData.VoteList voteList = manager.getGameConfig().voteList;
             if (args.length <= 2) {
                 return null;
@@ -418,7 +412,7 @@ public class AutoBingoCommand implements TabExecutor
             sendFailed("Player " + playerName + " could not be added to team " + teamName, sessionName);
             return false;
         }
-        sendSuccess("Player " + playerName + " added to team " + teamName + "", sessionName);
+        sendSuccess("Player " + playerName + " added to team " + teamName, sessionName);
         return true;
     }
 
@@ -489,7 +483,12 @@ public class AutoBingoCommand implements TabExecutor
                 sendSuccess("Saved settings to '" + path + "'.", sessionName);
             }
             case "load" -> {
-                settingsBuilder.fromOther(settingsData.getSettings(path));
+                BingoSettings settings = settingsData.getSettings(path);
+                if (settings == null) {
+                    sendFailed("Invalid settings path " + path, sessionName);
+                    return false;
+                }
+                settingsBuilder.fromOther(settings);
                 sendSuccess("Loaded settings from '" + path + "'.", sessionName);
             }
             case "remove" -> {

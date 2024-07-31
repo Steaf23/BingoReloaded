@@ -12,7 +12,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public class TeamData {
     @SerializableAs("TeamTemplate")
@@ -78,7 +77,7 @@ public class TeamData {
     // TODO: find cheaper way to generate valid team id
     public String getNewTeamId() {
         int id = 0;
-        List<String> keys = data.getConfig().getKeys(false).stream().sorted().collect(Collectors.toList());
+        List<String> keys = data.getConfig().getKeys(false).stream().sorted().toList();
         while (keys.contains(String.valueOf(id))) {
             id += 1;
         }

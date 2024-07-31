@@ -1,13 +1,12 @@
 package io.github.steaf23.bingoreloaded.gui.inventory;
 
-import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
-import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.cards.CardSize;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
+import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
+import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
 import io.github.steaf23.playerdisplay.inventory.BasicMenu;
 import io.github.steaf23.playerdisplay.inventory.MenuBoard;
 import io.github.steaf23.playerdisplay.inventory.item.ItemTemplate;
-import io.github.steaf23.playerdisplay.inventory.item.action.MenuAction;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
 

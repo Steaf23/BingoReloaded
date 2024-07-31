@@ -8,8 +8,13 @@ import org.bukkit.entity.EntityType;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
-import java.util.*;
-import java.util.stream.Stream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @SerializableAs("Bingo.Statistic")
 public record BingoStatistic(@NotNull Statistic stat, @Nullable EntityType entityType, @Nullable Material materialType) implements ConfigurationSerializable
@@ -24,7 +29,7 @@ public record BingoStatistic(@NotNull Statistic stat, @Nullable EntityType entit
         OTHER,
     }
 
-    private static Set<EntityType> validEntityTypes = getValidEntityTypes();
+    private static final Set<EntityType> validEntityTypes = getValidEntityTypes();
 
     public BingoStatistic(Statistic stat)
     {
@@ -299,8 +304,7 @@ public record BingoStatistic(@NotNull Statistic stat, @Nullable EntityType entit
         else if (statistic.entityType != null &&
                 statistic.stat.getType() == Statistic.Type.ENTITY)
         {
-            Material spawnEgg = Material.valueOf(statistic.entityType.name() + "_SPAWN_EGG");
-            return spawnEgg;
+            return Material.valueOf(statistic.entityType.name() + "_SPAWN_EGG");
         }
 
         return Material.GLOBE_BANNER_PATTERN;

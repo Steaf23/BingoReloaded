@@ -2,27 +2,28 @@ package io.github.steaf23.playerdisplay.inventory;
 
 
 import com.github.retrooper.packetevents.PacketEvents;
-import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerOpenWindow;
 import io.github.steaf23.playerdisplay.PlayerDisplay;
-import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
-import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.*;
+import org.bukkit.event.inventory.ClickType;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.inventory.InventoryView;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.Stack;
+import java.util.UUID;
 
 public class MenuBoard implements Listener
 {
     // Stores all currently open inventories by all players, using a stack system we can easily add or remove child inventories.
     protected final Map<UUID, Stack<Menu>> activeMenus;
-    private final Map<UUID, InventoryView> views = new HashMap<>();
 
     private final MenuPacketListener packetListener;
 
@@ -89,34 +90,8 @@ public class MenuBoard implements Listener
         }
 
         menu.beforeOpening(player);
-        Bukkit.getScheduler().runTask(PlayerDisplay.getPlugin(), task -> {
-            views.put(player.getUniqueId(), player.openInventory(menu.getInventory()));
-        });
+        Bukkit.getScheduler().runTask(PlayerDisplay.getPlugin(), task -> player.openInventory(menu.getInventory()));
     }
-
-    /**
-     * @deprecated currently does nothing.
-     */
-    @Deprecated
-    public void updateMenuTitle(Menu menu, Component newTitle, HumanEntity entity)
-    {
-        int inventoryId = packetListener.getOpenInventoryIdForPlayer(entity.getUniqueId());
-        if (inventoryId == -1) {
-            ConsoleMessenger.log("invalid inv id -1");
-        }
-        else {
-            ConsoleMessenger.log("inv id: " + inventoryId);
-        }
-
-        if (!(entity instanceof Player player)) {
-            return;
-        }
-
-        WrapperPlayServerOpenWindow openWindow = new WrapperPlayServerOpenWindow(inventoryId, 5, newTitle);
-        PlayerDisplay.sendPlayerPacket(player, openWindow);
-        player.updateInventory();
-    }
-
 
     @EventHandler
     public void handleInventoryClick(final InventoryClickEvent event) {

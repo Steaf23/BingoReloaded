@@ -10,7 +10,6 @@ public class ConfigData
     {
         SINGULAR,
         MULTIPLE,
-        ;
     }
 
     public enum PlayerTeleportStrategy
@@ -19,14 +18,12 @@ public class ConfigData
         TEAM,
         ALL,
         NONE,
-        ;
     }
 
     public enum LoadPlayerInformationStrategy
     {
         AFTER_GAME,
         AFTER_LEAVING_WORLD,
-        ;
     }
 
     public record VoteList(List<String> gamemodes, List<String> kits, List<String> cards)

@@ -6,16 +6,12 @@ import io.github.steaf23.bingoreloaded.data.ScoreboardData;
 import io.github.steaf23.playerdisplay.PlayerDisplay;
 import io.github.steaf23.playerdisplay.scoreboard.PlayerHUD;
 import io.github.steaf23.playerdisplay.scoreboard.SidebarHUD;
-import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
-import io.github.steaf23.playerdisplay.util.TinyCaps;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -51,8 +47,6 @@ public class TemplatedPlayerHUD extends PlayerHUD
         sidebar.clear();
 
         // Step 1. collect all components, including ones from template arguments, into a single list of components.
-        int lineNumber = 0;
-        boolean full = false;
         int lineIndex = 0;
         List<Component> components = new ArrayList<>();
         for (String line : template.lines()) {

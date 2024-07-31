@@ -3,10 +3,13 @@ package io.github.steaf23.bingoreloaded.gui.inventory;
 
 import io.github.steaf23.bingoreloaded.data.BingoCardData;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
-import io.github.steaf23.bingoreloaded.data.ConfigData;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.playerdisplay.PlayerDisplay;
-import io.github.steaf23.playerdisplay.inventory.*;
+import io.github.steaf23.playerdisplay.inventory.BasicMenu;
+import io.github.steaf23.playerdisplay.inventory.FilterType;
+import io.github.steaf23.playerdisplay.inventory.Menu;
+import io.github.steaf23.playerdisplay.inventory.MenuBoard;
+import io.github.steaf23.playerdisplay.inventory.PaginatedSelectionMenu;
 import io.github.steaf23.playerdisplay.inventory.item.ItemTemplate;
 import io.github.steaf23.playerdisplay.inventory.item.action.ComboBoxButtonAction;
 import io.github.steaf23.playerdisplay.inventory.item.action.MenuAction;
@@ -54,7 +57,7 @@ public class AdminBingoMenu extends BasicMenu
     private static final ItemTemplate PRESETS = new ItemTemplate(7, 4,
             Material.CHEST_MINECART, BasicMenu.applyTitleFormat("Setting Presets"));
 
-    public AdminBingoMenu(MenuBoard menuBoard, BingoSession session, ConfigData config) {
+    public AdminBingoMenu(MenuBoard menuBoard, BingoSession session) {
         super(menuBoard, BingoMessage.OPTIONS_TITLE.asPhrase(), 6);
         this.session = session;
 

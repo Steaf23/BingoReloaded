@@ -66,7 +66,7 @@ public class LockoutTaskCard extends TaskCard
         BingoMessage.DROPPED.sendToAudience(session, team.getColoredName());
         team.outOfTheGame = true;
         for (GameTask task : getTasks()) {
-            if (task.isCompleted() && team.getMembers().contains(task.getCompletedBy().orElseGet(() -> null))) {
+            if (task.isCompleted() && team.getMembers().contains(task.getCompletedBy().orElse(null))) {
                 task.setVoided(true);
                 currentMaxTasks--;
             }

@@ -3,7 +3,7 @@ package io.github.steaf23.bingoreloaded.command;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.cards.TaskCard;
-import io.github.steaf23.bingoreloaded.data.CustomTextureData;
+import io.github.steaf23.bingoreloaded.data.TexturedMenuData;
 import io.github.steaf23.bingoreloaded.event.BingoTaskProgressCompletedEvent;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
@@ -13,7 +13,7 @@ import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
@@ -32,8 +32,6 @@ public class BingoTestCommand implements TabExecutor
         this.plugin = plugin;
         this.board = board;
     }
-
-    static int counter = 0;
 
     @Override
     public boolean onCommand(@NonNull CommandSender commandSender, @NonNull Command command, @NonNull String s, String[] args) {
@@ -69,7 +67,7 @@ public class BingoTestCommand implements TabExecutor
                     return false;
                 }
 
-                CustomTextureData.Texture test = BingoReloaded.getInstance().getTextureData().getTexture("test");
+                TexturedMenuData.Texture test = BingoReloaded.getInstance().getTextureData().getTexture("test");
                 TextComponent.Builder title = Component.text().color(NamedTextColor.WHITE);
                 if (test == null) {
                     return false;

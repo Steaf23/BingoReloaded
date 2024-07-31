@@ -6,7 +6,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
 import org.bukkit.plugin.java.JavaPlugin;
-
 import org.codehaus.plexus.util.FileUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -34,9 +33,7 @@ public class WorldData
             if (f.equals(worldsFolderDir)) continue;
 
             String worldName = f.getName();
-            if (!destroyWorld(plugin, worldName)) {
-                continue;
-            }
+            destroyWorld(plugin, worldName);
         }
         return true;
     }
@@ -44,8 +41,6 @@ public class WorldData
     /**
      * Creates a world group, creating all worlds if they do not exist yet.
      * If worlds by the same name exist, this will just construct a world group with the pre-existing worlds
-     * @param plugin
-     * @param worldName
      * @return created WorldGroup
      */
     public static WorldGroup createWorldGroup(@NotNull JavaPlugin plugin, String worldName) {
@@ -70,14 +65,11 @@ public class WorldData
             ConsoleMessenger.error("Could not fetch world group; " + worldName + "_the_end does not exist. Make sure the world exists and reload the plugin.");
             return null;
         }
-        WorldGroup group = new WorldGroup(worldName, overworld.getUID(), nether.getUID(), theEnd.getUID());
-        return group;
+        return new WorldGroup(worldName, overworld.getUID(), nether.getUID(), theEnd.getUID());
     }
 
     /**
      * !Also removes the worlds from the plugin folder permanently!
-     * @param plugin
-     * @param worldGroup
      * @return true if the worlds in the world group could be destroyed correctly
      */
     public static boolean destroyWorldGroup(@NotNull JavaPlugin plugin, @NotNull WorldGroup worldGroup) {

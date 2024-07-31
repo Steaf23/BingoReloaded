@@ -1,13 +1,13 @@
 package io.github.steaf23.bingoreloaded.data;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
-import io.github.steaf23.bingoreloaded.data.helper.YmlDataManager;
-import io.github.steaf23.bingoreloaded.cards.TaskCard;
 import io.github.steaf23.bingoreloaded.cards.CardSize;
+import io.github.steaf23.bingoreloaded.cards.TaskCard;
+import io.github.steaf23.bingoreloaded.data.helper.YmlDataManager;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
-import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.player.team.TeamManager;
+import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
 
 @Deprecated
 public class RecoveryCardData

@@ -5,11 +5,10 @@ import io.github.steaf23.bingoreloaded.data.PlayerSerializationData;
 import io.github.steaf23.bingoreloaded.data.helper.SerializablePlayer;
 import io.github.steaf23.bingoreloaded.data.world.WorldData;
 import io.github.steaf23.bingoreloaded.data.world.WorldGroup;
-import io.github.steaf23.bingoreloaded.event.core.BingoEventListener;
 import io.github.steaf23.bingoreloaded.event.PrepareNextBingoGameEvent;
+import io.github.steaf23.bingoreloaded.event.core.BingoEventListener;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
-import io.github.steaf23.playerdisplay.inventory.Menu;
 import io.github.steaf23.playerdisplay.inventory.MenuBoard;
 import io.github.steaf23.playerdisplay.scoreboard.HUDRegistry;
 import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
@@ -64,7 +63,7 @@ public class GameManager
             return false;
         }
 
-        BingoSession session = new BingoSession(this, menuBoard, hudRegistry, WorldData.createWorldGroup(plugin, sessionName), config);
+        BingoSession session = new BingoSession(menuBoard, hudRegistry, WorldData.createWorldGroup(plugin, sessionName), config);
         sessions.put(sessionName, session);
         return true;
     }
@@ -153,7 +152,7 @@ public class GameManager
         return sessions.containsKey(sessionName) && sessions.get(sessionName).isRunning();
     }
 
-    public boolean canPlayerOpenMenu(Player player, Menu menu) {
+    public boolean canPlayerOpenMenus(Player player) {
         return getSessionFromWorld(player.getWorld()) != null;
     }
 

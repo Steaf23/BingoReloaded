@@ -1,5 +1,6 @@
 package io.github.steaf23.bingoreloaded.hologram;
 
+import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EntityType;
@@ -16,7 +17,7 @@ public class HologramLine
         stand.setGravity(false);
         stand.setVisible(false);
         stand.setCustomNameVisible(true);
-        stand.setCustomName(line);
+        stand.customName(Component.text(line));
         stand.setBasePlate(false);
         this.lineNumber = lineNumber;
         this.hologramLocation = location;
@@ -34,9 +35,9 @@ public class HologramLine
         updateLocation();
     }
 
-    public void setText(String newText)
+    public void setText(Component newText)
     {
-        stand.setCustomName(newText);
+        stand.customName(newText);
     }
 
     public void remove()

@@ -32,7 +32,6 @@ public record CustomKit(String name, PlayerKit slot, List<SerializableItem> item
             default -> 0;
         };
 
-        assert slotId != 0;
         if (slotId == 0)
             return data;
 

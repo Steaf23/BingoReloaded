@@ -21,9 +21,11 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
 import java.util.function.Supplier;
 
 public class HotswapTaskCard extends TaskCard
@@ -79,7 +81,7 @@ public class HotswapTaskCard extends TaskCard
     }
 
     @Override
-    public boolean hasTeamWon(BingoTeam team) {
+    public boolean hasTeamWon(@NotNull BingoTeam team) {
         if (winningScore == -1) {
             return false;
         }
@@ -93,11 +95,7 @@ public class HotswapTaskCard extends TaskCard
     }
 
     /**
-     * Due to the way hotswap works, it is not possible to include statistics/advancements for technical reasons
-     * @param cardName
-     * @param seed
-     * @param withAdvancements
-     * @param withStatistics
+     * Overridden to set up the task generator
      */
     @Override
     public void generateCard(String cardName, int seed, boolean withAdvancements, boolean withStatistics) {
@@ -120,16 +118,13 @@ public class HotswapTaskCard extends TaskCard
                     }
                     return false;
                 });
-                if (randomTasks.size() == 0) {
-
-                }
                 Collections.shuffle(randomTasks, randomExpiryProvider);
             }
             if (randomTasks.isEmpty()) {
                 return new GameTask(new ItemTask(Material.DIRT, 1));
             }
 
-            return new GameTask(randomTasks.remove(randomTasks.size() - 1));
+            return new GameTask(randomTasks.removeLast());
         };
     }
 
@@ -222,11 +217,11 @@ public class HotswapTaskCard extends TaskCard
     }
 
     @Override
-    public int getCompleteCount(BingoTeam team) {
+    public int getCompleteCount(@NotNull BingoTeam team) {
         return (int) completedTasks.stream().filter(task -> task.getCompletedBy().isPresent() && task.getCompletedBy().get().getTeam().equals(team)).count();
     }
 
-    public int getCompleteCount(@Nullable BingoParticipant participant) {
+    public int getCompleteCount(@NotNull BingoParticipant participant) {
         return (int) completedTasks.stream()
                 .filter(t -> t.getCompletedBy().isPresent() && t.getCompletedBy().get().getId().equals(participant.getId())).count();
     }

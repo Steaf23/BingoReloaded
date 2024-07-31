@@ -1,16 +1,13 @@
 package io.github.steaf23.bingoreloaded.item;
 
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 public class ItemCooldownManager
 {
-    private Map<Material, Long> cooldownMap;
+    private final Map<Material, Long> cooldownMap;
 
     public ItemCooldownManager()
     {

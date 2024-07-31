@@ -4,6 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -19,15 +20,15 @@ public record WorldGroup(String worldName, UUID overworldId, UUID netherId, UUID
         player.teleport(Bukkit.getWorld(overworldId).getSpawnLocation(), PlayerTeleportEvent.TeleportCause.NETHER_PORTAL);
     }
 
-    public World getOverworld() {
+    public @Nullable World getOverworld() {
         return overworldId == null ? null : Bukkit.getWorld(overworldId);
     }
 
-    public World getNetherWorld() {
+    public @Nullable World getNetherWorld() {
         return netherId == null ? null : Bukkit.getWorld(netherId);
     }
 
-    public World getEndWorld() {
+    public @Nullable World getEndWorld() {
         return endId == null ? null : Bukkit.getWorld(endId);
     }
 

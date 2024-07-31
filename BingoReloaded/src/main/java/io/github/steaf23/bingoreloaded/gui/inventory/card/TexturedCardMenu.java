@@ -2,7 +2,7 @@ package io.github.steaf23.bingoreloaded.gui.inventory.card;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.cards.CardSize;
-import io.github.steaf23.bingoreloaded.data.CustomTextureData;
+import io.github.steaf23.bingoreloaded.data.TexturedMenuData;
 import io.github.steaf23.bingoreloaded.gui.inventory.core.TexturedTitleBuilder;
 import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
 import io.github.steaf23.bingoreloaded.tasks.GameTask;
@@ -57,16 +57,16 @@ public class TexturedCardMenu implements Menu, CardMenu
     }
 
     protected Component buildTitle(BingoGamemode mode, CardSize size) {
-        CustomTextureData textures = BingoReloaded.getInstance().getTextureData();
+        TexturedMenuData textures = BingoReloaded.getInstance().getTextureData();
 
-        CustomTextureData.Texture cardTexture = null;
+        TexturedMenuData.Texture cardTexture = null;
         if (size == CardSize.X3) {
             cardTexture = textures.getTexture("card_3");
         } else if (size == CardSize.X5) {
             cardTexture = textures.getTexture("card_5");
         }
 
-        CustomTextureData.Texture bannerTexture = switch (mode) {
+        TexturedMenuData.Texture bannerTexture = switch (mode) {
             case REGULAR -> textures.getTexture("banner_regular");
             case LOCKOUT -> textures.getTexture("banner_lockout");
             case COMPLETE -> textures.getTexture("banner_complete");
@@ -149,7 +149,7 @@ public class TexturedCardMenu implements Menu, CardMenu
         return openedInventory;
     }
 
-    protected void setOpenedInventory(Inventory inventory) {
+    protected void setOpenedInventory(@NotNull Inventory inventory) {
         this.openedInventory = inventory;
     }
 
@@ -174,11 +174,10 @@ public class TexturedCardMenu implements Menu, CardMenu
 
     @Override
     public void setInfo(Component name, Component... description) {
-        ItemTemplate info = DUMMY_ITEM.copyToSlot(0)
+        this.info = DUMMY_ITEM.copyToSlot(0)
                 .setName(name.decorate(TextDecoration.BOLD).color(mode.getColor()))
                 .setLore(MultilineComponent.from(NamedTextColor.YELLOW, TextDecoration.ITALIC, description))
                 .setCustomModelData(1011);
-        this.info = info;
     }
 
     public void addItem(@NotNull ItemTemplate item) {

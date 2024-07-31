@@ -17,18 +17,13 @@ public interface Menu
 
     /**
      * Implementations should return if the event should be cancelled.
-     * @param event
-     * @param player
-     * @param clickedSlot
-     * @param clickType
-     * @return
+     * @return true if the event should be cancelled.
      */
     boolean onClick(final InventoryClickEvent event, HumanEntity player, int clickedSlot, ClickType clickType);
 
     /**
      * Implementations should return if the event should be cancelled.
-     * @param event
-     * @return
+     * @return true if the event should be cancelled.
      */
     boolean onDrag(final InventoryDragEvent event);
 
@@ -51,9 +46,9 @@ public interface Menu
     }
 
     @NotNull
-    public Inventory getInventory();
+    Inventory getInventory();
 
-    public static Component INPUT_LEFT_CLICK = inputButtonText(Component.keybind("key.attack"));
-    public static Component INPUT_RIGHT_CLICK = inputButtonText(Component.keybind("key.use"));
-    public static Component INPUT_SHIFT_CLICK = inputButtonText(Component.keybind("Hold Shift"));
+    Component INPUT_LEFT_CLICK = inputButtonText(Component.keybind("key.attack"));
+    Component INPUT_RIGHT_CLICK = inputButtonText(Component.keybind("key.use"));
+    Component INPUT_SHIFT_CLICK = inputButtonText(Component.keybind("Hold Shift"));
 }

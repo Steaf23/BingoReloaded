@@ -1,16 +1,14 @@
 package io.github.steaf23.bingoreloaded.hologram;
 
 import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
-import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Location;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 public class HologramManager
 {
-    private Map<String, Hologram> holograms;
+    private final Map<String, Hologram> holograms;
 
 //    private YmlDataManager data = new YmlDataManager(BingoReloaded.get(), "holograms.yml");
 

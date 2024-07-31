@@ -10,7 +10,9 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 @SerializableAs("Bingo.ItemTask")
 public record ItemTask(Material material, int count) implements CountableTask

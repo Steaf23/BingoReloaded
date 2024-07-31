@@ -1,9 +1,7 @@
 package io.github.steaf23.bingoreloaded.data;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
-import io.github.steaf23.bingoreloaded.util.CollectionHelper;
 import io.github.steaf23.playerdisplay.PlayerDisplay;
-import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import io.github.steaf23.playerdisplay.util.TinyCaps;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.audience.Audience;
@@ -13,16 +11,18 @@ import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.event.HoverEventSource;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
-import net.md_5.bungee.api.chat.hover.content.Text;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -154,7 +154,6 @@ public enum BingoMessage
 
     private final String key;
     private String translation;
-    private boolean dynamic;
 
     private static final Pattern HEX_PATTERN = Pattern.compile("\\{#[a-fA-F0-9]{6}}");
     private static final Pattern SMALL_CAPS_PATTERN = Pattern.compile("\\{@.+}");
@@ -184,8 +183,7 @@ public enum BingoMessage
      * @return Legacy text string that can be used in TextComponent#fromLegacyText
      */
     public static String convertColors(String input) {
-        String part = input;
-        return replaceColors(part, color -> "" + TextColor.fromHexString(color));
+        return replaceColors(input, color -> "" + TextColor.fromHexString(color));
     }
 
     public static String convertSmallCaps(String input) {
@@ -211,10 +209,8 @@ public enum BingoMessage
     /**
      * Translate and parse this config string and then send it to the player.
      * This method supports minimessage, placeholders and bingo reloaded formatting.
-     *
-     * @param audience
      */
-    public void sendToAudience(Audience audience, TextColor color, List<TextDecoration> decorations, Component... withArguments) {
+    public void sendToAudience(@NotNull Audience audience, TextColor color, List<TextDecoration> decorations, Component... withArguments) {
         //Untangle the mess before sending it.
         String translated = rawTranslation();
 
@@ -247,23 +243,21 @@ public enum BingoMessage
         sendToAudience(audience, null, decorations, withArguments);
     }
 
-    public static Component createHoverCommandMessage(Component prefix, Component hoverable, HoverEvent hover, Component postfix, @NotNull String command) {
+    public static Component createHoverCommandMessage(Component prefix, Component hoverable, HoverEvent<?> hover, Component postfix, @NotNull String command) {
         return prefix.append(hoverable.clickEvent(ClickEvent.runCommand(command)).hoverEvent(hover)).append(postfix);
     }
 
     /**
-     * Returns a multiline component, translated
-     *
-     * @param player
-     * @param withArguments
-     * @return
+     * @return translated multiline component, including placeholders
      */
     public Component[] convertForPlayer(Player player, Component... withArguments) {
-        //1. Solve placeholders first (so they can be nested into arguments in the following formats).
         String playerMessage = rawTranslation();
         return convertForPlayer(playerMessage, player, withArguments);
     }
 
+    /**
+     * @return multiline component from string input text, including placeholders
+     */
     public static Component[] convertForPlayer(String input, Player player, Component... withArguments) {
         if (BingoReloaded.PLACEHOLDER_API_ENABLED)
             input = PlaceholderAPI.setPlaceholders(player, input);
@@ -341,15 +335,10 @@ public enum BingoMessage
 
     /**
      * Splits strings on \n and converts them to mini message format.
-     *
-     * @param message
-     * @return
      */
     private static List<String> convertConfigStringToMini(String message) {
         String[] messages = message.split("\\n");
-        return Arrays.stream(messages).map(line -> {
-            return convertConfigStringToSingleMini(line);
-        }).toList();
+        return Arrays.stream(messages).map(BingoMessage::convertConfigStringToSingleMini).toList();
     }
 
     public static String convertConfigStringToSingleMini(String message) {

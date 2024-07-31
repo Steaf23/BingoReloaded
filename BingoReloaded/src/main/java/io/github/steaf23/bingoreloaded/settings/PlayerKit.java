@@ -13,13 +13,14 @@ import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Material;
-import org.bukkit.Server;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public enum PlayerKit
@@ -163,8 +164,7 @@ public enum PlayerKit
             }
         }
 
-        List<SerializableItem> playerItems = items.stream().map(SerializableItem::fromItemTemplate).collect(Collectors.toList());
-        return playerItems;
+        return items.stream().map(SerializableItem::fromItemTemplate).collect(Collectors.toList());
     }
 
     public int getCardSlot() {

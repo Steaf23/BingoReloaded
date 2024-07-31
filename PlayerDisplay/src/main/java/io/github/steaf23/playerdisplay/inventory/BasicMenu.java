@@ -10,7 +10,6 @@ import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
-import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
@@ -19,8 +18,6 @@ import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.function.Consumer;
 
 public class BasicMenu implements Menu
@@ -44,7 +41,7 @@ public class BasicMenu implements Menu
     private final Inventory inventory;
     private final MenuBoard manager;
     private int maxStackSizeOverride = -1; // -1 means no override (i.e. default stack sizes for all items)
-    private MenuItemGroup itemGroup;
+    private final MenuItemGroup itemGroup;
 
     private Component title;
 
@@ -55,11 +52,9 @@ public class BasicMenu implements Menu
 
     /**
      * Useful for textured menus, sets title as component string without prefix, to put custom fonts in the title.
-     * @param manager
-     * @param initialTitle
      */
-    public BasicMenu(MenuBoard manager, Component initialTitle, boolean prefix) {
-        this(manager, Bukkit.createInventory(null, 6 * 9, prefix ? Component.text().append(pluginTitlePrefix).append(initialTitle).build() : initialTitle));
+    public BasicMenu(MenuBoard manager, Component initialTitle, boolean usePrefix) {
+        this(manager, Bukkit.createInventory(null, 6 * 9, usePrefix ? Component.text().append(pluginTitlePrefix).append(initialTitle).build() : initialTitle));
         this.title = Component.empty();
     }
 

@@ -28,7 +28,7 @@ public class PlayerDisplay
 
     /**
      * Should be called on plugin load (i.e. as fast as possible after the server has started up)
-     * @param plugin
+     * @param plugin the plugin that is using PlayerDisplay
      */
     public static void setPlugin(final JavaPlugin plugin) {
         PlayerDisplay.plugin = plugin;
@@ -51,7 +51,7 @@ public class PlayerDisplay
         return translateFunction.apply(key);
     }
 
-    public static void sendPlayerPacket(Player player, PacketWrapper packet) {
+    public static void sendPlayerPacket(Player player, PacketWrapper<?> packet) {
         PacketEvents.getAPI().getPlayerManager().sendPacket(player, packet);
     }
 

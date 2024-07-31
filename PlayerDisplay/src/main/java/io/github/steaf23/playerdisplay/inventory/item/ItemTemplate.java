@@ -2,16 +2,12 @@ package io.github.steaf23.playerdisplay.inventory.item;
 
 import com.google.common.collect.ImmutableMultimap;
 import io.github.steaf23.playerdisplay.PlayerDisplay;
-import io.github.steaf23.playerdisplay.inventory.BasicMenu;
 import io.github.steaf23.playerdisplay.inventory.item.action.MenuAction;
-import io.github.steaf23.playerdisplay.inventory.item.action.MenuItemGroup;
 import io.github.steaf23.playerdisplay.util.ExtraMath;
 import io.github.steaf23.playerdisplay.util.PDCHelper;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
-
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Color;
@@ -27,7 +23,13 @@ import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 
 /**
@@ -172,7 +174,6 @@ public class ItemTemplate
 
     /**
      * @param enable if true, adds enchantment glint to the item.
-     * @return
      */
     public ItemTemplate setGlowing(boolean enable) {
         this.glowing = enable;
@@ -210,8 +211,7 @@ public class ItemTemplate
         if (stack == null || !stack.hasItemMeta())
             return false;
 
-        return compareKey.equals(stack.getItemMeta().getPersistentDataContainer()
-                .get(PDCHelper.createKey("item.compare_key"), PersistentDataType.STRING));
+        return PDCHelper.getStringFromPdc(stack.getItemMeta().getPersistentDataContainer(), "compare_key").equals(compareKey);
     }
 
     /**

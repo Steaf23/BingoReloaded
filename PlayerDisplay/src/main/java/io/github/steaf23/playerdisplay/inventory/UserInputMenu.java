@@ -1,7 +1,6 @@
 package io.github.steaf23.playerdisplay.inventory;
 
 import io.github.steaf23.playerdisplay.inventory.item.ItemTemplate;
-import io.github.steaf23.playerdisplay.inventory.item.action.MenuAction;
 import io.github.steaf23.playerdisplay.util.PlayerDisplayTranslationKey;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -17,9 +16,8 @@ public class UserInputMenu extends BasicMenu
     private final Consumer<String> resultAction;
     private String text;
 
-    private final ItemTemplate namedItem = new ItemTemplate(0, Material.NAME_TAG, null);
     private final ItemTemplate save = new ItemTemplate(2, Material.EMERALD, PlayerDisplayTranslationKey.MENU_ACCEPT.translate().color(NamedTextColor.GREEN).decorate(TextDecoration.BOLD));
-    private final ItemTemplate clear = new ItemTemplate(1, Material.HOPPER, PlayerDisplayTranslationKey.MENU_CLEAR_FILTER.translate().color(NamedTextColor.GRAY).decorate(TextDecoration.BOLD));
+    private static final ItemTemplate CLEAR = new ItemTemplate(1, Material.HOPPER, PlayerDisplayTranslationKey.MENU_CLEAR_FILTER.translate().color(NamedTextColor.GRAY).decorate(TextDecoration.BOLD));
 
     public UserInputMenu(MenuBoard manager, Component initialTitle, Consumer<String> result, String startingText) {
         super(manager, initialTitle, InventoryType.ANVIL);
@@ -27,9 +25,9 @@ public class UserInputMenu extends BasicMenu
         this.resultAction = result;
         this.text = "";
 
-        addItem(namedItem.setName(Component.text(startingText)));
+        addItem(new ItemTemplate(0, Material.NAME_TAG, Component.text(startingText)));
         addCloseAction(save);
-        addAction(clear, args -> {
+        addAction(CLEAR.copy(), args -> {
             text = "";
             close(args.player());
         });

@@ -86,7 +86,7 @@ public class YmlDataManager
         return configFile;
     }
 
-    public static List<String> enumSetToList(EnumSet<? extends Enum> set)
+    public static List<String> enumSetToList(EnumSet<? extends Enum<?>> set)
     {
         List<String> list = new ArrayList<>();
         set.forEach(entry -> list.add(entry.name()));

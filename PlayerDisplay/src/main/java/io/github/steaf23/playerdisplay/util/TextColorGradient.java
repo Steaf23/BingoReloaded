@@ -4,11 +4,9 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import org.jetbrains.annotations.NotNull;
 
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * Class used to create and sample from a gradient, returning bungee.api.ChatColors
@@ -25,46 +23,40 @@ public class TextColorGradient
      * Adds a color to the gradient at the given position, where the position is a value from 0 to 1.
      * Moves color to position if it is already in the gradient, without adding a new color.
      * Note: adding 2 colors with the same value will produce undefined results!
-     * @param position
-     * @param color
      */
     public TextColorGradient addColor(@NotNull TextColor color, float position) throws IllegalArgumentException {
         if (position < 0.0 || position > 1.0) {
             throw new IllegalArgumentException("position must be between 0.0 and 1.0.");
         }
         colors.put(color, position);
-
         return this;
     }
 
     /**
-     * @param color
      * @return false if the gradient does not contain the given color
      */
     public boolean removeColor(@NotNull TextColor color) {
         return colors.remove(color) != null;
     }
 
-
     /**
      * Samples the gradient, returning an interpolated color based on the given position, between 0 and 1
-     * @param position
-     * @return
+     * @return interpolated color at float position between 0 and 1
      */
     public TextColor sample(float position) {
-        if (colors.size() == 0) {
+        if (colors.isEmpty()) {
             return NamedTextColor.WHITE;
         }
 
         if (colors.size() == 1) {
-            return colors.keySet().stream().toList().get(0);
+            return colors.keySet().stream().toList().getFirst();
         }
 
         List<TextColor> sortedColors = colors.entrySet()
                 .stream()
                 .sorted(Map.Entry.comparingByValue())
                 .map(Map.Entry::getKey)
-                .collect(Collectors.toList());
+                .toList();
 
         // find 2 colors closest to the actual position
         TextColor leftColor = sortedColors.get(0);

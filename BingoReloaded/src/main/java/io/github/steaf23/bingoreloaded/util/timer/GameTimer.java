@@ -3,7 +3,6 @@ package io.github.steaf23.bingoreloaded.util.timer;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import net.kyori.adventure.text.Component;
-import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitTask;
 

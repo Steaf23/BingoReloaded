@@ -12,6 +12,9 @@ public class BingoPlayerSender
         audience.sendMessage(Component.text().append(prefix, message).build());
     }
 
+    /**
+     * Sends each component in the message as a separate line.
+     */
     public static void sendMessage(Component[] message, Audience audience) {
         for (Component c : message) {
             BingoPlayerSender.sendMessage(c, audience);

@@ -6,7 +6,7 @@ import java.util.Map;
 
 public class StatisticsKeyConverter
 {
-    private static Map<Statistic, String> statistics = Map.ofEntries(
+    private static final Map<Statistic, String> statistics = Map.<Statistic, String>ofEntries(
             Map.entry(Statistic.DROP, "dropped"),
             Map.entry(Statistic.PICKUP, "picked_up"),
             Map.entry(Statistic.USE_ITEM, "used"),
@@ -91,8 +91,8 @@ public class StatisticsKeyConverter
             Map.entry(Statistic.FALL_ONE_CM, "fall_one_cm"),
             Map.entry(Statistic.SPRINT_ONE_CM, "sprint_one_cm")
     );
+
     /**
-     * @param statistic
      * @return translation key usable when translating statistics in translation components
      */
     public static String getMinecraftTranslationKey(Statistic statistic) {

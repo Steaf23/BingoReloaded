@@ -64,7 +64,7 @@ public class HologramPlacer
     private void removeHologram(Location targetLocation)
     {
         if (!placedHolograms.containsKey(targetLocation))
-        return;
+            return;
 
         manager.destroy(placedHolograms.get(targetLocation));
         placedHolograms.remove(targetLocation);

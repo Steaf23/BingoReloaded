@@ -7,12 +7,10 @@ import java.util.List;
 
 public class Hologram
 {
-    private boolean destroyed;
     private final List<HologramLine> lines;
 
     public Hologram(Location location, String... lines)
     {
-        this.destroyed = false;
         this.lines = new ArrayList<>();
         for (String line : lines)
         {
@@ -46,6 +44,5 @@ public class Hologram
         {
             line.remove();
         }
-        destroyed = true;
     }
 }

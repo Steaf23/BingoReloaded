@@ -3,7 +3,12 @@ package io.github.steaf23.bingoreloaded.player.team;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Optional;
+import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 

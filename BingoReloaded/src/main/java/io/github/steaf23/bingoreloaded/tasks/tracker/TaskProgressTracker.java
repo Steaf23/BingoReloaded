@@ -7,7 +7,11 @@ import io.github.steaf23.bingoreloaded.event.BingoStatisticCompletedEvent;
 import io.github.steaf23.bingoreloaded.event.BingoTaskProgressCompletedEvent;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
-import io.github.steaf23.bingoreloaded.tasks.*;
+import io.github.steaf23.bingoreloaded.tasks.AdvancementTask;
+import io.github.steaf23.bingoreloaded.tasks.BingoStatistic;
+import io.github.steaf23.bingoreloaded.tasks.GameTask;
+import io.github.steaf23.bingoreloaded.tasks.ItemTask;
+import io.github.steaf23.bingoreloaded.tasks.StatisticTask;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.advancement.AdvancementProgress;
@@ -22,12 +26,17 @@ import org.bukkit.event.player.PlayerStatisticIncrementEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.BiFunction;
 
 public class TaskProgressTracker
 {
-    public class TaskProgress
+    public static class TaskProgress
     {
         private final BingoParticipant participant;
         private final int progressStart;
@@ -91,9 +100,8 @@ public class TaskProgressTracker
 
                 // the stat tracker will reset progress to 0 for every statistic added.
                 statisticTracker.addStatistic(statisticTask, participant);
-            } else {
-                // No progress to reset for item tasks
             }
+            // No progress to reset for item tasks
 
             // add task to progress tracker
             progressMap.get(task).add(new TaskProgress(participant, finalCount));
@@ -154,7 +162,7 @@ public class TaskProgressTracker
     }
 
     private ItemStack completeItemSlot(ItemStack item, BingoParticipant participant) {
-        if (participant == null) {
+        if (participant == null || participant.getTeam() == null) {
             return item;
         }
 
@@ -174,7 +182,6 @@ public class TaskProgressTracker
 
         Set<GameTask> tasksToRemove = new HashSet<>();
         for (GameTask task : progressMap.keySet()) {
-            List<TaskProgress> progressList = progressMap.get(task);
             for (TaskProgress progress : progressMap.get(task)) {
                 if (!progress.participant.equals(participant)) {
                     continue;
@@ -204,7 +211,7 @@ public class TaskProgressTracker
             }
         }
 
-        tasksToRemove.forEach(t -> progressMap.remove(t));
+        tasksToRemove.forEach(progressMap::remove);
 
         updateProgressFromEvent(participant, (task, progress) -> {
             if (task.type != GameTask.TaskType.ITEM) {
@@ -254,13 +261,13 @@ public class TaskProgressTracker
             // Other contents are updated, so we want to check the full inventory for task items..
             for (ItemStack stack : player.getInventory().getContents()) {
                 if (stack != null) {
-                    stack = completeItemSlot(stack, participant);
+                    completeItemSlot(stack, participant);
                 }
             }
 
             // Sometimes item changes are not recorded instantly for some reason, so double check if the cursor item can be completed as a task.
             ItemStack stack = player.getItemOnCursor();
-            stack = completeItemSlot(stack, participant);
+            completeItemSlot(stack, participant);
         });
     }
 
@@ -276,7 +283,6 @@ public class TaskProgressTracker
 
         ItemStack stack = event.getItem().getItemStack();
         int amount = stack.getAmount();
-        ItemStack oldStack = stack;
         stack = completeItemSlot(stack, participant);
         if (amount != stack.getAmount()) {
             event.setCancelled(true);
@@ -323,14 +329,14 @@ public class TaskProgressTracker
         }
 
         BingoParticipant player = progress.participant;
-        if (!(player.getSession().getPhase() instanceof BingoGame game)) {
+        if (!(player.getSession().getPhase() instanceof BingoGame)) {
             return false;
         }
 
         if (!task.complete(player, game.getGameTime()))
             return false;
 
-        if (player.getTeam() != null) {
+        if (player.getTeam() != null && player.getTeam().getCard() != null) {
             player.getTeam().getCard().handleTaskCompleted(player, task, game.getGameTime());
         }
 
@@ -340,7 +346,7 @@ public class TaskProgressTracker
     }
 
     private @Nullable BingoParticipant getValidParticipant(@Nullable BingoParticipant participant) {
-        return getValidParticipant(participant.sessionPlayer().orElseGet(null));
+        return getValidParticipant(participant != null ? participant.sessionPlayer().orElse(null) : null);
     }
 
     private @Nullable BingoParticipant getValidParticipant(@Nullable Player player) {
@@ -351,10 +357,7 @@ public class TaskProgressTracker
             return null;
         }
         BingoParticipant participant = game.getTeamManager().getPlayerAsParticipant(player);
-        if (participant == null)
-            return null;
-
-        if (participant.getTeam().outOfTheGame)
+        if (participant == null || participant.getTeam() == null || participant.getTeam().outOfTheGame)
             return null;
 
         return participant;
@@ -384,8 +387,6 @@ public class TaskProgressTracker
     /**
      * update progress for given participant about the task given by the updateFunction, using the task's existing progress
      * When the update function returns true the task is considered completed and will be removed from the tracker.
-     * @param participant
-     * @param updateFunction
      */
     private void updateProgressFromEvent(BingoParticipant participant, BiFunction<GameTask, TaskProgress, Boolean> updateFunction) {
         Set<GameTask> tasksToRemove = new HashSet<>();
@@ -402,6 +403,6 @@ public class TaskProgressTracker
             }
         }
 
-        tasksToRemove.forEach(t -> progressMap.remove(t));
+        tasksToRemove.forEach(progressMap::remove);
     }
 }

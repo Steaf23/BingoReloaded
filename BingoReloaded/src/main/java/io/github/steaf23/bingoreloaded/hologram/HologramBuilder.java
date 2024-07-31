@@ -1,20 +1,22 @@
 package io.github.steaf23.bingoreloaded.hologram;
 
 import org.bukkit.Location;
-import org.checkerframework.checker.nullness.qual.NonNull;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class HologramBuilder
 {
     private Location location;
-    private List<String> lines;
+    private final List<String> lines;
     private String id;
     private final HologramManager manager;
 
     public HologramBuilder(HologramManager manager)
     {
+        this.lines = new ArrayList<>();
         this.id = "";
         this.manager = manager;
         this.location = null;
@@ -23,7 +25,7 @@ public class HologramBuilder
     @Nullable
     public Hologram create()
     {
-        if (id.isEmpty() || location == null || lines.size() == 0)
+        if (id.isEmpty() || location == null || lines.isEmpty())
             return null;
 
         return manager.create(id, location, lines.toArray(new String[]{}));
@@ -43,9 +45,6 @@ public class HologramBuilder
 
     /**
      * Insert a line of text into the position at index, where index 0 is at the top of the hologram.
-     * @param index
-     * @param text
-     * @return
      */
     public HologramBuilder addLine(int index, String text)
     {
@@ -56,8 +55,6 @@ public class HologramBuilder
 
     /**
      * Add a line of text to the bottom of the hologram
-     * @param text
-     * @return
      */
     public HologramBuilder addLine(String text)
     {
@@ -67,15 +64,10 @@ public class HologramBuilder
 
     /**
      * Add multiple lines to the bottom of the hologram
-     * @param lines
-     * @return
      */
     public HologramBuilder addLines(String... lines)
     {
-        for (String line : lines)
-        {
-            this.lines.add(line);
-        }
+        Collections.addAll(this.lines, lines);
         return this;
     }
 

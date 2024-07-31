@@ -3,7 +3,7 @@ package io.github.steaf23.bingoreloaded.gui.inventory.card;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.cards.CardSize;
 import io.github.steaf23.bingoreloaded.cards.HotswapTaskHolder;
-import io.github.steaf23.bingoreloaded.data.CustomTextureData;
+import io.github.steaf23.bingoreloaded.data.TexturedMenuData;
 import io.github.steaf23.bingoreloaded.gui.inventory.core.TexturedTitleBuilder;
 import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
 import io.github.steaf23.bingoreloaded.tasks.GameTask;
@@ -38,9 +38,9 @@ public class HotswapTexturedCardMenu extends TexturedCardMenu implements Hotswap
 
     @Override
     protected Component buildTitle(BingoGamemode mode, CardSize size) {
-        CustomTextureData textures = BingoReloaded.getInstance().getTextureData();
+        TexturedMenuData textures = BingoReloaded.getInstance().getTextureData();
 
-        CustomTextureData.Texture cardTexture = null;
+        TexturedMenuData.Texture cardTexture = null;
         if (size == CardSize.X3) {
             cardTexture = textures.getTexture("hotswap_card_3");
         } else if (size == CardSize.X5) {
@@ -85,10 +85,6 @@ public class HotswapTexturedCardMenu extends TexturedCardMenu implements Hotswap
 
         setTaskItems();
         addItem(getInfo());
-
-        if (oldInventory == null) {
-            return;
-        }
 
         var viewers = new ArrayList<>(oldInventory.getViewers());
         viewers.forEach(p -> {

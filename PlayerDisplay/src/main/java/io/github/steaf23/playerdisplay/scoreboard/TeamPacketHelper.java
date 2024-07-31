@@ -7,7 +7,6 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 
 import java.util.Collection;
-import java.util.Optional;
 
 public class TeamPacketHelper
 {

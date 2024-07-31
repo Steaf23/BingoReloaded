@@ -18,7 +18,6 @@ public class ScoreboardData
         String title = data.getConfig().getString(name + ".title", "");
         List<String> sidebar = data.getConfig().getStringList(name + ".sidebar");
 
-        SidebarTemplate template = new SidebarTemplate(title, arguments, sidebar.toArray(new String[]{}));
-        return template;
+        return new SidebarTemplate(title, arguments, sidebar.toArray(new String[]{}));
     }
 }

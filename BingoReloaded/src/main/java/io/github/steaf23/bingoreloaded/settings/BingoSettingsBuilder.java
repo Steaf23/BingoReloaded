@@ -32,6 +32,10 @@ public class BingoSettingsBuilder
         this.session = session;
 
         BingoSettings def = new BingoSettingsData().getDefaultSettings();
+        if (def == null) {
+            ConsoleMessenger.error("Could not find default settings, make sure you have at least 1 existing settings preset and its set to be the default settings!");
+            return;
+        }
         this.card = def.card();
         this.mode = def.mode();
         this.cardSize = def.size();
@@ -71,7 +75,7 @@ public class BingoSettingsBuilder
         }
         int cardWidth = 0;
         try {
-            cardWidth = Integer.valueOf(tuple[1]);
+            cardWidth = Integer.parseInt(tuple[1]);
         } catch (NumberFormatException e) {
             ConsoleMessenger.bug("Could not read card size", this);
         }

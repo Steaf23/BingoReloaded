@@ -7,18 +7,20 @@ import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.player.team.SoloTeamManager;
 import io.github.steaf23.bingoreloaded.player.team.TeamManager;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
-import io.github.steaf23.bingoreloaded.placeholder.BingoPlaceholderFormatter;
 import io.github.steaf23.playerdisplay.PlayerDisplay;
 import io.github.steaf23.playerdisplay.scoreboard.HUDRegistry;
 import io.github.steaf23.playerdisplay.scoreboard.PlayerHUD;
 import io.github.steaf23.playerdisplay.scoreboard.PlayerHUDGroup;
-import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.entity.Player;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class BingoGameHUDGroup extends PlayerHUDGroup
 {
@@ -28,7 +30,6 @@ public class BingoGameHUDGroup extends PlayerHUDGroup
     private final boolean showPlayerNames;
     private final ScoreboardData.SidebarTemplate template;
 
-    private final BingoPlaceholderFormatter formatter;
     private static final Component PLAYER_PREFIX = PlayerDisplay.MINI_BUILDER.deserialize("<gray><bold> ┗ </bold></gray><white>");
 
     public BingoGameHUDGroup(HUDRegistry registry, BingoSession session, boolean showPlayerNames) {
@@ -38,7 +39,6 @@ public class BingoGameHUDGroup extends PlayerHUDGroup
         this.teamScores = new HashMap<>();
         this.showPlayerNames = showPlayerNames;
         this.template = new ScoreboardData().loadTemplate("game", registeredFields);
-        this.formatter = new BingoPlaceholderFormatter();
     }
 
     public void updateWinScore(BingoSettings settings) {
@@ -78,7 +78,6 @@ public class BingoGameHUDGroup extends PlayerHUDGroup
                 || teamManager.getTeamCount() + teamManager.getParticipantCount() > spaceLeft
                 || teamManager instanceof SoloTeamManager;
 
-        String format = formatter.getTeamFullFormat();
         teamManager.getActiveTeams().getTeams().stream()
                 .sorted(Comparator.comparingInt(BingoTeam::getCompleteCount).reversed())
                 .forEach(team -> {

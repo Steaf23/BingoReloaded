@@ -3,7 +3,6 @@ package io.github.steaf23.bingoreloaded.data;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.helper.YmlDataManager;
 import io.github.steaf23.bingoreloaded.hologram.HologramBuilder;
-import io.github.steaf23.bingoreloaded.util.BingoPlayerSender;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -53,7 +52,6 @@ public class BingoStatData
 
         String statsString = getPlayerData(playerId);
         String[] stats = statsString.split(";");
-        int stat = Integer.parseInt(stats[statType.idx]);
         String newStat = Integer.toString(value);
         stats[statType.idx] = newStat;
 
@@ -64,7 +62,6 @@ public class BingoStatData
      * @param firstEntry index of first entry to show on the scoreboard
      * @param entriesPerPage how many entries to show including the first entry
      * @param sortedBy stat to sort the entries by
-     * @return
      */
     public HologramBuilder asHologram(int firstEntry, int entriesPerPage, @Nullable BingoStatType sortedBy)
     {
@@ -76,8 +73,14 @@ public class BingoStatData
     {
         String stats = getPlayerData(playerId);
         String[] statList = stats.split(";");
+
+        String playerName = Bukkit.getOfflinePlayer(playerId).getName();
+        if (playerName == null) {
+            return Component.text("Statistics for invalid id " + playerId + " unavailable.");
+        }
+
         Component[] text = BingoMessage.configStringAsMultiline("{0}'s statistics: Wins: {1}, Losses: {2}, Games finished: {3}, Tasks completed: {4}, Tasks Completed Record: {5}, Wand uses: {6}", NamedTextColor.GREEN,
-                Component.text(Bukkit.getOfflinePlayer(playerId).getName(), NamedTextColor.YELLOW, TextDecoration.BOLD),
+                Component.text(playerName, NamedTextColor.YELLOW, TextDecoration.BOLD),
                 Component.text(statList[0], NamedTextColor.WHITE, TextDecoration.BOLD),
                 Component.text(statList[1], NamedTextColor.WHITE, TextDecoration.BOLD),
                 Component.text(Integer.parseInt(statList[0]) + Integer.parseInt(statList[1]), NamedTextColor.WHITE, TextDecoration.BOLD),
@@ -91,8 +94,6 @@ public class BingoStatData
     /**
      * While it's possible to get the player's statistics from the name,
      * using the UUID directly is less expensive and should be preferred
-     * @param playerName
-     * @return
      */
     public Component getPlayerStatsFormatted(String playerName)
     {
@@ -121,7 +122,11 @@ public class BingoStatData
         for (String recordName : playerData.keySet())
         {
             UUID playerId = UUID.fromString(recordName);
-            if (Bukkit.getPlayer(playerId).getName().equals(playerName))
+            Player bukkitPlayer = Bukkit.getPlayer(playerId);
+            if (bukkitPlayer == null) {
+                continue;
+            }
+            if (bukkitPlayer.getName().equals(playerName))
             {
                 return playerId;
             }

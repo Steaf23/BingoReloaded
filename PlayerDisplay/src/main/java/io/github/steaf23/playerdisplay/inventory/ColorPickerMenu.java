@@ -1,11 +1,11 @@
 package io.github.steaf23.playerdisplay.inventory;
 
 import io.github.steaf23.playerdisplay.inventory.item.ItemTemplate;
+import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.inventory.ClickType;
@@ -52,7 +52,7 @@ public final class ColorPickerMenu extends BasicMenu
                     .setCompareKey(color.asHexString()));
         }
 
-        updateDisplay(new Color(Integer.parseInt(hueItems.get(0).getCompareKey().substring(1), 16)));
+        updateDisplay(new Color(Integer.parseInt(hueItems.getFirst().getCompareKey().substring(1), 16)));
     }
 
     @Override
@@ -81,7 +81,7 @@ public final class ColorPickerMenu extends BasicMenu
 
     private void setHueBar(int startingFrom) {
         if (hueItems.size() < 7) {
-            Bukkit.getLogger().severe("Add at least 7 hue items!");
+            ConsoleMessenger.error("Add at least 7 hue items!");
             return;
         }
 
@@ -103,7 +103,7 @@ public final class ColorPickerMenu extends BasicMenu
 
                 ItemTemplate item = ItemTemplate.createColoredLeather(textColor, Material.LEATHER_CHESTPLATE)
                         .setCompareKey(textColor.asHexString())
-                        .setSlot(ItemTemplate.slotFromXY(x, y));
+                        .setSlot(x, y);
                 addItem(item);
             }
         }

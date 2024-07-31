@@ -2,21 +2,28 @@ package io.github.steaf23.bingoreloaded.player.team;
 
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.TeamData;
-import io.github.steaf23.bingoreloaded.event.*;
+import io.github.steaf23.bingoreloaded.event.BingoSettingsUpdatedEvent;
+import io.github.steaf23.bingoreloaded.event.ParticipantJoinedTeamEvent;
+import io.github.steaf23.bingoreloaded.event.ParticipantLeftTeamEvent;
+import io.github.steaf23.bingoreloaded.event.PlayerJoinedSessionWorldEvent;
+import io.github.steaf23.bingoreloaded.event.PlayerLeftSessionWorldEvent;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
-import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.placeholder.BingoPlaceholderFormatter;
+import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
-import io.github.steaf23.playerdisplay.PlayerDisplay;
 import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 /**
  * (This team manager is basic in terms of features, not in terms of complexity)
@@ -39,19 +46,19 @@ public class BasicTeamManager implements TeamManager
         ConsoleMessenger.log("Loaded " + joinableTeams.size() + " team(s)");
 
         TextColor autoTeamColor = TextColor.fromHexString("#fdffa8");
+        if (autoTeamColor == null) autoTeamColor = NamedTextColor.WHITE;
+
         this.autoTeam = new BingoTeam("auto", autoTeamColor, BingoMessage.TEAM_AUTO.asPhrase(), createAutoPrefix(autoTeamColor));
     }
 
     private Component createAutoPrefix(TextColor color) {
         String prefixFormat = new BingoPlaceholderFormatter().getTeamFullFormat();
-        Component prefix = BingoMessage.createPhrase(prefixFormat.replace("{0}", "<" + color.toString() + ">").replace("{1}", "✦") + " ");
-        return prefix;
+        return BingoMessage.createPhrase(prefixFormat.replace("{0}", "<" + color.toString() + ">").replace("{1}", "✦") + " ");
     }
 
     private Component createPrefix(TeamData.TeamTemplate template) {
         String prefixFormat = new BingoPlaceholderFormatter().getTeamFullFormat();
-        Component prefix = BingoMessage.createPhrase(prefixFormat.replace("{0}", "<" + template.color().toString() + ">").replace("{1}", template.name()) + " ");
-        return prefix;
+        return BingoMessage.createPhrase(prefixFormat.replace("{0}", "<" + template.color().toString() + ">").replace("{1}", template.name()) + " ");
     }
 
     private void addAutoPlayersToTeams() {
@@ -70,7 +77,7 @@ public class BasicTeamManager implements TeamManager
 
         int overflowPlayers = getTotalParticipantCapacity() - activeTeams.getAllParticipants().size();
         if (overflowPlayers < 0) {
-            ConsoleMessenger.error("Can not fit every player into a team (Please report!)");
+            ConsoleMessenger.bug("Can not fit every player into a team", this);
             return;
         }
 
@@ -116,7 +123,7 @@ public class BasicTeamManager implements TeamManager
                 if (!automaticTeamPlayers.isEmpty()) {
                     BingoTeam newTeam = activateAnyTeam();
                     if (newTeam == null) {
-                        ConsoleMessenger.warn("Could not fit every player into a team, since there is not enough room!");
+                        ConsoleMessenger.bug("Could not fit every player into a team, since there is not enough room!", this);
                         break;
                     }
                     counts.addFirst(new TeamCount(newTeam, 0));
@@ -152,7 +159,12 @@ public class BasicTeamManager implements TeamManager
 
     @Override
     public boolean removeMemberFromTeam(@Nullable BingoParticipant member) {
-        return removeMemberFromTeam(member, true);
+        boolean success = removeMemberFromTeam(member, true);
+
+        if (success && member != null) {
+            BingoMessage.LEAVE.sendToAudience(member, NamedTextColor.RED);
+        }
+        return success;
     }
 
     public boolean removeMemberFromTeam(@Nullable BingoParticipant player, boolean clearEmptyTeams) {
@@ -160,7 +172,7 @@ public class BasicTeamManager implements TeamManager
 
         BingoTeam team = player.getTeam();
         if (getParticipants().contains(player)) {
-            player.getTeam().removeMember(player);
+            team.removeMember(player);
         } else {
             return false;
         }
@@ -170,10 +182,6 @@ public class BasicTeamManager implements TeamManager
 
         var leaveEvent = new ParticipantLeftTeamEvent(player, team, session);
         Bukkit.getPluginManager().callEvent(leaveEvent);
-
-        player.sessionPlayer().ifPresent(p -> {
-//            new TranslatedMessage(BingoTranslation.LEAVE).color(ChatColor.RED).send(p);
-        });
         return true;
     }
 
@@ -214,8 +222,7 @@ public class BasicTeamManager implements TeamManager
         // If after trying to remove the participant from the teams, the participant count did not change, it means the player was not part of a team already
         if (participantCount == getParticipantCount() && participantCount >= getTotalParticipantCapacity()) {
             //TODO: translate this
-            ConsoleMessenger.log("" + participantCount);
-            ConsoleMessenger.log(Component.text("All teams are full!").color(NamedTextColor.RED));
+            ConsoleMessenger.log(Component.text("All teams are full! (" + getParticipantCount() + "/" + getTotalParticipantCapacity() + " players), with a maximum team size of " + getMaxTeamSize()).color(NamedTextColor.RED));
             activeTeams.removeEmptyTeams("auto");
             return false;
         }

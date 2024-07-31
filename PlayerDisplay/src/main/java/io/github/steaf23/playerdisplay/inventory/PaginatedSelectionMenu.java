@@ -20,9 +20,9 @@ public abstract class PaginatedSelectionMenu extends BasicMenu
     /**
      * Called by this Inventory's click event whenever an item in the page window gets clicked.
      *
-     * @param event
+     * @param event the associated inventory click event
      * @param clickedOption item that was clicked on, it's slot being the same slot that was clicked on.
-     * @param player
+     * @param player player that clicked on the menu.
      */
     public abstract void onOptionClickedDelegate(final InventoryClickEvent event, ItemTemplate clickedOption, HumanEntity player);
 
@@ -260,9 +260,6 @@ public abstract class PaginatedSelectionMenu extends BasicMenu
 
     /**
      * Replaces the item in the given slot at the current page to the new item. Keeps the item's selection status.
-     *
-     * @param newItem
-     * @param slot
      */
     public void replaceItem(ItemTemplate newItem, int slot) {
         ItemTemplate oldItem = filteredItems.get(ITEMS_PER_PAGE * currentPage + slot);

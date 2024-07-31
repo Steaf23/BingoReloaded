@@ -1,12 +1,12 @@
 package io.github.steaf23.bingoreloaded.gameloop.phase;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
-import io.github.steaf23.bingoreloaded.cards.TaskCard;
 import io.github.steaf23.bingoreloaded.cards.CardFactory;
 import io.github.steaf23.bingoreloaded.cards.LockoutTaskCard;
+import io.github.steaf23.bingoreloaded.cards.TaskCard;
 import io.github.steaf23.bingoreloaded.data.BingoCardData;
-import io.github.steaf23.bingoreloaded.data.BingoStatType;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
+import io.github.steaf23.bingoreloaded.data.BingoStatType;
 import io.github.steaf23.bingoreloaded.data.ConfigData;
 import io.github.steaf23.bingoreloaded.event.BingoDeathmatchTaskCompletedEvent;
 import io.github.steaf23.bingoreloaded.event.BingoEndedEvent;
@@ -19,8 +19,8 @@ import io.github.steaf23.bingoreloaded.event.ParticipantJoinedTeamEvent;
 import io.github.steaf23.bingoreloaded.event.ParticipantLeftTeamEvent;
 import io.github.steaf23.bingoreloaded.event.PlayerJoinedSessionWorldEvent;
 import io.github.steaf23.bingoreloaded.event.PlayerLeftSessionWorldEvent;
-import io.github.steaf23.bingoreloaded.gui.hud.BingoGameHUDGroup;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
+import io.github.steaf23.bingoreloaded.gui.hud.BingoGameHUDGroup;
 import io.github.steaf23.bingoreloaded.gui.inventory.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
@@ -67,8 +67,14 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.Vector;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 
 public class BingoGame implements GamePhase
 {
@@ -88,7 +94,7 @@ public class BingoGame implements GamePhase
 
     private GameTask deathMatchTask;
 
-    public BingoGame(BingoSession session, BingoSettings settings, ConfigData config) {
+    public BingoGame(@NotNull BingoSession session, @NotNull BingoSettings settings, @NotNull ConfigData config) {
         this.session = session;
         this.config = config;
         this.teamManager = session.teamManager;
@@ -153,7 +159,7 @@ public class BingoGame implements GamePhase
                 .append(BingoMessage.OPTIONS_EFFECTS.asPhrase()).append(Component.text(": \n"))
                 .append(Component.join(JoinConfiguration.separator(Component.text("\n")), EffectOptionFlags.effectsToText(settings.effects()))).append(Component.text("\n"))
                 .append(BingoMessage.DURATION.asPhrase(settings.enableCountdown() ?
-                        GameTimer.getTimeAsComponent(settings.countdownDuration() * 60) : Component.text("∞")))
+                        GameTimer.getTimeAsComponent(settings.countdownDuration() * 60L) : Component.text("∞")))
                 .build();
         BingoPlayerSender.sendMessage(BingoMessage.createHoverCommandMessage(
                 Component.empty(),
@@ -752,7 +758,7 @@ public class BingoGame implements GamePhase
     }
 
     @Override
-    public @Nullable BingoSession getSession() {
+    public @NotNull BingoSession getSession() {
         return session;
     }
 

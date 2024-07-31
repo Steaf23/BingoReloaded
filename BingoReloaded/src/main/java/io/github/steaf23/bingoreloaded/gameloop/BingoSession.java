@@ -1,10 +1,18 @@
 package io.github.steaf23.bingoreloaded.gameloop;
 
-import io.github.steaf23.bingoreloaded.*;
-import io.github.steaf23.bingoreloaded.command.BotCommand;
-import io.github.steaf23.bingoreloaded.data.*;
+import io.github.steaf23.bingoreloaded.BingoReloaded;
+import io.github.steaf23.bingoreloaded.data.BingoCardData;
+import io.github.steaf23.bingoreloaded.data.BingoMessage;
+import io.github.steaf23.bingoreloaded.data.ConfigData;
 import io.github.steaf23.bingoreloaded.data.world.WorldGroup;
-import io.github.steaf23.bingoreloaded.event.*;
+import io.github.steaf23.bingoreloaded.event.BingoEndedEvent;
+import io.github.steaf23.bingoreloaded.event.BingoPlaySoundEvent;
+import io.github.steaf23.bingoreloaded.event.BingoSettingsUpdatedEvent;
+import io.github.steaf23.bingoreloaded.event.ParticipantJoinedTeamEvent;
+import io.github.steaf23.bingoreloaded.event.ParticipantLeftTeamEvent;
+import io.github.steaf23.bingoreloaded.event.PlayerJoinedSessionWorldEvent;
+import io.github.steaf23.bingoreloaded.event.PlayerLeftSessionWorldEvent;
+import io.github.steaf23.bingoreloaded.event.PrepareNextBingoGameEvent;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.gameloop.phase.GamePhase;
 import io.github.steaf23.bingoreloaded.gameloop.phase.PostGamePhase;
@@ -25,12 +33,8 @@ import io.github.steaf23.bingoreloaded.util.BingoPlayerSender;
 import io.github.steaf23.playerdisplay.inventory.MenuBoard;
 import io.github.steaf23.playerdisplay.scoreboard.HUDRegistry;
 import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
-import io.papermc.paper.registry.RegistryAccess;
-import io.papermc.paper.registry.RegistryKey;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.audience.ForwardingAudience;
-import net.kyori.adventure.resource.ResourcePackInfo;
-import net.kyori.adventure.resource.ResourcePackRequest;
 import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -39,8 +43,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.*;
-import org.bukkit.potion.PotionEffectType;
+import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.player.PlayerPortalEvent;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -59,16 +63,13 @@ public class BingoSession implements ForwardingAudience
     private final ConfigData config;
     private final MenuBoard menuBoard;
     private final HUDRegistry hudRegistry;
-    private final GameManager gameManager;
-    private final BotCommand botCommand;
     private final TeamDisplay teamDisplay;
 
     // A bingo session controls 1 group of worlds
     private final WorldGroup worlds;
     private GamePhase phase;
 
-    public BingoSession(GameManager gameManager, MenuBoard menuBoard, HUDRegistry hudRegistry, @NotNull WorldGroup worlds, ConfigData config) {
-        this.gameManager = gameManager;
+    public BingoSession(MenuBoard menuBoard, HUDRegistry hudRegistry, @NotNull WorldGroup worlds, ConfigData config) {
         this.menuBoard = menuBoard;
         this.hudRegistry = hudRegistry;
         this.worlds = worlds;
@@ -86,7 +87,6 @@ public class BingoSession implements ForwardingAudience
             this.teamManager = new BasicTeamManager(this);
         }
 
-        this.botCommand = new BotCommand(this);
         this.teamDisplay = new TeamDisplay(this);
         this.phase = null;
 
@@ -363,7 +363,7 @@ public class BingoSession implements ForwardingAudience
         return result;
     }
 
-    public boolean hasPlayer(Player p) {
+    public boolean hasPlayer(@NotNull Player p) {
         return ownsWorld(p.getWorld());
     }
 

@@ -7,6 +7,7 @@ import io.github.steaf23.bingoreloaded.tasks.StatisticTask;
 import io.github.steaf23.bingoreloaded.tasks.TaskData;
 import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -34,10 +35,9 @@ public class TaskListData
         if (!data.getConfig().contains(listName + ".tasks"))
             return new HashSet<>();
 
-        Set<TaskData> taskList = (Set<TaskData>)data.getConfig().getList(listName + ".tasks").stream().filter((i ->
+        return (Set<TaskData>)data.getConfig().getList(listName + ".tasks").stream().filter((i ->
                 !(i instanceof StatisticTask && !withStatistics) &&
                 !(i instanceof AdvancementTask && !withAdvancements))).collect(Collectors.toSet());
-        return taskList;
     }
 
     public int getTaskCount(String listName)
@@ -69,7 +69,7 @@ public class TaskListData
             }
         }
 
-        data.getConfig().set(listName + ".tasks", savedTasks.stream().collect(Collectors.toList()));
+        data.getConfig().set(listName + ".tasks", new ArrayList<>(savedTasks));
         data.getConfig().set(listName + ".size", savedTasks.size());
         data.saveConfig();
     }

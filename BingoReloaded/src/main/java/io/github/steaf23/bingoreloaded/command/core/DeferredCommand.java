@@ -49,7 +49,7 @@ public class DeferredCommand extends SubCommand
     @Override
     public boolean execute(String... arguments) {
         // A substitute can't exist when there is nothing to defer it to (this is a developer mistake)
-        if (subCommands.size() == 0) {
+        if (subCommands.isEmpty()) {
             ConsoleMessenger.bug("Wrongly formatted command by plugin {this is a developer mistake!}", this);
             return false;
         }
@@ -73,7 +73,7 @@ public class DeferredCommand extends SubCommand
 
     @Override
     protected String determineUsage(String... arguments) {
-        if (subCommands.size() == 0) {
+        if (subCommands.isEmpty()) {
             return name + " " + usage;
         }
 

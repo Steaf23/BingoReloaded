@@ -14,7 +14,9 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 @SerializableAs("Bingo.StatisticTask")
 public record StatisticTask(BingoStatistic statistic, int count) implements CountableTask
@@ -67,17 +69,14 @@ public record StatisticTask(BingoStatistic statistic, int count) implements Coun
                             .append(amount);
                 }
             }
-            case TRAVEL -> {
-                builder.append(ComponentUtils.statistic(statistic.stat()))
-                        .append(Component.text(": "))
-                        .append(Component.text(count * 10))
-                        .append(Component.text(" Blocks"));
-            }
-            default -> {
-                builder.append(ComponentUtils.statistic(statistic.stat()))
-                        .append(Component.text(": "))
-                        .append(amount);
-            }
+            case TRAVEL -> builder.append(ComponentUtils.statistic(statistic.stat()))
+                    .append(Component.text(": "))
+                    .append(Component.text(count * 10))
+                    .append(Component.text(" Blocks"));
+
+            default -> builder.append(ComponentUtils.statistic(statistic.stat()))
+                    .append(Component.text(": "))
+                    .append(amount);
         }
         builder.append(Component.text("*"));
         return builder.build();
@@ -120,7 +119,7 @@ public record StatisticTask(BingoStatistic statistic, int count) implements Coun
     }
 
     @Override
-    public PersistentDataContainer pdcSerialize(PersistentDataContainer stream)
+    public @NotNull PersistentDataContainer pdcSerialize(PersistentDataContainer stream)
     {
         stream.set(GameTask.getTaskDataKey("statistic"), PersistentDataType.STRING, statistic.stat().name());
         if (statistic.materialType() != null)
@@ -151,8 +150,7 @@ public record StatisticTask(BingoStatistic statistic, int count) implements Coun
         }
         int count = pdc.getOrDefault(GameTask.getTaskDataKey("count"), PersistentDataType.INTEGER, 1);
 
-        StatisticTask task = new StatisticTask(new BingoStatistic(stat, entity, item), count);
-        return task;
+        return new StatisticTask(new BingoStatistic(stat, entity, item), count);
     }
 
     @NotNull

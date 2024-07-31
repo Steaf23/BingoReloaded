@@ -4,7 +4,8 @@ import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 
-import java.util.*;
+import java.util.Comparator;
+import java.util.PriorityQueue;
 import java.util.function.Function;
 
 /**
@@ -13,6 +14,7 @@ import java.util.function.Function;
  * This message can either be shown or discarded based on the priority/ lingerTime
  * New messages need to be sent (in between updates) for old messages to get overwritten
  * Call update() periodically to update the timer and message being displayed.
+ * Sens action bar messages to all players in the given session.
  */
 public class ActionBarManager
 {
@@ -28,13 +30,15 @@ public class ActionBarManager
     }
 
     /**
-     * requests an actionbar message. No linger time is specified making it last only until it fades or gets replaced in update by a new message
-     * @param priority
+     * Requests an actionbar message. No linger time is specified making it last only until it fades or gets replaced in update by a new message
      */
     public void requestMessage(Function<Player, Component> messageTemplate, int priority) {
         requestMessage(messageTemplate, priority, 0);
     }
 
+    /**
+     * Requests an actionbar message. Stays on the players screen until it gets replaced with a higher priority message or until the lingerTime expired, whichever comes first.
+     */
     public void requestMessage(Function<Player, Component> messageTemplate, int priority, int lingerTime) {
         messages.add(new ActionBarMessage(messageTemplate, priority, lingerTime, tickCounter));
     }

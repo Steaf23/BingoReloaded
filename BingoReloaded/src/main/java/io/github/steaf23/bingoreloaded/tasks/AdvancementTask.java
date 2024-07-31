@@ -14,7 +14,8 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 @SerializableAs("Bingo.AdvancementTask")
 public record AdvancementTask(Advancement advancement) implements TaskData
@@ -54,9 +55,8 @@ public record AdvancementTask(Advancement advancement) implements TaskData
     @Override
     public Component getChatDescription()
     {
-        Component component = ComponentUtils.advancementDescription(advancement)
+        return ComponentUtils.advancementDescription(advancement)
                 .color(NamedTextColor.DARK_AQUA);
-        return component;
     }
 
     @Override
@@ -81,7 +81,7 @@ public record AdvancementTask(Advancement advancement) implements TaskData
     }
 
     @Override
-    public PersistentDataContainer pdcSerialize(PersistentDataContainer stream)
+    public @NotNull PersistentDataContainer pdcSerialize(PersistentDataContainer stream)
     {
         stream.set(GameTask.getTaskDataKey("advancement"), PersistentDataType.STRING, advancement.getKey().toString());
         return stream;
@@ -91,8 +91,7 @@ public record AdvancementTask(Advancement advancement) implements TaskData
     {
         Advancement a = Bukkit.getAdvancement(NamespacedKey.fromString(
                         pdc.getOrDefault(GameTask.getTaskDataKey("advancement"), PersistentDataType.STRING, "minecraft:story/mine_stone")));
-        AdvancementTask task = new AdvancementTask(a);
-        return task;
+        return new AdvancementTask(a);
     }
 
     @NotNull

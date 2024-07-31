@@ -47,8 +47,7 @@ public class GenericCardMenu extends BasicMenu implements CardMenu
     }
 
     public @NotNull ItemTemplate getItemFromTask(int taskIndex) {
-        ItemTemplate item = tasks.get(taskIndex).toItem();
-        return item;
+        return tasks.get(taskIndex).toItem();
     }
 
     public void setInfo(Component name, Component... description)

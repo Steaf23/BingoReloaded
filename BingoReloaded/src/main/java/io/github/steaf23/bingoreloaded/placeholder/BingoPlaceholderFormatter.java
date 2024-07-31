@@ -1,7 +1,6 @@
 package io.github.steaf23.bingoreloaded.placeholder;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
-import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.helper.YmlDataManager;
 
 public class BingoPlaceholderFormatter

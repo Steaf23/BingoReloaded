@@ -5,12 +5,9 @@ import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
-import org.bukkit.scheduler.BukkitTask;
 
 public class CounterTimer extends GameTimer
 {
-    private BukkitTask task;
-
     @Override
     public Component getTimeDisplayMessage(boolean asSeconds)
     {

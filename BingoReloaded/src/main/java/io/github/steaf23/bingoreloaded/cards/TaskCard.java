@@ -7,13 +7,20 @@ import io.github.steaf23.bingoreloaded.data.TaskListData;
 import io.github.steaf23.bingoreloaded.gui.inventory.card.CardMenu;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
-import io.github.steaf23.bingoreloaded.tasks.*;
+import io.github.steaf23.bingoreloaded.tasks.GameTask;
+import io.github.steaf23.bingoreloaded.tasks.ItemTask;
+import io.github.steaf23.bingoreloaded.tasks.TaskData;
 import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
 
 public abstract class TaskCard
@@ -45,8 +52,8 @@ public abstract class TaskCard
      * - Finally shuffle the tasks and add them to the card.
      * If the final task count is lower than the amount of spaces available on the card, it will be filled up using default tasks.
      *
-     * @param cardName
-     * @param seed
+     * @param cardName name of the card to pick tasks from.
+     * @param seed cards generated with the same seed and cardName will have the same tasks in the same positions.
      */
     public void generateCard(String cardName, int seed, boolean withAdvancements, boolean withStatistics) {
         BingoCardData cardsData = new BingoCardData();
@@ -104,7 +111,7 @@ public abstract class TaskCard
             // pop the first task in the list (which is random because we shuffled it beforehand) and add it to our final tasks
             List<TaskData> tasks = taskMap.get(listName);
             if (!tasks.isEmpty()) {
-                newTasks.add(tasks.remove(tasks.size() - 1));
+                newTasks.add(tasks.removeLast());
             }
             else {
                 ConsoleMessenger.error("Found empty task list '" + listName + "'.");
@@ -139,10 +146,7 @@ public abstract class TaskCard
      * @param team The team.
      * @return The amount of completed items for the given team.
      */
-    public int getCompleteCount(@Nullable BingoTeam team) {
-        if (team == null) {
-            return 0;
-        }
+    public int getCompleteCount(@NotNull BingoTeam team) {
         int count = 0;
         for (var task : getTasks()) {
             if (task.getCompletedBy().isPresent() && team.getMembers().contains(task.getCompletedBy().get()))
@@ -152,7 +156,7 @@ public abstract class TaskCard
         return count;
     }
 
-    public int getCompleteCount(@Nullable BingoParticipant participant) {
+    public int getCompleteCount(@NotNull BingoParticipant participant) {
         return (int) getTasks().stream()
                 .filter(t -> t.getCompletedBy().isPresent() && t.getCompletedBy().get().getId().equals(participant.getId())).count();
     }

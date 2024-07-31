@@ -4,7 +4,11 @@ import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.cards.CardSize;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.ConfigData;
-import io.github.steaf23.bingoreloaded.event.*;
+import io.github.steaf23.bingoreloaded.event.BingoSettingsUpdatedEvent;
+import io.github.steaf23.bingoreloaded.event.ParticipantJoinedTeamEvent;
+import io.github.steaf23.bingoreloaded.event.ParticipantLeftTeamEvent;
+import io.github.steaf23.bingoreloaded.event.PlayerJoinedSessionWorldEvent;
+import io.github.steaf23.bingoreloaded.event.PlayerLeftSessionWorldEvent;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gui.hud.BingoSettingsHUDGroup;
 import io.github.steaf23.bingoreloaded.gui.hud.DisabledBingoSettingsHUDGroup;
@@ -110,7 +114,7 @@ public class PregameLobby implements GamePhase
         sendVoteCountMessage(count, BingoMessage.OPTIONS_GAMEMODE.asPhrase(),
                 BingoGamemode.fromDataString(tuple[0]).asComponent()
                         .append(Component.text(" ")
-                        .append(CardSize.fromWidth(Integer.valueOf(tuple[1])).asComponent())));
+                        .append(CardSize.fromWidth(Integer.parseInt(tuple[1])).asComponent())));
     }
 
     public void voteCard(String card, HumanEntity player) {
@@ -344,7 +348,7 @@ public class PregameLobby implements GamePhase
     @Override
     public void handleParticipantJoinedTeam(final ParticipantJoinedTeamEvent event) {
         if (event.getParticipant() != null) {
-            event.getParticipant().sessionPlayer().ifPresent(p -> settingsHUD.addPlayer(p));
+            event.getParticipant().sessionPlayer().ifPresent(settingsHUD::addPlayer);
         }
         settingsHUD.setStatus(BingoMessage.PLAYER_STATUS.asPhrase(Component.text(session.teamManager.getParticipantCount())));
 

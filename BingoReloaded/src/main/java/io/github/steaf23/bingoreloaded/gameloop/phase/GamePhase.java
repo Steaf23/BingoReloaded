@@ -1,6 +1,10 @@
 package io.github.steaf23.bingoreloaded.gameloop.phase;
 
-import io.github.steaf23.bingoreloaded.event.*;
+import io.github.steaf23.bingoreloaded.event.BingoSettingsUpdatedEvent;
+import io.github.steaf23.bingoreloaded.event.ParticipantJoinedTeamEvent;
+import io.github.steaf23.bingoreloaded.event.ParticipantLeftTeamEvent;
+import io.github.steaf23.bingoreloaded.event.PlayerJoinedSessionWorldEvent;
+import io.github.steaf23.bingoreloaded.event.PlayerLeftSessionWorldEvent;
 import io.github.steaf23.bingoreloaded.gameloop.SessionMember;
 import org.bukkit.event.player.PlayerInteractEvent;
 
