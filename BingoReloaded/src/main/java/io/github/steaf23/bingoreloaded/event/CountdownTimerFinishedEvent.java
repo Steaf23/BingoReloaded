@@ -8,20 +8,12 @@ import org.jetbrains.annotations.NotNull;
 
 public class CountdownTimerFinishedEvent extends BingoEvent
 {
-    private static final HandlerList HANDLERS = new HandlerList();
-
     private final CountdownTimer timer;
 
     public CountdownTimerFinishedEvent(BingoSession session, CountdownTimer timer)
     {
         super(session);
         this.timer = timer;
-    }
-
-    @Override
-    public @NotNull HandlerList getHandlers()
-    {
-        return HANDLERS;
     }
 
     public CountdownTimer getTimer()
