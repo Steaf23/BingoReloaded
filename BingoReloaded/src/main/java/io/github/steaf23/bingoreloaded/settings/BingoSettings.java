@@ -21,6 +21,7 @@ public record BingoSettings(String card,
                             EnumSet<EffectOptionFlags> effects,
                             int maxTeamSize,
                             boolean enableCountdown,
+                            boolean showCounter,
                             int countdownDuration,
                             int hotswapGoal) implements ConfigurationSerializable
 {
@@ -38,6 +39,7 @@ public record BingoSettings(String card,
             put("team_size", maxTeamSize);
             put("duration", countdownDuration);
             put("countdown", enableCountdown);
+            put("counter", showCounter);
             put("hotswap_goal", hotswapGoal);
         }};
     }
@@ -53,6 +55,7 @@ public record BingoSettings(String card,
                 YmlDataManager.enumSetFromList(EffectOptionFlags.class, (List<String>) data.get("effects")),
                 (int) data.get("team_size"),
                 (boolean) data.get("countdown"),
+                (boolean) data.get("counter"),
                 (int) data.get("duration"),
                 (int) data.getOrDefault("hotswap_goal", 10)
         );

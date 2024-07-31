@@ -15,4 +15,5 @@ default_settings:
   team_size: 5
   kit: overpowered
   countdown: false
+  counter: true
   card: default_card

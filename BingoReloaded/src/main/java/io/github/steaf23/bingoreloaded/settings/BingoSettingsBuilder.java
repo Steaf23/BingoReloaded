@@ -24,6 +24,7 @@ public class BingoSettingsBuilder
     private EnumSet<EffectOptionFlags> effects;
     private int maxTeamSize;
     private boolean enableCountdown;
+    private boolean showCounter;
     private int countdownGameDuration;
     private int hotswapGoal;
 
@@ -45,6 +46,7 @@ public class BingoSettingsBuilder
         this.maxTeamSize = def.maxTeamSize();
         this.countdownGameDuration = def.countdownDuration();
         this.enableCountdown = def.enableCountdown();
+        this.showCounter = def.showCounter();
         this.hotswapGoal = def.hotswapGoal();
     }
 
@@ -59,6 +61,7 @@ public class BingoSettingsBuilder
         maxTeamSize = settings.maxTeamSize();
         countdownGameDuration = settings.countdownDuration();
         enableCountdown = settings.enableCountdown();
+        showCounter = settings.showCounter();
         hotswapGoal = settings.hotswapGoal();
         settingsUpdated();
     }
@@ -180,6 +183,15 @@ public class BingoSettingsBuilder
         return this;
     }
 
+    public BingoSettingsBuilder showCounter(boolean showCounter)
+    {
+        if (this.showCounter != showCounter) {
+            this.showCounter = showCounter;
+            settingsUpdated();
+        }
+        return this;
+    }
+
     public BingoSettingsBuilder countdownGameDuration(int countdownGameDuration)
     {
         if (this.countdownGameDuration != countdownGameDuration) {
@@ -208,6 +220,7 @@ public class BingoSettingsBuilder
                 effects,
                 maxTeamSize,
                 enableCountdown,
+                showCounter,
                 countdownGameDuration,
                 hotswapGoal);
     }

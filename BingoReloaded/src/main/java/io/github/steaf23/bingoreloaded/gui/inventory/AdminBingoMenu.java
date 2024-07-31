@@ -50,6 +50,8 @@ public class AdminBingoMenu extends BasicMenu
             Material.POTION, BasicMenu.applyTitleFormat(BingoMessage.OPTIONS_EFFECTS.asPhrase()));
     private static final ItemTemplate COUNTDOWN = new ItemTemplate(5, 2,
             Material.CLOCK, BasicMenu.applyTitleFormat("Enable Countdown Timer"));
+    private static final ItemTemplate COUNTER = new ItemTemplate(4, 0,
+            Material.CLOCK, BasicMenu.applyTitleFormat("Show Counter Timer"));
     private static final ItemTemplate DURATION = new ItemTemplate(5, 4,
             Material.RECOVERY_COMPASS, BasicMenu.applyTitleFormat("Countdown Duration"));
     private static final ItemTemplate TEAM_SIZE = new ItemTemplate(7, 2,
@@ -101,7 +103,16 @@ public class AdminBingoMenu extends BasicMenu
             session.settingsBuilder.enableCountdown(enable);
             updateCountdownEnabledLore(countdownItem, enable);
         }));
-        addItems(teamSizeItem, durationItem, countdownItem);
+
+        ItemTemplate counterItem = COUNTER.copy();
+        boolean showCounter = session.settingsBuilder.view().showCounter();
+        updateCounterEnabledLore(counterItem, showCounter);
+        counterItem.setAction(new ToggleButtonAction(showCounter, enable -> {
+            session.settingsBuilder.showCounter(enable);
+            updateCounterEnabledLore(counterItem, enable);
+        }));
+
+        addItems(teamSizeItem, durationItem, countdownItem, counterItem);
 
         ItemTemplate centerButton = START.copy();
         centerButton.setAction(new ComboBoxButtonAction(value -> {
@@ -154,12 +165,15 @@ public class AdminBingoMenu extends BasicMenu
     }
 
     private void updateCountdownEnabledLore(ItemTemplate item, boolean enabled) {
-        if (enabled) {
-            item.setLore(PlayerDisplay.MINI_BUILDER.deserialize("<dark_purple>Countdown mode is <green>ENABLED</green>"));
-        }
-        else {
-            item.setLore(PlayerDisplay.MINI_BUILDER.deserialize("<dark_purple>Countdown mode is <red>DISABLED</red>"));
-        }
+        item.setLore(PlayerDisplay.MINI_BUILDER.deserialize(enabled
+            ? "<dark_purple>Countdown mode is <green>ENABLED</green>"
+            : "<dark_purple>Countdown mode is <red>DISABLED</red>"));
+    }
+
+    private void updateCounterEnabledLore(ItemTemplate item, boolean enabled) {
+        item.setLore(PlayerDisplay.MINI_BUILDER.deserialize(enabled
+            ? "<dark_purple>Counter Timer is now <green>visible</green>"
+            : "<dark_purple>Counter Timer is now <red>hidden</red>"));
     }
 
     private void updateTeamSizeLore(ItemTemplate item, int value) {

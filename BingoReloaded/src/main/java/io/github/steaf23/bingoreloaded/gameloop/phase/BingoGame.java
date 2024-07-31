@@ -109,25 +109,27 @@ public class BingoGame implements GamePhase
 
     private void start() {
         this.gameStarted = false;
-        // Create timer
-        if (settings.enableCountdown())
-            timer = new CountdownTimer(settings.countdownDuration() * 60, 5 * 60, 60, session);
-        else
-            timer = new CounterTimer();
-        timer.addNotifier(time ->
-        {
-            Component timerMessage = timer.getTimeDisplayMessage(false);
-            actionBarManager.requestMessage(p -> timerMessage, 0);
-            actionBarManager.update();
-            getProgressTracker().updateStatisticProgress();
-            scoreboard.updateVisible();
-        });
+
+        timer = settings.enableCountdown()
+            ? new CountdownTimer(settings.countdownDuration() * 60, 5 * 60, 60, session)
+            : new CounterTimer();
+
+        if ((timer instanceof CounterTimer && settings.showCounter()) || timer instanceof CountdownTimer)
+            timer.addNotifier(time ->
+            {
+                Component timerMessage = timer.getTimeDisplayMessage(false);
+                actionBarManager.requestMessage(p -> timerMessage, 0);
+                actionBarManager.update();
+                getProgressTracker().updateStatisticProgress();
+                scoreboard.updateVisible();
+            });
 
         deathMatchTask = null;
+
         World world = session.getOverworld();
-        if (world == null) {
+        if (world == null)
             return;
-        }
+
         world.setStorm(false);
         world.setTime(1000);
 
