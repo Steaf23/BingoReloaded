@@ -180,7 +180,7 @@ public class BingoGame implements GamePhase
             }
 
             Message timeDisplay = new Message(timeString).bold().color(color);
-            teamManager.getParticipants().forEach(p ->
+            getTeamManager().getParticipants().forEach(p ->
                     p.sessionPlayer().ifPresent(player -> {
                         Message.sendTitleMessage(timeDisplay, new Message(), player);
                     }));
