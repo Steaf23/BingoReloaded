@@ -76,8 +76,8 @@ public enum PlayerKit
     }
 
     public Component getDisplayName() {
-        if (getCustomKit(this) != null) {
-            return LegacyComponentSerializer.legacySection().deserialize(getCustomKit(this).name());
+        if (isCustomKit()) {
+            return getCustomKit(this).name();
         }
         return displayName;
     }
@@ -199,7 +199,7 @@ public enum PlayerKit
         };
     }
 
-    public static boolean assignCustomKit(String kitName, PlayerKit slot, Player commandSender)
+    public static boolean assignCustomKit(Component kitName, PlayerKit slot, Player commandSender)
     {
         if (customKitData.getConfig().contains(slot.configName))
             return false;

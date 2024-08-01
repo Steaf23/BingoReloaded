@@ -2,6 +2,8 @@ package io.github.steaf23.bingoreloaded.settings;
 
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.gui.inventory.item.SerializableItem;
+import io.github.steaf23.playerdisplay.PlayerDisplay;
+import net.kyori.adventure.text.Component;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.entity.Player;
@@ -14,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 @SerializableAs("Bingo.CustomKit")
-public record CustomKit(String name, PlayerKit slot, List<SerializableItem> items, int cardSlot) implements ConfigurationSerializable
+public record CustomKit(Component name, PlayerKit slot, List<SerializableItem> items, int cardSlot) implements ConfigurationSerializable
 {
     @NotNull
     @Override
@@ -35,7 +37,7 @@ public record CustomKit(String name, PlayerKit slot, List<SerializableItem> item
         if (slotId == 0)
             return data;
 
-        data.put("name", name);
+        data.put("name", PlayerDisplay.MINI_BUILDER.serialize(name));
         data.put("slot", slotId);
         data.put("items", items);
         data.put("card_slot", cardSlot);
@@ -53,10 +55,10 @@ public record CustomKit(String name, PlayerKit slot, List<SerializableItem> item
             case 5 -> PlayerKit.CUSTOM_5;
             default -> throw new IllegalStateException("Unexpected value: " + (int) data.get("slot"));
         };
-        return new CustomKit((String)data.get("name"), kit, (List<SerializableItem>)data.get("items"), (int)data.getOrDefault("card_slot", 40));
+        return new CustomKit(PlayerDisplay.MINI_BUILDER.deserialize((String)data.get("name")), kit, (List<SerializableItem>)data.get("items"), (int)data.getOrDefault("card_slot", 40));
     }
 
-    public static CustomKit fromPlayerInventory(Player player, String kitName, PlayerKit kitSlot)
+    public static CustomKit fromPlayerInventory(Player player, Component kitName, PlayerKit kitSlot)
     {
         List<SerializableItem> items = new ArrayList<>();
         int slot = 0;
@@ -76,10 +78,5 @@ public record CustomKit(String name, PlayerKit slot, List<SerializableItem> item
         }
 
         return new CustomKit(kitName, kitSlot, items, cardSlot);
-    }
-
-    public String getName()
-    {
-        return BingoMessage.convertColors(name);
     }
 }

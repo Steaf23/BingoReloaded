@@ -60,7 +60,7 @@ public class KitOptionsMenu extends BasicMenu
             CustomKit customkit = PlayerKit.getCustomKit(kit);
             if (customkit != null) {
                 addAction(new ItemTemplate(kitIdx * 2, 3, Material.WHITE_CONCRETE,
-                        Component.text(customkit.getName()), Component.text("Custom kit")), args -> {
+                        customkit.name(), Component.text("Custom kit")), args -> {
                     setKit(PlayerKit.fromConfig(kit.configName));
                     close(args.player());
                 });

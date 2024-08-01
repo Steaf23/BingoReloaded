@@ -238,10 +238,10 @@ public class BingoCommand implements TabExecutor
         }
         kitName.append(kitNameParts.getLast());
 
-        if (!PlayerKit.assignCustomKit(kitName.toString(), kit, commandSender)) {
+        if (!PlayerKit.assignCustomKit(PlayerDisplay.MINI_BUILDER.deserialize(kitName.toString()), kit, commandSender)) {
             Component message = PlayerDisplay.MINI_BUILDER
                     .deserialize("<red>Cannot add custom kit " + kitName + " to slot " + slot + ", this slot already contains kit ")
-                    .append(Component.text(PlayerKit.getCustomKit(kit).name()))
+                    .append(PlayerKit.getCustomKit(kit).name())
                     .append(Component.text(". Remove it first!"));
             BingoPlayerSender.sendMessage(message, commandSender);
         } else {
@@ -276,7 +276,7 @@ public class BingoCommand implements TabExecutor
             PlayerKit.removeCustomKit(kit);
 
             Component message = PlayerDisplay.MINI_BUILDER
-                    .deserialize("<green>Removed custom kit " + customKit.getName() + " from slot " + slot);
+                    .deserialize("<green>Removed custom kit " + PlayerDisplay.MINI_BUILDER.serialize(customKit.name()) + " from slot " + slot);
             BingoPlayerSender.sendMessage(message, commandSender);
         }
     }

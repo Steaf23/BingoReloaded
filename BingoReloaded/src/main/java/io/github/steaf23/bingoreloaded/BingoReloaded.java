@@ -86,15 +86,13 @@ public class BingoReloaded extends JavaPlugin
             ConsoleMessenger.log(Component.text("Enabled Bingo Reloaded Placeholder expansion").color(NamedTextColor.GREEN));
         }
 
-        PlayerDisplay.setItemTranslation(key -> {
-            return switch (key) {
-                case MENU_PREVIOUS -> BingoMessage.MENU_PREV.asPhrase();
-                case MENU_NEXT -> BingoMessage.MENU_NEXT.asPhrase();
-                case MENU_ACCEPT -> BingoMessage.MENU_ACCEPT.asPhrase();
-                case MENU_SAVE_EXIT -> BingoMessage.MENU_SAVE_EXIT.asPhrase();
-                case MENU_FILTER -> BingoMessage.MENU_FILTER.asPhrase();
-                case MENU_CLEAR_FILTER -> BingoMessage.MENU_CLEAR_FILTER.asPhrase();
-            };
+        PlayerDisplay.setItemTranslation(key -> switch (key) {
+            case MENU_PREVIOUS -> BingoMessage.MENU_PREV.asPhrase();
+            case MENU_NEXT -> BingoMessage.MENU_NEXT.asPhrase();
+            case MENU_ACCEPT -> BingoMessage.MENU_ACCEPT.asPhrase();
+            case MENU_SAVE_EXIT -> BingoMessage.MENU_SAVE_EXIT.asPhrase();
+            case MENU_FILTER -> BingoMessage.MENU_FILTER.asPhrase();
+            case MENU_CLEAR_FILTER -> BingoMessage.MENU_CLEAR_FILTER.asPhrase();
         });
 
         ConfigurationSerialization.registerClass(BingoSettings.class);
@@ -145,12 +143,10 @@ public class BingoReloaded extends JavaPlugin
         Bukkit.getPluginManager().registerEvents(hudRegistry, this);
 
         Metrics bStatsMetrics = new Metrics(this, 22586);
-        bStatsMetrics.addCustomChart(new Metrics.SimplePie("selected_language", () -> {
-            return config.language.replace(".yml", "").replace("languages/", "");
-        }));
-        bStatsMetrics.addCustomChart(new Metrics.SimplePie("plugin_configuration", () -> {
-            return config.configuration == ConfigData.PluginConfiguration.SINGULAR ? "Singular" : "Multiple";
-        }));
+        bStatsMetrics.addCustomChart(new Metrics.SimplePie("selected_language",
+                () -> config.language.replace(".yml", "").replace("languages/", "")));
+        bStatsMetrics.addCustomChart(new Metrics.SimplePie("plugin_configuration",
+                () -> config.configuration == ConfigData.PluginConfiguration.SINGULAR ? "Singular" : "Multiple"));
     }
 
     public void registerCommand(String commandName, TabExecutor executor) {

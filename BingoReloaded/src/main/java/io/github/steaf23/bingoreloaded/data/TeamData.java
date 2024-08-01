@@ -2,7 +2,10 @@ package io.github.steaf23.bingoreloaded.data;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.helper.YmlDataManager;
+import io.github.steaf23.playerdisplay.PlayerDisplay;
 import io.github.steaf23.playerdisplay.util.BlockColor;
+import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import org.apache.commons.text.WordUtils;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
@@ -14,13 +17,17 @@ import java.util.List;
 import java.util.Map;
 
 public class TeamData {
+    /**
+     * @param stringName name to use for the team, which is retrieved using minimessage deserialization
+     * @param color
+     */
     @SerializableAs("TeamTemplate")
-    public record TeamTemplate(String name, TextColor color) implements ConfigurationSerializable {
+    public record TeamTemplate(String stringName, TextColor color) implements ConfigurationSerializable {
         @NotNull
         @Override
         public Map<String, Object> serialize() {
             Map<String, Object> data = new HashMap<>();
-            data.put("name", name);
+            data.put("name", stringName);
             data.put("color", color.asHexString());
             return data;
         }
@@ -29,6 +36,10 @@ public class TeamData {
             String name = (String) data.getOrDefault("name", "");
             TextColor color = TextColor.fromHexString((String) data.getOrDefault("color", "#808080"));
             return new TeamTemplate(name, color);
+        }
+
+        public Component nameComponent() {
+            return PlayerDisplay.MINI_BUILDER.deserialize(stringName);
         }
     }
 
@@ -51,7 +62,7 @@ public class TeamData {
     }
 
     public void addTeam(@NotNull String key, TeamTemplate template) {
-        addTeam(key, template.name(), template.color());
+        addTeam(key, template.stringName(), template.color());
     }
 
     public TeamTemplate getTeam(String key, TeamTemplate def) {

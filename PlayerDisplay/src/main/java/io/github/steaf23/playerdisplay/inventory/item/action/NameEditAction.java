@@ -1,6 +1,7 @@
 package io.github.steaf23.playerdisplay.inventory.item.action;
 
 
+import io.github.steaf23.playerdisplay.PlayerDisplay;
 import io.github.steaf23.playerdisplay.inventory.MenuBoard;
 import io.github.steaf23.playerdisplay.inventory.UserInputMenu;
 import io.github.steaf23.playerdisplay.inventory.item.ItemTemplate;
@@ -8,7 +9,11 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.entity.HumanEntity;
 
 import java.util.function.BiConsumer;
+import java.util.function.Function;
 
+/**
+ * Action to edit the name of an item by clicking on it. Supports minimessage serialization
+ */
 public class NameEditAction extends MenuAction
 {
     private String value;
@@ -31,7 +36,7 @@ public class NameEditAction extends MenuAction
     protected void renameItem(HumanEntity player) {
         new UserInputMenu(board, prompt, (result) -> {
             value = result;
-            item.setName(Component.text(value));
+            item.setName(PlayerDisplay.MINI_BUILDER.deserialize(value));
             callback.accept(value, item);
         }, value)
                 .open(player);

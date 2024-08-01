@@ -58,7 +58,7 @@ public class BasicTeamManager implements TeamManager
 
     private Component createPrefix(TeamData.TeamTemplate template) {
         String prefixFormat = new BingoPlaceholderFormatter().getTeamFullFormat();
-        return BingoMessage.createPhrase(prefixFormat.replace("{0}", "<" + template.color().toString() + ">").replace("{1}", template.name()) + " ");
+        return BingoMessage.createPhrase(prefixFormat.replace("{0}", "<" + template.color().toString() + ">").replace("{1}", template.stringName()) + " ");
     }
 
     private void addAutoPlayersToTeams() {
@@ -267,7 +267,7 @@ public class BasicTeamManager implements TeamManager
         if (existingTeam.isPresent())
             return existingTeam.get();
 
-        BingoTeam bTeam = new BingoTeam(teamId, team.color(), Component.text(team.name()), createPrefix(team));
+        BingoTeam bTeam = new BingoTeam(teamId, team.color(), team.nameComponent(), createPrefix(team));
 
         activeTeams.addTeam(bTeam);
         return bTeam;

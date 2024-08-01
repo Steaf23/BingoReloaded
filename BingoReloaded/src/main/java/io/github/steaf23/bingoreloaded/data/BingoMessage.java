@@ -178,14 +178,6 @@ public enum BingoMessage
         return translation;
     }
 
-    /**
-     * @param input The input string, can look something like this: "{#00bb33}Hello, I like to &2&lDance && &rSing!"
-     * @return Legacy text string that can be used in TextComponent#fromLegacyText
-     */
-    public static String convertColors(String input) {
-        return replaceColors(input, color -> "" + TextColor.fromHexString(color));
-    }
-
     public static String convertSmallCaps(String input) {
         String part = input;
         Matcher matcher = SMALL_CAPS_PATTERN.matcher(part);
@@ -354,7 +346,7 @@ public enum BingoMessage
     }
 
     /**
-     * Replaces all instances of color formatted blocks by their converted values.
+     * Replaces all instances of color formatted blocks by their converted values. (when using {#FFFFFF} for example)
      * The way the colors are replaced is determined by the converter function.
      *
      * @param input     input string containing possibly multiple instances of colors to be converted

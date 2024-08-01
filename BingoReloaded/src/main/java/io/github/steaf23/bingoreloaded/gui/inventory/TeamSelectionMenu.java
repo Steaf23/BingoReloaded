@@ -129,7 +129,7 @@ public class TeamSelectionMenu extends PaginatedSelectionMenu
             }
 
             optionItems.add(ItemTemplate.createColoredLeather(teamTemplate.color(), Material.LEATHER_HELMET)
-                    .setName(Component.text(teamTemplate.name()).color(teamTemplate.color()).decorate(TextDecoration.BOLD))
+                    .setName(teamTemplate.nameComponent().color(teamTemplate.color()).decorate(TextDecoration.BOLD))
                     .setLore(players.toArray(Component[]::new))
                     .setCompareKey(teamId)
                     .setGlowing(playersTeam)

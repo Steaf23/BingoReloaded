@@ -56,7 +56,7 @@ public class TeamEditorMenu extends PaginatedSelectionMenu
         for (String key : teamMap.keySet()) {
             TeamData.TeamTemplate template = teamMap.get(key);
             items.add(ItemTemplate.createColoredLeather(template.color(), Material.LEATHER_HELMET)
-                    .setName(Component.text(template.name()).color(template.color()).decorate(TextDecoration.BOLD))
+                    .setName(template.nameComponent().color(template.color()).decorate(TextDecoration.BOLD))
                     .setLore(Component.text("id: ").append(Component.text(key).color(NamedTextColor.GRAY).decorate(TextDecoration.ITALIC)))
                     .setCompareKey(key));
         }
@@ -94,15 +94,7 @@ public class TeamEditorMenu extends PaginatedSelectionMenu
             this.templateToEdit = teamToEdit;
             this.finishedCallback = callback;
 
-            // Change the team name
-            ItemTemplate teamNameItem = new ItemTemplate(2, 1, Material.WRITABLE_BOOK, Component.text(templateToEdit.name()));
-            teamNameItem.setAction(new NameEditAction(Component.text("Edit team name"), getMenuBoard(), (value, item) -> {
-                templateToEdit = new TeamData.TeamTemplate(value, templateToEdit.color());
-                //TODO: find a way to do addItem(teamNameItem); automatically??
-                addItem(item);
-            }));
-
-            addItem(teamNameItem);
+            addItem(getTeamNameItem());
 
             // Add action to change the team's color.
             ItemTemplate teamColorItem = new ItemTemplate(4, 1, Material.LEATHER_CHESTPLATE, Component.text("Color").color(templateToEdit.color()).decorate(TextDecoration.BOLD))
@@ -112,7 +104,7 @@ public class TeamEditorMenu extends PaginatedSelectionMenu
             addAction(teamColorItem, args -> {
                 new ColorPickerMenu(getMenuBoard(), Component.text("Pick team color"), (result) -> {
                     // Update template
-                    templateToEdit = new TeamData.TeamTemplate(templateToEdit.name(), result);
+                    templateToEdit = new TeamData.TeamTemplate(templateToEdit.stringName(), result);
 
                     // Update menu item
                     teamColorItem.setLeatherColor(templateToEdit.color())
@@ -123,6 +115,19 @@ public class TeamEditorMenu extends PaginatedSelectionMenu
 
             addCloseAction(new ItemTemplate(6, 1, Material.BARRIER,
                     BingoMessage.MENU_EXIT.asPhrase().color(NamedTextColor.RED).decorate(TextDecoration.BOLD)));
+        }
+
+        private @NotNull ItemTemplate getTeamNameItem() {
+            ItemTemplate teamNameItem = new ItemTemplate(2, 1, Material.WRITABLE_BOOK,
+                    templateToEdit.nameComponent(),
+                    Component.text("Supports minimessage formatting").color(NamedTextColor.AQUA).decorate(TextDecoration.ITALIC));
+
+            teamNameItem.setAction(new NameEditAction(Component.text("Edit team name"), getMenuBoard(), (value, item) -> {
+                templateToEdit = new TeamData.TeamTemplate(value, templateToEdit.color());
+                //TODO: find a way to do addItem(teamNameItem); automatically??
+                addItem(item);
+            }));
+            return teamNameItem;
         }
 
         @Override
