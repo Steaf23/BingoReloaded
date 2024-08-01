@@ -31,7 +31,7 @@ public class SerializablePlayer implements ConfigurationSerializable
     public ItemStack[] inventory;
     public ItemStack[] enderInventory;
 
-    public static SerializablePlayer fromPlayer(JavaPlugin plugin, Player player)
+    public static SerializablePlayer fromPlayer(@NotNull JavaPlugin plugin, @NotNull Player player)
     {
         SerializablePlayer data = new SerializablePlayer();
         data.pluginVersion = plugin.getPluginMeta().getVersion();

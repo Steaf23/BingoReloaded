@@ -4,8 +4,6 @@
 
 3.0 Add support for Folia
 
-(2.x) implement Vault rewards
-
 (2.x) refactor card recovery (its shit).
 
 (2.x) add Hologram wizard item to /bingo hologram to allow players to place scoreboards in the world
@@ -31,16 +29,6 @@
   - to change these values
 
 (2.x) add spam prevention on player gui's/ options
-
-(2.x) add /autobingo playerdata command (
-#- ### `/autobingo <world_name> playerdata <load | save | remove> <player_name>`
-#  Manage player data manually, should be used if the config options don't provide enough freedom in how you want to use player data.
-#  (or when you need to recover data in certain situations).
-#  
-#  Arguments:
-#    - *Required** `<load | save | remove>`: Specify whether to load, save, or remove player data.
-#    - *Required** `<player_name>`: The name of the player whose data will be loaded, saved, or removed.
-)
 
 (2.x) add support to use minimessage from commands like setting team or kit name
 

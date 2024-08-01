@@ -1,11 +1,14 @@
 package io.github.steaf23.bingoreloaded.command;
 
+import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.cards.CardSize;
 import io.github.steaf23.bingoreloaded.command.core.DeferredCommand;
 import io.github.steaf23.bingoreloaded.command.core.SubCommand;
 import io.github.steaf23.bingoreloaded.data.BingoCardData;
 import io.github.steaf23.bingoreloaded.data.BingoSettingsData;
 import io.github.steaf23.bingoreloaded.data.ConfigData;
+import io.github.steaf23.bingoreloaded.data.PlayerSerializationData;
+import io.github.steaf23.bingoreloaded.data.helper.SerializablePlayer;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gameloop.GameManager;
 import io.github.steaf23.bingoreloaded.gameloop.phase.PregameLobby;
@@ -221,6 +224,17 @@ public class AutoBingoCommand implements TabExecutor
             }
             return List.of();
         }));
+
+        command.addSubCommand(new SubCommand("playerdata", this::playerDataCommand)
+                .addUsage("<save | load | remove> <player_name>")
+                .addTabCompletion(args -> {
+                    if (args.length <= 2) {
+                        return List.of("save", "load", "remove");
+                    } else if (args.length == 3) {
+                        return null;
+                    }
+                    return List.of();
+                }));
     }
 
     @Override
@@ -609,6 +623,46 @@ public class AutoBingoCommand implements TabExecutor
         }
         sendSuccess(player.displayName().append(Component.text(" voted for " + category + " " + voteFor)), sessionName);
         return true;
+    }
+
+    private boolean playerDataCommand(String... args) {
+        String sessionName = args[0];
+        if (args.length != 3) {
+            return false;
+        }
+
+        PlayerSerializationData playerData = manager.getPlayerData();
+
+        String playerName = args[2];
+        Player player = Bukkit.getPlayer(playerName);
+        if (player == null) {
+            sendFailed("Cannot edit player data, player " + playerName + " not found", sessionName);
+            return false;
+        }
+
+        return switch (args[1]) {
+            case "load" -> {
+                SerializablePlayer data = playerData.loadPlayer(player);
+                if (data == null) {
+                    sendFailed("Cannot load player data, no data saved for " + playerName, sessionName);
+                    yield false;
+                }
+                sendSuccess("Loaded player data for " + playerName, sessionName);
+                yield true;
+            }
+            case "save" -> {
+                SerializablePlayer data = SerializablePlayer.fromPlayer(BingoReloaded.getInstance(), player);
+                playerData.savePlayer(data, true);
+                sendSuccess("Saved player data for " + playerName, sessionName);
+                yield true;
+            }
+            case "remove" -> {
+                playerData.removePlayer(player.getUniqueId());
+                sendSuccess("Removed previously saved player data for " + playerName, sessionName);
+                yield true;
+            }
+            default -> false;
+        };
     }
 
     private void sendSuccess(String message, String sessionName) {

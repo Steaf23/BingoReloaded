@@ -281,4 +281,8 @@ public class GameManager
             }
         }
     }
+
+    public PlayerSerializationData getPlayerData() {
+        return playerData;
+    }
 }
