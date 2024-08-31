@@ -1,6 +1,8 @@
 package io.github.steaf23.bingoreloaded.tasks;
 
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
+import io.github.steaf23.bingoreloaded.data.core.node.BranchNode;
+import io.github.steaf23.bingoreloaded.data.core.node.NodeBuilder;
 import io.github.steaf23.playerdisplay.util.ComponentUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -10,8 +12,6 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 
 @SerializableAs("Bingo.ItemTask")
@@ -26,6 +26,13 @@ public record ItemTask(Material material, int count) implements CountableTask
     {
         this.material = material;
         this.count = Math.min(64, Math.max(1, count));
+    }
+
+    public ItemTask(BranchNode node) {
+        this(
+                Material.valueOf(node.getString("item")),
+                node.getInt("count")
+        );
     }
 
     @Override
@@ -63,16 +70,6 @@ public record ItemTask(Material material, int count) implements CountableTask
         return new ItemTask(item, count);
     }
 
-    @NotNull
-    @Override
-    public Map<String, Object> serialize()
-    {
-        return new HashMap<>(){{
-            put("item", material.name());
-            put("count", count);
-        }};
-    }
-
     @Override
     public boolean equals(Object o)
     {
@@ -97,13 +94,6 @@ public record ItemTask(Material material, int count) implements CountableTask
         return material.equals(itemTask.material);
     }
 
-    public static ItemTask deserialize(Map<String, Object> data)
-    {
-        return new ItemTask(
-                Material.valueOf((String) data.get("item")),
-                (int) data.get("count"));
-    }
-
     @Override
     public int getCount()
     {
@@ -114,5 +104,14 @@ public record ItemTask(Material material, int count) implements CountableTask
     public CountableTask updateTask(int newCount)
     {
         return new ItemTask(material, newCount);
+    }
+
+
+    @Override
+    public BranchNode toNode() {
+        return new NodeBuilder()
+                .withString("item", material.name())
+                .withInt("count", count)
+                .getNode();
     }
 }

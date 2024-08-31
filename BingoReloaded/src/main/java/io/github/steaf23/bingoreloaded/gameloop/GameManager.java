@@ -1,8 +1,8 @@
 package io.github.steaf23.bingoreloaded.gameloop;
 
-import io.github.steaf23.bingoreloaded.data.ConfigData;
+import io.github.steaf23.bingoreloaded.data.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.data.PlayerSerializationData;
-import io.github.steaf23.bingoreloaded.data.helper.SerializablePlayer;
+import io.github.steaf23.bingoreloaded.data.core.helper.SerializablePlayer;
 import io.github.steaf23.bingoreloaded.data.world.WorldData;
 import io.github.steaf23.bingoreloaded.data.world.WorldGroup;
 import io.github.steaf23.bingoreloaded.event.PrepareNextBingoGameEvent;
@@ -33,7 +33,7 @@ public class GameManager
     protected final Map<String, BingoSession> sessions;
 
     private final JavaPlugin plugin;
-    private final ConfigData config;
+    private final BingoConfigurationData config;
     private final MenuBoard menuBoard;
     private final HUDRegistry hudRegistry;
 
@@ -42,7 +42,7 @@ public class GameManager
 
     private boolean teleportingPlayer;
 
-    public GameManager(@NotNull JavaPlugin plugin, ConfigData config, MenuBoard menuBoard, HUDRegistry hudRegistry) {
+    public GameManager(@NotNull JavaPlugin plugin, BingoConfigurationData config, MenuBoard menuBoard, HUDRegistry hudRegistry) {
         this.plugin = plugin;
         this.config = config;
         this.menuBoard = menuBoard;
@@ -144,7 +144,7 @@ public class GameManager
         }
     }
 
-    public ConfigData getGameConfig() {
+    public BingoConfigurationData getGameConfig() {
         return config;
     }
 
@@ -272,7 +272,7 @@ public class GameManager
     }
 
     public void handlePrepareNextBingoGame(final PrepareNextBingoGameEvent event) {
-        if (config.savePlayerInformation && config.loadPlayerInformationStrategy == ConfigData.LoadPlayerInformationStrategy.AFTER_GAME) {
+        if (config.savePlayerInformation && config.loadPlayerInformationStrategy == BingoConfigurationData.LoadPlayerInformationStrategy.AFTER_GAME) {
             for (BingoParticipant participant : event.getSession().teamManager.getParticipants()) {
                 participant.sessionPlayer().ifPresent(player -> {
                     event.getSession().teamManager.removeMemberFromTeam(participant);

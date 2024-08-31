@@ -2,7 +2,7 @@ package io.github.steaf23.bingoreloaded.command;
 
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.BingoStatData;
-import io.github.steaf23.bingoreloaded.data.ConfigData;
+import io.github.steaf23.bingoreloaded.data.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gameloop.GameManager;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
@@ -36,11 +36,11 @@ import java.util.stream.Collectors;
 
 public class BingoCommand implements TabExecutor
 {
-    private final ConfigData config;
+    private final BingoConfigurationData config;
     private final GameManager gameManager;
     private final MenuBoard menuBoard;
 
-    public BingoCommand(ConfigData config, GameManager gameManager, MenuBoard menuBoard) {
+    public BingoCommand(BingoConfigurationData config, GameManager gameManager, MenuBoard menuBoard) {
         this.config = config;
         this.gameManager = gameManager;
         this.menuBoard = menuBoard;

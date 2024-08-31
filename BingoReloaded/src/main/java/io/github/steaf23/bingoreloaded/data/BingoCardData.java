@@ -1,7 +1,10 @@
 package io.github.steaf23.bingoreloaded.data;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
-import io.github.steaf23.bingoreloaded.data.helper.YmlDataManager;
+import io.github.steaf23.bingoreloaded.data.core.DataAccessor;
+import io.github.steaf23.bingoreloaded.data.core.DataStorage;
+import io.github.steaf23.bingoreloaded.data.core.NodeDataAccessor;
+import io.github.steaf23.bingoreloaded.data.core.node.BranchNode;
 import io.github.steaf23.bingoreloaded.tasks.ItemTask;
 import io.github.steaf23.bingoreloaded.tasks.TaskData;
 import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
@@ -9,12 +12,10 @@ import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public class BingoCardData
 {
@@ -26,11 +27,11 @@ public class BingoCardData
     public static final int MAX_ITEMS = 36;
     public static final int MIN_ITEMS = 1;
 
-    private final YmlDataManager data = BingoReloaded.createYmlDataManager("data/cards.yml");
+    private final NodeDataAccessor data = BingoReloaded.getOrCreateDataAccessor("data/cards.yml", NodeDataAccessor.class);
 
     public boolean removeCard(String cardName)
     {
-        if (!data.getConfig().contains(cardName))
+        if (!data.contains(cardName))
             return false;
 
         if (DEFAULT_CARD_NAMES.contains(cardName)) {
@@ -38,19 +39,19 @@ public class BingoCardData
             return false;
         }
 
-        data.getConfig().set(cardName, null);
-        data.saveConfig();
+        data.erase(cardName);
+        data.saveChanges();
         return true;
     }
 
     public boolean duplicateCard(String cardName)
     {
-        if (!data.getConfig().contains(cardName))
+        if (!data.contains(cardName))
             return false;
 
-        var card = data.getConfig().get(cardName);
-        data.getConfig().set(cardName + "_copy", card);
-        data.saveConfig();
+        BranchNode card = data.getStorage(cardName);
+        data.setStorage(cardName + "_copy", card);
+        data.saveChanges();
         return true;
     }
 
@@ -58,45 +59,43 @@ public class BingoCardData
     {
         if (DEFAULT_CARD_NAMES.contains(cardName) || DEFAULT_CARD_NAMES.contains(newName))
             return false;
-        if (!data.getConfig().contains(cardName))
+        if (!data.contains(cardName))
             return false;
-        if (data.getConfig().contains(newName)) // Card with newName already exists
+        if (data.contains(newName)) // Card with newName already exists
             return false;
 
-        var card = data.getConfig().get(cardName);
-        data.getConfig().set(newName, card);
-        data.getConfig().set(cardName, null);
-        data.saveConfig();
+        BranchNode card = data.getStorage(cardName);
+        data.setStorage(newName, card);
+        data.erase(cardName);
+        data.saveChanges();
         return true;
     }
 
     public Set<String> getCardNames()
     {
-        return data.getConfig().getKeys(false);
+        return data.getKeys();
     }
 
     public int getListMax(String cardName, String listName)
     {
-        return data.getConfig().getInt(cardName + "." + listName + ".max", MAX_ITEMS);
+        return data.getInt(cardName + "." + listName + ".max", MAX_ITEMS);
     }
 
     public int getListMin(String cardName, String listName)
     {
-        return data.getConfig().getInt(cardName + "." + listName + ".min", MIN_ITEMS);
+        return data.getInt(cardName + "." + listName + ".min", MIN_ITEMS);
     }
 
     public void setList(String cardName, String listName, int max, int min)
     {
-        data.getConfig().createSection(cardName + "." + listName, new HashMap<>(){{
-            put("max", max);
-            put("min", min);
-        }});
-        data.saveConfig();
+        data.setInt(cardName + "." + listName + ".max", max);
+        data.setInt(cardName + "." + listName + ".min", min);
+        data.saveChanges();
     }
 
     public void removeList(String cardName, String listName)
     {
-        data.getConfig().set(cardName + "." + listName, null);
+        data.erase(cardName + "." + listName);
     }
 
     public ItemTask getRandomItemTask(String cardName)
@@ -108,7 +107,7 @@ public class BingoCardData
         List<TaskData> tasks = new ArrayList<>();
         getListNames(cardName).forEach((l) -> tasks.addAll(listsData.getTasks(l, false, false)));
 
-        List<TaskData> allItemTasks = tasks.stream().filter(task -> task instanceof ItemTask).collect(Collectors.toList());
+        List<TaskData> allItemTasks = tasks.stream().filter(task -> task instanceof ItemTask).toList();
 
         if (!allItemTasks.isEmpty())
             return (ItemTask)allItemTasks.get(Math.abs(generator.nextInt(allItemTasks.size())));
@@ -134,24 +133,24 @@ public class BingoCardData
 
     public Set<String> getListNames(String cardName)
     {
-        if (data.getConfig().getConfigurationSection(cardName) == null)
+        if (!data.contains(cardName))
             return new HashSet<>();
         else
         {
-            return data.getConfig().getConfigurationSection(cardName).getKeys(false);
+            return data.get(cardName).getKeys();
         }
     }
 
     public List<String> getListsSortedByMin(String cardName)
     {
-        List<String> result = new ArrayList<>(data.getConfig().getConfigurationSection(cardName).getKeys(false));
+        List<String> result = new ArrayList<>(data.get(cardName).getKeys());
         result.sort((a, b) -> Integer.compare(getListMin(cardName, a), getListMin(cardName, b)));
         return result;
     }
 
     public List<String> getListsSortedByMax(String cardName)
     {
-        List<String> result = new ArrayList<>(data.getConfig().getConfigurationSection(cardName).getKeys(false));
+        List<String> result = new ArrayList<>(data.get(cardName).getKeys());
         result.sort((a, b) -> Integer.compare(getListMax(cardName, a), getListMax(cardName, b)));
         return result;
     }

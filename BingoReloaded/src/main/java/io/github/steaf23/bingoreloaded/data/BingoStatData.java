@@ -1,23 +1,25 @@
 package io.github.steaf23.bingoreloaded.data;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
-import io.github.steaf23.bingoreloaded.data.helper.YmlDataManager;
+import io.github.steaf23.bingoreloaded.data.core.DataAccessor;
+import io.github.steaf23.bingoreloaded.data.core.NodeDataAccessor;
 import io.github.steaf23.bingoreloaded.hologram.HologramBuilder;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
-import java.util.Map;
 import java.util.UUID;
 
 
 public class BingoStatData
 {
-    private final YmlDataManager data = BingoReloaded.createYmlDataManager("data/player_stats.yml");
+    private final NodeDataAccessor data = BingoReloaded.getOrCreateDataAccessor("data/player_stats.yml", NodeDataAccessor.class);
 
     public BingoStatData()
     {
@@ -98,45 +100,23 @@ public class BingoStatData
     public Component getPlayerStatsFormatted(String playerName)
     {
         UUID playerId = getPlayerUUID(playerName);
-        if (playerId != null)
-        {
-            return getPlayerStatsFormatted(playerId);
-        }
-        else
-        {
-            return Component.text("Could not find statistics for player ")
-                    .append(Component.text(playerName).color(NamedTextColor.WHITE))
-                    .append(Component.text("!"))
-                    .color(NamedTextColor.RED);
-        }
+        return getPlayerStatsFormatted(playerId);
     }
 
     private String getPlayerData(UUID playerId)
     {
-        return data.getConfig().getString(playerId.toString(), "0;0;0;0;0");
+        return data.getString(playerId.toString(), "0;0;0;0;0");
     }
 
-    private UUID getPlayerUUID(String playerName)
+    private @NotNull UUID getPlayerUUID(String playerName)
     {
-        Map<String, Object> playerData = data.getConfig().getValues(false);
-        for (String recordName : playerData.keySet())
-        {
-            UUID playerId = UUID.fromString(recordName);
-            Player bukkitPlayer = Bukkit.getPlayer(playerId);
-            if (bukkitPlayer == null) {
-                continue;
-            }
-            if (bukkitPlayer.getName().equals(playerName))
-            {
-                return playerId;
-            }
-        }
-        return null;
+        OfflinePlayer player = Bukkit.getOfflinePlayer(playerName);
+        return player.getUniqueId();
     }
 
     private void setPlayerData(UUID playerId, String statData)
     {
-        data.getConfig().set(playerId.toString(), statData);
-        data.saveConfig();
+        data.setString(playerId.toString(), statData);
+        data.saveChanges();
     }
 }

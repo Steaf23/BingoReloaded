@@ -1,7 +1,7 @@
 package io.github.steaf23.bingoreloaded.gui.inventory;
 
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
-import io.github.steaf23.bingoreloaded.data.ConfigData;
+import io.github.steaf23.bingoreloaded.data.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.gameloop.phase.PregameLobby;
 import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
@@ -26,7 +26,7 @@ public class VoteMenu extends BasicMenu
     private static final ItemTemplate EXIT = new ItemTemplate(8, Material.BARRIER,
             BingoMessage.MENU_EXIT.asPhrase().color(NamedTextColor.RED).decorate(TextDecoration.BOLD));
 
-    public VoteMenu(MenuBoard menuBoard, ConfigData.VoteList voteList, PregameLobby lobbyPhase) {
+    public VoteMenu(MenuBoard menuBoard, BingoConfigurationData.VoteList voteList, PregameLobby lobbyPhase) {
         super(menuBoard, BingoMessage.OPTIONS_VOTE.asPhrase(), 3);
 
         this.lobby = lobbyPhase;

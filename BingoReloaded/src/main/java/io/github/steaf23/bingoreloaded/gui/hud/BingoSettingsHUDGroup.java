@@ -1,6 +1,6 @@
 package io.github.steaf23.bingoreloaded.gui.hud;
 
-import io.github.steaf23.bingoreloaded.data.ConfigData;
+import io.github.steaf23.bingoreloaded.data.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.data.ScoreboardData;
 import io.github.steaf23.bingoreloaded.gui.inventory.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
@@ -37,7 +37,7 @@ public class BingoSettingsHUDGroup extends PlayerHUDGroup
         updateVisible();
     }
 
-    public void updateSettings(@NotNull BingoSettings settings, ConfigData config) {
+    public void updateSettings(@NotNull BingoSettings settings, BingoConfigurationData config) {
         addSidebarArgument("gamemode", settings.mode().asComponent());
         addSidebarArgument("card_size", settings.size().asComponent());
         addSidebarArgument("kit", settings.kit().getDisplayName());

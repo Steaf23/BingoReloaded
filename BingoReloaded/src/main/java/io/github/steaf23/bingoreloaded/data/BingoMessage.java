@@ -1,6 +1,8 @@
 package io.github.steaf23.bingoreloaded.data;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
+import io.github.steaf23.bingoreloaded.data.core.DataAccessor;
+import io.github.steaf23.bingoreloaded.data.core.helper.YmlDataManager;
 import io.github.steaf23.playerdisplay.PlayerDisplay;
 import io.github.steaf23.playerdisplay.util.TinyCaps;
 import me.clip.placeholderapi.PlaceholderAPI;
@@ -8,13 +10,11 @@ import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
-import net.kyori.adventure.text.event.HoverEventSource;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -168,9 +168,9 @@ public enum BingoMessage
         this.translation = key;
     }
 
-    public static void setLanguage(FileConfiguration text, FileConfiguration fallbackText) {
+    public static void setLanguage(YmlDataManager text, YmlDataManager fallbackText) {
         for (BingoMessage value : BingoMessage.values()) {
-            value.translation = text.getString(value.key, fallbackText.getString(value.key, value.translation));
+            value.translation = text.getConfig().getString(value.key, fallbackText.getConfig().getString(value.key, value.translation));
         }
     }
 

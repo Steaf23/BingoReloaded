@@ -1,8 +1,9 @@
 package io.github.steaf23.bingoreloaded.data;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
-import io.github.steaf23.bingoreloaded.data.helper.SerializablePlayer;
-import io.github.steaf23.bingoreloaded.data.helper.YmlDataManager;
+import io.github.steaf23.bingoreloaded.data.core.DataAccessor;
+import io.github.steaf23.bingoreloaded.data.core.NodeDataAccessor;
+import io.github.steaf23.bingoreloaded.data.core.helper.SerializablePlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
@@ -10,14 +11,14 @@ import java.util.UUID;
 
 public class PlayerSerializationData
 {
-    private final YmlDataManager data = BingoReloaded.createYmlDataManager("data/players.yml");
+    private final NodeDataAccessor data = BingoReloaded.getOrCreateDataAccessor("data/players.yml", NodeDataAccessor.class);
 
     public void savePlayer(SerializablePlayer player, boolean overwriteExisting) {
-        if (data.getConfig().contains(player.playerId.toString()) && !overwriteExisting)
+        if (data.contains(player.playerId.toString()) && !overwriteExisting)
             return;
 
-        data.getConfig().set(player.playerId.toString(), player);
-        data.saveConfig();
+        data.setSerializable(player.playerId.toString(), player);
+        data.saveChanges();
     }
 
     /**
@@ -26,22 +27,22 @@ public class PlayerSerializationData
      * @return the players new state
      */
     public @Nullable SerializablePlayer loadPlayer(Player player) {
-        if (!data.getConfig().contains(player.getUniqueId().toString())) {
+        if (!data.contains(player.getUniqueId().toString())) {
             return null;
         }
 
-        SerializablePlayer playerData = data.getConfig().getSerializable(player.getUniqueId().toString(), SerializablePlayer.class);
+        SerializablePlayer playerData = data.getSerializable(player.getUniqueId().toString(), SerializablePlayer.class);
         if (playerData == null) {
             return null;
         }
-        data.getConfig().set(player.getUniqueId().toString(), null);
-        data.saveConfig();
+        data.erase(player.getUniqueId().toString());
+        data.saveChanges();
         playerData.apply(player);
         return playerData;
     }
 
     public void removePlayer(UUID playerId) {
-        data.getConfig().set(playerId.toString(), null);
-        data.saveConfig();
+        data.erase(playerId.toString());
+        data.saveChanges();
     }
 }

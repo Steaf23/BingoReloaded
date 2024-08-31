@@ -3,7 +3,7 @@ package io.github.steaf23.bingoreloaded.gameloop.phase;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.cards.CardSize;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
-import io.github.steaf23.bingoreloaded.data.ConfigData;
+import io.github.steaf23.bingoreloaded.data.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.event.BingoSettingsUpdatedEvent;
 import io.github.steaf23.bingoreloaded.event.ParticipantJoinedTeamEvent;
 import io.github.steaf23.bingoreloaded.event.ParticipantLeftTeamEvent;
@@ -50,7 +50,7 @@ public class PregameLobby implements GamePhase
 
     private final BingoSession session;
     private final Map<UUID, VoteTicket> votes;
-    private final ConfigData config;
+    private final BingoConfigurationData config;
     private final MenuBoard menuBoard;
     private final CountdownTimer playerCountTimer;
 
@@ -59,7 +59,7 @@ public class PregameLobby implements GamePhase
     private boolean playerCountTimerPaused = false;
     private boolean gameStarted = false;
 
-    public PregameLobby(MenuBoard menuBoard, HUDRegistry hudRegistry, BingoSession session, ConfigData config) {
+    public PregameLobby(MenuBoard menuBoard, HUDRegistry hudRegistry, BingoSession session, BingoConfigurationData config) {
         this.menuBoard = menuBoard;
         this.session = session;
         this.votes = new HashMap<>();

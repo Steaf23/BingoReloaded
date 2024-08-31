@@ -1,6 +1,6 @@
 package io.github.steaf23.bingoreloaded.gameloop;
 
-import io.github.steaf23.bingoreloaded.data.ConfigData;
+import io.github.steaf23.bingoreloaded.data.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.data.world.WorldGroup;
 import io.github.steaf23.playerdisplay.inventory.MenuBoard;
 import io.github.steaf23.playerdisplay.scoreboard.HUDRegistry;
@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class SingularGameManager extends GameManager
 {
-    public SingularGameManager(@NotNull JavaPlugin plugin, ConfigData config, MenuBoard menuBoard, HUDRegistry hudRegistry) {
+    public SingularGameManager(@NotNull JavaPlugin plugin, BingoConfigurationData config, MenuBoard menuBoard, HUDRegistry hudRegistry) {
         super(plugin, config, menuBoard, hudRegistry);
 
         WorldGroup group = createWorldGroupFromExistingWorlds();

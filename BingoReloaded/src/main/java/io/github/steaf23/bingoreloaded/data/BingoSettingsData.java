@@ -1,7 +1,7 @@
 package io.github.steaf23.bingoreloaded.data;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
-import io.github.steaf23.bingoreloaded.data.helper.YmlDataManager;
+import io.github.steaf23.bingoreloaded.data.core.NodeDataAccessor;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
 import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 
@@ -11,10 +11,10 @@ import java.util.stream.Collectors;
 
 public class BingoSettingsData
 {
-    private final YmlDataManager data;
+    private final NodeDataAccessor data;
 
     public BingoSettingsData() {
-        this.data = BingoReloaded.createYmlDataManager("data/presets.yml");
+        this.data = BingoReloaded.getOrCreateDataAccessor("data/presets.yml", NodeDataAccessor.class);
     }
 
     public @Nullable BingoSettings getSettings(String name) {
@@ -24,11 +24,11 @@ public class BingoSettingsData
             return null;
         }
 
-        if (data.getConfig().contains(name)) {
-            return data.getConfig().getSerializable(name, BingoSettings.class);
+        if (data.contains(name)) {
+            return data.getSerializable(name, BingoSettings.class);
         }
         else if (!getDefaultSettingsName().isEmpty()) {
-            return data.getConfig().getSerializable(getDefaultSettingsName(), BingoSettings.class);
+            return data.getSerializable(getDefaultSettingsName(), BingoSettings.class);
         }
         return null;
     }
@@ -39,14 +39,14 @@ public class BingoSettingsData
             ConsoleMessenger.error("Cannot use name 'default'.");
             return;
         }
-        if (data.getConfig().contains(name)) {
+        if (data.contains(name)) {
             ConsoleMessenger.log("Overwritten saved preset '" + name + "' with current settings");
-            data.getConfig().set(name, null);
+            data.erase(name);
         } else {
             ConsoleMessenger.log("Saved preset '" + name + "'");
         }
-        data.getConfig().set(name, settings);
-        data.saveConfig();
+        data.setSerializable(name, settings);
+        data.saveChanges();
     }
 
     public void removeSettings(String name) {
@@ -62,30 +62,30 @@ public class BingoSettingsData
             setDefaultSettings("default_settings");
         }
         ConsoleMessenger.log("Removed preset '" + name + "'");
-        data.getConfig().set(name, null);
-        data.saveConfig();
+        data.erase(name);
+        data.saveChanges();
     }
 
     public String getDefaultSettingsName() {
-        return data.getConfig().get("default", "").toString();
+        return data.getString("default", "");
     }
 
     public @Nullable BingoSettings getDefaultSettings() {
-        if (!data.getConfig().contains("default")) {
+        if (!data.contains("default")) {
             return null;
         }
 
-        String defaultSettingsName = data.getConfig().get("default").toString();
+        String defaultSettingsName = getDefaultSettingsName();
         return getSettings(defaultSettingsName);
     }
 
     public void setDefaultSettings(String name) {
-        data.getConfig().set("default", name);
-        data.saveConfig();
+        data.setString("default", name);
+        data.saveChanges();
     }
 
     public Set<String> getPresetNames() {
-        return data.getConfig().getKeys(false)
+        return data.getKeys()
                 .stream().filter(k -> !k.equals("default"))
                 .collect(Collectors.toSet());
     }

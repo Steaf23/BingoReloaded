@@ -32,7 +32,7 @@ public class BasicMenu implements Menu
         return Component.text(to).color(NamedTextColor.GOLD).decorate(TextDecoration.BOLD);
     }
 
-    protected static ItemTemplate BLANK = new ItemTemplate(Material.BLACK_STAINED_GLASS_PANE, null)
+    public static ItemTemplate BLANK = new ItemTemplate(Material.BLACK_STAINED_GLASS_PANE, null)
             .addMetaModifier(meta -> {
                 meta.setHideTooltip(true);
                 return meta;

@@ -4,7 +4,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 
 import java.util.List;
 
-public class ConfigData
+public class BingoConfigurationData
 {
     public enum PluginConfiguration
     {
@@ -78,7 +78,7 @@ public class ConfigData
     public final boolean savePlayerInformation;
     public final LoadPlayerInformationStrategy loadPlayerInformationStrategy;
 
-    public ConfigData(FileConfiguration config) {
+    public BingoConfigurationData(FileConfiguration config) {
         // General
         this.configuration = PluginConfiguration.valueOf(config.getString("configuration", "SINGULAR"));
         this.defaultWorldName = config.getString("defaultWorldName", "world");

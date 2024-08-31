@@ -1,7 +1,8 @@
 package io.github.steaf23.bingoreloaded.data;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
-import io.github.steaf23.bingoreloaded.data.helper.YmlDataManager;
+import io.github.steaf23.bingoreloaded.data.core.DataAccessor;
+import io.github.steaf23.bingoreloaded.data.core.NodeDataAccessor;
 import io.github.steaf23.bingoreloaded.tasks.AdvancementTask;
 import io.github.steaf23.bingoreloaded.tasks.StatisticTask;
 import io.github.steaf23.bingoreloaded.tasks.TaskData;
@@ -28,30 +29,28 @@ public class TaskListData
             "default_statistics_hardcore"
     );
 
-    private final YmlDataManager data = BingoReloaded.createYmlDataManager("data/" + BingoReloaded.getDefaultTasksVersion());
+    private final NodeDataAccessor data = BingoReloaded.getOrCreateDataAccessor("data/" + BingoReloaded.getDefaultTasksVersion(), NodeDataAccessor.class);
 
     public Set<TaskData> getTasks(String listName, boolean withStatistics, boolean withAdvancements)
     {
-        if (!data.getConfig().contains(listName + ".tasks"))
+        if (!data.contains(listName + ".tasks"))
             return new HashSet<>();
 
-        return (Set<TaskData>)data.getConfig().getList(listName + ".tasks").stream().filter((i ->
+        return data.getList(listName + ".tasks", TaskData.class).stream().filter((i ->
                 !(i instanceof StatisticTask && !withStatistics) &&
                 !(i instanceof AdvancementTask && !withAdvancements))).collect(Collectors.toSet());
     }
 
     public int getTaskCount(String listName)
     {
-        return data.getConfig().getInt(listName + ".size", 0);
+        return data.getInt(listName + ".size", 0);
     }
 
     public void saveTasksFromGroup(String listName, List<TaskData> group, List<TaskData> tasksToSave)
     {
         Set<TaskData> savedTasks = getTasks(listName, true, true);
         Set<TaskData> tasksToRemove = group.stream().filter(t ->
-        {
-            return tasksToSave.stream().noneMatch(i -> i.equals(t));
-        }).collect(Collectors.toSet());
+                tasksToSave.stream().noneMatch(i -> i.equals(t))).collect(Collectors.toSet());
 
         for (TaskData t : tasksToRemove)
         {
@@ -69,37 +68,37 @@ public class TaskListData
             }
         }
 
-        data.getConfig().set(listName + ".tasks", new ArrayList<>(savedTasks));
-        data.getConfig().set(listName + ".size", savedTasks.size());
-        data.saveConfig();
+        data.setList(listName + ".tasks", new ArrayList<>(savedTasks));
+        data.setInt(listName + ".size", savedTasks.size());
+        data.saveChanges();
     }
 
     public boolean removeList(String listName)
     {
-        if (!data.getConfig().contains(listName))
+        if (!data.contains(listName))
             return false;
 
         if (DEFAULT_LIST_NAMES.contains(listName)) {
             ConsoleMessenger.error("Cannot remove default lists!");
             return false;
         }
-        data.getConfig().set(listName, null);
-        data.saveConfig();
+        data.erase(listName);
+        data.saveChanges();
         return true;
     }
 
     public boolean duplicateList(String listName)
     {
-        if (!data.getConfig().contains(listName))
+        if (!data.contains(listName))
             return false;
 
-        var list = data.getConfig().get(listName);
+        var list = data.get(listName);
         String newName = listName + "_copy";
-        if (data.getConfig().contains(newName)) // Card with newName already exists
+        if (data.contains(newName)) // Card with newName already exists
             return false;
 
-        data.getConfig().set(newName, list);
-        data.saveConfig();
+        data.set(newName, list);
+        data.saveChanges();
         return true;
     }
 
@@ -107,15 +106,15 @@ public class TaskListData
     {
         if (DEFAULT_LIST_NAMES.contains(oldName) || DEFAULT_LIST_NAMES.contains(newName))
             return false;
-        if (!data.getConfig().contains(oldName))
+        if (!data.contains(oldName))
             return false;
-        if (data.getConfig().contains(newName)) // Card with newName already exists
+        if (data.contains(newName)) // Card with newName already exists
             return false;
 
-        var list = data.getConfig().get(oldName);
-        data.getConfig().set(newName, list);
-        data.getConfig().set(oldName, null);
-        data.saveConfig();
+        var list = data.get(oldName);
+        data.set(newName, list);
+        data.erase(oldName);
+        data.saveChanges();
         return true;
     }
 
@@ -124,6 +123,6 @@ public class TaskListData
      */
     public Set<String> getListNames()
     {
-        return data.getConfig().getKeys(false);
+        return data.getKeys();
     }
 }

@@ -1,6 +1,6 @@
 package io.github.steaf23.bingoreloaded.data.world;
 
-import io.github.steaf23.bingoreloaded.data.helper.ResourceFileHelper;
+import io.github.steaf23.bingoreloaded.data.core.helper.ResourceFileHelper;
 import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import org.bukkit.Bukkit;
 import org.bukkit.World;

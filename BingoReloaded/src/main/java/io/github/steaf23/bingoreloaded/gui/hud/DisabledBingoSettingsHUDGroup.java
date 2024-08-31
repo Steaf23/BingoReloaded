@@ -1,6 +1,6 @@
 package io.github.steaf23.bingoreloaded.gui.hud;
 
-import io.github.steaf23.bingoreloaded.data.ConfigData;
+import io.github.steaf23.bingoreloaded.data.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
 import io.github.steaf23.playerdisplay.scoreboard.HUDRegistry;
 import net.kyori.adventure.text.Component;
@@ -29,7 +29,7 @@ public class DisabledBingoSettingsHUDGroup extends BingoSettingsHUDGroup
     }
 
     @Override
-    public void updateSettings(@Nullable BingoSettings settings, ConfigData config) {
+    public void updateSettings(@Nullable BingoSettings settings, BingoConfigurationData config) {
     }
 
     @Override

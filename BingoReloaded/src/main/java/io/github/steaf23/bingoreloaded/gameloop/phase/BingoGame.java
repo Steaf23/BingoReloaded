@@ -7,7 +7,7 @@ import io.github.steaf23.bingoreloaded.cards.TaskCard;
 import io.github.steaf23.bingoreloaded.data.BingoCardData;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.BingoStatType;
-import io.github.steaf23.bingoreloaded.data.ConfigData;
+import io.github.steaf23.bingoreloaded.data.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.event.BingoDeathmatchTaskCompletedEvent;
 import io.github.steaf23.bingoreloaded.event.BingoEndedEvent;
 import io.github.steaf23.bingoreloaded.event.BingoPlaySoundEvent;
@@ -84,7 +84,7 @@ public class BingoGame implements GamePhase
     private final TeamManager teamManager;
     private final PlayerRespawnManager respawnManager;
     private final TaskProgressTracker progressTracker;
-    private final ConfigData config;
+    private final BingoConfigurationData config;
     private GameTimer timer;
     private CountdownTimer startingTimer;
     private boolean gameStarted;
@@ -94,7 +94,7 @@ public class BingoGame implements GamePhase
 
     private GameTask deathMatchTask;
 
-    public BingoGame(@NotNull BingoSession session, @NotNull BingoSettings settings, @NotNull ConfigData config) {
+    public BingoGame(@NotNull BingoSession session, @NotNull BingoSettings settings, @NotNull BingoConfigurationData config) {
         this.session = session;
         this.config = config;
         this.teamManager = session.teamManager;
@@ -294,7 +294,7 @@ public class BingoGame implements GamePhase
         return settings;
     }
 
-    public ConfigData getConfig() {
+    public BingoConfigurationData getConfig() {
         return config;
     }
 

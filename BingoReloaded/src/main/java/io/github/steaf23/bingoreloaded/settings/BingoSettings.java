@@ -1,18 +1,14 @@
 package io.github.steaf23.bingoreloaded.settings;
 
 import io.github.steaf23.bingoreloaded.cards.CardSize;
-import io.github.steaf23.bingoreloaded.data.helper.YmlDataManager;
+import io.github.steaf23.bingoreloaded.data.core.node.BranchNode;
+import io.github.steaf23.bingoreloaded.data.core.node.NodeBuilder;
+import io.github.steaf23.bingoreloaded.data.core.node.datatype.NodeDataType;
+import io.github.steaf23.bingoreloaded.data.core.node.NodeSerializer;
 import io.github.steaf23.bingoreloaded.gui.inventory.EffectOptionFlags;
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
-import org.bukkit.configuration.serialization.SerializableAs;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
-@SerializableAs("BingoSettings")
 public record BingoSettings(String card,
                             BingoGamemode mode,
                             CardSize size,
@@ -22,39 +18,36 @@ public record BingoSettings(String card,
                             int maxTeamSize,
                             boolean enableCountdown,
                             int countdownDuration,
-                            int hotswapGoal) implements ConfigurationSerializable
+                            int hotswapGoal) implements NodeSerializer
 {
-    @NotNull
-    @Override
-    public Map<String, Object> serialize()
-    {
-        return new HashMap<>(){{
-            put("card", card);
-            put("mode", mode.getDataName());
-            put("size", size.size);
-            put("seed", seed);
-            put("kit", kit.configName);
-            put("effects", YmlDataManager.enumSetToList(effects));
-            put("team_size", maxTeamSize);
-            put("duration", countdownDuration);
-            put("countdown", enableCountdown);
-            put("hotswap_goal", hotswapGoal);
-        }};
+    public BingoSettings(BranchNode node) {
+        this(
+                node.getString("card"),
+                BingoGamemode.fromDataString(node.getString("mode")),
+                CardSize.fromWidth(node.getInt("size")),
+                node.getInt("seed"),
+                PlayerKit.fromConfig(node.getString("kit")),
+                NodeBuilder.enumSetFromList(EffectOptionFlags.class, node.getList("effects", NodeDataType.STRING)),
+                node.getInt("team_size"),
+                node.getBoolean("countdown", false),
+                node.getInt("duration"),
+                node.getInt("hotswap_goal", 10)
+        );
     }
 
-    public static BingoSettings deserialize(Map<String, Object> data)
-    {
-        return new BingoSettings(
-                (String) data.get("card"),
-                BingoGamemode.fromDataString((String) data.get("mode")),
-                CardSize.fromWidth((int) data.get("size")),
-                (int) data.get("seed"),
-                PlayerKit.fromConfig((String) data.get("kit")),
-                YmlDataManager.enumSetFromList(EffectOptionFlags.class, (List<String>) data.get("effects")),
-                (int) data.get("team_size"),
-                (boolean) data.get("countdown"),
-                (int) data.get("duration"),
-                (int) data.getOrDefault("hotswap_goal", 10)
-        );
+    @Override
+    public BranchNode toNode() {
+        return new NodeBuilder()
+                .withString("card", card)
+                .withString("mode", mode.getDataName())
+                .withInt("size", size.size)
+                .withInt("seed", seed)
+                .withString("kit", kit.configName)
+                .withList("effects", NodeDataType.STRING, NodeBuilder.enumSetToList(effects))
+                .withInt("team_size", maxTeamSize)
+                .withInt("duration", countdownDuration)
+                .withBoolean("countdown", enableCountdown)
+                .withInt("hotswap_goal", hotswapGoal)
+                .getNode();
     }
 }

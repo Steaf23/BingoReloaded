@@ -1,6 +1,8 @@
 package io.github.steaf23.bingoreloaded.tasks;
 
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
+import io.github.steaf23.bingoreloaded.data.core.node.BranchNode;
+import io.github.steaf23.bingoreloaded.data.core.node.NodeBuilder;
 import io.github.steaf23.playerdisplay.util.ComponentUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
@@ -8,17 +10,13 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
 import org.bukkit.Statistic;
-import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.entity.EntityType;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 
-@SerializableAs("Bingo.StatisticTask")
 public record StatisticTask(BingoStatistic statistic, int count) implements CountableTask
 {
     public StatisticTask(BingoStatistic statistic)
@@ -30,6 +28,18 @@ public record StatisticTask(BingoStatistic statistic, int count) implements Coun
     {
         this.statistic = statistic;
         this.count = Math.min(64, Math.max(1, count));
+    }
+
+    public StatisticTask(BranchNode node) {
+        this(node.getSerializable("statistic", BingoStatistic.class), node.getInt("count"));
+    }
+
+    @Override
+    public BranchNode toNode() {
+        return new NodeBuilder()
+                .withSerializable("statistic", statistic)
+                .withInt("count", count)
+                .getNode();
     }
 
     @Override
@@ -151,24 +161,6 @@ public record StatisticTask(BingoStatistic statistic, int count) implements Coun
         int count = pdc.getOrDefault(GameTask.getTaskDataKey("count"), PersistentDataType.INTEGER, 1);
 
         return new StatisticTask(new BingoStatistic(stat, entity, item), count);
-    }
-
-    @NotNull
-    @Override
-    public Map<String, Object> serialize()
-    {
-        return new HashMap<>(){{
-            put("statistic", statistic);
-            put("count", count);
-        }};
-    }
-
-    public static StatisticTask deserialize(Map<String, Object> data)
-    {
-        return new StatisticTask(
-                (BingoStatistic) data.get("statistic"),
-                (int)data.get("count")
-        );
     }
 
     @Override

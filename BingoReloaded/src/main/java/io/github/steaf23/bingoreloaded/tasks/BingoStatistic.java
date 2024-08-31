@@ -1,24 +1,34 @@
 package io.github.steaf23.bingoreloaded.tasks;
 
+import io.github.steaf23.bingoreloaded.data.core.node.BranchNode;
+import io.github.steaf23.bingoreloaded.data.core.node.NodeBuilder;
+import io.github.steaf23.bingoreloaded.data.core.node.NodeSerializer;
+import io.papermc.paper.registry.RegistryAccess;
+import io.papermc.paper.registry.RegistryKey;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.Statistic;
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
-import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.entity.EntityType;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
-@SerializableAs("Bingo.Statistic")
-public record BingoStatistic(@NotNull Statistic stat, @Nullable EntityType entityType, @Nullable Material materialType) implements ConfigurationSerializable
+public record BingoStatistic(@NotNull Statistic stat, @Nullable EntityType entityType, @Nullable Material materialType) implements NodeSerializer
 {
+    @Override
+    public BranchNode toNode() {
+        return new NodeBuilder()
+                .withString("statistic", stat.name())
+                .withString("entity", entityType == null ? "" : entityType.name())
+                .withString("item", materialType == null ? "" : materialType.name())
+                .getNode();
+    }
+
     public enum StatisticCategory
     {
         TRAVEL,
@@ -45,6 +55,39 @@ public record BingoStatistic(@NotNull Statistic stat, @Nullable EntityType entit
     {
         this(stat, null, materialType);
     }
+    
+    public BingoStatistic(BranchNode node) {
+        this(Statistic.valueOf(node.getString("statistic")), getEntityFromString(node.getString("entity")), getMaterialFromString(node.getString("item")));
+    }
+
+    private static BingoStatistic createStatistic(@Nullable String statistic, @Nullable String entityStr, @Nullable String materialStr)
+    {
+        Statistic stat = Statistic.valueOf(statistic);
+
+        EntityType entity = null;
+        if (entityStr != null && !entityStr.isEmpty())
+            entity = EntityType.valueOf(entityStr);
+
+        Material material = null;
+        if (materialStr != null && !materialStr.isEmpty())
+            material = org.bukkit.Material.valueOf(materialStr);
+
+        return new BingoStatistic(stat, entity, material);
+    }
+
+    private static @Nullable EntityType getEntityFromString(@Nullable String type) {
+        if (type != null && !type.isEmpty()) {
+            return RegistryAccess.registryAccess().getRegistry(RegistryKey.ENTITY_TYPE).get(new NamespacedKey("minecraft", type));
+        }
+        return null;
+    }
+
+    private static @Nullable Material getMaterialFromString(@Nullable String type) {
+        if (type != null && !type.isEmpty()) {
+            return Material.valueOf(type);
+        }
+        return null;
+    }
 
     //TODO: less static?
     public static List<Statistic> getStatisticsOfCategory(StatisticCategory category)
@@ -65,10 +108,10 @@ public record BingoStatistic(@NotNull Statistic stat, @Nullable EntityType entit
         // This is the reason we cant support 1.19.2 or below, since we would have to manually add ender dragon and wither spawn eggs.
         Set<EntityType> types = new HashSet<>();
         Arrays.stream(Material.values())
-                .filter(mat ->
-                        mat.name().contains("_SPAWN_EGG"))
                 .forEach(mat -> {
-                    types.add(EntityType.valueOf(mat.name().replace("_SPAWN_EGG", "")));
+                    if (mat.name().contains("_SPAWN_EGG")) {
+                        types.add(EntityType.valueOf(mat.name().replace("_SPAWN_EGG", "")));
+                    }
                 });
         // Note: pre 1.20.5 mooshroom spawn egg needed to be parsed by hand
         return types;
@@ -308,34 +351,6 @@ public record BingoStatistic(@NotNull Statistic stat, @Nullable EntityType entit
         }
 
         return Material.GLOBE_BANNER_PATTERN;
-    }
-
-    @NotNull
-    @Override
-    public Map<String, Object> serialize()
-    {
-        Map<String, Object> result = new HashMap<>();
-        result.put("statistic", stat.name());
-        result.put("entity", entityType == null ? "" : entityType.name());
-        result.put("item", materialType == null ? "" : materialType.name());
-        return result;
-    }
-
-    public static BingoStatistic deserialize(Map<String, Object> data)
-    {
-        Statistic stat = Statistic.valueOf((String)data.get("statistic"));
-
-        String entityStr = (String) data.getOrDefault("entity", null);
-        EntityType entity = null;
-        if (entityStr != null && !entityStr.isEmpty())
-            entity = EntityType.valueOf((String)data.get("entity"));
-
-        String materialStr = (String) data.getOrDefault("item", null);
-        Material material = null;
-        if (materialStr != null && !materialStr.isEmpty())
-            material = Material.valueOf((String)data.get("item"));
-
-        return new BingoStatistic(stat, entity, material);
     }
 
     public boolean hasMaterialComponent()

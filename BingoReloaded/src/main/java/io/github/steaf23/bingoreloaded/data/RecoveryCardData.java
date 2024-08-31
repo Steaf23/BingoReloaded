@@ -3,7 +3,8 @@ package io.github.steaf23.bingoreloaded.data;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.cards.CardSize;
 import io.github.steaf23.bingoreloaded.cards.TaskCard;
-import io.github.steaf23.bingoreloaded.data.helper.YmlDataManager;
+import io.github.steaf23.bingoreloaded.data.core.DataAccessor;
+import io.github.steaf23.bingoreloaded.data.core.NodeDataAccessor;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.player.team.TeamManager;
@@ -12,16 +13,16 @@ import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
 @Deprecated
 public class RecoveryCardData
 {
-    private final YmlDataManager data = BingoReloaded.createYmlDataManager("data/recovered.yml");
+    private final NodeDataAccessor data = BingoReloaded.getOrCreateDataAccessor("data/recovered.yml", NodeDataAccessor.class);
 
     public boolean loadCards(BingoGame game)
     {
         boolean success = false;
-        if (data.getConfig().getBoolean("ended")) return false;
+        if (data.getBoolean("ended")) return false;
 
 //        Message.log(ChatColor.GREEN + "The last game did not finish, attempting to recover bingo card...");
-        BingoGamemode mode = BingoGamemode.fromDataString(data.getConfig().getString("gamemode"));
-        CardSize size = CardSize.fromWidth(data.getConfig().getInt("size"));
+        BingoGamemode mode = BingoGamemode.fromDataString(data.getString("gamemode"));
+        CardSize size = CardSize.fromWidth(data.getInt("size"));
 
         if (game.getTeamManager().getActiveTeams().teamCount() == 0)
         {
@@ -46,8 +47,8 @@ public class RecoveryCardData
 
     public void writeDebug(String text)
     {
-        data.getConfig().set("testString", text);
-        data.saveConfig();
+        data.setString("testString", text);
+        data.saveChanges();
     }
 
     public boolean fillCard(TeamManager manager, BingoTeam team, TaskCard card)
@@ -118,7 +119,7 @@ public class RecoveryCardData
 
     public void markCardEnded(boolean value)
     {
-        data.getConfig().set("ended", value);
-        data.saveConfig();
+        data.setBoolean("ended", value);
+        data.saveChanges();
     }
 }

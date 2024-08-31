@@ -7,26 +7,21 @@ import io.github.steaf23.bingoreloaded.command.TeamChatCommand;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.BingoStatData;
 import io.github.steaf23.bingoreloaded.data.BingoStatType;
-import io.github.steaf23.bingoreloaded.data.ConfigData;
+import io.github.steaf23.bingoreloaded.data.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.data.TexturedMenuData;
-import io.github.steaf23.bingoreloaded.data.TeamData;
-import io.github.steaf23.bingoreloaded.data.helper.SerializablePlayer;
-import io.github.steaf23.bingoreloaded.data.helper.YmlDataManager;
+import io.github.steaf23.bingoreloaded.data.core.DataAccessor;
+import io.github.steaf23.bingoreloaded.data.core.NodeDataAccessor;
+import io.github.steaf23.bingoreloaded.data.core.helper.YmlDataManager;
+import io.github.steaf23.bingoreloaded.data.core.node.NodeSerializer;
 import io.github.steaf23.bingoreloaded.data.world.WorldData;
 import io.github.steaf23.bingoreloaded.gameloop.GameManager;
 import io.github.steaf23.bingoreloaded.gameloop.SingularGameManager;
 import io.github.steaf23.bingoreloaded.gui.inventory.BingoMenuBoard;
-import io.github.steaf23.bingoreloaded.gui.inventory.item.SerializableItem;
 import io.github.steaf23.bingoreloaded.placeholder.BingoReloadedPlaceholderExpansion;
-import io.github.steaf23.bingoreloaded.settings.BingoSettings;
-import io.github.steaf23.bingoreloaded.settings.CustomKit;
-import io.github.steaf23.bingoreloaded.tasks.AdvancementTask;
-import io.github.steaf23.bingoreloaded.tasks.BingoStatistic;
-import io.github.steaf23.bingoreloaded.tasks.ItemTask;
-import io.github.steaf23.bingoreloaded.tasks.StatisticTask;
 import io.github.steaf23.bingoreloaded.util.bstats.Metrics;
 import io.github.steaf23.playerdisplay.PlayerDisplay;
 import io.github.steaf23.playerdisplay.inventory.BasicMenu;
+import io.github.steaf23.playerdisplay.inventory.item.ItemTemplate;
 import io.github.steaf23.playerdisplay.scoreboard.HUDRegistry;
 import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import net.kyori.adventure.resource.ResourcePackInfo;
@@ -34,16 +29,21 @@ import net.kyori.adventure.resource.ResourcePackRequest;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.TabExecutor;
-import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.net.URI;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Consumer;
 
 public class BingoReloaded extends JavaPlugin
@@ -63,7 +63,7 @@ public class BingoReloaded extends JavaPlugin
 
     private static BingoReloaded INSTANCE;
 
-    private ConfigData config;
+    private BingoConfigurationData config;
     private GameManager gameManager;
     private BingoMenuBoard menuBoard;
     private TexturedMenuData textureData;
@@ -71,6 +71,21 @@ public class BingoReloaded extends JavaPlugin
     @Override
     public void onLoad() {
         PlayerDisplay.setPlugin(this);
+
+        ConsoleMessenger.log("START LOAD");
+        ItemStack stack = new ItemStack(Material.BEDROCK);
+        ItemStack complicated = new ItemTemplate(Material.TOTEM_OF_UNDYING,
+                PlayerDisplay.MINI_BUILDER.deserialize("<red></italic>I</italic><yellow> am special </yellow><bold><blue>>:</blue>D</bold></red>"),
+                Component.text("Lore1"),
+                Component.text("Lore2")).setGlowing(true).setMaxDamage(230).setDamage(125).buildItem(true);
+        System.out.println(Arrays.toString(stack.serializeAsBytes()));
+
+        NodeDataAccessor accessor = new NodeDataAccessor("test_nodes_stack.bingo");
+        accessor.setItemStack("test_path", stack);
+        accessor.setItemStack("complicated", complicated);
+        accessor.saveChanges();
+        ConsoleMessenger.log("END LOAD");
+
     }
 
     @Override
@@ -78,6 +93,9 @@ public class BingoReloaded extends JavaPlugin
         PlayerDisplay.onPluginEnable();
         reloadConfig();
         saveDefaultConfig();
+
+        testNodeSerialization();
+
         // Kinda ugly, but we can assume there will only be one instance of this class anyway.
         INSTANCE = this;
         PLACEHOLDER_API_ENABLED = Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null;
@@ -95,20 +113,16 @@ public class BingoReloaded extends JavaPlugin
             case MENU_CLEAR_FILTER -> BingoMessage.MENU_CLEAR_FILTER.asPhrase();
         });
 
-        ConfigurationSerialization.registerClass(BingoSettings.class);
-        ConfigurationSerialization.registerClass(ItemTask.class);
-        ConfigurationSerialization.registerClass(AdvancementTask.class);
-        ConfigurationSerialization.registerClass(StatisticTask.class);
-        ConfigurationSerialization.registerClass(BingoStatistic.class);
-        ConfigurationSerialization.registerClass(CustomKit.class);
-        ConfigurationSerialization.registerClass(SerializableItem.class);
-        ConfigurationSerialization.registerClass(SerializablePlayer.class);
-        ConfigurationSerialization.registerClass(TeamData.TeamTemplate.class);
-
-        this.config = new ConfigData(getConfig());
+        this.config = new BingoConfigurationData(getConfig());
 
         PlayerDisplay.setUseCustomTextures(config.useIncludedResourcepack);
-        BingoMessage.setLanguage(createYmlDataManager(config.language).getConfig(), createYmlDataManager("languages/en_us.yml").getConfig());
+        BingoMessage.setLanguage(
+                new YmlDataManager(this, config.language),
+                new YmlDataManager(this, "languages/en_us.yml")
+        );
+//                FileConfigurationAccessor.create(config.language, new YmlDataManager(this, config.language).getConfig(), this),
+//                FileConfigurationAccessor.create(config.language, new YmlDataManager(this, "languages/en_us.yml").getConfig(), this)
+//        );
         ConsoleMessenger.log(BingoMessage.CHANGED_LANGUAGE.asPhrase().color(NamedTextColor.GREEN));
 
         BasicMenu.pluginTitlePrefix = BingoMessage.MENU_PREFIX.asPhrase();
@@ -117,7 +131,7 @@ public class BingoReloaded extends JavaPlugin
         this.textureData = new TexturedMenuData();
         this.menuBoard = new BingoMenuBoard();
         HUDRegistry hudRegistry = new HUDRegistry();
-        if (config.configuration == ConfigData.PluginConfiguration.SINGULAR) {
+        if (config.configuration == BingoConfigurationData.PluginConfiguration.SINGULAR) {
             this.gameManager = new SingularGameManager(this, config, menuBoard, hudRegistry);
         } else {
             this.gameManager = new GameManager(this, config, menuBoard, hudRegistry);
@@ -146,7 +160,7 @@ public class BingoReloaded extends JavaPlugin
         bStatsMetrics.addCustomChart(new Metrics.SimplePie("selected_language",
                 () -> config.language.replace(".yml", "").replace("languages/", "")));
         bStatsMetrics.addCustomChart(new Metrics.SimplePie("plugin_configuration",
-                () -> config.configuration == ConfigData.PluginConfiguration.SINGULAR ? "Singular" : "Multiple"));
+                () -> config.configuration == BingoConfigurationData.PluginConfiguration.SINGULAR ? "Singular" : "Multiple"));
     }
 
     public void registerCommand(String commandName, TabExecutor executor) {
@@ -157,10 +171,6 @@ public class BingoReloaded extends JavaPlugin
         }
     }
 
-    public static YmlDataManager createYmlDataManager(String filepath) {
-        return new YmlDataManager(INSTANCE, filepath);
-    }
-
     public void onDisable() {
         if (gameManager != null) {
             gameManager.onPluginDisable();
@@ -169,7 +179,7 @@ public class BingoReloaded extends JavaPlugin
         HandlerList.unregisterAll(menuBoard);
     }
 
-    public ConfigData config() {
+    public BingoConfigurationData config() {
         return config;
     }
 
@@ -243,5 +253,52 @@ public class BingoReloaded extends JavaPlugin
 
     public TexturedMenuData getTextureData() {
         return textureData;
+    }
+
+    private Map<String, Class<NodeSerializer>> serializers = new HashMap<>();
+
+    /**
+     * Registers a NodeSerializable so that the plugin knows how to serialize its data.
+     * <p>
+     * Ignores the issue that a class could be loaded by multiple clas loaders.
+     * In this case the last call to this function will overwrite the existing entry.
+     */
+    public void registerNodeSerializer(Class<NodeSerializer> nodeSerializableClass) {
+        serializers.put(nodeSerializableClass.getName(), nodeSerializableClass);
+    }
+
+    /**
+     * Unregisters the class with the same class (and package) name using Class.getName() previously registered.
+     */
+    public void unregisterNodeSerializer(Class<NodeSerializer> nodeSerializableClass) {
+        serializers.remove(nodeSerializableClass.getName());
+    }
+
+    public static <T extends NodeSerializer> @Nullable Class<NodeSerializer> getSerializableNode(String className) {
+        return BingoReloaded.getInstance().serializers.get(className);
+    }
+
+    private static Map<String, DataAccessor<?>> accessorMap = new HashMap<>();
+    @NotNull public static <T extends DataAccessor<?>> T getOrCreateDataAccessor(String location, Class<T> accessorType) {
+        boolean exists = location.isEmpty();
+        if (!exists) {
+            try {
+                T accessor = accessorType.getConstructor().newInstance();
+                accessor.load();
+                accessorMap.put(location, accessor);
+                return accessor;
+            } catch (Exception ignored)
+            {
+                ConsoleMessenger.bug("Exception when creating data accessor for " + location, null);
+            }
+        }
+        return accessorType.cast(accessorMap.get(location));
+    }
+
+    private void testNodeSerialization() {
+        NodeDataAccessor data = getOrCreateDataAccessor("test_nodes.bingo", NodeDataAccessor.class);
+
+
+        data.saveChanges();
     }
 }

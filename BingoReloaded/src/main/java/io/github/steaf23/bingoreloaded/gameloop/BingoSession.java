@@ -3,7 +3,7 @@ package io.github.steaf23.bingoreloaded.gameloop;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.BingoCardData;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
-import io.github.steaf23.bingoreloaded.data.ConfigData;
+import io.github.steaf23.bingoreloaded.data.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.data.world.WorldGroup;
 import io.github.steaf23.bingoreloaded.event.BingoEndedEvent;
 import io.github.steaf23.bingoreloaded.event.BingoPlaySoundEvent;
@@ -60,7 +60,7 @@ public class BingoSession implements ForwardingAudience
     public BingoSettingsBuilder settingsBuilder;
     public final BingoGameHUDGroup scoreboard;
     public final TeamManager teamManager;
-    private final ConfigData config;
+    private final BingoConfigurationData config;
     private final MenuBoard menuBoard;
     private final HUDRegistry hudRegistry;
     private final TeamDisplay teamDisplay;
@@ -69,7 +69,7 @@ public class BingoSession implements ForwardingAudience
     private final WorldGroup worlds;
     private GamePhase phase;
 
-    public BingoSession(MenuBoard menuBoard, HUDRegistry hudRegistry, @NotNull WorldGroup worlds, ConfigData config) {
+    public BingoSession(MenuBoard menuBoard, HUDRegistry hudRegistry, @NotNull WorldGroup worlds, BingoConfigurationData config) {
         this.menuBoard = menuBoard;
         this.hudRegistry = hudRegistry;
         this.worlds = worlds;

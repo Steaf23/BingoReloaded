@@ -1,4 +1,4 @@
-package io.github.steaf23.bingoreloaded.data.helper;
+package io.github.steaf23.bingoreloaded.data.core.helper;
 
 import org.codehaus.plexus.util.FileUtils;
 

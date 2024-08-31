@@ -1,4 +1,4 @@
-package io.github.steaf23.bingoreloaded.data.helper;
+package io.github.steaf23.bingoreloaded.data.core.helper;
 
 import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -9,9 +9,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.List;
 
 public class YmlDataManager
 {
@@ -86,17 +83,9 @@ public class YmlDataManager
         return configFile;
     }
 
-    public static List<String> enumSetToList(EnumSet<? extends Enum<?>> set)
+    public void clearConfig()
     {
-        List<String> list = new ArrayList<>();
-        set.forEach(entry -> list.add(entry.name()));
-        return list;
-    }
-
-    public static <E extends Enum<E>> EnumSet<E> enumSetFromList(Class<E> enumType, List<String> list)
-    {
-        EnumSet<E> result = EnumSet.noneOf(enumType);
-        list.forEach(entry -> result.add(Enum.<E>valueOf(enumType, entry)));
-        return result;
+        getConfig().set("", null);
+        saveConfig();
     }
 }

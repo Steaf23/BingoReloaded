@@ -3,7 +3,7 @@ package io.github.steaf23.bingoreloaded.settings;
 import com.google.common.collect.ImmutableSet;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
-import io.github.steaf23.bingoreloaded.data.helper.YmlDataManager;
+import io.github.steaf23.bingoreloaded.data.core.NodeDataAccessor;
 import io.github.steaf23.bingoreloaded.gui.inventory.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.gui.inventory.item.SerializableItem;
 import io.github.steaf23.playerdisplay.inventory.item.ItemTemplate;
@@ -11,7 +11,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -66,7 +65,7 @@ public enum PlayerKit
     private final Component displayName;
     public final EnumSet<EffectOptionFlags> defaultEffects;
 
-    private static final YmlDataManager customKitData = BingoReloaded.createYmlDataManager("data/kits.yml");
+    private static final NodeDataAccessor customKitData = BingoReloaded.getOrCreateDataAccessor("data/kits.yml", NodeDataAccessor.class);
 
     PlayerKit(String configName, Component displayName, EnumSet<EffectOptionFlags> defaultEffects)
     {
@@ -153,7 +152,7 @@ public enum PlayerKit
                         .setAmount(64));
             }
             case CUSTOM_1, CUSTOM_2, CUSTOM_3, CUSTOM_4, CUSTOM_5 -> {
-                CustomKit kit = customKitData.getConfig().getSerializable(configName, CustomKit.class);
+                CustomKit kit = getCustomKit(this);
                 if (kit != null)
                 {
                     // Color colored items according to the team color.
@@ -201,28 +200,28 @@ public enum PlayerKit
 
     public static boolean assignCustomKit(Component kitName, PlayerKit slot, Player commandSender)
     {
-        if (customKitData.getConfig().contains(slot.configName))
+        if (customKitData.contains(slot.configName))
             return false;
 
-        customKitData.getConfig().set(slot.configName, CustomKit.fromPlayerInventory(commandSender, kitName, slot));
-        customKitData.saveConfig();
+        customKitData.setSerializable(slot.configName, CustomKit.fromPlayerInventory(commandSender, kitName, slot));
+        customKitData.saveChanges();
         return true;
     }
 
     public static boolean removeCustomKit(PlayerKit slot)
     {
-        if (!customKitData.getConfig().contains(slot.configName))
+        if (!customKitData.contains(slot.configName))
             return false;
 
-        customKitData.getConfig().set(slot.configName, null);
-        customKitData.saveConfig();
+        customKitData.erase(slot.configName);
+        customKitData.saveChanges();
 
         return true;
     }
 
     public static @Nullable CustomKit getCustomKit(PlayerKit slot)
     {
-        return customKitData.getConfig().getSerializable(slot.configName, CustomKit.class);
+        return customKitData.getSerializable(slot.configName, CustomKit.class);
     }
 
     public static Set<PlayerKit> customKits() {

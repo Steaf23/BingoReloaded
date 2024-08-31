@@ -1,6 +1,8 @@
 package io.github.steaf23.bingoreloaded.tasks;
 
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
+import io.github.steaf23.bingoreloaded.data.core.node.BranchNode;
+import io.github.steaf23.bingoreloaded.data.core.node.NodeBuilder;
 import io.github.steaf23.playerdisplay.util.ComponentUtils;
 import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import net.kyori.adventure.text.Component;
@@ -14,15 +16,26 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
-import java.util.Map;
-
 @SerializableAs("Bingo.AdvancementTask")
 public record AdvancementTask(Advancement advancement) implements TaskData
 {
-    public AdvancementTask(Advancement advancement)
+    public AdvancementTask(@NotNull Advancement advancement)
     {
         this.advancement = advancement;
+    }
+
+
+    public AdvancementTask(BranchNode node) {
+        this(
+                Bukkit.getAdvancement(NamespacedKey.fromString(node.getString("advancement")))
+        );
+    }
+
+    @Override
+    public BranchNode toNode() {
+        return new NodeBuilder()
+                .withString("advancement", advancement.getKey().toString())
+                .getNode();
     }
 
     @Override
@@ -92,21 +105,5 @@ public record AdvancementTask(Advancement advancement) implements TaskData
         Advancement a = Bukkit.getAdvancement(NamespacedKey.fromString(
                         pdc.getOrDefault(GameTask.getTaskDataKey("advancement"), PersistentDataType.STRING, "minecraft:story/mine_stone")));
         return new AdvancementTask(a);
-    }
-
-    @NotNull
-    @Override
-    public Map<String, Object> serialize()
-    {
-        return new HashMap<>(){{
-            put("advancement", advancement.getKey().toString());
-        }};
-    }
-
-    public static AdvancementTask deserialize(Map<String, Object> data)
-    {
-        return new AdvancementTask(
-                Bukkit.getAdvancement(NamespacedKey.fromString((String)data.get("advancement")))
-        );
     }
 }

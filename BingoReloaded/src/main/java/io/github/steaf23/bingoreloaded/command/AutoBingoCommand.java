@@ -6,9 +6,9 @@ import io.github.steaf23.bingoreloaded.command.core.DeferredCommand;
 import io.github.steaf23.bingoreloaded.command.core.SubCommand;
 import io.github.steaf23.bingoreloaded.data.BingoCardData;
 import io.github.steaf23.bingoreloaded.data.BingoSettingsData;
-import io.github.steaf23.bingoreloaded.data.ConfigData;
+import io.github.steaf23.bingoreloaded.data.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.data.PlayerSerializationData;
-import io.github.steaf23.bingoreloaded.data.helper.SerializablePlayer;
+import io.github.steaf23.bingoreloaded.data.core.helper.SerializablePlayer;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gameloop.GameManager;
 import io.github.steaf23.bingoreloaded.gameloop.phase.PregameLobby;
@@ -209,7 +209,7 @@ public class AutoBingoCommand implements TabExecutor
 
 
         command.addSubCommand(new SubCommand("vote", this::voteForPlayer).addUsage("<player_name> <vote_category> <vote_for>").addTabCompletion(args -> {
-            ConfigData.VoteList voteList = manager.getGameConfig().voteList;
+            BingoConfigurationData.VoteList voteList = manager.getGameConfig().voteList;
             if (args.length <= 2) {
                 return null;
             } else if (args.length == 3) {

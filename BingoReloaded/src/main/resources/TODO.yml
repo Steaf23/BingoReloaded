@@ -6,6 +6,8 @@
 
 (?) add way to reopen/sync team selection menu for all players that are in it
 
+(?) add spam prevention on player gui's/ options
+
 (2.x) refactor card recovery (its shit).
 
 (2.x) add Hologram wizard item to /bingo hologram to allow players to place scoreboards in the world
@@ -27,8 +29,6 @@
 (2.x) add /bingoconfig command
   - to see values of config values
   - to change these values
-
-(2.x) add spam prevention on player gui's/ options
 
 3.0 (?) add custom resource pack
 
