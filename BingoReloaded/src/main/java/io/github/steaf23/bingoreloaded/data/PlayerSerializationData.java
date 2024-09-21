@@ -2,7 +2,6 @@ package io.github.steaf23.bingoreloaded.data;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.core.DataAccessor;
-import io.github.steaf23.bingoreloaded.data.core.NodeDataAccessor;
 import io.github.steaf23.bingoreloaded.data.core.helper.SerializablePlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
@@ -11,13 +10,13 @@ import java.util.UUID;
 
 public class PlayerSerializationData
 {
-    private final NodeDataAccessor data = BingoReloaded.getOrCreateDataAccessor("data/players.yml", NodeDataAccessor.class);
+    private final DataAccessor data = BingoReloaded.getDataAccessor("data/players");
 
     public void savePlayer(SerializablePlayer player, boolean overwriteExisting) {
         if (data.contains(player.playerId.toString()) && !overwriteExisting)
             return;
 
-        data.setSerializable(player.playerId.toString(), player);
+        data.setSerializable(player.playerId.toString(), SerializablePlayer.class, player);
         data.saveChanges();
     }
 

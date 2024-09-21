@@ -1,8 +1,6 @@
 package io.github.steaf23.bingoreloaded.tasks;
 
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
-import io.github.steaf23.bingoreloaded.data.core.node.BranchNode;
-import io.github.steaf23.bingoreloaded.data.core.node.NodeBuilder;
 import io.github.steaf23.playerdisplay.util.ComponentUtils;
 import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import net.kyori.adventure.text.Component;
@@ -11,33 +9,12 @@ import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.advancement.Advancement;
-import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 
-@SerializableAs("Bingo.AdvancementTask")
 public record AdvancementTask(Advancement advancement) implements TaskData
 {
-    public AdvancementTask(@NotNull Advancement advancement)
-    {
-        this.advancement = advancement;
-    }
-
-
-    public AdvancementTask(BranchNode node) {
-        this(
-                Bukkit.getAdvancement(NamespacedKey.fromString(node.getString("advancement")))
-        );
-    }
-
-    @Override
-    public BranchNode toNode() {
-        return new NodeBuilder()
-                .withString("advancement", advancement.getKey().toString())
-                .getNode();
-    }
-
     @Override
     public Component getName()
     {

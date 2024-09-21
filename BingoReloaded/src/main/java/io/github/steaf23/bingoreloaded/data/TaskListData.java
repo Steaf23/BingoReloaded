@@ -2,7 +2,6 @@ package io.github.steaf23.bingoreloaded.data;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.core.DataAccessor;
-import io.github.steaf23.bingoreloaded.data.core.NodeDataAccessor;
 import io.github.steaf23.bingoreloaded.tasks.AdvancementTask;
 import io.github.steaf23.bingoreloaded.tasks.StatisticTask;
 import io.github.steaf23.bingoreloaded.tasks.TaskData;
@@ -29,14 +28,14 @@ public class TaskListData
             "default_statistics_hardcore"
     );
 
-    private final NodeDataAccessor data = BingoReloaded.getOrCreateDataAccessor("data/" + BingoReloaded.getDefaultTasksVersion(), NodeDataAccessor.class);
+    private final DataAccessor data = BingoReloaded.getDataAccessor("data/" + BingoReloaded.getDefaultTasksVersion());
 
     public Set<TaskData> getTasks(String listName, boolean withStatistics, boolean withAdvancements)
     {
         if (!data.contains(listName + ".tasks"))
             return new HashSet<>();
 
-        return data.getList(listName + ".tasks", TaskData.class).stream().filter((i ->
+        return data.getSerializableList(listName + ".tasks", TaskData.class).stream().filter((i ->
                 !(i instanceof StatisticTask && !withStatistics) &&
                 !(i instanceof AdvancementTask && !withAdvancements))).collect(Collectors.toSet());
     }
@@ -68,7 +67,7 @@ public class TaskListData
             }
         }
 
-        data.setList(listName + ".tasks", new ArrayList<>(savedTasks));
+        data.setSerializableList(listName + ".tasks", TaskData.class, new ArrayList<>(savedTasks));
         data.setInt(listName + ".size", savedTasks.size());
         data.saveChanges();
     }
@@ -92,12 +91,12 @@ public class TaskListData
         if (!data.contains(listName))
             return false;
 
-        var list = data.get(listName);
+        var list = data.getStorage(listName);
         String newName = listName + "_copy";
         if (data.contains(newName)) // Card with newName already exists
             return false;
 
-        data.set(newName, list);
+        data.setStorage(newName, list);
         data.saveChanges();
         return true;
     }
@@ -111,8 +110,8 @@ public class TaskListData
         if (data.contains(newName)) // Card with newName already exists
             return false;
 
-        var list = data.get(oldName);
-        data.set(newName, list);
+        var list = data.getStorage(oldName);
+        data.setStorage(newName, list);
         data.erase(oldName);
         data.saveChanges();
         return true;

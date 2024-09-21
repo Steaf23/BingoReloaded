@@ -8,20 +8,35 @@ import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.BingoStatData;
 import io.github.steaf23.bingoreloaded.data.BingoStatType;
 import io.github.steaf23.bingoreloaded.data.BingoConfigurationData;
+import io.github.steaf23.bingoreloaded.data.DataUpdaterV1;
+import io.github.steaf23.bingoreloaded.data.TeamData;
 import io.github.steaf23.bingoreloaded.data.TexturedMenuData;
 import io.github.steaf23.bingoreloaded.data.core.DataAccessor;
-import io.github.steaf23.bingoreloaded.data.core.NodeDataAccessor;
+import io.github.steaf23.bingoreloaded.data.core.DataStorageSerializerRegistry;
+import io.github.steaf23.bingoreloaded.data.core.VirtualDataAccessor;
+import io.github.steaf23.bingoreloaded.data.core.helper.SerializablePlayer;
 import io.github.steaf23.bingoreloaded.data.core.helper.YmlDataManager;
-import io.github.steaf23.bingoreloaded.data.core.node.NodeSerializer;
+import io.github.steaf23.bingoreloaded.data.core.tag.TagDataAccessor;
+import io.github.steaf23.bingoreloaded.data.serializers.BingoSettingsStorageSerializer;
+import io.github.steaf23.bingoreloaded.data.serializers.BingoStatisticStorageSerializer;
+import io.github.steaf23.bingoreloaded.data.serializers.CustomKitStorageSerializer;
+import io.github.steaf23.bingoreloaded.data.serializers.PlayerStorageSerializer;
+import io.github.steaf23.bingoreloaded.data.serializers.ItemStorageSerializer;
+import io.github.steaf23.bingoreloaded.data.serializers.TaskStorageSerializer;
+import io.github.steaf23.bingoreloaded.data.serializers.TeamTemplateStorageSerializer;
 import io.github.steaf23.bingoreloaded.data.world.WorldData;
 import io.github.steaf23.bingoreloaded.gameloop.GameManager;
 import io.github.steaf23.bingoreloaded.gameloop.SingularGameManager;
 import io.github.steaf23.bingoreloaded.gui.inventory.BingoMenuBoard;
+import io.github.steaf23.bingoreloaded.gui.inventory.item.SerializableItem;
 import io.github.steaf23.bingoreloaded.placeholder.BingoReloadedPlaceholderExpansion;
+import io.github.steaf23.bingoreloaded.settings.BingoSettings;
+import io.github.steaf23.bingoreloaded.settings.CustomKit;
+import io.github.steaf23.bingoreloaded.tasks.BingoStatistic;
+import io.github.steaf23.bingoreloaded.tasks.TaskData;
 import io.github.steaf23.bingoreloaded.util.bstats.Metrics;
 import io.github.steaf23.playerdisplay.PlayerDisplay;
 import io.github.steaf23.playerdisplay.inventory.BasicMenu;
-import io.github.steaf23.playerdisplay.inventory.item.ItemTemplate;
 import io.github.steaf23.playerdisplay.scoreboard.HUDRegistry;
 import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import net.kyori.adventure.resource.ResourcePackInfo;
@@ -29,19 +44,15 @@ import net.kyori.adventure.resource.ResourcePackRequest;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.net.URI;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -54,8 +65,7 @@ public class BingoReloaded extends JavaPlugin
             .uri(URI.create(RESOURCE_PACK_URL))
             .hash(RESOURCE_PACK_HASH).build();
 
-    public static final String CARD_1_20_6 = "lists_1_20.yml";
-    public static final String CARD_1_21 = "lists_1_21.yml";
+    public static final String CARD_1_21 = "lists_1_21";
 
     // Amount of ticks per second.
     public static final int ONE_SECOND = 20;
@@ -70,34 +80,52 @@ public class BingoReloaded extends JavaPlugin
 
     @Override
     public void onLoad() {
+        // Kinda ugly, but we can assume there will only be one instance of this class anyway.
+        INSTANCE = this;
         PlayerDisplay.setPlugin(this);
 
-        ConsoleMessenger.log("START LOAD");
-        ItemStack stack = new ItemStack(Material.BEDROCK);
-        ItemStack complicated = new ItemTemplate(Material.TOTEM_OF_UNDYING,
-                PlayerDisplay.MINI_BUILDER.deserialize("<red></italic>I</italic><yellow> am special </yellow><bold><blue>>:</blue>D</bold></red>"),
-                Component.text("Lore1"),
-                Component.text("Lore2")).setGlowing(true).setMaxDamage(230).setDamage(125).buildItem(true);
-        System.out.println(Arrays.toString(stack.serializeAsBytes()));
-
-        NodeDataAccessor accessor = new NodeDataAccessor("test_nodes_stack.bingo");
-        accessor.setItemStack("test_path", stack);
-        accessor.setItemStack("complicated", complicated);
-        accessor.saveChanges();
-        ConsoleMessenger.log("END LOAD");
+//        ConsoleMessenger.log("START LOAD");
+//        ItemStack stack = new ItemStack(Material.BEDROCK);
+//        ItemStack complicated = new ItemTemplate(Material.TOTEM_OF_UNDYING,
+//                PlayerDisplay.MINI_BUILDER.deserialize("<red></italic>I</italic><yellow> am special </yellow><bold><blue>>:</blue>D</bold></red>"),
+//                Component.text("Lore1"),
+//                Component.text("Lore2")).setGlowing(true).setMaxDamage(230).setDamage(125).buildItem(true);
+//        System.out.println(Arrays.toString(stack.serializeAsBytes()));
+//
+//        NodeDataAccessor accessor = new NodeDataAccessor("test_nodes_stack.bingo");
+//        accessor.setItemStack("test_path", stack);
+//        accessor.setItemStack("complicated", complicated);
+//        accessor.saveChanges();
+//        ConsoleMessenger.log("END LOAD");
 
     }
 
     @Override
     public void onEnable() {
         PlayerDisplay.onPluginEnable();
+
+        DataStorageSerializerRegistry.addSerializer(new CustomKitStorageSerializer(), CustomKit.class);
+        DataStorageSerializerRegistry.addSerializer(new TaskStorageSerializer(), TaskData.class);
+        DataStorageSerializerRegistry.addSerializer(new PlayerStorageSerializer(), SerializablePlayer.class);
+        DataStorageSerializerRegistry.addSerializer(new TeamTemplateStorageSerializer(), TeamData.TeamTemplate.class);
+        DataStorageSerializerRegistry.addSerializer(new BingoSettingsStorageSerializer(), BingoSettings.class);
+        DataStorageSerializerRegistry.addSerializer(new BingoStatisticStorageSerializer(), BingoStatistic.class);
+        DataStorageSerializerRegistry.addSerializer(new ItemStorageSerializer(), SerializableItem.class);
+
+        // Data file updaters
+        {
+            DataUpdaterV1 updater = new DataUpdaterV1(this);
+            updater.update();
+        }
+
+        // Create data accessors
+        addDataAccessor(new TagDataAccessor(this, "data/cards"));
+        addDataAccessor(new TagDataAccessor(this, "data/kits"));
+
+
         reloadConfig();
         saveDefaultConfig();
 
-        testNodeSerialization();
-
-        // Kinda ugly, but we can assume there will only be one instance of this class anyway.
-        INSTANCE = this;
         PLACEHOLDER_API_ENABLED = Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null;
         if (PLACEHOLDER_API_ENABLED) {
             new BingoReloadedPlaceholderExpansion(this).register();
@@ -228,13 +256,7 @@ public class BingoReloaded extends JavaPlugin
     }
 
     public static String getDefaultTasksVersion() {
-        String version = Bukkit.getMinecraftVersion();
-        if (version.contains("1.20")) {
-            return CARD_1_20_6;
-        } else if (version.contains("1.21")) {
-            return CARD_1_21;
-        }
-        return CARD_1_20_6;
+        return CARD_1_21;
     }
 
     public static void sendResourcePack(Player player) {
@@ -255,50 +277,22 @@ public class BingoReloaded extends JavaPlugin
         return textureData;
     }
 
-    private Map<String, Class<NodeSerializer>> serializers = new HashMap<>();
-
-    /**
-     * Registers a NodeSerializable so that the plugin knows how to serialize its data.
-     * <p>
-     * Ignores the issue that a class could be loaded by multiple clas loaders.
-     * In this case the last call to this function will overwrite the existing entry.
-     */
-    public void registerNodeSerializer(Class<NodeSerializer> nodeSerializableClass) {
-        serializers.put(nodeSerializableClass.getName(), nodeSerializableClass);
-    }
-
-    /**
-     * Unregisters the class with the same class (and package) name using Class.getName() previously registered.
-     */
-    public void unregisterNodeSerializer(Class<NodeSerializer> nodeSerializableClass) {
-        serializers.remove(nodeSerializableClass.getName());
-    }
-
-    public static <T extends NodeSerializer> @Nullable Class<NodeSerializer> getSerializableNode(String className) {
-        return BingoReloaded.getInstance().serializers.get(className);
-    }
-
-    private static Map<String, DataAccessor<?>> accessorMap = new HashMap<>();
-    @NotNull public static <T extends DataAccessor<?>> T getOrCreateDataAccessor(String location, Class<T> accessorType) {
-        boolean exists = location.isEmpty();
-        if (!exists) {
-            try {
-                T accessor = accessorType.getConstructor().newInstance();
-                accessor.load();
-                accessorMap.put(location, accessor);
-                return accessor;
-            } catch (Exception ignored)
-            {
-                ConsoleMessenger.bug("Exception when creating data accessor for " + location, null);
-            }
+    private static final Map<String, DataAccessor> accessorMap = new HashMap<>();
+    @NotNull public static DataAccessor getDataAccessor(@NotNull String location) {
+        if (location.isEmpty()) {
+            ConsoleMessenger.bug("No location specified for data accessor, returning empty data accessor.", BingoReloaded.getInstance());
+            return new VirtualDataAccessor(location);
         }
-        return accessorType.cast(accessorMap.get(location));
+
+        if (!accessorMap.containsKey(location)) {
+            ConsoleMessenger.bug("No data accessor exists for the specified location (" + location + "), returning empty data accessor.", BingoReloaded.getInstance());
+            return new VirtualDataAccessor(location);
+        }
+
+        return accessorMap.get(location);
     }
 
-    private void testNodeSerialization() {
-        NodeDataAccessor data = getOrCreateDataAccessor("test_nodes.bingo", NodeDataAccessor.class);
-
-
-        data.saveChanges();
+    public static void addDataAccessor(DataAccessor accessor) {
+        accessorMap.put(accessor.getLocation(), accessor);
     }
 }

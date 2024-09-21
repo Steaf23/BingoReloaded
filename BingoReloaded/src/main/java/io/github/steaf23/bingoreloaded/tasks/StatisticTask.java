@@ -1,8 +1,6 @@
 package io.github.steaf23.bingoreloaded.tasks;
 
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
-import io.github.steaf23.bingoreloaded.data.core.node.BranchNode;
-import io.github.steaf23.bingoreloaded.data.core.node.NodeBuilder;
 import io.github.steaf23.playerdisplay.util.ComponentUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
@@ -28,18 +26,6 @@ public record StatisticTask(BingoStatistic statistic, int count) implements Coun
     {
         this.statistic = statistic;
         this.count = Math.min(64, Math.max(1, count));
-    }
-
-    public StatisticTask(BranchNode node) {
-        this(node.getSerializable("statistic", BingoStatistic.class), node.getInt("count"));
-    }
-
-    @Override
-    public BranchNode toNode() {
-        return new NodeBuilder()
-                .withSerializable("statistic", statistic)
-                .withInt("count", count)
-                .getNode();
     }
 
     @Override

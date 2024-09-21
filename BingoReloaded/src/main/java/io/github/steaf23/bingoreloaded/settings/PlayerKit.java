@@ -3,7 +3,7 @@ package io.github.steaf23.bingoreloaded.settings;
 import com.google.common.collect.ImmutableSet;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
-import io.github.steaf23.bingoreloaded.data.core.NodeDataAccessor;
+import io.github.steaf23.bingoreloaded.data.core.DataAccessor;
 import io.github.steaf23.bingoreloaded.gui.inventory.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.gui.inventory.item.SerializableItem;
 import io.github.steaf23.playerdisplay.inventory.item.ItemTemplate;
@@ -65,7 +65,7 @@ public enum PlayerKit
     private final Component displayName;
     public final EnumSet<EffectOptionFlags> defaultEffects;
 
-    private static final NodeDataAccessor customKitData = BingoReloaded.getOrCreateDataAccessor("data/kits.yml", NodeDataAccessor.class);
+    private static final DataAccessor customKitData = BingoReloaded.getDataAccessor("data/kits");
 
     PlayerKit(String configName, Component displayName, EnumSet<EffectOptionFlags> defaultEffects)
     {
@@ -203,7 +203,7 @@ public enum PlayerKit
         if (customKitData.contains(slot.configName))
             return false;
 
-        customKitData.setSerializable(slot.configName, CustomKit.fromPlayerInventory(commandSender, kitName, slot));
+        customKitData.setSerializable(slot.configName, CustomKit.class, CustomKit.fromPlayerInventory(commandSender, kitName, slot));
         customKitData.saveChanges();
         return true;
     }

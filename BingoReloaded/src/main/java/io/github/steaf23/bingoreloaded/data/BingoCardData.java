@@ -3,8 +3,6 @@ package io.github.steaf23.bingoreloaded.data;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.core.DataAccessor;
 import io.github.steaf23.bingoreloaded.data.core.DataStorage;
-import io.github.steaf23.bingoreloaded.data.core.NodeDataAccessor;
-import io.github.steaf23.bingoreloaded.data.core.node.BranchNode;
 import io.github.steaf23.bingoreloaded.tasks.ItemTask;
 import io.github.steaf23.bingoreloaded.tasks.TaskData;
 import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
@@ -27,7 +25,7 @@ public class BingoCardData
     public static final int MAX_ITEMS = 36;
     public static final int MIN_ITEMS = 1;
 
-    private final NodeDataAccessor data = BingoReloaded.getOrCreateDataAccessor("data/cards.yml", NodeDataAccessor.class);
+    private final DataAccessor data = BingoReloaded.getDataAccessor("data/cards");
 
     public boolean removeCard(String cardName)
     {
@@ -49,7 +47,7 @@ public class BingoCardData
         if (!data.contains(cardName))
             return false;
 
-        BranchNode card = data.getStorage(cardName);
+        DataStorage card = data.getStorage(cardName);
         data.setStorage(cardName + "_copy", card);
         data.saveChanges();
         return true;
@@ -64,7 +62,7 @@ public class BingoCardData
         if (data.contains(newName)) // Card with newName already exists
             return false;
 
-        BranchNode card = data.getStorage(cardName);
+        DataStorage card = data.getStorage(cardName);
         data.setStorage(newName, card);
         data.erase(cardName);
         data.saveChanges();
@@ -137,20 +135,20 @@ public class BingoCardData
             return new HashSet<>();
         else
         {
-            return data.get(cardName).getKeys();
+            return data.getStorage(cardName).getKeys();
         }
     }
 
     public List<String> getListsSortedByMin(String cardName)
     {
-        List<String> result = new ArrayList<>(data.get(cardName).getKeys());
+        List<String> result = new ArrayList<>(data.getStorage(cardName).getKeys());
         result.sort((a, b) -> Integer.compare(getListMin(cardName, a), getListMin(cardName, b)));
         return result;
     }
 
     public List<String> getListsSortedByMax(String cardName)
     {
-        List<String> result = new ArrayList<>(data.get(cardName).getKeys());
+        List<String> result = new ArrayList<>(data.getStorage(cardName).getKeys());
         result.sort((a, b) -> Integer.compare(getListMax(cardName, a), getListMax(cardName, b)));
         return result;
     }

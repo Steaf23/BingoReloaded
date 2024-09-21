@@ -1,8 +1,9 @@
 package io.github.steaf23.bingoreloaded.data.core;
 
-import io.github.steaf23.bingoreloaded.data.core.node.NodeSerializer;
-import io.github.steaf23.bingoreloaded.data.core.node.datatype.NodeDataType;
+import io.github.steaf23.bingoreloaded.data.core.tag.TagAdapter;
+import io.github.steaf23.bingoreloaded.data.core.tag.TagDataType;
 import org.bukkit.Location;
+import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -11,38 +12,47 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-public interface DataStorage<T extends DataStorage<?>>
+public interface DataStorage
 {
     Set<String> getKeys();
 
+    void setByte(String path, byte value);
+    byte getByte(String path, byte def);
+
+    void setShort(String path, short value);
+    short getShort(String path, short def);
+
+    void setInt(String path, int value);
+    int getInt(String path, int def);
+
+    void setLong(String path, long value);
+    long getLong(String path, long def);
+
     void setString(String path, @NotNull String value);
-    String getString(String path);
-    String getString(String path, String def);
+    @NotNull String getString(String path, String def);
 
-    <T> void setList(String path, NodeDataType<T> type, List<T> values);
-    <T extends NodeSerializer> void setList(String path, List<T> values);
+    <T> void setList(String path, TagDataType<T> type, List<T> values);
+    <T> List<T> getList(String path, TagDataType<T> dataType);
 
-    <T> List<T> getList(String path, NodeDataType<T> dataType);
-    <T extends NodeSerializer> List<T> getList(String path, Class<T> classType);
+    <T> void setList(String path, TagAdapter<T, ?> adapterType, List<T> values);
+    <T> List<T> getList(String path, TagAdapter<T, ?> adapterType);
 
-    void setSerializable(String path, NodeSerializer value);
-    <T extends NodeSerializer> T getSerializable(String path, Class<T> classType);
-    <T extends NodeSerializer> T getSerializable(String path, Class<T> classType, T def);
+    <T> void setSerializableList(String path, Class<T> dataType, List<T> values);
+    <T> List<T> getSerializableList(String path, Class<T> dataType);
+
+    <T> void setSerializable(String path, Class<T> classType, T value);
+    <T> @Nullable T getSerializable(String path, Class<T> classType);
+    <T> @NotNull T getSerializable(String path, Class<T> classType, T def);
 
     void setBoolean(String path, boolean value);
     boolean getBoolean(String path);
-    boolean getBoolean(String path, Boolean def);
+    boolean getBoolean(String path, boolean def);
 
-    void setInt(String path, int value);
-    int getInt(String path);
-    int getInt(String path, int def);
+    void setFloat(String path, float value);
+    float getFloat(String path, float def);
 
     void setDouble(String path, double value);
-    double getDouble(String path);
     double getDouble(String path, double def);
-
-    void setBytes(String path, byte[] value);
-    byte[] getBytes(String path);
 
     void setItemStack(String path, ItemStack value);
     @NotNull ItemStack getItemStack(String path);
@@ -54,8 +64,11 @@ public interface DataStorage<T extends DataStorage<?>>
     @Nullable Location getLocation(String path);
     @NotNull Location getLocation(String path, @NotNull Location def);
 
-    void setStorage(String path, T value);
-    @Nullable T getStorage(String path);
+    void setNamespacedKey(String path, @NotNull NamespacedKey value);
+    @NotNull NamespacedKey getNamespacedKey(String path);
+
+    void setStorage(String path, DataStorage value);
+    @Nullable DataStorage getStorage(String path);
 
     /**
      * Also erases parent nodes of data node if they are empty after removal
@@ -63,4 +76,5 @@ public interface DataStorage<T extends DataStorage<?>>
     void erase(String path);
 
     boolean contains(String path);
+    void clear();
 }

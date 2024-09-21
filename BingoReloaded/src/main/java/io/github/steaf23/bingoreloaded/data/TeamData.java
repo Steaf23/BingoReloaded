@@ -1,10 +1,9 @@
 package io.github.steaf23.bingoreloaded.data;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
-import io.github.steaf23.bingoreloaded.data.core.NodeDataAccessor;
-import io.github.steaf23.bingoreloaded.data.core.node.BranchNode;
-import io.github.steaf23.bingoreloaded.data.core.node.NodeBuilder;
-import io.github.steaf23.bingoreloaded.data.core.node.NodeSerializer;
+import io.github.steaf23.bingoreloaded.data.core.DataAccessor;
+import io.github.steaf23.bingoreloaded.data.core.DataStorage;
+import io.github.steaf23.bingoreloaded.data.core.tag.DataStorageSerializer;
 import io.github.steaf23.playerdisplay.PlayerDisplay;
 import io.github.steaf23.playerdisplay.util.BlockColor;
 import net.kyori.adventure.text.Component;
@@ -22,27 +21,14 @@ public class TeamData {
      * @param stringName name to use for the team, which is retrieved using minimessage deserialization
      * @param color
      */
-    @SerializableAs("TeamTemplate")
-    public record TeamTemplate(String stringName, TextColor color) implements NodeSerializer
+    public record TeamTemplate(String stringName, TextColor color)
     {
-        public TeamTemplate(BranchNode node) {
-            this(node.getString("name"), TextColor.fromHexString(node.getString("color", "#808080")));
-        }
-
-        @Override
-        public BranchNode toNode() {
-            return new NodeBuilder()
-                    .withString("name", stringName)
-                    .withString("color", color.asHexString())
-                    .getNode();
-        }
-
         public Component nameComponent() {
             return PlayerDisplay.MINI_BUILDER.deserialize(stringName);
         }
     }
 
-    private final NodeDataAccessor data = BingoReloaded.getOrCreateDataAccessor("data/teams.yml", NodeDataAccessor.class);
+    private final DataAccessor data = BingoReloaded.getDataAccessor("data/teams");
 
     public Map<String, TeamTemplate> getTeams() {
         Map<String, TeamTemplate> teams = new HashMap<>();
@@ -56,7 +42,7 @@ public class TeamData {
         if (key.isEmpty()) {
             key = getNewTeamId();
         }
-        data.setSerializable(key, new TeamTemplate(name, color));
+        data.setSerializable(key, TeamTemplate.class, new TeamTemplate(name, color));
         data.saveChanges();
     }
 

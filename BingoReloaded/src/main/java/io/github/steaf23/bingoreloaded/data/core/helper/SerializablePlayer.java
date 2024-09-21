@@ -1,9 +1,8 @@
 package io.github.steaf23.bingoreloaded.data.core.helper;
 
-import io.github.steaf23.bingoreloaded.data.core.node.BranchNode;
-import io.github.steaf23.bingoreloaded.data.core.node.NodeBuilder;
-import io.github.steaf23.bingoreloaded.data.core.node.datatype.NodeDataType;
-import io.github.steaf23.bingoreloaded.data.core.node.NodeSerializer;
+import io.github.steaf23.bingoreloaded.data.core.DataStorage;
+import io.github.steaf23.bingoreloaded.data.core.tag.TagDataType;
+import io.github.steaf23.bingoreloaded.data.core.tag.DataStorageSerializer;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.configuration.serialization.SerializableAs;
@@ -17,9 +16,8 @@ import java.util.Arrays;
 import java.util.UUID;
 
 @SerializableAs("Player")
-public class SerializablePlayer implements NodeSerializer
+public class SerializablePlayer
 {
-    // Generated this data in plugin version x
     public String pluginVersion;
     public UUID playerId;
     public Location location;
@@ -69,7 +67,7 @@ public class SerializablePlayer implements NodeSerializer
         return data;
     }
 
-    private SerializablePlayer() {
+    public SerializablePlayer() {
     }
 
     public void apply(Player player)
@@ -97,37 +95,5 @@ public class SerializablePlayer implements NodeSerializer
             player.getEnderChest().setContents(enderInventory);
         }
         player.updateInventory();
-    }
-
-    public SerializablePlayer(BranchNode node) {
-        pluginVersion = node.getString("version", "-");
-        playerId = node.getUUID("uuid");
-        location = node.getLocation("location", new Location(null, 0.0, 0.0, 0.0));
-        health = node.getDouble("health");
-        hunger = node.getInt("hunger");
-        gamemode = GameMode.valueOf(node.getString("gamemode", "SURVIVAL"));
-        spawnPoint = node.getLocation("location", new Location(null, 0.0, 0.0, 0.0));
-        xpLevel = node.getInt("xp_level", 0);
-        xpPoints = (float)node.getDouble("xp_points", 0.0D);
-        inventory = node.getList("inventory", NodeDataType.ITEM_STACK).toArray(new ItemStack[]{});
-        enderInventory = node.getList("ender_inventory", NodeDataType.ITEM_STACK).toArray(new ItemStack[]{});
-    }
-
-
-    @Override
-    public BranchNode toNode() {
-        return new NodeBuilder()
-                .withString("version", pluginVersion)
-                .withUUID("uuid", playerId)
-                .withLocation("location", location)
-                .withDouble("health", health)
-                .withInt("hunger", hunger)
-                .withString("gamemode", gamemode.toString())
-                .withLocation("spawn_point", spawnPoint)
-                .withInt("xp_level", xpLevel)
-                .withDouble("xp_points", xpPoints)
-                .withList("inventory", NodeDataType.ITEM_STACK, Arrays.stream(inventory).toList())
-                .withList("ender_inventory", NodeDataType.ITEM_STACK, Arrays.stream(enderInventory).toList())
-                .getNode();
     }
 }

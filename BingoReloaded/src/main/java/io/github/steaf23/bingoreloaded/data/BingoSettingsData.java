@@ -1,7 +1,7 @@
 package io.github.steaf23.bingoreloaded.data;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
-import io.github.steaf23.bingoreloaded.data.core.NodeDataAccessor;
+import io.github.steaf23.bingoreloaded.data.core.DataAccessor;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
 import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 
@@ -11,11 +11,7 @@ import java.util.stream.Collectors;
 
 public class BingoSettingsData
 {
-    private final NodeDataAccessor data;
-
-    public BingoSettingsData() {
-        this.data = BingoReloaded.getOrCreateDataAccessor("data/presets.yml", NodeDataAccessor.class);
-    }
+    private final DataAccessor data = BingoReloaded.getDataAccessor("data/presets");
 
     public @Nullable BingoSettings getSettings(String name) {
         if (name.equals("default"))
@@ -45,7 +41,7 @@ public class BingoSettingsData
         } else {
             ConsoleMessenger.log("Saved preset '" + name + "'");
         }
-        data.setSerializable(name, settings);
+        data.setSerializable(name, BingoSettings.class, settings);
         data.saveChanges();
     }
 

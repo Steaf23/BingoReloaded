@@ -1,11 +1,11 @@
 package io.github.steaf23.bingoreloaded.data.core;
 
-/**
- * Not safe for async access!
- */
-public interface DataAccessor<T extends DataStorage<?>> extends DataStorage<T>
+import org.bukkit.plugin.java.JavaPlugin;
+
+public interface DataAccessor extends DataStorage
 {
     String getLocation();
     void load();
     void saveChanges();
+    JavaPlugin getPlugin();
 }

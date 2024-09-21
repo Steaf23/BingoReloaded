@@ -1,8 +1,5 @@
 package io.github.steaf23.bingoreloaded.tasks;
 
-import io.github.steaf23.bingoreloaded.data.core.node.BranchNode;
-import io.github.steaf23.bingoreloaded.data.core.node.NodeBuilder;
-import io.github.steaf23.bingoreloaded.data.core.node.NodeSerializer;
 import io.papermc.paper.registry.RegistryAccess;
 import io.papermc.paper.registry.RegistryKey;
 import org.bukkit.Material;
@@ -18,17 +15,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public record BingoStatistic(@NotNull Statistic stat, @Nullable EntityType entityType, @Nullable Material materialType) implements NodeSerializer
+public record BingoStatistic(@NotNull Statistic stat, @Nullable EntityType entityType, @Nullable Material materialType)
 {
-    @Override
-    public BranchNode toNode() {
-        return new NodeBuilder()
-                .withString("statistic", stat.name())
-                .withString("entity", entityType == null ? "" : entityType.name())
-                .withString("item", materialType == null ? "" : materialType.name())
-                .getNode();
-    }
-
     public enum StatisticCategory
     {
         TRAVEL,
@@ -54,10 +42,6 @@ public record BingoStatistic(@NotNull Statistic stat, @Nullable EntityType entit
     public BingoStatistic(Statistic stat, @Nullable Material materialType)
     {
         this(stat, null, materialType);
-    }
-    
-    public BingoStatistic(BranchNode node) {
-        this(Statistic.valueOf(node.getString("statistic")), getEntityFromString(node.getString("entity")), getMaterialFromString(node.getString("item")));
     }
 
     private static BingoStatistic createStatistic(@Nullable String statistic, @Nullable String entityStr, @Nullable String materialStr)

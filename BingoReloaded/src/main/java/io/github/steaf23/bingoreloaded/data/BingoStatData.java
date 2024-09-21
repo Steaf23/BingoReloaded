@@ -2,7 +2,6 @@ package io.github.steaf23.bingoreloaded.data;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.core.DataAccessor;
-import io.github.steaf23.bingoreloaded.data.core.NodeDataAccessor;
 import io.github.steaf23.bingoreloaded.hologram.HologramBuilder;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -19,7 +18,7 @@ import java.util.UUID;
 
 public class BingoStatData
 {
-    private final NodeDataAccessor data = BingoReloaded.getOrCreateDataAccessor("data/player_stats.yml", NodeDataAccessor.class);
+    private final DataAccessor data = BingoReloaded.getDataAccessor("data/player_stats");
 
     public BingoStatData()
     {

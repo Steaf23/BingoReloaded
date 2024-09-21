@@ -9,4 +9,10 @@ public class CollectionHelper
         System.arraycopy(arrayRight, 0, result, arrayLeft.length, arrayRight.length);
         return result;
     }
+
+    public static byte[] concatWithArrayCopy(byte[] arrayLeft, byte[] arrayRight) {
+        byte[] result = Arrays.copyOf(arrayLeft, arrayLeft.length + arrayRight.length);
+        System.arraycopy(arrayRight, 0, result, arrayLeft.length, arrayRight.length);
+        return result;
+    }
 }

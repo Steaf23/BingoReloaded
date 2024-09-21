@@ -1,7 +1,9 @@
 package io.github.steaf23.bingoreloaded.data;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
-import io.github.steaf23.bingoreloaded.data.core.NodeDataAccessor;
+import io.github.steaf23.bingoreloaded.data.core.DataAccessor;
+import io.github.steaf23.bingoreloaded.data.core.DataStorage;
+import io.github.steaf23.bingoreloaded.data.core.DataStorageSerializerRegistry;
 import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import org.jetbrains.annotations.Nullable;
 
@@ -9,7 +11,7 @@ public class TexturedMenuData
 {
     public record Texture (String character, int textureEnd, int menuOffset){}
 
-    private final NodeDataAccessor data = BingoReloaded.getOrCreateDataAccessor("data/textures.yml", NodeDataAccessor.class);
+    private final DataAccessor data = BingoReloaded.getDataAccessor("data/textures");
 
     public @Nullable Texture getTexture(String name) {
         if (!data.contains(name)) {
@@ -17,13 +19,15 @@ public class TexturedMenuData
             return null;
         }
 
-        //TODO, allow me to do this!
-//        Node n = data.get(name);
-//        String character = n.getString(".char", " ");
+        DataStorage n = data.getStorage(name);
+        if (n == null) {
+            return null;
+        }
 
-        String character = data.getString(name + ".char", " ");
-        int textureEnd = data.getInt(name + ".texture_end", 0);
-        int menuOffset = data.getInt(name + ".menu_offset", 0);
+        String character = n.getString("char", " ");
+        int textureEnd = n.getInt("texture_end", 0);
+        int menuOffset = n.getInt("menu_offset", 0);
+
         return new Texture(character, textureEnd, menuOffset);
     }
 }

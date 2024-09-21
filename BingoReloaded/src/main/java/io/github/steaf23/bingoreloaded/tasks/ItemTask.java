@@ -1,8 +1,6 @@
 package io.github.steaf23.bingoreloaded.tasks;
 
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
-import io.github.steaf23.bingoreloaded.data.core.node.BranchNode;
-import io.github.steaf23.bingoreloaded.data.core.node.NodeBuilder;
 import io.github.steaf23.playerdisplay.util.ComponentUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -26,13 +24,6 @@ public record ItemTask(Material material, int count) implements CountableTask
     {
         this.material = material;
         this.count = Math.min(64, Math.max(1, count));
-    }
-
-    public ItemTask(BranchNode node) {
-        this(
-                Material.valueOf(node.getString("item")),
-                node.getInt("count")
-        );
     }
 
     @Override
@@ -104,14 +95,5 @@ public record ItemTask(Material material, int count) implements CountableTask
     public CountableTask updateTask(int newCount)
     {
         return new ItemTask(material, newCount);
-    }
-
-
-    @Override
-    public BranchNode toNode() {
-        return new NodeBuilder()
-                .withString("item", material.name())
-                .withInt("count", count)
-                .getNode();
     }
 }
