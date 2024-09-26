@@ -4,24 +4,24 @@ import io.github.steaf23.bingoreloaded.command.AutoBingoCommand;
 import io.github.steaf23.bingoreloaded.command.BingoCommand;
 import io.github.steaf23.bingoreloaded.command.BingoTestCommand;
 import io.github.steaf23.bingoreloaded.command.TeamChatCommand;
+import io.github.steaf23.bingoreloaded.data.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.BingoStatData;
 import io.github.steaf23.bingoreloaded.data.BingoStatType;
-import io.github.steaf23.bingoreloaded.data.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.data.DataUpdaterV1;
 import io.github.steaf23.bingoreloaded.data.TeamData;
 import io.github.steaf23.bingoreloaded.data.TexturedMenuData;
 import io.github.steaf23.bingoreloaded.data.core.DataAccessor;
 import io.github.steaf23.bingoreloaded.data.core.DataStorageSerializerRegistry;
 import io.github.steaf23.bingoreloaded.data.core.VirtualDataAccessor;
+import io.github.steaf23.bingoreloaded.data.core.configuration.YamlDataAccessor;
 import io.github.steaf23.bingoreloaded.data.core.helper.SerializablePlayer;
-import io.github.steaf23.bingoreloaded.data.core.helper.YmlDataManager;
 import io.github.steaf23.bingoreloaded.data.core.tag.TagDataAccessor;
 import io.github.steaf23.bingoreloaded.data.serializers.BingoSettingsStorageSerializer;
 import io.github.steaf23.bingoreloaded.data.serializers.BingoStatisticStorageSerializer;
 import io.github.steaf23.bingoreloaded.data.serializers.CustomKitStorageSerializer;
-import io.github.steaf23.bingoreloaded.data.serializers.PlayerStorageSerializer;
 import io.github.steaf23.bingoreloaded.data.serializers.ItemStorageSerializer;
+import io.github.steaf23.bingoreloaded.data.serializers.PlayerStorageSerializer;
 import io.github.steaf23.bingoreloaded.data.serializers.TaskStorageSerializer;
 import io.github.steaf23.bingoreloaded.data.serializers.TeamTemplateStorageSerializer;
 import io.github.steaf23.bingoreloaded.data.world.WorldData;
@@ -90,7 +90,6 @@ public class BingoReloaded extends JavaPlugin
 //                PlayerDisplay.MINI_BUILDER.deserialize("<red></italic>I</italic><yellow> am special </yellow><bold><blue>>:</blue>D</bold></red>"),
 //                Component.text("Lore1"),
 //                Component.text("Lore2")).setGlowing(true).setMaxDamage(230).setDamage(125).buildItem(true);
-//        System.out.println(Arrays.toString(stack.serializeAsBytes()));
 //
 //        NodeDataAccessor accessor = new NodeDataAccessor("test_nodes_stack.bingo");
 //        accessor.setItemStack("test_path", stack);
@@ -119,9 +118,16 @@ public class BingoReloaded extends JavaPlugin
         }
 
         // Create data accessors
+        addDataAccessor(new YamlDataAccessor(this, "scoreboards"));
+        addDataAccessor(new YamlDataAccessor(this, "placeholders"));
         addDataAccessor(new TagDataAccessor(this, "data/cards"));
+        addDataAccessor(new TagDataAccessor(this, "data/textures"));
         addDataAccessor(new TagDataAccessor(this, "data/kits"));
-
+        addDataAccessor(new TagDataAccessor(this, "data/" + getDefaultTasksVersion()));
+        addDataAccessor(new TagDataAccessor(this, "data/presets"));
+        addDataAccessor(new TagDataAccessor(this, "data/player_stats"));
+        addDataAccessor(new TagDataAccessor(this, "data/teams"));
+        addDataAccessor(new TagDataAccessor(this, "data/players"));
 
         reloadConfig();
         saveDefaultConfig();
@@ -143,10 +149,12 @@ public class BingoReloaded extends JavaPlugin
 
         this.config = new BingoConfigurationData(getConfig());
 
+
+
         PlayerDisplay.setUseCustomTextures(config.useIncludedResourcepack);
         BingoMessage.setLanguage(
-                new YmlDataManager(this, config.language),
-                new YmlDataManager(this, "languages/en_us.yml")
+                addDataAccessor(new YamlDataAccessor(this, config.language.substring(0, config.language.length() - 4))),
+                addDataAccessor(new YamlDataAccessor(this, "languages/en_us"))
         );
 //                FileConfigurationAccessor.create(config.language, new YmlDataManager(this, config.language).getConfig(), this),
 //                FileConfigurationAccessor.create(config.language, new YmlDataManager(this, "languages/en_us.yml").getConfig(), this)
@@ -292,7 +300,9 @@ public class BingoReloaded extends JavaPlugin
         return accessorMap.get(location);
     }
 
-    public static void addDataAccessor(DataAccessor accessor) {
+    public static DataAccessor addDataAccessor(DataAccessor accessor) {
         accessorMap.put(accessor.getLocation(), accessor);
+        accessor.load();
+        return accessor;
     }
 }

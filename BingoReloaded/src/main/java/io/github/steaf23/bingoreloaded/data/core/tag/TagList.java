@@ -9,7 +9,8 @@ import java.util.List;
 
 public class TagList
 {
-    TagDataType<?> tagType;
+    // Use some default tag type (since when the list is empty, its type won't matter
+    TagDataType<?> tagType = TagDataType.BYTE;
 
     private final List<Tag<?>> tags = new ArrayList<>();
 

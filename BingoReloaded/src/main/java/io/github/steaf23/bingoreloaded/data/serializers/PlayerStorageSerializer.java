@@ -3,18 +3,19 @@ package io.github.steaf23.bingoreloaded.data.serializers;
 import io.github.steaf23.bingoreloaded.data.core.DataStorage;
 import io.github.steaf23.bingoreloaded.data.core.helper.SerializablePlayer;
 import io.github.steaf23.bingoreloaded.data.core.tag.DataStorageSerializer;
-import io.github.steaf23.bingoreloaded.data.core.tag.TagDataType;
+import io.github.steaf23.bingoreloaded.gui.inventory.item.SerializableItem;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PlayerStorageSerializer implements DataStorageSerializer<SerializablePlayer>
 {
     @Override
-    public void toDataStorage(@NotNull DataStorage storage, SerializablePlayer value) {
+    public void toDataStorage(@NotNull DataStorage storage, @NotNull SerializablePlayer value) {
         storage.setString("version", value.pluginVersion);
         storage.setUUID("uuid", value.playerId);
         storage.setLocation("location", value.location);
@@ -24,8 +25,8 @@ public class PlayerStorageSerializer implements DataStorageSerializer<Serializab
         storage.setLocation("spawn_point", value.spawnPoint);
         storage.setInt("xp_level", value.xpLevel);
         storage.setFloat("xp_points", value.xpPoints);
-        storage.setList("inventory", TagDataType.ITEM_STACK, Arrays.stream(value.inventory).toList());
-        storage.setList("ender_inventory", TagDataType.ITEM_STACK, Arrays.stream(value.inventory).toList());
+        storage.setSerializableList("inventory", SerializableItem.class, serializeInventory(value.inventory));
+        storage.setSerializableList("ender_inventory", SerializableItem.class, serializeInventory(value.enderInventory));
     }
 
     @Override
@@ -40,8 +41,30 @@ public class PlayerStorageSerializer implements DataStorageSerializer<Serializab
         player.spawnPoint = storage.getLocation("location", new Location(null, 0.0, 0.0, 0.0));
         player.xpLevel = storage.getInt("xp_level", 0);
         player.xpPoints = storage.getFloat("xp_points", 0.0f);
-        player.inventory = storage.getList("inventory", TagDataType.ITEM_STACK).toArray(new ItemStack[]{});
-        player.enderInventory = storage.getList("ender_inventory", TagDataType.ITEM_STACK).toArray(new ItemStack[]{});
+        player.inventory = deserializeInventory(storage.getSerializableList("inventory", SerializableItem.class), 41);
+        player.enderInventory = deserializeInventory(storage.getSerializableList("ender_inventory", SerializableItem.class), 27);
         return player;
+    }
+
+    private static List<SerializableItem> serializeInventory(ItemStack[] items) {
+        List<SerializableItem> inventory = new ArrayList<>();
+        int index = 0;
+        for (ItemStack stack : items) {
+            if (stack == null) {
+                index++;
+                continue;
+            }
+            inventory.add(new SerializableItem(index, stack));
+            index++;
+        }
+        return inventory;
+    }
+
+    private static ItemStack[] deserializeInventory(List<SerializableItem> items, int size) {
+        ItemStack[] inventory = new ItemStack[size];
+        for (SerializableItem stack : items) {
+            inventory[stack.slot()] = stack.stack();
+        }
+        return inventory;
     }
 }

@@ -18,7 +18,7 @@ import java.util.List;
 public class BingoSettingsStorageSerializer implements DataStorageSerializer<BingoSettings>
 {
     @Override
-    public void toDataStorage(@NotNull DataStorage storage, BingoSettings value) {
+    public void toDataStorage(@NotNull DataStorage storage, @NotNull BingoSettings value) {
         storage.setString("card", value.card());
         storage.setString("mode", value.mode().getDataName());
         storage.setInt("size", value.size().size);

@@ -11,7 +11,7 @@ public class ConsoleMessenger
     }
 
     public static void warn(String message) {
-        PlayerDisplay.getPlugin().getComponentLogger().info(
+        PlayerDisplay.getPlugin().getComponentLogger().warn(
                 PlayerDisplay.MINI_BUILDER.deserialize(message));
     }
 
@@ -57,11 +57,11 @@ public class ConsoleMessenger
     public static void bug(String message, Object source) {
         PlayerDisplay.getPlugin().getComponentLogger().error(
                 PlayerDisplay.MINI_BUILDER.deserialize(message)
-                        .append(Component.text(" in " + source.getClass().getName() + "(Please report!)")));
+                        .append(Component.text("; Source: " + source.getClass().getName() + " (Please report!)")));
     }
 
     public static void bug(Component message, Object source) {
         PlayerDisplay.getPlugin().getComponentLogger().error(
-                message.append(Component.text(" in " + source.getClass().getName() + "(Please report!)")));
+                message.append(Component.text("; Source: " + source.getClass().getName() + " (Please report!)")));
     }
 }

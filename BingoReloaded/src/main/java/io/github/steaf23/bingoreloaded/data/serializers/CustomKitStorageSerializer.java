@@ -2,53 +2,31 @@ package io.github.steaf23.bingoreloaded.data.serializers;
 
 import io.github.steaf23.bingoreloaded.data.core.DataStorage;
 import io.github.steaf23.bingoreloaded.data.core.tag.DataStorageSerializer;
-import io.github.steaf23.bingoreloaded.data.core.tag.TagDataType;
 import io.github.steaf23.bingoreloaded.gui.inventory.item.SerializableItem;
 import io.github.steaf23.bingoreloaded.settings.CustomKit;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import io.github.steaf23.playerdisplay.PlayerDisplay;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class CustomKitStorageSerializer implements DataStorageSerializer<CustomKit>
 {
     @Override
-    public void toDataStorage(@NotNull DataStorage storage, CustomKit value) {
-        List<ItemStack> stacks = value.items().stream().map(SerializableItem::stack).toList();
-        List<Integer> slots = value.items().stream().map(SerializableItem::slot).toList();
-
+    public void toDataStorage(@NotNull DataStorage storage, @NotNull CustomKit value) {
+        storage.setByte("card_slot", (byte)value.cardSlot());
         storage.setString("name", PlayerDisplay.MINI_BUILDER.serialize(value.name()));
-        storage.setInt("slot", slotFromKit(value.slot()));
-        storage.setList("item_stacks", TagDataType.ITEM_STACK, stacks);
-        storage.setList("item_slots", TagDataType.INT, slots);
+        storage.setByte("kit_id", slotFromKit(value.slot()));
+        storage.setSerializableList("items", SerializableItem.class, value.items());
     }
 
     @Override
     public CustomKit fromDataStorage(@NotNull DataStorage storage) {
         return new CustomKit(PlayerDisplay.MINI_BUILDER.deserialize(storage.getString("name", "")),
-                kitFromSlot(storage.getInt("slot", 0)),
-                createSerializableItems(
-                        storage.getList("item_stacks", TagDataType.ITEM_STACK),
-                        storage.getList("item_slots", TagDataType.INT)),
-                storage.getInt("card_slot", 40));
+                kitFromSlot(storage.getByte("kit_id", (byte)0)),
+                storage.getSerializableList("items", SerializableItem.class),
+                storage.getByte("card_slot", (byte)40)); //off-hand slot
     }
 
-    private static List<SerializableItem> createSerializableItems(List<ItemStack> stacks, List<Integer> slots) {
-        if (stacks.size() != slots.size()) {
-            return List.of();
-        }
-
-        List<SerializableItem> result = new ArrayList<>();
-        for (int i = 0; i < stacks.size(); i++) {
-            result.add(new SerializableItem(slots.get(i), stacks.get(i)));
-        }
-        return result;
-    }
-
-    private static PlayerKit kitFromSlot(int slot) throws IllegalStateException {
+    private static PlayerKit kitFromSlot(byte slot) throws IllegalStateException {
         return switch (slot)
         {
             case 1 -> PlayerKit.CUSTOM_1;
@@ -60,7 +38,7 @@ public class CustomKitStorageSerializer implements DataStorageSerializer<CustomK
         };
     }
 
-    private static int slotFromKit(PlayerKit kit) throws IllegalStateException {
+    private static byte slotFromKit(PlayerKit kit) throws IllegalStateException {
         return switch (kit)
         {
             case CUSTOM_1 -> 1;

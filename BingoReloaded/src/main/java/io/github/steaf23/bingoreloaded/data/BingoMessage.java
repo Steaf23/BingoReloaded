@@ -1,7 +1,7 @@
 package io.github.steaf23.bingoreloaded.data;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
-import io.github.steaf23.bingoreloaded.data.core.helper.YmlDataManager;
+import io.github.steaf23.bingoreloaded.data.core.DataAccessor;
 import io.github.steaf23.playerdisplay.PlayerDisplay;
 import io.github.steaf23.playerdisplay.util.TinyCaps;
 import me.clip.placeholderapi.PlaceholderAPI;
@@ -167,9 +167,9 @@ public enum BingoMessage
         this.translation = key;
     }
 
-    public static void setLanguage(YmlDataManager text, YmlDataManager fallbackText) {
+    public static void setLanguage(DataAccessor text, DataAccessor fallbackText) {
         for (BingoMessage value : BingoMessage.values()) {
-            value.translation = text.getConfig().getString(value.key, fallbackText.getConfig().getString(value.key, value.translation));
+            value.translation = text.getString(value.key, fallbackText.getString(value.key, value.translation));
         }
     }
 

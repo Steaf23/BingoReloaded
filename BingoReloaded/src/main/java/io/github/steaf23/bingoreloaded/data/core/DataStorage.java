@@ -60,7 +60,7 @@ public interface DataStorage
     void setUUID(String path, UUID value);
     @Nullable UUID getUUID(String path);
 
-    void setLocation(String path, Location value);
+    void setLocation(String path, @NotNull Location value);
     @Nullable Location getLocation(String path);
     @NotNull Location getLocation(String path, @NotNull Location def);
 

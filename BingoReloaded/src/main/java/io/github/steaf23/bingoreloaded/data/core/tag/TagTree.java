@@ -1,11 +1,9 @@
 package io.github.steaf23.bingoreloaded.data.core.tag;
 
 import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
-import org.yaml.snakeyaml.util.ArrayUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -28,7 +26,6 @@ public class TagTree
             tags.remove(path);
             return;
         }
-        System.out.println(data.getValue());
         tags.put(path, data);
     }
 
@@ -52,7 +49,6 @@ public class TagTree
             tag.writePayloadBytes(stream);
         }
         stream.write(0);
-        System.out.println("Writ: " + Arrays.toString(stream.toByteArray()));
     }
 
     public static TagTree fromPayload(ByteArrayInputStream stream) {

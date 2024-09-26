@@ -1,21 +1,15 @@
 package io.github.steaf23.bingoreloaded.data.core.helper;
 
-import io.github.steaf23.bingoreloaded.data.core.DataStorage;
-import io.github.steaf23.bingoreloaded.data.core.tag.TagDataType;
-import io.github.steaf23.bingoreloaded.data.core.tag.DataStorageSerializer;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
-import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
 import java.util.UUID;
 
-@SerializableAs("Player")
 public class SerializablePlayer
 {
     public String pluginVersion;
@@ -30,7 +24,7 @@ public class SerializablePlayer
     public ItemStack[] inventory;
     public ItemStack[] enderInventory;
 
-    public static SerializablePlayer fromPlayer(@NotNull JavaPlugin plugin, @NotNull Player player)
+    public static @NotNull SerializablePlayer fromPlayer(@NotNull JavaPlugin plugin, @NotNull Player player)
     {
         SerializablePlayer data = new SerializablePlayer();
         data.pluginVersion = plugin.getPluginMeta().getVersion();
@@ -39,7 +33,7 @@ public class SerializablePlayer
         data.health = player.getHealth();
         data.hunger = player.getFoodLevel();
         data.gamemode = player.getGameMode();
-        data.spawnPoint = player.getRespawnLocation();
+        data.spawnPoint = player.getRespawnLocation() == null ? player.getWorld().getSpawnLocation() : player.getRespawnLocation();
         data.xpLevel = player.getLevel();
         data.xpPoints = player.getExp();
         data.inventory = player.getInventory().getContents();

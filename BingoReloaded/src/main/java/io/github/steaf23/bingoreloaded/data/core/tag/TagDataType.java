@@ -8,7 +8,6 @@ import org.bukkit.inventory.ItemStack;
 import javax.annotation.Nullable;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
@@ -145,7 +144,6 @@ public class TagDataType<T>
                 return result;
             },
             Tag.LongArrayTag::new);
-
 
     public static final TagAdapter<Boolean, Byte> BOOLEAN = new BooleanTagAdapter();
     public static final TagAdapter<java.util.UUID, int[]> UUID = new UUIDTagAdapter();

@@ -1,6 +1,6 @@
 package io.github.steaf23.bingoreloaded.data.core.helper;
 
-import org.codehaus.plexus.util.FileUtils;
+import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;

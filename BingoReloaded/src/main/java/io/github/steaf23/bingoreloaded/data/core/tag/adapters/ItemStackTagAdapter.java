@@ -19,7 +19,7 @@ public class ItemStackTagAdapter implements TagAdapter<ItemStack, byte[]>
     }
 
     @Override
-    public @NotNull Tag<byte[]> toTag(ItemStack value) {
+    public @NotNull Tag<byte[]> toTag(@NotNull ItemStack value) {
         return new Tag.ByteArrayTag(value.serializeAsBytes());
     }
 }

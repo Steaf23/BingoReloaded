@@ -26,7 +26,6 @@ public class UUIDTagAdapter implements TagAdapter<UUID, int[]>
         long mostSig = (long)data[0] << 32 | data[1] & 0xFFFFFFFFL;
         long leastSig = (long)data[2] << 32 | data[3] & 0xFFFFFFFFL;
 
-        System.out.println("FROM_TAG: " + mostSig + " " + leastSig);
         return new UUID(mostSig, leastSig);
     }
 
@@ -42,7 +41,6 @@ public class UUIDTagAdapter implements TagAdapter<UUID, int[]>
         data[2] = (int)(leastSig >> 32);
         data[3] = (int)leastSig;
 
-        System.out.println("TO_TAG: " + mostSig + " " + leastSig);
         return new Tag.IntegerArrayTag(data);
     }
 

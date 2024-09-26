@@ -74,10 +74,11 @@ public class NodeLikeData
         // remove node if node at fullPath is not a branch node
         Node data = root.getData(fullPath[0]);
         if (data instanceof NodeBranch<?> branch) {
-            branch.removeData(key.substring(fullPath[0].length() + 1));
-            if (branch.isEmpty()) {
-                removeNested(root, fullPath[0]);
-            }
+            removeNested(branch, key.substring(fullPath[0].length() + 1));
+            //TODO: decide if to remove itself if it has no children... its good because its auto cleanup but bad because of potential invalid access.
+//            if (branch.isEmpty()) {
+//                removeNested(root, fullPath[0]);
+//            }
         } else {
             root.removeData(fullPath[0]);
         }

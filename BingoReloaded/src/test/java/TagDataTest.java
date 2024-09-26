@@ -1,6 +1,8 @@
+import be.seeseemelk.mockbukkit.MockBukkit;
 import io.github.steaf23.bingoreloaded.data.TeamData;
 import io.github.steaf23.bingoreloaded.data.core.DataStorage;
 import io.github.steaf23.bingoreloaded.data.core.DataStorageSerializerRegistry;
+import io.github.steaf23.bingoreloaded.data.core.helper.ResourceFileHelper;
 import io.github.steaf23.bingoreloaded.data.core.helper.SerializablePlayer;
 import io.github.steaf23.bingoreloaded.data.core.tag.TagDataAccessor;
 import io.github.steaf23.bingoreloaded.data.core.tag.TagDataStorage;
@@ -21,9 +23,12 @@ import io.github.steaf23.bingoreloaded.tasks.BingoStatistic;
 import io.github.steaf23.bingoreloaded.tasks.ItemTask;
 import io.github.steaf23.bingoreloaded.tasks.StatisticTask;
 import io.github.steaf23.bingoreloaded.tasks.TaskData;
+import io.github.steaf23.playerdisplay.inventory.item.ItemTemplate;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.Statistic;
-import org.bukkit.advancement.Advancement;
+import org.bukkit.inventory.ItemStack;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -31,6 +36,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.List;
 import java.util.UUID;
 
@@ -53,6 +59,17 @@ public class TagDataTest
         DataStorageSerializerRegistry.addSerializer(new BingoSettingsStorageSerializer(), BingoSettings.class);
         DataStorageSerializerRegistry.addSerializer(new BingoStatisticStorageSerializer(), BingoStatistic.class);
         DataStorageSerializerRegistry.addSerializer(new ItemStorageSerializer(), SerializableItem.class);
+
+        try {
+            Files.createDirectory(new File("test").toPath());
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    @AfterAll
+    public static void after() {
+        ResourceFileHelper.deleteFolderRecurse("test");
     }
 
     @Test
@@ -61,6 +78,18 @@ public class TagDataTest
         DataStorage node = new TagDataStorage();
         node.setString("test_path", test);
         assertEquals(test, node.getString("test_path", "def"));
+    }
+
+    @Test
+    public void storeStringToFile() {
+        String test = "\uE031";
+        TagDataStorage node = new TagDataStorage();
+        node.setString("test_path", test);
+        assertEquals(test, node.getString("test_path", "def"));
+        writeToFile(node, "test_nodes_uid2");
+
+        TagDataStorage accessor1 = readFromFile("test_nodes_uid2");
+        assertEquals(accessor1.getString("test_path", "def"), test);
     }
 
     @Test
@@ -154,7 +183,6 @@ public class TagDataTest
         UUID testId = UUID.randomUUID();
 
         TagDataStorage accessor = new TagDataStorage();
-        DataStorage node = new TagDataStorage();
         accessor.setString("node0.test_path", testStr);
         accessor.setString("node1.test_path", "haha");
         accessor.setString("node1.test_path", testStr);
@@ -164,9 +192,6 @@ public class TagDataTest
         accessor.setUUID("test.n.id", testId);
         accessor.setList("node0.test_path.list", TagDataType.DOUBLE, doubles);
 
-//        for (int i = 0; i < 10000; i++) {
-//            accessor.setString("node_" + i, "some value to inflate the file size, to ballpark which method is more memory efficient..");
-//        }
         writeToFile(accessor, "test_nodes");
 
 
@@ -264,13 +289,24 @@ public class TagDataTest
     public void storeSerializableList() {
         List<TaskData> test = List.of(
                 new StatisticTask(new BingoStatistic(org.bukkit.Statistic.CRAFT_ITEM, Material.CRAFTING_TABLE)),
-                new AdvancementTask((Advancement)null),
+                new AdvancementTask(null),
                 new ItemTask(Material.BEDROCK, 13)
         );
         DataStorage node = new TagDataStorage();
         node.setSerializableList("test_path", TaskData.class, test);
-        System.out.println(node.getSerializableList("test_path", TaskData.class));
         assertEquals(test, node.getSerializableList("test_path", TaskData.class));
+    }
+
+    @Test
+    public void storeUUIDListToFile() {
+        List<UUID> test = List.of(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(),UUID.randomUUID(), UUID.randomUUID());
+        TagDataStorage node = new TagDataStorage();
+        node.setList("test_path", TagDataType.UUID, test);
+        assertEquals(node.getList("test_path", TagDataType.UUID), test);
+        writeToFile(node, "test_nodes_uid2");
+
+        TagDataStorage accessor1 = readFromFile("test_nodes_uid2");
+        assertEquals(accessor1.getList("test_path", TagDataType.UUID), test);
     }
 
     @Test
@@ -354,7 +390,6 @@ public class TagDataTest
     @Test
     public void serializeUUIDToFile() {
         UUID test = UUID.randomUUID();
-        System.out.println(test);
 
         TagDataStorage accessor = new TagDataStorage();
         accessor.setUUID("test_path", test);
@@ -387,13 +422,12 @@ public class TagDataTest
 
         ByteArrayInputStream input = new ByteArrayInputStream(stream.toByteArray());
         TagTree tree = TagDataType.COMPOUND.readBytes(input);
-        System.out.println(tree.getKeys());
         DataStorage result = new TagDataStorage(tree);
-        assertEquals(test, result.getSerializable("test_path", StatisticTask.class));
+        assertEquals(test, result.getSerializable("test_path", TaskData.class));
     }
 
     @Test
-    public void serializeSerializableList() throws IOException {
+    public void serializeSerializableList() {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
 
         List<TaskData> test = List.of(
@@ -408,18 +442,31 @@ public class TagDataTest
         ByteArrayInputStream input = new ByteArrayInputStream(stream.toByteArray());
         TagTree tree = TagDataType.COMPOUND.readBytes(input);
         DataStorage result = new TagDataStorage(tree);
-        System.out.println(node.getSerializableList("test_path", TaskData.class));
-        System.out.println(result.getSerializableList("test_path", TaskData.class));
-        assertEquals(test, result.getSerializable("test_path", TaskData.class));
+        assertEquals(test, result.getSerializableList("test_path", TaskData.class));
+    }
+
+    @Test
+    public void serializeBooleans() {
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+
+        List<Boolean> items = List.of(true, true, false, false, true, false, true, false);
+        TagDataStorage node = new TagDataStorage();
+        node.setList("test_path", TagDataType.BOOLEAN, items);
+        TagDataType.COMPOUND.writeBytes(node.getTree(), stream);
+
+        ByteArrayInputStream input = new ByteArrayInputStream(stream.toByteArray());
+        TagTree tree = TagDataType.COMPOUND.readBytes(input);
+        DataStorage result = new TagDataStorage(tree);
+        assertEquals(items, result.getList("test_path", TagDataType.BOOLEAN));
     }
 
     public TagDataStorage readFromFile(String filename) {
         TagDataStorage data = new TagDataStorage();
-        TagDataAccessor.readTagDataFromFile(data, new File(filename + ".nbt"));
+        TagDataAccessor.readTagDataFromFile(data, new File("test\\" + filename + ".nbt"));
         return data;
     }
 
     public void writeToFile(TagDataStorage data, String filename) {
-        TagDataAccessor.writeTagDataToFile(data, new File(filename + ".nbt"));
+        TagDataAccessor.writeTagDataToFile(data, new File("test\\" + filename + ".nbt"));
     }
 }

@@ -1,9 +1,8 @@
 package io.github.steaf23.bingoreloaded.settings;
 
 import com.google.common.collect.ImmutableSet;
-import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
-import io.github.steaf23.bingoreloaded.data.core.DataAccessor;
+import io.github.steaf23.bingoreloaded.data.CustomKitData;
 import io.github.steaf23.bingoreloaded.gui.inventory.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.gui.inventory.item.SerializableItem;
 import io.github.steaf23.playerdisplay.inventory.item.ItemTemplate;
@@ -13,9 +12,7 @@ import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.Player;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
@@ -64,8 +61,7 @@ public enum PlayerKit
     public final String configName;
     private final Component displayName;
     public final EnumSet<EffectOptionFlags> defaultEffects;
-
-    private static final DataAccessor customKitData = BingoReloaded.getDataAccessor("data/kits");
+    private static final CustomKitData customKitData = new CustomKitData();
 
     PlayerKit(String configName, Component displayName, EnumSet<EffectOptionFlags> defaultEffects)
     {
@@ -76,7 +72,7 @@ public enum PlayerKit
 
     public Component getDisplayName() {
         if (isCustomKit()) {
-            return getCustomKit(this).name();
+            return customKitData.getCustomKit(this).name();
         }
         return displayName;
     }
@@ -152,7 +148,7 @@ public enum PlayerKit
                         .setAmount(64));
             }
             case CUSTOM_1, CUSTOM_2, CUSTOM_3, CUSTOM_4, CUSTOM_5 -> {
-                CustomKit kit = getCustomKit(this);
+                CustomKit kit = customKitData.getCustomKit(this);
                 if (kit != null)
                 {
                     // Color colored items according to the team color.
@@ -168,7 +164,7 @@ public enum PlayerKit
 
     public int getCardSlot() {
         if (isCustomKit()) {
-            return getCustomKit(this).cardSlot();
+            return customKitData.getCustomKit(this).cardSlot();
         }
         else {
             // off-hand slot: 40
@@ -178,6 +174,10 @@ public enum PlayerKit
 
     public boolean isCustomKit() {
         return customKits().contains(this);
+    }
+
+    public boolean isValid() {
+        return !isCustomKit() || (PlayerKit.customKits().contains(this) && customKitData.getCustomKit(this) != null);
     }
 
     public static PlayerKit fromConfig(String name)
@@ -196,32 +196,6 @@ public enum PlayerKit
             case "custom_5" -> CUSTOM_5;
             default -> HARDCORE;
         };
-    }
-
-    public static boolean assignCustomKit(Component kitName, PlayerKit slot, Player commandSender)
-    {
-        if (customKitData.contains(slot.configName))
-            return false;
-
-        customKitData.setSerializable(slot.configName, CustomKit.class, CustomKit.fromPlayerInventory(commandSender, kitName, slot));
-        customKitData.saveChanges();
-        return true;
-    }
-
-    public static boolean removeCustomKit(PlayerKit slot)
-    {
-        if (!customKitData.contains(slot.configName))
-            return false;
-
-        customKitData.erase(slot.configName);
-        customKitData.saveChanges();
-
-        return true;
-    }
-
-    public static @Nullable CustomKit getCustomKit(PlayerKit slot)
-    {
-        return customKitData.getSerializable(slot.configName, CustomKit.class);
     }
 
     public static Set<PlayerKit> customKits() {

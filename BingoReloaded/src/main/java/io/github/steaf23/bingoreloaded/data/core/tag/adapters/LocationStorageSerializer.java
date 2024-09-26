@@ -12,7 +12,7 @@ import java.util.UUID;
 public class LocationStorageSerializer implements DataStorageSerializer<Location>
 {
     @Override
-    public void toDataStorage(@NotNull DataStorage storage, Location value) {
+    public void toDataStorage(@NotNull DataStorage storage, @NotNull Location value) {
         storage.setUUID("world", value.getWorld().getUID());
         storage.setDouble("x", value.getX());
         storage.setDouble("y", value.getY());

@@ -6,8 +6,8 @@ import io.github.steaf23.bingoreloaded.settings.BingoSettings;
 import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 
 import javax.annotation.Nullable;
+import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public class BingoSettingsData
 {
@@ -20,11 +20,11 @@ public class BingoSettingsData
             return null;
         }
 
-        if (data.contains(name)) {
-            return data.getSerializable(name, BingoSettings.class);
+        if (data.contains("presets." + name)) {
+            return data.getSerializable("presets." + name, BingoSettings.class);
         }
         else if (!getDefaultSettingsName().isEmpty()) {
-            return data.getSerializable(getDefaultSettingsName(), BingoSettings.class);
+            return data.getSerializable("presets." + getDefaultSettingsName(), BingoSettings.class);
         }
         return null;
     }
@@ -35,13 +35,13 @@ public class BingoSettingsData
             ConsoleMessenger.error("Cannot use name 'default'.");
             return;
         }
-        if (data.contains(name)) {
+        if (data.contains("presets." + name)) {
             ConsoleMessenger.log("Overwritten saved preset '" + name + "' with current settings");
-            data.erase(name);
+            data.erase("presets." + name);
         } else {
             ConsoleMessenger.log("Saved preset '" + name + "'");
         }
-        data.setSerializable(name, BingoSettings.class, settings);
+        data.setSerializable("presets." + name, BingoSettings.class, settings);
         data.saveChanges();
     }
 
@@ -58,7 +58,7 @@ public class BingoSettingsData
             setDefaultSettings("default_settings");
         }
         ConsoleMessenger.log("Removed preset '" + name + "'");
-        data.erase(name);
+        data.erase("presets." + name);
         data.saveChanges();
     }
 
@@ -81,8 +81,6 @@ public class BingoSettingsData
     }
 
     public Set<String> getPresetNames() {
-        return data.getKeys()
-                .stream().filter(k -> !k.equals("default"))
-                .collect(Collectors.toSet());
+        return new HashSet<>(data.getStorage("presets").getKeys());
     }
 }

@@ -1,5 +1,6 @@
 package io.github.steaf23.bingoreloaded.gameloop;
 
+import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.data.PlayerSerializationData;
 import io.github.steaf23.bingoreloaded.data.core.helper.SerializablePlayer;
@@ -12,7 +13,6 @@ import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.playerdisplay.inventory.MenuBoard;
 import io.github.steaf23.playerdisplay.scoreboard.HUDRegistry;
 import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
-import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -216,12 +216,16 @@ public class GameManager
         if (sourceSession != null) {
             if (config.savePlayerInformation && targetSession == null) {
                 teleportingPlayer = true;
-                if (playerData.loadPlayer(event.getPlayer()) == null) {
-                    // Player data was not saved for some reason?
-                    ConsoleMessenger.bug(Component.text("No saved player data could be found for ").append(event.getPlayer().displayName()).append(Component.text(", resetting data")), this);
-                    // Using the boolean we can check if we were already teleporting the player.
-                    SerializablePlayer.reset(plugin, event.getPlayer(), event.getTo()).apply(event.getPlayer());
-                }
+                // load player will teleport them, so we have to schedule it to make sure to do the right thing
+                BingoReloaded.scheduleTask(t -> {
+                    if (playerData.loadPlayer(event.getPlayer()) == null) {
+//                        // Player data was not saved for some reason?
+//                        ConsoleMessenger.bug(Component.text("No saved player data could be found for ").append(event.getPlayer().displayName()).append(Component.text(", resetting data")), this);
+//                        // Using the boolean we can check if we were already teleporting the player.
+//                        SerializablePlayer.reset(plugin, event.getPlayer(), event.getTo()).apply(event.getPlayer());
+                    }
+                });
+
                 event.setCancelled(true);
             }
             sourceSession.removePlayer(event.getPlayer());

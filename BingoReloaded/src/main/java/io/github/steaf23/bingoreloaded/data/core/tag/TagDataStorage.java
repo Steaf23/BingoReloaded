@@ -12,11 +12,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 public class TagDataStorage implements DataStorage
 {
@@ -34,7 +32,6 @@ public class TagDataStorage implements DataStorage
         root = new Tag.CompoundTag(tree);
     }
 
-
     @Override
     public Set<String> getKeys() {
         return root.getValue().getKeys();
@@ -42,7 +39,7 @@ public class TagDataStorage implements DataStorage
 
     @Override
     public void setByte(String path, byte value) {
-        set(path, new Tag.ByteTag(value));
+        set(path, TagDataType.BYTE.createTag(value));
     }
 
     @Override
@@ -56,7 +53,7 @@ public class TagDataStorage implements DataStorage
 
     @Override
     public void setShort(String path, short value) {
-        set(path, new Tag.ShortTag(value));
+        set(path, TagDataType.SHORT.createTag(value));
     }
 
     @Override
@@ -84,7 +81,7 @@ public class TagDataStorage implements DataStorage
 
     @Override
     public void setLong(String path, long value) {
-        set(path, new Tag.LongTag(value));
+        set(path, TagDataType.LONG.createTag(value));
     }
 
     @Override
@@ -98,7 +95,7 @@ public class TagDataStorage implements DataStorage
 
     @Override
     public void setString(String path, @NotNull String value) {
-        set(path, new Tag.StringTag(value));
+        set(path, TagDataType.STRING.createTag(value));
     }
 
     @Override
@@ -148,7 +145,7 @@ public class TagDataStorage implements DataStorage
             tags.addTag(type.createTag(v));
         }
 
-        set(path, new Tag.ListTag(tags));
+        set(path, TagDataType.LIST.createTag(tags));
     }
 
     @Override
@@ -199,34 +196,35 @@ public class TagDataStorage implements DataStorage
 
     @Override
     public <T> void setList(String path, TagAdapter<T, ?> adapterType, List<T> values) {
+        //FIXME: Currently byte-, int- and long- array adapters will not work because of the casting happening here...
         if (adapterType.getBaseType() == TagDataType.BYTE) {
             byte[] bytes = new byte[values.size()];
             int i = 0;
             for (T value : values) {
-                bytes[i] = (byte) value;
+                bytes[i] = (byte) adapterType.toTag(value).getValue();
                 i++;
             }
-            set(path, new Tag.ByteArrayTag(bytes));
+            set(path, TagDataType.BYTE_ARRAY.createTag(bytes));
             return;
         }
         if (adapterType.getBaseType() == TagDataType.INT) {
             int[] ints = new int[values.size()];
             int i = 0;
             for (T value : values) {
-                ints[i] = (int) value;
+                ints[i] = (int) adapterType.toTag(value).getValue();
                 i++;
             }
-            set(path, new Tag.IntegerArrayTag(ints));
+            set(path, TagDataType.INT_ARRAY.createTag(ints));
             return;
         }
         if (adapterType.getBaseType() == TagDataType.LONG) {
             long[] longs = new long[values.size()];
             int i = 0;
             for (T value : values) {
-                longs[i] = (long) value;
+                longs[i] = (int) adapterType.toTag(value).getValue();
                 i++;
             }
-            set(path, new Tag.LongArrayTag(longs));
+            set(path, TagDataType.LONG_ARRAY.createTag(longs));
             return;
         }
 
@@ -235,7 +233,7 @@ public class TagDataStorage implements DataStorage
             tags.addTag(adapterType.toTag(v));
         }
 
-        set(path, new Tag.ListTag(tags));
+        set(path, TagDataType.LIST.createTag(tags));
     }
 
     @Override
@@ -247,6 +245,27 @@ public class TagDataStorage implements DataStorage
         if (tag.getType() == TagDataType.LIST) {
             TagList tagList = (TagList) tag.getValue();
             return tagList.getTags().stream().map(adapterType::fromTagOrNull).toList();
+        } else if (tag.getType() == TagDataType.BYTE_ARRAY) {
+            byte[] values = (byte[]) tag.getValue();
+            List<T> result = new ArrayList<>();
+            for (byte v : values) {
+                result.add(adapterType.fromTagOrNull(new Tag.ByteTag(v)));
+            }
+            return result;
+        } else if (tag.getType() == TagDataType.INT_ARRAY) {
+            int[] values = (int[]) tag.getValue();
+            List<T> result = new ArrayList<>();
+            for (int v : values) {
+                result.add(adapterType.fromTagOrNull(new Tag.IntegerTag(v)));
+            }
+            return result;
+        } else if (tag.getType() == TagDataType.LONG_ARRAY) {
+            long[] values = (long[]) tag.getValue();
+            List<T> result = new ArrayList<>();
+            for (long v : values) {
+                result.add(adapterType.fromTagOrNull(new Tag.LongTag(v)));
+            }
+            return result;
         }
         return List.of();
     }
@@ -329,22 +348,30 @@ public class TagDataStorage implements DataStorage
 
     @Override
     public void setFloat(String path, float value) {
-
+        set(path, TagDataType.FLOAT.createTag(value));
     }
 
     @Override
     public float getFloat(String path, float def) {
-        return 0;
+        Tag<?> tag = get(path);
+        if (tag != null && tag.getType() == TagDataType.FLOAT) {
+            return (float) tag.getValue();
+        }
+        return def;
     }
 
     @Override
     public void setDouble(String path, double value) {
-
+        set(path, TagDataType.DOUBLE.createTag(value));
     }
 
     @Override
     public double getDouble(String path, double def) {
-        return 0;
+        Tag<?> tag = get(path);
+        if (tag != null && tag.getType() == TagDataType.DOUBLE) {
+            return (double) tag.getValue();
+        }
+        return def;
     }
 
     @Override
@@ -369,7 +396,7 @@ public class TagDataStorage implements DataStorage
     }
 
     @Override
-    public void setLocation(String path, Location value) {
+    public void setLocation(String path, @NotNull Location value) {
         setSerializable(path, Location.class, value);
     }
 

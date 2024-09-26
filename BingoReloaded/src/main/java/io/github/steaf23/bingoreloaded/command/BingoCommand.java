@@ -1,8 +1,9 @@
 package io.github.steaf23.bingoreloaded.command;
 
+import io.github.steaf23.bingoreloaded.data.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.BingoStatData;
-import io.github.steaf23.bingoreloaded.data.BingoConfigurationData;
+import io.github.steaf23.bingoreloaded.data.CustomKitData;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gameloop.GameManager;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
@@ -238,10 +239,11 @@ public class BingoCommand implements TabExecutor
         }
         kitName.append(kitNameParts.getLast());
 
-        if (!PlayerKit.assignCustomKit(PlayerDisplay.MINI_BUILDER.deserialize(kitName.toString()), kit, commandSender)) {
+        CustomKitData data = new CustomKitData();
+        if (!data.assignCustomKit(PlayerDisplay.MINI_BUILDER.deserialize(kitName.toString()), kit, commandSender)) {
             Component message = PlayerDisplay.MINI_BUILDER
                     .deserialize("<red>Cannot add custom kit " + kitName + " to slot " + slot + ", this slot already contains kit ")
-                    .append(PlayerKit.getCustomKit(kit).name())
+                    .append(data.getCustomKit(kit).name())
                     .append(Component.text(". Remove it first!"));
             BingoPlayerSender.sendMessage(message, commandSender);
         } else {
@@ -267,13 +269,14 @@ public class BingoCommand implements TabExecutor
             return;
         }
 
-        CustomKit customKit = PlayerKit.getCustomKit(kit);
+        CustomKitData data = new CustomKitData();
+        CustomKit customKit = data.getCustomKit(kit);
         if (customKit == null) {
             Component message = PlayerDisplay.MINI_BUILDER
                     .deserialize("<red>Cannot remove kit from slot " + slot + " because no custom kit is assigned to this slot");
             BingoPlayerSender.sendMessage(message, commandSender);
         } else {
-            PlayerKit.removeCustomKit(kit);
+            data.removeCustomKit(kit);
 
             Component message = PlayerDisplay.MINI_BUILDER
                     .deserialize("<green>Removed custom kit " + PlayerDisplay.MINI_BUILDER.serialize(customKit.name()) + " from slot " + slot);

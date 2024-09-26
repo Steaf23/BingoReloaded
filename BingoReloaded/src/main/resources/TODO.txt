@@ -22,8 +22,6 @@
 
 (2.x) add progress view to tasks
 
-(2.x) rework yml data managers to add syncs between instances, now you can get outdated data in older references if newer ones have changed the data.
-
 (2.x) on paginated menu apply filter, maybe change the item names to color the filtered phrase differently.
 
 (2.x) add /bingoconfig command
@@ -35,3 +33,10 @@
 () reimplement resource pack spacing inside the resource pack instead of using a separate pack
 
 () add input text to team edit button and fill name edit with correct text
+
+() add web editor for nbt files
+() add (web) DFU for new text components, compared to old file formatter for files like translation and scoreboards
+
+BUGS:
+- Cannot teleport player to world error, when the teleport in fact succeeded...
+- Load player data in a bingo world does not teleport the player out

@@ -7,7 +7,6 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -33,6 +32,11 @@ public class VirtualDataAccessor implements DataAccessor
     }
 
     @Override
+    public String getFileExtension() {
+        return "";
+    }
+
+    @Override
     public void load() {
         ConsoleMessenger.bug("read filepath '" + filepath + "' and threw it in the void! (using empty node reader)", this);
     }
@@ -40,11 +44,6 @@ public class VirtualDataAccessor implements DataAccessor
     @Override
     public void saveChanges() {
         ConsoleMessenger.bug("wanted to write node data to filepath '" + filepath + "', but threw it in the void! (using empty node writer)", this);
-    }
-
-    @Override
-    public JavaPlugin getPlugin() {
-        return null;
     }
 
     @Override
@@ -203,7 +202,7 @@ public class VirtualDataAccessor implements DataAccessor
     }
 
     @Override
-    public void setLocation(String path, Location value) {
+    public void setLocation(String path, @NotNull Location value) {
 
     }
 

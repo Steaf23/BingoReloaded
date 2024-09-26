@@ -5,8 +5,8 @@ import io.github.steaf23.bingoreloaded.cards.CardSize;
 import io.github.steaf23.bingoreloaded.command.core.DeferredCommand;
 import io.github.steaf23.bingoreloaded.command.core.SubCommand;
 import io.github.steaf23.bingoreloaded.data.BingoCardData;
-import io.github.steaf23.bingoreloaded.data.BingoSettingsData;
 import io.github.steaf23.bingoreloaded.data.BingoConfigurationData;
+import io.github.steaf23.bingoreloaded.data.BingoSettingsData;
 import io.github.steaf23.bingoreloaded.data.PlayerSerializationData;
 import io.github.steaf23.bingoreloaded.data.core.helper.SerializablePlayer;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
@@ -295,7 +295,7 @@ public class AutoBingoCommand implements TabExecutor
 
         PlayerKit kit = PlayerKit.fromConfig(extraArguments[0]);
 
-        if (PlayerKit.customKits().contains(kit) && PlayerKit.getCustomKit(kit) == null) {
+        if (!kit.isValid()) {
             // Invalid custom kit selected, not possible!
             sendFailed("Cannot set kit to " + kit.getDisplayName() + ". This custom kit is not defined. To create custom kits first, use /bingo kit.", worldName);
             return false;

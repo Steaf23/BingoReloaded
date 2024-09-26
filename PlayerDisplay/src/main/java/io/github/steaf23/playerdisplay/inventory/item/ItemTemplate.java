@@ -397,8 +397,11 @@ public class ItemTemplate
                 ((Damageable)stackMeta).setDamage(currentDamage);
             }
         }
-        PersistentDataContainer pdc = stackMeta.getPersistentDataContainer();
-        pdc = PDCHelper.addStringToPdc(pdc, "compare_key", compareKey);
+
+        if (compareKey != null) {
+            PersistentDataContainer pdc = stackMeta.getPersistentDataContainer();
+            pdc = PDCHelper.addStringToPdc(pdc, "compare_key", compareKey);
+        }
 
         stackMeta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_UNBREAKABLE, ItemFlag.HIDE_DYE);
         if (hideAttributes) {

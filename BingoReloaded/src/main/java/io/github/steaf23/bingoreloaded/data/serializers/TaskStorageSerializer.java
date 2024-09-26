@@ -17,7 +17,7 @@ public class TaskStorageSerializer implements DataStorageSerializer<TaskData>
     private static final int TYPE_STATISTIC = 2;
 
     @Override
-    public void toDataStorage(@NotNull DataStorage storage, TaskData value) {
+    public void toDataStorage(@NotNull DataStorage storage, @NotNull TaskData value) {
         int type = -1;
         if (value instanceof ItemTask itemTask) {
             type = TYPE_ITEM;
@@ -42,8 +42,13 @@ public class TaskStorageSerializer implements DataStorageSerializer<TaskData>
         return switch (type) {
             case TYPE_ITEM:
                 yield new ItemTask(Registry.MATERIAL.get(storage.getNamespacedKey("item")), storage.getInt("count", 1));
-            case TYPE_ADVANCEMENT:
-                yield new AdvancementTask(Registry.ADVANCEMENT.get(storage.getNamespacedKey("advancement")));
+            case TYPE_ADVANCEMENT: {
+                if (storage.contains("advancement")) {
+                    yield new AdvancementTask(Registry.ADVANCEMENT.get(storage.getNamespacedKey("advancement")));
+                } else {
+                    yield new AdvancementTask(null);
+                }
+            }
             case TYPE_STATISTIC:
                 yield new StatisticTask(storage.getSerializable("statistic", BingoStatistic.class), storage.getInt("count", 1));
             default:

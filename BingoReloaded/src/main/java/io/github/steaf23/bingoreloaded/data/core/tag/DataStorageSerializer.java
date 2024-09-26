@@ -6,7 +6,7 @@ import org.jetbrains.annotations.Nullable;
 
 public interface DataStorageSerializer<T>
 {
-    void toDataStorage(@NotNull DataStorage storage, T value);
+    void toDataStorage(@NotNull DataStorage storage, @NotNull T value);
     @Nullable
     T fromDataStorage(@NotNull DataStorage storage);
 }

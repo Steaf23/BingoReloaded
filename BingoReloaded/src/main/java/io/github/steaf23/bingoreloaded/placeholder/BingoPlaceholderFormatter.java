@@ -1,14 +1,14 @@
 package io.github.steaf23.bingoreloaded.placeholder;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
-import io.github.steaf23.bingoreloaded.data.core.helper.YmlDataManager;
+import io.github.steaf23.bingoreloaded.data.core.DataAccessor;
 
 public class BingoPlaceholderFormatter
 {
-    private static final YmlDataManager data = new YmlDataManager(BingoReloaded.getInstance(), "placeholders.yml");
+    private static final DataAccessor DATA = BingoReloaded.getDataAccessor("placeholders");
 
     public String format(BingoReloadedPlaceholder placeholder) {
-        return data.getConfig().getString("placeholders." + placeholder.getName() + ".format", "");
+        return DATA.getString("placeholders." + placeholder.getName() + ".format", "");
     }
 
     /**
@@ -16,6 +16,6 @@ public class BingoPlaceholderFormatter
      * @return format for bingoreloaded_team_full placeholder
      */
     public String getTeamFullFormat() {
-        return data.getConfig().getString("placeholders.team_full.format", "");
+        return DATA.getString("placeholders.team_full.format", "");
     }
 }

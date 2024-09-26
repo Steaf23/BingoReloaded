@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
 public class TeamTemplateStorageSerializer implements DataStorageSerializer<TeamData.TeamTemplate>
 {
     @Override
-    public void toDataStorage(@NotNull DataStorage storage, TeamData.TeamTemplate value) {
+    public void toDataStorage(@NotNull DataStorage storage, TeamData.@NotNull TeamTemplate value) {
         storage.setString("name", value.stringName());
         storage.setString("color", value.color().asHexString());
     }

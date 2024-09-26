@@ -1,7 +1,7 @@
 package io.github.steaf23.bingoreloaded.gui.inventory;
 
-import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.BingoConfigurationData;
+import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.gameloop.phase.PregameLobby;
 import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
@@ -174,23 +174,23 @@ public class VoteMenu extends BasicMenu
                 });
             };
 
-            if (voteList.kits().contains("custom_1") && PlayerKit.getCustomKit(PlayerKit.CUSTOM_1) != null) {
+            if (voteList.kits().contains("custom_1") && PlayerKit.CUSTOM_1.isValid()) {
                 addCustomKit.accept(PlayerKit.CUSTOM_1, itemIndex);
                 itemIndex++;
             }
-            if (voteList.kits().contains("custom_2") && PlayerKit.getCustomKit(PlayerKit.CUSTOM_2) != null) {
+            if (voteList.kits().contains("custom_2") && PlayerKit.CUSTOM_2.isValid()) {
                 addCustomKit.accept(PlayerKit.CUSTOM_2, itemIndex);
                 itemIndex++;
             }
-            if (voteList.kits().contains("custom_3") && PlayerKit.getCustomKit(PlayerKit.CUSTOM_3) != null) {
+            if (voteList.kits().contains("custom_3") && PlayerKit.CUSTOM_3.isValid()) {
                 addCustomKit.accept(PlayerKit.CUSTOM_3, itemIndex);
                 itemIndex++;
             }
-            if (voteList.kits().contains("custom_4") && PlayerKit.getCustomKit(PlayerKit.CUSTOM_4) != null) {
+            if (voteList.kits().contains("custom_4") && PlayerKit.CUSTOM_4.isValid()) {
                 addCustomKit.accept(PlayerKit.CUSTOM_4, itemIndex);
                 itemIndex++;
             }
-            if (voteList.kits().contains("custom_5") && PlayerKit.getCustomKit(PlayerKit.CUSTOM_5) != null) {
+            if (voteList.kits().contains("custom_5") && PlayerKit.CUSTOM_5.isValid()) {
                 addCustomKit.accept(PlayerKit.CUSTOM_5, itemIndex);
                 itemIndex++;
             }

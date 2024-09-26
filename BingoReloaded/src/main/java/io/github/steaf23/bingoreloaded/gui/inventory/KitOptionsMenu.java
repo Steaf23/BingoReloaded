@@ -1,6 +1,7 @@
 package io.github.steaf23.bingoreloaded.gui.inventory;
 
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
+import io.github.steaf23.bingoreloaded.data.CustomKitData;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.settings.CustomKit;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
@@ -56,8 +57,9 @@ public class KitOptionsMenu extends BasicMenu
         });
 
         int kitIdx = 0;
+        CustomKitData customKitData = new CustomKitData();
         for (PlayerKit kit : PlayerKit.customKits()) {
-            CustomKit customkit = PlayerKit.getCustomKit(kit);
+            CustomKit customkit = customKitData.getCustomKit(kit);
             if (customkit != null) {
                 addAction(new ItemTemplate(kitIdx * 2, 3, Material.WHITE_CONCRETE,
                         customkit.name(), Component.text("Custom kit")), args -> {

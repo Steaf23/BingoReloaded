@@ -49,14 +49,12 @@ public class ByteHelper
     }
 
     public static void writeInt(int value, ByteArrayOutputStream stream) {
-        System.out.println("writing " + value);
         stream.writeBytes(ByteHelper.intToBytes(value));
     }
 
     public static int readInt(ByteArrayInputStream stream) {
         byte[] bytes = new byte[4];
         stream.readNBytes(bytes, 0, 4);
-        System.out.println("reading " + bytesToInt(bytes));
         return bytesToInt(bytes);
     }
 
@@ -71,8 +69,9 @@ public class ByteHelper
     }
 
     public static void writeString(@NotNull String value, ByteArrayOutputStream stream) {
-        writeShort((short)value.length(), stream);
-        stream.writeBytes(value.getBytes(StandardCharsets.UTF_8));
+        byte[] bytes = value.getBytes(StandardCharsets.UTF_8);
+        writeShort((short)bytes.length, stream);
+        stream.writeBytes(bytes);
     }
 
     public static String readString(ByteArrayInputStream stream) {
