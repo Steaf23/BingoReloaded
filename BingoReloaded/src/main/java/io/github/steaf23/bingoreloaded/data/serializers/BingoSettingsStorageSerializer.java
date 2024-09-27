@@ -29,21 +29,24 @@ public class BingoSettingsStorageSerializer implements DataStorageSerializer<Bin
         storage.setInt("duration", value.countdownDuration());
         storage.setBoolean("countdown", value.enableCountdown());
         storage.setInt("hotswap_goal", value.hotswapGoal());
+        storage.setInt("complete_goal", value.completeGoal());
     }
 
     @Override
     public @Nullable BingoSettings fromDataStorage(@NotNull DataStorage storage) {
+        CardSize size = CardSize.fromWidth(storage.getInt("size", 5));
         return new BingoSettings(
                 storage.getString("card", ""),
                 BingoGamemode.fromDataString(storage.getString("mode", "")),
-                CardSize.fromWidth(storage.getInt("size", 5)),
+                size,
                 storage.getInt("seed", 0),
                 PlayerKit.fromConfig(storage.getString("kit", "")),
                 enumSetFromList(EffectOptionFlags.class, storage.getList("effects", TagDataType.STRING)),
                 storage.getInt("team_size", 1),
                 storage.getBoolean("countdown", false),
                 storage.getInt("duration", 0),
-                storage.getInt("hotswap_goal", 10)
+                storage.getInt("hotswap_goal", 10),
+                storage.getInt("complete_goal", size.fullCardSize)
         );
     }
 

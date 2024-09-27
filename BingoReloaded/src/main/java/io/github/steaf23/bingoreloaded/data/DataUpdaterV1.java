@@ -261,7 +261,8 @@ public class DataUpdaterV1
                         oldSettings.maxTeamSize(),
                         oldSettings.enableCountdown(),
                         oldSettings.countdownDuration(),
-                        oldSettings.hotswapGoal()
+                        oldSettings.hotswapGoal(),
+                        oldSettings.size.fullCardSize
                 ));
             }
         }

@@ -131,7 +131,7 @@ public class TexturedCardMenu implements Menu, CardMenu
 
     @Override
     public boolean onClick(InventoryClickEvent event, HumanEntity player, int clickedSlot, ClickType clickType) {
-        return itemGroup.handleClick(event, player, clickedSlot, clickType);
+        return itemGroup.handleClick(this, event, player, clickedSlot, clickType);
     }
 
     @Override

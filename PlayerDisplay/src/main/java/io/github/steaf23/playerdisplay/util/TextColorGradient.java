@@ -79,6 +79,6 @@ public class TextColorGradient
         int red = (int)ExtraMath.lerp(left.red(), right.red(), value);
         int green = (int)ExtraMath.lerp(left.green(), right.green(), value);
         int blue = (int)ExtraMath.lerp(left.blue(), right.blue(), value);
-        return TextColor.color(ExtraMath.clamped(red, 0, 255), ExtraMath.clamped(green, 0, 255), ExtraMath.clamped(blue, 0, 255));
+        return TextColor.color(Math.clamp(red, 0, 255), Math.clamp(green, 0, 255), Math.clamp(blue, 0, 255));
     }
 }

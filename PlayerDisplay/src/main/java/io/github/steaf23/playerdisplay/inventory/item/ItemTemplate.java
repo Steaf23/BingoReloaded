@@ -3,7 +3,6 @@ package io.github.steaf23.playerdisplay.inventory.item;
 import com.google.common.collect.ImmutableMultimap;
 import io.github.steaf23.playerdisplay.PlayerDisplay;
 import io.github.steaf23.playerdisplay.inventory.item.action.MenuAction;
-import io.github.steaf23.playerdisplay.util.ExtraMath;
 import io.github.steaf23.playerdisplay.util.PDCHelper;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -19,7 +18,6 @@ import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.persistence.PersistentDataContainer;
-import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -164,7 +162,7 @@ public class ItemTemplate
      * @param amount value is clamped between 1 and 64 before being applied.
      */
     public ItemTemplate setAmount(int amount) {
-        this.amount = ExtraMath.clamped(amount, 1, 64);
+        this.amount = Math.clamp(amount, 1, 64);
         return this;
     }
 
@@ -238,6 +236,10 @@ public class ItemTemplate
         }
         action.setItem(this);
         return this;
+    }
+
+    public MenuAction getAction() {
+        return this.action;
     }
 
     /**

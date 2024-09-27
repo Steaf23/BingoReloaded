@@ -1,5 +1,6 @@
 package io.github.steaf23.playerdisplay.inventory.item.action;
 
+import io.github.steaf23.playerdisplay.inventory.Menu;
 import io.github.steaf23.playerdisplay.inventory.item.ItemTemplate;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.inventory.ClickType;
@@ -11,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public abstract class MenuAction
 {
-    public record ActionArguments(HumanEntity player, ClickType clickType)
+    public record ActionArguments(Menu menu, HumanEntity player, ClickType clickType)
     {
     }
 

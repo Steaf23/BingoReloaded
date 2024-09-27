@@ -9,7 +9,6 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.entity.HumanEntity;
 
 import java.util.function.BiConsumer;
-import java.util.function.Function;
 
 /**
  * Action to edit the name of an item by clicking on it. Supports minimessage serialization

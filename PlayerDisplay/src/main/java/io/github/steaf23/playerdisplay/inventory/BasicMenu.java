@@ -44,6 +44,7 @@ public class BasicMenu implements Menu
     private final MenuItemGroup itemGroup;
 
     private Component title;
+    private boolean openOnce;
 
     public BasicMenu(MenuBoard manager, Component initialTitle, int rows) {
         this(manager, Bukkit.createInventory(null, rows * 9, Component.text().append(pluginTitlePrefix).append(initialTitle).build()));
@@ -74,6 +75,11 @@ public class BasicMenu implements Menu
         manager.open(this, player);
     }
 
+    public void open(HumanEntity player, boolean openOnce) {
+        setOpenOnce(openOnce);
+        manager.open(this, player);
+    }
+
     public void close(HumanEntity player) {
         manager.close(this, player);
     }
@@ -84,8 +90,7 @@ public class BasicMenu implements Menu
 
     public @Nullable ItemTemplate getItemAtSlot(int slot) {
         for (ItemTemplate item : itemGroup.items) {
-            if (item.getSlot() == slot)
-            {
+            if (item.getSlot() == slot) {
                 return item;
             }
         }
@@ -101,7 +106,6 @@ public class BasicMenu implements Menu
         }
 
         itemGroup.addItem(item);
-
         // Replace/ set new item in its target slot
         getInventory().setItem(item.getSlot(), item.buildItem());
 
@@ -113,13 +117,14 @@ public class BasicMenu implements Menu
     }
 
     public BasicMenu addAction(@NotNull ItemTemplate item, Consumer<MenuAction.ActionArguments> action) {
-        item.setAction(new MenuAction()
+        MenuAction menuAction = new MenuAction()
         {
             @Override
             public void use(ActionArguments arguments) {
                 action.accept(arguments);
             }
-        });
+        };
+        item.setAction(menuAction);
         addItem(item);
 
         return this;
@@ -169,7 +174,7 @@ public class BasicMenu implements Menu
 
     @Override
     public boolean onClick(final InventoryClickEvent event, HumanEntity player, int clickedSlot, ClickType clickType) {
-        return itemGroup.handleClick(event, player, clickedSlot, clickType);
+        return itemGroup.handleClick(this, event, player, clickedSlot, clickType);
     }
 
     @Override
@@ -189,5 +194,14 @@ public class BasicMenu implements Menu
     @Override
     public String toString() {
         return "BasicMenu{" + this.title + "}";
+    }
+
+    public void setOpenOnce(boolean value) {
+        openOnce = value;
+    }
+
+    @Override
+    public boolean openOnce() {
+        return openOnce;
     }
 }

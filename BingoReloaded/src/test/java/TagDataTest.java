@@ -1,4 +1,3 @@
-import be.seeseemelk.mockbukkit.MockBukkit;
 import io.github.steaf23.bingoreloaded.data.TeamData;
 import io.github.steaf23.bingoreloaded.data.core.DataStorage;
 import io.github.steaf23.bingoreloaded.data.core.DataStorageSerializerRegistry;
@@ -23,11 +22,8 @@ import io.github.steaf23.bingoreloaded.tasks.BingoStatistic;
 import io.github.steaf23.bingoreloaded.tasks.ItemTask;
 import io.github.steaf23.bingoreloaded.tasks.StatisticTask;
 import io.github.steaf23.bingoreloaded.tasks.TaskData;
-import io.github.steaf23.playerdisplay.inventory.item.ItemTemplate;
-import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.Statistic;
-import org.bukkit.inventory.ItemStack;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;

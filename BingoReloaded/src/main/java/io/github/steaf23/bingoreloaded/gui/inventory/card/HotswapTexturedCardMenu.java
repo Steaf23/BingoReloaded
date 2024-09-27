@@ -85,7 +85,9 @@ public class HotswapTexturedCardMenu extends TexturedCardMenu implements Hotswap
 
         setTaskItems();
         addItem(getInfo());
-
+        if (oldInventory == null) {
+            return;
+        }
         var viewers = new ArrayList<>(oldInventory.getViewers());
         viewers.forEach(p -> {
             p.openInventory(getInventory());

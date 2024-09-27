@@ -2,7 +2,6 @@ package io.github.steaf23.playerdisplay.inventory.item.action;
 
 import io.github.steaf23.playerdisplay.inventory.Menu;
 import io.github.steaf23.playerdisplay.inventory.item.ItemTemplate;
-import io.github.steaf23.playerdisplay.util.ExtraMath;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 
@@ -16,9 +15,9 @@ public class SpinBoxButtonAction extends MenuAction
     private final Consumer<Integer> callback;
 
     public SpinBoxButtonAction(int minValue, int maxValue, int initialValue, Consumer<Integer> callback) {
-        this.min = ExtraMath.clamped(minValue, 1, maxValue);
-        this.max = ExtraMath.clamped(maxValue, minValue, 64);
-        this.value = ExtraMath.clamped(initialValue, min, max);
+        this.min = Math.clamp(minValue, 1, maxValue);
+        this.max = Math.clamp(maxValue, minValue, 64);
+        this.value = Math.clamp(initialValue, min, max);
         this.callback = callback;
     }
 
@@ -44,10 +43,14 @@ public class SpinBoxButtonAction extends MenuAction
             changeBy *= -1;
         }
 
-        value = ExtraMath.clamped(value + changeBy, min, max);
+        value = Math.clamp(value + changeBy, min, max);
         if (item != null) {
             item.setAmount(value);
         }
         callback.accept(value);
+    }
+
+    public int getValue() {
+        return value;
     }
 }

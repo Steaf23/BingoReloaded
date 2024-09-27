@@ -2,10 +2,6 @@ package io.github.steaf23.playerdisplay.util;
 
 public class ExtraMath
 {
-    public static int clamped(int value, int min, int max) {
-        return Math.max(Math.min(value, max), min);
-    }
-
     public static float lerp(float from, float to, float by) {
         return from + (to - from) * by;
     }

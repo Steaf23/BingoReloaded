@@ -7,7 +7,6 @@ import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.playerdisplay.PlayerDisplay;
 import io.github.steaf23.playerdisplay.inventory.BasicMenu;
 import io.github.steaf23.playerdisplay.inventory.FilterType;
-import io.github.steaf23.playerdisplay.inventory.Menu;
 import io.github.steaf23.playerdisplay.inventory.MenuBoard;
 import io.github.steaf23.playerdisplay.inventory.PaginatedSelectionMenu;
 import io.github.steaf23.playerdisplay.inventory.item.ItemTemplate;
@@ -15,10 +14,8 @@ import io.github.steaf23.playerdisplay.inventory.item.action.ComboBoxButtonActio
 import io.github.steaf23.playerdisplay.inventory.item.action.MenuAction;
 import io.github.steaf23.playerdisplay.inventory.item.action.SpinBoxButtonAction;
 import io.github.steaf23.playerdisplay.inventory.item.action.ToggleButtonAction;
-import io.github.steaf23.playerdisplay.util.ComponentUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -44,8 +41,7 @@ public class AdminBingoMenu extends BasicMenu
     private static final ItemTemplate KIT = new ItemTemplate(3, 2,
             Material.LEATHER_HELMET, BasicMenu.applyTitleFormat(BingoMessage.OPTIONS_KIT.asPhrase()));
     private static final ItemTemplate MODE = new ItemTemplate(1, 4,
-            Material.ENCHANTED_BOOK, BasicMenu.applyTitleFormat(BingoMessage.OPTIONS_GAMEMODE.asPhrase()))
-            .addDescription("input", 10, Menu.INPUT_RIGHT_CLICK.append(Component.text("gamemode specific settings")));
+            Material.ENCHANTED_BOOK, BasicMenu.applyTitleFormat(BingoMessage.OPTIONS_GAMEMODE.asPhrase()));
     private static final ItemTemplate EFFECTS = new ItemTemplate(3, 4,
             Material.POTION, BasicMenu.applyTitleFormat(BingoMessage.OPTIONS_EFFECTS.asPhrase()));
     private static final ItemTemplate COUNTDOWN = new ItemTemplate(5, 2,
@@ -66,14 +62,7 @@ public class AdminBingoMenu extends BasicMenu
             selectionMenu.open(arguments.player());
         });
         addAction(KIT, arguments -> new KitOptionsMenu(getMenuBoard(), session).open(arguments.player()));
-        addAction(MODE, arguments -> {
-            if (arguments.clickType().isLeftClick()) {
-                new GamemodeOptionsMenu(getMenuBoard(), session).open(arguments.player());
-            }
-            else if (arguments.clickType().isRightClick()) {
-                showGamemodeSettings(arguments.player());
-            }
-        });
+        addAction(MODE, arguments -> new GamemodeOptionsMenu(getMenuBoard(), session).open(arguments.player()));
         addAction(CARD, this::openCardPicker);
         addAction(EFFECTS, arguments -> new EffectOptionsMenu(getMenuBoard(), session.settingsBuilder).open(arguments.player()));
         addAction(PRESETS, arguments -> new SettingsPresetMenu(getMenuBoard(), session.settingsBuilder).open(arguments.player()));
@@ -103,18 +92,17 @@ public class AdminBingoMenu extends BasicMenu
         }));
         addItems(teamSizeItem, durationItem, countdownItem);
 
-        ItemTemplate centerButton = START.copy();
-        centerButton.setAction(new ComboBoxButtonAction(value -> {
-            if (value.equals("end")) {
-                session.startGame();
-            }
-            else if (value.equals("start")) {
-                session.endGame();
-            }
-        })
-                .addOption("start", START)
-                .addOption("end", END)
-                .selectOption(session.isRunning() ? "end" : "start"));
+        ItemTemplate centerButton = new ComboBoxButtonAction.Builder("start", START.copy())
+                .addOption("end", END.copy())
+                .setCallback(value -> {
+                    if (value.equals("end")) {
+                        session.endGame();
+                    }
+                    else if (value.equals("start")) {
+                        session.startGame();
+                    }
+                })
+                .buildItem(ItemTemplate.slotFromXY(6, 0), session.isRunning() ? "end" : "start");
         addItem(centerButton);
     }
 
@@ -166,24 +154,5 @@ public class AdminBingoMenu extends BasicMenu
         item.setLore(Component.text("(When changing this setting all currently").color(NamedTextColor.GRAY),
                 Component.text("joined players will be kicked from their teams!)").color(NamedTextColor.GRAY),
                 Component.text("Maximum team size set to " + value + " players.").color(NamedTextColor.DARK_PURPLE));
-    }
-
-    private void showGamemodeSettings(HumanEntity player) {
-        BasicMenu menu = new BasicMenu(getMenuBoard(), Component.empty(), 1);
-
-        int hotswapGoal = session.settingsBuilder.view().hotswapGoal();
-        ItemTemplate hotswapGoalItem = new ItemTemplate(0, Material.FIRE_CHARGE, Component.text("Hot-Swap Win Score"),
-                Component.text("Complete " + hotswapGoal + " tasks to win hot-swap."),
-                Component.text("Only effective if countdown mode is disabled"));
-        menu.addAction(hotswapGoalItem,
-                new SpinBoxButtonAction(1, 64, hotswapGoal, value -> {
-                    session.settingsBuilder.hotswapGoal(value);
-                    hotswapGoalItem.setLore(ComponentUtils.createComponentsFromString(
-                            "Complete " + value + " tasks to win hot-swap.",
-                            "Only effective if countdown mode is disabled"));
-                }));
-
-        menu.addCloseAction(new ItemTemplate(8, Material.BARRIER, BingoMessage.MENU_EXIT.asPhrase().color(NamedTextColor.LIGHT_PURPLE).decorate(TextDecoration.BOLD)));
-        menu.open(player);
     }
 }

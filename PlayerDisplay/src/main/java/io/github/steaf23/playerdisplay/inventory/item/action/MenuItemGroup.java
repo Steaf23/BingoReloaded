@@ -1,5 +1,6 @@
 package io.github.steaf23.playerdisplay.inventory.item.action;
 
+import io.github.steaf23.playerdisplay.inventory.Menu;
 import io.github.steaf23.playerdisplay.inventory.item.ItemTemplate;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.inventory.ClickType;
@@ -19,10 +20,10 @@ public class MenuItemGroup
         this.items = new ArrayList<>();
     }
 
-    public boolean handleClick(final InventoryClickEvent event, HumanEntity player, int clickedSlot, ClickType clickType) {
+    public boolean handleClick(Menu menu, final InventoryClickEvent event, HumanEntity player, int clickedSlot, ClickType clickType) {
         for (ItemTemplate item : new ArrayList<>(items)) {
             if (item.getSlot() == clickedSlot) {
-                item.useItem(new MenuAction.ActionArguments(player, clickType));
+                item.useItem(new MenuAction.ActionArguments(menu, player, clickType));
                 //TODO: find a way to update itemstack automatically on change, no matter where!
                 event.getInventory().setItem(item.getSlot(), item.buildItem());
             }

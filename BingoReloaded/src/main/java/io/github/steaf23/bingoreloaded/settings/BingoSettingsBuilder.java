@@ -26,6 +26,7 @@ public class BingoSettingsBuilder
     private boolean enableCountdown;
     private int countdownGameDuration;
     private int hotswapGoal;
+    private int completeGoal;
 
     public BingoSettingsBuilder(BingoSession session)
     {
@@ -46,6 +47,7 @@ public class BingoSettingsBuilder
         this.countdownGameDuration = def.countdownDuration();
         this.enableCountdown = def.enableCountdown();
         this.hotswapGoal = def.hotswapGoal();
+        this.completeGoal = def.completeGoal();
     }
 
     public void fromOther(BingoSettings settings)
@@ -60,6 +62,7 @@ public class BingoSettingsBuilder
         countdownGameDuration = settings.countdownDuration();
         enableCountdown = settings.enableCountdown();
         hotswapGoal = settings.hotswapGoal();
+        completeGoal = settings.completeGoal();
         settingsUpdated();
     }
 
@@ -120,6 +123,8 @@ public class BingoSettingsBuilder
     {
         if (this.cardSize != cardSize) {
             this.cardSize = cardSize;
+            // reset complete goal to remain full card completion settings by default
+            this.completeGoal = cardSize.fullCardSize;
             settingsUpdated();
         }
         return this;
@@ -197,6 +202,15 @@ public class BingoSettingsBuilder
         return this;
     }
 
+    public BingoSettingsBuilder completeGoal(int completeGoal) {
+        if (this.completeGoal != completeGoal) {
+            // clamp completeGoal based on card size as a goal of 25 on a small card is not possible...
+            this.completeGoal = Math.min(completeGoal, cardSize.fullCardSize);
+            settingsUpdated();
+        }
+        return this;
+    }
+
     public BingoSettings view()
     {
         return new BingoSettings(
@@ -209,7 +223,8 @@ public class BingoSettingsBuilder
                 maxTeamSize,
                 enableCountdown,
                 countdownGameDuration,
-                hotswapGoal);
+                hotswapGoal,
+                completeGoal);
     }
 
     public void settingsUpdated()

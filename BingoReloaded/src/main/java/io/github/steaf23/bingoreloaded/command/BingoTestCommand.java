@@ -8,12 +8,17 @@ import io.github.steaf23.bingoreloaded.event.BingoTaskProgressCompletedEvent;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.tasks.GameTask;
+import io.github.steaf23.playerdisplay.inventory.BasicMenu;
 import io.github.steaf23.playerdisplay.inventory.MenuBoard;
+import io.github.steaf23.playerdisplay.inventory.item.ItemTemplate;
+import io.github.steaf23.playerdisplay.inventory.item.action.ComboBoxButtonAction;
+import io.github.steaf23.playerdisplay.inventory.item.action.MenuAction;
 import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
@@ -62,7 +67,7 @@ public class BingoTestCommand implements TabExecutor
                 }
                 completeTaskByPlayer(virtualPlayer, taskIndex);
             }
-            case "menu" -> {
+            case "texture_menu" -> {
                 if (!(commandSender instanceof Player p)) {
                     return false;
                 }
@@ -77,6 +82,35 @@ public class BingoTestCommand implements TabExecutor
 
                 var inv = Bukkit.createInventory(null, 9*6, title.append(Component.text("\uE030").append(Component.translatable("space.-" + (test.textureEnd() + 2)))).append(Component.text("\uE030")).build());
                 p.openInventory(inv);
+            }
+            case "menu" -> {
+                if (!(commandSender instanceof Player p)) {
+                    return false;
+                }
+
+                BasicMenu menu = new BasicMenu(board, Component.text("Some test menu..."), 6);
+                ItemTemplate cardSizeItem = new ComboBoxButtonAction.Builder("one",
+                        new ItemTemplate(Material.WHITE_CONCRETE, Component.text(1)))
+                        .addOption("two",
+                                new ItemTemplate(Material.YELLOW_CONCRETE, Component.text(2)))
+                        .addOption("three",
+                                new ItemTemplate(Material.ORANGE_CONCRETE, Component.text(3)))
+                        .addOption("four",
+                                new ItemTemplate(Material.RED_CONCRETE, Component.text(4)))
+                        .addOption("five",
+                                new ItemTemplate(Material.PURPLE_CONCRETE, Component.text(5)))
+                        .addOption("six",
+                                new ItemTemplate(Material.BLUE_CONCRETE, Component.text(6)))
+                        .buildItem(12, "three");
+                menu.addItem(cardSizeItem);
+                menu.addAction(new ItemTemplate(11, Material.GOLDEN_APPLE, Component.text("Vibe Check")), a -> {
+                    ConsoleMessenger.warn("Vibe incoming");
+                    MenuAction action = cardSizeItem.getAction();
+                    if (action instanceof ComboBoxButtonAction comboAction) {
+                        ConsoleMessenger.error("VIBE CHECKED: " + comboAction.getSelectedOptionName());
+                    }
+                });
+                menu.open(p);
             }
         }
         return true;

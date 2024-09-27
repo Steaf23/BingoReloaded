@@ -14,6 +14,7 @@ public record BingoSettings(String card,
                             int maxTeamSize,
                             boolean enableCountdown,
                             int countdownDuration,
-                            int hotswapGoal)
+                            int hotswapGoal,
+                            int completeGoal)
 {
 }
