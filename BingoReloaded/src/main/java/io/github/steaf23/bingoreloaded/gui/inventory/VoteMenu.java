@@ -101,7 +101,7 @@ public class VoteMenu extends BasicMenu
                         BingoGamemode.HOTSWAP.asComponent().decorate(TextDecoration.BOLD).append(Component.text(" - 5x5")),
                         CollectionHelper.concatWithArrayCopy(
                                 BingoMessage.INFO_HOTSWAP_DESC_EXPIRE.asMultiline(),
-                                BingoMessage.INFO_HOTSWAP_DESC_ANY.asMultiline(Component.text("?")))), (args) -> {
+                                BingoMessage.INFO_HOTSWAP_DESC_ANY.asMultiline(Component.text("x")))), (args) -> {
                     HumanEntity player = args.player();
                     lobby.voteGamemode("hotswap_5", player);
                     gamemodeOptions.close(player);
@@ -113,7 +113,7 @@ public class VoteMenu extends BasicMenu
                         BingoGamemode.HOTSWAP.asComponent().decorate(TextDecoration.BOLD).append(Component.text(" - 3x3")),
                         CollectionHelper.concatWithArrayCopy(
                                 BingoMessage.INFO_HOTSWAP_DESC_EXPIRE.asMultiline(),
-                                BingoMessage.INFO_HOTSWAP_DESC_ANY.asMultiline(Component.text("?")))), (args) -> {
+                                BingoMessage.INFO_HOTSWAP_DESC_ANY.asMultiline(Component.text("x")))), (args) -> {
                     HumanEntity player = args.player();
                     lobby.voteGamemode("hotswap_3", player);
                     gamemodeOptions.close(player);
