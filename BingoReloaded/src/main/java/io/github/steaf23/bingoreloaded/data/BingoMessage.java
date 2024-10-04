@@ -102,8 +102,10 @@ public enum BingoMessage
     INFO_COMPLETE_NAME("menu.card.info_complete.name"),
     INFO_COMPLETE_DESC("menu.card.info_complete.desc"),
     INFO_HOTSWAP_NAME("menu.card.info_hotswap.name"),
-    INFO_HOTSWAP_DESC("menu.card.info_hotswap.desc"),
-    INFO_HOTSWAP_COUNTDOWN("menu.card.info_hotswap.desc_alt"),
+    INFO_HOTSWAP_DESC_EXPIRE("menu.card.info_hotswap.desc_expire"),
+    INFO_HOTSWAP_DESC_SCORE("menu.card.info_hotswap.desc_score"),
+    INFO_HOTSWAP_DESC_TIME("menu.card.info_hotswap.desc_time"),
+    INFO_HOTSWAP_DESC_ANY("menu.card.info_hotswap.desc_any"),
     OPTIONS_TITLE("menu.options.title"),
     OPTIONS_START("menu.options.start"),
     OPTIONS_END("menu.options.end"),
@@ -274,6 +276,7 @@ public enum BingoMessage
             return cachedPhrases.get(input);
         }
 
+        // phrases cannot contain newlines, which is why this is filtered explicitly using convertConfigStringToMini
         String converted = String.join("", convertConfigStringToMini(input));
         // create tag resolvers for each argument, which will appear as <0>, <1> etc... in the mini message string and be replaced by the correct components.
         List<TagResolver> resolvers = new ArrayList<>();

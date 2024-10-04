@@ -23,7 +23,7 @@ public class CardFactory
             case LOCKOUT ->
                     new LockoutTaskCard(menu, settings.size(), game.getSession(), game.getTeamManager().getActiveTeams());
             case COMPLETE ->
-                    new CompleteTaskCard(menu, settings.size());
+                    new CompleteTaskCard(menu, settings.size(), game.getSettings().completeGoal());
             case HOTSWAP -> {
                 if (!(menu instanceof HotswapCardMenu)) {
                     menu = new HotswapGenericCardMenu(menuBoard, settings.size());

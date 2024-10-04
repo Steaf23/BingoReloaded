@@ -95,7 +95,7 @@ menu:
       name: "Cartão de Bingo Lockout"
       desc: "Vence o time que mais completar tarefas. \nQuando uma tarefa é completa \nela não pode ser completada por outro time."
     info_complete:
-      name: "Cartão de Bingo Blackout"
+      name: "Cartão de Bingo Complete-X"
       desc: "Vence o primeiro time a completar todas as tarefas."
     info_hotswap:
       name: "Cartão de Bingo Hot-Swap"
@@ -115,7 +115,7 @@ menu:
     modes:
       regular: "Normal"
       lockout: "Lockout"
-      complete: "Blackout"
+      complete: "Complete-X"
       hotswap: "Hot-Swap"
   effects:
     enable: "Clique para ATIVAR esta opção de efeito"

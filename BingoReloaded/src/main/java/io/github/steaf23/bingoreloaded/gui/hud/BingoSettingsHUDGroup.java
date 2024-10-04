@@ -24,7 +24,7 @@ public class BingoSettingsHUDGroup extends PlayerHUDGroup
         super(registry);
         this.settingsBoardTemplate = new ScoreboardData().loadTemplate("lobby", registeredFields);
 
-        setStatus((Component)null);
+        setStatus(null);
     }
 
     @Override
@@ -42,7 +42,7 @@ public class BingoSettingsHUDGroup extends PlayerHUDGroup
         addSidebarArgument("card_size", settings.size().asComponent());
         addSidebarArgument("kit", settings.kit().getDisplayName());
         addSidebarArgument("team_size", config.singlePlayerTeams ? Component.text("1").color(NamedTextColor.AQUA) : Component.text(Integer.toString(settings.maxTeamSize())));
-        addSidebarArgument("duration", settings.enableCountdown() ? Component.text(Integer.toString(settings.maxTeamSize())) : Component.text("∞").color(NamedTextColor.AQUA));
+        addSidebarArgument("duration", settings.useCountdown() ? Component.text(Integer.toString(settings.maxTeamSize())) : Component.text("∞").color(NamedTextColor.AQUA));
         addSidebarArgument("effects", EffectOptionFlags.effectsToText(settings.effects()));
 
         updateVisible();

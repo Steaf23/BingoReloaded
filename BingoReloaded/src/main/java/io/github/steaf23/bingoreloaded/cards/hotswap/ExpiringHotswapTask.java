@@ -1,4 +1,4 @@
-package io.github.steaf23.bingoreloaded.cards;
+package io.github.steaf23.bingoreloaded.cards.hotswap;
 
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.tasks.GameTask;
@@ -9,7 +9,7 @@ import io.github.steaf23.playerdisplay.util.TextColorGradient;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 
-public class HotswapTaskHolder
+public class ExpiringHotswapTask implements HotswapTaskHolder
 {
     public GameTask task;
     public int expirationTimeSeconds;
@@ -25,7 +25,7 @@ public class HotswapTaskHolder
             .addColor(TextColor.fromHexString("#750e0e"), 0.8f)
             .addColor(NamedTextColor.DARK_GRAY, 1.0f);
 
-    public HotswapTaskHolder(GameTask task, int expirationTimeMinutes, int recoverTime, boolean showExpirationAsDurability) {
+    public ExpiringHotswapTask(GameTask task, int expirationTimeMinutes, int recoverTime, boolean showExpirationAsDurability) {
         this.task = task;
         this.expirationTimeSeconds = expirationTimeMinutes;
         this.recoveryTime = recoverTime;
@@ -34,6 +34,7 @@ public class HotswapTaskHolder
         this.showExpirationAsDurability = showExpirationAsDurability;
     }
 
+    @Override
     public ItemTemplate convertToItem() {
         ItemTemplate item = task.toItem();
         if (isRecovering()) {
@@ -49,11 +50,28 @@ public class HotswapTaskHolder
         return item;
     }
 
+    @Override
     public void startRecovering() {
         recovering = true;
         currentTime = recoveryTime;
     }
 
+    @Override
+    public void updateTaskTime() {
+        currentTime -= 1;
+    }
+
+    @Override
+    public int getCurrentTime() {
+        return currentTime;
+    }
+
+    @Override
+    public GameTask getTask() {
+        return task;
+    }
+
+    @Override
     public boolean isRecovering() {
         return recovering;
     }

@@ -118,7 +118,8 @@ public class AutoBingoCommand implements TabExecutor
                 return false;
             }
             return setCountdown(settings, args[0], Arrays.copyOfRange(args, 1, args.length));
-        }).addUsage("<countdown_seconds>"));
+        }).addUsage("<type>")
+                .addTabCompletion(args -> args.length == 2 ? List.of("disabled", "duration", "time_limit") : List.of()));
 
 
         command.addSubCommand(new SubCommand("duration", args -> {
@@ -363,9 +364,19 @@ public class AutoBingoCommand implements TabExecutor
             return false;
         }
 
-        boolean enableCountdown = extraArguments[0].equals("true");
-        settings.enableCountdown(enableCountdown);
-        sendSuccess((enableCountdown ? "Enabled" : "Disabled") + " countdown mode", worldName);
+        switch (extraArguments[0]) {
+            case "true", "duration" ->
+                    settings.countdownType(BingoSettings.CountdownType.DURATION);
+            case "false", "disabled" ->
+                    settings.countdownType(BingoSettings.CountdownType.DISABLED);
+            case "time_limit" ->
+                    settings.countdownType(BingoSettings.CountdownType.TIME_LIMIT);
+            default -> {
+                sendFailed("Invalid countdown type '" + extraArguments[0] + "'", worldName);
+                return false;
+            }
+        }
+        sendSuccess("Set countdown type to " + extraArguments[0], worldName);
         return true;
     }
 

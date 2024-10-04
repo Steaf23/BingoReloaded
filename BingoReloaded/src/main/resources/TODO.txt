@@ -35,7 +35,11 @@
 () add input text to team edit button and fill name edit with correct text
 
 () add web editor for nbt files
-() add (web) DFU for new text components, compared to old file formatter for files like translation and scoreboards
+() update docs about /autobingo countdown update
+
+() add autobingo commands for new (hotswap) settings
+() add /bingo version command
+() add placeholders for new settings
 
 BUGS:
 - Cannot teleport player to world error, when the teleport in fact succeeded...

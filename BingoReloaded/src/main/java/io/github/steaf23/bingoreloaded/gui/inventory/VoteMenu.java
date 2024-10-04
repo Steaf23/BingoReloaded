@@ -5,6 +5,7 @@ import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.gameloop.phase.PregameLobby;
 import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
+import io.github.steaf23.bingoreloaded.util.CollectionHelper;
 import io.github.steaf23.playerdisplay.inventory.BasicMenu;
 import io.github.steaf23.playerdisplay.inventory.MenuBoard;
 import io.github.steaf23.playerdisplay.inventory.item.ItemTemplate;
@@ -98,7 +99,9 @@ public class VoteMenu extends BasicMenu
             if (voteList.gamemodes().contains("hotswap_5")) {
                 gamemodeOptions.addAction(new ItemTemplate(itemIndex, Material.YELLOW_CONCRETE,
                         BingoGamemode.HOTSWAP.asComponent().decorate(TextDecoration.BOLD).append(Component.text(" - 5x5")),
-                        BingoMessage.INFO_HOTSWAP_DESC.asMultiline(Component.text("?"))), (args) -> {
+                        CollectionHelper.concatWithArrayCopy(
+                                BingoMessage.INFO_HOTSWAP_DESC_EXPIRE.asMultiline(),
+                                BingoMessage.INFO_HOTSWAP_DESC_ANY.asMultiline(Component.text("?")))), (args) -> {
                     HumanEntity player = args.player();
                     lobby.voteGamemode("hotswap_5", player);
                     gamemodeOptions.close(player);
@@ -108,7 +111,9 @@ public class VoteMenu extends BasicMenu
             if (voteList.gamemodes().contains("hotswap_3")) {
                 gamemodeOptions.addAction(new ItemTemplate(itemIndex, Material.ORANGE_CONCRETE,
                         BingoGamemode.HOTSWAP.asComponent().decorate(TextDecoration.BOLD).append(Component.text(" - 3x3")),
-                        BingoMessage.INFO_HOTSWAP_DESC.asMultiline(Component.text("?"))), (args) -> {
+                        CollectionHelper.concatWithArrayCopy(
+                                BingoMessage.INFO_HOTSWAP_DESC_EXPIRE.asMultiline(),
+                                BingoMessage.INFO_HOTSWAP_DESC_ANY.asMultiline(Component.text("?")))), (args) -> {
                     HumanEntity player = args.player();
                     lobby.voteGamemode("hotswap_3", player);
                     gamemodeOptions.close(player);

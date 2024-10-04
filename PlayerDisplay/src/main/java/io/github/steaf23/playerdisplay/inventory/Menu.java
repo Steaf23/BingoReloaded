@@ -36,7 +36,7 @@ public interface Menu
         return false;
     }
 
-    private static Component inputButtonText(Component buttonText) {
+    static Component inputButtonText(Component buttonText) {
         return Component.text()
                 .append(Component.text("<").color(NamedTextColor.DARK_GRAY))
                 .append(buttonText.color(NamedTextColor.GRAY))

@@ -1,5 +1,6 @@
 package io.github.steaf23.bingoreloaded.data.core;
 
+import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.core.tag.TagAdapter;
 import io.github.steaf23.bingoreloaded.data.core.tag.TagDataType;
 import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
@@ -223,7 +224,7 @@ public class VirtualDataAccessor implements DataAccessor
 
     @Override
     public @NotNull NamespacedKey getNamespacedKey(String path) {
-        return NamespacedKey.randomKey();
+        return new NamespacedKey(BingoReloaded.getInstance(), "unimplemented");
     }
 
     @Override

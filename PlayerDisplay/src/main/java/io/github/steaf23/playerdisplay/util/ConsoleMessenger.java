@@ -54,6 +54,12 @@ public class ConsoleMessenger
                         .append(message));
     }
 
+    public static void bug(String message, Class<?> source) {
+        PlayerDisplay.getPlugin().getComponentLogger().error(
+                PlayerDisplay.MINI_BUILDER.deserialize(message)
+                        .append(Component.text("; Source: " + source.getName() + " (Please report!)")));
+    }
+
     public static void bug(String message, Object source) {
         PlayerDisplay.getPlugin().getComponentLogger().error(
                 PlayerDisplay.MINI_BUILDER.deserialize(message)

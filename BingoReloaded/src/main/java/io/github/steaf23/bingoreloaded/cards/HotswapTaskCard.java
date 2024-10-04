@@ -1,5 +1,8 @@
 package io.github.steaf23.bingoreloaded.cards;
 
+import io.github.steaf23.bingoreloaded.cards.hotswap.ExpiringHotswapTask;
+import io.github.steaf23.bingoreloaded.cards.hotswap.HotswapTaskHolder;
+import io.github.steaf23.bingoreloaded.cards.hotswap.SimpleHotswapTask;
 import io.github.steaf23.bingoreloaded.data.BingoCardData;
 import io.github.steaf23.bingoreloaded.data.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
@@ -12,7 +15,7 @@ import io.github.steaf23.bingoreloaded.tasks.GameTask;
 import io.github.steaf23.bingoreloaded.tasks.ItemTask;
 import io.github.steaf23.bingoreloaded.tasks.TaskData;
 import io.github.steaf23.bingoreloaded.tasks.tracker.TaskProgressTracker;
-import io.github.steaf23.bingoreloaded.util.timer.GameTimer;
+import io.github.steaf23.bingoreloaded.util.CollectionHelper;
 import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
@@ -31,13 +34,13 @@ import java.util.function.Supplier;
 public class HotswapTaskCard extends TaskCard
 {
     private final int winningScore;
-    private final GameTimer taskTimer;
 
     private final Random randomExpiryProvider;
     private final int minExpirationTime;
     private final int maxExpirationTime;
     private final int recoveryTimeSeconds;
     private final boolean showExpirationAsDurability;
+    private final boolean expireTasksAutomatically;
 
     private final List<HotswapTaskHolder> taskHolders;
     private Supplier<GameTask> bingoTaskGenerator;
@@ -53,7 +56,6 @@ public class HotswapTaskCard extends TaskCard
 
     public HotswapTaskCard(@NotNull HotswapCardMenu menu, CardSize size, BingoGame game, TaskProgressTracker progressTracker, int winningScore, BingoConfigurationData.HotswapConfig config) {
         super(menu, size);
-        this.taskTimer = game.getTimer();
         this.randomExpiryProvider = new Random();
         this.taskHolders = new ArrayList<>();
         this.completedTasks = new ArrayList<>();
@@ -64,20 +66,24 @@ public class HotswapTaskCard extends TaskCard
         this.minExpirationTime = config.minimumExpiration();
         this.maxExpirationTime = config.maximumExpiration();
         this.recoveryTimeSeconds = config.recoveryTime();
-        this.showExpirationAsDurability = config.showExpirationAsDurability();
+        this.showExpirationAsDurability = config.showExpirationAsDurability() && game.getSettings().expireHotswapTasks();
         this.randomTasks = new ArrayList<>();
-        taskTimer.addNotifier(this::updateTaskExpiration);
+        this.expireTasksAutomatically = game.getSettings().expireHotswapTasks();
 
-        boolean countdownEnabled = game.getSettings().enableCountdown();
-        this.winningScore = countdownEnabled ? -1 : winningScore;
+        game.getTimer().addNotifier(this::updateTaskExpiration);
 
-        Component[] description;
-        if (countdownEnabled) {
-            description = BingoMessage.INFO_HOTSWAP_COUNTDOWN.asMultiline(Component.text(game.getSettings().countdownDuration()));
-        } else {
-            description = BingoMessage.INFO_HOTSWAP_DESC.asMultiline(Component.text(winningScore));
+        this.winningScore = game.getSettings().useScoreAsWinCondition() ? -1 : winningScore;
+
+        Component[] description = new Component[]{};
+        if (this.expireTasksAutomatically) {
+            description = BingoMessage.INFO_HOTSWAP_DESC_EXPIRE.asMultiline(Component.text(game.getSettings().countdownDuration()));
         }
-        menu.setInfo(BingoMessage.INFO_HOTSWAP_NAME.asPhrase(), description);
+        Component[] extraDescription = switch (game.getSettings().countdownType()) {
+            case DISABLED -> BingoMessage.INFO_HOTSWAP_DESC_SCORE.asMultiline(Component.text(game.getSettings().hotswapGoal()));
+            case DURATION -> BingoMessage.INFO_HOTSWAP_DESC_TIME.asMultiline();
+            case TIME_LIMIT -> BingoMessage.INFO_HOTSWAP_DESC_ANY.asMultiline(Component.text(game.getSettings().hotswapGoal()));
+        };
+        menu.setInfo(BingoMessage.INFO_HOTSWAP_NAME.asPhrase(), CollectionHelper.concatWithArrayCopy(description, extraDescription));
     }
 
     @Override
@@ -131,10 +137,17 @@ public class HotswapTaskCard extends TaskCard
     @Override
     public void setTasks(List<GameTask> tasks) {
         taskHolders.clear();
-        for (GameTask task : tasks) {
-            int expirationTime = randomExpiryProvider.nextInt(minExpirationTime * 60, (maxExpirationTime * 60) + 1);
-            taskHolders.add(new HotswapTaskHolder(task, expirationTime, recoveryTimeSeconds, showExpirationAsDurability));
+        if (expireTasksAutomatically) {
+            for (GameTask task : tasks) {
+                int expirationTime = randomExpiryProvider.nextInt(minExpirationTime * 60, (maxExpirationTime * 60) + 1);
+                taskHolders.add(new ExpiringHotswapTask(task, expirationTime, recoveryTimeSeconds, showExpirationAsDurability));
+            }
+        } else {
+            for (GameTask task : tasks) {
+                taskHolders.add(new SimpleHotswapTask(task, recoveryTimeSeconds));
+            }
         }
+
         ((HotswapCardMenu)menu).updateTaskHolders(taskHolders);
     }
 
@@ -145,7 +158,7 @@ public class HotswapTaskCard extends TaskCard
 
     @Override
     public List<GameTask> getTasks() {
-        return taskHolders.stream().map(holder -> holder.task).toList();
+        return taskHolders.stream().map(HotswapTaskHolder::getTask).toList();
     }
 
     public void updateTaskExpiration(long timeElapsed) {
@@ -154,13 +167,16 @@ public class HotswapTaskCard extends TaskCard
         int taskRecoveredCount = 0;
         GameTask lastExpiredTask = null;
         GameTask lastRecoverdTask = null;
+
         for (HotswapTaskHolder holder : taskHolders) {
-            holder.currentTime -= 1;
-            if (!holder.isRecovering() && holder.task.isCompleted()) { // start recovering item when it's been completed
+            if (!holder.isRecovering() && holder.getTask().isCompleted()) { // start recovering item when it's been completed
                 holder.startRecovering();
                 continue;
             }
-            if (holder.currentTime <= 0) {
+
+            holder.updateTaskTime();
+
+            if (holder.getCurrentTime() <= 0) {
                 if (holder.isRecovering()) {
                     taskRecoveredCount++;
                     // Recovery finished, replace task with a new one.
@@ -169,15 +185,20 @@ public class HotswapTaskCard extends TaskCard
                         ConsoleMessenger.bug("Cannot generate new task for hot-swap", this);
                     }
                     lastRecoverdTask = newTask;
-                    int expirationTime = randomExpiryProvider.nextInt(minExpirationTime, (maxExpirationTime + 1)) * 60;
-                    taskHolders.set(idx, new HotswapTaskHolder(newTask, expirationTime, recoveryTimeSeconds, showExpirationAsDurability));
+
+                    if (expireTasksAutomatically) {
+                        int expirationTime = randomExpiryProvider.nextInt(minExpirationTime, (maxExpirationTime + 1)) * 60;
+                        taskHolders.set(idx, new ExpiringHotswapTask(newTask, expirationTime, recoveryTimeSeconds, showExpirationAsDurability));
+                    } else {
+                        taskHolders.set(idx, new SimpleHotswapTask(newTask, recoveryTimeSeconds));
+                    }
                     progressTracker.startTrackingTask(newTask);
                 } else {
                     taskExpiredCount++;
-                    lastExpiredTask = holder.task;
-                    holder.task.setVoided(true);
+                    lastExpiredTask = holder.getTask();
+                    holder.getTask().setVoided(true);
                     holder.startRecovering();
-                    progressTracker.removeTask(holder.task);
+                    progressTracker.removeTask(holder.getTask());
                 }
             }
             idx++;

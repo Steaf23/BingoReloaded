@@ -110,9 +110,8 @@ public class ComboBoxButtonAction extends MenuAction
             newItem.setAction(this);
             // This will also set the 'item' to the new value
             basicMenu.addItem(newItem);
+            callback.accept(getSelectedOptionName());
         });
-
-        callback.accept(getSelectedOptionName());
     }
 
     public int getSelectedOptionIndex() {

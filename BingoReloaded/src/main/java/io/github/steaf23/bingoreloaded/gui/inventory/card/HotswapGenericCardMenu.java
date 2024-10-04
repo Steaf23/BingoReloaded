@@ -1,7 +1,7 @@
 package io.github.steaf23.bingoreloaded.gui.inventory.card;
 
 import io.github.steaf23.bingoreloaded.cards.CardSize;
-import io.github.steaf23.bingoreloaded.cards.HotswapTaskHolder;
+import io.github.steaf23.bingoreloaded.cards.hotswap.HotswapTaskHolder;
 import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
 import io.github.steaf23.bingoreloaded.tasks.GameTask;
 import io.github.steaf23.playerdisplay.inventory.MenuBoard;
@@ -21,7 +21,7 @@ public class HotswapGenericCardMenu extends GenericCardMenu implements HotswapCa
     // Override to only allow tasks getting updated from the task holders.
     @Override
     public void updateTasks(List<GameTask> tasks) {
-        super.updateTasks(taskHolders.stream().map(h -> h.task).toList());
+        super.updateTasks(taskHolders.stream().map(HotswapTaskHolder::getTask).toList());
     }
 
     public void updateTaskHolders(List<HotswapTaskHolder> holders) {

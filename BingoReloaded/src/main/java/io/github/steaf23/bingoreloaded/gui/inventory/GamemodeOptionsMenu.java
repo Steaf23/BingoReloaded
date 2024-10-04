@@ -5,6 +5,7 @@ import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
 import io.github.steaf23.bingoreloaded.settings.BingoSettingsBuilder;
+import io.github.steaf23.playerdisplay.PlayerDisplay;
 import io.github.steaf23.playerdisplay.inventory.BasicMenu;
 import io.github.steaf23.playerdisplay.inventory.Menu;
 import io.github.steaf23.playerdisplay.inventory.MenuBoard;
@@ -12,6 +13,7 @@ import io.github.steaf23.playerdisplay.inventory.item.ItemTemplate;
 import io.github.steaf23.playerdisplay.inventory.item.action.ComboBoxButtonAction;
 import io.github.steaf23.playerdisplay.inventory.item.action.MenuAction;
 import io.github.steaf23.playerdisplay.inventory.item.action.SpinBoxButtonAction;
+import io.github.steaf23.playerdisplay.inventory.item.action.ToggleButtonAction;
 import io.github.steaf23.playerdisplay.util.ComponentUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -33,13 +35,13 @@ public class GamemodeOptionsMenu extends BasicMenu
         this.session = session;
 
         addAction(new ItemTemplate(1,
-                Material.LIME_CONCRETE, BasicMenu.applyTitleFormat("Regular 5x5")), arguments -> selectGamemode(arguments.player(), BingoGamemode.REGULAR));
+                Material.LIME_CONCRETE, BasicMenu.applyTitleFormat(BingoMessage.MODE_REGULAR.asPhrase())), arguments -> selectGamemode(arguments.player(), BingoGamemode.REGULAR));
         addAction(new ItemTemplate(3,
-                Material.MAGENTA_CONCRETE, BasicMenu.applyTitleFormat("Lockout 5x5")), arguments -> selectGamemode(arguments.player(), BingoGamemode.LOCKOUT));
+                Material.MAGENTA_CONCRETE, BasicMenu.applyTitleFormat(BingoMessage.MODE_LOCKOUT.asPhrase())), arguments -> selectGamemode(arguments.player(), BingoGamemode.LOCKOUT));
         addAction(new ItemTemplate(5,
-                Material.LIGHT_BLUE_CONCRETE, BasicMenu.applyTitleFormat("Complete-All 5x5")), arguments -> selectGamemode(arguments.player(), BingoGamemode.COMPLETE));
+                Material.LIGHT_BLUE_CONCRETE, BasicMenu.applyTitleFormat(BingoMessage.MODE_COMPLETE.asPhrase())), arguments -> selectGamemode(arguments.player(), BingoGamemode.COMPLETE));
         addAction(new ItemTemplate(7,
-                Material.ORANGE_CONCRETE, BasicMenu.applyTitleFormat("HotSwap 5x5")), arguments -> selectGamemode(arguments.player(), BingoGamemode.HOTSWAP));
+                Material.ORANGE_CONCRETE, BasicMenu.applyTitleFormat(BingoMessage.MODE_HOTSWAP.asPhrase())), arguments -> selectGamemode(arguments.player(), BingoGamemode.HOTSWAP));
     }
 
     public void selectGamemode(HumanEntity player, BingoGamemode chosenMode) {
@@ -56,13 +58,13 @@ public class GamemodeOptionsMenu extends BasicMenu
 
         if (chosenMode == BingoGamemode.COMPLETE) {
             int completeGoal = session.settingsBuilder.view().completeGoal();
-            ItemTemplate completeGoalItem = new ItemTemplate(5, Material.RECOVERY_COMPASS, BasicMenu.applyTitleFormat("Complete-All Win Score"),
-                    Component.text("Complete " + completeGoal + " tasks to win complete-all."),
+            ItemTemplate completeGoalItem = new ItemTemplate(5, Material.RECOVERY_COMPASS, BasicMenu.applyTitleFormat("Complete-X Win Score"),
+                    Component.text("Complete " + completeGoal + " tasks to win complete-x."),
                     Component.text("Only effective if countdown mode is disabled"));
             SpinBoxButtonAction goalAction = new SpinBoxButtonAction(1, 64, completeGoal, value -> {
                 session.settingsBuilder.completeGoal(value);
                 completeGoalItem.setLore(ComponentUtils.createComponentsFromString(
-                        "Complete " + value + " tasks to win complete-all.",
+                        "Complete " + value + " tasks to win complete-x.",
                         "Only effective if countdown mode is disabled"));
             });
             optionMenu.addAction(completeGoalItem, goalAction);
@@ -81,6 +83,16 @@ public class GamemodeOptionsMenu extends BasicMenu
             });
             optionMenu.addAction(hotswapGoalItem, goalAction);
             additionalOptions.add(settings -> settings.hotswapGoal(goalAction.getValue()));
+
+            boolean expireTasks = session.settingsBuilder.view().expireHotswapTasks();
+            ItemTemplate hotswapExpireItem = new ItemTemplate(6, Material.ROTTEN_FLESH, BasicMenu.applyTitleFormat("Expire tasks automatically"));
+            updateExpireTasksEnabledVisual(hotswapExpireItem, expireTasks);
+            ToggleButtonAction toggleExpireTasksAction = new ToggleButtonAction(expireTasks, newValue -> {
+                session.settingsBuilder.expireHotswapTasks(newValue);
+                updateExpireTasksEnabledVisual(hotswapExpireItem, newValue);
+            });
+            optionMenu.addAction(hotswapExpireItem, toggleExpireTasksAction);
+            additionalOptions.add(settings -> settings.expireHotswapTasks(toggleExpireTasksAction.getValue()));
         }
 
         optionMenu.addCloseAction(new ItemTemplate(0, Material.REDSTONE, BingoMessage.MENU_EXIT.asPhrase().color(NamedTextColor.RED).decorate(TextDecoration.BOLD)));
@@ -101,6 +113,19 @@ public class GamemodeOptionsMenu extends BasicMenu
             GamemodeOptionsMenu.this.close(player);
         });
         optionMenu.open(player, true);
+    }
+
+    private static void updateExpireTasksEnabledVisual(ItemTemplate item, boolean enabled) {
+        if (enabled) {
+            item.setLore(
+                    Component.text("Tasks always expire when they get completed, however..."),
+                    PlayerDisplay.MINI_BUILDER.deserialize("Tasks <red>EXPIRE</red> automatically after some random amount of time"));
+        }
+        else {
+            item.setLore(
+                    Component.text("Tasks always expire when they get completed, however..."),
+                    PlayerDisplay.MINI_BUILDER.deserialize("Tasks <gray>DO NOT EXPIRE</gray> automatically after some random amount of time"));
+        }
     }
 
     private static ItemTemplate getSaveButton(BingoGamemode mode, int slot) {

@@ -92,7 +92,7 @@ public class SettingsPresetMenu extends PaginatedSelectionMenu
             boolean def = preset.equals(settingsData.getDefaultSettingsName());
             Component name = LegacyComponentSerializer.legacySection().deserialize(preset);
             if (def) {
-                name = name.append(Component.text("(default)").color(NamedTextColor.LIGHT_PURPLE));
+                name = name.append(Component.text(" (default)").color(NamedTextColor.LIGHT_PURPLE));
             }
             ItemTemplate item = new ItemTemplate(Material.GLOBE_BANNER_PATTERN, name)
                     .addDescription("input", 5,

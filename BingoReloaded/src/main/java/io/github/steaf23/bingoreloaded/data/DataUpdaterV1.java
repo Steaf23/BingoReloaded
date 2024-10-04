@@ -259,9 +259,10 @@ public class DataUpdaterV1
                         oldSettings.kit(),
                         oldSettings.effects(),
                         oldSettings.maxTeamSize(),
-                        oldSettings.enableCountdown(),
+                        oldSettings.enableCountdown() ? BingoSettings.CountdownType.DURATION : BingoSettings.CountdownType.DISABLED,
                         oldSettings.countdownDuration(),
                         oldSettings.hotswapGoal(),
+                        true,
                         oldSettings.size.fullCardSize
                 ));
             }

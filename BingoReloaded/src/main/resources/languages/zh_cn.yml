@@ -96,7 +96,7 @@ menu:
       name: "Lockout Bingo 卡片"
       desc: "完成更多任务以取得胜利。 \n当一个任务被完成后， \n其他队伍将无法再完成该任务。"
     info_complete:
-      name: "Complete-All Bingo 卡片"
+      name: "Complete-X Bingo 卡片"
       desc: "首个完成所有任务的队伍获胜。"
     info_hotswap:
       name: "Hot-Swap Bingo 卡片"
@@ -116,7 +116,7 @@ menu:
     modes:
       regular: "Regular"
       lockout: "Lockout"
-      complete: "Complete-All"
+      complete: "Complete-X"
       hotswap: "Hot-Swap"
   effects:
     enable: "点击以启用该效果"

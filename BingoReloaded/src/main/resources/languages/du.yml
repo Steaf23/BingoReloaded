@@ -116,7 +116,7 @@ menu:
     modes:
       regular: "Regulär"
       lockout: "Lockout"
-      complete: "Komplett"
+      complete: "Komplett-X"
       hotswap: "Hot-Swap"
   effects:
     enable: "Klicken, um diese Effektoption zu AKTIVIEREN"

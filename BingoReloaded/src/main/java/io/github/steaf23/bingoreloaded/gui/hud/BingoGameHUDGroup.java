@@ -42,19 +42,27 @@ public class BingoGameHUDGroup extends PlayerHUDGroup
     }
 
     public void updateWinScore(BingoSettings settings) {
-        String score = "-";
+        String goal = "-";
+
         switch (settings.mode()) {
             case HOTSWAP -> {
-                if (settings.enableCountdown()) {
+                if (!settings.useScoreAsWinCondition()) {
                     break;
                 }
 
-                score = Integer.toString(settings.hotswapGoal());
+                goal = Integer.toString(settings.hotswapGoal());
             }
-            case REGULAR -> score = "-----";
-            case COMPLETE, LOCKOUT -> score = Integer.toString(settings.size().fullCardSize);
+            case COMPLETE -> {
+                if (!settings.useScoreAsWinCondition()) {
+                    break;
+                }
+
+                goal = Integer.toString(settings.completeGoal());
+            }
+            case REGULAR -> goal = "-----";
+            case LOCKOUT -> goal = Integer.toString(settings.size().fullCardSize);
         }
-        addSidebarArgument("win_goal", Component.text(score));
+        addSidebarArgument("win_goal", Component.text(goal));
         updateVisible();
     }
 

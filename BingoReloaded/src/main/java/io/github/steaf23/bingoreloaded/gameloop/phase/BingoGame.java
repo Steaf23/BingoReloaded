@@ -110,7 +110,7 @@ public class BingoGame implements GamePhase
     private void start() {
         this.gameStarted = false;
         // Create timer
-        if (settings.enableCountdown())
+        if (settings.useCountdown())
             timer = new CountdownTimer(settings.countdownDuration() * 60, 5 * 60, 60, session);
         else
             timer = new CounterTimer();
@@ -158,7 +158,7 @@ public class BingoGame implements GamePhase
                 .append(settings.kit().getDisplayName()).append(Component.text("\n"))
                 .append(BingoMessage.OPTIONS_EFFECTS.asPhrase()).append(Component.text(": \n"))
                 .append(Component.join(JoinConfiguration.separator(Component.text("\n")), EffectOptionFlags.effectsToText(settings.effects()))).append(Component.text("\n"))
-                .append(BingoMessage.DURATION.asPhrase(settings.enableCountdown() ?
+                .append(BingoMessage.DURATION.asPhrase(settings.useCountdown() ?
                         GameTimer.getTimeAsComponent(settings.countdownDuration() * 60L) : Component.text("∞")))
                 .build();
         BingoPlayerSender.sendMessage(BingoMessage.createHoverCommandMessage(

@@ -129,7 +129,7 @@ public class BingoReloadedPlaceholderExpansion extends PlaceholderExpansion
                     yield defaultComponent;
                 }
                 else {
-                    yield settings.enableCountdown() ? Component.text(settings.countdownDuration()) : defaultComponent;
+                    yield settings.useCountdown() ? Component.text(settings.countdownDuration()) : defaultComponent;
                 }
             }
             case SETTING_EFFECTS -> {
@@ -143,7 +143,7 @@ public class BingoReloadedPlaceholderExpansion extends PlaceholderExpansion
                     yield defaultComponent;
                 }
                 else {
-                    yield settings.enableCountdown() || settings.mode() != BingoGamemode.HOTSWAP ? defaultComponent : Component.text(settings.hotswapGoal());
+                    yield settings.useScoreAsWinCondition() || settings.mode() != BingoGamemode.HOTSWAP ? defaultComponent : Component.text(settings.hotswapGoal());
                 }
             }
             case SETTING_SEED -> {

@@ -38,4 +38,8 @@ public class ToggleButtonAction extends MenuAction
         }
         callback.accept(enabled);
     }
+
+    public boolean getValue() {
+        return enabled;
+    }
 }

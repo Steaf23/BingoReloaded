@@ -23,9 +23,10 @@ public class BingoSettingsBuilder
     private PlayerKit kit;
     private EnumSet<EffectOptionFlags> effects;
     private int maxTeamSize;
-    private boolean enableCountdown;
+    private BingoSettings.CountdownType countdownType;
     private int countdownGameDuration;
     private int hotswapGoal;
+    private boolean expireHotswapTasks;
     private int completeGoal;
 
     public BingoSettingsBuilder(BingoSession session)
@@ -45,7 +46,7 @@ public class BingoSettingsBuilder
         this.effects = def.effects();
         this.maxTeamSize = def.maxTeamSize();
         this.countdownGameDuration = def.countdownDuration();
-        this.enableCountdown = def.enableCountdown();
+        this.countdownType = def.countdownType();
         this.hotswapGoal = def.hotswapGoal();
         this.completeGoal = def.completeGoal();
     }
@@ -60,7 +61,7 @@ public class BingoSettingsBuilder
         effects = settings.effects();
         maxTeamSize = settings.maxTeamSize();
         countdownGameDuration = settings.countdownDuration();
-        enableCountdown = settings.enableCountdown();
+        countdownType = settings.countdownType();
         hotswapGoal = settings.hotswapGoal();
         completeGoal = settings.completeGoal();
         settingsUpdated();
@@ -176,10 +177,10 @@ public class BingoSettingsBuilder
         return this;
     }
 
-    public BingoSettingsBuilder enableCountdown(boolean enableCountdown)
+    public BingoSettingsBuilder countdownType(BingoSettings.CountdownType countdownType)
     {
-        if (this.enableCountdown != enableCountdown) {
-            this.enableCountdown = enableCountdown;
+        if (this.countdownType != countdownType) {
+            this.countdownType = countdownType;
             settingsUpdated();
         }
         return this;
@@ -189,6 +190,14 @@ public class BingoSettingsBuilder
     {
         if (this.countdownGameDuration != countdownGameDuration) {
             this.countdownGameDuration = countdownGameDuration;
+            settingsUpdated();
+        }
+        return this;
+    }
+
+    public BingoSettingsBuilder expireHotswapTasks(boolean expireHotswapTasks) {
+        if (this.expireHotswapTasks != expireHotswapTasks) {
+            this.expireHotswapTasks = expireHotswapTasks;
             settingsUpdated();
         }
         return this;
@@ -221,9 +230,10 @@ public class BingoSettingsBuilder
                 kit,
                 effects,
                 maxTeamSize,
-                enableCountdown,
+                countdownType,
                 countdownGameDuration,
                 hotswapGoal,
+                expireHotswapTasks,
                 completeGoal);
     }
 

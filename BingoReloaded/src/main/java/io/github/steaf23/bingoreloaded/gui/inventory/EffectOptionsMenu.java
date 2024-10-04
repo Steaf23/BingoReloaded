@@ -61,7 +61,7 @@ public class EffectOptionsMenu extends BasicMenu
             item.setLore(BingoMessage.EFFECTS_ENABLE.asMultiline(NamedTextColor.GREEN));
         } else {
             item.setName(Component.text().append(flag.name, Component.text(" "), BingoMessage.EFFECTS_DISABLED.asPhrase()).color(NamedTextColor.RED).decorate(TextDecoration.BOLD).build());
-            item.setLore(BingoMessage.EFFECTS_ENABLE.asMultiline(NamedTextColor.RED));
+            item.setLore(BingoMessage.EFFECTS_DISABLE.asMultiline(NamedTextColor.RED));
         }
     }
 

@@ -83,20 +83,6 @@ public class BingoReloaded extends JavaPlugin
         // Kinda ugly, but we can assume there will only be one instance of this class anyway.
         INSTANCE = this;
         PlayerDisplay.setPlugin(this);
-
-//        ConsoleMessenger.log("START LOAD");
-//        ItemStack stack = new ItemStack(Material.BEDROCK);
-//        ItemStack complicated = new ItemTemplate(Material.TOTEM_OF_UNDYING,
-//                PlayerDisplay.MINI_BUILDER.deserialize("<red></italic>I</italic><yellow> am special </yellow><bold><blue>>:</blue>D</bold></red>"),
-//                Component.text("Lore1"),
-//                Component.text("Lore2")).setGlowing(true).setMaxDamage(230).setDamage(125).buildItem(true);
-//
-//        NodeDataAccessor accessor = new NodeDataAccessor("test_nodes_stack.bingo");
-//        accessor.setItemStack("test_path", stack);
-//        accessor.setItemStack("complicated", complicated);
-//        accessor.saveChanges();
-//        ConsoleMessenger.log("END LOAD");
-
     }
 
     @Override

@@ -4,16 +4,16 @@ package io.github.steaf23.bingoreloaded.gui.inventory;
 import io.github.steaf23.bingoreloaded.data.BingoCardData;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
-import io.github.steaf23.playerdisplay.PlayerDisplay;
+import io.github.steaf23.bingoreloaded.settings.BingoSettings;
 import io.github.steaf23.playerdisplay.inventory.BasicMenu;
 import io.github.steaf23.playerdisplay.inventory.FilterType;
+import io.github.steaf23.playerdisplay.inventory.Menu;
 import io.github.steaf23.playerdisplay.inventory.MenuBoard;
 import io.github.steaf23.playerdisplay.inventory.PaginatedSelectionMenu;
 import io.github.steaf23.playerdisplay.inventory.item.ItemTemplate;
 import io.github.steaf23.playerdisplay.inventory.item.action.ComboBoxButtonAction;
 import io.github.steaf23.playerdisplay.inventory.item.action.MenuAction;
 import io.github.steaf23.playerdisplay.inventory.item.action.SpinBoxButtonAction;
-import io.github.steaf23.playerdisplay.inventory.item.action.ToggleButtonAction;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
@@ -30,6 +30,8 @@ public class AdminBingoMenu extends BasicMenu
     private static final int DURATION_MAX = 60;
     private static final int TEAMSIZE_MAX = 64;
 
+    private static final Component COUNTDOWN_INPUT_LORE = Menu.inputButtonText(Component.text("Click")).append(Component.text("toggle countdown type"));
+
     private static final ItemTemplate START = new ItemTemplate(6, 0,
             Material.LIME_CONCRETE, BasicMenu.applyTitleFormat(BingoMessage.OPTIONS_START.asPhrase()));
     private static final ItemTemplate END = new ItemTemplate(6, 0,
@@ -44,8 +46,24 @@ public class AdminBingoMenu extends BasicMenu
             Material.ENCHANTED_BOOK, BasicMenu.applyTitleFormat(BingoMessage.OPTIONS_GAMEMODE.asPhrase()));
     private static final ItemTemplate EFFECTS = new ItemTemplate(3, 4,
             Material.POTION, BasicMenu.applyTitleFormat(BingoMessage.OPTIONS_EFFECTS.asPhrase()));
-    private static final ItemTemplate COUNTDOWN = new ItemTemplate(5, 2,
-            Material.CLOCK, BasicMenu.applyTitleFormat("Enable Countdown Timer"));
+
+    private static final ItemTemplate COUNTDOWN_TYPE_DISABLED = new ItemTemplate(5, 2,
+            Material.COMPASS, BasicMenu.applyTitleFormat("Countdown Disabled"),
+            Component.text("No timer will be used to limit play time."))
+            .addDescription("input", 10, COUNTDOWN_INPUT_LORE);
+    private static final ItemTemplate COUNTDOWN_TYPE_DURATION = new ItemTemplate(5, 2,
+            Material.CLOCK, BasicMenu.applyTitleFormat("Countdown Duration"),
+            Component.text("Countdown timer will be enabled."),
+            Component.text("The game will end after the timer runs out,"),
+            Component.text("this removes the win goal condition from Hot-Swap and Complete-X."))
+            .addDescription("input", 10, COUNTDOWN_INPUT_LORE);
+    private static final ItemTemplate COUNTDOWN_TYPE_LIMIT = new ItemTemplate(5, 2,
+            Material.RECOVERY_COMPASS, BasicMenu.applyTitleFormat("Countdown Time Limit"),
+            Component.text("Countdown timer will be enabled."),
+            Component.text("Any goal is still a valid win condition,"),
+            Component.text("but the game will end after the timer runs out."))
+            .addDescription("input", 10, COUNTDOWN_INPUT_LORE);
+
     private static final ItemTemplate DURATION = new ItemTemplate(5, 4,
             Material.RECOVERY_COMPASS, BasicMenu.applyTitleFormat("Countdown Duration"));
     private static final ItemTemplate TEAM_SIZE = new ItemTemplate(7, 2,
@@ -56,9 +74,16 @@ public class AdminBingoMenu extends BasicMenu
     public AdminBingoMenu(MenuBoard menuBoard, BingoSession session) {
         super(menuBoard, BingoMessage.OPTIONS_TITLE.asPhrase(), 6);
         this.session = session;
+    }
+
+    @Override
+    public void beforeOpening(HumanEntity player) {
+        super.beforeOpening(player);
+
+        BingoSettings view = session.settingsBuilder.view();
 
         addAction(JOIN, arguments -> {
-            TeamSelectionMenu selectionMenu = new TeamSelectionMenu(menuBoard, session);
+            TeamSelectionMenu selectionMenu = new TeamSelectionMenu(getMenuBoard(), session);
             selectionMenu.open(arguments.player());
         });
         addAction(KIT, arguments -> new KitOptionsMenu(getMenuBoard(), session).open(arguments.player()));
@@ -68,7 +93,7 @@ public class AdminBingoMenu extends BasicMenu
         addAction(PRESETS, arguments -> new SettingsPresetMenu(getMenuBoard(), session.settingsBuilder).open(arguments.player()));
 
         ItemTemplate teamSizeItem = TEAM_SIZE.copy();
-        int maxTeamSize = session.settingsBuilder.view().maxTeamSize();
+        int maxTeamSize = view.maxTeamSize();
         updateTeamSizeLore(teamSizeItem, maxTeamSize);
         teamSizeItem.setAction(new SpinBoxButtonAction(1, TEAMSIZE_MAX, maxTeamSize, value -> {
             session.settingsBuilder.maxTeamSize(value);
@@ -76,30 +101,30 @@ public class AdminBingoMenu extends BasicMenu
         }));
 
         ItemTemplate durationItem = DURATION.copy();
-        int duration = session.settingsBuilder.view().countdownDuration();
+        int duration = view.countdownDuration();
         updateDurationLore(durationItem, duration);
         durationItem.setAction(new SpinBoxButtonAction(1, DURATION_MAX, duration, value -> {
             session.settingsBuilder.countdownGameDuration(value);
             updateDurationLore(durationItem, value);
         }));
 
-        ItemTemplate countdownItem = COUNTDOWN.copy();
-        boolean enableCountdown = session.settingsBuilder.view().enableCountdown();
-        updateCountdownEnabledLore(countdownItem, enableCountdown);
-        countdownItem.setAction(new ToggleButtonAction(enableCountdown, enable -> {
-            session.settingsBuilder.enableCountdown(enable);
-            updateCountdownEnabledLore(countdownItem, enable);
-        }));
+        ItemTemplate countdownItem = new ComboBoxButtonAction.Builder("DISABLED", COUNTDOWN_TYPE_DISABLED.copy())
+                .addOption("DURATION", COUNTDOWN_TYPE_DURATION.copy())
+                .addOption("TIME_LIMIT", COUNTDOWN_TYPE_LIMIT.copy())
+                .setCallback(value -> {
+                    session.settingsBuilder.countdownType(BingoSettings.CountdownType.valueOf(value));
+                })
+                .buildItem(COUNTDOWN_TYPE_DISABLED.getSlot(), view.countdownType().name());
         addItems(teamSizeItem, durationItem, countdownItem);
 
         ItemTemplate centerButton = new ComboBoxButtonAction.Builder("start", START.copy())
                 .addOption("end", END.copy())
                 .setCallback(value -> {
                     if (value.equals("end")) {
-                        session.endGame();
+                        session.startGame();
                     }
                     else if (value.equals("start")) {
-                        session.startGame();
+                        session.endGame();
                     }
                 })
                 .buildItem(ItemTemplate.slotFromXY(6, 0), session.isRunning() ? "end" : "start");
@@ -139,15 +164,6 @@ public class AdminBingoMenu extends BasicMenu
     private void updateDurationLore(ItemTemplate item, int duration) {
         item.setLore(Component.text("Timer set to " + duration + " minutes(s)").color(NamedTextColor.DARK_PURPLE),
                 Component.text("for bingo games on countdown mode").color(NamedTextColor.DARK_PURPLE));
-    }
-
-    private void updateCountdownEnabledLore(ItemTemplate item, boolean enabled) {
-        if (enabled) {
-            item.setLore(PlayerDisplay.MINI_BUILDER.deserialize("<dark_purple>Countdown mode is <green>ENABLED</green>"));
-        }
-        else {
-            item.setLore(PlayerDisplay.MINI_BUILDER.deserialize("<dark_purple>Countdown mode is <red>DISABLED</red>"));
-        }
     }
 
     private void updateTeamSizeLore(ItemTemplate item, int value) {
