@@ -40,6 +40,8 @@
 () add autobingo commands for new (hotswap) settings
 () add /bingo version command
 () add placeholders for new settings
+() selector support on commands
+() give team selection item when a player dies
 
 BUGS:
 - Cannot teleport player to world error, when the teleport in fact succeeded...
