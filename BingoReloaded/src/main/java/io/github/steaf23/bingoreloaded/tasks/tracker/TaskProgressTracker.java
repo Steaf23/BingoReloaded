@@ -7,11 +7,11 @@ import io.github.steaf23.bingoreloaded.event.BingoStatisticCompletedEvent;
 import io.github.steaf23.bingoreloaded.event.BingoTaskProgressCompletedEvent;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
-import io.github.steaf23.bingoreloaded.tasks.AdvancementTask;
+import io.github.steaf23.bingoreloaded.tasks.data.AdvancementTask;
 import io.github.steaf23.bingoreloaded.tasks.BingoStatistic;
 import io.github.steaf23.bingoreloaded.tasks.GameTask;
-import io.github.steaf23.bingoreloaded.tasks.ItemTask;
-import io.github.steaf23.bingoreloaded.tasks.StatisticTask;
+import io.github.steaf23.bingoreloaded.tasks.data.ItemTask;
+import io.github.steaf23.bingoreloaded.tasks.data.StatisticTask;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.advancement.AdvancementProgress;
@@ -80,7 +80,7 @@ public class TaskProgressTracker
                 continue;
             }
 
-            int finalCount = task.getCount();
+            int finalCount = task.data.getRequiredAmount();
 
             // reset any progress already made beforehand
             if (task.type == GameTask.TaskType.ADVANCEMENT) {
@@ -152,7 +152,7 @@ public class TaskProgressTracker
                 return false;
             }
 
-            progress.setProgress(data.getCount());
+            progress.setProgress(data.getRequiredAmount());
             return tryCompleteTask(task, progress);
         });
     }
@@ -202,7 +202,7 @@ public class TaskProgressTracker
 
                 if (participant.sessionPlayer().isPresent()) {
                     if (game.getConfig().removeTaskItems) {
-                        item.setAmount(item.getAmount() - data.getCount());
+                        item.setAmount(item.getAmount() - data.getRequiredAmount());
                     }
                     participant.sessionPlayer().get().updateInventory();
                 }
@@ -229,7 +229,7 @@ public class TaskProgressTracker
 
             participant.sessionPlayer().ifPresent(player -> {
                 if (game.getConfig().removeTaskItems) {
-                    item.setAmount(item.getAmount() - data.getCount());
+                    item.setAmount(item.getAmount() - data.getRequiredAmount());
                 }
             });
 
@@ -361,27 +361,6 @@ public class TaskProgressTracker
             return null;
 
         return participant;
-    }
-
-    public void setPlayerStatistic(BingoStatistic statistic, BingoParticipant player, int value)
-    {
-        if (player.sessionPlayer().isEmpty())
-            return;
-
-        Player gamePlayer = player.sessionPlayer().get();
-
-        if (statistic.hasMaterialComponent())
-        {
-            gamePlayer.setStatistic(statistic.stat(), statistic.materialType(), value);
-        }
-        else if (statistic.hasEntityComponent())
-        {
-            gamePlayer.setStatistic(statistic.stat(), statistic.entityType(), value);
-        }
-        else
-        {
-            gamePlayer.setStatistic(statistic.stat(), value);
-        }
     }
 
     /**

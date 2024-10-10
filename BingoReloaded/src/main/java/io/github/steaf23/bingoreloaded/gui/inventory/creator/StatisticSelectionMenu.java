@@ -3,7 +3,7 @@ package io.github.steaf23.bingoreloaded.gui.inventory.creator;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.tasks.BingoStatistic;
 import io.github.steaf23.bingoreloaded.tasks.GameTask;
-import io.github.steaf23.bingoreloaded.tasks.StatisticTask;
+import io.github.steaf23.bingoreloaded.tasks.data.StatisticTask;
 import io.github.steaf23.playerdisplay.inventory.BasicMenu;
 import io.github.steaf23.playerdisplay.inventory.MenuBoard;
 import io.github.steaf23.playerdisplay.inventory.item.ItemTemplate;

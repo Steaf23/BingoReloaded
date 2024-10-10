@@ -2,10 +2,10 @@ package io.github.steaf23.bingoreloaded.data.serializers;
 
 import io.github.steaf23.bingoreloaded.data.core.DataStorage;
 import io.github.steaf23.bingoreloaded.data.core.tag.DataStorageSerializer;
-import io.github.steaf23.bingoreloaded.tasks.AdvancementTask;
+import io.github.steaf23.bingoreloaded.tasks.data.AdvancementTask;
 import io.github.steaf23.bingoreloaded.tasks.BingoStatistic;
-import io.github.steaf23.bingoreloaded.tasks.ItemTask;
-import io.github.steaf23.bingoreloaded.tasks.StatisticTask;
+import io.github.steaf23.bingoreloaded.tasks.data.ItemTask;
+import io.github.steaf23.bingoreloaded.tasks.data.StatisticTask;
 import io.github.steaf23.bingoreloaded.tasks.TaskData;
 import org.bukkit.Registry;
 import org.jetbrains.annotations.NotNull;
@@ -19,19 +19,25 @@ public class TaskStorageSerializer implements DataStorageSerializer<TaskData>
     @Override
     public void toDataStorage(@NotNull DataStorage storage, @NotNull TaskData value) {
         int type = -1;
-        if (value instanceof ItemTask itemTask) {
-            type = TYPE_ITEM;
-            storage.setNamespacedKey("item", itemTask.material().getKey());
-            storage.setInt("count", itemTask.getCount());
-        } else if (value instanceof AdvancementTask advancementTask) {
-            type = TYPE_ADVANCEMENT;
-            if (advancementTask.advancement() != null) {
-                storage.setNamespacedKey("advancement", advancementTask.advancement().getKey());
+        switch (value) {
+            case ItemTask itemTask -> {
+                type = TYPE_ITEM;
+                storage.setNamespacedKey("item", itemTask.material().getKey());
+                storage.setInt("count", itemTask.getRequiredAmount());
             }
-        } else if (value instanceof StatisticTask statisticTask) {
-            storage.setSerializable("statistic", BingoStatistic.class, statisticTask.statistic());
-            storage.setInt("count", statisticTask.getCount());
-            type = TYPE_STATISTIC;
+            case AdvancementTask advancementTask -> {
+                type = TYPE_ADVANCEMENT;
+                if (advancementTask.advancement() != null) {
+                    storage.setNamespacedKey("advancement", advancementTask.advancement().getKey());
+                }
+            }
+            case StatisticTask statisticTask -> {
+                type = TYPE_STATISTIC;
+                storage.setSerializable("statistic", BingoStatistic.class, statisticTask.statistic());
+                storage.setInt("count", statisticTask.getRequiredAmount());
+            }
+            default -> {
+            }
         }
         storage.setInt("type", type);
     }

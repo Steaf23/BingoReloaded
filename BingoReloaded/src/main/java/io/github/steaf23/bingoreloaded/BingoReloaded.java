@@ -44,8 +44,11 @@ import net.kyori.adventure.resource.ResourcePackRequest;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
+import org.bukkit.Registry;
+import org.bukkit.advancement.Advancement;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.TabExecutor;
+import org.bukkit.craftbukkit.advancement.CraftAdvancement;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -172,7 +175,6 @@ public class BingoReloaded extends JavaPlugin
             registerCommand("btc", command);
             Bukkit.getPluginManager().registerEvents(command, this);
         }
-
         ConsoleMessenger.log(Component.text("Enabled " + getName()).color(NamedTextColor.GREEN));
 
         Bukkit.getPluginManager().registerEvents(menuBoard, this);

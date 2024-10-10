@@ -1,6 +1,8 @@
-package io.github.steaf23.bingoreloaded.tasks;
+package io.github.steaf23.bingoreloaded.tasks.data;
 
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
+import io.github.steaf23.bingoreloaded.tasks.GameTask;
+import io.github.steaf23.bingoreloaded.tasks.TaskData;
 import io.github.steaf23.playerdisplay.util.ComponentUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -11,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-public record ItemTask(Material material, int count) implements CountableTask
+public record ItemTask(Material material, int count) implements TaskData
 {
     public ItemTask(Material material)
     {
@@ -52,6 +54,11 @@ public record ItemTask(Material material, int count) implements CountableTask
         return stream;
     }
 
+    @Override
+    public int getRequiredAmount() {
+        return count;
+    }
+
     public static ItemTask fromPdc(PersistentDataContainer pdc)
     {
         Material item = Material.valueOf(pdc.getOrDefault(GameTask.getTaskDataKey("item"), PersistentDataType.STRING, "BEDROCK"));
@@ -81,17 +88,5 @@ public record ItemTask(Material material, int count) implements CountableTask
             return false;
 
         return material.equals(itemTask.material);
-    }
-
-    @Override
-    public int getCount()
-    {
-        return count;
-    }
-
-    @Override
-    public CountableTask updateTask(int newCount)
-    {
-        return new ItemTask(material, newCount);
     }
 }

@@ -3,6 +3,9 @@ package io.github.steaf23.bingoreloaded.tasks;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.gui.inventory.item.TaskItemAction;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
+import io.github.steaf23.bingoreloaded.tasks.data.AdvancementTask;
+import io.github.steaf23.bingoreloaded.tasks.data.ItemTask;
+import io.github.steaf23.bingoreloaded.tasks.data.StatisticTask;
 import io.github.steaf23.bingoreloaded.util.timer.GameTimer;
 import io.github.steaf23.playerdisplay.inventory.item.ItemTemplate;
 import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
@@ -132,7 +135,7 @@ public class GameTask
         else // DEFAULT TASK
         {
             item = new ItemTemplate(material, data.getName(), data.getItemDescription());
-            item.setAmount(data.getStackSize());
+            item.setAmount(Math.min(64, data.getRequiredAmount()));
         }
 
         // STEP 2: Add additional stuff like pdc data and glowing effect.
@@ -217,12 +220,5 @@ public class GameTask
 
     public Optional<BingoParticipant> getCompletedBy() {
         return Optional.ofNullable(completedBy);
-    }
-
-    public int getCount() {
-        if (data instanceof CountableTask countable) {
-            return countable.getCount();
-        }
-        return 1;
     }
 }

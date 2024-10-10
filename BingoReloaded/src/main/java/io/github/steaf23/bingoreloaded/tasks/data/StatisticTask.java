@@ -1,6 +1,9 @@
-package io.github.steaf23.bingoreloaded.tasks;
+package io.github.steaf23.bingoreloaded.tasks.data;
 
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
+import io.github.steaf23.bingoreloaded.tasks.BingoStatistic;
+import io.github.steaf23.bingoreloaded.tasks.GameTask;
+import io.github.steaf23.bingoreloaded.tasks.TaskData;
 import io.github.steaf23.playerdisplay.util.ComponentUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
@@ -15,7 +18,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-public record StatisticTask(BingoStatistic statistic, int count) implements CountableTask
+public record StatisticTask(BingoStatistic statistic, int count) implements TaskData
 {
     public StatisticTask(BingoStatistic statistic)
     {
@@ -130,6 +133,11 @@ public record StatisticTask(BingoStatistic statistic, int count) implements Coun
         return stream;
     }
 
+    @Override
+    public int getRequiredAmount() {
+        return count;
+    }
+
     public static StatisticTask fromPdc(PersistentDataContainer pdc)
     {
         Statistic stat = Statistic.valueOf(pdc.getOrDefault(GameTask.getTaskDataKey("statistic"), PersistentDataType.STRING, "stat.minecraft.bell_ring"));
@@ -147,17 +155,5 @@ public record StatisticTask(BingoStatistic statistic, int count) implements Coun
         int count = pdc.getOrDefault(GameTask.getTaskDataKey("count"), PersistentDataType.INTEGER, 1);
 
         return new StatisticTask(new BingoStatistic(stat, entity, item), count);
-    }
-
-    @Override
-    public int getCount()
-    {
-        return count;
-    }
-
-    @Override
-    public CountableTask updateTask(int newCount)
-    {
-        return new StatisticTask(statistic, newCount);
     }
 }

@@ -5,7 +5,7 @@ import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.tasks.BingoStatistic;
-import io.github.steaf23.bingoreloaded.tasks.StatisticTask;
+import io.github.steaf23.bingoreloaded.tasks.data.StatisticTask;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerStatisticIncrementEvent;
 

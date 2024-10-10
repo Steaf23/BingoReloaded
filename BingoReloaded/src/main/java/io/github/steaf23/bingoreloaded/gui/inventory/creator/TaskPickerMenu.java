@@ -1,9 +1,10 @@
 package io.github.steaf23.bingoreloaded.gui.inventory.creator;
 
 import io.github.steaf23.bingoreloaded.data.BingoCardData;
-import io.github.steaf23.bingoreloaded.tasks.CountableTask;
 import io.github.steaf23.bingoreloaded.tasks.GameTask;
 import io.github.steaf23.bingoreloaded.tasks.TaskData;
+import io.github.steaf23.bingoreloaded.tasks.data.ItemTask;
+import io.github.steaf23.bingoreloaded.tasks.data.StatisticTask;
 import io.github.steaf23.playerdisplay.PlayerDisplay;
 import io.github.steaf23.playerdisplay.inventory.FilterType;
 import io.github.steaf23.playerdisplay.inventory.MenuBoard;
@@ -104,9 +105,7 @@ public class TaskPickerMenu extends PaginatedSelectionMenu
             }
 
             if (savedTask != null) {
-                int count = 1;
-                if (savedTask instanceof CountableTask countable)
-                    count = countable.getCount();
+                int count = savedTask.getRequiredAmount();
 
                 ItemTemplate newItem = getUpdatedTaskItem(itemData, true, count);
                 replaceItem(newItem, item);
@@ -138,8 +137,11 @@ public class TaskPickerMenu extends PaginatedSelectionMenu
     private static ItemTemplate getUpdatedTaskItem(TaskData old, boolean selected, int newCount) {
         TaskData newData = old;
         if (selected) {
-            if (newData instanceof CountableTask countable) {
-                newData = countable.updateTask(newCount);
+            if (newData instanceof StatisticTask statisticTask) {
+                newData = new StatisticTask(statisticTask.statistic(), newCount);
+            }
+            if (newData instanceof ItemTask itemTask) {
+                newData = new ItemTask(itemTask.material(), newCount);
             }
         }
 

@@ -1,6 +1,8 @@
-package io.github.steaf23.bingoreloaded.tasks;
+package io.github.steaf23.bingoreloaded.tasks.data;
 
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
+import io.github.steaf23.bingoreloaded.tasks.GameTask;
+import io.github.steaf23.bingoreloaded.tasks.TaskData;
 import io.github.steaf23.playerdisplay.util.ComponentUtils;
 import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import net.kyori.adventure.text.Component;
@@ -9,6 +11,7 @@ import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.advancement.Advancement;
+import org.bukkit.craftbukkit.advancement.CraftAdvancement;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
@@ -78,6 +81,12 @@ public record AdvancementTask(Advancement advancement) implements TaskData
     {
         stream.set(GameTask.getTaskDataKey("advancement"), PersistentDataType.STRING, advancement.getKey().toString());
         return stream;
+    }
+
+    @Override
+    public int getRequiredAmount() {
+        // We need a little NMS voo-doo magic
+        return ((CraftAdvancement)advancement).getHandle().value().requirements().requirements().size();
     }
 
     public static AdvancementTask fromPdc(PersistentDataContainer pdc)
