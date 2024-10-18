@@ -2,10 +2,13 @@ package io.github.steaf23.bingoreloaded.command;
 
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
+import io.github.steaf23.bingoreloaded.cards.CardSize;
 import io.github.steaf23.bingoreloaded.cards.TaskCard;
+import io.github.steaf23.bingoreloaded.cards.TaskGenerator;
 import io.github.steaf23.bingoreloaded.data.TexturedMenuData;
 import io.github.steaf23.bingoreloaded.event.BingoTaskProgressCompletedEvent;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
+import io.github.steaf23.bingoreloaded.gui.map.BingoCardMapRenderer;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.tasks.GameTask;
 import io.github.steaf23.playerdisplay.inventory.BasicMenu;
@@ -23,6 +26,10 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.ItemType;
+import org.bukkit.inventory.meta.MapMeta;
+import org.bukkit.map.MapView;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.jetbrains.annotations.NotNull;
 
@@ -111,6 +118,21 @@ public class BingoTestCommand implements TabExecutor
                     }
                 });
                 menu.open(p);
+            }
+            case "map" -> {
+                if (!(commandSender instanceof Player p)) {
+                    return false;
+                }
+                List<GameTask> tasks = TaskGenerator.generateCardTasks("default_card", 1, false, false, CardSize.X5);
+
+                ItemStack map = new ItemStack(Material.FILLED_MAP);
+                MapMeta meta = (MapMeta) map.getItemMeta();
+
+                MapView view = Bukkit.createMap(p.getWorld());
+                view.addRenderer(new BingoCardMapRenderer(plugin, tasks));
+                meta.setMapView(view);
+                map.setItemMeta(meta);
+                p.getInventory().setItem(0, map);
             }
         }
         return true;

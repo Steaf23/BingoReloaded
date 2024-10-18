@@ -30,8 +30,6 @@ public abstract class TaskCard
 
     protected final CardMenu menu;
 
-    private static final TaskData DEFAULT_TASK = new ItemTask(Material.DIRT, 1);
-
     public TaskCard(CardMenu menu, CardSize size) {
         this.size = size;
         this.tasks = new ArrayList<>();
@@ -56,75 +54,7 @@ public abstract class TaskCard
      * @param seed cards generated with the same seed and cardName will have the same tasks in the same positions.
      */
     public void generateCard(String cardName, int seed, boolean withAdvancements, boolean withStatistics) {
-        BingoCardData cardsData = new BingoCardData();
-        TaskListData listsData = cardsData.lists();
-        // Create shuffler
-        Random shuffler;
-        if (seed == 0) {
-            shuffler = new Random();
-        } else {
-            shuffler = new Random(seed);
-        }
-
-        Map<String, List<TaskData>> taskMap = new HashMap<>();
-        for (String listName : cardsData.getListNames(cardName)) {
-            List<TaskData> tasks = new ArrayList<>(listsData.getTasks(listName, withStatistics, withAdvancements));
-            if (!tasks.isEmpty()) {
-                Collections.shuffle(tasks, shuffler);
-                taskMap.put(listName, tasks);
-            }
-        }
-
-        // Create ticketList
-        List<String> ticketList = new ArrayList<>();
-        for (String listName : cardsData.getListsSortedByMin(cardName)) {
-            if (!taskMap.containsKey(listName)) {
-                continue;
-            }
-
-            int proportionalMin = Math.max(1, cardsData.getListMin(cardName, listName));
-            for (int i = 0; i < proportionalMin; i++) {
-                ticketList.add(listName);
-            }
-        }
-        List<String> overflowList = new ArrayList<>();
-        for (String listName : cardsData.getListNames(cardName)) {
-            if (!taskMap.containsKey(listName)) {
-                continue;
-            }
-
-            int proportionalMin = Math.max(1, cardsData.getListMin(cardName, listName));
-            int proportionalMax = cardsData.getListMax(cardName, listName);
-
-            for (int i = 0; i < proportionalMax - proportionalMin; i++) {
-                overflowList.add(listName);
-            }
-        }
-        Collections.shuffle(overflowList, shuffler);
-        ticketList.addAll(overflowList);
-        if (ticketList.size() > size.fullCardSize)
-            ticketList = ticketList.subList(0, size.fullCardSize);
-
-        // Pick random tasks
-        List<TaskData> newTasks = new ArrayList<>();
-        for (String listName : ticketList) {
-            // pop the first task in the list (which is random because we shuffled it beforehand) and add it to our final tasks
-            List<TaskData> tasks = taskMap.get(listName);
-            if (!tasks.isEmpty()) {
-                newTasks.add(tasks.removeLast());
-            }
-            else {
-                ConsoleMessenger.error("Found empty task list '" + listName + "'.");
-            }
-        }
-        while (newTasks.size() < size.fullCardSize) {
-            newTasks.add(DEFAULT_TASK);
-        }
-        newTasks = newTasks.subList(0, size.fullCardSize);
-
-        // Shuffle and add tasks to the card.
-        Collections.shuffle(newTasks, shuffler);
-        setTasks(newTasks.stream().map(GameTask::new).toList());
+        setTasks(TaskGenerator.generateCardTasks(cardName, seed, withAdvancements, withStatistics, size));
     }
 
     public void showInventory(Player player) {

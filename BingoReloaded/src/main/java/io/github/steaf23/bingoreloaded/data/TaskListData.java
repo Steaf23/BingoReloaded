@@ -6,6 +6,7 @@ import io.github.steaf23.bingoreloaded.tasks.data.AdvancementTask;
 import io.github.steaf23.bingoreloaded.tasks.data.StatisticTask;
 import io.github.steaf23.bingoreloaded.tasks.TaskData;
 import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
+import org.bukkit.Bukkit;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -36,6 +37,7 @@ public class TaskListData
             return new HashSet<>();
 
         return data.getSerializableList(listName + ".tasks", TaskData.class).stream().filter((i ->
+                (i != null) && // don't parse empty (invalid) tasks
                 !(i instanceof StatisticTask && !withStatistics) &&
                 !(i instanceof AdvancementTask && !withAdvancements))).collect(Collectors.toSet());
     }
@@ -81,6 +83,7 @@ public class TaskListData
             ConsoleMessenger.error("Cannot remove default lists!");
             return false;
         }
+
         data.erase(listName);
         data.saveChanges();
         return true;

@@ -88,7 +88,9 @@ public class BingoConfigurationData
         this.voteUsingCommandsOnly = config.getBoolean("voteUsingCommandsOnly", false);
         this.selectTeamsUsingCommandsOnly = config.getBoolean("selectTeamsUsingCommandsOnly", false);
         this.disableScoreboardSidebar = config.getBoolean("disableScoreboardSidebar", false);
-        this.useIncludedResourcepack = config.getBoolean("useIncludedResourcepack", true);
+        // TODO: re-enable resource pack
+//        this.useIncludedResourcepack = config.getBoolean("useIncludedResourcepack", true);
+        this.useIncludedResourcepack = false;
 
         // Lobby
         this.singlePlayerTeams = config.getBoolean("singlePlayerTeams", false);

@@ -1,48 +1,44 @@
-3.0 (?) add new way for users to create custom tasks involving a lot of head aches on my part but should be the ultimate final task type
-3.0 (?) create language option per player
-3.0 (?) create LITE mode, where players can join bingo in the middle of a survival world, without needing to be teleported to any other world
+(?) add new way for users to create custom tasks involving a lot of head aches on my part but should be the ultimate final task type
+(?) create language option per player
+(?) create LITE mode, where players can join bingo in the middle of a survival world, without needing to be teleported to any other world
+(?) Folia support
 
-3.0 Add support for Folia
+(BLOCKED: would only be available for singular configuration servers) (?) add small biomes option using datapack
 
 (?) add way to reopen/sync team selection menu for all players that are in it
 
 (?) add spam prevention on player gui's/ options
 
-(2.x) refactor card recovery (its shit).
+(?) refactor card recovery (its shit).
 
-(2.x) add Hologram wizard item to /bingo hologram to allow players to place scoreboards in the world
+(?) add Hologram wizard item to /bingo hologram to allow players to place scoreboards in the world
 
-(2.x) add /bingo info command to see information about current game (settings mostly) (admin use only)
+(?) on paginated menu apply filter, maybe change the item names to color the filtered phrase differently.
 
-(2.x) vote item does not appear when starting server sometimes
+(?) add progress view to tasks
 
-(2.x) add small biomes option using datapack
+(?) add way to view other teams' cards
 
-(2.x) add reload config command
+(3.x) add /bingo info command to receive hover message of current game settings, game status, etc...
+(3.x) add custom resource pack
+(3.x) reimplement resource pack spacing inside the resource pack instead of using a separate pack
 
-(2.x) add progress view to tasks
-
-(2.x) on paginated menu apply filter, maybe change the item names to color the filtered phrase differently.
-
-(2.x) add /bingoconfig command
+(3.x) add /bingoconfig command
   - to see values of config values
   - to change these values
+(3.x) add reload config command
+(3.x) selector support on commands
+(3.x) add web editor for nbt files
+(3.x) implement card view placed on a map as the bingo card
 
-3.0 (?) add custom resource pack
-
-() reimplement resource pack spacing inside the resource pack instead of using a separate pack
-
-() add input text to team edit button and fill name edit with correct text
-
-() add web editor for nbt files
-() update docs about /autobingo countdown update
+(BUG) add input text to team edit button and fill name edit with correct text
+(BUG) vote item does not appear when starting server sometimes
+(BUG) advancement progress is not reset correctly
+(BUG) Cannot teleport player to world error, when the teleport in fact succeeded...
+(BUG) Load player data in a bingo world does not teleport the player out
 
 () add autobingo commands for new (hotswap) settings
+() update docs about /autobingo countdown update
 () add /bingo version command
 () add placeholders for new settings
-() selector support on commands
 () give team selection item when a player dies
-
-BUGS:
-- Cannot teleport player to world error, when the teleport in fact succeeded...
-- Load player data in a bingo world does not teleport the player out
