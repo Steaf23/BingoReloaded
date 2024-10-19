@@ -37,6 +37,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class AutoBingoCommand implements TabExecutor
@@ -663,6 +664,40 @@ public class AutoBingoCommand implements TabExecutor
             return false;
         }
         sendSuccess("Teleported " + playerName + " to " + targetWorldName, worldName);
+        return true;
+    }
+
+    private boolean removeAllPlayersFromSession(String... args) {
+        String worldName = args[0];
+        if (args.length != 2) {
+            sendFailed("Expected 3 arguments!", worldName);
+            return false;
+        }
+
+        BingoSession session = manager.getSession(worldName);
+        if (session == null) {
+            sendFailed("Could not remove players from this world, invalid session", worldName);
+            return false;
+        }
+
+        String targetWorldName = args[1];
+        World world = Bukkit.getWorld(targetWorldName);
+        if (world == null) {
+            sendFailed("Could not teleport players to invalid world " + targetWorldName + ".", worldName);
+            return false;
+        }
+
+        Set<Player> allPlayers = session.getPlayersInWorld();
+        int playerCount = allPlayers.size();
+        int playersLeft = playerCount;
+        for (Player player : session.getPlayersInWorld())
+        {
+            if (session.ownsWorld(player.getWorld()) && player.teleport(world.getSpawnLocation(), PlayerTeleportEvent.TeleportCause.PLUGIN)) {
+                playersLeft--;
+            }
+        }
+
+        sendSuccess("Teleported " + (playerCount - playersLeft) + " out of " + playerCount + " players in " + worldName + " to " + targetWorldName, worldName);
         return true;
     }
 

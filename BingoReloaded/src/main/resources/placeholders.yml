@@ -80,7 +80,7 @@ placeholders:
 
   # Name of the session/world that the player is in.
   session_name:
-    format: "({0})"
+    format: "{0}"
 
   # Total amount of games won by this player
   games_won:
@@ -104,4 +104,9 @@ placeholders:
 
   # Amount of times player used the go-up wand (lifetime)
   item_uses_wand:
+    format: "{0}"
+
+  # Returns formatted session name with session_name format if the session has been created and an empty string if it has not.
+  # Example usage: %bingoreloaded_created_session_My world% (returns My world if the session "My world" has been created)
+  created_session_: # followed by session name
     format: "{0}"

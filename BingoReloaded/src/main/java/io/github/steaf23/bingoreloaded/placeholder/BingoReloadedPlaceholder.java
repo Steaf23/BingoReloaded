@@ -5,6 +5,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Arrays;
 
 public enum BingoReloadedPlaceholder {
+    // plugin information
+    CREATED_SESSION("created_session_"),
+
     //current match information
     TEAM_FULL("team_full"),
     TEAM_COLOR("team_color"),
@@ -42,6 +45,9 @@ public enum BingoReloadedPlaceholder {
     }
 
     public static @Nullable BingoReloadedPlaceholder fromString(String name) {
+        if (name.startsWith("created_session_")) {
+            return BingoReloadedPlaceholder.CREATED_SESSION;
+        }
         return Arrays.stream(values()).filter(p -> p.placeholderName.equals(name)).findFirst().orElse(null);
     }
 
