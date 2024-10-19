@@ -168,6 +168,37 @@ public class AutoBingoCommand implements TabExecutor
                 }));
 
 
+        command.addSubCommand(new SubCommand("hotswap_goal", args -> {
+            var settings = getSettingsBuilder(args[0]);
+            if (settings == null) {
+                sendFailed("Invalid world/ session name: " + args[0], args[0]);
+                return false;
+            }
+            return setHotswapGoal(settings, args[0], Arrays.copyOfRange(args, 1, args.length));
+        })).addUsage("<win_goal>");
+
+
+        command.addSubCommand(new SubCommand("hotswap_expire", args -> {
+            var settings = getSettingsBuilder(args[0]);
+            if (settings == null) {
+                sendFailed("Invalid world/ session name: " + args[0], args[0]);
+                return false;
+            }
+            return setHotswapExpire(settings, args[0], Arrays.copyOfRange(args, 1, args.length));
+        }).addUsage("<true | false>")
+                .addTabCompletion(args -> args.length == 2 ? List.of("true", "false") : List.of()));
+
+
+        command.addSubCommand(new SubCommand("complete_goal", args -> {
+            var settings = getSettingsBuilder(args[0]);
+            if (settings == null) {
+                sendFailed("Invalid world/ session name: " + args[0], args[0]);
+                return false;
+            }
+            return setCompleteGoal(settings, args[0], Arrays.copyOfRange(args, 1, args.length));
+        })).addUsage("<win_goal>");
+
+
         command.addSubCommand(new SubCommand("end", args -> end(args[0])));
 
 
@@ -365,12 +396,9 @@ public class AutoBingoCommand implements TabExecutor
         }
 
         switch (extraArguments[0]) {
-            case "true", "duration" ->
-                    settings.countdownType(BingoSettings.CountdownType.DURATION);
-            case "false", "disabled" ->
-                    settings.countdownType(BingoSettings.CountdownType.DISABLED);
-            case "time_limit" ->
-                    settings.countdownType(BingoSettings.CountdownType.TIME_LIMIT);
+            case "true", "duration" -> settings.countdownType(BingoSettings.CountdownType.DURATION);
+            case "false", "disabled" -> settings.countdownType(BingoSettings.CountdownType.DISABLED);
+            case "time_limit" -> settings.countdownType(BingoSettings.CountdownType.TIME_LIMIT);
             default -> {
                 sendFailed("Invalid countdown type '" + extraArguments[0] + "'", worldName);
                 return false;
@@ -475,6 +503,59 @@ public class AutoBingoCommand implements TabExecutor
 
         BingoSettings view = settings.view();
         sendSuccess("Set gamemode to " + view.mode() + " " + view.size().size + "x" + view.size().size, worldName);
+        return true;
+    }
+
+    public boolean setHotswapGoal(BingoSettingsBuilder settings, String worldName, String[] extraArguments) {
+        if (extraArguments.length == 0) {
+            sendFailed("Expected at least 3 arguments!", worldName);
+            return false;
+        }
+
+        int goal = 10;
+        try {
+            goal = Integer.parseInt(extraArguments[0]);
+        } catch (NumberFormatException exception) {
+            sendFailed("Invalid win goal amount '" + extraArguments[0] + "'", worldName);
+            return false;
+        }
+
+        settings.hotswapGoal(goal);
+
+        sendSuccess("Set hotswap goal to " + goal, worldName);
+        return true;
+    }
+
+    public boolean setHotswapExpire(BingoSettingsBuilder settings, String worldName, String[] extraArguments) {
+        if (extraArguments.length != 1) {
+            sendFailed("Expected 3 arguments!", worldName);
+            return false;
+        }
+
+        boolean value = extraArguments[0].equals("true");
+        settings.expireHotswapTasks(value);
+
+        sendSuccess((value ? "Enabled" : "Disabled") + " hotswap task expiration", worldName);
+        return true;
+    }
+
+    public boolean setCompleteGoal(BingoSettingsBuilder settings, String worldName, String[] extraArguments) {
+        if (extraArguments.length == 0) {
+            sendFailed("Expected at least 3 arguments!", worldName);
+            return false;
+        }
+
+        int goal;
+        try {
+            goal = Integer.parseInt(extraArguments[0]);
+        } catch (NumberFormatException exception) {
+            sendFailed("Invalid win goal amount '" + extraArguments[0] + "'", worldName);
+            return false;
+        }
+
+        settings.completeGoal(goal);
+
+        sendSuccess("Set complete goal to " + goal, worldName);
         return true;
     }
 

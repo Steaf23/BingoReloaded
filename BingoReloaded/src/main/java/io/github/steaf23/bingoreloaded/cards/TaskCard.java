@@ -1,26 +1,17 @@
 package io.github.steaf23.bingoreloaded.cards;
 
 
-import io.github.steaf23.bingoreloaded.data.BingoCardData;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
-import io.github.steaf23.bingoreloaded.data.TaskListData;
 import io.github.steaf23.bingoreloaded.gui.inventory.card.CardMenu;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.tasks.GameTask;
-import io.github.steaf23.bingoreloaded.tasks.data.ItemTask;
-import io.github.steaf23.bingoreloaded.tasks.TaskData;
-import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
-import org.bukkit.Material;
+import io.github.steaf23.bingoreloaded.tasks.TaskGenerator;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Random;
 
 
 public abstract class TaskCard

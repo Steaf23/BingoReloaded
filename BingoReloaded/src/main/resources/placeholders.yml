@@ -58,8 +58,16 @@ placeholders:
   setting_effects:
     format: "{0}"
 
-  # The currently selected score to win hotswap, '-' if countdown is enabled or hotswap is not being played.
+  # The currently selected score to win hotswap, '-' if countdown is enabled.
   setting_hotswap_winscore:
+    format: "{0}"
+
+  # The currently selected settings to determine if hotswap tasks should expire automatically, "true" or "false" depending on the value.
+  setting_hotswap_expiration:
+    format: "{0}"
+
+  # The currently selected score to win complete-all, '-' if countdown is enabled.
+  setting_complete_winscore:
     format: "{0}"
 
   # The currently selected seed, 0 if no seed was used.

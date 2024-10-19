@@ -85,8 +85,9 @@ public record AdvancementTask(Advancement advancement) implements TaskData
 
     @Override
     public int getRequiredAmount() {
-        // We need a little NMS voo-doo magic
-        return ((CraftAdvancement)advancement).getHandle().value().requirements().requirements().size();
+        return 1;
+//        // We need a little NMS voo-doo magic
+//        return ((CraftAdvancement)advancement).getHandle().value().requirements().requirements().size();
     }
 
     public static AdvancementTask fromPdc(PersistentDataContainer pdc)

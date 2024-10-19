@@ -18,8 +18,6 @@ public class ScoreboardData
     public SidebarTemplate loadTemplate(String name, Map<String, Component[]> arguments) {
         String title = newData.getString(name + ".title", "");
         List<String> sidebar = newData.getList(name + ".sidebar", TagDataType.STRING);
-//        String title = data.getConfig().getString(name + ".title", "");
-//        List<String> sidebar = data.getConfig().getStringList(name + ".sidebar");
 
         return new SidebarTemplate(title, arguments, sidebar.toArray(new String[]{}));
     }

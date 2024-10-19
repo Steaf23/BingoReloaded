@@ -72,7 +72,7 @@ public class HotswapTaskCard extends TaskCard
 
         game.getTimer().addNotifier(this::updateTaskExpiration);
 
-        this.winningScore = game.getSettings().useScoreAsWinCondition() ? -1 : winningScore;
+        this.winningScore = game.getSettings().useScoreAsWinCondition() ? winningScore : -1;
 
         Component[] description = new Component[]{};
         if (this.expireTasksAutomatically) {
@@ -91,7 +91,7 @@ public class HotswapTaskCard extends TaskCard
         if (winningScore == -1) {
             return false;
         }
-        return getCompleteCount(team) == winningScore;
+        return getCompleteCount(team) >= winningScore;
     }
 
     // Hotswap cards cannot be copied since it should be the same instance for every player.

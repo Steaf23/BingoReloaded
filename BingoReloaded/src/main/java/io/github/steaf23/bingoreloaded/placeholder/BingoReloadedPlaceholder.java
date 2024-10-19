@@ -13,6 +13,7 @@ public enum BingoReloadedPlaceholder {
     CURRENT_TASKS_PLAYER("current_tasks_player"),
     CURRENT_TIME("current_time"),
     GAME_STATUS("game_status"),
+
     // current settings information
     SETTING_GAMEMODE("setting_gamemode"),
     SETTING_CARDSIZE("setting_cardsize"),
@@ -20,6 +21,8 @@ public enum BingoReloadedPlaceholder {
     SETTING_DURATION("setting_duration"),
     SETTING_EFFECTS("setting_effects"),
     SETTING_HOTSWAP_WINSCORE("setting_hotswap_winscore"),
+    SETTING_HOTSWAP_EXPIRE("setting_hotswap_expire"),
+    SETTING_COMPLETE_WINSCORE("setting_complete_winscore"),
     SETTING_SEED("setting_seed"),
     SETTING_TEAMSIZE("setting_teamsize"),
 

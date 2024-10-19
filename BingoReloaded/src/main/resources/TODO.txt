@@ -31,14 +31,18 @@
 (3.x) add web editor for nbt files
 (3.x) implement card view placed on a map as the bingo card
 
-(BUG) add input text to team edit button and fill name edit with correct text
 (BUG) vote item does not appear when starting server sometimes
+
+====================== 3.0 BLOCKERS ======================
+
+(BUG) add input text to team edit button and fill name edit with correct text
 (BUG) advancement progress is not reset correctly
 (BUG) Cannot teleport player to world error, when the teleport in fact succeeded...
 (BUG) Load player data in a bingo world does not teleport the player out
+(BUG) fix task placement for small cards
 
-() add autobingo commands for new (hotswap) settings
 () update docs about /autobingo countdown update
 () add /bingo version command
-() add placeholders for new settings
 () give team selection item when a player dies
+() add world placeholder to see if a world exists
+() add autobingo command to kick all players from a world (/autobingo kickplayers target_world)

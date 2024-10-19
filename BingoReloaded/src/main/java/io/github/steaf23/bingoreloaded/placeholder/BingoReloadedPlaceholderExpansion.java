@@ -143,7 +143,25 @@ public class BingoReloadedPlaceholderExpansion extends PlaceholderExpansion
                     yield defaultComponent;
                 }
                 else {
-                    yield settings.useScoreAsWinCondition() || settings.mode() != BingoGamemode.HOTSWAP ? defaultComponent : Component.text(settings.hotswapGoal());
+                    yield settings.useScoreAsWinCondition() ? Component.text(settings.hotswapGoal()) : defaultComponent;
+                }
+            }
+            case SETTING_HOTSWAP_EXPIRE -> {
+                BingoSettings settings = getSettings(player);
+                if (settings == null) {
+                    yield defaultComponent;
+                }
+                else {
+                    yield Component.text(settings.expireHotswapTasks());
+                }
+            }
+            case SETTING_COMPLETE_WINSCORE -> {
+                BingoSettings settings = getSettings(player);
+                if (settings == null) {
+                    yield defaultComponent;
+                }
+                else {
+                    yield settings.useScoreAsWinCondition() ? Component.text(settings.completeGoal()) : defaultComponent;
                 }
             }
             case SETTING_SEED -> {

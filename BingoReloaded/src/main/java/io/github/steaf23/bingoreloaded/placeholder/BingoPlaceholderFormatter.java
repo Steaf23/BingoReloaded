@@ -8,7 +8,7 @@ public class BingoPlaceholderFormatter
     private static final DataAccessor DATA = BingoReloaded.getDataAccessor("placeholders");
 
     public String format(BingoReloadedPlaceholder placeholder) {
-        return DATA.getString("placeholders." + placeholder.getName() + ".format", "");
+        return DATA.getString("placeholders." + placeholder.getName() + ".format", "{0}");
     }
 
     /**

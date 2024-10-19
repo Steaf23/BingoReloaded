@@ -26,7 +26,7 @@ public class GenericCardMenu extends BasicMenu implements CardMenu
 
     public GenericCardMenu(MenuBoard menuBoard, BingoGamemode mode, CardSize cardSize)
     {
-        super(menuBoard, BingoMessage.CARD_TITLE.asPhrase(), cardSize.size);
+        super(menuBoard, BingoMessage.CARD_TITLE.asPhrase(), 6);
         this.size = cardSize;
         this.mode = mode;
         this.tasks = new ArrayList<>();
