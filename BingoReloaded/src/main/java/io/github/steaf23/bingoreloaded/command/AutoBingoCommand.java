@@ -241,6 +241,15 @@ public class AutoBingoCommand implements TabExecutor
         }));
 
 
+        command.addSubCommand(new SubCommand("kickplayers", this::removeAllPlayersFromSession).addUsage("<target_world_name>").addTabCompletion(args -> {
+            if (args.length == 2) {
+                return Bukkit.getWorlds().stream().map(w -> w.getName()).toList();
+            } else {
+                return List.of();
+            }
+        }));
+
+
         command.addSubCommand(new SubCommand("vote", this::voteForPlayer).addUsage("<player_name> <vote_category> <vote_for>").addTabCompletion(args -> {
             BingoConfigurationData.VoteList voteList = manager.getGameConfig().voteList;
             if (args.length <= 2) {

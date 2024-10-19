@@ -1,5 +1,6 @@
 package io.github.steaf23.bingoreloaded.command;
 
+import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.BingoStatData;
@@ -20,9 +21,13 @@ import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import io.github.steaf23.bingoreloaded.util.BingoPlayerSender;
 import io.github.steaf23.playerdisplay.PlayerDisplay;
 import io.github.steaf23.playerdisplay.inventory.MenuBoard;
+import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.JoinConfiguration;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
@@ -206,11 +211,18 @@ public class BingoCommand implements TabExecutor
             case "hologram" -> {
 
             }
+            case "about" -> {
+                BingoPlayerSender.sendMessage(Component.text("Bingo Reloaded Version: " + BingoReloaded.getInstance().getPluginMeta().getVersion() +
+                        ", Created by: " + BingoReloaded.getInstance().getPluginMeta().getAuthors()), player);
+                BingoPlayerSender.sendMessage(Component.text("Join the bingo reloaded discord server here to stay up to date!").color(NamedTextColor.AQUA).decorate(TextDecoration.ITALIC)
+                        .hoverEvent(HoverEvent.showText(Component.text("https://discord.gg/AzZNxPRNPf")))
+                        .clickEvent(ClickEvent.openUrl("https://discord.gg/AzZNxPRNPf")), player);
+            }
             default -> {
                 if (player.hasPermission("bingo.admin")) {
-                    BingoMessage.COMMAND_USAGE.sendToAudience(player, NamedTextColor.RED, Component.text("/bingo [getcard | stats | start | end | join | vote | back | leave | deathmatch | creator | teams | kit | wait | teamedit]"));
+                    BingoMessage.COMMAND_USAGE.sendToAudience(player, NamedTextColor.RED, Component.text("/bingo [getcard | stats | start | end | join | vote | back | leave | deathmatch | creator | teams | kit | wait | teamedit | about]"));
                 } else {
-                    BingoMessage.COMMAND_USAGE.sendToAudience(player, NamedTextColor.RED, Component.text("/bingo [getcard | stats | join | vote | back | leave]"));
+                    BingoMessage.COMMAND_USAGE.sendToAudience(player, NamedTextColor.RED, Component.text("/bingo [getcard | stats | join | vote | back | leave | about]"));
                 }
             }
         }

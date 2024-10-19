@@ -12,8 +12,11 @@ import io.github.steaf23.bingoreloaded.event.PlayerLeftSessionWorldEvent;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gui.hud.BingoSettingsHUDGroup;
 import io.github.steaf23.bingoreloaded.gui.hud.DisabledBingoSettingsHUDGroup;
+import io.github.steaf23.bingoreloaded.gui.inventory.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.gui.inventory.TeamSelectionMenu;
 import io.github.steaf23.bingoreloaded.gui.inventory.VoteMenu;
+import io.github.steaf23.bingoreloaded.player.BingoParticipant;
+import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import io.github.steaf23.bingoreloaded.util.timer.CountdownTimer;
@@ -28,6 +31,7 @@ import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.HashMap;
@@ -379,5 +383,14 @@ public class PregameLobby implements GamePhase
                 playerCountTimer.stop();
             }
         });
+    }
+
+    public void handlePlayerRespawn(final PlayerRespawnEvent event) {
+        if (config.useVoteSystem && !config.voteUsingCommandsOnly && !config.voteList.isEmpty()) {
+            giveVoteItem(event.getPlayer());
+        }
+        if (!config.selectTeamsUsingCommandsOnly) {
+            giveTeamItem(event.getPlayer());
+        }
     }
 }

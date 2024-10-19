@@ -42,7 +42,3 @@
 (BUG) fix task placement for small cards
 
 () update docs about /autobingo countdown update
-() add /bingo version command
-() give team selection item when a player dies
-() add world placeholder to see if a world exists
-() add autobingo command to kick all players from a world (/autobingo kickplayers target_world)

@@ -50,13 +50,15 @@ public enum PlayerKit
             Material.EMERALD,
             BingoMessage.VOTE_ITEM_NAME.asPhrase().color(NamedTextColor.DARK_PURPLE).decorate(TextDecoration.BOLD, TextDecoration.ITALIC),
             BingoMessage.VOTE_ITEM_DESC.asMultiline())
-            .setCompareKey("vote");
+            .setCompareKey("vote")
+            .addEnchantment(Enchantment.VANISHING_CURSE, 1);
 
     public static final ItemTemplate TEAM_ITEM = new ItemTemplate(
             Material.WHITE_GLAZED_TERRACOTTA,
             BingoMessage.TEAM_ITEM_NAME.asPhrase().color(NamedTextColor.DARK_PURPLE).decorate(TextDecoration.BOLD, TextDecoration.ITALIC),
             BingoMessage.TEAM_ITEM_DESC.asMultiline())
-            .setCompareKey("team");
+            .setCompareKey("team")
+            .addEnchantment(Enchantment.VANISHING_CURSE, 1);
 
     public final String configName;
     private final Component displayName;

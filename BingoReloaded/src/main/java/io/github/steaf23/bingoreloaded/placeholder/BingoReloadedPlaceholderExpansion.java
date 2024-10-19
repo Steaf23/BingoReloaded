@@ -69,7 +69,7 @@ public class BingoReloadedPlaceholderExpansion extends PlaceholderExpansion
 
                 BingoSession session = plugin.getGameManager().getSession(sessionName);
                 if (session == null) {
-                    yield defaultComponent;
+                    yield Component.empty();
                 }
                 yield Component.text(sessionName);
             }

@@ -15,6 +15,7 @@ import io.github.steaf23.bingoreloaded.event.PrepareNextBingoGameEvent;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gameloop.GameManager;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
+import io.github.steaf23.bingoreloaded.gameloop.phase.PregameLobby;
 import org.bukkit.World;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -147,6 +148,12 @@ public class BingoEventListener implements Listener
     public void handlePlayerRespawn(final PlayerRespawnEvent event)
     {
         BingoSession session = getSession(event.getPlayer().getWorld());
+        if (session != null && session.getPhase() instanceof PregameLobby lobby) {
+            lobby.handlePlayerRespawn(event);
+            return;
+        }
+
+
         BingoGame game = session != null && session.isRunning() ? (BingoGame)session.phase() : null;
         if (game != null)
         {
