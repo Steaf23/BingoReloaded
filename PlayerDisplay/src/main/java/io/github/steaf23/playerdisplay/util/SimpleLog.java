@@ -19,6 +19,7 @@ public class SimpleLog
         try {
             // Create the log file if it doesn't exist
             if (!location.exists()) {
+                location.getParentFile().mkdirs();
                 location.createNewFile();
             }
             // Create a BufferedWriter to write to the file
