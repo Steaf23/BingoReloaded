@@ -35,7 +35,3 @@
 (BUG) vote item does not appear when starting server sometimes
 (BUG) Load player data in a bingo world does not teleport the player out
 (BUG) advancement progress is not reset correctly? (MORE INFO NEEDED)
-
-====================== 3.0 BLOCKERS ======================
-
-() update docs about /autobingo countdown update
