@@ -9,6 +9,8 @@ import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
+import net.kyori.adventure.text.event.HoverEventSource;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.tag.Tag;
@@ -346,6 +348,17 @@ public enum BingoMessage
         message = message.replace("{", "<").replace("}", ">");
         return message;
     }
+
+    public static Component createInfoUrlComponent(Component hoverableText, String url) {
+        return hoverableText.decorate(TextDecoration.ITALIC).color(NamedTextColor.AQUA)
+                .hoverEvent(HoverEvent.showText(Component.text(url).color(NamedTextColor.BLUE)))
+                .clickEvent(ClickEvent.openUrl(url));
+    }
+
+    public static Component createInfoUrlComponent(String url) {
+        return createInfoUrlComponent(Component.text("(?)"), url);
+    }
+
 
     /**
      * Replaces all instances of color formatted blocks by their converted values. (when using {#FFFFFF} for example)

@@ -3,6 +3,7 @@ package io.github.steaf23.playerdisplay;
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
 import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
+import io.github.steaf23.playerdisplay.util.DebugLogger;
 import io.github.steaf23.playerdisplay.util.PlayerDisplayTranslationKey;
 import io.github.steaf23.playerdisplay.util.TinyCaps;
 import net.kyori.adventure.text.Component;
@@ -37,6 +38,12 @@ public class PlayerDisplay
         PacketEvents.getAPI().getSettings().reEncodeByDefault(false)
                 .checkForUpdates(true);
         PacketEvents.getAPI().load();
+
+        DebugLogger.setupLogger(plugin);
+    }
+
+    public static void disable() {
+        DebugLogger.stopLogger();
     }
 
     public static JavaPlugin getPlugin() {
@@ -66,4 +73,10 @@ public class PlayerDisplay
     public static boolean useCustomTextures() {
         return USE_CUSTOM_TEXTURES;
     }
+
+    public static void enableDebugLogging(boolean enable) {
+        DebugLogger.setLoggingEnabled(enable);
+    }
 }
+
+

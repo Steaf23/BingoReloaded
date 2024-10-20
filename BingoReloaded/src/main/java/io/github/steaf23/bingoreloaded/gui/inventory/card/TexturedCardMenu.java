@@ -107,7 +107,7 @@ public class TexturedCardMenu implements Menu, CardMenu
         Map<Integer, TextColor> completedSlots = new HashMap<>();
 
         for (int i = 0; i < tasks.size(); i++) {
-            int rawSlot = size.getCardInventorySlot(i);
+            int rawSlot = getSlotForTask(i);
             if (tasks.get(i).isCompleted()) {
                 tasks.get(i).getCompletedBy().ifPresent(p -> completedSlots.put(rawSlot, p.getTeam().getColor()));
             }
@@ -187,12 +187,20 @@ public class TexturedCardMenu implements Menu, CardMenu
 
     protected void setTaskItems() {
         for (int i = 0; i < tasks.size(); i++) {
-            ItemTemplate item = getItemFromTask(i).setSlot(size.getCardInventorySlot(i));
+            ItemTemplate item = getItemFromTask(i).setSlot(getSlotForTask(i));
             addItem(item);
         }
     }
 
     protected ItemTemplate getInfo() {
         return info;
+    }
+
+    public int getSlotForTask(int index) {
+        int slot = size.getCardInventorySlot(index);
+        if (size == CardSize.X3) {
+            slot += 9;
+        }
+        return slot;
     }
 }

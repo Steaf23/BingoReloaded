@@ -60,6 +60,18 @@ tasks.withType(JavaCompile).configureEach {
     }
 }
 
+tasks.jar {
+    manifest {
+        attributes["paperweight-mappings-namespace"] = "mojang"
+    }
+}
+// if you have shadowJar configured
+tasks.shadowJar {
+    manifest {
+        attributes["paperweight-mappings-namespace"] = "mojang"
+    }
+}
+
 processResources {
     def props = [version: version]
     inputs.properties props

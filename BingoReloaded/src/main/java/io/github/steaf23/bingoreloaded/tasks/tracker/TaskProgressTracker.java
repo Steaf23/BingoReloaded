@@ -12,8 +12,11 @@ import io.github.steaf23.bingoreloaded.tasks.BingoStatistic;
 import io.github.steaf23.bingoreloaded.tasks.GameTask;
 import io.github.steaf23.bingoreloaded.tasks.data.ItemTask;
 import io.github.steaf23.bingoreloaded.tasks.data.StatisticTask;
+import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
+import io.github.steaf23.playerdisplay.util.DebugLogger;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.Registry;
 import org.bukkit.advancement.AdvancementProgress;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityPickupItemEvent;
@@ -24,6 +27,7 @@ import org.bukkit.event.player.PlayerAdvancementDoneEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerStatisticIncrementEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scoreboard.Criteria;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -69,6 +73,25 @@ public class TaskProgressTracker
         this.game = game;
         this.progressMap = new HashMap<>();
         this.statisticTracker = new StatisticTracker();
+        if (!game.getConfig().disableAdvancements) {
+            ConsoleMessenger.log("Revoking all advancements from participants...");
+            DebugLogger.addLog("Revoking all advancements");
+
+            List<Player> allPlayers = new ArrayList<>();
+
+            for (BingoParticipant participant : game.getTeamManager().getParticipants()) {
+                 participant.sessionPlayer().ifPresent(allPlayers::add);
+            }
+
+            Registry.ADVANCEMENT.stream().forEach(advancement -> {
+                for (Player p : allPlayers) {
+                    AdvancementProgress progress = p.getAdvancementProgress(advancement);
+                    for (String criteria : advancement.getCriteria()) {
+                        progress.revokeCriteria(criteria);
+                    }
+                }
+            });
+        }
     }
 
     public void startTrackingTask(GameTask task) {
@@ -89,6 +112,7 @@ public class TaskProgressTracker
                 participant.sessionPlayer().ifPresent(player -> {
                     AdvancementProgress progress = player.getAdvancementProgress(advancementTask.advancement());
                     progress.getAwardedCriteria().forEach(progress::revokeCriteria);
+                    DebugLogger.addLog("Revoking advancement " + advancementTask.advancement().getKey().getKey() + " for player " + player.getName());
                 });
             } else if (task.type == GameTask.TaskType.STATISTIC) {
                 StatisticTask statisticTask = (StatisticTask) task.data;
@@ -117,6 +141,9 @@ public class TaskProgressTracker
         if (game.getDeathMatchTask() != null)
             return;
 
+        if (!event.getAdvancement().getKey().getKey().startsWith("recipes"))
+            DebugLogger.addLog("Advancement " + event.getAdvancement().getKey().getKey() + " completed by " + event.getPlayer().getName());
+
         updateProgressFromEvent(participant, (task, progress) -> {
             if (task.type != GameTask.TaskType.ADVANCEMENT) {
                 return false;
@@ -128,6 +155,7 @@ public class TaskProgressTracker
             }
 
             progress.addProgress(1);
+            DebugLogger.addLog("Completed task " + event.getAdvancement().getKey().getKey() + " completed by player " + participant.getName());
             return tryCompleteTask(task, progress);
         });
     }

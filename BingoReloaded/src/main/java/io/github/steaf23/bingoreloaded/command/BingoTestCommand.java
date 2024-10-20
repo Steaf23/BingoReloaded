@@ -25,14 +25,18 @@ import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.MapMeta;
 import org.bukkit.map.MapView;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class BingoTestCommand implements TabExecutor
 {
@@ -131,6 +135,7 @@ public class BingoTestCommand implements TabExecutor
                 view.addRenderer(new BingoCardMapRenderer(plugin, tasks));
                 meta.setMapView(view);
                 map.setItemMeta(meta);
+
                 p.getInventory().setItem(0, map);
             }
         }

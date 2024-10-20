@@ -86,8 +86,8 @@ public class BingoCardData
 
     public void setList(String cardName, String listName, int max, int min)
     {
-        data.setInt(cardName + "." + listName + ".max", max);
-        data.setInt(cardName + "." + listName + ".min", min);
+        data.setByte(cardName + "." + listName + ".max", (byte) max);
+        data.setByte(cardName + "." + listName + ".min", (byte) min);
         data.saveChanges();
     }
 

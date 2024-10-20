@@ -212,11 +212,9 @@ public class BingoCommand implements TabExecutor
 
             }
             case "about" -> {
-                BingoPlayerSender.sendMessage(Component.text("Bingo Reloaded Version: " + BingoReloaded.getInstance().getPluginMeta().getVersion() +
-                        ", Created by: " + BingoReloaded.getInstance().getPluginMeta().getAuthors()), player);
-                BingoPlayerSender.sendMessage(Component.text("Join the bingo reloaded discord server here to stay up to date!").color(NamedTextColor.AQUA).decorate(TextDecoration.ITALIC)
-                        .hoverEvent(HoverEvent.showText(Component.text("https://discord.gg/AzZNxPRNPf")))
-                        .clickEvent(ClickEvent.openUrl("https://discord.gg/AzZNxPRNPf")), player);
+                player.sendMessage(Component.text("Bingo Reloaded Version: " + BingoReloaded.getInstance().getPluginMeta().getVersion() +
+                        " Created by: " + BingoReloaded.getInstance().getPluginMeta().getAuthors()));
+                player.sendMessage(BingoMessage.createInfoUrlComponent(Component.text("Join the bingo reloaded discord server here to stay up to date!"), "https://discord.gg/AzZNxPRNPf"));
             }
             default -> {
                 if (player.hasPermission("bingo.admin")) {
@@ -320,7 +318,7 @@ public class BingoCommand implements TabExecutor
     public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
         if (!(sender instanceof Player player) || player.hasPermission("bingo.admin")) {
             if (args.length <= 1) {
-                return List.of("join", "vote", "getcard", "back", "leave", "stats", "end", "wait", "kit", "deathmatch", "creator", "teams", "teamedit");
+                return List.of("join", "vote", "getcard", "back", "leave", "stats", "end", "wait", "kit", "deathmatch", "creator", "teams", "teamedit", "about");
             }
 
             if (args[0].equals("kit")) {
@@ -342,7 +340,7 @@ public class BingoCommand implements TabExecutor
         }
 
         if (args.length == 1) {
-            return List.of("join", "vote", "getcard", "back", "leave", "stats");
+            return List.of("join", "vote", "getcard", "back", "leave", "stats", "about");
         }
         return List.of();
     }

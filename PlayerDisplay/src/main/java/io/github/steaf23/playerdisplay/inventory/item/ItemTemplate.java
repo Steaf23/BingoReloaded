@@ -3,6 +3,7 @@ package io.github.steaf23.playerdisplay.inventory.item;
 import com.google.common.collect.ImmutableMultimap;
 import io.github.steaf23.playerdisplay.PlayerDisplay;
 import io.github.steaf23.playerdisplay.inventory.item.action.MenuAction;
+import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import io.github.steaf23.playerdisplay.util.PDCHelper;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -376,13 +377,13 @@ public class ItemTemplate
         }
         ItemStack stack = new ItemStack(material, amount);
 
-        if (glowing) {
-            stack.addUnsafeEnchantment(Enchantment.UNBREAKING, 1);
-        }
-
         ItemMeta stackMeta = stack.getItemMeta();
         if (stackMeta == null) {
             return stack;
+        }
+
+        if (glowing) {
+            stackMeta.addEnchant(Enchantment.UNBREAKING, 1, true);
         }
 
         if (name != null) {
@@ -405,7 +406,8 @@ public class ItemTemplate
             pdc = PDCHelper.addStringToPdc(pdc, "compare_key", compareKey);
         }
 
-        stackMeta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_UNBREAKABLE, ItemFlag.HIDE_DYE);
+        stackMeta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_UNBREAKABLE,
+                ItemFlag.HIDE_DYE, ItemFlag.HIDE_STORED_ENCHANTS, ItemFlag.HIDE_ARMOR_TRIM);
         if (hideAttributes) {
             //TODO: change if there is a need for items to be used by the player with hidden attributes
             stackMeta.setAttributeModifiers(ImmutableMultimap.of());
@@ -417,8 +419,11 @@ public class ItemTemplate
         for (Function<ItemMeta, ItemMeta> modifier : metaModifiers) {
             stackMeta = modifier.apply(stackMeta);
         }
+        for (Enchantment enchantment : enchantments.keySet()) {
+            stackMeta.addEnchant(enchantment, enchantments.get(enchantment), true);
+        }
         stack.setItemMeta(stackMeta);
-        stack.addUnsafeEnchantments(enchantments);
+
         return stack;
     }
 

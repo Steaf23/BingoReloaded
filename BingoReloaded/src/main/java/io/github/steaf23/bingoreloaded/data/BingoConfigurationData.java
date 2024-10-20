@@ -45,6 +45,7 @@ public class BingoConfigurationData
     public final boolean selectTeamsUsingCommandsOnly;
     public final boolean disableScoreboardSidebar;
     public final boolean useIncludedResourcepack;
+    public final boolean enableDebugLogging;
 
     // Lobby options
     public final boolean singlePlayerTeams;
@@ -91,6 +92,7 @@ public class BingoConfigurationData
         // TODO: re-enable resource pack
 //        this.useIncludedResourcepack = config.getBoolean("useIncludedResourcepack", true);
         this.useIncludedResourcepack = false;
+        this.enableDebugLogging = config.getBoolean("enableDebugLogging", false);
 
         // Lobby
         this.singlePlayerTeams = config.getBoolean("singlePlayerTeams", false);

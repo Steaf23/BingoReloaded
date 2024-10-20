@@ -46,8 +46,7 @@ public enum CardSize implements ComponentLike
             row = (int) Math.floor(itemIndex / (double)size);
         }
 
-        int finalIndex = itemIndex + leftSpacing + row * (leftSpacing + rightSpacing);
-        return this == CardSize.X3 ? finalIndex + 9 : finalIndex;
+        return itemIndex + leftSpacing + row * (leftSpacing + rightSpacing);
     }
 
     public static CardSize fromWidth(int width)

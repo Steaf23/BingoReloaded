@@ -72,7 +72,7 @@ public class HotswapTexturedCardMenu extends TexturedCardMenu implements Hotswap
         //TODO: check if inventory needs to be recreated at all by comparing completed items
         Map<Integer, TextColor> completedSlots = new HashMap<>();
         for (int i = 0; i < tasks.size(); i++) {
-            int rawSlot = size.getCardInventorySlot(i);
+            int rawSlot = getSlotForTask(i);
             if (tasks.get(i).isCompleted()) {
                 tasks.get(i).getCompletedBy().ifPresent(p -> completedSlots.put(rawSlot, p.getTeam().getColor()));
             }

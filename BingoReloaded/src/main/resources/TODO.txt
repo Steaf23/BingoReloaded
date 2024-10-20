@@ -30,15 +30,14 @@
 (3.x) selector support on commands
 (3.x) add web editor for nbt files
 (3.x) implement card view placed on a map as the bingo card
+(3.x) add purging to log files
 
 (BUG) vote item does not appear when starting server sometimes
+(BUG) Load player data in a bingo world does not teleport the player out
+(BUG) advancement progress is not reset correctly? (MORE INFO NEEDED)
 
 ====================== 3.0 BLOCKERS ======================
 
-(BUG) add input text to team edit button and fill name edit with correct text
-(BUG) advancement progress is not reset correctly
-(BUG) Cannot teleport player to world error, when the teleport in fact succeeded...
-(BUG) Load player data in a bingo world does not teleport the player out
-(BUG) fix task placement for small cards
+(BUG) fix list value edit menu
 
 () update docs about /autobingo countdown update

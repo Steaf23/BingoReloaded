@@ -134,7 +134,7 @@ public class BingoReloaded extends JavaPlugin
         });
 
         this.config = new BingoConfigurationData(getConfig());
-
+        PlayerDisplay.enableDebugLogging(config.enableDebugLogging);
 
 
         PlayerDisplay.setUseCustomTextures(config.useIncludedResourcepack);
@@ -198,6 +198,7 @@ public class BingoReloaded extends JavaPlugin
         }
 
         HandlerList.unregisterAll(menuBoard);
+        PlayerDisplay.disable();
     }
 
     public BingoConfigurationData config() {

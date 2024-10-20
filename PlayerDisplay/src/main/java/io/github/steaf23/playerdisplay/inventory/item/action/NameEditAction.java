@@ -21,10 +21,14 @@ public class NameEditAction extends MenuAction
     private final Component prompt;
 
     public NameEditAction(Component prompt, MenuBoard board, BiConsumer<String, ItemTemplate> callback) {
+        this(prompt, board, "", callback);
+    }
+
+    public NameEditAction(Component prompt, MenuBoard board, String startingValue, BiConsumer<String, ItemTemplate> callback) {
         this.callback = callback;
         this.board = board;
         this.prompt = prompt;
-        this.value = "";
+        this.value = startingValue;
     }
 
     @Override

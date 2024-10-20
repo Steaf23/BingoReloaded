@@ -122,7 +122,7 @@ public class TeamEditorMenu extends PaginatedSelectionMenu
                     templateToEdit.nameComponent(),
                     Component.text("Supports minimessage formatting").color(NamedTextColor.AQUA).decorate(TextDecoration.ITALIC));
 
-            teamNameItem.setAction(new NameEditAction(Component.text("Edit team name"), getMenuBoard(), (value, item) -> {
+            teamNameItem.setAction(new NameEditAction(Component.text("Edit team name"), getMenuBoard(), templateToEdit.stringName(), (value, item) -> {
                 templateToEdit = new TeamData.TeamTemplate(value, templateToEdit.color());
                 //TODO: find a way to do addItem(teamNameItem); automatically??
                 addItem(item);

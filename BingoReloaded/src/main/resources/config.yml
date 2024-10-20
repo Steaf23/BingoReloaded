@@ -53,6 +53,10 @@ disableScoreboardSidebar: false
 # If set to false will use the fallback menus and items without losing functionality.
 useIncludedResourcepack: true
 
+# Set to true if you want to log debug messages in /plugins/BingoReloaded/log/debug.log.
+# Usually used when trying to recreate bugs.
+enableDebugLogging: false
+
 # ==========================================================================
 #    Lobby Configuration Options
 # ==========================================================================

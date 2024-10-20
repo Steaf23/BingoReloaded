@@ -2,6 +2,8 @@ package io.github.steaf23.bingoreloaded.data.world;
 
 import io.github.steaf23.bingoreloaded.data.core.helper.ResourceFileHelper;
 import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
@@ -29,12 +31,16 @@ public class WorldData
             }
         }
 
+        int removeCount = 0;
         for (File f : worldsFolderDir.listFiles(File::isDirectory)) {
             if (f.equals(worldsFolderDir)) continue;
 
             String worldName = f.getName();
-            destroyWorld(plugin, worldName);
+            if (destroyWorld(plugin, worldName)) {
+                removeCount++;
+            }
         }
+        ConsoleMessenger.log(Component.text("Removed " + removeCount + " bingo worlds on startup").color(NamedTextColor.LIGHT_PURPLE));
         return true;
     }
 
