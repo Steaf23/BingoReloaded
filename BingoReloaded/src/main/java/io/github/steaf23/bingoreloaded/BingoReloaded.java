@@ -148,7 +148,6 @@ public class BingoReloaded extends JavaPlugin
         ConsoleMessenger.log(BingoMessage.CHANGED_LANGUAGE.asPhrase().color(NamedTextColor.GREEN));
 
         BasicMenu.pluginTitlePrefix = BingoMessage.MENU_PREFIX.asPhrase();
-        WorldData.clearWorlds(this);
 
         this.textureData = new TexturedMenuData();
         this.menuBoard = new BingoMenuBoard();

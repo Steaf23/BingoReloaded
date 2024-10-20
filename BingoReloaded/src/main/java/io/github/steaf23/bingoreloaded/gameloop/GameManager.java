@@ -39,6 +39,7 @@ public class GameManager
 
     private final PlayerSerializationData playerData;
     private final BingoEventListener eventListener;
+    private final WorldData worldData;
 
     private boolean teleportingPlayer;
 
@@ -47,12 +48,14 @@ public class GameManager
         this.config = config;
         this.menuBoard = menuBoard;
         this.hudRegistry = hudRegistry;
+        this.worldData = new WorldData(plugin);
 
         this.sessions = new HashMap<>();
         this.playerData = new PlayerSerializationData();
         this.eventListener = new BingoEventListener(this, config.disableAdvancements, config.disableStatistics);
 
         this.teleportingPlayer = false;
+        this.worldData.clearWorlds();
 
         Bukkit.getPluginManager().registerEvents(eventListener, plugin);
     }
@@ -63,7 +66,7 @@ public class GameManager
             return false;
         }
 
-        BingoSession session = new BingoSession(menuBoard, hudRegistry, WorldData.createWorldGroup(plugin, sessionName), config);
+        BingoSession session = new BingoSession(menuBoard, hudRegistry, worldData.createWorldGroup(sessionName), config);
         sessions.put(sessionName, session);
         return true;
     }
@@ -74,12 +77,12 @@ public class GameManager
         }
 
         endGame(sessionName);
-        WorldGroup group = WorldData.getWorldGroup(plugin, sessionName);
+        WorldGroup group = worldData.getWorldGroup(sessionName);
         if (group == null) {
             ConsoleMessenger.bug("Could not destroy worlds from session properly", this);
             return false;
         }
-        WorldData.destroyWorldGroup(plugin, WorldData.getWorldGroup(plugin, sessionName));
+        worldData.destroyWorldGroup(group);
         sessions.get(sessionName).destroy();
         sessions.remove(sessionName);
         return true;
@@ -157,7 +160,7 @@ public class GameManager
     }
 
     public boolean teleportPlayerToSession(Player player, String sessionName) {
-        WorldGroup bingoWorld = WorldData.getWorldGroup(plugin, sessionName);
+        WorldGroup bingoWorld = worldData.getWorldGroup(sessionName);
         if (bingoWorld == null) {
             return false;
         }

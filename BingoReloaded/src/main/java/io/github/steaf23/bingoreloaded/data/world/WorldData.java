@@ -17,12 +17,18 @@ import java.util.UUID;
 
 public class WorldData
 {
+    private final JavaPlugin plugin;
+
+    public WorldData(JavaPlugin plugin) {
+        this.plugin = plugin;
+    }
+
     /**
      * Removes all worlds in the pluginFolder/worlds folder
      *
      * @return false if 1 or more worlds could not be removed for any reason
      */
-    public static boolean clearWorlds(@NotNull JavaPlugin plugin) {
+    public boolean clearWorlds() {
         String worldFolder = getWorldsFolder(plugin);
         File worldsFolderDir = FileUtils.getFile(worldFolder);
         if (!worldsFolderDir.exists()) {
@@ -49,14 +55,14 @@ public class WorldData
      * If worlds by the same name exist, this will just construct a world group with the pre-existing worlds
      * @return created WorldGroup
      */
-    public static WorldGroup createWorldGroup(@NotNull JavaPlugin plugin, String worldName) {
+    public WorldGroup createWorldGroup(String worldName) {
         World overworld = createWorld(plugin, worldName, World.Environment.NORMAL);
         World nether = createWorld(plugin, worldName + "_nether", World.Environment.NETHER);
         World end = createWorld(plugin, worldName + "_the_end", World.Environment.THE_END);
         return new WorldGroup(worldName, overworld.getUID(), nether.getUID(), end.getUID());
     }
 
-    public static @Nullable WorldGroup getWorldGroup(@NotNull JavaPlugin plugin, String worldName) {
+    public @Nullable WorldGroup getWorldGroup(String worldName) {
         World overworld = Bukkit.getWorld(getWorldsFolder(plugin) + worldName);
         World nether = Bukkit.getWorld(getWorldsFolder(plugin) + worldName + "_nether");
         World theEnd = Bukkit.getWorld(getWorldsFolder(plugin) + worldName + "_the_end");
@@ -78,7 +84,7 @@ public class WorldData
      * !Also removes the worlds from the plugin folder permanently!
      * @return true if the worlds in the world group could be destroyed correctly
      */
-    public static boolean destroyWorldGroup(@NotNull JavaPlugin plugin, @NotNull WorldGroup worldGroup) {
+    public boolean destroyWorldGroup(@NotNull WorldGroup worldGroup) {
         boolean success = destroyWorld(plugin, worldGroup.worldName());
         success = success && destroyWorld(plugin, worldGroup.worldName() + "_nether");
         success = success && destroyWorld(plugin, worldGroup.worldName() + "_the_end");
