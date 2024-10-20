@@ -38,6 +38,4 @@
 
 ====================== 3.0 BLOCKERS ======================
 
-(BUG) fix list value edit menu
-
 () update docs about /autobingo countdown update

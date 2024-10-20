@@ -52,12 +52,15 @@ public class TaskGenerator
         }
         List<String> overflowList = new ArrayList<>();
         for (String listName : cardsData.getListNames(cardName)) {
+            int listMin = cardsData.getListMin(cardName, listName);
+            int listMax = cardsData.getListMax(cardName, listName);
+
             if (!taskMap.containsKey(listName)) {
                 continue;
             }
 
-            int proportionalMin = Math.max(1, cardsData.getListMin(cardName, listName));
-            int proportionalMax = cardsData.getListMax(cardName, listName);
+            int proportionalMin = Math.max(1, listMin);
+            int proportionalMax = listMax;
 
             for (int i = 0; i < proportionalMax - proportionalMin; i++) {
                 overflowList.add(listName);

@@ -10,15 +10,24 @@ import java.util.function.Consumer;
 public class SpinBoxButtonAction extends MenuAction
 {
     private int value;
-    private final int min;
-    private final int max;
-    private final Consumer<Integer> callback;
+    private int min;
+    private int max;
+    private Consumer<Integer> callback;
 
-    public SpinBoxButtonAction(int minValue, int maxValue, int initialValue, Consumer<Integer> callback) {
+    public SpinBoxButtonAction(int minValue, int maxValue, int initialValue, @NotNull Consumer<Integer> callback) {
+        maxValue = Math.min(maxValue, 64);
         this.min = Math.clamp(minValue, 1, maxValue);
         this.max = Math.clamp(maxValue, minValue, 64);
         this.value = Math.clamp(initialValue, min, max);
         this.callback = callback;
+    }
+
+    public SpinBoxButtonAction(int minValue, int maxValue, int initialValue) {
+        maxValue = Math.min(maxValue, 64);
+        this.min = Math.clamp(minValue, 1, maxValue);
+        this.max = Math.clamp(maxValue, minValue, 64);
+        this.value = Math.clamp(initialValue, min, max);
+        this.callback = null;
     }
 
     @Override
@@ -44,13 +53,43 @@ public class SpinBoxButtonAction extends MenuAction
         }
 
         value = Math.clamp(value + changeBy, min, max);
-        if (item != null) {
-            item.setAmount(value);
-        }
-        callback.accept(value);
+        updateItem();
     }
 
     public int getValue() {
         return value;
+    }
+
+    public void setCallback(@NotNull Consumer<Integer> callback) {
+        this.callback = callback;
+    }
+
+    public void setMax(int max) {
+        this.max = Math.clamp(max, min, 64);
+
+        int newValue = Math.clamp(value, this.min, this.max);
+        if (newValue != value) {
+            this.value = newValue;
+            updateItem();
+        }
+    }
+
+    public void setMin(int min) {
+        this.min = Math.clamp(min, 1, max);
+
+        int newValue = Math.clamp(value, this.min, this.max);
+        if (newValue != value) {
+            this.value = newValue;
+            updateItem();
+        }
+    }
+
+    private void updateItem() {
+        if (item != null) {
+            item.setAmount(value);
+        }
+        if (callback != null) {
+            callback.accept(value);
+        }
     }
 }

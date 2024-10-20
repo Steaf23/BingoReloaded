@@ -22,8 +22,8 @@ public class BingoCardData
             "default_card_hardcore"
     );
     private final TaskListData listsData = new TaskListData();
-    public static final int MAX_ITEMS = 36;
-    public static final int MIN_ITEMS = 1;
+    public static final byte MAX_ITEMS = 36;
+    public static final byte MIN_ITEMS = 1;
 
     private final DataAccessor data = BingoReloaded.getDataAccessor("data/cards");
 
@@ -74,20 +74,20 @@ public class BingoCardData
         return data.getKeys();
     }
 
-    public int getListMax(String cardName, String listName)
+    public byte getListMax(String cardName, String listName)
     {
-        return data.getInt(cardName + "." + listName + ".max", MAX_ITEMS);
+        return data.getByte(cardName + "." + listName + ".max", MAX_ITEMS);
     }
 
-    public int getListMin(String cardName, String listName)
+    public byte getListMin(String cardName, String listName)
     {
-        return data.getInt(cardName + "." + listName + ".min", MIN_ITEMS);
+        return data.getByte(cardName + "." + listName + ".min", MIN_ITEMS);
     }
 
     public void setList(String cardName, String listName, int max, int min)
     {
-        data.setByte(cardName + "." + listName + ".max", (byte) max);
-        data.setByte(cardName + "." + listName + ".min", (byte) min);
+        data.setByte(cardName + "." + listName + ".max", (byte) Math.min(max, MAX_ITEMS));
+        data.setByte(cardName + "." + listName + ".min", (byte) Math.max(min, MIN_ITEMS));
         data.saveChanges();
     }
 
