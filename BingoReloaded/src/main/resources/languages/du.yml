@@ -7,16 +7,7 @@ branding:
 command:
   use: "Verwendung: {0}" # 0: cmd usage
   bingo:
-    use: "Verwendung: {0}" # 0: /bingo usage
     no_deathmatch: "Ein Deathmatch kann nicht gestartet werden, wenn gerade kein Bingospiel läuft!"
-  card:
-    no_name: "Bitte geben Sie einen Kartennamen ein: {0}" # 0: command
-    no_remove: "'{0}'kann nicht gelöscht werden. Haben Sie es richtig geschrieben?" # 0: card name
-    removed: "Karte '{0}' konnte gelöscht werden!" # 0: card name
-  list:
-    no_name: "Geben Sie den Namen der Liste ein: {0}" # 0: command
-    no_remove: "'{0}'kann nicht gelöscht werden. Haben Sie es richtig geschrieben?" # 0: item list name
-    removed: "Artikelliste '{0}' Erfolgreiche Löschung!" # 0: item list name
 game:
   timer:
     duration: "Spielzeit: {0} " # 0: total game time duration
@@ -71,7 +62,7 @@ game:
     single_added: "{0} Hinzugefügt" # 0: task
     multiple_expired: "Mehrere Aufgaben abgelaufen"
     multiple_added: "Mehrere neue Aufgaben hinzugefügt"
-    lore: Besorgen Sie sich {0} dieses Artikels, um die Aufgabe abzuschließen! # 0: item count
+    lore: "Besorgen Sie sich {0} dieses Artikels, um die Aufgabe abzuschließen!" # 0: item count
     lore_advancement: "Klicken Sie hier, um weitere Informationen zu erhalten!"
     lore_statistic: "Indem Sie die Aufgabe erledigen, schließen Sie sie ab!"
     completed: "{0} wurde von {1} am {2} erreicht" # 0: item name, 1: team, 2: completion time
@@ -100,8 +91,10 @@ menu:
       desc: "Das erste Team, das alle Aufgaben erfüllt, gewinnt."
     info_hotswap:
       name: "Hot-Swap Bingo-Karte"
-      desc: "Aufgaben werden ersetzt, wenn sie nach einiger Zeit ablaufen.\nDas erste Team, das {0} Aufgaben erfüllt, gewinnt!" #0: winning score
-      desc_alt: "Aufgaben werden ersetzt, wenn sie nach einiger Zeit ablaufen.\nDas Team, das die meisten Aufgaben innerhalb von {0} Minuten erfüllt, gewinnt!" #0: time
+      desc_expire: "Aufgaben werden nach einer gewissen Zeit ersetzt, wenn sie ablaufen."
+      desc_score: "Das erste Team, das {0} Aufgaben abschließt, gewinnt!" #0: winning score
+      desc_time: "Das Team, das die meisten Aufgaben \nvor Ablauf der Zeit abschließt, gewinnt!"
+      desc_any: "Das Team, das die meisten Aufgaben \nvor Ablauf der Zeit abschließt oder {0} Aufgaben erledigt, gewinnt!" #0: winning score
   options:
     title: "Optionsmenü"
     start: "Spiel starten"

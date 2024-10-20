@@ -8,7 +8,7 @@ lobby:
 # - {team_size}: selected maximum team size
 # - {duration}: selected duration (or ∞ if countdown mode is not enabled)
 
-    title: "{$branding.scoreboard_title}"
+    title: "<bingo_translate:'branding.scoreboard_title'>"
     sidebar:
         - " "
         - "{status}"
@@ -24,7 +24,7 @@ game:
 # - {team_info}: displays currently playing teams and optionally team members if enough space is left (multiline)
 # - {win_goal}: amount of points required to win, set to "-----" for regular bingo.
 
-    title: "<underlined><italic>{$menu.completed}"
+    title: "<underlined><italic><bingo_translate:'menu.completed'>"
     sidebar:
         - " "
         - "{team_info}"

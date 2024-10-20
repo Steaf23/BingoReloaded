@@ -1,9 +1,9 @@
 name: "Russian"
 changed: "Язык был изменён на Русский!"
 branding:
-  scoreboard_title: "<dark_aqua><bold>Бинго<reset><dark_red>"
-  message_prefix: "<dark_gray>[<dark_aqua><bold>Бинго<reset><dark_gray>]<reset>: "
-  menu_prefix: ""
+  scoreboard_title: "<dark_aqua><bold>Bingo<reset><yellow><italic>Ⓡeloaded<reset>"
+  message_prefix: "<dark_red>[<dark_aqua><bold>Bingo</bold></dark_aqua><yellow><italic>Ⓡeloaded</italic></yellow>]</dark_red>: "
+  menu_prefix: "<dark_red>[<dark_aqua><bold>B</bold></dark_aqua><yellow><italic>Ⓡ</italic></yellow>]</dark_red>: <dark_gray>"
 command:
   use: "Использование: {0}" # 0: cmd usage
   bingo:
@@ -87,12 +87,14 @@ menu:
       name: "Фиксация"
       desc: "Выполните как можно больше заданий, чтобы победить. \nКогда задача будет выполнена, \nона не сможет быть выполнена другой командой."
     info_complete:
-      name: "Перфекционизм"
+      name: "Завершите-X"
       desc: "Побеждает первая команда, которая выполнила все задачи."
     info_hotswap:
       name: "Горячая Замена"
-      desc: "Задачи будут заменены, после того как истекут \nчерез некоторое время.\nПервая команда выполнившая {0} задач побеждает!" #0: winning score
-      desc_alt: "Задачи будут заменены, после того как истекут \nчерез некоторое время.\nКомандая, выполнившая больше задач в течении {0} мин., побеждает!" #0: time
+      desc_expire: "Задачи будут заменены, когда истечет их срок \nчерез некоторое время."
+      desc_score: "Первая команда, выполнившая {0} задач, побеждает!" #0: winning score
+      desc_time: "Команда, выполнившая больше всего задач \nдо истечения времени, побеждает!"
+      desc_any: "Команда, выполнившая больше всего задач \nдо истечения времени или выполнившая {0} задач, побеждает!" #0: winning score
   options:
     title: "Настройки"
     start: "Начать игру"

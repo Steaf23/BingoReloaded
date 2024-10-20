@@ -7,16 +7,7 @@ branding:
 command:
   use: "Use: {0}" # 0: cmd usage
   bingo:
-    use: "Use: {0}" # 0: /bingo usage
     no_deathmatch: "Não é possível iniciar a Morte Súbita quando não há um jogo ativo!"
-  card:
-    no_name: "Favor providenciar o nome da cartela: {0}" # 0: command
-    no_remove: "Não foi possível remover '{0}', veja se você digitou corretamente!" # 0: card name
-    removed: "Cartela '{0}' removida com sucesso!" # 0: card name
-  list:
-    no_name: "Favor providenciar o nome da lista de itens: {0}" # 0: command
-    no_remove: "Não foi possível remover '{0}', veja se você digitou corretamente!" # 0: item list name
-    removed: "Lista de itens '{0}' removida com sucesso!" # 0: item list name
 game:
   timer:
     duration: "Duração do jogo: {0}" # 0: total game time duration
@@ -99,8 +90,10 @@ menu:
       desc: "Vence o primeiro time a completar todas as tarefas."
     info_hotswap:
       name: "Cartão de Bingo Hot-Swap"
-      desc: "As tarefas serão substituídas quando expirarem \napós um determinado período de tempo.\nA primeira equipe a completar {0} tarefas vence!" #0: winning score
-      desc_alt: "As tarefas serão substituídas quando expirarem \napós um determinado período de tempo.\nA equipe que completar a maioria das tarefas dentro de {0} minutos vence!" #0: time
+      desc_expire: "As tarefas serão substituídas quando expirarem \ndepois de algum tempo."
+      desc_score: "A primeira equipe a completar {0} tarefas vence!" #0: winning score
+      desc_time: "A equipe que completar mais tarefas \nante que o tempo acabe vence!"
+      desc_any: "A equipe que completar mais tarefas \nante que o tempo acabe ou completar {0} tarefas vence!" #0: winning score
   options:
     title: "Menu de Opções"
     start: "Iniciar o Jogo"

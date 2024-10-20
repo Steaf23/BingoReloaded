@@ -7,16 +7,7 @@ branding:
 command:
   use: "Utilisation: {0}" # 0: cmd usage
   bingo:
-    use: "Utilisation: {0}" # 0: /bingo usage
     no_deathmatch: "Impossible de commencer une mort subite quand aucune partie n'est en cours!"
-  card:
-    no_name: "Veuillez indiquer le nom de la grille: {0}" # 0: command
-    no_remove: "Impossible de supprimer la grille '{0}', vérifiez si vous avez orthographié le nom correctement!" # 0: card name
-    removed: "Grille '{0}' supprimée avec succès!" # 0: card name
-  list:
-    no_name: "Veuillez indiquer le nom de la liste d'éléments: {0}" # 0: command
-    no_remove: "Impossible de supprimer la liste d'éléments '{0}', vérifiez si vous avez orthographié le nom correctement!" # 0: item list name
-    removed: "Liste d'éléments '{0}' supprimée avec succès!" # 0: item list name
 game:
   timer:
     duration: "Durée de la partie: {0}" # 0: total game time
@@ -71,7 +62,7 @@ game:
     single_added: "{0} Ajoutée" # 0: task
     multiple_expired: "Plusieurs tâches expirées"
     multiple_added: "Ajout de plusieurs nouvelles tâches"
-    lore: Amassez {0} de cet élément pour compléter cette tâche! # 0: item count
+    lore: "Amassez {0} de cet élément pour compléter cette tâche!" # 0: item count
     lore_advancement: "Cliquez pour plus de détails!"
     lore_statistic: "Obtenez cette statistique pour terminer la tâche!"
     completed: "{0} completé par l'équipe {1} à {2}" # 0: item name, 1: team, 2: completion time
@@ -100,8 +91,10 @@ menu:
       desc: "La première équipe à compléter la totalité de la grille gagne."
     info_hotswap:
       name: "Carte Bingo Hot-Swap"
-      desc: "Les tâches seront remplacées lorsqu'elles expirent \naprès un certain laps de temps. \nLa première équipe à accomplir {0} tâches gagne !" #0: winning score
-      desc_alt: "Les tâches seront remplacées lorsqu'elles expirent \naprès un certain laps de temps. \nL'équipe qui accomplit le plus de tâches dans les {0} minutes gagne !" #0: time
+      desc_expire: "Les tâches seront remplacées lorsqu'elles expireront \naprès un certain temps."
+      desc_score: "La première équipe à terminer {0} tâches gagne !" #0: winning score
+      desc_time: "L'équipe qui termine le plus de tâches \n\navant la fin du temps imparti gagne !"
+      desc_any: "L'équipe qui termine le plus de tâches \n\navant la fin du temps imparti ou qui termine {0} tâches gagne !" #0: winning score
   options:
     title: "Options"
     start: "Démarrer la partie"

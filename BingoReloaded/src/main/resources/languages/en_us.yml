@@ -93,8 +93,8 @@ menu:
       name: "Hot-Swap Bingo Card"
       desc_expire: "Tasks will get replaced when they expire \nafter some amount of time."
       desc_score: "First team to complete {0} tasks wins!" #0: winning score
-      desc_time: "Team to complete the most tasks before the time limit runs out wins!"
-      desc_any: "Team to complete the most tasks before the time limit runs our \nor to complete {0} tasks wins!" #0: winning score
+      desc_time: "Team to complete the most tasks \nbefore the time limit runs out wins!"
+      desc_any: "Team to complete the most tasks \nbefore the time limit runs our \nor to complete {0} tasks wins!" #0: winning score
   options:
     title: "Options Menu"
     start: "Start The Game"

@@ -7,16 +7,7 @@ branding:
 command:
   use: "使用方法: {0}" # 0: cmd usage
   bingo:
-    use: "使用方法: {0}" # 0: /bingo usage
     no_deathmatch: "非游戏期间无法启动死亡竞赛！"
-  card:
-    no_name: "请提供卡片名称: {0}" # 0: command
-    no_remove: "无法移除 '{0}'，请确保拼写正确！" # 0: card name
-    removed: "卡片 '{0}' 成功移除！" # 0: card name
-  list:
-    no_name: "请提供物品列表名称: {0}" # 0: command
-    no_remove: "无法移除 '{0}'，请确保拼写正确！" # 0: item list name
-    removed: "物品列表 '{0}' 成功移除！" # 0: item list name
 game:
   timer:
     duration: "游戏时长: {0}" # 0: total game time duration
@@ -71,7 +62,7 @@ game:
     single_added: "{0} 已添加" # 0: task
     multiple_expired: "多个任务已过期"
     multiple_added: "已添加多个新任务"
-    lore: 获得 {0} 个该物品来完成任务！ # 0: item count
+    lore: "获得 {0} 个该物品来完成任务！" # 0: item count
     lore_advancement: "点击以了解更多！"
     lore_statistic: "获得该统计信息以完成任务！"
     completed: "{1} 于 {2} 完成 {0}" # 0: item name, 1: team, 2: completion time
@@ -100,8 +91,10 @@ menu:
       desc: "首个完成所有任务的队伍获胜。"
     info_hotswap:
       name: "Hot-Swap Bingo 卡片"
-      desc: "任务将在一定时间后过期并被替换。\n首个完成 {0} 个任务的队伍获胜！" #0: winning score
-      desc_alt: "任务将在一定时间后过期并被替换。\n在 {0} 分钟内完成任务最多的队伍获胜！" #0: time
+      desc_expire: "任务将在过期后被替换 \n经过一段时间。"
+      desc_score: "第一个完成 {0} 个任务的队伍获胜!" #0: winning score
+      desc_time: "在时间结束前，完成最多任务的队伍获胜 \n！"
+      desc_any: "在时间结束前完成最多任务的队伍或 \n完成 {0} 个任务的队伍获胜！" #0: winning score
   options:
     title: "选择菜单"
     start: "开始游戏"
@@ -176,7 +169,7 @@ items:
     desc: "点击以打开 Bingo 卡片！"
   wand:
     name: "抬升法杖"
-    desc: "右键传送到高处！ (&& 按住shift以下降)"
+    desc: "右键传送到高处！ (& 按住shift以下降)"
   vote:
     name: "投票"
     desc: "点击为游戏选项投票"

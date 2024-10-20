@@ -7,16 +7,7 @@ branding:
 command:
   use: "Gebruik: {0}" # 0: cmd usage
   bingo:
-    use: "Gebruik: {0}" # 0: /bingo usage
     no_deathmatch: "Er kan geen deathmatch gestart worden als er geen bingo spel loopt!"
-  card:
-    no_name: "Geef de naam van de kaart op: {0}" # 0: command
-    no_remove: "'{0}' kan niet verwijderd worden, weet je zeker dat de naam klopt?" # 0: card name
-    removed: "'{0}' is succesvol verwijderd!" # 0: card name
-  list:
-    no_name: "Geef de naam van de lijst op: {0}" # 0: command
-    no_remove: "'{0}' kan niet verwijderd worden, weet je zeker dat de naam klopt?" # 0: item list name
-    removed: "'{0}' is succesvol verwijderd!" # 0: item list name
 game:
   timer:
     duration: "Speelduur: {0}"
@@ -36,7 +27,7 @@ game:
     already_started: "Bingo kan niet gestart worden omdat er al een spel bezig is"
     give_cards: "Alle kits en bingo kaarten worden nu uitgedeeld!"
     no_card: "Bingo kan niet gestart worden met de kaart '{0}' want deze kaart bestaat niet!" # 0: card_name
-    chosen_settings: Bingo-spel starten! &6Beweeg je cursor hier&r om alle instellingen te bekijken."
+    chosen_settings: "Bingo-spel starten! <gold>Beweeg je cursor hier</gold> om alle instellingen te bekijken."
   end:
     bingo: "Gefeliciteerd, team {0} heeft het spel gewonnen!" # 0: winning team
   postgame:
@@ -71,7 +62,7 @@ game:
     single_added: "{0} Toegevoegd" # 0: task
     multiple_expired: "Meerdere taken verlopen"
     multiple_added: "Meerdere nieuwe taken vervangen"
-    lore: Verzamel {0} van dit item om deze taak te voltooien! # 0: item count
+    lore: "Verzamel {0} van dit item om deze taak te voltooien!" # 0: item count
     lore_advancement: "Klik voor meer informatie!"
     lore_statistic: "Behaal deze statistiek om de taak te voltooien!"
     completed: "{0} is behaald door team {1} op {2}!" # 0: item name, 1: team, 2: completion time
@@ -100,8 +91,10 @@ menu:
       desc: "Het eerste team met een volle kaart wint."
     info_hotswap:
       name: "Hot-Swap Bingo Kaart"
-      desc: "Taken veranderen na een bepaalde tijd. \nHet team dat als eerst {0} taken voltooid wint!" # 0: winning score
-      desc_alt: "Taken veranderen na een bepaalde tijd. \nHet team dat de meeste taken binnen de tijd voltooid wint!"#0: time
+      desc_expire: "Taken worden vervangen wanneer ze verlopen \nna een bepaalde tijd."
+      desc_score: "Het eerste team dat {0} taken voltooit, wint!" #0: winning score
+      desc_time: "Het team dat de meeste taken voltooit \nvoordat de tijdslimiet verloopt, wint!"
+      desc_any: "Het team dat de meeste taken voltooit \nvoordat de tijdslimiet verloopt \nof dat {0} taken voltooit, wint!" #0: winning score
   options:
     title: "Opties"
     start: "Start Het Spel"
