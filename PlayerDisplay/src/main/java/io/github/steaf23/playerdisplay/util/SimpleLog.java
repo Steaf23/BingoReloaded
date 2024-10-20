@@ -1,7 +1,5 @@
 package io.github.steaf23.playerdisplay.util;
 
-import org.bukkit.plugin.java.JavaPlugin;
-
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -11,11 +9,9 @@ import java.time.Instant;
 public class SimpleLog
 {
     private BufferedWriter writer;
-    private final File location;
 
     public SimpleLog(File location) {
         // Create the log file in the plugin's data folder
-        this.location = location;
         try {
             // Create the log file if it doesn't exist
             if (!location.exists()) {

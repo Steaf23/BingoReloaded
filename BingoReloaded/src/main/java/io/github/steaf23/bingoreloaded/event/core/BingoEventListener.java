@@ -18,6 +18,7 @@ import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.gameloop.phase.PregameLobby;
 import org.bukkit.World;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
@@ -219,7 +220,8 @@ public class BingoEventListener implements Listener
         gameManager.handlePlayerQuitsServer(event);
     }
 
-    @EventHandler
+    // We need the game manager to handle teleports first to make sure no player information gets lost by accident.
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void handlePlayerTeleport(final PlayerTeleportEvent event)
     {
         gameManager.handlePlayerTeleport(event);

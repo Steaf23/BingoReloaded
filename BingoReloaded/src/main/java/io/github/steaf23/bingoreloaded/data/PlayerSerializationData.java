@@ -37,7 +37,6 @@ public class PlayerSerializationData
         if (playerData == null) {
             return null;
         }
-        ConsoleMessenger.warn(Arrays.toString(playerData.inventory));
         data.erase(player.getUniqueId().toString());
         data.saveChanges();
         playerData.apply(player);

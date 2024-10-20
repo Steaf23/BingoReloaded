@@ -30,8 +30,11 @@
 (3.x) selector support on commands
 (3.x) add web editor for nbt files
 (3.x) implement card view placed on a map as the bingo card
-(3.x) add purging to log files
+(3.x) add purging to debug log
+(3.x) add automatic updates to config.yml when starting server to add new options
 
 (BUG) vote item does not appear when starting server sometimes
 (BUG) Load player data in a bingo world does not teleport the player out
 (BUG) advancement progress is not reset correctly? (MORE INFO NEEDED)
+(BUG) kicking a player from a bingo world displays teleportation failed error even though it worked (related to playerdata)
+

@@ -38,9 +38,12 @@ public record WorldGroup(String worldName, UUID overworldId, UUID netherId, UUID
 
     public Set<Player> getPlayers() {
         Set<Player> players = new HashSet<>();
-        players.addAll(getOverworld().getPlayers());
-        players.addAll(getNetherWorld().getPlayers());
-        players.addAll(getEndWorld().getPlayers());
+        if (getOverworld() != null)
+            players.addAll(getOverworld().getPlayers());
+        if (getNetherWorld() != null)
+            players.addAll(getNetherWorld().getPlayers());
+        if (getEndWorld() != null)
+            players.addAll(getEndWorld().getPlayers());
         return players;
     }
 }

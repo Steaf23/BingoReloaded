@@ -233,7 +233,11 @@ public class BingoGame implements GamePhase
 
     public void end(@Nullable BingoTeam winningTeam) {
         // If the starting timer was still running
-        startingTimer.stop();
+        if (startingTimer != null) {
+            startingTimer.stop();
+        } else {
+            ConsoleMessenger.bug("Could not stop the starting timer. This means something bad happened when ending a game, reload the plugin to continue without problems", this);
+        }
         BingoPlayerSender.sendMessage(timer.getTimeDisplayMessage(false), session);
         timer.stop();
 

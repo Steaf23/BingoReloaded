@@ -217,19 +217,23 @@ public class GameManager
         }
 
         if (sourceSession != null) {
-            if (config.savePlayerInformation && targetSession == null) {
-                teleportingPlayer = true;
-                // load player will teleport them, so we have to schedule it to make sure to do the right thing
-                BingoReloaded.scheduleTask(t -> {
-                    if (playerData.loadPlayer(event.getPlayer()) == null) {
+            if (targetSession == null) {
+                event.getPlayer().getInventory().clear(); // If we are leaving a bingo world, we can always clear the player's inventory
+
+                if (config.savePlayerInformation) {
+                    teleportingPlayer = true;
+                    // load player will teleport them, so we have to schedule it to make sure to do the right thing
+                    BingoReloaded.scheduleTask(t -> {
+                        if (playerData.loadPlayer(event.getPlayer()) == null) {
 //                        // Player data was not saved for some reason?
 //                        ConsoleMessenger.bug(Component.text("No saved player data could be found for ").append(event.getPlayer().displayName()).append(Component.text(", resetting data")), this);
 //                        // Using the boolean we can check if we were already teleporting the player.
 //                        SerializablePlayer.reset(plugin, event.getPlayer(), event.getTo()).apply(event.getPlayer());
-                    }
-                });
+                        }
+                    });
 
-                event.setCancelled(true);
+                    event.setCancelled(true);
+                }
             }
             sourceSession.removePlayer(event.getPlayer());
         }
