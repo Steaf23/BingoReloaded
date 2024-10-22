@@ -20,6 +20,7 @@ import io.github.steaf23.bingoreloaded.settings.BingoSettings;
 import io.github.steaf23.bingoreloaded.settings.BingoSettingsBuilder;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import io.github.steaf23.playerdisplay.PlayerDisplay;
+import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
@@ -701,9 +702,17 @@ public class AutoBingoCommand implements TabExecutor
         int playersLeft = playerCount;
         for (Player player : session.getPlayersInWorld())
         {
-            if (session.ownsWorld(player.getWorld()) && player.teleport(world.getSpawnLocation(), PlayerTeleportEvent.TeleportCause.PLUGIN)) {
-                playersLeft--;
+            if (!session.ownsWorld(player.getWorld())) {
+                ConsoleMessenger.log("Player '" + player.getName() + "' cannot be kicked from the session " + targetWorldName);
+                continue;
             }
+
+            if (!player.teleport(world.getSpawnLocation(), PlayerTeleportEvent.TeleportCause.PLUGIN)) {
+                ConsoleMessenger.bug("Could not teleport player '" + player.getName() + "'(" + player.getUniqueId() + ") for some reason", this);
+                continue;
+            }
+
+            playersLeft--;
         }
 
         sendSuccess("Teleported " + (playerCount - playersLeft) + " out of " + playerCount + " players in " + worldName + " to " + targetWorldName, worldName);

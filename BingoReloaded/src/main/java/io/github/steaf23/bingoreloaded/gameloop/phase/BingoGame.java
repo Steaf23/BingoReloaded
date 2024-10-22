@@ -263,7 +263,7 @@ public class BingoGame implements GamePhase
             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
         }
 
-        BingoPlayerSender.sendMessage(Component.text(" "), session);
+        session.sendMessage(Component.text(" "));
         var event = new BingoEndedEvent(getGameTime(), winningTeam, session);
         Bukkit.getPluginManager().callEvent(event);
     }

@@ -37,4 +37,4 @@
 (BUG) Load player data in a bingo world does not teleport the player out
 (BUG) advancement progress is not reset correctly? (MORE INFO NEEDED)
 (BUG) kicking a player from a bingo world displays teleportation failed error even though it worked (related to playerdata)
-
+(BUG) fix kickplayers for multiple players (has to do with an issue between loading player data and teleportevent from gamemanager)

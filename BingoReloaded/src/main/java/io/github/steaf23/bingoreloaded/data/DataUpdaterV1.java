@@ -5,6 +5,7 @@ import io.github.steaf23.bingoreloaded.cards.CardSize;
 import io.github.steaf23.bingoreloaded.data.core.configuration.YamlDataAccessor;
 import io.github.steaf23.bingoreloaded.data.core.helper.SerializablePlayer;
 import io.github.steaf23.bingoreloaded.data.core.tag.TagDataAccessor;
+import io.github.steaf23.bingoreloaded.data.core.tag.TagDataType;
 import io.github.steaf23.bingoreloaded.gui.inventory.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.gui.inventory.item.SerializableItem;
 import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
@@ -15,10 +16,13 @@ import io.github.steaf23.bingoreloaded.tasks.BingoStatistic;
 import io.github.steaf23.bingoreloaded.tasks.data.ItemTask;
 import io.github.steaf23.bingoreloaded.tasks.data.StatisticTask;
 import io.github.steaf23.bingoreloaded.tasks.TaskData;
+import io.github.steaf23.playerdisplay.PlayerDisplay;
 import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -232,6 +236,8 @@ public class DataUpdaterV1
         updatePlayers();
         updatePresets();
         updateTeams();
+        updateScoreboards();
+        updatePlaceholders();
     }
 
     private void updatePresets() {
@@ -332,7 +338,7 @@ public class DataUpdaterV1
     }
 
     private void updateLists(String filename) {
-        if (!new File(plugin.getDataFolder(), filename + ".yml").exists() || new File(plugin.getDataFolder(),filename + ".nbt").exists()) {
+        if (!new File(plugin.getDataFolder(), filename + ".yml").exists() || new File(plugin.getDataFolder(), filename + ".nbt").exists()) {
             return;
         }
 
@@ -479,5 +485,81 @@ public class DataUpdaterV1
             }
         }
         tagData.saveChanges();
+    }
+
+    private void updateScoreboards() {
+        YamlDataAccessor yamlData = new YamlDataAccessor(plugin, "scoreboards");
+        yamlData.load();
+
+        String version = yamlData.getString("version", "");
+
+        if (!version.isEmpty()) {
+            return;
+        }
+
+        yamlData.setString("version", "3.0.1");
+        updateBoard("lobby", yamlData);
+        updateBoard("game", yamlData);
+        yamlData.saveChanges();
+
+        ConsoleMessenger.log(Component.text("Found outdated scoreboards file and updated it to new format (V2 -> V3)").color(NamedTextColor.GOLD));
+    }
+
+    private @NotNull String updateConfigString(@NotNull String input) {
+        input = input.replace("&", "§");
+        Component legacyComponent = LegacyComponentSerializer.legacySection().deserialize(input);
+        String legacyMini = MiniMessage.miniMessage().serialize(legacyComponent);
+
+        // Variation of BingoMessage convertConfigStringToSingleMini that doesn't replace the argument brackets for scoreboard arguments.
+        legacyMini = BingoMessage.replaceColors(legacyMini, color -> "<" + color + ">");
+        legacyMini = BingoMessage.convertSmallCaps(legacyMini);
+        legacyMini = BingoMessage.replaceSubstitutionTags(legacyMini);
+
+        return legacyMini;
+    }
+
+    private void updateBoard(String boardName, YamlDataAccessor data) {
+        String title = data.getString(boardName + ".title", "");
+        List<String> sideBar = data.getList(boardName + ".sidebar", TagDataType.STRING);
+
+        sideBar.replaceAll(this::updateConfigString);
+
+        data.setString(boardName + ".title", this.updateConfigString(title));
+        data.setList(boardName + ".sidebar", TagDataType.STRING, sideBar);
+    }
+
+    private void updatePlaceholders() {
+        YamlDataAccessor yamlData = new YamlDataAccessor(plugin, "placeholders");
+        yamlData.load();
+
+        String version = yamlData.getString("version", "");
+
+        if (!version.isEmpty()) {
+            return;
+        }
+
+        yamlData.setString("version", "3.0.1");
+
+        for (String placeholder : yamlData.getStorage("placeholders").getKeys()) {
+            String format = updateConfigString(yamlData.getString("placeholders." + placeholder + ".format", ""));
+            yamlData.setString("placeholders." + placeholder + ".format", format);
+        }
+
+        yamlData.setString("placeholders.setting_hotswap_expiration.format", "{0}");
+        yamlData.setComment("placeholders.setting_hotswap_expiration.format", List.of(
+                "The currently selected settings to determine if hotswap tasks should expire automatically, \"true\" or \"false\" depending on the value."));
+
+        yamlData.setString("placeholders.setting_complete_winscore.format", "{0}");
+        yamlData.setComment("placeholders.setting_complete_winscore.format", List.of(
+                "The currently selected score to win complete-all, '-' if countdown is enabled."));
+
+        yamlData.setString("placeholders.created_session_.format", "{0}");
+        yamlData.setComment("placeholders.created_session_.format", List.of(
+                "Returns formatted session name with session_name format if the session has been created and an empty string if it has not.",
+                "Example usage: %bingoreloaded_created_session_My world% (returns My world if the session \"My world\" has been created)"));
+
+        yamlData.saveChanges();
+
+        ConsoleMessenger.log(Component.text("Found outdated placeholders file and updated it to new format (V2 -> V3)").color(NamedTextColor.GOLD));
     }
 }

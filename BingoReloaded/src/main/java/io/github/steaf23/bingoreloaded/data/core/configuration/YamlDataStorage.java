@@ -295,4 +295,11 @@ public class YamlDataStorage implements DataStorage
     public @NotNull ConfigurationSection getSection() {
         return config;
     }
+
+    public void setComment(String forKey, List<String> comments) {
+        if (!(config instanceof YamlConfiguration yamlConfig)) {
+            return;
+        }
+        yamlConfig.setComments(forKey, comments);
+    }
 }
