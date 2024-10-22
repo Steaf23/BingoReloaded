@@ -369,7 +369,7 @@ public enum BingoMessage
      *                  Where the input is the color in hex string format "#FFFFFF" configured by the user.
      * @return the converted string (or the input string if no colors were found).
      */
-    private static String replaceColors(String input, Function<String, String> converter) {
+    public static String replaceColors(String input, Function<String, String> converter) {
         Matcher matcher = HEX_PATTERN.matcher(input);
 
         String result = input;
@@ -382,7 +382,7 @@ public enum BingoMessage
         return result;
     }
 
-    private static String replaceSubstitutionTags(String input) {
+    public static String replaceSubstitutionTags(String input) {
         Matcher matcher = SUBSTITUTE_PATTERN.matcher(input);
 
         while (matcher.find()) {

@@ -17,7 +17,7 @@ import java.util.UUID;
 public record WorldGroup(String worldName, UUID overworldId, UUID netherId, UUID endId)
 {
     public void teleportPlayer(Player player) {
-        player.teleport(Bukkit.getWorld(overworldId).getSpawnLocation(), PlayerTeleportEvent.TeleportCause.NETHER_PORTAL);
+        player.teleport(Bukkit.getWorld(overworldId).getSpawnLocation(), PlayerTeleportEvent.TeleportCause.PLUGIN);
     }
 
     public @Nullable World getOverworld() {
