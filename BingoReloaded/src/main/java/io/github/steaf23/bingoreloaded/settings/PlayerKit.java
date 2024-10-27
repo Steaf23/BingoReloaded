@@ -40,7 +40,7 @@ public enum PlayerKit
             .setCompareKey("wand");
 
     public static final ItemTemplate CARD_ITEM = new ItemTemplate(
-            Material.GLOBE_BANNER_PATTERN,
+            Material.FILLED_MAP,
             BingoMessage.CARD_ITEM_NAME.asPhrase().color(NamedTextColor.DARK_PURPLE).decorate(TextDecoration.BOLD, TextDecoration.ITALIC),
             BingoMessage.CARD_ITEM_DESC.asMultiline())
             .setGlowing(true)

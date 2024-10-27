@@ -11,6 +11,8 @@ import io.github.steaf23.bingoreloaded.item.ItemCooldownManager;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import io.github.steaf23.bingoreloaded.tasks.GameTask;
+import io.github.steaf23.playerdisplay.inventory.item.ItemTemplate;
+import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import io.github.steaf23.playerdisplay.util.PDCHelper;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
@@ -24,12 +26,16 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.MapMeta;
+import org.bukkit.map.MapRenderer;
+import org.bukkit.map.MapView;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.Map;
 import java.util.Optional;
@@ -128,7 +134,7 @@ public class BingoPlayer implements BingoParticipant
     }
 
     @Override
-    public void giveBingoCard(int cardSlot)
+    public void giveBingoCard(int cardSlot, @Nullable MapRenderer mapRenderer)
     {
         if (sessionPlayer().isEmpty())
             return;
@@ -145,7 +151,24 @@ public class BingoPlayer implements BingoParticipant
                 }
             }
             ItemStack existingItem = player.getInventory().getItem(cardSlot);
-            player.getInventory().setItem(cardSlot, PlayerKit.CARD_ITEM.buildItem());
+            ItemTemplate map = PlayerKit.CARD_ITEM.copy().addMetaModifier(meta -> {
+                if (meta instanceof MapMeta mapMeta) {
+                    MapView view = Bukkit.createMap(player.getWorld());
+                    for (MapRenderer renderer : new ArrayList<>(view.getRenderers())) {
+                        view.removeRenderer(renderer);
+                    }
+
+                    if (mapRenderer != null)
+                        view.addRenderer(mapRenderer);
+                    mapMeta.setMapView(view);
+                    return mapMeta;
+                }
+                ConsoleMessenger.error("EHM WHERE IS MY MAP?");
+                return meta;
+            });
+
+            ItemStack card = map.buildItem();
+            player.getInventory().setItem(cardSlot, card);
             if (existingItem != null && !existingItem.getType().isAir()) {
                 Map<Integer, ItemStack> leftOver = player.getInventory().addItem(existingItem);
                 for (ItemStack stack : leftOver.values()) {

@@ -38,3 +38,10 @@
 (BUG) advancement progress is not reset correctly? (MORE INFO NEEDED)
 (BUG) kicking a player from a bingo world displays teleportation failed error even though it worked (related to playerdata)
 (BUG) fix kickplayers for multiple players (has to do with an issue between loading player data and teleportevent from gamemanager)
+
+add task count to complete card
+singleplayer team scoreboard is messed up (should showplayer names instead)
+spawn platform teleportation is too high wand teleportion isnt centered
+add spectator mode
+singleplayer teams kick players out of game when it ends, and not always back in again
+add players to world

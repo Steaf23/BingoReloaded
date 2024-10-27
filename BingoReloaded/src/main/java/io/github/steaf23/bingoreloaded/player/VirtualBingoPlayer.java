@@ -9,6 +9,7 @@ import io.github.steaf23.playerdisplay.PlayerDisplay;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
+import org.bukkit.map.MapRenderer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -79,7 +80,7 @@ public class VirtualBingoPlayer implements BingoParticipant
     }
 
     @Override
-    public void giveBingoCard(int cardSlot) {
+    public void giveBingoCard(int cardSlot, MapRenderer renderer) {
     }
 
     @Override

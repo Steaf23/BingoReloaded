@@ -22,6 +22,7 @@ import io.github.steaf23.bingoreloaded.event.PlayerLeftSessionWorldEvent;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gui.hud.BingoGameHUDGroup;
 import io.github.steaf23.bingoreloaded.gui.inventory.EffectOptionFlags;
+import io.github.steaf23.bingoreloaded.gui.map.BingoCardMapRenderer;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.player.PlayerRespawnManager;
@@ -64,6 +65,7 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.map.MapRenderer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.Vector;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -93,6 +95,8 @@ public class BingoGame implements GamePhase
     private final Map<UUID, Location> playerSpawnPoints;
 
     private GameTask deathMatchTask;
+
+    Map<BingoTeam, BingoCardMapRenderer> renderers = new HashMap<>();
 
     public BingoGame(@NotNull BingoSession session, @NotNull BingoSettings settings, @NotNull BingoConfigurationData config) {
         this.session = session;
@@ -144,6 +148,7 @@ public class BingoGame implements GamePhase
             t.outOfTheGame = false;
             t.setCard(masterCard.copy());
             uniqueCards.add(t.getCard());
+            renderers.put(t, new BingoCardMapRenderer(BingoReloaded.getInstance(), t.getCard().getTasks(), t));
         });
 
         BingoMessage.GIVE_CARDS.sendToAudience(session);
@@ -174,7 +179,7 @@ public class BingoGame implements GamePhase
                 Player player = p.sessionPlayer().get();
 
                 p.giveKit(settings.kit());
-                returnCardToPlayer(settings.kit().getCardSlot(), p);
+                returnCardToPlayer(settings.kit().getCardSlot(), p, renderers.get(p.getTeam()));
                 player.setLevel(0);
                 player.setExp(0.0f);
                 scoreboard.addPlayer(player);
@@ -314,11 +319,16 @@ public class BingoGame implements GamePhase
         return actionBarManager;
     }
 
+
     public void returnCardToPlayer(int cardSlot, BingoParticipant participant) {
+        returnCardToPlayer(cardSlot, participant, renderers.get(participant.getTeam()));
+    }
+
+    public void returnCardToPlayer(int cardSlot, BingoParticipant participant, MapRenderer cardRenderer) {
         if (participant.sessionPlayer().isEmpty())
             return;
 
-        participant.giveBingoCard(cardSlot);
+        participant.giveBingoCard(cardSlot, cardRenderer);
         participant.sessionPlayer().get().setGameMode(GameMode.SURVIVAL);
 
         BingoReloaded.scheduleTask(task -> participant.giveEffects(settings.effects(), config.gracePeriod), BingoReloaded.ONE_SECOND);
@@ -666,7 +676,7 @@ public class BingoGame implements GamePhase
             return;
 
         if (!settings.effects().contains(EffectOptionFlags.KEEP_INVENTORY)) {
-            returnCardToPlayer(settings.kit().getCardSlot(), player);
+            returnCardToPlayer(settings.kit().getCardSlot(), player, renderers.get(player.getTeam()));
             player.giveKit(settings.kit());
         } else {
             player.giveEffects(settings.effects(), 0);

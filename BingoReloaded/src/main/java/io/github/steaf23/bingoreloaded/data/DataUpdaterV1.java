@@ -16,7 +16,6 @@ import io.github.steaf23.bingoreloaded.tasks.BingoStatistic;
 import io.github.steaf23.bingoreloaded.tasks.data.ItemTask;
 import io.github.steaf23.bingoreloaded.tasks.data.StatisticTask;
 import io.github.steaf23.bingoreloaded.tasks.TaskData;
-import io.github.steaf23.playerdisplay.PlayerDisplay;
 import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;

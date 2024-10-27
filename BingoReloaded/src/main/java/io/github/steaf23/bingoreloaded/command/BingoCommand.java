@@ -16,18 +16,15 @@ import io.github.steaf23.bingoreloaded.gui.inventory.VoteMenu;
 import io.github.steaf23.bingoreloaded.gui.inventory.creator.BingoCreatorMenu;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
+import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
 import io.github.steaf23.bingoreloaded.settings.CustomKit;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import io.github.steaf23.bingoreloaded.util.BingoPlayerSender;
 import io.github.steaf23.playerdisplay.PlayerDisplay;
 import io.github.steaf23.playerdisplay.inventory.MenuBoard;
-import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.JoinConfiguration;
-import net.kyori.adventure.text.event.ClickEvent;
-import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
@@ -118,7 +115,8 @@ public class BingoCommand implements TabExecutor
                     BingoParticipant participant = session.teamManager.getPlayerAsParticipant(player);
                     if (participant instanceof BingoPlayer bingoPlayer) {
                         int cardSlot = session.settingsBuilder.view().kit().getCardSlot();
-                        ((BingoGame) session.phase()).returnCardToPlayer(cardSlot, bingoPlayer);
+                        BingoGame game = (BingoGame) session.phase();
+                        game.returnCardToPlayer(cardSlot, bingoPlayer);
                     }
                     return true;
                 }
