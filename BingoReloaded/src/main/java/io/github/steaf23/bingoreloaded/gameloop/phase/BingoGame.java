@@ -148,7 +148,7 @@ public class BingoGame implements GamePhase
             t.outOfTheGame = false;
             t.setCard(masterCard.copy());
             uniqueCards.add(t.getCard());
-            renderers.put(t, new BingoCardMapRenderer(BingoReloaded.getInstance(), t.getCard().getTasks(), t));
+            renderers.put(t, new BingoCardMapRenderer(BingoReloaded.getInstance(), t.getCard(), t));
         });
 
         BingoMessage.GIVE_CARDS.sendToAudience(session);
