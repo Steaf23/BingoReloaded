@@ -20,6 +20,7 @@ game:
     vote_kit: "Vote for a Kit"
     vote_gamemode: "Vote for a Gamemode"
     vote_card: "Vote for a Card"
+    vote_cardsize: "Vote for a card size"
     vote_count: "{0} player(s) voted for {1} {2}" # DYNAMIC 0: player count, 1: vote category, 2: vote item
     vote_won: "{0} {1} received the most votes!" # DYNAMIC 0: vote category, 1: vote item
   start:
@@ -104,6 +105,7 @@ menu:
     kit: "Kit"
     card: "Card"
     mode: "Gamemode"
+    cardsize: "Card Size"
     effects: "Player Effects"
     vote: "Vote For Settings"
     modes:

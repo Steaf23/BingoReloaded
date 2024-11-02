@@ -17,6 +17,8 @@ import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.gameloop.phase.GamePhase;
 import io.github.steaf23.bingoreloaded.gameloop.phase.PostGamePhase;
 import io.github.steaf23.bingoreloaded.gameloop.phase.PregameLobby;
+import io.github.steaf23.bingoreloaded.gameloop.vote.VoteCategory;
+import io.github.steaf23.bingoreloaded.gameloop.vote.VoteTicket;
 import io.github.steaf23.bingoreloaded.gui.hud.BingoGameHUDGroup;
 import io.github.steaf23.bingoreloaded.gui.hud.DisabledBingoGameHUDGroup;
 import io.github.steaf23.bingoreloaded.gui.hud.TeamDisplay;
@@ -25,11 +27,9 @@ import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.player.team.BasicTeamManager;
 import io.github.steaf23.bingoreloaded.player.team.SoloTeamManager;
 import io.github.steaf23.bingoreloaded.player.team.TeamManager;
-import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
 import io.github.steaf23.bingoreloaded.settings.BingoSettingsBuilder;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
-import io.github.steaf23.bingoreloaded.util.BingoPlayerSender;
 import io.github.steaf23.playerdisplay.inventory.MenuBoard;
 import io.github.steaf23.playerdisplay.scoreboard.HUDRegistry;
 import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
@@ -50,6 +50,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
+import java.util.function.Consumer;
 
 /**
  * This class represents a session of a bingo game on a single world(group).
@@ -333,32 +334,34 @@ public class BingoSession implements ForwardingAudience
             return null;
         }
 
-        PregameLobby.VoteTicket voteResult = lobby.getVoteResult();
+        VoteTicket voteResult = VoteTicket.getVoteResult(lobby.getAllVotes());
         if (voteResult.isEmpty()) {
             return null;
         }
 
-        BingoSettingsBuilder result = settingsBuilder.getVoteResult(voteResult);
-        BingoPlayerSender.sendMessage(Component.text(" "), this);
-        if (!voteResult.gamemode.isEmpty()) {
-            var tuple = voteResult.gamemode.split("_");
+        BingoSettingsBuilder result = settingsBuilder.applyVoteResult(voteResult);
+
+        Consumer<VoteCategory<?>> sendVoteMessage = category -> {
             BingoMessage.VOTE_WON.sendToAudience(this,
-                    BingoMessage.OPTIONS_GAMEMODE.asPhrase(),
-                    Component.text()
-                            .append(BingoGamemode.fromDataString(tuple[0]).asComponent())
-                            .append(Component.text(" " + tuple[1] + "x" + tuple[1])).build());
+                    category.asComponent(),
+                    category.getValueComponent(voteResult.getVote(category)).decorate(TextDecoration.BOLD));
+        };
+        this.sendMessage(Component.text(" "));
+
+        if (voteResult.containsCategory(VoteTicket.CATEGORY_GAMEMODE)) {
+            sendVoteMessage.accept(VoteTicket.CATEGORY_GAMEMODE);
         }
-        if (!voteResult.kit.isEmpty()) {
-            BingoMessage.VOTE_WON.sendToAudience(this,
-                    BingoMessage.OPTIONS_KIT.asPhrase(),
-                    PlayerKit.fromConfig(voteResult.kit).getDisplayName());
+        if (voteResult.containsCategory(VoteTicket.CATEGORY_KIT)) {
+            sendVoteMessage.accept(VoteTicket.CATEGORY_KIT);
         }
-        if (!voteResult.card.isEmpty()) {
-            BingoMessage.VOTE_WON.sendToAudience(this,
-                    BingoMessage.OPTIONS_CARD.asPhrase(),
-                    Component.text(voteResult.card).decorate(TextDecoration.ITALIC));
+        if (voteResult.containsCategory(VoteTicket.CATEGORY_CARD)) {
+            sendVoteMessage.accept(VoteTicket.CATEGORY_CARD);
         }
-        BingoPlayerSender.sendMessage(Component.text(" "), this);
+        if (voteResult.containsCategory(VoteTicket.CATEGORY_CARDSIZE)) {
+            sendVoteMessage.accept(VoteTicket.CATEGORY_CARDSIZE);
+        }
+
+        this.sendMessage(Component.text(" "));
 
         return result;
     }

@@ -33,11 +33,14 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -66,6 +69,16 @@ public class TagDataTest
     @AfterAll
     public static void after() {
         ResourceFileHelper.deleteFolderRecurse("test");
+    }
+
+
+    @Test
+    public void testListSort() {
+        List<Integer> list = List.of(1, 4, 3, 6, 23, -1, 5, 0, -6, 7, 7, 7);
+        List<Integer> sorted = new ArrayList<>(list);
+        sorted.sort(Comparator.comparingInt(a -> -a));
+        assertNotEquals(List.of(-6, -1, 0, 1, 3, 4, 5, 6, 7, 7, 7, 23), sorted);
+        assertEquals(List.of(23, 7, 7, 7, 6, 5, 4, 3, 1, 0, -1, -6), sorted);
     }
 
     @Test

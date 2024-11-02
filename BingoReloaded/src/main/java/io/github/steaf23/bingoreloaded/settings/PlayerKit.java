@@ -12,6 +12,7 @@ import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
@@ -184,8 +185,13 @@ public enum PlayerKit
 
     public static PlayerKit fromConfig(String name)
     {
+        return fromConfig(name, false);
+    }
+
+    public static @Nullable PlayerKit fromConfig(String name, boolean strict)
+    {
         if (name == null)
-            return HARDCORE;
+            return strict ? null : HARDCORE;
         return switch (name.toLowerCase())
         {
             case "normal" -> NORMAL;
@@ -196,7 +202,7 @@ public enum PlayerKit
             case "custom_3" -> CUSTOM_3;
             case "custom_4" -> CUSTOM_4;
             case "custom_5" -> CUSTOM_5;
-            default -> HARDCORE;
+            default -> strict ? null : HARDCORE;
         };
     }
 

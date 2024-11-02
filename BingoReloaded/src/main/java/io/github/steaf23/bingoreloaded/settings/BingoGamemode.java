@@ -5,6 +5,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.format.TextColor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public enum BingoGamemode implements ComponentLike
 {
@@ -29,7 +30,7 @@ public enum BingoGamemode implements ComponentLike
         return fromDataString(data, false);
     }
 
-    public static BingoGamemode fromDataString(String data, boolean strict)
+    public static @Nullable BingoGamemode fromDataString(String data, boolean strict)
     {
         for (BingoGamemode mode : BingoGamemode.values())
         {

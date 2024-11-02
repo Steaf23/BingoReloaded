@@ -1,7 +1,6 @@
 package io.github.steaf23.bingoreloaded.gameloop.phase;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
-import io.github.steaf23.bingoreloaded.cards.CardSize;
 import io.github.steaf23.bingoreloaded.data.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.event.BingoSettingsUpdatedEvent;
@@ -10,14 +9,12 @@ import io.github.steaf23.bingoreloaded.event.ParticipantLeftTeamEvent;
 import io.github.steaf23.bingoreloaded.event.PlayerJoinedSessionWorldEvent;
 import io.github.steaf23.bingoreloaded.event.PlayerLeftSessionWorldEvent;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
+import io.github.steaf23.bingoreloaded.gameloop.vote.VoteCategory;
+import io.github.steaf23.bingoreloaded.gameloop.vote.VoteTicket;
 import io.github.steaf23.bingoreloaded.gui.hud.BingoSettingsHUDGroup;
 import io.github.steaf23.bingoreloaded.gui.hud.DisabledBingoSettingsHUDGroup;
-import io.github.steaf23.bingoreloaded.gui.inventory.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.gui.inventory.TeamSelectionMenu;
 import io.github.steaf23.bingoreloaded.gui.inventory.VoteMenu;
-import io.github.steaf23.bingoreloaded.player.BingoParticipant;
-import io.github.steaf23.bingoreloaded.player.BingoPlayer;
-import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import io.github.steaf23.bingoreloaded.util.timer.CountdownTimer;
 import io.github.steaf23.playerdisplay.inventory.MenuBoard;
@@ -33,25 +30,17 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 public class PregameLobby implements GamePhase
 {
-    // Each player can cast a single vote for all categories, To keep track of this a VoteTicket will be made for every player that votes on something
-    public static class VoteTicket
-    {
-        public String gamemode = "";
-        public String kit = "";
-        public String card = "";
-
-        public boolean isEmpty() {
-            return gamemode.isEmpty() && kit.isEmpty() && card.isEmpty();
-        }
-    }
-
     private final BingoSession session;
     private final Map<UUID, VoteTicket> votes;
     private final BingoConfigurationData config;
@@ -91,118 +80,49 @@ public class PregameLobby implements GamePhase
     }
 
     public void voteGamemode(String gamemode, HumanEntity player) {
-        if (!config.useVoteSystem) {
-            ConsoleMessenger.warn("Players cannot vote because useVoteSystem is set to false in config.yml!");
-            return;
-        }
-
-        VoteTicket ticket = votes.getOrDefault(player.getUniqueId(), new VoteTicket());
-        if (gamemode.equals(ticket.gamemode)) {
-            return;
-        }
-
-        ticket.gamemode = gamemode;
-        votes.put(player.getUniqueId(), ticket);
-
-        int count = 0;
-        for (VoteTicket t : votes.values()) {
-            if (t.gamemode.equals(gamemode)) {
-                count++;
-            }
-        }
-
-        String[] tuple = gamemode.split("_");
-        if (tuple.length != 2) {
-            return;
-        }
-        sendVoteCountMessage(count, BingoMessage.OPTIONS_GAMEMODE.asPhrase(),
-                BingoGamemode.fromDataString(tuple[0]).asComponent()
-                        .append(Component.text(" ")
-                        .append(CardSize.fromWidth(Integer.parseInt(tuple[1])).asComponent())));
+        registerVote(VoteTicket.CATEGORY_GAMEMODE, gamemode, player);
     }
 
-    public void voteCard(String card, HumanEntity player) {
-        if (!config.useVoteSystem) {
-            ConsoleMessenger.warn("Players cannot vote because useVoteSystem is set to false in config.yml!");
-            return;
-        }
-
-        VoteTicket ticket = votes.getOrDefault(player.getUniqueId(), new VoteTicket());
-        if (card.equals(ticket.card)) {
-            return;
-        }
-
-        ticket.card = card;
-        votes.put(player.getUniqueId(), ticket);
-
-        int count = 0;
-        for (VoteTicket t : votes.values()) {
-            if (t.card.equals(card)) {
-                count++;
-            }
-        }
-        sendVoteCountMessage(count, BingoMessage.OPTIONS_CARD.asPhrase(), Component.text(card));
+    public void voteCard(@NotNull String card, HumanEntity player) {
+        registerVote(VoteTicket.CATEGORY_CARD, card, player);
     }
 
     public void voteKit(String kit, HumanEntity player) {
+        registerVote(VoteTicket.CATEGORY_KIT, kit, player);
+    }
+
+    public void voteCardsize(String cardSize, HumanEntity player) {
+        registerVote(VoteTicket.CATEGORY_CARDSIZE, cardSize, player);
+    }
+
+    public void registerVote(VoteCategory<?> category, @NotNull String value, HumanEntity player) {
         if (!config.useVoteSystem) {
             ConsoleMessenger.warn("Players cannot vote because useVoteSystem is set to false in config.yml!");
             return;
         }
 
         VoteTicket ticket = votes.getOrDefault(player.getUniqueId(), new VoteTicket());
-        if (kit.equals(ticket.kit)) {
+        if (value.equals(ticket.getVote(category))) {
+            // player already voted for this
             return;
         }
 
-        ticket.kit = kit;
+        if (!ticket.addVote(category, value)) {
+            ConsoleMessenger.error("Player cannot vote for " + category + " " + value);
+            return;
+        }
         votes.put(player.getUniqueId(), ticket);
 
         int count = 0;
         for (VoteTicket t : votes.values()) {
-            if (t.kit.equals(kit)) {
+            if (value.equals(t.getVote(category))) {
                 count++;
             }
         }
-        sendVoteCountMessage(count, BingoMessage.OPTIONS_KIT.asPhrase(), PlayerKit.fromConfig(kit).getDisplayName());
-    }
-
-    public void sendVoteCountMessage(int count, Component category, Component voteItem) {
         BingoMessage.VOTE_COUNT.sendToAudience(session,
                 Component.text(count).color(NamedTextColor.GOLD),
-                category,
-                voteItem);
-    }
-
-    public VoteTicket getVoteResult() {
-        VoteTicket outcome = new VoteTicket();
-
-        Map<String, Integer> gamemodes = new HashMap<>();
-        Map<String, Integer> kits = new HashMap<>();
-        Map<String, Integer> cards = new HashMap<>();
-
-        for (UUID player : votes.keySet()) {
-            VoteTicket ticket = votes.get(player);
-            gamemodes.put(ticket.gamemode, gamemodes.getOrDefault(ticket.gamemode, 0) + 1);
-            kits.put(ticket.kit, kits.getOrDefault(ticket.kit, 0) + 1);
-            cards.put(ticket.card, cards.getOrDefault(ticket.card, 0) + 1);
-        }
-
-        outcome.gamemode = getKeyWithHighestValue(gamemodes);
-        outcome.kit = getKeyWithHighestValue(kits);
-        outcome.card = getKeyWithHighestValue(cards);
-
-        return outcome;
-    }
-
-    private String getKeyWithHighestValue(Map<String, Integer> values) {
-        String recordKey = "";
-        for (var k : values.keySet()) {
-            if (recordKey.isEmpty() || values.get(k) > values.get(recordKey)) {
-                recordKey = k;
-            }
-        }
-        return recordKey;
+                category.asComponent(),
+                category.getValueComponent(value));
     }
 
     private void giveVoteItem(Player player) {
@@ -392,5 +312,13 @@ public class PregameLobby implements GamePhase
         if (!config.selectTeamsUsingCommandsOnly) {
             giveTeamItem(event.getPlayer());
         }
+    }
+
+    public Collection<VoteTicket> getAllVotes() {
+        List<VoteTicket> result = new ArrayList<>();
+        for (UUID playerId : votes.keySet()) {
+            result.add(votes.get(playerId));
+        }
+        return result;
     }
 }

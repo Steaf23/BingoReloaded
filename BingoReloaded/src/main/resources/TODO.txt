@@ -38,3 +38,4 @@
 (BUG) advancement progress is not reset correctly? (MORE INFO NEEDED)
 (BUG) kicking a player from a bingo world displays teleportation failed error even though it worked (related to playerdata)
 (BUG) fix kickplayers for multiple players (has to do with an issue between loading player data and teleportevent from gamemanager)
+(BUG) add randomization of votes if the amount is the same

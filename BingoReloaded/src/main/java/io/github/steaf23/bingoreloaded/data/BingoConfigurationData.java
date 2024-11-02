@@ -1,5 +1,6 @@
 package io.github.steaf23.bingoreloaded.data;
 
+import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import java.util.List;
@@ -26,10 +27,10 @@ public class BingoConfigurationData
         AFTER_LEAVING_WORLD,
     }
 
-    public record VoteList(List<String> gamemodes, List<String> kits, List<String> cards)
+    public record VoteList(List<String> gamemodes, List<String> kits, List<String> cards, List<String> cardSizes)
     {
         public boolean isEmpty() {
-            return this.gamemodes.isEmpty() && this.kits.isEmpty() && this.cards.isEmpty();
+            return this.gamemodes.isEmpty() && this.kits.isEmpty() && this.cards.isEmpty() && this.cardSizes.isEmpty();
         }
     }
 
@@ -103,7 +104,8 @@ public class BingoConfigurationData
         this.voteList = new VoteList(
                 config.getStringList("voteList.gamemodes"),
                 config.getStringList("voteList.kits"),
-                config.getStringList("voteList.cards"));
+                config.getStringList("voteList.cards"),
+                config.getStringList("voteList.cardsizes"));
 
         // Gameplay
         this.startingCountdownTime = Math.max(0, config.getInt("startingCountdownTime", 10));

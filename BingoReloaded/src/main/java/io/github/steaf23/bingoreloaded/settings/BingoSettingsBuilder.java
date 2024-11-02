@@ -1,11 +1,10 @@
 package io.github.steaf23.bingoreloaded.settings;
 
 import io.github.steaf23.bingoreloaded.cards.CardSize;
-import io.github.steaf23.bingoreloaded.data.BingoCardData;
 import io.github.steaf23.bingoreloaded.data.BingoSettingsData;
 import io.github.steaf23.bingoreloaded.event.BingoSettingsUpdatedEvent;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
-import io.github.steaf23.bingoreloaded.gameloop.phase.PregameLobby;
+import io.github.steaf23.bingoreloaded.gameloop.vote.VoteTicket;
 import io.github.steaf23.bingoreloaded.gui.inventory.EffectOptionFlags;
 import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import org.bukkit.Bukkit;
@@ -67,37 +66,34 @@ public class BingoSettingsBuilder
         settingsUpdated();
     }
 
-    public BingoSettingsBuilder getVoteResult(PregameLobby.VoteTicket voteResult)
+    public BingoSettingsBuilder applyVoteResult(VoteTicket voteResult)
     {
         BingoSettingsBuilder resultBuilder = new BingoSettingsBuilder(session);
         resultBuilder.fromOther(view());
 
-        String[] tuple = voteResult.gamemode.split("_");
-        if (tuple.length != 2) {
-            ConsoleMessenger.bug("Could not read vote results", this);
-            return resultBuilder;
-        }
-        int cardWidth = 0;
-        try {
-            cardWidth = Integer.parseInt(tuple[1]);
-        } catch (NumberFormatException e) {
-            ConsoleMessenger.bug("Could not read card size", this);
-        }
-        if (cardWidth == 0) {
-            return resultBuilder;
+        BingoGamemode newMode = VoteTicket.CATEGORY_GAMEMODE.getValidResultOrNull(voteResult);
+        if (newMode != null)
+        {
+            resultBuilder.mode = newMode;
         }
 
-        BingoGamemode mode = BingoGamemode.fromDataString(tuple[0]);
-        CardSize size = CardSize.fromWidth(cardWidth);
+        PlayerKit newKit = VoteTicket.CATEGORY_KIT.getValidResultOrNull(voteResult);
+        if (newKit != null)
+        {
+            resultBuilder.kit = newKit;
+        }
 
-        resultBuilder.mode = mode;
-        resultBuilder.cardSize = size;
+        String newCard = VoteTicket.CATEGORY_CARD.getValidResultOrNull(voteResult);
+        if (newCard != null)
+        {
+            resultBuilder.card = newCard;
+        }
 
-        if (!voteResult.kit.isEmpty())
-            resultBuilder.kit = PlayerKit.fromConfig(voteResult.kit);
-
-        if (!voteResult.kit.isEmpty() && new BingoCardData().getCardNames().contains(voteResult.card))
-            resultBuilder.card = voteResult.card;
+        CardSize newCardsize = VoteTicket.CATEGORY_CARDSIZE.getValidResultOrNull(voteResult);
+        if (newCardsize != null)
+        {
+            resultBuilder.cardSize = newCardsize;
+        }
 
         return resultBuilder;
     }
