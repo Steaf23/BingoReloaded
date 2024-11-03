@@ -37,6 +37,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -362,12 +363,12 @@ public class AutoBingoCommand implements TabExecutor
         boolean enable = extraArguments.length == 1 || !extraArguments[1].equals("false");
 
         if (effect.equals("all")) {
-            settings.effects(EffectOptionFlags.ALL_ON);
-            sendSuccess("Updated active effects to " + EffectOptionFlags.ALL_ON, worldName);
+            settings.effects(EnumSet.allOf(EffectOptionFlags.class));
+            sendSuccess("Updated active effects to " + EnumSet.allOf(EffectOptionFlags.class), worldName);
             return true;
         } else if (effect.equals("none")) {
-            settings.effects(EffectOptionFlags.ALL_OFF);
-            sendSuccess("Updated active effects to " + EffectOptionFlags.ALL_OFF, worldName);
+            settings.effects(EnumSet.noneOf(EffectOptionFlags.class));
+            sendSuccess("Updated active effects to " + EnumSet.noneOf(EffectOptionFlags.class), worldName);
             return true;
         }
 

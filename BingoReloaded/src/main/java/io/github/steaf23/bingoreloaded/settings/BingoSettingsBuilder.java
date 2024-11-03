@@ -147,10 +147,8 @@ public class BingoSettingsBuilder
 
     public BingoSettingsBuilder effects(EnumSet<EffectOptionFlags> effects)
     {
-        if (this.effects.equals(effects)) {
-            this.effects = effects;
-            settingsUpdated();
-        }
+        this.effects = effects;
+        settingsUpdated();
         return this;
     }
 

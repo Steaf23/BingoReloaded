@@ -14,6 +14,7 @@ import io.github.steaf23.bingoreloaded.data.serializers.ItemStorageSerializer;
 import io.github.steaf23.bingoreloaded.data.serializers.PlayerStorageSerializer;
 import io.github.steaf23.bingoreloaded.data.serializers.TaskStorageSerializer;
 import io.github.steaf23.bingoreloaded.data.serializers.TeamTemplateStorageSerializer;
+import io.github.steaf23.bingoreloaded.gui.inventory.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.gui.inventory.item.SerializableItem;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
 import io.github.steaf23.bingoreloaded.settings.CustomKit;
@@ -35,6 +36,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.UUID;
 
@@ -79,6 +81,15 @@ public class TagDataTest
         sorted.sort(Comparator.comparingInt(a -> -a));
         assertNotEquals(List.of(-6, -1, 0, 1, 3, 4, 5, 6, 7, 7, 7, 23), sorted);
         assertEquals(List.of(23, 7, 7, 7, 6, 5, 4, 3, 1, 0, -1, -6), sorted);
+    }
+
+    @Test
+    public void testEffectsEnum() {
+        EnumSet<EffectOptionFlags> testSet = EnumSet.allOf(EffectOptionFlags.class);
+        testSet.remove(EffectOptionFlags.KEEP_INVENTORY);
+
+        assertNotEquals(EnumSet.allOf(EffectOptionFlags.class), testSet);
+        assertNotEquals(EnumSet.allOf(EffectOptionFlags.class), EnumSet.noneOf(EffectOptionFlags.class));
     }
 
     @Test

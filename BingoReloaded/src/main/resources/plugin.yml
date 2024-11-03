@@ -1,5 +1,5 @@
 name: BingoReloaded # the plugins name as it should appear in the plugin list /pl
-version: 3.0.0 # the plugin's version
+version: 3.0.2 # the plugin's version
 author: Steven
 main: io.github.steaf23.bingoreloaded.BingoReloaded
 api-version: 1.21
