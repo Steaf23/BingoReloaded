@@ -101,13 +101,7 @@ public class GameTask
             item = new ItemTemplate(Material.STRUCTURE_VOID, null);
             Component[] addedDesc = BingoMessage.VOIDED.asMultiline(NamedTextColor.DARK_GRAY);
 
-            TextComponent.Builder nameBuilder = Component.text()
-                    .color(NamedTextColor.DARK_GRAY).decorate(TextDecoration.STRIKETHROUGH);
-            nameBuilder.append(Component.text("A").decorate(TextDecoration.OBFUSCATED));
-            nameBuilder.append(data.getName().color(NamedTextColor.DARK_GRAY));
-            nameBuilder.append(Component.text("A").decorate(TextDecoration.OBFUSCATED));
-
-            item.setName(nameBuilder.build());
+            item.setName(getName());
             item.setLore(addedDesc);
             item.setGlowing(true);
         }
@@ -116,10 +110,6 @@ public class GameTask
             Material completeMaterial = Material.BARRIER;
 
             String timeString = GameTimer.getTimeAsString(completedAt);
-
-            TextComponent.Builder nameBuilder = Component.text()
-                    .color(NamedTextColor.GRAY).decorate(TextDecoration.STRIKETHROUGH);
-            nameBuilder.append(data.getName());
 
             Component[] desc = BingoMessage.COMPLETED_LORE.asMultiline(NamedTextColor.DARK_PURPLE,
                     completedBy.getDisplayName()
@@ -130,7 +120,7 @@ public class GameTask
                             .color(NamedTextColor.GOLD)
                             .decorate(TextDecoration.ITALIC));
 
-            item = new ItemTemplate(completeMaterial, nameBuilder.build(), desc);
+            item = new ItemTemplate(completeMaterial, getName(), desc);
         }
         else // DEFAULT TASK
         {
@@ -220,5 +210,26 @@ public class GameTask
 
     public Optional<BingoParticipant> getCompletedBy() {
         return Optional.ofNullable(completedBy);
+    }
+
+    public Component getName() {
+        if (isVoided())
+        {
+            TextComponent.Builder nameBuilder = Component.text()
+                    .color(NamedTextColor.DARK_GRAY).decorate(TextDecoration.STRIKETHROUGH);
+            nameBuilder.append(Component.text("A").decorate(TextDecoration.OBFUSCATED));
+            nameBuilder.append(data.getName().color(NamedTextColor.DARK_GRAY));
+            nameBuilder.append(Component.text("A").decorate(TextDecoration.OBFUSCATED));
+            return nameBuilder.build();
+        }
+        else if (isCompleted()) {
+            TextComponent.Builder nameBuilder = Component.text()
+                    .color(NamedTextColor.GRAY).decorate(TextDecoration.STRIKETHROUGH);
+            nameBuilder.append(data.getName());
+            return nameBuilder.build();
+        }
+        else {
+            return data.getName();
+        }
     }
 }
