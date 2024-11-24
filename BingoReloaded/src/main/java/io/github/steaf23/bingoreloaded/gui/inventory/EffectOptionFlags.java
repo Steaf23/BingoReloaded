@@ -25,9 +25,6 @@ public enum EffectOptionFlags
         this.name = name;
     }
 
-    public static final EnumSet<EffectOptionFlags> ALL_ON = EnumSet.allOf(EffectOptionFlags.class);
-    public static final EnumSet<EffectOptionFlags> ALL_OFF = EnumSet.noneOf(EffectOptionFlags.class);
-
     public static Component[] effectsToText(EnumSet<EffectOptionFlags> effects) {
         List<Component> result = new ArrayList<>();
         if (effects.isEmpty())

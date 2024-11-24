@@ -1,5 +1,6 @@
 package io.github.steaf23.bingoreloaded.data;
 
+import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import java.util.List;
@@ -26,10 +27,10 @@ public class BingoConfigurationData
         AFTER_LEAVING_WORLD,
     }
 
-    public record VoteList(List<String> gamemodes, List<String> kits, List<String> cards)
+    public record VoteList(List<String> gamemodes, List<String> kits, List<String> cards, List<String> cardSizes)
     {
         public boolean isEmpty() {
-            return this.gamemodes.isEmpty() && this.kits.isEmpty() && this.cards.isEmpty();
+            return this.gamemodes.isEmpty() && this.kits.isEmpty() && this.cards.isEmpty() && this.cardSizes.isEmpty();
         }
     }
 
@@ -53,6 +54,7 @@ public class BingoConfigurationData
     public final int playerWaitTime;
     public final int gameRestartTime;
     public final boolean useVoteSystem;
+    public final boolean preventPlayerGriefing; //FIXME: implement
     public final VoteList voteList;
 
     // Gameplay options
@@ -79,6 +81,10 @@ public class BingoConfigurationData
     public final boolean savePlayerInformation;
     public final LoadPlayerInformationStrategy loadPlayerInformationStrategy;
 
+    // Configuration: MULTIPLE options
+    public final List<String> defaultWorlds; //FIXME: implement
+    public final boolean resetDefaultWorlds; //FIXME: implement
+
     public BingoConfigurationData(FileConfiguration config) {
         // General
         this.configuration = PluginConfiguration.valueOf(config.getString("configuration", "SINGULAR"));
@@ -100,10 +106,12 @@ public class BingoConfigurationData
         this.playerWaitTime = Math.max(0, config.getInt("playerWaitTime", 30));
         this.gameRestartTime = Math.max(0, config.getInt("gameRestartTime", 20));
         this.useVoteSystem = config.getBoolean("useVoteSystem", false);
+        this.preventPlayerGriefing = config.getBoolean("preventPlayerGriefing", true);
         this.voteList = new VoteList(
                 config.getStringList("voteList.gamemodes"),
                 config.getStringList("voteList.kits"),
-                config.getStringList("voteList.cards"));
+                config.getStringList("voteList.cards"),
+                config.getStringList("voteList.cardsizes"));
 
         // Gameplay
         this.startingCountdownTime = Math.max(0, config.getInt("startingCountdownTime", 10));
@@ -133,5 +141,9 @@ public class BingoConfigurationData
         this.savePlayerInformation = config.getBoolean("savePlayerInformation", true);
         this.loadPlayerInformationStrategy = LoadPlayerInformationStrategy.valueOf(
                 config.getString("loadPlayerInformationStrategy", "AFTER_LEAVING_WORLD"));
+
+        // Configuration: MULTIPLE
+        this.defaultWorlds = config.getStringList("defaultWorlds");
+        this.resetDefaultWorlds = config.getBoolean("resetDefaultWorlds", true);
     }
 }

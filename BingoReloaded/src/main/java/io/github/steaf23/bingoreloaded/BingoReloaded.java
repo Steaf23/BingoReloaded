@@ -24,7 +24,6 @@ import io.github.steaf23.bingoreloaded.data.serializers.ItemStorageSerializer;
 import io.github.steaf23.bingoreloaded.data.serializers.PlayerStorageSerializer;
 import io.github.steaf23.bingoreloaded.data.serializers.TaskStorageSerializer;
 import io.github.steaf23.bingoreloaded.data.serializers.TeamTemplateStorageSerializer;
-import io.github.steaf23.bingoreloaded.data.world.WorldData;
 import io.github.steaf23.bingoreloaded.gameloop.GameManager;
 import io.github.steaf23.bingoreloaded.gameloop.SingularGameManager;
 import io.github.steaf23.bingoreloaded.gui.inventory.BingoMenuBoard;
@@ -157,6 +156,8 @@ public class BingoReloaded extends JavaPlugin
         } else {
             this.gameManager = new GameManager(this, config, menuBoard, hudRegistry);
         }
+
+        this.gameManager.setup(config.defaultWorlds);
 
         TabExecutor autoBingoCommand = new AutoBingoCommand(gameManager);
 

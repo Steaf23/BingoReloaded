@@ -1,5 +1,6 @@
 package io.github.steaf23.bingoreloaded.gui.inventory;
 
+import io.github.steaf23.bingoreloaded.cards.CardSize;
 import io.github.steaf23.bingoreloaded.data.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.gameloop.phase.PregameLobby;
@@ -19,10 +20,9 @@ import java.util.function.BiConsumer;
 
 public class VoteMenu extends BasicMenu
 {
-    private BasicMenu gamemodeOptions;
-    private BasicMenu kitOptions;
-    private BasicMenu cardOptions;
     private final PregameLobby lobby;
+
+    private static final int[][] categoryPositions = new int[][] {{4}, {3, 5}, {2, 4, 6}, {1, 3, 5, 7}};
 
     private static final ItemTemplate EXIT = new ItemTemplate(8, Material.BARRIER,
             BingoMessage.MENU_EXIT.asPhrase().color(NamedTextColor.RED).decorate(TextDecoration.BOLD));
@@ -32,101 +32,74 @@ public class VoteMenu extends BasicMenu
 
         this.lobby = lobbyPhase;
 
-        if (voteList.gamemodes().size() > 1) {
-            gamemodeOptions = new BasicMenu(menuBoard, BingoMessage.VOTE_GAMEMODE.asPhrase(), 1);
+        // Determine the position of the vote items in the GUI based on the amount of categories available to vote.
+        int categoryMax = 0, categoryIndex = 0;
+        if (!voteList.cards().isEmpty()) categoryMax++;
+        if (!voteList.gamemodes().isEmpty()) categoryMax++;
+        if (!voteList.kits().isEmpty()) categoryMax++;
+        if (!voteList.cardSizes().isEmpty()) categoryMax++;
+
+        if (categoryMax == 0) {
+            return;
+        }
+
+        int[] positions = categoryPositions[categoryMax-1];
+
+        if (!voteList.gamemodes().isEmpty()) {
+            BasicMenu gamemodeOptions = new BasicMenu(menuBoard, BingoMessage.VOTE_GAMEMODE.asPhrase(), 1);
 
             int itemIndex = 0;
-            if (voteList.gamemodes().contains("regular_5")) {
+            if (voteList.gamemodes().contains("regular")) {
                 gamemodeOptions.addAction(new ItemTemplate(itemIndex, Material.LIME_CONCRETE,
-                        BingoGamemode.REGULAR.asComponent().decorate(TextDecoration.BOLD).append(Component.text(" - 5x5")),
+                        BingoGamemode.REGULAR.asComponent().decorate(TextDecoration.BOLD),
                         BingoMessage.INFO_REGULAR_DESC.asMultiline()), (args) -> {
                     HumanEntity player = args.player();
-                    lobby.voteGamemode("regular_5", player);
+                    lobby.voteGamemode("regular", player);
                     gamemodeOptions.close(player);
                 });
                 itemIndex++;
             }
-            if (voteList.gamemodes().contains("regular_3")) {
-                gamemodeOptions.addAction(new ItemTemplate(itemIndex, Material.GREEN_CONCRETE,
-                        BingoGamemode.REGULAR.asComponent().decorate(TextDecoration.BOLD).append(Component.text(" - 3x3")),
-                        BingoMessage.INFO_REGULAR_DESC.asMultiline()), (args) -> {
-                    HumanEntity player = args.player();
-                    lobby.voteGamemode("regular_3", player);
-                    gamemodeOptions.close(player);
-                });
-                itemIndex++;
-            }
-            if (voteList.gamemodes().contains("lockout_5")) {
+            if (voteList.gamemodes().contains("lockout")) {
                 gamemodeOptions.addAction(new ItemTemplate(itemIndex, Material.PINK_CONCRETE,
-                        BingoGamemode.LOCKOUT.asComponent().decorate(TextDecoration.BOLD).append(Component.text(" - 5x5")),
+                        BingoGamemode.LOCKOUT.asComponent().decorate(TextDecoration.BOLD),
                         BingoMessage.INFO_LOCKOUT_DESC.asMultiline()), (args) -> {
                     HumanEntity player = args.player();
-                    lobby.voteGamemode("lockout_5", player);
+                    lobby.voteGamemode("lockout", player);
                     gamemodeOptions.close(player);
                 });
                 itemIndex++;
             }
-            if (voteList.gamemodes().contains("lockout_3")) {
-                gamemodeOptions.addAction(new ItemTemplate(itemIndex, Material.PURPLE_CONCRETE,
-                        BingoGamemode.LOCKOUT.asComponent().decorate(TextDecoration.BOLD).append(Component.text(" - 3x3")),
-                        BingoMessage.INFO_LOCKOUT_DESC.asMultiline()), (args) -> {
-                    HumanEntity player = args.player();
-                    lobby.voteGamemode("lockout_3", player);
-                    gamemodeOptions.close(player);
-                });
-                itemIndex++;
-            }
-            if (voteList.gamemodes().contains("complete_5")) {
+            if (voteList.gamemodes().contains("complete")) {
                 gamemodeOptions.addAction(new ItemTemplate(itemIndex, Material.LIGHT_BLUE_CONCRETE,
-                        BingoGamemode.COMPLETE.asComponent().decorate(TextDecoration.BOLD).append(Component.text(" - 5x5")),
+                        BingoGamemode.COMPLETE.asComponent().decorate(TextDecoration.BOLD),
                         BingoMessage.INFO_COMPLETE_DESC.asMultiline()), (args) -> {
                     HumanEntity player = args.player();
-                    lobby.voteGamemode("complete_5", player);
+                    lobby.voteGamemode("complete", player);
                     gamemodeOptions.close(player);
                 });
                 itemIndex++;
             }
-            if (voteList.gamemodes().contains("complete_3")) {
-                gamemodeOptions.addAction(new ItemTemplate(itemIndex, Material.BLUE_CONCRETE,
-                        BingoGamemode.COMPLETE.asComponent().decorate(TextDecoration.BOLD).append(Component.text(" - 3x3")),
-                        BingoMessage.INFO_COMPLETE_DESC.asMultiline()), (args) -> {
-                    HumanEntity player = args.player();
-                    lobby.voteGamemode("complete_3", player);
-                    gamemodeOptions.close(player);
-                });
-                itemIndex++;
-            }
-            if (voteList.gamemodes().contains("hotswap_5")) {
+            if (voteList.gamemodes().contains("hotswap")) {
                 gamemodeOptions.addAction(new ItemTemplate(itemIndex, Material.YELLOW_CONCRETE,
-                        BingoGamemode.HOTSWAP.asComponent().decorate(TextDecoration.BOLD).append(Component.text(" - 5x5")),
+                        BingoGamemode.HOTSWAP.asComponent().decorate(TextDecoration.BOLD),
                         CollectionHelper.concatWithArrayCopy(
                                 BingoMessage.INFO_HOTSWAP_DESC_EXPIRE.asMultiline(),
                                 BingoMessage.INFO_HOTSWAP_DESC_ANY.asMultiline(Component.text("x")))), (args) -> {
                     HumanEntity player = args.player();
-                    lobby.voteGamemode("hotswap_5", player);
+                    lobby.voteGamemode("hotswap", player);
                     gamemodeOptions.close(player);
                 });
                 itemIndex++;
-            }
-            if (voteList.gamemodes().contains("hotswap_3")) {
-                gamemodeOptions.addAction(new ItemTemplate(itemIndex, Material.ORANGE_CONCRETE,
-                        BingoGamemode.HOTSWAP.asComponent().decorate(TextDecoration.BOLD).append(Component.text(" - 3x3")),
-                        CollectionHelper.concatWithArrayCopy(
-                                BingoMessage.INFO_HOTSWAP_DESC_EXPIRE.asMultiline(),
-                                BingoMessage.INFO_HOTSWAP_DESC_ANY.asMultiline(Component.text("x")))), (args) -> {
-                    HumanEntity player = args.player();
-                    lobby.voteGamemode("hotswap_3", player);
-                    gamemodeOptions.close(player);
-                });
             }
             gamemodeOptions.addCloseAction(EXIT.copy());
 
-            addAction(new ItemTemplate(2, 1, Material.ENCHANTED_BOOK, BasicMenu.applyTitleFormat(BingoMessage.VOTE_GAMEMODE.asPhrase())),
+            addAction(new ItemTemplate(positions[categoryIndex], 1, Material.ENCHANTED_BOOK, BasicMenu.applyTitleFormat(BingoMessage.VOTE_GAMEMODE.asPhrase())),
                     args -> gamemodeOptions.open(args.player()));
+            categoryIndex++;
         }
 
-        if (voteList.kits().size() > 1) {
-            kitOptions = new BasicMenu(menuBoard, BingoMessage.VOTE_KIT.asPhrase(), 1);
+        if (!voteList.kits().isEmpty()) {
+            BasicMenu kitOptions = new BasicMenu(menuBoard, BingoMessage.VOTE_KIT.asPhrase(), 1);
 
             int itemIndex = 0;
             if (voteList.kits().contains("hardcore")) {
@@ -203,20 +176,21 @@ public class VoteMenu extends BasicMenu
             if (itemIndex < 8)
                 kitOptions.addCloseAction(EXIT.copy());
 
-            addAction(new ItemTemplate(4, 1, Material.ENCHANTED_BOOK, BasicMenu.applyTitleFormat(BingoMessage.VOTE_KIT.asPhrase())),
+            addAction(new ItemTemplate(positions[categoryIndex], 1, Material.ENCHANTED_BOOK, BasicMenu.applyTitleFormat(BingoMessage.VOTE_KIT.asPhrase())),
                     arguments -> kitOptions.open(arguments.player()));
+            categoryIndex++;
         }
 
-        if (voteList.cards().size() > 1) {
-            cardOptions = new BasicMenu(menuBoard, BingoMessage.VOTE_CARD.asPhrase(), 1);
+        if (!voteList.cards().isEmpty()) {
+            BasicMenu cardOptions = new BasicMenu(menuBoard, BingoMessage.VOTE_CARD.asPhrase(), 1);
 
             int itemIndex = 0;
             for (String card : voteList.cards()) {
                 Material material = Material.PAPER;
-                ItemTemplate ItemTemplate = new ItemTemplate(itemIndex, material, Component.text(card).decorate(TextDecoration.BOLD));
+                ItemTemplate itemTemplate = new ItemTemplate(itemIndex, material, Component.text(card).decorate(TextDecoration.BOLD));
 
                 // Add the menu item to the cardOptions menu
-                cardOptions.addAction(ItemTemplate, (args) -> {
+                cardOptions.addAction(itemTemplate, (args) -> {
                     HumanEntity player = args.player();
                     lobby.voteCard(card, player);
                     cardOptions.close(player);
@@ -225,9 +199,42 @@ public class VoteMenu extends BasicMenu
                 itemIndex++;
             }
 
-            cardOptions.addCloseAction(EXIT.copy());
-            addAction(new ItemTemplate(6, 1, Material.ENCHANTED_BOOK, BasicMenu.applyTitleFormat(BingoMessage.VOTE_CARD.asPhrase())),
+            if (itemIndex < 8) {
+                cardOptions.addCloseAction(EXIT.copy());
+            }
+            addAction(new ItemTemplate(positions[categoryIndex], 1, Material.ENCHANTED_BOOK, BasicMenu.applyTitleFormat(BingoMessage.VOTE_CARD.asPhrase())),
                     args -> cardOptions.open(args.player()));
+            categoryIndex++;
+        }
+
+        if (!voteList.cardSizes().isEmpty()) {
+            BasicMenu cardSizeOptions = new BasicMenu(menuBoard, BingoMessage.VOTE_CARDSIZE.asPhrase(), 1);
+
+            int itemIndex = 0;
+            if (voteList.cardSizes().contains("3")) {
+                ItemTemplate smallSize = new ItemTemplate(itemIndex, Material.RABBIT_HIDE, CardSize.X3.asComponent());
+                cardSizeOptions.addAction(smallSize, args -> {
+                    lobby.voteCardsize("3", args.player());
+                    cardSizeOptions.close(args.player());
+                });
+            }
+            itemIndex++;
+
+            if (voteList.cardSizes().contains("5")) {
+                ItemTemplate smallSize = new ItemTemplate(itemIndex, Material.LEATHER, CardSize.X5.asComponent());
+                cardSizeOptions.addAction(smallSize, args -> {
+                    lobby.voteCardsize("5", args.player());
+                    cardSizeOptions.close(args.player());
+                });
+            }
+            itemIndex++;
+
+            if (itemIndex < 8) {
+                cardSizeOptions.addCloseAction(EXIT.copy());
+            }
+            addAction(new ItemTemplate(positions[categoryIndex], 1, Material.ENCHANTED_BOOK, BasicMenu.applyTitleFormat(BingoMessage.VOTE_CARDSIZE.asPhrase())),
+                    args -> cardSizeOptions.open(args.player()));
+            categoryIndex++;
         }
 
         addCloseAction(EXIT.copyToSlot(0, 2));

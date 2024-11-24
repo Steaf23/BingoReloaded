@@ -37,6 +37,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -256,12 +257,13 @@ public class AutoBingoCommand implements TabExecutor
             if (args.length <= 2) {
                 return null;
             } else if (args.length == 3) {
-                return List.of("kits", "gamemodes", "cards");
+                return List.of("kits", "gamemodes", "cards", "cardsizes");
             } else if (args.length == 4) {
                 return switch (args[2]) {
                     case "kits" -> voteList.kits();
                     case "gamemodes" -> voteList.gamemodes();
                     case "cards" -> voteList.cards();
+                    case "cardsizes" -> voteList.cardSizes();
                     default -> List.of();
                 };
             }
@@ -361,12 +363,12 @@ public class AutoBingoCommand implements TabExecutor
         boolean enable = extraArguments.length == 1 || !extraArguments[1].equals("false");
 
         if (effect.equals("all")) {
-            settings.effects(EffectOptionFlags.ALL_ON);
-            sendSuccess("Updated active effects to " + EffectOptionFlags.ALL_ON, worldName);
+            settings.effects(EnumSet.allOf(EffectOptionFlags.class));
+            sendSuccess("Updated active effects to " + EnumSet.allOf(EffectOptionFlags.class), worldName);
             return true;
         } else if (effect.equals("none")) {
-            settings.effects(EffectOptionFlags.ALL_OFF);
-            sendSuccess("Updated active effects to " + EffectOptionFlags.ALL_OFF, worldName);
+            settings.effects(EnumSet.noneOf(EffectOptionFlags.class));
+            sendSuccess("Updated active effects to " + EnumSet.noneOf(EffectOptionFlags.class), worldName);
             return true;
         }
 
@@ -726,6 +728,12 @@ public class AutoBingoCommand implements TabExecutor
             return false;
         }
 
+        BingoSession session = manager.getSession(sessionName);
+        if (session == null) {
+            sendFailed("Cannot cast a vote in this world (bingo is not being played here!).", sessionName);
+            return false;
+        }
+
         Player player = Bukkit.getPlayer(args[1]);
         if (player == null) {
             sendFailed("Player '" + args[1] + "' does not exist!", sessionName);
@@ -734,7 +742,7 @@ public class AutoBingoCommand implements TabExecutor
 
         String category = args[2];
         String voteFor = args[3];
-        if (!(manager.getSession(sessionName).phase() instanceof PregameLobby lobby)) {
+        if (!(session.phase() instanceof PregameLobby lobby)) {
             sendFailed("Cannot vote for player, game is not in lobby phase.", sessionName);
             return false;
         }
@@ -743,6 +751,11 @@ public class AutoBingoCommand implements TabExecutor
             case "kits" -> {
                 if (!manager.getGameConfig().voteList.kits().contains(voteFor)) {
                     sendFailed("Cannot vote for kit " + voteFor + ", kit does not appear in vote list.", sessionName);
+                    return false;
+                }
+
+                if (!PlayerKit.fromConfig(voteFor).isValid()) {
+                    sendFailed("Cannot vote for kit " + voteFor + ", because it does not exist.", sessionName);
                     return false;
                 }
                 lobby.voteKit(voteFor, player);
@@ -761,8 +774,15 @@ public class AutoBingoCommand implements TabExecutor
                 }
                 lobby.voteCard(voteFor, player);
             }
+            case "cardsizes" -> {
+                if (!manager.getGameConfig().voteList.cardSizes().contains(voteFor)) {
+                    sendFailed("Cannot vote for card size " + voteFor + ", card size does not appear in vote list.", sessionName);
+                    return false;
+                }
+                lobby.voteCardsize(voteFor, player);
+            }
             default -> {
-                sendFailed("Cannot vote for '" + category + "', category does not exist!", sessionName);
+                sendFailed("Cannot vote for '" + category + "', category does not exist in the vote list!", sessionName);
                 return false;
             }
         }

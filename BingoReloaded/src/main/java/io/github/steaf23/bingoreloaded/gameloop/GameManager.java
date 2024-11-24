@@ -26,6 +26,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class GameManager
@@ -55,9 +56,17 @@ public class GameManager
         this.eventListener = new BingoEventListener(this, config.disableAdvancements, config.disableStatistics);
 
         this.teleportingPlayer = false;
-        this.worldData.clearWorlds();
-
         Bukkit.getPluginManager().registerEvents(eventListener, plugin);
+
+        this.worldData.clearWorlds();
+    }
+
+    public void setup(List<String> worldNames) {
+        for (String world : worldNames) {
+            createSession(world);
+        }
+
+        ConsoleMessenger.log("Created world(s) " + worldNames);
     }
 
     public boolean createSession(String sessionName) {

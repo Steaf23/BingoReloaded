@@ -7,6 +7,7 @@ import java.util.Arrays;
 public enum BingoReloadedPlaceholder {
     // plugin information
     CREATED_SESSION("created_session_"),
+    COUNT_SESSION_PLAYERS("count_session_players_"),
 
     //current match information
     TEAM_FULL("team_full"),

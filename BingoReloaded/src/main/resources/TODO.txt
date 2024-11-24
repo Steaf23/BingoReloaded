@@ -32,16 +32,14 @@
 (3.x) implement card view placed on a map as the bingo card
 (3.x) add purging to debug log
 (3.x) add automatic updates to config.yml when starting server to add new options
+(3.x) add randomization of votes if the amount is the same
+(3.x) add spectator mode
 
 (BUG) vote item does not appear when starting server sometimes
 (BUG) Load player data in a bingo world does not teleport the player out
 (BUG) advancement progress is not reset correctly? (MORE INFO NEEDED)
 (BUG) kicking a player from a bingo world displays teleportation failed error even though it worked (related to playerdata)
 (BUG) fix kickplayers for multiple players (has to do with an issue between loading player data and teleportevent from gamemanager)
-
-add task count to complete card
-singleplayer team scoreboard is messed up (should showplayer names instead)
-spawn platform teleportation is too high wand teleportion isnt centered
-add spectator mode
-singleplayer teams kick players out of game when it ends, and not always back in again
-add players to world
+(BUG) spawn platform teleportation is too high wand teleportion isnt centered
+(BUG) singleplayer team scoreboard is messed up (should showplayer names instead)
+(BUG) (TESTING NEEDED) singleplayer teams kick players out of game when it ends, and not always back in again

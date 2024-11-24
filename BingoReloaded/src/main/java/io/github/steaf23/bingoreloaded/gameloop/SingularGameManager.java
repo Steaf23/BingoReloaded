@@ -10,6 +10,8 @@ import org.bukkit.World;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
 public class SingularGameManager extends GameManager
 {
     public SingularGameManager(@NotNull JavaPlugin plugin, BingoConfigurationData config, MenuBoard menuBoard, HUDRegistry hudRegistry) {
@@ -22,6 +24,11 @@ public class SingularGameManager extends GameManager
 
         BingoSession session = new BingoSession(menuBoard, hudRegistry, group, config);
         sessions.put(config.defaultWorldName, session);
+    }
+
+    // Don't create extra worlds...
+    @Override
+    public void setup(List<String> worldNames) {
     }
 
     @Override
