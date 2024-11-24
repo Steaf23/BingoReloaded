@@ -64,13 +64,22 @@ public class BingoReloadedPlaceholderExpansion extends PlaceholderExpansion
 
         Component placeholderComponent = switch (placeholder) {
             case CREATED_SESSION -> {
-                String sessionName = params.replace("created_session_", "");
+                String sessionName = params.replace(BingoReloadedPlaceholder.CREATED_SESSION.getName(), "");
 
                 BingoSession session = plugin.getGameManager().getSession(sessionName);
                 if (session == null) {
                     yield Component.empty();
                 }
                 yield Component.text(sessionName);
+            }
+            case COUNT_SESSION_PLAYERS -> {
+                String sessionName = params.replace(BingoReloadedPlaceholder.CREATED_SESSION.getName(), "");
+
+                BingoSession session = plugin.getGameManager().getSession(sessionName);
+                if (session == null) {
+                    yield Component.empty();
+                }
+                yield Component.text(session.teamManager.getParticipants().size());
             }
             case TEAM_FULL -> getPlayerTeamPlaceholder(player, true, true);
             case TEAM_COLOR -> getPlayerTeamPlaceholder(player, false, true);

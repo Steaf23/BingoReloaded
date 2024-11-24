@@ -19,7 +19,7 @@ configuration: SINGULAR
 # This option means different things for each configuration:
 #   - SINGULAR: This world is the one where bingo is played. The plugin will not create this world, so make sure to create it before running this plugin.
 #     to allow the plugin to use the Nether and End dimensions, the names `<defaultWorldName>_nether` and `<defaultWorldName>_the_end` must also be valid worlds.
-#   - MULTIPLE: This world is used more like a lobby world, however it is not required. Using auto bingo commands the actual game worlds will be created automatically.
+#   - MULTIPLE: This world is used more like a lobby world, however it is not required. The actual game worlds can be will be created using autobingo commands .
 #     In this case, players can be teleported to any active game world using the /autobingo teleport command
 defaultWorldName: world
 
@@ -78,6 +78,10 @@ gameRestartTime: 20
 
 # If true, allows players to vote on certain options before the game starts.
 useVoteSystem: true
+
+# UNIMPLEMENTED
+# Prevent players from breaking or placing blocks when the game is in the lobby phase
+preventLobbyGriefing: true
 
 # Use this to configure what options can be voted on.
 voteList:
@@ -175,3 +179,13 @@ savePlayerInformation: true
 # If this option is set to anything other than AFTER_LEAVING_WORLD and the player leaves the bingo world anyway, their data will also be loaded.
 #   (To prevent this from happening at all, disable savePlayerInformation)
 loadPlayerInformationStrategy: AFTER_LEAVING_WORLD
+
+# ==========================================================================
+#    Configuration: MULTIPLE Specific Configuration Options
+# ==========================================================================
+# Specify a list of worlds to create on server startup using /autobingo <world_name> create automatically.
+defaultWorlds:
+  - bingo_world
+
+# All worlds are automatically reset (removed and created again) when (re)starting the server. When false, this does not reset the worlds named specified by defaultWorlds.
+clearDefaultWorlds: true
