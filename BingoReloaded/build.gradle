@@ -27,7 +27,7 @@ repositories {
 }
 
 dependencies {
-    paperweightDevelopmentBundle("io.papermc.paper:dev-bundle:1.21.1-R0.1-SNAPSHOT")
+    paperweightDevelopmentBundle("io.papermc.paper:dev-bundle:1.21.3-R0.1-SNAPSHOT")
     compileOnly 'me.clip:placeholderapi:2.11.6'
     implementation 'org.apache.commons:commons-configuration2:2.11.0'
     implementation 'org.apache.commons:commons-compress:1.26.0'
@@ -37,7 +37,7 @@ dependencies {
     implementation(project(":PlayerDisplay"))
 
     //tests
-    testImplementation "io.papermc.paper:paper-api:1.21.1-R0.1-SNAPSHOT"
+    testImplementation "io.papermc.paper:paper-api:1.21.3-R0.1-SNAPSHOT"
     testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.10.2'
     testImplementation 'com.github.seeseemelk:MockBukkit-v1.21:3.128.0'
 }

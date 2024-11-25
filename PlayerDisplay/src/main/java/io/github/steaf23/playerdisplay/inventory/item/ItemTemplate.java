@@ -3,7 +3,6 @@ package io.github.steaf23.playerdisplay.inventory.item;
 import com.google.common.collect.ImmutableMultimap;
 import io.github.steaf23.playerdisplay.PlayerDisplay;
 import io.github.steaf23.playerdisplay.inventory.item.action.MenuAction;
-import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import io.github.steaf23.playerdisplay.util.PDCHelper;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -386,6 +385,7 @@ public class ItemTemplate
             stackMeta.addEnchant(Enchantment.UNBREAKING, 1, true);
         }
 
+
         if (name != null) {
             stackMeta.displayName(name.colorIfAbsent(NamedTextColor.WHITE).decorationIfAbsent(TextDecoration.ITALIC, TextDecoration.State.FALSE));
         }
@@ -403,7 +403,7 @@ public class ItemTemplate
 
         if (compareKey != null) {
             PersistentDataContainer pdc = stackMeta.getPersistentDataContainer();
-            pdc = PDCHelper.addStringToPdc(pdc, "compare_key", compareKey);
+            PDCHelper.addStringToPdc(pdc, "compare_key", compareKey);
         }
 
         stackMeta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_UNBREAKABLE,

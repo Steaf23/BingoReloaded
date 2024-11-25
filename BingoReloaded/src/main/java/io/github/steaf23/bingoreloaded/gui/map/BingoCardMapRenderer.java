@@ -3,6 +3,7 @@ package io.github.steaf23.bingoreloaded.gui.map;
 import io.github.steaf23.bingoreloaded.cards.TaskCard;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.tasks.GameTask;
+import io.github.steaf23.playerdisplay.inventory.item.ItemTemplate;
 import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import org.apache.commons.compress.archivers.sevenz.SevenZArchiveEntry;
 import org.apache.commons.compress.archivers.sevenz.SevenZFile;
@@ -15,6 +16,7 @@ import org.bukkit.map.MapCanvas;
 import org.bukkit.map.MapPalette;
 import org.bukkit.map.MapRenderer;
 import org.bukkit.map.MapView;
+import org.bukkit.map.MinecraftFont;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
@@ -119,7 +121,8 @@ public class BingoCardMapRenderer extends MapRenderer
 
     public void drawTaskOnGrid(MapCanvas canvas, GameTask task, int gridX, int gridY) {
 
-        Material mat = task.toItem().getMaterial();
+        ItemTemplate stack = task.toItem();
+        Material mat = stack.getMaterial();
         NamespacedKey key = mat.getKey();
 
         int extraOffset = 1;
@@ -137,6 +140,21 @@ public class BingoCardMapRenderer extends MapRenderer
         else {
             drawImageAlphaScissor(canvas, gridX * 24 + 4 + extraOffset, gridY * 24 + 4 + extraOffset, allItemImages.get(mat.getKey()));
         }
+        int amount = stack.getAmount();
+        if (amount > 1) {
+            drawTaskAmount(canvas, gridX, gridY, amount);
+        }
+    }
+
+    private void drawTaskAmount(MapCanvas canvas, int gridX, int gridY, int amount) {
+        String amountString = "" + amount;
+
+        int xStartOffset = 0;
+        if (amountString.length() == 1) {
+            xStartOffset = 6;
+        }
+        canvas.drawText(gridX * 24 + 17 + xStartOffset, gridY * 24 + 21, MinecraftFont.Font, "§47;" + amount); // dark gray shadow
+        canvas.drawText(gridX * 24 + 16 + xStartOffset, gridY * 24 + 20, MinecraftFont.Font, "§58;" + amount); // white foreground
     }
 
     private void drawImageAlphaScissor(MapCanvas canvas, int x, int y, BufferedImage image)
@@ -153,4 +171,5 @@ public class BingoCardMapRenderer extends MapRenderer
             }
         }
     }
+
 }

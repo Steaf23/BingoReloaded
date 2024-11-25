@@ -1,6 +1,5 @@
 package io.github.steaf23.bingoreloaded.data;
 
-import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import java.util.List;
@@ -36,6 +35,8 @@ public class BingoConfigurationData
 
     public record HotswapConfig (int minimumExpiration, int maximumExpiration, int recoveryTime, boolean showExpirationAsDurability){}
 
+    private final FileConfiguration config;
+
     // General options
     public final PluginConfiguration configuration;
     public final String defaultWorldName;
@@ -45,7 +46,7 @@ public class BingoConfigurationData
     public final boolean voteUsingCommandsOnly;
     public final boolean selectTeamsUsingCommandsOnly;
     public final boolean disableScoreboardSidebar;
-    public final boolean useIncludedResourcepack;
+    public final boolean useIncludedResourcePack;
     public final boolean enableDebugLogging;
 
     // Lobby options
@@ -82,10 +83,11 @@ public class BingoConfigurationData
     public final LoadPlayerInformationStrategy loadPlayerInformationStrategy;
 
     // Configuration: MULTIPLE options
-    public final List<String> defaultWorlds; //FIXME: implement
+    public final List<String> defaultWorlds;
     public final boolean resetDefaultWorlds; //FIXME: implement
 
     public BingoConfigurationData(FileConfiguration config) {
+        this.config = config;
         // General
         this.configuration = PluginConfiguration.valueOf(config.getString("configuration", "SINGULAR"));
         this.defaultWorldName = config.getString("defaultWorldName", "world");
@@ -97,7 +99,7 @@ public class BingoConfigurationData
         this.disableScoreboardSidebar = config.getBoolean("disableScoreboardSidebar", false);
         // TODO: re-enable resource pack
 //        this.useIncludedResourcepack = config.getBoolean("useIncludedResourcepack", true);
-        this.useIncludedResourcepack = false;
+        this.useIncludedResourcePack = false;
         this.enableDebugLogging = config.getBoolean("enableDebugLogging", false);
 
         // Lobby
@@ -145,5 +147,13 @@ public class BingoConfigurationData
         // Configuration: MULTIPLE
         this.defaultWorlds = config.getStringList("defaultWorlds");
         this.resetDefaultWorlds = config.getBoolean("resetDefaultWorlds", true);
+    }
+
+    public <DataType> DataType getOptionValue(ConfigurationOption<DataType> option) {
+        return (DataType) config.get(option.getConfigName());
+    }
+
+    public <DataType> void setOptionValue(ConfigurationOption<DataType> option, DataType value) {
+        config.set(option.getConfigName(), value);
     }
 }

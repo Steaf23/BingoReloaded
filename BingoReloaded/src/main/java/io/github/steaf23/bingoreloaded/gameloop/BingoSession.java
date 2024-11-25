@@ -76,15 +76,14 @@ public class BingoSession implements ForwardingAudience
         this.worlds = worlds;
         this.config = config;
         if (config.disableScoreboardSidebar) {
-            this.scoreboard =  new DisabledBingoGameHUDGroup(hudRegistry, this, config.showPlayerInScoreboard);
+            this.scoreboard = new DisabledBingoGameHUDGroup(hudRegistry, this, config.showPlayerInScoreboard);
         } else {
             this.scoreboard = new BingoGameHUDGroup(hudRegistry, this, config.showPlayerInScoreboard);
         }
         this.settingsBuilder = new BingoSettingsBuilder(this);
         if (config.singlePlayerTeams) {
             this.teamManager = new SoloTeamManager(this);
-        }
-        else {
+        } else {
             this.teamManager = new BasicTeamManager(this);
         }
 
@@ -176,6 +175,7 @@ public class BingoSession implements ForwardingAudience
     /**
      * Remove participant from an active game or lobby as if they chose leave game in the team selector.
      * Does not force the player out of the world (use removePlayer for that instead)
+     *
      * @param player participant to remove from the active game or lobby.
      */
     public void removeParticipant(@NonNull BingoParticipant player) {
@@ -252,15 +252,11 @@ public class BingoSession implements ForwardingAudience
                 return;
             }
 
-            if (teamManager.getActiveTeams().getOnlineTeamCount() <= 1) {
+            if (teamManager.getActiveTeams().getOnlineTeamCount() <= 1 || teamManager.getActiveTeams().getAllOnlineParticipants().isEmpty()) {
+                if (isRunning()) {
+                    ConsoleMessenger.log(Component.text("Ending game because there is no competition anymore.").color(NamedTextColor.LIGHT_PURPLE), Component.text(worlds.worldName()));
+                }
                 endGame();
-                ConsoleMessenger.log(Component.text("Ended game because there is no competition anymore.").color(NamedTextColor.LIGHT_PURPLE), Component.text(worlds.worldName()));
-                return;
-            }
-
-            if (teamManager.getActiveTeams().getAllOnlineParticipants().isEmpty()) {
-                endGame();
-                ConsoleMessenger.log(Component.text("Ended game because there is no competition anymore.").color(NamedTextColor.LIGHT_PURPLE), Component.text(worlds.worldName()));
                 return;
             }
         });
@@ -286,30 +282,24 @@ public class BingoSession implements ForwardingAudience
             if (target.getEnvironment() == World.Environment.NETHER) {
                 // Nether
                 targetlocation.setWorld(worlds.getNetherWorld());
-            }
-            else if (target.getEnvironment() == World.Environment.THE_END) {
+            } else if (target.getEnvironment() == World.Environment.THE_END) {
                 // The End
                 targetlocation.setWorld(worlds.getEndWorld());
-            }
-            else {
+            } else {
                 ConsoleMessenger.bug("Could not catch player going through portal", this);
             }
-        }
-        else if (origin.getUID().equals(worlds.netherId())) {
+        } else if (origin.getUID().equals(worlds.netherId())) {
             // coming from the nether we can only go to the OW
             targetlocation.setWorld(worlds.getOverworld());
-        }
-        else if (origin.getUID().equals(worlds.endId())) {
+        } else if (origin.getUID().equals(worlds.endId())) {
             // coming from the end we can go to either the overworld or to the end spawn from an outer portal.
             if (target.getEnvironment() == World.Environment.NORMAL) {
                 // Overworld
                 targetlocation.setWorld(worlds.getOverworld());
-            }
-            else if (target.getEnvironment() == World.Environment.THE_END) {
+            } else if (target.getEnvironment() == World.Environment.THE_END) {
                 // The End
                 targetlocation.setWorld(worlds.getEndWorld());
-            }
-            else {
+            } else {
                 ConsoleMessenger.bug("Could not catch player going through portal", this);
             }
         }

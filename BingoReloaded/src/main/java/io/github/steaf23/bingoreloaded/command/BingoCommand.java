@@ -16,12 +16,12 @@ import io.github.steaf23.bingoreloaded.gui.inventory.VoteMenu;
 import io.github.steaf23.bingoreloaded.gui.inventory.creator.BingoCreatorMenu;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
-import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
 import io.github.steaf23.bingoreloaded.settings.CustomKit;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import io.github.steaf23.bingoreloaded.util.BingoPlayerSender;
 import io.github.steaf23.playerdisplay.PlayerDisplay;
 import io.github.steaf23.playerdisplay.inventory.MenuBoard;
+import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.JoinConfiguration;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -42,8 +42,10 @@ public class BingoCommand implements TabExecutor
     private final BingoConfigurationData config;
     private final GameManager gameManager;
     private final MenuBoard menuBoard;
+    private final BingoReloaded plugin;
 
-    public BingoCommand(BingoConfigurationData config, GameManager gameManager, MenuBoard menuBoard) {
+    public BingoCommand(BingoReloaded plugin, BingoConfigurationData config, GameManager gameManager, MenuBoard menuBoard) {
+        this.plugin = plugin;
         this.config = config;
         this.gameManager = gameManager;
         this.menuBoard = menuBoard;
@@ -53,6 +55,10 @@ public class BingoCommand implements TabExecutor
     public boolean onCommand(@NonNull CommandSender commandSender, @NonNull Command command, @NonNull String alias, String[] args) {
         if (!(commandSender instanceof Player player) || !player.hasPermission("bingo.player")) {
             return false;
+        }
+
+        if (args.length == 2 && args[0].equals("reload")) {
+            return reloadCommand(args[1]);
         }
 
         BingoSession session = gameManager.getSessionFromWorld(player.getWorld());
@@ -316,7 +322,7 @@ public class BingoCommand implements TabExecutor
     public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
         if (!(sender instanceof Player player) || player.hasPermission("bingo.admin")) {
             if (args.length <= 1) {
-                return List.of("join", "vote", "getcard", "back", "leave", "stats", "end", "wait", "kit", "deathmatch", "creator", "teams", "teamedit", "about");
+                return List.of("join", "vote", "getcard", "back", "leave", "stats", "end", "wait", "kit", "deathmatch", "creator", "teams", "teamedit", "about", "reload");
             }
 
             if (args[0].equals("kit")) {
@@ -333,6 +339,15 @@ public class BingoCommand implements TabExecutor
                         }
                     }
                 }
+            } else if (args[0].equals("reload")) {
+                return List.of("all",
+                        "config",
+                        "worlds",
+                        "placeholders",
+                        "scoreboards",
+                        "data",
+                        "languages"
+                );
             }
             return List.of();
         }
@@ -341,5 +356,58 @@ public class BingoCommand implements TabExecutor
             return List.of("join", "vote", "getcard", "back", "leave", "stats", "about");
         }
         return List.of();
+    }
+
+    public boolean reloadCommand(String reloadOption) {
+        switch(reloadOption)
+        {
+            case "all" -> reloadAll();
+            case "config" -> reloadConfig();
+            case "worlds" -> reloadWorlds();
+            case "placeholders" -> reloadPlaceholders();
+            case "scoreboards" -> reloadScoreboards();
+            case "data" -> reloadData();
+            case "languages" -> reloadLanguages();
+            default -> {
+                ConsoleMessenger.error("Cannot reload '" + reloadOption + "', invalid option");
+                return false;
+            }
+        }
+
+        ConsoleMessenger.log("Reloading " + reloadOption);
+        return true;
+    }
+
+    public void reloadAll() {
+        reloadConfig();
+        reloadWorlds();
+        reloadPlaceholders();
+        reloadScoreboards();
+        reloadData();
+        reloadLanguages();
+    }
+
+    public void reloadConfig() {
+
+    }
+
+    public void reloadWorlds() {
+        // end all games, clear worlds, setup game manager again.
+    }
+
+    public void reloadPlaceholders() {
+        plugin.reloadPlaceholders();
+    }
+
+    public void reloadScoreboards() {
+        plugin.reloadScoreboards();
+    }
+
+    public void reloadData() {
+        plugin.reloadData();
+    }
+
+    public void reloadLanguages() {
+        plugin.reloadLanguages();
     }
 }

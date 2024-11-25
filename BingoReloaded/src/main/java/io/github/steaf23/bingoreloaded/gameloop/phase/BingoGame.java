@@ -513,19 +513,16 @@ public class BingoGame implements GamePhase
      * @return true if this plugin consider biome to be an ocean-like biome
      */
     private static boolean isOceanBiome(Biome biome) {
-        return switch (biome) {
-            case OCEAN,
-                 RIVER,
-                 DEEP_COLD_OCEAN,
-                 COLD_OCEAN,
-                 DEEP_OCEAN,
-                 FROZEN_OCEAN,
-                 DEEP_FROZEN_OCEAN,
-                 LUKEWARM_OCEAN,
-                 DEEP_LUKEWARM_OCEAN,
-                 WARM_OCEAN -> true;
-            default -> false;
-        };
+        return biome == Biome.OCEAN ||
+                biome == Biome.RIVER ||
+                biome == Biome.DEEP_COLD_OCEAN ||
+                biome == Biome.COLD_OCEAN ||
+                biome == Biome.DEEP_OCEAN ||
+                biome == Biome.FROZEN_OCEAN ||
+                biome == Biome.DEEP_FROZEN_OCEAN ||
+                biome == Biome.LUKEWARM_OCEAN ||
+                biome == Biome.DEEP_LUKEWARM_OCEAN ||
+                biome == Biome.WARM_OCEAN;
     }
 
     public GameTask getDeathMatchTask() {

@@ -2,6 +2,7 @@ package io.github.steaf23.bingoreloaded;
 
 import io.github.steaf23.bingoreloaded.command.AutoBingoCommand;
 import io.github.steaf23.bingoreloaded.command.BingoCommand;
+import io.github.steaf23.bingoreloaded.command.BingoConfigCommand;
 import io.github.steaf23.bingoreloaded.command.BingoTestCommand;
 import io.github.steaf23.bingoreloaded.command.TeamChatCommand;
 import io.github.steaf23.bingoreloaded.data.BingoConfigurationData;
@@ -136,7 +137,7 @@ public class BingoReloaded extends JavaPlugin
         PlayerDisplay.enableDebugLogging(config.enableDebugLogging);
 
 
-        PlayerDisplay.setUseCustomTextures(config.useIncludedResourcepack);
+        PlayerDisplay.setUseCustomTextures(config.useIncludedResourcePack);
         BingoMessage.setLanguage(
                 addDataAccessor(new YamlDataAccessor(this, config.language.substring(0, config.language.length() - 4))),
                 addDataAccessor(new YamlDataAccessor(this, "languages/en_us"))
@@ -159,12 +160,14 @@ public class BingoReloaded extends JavaPlugin
 
         this.gameManager.setup(config.defaultWorlds);
 
-        TabExecutor autoBingoCommand = new AutoBingoCommand(gameManager);
-
         menuBoard.setPlayerOpenPredicate(player -> player instanceof Player p && this.gameManager.canPlayerOpenMenus(p));
 
-        registerCommand("bingo", new BingoCommand(config, gameManager, menuBoard));
+        TabExecutor autoBingoCommand = new AutoBingoCommand(gameManager);
+        TabExecutor bingoConfigCommand = new BingoConfigCommand(this, config);
+
+        registerCommand("bingo", new BingoCommand(this, config, gameManager, menuBoard));
         registerCommand("autobingo", autoBingoCommand);
+        registerCommand("bingoconfig", bingoConfigCommand);
         registerCommand("bingotest", new BingoTestCommand(this, menuBoard));
 //        registerCommand("bingobot", new BotCommand(gameManager));
         if (config.enableTeamChat) {
@@ -290,5 +293,34 @@ public class BingoReloaded extends JavaPlugin
         accessorMap.put(accessor.getLocation(), accessor);
         accessor.load();
         return accessor;
+    }
+
+    public void reloadScoreboards() {
+        getDataAccessor("scoreboards").load();
+    }
+
+    public void reloadPlaceholders() {
+        getDataAccessor("placeholders").load();
+    }
+
+    public void reloadData() {
+        getDataAccessor("data/cards").load();
+        getDataAccessor( "data/textures").load();
+        getDataAccessor( "data/kits").load();
+        getDataAccessor( "data/" + getDefaultTasksVersion()).load();
+        getDataAccessor( "data/presets").load();
+        getDataAccessor( "data/player_stats").load();
+        getDataAccessor( "data/teams").load();
+        getDataAccessor( "data/players").load();
+    }
+
+    public void reloadLanguages() {
+        ConsoleMessenger.warn("Reloading languages, however due to how plugins are loaded this may not affect all text");
+        ConsoleMessenger.warn("To fully reload the languages restart the server.");
+        String langString = config.language.substring(0, config.language.length() - 4);
+        getDataAccessor(langString).load();
+        if (!config.language.equals(langString)) {
+            getDataAccessor("languages/en_us").load();
+        }
     }
 }
