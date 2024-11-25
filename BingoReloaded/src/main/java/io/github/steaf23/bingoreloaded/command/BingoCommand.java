@@ -1,10 +1,11 @@
 package io.github.steaf23.bingoreloaded.command;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
-import io.github.steaf23.bingoreloaded.data.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.BingoStatData;
 import io.github.steaf23.bingoreloaded.data.CustomKitData;
+import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
+import io.github.steaf23.bingoreloaded.data.config.BingoOptions;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gameloop.GameManager;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
@@ -83,11 +84,13 @@ public class BingoCommand implements TabExecutor
                 if (!(session.phase() instanceof PregameLobby lobby)) {
                     return true;
                 }
-                if (!config.useVoteSystem || config.voteUsingCommandsOnly || config.voteList.isEmpty()) {
+                if (!config.getOptionValue(BingoOptions.USE_VOTE_SYSTEM) ||
+                        config.getOptionValue(BingoOptions.VOTE_USING_COMMANDS_ONLY) ||
+                        config.getOptionValue(BingoOptions.VOTE_LIST).isEmpty()) {
                     BingoPlayerSender.sendMessage(Component.text("Voting is disabled!").color(NamedTextColor.RED), player);
                     return true;
                 }
-                VoteMenu menu = new VoteMenu(menuBoard, config.voteList, lobby);
+                VoteMenu menu = new VoteMenu(menuBoard, config.getOptionValue(BingoOptions.VOTE_LIST), lobby);
                 menu.open(player);
             }
             case "leave" -> {
@@ -129,7 +132,7 @@ public class BingoCommand implements TabExecutor
             }
             case "back" -> {
                 if (session.isRunning()) {
-                    if (config.teleportAfterDeath) {
+                    if (config.getOptionValue(BingoOptions.TELEPORT_AFTER_DEATH)) {
                         ((BingoGame) session.phase()).teleportPlayerAfterDeath(player);
                         return true;
                     }
@@ -154,7 +157,7 @@ public class BingoCommand implements TabExecutor
                 }
             }
             case "stats" -> {
-                if (!config.savePlayerStatistics) {
+                if (!config.getOptionValue(BingoOptions.SAVE_PLAYER_STATISTICS)) {
                     Component text = Component.text("Player statistics are not being tracked at this moment!")
                             .color(NamedTextColor.RED);
                     BingoPlayerSender.sendMessage(text, player);

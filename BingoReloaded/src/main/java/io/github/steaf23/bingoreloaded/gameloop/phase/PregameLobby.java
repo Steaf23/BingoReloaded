@@ -1,8 +1,9 @@
 package io.github.steaf23.bingoreloaded.gameloop.phase;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
-import io.github.steaf23.bingoreloaded.data.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
+import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
+import io.github.steaf23.bingoreloaded.data.config.BingoOptions;
 import io.github.steaf23.bingoreloaded.event.BingoSettingsUpdatedEvent;
 import io.github.steaf23.bingoreloaded.event.ParticipantJoinedTeamEvent;
 import io.github.steaf23.bingoreloaded.event.ParticipantLeftTeamEvent;
@@ -57,8 +58,8 @@ public class PregameLobby implements GamePhase
         this.session = session;
         this.votes = new HashMap<>();
         this.config = config;
-        this.playerCountTimer = new CountdownTimer(config.playerWaitTime, session);
-        if (config.disableScoreboardSidebar) {
+        this.playerCountTimer = new CountdownTimer(config.getOptionValue(BingoOptions.PLAYER_WAIT_TIME), session);
+        if (config.getOptionValue(BingoOptions.DISABLE_SCOREBOARD_SIDEBAR)) {
             this.settingsHUD = new DisabledBingoSettingsHUDGroup(hudRegistry);
         }
         else {
@@ -96,7 +97,7 @@ public class PregameLobby implements GamePhase
     }
 
     public void registerVote(VoteCategory<?> category, @NotNull String value, HumanEntity player) {
-        if (!config.useVoteSystem) {
+        if (!config.getOptionValue(BingoOptions.USE_VOTE_SYSTEM)) {
             ConsoleMessenger.warn("Players cannot vote because useVoteSystem is set to false in config.yml!");
             return;
         }
@@ -137,10 +138,12 @@ public class PregameLobby implements GamePhase
         settingsHUD.addPlayer(player);
         player.getInventory().clear();
 
-        if (config.useVoteSystem && !config.voteUsingCommandsOnly && !config.voteList.isEmpty()) {
+        if (config.getOptionValue(BingoOptions.USE_VOTE_SYSTEM) &&
+                !config.getOptionValue(BingoOptions.VOTE_USING_COMMANDS_ONLY) &&
+                !config.getOptionValue(BingoOptions.VOTE_LIST).isEmpty()) {
             giveVoteItem(player);
         }
-        if (!config.selectTeamsUsingCommandsOnly) {
+        if (!config.getOptionValue(BingoOptions.SELECT_TEAMS_USING_COMMANDS_ONLY)) {
             giveTeamItem(player);
         }
     }
@@ -174,11 +177,12 @@ public class PregameLobby implements GamePhase
     }
 
     private void startPlayerCountTimerIfMinCountReached() {
-        if (config.minimumPlayerCount == 0 || gameStarted) {
+        int minimumPlayerCount = config.getOptionValue(BingoOptions.MINIMUM_PLAYER_COUNT);
+        if (minimumPlayerCount == 0 || gameStarted) {
             return;
         }
 
-        if (session.teamManager.getParticipantCount() < config.minimumPlayerCount) {
+        if (session.teamManager.getParticipantCount() < minimumPlayerCount) {
             return;
         }
 
@@ -189,7 +193,7 @@ public class PregameLobby implements GamePhase
         playerCountTimer.start();
         if (playerCountTimer.getTime() > 10) {
             BingoMessage.STARTING_STATUS.sendToAudience(session,
-                    Component.text(config.playerWaitTime).color(NamedTextColor.GOLD));
+                    Component.text(config.getOptionValue(BingoOptions.PLAYER_WAIT_TIME)).color(NamedTextColor.GOLD));
         }
     }
 
@@ -260,7 +264,7 @@ public class PregameLobby implements GamePhase
 
         if (PlayerKit.VOTE_ITEM.isCompareKeyEqual(event.getItem())) {
             event.setCancelled(true);
-            VoteMenu menu = new VoteMenu(menuBoard, config.voteList, this);
+            VoteMenu menu = new VoteMenu(menuBoard, config.getOptionValue(BingoOptions.VOTE_LIST), this);
             menu.open(event.getPlayer());
         } else if (PlayerKit.TEAM_ITEM.isCompareKeyEqual(event.getItem())) {
             event.setCancelled(true);
@@ -299,19 +303,14 @@ public class PregameLobby implements GamePhase
         // Schedule check in the future since a player can switch teams where they will briefly leave the team
         // and lower the participant count to possibly stop the timer.
         BingoReloaded.scheduleTask(t -> {
-            if (session.teamManager.getParticipantCount() < config.minimumPlayerCount && playerCountTimer.isRunning()) {
+            if (session.teamManager.getParticipantCount() < config.getOptionValue(BingoOptions.MINIMUM_PLAYER_COUNT) && playerCountTimer.isRunning()) {
                 playerCountTimer.stop();
             }
         });
     }
 
     public void handlePlayerRespawn(final PlayerRespawnEvent event) {
-        if (config.useVoteSystem && !config.voteUsingCommandsOnly && !config.voteList.isEmpty()) {
-            giveVoteItem(event.getPlayer());
-        }
-        if (!config.selectTeamsUsingCommandsOnly) {
-            giveTeamItem(event.getPlayer());
-        }
+        initializePlayer(event.getPlayer());
     }
 
     public Collection<VoteTicket> getAllVotes() {

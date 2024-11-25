@@ -1,8 +1,9 @@
 package io.github.steaf23.bingoreloaded.gameloop;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
-import io.github.steaf23.bingoreloaded.data.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.data.PlayerSerializationData;
+import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
+import io.github.steaf23.bingoreloaded.data.config.BingoOptions;
 import io.github.steaf23.bingoreloaded.data.core.helper.SerializablePlayer;
 import io.github.steaf23.bingoreloaded.data.world.WorldData;
 import io.github.steaf23.bingoreloaded.data.world.WorldGroup;
@@ -53,7 +54,9 @@ public class GameManager
 
         this.sessions = new HashMap<>();
         this.playerData = new PlayerSerializationData();
-        this.eventListener = new BingoEventListener(this, config.disableAdvancements, config.disableStatistics);
+        this.eventListener = new BingoEventListener(this,
+                config.getOptionValue(BingoOptions.DISABLE_ADVANCEMENTS),
+                config.getOptionValue(BingoOptions.DISABLE_STATISTICS));
 
         this.teleportingPlayer = false;
         Bukkit.getPluginManager().registerEvents(eventListener, plugin);
@@ -225,11 +228,13 @@ public class GameManager
             return;
         }
 
+        boolean savePlayerInformation = config.getOptionValue(BingoOptions.SAVE_PLAYER_INFORMATION);
+
         if (sourceSession != null) {
             if (targetSession == null) {
                 event.getPlayer().getInventory().clear(); // If we are leaving a bingo world, we can always clear the player's inventory
 
-                if (config.savePlayerInformation) {
+                if (savePlayerInformation) {
                     teleportingPlayer = true;
                     // load player will teleport them, so we have to schedule it to make sure to do the right thing
                     BingoReloaded.scheduleTask(t -> {
@@ -248,7 +253,7 @@ public class GameManager
         }
 
         if (targetSession != null) {
-            if (config.savePlayerInformation && sourceSession == null) {
+            if (savePlayerInformation && sourceSession == null) {
                 // Only save player data if it does not pertain to a bingo world
                 SerializablePlayer serializablePlayer = SerializablePlayer.fromPlayer(plugin, event.getPlayer());
                 serializablePlayer.location = event.getFrom();
@@ -292,7 +297,8 @@ public class GameManager
     }
 
     public void handlePrepareNextBingoGame(final PrepareNextBingoGameEvent event) {
-        if (config.savePlayerInformation && config.loadPlayerInformationStrategy == BingoConfigurationData.LoadPlayerInformationStrategy.AFTER_GAME) {
+        if (config.getOptionValue(BingoOptions.SAVE_PLAYER_INFORMATION) &&
+                config.getOptionValue(BingoOptions.LOAD_PLAYER_INFORMATION_STRATEGY) == BingoOptions.LoadPlayerInformationStrategy.AFTER_GAME) {
             for (BingoParticipant participant : event.getSession().teamManager.getParticipants()) {
                 participant.sessionPlayer().ifPresent(player -> {
                     event.getSession().teamManager.removeMemberFromTeam(participant);

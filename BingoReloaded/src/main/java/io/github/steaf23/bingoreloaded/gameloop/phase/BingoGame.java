@@ -5,9 +5,10 @@ import io.github.steaf23.bingoreloaded.cards.CardFactory;
 import io.github.steaf23.bingoreloaded.cards.LockoutTaskCard;
 import io.github.steaf23.bingoreloaded.cards.TaskCard;
 import io.github.steaf23.bingoreloaded.data.BingoCardData;
-import io.github.steaf23.bingoreloaded.data.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.BingoStatType;
+import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
+import io.github.steaf23.bingoreloaded.data.config.BingoOptions;
 import io.github.steaf23.bingoreloaded.event.BingoDeathmatchTaskCompletedEvent;
 import io.github.steaf23.bingoreloaded.event.BingoEndedEvent;
 import io.github.steaf23.bingoreloaded.event.BingoPlaySoundEvent;
@@ -107,7 +108,7 @@ public class BingoGame implements GamePhase
         this.actionBarManager = new ActionBarManager(session);
         this.progressTracker = new TaskProgressTracker(this);
 
-        this.respawnManager = new PlayerRespawnManager(BingoReloaded.getInstance(), config.teleportAfterDeathPeriod);
+        this.respawnManager = new PlayerRespawnManager(BingoReloaded.getInstance(), config.getOptionValue(BingoOptions.TELEPORT_AFTER_DEATH_PERIOD));
         this.playerSpawnPoints = new HashMap<>();
     }
 
@@ -136,10 +137,10 @@ public class BingoGame implements GamePhase
         world.setTime(1000);
 
         // Generate cards
-        boolean useAdvancements = !(BingoReloaded.areAdvancementsDisabled() || config.disableAdvancements);
+        boolean useAdvancements = !(BingoReloaded.areAdvancementsDisabled() || config.getOptionValue(BingoOptions.DISABLE_ADVANCEMENTS));
         //TODO create viewType config option, but for now try to use textured for testing.
         TaskCard masterCard = CardFactory.fromGame(session.getMenuManager(), this, PlayerDisplay.useCustomTextures());
-        masterCard.generateCard(settings.card(), settings.seed(), useAdvancements, !config.disableStatistics);
+        masterCard.generateCard(settings.card(), settings.seed(), useAdvancements, !config.getOptionValue(BingoOptions.DISABLE_STATISTICS));
         if (masterCard instanceof LockoutTaskCard lockoutCard) {
             lockoutCard.teamCount = getTeamManager().getTeamCount();
         }
@@ -200,7 +201,7 @@ public class BingoGame implements GamePhase
         Bukkit.getPluginManager().callEvent(event);
 
         // Countdown before the game actually starts
-        startingTimer = new CountdownTimer(Math.max(1, config.startingCountdownTime), 6, 3, session);
+        startingTimer = new CountdownTimer(Math.max(1, config.getOptionValue(BingoOptions.STARTING_COUNTDOWN_TIME)), 6, 3, session);
         startingTimer.addNotifier(time -> {
             Component timeComponent = Component.text(time);
             if (time == 0) {
@@ -246,7 +247,7 @@ public class BingoGame implements GamePhase
         BingoPlayerSender.sendMessage(timer.getTimeDisplayMessage(false), session);
         timer.stop();
 
-        if (!config.keepScoreboardVisible) {
+        if (!config.getOptionValue(BingoOptions.KEEP_SCOREBOARD_VISIBLE)) {
             scoreboard.setup(settings);
         }
 
@@ -263,7 +264,7 @@ public class BingoGame implements GamePhase
         var soundEvent = new BingoPlaySoundEvent(session, Sound.ENTITY_LIGHTNING_BOLT_THUNDER);
         Bukkit.getPluginManager().callEvent(soundEvent);
 
-        String command = config.sendCommandAfterGameEnds;
+        String command = config.getOptionValue(BingoOptions.SEND_COMMAND_AFTER_GAME_ENDS);
         if (!command.isEmpty()) {
             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
         }
@@ -331,7 +332,7 @@ public class BingoGame implements GamePhase
         participant.giveBingoCard(cardSlot, cardRenderer);
         participant.sessionPlayer().get().setGameMode(GameMode.SURVIVAL);
 
-        BingoReloaded.scheduleTask(task -> participant.giveEffects(settings.effects(), config.gracePeriod), BingoReloaded.ONE_SECOND);
+        BingoReloaded.scheduleTask(task -> participant.giveEffects(settings.effects(), config.getOptionValue(BingoOptions.GRACE_PERIOD)), BingoReloaded.ONE_SECOND);
     }
 
     public void startDeathMatch(int seconds) {
@@ -434,7 +435,8 @@ public class BingoGame implements GamePhase
     }
 
     private void teleportPlayersToStart(World world) {
-        switch (config.playerTeleportStrategy) {
+        int gracePeriod = config.getOptionValue(BingoOptions.GRACE_PERIOD);
+        switch (config.getOptionValue(BingoOptions.PLAYER_TELEPORT_STRATEGY)) {
             case ALONE -> {
                 for (BingoParticipant p : getTeamManager().getParticipants()) {
                     Location platformLocation = getRandomSpawnLocation(world);
@@ -444,7 +446,7 @@ public class BingoGame implements GamePhase
                         spawnPlatform(platformLocation.clone(), 5, true);
 
                         BingoReloaded.scheduleTask(task ->
-                                BingoGame.removePlatform(platformLocation, 5), (long) (Math.max(0, config.gracePeriod - 5)) * BingoReloaded.ONE_SECOND);
+                                BingoGame.removePlatform(platformLocation, 5), (long) (Math.max(0, gracePeriod - 5)) * BingoReloaded.ONE_SECOND);
                     }
                 }
             }
@@ -459,7 +461,7 @@ public class BingoGame implements GamePhase
                         spawnPlatform(teamLocation, 5, true);
 
                         BingoReloaded.scheduleTask(task ->
-                                BingoGame.removePlatform(teamLocation, 5), (long) (Math.max(0, config.gracePeriod - 5)) * BingoReloaded.ONE_SECOND);
+                                BingoGame.removePlatform(teamLocation, 5), (long) (Math.max(0, gracePeriod - 5)) * BingoReloaded.ONE_SECOND);
                     }
                 }
             }
@@ -471,7 +473,7 @@ public class BingoGame implements GamePhase
                     spawnPlatform(spawnLocation, 5, true);
 
                     BingoReloaded.scheduleTask(task ->
-                            BingoGame.removePlatform(spawnLocation, 5), (long) (Math.max(0, config.gracePeriod - 5)) * BingoReloaded.ONE_SECOND);
+                            BingoGame.removePlatform(spawnLocation, 5), (long) (Math.max(0, gracePeriod - 5)) * BingoReloaded.ONE_SECOND);
                 }
             }
             default -> {
@@ -494,12 +496,14 @@ public class BingoGame implements GamePhase
     }
 
     private Location getRandomSpawnLocation(World world) {
-        Vector position = Vector.getRandom().multiply(config.teleportMaxDistance * 2).subtract(new Vector(config.teleportMaxDistance, config.teleportMaxDistance, config.teleportMaxDistance));
+        int teleportMaxDistance = config.getOptionValue(BingoOptions.TELEPORT_MAX_DISTANCE);
+
+        Vector position = Vector.getRandom().multiply(teleportMaxDistance * 2).subtract(new Vector(teleportMaxDistance, teleportMaxDistance, teleportMaxDistance));
         Location location = new Location(world, position.getX(), world.getHighestBlockYAt(position.getBlockX(), position.getBlockZ()), position.getZ());
 
         //find a not ocean biome to start the game in
         while (isOceanBiome(world.getBiome(location))) {
-            position = Vector.getRandom().multiply(config.teleportMaxDistance);
+            position = Vector.getRandom().multiply(teleportMaxDistance);
             location = new Location(world, position.getBlockX(), world.getHighestBlockYAt(position.getBlockX(), position.getBlockZ()), position.getBlockZ());
         }
 
@@ -607,7 +611,11 @@ public class BingoGame implements GamePhase
                 return;
 
             event.setCancelled(true);
-            ((BingoPlayer) participant).useGoUpWand(event.getItem(), config.wandCooldown, config.wandDown, config.wandUp, config.platformLifetime);
+            ((BingoPlayer) participant).useGoUpWand(event.getItem(),
+                    config.getOptionValue(BingoOptions.GO_UP_WAND_COOLDOWN),
+                    config.getOptionValue(BingoOptions.GO_UP_WAND_DOWN_DISTANCE),
+                    config.getOptionValue(BingoOptions.GO_UP_WAND_UP_DISTANCE),
+                    config.getOptionValue(BingoOptions.GO_UP_WAND_PLATFORM_LIFETIME));
         } else if (PlayerKit.CARD_ITEM.isCompareKeyEqual(event.getItem())) {
             // Show bingo card to player
             event.setCancelled(true);
@@ -651,7 +659,7 @@ public class BingoGame implements GamePhase
         }
 
         Location deathCoords = event.getEntity().getLocation();
-        if (config.teleportAfterDeath) {
+        if (config.getOptionValue(BingoOptions.TELEPORT_AFTER_DEATH)) {
             Component hoverable = Arrays.stream(BingoMessage.RESPAWN.convertForPlayer(event.getPlayer())).reduce(Component::append).get();
             BingoPlayerSender.sendMessage(BingoMessage.createHoverCommandMessage(
                     Component.empty(),
@@ -780,7 +788,7 @@ public class BingoGame implements GamePhase
         if (!(participant instanceof BingoPlayer player))
             return;
 
-        player.giveEffects(settings.effects(), config.gracePeriod);
+        player.giveEffects(settings.effects(), config.getOptionValue(BingoOptions.GRACE_PERIOD));
     }
 
     @Override
@@ -797,7 +805,7 @@ public class BingoGame implements GamePhase
         if (!(event.getParticipant() instanceof BingoPlayer player))
             return;
 
-        player.giveEffects(settings.effects(), config.gracePeriod);
+        player.giveEffects(settings.effects(), config.getOptionValue(BingoOptions.GRACE_PERIOD));
     }
 
     @Override

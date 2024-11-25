@@ -3,11 +3,8 @@ package io.github.steaf23.bingoreloaded.gameloop.vote;
 import io.github.steaf23.bingoreloaded.cards.CardSize;
 import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
-import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
-import org.bukkit.scoreboard.Score;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.Console;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;

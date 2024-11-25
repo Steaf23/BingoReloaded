@@ -5,9 +5,10 @@ import io.github.steaf23.bingoreloaded.cards.CardSize;
 import io.github.steaf23.bingoreloaded.command.core.DeferredCommand;
 import io.github.steaf23.bingoreloaded.command.core.SubCommand;
 import io.github.steaf23.bingoreloaded.data.BingoCardData;
-import io.github.steaf23.bingoreloaded.data.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.data.BingoSettingsData;
 import io.github.steaf23.bingoreloaded.data.PlayerSerializationData;
+import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
+import io.github.steaf23.bingoreloaded.data.config.BingoOptions;
 import io.github.steaf23.bingoreloaded.data.core.helper.SerializablePlayer;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gameloop.GameManager;
@@ -253,7 +254,7 @@ public class AutoBingoCommand implements TabExecutor
 
 
         command.addSubCommand(new SubCommand("vote", this::voteForPlayer).addUsage("<player_name> <vote_category> <vote_for>").addTabCompletion(args -> {
-            BingoConfigurationData.VoteList voteList = manager.getGameConfig().voteList;
+            BingoConfigurationData.VoteList voteList = manager.getGameConfig().getOptionValue(BingoOptions.VOTE_LIST);
             if (args.length <= 2) {
                 return null;
             } else if (args.length == 3) {
@@ -747,9 +748,11 @@ public class AutoBingoCommand implements TabExecutor
             return false;
         }
 
+        BingoConfigurationData.VoteList voteList = manager.getGameConfig().getOptionValue(BingoOptions.VOTE_LIST);
+
         switch (category) {
             case "kits" -> {
-                if (!manager.getGameConfig().voteList.kits().contains(voteFor)) {
+                if (!voteList.kits().contains(voteFor)) {
                     sendFailed("Cannot vote for kit " + voteFor + ", kit does not appear in vote list.", sessionName);
                     return false;
                 }
@@ -761,21 +764,21 @@ public class AutoBingoCommand implements TabExecutor
                 lobby.voteKit(voteFor, player);
             }
             case "gamemodes" -> {
-                if (!manager.getGameConfig().voteList.gamemodes().contains(voteFor)) {
+                if (!voteList.gamemodes().contains(voteFor)) {
                     sendFailed("Cannot vote for gamemode " + voteFor + ", gamemode does not appear in vote list.", sessionName);
                     return false;
                 }
                 lobby.voteGamemode(voteFor, player);
             }
             case "cards" -> {
-                if (!manager.getGameConfig().voteList.cards().contains(voteFor)) {
+                if (!voteList.cards().contains(voteFor)) {
                     sendFailed("Cannot vote for card " + voteFor + ", card does not appear in vote list.", sessionName);
                     return false;
                 }
                 lobby.voteCard(voteFor, player);
             }
             case "cardsizes" -> {
-                if (!manager.getGameConfig().voteList.cardSizes().contains(voteFor)) {
+                if (!voteList.cardSizes().contains(voteFor)) {
                     sendFailed("Cannot vote for card size " + voteFor + ", card size does not appear in vote list.", sessionName);
                     return false;
                 }

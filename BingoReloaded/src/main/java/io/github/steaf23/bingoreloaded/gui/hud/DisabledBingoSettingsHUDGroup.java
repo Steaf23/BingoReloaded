@@ -1,6 +1,6 @@
 package io.github.steaf23.bingoreloaded.gui.hud;
 
-import io.github.steaf23.bingoreloaded.data.BingoConfigurationData;
+import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
 import io.github.steaf23.playerdisplay.scoreboard.HUDRegistry;
 import net.kyori.adventure.text.Component;

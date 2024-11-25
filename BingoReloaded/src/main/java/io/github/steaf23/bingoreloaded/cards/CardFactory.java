@@ -1,5 +1,6 @@
 package io.github.steaf23.bingoreloaded.cards;
 
+import io.github.steaf23.bingoreloaded.data.config.BingoOptions;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.gui.inventory.card.CardMenu;
 import io.github.steaf23.bingoreloaded.gui.inventory.card.GenericCardMenu;
@@ -28,7 +29,8 @@ public class CardFactory
                 if (!(menu instanceof HotswapCardMenu)) {
                     menu = new HotswapGenericCardMenu(menuBoard, settings.size());
                 }
-                yield new HotswapTaskCard((HotswapCardMenu) menu, settings.size(), game, game.getProgressTracker(), settings.hotswapGoal(), game.getConfig().hotswapMode);
+                yield new HotswapTaskCard((HotswapCardMenu) menu, settings.size(), game, game.getProgressTracker(), settings.hotswapGoal(),
+                        game.getConfig().getOptionValue(BingoOptions.HOTSWAP_CONFIG));
             }
             default -> new BingoTaskCard(menu, settings.size());
         };

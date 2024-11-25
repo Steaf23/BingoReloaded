@@ -1,7 +1,6 @@
 package io.github.steaf23.bingoreloaded.tasks;
 
 import net.kyori.adventure.text.Component;
-import org.bukkit.entity.Player;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.jetbrains.annotations.NotNull;
 

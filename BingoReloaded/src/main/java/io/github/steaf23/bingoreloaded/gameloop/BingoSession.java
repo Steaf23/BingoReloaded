@@ -2,8 +2,9 @@ package io.github.steaf23.bingoreloaded.gameloop;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.BingoCardData;
-import io.github.steaf23.bingoreloaded.data.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
+import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
+import io.github.steaf23.bingoreloaded.data.config.BingoOptions;
 import io.github.steaf23.bingoreloaded.data.world.WorldGroup;
 import io.github.steaf23.bingoreloaded.event.BingoEndedEvent;
 import io.github.steaf23.bingoreloaded.event.BingoPlaySoundEvent;
@@ -75,13 +76,14 @@ public class BingoSession implements ForwardingAudience
         this.hudRegistry = hudRegistry;
         this.worlds = worlds;
         this.config = config;
-        if (config.disableScoreboardSidebar) {
-            this.scoreboard = new DisabledBingoGameHUDGroup(hudRegistry, this, config.showPlayerInScoreboard);
+        boolean showPlayerInScoreboard = config.getOptionValue(BingoOptions.SHOW_PLAYER_IN_SCOREBOARD);
+        if (config.getOptionValue(BingoOptions.DISABLE_SCOREBOARD_SIDEBAR)) {
+            this.scoreboard = new DisabledBingoGameHUDGroup(hudRegistry, this, showPlayerInScoreboard);
         } else {
-            this.scoreboard = new BingoGameHUDGroup(hudRegistry, this, config.showPlayerInScoreboard);
+            this.scoreboard = new BingoGameHUDGroup(hudRegistry, this, showPlayerInScoreboard);
         }
         this.settingsBuilder = new BingoSettingsBuilder(this);
-        if (config.singlePlayerTeams) {
+        if (config.getOptionValue(BingoOptions.SINGLE_PLAYER_TEAMS)) {
             this.teamManager = new SoloTeamManager(this);
         } else {
             this.teamManager = new BasicTeamManager(this);
@@ -183,7 +185,7 @@ public class BingoSession implements ForwardingAudience
     }
 
     public void handleGameEnded(final BingoEndedEvent event) {
-        phase = new PostGamePhase(this, config.gameRestartTime);
+        phase = new PostGamePhase(this, config.getOptionValue(BingoOptions.GAME_RESTART_TIME));
         phase.setup();
     }
 
@@ -248,7 +250,7 @@ public class BingoSession implements ForwardingAudience
             scoreboard.removePlayer(player);
             teamDisplay.update();
 
-            if (!config.endGameWithoutTeams) {
+            if (!config.getOptionValue(BingoOptions.END_GAME_WITHOUT_TEAMS)) {
                 return;
             }
 
@@ -320,7 +322,7 @@ public class BingoSession implements ForwardingAudience
     }
 
     private BingoSettingsBuilder determineSettingsByVote(PregameLobby lobby) {
-        if (!config.useVoteSystem) {
+        if (!config.getOptionValue(BingoOptions.USE_VOTE_SYSTEM)) {
             return null;
         }
 

@@ -2,14 +2,15 @@ package io.github.steaf23.bingoreloaded.tasks.tracker;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.cards.TaskCard;
+import io.github.steaf23.bingoreloaded.data.config.BingoOptions;
 import io.github.steaf23.bingoreloaded.event.BingoDeathmatchTaskCompletedEvent;
 import io.github.steaf23.bingoreloaded.event.BingoStatisticCompletedEvent;
 import io.github.steaf23.bingoreloaded.event.BingoTaskProgressCompletedEvent;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
-import io.github.steaf23.bingoreloaded.tasks.data.AdvancementTask;
 import io.github.steaf23.bingoreloaded.tasks.BingoStatistic;
 import io.github.steaf23.bingoreloaded.tasks.GameTask;
+import io.github.steaf23.bingoreloaded.tasks.data.AdvancementTask;
 import io.github.steaf23.bingoreloaded.tasks.data.ItemTask;
 import io.github.steaf23.bingoreloaded.tasks.data.StatisticTask;
 import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
@@ -27,7 +28,6 @@ import org.bukkit.event.player.PlayerAdvancementDoneEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerStatisticIncrementEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scoreboard.Criteria;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -73,7 +73,7 @@ public class TaskProgressTracker
         this.game = game;
         this.progressMap = new HashMap<>();
         this.statisticTracker = new StatisticTracker();
-        if (!game.getConfig().disableAdvancements) {
+        if (!game.getConfig().getOptionValue(BingoOptions.DISABLE_ADVANCEMENTS)) {
             ConsoleMessenger.log("Revoking all advancements from participants...");
             DebugLogger.addLog("Revoking all advancements");
 
@@ -229,7 +229,7 @@ public class TaskProgressTracker
                 }
 
                 if (participant.sessionPlayer().isPresent()) {
-                    if (game.getConfig().removeTaskItems) {
+                    if (game.getConfig().getOptionValue(BingoOptions.REMOVE_TASK_ITEMS)) {
                         item.setAmount(item.getAmount() - data.getRequiredAmount());
                     }
                     participant.sessionPlayer().get().updateInventory();
@@ -256,7 +256,7 @@ public class TaskProgressTracker
             }
 
             participant.sessionPlayer().ifPresent(player -> {
-                if (game.getConfig().removeTaskItems) {
+                if (game.getConfig().getOptionValue(BingoOptions.REMOVE_TASK_ITEMS)) {
                     item.setAmount(item.getAmount() - data.getRequiredAmount());
                 }
             });
@@ -398,7 +398,6 @@ public class TaskProgressTracker
     private void updateProgressFromEvent(BingoParticipant participant, BiFunction<GameTask, TaskProgress, Boolean> updateFunction) {
         Set<GameTask> tasksToRemove = new HashSet<>();
         for (GameTask task : progressMap.keySet()) {
-            List<TaskProgress> progressList = progressMap.get(task);
             for (TaskProgress progress : progressMap.get(task)) {
                 if (!progress.participant.equals(participant)) {
                     continue;

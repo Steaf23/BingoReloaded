@@ -5,13 +5,14 @@ import io.github.steaf23.bingoreloaded.command.BingoCommand;
 import io.github.steaf23.bingoreloaded.command.BingoConfigCommand;
 import io.github.steaf23.bingoreloaded.command.BingoTestCommand;
 import io.github.steaf23.bingoreloaded.command.TeamChatCommand;
-import io.github.steaf23.bingoreloaded.data.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.BingoStatData;
 import io.github.steaf23.bingoreloaded.data.BingoStatType;
 import io.github.steaf23.bingoreloaded.data.DataUpdaterV1;
 import io.github.steaf23.bingoreloaded.data.TeamData;
 import io.github.steaf23.bingoreloaded.data.TexturedMenuData;
+import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
+import io.github.steaf23.bingoreloaded.data.config.BingoOptions;
 import io.github.steaf23.bingoreloaded.data.core.DataAccessor;
 import io.github.steaf23.bingoreloaded.data.core.DataStorageSerializerRegistry;
 import io.github.steaf23.bingoreloaded.data.core.VirtualDataAccessor;
@@ -134,12 +135,13 @@ public class BingoReloaded extends JavaPlugin
         });
 
         this.config = new BingoConfigurationData(getConfig());
-        PlayerDisplay.enableDebugLogging(config.enableDebugLogging);
+        PlayerDisplay.enableDebugLogging(config.getOptionValue(BingoOptions.ENABLE_DEBUG_LOGGING));
 
 
-        PlayerDisplay.setUseCustomTextures(config.useIncludedResourcePack);
+        PlayerDisplay.setUseCustomTextures(config.getOptionValue(BingoOptions.USE_INCLUDED_RESOURCE_PACK));
+        String language = config.getOptionValue(BingoOptions.LANGUAGE);
         BingoMessage.setLanguage(
-                addDataAccessor(new YamlDataAccessor(this, config.language.substring(0, config.language.length() - 4))),
+                addDataAccessor(new YamlDataAccessor(this, language.substring(0, language.length() - 4))),
                 addDataAccessor(new YamlDataAccessor(this, "languages/en_us"))
         );
 //                FileConfigurationAccessor.create(config.language, new YmlDataManager(this, config.language).getConfig(), this),
@@ -152,13 +154,13 @@ public class BingoReloaded extends JavaPlugin
         this.textureData = new TexturedMenuData();
         this.menuBoard = new BingoMenuBoard();
         HUDRegistry hudRegistry = new HUDRegistry();
-        if (config.configuration == BingoConfigurationData.PluginConfiguration.SINGULAR) {
+        if (config.getOptionValue(BingoOptions.CONFIGURATION) == BingoOptions.PluginConfiguration.SINGULAR) {
             this.gameManager = new SingularGameManager(this, config, menuBoard, hudRegistry);
         } else {
             this.gameManager = new GameManager(this, config, menuBoard, hudRegistry);
         }
 
-        this.gameManager.setup(config.defaultWorlds);
+        this.gameManager.setup(config.getOptionValue(BingoOptions.DEFAULT_WORLDS));
 
         menuBoard.setPlayerOpenPredicate(player -> player instanceof Player p && this.gameManager.canPlayerOpenMenus(p));
 
@@ -170,7 +172,7 @@ public class BingoReloaded extends JavaPlugin
         registerCommand("bingoconfig", bingoConfigCommand);
         registerCommand("bingotest", new BingoTestCommand(this, menuBoard));
 //        registerCommand("bingobot", new BotCommand(gameManager));
-        if (config.enableTeamChat) {
+        if (config.getOptionValue(BingoOptions.ENABLE_TEAM_CHAT)) {
             TeamChatCommand command = new TeamChatCommand(player -> gameManager.getSessionFromWorld(player.getWorld()));
             registerCommand("btc", command);
             Bukkit.getPluginManager().registerEvents(command, this);
@@ -182,9 +184,9 @@ public class BingoReloaded extends JavaPlugin
 
         Metrics bStatsMetrics = new Metrics(this, 22586);
         bStatsMetrics.addCustomChart(new Metrics.SimplePie("selected_language",
-                () -> config.language.replace(".yml", "").replace("languages/", "")));
+                () -> config.getOptionValue(BingoOptions.LANGUAGE).replace(".yml", "").replace("languages/", "")));
         bStatsMetrics.addCustomChart(new Metrics.SimplePie("plugin_configuration",
-                () -> config.configuration == BingoConfigurationData.PluginConfiguration.SINGULAR ? "Singular" : "Multiple"));
+                () -> config.getOptionValue(BingoOptions.CONFIGURATION) == BingoOptions.PluginConfiguration.SINGULAR ? "Singular" : "Multiple"));
     }
 
     public void registerCommand(String commandName, TabExecutor executor) {
@@ -209,7 +211,7 @@ public class BingoReloaded extends JavaPlugin
     }
 
     public static void incrementPlayerStat(Player player, BingoStatType stat) {
-        boolean savePlayerStatistics = INSTANCE.config.savePlayerStatistics;
+        boolean savePlayerStatistics = INSTANCE.config.getOptionValue(BingoOptions.SAVE_PLAYER_STATISTICS);
         if (savePlayerStatistics) {
             BingoStatData statsData = new BingoStatData();
             statsData.incrementPlayerStat(player, stat);
@@ -217,7 +219,7 @@ public class BingoReloaded extends JavaPlugin
     }
 
     public static void setPlayerStat(Player player, BingoStatType stat, int value) {
-        boolean savePlayerStatistics = INSTANCE.config.savePlayerStatistics;
+        boolean savePlayerStatistics = INSTANCE.config.getOptionValue(BingoOptions.SAVE_PLAYER_STATISTICS);
         if (savePlayerStatistics) {
             BingoStatData statsData = new BingoStatData();
             statsData.setPlayerStat(player.getUniqueId(), stat, value);
@@ -225,7 +227,7 @@ public class BingoReloaded extends JavaPlugin
     }
 
     public static int getPlayerStat(Player player, BingoStatType stat) {
-        boolean savePlayerStatistics = INSTANCE.config.savePlayerStatistics;
+        boolean savePlayerStatistics = INSTANCE.config.getOptionValue(BingoOptions.SAVE_PLAYER_STATISTICS);
         if (savePlayerStatistics) {
             BingoStatData statsData = new BingoStatData();
             return statsData.getPlayerStat(player.getUniqueId(), stat);
@@ -317,9 +319,10 @@ public class BingoReloaded extends JavaPlugin
     public void reloadLanguages() {
         ConsoleMessenger.warn("Reloading languages, however due to how plugins are loaded this may not affect all text");
         ConsoleMessenger.warn("To fully reload the languages restart the server.");
-        String langString = config.language.substring(0, config.language.length() - 4);
+        String selectedLanguage = config.getOptionValue(BingoOptions.LANGUAGE);
+        String langString = selectedLanguage.substring(0, selectedLanguage.length() - 4);
         getDataAccessor(langString).load();
-        if (!config.language.equals(langString)) {
+        if (!selectedLanguage.equals(langString)) {
             getDataAccessor("languages/en_us").load();
         }
     }

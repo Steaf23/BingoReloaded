@@ -3,16 +3,17 @@ package io.github.steaf23.bingoreloaded.command;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.command.core.CommandTemplate;
 import io.github.steaf23.bingoreloaded.command.core.SubCommand;
-import io.github.steaf23.bingoreloaded.data.BingoConfigurationData;
+import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
+import io.github.steaf23.bingoreloaded.data.config.ConfigurationOption;
 import io.github.steaf23.bingoreloaded.util.BingoPlayerSender;
 import io.github.steaf23.playerdisplay.PlayerDisplay;
-import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.command.CommandSender;
 
 import java.util.List;
+import java.util.Set;
 
 public class BingoConfigCommand extends CommandTemplate
 {
@@ -26,11 +27,15 @@ public class BingoConfigCommand extends CommandTemplate
     }
 
     private boolean readOption(CommandSender sender, String optionKey) {
-        if (!plugin.getConfig().contains(optionKey)) {
+        Set<ConfigurationOption<?>> allOptions = configuration.getAvailableOptions();
+
+        ConfigurationOption<?> option = configuration.getOptionFromName(optionKey);
+
+        if (!allOptions.contains(option)) {
             BingoPlayerSender.sendMessage(PlayerDisplay.MINI_BUILDER.deserialize("Config option '<red>" + optionKey + "</red>' doesn't exist."), sender);
             return false;
         }
-        String value = plugin.getConfig().get(optionKey, "INVALID (Please report!)").toString();
+        String value = configuration.getOptionValue(option).toString();
         TextColor valueColor = NamedTextColor.BLUE;
         if (BingoConfigCommand.isValueNumeric(value)) {
             valueColor = NamedTextColor.AQUA;
@@ -49,12 +54,22 @@ public class BingoConfigCommand extends CommandTemplate
     }
 
     private boolean writeOption(CommandSender sender, String optionKey, String value) {
-        ConsoleMessenger.log("WRITING " + value + " TO " + optionKey);
-        return false;
+        Set<ConfigurationOption<?>> allOptions = configuration.getAvailableOptions();
+
+        ConfigurationOption<?> option = configuration.getOptionFromName(optionKey);
+
+        if (!allOptions.contains(option)) {
+            BingoPlayerSender.sendMessage(PlayerDisplay.MINI_BUILDER.deserialize("Config option '<red>" + optionKey + "</red>' doesn't exist."), sender);
+            return false;
+        }
+        configuration.setOptionValueFromString(option, value);
+        return true;
     }
 
     private List<String> allOptionKeys() {
-        return plugin.getConfig().getKeys(false).stream().toList();
+        return configuration.getAvailableOptions().stream()
+                .map(ConfigurationOption::getConfigName)
+                .toList();
     }
 
     @Override
