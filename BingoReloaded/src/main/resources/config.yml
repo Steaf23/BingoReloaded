@@ -34,7 +34,7 @@ language: en_us.yml
 savePlayerStatistics: false # true or false
 
 # If this value is not an empty string it will be sent as a command to the console.
-sendCommandAfterGameEnds: "" # command to send
+sendCommandAfterGameEnds: '' # command to send
 
 # If true this will prevent the player from receiving the voting item, allowing custom implementations using the available autobingo command.
 # Note: This will also disallow the use of the /bingo vote command such that only /autobingo <world_name> vote can be used to vote on behalf of a player.
@@ -86,13 +86,25 @@ preventLobbyGriefing: true
 # Use this to configure what options can be voted on.
 voteList:
   gamemodes:
-    [ regular, lockout, complete, hotswap ]
+  - regular
+  - lockout
+  - complete
+  - hotswap
   kits:
-    [ hardcore, normal, overpowered, reloaded, custom_1, custom_2, custom_3, custom_4, custom_5 ]
+  - hardcore
+  - normal
+  - overpowered
+  - reloaded
+  - custom_1
+  - custom_2
+  - custom_3
+  - custom_4
+  - custom_5
   cards:
-    [ default_card ]
+  - default_card
   cardsizes:
-    [ '3', '5' ]
+  - '3'
+  - '5'
 
 # ==========================================================================
 #    Gameplay Configuration Options
@@ -115,7 +127,7 @@ playerTeleportStrategy: ALL
 
 # If true, the game will send a message to players that died while playing the game
 #   that can be used to teleport them back.
-teleportBackAfterDeathMessage: true  # true or false
+teleportBackAfterDeathMessage: true # true or false
 
 # Amount of time the command is valid after a player dies, if they click the message after this time or use /bingo back, nothing will happen
 teleportAfterDeathPeriod: 60 # amount of time in seconds

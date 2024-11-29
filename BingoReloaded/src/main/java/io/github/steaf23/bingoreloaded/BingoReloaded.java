@@ -16,6 +16,7 @@ import io.github.steaf23.bingoreloaded.data.config.BingoOptions;
 import io.github.steaf23.bingoreloaded.data.core.DataAccessor;
 import io.github.steaf23.bingoreloaded.data.core.DataStorageSerializerRegistry;
 import io.github.steaf23.bingoreloaded.data.core.VirtualDataAccessor;
+import io.github.steaf23.bingoreloaded.data.core.configuration.ConfigDataAccessor;
 import io.github.steaf23.bingoreloaded.data.core.configuration.YamlDataAccessor;
 import io.github.steaf23.bingoreloaded.data.core.helper.SerializablePlayer;
 import io.github.steaf23.bingoreloaded.data.core.tag.TagDataAccessor;
@@ -119,6 +120,8 @@ public class BingoReloaded extends JavaPlugin
         reloadConfig();
         saveDefaultConfig();
 
+        saveConfig();
+
         PLACEHOLDER_API_ENABLED = Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null;
         if (PLACEHOLDER_API_ENABLED) {
             new BingoReloadedPlaceholderExpansion(this).register();
@@ -134,7 +137,7 @@ public class BingoReloaded extends JavaPlugin
             case MENU_CLEAR_FILTER -> BingoMessage.MENU_CLEAR_FILTER.asPhrase();
         });
 
-        this.config = new BingoConfigurationData(getConfig());
+        this.config = new BingoConfigurationData(new ConfigDataAccessor(this));
         PlayerDisplay.enableDebugLogging(config.getOptionValue(BingoOptions.ENABLE_DEBUG_LOGGING));
 
 
@@ -165,7 +168,7 @@ public class BingoReloaded extends JavaPlugin
         menuBoard.setPlayerOpenPredicate(player -> player instanceof Player p && this.gameManager.canPlayerOpenMenus(p));
 
         TabExecutor autoBingoCommand = new AutoBingoCommand(gameManager);
-        TabExecutor bingoConfigCommand = new BingoConfigCommand(this, config);
+        TabExecutor bingoConfigCommand = new BingoConfigCommand(config);
 
         registerCommand("bingo", new BingoCommand(this, config, gameManager, menuBoard));
         registerCommand("autobingo", autoBingoCommand);

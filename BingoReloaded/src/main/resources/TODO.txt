@@ -17,14 +17,13 @@
 
 (?) add progress view to tasks
 
+(?) add support to also edit NonSerializable config options
+
 (3.x) add /bingo info command to receive hover message of current game settings, game status, etc...
 (3.x) add custom resource pack
 (3.x) reimplement resource pack spacing inside the resource pack instead of using a separate pack
 (3.x) add way to view other teams' cards
-(3.x) add /bingoconfig command
-  - to see values of config values
-  - to change these values
-(3.x) add reload config command
+(3.x) add reload config command to reload all config options by saving the config.yml file externally
 (3.x) selector support on commands
 (3.x) add web editor for nbt files
 (3.x) implement card view placed on a map as the bingo card
@@ -32,12 +31,13 @@
 (3.x) add automatic updates to config.yml when starting server to add new options
 (3.x) add randomization of votes if the amount is the same
 (3.x) add spectator mode
+(3.x) transfer config additions automatically when updating
 
-(BUG) vote item does not appear when starting server sometimes
+(BUG) config.yml is not getting copied on server startup, making it use the default values when it should copy the existing config.yml file if available.
 (BUG) Load player data in a bingo world does not teleport the player out
 (BUG) advancement progress is not reset correctly? (MORE INFO NEEDED)
 (BUG) kicking a player from a bingo world displays teleportation failed error even though it worked (related to playerdata)
 (BUG) fix kickplayers for multiple players (has to do with an issue between loading player data and teleportevent from gamemanager)
-(BUG) spawn platform teleportation is too high wand teleportion isnt centered
+(BUG) spawn platform teleportation is too high wand teleportion isn't centered
 (BUG) singleplayer team scoreboard is messed up (should showplayer names instead)
 (BUG) (TESTING NEEDED) singleplayer teams kick players out of game when it ends, and not always back in again

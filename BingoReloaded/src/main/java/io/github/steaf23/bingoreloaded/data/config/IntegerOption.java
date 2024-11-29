@@ -1,5 +1,9 @@
 package io.github.steaf23.bingoreloaded.data.config;
 
+import io.github.steaf23.bingoreloaded.data.core.DataStorage;
+
+import java.util.Optional;
+
 public class IntegerOption extends ConfigurationOption<Integer>
 {
     private int min = Integer.MIN_VALUE;
@@ -30,7 +34,17 @@ public class IntegerOption extends ConfigurationOption<Integer>
     }
 
     @Override
-    public Integer fromString(String value) {
-        return Math.clamp(Integer.parseInt(value), min, max);
+    public Optional<Integer> fromString(String value) {
+        try {
+            int val = Integer.parseInt(value);
+            return Optional.of(Math.clamp(val, min, max));
+        } catch (NumberFormatException e) {
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    public void toDataStorage(DataStorage storage, Integer value) {
+        storage.setInt(getConfigName(), value);
     }
 }

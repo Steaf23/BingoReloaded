@@ -1,12 +1,15 @@
 package io.github.steaf23.bingoreloaded.data.config;
 
+import io.github.steaf23.bingoreloaded.data.core.configuration.ConfigDataAccessor;
+import io.github.steaf23.bingoreloaded.data.core.tag.TagDataType;
 import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
-import org.bukkit.configuration.file.FileConfiguration;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 public class BingoConfigurationData
@@ -20,9 +23,12 @@ public class BingoConfigurationData
 
     public record HotswapConfig (int minimumExpiration, int maximumExpiration, int recoveryTime, boolean showExpirationAsDurability){}
 
+    private final ConfigDataAccessor config;
+
     Map<ConfigurationOption<?>, Object> options;
 
-    public BingoConfigurationData(FileConfiguration config) {
+    public BingoConfigurationData(ConfigDataAccessor config) {
+        this.config = config;
         this.options = new HashMap<>();
 
         // General
@@ -44,14 +50,14 @@ public class BingoConfigurationData
         setOptionValue(BingoOptions.MINIMUM_PLAYER_COUNT, config.getInt("minimumPlayerCount", 4));
         setOptionValue(BingoOptions.PLAYER_WAIT_TIME, config.getInt("playerWaitTime", 30));
         setOptionValue(BingoOptions.GAME_RESTART_TIME, config.getInt("gameRestartTime", 20));
-        setOptionValue(BingoOptions.USE_VOTE_SYSTEM, config.getBoolean("useVoteSystem", false));
+        setOptionValue(BingoOptions.USE_VOTE_SYSTEM, config.getBoolean("useVoteSystem", true));
         //FIXME: implement
         setOptionValue(BingoOptions.PREVENT_PLAYER_GRIEFING, config.getBoolean("preventPlayerGriefing", true));
         setOptionValue(BingoOptions.VOTE_LIST, new VoteList(
-                config.getStringList("voteList.gamemodes"),
-                config.getStringList("voteList.kits"),
-                config.getStringList("voteList.cards"),
-                config.getStringList("voteList.cardsizes")));
+                config.getList("voteList.gamemodes", TagDataType.STRING),
+                config.getList("voteList.kits", TagDataType.STRING),
+                config.getList("voteList.cards", TagDataType.STRING),
+                config.getList("voteList.cardsizes", TagDataType.STRING)));
 
         // Gameplay
         setOptionValue(BingoOptions.STARTING_COUNTDOWN_TIME, config.getInt("startingCountdownTime", 10));
@@ -83,7 +89,7 @@ public class BingoConfigurationData
                 config.getString("loadPlayerInformationStrategy", "AFTER_LEAVING_WORLD")));
 
         // Configuration: MULTIPLE
-        setOptionValue(BingoOptions.DEFAULT_WORLDS, new ConfigurationOption.StringList(config.getStringList("defaultWorlds")));
+        setOptionValue(BingoOptions.DEFAULT_WORLDS, new ConfigurationOption.StringList(config.getList("defaultWorlds", TagDataType.STRING)));
         //FIXME: implement
         setOptionValue(BingoOptions.RESET_DEFAULT_WORLDS, config.getBoolean("resetDefaultWorlds", true));
     }
@@ -105,28 +111,35 @@ public class BingoConfigurationData
         return (DataType) options.get(option);
     }
 
-    public <DataType> void setOptionValue(@Nullable ConfigurationOption<DataType> option, DataType value) {
-        if (option == null) {
-            return;
-        }
+    public <DataType> void setOptionValue(@NotNull ConfigurationOption<DataType> option, DataType value) {
         options.put(option, value);
     }
 
-    public <DataType> void setOptionValueFromString(@Nullable ConfigurationOption<DataType> option, String value) {
-        if (option == null) {
-            return;
-        }
+    /**
+     * @return true if the value was set to the option successfully.
+     */
+    public <DataType> boolean setOptionValueFromString(@NotNull ConfigurationOption<DataType> option, String value) {
+        Optional<DataType> someValue = option.fromString(value);
 
-        options.put(option, option.fromString(value));
+        if (someValue.isPresent()) {
+            DataType val = someValue.get();
+            options.put(option, val);
+            //TODO: check if this needs to be done for setOptionValue as well...
+            option.toDataStorage(config, val);
+            config.saveChanges();
+            return true;
+        } else {
+            return false;
+        }
     }
 
-    public @Nullable ConfigurationOption<?> getOptionFromName(String name) {
+    public @NotNull Optional<ConfigurationOption<?>> getOptionFromName(String name) {
         for (var o : options.keySet()) {
             if (o.getConfigName().equals(name)) {
-                return o;
+                return Optional.of(o);
             }
         }
-        return null;
+        return Optional.empty();
     }
 
     public Set<ConfigurationOption<?>> getAvailableOptions() {
