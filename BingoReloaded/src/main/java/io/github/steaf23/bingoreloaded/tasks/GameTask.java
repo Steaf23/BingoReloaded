@@ -6,10 +6,12 @@ import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.tasks.data.AdvancementTask;
 import io.github.steaf23.bingoreloaded.tasks.data.ItemTask;
 import io.github.steaf23.bingoreloaded.tasks.data.StatisticTask;
+import io.github.steaf23.bingoreloaded.tasks.data.TaskData;
 import io.github.steaf23.bingoreloaded.util.timer.GameTimer;
 import io.github.steaf23.playerdisplay.inventory.item.ItemTemplate;
 import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import io.github.steaf23.playerdisplay.util.PDCHelper;
+import io.papermc.paper.advancement.AdvancementDisplay;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -55,9 +57,14 @@ public class GameTask
                 this.material = itemTask.material();
                 this.glowing = false;
             }
-            case AdvancementTask ignored -> {
+            case AdvancementTask advancementTask -> {
                 this.type = TaskType.ADVANCEMENT;
-                this.material = Material.FILLED_MAP;
+                AdvancementDisplay display = advancementTask.advancement().getDisplay();
+                if (display == null) {
+                    this.material = Material.FILLED_MAP;
+                } else {
+                    this.material = advancementTask.advancement().getDisplay().icon().getType();
+                }
                 this.glowing = true;
             }
             case StatisticTask statTask -> {

@@ -4,6 +4,7 @@ import io.github.steaf23.bingoreloaded.cards.CardSize;
 import io.github.steaf23.bingoreloaded.data.BingoCardData;
 import io.github.steaf23.bingoreloaded.data.TaskListData;
 import io.github.steaf23.bingoreloaded.tasks.data.ItemTask;
+import io.github.steaf23.bingoreloaded.tasks.data.TaskData;
 import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import org.bukkit.Material;
 

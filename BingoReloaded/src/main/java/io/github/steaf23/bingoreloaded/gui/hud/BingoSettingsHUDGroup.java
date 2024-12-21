@@ -43,7 +43,7 @@ public class BingoSettingsHUDGroup extends PlayerHUDGroup
         addSidebarArgument("card_size", settings.size().asComponent());
         addSidebarArgument("kit", settings.kit().getDisplayName());
         addSidebarArgument("team_size", config.getOptionValue(BingoOptions.SINGLE_PLAYER_TEAMS) ? Component.text("1").color(NamedTextColor.AQUA) : Component.text(Integer.toString(settings.maxTeamSize())));
-        addSidebarArgument("duration", settings.useCountdown() ? Component.text(Integer.toString(settings.maxTeamSize())) : Component.text("∞").color(NamedTextColor.AQUA));
+        addSidebarArgument("duration", settings.useCountdown() ? Component.text(Integer.toString(settings.countdownDuration())) : Component.text("∞").color(NamedTextColor.AQUA));
         addSidebarArgument("effects", EffectOptionFlags.effectsToText(settings.effects()));
 
         updateVisible();

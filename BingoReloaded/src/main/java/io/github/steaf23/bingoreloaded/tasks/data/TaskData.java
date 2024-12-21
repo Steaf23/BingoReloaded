@@ -1,4 +1,4 @@
-package io.github.steaf23.bingoreloaded.tasks;
+package io.github.steaf23.bingoreloaded.tasks.data;
 
 import net.kyori.adventure.text.Component;
 import org.bukkit.persistence.PersistentDataContainer;
