@@ -3,6 +3,7 @@ package io.github.steaf23.bingoreloaded.data;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.core.DataAccessor;
 import io.github.steaf23.playerdisplay.PlayerDisplay;
+import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import io.github.steaf23.playerdisplay.util.TinyCaps;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.audience.Audience;
@@ -57,7 +58,6 @@ public enum BingoMessage
     DEATHMATCH_SEARCH("game.deathmatch.search"),
     DEATHMATCH_ITEM("game.deathmatch.item"),
     BINGO("game.end.bingo"),
-    RESTART("game.end.restart"),
     LEAVE("game.player.leave"),
     NOT_STARTED("game.player.no_start"),
     NO_PLAYER_CARD("game.player.no_card"),
@@ -65,6 +65,7 @@ public enum BingoMessage
     RESPAWN("game.player.respawn"),
     RESPAWN_EXPIRED("game.player.respawn_expired"),
     NO_JOIN("game.team.no_join"),
+    SPECTATOR_JOIN("game.team.spectator_join"),
     JOIN("game.team.join"),
     JOIN_AUTO("game.team.join_auto"),
     DROPPED("game.team.dropped"),
@@ -174,6 +175,9 @@ public enum BingoMessage
 
     public static void setLanguage(DataAccessor text, DataAccessor fallbackText) {
         for (BingoMessage value : BingoMessage.values()) {
+            if (!text.contains(value.key)) {
+                ConsoleMessenger.log(PlayerDisplay.MINI_BUILDER.deserialize("The message '<yellow>" + value.key + "</yellow>' in translation file <blue>" + text.getLocation() + text.getFileExtension() + "</blue> has no translation, using fallback (<green>English</green>)"));
+            }
             value.translation = text.getString(value.key, fallbackText.getString(value.key, value.translation));
         }
     }

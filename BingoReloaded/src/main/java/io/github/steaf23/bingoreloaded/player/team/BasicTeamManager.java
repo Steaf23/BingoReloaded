@@ -16,6 +16,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.ArrayList;
@@ -338,12 +339,11 @@ public class BasicTeamManager implements TeamManager
         }
 
         if (session.isRunning()) {
-            BingoMessage.NO_JOIN.sendToAudience(event.getPlayer());
+            event.getPlayer().setGameMode(GameMode.SPECTATOR);
+            BingoMessage.SPECTATOR_JOIN.sendToAudience(event.getPlayer());
             return;
         }
 
-        if (getPlayerAsParticipant(event.getPlayer()) == null) {
-            addMemberToTeam(new BingoPlayer(event.getPlayer(), session), "auto");
-        }
+        addMemberToTeam(new BingoPlayer(event.getPlayer(), session), "auto");
     }
 }

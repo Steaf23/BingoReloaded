@@ -72,6 +72,7 @@ import org.bukkit.util.Vector;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.Console;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -599,6 +600,11 @@ public class BingoGame implements GamePhase
         BingoParticipant participant = getTeamManager().getPlayerAsParticipant(event.getPlayer());
         if (participant == null || participant.sessionPlayer().isEmpty())
             return;
+
+        // Spectators should not be able to interact with custom items.
+        if (participant.sessionPlayer().get().getGameMode() == GameMode.SPECTATOR) {
+            return;
+        }
 
         if (event.getItem() == null || event.getItem().getType().isAir())
             return;

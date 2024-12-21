@@ -16,6 +16,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.util.HSVLike;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.jetbrains.annotations.NotNull;
 
@@ -159,7 +160,7 @@ public class SoloTeamManager implements TeamManager
 
     @Override
     public void handlePlayerJoinedSessionWorld(PlayerJoinedSessionWorldEvent event) {
-        ConsoleMessenger.log(event.getPlayer().displayName().append(Component.text(" joined world")), session.getOverworld().getName());
+        ConsoleMessenger.log(event.getPlayer().displayName().append(Component.text(" joined world")).color(NamedTextColor.GOLD), session.getOverworld().getName());
 
         BingoParticipant participant = getPlayerAsParticipant(event.getPlayer());
         if (participant != null) {
@@ -171,18 +172,17 @@ public class SoloTeamManager implements TeamManager
         }
 
         if (session.isRunning()) {
-            BingoMessage.NO_JOIN.sendToAudience(event.getPlayer());
+            event.getPlayer().setGameMode(GameMode.SPECTATOR);
+            BingoMessage.SPECTATOR_JOIN.sendToAudience(event.getPlayer());
             return;
         }
 
-        if (getPlayerAsParticipant(event.getPlayer()) == null) {
-            addMemberToTeam(new BingoPlayer(event.getPlayer(), session), "auto");
-        }
+        addMemberToTeam(new BingoPlayer(event.getPlayer(), session), "auto");
     }
 
     @Override
     public void handlePlayerLeftSessionWorld(PlayerLeftSessionWorldEvent event) {
-        ConsoleMessenger.log(event.getPlayer().displayName().append(Component.text(" left world")), session.getOverworld().getName());
+        ConsoleMessenger.log(event.getPlayer().displayName().append(Component.text(" left world")).color(NamedTextColor.GOLD), session.getOverworld().getName());
     }
 
     private void removeMemberFromTeamSilently(@NotNull BingoParticipant member) {
