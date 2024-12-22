@@ -174,7 +174,6 @@ public class BingoReloaded extends JavaPlugin
         registerCommand("autobingo", autoBingoCommand);
         registerCommand("bingoconfig", bingoConfigCommand);
         registerCommand("bingotest", new BingoTestCommand(this, menuBoard));
-//        registerCommand("bingobot", new BotCommand(gameManager));
         if (config.getOptionValue(BingoOptions.ENABLE_TEAM_CHAT)) {
             TeamChatCommand command = new TeamChatCommand(player -> gameManager.getSessionFromWorld(player.getWorld()));
             registerCommand("btc", command);

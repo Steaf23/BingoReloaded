@@ -89,9 +89,16 @@ public class BingoGameHUDGroup extends PlayerHUDGroup
         teamManager.getActiveTeams().getTeams().stream()
                 .sorted(Comparator.comparingInt(BingoTeam::getCompleteCount).reversed())
                 .forEach(team -> {
-                    Component teamScore = team.getPrefix()
-                            .append(Component.text(": ", NamedTextColor.WHITE)
-                                    .append(Component.text(teamScores.get(team.getIdentifier())).decorate(TextDecoration.BOLD)));
+                    Component teamScore;
+                    // In the case of the solo teams, we want to show the player names instead of the team prefix (since that is just an icon)
+                    if (teamManager instanceof SoloTeamManager) {
+                        teamScore = team.getColoredName();
+                    } else {
+                        teamScore = team.getPrefix();
+                    }
+                    teamScore = teamScore.append(Component.text(": ", NamedTextColor.WHITE)
+                            .append(Component.text(teamScores.get(team.getIdentifier())).decorate(TextDecoration.BOLD)));
+
                     teamInfo.add(teamScore);
 
                     if (!condensedDisplay) {

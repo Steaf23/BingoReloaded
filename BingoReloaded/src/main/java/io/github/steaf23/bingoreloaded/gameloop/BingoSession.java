@@ -1,6 +1,7 @@
 package io.github.steaf23.bingoreloaded.gameloop;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
+import io.github.steaf23.bingoreloaded.command.BotCommand;
 import io.github.steaf23.bingoreloaded.data.BingoCardData;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
@@ -91,6 +92,8 @@ public class BingoSession implements ForwardingAudience
 
         this.teamDisplay = new TeamDisplay(this);
         this.phase = null;
+
+        BingoReloaded.getInstance().registerCommand("bingobot", new BotCommand(this));
 
         BingoReloaded.scheduleTask((t) -> {
             for (Player p : Bukkit.getOnlinePlayers()) {
