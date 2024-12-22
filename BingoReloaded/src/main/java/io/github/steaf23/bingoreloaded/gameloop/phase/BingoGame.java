@@ -389,29 +389,26 @@ public class BingoGame implements GamePhase
     public static void spawnPlatform(Location platformLocation, int size, boolean clearArea) {
         for (int x = -size; x < size + 1; x++) {
             for (int z = -size; z < size + 1; z++) {
-                if (!platformLocation.getWorld().getType(
-                        (int) platformLocation.getX() + x,
-                        (int) platformLocation.getY(),
-                        (int) platformLocation.getZ() + z).isSolid()) {
-                    platformLocation.getWorld().setType(
-                            (int) platformLocation.getX() + x,
-                            (int) platformLocation.getY(),
-                            (int) platformLocation.getZ() + z,
-                            Material.WHITE_STAINED_GLASS);
+                Location blockLoc = platformLocation.clone();
+                blockLoc.setX(blockLoc.getBlockX() + x);
+                blockLoc.setZ(blockLoc.getBlockZ() + z);
+                if (!platformLocation.getWorld().getType(blockLoc).isSolid()) {
+                    platformLocation.getWorld().setType(blockLoc, Material.WHITE_STAINED_GLASS);
                 }
             }
         }
 
-        if (clearArea) {
-            for (int y = 1; y < 6; y++) {
-                for (int x = -size; x < size + 1; x++) {
-                    for (int z = -size; z < size + 1; z++) {
-                        platformLocation.getWorld().setType(
-                                (int) platformLocation.getX() + x,
-                                (int) platformLocation.getY() + y,
-                                (int) platformLocation.getZ() + z,
-                                Material.AIR);
-                    }
+        if (!clearArea) {
+            return;
+        }
+        for (int y = 1; y < 6; y++) {
+            for (int x = -size; x < size + 1; x++) {
+                for (int z = -size; z < size + 1; z++) {
+                    platformLocation.getWorld().setType(
+                            (int) platformLocation.getBlockX() + x,
+                            (int) platformLocation.getBlockY() + y,
+                            (int) platformLocation.getBlockZ() + z,
+                            Material.AIR);
                 }
             }
         }
@@ -420,15 +417,11 @@ public class BingoGame implements GamePhase
     public static void removePlatform(Location platformLocation, int size) {
         for (int x = -size; x < size + 1; x++) {
             for (int z = -size; z < size + 1; z++) {
-                if (platformLocation.getWorld().getType(
-                        (int) platformLocation.getX() + x,
-                        (int) platformLocation.getY(),
-                        (int) platformLocation.getZ() + z) == Material.WHITE_STAINED_GLASS) {
-                    platformLocation.getWorld().setType(
-                            (int) platformLocation.getX() + x,
-                            (int) platformLocation.getY(),
-                            (int) platformLocation.getZ() + z,
-                            Material.AIR);
+                Location blockLoc = platformLocation.clone();
+                blockLoc.setX(blockLoc.getBlockX() + x);
+                blockLoc.setZ(blockLoc.getBlockZ() + z);
+                if (platformLocation.getWorld().getType(blockLoc) == Material.WHITE_STAINED_GLASS) {
+                    platformLocation.getWorld().setType(blockLoc, Material.AIR);
                 }
             }
         }
@@ -440,14 +433,13 @@ public class BingoGame implements GamePhase
             case ALONE -> {
                 for (BingoParticipant p : getTeamManager().getParticipants()) {
                     Location platformLocation = getRandomSpawnLocation(world);
-                    teleportPlayerToStart(p, platformLocation, 5);
-
                     if (!getTeamManager().getParticipants().isEmpty()) {
                         spawnPlatform(platformLocation.clone(), 5, true);
 
                         BingoReloaded.scheduleTask(task ->
                                 BingoGame.removePlatform(platformLocation, 5), (long) (Math.max(0, gracePeriod - 5)) * BingoReloaded.ONE_SECOND);
                     }
+                    teleportPlayerToStart(p, platformLocation, 5);
                 }
             }
             case TEAM -> {
@@ -455,26 +447,26 @@ public class BingoGame implements GamePhase
                     Location teamLocation = getRandomSpawnLocation(world);
 
                     Set<BingoParticipant> players = t.getMembers();
-                    players.forEach(p -> teleportPlayerToStart(p, teamLocation, 5));
-
                     if (!players.isEmpty()) {
                         spawnPlatform(teamLocation, 5, true);
 
                         BingoReloaded.scheduleTask(task ->
                                 BingoGame.removePlatform(teamLocation, 5), (long) (Math.max(0, gracePeriod - 5)) * BingoReloaded.ONE_SECOND);
                     }
+                    players.forEach(p -> teleportPlayerToStart(p, teamLocation, 5));
                 }
             }
             case ALL -> {
                 Location spawnLocation = getRandomSpawnLocation(world);
-                Set<BingoParticipant> players = getTeamManager().getParticipants();
-                players.forEach(p -> teleportPlayerToStart(p, spawnLocation, 5));
                 if (!getTeamManager().getParticipants().isEmpty()) {
                     spawnPlatform(spawnLocation, 5, true);
 
                     BingoReloaded.scheduleTask(task ->
                             BingoGame.removePlatform(spawnLocation, 5), (long) (Math.max(0, gracePeriod - 5)) * BingoReloaded.ONE_SECOND);
                 }
+
+                Set<BingoParticipant> players = getTeamManager().getParticipants();
+                players.forEach(p -> teleportPlayerToStart(p, spawnLocation, 5));
             }
             default -> {
             }
@@ -488,7 +480,7 @@ public class BingoGame implements GamePhase
 
         Vector placement = Vector.getRandom().multiply(spread * 2).add(new Vector(-spread, -spread, -spread));
         Location playerLocation = to.clone().add(placement);
-        playerLocation.setY(playerLocation.getY() + 10.0);
+        playerLocation.setY(playerLocation.getY() + 5.0);
         player.teleport(playerLocation, PlayerTeleportEvent.TeleportCause.PLUGIN);
         Location spawnLocation = to.clone().add(0.0, 2.0, 0.0);
         player.setRespawnLocation(spawnLocation, true);

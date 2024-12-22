@@ -32,12 +32,11 @@
 (3.x) add randomization of votes if the amount is the same
 (3.x) add spectator mode
 (3.x) transfer config additions automatically when updating
+(3.x) put automatic team members into random teams instead of the same ones every time (looking at you magenta...)
 
 (BUG) config.yml is not getting copied on server startup, making it use the default values when it should copy the existing config.yml file if available.
 (BUG) Load player data in a bingo world does not teleport the player out
 (BUG) advancement progress is not reset correctly? (MORE INFO NEEDED)
 (BUG) kicking a player from a bingo world displays teleportation failed error even though it worked (related to playerdata)
 (BUG) fix kickplayers for multiple players (has to do with an issue between loading player data and teleportevent from gamemanager)
-(BUG) spawn platform teleportation is too high wand teleportion isn't centered
-(BUG) singleplayer team scoreboard is messed up (should showplayer names instead)
 (BUG) (TESTING NEEDED) singleplayer teams kick players out of game when it ends, and not always back in again

@@ -296,21 +296,21 @@ public class BingoPlayer implements BingoParticipant
             }
             else
             {
-                distance = upDistance + 5;
-                fallDistance = 5.0;
+                distance = upDistance;
+                fallDistance = 2.0;
             }
 
-            Location newLocation = player.getLocation();
-            newLocation.setY(newLocation.getY() + distance + fallDistance);
-            player.teleport(newLocation, PlayerTeleportEvent.TeleportCause.PLUGIN);
-            newLocation.setY(newLocation.getY() - fallDistance);
+            Location teleportLocation = player.getLocation();
+            Location platformLocation = teleportLocation.clone();
+            teleportLocation.setY(teleportLocation.getY() + distance + fallDistance);
+            platformLocation.setY(platformLocation.getY() + distance);
 
-            BingoGame.spawnPlatform(newLocation, 1, true);
-
+            BingoGame.spawnPlatform(platformLocation, 1, true);
             BingoReloaded.scheduleTask(laterTask -> {
-                BingoGame.removePlatform(newLocation, 1);
+                BingoGame.removePlatform(platformLocation, 1);
             }, (long) Math.max(0, platformLifetimeSeconds) * BingoReloaded.ONE_SECOND);
 
+            player.teleport(teleportLocation);
             player.playSound(player, Sound.ENTITY_SHULKER_TELEPORT, 0.8f, 1.0f);
             player.addPotionEffect(new PotionEffect(PotionEffectType.RESISTANCE, BingoReloaded.ONE_SECOND * 10, 100, false, false));
 
