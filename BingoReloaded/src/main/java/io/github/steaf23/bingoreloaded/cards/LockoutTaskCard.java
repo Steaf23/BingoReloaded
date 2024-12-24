@@ -58,6 +58,11 @@ public class LockoutTaskCard extends TaskCard
         return this;
     }
 
+    @Override
+    public boolean canGenerateSeparateCards() {
+        return false;
+    }
+
 
     public void dropTeam(BingoTeam team, BingoSession session) {
         if (team.outOfTheGame) {

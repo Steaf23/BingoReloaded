@@ -38,4 +38,9 @@ public class CompleteTaskCard extends TaskCard
         card.setTasks(newTasks);
         return card;
     }
+
+    @Override
+    public boolean canGenerateSeparateCards() {
+        return true;
+    }
 }

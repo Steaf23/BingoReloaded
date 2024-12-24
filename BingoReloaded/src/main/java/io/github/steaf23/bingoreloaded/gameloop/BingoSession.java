@@ -312,7 +312,7 @@ public class BingoSession implements ForwardingAudience
         event.setTo(targetlocation);
     }
 
-    public MenuBoard getMenuManager() {
+    public MenuBoard getMenuBoard() {
         return menuBoard;
     }
 

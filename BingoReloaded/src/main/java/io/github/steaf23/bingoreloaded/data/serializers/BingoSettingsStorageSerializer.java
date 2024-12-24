@@ -31,6 +31,7 @@ public class BingoSettingsStorageSerializer implements DataStorageSerializer<Bin
         storage.setInt("hotswap_goal", value.hotswapGoal());
         storage.setBoolean("expire_hotswap_tasks", value.expireHotswapTasks());
         storage.setInt("complete_goal", value.completeGoal());
+        storage.setBoolean("different_card_per_team", value.differentCardPerTeam());
     }
 
     @Override
@@ -48,7 +49,8 @@ public class BingoSettingsStorageSerializer implements DataStorageSerializer<Bin
                 storage.getInt("duration", 0),
                 storage.getInt("hotswap_goal", 10),
                 storage.getBoolean("expire_hotswap_tasks", true),
-                storage.getInt("complete_goal", size.fullCardSize)
+                storage.getInt("complete_goal", size.fullCardSize),
+                storage.getBoolean("different_card_per_team", false)
         );
     }
 

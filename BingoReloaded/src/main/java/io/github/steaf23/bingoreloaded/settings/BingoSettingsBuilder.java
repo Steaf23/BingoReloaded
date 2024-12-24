@@ -27,6 +27,7 @@ public class BingoSettingsBuilder
     private int hotswapGoal;
     private boolean expireHotswapTasks;
     private int completeGoal;
+    private boolean differentCardPerTeam;
 
     public BingoSettingsBuilder(BingoSession session)
     {
@@ -48,6 +49,7 @@ public class BingoSettingsBuilder
         this.countdownType = def.countdownType();
         this.hotswapGoal = def.hotswapGoal();
         this.completeGoal = def.completeGoal();
+        this.differentCardPerTeam = def.differentCardPerTeam();
     }
 
     public void fromOther(BingoSettings settings)
@@ -63,6 +65,7 @@ public class BingoSettingsBuilder
         countdownType = settings.countdownType();
         hotswapGoal = settings.hotswapGoal();
         completeGoal = settings.completeGoal();
+        differentCardPerTeam = settings.differentCardPerTeam();
         settingsUpdated();
     }
 
@@ -214,6 +217,14 @@ public class BingoSettingsBuilder
         return this;
     }
 
+    public BingoSettingsBuilder differentCardPerTeam(boolean value) {
+        if (this.differentCardPerTeam != value) {
+            this.differentCardPerTeam = value;
+            settingsUpdated();
+        }
+        return this;
+    }
+
     public BingoSettings view()
     {
         return new BingoSettings(
@@ -228,7 +239,8 @@ public class BingoSettingsBuilder
                 countdownGameDuration,
                 hotswapGoal,
                 expireHotswapTasks,
-                completeGoal);
+                completeGoal,
+                differentCardPerTeam);
     }
 
     public void settingsUpdated()

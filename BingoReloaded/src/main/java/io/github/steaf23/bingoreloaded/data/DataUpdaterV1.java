@@ -268,7 +268,8 @@ public class DataUpdaterV1
                         oldSettings.countdownDuration(),
                         oldSettings.hotswapGoal(),
                         true,
-                        oldSettings.size.fullCardSize
+                        oldSettings.size.fullCardSize,
+                        false
                 ));
             }
         }

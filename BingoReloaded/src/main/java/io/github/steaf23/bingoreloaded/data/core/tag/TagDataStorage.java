@@ -338,12 +338,13 @@ public class TagDataStorage implements DataStorage
     @Override
     public boolean getBoolean(String path) {
         Boolean bool = TagDataType.BOOLEAN.fromTagOrNull(get(path));
-        return bool != null && bool;
+        return bool != null ? bool : false;
     }
 
     @Override
     public boolean getBoolean(String path, boolean def) {
-        return TagDataType.BOOLEAN.fromTagOrNull(get(path));
+        Boolean bool = TagDataType.BOOLEAN.fromTagOrNull(get(path));
+        return bool != null ? bool : def;
     }
 
     @Override

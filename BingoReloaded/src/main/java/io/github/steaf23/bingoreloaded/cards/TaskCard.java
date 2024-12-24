@@ -31,21 +31,13 @@ public abstract class TaskCard
 
     public abstract boolean hasTeamWon(BingoTeam team);
     public abstract TaskCard copy();
+    public abstract boolean canGenerateSeparateCards();
 
     /**
-     * Generating a bingo card has a few steps:
-     * - Create task shuffler
-     * - Create a ticketlist. This list contains a list name for each task on the card,
-     * based on how often an item from that list should appear on the card.
-     * - Using the ticketlist, pick a random task from each ticketlist entry to put on the card.
-     * - Finally shuffle the tasks and add them to the card.
-     * If the final task count is lower than the amount of spaces available on the card, it will be filled up using default tasks.
-     *
-     * @param cardName name of the card to pick tasks from.
-     * @param seed cards generated with the same seed and cardName will have the same tasks in the same positions.
+     * @param settings settings to use for card generation.
      */
-    public void generateCard(String cardName, int seed, boolean withAdvancements, boolean withStatistics) {
-        setTasks(TaskGenerator.generateCardTasks(cardName, seed, withAdvancements, withStatistics, size));
+    public void generateCard(TaskGenerator.GeneratorSettings settings) {
+        setTasks(TaskGenerator.generateCardTasks(settings));
     }
 
     public void showInventory(Player player) {

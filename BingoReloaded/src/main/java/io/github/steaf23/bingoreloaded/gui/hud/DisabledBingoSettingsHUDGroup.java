@@ -5,6 +5,7 @@ import io.github.steaf23.bingoreloaded.settings.BingoSettings;
 import io.github.steaf23.playerdisplay.scoreboard.HUDRegistry;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -33,6 +34,6 @@ public class DisabledBingoSettingsHUDGroup extends BingoSettingsHUDGroup
     }
 
     @Override
-    public void setStatus(Component status) {
+    public void setStatus(@NotNull Component status) {
     }
 }

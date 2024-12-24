@@ -20,6 +20,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
+import org.bukkit.inventory.ItemType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,8 +30,7 @@ public class GamemodeOptionsMenu extends BasicMenu
 {
     private final BingoSession session;
 
-    public GamemodeOptionsMenu(MenuBoard menuBoard, BingoSession session)
-    {
+    public GamemodeOptionsMenu(MenuBoard menuBoard, BingoSession session) {
         super(menuBoard, Component.text("Select Gamemode"), 1);
         this.session = session;
 
@@ -68,7 +68,6 @@ public class GamemodeOptionsMenu extends BasicMenu
                         "Only effective if countdown mode is disabled"));
             });
             optionMenu.addAction(completeGoalItem, goalAction);
-            additionalOptions.add(settings -> settings.completeGoal(goalAction.getValue()));
 
         } else if (chosenMode == BingoGamemode.HOTSWAP) {
             int hotswapGoal = session.settingsBuilder.view().hotswapGoal();
@@ -93,6 +92,20 @@ public class GamemodeOptionsMenu extends BasicMenu
             });
             optionMenu.addAction(hotswapExpireItem, toggleExpireTasksAction);
             additionalOptions.add(settings -> settings.expireHotswapTasks(toggleExpireTasksAction.getValue()));
+        }
+
+        // Generate separate card per team option
+        if (chosenMode == BingoGamemode.REGULAR || chosenMode == BingoGamemode.COMPLETE) {
+            int slot = chosenMode == BingoGamemode.REGULAR ? 5 : 6;
+            boolean separateGeneration = session.settingsBuilder.view().differentCardPerTeam();
+            ItemTemplate separateGenerationItem = new ItemTemplate(slot, Material.GLOBE_BANNER_PATTERN, BasicMenu.applyTitleFormat("Different cards generated per team"));
+            updateSeparateGenerationVisual(separateGenerationItem, separateGeneration);
+            ToggleButtonAction separateGenerationAction = new ToggleButtonAction(separateGeneration, newValue -> {
+                session.settingsBuilder.differentCardPerTeam(newValue);
+                updateSeparateGenerationVisual(separateGenerationItem, newValue);
+            });
+            optionMenu.addAction(separateGenerationItem, separateGenerationAction);
+            additionalOptions.add(settings -> settings.differentCardPerTeam(separateGenerationAction.getValue()));
         }
 
         optionMenu.addCloseAction(new ItemTemplate(0, Material.REDSTONE, BingoMessage.MENU_EXIT.asPhrase().color(NamedTextColor.RED).decorate(TextDecoration.BOLD)));
@@ -120,11 +133,18 @@ public class GamemodeOptionsMenu extends BasicMenu
             item.setLore(
                     Component.text("Tasks always expire when they get completed, however..."),
                     PlayerDisplay.MINI_BUILDER.deserialize("Tasks <red>EXPIRE</red> automatically after some random amount of time"));
-        }
-        else {
+        } else {
             item.setLore(
                     Component.text("Tasks always expire when they get completed, however..."),
                     PlayerDisplay.MINI_BUILDER.deserialize("Tasks <gray>DO NOT EXPIRE</gray> automatically after some random amount of time"));
+        }
+    }
+
+    private static void updateSeparateGenerationVisual(ItemTemplate item, boolean enabled) {
+        if (enabled) {
+            item.setLore(PlayerDisplay.MINI_BUILDER.deserialize(("Different teams get <red>DIFFERENT</red> cards")));
+        } else {
+            item.setLore(PlayerDisplay.MINI_BUILDER.deserialize(("Different teams get <gray>THE SAME</gray> cards")));
         }
     }
 

@@ -17,22 +17,33 @@ import java.util.Random;
 
 public class TaskGenerator
 {
+    public record GeneratorSettings(String cardName, int seed, boolean includeAdvancements, boolean includeStatistics, CardSize size) {}
+
     private static final TaskData DEFAULT_TASK = new ItemTask(Material.DIRT, 1);
 
-    public static List<GameTask> generateCardTasks(String cardName, int seed, boolean withAdvancements, boolean withStatistics, CardSize size) {
+    /**
+     * Generating a bingo card has a few steps:
+     * - Create task shuffler
+     * - Create a ticketlist. This list contains a list name for each task on the card,
+     * based on how often an item from that list should appear on the card.
+     * - Using the ticketlist, pick a random task from each ticketlist entry to put on the card.
+     * - Finally shuffle the tasks and add them to the card.
+     * If the final task count is lower than the amount of spaces available on the card, it will be filled up using default tasks.
+     */
+    public static List<GameTask> generateCardTasks(GeneratorSettings settings) {
         BingoCardData cardsData = new BingoCardData();
         TaskListData listsData = cardsData.lists();
         // Create shuffler
         Random shuffler;
-        if (seed == 0) {
+        if (settings.seed == 0) {
             shuffler = new Random();
         } else {
-            shuffler = new Random(seed);
+            shuffler = new Random(settings.seed);
         }
 
         Map<String, List<TaskData>> taskMap = new HashMap<>();
-        for (String listName : cardsData.getListNames(cardName)) {
-            List<TaskData> tasks = new ArrayList<>(listsData.getTasks(listName, withStatistics, withAdvancements));
+        for (String listName : cardsData.getListNames(settings.cardName)) {
+            List<TaskData> tasks = new ArrayList<>(listsData.getTasks(listName, settings.includeStatistics, settings.includeAdvancements));
             if (!tasks.isEmpty()) {
                 Collections.shuffle(tasks, shuffler);
                 taskMap.put(listName, tasks);
@@ -41,20 +52,20 @@ public class TaskGenerator
 
         // Create ticketList
         List<String> ticketList = new ArrayList<>();
-        for (String listName : cardsData.getListsSortedByMin(cardName)) {
+        for (String listName : cardsData.getListsSortedByMin(settings.cardName)) {
             if (!taskMap.containsKey(listName)) {
                 continue;
             }
 
-            int proportionalMin = Math.max(1, cardsData.getListMin(cardName, listName));
+            int proportionalMin = Math.max(1, cardsData.getListMin(settings.cardName, listName));
             for (int i = 0; i < proportionalMin; i++) {
                 ticketList.add(listName);
             }
         }
         List<String> overflowList = new ArrayList<>();
-        for (String listName : cardsData.getListNames(cardName)) {
-            int listMin = cardsData.getListMin(cardName, listName);
-            int listMax = cardsData.getListMax(cardName, listName);
+        for (String listName : cardsData.getListNames(settings.cardName)) {
+            int listMin = cardsData.getListMin(settings.cardName, listName);
+            int listMax = cardsData.getListMax(settings.cardName, listName);
 
             if (!taskMap.containsKey(listName)) {
                 continue;
@@ -67,10 +78,13 @@ public class TaskGenerator
                 overflowList.add(listName);
             }
         }
+
+        int fullCardSize = settings.size.fullCardSize;
+
         Collections.shuffle(overflowList, shuffler);
         ticketList.addAll(overflowList);
-        if (ticketList.size() > size.fullCardSize)
-            ticketList = ticketList.subList(0, size.fullCardSize);
+        if (ticketList.size() > fullCardSize)
+            ticketList = ticketList.subList(0, fullCardSize);
 
         // Pick random tasks
         List<TaskData> newTasks = new ArrayList<>();
@@ -84,10 +98,10 @@ public class TaskGenerator
                 ConsoleMessenger.error("Found empty task list '" + listName + "'.");
             }
         }
-        while (newTasks.size() < size.fullCardSize) {
+        while (newTasks.size() < fullCardSize) {
             newTasks.add(DEFAULT_TASK);
         }
-        newTasks = newTasks.subList(0, size.fullCardSize);
+        newTasks = newTasks.subList(0, fullCardSize);
 
         // Shuffle and add tasks to the card.
         Collections.shuffle(newTasks, shuffler);

@@ -12,7 +12,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * Manager of multiple player HUDs, to show similar contents, but allows for per-player options as well
@@ -25,7 +24,7 @@ public class BingoSettingsHUDGroup extends PlayerHUDGroup
         super(registry);
         this.settingsBoardTemplate = new ScoreboardData().loadTemplate("lobby", registeredFields);
 
-        setStatus(null);
+        setStatus(Component.empty());
     }
 
     @Override
@@ -33,8 +32,8 @@ public class BingoSettingsHUDGroup extends PlayerHUDGroup
         return new TemplatedPlayerHUD(player, "Bingo Settings", settingsBoardTemplate);
     }
 
-    public void setStatus(@Nullable Component status) {
-        addSidebarArgument("status", status == null ? status : status.color(NamedTextColor.RED));
+    public void setStatus(@NotNull Component status) {
+        addSidebarArgument("status", status.color(NamedTextColor.RED));
         updateVisible();
     }
 

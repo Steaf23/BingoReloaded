@@ -21,7 +21,8 @@ public record BingoSettings(String card,
                             int countdownDuration,
                             int hotswapGoal,
                             boolean expireHotswapTasks,
-                            int completeGoal)
+                            int completeGoal,
+                            boolean differentCardPerTeam)
 {
     public enum CountdownType implements Keyed
     {

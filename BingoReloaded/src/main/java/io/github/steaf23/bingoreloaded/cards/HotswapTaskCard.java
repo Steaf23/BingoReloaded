@@ -12,6 +12,7 @@ import io.github.steaf23.bingoreloaded.gui.inventory.card.HotswapCardMenu;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.tasks.GameTask;
+import io.github.steaf23.bingoreloaded.tasks.TaskGenerator;
 import io.github.steaf23.bingoreloaded.tasks.data.TaskData;
 import io.github.steaf23.bingoreloaded.tasks.data.ItemTask;
 import io.github.steaf23.bingoreloaded.tasks.tracker.TaskProgressTracker;
@@ -100,20 +101,25 @@ public class HotswapTaskCard extends TaskCard
         return this;
     }
 
+    @Override
+    public boolean canGenerateSeparateCards() {
+        return false;
+    }
+
     /**
      * Overridden to set up the task generator
      */
     @Override
-    public void generateCard(String cardName, int seed, boolean withAdvancements, boolean withStatistics) {
-        super.generateCard(cardName, seed, withAdvancements, withStatistics);
+    public void generateCard(TaskGenerator.GeneratorSettings settings) {
+        super.generateCard(settings);
 
-        if (seed != 0) {
-            randomExpiryProvider.setSeed(seed);
+        if (settings.seed() != 0) {
+            randomExpiryProvider.setSeed(settings.seed());
         }
 
         bingoTaskGenerator = () -> {
             if (randomTasks.isEmpty()) {
-                randomTasks.addAll(cardData.getAllTasks(cardName, withStatistics, withAdvancements));
+                randomTasks.addAll(cardData.getAllTasks(settings.cardName(), settings.includeStatistics(), settings.includeAdvancements()));
                 // Do not add the tasks that are currently on the card.
                 // This will result in less duplicates overall when cycling through tasks.
                 randomTasks.removeIf(data -> {

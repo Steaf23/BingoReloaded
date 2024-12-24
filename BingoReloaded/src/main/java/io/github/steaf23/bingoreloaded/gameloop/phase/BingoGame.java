@@ -49,6 +49,7 @@ import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -139,23 +140,20 @@ public class BingoGame implements GamePhase
 
         // Generate cards
         boolean useAdvancements = !(BingoReloaded.areAdvancementsDisabled() || config.getOptionValue(BingoOptions.DISABLE_ADVANCEMENTS));
-        TaskCard masterCard = CardFactory.fromGame(session.getMenuManager(), this, PlayerDisplay.useCustomTextures());
-        masterCard.generateCard(settings.card(), settings.seed(), useAdvancements, !config.getOptionValue(BingoOptions.DISABLE_STATISTICS));
-        if (masterCard instanceof LockoutTaskCard lockoutCard) {
-            lockoutCard.teamCount = getTeamManager().getTeamCount();
-        }
-        Set<TaskCard> uniqueCards = new HashSet<>();
+
+        Set<TaskCard> uniqueCards = CardFactory.generateCardsForGame(this, session.getMenuBoard(), PlayerDisplay.useCustomTextures(), useAdvancements, !config.getOptionValue(BingoOptions.DISABLE_STATISTICS));
         getTeamManager().getActiveTeams().forEach(t -> {
-            t.outOfTheGame = false;
-            TaskCard card = masterCard.copy();
-            t.setCard(card);
-            uniqueCards.add(card);
-            renderers.put(t, new BingoCardMapRenderer(BingoReloaded.getInstance(), card, t));
+            Optional<TaskCard> card = t.getCard();
+            card.ifPresentOrElse(
+                    c -> renderers.put(t, new BingoCardMapRenderer(BingoReloaded.getInstance(), c, t)),
+                    () -> ConsoleMessenger.bug("Could not generate card for team " + PlainTextComponentSerializer.plainText().serialize(t.getColoredName()), this)
+            );
         });
 
         BingoMessage.GIVE_CARDS.sendToAudience(session);
         teleportPlayersToStart(world);
 
+        // Show settings to player inside a hover message
         Component hoverMessage = Component.text()
                 .append(BingoMessage.OPTIONS_GAMEMODE.asPhrase()).append(Component.text(": "))
                 .append(settings.mode().asComponent())
