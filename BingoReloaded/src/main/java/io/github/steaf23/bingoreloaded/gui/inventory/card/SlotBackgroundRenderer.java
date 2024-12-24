@@ -8,6 +8,9 @@ import net.kyori.adventure.text.format.TextColor;
 
 import java.util.Map;
 
+/**
+ * Used when useResourcePack is enabled
+ */
 public class SlotBackgroundRenderer
 {
     public static final int SLOT_TEXTURE_WIDTH = 18;

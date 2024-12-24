@@ -35,6 +35,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.BiFunction;
 
@@ -98,8 +99,8 @@ public class TaskProgressTracker
         progressMap.put(task, new ArrayList<>());
         for (BingoParticipant participant : game.getTeamManager().getParticipants()) {
             // only track progress if the participant has to complete the task.
-            TaskCard card = participant.getTeam().getCard();
-            if (card == null || !card.getTasks().contains(task)) {
+            Optional<TaskCard> card = participant.getTeam().getCard();
+            if (card.isEmpty() || !card.get().getTasks().contains(task)) {
                 continue;
             }
 
@@ -364,9 +365,11 @@ public class TaskProgressTracker
         if (!task.complete(player, game.getGameTime()))
             return false;
 
-        if (player.getTeam() != null && player.getTeam().getCard() != null) {
-            player.getTeam().getCard().handleTaskCompleted(player, task, game.getGameTime());
+        if (player.getTeam() == null) {
+            ConsoleMessenger.bug("Player " + player.getName() + " is not in a valid team!", this);
         }
+        player.getTeam().getCard().ifPresent(card ->
+                card.handleTaskCompleted(player, task, game.getGameTime()));
 
         var progressCompletedEvent = new BingoTaskProgressCompletedEvent(player.getSession(), task);
         Bukkit.getPluginManager().callEvent(progressCompletedEvent);

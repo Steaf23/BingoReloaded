@@ -22,7 +22,6 @@ import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -57,26 +56,24 @@ public class BingoPlayer implements BingoParticipant
 
     private final int POTION_DURATION = 1728000; // 24 Hours
 
-    public BingoPlayer(Player player, BingoSession session)
-    {
+    public BingoPlayer(Player player, BingoSession session) {
         this.playerId = player.getUniqueId();
         this.session = session;
         this.playerName = player.getName();
         this.displayName = player.displayName();
         this.itemCooldowns = new ItemCooldownManager();
+        this.team = null;
     }
 
     /**
      * @return the player that belongs to this BingoPlayer, if this player is in a session world, otherwise returns null
      */
-    public Optional<Player> sessionPlayer()
-    {
+    public Optional<Player> sessionPlayer() {
         if (!offline().isOnline())
             return Optional.empty();
 
         Player player = Bukkit.getPlayer(playerId);
-        if (player == null || !session.hasPlayer(player))
-        {
+        if (player == null || !session.hasPlayer(player)) {
             return Optional.empty();
         }
         return Optional.of(player);
@@ -88,31 +85,27 @@ public class BingoPlayer implements BingoParticipant
     }
 
     @Override
-    public UUID getId()
-    {
+    public UUID getId() {
         return playerId;
     }
 
     @Override
-    public Component getDisplayName()
-    {
+    public Component getDisplayName() {
         return displayName;
     }
 
-    public OfflinePlayer offline()
-    {
+    public OfflinePlayer offline() {
         return Bukkit.getOfflinePlayer(playerId);
     }
 
     @Override
-    public void giveKit(PlayerKit kit)
-    {
+    public void giveKit(PlayerKit kit) {
         if (sessionPlayer().isEmpty())
             return;
 
         Player player = sessionPlayer().get();
 
-        var items = kit.getItems(team.getColor());
+        var items = kit.getItems(getTeam().getColor());
         player.closeInventory();
         Inventory inv = player.getInventory();
         inv.clear();
@@ -121,8 +114,7 @@ public class BingoPlayer implements BingoParticipant
             var meta = i.stack().getItemMeta();
 
             // Show enchantments except on the wand
-            if (!PlayerKit.WAND_ITEM.isCompareKeyEqual(i.stack()))
-            {
+            if (!PlayerKit.WAND_ITEM.isCompareKeyEqual(i.stack())) {
                 meta.removeItemFlags(ItemFlag.values());
             }
             var pdc = meta.getPersistentDataContainer();
@@ -134,18 +126,15 @@ public class BingoPlayer implements BingoParticipant
     }
 
     @Override
-    public void giveBingoCard(int cardSlot, @Nullable MapRenderer mapRenderer)
-    {
+    public void giveBingoCard(int cardSlot, @Nullable MapRenderer mapRenderer) {
         if (sessionPlayer().isEmpty())
             return;
 
         Player player = sessionPlayer().get();
 
         BingoReloaded.scheduleTask(task -> {
-            for (ItemStack itemStack : player.getInventory())
-            {
-                if (PlayerKit.CARD_ITEM.isCompareKeyEqual(itemStack))
-                {
+            for (ItemStack itemStack : player.getInventory()) {
+                if (PlayerKit.CARD_ITEM.isCompareKeyEqual(itemStack)) {
                     player.getInventory().remove(itemStack);
                     break;
                 }
@@ -179,8 +168,7 @@ public class BingoPlayer implements BingoParticipant
     }
 
     @Override
-    public void giveEffects(EnumSet<EffectOptionFlags> effects, int gracePeriod)
-    {
+    public void giveEffects(EnumSet<EffectOptionFlags> effects, int gracePeriod) {
         if (sessionPlayer().isEmpty())
             return;
 
@@ -206,17 +194,13 @@ public class BingoPlayer implements BingoParticipant
      * @param force ignore if the player is actually in the world playing the game at this moment.
      */
     @Override
-    public void takeEffects(boolean force)
-    {
-        if (force)
-        {
+    public void takeEffects(boolean force) {
+        if (force) {
             Player p = Bukkit.getPlayer(playerId);
             if (p != null) {
                 p.clearActivePotionEffects();
             }
-        }
-        else
-        {
+        } else {
             if (sessionPlayer().isEmpty())
                 return;
 
@@ -224,8 +208,7 @@ public class BingoPlayer implements BingoParticipant
         }
     }
 
-    public void showDeathMatchTask(GameTask task)
-    {
+    public void showDeathMatchTask(GameTask task) {
         if (sessionPlayer().isEmpty())
             return;
 
@@ -240,9 +223,10 @@ public class BingoPlayer implements BingoParticipant
     public void showCard(GameTask deathMatchTask) {
         BingoTeam playerTeam = getTeam();
         if (playerTeam == null) {
+            ConsoleMessenger.bug("Invalid team for player " + playerName + "!", this);
             return;
         }
-        TaskCard card = playerTeam.getCard();
+        Optional<TaskCard> card = playerTeam.getCard();
 
         sessionPlayer().ifPresent(player -> {
             if (deathMatchTask != null) {
@@ -251,32 +235,24 @@ public class BingoPlayer implements BingoParticipant
             }
 
             // if the player is actually participating, show it
-            if (card == null) {
-                BingoMessage.NO_PLAYER_CARD.sendToAudience(player);
-                return;
-            }
-
-            card.showInventory(player);
+            card.ifPresentOrElse(c -> c.showInventory(player), () -> BingoMessage.NO_PLAYER_CARD.sendToAudience(player));
         });
     }
 
     @Override
-    public boolean alwaysActive()
-    {
+    public boolean alwaysActive() {
         return false;
     }
 
-    public void useGoUpWand(ItemStack wand, double wandCooldownSeconds, int downDistance, int upDistance, int platformLifetimeSeconds)
-    {
+    public void useGoUpWand(ItemStack wand, double wandCooldownSeconds, int downDistance, int upDistance, int platformLifetimeSeconds) {
         if (sessionPlayer().isEmpty())
-             return;
+            return;
 
         Player player = sessionPlayer().get();
         if (!PlayerKit.WAND_ITEM.isCompareKeyEqual(wand))
             return;
 
-        if (!itemCooldowns.isCooldownOver(wand.getType()))
-        {
+        if (!itemCooldowns.isCooldownOver(wand.getType())) {
             double timeLeft = itemCooldowns.getTimeLeft(wand.getType()) / 1000.0;
             player.sendMessage(BingoMessage.COOLDOWN.asPhrase(Component.text(String.format("%.2f", timeLeft)))
                     .color(NamedTextColor.RED));
@@ -284,18 +260,15 @@ public class BingoPlayer implements BingoParticipant
         }
 
         BingoReloaded.scheduleTask(task -> {
-            itemCooldowns.addCooldown(wand.getType(), (int)(wandCooldownSeconds * 1000));
+            itemCooldowns.addCooldown(wand.getType(), (int) (wandCooldownSeconds * 1000));
 
             double distance;
             double fallDistance;
             // Use the wand
-            if (sessionPlayer().isPresent() && sessionPlayer().get().isSneaking())
-            {
+            if (sessionPlayer().isPresent() && sessionPlayer().get().isSneaking()) {
                 distance = -downDistance;
                 fallDistance = 0.0;
-            }
-            else
-            {
+            } else {
                 distance = upDistance;
                 fallDistance = 2.0;
             }
@@ -319,20 +292,17 @@ public class BingoPlayer implements BingoParticipant
     }
 
     @Override
-    public BingoSession getSession()
-    {
+    public BingoSession getSession() {
         return session;
     }
 
-    @Nullable
     @Override
-    public BingoTeam getTeam()
-    {
+    public @Nullable BingoTeam getTeam() {
         return team;
     }
 
     @Override
-    public void setTeam(BingoTeam team) {
+    public void setTeam(@Nullable BingoTeam team) {
         this.team = team;
     }
 

@@ -71,9 +71,7 @@ public class BingoGameHUDGroup extends PlayerHUDGroup
             return;
 
         for (BingoTeam t : session.teamManager.getActiveTeams()) {
-            if (t.getCard() != null) {
-                teamScores.put(t.getIdentifier(), t.getCard().getCompleteCount(t));
-            }
+            teamScores.put(t.getIdentifier(), t.getCompleteCount());
         }
 
         List<Component> teamInfo = new ArrayList<>();

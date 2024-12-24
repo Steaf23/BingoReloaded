@@ -40,14 +40,13 @@ public class VirtualBingoPlayer implements BingoParticipant
         return session;
     }
 
-    @Nullable
     @Override
-    public BingoTeam getTeam() {
+    public @NotNull BingoTeam getTeam() {
         return team;
     }
 
     @Override
-    public void setTeam(BingoTeam team) {
+    public void setTeam(@Nullable BingoTeam team) {
         this.team = team;
     }
 

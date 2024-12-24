@@ -239,7 +239,7 @@ public class HotswapTaskCard extends TaskCard
 
     @Override
     public int getCompleteCount(@NotNull BingoTeam team) {
-        return (int) completedTasks.stream().filter(task -> task.getCompletedBy().isPresent() && task.getCompletedBy().get().getTeam().equals(team)).count();
+        return (int) completedTasks.stream().filter(task -> task.getCompletedBy().isPresent() && team.equals(task.getCompletedBy().get().getTeam())).count();
     }
 
     public int getCompleteCount(@NotNull BingoParticipant participant) {

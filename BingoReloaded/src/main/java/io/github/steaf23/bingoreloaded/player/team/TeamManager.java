@@ -5,6 +5,7 @@ import io.github.steaf23.bingoreloaded.event.BingoSettingsUpdatedEvent;
 import io.github.steaf23.bingoreloaded.event.PlayerJoinedSessionWorldEvent;
 import io.github.steaf23.bingoreloaded.event.PlayerLeftSessionWorldEvent;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
+import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -36,6 +37,7 @@ public interface TeamManager
     /**
      * Attempts to retrieve the given player as a BingoParticipant.
      * Player does not have to be in the correct session world for this to work.
+     * If this player is not yet participating, null will be returned instead
      */
     @Nullable
     default BingoParticipant getPlayerAsParticipant(@NonNull Player player) {

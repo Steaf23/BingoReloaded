@@ -10,6 +10,7 @@ import net.kyori.adventure.audience.ForwardingAudience;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 import org.bukkit.map.MapRenderer;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.EnumSet;
@@ -21,7 +22,7 @@ public interface BingoParticipant extends ForwardingAudience.Single
     BingoSession getSession();
     @Nullable
     BingoTeam getTeam();
-    void setTeam(BingoTeam team);
+    void setTeam(@Nullable BingoTeam team);
     UUID getId();
     Optional<Player> sessionPlayer();
     String getName();
@@ -30,15 +31,19 @@ public interface BingoParticipant extends ForwardingAudience.Single
     void showCard(GameTask deathMatchTask);
     boolean alwaysActive();
     default int getAmountOfTaskCompleted() {
-        BingoTeam team = getTeam();
-        if (team == null) {
+        if (getTeam() == null) {
             return 0;
         }
-        TaskCard card = team.getCard();
-        if (card == null) {
-            return 0;
+
+        Optional<TaskCard> card = getTeam().getCard();
+        return card.map(taskCard -> taskCard.getCompleteCount(this)).orElse(0);
+    }
+
+    default Optional<TaskCard> getCard() {
+        if (getTeam() == null) {
+            return Optional.empty();
         }
-        return card.getCompleteCount(this);
+        return getTeam().getCard();
     }
 
     void giveBingoCard(int cardSlot, MapRenderer renderer);

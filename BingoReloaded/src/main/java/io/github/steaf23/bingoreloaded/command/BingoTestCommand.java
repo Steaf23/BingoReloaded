@@ -27,6 +27,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Optional;
 
 public class BingoTestCommand implements TabExecutor
 {
@@ -125,14 +126,14 @@ public class BingoTestCommand implements TabExecutor
         if (!player.getSession().isRunning())
             return;
 
-        TaskCard card = player.getTeam().getCard();
+        Optional<TaskCard> card = player.getCard();
 
-        if (card == null || taskIndex >= card.getTasks().size()) {
-            ConsoleMessenger.log(Component.text("index out of bounds for task list!").color(NamedTextColor.RED));
+        if (card.isEmpty() || taskIndex >= card.get().getTasks().size()) {
+            ConsoleMessenger.error("index out of bounds for task list!");
             return;
         }
 
-        GameTask task = card.getTasks().get(taskIndex);
+        GameTask task = card.get().getTasks().get(taskIndex);
         task.complete(player, ((BingoGame) player.getSession().phase()).getGameTime());
         var slotEvent = new BingoTaskProgressCompletedEvent(player.getSession(), task);
         Bukkit.getPluginManager().callEvent(slotEvent);

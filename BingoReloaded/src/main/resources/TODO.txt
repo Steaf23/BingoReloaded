@@ -24,12 +24,10 @@
 (3.x) reimplement resource pack spacing inside the resource pack instead of using a separate pack
 (3.x) add way to view other teams' cards
 (3.x) add reload config command to reload all config options by saving the config.yml file externally
-(3.x) selector support on commands
 (3.x) add web editor for nbt files
 (3.x) implement card view placed on a map as the bingo card
 (3.x) add purging to debug log
 (3.x) add automatic updates to config.yml when starting server to add new options
-(3.x) add randomization of votes if the amount is the same
 (3.x) add spectator mode
 (3.x) transfer config additions automatically when updating
 (3.x) put automatic team members into random teams instead of the same ones every time (looking at you magenta...)

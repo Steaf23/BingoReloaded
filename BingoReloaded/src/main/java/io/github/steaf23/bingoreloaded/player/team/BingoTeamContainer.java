@@ -2,6 +2,7 @@ package io.github.steaf23.bingoreloaded.player.team;
 
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.Comparator;
@@ -32,7 +33,7 @@ public class BingoTeamContainer implements Iterable<BingoTeam>
         teams.remove(team);
     }
 
-    public BingoTeam getLeadingTeam() {
+    public @Nullable BingoTeam getLeadingTeam() {
         Optional<BingoTeam> leadingTeam = teams.stream().max(
                 Comparator.comparingInt(BingoTeam::getCompleteCount)
         );

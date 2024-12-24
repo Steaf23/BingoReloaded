@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -36,8 +37,8 @@ public class BingoTeam implements ForwardingAudience
         this.prefix = prefix;
     }
 
-    public @Nullable TaskCard getCard() {
-        return card;
+    public Optional<TaskCard> getCard() {
+        return Optional.of(card);
     }
 
     public void setCard(TaskCard card) {

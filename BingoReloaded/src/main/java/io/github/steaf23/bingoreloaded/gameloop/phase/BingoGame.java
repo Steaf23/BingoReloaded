@@ -76,6 +76,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -138,7 +139,6 @@ public class BingoGame implements GamePhase
 
         // Generate cards
         boolean useAdvancements = !(BingoReloaded.areAdvancementsDisabled() || config.getOptionValue(BingoOptions.DISABLE_ADVANCEMENTS));
-        //TODO create viewType config option, but for now try to use textured for testing.
         TaskCard masterCard = CardFactory.fromGame(session.getMenuManager(), this, PlayerDisplay.useCustomTextures());
         masterCard.generateCard(settings.card(), settings.seed(), useAdvancements, !config.getOptionValue(BingoOptions.DISABLE_STATISTICS));
         if (masterCard instanceof LockoutTaskCard lockoutCard) {
@@ -147,9 +147,10 @@ public class BingoGame implements GamePhase
         Set<TaskCard> uniqueCards = new HashSet<>();
         getTeamManager().getActiveTeams().forEach(t -> {
             t.outOfTheGame = false;
-            t.setCard(masterCard.copy());
-            uniqueCards.add(t.getCard());
-            renderers.put(t, new BingoCardMapRenderer(BingoReloaded.getInstance(), t.getCard(), t));
+            TaskCard card = masterCard.copy();
+            t.setCard(card);
+            uniqueCards.add(card);
+            renderers.put(t, new BingoCardMapRenderer(BingoReloaded.getInstance(), card, t));
         });
 
         BingoMessage.GIVE_CARDS.sendToAudience(session);
@@ -184,7 +185,7 @@ public class BingoGame implements GamePhase
                 player.setLevel(0);
                 player.setExp(0.0f);
                 scoreboard.addPlayer(player);
-            } else if (!p.alwaysActive()){
+            } else if (!p.alwaysActive()) {
                 // If the player is not online, we can remove them from the game, as they probably did not intend on playing in this session
                 session.removeParticipant(p);
             }
@@ -274,7 +275,7 @@ public class BingoGame implements GamePhase
         Bukkit.getPluginManager().callEvent(event);
     }
 
-    public void bingo(BingoTeam team) {
+    public void bingo(@NotNull BingoTeam team) {
         BingoMessage.BINGO.sendToAudience(session, team.getColoredName());
         for (BingoParticipant p : getTeamManager().getParticipants()) {
             if (p.sessionPlayer().isEmpty())
@@ -540,9 +541,15 @@ public class BingoGame implements GamePhase
             return;
         }
 
+        BingoTeam team = participant.getTeam();
+        if (team == null) {
+            ConsoleMessenger.bug("Player " + participant.getName() + " is not on a team.", this);
+            return;
+        }
+
         BingoMessage.COMPLETED.sendToAudience(session, NamedTextColor.AQUA,
                 event.getTask().data.getName(),
-                participant.getDisplayName().color(participant.getTeam().getColor()).decorate(TextDecoration.BOLD),
+                participant.getDisplayName().color(team.getColor()).decorate(TextDecoration.BOLD),
                 timeString.color(NamedTextColor.WHITE));
 
         var soundEvent = new BingoPlaySoundEvent(session, Sound.ENTITY_DRAGON_FIREBALL_EXPLODE);
@@ -554,14 +561,19 @@ public class BingoGame implements GamePhase
             BingoReloaded.incrementPlayerStat(player, BingoStatType.TASKS);
         });
 
-        if (participant.getTeam().getCard().hasTeamWon(participant.getTeam())) {
+        if (participant.getCard().isPresent() && participant.getCard().get().hasTeamWon(participant.getTeam())) {
             bingo(participant.getTeam());
             return;
         }
 
+
         // Start death match when all tasks have been completed in lockout
-        TaskCard card = teamManager.getActiveTeams().getLeadingTeam().getCard();
-        if (!(card instanceof LockoutTaskCard lockoutCard)) {
+        BingoTeam leadingTeam = teamManager.getActiveTeams().getLeadingTeam();
+        if (leadingTeam == null) {
+            return;
+        }
+        Optional<TaskCard> card = teamManager.getActiveTeams().getLeadingTeam().getCard();
+        if (!(card.orElse(null) instanceof LockoutTaskCard lockoutCard)) {
             return;
         }
 
@@ -657,15 +669,16 @@ public class BingoGame implements GamePhase
 
         Location deathCoords = event.getEntity().getLocation();
         if (config.getOptionValue(BingoOptions.TELEPORT_AFTER_DEATH)) {
-            Component hoverable = Arrays.stream(BingoMessage.RESPAWN.convertForPlayer(event.getPlayer())).reduce(Component::append).get();
-            BingoPlayerSender.sendMessage(BingoMessage.createHoverCommandMessage(
-                    Component.empty(),
-                    hoverable,
-                    null,
-                    Component.empty(),
-                    "/bingo back"),
-                    event.getPlayer());
-            respawnManager.addPlayer(event.getEntity().getUniqueId(), deathCoords);
+            Arrays.stream(BingoMessage.RESPAWN.convertForPlayer(event.getPlayer())).reduce(Component::append).ifPresent(hoverable -> {
+                BingoPlayerSender.sendMessage(BingoMessage.createHoverCommandMessage(
+                                Component.empty(),
+                                hoverable,
+                                null,
+                                Component.empty(),
+                                "/bingo back"),
+                        event.getPlayer());
+                respawnManager.addPlayer(event.getEntity().getUniqueId(), deathCoords);
+            });
         }
     }
 
@@ -703,7 +716,7 @@ public class BingoGame implements GamePhase
             tiedTeams.add(leadingTeam);
 
             // Regular bingo cannot draw, so end the game without a winner
-            if (settings.mode() == BingoGamemode.REGULAR) {
+            if (settings.mode() == BingoGamemode.REGULAR || leadingTeam == null) {
                 end(null);
                 return;
             }
