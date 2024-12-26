@@ -35,6 +35,12 @@ public class GameTask
         ADVANCEMENT,
     }
 
+    public enum TaskDisplayMode
+    {
+        NON_ITEMS_SIMILAR, // Shows a filled map for all advancements and a banner pattern for all statistic tasks.
+        NON_ITEMS_UNIQUE, // Item type to show is based on the actual contents of the tasks, just like for item tasks.
+    }
+
     private BingoParticipant completedBy;
     public long completedAt;
     private boolean voided;
@@ -44,12 +50,15 @@ public class GameTask
     public final Material material;
     public final boolean glowing;
 
-    public GameTask(TaskData data)
+    public final TaskDisplayMode displayMode;
+
+    public GameTask(TaskData data, TaskDisplayMode displayMode)
     {
         this.data = data;
         this.completedBy = null;
         this.voided = false;
         this.completedAt = -1L;
+        this.displayMode = displayMode;
 
         switch (data) {
             case ItemTask itemTask -> {
@@ -60,7 +69,7 @@ public class GameTask
             case AdvancementTask advancementTask -> {
                 this.type = TaskType.ADVANCEMENT;
                 AdvancementDisplay display = advancementTask.advancement().getDisplay();
-                if (display == null) {
+                if (display == null || displayMode == TaskDisplayMode.NON_ITEMS_SIMILAR) {
                     this.material = Material.FILLED_MAP;
                 } else {
                     this.material = advancementTask.advancement().getDisplay().icon().getType();
@@ -69,11 +78,15 @@ public class GameTask
             }
             case StatisticTask statTask -> {
                 this.type = TaskType.STATISTIC;
-                this.material = BingoStatistic.getMaterial(statTask.statistic());
+                if (displayMode == TaskDisplayMode.NON_ITEMS_SIMILAR) {
+                    this.material = Material.GLOBE_BANNER_PATTERN;
+                } else {
+                    this.material = BingoStatistic.getMaterial(statTask.statistic());
+                }
                 this.glowing = true;
             }
             case null, default -> {
-                ConsoleMessenger.log("This Type of data is not supported by BingoTask: '" + data + "'!");
+                ConsoleMessenger.bug("This Type of data is not supported by BingoTask: '" + data + "'!", this);
                 this.type = TaskType.ITEM;
                 this.glowing = false;
                 this.material = Material.BEDROCK;
@@ -183,9 +196,9 @@ public class GameTask
         type = TaskType.valueOf(typeStr);
         GameTask task = switch (type)
         {
-            case ADVANCEMENT -> new GameTask(AdvancementTask.fromPdc(pdcData));
-            case STATISTIC -> new GameTask(StatisticTask.fromPdc(pdcData));
-            default -> new GameTask(ItemTask.fromPdc(pdcData));
+            case ADVANCEMENT -> new GameTask(AdvancementTask.fromPdc(pdcData), TaskDisplayMode.NON_ITEMS_UNIQUE);
+            case STATISTIC -> new GameTask(StatisticTask.fromPdc(pdcData), TaskDisplayMode.NON_ITEMS_UNIQUE);
+            default -> new GameTask(ItemTask.fromPdc(pdcData), TaskDisplayMode.NON_ITEMS_UNIQUE);
         };
 
         task.voided = voided;
@@ -212,7 +225,7 @@ public class GameTask
 
     public GameTask copy()
     {
-        return new GameTask(data);
+        return new GameTask(data, displayMode);
     }
 
     public Optional<BingoParticipant> getCompletedBy() {

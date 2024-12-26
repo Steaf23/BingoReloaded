@@ -79,7 +79,7 @@ public class VirtualBingoPlayer implements BingoParticipant
     }
 
     @Override
-    public void giveBingoCard(int cardSlot, MapRenderer renderer) {
+    public void giveBingoCard(int cardSlot, @Nullable MapRenderer renderer) {
     }
 
     @Override

@@ -1,5 +1,7 @@
 package io.github.steaf23.bingoreloaded.data.config;
 
+import java.io.ObjectInputFilter;
+
 public class BingoOptions
 {
     public enum PluginConfiguration
@@ -79,6 +81,10 @@ public class BingoOptions
             .withEditUpdate(ConfigurationOption.EditUpdateTime.AFTER_SERVER_RESTART);
     public static final ConfigurationOption<Boolean> END_GAME_WITHOUT_TEAMS = new BooleanOption("endGameWithoutTeams");
     public static final ConfigurationOption<BingoConfigurationData.HotswapConfig> HOTSWAP_CONFIG = new NonSerializableOption<>("hotswapConfig");
+    public static final ConfigurationOption<Boolean> SHOW_ADVANCEMENT_ITEMS = new BooleanOption("showAdvancementItems")
+            .withEditUpdate(ConfigurationOption.EditUpdateTime.AFTER_GAME);
+    public static final ConfigurationOption<Boolean> USE_MAP_RENDERER = new BooleanOption("useMapRenderer")
+            .withEditUpdate(ConfigurationOption.EditUpdateTime.AFTER_GAME);
 
     // Player Data
     public static final ConfigurationOption<Boolean> SAVE_PLAYER_INFORMATION = new BooleanOption("savePlayerInformation");

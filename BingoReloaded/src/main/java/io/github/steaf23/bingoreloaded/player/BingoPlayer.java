@@ -132,31 +132,37 @@ public class BingoPlayer implements BingoParticipant
 
         Player player = sessionPlayer().get();
 
+        ItemTemplate cardItem = mapRenderer == null ? PlayerKit.CARD_ITEM : PlayerKit.CARD_ITEM_RENDERABLE;
+
         BingoReloaded.scheduleTask(task -> {
             for (ItemStack itemStack : player.getInventory()) {
-                if (PlayerKit.CARD_ITEM.isCompareKeyEqual(itemStack)) {
+                if (cardItem.isCompareKeyEqual(itemStack)) {
                     player.getInventory().remove(itemStack);
                     break;
                 }
             }
             ItemStack existingItem = player.getInventory().getItem(cardSlot);
-            ItemTemplate map = PlayerKit.CARD_ITEM.copy().addMetaModifier(meta -> {
-                if (meta instanceof MapMeta mapMeta) {
-                    MapView view = Bukkit.createMap(player.getWorld());
-                    for (MapRenderer renderer : new ArrayList<>(view.getRenderers())) {
-                        view.removeRenderer(renderer);
-                    }
+            ItemStack card;
+            if (mapRenderer == null) {
+                card = cardItem.buildItem();
+            } else {
+                ItemTemplate map = cardItem.copy().addMetaModifier(meta -> {
+                    if (meta instanceof MapMeta mapMeta) {
+                        MapView view = Bukkit.createMap(player.getWorld());
+                        for (MapRenderer renderer : new ArrayList<>(view.getRenderers())) {
+                            view.removeRenderer(renderer);
+                        }
 
-                    if (mapRenderer != null)
                         view.addRenderer(mapRenderer);
-                    mapMeta.setMapView(view);
-                    return mapMeta;
-                }
-                ConsoleMessenger.error("EHM WHERE IS MY MAP?");
-                return meta;
-            });
+                        mapMeta.setMapView(view);
+                        return mapMeta;
+                    }
+                    ConsoleMessenger.bug("No valid map item found to render texture to.", this);
+                    return meta;
+                });
+                card = map.buildItem();
+            }
 
-            ItemStack card = map.buildItem();
             player.getInventory().setItem(cardSlot, card);
             if (existingItem != null && !existingItem.getType().isAir()) {
                 Map<Integer, ItemStack> leftOver = player.getInventory().addItem(existingItem);

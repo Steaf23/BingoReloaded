@@ -8,17 +8,15 @@ import io.github.steaf23.bingoreloaded.gui.inventory.card.HotswapCardMenu;
 import io.github.steaf23.bingoreloaded.gui.inventory.card.HotswapGenericCardMenu;
 import io.github.steaf23.bingoreloaded.gui.inventory.card.HotswapTexturedCardMenu;
 import io.github.steaf23.bingoreloaded.gui.inventory.card.TexturedCardMenu;
-import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
+import io.github.steaf23.bingoreloaded.tasks.GameTask;
 import io.github.steaf23.bingoreloaded.tasks.TaskGenerator;
 import io.github.steaf23.playerdisplay.PlayerDisplay;
 import io.github.steaf23.playerdisplay.inventory.MenuBoard;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 public class CardFactory
@@ -45,9 +43,9 @@ public class CardFactory
         };
     }
 
-    public static Set<TaskCard> generateCardsForGame(BingoGame game, MenuBoard menuBoard, boolean texturedMenu, boolean includeAdvancements, boolean includeStatistics) {
+    public static Set<TaskCard> generateCardsForGame(BingoGame game, MenuBoard menuBoard, boolean includeAdvancements, boolean includeStatistics, GameTask.TaskDisplayMode taskDisplayMode) {
         BingoSettings settings = game.getSettings();
-        TaskGenerator.GeneratorSettings generatorSettings = new TaskGenerator.GeneratorSettings(settings.card(), settings.seed(), includeAdvancements, includeStatistics, settings.size());
+        TaskGenerator.GeneratorSettings generatorSettings = new TaskGenerator.GeneratorSettings(settings.card(), settings.seed(), includeAdvancements, includeStatistics, settings.size(), taskDisplayMode);
 
         Set<TaskCard> uniqueCards = new HashSet<>();
 

@@ -133,10 +133,10 @@ public class HotswapTaskCard extends TaskCard
                 Collections.shuffle(randomTasks, randomExpiryProvider);
             }
             if (randomTasks.isEmpty()) {
-                return new GameTask(new ItemTask(Material.DIRT, 1));
+                return new GameTask(new ItemTask(Material.DIRT, 1), settings.displayMode());
             }
 
-            return new GameTask(randomTasks.removeLast());
+            return new GameTask(randomTasks.removeLast(), settings.displayMode());
         };
     }
 

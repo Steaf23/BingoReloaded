@@ -17,7 +17,7 @@ import java.util.Random;
 
 public class TaskGenerator
 {
-    public record GeneratorSettings(String cardName, int seed, boolean includeAdvancements, boolean includeStatistics, CardSize size) {}
+    public record GeneratorSettings(String cardName, int seed, boolean includeAdvancements, boolean includeStatistics, CardSize size, GameTask.TaskDisplayMode displayMode) {}
 
     private static final TaskData DEFAULT_TASK = new ItemTask(Material.DIRT, 1);
 
@@ -105,6 +105,6 @@ public class TaskGenerator
 
         // Shuffle and add tasks to the card.
         Collections.shuffle(newTasks, shuffler);
-        return newTasks.stream().map(GameTask::new).toList();
+        return newTasks.stream().map(t -> new GameTask(t, settings.displayMode())).toList();
     }
 }

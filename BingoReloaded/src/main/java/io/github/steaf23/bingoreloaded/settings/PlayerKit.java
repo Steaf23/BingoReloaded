@@ -40,8 +40,15 @@ public enum PlayerKit
             .addEnchantment(Enchantment.UNBREAKING, 3)
             .setCompareKey("wand");
 
-    public static final ItemTemplate CARD_ITEM = new ItemTemplate(
+    public static final ItemTemplate CARD_ITEM_RENDERABLE = new ItemTemplate(
             Material.FILLED_MAP,
+            BingoMessage.CARD_ITEM_NAME.asPhrase().color(NamedTextColor.DARK_PURPLE).decorate(TextDecoration.BOLD, TextDecoration.ITALIC),
+            BingoMessage.CARD_ITEM_DESC.asMultiline())
+            .setGlowing(true)
+            .setCompareKey("card");
+
+    public static final ItemTemplate CARD_ITEM = new ItemTemplate(
+            Material.FLOWER_BANNER_PATTERN,
             BingoMessage.CARD_ITEM_NAME.asPhrase().color(NamedTextColor.DARK_PURPLE).decorate(TextDecoration.BOLD, TextDecoration.ITALIC),
             BingoMessage.CARD_ITEM_DESC.asMultiline())
             .setGlowing(true)

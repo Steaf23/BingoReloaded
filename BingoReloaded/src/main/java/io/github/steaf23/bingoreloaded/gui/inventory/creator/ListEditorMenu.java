@@ -60,7 +60,7 @@ public class ListEditorMenu extends BasicMenu
         List<GameTask> tasks = new ArrayList<>();
         for (Material m : Material.values()) {
             if (!m.name().contains("LEGACY_") && !glassPanes.contains(m) && m.isItem() && !m.isAir()) {
-                tasks.add(new GameTask(new ItemTask(m, 1)));
+                tasks.add(new GameTask(new ItemTask(m, 1), GameTask.TaskDisplayMode.NON_ITEMS_UNIQUE));
             }
         }
 
@@ -77,7 +77,7 @@ public class ListEditorMenu extends BasicMenu
             }
 
             AdvancementTask task = new AdvancementTask(a);
-            tasks.add(new GameTask(task));
+            tasks.add(new GameTask(task, GameTask.TaskDisplayMode.NON_ITEMS_UNIQUE));
         }
 
         return new TaskPickerMenu(menuBoard, "Add Advancements", tasks, listName);

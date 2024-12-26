@@ -125,7 +125,7 @@ public class BingoCommand implements TabExecutor
                     if (participant instanceof BingoPlayer bingoPlayer) {
                         int cardSlot = session.settingsBuilder.view().kit().getCardSlot();
                         BingoGame game = (BingoGame) session.phase();
-                        game.returnCardToPlayer(cardSlot, bingoPlayer);
+                        game.returnCardToPlayer(cardSlot, bingoPlayer, null);
                     }
                     return true;
                 }

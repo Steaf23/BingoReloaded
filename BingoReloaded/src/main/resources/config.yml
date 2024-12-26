@@ -171,6 +171,13 @@ hotswapMode:
   recoverTime: 15 # Time in seconds that a completed/expired task needs to be replaced with a new task
   showExpirationAsDurability: true # Attempts to show expiration time as durability of the item. This feature only works on Minecraft 1.21+ and late versions of 1.20.6.
 
+# Set to false if you want to display advancements as filled maps and statistics as banner patterns, regardless of the actual task.
+showAdvancementItems: true
+
+# Set to false if you want to disable the card rendering in the player hand on a map, may save a bit of server performance.
+# It's recommended to use this setting alongside showAdvancementItems for the best experience while playing.
+useMapRenderer: true
+
 # ==========================================================================
 #    Player Data Configuration Options
 # ==========================================================================

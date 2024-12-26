@@ -141,14 +141,18 @@ public class BingoGame implements GamePhase
         // Generate cards
         boolean useAdvancements = !(BingoReloaded.areAdvancementsDisabled() || config.getOptionValue(BingoOptions.DISABLE_ADVANCEMENTS));
 
-        Set<TaskCard> uniqueCards = CardFactory.generateCardsForGame(this, session.getMenuBoard(), PlayerDisplay.useCustomTextures(), useAdvancements, !config.getOptionValue(BingoOptions.DISABLE_STATISTICS));
-        getTeamManager().getActiveTeams().forEach(t -> {
-            Optional<TaskCard> card = t.getCard();
-            card.ifPresentOrElse(
-                    c -> renderers.put(t, new BingoCardMapRenderer(BingoReloaded.getInstance(), c, t)),
-                    () -> ConsoleMessenger.bug("Could not generate card for team " + PlainTextComponentSerializer.plainText().serialize(t.getColoredName()), this)
-            );
-        });
+        GameTask.TaskDisplayMode displayMode = config.getOptionValue(BingoOptions.SHOW_ADVANCEMENT_ITEMS) ? GameTask.TaskDisplayMode.NON_ITEMS_UNIQUE : GameTask.TaskDisplayMode.NON_ITEMS_SIMILAR;
+        Set<TaskCard> uniqueCards = CardFactory.generateCardsForGame(this, session.getMenuBoard(), useAdvancements, !config.getOptionValue(BingoOptions.DISABLE_STATISTICS), displayMode);
+
+        if (config.getOptionValue(BingoOptions.USE_MAP_RENDERER)) {
+            getTeamManager().getActiveTeams().forEach(t -> {
+                Optional<TaskCard> card = t.getCard();
+                card.ifPresentOrElse(
+                        c -> renderers.put(t, new BingoCardMapRenderer(BingoReloaded.getInstance(), c, t)),
+                        () -> ConsoleMessenger.bug("Could not generate card for team " + PlainTextComponentSerializer.plainText().serialize(t.getColoredName()), this)
+                );
+            });
+        }
 
         BingoMessage.GIVE_CARDS.sendToAudience(session);
         teleportPlayersToStart(world);
@@ -319,12 +323,7 @@ public class BingoGame implements GamePhase
         return actionBarManager;
     }
 
-
-    public void returnCardToPlayer(int cardSlot, BingoParticipant participant) {
-        returnCardToPlayer(cardSlot, participant, renderers.get(participant.getTeam()));
-    }
-
-    public void returnCardToPlayer(int cardSlot, BingoParticipant participant, MapRenderer cardRenderer) {
+    public void returnCardToPlayer(int cardSlot, BingoParticipant participant, @Nullable MapRenderer cardRenderer) {
         if (participant.sessionPlayer().isEmpty())
             return;
 
@@ -346,7 +345,7 @@ public class BingoGame implements GamePhase
     //FIXME: don't use recursion to create tasks..
     private void startDeathMatchRecurse(int countdown) {
         if (countdown == 0) {
-            deathMatchTask = new GameTask(new BingoCardData().getRandomItemTask(settings.card()));
+            deathMatchTask = new GameTask(new BingoCardData().getRandomItemTask(settings.card()), GameTask.TaskDisplayMode.NON_ITEMS_UNIQUE);
 
             BingoPlayerSender.sendTitle(
                     Component.text("GO").color(NamedTextColor.GOLD).decorate(TextDecoration.BOLD),

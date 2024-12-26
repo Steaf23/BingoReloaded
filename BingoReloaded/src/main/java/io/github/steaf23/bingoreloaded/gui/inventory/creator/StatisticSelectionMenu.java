@@ -61,7 +61,7 @@ public class StatisticSelectionMenu extends BasicMenu
                 .toList();
 
         List<GameTask> tasks = new ArrayList<>();
-        entities.forEach(e -> tasks.add(new GameTask(new StatisticTask(new BingoStatistic(stat, e)))));
+        entities.forEach(e -> tasks.add(new GameTask(new StatisticTask(new BingoStatistic(stat, e)), GameTask.TaskDisplayMode.NON_ITEMS_UNIQUE)));
 
         return new TaskPickerMenu(getMenuBoard(), "Select Entities", tasks, listName);
     }
@@ -80,7 +80,7 @@ public class StatisticSelectionMenu extends BasicMenu
         {
             if (!m.name().contains("LEGACY_") && !glassPanes.contains(m) && m.isBlock() && m.isItem() && !m.isAir())
             {
-                tasks.add(new GameTask(new StatisticTask(new BingoStatistic(stat, m))));
+                tasks.add(new GameTask(new StatisticTask(new BingoStatistic(stat, m)), GameTask.TaskDisplayMode.NON_ITEMS_UNIQUE));
             }
         }
         return new TaskPickerMenu(getMenuBoard(), "Select Blocks", tasks, listName);
@@ -99,7 +99,7 @@ public class StatisticSelectionMenu extends BasicMenu
         {
             if (!m.name().contains("LEGACY_") && !glassPanes.contains(m) && m.isItem() && !m.isAir())
             {
-                tasks.add(new GameTask(new StatisticTask(new BingoStatistic(stat, m))));
+                tasks.add(new GameTask(new StatisticTask(new BingoStatistic(stat, m)), GameTask.TaskDisplayMode.NON_ITEMS_UNIQUE));
             }
         }
         return new TaskPickerMenu(getMenuBoard(), "Select Items", tasks, listName);
@@ -110,7 +110,7 @@ public class StatisticSelectionMenu extends BasicMenu
         List<GameTask> tasks = new ArrayList<>();
         for (Statistic stat : BingoStatistic.getStatisticsOfCategory(BingoStatistic.StatisticCategory.TRAVEL))
         {
-            tasks.add(new GameTask(new StatisticTask(new BingoStatistic(stat))));
+            tasks.add(new GameTask(new StatisticTask(new BingoStatistic(stat)), GameTask.TaskDisplayMode.NON_ITEMS_UNIQUE));
         }
         return new TaskPickerMenu(getMenuBoard(), "Travel Statistics", tasks, listName);
     }
@@ -119,7 +119,7 @@ public class StatisticSelectionMenu extends BasicMenu
     {
         List<GameTask> tasks = new ArrayList<>();
         BingoStatistic.getStatisticsOfCategory(BingoStatistic.StatisticCategory.CONTAINER_INTERACT)
-                .forEach(stat -> tasks.add(new GameTask(new StatisticTask(new BingoStatistic(stat))))
+                .forEach(stat -> tasks.add(new GameTask(new StatisticTask(new BingoStatistic(stat)), GameTask.TaskDisplayMode.NON_ITEMS_UNIQUE))
                 );
         return new TaskPickerMenu(getMenuBoard(), "Container Statistics", tasks, listName);
     }
@@ -128,7 +128,7 @@ public class StatisticSelectionMenu extends BasicMenu
     {
         List<GameTask> tasks = new ArrayList<>();
         BingoStatistic.getStatisticsOfCategory(BingoStatistic.StatisticCategory.BLOCK_INTERACT)
-                .forEach(stat -> tasks.add(new GameTask(new StatisticTask(new BingoStatistic(stat))))
+                .forEach(stat -> tasks.add(new GameTask(new StatisticTask(new BingoStatistic(stat)), GameTask.TaskDisplayMode.NON_ITEMS_UNIQUE))
                 );
         return new TaskPickerMenu(getMenuBoard(),  "Select Blocks", tasks, listName);
     }
@@ -137,7 +137,7 @@ public class StatisticSelectionMenu extends BasicMenu
     {
         List<GameTask> tasks = new ArrayList<>();
         BingoStatistic.getStatisticsOfCategory(BingoStatistic.StatisticCategory.DAMAGE)
-                .forEach(stat -> tasks.add(new GameTask(new StatisticTask(new BingoStatistic(stat))))
+                .forEach(stat -> tasks.add(new GameTask(new StatisticTask(new BingoStatistic(stat)), GameTask.TaskDisplayMode.NON_ITEMS_UNIQUE))
                 );
         return new TaskPickerMenu(getMenuBoard(), "Damage Statistics", tasks, listName);
     }
@@ -155,7 +155,7 @@ public class StatisticSelectionMenu extends BasicMenu
                                 TIME_SINCE_REST,
                                 TOTAL_WORLD_TIME,
                                 LEAVE_GAME -> {}
-                        default -> tasks.add(new GameTask(new StatisticTask(new BingoStatistic(stat))));
+                        default -> tasks.add(new GameTask(new StatisticTask(new BingoStatistic(stat)), GameTask.TaskDisplayMode.NON_ITEMS_UNIQUE));
                     }
                 });
         return new TaskPickerMenu(getMenuBoard(), "Other Statistics", tasks, listName);

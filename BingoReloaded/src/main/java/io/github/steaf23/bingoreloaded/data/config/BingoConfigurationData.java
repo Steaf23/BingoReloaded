@@ -44,6 +44,8 @@ public class BingoConfigurationData
 //        setOptionValue(ConfigurationOption.USE_INCLUDED_RESOURCE_PACK, config.getBoolean("useIncludedResourcePack", true));
         setOptionValue(BingoOptions.USE_INCLUDED_RESOURCE_PACK, false);
         setOptionValue(BingoOptions.ENABLE_DEBUG_LOGGING, config.getBoolean("enableDebugLogging", false));
+        setOptionValue(BingoOptions.USE_MAP_RENDERER, config.getBoolean("useMapRenderer", true));
+        setOptionValue(BingoOptions.SHOW_ADVANCEMENT_ITEMS, config.getBoolean("showAdvancementItems", true));
 
         // Lobby
         setOptionValue(BingoOptions.SINGLE_PLAYER_TEAMS, config.getBoolean("singlePlayerTeams", false));

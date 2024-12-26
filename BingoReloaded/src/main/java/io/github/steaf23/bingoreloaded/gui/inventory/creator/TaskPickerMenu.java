@@ -145,7 +145,7 @@ public class TaskPickerMenu extends PaginatedSelectionMenu
             }
         }
 
-        GameTask newTask = new GameTask(newData);
+        GameTask newTask = new GameTask(newData, GameTask.TaskDisplayMode.NON_ITEMS_UNIQUE);
         ItemTemplate item = newTask.toItem();
         item.setAction(null);
 

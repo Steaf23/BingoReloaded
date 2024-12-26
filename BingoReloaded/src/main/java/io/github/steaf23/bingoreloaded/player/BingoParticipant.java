@@ -46,7 +46,7 @@ public interface BingoParticipant extends ForwardingAudience.Single
         return getTeam().getCard();
     }
 
-    void giveBingoCard(int cardSlot, MapRenderer renderer);
+    void giveBingoCard(int cardSlot, @Nullable MapRenderer renderer);
     void giveEffects(EnumSet<EffectOptionFlags> effects, int gracePeriod);
     void takeEffects(boolean force);
     void giveKit(PlayerKit kit);
