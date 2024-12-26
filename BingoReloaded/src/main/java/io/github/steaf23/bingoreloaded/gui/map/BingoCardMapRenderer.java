@@ -3,6 +3,8 @@ package io.github.steaf23.bingoreloaded.gui.map;
 import io.github.steaf23.bingoreloaded.cards.TaskCard;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.tasks.GameTask;
+import io.github.steaf23.bingoreloaded.tasks.data.AdvancementTask;
+import io.github.steaf23.bingoreloaded.tasks.data.StatisticTask;
 import io.github.steaf23.playerdisplay.inventory.item.ItemTemplate;
 import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import org.apache.commons.compress.archivers.sevenz.SevenZArchiveEntry;
@@ -42,6 +44,8 @@ public class BingoCardMapRenderer extends MapRenderer
 
     private static BufferedImage COMPLETED_OVERLAY = null;
     private static BufferedImage BACKGROUND = null;
+    private static BufferedImage ADVANCEMENT_ICON = null;
+    private static BufferedImage STATISTIC_ICON = null;
 
     public BingoCardMapRenderer(JavaPlugin plugin, TaskCard card, BingoTeam team) {
         this.plugin = plugin;
@@ -77,9 +81,17 @@ public class BingoCardMapRenderer extends MapRenderer
             if (overlayStream != null)
                 COMPLETED_OVERLAY = ImageIO.read(overlayStream);
 
-            InputStream backgroundStream = plugin.getResource("card_background.png");
+            InputStream backgroundStream = plugin.getResource("maptextures/card_background.png");
             if (backgroundStream != null)
                 BACKGROUND = ImageIO.read(backgroundStream);
+
+            InputStream iconStream = plugin.getResource("maptextures/advancement_icon.png");
+            if (iconStream != null)
+                ADVANCEMENT_ICON = ImageIO.read(iconStream);
+
+            iconStream = plugin.getResource("maptextures/statistic_icon.png");
+            if (iconStream != null)
+                STATISTIC_ICON = ImageIO.read(iconStream);
 
         } catch (IOException e) {
             ConsoleMessenger.error(e.getMessage());
@@ -136,6 +148,7 @@ public class BingoCardMapRenderer extends MapRenderer
 
         if (task.isCompleted() && COMPLETED_OVERLAY != null && false) {
             drawImageAlphaScissor(canvas, gridX * 24 + 4, gridY * 24 + 4, COMPLETED_OVERLAY);
+            return;
         }
         else {
             drawImageAlphaScissor(canvas, gridX * 24 + 4 + extraOffset, gridY * 24 + 4 + extraOffset, allItemImages.get(mat.getKey()));
@@ -143,6 +156,12 @@ public class BingoCardMapRenderer extends MapRenderer
         int amount = stack.getAmount();
         if (amount > 1) {
             drawTaskAmount(canvas, gridX, gridY, amount);
+        }
+
+        if (task.data instanceof AdvancementTask) {
+            drawImageAlphaScissor(canvas, gridX * 24 + 2, gridY * 24 + 15, ADVANCEMENT_ICON);
+        } else if (task.data instanceof StatisticTask) {
+            drawImageAlphaScissor(canvas, gridX * 24 + 2, gridY * 24 + 15, STATISTIC_ICON);
         }
     }
 
