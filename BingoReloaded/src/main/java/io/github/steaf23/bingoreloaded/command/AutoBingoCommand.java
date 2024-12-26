@@ -203,6 +203,17 @@ public class AutoBingoCommand implements TabExecutor
         })).addUsage("<win_goal>");
 
 
+        command.addSubCommand(new SubCommand("separate_cards", args -> {
+            var settings = getSettingsBuilder(args[0]);
+            if (settings == null) {
+                sendFailed("Invalid world/ session name: " + args[0], args[0]);
+                return false;
+            }
+            return setDifferentCardPerTeam(settings, args[0], Arrays.copyOfRange(args, 1, args.length));
+        }).addUsage("<true | false>")
+            .addTabCompletion(args -> args.length == 2 ? List.of("true", "false") : List.of()));
+
+
         command.addSubCommand(new SubCommand("end", args -> end(args[0])));
 
 
@@ -570,6 +581,19 @@ public class AutoBingoCommand implements TabExecutor
         settings.completeGoal(goal);
 
         sendSuccess("Set complete goal to " + goal, worldName);
+        return true;
+    }
+
+    public boolean setDifferentCardPerTeam(BingoSettingsBuilder settings, String worldName, String[] extraArguments) {
+        if (extraArguments.length != 1) {
+            sendFailed("Expected 3 arguments!", worldName);
+            return false;
+        }
+
+        boolean value = extraArguments[0].equals("true");
+        settings.differentCardPerTeam(value);
+
+        sendSuccess((value ? "Enabled" : "Disabled") + " separate cards per team", worldName);
         return true;
     }
 
