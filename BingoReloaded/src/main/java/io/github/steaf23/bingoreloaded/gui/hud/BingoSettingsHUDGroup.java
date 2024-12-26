@@ -4,6 +4,7 @@ import io.github.steaf23.bingoreloaded.data.ScoreboardData;
 import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.data.config.BingoOptions;
 import io.github.steaf23.bingoreloaded.gui.inventory.EffectOptionFlags;
+import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
 import io.github.steaf23.playerdisplay.scoreboard.HUDRegistry;
 import io.github.steaf23.playerdisplay.scoreboard.PlayerHUD;
@@ -44,6 +45,10 @@ public class BingoSettingsHUDGroup extends PlayerHUDGroup
         addSidebarArgument("team_size", config.getOptionValue(BingoOptions.SINGLE_PLAYER_TEAMS) ? Component.text("1").color(NamedTextColor.AQUA) : Component.text(Integer.toString(settings.maxTeamSize())));
         addSidebarArgument("duration", settings.useCountdown() ? Component.text(Integer.toString(settings.countdownDuration())) : Component.text("∞").color(NamedTextColor.AQUA));
         addSidebarArgument("effects", EffectOptionFlags.effectsToText(settings.effects()));
+        addSidebarArgument("seed", Component.text(settings.seed()));
+        addSidebarArgument("goal", Component.text(settings.mode() == BingoGamemode.COMPLETE ? settings.completeGoal() : settings.hotswapGoal()));
+        addSidebarArgument("expire_hotswap", settings.expireHotswapTasks() ? Component.text("✔").color(NamedTextColor.GREEN) : Component.text("✕").color(NamedTextColor.RED));
+        addSidebarArgument("separate_cards", settings.differentCardPerTeam() ? Component.text("✔").color(NamedTextColor.GREEN) : Component.text("✕").color(NamedTextColor.RED));
 
         updateVisible();
     }
