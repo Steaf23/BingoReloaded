@@ -1,24 +1,22 @@
 package io.github.steaf23.bingoreloaded.player.team;
 
+import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class BingoTeamContainer implements Iterable<BingoTeam>
 {
     private final Set<BingoTeam> teams;
+    private BingoSession session;
 
-    BingoTeamContainer() {
+    BingoTeamContainer(BingoSession session) {
         teams = new HashSet<>();
+        this.session = session;
     }
 
     public int teamCount() {
@@ -57,11 +55,7 @@ public class BingoTeamContainer implements Iterable<BingoTeam>
     }
 
     public Set<BingoParticipant> getAllParticipants() {
-        Set<BingoParticipant> allPlayers = new HashSet<>();
-        for (BingoTeam activeTeam : teams) {
-            allPlayers.addAll(activeTeam.getMembers());
-        }
-        return allPlayers;
+        return new HashSet<>(session.participantMap.values());
     }
 
     public Set<BingoParticipant> getAllOnlineParticipants() {

@@ -1,5 +1,7 @@
 package io.github.steaf23.bingoreloaded.cards;
 
+import io.github.steaf23.bingoreloaded.BingoReloaded;
+import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.data.config.BingoOptions;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.gui.inventory.card.CardMenu;
@@ -8,6 +10,7 @@ import io.github.steaf23.bingoreloaded.gui.inventory.card.HotswapCardMenu;
 import io.github.steaf23.bingoreloaded.gui.inventory.card.HotswapGenericCardMenu;
 import io.github.steaf23.bingoreloaded.gui.inventory.card.HotswapTexturedCardMenu;
 import io.github.steaf23.bingoreloaded.gui.inventory.card.TexturedCardMenu;
+import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
 import io.github.steaf23.bingoreloaded.tasks.GameTask;
@@ -43,33 +46,42 @@ public class CardFactory
         };
     }
 
-    public static Set<TaskCard> generateCardsForGame(BingoGame game, MenuBoard menuBoard, boolean includeAdvancements, boolean includeStatistics, GameTask.TaskDisplayMode taskDisplayMode) {
-        BingoSettings settings = game.getSettings();
-        TaskGenerator.GeneratorSettings generatorSettings = new TaskGenerator.GeneratorSettings(settings.card(), settings.seed(), includeAdvancements, includeStatistics, settings.size(), taskDisplayMode);
-
+    public static Set<TaskCard> generateCardsForGame(BingoGame game, MenuBoard menuBoard) {
         Set<TaskCard> uniqueCards = new HashSet<>();
 
-        TaskCard masterCard = CardFactory.fromGame(menuBoard, game, PlayerDisplay.useCustomTextures());
-        if (settings.differentCardPerTeam() && masterCard.canGenerateSeparateCards()) {
+        game.masterCard = CardFactory.fromGame(menuBoard, game, PlayerDisplay.useCustomTextures());
+
+        BingoConfigurationData config = game.getConfig();
+        boolean useAdvancements = !(BingoReloaded.areAdvancementsDisabled() || config.getOptionValue(BingoOptions.DISABLE_ADVANCEMENTS));
+        GameTask.TaskDisplayMode displayMode = config.getOptionValue(BingoOptions.SHOW_ADVANCEMENT_ITEMS) ? GameTask.TaskDisplayMode.NON_ITEMS_UNIQUE : GameTask.TaskDisplayMode.NON_ITEMS_SIMILAR;
+        BingoSettings settings = game.getSettings();
+        game.generatorSettings = new TaskGenerator.GeneratorSettings(settings.card(), settings.seed(), useAdvancements, !config.getOptionValue(BingoOptions.DISABLE_STATISTICS), settings.size(), displayMode);
+
+        game.masterCard.generateCard(game.generatorSettings);
+
+        game.getTeamManager().getActiveTeams().forEach(t -> {
+           uniqueCards.add(generateCardForTeam(t, game));
+        });
+
+        return uniqueCards;
+    }
+
+    public static TaskCard generateCardForTeam(BingoTeam t, BingoGame game) {
+        BingoSettings settings = game.getSettings();
+        if (settings.differentCardPerTeam() && game.masterCard.canGenerateSeparateCards()) {
             // Generate a new card for each team.
-            game.getTeamManager().getActiveTeams().forEach(t -> {
-                t.outOfTheGame = false;
-                TaskCard card = masterCard.copy();
-                card.generateCard(generatorSettings);
-                t.setCard(card);
-                uniqueCards.add(card);
-            });
+            t.outOfTheGame = false;
+            TaskCard card = game.masterCard.copy();
+            card.generateCard(game.generatorSettings);
+            t.setCard(card);
+            return card;
         } else {
             // Otherwise generate the card only once and copy it for all teams
-            masterCard.generateCard(generatorSettings);
-            game.getTeamManager().getActiveTeams().forEach(t -> {
-                t.outOfTheGame = false;
-                TaskCard card = masterCard.copy();
-                t.setCard(card);
-                uniqueCards.add(card);
-            });
+            t.outOfTheGame = false;
+            TaskCard card = game.masterCard.copy();
+            t.setCard(card);
+            return card;
         }
-        return uniqueCards;
     }
 
     private static @NotNull CardMenu createMenu(MenuBoard menuBoard, boolean texturedMenu, BingoGamemode mode, CardSize size) {

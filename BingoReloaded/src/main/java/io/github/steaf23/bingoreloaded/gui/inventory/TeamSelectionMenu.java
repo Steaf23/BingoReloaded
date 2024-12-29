@@ -47,6 +47,8 @@ public class TeamSelectionMenu extends PaginatedSelectionMenu
             participant = new BingoPlayer((Player) player, session);
         }
 
+        session.participantMap.put(participant.getId(), participant);
+
         if (clickedOption.getCompareKey().equals("item_auto")) {
             teamManager.addMemberToTeam(participant, "auto");
             reopen(player);

@@ -47,7 +47,6 @@ import java.util.UUID;
  */
 public class BingoPlayer implements BingoParticipant
 {
-    private BingoTeam team;
     public final String playerName;
     private final BingoSession session;
     private final UUID playerId;
@@ -62,7 +61,6 @@ public class BingoPlayer implements BingoParticipant
         this.playerName = player.getName();
         this.displayName = player.displayName();
         this.itemCooldowns = new ItemCooldownManager();
-        this.team = null;
     }
 
     /**
@@ -304,12 +302,25 @@ public class BingoPlayer implements BingoParticipant
 
     @Override
     public @Nullable BingoTeam getTeam() {
-        return team;
+        return session.teamManager
+                .getActiveTeams()
+                .getTeams()
+                .stream()
+                .filter(team -> team.hasMember(this.playerId))
+                .findAny()
+                .orElse(null);
     }
 
     @Override
     public void setTeam(@Nullable BingoTeam team) {
-        this.team = team;
+        if(team == null) {
+            session.teamManager
+                    .getActiveTeams()
+                    .getTeams()
+                    .forEach(t -> t.removeMember(this));
+        } else {
+            team.addMember(this);
+        }
     }
 
     @Override

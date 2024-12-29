@@ -23,6 +23,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
+import org.bukkit.scoreboard.Team;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.jetbrains.annotations.NotNull;
 
@@ -112,6 +113,16 @@ public class BingoTestCommand implements TabExecutor
                     }
                 });
                 menu.open(p);
+            }
+            case "test" -> {
+                //BingoReloaded.getInstance().getGameManager().getSession("world").participantMap.values()
+                commandSender.sendMessage("---");
+                BingoReloaded.getInstance().getGameManager().getSession("world").participantMap.forEach((key,value) -> {
+                    commandSender.sendMessage(String.format("%s: %s", key.toString(), value.getName()));
+                });
+            }
+            case "remove-team" -> {
+                Bukkit.getScoreboardManager().getMainScoreboard().getTeams().forEach(Team::unregister);
             }
         }
         return true;

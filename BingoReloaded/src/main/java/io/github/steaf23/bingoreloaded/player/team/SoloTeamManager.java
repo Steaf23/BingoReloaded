@@ -34,13 +34,13 @@ public class SoloTeamManager implements TeamManager
 
     public SoloTeamManager(BingoSession session) {
         this.session = session;
-        this.teams = new BingoTeamContainer();
+        this.teams = new BingoTeamContainer(session);
 
         TextColor autoTeamColor = TextColor.fromHexString("#fdffa8");
         if (autoTeamColor == null) {
             autoTeamColor = NamedTextColor.WHITE;
         }
-        this.autoTeam = new BingoTeam("auto", autoTeamColor, BingoMessage.TEAM_AUTO.asPhrase(), createPrefix(autoTeamColor));
+        this.autoTeam = new BingoTeam(session, "auto", autoTeamColor, BingoMessage.TEAM_AUTO.asPhrase(), createPrefix(autoTeamColor));
         this.teams.addTeam(autoTeam);
     }
 
@@ -85,8 +85,11 @@ public class SoloTeamManager implements TeamManager
     public void reset() {
         for (BingoTeam team : new HashSet<>(teams.getTeams())) {
             for (BingoParticipant member : new HashSet<>(team.getMembers())) {
-                removeMemberFromTeam(member);
+                team.removeMember(member);
+                var leaveEvent = new ParticipantLeftTeamEvent(member, session);
+                Bukkit.getPluginManager().callEvent(leaveEvent);
             }
+            team.getGameTeam().unregister();
             teams.removeTeam(team);
         }
         teams.addTeam(autoTeam);
@@ -95,7 +98,7 @@ public class SoloTeamManager implements TeamManager
     public void setupParticipant(BingoParticipant participant) {
         TextColor teamColor = determineTeamColor();
         // create a team where the id is the same as the participant's id, which is good enough for our use case.
-        BingoTeam team = new BingoTeam(participant.getId().toString(), teamColor, participant.getDisplayName(), createPrefix(teamColor));
+        BingoTeam team = new BingoTeam(session, participant.getId().toString(), teamColor, participant.getDisplayName(), createPrefix(teamColor));
         team.addMember(participant);
         teams.addTeam(team);
 
@@ -159,11 +162,11 @@ public class SoloTeamManager implements TeamManager
 
 
     @Override
-    public void handlePlayerJoinedSessionWorld(PlayerJoinedSessionWorldEvent event) {
+    public void handlePlayerJoinedSessionWorld(final PlayerJoinedSessionWorldEvent event) {
         ConsoleMessenger.log(event.getPlayer().displayName().append(Component.text(" joined world")).color(NamedTextColor.GOLD), session.getOverworld().getName());
 
         BingoParticipant participant = getPlayerAsParticipant(event.getPlayer());
-        if (participant != null) {
+        if (participant != null && participant.getTeam() != null) {
             if (!session.isRunning()) {
                 return;
             }
@@ -172,12 +175,12 @@ public class SoloTeamManager implements TeamManager
         }
 
         if (session.isRunning()) {
-            event.getPlayer().setGameMode(GameMode.SPECTATOR);
-            BingoMessage.SPECTATOR_JOIN.sendToAudience(event.getPlayer());
             return;
         }
 
-        addMemberToTeam(new BingoPlayer(event.getPlayer(), session), "auto");
+        BingoPlayer player = new BingoPlayer(event.getPlayer(), session);
+        session.participantMap.put(player.getId(), player);
+        addMemberToTeam(player, "auto");
     }
 
     @Override

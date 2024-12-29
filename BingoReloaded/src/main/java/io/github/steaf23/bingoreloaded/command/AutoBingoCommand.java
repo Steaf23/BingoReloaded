@@ -486,6 +486,7 @@ public class AutoBingoCommand implements TabExecutor
         if (participant == null) {
             participant = new BingoPlayer(player, session);
         }
+        session.participantMap.put(participant.getId(), participant);
         if (!session.teamManager.addMemberToTeam(participant, teamName)) {
             sendFailed("Player " + playerName + " could not be added to team " + teamName, sessionName);
             return false;

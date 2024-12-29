@@ -51,7 +51,10 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.function.Consumer;
 
 /**
@@ -66,13 +69,17 @@ public class BingoSession implements ForwardingAudience
     private final BingoConfigurationData config;
     private final MenuBoard menuBoard;
     private final HUDRegistry hudRegistry;
-    private final TeamDisplay teamDisplay;
+    public final TeamDisplay teamDisplay;
 
     // A bingo session controls 1 group of worlds
     private final WorldGroup worlds;
     private GamePhase phase;
 
+    public final Map<UUID, BingoParticipant> participantMap;
+
     public BingoSession(MenuBoard menuBoard, HUDRegistry hudRegistry, @NotNull WorldGroup worlds, BingoConfigurationData config) {
+        this.participantMap = new HashMap<>();
+
         this.menuBoard = menuBoard;
         this.hudRegistry = hudRegistry;
         this.worlds = worlds;
@@ -141,6 +148,8 @@ public class BingoSession implements ForwardingAudience
         phase.end();
         phase = new BingoGame(this, gameSettings == null ? settings : gameSettings.view(), config);
         phase.setup();
+
+        teamDisplay.update();
     }
 
     public void endGame() {
@@ -172,9 +181,20 @@ public class BingoSession implements ForwardingAudience
 
         getOverworld().getPlayers().forEach(p -> {
             if (teamManager.getPlayerAsParticipant(p) == null) {
-                teamManager.addMemberToTeam(new BingoPlayer(p, this), "auto");
+                BingoPlayer player = new BingoPlayer(p, this);
+                participantMap.put(player.getId(), player);
+                teamManager.addMemberToTeam(player, "auto");
             }
         });
+
+        // Remove Offline Participants
+        teamManager.getParticipants().forEach(p -> {
+            if(p.sessionPlayer().isEmpty() && !p.alwaysActive()) {
+                removeParticipant(p);
+            }
+        });
+
+        teamDisplay.update();
     }
 
     /**
@@ -185,6 +205,7 @@ public class BingoSession implements ForwardingAudience
      */
     public void removeParticipant(@NonNull BingoParticipant player) {
         teamManager.removeMemberFromTeam(player);
+        participantMap.remove(player.getId());
     }
 
     public void handleGameEnded(final BingoEndedEvent event) {

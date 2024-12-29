@@ -41,7 +41,7 @@ public class BasicTeamManager implements TeamManager
     public BasicTeamManager(BingoSession session) {
         this.session = session;
         this.teamData = new TeamData();
-        this.activeTeams = new BingoTeamContainer();
+        this.activeTeams = new BingoTeamContainer(session);
         this.maxTeamSize = session.settingsBuilder.view().maxTeamSize();
         this.joinableTeams = teamData.getTeams();
         ConsoleMessenger.log("Loaded " + joinableTeams.size() + " team(s)");
@@ -49,7 +49,7 @@ public class BasicTeamManager implements TeamManager
         TextColor autoTeamColor = TextColor.fromHexString("#fdffa8");
         if (autoTeamColor == null) autoTeamColor = NamedTextColor.WHITE;
 
-        this.autoTeam = new BingoTeam("auto", autoTeamColor, BingoMessage.TEAM_AUTO.asPhrase(), createAutoPrefix(autoTeamColor));
+        this.autoTeam = new BingoTeam(session, "auto", autoTeamColor, BingoMessage.TEAM_AUTO.asPhrase(), createAutoPrefix(autoTeamColor));
     }
 
     private Component createAutoPrefix(TextColor color) {
@@ -172,7 +172,7 @@ public class BasicTeamManager implements TeamManager
         if (player == null) return false;
 
         BingoTeam team = player.getTeam();
-        if (getParticipants().contains(player)) {
+        if (team != null) {
             team.removeMember(player);
         } else {
             return false;
@@ -254,7 +254,7 @@ public class BasicTeamManager implements TeamManager
     }
 
     @Nullable
-    private BingoTeam activateTeamFromId(String teamId) {
+    public BingoTeam activateTeamFromId(String teamId) {
         TeamData.TeamTemplate team = joinableTeams.getOrDefault(teamId, null);
         if (team == null) {
             return null;
@@ -268,7 +268,7 @@ public class BasicTeamManager implements TeamManager
         if (existingTeam.isPresent())
             return existingTeam.get();
 
-        BingoTeam bTeam = new BingoTeam(teamId, team.color(), team.nameComponent(), createPrefix(team));
+        BingoTeam bTeam = new BingoTeam(session, teamId, team.color(), team.nameComponent(), createPrefix(team));
 
         activeTeams.addTeam(bTeam);
         return bTeam;
@@ -330,7 +330,7 @@ public class BasicTeamManager implements TeamManager
         ConsoleMessenger.log(event.getPlayer().displayName().append(Component.text(" joined world")).color(NamedTextColor.GOLD), session.getOverworld().getName());
 
         BingoParticipant participant = getPlayerAsParticipant(event.getPlayer());
-        if (participant != null) {
+        if (participant != null && participant.getTeam() != null) {
             if (!session.isRunning()) {
                 return;
             }
@@ -339,11 +339,13 @@ public class BasicTeamManager implements TeamManager
         }
 
         if (session.isRunning()) {
-            event.getPlayer().setGameMode(GameMode.SPECTATOR);
-            BingoMessage.SPECTATOR_JOIN.sendToAudience(event.getPlayer());
+            //event.getPlayer().setGameMode(GameMode.SPECTATOR);
+            BingoMessage.NO_JOIN.sendToAudience(event.getPlayer());
             return;
         }
 
-        addMemberToTeam(new BingoPlayer(event.getPlayer(), session), "auto");
+        BingoPlayer player = new BingoPlayer(event.getPlayer(), session);
+        session.participantMap.put(player.getId(), player);
+        addMemberToTeam(player, "auto");
     }
 }

@@ -6,10 +6,7 @@ import org.bukkit.Location;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitTask;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 public class PlayerRespawnManager
 {
@@ -20,11 +17,15 @@ public class PlayerRespawnManager
         this.deadPlayers = new HashMap<>();
         //TODO: Maybe only have the task running if there are dead players?
         this.task = Bukkit.getScheduler().runTaskTimer(plugin, () -> {
-            for (var p : deadPlayers.keySet()) {
-                DeadPlayer player = deadPlayers.get(p);
-                if (System.currentTimeMillis() > player.deathTime + respawnPeriodSeconds * 1000L) {
-                    deadPlayers.remove(p);
+            try {
+                for (var p : deadPlayers.keySet()) {
+                    DeadPlayer player = deadPlayers.get(p);
+                    if (System.currentTimeMillis() > player.deathTime + respawnPeriodSeconds * 1000L) {
+                        deadPlayers.remove(p);
+                    }
                 }
+            } catch (ConcurrentModificationException e) {
+                //why idk
             }
         }, 0, BingoReloaded.ONE_SECOND);
     }

@@ -1,39 +1,43 @@
 package io.github.steaf23.bingoreloaded.player.team;
 
+import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.cards.TaskCard;
+import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.audience.ForwardingAudience;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.Team;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class BingoTeam implements ForwardingAudience
 {
+    private BingoSession session;
     private TaskCard card;
     public boolean outOfTheGame = false;
     private final String id;
     private final TextColor color;
     private final Component name;
     private final Component prefix;
+    public Location teamLocation = null;
 
-    private final Set<BingoParticipant> members;
-
-    public BingoTeam(String identifier, TextColor color, Component name, Component prefix) {
+    public BingoTeam(BingoSession session, String identifier, TextColor color, Component name, Component prefix) {
+        this.session = session;
         this.id = identifier;
         this.card = null;
         this.color = color;
         this.name = name;
-        this.members = new HashSet<>();
         this.prefix = prefix;
     }
 
@@ -67,26 +71,22 @@ public class BingoTeam implements ForwardingAudience
     }
 
     public Set<BingoParticipant> getMembers() {
-        return members;
+        return getGameTeam().getEntries().stream()
+                .map(p -> session.participantMap.get(Bukkit.getOfflinePlayer(p).getUniqueId()))
+                .filter(Objects::nonNull)
+                .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     public void addMember(BingoParticipant player) {
-        members.add(player);
-        player.setTeam(this);
+        getGameTeam().addPlayer(Bukkit.getOfflinePlayer(player.getId()));
     }
 
     public void removeMember(@NotNull BingoParticipant player) {
-        members.remove(player);
-        player.setTeam(null);
+        getGameTeam().removePlayer(Bukkit.getOfflinePlayer(player.getId()));
     }
 
     public boolean hasMember(UUID memberId) {
-        for (BingoParticipant member : members) {
-            if (member.getId().equals(memberId)) {
-                return true;
-            }
-        }
-        return false;
+        return getGameTeam().hasPlayer(Bukkit.getOfflinePlayer(memberId));
     }
 
     public int getCompleteCount() {
@@ -98,8 +98,7 @@ public class BingoTeam implements ForwardingAudience
     }
 
     public Set<String> getMemberNames() {
-        return members.stream()
-                .map(BingoParticipant::getName).collect(Collectors.toSet());
+        return getGameTeam().getEntries();
     }
 
     public Component getPrefix() {
@@ -109,5 +108,15 @@ public class BingoTeam implements ForwardingAudience
     @Override
     public @NotNull Iterable<? extends Audience> audiences() {
         return getMembers();
+    }
+
+    public Team getGameTeam() {
+        Scoreboard scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
+        Team team = scoreboard.getTeam(id);
+        if(team == null) {
+            team = scoreboard.registerNewTeam(id);
+            team.color(NamedTextColor.nearestTo(this.color));
+        }
+        return team;
     }
 }

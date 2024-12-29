@@ -67,7 +67,7 @@ public class TaskProgressTracker
     }
 
     private final BingoGame game;
-    private final Map<GameTask, List<TaskProgress>> progressMap;
+    public final Map<GameTask, List<TaskProgress>> progressMap;
     private final StatisticTracker statisticTracker;
 
     public TaskProgressTracker(BingoGame game) {
@@ -95,41 +95,45 @@ public class TaskProgressTracker
         }
     }
 
-    public void startTrackingTask(GameTask task) {
-        progressMap.put(task, new ArrayList<>());
-        for (BingoParticipant participant : game.getTeamManager().getParticipants()) {
-            // only track progress if the participant has to complete the task.
-            Optional<TaskCard> card = participant.getTeam().getCard();
-            if (card.isEmpty() || !card.get().getTasks().contains(task)) {
-                continue;
-            }
+    public void startTrackingTaskForParticipant(GameTask task, BingoParticipant participant) {
+        // only track progress if the participant has to complete the task.
+        Optional<TaskCard> card = participant.getTeam().getCard();
+        if (card.isEmpty() || !card.get().getTasks().contains(task)) {
+            return;
+        }
 
-            int finalCount = task.data.getRequiredAmount();
+        int finalCount = task.data.getRequiredAmount();
 
-            // reset any progress already made beforehand
-            if (task.type == GameTask.TaskType.ADVANCEMENT) {
-                // revoke advancement from player
-                AdvancementTask advancementTask = (AdvancementTask) task.data;
-                participant.sessionPlayer().ifPresent(player -> {
-                    AdvancementProgress progress = player.getAdvancementProgress(advancementTask.advancement());
-                    progress.getAwardedCriteria().forEach(progress::revokeCriteria);
-                    DebugLogger.addLog("Revoking advancement " + advancementTask.advancement().getKey().getKey() + " for player " + player.getName());
-                });
-            } else if (task.type == GameTask.TaskType.STATISTIC) {
-                StatisticTask statisticTask = (StatisticTask) task.data;
-                // travel statistics are counted * 1000
+        // reset any progress already made beforehand
+        if (task.type == GameTask.TaskType.ADVANCEMENT) {
+            // revoke advancement from player
+            AdvancementTask advancementTask = (AdvancementTask) task.data;
+            participant.sessionPlayer().ifPresent(player -> {
+                AdvancementProgress progress = player.getAdvancementProgress(advancementTask.advancement());
+                progress.getAwardedCriteria().forEach(progress::revokeCriteria);
+                DebugLogger.addLog("Revoking advancement " + advancementTask.advancement().getKey().getKey() + " for player " + player.getName());
+            });
+        } else if (task.type == GameTask.TaskType.STATISTIC) {
+            StatisticTask statisticTask = (StatisticTask) task.data;
+            // travel statistics are counted * 1000
 //                if (statisticTask.statistic().getCategory() == BingoStatistic.StatisticCategory.TRAVEL)
 //                {
 //                    finalCount *= 1000;
 //                }
 
-                // the stat tracker will reset progress to 0 for every statistic added.
-                statisticTracker.addStatistic(statisticTask, participant);
-            }
-            // No progress to reset for item tasks
+            // the stat tracker will reset progress to 0 for every statistic added.
+            statisticTracker.addStatistic(statisticTask, participant);
+        }
+        // No progress to reset for item tasks
 
-            // add task to progress tracker
-            progressMap.get(task).add(new TaskProgress(participant, finalCount));
+        // add task to progress tracker
+        progressMap.get(task).add(new TaskProgress(participant, finalCount));
+    }
+
+    public void startTrackingTask(GameTask task) {
+        progressMap.put(task, new ArrayList<>());
+        for (BingoParticipant participant : game.getTeamManager().getParticipants()) {
+            startTrackingTaskForParticipant(task, participant);
         }
     }
 
