@@ -43,7 +43,7 @@ public class BingoTeam implements ForwardingAudience
         if(team == null) {
             team = scoreboard.registerNewTeam(id);
             team.displayName(name);
-            team.color(NamedTextColor.nearestTo(this.color));
+            //team.color(NamedTextColor.nearestTo(this.color));
             team.prefix(prefix);
         }
         this.gameTeam = team;
