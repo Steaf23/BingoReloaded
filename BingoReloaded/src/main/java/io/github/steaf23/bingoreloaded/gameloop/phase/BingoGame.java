@@ -189,9 +189,6 @@ public class BingoGame implements GamePhase {
                         progressTracker.startTrackingTaskForParticipant(task, player);
                     }
 
-                    // Update Tab List
-                    session.teamDisplay.update();
-
                     // Teleport Player
                     switch (config.getOptionValue(BingoOptions.PLAYER_TELEPORT_STRATEGY)) {
                         case ALONE -> {
@@ -208,7 +205,6 @@ public class BingoGame implements GamePhase {
                 } else if (participant != null && team == null) { // Check Player leaved a team (/team leave)
                     session.removeParticipant(participant);
                     BingoMessage.LEAVE.sendToAudience(participant);
-                    session.teamDisplay.update();
                 }
             });
         });

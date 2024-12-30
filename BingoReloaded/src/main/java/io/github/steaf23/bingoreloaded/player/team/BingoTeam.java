@@ -1,6 +1,5 @@
 package io.github.steaf23.bingoreloaded.player.team;
 
-import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.cards.TaskCard;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
@@ -16,7 +15,6 @@ import org.bukkit.Location;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -31,6 +29,7 @@ public class BingoTeam implements ForwardingAudience
     private final Component name;
     private final Component prefix;
     public Location teamLocation = null;
+    public final Team gameTeam;
 
     public BingoTeam(BingoSession session, String identifier, TextColor color, Component name, Component prefix) {
         this.session = session;
@@ -39,6 +38,15 @@ public class BingoTeam implements ForwardingAudience
         this.color = color;
         this.name = name;
         this.prefix = prefix;
+        Scoreboard scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
+        Team team = scoreboard.getTeam(id);
+        if(team == null) {
+            team = scoreboard.registerNewTeam(id);
+            team.displayName(name);
+            team.color(NamedTextColor.nearestTo(this.color));
+            team.prefix(prefix);
+        }
+        this.gameTeam = team;
     }
 
     public Optional<TaskCard> getCard() {
@@ -71,22 +79,22 @@ public class BingoTeam implements ForwardingAudience
     }
 
     public Set<BingoParticipant> getMembers() {
-        return getGameTeam().getEntries().stream()
+        return gameTeam.getEntries().stream()
                 .map(p -> session.participantMap.get(Bukkit.getOfflinePlayer(p).getUniqueId()))
                 .filter(Objects::nonNull)
                 .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     public void addMember(BingoParticipant player) {
-        getGameTeam().addPlayer(Bukkit.getOfflinePlayer(player.getId()));
+        gameTeam.addPlayer(Bukkit.getOfflinePlayer(player.getId()));
     }
 
     public void removeMember(@NotNull BingoParticipant player) {
-        getGameTeam().removePlayer(Bukkit.getOfflinePlayer(player.getId()));
+        gameTeam.removePlayer(Bukkit.getOfflinePlayer(player.getId()));
     }
 
     public boolean hasMember(UUID memberId) {
-        return getGameTeam().hasPlayer(Bukkit.getOfflinePlayer(memberId));
+        return gameTeam.hasPlayer(Bukkit.getOfflinePlayer(memberId));
     }
 
     public int getCompleteCount() {
@@ -97,10 +105,6 @@ public class BingoTeam implements ForwardingAudience
         return card.getCompleteCount(this);
     }
 
-    public Set<String> getMemberNames() {
-        return getGameTeam().getEntries();
-    }
-
     public Component getPrefix() {
         return prefix;
     }
@@ -108,15 +112,5 @@ public class BingoTeam implements ForwardingAudience
     @Override
     public @NotNull Iterable<? extends Audience> audiences() {
         return getMembers();
-    }
-
-    public Team getGameTeam() {
-        Scoreboard scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
-        Team team = scoreboard.getTeam(id);
-        if(team == null) {
-            team = scoreboard.registerNewTeam(id);
-            team.color(NamedTextColor.nearestTo(this.color));
-        }
-        return team;
     }
 }

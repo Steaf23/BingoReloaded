@@ -89,7 +89,7 @@ public class SoloTeamManager implements TeamManager
                 var leaveEvent = new ParticipantLeftTeamEvent(member, session);
                 Bukkit.getPluginManager().callEvent(leaveEvent);
             }
-            team.getGameTeam().unregister();
+            team.gameTeam.unregister();
             teams.removeTeam(team);
         }
         teams.addTeam(autoTeam);
