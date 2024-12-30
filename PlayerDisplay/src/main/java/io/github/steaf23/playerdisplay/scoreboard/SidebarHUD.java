@@ -23,13 +23,20 @@ public class SidebarHUD
     private final Objective sidebar;
 
     public SidebarHUD(Component initialTitle) {
-        this.board = Bukkit.getScoreboardManager().getNewScoreboard();
-        this.sidebar = board.registerNewObjective("info", Criteria.DUMMY, initialTitle);
+        this.board = Bukkit.getScoreboardManager().getMainScoreboard();
+        Objective sidebar = board.getObjective("info");
+        if (sidebar == null) {
+            sidebar = board.registerNewObjective("info", Criteria.DUMMY, initialTitle);
+        }
+        this.sidebar = sidebar;
         sidebar.setDisplaySlot(DisplaySlot.SIDEBAR);
         this.subscribers = new HashSet<>();
 
         for (int i = 0; i < 15; i++) {
-            Team team = board.registerNewTeam("LINE_" + i);
+            Team team = board.getTeam("LINE_" + i);
+            if (team == null) {
+                team = board.registerNewTeam("LINE_" + i);
+            }
             team.addEntry(getEntry(i));
             setText(i, null);
         }
@@ -43,12 +50,12 @@ public class SidebarHUD
 
     public void applyToPlayer(Player player) {
         subscribers.add(player.getUniqueId());
-        player.setScoreboard(board);
+        //player.setScoreboard(board);
     }
 
     public void removeFromPlayer(Player player) {
         subscribers.remove(player.getUniqueId());
-        player.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
+        //player.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
     }
 
     public void setTitle(Component title) {
