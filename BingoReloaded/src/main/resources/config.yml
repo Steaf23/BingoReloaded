@@ -79,8 +79,7 @@ gameRestartTime: 20
 # If true, allows players to vote on certain options before the game starts.
 useVoteSystem: true
 
-# UNIMPLEMENTED
-# Prevent players from breaking or placing blocks when the game is in the lobby phase
+# Prevent players from breaking or placing blocks when the game is not running
 preventLobbyGriefing: true
 
 # Use this to configure what options can be voted on.

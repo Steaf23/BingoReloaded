@@ -27,7 +27,7 @@ public class BingoSettingsStorageSerializer implements DataStorageSerializer<Bin
         storage.setList("effects", TagDataType.STRING, enumSetToList(value.effects()));
         storage.setInt("team_size", value.maxTeamSize());
         storage.setInt("duration", value.countdownDuration());
-        storage.setNamespacedKey("countdown_type", value.countdownType().key()); //TODO: fix this??
+        storage.setNamespacedKey("countdown_type", value.countdownType().key());
         storage.setInt("hotswap_goal", value.hotswapGoal());
         storage.setBoolean("expire_hotswap_tasks", value.expireHotswapTasks());
         storage.setInt("complete_goal", value.completeGoal());

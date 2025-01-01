@@ -49,6 +49,7 @@ public enum BingoMessage
     VOTE_CARDSIZE("game.lobby.vote_cardsize"),
     VOTE_COUNT("game.lobby.vote_count"),
     VOTE_WON("game.lobby.vote_won"),
+    NO_GRIEFING("game.lobby.no_griefing"),
     NO_PLAYERS("game.start.no_players"),
     ALREADY_STARTED("game.start.already_started"),
     GIVE_CARDS("game.start.give_cards"),

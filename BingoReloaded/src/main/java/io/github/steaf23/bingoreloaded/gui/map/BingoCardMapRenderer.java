@@ -108,7 +108,6 @@ public class BingoCardMapRenderer extends MapRenderer
         ConsoleMessenger.log("Added all texture files: " + allItemImages.size());
     }
 
-    //TODO: implement bingo card holdable map
     @Override
     public void render(@NotNull MapView mapView, @NotNull MapCanvas mapCanvas, @NotNull Player player) {
         int cardSize = card.size.size;

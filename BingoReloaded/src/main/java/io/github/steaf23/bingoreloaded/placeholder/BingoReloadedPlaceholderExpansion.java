@@ -21,7 +21,6 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-//FIXME: parse format from minimessage to component back to legacy-section
 public class BingoReloadedPlaceholderExpansion extends PlaceholderExpansion
 {
     private final BingoReloaded plugin;

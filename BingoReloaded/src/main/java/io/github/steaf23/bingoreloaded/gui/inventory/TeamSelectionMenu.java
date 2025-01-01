@@ -73,7 +73,6 @@ public class TeamSelectionMenu extends PaginatedSelectionMenu
                     .filter(t -> t.getIdentifier().equals("auto")).findAny();
 
             if (autoTeamOpt.isEmpty()) {
-                //FIXME: maybe send the player a message instead?
                 ConsoleMessenger.error("Cannot find any teams to join! Wait for the game to re-open (if it still happens after the game is re-opened, Please report!)");
                 return;
             }
