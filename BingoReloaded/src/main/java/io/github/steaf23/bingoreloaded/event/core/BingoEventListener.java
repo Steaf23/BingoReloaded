@@ -20,6 +20,8 @@ import org.bukkit.World;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
@@ -285,6 +287,24 @@ public class BingoEventListener implements Listener
             return;
 
         session.handlePlayerPortalEvent(event);
+    }
+
+    @EventHandler
+    public void handlePlayerBlockBreak(final BlockBreakEvent event) {
+        BingoSession session = getSession(event.getPlayer().getWorld());
+        if (session == null)
+            return;
+
+        session.handlePlayerBlockBreak(event);
+    }
+
+    @EventHandler
+    public void handlePlayerBlockPlace(final BlockPlaceEvent event) {
+        BingoSession session = getSession(event.getPlayer().getWorld());
+        if (session == null)
+            return;
+
+        session.handlePlayerBlockPlace(event);
     }
 
     @EventHandler

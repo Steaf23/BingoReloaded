@@ -62,7 +62,6 @@ public class TagList
 
         TagList list = new TagList();
         for (int i = 0; i < size; i++) {
-            //TODO: create function to turn some byte string into a typed tag
             list.addTag(type.createTagFromStream(stream)); // read buffer until next tag ends
         }
         return list;

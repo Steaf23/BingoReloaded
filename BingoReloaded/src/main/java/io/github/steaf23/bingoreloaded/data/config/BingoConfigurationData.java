@@ -53,7 +53,6 @@ public class BingoConfigurationData
         setOptionValue(BingoOptions.PLAYER_WAIT_TIME, config.getInt("playerWaitTime", 30));
         setOptionValue(BingoOptions.GAME_RESTART_TIME, config.getInt("gameRestartTime", 20));
         setOptionValue(BingoOptions.USE_VOTE_SYSTEM, config.getBoolean("useVoteSystem", true));
-        //FIXME: implement
         setOptionValue(BingoOptions.PREVENT_PLAYER_GRIEFING, config.getBoolean("preventPlayerGriefing", true));
         setOptionValue(BingoOptions.VOTE_LIST, new VoteList(
                 config.getList("voteList.gamemodes", TagDataType.STRING),

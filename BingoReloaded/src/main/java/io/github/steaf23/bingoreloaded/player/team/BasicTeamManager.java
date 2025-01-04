@@ -222,7 +222,6 @@ public class BasicTeamManager implements TeamManager
         removeMemberFromTeam(participant, false);
         // If after trying to remove the participant from the teams, the participant count did not change, it means the player was not part of a team already
         if (participantCount == getParticipantCount() && participantCount >= getTotalParticipantCapacity()) {
-            //TODO: translate this
             ConsoleMessenger.log(Component.text("All teams are full! (" + getParticipantCount() + "/" + getTotalParticipantCapacity() + " players), with a maximum team size of " + getMaxTeamSize()).color(NamedTextColor.RED));
             activeTeams.removeEmptyTeams("auto");
             return false;
