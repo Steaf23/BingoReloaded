@@ -5,6 +5,7 @@ import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.cards.TaskCard;
 import io.github.steaf23.bingoreloaded.data.TexturedMenuData;
 import io.github.steaf23.bingoreloaded.event.BingoTaskProgressCompletedEvent;
+import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.tasks.GameTask;
@@ -114,11 +115,24 @@ public class BingoTestCommand implements TabExecutor
                 });
                 menu.open(p);
             }
-            case "test" -> {
-                //BingoReloaded.getInstance().getGameManager().getSession("world").participantMap.values()
+            case "participants" -> {
                 commandSender.sendMessage("---");
                 BingoReloaded.getInstance().getGameManager().getSession("world").participantMap.forEach((key,value) -> {
                     commandSender.sendMessage(String.format("%s: %s", key.toString(), value.getName()));
+                });
+            }
+            case "teams" -> {
+                BingoSession session = BingoReloaded.getInstance().getGameManager().getSession("world");
+                commandSender.sendMessage("-- Active Teams --");
+                session.teamManager.getActiveTeams().getTeams().forEach(team -> {
+                    commandSender.sendMessage(team.getColoredName());
+                    team.getMembers().forEach(member -> {
+                        commandSender.sendMessage(String.format(" ┗ %s", member.getName()));
+                    });
+                });
+                commandSender.sendMessage("-- Joinable Teams --");
+                session.teamManager.getJoinableTeams().forEach((name, template) -> {
+                    commandSender.sendMessage(template.nameComponent().color(template.color()));
                 });
             }
             case "remove-team" -> {

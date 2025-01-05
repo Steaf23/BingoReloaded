@@ -259,9 +259,9 @@ public class BasicTeamManager implements TeamManager
             return null;
         }
 
-        if (session.isRunning() && !activeTeams.containsId(teamId)) {
+        /*if (session.isRunning() && !activeTeams.containsId(teamId)) {
             return null;
-        }
+        }*/
 
         Optional<BingoTeam> existingTeam = activeTeams.getById(teamId);
         if (existingTeam.isPresent())

@@ -17,10 +17,13 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.Team;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,7 +51,6 @@ public class TeamSelectionMenu extends PaginatedSelectionMenu
         }
 
         session.participantMap.put(participant.getId(), participant);
-
         if (clickedOption.getCompareKey().equals("item_auto")) {
             teamManager.addMemberToTeam(participant, "auto");
             reopen(player);
@@ -58,7 +60,6 @@ public class TeamSelectionMenu extends PaginatedSelectionMenu
             reopen(player);
             return;
         }
-
         teamManager.addMemberToTeam(participant, clickedOption.getCompareKey());
         reopen(player);
     }
@@ -75,6 +76,7 @@ public class TeamSelectionMenu extends PaginatedSelectionMenu
                     .filter(t -> t.getIdentifier().equals("auto")).findAny();
 
             if (autoTeamOpt.isEmpty()) {
+                //FIXME: maybe send the player a message instead?
                 ConsoleMessenger.error("Cannot find any teams to join! Wait for the game to re-open (if it still happens after the game is re-opened, Please report!)");
                 return;
             }
@@ -98,6 +100,7 @@ public class TeamSelectionMenu extends PaginatedSelectionMenu
         optionItems.add(new ItemTemplate(Material.TNT, BingoMessage.OPTIONS_LEAVE.asPhrase().color(NamedTextColor.AQUA).decorate(TextDecoration.BOLD, TextDecoration.ITALIC))
                 .setGlowing(true).setCompareKey("item_leave"));
 
+        Scoreboard scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
         var allTeams = teamManager.getJoinableTeams();
         for (String teamId : allTeams.keySet()) {
             boolean playersTeam = false;
@@ -106,18 +109,13 @@ public class TeamSelectionMenu extends PaginatedSelectionMenu
             boolean teamIsFull = false;
             List<Component> players = new ArrayList<>();
 
-            for (BingoTeam team : teamManager.getActiveTeams()) {
-                if (!team.getIdentifier().equals(teamId))
-                    continue;
-
-                for (BingoParticipant participant : team.getMembers()) {
-                    players.add(PLAYER_PREFIX.append(participant.getDisplayName()));
-                    if (participant.getId().equals(player.getUniqueId())) {
-                        playersTeam = true;
-                    }
+            Team team = scoreboard.getTeam(teamId);
+            if(team != null) {
+                for (String playerName : team.getEntries()) {
+                    players.add(PLAYER_PREFIX.append(Component.text(playerName)));
                 }
-
-                if (teamManager.getMaxTeamSize() == team.getMembers().size()) {
+                playersTeam = team.hasEntity(player);
+                if (teamManager.getMaxTeamSize() == team.getSize()) {
                     teamIsFull = true;
                 }
             }

@@ -131,6 +131,21 @@ public class BingoGame implements GamePhase {
             timer = new CountdownTimer(settings.countdownDuration() * 60, 5 * 60, 60, session);
         else
             timer = new CounterTimer();
+
+        Scoreboard mainScoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
+        getTeamManager().getParticipants().forEach(p -> {
+            if (p.sessionPlayer().isPresent()) {
+                Player player = p.sessionPlayer().get();
+                if (p.getTeam() == null) {
+                    Team team = mainScoreboard.getEntityTeam(player);
+                    if (team == null) {
+                        return;
+                    }
+                    ((BasicTeamManager) teamManager).activateTeamFromId(team.getName());
+                }
+            }
+        });
+
         timer.addNotifier(time ->
         {
             Component timerMessage = timer.getTimeDisplayMessage(false);
@@ -158,6 +173,7 @@ public class BingoGame implements GamePhase {
                         teamManager.addMemberToTeam(player, team.getName());
                         bTeam = player.getTeam();
                         // Send Message
+                        assert bTeam != null;
                         BingoMessage.JOIN.sendToAudience(player, NamedTextColor.GREEN, bTeam.getColoredName());
                     } else {
                         // Setup Solo Team
@@ -199,7 +215,10 @@ public class BingoGame implements GamePhase {
                                     BingoGame.removePlatform(platformLocation, 5), (long) (Math.max(0, gracePeriod - 5)) * BingoReloaded.ONE_SECOND);
                             teleportPlayerToStart(player, platformLocation, 5);
                         }
-                        case TEAM -> teleportPlayerToStart(player, bTeam.teamLocation, 5);
+                        case TEAM -> {
+                            assert bTeam != null;
+                            teleportPlayerToStart(player, bTeam.teamLocation, 5);
+                        }
                         case ALL -> teleportPlayerToStart(player, this.spawnLocation, 5);
                     }
                 } else if (participant != null && team == null) { // Check Player leaved a team (/team leave)
@@ -257,7 +276,6 @@ public class BingoGame implements GamePhase {
         {
             if (p.sessionPlayer().isPresent()) {
                 Player player = p.sessionPlayer().get();
-
                 p.giveKit(settings.kit());
                 returnCardToPlayer(settings.kit().getCardSlot(), p, renderers.get(p.getTeam()));
                 player.setLevel(0);
@@ -701,7 +719,10 @@ public class BingoGame implements GamePhase {
         } else if (PlayerKit.CARD_ITEM.isCompareKeyEqual(event.getItem())) {
             // Show bingo card to player
             event.setCancelled(true);
-            participant.showCard(deathMatchTask);
+            // Prevents cards from being opened when Wand is used
+            if(!PlayerKit.WAND_ITEM.isCompareKeyEqual(event.getPlayer().getInventory().getItemInMainHand())) {
+                participant.showCard(deathMatchTask);
+            }
         }
     }
 
