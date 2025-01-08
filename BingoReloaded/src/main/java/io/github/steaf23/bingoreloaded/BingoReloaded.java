@@ -120,8 +120,6 @@ public class BingoReloaded extends JavaPlugin
         reloadConfig();
         saveDefaultConfig();
 
-        saveConfig();
-
         PLACEHOLDER_API_ENABLED = Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null;
         if (PLACEHOLDER_API_ENABLED) {
             new BingoReloadedPlaceholderExpansion(this).register();

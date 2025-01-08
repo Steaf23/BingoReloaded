@@ -32,7 +32,6 @@
 (3.x) transfer config additions automatically when updating
 (3.x) put automatic team members into random teams instead of the same ones every time (looking at you magenta...)
 
-(BUG) config.yml is not getting copied on server startup, making it use the default values when it should copy the existing config.yml file if available.
 (BUG) Load player data in a bingo world does not teleport the player out
 (BUG) advancement progress is not reset correctly? (MORE INFO NEEDED)
 (BUG) kicking a player from a bingo world displays teleportation failed error even though it worked (related to playerdata)
