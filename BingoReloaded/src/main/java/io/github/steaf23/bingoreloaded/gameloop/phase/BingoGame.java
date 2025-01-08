@@ -78,13 +78,7 @@ import org.bukkit.util.Vector;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.logging.Logger;
 
 public class BingoGame implements GamePhase {
@@ -154,35 +148,44 @@ public class BingoGame implements GamePhase {
             getProgressTracker().updateStatisticProgress();
             scoreboard.updateVisible();
 
-            boolean isSolo = teamManager instanceof SoloTeamManager;
             session.getOverworld().getPlayers().forEach(p -> {
                 Team team = Bukkit.getScoreboardManager().getMainScoreboard().getEntityTeam(p);
                 BingoParticipant participant = teamManager.getPlayerAsParticipant(p);
                 // Check New Player joined a team (/team join)
-                if (participant == null && (team != null || isSolo)) {
+                if (participant == null && (team != null || teamManager instanceof SoloTeamManager)) {
                     // Setup Team
                     BingoPlayer player = new BingoPlayer(p, session);
-                    BingoTeam bTeam;
-                    if (!isSolo) {
-                        // Join to active team
-                        if (!teamManager.getActiveTeams().containsId(team.getName())) {
-                            ConsoleMessenger.error(String.format("Team '%s' is not active!", team.getName()));
-                            team.removeEntity(p);
-                            return;
+                    BingoTeam bTeam = null;
+                    boolean newTeam = false;
+
+                    if (teamManager instanceof BasicTeamManager manager) {
+                        // If there is no team, create it
+                        if (!manager.getActiveTeams().containsId(team.getName())) {
+                            if (manager.activateTeamFromId(team.getName()) != null) {
+                                newTeam = true;
+                            } else {
+                                team.removeEntity(p);
+                                return;
+                            }
                         }
-                        teamManager.addMemberToTeam(player, team.getName());
+                        // Join to team
+                        manager.addMemberToTeam(player, team.getName());
                         bTeam = player.getTeam();
-                        // Send Message
                         assert bTeam != null;
+                        // Send Message
                         BingoMessage.JOIN.sendToAudience(player, NamedTextColor.GREEN, bTeam.getColoredName());
-                    } else {
+                    } else if (teamManager instanceof SoloTeamManager manager) {
                         // Setup Solo Team
-                        SoloTeamManager manager = (SoloTeamManager) teamManager;
                         manager.setupParticipant(player);
                         bTeam = player.getTeam();
+                        assert bTeam != null;
+                        newTeam = true;
+                    }
+
+                    if (newTeam) {
                         // Setup Card
                         TaskCard card = CardFactory.generateCardForTeam(bTeam, this);
-                        card.getTasks().forEach(t -> getProgressTracker().startTrackingTask(t));
+                        card.getTasks().forEach(t -> getProgressTracker().addTask(t));
                         if (config.getOptionValue(BingoOptions.USE_MAP_RENDERER)) {
                             renderers.put(bTeam, new BingoCardMapRenderer(BingoReloaded.getInstance(), card, bTeam));
                         }
@@ -190,36 +193,19 @@ public class BingoGame implements GamePhase {
 
                     session.participantMap.put(player.getId(), player);
 
-                    // Give Kit and Card
-                    player.giveKit(settings.kit());
-                    returnCardToPlayer(settings.kit().getCardSlot(), player, renderers.get(bTeam));
-                    p.setLevel(0);
-                    p.setExp(0.0f);
-
-                    // Add to Scoreboard
-                    scoreboard.addPlayer(p);
+                    // Setup Participant
+                    setupParticipant(player);
                     scoreboard.updateTeamScores();
-
-                    // Start Task Tracking
-                    for (GameTask task : progressTracker.progressMap.keySet()) {
-                        progressTracker.startTrackingTaskForParticipant(task, player);
-                    }
 
                     // Teleport Player
                     switch (config.getOptionValue(BingoOptions.PLAYER_TELEPORT_STRATEGY)) {
                         case ALONE -> {
-                            int gracePeriod = config.getOptionValue(BingoOptions.GRACE_PERIOD);
                             Location platformLocation = getRandomSpawnLocation(session.getOverworld());
-                            spawnPlatform(platformLocation.clone(), 5, true);
-                            BingoReloaded.scheduleTask(task ->
-                                    BingoGame.removePlatform(platformLocation, 5), (long) (Math.max(0, gracePeriod - 5)) * BingoReloaded.ONE_SECOND);
-                            teleportPlayerToStart(player, platformLocation, 5);
+                            createPlatform(platformLocation, p.getWorld());
+                            teleportPlayerToStart(player, platformLocation);
                         }
-                        case TEAM -> {
-                            assert bTeam != null;
-                            teleportPlayerToStart(player, bTeam.teamLocation, 5);
-                        }
-                        case ALL -> teleportPlayerToStart(player, this.spawnLocation, 5);
+                        case TEAM -> teleportPlayerToStart(player, bTeam.teamLocation);
+                        default -> teleportPlayerToStart(player, this.spawnLocation);
                     }
                 } else if (participant != null && team == null) { // Check Player leaved a team (/team leave)
                     session.removeParticipant(participant);
@@ -249,9 +235,6 @@ public class BingoGame implements GamePhase {
             });
         }
 
-        BingoMessage.GIVE_CARDS.sendToAudience(session);
-        teleportPlayersToStart(world);
-
         // Show settings to player inside a hover message
         Component hoverMessage = Component.text()
                 .append(BingoMessage.OPTIONS_GAMEMODE.asPhrase()).append(Component.text(": "))
@@ -272,23 +255,12 @@ public class BingoGame implements GamePhase {
                 Component.empty(),
                 ""), session);
 
-        getTeamManager().getParticipants().forEach(p ->
-        {
-            if (p.sessionPlayer().isPresent()) {
-                Player player = p.sessionPlayer().get();
-                p.giveKit(settings.kit());
-                returnCardToPlayer(settings.kit().getCardSlot(), p, renderers.get(p.getTeam()));
-                player.setLevel(0);
-                player.setExp(0.0f);
-                scoreboard.addPlayer(player);
-            } else if (!p.alwaysActive()) {
-                // If the player is not online, we can remove them from the game, as they probably did not intend on playing in this session
-                session.removeParticipant(p);
-            }
-        });
+        getTeamManager().getParticipants().forEach(this::setupParticipant);
+        BingoMessage.GIVE_CARDS.sendToAudience(session);
+        teleportPlayersToStart(world);
 
         for (TaskCard card : uniqueCards) {
-            card.getTasks().forEach(t -> getProgressTracker().startTrackingTask(t));
+            card.getTasks().forEach(t -> getProgressTracker().addTask(t));
         }
 
         // Post-start Setup
@@ -328,6 +300,36 @@ public class BingoGame implements GamePhase {
             }
         });
         BingoReloaded.scheduleTask(task -> startingTimer.start(), BingoReloaded.ONE_SECOND);
+    }
+
+    private void setupParticipant(BingoParticipant participant) {
+        BingoTeam team = participant.getTeam();
+
+        if (participant.sessionPlayer().isEmpty()) {
+            if (!participant.alwaysActive()) {
+                // If the player is not online, we can remove them from the game, as they probably did not intend on playing in this session
+                session.removeParticipant(participant);
+            }
+            return;
+        }
+
+        if (team == null) return;
+
+        Player player = participant.sessionPlayer().get();
+
+        // Give Kit and Card
+        participant.giveKit(settings.kit());
+        returnCardToPlayer(settings.kit().getCardSlot(), participant, renderers.get(team));
+        player.setLevel(0);
+        player.setExp(0.0f);
+
+        // Add to Scoreboard
+        scoreboard.addPlayer(player);
+
+        // Start Task Tracking
+        for (GameTask task : progressTracker.progressMap.keySet()) {
+            progressTracker.startTrackingTaskForParticipant(task, participant);
+        }
     }
 
     public boolean hasStarted() {
@@ -520,54 +522,51 @@ public class BingoGame implements GamePhase {
     }
 
     private void teleportPlayersToStart(World world) {
-        int gracePeriod = config.getOptionValue(BingoOptions.GRACE_PERIOD);
         switch (config.getOptionValue(BingoOptions.PLAYER_TELEPORT_STRATEGY)) {
             case ALONE -> {
                 for (BingoParticipant p : getTeamManager().getParticipants()) {
-                    Location platformLocation = getRandomSpawnLocation(world);
-                    if (!getTeamManager().getParticipants().isEmpty()) {
-                        spawnPlatform(platformLocation.clone(), 5, true);
-
-                        BingoReloaded.scheduleTask(task ->
-                                BingoGame.removePlatform(platformLocation, 5), (long) (Math.max(0, gracePeriod - 5)) * BingoReloaded.ONE_SECOND);
-                    }
-                    teleportPlayerToStart(p, platformLocation, 5);
+                    Location spawnLocation = getRandomSpawnLocation(world);
+                    createPlatform(spawnLocation, world);
+                    teleportPlayerToStart(p, spawnLocation);
                 }
             }
             case TEAM -> {
                 for (BingoTeam t : getTeamManager().getActiveTeams()) {
                     t.teamLocation = getRandomSpawnLocation(world);
-
                     Set<BingoParticipant> players = t.getMembers();
                     if (!players.isEmpty()) {
-                        spawnPlatform(t.teamLocation, 5, true);
-
-                        BingoReloaded.scheduleTask(task ->
-                                BingoGame.removePlatform(t.teamLocation, 5), (long) (Math.max(0, gracePeriod - 5)) * BingoReloaded.ONE_SECOND);
+                        createPlatform(t.teamLocation, world);
                     }
-                    players.forEach(p -> teleportPlayerToStart(p, t.teamLocation, 5));
+                    for (BingoParticipant p : players) {
+                        teleportPlayerToStart(p, t.teamLocation);
+                    }
                 }
             }
             case ALL -> {
                 this.spawnLocation = getRandomSpawnLocation(world);
-                if (!getTeamManager().getParticipants().isEmpty()) {
-                    spawnPlatform(this.spawnLocation, 5, true);
-
-                    BingoReloaded.scheduleTask(task ->
-                            BingoGame.removePlatform(this.spawnLocation, 5), (long) (Math.max(0, gracePeriod - 5)) * BingoReloaded.ONE_SECOND);
+                createPlatform(this.spawnLocation, world);
+                for (BingoParticipant p : getTeamManager().getParticipants()) {
+                    teleportPlayerToStart(p, this.spawnLocation);
                 }
-
-                Set<BingoParticipant> players = getTeamManager().getParticipants();
-                players.forEach(p -> teleportPlayerToStart(p, this.spawnLocation, 5));
-            }
-            default -> {
             }
         }
     }
 
-    private void teleportPlayerToStart(BingoParticipant participant, Location to, int spread) {
+    private void createPlatform(Location location, World world) {
+        int gracePeriod = config.getOptionValue(BingoOptions.GRACE_PERIOD);
+
+        spawnPlatform(location, 5, true);
+
+        BingoReloaded.scheduleTask(task ->
+                BingoGame.removePlatform(location, 5), (long) (Math.max(0, gracePeriod - 5)) * BingoReloaded.ONE_SECOND);
+    }
+
+    private void teleportPlayerToStart(BingoParticipant participant, Location to) {
         if (participant.sessionPlayer().isEmpty())
             return;
+
+        int spread = 5;
+
         Player player = participant.sessionPlayer().get();
 
         Vector placement = Vector.getRandom().multiply(spread * 2).add(new Vector(-spread, -spread, -spread));
@@ -720,7 +719,7 @@ public class BingoGame implements GamePhase {
             // Show bingo card to player
             event.setCancelled(true);
             // Prevents cards from being opened when Wand is used
-            if(!PlayerKit.WAND_ITEM.isCompareKeyEqual(event.getPlayer().getInventory().getItemInMainHand())) {
+            if (!PlayerKit.WAND_ITEM.isCompareKeyEqual(event.getPlayer().getInventory().getItemInMainHand())) {
                 participant.showCard(deathMatchTask);
             }
         }

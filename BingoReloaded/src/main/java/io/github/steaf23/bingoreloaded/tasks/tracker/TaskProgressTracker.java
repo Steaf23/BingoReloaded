@@ -130,11 +130,8 @@ public class TaskProgressTracker
         progressMap.get(task).add(new TaskProgress(participant, finalCount));
     }
 
-    public void startTrackingTask(GameTask task) {
+    public void addTask(GameTask task) {
         progressMap.put(task, new ArrayList<>());
-        for (BingoParticipant participant : game.getTeamManager().getParticipants()) {
-            startTrackingTaskForParticipant(task, participant);
-        }
     }
 
     public void handlePlayerAdvancementDone(final PlayerAdvancementDoneEvent event) {

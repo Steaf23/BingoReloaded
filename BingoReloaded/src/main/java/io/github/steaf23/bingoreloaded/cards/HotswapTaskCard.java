@@ -198,7 +198,7 @@ public class HotswapTaskCard extends TaskCard
                     } else {
                         taskHolders.set(idx, new SimpleHotswapTask(newTask, recoveryTimeSeconds));
                     }
-                    progressTracker.startTrackingTask(newTask);
+                    progressTracker.addTask(newTask);
                 } else {
                     taskExpiredCount++;
                     lastExpiredTask = holder.getTask();
