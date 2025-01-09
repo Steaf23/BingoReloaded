@@ -224,6 +224,9 @@ public class BingoGame implements GamePhase {
 
         // Generate cards
         Set<TaskCard> uniqueCards = CardFactory.generateCardsForGame(this, session.getMenuBoard());
+        for (TaskCard card : uniqueCards) {
+            card.getTasks().forEach(t -> getProgressTracker().addTask(t));
+        }
 
         if (config.getOptionValue(BingoOptions.USE_MAP_RENDERER)) {
             getTeamManager().getActiveTeams().forEach(t -> {
@@ -258,10 +261,6 @@ public class BingoGame implements GamePhase {
         getTeamManager().getParticipants().forEach(this::setupParticipant);
         BingoMessage.GIVE_CARDS.sendToAudience(session);
         teleportPlayersToStart(world);
-
-        for (TaskCard card : uniqueCards) {
-            card.getTasks().forEach(t -> getProgressTracker().addTask(t));
-        }
 
         // Post-start Setup
         scoreboard.setup(settings);
