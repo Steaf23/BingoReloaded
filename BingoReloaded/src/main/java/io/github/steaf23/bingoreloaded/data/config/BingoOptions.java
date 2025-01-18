@@ -1,7 +1,5 @@
 package io.github.steaf23.bingoreloaded.data.config;
 
-import java.io.ObjectInputFilter;
-
 public class BingoOptions
 {
     public enum PluginConfiguration
@@ -85,6 +83,7 @@ public class BingoOptions
             .withEditUpdate(ConfigurationOption.EditUpdateTime.AFTER_GAME);
     public static final ConfigurationOption<Boolean> USE_MAP_RENDERER = new BooleanOption("useMapRenderer")
             .withEditUpdate(ConfigurationOption.EditUpdateTime.AFTER_GAME);
+    public static final ConfigurationOption<Boolean> ALLOW_VIEWING_ALL_CARDS = new BooleanOption("allowViewingAllCards");
 
     // Player Data
     public static final ConfigurationOption<Boolean> SAVE_PLAYER_INFORMATION = new BooleanOption("savePlayerInformation");

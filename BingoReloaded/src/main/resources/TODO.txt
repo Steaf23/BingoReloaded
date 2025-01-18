@@ -4,6 +4,7 @@
 (?) Folia support
 
 (BLOCKED: would only be available for singular configuration servers) (?) add small biomes option using datapack
+    - Maybe use some nms magic to make it actually happen? - Create new chunkgeneratorsettings, and somehow inject it into the chunkgenerator for the world...??
 
 (?) add way to reopen/sync team selection menu for all players that are in it
 
@@ -18,19 +19,21 @@
 (?) add progress view to tasks
 
 (?) add support to also edit NonSerializable config options
+(?) add purging to debug log
 
 (3.x) add /bingo info command to receive hover message of current game settings, game status, etc...
 (3.x) add custom resource pack
 (3.x) reimplement resource pack spacing inside the resource pack instead of using a separate pack
-(3.x) add way to view other teams' cards
 (3.x) add reload config command to reload all config options by saving the config.yml file externally
 (3.x) add web editor for nbt files
 (3.x) implement card view placed on a map as the bingo card
-(3.x) add purging to debug log
+
 (3.x) add automatic updates to config.yml when starting server to add new options
 (3.x) add spectator mode
 (3.x) transfer config additions automatically when updating
 (3.x) put automatic team members into random teams instead of the same ones every time (looking at you magenta...)
+
+(3.x) add way to view other teams' cards
 
 (BUG) Load player data in a bingo world does not teleport the player out
 (BUG) advancement progress is not reset correctly? (MORE INFO NEEDED)

@@ -1,6 +1,7 @@
 package io.github.steaf23.bingoreloaded.data.world;
 
 import io.github.steaf23.bingoreloaded.data.core.helper.ResourceFileHelper;
+import io.github.steaf23.bingoreloaded.util.CustomWorldCreator;
 import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -56,7 +57,10 @@ public class WorldData
      * @return created WorldGroup
      */
     public WorldGroup createWorldGroup(String worldName) {
-        World overworld = createWorld(plugin, worldName, World.Environment.NORMAL);
+        World overworld = CustomWorldCreator.createWorld(plugin, worldName);
+        if (overworld == null) {
+            overworld = createWorld(plugin, worldName, World.Environment.NORMAL);
+        }
         World nether = createWorld(plugin, worldName + "_nether", World.Environment.NETHER);
         World end = createWorld(plugin, worldName + "_the_end", World.Environment.THE_END);
         return new WorldGroup(worldName, overworld.getUID(), nether.getUID(), end.getUID());

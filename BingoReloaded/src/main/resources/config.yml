@@ -177,6 +177,9 @@ showAdvancementItems: true
 # It's recommended to use this setting alongside showAdvancementItems for the best experience while playing.
 useMapRenderer: true
 
+# Allows all players and spectators to view the cards assigned to every team using /bingo view
+allowViewingAllCards: true
+
 # ==========================================================================
 #    Player Data Configuration Options
 # ==========================================================================

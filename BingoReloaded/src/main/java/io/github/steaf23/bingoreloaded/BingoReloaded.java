@@ -177,7 +177,6 @@ public class BingoReloaded extends JavaPlugin
             registerCommand("btc", command);
             Bukkit.getPluginManager().registerEvents(command, this);
         }
-        ConsoleMessenger.log(Component.text("Enabled " + getName()).color(NamedTextColor.GREEN));
 
         Bukkit.getPluginManager().registerEvents(menuBoard, this);
         Bukkit.getPluginManager().registerEvents(hudRegistry, this);
@@ -187,6 +186,8 @@ public class BingoReloaded extends JavaPlugin
                 () -> config.getOptionValue(BingoOptions.LANGUAGE).replace(".yml", "").replace("languages/", "")));
         bStatsMetrics.addCustomChart(new Metrics.SimplePie("plugin_configuration",
                 () -> config.getOptionValue(BingoOptions.CONFIGURATION) == BingoOptions.PluginConfiguration.SINGULAR ? "Singular" : "Multiple"));
+
+        ConsoleMessenger.log(Component.text("Enabled " + getName()).color(NamedTextColor.GREEN));
     }
 
     public void registerCommand(String commandName, TabExecutor executor) {
