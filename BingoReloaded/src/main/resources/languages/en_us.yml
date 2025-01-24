@@ -96,6 +96,10 @@ menu:
       desc_score: "First team to complete {0} tasks wins!" #0: winning score
       desc_time: "Team to complete the most tasks \nbefore the time limit runs out wins!"
       desc_any: "Team to complete the most tasks \nbefore the time limit runs our \nor to complete {0} tasks wins!" #0: winning score
+    show_team_card:
+      title: "See cards of other teams"
+      name: "<0>'s Bingo Card"
+      desc: "View the card as if you were this team."
   options:
     title: "Options Menu"
     start: "Start The Game"

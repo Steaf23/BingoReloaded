@@ -188,7 +188,7 @@ public class ItemTemplate
     }
 
     /**
-     * @return Compare key as set by setCompareKey. Returns an empty string if not compare key was set.
+     * @return Compare key as set by setCompareKey. Returns an empty string if no compare key was set.
      */
     public String getCompareKey() {
         return compareKey == null ? "" : compareKey;

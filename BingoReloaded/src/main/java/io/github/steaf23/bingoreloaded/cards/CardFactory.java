@@ -25,7 +25,8 @@ public class CardFactory
         BingoSettings settings = game.getSettings();
         CardSize size = settings.size();
 
-        CardMenu menu = createMenu(menuBoard, texturedMenu, settings.mode(), size);
+        boolean allowViewingAllCards = game.getConfig().getOptionValue(BingoOptions.ALLOW_VIEWING_ALL_CARDS);
+        CardMenu menu = createMenu(menuBoard, texturedMenu, settings.mode(), size, allowViewingAllCards);
 
         return switch (settings.mode()) {
             case LOCKOUT ->
@@ -34,7 +35,7 @@ public class CardFactory
                     new CompleteTaskCard(menu, size, game.getSettings().completeGoal());
             case HOTSWAP -> {
                 if (!(menu instanceof HotswapCardMenu)) {
-                    menu = new HotswapGenericCardMenu(menuBoard, size);
+                    menu = new HotswapGenericCardMenu(menuBoard, size, allowViewingAllCards);
                 }
                 yield new HotswapTaskCard((HotswapCardMenu) menu, size, game, game.getProgressTracker(), settings.hotswapGoal(),
                         game.getConfig().getOptionValue(BingoOptions.HOTSWAP_CONFIG));
@@ -72,18 +73,18 @@ public class CardFactory
         return uniqueCards;
     }
 
-    private static @NotNull CardMenu createMenu(MenuBoard menuBoard, boolean texturedMenu, BingoGamemode mode, CardSize size) {
+    private static @NotNull CardMenu createMenu(MenuBoard menuBoard, boolean texturedMenu, BingoGamemode mode, CardSize size, boolean allowViewingAllCards) {
         if (texturedMenu) {
             if (mode == BingoGamemode.HOTSWAP) {
-                return new HotswapTexturedCardMenu(menuBoard, size);
+                return new HotswapTexturedCardMenu(menuBoard, size, allowViewingAllCards);
             }
-            return new TexturedCardMenu(menuBoard, mode, size);
+            return new TexturedCardMenu(menuBoard, mode, size, allowViewingAllCards);
         }
 
         if (mode == BingoGamemode.HOTSWAP) {
-            return new HotswapGenericCardMenu(menuBoard, size);
+            return new HotswapGenericCardMenu(menuBoard, size, allowViewingAllCards);
         }
 
-        return new GenericCardMenu(menuBoard, mode, size);
+        return new GenericCardMenu(menuBoard, mode, size, allowViewingAllCards);
     }
 }

@@ -26,8 +26,8 @@ public class HotswapTexturedCardMenu extends TexturedCardMenu implements Hotswap
 {
     private List<HotswapTaskHolder> taskHolders;
 
-    public HotswapTexturedCardMenu(MenuBoard board, CardSize size) {
-        super(board, BingoGamemode.HOTSWAP, size);
+    public HotswapTexturedCardMenu(MenuBoard board, CardSize size, boolean allowViewingAllCards) {
+        super(board, BingoGamemode.HOTSWAP, size, allowViewingAllCards);
     }
 
     // Override to only allow tasks getting updated from the task holders.
@@ -61,7 +61,7 @@ public class HotswapTexturedCardMenu extends TexturedCardMenu implements Hotswap
 
     @Override
     public CardMenu copy() {
-        return new HotswapTexturedCardMenu(getMenuBoard(), size);
+        return new HotswapTexturedCardMenu(getMenuBoard(), size, allowViewingOtherCards());
     }
 
     @Override

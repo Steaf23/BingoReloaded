@@ -24,11 +24,11 @@ public class BasicMenu implements Menu
 {
     public static Component pluginTitlePrefix = Component.empty();
 
-    protected static Component applyTitleFormat(Component to) {
+    public static Component applyTitleFormat(Component to) {
         return to.color(NamedTextColor.GOLD).decorate(TextDecoration.BOLD);
     }
 
-    protected static Component applyTitleFormat(String to) {
+    public static Component applyTitleFormat(String to) {
         return Component.text(to).color(NamedTextColor.GOLD).decorate(TextDecoration.BOLD);
     }
 
@@ -196,6 +196,7 @@ public class BasicMenu implements Menu
         return "BasicMenu{" + this.title + "}";
     }
 
+    @Override
     public void setOpenOnce(boolean value) {
         openOnce = value;
     }

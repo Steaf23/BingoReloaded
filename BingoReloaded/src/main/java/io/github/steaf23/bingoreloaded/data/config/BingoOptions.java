@@ -83,7 +83,8 @@ public class BingoOptions
             .withEditUpdate(ConfigurationOption.EditUpdateTime.AFTER_GAME);
     public static final ConfigurationOption<Boolean> USE_MAP_RENDERER = new BooleanOption("useMapRenderer")
             .withEditUpdate(ConfigurationOption.EditUpdateTime.AFTER_GAME);
-    public static final ConfigurationOption<Boolean> ALLOW_VIEWING_ALL_CARDS = new BooleanOption("allowViewingAllCards");
+    public static final ConfigurationOption<Boolean> ALLOW_VIEWING_ALL_CARDS = new BooleanOption("allowViewingAllCards")
+            .withEditUpdate(ConfigurationOption.EditUpdateTime.AFTER_GAME);
 
     // Player Data
     public static final ConfigurationOption<Boolean> SAVE_PLAYER_INFORMATION = new BooleanOption("savePlayerInformation");

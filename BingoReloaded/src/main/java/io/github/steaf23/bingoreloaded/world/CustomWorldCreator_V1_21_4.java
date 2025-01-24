@@ -186,7 +186,8 @@ public class CustomWorldCreator_V1_21_4
                 ChunkGenerator chunkGen = new NoiseBasedChunkGenerator(existingStem.generator().getBiomeSource(), bingoNoiseSettings.get());
                 customStem = new LevelStem(existingStem.type(), chunkGen);
             } else {
-                ConsoleMessenger.bug("noise generation settings called " + noiseSettingsLocation, CustomWorldCreator_V1_21_4.class);
+                ConsoleMessenger.error("Noise generation settings called " + noiseSettingsLocation + " could not be found in enabled datapacks, please double check all your installed datapacks and verify that the generation settings are present.");
+                ConsoleMessenger.log("To prevent this message from showing you can also set the config option customWorldGeneration to 'null' to use vanilla generation instead");
                 customStem = existingStem;
             }
         }

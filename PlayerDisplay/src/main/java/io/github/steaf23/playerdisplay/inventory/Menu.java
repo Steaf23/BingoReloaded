@@ -32,9 +32,9 @@ public interface Menu
     /**
      * @return true if this menu should be removed if another menu opens on top of it.
      */
-    default boolean openOnce() {
-        return false;
-    }
+    boolean openOnce();
+
+    void setOpenOnce(boolean value);
 
     static Component inputButtonText(Component buttonText) {
         return Component.text()

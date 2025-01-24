@@ -14,8 +14,8 @@ public class HotswapGenericCardMenu extends GenericCardMenu implements HotswapCa
 {
     private List<HotswapTaskHolder> taskHolders;
 
-    public HotswapGenericCardMenu(MenuBoard menuBoard, CardSize cardSize) {
-        super(menuBoard, BingoGamemode.HOTSWAP, cardSize);
+    public HotswapGenericCardMenu(MenuBoard menuBoard, CardSize cardSize, boolean allowViewingAllCards) {
+        super(menuBoard, BingoGamemode.HOTSWAP, cardSize, allowViewingAllCards);
     }
 
     // Override to only allow tasks getting updated from the task holders.
@@ -31,7 +31,7 @@ public class HotswapGenericCardMenu extends GenericCardMenu implements HotswapCa
 
     @Override
     public CardMenu copy() {
-        return new HotswapGenericCardMenu(getMenuBoard(), size);
+        return new HotswapGenericCardMenu(getMenuBoard(), size, allowViewingOtherCards());
     }
 
     @Override

@@ -51,7 +51,9 @@ public class GameManager
         this.config = config;
         this.menuBoard = menuBoard;
         this.hudRegistry = hudRegistry;
-        NamespacedKey generationSettings = NamespacedKey.fromString(config.getOptionValue(BingoOptions.CUSTOM_WORLD_GENERATION));
+
+        String settingsName = config.getOptionValue(BingoOptions.CUSTOM_WORLD_GENERATION);
+        NamespacedKey generationSettings = settingsName.equals("null") ? null : NamespacedKey.fromString(settingsName);
         this.worldData = new WorldData(plugin, generationSettings);
 
         this.sessions = new HashMap<>();

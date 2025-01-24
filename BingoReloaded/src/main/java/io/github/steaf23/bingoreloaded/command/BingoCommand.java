@@ -11,6 +11,7 @@ import io.github.steaf23.bingoreloaded.gameloop.GameManager;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.gameloop.phase.PregameLobby;
 import io.github.steaf23.bingoreloaded.gui.inventory.AdminBingoMenu;
+import io.github.steaf23.bingoreloaded.gui.inventory.TeamCardSelectMenu;
 import io.github.steaf23.bingoreloaded.gui.inventory.TeamEditorMenu;
 import io.github.steaf23.bingoreloaded.gui.inventory.TeamSelectionMenu;
 import io.github.steaf23.bingoreloaded.gui.inventory.VoteMenu;
@@ -53,7 +54,7 @@ public class BingoCommand implements TabExecutor
     }
 
     @Override
-    public boolean onCommand(@NonNull CommandSender commandSender, @NonNull Command command, @NonNull String alias, String[] args) {
+    public boolean onCommand(@NonNull CommandSender commandSender, @NonNull Command command, @NonNull String alias, String @NotNull [] args) {
         if (!(commandSender instanceof Player player) || !player.hasPermission("bingo.player")) {
             return false;
         }
@@ -152,8 +153,7 @@ public class BingoCommand implements TabExecutor
             }
             case "creator" -> {
                 if (player.hasPermission("bingo.manager")) {
-                    BingoCreatorMenu creatorMenu = new BingoCreatorMenu(menuBoard);
-                    creatorMenu.open(player);
+                    new BingoCreatorMenu(menuBoard).open(player);
                 }
             }
             case "stats" -> {
@@ -213,7 +213,13 @@ public class BingoCommand implements TabExecutor
                                     .map(BingoParticipant::getDisplayName)
                                     .toList()))));
                 });
+            }
+            case "view" -> {
+                if (!player.hasPermission("bingo.admin") && !config.getOptionValue(BingoOptions.ALLOW_VIEWING_ALL_CARDS)) {
+                    return false;
+                }
 
+                showTeamCardsToPlayer(player, session);
             }
             case "hologram" -> {
 
@@ -307,6 +313,14 @@ public class BingoCommand implements TabExecutor
         } else if (itemName.equals("card")) {
             player.getInventory().addItem(PlayerKit.CARD_ITEM.buildItem());
         }
+    }
+
+    public void showTeamCardsToPlayer(Player player, BingoSession session) {
+        if (!session.isRunning()) {
+            return;
+        }
+
+        new TeamCardSelectMenu(menuBoard, session).open(player);
     }
 
     /**

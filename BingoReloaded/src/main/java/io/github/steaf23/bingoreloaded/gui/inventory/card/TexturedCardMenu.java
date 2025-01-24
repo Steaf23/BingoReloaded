@@ -39,12 +39,15 @@ public class TexturedCardMenu implements Menu, CardMenu
     private final MenuItemGroup itemGroup;
     private final Component startingTitle;
     private Inventory openedInventory;
+    private final boolean showAllCards;
 
     private ItemTemplate info;
 
+    boolean openOnce = false;
+
     public static final ItemTemplate DUMMY_ITEM = new ItemTemplate(Material.POISONOUS_POTATO);
 
-    public TexturedCardMenu(MenuBoard board, BingoGamemode mode, CardSize size) {
+    public TexturedCardMenu(MenuBoard board, BingoGamemode mode, CardSize size, boolean allowViewingAllCards) {
         ItemTemplate info = DUMMY_ITEM.copyToSlot(0);
 
         this.board = board;
@@ -54,6 +57,10 @@ public class TexturedCardMenu implements Menu, CardMenu
         this.itemGroup = new MenuItemGroup();
         this.startingTitle = buildTitle(mode, size);
         this.info = info;
+        this.showAllCards = allowViewingAllCards;
+        if (allowViewingAllCards) {
+            addItem(CardMenu.createTeamEditItem().setSlot(8));
+        }
     }
 
     protected Component buildTitle(BingoGamemode mode, CardSize size) {
@@ -145,6 +152,16 @@ public class TexturedCardMenu implements Menu, CardMenu
     }
 
     @Override
+    public boolean openOnce() {
+        return openOnce;
+    }
+
+    @Override
+    public void setOpenOnce(boolean value) {
+        this.openOnce = value;
+    }
+
+    @Override
     public @NotNull Inventory getInventory() {
         return openedInventory;
     }
@@ -159,7 +176,12 @@ public class TexturedCardMenu implements Menu, CardMenu
 
     @Override
     public CardMenu copy() {
-        return new TexturedCardMenu(getMenuBoard(), mode, size);
+        return new TexturedCardMenu(getMenuBoard(), mode, size, allowViewingOtherCards());
+    }
+
+    @Override
+    public boolean allowViewingOtherCards() {
+        return showAllCards;
     }
 
     protected @NotNull ItemTemplate getItemFromTask(int taskIndex) {

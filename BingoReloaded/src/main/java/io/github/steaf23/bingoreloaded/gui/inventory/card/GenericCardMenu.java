@@ -23,14 +23,19 @@ public class GenericCardMenu extends BasicMenu implements CardMenu
     protected final CardSize size;
     protected final BingoGamemode mode;
     protected List<GameTask> tasks;
+    private final boolean showAllCards;
 
-    public GenericCardMenu(MenuBoard menuBoard, BingoGamemode mode, CardSize cardSize)
+    public GenericCardMenu(MenuBoard menuBoard, BingoGamemode mode, CardSize cardSize, boolean allowViewingAllCards)
     {
         super(menuBoard, BingoMessage.CARD_TITLE.asPhrase(), cardSize.size);
         this.size = cardSize;
         this.mode = mode;
         this.tasks = new ArrayList<>();
         setMaxStackSizeOverride(64);
+        this.showAllCards = allowViewingAllCards;
+        if (allowViewingAllCards) {
+            addItem(CardMenu.createTeamEditItem().setSlot(8));
+        }
     }
 
     public void updateTasks(List<GameTask> tasks) {
@@ -43,7 +48,12 @@ public class GenericCardMenu extends BasicMenu implements CardMenu
 
     @Override
     public CardMenu copy() {
-        return new GenericCardMenu(getMenuBoard(), mode, size);
+        return new GenericCardMenu(getMenuBoard(), mode, size, allowViewingOtherCards());
+    }
+
+    @Override
+    public boolean allowViewingOtherCards() {
+        return showAllCards;
     }
 
     public @NotNull ItemTemplate getItemFromTask(int taskIndex) {
