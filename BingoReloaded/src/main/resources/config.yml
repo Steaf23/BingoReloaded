@@ -210,3 +210,8 @@ defaultWorlds:
 
 # All worlds are automatically reset (removed and created again) when (re)starting the server. When false, this does not reset the worlds named specified by defaultWorlds.
 clearDefaultWorlds: true
+
+# When not empty, uses the noise generation settings specified by the key in any datapack installed to the main world.
+# By default, it uses the bingoreloaded datapack noise generation but any datapack with noise generation settings will work
+# This is formatted as a namespaced key, where the name of the datapack comes first and is (in this case) followed by the name of the worldgen/noise_settings file.
+customWorldGeneration: "bingoreloaded:small"

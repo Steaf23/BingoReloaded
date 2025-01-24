@@ -94,6 +94,7 @@ public class BingoConfigurationData
         setOptionValue(BingoOptions.DEFAULT_WORLDS, new ConfigurationOption.StringList(config.getList("defaultWorlds", TagDataType.STRING)));
         //FIXME: implement
         setOptionValue(BingoOptions.RESET_DEFAULT_WORLDS, config.getBoolean("resetDefaultWorlds", true));
+        setOptionValue(BingoOptions.CUSTOM_WORLD_GENERATION, config.getString("customWorldGeneration", "bingoreloaded:small"));
     }
 
     public <DataType> DataType getOptionValue(@Nullable ConfigurationOption<DataType> option) {

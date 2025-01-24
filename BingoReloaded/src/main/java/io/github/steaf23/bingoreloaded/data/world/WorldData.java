@@ -1,11 +1,12 @@
 package io.github.steaf23.bingoreloaded.data.world;
 
 import io.github.steaf23.bingoreloaded.data.core.helper.ResourceFileHelper;
-import io.github.steaf23.bingoreloaded.util.CustomWorldCreator;
+import io.github.steaf23.bingoreloaded.world.CustomWorldCreator;
 import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
+import org.bukkit.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -19,9 +20,11 @@ import java.util.UUID;
 public class WorldData
 {
     private final JavaPlugin plugin;
+    private final NamespacedKey generationOptions;
 
-    public WorldData(JavaPlugin plugin) {
+    public WorldData(JavaPlugin plugin, @Nullable NamespacedKey generationOptions) {
         this.plugin = plugin;
+        this.generationOptions = generationOptions;
     }
 
     /**
@@ -57,7 +60,7 @@ public class WorldData
      * @return created WorldGroup
      */
     public WorldGroup createWorldGroup(String worldName) {
-        World overworld = CustomWorldCreator.createWorld(plugin, worldName);
+        World overworld = CustomWorldCreator.createWorld(plugin, worldName, generationOptions);
         if (overworld == null) {
             overworld = createWorld(plugin, worldName, World.Environment.NORMAL);
         }

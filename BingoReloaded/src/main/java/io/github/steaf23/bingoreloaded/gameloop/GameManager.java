@@ -15,6 +15,7 @@ import io.github.steaf23.playerdisplay.inventory.MenuBoard;
 import io.github.steaf23.playerdisplay.scoreboard.HUDRegistry;
 import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import org.bukkit.Bukkit;
+import org.bukkit.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
@@ -50,7 +51,8 @@ public class GameManager
         this.config = config;
         this.menuBoard = menuBoard;
         this.hudRegistry = hudRegistry;
-        this.worldData = new WorldData(plugin);
+        NamespacedKey generationSettings = NamespacedKey.fromString(config.getOptionValue(BingoOptions.CUSTOM_WORLD_GENERATION));
+        this.worldData = new WorldData(plugin, generationSettings);
 
         this.sessions = new HashMap<>();
         this.playerData = new PlayerSerializationData();

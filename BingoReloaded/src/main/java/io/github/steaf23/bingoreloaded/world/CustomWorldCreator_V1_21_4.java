@@ -1,10 +1,11 @@
-package io.github.steaf23.bingoreloaded.util;
+package io.github.steaf23.bingoreloaded.world;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.Lifecycle;
 import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
+import io.github.steaf23.playerdisplay.util.DebugLogger;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.NbtException;
@@ -46,7 +47,7 @@ import org.bukkit.World;
 import org.bukkit.WorldType;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.event.world.WorldLoadEvent;
-import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
@@ -54,17 +55,12 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Random;
 
-public class CustomWorldCreator
+public class CustomWorldCreator_V1_21_4
 {
-    public static World createWorld(JavaPlugin plugin, String worldName) {
-        String worldFolder = getWorldsFolder(plugin);
-        return createBingoWorld(worldFolder + worldName, new NamespacedKey("biome_preset", "small"));
-    }
-
     /**
-     * NMS Craft-magic is happening here, be warned!
+     * Here be NMS Craft-magic dragons!
      */
-    private static World createBingoWorld(String worldName, NamespacedKey noiseSettingsLocation) {
+    public static World createBingoWorld(String worldName, @Nullable NamespacedKey noiseSettingsLocation) {
 
         CraftServer craftServer = (CraftServer) Bukkit.getServer();
         DedicatedServer console = craftServer.getServer();
@@ -72,16 +68,15 @@ public class CustomWorldCreator
         Preconditions.checkState(console.getAllLevels().iterator().hasNext(), "Cannot create additional worlds on STARTUP");
         //Preconditions.checkState(!this.console.isIteratingOverLevels, "Cannot create a world while worlds are being ticked"); // Paper - Cat - Temp disable. We'll see how this goes.
 
-        String name = worldName;
-        File folder = new File(Bukkit.getWorldContainer(), name);
-        World world = Bukkit.getWorld(name);
+        File folder = new File(Bukkit.getWorldContainer(), worldName);
+        World world = Bukkit.getWorld(worldName);
 
         if (world != null) {
             return world;
         }
 
         if (folder.exists()) {
-            Preconditions.checkArgument(folder.isDirectory(), "File (%s) exists and isn't a folder", name);
+            Preconditions.checkArgument(folder.isDirectory(), "File (%s) exists and isn't a folder", worldName);
         }
 
 //        ResourceKey<LevelStem> actualDimension = ResourceKey.create(Registries.LEVEL_STEM, ResourceLocation.fromNamespaceAndPath("bingoreloaded", "bingo"));
@@ -89,7 +84,7 @@ public class CustomWorldCreator
 
         LevelStorageSource.LevelStorageAccess levelStorageAccess;
         try {
-            levelStorageAccess = LevelStorageSource.createDefault(Bukkit.getWorldContainer().toPath()).validateAndCreateAccess(name, actualDimension);
+            levelStorageAccess = LevelStorageSource.createDefault(Bukkit.getWorldContainer().toPath()).validateAndCreateAccess(worldName, actualDimension);
         } catch (IOException | ContentValidationException ex) {
             throw new RuntimeException(ex);
         }
@@ -152,7 +147,7 @@ public class CustomWorldCreator
 
             DedicatedServerProperties.WorldDimensionData properties = new DedicatedServerProperties.WorldDimensionData(GsonHelper.parse("{}"), WorldType.NORMAL.name().toLowerCase(Locale.ROOT));
             levelSettings = new LevelSettings(
-                    name,
+                    worldName,
                     GameType.byId(Bukkit.getDefaultGameMode().getValue()),
                     false, Difficulty.EASY,
                     false,
@@ -171,22 +166,33 @@ public class CustomWorldCreator
 
         // Create a new stem with our custom generator in here directly, without registering it like a normal datapack.
         LevelStem existingStem = contextLevelStemRegistry.getValue(actualDimension);
-        ResourceKey<NoiseGeneratorSettings> noiseSettingsKey = ResourceKey.create(Registries.NOISE_SETTINGS, ResourceLocation.fromNamespaceAndPath(noiseSettingsLocation.getNamespace(), noiseSettingsLocation.getKey()));
-        var settingsRegistry = console.registryAccess().lookupOrThrow(Registries.NOISE_SETTINGS);
-        var bingoNoiseSettings = settingsRegistry.get(noiseSettingsKey);
-
         LevelStem customStem;
-        if (bingoNoiseSettings.isPresent())
+        if (noiseSettingsLocation == null)
         {
-            ChunkGenerator chunkGen = new NoiseBasedChunkGenerator(existingStem.generator().getBiomeSource(), bingoNoiseSettings.get());
-            customStem = new LevelStem(existingStem.type(), chunkGen);
-        } else {
-            ConsoleMessenger.bug("bingoreloaded datapack is not loaded!", CustomWorldCreator.class);
+            DebugLogger.addLog("Noise generation settings location null (invalid namespaced key");
             customStem = existingStem;
+        }
+        else if (existingStem == null) {
+            DebugLogger.addLog("No existing level stem found for overworld dimension? (big oopsie)");
+            customStem = null;
+        }
+        else {
+            ResourceKey<NoiseGeneratorSettings> noiseSettingsKey = ResourceKey.create(Registries.NOISE_SETTINGS, ResourceLocation.fromNamespaceAndPath(noiseSettingsLocation.getNamespace(), noiseSettingsLocation.getKey()));
+            var settingsRegistry = console.registryAccess().lookupOrThrow(Registries.NOISE_SETTINGS);
+            var bingoNoiseSettings = settingsRegistry.get(noiseSettingsKey);
+
+            if (bingoNoiseSettings.isPresent())
+            {
+                ChunkGenerator chunkGen = new NoiseBasedChunkGenerator(existingStem.generator().getBiomeSource(), bingoNoiseSettings.get());
+                customStem = new LevelStem(existingStem.type(), chunkGen);
+            } else {
+                ConsoleMessenger.bug("noise generation settings called " + noiseSettingsLocation, CustomWorldCreator_V1_21_4.class);
+                customStem = existingStem;
+            }
         }
 
         primaryLevelData.customDimensions = contextLevelStemRegistry;
-        primaryLevelData.checkName(name);
+        primaryLevelData.checkName(worldName);
         primaryLevelData.setModdedInfo(console.getServerModName(), console.getModdedStatus().shouldReportAsModified());
 
         if (console.options.has("forceUpgrade")) {
@@ -200,12 +206,12 @@ public class CustomWorldCreator
 
         ResourceKey<Level> dimensionKey;
         String levelName = console.getProperties().levelName;
-        if (name.equals(levelName + "_nether")) {
+        if (worldName.equals(levelName + "_nether")) {
             dimensionKey = net.minecraft.world.level.Level.NETHER;
-        } else if (name.equals(levelName + "_the_end")) {
+        } else if (worldName.equals(levelName + "_the_end")) {
             dimensionKey = net.minecraft.world.level.Level.END;
         } else {
-            dimensionKey = ResourceKey.create(Registries.DIMENSION, ResourceLocation.fromNamespaceAndPath("minecraft", name.toLowerCase(Locale.ROOT)));
+            dimensionKey = ResourceKey.create(Registries.DIMENSION, ResourceLocation.fromNamespaceAndPath("minecraft", worldName.toLowerCase(Locale.ROOT)));
         }
 
         // Disable spawn chunks for bingo since players are going to run away from spawn anyway.
@@ -228,7 +234,7 @@ public class CustomWorldCreator
                 null, null
         );
 
-        if (craftServer.getWorld(name) == null) {
+        if (craftServer.getWorld(worldName) == null) {
             return null;
         }
 
@@ -244,9 +250,5 @@ public class CustomWorldCreator
 
         Bukkit.getPluginManager().callEvent(new WorldLoadEvent(serverLevel.getWorld()));
         return serverLevel.getWorld();
-    }
-
-    private static String getWorldsFolder(JavaPlugin plugin) {
-        return plugin.getDataFolder().getPath().replace("\\", "/") + "/worlds/";
     }
 }
