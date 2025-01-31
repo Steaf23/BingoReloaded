@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class BingoConfigurationData
 {
@@ -32,69 +34,69 @@ public class BingoConfigurationData
         this.options = new HashMap<>();
 
         // General
-        setOptionValue(BingoOptions.CONFIGURATION, BingoOptions.PluginConfiguration.valueOf(config.getString("configuration", "SINGULAR")));
-        setOptionValue(BingoOptions.DEFAULT_WORLD_NAME, config.getString("defaultWorldName", "world"));
-        setOptionValue(BingoOptions.LANGUAGE, "languages/" + config.getString("language", "en_us.yml"));
-        setOptionValue(BingoOptions.SAVE_PLAYER_STATISTICS, config.getBoolean("savePlayerStatistics", false));
-        setOptionValue(BingoOptions.SEND_COMMAND_AFTER_GAME_ENDS, config.getString("sendCommandAfterGameEnds", ""));
-        setOptionValue(BingoOptions.VOTE_USING_COMMANDS_ONLY, config.getBoolean("voteUsingCommandsOnly", false));
-        setOptionValue(BingoOptions.SELECT_TEAMS_USING_COMMANDS_ONLY, config.getBoolean("selectTeamsUsingCommandsOnly", false));
-        setOptionValue(BingoOptions.DISABLE_SCOREBOARD_SIDEBAR, config.getBoolean("disableScoreboardSidebar", false));
+        setDefaultOption(BingoOptions.CONFIGURATION, name -> BingoOptions.PluginConfiguration.valueOf(config.getString(name, "SINGULAR")));
+        setDefaultOption(BingoOptions.DEFAULT_WORLD_NAME, name -> config.getString(name, "world"));
+        setDefaultOption(BingoOptions.LANGUAGE, name -> "languages/" + config.getString(name, "en_us.yml"));
+        setDefaultOption(BingoOptions.SAVE_PLAYER_STATISTICS, name -> config.getBoolean(name, false));
+        setDefaultOption(BingoOptions.SEND_COMMAND_AFTER_GAME_ENDS, name -> config.getString(name, ""));
+        setDefaultOption(BingoOptions.VOTE_USING_COMMANDS_ONLY, name -> config.getBoolean(name, false));
+        setDefaultOption(BingoOptions.SELECT_TEAMS_USING_COMMANDS_ONLY, name -> config.getBoolean(name, false));
+        setDefaultOption(BingoOptions.DISABLE_SCOREBOARD_SIDEBAR, name -> config.getBoolean(name, false));
         // TODO: re-enable resource pack
 //        setOptionValue(ConfigurationOption.USE_INCLUDED_RESOURCE_PACK, config.getBoolean("useIncludedResourcePack", true));
-        setOptionValue(BingoOptions.USE_INCLUDED_RESOURCE_PACK, false);
-        setOptionValue(BingoOptions.ENABLE_DEBUG_LOGGING, config.getBoolean("enableDebugLogging", false));
+        setDefaultOption(BingoOptions.USE_INCLUDED_RESOURCE_PACK, name -> false);
+        setDefaultOption(BingoOptions.USE_MAP_RENDERER, name -> config.getBoolean(name, true));
+        setDefaultOption(BingoOptions.SHOW_ADVANCEMENT_ITEMS, name -> config.getBoolean(name, true));
+        setDefaultOption(BingoOptions.ENABLE_DEBUG_LOGGING, name -> config.getBoolean(name, false));
 
         // Lobby
-        setOptionValue(BingoOptions.SINGLE_PLAYER_TEAMS, config.getBoolean("singlePlayerTeams", false));
-        setOptionValue(BingoOptions.MINIMUM_PLAYER_COUNT, config.getInt("minimumPlayerCount", 4));
-        setOptionValue(BingoOptions.PLAYER_WAIT_TIME, config.getInt("playerWaitTime", 30));
-        setOptionValue(BingoOptions.GAME_RESTART_TIME, config.getInt("gameRestartTime", 20));
-        setOptionValue(BingoOptions.USE_VOTE_SYSTEM, config.getBoolean("useVoteSystem", true));
-        setOptionValue(BingoOptions.PREVENT_PLAYER_GRIEFING, config.getBoolean("preventPlayerGriefing", true));
-        setOptionValue(BingoOptions.VOTE_LIST, new VoteList(
+        setDefaultOption(BingoOptions.SINGLE_PLAYER_TEAMS, name -> config.getBoolean(name, false));
+        setDefaultOption(BingoOptions.MINIMUM_PLAYER_COUNT, name -> config.getInt(name, 4));
+        setDefaultOption(BingoOptions.PLAYER_WAIT_TIME, name -> config.getInt(name, 30));
+        setDefaultOption(BingoOptions.GAME_RESTART_TIME, name -> config.getInt(name, 20));
+        setDefaultOption(BingoOptions.USE_VOTE_SYSTEM, name -> config.getBoolean(name, true));
+        setDefaultOption(BingoOptions.PREVENT_PLAYER_GRIEFING, name -> config.getBoolean(name, true));
+        setDefaultOption(BingoOptions.VOTE_LIST, name -> new VoteList(
                 config.getList("voteList.gamemodes", TagDataType.STRING),
                 config.getList("voteList.kits", TagDataType.STRING),
                 config.getList("voteList.cards", TagDataType.STRING),
                 config.getList("voteList.cardsizes", TagDataType.STRING)));
 
         // Gameplay
-        setOptionValue(BingoOptions.STARTING_COUNTDOWN_TIME, config.getInt("startingCountdownTime", 10));
-        setOptionValue(BingoOptions.TELEPORT_MAX_DISTANCE, config.getInt("teleportMaxDistance", 1000000));
-        setOptionValue(BingoOptions.PLAYER_TELEPORT_STRATEGY, BingoOptions.PlayerTeleportStrategy.valueOf(config.getString("playerTeleportStrategy", "ALL")));
-        setOptionValue(BingoOptions.TELEPORT_AFTER_DEATH, config.getBoolean("teleportBackAfterDeathMessage", true));
-        setOptionValue(BingoOptions.TELEPORT_AFTER_DEATH_PERIOD, config.getInt("teleportAfterDeathPeriod", 60));
-        setOptionValue(BingoOptions.GO_UP_WAND_UP_DISTANCE, config.getInt("GoUpWand.upDistance", 75));
-        setOptionValue(BingoOptions.GO_UP_WAND_DOWN_DISTANCE, config.getInt("GoUpWand.downDistance", 5));
-        setOptionValue(BingoOptions.GO_UP_WAND_COOLDOWN, config.getDouble("GoUpWand.cooldown", 5.0D));
-        setOptionValue(BingoOptions.GO_UP_WAND_PLATFORM_LIFETIME, config.getInt("GoUPWand.platformLifetime", 10));
-        setOptionValue(BingoOptions.GRACE_PERIOD, config.getInt("gracePeriod", 30));
-        setOptionValue(BingoOptions.REMOVE_TASK_ITEMS, config.getBoolean("removeTaskItems", true));
-        setOptionValue(BingoOptions.ENABLE_TEAM_CHAT, config.getBoolean("enableTeamChat", true));
-        setOptionValue(BingoOptions.KEEP_SCOREBOARD_VISIBLE, config.getBoolean("keepScoreboardVisible", true));
-        setOptionValue(BingoOptions.SHOW_PLAYER_IN_SCOREBOARD, config.getBoolean("showPlayerInScoreboard", true));
-        setOptionValue(BingoOptions.DISABLE_ADVANCEMENTS, config.getBoolean("disableAdvancements", false));
-        setOptionValue(BingoOptions.DISABLE_STATISTICS, config.getBoolean("disableStatistics", false));
-        setOptionValue(BingoOptions.END_GAME_WITHOUT_TEAMS, config.getBoolean("endGameWithoutTeams", true));
-        setOptionValue(BingoOptions.USE_MAP_RENDERER, config.getBoolean("useMapRenderer", true));
-        setOptionValue(BingoOptions.SHOW_ADVANCEMENT_ITEMS, config.getBoolean("showAdvancementItems", true));
-        setOptionValue(BingoOptions.ALLOW_VIEWING_ALL_CARDS, config.getBoolean("allowViewingAllCard", true));
-        setOptionValue(BingoOptions.HOTSWAP_CONFIG, new HotswapConfig(
-                config.getInt("hotswapMode.minimumExpirationTime", 3),
-                config.getInt("hotswapMode.maximumExpirationTime", 20),
-                config.getInt("hotswapMode.recoverTime", 10),
-                config.getBoolean("hotswapMode.showExpirationAsDurability", true)));
+        setDefaultOption(BingoOptions.STARTING_COUNTDOWN_TIME, name -> config.getInt(name, 10));
+        setDefaultOption(BingoOptions.TELEPORT_MAX_DISTANCE, name -> config.getInt(name, 1000000));
+        setDefaultOption(BingoOptions.PLAYER_TELEPORT_STRATEGY, name -> BingoOptions.PlayerTeleportStrategy.valueOf(config.getString(name, "ALL")));
+        setDefaultOption(BingoOptions.TELEPORT_AFTER_DEATH, name -> config.getBoolean(name, true));
+        setDefaultOption(BingoOptions.TELEPORT_AFTER_DEATH_PERIOD, name -> config.getInt(name, 60));
+        setDefaultOption(BingoOptions.GO_UP_WAND_UP_DISTANCE, name -> config.getInt(name, 75));
+        setDefaultOption(BingoOptions.GO_UP_WAND_DOWN_DISTANCE, name -> config.getInt(name, 5));
+        setDefaultOption(BingoOptions.GO_UP_WAND_COOLDOWN, name -> config.getDouble(name, 5.0D));
+        setDefaultOption(BingoOptions.GO_UP_WAND_PLATFORM_LIFETIME, name -> config.getInt(name, 10));
+        setDefaultOption(BingoOptions.GRACE_PERIOD, name -> config.getInt(name, 30));
+        setDefaultOption(BingoOptions.REMOVE_TASK_ITEMS, name -> config.getBoolean(name, true));
+        setDefaultOption(BingoOptions.ENABLE_TEAM_CHAT, name -> config.getBoolean(name, true));
+        setDefaultOption(BingoOptions.KEEP_SCOREBOARD_VISIBLE, name -> config.getBoolean(name, true));
+        setDefaultOption(BingoOptions.SHOW_PLAYER_IN_SCOREBOARD, name -> config.getBoolean(name, true));
+        setDefaultOption(BingoOptions.DISABLE_ADVANCEMENTS, name -> config.getBoolean(name, false));
+        setDefaultOption(BingoOptions.DISABLE_STATISTICS, name -> config.getBoolean(name, false));
+        setDefaultOption(BingoOptions.END_GAME_WITHOUT_TEAMS, name -> config.getBoolean(name, true));
+        setDefaultOption(BingoOptions.HOTSWAP_CONFIG, name -> new HotswapConfig(
+                config.getInt(name + "minimumExpirationTime", 3),
+                config.getInt(name + "maximumExpirationTime", 20),
+                config.getInt(name + "recoverTime", 10),
+                config.getBoolean(name + "showExpirationAsDurability", true)));
+        setDefaultOption(BingoOptions.ALLOW_VIEWING_ALL_CARDS, name -> config.getBoolean(name, true));
 
         // Player
-        setOptionValue(BingoOptions.SAVE_PLAYER_INFORMATION, config.getBoolean("savePlayerInformation", true));
-        setOptionValue(BingoOptions.LOAD_PLAYER_INFORMATION_STRATEGY, BingoOptions.LoadPlayerInformationStrategy.valueOf(
-                config.getString("loadPlayerInformationStrategy", "AFTER_LEAVING_WORLD")));
+        setDefaultOption(BingoOptions.SAVE_PLAYER_INFORMATION, name -> config.getBoolean(name, true));
+        setDefaultOption(BingoOptions.LOAD_PLAYER_INFORMATION_STRATEGY, name -> BingoOptions.LoadPlayerInformationStrategy.valueOf(
+                config.getString(name, "AFTER_LEAVING_WORLD")));
 
         // Configuration: MULTIPLE
-        setOptionValue(BingoOptions.DEFAULT_WORLDS, new ConfigurationOption.StringList(config.getList("defaultWorlds", TagDataType.STRING)));
+        setDefaultOption(BingoOptions.DEFAULT_WORLDS, name -> new ConfigurationOption.StringList(config.getList(name, TagDataType.STRING)));
         //FIXME: implement
-        setOptionValue(BingoOptions.RESET_DEFAULT_WORLDS, config.getBoolean("resetDefaultWorlds", true));
-        setOptionValue(BingoOptions.CUSTOM_WORLD_GENERATION, config.getString("customWorldGeneration", "bingoreloaded:small"));
+        setDefaultOption(BingoOptions.CLEAR_DEFAULT_WORLDS, name -> config.getBoolean(name, true));
+        setDefaultOption(BingoOptions.CUSTOM_WORLD_GENERATION, name -> config.getString(name, "bingoreloaded:small"));
     }
 
     public <DataType> DataType getOptionValue(@Nullable ConfigurationOption<DataType> option) {
@@ -134,6 +136,10 @@ public class BingoConfigurationData
         } else {
             return false;
         }
+    }
+
+    public <T> void setDefaultOption(ConfigurationOption<T> option, Function<String, T> defaultValue) {
+        setOptionValue(option, defaultValue.apply(option.getConfigName()));
     }
 
     public @NotNull Optional<ConfigurationOption<?>> getOptionFromName(String name) {

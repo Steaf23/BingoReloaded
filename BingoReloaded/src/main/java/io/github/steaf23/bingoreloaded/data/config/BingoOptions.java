@@ -37,6 +37,10 @@ public class BingoOptions
             .withEditUpdate(ConfigurationOption.EditUpdateTime.AFTER_SESSION);
     public static final ConfigurationOption<Boolean> USE_INCLUDED_RESOURCE_PACK = new BooleanOption("useIncludedResourcePack")
             .withEditUpdate(ConfigurationOption.EditUpdateTime.AFTER_SERVER_RESTART);
+    public static final ConfigurationOption<Boolean> USE_MAP_RENDERER = new BooleanOption("useMapRenderer")
+            .withEditUpdate(ConfigurationOption.EditUpdateTime.AFTER_GAME);
+    public static final ConfigurationOption<Boolean> SHOW_ADVANCEMENT_ITEMS = new BooleanOption("showAdvancementItems")
+            .withEditUpdate(ConfigurationOption.EditUpdateTime.AFTER_GAME);
     public static final ConfigurationOption<Boolean> ENABLE_DEBUG_LOGGING = new BooleanOption("enableDebugLogging");
 
     // Lobby
@@ -78,11 +82,7 @@ public class BingoOptions
     public static final ConfigurationOption<Boolean> DISABLE_STATISTICS = new BooleanOption("disableStatistics")
             .withEditUpdate(ConfigurationOption.EditUpdateTime.AFTER_SERVER_RESTART);
     public static final ConfigurationOption<Boolean> END_GAME_WITHOUT_TEAMS = new BooleanOption("endGameWithoutTeams");
-    public static final ConfigurationOption<BingoConfigurationData.HotswapConfig> HOTSWAP_CONFIG = new NonSerializableOption<>("hotswapConfig");
-    public static final ConfigurationOption<Boolean> SHOW_ADVANCEMENT_ITEMS = new BooleanOption("showAdvancementItems")
-            .withEditUpdate(ConfigurationOption.EditUpdateTime.AFTER_GAME);
-    public static final ConfigurationOption<Boolean> USE_MAP_RENDERER = new BooleanOption("useMapRenderer")
-            .withEditUpdate(ConfigurationOption.EditUpdateTime.AFTER_GAME);
+    public static final ConfigurationOption<BingoConfigurationData.HotswapConfig> HOTSWAP_CONFIG = new NonSerializableOption<>("hotswapMode");
     public static final ConfigurationOption<Boolean> ALLOW_VIEWING_ALL_CARDS = new BooleanOption("allowViewingAllCards")
             .withEditUpdate(ConfigurationOption.EditUpdateTime.AFTER_GAME);
 
@@ -93,7 +93,7 @@ public class BingoOptions
     // Configuration: MULTIPLE
     public static final ConfigurationOption<ConfigurationOption.StringList> DEFAULT_WORLDS = new NonSerializableOption<ConfigurationOption.StringList>("defaultWorlds")
             .withEditUpdate(ConfigurationOption.EditUpdateTime.AFTER_GAME);
-    public static final ConfigurationOption<Boolean> RESET_DEFAULT_WORLDS = new BooleanOption("resetDefaultWorlds");
+    public static final ConfigurationOption<Boolean> CLEAR_DEFAULT_WORLDS = new BooleanOption("clearDefaultWorlds");
     public static final ConfigurationOption<String> CUSTOM_WORLD_GENERATION = new StringOption("customWorldGeneration")
             .withEditUpdate(ConfigurationOption.EditUpdateTime.AFTER_SERVER_RESTART);
 }

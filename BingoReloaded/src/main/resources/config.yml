@@ -53,6 +53,13 @@ disableScoreboardSidebar: false
 # If set to false will use the fallback menus and items without losing functionality.
 useIncludedResourcepack: true
 
+# Set to false if you want to disable the card rendering in the player hand on a map, may save a bit of server performance.
+# It's recommended to use this setting alongside showAdvancementItems for the best experience while playing.
+useMapRenderer: true
+
+# Set to false if you want to display advancements as filled maps and statistics as banner patterns, regardless of the actual task.
+showAdvancementItems: true
+
 # Set to true if you want to log debug messages in /plugins/BingoReloaded/log/debug.log.
 # Usually used when trying to recreate bugs.
 enableDebugLogging: false
@@ -169,13 +176,6 @@ hotswapMode:
   maximumExpirationTime: 30 # Maximum amount of time in minutes that a task can expire in
   recoverTime: 15 # Time in seconds that a completed/expired task needs to be replaced with a new task
   showExpirationAsDurability: true # Attempts to show expiration time as durability of the item. This feature only works on Minecraft 1.21+ and late versions of 1.20.6.
-
-# Set to false if you want to display advancements as filled maps and statistics as banner patterns, regardless of the actual task.
-showAdvancementItems: true
-
-# Set to false if you want to disable the card rendering in the player hand on a map, may save a bit of server performance.
-# It's recommended to use this setting alongside showAdvancementItems for the best experience while playing.
-useMapRenderer: true
 
 # Allows all players and spectators to view the cards assigned to every team using /bingo view
 allowViewingAllCards: true
