@@ -65,7 +65,10 @@ public class GameManager
         this.teleportingPlayer = false;
         Bukkit.getPluginManager().registerEvents(eventListener, plugin);
 
-        this.worldData.clearWorlds();
+        if (config.getOptionValue(BingoOptions.CLEAR_DEFAULT_WORLDS))
+        {
+            this.worldData.clearWorlds();
+        }
     }
 
     public void setup(List<String> worldNames) {
