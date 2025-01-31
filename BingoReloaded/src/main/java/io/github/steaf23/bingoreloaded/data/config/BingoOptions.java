@@ -39,7 +39,7 @@ public class BingoOptions
             .withEditUpdate(ConfigurationOption.EditUpdateTime.AFTER_SERVER_RESTART);
     public static final ConfigurationOption<Boolean> USE_MAP_RENDERER = new BooleanOption("useMapRenderer")
             .withEditUpdate(ConfigurationOption.EditUpdateTime.AFTER_GAME);
-    public static final ConfigurationOption<Boolean> SHOW_ADVANCEMENT_ITEMS = new BooleanOption("showAdvancementItems")
+    public static final ConfigurationOption<Boolean> SHOW_UNIQUE_TASK_ITEMS = new BooleanOption("showUniqueTaskItems")
             .withEditUpdate(ConfigurationOption.EditUpdateTime.AFTER_GAME);
     public static final ConfigurationOption<Boolean> ENABLE_DEBUG_LOGGING = new BooleanOption("enableDebugLogging");
 

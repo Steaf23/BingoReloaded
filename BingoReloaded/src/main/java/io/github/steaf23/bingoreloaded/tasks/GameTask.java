@@ -37,8 +37,8 @@ public class GameTask
 
     public enum TaskDisplayMode
     {
-        NON_ITEMS_SIMILAR, // Shows a filled map for all advancements and a banner pattern for all statistic tasks.
-        NON_ITEMS_UNIQUE, // Item type to show is based on the actual contents of the tasks, just like for item tasks.
+        GENERIC_TASK_ITEMS, // Shows a filled map for all advancements and a banner pattern for all statistic tasks.
+        UNIQUE_TASK_ITEMS, // Item type to show is based on the actual contents of the tasks, just like for item tasks.
     }
 
     private BingoParticipant completedBy;
@@ -69,7 +69,7 @@ public class GameTask
             case AdvancementTask advancementTask -> {
                 this.type = TaskType.ADVANCEMENT;
                 AdvancementDisplay display = advancementTask.advancement().getDisplay();
-                if (display == null || displayMode == TaskDisplayMode.NON_ITEMS_SIMILAR) {
+                if (display == null || displayMode == TaskDisplayMode.GENERIC_TASK_ITEMS) {
                     this.material = Material.FILLED_MAP;
                 } else {
                     this.material = advancementTask.advancement().getDisplay().icon().getType();
@@ -78,7 +78,7 @@ public class GameTask
             }
             case StatisticTask statTask -> {
                 this.type = TaskType.STATISTIC;
-                if (displayMode == TaskDisplayMode.NON_ITEMS_SIMILAR) {
+                if (displayMode == TaskDisplayMode.GENERIC_TASK_ITEMS) {
                     this.material = Material.GLOBE_BANNER_PATTERN;
                 } else {
                     this.material = BingoStatistic.getMaterial(statTask.statistic());
@@ -196,9 +196,9 @@ public class GameTask
         type = TaskType.valueOf(typeStr);
         GameTask task = switch (type)
         {
-            case ADVANCEMENT -> new GameTask(AdvancementTask.fromPdc(pdcData), TaskDisplayMode.NON_ITEMS_UNIQUE);
-            case STATISTIC -> new GameTask(StatisticTask.fromPdc(pdcData), TaskDisplayMode.NON_ITEMS_UNIQUE);
-            default -> new GameTask(ItemTask.fromPdc(pdcData), TaskDisplayMode.NON_ITEMS_UNIQUE);
+            case ADVANCEMENT -> new GameTask(AdvancementTask.fromPdc(pdcData), TaskDisplayMode.UNIQUE_TASK_ITEMS);
+            case STATISTIC -> new GameTask(StatisticTask.fromPdc(pdcData), TaskDisplayMode.UNIQUE_TASK_ITEMS);
+            default -> new GameTask(ItemTask.fromPdc(pdcData), TaskDisplayMode.UNIQUE_TASK_ITEMS);
         };
 
         task.voided = voided;

@@ -40,7 +40,6 @@ import io.github.steaf23.bingoreloaded.util.MaterialHelper;
 import io.github.steaf23.bingoreloaded.util.timer.CountdownTimer;
 import io.github.steaf23.bingoreloaded.util.timer.CounterTimer;
 import io.github.steaf23.bingoreloaded.util.timer.GameTimer;
-import io.github.steaf23.playerdisplay.PlayerDisplay;
 import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import io.github.steaf23.playerdisplay.util.PDCHelper;
 import net.kyori.adventure.text.Component;
@@ -141,7 +140,7 @@ public class BingoGame implements GamePhase
         // Generate cards
         boolean useAdvancements = !(BingoReloaded.areAdvancementsDisabled() || config.getOptionValue(BingoOptions.DISABLE_ADVANCEMENTS));
 
-        GameTask.TaskDisplayMode displayMode = config.getOptionValue(BingoOptions.SHOW_ADVANCEMENT_ITEMS) ? GameTask.TaskDisplayMode.NON_ITEMS_UNIQUE : GameTask.TaskDisplayMode.NON_ITEMS_SIMILAR;
+        GameTask.TaskDisplayMode displayMode = config.getOptionValue(BingoOptions.SHOW_UNIQUE_TASK_ITEMS) ? GameTask.TaskDisplayMode.UNIQUE_TASK_ITEMS : GameTask.TaskDisplayMode.GENERIC_TASK_ITEMS;
         Set<TaskCard> uniqueCards = CardFactory.generateCardsForGame(this, session.getMenuBoard(), useAdvancements, !config.getOptionValue(BingoOptions.DISABLE_STATISTICS), displayMode);
 
         if (config.getOptionValue(BingoOptions.USE_MAP_RENDERER)) {
@@ -345,7 +344,7 @@ public class BingoGame implements GamePhase
     //FIXME: don't use recursion to create tasks..
     private void startDeathMatchRecurse(int countdown) {
         if (countdown == 0) {
-            deathMatchTask = new GameTask(new BingoCardData().getRandomItemTask(settings.card()), GameTask.TaskDisplayMode.NON_ITEMS_UNIQUE);
+            deathMatchTask = new GameTask(new BingoCardData().getRandomItemTask(settings.card()), GameTask.TaskDisplayMode.UNIQUE_TASK_ITEMS);
 
             BingoPlayerSender.sendTitle(
                     Component.text("GO").color(NamedTextColor.GOLD).decorate(TextDecoration.BOLD),

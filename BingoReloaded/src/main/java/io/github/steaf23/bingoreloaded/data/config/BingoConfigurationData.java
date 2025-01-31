@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class BingoConfigurationData
@@ -46,7 +45,7 @@ public class BingoConfigurationData
 //        setOptionValue(ConfigurationOption.USE_INCLUDED_RESOURCE_PACK, config.getBoolean("useIncludedResourcePack", true));
         setDefaultOption(BingoOptions.USE_INCLUDED_RESOURCE_PACK, name -> false);
         setDefaultOption(BingoOptions.USE_MAP_RENDERER, name -> config.getBoolean(name, true));
-        setDefaultOption(BingoOptions.SHOW_ADVANCEMENT_ITEMS, name -> config.getBoolean(name, true));
+        setDefaultOption(BingoOptions.SHOW_UNIQUE_TASK_ITEMS, name -> config.getBoolean(name, true));
         setDefaultOption(BingoOptions.ENABLE_DEBUG_LOGGING, name -> config.getBoolean(name, false));
 
         // Lobby
