@@ -51,6 +51,10 @@ public class BingoConfigCommand extends CommandTemplate
 
         ConfigurationOption<?> option = someOption.get();
 
+        if (option.isLocked()) {
+            BingoPlayerSender.sendMessage(PlayerDisplay.MINI_BUILDER.deserialize("<red>This option is not (yet) available, please wait for a future update.</red>"), sender);
+            return false;
+        }
         if (!option.canBeEdited()) {
             BingoPlayerSender.sendMessage(PlayerDisplay.MINI_BUILDER.deserialize("<red>This option cannot be changed in-game. Please change it in the config.yml file and restart the server."), sender);
             return false;

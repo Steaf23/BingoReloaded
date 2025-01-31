@@ -116,6 +116,9 @@ public class BingoConfigurationData
     }
 
     public <DataType> void setOptionValue(@NotNull ConfigurationOption<DataType> option, DataType value) {
+        if (option.isLocked())
+            return;
+
         options.put(option, value);
     }
 
@@ -127,8 +130,8 @@ public class BingoConfigurationData
 
         if (someValue.isPresent()) {
             DataType val = someValue.get();
-            options.put(option, val);
-            //TODO: check if this needs to be done for setOptionValue as well...
+            setOptionValue(option, val);
+            //TODO: check if this needs to be inside setOptionValue
             option.toDataStorage(config, val);
             config.saveChanges();
             return true;

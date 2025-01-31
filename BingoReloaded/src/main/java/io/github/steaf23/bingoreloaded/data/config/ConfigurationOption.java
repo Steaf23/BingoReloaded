@@ -26,6 +26,7 @@ public abstract class ConfigurationOption<Data>
 
     private final String configName;
     private EditUpdateTime editUpdate = EditUpdateTime.IMMEDIATE;
+    private boolean locked = false;
 
     public ConfigurationOption(String configName) {
         this.configName = configName;
@@ -44,8 +45,17 @@ public abstract class ConfigurationOption<Data>
         return this;
     }
 
+    public ConfigurationOption<Data> lock() {
+        locked = true;
+        return this;
+    }
+
     public boolean canBeEdited() {
-        return getEditUpdateTime() != EditUpdateTime.IMPOSSIBLE;
+        return getEditUpdateTime() != EditUpdateTime.IMPOSSIBLE && !isLocked();
+    }
+
+    public boolean isLocked() {
+        return locked;
     }
 
     abstract public Optional<Data> fromString(String value);

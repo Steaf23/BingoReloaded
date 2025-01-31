@@ -36,7 +36,8 @@ public class BingoOptions
     public static final ConfigurationOption<Boolean> DISABLE_SCOREBOARD_SIDEBAR = new BooleanOption("disableScoreboardSidebar")
             .withEditUpdate(ConfigurationOption.EditUpdateTime.AFTER_SESSION);
     public static final ConfigurationOption<Boolean> USE_INCLUDED_RESOURCE_PACK = new BooleanOption("useIncludedResourcePack")
-            .withEditUpdate(ConfigurationOption.EditUpdateTime.AFTER_SERVER_RESTART);
+            .withEditUpdate(ConfigurationOption.EditUpdateTime.AFTER_SERVER_RESTART)
+            .lock();
     public static final ConfigurationOption<Boolean> USE_MAP_RENDERER = new BooleanOption("useMapRenderer")
             .withEditUpdate(ConfigurationOption.EditUpdateTime.AFTER_GAME);
     public static final ConfigurationOption<Boolean> SHOW_UNIQUE_TASK_ITEMS = new BooleanOption("showUniqueTaskItems")
