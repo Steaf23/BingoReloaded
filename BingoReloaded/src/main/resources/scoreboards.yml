@@ -9,6 +9,11 @@ lobby:
 # - {effects}: selected effects (multiline)
 # - {team_size}: selected maximum team size
 # - {duration}: selected duration (or ∞ if countdown mode is not enabled)
+# - {seed}: selected card seed.
+# - {goal}: currently set goal to win the game.
+# - {expire_hotswap}: true or false depending on if hotswap tasks expire from the card.
+# - {separate_cards}: true or false depending on if separate cards will be generated per team.
+
 
     title: "<bingo_translate:'branding.scoreboard_title'>"
     sidebar:
