@@ -140,8 +140,11 @@ public class BingoGame implements GamePhase
         // Generate cards
         boolean useAdvancements = !(BingoReloaded.areAdvancementsDisabled() || config.getOptionValue(BingoOptions.DISABLE_ADVANCEMENTS));
 
-        GameTask.TaskDisplayMode displayMode = config.getOptionValue(BingoOptions.SHOW_UNIQUE_TASK_ITEMS) ? GameTask.TaskDisplayMode.UNIQUE_TASK_ITEMS : GameTask.TaskDisplayMode.GENERIC_TASK_ITEMS;
-        Set<TaskCard> uniqueCards = CardFactory.generateCardsForGame(this, session.getMenuBoard(), useAdvancements, !config.getOptionValue(BingoOptions.DISABLE_STATISTICS), displayMode);
+        GameTask.TaskDisplayMode advancementDisplayMode = config.getOptionValue(BingoOptions.SHOW_UNIQUE_ADVANCEMENT_ITEMS) ? GameTask.TaskDisplayMode.UNIQUE_TASK_ITEMS : GameTask.TaskDisplayMode.GENERIC_TASK_ITEMS;
+        GameTask.TaskDisplayMode statisticDisplayMode = config.getOptionValue(BingoOptions.SHOW_UNIQUE_STATISTIC_ITEMS) ? GameTask.TaskDisplayMode.UNIQUE_TASK_ITEMS : GameTask.TaskDisplayMode.GENERIC_TASK_ITEMS;
+        Set<TaskCard> uniqueCards = CardFactory.generateCardsForGame(this, session.getMenuBoard(),
+                useAdvancements, !config.getOptionValue(BingoOptions.DISABLE_STATISTICS),
+                advancementDisplayMode, statisticDisplayMode);
 
         if (config.getOptionValue(BingoOptions.USE_MAP_RENDERER)) {
             getTeamManager().getActiveTeams().forEach(t -> {

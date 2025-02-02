@@ -7,6 +7,7 @@ import io.github.steaf23.bingoreloaded.tasks.data.TaskData;
 import io.github.steaf23.bingoreloaded.tasks.data.AdvancementTask;
 import io.github.steaf23.bingoreloaded.tasks.data.ItemTask;
 import io.github.steaf23.bingoreloaded.tasks.data.StatisticTask;
+import org.bukkit.Bukkit;
 import org.bukkit.Registry;
 import org.jetbrains.annotations.NotNull;
 
@@ -39,7 +40,7 @@ public class TaskStorageSerializer implements DataStorageSerializer<TaskData>
             return new ItemTask(Registry.MATERIAL.get(storage.getNamespacedKey("item")), storage.getInt("count", 1));
         }
         else if (storage.contains("advancement")) {
-            return new AdvancementTask(Registry.ADVANCEMENT.get(storage.getNamespacedKey("advancement")));
+            return new AdvancementTask(Bukkit.getAdvancement(storage.getNamespacedKey("advancement")));
         }
         else if (storage.contains("statistic")) {
             return new StatisticTask(storage.getSerializable("statistic", BingoStatistic.class), storage.getInt("count", 1));

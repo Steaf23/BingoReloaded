@@ -57,8 +57,11 @@ useIncludedResourcepack: true
 # It's recommended to use this setting alongside showAdvancementItems for the best experience while playing.
 useMapRenderer: true
 
-# Set to false if you want to display advancements as filled maps and statistics as banner patterns, regardless of the actual task.
-showAdvancementItems: true
+# Set to false if you want to display advancements as filled maps, regardless of the actual task.
+showUniqueAdvancementItems: false
+
+# Set to false if you want to display statistics as banner patterns, regardless of the actual task.
+showUniqueStatisticItems: true
 
 # Set to true if you want to log debug messages in /plugins/BingoReloaded/log/debug.log.
 # Usually used when trying to recreate bugs.
@@ -212,6 +215,8 @@ defaultWorlds:
 clearDefaultWorlds: true
 
 # When not empty, uses the noise generation settings specified by the key in any datapack installed to the main world.
-# By default, it uses the bingoreloaded datapack noise generation but any datapack with noise generation settings will work
+# By default, it uses the vanilla world generation, but it can be configured to work for the bingoreloaded datapack or any other datapack with noise generation settings.
 # This is formatted as a namespaced key, where the name of the datapack comes first and is (in this case) followed by the name of the worldgen/noise_settings file.
-customWorldGeneration: "bingoreloaded:small"
+# If you want to use vanilla generation, put "null" as the value.
+# If you want to use generation included in the bingoreloaded datapack, make sure to add it to your main world and set this setting to "bingoreloaded:small"
+customWorldGeneration: "null"

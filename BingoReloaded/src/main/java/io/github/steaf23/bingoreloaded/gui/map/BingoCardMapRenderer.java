@@ -5,7 +5,6 @@ import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.tasks.GameTask;
 import io.github.steaf23.bingoreloaded.tasks.data.AdvancementTask;
 import io.github.steaf23.bingoreloaded.tasks.data.StatisticTask;
-import io.github.steaf23.playerdisplay.inventory.item.ItemTemplate;
 import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import org.apache.commons.compress.archivers.sevenz.SevenZArchiveEntry;
 import org.apache.commons.compress.archivers.sevenz.SevenZFile;
@@ -131,9 +130,8 @@ public class BingoCardMapRenderer extends MapRenderer
     }
 
     public void drawTaskOnGrid(MapCanvas canvas, GameTask task, int gridX, int gridY) {
-
-        ItemTemplate stack = task.toItem();
-        Material mat = stack.getMaterial();
+        Material mat = task.data.getDisplayMaterial(false);
+        int amount = task.data.getRequiredAmount();
         NamespacedKey key = mat.getKey();
 
         int extraOffset = 1;
@@ -152,7 +150,6 @@ public class BingoCardMapRenderer extends MapRenderer
         else {
             drawImageAlphaScissor(canvas, gridX * 24 + 4 + extraOffset, gridY * 24 + 4 + extraOffset, allItemImages.get(mat.getKey()));
         }
-        int amount = stack.getAmount();
         if (amount > 1) {
             drawTaskAmount(canvas, gridX, gridY, amount);
         }

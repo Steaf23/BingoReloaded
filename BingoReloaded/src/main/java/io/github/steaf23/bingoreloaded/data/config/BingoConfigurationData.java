@@ -45,7 +45,8 @@ public class BingoConfigurationData
 //        setOptionValue(ConfigurationOption.USE_INCLUDED_RESOURCE_PACK, config.getBoolean("useIncludedResourcePack", true));
         setDefaultOption(BingoOptions.USE_INCLUDED_RESOURCE_PACK, name -> false);
         setDefaultOption(BingoOptions.USE_MAP_RENDERER, name -> config.getBoolean(name, true));
-        setDefaultOption(BingoOptions.SHOW_UNIQUE_TASK_ITEMS, name -> config.getBoolean(name, true));
+        setDefaultOption(BingoOptions.SHOW_UNIQUE_ADVANCEMENT_ITEMS, name -> config.getBoolean(name, false));
+        setDefaultOption(BingoOptions.SHOW_UNIQUE_STATISTIC_ITEMS, name -> config.getBoolean(name, true));
         setDefaultOption(BingoOptions.ENABLE_DEBUG_LOGGING, name -> config.getBoolean(name, false));
 
         // Lobby
@@ -95,7 +96,7 @@ public class BingoConfigurationData
         setDefaultOption(BingoOptions.DEFAULT_WORLDS, name -> new ConfigurationOption.StringList(config.getList(name, TagDataType.STRING)));
         //FIXME: implement
         setDefaultOption(BingoOptions.CLEAR_DEFAULT_WORLDS, name -> config.getBoolean(name, true));
-        setDefaultOption(BingoOptions.CUSTOM_WORLD_GENERATION, name -> config.getString(name, "bingoreloaded:small"));
+        setDefaultOption(BingoOptions.CUSTOM_WORLD_GENERATION, name -> config.getString(name, "null"));
     }
 
     public <DataType> DataType getOptionValue(@Nullable ConfigurationOption<DataType> option) {
@@ -141,7 +142,7 @@ public class BingoConfigurationData
     }
 
     public <T> void setDefaultOption(ConfigurationOption<T> option, Function<String, T> defaultValue) {
-        setOptionValue(option, defaultValue.apply(option.getConfigName()));
+        options.put(option, defaultValue.apply(option.getConfigName()));
     }
 
     public @NotNull Optional<ConfigurationOption<?>> getOptionFromName(String name) {

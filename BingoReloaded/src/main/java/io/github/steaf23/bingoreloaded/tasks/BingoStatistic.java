@@ -228,7 +228,7 @@ public record BingoStatistic(@NotNull Statistic stat, @Nullable EntityType entit
         };
     }
 
-    public static Material getMaterial(BingoStatistic statistic)
+    public static @NotNull Material getMaterial(BingoStatistic statistic)
     {
         return switch (statistic.stat)
         {

@@ -8,6 +8,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.advancement.Advancement;
 import org.bukkit.persistence.PersistentDataContainer;
@@ -16,6 +17,11 @@ import org.jetbrains.annotations.NotNull;
 
 public record AdvancementTask(Advancement advancement) implements TaskData
 {
+    @Override
+    public TaskType getType() {
+        return TaskType.ADVANCEMENT;
+    }
+
     @Override
     public Component getName()
     {
@@ -79,6 +85,21 @@ public record AdvancementTask(Advancement advancement) implements TaskData
     {
         stream.set(GameTask.getTaskDataKey("advancement"), PersistentDataType.STRING, advancement.getKey().toString());
         return stream;
+    }
+
+    @Override
+    public boolean shouldItemGlow() {
+        return true;
+    }
+
+    @Override
+    public Material getDisplayMaterial(boolean genericItem) {
+        if (genericItem || advancement().getDisplay() == null) {
+            return Material.FILLED_MAP;
+        }
+        else {
+            return advancement().getDisplay().icon().getType();
+        }
     }
 
     @Override

@@ -44,9 +44,9 @@ public class CardFactory
         };
     }
 
-    public static Set<TaskCard> generateCardsForGame(BingoGame game, MenuBoard menuBoard, boolean includeAdvancements, boolean includeStatistics, GameTask.TaskDisplayMode taskDisplayMode) {
+    public static Set<TaskCard> generateCardsForGame(BingoGame game, MenuBoard menuBoard, boolean includeAdvancements, boolean includeStatistics, GameTask.TaskDisplayMode advancementDisplayMode, GameTask.TaskDisplayMode statisticDisplayMode) {
         BingoSettings settings = game.getSettings();
-        TaskGenerator.GeneratorSettings generatorSettings = new TaskGenerator.GeneratorSettings(settings.card(), settings.seed(), includeAdvancements, includeStatistics, settings.size(), taskDisplayMode);
+        TaskGenerator.GeneratorSettings generatorSettings = new TaskGenerator.GeneratorSettings(settings.card(), settings.seed(), includeAdvancements, includeStatistics, settings.size(), advancementDisplayMode, statisticDisplayMode);
 
         Set<TaskCard> uniqueCards = new HashSet<>();
 

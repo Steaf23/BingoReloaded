@@ -57,6 +57,7 @@ public class ItemTemplate
     private final Map<Enchantment, Integer> enchantments = new HashMap<>();
     private final List<Function<ItemMeta, ItemMeta>> metaModifiers = new ArrayList<>();
     private Integer maxDamage = null;
+    private Integer maxStackSize = null;
     private int currentDamage = 0;
     private int customModelData = 0;
     private ItemTemplate texturedVariant = null;
@@ -269,6 +270,16 @@ public class ItemTemplate
         return this;
     }
 
+    public ItemTemplate setMaxStackSize(int stackSize) {
+        maxStackSize = Math.clamp(stackSize, 1, 64);
+        return this;
+    }
+
+    public ItemTemplate resetMaxStackSize() {
+        maxStackSize = null;
+        return this;
+    }
+
     public ItemTemplate setCustomModelData(int data) {
         this.customModelData = data;
         return this;
@@ -394,11 +405,14 @@ public class ItemTemplate
         }
 
         if (maxDamage != null) {
-            // NOTE: still broken in older versions (pre 1.20.6-1.21-ish) for spawn eggs.
             if (stackMeta instanceof Damageable) {
                 ((Damageable)stackMeta).setMaxDamage(maxDamage);
                 ((Damageable)stackMeta).setDamage(currentDamage);
             }
+        }
+
+        if (maxStackSize != null) {
+            stackMeta.setMaxStackSize(maxStackSize);
         }
 
         if (compareKey != null) {

@@ -145,9 +145,7 @@ public class BingoReloaded extends JavaPlugin
                 addDataAccessor(new YamlDataAccessor(this, language.substring(0, language.length() - 4))),
                 addDataAccessor(new YamlDataAccessor(this, "languages/en_us"))
         );
-//                FileConfigurationAccessor.create(config.language, new YmlDataManager(this, config.language).getConfig(), this),
-//                FileConfigurationAccessor.create(config.language, new YmlDataManager(this, "languages/en_us.yml").getConfig(), this)
-//        );
+
         ConsoleMessenger.log(BingoMessage.CHANGED_LANGUAGE.asPhrase().color(NamedTextColor.GREEN));
 
         BasicMenu.pluginTitlePrefix = BingoMessage.MENU_PREFIX.asPhrase();

@@ -13,11 +13,11 @@ import io.github.steaf23.bingoreloaded.tasks.GameTask;
 import io.github.steaf23.bingoreloaded.tasks.data.AdvancementTask;
 import io.github.steaf23.bingoreloaded.tasks.data.ItemTask;
 import io.github.steaf23.bingoreloaded.tasks.data.StatisticTask;
+import io.github.steaf23.bingoreloaded.tasks.data.TaskData;
 import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import io.github.steaf23.playerdisplay.util.DebugLogger;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.Registry;
 import org.bukkit.advancement.AdvancementProgress;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityPickupItemEvent;
@@ -84,7 +84,7 @@ public class TaskProgressTracker
                  participant.sessionPlayer().ifPresent(allPlayers::add);
             }
 
-            Registry.ADVANCEMENT.stream().forEach(advancement -> {
+            Bukkit.advancementIterator().forEachRemaining(advancement -> {
                 for (Player p : allPlayers) {
                     AdvancementProgress progress = p.getAdvancementProgress(advancement);
                     for (String criteria : advancement.getCriteria()) {
@@ -105,9 +105,10 @@ public class TaskProgressTracker
             }
 
             int finalCount = task.data.getRequiredAmount();
+            TaskData.TaskType type = task.data.getType();
 
             // reset any progress already made beforehand
-            if (task.type == GameTask.TaskType.ADVANCEMENT) {
+            if (type == TaskData.TaskType.ADVANCEMENT) {
                 // revoke advancement from player
                 AdvancementTask advancementTask = (AdvancementTask) task.data;
                 participant.sessionPlayer().ifPresent(player -> {
@@ -115,7 +116,7 @@ public class TaskProgressTracker
                     progress.getAwardedCriteria().forEach(progress::revokeCriteria);
                     DebugLogger.addLog("Revoking advancement " + advancementTask.advancement().getKey().getKey() + " for player " + player.getName());
                 });
-            } else if (task.type == GameTask.TaskType.STATISTIC) {
+            } else if (type == TaskData.TaskType.STATISTIC) {
                 StatisticTask statisticTask = (StatisticTask) task.data;
                 // travel statistics are counted * 1000
 //                if (statisticTask.statistic().getCategory() == BingoStatistic.StatisticCategory.TRAVEL)
@@ -146,7 +147,7 @@ public class TaskProgressTracker
             DebugLogger.addLog("Advancement " + event.getAdvancement().getKey().getKey() + " completed by " + event.getPlayer().getName());
 
         updateProgressFromEvent(participant, (task, progress) -> {
-            if (task.type != GameTask.TaskType.ADVANCEMENT) {
+            if (task.taskType() != TaskData.TaskType.ADVANCEMENT) {
                 return false;
             }
             AdvancementTask data = (AdvancementTask) task.data;
@@ -171,7 +172,7 @@ public class TaskProgressTracker
             return;
 
         updateProgressFromEvent(participant, (task, progress) -> {
-            if (task.type != GameTask.TaskType.STATISTIC) {
+            if (task.taskType() != TaskData.TaskType.STATISTIC) {
                 return false;
             }
             BingoStatistic statistic = event.getStatistic();
@@ -201,7 +202,7 @@ public class TaskProgressTracker
 
         GameTask deathMatchTask = game.getDeathMatchTask();
         if (deathMatchTask != null) {
-            if (item.getType().equals(deathMatchTask.material)) {
+            if (item.getType().equals(deathMatchTask.material())) {
                 deathMatchTask.complete(participant, game.getGameTime());
                 var slotEvent = new BingoDeathmatchTaskCompletedEvent(participant.getSession(), deathMatchTask);
                 Bukkit.getPluginManager().callEvent(slotEvent);
@@ -216,7 +217,7 @@ public class TaskProgressTracker
                     continue;
                 }
 
-                if (task.type != GameTask.TaskType.ITEM) {
+                if (task.taskType() != TaskData.TaskType.ITEM) {
                     continue;
                 }
                 ItemTask data = (ItemTask) task.data;
@@ -243,7 +244,7 @@ public class TaskProgressTracker
         tasksToRemove.forEach(progressMap::remove);
 
         updateProgressFromEvent(participant, (task, progress) -> {
-            if (task.type != GameTask.TaskType.ITEM) {
+            if (task.taskType() != TaskData.TaskType.ITEM) {
                 return false;
             }
             ItemTask data = (ItemTask) task.data;
@@ -347,7 +348,7 @@ public class TaskProgressTracker
 
     public void removeTask(GameTask task) {
         progressMap.remove(task);
-        if (task.type == GameTask.TaskType.STATISTIC) {
+        if (task.taskType() == TaskData.TaskType.STATISTIC) {
             statisticTracker.removeStatistic((StatisticTask) task.data);
         }
     }

@@ -60,7 +60,7 @@ public class ListEditorMenu extends BasicMenu
         List<GameTask> tasks = new ArrayList<>();
         for (Material m : Material.values()) {
             if (!m.name().contains("LEGACY_") && !glassPanes.contains(m) && m.isItem() && !m.isAir()) {
-                tasks.add(new GameTask(new ItemTask(m, 1), GameTask.TaskDisplayMode.UNIQUE_TASK_ITEMS));
+                tasks.add(GameTask.simpleItemTask(m, 1));
             }
         }
 

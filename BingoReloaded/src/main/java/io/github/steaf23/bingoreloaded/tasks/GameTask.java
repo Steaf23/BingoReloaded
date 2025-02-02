@@ -11,7 +11,6 @@ import io.github.steaf23.bingoreloaded.util.timer.GameTimer;
 import io.github.steaf23.playerdisplay.inventory.item.ItemTemplate;
 import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import io.github.steaf23.playerdisplay.util.PDCHelper;
-import io.papermc.paper.advancement.AdvancementDisplay;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -28,13 +27,6 @@ import java.util.UUID;
 
 public class GameTask
 {
-    public enum TaskType
-    {
-        ITEM,
-        STATISTIC,
-        ADVANCEMENT,
-    }
-
     public enum TaskDisplayMode
     {
         GENERIC_TASK_ITEMS, // Shows a filled map for all advancements and a banner pattern for all statistic tasks.
@@ -45,10 +37,7 @@ public class GameTask
     public long completedAt;
     private boolean voided;
 
-    public final TaskType type;
     public final TaskData data;
-    public final Material material;
-    public final boolean glowing;
 
     public final TaskDisplayMode displayMode;
 
@@ -59,39 +48,10 @@ public class GameTask
         this.voided = false;
         this.completedAt = -1L;
         this.displayMode = displayMode;
+    }
 
-        switch (data) {
-            case ItemTask itemTask -> {
-                this.type = TaskType.ITEM;
-                this.material = itemTask.material();
-                this.glowing = false;
-            }
-            case AdvancementTask advancementTask -> {
-                this.type = TaskType.ADVANCEMENT;
-                AdvancementDisplay display = advancementTask.advancement().getDisplay();
-                if (display == null || displayMode == TaskDisplayMode.GENERIC_TASK_ITEMS) {
-                    this.material = Material.FILLED_MAP;
-                } else {
-                    this.material = advancementTask.advancement().getDisplay().icon().getType();
-                }
-                this.glowing = true;
-            }
-            case StatisticTask statTask -> {
-                this.type = TaskType.STATISTIC;
-                if (displayMode == TaskDisplayMode.GENERIC_TASK_ITEMS) {
-                    this.material = Material.GLOBE_BANNER_PATTERN;
-                } else {
-                    this.material = BingoStatistic.getMaterial(statTask.statistic());
-                }
-                this.glowing = true;
-            }
-            case null, default -> {
-                ConsoleMessenger.bug("This Type of data is not supported by BingoTask: '" + data + "'!", this);
-                this.type = TaskType.ITEM;
-                this.glowing = false;
-                this.material = Material.BEDROCK;
-            }
-        }
+    public static GameTask simpleItemTask(Material material, int count) {
+        return new GameTask(new ItemTask(material, count), TaskDisplayMode.UNIQUE_TASK_ITEMS);
     }
 
     public void setVoided(boolean value)
@@ -144,8 +104,8 @@ public class GameTask
         }
         else // DEFAULT TASK
         {
-            item = new ItemTemplate(material, data.getName(), data.getItemDescription());
-            item.setAmount(Math.min(64, data.getRequiredAmount()));
+            item = new ItemTemplate(material(), data.getName(), data.getItemDescription());
+            item.setAmount(data.getRequiredAmount());
         }
 
         // STEP 2: Add additional stuff like pdc data and glowing effect.
@@ -155,7 +115,7 @@ public class GameTask
             // Serialize specific data first, to catch null pointers from incomplete implementations.
             pdcData = data.pdcSerialize(pdcData);
             // Then serialize generic task info/ live data
-            pdcData.set(getTaskDataKey("type"), PersistentDataType.STRING, type.name());
+            pdcData.set(getTaskDataKey("type"), PersistentDataType.STRING, taskType().name());
             pdcData.set(getTaskDataKey("voided"), PersistentDataType.BYTE, (byte)(voided ? 1 : 0));
             pdcData.set(getTaskDataKey("completed_at"), PersistentDataType.LONG, completedAt);
             if (isCompleted())
@@ -165,12 +125,13 @@ public class GameTask
             return meta;
         });
 
-        if ((glowing || isCompleted()) && !isVoided())
+        if ((data.shouldItemGlow() || isCompleted()) && !isVoided())
         {
             item.setGlowing(true);
         }
 
         item.setAction(new TaskItemAction(this));
+        item.setMaxStackSize(64);
         return item;
     }
 
@@ -186,14 +147,14 @@ public class GameTask
             completedByUUID = UUID.fromString(idStr);
 
         String typeStr = pdcData.getOrDefault(getTaskDataKey("type"), PersistentDataType.STRING, "");
-        TaskType type;
+        TaskData.TaskType type;
         if (typeStr.isEmpty())
         {
             ConsoleMessenger.log("Cannot create a valid task from this item stack!");
             return null;
         }
 
-        type = TaskType.valueOf(typeStr);
+        type = TaskData.TaskType.valueOf(typeStr);
         GameTask task = switch (type)
         {
             case ADVANCEMENT -> new GameTask(AdvancementTask.fromPdc(pdcData), TaskDisplayMode.UNIQUE_TASK_ITEMS);
@@ -251,5 +212,13 @@ public class GameTask
         else {
             return data.getName();
         }
+    }
+
+    public Material material() {
+        return data.getDisplayMaterial(displayMode == TaskDisplayMode.GENERIC_TASK_ITEMS);
+    }
+
+    public TaskData.TaskType taskType() {
+        return data.getType();
     }
 }

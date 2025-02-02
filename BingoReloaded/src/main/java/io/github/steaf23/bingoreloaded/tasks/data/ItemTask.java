@@ -26,6 +26,11 @@ public record ItemTask(Material material, int count) implements TaskData
     }
 
     @Override
+    public TaskType getType() {
+        return TaskType.ITEM;
+    }
+
+    @Override
     public Component getName()
     {
         return Component.text().color(NamedTextColor.YELLOW)
@@ -51,6 +56,17 @@ public record ItemTask(Material material, int count) implements TaskData
         stream.set(GameTask.getTaskDataKey("item"),  PersistentDataType.STRING, material.name());
         stream.set(GameTask.getTaskDataKey("count"),  PersistentDataType.INTEGER, count);
         return stream;
+    }
+
+    @Override
+    public boolean shouldItemGlow() {
+        return false;
+    }
+
+    @Override
+    public Material getDisplayMaterial(boolean genericItem) {
+        // There is no generic material for item tasks
+        return material;
     }
 
     @Override

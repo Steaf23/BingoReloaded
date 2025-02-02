@@ -19,6 +19,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -218,8 +219,9 @@ public class BingoPlayer implements BingoParticipant
         if (sessionPlayer().isEmpty())
             return;
 
-        String itemKey = task.material.isBlock() ? "block" : "item";
-        itemKey += ".minecraft." + task.material.getKey().getKey();
+        Material mat = task.material();
+        String itemKey = mat.isBlock() ? "block" : "item";
+        itemKey += ".minecraft." + mat.getKey().getKey();
         sessionPlayer().get()
                 .sendMessage(BingoMessage.DEATHMATCH_ITEM.asPhrase(Component.translatable(itemKey))
                         .color(NamedTextColor.GOLD));

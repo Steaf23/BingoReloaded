@@ -31,6 +31,11 @@ public record StatisticTask(BingoStatistic statistic, int count) implements Task
     }
 
     @Override
+    public TaskType getType() {
+        return TaskType.STATISTIC;
+    }
+
+    @Override
     public Component getName()
     {
         Component amount = Component.text(count);
@@ -130,6 +135,20 @@ public record StatisticTask(BingoStatistic statistic, int count) implements Task
         }
         stream.set(GameTask.getTaskDataKey("count"),  PersistentDataType.INTEGER, count);
         return stream;
+    }
+
+    @Override
+    public boolean shouldItemGlow() {
+        return true;
+    }
+
+    @Override
+    public Material getDisplayMaterial(boolean genericItem) {
+        if (genericItem) {
+            return Material.GLOBE_BANNER_PATTERN;
+        } else {
+            return BingoStatistic.getMaterial(statistic());
+        }
     }
 
     @Override
