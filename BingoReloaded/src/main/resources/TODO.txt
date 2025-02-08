@@ -28,7 +28,6 @@
 
 (3.x) add automatic updates to config.yml when starting server to add new options
 (3.x) add spectator mode
-(3.x) put automatic team members into random teams instead of the same ones every time (looking at you magenta...)
 
 (3.x) add small biomes option using datapack
 

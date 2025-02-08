@@ -20,17 +20,18 @@ import org.bukkit.GameMode;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+
 /**
  * (This team manager is basic in terms of features, not in terms of complexity)
  */
-public class BasicTeamManager implements TeamManager
-{
+public class BasicTeamManager implements TeamManager {
     private final BingoSession session;
     private final BingoTeamContainer activeTeams;
     private final TeamData teamData;
@@ -63,8 +64,7 @@ public class BasicTeamManager implements TeamManager
     }
 
     private void addAutoPlayersToTeams() {
-        record TeamCount(BingoTeam team, int count)
-        {
+        record TeamCount(BingoTeam team, int count) {
         }
 
         Optional<BingoTeam> automaticTeamOpt = activeTeams.getTeams().stream().filter(t -> t.getIdentifier().equals("auto")).findFirst();
@@ -122,7 +122,7 @@ public class BasicTeamManager implements TeamManager
             if (counts.isEmpty() || lowest.count == getMaxTeamSize()) {
                 // If there are still players left in the queue, create a new team
                 if (!automaticTeamPlayers.isEmpty()) {
-                    BingoTeam newTeam = activateAnyTeam();
+                    BingoTeam newTeam = activateRandomTeam();
                     if (newTeam == null) {
                         ConsoleMessenger.bug("Could not fit every player into a team, since there is not enough room!", this);
                         break;
@@ -273,8 +273,11 @@ public class BasicTeamManager implements TeamManager
         return bTeam;
     }
 
-    private @Nullable BingoTeam activateAnyTeam() {
-        for (String teamId : teamData.getTeams().keySet()) {
+    private @Nullable BingoTeam activateRandomTeam() {
+        List<String> allTeams = new ArrayList<>(teamData.getTeams().keySet());
+        Collections.shuffle(allTeams);
+
+        for (String teamId : allTeams) {
             if (!activeTeams.containsId(teamId)) {
                 return activateTeamFromId(teamId);
             }
