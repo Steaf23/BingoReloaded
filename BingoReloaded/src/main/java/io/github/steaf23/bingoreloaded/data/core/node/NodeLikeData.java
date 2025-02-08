@@ -3,6 +3,7 @@ package io.github.steaf23.bingoreloaded.data.core.node;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class NodeLikeData
@@ -60,6 +61,19 @@ public class NodeLikeData
             return null;
         }
         return getNested(subNode, key.substring(fullPath[0].length() + 1));
+    }
+
+    public static <T> @Nullable T getNestedSingle(T root, String key, Function<String, T> subCollector) {
+        String[] fullPath = Arrays.stream(key.split("\\.")).filter(s -> !s.isEmpty()).toList().toArray(new String[]{});
+        if (fullPath.length == 0) {
+            return null;
+        }
+        T subObject = subCollector.apply(fullPath[0]);
+        if (fullPath.length == 1) {
+            return subObject;
+        }
+        // return empty value if node at fullPath is not a branch node
+        return getNestedSingle(subObject, key.substring(fullPath[0].length() + 1), subCollector);
     }
 
     public static <T extends Node> void removeNested(NodeBranch<T> root, String key) {

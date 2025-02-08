@@ -33,6 +33,11 @@ public class TagDataStorage implements DataStorage
     }
 
     @Override
+    public TagDataStorage createNew() {
+        return new TagDataStorage();
+    }
+
+    @Override
     public Set<String> getKeys() {
         return root.getValue().getKeys();
     }
@@ -299,38 +304,6 @@ public class TagDataStorage implements DataStorage
     }
 
     @Override
-    public <T> void setSerializable(String path, Class<T> classType, T value) {
-        TagDataStorage storage = new TagDataStorage();
-        DataStorageSerializer<T> serializer = DataStorageSerializerRegistry.getSerializer(classType);
-        if (serializer == null) {
-            ConsoleMessenger.bug("No serializer registered for this type of data at path " + path, this);
-            return;
-        }
-        serializer.toDataStorage(storage, value);
-        setStorage(path, storage);
-    }
-
-    @Override
-    public <T> @Nullable T getSerializable(String path, Class<T> classType) {
-        return getSerializable(path, classType, null);
-    }
-
-    @Override
-    public <T> @NotNull T getSerializable(String path, Class<T> classType, T def) {
-        DataStorage serializable = getStorage(path);
-        if (serializable == null) {
-            return def;
-        }
-        DataStorageSerializer<T> serializer = DataStorageSerializerRegistry.getSerializer(classType);
-        if (serializer == null) {
-            ConsoleMessenger.bug("No serializer registered for this type of data at path " + path, this);
-            return def;
-        }
-        T value = serializer.fromDataStorage(serializable);
-        return value == null ? def : value;
-    }
-
-    @Override
     public void setBoolean(String path, boolean value) {
         set(path, TagDataType.BOOLEAN.toTag(value));
     }
@@ -473,7 +446,9 @@ public class TagDataStorage implements DataStorage
     }
 
     private @Nullable Tag<?> get(String path) {
-        return NodeLikeData.getNested(root, path);
+        return NodeLikeData.getNestedSingle(root, path, subPath -> {
+            return 
+        });
     }
 
     private void set(String key, Tag<?> tag) {

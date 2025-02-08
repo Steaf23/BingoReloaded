@@ -1,7 +1,9 @@
 package io.github.steaf23.bingoreloaded.data.core;
 
+import io.github.steaf23.bingoreloaded.data.core.tag.DataStorageSerializer;
 import io.github.steaf23.bingoreloaded.data.core.tag.TagAdapter;
 import io.github.steaf23.bingoreloaded.data.core.tag.TagDataType;
+import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
@@ -14,6 +16,8 @@ import java.util.UUID;
 
 public interface DataStorage
 {
+    DataStorage createNew();
+
     Set<String> getKeys();
 
     void setByte(String path, byte value);
@@ -40,9 +44,34 @@ public interface DataStorage
     <T> void setSerializableList(String path, Class<T> dataType, List<T> values);
     <T> List<T> getSerializableList(String path, Class<T> dataType);
 
-    <T> void setSerializable(String path, Class<T> classType, T value);
-    <T> @Nullable T getSerializable(String path, Class<T> classType);
-    <T> @NotNull T getSerializable(String path, Class<T> classType, T def);
+    default <T> void setSerializable(String path, Class<T> classType, T value) {
+        DataStorage storage = createNew();
+        DataStorageSerializer<T> serializer = DataStorageSerializerRegistry.getSerializer(classType);
+        if (serializer == null) {
+            ConsoleMessenger.bug("No serializer registered for this type of data at path " + path, this);
+            return;
+        }
+        serializer.toDataStorage(storage, value);
+        setStorage(path, storage);
+    }
+
+    default <T> @Nullable T getSerializable(String path, Class<T> classType) {
+        return getSerializable(path, classType, null);
+    }
+
+    default <T> @NotNull T getSerializable(String path, Class<T> classType, T def) {
+        DataStorage serializable = getStorage(path);
+        if (serializable == null) {
+            return def;
+        }
+        DataStorageSerializer<T> serializer = DataStorageSerializerRegistry.getSerializer(classType);
+        if (serializer == null) {
+            ConsoleMessenger.bug("No serializer registered for this type of data at path " + path, this);
+            return def;
+        }
+        T value = serializer.fromDataStorage(serializable);
+        return value == null ? def : value;
+    }
 
     void setBoolean(String path, boolean value);
     boolean getBoolean(String path);

@@ -32,6 +32,11 @@ public class YamlDataStorage implements DataStorage
     }
 
     @Override
+    public DataStorage createNew() {
+        return new YamlDataStorage();
+    }
+
+    @Override
     public Set<String> getKeys() {
         return config.getKeys(false);
     }
@@ -137,38 +142,6 @@ public class YamlDataStorage implements DataStorage
         return config.getList(path, List.of()).stream()
                 .map(v -> serializer.fromDataStorage(new YamlDataStorage()))
                 .toList();
-    }
-
-    @Override
-    public <T> void setSerializable(String path, Class<T> classType, T value) {
-        YamlDataStorage storage = new YamlDataStorage();
-        DataStorageSerializer<T> serializer = DataStorageSerializerRegistry.getSerializer(classType);
-        if (serializer == null) {
-            ConsoleMessenger.bug("No serializer registered for this type of data at path " + path, this);
-            return;
-        }
-        serializer.toDataStorage(storage, value);
-        setStorage(path, storage);
-    }
-
-    @Override
-    public <T> @Nullable T getSerializable(String path, Class<T> classType) {
-        return getSerializable(path, classType, null);
-    }
-
-    @Override
-    public <T> @NotNull T getSerializable(String path, Class<T> classType, T def) {
-        DataStorage serializable = getStorage(path);
-        if (serializable == null) {
-            return def;
-        }
-        DataStorageSerializer<T> serializer = DataStorageSerializerRegistry.getSerializer(classType);
-        if (serializer == null) {
-            ConsoleMessenger.bug("No serializer registered for this type of data at path " + path, this);
-            return def;
-        }
-        T value = serializer.fromDataStorage(serializable);
-        return value == null ? def : value;
     }
 
     @Override

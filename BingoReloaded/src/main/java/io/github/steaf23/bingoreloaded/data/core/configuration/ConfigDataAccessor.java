@@ -3,6 +3,9 @@ package io.github.steaf23.bingoreloaded.data.core.configuration;
 import io.github.steaf23.bingoreloaded.data.core.DataAccessor;
 import org.bukkit.plugin.java.JavaPlugin;
 
+/**
+ * Specific yaml data accessor for the config.yml file provided by Bukkit.
+ */
 public class ConfigDataAccessor extends YamlDataStorage implements DataAccessor
 {
     private final JavaPlugin plugin;
