@@ -2,11 +2,11 @@ package io.github.steaf23.bingoreloaded.data;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.core.DataAccessor;
+import io.github.steaf23.bingoreloaded.util.StringAdditions;
 import io.github.steaf23.playerdisplay.PlayerDisplay;
 import io.github.steaf23.playerdisplay.util.BlockColor;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
-import org.apache.commons.text.WordUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -63,7 +63,7 @@ public class TeamData {
         data.saveChanges();
 
         for (BlockColor col : BlockColor.values()) {
-            addTeam(col.name, WordUtils.capitalize(col.name.replace("_", " ")), col.textColor);
+            addTeam(col.name, StringAdditions.capitalize(col.name.replace("_", " ")), col.textColor);
         }
     }
 

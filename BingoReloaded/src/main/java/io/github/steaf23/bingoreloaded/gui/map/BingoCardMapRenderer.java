@@ -1,14 +1,15 @@
 package io.github.steaf23.bingoreloaded.gui.map;
 
 import io.github.steaf23.bingoreloaded.cards.TaskCard;
+import io.github.steaf23.bingoreloaded.data.core.DataStorage;
+import io.github.steaf23.bingoreloaded.data.core.json.JsonDataAccessor;
+import io.github.steaf23.bingoreloaded.data.core.json.JsonDataStorage;
+import io.github.steaf23.bingoreloaded.data.core.tag.TagDataType;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.tasks.GameTask;
 import io.github.steaf23.bingoreloaded.tasks.data.AdvancementTask;
 import io.github.steaf23.bingoreloaded.tasks.data.StatisticTask;
 import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
-import org.apache.commons.compress.archivers.sevenz.SevenZArchiveEntry;
-import org.apache.commons.compress.archivers.sevenz.SevenZFile;
-import org.apache.commons.compress.utils.SeekableInMemoryByteChannel;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Registry;
@@ -23,7 +24,6 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -54,41 +54,33 @@ public class BingoCardMapRenderer extends MapRenderer
             return;
         }
 
-        InputStream stream = plugin.getResource("taskimages.7z");
-        try (SevenZFile zipped = new SevenZFile(new SeekableInMemoryByteChannel(stream.readAllBytes()))) {
-            SevenZArchiveEntry file = zipped.getNextEntry();
+        try {
+            JsonDataStorage atlas = new JsonDataStorage();
+            JsonDataAccessor.readJsonFromFile(atlas, plugin.getResource("taskimages/item_atlas.json"));
+            DataStorage blocks = atlas.getStorage("blocks");
+            DataStorage items = atlas.getStorage("items");
 
-            while (file != null) {
-                if (!file.getName().startsWith("items/") && !file.getName().startsWith("blocks/")) {
-                    file = zipped.getNextEntry();
-                    continue;
-                }
-
-                byte[] content = new byte[(int) file.getSize()];
-                zipped.read(content, 0, content.length);
-                BufferedImage image = ImageIO.read(new ByteArrayInputStream(content));
-                // filename could be something like items/diamond.png, we can extract diamond by removing items/ (or blocks/ ) and the extension at end
-                String itemName = file.getName().split("/")[1];
-                NamespacedKey namespace = NamespacedKey.minecraft(itemName.substring(0, itemName.length() - 4));
-                allItemImages.put(namespace, image);
-                if (file.getName().startsWith("items")) {
-                    flatItems.add(namespace);
-                }
-                file = zipped.getNextEntry();
+            if (items == null || blocks == null) {
+                ConsoleMessenger.bug("Error loading task images from atlas.", this);
+                return;
             }
+
+            addImagesFromAtlas(plugin.getResource("taskimages/blocks.png"), blocks, false);
+            addImagesFromAtlas(plugin.getResource("taskimages/items.png"), items, true);
+
             InputStream overlayStream = plugin.getResource("task_completed.png");
             if (overlayStream != null)
                 COMPLETED_OVERLAY = ImageIO.read(overlayStream);
 
-            InputStream backgroundStream = plugin.getResource("maptextures/card_background.png");
+            InputStream backgroundStream = plugin.getResource("taskimages/card_background.png");
             if (backgroundStream != null)
                 BACKGROUND = ImageIO.read(backgroundStream);
 
-            InputStream iconStream = plugin.getResource("maptextures/advancement_icon.png");
+            InputStream iconStream = plugin.getResource("taskimages/advancement_icon.png");
             if (iconStream != null)
                 ADVANCEMENT_ICON = ImageIO.read(iconStream);
 
-            iconStream = plugin.getResource("maptextures/statistic_icon.png");
+            iconStream = plugin.getResource("taskimages/statistic_icon.png");
             if (iconStream != null)
                 STATISTIC_ICON = ImageIO.read(iconStream);
 
@@ -104,7 +96,28 @@ public class BingoCardMapRenderer extends MapRenderer
             }
         }
 
-        ConsoleMessenger.log("Added all texture files: " + allItemImages.size());
+        ConsoleMessenger.log("Added " + allItemImages.size() + " item images for use in the map renderer.");
+    }
+
+    private static void addImagesFromAtlas(InputStream atlas, DataStorage atlasInfo, boolean renderAsItems) throws IOException {
+        List<String> itemNames = atlasInfo.getList("names", TagDataType.STRING);
+        int rowCount = atlasInfo.getInt("rows", 1);
+        List<Integer> sizeVec = atlasInfo.getList("item_size", TagDataType.INT);
+        int sizeX = sizeVec.get(0);
+        int sizeY = sizeVec.get(1);
+
+        BufferedImage image = ImageIO.read(atlas);
+
+        int index = 0;
+        for (String name : itemNames) {
+            NamespacedKey nameKey = NamespacedKey.minecraft(name);
+            BufferedImage subImage = image.getSubimage((index % rowCount) * sizeX, (index / rowCount) * sizeY, sizeX, sizeY);
+            index++;
+            allItemImages.put(nameKey, subImage);
+            if (renderAsItems) {
+                flatItems.add(nameKey);
+            }
+        }
     }
 
     @Override
@@ -117,16 +130,12 @@ public class BingoCardMapRenderer extends MapRenderer
         if (BACKGROUND != null)
             mapCanvas.drawImage(0, 0, BACKGROUND);
 
-//        MapCursorCollection cursors = new MapCursorCollection();
         for (int y = 0; y < cardSize; y++) {
             for (int x = 0; x < cardSize; x++) {
                 GameTask task = tasks.get(y * cardSize + x);
                 drawTaskOnGrid(mapCanvas, task, x + offsetFromTopLeft, y + offsetFromTopLeft);
-//                cursors.addCursor(new MapCursor((byte)((x - 2) * 24 * 2), (byte)((y - 2) * 24 * 2), (byte)0,
-//                        MapCursor.Type.PLAYER_OFF_LIMITS, true, Component.text("A")));
             }
         }
-//        mapCanvas.setCursors(cursors);
     }
 
     public void drawTaskOnGrid(MapCanvas canvas, GameTask task, int gridX, int gridY) {
@@ -143,7 +152,7 @@ public class BingoCardMapRenderer extends MapRenderer
             extraOffset = 4;
         }
 
-        if (task.isCompleted() && COMPLETED_OVERLAY != null && false) {
+        if (task.isCompleted() && COMPLETED_OVERLAY != null) {
             drawImageAlphaScissor(canvas, gridX * 24 + 4, gridY * 24 + 4, COMPLETED_OVERLAY);
             return;
         }
