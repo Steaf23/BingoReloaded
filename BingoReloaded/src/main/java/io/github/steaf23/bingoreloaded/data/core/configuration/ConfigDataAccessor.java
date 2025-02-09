@@ -39,4 +39,9 @@ public class ConfigDataAccessor extends YamlDataStorage implements DataAccessor
     public void saveChanges() {
         plugin.saveConfig();
     }
+
+    @Override
+    public boolean isInternalReadOnly() {
+        return false;
+    }
 }

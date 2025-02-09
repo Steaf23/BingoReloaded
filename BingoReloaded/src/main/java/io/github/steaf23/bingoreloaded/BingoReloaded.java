@@ -106,16 +106,16 @@ public class BingoReloaded extends JavaPlugin
         }
 
         // Create data accessors
-        addDataAccessor(new YamlDataAccessor(this, "scoreboards"));
-        addDataAccessor(new YamlDataAccessor(this, "placeholders"));
-        addDataAccessor(new TagDataAccessor(this, "data/cards"));
-        addDataAccessor(new TagDataAccessor(this, "data/textures"));
-        addDataAccessor(new TagDataAccessor(this, "data/kits"));
-        addDataAccessor(new TagDataAccessor(this, "data/" + getDefaultTasksVersion()));
-        addDataAccessor(new TagDataAccessor(this, "data/presets"));
-        addDataAccessor(new TagDataAccessor(this, "data/player_stats"));
-        addDataAccessor(new TagDataAccessor(this, "data/teams"));
-        addDataAccessor(new TagDataAccessor(this, "data/players"));
+        addDataAccessor(new YamlDataAccessor(this, "scoreboards", false));
+        addDataAccessor(new YamlDataAccessor(this, "placeholders", false));
+        addDataAccessor(new TagDataAccessor(this, "data/cards", false));
+        addDataAccessor(new TagDataAccessor(this, "data/textures", false));
+        addDataAccessor(new TagDataAccessor(this, "data/kits", false));
+        addDataAccessor(new TagDataAccessor(this, "data/" + getDefaultTasksVersion(), false));
+        addDataAccessor(new TagDataAccessor(this, "data/presets", false));
+        addDataAccessor(new TagDataAccessor(this, "data/player_stats", false));
+        addDataAccessor(new TagDataAccessor(this, "data/teams", false));
+        addDataAccessor(new TagDataAccessor(this, "data/players", false));
 
         reloadConfig();
         saveDefaultConfig();
@@ -142,8 +142,8 @@ public class BingoReloaded extends JavaPlugin
         PlayerDisplay.setUseCustomTextures(config.getOptionValue(BingoOptions.USE_INCLUDED_RESOURCE_PACK));
         String language = config.getOptionValue(BingoOptions.LANGUAGE);
         BingoMessage.setLanguage(
-                addDataAccessor(new YamlDataAccessor(this, language.substring(0, language.length() - 4))),
-                addDataAccessor(new YamlDataAccessor(this, "languages/en_us"))
+                addDataAccessor(new YamlDataAccessor(this, language.substring(0, language.length() - 4), false)),
+                addDataAccessor(new YamlDataAccessor(this, "languages/en_us", false))
         );
 
         ConsoleMessenger.log(BingoMessage.CHANGED_LANGUAGE.asPhrase().color(NamedTextColor.GREEN));

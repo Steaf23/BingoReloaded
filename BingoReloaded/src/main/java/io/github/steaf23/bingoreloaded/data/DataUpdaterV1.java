@@ -246,8 +246,8 @@ public class DataUpdaterV1
 
         ConfigurationSerialization.registerClass(OldBingoSettings.class);
 
-        YamlDataAccessor yamlData = new YamlDataAccessor(plugin, "data/presets");
-        TagDataAccessor tagData = new TagDataAccessor(plugin, "data/presets");
+        YamlDataAccessor yamlData = new YamlDataAccessor(plugin, "data/presets", false);
+        TagDataAccessor tagData = new TagDataAccessor(plugin, "data/presets", false);
 
         yamlData.load();
         for (String key : yamlData.getKeys()) {
@@ -288,8 +288,8 @@ public class DataUpdaterV1
 
         ConfigurationSerialization.registerClass(OldPlayer.class);
 
-        YamlDataAccessor yamlData = new YamlDataAccessor(plugin, "data/players");
-        TagDataAccessor tagData = new TagDataAccessor(plugin, "data/players");
+        YamlDataAccessor yamlData = new YamlDataAccessor(plugin, "data/players", false);
+        TagDataAccessor tagData = new TagDataAccessor(plugin, "data/players", false);
 
         yamlData.load();
 
@@ -325,8 +325,8 @@ public class DataUpdaterV1
             return;
         }
 
-        YamlDataAccessor yamlData = new YamlDataAccessor(plugin, "data/player_stats");
-        TagDataAccessor tagData = new TagDataAccessor(plugin, "data/player_stats");
+        YamlDataAccessor yamlData = new YamlDataAccessor(plugin, "data/player_stats", false);
+        TagDataAccessor tagData = new TagDataAccessor(plugin, "data/player_stats", false);
 
         yamlData.load();
         for (String id : yamlData.getKeys()) {
@@ -347,8 +347,8 @@ public class DataUpdaterV1
         ConfigurationSerialization.registerClass(OldStatisticTask.class);
         ConfigurationSerialization.registerClass(OldAdvancementTask.class);
 
-        YamlDataAccessor yamlData = new YamlDataAccessor(plugin, filename);
-        TagDataAccessor tagData = new TagDataAccessor(plugin, filename);
+        YamlDataAccessor yamlData = new YamlDataAccessor(plugin, filename, false);
+        TagDataAccessor tagData = new TagDataAccessor(plugin, filename, false);
 
         yamlData.load();
 
@@ -393,8 +393,8 @@ public class DataUpdaterV1
             return;
         }
 
-        YamlDataAccessor yamlData = new YamlDataAccessor(plugin, "data/cards");
-        TagDataAccessor tagData = new TagDataAccessor(plugin, "data/cards");
+        YamlDataAccessor yamlData = new YamlDataAccessor(plugin, "data/cards", false);
+        TagDataAccessor tagData = new TagDataAccessor(plugin, "data/cards", false);
 
         yamlData.load();
 
@@ -417,8 +417,8 @@ public class DataUpdaterV1
         ConfigurationSerialization.registerClass(OldMenuItem.class);
         ConfigurationSerialization.registerClass(OldCustomKit.class);
 
-        YamlDataAccessor yamlData = new YamlDataAccessor(plugin, "data/kits");
-        TagDataAccessor tagData = new TagDataAccessor(plugin, "data/kits");
+        YamlDataAccessor yamlData = new YamlDataAccessor(plugin, "data/kits", false);
+        TagDataAccessor tagData = new TagDataAccessor(plugin, "data/kits", false);
 
         yamlData.load();
 
@@ -449,8 +449,8 @@ public class DataUpdaterV1
 
         ConfigurationSerialization.registerClass(OldTeamTemplate.class);
 
-        YamlDataAccessor yamlData = new YamlDataAccessor(plugin, "data/teams");
-        TagDataAccessor tagData = new TagDataAccessor(plugin, "data/teams");
+        YamlDataAccessor yamlData = new YamlDataAccessor(plugin, "data/teams", false);
+        TagDataAccessor tagData = new TagDataAccessor(plugin, "data/teams", false);
 
         yamlData.load();
 
@@ -470,8 +470,8 @@ public class DataUpdaterV1
     }
 
     private void updateTextures() {
-        YamlDataAccessor yamlData = new YamlDataAccessor(plugin, "data/textures");
-        TagDataAccessor tagData = new TagDataAccessor(plugin, "data/textures");
+        YamlDataAccessor yamlData = new YamlDataAccessor(plugin, "data/textures", false);
+        TagDataAccessor tagData = new TagDataAccessor(plugin, "data/textures", false);
 
         yamlData.load();
 
@@ -488,7 +488,7 @@ public class DataUpdaterV1
     }
 
     private void updateScoreboards() {
-        YamlDataAccessor yamlData = new YamlDataAccessor(plugin, "scoreboards");
+        YamlDataAccessor yamlData = new YamlDataAccessor(plugin, "scoreboards", false);
         yamlData.load();
 
         String version = yamlData.getString("version", "");
@@ -529,7 +529,7 @@ public class DataUpdaterV1
     }
 
     private void updatePlaceholders() {
-        YamlDataAccessor yamlData = new YamlDataAccessor(plugin, "placeholders");
+        YamlDataAccessor yamlData = new YamlDataAccessor(plugin, "placeholders", false);
         yamlData.load();
 
         String version = yamlData.getString("version", "");

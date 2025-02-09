@@ -48,6 +48,16 @@ public class VirtualDataAccessor implements DataAccessor
     }
 
     @Override
+    public boolean isInternalReadOnly() {
+        return false;
+    }
+
+    @Override
+    public DataStorage createNew() {
+        return null;
+    }
+
+    @Override
     public Set<String> getKeys() {
         return Set.of();
     }
