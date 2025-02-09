@@ -4,8 +4,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Used to register more complex type of tag data that can be used to store any data that can be saved in a Tag
- * @param <T>
+ * Used to register more complex type of tag data that can be used to store any data that can be saved in a Tag.
+ * Adapted tags are stored as their base type, and can then be retrieved either using the adapter for automatic conversion
+ * or using the base tag type.
+ * @param <T> Type of data to adapt.
+ * @param <Base> base nbt type that this data will be stored as.
  */
 public interface TagAdapter<T, Base>
 {

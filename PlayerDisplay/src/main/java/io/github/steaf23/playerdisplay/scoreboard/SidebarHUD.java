@@ -1,6 +1,7 @@
 package io.github.steaf23.playerdisplay.scoreboard;
 
 import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
+import io.papermc.paper.scoreboard.numbers.NumberFormat;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -26,6 +27,7 @@ public class SidebarHUD
         this.board = Bukkit.getScoreboardManager().getNewScoreboard();
         this.sidebar = board.registerNewObjective("info", Criteria.DUMMY, initialTitle);
         sidebar.setDisplaySlot(DisplaySlot.SIDEBAR);
+        sidebar.numberFormat(NumberFormat.blank());
         this.subscribers = new HashSet<>();
 
         for (int i = 0; i < 15; i++) {

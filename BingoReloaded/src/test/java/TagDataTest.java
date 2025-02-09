@@ -3,6 +3,8 @@ import io.github.steaf23.bingoreloaded.data.core.DataStorage;
 import io.github.steaf23.bingoreloaded.data.core.DataStorageSerializerRegistry;
 import io.github.steaf23.bingoreloaded.data.core.helper.ResourceFileHelper;
 import io.github.steaf23.bingoreloaded.data.core.helper.SerializablePlayer;
+import io.github.steaf23.bingoreloaded.data.core.json.JsonDataAccessor;
+import io.github.steaf23.bingoreloaded.data.core.json.JsonDataStorage;
 import io.github.steaf23.bingoreloaded.data.core.tag.TagDataAccessor;
 import io.github.steaf23.bingoreloaded.data.core.tag.TagDataStorage;
 import io.github.steaf23.bingoreloaded.data.core.tag.TagDataType;
@@ -32,6 +34,7 @@ import org.junit.jupiter.api.Test;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
@@ -45,6 +48,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class TagDataTest
 {
@@ -71,6 +75,18 @@ public class TagDataTest
     @AfterAll
     public static void after() {
         ResourceFileHelper.deleteFolderRecurse("test");
+    }
+
+    @Test
+    public void testJsonAccessor() {
+        String json = "{\"some\":{\"type\": \"some string data\", \"list\": [\"val1\", \"val2\", \"val3\"], \"boo\": true}, \"size_check\": 34}";
+        JsonDataStorage storage = new JsonDataStorage();
+        JsonDataAccessor.readJsonFromFile(storage, new ByteArrayInputStream(json.getBytes()));
+
+        assertEquals("val2", storage.getList("some.list", TagDataType.STRING).get(1));
+        assertEquals("some string data", storage.getString("some.type", "NAH"));
+        assertTrue(storage.getBoolean("some.boo"));
+        assertEquals(34, storage.getInt("size_check", (short)0));
     }
 
 
@@ -482,7 +498,13 @@ public class TagDataTest
 
     public TagDataStorage readFromFile(String filename) {
         TagDataStorage data = new TagDataStorage();
-        TagDataAccessor.readTagDataFromFile(data, new File("test\\" + filename + ".nbt"));
+        try {
+            TagDataAccessor.readTagDataFromInput(data, new FileInputStream("test\\" + filename + ".nbt"));
+        }
+        catch (IOException ex) {
+            fail();
+        }
+
         return data;
     }
 

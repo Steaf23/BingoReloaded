@@ -63,7 +63,7 @@ public class YamlDataAccessor extends YamlDataStorage implements DataAccessor
 
     @Override
     public void saveChanges() {
-        if (config == null) {
+        if (config == null || isInternalReadOnly()) {
             return;
         }
 

@@ -443,14 +443,8 @@ public class TagDataStorage implements DataStorage
     }
 
     private @Nullable Tag<?> get(String path) {
-        return NodeLikeData.getNestedSingle(root, path, TagDataStorage::getAndConvertSubCompound);
+        return NodeLikeData.getNested(root, path);
     }
-
-    public static Tag.CompoundTag getAndConvertSubCompound(Tag.CompoundTag current, String path) {
-        Tag<?> child = current.getValue().getChild(path);
-        return child == null || child.getType() != TagDataType.COMPOUND ? null : (Tag.CompoundTag) child;
-    }
-
 
     private void set(String key, Tag<?> tag) {
         NodeLikeData.setNested(root, key, tag, () -> new Tag.CompoundTag(new TagTree()));

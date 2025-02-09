@@ -1,9 +1,15 @@
 package io.github.steaf23.bingoreloaded.data.core.json;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.JsonPrimitive;
 import io.github.steaf23.bingoreloaded.data.core.DataAccessor;
-import io.github.steaf23.bingoreloaded.data.core.tag.TagDataStorage;
+import io.github.steaf23.bingoreloaded.data.core.tag.Tag;
+import io.github.steaf23.bingoreloaded.data.core.tag.TagDataType;
+import io.github.steaf23.bingoreloaded.data.core.tag.TagList;
+import io.github.steaf23.bingoreloaded.data.core.tag.TagTree;
 import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -12,11 +18,12 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Map;
 
 /**
  * The Json data accessor is nothing more than a TagDataStorage that gets converted upon write and read to/from disk
  */
-public class JsonDataAccessor extends TagDataStorage implements DataAccessor
+public class JsonDataAccessor extends JsonDataStorage implements DataAccessor
 {
     private final JavaPlugin plugin;
     private final String filepath;
@@ -76,10 +83,86 @@ public class JsonDataAccessor extends TagDataStorage implements DataAccessor
         return readOnly;
     }
 
-
-    public void readJsonFromFile(DataAccessor accessor, InputStream input) {
-        clear();
+    /**
+     * Used by the JsonDataAccessor to convert json to DataStorage, but can be used standalone as well.
+     * @param storage json data storage to store the parsed data into.
+     * @param input input stream of a json file
+     */
+    public static void readJsonFromFile(JsonDataStorage storage, InputStream input) {
+        storage.clear();
 
         JsonElement element = JsonParser.parseReader(new InputStreamReader(input));
+        Tag<?> nbt = toTag(element);
+        if (nbt.getType() != TagDataType.COMPOUND) {
+            return;
+        }
+        storage.setTree((TagTree) nbt.getValue());
     }
+
+    /**
+     * A few notes on this conversion:
+     *  - Numbers will be either parsed into a double for fractional values, or an int if small enough, else it will be parsed into a long
+     *  - Booleans will be parsed into a boolean tag adapter. This means that the actual data stored is either 1b or 0b for true and false respectively.
+     * @param jsonElement Element to convert to an NBT tag.
+     * @return Converted json element as a tag.
+     */
+    private static Tag<?> toTag(JsonElement jsonElement) {
+        if (jsonElement.isJsonPrimitive()) {
+            JsonPrimitive jsonPrimitive = jsonElement.getAsJsonPrimitive();
+
+            if (jsonPrimitive.isBoolean()) {
+                return TagDataType.BOOLEAN.toTag(jsonPrimitive.getAsBoolean());
+
+            } else if (jsonPrimitive.isNumber()) {
+                Number number = jsonPrimitive.getAsNumber();
+
+                long longVal = number.longValue();
+                int intVal = number.intValue();
+                double doubleVal = number.doubleValue();
+
+                // the value has a fractional component, so we need to use a double tag.
+                if (Math.abs(longVal - doubleVal) > 0.000001) {
+                    return new Tag.DoubleTag(doubleVal);
+                }
+                // integer value probably got truncated, so it's better to use a long tag instead.
+                if (intVal != longVal) {
+                    return new Tag.LongTag(longVal);
+                }
+                else {
+                    return new Tag.IntegerTag(intVal);
+                }
+
+            } else if (jsonPrimitive.isString()) {
+                return new Tag.StringTag(jsonPrimitive.getAsString());
+            }
+        } else if (jsonElement.isJsonArray()) {
+            JsonArray jsonArray = (JsonArray) jsonElement;
+            TagList data = new TagList();
+
+            try {
+                for (JsonElement element : jsonArray) {
+                    data.addTag(toTag(element));
+                }
+            } catch (IllegalArgumentException ex) {
+                ConsoleMessenger.bug("Cannot convert json to NBT using different types within the same list.", JsonDataAccessor.class);
+            }
+
+            return new Tag.ListTag(data);
+        } else if (jsonElement.isJsonObject()) {
+            JsonObject jsonObject = (JsonObject) jsonElement;
+            TagTree nbtCompound = new TagTree();
+
+            for (Map.Entry<String, JsonElement> jsonEntry : jsonObject.entrySet()) {
+                nbtCompound.putChild(jsonEntry.getKey(), toTag(jsonEntry.getValue()));
+            }
+
+            return new Tag.CompoundTag(nbtCompound);
+        }
+
+        // Best effort conversion to empty compound tag when the value is null or invalid
+        ConsoleMessenger.bug("Cannot convert json to NBT, invalid data found.", JsonDataAccessor.class);
+        return new Tag.CompoundTag(new TagTree());
+    }
+
+
 }

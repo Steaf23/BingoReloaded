@@ -147,7 +147,7 @@ public class DataUpdaterV1
             NamespacedKey advancementKey = NamespacedKey.fromString((String) values.get("advancement"));
             if (advancementKey == null)
                 return new OldAdvancementTask(null);
-            Advancement advancement = Registry.ADVANCEMENT.get(advancementKey);
+            Advancement advancement = Bukkit.getAdvancement(advancementKey);
             return new OldAdvancementTask(advancement);
         }
     }

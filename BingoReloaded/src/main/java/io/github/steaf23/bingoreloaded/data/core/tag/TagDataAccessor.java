@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
@@ -41,11 +42,26 @@ public class TagDataAccessor extends TagDataStorage implements DataAccessor
 
     @Override
     public void load() {
-        File file = new File(plugin.getDataFolder(), getLocation() + getFileExtension());
-        if (!file.exists()) {
-            plugin.saveResource(getLocation() + getFileExtension(), false);
+        InputStream inputStream;
+        if (isInternalReadOnly()) {
+            inputStream = plugin.getResource(getLocation() + getFileExtension());
         }
-        readTagDataFromFile(this, file);
+        else {
+            File file = new File(plugin.getDataFolder(), getLocation() + getFileExtension());
+            if (!file.exists()) {
+                plugin.saveResource(getLocation() + getFileExtension(), false);
+            }
+
+            try {
+                inputStream = new FileInputStream(file);
+            }
+            catch (IOException e) {
+                ConsoleMessenger.bug("Could not read nbt data from file " + file.getAbsoluteFile(), this);
+                return;
+            }
+        }
+
+        readTagDataFromInput(this, inputStream);
     }
 
     @Override
@@ -58,7 +74,7 @@ public class TagDataAccessor extends TagDataStorage implements DataAccessor
 
     @Override
     public boolean isInternalReadOnly() {
-        return false;
+        return readOnly;
     }
 
     public static void writeTagDataToFile(TagDataStorage dataStorage, File file) {
@@ -80,19 +96,18 @@ public class TagDataAccessor extends TagDataStorage implements DataAccessor
         {
             zipStream.write(bytes);
         }catch (IOException e) {
-            ConsoleMessenger.bug("Could not write nbt data to file " + file.getAbsolutePath(), dataStorage);
+            ConsoleMessenger.bug("Could not write nbt data to file " + file.getAbsolutePath(), TagDataAccessor.class);
             ConsoleMessenger.error(e.getMessage());
         }
     }
 
-    public static void readTagDataFromFile(TagDataStorage dataStorage, File file) {
+    public static void readTagDataFromInput(TagDataStorage dataStorage, InputStream fileStream) {
         byte[] bytes = new byte[]{};
-        try (FileInputStream fileStream = new FileInputStream(file);
-             GZIPInputStream zipStream = new GZIPInputStream(fileStream))
+        try (GZIPInputStream zipStream = new GZIPInputStream(fileStream))
         {
             bytes = zipStream.readAllBytes();
         }catch (IOException e) {
-            ConsoleMessenger.bug("Could not read nbt data from file " + file.getAbsolutePath(), dataStorage);
+            ConsoleMessenger.bug("Could not read nbt data from file.", TagDataAccessor.class);
         }
 
         ByteArrayInputStream stream = new ByteArrayInputStream(bytes);
