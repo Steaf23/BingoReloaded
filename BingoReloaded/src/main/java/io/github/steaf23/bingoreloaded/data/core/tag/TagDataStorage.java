@@ -162,8 +162,7 @@ public class TagDataStorage implements DataStorage
         if (tag.getType() == TagDataType.LIST) {
             TagList tagList = (TagList) tag.getValue();
             return tagList.getList(dataType);
-        }
-        else if (tag.getType() == TagDataType.BYTE_ARRAY) {
+        } else if (tag.getType() == TagDataType.BYTE_ARRAY) {
             if (tag instanceof Tag.ByteArrayTag arrTag) {
                 List<T> result = new ArrayList<>();
                 for (Byte t : arrTag.getValue()) {
@@ -173,8 +172,7 @@ public class TagDataStorage implements DataStorage
                 return result;
             }
             return List.of();
-        }
-        else if (tag.getType() == TagDataType.INT_ARRAY) {
+        } else if (tag.getType() == TagDataType.INT_ARRAY) {
             if (tag instanceof Tag.IntegerArrayTag arrTag) {
                 List<T> result = new ArrayList<>();
                 for (Integer t : arrTag.getValue()) {
@@ -184,8 +182,7 @@ public class TagDataStorage implements DataStorage
                 return result;
             }
             return List.of();
-        }
-        else if (tag.getType() == TagDataType.LONG_ARRAY) {
+        } else if (tag.getType() == TagDataType.LONG_ARRAY) {
             if (tag instanceof Tag.LongArrayTag arrTag) {
                 List<T> result = new ArrayList<>();
                 for (Long t : arrTag.getValue()) {
@@ -446,10 +443,14 @@ public class TagDataStorage implements DataStorage
     }
 
     private @Nullable Tag<?> get(String path) {
-        return NodeLikeData.getNestedSingle(root, path, subPath -> {
-            return 
-        });
+        return NodeLikeData.getNestedSingle(root, path, TagDataStorage::getAndConvertSubCompound);
     }
+
+    public static Tag.CompoundTag getAndConvertSubCompound(Tag.CompoundTag current, String path) {
+        Tag<?> child = current.getValue().getChild(path);
+        return child == null || child.getType() != TagDataType.COMPOUND ? null : (Tag.CompoundTag) child;
+    }
+
 
     private void set(String key, Tag<?> tag) {
         NodeLikeData.setNested(root, key, tag, () -> new Tag.CompoundTag(new TagTree()));

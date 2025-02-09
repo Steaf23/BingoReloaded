@@ -4,6 +4,9 @@ public interface DataAccessor extends DataStorage
 {
     String getLocation();
     String getFileExtension();
+
     void load();
     void saveChanges();
+
+    boolean isInternalReadOnly();
 }
