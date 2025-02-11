@@ -26,7 +26,6 @@
 (3.x) reimplement resource pack spacing inside the resource pack instead of using a separate pack
 (3.x) add reload config command to reload all config options by saving the config.yml file externally
 
-(3.x) add automatic updates to config.yml when starting server to add new options
 (3.x) add spectator mode
 
 (3.x) add small biomes option using datapack
