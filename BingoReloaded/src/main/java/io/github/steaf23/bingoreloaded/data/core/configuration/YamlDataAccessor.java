@@ -15,14 +15,14 @@ public class YamlDataAccessor extends YamlDataStorage implements DataAccessor
 {
     private final JavaPlugin plugin;
     private final String location;
-    private final boolean readOnly;
+    private final boolean internalOnly;
 
-    public YamlDataAccessor(JavaPlugin plugin, String location, boolean readOnly) {
+    public YamlDataAccessor(JavaPlugin plugin, String location, boolean internalOnly) {
         // create default config to not throw null pointers everywhere when trying to use this class before its loaded
         super(new YamlConfiguration());
         this.plugin = plugin;
         this.location = location;
-        this.readOnly = readOnly;
+        this.internalOnly = internalOnly;
     }
 
     @Override
@@ -76,6 +76,6 @@ public class YamlDataAccessor extends YamlDataStorage implements DataAccessor
 
     @Override
     public boolean isInternalReadOnly() {
-        return readOnly;
+        return internalOnly;
     }
 }

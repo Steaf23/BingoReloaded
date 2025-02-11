@@ -23,11 +23,11 @@ public class YamlDataStorage implements DataStorage
 {
     protected ConfigurationSection config;
 
-    YamlDataStorage(ConfigurationSection config) {
+    public YamlDataStorage(ConfigurationSection config) {
         this.config = config;
     }
 
-    YamlDataStorage() {
+    public YamlDataStorage() {
         this.config = new YamlConfiguration();
     }
 

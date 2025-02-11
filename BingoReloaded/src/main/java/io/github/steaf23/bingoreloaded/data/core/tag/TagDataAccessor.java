@@ -22,12 +22,12 @@ public class TagDataAccessor extends TagDataStorage implements DataAccessor
 {
     private final JavaPlugin plugin;
     private final String filepath;
-    private final boolean readOnly;
+    private final boolean internalOnly;
 
-    public TagDataAccessor(JavaPlugin plugin, String filepath, boolean readOnly) {
+    public TagDataAccessor(JavaPlugin plugin, String filepath, boolean internalOnly) {
         this.plugin = plugin;
         this.filepath = filepath;
-        this.readOnly = readOnly;
+        this.internalOnly = internalOnly;
     }
 
     @Override
@@ -74,7 +74,7 @@ public class TagDataAccessor extends TagDataStorage implements DataAccessor
 
     @Override
     public boolean isInternalReadOnly() {
-        return readOnly;
+        return internalOnly;
     }
 
     public static void writeTagDataToFile(TagDataStorage dataStorage, File file) {

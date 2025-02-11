@@ -48,12 +48,17 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.TabExecutor;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
@@ -91,6 +96,14 @@ public class BingoReloaded extends JavaPlugin
     public void onEnable() {
         PlayerDisplay.onPluginEnable();
 
+        // Data file updaters
+        {
+            DataUpdaterV1 updater = new DataUpdaterV1(this);
+            updater.update();
+        }
+
+        setupConfig();
+
         DataStorageSerializerRegistry.addSerializer(new CustomKitStorageSerializer(), CustomKit.class);
         DataStorageSerializerRegistry.addSerializer(new TaskStorageSerializer(), TaskData.class);
         DataStorageSerializerRegistry.addSerializer(new PlayerStorageSerializer(), SerializablePlayer.class);
@@ -98,12 +111,6 @@ public class BingoReloaded extends JavaPlugin
         DataStorageSerializerRegistry.addSerializer(new BingoSettingsStorageSerializer(), BingoSettings.class);
         DataStorageSerializerRegistry.addSerializer(new BingoStatisticStorageSerializer(), BingoStatistic.class);
         DataStorageSerializerRegistry.addSerializer(new ItemStorageSerializer(), SerializableItem.class);
-
-        // Data file updaters
-        {
-            DataUpdaterV1 updater = new DataUpdaterV1(this);
-            updater.update();
-        }
 
         // Create data accessors
         addDataAccessor(new YamlDataAccessor(this, "scoreboards", false));
@@ -117,23 +124,11 @@ public class BingoReloaded extends JavaPlugin
         addDataAccessor(new TagDataAccessor(this, "data/teams", false));
         addDataAccessor(new TagDataAccessor(this, "data/players", false));
 
-        reloadConfig();
-        saveDefaultConfig();
-
         PLACEHOLDER_API_ENABLED = Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null;
         if (PLACEHOLDER_API_ENABLED) {
             new BingoReloadedPlaceholderExpansion(this).register();
             ConsoleMessenger.log(Component.text("Enabled Bingo Reloaded Placeholder expansion").color(NamedTextColor.GREEN));
         }
-
-        PlayerDisplay.setItemTranslation(key -> switch (key) {
-            case MENU_PREVIOUS -> BingoMessage.MENU_PREV.asPhrase();
-            case MENU_NEXT -> BingoMessage.MENU_NEXT.asPhrase();
-            case MENU_ACCEPT -> BingoMessage.MENU_ACCEPT.asPhrase();
-            case MENU_SAVE_EXIT -> BingoMessage.MENU_SAVE_EXIT.asPhrase();
-            case MENU_FILTER -> BingoMessage.MENU_FILTER.asPhrase();
-            case MENU_CLEAR_FILTER -> BingoMessage.MENU_CLEAR_FILTER.asPhrase();
-        });
 
         this.config = new BingoConfigurationData(new ConfigDataAccessor(this));
         PlayerDisplay.enableDebugLogging(config.getOptionValue(BingoOptions.ENABLE_DEBUG_LOGGING));
@@ -145,6 +140,15 @@ public class BingoReloaded extends JavaPlugin
                 addDataAccessor(new YamlDataAccessor(this, language.substring(0, language.length() - 4), false)),
                 addDataAccessor(new YamlDataAccessor(this, "languages/en_us", false))
         );
+
+        PlayerDisplay.setItemTranslation(key -> switch (key) {
+            case MENU_PREVIOUS -> BingoMessage.MENU_PREV.asPhrase();
+            case MENU_NEXT -> BingoMessage.MENU_NEXT.asPhrase();
+            case MENU_ACCEPT -> BingoMessage.MENU_ACCEPT.asPhrase();
+            case MENU_SAVE_EXIT -> BingoMessage.MENU_SAVE_EXIT.asPhrase();
+            case MENU_FILTER -> BingoMessage.MENU_FILTER.asPhrase();
+            case MENU_CLEAR_FILTER -> BingoMessage.MENU_CLEAR_FILTER.asPhrase();
+        });
 
         ConsoleMessenger.log(BingoMessage.CHANGED_LANGUAGE.asPhrase().color(NamedTextColor.GREEN));
 
@@ -323,6 +327,29 @@ public class BingoReloaded extends JavaPlugin
         getDataAccessor(langString).load();
         if (!selectedLanguage.equals(langString)) {
             getDataAccessor("languages/en_us").load();
+        }
+    }
+
+    private void setupConfig() {
+        saveConfig();
+        saveDefaultConfig();
+
+        // load default config
+        YamlConfiguration defaultConfigFull = YamlConfiguration.loadConfiguration(new InputStreamReader(this.getResource("config.yml")));
+
+        // load current user config to copy values from
+        FileConfiguration userConfig = getConfig();
+
+        for (String key : userConfig.getKeys(true)) {
+            if (defaultConfigFull.contains(key)) {
+                defaultConfigFull.set(key, userConfig.get(key));
+            }
+        }
+
+        try {
+            defaultConfigFull.save(new File(getDataFolder(), "config.yml"));
+        } catch (IOException e) {
+            ConsoleMessenger.bug("Could not update config.yml to new version", this);
         }
     }
 }
