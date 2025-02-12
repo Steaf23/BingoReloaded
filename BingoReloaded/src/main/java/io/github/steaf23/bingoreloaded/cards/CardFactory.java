@@ -1,5 +1,6 @@
 package io.github.steaf23.bingoreloaded.cards;
 
+import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.config.BingoOptions;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.gui.inventory.card.CardMenu;
@@ -35,7 +36,7 @@ public class CardFactory
                     new CompleteTaskCard(menu, size, game.getSettings().completeGoal());
             case HOTSWAP -> {
                 if (!(menu instanceof HotswapCardMenu)) {
-                    menu = new HotswapGenericCardMenu(menuBoard, size, allowViewingAllCards);
+                    menu = new HotswapGenericCardMenu(menuBoard, size, allowViewingAllCards, null);
                 }
                 yield new HotswapTaskCard((HotswapCardMenu) menu, size, game, game.getProgressTracker(), settings.hotswapGoal(),
                         game.getConfig().getOptionValue(BingoOptions.HOTSWAP_CONFIG));
@@ -55,7 +56,7 @@ public class CardFactory
             // Generate a new card for each team.
             game.getTeamManager().getActiveTeams().forEach(t -> {
                 t.outOfTheGame = false;
-                TaskCard card = masterCard.copy();
+                TaskCard card = masterCard.copy(BingoMessage.SHOW_TEAM_CARD_NAME.asPhrase(t.getColoredName()));
                 card.generateCard(generatorSettings);
                 t.setCard(card);
                 uniqueCards.add(card);
@@ -65,7 +66,7 @@ public class CardFactory
             masterCard.generateCard(generatorSettings);
             game.getTeamManager().getActiveTeams().forEach(t -> {
                 t.outOfTheGame = false;
-                TaskCard card = masterCard.copy();
+                TaskCard card = masterCard.copy(BingoMessage.SHOW_TEAM_CARD_NAME.asPhrase(t.getColoredName()));
                 t.setCard(card);
                 uniqueCards.add(card);
             });
@@ -82,9 +83,9 @@ public class CardFactory
         }
 
         if (mode == BingoGamemode.HOTSWAP) {
-            return new HotswapGenericCardMenu(menuBoard, size, allowViewingAllCards);
+            return new HotswapGenericCardMenu(menuBoard, size, allowViewingAllCards, null);
         }
 
-        return new GenericCardMenu(menuBoard, mode, size, allowViewingAllCards);
+        return new GenericCardMenu(menuBoard, mode, size, allowViewingAllCards, null);
     }
 }

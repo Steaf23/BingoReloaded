@@ -24,6 +24,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -96,7 +97,7 @@ public class HotswapTaskCard extends TaskCard
 
     // Hotswap cards cannot be copied since it should be the same instance for every player.
     @Override
-    public HotswapTaskCard copy() {
+    public TaskCard copy(@Nullable Component alternateTitle) {
         return this;
     }
 

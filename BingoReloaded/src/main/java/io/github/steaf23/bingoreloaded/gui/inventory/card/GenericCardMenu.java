@@ -14,6 +14,7 @@ import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,9 +26,9 @@ public class GenericCardMenu extends BasicMenu implements CardMenu
     protected List<GameTask> tasks;
     private final boolean showAllCards;
 
-    public GenericCardMenu(MenuBoard menuBoard, BingoGamemode mode, CardSize cardSize, boolean allowViewingAllCards)
+    public GenericCardMenu(MenuBoard menuBoard, BingoGamemode mode, CardSize cardSize, boolean allowViewingAllCards, @Nullable Component alternateTitle)
     {
-        super(menuBoard, BingoMessage.CARD_TITLE.asPhrase(), cardSize.size);
+        super(menuBoard, alternateTitle == null ? BingoMessage.CARD_TITLE.asPhrase() : alternateTitle, cardSize.size);
         this.size = cardSize;
         this.mode = mode;
         this.tasks = new ArrayList<>();
@@ -46,9 +47,8 @@ public class GenericCardMenu extends BasicMenu implements CardMenu
         }
     }
 
-    @Override
-    public CardMenu copy() {
-        return new GenericCardMenu(getMenuBoard(), mode, size, allowViewingOtherCards());
+    public CardMenu copy(@Nullable Component newTitle) {
+        return new GenericCardMenu(getMenuBoard(), mode, size, allowViewingOtherCards(), newTitle);
     }
 
     @Override

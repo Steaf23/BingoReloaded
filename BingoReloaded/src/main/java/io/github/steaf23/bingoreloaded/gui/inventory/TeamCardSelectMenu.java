@@ -43,7 +43,6 @@ public class TeamCardSelectMenu extends PaginatedSelectionMenu
             return;
         }
 
-        ConsoleMessenger.log("COMPARE KEY: " + clickedOption.getCompareKey());
         Optional<BingoTeam> team = session.teamManager.getActiveTeams().getById(clickedOption.getCompareKey());
         if (team.isPresent() && team.get().getCard().isPresent()) {
             team.get().getCard().get().showInventory(actualPlayer);

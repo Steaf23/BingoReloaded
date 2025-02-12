@@ -23,6 +23,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -174,8 +175,11 @@ public class TexturedCardMenu implements Menu, CardMenu
         return startingTitle;
     }
 
+    /**
+     * @param alternateTitle not used by textured menus
+     */
     @Override
-    public CardMenu copy() {
+    public CardMenu copy(@Nullable Component alternateTitle) {
         return new TexturedCardMenu(getMenuBoard(), mode, size, allowViewingOtherCards());
     }
 

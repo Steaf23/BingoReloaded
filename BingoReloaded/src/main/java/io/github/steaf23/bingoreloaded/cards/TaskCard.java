@@ -7,8 +7,10 @@ import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.tasks.GameTask;
 import io.github.steaf23.bingoreloaded.tasks.TaskGenerator;
+import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +32,7 @@ public abstract class TaskCard
     }
 
     public abstract boolean hasTeamWon(BingoTeam team);
-    public abstract TaskCard copy();
+    public abstract TaskCard copy(@Nullable Component alternateTitle);
     public abstract boolean canGenerateSeparateCards();
 
     /**

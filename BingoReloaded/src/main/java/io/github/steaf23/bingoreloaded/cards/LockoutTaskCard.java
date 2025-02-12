@@ -6,7 +6,9 @@ import io.github.steaf23.bingoreloaded.gui.inventory.card.CardMenu;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeamContainer;
 import io.github.steaf23.bingoreloaded.tasks.GameTask;
+import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class LockoutTaskCard extends TaskCard
 {
@@ -54,7 +56,7 @@ public class LockoutTaskCard extends TaskCard
 
     // Lockout cards cannot be copied since it should be the same instance for every player.
     @Override
-    public LockoutTaskCard copy() {
+    public TaskCard copy(@Nullable Component alternateTitle) {
         return this;
     }
 

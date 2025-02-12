@@ -10,11 +10,10 @@ import io.github.steaf23.playerdisplay.inventory.BasicMenu;
 import io.github.steaf23.playerdisplay.inventory.MenuBoard;
 import io.github.steaf23.playerdisplay.inventory.item.ItemTemplate;
 import io.github.steaf23.playerdisplay.inventory.item.action.MenuAction;
-import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
-import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -23,7 +22,11 @@ public interface CardMenu
     void setInfo(Component title, Component... description);
     void updateTasks(List<GameTask> tasks);
     void open(HumanEntity entity);
-    CardMenu copy();
+
+    /**
+     * FIXME: when menus can have changeable titles (i.e. when menu builders get added)
+     */
+    CardMenu copy(@Nullable Component alternateTitle);
     boolean allowViewingOtherCards();
 
     static ItemTemplate createTeamEditItem() {

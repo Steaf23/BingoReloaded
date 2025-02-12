@@ -16,6 +16,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -60,7 +61,7 @@ public class HotswapTexturedCardMenu extends TexturedCardMenu implements Hotswap
     }
 
     @Override
-    public CardMenu copy() {
+    public CardMenu copy(@Nullable Component alternateTitle) {
         return new HotswapTexturedCardMenu(getMenuBoard(), size, allowViewingOtherCards());
     }
 
