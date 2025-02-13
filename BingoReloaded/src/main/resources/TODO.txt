@@ -29,7 +29,6 @@
 
 
 (3.1.0) finish datapack and check if it works for generating the normal world too.
-(3.1.0) refactor completed task icon on map renderer from barrier to stamp and add random position offset
 
 (BUG) Load player data in a bingo world does not teleport the player out
 (BUG) advancement progress is not reset correctly? (MORE INFO NEEDED)

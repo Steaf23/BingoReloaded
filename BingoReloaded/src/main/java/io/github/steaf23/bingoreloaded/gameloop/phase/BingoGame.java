@@ -53,6 +53,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
@@ -533,16 +534,16 @@ public class BingoGame implements GamePhase
 
     public void handleBingoTaskComplete(final BingoTaskProgressCompletedEvent event) {
         Component timeString = GameTimer.getTimeAsComponent(getGameTime());
-        BingoParticipant participant = event.getTask().getCompletedBy().orElse(null);
+        BingoTeam team = event.getTask().getCompletedByTeam().orElse(null);
+        BingoParticipant participant = event.getTask().getCompletedByPlayer().orElse(null);
         if (participant == null) {
             // I guess it was not actually completed?
             ConsoleMessenger.bug("Task not completed correctly...?", this);
             return;
         }
 
-        BingoTeam team = participant.getTeam();
         if (team == null) {
-            ConsoleMessenger.bug("Player " + participant.getName() + " is not on a team.", this);
+            ConsoleMessenger.bug("Player " + participant.getName() + " is not in a team?", this);
             return;
         }
 
@@ -560,8 +561,8 @@ public class BingoGame implements GamePhase
             BingoReloaded.incrementPlayerStat(player, BingoStatType.TASKS);
         });
 
-        if (participant.getCard().isPresent() && participant.getCard().get().hasTeamWon(participant.getTeam())) {
-            bingo(participant.getTeam());
+        if (participant.getCard().isPresent() && participant.getCard().get().hasTeamWon(team)) {
+            bingo(team);
             return;
         }
 
@@ -582,19 +583,20 @@ public class BingoGame implements GamePhase
     }
 
     public void handleDeathmatchTaskComplete(final BingoDeathmatchTaskCompletedEvent event) {
-        BingoParticipant participant = event.getTask().getCompletedBy().orElse(null);
+        BingoTeam team = event.getTask().getCompletedByTeam().orElse(null);
+        BingoParticipant participant = event.getTask().getCompletedByPlayer().orElse(null);
         if (participant == null) {
             // I guess it was not actually completed?
             ConsoleMessenger.bug("Task not completed correctly...?", this);
             return;
         }
 
-        if (participant.getTeam() == null) {
+        if (team == null) {
             ConsoleMessenger.bug("Player " + participant.getName() + " completing Deathmatch task is not in a team?", this);
             return;
         }
 
-        bingo(participant.getTeam());
+        bingo(team);
     }
 
     @Override

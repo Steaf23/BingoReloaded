@@ -3,6 +3,7 @@ package io.github.steaf23.bingoreloaded.tasks;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.gui.inventory.item.TaskItemAction;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
+import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.tasks.data.AdvancementTask;
 import io.github.steaf23.bingoreloaded.tasks.data.ItemTask;
 import io.github.steaf23.bingoreloaded.tasks.data.StatisticTask;
@@ -20,6 +21,7 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.Optional;
@@ -34,6 +36,7 @@ public class GameTask
     }
 
     private BingoParticipant completedBy;
+    private BingoTeam completedByTeam;
     public long completedAt;
     private boolean voided;
 
@@ -45,6 +48,7 @@ public class GameTask
     {
         this.data = data;
         this.completedBy = null;
+        this.completedByTeam = null;
         this.voided = false;
         this.completedAt = -1L;
         this.displayMode = displayMode;
@@ -69,7 +73,7 @@ public class GameTask
 
     public boolean isCompleted()
     {
-        return completedBy != null;
+        return completedBy != null || completedByTeam != null;
     }
 
     public ItemTemplate toItem()
@@ -118,10 +122,13 @@ public class GameTask
             pdcData.set(getTaskDataKey("type"), PersistentDataType.STRING, taskType().name());
             pdcData.set(getTaskDataKey("voided"), PersistentDataType.BYTE, (byte)(voided ? 1 : 0));
             pdcData.set(getTaskDataKey("completed_at"), PersistentDataType.LONG, completedAt);
-            if (isCompleted())
+            if (isCompleted()) {
                 pdcData.set(getTaskDataKey("completed_by"), PersistentDataType.STRING, completedBy.getId().toString());
-            else
+                pdcData.set(getTaskDataKey("completed_by_team"), PersistentDataType.STRING, completedByTeam.getIdentifier());
+            } else {
                 pdcData.set(getTaskDataKey("completed_by"), PersistentDataType.STRING, "");
+                pdcData.set(getTaskDataKey("completed_by_team"), PersistentDataType.STRING, "");
+            }
             return meta;
         });
 
@@ -179,6 +186,7 @@ public class GameTask
         if (isCompleted() || isVoided())
             return false;
 
+        completedByTeam = participant.getTeam();
         completedBy = participant;
         completedAt = gameTime;
         return true;
@@ -189,8 +197,16 @@ public class GameTask
         return new GameTask(data, displayMode);
     }
 
-    public Optional<BingoParticipant> getCompletedBy() {
+    public Optional<BingoParticipant> getCompletedByPlayer() {
         return Optional.ofNullable(completedBy);
+    }
+
+    public Optional<BingoTeam> getCompletedByTeam() {
+        return Optional.ofNullable(completedByTeam);
+    }
+
+    public boolean isCompletedByTeam(@NotNull BingoTeam team) {
+        return team.equals(completedByTeam);
     }
 
     public Component getName() {

@@ -27,14 +27,12 @@ public class BingoTaskCard extends TaskCard
             boolean completedCol = true;
             for (int x = 0; x < size.size; x++) {
                 int indexRow = size.size * y + x;
-                Optional<BingoParticipant> completedBy = allTasks.get(indexRow).getCompletedBy();
-                if (completedBy.isEmpty() || !team.getMembers().contains(completedBy.get())) {
+                if (!allTasks.get(indexRow).isCompletedByTeam(team)) {
                     completedRow = false;
                 }
 
                 int indexCol = size.size * x + y;
-                completedBy = allTasks.get(indexCol).getCompletedBy();
-                if (completedBy.isEmpty() || !team.getMembers().contains(completedBy.get())) {
+                if (!allTasks.get(indexCol).isCompletedByTeam(team)) {
                     completedCol = false;
                 }
             }
@@ -47,8 +45,7 @@ public class BingoTaskCard extends TaskCard
         // check for diagonals
         boolean completedDiagonal1 = true;
         for (int idx = 0; idx < size.fullCardSize; idx += size.size + 1) {
-            Optional<BingoParticipant> completedBy = allTasks.get(idx).getCompletedBy();
-            if (completedBy.isEmpty() || !team.getMembers().contains(completedBy.get())) {
+            if (!allTasks.get(idx).isCompletedByTeam(team)) {
                 completedDiagonal1 = false;
                 break;
             }
@@ -57,8 +54,7 @@ public class BingoTaskCard extends TaskCard
         boolean completedDiagonal2 = true;
         for (int idx = 0; idx < size.fullCardSize; idx += size.size - 1) {
             if (idx != 0 && idx != size.fullCardSize - 1) {
-                Optional<BingoParticipant> completedBy = allTasks.get(idx).getCompletedBy();
-                if (completedBy.isEmpty() || !team.getMembers().contains(completedBy.get())) {
+                if (!allTasks.get(idx).isCompletedByTeam(team)) {
                     completedDiagonal2 = false;
                     break;
                 }

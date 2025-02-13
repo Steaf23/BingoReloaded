@@ -10,26 +10,32 @@ import io.github.steaf23.bingoreloaded.tasks.GameTask;
 import io.github.steaf23.bingoreloaded.tasks.data.AdvancementTask;
 import io.github.steaf23.bingoreloaded.tasks.data.StatisticTask;
 import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
+import io.github.steaf23.playerdisplay.util.ExtraMath;
+import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Registry;
 import org.bukkit.entity.Player;
 import org.bukkit.map.MapCanvas;
-import org.bukkit.map.MapPalette;
 import org.bukkit.map.MapRenderer;
 import org.bukkit.map.MapView;
 import org.bukkit.map.MinecraftFont;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 
 public class BingoCardMapRenderer extends MapRenderer
@@ -37,6 +43,9 @@ public class BingoCardMapRenderer extends MapRenderer
     BingoTeam team;
     private final TaskCard card;
     private final JavaPlugin plugin;
+
+    private final Random random;
+    private final List<Vector> stampOffsets;
 
     private static final Map<NamespacedKey, BufferedImage> allItemImages = new HashMap<>();
     private static final Set<NamespacedKey> flatItems = new HashSet<>();
@@ -49,6 +58,9 @@ public class BingoCardMapRenderer extends MapRenderer
     public BingoCardMapRenderer(JavaPlugin plugin, TaskCard card, BingoTeam team) {
         this.plugin = plugin;
         this.card = card;
+
+        random = new Random();
+        stampOffsets = new ArrayList<>();
 
         if (!allItemImages.isEmpty()) {
             return;
@@ -68,7 +80,7 @@ public class BingoCardMapRenderer extends MapRenderer
             addImagesFromAtlas(plugin.getResource("taskimages/blocks.png"), blocks, false);
             addImagesFromAtlas(plugin.getResource("taskimages/items.png"), items, true);
 
-            InputStream overlayStream = plugin.getResource("task_completed.png");
+            InputStream overlayStream = plugin.getResource("taskimages/completed_stamp.png");
             if (overlayStream != null)
                 COMPLETED_OVERLAY = ImageIO.read(overlayStream);
 
@@ -94,6 +106,11 @@ public class BingoCardMapRenderer extends MapRenderer
             if (!allItemImages.containsKey(mat.getKey())) {
                 ConsoleMessenger.warn("No task image found for item " + mat.name());
             }
+        }
+
+        // initialize stamp offsets at once so they are not drawn in different positions every time.
+        for (int i  = 0; i < card.size.fullCardSize; i++) {
+            stampOffsets.add(getStampOffset(0, 4));
         }
 
         ConsoleMessenger.log("Added " + allItemImages.size() + " item images for use in the map renderer.");
@@ -133,12 +150,12 @@ public class BingoCardMapRenderer extends MapRenderer
         for (int y = 0; y < cardSize; y++) {
             for (int x = 0; x < cardSize; x++) {
                 GameTask task = tasks.get(y * cardSize + x);
-                drawTaskOnGrid(mapCanvas, task, x + offsetFromTopLeft, y + offsetFromTopLeft);
+                drawTaskOnGrid(mapCanvas, task, x + offsetFromTopLeft, y + offsetFromTopLeft, stampOffsets.get(y * cardSize + x));
             }
         }
     }
 
-    public void drawTaskOnGrid(MapCanvas canvas, GameTask task, int gridX, int gridY) {
+    public void drawTaskOnGrid(MapCanvas canvas, GameTask task, int gridX, int gridY, Vector stampOffset) {
         Material mat = task.data.getDisplayMaterial(false);
         int amount = task.data.getRequiredAmount();
         NamespacedKey key = mat.getKey();
@@ -152,21 +169,21 @@ public class BingoCardMapRenderer extends MapRenderer
             extraOffset = 4;
         }
 
-        if (task.isCompleted() && COMPLETED_OVERLAY != null) {
-            drawImageAlphaScissor(canvas, gridX * 24 + 4, gridY * 24 + 4, COMPLETED_OVERLAY);
-            return;
-        }
-        else {
-            drawImageAlphaScissor(canvas, gridX * 24 + 4 + extraOffset, gridY * 24 + 4 + extraOffset, allItemImages.get(mat.getKey()));
-        }
+        drawImageAlphaScissor(canvas, gridX * 24 + 4 + extraOffset, gridY * 24 + 4 + extraOffset, allItemImages.get(mat.getKey()), null);
+
         if (amount > 1) {
             drawTaskAmount(canvas, gridX, gridY, amount);
         }
 
         if (task.data instanceof AdvancementTask) {
-            drawImageAlphaScissor(canvas, gridX * 24 + 2, gridY * 24 + 15, ADVANCEMENT_ICON);
+            drawImageAlphaScissor(canvas, gridX * 24 + 2, gridY * 24 + 15, ADVANCEMENT_ICON, null);
         } else if (task.data instanceof StatisticTask) {
-            drawImageAlphaScissor(canvas, gridX * 24 + 2, gridY * 24 + 15, STATISTIC_ICON);
+            drawImageAlphaScissor(canvas, gridX * 24 + 2, gridY * 24 + 15, STATISTIC_ICON, null);
+        }
+
+        if (task.isCompleted() && task.getCompletedByTeam().isPresent() && COMPLETED_OVERLAY != null) {
+            TextColor color = task.getCompletedByTeam().get().getColor();
+            drawImageAlphaScissor(canvas, gridX * 24 + 4 + stampOffset.getBlockX(), gridY * 24 + 4 + stampOffset.getBlockY(), COMPLETED_OVERLAY, color);
         }
     }
 
@@ -181,9 +198,24 @@ public class BingoCardMapRenderer extends MapRenderer
         canvas.drawText(gridX * 24 + 16 + xStartOffset, gridY * 24 + 20, MinecraftFont.Font, "§58;" + amount); // white foreground
     }
 
-    private void drawImageAlphaScissor(MapCanvas canvas, int x, int y, BufferedImage image)
+    private void drawImageAlphaScissor(MapCanvas canvas, int x, int y, BufferedImage image, @Nullable TextColor modulate)
     {
-        byte[] bytes = MapPalette.imageToBytes(image);
+        if (modulate == null) {
+            for (int x2 = 0; x2 < image.getWidth(null); ++x2) {
+                for (int y2 = 0; y2 < image.getHeight(null); ++y2) {
+                    int alpha = (image.getRGB(x2, y2) >> 24) & 0xff;
+                    if (alpha == 0)
+                    {
+                        continue;
+                    }
+                    canvas.setPixelColor(x + x2, y + y2, new Color(image.getRGB(x2, y2)));
+                }
+            }
+
+            return;
+        }
+
+        Color modulateColor = new Color(modulate.red(), modulate.green(), modulate.blue());
         for (int x2 = 0; x2 < image.getWidth(null); ++x2) {
             for (int y2 = 0; y2 < image.getHeight(null); ++y2) {
                 int alpha = (image.getRGB(x2, y2) >> 24) & 0xff;
@@ -191,9 +223,15 @@ public class BingoCardMapRenderer extends MapRenderer
                 {
                     continue;
                 }
-                canvas.setPixel(x + x2, y + y2, bytes[y2 * image.getWidth() + x2]);
+                canvas.setPixelColor(x + x2, y + y2, ExtraMath.modulateColor(new Color(image.getRGB(x2, y2)), modulateColor));
             }
         }
+    }
+
+    private Vector getStampOffset(int minOffset, int maxOffset) {
+        int range = maxOffset - minOffset;
+        Vector randomVec = new Vector(random.nextInt(range + 1), random.nextInt(range + 1), random.nextInt(range + 1));
+        return randomVec.add(new Vector(minOffset, minOffset, minOffset));
     }
 
 }

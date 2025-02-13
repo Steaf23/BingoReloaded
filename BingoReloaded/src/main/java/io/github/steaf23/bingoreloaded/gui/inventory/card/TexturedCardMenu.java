@@ -117,7 +117,7 @@ public class TexturedCardMenu implements Menu, CardMenu
         for (int i = 0; i < tasks.size(); i++) {
             int rawSlot = getSlotForTask(i);
             if (tasks.get(i).isCompleted()) {
-                tasks.get(i).getCompletedBy().ifPresent(p -> completedSlots.put(rawSlot, p.getTeam().getColor()));
+                tasks.get(i).getCompletedByTeam().ifPresent(team -> completedSlots.put(rawSlot, team.getColor()));
             }
         }
 

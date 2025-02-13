@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Class used to create and sample from a gradient, returning bungee.api.ChatColors
+ * Class used to create and sample from a gradient, returning adventure TextColors
  */
 public class TextColorGradient
 {

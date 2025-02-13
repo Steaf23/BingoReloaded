@@ -64,7 +64,7 @@ public abstract class TaskCard
     public int getCompleteCount(@NotNull BingoTeam team) {
         int count = 0;
         for (var task : getTasks()) {
-            if (task.getCompletedBy().isPresent() && team.getMembers().contains(task.getCompletedBy().get()))
+            if (task.isCompletedByTeam(team))
                 count++;
         }
 
@@ -73,7 +73,7 @@ public abstract class TaskCard
 
     public int getCompleteCount(@NotNull BingoParticipant participant) {
         return (int) getTasks().stream()
-                .filter(t -> t.getCompletedBy().isPresent() && t.getCompletedBy().get().getId().equals(participant.getId())).count();
+                .filter(t -> t.getCompletedByPlayer().isPresent() && t.getCompletedByPlayer().get().getId().equals(participant.getId())).count();
     }
 
     public void handleTaskCompleted(BingoParticipant player, GameTask task, long timeSeconds) {}
