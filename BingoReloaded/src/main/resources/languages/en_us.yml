@@ -23,6 +23,7 @@ game:
     vote_cardsize: "Vote for a card size"
     vote_count: "{0} player(s) voted for {1} {2}" # DYNAMIC 0: player count, 1: vote category, 2: vote item
     vote_won: "{0} {1} received the most votes!" # DYNAMIC 0: vote category, 1: vote item
+    no_griefing: "You cannot place or break any blocks before the game has started!"
   start:
     no_players: "Bingo could not be started since nobody joined :(" # DYNAMIC (current unused)
     already_started: "Cannot start a game of Bingo when there is already one active!" # DYNAMIC (currently unused)
@@ -55,6 +56,8 @@ game:
     size_changed: "The maximum team sized has been changed, please rejoin your team of choice!" # DYNAMIC
     full_team_desc: "This team is full"
     join_team_desc: "Click to join this team"
+    spectator_join: "You have joined this game as a spectator, use /bingo view to view all team's bingo cards."
+    spectator_join_no_view: "You have joined this game as a spectator."
   item:
     voided: "This task cannot be completed anymore!"
     expire: "Expires in: {0}" # 0: time left

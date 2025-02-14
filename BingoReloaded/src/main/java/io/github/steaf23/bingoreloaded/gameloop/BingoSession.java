@@ -342,6 +342,10 @@ public class BingoSession implements ForwardingAudience
         return worlds.hasWorld(world.getUID());
     }
 
+    public BingoConfigurationData getPluginConfig() {
+        return config;
+    }
+
     private BingoSettingsBuilder determineSettingsByVote(PregameLobby lobby) {
         if (!config.getOptionValue(BingoOptions.USE_VOTE_SYSTEM)) {
             return null;

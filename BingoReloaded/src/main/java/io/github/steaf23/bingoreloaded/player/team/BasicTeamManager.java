@@ -2,6 +2,7 @@ package io.github.steaf23.bingoreloaded.player.team;
 
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.TeamData;
+import io.github.steaf23.bingoreloaded.data.config.BingoOptions;
 import io.github.steaf23.bingoreloaded.event.BingoSettingsUpdatedEvent;
 import io.github.steaf23.bingoreloaded.event.ParticipantJoinedTeamEvent;
 import io.github.steaf23.bingoreloaded.event.ParticipantLeftTeamEvent;
@@ -342,7 +343,13 @@ public class BasicTeamManager implements TeamManager {
 
         if (session.isRunning()) {
             event.getPlayer().setGameMode(GameMode.SPECTATOR);
-            BingoMessage.SPECTATOR_JOIN.sendToAudience(event.getPlayer());
+            if (session.getPluginConfig().getOptionValue(BingoOptions.ALLOW_VIEWING_ALL_CARDS)) {
+                BingoMessage.SPECTATOR_JOIN.sendToAudience(event.getPlayer());
+            }
+            else {
+                BingoMessage.SPECTATOR_JOIN_NO_VIEW.sendToAudience(event.getPlayer());
+            }
+
             return;
         }
 

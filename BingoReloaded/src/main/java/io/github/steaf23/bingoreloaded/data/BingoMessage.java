@@ -67,6 +67,7 @@ public enum BingoMessage
     RESPAWN_EXPIRED("game.player.respawn_expired"),
     NO_JOIN("game.team.no_join"),
     SPECTATOR_JOIN("game.team.spectator_join"),
+    SPECTATOR_JOIN_NO_VIEW("game.team.spectator_join_no_view"),
     JOIN("game.team.join"),
     JOIN_AUTO("game.team.join_auto"),
     DROPPED("game.team.dropped"),
