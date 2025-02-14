@@ -2,6 +2,7 @@ package io.github.steaf23.bingoreloaded.data;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.cards.CardSize;
+import io.github.steaf23.bingoreloaded.data.config.BingoOptions;
 import io.github.steaf23.bingoreloaded.data.core.configuration.YamlDataAccessor;
 import io.github.steaf23.bingoreloaded.data.core.helper.SerializablePlayer;
 import io.github.steaf23.bingoreloaded.data.core.tag.TagDataAccessor;
@@ -17,6 +18,7 @@ import io.github.steaf23.bingoreloaded.tasks.data.AdvancementTask;
 import io.github.steaf23.bingoreloaded.tasks.data.ItemTask;
 import io.github.steaf23.bingoreloaded.tasks.data.StatisticTask;
 import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
+import io.papermc.paper.configuration.type.fallback.FallbackValue;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
@@ -493,11 +495,11 @@ public class DataUpdaterV1
 
         String version = yamlData.getString("version", "");
 
-        if (!version.isEmpty()) {
+        if (isNewerOrEqual(version, "3.0.2")) {
             return;
         }
 
-        yamlData.setString("version", "3.0.1");
+        yamlData.setString("version", plugin.getPluginMeta().getVersion());
         updateBoard("lobby", yamlData);
         updateBoard("game", yamlData);
         yamlData.saveChanges();
@@ -534,8 +536,7 @@ public class DataUpdaterV1
 
         String version = yamlData.getString("version", "");
 
-        //TODO: add proper version check
-        if (!version.isEmpty()) {
+        if (isNewerOrEqual(version, "3.0.2")) {
             return;
         }
 
@@ -562,5 +563,26 @@ public class DataUpdaterV1
         yamlData.saveChanges();
 
         ConsoleMessenger.log(Component.text("Found outdated placeholders file and updated it to new format (V2 -> V3)").color(NamedTextColor.GOLD));
+    }
+
+    private boolean isNewerOrEqual(String version, String pluginVersion) {
+        if (pluginVersion.isEmpty()) {
+            return false;
+        }
+        String[] pluginVersions = pluginVersion.split("\\.");
+        String[] versions = version.split("\\.");
+        if (versions.length != 3 || pluginVersions.length != 3) {
+            return false;
+        }
+
+        int pluginMajor = Integer.parseInt(pluginVersions[0]);
+        int pluginMinor = Integer.parseInt(pluginVersions[1]);
+        int pluginPatch = Integer.parseInt(pluginVersions[2]);
+
+        int currentMajor = Integer.parseInt(versions[0]);
+        int currentMinor = Integer.parseInt(versions[1]);
+        int currentPatch = Integer.parseInt(versions[2]);
+
+        return currentMajor > pluginMajor || (currentMajor == pluginMajor && currentMinor > pluginMinor) || (currentMajor == pluginMajor && currentMinor == pluginMinor && currentPatch >= pluginPatch);
     }
 }

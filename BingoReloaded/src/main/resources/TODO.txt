@@ -27,8 +27,7 @@
 (3.x) add reload config command to reload all config options by saving the config.yml file externally
 (3.x) add spectator mode
 
-
-(3.1.0) finish datapack and check if it works for generating the normal world too.
+(3.1.0) Split datapack into two, 1 to just generate the other worlds and one to also generate the server main world.
 
 (BUG) Load player data in a bingo world does not teleport the player out
 (BUG) advancement progress is not reset correctly? (MORE INFO NEEDED)

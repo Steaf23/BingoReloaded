@@ -246,8 +246,8 @@ public class CustomWorldCreator_V1_21_4
         // Paper - Put world into worldlist before initing the world; move up
 
         console.prepareLevels(serverLevel.getChunkSource().chunkMap.progressListener, serverLevel);
-        // TODO: RE-ENABLE THIS
-//        serverLevel.entit.tickEntityManager(serverLevel); // SPIGOT-6526: Load pending entities so they are available to the API // Paper - chunk system
+//         TODO: How to enable this? code broke
+//        serverLevel.entity.tickEntityManager(serverLevel); // SPIGOT-6526: Load pending entities so they are available to the API // Paper - chunk system
 
         Bukkit.getPluginManager().callEvent(new WorldLoadEvent(serverLevel.getWorld()));
         return serverLevel.getWorld();

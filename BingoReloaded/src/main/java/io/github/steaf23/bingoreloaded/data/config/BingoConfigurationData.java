@@ -94,7 +94,6 @@ public class BingoConfigurationData
 
         // Configuration: MULTIPLE
         setOptionValueForce(BingoOptions.DEFAULT_WORLDS, name -> new ConfigurationOption.StringList(config.getList(name, TagDataType.STRING)));
-        //FIXME: implement
         setOptionValueForce(BingoOptions.CLEAR_DEFAULT_WORLDS, name -> config.getBoolean(name, true));
         setOptionValueForce(BingoOptions.CUSTOM_WORLD_GENERATION, name -> config.getString(name, "null"));
     }
