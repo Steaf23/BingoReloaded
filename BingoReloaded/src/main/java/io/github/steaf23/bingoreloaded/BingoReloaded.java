@@ -62,6 +62,7 @@ import java.io.InputStreamReader;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 import java.util.function.Consumer;
 
 public class BingoReloaded extends JavaPlugin
@@ -84,6 +85,7 @@ public class BingoReloaded extends JavaPlugin
     private GameManager gameManager;
     private BingoMenuBoard menuBoard;
     private TexturedMenuData textureData;
+    private HUDRegistry hudRegistry;
 
     @Override
     public void onLoad() {
@@ -133,52 +135,17 @@ public class BingoReloaded extends JavaPlugin
         this.config = new BingoConfigurationData(new ConfigDataAccessor(this));
         PlayerDisplay.enableDebugLogging(config.getOptionValue(BingoOptions.ENABLE_DEBUG_LOGGING));
 
-
         PlayerDisplay.setUseCustomTextures(config.getOptionValue(BingoOptions.USE_INCLUDED_RESOURCE_PACK));
-        String language = config.getOptionValue(BingoOptions.LANGUAGE);
-        BingoMessage.setLanguage(
-                addDataAccessor(new YamlDataAccessor(this, language.substring(0, language.length() - 4), false)),
-                addDataAccessor(new YamlDataAccessor(this, "languages/en_us", false))
-        );
-
-        PlayerDisplay.setItemTranslation(key -> switch (key) {
-            case MENU_PREVIOUS -> BingoMessage.MENU_PREV.asPhrase();
-            case MENU_NEXT -> BingoMessage.MENU_NEXT.asPhrase();
-            case MENU_ACCEPT -> BingoMessage.MENU_ACCEPT.asPhrase();
-            case MENU_SAVE_EXIT -> BingoMessage.MENU_SAVE_EXIT.asPhrase();
-            case MENU_FILTER -> BingoMessage.MENU_FILTER.asPhrase();
-            case MENU_CLEAR_FILTER -> BingoMessage.MENU_CLEAR_FILTER.asPhrase();
-        });
-
-        ConsoleMessenger.log(BingoMessage.CHANGED_LANGUAGE.asPhrase().color(NamedTextColor.GREEN));
+        String language = config.getOptionValue(BingoOptions.LANGUAGE).replace(".yml", "");
+        setLanguage(language);
 
         BasicMenu.pluginTitlePrefix = BingoMessage.MENU_PREFIX.asPhrase();
 
         this.textureData = new TexturedMenuData();
         this.menuBoard = new BingoMenuBoard();
-        HUDRegistry hudRegistry = new HUDRegistry();
-        if (config.getOptionValue(BingoOptions.CONFIGURATION) == BingoOptions.PluginConfiguration.SINGULAR) {
-            this.gameManager = new SingularGameManager(this, config, menuBoard, hudRegistry);
-        } else {
-            this.gameManager = new GameManager(this, config, menuBoard, hudRegistry);
-        }
+        this.hudRegistry = new HUDRegistry();
 
-        this.gameManager.setup(config.getOptionValue(BingoOptions.DEFAULT_WORLDS));
-
-        menuBoard.setPlayerOpenPredicate(player -> player instanceof Player p && this.gameManager.canPlayerOpenMenus(p));
-
-        TabExecutor autoBingoCommand = new AutoBingoCommand(gameManager);
-        TabExecutor bingoConfigCommand = new BingoConfigCommand(config);
-
-        registerCommand("bingo", new BingoCommand(this, config, gameManager, menuBoard));
-        registerCommand("autobingo", autoBingoCommand);
-        registerCommand("bingoconfig", bingoConfigCommand);
-        registerCommand("bingotest", new BingoTestCommand(this, menuBoard));
-        if (config.getOptionValue(BingoOptions.ENABLE_TEAM_CHAT)) {
-            TeamChatCommand command = new TeamChatCommand(player -> gameManager.getSessionFromWorld(player.getWorld()));
-            registerCommand("btc", command);
-            Bukkit.getPluginManager().registerEvents(command, this);
-        }
+        reloadManager();
 
         Bukkit.getPluginManager().registerEvents(menuBoard, this);
         Bukkit.getPluginManager().registerEvents(hudRegistry, this);
@@ -280,7 +247,9 @@ public class BingoReloaded extends JavaPlugin
     }
 
     private static final Map<String, DataAccessor> accessorMap = new HashMap<>();
-    @NotNull public static DataAccessor getDataAccessor(@NotNull String location) {
+
+    @NotNull
+    public static DataAccessor getDataAccessor(@NotNull String location) {
         if (location.isEmpty()) {
             ConsoleMessenger.bug("No location specified for data accessor, returning empty data accessor.", BingoReloaded.getInstance());
             return new VirtualDataAccessor(location);
@@ -295,9 +264,21 @@ public class BingoReloaded extends JavaPlugin
     }
 
     public static DataAccessor addDataAccessor(DataAccessor accessor) {
-        accessorMap.put(accessor.getLocation(), accessor);
+        if (!containsDataAccessor(accessor.getLocation())) {
+            accessorMap.put(accessor.getLocation(), accessor);
+        }
+
         accessor.load();
         return accessor;
+    }
+
+    public static boolean containsDataAccessor(String name) {
+        return accessorMap.containsKey(name);
+    }
+
+    public void reloadConfigFromFile() {
+        setupConfig();
+        this.config.reload();
     }
 
     public void reloadScoreboards() {
@@ -310,24 +291,22 @@ public class BingoReloaded extends JavaPlugin
 
     public void reloadData() {
         getDataAccessor("data/cards").load();
-        getDataAccessor( "data/textures").load();
-        getDataAccessor( "data/kits").load();
-        getDataAccessor( "data/" + getDefaultTasksVersion()).load();
-        getDataAccessor( "data/presets").load();
-        getDataAccessor( "data/player_stats").load();
-        getDataAccessor( "data/teams").load();
-        getDataAccessor( "data/players").load();
+        getDataAccessor("data/textures").load();
+        getDataAccessor("data/kits").load();
+        getDataAccessor("data/" + getDefaultTasksVersion()).load();
+        getDataAccessor("data/presets").load();
+        getDataAccessor("data/player_stats").load();
+        getDataAccessor("data/teams").load();
+        getDataAccessor("data/players").load();
     }
 
-    public void reloadLanguages() {
+    public void reloadLanguage() {
         ConsoleMessenger.warn("Reloading languages, however due to how plugins are loaded this may not affect all text");
         ConsoleMessenger.warn("To fully reload the languages restart the server.");
         String selectedLanguage = config.getOptionValue(BingoOptions.LANGUAGE);
-        String langString = selectedLanguage.substring(0, selectedLanguage.length() - 4);
-        getDataAccessor(langString).load();
-        if (!selectedLanguage.equals(langString)) {
-            getDataAccessor("languages/en_us").load();
-        }
+        String langString = selectedLanguage.replace(".yml", "");
+
+        setLanguage(langString);
     }
 
     private void setupConfig() {
@@ -350,6 +329,72 @@ public class BingoReloaded extends JavaPlugin
             defaultConfigFull.save(new File(getDataFolder(), "config.yml"));
         } catch (IOException e) {
             ConsoleMessenger.bug("Could not update config.yml to new version", this);
+        }
+    }
+
+    public void setLanguage(String language) {
+        language = "languages/" + language;
+
+        // only reload the language when it exists
+        if (this.getResource(language + ".yml") != null) {
+            DataAccessor newLang = addDataAccessor(new YamlDataAccessor(this, language, false));
+            BingoMessage.setLanguage(newLang, addDataAccessor(new YamlDataAccessor(this, "languages/en_us", false)));
+
+            PlayerDisplay.setItemTranslation(key -> switch (key) {
+                case MENU_PREVIOUS -> BingoMessage.MENU_PREV.asPhrase();
+                case MENU_NEXT -> BingoMessage.MENU_NEXT.asPhrase();
+                case MENU_ACCEPT -> BingoMessage.MENU_ACCEPT.asPhrase();
+                case MENU_SAVE_EXIT -> BingoMessage.MENU_SAVE_EXIT.asPhrase();
+                case MENU_FILTER -> BingoMessage.MENU_FILTER.asPhrase();
+                case MENU_CLEAR_FILTER -> BingoMessage.MENU_CLEAR_FILTER.asPhrase();
+            });
+
+            ConsoleMessenger.log(BingoMessage.CHANGED_LANGUAGE.asPhrase().color(NamedTextColor.GREEN));
+        } else {
+            ConsoleMessenger.error("Could not set language, a translation for language '" + language + "' could not be found!");
+        }
+    }
+
+    public void reloadManager() {
+        if (gameManager != null) {
+            for (String name : gameManager.getSessionNames()) {
+                gameManager.endGame(name);
+
+                // Reset player data regardless of whether saving player information is enabled, because we need to begin with a clean slate.
+                for (UUID playerId : gameManager.getPlayerData().getSavedPlayers()) {
+                    Player player = Bukkit.getPlayer(playerId);
+
+                    if (player != null) {
+                        gameManager.getPlayerData().loadPlayer(player);
+                    }
+                }
+
+                gameManager.destroySession(name);
+            }
+            gameManager.onPluginDisable();
+        }
+
+        if (config.getOptionValue(BingoOptions.CONFIGURATION) == BingoOptions.PluginConfiguration.SINGULAR) {
+            this.gameManager = new SingularGameManager(this, config, menuBoard, hudRegistry);
+        } else {
+            this.gameManager = new GameManager(this, config, menuBoard, hudRegistry);
+        }
+
+        this.gameManager.setup(config.getOptionValue(BingoOptions.DEFAULT_WORLDS));
+
+        menuBoard.setPlayerOpenPredicate(player -> player instanceof Player p && this.gameManager.canPlayerOpenMenus(p));
+
+        TabExecutor autoBingoCommand = new AutoBingoCommand(gameManager);
+        TabExecutor bingoConfigCommand = new BingoConfigCommand(config);
+
+        registerCommand("bingo", new BingoCommand(this, config, gameManager, menuBoard));
+        registerCommand("autobingo", autoBingoCommand);
+        registerCommand("bingoconfig", bingoConfigCommand);
+        registerCommand("bingotest", new BingoTestCommand(this, menuBoard));
+        if (config.getOptionValue(BingoOptions.ENABLE_TEAM_CHAT)) {
+            TeamChatCommand command = new TeamChatCommand(player -> gameManager.getSessionFromWorld(player.getWorld()));
+            registerCommand("btc", command);
+            Bukkit.getPluginManager().registerEvents(command, this);
         }
     }
 }

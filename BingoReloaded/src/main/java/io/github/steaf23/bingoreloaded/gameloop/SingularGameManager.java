@@ -34,13 +34,13 @@ public class SingularGameManager extends GameManager
 
     @Override
     public boolean destroySession(String sessionName) {
-        ConsoleMessenger.error("This command is not available when using configuration singular!");
+        ConsoleMessenger.error("Cannot destroy session when using configuration singular!");
         return false;
     }
 
     @Override
     public boolean createSession(String sessionName) {
-        ConsoleMessenger.error("This command is not available when using configuration singular!");
+        ConsoleMessenger.error("Cannot create session when using configuration singular!");
         return false;
     }
 

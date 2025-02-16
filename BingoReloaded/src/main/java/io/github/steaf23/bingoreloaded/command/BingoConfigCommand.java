@@ -73,10 +73,10 @@ public class BingoConfigCommand extends CommandTemplate
                 BingoPlayerSender.sendMessage(PlayerDisplay.MINI_BUILDER.deserialize("<gold> This option will be applied to the world at the end of the current/ upcoming game"), sender);
             }
             case AFTER_SESSION -> {
-                BingoPlayerSender.sendMessage(PlayerDisplay.MINI_BUILDER.deserialize("<gold> This option will be applied after the server has restarted or on a new world in configuration MULTIPLE"), sender);
+                BingoPlayerSender.sendMessage(PlayerDisplay.MINI_BUILDER.deserialize("<gold> This option will be applied after the server has restarted, on a new world in configuration MULTIPLE, or using the <red>/bingo reload</red> command"), sender);
             }
             case AFTER_SERVER_RESTART -> {
-                BingoPlayerSender.sendMessage(PlayerDisplay.MINI_BUILDER.deserialize("<gold> This option will be applied after the server has been restarted"), sender);
+                BingoPlayerSender.sendMessage(PlayerDisplay.MINI_BUILDER.deserialize("<gold> This option will be applied after the server has been restarted, or using the <red>/bingo reload</red> command if it can be reloaded dynamically"), sender);
             }
         }
 

@@ -163,6 +163,7 @@ public class GameManager
 
         for (String session : sessions.keySet()) {
             sessions.get(session).destroy();
+            sessions.remove(session);
         }
     }
 

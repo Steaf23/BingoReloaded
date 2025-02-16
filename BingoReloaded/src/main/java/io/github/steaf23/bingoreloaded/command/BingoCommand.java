@@ -59,8 +59,12 @@ public class BingoCommand implements TabExecutor
             return false;
         }
 
-        if (args.length == 2 && args[0].equals("reload")) {
-            return reloadCommand(args[1]);
+        if (args.length > 0 && args[0].equals("reload")) {
+            if (args.length == 2) {
+                return reloadCommand(args[1], commandSender);
+            } else {
+                return reloadCommand("all", commandSender);
+            }
         }
 
         BingoSession session = gameManager.getSessionFromWorld(player.getWorld());
@@ -210,8 +214,8 @@ public class BingoCommand implements TabExecutor
                     player.sendMessage(Component.text(" - ").append(team.getColoredName()).append(Component.text(": ")
                             .append(Component.join(JoinConfiguration.separator(Component.text(", ")),
                                     team.getMembers().stream()
-                                    .map(BingoParticipant::getDisplayName)
-                                    .toList()))));
+                                            .map(BingoParticipant::getDisplayName)
+                                            .toList()))));
                 });
             }
             case "view" -> {
@@ -231,9 +235,9 @@ public class BingoCommand implements TabExecutor
             }
             default -> {
                 if (player.hasPermission("bingo.admin")) {
-                    BingoMessage.COMMAND_USAGE.sendToAudience(player, NamedTextColor.RED, Component.text("/bingo [getcard | stats | start | end | join | vote | back | leave | deathmatch | creator | teams | kit | wait | teamedit | about]"));
+                    BingoMessage.COMMAND_USAGE.sendToAudience(player, NamedTextColor.RED, Component.text("/bingo [getcard | stats | start | end | join | vote | back | leave | deathmatch | creator | teams | kit | wait | teamedit | about | reload | view]"));
                 } else {
-                    BingoMessage.COMMAND_USAGE.sendToAudience(player, NamedTextColor.RED, Component.text("/bingo [getcard | stats | join | vote | back | leave | about]"));
+                    BingoMessage.COMMAND_USAGE.sendToAudience(player, NamedTextColor.RED, Component.text("/bingo [getcard | stats | join | vote | back | leave | about | view]"));
                 }
             }
         }
@@ -339,7 +343,7 @@ public class BingoCommand implements TabExecutor
     public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
         if (!(sender instanceof Player player) || player.hasPermission("bingo.admin")) {
             if (args.length <= 1) {
-                return List.of("join", "vote", "getcard", "back", "leave", "stats", "end", "wait", "kit", "deathmatch", "creator", "teams", "teamedit", "about", "reload");
+                return List.of("join", "vote", "getcard", "back", "leave", "stats", "end", "wait", "kit", "deathmatch", "creator", "teams", "teamedit", "about", "reload", "view");
             }
 
             if (args[0].equals("kit")) {
@@ -363,53 +367,54 @@ public class BingoCommand implements TabExecutor
                         "placeholders",
                         "scoreboards",
                         "data",
-                        "languages"
+                        "language"
                 );
             }
             return List.of();
         }
 
         if (args.length == 1) {
-            return List.of("join", "vote", "getcard", "back", "leave", "stats", "about");
+            return List.of("join", "vote", "getcard", "back", "leave", "stats", "about", "view");
         }
         return List.of();
     }
 
-    public boolean reloadCommand(String reloadOption) {
-        switch(reloadOption)
-        {
+    public boolean reloadCommand(String reloadOption, CommandSender sender) {
+        switch (reloadOption) {
             case "all" -> reloadAll();
             case "config" -> reloadConfig();
             case "worlds" -> reloadWorlds();
             case "placeholders" -> reloadPlaceholders();
             case "scoreboards" -> reloadScoreboards();
             case "data" -> reloadData();
-            case "languages" -> reloadLanguages();
+            case "language" -> reloadLanguage();
             default -> {
-                ConsoleMessenger.error("Cannot reload '" + reloadOption + "', invalid option");
+                BingoPlayerSender.sendMessage(Component.text("Cannot reload '" + reloadOption + "', invalid option"), sender);
                 return false;
             }
         }
 
-        ConsoleMessenger.log("Reloading " + reloadOption);
+        BingoPlayerSender.sendMessage(Component.text("Reloaded " + reloadOption), sender);
         return true;
     }
 
     public void reloadAll() {
         reloadConfig();
-        reloadWorlds();
         reloadPlaceholders();
         reloadScoreboards();
         reloadData();
-        reloadLanguages();
+        reloadLanguage();
+
+        // reload worlds last to kick off everything else.
+        reloadWorlds();
     }
 
     public void reloadConfig() {
-
+        plugin.reloadConfigFromFile();
     }
 
     public void reloadWorlds() {
-        // end all games, clear worlds, setup game manager again.
+        plugin.reloadManager();
     }
 
     public void reloadPlaceholders() {
@@ -424,7 +429,7 @@ public class BingoCommand implements TabExecutor
         plugin.reloadData();
     }
 
-    public void reloadLanguages() {
-        plugin.reloadLanguages();
+    public void reloadLanguage() {
+        plugin.reloadLanguage();
     }
 }

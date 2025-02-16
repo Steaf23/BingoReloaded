@@ -7,7 +7,9 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class PlayerSerializationData
 {
@@ -26,7 +28,7 @@ public class PlayerSerializationData
      *
      * @return the players new state
      */
-    public @Nullable SerializablePlayer loadPlayer(Player player) {
+    public @Nullable SerializablePlayer loadPlayer(@NotNull Player player) {
         if (!data.contains(player.getUniqueId().toString())) {
             return null;
         }
@@ -44,5 +46,9 @@ public class PlayerSerializationData
     public void removePlayer(UUID playerId) {
         data.erase(playerId.toString());
         data.saveChanges();
+    }
+
+    public Set<UUID> getSavedPlayers() {
+        return data.getKeys().stream().map(stringId -> UUID.fromString(stringId)).collect(Collectors.toSet());
     }
 }

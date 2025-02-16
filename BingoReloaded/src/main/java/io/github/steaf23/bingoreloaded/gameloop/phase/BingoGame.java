@@ -148,11 +148,11 @@ public class BingoGame implements GamePhase
                 advancementDisplayMode, statisticDisplayMode);
 
         if (config.getOptionValue(BingoOptions.USE_MAP_RENDERER)) {
-            getTeamManager().getActiveTeams().forEach(t -> {
-                Optional<TaskCard> card = t.getCard();
+            getTeamManager().getActiveTeams().forEach(team -> {
+                Optional<TaskCard> card = team.getCard();
                 card.ifPresentOrElse(
-                        c -> renderers.put(t, new BingoCardMapRenderer(BingoReloaded.getInstance(), c, t)),
-                        () -> ConsoleMessenger.bug("Could not generate card for team " + PlainTextComponentSerializer.plainText().serialize(t.getColoredName()), this)
+                        taskCard -> renderers.put(team, new BingoCardMapRenderer(BingoReloaded.getInstance(), taskCard, team)),
+                        () -> ConsoleMessenger.bug("Could not generate card for team " + PlainTextComponentSerializer.plainText().serialize(team.getColoredName()), this)
                 );
             });
         }

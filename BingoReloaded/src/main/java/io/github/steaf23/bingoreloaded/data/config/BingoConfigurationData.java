@@ -35,7 +35,7 @@ public class BingoConfigurationData
         // General
         setOptionValueForce(BingoOptions.CONFIGURATION, name -> BingoOptions.PluginConfiguration.valueOf(config.getString(name, "SINGULAR")));
         setOptionValueForce(BingoOptions.DEFAULT_WORLD_NAME, name -> config.getString(name, "world"));
-        setOptionValueForce(BingoOptions.LANGUAGE, name -> "languages/" + config.getString(name, "en_us.yml"));
+        setOptionValueForce(BingoOptions.LANGUAGE, name -> config.getString(name, "en_us.yml"));
         setOptionValueForce(BingoOptions.SAVE_PLAYER_STATISTICS, name -> config.getBoolean(name, false));
         setOptionValueForce(BingoOptions.SEND_COMMAND_AFTER_GAME_ENDS, name -> config.getString(name, ""));
         setOptionValueForce(BingoOptions.VOTE_USING_COMMANDS_ONLY, name -> config.getBoolean(name, false));
@@ -96,6 +96,10 @@ public class BingoConfigurationData
         setOptionValueForce(BingoOptions.DEFAULT_WORLDS, name -> new ConfigurationOption.StringList(config.getList(name, TagDataType.STRING)));
         setOptionValueForce(BingoOptions.CLEAR_DEFAULT_WORLDS, name -> config.getBoolean(name, true));
         setOptionValueForce(BingoOptions.CUSTOM_WORLD_GENERATION, name -> config.getString(name, "null"));
+    }
+
+    public void reload() {
+        config.load();
     }
 
     public <DataType> DataType getOptionValue(@Nullable ConfigurationOption<DataType> option) {

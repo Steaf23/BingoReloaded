@@ -62,6 +62,11 @@ public class BingoCardMapRenderer extends MapRenderer
         random = new Random();
         stampOffsets = new ArrayList<>();
 
+        // initialize stamp offsets at once so they are not drawn in different positions every time.
+        for (int i  = 0; i < card.size.fullCardSize; i++) {
+            stampOffsets.add(getStampOffset(0, 4));
+        }
+
         if (!allItemImages.isEmpty()) {
             return;
         }
@@ -106,11 +111,6 @@ public class BingoCardMapRenderer extends MapRenderer
             if (!allItemImages.containsKey(mat.getKey())) {
                 ConsoleMessenger.warn("No task image found for item " + mat.name());
             }
-        }
-
-        // initialize stamp offsets at once so they are not drawn in different positions every time.
-        for (int i  = 0; i < card.size.fullCardSize; i++) {
-            stampOffsets.add(getStampOffset(0, 4));
         }
 
         ConsoleMessenger.log("Added " + allItemImages.size() + " item images for use in the map renderer.");
