@@ -98,6 +98,9 @@ public class BingoReloaded extends JavaPlugin
     public void onEnable() {
         PlayerDisplay.onPluginEnable();
 
+        saveResource("bingoreloaded.zip", true);
+        saveResource("bingoreloaded_lite.zip", true);
+
         // Data file updaters
         {
             DataUpdaterV1 updater = new DataUpdaterV1(this);

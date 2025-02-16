@@ -24,10 +24,7 @@
 (3.x) add point system to hotswap cards, allowing the user to configure a point amount gained per task completed
 (3.x) add custom resource pack
 (3.x) reimplement resource pack spacing inside the resource pack instead of using a separate pack
-(3.x) add reload config command to reload all config options by saving the config.yml file externally
-(3.x) add spectator mode
-
-(3.1.0) Split datapack into two, 1 to just generate the other worlds and one to also generate the server main world.
+(3.x) improve/add spectator mode
 
 (BUG) Load player data in a bingo world does not teleport the player out
 (BUG) advancement progress is not reset correctly? (MORE INFO NEEDED)
