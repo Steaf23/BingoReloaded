@@ -21,6 +21,7 @@ public enum BingoReloadedPlaceholder {
     // current settings information
     SETTING_GAMEMODE("setting_gamemode"),
     SETTING_CARDSIZE("setting_cardsize"),
+    SETTING_CARDNAME("setting_cardname"),
     SETTING_KIT("setting_kit"),
     SETTING_DURATION("setting_duration"),
     SETTING_EFFECTS("setting_effects"),
@@ -29,6 +30,7 @@ public enum BingoReloadedPlaceholder {
     SETTING_COMPLETE_WINSCORE("setting_complete_winscore"),
     SETTING_SEED("setting_seed"),
     SETTING_TEAMSIZE("setting_teamsize"),
+    SETTING_SEPARATE_CARDS("setting_separate_cards"),
 
     // player lifetime information
     SESSION_NAME("session_name"),

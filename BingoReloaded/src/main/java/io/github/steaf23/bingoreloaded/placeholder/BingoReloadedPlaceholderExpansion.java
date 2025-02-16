@@ -72,7 +72,7 @@ public class BingoReloadedPlaceholderExpansion extends PlaceholderExpansion
                 yield Component.text(sessionName);
             }
             case COUNT_SESSION_PLAYERS -> {
-                String sessionName = params.replace(BingoReloadedPlaceholder.CREATED_SESSION.getName(), "");
+                String sessionName = params.replace(BingoReloadedPlaceholder.COUNT_SESSION_PLAYERS.getName(), "");
 
                 BingoSession session = plugin.getGameManager().getSession(sessionName);
                 if (session == null) {
@@ -128,6 +128,15 @@ public class BingoReloadedPlaceholderExpansion extends PlaceholderExpansion
                 }
                 else {
                     yield settings.size().asComponent();
+                }
+            }
+            case SETTING_CARDNAME -> {
+                BingoSettings settings = getSettings(player);
+                if (settings == null) {
+                    yield defaultComponent;
+                }
+                else {
+                    yield Component.text(settings.card());
                 }
             }
             case SETTING_KIT -> {
@@ -196,6 +205,15 @@ public class BingoReloadedPlaceholderExpansion extends PlaceholderExpansion
                 }
                 else {
                     yield Component.text(settings.maxTeamSize());
+                }
+            }
+            case SETTING_SEPARATE_CARDS -> {
+                BingoSettings settings = getSettings(player);
+                if (settings == null) {
+                    yield defaultComponent;
+                }
+                else {
+                    yield Component.text(settings.differentCardPerTeam());
                 }
             }
             case SESSION_NAME -> getPlayerSessionPlaceholder(player);
