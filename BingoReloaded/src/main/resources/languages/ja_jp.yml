@@ -20,9 +20,10 @@ game:
     vote_kit: "キットの投票"
     vote_gamemode: "ゲームモードの投票"
     vote_card: "カードの投票"
+    vote_cardsize: "カードサイズの投票"
     vote_count: "{0}人のプレイヤーが{1} {2}に投票しました"
     vote_won: "{0} {1}が最も多くの票を獲得しました！"
-    vote_cardsize: "カードサイズの投票"
+    no_griefing: "<red>ゲームが始まる前にブロックを設置または破壊することはできません！"
   start:
     no_players: "誰もゲームに参加していないため、ビンゴゲームを開始できません :("
     already_started: "複数のビンゴゲームを同時に進行することはできません！"
@@ -55,6 +56,8 @@ game:
     size_changed: "チームの最大人数が変更されました。再度希望のチームに参加してください！"
     full_team_desc: "このチームは満員です！"
     join_team_desc: "クリックしてこのチームに参加"
+    spectator_join: "観戦者としてゲームに参加しました。/bingo view でチームのビンゴカードを表示できます。"
+    spectator_join_no_view: "観戦者としてゲームに参加しました。"
   item:
     voided: "このタスクは完了できなくなりました！"
     expire: "期限切れ: {0}"
@@ -96,6 +99,10 @@ menu:
       desc_score: "{0} 個のタスクを完了した最初のチームが勝利します！"
       desc_time: "時間切れになる前に最も多くのタスクを完了したチームが勝利します。"
       desc_any: "時間切れになる前に最も多くのタスクを完了する、または{0}個のタスクを完了したチームが勝利します！"
+    show_team_card:
+      desc: "このチームのカードを表示します。"
+      name: "<0> のビンゴカード"
+      title: "チームカードを表示"
   options:
     title: "設定メニュー"
     start: "ゲーム開始"
@@ -105,6 +112,7 @@ menu:
     kit: "キット"
     card: "カード"
     mode: "ゲームモード"
+    cardsize: "カードサイズ"
     effects: "プレイヤーのエフェクト"
     vote: "投票の設定"
     modes:
@@ -112,7 +120,6 @@ menu:
       lockout: "ロックアウト"
       complete: "コンプリート-X"
       hotswap: "ホットスワップ"
-    cardsize: "カードのサイズ"
   effects:
     enable: "クリックしてエフェクトを有効化"
     disable: "クリックしてエフェクトを無効化"

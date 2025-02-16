@@ -20,8 +20,10 @@ game:
     vote_kit: "Votez pour un kit"
     vote_gamemode: "Votez pour un mode de jeu"
     vote_card: "Votez pour une carte"
+    vote_cardsize: "Vote sur la taille de la carte"
     vote_count: "{0} joueurs ont voté pour {1} {2}" # 0: player count, 1: vote category, 2: vote item
     vote_won: "{0} {1} a reçu le plus de votes!" # 0: vote category, 1: vote item
+    no_griefing: "<red>Griefing interdit"
   start:
     no_players: "Le Bingo ne peut pas démarrer car aucun joueur n'a rejoint la partie :("
     already_started: "Impossible de démarrer une nouvelle partie car il y en a une déjà en cours!"
@@ -54,6 +56,8 @@ game:
     size_changed: "La taille maximale de l'équipe a été modifiée, veuillez rejoindre l'équipe de votre choix!"
     full_team_desc: "This team is full"
     join_team_desc: "Click to join this team"
+    spectator_join: "Vous avez rejoint cette partie en tant que spectateur, utilisez /bingo view pour voir les cartes des équipes."
+    spectator_join_no_view: "Vous avez rejoint cette partie en tant que spectateur."
   item:
     voided: "Cette tâche ne peut plus être complétée!"
     expire: "Expire dans: {0}" # 0: time left
@@ -95,6 +99,10 @@ menu:
       desc_score: "La première équipe à terminer {0} tâches gagne !" #0: winning score
       desc_time: "L'équipe qui termine le plus de tâches \n\navant la fin du temps imparti gagne !"
       desc_any: "L'équipe qui termine le plus de tâches \n\navant la fin du temps imparti ou qui termine {0} tâches gagne !" #0: winning score
+    show_team_card:
+      desc: "Affiche la carte de votre équipe"
+      name: "Carte d'équipe <0>"
+      title: "Afficher la carte d'équipe"
   options:
     title: "Options"
     start: "Démarrer la partie"
@@ -104,6 +112,7 @@ menu:
     kit: "Kit"
     card: "Carte"
     mode: "Mode de jeu"
+    cardsize: "Taille de la carte"
     effects: "Effets"
     vote: "Vote"
     modes:
@@ -170,8 +179,14 @@ items:
   wand:
     name: "La Baguette d'Envol"
     desc: "Cliquez avec le bouton de droite pour vous envoler dans les cieux! (& maintenez shift pour descendre)"
+  vote:
+    name: "Vote"
+    desc: "Cliquez pour voter pour les options de jeu"
+  team:
+    name: "Rejoindre une équipe"
+    desc: "Cliquez pour sélectionner votre équipe"
 creator:
   card_item:
     desc: "Contient {0} liste(s)" # 0: list count
 teams:
-  automatic: "Automatique"
+  auto: "Automatique"

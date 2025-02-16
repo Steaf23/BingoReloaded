@@ -20,8 +20,10 @@ game:
     vote_kit: "Stimmen Sie für eine Ausrüstung"
     vote_gamemode: "Stimmen Sie für einen SpielMode"
     vote_card: "Stimmen Sie für eine Karte"
+    vote_cardsize: "Abstimmung über Kartengröße"
     vote_count: "{0} Die Spieler stimmten dafür {1} {2}" # 0: player count, 1: vote category, 2: vote item
     vote_won: "{0} {1} Hat die meisten Stimmen erhalten!" # 0: vote category, 1: vote item
+    no_griefing: "<red>Kein Griefing erlaubt"
   start:
     no_players: "Bingo Kann nicht gestartet werden, da noch niemand beigetreten ist :("
     already_started: "Ein Spiel kann nicht gestartet werden, wenn bereits ein Spiel läuft!"
@@ -54,6 +56,8 @@ game:
     size_changed: "Die maximale Gruppengröße wurde angepasst. Wählen Sie Ihr Team erneut aus!"
     full_team_desc: "Diese Gruppe ist voll"
     join_team_desc: "Klicken Sie, um dieser Gruppe hinzuzufügen"
+    spectator_join: "Du bist dem Spiel als Zuschauer beigetreten"
+    spectator_join_no_view: "Du bist dem Spiel als Zuschauer beigetreten, kannst aber keine Teams sehen"
   item:
     voided: "Diese Aufgabe kann nicht mehr abgeschlossen werden!"
     expire: "Läuft ab in: {0}" # 0: time left
@@ -62,7 +66,7 @@ game:
     single_added: "{0} Hinzugefügt" # 0: task
     multiple_expired: "Mehrere Aufgaben abgelaufen"
     multiple_added: "Mehrere neue Aufgaben hinzugefügt"
-    lore: "Besorgen Sie sich {0} dieses Artikels, um die Aufgabe abzuschließen!" # 0: item count
+    lore: "Besorgen Sie sich {0} dieses Artikels, \num die Aufgabe abzuschließen!" # 0: item count
     lore_advancement: "Klicken Sie hier, um weitere Informationen zu erhalten!"
     lore_statistic: "Indem Sie die Aufgabe erledigen, schließen Sie sie ab!"
     completed: "{0} wurde von {1} am {2} erreicht" # 0: item name, 1: team, 2: completion time
@@ -95,6 +99,10 @@ menu:
       desc_score: "Das erste Team, das {0} Aufgaben abschließt, gewinnt!" #0: winning score
       desc_time: "Das Team, das die meisten Aufgaben \nvor Ablauf der Zeit abschließt, gewinnt!"
       desc_any: "Das Team, das die meisten Aufgaben \nvor Ablauf der Zeit abschließt oder {0} Aufgaben erledigt, gewinnt!" #0: winning score
+    show_team_card:
+      desc: "Zeigt die Teamkarte an"
+      name: "Teamkarte <0>"
+      title: "Teamkarte anzeigen"
   options:
     title: "Optionsmenü"
     start: "Spiel starten"
@@ -105,6 +113,7 @@ menu:
     card: "Karte"
     mode: "Spielmodus"
     effects: "Spielereffekte"
+    cardsize: "Kartengröße"
     vote: "Für Einstellungen abstimmen"
     modes:
       regular: "Regulär"

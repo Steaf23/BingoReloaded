@@ -20,8 +20,10 @@ game:
     vote_kit: "Stem op een Kit"
     vote_gamemode: "Stem op een Spelmodus"
     vote_card: "Stem op een Kaart"
+    vote_cardsize: "Stem op een kaartgrootte"
     vote_count: "{0} spelers hebben gestemd op {1} {2}" # 0: player count, 1: vote category, 2: vote item
     vote_won: "{0} {1} kreeg de meeste stemmen!" # 0: vote category, 1: vote item
+    no_griefing: "<red>Je kunt geen blokken plaatsen of breken voordat het spel is begonnen!"
   start:
     no_players: "Bingo kan niet gestart worden als er niemand gejoined is :(."
     already_started: "Bingo kan niet gestart worden omdat er al een spel bezig is"
@@ -54,6 +56,8 @@ game:
     size_changed: "Het maximum aantal team leden is verandert, kies opnieuw jou team!"
     full_team_desc: "Dit team zit vol"
     join_team_desc: "Klik om in dit team te komen"
+    spectator_join: "Je bent toegetreden als toeschouwer. Gebruik /bingo view om de kaarten van de teams te bekijken."
+    spectator_join_no_view: "Je bent toegetreden als toeschouwer."
   item:
     voided: "Deze taak kan niet meer voltooid worden!"
     expire: "Verloopt in: {0}" # 0: time left
@@ -95,6 +99,10 @@ menu:
       desc_score: "Het eerste team dat {0} taken voltooit, wint!" #0: winning score
       desc_time: "Het team dat de meeste taken voltooit \nvoordat de tijdslimiet verloopt, wint!"
       desc_any: "Het team dat de meeste taken voltooit \nvoordat de tijdslimiet verloopt \nof dat {0} taken voltooit, wint!" #0: winning score
+    show_team_card:
+      desc: "Bekijk de bingokaart van dit team."
+      name: "Bingokaart van <0>"
+      title: "Toon Teamkaart"
   options:
     title: "Opties"
     start: "Start Het Spel"
@@ -104,6 +112,7 @@ menu:
     kit: "Kit"
     card: "Kaart"
     mode: "Spelmodus"
+    cardsize: "Kaartgrootte"
     effects: "Effecten"
     vote: "Stem voor instellingen"
     modes:

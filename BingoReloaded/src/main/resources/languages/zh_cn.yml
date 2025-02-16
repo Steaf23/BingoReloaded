@@ -20,8 +20,10 @@ game:
     vote_kit: "投票选择初始套件"
     vote_gamemode: "投票选择游戏模式"
     vote_card: "投票选择卡片"
+    vote_cardsize: "投票选择卡片大小"
     vote_count: "{0} 名玩家选择 {1} {2}" # 0: player count, 1: vote category, 2: vote item
     vote_won: "{0} {1} 获得了最高票数！" # 0: vote category, 1: vote item
+    no_griefing: "<red>游戏开始前无法放置或破坏方块！"
   start:
     no_players: "由于无人加入游戏，BINGO 游戏无法开始 :("
     already_started: "无法同时进行多场 BINGO 游戏！"
@@ -54,6 +56,8 @@ game:
     size_changed: "队伍人数上限已更改，请重新加入您选择的队伍！"
     full_team_desc: "此队已满！"
     join_team_desc: "点击以加入该队伍"
+    spectator_join: "你已作为旁观者加入游戏，使用 /bingo view 查看队伍的卡片。"
+    spectator_join_no_view: "你已作为旁观者加入游戏。"
   item:
     voided: "此任务已无法完成！"
     expire: "过期时间：{0}" # 0: time left
@@ -95,6 +99,10 @@ menu:
       desc_score: "第一个完成 {0} 个任务的队伍获胜!" #0: winning score
       desc_time: "在时间结束前，完成最多任务的队伍获胜 \n！"
       desc_any: "在时间结束前完成最多任务的队伍或 \n完成 {0} 个任务的队伍获胜！" #0: winning score
+    show_team_card:
+      desc: "以此队伍的视角查看Bingo卡片。"
+      name: "<0> 的Bingo卡片"
+      title: "显示队伍卡片"
   options:
     title: "选择菜单"
     start: "开始游戏"
@@ -104,6 +112,7 @@ menu:
     kit: "初始套件"
     card: "卡片"
     mode: "游戏模式"
+    cardsize: "卡片大小"
     effects: "玩家效果"
     vote: "投票选择设置"
     modes:

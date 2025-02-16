@@ -20,8 +20,10 @@ game:
     vote_kit: "Vote em um Kit"
     vote_gamemode: "Vote em um Modo de Jogo"
     vote_card: "Vote em uma Cartela"
+    vote_cardsize: "Vote no tamanho da cartela"
     vote_count: "{0} jogador(es) votaram em {1} {2}" # 0: player count, 1: vote category, 2: vote item
     vote_won: "{0} {1} recebeu o maior número de votos!" # 0: vote category, 1: vote item
+    no_griefing: "<red>Você não pode colocar ou quebrar blocos antes do jogo começar!"
   start:
     no_players: "O Bingo não pôde ser iniciado, pois ninguém entrou :("
     already_started: "Não é possível iniciar um jogo de Bingo quando um já está ativo!"
@@ -42,6 +44,7 @@ game:
     no_card: "Não foi possível encontrar sua Cartela!"
     cooldown: "Espere {0} segundos para usar este item novamente!" # 0: time left
     respawn: "<dark_aqua><bold>Clique aqui para teleportar de volta ao local de sua morte"
+    respawn_expired: "O seu teleporte de renascimento expirou!"
   team:
     no_join: "Você não pode se juntar a um jogo em progresso!"
     join: "Você entrou no time {0}!" # 0: team name
@@ -53,6 +56,8 @@ game:
     size_changed: "O tamanho máximo dos times foi alterado, por favor entre novamente no time de sua escolha!"
     full_team_desc: "Este time está cheio"
     join_team_desc: Clique para se juntar a este time"
+    spectator_join: "Você entrou no jogo como espectador. Use /bingo view para ver as cartelas das equipes."
+    spectator_join_no_view: "Você entrou no jogo como espectador."
   item:
     voided: "Esta tarefa não pode mais ser concluída!"
     expire: "Expira em: {0}" # 0: time left
@@ -94,6 +99,10 @@ menu:
       desc_score: "A primeira equipe a completar {0} tarefas vence!" #0: winning score
       desc_time: "A equipe que completar mais tarefas \nante que o tempo acabe vence!"
       desc_any: "A equipe que completar mais tarefas \nante que o tempo acabe ou completar {0} tarefas vence!" #0: winning score
+    show_team_card:
+      desc: "Veja a cartela de bingo desta equipe."
+      name: "Cartela de <0>"
+      title: "Mostrar Cartela da Equipe"
   options:
     title: "Menu de Opções"
     start: "Iniciar o Jogo"
@@ -103,6 +112,7 @@ menu:
     kit: "Kit"
     card: "Cartela"
     mode: "Modo de Jogo"
+    cardsize: "Tamanho da Cartela"
     effects: "Efeitos de Jogador"
     vote: "Vote em Opções"
     modes:
@@ -178,5 +188,5 @@ items:
 creator:
   card_item:
     desc: "Contém {0} lista(s)" # 0: list count
-team:
+teams:
   auto: "Automático"
