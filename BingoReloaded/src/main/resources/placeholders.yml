@@ -5,8 +5,6 @@
 # When a placeholder is not available (e.g. current_tasks_team because no game is running), the placeholder will return '-' instead
 
 # Formats support using minimessage.
-# Formats support using small capital letters using {@}: {@This text will be in small caps}, or using minimessage tag <tiny:'this text is in small caps'>.
-# Formats support using translation keys {$}: {$game.lobby.wait_status} -> "Waiting for players..."
 # For more information about formatting yml files in Bingo Reloaded, read https://github.com/Steaf23/BingoReloaded/wiki/Text-Formatting
 
 version: 3.1.0
