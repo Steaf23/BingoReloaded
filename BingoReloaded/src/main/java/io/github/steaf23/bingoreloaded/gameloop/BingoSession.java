@@ -1,7 +1,6 @@
 package io.github.steaf23.bingoreloaded.gameloop;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
-import io.github.steaf23.bingoreloaded.command.BotCommand;
 import io.github.steaf23.bingoreloaded.data.BingoCardData;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
@@ -32,7 +31,6 @@ import io.github.steaf23.bingoreloaded.player.team.TeamManager;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
 import io.github.steaf23.bingoreloaded.settings.BingoSettingsBuilder;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
-import io.github.steaf23.bingoreloaded.util.BingoPlayerSender;
 import io.github.steaf23.playerdisplay.inventory.MenuBoard;
 import io.github.steaf23.playerdisplay.scoreboard.HUDRegistry;
 import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
@@ -42,7 +40,6 @@ import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
-import net.minecraft.world.level.storage.loot.providers.number.BinomialDistributionGenerator;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -97,7 +94,8 @@ public class BingoSession implements ForwardingAudience
         this.teamDisplay = new TeamDisplay(this);
         this.phase = null;
 
-        BingoReloaded.getInstance().registerCommand("bingobot", new BotCommand(this));
+        //TODO: decide a better place for this command
+//        BingoReloaded.getInstance().registerCommand("bingobot", new BotCommand(this));
 
         BingoReloaded.scheduleTask((t) -> {
             for (Player p : Bukkit.getOnlinePlayers()) {
