@@ -5,6 +5,7 @@ import io.github.steaf23.bingoreloaded.data.TeamData;
 import io.github.steaf23.playerdisplay.inventory.BasicMenu;
 import io.github.steaf23.playerdisplay.inventory.ColorPickerMenu;
 import io.github.steaf23.playerdisplay.inventory.FilterType;
+import io.github.steaf23.playerdisplay.inventory.Menu;
 import io.github.steaf23.playerdisplay.inventory.MenuBoard;
 import io.github.steaf23.playerdisplay.inventory.PaginatedSelectionMenu;
 import io.github.steaf23.playerdisplay.inventory.item.ItemTemplate;
@@ -58,7 +59,10 @@ public class TeamEditorMenu extends PaginatedSelectionMenu
             items.add(ItemTemplate.createColoredLeather(template.color(), Material.LEATHER_HELMET)
                     .setName(template.nameComponent().color(template.color()).decorate(TextDecoration.BOLD))
                     .setLore(Component.text("id: ").append(Component.text(key).color(NamedTextColor.GRAY).decorate(TextDecoration.ITALIC)))
-                    .setCompareKey(key));
+                    .setCompareKey(key)
+                    .addDescription("input", 5,
+                            Menu.INPUT_LEFT_CLICK.append(Component.text("edit team")),
+                            Menu.INPUT_RIGHT_CLICK.append(Component.text("remove team"))));
         }
         addItemsToSelect(items);
     }

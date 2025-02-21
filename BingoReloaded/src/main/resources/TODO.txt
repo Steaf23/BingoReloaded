@@ -21,6 +21,9 @@
 (?) add /bingo info command to receive hover message of current game settings, game status, etc...
 (?) add web editor for nbt files
 
+(?) user input menu reset filter/cancel should not close the inventory, but just clear the input.
+
+
 (3.x) add point system to hotswap cards, allowing the user to configure a point amount gained per task completed
 (3.x) add custom resource pack
 (3.x) reimplement resource pack spacing inside the resource pack instead of using a separate pack

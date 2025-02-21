@@ -495,7 +495,7 @@ public class DataUpdaterV1
 
         String version = yamlData.getString("version", "");
 
-        if (isNewerOrEqual(version, "3.0.2")) {
+        if (isNewerOrEqual(version, "3.0.1")) {
             return;
         }
 
