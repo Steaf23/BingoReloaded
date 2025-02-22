@@ -7,19 +7,21 @@ import io.github.steaf23.bingoreloaded.data.BingoStatType;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.gui.inventory.EffectOptionFlags;
-import io.github.steaf23.bingoreloaded.item.ItemCooldownManager;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import io.github.steaf23.bingoreloaded.tasks.GameTask;
 import io.github.steaf23.playerdisplay.inventory.item.ItemTemplate;
 import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 import io.github.steaf23.playerdisplay.util.PDCHelper;
+import io.papermc.paper.datacomponent.DataComponentTypes;
+import io.papermc.paper.datacomponent.item.UseCooldown;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -53,14 +55,12 @@ public class BingoPlayer implements BingoParticipant
     private final BingoSession session;
     private final UUID playerId;
     private final Component displayName;
-    private final ItemCooldownManager itemCooldowns;
 
     public BingoPlayer(Player player, BingoSession session) {
         this.playerId = player.getUniqueId();
         this.session = session;
         this.playerName = player.getName();
         this.displayName = player.displayName();
-        this.itemCooldowns = new ItemCooldownManager();
         this.team = null;
     }
 
@@ -258,16 +258,15 @@ public class BingoPlayer implements BingoParticipant
         if (!PlayerKit.WAND_ITEM.isCompareKeyEqual(wand))
             return;
 
-        if (!itemCooldowns.isCooldownOver(wand.getType())) {
-            double timeLeft = itemCooldowns.getTimeLeft(wand.getType()) / 1000.0;
-            player.sendMessage(BingoMessage.COOLDOWN.asPhrase(Component.text(String.format("%.2f", timeLeft)))
-                    .color(NamedTextColor.RED));
+        if (player.hasCooldown(wand)) {
             return;
         }
 
-        BingoReloaded.scheduleTask(task -> {
-            itemCooldowns.addCooldown(wand.getType(), (int) (wandCooldownSeconds * 1000));
+        //TODO: rewrite this to be a bit nicer, maybe add a cooldown support to item templates.
+        wand.setData(DataComponentTypes.USE_COOLDOWN, UseCooldown.useCooldown((float)wandCooldownSeconds).cooldownGroup(new NamespacedKey(BingoReloaded.getInstance(), "wand_cooldown")).build());
+        player.setCooldown(wand, (int)(wand.getData(DataComponentTypes.USE_COOLDOWN).seconds() * 20));
 
+        BingoReloaded.scheduleTask(task -> {
             double distance;
             double fallDistance;
             // Use the wand

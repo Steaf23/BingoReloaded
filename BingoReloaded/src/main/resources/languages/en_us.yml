@@ -42,7 +42,6 @@ game:
     leave: "You have left the game!" # DYNAMIC 0: /bingo command
     no_start: "The game has not started yet!" # DYNAMIC
     no_card: "Could not find your card!" # DYNAMIC
-    cooldown: "You cannot use this item for another {0} seconds!" # DYNAMIC 0: time left
     respawn: "<dark_aqua><bold>Click here to teleport back to where you died" # DYNAMIC
     respawn_expired: "Teleport to death location has expired!" # DYNAMIC
   team:

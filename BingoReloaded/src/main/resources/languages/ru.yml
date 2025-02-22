@@ -42,7 +42,6 @@ game:
     leave: "Вы вышли из игры!" # DYNAMIC 0: /bingo command
     no_start: "Игра ещё не началась!" # DYNAMIC
     no_card: "Мы не смогли найти вашу карточку!" # DYNAMIC
-    cooldown: "Вы не можете использовать этот предмет ещё {0} сек.!" # DYNAMIC 0: time left
     respawn: "<dark_aqua><bold>Нажмите по тексту<reset> для телепортации на место вашей смерти." # DYNAMIC
     respawn_expired: "Срок телепортации на место смерти истёк!" # DYNAMIC
   team:

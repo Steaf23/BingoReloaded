@@ -62,7 +62,6 @@ public enum BingoMessage
     LEAVE("game.player.leave"),
     NOT_STARTED("game.player.no_start"),
     NO_PLAYER_CARD("game.player.no_card"),
-    COOLDOWN("game.player.cooldown"),
     RESPAWN("game.player.respawn"),
     RESPAWN_EXPIRED("game.player.respawn_expired"),
     NO_JOIN("game.team.no_join"),

@@ -42,7 +42,6 @@ game:
     leave: "Du wurdest aus dem Spiel entfernt. Benutze {0}, um wieder beizutreten" # 0: /bingo command
     no_start: "Das Spiel hat noch nicht begonnen!"
     no_card: "Ich kann Ihre Karte nicht finden!"
-    cooldown: "Sie können diesen Gegenstand {0} Sekunden lang nicht verwenden!" # 0: time left
     respawn: "<dark_aqua><bold>Klicken sie hier, um sich dorthin zurück zu teleportieren, wo sie gestorben sind"
     respawn_expired: "Der Teleport zur Todesstelle ist abgelaufen!"
   team:

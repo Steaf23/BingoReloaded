@@ -42,7 +42,6 @@ game:
     leave: "你离开了游戏！" # 0: /bingo command
     no_start: "游戏还未开始！"
     no_card: "无法找到你的卡片！"
-    cooldown: "道具冷却中，{0} 秒内你无法使用该物品！" # 0: time left
     respawn: "<dark_aqua><bold>点击这里返回死亡地点"
     respawn_expired: "传送至死亡地点已失效！"
   team:

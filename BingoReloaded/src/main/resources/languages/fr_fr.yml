@@ -42,7 +42,6 @@ game:
     leave: "Vous avez été enlevé de la partie avec succès, utilisez {0} pour revenir :D" # 0: /bingo command
     no_start: "La partie n'a pas encore commencée!"
     no_card: "Impossible de trouver votre carte !"
-    cooldown: "Vous ne pouvez plus utiliser cet élément durant les {0} prochaines secondes!" # 0: time left
     respawn: "<dark_aqua><bold>Cliquez ici pour vous téléporter à l'endroit de votre mort"
     respawn_expired: "La téléportation vers le lieu de la mort a expiré!"
   team:

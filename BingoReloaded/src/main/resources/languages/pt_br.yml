@@ -35,14 +35,13 @@ game:
   postgame:
     start: "Este jogo vai reabrir em {0} segundos" # 0: time until restart (seconds)
   deathmatch:
-    start: Vários times completaram a mesma quantidade de tarefas, iniciando a Morte Súbita para desempatar!"
-    search: Encontre o item listado no chat para vencer o jogo!"
+    start: "Vários times completaram a mesma quantidade de tarefas, iniciando a Morte Súbita para desempatar!"
+    search: "Encontre o item listado no chat para vencer o jogo!"
     item: "Morte Súbita - Seja o primeiro a obter este item para vencer: {0}" # 0: item name
   player:
     leave: "Você saiu do jogo!" # 0: /bingo command
     no_start: "Este jogo ainda não começou!"
     no_card: "Não foi possível encontrar sua Cartela!"
-    cooldown: "Espere {0} segundos para usar este item novamente!" # 0: time left
     respawn: "<dark_aqua><bold>Clique aqui para teleportar de volta ao local de sua morte"
     respawn_expired: "O seu teleporte de renascimento expirou!"
   team:
@@ -55,7 +54,7 @@ game:
     chat_on: "Chat de time está <green>ligado</green>, use {0} para desativá-lo." # 0: /btc
     size_changed: "O tamanho máximo dos times foi alterado, por favor entre novamente no time de sua escolha!"
     full_team_desc: "Este time está cheio"
-    join_team_desc: Clique para se juntar a este time"
+    join_team_desc: "Clique para se juntar a este time"
     spectator_join: "Você entrou no jogo como espectador. Use /bingo view para ver as cartelas das equipes."
     spectator_join_no_view: "Você entrou no jogo como espectador."
   item:
@@ -66,14 +65,14 @@ game:
     single_added: "{0} Adicionada" # 0: task
     multiple_expired: "Várias Tarefas Expiraram"
     multiple_added: "Adicionadas Múltiplas Novas Tarefas"
-    lore: Obtenha {0} deste item para completar a tarefa! # 0: item count
+    lore: "Obtenha {0} deste item para completar a tarefa!" # 0: item count
     lore_advancement: "Clique para ver mais!"
     lore_statistic: "Obtenha esta estatística para completar a tarefa!"
     completed: "{0} completo por {1} em {2}" # 0: item name, 1: team, 2: completion time
     complete_lore: "Completo pelo time {0} \nem {1}" # 0: team, 1: completion time
 menu:
   save: "Salvar"
-  exit: Fechar Menu"
+  exit: "Fechar Menu"
   save_exit: "Salvar & Sair"
   accept: "Aceitar & Fechar"
   next: "Próxima Página"

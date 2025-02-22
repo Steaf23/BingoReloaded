@@ -42,7 +42,6 @@ game:
     leave: "ゲームから退出しました！"
     no_start: "ゲームはまだ始まっていません！"
     no_card: "カードが見つかりません！"
-    cooldown: "このアイテムを使うにはあと{0}秒待つ必要があります！"
     respawn: "<dark_aqua><bold>ここをクリックして死亡地点に戻る"
     respawn_expired: "死亡地点へのテレポートが無効になりました！"
   team:
