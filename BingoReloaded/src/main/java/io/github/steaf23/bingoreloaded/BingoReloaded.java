@@ -328,6 +328,8 @@ public class BingoReloaded extends JavaPlugin
             }
         }
 
+        defaultConfigFull.set("version", getPluginMeta().getVersion());
+
         try {
             defaultConfigFull.save(new File(getDataFolder(), "config.yml"));
         } catch (IOException e) {

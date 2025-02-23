@@ -32,18 +32,25 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.Registry;
 import org.bukkit.Statistic;
 import org.bukkit.advancement.Advancement;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 public class DataUpdaterV1
@@ -229,6 +236,7 @@ public class DataUpdaterV1
     }
 
     public void update() {
+        updateConfig();
         updateCards();
 //        updateTextures();
         updateKits();
@@ -239,6 +247,52 @@ public class DataUpdaterV1
         updateTeams();
         updateScoreboards();
         updatePlaceholders();
+    }
+
+    private void updateConfig() {
+        File configFile = new File(plugin.getDataFolder(), "config.yml");
+        if (!configFile.exists()) {
+            return;
+        }
+
+        YamlConfiguration existingConfig = YamlConfiguration.loadConfiguration(configFile);
+        String version = existingConfig.getString("version");
+
+        if (isNewerOrEqual(version, "3.1.0")) {
+            return;
+        }
+
+        if (!existingConfig.contains("voteList.gamemodes")) {
+            return;
+        }
+
+        // convert old gamemodes to gamemode and card size votes (regular_5 -> regular mode and cardsize 5
+
+        // Add to existing set of card sizes.
+        Set<String> cardSizes = new HashSet<>(existingConfig.getStringList("voteList.cardsizes"));
+        // Replace existing modes with new names.
+        Set<String> modes = new HashSet<>();
+        for (String mode : existingConfig.getStringList("voteList.gamemodes")) {
+            String[] split = mode.split("_");
+            if (split.length != 2) {
+                continue;
+            }
+
+            mode = split[0];
+            String size = split[1];
+            cardSizes.add(size);
+            modes.add(mode);
+        }
+
+        FileConfiguration config = plugin.getConfig();
+        config.set("voteList.gamemodes", new ArrayList<>(modes));
+        config.set("voteList.cardsizes", new ArrayList<>(cardSizes));
+        try {
+            config.save(configFile);
+        } catch (IOException e) {
+            ConsoleMessenger.bug("Could not update config.yml to new version", this);
+        }
+        ConsoleMessenger.log(Component.text("Found outdated config.yml file and updated it to new format (V2 -> V3)").color(NamedTextColor.GOLD));
     }
 
     private void updatePresets() {
@@ -565,8 +619,8 @@ public class DataUpdaterV1
         ConsoleMessenger.log(Component.text("Found outdated placeholders file and updated it to new format (V2 -> V3)").color(NamedTextColor.GOLD));
     }
 
-    private boolean isNewerOrEqual(String version, String pluginVersion) {
-        if (pluginVersion.isEmpty()) {
+    private boolean isNewerOrEqual(@Nullable String version, String pluginVersion) {
+        if (pluginVersion.isEmpty() || version == null) {
             return false;
         }
         String[] pluginVersions = pluginVersion.split("\\.");

@@ -71,21 +71,26 @@ public class VoteTicket
         return outcome;
     }
 
+    /**
+     * @param values Map of options alongside how many times was voted for it
+     * @return The option from the map that contains the highest amount of votes, or a random one if there are multiple with the same highest vote count.
+     */
     private static String getVoteWithHighestCount(Map<String, Integer> values) {
 
+        // List of options sorted by amount of votes for that option, highest to lowest.
         List<String> sortedCounts = new ArrayList<>(values.keySet().stream()
                 .sorted(Comparator.comparingInt(a -> -values.get(a)))
                 .toList());
 
         int recordCount = values.get(sortedCounts.getFirst());
-        int currentCount = 0;
-        int index = sortedCounts.size() - 1;
+        int currentCount;
         for (int i = sortedCounts.size() - 1; i >= 0; i--) {
-            currentCount = values.get(sortedCounts.get(index));
+            currentCount = values.get(sortedCounts.get(i));
             if (recordCount == currentCount) {
+                // Since we are looping in reverse, we can break when we run into the same count as the record, all remaining options will have the record amount.
                 break;
             }
-            sortedCounts.remove(index);
+            sortedCounts.remove(i);
         }
 
         return sortedCounts.get((int)(Math.random() * sortedCounts.size()));

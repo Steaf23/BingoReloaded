@@ -430,6 +430,9 @@ public class BingoGame implements GamePhase
 
     private void teleportPlayersToStart(World world) {
         int gracePeriod = config.getOptionValue(BingoOptions.GRACE_PERIOD);
+
+        // Platform should at least last as long as the starting countdown time.
+        int platformLifetime = Math.max(config.getOptionValue(BingoOptions.STARTING_COUNTDOWN_TIME), Math.max(0, gracePeriod - 5)) * BingoReloaded.ONE_SECOND;
         switch (config.getOptionValue(BingoOptions.PLAYER_TELEPORT_STRATEGY)) {
             case ALONE -> {
                 for (BingoParticipant p : getTeamManager().getParticipants()) {
@@ -438,7 +441,7 @@ public class BingoGame implements GamePhase
                         spawnPlatform(platformLocation.clone(), 5, true);
 
                         BingoReloaded.scheduleTask(task ->
-                                BingoGame.removePlatform(platformLocation, 5), (long) (Math.max(0, gracePeriod - 5)) * BingoReloaded.ONE_SECOND);
+                                BingoGame.removePlatform(platformLocation, 5), platformLifetime);
                     }
                     teleportPlayerToStart(p, platformLocation, 5);
                 }
@@ -452,7 +455,7 @@ public class BingoGame implements GamePhase
                         spawnPlatform(teamLocation, 5, true);
 
                         BingoReloaded.scheduleTask(task ->
-                                BingoGame.removePlatform(teamLocation, 5), (long) (Math.max(0, gracePeriod - 5)) * BingoReloaded.ONE_SECOND);
+                                BingoGame.removePlatform(teamLocation, 5), platformLifetime);
                     }
                     players.forEach(p -> teleportPlayerToStart(p, teamLocation, 5));
                 }
@@ -463,7 +466,7 @@ public class BingoGame implements GamePhase
                     spawnPlatform(spawnLocation, 5, true);
 
                     BingoReloaded.scheduleTask(task ->
-                            BingoGame.removePlatform(spawnLocation, 5), (long) (Math.max(0, gracePeriod - 5)) * BingoReloaded.ONE_SECOND);
+                            BingoGame.removePlatform(spawnLocation, 5), platformLifetime);
                 }
 
                 Set<BingoParticipant> players = getTeamManager().getParticipants();
