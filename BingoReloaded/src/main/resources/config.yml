@@ -85,7 +85,7 @@ gameRestartTime: 20
 useVoteSystem: true
 
 # Prevent players from breaking or placing blocks when the game is not running
-preventLobbyGriefing: true
+preventPlayerGriefing: true
 
 # Use this to configure what options can be voted on.
 voteList:
