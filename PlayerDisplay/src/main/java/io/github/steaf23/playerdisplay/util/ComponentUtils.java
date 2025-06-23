@@ -46,6 +46,7 @@ public class ComponentUtils
         {
             case "husbandry.obtain_netherite_hoe" -> "husbandry.netherite_hoe";
             case "husbandry.bred_all_animals" -> "husbandry.breed_all_animals";
+            case "adventure.read_power_of_chiseled_bookshelf" -> "adventure.read_power_from_chiseled_bookshelf";
             default -> result;
         };
         return "advancements." + result;
