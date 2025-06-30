@@ -26,10 +26,9 @@ hs_err_pid*
 
 */target
 qodana.yaml
-BingoReloaded/BingoReloaded.iml
-PlayerDisplay/PlayerDisplay.iml
+
 **/.gradle
-/BingoReloaded/build
-/PlayerDisplay/build
-/BingoReloaded/run
 /build
+common/build/
+paper/build/
+fabric/build/

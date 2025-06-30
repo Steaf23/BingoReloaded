@@ -1,0 +1,8 @@
+plugins {
+    id 'base'
+}
+
+allprojects {
+    group = 'io.github.steaf23.bingoreloaded'
+    version = '1.0.0'
+}

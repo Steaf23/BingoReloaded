@@ -1,3 +1,16 @@
-rootProject.name = 'BingoReloaded'
-include 'BingoReloaded'
-include 'PlayerDisplay'
+pluginManagement {
+    repositories {
+        maven {
+            name = "FabricMC"
+            url = uri("https://maven.fabricmc.net/")
+        }
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+
+rootProject.name = "BingoReloaded"
+
+include 'common'
+include 'paper'
+include 'fabric'
