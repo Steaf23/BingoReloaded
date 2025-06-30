@@ -1,5 +1,9 @@
 plugins {
-    id 'java'
+    id 'java-library'
+}
+
+dependencies {
+    api("net.kyori:adventure-api:$adventure_version")
 }
 
 java {
