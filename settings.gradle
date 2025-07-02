@@ -11,6 +11,6 @@ pluginManagement {
 
 rootProject.name = "BingoReloaded"
 
-include 'common'
-include 'paper'
-include 'fabric'
+include ':common'
+include ':paper'
+include ':fabric'
