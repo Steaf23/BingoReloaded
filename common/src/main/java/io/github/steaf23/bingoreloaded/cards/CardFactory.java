@@ -9,12 +9,11 @@ import io.github.steaf23.bingoreloaded.gui.inventory.card.HotswapCardMenu;
 import io.github.steaf23.bingoreloaded.gui.inventory.card.HotswapGenericCardMenu;
 import io.github.steaf23.bingoreloaded.gui.inventory.card.HotswapTexturedCardMenu;
 import io.github.steaf23.bingoreloaded.gui.inventory.card.TexturedCardMenu;
+import io.github.steaf23.bingoreloaded.lib.api.MenuBoard;
 import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
 import io.github.steaf23.bingoreloaded.tasks.GameTask;
 import io.github.steaf23.bingoreloaded.tasks.TaskGenerator;
-import io.github.steaf23.bingoreloaded.lib.PlayerDisplay;
-import io.github.steaf23.bingoreloaded.lib.inventory.MenuBoard;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;

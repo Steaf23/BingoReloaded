@@ -1,21 +1,18 @@
 package io.github.steaf23.bingoreloaded.gameloop;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
+import io.github.steaf23.bingoreloaded.api.BingoEvents;
+import io.github.steaf23.bingoreloaded.lib.api.DimensionType;
+import io.github.steaf23.bingoreloaded.lib.api.ExtensionApi;
+import io.github.steaf23.bingoreloaded.lib.api.MenuBoard;
 import io.github.steaf23.bingoreloaded.lib.api.PlayerHandle;
+import io.github.steaf23.bingoreloaded.lib.api.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.api.WorldHandle;
 import io.github.steaf23.bingoreloaded.data.BingoCardData;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.data.config.BingoOptions;
 import io.github.steaf23.bingoreloaded.data.world.WorldGroup;
-import io.github.steaf23.bingoreloaded.event.BingoEndedEvent;
-import io.github.steaf23.bingoreloaded.event.BingoPlaySoundEvent;
-import io.github.steaf23.bingoreloaded.event.BingoSettingsUpdatedEvent;
-import io.github.steaf23.bingoreloaded.event.ParticipantJoinedTeamEvent;
-import io.github.steaf23.bingoreloaded.event.ParticipantLeftTeamEvent;
-import io.github.steaf23.bingoreloaded.event.PlayerJoinedSessionWorldEvent;
-import io.github.steaf23.bingoreloaded.event.PlayerLeftSessionWorldEvent;
-import io.github.steaf23.bingoreloaded.event.PrepareNextBingoGameEvent;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.gameloop.phase.GamePhase;
 import io.github.steaf23.bingoreloaded.gameloop.phase.PostGamePhase;
@@ -25,7 +22,7 @@ import io.github.steaf23.bingoreloaded.gameloop.vote.VoteTicket;
 import io.github.steaf23.bingoreloaded.gui.hud.BingoGameHUDGroup;
 import io.github.steaf23.bingoreloaded.gui.hud.DisabledBingoGameHUDGroup;
 import io.github.steaf23.bingoreloaded.gui.hud.TeamDisplay;
-import io.github.steaf23.bingoreloaded.lib.inventory.MenuBoard;
+import io.github.steaf23.bingoreloaded.lib.api.WorldPosition;
 import io.github.steaf23.bingoreloaded.lib.scoreboard.HUDRegistry;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
@@ -38,7 +35,6 @@ import io.github.steaf23.bingoreloaded.settings.BingoSettingsBuilder;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.audience.ForwardingAudience;
-import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -91,7 +87,7 @@ public class BingoSession implements ForwardingAudience
 //        BingoReloaded.getInstance().registerCommand("bingobot", new BotCommand(this));
 
         BingoReloaded.scheduleTask((t) -> {
-            for (PlayerHandle p : Bukkit.getOnlinePlayers()) {
+            for (PlayerHandle p : ExtensionApi.getOnlinePlayers()) {
                 if (hasPlayer(p)) {
                     addPlayer(p);
                 }
@@ -155,7 +151,7 @@ public class BingoSession implements ForwardingAudience
     public void prepareNextGame() {
         teamManager.reset();
         var event = new PrepareNextBingoGameEvent(this);
-        Bukkit.getPluginManager().callEvent(event);
+        ExtensionApi.callEvent(event);
 
         // When we came from the PostGamePhase we need to make sure to end it properly
         if (phase != null) {
@@ -165,7 +161,7 @@ public class BingoSession implements ForwardingAudience
         phase = new PregameLobby(menuBoard, hudRegistry, this, config);
         phase.setup();
 
-        getOverworld().getPlayers().forEach(p -> {
+        getOverworld().players().forEach(p -> {
             if (teamManager.getPlayerAsParticipant(p) == null) {
                 teamManager.addMemberToTeam(new BingoPlayer(p, this), "auto");
             }
@@ -182,67 +178,66 @@ public class BingoSession implements ForwardingAudience
         teamManager.removeMemberFromTeam(player);
     }
 
-    public void handleGameEnded(final BingoEndedEvent event) {
+    public void handleGameEnded(final BingoEvents.GameEnded event) {
         phase = new PostGamePhase(this, config.getOptionValue(BingoOptions.GAME_RESTART_TIME));
         phase.setup();
     }
 
-    public void handleSettingsUpdated(final BingoSettingsUpdatedEvent event) {
+    public void handleSettingsUpdated(final BingoEvents.SettingsUpdated event) {
         phase.handleSettingsUpdated(event);
         teamManager.handleSettingsUpdated(event);
     }
 
-    public void handlePlaySoundEvent(final BingoPlaySoundEvent event) {
-        playSound(Sound.sound().type(event.getSound()).volume(event.getLoudness()).pitch(event.getPitch()).build());
+    public void handlePlaySoundEvent(final BingoEvents.PlaySound event) {
+        playSound(event.sound());
     }
 
     public void addPlayer(PlayerHandle player) {
         var joinedWorldEvent = new PlayerJoinedSessionWorldEvent(player, this);
-        Bukkit.getPluginManager().callEvent(joinedWorldEvent);
+        ExtensionApi.callEvent(joinedWorldEvent);
 
         BingoReloaded.sendResourcePack(player);
     }
 
     public void removePlayer(PlayerHandle player) {
         var leftWorldEvent = new PlayerLeftSessionWorldEvent(player, this);
-        Bukkit.getPluginManager().callEvent(leftWorldEvent);
+        ExtensionApi.callEvent(leftWorldEvent);
     }
 
-    public void handlePlayerDropItem(final PlayerDropItemEvent dropEvent) {
-        if (PlayerKit.CARD_ITEM.isCompareKeyEqual(dropEvent.getItemDrop().getItemStack()) ||
-                PlayerKit.WAND_ITEM.isCompareKeyEqual(dropEvent.getItemDrop().getItemStack()) ||
-                PlayerKit.VOTE_ITEM.isCompareKeyEqual(dropEvent.getItemDrop().getItemStack()) ||
-                PlayerKit.TEAM_ITEM.isCompareKeyEqual(dropEvent.getItemDrop().getItemStack())) {
-            dropEvent.setCancelled(true);
-        }
-    }
+    public boolean handlePlayerDropItem(final StackHandle stack) {
+		return PlayerKit.CARD_ITEM.isCompareKeyEqual(stack) ||
+				PlayerKit.WAND_ITEM.isCompareKeyEqual(stack) ||
+				PlayerKit.VOTE_ITEM.isCompareKeyEqual(stack) ||
+				PlayerKit.TEAM_ITEM.isCompareKeyEqual(stack);
+	}
 
-    public void handlePlayerJoinedSessionWorld(final PlayerJoinedSessionWorldEvent event) {
+    public void handlePlayerJoinedSessionWorld(final BingoEvents.PlayerEvent event) {
         BingoReloaded.scheduleTask(t -> {
             teamManager.handlePlayerJoinedSessionWorld(event);
             phase.handlePlayerJoinedSessionWorld(event);
 
             if (isRunning()) {
-                scoreboard.addPlayer(event.getPlayer());
+                scoreboard.addPlayer(event.player());
             }
             teamDisplay.update();
         });
     }
 
-    public void handlePlayerLeftSessionWorld(final PlayerLeftSessionWorldEvent event) {
+    public void handlePlayerLeftSessionWorld(final BingoEvents.PlayerEvent event) {
         // Clear player's teams before anything else.
         // This is because they might join another bingo as a result of leaving this one, so we have to remove the player's team display at this moment
-        teamDisplay.clearTeamsForPlayer(event.getPlayer());
+        //FIXME: REFACTOR TeamDisplay
+//        teamDisplay.clearTeamsForPlayer(event.player());
 
         BingoReloaded.scheduleTask(t -> {
             teamManager.handlePlayerLeftSessionWorld(event);
             phase.handlePlayerLeftSessionWorld(event);
 
-            Player player = event.getPlayer();
-            player.clearActivePotionEffects();
+            PlayerHandle player = event.player();
+            player.clearAllEffects();
 
             if (isRunning()) {
-                BingoMessage.LEAVE.sendToAudience(event.getPlayer());
+                BingoMessage.LEAVE.sendToAudience(player);
             }
 
             scoreboard.removePlayer(player);
@@ -262,63 +257,66 @@ public class BingoSession implements ForwardingAudience
         });
     }
 
-    public void handleParticipantJoinedTeam(final ParticipantJoinedTeamEvent event) {
+    public void handleParticipantJoinedTeam(final BingoEvents.TeamParticipantEvent event) {
         phase.handleParticipantJoinedTeam(event);
         teamDisplay.update();
     }
 
-    public void handleParticipantLeftTeam(final ParticipantLeftTeamEvent event) {
+    public void handleParticipantLeftTeam(final BingoEvents.TeamParticipantEvent event) {
         phase.handleParticipantLeftTeam(event);
         teamDisplay.update();
     }
 
-    public void handlePlayerPortalEvent(final PlayerPortalEvent event) {
-        World origin = event.getFrom().getWorld();
-        World target = event.getTo().getWorld();
+    public void handlePlayerPortalEvent(final PlayerHandle player, final WorldPosition fromPos, @NotNull WorldPosition toPos) {
+        WorldHandle origin = fromPos.world();
+        WorldHandle target = toPos.world();
 
-        Location targetlocation = event.getTo();
-        if (origin.getUID().equals(worlds.overworldId())) {
+        WorldPosition targetLocation = new WorldPosition(toPos);
+        if (origin.uniqueId().equals(worlds.overworldId())) {
             // coming from the OW we can go to either the nether or the end
-            if (target.getEnvironment() == World.Environment.NETHER) {
+            if (target.dimension() == DimensionType.NETHER) {
                 // Nether
-                targetlocation.setWorld(worlds.getNetherWorld());
-            } else if (target.getEnvironment() == World.Environment.THE_END) {
+                targetLocation.setWorld(worlds.getNetherWorld());
+            } else if (target.dimension() == DimensionType.THE_END) {
                 // The End
-                targetlocation.setWorld(worlds.getEndWorld());
+                targetLocation.setWorld(worlds.getEndWorld());
             } else {
                 ConsoleMessenger.bug("Could not catch player going through portal", this);
             }
-        } else if (origin.getUID().equals(worlds.netherId())) {
+        } else if (origin.uniqueId().equals(worlds.netherId())) {
             // coming from the nether we can only go to the OW
-            targetlocation.setWorld(worlds.getOverworld());
-        } else if (origin.getUID().equals(worlds.endId())) {
+            targetLocation.setWorld(worlds.getOverworld());
+        } else if (origin.uniqueId().equals(worlds.endId())) {
             // coming from the end we can go to either the overworld or to the end spawn from an outer portal.
-            if (target.getEnvironment() == World.Environment.NORMAL) {
+            if (target.dimension() == DimensionType.OVERWORLD) {
                 // Overworld
-                targetlocation.setWorld(worlds.getOverworld());
-            } else if (target.getEnvironment() == World.Environment.THE_END) {
+                targetLocation.setWorld(worlds.getOverworld());
+            } else if (target.dimension() == DimensionType.THE_END) {
                 // The End
-                targetlocation.setWorld(worlds.getEndWorld());
+                targetLocation.setWorld(worlds.getEndWorld());
             } else {
                 ConsoleMessenger.bug("Could not catch player going through portal", this);
             }
         }
 
-        event.setTo(targetlocation);
+        toPos.takeFrom(targetLocation);
     }
 
-    public void handlePlayerBlockBreak(final BlockBreakEvent event) {
-        if (!isRunning() && config.getOptionValue(BingoOptions.PREVENT_PLAYER_GRIEFING) && !event.getPlayer().hasPermission("bingo.admin")) {
-            event.setCancelled(true);
-            BingoMessage.NO_GRIEFING.sendToAudience(event.getPlayer());
+    public boolean handlePlayerBlockBreak(final PlayerHandle player) {
+        if (!isRunning() && config.getOptionValue(BingoOptions.PREVENT_PLAYER_GRIEFING) && !player.hasPermission("bingo.admin")) {
+            BingoMessage.NO_GRIEFING.sendToAudience(player);
+            return true;
         }
+
+        return false;
     }
 
-    public void handlePlayerBlockPlace(final BlockPlaceEvent event) {
-        if (!isRunning() && config.getOptionValue(BingoOptions.PREVENT_PLAYER_GRIEFING) && !event.getPlayer().hasPermission("bingo.admin")) {
-            event.setCancelled(true);
-            BingoMessage.NO_GRIEFING.sendToAudience(event.getPlayer());
+    public boolean handlePlayerBlockPlace(final PlayerHandle player) {
+        if (!isRunning() && config.getOptionValue(BingoOptions.PREVENT_PLAYER_GRIEFING) && !player.hasPermission("bingo.admin")) {
+            BingoMessage.NO_GRIEFING.sendToAudience(player);
+            return true;
         }
+        return false;
     }
 
     public MenuBoard getMenuBoard() {
@@ -330,7 +328,7 @@ public class BingoSession implements ForwardingAudience
     }
 
     public boolean ownsWorld(@NotNull WorldHandle world) {
-        return worlds.hasWorld(world.getUniqueId());
+        return worlds.hasWorld(world.uniqueId());
     }
 
     public BingoConfigurationData getPluginConfig() {
@@ -375,7 +373,7 @@ public class BingoSession implements ForwardingAudience
     }
 
     public boolean hasPlayer(@NotNull PlayerHandle p) {
-        return ownsWorld(p.getWorld());
+        return ownsWorld(p.world());
     }
 
     public @Nullable GamePhase getPhase() {

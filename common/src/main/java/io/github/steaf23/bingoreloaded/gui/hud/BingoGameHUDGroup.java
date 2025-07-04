@@ -7,14 +7,9 @@ import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.player.team.SoloTeamManager;
 import io.github.steaf23.bingoreloaded.player.team.TeamManager;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
-import io.github.steaf23.bingoreloaded.lib.PlayerDisplay;
-import io.github.steaf23.bingoreloaded.lib.scoreboard.HUDRegistry;
-import io.github.steaf23.bingoreloaded.lib.scoreboard.PlayerHUD;
-import io.github.steaf23.bingoreloaded.lib.scoreboard.PlayerHUDGroup;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
-import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.Comparator;

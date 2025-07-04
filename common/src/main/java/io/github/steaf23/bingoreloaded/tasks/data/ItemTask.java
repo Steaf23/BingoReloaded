@@ -2,13 +2,9 @@ package io.github.steaf23.bingoreloaded.tasks.data;
 
 import io.github.steaf23.bingoreloaded.lib.api.ItemType;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
-import io.github.steaf23.bingoreloaded.tasks.GameTask;
 import io.github.steaf23.bingoreloaded.lib.util.ComponentUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.persistence.PersistentDataContainer;
-import org.bukkit.persistence.PersistentDataType;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
@@ -51,14 +47,6 @@ public record ItemTask(ItemType itemType, int count) implements TaskData
     }
 
     @Override
-    public @NotNull PersistentDataContainer pdcSerialize(PersistentDataContainer stream)
-    {
-        stream.set(GameTask.getTaskDataKey("item"),  PersistentDataType.STRING, itemType.name());
-        stream.set(GameTask.getTaskDataKey("count"),  PersistentDataType.INTEGER, count);
-        return stream;
-    }
-
-    @Override
     public boolean shouldItemGlow() {
         return false;
     }
@@ -74,26 +62,19 @@ public record ItemTask(ItemType itemType, int count) implements TaskData
         return count;
     }
 
-    public static ItemTask fromPdc(PersistentDataContainer pdc)
-    {
-        ItemType item = ItemType.valueOf(pdc.getOrDefault(GameTask.getTaskDataKey("item"), PersistentDataType.STRING, "BEDROCK"));
-        int count = pdc.getOrDefault(GameTask.getTaskDataKey("count"), PersistentDataType.INTEGER, 1);
-        return new ItemTask(item, count);
-    }
-
     @Override
     public boolean equals(Object o)
     {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ItemTask itemTask = (ItemTask) o;
-        return material == itemTask.material;
+        return itemType.equals(itemTask.itemType);
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash(material);
+        return Objects.hash(itemType);
     }
 
     @Override
@@ -102,6 +83,6 @@ public record ItemTask(ItemType itemType, int count) implements TaskData
         if (!(other instanceof ItemTask itemTask))
             return false;
 
-        return material.equals(itemTask.material);
+        return itemType.equals(itemTask.itemType);
     }
 }

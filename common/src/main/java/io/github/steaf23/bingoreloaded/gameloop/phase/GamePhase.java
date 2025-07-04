@@ -1,11 +1,10 @@
 package io.github.steaf23.bingoreloaded.gameloop.phase;
 
-import io.github.steaf23.bingoreloaded.event.BingoSettingsUpdatedEvent;
-import io.github.steaf23.bingoreloaded.event.ParticipantJoinedTeamEvent;
-import io.github.steaf23.bingoreloaded.event.ParticipantLeftTeamEvent;
-import io.github.steaf23.bingoreloaded.event.PlayerJoinedSessionWorldEvent;
-import io.github.steaf23.bingoreloaded.event.PlayerLeftSessionWorldEvent;
+import io.github.steaf23.bingoreloaded.api.BingoEvents;
 import io.github.steaf23.bingoreloaded.gameloop.SessionMember;
+import io.github.steaf23.bingoreloaded.lib.api.InteractAction;
+import io.github.steaf23.bingoreloaded.lib.api.PlayerHandle;
+import io.github.steaf23.bingoreloaded.lib.api.StackHandle;
 
 public interface GamePhase extends SessionMember
 {
@@ -13,11 +12,11 @@ public interface GamePhase extends SessionMember
      * To be called when this phase needs to (forcefully) end.
      */
     void end();
-    void handlePlayerJoinedSessionWorld(final PlayerJoinedSessionWorldEvent event);
-    void handlePlayerLeftSessionWorld(final PlayerLeftSessionWorldEvent event);
-    void handleSettingsUpdated(final BingoSettingsUpdatedEvent event);
-    void handlePlayerInteract(final PlayerInteractEvent event);
+    void handlePlayerJoinedSessionWorld(final BingoEvents.PlayerEvent event);
+    void handlePlayerLeftSessionWorld(final BingoEvents.PlayerEvent event);
+    void handleSettingsUpdated(final BingoEvents.SettingsUpdated event);
+    boolean handlePlayerInteract(final PlayerHandle player, StackHandle stack, InteractAction action);
 
-    default void handleParticipantJoinedTeam(final ParticipantJoinedTeamEvent event) {};
-    default void handleParticipantLeftTeam(final ParticipantLeftTeamEvent event) {};
+    default void handleParticipantJoinedTeam(final BingoEvents.TeamParticipantEvent event) {};
+    default void handleParticipantLeftTeam(final BingoEvents.TeamParticipantEvent event) {};
 }

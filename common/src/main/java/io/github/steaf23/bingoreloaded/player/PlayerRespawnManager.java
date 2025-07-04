@@ -1,10 +1,8 @@
 package io.github.steaf23.bingoreloaded.player;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
-import io.github.steaf23.bingoreloaded.lib.api.MinecraftExtension;
+import io.github.steaf23.bingoreloaded.lib.api.Extension;
 import io.github.steaf23.bingoreloaded.lib.api.WorldPosition;
-import org.bukkit.Bukkit;
-import org.bukkit.scheduler.BukkitTask;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -15,20 +13,19 @@ import java.util.UUID;
 public class PlayerRespawnManager
 {
     private final Map<UUID, DeadPlayer> deadPlayers;
-    private final BukkitTask task;
 
-    public PlayerRespawnManager(MinecraftExtension extension, int respawnPeriodSeconds) {
+	public PlayerRespawnManager(Extension extension, int respawnPeriodSeconds) {
         this.deadPlayers = new HashMap<>();
         //TODO: Maybe only have the task running if there are dead players?
-        this.task = Bukkit.getScheduler().runTaskTimer(extension, () -> {
-            for (var p : new HashSet<>(deadPlayers.keySet())) {
-                DeadPlayer player = deadPlayers.get(p);
-                if (System.currentTimeMillis() > player.deathTime + respawnPeriodSeconds * 1000L) {
-                    deadPlayers.remove(p);
-                }
-            }
-        }, 0, BingoReloaded.ONE_SECOND);
-    }
+		extension.runTaskTimer(0, BingoReloaded.ONE_SECOND, () -> {
+			for (var p : new HashSet<>(deadPlayers.keySet())) {
+				DeadPlayer player = deadPlayers.get(p);
+				if (System.currentTimeMillis() > player.deathTime + respawnPeriodSeconds * 1000L) {
+					deadPlayers.remove(p);
+				}
+			}
+		});
+	}
 
     private record DeadPlayer(WorldPosition deathLocation, Long deathTime)
     {

@@ -1,10 +1,11 @@
 package io.github.steaf23.bingoreloaded.gameloop.phase;
 
+import io.github.steaf23.bingoreloaded.api.BingoEvents;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
-import io.github.steaf23.bingoreloaded.event.BingoSettingsUpdatedEvent;
-import io.github.steaf23.bingoreloaded.event.PlayerJoinedSessionWorldEvent;
-import io.github.steaf23.bingoreloaded.event.PlayerLeftSessionWorldEvent;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
+import io.github.steaf23.bingoreloaded.lib.api.InteractAction;
+import io.github.steaf23.bingoreloaded.lib.api.PlayerHandle;
+import io.github.steaf23.bingoreloaded.lib.api.StackHandle;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
@@ -49,37 +50,38 @@ public class PostGamePhase implements GamePhase
     }
 
     @Override
-    public void handlePlayerJoinedSessionWorld(PlayerJoinedSessionWorldEvent event) {
-        sendRestartMessage(this.timer.getTime(), event.getPlayer());
+    public void handlePlayerJoinedSessionWorld(BingoEvents.PlayerEvent event) {
+        sendRestartMessage(this.timer.getTime(), event.player());
     }
 
     @Override
-    public void handlePlayerLeftSessionWorld(PlayerLeftSessionWorldEvent event) {
-
-    }
-
-    @Override
-    public void handleSettingsUpdated(BingoSettingsUpdatedEvent event) {
+    public void handlePlayerLeftSessionWorld(BingoEvents.PlayerEvent event) {
 
     }
 
     @Override
-    public void handlePlayerInteract(PlayerInteractEvent event) {
-        BingoParticipant participant = session.teamManager.getPlayerAsParticipant(event.getPlayer());
+    public void handleSettingsUpdated(BingoEvents.SettingsUpdated event) {
+
+    }
+
+    @Override
+    public boolean handlePlayerInteract(final PlayerHandle player, StackHandle stack, InteractAction action) {
+        BingoParticipant participant = session.teamManager.getPlayerAsParticipant(player);
         if (participant == null || participant.sessionPlayer().isEmpty())
-            return;
+            return false;
 
-        if (event.getItem() == null || event.getItem().getType().isAir())
-            return;
+        if (stack == null || stack.type().isAir())
+            return false;
 
-        if (event.getAction() != Action.RIGHT_CLICK_AIR && event.getAction() != Action.RIGHT_CLICK_BLOCK)
-            return;
+        if (!action.rightClick())
+            return false;
 
-        if (PlayerKit.CARD_ITEM.isCompareKeyEqual(event.getItem())) {
+        if (PlayerKit.CARD_ITEM.isCompareKeyEqual(stack)) {
             // Show bingo card to player
-            event.setCancelled(true);
             participant.showCard(null);
+            return true;
         }
+        return false;
     }
 
     private void onTimerTicks(long timeLeft) {

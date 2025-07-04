@@ -1,7 +1,7 @@
 package io.github.steaf23.bingoreloaded.gui.inventory.creator;
 
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
-import io.github.steaf23.bingoreloaded.tasks.BingoStatistic;
+import io.github.steaf23.bingoreloaded.tasks.StatisticHandlePaper;
 import io.github.steaf23.bingoreloaded.tasks.GameTask;
 import io.github.steaf23.bingoreloaded.tasks.data.StatisticTask;
 import io.github.steaf23.bingoreloaded.lib.inventory.BasicMenu;
@@ -57,11 +57,11 @@ public class StatisticSelectionMenu extends BasicMenu
     private TaskPickerMenu createEntityMenu(Statistic stat)
     {
         List<EntityType> entities = Arrays.stream(EntityType.values())
-                .filter(BingoStatistic::isEntityValidForStatistic)
+                .filter(StatisticHandlePaper::isEntityValidForStatistic)
                 .toList();
 
         List<GameTask> tasks = new ArrayList<>();
-        entities.forEach(e -> tasks.add(new GameTask(new StatisticTask(new BingoStatistic(stat, e)), GameTask.TaskDisplayMode.UNIQUE_TASK_ITEMS)));
+        entities.forEach(e -> tasks.add(new GameTask(new StatisticTask(new StatisticHandlePaper(stat, e)), GameTask.TaskDisplayMode.UNIQUE_TASK_ITEMS)));
 
         return new TaskPickerMenu(getMenuBoard(), "Select Entities", tasks, listName);
     }
@@ -80,7 +80,7 @@ public class StatisticSelectionMenu extends BasicMenu
         {
             if (!m.name().contains("LEGACY_") && !glassPanes.contains(m) && m.isBlock() && m.isItem() && !m.isAir())
             {
-                tasks.add(new GameTask(new StatisticTask(new BingoStatistic(stat, m)), GameTask.TaskDisplayMode.UNIQUE_TASK_ITEMS));
+                tasks.add(new GameTask(new StatisticTask(new StatisticHandlePaper(stat, m)), GameTask.TaskDisplayMode.UNIQUE_TASK_ITEMS));
             }
         }
         return new TaskPickerMenu(getMenuBoard(), "Select Blocks", tasks, listName);
@@ -99,7 +99,7 @@ public class StatisticSelectionMenu extends BasicMenu
         {
             if (!m.name().contains("LEGACY_") && !glassPanes.contains(m) && m.isItem() && !m.isAir())
             {
-                tasks.add(new GameTask(new StatisticTask(new BingoStatistic(stat, m)), GameTask.TaskDisplayMode.UNIQUE_TASK_ITEMS));
+                tasks.add(new GameTask(new StatisticTask(new StatisticHandlePaper(stat, m)), GameTask.TaskDisplayMode.UNIQUE_TASK_ITEMS));
             }
         }
         return new TaskPickerMenu(getMenuBoard(), "Select Items", tasks, listName);
@@ -108,9 +108,9 @@ public class StatisticSelectionMenu extends BasicMenu
     public TaskPickerMenu createTravelMenu()
     {
         List<GameTask> tasks = new ArrayList<>();
-        for (Statistic stat : BingoStatistic.getStatisticsOfCategory(BingoStatistic.StatisticCategory.TRAVEL))
+        for (Statistic stat : StatisticHandlePaper.getStatisticsOfCategory(StatisticHandlePaper.StatisticCategory.TRAVEL))
         {
-            tasks.add(new GameTask(new StatisticTask(new BingoStatistic(stat)), GameTask.TaskDisplayMode.UNIQUE_TASK_ITEMS));
+            tasks.add(new GameTask(new StatisticTask(new StatisticHandlePaper(stat)), GameTask.TaskDisplayMode.UNIQUE_TASK_ITEMS));
         }
         return new TaskPickerMenu(getMenuBoard(), "Travel Statistics", tasks, listName);
     }
@@ -118,8 +118,8 @@ public class StatisticSelectionMenu extends BasicMenu
     private TaskPickerMenu createContainerMenu()
     {
         List<GameTask> tasks = new ArrayList<>();
-        BingoStatistic.getStatisticsOfCategory(BingoStatistic.StatisticCategory.CONTAINER_INTERACT)
-                .forEach(stat -> tasks.add(new GameTask(new StatisticTask(new BingoStatistic(stat)), GameTask.TaskDisplayMode.UNIQUE_TASK_ITEMS))
+        StatisticHandlePaper.getStatisticsOfCategory(StatisticHandlePaper.StatisticCategory.CONTAINER_INTERACT)
+                .forEach(stat -> tasks.add(new GameTask(new StatisticTask(new StatisticHandlePaper(stat)), GameTask.TaskDisplayMode.UNIQUE_TASK_ITEMS))
                 );
         return new TaskPickerMenu(getMenuBoard(), "Container Statistics", tasks, listName);
     }
@@ -127,8 +127,8 @@ public class StatisticSelectionMenu extends BasicMenu
     private TaskPickerMenu createBlockInteractMenu()
     {
         List<GameTask> tasks = new ArrayList<>();
-        BingoStatistic.getStatisticsOfCategory(BingoStatistic.StatisticCategory.BLOCK_INTERACT)
-                .forEach(stat -> tasks.add(new GameTask(new StatisticTask(new BingoStatistic(stat)), GameTask.TaskDisplayMode.UNIQUE_TASK_ITEMS))
+        StatisticHandlePaper.getStatisticsOfCategory(StatisticHandlePaper.StatisticCategory.BLOCK_INTERACT)
+                .forEach(stat -> tasks.add(new GameTask(new StatisticTask(new StatisticHandlePaper(stat)), GameTask.TaskDisplayMode.UNIQUE_TASK_ITEMS))
                 );
         return new TaskPickerMenu(getMenuBoard(),  "Select Blocks", tasks, listName);
     }
@@ -136,8 +136,8 @@ public class StatisticSelectionMenu extends BasicMenu
     private TaskPickerMenu createDamageMenu()
     {
         List<GameTask> tasks = new ArrayList<>();
-        BingoStatistic.getStatisticsOfCategory(BingoStatistic.StatisticCategory.DAMAGE)
-                .forEach(stat -> tasks.add(new GameTask(new StatisticTask(new BingoStatistic(stat)), GameTask.TaskDisplayMode.UNIQUE_TASK_ITEMS))
+        StatisticHandlePaper.getStatisticsOfCategory(StatisticHandlePaper.StatisticCategory.DAMAGE)
+                .forEach(stat -> tasks.add(new GameTask(new StatisticTask(new StatisticHandlePaper(stat)), GameTask.TaskDisplayMode.UNIQUE_TASK_ITEMS))
                 );
         return new TaskPickerMenu(getMenuBoard(), "Damage Statistics", tasks, listName);
     }
@@ -145,7 +145,7 @@ public class StatisticSelectionMenu extends BasicMenu
     private TaskPickerMenu createMiscMenu()
     {
         List<GameTask> tasks = new ArrayList<>();
-        BingoStatistic.getStatisticsOfCategory(BingoStatistic.StatisticCategory.OTHER)
+        StatisticHandlePaper.getStatisticsOfCategory(StatisticHandlePaper.StatisticCategory.OTHER)
                 .forEach(stat ->
                 {
                     // Disable certain statistics that wouldn't make sense have in a bingo minigame
@@ -155,7 +155,7 @@ public class StatisticSelectionMenu extends BasicMenu
                                 TIME_SINCE_REST,
                                 TOTAL_WORLD_TIME,
                                 LEAVE_GAME -> {}
-                        default -> tasks.add(new GameTask(new StatisticTask(new BingoStatistic(stat)), GameTask.TaskDisplayMode.UNIQUE_TASK_ITEMS));
+                        default -> tasks.add(new GameTask(new StatisticTask(new StatisticHandlePaper(stat)), GameTask.TaskDisplayMode.UNIQUE_TASK_ITEMS));
                     }
                 });
         return new TaskPickerMenu(getMenuBoard(), "Other Statistics", tasks, listName);

@@ -1,21 +1,15 @@
 package io.github.steaf23.bingoreloaded.tasks.data;
 
+import io.github.steaf23.bingoreloaded.lib.api.AdvancementHandle;
 import io.github.steaf23.bingoreloaded.lib.api.ItemType;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
-import io.github.steaf23.bingoreloaded.tasks.GameTask;
 import io.github.steaf23.bingoreloaded.lib.util.ComponentUtils;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
-import org.bukkit.Bukkit;
-import org.bukkit.NamespacedKey;
-import org.bukkit.advancement.Advancement;
-import org.bukkit.persistence.PersistentDataContainer;
-import org.bukkit.persistence.PersistentDataType;
-import org.jetbrains.annotations.NotNull;
 
-public record AdvancementTask(Advancement advancement) implements TaskData
+public record AdvancementTask(AdvancementHandle advancement) implements TaskData
 {
     @Override
     public TaskType getType() {
@@ -65,13 +59,13 @@ public record AdvancementTask(Advancement advancement) implements TaskData
         if (advancement == null) {
             return that.advancement == null;
         }
-        return advancement.getKey().equals(that.advancement.getKey());
+        return advancement.key().equals(that.advancement.key());
     }
 
     @Override
     public int hashCode()
     {
-        return advancement.getKey().hashCode();
+        return advancement.key().hashCode();
     }
 
     @Override
@@ -81,24 +75,17 @@ public record AdvancementTask(Advancement advancement) implements TaskData
     }
 
     @Override
-    public @NotNull PersistentDataContainer pdcSerialize(PersistentDataContainer stream)
-    {
-        stream.set(GameTask.getTaskDataKey("advancement"), PersistentDataType.STRING, advancement.getKey().toString());
-        return stream;
-    }
-
-    @Override
     public boolean shouldItemGlow() {
         return true;
     }
 
     @Override
     public ItemType getDisplayMaterial(boolean genericItem) {
-        if (genericItem || advancement().getDisplay() == null) {
-            return ItemType.FILLED_MAP;
+        if (genericItem || advancement().displayIcon() == null) {
+            return ItemType.of("filled_map");
         }
         else {
-            return advancement().getDisplay().icon().getType();
+            return advancement().displayIcon();
         }
     }
 
@@ -107,12 +94,5 @@ public record AdvancementTask(Advancement advancement) implements TaskData
         return 1;
 //        // We need a little NMS voo-doo magic
 //        return ((CraftAdvancement)advancement).getHandle().value().requirements().requirements().size();
-    }
-
-    public static AdvancementTask fromPdc(PersistentDataContainer pdc)
-    {
-        Advancement a = Bukkit.getAdvancement(NamespacedKey.fromString(
-                        pdc.getOrDefault(GameTask.getTaskDataKey("advancement"), PersistentDataType.STRING, "minecraft:story/mine_stone")));
-        return new AdvancementTask(a);
     }
 }

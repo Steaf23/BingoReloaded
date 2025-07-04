@@ -1,17 +1,16 @@
 package io.github.steaf23.bingoreloaded.tasks;
 
+import io.github.steaf23.bingoreloaded.gui.inventory.item.TaskItemAction;
 import io.github.steaf23.bingoreloaded.lib.api.ItemType;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
-import io.github.steaf23.bingoreloaded.gui.inventory.item.TaskItemAction;
+import io.github.steaf23.bingoreloaded.lib.api.StackHandle;
+import io.github.steaf23.bingoreloaded.lib.data.core.tag.TagDataStorage;
+import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
-import io.github.steaf23.bingoreloaded.tasks.data.AdvancementTask;
 import io.github.steaf23.bingoreloaded.tasks.data.ItemTask;
-import io.github.steaf23.bingoreloaded.tasks.data.StatisticTask;
 import io.github.steaf23.bingoreloaded.tasks.data.TaskData;
 import io.github.steaf23.bingoreloaded.util.timer.GameTimer;
-import io.github.steaf23.bingoreloaded.lib.inventory.item.ItemTemplate;
-import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import io.github.steaf23.bingoreloaded.lib.util.PDCHelper;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
@@ -22,7 +21,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
-import java.util.UUID;
 
 public class GameTask
 {
@@ -41,6 +39,7 @@ public class GameTask
 
     public final TaskDisplayMode displayMode;
 
+    // FIXME: REFACTOR display mode
     public GameTask(TaskData data, TaskDisplayMode displayMode)
     {
         this.data = data;
@@ -111,23 +110,9 @@ public class GameTask
 
         // STEP 2: Add additional stuff like pdc data and glowing effect.
 
-        item.addMetaModifier(meta -> {
-            PersistentDataContainer pdcData = meta.getPersistentDataContainer();
-            // Serialize specific data first, to catch null pointers from incomplete implementations.
-            pdcData = data.pdcSerialize(pdcData);
-            // Then serialize generic task info/ live data
-            pdcData.set(getTaskDataKey("type"), PersistentDataType.STRING, taskType().name());
-            pdcData.set(getTaskDataKey("voided"), PersistentDataType.BYTE, (byte)(voided ? 1 : 0));
-            pdcData.set(getTaskDataKey("completed_at"), PersistentDataType.LONG, completedAt);
-            if (isCompleted()) {
-                pdcData.set(getTaskDataKey("completed_by"), PersistentDataType.STRING, completedBy.getId().toString());
-                pdcData.set(getTaskDataKey("completed_by_team"), PersistentDataType.STRING, completedByTeam.getIdentifier());
-            } else {
-                pdcData.set(getTaskDataKey("completed_by"), PersistentDataType.STRING, "");
-                pdcData.set(getTaskDataKey("completed_by_team"), PersistentDataType.STRING, "");
-            }
-            return meta;
-        });
+        TagDataStorage storage = new TagDataStorage();
+        new GameTaskSerializer().toDataStorage(storage, this);
+        item.addExtraData("game_task", storage);
 
         if ((data.shouldItemGlow() || isCompleted()) && !isVoided())
         {
@@ -139,38 +124,9 @@ public class GameTask
         return item;
     }
 
-    public static @Nullable GameTask fromItem(ItemStack in)
+    public static @Nullable GameTask fromItem(StackHandle in)
     {
-        PersistentDataContainer pdcData = in.getItemMeta().getPersistentDataContainer();
-
-        boolean voided = pdcData.getOrDefault(getTaskDataKey("voided"), PersistentDataType.BYTE, (byte)0) != 0;
-        UUID completedByUUID = null;
-        String idStr = pdcData.getOrDefault(getTaskDataKey("completed_by"), PersistentDataType.STRING, "");
-        long timeStr = pdcData.getOrDefault(getTaskDataKey("completed_at"), PersistentDataType.LONG, -1L);
-        if (!idStr.isEmpty())
-            completedByUUID = UUID.fromString(idStr);
-
-        String typeStr = pdcData.getOrDefault(getTaskDataKey("type"), PersistentDataType.STRING, "");
-        TaskData.TaskType type;
-        if (typeStr.isEmpty())
-        {
-            ConsoleMessenger.log("Cannot create a valid task from this item stack!");
-            return null;
-        }
-
-        type = TaskData.TaskType.valueOf(typeStr);
-        GameTask task = switch (type)
-        {
-            case ADVANCEMENT -> new GameTask(AdvancementTask.fromPdc(pdcData), TaskDisplayMode.UNIQUE_TASK_ITEMS);
-            case STATISTIC -> new GameTask(StatisticTask.fromPdc(pdcData), TaskDisplayMode.UNIQUE_TASK_ITEMS);
-            default -> new GameTask(ItemTask.fromPdc(pdcData), TaskDisplayMode.UNIQUE_TASK_ITEMS);
-        };
-
-        task.voided = voided;
-        task.completedAt = timeStr;
-        //TODO: implement completedBy deserialization (need access to teamManager to get participant object).
-
-        return task;
+        //FIXME: REFACTOR something with GameTaskSerializer
     }
 
     public static Key getTaskDataKey(String property)

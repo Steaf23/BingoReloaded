@@ -218,12 +218,11 @@ public class VirtualDataAccessor implements DataAccessor
     }
 
     @Override
-    public @Nullable Location getLocation(String path) {
+    public @Nullable Location getWorldPosition(String path) {
         return null;
     }
 
-    @Override
-    public @NotNull Location getLocation(String path, @NotNull Location def) {
+    public @NotNull Location getWorldPosition(String path, @NotNull Location def) {
         return def;
     }
 

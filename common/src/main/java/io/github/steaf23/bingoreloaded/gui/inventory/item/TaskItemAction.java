@@ -1,7 +1,7 @@
 package io.github.steaf23.bingoreloaded.gui.inventory.item;
 
+import io.github.steaf23.bingoreloaded.lib.item.action.MenuAction;
 import io.github.steaf23.bingoreloaded.tasks.GameTask;
-import io.github.steaf23.bingoreloaded.lib.inventory.item.action.MenuAction;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.jetbrains.annotations.NotNull;

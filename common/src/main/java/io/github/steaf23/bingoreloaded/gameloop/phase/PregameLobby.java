@@ -1,22 +1,22 @@
 package io.github.steaf23.bingoreloaded.gameloop.phase;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
+import io.github.steaf23.bingoreloaded.api.BingoEvents;
+import io.github.steaf23.bingoreloaded.lib.api.ExtensionApi;
+import io.github.steaf23.bingoreloaded.lib.api.InteractAction;
+import io.github.steaf23.bingoreloaded.lib.api.MenuBoard;
 import io.github.steaf23.bingoreloaded.lib.api.PlayerHandle;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.data.config.BingoOptions;
-import io.github.steaf23.bingoreloaded.event.BingoSettingsUpdatedEvent;
-import io.github.steaf23.bingoreloaded.event.ParticipantJoinedTeamEvent;
-import io.github.steaf23.bingoreloaded.event.ParticipantLeftTeamEvent;
-import io.github.steaf23.bingoreloaded.event.PlayerJoinedSessionWorldEvent;
-import io.github.steaf23.bingoreloaded.event.PlayerLeftSessionWorldEvent;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gameloop.vote.VoteCategory;
 import io.github.steaf23.bingoreloaded.gameloop.vote.VoteTicket;
 import io.github.steaf23.bingoreloaded.gui.hud.BingoSettingsHUDGroup;
 import io.github.steaf23.bingoreloaded.gui.hud.DisabledBingoSettingsHUDGroup;
-import io.github.steaf23.bingoreloaded.gui.inventory.TeamSelectionMenu;
-import io.github.steaf23.bingoreloaded.gui.inventory.VoteMenu;
+import io.github.steaf23.bingoreloaded.lib.api.StackHandle;
+import io.github.steaf23.bingoreloaded.lib.scoreboard.HUDRegistry;
+import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import io.github.steaf23.bingoreloaded.util.timer.CountdownTimer;
 import net.kyori.adventure.text.Component;
@@ -118,16 +118,16 @@ public class PregameLobby implements GamePhase
     }
 
     private void giveVoteItem(PlayerHandle player) {
-        player.getInventory().addItem(PlayerKit.VOTE_ITEM.buildItem());
+        player.inventory().addItem(PlayerKit.VOTE_ITEM.buildItem());
     }
 
     private void giveTeamItem(PlayerHandle player) {
-        player.getInventory().addItem(PlayerKit.TEAM_ITEM.buildItem());
+        player.inventory().addItem(PlayerKit.TEAM_ITEM.buildItem());
     }
 
     private void initializePlayer(PlayerHandle player) {
         settingsHUD.addPlayer(player);
-        player.getInventory().clear();
+        player.clearInventory();
 
         if (config.getOptionValue(BingoOptions.USE_VOTE_SYSTEM) &&
                 !config.getOptionValue(BingoOptions.VOTE_USING_COMMANDS_ONLY) &&
@@ -209,9 +209,9 @@ public class PregameLobby implements GamePhase
                 return;
             }
 
-            for (PlayerHandle p : Bukkit.getOnlinePlayers()) {
+            for (PlayerHandle p : ExtensionApi.getOnlinePlayers()) {
                 if (session.hasPlayer(p)) {
-                    initializePlayer(p.getPlayer());
+                    initializePlayer(p);
                 }
             }
 
@@ -229,50 +229,54 @@ public class PregameLobby implements GamePhase
     }
 
     @Override
-    public void handlePlayerJoinedSessionWorld(final PlayerJoinedSessionWorldEvent event) {
-        initializePlayer(event.getPlayer());
+    public void handlePlayerJoinedSessionWorld(BingoEvents.PlayerEvent event) {
+        initializePlayer(event.player());
     }
 
     @Override
-    public void handlePlayerLeftSessionWorld(final PlayerLeftSessionWorldEvent event) {
-        settingsHUD.removePlayer(event.getPlayer());
-        session.teamManager.removeMemberFromTeam(session.teamManager.getPlayerAsParticipant(event.getPlayer()));
+    public void handlePlayerLeftSessionWorld(BingoEvents.PlayerEvent event) {
+        settingsHUD.removePlayer(event.player());
+        session.teamManager.removeMemberFromTeam(session.teamManager.getPlayerAsParticipant(event.player()));
     }
 
     @Override
-    public void handleSettingsUpdated(final BingoSettingsUpdatedEvent event) {
-        settingsHUD.updateSettings(event.getNewSettings(), config);
+    public void handleSettingsUpdated(BingoEvents.SettingsUpdated event) {
+        settingsHUD.updateSettings(event.newSettings(), config);
     }
 
     @Override
-    public void handlePlayerInteract(PlayerInteractEvent event) {
-        if (event.getItem() == null || event.getItem().getType() == Material.AIR)
-            return;
+    public boolean handlePlayerInteract(PlayerHandle player, StackHandle stack, InteractAction action) {
+        StackHandle item = stack;
+        if (item == null || item.type().isAir())
+            return false;
 
-        if (event.getAction() != Action.RIGHT_CLICK_AIR && event.getAction() != Action.RIGHT_CLICK_BLOCK) {
-            return;
+        if (!action.rightClick()) {
+            return false;
         }
 
-        if (PlayerKit.VOTE_ITEM.isCompareKeyEqual(event.getItem())) {
-            event.setCancelled(true);
-            VoteMenu menu = new VoteMenu(menuBoard, config.getOptionValue(BingoOptions.VOTE_LIST), this);
-            menu.open(event.getPlayer());
-        } else if (PlayerKit.TEAM_ITEM.isCompareKeyEqual(event.getItem())) {
-            event.setCancelled(true);
-            TeamSelectionMenu teamSelection = new TeamSelectionMenu(menuBoard, session);
-            teamSelection.open(event.getPlayer());
-        }
+        //FIXME: REFACTOR menu call
+//        if (PlayerKit.VOTE_ITEM.isCompareKeyEqual(item)) {
+//            VoteMenu menu = new VoteMenu(menuBoard, config.getOptionValue(BingoOptions.VOTE_LIST), this);
+//            menu.open(player);
+//            return true;
+//        } else if (PlayerKit.TEAM_ITEM.isCompareKeyEqual(item)) {
+//            TeamSelectionMenu teamSelection = new TeamSelectionMenu(menuBoard, session);
+//            teamSelection.open(player);
+//            return true;
+//        }
+
+        return false;
     }
 
     @Override
-    public void handleParticipantJoinedTeam(final ParticipantJoinedTeamEvent event) {
-        if (event.getParticipant() != null) {
-            event.getParticipant().sessionPlayer().ifPresent(settingsHUD::addPlayer);
+    public void handleParticipantJoinedTeam(final BingoEvents.TeamParticipantEvent event) {
+        if (event.participant() != null) {
+            event.participant().sessionPlayer().ifPresent(settingsHUD::addPlayer);
         }
         settingsHUD.setStatus(BingoMessage.PLAYER_STATUS.asPhrase(Component.text(session.teamManager.getParticipantCount())));
 
         if (playerCountTimer.isRunning() && playerCountTimer.getTime() > 10) {
-            event.getParticipant().sessionPlayer().ifPresent(p -> {
+            event.participant().sessionPlayer().ifPresent(p -> {
                 BingoMessage.STARTING_STATUS.sendToAudience(p,
                         Component.text(playerCountTimer.getTime()).color(NamedTextColor.GOLD));
             });
@@ -282,7 +286,7 @@ public class PregameLobby implements GamePhase
     }
 
     @Override
-    public void handleParticipantLeftTeam(final ParticipantLeftTeamEvent event) {
+    public void handleParticipantLeftTeam(final BingoEvents.TeamParticipantEvent event) {
         int playerCount = session.teamManager.getParticipantCount();
 
         if (playerCount == 0) {
@@ -300,8 +304,8 @@ public class PregameLobby implements GamePhase
         });
     }
 
-    public void handlePlayerRespawn(final PlayerRespawnEvent event) {
-        initializePlayer(event.getPlayer());
+    public void handlePlayerRespawn(final PlayerHandle player) {
+        initializePlayer(player);
     }
 
     public Collection<VoteTicket> getAllVotes() {

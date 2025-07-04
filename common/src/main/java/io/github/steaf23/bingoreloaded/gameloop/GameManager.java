@@ -1,20 +1,17 @@
 package io.github.steaf23.bingoreloaded.gameloop;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
+import io.github.steaf23.bingoreloaded.api.BingoEvents;
 import io.github.steaf23.bingoreloaded.data.PlayerSerializationData;
 import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.data.config.BingoOptions;
 import io.github.steaf23.bingoreloaded.data.world.WorldData;
 import io.github.steaf23.bingoreloaded.data.world.WorldGroup;
-import io.github.steaf23.bingoreloaded.event.PrepareNextBingoGameEvent;
-import io.github.steaf23.bingoreloaded.event.core.BingoEventListener;
 import io.github.steaf23.bingoreloaded.lib.api.Extension;
+import io.github.steaf23.bingoreloaded.lib.api.MenuBoard;
 import io.github.steaf23.bingoreloaded.lib.api.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.api.WorldHandle;
-import io.github.steaf23.bingoreloaded.lib.event.events.PlayerJoinEvent;
-import io.github.steaf23.bingoreloaded.lib.event.events.PlayerQuitEvent;
-import io.github.steaf23.bingoreloaded.lib.event.events.PlayerTeleportEvent;
-import io.github.steaf23.bingoreloaded.lib.inventory.MenuBoard;
+import io.github.steaf23.bingoreloaded.lib.api.WorldPosition;
 import io.github.steaf23.bingoreloaded.lib.scoreboard.HUDRegistry;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
@@ -39,7 +36,7 @@ public class GameManager
     private final HUDRegistry hudRegistry;
 
     private final PlayerSerializationData playerData;
-    private final BingoEventListener eventListener;
+//    private final BingoEventListener eventListener;
     private final WorldData worldData;
 
     private boolean teleportingPlayer;
@@ -56,12 +53,14 @@ public class GameManager
 
         this.sessions = new HashMap<>();
         this.playerData = new PlayerSerializationData();
-        this.eventListener = new BingoEventListener(this,
-                config.getOptionValue(BingoOptions.DISABLE_ADVANCEMENTS),
-                config.getOptionValue(BingoOptions.DISABLE_STATISTICS));
 
         this.teleportingPlayer = false;
-        extension.registerListener(eventListener);
+
+        //FIXME: REFACTOR Move out of Game manager
+//        this.eventListener = new BingoEventListener(this,
+//                config.getOptionValue(BingoOptions.DISABLE_ADVANCEMENTS),
+//                config.getOptionValue(BingoOptions.DISABLE_STATISTICS));
+//        extension.registerListener(eventListener);
 
         if (config.getOptionValue(BingoOptions.CLEAR_DEFAULT_WORLDS))
         {
@@ -157,7 +156,7 @@ public class GameManager
     }
 
     public void onPluginDisable() {
-        extension.unregisterListener(eventListener);
+//        extension.unregisterListener(eventListener);
 
         for (String session : sessions.keySet()) {
             sessions.get(session).destroy();
@@ -203,27 +202,27 @@ public class GameManager
         return sessions.keySet();
     }
 
-    public void handlePlayerTeleport(final PlayerTeleportEvent event) {
-        WorldHandle sourceWorld = event.fromPosition().world();
-        WorldHandle targetWorld = event.toPosition().world();
+    public boolean handlePlayerTeleport(final PlayerHandle player, final WorldPosition fromPos, final WorldPosition toPos) {
+        WorldHandle sourceWorld = fromPos.world();
+        WorldHandle targetWorld = toPos.world();
 
         // If the world didn't change, the event is not interesting for us
         if (sourceWorld == targetWorld) {
-            return;
+            return false;
         }
 
         if (teleportingPlayer) {
             teleportingPlayer = false;
-            return;
+            return false;
         }
 
         if (sourceWorld == null) {
             ConsoleMessenger.bug("Source world is invalid", this);
-            return;
+            return false;
         }
         if (targetWorld == null) {
             ConsoleMessenger.bug("Target world is invalid", this);
-            return;
+            return false;
         }
 
         BingoSession sourceSession = getSessionFromWorld(sourceWorld);
@@ -231,13 +230,12 @@ public class GameManager
 
         // We could have gone through a portal, so still both worlds could be in the same session, so we can return.
         if (sourceSession == targetSession) {
-            return;
+            return false;
         }
 
         boolean savePlayerInformation = config.getOptionValue(BingoOptions.SAVE_PLAYER_INFORMATION);
 
-        PlayerHandle player = event.player();
-
+        boolean cancel = false;
         if (sourceSession != null) {
             if (targetSession == null) {
                 player.clearInventory(); // If we are leaving a bingo world, we can always clear the player's inventory
@@ -254,10 +252,10 @@ public class GameManager
                         }
                     });
 
-                    event.setCancelled(true);
+                    cancel = true;
                 }
             }
-            sourceSession.removePlayer(event.player());
+            sourceSession.removePlayer(player);
         }
 
         if (targetSession != null) {
@@ -287,30 +285,32 @@ public class GameManager
             player.setRespawnPoint(targetSession.getOverworld().spawnPoint(), true);
             targetSession.addPlayer(player);
         }
+
+        return cancel;
     }
 
-    public void handlePlayerJoinsServer(final PlayerJoinEvent event) {
-        BingoSession targetSession = getSessionFromWorld(event.player().world());
+    public void handlePlayerJoinsServer(final PlayerHandle player) {
+        BingoSession targetSession = getSessionFromWorld(player.world());
 
         if (targetSession != null) {
-            targetSession.addPlayer(event.player());
+            targetSession.addPlayer(player);
         }
     }
 
-    public void handlePlayerQuitsServer(final PlayerQuitEvent event) {
-        BingoSession sourceSession = getSessionFromWorld(event.player().world());
+    public void handlePlayerQuitsServer(final PlayerHandle player) {
+        BingoSession sourceSession = getSessionFromWorld(player.world());
 
         if (sourceSession != null) {
-            sourceSession.removePlayer(event.player());
+            sourceSession.removePlayer(player);
         }
     }
 
-    public void handlePrepareNextBingoGame(final PrepareNextBingoGameEvent event) {
+    public void handlePrepareNextBingoGame(final BingoEvents.SessionEvent event) {
         if (config.getOptionValue(BingoOptions.SAVE_PLAYER_INFORMATION) &&
                 config.getOptionValue(BingoOptions.LOAD_PLAYER_INFORMATION_STRATEGY) == BingoOptions.LoadPlayerInformationStrategy.AFTER_GAME) {
-            for (BingoParticipant participant : event.getSession().teamManager.getParticipants()) {
+            for (BingoParticipant participant : event.session().teamManager.getParticipants()) {
                 participant.sessionPlayer().ifPresent(player -> {
-                    event.getSession().teamManager.removeMemberFromTeam(participant);
+                    event.session().teamManager.removeMemberFromTeam(participant);
                     playerData.loadPlayer(player);
                 });
             }
@@ -319,5 +319,9 @@ public class GameManager
 
     public PlayerSerializationData getPlayerData() {
         return playerData;
+    }
+
+    protected Extension getExtension() {
+        return extension;
     }
 }

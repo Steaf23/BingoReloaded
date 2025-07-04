@@ -4,7 +4,7 @@ import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.CustomKitData;
 import io.github.steaf23.bingoreloaded.gui.inventory.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.gui.inventory.item.SerializableItem;
-import io.github.steaf23.bingoreloaded.lib.inventory.item.ItemTemplate;
+import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;

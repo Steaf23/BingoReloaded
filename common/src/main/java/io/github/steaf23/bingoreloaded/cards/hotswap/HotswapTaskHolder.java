@@ -1,7 +1,7 @@
 package io.github.steaf23.bingoreloaded.cards.hotswap;
 
+import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import io.github.steaf23.bingoreloaded.tasks.GameTask;
-import io.github.steaf23.bingoreloaded.lib.inventory.item.ItemTemplate;
 
 public interface HotswapTaskHolder
 {

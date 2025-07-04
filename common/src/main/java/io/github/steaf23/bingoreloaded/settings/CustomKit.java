@@ -2,6 +2,7 @@ package io.github.steaf23.bingoreloaded.settings;
 
 import io.github.steaf23.bingoreloaded.lib.api.PlayerHandle;
 import io.github.steaf23.bingoreloaded.gui.inventory.item.SerializableItem;
+import io.github.steaf23.bingoreloaded.lib.api.StackHandle;
 import net.kyori.adventure.text.Component;
 
 import java.util.ArrayList;
@@ -14,7 +15,7 @@ public record CustomKit(Component name, PlayerKit slot, List<SerializableItem> i
         List<SerializableItem> items = new ArrayList<>();
         int slot = 0;
         int cardSlot = 40;
-        for (ItemStack itemStack : player.getInventory())
+        for (StackHandle itemStack : player.inventory())
         {
             if (itemStack != null) {
                 // if this item is the card, save the slot instead and disregard the item itself.

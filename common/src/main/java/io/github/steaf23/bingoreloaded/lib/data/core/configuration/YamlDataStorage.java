@@ -209,12 +209,11 @@ public class YamlDataStorage implements DataStorage
     }
 
     @Override
-    public @Nullable Location getLocation(String path) {
+    public @Nullable Location getWorldPosition(String path) {
         return config.getLocation(path);
     }
 
-    @Override
-    public @NotNull Location getLocation(String path, @NotNull Location def) {
+    public @NotNull Location getWorldPosition(String path, @NotNull Location def) {
         return config.getLocation(path, def);
     }
 

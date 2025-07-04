@@ -2,7 +2,6 @@ package io.github.steaf23.bingoreloaded.settings;
 
 import io.github.steaf23.bingoreloaded.cards.CardSize;
 import io.github.steaf23.bingoreloaded.data.BingoSettingsData;
-import io.github.steaf23.bingoreloaded.event.BingoSettingsUpdatedEvent;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gameloop.vote.VoteTicket;
 import io.github.steaf23.bingoreloaded.gui.inventory.EffectOptionFlags;
@@ -244,7 +243,8 @@ public class BingoSettingsBuilder
 
     public void settingsUpdated()
     {
-        var event = new BingoSettingsUpdatedEvent(view(), session);
-        Bukkit.getPluginManager().callEvent(event);
+        //FIXME: REFACTOR call bingo settings updated event
+//        var event = new BingoSettingsUpdatedEvent(view(), session);
+//        Bukkit.getPluginManager().callEvent(event);
     }
 }

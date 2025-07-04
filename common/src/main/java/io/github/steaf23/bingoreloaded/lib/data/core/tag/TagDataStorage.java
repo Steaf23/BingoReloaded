@@ -1,14 +1,18 @@
 package io.github.steaf23.bingoreloaded.lib.data.core.tag;
 
+import io.github.steaf23.bingoreloaded.lib.api.StackHandle;
+import io.github.steaf23.bingoreloaded.lib.api.WorldPosition;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataStorage;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataStorageSerializer;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataStorageSerializerRegistry;
 import io.github.steaf23.bingoreloaded.lib.data.core.node.NodeLikeData;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
+import net.kyori.adventure.key.Key;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
+import org.intellij.lang.annotations.Subst;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -347,14 +351,14 @@ public class TagDataStorage implements DataStorage
     }
 
     @Override
-    public void setItemStack(String path, ItemStack value) {
+    public void setItemStack(String path, StackHandle value) {
         set(path, TagDataType.ITEM_STACK.toTag(value));
     }
 
     @Override
-    public @NotNull ItemStack getItemStack(String path) {
-        ItemStack stack = TagDataType.ITEM_STACK.fromTagOrNull(get(path));
-        return stack == null ? new ItemStack(Material.AIR) : stack;
+    public @NotNull StackHandle getItemStack(String path) {
+        StackHandle stack = TagDataType.ITEM_STACK.fromTagOrNull(get(path));
+        return stack == null ? new StackHandle(Material.AIR) : stack;
     }
 
     @Override
@@ -368,35 +372,34 @@ public class TagDataStorage implements DataStorage
     }
 
     @Override
-    public void setLocation(String path, @NotNull Location value) {
-        setSerializable(path, Location.class, value);
+    public void setWorldPosition(String path, @NotNull WorldPosition value) {
+        setSerializable(path, WorldPosition.class, value);
     }
 
     @Override
-    public @Nullable Location getLocation(String path) {
-        return getSerializable(path, Location.class);
+    public @Nullable WorldPosition getWorldPosition(String path) {
+        return getSerializable(path, WorldPosition.class);
     }
 
-    @Override
-    public @NotNull Location getLocation(String path, @NotNull Location def) {
-        Location loc = getSerializable(path, Location.class);
+    public @NotNull WorldPosition getWorldPosition(String path, @NotNull WorldPosition def) {
+        WorldPosition loc = getSerializable(path, WorldPosition.class);
         return loc == null ? def : loc;
     }
 
     @Override
-    public void setNamespacedKey(String path, @NotNull NamespacedKey value) {
+    public void setNamespacedKey(String path, @NotNull Key value) {
         setString(path, value.toString());
     }
 
     @Override
-    public @NotNull NamespacedKey getNamespacedKey(String path) {
-        String stringified = getString(path, "");
+    public @NotNull Key getNamespacedKey(String path) {
+        @Subst("minecraft:duck") String stringified = getString(path, "");
         if (!stringified.isEmpty()) {
-            String[] parts = stringified.split(":");
-            return new NamespacedKey(parts[0], parts[1]);
+            return Key.key(stringified);
         }
-        ConsoleMessenger.log("Could not read namespaced key: '" + stringified + "'");
-        return new NamespacedKey("", "");
+        ConsoleMessenger.bug("Could not read namespaced key: '" + stringified + "'", this.getClass());
+        assert(false);
+        return Key.key("", "");
     }
 
     @Override

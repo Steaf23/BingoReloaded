@@ -1,5 +1,6 @@
 package io.github.steaf23.bingoreloaded.data.world;
 
+import io.github.steaf23.bingoreloaded.lib.api.ExtensionApi;
 import io.github.steaf23.bingoreloaded.lib.api.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.api.WorldHandle;
 import org.jetbrains.annotations.Nullable;
@@ -15,19 +16,20 @@ import java.util.UUID;
 public record WorldGroup(String worldName, UUID overworldId, UUID netherId, UUID endId)
 {
     public void teleportPlayer(PlayerHandle player) {
-        player.teleport(Bukkit.getWorld(overworldId).getSpawnLocation(), PlayerTeleportEvent.TeleportCause.PLUGIN);
+        //FIXME: Refactor Teleport Cause
+//        player.teleport(ExtensionApi.getWorld(overworldId).spawnPoint(), PlayerTeleportEvent.TeleportCause.PLUGIN);
     }
 
     public @Nullable WorldHandle getOverworld() {
-        return overworldId == null ? null : Bukkit.getWorld(overworldId);
+        return overworldId == null ? null : ExtensionApi.getWorld(overworldId);
     }
 
     public @Nullable WorldHandle getNetherWorld() {
-        return netherId == null ? null : Bukkit.getWorld(netherId);
+        return netherId == null ? null : ExtensionApi.getWorld(netherId);
     }
 
     public @Nullable WorldHandle getEndWorld() {
-        return endId == null ? null : Bukkit.getWorld(endId);
+        return endId == null ? null : ExtensionApi.getWorld(endId);
     }
 
     public boolean hasWorld(UUID uuid) {
@@ -37,11 +39,11 @@ public record WorldGroup(String worldName, UUID overworldId, UUID netherId, UUID
     public Set<PlayerHandle> getPlayers() {
         Set<PlayerHandle> players = new HashSet<>();
         if (getOverworld() != null)
-            players.addAll(getOverworld().getPlayers());
+            players.addAll(getOverworld().players());
         if (getNetherWorld() != null)
-            players.addAll(getNetherWorld().getPlayers());
+            players.addAll(getNetherWorld().players());
         if (getEndWorld() != null)
-            players.addAll(getEndWorld().getPlayers());
+            players.addAll(getEndWorld().players());
         return players;
     }
 }

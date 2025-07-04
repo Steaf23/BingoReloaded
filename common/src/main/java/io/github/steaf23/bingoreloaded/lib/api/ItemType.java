@@ -7,9 +7,11 @@ public interface ItemType extends Keyed {
 
 	ItemType AIR = of(Key.key("air"));
 
+	boolean isBlock();
 	default boolean isAir() {
 		return key().equals(AIR.key());
 	}
+	boolean isSolid();
 
 	static ItemType of(String type) {
 

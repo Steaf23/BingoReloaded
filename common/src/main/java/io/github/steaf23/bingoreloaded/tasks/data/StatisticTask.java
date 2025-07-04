@@ -2,25 +2,24 @@ package io.github.steaf23.bingoreloaded.tasks.data;
 
 import io.github.steaf23.bingoreloaded.lib.api.ItemType;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
-import io.github.steaf23.bingoreloaded.tasks.BingoStatistic;
-import io.github.steaf23.bingoreloaded.tasks.GameTask;
+import io.github.steaf23.bingoreloaded.lib.api.StatisticHandle;
+import io.github.steaf23.bingoreloaded.lib.api.StatisticType;
 import io.github.steaf23.bingoreloaded.lib.util.ComponentUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-public record StatisticTask(BingoStatistic statistic, int count) implements TaskData
+public record StatisticTask(StatisticHandle statistic, int count) implements TaskData
 {
-    public StatisticTask(BingoStatistic statistic)
+    public StatisticTask(StatisticHandle statistic)
     {
         this(statistic, 1);
     }
 
-    public StatisticTask(BingoStatistic statistic, int count)
+    public StatisticTask(StatisticHandle statistic, int count)
     {
         this.statistic = statistic;
         this.count = Math.min(64, Math.max(1, count));
@@ -42,38 +41,38 @@ public record StatisticTask(BingoStatistic statistic, int count) implements Task
         switch (statistic.getCategory())
         {
             case ROOT_STATISTIC -> {
-                if (statistic.stat() == Statistic.KILL_ENTITY)
+                if (statistic.type().equals(StatisticType.KILL_ENTITY))
                 {
-                    Component entityName = ComponentUtils.entityName(statistic.entityType());
+                    Component entityName = ComponentUtils.entityName(statistic.entity());
                     Component[] inPlaceArguments = new Component[]{amount, Component.empty()};
-                    builder.append(ComponentUtils.statistic(statistic.stat(), inPlaceArguments))
+                    builder.append(ComponentUtils.statistic(statistic, inPlaceArguments))
                             .append(Component.text(" ("))
                             .append(entityName)
                             .append(Component.text(")"));
                 }
-                else if (statistic.stat() == Statistic.ENTITY_KILLED_BY) {
-                    Component entityName = ComponentUtils.entityName(statistic.entityType());
+                else if (statistic.type().equals(StatisticType.ENTITY_KILLED_BY)) {
+                    Component entityName = ComponentUtils.entityName(statistic.entity());
                     Component[] inPlaceArguments = new Component[]{Component.empty(), amount, Component.empty()};
                     builder.append(Component.text(" ("))
                             .append(entityName)
                             .append(Component.text(")"))
-                            .append(ComponentUtils.statistic(statistic.stat(), inPlaceArguments));
+                            .append(ComponentUtils.statistic(statistic, inPlaceArguments));
                 }
                 else
                 {
-                    builder.append(ComponentUtils.statistic(statistic.stat()))
+                    builder.append(ComponentUtils.statistic(statistic))
                             .append(Component.text(" "))
-                            .append(ComponentUtils.itemName(statistic.materialType()))
+                            .append(ComponentUtils.itemName(statistic.item()))
                             .append(Component.text(": "))
                             .append(amount);
                 }
             }
-            case TRAVEL -> builder.append(ComponentUtils.statistic(statistic.stat()))
+            case TRAVEL -> builder.append(ComponentUtils.statistic(statistic))
                     .append(Component.text(": "))
                     .append(Component.text(count * 10))
                     .append(Component.text(" Blocks"));
 
-            default -> builder.append(ComponentUtils.statistic(statistic.stat()))
+            default -> builder.append(ComponentUtils.statistic(statistic))
                     .append(Component.text(": "))
                     .append(amount);
         }
@@ -118,22 +117,6 @@ public record StatisticTask(BingoStatistic statistic, int count) implements Task
     }
 
     @Override
-    public @NotNull PersistentDataContainer pdcSerialize(PersistentDataContainer stream)
-    {
-        stream.set(GameTask.getTaskDataKey("statistic"), PersistentDataType.STRING, statistic.stat().name());
-        if (statistic.materialType() != null)
-        {
-            stream.set(GameTask.getTaskDataKey("item"),  PersistentDataType.STRING, statistic.materialType().name());
-        }
-        if (statistic.entityType() != null)
-        {
-            stream.set(GameTask.getTaskDataKey("entity"), PersistentDataType.STRING, statistic.entityType().name());
-        }
-        stream.set(GameTask.getTaskDataKey("count"),  PersistentDataType.INTEGER, count);
-        return stream;
-    }
-
-    @Override
     public boolean shouldItemGlow() {
         return true;
     }
@@ -141,9 +124,9 @@ public record StatisticTask(BingoStatistic statistic, int count) implements Task
     @Override
     public ItemType getDisplayMaterial(boolean genericItem) {
         if (genericItem) {
-            return ItemType.GLOBE_BANNER_PATTERN;
+            return ItemType.of("globe_banner_pattern");
         } else {
-            return BingoStatistic.getMaterial(statistic());
+            return statistic().icon();
         }
     }
 
@@ -152,22 +135,4 @@ public record StatisticTask(BingoStatistic statistic, int count) implements Task
         return count;
     }
 
-    public static StatisticTask fromPdc(PersistentDataContainer pdc)
-    {
-        Statistic stat = Statistic.valueOf(pdc.getOrDefault(GameTask.getTaskDataKey("statistic"), PersistentDataType.STRING, "stat.minecraft.bell_ring"));
-
-        ItemType item = null;
-        if (pdc.has(GameTask.getTaskDataKey("item"), PersistentDataType.STRING))
-        {
-            item = ItemType.valueOf(pdc.get(GameTask.getTaskDataKey("item"), PersistentDataType.STRING));
-        }
-        EntityType entity = null;
-        if (pdc.has(GameTask.getTaskDataKey("entity"), PersistentDataType.STRING))
-        {
-            entity = EntityType.valueOf(pdc.get(GameTask.getTaskDataKey("entity"), PersistentDataType.STRING));
-        }
-        int count = pdc.getOrDefault(GameTask.getTaskDataKey("count"), PersistentDataType.INTEGER, 1);
-
-        return new StatisticTask(new BingoStatistic(stat, entity, item), count);
-    }
 }

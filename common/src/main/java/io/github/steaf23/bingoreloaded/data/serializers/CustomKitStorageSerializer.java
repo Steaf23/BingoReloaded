@@ -5,7 +5,6 @@ import io.github.steaf23.bingoreloaded.lib.data.core.DataStorageSerializer;
 import io.github.steaf23.bingoreloaded.gui.inventory.item.SerializableItem;
 import io.github.steaf23.bingoreloaded.settings.CustomKit;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
-import io.github.steaf23.bingoreloaded.lib.PlayerDisplay;
 import org.jetbrains.annotations.NotNull;
 
 public class CustomKitStorageSerializer implements DataStorageSerializer<CustomKit>

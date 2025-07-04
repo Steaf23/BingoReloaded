@@ -1,10 +1,8 @@
 package io.github.steaf23.bingoreloaded.player.team;
 
+import io.github.steaf23.bingoreloaded.api.BingoEvents;
 import io.github.steaf23.bingoreloaded.lib.api.PlayerHandle;
 import io.github.steaf23.bingoreloaded.data.TeamData;
-import io.github.steaf23.bingoreloaded.event.BingoSettingsUpdatedEvent;
-import io.github.steaf23.bingoreloaded.event.PlayerJoinedSessionWorldEvent;
-import io.github.steaf23.bingoreloaded.event.PlayerLeftSessionWorldEvent;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -67,13 +65,13 @@ public interface TeamManager
     int getTotalParticipantCapacity();
 
 
-    default void handleSettingsUpdated(final BingoSettingsUpdatedEvent event) {
+    default void handleSettingsUpdated(final BingoEvents.SettingsUpdated event) {
     }
 
-    default void handlePlayerJoinedSessionWorld(final PlayerJoinedSessionWorldEvent event) {
+    default void handlePlayerJoinedSessionWorld(final BingoEvents.PlayerEvent event) {
     }
 
-    default void handlePlayerLeftSessionWorld(final PlayerLeftSessionWorldEvent event) {
+    default void handlePlayerLeftSessionWorld(final BingoEvents.PlayerEvent event) {
     }
 
 }

@@ -1,24 +1,23 @@
 package io.github.steaf23.bingoreloaded.tasks.tracker;
 
 import io.github.steaf23.bingoreloaded.lib.api.PlayerHandle;
-import io.github.steaf23.bingoreloaded.event.BingoStatisticCompletedEvent;
+import io.github.steaf23.bingoreloaded.lib.api.StatisticHandle;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
-import io.github.steaf23.bingoreloaded.tasks.BingoStatistic;
 
 public class StatisticProgress
 {
-    private final BingoStatistic statistic;
+    private final StatisticHandle statistic;
     private final BingoParticipant player;
     private int progressLeft;
 
     private int previousGlobalProgress;
 
-    public StatisticProgress(BingoStatistic statistic, BingoParticipant player, int targetScore)
+    public StatisticProgress(StatisticHandle statistic, BingoParticipant player, int targetScore)
     {
         this.statistic = statistic;
         this.player = player;
         this.progressLeft = targetScore;
-        if (statistic.getCategory() == BingoStatistic.StatisticCategory.TRAVEL)
+        if (statistic.getCategory() == StatisticHandle.StatisticCategory.TRAVEL)
         {
             progressLeft *= 1000;
         }
@@ -38,7 +37,7 @@ public class StatisticProgress
      */
     public void updatePeriodicProgress()
     {
-        if (statistic.getsUpdatedWithIncrementEvent())
+        if (statistic.getsUpdatedAutomatically())
             return;
 
         int newProgress = getParticipantTotalScore();
@@ -54,8 +53,9 @@ public class StatisticProgress
         previousGlobalProgress = newProgress;
 
         if (done()) {
-            var event = new BingoStatisticCompletedEvent(statistic, player);
-            Bukkit.getPluginManager().callEvent(event);
+            //FIXME: REFACTOR send event
+//            var event = new BingoStatisticCompletedEvent(statistic, player);
+//            Bukkit.getPluginManager().callEvent(event);
         }
     }
 
@@ -67,22 +67,22 @@ public class StatisticProgress
         }
 
         int value;
-        if (statistic.hasMaterialComponent())
+        if (statistic.hasItemType())
         {
-            value = gamePlayer.getStatistic(statistic.stat(), statistic.materialType());
+            value = gamePlayer.getStatisticValue(statistic.type(), statistic.item());
         }
-        else if (statistic.hasEntityComponent())
+        else if (statistic.hasEntity())
         {
-            value = gamePlayer.getStatistic(statistic.stat(), statistic.entityType());
+            value = gamePlayer.getStatisticValue(statistic.type(), statistic.entity());
         }
         else
         {
-            value = gamePlayer.getStatistic(statistic.stat());
+            value = gamePlayer.getStatisticValue(statistic.type());
         }
         return value;
     }
 
-    public BingoStatistic getStatistic() {
+    public StatisticHandle getStatistic() {
         return statistic;
     }
 

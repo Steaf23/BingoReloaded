@@ -1,14 +1,10 @@
 package io.github.steaf23.bingoreloaded.tasks.tracker;
 
 import io.github.steaf23.bingoreloaded.lib.api.PlayerHandle;
-import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
+import io.github.steaf23.bingoreloaded.lib.api.StatisticHandle;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
-import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
-import io.github.steaf23.bingoreloaded.tasks.BingoStatistic;
 import io.github.steaf23.bingoreloaded.tasks.data.StatisticTask;
-import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerStatisticIncrementEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +18,7 @@ public class StatisticTracker
         this.statistics = new ArrayList<>();
     }
 
-    public double getProgressLeft(BingoPlayer player, BingoStatistic statistic)
+    public double getProgressLeft(BingoPlayer player, StatisticHandle statistic)
     {
         List<StatisticProgress> statProgress = statistics.stream().filter(progress ->
                 progress.getParticipant().equals(player) && progress.getStatistic().equals(statistic)).toList();
@@ -57,49 +53,50 @@ public class StatisticTracker
         statistics.clear();
     }
 
-    public void handleStatisticIncrement(final PlayerStatisticIncrementEvent event, final BingoGame game)
-    {
-        if (game == null)
-            return;
+    // FIXME: REFACTOR implement player stat increase event.
+//    public void handleStatisticIncrement(final PlayerStatisticIncrementEvent event, final BingoGame game)
+//    {
+//        if (game == null)
+//            return;
+//
+//        BingoParticipant player = game.getTeamManager().getPlayerAsParticipant(event.getPlayer());
+//        if (player == null || player.sessionPlayer().isEmpty())
+//            return;
+//
+//        BingoTeam team = player.getTeam();
+//        if (team == null)
+//            return;
+//
+//        StatisticHandle stat = new StatisticHandle(event.getStatistic(), event.getEntityType(), event.getMaterial());
+//
+//        List<StatisticProgress> matchingStatistic = statistics.stream().filter(progress ->
+//                progress.getParticipant().equals(player) && progress.getStatistic().equals(stat)).toList();
+//        if (matchingStatistic.size() == 1)
+//        {
+//            matchingStatistic.getFirst().setProgress(event.getNewValue());
+//        }
+//
+//        statistics.removeIf(StatisticProgress::done);
+//    }
 
-        BingoParticipant player = game.getTeamManager().getPlayerAsParticipant(event.getPlayer());
-        if (player == null || player.sessionPlayer().isEmpty())
-            return;
-
-        BingoTeam team = player.getTeam();
-        if (team == null)
-            return;
-
-        BingoStatistic stat = new BingoStatistic(event.getStatistic(), event.getEntityType(), event.getMaterial());
-
-        List<StatisticProgress> matchingStatistic = statistics.stream().filter(progress ->
-                progress.getParticipant().equals(player) && progress.getStatistic().equals(stat)).toList();
-        if (matchingStatistic.size() == 1)
-        {
-            matchingStatistic.getFirst().setProgress(event.getNewValue());
-        }
-
-        statistics.removeIf(StatisticProgress::done);
-    }
-
-    public void setPlayerStatistic(BingoStatistic statistic, BingoParticipant player, int value)
+    public void setPlayerStatistic(StatisticHandle statistic, BingoParticipant player, int value)
     {
         if (player.sessionPlayer().isEmpty())
             return;
 
         PlayerHandle gamePlayer = player.sessionPlayer().get();
 
-        if (statistic.hasMaterialComponent())
+        if (statistic.hasItemType())
         {
-            gamePlayer.setStatistic(statistic.stat(), statistic.materialType(), value);
+            gamePlayer.setStatisticValue(statistic.type(), statistic.item(), value);
         }
-        else if (statistic.hasEntityComponent())
+        else if (statistic.hasEntity())
         {
-            gamePlayer.setStatistic(statistic.stat(), statistic.entityType(), value);
+            gamePlayer.setStatisticValue(statistic.type(), statistic.entity(), value);
         }
         else
         {
-            gamePlayer.setStatistic(statistic.stat(), value);
+            gamePlayer.setStatisticValue(statistic.type(), value);
         }
     }
 }

@@ -1,5 +1,6 @@
 package io.github.steaf23.bingoreloaded.gameloop.vote;
 
+import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
 import org.jetbrains.annotations.NotNull;

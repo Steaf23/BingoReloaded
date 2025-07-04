@@ -6,7 +6,6 @@ import io.github.steaf23.bingoreloaded.cards.hotswap.SimpleHotswapTask;
 import io.github.steaf23.bingoreloaded.data.BingoCardData;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
-import io.github.steaf23.bingoreloaded.event.BingoPlaySoundEvent;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.gui.inventory.card.HotswapCardMenu;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
@@ -18,6 +17,7 @@ import io.github.steaf23.bingoreloaded.tasks.tracker.TaskProgressTracker;
 import io.github.steaf23.bingoreloaded.util.CollectionHelper;
 import io.github.steaf23.bingoreloaded.lib.api.ItemType;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
+import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
@@ -211,8 +211,7 @@ public class HotswapTaskCard extends TaskCard
         }
 
         if (taskExpiredCount > 0) {
-            var event = new BingoPlaySoundEvent(game.getSession(), Sound.ITEM_FIRECHARGE_USE);
-            Bukkit.getPluginManager().callEvent(event);
+            game.playSound(Sound.sound(Key.key("minecraft:item_firecharge_use"), Sound.Source.UI, 1.0f, 1.0f));
 
             if (taskExpiredCount == 1) {
                 GameTask taskToSend = lastExpiredTask;
@@ -226,8 +225,7 @@ public class HotswapTaskCard extends TaskCard
             }
         }
         if (taskRecoveredCount > 0) {
-            var event = new BingoPlaySoundEvent(game.getSession(), Sound.ENTITY_PLAYER_LEVELUP);
-            Bukkit.getPluginManager().callEvent(event);
+            game.playSound(Sound.sound(Key.key("minecraft:entity_player_levelup"), Sound.Source.UI, 1.0f, 1.0f));
 
             if (taskRecoveredCount == 1) {
                 GameTask taskToSend = lastRecoverdTask;

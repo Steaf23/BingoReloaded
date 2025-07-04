@@ -11,7 +11,7 @@ import io.github.steaf23.bingoreloaded.gui.inventory.item.SerializableItem;
 import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
-import io.github.steaf23.bingoreloaded.tasks.BingoStatistic;
+import io.github.steaf23.bingoreloaded.tasks.StatisticHandlePaper;
 import io.github.steaf23.bingoreloaded.tasks.data.TaskData;
 import io.github.steaf23.bingoreloaded.tasks.data.AdvancementTask;
 import io.github.steaf23.bingoreloaded.tasks.data.ItemTask;
@@ -417,7 +417,7 @@ public class DataUpdaterV1
                 }
                 if (task instanceof OldStatisticTask statisticTask) {
                     newTasks.add(new StatisticTask(
-                            new BingoStatistic(
+                            new StatisticHandlePaper(
                                     statisticTask.statistic.stat,
                                     statisticTask.statistic.entity,
                                     statisticTask.statistic.material),

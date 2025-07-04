@@ -1,6 +1,8 @@
 package io.github.steaf23.bingoreloaded.tasks.tracker;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
+import io.github.steaf23.bingoreloaded.api.BingoEvents;
+import io.github.steaf23.bingoreloaded.lib.api.ExtensionApi;
 import io.github.steaf23.bingoreloaded.lib.api.PlayerHandle;
 import io.github.steaf23.bingoreloaded.cards.TaskCard;
 import io.github.steaf23.bingoreloaded.data.config.BingoOptions;
@@ -8,8 +10,12 @@ import io.github.steaf23.bingoreloaded.event.BingoDeathmatchTaskCompletedEvent;
 import io.github.steaf23.bingoreloaded.event.BingoStatisticCompletedEvent;
 import io.github.steaf23.bingoreloaded.event.BingoTaskProgressCompletedEvent;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
+import io.github.steaf23.bingoreloaded.lib.api.StackHandle;
+import io.github.steaf23.bingoreloaded.lib.events.events.PlayerDropItemEvent;
+import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
+import io.github.steaf23.bingoreloaded.lib.util.DebugLogger;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
-import io.github.steaf23.bingoreloaded.tasks.BingoStatistic;
+import io.github.steaf23.bingoreloaded.tasks.StatisticHandlePaper;
 import io.github.steaf23.bingoreloaded.tasks.GameTask;
 import io.github.steaf23.bingoreloaded.tasks.data.AdvancementTask;
 import io.github.steaf23.bingoreloaded.tasks.data.ItemTask;
@@ -149,8 +155,8 @@ public class TaskProgressTracker
         });
     }
 
-    public void handleBingoStatisticCompleted(final BingoStatisticCompletedEvent event) {
-        BingoParticipant participant = getValidParticipant(event.getParticipant());
+    public void handleBingoStatisticCompleted(final BingoEvents.StatisticCompleted event) {
+        BingoParticipant participant = getValidParticipant(event.participant());
         if (participant == null) {
             return;
         }
@@ -162,7 +168,7 @@ public class TaskProgressTracker
             if (task.taskType() != TaskData.TaskType.STATISTIC) {
                 return false;
             }
-            BingoStatistic statistic = event.getStatistic();
+            StatisticHandlePaper statistic = event.statistic();
             StatisticTask data = (StatisticTask) task.data;
 
             if (!data.statistic().equals(statistic)) {
@@ -178,7 +184,7 @@ public class TaskProgressTracker
         statisticTracker.handleStatisticIncrement(event, game);
     }
 
-    private ItemStack completeItemSlot(ItemStack item, BingoParticipant participant) {
+    private StackHandle completeItemSlot(StackHandle item, BingoParticipant participant) {
         if (participant == null || participant.getTeam() == null) {
             return item;
         }
@@ -189,10 +195,10 @@ public class TaskProgressTracker
 
         GameTask deathMatchTask = game.getDeathMatchTask();
         if (deathMatchTask != null) {
-            if (item.getType().equals(deathMatchTask.material())) {
+            if (item.type().equals(deathMatchTask.material())) {
                 deathMatchTask.complete(participant, game.getGameTime());
                 var slotEvent = new BingoDeathmatchTaskCompletedEvent(participant.getSession(), deathMatchTask);
-                Bukkit.getPluginManager().callEvent(slotEvent);
+                ExtensionApi.callEvent(slotEvent);
             }
             return item;
         }
@@ -318,13 +324,13 @@ public class TaskProgressTracker
     }
 
     public void handlePlayerDroppedItem(final PlayerDropItemEvent event) {
-        BingoParticipant participant = getValidParticipant(event.getPlayer());
+        BingoParticipant participant = getValidParticipant(event.player());
         if (participant == null) {
             return;
         }
 
         BingoReloaded.scheduleTask(task -> {
-            ItemStack stack = event.getItemDrop().getItemStack();
+            StackHandle stack = event.getStack();
             stack = completeItemSlot(stack, participant);
         });
     }

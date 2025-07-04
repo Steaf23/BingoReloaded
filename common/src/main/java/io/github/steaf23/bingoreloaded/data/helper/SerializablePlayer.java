@@ -1,6 +1,10 @@
 package io.github.steaf23.bingoreloaded.data.helper;
 
+import io.github.steaf23.bingoreloaded.lib.api.Extension;
+import io.github.steaf23.bingoreloaded.lib.api.PlayerGamemode;
 import io.github.steaf23.bingoreloaded.lib.api.PlayerHandle;
+import io.github.steaf23.bingoreloaded.lib.api.StackHandle;
+import io.github.steaf23.bingoreloaded.lib.api.WorldPosition;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
@@ -9,50 +13,50 @@ public class SerializablePlayer
 {
     public String pluginVersion;
     public UUID playerId;
-    public Location location;
+    public WorldPosition location;
     public double health;
     public int hunger;
-    public GameMode gamemode;
-    public Location spawnPoint;
+    public PlayerGamemode gamemode;
+    public WorldPosition spawnPoint;
     public int xpLevel;
     public float xpPoints;
-    public ItemStack[] inventory;
-    public ItemStack[] enderInventory;
+    public StackHandle[] inventory;
+    public StackHandle[] enderInventory;
 
-    public static @NotNull SerializablePlayer fromPlayer(@NotNull JavaPlugin plugin, @NotNull Player player)
+    public static @NotNull SerializablePlayer fromPlayer(@NotNull Extension extension, @NotNull PlayerHandle player)
     {
         SerializablePlayer data = new SerializablePlayer();
-        data.pluginVersion = plugin.getPluginMeta().getVersion();
-        data.playerId = player.getUniqueId();
-        data.location = player.getLocation();
-        data.health = player.getHealth();
-        data.hunger = player.getFoodLevel();
-        data.gamemode = player.getGameMode();
-        data.spawnPoint = player.getRespawnLocation() == null ? player.getWorld().getSpawnLocation() : player.getRespawnLocation();
-        data.xpLevel = player.getLevel();
-        data.xpPoints = player.getExp();
-        data.inventory = player.getInventory().getContents();
-        data.enderInventory = player.getEnderChest().getContents();
+        data.pluginVersion = extension.getPluginMeta().getVersion();
+        data.playerId = player.uniqueId();
+        data.location = player.position();
+        data.health = player.health();
+        data.hunger = player.foodLevel();
+        data.gamemode = player.gamemode();
+        data.spawnPoint = player.respawnPoint();
+        data.xpLevel = player.level();
+        data.xpPoints = player.exp();
+        data.inventory = player.inventory().contents();
+        data.enderInventory = player.enderChest().contents();
         return data;
     }
 
     /**
      * Reset all player data and set location
      */
-    public static SerializablePlayer reset(JavaPlugin plugin, Player player, Location location)
+    public static SerializablePlayer reset(Extension extension, PlayerHandle player, WorldPosition location)
     {
         SerializablePlayer data = new SerializablePlayer();
-        data.pluginVersion = plugin.getPluginMeta().getVersion();
+        data.pluginVersion = extension.getPluginMeta().getVersion();
         data.location = location;
-        data.playerId = player.getUniqueId();
+        data.playerId = player.uniqueId();
         data.health = 20.0;
         data.hunger = 20;
-        data.gamemode = player.getGameMode();
+        data.gamemode = player.gamemode();
         data.spawnPoint = null;
         data.xpLevel = 0;
         data.xpPoints = 0.0f;
-        data.inventory = new ItemStack[player.getInventory().getSize()];
-        data.enderInventory = new ItemStack[player.getEnderChest().getSize()];
+        data.inventory = new StackHandle[player.inventory().contents().length];
+        data.enderInventory = new StackHandle[player.enderChest().contents().length];
         return data;
     }
 
@@ -61,28 +65,27 @@ public class SerializablePlayer
 
     public void apply(PlayerHandle player)
     {
-        if (!playerId.equals(player.getUniqueId()))
+        if (!playerId.equals(player.uniqueId()))
             return;
 
-        player.teleport(location, PlayerTeleportEvent.TeleportCause.PLUGIN);
+        player.teleport(location);
 
         player.setHealth(health);
         player.setFoodLevel(hunger);
-        player.setGameMode(gamemode);
-        player.setRespawnLocation(spawnPoint, true);
+        player.setGamemode(gamemode);
+        player.setRespawnPoint(spawnPoint, true);
         player.setLevel(xpLevel);
         player.setExp(xpPoints);
 
-        player.getInventory().clear();
+        player.clearInventory();
         if (inventory != null)
         {
-            player.getInventory().setContents(inventory);
+            player.inventory().setContents(inventory);
         }
-        player.getEnderChest().clear();
+        player.enderChest().clearContents();
         if (enderInventory != null)
         {
-            player.getEnderChest().setContents(enderInventory);
+            player.enderChest().setContents(enderInventory);
         }
-        player.updateInventory();
     }
 }

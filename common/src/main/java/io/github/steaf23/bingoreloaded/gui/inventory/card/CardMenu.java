@@ -5,6 +5,9 @@ import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.config.BingoOptions;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gui.inventory.TeamCardSelectMenu;
+import io.github.steaf23.bingoreloaded.lib.api.MenuBoard;
+import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
+import io.github.steaf23.bingoreloaded.lib.item.action.MenuAction;
 import io.github.steaf23.bingoreloaded.tasks.GameTask;
 import io.github.steaf23.bingoreloaded.lib.api.ItemType;
 import io.github.steaf23.bingoreloaded.lib.api.PlayerHandle;
@@ -33,7 +36,7 @@ public interface CardMenu
         return new ItemTemplate(ItemType.of("bundle"), BasicMenu.applyTitleFormat(BingoMessage.SHOW_TEAM_CARD_TITLE.asPhrase())).setAction(new MenuAction()
         {
             @Override
-            public void use(ActionArguments arguments) {
+            public void use(MenuAction.ActionArguments arguments) {
                 //FIXME: ugly AF code, but by far the easiest method to implement this feature.
 
                 // The reason to not use getSessionOfPlayer is that not all players that execute this command have to be active bingo players.

@@ -1,8 +1,11 @@
 package io.github.steaf23.bingoreloaded.lib.data.core;
 
+import io.github.steaf23.bingoreloaded.lib.api.StackHandle;
+import io.github.steaf23.bingoreloaded.lib.api.WorldPosition;
 import io.github.steaf23.bingoreloaded.lib.data.core.tag.TagAdapter;
 import io.github.steaf23.bingoreloaded.lib.data.core.tag.TagDataType;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
+import net.kyori.adventure.key.Key;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
@@ -82,18 +85,18 @@ public interface DataStorage
     void setDouble(String path, double value);
     double getDouble(String path, double def);
 
-    void setItemStack(String path, ItemStack value);
-    @NotNull ItemStack getItemStack(String path);
+    void setItemStack(String path, StackHandle value);
+    @NotNull StackHandle getItemStack(String path);
 
     void setUUID(String path, UUID value);
     @Nullable UUID getUUID(String path);
 
-    void setLocation(String path, @NotNull Location value);
-    @Nullable Location getLocation(String path);
-    @NotNull Location getLocation(String path, @NotNull Location def);
+    void setWorldPosition(String path, @NotNull WorldPosition value);
+    @Nullable WorldPosition getWorldPosition(String path);
+    @NotNull WorldPosition getWorldPosition(String path, @NotNull WorldPosition def);
 
-    void setNamespacedKey(String path, @NotNull NamespacedKey value);
-    @NotNull NamespacedKey getNamespacedKey(String path);
+    void setNamespacedKey(String path, @NotNull Key value);
+    @NotNull Key getNamespacedKey(String path);
 
     void setStorage(String path, DataStorage value);
     @Nullable DataStorage getStorage(String path);

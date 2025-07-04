@@ -1,10 +1,11 @@
 package io.github.steaf23.bingoreloaded.lib.util;
 
+import io.github.steaf23.bingoreloaded.lib.api.AdvancementHandle;
+import io.github.steaf23.bingoreloaded.lib.api.EntityType;
+import io.github.steaf23.bingoreloaded.lib.api.ItemType;
+import io.github.steaf23.bingoreloaded.lib.api.StatisticHandle;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-import org.bukkit.Statistic;
-import org.bukkit.advancement.Advancement;
-import org.bukkit.entity.EntityType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -20,15 +21,15 @@ public class ComponentUtils
         return Component.translatable(itemKey(item));
     }
 
-    public static Component advancementTitle(@NotNull Advancement advancement) {
-        return Component.translatable(advancementKey(advancement) + ".title");
+    public static Component advancementTitle(@NotNull AdvancementHandle advancement) {
+        return Component.translatable(advancement.key().value() + ".title");
     }
 
-    public static Component advancementDescription(@NotNull Advancement advancement) {
-        return Component.translatable(advancementKey(advancement) + ".description");
+    public static Component advancementDescription(@NotNull AdvancementHandle advancement) {
+        return Component.translatable(advancement.key().value() + ".description");
     }
 
-    public static Component statistic(Statistic statistic, Component... with)
+    public static Component statistic(StatisticHandle statistic, Component... with)
     {
         return Component.translatable(statisticKey(statistic), with);
     }
@@ -38,9 +39,9 @@ public class ComponentUtils
         return Component.translatable(entityKey(entity));
     }
 
-    private static String advancementKey(@NotNull Advancement advancement)
+    private static String advancementKey(@NotNull AdvancementHandle advancement)
     {
-        String result = advancement.getKey().getKey().replace("/", ".");
+        String result = advancement.key().value().replace("/", ".");
         result = switch (result) // Needed to correct Spigot on some advancement names vs how they appear in the lang files
         {
             case "husbandry.obtain_netherite_hoe" -> "husbandry.netherite_hoe";
@@ -51,21 +52,21 @@ public class ComponentUtils
         return "advancements." + result;
     }
 
-    private static String statisticKey(Statistic statistic)
+    private static String statisticKey(StatisticHandle statistic)
     {
-        String prefix = statistic.isSubstatistic() ? "stat_type.minecraft." : "stat.minecraft.";
-        String result = io.github.steaf23.bingoreloaded.lib.util.StatisticsKeyConverter.getMinecraftTranslationKey(statistic);
-        return !result.isEmpty() ? prefix + result : statistic.name();
+        String prefix = statistic.isSubStatistic() ? "stat_type.minecraft." : "stat.minecraft.";
+        String result = statistic.translationKey();
+        return !result.isEmpty() ? prefix + result : statistic.type().toString();
     }
 
-    private static String itemKey(io.github.steaf23.bingoreloaded.lib.api.ItemType item)
+    private static String itemKey(ItemType item)
     {
-        return (item.isBlock() ? "block" : "item") + ".minecraft." + item.getKey().getKey();
+        return (item.isBlock() ? "block" : "item") + ".minecraft." + item.key().value();
     }
 
     private static String entityKey(EntityType entity)
     {
         // Note: before 1.20.6 , mooshroom and snow_golem needed to be translated manually.
-        return "entity.minecraft." + entity.name().toLowerCase();
+        return "entity.minecraft." + entity.key().value();
     }
 }

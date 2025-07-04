@@ -1,7 +1,7 @@
 package io.github.steaf23.bingoreloaded;
 
 import io.github.steaf23.bingoreloaded.lib.api.Extension;
-import io.github.steaf23.bingoreloaded.lib.api.PlatformHandle;
+import io.github.steaf23.bingoreloaded.lib.api.ServerHandle;
 import io.github.steaf23.bingoreloaded.lib.api.PlayerHandle;
 import io.github.steaf23.bingoreloaded.command.AutoBingoCommand;
 import io.github.steaf23.bingoreloaded.command.BingoCommand;
@@ -18,11 +18,10 @@ import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.data.config.BingoOptions;
 import io.github.steaf23.bingoreloaded.data.helper.SerializablePlayer;
 import io.github.steaf23.bingoreloaded.data.serializers.BingoSettingsStorageSerializer;
-import io.github.steaf23.bingoreloaded.data.serializers.BingoStatisticStorageSerializer;
 import io.github.steaf23.bingoreloaded.data.serializers.CustomKitStorageSerializer;
 import io.github.steaf23.bingoreloaded.data.serializers.ItemStorageSerializer;
 import io.github.steaf23.bingoreloaded.data.serializers.PlayerStorageSerializer;
-import io.github.steaf23.bingoreloaded.data.serializers.TaskStorageSerializer;
+import io.github.steaf23.bingoreloaded.tasks.data.TaskStorageSerializer;
 import io.github.steaf23.bingoreloaded.data.serializers.TeamTemplateStorageSerializer;
 import io.github.steaf23.bingoreloaded.gameloop.GameManager;
 import io.github.steaf23.bingoreloaded.gameloop.SingularGameManager;
@@ -39,7 +38,7 @@ import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import io.github.steaf23.bingoreloaded.placeholder.BingoReloadedPlaceholderExpansion;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
 import io.github.steaf23.bingoreloaded.settings.CustomKit;
-import io.github.steaf23.bingoreloaded.tasks.BingoStatistic;
+import io.github.steaf23.bingoreloaded.tasks.StatisticHandlePaper;
 import io.github.steaf23.bingoreloaded.tasks.data.TaskData;
 import io.github.steaf23.bingoreloaded.util.bstats.Metrics;
 import net.kyori.adventure.key.KeyPattern;
@@ -47,6 +46,7 @@ import net.kyori.adventure.resource.ResourcePackInfo;
 import net.kyori.adventure.resource.ResourcePackRequest;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -73,14 +73,14 @@ public class BingoReloaded implements Extension {
 
 	private static BingoReloaded INSTANCE;
 
-	private final PlatformHandle platform;
+	private final ServerHandle platform;
 	private BingoConfigurationData config;
 	private GameManager gameManager;
 	private BingoMenuBoard menuBoard;
 	private TexturedMenuData textureData;
 	private HUDRegistry hudRegistry;
 
-	BingoReloaded(PlatformHandle platform) {
+	BingoReloaded(ServerHandle platform) {
 		this.platform = platform;
 	}
 
@@ -106,7 +106,7 @@ public class BingoReloaded implements Extension {
 		DataStorageSerializerRegistry.addSerializer(new PlayerStorageSerializer(), SerializablePlayer.class);
 		DataStorageSerializerRegistry.addSerializer(new TeamTemplateStorageSerializer(), TeamData.TeamTemplate.class);
 		DataStorageSerializerRegistry.addSerializer(new BingoSettingsStorageSerializer(), BingoSettings.class);
-		DataStorageSerializerRegistry.addSerializer(new BingoStatisticStorageSerializer(), BingoStatistic.class);
+		DataStorageSerializerRegistry.addSerializer(new BingoStatisticStorageSerializer(), StatisticHandlePaper.class);
 		DataStorageSerializerRegistry.addSerializer(new ItemStorageSerializer(), SerializableItem.class);
 
 		// Create data accessors
