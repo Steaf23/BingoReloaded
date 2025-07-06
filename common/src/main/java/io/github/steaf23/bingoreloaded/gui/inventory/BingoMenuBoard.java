@@ -1,17 +1,13 @@
 package io.github.steaf23.bingoreloaded.gui.inventory;
 
-import io.github.steaf23.bingoreloaded.event.PlayerLeftSessionWorldEvent;
-import io.github.steaf23.bingoreloaded.lib.inventory.MenuBoard;
-import org.bukkit.entity.HumanEntity;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.inventory.InventoryClickEvent;
+import io.github.steaf23.bingoreloaded.lib.api.MenuBoard;
+import io.github.steaf23.bingoreloaded.lib.api.PlayerHandle;
 
 import java.awt.*;
 import java.util.function.Function;
 
-public class BingoMenuBoard extends MenuBoard
-{
-    private Function<HumanEntity, Boolean> playerPredicate;
+public class BingoMenuBoard implements MenuBoard {
+    private Function<PlayerHandle, Boolean> playerPredicate;
 
     public BingoMenuBoard()
     {
@@ -19,7 +15,7 @@ public class BingoMenuBoard extends MenuBoard
         this.playerPredicate = player -> false;
     }
 
-    public void setPlayerOpenPredicate(Function<HumanEntity, Boolean> playerPredicate) {
+    public void setPlayerOpenPredicate(Function<PlayerHandle, Boolean> playerPredicate) {
         this.playerPredicate = playerPredicate;
     }
 

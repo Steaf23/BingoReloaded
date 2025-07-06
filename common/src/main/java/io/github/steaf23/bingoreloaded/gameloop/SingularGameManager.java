@@ -1,12 +1,11 @@
 package io.github.steaf23.bingoreloaded.gameloop;
 
-import io.github.steaf23.bingoreloaded.lib.api.Extension;
+import io.github.steaf23.bingoreloaded.lib.api.PlatformBridge;
 import io.github.steaf23.bingoreloaded.lib.api.MenuBoard;
 import io.github.steaf23.bingoreloaded.lib.api.WorldHandle;
 import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.data.config.BingoOptions;
 import io.github.steaf23.bingoreloaded.data.world.WorldGroup;
-import io.github.steaf23.bingoreloaded.lib.scoreboard.HUDRegistry;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import org.jetbrains.annotations.NotNull;
 
@@ -14,15 +13,15 @@ import java.util.List;
 
 public class SingularGameManager extends GameManager
 {
-    public SingularGameManager(@NotNull Extension extension, BingoConfigurationData config, MenuBoard menuBoard, HUDRegistry hudRegistry) {
-        super(extension, config, menuBoard, hudRegistry);
+    public SingularGameManager(@NotNull PlatformBridge platform, BingoConfigurationData config) {
+        super(platform, config);
 
         WorldGroup group = createWorldGroupFromExistingWorlds();
         if (group == null) {
             return;
         }
 
-        BingoSession session = new BingoSession(menuBoard, hudRegistry, group, config);
+        BingoSession session = new BingoSession(this, group, config);
         sessions.put(config.getOptionValue(BingoOptions.DEFAULT_WORLD_NAME), session);
     }
 
@@ -45,9 +44,9 @@ public class SingularGameManager extends GameManager
 
     private WorldGroup createWorldGroupFromExistingWorlds() {
         String defaultWorldName = getGameConfig().getOptionValue(BingoOptions.DEFAULT_WORLD_NAME);
-        WorldHandle overworld = getExtension().getWorld(defaultWorldName);
-        WorldHandle nether = getExtension().getWorld(defaultWorldName + "_nether");
-        WorldHandle theEnd = getExtension().getWorld(defaultWorldName + "_the_end");
+        WorldHandle overworld = getPlatform().getWorld(defaultWorldName);
+        WorldHandle nether = getPlatform().getWorld(defaultWorldName + "_nether");
+        WorldHandle theEnd = getPlatform().getWorld(defaultWorldName + "_the_end");
 
         if (overworld == null) {
             ConsoleMessenger.error("Could not create world group from existing world; " + defaultWorldName + " does not exist. Make sure the world exists and reload the plugin.");

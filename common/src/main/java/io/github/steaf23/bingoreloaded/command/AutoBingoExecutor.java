@@ -1,6 +1,5 @@
 package io.github.steaf23.bingoreloaded.command;
 
-import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.cards.CardSize;
 import io.github.steaf23.bingoreloaded.command.core.DeferredCommand;
 import io.github.steaf23.bingoreloaded.command.core.SubCommand;
@@ -14,27 +13,20 @@ import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gameloop.GameManager;
 import io.github.steaf23.bingoreloaded.gameloop.phase.PregameLobby;
 import io.github.steaf23.bingoreloaded.gui.inventory.EffectOptionFlags;
+import io.github.steaf23.bingoreloaded.lib.api.PlatformBridge;
+import io.github.steaf23.bingoreloaded.lib.api.PlayerHandle;
+import io.github.steaf23.bingoreloaded.lib.api.WorldHandle;
+import io.github.steaf23.bingoreloaded.lib.util.ComponentUtils;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
 import io.github.steaf23.bingoreloaded.settings.BingoSettingsBuilder;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
-import io.github.steaf23.bingoreloaded.lib.PlayerDisplay;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
+import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.Bukkit;
-import org.bukkit.World;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabExecutor;
-import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerTeleportEvent;
-import org.bukkit.generator.WorldInfo;
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -43,19 +35,20 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class AutoBingoCommand implements TabExecutor
+public class AutoBingoExecutor
 {
+    private final PlatformBridge platform;
     private final GameManager manager;
     private final SubCommand command;
 
-    private CommandSender currentSender;
+    private Audience currentExecutor;
 
-    public AutoBingoCommand(GameManager manager) {
-        this.manager = manager;
+	public AutoBingoExecutor(PlatformBridge platform, GameManager manager) {
+		this.platform = platform;
+		this.manager = manager;
 
         command = new DeferredCommand("autobingo", "world")
                 .addTabCompletion(args -> manager.getSessionNames().stream().toList());
-
 
         command.addSubCommand(new SubCommand("create", args -> create(args[0])));
 
@@ -248,7 +241,7 @@ public class AutoBingoCommand implements TabExecutor
             if (args.length == 2) {
                 return null;
             } else if (args.length == 3) {
-                return Bukkit.getWorlds().stream().map(WorldInfo::getName).toList();
+                return platform.getLoadedWorlds().stream().map(WorldHandle::name).toList();
             } else {
                 return List.of();
             }
@@ -257,7 +250,7 @@ public class AutoBingoCommand implements TabExecutor
 
         command.addSubCommand(new SubCommand("kickplayers", this::removeAllPlayersFromSession).addUsage("<target_world_name>").addTabCompletion(args -> {
             if (args.length == 2) {
-                return Bukkit.getWorlds().stream().map(w -> w.getName()).toList();
+                return platform.getLoadedWorlds().stream().map(WorldHandle::name).toList();
             } else {
                 return List.of();
             }
@@ -294,20 +287,38 @@ public class AutoBingoCommand implements TabExecutor
                 }));
     }
 
-    @Override
-    public boolean onCommand(@NonNull CommandSender commandSender, @NonNull Command autobingoCommand, @NonNull String alias, @NonNull String[] args) {
-        // AutoBingo should only work for admins or console.
-        if (commandSender instanceof Player p && !p.hasPermission("bingo.admin")) {
+//    @Override
+//    public boolean onCommand(@NonNull CommandSender commandSender, @NonNull Command autobingoCommand, @NonNull String alias, @NonNull String[] args) {
+//        // AutoBingo should only work for admins or console.
+//        if (commandSender instanceof Player p && !p.hasPermission("bingo.admin")) {
+//            return false;
+//        }
+//
+//        currentSender = commandSender;
+//
+//        if (!command.execute(args)) {
+//            commandSender.sendMessage(PlayerDisplay.MINI_BUILDER.deserialize("<dark_gray> - <red>Usage: " + command.usage(args)));
+//        }
+//        return true;
+//    }
+
+    public boolean execute(Audience executor, String... arguments) {
+        //FIXME: REFACTOR check permission!
+
+        currentExecutor = executor;
+
+        if (!command.execute(arguments)) {
+            currentExecutor.sendMessage(ComponentUtils.MINI_BUILDER.deserialize("<dark_gray> - <red>Usage: " + command.usage(arguments)));
             return false;
         }
 
-        currentSender = commandSender;
-
-        if (!command.execute(args)) {
-            commandSender.sendMessage(PlayerDisplay.MINI_BUILDER.deserialize("<dark_gray> - <red>Usage: " + command.usage(args)));
-        }
         return true;
     }
+//    @Nullable
+//    @Override
+//    public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
+//        return this.command.tabComplete(args);
+//    }
 
     private BingoSettingsBuilder getSettingsBuilder(String sessionName) {
         BingoSession session = manager.getSession(sessionName);
@@ -465,7 +476,7 @@ public class AutoBingoCommand implements TabExecutor
         String playerName = extraArguments[0];
         String teamName = extraArguments[1];
 
-        Player player = Bukkit.getPlayer(playerName);
+        PlayerHandle player = platform.getPlayerFromName(playerName);
         if (player == null) {
             sendFailed("Cannot add " + playerName + " to team, player does not exist/ is not online!", sessionName);
             return false;
@@ -656,7 +667,7 @@ public class AutoBingoCommand implements TabExecutor
         }
 
         String playerName = args[1];
-        Player player = Bukkit.getPlayer(playerName);
+        PlayerHandle player = platform.getPlayerFromName(playerName);
         if (player == null) {
             sendFailed("Player " + playerName + " could not be found.", worldName);
             return false;
@@ -677,26 +688,26 @@ public class AutoBingoCommand implements TabExecutor
         }
 
         String playerName = args[1];
-        Player player = Bukkit.getPlayer(playerName);
+        PlayerHandle player = platform.getPlayerFromName(playerName);
         if (player == null) {
             sendFailed("Player " + playerName + " could not be found.", worldName);
             return false;
         }
 
         BingoSession session = manager.getSession(worldName);
-        if (session == null || !session.ownsWorld(player.getWorld())) {
+        if (session == null || !session.ownsWorld(player.world())) {
             sendFailed("Player cannot be teleported. " + playerName + " is not in " + worldName, worldName);
             return false;
         }
 
         String targetWorldName = args[2];
-        World world = Bukkit.getWorld(targetWorldName);
+        WorldHandle world = platform.getWorld(targetWorldName);
         if (world == null) {
             sendFailed("Could not teleport player to invalid world " + targetWorldName + ".", worldName);
             return false;
         }
 
-        if (!player.teleport(world.getSpawnLocation(), PlayerTeleportEvent.TeleportCause.PLUGIN)) {
+        if (!player.teleport(world.spawnPoint())) {
             sendFailed("Could not teleport player to " + targetWorldName + ".", worldName);
             return false;
         }
@@ -718,24 +729,24 @@ public class AutoBingoCommand implements TabExecutor
         }
 
         String targetWorldName = args[1];
-        World world = Bukkit.getWorld(targetWorldName);
+        WorldHandle world = platform.getWorld(targetWorldName);
         if (world == null) {
             sendFailed("Could not teleport players to invalid world " + targetWorldName + ".", worldName);
             return false;
         }
 
-        Set<Player> allPlayers = session.getPlayersInWorld();
+        Set<PlayerHandle> allPlayers = session.getPlayersInWorld();
         int playerCount = allPlayers.size();
         int playersLeft = playerCount;
-        for (Player player : session.getPlayersInWorld())
+        for (PlayerHandle player : session.getPlayersInWorld())
         {
-            if (!session.ownsWorld(player.getWorld())) {
-                ConsoleMessenger.log("Player '" + player.getName() + "' cannot be kicked from the session " + targetWorldName);
+            if (!session.ownsWorld(player.world())) {
+                ConsoleMessenger.log("Player '" + player.playerName() + "' cannot be kicked from the session " + targetWorldName);
                 continue;
             }
 
-            if (!player.teleport(world.getSpawnLocation(), PlayerTeleportEvent.TeleportCause.PLUGIN)) {
-                ConsoleMessenger.bug("Could not teleport player '" + player.getName() + "'(" + player.getUniqueId() + ") for some reason", this);
+            if (!player.teleport(world.spawnPoint())) {
+                ConsoleMessenger.bug("Could not teleport player '" + player.playerName() + "'(" + player.uniqueId() + ") for some reason", this);
                 continue;
             }
 
@@ -759,7 +770,7 @@ public class AutoBingoCommand implements TabExecutor
             return false;
         }
 
-        Player player = Bukkit.getPlayer(args[1]);
+        PlayerHandle player = platform.getPlayerFromName(args[1]);
         if (player == null) {
             sendFailed("Player '" + args[1] + "' does not exist!", sessionName);
             return false;
@@ -826,7 +837,7 @@ public class AutoBingoCommand implements TabExecutor
         PlayerSerializationData playerData = manager.getPlayerData();
 
         String playerName = args[2];
-        Player player = Bukkit.getPlayer(playerName);
+        PlayerHandle player = platform.getPlayerFromName(args[1]);
         if (player == null) {
             sendFailed("Cannot edit player data, player " + playerName + " not found", sessionName);
             return false;
@@ -843,13 +854,13 @@ public class AutoBingoCommand implements TabExecutor
                 yield true;
             }
             case "save" -> {
-                SerializablePlayer data = SerializablePlayer.fromPlayer(BingoReloaded.getInstance(), player);
+                SerializablePlayer data = SerializablePlayer.fromPlayer(platform, player);
                 playerData.savePlayer(data, true);
                 sendSuccess("Saved player data for " + playerName, sessionName);
                 yield true;
             }
             case "remove" -> {
-                playerData.removePlayer(player.getUniqueId());
+                playerData.removePlayer(player.uniqueId());
                 sendSuccess("Removed previously saved player data for " + playerName, sessionName);
                 yield true;
             }
@@ -866,16 +877,10 @@ public class AutoBingoCommand implements TabExecutor
     }
 
     private void sendSuccess(Component message, String sessionName) {
-        currentSender.sendMessage(Component.text("(" + sessionName + ") ").append(message.color(NamedTextColor.GREEN)));
+        currentExecutor.sendMessage(Component.text("(" + sessionName + ") ").append(message.color(NamedTextColor.GREEN)));
     }
 
     private void sendFailed(Component message, String sessionName) {
-        currentSender.sendMessage(Component.text("(" + sessionName + ") ").append(message.color(NamedTextColor.RED)));
-    }
-
-    @Nullable
-    @Override
-    public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
-        return this.command.tabComplete(args);
+        currentExecutor.sendMessage(Component.text("(" + sessionName + ") ").append(message.color(NamedTextColor.RED)));
     }
 }

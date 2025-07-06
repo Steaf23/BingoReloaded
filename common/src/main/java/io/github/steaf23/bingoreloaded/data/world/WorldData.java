@@ -1,8 +1,10 @@
 package io.github.steaf23.bingoreloaded.data.world;
 
-import io.github.steaf23.bingoreloaded.lib.api.Extension;
+import io.github.steaf23.bingoreloaded.lib.api.PlatformBridge;
+import io.github.steaf23.bingoreloaded.lib.api.DimensionType;
 import io.github.steaf23.bingoreloaded.lib.api.WorldHandle;
 import io.github.steaf23.bingoreloaded.data.helper.ResourceFileHelper;
+import io.github.steaf23.bingoreloaded.lib.api.WorldOptions;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import io.github.steaf23.bingoreloaded.world.CustomWorldCreator;
 import net.kyori.adventure.key.Key;
@@ -16,11 +18,11 @@ import java.util.UUID;
 
 public class WorldData
 {
-    private final Extension extension;
+    private final PlatformBridge platform;
     private final Key generationOptions;
 
-    public WorldData(Extension extension, @Nullable Key generationOptions) {
-        this.extension = extension;
+    public WorldData(PlatformBridge platform, @Nullable Key generationOptions) {
+        this.platform = platform;
         this.generationOptions = generationOptions;
     }
 
@@ -30,7 +32,7 @@ public class WorldData
      * @return false if 1 or more worlds could not be removed for any reason
      */
     public boolean clearWorlds() {
-        String worldFolder = getWorldsFolder(extension);
+        String worldFolder = getWorldsFolder();
         File worldsFolderDir = FileUtils.getFile(worldFolder);
         if (!worldsFolderDir.exists()) {
             if (!worldsFolderDir.mkdirs()) {
@@ -43,7 +45,7 @@ public class WorldData
             if (f.equals(worldsFolderDir)) continue;
 
             String worldName = f.getName();
-            if (destroyWorld(extension, worldName)) {
+            if (destroyWorld(worldName)) {
                 removeCount++;
             }
         }
@@ -57,19 +59,19 @@ public class WorldData
      * @return created WorldGroup
      */
     public WorldGroup createWorldGroup(String worldName) {
-        WorldHandle overworld = CustomWorldCreator.createWorld(extension, worldName, generationOptions);
+        WorldHandle overworld = CustomWorldCreator.createWorld(platform, worldName, generationOptions);
         if (overworld == null) {
-            overworld = createWorld(extension, worldName, World.Environment.NORMAL);
+            overworld = createWorld(worldName, DimensionType.OVERWORLD);
         }
-        WorldHandle nether = createWorld(extension, worldName + "_nether", World.Environment.NETHER);
-        WorldHandle end = createWorld(extension, worldName + "_the_end", World.Environment.THE_END);
-        return new WorldGroup(worldName, overworld.getUniqueId(), nether.getUniqueId(), end.getUniqueId());
+        WorldHandle nether = createWorld( worldName + "_nether", DimensionType.NETHER);
+        WorldHandle end = createWorld( worldName + "_the_end", DimensionType.THE_END);
+        return new WorldGroup(worldName, overworld.uniqueId(), nether.uniqueId(), end.uniqueId());
     }
 
     public @Nullable WorldGroup getWorldGroup(String worldName) {
-        WorldHandle overworld = Bukkit.getWorld(getWorldsFolder(extension) + worldName);
-        WorldHandle nether = Bukkit.getWorld(getWorldsFolder(extension) + worldName + "_nether");
-        WorldHandle theEnd = Bukkit.getWorld(getWorldsFolder(extension) + worldName + "_the_end");
+        WorldHandle overworld = platform.getWorld(getWorldsFolder() + worldName);
+        WorldHandle nether = platform.getWorld(getWorldsFolder() + worldName + "_nether");
+        WorldHandle theEnd = platform.getWorld(getWorldsFolder() + worldName + "_the_end");
 
         if (overworld == null) {
             ConsoleMessenger.error("Could not fetch world group; " + worldName + " does not exist. Make sure the world exists and reload the plugin.");
@@ -81,7 +83,7 @@ public class WorldData
             ConsoleMessenger.error("Could not fetch world group; " + worldName + "_the_end does not exist. Make sure the world exists and reload the plugin.");
             return null;
         }
-        return new WorldGroup(worldName, overworld.getUniqueId(), nether.getUniqueId(), theEnd.getUniqueId());
+        return new WorldGroup(worldName, overworld.uniqueId(), nether.uniqueId(), theEnd.uniqueId());
     }
 
     /**
@@ -89,40 +91,39 @@ public class WorldData
      * @return true if the worlds in the world group could be destroyed correctly
      */
     public boolean destroyWorldGroup(@NotNull WorldGroup worldGroup) {
-        boolean success = destroyWorld(extension, worldGroup.worldName());
-        success = success && destroyWorld(extension, worldGroup.worldName() + "_nether");
-        success = success && destroyWorld(extension, worldGroup.worldName() + "_the_end");
+        boolean success = destroyWorld(worldGroup.worldName());
+        success = success && destroyWorld(worldGroup.worldName() + "_nether");
+        success = success && destroyWorld(worldGroup.worldName() + "_the_end");
         return success;
     }
 
-    private static String getWorldsFolder(MinecraftExtension extension) {
-        return extension.getDataFolder().getPath().replace("\\", "/") + "/worlds/";
+    private String getWorldsFolder() {
+        return platform.getDataFolder().getPath().replace("\\", "/") + "/worlds/";
     }
 
-    private static WorldHandle createWorld(@NotNull MinecraftExtension extension, String worldName, World.Environment environment) {
-        String worldFolder = getWorldsFolder(extension);
-        WorldCreator creator = new WorldCreator(worldFolder + worldName);
-        creator.environment(environment);
-        return Bukkit.createWorld(creator);
+    private WorldHandle createWorld(String worldName, DimensionType dimension) {
+        String worldFolder = getWorldsFolder();
+        WorldOptions options = new WorldOptions(worldFolder + worldName, dimension);
+        return platform.createWorld(options);
     }
 
-    private static boolean destroyWorld(@NotNull MinecraftExtension extension, String worldName) {
-        String worldsFolder = getWorldsFolder(extension);
+    private boolean destroyWorld(String worldName) {
+        String worldsFolder = getWorldsFolder();
 
-        WorldHandle bukkitWorld = Bukkit.getWorld(worldsFolder + worldName);
+        WorldHandle bukkitWorld = platform.getWorld(worldsFolder + worldName);
         if (bukkitWorld == null)
         {
             if (!ResourceFileHelper.deleteFolderRecurse(worldsFolder + worldName))
             {
-                ConsoleMessenger.bug("Could not remove folder for " + worldName + ", cannot find the folder of this world (it might already be removed) or the folder could not be accessed", plugin);
+                ConsoleMessenger.bug("Could not remove folder for " + worldName + ", cannot find the folder of this world (it might already be removed) or the folder could not be accessed", platform);
             }
             return false;
         }
-        UUID worldId = bukkitWorld.getUniqueId();
-        boolean worldUnloaded = Bukkit.unloadWorld(bukkitWorld, false);
+        UUID worldId = bukkitWorld.uniqueId();
+        boolean worldUnloaded = platform.unloadWorld(bukkitWorld, false);
 
         // If world was not unloaded, it means that either it does not exist, it was already unloaded, or there are still players in the world
-        WorldHandle unloadedWorld = Bukkit.getWorld(worldId);
+        WorldHandle unloadedWorld = platform.getWorld(worldId);
         boolean stillLoaded = unloadedWorld != null || !worldUnloaded;
         if (stillLoaded) {
             // Players are still in the world, it could not be unloaded
@@ -132,7 +133,7 @@ public class WorldData
 
         if (!ResourceFileHelper.deleteFolderRecurse(worldsFolder + worldName))
         {
-            ConsoleMessenger.bug("Could not remove folder for " + worldName + ", cannot find the folder of this world (it might already be removed) or the folder could not be accessed", plugin);
+            ConsoleMessenger.bug("Could not remove folder for " + worldName + ", cannot find the folder of this world (it might already be removed) or the folder could not be accessed", platform);
         }
         return true;
     }

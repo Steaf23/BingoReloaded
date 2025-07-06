@@ -6,12 +6,8 @@ import io.github.steaf23.bingoreloaded.data.config.BingoOptions;
 import io.github.steaf23.bingoreloaded.gui.inventory.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
-import io.github.steaf23.bingoreloaded.lib.scoreboard.HUDRegistry;
-import io.github.steaf23.bingoreloaded.lib.scoreboard.PlayerHUD;
-import io.github.steaf23.bingoreloaded.lib.scoreboard.PlayerHUDGroup;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 /**

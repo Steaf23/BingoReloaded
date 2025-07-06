@@ -1,11 +1,13 @@
-package io.github.steaf23.bingoreloaded.lib.data.core.configuration;
+package io.github.steaf23.bingoreloaded.lib.data.core;
 
-import io.github.steaf23.bingoreloaded.lib.data.core.DataStorage;
-import io.github.steaf23.bingoreloaded.lib.data.core.DataStorageSerializerRegistry;
-import io.github.steaf23.bingoreloaded.lib.data.core.DataStorageSerializer;
+import io.github.steaf23.bingoreloaded.lib.api.PaperApiHelper;
+import io.github.steaf23.bingoreloaded.lib.api.StackHandle;
+import io.github.steaf23.bingoreloaded.lib.api.StackHandlePaper;
+import io.github.steaf23.bingoreloaded.lib.api.WorldPosition;
 import io.github.steaf23.bingoreloaded.lib.data.core.tag.TagAdapter;
 import io.github.steaf23.bingoreloaded.lib.data.core.tag.TagDataType;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
+import net.kyori.adventure.key.Key;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -180,13 +182,13 @@ public class YamlDataStorage implements DataStorage
     }
 
     @Override
-    public void setItemStack(String path, ItemStack value) {
+    public void setItemStack(String path, StackHandle value) {
         config.set(path, value);
     }
 
     @Override
-    public @NotNull ItemStack getItemStack(String path) {
-        return config.getItemStack(path, new ItemStack(Material.AIR));
+    public @NotNull StackHandle getItemStack(String path) {
+        return new StackHandlePaper(config.getItemStack(path, new ItemStack(Material.AIR)));
     }
 
     @Override
@@ -204,26 +206,29 @@ public class YamlDataStorage implements DataStorage
     }
 
     @Override
-    public void setLocation(String path, @NotNull Location value) {
+    public void setWorldPosition(String path, @NotNull WorldPosition value) {
         config.set(path, value);
     }
 
     @Override
-    public @Nullable Location getWorldPosition(String path) {
-        return config.getLocation(path);
-    }
-
-    public @NotNull Location getWorldPosition(String path, @NotNull Location def) {
-        return config.getLocation(path, def);
+    public @Nullable WorldPosition getWorldPosition(String path) {
+        Location loc = config.getLocation(path);
+        return loc == null ? null : PaperApiHelper.worldPosFromLocation(loc);
     }
 
     @Override
-    public void setNamespacedKey(String path, @NotNull NamespacedKey value) {
+    public @NotNull WorldPosition getWorldPosition(String path, @NotNull WorldPosition def) {
+        WorldPosition pos = getWorldPosition(path);
+        return pos == null ? def : pos;
+    }
+
+    @Override
+    public void setNamespacedKey(String path, @NotNull Key value) {
         config.set(path, value);
     }
 
     @Override
-    public @NotNull NamespacedKey getNamespacedKey(String path) {
+    public @NotNull Key getNamespacedKey(String path) {
         Object ns = config.get(path);
         if (ns instanceof NamespacedKey key) {
             return key;

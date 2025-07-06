@@ -5,6 +5,9 @@ import io.github.steaf23.bingoreloaded.lib.api.EntityType;
 import io.github.steaf23.bingoreloaded.lib.api.ItemType;
 import io.github.steaf23.bingoreloaded.lib.api.StatisticHandle;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import net.kyori.adventure.text.minimessage.tag.standard.StandardTags;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.jetbrains.annotations.NotNull;
 
@@ -12,6 +15,12 @@ import java.util.Arrays;
 
 public class ComponentUtils
 {
+    public static final MiniMessage MINI_BUILDER = MiniMessage.builder()
+            .tags(TagResolver.builder()
+                    .resolvers(StandardTags.defaults(), TinyCaps.TAG_RESOLVER)
+                    .build())
+            .build();
+
     public static Component[] createComponentsFromString(String... strings) {
         return Arrays.stream(strings).map(s -> LegacyComponentSerializer.legacySection().deserialize(s)).toList().toArray(new Component[]{});
     }

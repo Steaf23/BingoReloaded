@@ -1,18 +1,16 @@
 package io.github.steaf23.bingoreloaded.gameloop;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
-import io.github.steaf23.bingoreloaded.api.BingoEvents;
+import io.github.steaf23.bingoreloaded.api.BingoEventListener;
 import io.github.steaf23.bingoreloaded.data.PlayerSerializationData;
 import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.data.config.BingoOptions;
 import io.github.steaf23.bingoreloaded.data.world.WorldData;
 import io.github.steaf23.bingoreloaded.data.world.WorldGroup;
-import io.github.steaf23.bingoreloaded.lib.api.Extension;
-import io.github.steaf23.bingoreloaded.lib.api.MenuBoard;
+import io.github.steaf23.bingoreloaded.lib.api.PlatformBridge;
 import io.github.steaf23.bingoreloaded.lib.api.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.api.WorldHandle;
 import io.github.steaf23.bingoreloaded.lib.api.WorldPosition;
-import io.github.steaf23.bingoreloaded.lib.scoreboard.HUDRegistry;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
@@ -30,37 +28,31 @@ public class GameManager
 {
     protected final Map<String, BingoSession> sessions;
 
-    private final Extension extension;
+    private final PlatformBridge platform;
     private final BingoConfigurationData config;
-    private final MenuBoard menuBoard;
-    private final HUDRegistry hudRegistry;
 
     private final PlayerSerializationData playerData;
-//    private final BingoEventListener eventListener;
+    private final BingoEventListener eventListener;
     private final WorldData worldData;
 
     private boolean teleportingPlayer;
 
-    public GameManager(@NotNull Extension extension, BingoConfigurationData config, MenuBoard menuBoard, HUDRegistry hudRegistry) {
-        this.extension = extension;
+    public GameManager(@NotNull PlatformBridge platform, BingoConfigurationData config) {
+        this.platform = platform;
         this.config = config;
-        this.menuBoard = menuBoard;
-        this.hudRegistry = hudRegistry;
 
         @Subst("gamemanager:none") String settingsName = config.getOptionValue(BingoOptions.CUSTOM_WORLD_GENERATION);
         Key generationSettings = settingsName.equals("null") ? null : Key.key(settingsName);
-        this.worldData = new WorldData(extension, generationSettings);
+        this.worldData = new WorldData(platform, generationSettings);
 
         this.sessions = new HashMap<>();
         this.playerData = new PlayerSerializationData();
 
         this.teleportingPlayer = false;
 
-        //FIXME: REFACTOR Move out of Game manager
-//        this.eventListener = new BingoEventListener(this,
-//                config.getOptionValue(BingoOptions.DISABLE_ADVANCEMENTS),
-//                config.getOptionValue(BingoOptions.DISABLE_STATISTICS));
-//        extension.registerListener(eventListener);
+        this.eventListener = new BingoEventListener(this,
+                config.getOptionValue(BingoOptions.DISABLE_ADVANCEMENTS),
+                config.getOptionValue(BingoOptions.DISABLE_STATISTICS));
 
         if (config.getOptionValue(BingoOptions.CLEAR_DEFAULT_WORLDS))
         {
@@ -82,7 +74,7 @@ public class GameManager
             return false;
         }
 
-        BingoSession session = new BingoSession(menuBoard, hudRegistry, worldData.createWorldGroup(sessionName), config);
+        BingoSession session = new BingoSession(this, worldData.createWorldGroup(sessionName), config);
         sessions.put(sessionName, session);
         return true;
     }
@@ -156,8 +148,6 @@ public class GameManager
     }
 
     public void onPluginDisable() {
-//        extension.unregisterListener(eventListener);
-
         for (String session : sessions.keySet()) {
             sessions.get(session).destroy();
             sessions.remove(session);
@@ -243,7 +233,7 @@ public class GameManager
                 if (savePlayerInformation) {
                     teleportingPlayer = true;
                     // load player will teleport them, so we have to schedule it to make sure to do the right thing
-                    BingoReloaded.scheduleTask(t -> {
+                    platform.runTask(t -> {
                         if (playerData.loadPlayer(player) == null) {
 //                        // Player data was not saved for some reason?
 //                        ConsoleMessenger.bug(Component.text("No saved player data could be found for ").append(event.getPlayer().displayName()).append(Component.text(", resetting data")), this);
@@ -305,12 +295,12 @@ public class GameManager
         }
     }
 
-    public void handlePrepareNextBingoGame(final BingoEvents.SessionEvent event) {
+    public void prepareNextBingoGame(BingoSession session) {
         if (config.getOptionValue(BingoOptions.SAVE_PLAYER_INFORMATION) &&
                 config.getOptionValue(BingoOptions.LOAD_PLAYER_INFORMATION_STRATEGY) == BingoOptions.LoadPlayerInformationStrategy.AFTER_GAME) {
-            for (BingoParticipant participant : event.session().teamManager.getParticipants()) {
+            for (BingoParticipant participant : session.teamManager.getParticipants()) {
                 participant.sessionPlayer().ifPresent(player -> {
-                    event.session().teamManager.removeMemberFromTeam(participant);
+                    session.teamManager.removeMemberFromTeam(participant);
                     playerData.loadPlayer(player);
                 });
             }
@@ -321,7 +311,7 @@ public class GameManager
         return playerData;
     }
 
-    protected Extension getExtension() {
-        return extension;
+    public PlatformBridge getPlatform() {
+        return platform;
     }
 }

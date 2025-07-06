@@ -1,20 +1,19 @@
 package io.github.steaf23.bingoreloaded.lib.api;
 
-import net.kyori.adventure.audience.Audience;
-import net.kyori.adventure.key.Key;
+import net.kyori.adventure.audience.ForwardingAudience;
 import net.kyori.adventure.text.Component;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
-public interface PlayerHandle extends Audience {
+public interface PlayerHandle extends ForwardingAudience {
 
 	String playerName();
 	Component displayName();
 	UUID uniqueId();
 	WorldHandle world();
 	WorldPosition position();
-	@NotNull WorldPosition respawnPoint();
+	@Nullable WorldPosition respawnPoint();
 	boolean hasPermission(String permission);
 	int level();
 	float exp();
@@ -25,7 +24,7 @@ public interface PlayerHandle extends Audience {
 	int getStatisticValue(StatisticType type, EntityType entity);
 	int getStatisticValue(StatisticType type, ItemType item);
 
-	void teleport(WorldPosition pos);
+	boolean teleport(WorldPosition pos);
 
 	PlayerInventoryHandle inventory();
 	void clearInventory();
@@ -47,4 +46,6 @@ public interface PlayerHandle extends Audience {
 	void setStatisticValue(StatisticType type, ItemType item, int value);
 
 	void clearAllEffects();
+
+	boolean equals(Object other);
 }

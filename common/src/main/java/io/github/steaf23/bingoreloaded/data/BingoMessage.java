@@ -1,8 +1,11 @@
 package io.github.steaf23.bingoreloaded.data;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
+import io.github.steaf23.bingoreloaded.lib.api.BingoReloadedRuntime;
+import io.github.steaf23.bingoreloaded.lib.api.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataAccessor;
 import io.github.steaf23.bingoreloaded.lib.PlayerDisplay;
+import io.github.steaf23.bingoreloaded.lib.util.ComponentUtils;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import io.github.steaf23.bingoreloaded.lib.util.TinyCaps;
 import me.clip.placeholderapi.PlaceholderAPI;
@@ -177,10 +180,12 @@ public enum BingoMessage
         this.translation = key;
     }
 
-    public static void setLanguage(DataAccessor text, DataAccessor fallbackText) {
+    public static void setLanguage(BingoReloadedRuntime.LanguageData language) {
+        DataAccessor text = language.selectedLanguage();
+        DataAccessor fallbackText = language.selectedLanguage();
         for (BingoMessage value : BingoMessage.values()) {
             if (!text.contains(value.key)) {
-                ConsoleMessenger.log(PlayerDisplay.MINI_BUILDER.deserialize("The message '<yellow>" + value.key + "</yellow>' in translation file <blue>" + text.getLocation() + text.getFileExtension() + "</blue> has no translation, using fallback (<green>English</green>)"));
+                ConsoleMessenger.log(ComponentUtils.MINI_BUILDER.deserialize("The message '<yellow>" + value.key + "</yellow>' in translation file <blue>" + text.getLocation() + text.getFileExtension() + "</blue> has no translation, using fallback (<green>English</green>)"));
             }
             value.translation = text.getString(value.key, fallbackText.getString(value.key, value.translation));
         }
@@ -223,7 +228,7 @@ public enum BingoMessage
             //Translate and send in steps
             //1. Solve placeholders first (so they can be nested into arguments in the following formats).
             String playerMessage = translated;
-            if (innerAudience instanceof Player player && BingoReloaded.PLACEHOLDER_API_ENABLED) {
+            if (innerAudience instanceof PlayerHandle player && BingoReloaded.PLACEHOLDER_API_ENABLED) {
                 playerMessage = PlaceholderAPI.setPlaceholders(player, playerMessage);
             }
 
@@ -254,7 +259,7 @@ public enum BingoMessage
     /**
      * @return translated multiline component, including placeholders
      */
-    public Component[] convertForPlayer(Player player, Component... withArguments) {
+    public Component[] convertForPlayer(PlayerHandle player, Component... withArguments) {
         String playerMessage = rawTranslation();
         return convertForPlayer(playerMessage, player, withArguments);
     }
@@ -262,7 +267,7 @@ public enum BingoMessage
     /**
      * @return multiline component from string input text, including placeholders
      */
-    public static Component[] convertForPlayer(String input, Player player, Component... withArguments) {
+    public static Component[] convertForPlayer(String input, PlayerHandle player, Component... withArguments) {
         if (BingoReloaded.PLACEHOLDER_API_ENABLED)
             input = PlaceholderAPI.setPlaceholders(player, input);
 
@@ -298,7 +303,7 @@ public enum BingoMessage
             resolvers.add(SUBSTITUTE_RESOLVER);
         }
 
-        Component phrase = PlayerDisplay.MINI_BUILDER.deserialize(converted, resolvers.toArray(TagResolver[]::new));
+        Component phrase = ComponentUtils.MINI_BUILDER.deserialize(converted, resolvers.toArray(TagResolver[]::new));
         if (arguments.length == 0) {
             //caching only works without arguments
             cachedPhrases.put(input, phrase);
@@ -324,7 +329,7 @@ public enum BingoMessage
                 resolvers.add(Placeholder.component(Integer.toString(i), arguments[i]));
             }
             resolvers.add(SUBSTITUTE_RESOLVER);
-            Component c = PlayerDisplay.MINI_BUILDER.deserialize(converted, resolvers.toArray(TagResolver[]::new));
+            Component c = ComponentUtils.MINI_BUILDER.deserialize(converted, resolvers.toArray(TagResolver[]::new));
             if (color != null) {
                 result.add(c.color(color));
             } else {
@@ -424,7 +429,7 @@ public enum BingoMessage
                     String translateWith = args.pop().toString();
                     return Tag.inserting(BingoMessage.getByKey(key).asPhrase(true, Arrays.stream(translateWith
                                     .split(","))
-                            .map(a -> PlayerDisplay.MINI_BUILDER.deserialize(a, SUBSTITUTE_RESOLVER))
+                            .map(a -> ComponentUtils.MINI_BUILDER.deserialize(a, SUBSTITUTE_RESOLVER))
                             .toArray(Component[]::new)));
                 }),
                 TagResolver.resolver("bingo_translate_recurse", (args, ctx) -> {

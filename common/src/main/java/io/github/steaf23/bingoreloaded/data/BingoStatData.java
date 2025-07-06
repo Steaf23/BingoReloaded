@@ -1,17 +1,15 @@
 package io.github.steaf23.bingoreloaded.data;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
+import io.github.steaf23.bingoreloaded.lib.api.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataAccessor;
 import io.github.steaf23.bingoreloaded.hologram.HologramBuilder;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
-import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.UUID;
 
@@ -37,9 +35,9 @@ public class BingoStatData
         return Integer.parseInt(stats[statType.idx]);
     }
 
-    public void incrementPlayerStat(Player player, BingoStatType statType)
+    public void incrementPlayerStat(PlayerHandle player, BingoStatType statType)
     {
-        incrementPlayerStat(player.getUniqueId(), statType, 1);
+        incrementPlayerStat(player.uniqueId(), statType, 1);
     }
 
     public void incrementPlayerStat(UUID playerId, BingoStatType statType, int by)
@@ -110,7 +108,7 @@ public class BingoStatData
     private @NotNull UUID getPlayerUUID(String playerName)
     {
         OfflinePlayer player = Bukkit.getOfflinePlayer(playerName);
-        return player.getUniqueId();
+        return player.uniqueId();
     }
 
     private void setPlayerData(UUID playerId, String statData)

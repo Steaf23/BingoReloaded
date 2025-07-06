@@ -1,11 +1,10 @@
 package io.github.steaf23.bingoreloaded.lib.inventory;
 
-import io.github.steaf23.bingoreloaded.lib.PlayerDisplay;
-import io.github.steaf23.bingoreloaded.lib.api.InventoryHandle;
+import io.github.steaf23.bingoreloaded.lib.api.InventoryHandlePaper;
+import io.github.steaf23.bingoreloaded.lib.api.PlatformResolver;
 import io.github.steaf23.bingoreloaded.lib.api.PlayerHandle;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.Bukkit;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
 
@@ -15,7 +14,7 @@ public interface InventoryMenu extends Menu {
 	Inventory getInventory();
 
 	default void openInventory(PlayerHandle player) {
-		Bukkit.getScheduler().runTask(PlayerDisplay.getExtension(), task -> player.openInventory(getInventory()));
+		PlatformResolver.get().runTask(task -> player.openInventory(new InventoryHandlePaper(getInventory())));
 	}
 
 	static Component inputButtonText(Component buttonText) {

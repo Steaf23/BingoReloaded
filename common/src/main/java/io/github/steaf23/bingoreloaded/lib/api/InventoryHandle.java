@@ -1,9 +1,9 @@
 package io.github.steaf23.bingoreloaded.lib.api;
 
-public interface InventoryHandle extends Iterable<StackHandle> {
+public interface InventoryHandle {
 
 	void setItem(int index, StackHandle stack);
-	void addItem(StackHandle stack);
+	void addItem(StackHandle... stacks);
 
 	StackHandle[] contents();
 	void clearContents();

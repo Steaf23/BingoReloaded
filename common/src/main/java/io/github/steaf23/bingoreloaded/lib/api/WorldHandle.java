@@ -1,13 +1,13 @@
 package io.github.steaf23.bingoreloaded.lib.api;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.UUID;
 
 public interface WorldHandle {
 
 	String name();
 	UUID uniqueId();
-	List<PlayerHandle> players();
+	Collection<? extends PlayerHandle> players();
 	WorldPosition spawnPoint();
 	DimensionType dimension();
 

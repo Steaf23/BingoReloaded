@@ -1,9 +1,8 @@
 package io.github.steaf23.bingoreloaded.lib.data.core.tag;
 
-import io.github.steaf23.bingoreloaded.lib.api.Extension;
+import io.github.steaf23.bingoreloaded.lib.api.PlatformBridge;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataAccessor;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -21,12 +20,12 @@ import java.util.zip.GZIPOutputStream;
  */
 public class TagDataAccessor extends TagDataStorage implements DataAccessor
 {
-    private final Extension extension;
+    private final PlatformBridge platform;
     private final String filepath;
     private final boolean internalOnly;
 
-    public TagDataAccessor(Extension extension, String filepath, boolean internalOnly) {
-        this.extension = extension;
+    public TagDataAccessor(PlatformBridge platform, String filepath, boolean internalOnly) {
+        this.platform = platform;
         this.filepath = filepath;
         this.internalOnly = internalOnly;
     }
@@ -45,12 +44,12 @@ public class TagDataAccessor extends TagDataStorage implements DataAccessor
     public void load() {
         InputStream inputStream;
         if (isInternalReadOnly()) {
-            inputStream = extension.getResource(getLocation() + getFileExtension());
+            inputStream = platform.getResource(getLocation() + getFileExtension());
         }
         else {
-            File file = new File(extension.getDataFolder(), getLocation() + getFileExtension());
+            File file = new File(platform.getDataFolder(), getLocation() + getFileExtension());
             if (!file.exists()) {
-                extension.saveResource(getLocation() + getFileExtension(), false);
+                platform.saveResource(getLocation() + getFileExtension(), false);
             }
 
             try {
@@ -70,7 +69,7 @@ public class TagDataAccessor extends TagDataStorage implements DataAccessor
         if (isInternalReadOnly()) {
             return;
         }
-        writeTagDataToFile(this, new File(extension.getDataFolder(), getLocation() + getFileExtension()));
+        writeTagDataToFile(this, new File(platform.getDataFolder(), getLocation() + getFileExtension()));
     }
 
     @Override

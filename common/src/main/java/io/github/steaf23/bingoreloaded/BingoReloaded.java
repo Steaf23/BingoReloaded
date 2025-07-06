@@ -1,9 +1,10 @@
 package io.github.steaf23.bingoreloaded;
 
-import io.github.steaf23.bingoreloaded.lib.api.Extension;
-import io.github.steaf23.bingoreloaded.lib.api.ServerHandle;
+import io.github.steaf23.bingoreloaded.lib.api.BingoReloadedRuntime;
+import io.github.steaf23.bingoreloaded.lib.api.PlatformBridge;
+import io.github.steaf23.bingoreloaded.lib.api.PlatformResolver;
 import io.github.steaf23.bingoreloaded.lib.api.PlayerHandle;
-import io.github.steaf23.bingoreloaded.command.AutoBingoCommand;
+import io.github.steaf23.bingoreloaded.command.AutoBingoExecutor;
 import io.github.steaf23.bingoreloaded.command.BingoCommand;
 import io.github.steaf23.bingoreloaded.command.BingoConfigCommand;
 import io.github.steaf23.bingoreloaded.command.BingoTestCommand;
@@ -21,6 +22,9 @@ import io.github.steaf23.bingoreloaded.data.serializers.BingoSettingsStorageSeri
 import io.github.steaf23.bingoreloaded.data.serializers.CustomKitStorageSerializer;
 import io.github.steaf23.bingoreloaded.data.serializers.ItemStorageSerializer;
 import io.github.steaf23.bingoreloaded.data.serializers.PlayerStorageSerializer;
+import io.github.steaf23.bingoreloaded.lib.api.StatisticHandle;
+import io.github.steaf23.bingoreloaded.lib.data.serializers.StatisticSerializer;
+import io.github.steaf23.bingoreloaded.lib.event.EventBus;
 import io.github.steaf23.bingoreloaded.tasks.data.TaskStorageSerializer;
 import io.github.steaf23.bingoreloaded.data.serializers.TeamTemplateStorageSerializer;
 import io.github.steaf23.bingoreloaded.gameloop.GameManager;
@@ -30,35 +34,27 @@ import io.github.steaf23.bingoreloaded.gui.inventory.item.SerializableItem;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataAccessor;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataStorageSerializerRegistry;
 import io.github.steaf23.bingoreloaded.lib.data.core.VirtualDataAccessor;
-import io.github.steaf23.bingoreloaded.lib.data.core.configuration.YamlDataAccessor;
 import io.github.steaf23.bingoreloaded.lib.data.core.tag.TagDataAccessor;
-import io.github.steaf23.bingoreloaded.lib.inventory.BasicMenu;
-import io.github.steaf23.bingoreloaded.lib.scoreboard.HUDRegistry;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import io.github.steaf23.bingoreloaded.placeholder.BingoReloadedPlaceholderExpansion;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
 import io.github.steaf23.bingoreloaded.settings.CustomKit;
-import io.github.steaf23.bingoreloaded.tasks.StatisticHandlePaper;
 import io.github.steaf23.bingoreloaded.tasks.data.TaskData;
-import io.github.steaf23.bingoreloaded.util.bstats.Metrics;
 import net.kyori.adventure.key.KeyPattern;
+import net.kyori.adventure.key.Namespaced;
 import net.kyori.adventure.resource.ResourcePackInfo;
 import net.kyori.adventure.resource.ResourcePackRequest;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.Consumer;
 
-public class BingoReloaded implements Extension {
+public class BingoReloaded implements Namespaced {
 	public static final String RESOURCE_PACK_URL = "https://github.com/Steaf23/BingoReloaded/raw/menu-frontend-split-for-resource-pack/resourcepack/BingoReloaded.zip";
 	public static final String RESOURCE_PACK_HASH = "6fb0aa69a5c6076eb8d55d964493195588676301";
 	public static final ResourcePackInfo RESOURCE_PACK = ResourcePackInfo.resourcePackInfo()
@@ -73,15 +69,17 @@ public class BingoReloaded implements Extension {
 
 	private static BingoReloaded INSTANCE;
 
-	private final ServerHandle platform;
+	private final PlatformBridge platform;
+	private final BingoReloadedRuntime runtime;
 	private BingoConfigurationData config;
 	private GameManager gameManager;
-	private BingoMenuBoard menuBoard;
 	private TexturedMenuData textureData;
-	private HUDRegistry hudRegistry;
+	private final EventBus eventBus;
 
-	BingoReloaded(ServerHandle platform) {
-		this.platform = platform;
+	BingoReloaded(BingoReloadedRuntime runtime) {
+		this.eventBus = new EventBus();
+		this.platform = PlatformResolver.get();
+		this.runtime = runtime;
 	}
 
 	public void load() {
@@ -99,34 +97,35 @@ public class BingoReloaded implements Extension {
 			updater.update();
 		}
 
-		setupConfig();
+		runtime.setupConfig();
 
 		DataStorageSerializerRegistry.addSerializer(new CustomKitStorageSerializer(), CustomKit.class);
 		DataStorageSerializerRegistry.addSerializer(new TaskStorageSerializer(), TaskData.class);
 		DataStorageSerializerRegistry.addSerializer(new PlayerStorageSerializer(), SerializablePlayer.class);
 		DataStorageSerializerRegistry.addSerializer(new TeamTemplateStorageSerializer(), TeamData.TeamTemplate.class);
 		DataStorageSerializerRegistry.addSerializer(new BingoSettingsStorageSerializer(), BingoSettings.class);
-		DataStorageSerializerRegistry.addSerializer(new BingoStatisticStorageSerializer(), StatisticHandlePaper.class);
+		DataStorageSerializerRegistry.addSerializer(new StatisticSerializer(), StatisticHandle.class);
 		DataStorageSerializerRegistry.addSerializer(new ItemStorageSerializer(), SerializableItem.class);
 
 		// Create data accessors
-		addDataAccessor(new YamlDataAccessor(this, "scoreboards", false));
-		addDataAccessor(new YamlDataAccessor(this, "placeholders", false));
-		addDataAccessor(new TagDataAccessor(this, "data/cards", false));
-		addDataAccessor(new TagDataAccessor(this, "data/textures", false));
-		addDataAccessor(new TagDataAccessor(this, "data/kits", false));
-		addDataAccessor(new TagDataAccessor(this, "data/" + getDefaultTasksVersion(), false));
-		addDataAccessor(new TagDataAccessor(this, "data/presets", false));
-		addDataAccessor(new TagDataAccessor(this, "data/player_stats", false));
-		addDataAccessor(new TagDataAccessor(this, "data/teams", false));
-		addDataAccessor(new TagDataAccessor(this, "data/players", false));
+		addDataAccessor(new TagDataAccessor(platform, "data/cards", false));
+		addDataAccessor(new TagDataAccessor(platform, "data/textures", false));
+		addDataAccessor(new TagDataAccessor(platform, "data/kits", false));
+		addDataAccessor(new TagDataAccessor(platform, "data/" + getDefaultTasksVersion(), false));
+		addDataAccessor(new TagDataAccessor(platform, "data/presets", false));
+		addDataAccessor(new TagDataAccessor(platform, "data/player_stats", false));
+		addDataAccessor(new TagDataAccessor(platform, "data/teams", false));
+		addDataAccessor(new TagDataAccessor(platform, "data/players", false));
+		for (DataAccessor accessor : runtime.getDataToRegister()) { // platform specific data accessors
+			addDataAccessor(accessor);
+		}
 
 		if (canUsePlaceholderAPI()) {
 			new BingoReloadedPlaceholderExpansion(this).register();
 			ConsoleMessenger.log(Component.text("Enabled Bingo Reloaded Placeholder expansion").color(NamedTextColor.GREEN));
 		}
 
-		this.config = new BingoConfigurationData(new io.github.steaf23.bingoreloaded.lib.data.core.configuration.ConfigDataAccessor(this));
+		this.config = new BingoConfigurationData(runtime.getConfigData());
 		PlayerDisplay.enableDebugLogging(config.getOptionValue(BingoOptions.ENABLE_DEBUG_LOGGING));
 
 		PlayerDisplay.setUseCustomTextures(config.getOptionValue(BingoOptions.USE_INCLUDED_RESOURCE_PACK));
@@ -136,21 +135,10 @@ public class BingoReloaded implements Extension {
 		BasicMenu.pluginTitlePrefix = BingoMessage.MENU_PREFIX.asPhrase();
 
 		this.textureData = new TexturedMenuData();
-		this.menuBoard = new BingoMenuBoard();
-		this.hudRegistry = new HUDRegistry();
 
 		reloadManager();
 
-		Bukkit.getPluginManager().registerEvents(menuBoard, this);
-		Bukkit.getPluginManager().registerEvents(hudRegistry, this);
-
-		Metrics bStatsMetrics = new Metrics(this, 22586);
-		bStatsMetrics.addCustomChart(new Metrics.SimplePie("selected_language",
-				() -> config.getOptionValue(BingoOptions.LANGUAGE).replace(".yml", "").replace("languages/", "")));
-		bStatsMetrics.addCustomChart(new Metrics.SimplePie("plugin_configuration",
-				() -> config.getOptionValue(BingoOptions.CONFIGURATION) == BingoOptions.PluginConfiguration.SINGULAR ? "Singular" : "Multiple"));
-
-		ConsoleMessenger.log(Component.text("Enabled " + getName()).color(NamedTextColor.GREEN));
+		ConsoleMessenger.log(Component.text("Enabled " + platform.getExtensionInfo().name()).color(NamedTextColor.GREEN));
 	}
 
 	public void registerCommand(String commandName, TabExecutor executor) {
@@ -161,12 +149,11 @@ public class BingoReloaded implements Extension {
 		}
 	}
 
-	public void onDisable() {
+	public void disable() {
 		if (gameManager != null) {
 			gameManager.onPluginDisable();
 		}
 
-		HandlerList.unregisterAll(menuBoard);
 		PlayerDisplay.disable();
 	}
 
@@ -186,7 +173,7 @@ public class BingoReloaded implements Extension {
 		boolean savePlayerStatistics = INSTANCE.config.getOptionValue(BingoOptions.SAVE_PLAYER_STATISTICS);
 		if (savePlayerStatistics) {
 			BingoStatData statsData = new BingoStatData();
-			statsData.setPlayerStat(player.getUniqueId(), stat, value);
+			statsData.setPlayerStat(player.uniqueId(), stat, value);
 		}
 	}
 
@@ -194,28 +181,13 @@ public class BingoReloaded implements Extension {
 		boolean savePlayerStatistics = INSTANCE.config.getOptionValue(BingoOptions.SAVE_PLAYER_STATISTICS);
 		if (savePlayerStatistics) {
 			BingoStatData statsData = new BingoStatData();
-			return statsData.getPlayerStat(player.getUniqueId(), stat);
+			return statsData.getPlayerStat(player.uniqueId(), stat);
 		}
 		return 0;
 	}
 
 	public static boolean areAdvancementsDisabled() {
 		return !Bukkit.advancementIterator().hasNext() || Bukkit.advancementIterator().next() == null;
-	}
-
-	public static BingoReloaded getInstance() {
-		return INSTANCE;
-	}
-
-	public static void scheduleTask(@NotNull Consumer<BukkitTask> task) {
-		BingoReloaded.scheduleTask(task, 0);
-	}
-
-	public static void scheduleTask(@NotNull Consumer<BukkitTask> task, long delay) {
-		if (delay <= 0)
-			Bukkit.getScheduler().runTask(INSTANCE, task);
-		else
-			Bukkit.getScheduler().runTaskLater(INSTANCE, task, delay);
 	}
 
 	public static String getDefaultTasksVersion() {
@@ -245,12 +217,12 @@ public class BingoReloaded implements Extension {
 	@NotNull
 	public static DataAccessor getDataAccessor(@NotNull String location) {
 		if (location.isEmpty()) {
-			ConsoleMessenger.bug("No location specified for data accessor, returning empty data accessor.", BingoReloaded.getInstance());
+			ConsoleMessenger.bug("No location specified for data accessor, returning empty data accessor.", INSTANCE);
 			return new VirtualDataAccessor(location);
 		}
 
 		if (!accessorMap.containsKey(location)) {
-			ConsoleMessenger.bug("No data accessor exists for the specified location (" + location + "), returning empty data accessor.", BingoReloaded.getInstance());
+			ConsoleMessenger.bug("No data accessor exists for the specified location (" + location + "), returning empty data accessor.", INSTANCE);
 			return new VirtualDataAccessor(location);
 		}
 
@@ -271,7 +243,7 @@ public class BingoReloaded implements Extension {
 	}
 
 	public void reloadConfigFromFile() {
-		setupConfig();
+		runtime.setupConfig();
 		this.config.reload();
 	}
 
@@ -303,47 +275,22 @@ public class BingoReloaded implements Extension {
 		setLanguage(langString);
 	}
 
-	private void setupConfig() {
-		saveConfig();
-		saveDefaultConfig();
-
-		// load default config
-		YamlConfiguration defaultConfigFull = YamlConfiguration.loadConfiguration(new InputStreamReader(this.getResource("config.yml")));
-
-		// load current user config to copy values from
-		FileConfiguration userConfig = getConfig();
-
-		for (String key : userConfig.getKeys(true)) {
-			if (defaultConfigFull.contains(key)) {
-				defaultConfigFull.set(key, userConfig.get(key));
-			}
-		}
-
-		defaultConfigFull.set("version", getPluginMeta().getVersion());
-
-		try {
-			defaultConfigFull.save(new File(getDataFolder(), "config.yml"));
-		} catch (IOException e) {
-			ConsoleMessenger.bug("Could not update config.yml to new version", this);
-		}
-	}
-
 	public void setLanguage(String language) {
 		language = "languages/" + language;
 
 		// only reload the language when it exists
-		if (this.getResource(language + ".yml") != null) {
-			DataAccessor newLang = addDataAccessor(new io.github.steaf23.bingoreloaded.lib.data.core.configuration.YamlDataAccessor(this, language, false));
-			BingoMessage.setLanguage(newLang, addDataAccessor(new io.github.steaf23.bingoreloaded.lib.data.core.configuration.YamlDataAccessor(this, "languages/en_us", false)));
+		if (platform.getResource(language + ".yml") != null) {
+			BingoMessage.setLanguage(runtime.getLanguageData(language));
 
-			PlayerDisplay.setItemTranslation(key -> switch (key) {
-				case MENU_PREVIOUS -> BingoMessage.MENU_PREV.asPhrase();
-				case MENU_NEXT -> BingoMessage.MENU_NEXT.asPhrase();
-				case MENU_ACCEPT -> BingoMessage.MENU_ACCEPT.asPhrase();
-				case MENU_SAVE_EXIT -> BingoMessage.MENU_SAVE_EXIT.asPhrase();
-				case MENU_FILTER -> BingoMessage.MENU_FILTER.asPhrase();
-				case MENU_CLEAR_FILTER -> BingoMessage.MENU_CLEAR_FILTER.asPhrase();
-			});
+			//FIXME: REFACTOR init translation in platform code
+//			PlayerDisplay.setItemTranslation(key -> switch (key) {
+//				case MENU_PREVIOUS -> BingoMessage.MENU_PREV.asPhrase();
+//				case MENU_NEXT -> BingoMessage.MENU_NEXT.asPhrase();
+//				case MENU_ACCEPT -> BingoMessage.MENU_ACCEPT.asPhrase();
+//				case MENU_SAVE_EXIT -> BingoMessage.MENU_SAVE_EXIT.asPhrase();
+//				case MENU_FILTER -> BingoMessage.MENU_FILTER.asPhrase();
+//				case MENU_CLEAR_FILTER -> BingoMessage.MENU_CLEAR_FILTER.asPhrase();
+//			});
 
 			ConsoleMessenger.log(BingoMessage.CHANGED_LANGUAGE.asPhrase().color(NamedTextColor.GREEN));
 		} else {
@@ -358,7 +305,7 @@ public class BingoReloaded implements Extension {
 
 				// Reset player data regardless of whether saving player information is enabled, because we need to begin with a clean slate.
 				for (UUID playerId : gameManager.getPlayerData().getSavedPlayers()) {
-					PlayerHandle player = Bukkit.getPlayer(playerId);
+					PlayerHandle player = platform.getPlayerFromUniqueId(playerId);
 
 					if (player != null) {
 						gameManager.getPlayerData().loadPlayer(player);
@@ -371,27 +318,32 @@ public class BingoReloaded implements Extension {
 		}
 
 		if (config.getOptionValue(BingoOptions.CONFIGURATION) == BingoOptions.PluginConfiguration.SINGULAR) {
-			this.gameManager = new SingularGameManager(this, config, menuBoard, hudRegistry);
+			this.gameManager = new SingularGameManager(platform, config);
 		} else {
-			this.gameManager = new GameManager(this, config, menuBoard, hudRegistry);
+			this.gameManager = new GameManager(platform, config);
 		}
 
 		this.gameManager.setup(config.getOptionValue(BingoOptions.DEFAULT_WORLDS));
 
-		menuBoard.setPlayerOpenPredicate(player -> player instanceof PlayerHandle p && this.gameManager.canPlayerOpenMenus(p));
+		//FIXME: REFACTOR add openMenu predicate
+//		menuBoard.setPlayerOpenPredicate(player -> player instanceof PlayerHandle handle && this.gameManager.canPlayerOpenMenus(handle));
 
-		TabExecutor autoBingoCommand = new AutoBingoCommand(gameManager);
+		TabExecutor autoBingoCommand = new AutoBingoExecutor(gameManager);
 		TabExecutor bingoConfigCommand = new BingoConfigCommand(config);
 
-		registerCommand("bingo", new BingoCommand(this, config, gameManager, menuBoard));
+		registerCommand("bingo", new BingoCommand(this, config, gameManager));
 		registerCommand("autobingo", autoBingoCommand);
 		registerCommand("bingoconfig", bingoConfigCommand);
-		registerCommand("bingotest", new BingoTestCommand(this, menuBoard));
+		registerCommand("bingotest", new BingoTestCommand(this));
 		if (config.getOptionValue(BingoOptions.ENABLE_TEAM_CHAT)) {
 			TeamChatCommand command = new TeamChatCommand(player -> gameManager.getSessionFromWorld(player.getWorld()));
 			registerCommand("btc", command);
 			Bukkit.getPluginManager().registerEvents(command, this);
 		}
+	}
+
+	public boolean canUsePlaceholderAPI() {
+		return PLACEHOLDER_API_ENABLED;
 	}
 
 	@KeyPattern.Namespace
@@ -400,12 +352,7 @@ public class BingoReloaded implements Extension {
 		return "bingoreloaded";
 	}
 
-	@Override
-	public static ComponentLogger getComponentLogger() {
-		return null;
-	}
-
-	public boolean canUsePlaceholderAPI() {
-		return false;
+	public static EventBus eventBus() {
+		return INSTANCE.eventBus;
 	}
 }

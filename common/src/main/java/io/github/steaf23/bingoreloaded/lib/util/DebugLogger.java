@@ -1,6 +1,6 @@
 package io.github.steaf23.bingoreloaded.lib.util;
 
-import io.github.steaf23.bingoreloaded.lib.api.Extension;
+import io.github.steaf23.bingoreloaded.lib.api.PlatformBridge;
 
 import java.io.File;
 
@@ -15,9 +15,9 @@ public class DebugLogger
         }
     }
 
-    public static void setupLogger(Extension extension) {
-        logger = new SimpleLog(new File(extension.getDataFolder(), "log/debug.log"));
-        ConsoleMessenger.log("Set up debug logger for plugin " + extension.getName());
+    public static void setupLogger(PlatformBridge platform) {
+        logger = new SimpleLog(new File(platform.getDataFolder(), "log/debug.log"));
+        ConsoleMessenger.log("Set up debug logger for " + platform.getExtensionInfo().name());
     }
 
     public static void stopLogger() {

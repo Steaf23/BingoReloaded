@@ -1,18 +1,18 @@
 package io.github.steaf23.bingoreloaded.world;
 
-import org.bukkit.NamespacedKey;
-import org.bukkit.World;
-import org.bukkit.plugin.java.JavaPlugin;
+import io.github.steaf23.bingoreloaded.lib.api.PlatformBridge;
+import io.github.steaf23.bingoreloaded.lib.api.WorldHandle;
+import net.kyori.adventure.key.Key;
 import org.jetbrains.annotations.Nullable;
 
 public class CustomWorldCreator
 {
-    public static World createWorld(JavaPlugin plugin, String worldName, @Nullable NamespacedKey generationSettings) {
-        String worldFolder = getWorldsFolder(plugin);
-        return CustomWorldCreator_V1_21_4.createBingoWorld(worldFolder + worldName, generationSettings);
+    public static WorldHandle createWorld(PlatformBridge platform, String worldName, @Nullable Key generationSettingsResource) {
+        String worldFolder = getWorldsFolder(platform);
+        return CustomWorldCreator_V1_21_4.createBingoWorld(worldFolder + worldName, generationSettingsResource);
     }
 
-    private static String getWorldsFolder(JavaPlugin plugin) {
-        return plugin.getDataFolder().getPath().replace("\\", "/") + "/worlds/";
+    private static String getWorldsFolder(PlatformBridge platform) {
+        return platform.getDataFolder().getPath().replace("\\", "/") + "/worlds/";
     }
 }

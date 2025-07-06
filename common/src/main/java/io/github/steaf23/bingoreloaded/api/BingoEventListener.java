@@ -1,5 +1,6 @@
 package io.github.steaf23.bingoreloaded.api;
 
+import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gameloop.GameManager;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
@@ -18,6 +19,12 @@ public class BingoEventListener {
 		this.gameManager = gameManager;
 		this.disableAdvancements = disableAdvancements;
 		this.disableStatistics = disableStatistics;
+
+		BingoReloaded.eventBus()
+				.registerMethod(BingoEvents.GameEnded.class, this::handleBingoGameEnded)
+				.registerMethod(BingoEvents.GameEnded.class, this::handleBingoGameEnded)
+				.registerMethod(BingoEvents.GameEnded.class, this::handleBingoGameEnded)
+				.registerMethod(BingoEvents.GameEnded.class, this::handleBingoGameEnded);
 	}
 
 	@Nullable
@@ -258,16 +265,6 @@ public class BingoEventListener {
 		event.getSession().handleSettingsUpdated(event);
 	}
 
-	public void handlePlayerJoinedSessionWorld(final PlayerJoinedSessionWorldEvent event)
-	{
-		event.getSession().handlePlayerJoinedSessionWorld(event);
-	}
-
-	public void handlePlayerLeftSessionWorld(final PlayerLeftSessionWorldEvent event)
-	{
-		event.getSession().handlePlayerLeftSessionWorld(event);
-	}
-
 	public void handleParticipantJoinedTeam(final ParticipantJoinedTeamEvent event) {
 		event.getSession().handleParticipantJoinedTeam(event);
 	}
@@ -278,9 +275,5 @@ public class BingoEventListener {
 
 	public void handleBingoPlaySoundEvent(final BingoPlaySoundEvent event) {
 		event.getSession().handlePlaySoundEvent(event);
-	}
-
-	public void handlePrepareNextBingoGameEvent(final PrepareNextBingoGameEvent event) {
-		gameManager.handlePrepareNextBingoGame(event);
 	}
 }

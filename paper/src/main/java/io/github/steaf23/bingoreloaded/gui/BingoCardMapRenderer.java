@@ -1,7 +1,8 @@
 package io.github.steaf23.bingoreloaded.gui;
 
 import io.github.steaf23.bingoreloaded.cards.TaskCard;
-import io.github.steaf23.bingoreloaded.lib.api.Extension;
+import io.github.steaf23.bingoreloaded.lib.api.PlatformBridge;
+import io.github.steaf23.bingoreloaded.lib.api.Position;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataStorage;
 import io.github.steaf23.bingoreloaded.lib.data.core.json.JsonDataAccessor;
 import io.github.steaf23.bingoreloaded.lib.data.core.json.JsonDataStorage;
@@ -12,6 +13,7 @@ import io.github.steaf23.bingoreloaded.tasks.data.AdvancementTask;
 import io.github.steaf23.bingoreloaded.tasks.data.StatisticTask;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import io.github.steaf23.bingoreloaded.lib.util.ExtraMath;
+import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -36,27 +38,24 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
-import java.util.Vector;
 
 public class BingoCardMapRenderer extends MapRenderer
 {
     BingoTeam team;
     private final TaskCard card;
-    private final Extension extension;
 
     private final Random random;
-    private final List<Vector> stampOffsets;
+    private final List<Position> stampOffsets;
 
-    private static final Map<NamespacedKey, BufferedImage> allItemImages = new HashMap<>();
-    private static final Set<NamespacedKey> flatItems = new HashSet<>();
+    private static final Map<Key, BufferedImage> allItemImages = new HashMap<>();
+    private static final Set<Key> flatItems = new HashSet<>();
 
     private static BufferedImage COMPLETED_OVERLAY = null;
     private static BufferedImage BACKGROUND = null;
     private static BufferedImage ADVANCEMENT_ICON = null;
     private static BufferedImage STATISTIC_ICON = null;
 
-    public BingoCardMapRenderer(Extension extension, TaskCard card, BingoTeam team) {
-        this.extension = extension;
+    public BingoCardMapRenderer(PlatformBridge platform, TaskCard card, BingoTeam team) {
         this.card = card;
 
         random = new Random();
@@ -73,7 +72,7 @@ public class BingoCardMapRenderer extends MapRenderer
 
         try {
             JsonDataStorage atlas = new JsonDataStorage();
-            JsonDataAccessor.readJsonFromFile(atlas, extension.getResource("taskimages/item_atlas.json"));
+            JsonDataAccessor.readJsonFromFile(atlas, platform.getResource("taskimages/item_atlas.json"));
             DataStorage blocks = atlas.getStorage("blocks");
             DataStorage items = atlas.getStorage("items");
 
@@ -82,22 +81,22 @@ public class BingoCardMapRenderer extends MapRenderer
                 return;
             }
 
-            addImagesFromAtlas(extension.getResource("taskimages/blocks.png"), blocks, false);
-            addImagesFromAtlas(extension.getResource("taskimages/items.png"), items, true);
+            addImagesFromAtlas(platform.getResource("taskimages/blocks.png"), blocks, false);
+            addImagesFromAtlas(platform.getResource("taskimages/items.png"), items, true);
 
-            InputStream overlayStream = extension.getResource("taskimages/completed_stamp.png");
+            InputStream overlayStream = platform.getResource("taskimages/completed_stamp.png");
             if (overlayStream != null)
                 COMPLETED_OVERLAY = ImageIO.read(overlayStream);
 
-            InputStream backgroundStream = extension.getResource("taskimages/card_background.png");
+            InputStream backgroundStream = platform.getResource("taskimages/card_background.png");
             if (backgroundStream != null)
                 BACKGROUND = ImageIO.read(backgroundStream);
 
-            InputStream iconStream = extension.getResource("taskimages/advancement_icon.png");
+            InputStream iconStream = platform.getResource("taskimages/advancement_icon.png");
             if (iconStream != null)
                 ADVANCEMENT_ICON = ImageIO.read(iconStream);
 
-            iconStream = extension.getResource("taskimages/statistic_icon.png");
+            iconStream = platform.getResource("taskimages/statistic_icon.png");
             if (iconStream != null)
                 STATISTIC_ICON = ImageIO.read(iconStream);
 
@@ -155,10 +154,9 @@ public class BingoCardMapRenderer extends MapRenderer
         }
     }
 
-    public void drawTaskOnGrid(MapCanvas canvas, GameTask task, int gridX, int gridY, Vector stampOffset) {
-        Material mat = task.data.getDisplayMaterial(false);
+    public void drawTaskOnGrid(MapCanvas canvas, GameTask task, int gridX, int gridY, Position stampOffset) {
+        Key key = task.data.getDisplayMaterial(false).key();
         int amount = task.data.getRequiredAmount();
-        NamespacedKey key = mat.getKey();
 
         int extraOffset = 1;
         if (!allItemImages.containsKey(key)) {
@@ -169,7 +167,7 @@ public class BingoCardMapRenderer extends MapRenderer
             extraOffset = 4;
         }
 
-        drawImageAlphaScissor(canvas, gridX * 24 + 4 + extraOffset, gridY * 24 + 4 + extraOffset, allItemImages.get(mat.getKey()), null);
+        drawImageAlphaScissor(canvas, gridX * 24 + 4 + extraOffset, gridY * 24 + 4 + extraOffset, allItemImages.get(key), null);
 
         if (amount > 1) {
             drawTaskAmount(canvas, gridX, gridY, amount);
@@ -183,7 +181,7 @@ public class BingoCardMapRenderer extends MapRenderer
 
         if (task.isCompleted() && task.getCompletedByTeam().isPresent() && COMPLETED_OVERLAY != null) {
             TextColor color = task.getCompletedByTeam().get().getColor();
-            drawImageAlphaScissor(canvas, gridX * 24 + 4 + stampOffset.getBlockX(), gridY * 24 + 4 + stampOffset.getBlockY(), COMPLETED_OVERLAY, color);
+            drawImageAlphaScissor(canvas, gridX * 24 + 4 + stampOffset.blockX(), gridY * 24 + 4 + stampOffset.blockY(), COMPLETED_OVERLAY, color);
         }
     }
 
@@ -228,10 +226,10 @@ public class BingoCardMapRenderer extends MapRenderer
         }
     }
 
-    private Vector getStampOffset(int minOffset, int maxOffset) {
+    private Position getStampOffset(int minOffset, int maxOffset) {
         int range = maxOffset - minOffset;
-        Vector randomVec = new Vector(random.nextInt(range + 1), random.nextInt(range + 1), random.nextInt(range + 1));
-        return randomVec.add(new Vector(minOffset, minOffset, minOffset));
+        Position randomVec = new Position(random.nextInt(range + 1), random.nextInt(range + 1), random.nextInt(range + 1));
+        return randomVec.add(new Position(minOffset, minOffset, minOffset));
     }
 
 }

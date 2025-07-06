@@ -4,10 +4,6 @@ import io.github.steaf23.bingoreloaded.api.BingoEvents;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.TeamData;
 import io.github.steaf23.bingoreloaded.data.config.BingoOptions;
-import io.github.steaf23.bingoreloaded.event.ParticipantJoinedTeamEvent;
-import io.github.steaf23.bingoreloaded.event.ParticipantLeftTeamEvent;
-import io.github.steaf23.bingoreloaded.event.PlayerJoinedSessionWorldEvent;
-import io.github.steaf23.bingoreloaded.event.PlayerLeftSessionWorldEvent;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.lib.api.PlayerGamemode;
 import io.github.steaf23.bingoreloaded.lib.api.PlayerHandle;
@@ -103,8 +99,7 @@ public class SoloTeamManager implements TeamManager
 
         BingoMessage.JOIN.sendToAudience(participant, NamedTextColor.GREEN, participant.getTeam().getColoredName());
 
-        var joinEvent = new ParticipantJoinedTeamEvent(participant, team, session);
-        Bukkit.getPluginManager().callEvent(joinEvent);
+        session.onParticipantJoinedTeam(new BingoEvents.TeamParticipantEvent(session, participant, team, false));
     }
 
     @Override
@@ -128,8 +123,7 @@ public class SoloTeamManager implements TeamManager
         }
         autoTeam.addMember(player);
 
-        var joinEvent = new ParticipantJoinedTeamEvent(player, session);
-        Bukkit.getPluginManager().callEvent(joinEvent);
+        session.onParticipantJoinedTeam(new BingoEvents.TeamParticipantEvent(session, player, null, true));
 
         BingoMessage.JOIN_AUTO.sendToAudience(player, NamedTextColor.GREEN);
         return true;
@@ -142,8 +136,7 @@ public class SoloTeamManager implements TeamManager
         }
 
         removeMemberFromTeamSilently(member);
-        var leaveEvent = new ParticipantLeftTeamEvent(member, session);
-        Bukkit.getPluginManager().callEvent(leaveEvent);
+        session.onParticipantLeftTeam(new BingoEvents.TeamParticipantEvent(session, member, null, true));
 
         BingoMessage.LEAVE.sendToAudience(member, NamedTextColor.RED);
         return true;

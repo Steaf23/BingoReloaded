@@ -1,8 +1,7 @@
 package io.github.steaf23.bingoreloaded.data.config;
 
-
-import io.github.steaf23.bingoreloaded.data.core.configuration.ConfigDataAccessor;
-import io.github.steaf23.bingoreloaded.data.core.tag.TagDataType;
+import io.github.steaf23.bingoreloaded.lib.data.core.DataAccessor;
+import io.github.steaf23.bingoreloaded.lib.data.core.tag.TagDataType;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -25,11 +24,11 @@ public class BingoConfigurationData
 
     public record HotswapConfig (int minimumExpiration, int maximumExpiration, int recoveryTime, boolean showExpirationAsDurability){}
 
-    private final ConfigDataAccessor config;
+    private final DataAccessor config;
 
     Map<ConfigurationOption<?>, Object> options;
 
-    public BingoConfigurationData(ConfigDataAccessor config) {
+    public BingoConfigurationData(DataAccessor config) {
         this.config = config;
         this.options = new HashMap<>();
 

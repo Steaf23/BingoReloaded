@@ -1,9 +1,12 @@
 package io.github.steaf23.bingoreloaded.player.team;
 
+import io.github.steaf23.bingoreloaded.api.BingoEvents;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.TeamData;
 import io.github.steaf23.bingoreloaded.data.config.BingoOptions;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
+import io.github.steaf23.bingoreloaded.lib.api.PlayerGamemode;
+import io.github.steaf23.bingoreloaded.lib.api.PlayerHandle;
 import io.github.steaf23.bingoreloaded.placeholder.BingoPlaceholderFormatter;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
@@ -175,8 +178,7 @@ public class BasicTeamManager implements TeamManager {
             activeTeams.removeEmptyTeams("auto");
         }
 
-        var leaveEvent = new ParticipantLeftTeamEvent(player, team, session);
-        Bukkit.getPluginManager().callEvent(leaveEvent);
+        session.onParticipantLeftTeam(new BingoEvents.TeamParticipantEvent(session, player, team, false));
         return true;
     }
 
@@ -225,8 +227,7 @@ public class BasicTeamManager implements TeamManager {
 
         activeTeams.removeEmptyTeams("auto");
 
-        var joinEvent = new ParticipantJoinedTeamEvent(participant, bingoTeam, session);
-        Bukkit.getPluginManager().callEvent(joinEvent);
+        session.onParticipantJoinedTeam(new BingoEvents.TeamParticipantEvent(session, participant, bingoTeam, false));
 
         if (teamId.equals("auto")) {
             BingoMessage.JOIN_AUTO.sendToAudience(participant, NamedTextColor.GREEN);
@@ -299,8 +300,8 @@ public class BasicTeamManager implements TeamManager {
 
     //== EventHandlers ==========================================
     @Override
-    public void handleSettingsUpdated(BingoSettingsUpdatedEvent event) {
-        int newTeamSize = event.getNewSettings().maxTeamSize();
+    public void handleSettingsUpdated(final BingoEvents.SettingsUpdated event) {
+        int newTeamSize = event.newSettings().maxTeamSize();
         if (newTeamSize == getMaxTeamSize())
             return;
 
@@ -317,15 +318,16 @@ public class BasicTeamManager implements TeamManager {
     }
 
     @Override
-    public void handlePlayerLeftSessionWorld(final PlayerLeftSessionWorldEvent event) {
-        ConsoleMessenger.log(event.getPlayer().displayName().append(Component.text(" left world")).color(NamedTextColor.GOLD), session.getOverworld().getName());
+    public void handlePlayerLeftSessionWorld(final BingoEvents.PlayerEvent event) {
+        ConsoleMessenger.log(event.player().displayName().append(Component.text(" left world")).color(NamedTextColor.GOLD), session.getOverworld().name());
     }
 
     @Override
-    public void handlePlayerJoinedSessionWorld(final PlayerJoinedSessionWorldEvent event) {
-        ConsoleMessenger.log(event.getPlayer().displayName().append(Component.text(" joined world")).color(NamedTextColor.GOLD), session.getOverworld().getName());
+    public void handlePlayerJoinedSessionWorld(final BingoEvents.PlayerEvent event) {
+        PlayerHandle player = event.player();
+        ConsoleMessenger.log(player.displayName().append(Component.text(" joined world")).color(NamedTextColor.GOLD), session.getOverworld().name());
 
-        BingoParticipant participant = getPlayerAsParticipant(event.getPlayer());
+        BingoParticipant participant = getPlayerAsParticipant(player);
         if (participant != null) {
             if (!session.isRunning()) {
                 return;
@@ -335,17 +337,17 @@ public class BasicTeamManager implements TeamManager {
         }
 
         if (session.isRunning()) {
-            event.getPlayer().setGameMode(GameMode.SPECTATOR);
+            player.setGamemode(PlayerGamemode.SPECTATOR);
             if (session.getPluginConfig().getOptionValue(BingoOptions.ALLOW_VIEWING_ALL_CARDS)) {
-                BingoMessage.SPECTATOR_JOIN.sendToAudience(event.getPlayer());
+                BingoMessage.SPECTATOR_JOIN.sendToAudience(player);
             }
             else {
-                BingoMessage.SPECTATOR_JOIN_NO_VIEW.sendToAudience(event.getPlayer());
+                BingoMessage.SPECTATOR_JOIN_NO_VIEW.sendToAudience(player);
             }
 
             return;
         }
 
-        addMemberToTeam(new BingoPlayer(event.getPlayer(), session), "auto");
+        addMemberToTeam(new BingoPlayer(player, session), "auto");
     }
 }

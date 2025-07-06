@@ -3,8 +3,8 @@ package io.github.steaf23.bingoreloaded.gameloop;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.api.BingoEvents;
 import io.github.steaf23.bingoreloaded.lib.api.DimensionType;
-import io.github.steaf23.bingoreloaded.lib.api.ExtensionApi;
 import io.github.steaf23.bingoreloaded.lib.api.MenuBoard;
+import io.github.steaf23.bingoreloaded.lib.api.PlatformResolver;
 import io.github.steaf23.bingoreloaded.lib.api.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.api.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.api.WorldHandle;
@@ -20,10 +20,8 @@ import io.github.steaf23.bingoreloaded.gameloop.phase.PregameLobby;
 import io.github.steaf23.bingoreloaded.gameloop.vote.VoteCategory;
 import io.github.steaf23.bingoreloaded.gameloop.vote.VoteTicket;
 import io.github.steaf23.bingoreloaded.gui.hud.BingoGameHUDGroup;
-import io.github.steaf23.bingoreloaded.gui.hud.DisabledBingoGameHUDGroup;
 import io.github.steaf23.bingoreloaded.gui.hud.TeamDisplay;
 import io.github.steaf23.bingoreloaded.lib.api.WorldPosition;
-import io.github.steaf23.bingoreloaded.lib.scoreboard.HUDRegistry;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
@@ -53,26 +51,25 @@ public class BingoSession implements ForwardingAudience
     public BingoSettingsBuilder settingsBuilder;
     public final BingoGameHUDGroup scoreboard;
     public final TeamManager teamManager;
+    private final GameManager gameManager;
     private final BingoConfigurationData config;
-    private final MenuBoard menuBoard;
-    private final HUDRegistry hudRegistry;
     private final TeamDisplay teamDisplay;
 
     // A bingo session controls 1 group of worlds
     private final WorldGroup worlds;
     private GamePhase phase;
 
-    public BingoSession(MenuBoard menuBoard, HUDRegistry hudRegistry, @NotNull WorldGroup worlds, BingoConfigurationData config) {
-        this.menuBoard = menuBoard;
-        this.hudRegistry = hudRegistry;
+    public BingoSession(GameManager gameManager, @NotNull WorldGroup worlds, BingoConfigurationData config) {
+		this.gameManager = gameManager;
         this.worlds = worlds;
         this.config = config;
-        boolean showPlayerInScoreboard = config.getOptionValue(BingoOptions.SHOW_PLAYER_IN_SCOREBOARD);
-        if (config.getOptionValue(BingoOptions.DISABLE_SCOREBOARD_SIDEBAR)) {
-            this.scoreboard = new DisabledBingoGameHUDGroup(hudRegistry, this, showPlayerInScoreboard);
-        } else {
-            this.scoreboard = new BingoGameHUDGroup(hudRegistry, this, showPlayerInScoreboard);
-        }
+        //FIXME: REFACTOR add back scoreboard somehow
+//        boolean showPlayerInScoreboard = config.getOptionValue(BingoOptions.SHOW_PLAYER_IN_SCOREBOARD);
+//        if (config.getOptionValue(BingoOptions.DISABLE_SCOREBOARD_SIDEBAR)) {
+//            this.scoreboard = new DisabledBingoGameHUDGroup(this, showPlayerInScoreboard);
+//        } else {
+//            this.scoreboard = new BingoGameHUDGroup( this, showPlayerInScoreboard);
+//        }
         this.settingsBuilder = new BingoSettingsBuilder(this);
         if (config.getOptionValue(BingoOptions.SINGLE_PLAYER_TEAMS)) {
             this.teamManager = new SoloTeamManager(this);
@@ -86,13 +83,13 @@ public class BingoSession implements ForwardingAudience
         //TODO: decide a better place for this command
 //        BingoReloaded.getInstance().registerCommand("bingobot", new BotCommand(this));
 
-        BingoReloaded.scheduleTask((t) -> {
-            for (PlayerHandle p : ExtensionApi.getOnlinePlayers()) {
+        gameManager.getPlatform().runTask(10L, (t) -> {
+            for (PlayerHandle p : PlatformResolver.get().getOnlinePlayers()) {
                 if (hasPlayer(p)) {
                     addPlayer(p);
                 }
             }
-        }, 10);
+        });
         prepareNextGame();
     }
 
@@ -130,7 +127,7 @@ public class BingoSession implements ForwardingAudience
 
         // First make sure the previous phase (PregameLobby) is ended.
         phase.end();
-        phase = new BingoGame(this, gameSettings == null ? settings : gameSettings.view(), config);
+        phase = new BingoGame(gameManager.getPlatform(), this, gameSettings == null ? settings : gameSettings.view(), config);
         phase.setup();
     }
 
@@ -150,15 +147,14 @@ public class BingoSession implements ForwardingAudience
 
     public void prepareNextGame() {
         teamManager.reset();
-        var event = new PrepareNextBingoGameEvent(this);
-        ExtensionApi.callEvent(event);
+        gameManager.prepareNextBingoGame(this);
 
         // When we came from the PostGamePhase we need to make sure to end it properly
         if (phase != null) {
             phase.end();
         }
 
-        phase = new PregameLobby(menuBoard, hudRegistry, this, config);
+        phase = new PregameLobby(this, config);
         phase.setup();
 
         getOverworld().players().forEach(p -> {
@@ -193,15 +189,13 @@ public class BingoSession implements ForwardingAudience
     }
 
     public void addPlayer(PlayerHandle player) {
-        var joinedWorldEvent = new PlayerJoinedSessionWorldEvent(player, this);
-        ExtensionApi.callEvent(joinedWorldEvent);
+        onPlayerJoinedSessionWorld(new BingoEvents.PlayerEvent(this, player));
 
         BingoReloaded.sendResourcePack(player);
     }
 
     public void removePlayer(PlayerHandle player) {
-        var leftWorldEvent = new PlayerLeftSessionWorldEvent(player, this);
-        ExtensionApi.callEvent(leftWorldEvent);
+        onPlayerLeftSessionWorld(new BingoEvents.PlayerEvent(this, player));
     }
 
     public boolean handlePlayerDropItem(final StackHandle stack) {
@@ -211,8 +205,8 @@ public class BingoSession implements ForwardingAudience
 				PlayerKit.TEAM_ITEM.isCompareKeyEqual(stack);
 	}
 
-    public void handlePlayerJoinedSessionWorld(final BingoEvents.PlayerEvent event) {
-        BingoReloaded.scheduleTask(t -> {
+    public void onPlayerJoinedSessionWorld(final BingoEvents.PlayerEvent event) {
+        gameManager.getPlatform().runTask(t -> {
             teamManager.handlePlayerJoinedSessionWorld(event);
             phase.handlePlayerJoinedSessionWorld(event);
 
@@ -223,11 +217,12 @@ public class BingoSession implements ForwardingAudience
         });
     }
 
-    public void handlePlayerLeftSessionWorld(final BingoEvents.PlayerEvent event) {
+    public void onPlayerLeftSessionWorld(final BingoEvents.PlayerEvent event) {
         // Clear player's teams before anything else.
         // This is because they might join another bingo as a result of leaving this one, so we have to remove the player's team display at this moment
         //FIXME: REFACTOR TeamDisplay
 //        teamDisplay.clearTeamsForPlayer(event.player());
+
 
         BingoReloaded.scheduleTask(t -> {
             teamManager.handlePlayerLeftSessionWorld(event);
@@ -257,12 +252,12 @@ public class BingoSession implements ForwardingAudience
         });
     }
 
-    public void handleParticipantJoinedTeam(final BingoEvents.TeamParticipantEvent event) {
+    public void onParticipantJoinedTeam(final BingoEvents.TeamParticipantEvent event) {
         phase.handleParticipantJoinedTeam(event);
         teamDisplay.update();
     }
 
-    public void handleParticipantLeftTeam(final BingoEvents.TeamParticipantEvent event) {
+    public void onParticipantLeftTeam(final BingoEvents.TeamParticipantEvent event) {
         phase.handleParticipantLeftTeam(event);
         teamDisplay.update();
     }
@@ -391,5 +386,9 @@ public class BingoSession implements ForwardingAudience
     @Override
     public @NotNull Iterable<? extends Audience> audiences() {
         return teamManager.getParticipants();
+    }
+
+    public GameManager getGameManager() {
+        return gameManager;
     }
 }

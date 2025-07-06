@@ -1,6 +1,6 @@
 package io.github.steaf23.bingoreloaded.data.helper;
 
-import io.github.steaf23.bingoreloaded.lib.api.Extension;
+import io.github.steaf23.bingoreloaded.lib.api.PlatformBridge;
 import io.github.steaf23.bingoreloaded.lib.api.PlayerGamemode;
 import io.github.steaf23.bingoreloaded.lib.api.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.api.StackHandle;
@@ -11,7 +11,7 @@ import java.util.UUID;
 
 public class SerializablePlayer
 {
-    public String pluginVersion;
+    public String extensionVersion;
     public UUID playerId;
     public WorldPosition location;
     public double health;
@@ -23,10 +23,10 @@ public class SerializablePlayer
     public StackHandle[] inventory;
     public StackHandle[] enderInventory;
 
-    public static @NotNull SerializablePlayer fromPlayer(@NotNull Extension extension, @NotNull PlayerHandle player)
+    public static @NotNull SerializablePlayer fromPlayer(@NotNull PlatformBridge platform, @NotNull PlayerHandle player)
     {
         SerializablePlayer data = new SerializablePlayer();
-        data.pluginVersion = extension.getPluginMeta().getVersion();
+        data.extensionVersion = platform.getExtensionInfo().version();
         data.playerId = player.uniqueId();
         data.location = player.position();
         data.health = player.health();
@@ -43,10 +43,10 @@ public class SerializablePlayer
     /**
      * Reset all player data and set location
      */
-    public static SerializablePlayer reset(Extension extension, PlayerHandle player, WorldPosition location)
+    public static SerializablePlayer reset(PlatformBridge platform, PlayerHandle player, WorldPosition location)
     {
         SerializablePlayer data = new SerializablePlayer();
-        data.pluginVersion = extension.getPluginMeta().getVersion();
+        data.extensionVersion = platform.getExtensionInfo().version();
         data.location = location;
         data.playerId = player.uniqueId();
         data.health = 20.0;

@@ -11,7 +11,7 @@ public interface StackHandle {
 	int amount();
 	Component customName();
 	List<Component> lore();
-	Key compareKey();
+	String compareKey();
 
 	void addStorage(String key, DataStorage storage);
 }

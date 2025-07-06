@@ -3,9 +3,6 @@ package io.github.steaf23.bingoreloaded.event;
 import io.github.steaf23.bingoreloaded.api.Events;
 import io.github.steaf23.bingoreloaded.event.core.BingoEvent;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
-import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
-
-import javax.annotation.Nullable;
 
 /**
  * Event that will fire right before the game ends.

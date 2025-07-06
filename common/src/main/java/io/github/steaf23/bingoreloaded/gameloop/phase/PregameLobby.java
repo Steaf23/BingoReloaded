@@ -1,10 +1,7 @@
 package io.github.steaf23.bingoreloaded.gameloop.phase;
 
-import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.api.BingoEvents;
-import io.github.steaf23.bingoreloaded.lib.api.ExtensionApi;
 import io.github.steaf23.bingoreloaded.lib.api.InteractAction;
-import io.github.steaf23.bingoreloaded.lib.api.MenuBoard;
 import io.github.steaf23.bingoreloaded.lib.api.PlayerHandle;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
@@ -13,9 +10,7 @@ import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gameloop.vote.VoteCategory;
 import io.github.steaf23.bingoreloaded.gameloop.vote.VoteTicket;
 import io.github.steaf23.bingoreloaded.gui.hud.BingoSettingsHUDGroup;
-import io.github.steaf23.bingoreloaded.gui.hud.DisabledBingoSettingsHUDGroup;
 import io.github.steaf23.bingoreloaded.lib.api.StackHandle;
-import io.github.steaf23.bingoreloaded.lib.scoreboard.HUDRegistry;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import io.github.steaf23.bingoreloaded.util.timer.CountdownTimer;
@@ -36,7 +31,6 @@ public class PregameLobby implements GamePhase
     private final BingoSession session;
     private final Map<UUID, VoteTicket> votes;
     private final BingoConfigurationData config;
-    private final MenuBoard menuBoard;
     private final CountdownTimer playerCountTimer;
 
     private final BingoSettingsHUDGroup settingsHUD;
@@ -44,18 +38,18 @@ public class PregameLobby implements GamePhase
     private boolean playerCountTimerPaused = false;
     private boolean gameStarted = false;
 
-    public PregameLobby(MenuBoard menuBoard, HUDRegistry hudRegistry, BingoSession session, BingoConfigurationData config) {
-        this.menuBoard = menuBoard;
+    public PregameLobby(BingoSession session, BingoConfigurationData config) {
         this.session = session;
         this.votes = new HashMap<>();
         this.config = config;
         this.playerCountTimer = new CountdownTimer(config.getOptionValue(BingoOptions.PLAYER_WAIT_TIME), session);
-        if (config.getOptionValue(BingoOptions.DISABLE_SCOREBOARD_SIDEBAR)) {
-            this.settingsHUD = new DisabledBingoSettingsHUDGroup(hudRegistry);
-        }
-        else {
-            this.settingsHUD = new BingoSettingsHUDGroup(hudRegistry);
-        }
+        //FIXME: REFACTOR add back settings hud
+//        if (config.getOptionValue(BingoOptions.DISABLE_SCOREBOARD_SIDEBAR)) {
+//            this.settingsHUD = new DisabledBingoSettingsHUDGroup();
+//        }
+//        else {
+//            this.settingsHUD = new BingoSettingsHUDGroup();
+//        }
 
         playerCountTimer.addNotifier(time -> {
             settingsHUD.setStatus(BingoMessage.STARTING_STATUS.asPhrase(Component.text(String.valueOf(time))));
@@ -204,20 +198,18 @@ public class PregameLobby implements GamePhase
             settingsHUD.setStatus(BingoMessage.PLAYER_STATUS.asPhrase(Component.text(playerCount)));
         }
 
-        BingoReloaded.scheduleTask((t) -> {
+        session.getGameManager().getPlatform().runTask(10L, (t) -> {
             if (gameStarted) {
                 return;
             }
 
-            for (PlayerHandle p : ExtensionApi.getOnlinePlayers()) {
-                if (session.hasPlayer(p)) {
-                    initializePlayer(p);
-                }
-            }
+            session.getPlayersInWorld().stream()
+                    .filter(session::hasPlayer)
+                    .forEach(this::initializePlayer);
 
             // start a new timer in a task since the session will still assume the game is not in the lobby phase
             startPlayerCountTimerIfMinCountReached();
-        }, 10);
+        });
 
 
     }
@@ -297,7 +289,7 @@ public class PregameLobby implements GamePhase
 
         // Schedule check in the future since a player can switch teams where they will briefly leave the team
         // and lower the participant count to possibly stop the timer.
-        BingoReloaded.scheduleTask(t -> {
+        session.getGameManager().getPlatform().runTask(t -> {
             if (session.teamManager.getParticipantCount() < config.getOptionValue(BingoOptions.MINIMUM_PLAYER_COUNT) && playerCountTimer.isRunning()) {
                 playerCountTimer.stop();
             }

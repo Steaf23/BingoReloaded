@@ -1,18 +1,17 @@
-package io.github.steaf23.bingoreloaded.lib.data.core.configuration;
+package io.github.steaf23.bingoreloaded.lib.data.core;
 
-import io.github.steaf23.bingoreloaded.lib.api.Extension;
-import io.github.steaf23.bingoreloaded.lib.data.core.DataAccessor;
+import io.github.steaf23.bingoreloaded.lib.api.PaperPlatformBridge;
 
 /**
  * Specific yaml data accessor for the config.yml file provided by Bukkit.
  */
 public class ConfigDataAccessor extends YamlDataStorage implements DataAccessor
 {
-    private final Extension extension;
+    private final PaperPlatformBridge platform;
 
-    public ConfigDataAccessor(Extension extension) {
-        super(extension.getConfig());
-        this.extension = extension;
+    public ConfigDataAccessor(PaperPlatformBridge platform) {
+        super(platform.getConfig());
+        this.platform = platform;
     }
 
     /**
@@ -31,13 +30,13 @@ public class ConfigDataAccessor extends YamlDataStorage implements DataAccessor
 
     @Override
     public void load() {
-        extension.reloadConfig();
-        config = extension.getConfig();
+        platform.reloadConfig();
+        config = platform.getConfig();
     }
 
     @Override
     public void saveChanges() {
-        extension.saveConfig();
+        platform.saveConfig();
     }
 
     @Override

@@ -5,6 +5,8 @@ import io.github.steaf23.bingoreloaded.api.BingoEvents;
 import io.github.steaf23.bingoreloaded.lib.api.BiomeType;
 import io.github.steaf23.bingoreloaded.lib.api.InteractAction;
 import io.github.steaf23.bingoreloaded.lib.api.ItemType;
+import io.github.steaf23.bingoreloaded.lib.api.PlatformBridge;
+import io.github.steaf23.bingoreloaded.lib.api.PlatformResolver;
 import io.github.steaf23.bingoreloaded.lib.api.PlayerGamemode;
 import io.github.steaf23.bingoreloaded.lib.api.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.api.StackHandle;
@@ -34,7 +36,6 @@ import io.github.steaf23.bingoreloaded.tasks.GameTask;
 import io.github.steaf23.bingoreloaded.tasks.tracker.TaskProgressTracker;
 import io.github.steaf23.bingoreloaded.util.ActionBarManager;
 import io.github.steaf23.bingoreloaded.util.BingoPlayerSender;
-import io.github.steaf23.bingoreloaded.util.MaterialHelper;
 import io.github.steaf23.bingoreloaded.util.timer.CountdownTimer;
 import io.github.steaf23.bingoreloaded.util.timer.CounterTimer;
 import io.github.steaf23.bingoreloaded.util.timer.GameTimer;
@@ -56,10 +57,10 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
-import java.util.Vector;
 
 public class BingoGame implements GamePhase
 {
+    private final PlatformBridge platform;
     private final BingoSession session;
     private final BingoSettings settings;
     private final BingoGameHUDGroup scoreboard;
@@ -76,8 +77,9 @@ public class BingoGame implements GamePhase
 
     private GameTask deathMatchTask;
 
-    public BingoGame(@NotNull BingoSession session, @NotNull BingoSettings settings, @NotNull BingoConfigurationData config) {
-        this.session = session;
+    public BingoGame(PlatformBridge platform, @NotNull BingoSession session, @NotNull BingoSettings settings, @NotNull BingoConfigurationData config) {
+		this.platform = platform;
+		this.session = session;
         this.config = config;
         this.teamManager = session.teamManager;
         this.scoreboard = session.scoreboard;
@@ -85,7 +87,7 @@ public class BingoGame implements GamePhase
         this.actionBarManager = new ActionBarManager(session);
         this.progressTracker = new TaskProgressTracker(this);
 
-        this.respawnManager = new PlayerRespawnManager(BingoReloaded.getInstance(), config.getOptionValue(BingoOptions.TELEPORT_AFTER_DEATH_PERIOD));
+        this.respawnManager = new PlayerRespawnManager(PlatformResolver.get(), config.getOptionValue(BingoOptions.TELEPORT_AFTER_DEATH_PERIOD));
         this.playerSpawnPoints = new HashMap<>();
     }
 
@@ -352,7 +354,7 @@ public class BingoGame implements GamePhase
         BingoPlayerSender.sendTitle(countdownComponent.color(color), session);
         BingoPlayerSender.sendMessage(countdownComponent.color(color), session);
 
-        BingoReloaded.scheduleTask(task -> startDeathMatchRecurse(countdown - 1), BingoReloaded.ONE_SECOND);
+        PlatformResolver.get().scheduleTask(task -> startDeathMatchRecurse(countdown - 1), BingoReloaded.ONE_SECOND);
     }
 
     public void teleportPlayerAfterDeath(PlayerHandle player) {
@@ -473,7 +475,7 @@ public class BingoGame implements GamePhase
     }
 
     public void playSound(Sound sound) {
-        //FIXME: add actual sound implementation.
+        BingoReloaded.eventBus().callEvent(new BingoEvents.PlaySound(session, sound));
     }
 
 // @EventHandlers ========================================================================
