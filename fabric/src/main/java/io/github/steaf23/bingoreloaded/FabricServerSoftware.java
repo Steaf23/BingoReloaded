@@ -2,7 +2,7 @@ package io.github.steaf23.bingoreloaded;
 
 import io.github.steaf23.bingoreloaded.lib.api.DimensionType;
 import io.github.steaf23.bingoreloaded.lib.api.EntityType;
-import io.github.steaf23.bingoreloaded.lib.api.PlatformBridge;
+import io.github.steaf23.bingoreloaded.lib.api.ServerSoftware;
 import io.github.steaf23.bingoreloaded.lib.api.ExtensionTask;
 import io.github.steaf23.bingoreloaded.lib.api.ItemType;
 import io.github.steaf23.bingoreloaded.lib.api.PlayerHandle;
@@ -19,7 +19,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
-public class FabricPlatformBridge implements PlatformBridge {
+public class FabricServerSoftware implements ServerSoftware {
 
 	@Override
 	public InputStream getResource(String filePath) {

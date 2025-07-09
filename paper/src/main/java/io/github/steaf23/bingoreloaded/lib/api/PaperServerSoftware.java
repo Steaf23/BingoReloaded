@@ -5,9 +5,11 @@ import io.papermc.paper.registry.RegistryKey;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
@@ -19,11 +21,11 @@ import java.util.Collection;
 import java.util.UUID;
 import java.util.function.Consumer;
 
-public class PaperPlatformBridge implements PlatformBridge {
+public class PaperServerSoftware implements ServerSoftware {
 
 	private final JavaPlugin plugin;
 
-	public PaperPlatformBridge(JavaPlugin plugin) {
+	public PaperServerSoftware(JavaPlugin plugin) {
 		this.plugin = plugin;
 	}
 
@@ -121,6 +123,27 @@ public class PaperPlatformBridge implements PlatformBridge {
 	@Override
 	public boolean unloadWorld(@NotNull WorldHandle world, boolean save) {
 		return Bukkit.unloadWorld(((WorldHandlePaper)world).handle(), save);
+	}
+
+	@Override
+	public StackHandle createStack(ItemType type, int amount) {
+		Material mat = ((ItemTypePaper)type).handle();
+		return new StackHandlePaper(new ItemStack(mat, amount));
+	}
+
+	@Override
+	public StackHandle createStackFromBytes(byte[] bytes) {
+		return new StackHandlePaper(ItemStack.deserializeBytes(bytes));
+	}
+
+	@Override
+	public byte[] createBytesFromStack(StackHandle stack) {
+		return ((StackHandlePaper)stack).handle().serializeAsBytes();
+	}
+
+	@Override
+	public boolean areAdvancementsDisabled() {
+		return !Bukkit.advancementIterator().hasNext() || Bukkit.advancementIterator().next() == null;
 	}
 
 	@Override

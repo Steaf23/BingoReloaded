@@ -1,11 +1,11 @@
 package io.github.steaf23.bingoreloaded.lib.data.core.tag;
 
+import io.github.steaf23.bingoreloaded.lib.api.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.data.core.tag.adapters.BooleanTagAdapter;
 import io.github.steaf23.bingoreloaded.lib.data.core.tag.adapters.ItemStackTagAdapter;
 import io.github.steaf23.bingoreloaded.lib.data.core.tag.adapters.UUIDTagAdapter;
-import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
@@ -147,7 +147,7 @@ public class TagDataType<T>
 
     public static final TagAdapter<Boolean, Byte> BOOLEAN = new BooleanTagAdapter();
     public static final TagAdapter<java.util.UUID, int[]> UUID = new UUIDTagAdapter();
-    public static final TagAdapter<ItemStack, byte[]> ITEM_STACK = new ItemStackTagAdapter();
+    public static final TagAdapter<StackHandle, byte[]> ITEM_STACK = new ItemStackTagAdapter();
 
     private static Map<Integer, TagDataType<?>> types;
 

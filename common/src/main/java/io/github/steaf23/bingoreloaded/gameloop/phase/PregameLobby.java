@@ -221,12 +221,12 @@ public class PregameLobby implements GamePhase
     }
 
     @Override
-    public void handlePlayerJoinedSessionWorld(BingoEvents.PlayerEvent event) {
+    public void handlePlayerJoinedSessionWorld(BingoEvents.PlayerSessionEvent event) {
         initializePlayer(event.player());
     }
 
     @Override
-    public void handlePlayerLeftSessionWorld(BingoEvents.PlayerEvent event) {
+    public void handlePlayerLeftSessionWorld(BingoEvents.PlayerSessionEvent event) {
         settingsHUD.removePlayer(event.player());
         session.teamManager.removeMemberFromTeam(session.teamManager.getPlayerAsParticipant(event.player()));
     }

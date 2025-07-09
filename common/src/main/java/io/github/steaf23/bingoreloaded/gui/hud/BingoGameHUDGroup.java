@@ -2,6 +2,9 @@ package io.github.steaf23.bingoreloaded.gui.hud;
 
 import io.github.steaf23.bingoreloaded.data.ScoreboardData;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
+import io.github.steaf23.bingoreloaded.lib.gui.menu.PlayerHUD;
+import io.github.steaf23.bingoreloaded.lib.gui.menu.ValueListHUD;
+import io.github.steaf23.bingoreloaded.lib.util.ComponentUtils;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.player.team.SoloTeamManager;
@@ -17,7 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class BingoGameHUDGroup extends PlayerHUDGroup
+public class BingoGameHUDGroup extends ValueListHUD
 {
     // map of team IDs and their scores
     private final Map<String, Integer> teamScores;
@@ -25,10 +28,9 @@ public class BingoGameHUDGroup extends PlayerHUDGroup
     private final boolean showPlayerNames;
     private final ScoreboardData.SidebarTemplate template;
 
-    private static final Component PLAYER_PREFIX = PlayerDisplay.MINI_BUILDER.deserialize("<gray><bold> ┗ </bold></gray><white>");
+    private static final Component PLAYER_PREFIX = ComponentUtils.MINI_BUILDER.deserialize("<gray><bold> ┗ </bold></gray><white>");
 
-    public BingoGameHUDGroup(HUDRegistry registry, BingoSession session, boolean showPlayerNames) {
-        super(registry);
+    public BingoGameHUDGroup(BingoSession session, boolean showPlayerNames) {
 
         this.session = session;
         this.teamScores = new HashMap<>();
@@ -57,8 +59,7 @@ public class BingoGameHUDGroup extends PlayerHUDGroup
             case REGULAR -> goal = "-----";
             case LOCKOUT -> goal = Integer.toString(settings.size().fullCardSize);
         }
-        addSidebarArgument("win_goal", Component.text(goal));
-        updateVisible();
+        addField("win_goal", Component.text(goal));
     }
 
     public void updateTeamScores() {
@@ -101,8 +102,7 @@ public class BingoGameHUDGroup extends PlayerHUDGroup
                     }
                 });
 
-        addSidebarArgument("team_info", teamInfo.toArray(Component[]::new));
-        updateVisible();
+        addField("team_info", teamInfo.toArray(Component[]::new));
     }
 
     public void setup(BingoSettings settings) {

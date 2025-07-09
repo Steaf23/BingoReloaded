@@ -2,7 +2,7 @@ package io.github.steaf23.bingoreloaded;
 
 import io.github.steaf23.bingoreloaded.data.config.BingoOptions;
 import io.github.steaf23.bingoreloaded.lib.api.BingoReloadedRuntime;
-import io.github.steaf23.bingoreloaded.lib.api.PaperPlatformBridge;
+import io.github.steaf23.bingoreloaded.lib.api.PaperServerSoftware;
 import io.github.steaf23.bingoreloaded.lib.api.PlatformResolver;
 import io.github.steaf23.bingoreloaded.lib.data.core.ConfigDataAccessor;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataAccessor;
@@ -21,12 +21,12 @@ import java.util.List;
 
 public class BingoReloadedPaper extends JavaPlugin implements BingoReloadedRuntime {
 
-	private final PaperPlatformBridge platform;
+	private final PaperServerSoftware platform;
 	private final BingoReloaded bingo;
 
 	public BingoReloadedPaper() {
-		this.platform = new PaperPlatformBridge(this);
-		PlatformResolver.set(new PaperPlatformBridge(this));
+		this.platform = new PaperServerSoftware(this);
+		PlatformResolver.set(new PaperServerSoftware(this));
 
 		this.bingo = new BingoReloaded(this);
 	}

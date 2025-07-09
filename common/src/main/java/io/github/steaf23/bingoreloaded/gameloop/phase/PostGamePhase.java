@@ -50,12 +50,12 @@ public class PostGamePhase implements GamePhase
     }
 
     @Override
-    public void handlePlayerJoinedSessionWorld(BingoEvents.PlayerEvent event) {
+    public void handlePlayerJoinedSessionWorld(BingoEvents.PlayerSessionEvent event) {
         sendRestartMessage(this.timer.getTime(), event.player());
     }
 
     @Override
-    public void handlePlayerLeftSessionWorld(BingoEvents.PlayerEvent event) {
+    public void handlePlayerLeftSessionWorld(BingoEvents.PlayerSessionEvent event) {
 
     }
 

@@ -13,7 +13,7 @@ public class BingoReloadedFabric implements ModInitializer, BingoReloadedRuntime
 	private final BingoReloaded bingo;
 
 	public BingoReloadedFabric() {
-		PlatformResolver.set(new FabricPlatformBridge());
+		PlatformResolver.set(new FabricServerSoftware());
 
 		this.bingo = new BingoReloaded(this);
 	}
@@ -32,5 +32,15 @@ public class BingoReloadedFabric implements ModInitializer, BingoReloadedRuntime
 	@Override
 	public Collection<DataAccessor> getDataToRegister() {
 		return List.of();
+	}
+
+	@Override
+	public void setupConfig() {
+
+	}
+
+	@Override
+	public LanguageData getLanguageData(String language) {
+		return null;
 	}
 }

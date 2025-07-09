@@ -45,13 +45,17 @@ public interface DataStorage
 
     default <T> void setSerializable(String path, Class<T> classType, T value) {
         DataStorage storage = createNew();
-        io.github.steaf23.bingoreloaded.lib.data.core.DataStorageSerializer<T> serializer = io.github.steaf23.bingoreloaded.lib.data.core.DataStorageSerializerRegistry.getSerializer(classType);
+        storage.fromSerializable(classType, value);
+        setStorage(path, storage);
+    }
+
+    default <T> void fromSerializable(Class<T> classType, T value) {
+        DataStorageSerializer<T> serializer = DataStorageSerializerRegistry.getSerializer(classType);
         if (serializer == null) {
-            ConsoleMessenger.bug("No serializer registered for this type of data at path " + path, this);
+            ConsoleMessenger.bug("No serializer registered for serialization " + classType, this);
             return;
         }
-        serializer.toDataStorage(storage, value);
-        setStorage(path, storage);
+        serializer.toDataStorage(this, value);
     }
 
     default <T> @Nullable T getSerializable(String path, Class<T> classType) {
@@ -63,13 +67,18 @@ public interface DataStorage
         if (serializable == null) {
             return def;
         }
-        io.github.steaf23.bingoreloaded.lib.data.core.DataStorageSerializer<T> serializer = io.github.steaf23.bingoreloaded.lib.data.core.DataStorageSerializerRegistry.getSerializer(classType);
-        if (serializer == null) {
-            ConsoleMessenger.bug("No serializer registered for this type of data at path " + path, this);
-            return def;
-        }
-        T value = serializer.fromDataStorage(serializable);
+
+        T value = serializable.toSerializable(classType);
         return value == null ? def : value;
+    }
+
+    default <T> @Nullable T toSerializable(Class<T> classType) {
+        DataStorageSerializer<T> serializer = DataStorageSerializerRegistry.getSerializer(classType);
+        if (serializer == null) {
+            ConsoleMessenger.bug("No serializer registered for deserialization " + classType, this);
+            return null;
+        }
+        return serializer.fromDataStorage(this);
     }
 
     void setBoolean(String path, boolean value);

@@ -274,7 +274,7 @@ public class BingoPlayer implements BingoParticipant
                 BingoGame.removePlatform(platformLocation, 1);
             }, (long) Math.max(0, platformLifetimeSeconds) * BingoReloaded.ONE_SECOND);
 
-            player.teleport(teleportLocation);
+            player.teleportBlocking(teleportLocation);
             player.playSound(player, Sound.ENTITY_SHULKER_TELEPORT, 0.8f, 1.0f);
             player.addPotionEffect(new PotionEffect(PotionEffectType.RESISTANCE, BingoReloaded.ONE_SECOND * 10, 100, false, false));
 

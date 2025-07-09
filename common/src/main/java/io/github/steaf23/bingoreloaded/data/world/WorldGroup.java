@@ -1,6 +1,6 @@
 package io.github.steaf23.bingoreloaded.data.world;
 
-import io.github.steaf23.bingoreloaded.lib.api.PlatformBridge;
+import io.github.steaf23.bingoreloaded.lib.api.ServerSoftware;
 import io.github.steaf23.bingoreloaded.lib.api.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.api.WorldHandle;
 import org.jetbrains.annotations.Nullable;
@@ -13,11 +13,11 @@ import java.util.UUID;
  * A world group represents a group of 3 worlds, world_name, world_name_nether and world_name_the_end
  * These worlds are saved in the plugin's data folder under the name worlds
  */
-public record WorldGroup(PlatformBridge platform, String worldName, UUID overworldId, UUID netherId, UUID endId)
+public record WorldGroup(ServerSoftware platform, String worldName, UUID overworldId, UUID netherId, UUID endId)
 {
     public void teleportPlayer(PlayerHandle player) {
         //FIXME: Refactor Teleport Cause
-        player.teleport(platform.getWorld(overworldId).spawnPoint());
+        player.teleportBlocking(platform.getWorld(overworldId).spawnPoint());
     }
 
     public @Nullable WorldHandle getOverworld() {

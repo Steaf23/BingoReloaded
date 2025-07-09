@@ -4,6 +4,8 @@ import io.github.steaf23.bingoreloaded.lib.api.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.api.StatisticHandle;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 
+import java.util.function.Consumer;
+
 public class StatisticProgress
 {
     private final StatisticHandle statistic;
@@ -12,12 +14,15 @@ public class StatisticProgress
 
     private int previousGlobalProgress;
 
-    public StatisticProgress(StatisticHandle statistic, BingoParticipant player, int targetScore)
+    private final Consumer<StatisticProgress> progressCompletedCallback;
+
+    public StatisticProgress(StatisticHandle statistic, BingoParticipant player, int targetScore, Consumer<StatisticProgress> progressCompletedCallback)
     {
         this.statistic = statistic;
         this.player = player;
         this.progressLeft = targetScore;
-        if (statistic.getCategory() == StatisticHandle.StatisticCategory.TRAVEL)
+		this.progressCompletedCallback = progressCompletedCallback;
+		if (statistic.getCategory() == StatisticHandle.StatisticCategory.TRAVEL)
         {
             progressLeft *= 1000;
         }

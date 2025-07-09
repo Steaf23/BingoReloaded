@@ -1,12 +1,16 @@
 package io.github.steaf23.bingoreloaded.tasks.tracker;
 
-import io.github.steaf23.bingoreloaded.BingoReloaded;
-import io.github.steaf23.bingoreloaded.api.BingoEvents;
+import io.github.steaf23.bingoreloaded.lib.api.AdvancementHandle;
+import io.github.steaf23.bingoreloaded.lib.api.ServerSoftware;
 import io.github.steaf23.bingoreloaded.lib.api.PlayerHandle;
 import io.github.steaf23.bingoreloaded.cards.TaskCard;
 import io.github.steaf23.bingoreloaded.data.config.BingoOptions;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.lib.api.StackHandle;
+import io.github.steaf23.bingoreloaded.lib.api.StatisticHandle;
+import io.github.steaf23.bingoreloaded.lib.api.WorldPosition;
+import io.github.steaf23.bingoreloaded.lib.event.EventResult;
+import io.github.steaf23.bingoreloaded.lib.event.EventResults;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import io.github.steaf23.bingoreloaded.lib.util.DebugLogger;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
@@ -15,6 +19,7 @@ import io.github.steaf23.bingoreloaded.tasks.data.AdvancementTask;
 import io.github.steaf23.bingoreloaded.tasks.data.ItemTask;
 import io.github.steaf23.bingoreloaded.tasks.data.StatisticTask;
 import io.github.steaf23.bingoreloaded.tasks.data.TaskData;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -53,33 +58,16 @@ public class TaskProgressTracker
         }
     }
 
+    private final ServerSoftware platform;
     private final BingoGame game;
     private final Map<GameTask, List<TaskProgress>> progressMap;
     private final StatisticTracker statisticTracker;
 
-    public TaskProgressTracker(BingoGame game) {
+    public TaskProgressTracker(ServerSoftware platform, @NotNull BingoGame game) {
+        this.platform = platform;
         this.game = game;
         this.progressMap = new HashMap<>();
         this.statisticTracker = new StatisticTracker();
-        if (!game.getConfig().getOptionValue(BingoOptions.DISABLE_ADVANCEMENTS)) {
-            ConsoleMessenger.log("Revoking all advancements from participants...");
-            DebugLogger.addLog("Revoking all advancements");
-
-            List<PlayerHandle> allPlayers = new ArrayList<>();
-
-            for (BingoParticipant participant : game.getTeamManager().getParticipants()) {
-                 participant.sessionPlayer().ifPresent(allPlayers::add);
-            }
-
-            Bukkit.advancementIterator().forEachRemaining(advancement -> {
-                for (PlayerHandle p : allPlayers) {
-                    AdvancementProgress progress = p.getAdvancementProgress(advancement);
-                    for (String criteria : advancement.getCriteria()) {
-                        progress.revokeCriteria(criteria);
-                    }
-                }
-            });
-        }
     }
 
     public void startTrackingTask(GameTask task) {
@@ -99,9 +87,8 @@ public class TaskProgressTracker
                 // revoke advancement from player
                 AdvancementTask advancementTask = (AdvancementTask) task.data;
                 participant.sessionPlayer().ifPresent(player -> {
-                    AdvancementProgress progress = player.getAdvancementProgress(advancementTask.advancement());
-                    progress.getAwardedCriteria().forEach(progress::revokeCriteria);
-                    DebugLogger.addLog("Revoking advancement " + advancementTask.advancement().getKey().getKey() + " for player " + player.getName());
+                    player.removeAdvancementProgress(advancementTask.advancement());
+                    DebugLogger.addLog("Revoking advancement " + advancementTask.advancement().key().value() + " for player " + player.playerName());
                 });
             } else if (type == TaskData.TaskType.STATISTIC) {
                 StatisticTask statisticTask = (StatisticTask) task.data;
@@ -112,7 +99,7 @@ public class TaskProgressTracker
 //                }
 
                 // the stat tracker will reset progress to 0 for every statistic added.
-                statisticTracker.addStatistic(statisticTask, participant);
+                statisticTracker.addStatistic(statisticTask, participant, this::onBingoStatisticCompleted);
             }
             // No progress to reset for item tasks
 
@@ -121,8 +108,8 @@ public class TaskProgressTracker
         }
     }
 
-    public void handlePlayerAdvancementDone(final PlayerAdvancementDoneEvent event) {
-        BingoParticipant participant = getValidParticipant(event.getPlayer());
+    public void handlePlayerAdvancementDone(PlayerHandle player, AdvancementHandle advancement) {
+        BingoParticipant participant = getValidParticipant(player);
         if (participant == null) {
             return;
         }
@@ -130,8 +117,8 @@ public class TaskProgressTracker
         if (game.getDeathMatchTask() != null)
             return;
 
-        if (!event.getAdvancement().getKey().getKey().startsWith("recipes"))
-            DebugLogger.addLog("Advancement " + event.getAdvancement().getKey().getKey() + " completed by " + event.getPlayer().getName());
+        if (!advancement.key().value().startsWith("recipes"))
+            DebugLogger.addLog("Advancement " + advancement.key().value() + " completed by " + player.playerName());
 
         updateProgressFromEvent(participant, (task, progress) -> {
             if (task.taskType() != TaskData.TaskType.ADVANCEMENT) {
@@ -139,18 +126,18 @@ public class TaskProgressTracker
             }
             AdvancementTask data = (AdvancementTask) task.data;
 
-            if (!data.advancement().getKey().equals(event.getAdvancement().getKey())) {
+            if (!data.advancement().key().equals(advancement.key())) {
                 return false;
             }
 
             progress.addProgress(1);
-            DebugLogger.addLog("Completed task " + event.getAdvancement().getKey().getKey() + " completed by player " + participant.getName());
+            DebugLogger.addLog("Completed task " + advancement.key().value() + " completed by player " + participant.getName());
             return tryCompleteTask(task, progress);
         });
     }
 
-    public void handleBingoStatisticCompleted(final BingoEvents.StatisticCompleted event) {
-        BingoParticipant participant = getValidParticipant(event.participant());
+    public void onBingoStatisticCompleted(final StatisticProgress completedStat) {
+        BingoParticipant participant = getValidParticipant(completedStat.getParticipant());
         if (participant == null) {
             return;
         }
@@ -162,7 +149,7 @@ public class TaskProgressTracker
             if (task.taskType() != TaskData.TaskType.STATISTIC) {
                 return false;
             }
-            StatisticHandlePaper statistic = event.statistic();
+            StatisticHandle statistic = completedStat.getStatistic();
             StatisticTask data = (StatisticTask) task.data;
 
             if (!data.statistic().equals(statistic)) {
@@ -174,8 +161,13 @@ public class TaskProgressTracker
         });
     }
 
-    public void handlePlayerStatIncrement(final PlayerStatisticIncrementEvent event) {
-        statisticTracker.handleStatisticIncrement(event, game);
+    public void handlePlayerStatIncrement(PlayerHandle player, StatisticHandle statistic, int newValue) {
+
+        BingoParticipant participant = game.getTeamManager().getPlayerAsParticipant(player);
+        if (participant == null || participant.sessionPlayer().isEmpty())
+            return;
+
+        statisticTracker.handleStatisticIncrement(participant, statistic, newValue, game);
     }
 
     private StackHandle completeItemSlot(StackHandle item, BingoParticipant participant) {
@@ -191,62 +183,28 @@ public class TaskProgressTracker
         if (deathMatchTask != null) {
             if (item.type().equals(deathMatchTask.material())) {
                 deathMatchTask.complete(participant, game.getGameTime());
-                var slotEvent = new BingoDeathmatchTaskCompletedEvent(participant.getSession(), deathMatchTask);
-                ExtensionApi.callEvent(slotEvent);
+                game.onDeathmatchTaskComplete(participant, deathMatchTask);
             }
             return item;
         }
-
-        Set<GameTask> tasksToRemove = new HashSet<>();
-        for (GameTask task : progressMap.keySet()) {
-            for (TaskProgress progress : progressMap.get(task)) {
-                if (!progress.participant.equals(participant)) {
-                    continue;
-                }
-
-                if (task.taskType() != TaskData.TaskType.ITEM) {
-                    continue;
-                }
-                ItemTask data = (ItemTask) task.data;
-                if (!data.material().equals(item.getType()) || data.count() > item.getAmount()) {
-                    continue;
-                }
-
-                progress.setProgress(item.getAmount());
-                if (!tryCompleteTask(task, progress)) {
-                    continue;
-                }
-
-                if (participant.sessionPlayer().isPresent()) {
-                    if (game.getConfig().getOptionValue(BingoOptions.REMOVE_TASK_ITEMS)) {
-                        item.setAmount(item.getAmount() - data.getRequiredAmount());
-                    }
-                    participant.sessionPlayer().get().updateInventory();
-                }
-
-                tasksToRemove.add(task);
-            }
-        }
-
-        tasksToRemove.forEach(progressMap::remove);
 
         updateProgressFromEvent(participant, (task, progress) -> {
             if (task.taskType() != TaskData.TaskType.ITEM) {
                 return false;
             }
             ItemTask data = (ItemTask) task.data;
-            if (!data.material().equals(item.getType()) || data.count() > item.getAmount()) {
+            if (!data.itemType().equals(item.type()) || data.count() > item.amount()) {
                 return false;
             }
 
-            progress.setProgress(item.getAmount());
+            progress.setProgress(item.amount());
             if (!tryCompleteTask(task, progress)) {
                 return false;
             }
 
             participant.sessionPlayer().ifPresent(player -> {
                 if (game.getConfig().getOptionValue(BingoOptions.REMOVE_TASK_ITEMS)) {
-                    item.setAmount(item.getAmount() - data.getRequiredAmount());
+                    item.setAmount(item.amount() - data.getRequiredAmount());
                 }
             });
 
@@ -255,78 +213,79 @@ public class TaskProgressTracker
         return item;
     }
 
-    public void handleInventoryClicked(final InventoryClickEvent event) {
-        if (!(event.getWhoClicked() instanceof Player player)) {
-            return;
-        }
-
+    public void handleInventoryClicked(PlayerHandle player, StackHandle itemOnCursor) {
         BingoParticipant participant = getValidParticipant(player);
         if (participant == null) {
             return;
         }
 
-        // player tries to grab item in inventory normally
-        if (event.getSlotType() == InventoryType.SlotType.RESULT && event.getClick() != ClickType.SHIFT_LEFT) {
-            BingoReloaded.scheduleTask(task -> {
-                ItemStack resultStack = player.getItemOnCursor();
-                completeItemSlot(resultStack, participant);
-            });
-            return;
-        }
+        //FIXME: REFACTOR check if this condition is not already covered by the condition below.
+//        // player tries to grab item in inventory normally
+//        if (event.getSlotType() == InventoryType.SlotType.RESULT && event.getClick() != ClickType.SHIFT_LEFT) {
+//            BingoReloaded.scheduleTask(task -> {
+//                ItemStack resultStack = player.getItemOnCursor();
+//                completeItemSlot(resultStack, participant);
+//            });
+//            return;
+//        }
 
-        BingoReloaded.scheduleTask(task -> {
+        platform.runTask(task -> {
             // Other contents are updated, so we want to check the full inventory for task items..
-            for (ItemStack stack : player.getInventory().getContents()) {
+            for (StackHandle stack : player.inventory().contents()) {
                 if (stack != null) {
                     completeItemSlot(stack, participant);
                 }
             }
 
             // Sometimes item changes are not recorded instantly for some reason, so double check if the cursor item can be completed as a task.
-            ItemStack stack = player.getItemOnCursor();
-            completeItemSlot(stack, participant);
+            completeItemSlot(itemOnCursor, participant);
         });
     }
 
-    public void handlePlayerPickupItem(final EntityPickupItemEvent event) {
-        if (!(event.getEntity() instanceof PlayerHandle player)) {
-            return;
+    public EventResult<EventResults.PlayerPickupResult> handlePlayerPickupItem(PlayerHandle player, StackHandle stack, WorldPosition itemLocation) {
+
+        BingoParticipant participant = getValidParticipant(player);
+        if (participant == null) {
+            return new EventResult<>(false, null);
         }
 
+        int amount = stack.amount();
+        stack = completeItemSlot(stack, participant);
+        boolean cancel = false;
+        boolean removeItem = false;
+        if (amount != stack.amount()) {
+            cancel = true;
+            StackHandle resultStack = stack.clone();
+
+            if (resultStack.type().isAir() || resultStack.amount() <= 0) {
+                return EventResults.playerPickupResult(true, false, true, stack);
+            }
+
+            removeItem = true;
+
+            platform.runTask(task -> {
+                participant.sessionPlayer().ifPresent(p -> p.world().dropItem(resultStack, itemLocation));
+            });
+        }
+
+        return EventResults.playerPickupResult(cancel, removeItem, false, null);
+    }
+
+    public void handlePlayerDroppedItem(PlayerHandle player, StackHandle stack) {
         BingoParticipant participant = getValidParticipant(player);
         if (participant == null) {
             return;
         }
 
-        ItemStack stack = event.getItem().getItemStack();
-        int amount = stack.getAmount();
-        stack = completeItemSlot(stack, participant);
-        if (amount != stack.getAmount()) {
-            event.setCancelled(true);
-            ItemStack resultStack = stack.clone();
-            event.getItem().setItemStack(stack);
-
-            if (resultStack.getType() == Material.AIR || resultStack.getAmount() <= 0) {
-                return;
-            }
-
-            BingoReloaded.scheduleTask(task -> {
-                participant.sessionPlayer().ifPresent(p -> p.getWorld().dropItem(event.getItem().getLocation(), resultStack));
-                event.getItem().remove();
-            });
-        }
+        //FIXME: REFACTOR remove wrap
+        StackWrapped wrapped = new StackWrapped(stack);
+        platform.runTask(task -> {
+            StackHandle internal = wrapped.stack();
+            internal = completeItemSlot(stack, participant);
+        });
     }
 
-    public void handlePlayerDroppedItem(final PlayerDropItemEvent event) {
-        BingoParticipant participant = getValidParticipant(event.player());
-        if (participant == null) {
-            return;
-        }
-
-        BingoReloaded.scheduleTask(task -> {
-            StackHandle stack = event.getStack();
-            stack = completeItemSlot(stack, participant);
-        });
+    private record StackWrapped(StackHandle stack) {
     }
 
     public void updateStatisticProgress() {
@@ -346,6 +305,10 @@ public class TaskProgressTracker
         }
 
         BingoParticipant player = progress.participant;
+        if (player == null) {
+            return false;
+        }
+
         if (!(player.getSession().getPhase() instanceof BingoGame)) {
             return false;
         }
@@ -359,8 +322,7 @@ public class TaskProgressTracker
         player.getTeam().getCard().ifPresent(card ->
                 card.handleTaskCompleted(player, task, game.getGameTime()));
 
-        var progressCompletedEvent = new BingoTaskProgressCompletedEvent(player.getSession(), task);
-        Bukkit.getPluginManager().callEvent(progressCompletedEvent);
+        game.onBingoTaskCompleted(player, task);
         return true;
     }
 

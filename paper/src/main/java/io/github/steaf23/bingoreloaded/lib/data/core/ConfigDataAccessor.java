@@ -1,15 +1,15 @@
 package io.github.steaf23.bingoreloaded.lib.data.core;
 
-import io.github.steaf23.bingoreloaded.lib.api.PaperPlatformBridge;
+import io.github.steaf23.bingoreloaded.lib.api.PaperServerSoftware;
 
 /**
  * Specific yaml data accessor for the config.yml file provided by Bukkit.
  */
 public class ConfigDataAccessor extends YamlDataStorage implements DataAccessor
 {
-    private final PaperPlatformBridge platform;
+    private final PaperServerSoftware platform;
 
-    public ConfigDataAccessor(PaperPlatformBridge platform) {
+    public ConfigDataAccessor(PaperServerSoftware platform) {
         super(platform.getConfig());
         this.platform = platform;
     }

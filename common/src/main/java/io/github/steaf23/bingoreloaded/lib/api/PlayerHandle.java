@@ -5,47 +5,86 @@ import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
+import java.util.function.Consumer;
 
 public interface PlayerHandle extends ForwardingAudience {
 
 	String playerName();
+
 	Component displayName();
+
 	UUID uniqueId();
+
 	WorldHandle world();
+
 	WorldPosition position();
+
 	@Nullable WorldPosition respawnPoint();
+
 	boolean hasPermission(String permission);
+
 	int level();
+
 	float exp();
+
 	double health();
+
 	int foodLevel();
+
 	PlayerGamemode gamemode();
+
 	int getStatisticValue(StatisticType type);
+
 	int getStatisticValue(StatisticType type, EntityType entity);
+
 	int getStatisticValue(StatisticType type, ItemType item);
 
-	boolean teleport(WorldPosition pos);
+	void teleportAsync(WorldPosition pos, @Nullable Consumer<Boolean> whenFinished);
+
+	default void teleportAsync(WorldPosition pos) {
+		teleportAsync(pos, null);
+	}
+
+	/**
+	 * Blocking teleport is way faster compared to teleportAsync if the chunk is already loaded, Else it is way slower.
+	 *
+	 * @return true when the teleport was successful.
+	 */
+	boolean teleportBlocking(WorldPosition pos);
 
 	PlayerInventoryHandle inventory();
+
 	void clearInventory();
+
 	void openInventory(InventoryHandle handle);
+
 	InventoryHandle enderChest();
 
 	/**
 	 * @param newSpawn new position.
-	 * @param force true if setting the spawn point should ignore valid bed/respawn positions too.
+	 * @param force    true if setting the spawn point should ignore valid bed/respawn positions too.
 	 */
 	void setRespawnPoint(WorldPosition newSpawn, boolean force);
+
 	void setLevel(int level);
+
 	void setExp(float exp);
+
 	void setFoodLevel(int foodLevel);
+
 	void setHealth(double health);
+
 	void setGamemode(PlayerGamemode gamemode);
+
 	void setStatisticValue(StatisticType type, int value);
+
 	void setStatisticValue(StatisticType type, EntityType entity, int value);
+
 	void setStatisticValue(StatisticType type, ItemType item, int value);
 
 	void clearAllEffects();
+
+	void removeAdvancementProgress(AdvancementHandle advancement);
 
 	boolean equals(Object other);
 }

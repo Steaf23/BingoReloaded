@@ -1,6 +1,6 @@
 package io.github.steaf23.bingoreloaded.data.helper;
 
-import io.github.steaf23.bingoreloaded.lib.api.PlatformBridge;
+import io.github.steaf23.bingoreloaded.lib.api.ServerSoftware;
 import io.github.steaf23.bingoreloaded.lib.api.PlayerGamemode;
 import io.github.steaf23.bingoreloaded.lib.api.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.api.StackHandle;
@@ -23,7 +23,7 @@ public class SerializablePlayer
     public StackHandle[] inventory;
     public StackHandle[] enderInventory;
 
-    public static @NotNull SerializablePlayer fromPlayer(@NotNull PlatformBridge platform, @NotNull PlayerHandle player)
+    public static @NotNull SerializablePlayer fromPlayer(@NotNull ServerSoftware platform, @NotNull PlayerHandle player)
     {
         SerializablePlayer data = new SerializablePlayer();
         data.extensionVersion = platform.getExtensionInfo().version();
@@ -43,7 +43,7 @@ public class SerializablePlayer
     /**
      * Reset all player data and set location
      */
-    public static SerializablePlayer reset(PlatformBridge platform, PlayerHandle player, WorldPosition location)
+    public static SerializablePlayer reset(ServerSoftware platform, PlayerHandle player, WorldPosition location)
     {
         SerializablePlayer data = new SerializablePlayer();
         data.extensionVersion = platform.getExtensionInfo().version();
@@ -68,7 +68,7 @@ public class SerializablePlayer
         if (!playerId.equals(player.uniqueId()))
             return;
 
-        player.teleport(location);
+        player.teleportBlocking(location);
 
         player.setHealth(health);
         player.setFoodLevel(hunger);

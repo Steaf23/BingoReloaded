@@ -1,7 +1,7 @@
 package io.github.steaf23.bingoreloaded.gui;
 
 import io.github.steaf23.bingoreloaded.cards.TaskCard;
-import io.github.steaf23.bingoreloaded.lib.api.PlatformBridge;
+import io.github.steaf23.bingoreloaded.lib.api.ServerSoftware;
 import io.github.steaf23.bingoreloaded.lib.api.Position;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataStorage;
 import io.github.steaf23.bingoreloaded.lib.data.core.json.JsonDataAccessor;
@@ -55,7 +55,7 @@ public class BingoCardMapRenderer extends MapRenderer
     private static BufferedImage ADVANCEMENT_ICON = null;
     private static BufferedImage STATISTIC_ICON = null;
 
-    public BingoCardMapRenderer(PlatformBridge platform, TaskCard card, BingoTeam team) {
+    public BingoCardMapRenderer(ServerSoftware platform, TaskCard card, BingoTeam team) {
         this.card = card;
 
         random = new Random();

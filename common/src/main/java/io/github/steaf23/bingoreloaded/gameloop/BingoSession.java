@@ -3,6 +3,7 @@ package io.github.steaf23.bingoreloaded.gameloop;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.api.BingoEvents;
 import io.github.steaf23.bingoreloaded.lib.api.DimensionType;
+import io.github.steaf23.bingoreloaded.lib.api.ItemType;
 import io.github.steaf23.bingoreloaded.lib.api.MenuBoard;
 import io.github.steaf23.bingoreloaded.lib.api.PlatformResolver;
 import io.github.steaf23.bingoreloaded.lib.api.PlayerHandle;
@@ -22,6 +23,8 @@ import io.github.steaf23.bingoreloaded.gameloop.vote.VoteTicket;
 import io.github.steaf23.bingoreloaded.gui.hud.BingoGameHUDGroup;
 import io.github.steaf23.bingoreloaded.gui.hud.TeamDisplay;
 import io.github.steaf23.bingoreloaded.lib.api.WorldPosition;
+import io.github.steaf23.bingoreloaded.lib.event.EventResult;
+import io.github.steaf23.bingoreloaded.lib.event.EventResults;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
@@ -189,23 +192,26 @@ public class BingoSession implements ForwardingAudience
     }
 
     public void addPlayer(PlayerHandle player) {
-        onPlayerJoinedSessionWorld(new BingoEvents.PlayerEvent(this, player));
+        onPlayerJoinedSessionWorld(new BingoEvents.PlayerSessionEvent(this, player));
 
         BingoReloaded.sendResourcePack(player);
     }
 
     public void removePlayer(PlayerHandle player) {
-        onPlayerLeftSessionWorld(new BingoEvents.PlayerEvent(this, player));
+        onPlayerLeftSessionWorld(new BingoEvents.PlayerSessionEvent(this, player));
     }
 
-    public boolean handlePlayerDropItem(final StackHandle stack) {
-		return PlayerKit.CARD_ITEM.isCompareKeyEqual(stack) ||
+    public EventResult<?> handlePlayerDroppedStack(PlayerHandle player, StackHandle stack) {
+		if (PlayerKit.CARD_ITEM.isCompareKeyEqual(stack) ||
 				PlayerKit.WAND_ITEM.isCompareKeyEqual(stack) ||
 				PlayerKit.VOTE_ITEM.isCompareKeyEqual(stack) ||
-				PlayerKit.TEAM_ITEM.isCompareKeyEqual(stack);
+				PlayerKit.TEAM_ITEM.isCompareKeyEqual(stack)) {
+            return EventResult.CANCEL;
+        }
+        return EventResult.PASS;
 	}
 
-    public void onPlayerJoinedSessionWorld(final BingoEvents.PlayerEvent event) {
+    public void onPlayerJoinedSessionWorld(final BingoEvents.PlayerSessionEvent event) {
         gameManager.getPlatform().runTask(t -> {
             teamManager.handlePlayerJoinedSessionWorld(event);
             phase.handlePlayerJoinedSessionWorld(event);
@@ -217,14 +223,14 @@ public class BingoSession implements ForwardingAudience
         });
     }
 
-    public void onPlayerLeftSessionWorld(final BingoEvents.PlayerEvent event) {
+    public void onPlayerLeftSessionWorld(final BingoEvents.PlayerSessionEvent event) {
         // Clear player's teams before anything else.
         // This is because they might join another bingo as a result of leaving this one, so we have to remove the player's team display at this moment
         //FIXME: REFACTOR TeamDisplay
 //        teamDisplay.clearTeamsForPlayer(event.player());
 
 
-        BingoReloaded.scheduleTask(t -> {
+        getGameManager().getPlatform().runTask(t -> {
             teamManager.handlePlayerLeftSessionWorld(event);
             phase.handlePlayerLeftSessionWorld(event);
 
@@ -247,7 +253,6 @@ public class BingoSession implements ForwardingAudience
                     ConsoleMessenger.log(Component.text("Ending game because there is no competition anymore.").color(NamedTextColor.LIGHT_PURPLE), Component.text(worlds.worldName()));
                 }
                 endGame();
-                return;
             }
         });
     }
@@ -262,7 +267,7 @@ public class BingoSession implements ForwardingAudience
         teamDisplay.update();
     }
 
-    public void handlePlayerPortalEvent(final PlayerHandle player, final WorldPosition fromPos, @NotNull WorldPosition toPos) {
+    public EventResult<EventResults.PlayerMoveResult> handlePlayerPortalEvent(final PlayerHandle player, final WorldPosition fromPos, @NotNull WorldPosition toPos) {
         WorldHandle origin = fromPos.world();
         WorldHandle target = toPos.world();
 
@@ -294,24 +299,23 @@ public class BingoSession implements ForwardingAudience
             }
         }
 
-        toPos.takeFrom(targetLocation);
+        return EventResults.playerMoveResult(false, true, targetLocation);
     }
 
-    public boolean handlePlayerBlockBreak(final PlayerHandle player) {
+    public EventResult<?> handlePlayerBlockBreak(PlayerHandle player, WorldPosition position, ItemType block) {
         if (!isRunning() && config.getOptionValue(BingoOptions.PREVENT_PLAYER_GRIEFING) && !player.hasPermission("bingo.admin")) {
             BingoMessage.NO_GRIEFING.sendToAudience(player);
-            return true;
+            return EventResult.CANCEL;
         }
-
-        return false;
+        return EventResult.PASS;
     }
 
-    public boolean handlePlayerBlockPlace(final PlayerHandle player) {
+    public EventResult<?> handlePlayerBlockPlace(PlayerHandle player, WorldPosition position, ItemType block) {
         if (!isRunning() && config.getOptionValue(BingoOptions.PREVENT_PLAYER_GRIEFING) && !player.hasPermission("bingo.admin")) {
             BingoMessage.NO_GRIEFING.sendToAudience(player);
-            return true;
+            return EventResult.CANCEL;
         }
-        return false;
+        return EventResult.PASS;
     }
 
     public MenuBoard getMenuBoard() {

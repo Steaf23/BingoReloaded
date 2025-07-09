@@ -153,7 +153,7 @@ public class SoloTeamManager implements TeamManager
     }
 
     @Override
-    public void handlePlayerJoinedSessionWorld(BingoEvents.PlayerEvent event) {
+    public void handlePlayerJoinedSessionWorld(BingoEvents.PlayerSessionEvent event) {
         PlayerHandle player = event.player();
         ConsoleMessenger.log(player.displayName().append(Component.text(" joined world")).color(NamedTextColor.GOLD), session.getOverworld().name());
 
@@ -181,7 +181,7 @@ public class SoloTeamManager implements TeamManager
     }
 
     @Override
-    public void handlePlayerLeftSessionWorld(BingoEvents.PlayerEvent event) {
+    public void handlePlayerLeftSessionWorld(BingoEvents.PlayerSessionEvent event) {
         ConsoleMessenger.log(event.player().displayName().append(Component.text(" left world")).color(NamedTextColor.GOLD), session.getOverworld().name());
     }
 

@@ -1,12 +1,12 @@
 package io.github.steaf23.bingoreloaded.lib.util;
 
-import io.github.steaf23.bingoreloaded.lib.api.PlatformBridge;
+import io.github.steaf23.bingoreloaded.lib.api.ServerSoftware;
 import io.github.steaf23.bingoreloaded.lib.api.PlatformResolver;
 import net.kyori.adventure.text.Component;
 
 public class ConsoleMessenger
 {
-    private static final PlatformBridge PLATFORM = PlatformResolver.get();
+    private static final ServerSoftware PLATFORM = PlatformResolver.get();
 
     public static void log(String message) {
         PLATFORM.getComponentLogger().info(

@@ -1,7 +1,6 @@
 package io.github.steaf23.bingoreloaded.gameloop;
 
-import io.github.steaf23.bingoreloaded.lib.api.PlatformBridge;
-import io.github.steaf23.bingoreloaded.lib.api.MenuBoard;
+import io.github.steaf23.bingoreloaded.lib.api.ServerSoftware;
 import io.github.steaf23.bingoreloaded.lib.api.WorldHandle;
 import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.data.config.BingoOptions;
@@ -13,7 +12,7 @@ import java.util.List;
 
 public class SingularGameManager extends GameManager
 {
-    public SingularGameManager(@NotNull PlatformBridge platform, BingoConfigurationData config) {
+    public SingularGameManager(@NotNull ServerSoftware platform, BingoConfigurationData config) {
         super(platform, config);
 
         WorldGroup group = createWorldGroupFromExistingWorlds();
@@ -58,6 +57,6 @@ public class SingularGameManager extends GameManager
             ConsoleMessenger.error("Could not create world group from existing world; " + defaultWorldName + "_the_end does not exist. Make sure the world exists and reload the plugin.");
             return null;
         }
-        return new WorldGroup(defaultWorldName, overworld.uniqueId(), nether.uniqueId(), theEnd.uniqueId());
+        return new WorldGroup(getPlatform(), defaultWorldName, overworld.uniqueId(), nether.uniqueId(), theEnd.uniqueId());
     }
 }

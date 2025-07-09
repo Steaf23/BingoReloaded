@@ -1,17 +1,19 @@
 package io.github.steaf23.bingoreloaded.tasks;
 
+import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.gui.inventory.item.TaskItemAction;
 import io.github.steaf23.bingoreloaded.lib.api.ItemType;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.lib.api.StackHandle;
+import io.github.steaf23.bingoreloaded.lib.data.core.DataStorage;
 import io.github.steaf23.bingoreloaded.lib.data.core.tag.TagDataStorage;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
+import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.tasks.data.ItemTask;
 import io.github.steaf23.bingoreloaded.tasks.data.TaskData;
 import io.github.steaf23.bingoreloaded.util.timer.GameTimer;
-import io.github.steaf23.bingoreloaded.lib.util.PDCHelper;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
@@ -126,12 +128,17 @@ public class GameTask
 
     public static @Nullable GameTask fromItem(StackHandle in)
     {
-        //FIXME: REFACTOR something with GameTaskSerializer
+        DataStorage store = in.getStorage("game_task");
+        if (store == null) {
+            ConsoleMessenger.bug("No task data found in item", GameTask.class);
+            return null;
+        }
+        return store.toSerializable(GameTask.class);
     }
 
     public static Key getTaskDataKey(String property)
     {
-        return PDCHelper.createKey("task." + property);
+        return BingoReloaded.resourceKey("task." + property);
     }
 
     public boolean complete(BingoParticipant participant, long gameTime)

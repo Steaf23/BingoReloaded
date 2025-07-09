@@ -1,6 +1,6 @@
 package io.github.steaf23.bingoreloaded.lib.data.core;
 
-import io.github.steaf23.bingoreloaded.lib.api.PlatformBridge;
+import io.github.steaf23.bingoreloaded.lib.api.ServerSoftware;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -12,11 +12,11 @@ import java.nio.file.Paths;
 
 public class YamlDataAccessor extends YamlDataStorage implements DataAccessor
 {
-    private final PlatformBridge platform;
+    private final ServerSoftware platform;
     private final String location;
     private final boolean internalOnly;
 
-    public YamlDataAccessor(PlatformBridge platform, String location, boolean internalOnly) {
+    public YamlDataAccessor(ServerSoftware platform, String location, boolean internalOnly) {
         // create default config to not throw null pointers everywhere when trying to use this class before its loaded
         super(new YamlConfiguration());
         this.platform = platform;

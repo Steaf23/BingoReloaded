@@ -1,15 +1,26 @@
 package io.github.steaf23.bingoreloaded.api;
 
-import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gameloop.GameManager;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.gameloop.phase.PregameLobby;
+import io.github.steaf23.bingoreloaded.lib.api.AdvancementHandle;
+import io.github.steaf23.bingoreloaded.lib.api.InteractAction;
+import io.github.steaf23.bingoreloaded.lib.api.ItemType;
+import io.github.steaf23.bingoreloaded.lib.api.PlayerHandle;
+import io.github.steaf23.bingoreloaded.lib.api.StackHandle;
+import io.github.steaf23.bingoreloaded.lib.api.StatisticHandle;
 import io.github.steaf23.bingoreloaded.lib.api.WorldHandle;
+import io.github.steaf23.bingoreloaded.lib.api.WorldPosition;
+import io.github.steaf23.bingoreloaded.lib.event.PlatformEventDispatcher;
+import io.github.steaf23.bingoreloaded.lib.event.EventResult;
+import io.github.steaf23.bingoreloaded.lib.event.EventResults;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class BingoEventListener {
+import java.util.Collection;
+
+public final class BingoEventListener implements PlatformEventDispatcher {
 	private final boolean disableAdvancements;
 	private final boolean disableStatistics;
 	private final GameManager gameManager;
@@ -19,12 +30,6 @@ public class BingoEventListener {
 		this.gameManager = gameManager;
 		this.disableAdvancements = disableAdvancements;
 		this.disableStatistics = disableStatistics;
-
-		BingoReloaded.eventBus()
-				.registerMethod(BingoEvents.GameEnded.class, this::handleBingoGameEnded)
-				.registerMethod(BingoEvents.GameEnded.class, this::handleBingoGameEnded)
-				.registerMethod(BingoEvents.GameEnded.class, this::handleBingoGameEnded)
-				.registerMethod(BingoEvents.GameEnded.class, this::handleBingoGameEnded);
 	}
 
 	@Nullable
@@ -41,46 +46,95 @@ public class BingoEventListener {
 		}
 	}
 
-	public void handleTaskProgressCompleted(final BingoEvents.TaskProgressCompletedEvent event) {
-		BingoSession session = event.session();
-		BingoGame game = session != null && session.isRunning() ? (BingoGame)session.phase() : null;
-		if (game != null)
-		{
-			game.handleBingoTaskComplete(event);
-		}
+	public void handleTaskProgressCompleted(final BingoEvents.TaskProgressCompleted event) {
+//		BingoSession session = event.session();
+//		BingoGame game = session != null && session.isRunning() ? (BingoGame)session.phase() : null;
+//		if (game != null)
+//		{
+//			game.handleBingoTaskComplete(event);
+//		}
 	}
 
-	public void handleDeathmatchTaskCompleted(final BingoEvents.TaskProgressCompletedEvent event) {
-		BingoSession session = event.session();
-		BingoGame game = session != null && session.isRunning() ? (BingoGame)session.phase() : null;
-		if (game != null)
-		{
-			game.handleDeathmatchTaskComplete(event);
-		}
-	}
-
-	public void handlePlayerDropItem(final PlayerDropItemEvent event)
+	public void handleCountdownFinished(final BingoEvents.CountdownTimerFinished event)
 	{
-		BingoSession session = getSession(event.player().world());
-		if (session == null)
-			return;
+//		BingoGame game = event.session() != null && event.session().isRunning() ? (BingoGame)event.session().phase() : null;
+//		if (game != null)
+//		{
+//			game.handleCountdownFinished(event);
+//		}
+	}
 
-		session.handlePlayerDropItem(event);
+	public void handleBingoStatisticCompleted(final BingoEvents.StatisticCompleted event)
+	{
+//		if (disableStatistics)
+//			return;
+//
+//		BingoSession session = event.session();
+//		BingoGame game = session != null && session.isRunning() ? (BingoGame)session.phase() : null;
+//		if (game != null)
+//		{
+//			game.getProgressTracker().handleBingoStatisticCompleted(event);
+//		}
+	}
+
+	public void handleSettingsUpdated(final BingoSettingsUpdatedEvent event)
+	{
+		event.getSession().handleSettingsUpdated(event);
+	}
+
+	@Override
+	public EventResult<?> sendPlayerMove(PlayerHandle player, WorldPosition from, WorldPosition to) {
+		BingoGame game = getBingoGame(player.world());
+		if (game == null) return EventResult.PASS;
+
+		return game.handlePlayerMove(player, from, to);
+	}
+
+	@Override
+	public EventResult<?> sendPlayerTeleport(PlayerHandle player, WorldPosition from, WorldPosition to) {
+		return gameManager.handlePlayerTeleport(player, from, to);
+	}
+
+
+	@Override
+	public EventResult<EventResults.PlayerMoveResult> sendPlayerPortal(PlayerHandle player, WorldPosition from, WorldPosition to) {
+		// We only care about this event when it was sent from a bingo world.
+		BingoSession session = getSession(from.world());
+		if (session == null)
+			return new EventResult<>(false, null);
+
+		return session.handlePlayerPortalEvent(player, from, to);
+	}
+
+	@Override
+	public EventResult<?> sendPlayerDroppedStack(PlayerHandle player, StackHandle item) {
+		BingoSession session = getSession(player.world());
+		if (session == null)
+			return EventResult.PASS;
+
+		EventResult<?> sessionResult = session.handlePlayerDroppedStack(player, item);
 
 		BingoGame game = session.isRunning() ? (BingoGame)session.phase() : null;
 		if (game != null && game.hasStarted())
 		{
-			game.getProgressTracker().handlePlayerDroppedItem(event);
+			game.getProgressTracker().handlePlayerDroppedItem(player, item);
 		}
+
+		return sessionResult;
 	}
 
-	public void handlePlayerInteract(final PlayerInteractEvent event)
-	{
-		BingoSession session = getSession(event.player().world());
-		if (session == null)
-		{
-			return;
-		}
+	@Override
+	public EventResult<?> sendPlayerStackDamaged(PlayerHandle player, StackHandle item) {
+		BingoGame game = getBingoGame(player.world());
+		if (game == null) return EventResult.PASS;
+
+		return game.handlePlayerStackDamaged(player, item);
+	}
+
+	@Override
+	public EventResult<?> sendPlayerInteracted(PlayerHandle player, @Nullable StackHandle handItem, InteractAction action) {
+		BingoSession session = getSession(player.world());
+		if (session == null) return EventResult.PASS;
 
 		// FIXME: REFACTOR determine if this is needed
 //        // Determine if the event is fired for the correct hand, to avoid duplicate events
@@ -90,190 +144,134 @@ public class BingoEventListener {
 //            return;
 //        }
 
-		session.phase().handlePlayerInteract(event);
+		return session.phase().handlePlayerInteracted(player, handItem, action);
 	}
 
-	public void handleEntityDamage(final EntityDamageEvent event)
-	{
-		BingoSession session = getSession(event.getEntity().getWorld());
-		BingoGame game = session != null && session.isRunning() ? (BingoGame)session.phase() : null;
-		if (game != null)
-		{
-			game.handleEntityDamage(event);
-		}
+	@Override
+	public EventResult<?> sendPlayerFallDamage(PlayerHandle player) {
+		BingoGame game = getBingoGame(player.world());
+		if (game == null) return EventResult.PASS;
+
+		return game.handlePlayerFallDamage(player);
 	}
 
-	public void handlePlayerDeath(final PlayerDeathEvent event)
-	{
-		BingoSession session = getSession(event.getEntity().getWorld());
-		BingoGame game = session != null && session.isRunning() ? (BingoGame)session.phase() : null;
-		if (game != null)
-		{
-			game.handlePlayerDeath(event);
-		}
+	@Override
+	public EventResult<EventResults.PlayerDeathResult> sendPlayerDeath(PlayerHandle player, Collection<? extends StackHandle> drops) {
+		BingoGame game = getBingoGame(player.world());
+		if (game == null) return new EventResult<>(false, null);
+
+		return game.handlePlayerDeath(player, drops);
 	}
 
-	public void handlePlayerRespawn(final PlayerRespawnEvent event)
-	{
-		BingoSession session = getSession(event.getPlayer().getWorld());
+	@Override
+	public EventResult<EventResults.PlayerRespawnResult> sendPlayerRespawn(PlayerHandle player, boolean isBedSpawn, boolean isAnchorSpawn) {
+		BingoSession session = getSession(player.world());
 		if (session != null && session.getPhase() instanceof PregameLobby lobby) {
-			lobby.handlePlayerRespawn(event);
-			return;
+			lobby.handlePlayerRespawn(player);
 		}
-
 
 		BingoGame game = session != null && session.isRunning() ? (BingoGame)session.phase() : null;
 		if (game != null)
 		{
-			game.handlePlayerRespawn(event);
+			return game.handlePlayerRespawn(player, isBedSpawn, isAnchorSpawn);
 		}
+
+		return new EventResult<>(false, null);
 	}
 
-	public void handleCountdownFinished(final BingoEvents.CountdownTimerFinished event)
+	@Override
+	public EventResult<?> sendPlayerJoinsServer(PlayerHandle player)
 	{
-		BingoGame game = event.session() != null && event.session().isRunning() ? (BingoGame)event.session().phase() : null;
+		return gameManager.handlePlayerJoinsServer(player);
+	}
+
+	@Override
+	public EventResult<?> sendPlayerQuitsServer(final PlayerHandle player)
+	{
+		return gameManager.handlePlayerQuitsServer(player);
+	}
+
+	@Override
+	public EventResult<?> sendPlayerBreaksBlock(PlayerHandle player, WorldPosition position, ItemType blockType) {
+		BingoSession session = getSession(player.world());
+		if (session == null)
+			return EventResult.PASS;
+
+		return session.handlePlayerBlockBreak(player, position, blockType);
+	}
+
+	@Override
+	public EventResult<?> sendPlayerPlacesBlock(PlayerHandle player, WorldPosition position, ItemType blockType) {
+		BingoSession session = getSession(player.world());
+		if (session == null)
+			return EventResult.PASS;
+
+		return session.handlePlayerBlockPlace(player, position, blockType);
+	}
+
+	@Override
+	public EventResult<?> sendPlayerStatisticIncrement(PlayerHandle player, StatisticHandle statistic, int newValue) {
+		if (disableStatistics)
+			return EventResult.PASS;
+
+		BingoSession session = getSession(player.world());
+		BingoGame game = session != null && session.isRunning() ? (BingoGame)session.phase() : null;
 		if (game != null)
 		{
-			game.handleCountdownFinished(event);
+			game.getProgressTracker().handlePlayerStatIncrement(player, statistic, newValue);
 		}
+
+		return EventResult.PASS;
 	}
 
-	public void handlePlayerAdvancementCompleted(final PlayerAdvancementDoneEvent event)
-	{
+	@Override
+	public EventResult<?> sendPlayerAdvancementDone(PlayerHandle player, AdvancementHandle advancement) {
 		if (disableAdvancements)
-			return;
+			return EventResult.PASS;
 
-		BingoSession session = getSession(event.getPlayer().getWorld());
+		BingoSession session = getSession(player.world());
 		BingoGame game = session != null && session.isRunning() ? (BingoGame)session.phase() : null;
 		if (game != null)
 		{
-			game.getProgressTracker().handlePlayerAdvancementDone(event);
+			game.getProgressTracker().handlePlayerAdvancementDone(player, advancement);
 		}
+
+		return EventResult.PASS;
 	}
 
-	public void handlePlayerPickupItem(final EntityPickupItemEvent event)
-	{
-		BingoSession session = getSession(event.getEntity().getWorld());
+	@Override
+	public EventResult<EventResults.PlayerPickupResult> sendPlayerPickupStack(PlayerHandle player, StackHandle stack, WorldPosition itemLocation) {
+		BingoSession session = getSession(player.world());
 		BingoGame game = session != null && session.isRunning() ? (BingoGame)session.phase() : null;
 		if (game != null && game.hasStarted())
 		{
-			game.getProgressTracker().handlePlayerPickupItem(event);
+			return game.getProgressTracker().handlePlayerPickupItem(player, stack, itemLocation);
 		}
+
+		return new EventResult<>(false, null);
 	}
 
-	public void handleInventoryClicked(final InventoryClickEvent event)
-	{
-		BingoSession session = getSession(event.getWhoClicked().getWorld());
+	@Override
+	public EventResult<?> sendPlayerInventoryClick(PlayerHandle player, StackHandle itemOnCursor) {
+		BingoSession session = getSession(player.world());
 		BingoGame game = session != null && session.isRunning() ? (BingoGame)session.phase() : null;
 		if (game != null && game.hasStarted())
 		{
-			game.getProgressTracker().handleInventoryClicked(event);
+			game.getProgressTracker().handleInventoryClicked(player, itemOnCursor);
 		}
+
+		return EventResult.PASS;
 	}
 
-	public void handlePlayerJoinsServer(final PlayerJoinEvent event)
-	{
-		gameManager.handlePlayerJoinsServer(event);
-	}
 
-	public void handlePlayerQuitsServer(final PlayerQuitEvent event)
-	{
-		gameManager.handlePlayerQuitsServer(event);
-	}
+	private @Nullable BingoGame getBingoGame(WorldHandle world) {
+		BingoSession session = getSession(world);
+		if (session == null) return null;
 
-	// FIXME: REFACTOR add event priority?
-//    // We need the game manager to handle teleports first to make sure no player information gets lost by accident.
-//    @EventCallback(priority = EventPriority.HIGHEST)
-//    public void handlePlayerTeleport(final PlayerTeleportEvent event)
-//    {
-//        gameManager.handlePlayerTeleport(event);
-//    }
-
-	public void onPlayerItemDamaged(PlayerItemDamageEvent event)
-	{
-		BingoSession session = getSession(event.player().world());
-		if (session != null && session.isRunning())
-		{
-			((BingoGame)session.phase()).handlePlayerItemDamaged(event);
+		if (session.getPhase() instanceof BingoGame game) {
+			return game;
 		}
-	}
 
-	public void handleStatisticIncrement(final PlayerStatisticIncrementEvent event)
-	{
-		if (disableStatistics)
-			return;
-
-		BingoSession session = getSession(event.player().world());
-		BingoGame game = session != null && session.isRunning() ? (BingoGame)session.phase() : null;
-		if (game != null)
-		{
-			game.getProgressTracker().handlePlayerStatIncrement(event);
-		}
-	}
-
-	public void handleBingoStatisticCompleted(final BingoEvents.StatisticCompleted event)
-	{
-		if (disableStatistics)
-			return;
-
-		BingoSession session = event.session();
-		BingoGame game = session != null && session.isRunning() ? (BingoGame)session.phase() : null;
-		if (game != null)
-		{
-			game.getProgressTracker().handleBingoStatisticCompleted(event);
-		}
-	}
-
-	public void handlePlayerMove(final PlayerMoveEvent event)
-	{
-		BingoSession session = getSession(event.player().world());
-		if (session == null)
-			return;
-
-		if (session.isRunning())
-		{
-			((BingoGame)session.phase()).handlePlayerMove(event);
-		}
-	}
-
-	public void handlePlayerPortal(final PlayerPortalEvent event) {
-		BingoSession session = getSession(event.fromPosition().world());
-		if (session == null)
-			return;
-
-		session.handlePlayerPortalEvent(event);
-	}
-
-	public void handlePlayerBlockBreak(final BlockBreakEvent event) {
-		BingoSession session = getSession(event.player().world());
-		if (session == null)
-			return;
-
-		session.handlePlayerBlockBreak(event);
-	}
-
-	public void handlePlayerBlockPlace(final BlockPlaceEvent event) {
-		BingoSession session = getSession(event.player().world());
-		if (session == null)
-			return;
-
-		session.handlePlayerBlockPlace(event);
-	}
-
-	public void handleSettingsUpdated(final BingoSettingsUpdatedEvent event)
-	{
-		event.getSession().handleSettingsUpdated(event);
-	}
-
-	public void handleParticipantJoinedTeam(final ParticipantJoinedTeamEvent event) {
-		event.getSession().handleParticipantJoinedTeam(event);
-	}
-
-	public void handleParticipantLeftTeam(final ParticipantLeftTeamEvent event) {
-		event.getSession().handleParticipantLeftTeam(event);
-	}
-
-	public void handleBingoPlaySoundEvent(final BingoPlaySoundEvent event) {
-		event.getSession().handlePlaySoundEvent(event);
+		return null;
 	}
 }

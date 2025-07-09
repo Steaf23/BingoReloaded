@@ -1,5 +1,6 @@
 package io.github.steaf23.bingoreloaded.lib.data.core.tag;
 
+import io.github.steaf23.bingoreloaded.lib.api.ItemType;
 import io.github.steaf23.bingoreloaded.lib.api.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.api.WorldPosition;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataStorage;
@@ -8,10 +9,6 @@ import io.github.steaf23.bingoreloaded.lib.data.core.DataStorageSerializerRegist
 import io.github.steaf23.bingoreloaded.lib.data.core.node.NodeLikeData;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import net.kyori.adventure.key.Key;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
-import org.bukkit.inventory.ItemStack;
 import org.intellij.lang.annotations.Subst;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -358,7 +355,7 @@ public class TagDataStorage implements DataStorage
     @Override
     public @NotNull StackHandle getItemStack(String path) {
         StackHandle stack = TagDataType.ITEM_STACK.fromTagOrNull(get(path));
-        return stack == null ? new StackHandle(Material.AIR) : stack;
+        return stack == null ? StackHandle.create(ItemType.AIR) : stack;
     }
 
     @Override

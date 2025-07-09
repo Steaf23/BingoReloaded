@@ -1,6 +1,6 @@
 package io.github.steaf23.bingoreloaded.lib.data.core.tag;
 
-import io.github.steaf23.bingoreloaded.lib.api.PlatformBridge;
+import io.github.steaf23.bingoreloaded.lib.api.ServerSoftware;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataAccessor;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 
@@ -20,11 +20,11 @@ import java.util.zip.GZIPOutputStream;
  */
 public class TagDataAccessor extends TagDataStorage implements DataAccessor
 {
-    private final PlatformBridge platform;
+    private final ServerSoftware platform;
     private final String filepath;
     private final boolean internalOnly;
 
-    public TagDataAccessor(PlatformBridge platform, String filepath, boolean internalOnly) {
+    public TagDataAccessor(ServerSoftware platform, String filepath, boolean internalOnly) {
         this.platform = platform;
         this.filepath = filepath;
         this.internalOnly = internalOnly;

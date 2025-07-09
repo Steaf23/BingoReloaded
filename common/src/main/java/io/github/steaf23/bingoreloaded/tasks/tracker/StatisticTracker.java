@@ -1,13 +1,17 @@
 package io.github.steaf23.bingoreloaded.tasks.tracker;
 
+import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.lib.api.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.api.StatisticHandle;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
+import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.tasks.data.StatisticTask;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class StatisticTracker
 {
@@ -29,13 +33,13 @@ public class StatisticTracker
         return statProgress.getFirst().getProgressLeft();
     }
 
-    public void addStatistic(StatisticTask statTask, BingoParticipant participant) {
+    public void addStatistic(StatisticTask statTask, BingoParticipant participant, Consumer<StatisticProgress> completedCallback) {
         if (statistics.stream().anyMatch(progress ->
                 progress.getParticipant().equals(participant) && progress.getStatistic().equals(statTask.statistic())))
             return;
 
         setPlayerStatistic(statTask.statistic(), participant, 0);
-        statistics.add(new StatisticProgress(statTask.statistic(), participant, statTask.count()));
+        statistics.add(new StatisticProgress(statTask.statistic(), participant, statTask.count(), completedCallback));
     }
 
     public void removeStatistic(StatisticTask task) {
@@ -53,31 +57,21 @@ public class StatisticTracker
         statistics.clear();
     }
 
-    // FIXME: REFACTOR implement player stat increase event.
-//    public void handleStatisticIncrement(final PlayerStatisticIncrementEvent event, final BingoGame game)
-//    {
-//        if (game == null)
-//            return;
-//
-//        BingoParticipant player = game.getTeamManager().getPlayerAsParticipant(event.getPlayer());
-//        if (player == null || player.sessionPlayer().isEmpty())
-//            return;
-//
-//        BingoTeam team = player.getTeam();
-//        if (team == null)
-//            return;
-//
-//        StatisticHandle stat = new StatisticHandle(event.getStatistic(), event.getEntityType(), event.getMaterial());
-//
-//        List<StatisticProgress> matchingStatistic = statistics.stream().filter(progress ->
-//                progress.getParticipant().equals(player) && progress.getStatistic().equals(stat)).toList();
-//        if (matchingStatistic.size() == 1)
-//        {
-//            matchingStatistic.getFirst().setProgress(event.getNewValue());
-//        }
-//
-//        statistics.removeIf(StatisticProgress::done);
-//    }
+    public void handleStatisticIncrement(@NotNull BingoParticipant player, StatisticHandle statistic, int newValue, final BingoGame game)
+    {
+        BingoTeam team = player.getTeam();
+        if (team == null)
+            return;
+
+        List<StatisticProgress> matchingStatistic = statistics.stream().filter(progress ->
+                progress.getParticipant().equals(player) && progress.getStatistic().equals(statistic)).toList();
+        if (matchingStatistic.size() == 1)
+        {
+            matchingStatistic.getFirst().setProgress(newValue);
+        }
+
+        statistics.removeIf(StatisticProgress::done);
+    }
 
     public void setPlayerStatistic(StatisticHandle statistic, BingoParticipant player, int value)
     {

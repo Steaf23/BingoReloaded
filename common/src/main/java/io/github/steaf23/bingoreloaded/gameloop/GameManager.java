@@ -1,16 +1,16 @@
 package io.github.steaf23.bingoreloaded.gameloop;
 
-import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.api.BingoEventListener;
 import io.github.steaf23.bingoreloaded.data.PlayerSerializationData;
 import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.data.config.BingoOptions;
 import io.github.steaf23.bingoreloaded.data.world.WorldData;
 import io.github.steaf23.bingoreloaded.data.world.WorldGroup;
-import io.github.steaf23.bingoreloaded.lib.api.PlatformBridge;
+import io.github.steaf23.bingoreloaded.lib.api.ServerSoftware;
 import io.github.steaf23.bingoreloaded.lib.api.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.api.WorldHandle;
 import io.github.steaf23.bingoreloaded.lib.api.WorldPosition;
+import io.github.steaf23.bingoreloaded.lib.event.EventResult;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
@@ -24,294 +24,296 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class GameManager
-{
-    protected final Map<String, BingoSession> sessions;
+public class GameManager {
 
-    private final PlatformBridge platform;
-    private final BingoConfigurationData config;
+	protected final Map<String, BingoSession> sessions;
 
-    private final PlayerSerializationData playerData;
-    private final BingoEventListener eventListener;
-    private final WorldData worldData;
+	private final ServerSoftware platform;
+	private final BingoConfigurationData config;
 
-    private boolean teleportingPlayer;
+	private final PlayerSerializationData playerData;
+	private final BingoEventListener eventListener;
+	private final WorldData worldData;
 
-    public GameManager(@NotNull PlatformBridge platform, BingoConfigurationData config) {
-        this.platform = platform;
-        this.config = config;
+	private boolean teleportingPlayer;
 
-        @Subst("gamemanager:none") String settingsName = config.getOptionValue(BingoOptions.CUSTOM_WORLD_GENERATION);
-        Key generationSettings = settingsName.equals("null") ? null : Key.key(settingsName);
-        this.worldData = new WorldData(platform, generationSettings);
+	public GameManager(@NotNull ServerSoftware platform, BingoConfigurationData config) {
+		this.platform = platform;
+		this.config = config;
 
-        this.sessions = new HashMap<>();
-        this.playerData = new PlayerSerializationData();
+		@Subst("gamemanager:none") String settingsName = config.getOptionValue(BingoOptions.CUSTOM_WORLD_GENERATION);
+		Key generationSettings = settingsName.equals("null") ? null : Key.key(settingsName);
+		this.worldData = new WorldData(platform, generationSettings);
 
-        this.teleportingPlayer = false;
+		this.sessions = new HashMap<>();
+		this.playerData = new PlayerSerializationData();
 
-        this.eventListener = new BingoEventListener(this,
-                config.getOptionValue(BingoOptions.DISABLE_ADVANCEMENTS),
-                config.getOptionValue(BingoOptions.DISABLE_STATISTICS));
+		this.teleportingPlayer = false;
 
-        if (config.getOptionValue(BingoOptions.CLEAR_DEFAULT_WORLDS))
-        {
-            this.worldData.clearWorlds();
-        }
-    }
+		this.eventListener = new BingoEventListener(this,
+				config.getOptionValue(BingoOptions.DISABLE_ADVANCEMENTS),
+				config.getOptionValue(BingoOptions.DISABLE_STATISTICS));
 
-    public void setup(List<String> worldNames) {
-        for (String world : worldNames) {
-            createSession(world);
-        }
+		if (config.getOptionValue(BingoOptions.CLEAR_DEFAULT_WORLDS)) {
+			this.worldData.clearWorlds();
+		}
+	}
 
-        ConsoleMessenger.log("Created world(s) " + worldNames);
-    }
+	public void setup(List<String> worldNames) {
+		for (String world : worldNames) {
+			createSession(world);
+		}
 
-    public boolean createSession(String sessionName) {
-        if (sessions.containsKey(sessionName)) {
-            ConsoleMessenger.error("An instance of Bingo already exists in world '" + sessionName + "'!");
-            return false;
-        }
+		ConsoleMessenger.log("Created world(s) " + worldNames);
+	}
 
-        BingoSession session = new BingoSession(this, worldData.createWorldGroup(sessionName), config);
-        sessions.put(sessionName, session);
-        return true;
-    }
+	public boolean createSession(String sessionName) {
+		if (sessions.containsKey(sessionName)) {
+			ConsoleMessenger.error("An instance of Bingo already exists in world '" + sessionName + "'!");
+			return false;
+		}
 
-    public boolean destroySession(String sessionName) {
-        if (!sessions.containsKey(sessionName)) {
-            return false;
-        }
+		BingoSession session = new BingoSession(this, worldData.createWorldGroup(sessionName), config);
+		sessions.put(sessionName, session);
+		return true;
+	}
 
-        endGame(sessionName);
-        WorldGroup group = worldData.getWorldGroup(sessionName);
-        if (group == null) {
-            ConsoleMessenger.bug("Could not destroy worlds from session properly", this);
-            return false;
-        }
-        worldData.destroyWorldGroup(group);
-        sessions.get(sessionName).destroy();
-        sessions.remove(sessionName);
-        return true;
-    }
+	public boolean destroySession(String sessionName) {
+		if (!sessions.containsKey(sessionName)) {
+			return false;
+		}
 
-    public boolean startGame(String sessionName) {
-        if (!sessions.containsKey(sessionName)) {
-            ConsoleMessenger.log("Cannot start a game that doesn't exist, create it first using '/autobingo <world> create'!");
-            return false;
-        }
+		endGame(sessionName);
+		WorldGroup group = worldData.getWorldGroup(sessionName);
+		if (group == null) {
+			ConsoleMessenger.bug("Could not destroy worlds from session properly", this);
+			return false;
+		}
+		worldData.destroyWorldGroup(group);
+		sessions.get(sessionName).destroy();
+		sessions.remove(sessionName);
+		return true;
+	}
 
-        if (isSessionRunning(sessionName)) {
-            ConsoleMessenger.log("Could not start bingo because the game is already running on world '" + sessionName + "'!");
-            return false;
-        }
+	public boolean startGame(String sessionName) {
+		if (!sessions.containsKey(sessionName)) {
+			ConsoleMessenger.log("Cannot start a game that doesn't exist, create it first using '/autobingo <world> create'!");
+			return false;
+		}
 
-        sessions.get(sessionName).startGame();
-        return true;
-    }
+		if (isSessionRunning(sessionName)) {
+			ConsoleMessenger.log("Could not start bingo because the game is already running on world '" + sessionName + "'!");
+			return false;
+		}
 
-    public boolean endGame(String sessionName) {
-        if (!isSessionRunning(sessionName)) {
-            ConsoleMessenger.log("Could not end bingo because no game was started on world '" + sessionName + "'!");
-            return false;
-        }
+		sessions.get(sessionName).startGame();
+		return true;
+	}
 
-        BingoSession session = sessions.get(sessionName);
-        session.endGame();
-        return true;
-    }
+	public boolean endGame(String sessionName) {
+		if (!isSessionRunning(sessionName)) {
+			ConsoleMessenger.log("Could not end bingo because no game was started on world '" + sessionName + "'!");
+			return false;
+		}
 
-    public BingoSession getSession(String sessionName) {
-        if (sessions.containsKey(sessionName)) {
-            return sessions.get(sessionName);
-        }
-        return null;
-    }
+		BingoSession session = sessions.get(sessionName);
+		session.endGame();
+		return true;
+	}
 
-    public @Nullable BingoSession getSessionFromWorld(@NotNull WorldHandle world) {
-        for (String session : sessions.keySet()) {
-            BingoSession s = sessions.get(session);
-            if (s.ownsWorld(world)) {
-                return s;
-            }
-        }
-        return null;
-    }
+	public BingoSession getSession(String sessionName) {
+		if (sessions.containsKey(sessionName)) {
+			return sessions.get(sessionName);
+		}
+		return null;
+	}
 
-    public String getNameOfSession(@Nullable BingoSession session) {
-        if (session == null) {
-            return "";
-        }
+	public @Nullable BingoSession getSessionFromWorld(@NotNull WorldHandle world) {
+		for (String session : sessions.keySet()) {
+			BingoSession s = sessions.get(session);
+			if (s.ownsWorld(world)) {
+				return s;
+			}
+		}
+		return null;
+	}
 
-        return getSessionNames().stream().filter(name -> getSession(name) != null).findFirst().orElse("");
-    }
+	public String getNameOfSession(@Nullable BingoSession session) {
+		if (session == null) {
+			return "";
+		}
 
-    public void onPluginDisable() {
-        for (String session : sessions.keySet()) {
-            sessions.get(session).destroy();
-            sessions.remove(session);
-        }
-    }
+		return getSessionNames().stream().filter(name -> getSession(name) != null).findFirst().orElse("");
+	}
 
-    public BingoConfigurationData getGameConfig() {
-        return config;
-    }
+	public void onPluginDisable() {
+		for (String session : sessions.keySet()) {
+			sessions.get(session).destroy();
+			sessions.remove(session);
+		}
+	}
 
-    public boolean isSessionRunning(String sessionName) {
-        return sessions.containsKey(sessionName) && sessions.get(sessionName).isRunning();
-    }
+	public BingoConfigurationData getGameConfig() {
+		return config;
+	}
 
-    public boolean canPlayerOpenMenus(PlayerHandle player) {
-        return getSessionFromWorld(player.world()) != null;
-    }
+	public boolean isSessionRunning(String sessionName) {
+		return sessions.containsKey(sessionName) && sessions.get(sessionName).isRunning();
+	}
 
-    public boolean teleportPlayerToSession(PlayerHandle player, String sessionName) {
-        WorldGroup bingoWorld = worldData.getWorldGroup(sessionName);
-        if (bingoWorld == null) {
-            return false;
-        }
+	public boolean canPlayerOpenMenus(PlayerHandle player) {
+		return getSessionFromWorld(player.world()) != null;
+	}
 
-        bingoWorld.teleportPlayer(player);
-        return true;
-    }
+	public boolean teleportPlayerToSession(PlayerHandle player, String sessionName) {
+		WorldGroup bingoWorld = worldData.getWorldGroup(sessionName);
+		if (bingoWorld == null) {
+			return false;
+		}
 
-    public @Nullable BingoSession getSessionOfPlayer(PlayerHandle player) {
-        for (String sessionName : sessions.keySet()) {
-            BingoSession session = sessions.get(sessionName);
-            BingoParticipant participant = session.teamManager.getPlayerAsParticipant(player);
-            if (participant != null) {
-                return session;
-            }
-        }
+		bingoWorld.teleportPlayer(player);
+		return true;
+	}
 
-        return null;
-    }
+	public @Nullable BingoSession getSessionOfPlayer(PlayerHandle player) {
+		for (String sessionName : sessions.keySet()) {
+			BingoSession session = sessions.get(sessionName);
+			BingoParticipant participant = session.teamManager.getPlayerAsParticipant(player);
+			if (participant != null) {
+				return session;
+			}
+		}
 
-    public Collection<String> getSessionNames() {
-        return sessions.keySet();
-    }
+		return null;
+	}
 
-    public boolean handlePlayerTeleport(final PlayerHandle player, final WorldPosition fromPos, final WorldPosition toPos) {
-        WorldHandle sourceWorld = fromPos.world();
-        WorldHandle targetWorld = toPos.world();
+	public Collection<String> getSessionNames() {
+		return sessions.keySet();
+	}
 
-        // If the world didn't change, the event is not interesting for us
-        if (sourceWorld == targetWorld) {
-            return false;
-        }
+	public EventResult<?> handlePlayerTeleport(final PlayerHandle player, final WorldPosition fromPos, final WorldPosition toPos) {
+		WorldHandle sourceWorld = fromPos.world();
+		WorldHandle targetWorld = toPos.world();
 
-        if (teleportingPlayer) {
-            teleportingPlayer = false;
-            return false;
-        }
+		// If the world didn't change, the event is not interesting for us
+		if (sourceWorld == targetWorld) {
+			return EventResult.PASS;
+		}
 
-        if (sourceWorld == null) {
-            ConsoleMessenger.bug("Source world is invalid", this);
-            return false;
-        }
-        if (targetWorld == null) {
-            ConsoleMessenger.bug("Target world is invalid", this);
-            return false;
-        }
+		if (teleportingPlayer) {
+			teleportingPlayer = false;
+			return EventResult.PASS;
+		}
 
-        BingoSession sourceSession = getSessionFromWorld(sourceWorld);
-        BingoSession targetSession = getSessionFromWorld(targetWorld);
+		if (sourceWorld == null) {
+			ConsoleMessenger.bug("Source world is invalid", this);
+			return EventResult.PASS;
+		}
+		if (targetWorld == null) {
+			ConsoleMessenger.bug("Target world is invalid", this);
+			return EventResult.PASS;
+		}
 
-        // We could have gone through a portal, so still both worlds could be in the same session, so we can return.
-        if (sourceSession == targetSession) {
-            return false;
-        }
+		BingoSession sourceSession = getSessionFromWorld(sourceWorld);
+		BingoSession targetSession = getSessionFromWorld(targetWorld);
 
-        boolean savePlayerInformation = config.getOptionValue(BingoOptions.SAVE_PLAYER_INFORMATION);
+		// We could have gone through a portal, so still both worlds could be in the same session, so we can return.
+		if (sourceSession == targetSession) {
+			return EventResult.PASS;
+		}
 
-        boolean cancel = false;
-        if (sourceSession != null) {
-            if (targetSession == null) {
-                player.clearInventory(); // If we are leaving a bingo world, we can always clear the player's inventory
+		boolean savePlayerInformation = config.getOptionValue(BingoOptions.SAVE_PLAYER_INFORMATION);
 
-                if (savePlayerInformation) {
-                    teleportingPlayer = true;
-                    // load player will teleport them, so we have to schedule it to make sure to do the right thing
-                    platform.runTask(t -> {
-                        if (playerData.loadPlayer(player) == null) {
+		boolean cancel = false;
+		if (sourceSession != null) {
+			if (targetSession == null) {
+				player.clearInventory(); // If we are leaving a bingo world, we can always clear the player's inventory
+
+				if (savePlayerInformation) {
+					teleportingPlayer = true;
+					// load player will teleport them, so we have to schedule it to make sure to do the right thing
+					platform.runTask(t -> {
+						if (playerData.loadPlayer(player) == null) {
 //                        // Player data was not saved for some reason?
 //                        ConsoleMessenger.bug(Component.text("No saved player data could be found for ").append(event.getPlayer().displayName()).append(Component.text(", resetting data")), this);
 //                        // Using the boolean we can check if we were already teleporting the player.
 //                        SerializablePlayer.reset(plugin, event.getPlayer(), event.getTo()).apply(event.getPlayer());
-                        }
-                    });
+						}
+					});
 
-                    cancel = true;
-                }
-            }
-            sourceSession.removePlayer(player);
-        }
+					cancel = true;
+				}
+			}
+			sourceSession.removePlayer(player);
+		}
 
-        if (targetSession != null) {
-            if (savePlayerInformation && sourceSession == null) {
-                //FIXME: REFACTOR SerializablePlayer
+		if (targetSession != null) {
+			if (savePlayerInformation && sourceSession == null) {
+				//FIXME: REFACTOR SerializablePlayer
 //                // Only save player data if it does not pertain to a bingo world
 //                SerializablePlayer serializablePlayer = SerializablePlayer.fromPlayer(extension, player);
 //                serializablePlayer.location = event.fromPosition();
 //                playerData.savePlayer(serializablePlayer, false);
-            }
+			}
 
-            // If the player was already playing in another session, remove them from that game first
-            BingoSession previousSession = getSessionOfPlayer(player);
-            if (previousSession != null) {
-                BingoParticipant participant = previousSession.teamManager.getPlayerAsParticipant(player);
-                if (participant != null) {
-                    previousSession.removeParticipant(participant);
-                }
-                else {
-                    // Maybe we can cheat it by creating a new team and then seeing if the player can be removed from automatic players...
-                    BingoPlayer playerProxy = new BingoPlayer(player, previousSession);
-                    previousSession.removeParticipant(playerProxy);
-                }
-            }
+			// If the player was already playing in another session, remove them from that game first
+			BingoSession previousSession = getSessionOfPlayer(player);
+			if (previousSession != null) {
+				BingoParticipant participant = previousSession.teamManager.getPlayerAsParticipant(player);
+				if (participant != null) {
+					previousSession.removeParticipant(participant);
+				} else {
+					// Maybe we can cheat it by creating a new team and then seeing if the player can be removed from automatic players...
+					BingoPlayer playerProxy = new BingoPlayer(player, previousSession);
+					previousSession.removeParticipant(playerProxy);
+				}
+			}
 
-            // set spawn point of player in session world
-            player.setRespawnPoint(targetSession.getOverworld().spawnPoint(), true);
-            targetSession.addPlayer(player);
-        }
+			// set spawn point of player in session world
+			player.setRespawnPoint(targetSession.getOverworld().spawnPoint(), true);
+			targetSession.addPlayer(player);
+		}
 
-        return cancel;
-    }
+		return new EventResult<>(cancel, null);
+	}
 
-    public void handlePlayerJoinsServer(final PlayerHandle player) {
-        BingoSession targetSession = getSessionFromWorld(player.world());
+	public EventResult<?> handlePlayerJoinsServer(final PlayerHandle player) {
+		BingoSession targetSession = getSessionFromWorld(player.world());
 
-        if (targetSession != null) {
-            targetSession.addPlayer(player);
-        }
-    }
+		if (targetSession != null) {
+			targetSession.addPlayer(player);
+		}
 
-    public void handlePlayerQuitsServer(final PlayerHandle player) {
-        BingoSession sourceSession = getSessionFromWorld(player.world());
+		return EventResult.PASS;
+	}
 
-        if (sourceSession != null) {
-            sourceSession.removePlayer(player);
-        }
-    }
+	public EventResult<?> handlePlayerQuitsServer(final PlayerHandle player) {
+		BingoSession sourceSession = getSessionFromWorld(player.world());
 
-    public void prepareNextBingoGame(BingoSession session) {
-        if (config.getOptionValue(BingoOptions.SAVE_PLAYER_INFORMATION) &&
-                config.getOptionValue(BingoOptions.LOAD_PLAYER_INFORMATION_STRATEGY) == BingoOptions.LoadPlayerInformationStrategy.AFTER_GAME) {
-            for (BingoParticipant participant : session.teamManager.getParticipants()) {
-                participant.sessionPlayer().ifPresent(player -> {
-                    session.teamManager.removeMemberFromTeam(participant);
-                    playerData.loadPlayer(player);
-                });
-            }
-        }
-    }
+		if (sourceSession != null) {
+			sourceSession.removePlayer(player);
+		}
 
-    public PlayerSerializationData getPlayerData() {
-        return playerData;
-    }
+		return EventResult.PASS;
+	}
 
-    public PlatformBridge getPlatform() {
-        return platform;
-    }
+	public void prepareNextBingoGame(BingoSession session) {
+		if (config.getOptionValue(BingoOptions.SAVE_PLAYER_INFORMATION) &&
+				config.getOptionValue(BingoOptions.LOAD_PLAYER_INFORMATION_STRATEGY) == BingoOptions.LoadPlayerInformationStrategy.AFTER_GAME) {
+			for (BingoParticipant participant : session.teamManager.getParticipants()) {
+				participant.sessionPlayer().ifPresent(player -> {
+					session.teamManager.removeMemberFromTeam(participant);
+					playerData.loadPlayer(player);
+				});
+			}
+		}
+	}
+
+	public PlayerSerializationData getPlayerData() {
+		return playerData;
+	}
+
+	public ServerSoftware getPlatform() {
+		return platform;
+	}
 }

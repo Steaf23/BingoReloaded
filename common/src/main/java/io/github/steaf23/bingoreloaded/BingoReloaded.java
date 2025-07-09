@@ -1,7 +1,7 @@
 package io.github.steaf23.bingoreloaded;
 
 import io.github.steaf23.bingoreloaded.lib.api.BingoReloadedRuntime;
-import io.github.steaf23.bingoreloaded.lib.api.PlatformBridge;
+import io.github.steaf23.bingoreloaded.lib.api.ServerSoftware;
 import io.github.steaf23.bingoreloaded.lib.api.PlatformResolver;
 import io.github.steaf23.bingoreloaded.lib.api.PlayerHandle;
 import io.github.steaf23.bingoreloaded.command.AutoBingoExecutor;
@@ -24,12 +24,10 @@ import io.github.steaf23.bingoreloaded.data.serializers.ItemStorageSerializer;
 import io.github.steaf23.bingoreloaded.data.serializers.PlayerStorageSerializer;
 import io.github.steaf23.bingoreloaded.lib.api.StatisticHandle;
 import io.github.steaf23.bingoreloaded.lib.data.serializers.StatisticSerializer;
-import io.github.steaf23.bingoreloaded.lib.event.EventBus;
 import io.github.steaf23.bingoreloaded.tasks.data.TaskStorageSerializer;
 import io.github.steaf23.bingoreloaded.data.serializers.TeamTemplateStorageSerializer;
 import io.github.steaf23.bingoreloaded.gameloop.GameManager;
 import io.github.steaf23.bingoreloaded.gameloop.SingularGameManager;
-import io.github.steaf23.bingoreloaded.gui.inventory.BingoMenuBoard;
 import io.github.steaf23.bingoreloaded.gui.inventory.item.SerializableItem;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataAccessor;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataStorageSerializerRegistry;
@@ -40,19 +38,20 @@ import io.github.steaf23.bingoreloaded.placeholder.BingoReloadedPlaceholderExpan
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
 import io.github.steaf23.bingoreloaded.settings.CustomKit;
 import io.github.steaf23.bingoreloaded.tasks.data.TaskData;
+import net.kyori.adventure.key.Key;
 import net.kyori.adventure.key.KeyPattern;
 import net.kyori.adventure.key.Namespaced;
 import net.kyori.adventure.resource.ResourcePackInfo;
 import net.kyori.adventure.resource.ResourcePackRequest;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.intellij.lang.annotations.Subst;
 import org.jetbrains.annotations.NotNull;
 
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import java.util.function.Consumer;
 
 public class BingoReloaded implements Namespaced {
 	public static final String RESOURCE_PACK_URL = "https://github.com/Steaf23/BingoReloaded/raw/menu-frontend-split-for-resource-pack/resourcepack/BingoReloaded.zip";
@@ -69,7 +68,7 @@ public class BingoReloaded implements Namespaced {
 
 	private static BingoReloaded INSTANCE;
 
-	private final PlatformBridge platform;
+	private final ServerSoftware platform;
 	private final BingoReloadedRuntime runtime;
 	private BingoConfigurationData config;
 	private GameManager gameManager;
@@ -118,11 +117,6 @@ public class BingoReloaded implements Namespaced {
 		addDataAccessor(new TagDataAccessor(platform, "data/players", false));
 		for (DataAccessor accessor : runtime.getDataToRegister()) { // platform specific data accessors
 			addDataAccessor(accessor);
-		}
-
-		if (canUsePlaceholderAPI()) {
-			new BingoReloadedPlaceholderExpansion(this).register();
-			ConsoleMessenger.log(Component.text("Enabled Bingo Reloaded Placeholder expansion").color(NamedTextColor.GREEN));
 		}
 
 		this.config = new BingoConfigurationData(runtime.getConfigData());
@@ -184,10 +178,6 @@ public class BingoReloaded implements Namespaced {
 			return statsData.getPlayerStat(player.uniqueId(), stat);
 		}
 		return 0;
-	}
-
-	public static boolean areAdvancementsDisabled() {
-		return !Bukkit.advancementIterator().hasNext() || Bukkit.advancementIterator().next() == null;
 	}
 
 	public static String getDefaultTasksVersion() {
@@ -328,7 +318,7 @@ public class BingoReloaded implements Namespaced {
 		//FIXME: REFACTOR add openMenu predicate
 //		menuBoard.setPlayerOpenPredicate(player -> player instanceof PlayerHandle handle && this.gameManager.canPlayerOpenMenus(handle));
 
-		TabExecutor autoBingoCommand = new AutoBingoExecutor(gameManager);
+		TabExecutor autoBingoCommand = new AutoBingoExecutor(platform, gameManager);
 		TabExecutor bingoConfigCommand = new BingoConfigCommand(config);
 
 		registerCommand("bingo", new BingoCommand(this, config, gameManager));
@@ -336,7 +326,7 @@ public class BingoReloaded implements Namespaced {
 		registerCommand("bingoconfig", bingoConfigCommand);
 		registerCommand("bingotest", new BingoTestCommand(this));
 		if (config.getOptionValue(BingoOptions.ENABLE_TEAM_CHAT)) {
-			TeamChatCommand command = new TeamChatCommand(player -> gameManager.getSessionFromWorld(player.getWorld()));
+			TeamChatCommand command = new TeamChatCommand(player -> gameManager.getSessionFromWorld(player.world()));
 			registerCommand("btc", command);
 			Bukkit.getPluginManager().registerEvents(command, this);
 		}
@@ -354,5 +344,9 @@ public class BingoReloaded implements Namespaced {
 
 	public static EventBus eventBus() {
 		return INSTANCE.eventBus;
+	}
+
+	public static Key resourceKey(@Subst("value") String value) {
+		return Key.key(INSTANCE, value);
 	}
 }

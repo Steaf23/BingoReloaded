@@ -1,6 +1,6 @@
 package io.github.steaf23.bingoreloaded.data.world;
 
-import io.github.steaf23.bingoreloaded.lib.api.PlatformBridge;
+import io.github.steaf23.bingoreloaded.lib.api.ServerSoftware;
 import io.github.steaf23.bingoreloaded.lib.api.DimensionType;
 import io.github.steaf23.bingoreloaded.lib.api.WorldHandle;
 import io.github.steaf23.bingoreloaded.data.helper.ResourceFileHelper;
@@ -18,10 +18,10 @@ import java.util.UUID;
 
 public class WorldData
 {
-    private final PlatformBridge platform;
+    private final ServerSoftware platform;
     private final Key generationOptions;
 
-    public WorldData(PlatformBridge platform, @Nullable Key generationOptions) {
+    public WorldData(ServerSoftware platform, @Nullable Key generationOptions) {
         this.platform = platform;
         this.generationOptions = generationOptions;
     }

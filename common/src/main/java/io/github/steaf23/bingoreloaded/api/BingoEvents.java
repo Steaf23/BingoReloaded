@@ -11,15 +11,45 @@ import io.github.steaf23.bingoreloaded.util.timer.CountdownTimer;
 import net.kyori.adventure.sound.Sound;
 import org.jetbrains.annotations.Nullable;
 
-public interface BingoEvents {
-	record PlayerEvent(BingoSession session, PlayerHandle player){}
+public class BingoEvents {
 
-	record TaskProgressCompletedEvent(BingoSession session, GameTask task) {}
-	record TeamParticipantEvent(BingoSession session, BingoParticipant participant, @Nullable BingoTeam team, boolean autoTeam){}
+	private BingoEvents() {
+	}
 
-	record GameEnded(BingoSession session, long totalGameTime, @Nullable BingoTeam winningTeam) {}
-	record PlaySound(BingoSession session, Sound sound) {}
-	record SettingsUpdated(BingoSession session, BingoSettings newSettings){}
-	record StatisticCompleted(BingoSession session, StatisticHandle statistic, BingoParticipant participant){}
-	record CountdownTimerFinished(BingoSession session, CountdownTimer timer){}
+	public record PlayerSessionEvent(BingoSession session, PlayerHandle player) {
+
+	}
+
+	public record TaskProgressCompleted(BingoSession session, GameTask task) {
+
+	}
+
+	public record DeathmatchTaskCompleted(BingoSession session, GameTask task) {
+
+	}
+
+	public record TeamParticipantEvent(BingoSession session, BingoParticipant participant, @Nullable BingoTeam team,
+								boolean autoTeam) {
+
+	}
+
+	public record GameEnded(BingoSession session, long totalGameTime, @Nullable BingoTeam winningTeam) {
+
+	}
+
+	public record PlaySound(BingoSession session, Sound sound) {
+
+	}
+
+	public record SettingsUpdated(BingoSession session, BingoSettings newSettings) {
+
+	}
+
+	public record StatisticCompleted(BingoSession session, StatisticHandle statistic, BingoParticipant participant) {
+
+	}
+
+	public record CountdownTimerFinished(BingoSession session, CountdownTimer timer) {
+
+	}
 }

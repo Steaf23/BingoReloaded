@@ -1,10 +1,15 @@
 package io.github.steaf23.bingoreloaded.lib.api;
 
+import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
+import org.bukkit.advancement.AdvancementProgress;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 public class PlayerHandlePaper implements PlayerHandle {
 
@@ -95,7 +100,15 @@ public class PlayerHandlePaper implements PlayerHandle {
 	}
 
 	@Override
-	public boolean teleport(WorldPosition pos) {
+	public void teleportAsync(WorldPosition pos, @Nullable Consumer<Boolean> whenFinished) {
+		var future = player.teleportAsync(PaperApiHelper.locationFromWorldPos(pos));
+		if (whenFinished != null) {
+			future.thenAccept(whenFinished);
+		}
+	}
+
+	@Override
+	public boolean teleportBlocking(WorldPosition pos) {
 		return player.teleport(PaperApiHelper.locationFromWorldPos(pos));
 	}
 
@@ -167,5 +180,16 @@ public class PlayerHandlePaper implements PlayerHandle {
 	@Override
 	public void clearAllEffects() {
 
+	}
+
+	@Override
+	public void removeAdvancementProgress(AdvancementHandle advancement) {
+		AdvancementProgress progress = player.getAdvancementProgress(((AdvancementHandlePaper)advancement).handle());
+		progress.getAwardedCriteria().forEach(progress::revokeCriteria);
+	}
+
+	@Override
+	public @NotNull Iterable<? extends Audience> audiences() {
+		return List.of(player);
 	}
 }

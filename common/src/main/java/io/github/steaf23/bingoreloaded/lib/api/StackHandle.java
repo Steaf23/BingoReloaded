@@ -1,8 +1,8 @@
 package io.github.steaf23.bingoreloaded.lib.api;
 
 import io.github.steaf23.bingoreloaded.lib.data.core.DataStorage;
-import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -12,6 +12,28 @@ public interface StackHandle {
 	Component customName();
 	List<Component> lore();
 	String compareKey();
+	boolean isTool();
+	boolean isArmor();
+
+	void setAmount(int newAmount);
+	StackHandle clone();
 
 	void addStorage(String key, DataStorage storage);
+	@Nullable DataStorage getStorage(String key);
+
+	static StackHandle create(ItemType type, int amount) {
+		return PlatformResolver.get().createStack(type, amount);
+	}
+
+	static StackHandle create(ItemType type) {
+		return PlatformResolver.get().createStack(type, 1);
+	}
+
+	static StackHandle deserializeBytes(byte[] bytes) {
+		return PlatformResolver.get().createStackFromBytes(bytes);
+	}
+
+	static byte[] serializeBytes(StackHandle stack) {
+		return PlatformResolver.get().createBytesFromStack(stack);
+	}
 }

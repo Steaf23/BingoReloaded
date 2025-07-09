@@ -18,7 +18,7 @@ import java.util.function.Consumer;
 /**
  * Used by the common code to execute platform specific code.
  */
-public interface PlatformBridge {
+public interface ServerSoftware {
 
 	InputStream getResource(String filePath);
 	void saveResource(String name, boolean replace);
@@ -42,6 +42,12 @@ public interface PlatformBridge {
 	@Nullable WorldHandle getWorld(UUID worldName);
 	@Nullable WorldHandle createWorld(WorldOptions options);
 	boolean unloadWorld(@NotNull WorldHandle world, boolean save);
+
+	StackHandle createStack(ItemType type, int amount);
+	StackHandle createStackFromBytes(byte[] bytes);
+	byte[] createBytesFromStack(StackHandle stack);
+
+	boolean areAdvancementsDisabled();
 
 //	void registerListener(EventListener listener);
 //	void unregisterListener(EventListener listener);
