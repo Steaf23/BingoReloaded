@@ -119,7 +119,7 @@ public class BingoCardMapRenderer extends MapRenderer
     private static void addImagesFromAtlas(InputStream atlas, DataStorage atlasInfo, boolean renderAsItems) throws IOException {
         List<String> itemNames = atlasInfo.getList("names", TagDataType.STRING);
         int rowCount = atlasInfo.getInt("rows", 1);
-        List<Integer> sizeVec = atlasInfo.getList("item_size", TagDataType.INT);
+        List<Integer> sizeVec = atlasInfo.getList("texture_size", TagDataType.INT);
         int sizeX = sizeVec.get(0);
         int sizeY = sizeVec.get(1);
 

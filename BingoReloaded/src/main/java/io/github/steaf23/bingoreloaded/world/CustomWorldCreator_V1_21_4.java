@@ -196,10 +196,6 @@ public class CustomWorldCreator_V1_21_4
         primaryLevelData.checkName(worldName);
         primaryLevelData.setModdedInfo(console.getServerModName(), console.getModdedStatus().shouldReportAsModified());
 
-        if (console.options.has("forceUpgrade")) {
-            net.minecraft.server.Main.forceUpgrade(levelStorageAccess, DataFixers.getDataFixer(), console.options.has("eraseCache"), () -> true, registryAccess, console.options.has("recreateRegionFiles"));
-        }
-
         long i = BiomeManager.obfuscateSeed(primaryLevelData.worldGenOptions().seed());
         List<CustomSpawner> additionalSpawners = ImmutableList.of(
                 new PhantomSpawner(), new PatrolSpawner(), new CatSpawner(), new VillageSiege(), new WanderingTraderSpawner(primaryLevelData)

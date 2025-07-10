@@ -54,7 +54,7 @@ public record BingoStatistic(@NotNull Statistic stat, @Nullable EntityType entit
 
         Material material = null;
         if (materialStr != null && !materialStr.isEmpty())
-            material = org.bukkit.Material.valueOf(materialStr);
+            material = Material.valueOf(materialStr);
 
         return new BingoStatistic(stat, entity, material);
     }
@@ -202,21 +202,23 @@ public record BingoStatistic(@NotNull Statistic stat, @Nullable EntityType entit
                     DROPPER_INSPECTED,
                     DISPENSER_INSPECTED -> StatisticCategory.CONTAINER_INTERACT;
 
-            case STRIDER_ONE_CM,
-                    MINECART_ONE_CM,
-                    CLIMB_ONE_CM,
-                    FLY_ONE_CM,
-                    WALK_UNDER_WATER_ONE_CM,
-                    BOAT_ONE_CM,
-                    PIG_ONE_CM,
-                    HORSE_ONE_CM,
-                    CROUCH_ONE_CM,
-                    AVIATE_ONE_CM,
-                    WALK_ONE_CM,
-                    WALK_ON_WATER_ONE_CM,
-                    SWIM_ONE_CM,
-                    FALL_ONE_CM,
-                    SPRINT_ONE_CM -> StatisticCategory.TRAVEL;
+			case STRIDER_ONE_CM,
+				 MINECART_ONE_CM,
+				 CLIMB_ONE_CM,
+				 FLY_ONE_CM,
+				 WALK_UNDER_WATER_ONE_CM,
+				 BOAT_ONE_CM,
+				 PIG_ONE_CM,
+				 HORSE_ONE_CM,
+				 CROUCH_ONE_CM,
+				 AVIATE_ONE_CM,
+				 WALK_ONE_CM,
+				 WALK_ON_WATER_ONE_CM,
+				 SWIM_ONE_CM,
+				 FALL_ONE_CM,
+				 SPRINT_ONE_CM,
+                 HAPPY_GHAST_ONE_CM -> StatisticCategory.TRAVEL;
+            default -> StatisticCategory.OTHER;
         };
     }
 
@@ -305,6 +307,7 @@ public record BingoStatistic(@NotNull Statistic stat, @Nullable EntityType entit
             case TARGET_HIT -> Material.TARGET;
             case INTERACT_WITH_SMITHING_TABLE -> Material.SMITHING_TABLE;
             case STRIDER_ONE_CM -> Material.WARPED_FUNGUS_ON_A_STICK;
+            case HAPPY_GHAST_ONE_CM -> Material.HAPPY_GHAST_SPAWN_EGG;
             case DROP,
                     PICKUP,
                     MINE_BLOCK,
@@ -313,6 +316,7 @@ public record BingoStatistic(@NotNull Statistic stat, @Nullable EntityType entit
                     CRAFT_ITEM,
                     KILL_ENTITY,
                     ENTITY_KILLED_BY -> rootStatMaterial(statistic);
+            default -> Material.BEDROCK;
         };
     }
 

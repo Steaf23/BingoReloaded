@@ -89,7 +89,8 @@ public class StatisticsKeyConverter
             Map.entry(Statistic.WALK_ON_WATER_ONE_CM, "walk_on_water_one_cm"),
             Map.entry(Statistic.SWIM_ONE_CM, "swim_one_cm"),
             Map.entry(Statistic.FALL_ONE_CM, "fall_one_cm"),
-            Map.entry(Statistic.SPRINT_ONE_CM, "sprint_one_cm")
+            Map.entry(Statistic.SPRINT_ONE_CM, "sprint_one_cm"),
+            Map.entry(Statistic.HAPPY_GHAST_ONE_CM, "happy_ghast_one_cm")
     );
 
     /**

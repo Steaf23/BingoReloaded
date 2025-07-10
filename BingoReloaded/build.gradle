@@ -3,12 +3,12 @@ import io.papermc.paperweight.userdev.ReobfArtifactConfiguration
 plugins {
     id 'java'
     id 'io.github.goooler.shadow' version '8.1.7'
-    id 'io.papermc.paperweight.userdev' version '2.0.0-beta.13'
+    id 'io.papermc.paperweight.userdev' version '2.0.0-beta.17'
     id("xyz.jpenilla.run-paper") version "2.3.1"
 }
 
 group = 'io.github.steaf23'
-version = '3.1.0'
+version = '3.2.0'
 
 repositories {
     mavenCentral()
@@ -28,12 +28,12 @@ repositories {
 }
 
 dependencies {
-    paperweightDevelopmentBundle("io.papermc.paper:dev-bundle:1.21.4-R0.1-SNAPSHOT")
+    paperweightDevelopmentBundle("io.papermc.paper:dev-bundle:1.21.7-R0.1-SNAPSHOT")
     compileOnly 'me.clip:placeholderapi:2.11.6'
     implementation(project(":PlayerDisplay"))
 
     //tests
-    testImplementation "io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT"
+    testImplementation "io.papermc.paper:paper-api:1.21.7-R0.1-SNAPSHOT"
     testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.10.2'
     testImplementation 'com.github.seeseemelk:MockBukkit-v1.21:3.128.0'
 }
@@ -89,6 +89,6 @@ tasks {
         // Configure the Minecraft version for our task.
         // This is the only required configuration besides applying the plugin.
         // Your plugin's jar (or shadowJar if present) will be used automatically.
-        minecraftVersion("1.21.4")
+        minecraftVersion("1.21.7")
     }
 }
