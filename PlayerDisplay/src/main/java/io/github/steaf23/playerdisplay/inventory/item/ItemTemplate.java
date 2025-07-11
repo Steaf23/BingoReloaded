@@ -4,6 +4,9 @@ import com.google.common.collect.ImmutableMultimap;
 import io.github.steaf23.playerdisplay.PlayerDisplay;
 import io.github.steaf23.playerdisplay.inventory.item.action.MenuAction;
 import io.github.steaf23.playerdisplay.util.PDCHelper;
+import io.papermc.paper.datacomponent.DataComponentType;
+import io.papermc.paper.datacomponent.DataComponentTypes;
+import io.papermc.paper.datacomponent.item.TooltipDisplay;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
@@ -437,6 +440,11 @@ public class ItemTemplate
             stackMeta.addEnchant(enchantment, enchantments.get(enchantment), true);
         }
         stack.setItemMeta(stackMeta);
+        stack.setData(DataComponentTypes.TOOLTIP_DISPLAY, TooltipDisplay.tooltipDisplay().addHiddenComponents(
+                DataComponentTypes.TRIM,
+                DataComponentTypes.BUNDLE_CONTENTS,
+                DataComponentTypes.ENCHANTMENTS,
+                DataComponentTypes.STORED_ENCHANTMENTS).build());
 
         return stack;
     }

@@ -8,7 +8,7 @@ import io.github.steaf23.bingoreloaded.command.TeamChatCommand;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.BingoStatData;
 import io.github.steaf23.bingoreloaded.data.BingoStatType;
-import io.github.steaf23.bingoreloaded.data.DataUpdaterV1;
+import io.github.steaf23.bingoreloaded.data.DataUpdaterV3_2_0;
 import io.github.steaf23.bingoreloaded.data.TeamData;
 import io.github.steaf23.bingoreloaded.data.TexturedMenuData;
 import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
@@ -101,9 +101,9 @@ public class BingoReloaded extends JavaPlugin
         saveResource("bingoreloaded.zip", true);
         saveResource("bingoreloaded_lite.zip", true);
 
-        // Data file updaters
+        // Data file updater (backwards compatibility)
         {
-            DataUpdaterV1 updater = new DataUpdaterV1(this);
+            DataUpdaterV3_2_0 updater = new DataUpdaterV3_2_0(this);
             updater.update();
         }
 
@@ -123,6 +123,7 @@ public class BingoReloaded extends JavaPlugin
         addDataAccessor(new TagDataAccessor(this, "data/cards", false));
         addDataAccessor(new TagDataAccessor(this, "data/textures", false));
         addDataAccessor(new TagDataAccessor(this, "data/kits", false));
+        addDataAccessor(new TagDataAccessor(this, "data/default_lists", true));
         addDataAccessor(new TagDataAccessor(this, "data/" + getDefaultTasksVersion(), false));
         addDataAccessor(new TagDataAccessor(this, "data/presets", false));
         addDataAccessor(new TagDataAccessor(this, "data/player_stats", false));
@@ -296,6 +297,7 @@ public class BingoReloaded extends JavaPlugin
         getDataAccessor("data/cards").load();
         getDataAccessor("data/textures").load();
         getDataAccessor("data/kits").load();
+        getDataAccessor("data/default_lists").load();
         getDataAccessor("data/" + getDefaultTasksVersion()).load();
         getDataAccessor("data/presets").load();
         getDataAccessor("data/player_stats").load();

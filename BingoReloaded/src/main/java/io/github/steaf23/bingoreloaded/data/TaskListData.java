@@ -2,12 +2,14 @@ package io.github.steaf23.bingoreloaded.data;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.core.DataAccessor;
+import io.github.steaf23.bingoreloaded.data.core.DataStorage;
 import io.github.steaf23.bingoreloaded.tasks.data.TaskData;
 import io.github.steaf23.bingoreloaded.tasks.data.AdvancementTask;
 import io.github.steaf23.bingoreloaded.tasks.data.StatisticTask;
 import io.github.steaf23.playerdisplay.util.ConsoleMessenger;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -28,14 +30,21 @@ public class TaskListData
             "default_statistics_hardcore"
     );
 
+    private final DataAccessor defaultData = BingoReloaded.getDataAccessor("data/default_lists");
     private final DataAccessor data = BingoReloaded.getDataAccessor("data/" + BingoReloaded.getDefaultTasksVersion());
 
     public Set<TaskData> getTasks(String listName, boolean withStatistics, boolean withAdvancements)
     {
-        if (!data.contains(listName + ".tasks"))
+        Collection<TaskData> tasks;
+        if (defaultData.contains(listName + ".tasks")) {
+            tasks = defaultData.getSerializableList(listName + ".tasks", TaskData.class);
+        } else if (data.contains(listName + ".tasks")) {
+            tasks = data.getSerializableList(listName + ".tasks", TaskData.class);
+        } else {
             return new HashSet<>();
+        }
 
-        return data.getSerializableList(listName + ".tasks", TaskData.class).stream().filter((i ->
+        return tasks.stream().filter((i ->
                 (i != null) && // don't parse empty (invalid) tasks
                 !(i instanceof StatisticTask && !withStatistics) &&
                 !(i instanceof AdvancementTask && !withAdvancements))).collect(Collectors.toSet());
@@ -43,7 +52,11 @@ public class TaskListData
 
     public int getTaskCount(String listName)
     {
-        return data.getInt(listName + ".size", 0);
+        if (DEFAULT_LIST_NAMES.contains(listName)) {
+            return defaultData.getInt(listName + ".size", 0);
+        } else {
+            return data.getInt(listName + ".size", 0);
+        }
     }
 
     public void saveTasksFromGroup(String listName, List<TaskData> group, List<TaskData> tasksToSave)
@@ -90,10 +103,16 @@ public class TaskListData
 
     public boolean duplicateList(String listName)
     {
-        if (!data.contains(listName))
+        if (!data.contains(listName) && !defaultData.contains(listName))
             return false;
 
-        var list = data.getStorage(listName);
+        DataStorage list;
+        if (DEFAULT_LIST_NAMES.contains(listName)) {
+            list = defaultData.getStorage(listName);
+        } else {
+            list = data.getStorage(listName);
+        }
+
         String newName = listName + "_copy";
         if (data.contains(newName)) // Card with newName already exists
             return false;
@@ -124,6 +143,8 @@ public class TaskListData
      */
     public Set<String> getListNames()
     {
-        return data.getKeys();
+        var names = new HashSet<>(defaultData.getKeys());
+        names.addAll(data.getKeys());
+        return names;
     }
 }

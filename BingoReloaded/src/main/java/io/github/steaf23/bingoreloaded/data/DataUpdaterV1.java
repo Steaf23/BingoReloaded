@@ -55,7 +55,7 @@ import java.util.UUID;
 
 public class DataUpdaterV1
 {
-    private final BingoReloaded plugin;
+    protected final BingoReloaded plugin;
 
     public DataUpdaterV1(BingoReloaded plugin) {
         this.plugin = plugin;
@@ -249,7 +249,7 @@ public class DataUpdaterV1
         updatePlaceholders();
     }
 
-    private void updateConfig() {
+    protected void updateConfig() {
         File configFile = new File(plugin.getDataFolder(), "config.yml");
         if (!configFile.exists()) {
             return;
@@ -295,7 +295,7 @@ public class DataUpdaterV1
         ConsoleMessenger.log(Component.text("Found outdated config.yml file and updated it to new format (V2 -> V3)").color(NamedTextColor.GOLD));
     }
 
-    private void updatePresets() {
+    protected void updatePresets() {
         if (!new File(plugin.getDataFolder(), "data/presets.yml").exists() || new File(plugin.getDataFolder(), "data/presets.nbt").exists()) {
             return;
         }
@@ -337,7 +337,7 @@ public class DataUpdaterV1
         ConsoleMessenger.log(Component.text("Found outdated settings preset configuration file and updated it to new format (V2 -> V3)").color(NamedTextColor.GOLD));
     }
 
-    private void updatePlayers() {
+    protected void updatePlayers() {
         if (!new File(plugin.getDataFolder(), "data/players.yml").exists() || new File(plugin.getDataFolder(), "data/players.nbt").exists()) {
             return;
         }
@@ -376,7 +376,7 @@ public class DataUpdaterV1
         ConsoleMessenger.log(Component.text("Found outdated stored-players configuration file and updated it to new format (V2 -> V3)").color(NamedTextColor.GOLD));
     }
 
-    private void updateStats() {
+    protected void updateStats() {
         if (!new File(plugin.getDataFolder(), "data/player_stats.yml").exists() || new File(plugin.getDataFolder(), "data/player_stats.nbt").exists()) {
             return;
         }
@@ -393,7 +393,7 @@ public class DataUpdaterV1
         ConsoleMessenger.log(Component.text("Found outdated player stats configuration file and updated it to new format (V2 -> V3)").color(NamedTextColor.GOLD));
     }
 
-    private void updateLists(String filename) {
+    protected void updateLists(String filename) {
         if (!new File(plugin.getDataFolder(), filename + ".yml").exists() || new File(plugin.getDataFolder(), filename + ".nbt").exists()) {
             return;
         }
@@ -444,7 +444,7 @@ public class DataUpdaterV1
         ConsoleMessenger.log(Component.text("Found outdated list configuration file and updated it to new format (V2 -> V3)").color(NamedTextColor.GOLD));
     }
 
-    private void updateCards() {
+    protected void updateCards() {
         if (!new File(plugin.getDataFolder(), "data/cards.yml").exists() || new File(plugin.getDataFolder(), "data/cards.nbt").exists()) {
             return;
         }
@@ -465,7 +465,7 @@ public class DataUpdaterV1
         ConsoleMessenger.log(Component.text("Found outdated card configuration file and updated it to new format (V2 -> V3)").color(NamedTextColor.GOLD));
     }
 
-    private void updateKits() {
+    protected void updateKits() {
         if (!new File(plugin.getDataFolder(), "data/kits.yml").exists() || new File(plugin.getDataFolder(), "data/kits.nbt").exists()) {
             return;
         }
@@ -498,7 +498,7 @@ public class DataUpdaterV1
         ConsoleMessenger.log(Component.text("Found outdated kit configuration file and updated it to new format (V2 -> V3)").color(NamedTextColor.GOLD));
     }
 
-    private void updateTeams() {
+    protected void updateTeams() {
         if (!new File(plugin.getDataFolder(), "data/teams.yml").exists() || new File(plugin.getDataFolder(), "data/teams.nbt").exists()) {
             return;
         }
@@ -525,7 +525,7 @@ public class DataUpdaterV1
         ConsoleMessenger.log(Component.text("Found outdated teams configuration file and updated it to new format (V2 -> V3)").color(NamedTextColor.GOLD));
     }
 
-    private void updateTextures() {
+    protected void updateTextures() {
         YamlDataAccessor yamlData = new YamlDataAccessor(plugin, "data/textures", false);
         TagDataAccessor tagData = new TagDataAccessor(plugin, "data/textures", false);
 
@@ -543,7 +543,7 @@ public class DataUpdaterV1
         tagData.saveChanges();
     }
 
-    private void updateScoreboards() {
+    protected void updateScoreboards() {
         YamlDataAccessor yamlData = new YamlDataAccessor(plugin, "scoreboards", false);
         yamlData.load();
 
@@ -561,7 +561,7 @@ public class DataUpdaterV1
         ConsoleMessenger.log(Component.text("Found outdated scoreboards file and updated it to new format (V2 -> V3)").color(NamedTextColor.GOLD));
     }
 
-    private @NotNull String updateConfigString(@NotNull String input) {
+    protected @NotNull String updateConfigString(@NotNull String input) {
         input = input.replace("&", "§");
         Component legacyComponent = LegacyComponentSerializer.legacySection().deserialize(input);
         String legacyMini = MiniMessage.miniMessage().serialize(legacyComponent);
@@ -574,7 +574,7 @@ public class DataUpdaterV1
         return legacyMini;
     }
 
-    private void updateBoard(String boardName, YamlDataAccessor data) {
+    protected void updateBoard(String boardName, YamlDataAccessor data) {
         String title = data.getString(boardName + ".title", "");
         List<String> sideBar = data.getList(boardName + ".sidebar", TagDataType.STRING);
 
@@ -584,7 +584,7 @@ public class DataUpdaterV1
         data.setList(boardName + ".sidebar", TagDataType.STRING, sideBar);
     }
 
-    private void updatePlaceholders() {
+    protected void updatePlaceholders() {
         YamlDataAccessor yamlData = new YamlDataAccessor(plugin, "placeholders", false);
         yamlData.load();
 
@@ -619,7 +619,7 @@ public class DataUpdaterV1
         ConsoleMessenger.log(Component.text("Found outdated placeholders file and updated it to new format (V2 -> V3)").color(NamedTextColor.GOLD));
     }
 
-    private boolean isNewerOrEqual(@Nullable String version, String pluginVersion) {
+    protected boolean isNewerOrEqual(@Nullable String version, String pluginVersion) {
         if (pluginVersion.isEmpty() || version == null) {
             return false;
         }
