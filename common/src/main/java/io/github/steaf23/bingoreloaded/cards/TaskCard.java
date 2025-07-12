@@ -76,5 +76,5 @@ public abstract class TaskCard
                 .filter(t -> t.getCompletedByPlayer().isPresent() && t.getCompletedByPlayer().get().getId().equals(participant.getId())).count();
     }
 
-    public void handleTaskCompleted(BingoParticipant player, GameTask task, long timeSeconds) {}
+    public void onTaskCompleted(BingoParticipant player, GameTask task, long timeSeconds) {}
 }

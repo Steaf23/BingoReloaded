@@ -130,7 +130,7 @@ public class BingoSession implements ForwardingAudience
 
         // First make sure the previous phase (PregameLobby) is ended.
         phase.end();
-        phase = new BingoGame(gameManager.getPlatform(), this, gameSettings == null ? settings : gameSettings.view(), config);
+        phase = new BingoGame(gameManager.getPlatform(), this, gameSettings == null ? settings : gameSettings.view(), config, this::onGameEnded);
         phase.setup();
     }
 
@@ -177,14 +177,14 @@ public class BingoSession implements ForwardingAudience
         teamManager.removeMemberFromTeam(player);
     }
 
-    public void handleGameEnded(final BingoEvents.GameEnded event) {
+    public void onGameEnded() {
         phase = new PostGamePhase(this, config.getOptionValue(BingoOptions.GAME_RESTART_TIME));
         phase.setup();
     }
 
-    public void handleSettingsUpdated(final BingoEvents.SettingsUpdated event) {
-        phase.handleSettingsUpdated(event);
-        teamManager.handleSettingsUpdated(event);
+    public void onSettingUpdated(BingoSettings newSettings) {
+        phase.handleSettingsUpdated(newSettings);
+        teamManager.handleSettingsUpdated(newSettings);
     }
 
     public void handlePlaySoundEvent(final BingoEvents.PlaySound event) {

@@ -6,26 +6,29 @@ import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.function.Consumer;
 
 public class CountdownTimer extends GameTimer
 {
     private final int startTime;
     public final int medThreshold;
     public final int lowThreshold;
-    private final BingoSession session;
+    private final Runnable onTimeoutCallback;
 
-    public CountdownTimer(int seconds, BingoSession session)
+    public CountdownTimer(int seconds, @Nullable Runnable onTimeoutCallback)
     {
-        this(seconds, 0, 0, session);
+        this(seconds, 0, 0, onTimeoutCallback);
     }
 
-    public CountdownTimer(int seconds, int medThreshold, int lowThreshold, BingoSession session)
+    public CountdownTimer(int seconds, int medThreshold, int lowThreshold, @Nullable Runnable onTimeoutCallback)
     {
         this.medThreshold = medThreshold;
         this.lowThreshold = lowThreshold;
         this.startTime = seconds;
-        this.session = session;
-    }
+		this.onTimeoutCallback = onTimeoutCallback;
+	}
 
     public int getStartTime()
     {
@@ -53,8 +56,9 @@ public class CountdownTimer extends GameTimer
         super.updateTime(newTime);
         if (getTime() <= 0)
         {
-            CountdownTimerFinishedEvent event = new CountdownTimerFinishedEvent(session, this);
-            Bukkit.getPluginManager().callEvent(event);
+            if (onTimeoutCallback != null) {
+                onTimeoutCallback.run();
+            }
             stop();
         }
     }

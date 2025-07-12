@@ -243,8 +243,6 @@ public class BingoSettingsBuilder
 
     public void settingsUpdated()
     {
-        //FIXME: REFACTOR call bingo settings updated event
-//        var event = new BingoSettingsUpdatedEvent(view(), session);
-//        Bukkit.getPluginManager().callEvent(event);
+        session.onSettingUpdated(view());
     }
 }

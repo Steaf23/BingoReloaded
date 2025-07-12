@@ -80,7 +80,9 @@ public class BingoGame implements GamePhase
 
     private GameTask deathMatchTask;
 
-    public BingoGame(ServerSoftware platform, @NotNull BingoSession session, @NotNull BingoSettings settings, @NotNull BingoConfigurationData config) {
+    private final Runnable onGameEndedCallback;
+
+    public BingoGame(ServerSoftware platform, @NotNull BingoSession session, @NotNull BingoSettings settings, @NotNull BingoConfigurationData config, Runnable onGameEndedCallback) {
 		this.platform = platform;
 		this.session = session;
         this.config = config;
@@ -89,8 +91,9 @@ public class BingoGame implements GamePhase
         this.settings = settings;
         this.actionBarManager = new ActionBarManager(session);
         this.progressTracker = new TaskProgressTracker(platform, this);
+		this.onGameEndedCallback = onGameEndedCallback;
 
-        this.respawnManager = new PlayerRespawnManager(platform, config.getOptionValue(BingoOptions.TELEPORT_AFTER_DEATH_PERIOD));
+		this.respawnManager = new PlayerRespawnManager(platform, config.getOptionValue(BingoOptions.TELEPORT_AFTER_DEATH_PERIOD));
         this.playerSpawnPoints = new HashMap<>();
     }
 
@@ -98,7 +101,7 @@ public class BingoGame implements GamePhase
         this.gameStarted = false;
         // Create timer
         if (settings.useCountdown())
-            timer = new CountdownTimer(settings.countdownDuration() * 60, 5 * 60, 60, session);
+            timer = new CountdownTimer(settings.countdownDuration() * 60, 5 * 60, 60, this::onCountdownTimerFinished);
         else
             timer = new CounterTimer();
         timer.addNotifier(time ->
@@ -190,7 +193,7 @@ public class BingoGame implements GamePhase
 //        Bukkit.getPluginManager().callEvent(event);
 
         // Countdown before the game actually starts
-        startingTimer = new CountdownTimer(Math.max(1, config.getOptionValue(BingoOptions.STARTING_COUNTDOWN_TIME)), 6, 3, session);
+        startingTimer = new CountdownTimer(Math.max(1, config.getOptionValue(BingoOptions.STARTING_COUNTDOWN_TIME)), 6, 3, this::onStartingTimerFinished);
         startingTimer.addNotifier(time -> {
             Component timeComponent = Component.text(time);
             if (time == 0) {
@@ -257,9 +260,7 @@ public class BingoGame implements GamePhase
 //        }
 
         session.sendMessage(Component.text(" "));
-        //FIXME: REFACTOR call bingo end
-//        var event = new BingoEndedEvent(getGameTime(), winningTeam, session);
-//        Bukkit.getPluginManager().callEvent(event);
+        onGameEndedCallback.run();
     }
 
     public void bingo(@NotNull BingoTeam team) {
@@ -619,65 +620,40 @@ public class BingoGame implements GamePhase
             return EventResults.playerRespawnResult(false, false, null);
         }
     }
-//    public void sendPlayerRespawn(final PlayerRespawnEvent event) {
-//        BingoParticipant participant = getTeamManager().getPlayerAsParticipant(event.getPlayer());
-//        if (participant == null || participant.sessionPlayer().isEmpty())
-//            return;
-//
-//        if (!(participant instanceof BingoPlayer player))
-//            return;
-//
-//        if (!settings.effects().contains(EffectOptionFlags.KEEP_INVENTORY)) {
-//            returnCardToPlayer(settings.kit().getCardSlot(), player, renderers.get(player.getTeam()));
-//            player.giveKit(settings.kit());
-//        } else {
-//            player.giveEffects(settings.effects(), 0);
-//        }
-//
-//        boolean correctRespawnPoint = !event.isBedSpawn() && !event.isAnchorSpawn() && event.getPlayer().getRespawnLocation() == null;
-//        if (correctRespawnPoint && playerSpawnPoints.containsKey(player.getId())) {
-//            WorldPosition newSpawnLocation = playerSpawnPoints.get(player.getId());
-//            event.setRespawnLocation(newSpawnLocation);
-//            event.getPlayer().setRespawnLocation(newSpawnLocation, true);
-//        }
-//    }
 
-    public void handleCountdownFinished(final BingoEvents.CountdownTimerFinished event) {
-        if (!event.session().phase().equals(this))
+    public void onStartingTimerFinished() {
+        timer.start();
+        gameStarted = true;
+        playSound(Sound.sound(Key.key("minecraft:entity_firework_rocket_large_blast"), Sound.Source.UI, 1.0f, 1.0f));
+        playSound(Sound.sound(Key.key("minecraft:entity_firework_rocket_launch"), Sound.Source.UI, 1.0f, 1.0f));
+    }
+
+    public void onCountdownTimerFinished() {
+        BingoTeam leadingTeam = getTeamManager().getActiveTeams().getLeadingTeam();
+
+        Set<BingoTeam> tiedTeams = new HashSet<>();
+        tiedTeams.add(leadingTeam);
+
+        // Regular bingo cannot draw, so end the game without a winner
+        if (settings.mode() == BingoGamemode.REGULAR || leadingTeam == null) {
+            end((BingoTeam)null);
             return;
+        }
 
-        if (event.timer() == timer) {
-            BingoTeam leadingTeam = getTeamManager().getActiveTeams().getLeadingTeam();
-
-            Set<BingoTeam> tiedTeams = new HashSet<>();
-            tiedTeams.add(leadingTeam);
-
-            // Regular bingo cannot draw, so end the game without a winner
-            if (settings.mode() == BingoGamemode.REGULAR || leadingTeam == null) {
-                end((BingoTeam)null);
-                return;
-            }
-
-            int leadingPoints = leadingTeam.getCompleteCount();
-            for (BingoTeam team : getTeamManager().getActiveTeams()) {
-                if (team.getCompleteCount() == leadingPoints) {
-                    tiedTeams.add(team);
-                } else {
-                    team.outOfTheGame = true;
-                }
-            }
-
-            // If only 1 team is "tied" for first place, make that team win the game
-            if (tiedTeams.size() == 1) {
-                bingo(leadingTeam);
+        int leadingPoints = leadingTeam.getCompleteCount();
+        for (BingoTeam team : getTeamManager().getActiveTeams()) {
+            if (team.getCompleteCount() == leadingPoints) {
+                tiedTeams.add(team);
             } else {
-                startDeathMatch(5);
+                team.outOfTheGame = true;
             }
-        } else if (event.timer() == startingTimer) {
-            timer.start();
-            gameStarted = true;
-            playSound(Sound.sound(Key.key("minecraft:entity_firework_rocket_large_blast"), Sound.Source.UI, 1.0f, 1.0f));
-            playSound(Sound.sound(Key.key("minecraft:entity_firework_rocket_launch"), Sound.Source.UI, 1.0f, 1.0f));
+        }
+
+        // If only 1 team is "tied" for first place, make that team win the game
+        if (tiedTeams.size() == 1) {
+            bingo(leadingTeam);
+        } else {
+            startDeathMatch(5);
         }
     }
 
@@ -712,10 +688,6 @@ public class BingoGame implements GamePhase
     @Override
     public void end() {
         end((BingoTeam)null);
-    }
-
-    @Override
-    public void handleSettingsUpdated(BingoEvents.SettingsUpdated event) {
     }
 
     @Override
@@ -776,6 +748,11 @@ public class BingoGame implements GamePhase
             return;
 
         player.takeEffects(false);
+    }
+
+    @Override
+    public void handleSettingsUpdated(BingoSettings newSettings) {
+
     }
 
     @Override

@@ -1,10 +1,10 @@
 package io.github.steaf23.bingoreloaded.util.timer;
 
-import io.github.steaf23.bingoreloaded.BingoReloaded;
+import io.github.steaf23.bingoreloaded.lib.api.ExtensionTask;
+import io.github.steaf23.bingoreloaded.lib.api.PlatformResolver;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import net.kyori.adventure.text.Component;
-import org.bukkit.Bukkit;
-import org.bukkit.scheduler.BukkitTask;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +14,7 @@ public abstract class GameTimer
 {
     private final List<Consumer<Long>> notifiers;
     private long time;
-    private BukkitTask task;
+    private ExtensionTask task;
 
     public abstract Component getTimeDisplayMessage(boolean asSeconds);
     public abstract int getStartDelay();
@@ -31,10 +31,9 @@ public abstract class GameTimer
     public void start()
     {
         stop();
-        this.task = Bukkit.getScheduler().runTaskTimer(BingoReloaded.getPlugin(BingoReloaded.class), () -> {
+        this.task = PlatformResolver.get().runTaskTimer(getStartDelay(), getUpdateInterval(), (task) -> {
             updateTime(time + getStep());
-        }, getStartDelay(), getUpdateInterval());
-
+        });
     }
 
     public long pause()
@@ -97,7 +96,7 @@ public abstract class GameTimer
         return String.format("%d", seconds);
     }
 
-    public void addNotifier(Consumer<Long> notifier)
+    public void addNotifier(@NotNull Consumer<Long> notifier)
     {
         this.notifiers.add(notifier);
     }

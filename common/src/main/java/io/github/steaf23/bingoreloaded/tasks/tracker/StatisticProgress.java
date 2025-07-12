@@ -58,9 +58,7 @@ public class StatisticProgress
         previousGlobalProgress = newProgress;
 
         if (done()) {
-            //FIXME: REFACTOR send event
-//            var event = new BingoStatisticCompletedEvent(statistic, player);
-//            Bukkit.getPluginManager().callEvent(event);
+            progressCompletedCallback.accept(this);
         }
     }
 

@@ -38,50 +38,6 @@ public final class BingoEventListener implements PlatformEventDispatcher {
 		return gameManager.getSessionFromWorld(world);
 	}
 
-	public void handleBingoGameEnded(final BingoEvents.GameEnded event)
-	{
-		if (event.session() != null)
-		{
-			event.session().handleGameEnded(event);
-		}
-	}
-
-	public void handleTaskProgressCompleted(final BingoEvents.TaskProgressCompleted event) {
-//		BingoSession session = event.session();
-//		BingoGame game = session != null && session.isRunning() ? (BingoGame)session.phase() : null;
-//		if (game != null)
-//		{
-//			game.handleBingoTaskComplete(event);
-//		}
-	}
-
-	public void handleCountdownFinished(final BingoEvents.CountdownTimerFinished event)
-	{
-//		BingoGame game = event.session() != null && event.session().isRunning() ? (BingoGame)event.session().phase() : null;
-//		if (game != null)
-//		{
-//			game.handleCountdownFinished(event);
-//		}
-	}
-
-	public void handleBingoStatisticCompleted(final BingoEvents.StatisticCompleted event)
-	{
-//		if (disableStatistics)
-//			return;
-//
-//		BingoSession session = event.session();
-//		BingoGame game = session != null && session.isRunning() ? (BingoGame)session.phase() : null;
-//		if (game != null)
-//		{
-//			game.getProgressTracker().handleBingoStatisticCompleted(event);
-//		}
-	}
-
-	public void handleSettingsUpdated(final BingoSettingsUpdatedEvent event)
-	{
-		event.getSession().handleSettingsUpdated(event);
-	}
-
 	@Override
 	public EventResult<?> sendPlayerMove(PlayerHandle player, WorldPosition from, WorldPosition to) {
 		BingoGame game = getBingoGame(player.world());

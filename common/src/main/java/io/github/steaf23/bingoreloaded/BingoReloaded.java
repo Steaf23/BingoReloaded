@@ -1,5 +1,6 @@
 package io.github.steaf23.bingoreloaded;
 
+import io.github.steaf23.bingoreloaded.command.Executor;
 import io.github.steaf23.bingoreloaded.lib.api.BingoReloadedRuntime;
 import io.github.steaf23.bingoreloaded.lib.api.ServerSoftware;
 import io.github.steaf23.bingoreloaded.lib.api.PlatformResolver;
@@ -34,7 +35,6 @@ import io.github.steaf23.bingoreloaded.lib.data.core.DataStorageSerializerRegist
 import io.github.steaf23.bingoreloaded.lib.data.core.VirtualDataAccessor;
 import io.github.steaf23.bingoreloaded.lib.data.core.tag.TagDataAccessor;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
-import io.github.steaf23.bingoreloaded.placeholder.BingoReloadedPlaceholderExpansion;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
 import io.github.steaf23.bingoreloaded.settings.CustomKit;
 import io.github.steaf23.bingoreloaded.tasks.data.TaskData;
@@ -135,7 +135,7 @@ public class BingoReloaded implements Namespaced {
 		ConsoleMessenger.log(Component.text("Enabled " + platform.getExtensionInfo().name()).color(NamedTextColor.GREEN));
 	}
 
-	public void registerCommand(String commandName, TabExecutor executor) {
+	public void registerCommand(String commandName, Executor executor) {
 		PluginCommand command = getCommand(commandName);
 		if (command != null) {
 			command.setExecutor(executor);
@@ -318,8 +318,8 @@ public class BingoReloaded implements Namespaced {
 		//FIXME: REFACTOR add openMenu predicate
 //		menuBoard.setPlayerOpenPredicate(player -> player instanceof PlayerHandle handle && this.gameManager.canPlayerOpenMenus(handle));
 
-		TabExecutor autoBingoCommand = new AutoBingoExecutor(platform, gameManager);
-		TabExecutor bingoConfigCommand = new BingoConfigCommand(config);
+		Executor autoBingoCommand = new AutoBingoExecutor(platform, gameManager);
+		Executor bingoConfigCommand = new BingoConfigCommand(config);
 
 		registerCommand("bingo", new BingoCommand(this, config, gameManager));
 		registerCommand("autobingo", autoBingoCommand);

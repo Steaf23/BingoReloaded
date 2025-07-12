@@ -11,6 +11,7 @@ import io.github.steaf23.bingoreloaded.placeholder.BingoPlaceholderFormatter;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
+import io.github.steaf23.bingoreloaded.settings.BingoSettings;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
@@ -300,8 +301,8 @@ public class BasicTeamManager implements TeamManager {
 
     //== EventHandlers ==========================================
     @Override
-    public void handleSettingsUpdated(final BingoEvents.SettingsUpdated event) {
-        int newTeamSize = event.newSettings().maxTeamSize();
+    public void handleSettingsUpdated(final BingoSettings newSettings) {
+        int newTeamSize = newSettings.maxTeamSize();
         if (newTeamSize == getMaxTeamSize())
             return;
 

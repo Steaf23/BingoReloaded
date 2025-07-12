@@ -158,7 +158,7 @@ public class HotswapTaskCard extends TaskCard
     }
 
     @Override
-    public void handleTaskCompleted(BingoParticipant player, GameTask task, long timeSeconds) {
+    public void onTaskCompleted(BingoParticipant player, GameTask task, long timeSeconds) {
         completedTasks.add(task);
     }
 

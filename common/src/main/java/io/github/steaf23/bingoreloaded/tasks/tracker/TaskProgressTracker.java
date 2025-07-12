@@ -320,7 +320,7 @@ public class TaskProgressTracker
             ConsoleMessenger.bug("Player " + player.getName() + " is not in a valid team!", this);
         }
         player.getTeam().getCard().ifPresent(card ->
-                card.handleTaskCompleted(player, task, game.getGameTime()));
+                card.onTaskCompleted(player, task, game.getGameTime()));
 
         game.onBingoTaskCompleted(player, task);
         return true;

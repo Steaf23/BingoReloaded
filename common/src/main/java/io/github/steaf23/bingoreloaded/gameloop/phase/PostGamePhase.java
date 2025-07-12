@@ -6,8 +6,10 @@ import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.lib.api.InteractAction;
 import io.github.steaf23.bingoreloaded.lib.api.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.api.StackHandle;
+import io.github.steaf23.bingoreloaded.lib.event.EventResult;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
+import io.github.steaf23.bingoreloaded.settings.BingoSettings;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import io.github.steaf23.bingoreloaded.util.timer.CountdownTimer;
 import net.kyori.adventure.audience.Audience;
@@ -22,7 +24,7 @@ public class PostGamePhase implements GamePhase
 
     public PostGamePhase(BingoSession session, int durationSeconds) {
         this.session = session;
-        this.timer = new CountdownTimer(durationSeconds, session);
+        this.timer = new CountdownTimer(durationSeconds, this::onTimerFinished);
     }
 
     @Override
@@ -60,38 +62,39 @@ public class PostGamePhase implements GamePhase
     }
 
     @Override
-    public void handleSettingsUpdated(BingoEvents.SettingsUpdated event) {
+    public void handleSettingsUpdated(BingoSettings newSettings) {
 
     }
 
     @Override
-    public boolean handlePlayerInteract(final PlayerHandle player, StackHandle stack, InteractAction action) {
+    public EventResult<?> handlePlayerInteracted(PlayerHandle player, @Nullable StackHandle stack, InteractAction action) {
         BingoParticipant participant = session.teamManager.getPlayerAsParticipant(player);
         if (participant == null || participant.sessionPlayer().isEmpty())
-            return false;
+            return EventResult.PASS;
 
         if (stack == null || stack.type().isAir())
-            return false;
+            return EventResult.PASS;
 
         if (!action.rightClick())
-            return false;
+            return EventResult.PASS;
 
         if (PlayerKit.CARD_ITEM.isCompareKeyEqual(stack)) {
             // Show bingo card to player
             participant.showCard(null);
-            return true;
+            return EventResult.CANCEL;
         }
-        return false;
+        return EventResult.PASS;
     }
 
     private void onTimerTicks(long timeLeft) {
-        if (timeLeft == 0) {
-            session.prepareNextGame();
-            timer.stop();
-        }
-        else if (timeLeft == 5) {
+        if (timeLeft == 5) {
             sendRestartMessage(timeLeft, session);
         }
+    }
+
+    private void onTimerFinished() {
+        session.prepareNextGame();
+        timer.stop();
     }
 
     public void sendRestartMessage(long timeLeft, Audience audience) {

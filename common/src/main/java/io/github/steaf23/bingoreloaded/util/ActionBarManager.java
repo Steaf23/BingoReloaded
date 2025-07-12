@@ -1,8 +1,8 @@
 package io.github.steaf23.bingoreloaded.util;
 
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
+import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
-import org.bukkit.entity.Player;
 
 import java.util.Comparator;
 import java.util.PriorityQueue;
@@ -18,7 +18,7 @@ import java.util.function.Function;
  */
 public class ActionBarManager
 {
-    private record ActionBarMessage(Function<Player, Component> messageTemplate, int priority, int lingerTime, int insertionTime) {}
+    private record ActionBarMessage(Function<Audience, Component> messageTemplate, int priority, int lingerTime, int insertionTime) {}
     private final BingoSession session;
     private int tickCounter;
 
@@ -32,14 +32,14 @@ public class ActionBarManager
     /**
      * Requests an actionbar message. No linger time is specified making it last only until it fades or gets replaced in update by a new message
      */
-    public void requestMessage(Function<Player, Component> messageTemplate, int priority) {
+    public void requestMessage(Function<Audience, Component> messageTemplate, int priority) {
         requestMessage(messageTemplate, priority, 0);
     }
 
     /**
      * Requests an actionbar message. Stays on the players screen until it gets replaced with a higher priority message or until the lingerTime expired, whichever comes first.
      */
-    public void requestMessage(Function<Player, Component> messageTemplate, int priority, int lingerTime) {
+    public void requestMessage(Function<Audience, Component> messageTemplate, int priority, int lingerTime) {
         messages.add(new ActionBarMessage(messageTemplate, priority, lingerTime, tickCounter));
     }
 

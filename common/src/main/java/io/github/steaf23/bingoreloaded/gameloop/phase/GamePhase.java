@@ -6,6 +6,7 @@ import io.github.steaf23.bingoreloaded.lib.api.InteractAction;
 import io.github.steaf23.bingoreloaded.lib.api.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.api.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.event.EventResult;
+import io.github.steaf23.bingoreloaded.settings.BingoSettings;
 import org.jetbrains.annotations.Nullable;
 
 public interface GamePhase extends SessionMember
@@ -16,7 +17,7 @@ public interface GamePhase extends SessionMember
     void end();
     void handlePlayerJoinedSessionWorld(final BingoEvents.PlayerSessionEvent event);
     void handlePlayerLeftSessionWorld(final BingoEvents.PlayerSessionEvent event);
-    void handleSettingsUpdated(final BingoEvents.SettingsUpdated event);
+    void handleSettingsUpdated(final BingoSettings newSettings);
     EventResult<?> handlePlayerInteracted(PlayerHandle player, @Nullable StackHandle stack, InteractAction action);
 
     default void handleParticipantJoinedTeam(final BingoEvents.TeamParticipantEvent event) {};

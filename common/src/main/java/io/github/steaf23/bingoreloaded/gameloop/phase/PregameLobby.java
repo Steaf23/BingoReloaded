@@ -11,7 +11,9 @@ import io.github.steaf23.bingoreloaded.gameloop.vote.VoteCategory;
 import io.github.steaf23.bingoreloaded.gameloop.vote.VoteTicket;
 import io.github.steaf23.bingoreloaded.gui.hud.BingoSettingsHUDGroup;
 import io.github.steaf23.bingoreloaded.lib.api.StackHandle;
+import io.github.steaf23.bingoreloaded.lib.event.EventResult;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
+import io.github.steaf23.bingoreloaded.settings.BingoSettings;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import io.github.steaf23.bingoreloaded.util.timer.CountdownTimer;
 import net.kyori.adventure.text.Component;
@@ -42,7 +44,7 @@ public class PregameLobby implements GamePhase
         this.session = session;
         this.votes = new HashMap<>();
         this.config = config;
-        this.playerCountTimer = new CountdownTimer(config.getOptionValue(BingoOptions.PLAYER_WAIT_TIME), session);
+        this.playerCountTimer = new CountdownTimer(config.getOptionValue(BingoOptions.PLAYER_WAIT_TIME), this::onCountdownTimerFinished);
         //FIXME: REFACTOR add back settings hud
 //        if (config.getOptionValue(BingoOptions.DISABLE_SCOREBOARD_SIDEBAR)) {
 //            this.settingsHUD = new DisabledBingoSettingsHUDGroup();
@@ -51,18 +53,21 @@ public class PregameLobby implements GamePhase
 //            this.settingsHUD = new BingoSettingsHUDGroup();
 //        }
 
-        playerCountTimer.addNotifier(time -> {
-            settingsHUD.setStatus(BingoMessage.STARTING_STATUS.asPhrase(Component.text(String.valueOf(time))));
-            if (time == 10) {
-                BingoMessage.STARTING_STATUS.sendToAudience(session, Component.text(time).color(NamedTextColor.GOLD));
-            }
-            if (time == 0) {
-                gameStarted = true;
-                session.startGame();
-            } else if (time <= 5) {
-                BingoMessage.STARTING_STATUS.sendToAudience(session, Component.text(time).color(NamedTextColor.RED));
-            }
-        });
+        playerCountTimer.addNotifier(this::updateCounterVisual);
+    }
+
+    private void updateCounterVisual(long time) {
+        settingsHUD.setStatus(BingoMessage.STARTING_STATUS.asPhrase(Component.text(String.valueOf(time))));
+        if (time == 10) {
+            BingoMessage.STARTING_STATUS.sendToAudience(session, Component.text(time).color(NamedTextColor.GOLD));
+        } else if (time <= 5) {
+            BingoMessage.STARTING_STATUS.sendToAudience(session, Component.text(time).color(NamedTextColor.RED));
+        }
+    }
+
+    private void onCountdownTimerFinished() {
+        gameStarted = true;
+        session.startGame();
     }
 
     public void voteGamemode(String gamemode, PlayerHandle player) {
@@ -232,21 +237,20 @@ public class PregameLobby implements GamePhase
     }
 
     @Override
-    public void handleSettingsUpdated(BingoEvents.SettingsUpdated event) {
-        settingsHUD.updateSettings(event.newSettings(), config);
+    public void handleSettingsUpdated(BingoSettings newSettings) {
+        settingsHUD.updateSettings(newSettings, config);
     }
 
     @Override
-    public boolean handlePlayerInteract(PlayerHandle player, StackHandle stack, InteractAction action) {
-        StackHandle item = stack;
-        if (item == null || item.type().isAir())
-            return false;
-
-        if (!action.rightClick()) {
-            return false;
-        }
+    public EventResult<?> handlePlayerInteracted(PlayerHandle player, @Nullable StackHandle stack, InteractAction action) {
+		if (stack == null || stack.type().isAir())
+            return EventResult.PASS;
 
         //FIXME: REFACTOR menu call
+//        if (!action.rightClick()) {
+//            return EventResult.PASS;
+//        }
+//
 //        if (PlayerKit.VOTE_ITEM.isCompareKeyEqual(item)) {
 //            VoteMenu menu = new VoteMenu(menuBoard, config.getOptionValue(BingoOptions.VOTE_LIST), this);
 //            menu.open(player);
@@ -257,7 +261,7 @@ public class PregameLobby implements GamePhase
 //            return true;
 //        }
 
-        return false;
+        return EventResult.PASS;
     }
 
     @Override

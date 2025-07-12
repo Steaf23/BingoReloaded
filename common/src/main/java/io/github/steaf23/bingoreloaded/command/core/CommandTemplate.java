@@ -1,23 +1,24 @@
 package io.github.steaf23.bingoreloaded.command.core;
 
+import io.github.steaf23.bingoreloaded.command.Executor;
 import io.github.steaf23.bingoreloaded.lib.PlayerDisplay;
+import net.kyori.adventure.audience.Audience;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
-import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public abstract class CommandTemplate implements TabExecutor
+public abstract class CommandTemplate implements Executor
 {
     private final boolean allowConsole;
     private final List<String> permissions;
     private final SubCommand command;
 
-    private CommandSender currentSender = null;
+    private Audience currentSender = null;
 
     public CommandTemplate(boolean allowConsole, List<String> permissionWhitelist) {
         this.command = createCommand();
@@ -62,7 +63,7 @@ public abstract class CommandTemplate implements TabExecutor
         return this.command.tabComplete(strings);
     }
 
-    public CommandSender getCurrentSender() {
+    public Audience getCurrentSender() {
         return currentSender;
     }
 }
