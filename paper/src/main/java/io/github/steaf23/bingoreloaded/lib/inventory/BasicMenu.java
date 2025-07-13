@@ -1,11 +1,12 @@
 package io.github.steaf23.bingoreloaded.lib.inventory;
 
 import io.github.steaf23.bingoreloaded.lib.api.ItemType;
+import io.github.steaf23.bingoreloaded.lib.api.MenuBoard;
 import io.github.steaf23.bingoreloaded.lib.api.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataStorage;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
-import io.github.steaf23.bingoreloaded.lib.item.action.MenuAction;
-import io.github.steaf23.bingoreloaded.lib.item.action.MenuItemGroup;
+import io.github.steaf23.bingoreloaded.lib.inventory.action.MenuAction;
+import io.github.steaf23.bingoreloaded.lib.inventory.action.MenuItemGroup;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -24,14 +25,6 @@ import java.util.function.Consumer;
 public class BasicMenu implements InventoryMenu
 {
     public static Component pluginTitlePrefix = Component.empty();
-
-    public static Component applyTitleFormat(Component to) {
-        return to.color(NamedTextColor.GOLD).decorate(TextDecoration.BOLD);
-    }
-
-    public static Component applyTitleFormat(String to) {
-        return Component.text(to).color(NamedTextColor.GOLD).decorate(TextDecoration.BOLD);
-    }
 
     public static ItemTemplate BLANK = new ItemTemplate(ItemType.of("black_stained_glass_pane"), null)
             .addMetaModifier(meta -> {

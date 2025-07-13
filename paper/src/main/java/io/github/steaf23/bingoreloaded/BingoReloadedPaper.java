@@ -1,14 +1,32 @@
 package io.github.steaf23.bingoreloaded;
 
+import io.github.steaf23.bingoreloaded.command.AutoBingoAction;
+import io.github.steaf23.bingoreloaded.command.BingoAction;
+import io.github.steaf23.bingoreloaded.command.BingoConfigAction;
+import io.github.steaf23.bingoreloaded.command.BingoTestCommand;
+import io.github.steaf23.bingoreloaded.command.CommandTemplate;
+import io.github.steaf23.bingoreloaded.command.TeamChatCommand;
+import io.github.steaf23.bingoreloaded.data.DataUpdaterV1;
+import io.github.steaf23.bingoreloaded.lib.action.ActionTree;
+import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.data.config.BingoOptions;
 import io.github.steaf23.bingoreloaded.lib.api.BingoReloadedRuntime;
 import io.github.steaf23.bingoreloaded.lib.api.PaperServerSoftware;
 import io.github.steaf23.bingoreloaded.lib.api.PlatformResolver;
+import io.github.steaf23.bingoreloaded.lib.api.ServerSoftware;
+import io.github.steaf23.bingoreloaded.lib.api.WorldHandle;
 import io.github.steaf23.bingoreloaded.lib.data.core.ConfigDataAccessor;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataAccessor;
 import io.github.steaf23.bingoreloaded.lib.data.core.YamlDataAccessor;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import io.github.steaf23.bingoreloaded.util.bstats.Metrics;
+import io.github.steaf23.bingoreloaded.world.CustomWorldCreator;
+import net.kyori.adventure.audience.Audience;
+import net.kyori.adventure.key.Key;
+import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
+import org.bukkit.command.PluginCommand;
+import org.bukkit.command.TabExecutor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -33,6 +51,12 @@ public class BingoReloadedPaper extends JavaPlugin implements BingoReloadedRunti
 
 	@Override
 	public void onLoad() {
+		// Data file updaters
+		{
+			DataUpdaterV1 updater = new DataUpdaterV1(this);
+			updater.update();
+		}
+
 		bingo.load();
 	}
 
@@ -96,4 +120,50 @@ public class BingoReloadedPaper extends JavaPlugin implements BingoReloadedRunti
 				new YamlDataAccessor(platform, language, false),
 				new YamlDataAccessor(platform, "languages/en_us", false));
 	}
+
+	@Override
+	public void registerActions(BingoConfigurationData config) {
+		registerCommand(true, new AutoBingoAction(platform, bingo.getGameManager()));
+		registerCommand(true, new BingoConfigAction(config));
+		registerCommand(false, new BingoAction(bingo, config, bingo.getGameManager(), menuboard));
+//		registerCommand("bingotest", new BingoTestCommand(this));
+		if (config.getOptionValue(BingoOptions.ENABLE_TEAM_CHAT)) {
+			TeamChatCommand command = new TeamChatCommand(player -> bingo.getGameManager().getSessionFromWorld(player.world()));
+			registerCommand("btc", command);
+			Bukkit.getPluginManager().registerEvents(command, this);
+		}
+	}
+
+	@Override
+	public WorldHandle createBingoWorld(String worldName, Key generationOptions) {
+		return CustomWorldCreator.createWorld(platform, worldName, generationOptions);
+	}
+
+	@Override
+	public ServerSoftware getServerSoftware() {
+		return platform;
+	}
+
+	public void registerCommand(boolean allowConsole, ActionTree action) {
+		TabExecutor commandExec = new CommandTemplate(allowConsole, action);
+
+		PluginCommand command = getCommand(action.name());
+		if (command != null) {
+			command.setExecutor(commandExec);
+			command.setTabCompleter(commandExec);
+		} else {
+			ConsoleMessenger.bug("Cannot register command named '" + action.name() + "'", this);
+		}
+	}
+
+	public static boolean doesAudienceHavePermission(Audience audience, String permission) {
+		if (audience instanceof CommandSender sender) {
+			return sender.hasPermission(permission);
+		}
+		else {
+			return false;
+		}
+	}
+
+
 }

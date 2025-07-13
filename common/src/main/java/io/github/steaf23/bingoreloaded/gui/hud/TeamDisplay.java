@@ -1,11 +1,11 @@
 package io.github.steaf23.bingoreloaded.gui.hud;
 
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
+import io.github.steaf23.bingoreloaded.lib.api.PlayerHandle;
+import io.github.steaf23.bingoreloaded.lib.gui.TeamPacketHelper;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.player.team.TeamManager;
-import io.github.steaf23.bingoreloaded.lib.scoreboard.TeamPacketHelper;
 import net.kyori.adventure.text.Component;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -35,7 +35,7 @@ public class TeamDisplay
         reset();
 
         Set<BingoTeam> activeTeams = manager.getActiveTeams().getTeams();
-        for (Player player : session.getPlayersInWorld()) { // loop through all actual players.
+        for (PlayerHandle player : session.getPlayersInWorld()) { // loop through all actual players.
             addTeamsForPlayer(player, activeTeams);
         }
     }
@@ -43,11 +43,11 @@ public class TeamDisplay
     /**
      * Creates new entry in teams map if the player was not present before.
      */
-    public void addTeamsForPlayer(Player player, Set<BingoTeam> activeTeams) {
+    private void addTeamsForPlayer(PlayerHandle player, Set<BingoTeam> activeTeams) {
         // Compare the cached teams with the actual team manager's team state.
         // - If the manager doesn't have a team that was cached, it means we have to remove this team.
 
-        Set<TeamInfo> knownTeams = createdTeams.getOrDefault(player.getUniqueId(), Set.of());
+        Set<TeamInfo> knownTeams = createdTeams.getOrDefault(player.uniqueId(), Set.of());
         for (TeamInfo t : knownTeams) {
             boolean removeTeam = activeTeams.stream().noneMatch(bTeam -> bTeam.getIdentifier().equals(t.identifier()));
 
@@ -57,7 +57,7 @@ public class TeamDisplay
         }
 
         Set<TeamInfo> newTeams = activeTeams.stream().map(this::teamInfoFromBingoTeam).collect(Collectors.toSet());
-        createdTeams.put(player.getUniqueId(), newTeams);
+        createdTeams.put(player.uniqueId(), newTeams);
         for (TeamInfo team : newTeams) {
             createTeamForPlayer(team, player);
         }
@@ -67,7 +67,7 @@ public class TeamDisplay
         return new TeamInfo(team.getIdentifier(), team.getName(), team.getPrefix(), null, team.getMemberNames());
     }
 
-    private void createTeamForPlayer(TeamInfo team, Player player) {
+    private void createTeamForPlayer(TeamInfo team, PlayerHandle player) {
         TeamPacketHelper.createTeamVisibleToPlayer(player,
                 team.identifier(),
                 team.displayName(),
@@ -76,19 +76,19 @@ public class TeamDisplay
                 team.entries());
     }
 
-    public void removeTeamForPlayer(String teamIdentifier, Player player) {
+    private void removeTeamForPlayer(String teamIdentifier, PlayerHandle player) {
         TeamPacketHelper.removeTeamVisibleToPlayer(player, teamIdentifier);
     }
 
-    public void clearTeamsForPlayer(@NotNull Player player) {
-        for (TeamInfo info : createdTeams.getOrDefault(player.getUniqueId(), Set.of())) {
+    private void clearTeamsForPlayer(@NotNull PlayerHandle player) {
+        for (TeamInfo info : createdTeams.getOrDefault(player.uniqueId(), Set.of())) {
             removeTeamForPlayer(info.identifier(), player);
         }
-        createdTeams.remove(player.getUniqueId());
+        createdTeams.remove(player.uniqueId());
     }
 
     public void reset() {
-        for (Player player : session.getPlayersInWorld()) {
+        for (PlayerHandle player : session.getPlayersInWorld()) {
             clearTeamsForPlayer(player);
         }
         createdTeams.clear();

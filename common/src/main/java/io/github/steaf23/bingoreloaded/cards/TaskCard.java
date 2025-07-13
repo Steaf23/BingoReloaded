@@ -1,8 +1,8 @@
 package io.github.steaf23.bingoreloaded.cards;
 
 
+import io.github.steaf23.bingoreloaded.api.CardMenu;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
-import io.github.steaf23.bingoreloaded.gui.inventory.card.CardMenu;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.tasks.GameTask;

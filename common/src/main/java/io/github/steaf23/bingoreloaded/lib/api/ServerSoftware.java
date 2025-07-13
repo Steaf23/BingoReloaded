@@ -1,5 +1,6 @@
 package io.github.steaf23.bingoreloaded.lib.api;
 
+import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
 import org.intellij.lang.annotations.Subst;
@@ -45,6 +46,7 @@ public interface ServerSoftware {
 
 	StackHandle createStack(ItemType type, int amount);
 	StackHandle createStackFromBytes(byte[] bytes);
+	StackHandle createStackFromTemplate(ItemTemplate template, boolean hideAttributes);
 	byte[] createBytesFromStack(StackHandle stack);
 
 	boolean areAdvancementsDisabled();

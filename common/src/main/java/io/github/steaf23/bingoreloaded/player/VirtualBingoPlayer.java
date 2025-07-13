@@ -1,12 +1,13 @@
 package io.github.steaf23.bingoreloaded.player;
 
+import io.github.steaf23.bingoreloaded.lib.api.MapRenderer;
 import io.github.steaf23.bingoreloaded.lib.api.PlayerHandle;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gui.inventory.EffectOptionFlags;
+import io.github.steaf23.bingoreloaded.lib.util.ComponentUtils;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import io.github.steaf23.bingoreloaded.tasks.GameTask;
-import io.github.steaf23.bingoreloaded.lib.PlayerDisplay;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
@@ -61,7 +62,7 @@ public class VirtualBingoPlayer implements BingoParticipant
 
     @Override
     public Component getDisplayName() {
-        return PlayerDisplay.MINI_BUILDER.deserialize("<white>[<light_purple><tiny:'DUMMY'><white>] <gray>" + name + " <reset>");
+        return ComponentUtils.MINI_BUILDER.deserialize("<white>[<light_purple><tiny:'DUMMY'><white>] <gray>" + name + " <reset>");
     }
 
     @Override

@@ -2,8 +2,8 @@ package io.github.steaf23.bingoreloaded.data;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataAccessor;
+import io.github.steaf23.bingoreloaded.lib.util.ComponentUtils;
 import io.github.steaf23.bingoreloaded.lib.util.StringAdditions;
-import io.github.steaf23.bingoreloaded.lib.PlayerDisplay;
 import io.github.steaf23.bingoreloaded.lib.util.BlockColor;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
@@ -21,7 +21,7 @@ public class TeamData {
     public record TeamTemplate(String stringName, TextColor color)
     {
         public Component nameComponent() {
-            return PlayerDisplay.MINI_BUILDER.deserialize(stringName);
+            return ComponentUtils.MINI_BUILDER.deserialize(stringName);
         }
     }
 

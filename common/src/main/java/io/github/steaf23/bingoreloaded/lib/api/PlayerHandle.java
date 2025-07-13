@@ -4,10 +4,11 @@ import net.kyori.adventure.audience.ForwardingAudience;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.Nullable;
 
+import javax.swing.*;
 import java.util.UUID;
 import java.util.function.Consumer;
 
-public interface PlayerHandle extends ForwardingAudience {
+public interface PlayerHandle extends ForwardingAudience, ActionUser {
 
 	String playerName();
 
@@ -87,4 +88,12 @@ public interface PlayerHandle extends ForwardingAudience {
 	void removeAdvancementProgress(AdvancementHandle advancement);
 
 	boolean equals(Object other);
+
+	boolean hasCooldown(StackHandle stack);
+
+	void setCooldown(StackHandle stack, int cooldownTicks);
+
+	boolean isSneaking();
+
+	void closeInventory();
 }

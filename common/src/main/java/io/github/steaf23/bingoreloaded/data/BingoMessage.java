@@ -4,11 +4,9 @@ import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.lib.api.BingoReloadedRuntime;
 import io.github.steaf23.bingoreloaded.lib.api.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataAccessor;
-import io.github.steaf23.bingoreloaded.lib.PlayerDisplay;
 import io.github.steaf23.bingoreloaded.lib.util.ComponentUtils;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import io.github.steaf23.bingoreloaded.lib.util.TinyCaps;
-import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
@@ -19,7 +17,6 @@ import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -228,9 +225,10 @@ public enum BingoMessage
             //Translate and send in steps
             //1. Solve placeholders first (so they can be nested into arguments in the following formats).
             String playerMessage = translated;
-            if (innerAudience instanceof PlayerHandle player && BingoReloaded.PLACEHOLDER_API_ENABLED) {
-                playerMessage = PlaceholderAPI.setPlaceholders(player, playerMessage);
-            }
+            //FIXME: REFACTOR placeholder API.
+            //if (innerAudience instanceof PlayerHandle player && BingoReloaded.PLACEHOLDER_API_ENABLED) {
+//                playerMessage = PlaceholderAPI.setPlaceholders(player, playerMessage);
+//            }
 
             Component[] components = configStringAsMultiline(playerMessage, color, withArguments);
 
@@ -268,8 +266,9 @@ public enum BingoMessage
      * @return multiline component from string input text, including placeholders
      */
     public static Component[] convertForPlayer(String input, PlayerHandle player, Component... withArguments) {
-        if (BingoReloaded.PLACEHOLDER_API_ENABLED)
-            input = PlaceholderAPI.setPlaceholders(player, input);
+        //FIXME: REFACTOR placeholder API.
+//        if (BingoReloaded.PLACEHOLDER_API_ENABLED)
+//            input = PlaceholderAPI.setPlaceholders(player, input);
 
         return configStringAsMultiline(input, null, withArguments);
     }

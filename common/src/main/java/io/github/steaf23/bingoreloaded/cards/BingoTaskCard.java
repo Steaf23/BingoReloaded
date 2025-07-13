@@ -1,7 +1,6 @@
 package io.github.steaf23.bingoreloaded.cards;
 
-import io.github.steaf23.bingoreloaded.gui.inventory.card.CardMenu;
-import io.github.steaf23.bingoreloaded.player.BingoParticipant;
+import io.github.steaf23.bingoreloaded.api.CardMenu;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.tasks.GameTask;
 import net.kyori.adventure.text.Component;
@@ -10,7 +9,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 public class BingoTaskCard extends TaskCard
 {

@@ -1,24 +1,23 @@
 package io.github.steaf23.bingoreloaded.data;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
+import io.github.steaf23.bingoreloaded.lib.api.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataAccessor;
 import io.github.steaf23.bingoreloaded.settings.CustomKit;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import net.kyori.adventure.text.Component;
-import org.bukkit.entity.Player;
-
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 public class CustomKitData
 {
     private final DataAccessor data = BingoReloaded.getDataAccessor("data/kits");
 
-    public boolean assignCustomKit(Component kitName, PlayerKit slot, Player commandSender)
+    public boolean assignCustomKit(Component kitName, PlayerKit slot, PlayerHandle player)
     {
         if (data.contains(slot.configName))
             return false;
 
-        data.setSerializable(slot.configName, CustomKit.class, CustomKit.fromPlayerInventory(commandSender, kitName, slot));
+        data.setSerializable(slot.configName, CustomKit.class, CustomKit.fromPlayerInventory(player, kitName, slot));
         data.saveChanges();
         return true;
     }

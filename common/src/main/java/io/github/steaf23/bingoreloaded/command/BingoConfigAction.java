@@ -1,0 +1,135 @@
+package io.github.steaf23.bingoreloaded.command;
+
+import io.github.steaf23.bingoreloaded.lib.action.ActionTree;
+import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
+import io.github.steaf23.bingoreloaded.data.config.ConfigurationOption;
+import io.github.steaf23.bingoreloaded.lib.util.ComponentUtils;
+import io.github.steaf23.bingoreloaded.util.BingoPlayerSender;
+import net.kyori.adventure.audience.Audience;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
+
+import java.util.List;
+import java.util.Optional;
+
+public class BingoConfigAction extends ActionTree {
+    private final BingoConfigurationData configuration;
+
+    public BingoConfigAction(BingoConfigurationData configuration) {
+		super("bingoconfig", List.of("bingo.admin"));
+		this.configuration = configuration;
+
+        setAction((args) -> {
+            if (getLastUser() == null) {
+                return false;
+            }
+
+            if (args.length == 1) {
+                return readOption(getLastUser(), args[0]);
+            }
+            if (args.length == 2) {
+                return writeOption(getLastUser(), args[0], args[1]);
+            }
+
+            return false;
+        }).addTabCompletion(args ->
+                switch (args.length) {
+                    case 1 -> allOptionKeys(true);
+                    default -> List.of();
+                })
+                .addUsage("<option> [new_value]");
+    }
+
+    private boolean readOption(Audience sender, String optionKey) {
+        Optional<ConfigurationOption<?>> someOption = configuration.getOptionFromName(optionKey);
+
+        if (someOption.isEmpty()) {
+            BingoPlayerSender.sendMessage(ComponentUtils.MINI_BUILDER.deserialize("Config option '<red>" + optionKey + "</red>' doesn't exist."), sender);
+            return false;
+        }
+
+        ConfigurationOption<?> option = someOption.get();
+        String value = configuration.getOptionValue(option).toString();
+
+        BingoPlayerSender.sendMessage(
+                ComponentUtils.MINI_BUILDER.deserialize("Config option <yellow>" + optionKey + "</yellow> is set to: ")
+                        .append(Component.text(value).color(getColorOfOptionValue(value))), sender);
+        return true;
+    }
+
+    private boolean writeOption(Audience sender, String optionKey, String value) {
+        Optional<ConfigurationOption<?>> someOption = configuration.getOptionFromName(optionKey);
+
+        if (someOption.isEmpty()) {
+            BingoPlayerSender.sendMessage(ComponentUtils.MINI_BUILDER.deserialize("Config option '<red>" + optionKey + "</red>' doesn't exist."), sender);
+            return false;
+        }
+
+        ConfigurationOption<?> option = someOption.get();
+
+        if (option.isLocked()) {
+            BingoPlayerSender.sendMessage(ComponentUtils.MINI_BUILDER.deserialize("<red>This option is not (yet) available, please wait for a future update.</red>"), sender);
+            return false;
+        }
+        if (!option.canBeEdited()) {
+            BingoPlayerSender.sendMessage(ComponentUtils.MINI_BUILDER.deserialize("<red>This option cannot be changed in-game. Please change it in the config.yml file and restart the server."), sender);
+            return false;
+        }
+        if (!configuration.setOptionValueFromString(option, value)) {
+            BingoPlayerSender.sendMessage(ComponentUtils.MINI_BUILDER.deserialize("The value of option <yellow>" + optionKey + "</yellow> cannot be set to value <red>" + value), sender);
+            return false;
+        }
+
+        String newValue = configuration.getOptionValue(option).toString();
+        BingoPlayerSender.sendMessage(ComponentUtils.MINI_BUILDER.deserialize("Value of option <yellow>" + optionKey + "</yellow> has been set to: ")
+                .append(Component.text(newValue).color(getColorOfOptionValue(newValue))), sender);
+        switch (option.getEditUpdateTime()) {
+            case IMMEDIATE -> {}
+            case AFTER_GAME -> {
+                BingoPlayerSender.sendMessage(ComponentUtils.MINI_BUILDER.deserialize("<gold> This option will be applied to the world at the end of the current/ upcoming game"), sender);
+            }
+            case AFTER_SESSION -> {
+                BingoPlayerSender.sendMessage(ComponentUtils.MINI_BUILDER.deserialize("<gold> This option will be applied after the server has restarted, on a new world in configuration MULTIPLE, or using the <red>/bingo reload</red> command"), sender);
+            }
+            case AFTER_SERVER_RESTART -> {
+                BingoPlayerSender.sendMessage(ComponentUtils.MINI_BUILDER.deserialize("<gold> This option will be applied after the server has been restarted, or using the <red>/bingo reload</red> command if it can be reloaded dynamically"), sender);
+            }
+        }
+
+        // Perform additional setup to configure some options
+        //FIXME: add player display options
+//        PlayerDisplay.enableDebugLogging(configuration.getOptionValue(BingoOptions.ENABLE_DEBUG_LOGGING));
+
+        return true;
+    }
+    private List<String> allOptionKeys() {
+        return allOptionKeys(false);
+    }
+
+    private List<String> allOptionKeys(boolean onlyEditable) {
+        return configuration.getAvailableOptions().stream()
+                .filter(o -> o.canBeEdited() || !onlyEditable)
+                .map(ConfigurationOption::getConfigName)
+                .toList();
+    }
+
+    private static boolean isValueNumeric(String value) {
+        return value.matches("-?\\d+(\\.\\d+)?");
+    }
+
+    private TextColor getColorOfOptionValue(String value) {
+        TextColor result = NamedTextColor.BLUE;
+        if (BingoConfigAction.isValueNumeric(value)) {
+            result = NamedTextColor.AQUA;
+        }
+        else if (value.equals("false")) {
+            result = NamedTextColor.RED;
+        }
+        else if (value.equals("true")) {
+            result = NamedTextColor.GREEN;
+        }
+
+        return result;
+    }
+}

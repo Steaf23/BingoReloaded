@@ -2,7 +2,7 @@ package io.github.steaf23.bingoreloaded.data.serializers;
 
 import io.github.steaf23.bingoreloaded.lib.data.core.DataStorage;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataStorageSerializer;
-import io.github.steaf23.bingoreloaded.gui.inventory.item.SerializableItem;
+import io.github.steaf23.bingoreloaded.lib.item.SerializableItem;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

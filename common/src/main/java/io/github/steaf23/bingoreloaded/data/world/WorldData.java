@@ -1,12 +1,13 @@
 package io.github.steaf23.bingoreloaded.data.world;
 
+import io.github.steaf23.bingoreloaded.BingoReloaded;
+import io.github.steaf23.bingoreloaded.lib.api.PlatformResolver;
 import io.github.steaf23.bingoreloaded.lib.api.ServerSoftware;
 import io.github.steaf23.bingoreloaded.lib.api.DimensionType;
 import io.github.steaf23.bingoreloaded.lib.api.WorldHandle;
 import io.github.steaf23.bingoreloaded.data.helper.ResourceFileHelper;
 import io.github.steaf23.bingoreloaded.lib.api.WorldOptions;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
-import io.github.steaf23.bingoreloaded.world.CustomWorldCreator;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -59,7 +60,7 @@ public class WorldData
      * @return created WorldGroup
      */
     public WorldGroup createWorldGroup(String worldName) {
-        WorldHandle overworld = CustomWorldCreator.createWorld(platform, worldName, generationOptions);
+        WorldHandle overworld = BingoReloaded.runtime().createBingoWorld(worldName, generationOptions);
         if (overworld == null) {
             overworld = createWorld(worldName, DimensionType.OVERWORLD);
         }

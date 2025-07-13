@@ -6,7 +6,7 @@ import io.github.steaf23.bingoreloaded.lib.api.WorldPosition;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataStorage;
 import io.github.steaf23.bingoreloaded.data.helper.SerializablePlayer;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataStorageSerializer;
-import io.github.steaf23.bingoreloaded.gui.inventory.item.SerializableItem;
+import io.github.steaf23.bingoreloaded.lib.item.SerializableItem;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;

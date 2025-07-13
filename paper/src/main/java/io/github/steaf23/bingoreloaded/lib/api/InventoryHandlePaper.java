@@ -1,9 +1,12 @@
 package io.github.steaf23.bingoreloaded.lib.api;
 
+import org.bukkit.entity.Item;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
+import java.util.HashMap;
 
 public class InventoryHandlePaper implements InventoryHandle {
 
@@ -19,8 +22,22 @@ public class InventoryHandlePaper implements InventoryHandle {
 	}
 
 	@Override
-	public void addItem(StackHandle... stacks) {
+	public HashMap<Integer, StackHandle> addItem(StackHandle... stacks) {
 		inventory.addItem(Arrays.stream(stacks).map(s -> ((StackHandlePaper)s).handle()).toArray(ItemStack[]::new));
+	}
+
+	@Override
+	public @NotNull StackHandle getItem(int index) {
+		ItemStack stack = inventory.getItem(index);
+		if (stack == null) {
+			return StackHandle.create(ItemType.AIR);
+		}
+		return new StackHandlePaper(stack);
+	}
+
+	@Override
+	public void removeItem(StackHandle stack) {
+		inventory.remove(((StackHandlePaper)stack).handle());
 	}
 
 	@Override

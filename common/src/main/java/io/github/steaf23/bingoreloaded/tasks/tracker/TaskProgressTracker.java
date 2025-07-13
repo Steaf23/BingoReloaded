@@ -181,7 +181,7 @@ public class TaskProgressTracker
 
         GameTask deathMatchTask = game.getDeathMatchTask();
         if (deathMatchTask != null) {
-            if (item.type().equals(deathMatchTask.material())) {
+            if (item.type().equals(deathMatchTask.icon())) {
                 deathMatchTask.complete(participant, game.getGameTime());
                 game.onDeathmatchTaskComplete(participant, deathMatchTask);
             }

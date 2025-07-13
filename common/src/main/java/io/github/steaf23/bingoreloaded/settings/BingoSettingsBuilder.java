@@ -4,8 +4,8 @@ import io.github.steaf23.bingoreloaded.cards.CardSize;
 import io.github.steaf23.bingoreloaded.data.BingoSettingsData;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gameloop.vote.VoteTicket;
-import io.github.steaf23.bingoreloaded.gui.inventory.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
+import io.github.steaf23.bingoreloaded.player.EffectOptionFlags;
 
 import java.util.EnumSet;
 import java.util.Objects;

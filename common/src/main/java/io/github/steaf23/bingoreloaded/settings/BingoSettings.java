@@ -2,8 +2,8 @@ package io.github.steaf23.bingoreloaded.settings;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.cards.CardSize;
-import io.github.steaf23.bingoreloaded.gui.inventory.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
+import io.github.steaf23.bingoreloaded.player.EffectOptionFlags;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.key.Keyed;
 import org.jetbrains.annotations.NotNull;
@@ -26,9 +26,9 @@ public record BingoSettings(String card,
 {
     public enum CountdownType implements Keyed
     {
-        DISABLED(Key.key(BingoReloaded.getInstance(), "countdown_type.disabled")), // No countdown timer is used at all, only the normal game timer is used for events.
-        DURATION(Key.key(BingoReloaded.getInstance(), "countdown_type.duration")), // Use the countdown timer and ignore score based goals.
-        TIME_LIMIT(Key.key(BingoReloaded.getInstance(), "countdown_type.time_limit")),
+        DISABLED(BingoReloaded.resourceKey("countdown_type.disabled")), // No countdown timer is used at all, only the normal game timer is used for events.
+        DURATION(BingoReloaded.resourceKey("countdown_type.duration")), // Use the countdown timer and ignore score based goals.
+        TIME_LIMIT(BingoReloaded.resourceKey("countdown_type.time_limit")),
         ; // Use the countdown timer, but if a score based goal got reached, end the game.
 
         private final Key key;

@@ -3,9 +3,7 @@ package io.github.steaf23.bingoreloaded.lib.item;
 import io.github.steaf23.bingoreloaded.lib.api.ItemType;
 import io.github.steaf23.bingoreloaded.lib.api.StackBuilder;
 import io.github.steaf23.bingoreloaded.lib.api.StackHandle;
-import io.github.steaf23.bingoreloaded.lib.data.core.DataStorage;
 import io.github.steaf23.bingoreloaded.lib.data.core.tag.TagDataStorage;
-import io.github.steaf23.bingoreloaded.lib.item.action.MenuAction;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -18,6 +16,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -57,8 +56,6 @@ public class ItemTemplate
     private ItemTemplate texturedVariant = null;
     private final Map<Key, ItemComponents.ItemComponent> components = new HashMap<>();
     private final Map<String, TagDataStorage> extraData = new HashMap<>();
-
-    private MenuAction action;
 
     public ItemTemplate(ItemType type) {
         this.type = type;
@@ -215,21 +212,22 @@ public class ItemTemplate
         return addItemComponent(new ItemComponents.DyedColor(color));
     }
 
-    /**
-     * Sets the menu action to perform when interacting with this item in a menu.
-     */
-    public ItemTemplate setAction(@Nullable MenuAction action) {
-        this.action = action;
-        if (action == null) {
-            return this;
-        }
-        action.setItem(this);
-        return this;
-    }
-
-    public MenuAction getAction() {
-        return this.action;
-    }
+    //FIXME: REFACTOR reimplement in paper
+//    /**
+//     * Sets the menu action to perform when interacting with this item in a menu.
+//     */
+//    public ItemTemplate setAction(@Nullable MenuAction action) {
+//        this.action = action;
+//        if (action == null) {
+//            return this;
+//        }
+//        action.setItem(this);
+//        return this;
+//    }
+//
+//    public MenuAction getAction() {
+//        return this.action;
+//    }
 
     /**
      * All added enchantments get added as unsafe enchantments to the built stack.
@@ -239,12 +237,20 @@ public class ItemTemplate
         return this;
     }
 
+    public Map<Key, Integer> getEnchantments() {
+        return enchantments;
+    }
+
     /**
      * Damages the item by byAmount. The resulting damage cannot go below 0.
      */
     public ItemTemplate setDamage(int byAmount) {
         currentDamage = Math.max(currentDamage - byAmount, 0);
         return this;
+    }
+
+    public int getDamage() {
+        return currentDamage;
     }
 
     /**
@@ -258,9 +264,17 @@ public class ItemTemplate
         return this;
     }
 
+    public @Nullable Integer getMaxDamage() {
+        return maxDamage;
+    }
+
     public ItemTemplate setMaxStackSize(int stackSize) {
         maxStackSize = Math.clamp(stackSize, 1, 64);
         return this;
+    }
+
+    public Integer getMaxStackSize() {
+        return maxStackSize;
     }
 
     public ItemTemplate resetMaxStackSize() {
@@ -281,12 +295,13 @@ public class ItemTemplate
         return this;
     }
 
-    public void useItem(MenuAction.ActionArguments arguments) {
-        if (action == null) {
-            return;
-        }
-        action.use(arguments);
-    }
+    //FIXME: REFACTOR reimplement in paper
+//    public void useItem(MenuAction.ActionArguments arguments) {
+//        if (action == null) {
+//            return;
+//        }
+//        action.use(arguments);
+//    }
 
     public boolean isEmpty() {
         return type.isAir();
@@ -307,7 +322,6 @@ public class ItemTemplate
         copy.amount = amount;
         copy.glowing = glowing;
         copy.compareKey = compareKey;
-        copy.action = action;
         copy.enchantments.putAll(enchantments);
         copy.components.putAll(components);
         copy.maxDamage = maxDamage;
@@ -352,18 +366,10 @@ public class ItemTemplate
      * @return Item built from this template.
      */
     public StackHandle buildItem() {
-        return buildItem(false);
+        return StackHandle.createFromTemplate(this, true);
     }
 
-    public StackHandle buildItem(boolean hideAttributes) {
-        return buildItem(hideAttributes, false);
-    }
-
-    private StackHandle buildItem(boolean hideAttributes, boolean textured) {
-        return StackBuilder.buildItem(this, hideAttributes, textured);
-    }
-
-    private List<Component> buildDescriptionList() {
+    public List<Component> buildDescriptionList() {
         // To create the description, sort the sections based on priority and place all lines under each other.
         List<Component> descriptionList = new ArrayList<>();
         description.values().stream().sorted(Comparator.comparingInt(a -> a.priority)).forEach(section -> {

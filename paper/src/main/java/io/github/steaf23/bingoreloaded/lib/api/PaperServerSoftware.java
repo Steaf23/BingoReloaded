@@ -1,5 +1,6 @@
 package io.github.steaf23.bingoreloaded.lib.api;
 
+import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import io.papermc.paper.registry.RegistryAccess;
 import io.papermc.paper.registry.RegistryKey;
 import net.kyori.adventure.key.Key;
@@ -65,12 +66,7 @@ public class PaperServerSoftware implements ServerSoftware {
 	}
 
 	@Override
-	public DimensionType resolveDimensionType(Key key) {
-		return
-		if (key.namespace().equals("minecraft")) {
-			return null;
-		}
-
+	public @Nullable DimensionType resolveDimensionType(Key key) {
 		if (key.value().equals("overworld")) {
 			return DimensionType.OVERWORLD;
 		} else if (key.value().equals("nether")) {
@@ -89,7 +85,7 @@ public class PaperServerSoftware implements ServerSoftware {
 
 	@Override
 	public ExtensionInfo getExtensionInfo() {
-		return new ExtensionInfo(plugin.getPluginMeta().getName(), plugin.getPluginMeta().getVersion());
+		return new ExtensionInfo(plugin.getPluginMeta().getName(), plugin.getPluginMeta().getVersion(), plugin.getPluginMeta().getAuthors());
 	}
 
 	@Override
@@ -134,6 +130,11 @@ public class PaperServerSoftware implements ServerSoftware {
 	@Override
 	public StackHandle createStackFromBytes(byte[] bytes) {
 		return new StackHandlePaper(ItemStack.deserializeBytes(bytes));
+	}
+
+	@Override
+	public StackHandle createStackFromTemplate(ItemTemplate template, boolean hideAttributes) {
+		return new StackBuilderPaper().buildItem(template, hideAttributes);
 	}
 
 	@Override

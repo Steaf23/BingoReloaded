@@ -2,6 +2,7 @@ package io.github.steaf23.bingoreloaded.lib.api;
 
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
+import org.bukkit.GameMode;
 import org.bukkit.advancement.AdvancementProgress;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -76,12 +77,7 @@ public class PlayerHandlePaper implements PlayerHandle {
 
 	@Override
 	public PlayerGamemode gamemode() {
-		return switch (player.getGameMode()) {
-			case SURVIVAL -> PlayerGamemode.SURVIVAL;
-			case CREATIVE -> PlayerGamemode.CREATIVE;
-			case SPECTATOR -> PlayerGamemode.SPECTATOR;
-			case ADVENTURE -> PlayerGamemode.ADVENTURE;
-		};
+		return toPlayerMode(player.getGameMode());
 	}
 
 	@Override
@@ -159,7 +155,25 @@ public class PlayerHandlePaper implements PlayerHandle {
 
 	@Override
 	public void setGamemode(PlayerGamemode gamemode) {
+		player.setGameMode(fromPlayerMode(gamemode));
+	}
 
+	public static GameMode fromPlayerMode(PlayerGamemode gamemode) {
+		return switch (gamemode) {
+			case SPECTATOR -> GameMode.SPECTATOR;
+			case CREATIVE -> GameMode.CREATIVE;
+			case SURVIVAL -> GameMode.SURVIVAL;
+			case ADVENTURE -> GameMode.ADVENTURE;
+		};
+	}
+
+	public static PlayerGamemode toPlayerMode(GameMode gameMode) {
+		return switch (gameMode) {
+			case SURVIVAL -> PlayerGamemode.SURVIVAL;
+			case CREATIVE -> PlayerGamemode.CREATIVE;
+			case SPECTATOR -> PlayerGamemode.SPECTATOR;
+			case ADVENTURE -> PlayerGamemode.ADVENTURE;
+		};
 	}
 
 	@Override
@@ -186,6 +200,16 @@ public class PlayerHandlePaper implements PlayerHandle {
 	public void removeAdvancementProgress(AdvancementHandle advancement) {
 		AdvancementProgress progress = player.getAdvancementProgress(((AdvancementHandlePaper)advancement).handle());
 		progress.getAwardedCriteria().forEach(progress::revokeCriteria);
+	}
+
+	@Override
+	public boolean hasCooldown(StackHandle stack) {
+		return player.hasCooldown(((StackHandlePaper)stack).handle());
+	}
+
+	@Override
+	public void setCooldown(StackHandle stack, int cooldownTicks) {
+		player.setCooldown(((StackHandlePaper)stack).handle(), cooldownTicks);
 	}
 
 	@Override

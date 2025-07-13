@@ -1,12 +1,13 @@
 package io.github.steaf23.bingoreloaded.data;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
+import io.github.steaf23.bingoreloaded.lib.api.ItemType;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataAccessor;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataStorage;
+import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import io.github.steaf23.bingoreloaded.tasks.data.TaskData;
 import io.github.steaf23.bingoreloaded.tasks.data.ItemTask;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
-import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -17,6 +18,8 @@ import java.util.Set;
 
 public class BingoCardData
 {
+    private static final ItemType DEFAULT_ITEM = ItemType.of("minecraft:dirt");
+
     public static final Set<String> DEFAULT_CARD_NAMES = Set.of(
             "default_card",
             "default_card_hardcore"
@@ -110,7 +113,7 @@ public class BingoCardData
         if (!allItemTasks.isEmpty())
             return (ItemTask)allItemTasks.get(Math.abs(generator.nextInt(allItemTasks.size())));
         else
-            return new ItemTask(Material.DIRT, 1);
+            return new ItemTask(DEFAULT_ITEM, 1);
     }
 
     public TaskData getRandomTask(String cardName, @NotNull Random generator, boolean withStatistics, boolean withAdvancements) {
@@ -119,7 +122,7 @@ public class BingoCardData
         if (!allTasks.isEmpty())
             return allTasks.get(Math.abs(generator.nextInt(allTasks.size())));
         else
-            return new ItemTask(Material.DIRT, 1);
+            return new ItemTask(DEFAULT_ITEM, 1);
     }
 
 

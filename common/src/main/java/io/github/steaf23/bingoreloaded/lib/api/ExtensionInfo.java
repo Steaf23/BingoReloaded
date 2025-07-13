@@ -1,5 +1,7 @@
 package io.github.steaf23.bingoreloaded.lib.api;
 
-public record ExtensionInfo(String name, String version) {
+import java.util.List;
+
+public record ExtensionInfo(String name, String version, List<String> authors) {
 
 }

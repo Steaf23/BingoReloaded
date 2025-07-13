@@ -4,7 +4,6 @@ import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.lib.api.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataAccessor;
 import io.github.steaf23.bingoreloaded.data.helper.SerializablePlayer;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -30,15 +29,15 @@ public class PlayerSerializationData
      * @return the players new state
      */
     public @Nullable SerializablePlayer loadPlayer(@NotNull PlayerHandle player) {
-        if (!data.contains(player.getUniqueId().toString())) {
+        if (!data.contains(player.uniqueId().toString())) {
             return null;
         }
 
-        SerializablePlayer playerData = data.getSerializable(player.getUniqueId().toString(), SerializablePlayer.class);
+        SerializablePlayer playerData = data.getSerializable(player.uniqueId().toString(), SerializablePlayer.class);
         if (playerData == null) {
             return null;
         }
-        data.erase(player.getUniqueId().toString());
+        data.erase(player.uniqueId().toString());
         data.saveChanges();
         playerData.apply(player);
         return playerData;

@@ -1,7 +1,6 @@
 package io.github.steaf23.bingoreloaded.tasks;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
-import io.github.steaf23.bingoreloaded.gui.inventory.item.TaskItemAction;
 import io.github.steaf23.bingoreloaded.lib.api.ItemType;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.lib.api.StackHandle;
@@ -106,7 +105,7 @@ public class GameTask
         }
         else // DEFAULT TASK
         {
-            item = new ItemTemplate(material(), data.getName(), data.getItemDescription());
+            item = new ItemTemplate(icon(), data.getName(), data.getItemDescription());
             item.setAmount(data.getRequiredAmount());
         }
 
@@ -121,7 +120,8 @@ public class GameTask
             item.setGlowing(true);
         }
 
-        item.setAction(new TaskItemAction(this));
+        //FIXME: REFACTOR add task action back to item
+//        item.setAction(new TaskItemAction(this));
         item.setMaxStackSize(64);
         return item;
     }
@@ -190,7 +190,7 @@ public class GameTask
         }
     }
 
-    public ItemType material() {
+    public ItemType icon() {
         return data.getDisplayMaterial(displayMode == TaskDisplayMode.GENERIC_TASK_ITEMS);
     }
 
