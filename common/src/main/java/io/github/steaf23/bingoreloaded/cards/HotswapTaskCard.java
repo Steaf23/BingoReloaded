@@ -1,5 +1,6 @@
 package io.github.steaf23.bingoreloaded.cards;
 
+import io.github.steaf23.bingoreloaded.api.HotswapCardMenu;
 import io.github.steaf23.bingoreloaded.cards.hotswap.ExpiringHotswapTask;
 import io.github.steaf23.bingoreloaded.cards.hotswap.HotswapTaskHolder;
 import io.github.steaf23.bingoreloaded.cards.hotswap.SimpleHotswapTask;
@@ -7,7 +8,6 @@ import io.github.steaf23.bingoreloaded.data.BingoCardData;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
-import io.github.steaf23.bingoreloaded.gui.inventory.card.HotswapCardMenu;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.tasks.GameTask;

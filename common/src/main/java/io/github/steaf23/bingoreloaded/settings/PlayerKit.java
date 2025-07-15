@@ -35,7 +35,7 @@ public enum PlayerKit
             ItemType.of("minecraft:warped_fungus_on_a_stick"),
             BingoMessage.WAND_ITEM_NAME.asPhrase().color(NamedTextColor.DARK_PURPLE).decorate(TextDecoration.BOLD, TextDecoration.ITALIC),
             BingoMessage.WAND_ITEM_DESC.asMultiline())
-            .addEnchantment(Enchantment.UNBREAKING, 3)
+//            .addEnchantment(Enchantment.UNBREAKING, 3)
             .setCompareKey("wand");
 
     public static final ItemTemplate CARD_ITEM_RENDERABLE = new ItemTemplate(
@@ -56,15 +56,15 @@ public enum PlayerKit
             ItemType.of("minecraft:emerald"),
             BingoMessage.VOTE_ITEM_NAME.asPhrase().color(NamedTextColor.DARK_PURPLE).decorate(TextDecoration.BOLD, TextDecoration.ITALIC),
             BingoMessage.VOTE_ITEM_DESC.asMultiline())
-            .setCompareKey("vote")
-            .addEnchantment(Enchantment.VANISHING_CURSE, 1);
+            .setCompareKey("vote");
+//            .addEnchantment(Enchantment.VANISHING_CURSE, 1);
 
     public static final ItemTemplate TEAM_ITEM = new ItemTemplate(
             ItemType.of("minecraft:white_glazed_terracotta"),
             BingoMessage.TEAM_ITEM_NAME.asPhrase().color(NamedTextColor.DARK_PURPLE).decorate(TextDecoration.BOLD, TextDecoration.ITALIC),
             BingoMessage.TEAM_ITEM_DESC.asMultiline())
-            .setCompareKey("team")
-            .addEnchantment(Enchantment.VANISHING_CURSE, 1);
+            .setCompareKey("team");
+//            .addEnchantment(Enchantment.VANISHING_CURSE, 1);
 
     public final String configName;
     private final Component displayName;

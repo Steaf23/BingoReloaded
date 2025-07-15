@@ -1,6 +1,5 @@
-package io.github.steaf23.bingoreloaded.gui.inventory.card;
+package io.github.steaf23.bingoreloaded.api;
 
-import io.github.steaf23.bingoreloaded.api.CardMenu;
 import io.github.steaf23.bingoreloaded.cards.hotswap.HotswapTaskHolder;
 
 import java.util.List;

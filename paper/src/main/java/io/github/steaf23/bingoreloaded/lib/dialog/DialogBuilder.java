@@ -1,8 +1,20 @@
 package io.github.steaf23.bingoreloaded.lib.dialog;
 
-import io.github.steaf23.bingoreloaded.lib.inventory.item.ItemTemplate;
+import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
+import io.papermc.paper.registry.data.dialog.ActionButton;
+import io.papermc.paper.registry.data.dialog.body.DialogBody;
+import io.papermc.paper.registry.data.dialog.body.ItemDialogBody;
+import io.papermc.paper.registry.data.dialog.body.PlainMessageDialogBody;
+import io.papermc.paper.registry.data.dialog.input.DialogInput;
+import io.papermc.paper.registry.data.dialog.type.ConfirmationType;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.dialog.ConfirmationDialog;
+import net.minecraft.server.dialog.DialogAction;
+import net.minecraft.server.dialog.DialogListDialog;
+import net.minecraft.server.dialog.MultiActionDialog;
+import net.minecraft.server.dialog.NoticeDialog;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -17,7 +29,7 @@ public class DialogBuilder {
 	private boolean pause = true;
 	private DialogAction afterAction = DialogAction.CLOSE;
 	private final List<DialogBody> body = new ArrayList<>();
-	private final List<Input> inputs = new ArrayList<>();
+	private final List<DialogInput> inputs = new ArrayList<>();
 
 	public DialogBuilder(@NotNull Component title) {
 		this.title = title;
@@ -47,7 +59,7 @@ public class DialogBuilder {
 		return new NoticeDialog(buildCommonData(), action);
 	}
 
-	public ConfirmationDialog buildConfirmation(ActionButton yes, ActionButton no) {
+	public ConfirmationType buildConfirmation(ActionButton yes, ActionButton no) {
 		return new ConfirmationDialog(buildCommonData(), yes, no);
 	}
 
@@ -309,18 +321,18 @@ public class DialogBuilder {
 			return this;
 		}
 
-		public Input build() {
-			return new Input(key, new NumberRangeInputControl(
+		public DialogInput build() {
+			return new Input(key, new NumberRangeInput(
 					width,
 					label,
 					labelFormatKey,
-					new NumberRangeInputControl.RangeInfo(rangeStart, rangeEnd, initial, step)));
+					new NumberRangeInput.RangeInfo(rangeStart, rangeEnd, initial, step)));
 		}
 	}
 
 	public static class ActionButtonBuilder {
 		private final @NotNull Component label;
-		private final @NotNull Action action;
+		private final @NotNull io.papermc.paper.registry.data.dialog.action.DialogAction action;
 
 		private @Nullable Component tooltip = null;
 		private int width = 150;

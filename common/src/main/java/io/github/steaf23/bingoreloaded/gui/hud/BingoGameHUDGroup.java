@@ -11,9 +11,11 @@ import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.player.team.SoloTeamManager;
 import io.github.steaf23.bingoreloaded.player.team.TeamManager;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
+import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -21,99 +23,109 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class BingoGameHUDGroup extends ValueListHUD
-{
-    // map of team IDs and their scores
-    private final Map<String, Integer> teamScores;
-    private final BingoSession session;
-    private final boolean showPlayerNames;
-    private final ScoreboardData.SidebarTemplate template;
+public class BingoGameHUDGroup extends ValueListHUD {
 
-    private static final Component PLAYER_PREFIX = ComponentUtils.MINI_BUILDER.deserialize("<gray><bold> ┗ </bold></gray><white>");
+	// map of team IDs and their scores
+	private final Map<String, Integer> teamScores;
+	private final BingoSession session;
+	private final boolean showPlayerNames;
+	private final ScoreboardData.SidebarTemplate template;
 
-    public BingoGameHUDGroup(BingoSession session, boolean showPlayerNames) {
+	private static final Component PLAYER_PREFIX = ComponentUtils.MINI_BUILDER.deserialize("<gray><bold> ┗ </bold></gray><white>");
 
-        this.session = session;
-        this.teamScores = new HashMap<>();
-        this.showPlayerNames = showPlayerNames;
-        this.template = new ScoreboardData().loadTemplate("game", registeredFields);
-    }
+	public BingoGameHUDGroup(BingoSession session, boolean showPlayerNames) {
 
-    public void updateWinScore(BingoSettings settings) {
-        String goal = "-";
+		this.session = session;
+		this.teamScores = new HashMap<>();
+		this.showPlayerNames = showPlayerNames;
+		this.template = new ScoreboardData().loadTemplate("game", registeredFields);
+	}
 
-        switch (settings.mode()) {
-            case HOTSWAP -> {
-                if (!settings.useScoreAsWinCondition()) {
-                    break;
-                }
+	public void updateWinScore(BingoSettings settings) {
+		String goal = "-";
 
-                goal = Integer.toString(settings.hotswapGoal());
-            }
-            case COMPLETE -> {
-                if (!settings.useScoreAsWinCondition()) {
-                    break;
-                }
+		switch (settings.mode()) {
+			case HOTSWAP -> {
+				if (!settings.useScoreAsWinCondition()) {
+					break;
+				}
 
-                goal = Integer.toString(settings.completeGoal());
-            }
-            case REGULAR -> goal = "-----";
-            case LOCKOUT -> goal = Integer.toString(settings.size().fullCardSize);
-        }
-        addField("win_goal", Component.text(goal));
-    }
+				goal = Integer.toString(settings.hotswapGoal());
+			}
+			case COMPLETE -> {
+				if (!settings.useScoreAsWinCondition()) {
+					break;
+				}
 
-    public void updateTeamScores() {
-        if (!session.isRunning())
-            return;
+				goal = Integer.toString(settings.completeGoal());
+			}
+			case REGULAR -> goal = "-----";
+			case LOCKOUT -> goal = Integer.toString(settings.size().fullCardSize);
+		}
+		addField("win_goal", Component.text(goal));
+	}
 
-        for (BingoTeam t : session.teamManager.getActiveTeams()) {
-            teamScores.put(t.getIdentifier(), t.getCompleteCount());
-        }
+	public void updateTeamScores() {
+		if (!session.isRunning())
+			return;
 
-        List<Component> teamInfo = new ArrayList<>();
+		for (BingoTeam t : session.teamManager.getActiveTeams()) {
+			teamScores.put(t.getIdentifier(), t.getCompleteCount());
+		}
 
-        TeamManager teamManager = session.teamManager;
+		List<Component> teamInfo = new ArrayList<>();
 
-        // try to save space on the sidebar
-        int spaceLeft = 15 - template.lines().length;
-        boolean condensedDisplay = !showPlayerNames
-                || teamManager.getTeamCount() + teamManager.getParticipantCount() > spaceLeft
-                || teamManager instanceof SoloTeamManager;
+		TeamManager teamManager = session.teamManager;
 
-        teamManager.getActiveTeams().getTeams().stream()
-                .sorted(Comparator.comparingInt(BingoTeam::getCompleteCount).reversed())
-                .forEach(team -> {
-                    Component teamScore;
-                    // In the case of the solo teams, we want to show the player names instead of the team prefix (since that is just an icon)
-                    if (teamManager instanceof SoloTeamManager) {
-                        teamScore = team.getColoredName();
-                    } else {
-                        teamScore = team.getPrefix();
-                    }
-                    teamScore = teamScore.append(Component.text(": ", NamedTextColor.WHITE)
-                            .append(Component.text(teamScores.get(team.getIdentifier())).decorate(TextDecoration.BOLD)));
+		// try to save space on the sidebar
+		int spaceLeft = 15 - template.lines().length;
+		boolean condensedDisplay = !showPlayerNames
+				|| teamManager.getTeamCount() + teamManager.getParticipantCount() > spaceLeft
+				|| teamManager instanceof SoloTeamManager;
 
-                    teamInfo.add(teamScore);
+		teamManager.getActiveTeams().getTeams().stream()
+				.sorted(Comparator.comparingInt(BingoTeam::getCompleteCount).reversed())
+				.forEach(team -> {
+					Component teamScore;
+					// In the case of the solo teams, we want to show the player names instead of the team prefix (since that is just an icon)
+					if (teamManager instanceof SoloTeamManager) {
+						teamScore = team.getColoredName();
+					} else {
+						teamScore = team.getPrefix();
+					}
+					teamScore = teamScore.append(Component.text(": ", NamedTextColor.WHITE)
+							.append(Component.text(teamScores.get(team.getIdentifier())).decorate(TextDecoration.BOLD)));
 
-                    if (!condensedDisplay) {
-                        for (BingoParticipant player : team.getMembers()) {
-                            teamInfo.add(PLAYER_PREFIX.append(player.getDisplayName()));
-                        }
-                    }
-                });
+					teamInfo.add(teamScore);
 
-        addField("team_info", teamInfo.toArray(Component[]::new));
-    }
+					if (!condensedDisplay) {
+						for (BingoParticipant player : team.getMembers()) {
+							teamInfo.add(PLAYER_PREFIX.append(player.getDisplayName()));
+						}
+					}
+				});
 
-    public void setup(BingoSettings settings) {
-        this.teamScores.clear();
-        updateTeamScores();
-        updateWinScore(settings);
-    }
+		addField("team_info", teamInfo.toArray(Component[]::new));
+	}
 
-    @Override
-    protected PlayerHUD createHUDForPlayer(PlayerHandle player) {
-        return new TemplatedPlayerHUD(player, "Team Score", template);
-    }
+	public void setup(BingoSettings settings) {
+		this.teamScores.clear();
+		updateTeamScores();
+		updateWinScore(settings);
+	}
+
+	@Override
+	public @NotNull Iterable<? extends Audience> audiences() {
+		return session.audiences();
+	}
+
+	@Override
+	public void forceUpdate() {
+
+	}
+
+//    @Override
+//    protected PlayerHUD createHUDForPlayer(PlayerHandle player) {
+//        return new TemplatedPlayerHUD(player, "Team Score", template);
+//    }
 }

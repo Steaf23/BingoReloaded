@@ -2,6 +2,7 @@ package io.github.steaf23.bingoreloaded.util;
 
 
 import io.github.steaf23.bingoreloaded.lib.api.ItemType;
+import org.bukkit.Material;
 
 public class ItemHelper {
 

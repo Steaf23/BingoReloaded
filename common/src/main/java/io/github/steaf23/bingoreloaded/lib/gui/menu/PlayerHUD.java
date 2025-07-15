@@ -1,5 +1,7 @@
 package io.github.steaf23.bingoreloaded.lib.gui.menu;
 
-public interface PlayerHUD {
+import net.kyori.adventure.audience.ForwardingAudience;
 
+public interface PlayerHUD extends ForwardingAudience {
+	void forceUpdate();
 }

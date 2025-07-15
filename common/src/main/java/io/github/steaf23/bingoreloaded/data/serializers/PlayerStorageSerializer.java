@@ -16,7 +16,7 @@ public class PlayerStorageSerializer implements DataStorageSerializer<Serializab
 {
     @Override
     public void toDataStorage(@NotNull DataStorage storage, @NotNull SerializablePlayer value) {
-        storage.setString("version", value.pluginVersion);
+        storage.setString("version", value.extensionVersion);
         storage.setUUID("uuid", value.playerId);
         storage.setWorldPosition("location", value.location);
         storage.setDouble("health", value.health);
@@ -32,7 +32,7 @@ public class PlayerStorageSerializer implements DataStorageSerializer<Serializab
     @Override
     public SerializablePlayer fromDataStorage(@NotNull DataStorage storage) {
         var player = new SerializablePlayer();
-        player.pluginVersion = storage.getString("version", "-");
+        player.extensionVersion = storage.getString("version", "-");
         player.playerId = storage.getUUID("uuid");
         player.location = storage.getWorldPosition("location", new WorldPosition(null, 0.0, 0.0, 0.0));
         player.health = storage.getDouble("health", 20.0);

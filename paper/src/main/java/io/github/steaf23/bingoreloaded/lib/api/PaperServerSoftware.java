@@ -5,10 +5,13 @@ import io.papermc.paper.registry.RegistryAccess;
 import io.papermc.paper.registry.RegistryKey;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
+import net.minecraft.core.registries.Registries;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
+import org.bukkit.advancement.Advancement;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -84,6 +87,11 @@ public class PaperServerSoftware implements ServerSoftware {
 	}
 
 	@Override
+	public AdvancementHandle resolveAdvancement(Key key) {
+		return new AdvancementHandlePaper(Bukkit.getAdvancement(new NamespacedKey(key.namespace(), key.value())));
+	}
+
+	@Override
 	public ExtensionInfo getExtensionInfo() {
 		return new ExtensionInfo(plugin.getPluginMeta().getName(), plugin.getPluginMeta().getVersion(), plugin.getPluginMeta().getAuthors());
 	}
@@ -140,6 +148,10 @@ public class PaperServerSoftware implements ServerSoftware {
 	@Override
 	public byte[] createBytesFromStack(StackHandle stack) {
 		return ((StackHandlePaper)stack).handle().serializeAsBytes();
+	}
+
+	@Override
+	public StatisticHandle createStatistic(StatisticType type, @Nullable ItemType item, @Nullable EntityType entity) {
 	}
 
 	@Override

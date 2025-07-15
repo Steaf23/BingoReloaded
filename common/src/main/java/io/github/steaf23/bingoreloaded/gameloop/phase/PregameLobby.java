@@ -42,7 +42,8 @@ public class PregameLobby implements GamePhase
 
     public PregameLobby(BingoSession session, BingoConfigurationData config) {
         this.session = session;
-        this.votes = new HashMap<>();
+		this.settingsHUD = new BingoSettingsHUDGroup(session);
+		this.votes = new HashMap<>();
         this.config = config;
         this.playerCountTimer = new CountdownTimer(config.getOptionValue(BingoOptions.PLAYER_WAIT_TIME), this::onCountdownTimerFinished);
         //FIXME: REFACTOR add back settings hud
@@ -125,7 +126,7 @@ public class PregameLobby implements GamePhase
     }
 
     private void initializePlayer(PlayerHandle player) {
-        settingsHUD.addPlayer(player);
+        settingsHUD.forceUpdate();
         player.clearInventory();
 
         if (config.getOptionValue(BingoOptions.USE_VOTE_SYSTEM) &&
@@ -222,7 +223,8 @@ public class PregameLobby implements GamePhase
     @Override
     public void end() {
         playerCountTimer.stop();
-        settingsHUD.removeAllPlayers();
+        //FIXME: REFACTOR handle this?
+//        settingsHUD.removeAllPlayers();
     }
 
     @Override
@@ -232,7 +234,8 @@ public class PregameLobby implements GamePhase
 
     @Override
     public void handlePlayerLeftSessionWorld(BingoEvents.PlayerSessionEvent event) {
-        settingsHUD.removePlayer(event.player());
+        //FIXME: REFACTOR remove players from scoreboard when they leave (dont leave them hanging with outdated scoreboards...
+//        settingsHUD.removePlayer(event.player());
         session.teamManager.removeMemberFromTeam(session.teamManager.getPlayerAsParticipant(event.player()));
     }
 
@@ -266,9 +269,6 @@ public class PregameLobby implements GamePhase
 
     @Override
     public void handleParticipantJoinedTeam(final BingoEvents.TeamParticipantEvent event) {
-        if (event.participant() != null) {
-            event.participant().sessionPlayer().ifPresent(settingsHUD::addPlayer);
-        }
         settingsHUD.setStatus(BingoMessage.PLAYER_STATUS.asPhrase(Component.text(session.teamManager.getParticipantCount())));
 
         if (playerCountTimer.isRunning() && playerCountTimer.getTime() > 10) {

@@ -10,7 +10,6 @@ import java.util.Map;
 public abstract class ValueListHUD implements PlayerHUD {
 
 	protected final Map<String, Component[]> registeredFields = new HashMap<>();
-	private final List<PlayerHUD> huds = new ArrayList<>();
 
 	public void addField(String key, Component... text) {
 		registeredFields.put(key, text);

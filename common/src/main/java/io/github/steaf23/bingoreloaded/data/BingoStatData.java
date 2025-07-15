@@ -2,8 +2,9 @@ package io.github.steaf23.bingoreloaded.data;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.lib.api.PlayerHandle;
+import io.github.steaf23.bingoreloaded.lib.api.PlayerInfo;
+import io.github.steaf23.bingoreloaded.lib.api.ServerSoftware;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataAccessor;
-import io.github.steaf23.bingoreloaded.hologram.HologramBuilder;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -14,106 +15,99 @@ import java.util.Arrays;
 import java.util.UUID;
 
 
-public class BingoStatData
-{
-    private final DataAccessor data = BingoReloaded.getDataAccessor("data/player_stats");
+public class BingoStatData {
 
-    public BingoStatData()
-    {
-    }
+	private final ServerSoftware server;
+	private final DataAccessor data = BingoReloaded.getDataAccessor("data/player_stats");
 
-    public int getPlayerStat(UUID playerId, BingoStatType statType)
-    {
-        if (statType == BingoStatType.PLAYED)
-            return getPlayerStat(playerId, BingoStatType.WINS) + getPlayerStat(playerId, BingoStatType.LOSSES);
+	public BingoStatData(ServerSoftware server) {
+		this.server = server;
+	}
 
-        if (statType.idx < 0)
-            return 0;
+	public int getPlayerStat(UUID playerId, BingoStatType statType) {
+		if (statType == BingoStatType.PLAYED)
+			return getPlayerStat(playerId, BingoStatType.WINS) + getPlayerStat(playerId, BingoStatType.LOSSES);
 
-        String statsString = getPlayerData(playerId);
-        String[] stats = statsString.split(";");
-        return Integer.parseInt(stats[statType.idx]);
-    }
+		if (statType.idx < 0)
+			return 0;
 
-    public void incrementPlayerStat(PlayerHandle player, BingoStatType statType)
-    {
-        incrementPlayerStat(player.uniqueId(), statType, 1);
-    }
+		String statsString = getPlayerData(playerId);
+		String[] stats = statsString.split(";");
+		return Integer.parseInt(stats[statType.idx]);
+	}
 
-    public void incrementPlayerStat(UUID playerId, BingoStatType statType, int by)
-    {
-       setPlayerStat(playerId, statType, getPlayerStat(playerId, statType) + by);
-    }
+	public void incrementPlayerStat(PlayerHandle player, BingoStatType statType) {
+		incrementPlayerStat(player.uniqueId(), statType, 1);
+	}
 
-    public void setPlayerStat(UUID playerId, BingoStatType statType, int value) {
-        if (statType.idx < 0)
-            return;
+	public void incrementPlayerStat(UUID playerId, BingoStatType statType, int by) {
+		setPlayerStat(playerId, statType, getPlayerStat(playerId, statType) + by);
+	}
 
-        String statsString = getPlayerData(playerId);
-        String[] stats = statsString.split(";");
-        String newStat = Integer.toString(value);
-        stats[statType.idx] = newStat;
+	public void setPlayerStat(UUID playerId, BingoStatType statType, int value) {
+		if (statType.idx < 0)
+			return;
 
-        setPlayerData(playerId, String.join(";", stats));
-    }
+		String statsString = getPlayerData(playerId);
+		String[] stats = statsString.split(";");
+		String newStat = Integer.toString(value);
+		stats[statType.idx] = newStat;
 
-    /**
-     * @param firstEntry index of first entry to show on the scoreboard
-     * @param entriesPerPage how many entries to show including the first entry
-     * @param sortedBy stat to sort the entries by
-     */
-    public HologramBuilder asHologram(int firstEntry, int entriesPerPage, @Nullable BingoStatType sortedBy)
-    {
-        //TODO: implement
-        return new HologramBuilder(null);
-    }
+		setPlayerData(playerId, String.join(";", stats));
+	}
 
-    public Component getPlayerStatsFormatted(UUID playerId)
-    {
-        String stats = getPlayerData(playerId);
-        String[] statList = stats.split(";");
+	//TODO: Implement
+//    /**
+//     * @param firstEntry index of first entry to show on the scoreboard
+//     * @param entriesPerPage how many entries to show including the first entry
+//     * @param sortedBy stat to sort the entries by
+//     */
+//    public HologramBuilder asHologram(int firstEntry, int entriesPerPage, @Nullable BingoStatType sortedBy)
+//    {
+//        return new HologramBuilder(null);
+//    }
 
-        String playerName = Bukkit.getOfflinePlayer(playerId).getName();
-        if (playerName == null) {
-            return Component.text("Statistics for invalid id " + playerId + " unavailable.");
-        }
+	public Component getPlayerStatsFormatted(UUID playerId) {
+		String stats = getPlayerData(playerId);
+		String[] statList = stats.split(";");
 
-        Component[] text = BingoMessage.configStringAsMultiline("{0}'s statistics: Wins: {1}, Losses: {2}, Games finished: {3}, Tasks completed: {4}, Tasks Completed Record: {5}, Wand uses: {6}", NamedTextColor.GREEN,
-                Component.text(playerName, NamedTextColor.YELLOW, TextDecoration.BOLD),
-                Component.text(statList[0], NamedTextColor.WHITE, TextDecoration.BOLD),
-                Component.text(statList[1], NamedTextColor.WHITE, TextDecoration.BOLD),
-                Component.text(Integer.parseInt(statList[0]) + Integer.parseInt(statList[1]), NamedTextColor.WHITE, TextDecoration.BOLD),
-                Component.text(statList[2], NamedTextColor.WHITE, TextDecoration.BOLD),
-                Component.text(statList[3], NamedTextColor.WHITE, TextDecoration.BOLD),
-                Component.text(statList[4], NamedTextColor.WHITE, TextDecoration.BOLD));
+		String playerName = server.getPlayerInfo(playerId).playerName();
+		if (playerName == null) {
+			return Component.text("Statistics for invalid id " + playerId + " unavailable.");
+		}
 
-        return Arrays.stream(text).reduce(Component::append).get();
-    }
+		Component[] text = BingoMessage.configStringAsMultiline("{0}'s statistics: Wins: {1}, Losses: {2}, Games finished: {3}, Tasks completed: {4}, Tasks Completed Record: {5}, Wand uses: {6}", NamedTextColor.GREEN,
+				Component.text(playerName, NamedTextColor.YELLOW, TextDecoration.BOLD),
+				Component.text(statList[0], NamedTextColor.WHITE, TextDecoration.BOLD),
+				Component.text(statList[1], NamedTextColor.WHITE, TextDecoration.BOLD),
+				Component.text(Integer.parseInt(statList[0]) + Integer.parseInt(statList[1]), NamedTextColor.WHITE, TextDecoration.BOLD),
+				Component.text(statList[2], NamedTextColor.WHITE, TextDecoration.BOLD),
+				Component.text(statList[3], NamedTextColor.WHITE, TextDecoration.BOLD),
+				Component.text(statList[4], NamedTextColor.WHITE, TextDecoration.BOLD));
 
-    /**
-     * While it's possible to get the player's statistics from the name,
-     * using the UUID directly is less expensive and should be preferred
-     */
-    public Component getPlayerStatsFormatted(String playerName)
-    {
-        UUID playerId = getPlayerUUID(playerName);
-        return getPlayerStatsFormatted(playerId);
-    }
+		return Arrays.stream(text).reduce(Component::append).get();
+	}
 
-    private String getPlayerData(UUID playerId)
-    {
-        return data.getString(playerId.toString(), "0;0;0;0;0");
-    }
+	/**
+	 * While it's possible to get the player's statistics from the name,
+	 * using the UUID directly is less expensive and should be preferred
+	 */
+	public Component getPlayerStatsFormatted(String playerName) {
+		UUID playerId = getPlayerUUID(playerName);
+		return getPlayerStatsFormatted(playerId);
+	}
 
-    private @NotNull UUID getPlayerUUID(String playerName)
-    {
-        OfflinePlayer player = Bukkit.getOfflinePlayer(playerName);
-        return player.uniqueId();
-    }
+	private String getPlayerData(UUID playerId) {
+		return data.getString(playerId.toString(), "0;0;0;0;0");
+	}
 
-    private void setPlayerData(UUID playerId, String statData)
-    {
-        data.setString(playerId.toString(), statData);
-        data.saveChanges();
-    }
+	private @NotNull UUID getPlayerUUID(String playerName) {
+		PlayerInfo player = server.getPlayerInfo(playerName);
+		return player.uniqueId();
+	}
+
+	private void setPlayerData(UUID playerId, String statData) {
+		data.setString(playerId.toString(), statData);
+		data.saveChanges();
+	}
 }

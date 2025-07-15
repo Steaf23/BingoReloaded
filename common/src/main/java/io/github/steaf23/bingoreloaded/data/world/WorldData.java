@@ -11,6 +11,7 @@ import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.apache.commons.io.FileUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -66,7 +67,7 @@ public class WorldData
         }
         WorldHandle nether = createWorld( worldName + "_nether", DimensionType.NETHER);
         WorldHandle end = createWorld( worldName + "_the_end", DimensionType.THE_END);
-        return new WorldGroup(worldName, overworld.uniqueId(), nether.uniqueId(), end.uniqueId());
+        return new WorldGroup(platform, worldName, overworld.uniqueId(), nether.uniqueId(), end.uniqueId());
     }
 
     public @Nullable WorldGroup getWorldGroup(String worldName) {
@@ -84,7 +85,7 @@ public class WorldData
             ConsoleMessenger.error("Could not fetch world group; " + worldName + "_the_end does not exist. Make sure the world exists and reload the plugin.");
             return null;
         }
-        return new WorldGroup(worldName, overworld.uniqueId(), nether.uniqueId(), theEnd.uniqueId());
+        return new WorldGroup(platform, worldName, overworld.uniqueId(), nether.uniqueId(), theEnd.uniqueId());
     }
 
     /**

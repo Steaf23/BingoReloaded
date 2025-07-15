@@ -28,10 +28,14 @@ public interface ServerSoftware {
 	Collection<? extends PlayerHandle> getOnlinePlayers();
 	@Nullable PlayerHandle getPlayerFromUniqueId(UUID id);
 	@Nullable PlayerHandle getPlayerFromName(String name);
+	@NotNull PlayerInfo getPlayerInfo(UUID playerId);
+	@NotNull PlayerInfo getPlayerInfo(String playerName);
 
 	ItemType resolveItemType(Key key);
 	DimensionType resolveDimensionType(Key key);
 	EntityType resolveEntityType(Key key);
+	AdvancementHandle resolveAdvancement(Key key);
+	StatisticType resolveStatisticType(Key key);
 
 	@Subst("")
 	ExtensionInfo getExtensionInfo();
@@ -48,6 +52,8 @@ public interface ServerSoftware {
 	StackHandle createStackFromBytes(byte[] bytes);
 	StackHandle createStackFromTemplate(ItemTemplate template, boolean hideAttributes);
 	byte[] createBytesFromStack(StackHandle stack);
+
+	StatisticHandle createStatistic(StatisticType type, @Nullable ItemType item, @Nullable EntityType entity);
 
 	boolean areAdvancementsDisabled();
 

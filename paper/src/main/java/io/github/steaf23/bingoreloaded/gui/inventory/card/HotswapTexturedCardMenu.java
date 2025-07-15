@@ -2,19 +2,19 @@ package io.github.steaf23.bingoreloaded.gui.inventory.card;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.api.CardMenu;
+import io.github.steaf23.bingoreloaded.api.HotswapCardMenu;
 import io.github.steaf23.bingoreloaded.cards.CardSize;
 import io.github.steaf23.bingoreloaded.cards.hotswap.HotswapTaskHolder;
 import io.github.steaf23.bingoreloaded.data.TexturedMenuData;
 import io.github.steaf23.bingoreloaded.gui.inventory.core.TexturedTitleBuilder;
+import io.github.steaf23.bingoreloaded.lib.api.ItemType;
+import io.github.steaf23.bingoreloaded.lib.api.MenuBoard;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
 import io.github.steaf23.bingoreloaded.tasks.GameTask;
-import io.github.steaf23.bingoreloaded.lib.inventory.MenuBoard;
-import io.github.steaf23.bingoreloaded.lib.inventory.item.ItemTemplate;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
@@ -105,7 +105,7 @@ public class HotswapTexturedCardMenu extends TexturedCardMenu implements Hotswap
     public @NotNull ItemTemplate getItemFromTask(int taskIndex) {
         ItemTemplate item = taskHolders.get(taskIndex).convertToItem();
         if (tasks.get(taskIndex).isCompleted()) {
-            item.setMaterial(Material.POISONOUS_POTATO);
+            item.setItemType(ItemType.of("minecraft:poisonous_potato"));
             item.setCustomModelData(1012);
             item.setGlowing(false);
         }

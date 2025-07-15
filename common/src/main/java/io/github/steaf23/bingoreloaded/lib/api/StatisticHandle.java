@@ -42,7 +42,7 @@ public interface StatisticHandle {
 	ItemType icon();
 
 	static StatisticHandle create(StatisticType type, @Nullable ItemType item, @Nullable EntityType entity) {
-
+		return PlatformResolver.get().createStatistic(type, item, entity);
 	}
 
 	private static Set<EntityType> getValidEntityTypes() {

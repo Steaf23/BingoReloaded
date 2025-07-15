@@ -2,6 +2,7 @@ package io.github.steaf23.bingoreloaded.gameloop;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.api.BingoEvents;
+import io.github.steaf23.bingoreloaded.gui.hud.DisabledBingoGameHUDGroup;
 import io.github.steaf23.bingoreloaded.lib.api.DimensionType;
 import io.github.steaf23.bingoreloaded.lib.api.ItemType;
 import io.github.steaf23.bingoreloaded.lib.api.MenuBoard;
@@ -67,12 +68,12 @@ public class BingoSession implements ForwardingAudience
         this.worlds = worlds;
         this.config = config;
         //FIXME: REFACTOR add back scoreboard somehow
-//        boolean showPlayerInScoreboard = config.getOptionValue(BingoOptions.SHOW_PLAYER_IN_SCOREBOARD);
-//        if (config.getOptionValue(BingoOptions.DISABLE_SCOREBOARD_SIDEBAR)) {
-//            this.scoreboard = new DisabledBingoGameHUDGroup(this, showPlayerInScoreboard);
-//        } else {
-//            this.scoreboard = new BingoGameHUDGroup( this, showPlayerInScoreboard);
-//        }
+        boolean showPlayerInScoreboard = config.getOptionValue(BingoOptions.SHOW_PLAYER_IN_SCOREBOARD);
+        if (config.getOptionValue(BingoOptions.DISABLE_SCOREBOARD_SIDEBAR)) {
+            this.scoreboard = new DisabledBingoGameHUDGroup(this, showPlayerInScoreboard);
+        } else {
+            this.scoreboard = new BingoGameHUDGroup( this, showPlayerInScoreboard);
+        }
         this.settingsBuilder = new BingoSettingsBuilder(this);
         if (config.getOptionValue(BingoOptions.SINGLE_PLAYER_TEAMS)) {
             this.teamManager = new SoloTeamManager(this);
@@ -217,7 +218,7 @@ public class BingoSession implements ForwardingAudience
             phase.handlePlayerJoinedSessionWorld(event);
 
             if (isRunning()) {
-                scoreboard.addPlayer(event.player());
+                scoreboard.forceUpdate();
             }
             teamDisplay.update();
         });
@@ -241,7 +242,7 @@ public class BingoSession implements ForwardingAudience
                 BingoMessage.LEAVE.sendToAudience(player);
             }
 
-            scoreboard.removePlayer(player);
+            scoreboard.forceUpdate();
             teamDisplay.update();
 
             if (!config.getOptionValue(BingoOptions.END_GAME_WITHOUT_TEAMS)) {
@@ -316,10 +317,6 @@ public class BingoSession implements ForwardingAudience
             return EventResult.CANCEL;
         }
         return EventResult.PASS;
-    }
-
-    public MenuBoard getMenuBoard() {
-        return menuBoard;
     }
 
     public WorldHandle getOverworld() {

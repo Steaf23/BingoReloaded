@@ -5,13 +5,13 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
+import io.github.steaf23.bingoreloaded.lib.api.ServerSoftware;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataAccessor;
 import io.github.steaf23.bingoreloaded.lib.data.core.tag.Tag;
 import io.github.steaf23.bingoreloaded.lib.data.core.tag.TagDataType;
 import io.github.steaf23.bingoreloaded.lib.data.core.tag.TagList;
 import io.github.steaf23.bingoreloaded.lib.data.core.tag.TagTree;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -25,12 +25,12 @@ import java.util.Map;
  */
 public class JsonDataAccessor extends JsonDataStorage implements DataAccessor
 {
-    private final JavaPlugin plugin;
+    private final ServerSoftware server;
     private final String filepath;
     private final boolean readOnly;
 
-    public JsonDataAccessor(JavaPlugin plugin, String filepath, boolean readOnly) {
-        this.plugin = plugin;
+    public JsonDataAccessor(ServerSoftware server, String filepath, boolean readOnly) {
+        this.server = server;
         this.filepath = filepath;
         this.readOnly = readOnly;
     }
@@ -48,16 +48,16 @@ public class JsonDataAccessor extends JsonDataStorage implements DataAccessor
     @Override
     public void load() {
         if (isInternalReadOnly()) {
-            InputStream stream = plugin.getResource(getLocation() + getFileExtension());
+            InputStream stream = server.getResource(getLocation() + getFileExtension());
             if (stream != null) {
                 readJsonFromFile(this, stream);
             }
             return;
         }
 
-        File file = new File(plugin.getDataFolder(), getLocation() + getFileExtension());
+        File file = new File(server.getDataFolder(), getLocation() + getFileExtension());
         if (!file.exists()) {
-            plugin.saveResource(getLocation() + getFileExtension(), false);
+            server.saveResource(getLocation() + getFileExtension(), false);
         }
 
         try (InputStream input = new FileInputStream(file)) {

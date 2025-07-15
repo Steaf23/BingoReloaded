@@ -111,7 +111,6 @@ public class BingoGame implements GamePhase
             actionBarManager.requestMessage(p -> timerMessage, 0);
             actionBarManager.update();
             getProgressTracker().updateStatisticProgress();
-            scoreboard.updateVisible();
         });
 
         deathMatchTask = null;
@@ -127,7 +126,7 @@ public class BingoGame implements GamePhase
 
         GameTask.TaskDisplayMode advancementDisplayMode = config.getOptionValue(BingoOptions.SHOW_UNIQUE_ADVANCEMENT_ITEMS) ? GameTask.TaskDisplayMode.UNIQUE_TASK_ITEMS : GameTask.TaskDisplayMode.GENERIC_TASK_ITEMS;
         GameTask.TaskDisplayMode statisticDisplayMode = config.getOptionValue(BingoOptions.SHOW_UNIQUE_STATISTIC_ITEMS) ? GameTask.TaskDisplayMode.UNIQUE_TASK_ITEMS : GameTask.TaskDisplayMode.GENERIC_TASK_ITEMS;
-        Set<TaskCard> uniqueCards = CardFactory.generateCardsForGame(this, session.getMenuBoard(),
+        Set<TaskCard> uniqueCards = CardFactory.generateCardsForGame(this,
                 useAdvancements, !config.getOptionValue(BingoOptions.DISABLE_STATISTICS),
                 advancementDisplayMode, statisticDisplayMode);
 
@@ -175,7 +174,6 @@ public class BingoGame implements GamePhase
                 returnCardToPlayer(settings.kit().getCardSlot(), p, null);
                 player.setLevel(0);
                 player.setExp(0.0f);
-                scoreboard.addPlayer(player);
             } else if (!p.alwaysActive()) {
                 // If the player is not online, we can remove them from the game, as they probably did not intend on playing in this session
                 session.removeParticipant(p);
@@ -606,7 +604,7 @@ public class BingoGame implements GamePhase
             return EventResults.playerRespawnResult(false, false, null);
 
         if (!settings.effects().contains(EffectOptionFlags.KEEP_INVENTORY)) {
-            returnCardToPlayer(settings.kit().getCardSlot(), bingoPlayer, renderers.get(bingoPlayer.getTeam()));
+            returnCardToPlayer(settings.kit().getCardSlot(), bingoPlayer, null);
             bingoPlayer.giveKit(settings.kit());
         } else {
             bingoPlayer.giveEffects(settings.effects(), 0);

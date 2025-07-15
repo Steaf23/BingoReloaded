@@ -3,11 +3,12 @@ package io.github.steaf23.bingoreloaded.gui.hud;
 import io.github.steaf23.bingoreloaded.data.ScoreboardData;
 import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.data.config.BingoOptions;
-import io.github.steaf23.bingoreloaded.lib.gui.menu.PlayerHUD;
+import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.lib.gui.menu.ValueListHUD;
 import io.github.steaf23.bingoreloaded.player.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
+import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.jetbrains.annotations.NotNull;
@@ -18,17 +19,19 @@ import org.jetbrains.annotations.NotNull;
 public class BingoSettingsHUDGroup extends ValueListHUD
 {
     private final ScoreboardData.SidebarTemplate settingsBoardTemplate;
+    private final BingoSession session;
 
-    public BingoSettingsHUDGroup() {
+    public BingoSettingsHUDGroup(BingoSession session) {
         this.settingsBoardTemplate = new ScoreboardData().loadTemplate("lobby", registeredFields);
+        this.session = session;
 
         setStatus(Component.empty());
     }
 
-    @Override
-    protected PlayerHUD createHUDForPlayer(Player player) {
-        return new TemplatedPlayerHUD(player, "Bingo Settings", settingsBoardTemplate);
-    }
+//    @Override
+//    protected PlayerHUD createHUDForPlayer(Player player) {
+//        return new TemplatedPlayerHUD(player, "Bingo Settings", settingsBoardTemplate);
+//    }
 
     public void setStatus(@NotNull Component status) {
         addField("status", status.color(NamedTextColor.RED));
@@ -47,4 +50,13 @@ public class BingoSettingsHUDGroup extends ValueListHUD
         addField("separate_cards", settings.differentCardPerTeam() ? Component.text("✔").color(NamedTextColor.GREEN) : Component.text("✕").color(NamedTextColor.RED));
     }
 
+    @Override
+    public void forceUpdate() {
+
+    }
+
+    @Override
+    public @NotNull Iterable<? extends Audience> audiences() {
+        return session.audiences();
+    }
 }

@@ -11,11 +11,6 @@ import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gameloop.GameManager;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.gameloop.phase.PregameLobby;
-import io.github.steaf23.bingoreloaded.gui.inventory.TeamCardSelectMenu;
-import io.github.steaf23.bingoreloaded.gui.inventory.TeamEditorMenu;
-import io.github.steaf23.bingoreloaded.gui.inventory.TeamSelectionMenu;
-import io.github.steaf23.bingoreloaded.gui.inventory.VoteMenu;
-import io.github.steaf23.bingoreloaded.gui.inventory.creator.BingoCreatorMenu;
 import io.github.steaf23.bingoreloaded.lib.api.ActionUser;
 import io.github.steaf23.bingoreloaded.lib.api.MenuBoard;
 import io.github.steaf23.bingoreloaded.lib.api.PlatformResolver;
@@ -41,7 +36,6 @@ public class BingoAction extends ActionTree {
 
 	private final BingoConfigurationData config;
 	private final GameManager gameManager;
-	private final MenuBoard menuBoard;
 	private final BingoReloaded bingo;
 
 	public BingoAction(BingoReloaded bingo, BingoConfigurationData config, GameManager gameManager, MenuBoard menuBoard) {
@@ -49,7 +43,6 @@ public class BingoAction extends ActionTree {
 		this.config = config;
 		this.bingo = bingo;
 		this.gameManager = gameManager;
-		this.menuBoard = menuBoard;
 
 		setAction((action) -> {
 			// FIXME: open bingo settings menu...
@@ -72,16 +65,23 @@ public class BingoAction extends ActionTree {
 				BingoPlayerSender.sendMessage(Component.text("Voting is disabled!").color(NamedTextColor.RED), getLastUser());
 				return false;
 			}
-			VoteMenu menu = new VoteMenu(menuBoard, config.getOptionValue(BingoOptions.VOTE_LIST), lobby);
-			menu.open(getLastUser());
+
+			if (!(getLastUser() instanceof PlayerHandle player)) {
+				return false;
+			}
+
+			BingoReloaded.runtime().openVoteMenu(player, lobby);
 
 			return true;
 		});
 
 
 		this.addSessionSubAction("join", List.of(), (args, session) -> {
-			TeamSelectionMenu menu = new TeamSelectionMenu(menuBoard, session);
-			menu.open(player);
+			if (!(getLastUser() instanceof PlayerHandle player)) {
+				return false;
+			}
+
+			BingoReloaded.runtime().openTeamSelector(player, session);
 			return true;
 		});
 
@@ -208,7 +208,11 @@ public class BingoAction extends ActionTree {
 		});
 
 		this.addSessionSubAction("creator", List.of("bingo.admin"), (args, session) -> {
-			new BingoCreatorMenu(menuBoard).open(getLastUser());
+			if (!(getLastUser() instanceof PlayerHandle player)) {
+				return false;
+			}
+
+			BingoReloaded.runtime().openBingoCreator(player);
 			return true;
 		});
 
@@ -220,7 +224,7 @@ public class BingoAction extends ActionTree {
 				BingoPlayerSender.sendMessage(text, getLastUser());
 				return true;
 			}
-			BingoStatData statsData = new BingoStatData();
+			BingoStatData statsData = new BingoStatData(gameManager.getPlatform());
 			Component msg;
 			if (args.length > 1 && getLastUser().hasPermission("bingo.admin")) {
 				msg = statsData.getPlayerStatsFormatted(args[1]);
@@ -271,7 +275,11 @@ public class BingoAction extends ActionTree {
 
 
 		this.addSessionSubAction("teamedit", List.of("bingo.admin"), (args, session) -> {
-			new TeamEditorMenu(menuBoard).open(getLastUser());
+			if (!(getLastUser() instanceof PlayerHandle player)) {
+				return false;
+			}
+
+			BingoReloaded.runtime().openTeamEditor(player);
 			return true;
 		});
 
@@ -380,7 +388,11 @@ public class BingoAction extends ActionTree {
 			return;
 		}
 
-		new TeamCardSelectMenu(menuBoard, session).open(user);
+		if (!(getLastUser() instanceof PlayerHandle player)) {
+			return;
+		}
+
+		BingoReloaded.runtime().openTeamCardSelect(player, session);
 	}
 
 	/**

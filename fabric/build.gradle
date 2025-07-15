@@ -10,6 +10,9 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:0.15.7"
     modImplementation "net.fabricmc.fabric-api:fabric-api:0.128.1+1.21.7"
 
+    implementation("commons-io:commons-io:2.19.0")
+    implementation("com.google.code.gson:gson:2.13.1")
+
     implementation("net.kyori:adventure-api:$adventure_version")
 }
 

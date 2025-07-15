@@ -114,7 +114,8 @@ public class BingoReloaded implements Namespaced {
 		String language = config.getOptionValue(BingoOptions.LANGUAGE).replace(".yml", "");
 		setLanguage(language);
 
-		BasicMenu.pluginTitlePrefix = BingoMessage.MENU_PREFIX.asPhrase();
+		//FIXME: REFACTOR
+//		BasicMenu.pluginTitlePrefix = BingoMessage.MENU_PREFIX.asPhrase();
 
 		this.textureData = new TexturedMenuData();
 
@@ -128,7 +129,7 @@ public class BingoReloaded implements Namespaced {
 			gameManager.onPluginDisable();
 		}
 
-		PlayerDisplay.disable();
+//		PlayerDisplay.disable();
 	}
 
 	public BingoConfigurationData config() {
@@ -138,7 +139,7 @@ public class BingoReloaded implements Namespaced {
 	public static void incrementPlayerStat(PlayerHandle player, BingoStatType stat) {
 		boolean savePlayerStatistics = INSTANCE.config.getOptionValue(BingoOptions.SAVE_PLAYER_STATISTICS);
 		if (savePlayerStatistics) {
-			BingoStatData statsData = new BingoStatData();
+			BingoStatData statsData = new BingoStatData(INSTANCE.platform);
 			statsData.incrementPlayerStat(player, stat);
 		}
 	}
@@ -146,7 +147,7 @@ public class BingoReloaded implements Namespaced {
 	public static void setPlayerStat(PlayerHandle player, BingoStatType stat, int value) {
 		boolean savePlayerStatistics = INSTANCE.config.getOptionValue(BingoOptions.SAVE_PLAYER_STATISTICS);
 		if (savePlayerStatistics) {
-			BingoStatData statsData = new BingoStatData();
+			BingoStatData statsData = new BingoStatData(INSTANCE.platform);
 			statsData.setPlayerStat(player.uniqueId(), stat, value);
 		}
 	}
@@ -154,7 +155,7 @@ public class BingoReloaded implements Namespaced {
 	public static int getPlayerStat(PlayerHandle player, BingoStatType stat) {
 		boolean savePlayerStatistics = INSTANCE.config.getOptionValue(BingoOptions.SAVE_PLAYER_STATISTICS);
 		if (savePlayerStatistics) {
-			BingoStatData statsData = new BingoStatData();
+			BingoStatData statsData = new BingoStatData(INSTANCE.platform);
 			return statsData.getPlayerStat(player.uniqueId(), stat);
 		}
 		return 0;
@@ -165,7 +166,7 @@ public class BingoReloaded implements Namespaced {
 	}
 
 	public static void sendResourcePack(PlayerHandle player) {
-		if (!INSTANCE.useResourcePack) {
+		if (!useResourcePack()) {
 			return;
 		}
 		player.sendResourcePacks(ResourcePackRequest.resourcePackRequest()
@@ -325,5 +326,9 @@ public class BingoReloaded implements Namespaced {
 
 	public static BingoReloadedRuntime runtime() {
 		return INSTANCE.runtime;
+	}
+
+	public static boolean useResourcePack() {
+		return INSTANCE.useResourcePack;
 	}
 }

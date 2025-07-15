@@ -8,5 +8,6 @@ public interface StatisticType extends Keyed {
 	StatisticType ENTITY_KILLED_BY = StatisticType.of(Key.key("minecraft", "entity_killed_by"));
 
 	static StatisticType of(Key key) {
+		return PlatformResolver.get().resolveStatisticType(key);
 	}
 }

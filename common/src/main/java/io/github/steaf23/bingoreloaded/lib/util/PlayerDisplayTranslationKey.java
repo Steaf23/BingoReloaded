@@ -1,6 +1,5 @@
 package io.github.steaf23.bingoreloaded.lib.util;
 
-import io.github.steaf23.bingoreloaded.lib.PlayerDisplay;
 import net.kyori.adventure.text.Component;
 
 public enum PlayerDisplayTranslationKey
@@ -13,6 +12,8 @@ public enum PlayerDisplayTranslationKey
     MENU_CLEAR_FILTER;
 
     public Component translate() {
-        return PlayerDisplay.translateKey(this);
+        //FIXME: REFACTOR implement
+        return Component.text("IMPLEMENT");
+//        return PlayerDisplay.translateKey(this);
     }
 }

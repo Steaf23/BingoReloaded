@@ -1,59 +1,48 @@
 package io.github.steaf23.bingoreloaded.gui.hud;
 
-import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.ScoreboardData;
-import io.github.steaf23.bingoreloaded.lib.PlayerDisplay;
-import io.github.steaf23.bingoreloaded.lib.scoreboard.PlayerHUD;
-import io.github.steaf23.bingoreloaded.lib.scoreboard.SidebarHUD;
-import me.clip.placeholderapi.PlaceholderAPI;
+import io.github.steaf23.bingoreloaded.lib.api.PlayerHandle;
+import io.github.steaf23.bingoreloaded.lib.util.ComponentUtils;
 import net.kyori.adventure.text.Component;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
+
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class TemplatedPlayerHUD extends PlayerHUD
+public class TemplatedSidebarHUD
 {
     private final ScoreboardData.SidebarTemplate template;
     private static final Pattern ARG_PATTERN = Pattern.compile("\\{[a-zA-Z0-9_]+}");
 
-    public TemplatedPlayerHUD(Player player, String initialTitle, ScoreboardData.SidebarTemplate template) {
-        super(player.getUniqueId(), new SidebarHUD(Component.text(initialTitle)));
-
+    public TemplatedSidebarHUD(ScoreboardData.SidebarTemplate template) {
         this.template = template;
-        update();
     }
 
-    @Override
-    public void update() {
-        Player player = Bukkit.getPlayer(getPlayerId());
-        if (player == null) {
-            return;
-        }
-
+    public List<Component> sidebarComponents(PlayerHandle forPlayer) {
         Component title = Component.empty();
-        Component[] titleComponents = BingoMessage.convertForPlayer(template.title(), player);
+        Component[] titleComponents = BingoMessage.convertForPlayer(template.title(), forPlayer);
         if (titleComponents.length > 0) {
             title = titleComponents[0];
         }
-        sidebar.setTitle(title);
-
-        // Newlines on the scoreboard lines is not supported, so we can ignore it.
-        // Also assume that every template line is a config string.
-        sidebar.clear();
+        //FIXME: REFACTOR sidebar handling somewhere else?
+//        sidebar.setTitle(title);
+//
+//        // Newlines on the scoreboard lines is not supported, so we can ignore it.
+//        // Also assume that every template line is a config string.
+//        sidebar.clear();
 
         // Step 1. collect all components, including ones from template arguments, into a single list of components.
         int lineIndex = 0;
         List<Component> components = new ArrayList<>();
         for (String line : template.lines()) {
             // convert placeholders
-            if (BingoReloaded.PLACEHOLDER_API_ENABLED) {
-                line = PlaceholderAPI.setPlaceholders(player, line);
-            }
+            //FIXME: REFACTOR: placeholder API (Maybe make a ComponentPreParser that can convert strings into other strings for example placeholderAPI.
+//            if (BingoReloaded.PLACEHOLDER_API_ENABLED) {
+//                line = PlaceholderAPI.setPlaceholders(forPlayer, line);
+//            }
 
             // split out lines that contain arguments into separate components, that then join if they are single line or append separately if multiline.
             Matcher matcher = ARG_PATTERN.matcher(line);
@@ -73,7 +62,7 @@ public class TemplatedPlayerHUD extends PlayerHUD
                 } else {
                     componentToAdd = Component.empty();
                 }
-                componentToAdd = componentToAdd.append(PlayerDisplay.MINI_BUILDER.deserialize(before));
+                componentToAdd = componentToAdd.append(ComponentUtils.MINI_BUILDER.deserialize(before));
 
                 appendToLastComponent = true;
                 Component[] argument = template.arguments().getOrDefault(key, new Component[]{});
@@ -103,7 +92,7 @@ public class TemplatedPlayerHUD extends PlayerHUD
             }
 
             // finish the end of the line
-            Component rightSide = PlayerDisplay.MINI_BUILDER.deserialize(line);
+            Component rightSide = ComponentUtils.MINI_BUILDER.deserialize(line);
             if (appendToLastComponent) {
                 components.set(components.size() - 1, components.getLast().append(rightSide));
             } else {
@@ -112,14 +101,15 @@ public class TemplatedPlayerHUD extends PlayerHUD
             lineIndex++;
         }
 
-        // Step 2. add all components to the scoreboard, stopping at the limit
-        for (int i = 0; i < components.size(); i++) {
-            if (i >= 15) {
-                break;
-            }
-            sidebar.setText(i, components.get(i));
-        }
+        //FIXME: REFACTOR actually apply sidebar (somewhere else?)
+//        // Step 2. add all components to the scoreboard, stopping at the limit
+//        for (int i = 0; i < components.size(); i++) {
+//            if (i >= 15) {
+//                break;
+//            }
+//            sidebar.setText(i, components.get(i));
+//        }
 
-        super.update();
+        return components;
     }
 }

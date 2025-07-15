@@ -1,6 +1,7 @@
 package io.github.steaf23.bingoreloaded.gui.hud;
 
 import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
+import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
@@ -11,6 +12,10 @@ import org.jetbrains.annotations.Nullable;
  */
 public class DisabledBingoSettingsHUDGroup extends BingoSettingsHUDGroup
 {
+
+    public DisabledBingoSettingsHUDGroup(BingoSession session) {
+        super(session);
+    }
 
     @Override
     public void updateSettings(@Nullable BingoSettings settings, BingoConfigurationData config) {

@@ -1,5 +1,6 @@
 package io.github.steaf23.bingoreloaded.lib.data.core.tag.adapters;
 
+import io.github.steaf23.bingoreloaded.lib.api.PlatformResolver;
 import io.github.steaf23.bingoreloaded.lib.api.WorldHandle;
 import io.github.steaf23.bingoreloaded.lib.api.WorldPosition;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataStorage;
@@ -12,12 +13,12 @@ public class WorldPositionStorageSerializer implements DataStorageSerializer<Wor
 {
     @Override
     public void toDataStorage(@NotNull DataStorage storage, @NotNull WorldPosition value) {
-        storage.setUUID("world", value.getWorld().getUID());
-        storage.setDouble("x", value.getX());
-        storage.setDouble("y", value.getY());
-        storage.setDouble("z", value.getZ());
-        storage.setFloat("yaw", value.getYaw());
-        storage.setFloat("pitch", value.getPitch());
+        storage.setUUID("world", value.world().uniqueId());
+        storage.setDouble("x", value.x());
+        storage.setDouble("y", value.y());
+        storage.setDouble("z", value.z());
+//        storage.setFloat("yaw", value.getYaw());
+//        storage.setFloat("pitch", value.getPitch());
     }
 
     @Override
@@ -26,7 +27,7 @@ public class WorldPositionStorageSerializer implements DataStorageSerializer<Wor
         if (id == null) {
             return null;
         }
-        WorldHandle world = Bukkit.getWorld(id);
+        WorldHandle world = PlatformResolver.get().getWorld(id);
         if (world == null) {
             return null;
         }
@@ -36,6 +37,6 @@ public class WorldPositionStorageSerializer implements DataStorageSerializer<Wor
         double z = storage.getDouble("z", 0.0D);
         float yaw = storage.getFloat("yaw", 0.0f);
         float pitch = storage.getFloat("pitch", 0.0f);
-        return new WorldPosition(world, x, y, z, yaw, pitch);
+        return new WorldPosition(world, x, y, z);
     }
 }

@@ -68,16 +68,17 @@ public class TeamDisplay
     }
 
     private void createTeamForPlayer(TeamInfo team, PlayerHandle player) {
-        TeamPacketHelper.createTeamVisibleToPlayer(player,
-                team.identifier(),
-                team.displayName(),
-                team.prefix(),
-                team.suffix(),
-                team.entries());
+        //FIXME: REFACTOR redo TeamPacketHelper
+//        TeamPacketHelper.createTeamVisibleToPlayer(player,
+//                team.identifier(),
+//                team.displayName(),
+//                team.prefix(),
+//                team.suffix(),
+//                team.entries());
     }
 
     private void removeTeamForPlayer(String teamIdentifier, PlayerHandle player) {
-        TeamPacketHelper.removeTeamVisibleToPlayer(player, teamIdentifier);
+//        TeamPacketHelper.removeTeamVisibleToPlayer(player, teamIdentifier);
     }
 
     private void clearTeamsForPlayer(@NotNull PlayerHandle player) {

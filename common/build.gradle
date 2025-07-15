@@ -3,6 +3,9 @@ plugins {
 }
 
 dependencies {
+    api("commons-io:commons-io:2.19.0")
+    api("com.google.code.gson:gson:2.13.1")
+
     api("net.kyori:adventure-api:$adventure_version")
     api("net.kyori:adventure-text-logger-slf4j:$adventure_version")
     api("net.kyori:adventure-text-minimessage:$adventure_version")

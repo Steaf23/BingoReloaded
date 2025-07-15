@@ -1,13 +1,11 @@
 package io.github.steaf23.bingoreloaded.lib.data.core;
 
-import io.github.steaf23.bingoreloaded.lib.PlayerDisplay;
+import io.github.steaf23.bingoreloaded.lib.api.StackHandle;
+import io.github.steaf23.bingoreloaded.lib.api.WorldPosition;
 import io.github.steaf23.bingoreloaded.lib.data.core.tag.TagAdapter;
 import io.github.steaf23.bingoreloaded.lib.data.core.tag.TagDataType;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
-import org.bukkit.inventory.ItemStack;
+import net.kyori.adventure.key.Key;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -193,13 +191,13 @@ public class VirtualDataAccessor implements DataAccessor
     }
 
     @Override
-    public void setItemStack(String path, ItemStack value) {
+    public void setItemStack(String path, StackHandle value) {
 
     }
 
     @Override
-    public @NotNull ItemStack getItemStack(String path) {
-        return new ItemStack(Material.AIR);
+    public @NotNull StackHandle getItemStack(String path) {
+        return StackHandle.empty();
     }
 
     @Override
@@ -213,27 +211,27 @@ public class VirtualDataAccessor implements DataAccessor
     }
 
     @Override
-    public void setLocation(String path, @NotNull Location value) {
+    public void setWorldPosition(String path, @NotNull WorldPosition value) {
 
     }
 
     @Override
-    public @Nullable Location getWorldPosition(String path) {
+    public @Nullable WorldPosition getWorldPosition(String path) {
         return null;
     }
 
-    public @NotNull Location getWorldPosition(String path, @NotNull Location def) {
+    public @NotNull WorldPosition getWorldPosition(String path, @NotNull WorldPosition def) {
         return def;
     }
 
     @Override
-    public void setNamespacedKey(String path, @NotNull NamespacedKey value) {
+    public void setNamespacedKey(String path, @NotNull Key value) {
 
     }
 
     @Override
-    public @NotNull NamespacedKey getNamespacedKey(String path) {
-        return new NamespacedKey(PlayerDisplay.getPlugin(), "unimplemented");
+    public @NotNull Key getNamespacedKey(String path) {
+        return Key.key("unimplemented", "unimplemented");
     }
 
     @Override

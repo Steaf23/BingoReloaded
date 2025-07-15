@@ -3,6 +3,7 @@ package io.github.steaf23.bingoreloaded.data.serializers;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataStorage;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataStorageSerializer;
 import io.github.steaf23.bingoreloaded.lib.item.SerializableItem;
+import io.github.steaf23.bingoreloaded.lib.util.ComponentUtils;
 import io.github.steaf23.bingoreloaded.settings.CustomKit;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import org.jetbrains.annotations.NotNull;
@@ -12,14 +13,14 @@ public class CustomKitStorageSerializer implements DataStorageSerializer<CustomK
     @Override
     public void toDataStorage(@NotNull DataStorage storage, @NotNull CustomKit value) {
         storage.setByte("card_slot", (byte)value.cardSlot());
-        storage.setString("name", PlayerDisplay.MINI_BUILDER.serialize(value.name()));
+        storage.setString("name", ComponentUtils.MINI_BUILDER.serialize(value.name()));
         storage.setByte("kit_id", slotFromKit(value.slot()));
         storage.setSerializableList("items", SerializableItem.class, value.items());
     }
 
     @Override
     public CustomKit fromDataStorage(@NotNull DataStorage storage) {
-        return new CustomKit(PlayerDisplay.MINI_BUILDER.deserialize(storage.getString("name", "")),
+        return new CustomKit(ComponentUtils.MINI_BUILDER.deserialize(storage.getString("name", "")),
                 kitFromSlot(storage.getByte("kit_id", (byte)0)),
                 storage.getSerializableList("items", SerializableItem.class),
                 storage.getByte("card_slot", (byte)40)); //off-hand slot
