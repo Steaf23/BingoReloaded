@@ -1,9 +1,9 @@
 package io.github.steaf23.bingoreloaded.lib.inventory.action;
 
-import io.github.steaf23.bingoreloaded.lib.api.PlayerClickType;
 import io.github.steaf23.bingoreloaded.lib.api.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.inventory.Menu;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
+import org.bukkit.event.inventory.ClickType;
 import org.jetbrains.annotations.NotNull;
 
 
@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public abstract class MenuAction
 {
-    public record ActionArguments(Menu menu, PlayerHandle player, PlayerClickType clickType)
+    public record ActionArguments(Menu menu, PlayerHandle player, ClickType clickType)
     {
     }
 
@@ -20,6 +20,10 @@ public abstract class MenuAction
 
     public void setItem(@NotNull ItemTemplate item) {
         this.item = item;
+    }
+
+    public ItemTemplate item() {
+        return item;
     }
 
     public abstract void use(ActionArguments arguments);

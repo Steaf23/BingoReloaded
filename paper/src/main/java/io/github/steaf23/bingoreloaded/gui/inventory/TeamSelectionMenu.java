@@ -3,22 +3,23 @@ package io.github.steaf23.bingoreloaded.gui.inventory;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.TeamData;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
+import io.github.steaf23.bingoreloaded.lib.api.ItemTypePaper;
+import io.github.steaf23.bingoreloaded.lib.api.MenuBoard;
+import io.github.steaf23.bingoreloaded.lib.api.PlayerHandle;
+import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
+import io.github.steaf23.bingoreloaded.lib.util.ComponentUtils;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.player.team.TeamManager;
-import io.github.steaf23.bingoreloaded.lib.PlayerDisplay;
 import io.github.steaf23.bingoreloaded.lib.inventory.FilterType;
-import io.github.steaf23.bingoreloaded.lib.inventory.MenuBoard;
 import io.github.steaf23.bingoreloaded.lib.inventory.PaginatedSelectionMenu;
-import io.github.steaf23.bingoreloaded.lib.inventory.item.ItemTemplate;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
-import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
@@ -31,7 +32,7 @@ public class TeamSelectionMenu extends PaginatedSelectionMenu
     private final BingoSession session;
     private final TeamManager teamManager;
 
-    private static final Component PLAYER_PREFIX = PlayerDisplay.MINI_BUILDER.deserialize("<gray><bold> ┗ </bold></gray><white>");
+    private static final Component PLAYER_PREFIX = ComponentUtils.MINI_BUILDER.deserialize("<gray><bold> ┗ </bold></gray><white>");
 
     public TeamSelectionMenu(MenuBoard manager, BingoSession session) {
         super(manager, BingoMessage.OPTIONS_TEAM.asPhrase(), new ArrayList<>(), FilterType.NONE);
@@ -40,11 +41,11 @@ public class TeamSelectionMenu extends PaginatedSelectionMenu
     }
 
     @Override
-    public void onOptionClickedDelegate(InventoryClickEvent event, ItemTemplate clickedOption, HumanEntity player) {
-        BingoParticipant participant = teamManager.getPlayerAsParticipant((Player) player);
+    public void onOptionClickedDelegate(InventoryClickEvent event, ItemTemplate clickedOption, PlayerHandle player) {
+        BingoParticipant participant = teamManager.getPlayerAsParticipant(player);
         if (participant == null)
         {
-            participant = new BingoPlayer((Player) player, session);
+            participant = new BingoPlayer(player, session);
         }
 
         if (clickedOption.getCompareKey().equals("item_auto")) {
@@ -62,11 +63,11 @@ public class TeamSelectionMenu extends PaginatedSelectionMenu
     }
 
     @Override
-    public void beforeOpening(HumanEntity player) {
+    public void beforeOpening(PlayerHandle player) {
         super.beforeOpening(player);
 
         List<ItemTemplate> optionItems = new ArrayList<>();
-        ItemTemplate autoItem = new ItemTemplate(Material.NETHER_STAR, BingoMessage.TEAM_AUTO.asPhrase().color(TextColor.fromHexString("#fdffa8")).decorate(TextDecoration.BOLD, TextDecoration.ITALIC))
+        ItemTemplate autoItem = new ItemTemplate(ItemTypePaper.of(Material.NETHER_STAR), BingoMessage.TEAM_AUTO.asPhrase().color(TextColor.fromHexString("#fdffa8")).decorate(TextDecoration.BOLD, TextDecoration.ITALIC))
                 .setCompareKey("item_auto");
         if (player instanceof Player gamePlayer) {
             Optional<BingoTeam> autoTeamOpt = teamManager.getActiveTeams().getTeams().stream()
@@ -79,7 +80,7 @@ public class TeamSelectionMenu extends PaginatedSelectionMenu
 
             BingoTeam autoTeam = autoTeamOpt.get();
 
-            boolean playerInAutoTeam = autoTeam.hasMember(player.getUniqueId());
+            boolean playerInAutoTeam = autoTeam.hasMember(player.uniqueId());
             int autoTeamMemberCount = autoTeam.getMembers().size();
             List<Component> description = new ArrayList<>();
             if (playerInAutoTeam) {
@@ -93,7 +94,7 @@ public class TeamSelectionMenu extends PaginatedSelectionMenu
             autoItem.setLore(description.toArray(Component[]::new));
         }
         optionItems.add(autoItem);
-        optionItems.add(new ItemTemplate(Material.TNT, BingoMessage.OPTIONS_LEAVE.asPhrase().color(NamedTextColor.AQUA).decorate(TextDecoration.BOLD, TextDecoration.ITALIC))
+        optionItems.add(new ItemTemplate(ItemTypePaper.of(Material.TNT), BingoMessage.OPTIONS_LEAVE.asPhrase().color(NamedTextColor.AQUA).decorate(TextDecoration.BOLD, TextDecoration.ITALIC))
                 .setGlowing(true).setCompareKey("item_leave"));
 
         var allTeams = teamManager.getJoinableTeams();
@@ -110,7 +111,7 @@ public class TeamSelectionMenu extends PaginatedSelectionMenu
 
                 for (BingoParticipant participant : team.getMembers()) {
                     players.add(PLAYER_PREFIX.append(participant.getDisplayName()));
-                    if (participant.getId().equals(player.getUniqueId())) {
+                    if (participant.getId().equals(player.uniqueId())) {
                         playersTeam = true;
                     }
                 }
@@ -127,7 +128,7 @@ public class TeamSelectionMenu extends PaginatedSelectionMenu
                 teamStatus = BingoMessage.JOIN_TEAM_DESC.asPhrase().color(NamedTextColor.GREEN);
             }
 
-            optionItems.add(ItemTemplate.createColoredLeather(teamTemplate.color(), Material.LEATHER_HELMET)
+            optionItems.add(ItemTemplate.createColoredLeather(teamTemplate.color(), ItemTypePaper.of(Material.LEATHER_HELMET))
                     .setName(teamTemplate.nameComponent().color(teamTemplate.color()).decorate(TextDecoration.BOLD))
                     .setLore(players.toArray(Component[]::new))
                     .setCompareKey(teamId)

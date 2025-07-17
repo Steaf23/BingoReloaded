@@ -1,9 +1,9 @@
 package io.github.steaf23.bingoreloaded.lib.inventory;
 
 import io.github.steaf23.bingoreloaded.lib.api.ItemType;
+import io.github.steaf23.bingoreloaded.lib.api.MenuBoard;
 import io.github.steaf23.bingoreloaded.lib.api.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataStorage;
-import io.github.steaf23.bingoreloaded.lib.dialog.SelectionMenuFilterDialog;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import io.github.steaf23.bingoreloaded.lib.util.PlayerDisplayTranslationKey;
@@ -11,6 +11,8 @@ import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
+import org.bukkit.event.inventory.ClickType;
+import org.bukkit.event.inventory.InventoryClickEvent;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -87,7 +89,7 @@ public abstract class PaginatedSelectionMenu extends BasicMenu {
 			addItem(BLANK.copyToSlot(1, 5));
 		} else {
 			addAction(filterItem, args -> {
-				new SelectionMenuFilterDialog(getMenuBoard(), availableFilterTypes, appliedFilter, this::applyFilter)
+				new UserInputMenu(getMenuBoard(), Component.text("Filter on..."), f -> applyFilter(new MenuFilterSettings(availableFilterTypes.getFirst(), f)), appliedFilter.name())
 						.open(args.player());
 			});
 		}
@@ -155,7 +157,7 @@ public abstract class PaginatedSelectionMenu extends BasicMenu {
 					case ITEM_ID -> (item) -> item.getCompareKey().contains(appliedFilter.name());
 					case MATERIAL -> (item) ->
 					{
-						String name = item.getMaterial().name().replace("_", " ");
+						String name = item.getItemType().key().value().replace("_", " ");
 						return name.toLowerCase().contains(appliedFilter.name().toLowerCase());
 					};
 					case DISPLAY_NAME -> (item) -> item.getPlainTextName()

@@ -1,60 +1,64 @@
 package io.github.steaf23.bingoreloaded.lib.api;
 
-import io.papermc.paper.registry.RegistryAccess;
-import io.papermc.paper.registry.RegistryKey;
-import org.bukkit.NamespacedKey;
+import org.bukkit.Material;
 import org.bukkit.Statistic;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
-public record StatisticHandlePaper(@NotNull Statistic stat, @Nullable EntityType entityType, @Nullable ItemType itemType) implements StatisticHandle
+public record StatisticHandlePaper(@NotNull StatisticTypePaper statistic, @Nullable EntityType entityType, @Nullable ItemType itemType) implements StatisticHandle
 {
-
-    public StatisticHandlePaper(Statistic stat)
+    public StatisticHandlePaper(StatisticTypePaper stat)
     {
         this(stat, null, null);
     }
 
-    public StatisticHandlePaper(Statistic stat, @Nullable EntityType entityType)
+    public StatisticHandlePaper(StatisticTypePaper stat, @Nullable EntityType entityType)
     {
         this(stat, entityType, null);
     }
 
-    public StatisticHandlePaper(Statistic stat, @Nullable ItemType itemType)
+    public StatisticHandlePaper(StatisticTypePaper stat, @Nullable ItemType itemType)
     {
         this(stat, null, itemType);
     }
 
-    //TODO: less static?
-    public static List<StatisticType> getStatisticsInCategory(StatisticCategory category)
+    public StatisticHandlePaper(Statistic stat)
     {
-        List<Statistic> result = new ArrayList<>();
-        for (var stat : Statistic.values())
-        {
-            if (getCategory(stat) == category)
-            {
-                result.add(stat);
-            }
-        }
-        return result;
+        this(new StatisticTypePaper(stat), null, null);
     }
 
-    public static boolean isEntityValidForStatistic(EntityType type)
+    public StatisticHandlePaper(Statistic stat, @Nullable org.bukkit.entity.EntityType entityType)
     {
-        return validEntityTypes.contains(type);
+        this(new StatisticTypePaper(stat), new EntityTypePaper(entityType), null);
+    }
+
+    public StatisticHandlePaper(Statistic stat, @Nullable Material itemType)
+    {
+        this(new StatisticTypePaper(stat), null, ItemTypePaper.of(itemType));
+    }
+
+    public StatisticHandlePaper(Statistic stat, @Nullable org.bukkit.entity.EntityType entity, @Nullable Material itemType)
+    {
+        this(new StatisticTypePaper(stat), new EntityTypePaper(entity), ItemTypePaper.of(itemType));
     }
 
     @Override
-    public @Nullable ItemType item() {
-        return itemType;
+    public StatisticType statisticType() {
+        return (StatisticType) statistic;
     }
 
     @Override
-    public @Nullable EntityType entity() {
-        return entityType;
+    public boolean isSubStatistic() {
+        return false;
+    }
+
+    @Override
+    public String translationKey() {
+        return "";
     }
 
     /**
@@ -62,10 +66,10 @@ public record StatisticHandlePaper(@NotNull Statistic stat, @Nullable EntityType
      */
     public boolean getsUpdatedAutomatically()
     {
-        if (getCategory() == StatisticCategory.TRAVEL)
+        if (statistic.getCategory() == StatisticType.StatisticCategory.TRAVEL)
             return false;
 
-        return switch (stat)
+        return switch (statistic.handle())
         {
             case PLAY_ONE_MINUTE,
                     SNEAK_TIME,
@@ -73,102 +77,6 @@ public record StatisticHandlePaper(@NotNull Statistic stat, @Nullable EntityType
                     TIME_SINCE_REST,
                     TIME_SINCE_DEATH -> false;
             default -> true;
-        };
-    }
-
-    public StatisticCategory getCategory()
-    {
-        return switch (stat)
-        {
-            case DROP,
-                    PICKUP,
-                    USE_ITEM,
-                    BREAK_ITEM,
-                    CRAFT_ITEM,
-                    KILL_ENTITY,
-                    ENTITY_KILLED_BY,
-                    MINE_BLOCK -> StatisticCategory.ROOT_STATISTIC;
-
-            case DAMAGE_DEALT,
-                    DAMAGE_TAKEN,
-                    DAMAGE_DEALT_ABSORBED,
-                    DAMAGE_DEALT_RESISTED,
-                    DAMAGE_RESISTED,
-                    DAMAGE_ABSORBED,
-                    DAMAGE_BLOCKED_BY_SHIELD -> StatisticCategory.DAMAGE;
-
-            case TALKED_TO_VILLAGER,
-                    TRADED_WITH_VILLAGER,
-                    DEATHS,
-                    MOB_KILLS,
-                    PLAYER_KILLS,
-                    FISH_CAUGHT,
-                    ANIMALS_BRED,
-                    LEAVE_GAME,
-                    JUMP,
-                    DROP_COUNT,
-                    PLAY_ONE_MINUTE,
-                    TOTAL_WORLD_TIME,
-                    SNEAK_TIME,
-                    TIME_SINCE_DEATH,
-                    RAID_TRIGGER,
-                    ARMOR_CLEANED,
-                    BANNER_CLEANED,
-                    ITEM_ENCHANTED,
-                    TIME_SINCE_REST,
-                    RAID_WIN,
-                    TARGET_HIT,
-                    CLEAN_SHULKER_BOX -> StatisticCategory.OTHER;
-
-            case CAKE_SLICES_EATEN,
-                    CAULDRON_FILLED,
-                    BREWINGSTAND_INTERACTION,
-                    BEACON_INTERACTION,
-                    NOTEBLOCK_PLAYED,
-                    CAULDRON_USED,
-                    NOTEBLOCK_TUNED,
-                    FLOWER_POTTED,
-                    RECORD_PLAYED,
-                    FURNACE_INTERACTION,
-                    CRAFTING_TABLE_INTERACTION,
-                    SLEEP_IN_BED,
-                    INTERACT_WITH_BLAST_FURNACE,
-                    INTERACT_WITH_SMOKER,
-                    INTERACT_WITH_LECTERN,
-                    INTERACT_WITH_CAMPFIRE,
-                    INTERACT_WITH_CARTOGRAPHY_TABLE,
-                    INTERACT_WITH_LOOM,
-                    INTERACT_WITH_STONECUTTER,
-                    BELL_RING,
-                    INTERACT_WITH_ANVIL,
-                    INTERACT_WITH_GRINDSTONE,
-                    INTERACT_WITH_SMITHING_TABLE -> StatisticCategory.BLOCK_INTERACT;
-
-            case OPEN_BARREL,
-                    CHEST_OPENED,
-                    ENDERCHEST_OPENED,
-                    SHULKER_BOX_OPENED,
-                    TRAPPED_CHEST_TRIGGERED,
-                    HOPPER_INSPECTED,
-                    DROPPER_INSPECTED,
-                    DISPENSER_INSPECTED -> StatisticCategory.CONTAINER_INTERACT;
-
-            case STRIDER_ONE_CM,
-                    MINECART_ONE_CM,
-                    CLIMB_ONE_CM,
-                    FLY_ONE_CM,
-                    WALK_UNDER_WATER_ONE_CM,
-                    BOAT_ONE_CM,
-                    PIG_ONE_CM,
-                    HORSE_ONE_CM,
-                    CROUCH_ONE_CM,
-                    AVIATE_ONE_CM,
-                    WALK_ONE_CM,
-                    WALK_ON_WATER_ONE_CM,
-                    SWIM_ONE_CM,
-                    FALL_ONE_CM,
-                    SPRINT_ONE_CM,
-                    HAPPY_GHAST_ONE_CM -> StatisticCategory.TRAVEL;
         };
     }
 
@@ -182,7 +90,7 @@ public record StatisticHandlePaper(@NotNull Statistic stat, @Nullable EntityType
 
     public @NotNull ItemType icon()
     {
-        return switch (stat)
+        return switch (statistic.handle())
         {
             case DAMAGE_DEALT -> ItemType.of("diamond_sword");
             case DAMAGE_TAKEN -> ItemType.of("iron_chestplate");
@@ -265,23 +173,21 @@ public record StatisticHandlePaper(@NotNull Statistic stat, @Nullable EntityType
                     BREAK_ITEM,
                     CRAFT_ITEM,
                     KILL_ENTITY,
-                    ENTITY_KILLED_BY -> rootStatItemType(statistic);
+                    ENTITY_KILLED_BY -> rootStatIcon(statistic.handle());
         };
     }
 
-    private static ItemType rootStatItemType(StatisticHandlePaper statistic)
+    private ItemType rootStatIcon(Statistic statistic)
     {
-        if (statistic.itemType != null &&
-                (statistic.stat.getType() == Statistic.Type.ITEM || statistic.stat.getType() == Statistic.Type.BLOCK))
-        {
-            return statistic.itemType;
+        if (statistic.getType() == Statistic.Type.ITEM || statistic.getType() == Statistic.Type.BLOCK) {
+            return itemType();
         }
-        else if (statistic.entityType != null &&
-                statistic.stat.getType() == Statistic.Type.ENTITY)
+        else if (entityType() != null &&
+                statistic.getType() == Statistic.Type.ENTITY)
         {
-            return ItemType.valueOf(statistic.entityType.name() + "_SPAWN_EGG");
+            return ItemType.of(entityType().key().namespace() + "_spawn_egg");
         }
 
-        return ItemType.of("globe_banner_pattern");
+        return ItemType.of("minecraft:globe_banner_pattern");
     }
 }

@@ -1,16 +1,17 @@
 package io.github.steaf23.bingoreloaded.gui.inventory;
 
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
+import io.github.steaf23.bingoreloaded.lib.api.ItemTypePaper;
+import io.github.steaf23.bingoreloaded.lib.api.MenuBoard;
+import io.github.steaf23.bingoreloaded.lib.api.PlayerHandle;
+import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import io.github.steaf23.bingoreloaded.player.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.settings.BingoSettingsBuilder;
 import io.github.steaf23.bingoreloaded.lib.inventory.BasicMenu;
-import io.github.steaf23.bingoreloaded.lib.inventory.MenuBoard;
-import io.github.steaf23.bingoreloaded.lib.inventory.item.ItemTemplate;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
-import org.bukkit.entity.HumanEntity;
 
 import java.util.EnumSet;
 
@@ -35,11 +36,11 @@ public class EffectOptionsMenu extends BasicMenu
         addEffectAction(EffectOptionFlags.SPEED, 1, 3, Material.FEATHER);
         addEffectAction(EffectOptionFlags.NO_DURABILITY, 6, 1, Material.NETHERITE_PICKAXE);
         addEffectAction(EffectOptionFlags.KEEP_INVENTORY, 4, 1, Material.CHEST);
-        addCloseAction(new ItemTemplate(8, 5, Material.DIAMOND, BingoMessage.MENU_SAVE_EXIT.asPhrase().color(NamedTextColor.AQUA).decorate(TextDecoration.BOLD)));
+        addCloseAction(new ItemTemplate(8, 5, ItemTypePaper.of(Material.DIAMOND), BingoMessage.MENU_SAVE_EXIT.asPhrase().color(NamedTextColor.AQUA).decorate(TextDecoration.BOLD)));
     }
 
     private void addEffectAction(EffectOptionFlags flag, int slotX, int slotY, Material material) {
-        ItemTemplate item = new ItemTemplate(slotX, slotY, material, null);
+        ItemTemplate item = new ItemTemplate(slotX, slotY, ItemTypePaper.of(material), null);
         updateUI(flag, item);
         addAction(item,
                 player -> {
@@ -67,7 +68,7 @@ public class EffectOptionsMenu extends BasicMenu
     }
 
     @Override
-    public void beforeClosing(HumanEntity player) {
+    public void beforeClosing(PlayerHandle player) {
         settingsBuilder.effects(flags);
         super.beforeClosing(player);
     }

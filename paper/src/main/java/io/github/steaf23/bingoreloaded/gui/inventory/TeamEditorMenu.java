@@ -2,14 +2,17 @@ package io.github.steaf23.bingoreloaded.gui.inventory;
 
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.TeamData;
+import io.github.steaf23.bingoreloaded.lib.api.ItemTypePaper;
+import io.github.steaf23.bingoreloaded.lib.api.MenuBoard;
+import io.github.steaf23.bingoreloaded.lib.api.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.inventory.BasicMenu;
 import io.github.steaf23.bingoreloaded.lib.inventory.ColorPickerMenu;
 import io.github.steaf23.bingoreloaded.lib.inventory.FilterType;
 import io.github.steaf23.bingoreloaded.lib.inventory.InventoryMenu;
-import io.github.steaf23.bingoreloaded.lib.inventory.MenuBoard;
 import io.github.steaf23.bingoreloaded.lib.inventory.PaginatedSelectionMenu;
-import io.github.steaf23.bingoreloaded.lib.inventory.item.ItemTemplate;
-import io.github.steaf23.bingoreloaded.lib.inventory.item.action.NameEditAction;
+import io.github.steaf23.bingoreloaded.lib.inventory.action.MenuAction;
+import io.github.steaf23.bingoreloaded.lib.inventory.action.NameEditAction;
+import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
@@ -30,11 +33,11 @@ public class TeamEditorMenu extends PaginatedSelectionMenu
 
     private static final TeamData.TeamTemplate DEFAULT_NEW_TEAM = new TeamData.TeamTemplate("MyTeam", TextColor.fromHexString("#808080"));
 
-    private static final ItemTemplate RESTORE_DEFAULT = new ItemTemplate(2, 5, Material.TNT,
+    private static final ItemTemplate RESTORE_DEFAULT = new ItemTemplate(2, 5, ItemTypePaper.of(Material.TNT),
             Component.text("Restore Default Teams").color(NamedTextColor.RED).decorate(TextDecoration.BOLD),
             Component.text("This option will remove all created teams!"));
 
-    private static final ItemTemplate CREATE_TEAM = new ItemTemplate(6, 5, Material.EMERALD,
+    private static final ItemTemplate CREATE_TEAM = new ItemTemplate(6, 5, ItemTypePaper.of(Material.EMERALD),
             Component.text("Create New Team").color(NamedTextColor.GREEN).decorate(TextDecoration.BOLD));
 
     public TeamEditorMenu(MenuBoard manager) {
@@ -56,7 +59,7 @@ public class TeamEditorMenu extends PaginatedSelectionMenu
         var teamMap = teamData.getTeams();
         for (String key : teamMap.keySet()) {
             TeamData.TeamTemplate template = teamMap.get(key);
-            items.add(ItemTemplate.createColoredLeather(template.color(), Material.LEATHER_HELMET)
+            items.add(ItemTemplate.createColoredLeather(template.color(), ItemTypePaper.of(Material.LEATHER_HELMET))
                     .setName(template.nameComponent().color(template.color()).decorate(TextDecoration.BOLD))
                     .setLore(Component.text("id: ").append(Component.text(key).color(NamedTextColor.GRAY).decorate(TextDecoration.ITALIC)))
                     .setCompareKey(key)
@@ -72,7 +75,7 @@ public class TeamEditorMenu extends PaginatedSelectionMenu
     }
 
     @Override
-    public void onOptionClickedDelegate(InventoryClickEvent event, ItemTemplate clickedOption, HumanEntity player) {
+    public void onOptionClickedDelegate(InventoryClickEvent event, ItemTemplate clickedOption, PlayerHandle player) {
         String key = clickedOption.getCompareKey();
         if (event.getClick() == ClickType.RIGHT) {
             teamData.removeTeam(key);
@@ -83,7 +86,7 @@ public class TeamEditorMenu extends PaginatedSelectionMenu
     }
 
     @Override
-    public void beforeOpening(HumanEntity player) {
+    public void beforeOpening(PlayerHandle player) {
         updateDisplay();
         super.beforeOpening(player);
     }
@@ -98,10 +101,10 @@ public class TeamEditorMenu extends PaginatedSelectionMenu
             this.templateToEdit = teamToEdit;
             this.finishedCallback = callback;
 
-            addItem(getTeamNameItem());
+            addAction(getTeamNameAction());
 
             // Add action to change the team's color.
-            ItemTemplate teamColorItem = new ItemTemplate(4, 1, Material.LEATHER_CHESTPLATE, Component.text("Color").color(templateToEdit.color()).decorate(TextDecoration.BOLD))
+            ItemTemplate teamColorItem = new ItemTemplate(4, 1, ItemTypePaper.of(Material.LEATHER_CHESTPLATE), Component.text("Color").color(templateToEdit.color()).decorate(TextDecoration.BOLD))
                     .setLeatherColor(templateToEdit.color());
 
             // TODO: maybe find a less cursed way to fix this?
@@ -117,25 +120,26 @@ public class TeamEditorMenu extends PaginatedSelectionMenu
                 }).open(args.player());
             });
 
-            addCloseAction(new ItemTemplate(6, 1, Material.BARRIER,
+            addCloseAction(new ItemTemplate(6, 1, ItemTypePaper.of(Material.BARRIER),
                     BingoMessage.MENU_EXIT.asPhrase().color(NamedTextColor.RED).decorate(TextDecoration.BOLD)));
         }
 
-        private @NotNull ItemTemplate getTeamNameItem() {
-            ItemTemplate teamNameItem = new ItemTemplate(2, 1, Material.WRITABLE_BOOK,
+        private @NotNull MenuAction getTeamNameAction() {
+            ItemTemplate teamNameItem = new ItemTemplate(2, 1, ItemTypePaper.of(Material.WRITABLE_BOOK),
                     templateToEdit.nameComponent(),
                     Component.text("Supports minimessage formatting").color(NamedTextColor.AQUA).decorate(TextDecoration.ITALIC));
 
-            teamNameItem.setAction(new NameEditAction(Component.text("Edit team name"), getMenuBoard(), templateToEdit.stringName(), (value, item) -> {
+            MenuAction action = new NameEditAction(Component.text("Edit team name"), getMenuBoard(), templateToEdit.stringName(), (value, item) -> {
                 templateToEdit = new TeamData.TeamTemplate(value, templateToEdit.color());
                 //TODO: find a way to do addItem(teamNameItem); automatically??
                 addItem(item);
-            }));
-            return teamNameItem;
+            });
+            action.setItem(teamNameItem);
+            return action;
         }
 
         @Override
-        public void beforeClosing(HumanEntity player) {
+        public void beforeClosing(PlayerHandle player) {
             super.beforeClosing(player);
             finishedCallback.accept(templateToEdit);
         }

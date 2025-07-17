@@ -28,9 +28,9 @@ import java.util.function.Function;
 public class TeamChatCommand extends ActionTree implements Listener {
 
 	private final List<BingoPlayer> enabledPlayers;
-	private final Function<PlayerHandle, BingoSession> sessionResolver;
+	private final Function<PlayerHandle, @Nullable BingoSession> sessionResolver;
 
-	public TeamChatCommand(Function<PlayerHandle, BingoSession> sessionResolver) {
+	public TeamChatCommand(Function<PlayerHandle, @Nullable BingoSession> sessionResolver) {
 		super("btc", List.of("bingo.player"));
 		this.enabledPlayers = new ArrayList<>();
 		this.sessionResolver = sessionResolver;
@@ -67,7 +67,7 @@ public class TeamChatCommand extends ActionTree implements Listener {
 		});
 	}
 
-	private BingoSession getSession(PlayerHandle player) {
+	private @Nullable BingoSession getSession(PlayerHandle player) {
 		return sessionResolver.apply(player);
 	}
 

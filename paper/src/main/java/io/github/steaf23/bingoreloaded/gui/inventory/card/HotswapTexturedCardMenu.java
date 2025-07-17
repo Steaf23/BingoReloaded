@@ -1,6 +1,5 @@
 package io.github.steaf23.bingoreloaded.gui.inventory.card;
 
-import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.api.CardMenu;
 import io.github.steaf23.bingoreloaded.api.HotswapCardMenu;
 import io.github.steaf23.bingoreloaded.cards.CardSize;
@@ -15,7 +14,6 @@ import io.github.steaf23.bingoreloaded.tasks.GameTask;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.HumanEntity;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -41,14 +39,15 @@ public class HotswapTexturedCardMenu extends TexturedCardMenu implements Hotswap
 
     @Override
     protected Component buildTitle(BingoGamemode mode, CardSize size) {
-        TexturedMenuData textures = BingoReloaded.getInstance().getTextureData();
+        //FIXME: REFACTOR actually add textures.
+//        TexturedMenuData textures = BingoReloaded.getInstance().getTextureData();
 
         TexturedMenuData.Texture cardTexture = null;
-        if (size == CardSize.X3) {
-            cardTexture = textures.getTexture("hotswap_card_3");
-        } else if (size == CardSize.X5) {
-            cardTexture = textures.getTexture("hotswap_card_5");
-        }
+//        if (size == CardSize.X3) {
+//            cardTexture = textures.getTexture("hotswap_card_3");
+//        } else if (size == CardSize.X5) {
+//            cardTexture = textures.getTexture("hotswap_card_5");
+//        }
 
         if (cardTexture == null) {
             return Component.empty();
@@ -95,10 +94,6 @@ public class HotswapTexturedCardMenu extends TexturedCardMenu implements Hotswap
         viewers.forEach(p -> {
             p.openInventory(getInventory());
         });
-    }
-
-    @Override
-    public void beforeOpening(HumanEntity player) {
     }
 
     @Override

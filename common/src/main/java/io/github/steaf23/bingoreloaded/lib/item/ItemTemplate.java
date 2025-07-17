@@ -1,7 +1,6 @@
 package io.github.steaf23.bingoreloaded.lib.item;
 
 import io.github.steaf23.bingoreloaded.lib.api.ItemType;
-import io.github.steaf23.bingoreloaded.lib.api.StackBuilder;
 import io.github.steaf23.bingoreloaded.lib.api.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.data.core.tag.TagDataStorage;
 import net.kyori.adventure.key.Key;
@@ -16,7 +15,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -46,6 +44,7 @@ public class ItemTemplate
     private final Map<String, DescriptionSection> description = new HashMap<>();
     private int amount = 1;
     private boolean glowing = false;
+    private boolean noTooltip = false;
     private String compareKey = null;
     private final Map<Key, Integer> enchantments = new HashMap<>();
 //    private final List<Function<ItemMeta, ItemMeta>> metaModifiers = new ArrayList<>(); REPLACE WITH COMPONENTS
@@ -169,6 +168,18 @@ public class ItemTemplate
      */
     public ItemTemplate setGlowing(boolean enable) {
         this.glowing = enable;
+        return this;
+    }
+
+    public boolean hasNoTooltip() {
+        return noTooltip;
+    }
+
+    /**
+     * @param value if true, hides the tooltip from the item completely.
+     */
+    public ItemTemplate setNoTooltip(boolean value) {
+        this.noTooltip = value;
         return this;
     }
 
@@ -321,6 +332,7 @@ public class ItemTemplate
         copy.description.putAll(description);
         copy.amount = amount;
         copy.glowing = glowing;
+        copy.noTooltip = noTooltip;
         copy.compareKey = compareKey;
         copy.enchantments.putAll(enchantments);
         copy.components.putAll(components);

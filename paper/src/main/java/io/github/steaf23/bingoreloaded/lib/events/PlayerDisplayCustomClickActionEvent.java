@@ -5,7 +5,7 @@ import net.kyori.adventure.key.Key;
 
 import java.util.UUID;
 
-public class PlayerDisplayCustomClickActionEvent extends PlayerEvent {
+public class PlayerDisplayCustomClickActionEvent extends PlayerPacketEvent {
 
 	private final Key actionKey;
 	private final NBTCompound payload;

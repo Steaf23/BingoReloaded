@@ -7,12 +7,15 @@ import io.github.steaf23.bingoreloaded.data.BingoStatType;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gameloop.GameManager;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
+import io.github.steaf23.bingoreloaded.lib.api.PlatformResolver;
 import io.github.steaf23.bingoreloaded.lib.api.PlayerHandle;
+import io.github.steaf23.bingoreloaded.lib.api.ServerSoftware;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
 import io.github.steaf23.bingoreloaded.util.timer.GameTimer;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
+import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
@@ -25,8 +28,10 @@ public class BingoReloadedPlaceholderExpansion extends PlaceholderExpansion
 {
     private final BingoReloaded extension;
     private final BingoPlaceholderFormatter formatter;
+    private final ServerSoftware server;
 
-    public BingoReloadedPlaceholderExpansion(BingoReloaded extension) {
+    public BingoReloadedPlaceholderExpansion(ServerSoftware server, BingoReloaded extension) {
+        this.server = server;
         this.extension = extension;
         this.formatter = new BingoPlaceholderFormatter();
     }
@@ -38,12 +43,12 @@ public class BingoReloadedPlaceholderExpansion extends PlaceholderExpansion
 
     @Override
     public @NotNull String getAuthor() {
-        return String.join(", ", extension.getPluginMeta().getAuthors());
+        return String.join(", ", PlatformResolver.get().getExtensionInfo().authors());
     }
 
     @Override
     public @NotNull String getVersion() {
-        return extension.getPluginMeta().getVersion();
+        return PlatformResolver.get().getExtensionInfo().version();
     }
 
     @Override
@@ -236,9 +241,9 @@ public class BingoReloadedPlaceholderExpansion extends PlaceholderExpansion
         Component noTeamPlaceholder = Component.empty();
 
         // If a player is online, we can the team from the participant object
-        PlayerHandle onlinePlayer = Bukkit.getPlayer(player.getUniqueId());
+        PlayerHandle onlinePlayer = server.getPlayerFromUniqueId(player.getUniqueId());
         if (onlinePlayer != null) {
-            BingoSession session = gameManager.getSessionFromWorld(onlinePlayer.getWorld());
+            BingoSession session = gameManager.getSessionFromWorld(onlinePlayer.world());
             if (session == null) {
                 return noTeamPlaceholder;
             }
@@ -267,7 +272,7 @@ public class BingoReloadedPlaceholderExpansion extends PlaceholderExpansion
     }
 
     private Component getPlayerStatPlaceholder(OfflinePlayer player, BingoStatType statType) {
-        BingoStatData statData = new BingoStatData();
+        BingoStatData statData = new BingoStatData(server);
         return Component.text(statData.getPlayerStat(player.getUniqueId(), statType));
     }
 
@@ -296,7 +301,7 @@ public class BingoReloadedPlaceholderExpansion extends PlaceholderExpansion
             return noSessionPlaceholder;
         }
 
-        return BingoMessage.createPhrase(getPlaceholderFormat(BingoReloadedPlaceholder.SESSION_NAME), Component.text(plugin.getGameManager().getNameOfSession(session)));
+        return BingoMessage.createPhrase(getPlaceholderFormat(BingoReloadedPlaceholder.SESSION_NAME), Component.text(extension.getGameManager().getNameOfSession(session)));
     }
 
     private String getPlaceholderFormat(BingoReloadedPlaceholder placeholder) {
@@ -307,9 +312,9 @@ public class BingoReloadedPlaceholderExpansion extends PlaceholderExpansion
         GameManager gameManager = extension.getGameManager();
 
         // If a player is online, we can the team from the participant object
-        Player onlinePlayer = Bukkit.getPlayer(player.getUniqueId());
+        PlayerHandle onlinePlayer = server.getPlayerFromUniqueId(player.getUniqueId());
         if (onlinePlayer != null) {
-            return gameManager.getSessionFromWorld(onlinePlayer.getWorld());
+            return gameManager.getSessionFromWorld(onlinePlayer.world());
         }
 
         // When a player is either not online or in the auto team, we have to get the team manually.
@@ -328,10 +333,10 @@ public class BingoReloadedPlaceholderExpansion extends PlaceholderExpansion
     private @Nullable BingoParticipant getParticipant(OfflinePlayer player) {
         GameManager gameManager = extension.getGameManager();
 
-        // If a player is online, we can the team from the participant object
-        Player onlinePlayer = Bukkit.getPlayer(player.getUniqueId());
+        // If a player is online, we can get the team from the participant object
+        PlayerHandle onlinePlayer = server.getPlayerFromUniqueId(player.getUniqueId());
         if (onlinePlayer != null) {
-            BingoSession session = gameManager.getSessionFromWorld(onlinePlayer.getWorld());
+            BingoSession session = gameManager.getSessionFromWorld(onlinePlayer.world());
             if (session == null) {
                 return null;
             }

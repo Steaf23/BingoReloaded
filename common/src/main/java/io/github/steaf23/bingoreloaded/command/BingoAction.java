@@ -12,7 +12,6 @@ import io.github.steaf23.bingoreloaded.gameloop.GameManager;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.gameloop.phase.PregameLobby;
 import io.github.steaf23.bingoreloaded.lib.api.ActionUser;
-import io.github.steaf23.bingoreloaded.lib.api.MenuBoard;
 import io.github.steaf23.bingoreloaded.lib.api.PlatformResolver;
 import io.github.steaf23.bingoreloaded.lib.api.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.api.ServerSoftware;
@@ -38,7 +37,7 @@ public class BingoAction extends ActionTree {
 	private final GameManager gameManager;
 	private final BingoReloaded bingo;
 
-	public BingoAction(BingoReloaded bingo, BingoConfigurationData config, GameManager gameManager, MenuBoard menuBoard) {
+	public BingoAction(BingoReloaded bingo, BingoConfigurationData config, GameManager gameManager) {
 		super("bingo", List.of("bingo.player"));
 		this.config = config;
 		this.bingo = bingo;

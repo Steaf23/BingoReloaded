@@ -72,6 +72,11 @@ public class WorldHandlePaper implements WorldHandle {
 		return null;
 	}
 
+	@Override
+	public void dropItem(StackHandle item, WorldPosition location) {
+
+	}
+
 	public World handle() {
 		return world;
 	}

@@ -1,19 +1,19 @@
 package io.github.steaf23.bingoreloaded.gui.inventory.creator;
 
 import io.github.steaf23.bingoreloaded.data.BingoCardData;
+import io.github.steaf23.bingoreloaded.lib.api.MenuBoard;
+import io.github.steaf23.bingoreloaded.lib.api.PlayerHandle;
+import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
+import io.github.steaf23.bingoreloaded.lib.util.ComponentUtils;
 import io.github.steaf23.bingoreloaded.tasks.GameTask;
 import io.github.steaf23.bingoreloaded.tasks.data.TaskData;
 import io.github.steaf23.bingoreloaded.tasks.data.ItemTask;
 import io.github.steaf23.bingoreloaded.tasks.data.StatisticTask;
-import io.github.steaf23.bingoreloaded.lib.PlayerDisplay;
 import io.github.steaf23.bingoreloaded.lib.inventory.FilterType;
-import io.github.steaf23.bingoreloaded.lib.inventory.MenuBoard;
 import io.github.steaf23.bingoreloaded.lib.inventory.PaginatedSelectionMenu;
-import io.github.steaf23.bingoreloaded.lib.inventory.item.ItemTemplate;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
-import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
 import java.util.ArrayList;
@@ -35,7 +35,7 @@ public class TaskPickerMenu extends PaginatedSelectionMenu
     }
 
     @Override
-    public void onOptionClickedDelegate(InventoryClickEvent event, ItemTemplate clickedOption, HumanEntity player) {
+    public void onOptionClickedDelegate(InventoryClickEvent event, ItemTemplate clickedOption, PlayerHandle player) {
         switch (event.getClick()) {
             case LEFT -> incrementItemCount(clickedOption, 1);
             case SHIFT_LEFT -> incrementItemCount(clickedOption, 10);
@@ -88,7 +88,7 @@ public class TaskPickerMenu extends PaginatedSelectionMenu
     }
 
     @Override
-    public void beforeOpening(HumanEntity player) {
+    public void beforeOpening(PlayerHandle player) {
         super.beforeOpening(player);
 
         BingoCardData cardsData = new BingoCardData();
@@ -115,7 +115,7 @@ public class TaskPickerMenu extends PaginatedSelectionMenu
     }
 
     @Override
-    public void beforeClosing(HumanEntity player) {
+    public void beforeClosing(PlayerHandle player) {
         super.beforeClosing(player);
 
         BingoCardData cardsData = new BingoCardData();
@@ -141,13 +141,12 @@ public class TaskPickerMenu extends PaginatedSelectionMenu
                 newData = new StatisticTask(statisticTask.statistic(), newCount);
             }
             if (newData instanceof ItemTask itemTask) {
-                newData = new ItemTask(itemTask.material(), newCount);
+                newData = new ItemTask(itemTask.itemType(), newCount);
             }
         }
 
         GameTask newTask = new GameTask(newData, GameTask.TaskDisplayMode.UNIQUE_TASK_ITEMS);
         ItemTemplate item = newTask.toItem();
-        item.setAction(null);
 
         Component[] addedLore;
         if (selected)
@@ -162,12 +161,12 @@ public class TaskPickerMenu extends PaginatedSelectionMenu
 
     private static Component[] createSelectedLore() {
         return new Component[]{
-                PlayerDisplay.MINI_BUILDER.deserialize("<white><italic> - <dark_purple>This task has been added to the list")};
+                ComponentUtils.MINI_BUILDER.deserialize("<white><italic> - <dark_purple>This task has been added to the list")};
     }
 
     private static Component[] createUnselectedLore() {
         return new Component[]{
-                PlayerDisplay.MINI_BUILDER.deserialize("<white><italic> - <gray>Click to make this task"),
+                ComponentUtils.MINI_BUILDER.deserialize("<white><italic> - <gray>Click to make this task"),
                 Component.text("   appear on bingo cards", NamedTextColor.GRAY, TextDecoration.ITALIC)};
     }
 }

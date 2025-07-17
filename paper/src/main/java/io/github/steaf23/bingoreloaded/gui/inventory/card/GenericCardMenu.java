@@ -3,7 +3,10 @@ package io.github.steaf23.bingoreloaded.gui.inventory.card;
 import io.github.steaf23.bingoreloaded.api.CardMenu;
 import io.github.steaf23.bingoreloaded.cards.CardSize;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
+import io.github.steaf23.bingoreloaded.lib.api.ItemType;
 import io.github.steaf23.bingoreloaded.lib.api.MenuBoard;
+import io.github.steaf23.bingoreloaded.lib.api.PlayerHandle;
+import io.github.steaf23.bingoreloaded.lib.inventory.BasicMenu;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
 import io.github.steaf23.bingoreloaded.tasks.GameTask;
@@ -11,6 +14,8 @@ import io.github.steaf23.bingoreloaded.lib.util.MultilineComponent;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
+import org.bukkit.Material;
+import org.bukkit.entity.HumanEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -32,9 +37,10 @@ public class GenericCardMenu extends BasicMenu implements CardMenu
         this.tasks = new ArrayList<>();
         setMaxStackSizeOverride(64);
         this.showAllCards = allowViewingAllCards;
-        if (allowViewingAllCards) {
-            addItem(CardMenu.createTeamViewItem().setSlot(8));
-        }
+        //FIXME: REFACTOR reimplement
+//        if (allowViewingAllCards) {
+//            addItem(CardMenu.createTeamViewItem().setSlot(8));
+//        }
     }
 
     public void updateTasks(List<GameTask> tasks) {
@@ -60,14 +66,14 @@ public class GenericCardMenu extends BasicMenu implements CardMenu
 
     public void setInfo(Component name, Component... description)
     {
-        ItemTemplate info = new ItemTemplate(0, Material.MAP,
+        ItemTemplate info = new ItemTemplate(0, ItemType.of("minecraft:map"),
                 name.decorate(TextDecoration.BOLD).color(mode.getColor()),
                 MultilineComponent.from(NamedTextColor.YELLOW, TextDecoration.ITALIC, description));
         addItem(info);
     }
 
     @Override
-    public void beforeOpening(HumanEntity player) {
+    public void beforeOpening(PlayerHandle player) {
         for (int i = 0; i < tasks.size(); i++)
         {
             addItem(getItemFromTask(i).setSlot(size.getCardInventorySlot(i)));

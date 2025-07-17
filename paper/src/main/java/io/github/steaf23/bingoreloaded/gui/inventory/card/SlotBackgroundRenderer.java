@@ -45,6 +45,6 @@ public class SlotBackgroundRenderer
     }
 
     public static TexturedMenuData.Texture getTextureForRow(int row) {
-        return BingoReloaded.getInstance().getTextureData().getTexture("slot_row_" + row);
+        return BingoReloaded.getTextureData().getTexture("slot_row_" + row);
     }
 }

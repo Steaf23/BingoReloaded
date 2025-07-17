@@ -2,6 +2,7 @@ package io.github.steaf23.bingoreloaded.lib.api;
 
 import io.github.steaf23.bingoreloaded.lib.data.core.DataStorage;
 import io.github.steaf23.bingoreloaded.lib.util.PDCHelper;
+import io.github.steaf23.bingoreloaded.util.ItemHelper;
 import net.kyori.adventure.text.Component;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
@@ -43,12 +44,12 @@ public class StackHandlePaper implements StackHandle {
 
 	@Override
 	public boolean isTool() {
-		return false;
+		return ItemHelper.isTool(stack.getType());
 	}
 
 	@Override
 	public boolean isArmor() {
-		return false;
+		return ItemHelper.isArmor(stack.getType());
 	}
 
 	@Override

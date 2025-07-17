@@ -1,20 +1,46 @@
 package io.github.steaf23.bingoreloaded.lib.dialog;
 
+
+import com.github.retrooper.packetevents.protocol.chat.clickevent.ChangePageClickEvent;
+import com.github.retrooper.packetevents.protocol.chat.clickevent.CopyToClipboardClickEvent;
+import com.github.retrooper.packetevents.protocol.chat.clickevent.CustomClickEvent;
+import com.github.retrooper.packetevents.protocol.chat.clickevent.OpenUrlClickEvent;
+import com.github.retrooper.packetevents.protocol.chat.clickevent.RunCommandClickEvent;
+import com.github.retrooper.packetevents.protocol.chat.clickevent.ShowDialogClickEvent;
+import com.github.retrooper.packetevents.protocol.chat.clickevent.SuggestCommandClickEvent;
+import com.github.retrooper.packetevents.protocol.dialog.CommonDialogData;
+import com.github.retrooper.packetevents.protocol.dialog.ConfirmationDialog;
+import com.github.retrooper.packetevents.protocol.dialog.Dialog;
+import com.github.retrooper.packetevents.protocol.dialog.DialogAction;
+import com.github.retrooper.packetevents.protocol.dialog.DialogListDialog;
+import com.github.retrooper.packetevents.protocol.dialog.MultiActionDialog;
+import com.github.retrooper.packetevents.protocol.dialog.NoticeDialog;
+import com.github.retrooper.packetevents.protocol.dialog.ServerLinksDialog;
+import com.github.retrooper.packetevents.protocol.dialog.action.Action;
+import com.github.retrooper.packetevents.protocol.dialog.action.DialogTemplate;
+import com.github.retrooper.packetevents.protocol.dialog.action.DynamicCustomAction;
+import com.github.retrooper.packetevents.protocol.dialog.action.DynamicRunCommandAction;
+import com.github.retrooper.packetevents.protocol.dialog.action.StaticAction;
+import com.github.retrooper.packetevents.protocol.dialog.body.DialogBody;
+import com.github.retrooper.packetevents.protocol.dialog.body.ItemDialogBody;
+import com.github.retrooper.packetevents.protocol.dialog.body.PlainMessage;
+import com.github.retrooper.packetevents.protocol.dialog.body.PlainMessageDialogBody;
+import com.github.retrooper.packetevents.protocol.dialog.button.ActionButton;
+import com.github.retrooper.packetevents.protocol.dialog.button.CommonButtonData;
+import com.github.retrooper.packetevents.protocol.dialog.input.BooleanInputControl;
+import com.github.retrooper.packetevents.protocol.dialog.input.Input;
+import com.github.retrooper.packetevents.protocol.dialog.input.NumberRangeInputControl;
+import com.github.retrooper.packetevents.protocol.dialog.input.SingleOptionInputControl;
+import com.github.retrooper.packetevents.protocol.dialog.input.TextInputControl;
+import com.github.retrooper.packetevents.protocol.item.ItemStack;
+import com.github.retrooper.packetevents.protocol.item.type.ItemTypes;
+import com.github.retrooper.packetevents.protocol.mapper.MappedEntityRefSet;
+import com.github.retrooper.packetevents.protocol.nbt.NBT;
+import com.github.retrooper.packetevents.protocol.nbt.NBTCompound;
+import com.github.retrooper.packetevents.resources.ResourceLocation;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
-import io.papermc.paper.registry.data.dialog.ActionButton;
-import io.papermc.paper.registry.data.dialog.body.DialogBody;
-import io.papermc.paper.registry.data.dialog.body.ItemDialogBody;
-import io.papermc.paper.registry.data.dialog.body.PlainMessageDialogBody;
-import io.papermc.paper.registry.data.dialog.input.DialogInput;
-import io.papermc.paper.registry.data.dialog.type.ConfirmationType;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.dialog.ConfirmationDialog;
-import net.minecraft.server.dialog.DialogAction;
-import net.minecraft.server.dialog.DialogListDialog;
-import net.minecraft.server.dialog.MultiActionDialog;
-import net.minecraft.server.dialog.NoticeDialog;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -29,7 +55,7 @@ public class DialogBuilder {
 	private boolean pause = true;
 	private DialogAction afterAction = DialogAction.CLOSE;
 	private final List<DialogBody> body = new ArrayList<>();
-	private final List<DialogInput> inputs = new ArrayList<>();
+	private final List<Input> inputs = new ArrayList<>();
 
 	public DialogBuilder(@NotNull Component title) {
 		this.title = title;
@@ -59,7 +85,7 @@ public class DialogBuilder {
 		return new NoticeDialog(buildCommonData(), action);
 	}
 
-	public ConfirmationType buildConfirmation(ActionButton yes, ActionButton no) {
+	public ConfirmationDialog buildConfirmation(ActionButton yes, ActionButton no) {
 		return new ConfirmationDialog(buildCommonData(), yes, no);
 	}
 
@@ -191,7 +217,7 @@ public class DialogBuilder {
 		}
 
 		public ItemDialogBody build(ItemTemplate item) {
-			return new ItemDialogBody(item.buildPacketEventsItem(), description, showDecoration, showTooltip, width, height);
+			return new ItemDialogBody(new ItemStack.Builder().type(ItemTypes.DIRT).build(), description, showDecoration, showTooltip, width, height);
 		}
 	}
 
@@ -321,18 +347,18 @@ public class DialogBuilder {
 			return this;
 		}
 
-		public DialogInput build() {
-			return new Input(key, new NumberRangeInput(
+		public Input build() {
+			return new Input(key, new NumberRangeInputControl(
 					width,
 					label,
 					labelFormatKey,
-					new NumberRangeInput.RangeInfo(rangeStart, rangeEnd, initial, step)));
+					new NumberRangeInputControl.RangeInfo(rangeStart, rangeEnd, initial, step)));
 		}
 	}
 
 	public static class ActionButtonBuilder {
 		private final @NotNull Component label;
-		private final @NotNull io.papermc.paper.registry.data.dialog.action.DialogAction action;
+		private final @NotNull Action action;
 
 		private @Nullable Component tooltip = null;
 		private int width = 150;

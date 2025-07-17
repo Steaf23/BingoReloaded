@@ -7,46 +7,40 @@ import java.util.Set;
 
 
 public interface StatisticHandle {
-	Set<EntityType> VALID_ENTITIES_FOR_STATISTICS = getValidEntityTypes();
-
-	enum StatisticCategory
-	{
-		TRAVEL,
-		BLOCK_INTERACT,
-		CONTAINER_INTERACT,
-		DAMAGE,
-		ROOT_STATISTIC,
-		OTHER,
-	}
+	Set<EntityType> VALID_ENTITIES_FOR_STATISTICS = cacheValidEntityTypes();
 
 	default boolean isEntityValid() {
-		return VALID_ENTITIES_FOR_STATISTICS.contains(entity());
+		return VALID_ENTITIES_FOR_STATISTICS.contains(entityType());
 	}
 
-	StatisticType type();
-	@Nullable ItemType item();
-	@Nullable EntityType entity();
+	StatisticType statisticType();
+	@Nullable ItemType itemType();
+	@Nullable EntityType entityType();
 	boolean isSubStatistic();
 	String translationKey();
 
 	default boolean hasItemType() {
-		return item() != null;
+		return itemType() != null;
 	}
 
 	default boolean hasEntity() {
-		return entity() != null;
+		return entityType() != null;
 	}
 
 	boolean getsUpdatedAutomatically();
-	StatisticCategory getCategory();
 	ItemType icon();
 
 	static StatisticHandle create(StatisticType type, @Nullable ItemType item, @Nullable EntityType entity) {
 		return PlatformResolver.get().createStatistic(type, item, entity);
 	}
 
-	private static Set<EntityType> getValidEntityTypes() {
+	static Set<EntityType> getValidEntityTypes() {
+		return VALID_ENTITIES_FOR_STATISTICS;
+	}
+
+	private static Set<EntityType> cacheValidEntityTypes() {
 		//FIXME: REFACTOR fix this function
+
 		// This is the reason we cant support 1.19.2 or below, since we would have to manually add ender dragon and wither spawn eggs.
 		Set<EntityType> types = new HashSet<>();
 //		Arrays.stream(ItemType.values())

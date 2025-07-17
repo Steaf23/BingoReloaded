@@ -179,8 +179,8 @@ public class BingoReloaded implements Namespaced {
 		return gameManager;
 	}
 
-	public TexturedMenuData getTextureData() {
-		return textureData;
+	public static TexturedMenuData getTextureData() {
+		return INSTANCE.textureData;
 	}
 
 	private static final Map<String, DataAccessor> accessorMap = new HashMap<>();

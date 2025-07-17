@@ -1,25 +1,26 @@
 package io.github.steaf23.bingoreloaded.gui.inventory;
 
+import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.cards.CardSize;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
+import io.github.steaf23.bingoreloaded.lib.api.ItemTypePaper;
+import io.github.steaf23.bingoreloaded.lib.api.MenuBoard;
+import io.github.steaf23.bingoreloaded.lib.api.PlayerHandle;
+import io.github.steaf23.bingoreloaded.lib.inventory.action.ComboBoxButtonAction;
+import io.github.steaf23.bingoreloaded.lib.inventory.action.MenuAction;
+import io.github.steaf23.bingoreloaded.lib.inventory.action.SpinBoxButtonAction;
+import io.github.steaf23.bingoreloaded.lib.inventory.action.ToggleButtonAction;
+import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
 import io.github.steaf23.bingoreloaded.settings.BingoSettingsBuilder;
-import io.github.steaf23.bingoreloaded.lib.PlayerDisplay;
 import io.github.steaf23.bingoreloaded.lib.inventory.BasicMenu;
 import io.github.steaf23.bingoreloaded.lib.inventory.InventoryMenu;
-import io.github.steaf23.bingoreloaded.lib.inventory.MenuBoard;
-import io.github.steaf23.bingoreloaded.lib.inventory.item.ItemTemplate;
-import io.github.steaf23.bingoreloaded.lib.inventory.item.action.ComboBoxButtonAction;
-import io.github.steaf23.bingoreloaded.lib.inventory.item.action.MenuAction;
-import io.github.steaf23.bingoreloaded.lib.inventory.item.action.SpinBoxButtonAction;
-import io.github.steaf23.bingoreloaded.lib.inventory.item.action.ToggleButtonAction;
 import io.github.steaf23.bingoreloaded.lib.util.ComponentUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
-import org.bukkit.entity.HumanEntity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,30 +35,30 @@ public class GamemodeOptionsMenu extends BasicMenu
         this.session = session;
 
         addAction(new ItemTemplate(1,
-                Material.LIME_CONCRETE, BasicMenu.applyTitleFormat(BingoMessage.MODE_REGULAR.asPhrase())), arguments -> selectGamemode(arguments.player(), BingoGamemode.REGULAR));
+                ItemTypePaper.of(Material.LIME_CONCRETE), BingoReloaded.applyTitleFormat(BingoMessage.MODE_REGULAR.asPhrase())), arguments -> selectGamemode(arguments.player(), BingoGamemode.REGULAR));
         addAction(new ItemTemplate(3,
-                Material.MAGENTA_CONCRETE, BasicMenu.applyTitleFormat(BingoMessage.MODE_LOCKOUT.asPhrase())), arguments -> selectGamemode(arguments.player(), BingoGamemode.LOCKOUT));
+                ItemTypePaper.of(Material.MAGENTA_CONCRETE), BingoReloaded.applyTitleFormat(BingoMessage.MODE_LOCKOUT.asPhrase())), arguments -> selectGamemode(arguments.player(), BingoGamemode.LOCKOUT));
         addAction(new ItemTemplate(5,
-                Material.LIGHT_BLUE_CONCRETE, BasicMenu.applyTitleFormat(BingoMessage.MODE_COMPLETE.asPhrase())), arguments -> selectGamemode(arguments.player(), BingoGamemode.COMPLETE));
+                ItemTypePaper.of(Material.LIGHT_BLUE_CONCRETE), BingoReloaded.applyTitleFormat(BingoMessage.MODE_COMPLETE.asPhrase())), arguments -> selectGamemode(arguments.player(), BingoGamemode.COMPLETE));
         addAction(new ItemTemplate(7,
-                Material.ORANGE_CONCRETE, BasicMenu.applyTitleFormat(BingoMessage.MODE_HOTSWAP.asPhrase())), arguments -> selectGamemode(arguments.player(), BingoGamemode.HOTSWAP));
+                ItemTypePaper.of(Material.ORANGE_CONCRETE), BingoReloaded.applyTitleFormat(BingoMessage.MODE_HOTSWAP.asPhrase())), arguments -> selectGamemode(arguments.player(), BingoGamemode.HOTSWAP));
     }
 
-    public void selectGamemode(HumanEntity player, BingoGamemode chosenMode) {
+    public void selectGamemode(PlayerHandle player, BingoGamemode chosenMode) {
         BasicMenu optionMenu = new BasicMenu(getMenuBoard(), Component.text("Select Gamemode Options"), 1);
         List<Consumer<BingoSettingsBuilder>> additionalOptions = new ArrayList<>();
 
         Component toggleInput = InventoryMenu.INPUT_LEFT_CLICK.append(Component.text("toggle option"));
-        ItemTemplate cardSizeItem = new ComboBoxButtonAction.Builder("3",
-                new ItemTemplate(Material.RABBIT_HIDE, BasicMenu.applyTitleFormat("Small card (3x3)")).addDescription("input", 10, toggleInput))
+        MenuAction cardSizeAction = new ComboBoxButtonAction.Builder("3",
+                new ItemTemplate(ItemTypePaper.of(Material.RABBIT_HIDE), BingoReloaded.applyTitleFormat("Small card (3x3)")).addDescription("input", 10, toggleInput))
                 .addOption("5",
-                        new ItemTemplate(Material.LEATHER, BasicMenu.applyTitleFormat("Big card (5x5)")).addDescription("input", 10, toggleInput))
-                .buildItem(3, session.settingsBuilder.view().size() == CardSize.X5 ? "5" : "3");
-        optionMenu.addItem(cardSizeItem);
+                        new ItemTemplate(ItemTypePaper.of(Material.LEATHER), BingoReloaded.applyTitleFormat("Big card (5x5)")).addDescription("input", 10, toggleInput))
+                .buildAction(3, session.settingsBuilder.view().size() == CardSize.X5 ? "5" : "3");
+        optionMenu.addAction(cardSizeAction);
 
         if (chosenMode == BingoGamemode.COMPLETE) {
             int completeGoal = session.settingsBuilder.view().completeGoal();
-            ItemTemplate completeGoalItem = new ItemTemplate(5, Material.RECOVERY_COMPASS, BasicMenu.applyTitleFormat("Complete-X Win Score"),
+            ItemTemplate completeGoalItem = new ItemTemplate(5, ItemTypePaper.of(Material.RECOVERY_COMPASS), BingoReloaded.applyTitleFormat("Complete-X Win Score"),
                     Component.text("Complete " + completeGoal + " tasks to win complete-x."),
                     Component.text("Only effective if countdown mode is disabled"));
             SpinBoxButtonAction goalAction = new SpinBoxButtonAction(1, 64, completeGoal, value -> {
@@ -66,11 +67,11 @@ public class GamemodeOptionsMenu extends BasicMenu
                         "Complete " + value + " tasks to win complete-x.",
                         "Only effective if countdown mode is disabled"));
             });
-            optionMenu.addAction(completeGoalItem, goalAction);
+            optionMenu.addItem(completeGoalItem, goalAction);
 
         } else if (chosenMode == BingoGamemode.HOTSWAP) {
             int hotswapGoal = session.settingsBuilder.view().hotswapGoal();
-            ItemTemplate hotswapGoalItem = new ItemTemplate(5, Material.FIRE_CHARGE, BasicMenu.applyTitleFormat("Hot-Swap Win Score"),
+            ItemTemplate hotswapGoalItem = new ItemTemplate(5, ItemTypePaper.of(Material.FIRE_CHARGE), BingoReloaded.applyTitleFormat("Hot-Swap Win Score"),
                     Component.text("Complete " + hotswapGoal + " tasks to win hot-swap."),
                     Component.text("Only effective if countdown mode is disabled"));
             SpinBoxButtonAction goalAction = new SpinBoxButtonAction(1, 64, hotswapGoal, value -> {
@@ -79,17 +80,17 @@ public class GamemodeOptionsMenu extends BasicMenu
                         "Complete " + value + " tasks to win hot-swap.",
                         "Only effective if countdown mode is disabled"));
             });
-            optionMenu.addAction(hotswapGoalItem, goalAction);
+            optionMenu.addItem(hotswapGoalItem, goalAction);
             additionalOptions.add(settings -> settings.hotswapGoal(goalAction.getValue()));
 
             boolean expireTasks = session.settingsBuilder.view().expireHotswapTasks();
-            ItemTemplate hotswapExpireItem = new ItemTemplate(6, Material.ROTTEN_FLESH, BasicMenu.applyTitleFormat("Expire tasks automatically"));
+            ItemTemplate hotswapExpireItem = new ItemTemplate(6, ItemTypePaper.of(Material.ROTTEN_FLESH), BingoReloaded.applyTitleFormat("Expire tasks automatically"));
             updateExpireTasksEnabledVisual(hotswapExpireItem, expireTasks);
             ToggleButtonAction toggleExpireTasksAction = new ToggleButtonAction(expireTasks, newValue -> {
                 session.settingsBuilder.expireHotswapTasks(newValue);
                 updateExpireTasksEnabledVisual(hotswapExpireItem, newValue);
             });
-            optionMenu.addAction(hotswapExpireItem, toggleExpireTasksAction);
+            optionMenu.addItem(hotswapExpireItem, toggleExpireTasksAction);
             additionalOptions.add(settings -> settings.expireHotswapTasks(toggleExpireTasksAction.getValue()));
         }
 
@@ -97,20 +98,20 @@ public class GamemodeOptionsMenu extends BasicMenu
         if (chosenMode == BingoGamemode.REGULAR || chosenMode == BingoGamemode.COMPLETE) {
             int slot = chosenMode == BingoGamemode.REGULAR ? 5 : 6;
             boolean separateGeneration = session.settingsBuilder.view().differentCardPerTeam();
-            ItemTemplate separateGenerationItem = new ItemTemplate(slot, Material.GLOBE_BANNER_PATTERN, BasicMenu.applyTitleFormat("Different cards generated per team"));
+            ItemTemplate separateGenerationItem = new ItemTemplate(slot, ItemTypePaper.of(Material.GLOBE_BANNER_PATTERN), BingoReloaded.applyTitleFormat("Different cards generated per team"));
             updateSeparateGenerationVisual(separateGenerationItem, separateGeneration);
             ToggleButtonAction separateGenerationAction = new ToggleButtonAction(separateGeneration, newValue -> {
                 session.settingsBuilder.differentCardPerTeam(newValue);
                 updateSeparateGenerationVisual(separateGenerationItem, newValue);
             });
-            optionMenu.addAction(separateGenerationItem, separateGenerationAction);
+            optionMenu.addItem(separateGenerationItem, separateGenerationAction);
             additionalOptions.add(settings -> settings.differentCardPerTeam(separateGenerationAction.getValue()));
         }
 
-        optionMenu.addCloseAction(new ItemTemplate(0, Material.REDSTONE, BingoMessage.MENU_EXIT.asPhrase().color(NamedTextColor.RED).decorate(TextDecoration.BOLD)));
+        optionMenu.addCloseAction(new ItemTemplate(0, ItemTypePaper.of(Material.REDSTONE), BingoMessage.MENU_EXIT.asPhrase().color(NamedTextColor.RED).decorate(TextDecoration.BOLD)));
         optionMenu.addAction(getSaveButton(chosenMode, 8), args -> {
             CardSize size = CardSize.X5;
-            MenuAction action = cardSizeItem.getAction();
+            MenuAction action = cardSizeAction;
             if (action instanceof ComboBoxButtonAction comboAction) {
                 size = comboAction.getSelectedOptionName().equals("5") ? CardSize.X5 : CardSize.X3;
             }
@@ -131,23 +132,23 @@ public class GamemodeOptionsMenu extends BasicMenu
         if (enabled) {
             item.setLore(
                     Component.text("Tasks always expire when they get completed, however..."),
-                    PlayerDisplay.MINI_BUILDER.deserialize("Tasks <red>EXPIRE</red> automatically after some random amount of time"));
+                    ComponentUtils.MINI_BUILDER.deserialize("Tasks <red>EXPIRE</red> automatically after some random amount of time"));
         } else {
             item.setLore(
                     Component.text("Tasks always expire when they get completed, however..."),
-                    PlayerDisplay.MINI_BUILDER.deserialize("Tasks <gray>DO NOT EXPIRE</gray> automatically after some random amount of time"));
+                    ComponentUtils.MINI_BUILDER.deserialize("Tasks <gray>DO NOT EXPIRE</gray> automatically after some random amount of time"));
         }
     }
 
     private static void updateSeparateGenerationVisual(ItemTemplate item, boolean enabled) {
         if (enabled) {
-            item.setLore(PlayerDisplay.MINI_BUILDER.deserialize(("Different teams get <red>DIFFERENT</red> cards")));
+            item.setLore(ComponentUtils.MINI_BUILDER.deserialize(("Different teams get <red>DIFFERENT</red> cards")));
         } else {
-            item.setLore(PlayerDisplay.MINI_BUILDER.deserialize(("Different teams get <gray>THE SAME</gray> cards")));
+            item.setLore(ComponentUtils.MINI_BUILDER.deserialize(("Different teams get <gray>THE SAME</gray> cards")));
         }
     }
 
     private static ItemTemplate getSaveButton(BingoGamemode mode, int slot) {
-        return new ItemTemplate(slot, Material.EMERALD, Component.text("Play ").color(NamedTextColor.GREEN).decorate(TextDecoration.BOLD).append(mode.asComponent()).append(Component.text(" with selected options")));
+        return new ItemTemplate(slot, ItemTypePaper.of(Material.EMERALD), Component.text("Play ").color(NamedTextColor.GREEN).decorate(TextDecoration.BOLD).append(mode.asComponent()).append(Component.text(" with selected options")));
     }
 }

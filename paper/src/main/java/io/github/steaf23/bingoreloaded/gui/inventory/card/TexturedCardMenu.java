@@ -5,7 +5,11 @@ import io.github.steaf23.bingoreloaded.api.CardMenu;
 import io.github.steaf23.bingoreloaded.cards.CardSize;
 import io.github.steaf23.bingoreloaded.data.TexturedMenuData;
 import io.github.steaf23.bingoreloaded.gui.inventory.core.TexturedTitleBuilder;
+import io.github.steaf23.bingoreloaded.lib.api.ItemTypePaper;
 import io.github.steaf23.bingoreloaded.lib.api.MenuBoard;
+import io.github.steaf23.bingoreloaded.lib.api.PlayerHandle;
+import io.github.steaf23.bingoreloaded.lib.api.StackHandlePaper;
+import io.github.steaf23.bingoreloaded.lib.inventory.InventoryMenu;
 import io.github.steaf23.bingoreloaded.lib.inventory.action.MenuItemGroup;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
@@ -19,7 +23,6 @@ import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
@@ -48,7 +51,7 @@ public class TexturedCardMenu implements InventoryMenu, CardMenu
 
     boolean openOnce = false;
 
-    public static final ItemTemplate DUMMY_ITEM = new ItemTemplate(Material.POISONOUS_POTATO);
+    public static final ItemTemplate DUMMY_ITEM = new ItemTemplate(ItemTypePaper.of(Material.POISONOUS_POTATO));
 
     public TexturedCardMenu(MenuBoard board, BingoGamemode mode, CardSize size, boolean allowViewingAllCards) {
         ItemTemplate info = DUMMY_ITEM.copyToSlot(0);
@@ -61,13 +64,14 @@ public class TexturedCardMenu implements InventoryMenu, CardMenu
         this.startingTitle = buildTitle(mode, size);
         this.info = info;
         this.showAllCards = allowViewingAllCards;
-        if (allowViewingAllCards) {
-            addItem(CardMenu.createTeamViewItem().setSlot(8));
-        }
+        //FIXME: REFACTOR ADD THIS BACK
+//        if (allowViewingAllCards) {
+//            addItem(CardMenu.createTeamViewItem().setSlot(8));
+//        }
     }
 
     protected Component buildTitle(BingoGamemode mode, CardSize size) {
-        TexturedMenuData textures = BingoReloaded.getInstance().getTextureData();
+        TexturedMenuData textures = BingoReloaded.getTextureData();
 
         TexturedMenuData.Texture cardTexture = null;
         if (size == CardSize.X3) {
@@ -103,7 +107,7 @@ public class TexturedCardMenu implements InventoryMenu, CardMenu
     }
 
     @Override
-    public void open(HumanEntity entity) {
+    public void open(PlayerHandle entity) {
         board.open(this, entity);
     }
 
@@ -113,7 +117,7 @@ public class TexturedCardMenu implements InventoryMenu, CardMenu
     }
 
     @Override
-    public void beforeOpening(HumanEntity player) {
+    public void beforeOpening(PlayerHandle player) {
         Map<Integer, TextColor> completedSlots = new HashMap<>();
 
         for (int i = 0; i < tasks.size(); i++) {
@@ -140,7 +144,7 @@ public class TexturedCardMenu implements InventoryMenu, CardMenu
     }
 
     @Override
-    public boolean onClick(InventoryClickEvent event, HumanEntity player, int clickedSlot, ClickType clickType) {
+    public boolean onClick(InventoryClickEvent event, PlayerHandle player, int clickedSlot, ClickType clickType) {
         return itemGroup.handleClick(this, event, player, clickedSlot, clickType);
     }
 
@@ -155,7 +159,7 @@ public class TexturedCardMenu implements InventoryMenu, CardMenu
     }
 
     @Override
-    public void beforeClosing(HumanEntity player) {
+    public void beforeClosing(PlayerHandle player) {
 
     }
 
@@ -198,7 +202,7 @@ public class TexturedCardMenu implements InventoryMenu, CardMenu
     protected @NotNull ItemTemplate getItemFromTask(int taskIndex) {
         ItemTemplate item = tasks.get(taskIndex).toItem();
         if (tasks.get(taskIndex).isCompleted()) {
-            item.setMaterial(Material.POISONOUS_POTATO);
+            item.setItemType(ItemTypePaper.of(Material.POISONOUS_POTATO));
             item.setCustomModelData(1012);
             item.setGlowing(false);
         }
@@ -214,8 +218,8 @@ public class TexturedCardMenu implements InventoryMenu, CardMenu
     }
 
     public void addItem(@NotNull ItemTemplate item) {
-        itemGroup.addItem(item);
-        getInventory().setItem(item.getSlot(), item.buildItem());
+        itemGroup.addItem(item, null);
+        getInventory().setItem(item.getSlot(), ((StackHandlePaper)item.buildItem()).handle());
     }
 
     protected void setTaskItems() {

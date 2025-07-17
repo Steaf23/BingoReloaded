@@ -1,11 +1,15 @@
 package io.github.steaf23.bingoreloaded.gui.inventory.creator;
 
+import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
+import io.github.steaf23.bingoreloaded.lib.api.AdvancementHandlePaper;
+import io.github.steaf23.bingoreloaded.lib.api.ItemType;
+import io.github.steaf23.bingoreloaded.lib.api.ItemTypePaper;
+import io.github.steaf23.bingoreloaded.lib.api.MenuBoard;
+import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import io.github.steaf23.bingoreloaded.tasks.GameTask;
 import io.github.steaf23.bingoreloaded.tasks.data.AdvancementTask;
 import io.github.steaf23.bingoreloaded.lib.inventory.BasicMenu;
-import io.github.steaf23.bingoreloaded.lib.inventory.MenuBoard;
-import io.github.steaf23.bingoreloaded.lib.inventory.item.ItemTemplate;
 import io.github.steaf23.bingoreloaded.lib.util.BlockColor;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -24,10 +28,10 @@ public class ListEditorMenu extends BasicMenu
 {
     private final String listName;
 
-    private static final ItemTemplate ITEMS = new ItemTemplate(2, 2, Material.APPLE, BasicMenu.applyTitleFormat("Items"), Component.text("Click to add or remove items"));
-    private static final ItemTemplate ADVANCEMENTS = new ItemTemplate(4, 2, Material.ENDER_EYE, BasicMenu.applyTitleFormat("Advancements"), Component.text("Click to add or remove advancements"));
-    private static final ItemTemplate STATISTICS = new ItemTemplate(6, 2, Material.GLOBE_BANNER_PATTERN, BasicMenu.applyTitleFormat("Statistics"), Component.text("Click to add or remove statistics"));
-    private static final ItemTemplate SAVE = new ItemTemplate(4, 5, Material.REDSTONE, BingoMessage.MENU_SAVE_EXIT.asPhrase().color(NamedTextColor.RED).decorate(TextDecoration.BOLD));
+    private static final ItemTemplate ITEMS = new ItemTemplate(2, 2, ItemTypePaper.of(Material.APPLE), BingoReloaded.applyTitleFormat("Items"), Component.text("Click to add or remove items"));
+    private static final ItemTemplate ADVANCEMENTS = new ItemTemplate(4, 2, ItemTypePaper.of(Material.ENDER_EYE), BingoReloaded.applyTitleFormat("Advancements"), net.kyori.adventure.text.Component.text("Click to add or remove advancements"));
+    private static final ItemTemplate STATISTICS = new ItemTemplate(6, 2, ItemTypePaper.of(Material.GLOBE_BANNER_PATTERN), BingoReloaded.applyTitleFormat("Statistics"), Component.text("Click to add or remove statistics"));
+    private static final ItemTemplate SAVE = new ItemTemplate(4, 5, ItemTypePaper.of(Material.REDSTONE), BingoMessage.MENU_SAVE_EXIT.asPhrase().color(NamedTextColor.RED).decorate(TextDecoration.BOLD));
 
     public ListEditorMenu(MenuBoard manager, String listName) {
         super(manager, Component.text("Editing '" + listName + "'"), 6);
@@ -51,15 +55,11 @@ public class ListEditorMenu extends BasicMenu
     }
 
     private BasicMenu createItemPicker(MenuBoard menuBoard) {
-        Set<Material> glassPanes = new HashSet<>();
-        for (BlockColor blockColor : BlockColor.values()) {
-            glassPanes.add(blockColor.glassPane);
-        }
 
         List<GameTask> tasks = new ArrayList<>();
         for (Material m : Material.values()) {
-            if (!m.name().contains("LEGACY_") && !glassPanes.contains(m) && m.isItem() && !m.isAir()) {
-                tasks.add(GameTask.simpleItemTask(m, 1));
+            if (!m.name().contains("LEGACY_") && m.isItem() && !m.isAir()) {
+                tasks.add(GameTask.simpleItemTask(ItemTypePaper.of(m), 1));
             }
         }
 
@@ -75,7 +75,7 @@ public class ListEditorMenu extends BasicMenu
                 continue;
             }
 
-            AdvancementTask task = new AdvancementTask(a);
+            AdvancementTask task = new AdvancementTask(new AdvancementHandlePaper(a));
             tasks.add(new GameTask(task, GameTask.TaskDisplayMode.UNIQUE_TASK_ITEMS));
         }
 

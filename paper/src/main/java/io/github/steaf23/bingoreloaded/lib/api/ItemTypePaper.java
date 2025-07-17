@@ -11,6 +11,10 @@ public class ItemTypePaper implements ItemType {
 		this.type = type;
 	}
 
+	public static ItemTypePaper of(Material type) {
+		return new ItemTypePaper(type);
+	}
+
 	@Override
 	public boolean isBlock() {
 		return type.isBlock();

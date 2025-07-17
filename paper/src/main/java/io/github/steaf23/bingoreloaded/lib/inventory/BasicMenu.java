@@ -3,14 +3,14 @@ package io.github.steaf23.bingoreloaded.lib.inventory;
 import io.github.steaf23.bingoreloaded.lib.api.ItemType;
 import io.github.steaf23.bingoreloaded.lib.api.MenuBoard;
 import io.github.steaf23.bingoreloaded.lib.api.PlayerHandle;
+import io.github.steaf23.bingoreloaded.lib.api.StackHandlePaper;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataStorage;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import io.github.steaf23.bingoreloaded.lib.inventory.action.MenuAction;
 import io.github.steaf23.bingoreloaded.lib.inventory.action.MenuItemGroup;
+import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -27,10 +27,7 @@ public class BasicMenu implements InventoryMenu
     public static Component pluginTitlePrefix = Component.empty();
 
     public static ItemTemplate BLANK = new ItemTemplate(ItemType.of("black_stained_glass_pane"), null)
-            .addMetaModifier(meta -> {
-                meta.setHideTooltip(true);
-                return meta;
-            });
+            .setNoTooltip(true);
 
     private final Inventory inventory;
     private final MenuBoard manager;
@@ -79,7 +76,7 @@ public class BasicMenu implements InventoryMenu
     }
 
     public void reopen(PlayerHandle player) {
-        Bukkit.getScheduler().runTask(PlayerDisplay.getPlugin(), t -> beforeOpening(player));
+        Bukkit.getScheduler().runTask(getMenuBoard().plugin(), t -> beforeOpening(player));
     }
 
     public @Nullable ItemTemplate getItemAtSlot(int slot) {
@@ -91,7 +88,7 @@ public class BasicMenu implements InventoryMenu
         return null;
     }
 
-    public BasicMenu addItem(@NotNull ItemTemplate item, boolean replaceExisting) {
+    public BasicMenu addItem(@NotNull ItemTemplate item, @Nullable MenuAction action, boolean replaceExisting) {
         if (maxStackSizeOverride != -1)
             getInventory().setMaxStackSize(maxStackSizeOverride);
 
@@ -99,15 +96,28 @@ public class BasicMenu implements InventoryMenu
             return this;
         }
 
-        itemGroup.addItem(item);
+        itemGroup.addItem(item, action);
         // Replace/ set new item in its target slot
-        getInventory().setItem(item.getSlot(), item.buildItem());
+        getInventory().setItem(item.getSlot(), ((StackHandlePaper)item.buildItem()).handle());
 
         return this;
     }
 
     public BasicMenu addItem(@NotNull ItemTemplate item) {
-        return addItem(item, true);
+        return addItem(item, null, true);
+    }
+
+    public BasicMenu addItem(@NotNull ItemTemplate item, @Nullable MenuAction action) {
+        return addItem(item, action, true);
+    }
+
+    public BasicMenu addAction(MenuAction action) {
+        if (action.item() == null) {
+            ConsoleMessenger.bug("Cannot add action as it does not contain any item!", this);
+            return this;
+        }
+        addItem(action.item(), action);
+        return this;
     }
 
     public BasicMenu addAction(@NotNull ItemTemplate item, Consumer<MenuAction.ActionArguments> action) {
@@ -118,39 +128,39 @@ public class BasicMenu implements InventoryMenu
                 action.accept(arguments);
             }
         };
-        item.setAction(menuAction);
-        addItem(item);
+        addItem(item, menuAction);
 
-        return this;
-    }
-
-    public BasicMenu addAction(@NotNull ItemTemplate item, MenuAction action) {
-        item.setAction(action);
-        addItem(item);
         return this;
     }
 
     public BasicMenu addCloseAction(@NotNull ItemTemplate item) {
-        item.setAction(new MenuAction()
+        MenuAction closeAction = new MenuAction()
         {
             @Override
             public void use(ActionArguments arguments) {
                 close(arguments.player());
             }
-        });
-        addItem(item);
+        };
+        addItem(item, closeAction);
 
         return this;
     }
 
     public void addItems(@NotNull ItemTemplate... items) {
         for (ItemTemplate item : items) {
-            addItem(item);
+            addItem(item, null);
+        }
+    }
+
+    public void addActions(@NotNull MenuAction... actions) {
+        for (MenuAction action : actions) {
+            addAction(action);
         }
     }
 
     public BasicMenu removeItem(int slotIdx) {
         getInventory().setItem(slotIdx, null);
+        itemGroup.removeItem(slotIdx);
         return this;
     }
 

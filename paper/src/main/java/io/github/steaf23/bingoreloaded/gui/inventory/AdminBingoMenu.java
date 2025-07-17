@@ -1,10 +1,13 @@
 package io.github.steaf23.bingoreloaded.gui.inventory;
 
 
+import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.BingoCardData;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
+import io.github.steaf23.bingoreloaded.lib.api.ItemTypePaper;
 import io.github.steaf23.bingoreloaded.lib.api.MenuBoard;
+import io.github.steaf23.bingoreloaded.lib.api.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.inventory.action.ComboBoxButtonAction;
 import io.github.steaf23.bingoreloaded.lib.inventory.action.MenuAction;
 import io.github.steaf23.bingoreloaded.lib.inventory.action.SpinBoxButtonAction;
@@ -33,43 +36,43 @@ public class AdminBingoMenu extends BasicMenu
     private static final Component COUNTDOWN_INPUT_LORE = InventoryMenu.inputButtonText(Component.text("Click")).append(Component.text("toggle countdown type"));
 
     private static final ItemTemplate START = new ItemTemplate(6, 0,
-            Material.LIME_CONCRETE, BasicMenu.applyTitleFormat(BingoMessage.OPTIONS_START.asPhrase()));
+            ItemTypePaper.of(Material.LIME_CONCRETE), BingoReloaded.applyTitleFormat(BingoMessage.OPTIONS_START.asPhrase()));
     private static final ItemTemplate END = new ItemTemplate(6, 0,
-            Material.RED_CONCRETE, BasicMenu.applyTitleFormat(BingoMessage.OPTIONS_END.asPhrase()));
+            ItemTypePaper.of(Material.RED_CONCRETE), BingoReloaded.applyTitleFormat(BingoMessage.OPTIONS_END.asPhrase()));
     private static final ItemTemplate JOIN = new ItemTemplate(2, 0,
-            Material.WHITE_GLAZED_TERRACOTTA, BasicMenu.applyTitleFormat(BingoMessage.OPTIONS_TEAM.asPhrase()));
+            ItemTypePaper.of(Material.WHITE_GLAZED_TERRACOTTA), BingoReloaded.applyTitleFormat(BingoMessage.OPTIONS_TEAM.asPhrase()));
     private static final ItemTemplate CARD = new ItemTemplate(1, 2,
-            Material.MAP, BasicMenu.applyTitleFormat(BingoMessage.OPTIONS_CARD.asPhrase()));
+            ItemTypePaper.of(Material.MAP), BingoReloaded.applyTitleFormat(BingoMessage.OPTIONS_CARD.asPhrase()));
     private static final ItemTemplate KIT = new ItemTemplate(3, 2,
-            Material.LEATHER_HELMET, BasicMenu.applyTitleFormat(BingoMessage.OPTIONS_KIT.asPhrase()));
+            ItemTypePaper.of(Material.LEATHER_HELMET), BingoReloaded.applyTitleFormat(BingoMessage.OPTIONS_KIT.asPhrase()));
     private static final ItemTemplate MODE = new ItemTemplate(1, 4,
-            Material.ENCHANTED_BOOK, BasicMenu.applyTitleFormat(BingoMessage.OPTIONS_GAMEMODE.asPhrase()));
+            ItemTypePaper.of(Material.ENCHANTED_BOOK), BingoReloaded.applyTitleFormat(BingoMessage.OPTIONS_GAMEMODE.asPhrase()));
     private static final ItemTemplate EFFECTS = new ItemTemplate(3, 4,
-            Material.POTION, BasicMenu.applyTitleFormat(BingoMessage.OPTIONS_EFFECTS.asPhrase()));
+            ItemTypePaper.of(Material.POTION), BingoReloaded.applyTitleFormat(BingoMessage.OPTIONS_EFFECTS.asPhrase()));
 
     private static final ItemTemplate COUNTDOWN_TYPE_DISABLED = new ItemTemplate(5, 2,
-            Material.COMPASS, BasicMenu.applyTitleFormat("Countdown Disabled"),
+            ItemTypePaper.of(Material.COMPASS), BingoReloaded.applyTitleFormat("Countdown Disabled"),
             Component.text("No timer will be used to limit play time."))
             .addDescription("input", 10, COUNTDOWN_INPUT_LORE);
     private static final ItemTemplate COUNTDOWN_TYPE_DURATION = new ItemTemplate(5, 2,
-            Material.CLOCK, BasicMenu.applyTitleFormat("Countdown Duration"),
+            ItemTypePaper.of(Material.CLOCK), BingoReloaded.applyTitleFormat("Countdown Duration"),
             Component.text("Countdown timer will be enabled."),
             Component.text("The game will end after the timer runs out,"),
             Component.text("this removes the win goal condition from Hot-Swap and Complete-X."))
             .addDescription("input", 10, COUNTDOWN_INPUT_LORE);
     private static final ItemTemplate COUNTDOWN_TYPE_LIMIT = new ItemTemplate(5, 2,
-            Material.RECOVERY_COMPASS, BasicMenu.applyTitleFormat("Countdown Time Limit"),
+            ItemTypePaper.of(Material.RECOVERY_COMPASS), BingoReloaded.applyTitleFormat("Countdown Time Limit"),
             Component.text("Countdown timer will be enabled."),
             Component.text("Any goal is still a valid win condition,"),
             Component.text("but the game will end after the timer runs out."))
             .addDescription("input", 10, COUNTDOWN_INPUT_LORE);
 
     private static final ItemTemplate DURATION = new ItemTemplate(5, 4,
-            Material.RECOVERY_COMPASS, BasicMenu.applyTitleFormat("Countdown Duration"));
+            ItemTypePaper.of(Material.RECOVERY_COMPASS), BingoReloaded.applyTitleFormat("Countdown Duration"));
     private static final ItemTemplate TEAM_SIZE = new ItemTemplate(7, 2,
-            Material.ENDER_EYE, BasicMenu.applyTitleFormat("Maximum Team Size"));
+            ItemTypePaper.of(Material.ENDER_EYE), BingoReloaded.applyTitleFormat("Maximum Team Size"));
     private static final ItemTemplate PRESETS = new ItemTemplate(7, 4,
-            Material.CHEST_MINECART, BasicMenu.applyTitleFormat("Setting Presets"));
+            ItemTypePaper.of(Material.CHEST_MINECART), BingoReloaded.applyTitleFormat("Setting Presets"));
 
     public AdminBingoMenu(MenuBoard menuBoard, BingoSession session) {
         super(menuBoard, BingoMessage.OPTIONS_TITLE.asPhrase(), 6);
@@ -77,7 +80,7 @@ public class AdminBingoMenu extends BasicMenu
     }
 
     @Override
-    public void beforeOpening(HumanEntity player) {
+    public void beforeOpening(PlayerHandle player) {
         super.beforeOpening(player);
 
         BingoSettings view = session.settingsBuilder.view();
@@ -95,29 +98,31 @@ public class AdminBingoMenu extends BasicMenu
         ItemTemplate teamSizeItem = TEAM_SIZE.copy();
         int maxTeamSize = view.maxTeamSize();
         updateTeamSizeLore(teamSizeItem, maxTeamSize);
-        teamSizeItem.setAction(new SpinBoxButtonAction(1, TEAMSIZE_MAX, maxTeamSize, value -> {
+        MenuAction teamSizeAction = new SpinBoxButtonAction(1, TEAMSIZE_MAX, maxTeamSize, value -> {
             session.settingsBuilder.maxTeamSize(value);
             updateTeamSizeLore(teamSizeItem, value);
-        }));
+        });
+        teamSizeAction.setItem(teamSizeItem);
 
         ItemTemplate durationItem = DURATION.copy();
         int duration = view.countdownDuration();
         updateDurationLore(durationItem, duration);
-        durationItem.setAction(new SpinBoxButtonAction(1, DURATION_MAX, duration, value -> {
+        MenuAction durationAction = new SpinBoxButtonAction(1, DURATION_MAX, duration, value -> {
             session.settingsBuilder.countdownGameDuration(value);
             updateDurationLore(durationItem, value);
-        }));
+        });
+        durationAction.setItem(durationItem);
 
-        ItemTemplate countdownItem = new ComboBoxButtonAction.Builder("DISABLED", COUNTDOWN_TYPE_DISABLED.copy())
+        MenuAction countdownAction = new ComboBoxButtonAction.Builder("DISABLED", COUNTDOWN_TYPE_DISABLED.copy())
                 .addOption("DURATION", COUNTDOWN_TYPE_DURATION.copy())
                 .addOption("TIME_LIMIT", COUNTDOWN_TYPE_LIMIT.copy())
                 .setCallback(value -> {
                     session.settingsBuilder.countdownType(BingoSettings.CountdownType.valueOf(value));
                 })
-                .buildItem(COUNTDOWN_TYPE_DISABLED.getSlot(), view.countdownType().name());
-        addItems(teamSizeItem, durationItem, countdownItem);
+                .buildAction(COUNTDOWN_TYPE_DISABLED.getSlot(), view.countdownType().name());
+        addActions(teamSizeAction, durationAction, countdownAction);
 
-        ItemTemplate centerButton = new ComboBoxButtonAction.Builder("start", START.copy())
+        MenuAction startAction = new ComboBoxButtonAction.Builder("start", START.copy())
                 .addOption("end", END.copy())
                 .setCallback(value -> {
                     if (value.equals("end")) {
@@ -127,17 +132,17 @@ public class AdminBingoMenu extends BasicMenu
                         session.endGame();
                     }
                 })
-                .buildItem(ItemTemplate.slotFromXY(6, 0), session.isRunning() ? "end" : "start");
-        addItem(centerButton);
+                .buildAction(ItemTemplate.slotFromXY(6, 0), session.isRunning() ? "end" : "start");
+        addAction(startAction);
     }
 
     private void openCardPicker(MenuAction.ActionArguments arguments) {
-        HumanEntity player = arguments.player();
+        PlayerHandle player = arguments.player();
         BingoCardData cardsData = new BingoCardData();
         List<ItemTemplate> cards = new ArrayList<>();
 
         for (String cardName : cardsData.getCardNames()) {
-            cards.add(new ItemTemplate(Material.PAPER, Component.text(cardName),
+            cards.add(new ItemTemplate(ItemTypePaper.of(Material.PAPER), Component.text(cardName),
                     BingoMessage.LIST_COUNT.asPhrase(Component.text(cardsData.getListNames(cardName).size())
                             .color(NamedTextColor.DARK_PURPLE))));
         }
@@ -145,7 +150,7 @@ public class AdminBingoMenu extends BasicMenu
         BasicMenu cardPicker = new PaginatedSelectionMenu(getMenuBoard(), Component.text("Choose A Card"), cards, FilterType.DISPLAY_NAME)
         {
             @Override
-            public void onOptionClickedDelegate(InventoryClickEvent event, ItemTemplate clickedOption, HumanEntity player) {
+            public void onOptionClickedDelegate(InventoryClickEvent event, ItemTemplate clickedOption, PlayerHandle player) {
                 String name = clickedOption.getPlainTextName();
                 if (!name.isEmpty()) {
                     cardSelected(name);

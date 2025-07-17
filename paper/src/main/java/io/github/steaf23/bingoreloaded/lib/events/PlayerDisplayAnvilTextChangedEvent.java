@@ -1,8 +1,11 @@
 package io.github.steaf23.bingoreloaded.lib.events;
 
+import org.bukkit.event.HandlerList;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.UUID;
 
-public class PlayerDisplayAnvilTextChangedEvent extends PlayerEvent {
+public class PlayerDisplayAnvilTextChangedEvent extends PlayerPacketEvent {
 
 	private final String newText;
 
@@ -13,5 +16,10 @@ public class PlayerDisplayAnvilTextChangedEvent extends PlayerEvent {
 
 	public String getNewText() {
 		return newText;
+	}
+
+	@Override
+	public @NotNull HandlerList getHandlers() {
+		return null;
 	}
 }

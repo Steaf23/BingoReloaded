@@ -1,12 +1,11 @@
 package io.github.steaf23.bingoreloaded.util;
 
 
-import io.github.steaf23.bingoreloaded.lib.api.ItemType;
 import org.bukkit.Material;
 
 public class ItemHelper {
 
-    public static boolean isTool(ItemType material) {
+    public static boolean isTool(Material material) {
         return isWoodenTool(material) ||
                 isStoneTool(material) ||
                 isIronTool(material) ||
@@ -15,7 +14,7 @@ public class ItemHelper {
                 isNetheriteTool(material);
     }
 
-    public static boolean isArmor(ItemType material) {
+    public static boolean isArmor(Material material) {
         return isLeatherArmor(material) ||
                 isChainmailArmor(material) ||
                 isIronArmor(material) ||
@@ -24,7 +23,7 @@ public class ItemHelper {
                 isNetheriteArmor(material);
     }
 
-    private static Boolean isWoodenTool(ItemType material) {
+    private static Boolean isWoodenTool(Material material) {
         return material == Material.WOODEN_SWORD ||
                 material == Material.WOODEN_SHOVEL ||
                 material == Material.WOODEN_PICKAXE ||
@@ -32,7 +31,7 @@ public class ItemHelper {
                 material == Material.WOODEN_HOE;
     }
 
-    private static Boolean isStoneTool(ItemType material) {
+    private static Boolean isStoneTool(Material material) {
         return material == Material.STONE_SWORD ||
                 material == Material.STONE_SHOVEL ||
                 material == Material.STONE_PICKAXE ||
@@ -40,7 +39,7 @@ public class ItemHelper {
                 material == Material.STONE_HOE;
     }
 
-    private static Boolean isGoldenTool(ItemType material) {
+    private static Boolean isGoldenTool(Material material) {
         return material == Material.GOLDEN_SWORD ||
                 material == Material.GOLDEN_SHOVEL ||
                 material == Material.GOLDEN_PICKAXE ||
@@ -48,7 +47,7 @@ public class ItemHelper {
                 material == Material.GOLDEN_HOE;
     }
 
-    private static Boolean isIronTool(ItemType material) {
+    private static Boolean isIronTool(Material material) {
         return material == Material.IRON_SWORD ||
                 material == Material.IRON_SHOVEL ||
                 material == Material.IRON_PICKAXE ||
@@ -56,7 +55,7 @@ public class ItemHelper {
                 material == Material.IRON_HOE;
     }
 
-    private static Boolean isDiamondTool(ItemType material) {
+    private static Boolean isDiamondTool(Material material) {
         return material == Material.DIAMOND_SWORD ||
                 material == Material.DIAMOND_SHOVEL ||
                 material == Material.DIAMOND_PICKAXE ||
@@ -64,7 +63,7 @@ public class ItemHelper {
                 material == Material.DIAMOND_HOE;
     }
 
-    private static Boolean isNetheriteTool(ItemType material) {
+    private static Boolean isNetheriteTool(Material material) {
         return material == Material.NETHERITE_SWORD ||
                 material == Material.NETHERITE_SHOVEL ||
                 material == Material.NETHERITE_PICKAXE ||
@@ -72,42 +71,42 @@ public class ItemHelper {
                 material == Material.NETHERITE_HOE;
     }
 
-    private static Boolean isLeatherArmor(ItemType material) {
+    private static Boolean isLeatherArmor(Material material) {
         return material == Material.LEATHER_BOOTS ||
                 material == Material.LEATHER_LEGGINGS ||
                 material == Material.LEATHER_CHESTPLATE ||
                 material == Material.LEATHER_HELMET;
     }
 
-    private static Boolean isChainmailArmor(ItemType material) {
+    private static Boolean isChainmailArmor(Material material) {
         return material == Material.CHAINMAIL_BOOTS ||
                 material == Material.CHAINMAIL_LEGGINGS ||
                 material == Material.CHAINMAIL_CHESTPLATE ||
                 material == Material.CHAINMAIL_HELMET;
     }
 
-    private static Boolean isIronArmor(ItemType material) {
+    private static Boolean isIronArmor(Material material) {
         return material == Material.IRON_BOOTS ||
                 material == Material.IRON_LEGGINGS ||
                 material == Material.IRON_CHESTPLATE ||
                 material == Material.IRON_HELMET;
     }
 
-    private static Boolean isGoldenArmor(ItemType material) {
+    private static Boolean isGoldenArmor(Material material) {
         return material == Material.GOLDEN_BOOTS ||
                 material == Material.GOLDEN_LEGGINGS ||
                 material == Material.GOLDEN_CHESTPLATE ||
                 material == Material.GOLDEN_HELMET;
     }
 
-    private static Boolean isDiamondArmor(ItemType material) {
+    private static Boolean isDiamondArmor(Material material) {
         return material == Material.DIAMOND_BOOTS ||
                 material == Material.DIAMOND_LEGGINGS ||
                 material == Material.DIAMOND_CHESTPLATE ||
                 material == Material.DIAMOND_HELMET;
     }
 
-    private static Boolean isNetheriteArmor(ItemType material) {
+    private static Boolean isNetheriteArmor(Material material) {
         return material == Material.NETHERITE_BOOTS ||
                 material == Material.NETHERITE_LEGGINGS ||
                 material == Material.NETHERITE_CHESTPLATE ||

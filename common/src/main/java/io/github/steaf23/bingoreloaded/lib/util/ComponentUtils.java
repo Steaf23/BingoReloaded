@@ -65,7 +65,7 @@ public class ComponentUtils
     {
         String prefix = statistic.isSubStatistic() ? "stat_type.minecraft." : "stat.minecraft.";
         String result = statistic.translationKey();
-        return !result.isEmpty() ? prefix + result : statistic.type().toString();
+        return !result.isEmpty() ? prefix + result : statistic.statisticType().toString();
     }
 
     private static String itemKey(ItemType item)

@@ -2,6 +2,7 @@ package io.github.steaf23.bingoreloaded.tasks.tracker;
 
 import io.github.steaf23.bingoreloaded.lib.api.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.api.StatisticHandle;
+import io.github.steaf23.bingoreloaded.lib.api.StatisticType;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 
 import java.util.function.Consumer;
@@ -22,7 +23,7 @@ public class StatisticProgress
         this.player = player;
         this.progressLeft = targetScore;
 		this.progressCompletedCallback = progressCompletedCallback;
-		if (statistic.getCategory() == StatisticHandle.StatisticCategory.TRAVEL)
+		if (statistic.statisticType().getCategory() == StatisticType.StatisticCategory.TRAVEL)
         {
             progressLeft *= 1000;
         }
@@ -72,15 +73,15 @@ public class StatisticProgress
         int value;
         if (statistic.hasItemType())
         {
-            value = gamePlayer.getStatisticValue(statistic.type(), statistic.item());
+            value = gamePlayer.getStatisticValue(statistic.statisticType(), statistic.itemType());
         }
         else if (statistic.hasEntity())
         {
-            value = gamePlayer.getStatisticValue(statistic.type(), statistic.entity());
+            value = gamePlayer.getStatisticValue(statistic.statisticType(), statistic.entityType());
         }
         else
         {
-            value = gamePlayer.getStatisticValue(statistic.type());
+            value = gamePlayer.getStatisticValue(statistic.statisticType());
         }
         return value;
     }

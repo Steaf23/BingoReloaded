@@ -1,9 +1,19 @@
 package io.github.steaf23.bingoreloaded;
 
+import io.github.steaf23.bingoreloaded.api.CardMenu;
+import io.github.steaf23.bingoreloaded.cards.CardSize;
+import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
+import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
+import io.github.steaf23.bingoreloaded.gameloop.phase.PregameLobby;
 import io.github.steaf23.bingoreloaded.lib.api.BingoReloadedRuntime;
 import io.github.steaf23.bingoreloaded.lib.api.PlatformResolver;
+import io.github.steaf23.bingoreloaded.lib.api.PlayerHandle;
+import io.github.steaf23.bingoreloaded.lib.api.ServerSoftware;
+import io.github.steaf23.bingoreloaded.lib.api.WorldHandle;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataAccessor;
+import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
 import net.fabricmc.api.ModInitializer;
+import net.kyori.adventure.key.Key;
 
 import java.util.Collection;
 import java.util.List;
@@ -42,5 +52,50 @@ public class BingoReloadedFabric implements ModInitializer, BingoReloadedRuntime
 	@Override
 	public LanguageData getLanguageData(String language) {
 		return null;
+	}
+
+	@Override
+	public void registerActions(BingoConfigurationData config) {
+
+	}
+
+	@Override
+	public WorldHandle createBingoWorld(String worldName, Key generationOptions) {
+		return null;
+	}
+
+	@Override
+	public ServerSoftware getServerSoftware() {
+		return null;
+	}
+
+	@Override
+	public CardMenu createMenu(boolean textured, BingoGamemode mode, CardSize size, boolean allowViewingAllCards) {
+		return null;
+	}
+
+	@Override
+	public void openTeamEditor(PlayerHandle player) {
+
+	}
+
+	@Override
+	public void openBingoCreator(PlayerHandle player) {
+
+	}
+
+	@Override
+	public void openTeamCardSelect(PlayerHandle player, BingoSession session) {
+
+	}
+
+	@Override
+	public void openTeamSelector(PlayerHandle player, BingoSession session) {
+
+	}
+
+	@Override
+	public void openVoteMenu(PlayerHandle player, PregameLobby lobby) {
+
 	}
 }

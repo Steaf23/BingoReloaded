@@ -13,14 +13,14 @@ public class StatisticSerializer implements DataStorageSerializer<StatisticHandl
 
 	@Override
 	public void toDataStorage(@NotNull DataStorage storage, @NotNull StatisticHandle value) {
-		storage.setNamespacedKey("stat_type", value.type().key());
+		storage.setNamespacedKey("stat_type", value.statisticType().key());
 
-		ItemType item = value.item();
+		ItemType item = value.itemType();
 		if (item != null)
 		{
 			storage.setNamespacedKey("item", item.key());
 		}
-		EntityType entity = value.entity();
+		EntityType entity = value.entityType();
 		if (entity != null)
 		{
 			storage.setNamespacedKey("entity", entity.key());

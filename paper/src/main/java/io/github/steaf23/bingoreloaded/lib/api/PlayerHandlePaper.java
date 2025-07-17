@@ -158,6 +158,21 @@ public class PlayerHandlePaper implements PlayerHandle {
 		player.setGameMode(fromPlayerMode(gamemode));
 	}
 
+	@Override
+	public void setStatisticValue(StatisticType type, int value) {
+
+	}
+
+	@Override
+	public void setStatisticValue(StatisticType type, EntityType entity, int value) {
+
+	}
+
+	@Override
+	public void setStatisticValue(StatisticType type, ItemType item, int value) {
+
+	}
+
 	public static GameMode fromPlayerMode(PlayerGamemode gamemode) {
 		return switch (gamemode) {
 			case SPECTATOR -> GameMode.SPECTATOR;
@@ -174,21 +189,6 @@ public class PlayerHandlePaper implements PlayerHandle {
 			case SPECTATOR -> PlayerGamemode.SPECTATOR;
 			case ADVENTURE -> PlayerGamemode.ADVENTURE;
 		};
-	}
-
-	@Override
-	public void setStatisticValue(StatisticType type, int value) {
-
-	}
-
-	@Override
-	public void setStatisticValue(StatisticType type, EntityType entity, int value) {
-
-	}
-
-	@Override
-	public void setStatisticValue(StatisticType type, ItemType item, int value) {
-
 	}
 
 	@Override
@@ -213,7 +213,21 @@ public class PlayerHandlePaper implements PlayerHandle {
 	}
 
 	@Override
+	public boolean isSneaking() {
+		return false;
+	}
+
+	@Override
+	public void closeInventory() {
+
+	}
+
+	@Override
 	public @NotNull Iterable<? extends Audience> audiences() {
 		return List.of(player);
+	}
+
+	public Player handle() {
+		return player;
 	}
 }

@@ -5,13 +5,11 @@ import io.papermc.paper.registry.RegistryAccess;
 import io.papermc.paper.registry.RegistryKey;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
-import net.minecraft.core.registries.Registries;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
-import org.bukkit.advancement.Advancement;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -64,6 +62,16 @@ public class PaperServerSoftware implements ServerSoftware {
 	}
 
 	@Override
+	public @NotNull PlayerInfo getPlayerInfo(UUID playerId) {
+		return null;
+	}
+
+	@Override
+	public @NotNull PlayerInfo getPlayerInfo(String playerName) {
+		return null;
+	}
+
+	@Override
 	public ItemType resolveItemType(Key key) {
 		return new ItemTypePaper(RegistryAccess.registryAccess().getRegistry(RegistryKey.ITEM).get(key).asMaterial());
 	}
@@ -89,6 +97,11 @@ public class PaperServerSoftware implements ServerSoftware {
 	@Override
 	public AdvancementHandle resolveAdvancement(Key key) {
 		return new AdvancementHandlePaper(Bukkit.getAdvancement(new NamespacedKey(key.namespace(), key.value())));
+	}
+
+	@Override
+	public StatisticType resolveStatisticType(Key key) {
+		return null;
 	}
 
 	@Override
@@ -152,6 +165,7 @@ public class PaperServerSoftware implements ServerSoftware {
 
 	@Override
 	public StatisticHandle createStatistic(StatisticType type, @Nullable ItemType item, @Nullable EntityType entity) {
+		return null;
 	}
 
 	@Override

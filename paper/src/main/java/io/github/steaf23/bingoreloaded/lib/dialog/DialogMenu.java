@@ -1,11 +1,10 @@
 package io.github.steaf23.bingoreloaded.lib.dialog;
 
 import com.github.retrooper.packetevents.protocol.dialog.Dialog;
-import io.github.steaf23.bingoreloaded.lib.PlayerDisplay;
+import io.github.steaf23.bingoreloaded.BingoReloadedPaper;
+import io.github.steaf23.bingoreloaded.lib.api.MenuBoard;
+import io.github.steaf23.bingoreloaded.lib.api.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.inventory.Menu;
-import io.github.steaf23.bingoreloaded.lib.inventory.MenuBoard;
-import org.bukkit.entity.HumanEntity;
-import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
@@ -18,7 +17,7 @@ public abstract class DialogMenu implements Menu {
 		this.menuBoard = menuBoard;
 	}
 
-	public void open(HumanEntity player) {
+	public void open(PlayerHandle player) {
 		beforeOpening(player);
 	}
 
@@ -30,19 +29,16 @@ public abstract class DialogMenu implements Menu {
 	public abstract Dialog getDialog();
 
 	@Override
-	public void beforeOpening(HumanEntity player) {
-		if (!(player instanceof Player actualPlayer)) {
-			return;
-		}
-		PlayerDisplay.showDialog(actualPlayer, getDialog());
+	public void beforeOpening(PlayerHandle player) {
+		BingoReloadedPaper.showPacketDialog(player, getDialog());
 	}
 
 	@Override
-	public void beforeClosing(HumanEntity player) {
+	public void beforeClosing(PlayerHandle player) {
 	}
 
 	@Override
-	public boolean onClick(InventoryClickEvent event, HumanEntity player, int clickedSlot, ClickType clickType) {
+	public boolean onClick(InventoryClickEvent event, PlayerHandle player, int clickedSlot, ClickType clickType) {
 		return true;
 	}
 

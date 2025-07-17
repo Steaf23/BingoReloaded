@@ -82,15 +82,15 @@ public class StatisticTracker
 
         if (statistic.hasItemType())
         {
-            gamePlayer.setStatisticValue(statistic.type(), statistic.item(), value);
+            gamePlayer.setStatisticValue(statistic.statisticType(), statistic.itemType(), value);
         }
         else if (statistic.hasEntity())
         {
-            gamePlayer.setStatisticValue(statistic.type(), statistic.entity(), value);
+            gamePlayer.setStatisticValue(statistic.statisticType(), statistic.entityType(), value);
         }
         else
         {
-            gamePlayer.setStatisticValue(statistic.type(), value);
+            gamePlayer.setStatisticValue(statistic.statisticType(), value);
         }
     }
 }

@@ -23,7 +23,14 @@ public class InventoryHandlePaper implements InventoryHandle {
 
 	@Override
 	public HashMap<Integer, StackHandle> addItem(StackHandle... stacks) {
-		inventory.addItem(Arrays.stream(stacks).map(s -> ((StackHandlePaper)s).handle()).toArray(ItemStack[]::new));
+		var result = inventory.addItem(Arrays.stream(stacks).map(s -> ((StackHandlePaper)s).handle()).toArray(ItemStack[]::new));
+
+		HashMap<Integer, StackHandle> returnedHandles = new HashMap<>();
+		for (Integer idx : result.keySet()) {
+			returnedHandles.put(idx, new StackHandlePaper(result.get(idx)));
+		}
+
+		return returnedHandles;
 	}
 
 	@Override

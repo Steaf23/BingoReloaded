@@ -38,20 +38,20 @@ public record StatisticTask(StatisticHandle statistic, int count) implements Tas
         TextComponent.Builder builder = Component.text().append(Component.text("*"))
                 .color(NamedTextColor.LIGHT_PURPLE).decorate(TextDecoration.ITALIC);
 
-        switch (statistic.getCategory())
+        switch (statistic.statisticType().getCategory())
         {
             case ROOT_STATISTIC -> {
-                if (statistic.type().equals(StatisticType.KILL_ENTITY))
+                if (statistic.statisticType().equals(StatisticType.KILL_ENTITY))
                 {
-                    Component entityName = ComponentUtils.entityName(statistic.entity());
+                    Component entityName = ComponentUtils.entityName(statistic.entityType());
                     Component[] inPlaceArguments = new Component[]{amount, Component.empty()};
                     builder.append(ComponentUtils.statistic(statistic, inPlaceArguments))
                             .append(Component.text(" ("))
                             .append(entityName)
                             .append(Component.text(")"));
                 }
-                else if (statistic.type().equals(StatisticType.ENTITY_KILLED_BY)) {
-                    Component entityName = ComponentUtils.entityName(statistic.entity());
+                else if (statistic.statisticType().equals(StatisticType.ENTITY_KILLED_BY)) {
+                    Component entityName = ComponentUtils.entityName(statistic.entityType());
                     Component[] inPlaceArguments = new Component[]{Component.empty(), amount, Component.empty()};
                     builder.append(Component.text(" ("))
                             .append(entityName)
@@ -62,7 +62,7 @@ public record StatisticTask(StatisticHandle statistic, int count) implements Tas
                 {
                     builder.append(ComponentUtils.statistic(statistic))
                             .append(Component.text(" "))
-                            .append(ComponentUtils.itemName(statistic.item()))
+                            .append(ComponentUtils.itemName(statistic.itemType()))
                             .append(Component.text(": "))
                             .append(amount);
                 }

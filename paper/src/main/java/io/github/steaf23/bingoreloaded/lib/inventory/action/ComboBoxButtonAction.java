@@ -43,7 +43,7 @@ public class ComboBoxButtonAction extends MenuAction
          * @return built item template that can be added to a menu. Sets selected index to the item at startingKey.
          * If no valid option can be found for the given key, the first option added is used as a key.
          */
-        public ItemTemplate buildItem(int slot, String startingKey) {
+        public ComboBoxButtonAction buildAction(int slot, String startingKey) {
             int startingIndex = 0;
             for (int i = 0; i < options.size(); i++) {
                 if (options.get(i).key().equals(startingKey)) {
@@ -51,18 +51,18 @@ public class ComboBoxButtonAction extends MenuAction
                     break;
                 }
             }
-            return buildItem(slot, startingIndex);
+            return buildAction(slot, startingIndex);
         }
 
         /**
          * @return built item template that can be added to a menu. Sets selected index to the item at startingKey.
          * If no valid option can be found for the given key, the first option added is used as a key.
          */
-        public ItemTemplate buildItem(int slot) {
-            return buildItem(slot, 0);
+        public ComboBoxButtonAction buildAction(int slot) {
+            return buildAction(slot, 0);
         }
 
-        public ItemTemplate buildItem(int slot, int startingIndex) {
+        public ComboBoxButtonAction buildAction(int slot, int startingIndex) {
             if (startingIndex < 0 || startingIndex >= options.size()) {
                 startingIndex = 0;
             }
@@ -72,8 +72,8 @@ public class ComboBoxButtonAction extends MenuAction
             for (ItemOption option : options) {
                 action.addOption(option.key(), option.item().copyToSlot(slot));
             }
-            result.setAction(action);
-            return result;
+            action.setItem(result);
+            return action;
         }
     }
 
@@ -104,11 +104,11 @@ public class ComboBoxButtonAction extends MenuAction
 
         // schedule item change, because after the action the item is reset automatically
         final int finalNewIndex = newIndex;
-        Bukkit.getScheduler().runTask(PlayerDisplay.getPlugin(), task -> {
+        Bukkit.getScheduler().runTask(menu.getMenuBoard().plugin(), task -> {
             ItemTemplate newItem = optionItem.get(finalNewIndex);
-            newItem.setAction(this);
+            setItem(newItem);
             // This will also set the 'item' to the new value
-            basicMenu.addItem(newItem);
+            basicMenu.addAction(this);
             callback.accept(getSelectedOptionName());
         });
     }

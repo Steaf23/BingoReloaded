@@ -1,11 +1,11 @@
 package io.github.steaf23.bingoreloaded.lib.inventory.action;
 
 
-import io.github.steaf23.bingoreloaded.lib.PlayerDisplay;
+import io.github.steaf23.bingoreloaded.lib.api.MenuBoard;
 import io.github.steaf23.bingoreloaded.lib.api.PlayerHandle;
-import io.github.steaf23.bingoreloaded.lib.inventory.MenuBoard;
 import io.github.steaf23.bingoreloaded.lib.inventory.UserInputMenu;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
+import io.github.steaf23.bingoreloaded.lib.util.ComponentUtils;
 import net.kyori.adventure.text.Component;
 
 import java.util.function.BiConsumer;
@@ -39,7 +39,7 @@ public class NameEditAction extends MenuAction
     protected void renameItem(PlayerHandle player) {
         new UserInputMenu(board, prompt, (result) -> {
             value = result;
-            item.setName(PlayerDisplay.MINI_BUILDER.deserialize(value));
+            item.setName(ComponentUtils.MINI_BUILDER.deserialize(value));
             callback.accept(value, item);
         }, value)
                 .open(player);

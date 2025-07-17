@@ -1,10 +1,10 @@
 package io.github.steaf23.bingoreloaded.lib.inventory;
 
 
-import io.github.steaf23.bingoreloaded.BingoReloadedPaper;
 import io.github.steaf23.bingoreloaded.lib.api.MenuBoard;
 import io.github.steaf23.bingoreloaded.lib.api.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.api.PlayerHandlePaper;
+import io.github.steaf23.bingoreloaded.lib.api.ServerSoftware;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataStorage;
 import io.github.steaf23.bingoreloaded.lib.data.core.tag.TagDataStorage;
 import io.github.steaf23.bingoreloaded.lib.events.PlayerDisplayAnvilTextChangedEvent;
@@ -14,6 +14,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
@@ -27,7 +28,7 @@ import java.util.Set;
 import java.util.Stack;
 import java.util.UUID;
 
-public class MenuBoardPaper implements MenuBoard
+public class MenuBoardPaper implements MenuBoard, Listener
 {
     // Stores all currently open inventories by all players, using a stack system we can easily add or remove child inventories.
     protected final Map<UUID, Stack<Menu>> activeMenus;
@@ -37,10 +38,11 @@ public class MenuBoardPaper implements MenuBoard
 
     private static final Set<ClickType> CLICK_TYPES_TO_IGNORE = Set.of(ClickType.DOUBLE_CLICK, ClickType.DROP, ClickType.CREATIVE, ClickType.CONTROL_DROP, ClickType.SWAP_OFFHAND);
 
-    public MenuBoardPaper(JavaPlugin plugin) {
+    public MenuBoardPaper(ServerSoftware server, JavaPlugin plugin) {
 		this.plugin = plugin;
 		this.activeMenus = new HashMap<>();
-        this.packetListener = new MenuPacketListener();
+        this.packetListener = new MenuPacketListener(server);
+        Bukkit.getPluginManager().registerEvents(this, plugin);
     }
 
     public void close(Menu menu, PlayerHandle player) {
@@ -76,6 +78,11 @@ public class MenuBoardPaper implements MenuBoard
         }
         activeMenus.remove(playerId);
         player.closeInventory();
+    }
+
+    @Override
+    public JavaPlugin plugin() {
+        return plugin;
     }
 
     public void open(Menu menu, PlayerHandle player) {
