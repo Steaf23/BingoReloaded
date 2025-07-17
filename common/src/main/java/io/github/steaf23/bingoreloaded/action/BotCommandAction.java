@@ -1,4 +1,4 @@
-package io.github.steaf23.bingoreloaded.command;
+package io.github.steaf23.bingoreloaded.action;
 
 import io.github.steaf23.bingoreloaded.cards.TaskCard;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;

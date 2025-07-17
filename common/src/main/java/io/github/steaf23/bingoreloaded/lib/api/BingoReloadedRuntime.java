@@ -31,6 +31,7 @@ public interface BingoReloadedRuntime {
 
 	CardMenu createMenu(boolean textured, BingoGamemode mode, CardSize size, boolean allowViewingAllCards);
 
+	void openBingoMenu(PlayerHandle player, BingoSession session);
 	void openTeamEditor(PlayerHandle player);
 	void openBingoCreator(PlayerHandle player);
 	void openTeamCardSelect(PlayerHandle player, BingoSession session);

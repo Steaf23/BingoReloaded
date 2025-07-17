@@ -1,4 +1,4 @@
-package io.github.steaf23.bingoreloaded.command;
+package io.github.steaf23.bingoreloaded.action;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.lib.action.ActionTree;
@@ -44,12 +44,11 @@ public class BingoAction extends ActionTree {
 		this.gameManager = gameManager;
 
 		setAction((action) -> {
-			// FIXME: open bingo settings menu...
-//			if (getLastUser().hasPermission("bingo.admin")) {
-//				new AdminBingoMenu(menuBoard, session).open(player);
-//			} else if (getLastUser().hasPermission("bingo.player")) {
-//				new TeamSelectionMenu(menuBoard, session).open(player);
-//			}
+			BingoSession session = getSessionFromUser(getLastUser());
+			if (session == null) {
+				return false;
+			}
+			BingoReloaded.runtime().openBingoMenu((PlayerHandle)getLastUser(), session);
 			return true;
 		});
 

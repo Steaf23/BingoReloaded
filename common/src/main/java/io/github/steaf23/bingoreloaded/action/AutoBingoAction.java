@@ -1,4 +1,4 @@
-package io.github.steaf23.bingoreloaded.command;
+package io.github.steaf23.bingoreloaded.action;
 
 import io.github.steaf23.bingoreloaded.cards.CardSize;
 import io.github.steaf23.bingoreloaded.lib.action.DeferredAction;

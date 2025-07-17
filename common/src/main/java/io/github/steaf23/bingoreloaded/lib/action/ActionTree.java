@@ -64,12 +64,14 @@ public class ActionTree
             return false;
         }
 
-        if (subActions.isEmpty()) {
-            return action.apply(arguments);
-        }
+        if (action != null) {
+            if (subActions.isEmpty()) {
+                return action.apply(arguments);
+            }
 
-        if (arguments.length == 0) {
-            return false;
+            if (arguments.length == 0) {
+                return action.apply(arguments);
+            }
         }
 
         ActionTree cmd = getSubCommand(arguments[0]);
@@ -114,7 +116,7 @@ public class ActionTree
     }
 
     protected String determineUsage(String... arguments) {
-        if (subActions.isEmpty()) {
+        if (subActions.isEmpty() || arguments.length == 0) {
             return name + " " + usage;
         }
 

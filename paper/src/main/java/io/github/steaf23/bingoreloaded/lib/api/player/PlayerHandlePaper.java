@@ -5,6 +5,7 @@ import io.github.steaf23.bingoreloaded.lib.api.AdvancementHandlePaper;
 import io.github.steaf23.bingoreloaded.lib.api.EntityType;
 import io.github.steaf23.bingoreloaded.lib.api.PaperApiHelper;
 import io.github.steaf23.bingoreloaded.lib.api.PlayerGamemode;
+import io.github.steaf23.bingoreloaded.lib.api.item.InventoryHandlePaper;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandlePaper;
 import io.github.steaf23.bingoreloaded.lib.api.StatisticType;
 import io.github.steaf23.bingoreloaded.lib.api.WorldHandle;
@@ -128,12 +129,12 @@ public class PlayerHandlePaper implements PlayerHandle {
 
 	@Override
 	public void clearInventory() {
-
+		player.getInventory().clear();
 	}
 
 	@Override
-	public void openInventory(InventoryHandle handle) {
-
+	public void openInventory(InventoryHandle inventory) {
+		player.openInventory(((InventoryHandlePaper)inventory).handle());
 	}
 
 	@Override
@@ -206,7 +207,7 @@ public class PlayerHandlePaper implements PlayerHandle {
 
 	@Override
 	public void clearAllEffects() {
-
+		player.clearActivePotionEffects();
 	}
 
 	@Override
@@ -232,7 +233,7 @@ public class PlayerHandlePaper implements PlayerHandle {
 
 	@Override
 	public void closeInventory() {
-
+		player.closeInventory();
 	}
 
 	@Override

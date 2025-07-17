@@ -6,15 +6,16 @@ import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSh
 import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
 import io.github.steaf23.bingoreloaded.api.CardMenu;
 import io.github.steaf23.bingoreloaded.cards.CardSize;
-import io.github.steaf23.bingoreloaded.command.AutoBingoAction;
-import io.github.steaf23.bingoreloaded.command.BingoAction;
-import io.github.steaf23.bingoreloaded.command.BingoConfigAction;
-import io.github.steaf23.bingoreloaded.command.BotCommandAction;
-import io.github.steaf23.bingoreloaded.command.CommandTemplate;
-import io.github.steaf23.bingoreloaded.command.TeamChatCommand;
+import io.github.steaf23.bingoreloaded.action.AutoBingoAction;
+import io.github.steaf23.bingoreloaded.action.BingoAction;
+import io.github.steaf23.bingoreloaded.action.BingoConfigAction;
+import io.github.steaf23.bingoreloaded.action.BotCommandAction;
+import io.github.steaf23.bingoreloaded.action.CommandTemplate;
+import io.github.steaf23.bingoreloaded.action.TeamChatCommand;
 import io.github.steaf23.bingoreloaded.data.DataUpdaterV1;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gameloop.phase.PregameLobby;
+import io.github.steaf23.bingoreloaded.gui.inventory.AdminBingoMenu;
 import io.github.steaf23.bingoreloaded.gui.inventory.TeamCardSelectMenu;
 import io.github.steaf23.bingoreloaded.gui.inventory.TeamEditorMenu;
 import io.github.steaf23.bingoreloaded.gui.inventory.TeamSelectionMenu;
@@ -95,6 +96,8 @@ public class BingoReloadedPaper extends JavaPlugin implements BingoReloadedRunti
 
 		bingo.enable();
 
+//		menuBoard.setPlayerOpenPredicate(player -> player instanceof PlayerHandle handle && this.gameManager.canPlayerOpenMenus(handle));
+
 		Metrics bStatsMetrics = new Metrics(this, 22586);
 		bStatsMetrics.addCustomChart(new Metrics.SimplePie("selected_language",
 				() -> bingo.config().getOptionValue(BingoOptions.LANGUAGE).replace(".yml", "").replace("languages/", "")));
@@ -147,9 +150,13 @@ public class BingoReloadedPaper extends JavaPlugin implements BingoReloadedRunti
 
 	@Override
 	public LanguageData getLanguageData(String language) {
-		return new LanguageData(
-				new YamlDataAccessor(platform, language, false),
-				new YamlDataAccessor(platform, "languages/en_us", false));
+		var lang = new YamlDataAccessor(platform, language, false);
+		var fallback = new YamlDataAccessor(platform, "languages/en_us", false);
+
+		BingoReloaded.addDataAccessor(lang);
+		BingoReloaded.addDataAccessor(fallback);
+
+		return new LanguageData(lang, fallback);
 	}
 
 	@Override
@@ -190,6 +197,15 @@ public class BingoReloadedPaper extends JavaPlugin implements BingoReloadedRunti
 		}
 
 		return new GenericCardMenu(menuBoard, mode, size, allowViewingAllCards, null);
+	}
+
+	@Override
+	public void openBingoMenu(PlayerHandle player, BingoSession session) {
+		if (player.hasPermission("bingo.admin")) {
+			new AdminBingoMenu(menuBoard, session).open(player);
+		} else if (player.hasPermission("bingo.player")) {
+			new TeamSelectionMenu(menuBoard, session).open(player);
+		}
 	}
 
 	@Override

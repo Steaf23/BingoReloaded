@@ -295,10 +295,6 @@ public class BingoReloaded implements Namespaced {
 		}
 
 		this.gameManager.setup(config.getOptionValue(BingoOptions.DEFAULT_WORLDS));
-
-		//FIXME: REFACTOR add openMenu predicate
-//		menuBoard.setPlayerOpenPredicate(player -> player instanceof PlayerHandle handle && this.gameManager.canPlayerOpenMenus(handle));
-
 		runtime.registerActions(config);
 	}
 

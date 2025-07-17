@@ -15,6 +15,10 @@ public class InventoryHandlePaper implements InventoryHandle {
 		this.inventory = inventory;
 	}
 
+	public Inventory handle() {
+		return inventory;
+	}
+
 	@Override
 	public void setItem(int index, StackHandle stack) {
 		inventory.setItem(index, ((StackHandlePaper)stack).handle());

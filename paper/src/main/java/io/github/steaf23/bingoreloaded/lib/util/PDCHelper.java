@@ -12,7 +12,7 @@ public class PDCHelper
 {
     public static Key createKey(@Subst("key") String key)
     {
-        @Subst("name") String name = PlatformResolver.get().getExtensionInfo().name();
+        @Subst("name") String name = PlatformResolver.get().getExtensionInfo().name().toLowerCase();
         return Key.key(name, key);
     }
 

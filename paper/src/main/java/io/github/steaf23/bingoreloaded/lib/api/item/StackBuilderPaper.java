@@ -34,8 +34,10 @@ public class StackBuilderPaper implements StackBuilder {
 		List<Component> descriptionList = template.buildDescriptionList();
 		ItemStack stack = new ItemStack(((ItemTypePaper)template.getItemType()).handle(), template.getAmount());
 
+		if (template.getName() != null) {
+			stack.setData(DataComponentTypes.CUSTOM_NAME, template.getName().colorIfAbsent(NamedTextColor.WHITE).decorationIfAbsent(TextDecoration.ITALIC, TextDecoration.State.FALSE));
+		}
 		stack.setData(DataComponentTypes.ENCHANTMENT_GLINT_OVERRIDE, template.isGlowing());
-		stack.setData(DataComponentTypes.CUSTOM_NAME, template.getName().colorIfAbsent(NamedTextColor.WHITE).decorationIfAbsent(TextDecoration.ITALIC, TextDecoration.State.FALSE));
 		stack.setData(DataComponentTypes.LORE, ItemLore.lore(descriptionList));
 
 		var maxDamage = template.getMaxDamage();

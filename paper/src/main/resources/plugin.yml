@@ -6,3 +6,35 @@ api-version: 1.21.7
 
 softdepend: [PlaceholderAPI]
 depend: [packetevents]
+
+permissions:
+  bingo.admin:
+    description: Access all commands and features.
+    default: op
+  bingo.player:
+    description: Players can join teams and play games.
+    default: true
+
+commands:
+  autobingo:
+    permission: bingo.admin
+    description: Used to start and manage settings for bingo games through commands only.
+    permission-message: §CYou don't have permission to use this command!
+  bingo:
+    permission: bingo.player
+    description: Used to open the settings menu as well as to start and end the game.
+    permission-message: §CYou don't have permission to use this command!
+  bingoconfig:
+    permission: bingo.admin
+    description: Used to read and edit config options from within the game.
+    permission-message: §CYou don't have permission to use this command!
+  btc:
+    permission: bingo.player
+    description: Used to toggle team chat when a game is active
+    permission-message: §CYou don't have permission to use this command!
+  bingobot:
+    permission: bingo.admin
+    description: Create fake players to join teams and complete tasks, for debugging purposes
+#  bingotest:
+#    permission: bingo.admin
+#    description: Test commands, for debugging only.

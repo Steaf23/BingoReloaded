@@ -66,7 +66,7 @@ public interface PlayerHandle extends ForwardingAudience, ActionUser {
 
 	void clearInventory();
 
-	void openInventory(InventoryHandle handle);
+	void openInventory(InventoryHandle inventory);
 
 	InventoryHandle enderChest();
 
