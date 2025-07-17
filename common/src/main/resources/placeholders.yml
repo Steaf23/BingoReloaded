@@ -1,0 +1,117 @@
+# All available placeholders are listed below under the placeholders section.
+# The way you can use these placeholders is using the prefix bingoreloaded.
+# For example %bingoreloaded_team_full% will be replaced by the bingo team name that player is in.
+# These placeholders can also be used in the translation file if you wanted.
+# When a placeholder is not available (e.g. current_tasks_team because no game is running), the placeholder will return '-' instead
+
+# Formats support using minimessage.
+# For more information about formatting yml files in Bingo Reloaded, read https://github.com/Steaf23/BingoReloaded/wiki/Text-Formatting
+
+version: 3.1.0
+
+placeholders:
+  # Full team prefix. This should be used most of the time when you want to show the team that the player is in.
+  team_full:
+    format: "<dark_red>[</dark_red>{0}<bold>{1}</bold><dark_red>]</dark_red>" # {0}: team_color, {1}: team_name
+
+  # Team color only. This can be used to color other text in the color of the player's team by using similar to a '&'-color prefix.
+  team_color:
+    format: "{0}"
+
+  # Team name only. Could be useful if you just want to list the team's name without color or other markup.
+  team_name:
+    format: "{0}"
+
+  # Amount of tasks completed by the team this player is in, for the current game.
+  current_tasks_team:
+    format: "{0}"
+
+  # Amount of tasks completed by this player, for the current game.
+  current_tasks_player:
+    format: "{0}"
+
+  # Time as can be seen from the game timer, for the game that the player is in.
+  current_time:
+    format: "{0}"
+
+  # Shows the status of the game, (i.e. waiting for players, or in progress, or waiting for new game, etc), of the world the player is in. NOT IMPLEMENTED YET
+  game_status:
+    format: "{0}"
+
+  # The currently selected gamemode of the session the player is in.
+  setting_gamemode:
+    format: "{0}"
+
+  # The currently selected card size of the session the player is in. (e.g. 3x3 or 5x5)
+  setting_cardsize:
+    format: "{0}"
+
+  # The currently selected kit of the session the player is in.
+  setting_kit:
+    format: "{0}"
+
+  # The currently selected maximum duration of a game, '-' if countdown is not enabled.
+  setting_duration:
+    format: "{0}"
+
+  # The currently selected effects of the session the player is in. NOT IMPLEMENTED YET
+  setting_effects:
+    format: "{0}"
+
+  # The currently selected score to win hotswap, '-' if countdown is enabled.
+  setting_hotswap_winscore:
+    format: "{0}"
+
+  # The currently selected settings to determine if hotswap tasks should expire automatically, "true" or "false" depending on the value.
+  setting_hotswap_expiration:
+    format: "{0}"
+
+  # The currently selected score to win complete-all, '-' if countdown is enabled.
+  setting_complete_winscore:
+    format: "{0}"
+
+  # The currently selected seed, 0 if no seed was used.
+  setting_seed:
+    format: "{0}"
+
+  # The currently selected max team size.
+  setting_teamsize:
+    format: "{0}"
+
+  # Name of the session/world that the player is in.
+  session_name:
+    format: "{0}"
+
+  # Total amount of games won by this player
+  games_won:
+    format: "{0}"
+
+  # Total amount of games lost by this player
+  games_lost:
+    format: "{0}"
+
+  # Total number of games played by this player (wins + losses)
+  games_played:
+    format: "{0}"
+
+  # Total number of tasks completed by this player (lifetime)
+  tasks_completed:
+    format: "{0}"
+
+  # Record number of tasks completed in a single game
+  tasks_completed_record:
+    format: "{0}"
+
+  # Amount of times player used the go-up wand (lifetime)
+  item_uses_wand:
+    format: "{0}"
+
+  # Returns formatted session name with session_name format if the session has been created and an empty string if it has not.
+  # Example usage: %bingoreloaded_created_session_My world% (returns My world if the session "My world" has been created)
+  created_session_: # followed by session name
+    format: "{0}"
+
+  # Returns the amount of players present in the world specified after this placeholder. Returns an empty component of the session does not exist.
+  # Example usage: %bingoreloaded_count_session_players_My world% (returns My world if the session "My world" has been created)
+  count_session_players_:
+    format: "{0}"

@@ -1,0 +1,43 @@
+version: 3.0.1
+
+# Formats support using minimessage.
+# For more information about formatting yml files in Bingo Reloaded, read https://github.com/Steaf23/BingoReloaded/wiki/Text-Formatting
+
+
+lobby:
+# Scoreboard variables:
+# - {status}: displays status of current game (like waiting for players or how many players joined the game)
+# - {gamemode}: selected gamemode
+# - {card_size}: selected card size
+# - {kit}: selected kit
+# - {effects}: selected effects (multiline)
+# - {team_size}: selected maximum team size
+# - {duration}: selected duration (or ∞ if countdown mode is not enabled)
+# - {seed}: selected card seed.
+# - {goal}: currently set goal to win the game.
+# - {expire_hotswap}: true or false depending on if hotswap tasks expire from the card.
+# - {separate_cards}: true or false depending on if separate cards will be generated per team.
+
+
+    title: "<bingo_translate:'branding.scoreboard_title'>"
+    sidebar:
+        - " "
+        - "{status}"
+        - " "
+        - "<bold>Gamemode:</bold> {gamemode} {card_size}"
+        - "<bold>Kit:</bold> {kit}"
+        - "<bold>Effects:</bold> {effects}"
+        - "<bold>Team Size:</bold> {team_size}"
+        - "<bold>Time:</bold> {duration}"
+
+game:
+# Scoreboard variables:
+# - {team_info}: displays currently playing teams and optionally team members if enough space is left (multiline)
+# - {win_goal}: amount of points required to win, set to "-----" for regular bingo.
+
+    title: "<underlined><italic><bingo_translate:'menu.completed'>"
+    sidebar:
+        - " "
+        - "{team_info}"
+        - " "
+        - "<bold>Goal:</bold> {win_goal}"

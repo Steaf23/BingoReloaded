@@ -61,20 +61,18 @@ import java.util.List;
 
 public class BingoReloadedPaper extends JavaPlugin implements BingoReloadedRuntime {
 
-	private final PaperServerSoftware platform;
-	private final BingoReloaded bingo;
-	private final MenuBoard menuBoard;
+	private PaperServerSoftware platform;
+	private BingoReloaded bingo;
+	private MenuBoard menuBoard;
 
 	public BingoReloadedPaper() {
-		this.platform = new PaperServerSoftware(this);
-		PlatformResolver.set(new PaperServerSoftware(this));
-
-		this.menuBoard = new MenuBoardPaper(platform, this);
-		this.bingo = new BingoReloaded(this);
 	}
 
 	@Override
 	public void onLoad() {
+		this.platform = new PaperServerSoftware(this);
+		PlatformResolver.set(new PaperServerSoftware(this));
+
 		// Data file updaters
 		{
 			DataUpdaterV1 updater = new DataUpdaterV1(this);
@@ -86,11 +84,15 @@ public class BingoReloadedPaper extends JavaPlugin implements BingoReloadedRunti
 				.checkForUpdates(true);
 		PacketEvents.getAPI().load();
 
+		this.bingo = new BingoReloaded(this);
+
 		bingo.load();
 	}
 
 	@Override
 	public void onEnable() {
+		this.menuBoard = new MenuBoardPaper(platform, this);
+
 		bingo.enable();
 
 		Metrics bStatsMetrics = new Metrics(this, 22586);

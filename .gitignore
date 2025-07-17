@@ -32,3 +32,4 @@ qodana.yaml
 common/build/
 paper/build/
 fabric/build/
+paper/run/

@@ -1,0 +1,191 @@
+name: "Deutsch"
+changed: "Sprache auf Deutsch eingestellt!"
+branding:
+  scoreboard_title: "<dark_aqua><bold>Bingo<reset><yellow><italic>Ⓡeloaded<reset>"
+  message_prefix: "<dark_red>[<dark_aqua><bold>Bingo</bold></dark_aqua><yellow><italic>Ⓡeloaded</italic></yellow>]</dark_red>: "
+  menu_prefix: "<dark_red>[<dark_aqua><bold>B</bold></dark_aqua><yellow><italic>Ⓡ</italic></yellow>]</dark_red>: <dark_gray>"
+command:
+  use: "Verwendung: {0}" # 0: cmd usage
+  bingo:
+    no_deathmatch: "Ein Deathmatch kann nicht gestartet werden, wenn gerade kein Bingospiel läuft!"
+game:
+  timer:
+    duration: "Spielzeit: {0} " # 0: total game time duration
+    time_left: "Spielzeit zum Mitnehmen: {0}" # 0: total game time left (for Countdown cards)
+  lobby:
+    settings_updated: "Ihre Einstellungen wurden aktualisiert, siehe Anzeigetafel!"
+    wait_status: "Warten auf Spieler..."
+    player_status: "{0} Spieler haben dem Spiel beigetreten" # 0: player count
+    starting_status: "Das Spiel beginnt in {0} Sekunden!" # 0: starting time (seconds)
+    vote_kit: "Stimmen Sie für eine Ausrüstung"
+    vote_gamemode: "Stimmen Sie für einen SpielMode"
+    vote_card: "Stimmen Sie für eine Karte"
+    vote_cardsize: "Abstimmung über Kartengröße"
+    vote_count: "{0} Die Spieler stimmten dafür {1} {2}" # 0: player count, 1: vote category, 2: vote item
+    vote_won: "{0} {1} Hat die meisten Stimmen erhalten!" # 0: vote category, 1: vote item
+    no_griefing: "<red>Kein Griefing erlaubt"
+  start:
+    no_players: "Bingo Kann nicht gestartet werden, da noch niemand beigetreten ist :("
+    already_started: "Ein Spiel kann nicht gestartet werden, wenn bereits ein Spiel läuft!"
+    give_cards: "Alle Teilnehmer erhalten Ausrüstung und eine Bingokarte!"
+    no_card: "Das Spiel kann mit der Karte '{0}' nicht gestartet werden, da die Karte nicht existiert!" # 0: card_name
+    chosen_settings: "Bingo-Spiel startet! <gold>Bewege deinen Cursor hierher</gold>, um alle Einstellungen anzusehen."
+  end:
+    bingo: "Herzlichen Glückwunsch! Team {0} hat das Bingo gewonnen!" # 0: winning team
+  postgame:
+    start: "Dieses Spiel wird in {0} Sekunden wieder geöffnet" # 0: time until restart (seconds)
+  deathmatch:
+    start: "Mehrere Gruppen haben die Karte mit der gleichen Punktzahl abgeschlossen. Das Deathmatch beginnt, um einen Gewinner zu ermitteln!"
+    search: "Finde den Gegenstand im Chat, um das Spiel zu gewinnen!"
+    item: "DeathMatch – Seien Sie der Erste, der diesen Artikel gewinnt!: {0}" # 0: item name
+  player:
+    leave: "Du wurdest aus dem Spiel entfernt. Benutze {0}, um wieder beizutreten" # 0: /bingo command
+    no_start: "Das Spiel hat noch nicht begonnen!"
+    no_card: "Ich kann Ihre Karte nicht finden!"
+    respawn: "<dark_aqua><bold>Klicken sie hier, um sich dorthin zurück zu teleportieren, wo sie gestorben sind"
+    respawn_expired: "Der Teleport zur Todesstelle ist abgelaufen!"
+  team:
+    no_join: "Sie können keinem Spiel beitreten, das bereits läuft!"
+    join: "Sie wurden erfolgreich zur Gruppe {0} hinzugefügt!" # 0: team name
+    join_auto: "Sobald das Spiel beginnt, werden Sie automatisch einer Gruppe hinzugefügt!"
+    dropped: "Gruppe {0} kann nicht mehr gewinnen, sie wurde aus dem Spiel geworfen!" # 0: team name
+    no_chat: "Der Gruppenchat kann nicht genutzt werden, da Sie keiner Gruppe angehören!"
+    chat_off: "Der Gruppenchat ist jetzt deaktiviert. <red>deaktiviert</red>, Verwenden Sie {0}, um ihn wieder zu aktivieren" # 0: /btc
+    chat_on: "Der Gruppenchat ist jetzt <green>aktiviert</green>, aktiviert. Verwenden Sie {0}, um ihn zu deaktivieren." # 0: /btc
+    size_changed: "Die maximale Gruppengröße wurde angepasst. Wählen Sie Ihr Team erneut aus!"
+    full_team_desc: "Diese Gruppe ist voll"
+    join_team_desc: "Klicken Sie, um dieser Gruppe hinzuzufügen"
+    spectator_join: "Du bist dem Spiel als Zuschauer beigetreten"
+    spectator_join_no_view: "Du bist dem Spiel als Zuschauer beigetreten, kannst aber keine Teams sehen"
+  item:
+    voided: "Diese Aufgabe kann nicht mehr abgeschlossen werden!"
+    expire: "Läuft ab in: {0}" # 0: time left
+    recover: "Regeneriert in: {0}" # 0: time left
+    single_expired: "{0} Abgelaufen" # 0: task
+    single_added: "{0} Hinzugefügt" # 0: task
+    multiple_expired: "Mehrere Aufgaben abgelaufen"
+    multiple_added: "Mehrere neue Aufgaben hinzugefügt"
+    lore: "Besorgen Sie sich {0} dieses Artikels, \num die Aufgabe abzuschließen!" # 0: item count
+    lore_advancement: "Klicken Sie hier, um weitere Informationen zu erhalten!"
+    lore_statistic: "Indem Sie die Aufgabe erledigen, schließen Sie sie ab!"
+    completed: "{0} wurde von {1} am {2} erreicht" # 0: item name, 1: team, 2: completion time
+    complete_lore: "Erreicht von {0} \nam {1}" # 0: team, 1: completion time
+menu:
+  save: "Speichern"
+  exit: "Menü schließen"
+  save_exit: "Speichern & Beenden"
+  accept: "Akzeptieren & Schließen"
+  next: "Nächste Seite"
+  prev: "Vorherige Seite"
+  filter: "Filtern..."
+  clear: "Filter löschen/ Abbrechen"
+  completed: "Abgeschlossene Aufgaben"
+  count_more: "und {0} andere..." # 0: amount
+  card:
+    title: "Kartenansicht"
+    info_regular:
+      name: "Reguläre Bingo-Karte"
+      desc: "Das erste Team, das eine Reihe komplettiert, gewinnt. \nZeilen können vertikal, horizontal \noder diagonal sein."
+    info_lockout:
+      name: "Lockout Bingo-Karte"
+      desc: "Erledige die meisten Aufgaben, um zu gewinnen. \nSobald eine Aufgabe erledigt ist, \nkann sie nicht von einem anderen Team erledigt werden."
+    info_complete:
+      name: "Komplett-Bingo-Karte"
+      desc: "Das erste Team, das alle Aufgaben erfüllt, gewinnt."
+    info_hotswap:
+      name: "Hot-Swap Bingo-Karte"
+      desc_expire: "Aufgaben werden nach einer gewissen Zeit ersetzt, wenn sie ablaufen."
+      desc_score: "Das erste Team, das {0} Aufgaben abschließt, gewinnt!" #0: winning score
+      desc_time: "Das Team, das die meisten Aufgaben \nvor Ablauf der Zeit abschließt, gewinnt!"
+      desc_any: "Das Team, das die meisten Aufgaben \nvor Ablauf der Zeit abschließt oder {0} Aufgaben erledigt, gewinnt!" #0: winning score
+    show_team_card:
+      desc: "Zeigt die Teamkarte an"
+      name: "Teamkarte <0>"
+      title: "Teamkarte anzeigen"
+  options:
+    title: "Optionsmenü"
+    start: "Spiel starten"
+    end: "Spiel beenden"
+    team: "Einem Team beitreten"
+    leave: "Spiel verlassen"
+    kit: "Ausrüstung"
+    card: "Karte"
+    mode: "Spielmodus"
+    effects: "Spielereffekte"
+    cardsize: "Kartengröße"
+    vote: "Für Einstellungen abstimmen"
+    modes:
+      regular: "Regulär"
+      lockout: "Lockout"
+      complete: "Komplett-X"
+      hotswap: "Hot-Swap"
+  effects:
+    enable: "Klicken, um diese Effektoption zu AKTIVIEREN"
+    disable: "Klicken, um diese Effektoption zu DEAKTIVIEREN"
+    enabled: "AKTIVIERT"
+    disabled: "DEAKTIVIERT"
+    night_vision: "Nachtsicht"
+    water_breath: "Wasseratmung"
+    fire_res: "Feuerresistenz"
+    no_fall_dmg: "Kein Fallschaden"
+    no_durability: "Unendliche Haltbarkeit"
+    keep_inventory: "Inventar behalten"
+    speed: "Geschwindigkeit"
+  kits:
+    hardcore:
+      name: "<dark_red><bold>Hardcore"
+      desc: "Diese Ausrüstung umfasst: \n
+      \n
+          - Nichts, tschüss und danke!"
+    normal:
+      name: "<yellow><bold>Normal"
+      desc: "Diese Ausrüstung umfasst: \n
+      \n
+          - Iron Axe \n
+          - Iron Pickaxe \n
+          - Iron Shovel (Silk Touch) \n
+          - 32 baked Potatoes \n
+          - Leather Helmet \n
+          - Leather Boots"
+    overpowered:
+      name: "<dark_purple><bold>Overpowered"
+      desc: "Diese Ausrüstung umfasst: \n
+      \n
+          - Netherite Axe \n
+          - Netherite Pickaxe (Fortune) \n
+          - Netherite Shovel (Silk Touch) \n
+          - 64 Golden Carrots \n
+          - Die Go-Up-Wand \n
+          - Leather Helmet \n
+          - Leather Boots"
+    reloaded:
+      name: "<dark_aqua><bold>Reloaded"
+      desc: "Diese Ausrüstung umfasst: \n
+      \n
+          - Netherite Axe \n
+          - Netherite Pickaxe (Fortune) \n
+          - Netherite Shovel (Silk Touch) \n
+          - 64 Golden Carrots \n
+          - Die Go-Up-Wand \n
+          - Leather Helmet \n
+          - Elytra (Unbreaking X) \n
+          - Leather Boots"
+    custom: "Eigen"
+items:
+  card:
+    name: "Bingo-Karte"
+    desc: "Klicken Sie hier, um die Bingo-Karte zu öffnen!"
+  wand:
+    name: "Der Nach-Oben-Zauberstab"
+    desc: "Rechtsklick, um nach oben zu teleportieren! (& Halten Sie Umschalttaste gedrückt, um nach unten zu gehen)"
+  vote:
+    name: "Abstimmen"
+    desc: "Klicken Sie hier, um für Spieloptionen abzustimmen"
+  team:
+    name: "Einem Team beitreten"
+    desc: "Klicken Sie hier, um Ihr Team auszuwählen"
+creator:
+  card_item:
+    desc: "Enthält {0} Liste(n)" # 0: Anzahl der Listen
+teams:
+  auto: "Automatisch"
