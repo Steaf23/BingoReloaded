@@ -1,7 +1,7 @@
 package io.github.steaf23.bingoreloaded.lib.data.serializers;
 
 import io.github.steaf23.bingoreloaded.lib.api.EntityType;
-import io.github.steaf23.bingoreloaded.lib.api.ItemType;
+import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.api.StatisticHandle;
 import io.github.steaf23.bingoreloaded.lib.api.StatisticType;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataStorage;

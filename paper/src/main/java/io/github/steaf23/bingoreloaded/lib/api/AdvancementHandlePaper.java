@@ -1,5 +1,6 @@
 package io.github.steaf23.bingoreloaded.lib.api;
 
+import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import net.kyori.adventure.key.Key;
 import org.bukkit.advancement.Advancement;
 import org.jetbrains.annotations.NotNull;

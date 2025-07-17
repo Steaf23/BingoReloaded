@@ -1,7 +1,7 @@
 package io.github.steaf23.bingoreloaded.lib.item;
 
-import io.github.steaf23.bingoreloaded.lib.api.ItemType;
-import io.github.steaf23.bingoreloaded.lib.api.StackHandle;
+import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
+import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.data.core.tag.TagDataStorage;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;

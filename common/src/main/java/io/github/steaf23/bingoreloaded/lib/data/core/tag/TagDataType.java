@@ -1,6 +1,6 @@
 package io.github.steaf23.bingoreloaded.lib.data.core.tag;
 
-import io.github.steaf23.bingoreloaded.lib.api.StackHandle;
+import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.data.core.tag.adapters.BooleanTagAdapter;
 import io.github.steaf23.bingoreloaded.lib.data.core.tag.adapters.ItemStackTagAdapter;
 import io.github.steaf23.bingoreloaded.lib.data.core.tag.adapters.UUIDTagAdapter;

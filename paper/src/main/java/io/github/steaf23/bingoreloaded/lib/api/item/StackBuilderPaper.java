@@ -1,5 +1,6 @@
-package io.github.steaf23.bingoreloaded.lib.api;
+package io.github.steaf23.bingoreloaded.lib.api.item;
 
+import io.github.steaf23.bingoreloaded.lib.api.ItemTypePaper;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import io.github.steaf23.bingoreloaded.lib.util.PDCHelper;

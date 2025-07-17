@@ -1,4 +1,4 @@
-package io.github.steaf23.bingoreloaded.lib.api;
+package io.github.steaf23.bingoreloaded.lib.api.player;
 
 import java.util.UUID;
 

@@ -2,7 +2,7 @@ package io.github.steaf23.bingoreloaded.lib.util;
 
 import io.github.steaf23.bingoreloaded.lib.api.AdvancementHandle;
 import io.github.steaf23.bingoreloaded.lib.api.EntityType;
-import io.github.steaf23.bingoreloaded.lib.api.ItemType;
+import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.api.StatisticHandle;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -25,7 +25,7 @@ public class ComponentUtils
         return Arrays.stream(strings).map(s -> LegacyComponentSerializer.legacySection().deserialize(s)).toList().toArray(new Component[]{});
     }
 
-    public static Component itemName(io.github.steaf23.bingoreloaded.lib.api.ItemType item)
+    public static Component itemName(ItemType item)
     {
         return Component.translatable(itemKey(item));
     }

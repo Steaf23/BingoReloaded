@@ -1,10 +1,5 @@
 package io.github.steaf23.bingoreloaded.lib.gui;
 
-import io.github.steaf23.bingoreloaded.lib.api.PlayerHandle;
-import net.kyori.adventure.text.Component;
-
-import java.util.Collection;
-
 public class TeamPacketHelper
 {
 //    public static void createTeamVisibleToPlayer(PlayerHandle player, String identifier, Component displayName, Component prefix, Component suffix, Collection<String> entries) {

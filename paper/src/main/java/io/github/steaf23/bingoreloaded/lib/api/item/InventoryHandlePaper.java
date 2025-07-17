@@ -1,6 +1,5 @@
-package io.github.steaf23.bingoreloaded.lib.api;
+package io.github.steaf23.bingoreloaded.lib.api.item;
 
-import org.bukkit.entity.Item;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;

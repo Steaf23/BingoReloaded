@@ -1,6 +1,6 @@
 package io.github.steaf23.bingoreloaded.lib.util;
 
-import io.github.steaf23.bingoreloaded.lib.api.ItemType;
+import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import net.kyori.adventure.text.format.TextColor;
 
 public enum BlockColor

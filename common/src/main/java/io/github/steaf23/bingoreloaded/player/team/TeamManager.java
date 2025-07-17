@@ -1,7 +1,7 @@
 package io.github.steaf23.bingoreloaded.player.team;
 
 import io.github.steaf23.bingoreloaded.api.BingoEvents;
-import io.github.steaf23.bingoreloaded.lib.api.PlayerHandle;
+import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.data.TeamData;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;

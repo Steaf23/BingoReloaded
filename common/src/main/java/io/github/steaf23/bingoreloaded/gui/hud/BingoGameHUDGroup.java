@@ -2,8 +2,6 @@ package io.github.steaf23.bingoreloaded.gui.hud;
 
 import io.github.steaf23.bingoreloaded.data.ScoreboardData;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
-import io.github.steaf23.bingoreloaded.lib.api.PlayerHandle;
-import io.github.steaf23.bingoreloaded.lib.gui.menu.PlayerHUD;
 import io.github.steaf23.bingoreloaded.lib.gui.menu.ValueListHUD;
 import io.github.steaf23.bingoreloaded.lib.util.ComponentUtils;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;

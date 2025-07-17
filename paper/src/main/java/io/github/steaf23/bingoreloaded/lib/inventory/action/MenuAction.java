@@ -1,6 +1,6 @@
 package io.github.steaf23.bingoreloaded.lib.inventory.action;
 
-import io.github.steaf23.bingoreloaded.lib.api.PlayerHandle;
+import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.inventory.Menu;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import org.bukkit.event.inventory.ClickType;

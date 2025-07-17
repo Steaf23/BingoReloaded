@@ -1,6 +1,6 @@
 package io.github.steaf23.bingoreloaded.lib.world;
 
-import io.github.steaf23.bingoreloaded.lib.api.ItemType;
+import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.api.WorldPosition;
 import org.jetbrains.annotations.Nullable;
 

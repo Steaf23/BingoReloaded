@@ -1,6 +1,6 @@
 package io.github.steaf23.bingoreloaded.tasks.data;
 
-import io.github.steaf23.bingoreloaded.lib.api.ItemType;
+import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import net.kyori.adventure.text.Component;
 
 public interface TaskData

@@ -1,5 +1,6 @@
-package io.github.steaf23.bingoreloaded.lib.api;
+package io.github.steaf23.bingoreloaded.lib.api.item;
 
+import io.github.steaf23.bingoreloaded.lib.api.PlatformResolver;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.key.Keyed;
 import org.intellij.lang.annotations.Subst;

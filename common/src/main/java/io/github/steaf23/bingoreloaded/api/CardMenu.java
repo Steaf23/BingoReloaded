@@ -1,7 +1,7 @@
 package io.github.steaf23.bingoreloaded.api;
 
 import io.github.steaf23.bingoreloaded.tasks.GameTask;
-import io.github.steaf23.bingoreloaded.lib.api.PlayerHandle;
+import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.Nullable;
 

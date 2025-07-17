@@ -1,8 +1,8 @@
 package io.github.steaf23.bingoreloaded.settings;
 
-import io.github.steaf23.bingoreloaded.lib.api.PlayerHandle;
+import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.item.SerializableItem;
-import io.github.steaf23.bingoreloaded.lib.api.StackHandle;
+import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import net.kyori.adventure.text.Component;
 
 import java.util.ArrayList;

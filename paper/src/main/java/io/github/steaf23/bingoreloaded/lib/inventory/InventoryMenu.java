@@ -1,8 +1,8 @@
 package io.github.steaf23.bingoreloaded.lib.inventory;
 
-import io.github.steaf23.bingoreloaded.lib.api.InventoryHandlePaper;
+import io.github.steaf23.bingoreloaded.lib.api.item.InventoryHandlePaper;
 import io.github.steaf23.bingoreloaded.lib.api.PlatformResolver;
-import io.github.steaf23.bingoreloaded.lib.api.PlayerHandle;
+import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.inventory.Inventory;

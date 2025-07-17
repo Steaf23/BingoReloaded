@@ -1,13 +1,10 @@
 package io.github.steaf23.bingoreloaded.lib.api;
 
+import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import org.bukkit.Material;
 import org.bukkit.Statistic;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 
 public record StatisticHandlePaper(@NotNull StatisticTypePaper statistic, @Nullable EntityType entityType, @Nullable ItemType itemType) implements StatisticHandle
 {

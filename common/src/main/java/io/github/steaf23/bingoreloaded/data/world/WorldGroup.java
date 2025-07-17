@@ -1,7 +1,7 @@
 package io.github.steaf23.bingoreloaded.data.world;
 
 import io.github.steaf23.bingoreloaded.lib.api.ServerSoftware;
-import io.github.steaf23.bingoreloaded.lib.api.PlayerHandle;
+import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.api.WorldHandle;
 import org.jetbrains.annotations.Nullable;
 
