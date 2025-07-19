@@ -94,7 +94,7 @@ public interface DataStorage
     void setItemStack(String path, StackHandle value);
     @NotNull StackHandle getItemStack(String path);
 
-    void setUUID(String path, UUID value);
+    void setUUID(String path, @Nullable UUID value);
     @Nullable UUID getUUID(String path);
 
     void setWorldPosition(String path, @NotNull WorldPosition value);

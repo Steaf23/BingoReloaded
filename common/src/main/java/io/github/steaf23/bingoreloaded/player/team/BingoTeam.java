@@ -37,7 +37,7 @@ public class BingoTeam implements ForwardingAudience
     }
 
     public Optional<TaskCard> getCard() {
-        return Optional.of(card);
+        return Optional.ofNullable(card);
     }
 
     public void setCard(TaskCard card) {

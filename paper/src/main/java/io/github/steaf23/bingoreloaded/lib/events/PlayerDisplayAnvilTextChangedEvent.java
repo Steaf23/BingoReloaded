@@ -17,9 +17,4 @@ public class PlayerDisplayAnvilTextChangedEvent extends PlayerPacketEvent {
 	public String getNewText() {
 		return newText;
 	}
-
-	@Override
-	public @NotNull HandlerList getHandlers() {
-		return null;
-	}
 }

@@ -31,7 +31,7 @@ public abstract class GameTimer
     public void start()
     {
         stop();
-        this.task = PlatformResolver.get().runTaskTimer(getStartDelay(), getUpdateInterval(), (task) -> {
+        this.task = PlatformResolver.get().runTaskTimer(getUpdateInterval(), getStartDelay(), (task) -> {
             updateTime(time + getStep());
         });
     }

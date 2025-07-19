@@ -187,10 +187,6 @@ public class BingoGame implements GamePhase
         // Post-start Setup
         scoreboard.setup(settings);
 
-        //FIXME: REFACTOR add bingo started event
-//        var event = new BingoStartedEvent(session);
-//        Bukkit.getPluginManager().callEvent(event);
-
         // Countdown before the game actually starts
         startingTimer = new CountdownTimer(Math.max(1, config.getOptionValue(BingoOptions.STARTING_COUNTDOWN_TIME)), 6, 3, this::onStartingTimerFinished);
         startingTimer.addNotifier(time -> {
@@ -459,14 +455,23 @@ public class BingoGame implements GamePhase
         WorldPosition randomPosition = BlockHelper.getRandomPosWithinRange(new WorldPosition(world, 0.0D, 0.0D, 0.0D), teleportMaxDistance, teleportMaxDistance);
         WorldPosition location = new WorldPosition(world, randomPosition.x(), BlockHelper.getHighestBlockYAtPos(randomPosition), randomPosition.z());
 
-        //find a not ocean biome to start the game in
-        BiomeType biome = world.biomeAtPos(location);
-        while (biome.isOcean() || biome.isRiver()) {
+        //find a not-ocean biome to start the game in
+        while (isOceanBiome(world.biomeAtPos(location))) {
             randomPosition = BlockHelper.getRandomPosWithinRange(new WorldPosition(world, 0.0D, 0.0D, 0.0D), teleportMaxDistance, teleportMaxDistance);
             location = new WorldPosition(world, randomPosition.x(), BlockHelper.getHighestBlockYAtPos(randomPosition), randomPosition.z());
         }
 
         return location;
+    }
+
+    /**
+     * Counts RIVER as ocean biome!
+     *
+     * @param biome biome to check
+     * @return true if the biome is considered to be an ocean-like biome
+     */
+    public static boolean isOceanBiome(BiomeType biome) {
+        return biome.isOcean() || biome.isRiver();
     }
 
     public GameTask getDeathMatchTask() {
@@ -570,8 +575,8 @@ public class BingoGame implements GamePhase
             keepInventory = true;
         } else {
             for (StackHandle drop : droppedItems) {
-                var kitInfo = drop.getStorage("kit");
-                if (kitInfo == null || kitInfo.getBoolean("kit_item", false)
+                var data = drop.getStorage();
+                if (data == null || data.getBoolean("kit_item", false)
                         || PlayerKit.CARD_ITEM.isCompareKeyEqual(drop)) {
                     drop.setAmount(0);
                 }

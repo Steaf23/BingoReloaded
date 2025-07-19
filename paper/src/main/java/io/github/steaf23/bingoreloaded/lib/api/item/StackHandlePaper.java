@@ -1,21 +1,39 @@
 package io.github.steaf23.bingoreloaded.lib.api.item;
 
 import io.github.steaf23.bingoreloaded.lib.api.ItemTypePaper;
-import io.github.steaf23.bingoreloaded.lib.data.core.DataStorage;
+import io.github.steaf23.bingoreloaded.lib.api.PlatformResolver;
+import io.github.steaf23.bingoreloaded.lib.data.core.tag.TagDataStorage;
+import io.github.steaf23.bingoreloaded.lib.data.core.tag.TagTree;
+import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import io.github.steaf23.bingoreloaded.lib.util.PDCHelper;
 import io.github.steaf23.bingoreloaded.util.ItemHelper;
 import net.kyori.adventure.text.Component;
+import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.persistence.PersistentDataType;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.List;
 
 public class StackHandlePaper implements StackHandle {
 
-	private final ItemStack stack;
+	private final @NotNull ItemStack stack;
 
-	public StackHandlePaper(ItemStack stack) {
-		this.stack = stack;
+	private static final NamespacedKey CUSTOM_DATA_KEY = new NamespacedKey(
+			PlatformResolver.get().getExtensionInfo().name().toLowerCase(),
+			"custom");
+
+	public StackHandlePaper(@Nullable ItemStack stack) {
+		if (stack != null) {
+			this.stack = stack;
+		} else {
+			this.stack = new ItemStack(Material.AIR);
+		}
 	}
 
 	@Override
@@ -40,6 +58,9 @@ public class StackHandlePaper implements StackHandle {
 
 	@Override
 	public String compareKey() {
+		if (stack.getItemMeta() == null) {
+			return "";
+		}
 		return PDCHelper.getStringFromPdc(stack.getItemMeta().getPersistentDataContainer(), "compare_key");
 	}
 
@@ -55,7 +76,7 @@ public class StackHandlePaper implements StackHandle {
 
 	@Override
 	public void setAmount(int newAmount) {
-
+		stack.setAmount(newAmount);
 	}
 
 	@Override
@@ -64,13 +85,37 @@ public class StackHandlePaper implements StackHandle {
 	}
 
 	@Override
-	public void addStorage(String key, DataStorage storage) {
-		//FIXME: REFACTOR implement
+	public void setStorage(TagDataStorage newStorage) {
+		stack.editPersistentDataContainer(container -> {
+			try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+				newStorage.getTree().getPayload(out);
+				byte[] bytes = out.toByteArray();
+
+				container.set(CUSTOM_DATA_KEY, PersistentDataType.BYTE_ARRAY, bytes);
+			} catch (IOException e) {
+				ConsoleMessenger.bug("Custom Data (in setStorage()) exception", this);
+				e.printStackTrace(); // You can log or rethrow this if needed
+			}
+		});
 	}
 
 	@Override
-	public @Nullable DataStorage getStorage(String key) {
-		return null;
+	public @Nullable TagDataStorage getStorage() {
+		byte[] bytes = stack.getItemMeta().getPersistentDataContainer()
+				.get(CUSTOM_DATA_KEY, PersistentDataType.BYTE_ARRAY);
+
+		if (bytes == null) {
+			return null;
+		}
+
+		try (ByteArrayInputStream in = new ByteArrayInputStream(bytes)) {
+			TagTree tree = TagTree.fromPayload(in);
+			return new TagDataStorage(tree);
+		} catch (IOException e) {
+			ConsoleMessenger.bug("Custom Data (in getStorage()) exception", this);
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 	public ItemStack handle() {

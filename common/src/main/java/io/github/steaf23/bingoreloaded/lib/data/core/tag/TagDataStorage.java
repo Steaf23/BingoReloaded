@@ -359,7 +359,11 @@ public class TagDataStorage implements DataStorage
     }
 
     @Override
-    public void setUUID(String path, UUID value) {
+    public void setUUID(String path, @Nullable UUID value) {
+        if (value == null) {
+            return;
+        }
+
         set(path, TagDataType.UUID.toTag(value));
     }
 

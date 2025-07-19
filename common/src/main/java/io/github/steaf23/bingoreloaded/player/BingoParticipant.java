@@ -15,37 +15,50 @@ import java.util.EnumSet;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface BingoParticipant extends ForwardingAudience.Single
-{
-    BingoSession getSession();
-    @Nullable
-    BingoTeam getTeam();
-    void setTeam(@Nullable BingoTeam team);
-    UUID getId();
-    Optional<PlayerHandle> sessionPlayer();
-    String getName();
-    Component getDisplayName();
-    void showDeathMatchTask(GameTask task);
-    void showCard(GameTask deathMatchTask);
-    boolean alwaysActive();
-    default int getAmountOfTaskCompleted() {
-        if (getTeam() == null) {
-            return 0;
-        }
+public interface BingoParticipant extends ForwardingAudience.Single {
 
-        Optional<TaskCard> card = getTeam().getCard();
-        return card.map(taskCard -> taskCard.getCompleteCount(this)).orElse(0);
-    }
+	BingoSession getSession();
 
-    default Optional<TaskCard> getCard() {
-        if (getTeam() == null) {
-            return Optional.empty();
-        }
-        return getTeam().getCard();
-    }
+	@Nullable
+	BingoTeam getTeam();
 
-    void giveBingoCard(int cardSlot, @Nullable MapRenderer renderer);
-    void giveEffects(EnumSet<EffectOptionFlags> effects, int gracePeriod);
-    void takeEffects(boolean force);
-    void giveKit(PlayerKit kit);
+	void setTeam(@Nullable BingoTeam team);
+
+	UUID getId();
+
+	Optional<PlayerHandle> sessionPlayer();
+
+	String getName();
+
+	Component getDisplayName();
+
+	void showDeathMatchTask(GameTask task);
+
+	void showCard(GameTask deathMatchTask);
+
+	boolean alwaysActive();
+
+	default int getAmountOfTaskCompleted() {
+		if (getTeam() == null) {
+			return 0;
+		}
+
+		Optional<TaskCard> card = getTeam().getCard();
+		return card.map(taskCard -> taskCard.getCompleteCount(this)).orElse(0);
+	}
+
+	default Optional<TaskCard> getCard() {
+		if (getTeam() == null) {
+			return Optional.empty();
+		}
+		return getTeam().getCard();
+	}
+
+	void giveBingoCard(int cardSlot, @Nullable MapRenderer renderer);
+
+	void giveEffects(EnumSet<EffectOptionFlags> effects, int gracePeriod);
+
+	void takeEffects(boolean force);
+
+	void giveKit(PlayerKit kit);
 }

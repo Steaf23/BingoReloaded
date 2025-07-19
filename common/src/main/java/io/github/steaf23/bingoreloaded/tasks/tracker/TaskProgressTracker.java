@@ -74,7 +74,7 @@ public class TaskProgressTracker
         progressMap.put(task, new ArrayList<>());
         for (BingoParticipant participant : game.getTeamManager().getParticipants()) {
             // only track progress if the participant has to complete the task.
-            Optional<TaskCard> card = participant.getTeam().getCard();
+            Optional<TaskCard> card = participant.getCard();
             if (card.isEmpty() || !card.get().getTasks().contains(task)) {
                 continue;
             }
@@ -319,7 +319,7 @@ public class TaskProgressTracker
         if (player.getTeam() == null) {
             ConsoleMessenger.bug("Player " + player.getName() + " is not in a valid team!", this);
         }
-        player.getTeam().getCard().ifPresent(card ->
+        player.getCard().ifPresent(card ->
                 card.onTaskCompleted(player, task, game.getGameTime()));
 
         game.onBingoTaskCompleted(player, task);

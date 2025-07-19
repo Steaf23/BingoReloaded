@@ -15,4 +15,8 @@ public class EntityTypePaper implements EntityType {
 	public @NotNull Key key() {
 		return type.key();
 	}
+
+	public org.bukkit.entity.EntityType handle() {
+		return type;
+	}
 }

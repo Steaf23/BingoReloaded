@@ -113,7 +113,7 @@ public class GameTask
 
         TagDataStorage storage = new TagDataStorage();
         new GameTaskSerializer().toDataStorage(storage, this);
-        item.addExtraData("game_task", storage);
+        item.setExtraData(storage);
 
         if ((data.shouldItemGlow() || isCompleted()) && !isVoided())
         {
@@ -128,7 +128,7 @@ public class GameTask
 
     public static @Nullable GameTask fromItem(StackHandle in)
     {
-        DataStorage store = in.getStorage("game_task");
+        TagDataStorage store = in.getStorage();
         if (store == null) {
             ConsoleMessenger.bug("No task data found in item", GameTask.class);
             return null;

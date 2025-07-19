@@ -3,6 +3,7 @@ package io.github.steaf23.bingoreloaded.lib.inventory;
 import io.github.steaf23.bingoreloaded.lib.api.ItemTypePaper;
 import io.github.steaf23.bingoreloaded.lib.api.MenuBoard;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
+import io.github.steaf23.bingoreloaded.lib.inventory.action.MenuAction;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import io.github.steaf23.bingoreloaded.lib.util.PlayerDisplayTranslationKey;
 import net.kyori.adventure.text.Component;
@@ -28,7 +29,6 @@ public class UserInputMenu extends BasicMenu
         this.text = "";
 
         addItem(new ItemTemplate(0, ItemTypePaper.of(Material.NAME_TAG), Component.text(startingText)));
-        addCloseAction(save);
         addAction(CLEAR.copy(), args -> {
             text = "";
             close(args.player());
@@ -37,7 +37,7 @@ public class UserInputMenu extends BasicMenu
 
     public void handleTextChanged(String newText) {
         this.text = newText;
-        addItem(save.setLore(Component.text(text)));
+        addCloseAction(save.setLore(Component.text(text)));
     }
 
     /**

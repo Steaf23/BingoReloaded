@@ -2,6 +2,7 @@ package io.github.steaf23.bingoreloaded.lib.api.item;
 
 import io.github.steaf23.bingoreloaded.lib.api.PlatformResolver;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataStorage;
+import io.github.steaf23.bingoreloaded.lib.data.core.tag.TagDataStorage;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.Nullable;
@@ -28,9 +29,13 @@ public interface StackHandle {
 
 	StackHandle clone();
 
-	void addStorage(String key, DataStorage storage);
+	/**
+	 * Clears and adds the newStorage to the stack using the custom_data component.
+	 * @param newStorage Source of data to copy over.
+	 */
+	void setStorage(TagDataStorage newStorage);
 
-	@Nullable DataStorage getStorage(String key);
+	@Nullable TagDataStorage getStorage();
 
 	static StackHandle createFromTemplate(ItemTemplate template, boolean hideAttributes) {
 		return PlatformResolver.get().createStackFromTemplate(template, hideAttributes);

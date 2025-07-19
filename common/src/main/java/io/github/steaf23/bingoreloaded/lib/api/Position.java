@@ -1,5 +1,7 @@
 package io.github.steaf23.bingoreloaded.lib.api;
 
+import java.util.Random;
+
 public class Position {
 	private double x;
 	private double y;
@@ -83,9 +85,32 @@ public class Position {
 	}
 
 	public Position add(Position other) {
-		this.x = other.x;
-		this.y = other.y;
-		this.z = other.z;
+		this.x += other.x;
+		this.y += other.y;
+		this.z += other.z;
 		return this;
+	}
+
+	public Position multiply(double value) {
+		this.x *= value;
+		this.y *= value;
+		this.z *= value;
+		return this;
+	}
+
+	public Position multiply(double valueX, double valueY, double valueZ) {
+		this.x *= valueX;
+		this.y *= valueY;
+		this.z *= valueZ;
+		return this;
+	}
+
+	public Position multiply(Position position) {
+		return multiply(position.x(), position.y(), position.z());
+	}
+
+	public static Position random() {
+		Random random = new Random();
+		return new Position(random.nextDouble(), random.nextDouble(), random.nextDouble());
 	}
 }

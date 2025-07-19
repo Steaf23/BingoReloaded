@@ -30,6 +30,10 @@ public class BingoSettingsData
     }
 
     public void saveSettings(String name, BingoSettings settings) {
+        if (name.isBlank()) {
+            return;
+        }
+
         if (name.equals("default"))
         {
             ConsoleMessenger.error("Cannot use name 'default'.");

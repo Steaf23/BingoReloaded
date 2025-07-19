@@ -31,7 +31,7 @@ public class MenuItemGroup
         for (ItemTemplate item : new ArrayList<>(items)) {
             int itemSlot = item.getSlot();
             if (itemSlot == clickedSlot) {
-                if (actions.containsKey(item.getSlot())) {
+                if (actions.containsKey(itemSlot) && actions.get(itemSlot) != null) {
                     actions.get(itemSlot).use(new MenuAction.ActionArguments(menu, player, clickType));
                 }
                 //TODO: find a way to update itemstack automatically on change, no matter where!
@@ -44,6 +44,9 @@ public class MenuItemGroup
     public void addItem(ItemTemplate item, @Nullable MenuAction action) {
         items.removeIf(i -> i.getSlot() == item.getSlot());
         items.add(item);
+        if (action != null) {
+            action.setItem(item);
+        }
         actions.put(item.getSlot(), action);
     }
 

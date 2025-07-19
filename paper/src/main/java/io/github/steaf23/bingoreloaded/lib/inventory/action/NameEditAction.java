@@ -39,8 +39,11 @@ public class NameEditAction extends MenuAction
     protected void renameItem(PlayerHandle player) {
         new UserInputMenu(board, prompt, (result) -> {
             value = result;
-            item.setName(ComponentUtils.MINI_BUILDER.deserialize(value));
+            if (item != null) {
+                item.setName(ComponentUtils.MINI_BUILDER.deserialize(value));
+            }
             callback.accept(value, item);
+
         }, value)
                 .open(player);
     }

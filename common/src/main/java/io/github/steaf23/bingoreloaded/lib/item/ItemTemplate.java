@@ -54,7 +54,7 @@ public class ItemTemplate
     private int customModelData = 0;
     private ItemTemplate texturedVariant = null;
     private final Map<Key, ItemComponents.ItemComponent> components = new HashMap<>();
-    private final Map<String, TagDataStorage> extraData = new HashMap<>();
+    private TagDataStorage extraData;
 
     public ItemTemplate(ItemType type) {
         this.type = type;
@@ -369,9 +369,13 @@ public class ItemTemplate
         return this;
     }
 
-    public ItemTemplate addExtraData(String key, TagDataStorage value) {
-        extraData.put(key, value);
+    public ItemTemplate setExtraData(TagDataStorage value) {
+        extraData = value;
         return this;
+    }
+
+    public TagDataStorage getExtraData() {
+        return extraData;
     }
 
     /**

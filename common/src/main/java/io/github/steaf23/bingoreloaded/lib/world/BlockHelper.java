@@ -1,8 +1,11 @@
 package io.github.steaf23.bingoreloaded.lib.world;
 
+import io.github.steaf23.bingoreloaded.lib.api.Position;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.api.WorldPosition;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Random;
 
 public interface BlockHelper {
 	static void buildCuboid(ItemType blockType, WorldPosition center, int extendX, int extendZ, int extendY, boolean skipSolidBlocks, @Nullable ItemType mask) {
@@ -29,10 +32,11 @@ public interface BlockHelper {
 		}
 	}
 
-	static WorldPosition getRandomPosWithinRange(WorldPosition center, int rangeX, int rangeY) {
-//		Vector placement = Vector.getRandom().multiply(spread * 2).add(new Vector(-spread, -spread, -spread));
-//		return center.add(placement);
-		return center.clone();
+	static WorldPosition getRandomPosWithinRange(WorldPosition center, int rangeX, int rangeZ) {
+		Position pos = Position.random()
+				.multiply(rangeX * 2, 1.0, rangeZ * 2)
+				.add(new Position(-rangeX, 1.0, -rangeZ));
+		return center.clone().add(pos);
 	}
 
 	static int getHighestBlockYAtPos(WorldPosition pos) {

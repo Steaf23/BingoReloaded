@@ -2,6 +2,7 @@ package io.github.steaf23.bingoreloaded.lib.api;
 
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
+import io.github.steaf23.bingoreloaded.lib.api.item.StackHandlePaper;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandlePaper;
 import org.bukkit.World;
@@ -68,17 +69,17 @@ public class WorldHandlePaper implements WorldHandle {
 
 	@Override
 	public void setTypeAtPos(WorldPosition pos, ItemType type) {
-
+		world.setType(PaperApiHelper.locationFromWorldPos(pos), ((ItemTypePaper)type).handle());
 	}
 
 	@Override
 	public WorldPosition highestBlockAt(WorldPosition pos) {
-		return null;
+		return PaperApiHelper.worldPosFromLocation(world.getHighestBlockAt(pos.blockX(), pos.blockY()).getLocation());
 	}
 
 	@Override
 	public void dropItem(StackHandle item, WorldPosition location) {
-
+		world.dropItem(PaperApiHelper.locationFromWorldPos(location), ((StackHandlePaper)item).handle());
 	}
 
 	public World handle() {

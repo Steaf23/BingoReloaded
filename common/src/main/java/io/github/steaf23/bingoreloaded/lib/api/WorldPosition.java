@@ -11,6 +11,11 @@ public class WorldPosition extends Position {
 		this.world = fromOther.world;
 	}
 
+	public WorldPosition(@NotNull WorldHandle world, Position fromOther) {
+		super(fromOther);
+		this.world = world;
+	}
+
 	public WorldPosition(@NotNull WorldHandle world, double x, double y, double z) {
 		super(x, y, z);
 		this.world = world;
@@ -68,5 +73,10 @@ public class WorldPosition extends Position {
 	public WorldPosition moveZBlocks(int amount) {
 		super.moveZBlocks(amount);
 		return this;
+	}
+
+	@Override
+	public WorldPosition add(Position other) {
+		return (WorldPosition) super.add(other);
 	}
 }
