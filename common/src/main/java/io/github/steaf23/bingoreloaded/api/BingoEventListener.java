@@ -208,12 +208,12 @@ public final class BingoEventListener implements PlatformEventDispatcher {
 	}
 
 	@Override
-	public EventResult<?> sendPlayerInventoryClick(PlayerHandle player, StackHandle itemOnCursor) {
+	public EventResult<?> sendPlayerInventoryClick(PlayerHandle player, StackHandle itemOnCursor, boolean resultSlot, boolean shiftClick) {
 		BingoSession session = getSession(player.world());
 		BingoGame game = session != null && session.isRunning() ? (BingoGame)session.phase() : null;
 		if (game != null && game.hasStarted())
 		{
-			game.getProgressTracker().handleInventoryClicked(player, itemOnCursor);
+			game.getProgressTracker().handleInventoryClicked(player, itemOnCursor, resultSlot, shiftClick);
 		}
 
 		return EventResult.PASS;

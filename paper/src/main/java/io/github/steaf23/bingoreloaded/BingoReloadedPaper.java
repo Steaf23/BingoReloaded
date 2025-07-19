@@ -39,6 +39,7 @@ import io.github.steaf23.bingoreloaded.lib.api.WorldHandle;
 import io.github.steaf23.bingoreloaded.lib.data.core.ConfigDataAccessor;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataAccessor;
 import io.github.steaf23.bingoreloaded.lib.data.core.YamlDataAccessor;
+import io.github.steaf23.bingoreloaded.lib.events.EventListenerPaper;
 import io.github.steaf23.bingoreloaded.lib.inventory.MenuBoardPaper;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
@@ -65,6 +66,7 @@ public class BingoReloadedPaper extends JavaPlugin implements BingoReloadedRunti
 	private PaperServerSoftware platform;
 	private BingoReloaded bingo;
 	private MenuBoard menuBoard;
+	private EventListenerPaper eventListener;
 
 	public BingoReloadedPaper() {
 	}
@@ -95,6 +97,8 @@ public class BingoReloadedPaper extends JavaPlugin implements BingoReloadedRunti
 		this.menuBoard = new MenuBoardPaper(platform, this);
 
 		bingo.enable();
+
+		eventListener = new EventListenerPaper(this, bingo.getGameManager().eventListener());
 
 //		menuBoard.setPlayerOpenPredicate(player -> player instanceof PlayerHandle handle && this.gameManager.canPlayerOpenMenus(handle));
 

@@ -316,4 +316,8 @@ public class GameManager {
 	public ServerSoftware getPlatform() {
 		return platform;
 	}
+
+	public BingoEventListener eventListener() {
+		return eventListener;
+	}
 }

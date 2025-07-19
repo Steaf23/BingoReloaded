@@ -34,4 +34,13 @@ public class ItemTypePaper implements ItemType {
 	public Material handle() {
 		return type;
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof ItemTypePaper other) {
+			return type.equals(other.type);
+		}
+
+		return super.equals(obj);
+	}
 }

@@ -1,5 +1,6 @@
 package io.github.steaf23.bingoreloaded.gameloop.phase;
 
+import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.api.BingoEvents;
 import io.github.steaf23.bingoreloaded.lib.api.InteractAction;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
@@ -249,20 +250,17 @@ public class PregameLobby implements GamePhase
 		if (stack == null || stack.type().isAir())
             return EventResult.PASS;
 
-        //FIXME: REFACTOR menu call
-//        if (!action.rightClick()) {
-//            return EventResult.PASS;
-//        }
-//
-//        if (PlayerKit.VOTE_ITEM.isCompareKeyEqual(item)) {
-//            VoteMenu menu = new VoteMenu(menuBoard, config.getOptionValue(BingoOptions.VOTE_LIST), this);
-//            menu.open(player);
-//            return true;
-//        } else if (PlayerKit.TEAM_ITEM.isCompareKeyEqual(item)) {
-//            TeamSelectionMenu teamSelection = new TeamSelectionMenu(menuBoard, session);
-//            teamSelection.open(player);
-//            return true;
-//        }
+        if (!action.rightClick()) {
+            return EventResult.PASS;
+        }
+
+        if (PlayerKit.VOTE_ITEM.isCompareKeyEqual(stack)) {
+            BingoReloaded.runtime().openVoteMenu(player, this);
+            return EventResult.CANCEL;
+        } else if (PlayerKit.TEAM_ITEM.isCompareKeyEqual(stack)) {
+            BingoReloaded.runtime().openTeamSelector(player, session);
+            return EventResult.CANCEL;
+        }
 
         return EventResult.PASS;
     }

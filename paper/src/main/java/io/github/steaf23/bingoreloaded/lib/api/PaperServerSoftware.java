@@ -17,6 +17,8 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockType;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -80,7 +82,16 @@ public class PaperServerSoftware implements ServerSoftware {
 
 	@Override
 	public ItemType resolveItemType(Key key) {
-		return new ItemTypePaper(RegistryAccess.registryAccess().getRegistry(RegistryKey.ITEM).get(key).asMaterial());
+
+		org.bukkit.inventory.ItemType item = RegistryAccess.registryAccess().getRegistry(RegistryKey.ITEM).get(key);
+		if (item != null) {
+			return new ItemTypePaper(item.asMaterial());
+		}
+		BlockType block = RegistryAccess.registryAccess().getRegistry(RegistryKey.BLOCK).get(key);
+		if (block != null) {
+			return new ItemTypePaper(block.asMaterial());
+		}
+		return ItemType.AIR;
 	}
 
 	@Override

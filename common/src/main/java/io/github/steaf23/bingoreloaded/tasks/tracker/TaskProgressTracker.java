@@ -213,21 +213,19 @@ public class TaskProgressTracker
         return item;
     }
 
-    public void handleInventoryClicked(PlayerHandle player, StackHandle itemOnCursor) {
+    public void handleInventoryClicked(PlayerHandle player, StackHandle itemOnCursor, boolean resultSlot, boolean shiftClicked) {
         BingoParticipant participant = getValidParticipant(player);
         if (participant == null) {
             return;
         }
 
-        //FIXME: REFACTOR check if this condition is not already covered by the condition below.
-//        // player tries to grab item in inventory normally
-//        if (event.getSlotType() == InventoryType.SlotType.RESULT && event.getClick() != ClickType.SHIFT_LEFT) {
-//            BingoReloaded.scheduleTask(task -> {
-//                ItemStack resultStack = player.getItemOnCursor();
-//                completeItemSlot(resultStack, participant);
-//            });
-//            return;
-//        }
+        // Used when crafting things.
+        if (resultSlot && !shiftClicked) {
+            platform.runTask(task -> {
+                completeItemSlot(itemOnCursor, participant);
+            });
+            return;
+        }
 
         platform.runTask(task -> {
             // Other contents are updated, so we want to check the full inventory for task items..

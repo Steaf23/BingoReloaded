@@ -207,12 +207,12 @@ public class ItemTemplate
      * Compares the compare key of an StackHandle built from an ItemTemplate against the given key string.
      * @return true if the compareKey is present in the given stack.
      */
-    public static boolean isCompareKeyEqual(StackHandle stack, @Subst("namespace:key") String compareKey) {
+    public static boolean isCompareKeyEqual(StackHandle stack, String compareKey) {
         if (compareKey == null) {
             return false;
         }
 
-        return stack.compareKey().equals(Key.key(compareKey));
+        return stack.compareKey().equals(compareKey);
     }
 
     /**
