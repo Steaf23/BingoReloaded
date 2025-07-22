@@ -2,6 +2,7 @@ package io.github.steaf23.bingoreloaded.tasks.tracker;
 
 import io.github.steaf23.bingoreloaded.lib.api.AdvancementHandle;
 import io.github.steaf23.bingoreloaded.lib.api.ServerSoftware;
+import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.cards.TaskCard;
 import io.github.steaf23.bingoreloaded.data.config.BingoOptions;
@@ -181,10 +182,15 @@ public class TaskProgressTracker
 
         GameTask deathMatchTask = game.getDeathMatchTask();
         if (deathMatchTask != null) {
-            if (item.type().equals(deathMatchTask.icon())) {
-                deathMatchTask.complete(participant, game.getGameTime());
-                game.onDeathmatchTaskComplete(participant, deathMatchTask);
+            if (deathMatchTask.data instanceof ItemTask task) {
+                if (item.type().equals(task.itemType())) {
+                    deathMatchTask.complete(participant, game.getGameTime());
+                    game.onDeathmatchTaskComplete(participant, deathMatchTask);
+                }
+            } else {
+                ConsoleMessenger.bug("Did not expect a non-item task for a deathmatch task, cannot complete the game!", this);
             }
+
             return item;
         }
 

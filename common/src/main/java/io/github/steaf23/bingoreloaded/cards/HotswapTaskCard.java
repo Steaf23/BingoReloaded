@@ -136,7 +136,7 @@ public class HotswapTaskCard extends TaskCard
             }
 
             TaskData data = randomTasks.removeLast();
-            return TaskGenerator.createTaskFromData(data, settings.advancementDisplayMode(), settings.statisticDisplayMode());
+            return TaskGenerator.createTaskFromData(data);
         };
     }
 

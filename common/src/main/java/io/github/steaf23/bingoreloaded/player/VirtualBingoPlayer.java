@@ -7,6 +7,7 @@ import io.github.steaf23.bingoreloaded.lib.util.ComponentUtils;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import io.github.steaf23.bingoreloaded.tasks.GameTask;
+import io.github.steaf23.bingoreloaded.tasks.data.ItemTask;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
@@ -65,11 +66,11 @@ public class VirtualBingoPlayer implements BingoParticipant
     }
 
     @Override
-    public void showDeathMatchTask(GameTask task) {
+    public void showDeathMatchTask(ItemTask task) {
     }
 
     @Override
-    public void showCard(GameTask deathMatchTask) {
+    public void showCard(ItemTask deathMatchTask) {
     }
 
     @Override

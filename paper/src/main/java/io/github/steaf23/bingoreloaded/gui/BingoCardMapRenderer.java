@@ -155,34 +155,35 @@ public class BingoCardMapRenderer extends MapRenderer
     }
 
     public void drawTaskOnGrid(MapCanvas canvas, GameTask task, int gridX, int gridY, Position stampOffset) {
-        Key key = task.data.getDisplayMaterial(false).key();
-        int amount = task.data.getRequiredAmount();
-
-        int extraOffset = 1;
-        if (!allItemImages.containsKey(key)) {
-            return;
-        }
-
-        if (flatItems.contains(key)) {
-            extraOffset = 4;
-        }
-
-        drawImageAlphaScissor(canvas, gridX * 24 + 4 + extraOffset, gridY * 24 + 4 + extraOffset, allItemImages.get(key), null);
-
-        if (amount > 1) {
-            drawTaskAmount(canvas, gridX, gridY, amount);
-        }
-
-        if (task.data instanceof AdvancementTask) {
-            drawImageAlphaScissor(canvas, gridX * 24 + 2, gridY * 24 + 15, ADVANCEMENT_ICON, null);
-        } else if (task.data instanceof StatisticTask) {
-            drawImageAlphaScissor(canvas, gridX * 24 + 2, gridY * 24 + 15, STATISTIC_ICON, null);
-        }
-
-        if (task.isCompleted() && task.getCompletedByTeam().isPresent() && COMPLETED_OVERLAY != null) {
-            TextColor color = task.getCompletedByTeam().get().getColor();
-            drawImageAlphaScissor(canvas, gridX * 24 + 4 + stampOffset.blockX(), gridY * 24 + 4 + stampOffset.blockY(), COMPLETED_OVERLAY, color);
-        }
+        //FIXME: REFACTOR fix getting correct card display info context when rendering task.
+//        Key key = task.data.getDisplayMaterial(card).key();
+//        int amount = task.data.getRequiredAmount();
+//
+//        int extraOffset = 1;
+//        if (!allItemImages.containsKey(key)) {
+//            return;
+//        }
+//
+//        if (flatItems.contains(key)) {
+//            extraOffset = 4;
+//        }
+//
+//        drawImageAlphaScissor(canvas, gridX * 24 + 4 + extraOffset, gridY * 24 + 4 + extraOffset, allItemImages.get(key), null);
+//
+//        if (amount > 1) {
+//            drawTaskAmount(canvas, gridX, gridY, amount);
+//        }
+//
+//        if (task.data instanceof AdvancementTask) {
+//            drawImageAlphaScissor(canvas, gridX * 24 + 2, gridY * 24 + 15, ADVANCEMENT_ICON, null);
+//        } else if (task.data instanceof StatisticTask) {
+//            drawImageAlphaScissor(canvas, gridX * 24 + 2, gridY * 24 + 15, STATISTIC_ICON, null);
+//        }
+//
+//        if (task.isCompleted() && task.getCompletedByTeam().isPresent() && COMPLETED_OVERLAY != null) {
+//            TextColor color = task.getCompletedByTeam().get().getColor();
+//            drawImageAlphaScissor(canvas, gridX * 24 + 4 + stampOffset.blockX(), gridY * 24 + 4 + stampOffset.blockY(), COMPLETED_OVERLAY, color);
+//        }
     }
 
     private void drawTaskAmount(MapCanvas canvas, int gridX, int gridY, int amount) {

@@ -4,8 +4,8 @@ import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.protocol.dialog.Dialog;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerShowDialog;
 import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
+import io.github.steaf23.bingoreloaded.api.CardDisplayInfo;
 import io.github.steaf23.bingoreloaded.api.CardMenu;
-import io.github.steaf23.bingoreloaded.cards.CardSize;
 import io.github.steaf23.bingoreloaded.action.AutoBingoAction;
 import io.github.steaf23.bingoreloaded.action.BingoAction;
 import io.github.steaf23.bingoreloaded.action.BingoConfigAction;
@@ -188,19 +188,19 @@ public class BingoReloadedPaper extends JavaPlugin implements BingoReloadedRunti
 	}
 
 	@Override
-	public CardMenu createMenu(boolean textured, BingoGamemode mode, CardSize size, boolean allowViewingAllCards) {
+	public CardMenu createMenu(boolean textured, CardDisplayInfo displayInfo) {
 		if (textured) {
-			if (mode == BingoGamemode.HOTSWAP) {
-				return new HotswapTexturedCardMenu(menuBoard, size, allowViewingAllCards);
+			if (displayInfo.mode() == BingoGamemode.HOTSWAP) {
+				return new HotswapTexturedCardMenu(menuBoard, displayInfo);
 			}
-			return new TexturedCardMenu(menuBoard, mode, size, allowViewingAllCards);
+			return new TexturedCardMenu(menuBoard, displayInfo);
 		}
 
-		if (mode == BingoGamemode.HOTSWAP) {
-			return new HotswapGenericCardMenu(menuBoard, size, allowViewingAllCards, null);
+		if (displayInfo.mode() == BingoGamemode.HOTSWAP) {
+			return new HotswapGenericCardMenu(menuBoard, displayInfo, null);
 		}
 
-		return new GenericCardMenu(menuBoard, mode, size, allowViewingAllCards, null);
+		return new GenericCardMenu(menuBoard, displayInfo, null);
 	}
 
 	@Override

@@ -2,6 +2,7 @@ package io.github.steaf23.bingoreloaded.gameloop.phase;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.api.BingoEvents;
+import io.github.steaf23.bingoreloaded.gui.hud.DisabledBingoSettingsHUDGroup;
 import io.github.steaf23.bingoreloaded.lib.api.InteractAction;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
@@ -43,17 +44,16 @@ public class PregameLobby implements GamePhase
 
     public PregameLobby(BingoSession session, BingoConfigurationData config) {
         this.session = session;
-		this.settingsHUD = new BingoSettingsHUDGroup(session);
 		this.votes = new HashMap<>();
         this.config = config;
         this.playerCountTimer = new CountdownTimer(config.getOptionValue(BingoOptions.PLAYER_WAIT_TIME), this::onCountdownTimerFinished);
-        //FIXME: REFACTOR add back settings hud
-//        if (config.getOptionValue(BingoOptions.DISABLE_SCOREBOARD_SIDEBAR)) {
-//            this.settingsHUD = new DisabledBingoSettingsHUDGroup();
-//        }
-//        else {
-//            this.settingsHUD = new BingoSettingsHUDGroup();
-//        }
+
+        if (config.getOptionValue(BingoOptions.DISABLE_SCOREBOARD_SIDEBAR)) {
+            this.settingsHUD = new DisabledBingoSettingsHUDGroup(session);
+        }
+        else {
+            this.settingsHUD = new BingoSettingsHUDGroup(session);
+        }
 
         playerCountTimer.addNotifier(this::updateCounterVisual);
     }

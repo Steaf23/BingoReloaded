@@ -17,7 +17,7 @@ public interface CardMenu
      * FIXME: when menus can have changeable titles (i.e. when menu builders get added)
      */
     CardMenu copy(@Nullable Component alternateTitle);
-    boolean allowViewingOtherCards();
+    CardDisplayInfo displayInfo();
 
     //FIXME: REFACTOR reimplement this in paper
 //    static ItemTemplate createTeamViewItem(BingoReloaded bingo) {

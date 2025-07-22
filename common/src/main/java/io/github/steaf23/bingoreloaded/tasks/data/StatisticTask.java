@@ -1,5 +1,7 @@
 package io.github.steaf23.bingoreloaded.tasks.data;
 
+import io.github.steaf23.bingoreloaded.api.CardDisplayInfo;
+import io.github.steaf23.bingoreloaded.api.TaskDisplayMode;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.lib.api.StatisticHandle;
@@ -122,8 +124,8 @@ public record StatisticTask(StatisticHandle statistic, int count) implements Tas
     }
 
     @Override
-    public ItemType getDisplayMaterial(boolean genericItem) {
-        if (genericItem) {
+    public ItemType getDisplayMaterial(CardDisplayInfo context) {
+        if (context.statisticDisplay() == TaskDisplayMode.GENERIC_TASK_ITEMS) {
             return ItemType.of("globe_banner_pattern");
         } else {
             return statistic().icon();

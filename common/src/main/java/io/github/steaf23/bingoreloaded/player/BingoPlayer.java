@@ -13,11 +13,14 @@ import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.BingoStatType;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
+import io.github.steaf23.bingoreloaded.lib.data.core.DataStorage;
+import io.github.steaf23.bingoreloaded.lib.data.core.tag.TagDataStorage;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import io.github.steaf23.bingoreloaded.tasks.GameTask;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
+import io.github.steaf23.bingoreloaded.tasks.data.ItemTask;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
@@ -94,18 +97,11 @@ public class BingoPlayer implements BingoParticipant
         inv.clearContents();
         items.forEach(i ->
         {
-            //FIXME: REFACTOR pdc stuff
-//            var meta = i.stack().getItemMeta();
-//
-//            // Show enchantments except on the wand
-//            if (!PlayerKit.WAND_ITEM.isCompareKeyEqual(i.stack())) {
-//                meta.removeItemFlags(ItemFlag.values());
-//            }
-//            var pdc = meta.getPersistentDataContainer();
-//            pdc.set(PDCHelper.createKey("kit.kit_item"), PersistentDataType.BOOLEAN, true);
-//
-//            i.stack().setItemMeta(meta);
-//            inv.setItem(i.slot(), i.stack());
+            TagDataStorage store = i.stack().getStorage();
+
+            store.setBoolean("kit_item", true);
+            i.stack().setStorage(store);
+            inv.setItem(i.slot(), i.stack());
         });
     }
 
@@ -202,11 +198,12 @@ public class BingoPlayer implements BingoParticipant
         }
     }
 
-    public void showDeathMatchTask(GameTask task) {
+    @Override
+    public void showDeathMatchTask(ItemTask task) {
         if (sessionPlayer().isEmpty())
             return;
 
-        ItemType type = task.icon();
+        ItemType type = task.itemType();
         String itemKey = type.isBlock() ? "block" : "item";
         itemKey += ".minecraft." + type.key();
         sessionPlayer().get()
@@ -215,7 +212,7 @@ public class BingoPlayer implements BingoParticipant
     }
 
     @Override
-    public void showCard(GameTask deathMatchTask) {
+    public void showCard(ItemTask deathMatchTask) {
         BingoTeam playerTeam = getTeam();
         if (playerTeam == null) {
             ConsoleMessenger.bug("Invalid team for player " + playerName + "!", this);

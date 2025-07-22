@@ -1,5 +1,6 @@
 package io.github.steaf23.bingoreloaded.cards.hotswap;
 
+import io.github.steaf23.bingoreloaded.api.CardDisplayInfo;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import io.github.steaf23.bingoreloaded.tasks.GameTask;
@@ -35,8 +36,8 @@ public class ExpiringHotswapTask implements HotswapTaskHolder
     }
 
     @Override
-    public ItemTemplate convertToItem() {
-        ItemTemplate item = task.toItem();
+    public ItemTemplate convertToItem(CardDisplayInfo displayInfo) {
+        ItemTemplate item = task.toItem(displayInfo);
         if (isRecovering()) {
             item.addDescription("time", 1, BingoMessage.HOTSWAP_RECOVER.asPhrase(GameTimer.getTimeAsComponent(currentTime)).color(TextColor.fromHexString("#5cb1ff")));
         }

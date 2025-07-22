@@ -4,7 +4,7 @@ import io.github.steaf23.bingoreloaded.lib.api.AdvancementHandle;
 import io.github.steaf23.bingoreloaded.lib.api.AdvancementHandlePaper;
 import io.github.steaf23.bingoreloaded.lib.api.EntityType;
 import io.github.steaf23.bingoreloaded.lib.api.EntityTypePaper;
-import io.github.steaf23.bingoreloaded.lib.api.ItemTypePaper;
+import io.github.steaf23.bingoreloaded.lib.api.item.ItemTypePaper;
 import io.github.steaf23.bingoreloaded.lib.api.PaperApiHelper;
 import io.github.steaf23.bingoreloaded.lib.api.PlayerGamemode;
 import io.github.steaf23.bingoreloaded.lib.api.StatisticTypePaper;
@@ -22,6 +22,7 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.GameMode;
 import org.bukkit.advancement.AdvancementProgress;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -114,7 +115,7 @@ public class PlayerHandlePaper implements PlayerHandle {
 
 	@Override
 	public void teleportAsync(WorldPosition pos, @Nullable Consumer<Boolean> whenFinished) {
-		var future = player.teleportAsync(PaperApiHelper.locationFromWorldPos(pos));
+		var future = player.teleportAsync(PaperApiHelper.locationFromWorldPos(pos), PlayerTeleportEvent.TeleportCause.PLUGIN);
 		if (whenFinished != null) {
 			future.thenAccept(whenFinished);
 		}
@@ -122,7 +123,7 @@ public class PlayerHandlePaper implements PlayerHandle {
 
 	@Override
 	public boolean teleportBlocking(WorldPosition pos) {
-		return player.teleport(PaperApiHelper.locationFromWorldPos(pos));
+		return player.teleport(PaperApiHelper.locationFromWorldPos(pos), PlayerTeleportEvent.TeleportCause.PLUGIN);
 	}
 
 	@Override

@@ -4,6 +4,7 @@ import io.github.steaf23.bingoreloaded.api.BingoEventListener;
 import io.github.steaf23.bingoreloaded.data.PlayerSerializationData;
 import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.data.config.BingoOptions;
+import io.github.steaf23.bingoreloaded.data.helper.SerializablePlayer;
 import io.github.steaf23.bingoreloaded.data.world.WorldData;
 import io.github.steaf23.bingoreloaded.data.world.WorldGroup;
 import io.github.steaf23.bingoreloaded.lib.api.ServerSoftware;
@@ -249,11 +250,10 @@ public class GameManager {
 
 		if (targetSession != null) {
 			if (savePlayerInformation && sourceSession == null) {
-				//FIXME: REFACTOR SerializablePlayer
-//                // Only save player data if it does not pertain to a bingo world
-//                SerializablePlayer serializablePlayer = SerializablePlayer.fromPlayer(extension, player);
-//                serializablePlayer.location = event.fromPosition();
-//                playerData.savePlayer(serializablePlayer, false);
+                // Only save player data if it does not pertain to a bingo world
+                SerializablePlayer serializablePlayer = SerializablePlayer.fromPlayer(platform, player);
+                serializablePlayer.location = toPos;
+                playerData.savePlayer(serializablePlayer, false);
 			}
 
 			// If the player was already playing in another session, remove them from that game first

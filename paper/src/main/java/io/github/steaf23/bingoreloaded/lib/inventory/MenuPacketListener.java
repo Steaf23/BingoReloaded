@@ -29,7 +29,6 @@ public class MenuPacketListener extends SimplePacketListenerAbstract
         this.openPlayerInventories = new HashMap<>();
     }
 
-    //FIXME: REFACTOR add back packet events packets
     @Override
     public void onPacketPlayReceive(PacketPlayReceiveEvent event) {
         if (event.getPacketType() == PacketType.Play.Client.NAME_ITEM) {

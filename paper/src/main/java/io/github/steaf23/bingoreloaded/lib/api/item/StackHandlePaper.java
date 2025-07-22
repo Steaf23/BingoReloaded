@@ -1,8 +1,5 @@
 package io.github.steaf23.bingoreloaded.lib.api.item;
 
-import io.github.steaf23.bingoreloaded.BingoReloaded;
-import io.github.steaf23.bingoreloaded.BingoReloadedPaper;
-import io.github.steaf23.bingoreloaded.lib.api.ItemTypePaper;
 import io.github.steaf23.bingoreloaded.lib.api.PlatformResolver;
 import io.github.steaf23.bingoreloaded.lib.data.core.tag.TagDataStorage;
 import io.github.steaf23.bingoreloaded.lib.data.core.tag.TagTree;
@@ -102,12 +99,12 @@ public class StackHandlePaper implements StackHandle {
 	}
 
 	@Override
-	public @Nullable TagDataStorage getStorage() {
+	public @NotNull TagDataStorage getStorage() {
 		byte[] bytes = stack.getItemMeta().getPersistentDataContainer()
 				.get(CUSTOM_DATA_KEY, PersistentDataType.BYTE_ARRAY);
 
 		if (bytes == null) {
-			return null;
+			return new TagDataStorage();
 		}
 
 		try (ByteArrayInputStream in = new ByteArrayInputStream(bytes)) {
@@ -116,7 +113,7 @@ public class StackHandlePaper implements StackHandle {
 		} catch (IOException e) {
 			ConsoleMessenger.bug("Custom Data (in getStorage()) exception", this);
 			e.printStackTrace();
-			return null;
+			return new TagDataStorage();
 		}
 	}
 

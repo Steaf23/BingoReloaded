@@ -1,6 +1,7 @@
 package io.github.steaf23.bingoreloaded.lib.api;
 
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
+import io.github.steaf23.bingoreloaded.lib.api.item.ItemTypePaper;
 import org.bukkit.Material;
 import org.bukkit.Statistic;
 import org.jetbrains.annotations.NotNull;

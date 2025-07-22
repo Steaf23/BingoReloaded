@@ -173,4 +173,9 @@ public class FabricServerSoftware implements ServerSoftware {
 	public ExtensionTask runTask(long startDelayTicks, Consumer<ExtensionTask> consumer) {
 		return null;
 	}
+
+	@Override
+	public void sendConsoleCommand(String command) {
+
+	}
 }

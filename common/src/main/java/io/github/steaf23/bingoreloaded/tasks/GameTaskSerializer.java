@@ -25,7 +25,7 @@ public class GameTaskSerializer implements DataStorageSerializer<GameTask> {
 		UUID completedByUUID = storage.getUUID("completed_by");
 		long timeStr = storage.getLong("completed_at", -1L);
 		TaskData data = storage.getSerializable("task", TaskData.class);
-		GameTask task = new GameTask(data, GameTask.TaskDisplayMode.UNIQUE_TASK_ITEMS);
+		GameTask task = new GameTask(data);
 
 		task.setVoided(voided);
 		task.completedAt = timeStr;

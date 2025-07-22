@@ -22,9 +22,7 @@ public class TaskGenerator
             int seed,
             boolean includeAdvancements,
             boolean includeStatistics,
-            CardSize size,
-            GameTask.TaskDisplayMode advancementDisplayMode,
-            GameTask.TaskDisplayMode statisticDisplayMode) {}
+            CardSize size) {}
 
     private static final TaskData DEFAULT_TASK = new ItemTask(ItemType.of("dirt"), 1);
 
@@ -112,16 +110,10 @@ public class TaskGenerator
 
         // Shuffle and add tasks to the card.
         Collections.shuffle(newTasks, shuffler);
-        return newTasks.stream().map(t -> createTaskFromData(t, settings.advancementDisplayMode, settings.statisticDisplayMode)).toList();
+        return newTasks.stream().map(TaskGenerator::createTaskFromData).toList();
     }
 
-    public static GameTask createTaskFromData(TaskData data, GameTask.TaskDisplayMode advancementDisplayMode, GameTask.TaskDisplayMode statisticDisplayMode) {
-        GameTask.TaskDisplayMode displayMode = switch (data.getType()) {
-            case ITEM -> GameTask.TaskDisplayMode.UNIQUE_TASK_ITEMS;
-            case STATISTIC -> statisticDisplayMode;
-            case ADVANCEMENT -> advancementDisplayMode;
-        };
-
-        return new GameTask(data, displayMode);
+    public static GameTask createTaskFromData(TaskData data) {
+        return new GameTask(data);
     }
 }

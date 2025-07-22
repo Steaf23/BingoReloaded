@@ -1,10 +1,11 @@
 package io.github.steaf23.bingoreloaded.lib.api.item;
 
-import io.github.steaf23.bingoreloaded.lib.api.ItemTypePaper;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import io.github.steaf23.bingoreloaded.lib.util.PDCHelper;
+import io.papermc.paper.datacomponent.DataComponentType;
 import io.papermc.paper.datacomponent.DataComponentTypes;
+import io.papermc.paper.datacomponent.item.DyedItemColor;
 import io.papermc.paper.datacomponent.item.ItemEnchantments;
 import io.papermc.paper.datacomponent.item.ItemLore;
 import io.papermc.paper.datacomponent.item.TooltipDisplay;
@@ -14,6 +15,7 @@ import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
+import org.bukkit.Color;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -75,6 +77,9 @@ public class StackBuilderPaper implements StackBuilder {
 			enchantmentBuilder.add(enchant, enchantments.get(key));
 		}
 		stack.setData(DataComponentTypes.ENCHANTMENTS, enchantmentBuilder);
+		if (template.getLeatherColor() != null) {
+			stack.setData(DataComponentTypes.DYED_COLOR, DyedItemColor.dyedItemColor(Color.fromRGB(template.getLeatherColor().value())));
+		}
 
 		//FIXME: REFACTOR reimplement custom model data
 //		stackMeta.setCustomModelData(customModelData);

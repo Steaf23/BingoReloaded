@@ -5,6 +5,7 @@ import io.github.steaf23.bingoreloaded.lib.data.core.DataStorage;
 import io.github.steaf23.bingoreloaded.lib.data.core.tag.TagDataStorage;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import net.kyori.adventure.text.Component;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -35,7 +36,12 @@ public interface StackHandle {
 	 */
 	void setStorage(TagDataStorage newStorage);
 
-	@Nullable TagDataStorage getStorage();
+	/**
+	 * @return existing store containing custom item data
+	 * 		   or a new store when the stack does not currently have any custom data assigned.
+	 * 		   Could be an expensive operation in some implementations!
+	 */
+	@NotNull TagDataStorage getStorage();
 
 	static StackHandle createFromTemplate(ItemTemplate template, boolean hideAttributes) {
 		return PlatformResolver.get().createStackFromTemplate(template, hideAttributes);

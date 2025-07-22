@@ -1,14 +1,15 @@
 package io.github.steaf23.bingoreloaded.cards;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
+import io.github.steaf23.bingoreloaded.api.CardDisplayInfo;
 import io.github.steaf23.bingoreloaded.api.CardMenu;
 import io.github.steaf23.bingoreloaded.api.HotswapCardMenu;
+import io.github.steaf23.bingoreloaded.api.TaskDisplayMode;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.config.BingoOptions;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.lib.api.BingoReloadedRuntime;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
-import io.github.steaf23.bingoreloaded.tasks.GameTask;
 import io.github.steaf23.bingoreloaded.tasks.TaskGenerator;
 
 import java.util.HashSet;
@@ -21,7 +22,13 @@ public class CardFactory
         CardSize size = settings.size();
 
         boolean allowViewingAllCards = game.getConfig().getOptionValue(BingoOptions.ALLOW_VIEWING_ALL_CARDS);
-        CardMenu menu = runtime.createMenu(texturedMenu, settings.mode(), size, allowViewingAllCards);
+        CardDisplayInfo displayInfo = new CardDisplayInfo(
+                settings.mode(),
+                size,
+                game.getConfig().getOptionValue(BingoOptions.SHOW_UNIQUE_ADVANCEMENT_ITEMS) ? TaskDisplayMode.UNIQUE_TASK_ITEMS : TaskDisplayMode.GENERIC_TASK_ITEMS,
+                game.getConfig().getOptionValue(BingoOptions.SHOW_UNIQUE_STATISTIC_ITEMS) ? TaskDisplayMode.UNIQUE_TASK_ITEMS : TaskDisplayMode.GENERIC_TASK_ITEMS,
+                allowViewingAllCards);
+        CardMenu menu = runtime.createMenu(texturedMenu, displayInfo);
 
         return switch (settings.mode()) {
             case LOCKOUT ->
@@ -35,9 +42,9 @@ public class CardFactory
         };
     }
 
-    public static Set<TaskCard> generateCardsForGame(BingoGame game, boolean includeAdvancements, boolean includeStatistics, GameTask.TaskDisplayMode advancementDisplayMode, GameTask.TaskDisplayMode statisticDisplayMode) {
+    public static Set<TaskCard> generateCardsForGame(BingoGame game, boolean includeAdvancements, boolean includeStatistics) {
         BingoSettings settings = game.getSettings();
-        TaskGenerator.GeneratorSettings generatorSettings = new TaskGenerator.GeneratorSettings(settings.card(), settings.seed(), includeAdvancements, includeStatistics, settings.size(), advancementDisplayMode, statisticDisplayMode);
+        TaskGenerator.GeneratorSettings generatorSettings = new TaskGenerator.GeneratorSettings(settings.card(), settings.seed(), includeAdvancements, includeStatistics, settings.size());
 
         Set<TaskCard> uniqueCards = new HashSet<>();
 

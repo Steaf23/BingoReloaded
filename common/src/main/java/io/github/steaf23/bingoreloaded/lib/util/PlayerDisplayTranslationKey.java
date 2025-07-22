@@ -14,6 +14,6 @@ public enum PlayerDisplayTranslationKey
     public Component translate() {
         //FIXME: REFACTOR implement
         return Component.text("IMPLEMENT");
-//        return PlayerDisplay.translateKey(this);
+//        return BingoMessage.(this);
     }
 }

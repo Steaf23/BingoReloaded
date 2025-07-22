@@ -1,10 +1,14 @@
 package io.github.steaf23.bingoreloaded.gui.inventory.creator;
 
+import io.github.steaf23.bingoreloaded.api.CardDisplayInfo;
+import io.github.steaf23.bingoreloaded.api.TaskDisplayMode;
+import io.github.steaf23.bingoreloaded.cards.CardSize;
 import io.github.steaf23.bingoreloaded.data.BingoCardData;
 import io.github.steaf23.bingoreloaded.lib.api.MenuBoard;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import io.github.steaf23.bingoreloaded.lib.util.ComponentUtils;
+import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
 import io.github.steaf23.bingoreloaded.tasks.GameTask;
 import io.github.steaf23.bingoreloaded.tasks.data.TaskData;
 import io.github.steaf23.bingoreloaded.tasks.data.ItemTask;
@@ -27,6 +31,12 @@ public class TaskPickerMenu extends PaginatedSelectionMenu
 
     protected static final Component[] SELECTED_LORE = createSelectedLore();
     protected static final Component[] UNSELECTED_LORE = createUnselectedLore();
+    protected static final CardDisplayInfo DUMMY_DISPLAY_INFO = new CardDisplayInfo(
+            BingoGamemode.REGULAR,
+            CardSize.X5,
+            TaskDisplayMode.UNIQUE_TASK_ITEMS,
+            TaskDisplayMode.UNIQUE_TASK_ITEMS,
+            false);
 
     public TaskPickerMenu(MenuBoard manager, String title, List<GameTask> options, String listName) {
         super(manager, Component.text(title), asPickerItems(options), FilterType.DISPLAY_NAME);
@@ -145,8 +155,8 @@ public class TaskPickerMenu extends PaginatedSelectionMenu
             }
         }
 
-        GameTask newTask = new GameTask(newData, GameTask.TaskDisplayMode.UNIQUE_TASK_ITEMS);
-        ItemTemplate item = newTask.toItem();
+        GameTask newTask = new GameTask(newData);
+        ItemTemplate item = newTask.toItem(DUMMY_DISPLAY_INFO);
 
         Component[] addedLore;
         if (selected)

@@ -16,7 +16,6 @@ import java.util.UUID;
 public record WorldGroup(ServerSoftware platform, String worldName, UUID overworldId, UUID netherId, UUID endId)
 {
     public void teleportPlayer(PlayerHandle player) {
-        //FIXME: Refactor Teleport Cause
         player.teleportBlocking(platform.getWorld(overworldId).spawnPoint());
     }
 

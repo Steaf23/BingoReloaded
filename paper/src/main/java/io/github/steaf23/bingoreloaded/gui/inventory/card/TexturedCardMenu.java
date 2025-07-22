@@ -1,11 +1,12 @@
 package io.github.steaf23.bingoreloaded.gui.inventory.card;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
+import io.github.steaf23.bingoreloaded.api.CardDisplayInfo;
 import io.github.steaf23.bingoreloaded.api.CardMenu;
 import io.github.steaf23.bingoreloaded.cards.CardSize;
 import io.github.steaf23.bingoreloaded.data.TexturedMenuData;
 import io.github.steaf23.bingoreloaded.gui.inventory.core.TexturedTitleBuilder;
-import io.github.steaf23.bingoreloaded.lib.api.ItemTypePaper;
+import io.github.steaf23.bingoreloaded.lib.api.item.ItemTypePaper;
 import io.github.steaf23.bingoreloaded.lib.api.MenuBoard;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandlePaper;
@@ -38,14 +39,12 @@ import java.util.Map;
 public class TexturedCardMenu implements InventoryMenu, CardMenu
 {
     private final MenuBoard board;
-    protected final BingoGamemode mode;
-    protected final CardSize size;
     protected List<GameTask> tasks;
 
     private final MenuItemGroup itemGroup;
     private final Component startingTitle;
     private Inventory openedInventory;
-    private final boolean showAllCards;
+    private final CardDisplayInfo displayInfo;
 
     private ItemTemplate info;
 
@@ -53,17 +52,15 @@ public class TexturedCardMenu implements InventoryMenu, CardMenu
 
     public static final ItemTemplate DUMMY_ITEM = new ItemTemplate(ItemTypePaper.of(Material.POISONOUS_POTATO));
 
-    public TexturedCardMenu(MenuBoard board, BingoGamemode mode, CardSize size, boolean allowViewingAllCards) {
+    public TexturedCardMenu(MenuBoard board, CardDisplayInfo displayInfo) {
         ItemTemplate info = DUMMY_ITEM.copyToSlot(0);
 
         this.board = board;
         this.tasks = new ArrayList<>();
-        this.mode = mode;
-        this.size = size;
         this.itemGroup = new MenuItemGroup();
-        this.startingTitle = buildTitle(mode, size);
+        this.startingTitle = buildTitle(displayInfo.mode(), displayInfo.size());
         this.info = info;
-        this.showAllCards = allowViewingAllCards;
+        this.displayInfo = displayInfo;
         //FIXME: REFACTOR ADD THIS BACK
 //        if (allowViewingAllCards) {
 //            addItem(CardMenu.createTeamViewItem().setSlot(8));
@@ -191,16 +188,16 @@ public class TexturedCardMenu implements InventoryMenu, CardMenu
      */
     @Override
     public CardMenu copy(@Nullable Component alternateTitle) {
-        return new TexturedCardMenu(getMenuBoard(), mode, size, allowViewingOtherCards());
+        return new TexturedCardMenu(getMenuBoard(), displayInfo);
     }
 
     @Override
-    public boolean allowViewingOtherCards() {
-        return showAllCards;
+    public CardDisplayInfo displayInfo() {
+        return displayInfo;
     }
 
     protected @NotNull ItemTemplate getItemFromTask(int taskIndex) {
-        ItemTemplate item = tasks.get(taskIndex).toItem();
+        ItemTemplate item = tasks.get(taskIndex).toItem(displayInfo);
         if (tasks.get(taskIndex).isCompleted()) {
             item.setItemType(ItemTypePaper.of(Material.POISONOUS_POTATO));
             item.setCustomModelData(1012);
@@ -212,7 +209,7 @@ public class TexturedCardMenu implements InventoryMenu, CardMenu
     @Override
     public void setInfo(Component name, Component... description) {
         this.info = DUMMY_ITEM.copyToSlot(0)
-                .setName(name.decorate(TextDecoration.BOLD).color(mode.getColor()))
+                .setName(name.decorate(TextDecoration.BOLD).color(displayInfo.mode().getColor()))
                 .setLore(MultilineComponent.from(NamedTextColor.YELLOW, TextDecoration.ITALIC, description))
                 .setCustomModelData(1011);
     }
@@ -234,8 +231,8 @@ public class TexturedCardMenu implements InventoryMenu, CardMenu
     }
 
     public int getSlotForTask(int index) {
-        int slot = size.getCardInventorySlot(index);
-        if (size == CardSize.X3) {
+        int slot = displayInfo.size().getCardInventorySlot(index);
+        if (displayInfo.size() == CardSize.X3) {
             slot += 9;
         }
         return slot;

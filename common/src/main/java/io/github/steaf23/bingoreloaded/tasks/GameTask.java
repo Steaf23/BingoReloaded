@@ -1,10 +1,11 @@
 package io.github.steaf23.bingoreloaded.tasks;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
+import io.github.steaf23.bingoreloaded.api.CardDisplayInfo;
+import io.github.steaf23.bingoreloaded.api.TaskDisplayMode;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
-import io.github.steaf23.bingoreloaded.lib.data.core.DataStorage;
 import io.github.steaf23.bingoreloaded.lib.data.core.tag.TagDataStorage;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
@@ -25,12 +26,6 @@ import java.util.Optional;
 
 public class GameTask
 {
-    public enum TaskDisplayMode
-    {
-        GENERIC_TASK_ITEMS, // Shows a filled map for all advancements and a banner pattern for all statistic tasks.
-        UNIQUE_TASK_ITEMS, // Item type to show is based on the actual contents of the tasks, just like for item tasks.
-    }
-
     private BingoParticipant completedBy;
     private BingoTeam completedByTeam;
     public long completedAt;
@@ -38,21 +33,17 @@ public class GameTask
 
     public final TaskData data;
 
-    public final TaskDisplayMode displayMode;
-
-    // FIXME: REFACTOR display mode
-    public GameTask(TaskData data, TaskDisplayMode displayMode)
+    public GameTask(TaskData data)
     {
         this.data = data;
         this.completedBy = null;
         this.completedByTeam = null;
         this.voided = false;
         this.completedAt = -1L;
-        this.displayMode = displayMode;
     }
 
     public static GameTask simpleItemTask(ItemType material, int count) {
-        return new GameTask(new ItemTask(material, count), TaskDisplayMode.UNIQUE_TASK_ITEMS);
+        return new GameTask(new ItemTask(material, count));
     }
 
     public void setVoided(boolean value)
@@ -73,7 +64,7 @@ public class GameTask
         return completedBy != null || completedByTeam != null;
     }
 
-    public ItemTemplate toItem()
+    public ItemTemplate toItem(CardDisplayInfo displayInfo)
     {
         ItemTemplate item;
         // Step 1: create the item and put the new name, description and material on it.
@@ -105,7 +96,7 @@ public class GameTask
         }
         else // DEFAULT TASK
         {
-            item = new ItemTemplate(icon(), data.getName(), data.getItemDescription());
+            item = new ItemTemplate(icon(displayInfo), data.getName(), data.getItemDescription());
             item.setAmount(data.getRequiredAmount());
         }
 
@@ -154,7 +145,7 @@ public class GameTask
 
     public GameTask copy()
     {
-        return new GameTask(data, displayMode);
+        return new GameTask(data);
     }
 
     public Optional<BingoParticipant> getCompletedByPlayer() {
@@ -190,8 +181,8 @@ public class GameTask
         }
     }
 
-    public ItemType icon() {
-        return data.getDisplayMaterial(displayMode == TaskDisplayMode.GENERIC_TASK_ITEMS);
+    public ItemType icon(CardDisplayInfo displayInfo) {
+        return data.getDisplayMaterial(displayInfo);
     }
 
     public TaskData.TaskType taskType() {

@@ -1,8 +1,9 @@
 package io.github.steaf23.bingoreloaded.lib.api;
 
 import net.kyori.adventure.key.Key;
+import net.kyori.adventure.key.Keyed;
 
-public interface DimensionType {
+public interface DimensionType extends Keyed {
 
 	DimensionType OVERWORLD = of(Key.key("minecraft:overworld"));
 	DimensionType NETHER = of(Key.key("minecraft:nether"));

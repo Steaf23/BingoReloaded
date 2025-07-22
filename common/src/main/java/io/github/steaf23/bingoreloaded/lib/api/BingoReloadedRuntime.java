@@ -1,5 +1,6 @@
 package io.github.steaf23.bingoreloaded.lib.api;
 
+import io.github.steaf23.bingoreloaded.api.CardDisplayInfo;
 import io.github.steaf23.bingoreloaded.api.CardMenu;
 import io.github.steaf23.bingoreloaded.cards.CardSize;
 import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
@@ -8,6 +9,7 @@ import io.github.steaf23.bingoreloaded.gameloop.phase.PregameLobby;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataAccessor;
 import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
+import io.github.steaf23.bingoreloaded.tasks.GameTask;
 import net.kyori.adventure.key.Key;
 
 import java.util.Collection;
@@ -29,7 +31,7 @@ public interface BingoReloadedRuntime {
 
 	ServerSoftware getServerSoftware();
 
-	CardMenu createMenu(boolean textured, BingoGamemode mode, CardSize size, boolean allowViewingAllCards);
+	CardMenu createMenu(boolean textured, CardDisplayInfo displayInfo);
 
 	void openBingoMenu(PlayerHandle player, BingoSession session);
 	void openTeamEditor(PlayerHandle player);

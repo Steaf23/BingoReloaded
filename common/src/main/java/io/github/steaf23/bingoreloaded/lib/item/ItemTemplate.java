@@ -9,7 +9,6 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
-import org.intellij.lang.annotations.Subst;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -31,7 +30,11 @@ import java.util.Set;
 public class ItemTemplate
 {
     public static final ItemTemplate EMPTY = new ItemTemplate(ItemType.AIR);
-    public static final Set<ItemType> LEATHER_ARMOR = Set.of(ItemType.of("leather_chestplate"), ItemType.of("leather_boots"), ItemType.of("leather_leggings"), ItemType.of("leather_helmet"));
+    public static final Set<ItemType> LEATHER_ARMOR = Set.of(
+            ItemType.of("minecraft:leather_chestplate"),
+            ItemType.of("minecraft:leather_boots"),
+            ItemType.of("minecraft:leather_leggings"),
+            ItemType.of("minecraft:leather_helmet"));
 
     // higher priorities appear lower on the item description
     record DescriptionSection(int priority, Component[] text)
@@ -53,7 +56,7 @@ public class ItemTemplate
     private int currentDamage = 0;
     private int customModelData = 0;
     private ItemTemplate texturedVariant = null;
-    private final Map<Key, ItemComponents.ItemComponent> components = new HashMap<>();
+    private TextColor leatherColor = null;
     private TagDataStorage extraData;
 
     public ItemTemplate(ItemType type) {
@@ -219,26 +222,15 @@ public class ItemTemplate
      * Sets leather color to given color value. Only works when the resulting stack is a piece of leather armor.
      * @param color new color to use.
      */
-    public ItemTemplate setLeatherColor(@NotNull TextColor color) {
-        return addItemComponent(new ItemComponents.DyedColor(color));
+    public ItemTemplate setLeatherColor(@Nullable TextColor color) {
+        leatherColor = color;
+        return this;
     }
 
-    //FIXME: REFACTOR reimplement in paper
-//    /**
-//     * Sets the menu action to perform when interacting with this item in a menu.
-//     */
-//    public ItemTemplate setAction(@Nullable MenuAction action) {
-//        this.action = action;
-//        if (action == null) {
-//            return this;
-//        }
-//        action.setItem(this);
-//        return this;
-//    }
-//
-//    public MenuAction getAction() {
-//        return this.action;
-//    }
+    public @Nullable TextColor getLeatherColor() {
+        return leatherColor;
+    }
+
 
     /**
      * All added enchantments get added as unsafe enchantments to the built stack.
@@ -306,14 +298,6 @@ public class ItemTemplate
         return this;
     }
 
-    //FIXME: REFACTOR reimplement in paper
-//    public void useItem(MenuAction.ActionArguments arguments) {
-//        if (action == null) {
-//            return;
-//        }
-//        action.use(arguments);
-//    }
-
     public boolean isEmpty() {
         return type.isAir();
     }
@@ -335,7 +319,7 @@ public class ItemTemplate
         copy.noTooltip = noTooltip;
         copy.compareKey = compareKey;
         copy.enchantments.putAll(enchantments);
-        copy.components.putAll(components);
+        copy.leatherColor = leatherColor;
         copy.maxDamage = maxDamage;
         copy.currentDamage = currentDamage;
         copy.customModelData = customModelData;
@@ -362,11 +346,6 @@ public class ItemTemplate
         ItemTemplate copy = copy();
         copy.slot = slot;
         return copy;
-    }
-
-    public ItemTemplate addItemComponent(ItemComponents.ItemComponent component) {
-        components.put(component.key(), component);
-        return this;
     }
 
     public ItemTemplate setExtraData(TagDataStorage value) {
@@ -411,10 +390,10 @@ public class ItemTemplate
 
     public static ItemTemplate createColoredLeather(TextColor color, ItemType leatherItemType) {
         if (!LEATHER_ARMOR.contains(leatherItemType)) {
-            leatherItemType = ItemType.of("leather_chestplate");
+            leatherItemType = ItemType.of("minecraft:leather_chestplate");
         }
 
-        ItemTemplate item = new ItemTemplate(leatherItemType, net.kyori.adventure.text.Component.text(color.asHexString()).color(color));
+        ItemTemplate item = new ItemTemplate(leatherItemType, Component.text(color.asHexString()).color(color));
         item.setLeatherColor(color);
         return item;
     }

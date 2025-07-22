@@ -3,7 +3,7 @@ package io.github.steaf23.bingoreloaded.gui.inventory.creator;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.lib.api.AdvancementHandlePaper;
-import io.github.steaf23.bingoreloaded.lib.api.ItemTypePaper;
+import io.github.steaf23.bingoreloaded.lib.api.item.ItemTypePaper;
 import io.github.steaf23.bingoreloaded.lib.api.MenuBoard;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import io.github.steaf23.bingoreloaded.tasks.GameTask;
@@ -72,7 +72,7 @@ public class ListEditorMenu extends BasicMenu
             }
 
             AdvancementTask task = new AdvancementTask(new AdvancementHandlePaper(a));
-            tasks.add(new GameTask(task, GameTask.TaskDisplayMode.UNIQUE_TASK_ITEMS));
+            tasks.add(new GameTask(task));
         }
 
         return new TaskPickerMenu(menuBoard, "Add Advancements", tasks, listName);

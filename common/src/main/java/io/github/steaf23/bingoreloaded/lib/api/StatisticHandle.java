@@ -40,7 +40,7 @@ public interface StatisticHandle {
 	}
 
 	private static Set<EntityType> cacheValidEntityTypes() {
-		//FIXME: REFACTOR fix this function
+		//FIXME: REFACTOR fix this function (Move to Bingo Runtime?)
 
 		// This is the reason we cant support 1.19.2 or below, since we would have to manually add ender dragon and wither spawn eggs.
 		Set<EntityType> types = new HashSet<>();

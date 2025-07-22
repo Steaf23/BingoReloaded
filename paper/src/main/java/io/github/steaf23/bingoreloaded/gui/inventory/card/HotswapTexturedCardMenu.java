@@ -1,5 +1,6 @@
 package io.github.steaf23.bingoreloaded.gui.inventory.card;
 
+import io.github.steaf23.bingoreloaded.api.CardDisplayInfo;
 import io.github.steaf23.bingoreloaded.api.CardMenu;
 import io.github.steaf23.bingoreloaded.api.HotswapCardMenu;
 import io.github.steaf23.bingoreloaded.cards.CardSize;
@@ -27,8 +28,8 @@ public class HotswapTexturedCardMenu extends TexturedCardMenu implements Hotswap
 {
     private List<HotswapTaskHolder> taskHolders;
 
-    public HotswapTexturedCardMenu(MenuBoard board, CardSize size, boolean allowViewingAllCards) {
-        super(board, BingoGamemode.HOTSWAP, size, allowViewingAllCards);
+    public HotswapTexturedCardMenu(MenuBoard board, CardDisplayInfo displayInfo) {
+        super(board, displayInfo);
     }
 
     // Override to only allow tasks getting updated from the task holders.
@@ -63,7 +64,7 @@ public class HotswapTexturedCardMenu extends TexturedCardMenu implements Hotswap
 
     @Override
     public CardMenu copy(@Nullable Component alternateTitle) {
-        return new HotswapTexturedCardMenu(getMenuBoard(), size, allowViewingOtherCards());
+        return new HotswapTexturedCardMenu(getMenuBoard(), displayInfo());
     }
 
     @Override
@@ -98,7 +99,7 @@ public class HotswapTexturedCardMenu extends TexturedCardMenu implements Hotswap
 
     @Override
     public @NotNull ItemTemplate getItemFromTask(int taskIndex) {
-        ItemTemplate item = taskHolders.get(taskIndex).convertToItem();
+        ItemTemplate item = taskHolders.get(taskIndex).convertToItem(displayInfo());
         if (tasks.get(taskIndex).isCompleted()) {
             item.setItemType(ItemType.of("minecraft:poisonous_potato"));
             item.setCustomModelData(1012);

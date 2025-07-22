@@ -1,12 +1,11 @@
 package io.github.steaf23.bingoreloaded.gui.inventory.card;
 
+import io.github.steaf23.bingoreloaded.api.CardDisplayInfo;
 import io.github.steaf23.bingoreloaded.api.CardMenu;
 import io.github.steaf23.bingoreloaded.api.HotswapCardMenu;
-import io.github.steaf23.bingoreloaded.cards.CardSize;
 import io.github.steaf23.bingoreloaded.cards.hotswap.HotswapTaskHolder;
 import io.github.steaf23.bingoreloaded.lib.api.MenuBoard;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
-import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
 import io.github.steaf23.bingoreloaded.tasks.GameTask;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
@@ -18,8 +17,8 @@ public class HotswapGenericCardMenu extends GenericCardMenu implements HotswapCa
 {
     private List<HotswapTaskHolder> taskHolders;
 
-    public HotswapGenericCardMenu(MenuBoard menuBoard, CardSize cardSize, boolean allowViewingAllCards, @Nullable Component alternateTitle) {
-        super(menuBoard, BingoGamemode.HOTSWAP, cardSize, allowViewingAllCards, alternateTitle);
+    public HotswapGenericCardMenu(MenuBoard menuBoard, CardDisplayInfo displayInfo, @Nullable Component alternateTitle) {
+        super(menuBoard, displayInfo, alternateTitle);
     }
 
     // Override to only allow tasks getting updated from the task holders.
@@ -35,12 +34,12 @@ public class HotswapGenericCardMenu extends GenericCardMenu implements HotswapCa
 
     @Override
     public CardMenu copy(@Nullable Component alternateTitle) {
-        return new HotswapGenericCardMenu(getMenuBoard(), size, allowViewingOtherCards(), alternateTitle);
+        return new HotswapGenericCardMenu(getMenuBoard(), displayInfo(), alternateTitle);
     }
 
     @Override
     public @NotNull ItemTemplate getItemFromTask(int taskIndex) {
         HotswapTaskHolder holder = taskHolders.get(taskIndex);
-        return holder.convertToItem();
+        return holder.convertToItem(displayInfo());
     }
 }

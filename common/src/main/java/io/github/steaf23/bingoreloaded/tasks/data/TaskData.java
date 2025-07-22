@@ -1,5 +1,6 @@
 package io.github.steaf23.bingoreloaded.tasks.data;
 
+import io.github.steaf23.bingoreloaded.api.CardDisplayInfo;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import net.kyori.adventure.text.Component;
 
@@ -19,7 +20,7 @@ public interface TaskData
     boolean isTaskEqual(TaskData other);
     boolean shouldItemGlow();
 
-    ItemType getDisplayMaterial(boolean genericItem);
+    ItemType getDisplayMaterial(CardDisplayInfo context);
 
     int getRequiredAmount();
 }

@@ -35,6 +35,7 @@ import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import io.github.steaf23.bingoreloaded.tasks.GameTask;
+import io.github.steaf23.bingoreloaded.tasks.data.ItemTask;
 import io.github.steaf23.bingoreloaded.tasks.tracker.TaskProgressTracker;
 import io.github.steaf23.bingoreloaded.util.ActionBarManager;
 import io.github.steaf23.bingoreloaded.util.BingoPlayerSender;
@@ -124,11 +125,8 @@ public class BingoGame implements GamePhase
         // Generate cards
         boolean useAdvancements = !(platform.areAdvancementsDisabled() || config.getOptionValue(BingoOptions.DISABLE_ADVANCEMENTS));
 
-        GameTask.TaskDisplayMode advancementDisplayMode = config.getOptionValue(BingoOptions.SHOW_UNIQUE_ADVANCEMENT_ITEMS) ? GameTask.TaskDisplayMode.UNIQUE_TASK_ITEMS : GameTask.TaskDisplayMode.GENERIC_TASK_ITEMS;
-        GameTask.TaskDisplayMode statisticDisplayMode = config.getOptionValue(BingoOptions.SHOW_UNIQUE_STATISTIC_ITEMS) ? GameTask.TaskDisplayMode.UNIQUE_TASK_ITEMS : GameTask.TaskDisplayMode.GENERIC_TASK_ITEMS;
         Set<TaskCard> uniqueCards = CardFactory.generateCardsForGame(this,
-                useAdvancements, !config.getOptionValue(BingoOptions.DISABLE_STATISTICS),
-                advancementDisplayMode, statisticDisplayMode);
+                useAdvancements, !config.getOptionValue(BingoOptions.DISABLE_STATISTICS));
 
         //FIXME: REFACTOR move to paper
 //        if (config.getOptionValue(BingoOptions.USE_MAP_RENDERER)) {
@@ -248,11 +246,10 @@ public class BingoGame implements GamePhase
 
         playSound(Sound.sound(Key.key("minecraft:entity_lightning_bolt_thunder"), Sound.Source.UI, 1.0f, 1.0f));
 
-        //FIXME: REFACTOR add command after game feature
-//        String command = config.getOptionValue(BingoOptions.SEND_COMMAND_AFTER_GAME_ENDS);
-//        if (!command.isEmpty()) {
-//            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
-//        }
+        String command = config.getOptionValue(BingoOptions.SEND_COMMAND_AFTER_GAME_ENDS);
+        if (!command.isEmpty()) {
+            platform.sendConsoleCommand(command);
+        }
 
         session.sendMessage(Component.text(" "));
         onGameEndedCallback.run();
@@ -323,7 +320,7 @@ public class BingoGame implements GamePhase
     //FIXME: don't use recursion to create tasks..
     private void startDeathMatchRecurse(int countdown) {
         if (countdown == 0) {
-            deathMatchTask = new GameTask(new BingoCardData().getRandomItemTask(settings.card()), GameTask.TaskDisplayMode.UNIQUE_TASK_ITEMS);
+            deathMatchTask = new GameTask(new BingoCardData().getRandomItemTask(settings.card()));
 
             BingoPlayerSender.sendTitle(
                     Component.text("GO").color(NamedTextColor.GOLD).decorate(TextDecoration.BOLD),
@@ -331,11 +328,16 @@ public class BingoGame implements GamePhase
                     session
             );
 
+            if (!(deathMatchTask.data instanceof ItemTask itemTask)) {
+                ConsoleMessenger.bug("Cannot play deathmatch with a non-item task!", this);
+                end();
+                return;
+            }
+
             for (BingoParticipant p : getTeamManager().getParticipants()) {
                 if (p.sessionPlayer().isEmpty())
                     continue;
-
-                p.showDeathMatchTask(deathMatchTask);
+                p.showDeathMatchTask(itemTask);
             }
 
             playSound(Sound.sound(Key.key("minecraft:entity_ghast_shoot"), Sound.Source.UI, 1.0f, 1.0f));
@@ -722,9 +724,15 @@ public class BingoGame implements GamePhase
                     config.getOptionValue(BingoOptions.GO_UP_WAND_PLATFORM_LIFETIME));
             return EventResult.CANCEL;
         } else if (PlayerKit.CARD_ITEM.isCompareKeyEqual(stack)) {
-            // Show bingo card to player
-            participant.showCard(deathMatchTask);
-            return EventResult.CANCEL;
+            // Only show item task as deathmatch tasks.
+            if (deathMatchTask == null) {
+                participant.showCard(null);
+            } else if (!(deathMatchTask.data instanceof ItemTask itemTask)) {
+                return EventResult.CANCEL;
+            } else {
+                participant.showCard(itemTask);
+                return EventResult.CANCEL;
+            }
         }
 
         return EventResult.PASS;

@@ -67,4 +67,9 @@ public interface ServerSoftware {
 	ExtensionTask runTaskTimer(long repeatTicks, long startDelayTicks, Consumer<ExtensionTask> consumer);
 	ExtensionTask runTask(Consumer<ExtensionTask> consumer);
 	ExtensionTask runTask(long startDelayTicks, Consumer<ExtensionTask> consumer);
+
+	/**
+	 * Sends command as console.
+	 */
+	void sendConsoleCommand(String command);
 }

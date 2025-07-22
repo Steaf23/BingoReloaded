@@ -1,6 +1,7 @@
 package io.github.steaf23.bingoreloaded.lib.api;
 
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
+import io.github.steaf23.bingoreloaded.lib.api.item.ItemTypePaper;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackBuilderPaper;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandlePaper;
@@ -8,6 +9,7 @@ import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandlePaper;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerInfo;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
+import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import io.papermc.paper.registry.RegistryAccess;
 import io.papermc.paper.registry.RegistryKey;
 import net.kyori.adventure.key.Key;
@@ -17,7 +19,6 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
-import org.bukkit.block.Block;
 import org.bukkit.block.BlockType;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.inventory.ItemStack;
@@ -150,8 +151,17 @@ public class PaperServerSoftware implements ServerSoftware {
 	@Override
 	public @Nullable WorldHandle createWorld(WorldOptions options) {
 		var creator = new WorldCreator(options.name());
-		//FIXME: add other dimensions
-		creator.environment(World.Environment.NORMAL);
+
+		if (options.dimension().equals(DimensionType.OVERWORLD)) {
+			creator.environment(World.Environment.NORMAL);
+		} else if (options.dimension().equals(DimensionType.NETHER)) {
+			creator.environment(World.Environment.NETHER);
+		} else if (options.dimension().equals(DimensionType.THE_END)) {
+			creator.environment(World.Environment.THE_END);
+		} else {
+			ConsoleMessenger.bug("Unknown dimension " + options.dimension().key().asString() + " for creating bingo world", this);
+		}
+
 		return fromWorld(Bukkit.createWorld(creator));
 	}
 
@@ -230,6 +240,11 @@ public class PaperServerSoftware implements ServerSoftware {
 
 			return wrapper;
 		}
+	}
+
+	@Override
+	public void sendConsoleCommand(String command) {
+		Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
 	}
 
 	private @Nullable WorldHandle fromWorld(@Nullable World world) {
