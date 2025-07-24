@@ -24,5 +24,7 @@ public interface StatisticType extends Keyed {
 		return PlatformResolver.get().resolveStatisticType(key);
 	}
 
+	boolean equals(Object other);
+
 	StatisticCategory getCategory();
 }

@@ -151,19 +151,19 @@ public class BingoCreatorMenu extends BasicMenu
         context.addAction(new ItemTemplate(0, REMOVE_ICON, BingoReloaded.applyTitleFormat("Remove")), (args) -> {
                     cardsData.removeCard(cardName);
                     context.close(args.player());
-                })
-                .addAction(new ItemTemplate(1, COPY_ICON, BingoReloaded.applyTitleFormat("Duplicate")), (args) -> {
+                });
+        context.addAction(new ItemTemplate(1, COPY_ICON, BingoReloaded.applyTitleFormat("Duplicate")), (args) -> {
                     cardsData.duplicateCard(cardName);
                     context.close(args.player());
-                })
-                .addAction(new ItemTemplate(2, RENAME_ICON, BingoReloaded.applyTitleFormat("Change Name")), (args) -> {
+                });
+        context.addAction(new ItemTemplate(2, RENAME_ICON, BingoReloaded.applyTitleFormat("Change Name")), (args) -> {
                     new UserInputMenu(getMenuBoard(), Component.text("Change name to"), (input) -> {
                         cardsData.renameCard(cardName, input);
                         context.close(args.player());
                     }, cardName)
                             .open(args.player());
-                })
-                .addCloseAction(new ItemTemplate(8, SAVE_ICON, BingoReloaded.applyTitleFormat(BingoMessage.MENU_EXIT.asPhrase())));
+                });
+        context.addCloseAction(new ItemTemplate(8, SAVE_ICON, BingoReloaded.applyTitleFormat(BingoMessage.MENU_EXIT.asPhrase())));
         return context;
     }
 
@@ -174,19 +174,19 @@ public class BingoCreatorMenu extends BasicMenu
         context.addAction(new ItemTemplate(0, REMOVE_ICON, BingoReloaded.applyTitleFormat("Remove")), (args) -> {
                     listsData.removeList(listName);
                     context.close(args.player());
-                })
-                .addAction(new ItemTemplate(1, COPY_ICON, BingoReloaded.applyTitleFormat("Duplicate")), (args) -> {
+                });
+        context.addAction(new ItemTemplate(1, COPY_ICON, BingoReloaded.applyTitleFormat("Duplicate")), (args) -> {
                     listsData.duplicateList(listName);
                     context.close(args.player());
-                })
-                .addAction(new ItemTemplate(2, RENAME_ICON, BingoReloaded.applyTitleFormat("Change Name")), (args) -> {
+                });
+        context.addAction(new ItemTemplate(2, RENAME_ICON, BingoReloaded.applyTitleFormat("Change Name")), (args) -> {
                     new UserInputMenu(getMenuBoard(), Component.text("Change name to"), (input) -> {
                         listsData.renameList(listName, input);
                         context.close(args.player());
                     }, listName)
                             .open(args.player());
-                })
-                .addCloseAction(new ItemTemplate(8, SAVE_ICON, BingoReloaded.applyTitleFormat(BingoMessage.MENU_EXIT.asPhrase())));
+                });
+        context.addCloseAction(new ItemTemplate(8, SAVE_ICON, BingoReloaded.applyTitleFormat(BingoMessage.MENU_EXIT.asPhrase())));
         return context;
     }
 }

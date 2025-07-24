@@ -6,6 +6,8 @@ import net.kyori.adventure.key.Key;
 import org.bukkit.advancement.Advancement;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+
 public class AdvancementHandlePaper implements AdvancementHandle {
 
 	private final Advancement advancement;
@@ -29,5 +31,19 @@ public class AdvancementHandlePaper implements AdvancementHandle {
 
 	public Advancement handle() {
 		return advancement;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof AdvancementHandle other) {
+			return key().equals(other.key());
+		}
+
+		return super.equals(obj);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hashCode(advancement);
 	}
 }

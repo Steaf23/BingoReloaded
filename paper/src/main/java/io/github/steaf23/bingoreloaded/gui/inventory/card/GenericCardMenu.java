@@ -3,6 +3,7 @@ package io.github.steaf23.bingoreloaded.gui.inventory.card;
 import io.github.steaf23.bingoreloaded.api.CardDisplayInfo;
 import io.github.steaf23.bingoreloaded.api.CardMenu;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
+import io.github.steaf23.bingoreloaded.gui.inventory.item.TaskItemAction;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.api.MenuBoard;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
@@ -41,7 +42,7 @@ public class GenericCardMenu extends BasicMenu implements CardMenu
         this.tasks = tasks;
         for (int i = 0; i < tasks.size(); i++)
         {
-            addItem(getItemFromTask(i).setSlot(displayInfo().size().getCardInventorySlot(i)));
+            addItem(getItemFromTask(i).setSlot(displayInfo().size().getCardInventorySlot(i)), new TaskItemAction(tasks.get(i)));
         }
     }
 
@@ -68,9 +69,6 @@ public class GenericCardMenu extends BasicMenu implements CardMenu
 
     @Override
     public void beforeOpening(PlayerHandle player) {
-        for (int i = 0; i < tasks.size(); i++)
-        {
-            addItem(getItemFromTask(i).setSlot(displayInfo().size().getCardInventorySlot(i)));
-        }
+        updateTasks(tasks);
     }
 }

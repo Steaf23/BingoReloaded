@@ -13,6 +13,7 @@ import io.github.steaf23.bingoreloaded.tasks.GameTask;
 import net.kyori.adventure.key.Key;
 
 import java.util.Collection;
+import java.util.Set;
 
 /**
  * Used by BingoReloaded to set up features that are implemented by each platform separately.
@@ -21,6 +22,8 @@ public interface BingoReloadedRuntime {
 	DataAccessor getConfigData();
 	Collection<DataAccessor> getDataToRegister();
 	void setupConfig();
+
+	Set<EntityType> getValidEntityTypesForStatistics();
 
 	record LanguageData(DataAccessor selectedLanguage, DataAccessor backupLanguage){};
 	LanguageData getLanguageData(String language);

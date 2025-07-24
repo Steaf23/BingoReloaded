@@ -7,6 +7,7 @@ import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gameloop.phase.PregameLobby;
 import io.github.steaf23.bingoreloaded.lib.api.BingoReloadedRuntime;
+import io.github.steaf23.bingoreloaded.lib.api.EntityType;
 import io.github.steaf23.bingoreloaded.lib.api.PlatformResolver;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.api.ServerSoftware;
@@ -20,6 +21,7 @@ import net.kyori.adventure.key.Key;
 import javax.smartcardio.Card;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 public class BingoReloadedFabric implements ModInitializer, BingoReloadedRuntime {
 
@@ -50,6 +52,11 @@ public class BingoReloadedFabric implements ModInitializer, BingoReloadedRuntime
 	@Override
 	public void setupConfig() {
 
+	}
+
+	@Override
+	public Set<EntityType> getValidEntityTypesForStatistics() {
+		return Set.of();
 	}
 
 	@Override

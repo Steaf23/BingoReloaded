@@ -109,13 +109,13 @@ public record StatisticTask(StatisticHandle statistic, int count) implements Tas
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         StatisticTask that = (StatisticTask) o;
-        return Objects.equals(statistic, that.statistic);
+        return statistic.equals(that.statistic);
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash(statistic);
+        return Objects.hashCode(statistic);
     }
 
     @Override
@@ -135,6 +135,11 @@ public record StatisticTask(StatisticHandle statistic, int count) implements Tas
     @Override
     public int getRequiredAmount() {
         return count;
+    }
+
+    @Override
+    public TaskData setRequiredAmount(int newAmount) {
+        return new StatisticTask(statistic, newAmount);
     }
 
 }

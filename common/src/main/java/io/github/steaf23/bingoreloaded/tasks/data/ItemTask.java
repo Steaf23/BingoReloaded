@@ -65,6 +65,11 @@ public record ItemTask(ItemType itemType, int count) implements TaskData
     }
 
     @Override
+    public TaskData setRequiredAmount(int newAmount) {
+        return new ItemTask(itemType, newAmount);
+    }
+
+    @Override
     public boolean equals(Object o)
     {
         if (this == o) return true;
@@ -76,7 +81,7 @@ public record ItemTask(ItemType itemType, int count) implements TaskData
     @Override
     public int hashCode()
     {
-        return Objects.hash(itemType);
+        return Objects.hashCode(itemType);
     }
 
     @Override

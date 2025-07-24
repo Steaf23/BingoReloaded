@@ -2,13 +2,11 @@ package io.github.steaf23.bingoreloaded.tasks;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.api.CardDisplayInfo;
-import io.github.steaf23.bingoreloaded.api.TaskDisplayMode;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.data.core.tag.TagDataStorage;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
-import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.tasks.data.ItemTask;
@@ -31,9 +29,9 @@ public class GameTask
     public long completedAt;
     private boolean voided;
 
-    public final TaskData data;
+    public TaskData data;
 
-    public GameTask(TaskData data)
+    public GameTask(@NotNull TaskData data)
     {
         this.data = data;
         this.completedBy = null;
@@ -111,8 +109,6 @@ public class GameTask
             item.setGlowing(true);
         }
 
-        //FIXME: REFACTOR add task action back to item
-//        item.setAction(new TaskItemAction(this));
         item.setMaxStackSize(64);
         return item;
     }
@@ -120,11 +116,7 @@ public class GameTask
     public static @Nullable GameTask fromItem(StackHandle in)
     {
         TagDataStorage store = in.getStorage();
-        if (store == null) {
-            ConsoleMessenger.bug("No task data found in item", GameTask.class);
-            return null;
-        }
-        return store.toSerializable(GameTask.class);
+		return store.toSerializable(GameTask.class);
     }
 
     public static Key getTaskDataKey(String property)

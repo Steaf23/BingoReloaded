@@ -23,4 +23,9 @@ public interface TaskData
     ItemType getDisplayMaterial(CardDisplayInfo context);
 
     int getRequiredAmount();
+
+    /**
+     * @return Copy with the new amount.
+     */
+    TaskData setRequiredAmount(int newAmount);
 }

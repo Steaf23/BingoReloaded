@@ -10,4 +10,6 @@ public interface AdvancementHandle extends Keyed {
 	}
 
 	ItemType displayIcon();
+
+	boolean equals(Object other);
 }

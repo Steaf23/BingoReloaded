@@ -280,7 +280,7 @@ public class EventListenerPaper implements Listener {
 
 		EventResult<?> result = dispatcher.sendPlayerInventoryClick(
 				new PlayerHandlePaper(player),
-				new StackHandlePaper(event.getCurrentItem()),
+				new StackHandlePaper(event.getWhoClicked().getItemOnCursor()),
 				event.getSlotType() == InventoryType.SlotType.RESULT,
 				event.isShiftClick());
 

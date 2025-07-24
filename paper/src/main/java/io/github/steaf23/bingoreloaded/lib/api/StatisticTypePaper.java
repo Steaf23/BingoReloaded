@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class StatisticTypePaper implements StatisticType {
 
@@ -32,6 +33,20 @@ public class StatisticTypePaper implements StatisticType {
 	@Override
 	public @NotNull Key key() {
 		return stat.key();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof StatisticTypePaper other) {
+			return stat.equals(other.stat);
+		}
+
+		return super.equals(obj);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hashCode(stat);
 	}
 
 	@Override

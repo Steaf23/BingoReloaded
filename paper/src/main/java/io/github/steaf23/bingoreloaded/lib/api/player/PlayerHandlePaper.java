@@ -34,7 +34,7 @@ public class PlayerHandlePaper implements PlayerHandle {
 
 	private final Player player;
 
-	public PlayerHandlePaper(Player player) {
+	public PlayerHandlePaper(@NotNull Player player) {
 		this.player = player;
 	}
 

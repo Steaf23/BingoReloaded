@@ -1,5 +1,6 @@
 package io.github.steaf23.bingoreloaded.lib.api;
 
+import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import org.jetbrains.annotations.Nullable;
 
@@ -40,17 +41,6 @@ public interface StatisticHandle {
 	}
 
 	private static Set<EntityType> cacheValidEntityTypes() {
-		//FIXME: REFACTOR fix this function (Move to Bingo Runtime?)
-
-		// This is the reason we cant support 1.19.2 or below, since we would have to manually add ender dragon and wither spawn eggs.
-		Set<EntityType> types = new HashSet<>();
-//		Arrays.stream(ItemType.values())
-//				.forEach(mat -> {
-//					if (mat.name().contains("_SPAWN_EGG")) {
-//						types.add(EntityType.valueOf(mat.name().replace("_SPAWN_EGG", "")));
-//					}
-//				});
-//		// Note: pre 1.20.5 mooshroom spawn egg needed to be parsed by hand
-		return types;
+		return BingoReloaded.runtime().getValidEntityTypesForStatistics();
 	}
 }

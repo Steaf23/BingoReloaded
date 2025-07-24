@@ -2,10 +2,13 @@ package io.github.steaf23.bingoreloaded.lib.api;
 
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemTypePaper;
+import io.github.steaf23.bingoreloaded.util.StatisticsKeyConverter;
 import org.bukkit.Material;
 import org.bukkit.Statistic;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Objects;
 
 public record StatisticHandlePaper(@NotNull StatisticTypePaper statistic, @Nullable EntityType entityType, @Nullable ItemType itemType) implements StatisticHandle
 {
@@ -46,17 +49,17 @@ public record StatisticHandlePaper(@NotNull StatisticTypePaper statistic, @Nulla
 
     @Override
     public StatisticType statisticType() {
-        return (StatisticType) statistic;
+        return statistic;
     }
 
     @Override
     public boolean isSubStatistic() {
-        return false;
+        return statistic.handle().isSubstatistic();
     }
 
     @Override
     public String translationKey() {
-        return "";
+        return StatisticsKeyConverter.getMinecraftTranslationKey(statistic.handle());
     }
 
     /**
@@ -183,9 +186,20 @@ public record StatisticHandlePaper(@NotNull StatisticTypePaper statistic, @Nulla
         else if (entityType() != null &&
                 statistic.getType() == Statistic.Type.ENTITY)
         {
-            return ItemType.of(entityType().key().namespace() + "_spawn_egg");
+            return ItemType.of("minecraft:" + entityType().key().value() + "_spawn_egg");
         }
 
         return ItemType.of("minecraft:globe_banner_pattern");
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof StatisticHandlePaper(StatisticTypePaper stat, EntityType entity, ItemType item))) return false;
+		return Objects.equals(itemType, item) && Objects.equals(entityType, entity) && Objects.equals(statistic, stat);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(statistic, entityType, itemType);
     }
 }

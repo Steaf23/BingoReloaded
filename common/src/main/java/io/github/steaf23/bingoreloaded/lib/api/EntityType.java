@@ -7,4 +7,6 @@ public interface EntityType extends Keyed {
 	static EntityType of(Key key) {
 		return PlatformResolver.get().resolveEntityType(key);
 	}
+
+	boolean equals(Object other);
 }

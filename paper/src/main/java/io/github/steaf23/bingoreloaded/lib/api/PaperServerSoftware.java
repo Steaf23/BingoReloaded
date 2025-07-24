@@ -17,6 +17,9 @@ import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.Registry;
+import org.bukkit.Statistic;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
 import org.bukkit.block.BlockType;
@@ -73,26 +76,19 @@ public class PaperServerSoftware implements ServerSoftware {
 
 	@Override
 	public @NotNull PlayerInfo getPlayerInfo(UUID playerId) {
-		return null;
+		OfflinePlayer offline = Bukkit.getOfflinePlayer(playerId);
+		return new PlayerInfo(playerId, offline.getName());
 	}
 
 	@Override
 	public @NotNull PlayerInfo getPlayerInfo(String playerName) {
-		return null;
+		OfflinePlayer offline = Bukkit.getOfflinePlayer(playerName);
+		return new PlayerInfo(offline.getUniqueId(), playerName);
 	}
 
 	@Override
 	public ItemType resolveItemType(Key key) {
-
-		org.bukkit.inventory.ItemType item = RegistryAccess.registryAccess().getRegistry(RegistryKey.ITEM).get(key);
-		if (item != null) {
-			return new ItemTypePaper(item.asMaterial());
-		}
-		BlockType block = RegistryAccess.registryAccess().getRegistry(RegistryKey.BLOCK).get(key);
-		if (block != null) {
-			return new ItemTypePaper(block.asMaterial());
-		}
-		return ItemType.AIR;
+		return new ItemTypePaper(Registry.MATERIAL.get(key));
 	}
 
 	@Override
@@ -110,7 +106,11 @@ public class PaperServerSoftware implements ServerSoftware {
 
 	@Override
 	public EntityType resolveEntityType(Key key) {
-		return null;
+		org.bukkit.entity.EntityType type = Registry.ENTITY_TYPE.get(key);
+		if (type == null) {
+			return null;
+		}
+		return new EntityTypePaper(type);
 	}
 
 	@Override
@@ -120,7 +120,11 @@ public class PaperServerSoftware implements ServerSoftware {
 
 	@Override
 	public StatisticType resolveStatisticType(Key key) {
-		return null;
+		Statistic stat = Registry.STATISTIC.get(key);
+		if (stat == null) {
+			return null;
+		}
+		return new StatisticTypePaper(stat);
 	}
 
 	@Override
@@ -193,7 +197,7 @@ public class PaperServerSoftware implements ServerSoftware {
 
 	@Override
 	public StatisticHandle createStatistic(StatisticType type, @Nullable ItemType item, @Nullable EntityType entity) {
-		return null;
+		return new StatisticHandlePaper((StatisticTypePaper) type, entity, item);
 	}
 
 	@Override

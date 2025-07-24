@@ -31,11 +31,11 @@ public class ComponentUtils
     }
 
     public static Component advancementTitle(@NotNull AdvancementHandle advancement) {
-        return Component.translatable(advancement.key().value() + ".title");
+        return Component.translatable(advancementKey(advancement) + ".title");
     }
 
     public static Component advancementDescription(@NotNull AdvancementHandle advancement) {
-        return Component.translatable(advancement.key().value() + ".description");
+        return Component.translatable(advancementKey(advancement) + ".description");
     }
 
     public static Component statistic(StatisticHandle statistic, Component... with)
@@ -51,7 +51,7 @@ public class ComponentUtils
     private static String advancementKey(@NotNull AdvancementHandle advancement)
     {
         String result = advancement.key().value().replace("/", ".");
-        result = switch (result) // Needed to correct Spigot on some advancement names vs how they appear in the lang files
+        result = switch (result) // Needed to correct Mojang on some advancement keys vs how they appear in the lang files
         {
             case "husbandry.obtain_netherite_hoe" -> "husbandry.netherite_hoe";
             case "husbandry.bred_all_animals" -> "husbandry.breed_all_animals";
@@ -65,7 +65,7 @@ public class ComponentUtils
     {
         String prefix = statistic.isSubStatistic() ? "stat_type.minecraft." : "stat.minecraft.";
         String result = statistic.translationKey();
-        return !result.isEmpty() ? prefix + result : statistic.statisticType().toString();
+        return !result.isEmpty() ? prefix + result : statistic.statisticType().key().asString();
     }
 
     private static String itemKey(ItemType item)

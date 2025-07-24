@@ -3,11 +3,17 @@ package io.github.steaf23.bingoreloaded.lib.api.item;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Objects;
 
 public class ItemTypePaper implements ItemType {
 	private final Material type;
 
-	public ItemTypePaper(Material type) {
+	public ItemTypePaper(@Nullable Material type) {
+		if (type == null) {
+			type = Material.AIR;
+		}
 		this.type = type;
 	}
 
@@ -41,5 +47,10 @@ public class ItemTypePaper implements ItemType {
 		}
 
 		return super.equals(obj);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hashCode(type);
 	}
 }

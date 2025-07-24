@@ -49,13 +49,13 @@ public class SettingsPresetMenu extends PaginatedSelectionMenu
             context.addAction(new ItemTemplate(0, ItemTypePaper.of(Material.BARRIER), BingoReloaded.applyTitleFormat("Remove")), clickType -> {
                         settingsData.removeSettings(clickedOption.getCompareKey());
                         context.close(player);
-                    })
-                    .addAction(new ItemTemplate(1, ItemTypePaper.of(Material.SHULKER_SHELL), BingoReloaded.applyTitleFormat("Duplicate")), clickType -> {
+                    });
+            context.addAction(new ItemTemplate(1, ItemTypePaper.of(Material.SHULKER_SHELL), BingoReloaded.applyTitleFormat("Duplicate")), clickType -> {
                         BingoSettings oldSettings = settingsData.getSettings(clickedOption.getCompareKey());
                         settingsData.saveSettings(clickedOption.getCompareKey() + "_copy", oldSettings);
                         context.close(player);
-                    })
-                    .addAction(new ItemTemplate(2, ItemTypePaper.of(Material.NAME_TAG), BingoReloaded.applyTitleFormat("Rename")), clickType -> {
+                    });
+            context.addAction(new ItemTemplate(2, ItemTypePaper.of(Material.NAME_TAG), BingoReloaded.applyTitleFormat("Rename")), clickType -> {
                         BingoSettings oldSettings = settingsData.getSettings(clickedOption.getCompareKey());
                         settingsData.removeSettings(clickedOption.getCompareKey());
                         new TextInputDialog(getMenuBoard(), clickedOption.getCompareKey(), input -> {
@@ -63,18 +63,18 @@ public class SettingsPresetMenu extends PaginatedSelectionMenu
                             context.close(player);
                         }, Component.text("Rename preset to:"), null)
                                 .open(player);
-                    })
-                    .addAction(new ItemTemplate(3, ItemTypePaper.of(Material.GLOBE_BANNER_PATTERN), BingoReloaded.applyTitleFormat("Overwrite"),
+                    });
+            context.addAction(new ItemTemplate(3, ItemTypePaper.of(Material.GLOBE_BANNER_PATTERN), BingoReloaded.applyTitleFormat("Overwrite"),
                             Component.text("This will overwrite the settings saved in "),
                             Component.text(clickedOption.getCompareKey() + " with the currently selected options!")), clickType -> {
                         settingsData.saveSettings(clickedOption.getCompareKey(), settingsBuilder.view());
                         context.close(player);
-                    })
-                    .addAction(new ItemTemplate(4, ItemTypePaper.of(Material.AMETHYST_SHARD), BingoReloaded.applyTitleFormat("Set As Default")), clickType -> {
+                    });
+            context.addAction(new ItemTemplate(4, ItemTypePaper.of(Material.AMETHYST_SHARD), BingoReloaded.applyTitleFormat("Set As Default")), clickType -> {
                         settingsData.setDefaultSettings(clickedOption.getCompareKey());
                         context.close(player);
-                    })
-                    .addCloseAction(new ItemTemplate(8, ItemTypePaper.of(Material.DIAMOND), BingoReloaded.applyTitleFormat("Exit")))
+                    });
+            context.addCloseAction(new ItemTemplate(8, ItemTypePaper.of(Material.DIAMOND), BingoReloaded.applyTitleFormat("Exit")))
                     .open(player);
         }
     }

@@ -29,6 +29,8 @@ import io.github.steaf23.bingoreloaded.lib.action.ActionTree;
 import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.data.config.BingoOptions;
 import io.github.steaf23.bingoreloaded.lib.api.BingoReloadedRuntime;
+import io.github.steaf23.bingoreloaded.lib.api.EntityType;
+import io.github.steaf23.bingoreloaded.lib.api.EntityTypePaper;
 import io.github.steaf23.bingoreloaded.lib.api.MenuBoard;
 import io.github.steaf23.bingoreloaded.lib.api.PaperServerSoftware;
 import io.github.steaf23.bingoreloaded.lib.api.PlatformResolver;
@@ -48,18 +50,23 @@ import io.github.steaf23.bingoreloaded.world.CustomWorldCreator;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.inventory.ItemType;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class BingoReloadedPaper extends JavaPlugin implements BingoReloadedRuntime {
 
@@ -153,6 +160,18 @@ public class BingoReloadedPaper extends JavaPlugin implements BingoReloadedRunti
 	}
 
 	@Override
+	public Set<EntityType> getValidEntityTypesForStatistics() {
+		Set<EntityType> types = new HashSet<>();
+		Arrays.stream(Material.values())
+				.forEach(mat -> {
+					if (mat.name().contains("_SPAWN_EGG")) {
+						types.add(new EntityTypePaper(org.bukkit.entity.EntityType.valueOf(mat.name().replace("_SPAWN_EGG", ""))));
+					}
+				});
+		return types;
+	}
+
+	@Override
 	public LanguageData getLanguageData(String language) {
 		var lang = new YamlDataAccessor(platform, language, false);
 		var fallback = new YamlDataAccessor(platform, "languages/en_us", false);
@@ -224,7 +243,7 @@ public class BingoReloadedPaper extends JavaPlugin implements BingoReloadedRunti
 
 	@Override
 	public void openBingoCreator(PlayerHandle player) {
-		new BingoCreatorMenu(menuBoard);
+		new BingoCreatorMenu(menuBoard).open(player);
 	}
 
 	@Override

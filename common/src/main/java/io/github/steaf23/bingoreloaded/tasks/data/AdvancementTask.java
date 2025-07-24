@@ -97,4 +97,9 @@ public record AdvancementTask(AdvancementHandle advancement) implements TaskData
 //        // We need a little NMS voo-doo magic
 //        return ((CraftAdvancement)advancement).getHandle().value().requirements().requirements().size();
     }
+
+    @Override
+    public TaskData setRequiredAmount(int newAmount) {
+        return this;
+    }
 }

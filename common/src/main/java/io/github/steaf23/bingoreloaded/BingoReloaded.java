@@ -19,6 +19,8 @@ import io.github.steaf23.bingoreloaded.data.serializers.ItemStorageSerializer;
 import io.github.steaf23.bingoreloaded.data.serializers.PlayerStorageSerializer;
 import io.github.steaf23.bingoreloaded.lib.api.StatisticHandle;
 import io.github.steaf23.bingoreloaded.lib.data.serializers.StatisticSerializer;
+import io.github.steaf23.bingoreloaded.tasks.GameTask;
+import io.github.steaf23.bingoreloaded.tasks.GameTaskSerializer;
 import io.github.steaf23.bingoreloaded.tasks.data.TaskStorageSerializer;
 import io.github.steaf23.bingoreloaded.data.serializers.TeamTemplateStorageSerializer;
 import io.github.steaf23.bingoreloaded.gameloop.GameManager;
@@ -94,6 +96,7 @@ public class BingoReloaded implements Namespaced {
 		DataStorageSerializerRegistry.addSerializer(new BingoSettingsStorageSerializer(), BingoSettings.class);
 		DataStorageSerializerRegistry.addSerializer(new StatisticSerializer(), StatisticHandle.class);
 		DataStorageSerializerRegistry.addSerializer(new ItemStorageSerializer(), SerializableItem.class);
+		DataStorageSerializerRegistry.addSerializer(new GameTaskSerializer(), GameTask.class);
 
 		// Create data accessors
 		addDataAccessor(new TagDataAccessor(platform, "data/cards", false));

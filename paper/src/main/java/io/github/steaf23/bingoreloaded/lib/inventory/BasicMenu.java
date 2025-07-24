@@ -120,7 +120,7 @@ public class BasicMenu implements InventoryMenu
         return this;
     }
 
-    public BasicMenu addAction(@NotNull ItemTemplate item, Consumer<MenuAction.ActionArguments> action) {
+    public MenuAction addAction(@NotNull ItemTemplate item, Consumer<MenuAction.ActionArguments> action) {
         MenuAction menuAction = new MenuAction()
         {
             @Override
@@ -130,7 +130,7 @@ public class BasicMenu implements InventoryMenu
         };
         addItem(item, menuAction);
 
-        return this;
+        return menuAction;
     }
 
     public BasicMenu addCloseAction(@NotNull ItemTemplate item) {
