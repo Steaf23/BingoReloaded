@@ -3,6 +3,7 @@ package io.github.steaf23.bingoreloaded.gameloop.phase;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.api.BingoEvents;
 import io.github.steaf23.bingoreloaded.lib.api.BiomeType;
+import io.github.steaf23.bingoreloaded.lib.api.EntityType;
 import io.github.steaf23.bingoreloaded.lib.api.InteractAction;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.api.MapRenderer;
@@ -117,6 +118,7 @@ public class BingoGame implements GamePhase
         deathMatchTask = null;
         WorldHandle world = session.getOverworld();
         if (world == null) {
+            session.endGame();
             return;
         }
         world.setStorming(false);
@@ -155,12 +157,11 @@ public class BingoGame implements GamePhase
                 .append(BingoMessage.DURATION.asPhrase(settings.useCountdown() ?
                         GameTimer.getTimeAsComponent(settings.countdownDuration() * 60L) : Component.text("∞")))
                 .build();
-        BingoPlayerSender.sendMessage(BingoMessage.createHoverCommandMessage(
+        BingoPlayerSender.sendMessage(BingoMessage.createHoverableMessage(
                 Component.empty(),
                 BingoMessage.SETTINGS_HOVER.asPhrase(),
                 HoverEvent.showText(hoverMessage),
-                Component.empty(),
-                ""), session);
+                Component.empty()), session);
 
         getTeamManager().getParticipants().forEach(p ->
         {
@@ -370,18 +371,8 @@ public class BingoGame implements GamePhase
         if (!clearArea) {
             return;
         }
-        for (int y = 1; y < 6; y++) {
-            for (int x = -size; x < size + 1; x++) {
-                for (int z = -size; z < size + 1; z++) {
-                    BlockHelper.placeBlock(ItemType.AIR, platformLocation.clone()
-                            .moveXBlocks(x)
-                            .moveYBlocks(y)
-                            .moveZBlocks(z),
-                            false,
-                            null);
-                }
-            }
-        }
+
+        BlockHelper.buildCuboid(ItemType.AIR, platformLocation.clone(), size, size, 3, false, null);
     }
 
     public static void removePlatform(WorldPosition platformLocation, int size) {
@@ -578,7 +569,7 @@ public class BingoGame implements GamePhase
         } else {
             for (StackHandle drop : droppedItems) {
                 var data = drop.getStorage();
-                if (data == null || data.getBoolean("kit_item", false)
+                if (data.getBoolean("kit_item", false)
                         || PlayerKit.CARD_ITEM.isCompareKeyEqual(drop)) {
                     drop.setAmount(0);
                 }

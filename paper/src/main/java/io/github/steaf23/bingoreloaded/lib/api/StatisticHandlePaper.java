@@ -32,19 +32,26 @@ public record StatisticHandlePaper(@NotNull StatisticTypePaper statistic, @Nulla
         this(new StatisticTypePaper(stat), null, null);
     }
 
-    public StatisticHandlePaper(Statistic stat, @Nullable org.bukkit.entity.EntityType entityType)
+    public StatisticHandlePaper(Statistic stat, @NotNull org.bukkit.entity.EntityType entityType)
     {
         this(new StatisticTypePaper(stat), new EntityTypePaper(entityType), null);
     }
 
-    public StatisticHandlePaper(Statistic stat, @Nullable Material itemType)
+    public StatisticHandlePaper(Statistic stat, @NotNull Material itemType)
     {
         this(new StatisticTypePaper(stat), null, ItemTypePaper.of(itemType));
     }
 
-    public StatisticHandlePaper(Statistic stat, @Nullable org.bukkit.entity.EntityType entity, @Nullable Material itemType)
-    {
-        this(new StatisticTypePaper(stat), new EntityTypePaper(entity), ItemTypePaper.of(itemType));
+    public static StatisticHandlePaper create(Statistic stat, @Nullable org.bukkit.entity.EntityType entity, @Nullable Material itemType) {
+        if (entity == null && itemType != null) {
+            return new StatisticHandlePaper(new StatisticTypePaper(stat), null, ItemTypePaper.of(itemType));
+        } else if (entity != null && itemType == null) {
+            return new StatisticHandlePaper(new StatisticTypePaper(stat), new EntityTypePaper(entity), null);
+        } else if (entity == null && itemType == null) {
+            return new StatisticHandlePaper(new StatisticTypePaper(stat), null, null);
+        } else {
+            return new StatisticHandlePaper(new StatisticTypePaper(stat), new EntityTypePaper(entity), ItemTypePaper.of(itemType));
+        }
     }
 
     @Override

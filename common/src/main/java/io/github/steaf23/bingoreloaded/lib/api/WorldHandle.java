@@ -15,6 +15,8 @@ public interface WorldHandle {
 	WorldPosition spawnPoint();
 	DimensionType dimension();
 
+	void spawnEntity(EntityType type, WorldPosition pos);
+
 	void setStorming(boolean storm);
 	void setTimeOfDay(long time);
 	BiomeType biomeAtPos(WorldPosition pos);

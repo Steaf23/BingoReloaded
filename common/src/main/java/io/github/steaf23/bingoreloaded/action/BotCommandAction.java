@@ -4,6 +4,7 @@ import io.github.steaf23.bingoreloaded.cards.TaskCard;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gameloop.GameManager;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
+import io.github.steaf23.bingoreloaded.lib.action.ActionResult;
 import io.github.steaf23.bingoreloaded.lib.action.ActionTree;
 import io.github.steaf23.bingoreloaded.lib.api.ActionUser;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
@@ -139,9 +140,13 @@ public class BotCommandAction extends ActionTree {
 		addSubAction(new ActionTree(name, permissions, (args) -> {
 			BingoSession session = getSessionFromUser(getLastUser());
 			if (session == null) {
-				return false;
+				return ActionResult.IGNORED;
 			} else {
-				return action.apply(args, session);
+				if (action.apply(args, session)) {
+					return ActionResult.SUCCESS;
+				} else {
+					return ActionResult.IGNORED;
+				}
 			}
 		}));
 	}

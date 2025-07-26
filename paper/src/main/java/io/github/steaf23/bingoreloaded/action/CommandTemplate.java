@@ -5,6 +5,7 @@ import io.github.steaf23.bingoreloaded.lib.api.ActionUser;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandlePaper;
 import io.github.steaf23.bingoreloaded.lib.util.ComponentUtils;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
+import org.apache.commons.lang3.StringUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
@@ -46,16 +47,28 @@ public class CommandTemplate implements TabExecutor
             return false;
         }
 
-        if (!command.execute(user, arguments)) {
-            commandSender.sendMessage(ComponentUtils.MINI_BUILDER.deserialize("<dark_gray> - <red>Usage: " + command.usage(arguments)));
-            return false;
+        switch (command.execute(user, arguments)) {
+            case INCORRECT_USE -> {
+                commandSender.sendMessage(ComponentUtils.MINI_BUILDER.deserialize("<dark_gray>- <red>Usage: " + command.usage(arguments)));
+                return false;
+            }
+            default -> {
+                return true;
+            }
         }
-
-        return true;
     }
 
     @Override
-    public @Nullable List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
-        return this.command.tabComplete(strings);
+    public @Nullable List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String alias, @NotNull String[] strings) {
+        ActionUser user;
+        if (commandSender instanceof Player player) {
+            user = new PlayerHandlePaper(player);
+        } else if (commandSender instanceof ConsoleCommandSender console){
+            user = new ConsoleActionUser(console);
+        } else {
+            return List.of();
+        }
+
+        return this.command.tabComplete(user, strings).stream().filter(s -> StringUtils.containsIgnoreCase(s, strings[strings.length - 1])).toList();
     }
 }

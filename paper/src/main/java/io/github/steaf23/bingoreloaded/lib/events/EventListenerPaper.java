@@ -228,7 +228,7 @@ public class EventListenerPaper implements Listener {
 	public void handlePlayerStatisticIncrementEvent(final PlayerStatisticIncrementEvent event) {
 		EventResult<?> result = dispatcher.sendPlayerStatisticIncrement(
 				new PlayerHandlePaper(event.getPlayer()),
-				new StatisticHandlePaper(event.getStatistic(), event.getEntityType(), event.getMaterial()),
+				StatisticHandlePaper.create(event.getStatistic(), event.getEntityType(), event.getMaterial()),
 				event.getNewValue());
 
 		if (result.cancel()) {

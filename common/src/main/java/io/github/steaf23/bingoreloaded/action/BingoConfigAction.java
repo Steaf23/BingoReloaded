@@ -1,5 +1,6 @@
 package io.github.steaf23.bingoreloaded.action;
 
+import io.github.steaf23.bingoreloaded.lib.action.ActionResult;
 import io.github.steaf23.bingoreloaded.lib.action.ActionTree;
 import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.data.config.ConfigurationOption;
@@ -22,7 +23,7 @@ public class BingoConfigAction extends ActionTree {
 
         setAction((args) -> {
             if (getLastUser() == null) {
-                return false;
+                return ActionResult.IGNORED;
             }
 
             if (args.length == 1) {
@@ -32,7 +33,7 @@ public class BingoConfigAction extends ActionTree {
                 return writeOption(getLastUser(), args[0], args[1]);
             }
 
-            return false;
+            return ActionResult.INCORRECT_USE;
         }).addTabCompletion(args ->
                 switch (args.length) {
                     case 1 -> allOptionKeys(true);
@@ -41,12 +42,12 @@ public class BingoConfigAction extends ActionTree {
                 .addUsage("<option> [new_value]");
     }
 
-    private boolean readOption(Audience sender, String optionKey) {
+    private ActionResult readOption(Audience sender, String optionKey) {
         Optional<ConfigurationOption<?>> someOption = configuration.getOptionFromName(optionKey);
 
         if (someOption.isEmpty()) {
             BingoPlayerSender.sendMessage(ComponentUtils.MINI_BUILDER.deserialize("Config option '<red>" + optionKey + "</red>' doesn't exist."), sender);
-            return false;
+            return ActionResult.INCORRECT_USE;
         }
 
         ConfigurationOption<?> option = someOption.get();
@@ -55,30 +56,30 @@ public class BingoConfigAction extends ActionTree {
         BingoPlayerSender.sendMessage(
                 ComponentUtils.MINI_BUILDER.deserialize("Config option <yellow>" + optionKey + "</yellow> is set to: ")
                         .append(Component.text(value).color(getColorOfOptionValue(value))), sender);
-        return true;
+        return ActionResult.SUCCESS;
     }
 
-    private boolean writeOption(Audience sender, String optionKey, String value) {
+    private ActionResult writeOption(Audience sender, String optionKey, String value) {
         Optional<ConfigurationOption<?>> someOption = configuration.getOptionFromName(optionKey);
 
         if (someOption.isEmpty()) {
             BingoPlayerSender.sendMessage(ComponentUtils.MINI_BUILDER.deserialize("Config option '<red>" + optionKey + "</red>' doesn't exist."), sender);
-            return false;
+            return ActionResult.INCORRECT_USE;
         }
 
         ConfigurationOption<?> option = someOption.get();
 
         if (option.isLocked()) {
             BingoPlayerSender.sendMessage(ComponentUtils.MINI_BUILDER.deserialize("<red>This option is not (yet) available, please wait for a future update.</red>"), sender);
-            return false;
+            return ActionResult.INCORRECT_USE;
         }
         if (!option.canBeEdited()) {
             BingoPlayerSender.sendMessage(ComponentUtils.MINI_BUILDER.deserialize("<red>This option cannot be changed in-game. Please change it in the config.yml file and restart the server."), sender);
-            return false;
+            return ActionResult.IGNORED; // logically this is incorrect_use but technically the command was not used incorrectly.
         }
         if (!configuration.setOptionValueFromString(option, value)) {
             BingoPlayerSender.sendMessage(ComponentUtils.MINI_BUILDER.deserialize("The value of option <yellow>" + optionKey + "</yellow> cannot be set to value <red>" + value), sender);
-            return false;
+            return ActionResult.IGNORED; // logically this is incorrect_use but technically the command was not used incorrectly.
         }
 
         String newValue = configuration.getOptionValue(option).toString();
@@ -101,7 +102,7 @@ public class BingoConfigAction extends ActionTree {
         //FIXME: add player display options
 //        PlayerDisplay.enableDebugLogging(configuration.getOptionValue(BingoOptions.ENABLE_DEBUG_LOGGING));
 
-        return true;
+        return ActionResult.SUCCESS;
     }
     private List<String> allOptionKeys() {
         return allOptionKeys(false);

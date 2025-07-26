@@ -79,4 +79,9 @@ public class WorldPosition extends Position {
 	public WorldPosition add(Position other) {
 		return (WorldPosition) super.add(other);
 	}
+
+	@Override
+	public WorldPosition floor() {
+		return (WorldPosition)super.floor();
+	}
 }

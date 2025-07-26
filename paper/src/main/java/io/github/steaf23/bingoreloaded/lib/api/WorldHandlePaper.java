@@ -49,6 +49,11 @@ public class WorldHandlePaper implements WorldHandle {
 	}
 
 	@Override
+	public void spawnEntity(EntityType type, WorldPosition pos) {
+		world.spawnEntity(PaperApiHelper.locationFromWorldPos(pos), ((EntityTypePaper)type).handle());
+	}
+
+	@Override
 	public void setStorming(boolean storm) {
 		world.setStorm(storm);
 	}
@@ -75,7 +80,7 @@ public class WorldHandlePaper implements WorldHandle {
 
 	@Override
 	public WorldPosition highestBlockAt(WorldPosition pos) {
-		return PaperApiHelper.worldPosFromLocation(world.getHighestBlockAt(pos.blockX(), pos.blockY()).getLocation());
+		return PaperApiHelper.worldPosFromLocation(world.getHighestBlockAt(pos.blockX(), pos.blockZ()).getLocation());
 	}
 
 	@Override

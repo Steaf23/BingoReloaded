@@ -2,6 +2,7 @@ package io.github.steaf23.bingoreloaded.action;
 
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
+import io.github.steaf23.bingoreloaded.lib.action.ActionResult;
 import io.github.steaf23.bingoreloaded.lib.action.ActionTree;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandlePaper;
@@ -32,22 +33,22 @@ public class TeamChatCommand extends ActionTree implements Listener {
 
 		setAction((args) -> {
 			if (!(getLastUser() instanceof PlayerHandle handle)) {
-				return false;
+				return ActionResult.IGNORED;
 			}
 
 			BingoSession session = getSession(handle);
 			if (session == null)
-				return false;
+				return ActionResult.IGNORED;
 
 			TeamManager teamManager = session.teamManager;
 			BingoParticipant participant = teamManager.getPlayerAsParticipant(handle);
 
 			if (!(participant instanceof BingoPlayer player))
-				return false;
+				return ActionResult.IGNORED;
 
 			if (!teamManager.getParticipants().contains(player)) {
 				BingoMessage.NO_CHAT.sendToAudience(player, NamedTextColor.RED);
-				return false;
+				return ActionResult.IGNORED;
 			}
 
 			if (enabledPlayers.contains(player)) {
@@ -58,7 +59,7 @@ public class TeamChatCommand extends ActionTree implements Listener {
 				BingoMessage.CHAT_ON.sendToAudience(player, NamedTextColor.GREEN, Component.text("/btc").color(NamedTextColor.GRAY));
 			}
 
-			return true;
+			return ActionResult.SUCCESS;
 		});
 	}
 

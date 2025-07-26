@@ -17,7 +17,7 @@ public record CustomKit(Component name, PlayerKit slot, List<SerializableItem> i
         int cardSlot = 40;
         for (StackHandle itemStack : player.inventory().contents())
         {
-            if (itemStack != null) {
+            if (itemStack != null && !itemStack.type().isAir()) {
                 // if this item is the card, save the slot instead and disregard the item itself.
                 if (PlayerKit.CARD_ITEM.isCompareKeyEqual(itemStack)) {
                     cardSlot = slot;

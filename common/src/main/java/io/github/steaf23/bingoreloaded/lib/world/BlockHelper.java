@@ -27,15 +27,19 @@ public interface BlockHelper {
 
 	static void placeBlock(ItemType blockType, WorldPosition pos, boolean skipSolidBlocks, @Nullable ItemType mask) {
 		ItemType typeAtPos = pos.world().typeAtPos(pos);
-		if (skipSolidBlocks || !typeAtPos.isSolid() && (mask == null || mask.equals(typeAtPos))) {
+		if (skipSolidBlocks && typeAtPos.isSolid() && mask == null) {
+			return;
+		}
+
+		if (mask == null || mask.equals(typeAtPos)) {
 			pos.world().setTypeAtPos(pos, blockType);
 		}
 	}
 
 	static WorldPosition getRandomPosWithinRange(WorldPosition center, int rangeX, int rangeZ) {
 		Position pos = Position.random()
-				.multiply(rangeX * 2, 1.0, rangeZ * 2)
-				.add(new Position(-rangeX, 1.0, -rangeZ));
+				.multiply(rangeX * 2, 1.0D, rangeZ * 2)
+				.add(new Position(-rangeX + 0.5D, 1.0D, -rangeZ + 0.5D));
 		return center.clone().add(pos);
 	}
 

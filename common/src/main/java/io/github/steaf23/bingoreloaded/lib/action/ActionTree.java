@@ -12,7 +12,7 @@ public class ActionTree
 {
     protected final List<ActionTree> subActions;
     protected final String name;
-    private Function<String[], Boolean> action;
+    private Function<String[], ActionResult> action;
     private final List<String> permissionWhitelist;
 
     protected String usage;
@@ -20,7 +20,7 @@ public class ActionTree
 
     private ActionUser lastUser = null;
 
-    public ActionTree(String name, List<String> permissionWhitelist, Function<String[], Boolean> action) {
+    public ActionTree(String name, List<String> permissionWhitelist, Function<String[], ActionResult> action) {
         this.subActions = new ArrayList<>();
         this.name = name;
         this.action = action;
@@ -29,15 +29,15 @@ public class ActionTree
         this.tabCompletionForArgs = args -> List.of();
     }
 
-    public ActionTree(String name, Function<String[], Boolean> action) {
-        this(name, List.of());
+    public ActionTree(String name, Function<String[], ActionResult> action) {
+        this(name, List.of(), action);
     }
 
     public ActionTree(String name, List<String> permissionWhitelist) {
         this(name, permissionWhitelist, null);
     }
 
-    public ActionTree setAction(Function<String[], Boolean> action) {
+    public ActionTree setAction(Function<String[], ActionResult> action) {
         this.action = action;
         return this;
     }
@@ -57,11 +57,11 @@ public class ActionTree
         return this;
     }
 
-    public boolean execute(ActionUser user, String... arguments) {
+    public ActionResult execute(ActionUser user, String... arguments) {
         lastUser = user;
 
         if (!hasPermission(user)) {
-            return false;
+            return ActionResult.NO_PERMISSION;
         }
 
         if (action != null) {
@@ -74,29 +74,35 @@ public class ActionTree
             }
         }
 
+        if (arguments.length == 0) {
+            return ActionResult.INCORRECT_USE;
+        }
+
         ActionTree cmd = getSubCommand(arguments[0]);
         if (cmd != null) {
             return cmd.execute(lastUser, Arrays.copyOfRange(arguments, 1, arguments.length));
         }
-        return false;
+        return ActionResult.INCORRECT_USE;
     }
 
     public boolean hasPermission(ActionUser user) {
         return permissionWhitelist.isEmpty() || user.hasAnyPermission(permissionWhitelist);
     }
 
-    public List<String> tabComplete(String... arguments) {
+    public List<String> tabComplete(ActionUser user, String... arguments) {
         if (subActions.isEmpty()) {
             return tabCompletionForArgs.apply(arguments);
         }
 
         if (arguments.length == 1) {
-            return subActions.stream().map(cmd -> cmd.name).collect(Collectors.toList());
+            return subActions.stream()
+                    .filter(cmd -> cmd.hasPermission(user))
+                    .map(cmd -> cmd.name).collect(Collectors.toList());
         }
 
         ActionTree cmd = getSubCommand(arguments[0]);
         if (cmd != null) {
-            return cmd.tabComplete(Arrays.copyOfRange(arguments, 1, arguments.length));
+            return cmd.tabComplete(user, Arrays.copyOfRange(arguments, 1, arguments.length));
         }
 
         return List.of();

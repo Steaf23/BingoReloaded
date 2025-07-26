@@ -427,7 +427,7 @@ public class DataUpdaterV1
                 }
                 if (task instanceof OldStatisticTask(int count, OldStatistic statistic)) {
                     newTasks.add(new StatisticTask(
-                            new StatisticHandlePaper(
+                            StatisticHandlePaper.create(
                                     statistic.stat(),
                                     statistic.entity(),
                                     statistic.material),

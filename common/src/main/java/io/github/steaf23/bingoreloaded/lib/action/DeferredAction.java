@@ -17,7 +17,7 @@ public class DeferredAction extends ActionTree
     }
 
     @Override
-    public List<String> tabComplete(String... arguments) {
+    public List<String> tabComplete(ActionUser user, String... arguments) {
         String deferred = "<" + deferredArgument + ">";
 
         if (arguments.length <= 1) {
@@ -41,23 +41,23 @@ public class DeferredAction extends ActionTree
         if (cmd != null) {
             String[] finalArguments = Arrays.copyOfRange(arguments, 1, arguments.length);
             finalArguments[0] = userArgument;
-            return cmd.tabComplete(finalArguments);
+            return cmd.tabComplete(user, finalArguments);
         }
 
         return List.of();
     }
 
     @Override
-    public boolean execute(ActionUser user, String... arguments) {
+    public ActionResult execute(ActionUser user, String... arguments) {
         // A substitute can't exist when there is nothing to defer it to (this is a developer mistake)
         if (subActions.isEmpty()) {
             ConsoleMessenger.bug("Wrongly formatted action by plugin {this is a developer mistake!}", this);
-            return false;
+            return ActionResult.IGNORED;
         }
 
         // there needs to be an extra argument past the substituted argument, else this command will fail.
         if (arguments.length <= 1) {
-            return false;
+            return ActionResult.INCORRECT_USE;
         }
 
         // Skip one element, as that is what we defer the 0th argument to.
@@ -69,7 +69,7 @@ public class DeferredAction extends ActionTree
             finalArguments[0] = userArgument;
             return cmd.execute(user, finalArguments);
         }
-        return false;
+        return ActionResult.INCORRECT_USE;
     }
 
     @Override

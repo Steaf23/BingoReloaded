@@ -16,6 +16,7 @@ import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataStorage;
 import io.github.steaf23.bingoreloaded.lib.data.core.tag.TagDataStorage;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
+import io.github.steaf23.bingoreloaded.lib.util.ComponentUtils;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import io.github.steaf23.bingoreloaded.tasks.GameTask;
@@ -203,11 +204,8 @@ public class BingoPlayer implements BingoParticipant
         if (sessionPlayer().isEmpty())
             return;
 
-        ItemType type = task.itemType();
-        String itemKey = type.isBlock() ? "block" : "item";
-        itemKey += ".minecraft." + type.key();
         sessionPlayer().get()
-                .sendMessage(BingoMessage.DEATHMATCH_ITEM.asPhrase(Component.translatable(itemKey))
+                .sendMessage(BingoMessage.DEATHMATCH_ITEM.asPhrase(ComponentUtils.itemName(task.itemType()))
                         .color(NamedTextColor.GOLD));
     }
 
@@ -266,7 +264,7 @@ public class BingoPlayer implements BingoParticipant
             }
 
             WorldPosition teleportLocation = player.position();
-            WorldPosition platformLocation = teleportLocation.clone();
+            WorldPosition platformLocation = teleportLocation.clone().floor();
             teleportLocation.setY(teleportLocation.y() + distance + fallDistance);
             platformLocation.setY(platformLocation.y() + distance);
 

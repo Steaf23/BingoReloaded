@@ -10,8 +10,6 @@ import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandlePaper;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerInfo;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
-import io.papermc.paper.registry.RegistryAccess;
-import io.papermc.paper.registry.RegistryKey;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
 import org.bukkit.Bukkit;
@@ -22,8 +20,8 @@ import org.bukkit.Registry;
 import org.bukkit.Statistic;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
-import org.bukkit.block.BlockType;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
@@ -66,12 +64,20 @@ public class PaperServerSoftware implements ServerSoftware {
 
 	@Override
 	public @Nullable PlayerHandle getPlayerFromUniqueId(UUID id) {
-		return new PlayerHandlePaper(Bukkit.getPlayer(id));
+		Player p = Bukkit.getPlayer(id);
+		if (p == null) {
+			return null;
+		}
+		return new PlayerHandlePaper(p);
 	}
 
 	@Override
 	public @Nullable PlayerHandle getPlayerFromName(String name) {
-		return new PlayerHandlePaper(Bukkit.getPlayer(name));
+		Player p = Bukkit.getPlayer(name);
+		if (p == null) {
+			return null;
+		}
+		return new PlayerHandlePaper(p);
 	}
 
 	@Override

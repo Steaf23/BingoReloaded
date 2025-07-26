@@ -113,4 +113,14 @@ public class Position {
 		Random random = new Random();
 		return new Position(random.nextDouble(), random.nextDouble(), random.nextDouble());
 	}
+
+	/**
+	 * Rounds x, y and z down, effectively removing the decimal value.
+	 */
+	public Position floor() {
+		this.x = Math.floor(this.x);
+		this.y = Math.floor(this.y);
+		this.z = Math.floor(this.z);
+		return this;
+	}
 }

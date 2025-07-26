@@ -253,6 +253,10 @@ public enum BingoMessage
         return prefix.append(hoverable.clickEvent(ClickEvent.runCommand(command)).hoverEvent(hover)).append(postfix);
     }
 
+    public static Component createHoverableMessage(Component prefix, Component hoverable, HoverEvent<?> hover, Component postfix) {
+        return prefix.append(hoverable.hoverEvent(hover)).append(postfix);
+    }
+
     /**
      * @return translated multiline component, including placeholders
      */
