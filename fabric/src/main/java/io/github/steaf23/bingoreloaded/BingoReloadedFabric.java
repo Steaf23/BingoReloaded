@@ -2,7 +2,6 @@ package io.github.steaf23.bingoreloaded;
 
 import io.github.steaf23.bingoreloaded.api.CardDisplayInfo;
 import io.github.steaf23.bingoreloaded.api.CardMenu;
-import io.github.steaf23.bingoreloaded.cards.CardSize;
 import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gameloop.phase.PregameLobby;
@@ -13,12 +12,9 @@ import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.api.ServerSoftware;
 import io.github.steaf23.bingoreloaded.lib.api.WorldHandle;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataAccessor;
-import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
-import io.github.steaf23.bingoreloaded.tasks.GameTask;
 import net.fabricmc.api.ModInitializer;
 import net.kyori.adventure.key.Key;
 
-import javax.smartcardio.Card;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -62,6 +58,11 @@ public class BingoReloadedFabric implements ModInitializer, BingoReloadedRuntime
 	@Override
 	public LanguageData getLanguageData(String language) {
 		return null;
+	}
+
+	@Override
+	public void onLanguageUpdated() {
+
 	}
 
 	@Override

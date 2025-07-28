@@ -2,6 +2,8 @@ package io.github.steaf23.bingoreloaded.lib.util;
 
 import net.kyori.adventure.text.Component;
 
+import java.util.function.Function;
+
 public enum PlayerDisplayTranslationKey
 {
     MENU_PREVIOUS,
@@ -11,9 +13,17 @@ public enum PlayerDisplayTranslationKey
     MENU_FILTER,
     MENU_CLEAR_FILTER;
 
+    public static void setTranslateFunction(Function<PlayerDisplayTranslationKey, Component> translateFunction) {
+        TRANSLATE_FUNCTION = translateFunction;
+    }
+    private static Function<PlayerDisplayTranslationKey, Component> TRANSLATE_FUNCTION = null;
+
     public Component translate() {
-        //FIXME: REFACTOR implement
-        return Component.text("IMPLEMENT");
-//        return BingoMessage.(this);
+        if (TRANSLATE_FUNCTION != null) {
+            return TRANSLATE_FUNCTION.apply(this);
+        }
+        else {
+            return Component.text("ERROR LOADING TRANSLATION TEXT");
+        }
     }
 }

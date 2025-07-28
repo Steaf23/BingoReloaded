@@ -1,5 +1,6 @@
 package io.github.steaf23.bingoreloaded.gui.inventory.card;
 
+import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.api.CardDisplayInfo;
 import io.github.steaf23.bingoreloaded.api.CardMenu;
 import io.github.steaf23.bingoreloaded.api.HotswapCardMenu;
@@ -17,8 +18,8 @@ public class HotswapGenericCardMenu extends GenericCardMenu implements HotswapCa
 {
     private List<HotswapTaskHolder> taskHolders;
 
-    public HotswapGenericCardMenu(MenuBoard menuBoard, CardDisplayInfo displayInfo, @Nullable Component alternateTitle) {
-        super(menuBoard, displayInfo, alternateTitle);
+    public HotswapGenericCardMenu(BingoReloaded bingo, MenuBoard menuBoard, CardDisplayInfo displayInfo, @Nullable Component alternateTitle) {
+        super(bingo, menuBoard, displayInfo, alternateTitle);
     }
 
     // Override to only allow tasks getting updated from the task holders.
@@ -34,7 +35,7 @@ public class HotswapGenericCardMenu extends GenericCardMenu implements HotswapCa
 
     @Override
     public CardMenu copy(@Nullable Component alternateTitle) {
-        return new HotswapGenericCardMenu(getMenuBoard(), displayInfo(), alternateTitle);
+        return new HotswapGenericCardMenu(bingo(), getMenuBoard(), displayInfo(), alternateTitle);
     }
 
     @Override

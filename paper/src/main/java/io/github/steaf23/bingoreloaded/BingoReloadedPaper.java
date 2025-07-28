@@ -12,6 +12,7 @@ import io.github.steaf23.bingoreloaded.action.BingoConfigAction;
 import io.github.steaf23.bingoreloaded.action.BotCommandAction;
 import io.github.steaf23.bingoreloaded.action.CommandTemplate;
 import io.github.steaf23.bingoreloaded.action.TeamChatCommand;
+import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.DataUpdaterV1;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gameloop.phase.PregameLobby;
@@ -42,8 +43,10 @@ import io.github.steaf23.bingoreloaded.lib.data.core.ConfigDataAccessor;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataAccessor;
 import io.github.steaf23.bingoreloaded.lib.data.core.YamlDataAccessor;
 import io.github.steaf23.bingoreloaded.lib.events.EventListenerPaper;
+import io.github.steaf23.bingoreloaded.lib.inventory.BasicMenu;
 import io.github.steaf23.bingoreloaded.lib.inventory.MenuBoardPaper;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
+import io.github.steaf23.bingoreloaded.lib.util.PlayerDisplayTranslationKey;
 import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
 import io.github.steaf23.bingoreloaded.util.bstats.Metrics;
 import io.github.steaf23.bingoreloaded.world.CustomWorldCreator;
@@ -56,7 +59,6 @@ import org.bukkit.command.PluginCommand;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.inventory.ItemType;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -183,6 +185,20 @@ public class BingoReloadedPaper extends JavaPlugin implements BingoReloadedRunti
 	}
 
 	@Override
+	public void onLanguageUpdated() {
+		PlayerDisplayTranslationKey.setTranslateFunction(key -> switch(key) {
+			case MENU_PREVIOUS -> BingoMessage.MENU_PREV.asPhrase();
+			case MENU_NEXT -> BingoMessage.MENU_NEXT.asPhrase();
+			case MENU_ACCEPT -> BingoMessage.MENU_ACCEPT.asPhrase();
+			case MENU_SAVE_EXIT -> BingoMessage.MENU_SAVE_EXIT.asPhrase();
+			case MENU_FILTER -> BingoMessage.MENU_FILTER.asPhrase();
+			case MENU_CLEAR_FILTER -> BingoMessage.MENU_CLEAR_FILTER.asPhrase();
+		});
+
+		BasicMenu.pluginTitlePrefix = BingoMessage.MENU_PREFIX.asPhrase();
+	}
+
+	@Override
 	public void registerActions(BingoConfigurationData config) {
 		registerCommand(true, new AutoBingoAction(platform, bingo.getGameManager()));
 		registerCommand(true, new BingoConfigAction(config));
@@ -216,10 +232,10 @@ public class BingoReloadedPaper extends JavaPlugin implements BingoReloadedRunti
 		}
 
 		if (displayInfo.mode() == BingoGamemode.HOTSWAP) {
-			return new HotswapGenericCardMenu(menuBoard, displayInfo, null);
+			return new HotswapGenericCardMenu(bingo, menuBoard, displayInfo, null);
 		}
 
-		return new GenericCardMenu(menuBoard, displayInfo, null);
+		return new GenericCardMenu(bingo, menuBoard, displayInfo, null);
 	}
 
 	@Override

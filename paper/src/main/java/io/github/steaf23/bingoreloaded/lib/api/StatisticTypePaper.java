@@ -145,19 +145,4 @@ public class StatisticTypePaper implements StatisticType {
 				 HAPPY_GHAST_ONE_CM -> StatisticCategory.TRAVEL;
 		};
 	}
-
-	//TODO: less static?
-//	public static Set<StatisticType> getStatisticsInCategory(StatisticType.StatisticCategory category)
-//	{
-//		List<StatisticType> result = new ArrayList<>();
-//		for (var stat : Statistic.values())
-//		{
-//			if (new StatisticHandlePaper(stat).getCategory() == category)
-//			{
-//				result.add(new StatisticTypePaper(stat));
-//			}
-//		}
-//		return result;
-//	}
-
 }

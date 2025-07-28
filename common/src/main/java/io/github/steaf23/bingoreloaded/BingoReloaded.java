@@ -118,9 +118,6 @@ public class BingoReloaded implements Namespaced {
 		String language = config.getOptionValue(BingoOptions.LANGUAGE).replace(".yml", "");
 		setLanguage(language);
 
-		//FIXME: REFACTOR
-//		BasicMenu.pluginTitlePrefix = BingoMessage.MENU_PREFIX.asPhrase();
-
 		this.textureData = new TexturedMenuData();
 
 		reloadManager();
@@ -257,15 +254,7 @@ public class BingoReloaded implements Namespaced {
 		if (platform.getResource(language + ".yml") != null) {
 			BingoMessage.setLanguage(runtime.getLanguageData(language));
 
-			//FIXME: REFACTOR init translation in platform code
-//			PlayerDisplay.setItemTranslation(key -> switch (key) {
-//				case MENU_PREVIOUS -> BingoMessage.MENU_PREV.asPhrase();
-//				case MENU_NEXT -> BingoMessage.MENU_NEXT.asPhrase();
-//				case MENU_ACCEPT -> BingoMessage.MENU_ACCEPT.asPhrase();
-//				case MENU_SAVE_EXIT -> BingoMessage.MENU_SAVE_EXIT.asPhrase();
-//				case MENU_FILTER -> BingoMessage.MENU_FILTER.asPhrase();
-//				case MENU_CLEAR_FILTER -> BingoMessage.MENU_CLEAR_FILTER.asPhrase();
-//			});
+			runtime.onLanguageUpdated();
 
 			ConsoleMessenger.log(BingoMessage.CHANGED_LANGUAGE.asPhrase().color(NamedTextColor.GREEN));
 		} else {

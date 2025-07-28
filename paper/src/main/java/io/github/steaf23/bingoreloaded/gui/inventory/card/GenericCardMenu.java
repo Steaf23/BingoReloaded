@@ -1,8 +1,10 @@
 package io.github.steaf23.bingoreloaded.gui.inventory.card;
 
+import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.api.CardDisplayInfo;
 import io.github.steaf23.bingoreloaded.api.CardMenu;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
+import io.github.steaf23.bingoreloaded.gui.inventory.item.OpenCardSelectAction;
 import io.github.steaf23.bingoreloaded.gui.inventory.item.TaskItemAction;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.api.MenuBoard;
@@ -17,7 +19,6 @@ import net.kyori.adventure.text.format.TextDecoration;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,17 +26,18 @@ public class GenericCardMenu extends BasicMenu implements CardMenu
 {
     protected List<GameTask> tasks;
     private final CardDisplayInfo displayInfo;
+    private final BingoReloaded bingo;
 
-    public GenericCardMenu(MenuBoard menuBoard, CardDisplayInfo displayInfo, @Nullable Component alternateTitle)
+    public GenericCardMenu(BingoReloaded bingo, MenuBoard menuBoard, CardDisplayInfo displayInfo, @Nullable Component alternateTitle)
     {
         super(menuBoard, alternateTitle == null ? BingoMessage.CARD_TITLE.asPhrase() : alternateTitle, displayInfo.size().size);
-        this.tasks = new ArrayList<>();
+		this.bingo = bingo;
+		this.tasks = new ArrayList<>();
         setMaxStackSizeOverride(64);
         this.displayInfo = displayInfo;
-        //FIXME: REFACTOR reimplement
-//        if (allowViewingAllCards) {
-//            addItem(CardMenu.createTeamViewItem().setSlot(8));
-//        }
+        if (displayInfo.allowViewingOtherCards()) {
+            addAction(OpenCardSelectAction.createItem(bingo, 8));
+        }
     }
 
     public void updateTasks(List<GameTask> tasks) {
@@ -47,7 +49,7 @@ public class GenericCardMenu extends BasicMenu implements CardMenu
     }
 
     public CardMenu copy(@Nullable Component newTitle) {
-        return new GenericCardMenu(getMenuBoard(), displayInfo(), newTitle);
+        return new GenericCardMenu(bingo, getMenuBoard(), displayInfo(), newTitle);
     }
 
     @Override
@@ -70,5 +72,9 @@ public class GenericCardMenu extends BasicMenu implements CardMenu
     @Override
     public void beforeOpening(PlayerHandle player) {
         updateTasks(tasks);
+    }
+
+    public BingoReloaded bingo() {
+        return bingo;
     }
 }

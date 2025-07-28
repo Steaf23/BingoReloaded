@@ -27,6 +27,7 @@ public interface BingoReloadedRuntime {
 
 	record LanguageData(DataAccessor selectedLanguage, DataAccessor backupLanguage){};
 	LanguageData getLanguageData(String language);
+	void onLanguageUpdated();
 
 	void registerActions(BingoConfigurationData config);
 

@@ -59,7 +59,8 @@ public class StackBuilderPaper implements StackBuilder {
 						DataComponentTypes.UNBREAKABLE,
 						DataComponentTypes.DYED_COLOR,
 						DataComponentTypes.STORED_ENCHANTMENTS,
-						DataComponentTypes.PROVIDES_TRIM_MATERIAL);
+						DataComponentTypes.PROVIDES_TRIM_MATERIAL,
+						DataComponentTypes.BUNDLE_CONTENTS);
 		if (hideAttributes) {
 			tooltipBuilder.addHiddenComponents(DataComponentTypes.ATTRIBUTE_MODIFIERS);
 		}
