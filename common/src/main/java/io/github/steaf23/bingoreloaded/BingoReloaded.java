@@ -1,6 +1,8 @@
 package io.github.steaf23.bingoreloaded;
 
 import io.github.steaf23.bingoreloaded.api.BingoEventListener;
+import io.github.steaf23.bingoreloaded.data.DefaultKitData;
+import io.github.steaf23.bingoreloaded.data.serializers.DefaultKitStorageSerializer;
 import io.github.steaf23.bingoreloaded.lib.api.BingoReloadedRuntime;
 import io.github.steaf23.bingoreloaded.lib.api.ServerSoftware;
 import io.github.steaf23.bingoreloaded.lib.api.PlatformResolver;
@@ -89,6 +91,7 @@ public class BingoReloaded implements Namespaced {
 
 		runtime.setupConfig();
 
+		DataStorageSerializerRegistry.addSerializer(new DefaultKitStorageSerializer(), DefaultKitData.Kit.class);
 		DataStorageSerializerRegistry.addSerializer(new CustomKitStorageSerializer(), CustomKit.class);
 		DataStorageSerializerRegistry.addSerializer(new TaskStorageSerializer(), TaskData.class);
 		DataStorageSerializerRegistry.addSerializer(new PlayerStorageSerializer(), SerializablePlayer.class);
@@ -101,6 +104,7 @@ public class BingoReloaded implements Namespaced {
 		// Create data accessors
 		addDataAccessor(new TagDataAccessor(platform, "data/cards", false));
 		addDataAccessor(new TagDataAccessor(platform, "data/textures", false));
+		addDataAccessor(new TagDataAccessor(platform, "data/default_kits", true));
 		addDataAccessor(new TagDataAccessor(platform, "data/kits", false));
 		addDataAccessor(new TagDataAccessor(platform, "data/" + getDefaultTasksVersion(), false));
 		addDataAccessor(new TagDataAccessor(platform, "data/presets", false));

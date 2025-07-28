@@ -2,6 +2,8 @@ package io.github.steaf23.bingoreloaded.settings;
 
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.CustomKitData;
+import io.github.steaf23.bingoreloaded.data.DefaultKitData;
+import io.github.steaf23.bingoreloaded.lib.api.ServerSoftware;
 import io.github.steaf23.bingoreloaded.lib.item.SerializableItem;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
@@ -12,11 +14,9 @@ import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public enum PlayerKit
 {
@@ -69,7 +69,8 @@ public enum PlayerKit
     public final String configName;
     private final Component displayName;
     public final EnumSet<EffectOptionFlags> defaultEffects;
-    private static final CustomKitData customKitData = new CustomKitData();
+    private static final DefaultKitData DEFAULT_KIT_DATA = new DefaultKitData();
+    private static final CustomKitData CUSTOM_KIT_DATA = new CustomKitData();
 
     PlayerKit(String configName, Component displayName, EnumSet<EffectOptionFlags> defaultEffects)
     {
@@ -80,101 +81,39 @@ public enum PlayerKit
 
     public Component getDisplayName() {
         if (isCustomKit()) {
-            return customKitData.getCustomKit(this).name();
+            return CUSTOM_KIT_DATA.getCustomKit(this).name();
         }
         return displayName;
     }
 
-    public List<SerializableItem> getItems(TextColor teamColor)
+    public List<SerializableItem> getItems(TextColor teamColor, ServerSoftware server)
     {
-        //FIXME: REFACTOR use nbt default_kits data file instead of hardcoding
-//        ItemTemplate helmet = new ItemTemplate(39, ItemType.of("minecraft:leather_helmet"))
-//                .setLeatherColor(teamColor);
-//        ItemTemplate boots = new ItemTemplate(36, ItemType.of("minecraft:leather_boots"))
-//                .setLeatherColor(teamColor);
-//
-//        List<ItemTemplate> items = new ArrayList<>();
-//        switch (this)
-//        {
-//            case NORMAL -> {
-//                items.add(helmet
-//                        .addEnchantment(Enchantment.AQUA_AFFINITY, 1));
-//                items.add(boots
-//                        .addEnchantment(Enchantment.DEPTH_STRIDER, 3));
-//                items.add(new ItemTemplate(1, Material.IRON_PICKAXE));
-//                items.add(new ItemTemplate(0, Material.IRON_AXE));
-//                items.add(new ItemTemplate(2, Material.IRON_SHOVEL)
-//                        .addEnchantment(Enchantment.SILK_TOUCH, 1));
-//                items.add(new ItemTemplate(3, Material.COOKED_PORKCHOP)
-//                        .setAmount(32));
-//            }
-//            case OVERPOWERED -> {
-//                items.add(WAND_ITEM.copyToSlot(8));
-//                items.add(helmet
-//                        .addEnchantment(Enchantment.UNBREAKING, 3)
-//                        .addEnchantment(Enchantment.AQUA_AFFINITY, 1)
-//                        .addEnchantment(Enchantment.PROTECTION, 4));
-//                items.add(boots
-//                        .addEnchantment(Enchantment.UNBREAKING, 3)
-//                        .addEnchantment(Enchantment.DEPTH_STRIDER, 3)
-//                        .addEnchantment(Enchantment.PROTECTION, 4));
-//                items.add(new ItemTemplate(1, Material.NETHERITE_PICKAXE)
-//                        .addEnchantment(Enchantment.FORTUNE, 3)
-//                        .addEnchantment(Enchantment.EFFICIENCY, 5));
-//                items.add(new ItemTemplate(0, Material.NETHERITE_AXE)
-//                        .addEnchantment(Enchantment.LOOTING, 3)
-//                        .addEnchantment(Enchantment.SHARPNESS, 5)
-//                        .addEnchantment(Enchantment.EFFICIENCY, 5));
-//                items.add(new ItemTemplate(2, Material.NETHERITE_SHOVEL)
-//                        .addEnchantment(Enchantment.SILK_TOUCH, 1)
-//                        .addEnchantment(Enchantment.EFFICIENCY, 5));
-//                items.add(new ItemTemplate(3, Material.GOLDEN_CARROT)
-//                        .setAmount(64));
-//            }
-//            case RELOADED -> {
-//                items.add(WAND_ITEM.copyToSlot(8));
-//                items.add(helmet
-//                        .addEnchantment(Enchantment.UNBREAKING, 3)
-//                        .addEnchantment(Enchantment.AQUA_AFFINITY, 1)
-//                        .addEnchantment(Enchantment.PROTECTION, 4));
-//                items.add(boots
-//                        .addEnchantment(Enchantment.UNBREAKING, 3)
-//                        .addEnchantment(Enchantment.DEPTH_STRIDER, 3)
-//                        .addEnchantment(Enchantment.PROTECTION, 4));
-//                items.add(new ItemTemplate(38, Material.ELYTRA)
-//                        .addEnchantment(Enchantment.UNBREAKING, 10));
-//                items.add(new ItemTemplate(1, Material.NETHERITE_PICKAXE)
-//                        .addEnchantment(Enchantment.FORTUNE, 3)
-//                        .addEnchantment(Enchantment.EFFICIENCY, 5));
-//                items.add(new ItemTemplate(0, Material.NETHERITE_AXE)
-//                        .addEnchantment(Enchantment.LOOTING, 3)
-//                        .addEnchantment(Enchantment.SHARPNESS, 5)
-//                        .addEnchantment(Enchantment.EFFICIENCY, 5));
-//                items.add(new ItemTemplate(2, Material.NETHERITE_SHOVEL)
-//                        .addEnchantment(Enchantment.SILK_TOUCH, 1)
-//                        .addEnchantment(Enchantment.EFFICIENCY, 5));
-//                items.add(new ItemTemplate(3, Material.ENCHANTED_GOLDEN_APPLE)
-//                        .setAmount(64));
-//            }
-//            case CUSTOM_1, CUSTOM_2, CUSTOM_3, CUSTOM_4, CUSTOM_5 -> {
-//                CustomKit kit = customKitData.getCustomKit(this);
-//                if (kit != null)
-//                {
-//                    // Color colored items according to the team color.
-//                    return kit.items().stream()
-//                            .map(item -> new SerializableItem(item.slot(), ItemTemplate.colorItemStack(item.stack(), teamColor)))
-//                            .toList();
-//                }
-//            }
-//        }
+        List<SerializableItem> items = switch (this)
+        {
+            case HARDCORE, NORMAL, OVERPOWERED, RELOADED -> {
+                DefaultKitData.Kit kit = DEFAULT_KIT_DATA.getKit(this);
+                if (kit != null) {
+                    yield kit.items();
+                }
+                yield List.of();
+            }
+            case CUSTOM_1, CUSTOM_2, CUSTOM_3, CUSTOM_4, CUSTOM_5 -> {
+                CustomKit kit = CUSTOM_KIT_DATA.getCustomKit(this);
+                if (kit != null) {
+                    yield kit.items();
+                }
+                yield List.of();
+            }
+        };
 
-        List<ItemTemplate> items = new ArrayList<>();
-        return items.stream().map(SerializableItem::fromItemTemplate).collect(Collectors.toList());
+        return items.stream()
+            .map(item -> new SerializableItem(item.slot(), server.colorItemStack(item.stack(), teamColor)))
+            .toList();
     }
 
     public int getCardSlot() {
         if (isCustomKit()) {
-            return customKitData.getCustomKit(this).cardSlot();
+            return CUSTOM_KIT_DATA.getCustomKit(this).cardSlot();
         }
         else {
             // off-hand slot: 40
@@ -187,7 +126,7 @@ public enum PlayerKit
     }
 
     public boolean isValid() {
-        return !isCustomKit() || (PlayerKit.customKits().contains(this) && customKitData.getCustomKit(this) != null);
+        return !isCustomKit() || (PlayerKit.customKits().contains(this) && CUSTOM_KIT_DATA.getCustomKit(this) != null);
     }
 
     public static PlayerKit fromConfig(String name)

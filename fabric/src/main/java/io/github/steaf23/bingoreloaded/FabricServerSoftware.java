@@ -16,6 +16,7 @@ import io.github.steaf23.bingoreloaded.lib.api.WorldHandle;
 import io.github.steaf23.bingoreloaded.lib.api.WorldOptions;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import net.kyori.adventure.key.Key;
+import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -147,6 +148,11 @@ public class FabricServerSoftware implements ServerSoftware {
 	@Override
 	public byte[] createBytesFromStack(StackHandle stack) {
 		return new byte[0];
+	}
+
+	@Override
+	public StackHandle colorItemStack(StackHandle stack, TextColor color) {
+		return null;
 	}
 
 	@Override

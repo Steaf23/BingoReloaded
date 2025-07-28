@@ -55,7 +55,8 @@ public class TagList
     public static TagList fromPayload(ByteArrayInputStream stream) {
         TagDataType<?> type = TagDataType.getTypeFromId(stream.read());
         if (type == null) {
-            ConsoleMessenger.bug("Could not read tag list from input stream", new TagList());
+            // Either invalid or empty list, it's easiest to just assume it's empty and skip the size parameter.
+            ByteHelper.readInt(stream);
             return new TagList();
         }
         int size = ByteHelper.readInt(stream);

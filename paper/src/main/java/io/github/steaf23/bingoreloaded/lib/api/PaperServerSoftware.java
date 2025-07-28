@@ -10,9 +10,13 @@ import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandlePaper;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerInfo;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
+import io.papermc.paper.datacomponent.DataComponentTypes;
+import io.papermc.paper.datacomponent.item.DyedItemColor;
 import net.kyori.adventure.key.Key;
+import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
 import org.bukkit.Bukkit;
+import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.OfflinePlayer;
@@ -199,6 +203,12 @@ public class PaperServerSoftware implements ServerSoftware {
 	@Override
 	public byte[] createBytesFromStack(StackHandle stack) {
 		return ((StackHandlePaper)stack).handle().serializeAsBytes();
+	}
+
+	@Override
+	public StackHandle colorItemStack(StackHandle stack, TextColor color) {
+		((StackHandlePaper)stack).handle().setData(DataComponentTypes.DYED_COLOR, DyedItemColor.dyedItemColor(Color.fromRGB(color.value())));
+		return stack;
 	}
 
 	@Override
