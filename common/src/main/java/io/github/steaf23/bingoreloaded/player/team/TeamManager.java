@@ -69,10 +69,10 @@ public interface TeamManager
     default void handleSettingsUpdated(final BingoSettings newSettings) {
     }
 
-    default void handlePlayerJoinedSessionWorld(final BingoEvents.PlayerSessionEvent event) {
+    default void handlePlayerJoinedSessionWorld(PlayerHandle player) {
     }
 
-    default void handlePlayerLeftSessionWorld(final BingoEvents.PlayerSessionEvent event) {
+    default void handlePlayerLeftSessionWorld(PlayerHandle player) {
     }
 
 }

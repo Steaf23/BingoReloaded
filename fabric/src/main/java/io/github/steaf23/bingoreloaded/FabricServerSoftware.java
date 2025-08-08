@@ -4,6 +4,7 @@ import io.github.steaf23.bingoreloaded.lib.api.AdvancementHandle;
 import io.github.steaf23.bingoreloaded.lib.api.DimensionType;
 import io.github.steaf23.bingoreloaded.lib.api.EntityType;
 import io.github.steaf23.bingoreloaded.lib.api.ExtensionInfo;
+import io.github.steaf23.bingoreloaded.lib.api.PotionEffectType;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerInfo;
 import io.github.steaf23.bingoreloaded.lib.api.ServerSoftware;
 import io.github.steaf23.bingoreloaded.lib.api.ExtensionTask;
@@ -92,6 +93,11 @@ public class FabricServerSoftware implements ServerSoftware {
 
 	@Override
 	public StatisticType resolveStatisticType(Key key) {
+		return null;
+	}
+
+	@Override
+	public PotionEffectType resolvePotionEffectType(Key key) {
 		return null;
 	}
 

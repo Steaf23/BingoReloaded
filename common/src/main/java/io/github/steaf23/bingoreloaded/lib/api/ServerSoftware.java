@@ -41,6 +41,7 @@ public interface ServerSoftware {
 	EntityType resolveEntityType(Key key);
 	AdvancementHandle resolveAdvancement(Key key);
 	StatisticType resolveStatisticType(Key key);
+	PotionEffectType resolvePotionEffectType(Key key);
 
 	@Subst("")
 	ExtensionInfo getExtensionInfo();

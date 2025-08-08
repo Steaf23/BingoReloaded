@@ -1,4 +1,4 @@
-package io.github.steaf23.bingoreloaded.gui.hud;
+package io.github.steaf23.bingoreloaded.api;
 
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
@@ -15,7 +15,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-public class TeamDisplay
+public class TeamDisplayPaper implements TeamDisplay
 {
     private record TeamInfo(String identifier, Component displayName, @Nullable Component prefix, @Nullable Component suffix, Collection<String> entries) {}
 
@@ -24,7 +24,7 @@ public class TeamDisplay
     // A Map of all teams created for each player, used when we have to remove all their teams when leaving or when removing empty teams
     private final Map<UUID, Set<TeamInfo>> createdTeams;
 
-    public TeamDisplay(BingoSession session) {
+    public TeamDisplayPaper(BingoSession session) {
         this.session = session;
         this.manager = session.teamManager;
         this.createdTeams = new HashMap<>();
@@ -67,20 +67,19 @@ public class TeamDisplay
     }
 
     private void createTeamForPlayer(TeamInfo team, PlayerHandle player) {
-        //FIXME: REFACTOR redo TeamPacketHelper
-//        TeamPacketHelper.createTeamVisibleToPlayer(player,
-//                team.identifier(),
-//                team.displayName(),
-//                team.prefix(),
-//                team.suffix(),
-//                team.entries());
+        TeamPacketHelper.createTeamVisibleToPlayer(player,
+                team.identifier(),
+                team.displayName(),
+                team.prefix(),
+                team.suffix(),
+                team.entries());
     }
 
     private void removeTeamForPlayer(String teamIdentifier, PlayerHandle player) {
-//        TeamPacketHelper.removeTeamVisibleToPlayer(player, teamIdentifier);
+        TeamPacketHelper.removeTeamVisibleToPlayer(player, teamIdentifier);
     }
 
-    private void clearTeamsForPlayer(@NotNull PlayerHandle player) {
+    public void clearTeamsForPlayer(@NotNull PlayerHandle player) {
         for (TeamInfo info : createdTeams.getOrDefault(player.uniqueId(), Set.of())) {
             removeTeamForPlayer(info.identifier(), player);
         }

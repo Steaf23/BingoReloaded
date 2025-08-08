@@ -15,8 +15,8 @@ public interface GamePhase extends SessionMember
      * To be called when this phase needs to (forcefully) end.
      */
     void end();
-    void handlePlayerJoinedSessionWorld(final BingoEvents.PlayerSessionEvent event);
-    void handlePlayerLeftSessionWorld(final BingoEvents.PlayerSessionEvent event);
+    void handlePlayerJoinedSessionWorld(PlayerHandle player);
+    void handlePlayerLeftSessionWorld(PlayerHandle player);
     void handleSettingsUpdated(final BingoSettings newSettings);
     EventResult<?> handlePlayerInteracted(PlayerHandle player, @Nullable StackHandle stack, InteractAction action);
 

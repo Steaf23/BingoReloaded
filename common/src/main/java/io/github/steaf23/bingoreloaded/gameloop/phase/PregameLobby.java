@@ -229,15 +229,15 @@ public class PregameLobby implements GamePhase
     }
 
     @Override
-    public void handlePlayerJoinedSessionWorld(BingoEvents.PlayerSessionEvent event) {
-        initializePlayer(event.player());
+    public void handlePlayerJoinedSessionWorld(PlayerHandle player) {
+        initializePlayer(player);
     }
 
     @Override
-    public void handlePlayerLeftSessionWorld(BingoEvents.PlayerSessionEvent event) {
+    public void handlePlayerLeftSessionWorld(PlayerHandle player) {
         //FIXME: REFACTOR remove players from scoreboard when they leave (dont leave them hanging with outdated scoreboards...
 //        settingsHUD.removePlayer(event.player());
-        session.teamManager.removeMemberFromTeam(session.teamManager.getPlayerAsParticipant(event.player()));
+        session.teamManager.removeMemberFromTeam(session.teamManager.getPlayerAsParticipant(player));
     }
 
     @Override

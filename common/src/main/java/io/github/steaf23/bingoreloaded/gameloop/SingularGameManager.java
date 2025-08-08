@@ -1,5 +1,6 @@
 package io.github.steaf23.bingoreloaded.gameloop;
 
+import io.github.steaf23.bingoreloaded.lib.api.BingoReloadedRuntime;
 import io.github.steaf23.bingoreloaded.lib.api.ServerSoftware;
 import io.github.steaf23.bingoreloaded.lib.api.WorldHandle;
 import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
@@ -12,8 +13,8 @@ import java.util.List;
 
 public class SingularGameManager extends GameManager
 {
-    public SingularGameManager(@NotNull ServerSoftware platform, BingoConfigurationData config) {
-        super(platform, config);
+    public SingularGameManager(@NotNull BingoReloadedRuntime runtime, BingoConfigurationData config) {
+        super(runtime, config);
 
         WorldGroup group = createWorldGroupFromExistingWorlds();
         if (group == null) {

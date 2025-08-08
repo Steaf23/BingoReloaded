@@ -4,6 +4,8 @@ import io.github.steaf23.bingoreloaded.lib.api.AdvancementHandle;
 import io.github.steaf23.bingoreloaded.lib.api.AdvancementHandlePaper;
 import io.github.steaf23.bingoreloaded.lib.api.EntityType;
 import io.github.steaf23.bingoreloaded.lib.api.EntityTypePaper;
+import io.github.steaf23.bingoreloaded.lib.api.PotionEffectInstance;
+import io.github.steaf23.bingoreloaded.lib.api.PotionEffectTypePaper;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemTypePaper;
 import io.github.steaf23.bingoreloaded.lib.api.PaperApiHelper;
 import io.github.steaf23.bingoreloaded.lib.api.PlayerGamemode;
@@ -23,6 +25,7 @@ import org.bukkit.GameMode;
 import org.bukkit.advancement.AdvancementProgress;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.potion.PotionEffect;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -189,6 +192,17 @@ public class PlayerHandlePaper implements PlayerHandle {
 	@Override
 	public void setStatisticValue(StatisticType type, ItemType item, int value) {
 		player.setStatistic(((StatisticTypePaper)type).handle(), ((ItemTypePaper)item).handle(), value);
+	}
+
+	@Override
+	public void addEffect(PotionEffectInstance effect) {
+		player.addPotionEffect(new PotionEffect(
+				((PotionEffectTypePaper)effect.effect()).handle(),
+				effect.durationTicks(),
+				effect.amplifier(),
+				effect.ambient(),
+				effect.particles(),
+				effect.icon()));
 	}
 
 	public static GameMode fromPlayerMode(PlayerGamemode gamemode) {

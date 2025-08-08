@@ -1,6 +1,8 @@
 package io.github.steaf23.bingoreloaded.player;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
+import io.github.steaf23.bingoreloaded.lib.api.PotionEffectInstance;
+import io.github.steaf23.bingoreloaded.lib.api.PotionEffectType;
 import io.github.steaf23.bingoreloaded.lib.api.item.InventoryHandle;
 import io.github.steaf23.bingoreloaded.lib.api.MapRenderer;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
@@ -162,20 +164,25 @@ public class BingoPlayer implements BingoParticipant
         takeEffects(false);
         PlayerHandle player = sessionPlayer().get();
 
-        //FIXME: REFACTOR potion effects
-//        server.runTask(task -> {
-//            if (effects.contains(EffectOptionFlags.NIGHT_VISION))
-//                player.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, PotionEffect.INFINITE_DURATION, 1, false, false));
-//            if (effects.contains(EffectOptionFlags.WATER_BREATHING))
-//                player.addPotionEffect(new PotionEffect(PotionEffectType.WATER_BREATHING, PotionEffect.INFINITE_DURATION, 1, false, false));
-//            if (effects.contains(EffectOptionFlags.FIRE_RESISTANCE))
-//                player.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, PotionEffect.INFINITE_DURATION, 1, false, false));
-//            if (effects.contains(EffectOptionFlags.SPEED))
-//                player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, PotionEffect.INFINITE_DURATION, 1, false, false));
-//            player.addPotionEffect(new PotionEffect(PotionEffectType.SATURATION, 2, 100, false, false));
-//            player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 2, 100, false, false));
-//            player.addPotionEffect(new PotionEffect(PotionEffectType.RESISTANCE, BingoReloaded.ONE_SECOND * gracePeriod, 100, false, false));
-//        });
+        server.runTask(task -> {
+            if (effects.contains(EffectOptionFlags.NIGHT_VISION))
+                player.addEffect(new PotionEffectInstance(PotionEffectType.of("minecraft:night_vision"), PotionEffectInstance.INFINITE_DURATION).setParticles(false));
+            if (effects.contains(EffectOptionFlags.WATER_BREATHING))
+                player.addEffect(new PotionEffectInstance(PotionEffectType.of("minecraft:water_breathing"), PotionEffectInstance.INFINITE_DURATION).setParticles(false));
+            if (effects.contains(EffectOptionFlags.FIRE_RESISTANCE))
+                player.addEffect(new PotionEffectInstance(PotionEffectType.of("minecraft:fire_resistance"), PotionEffectInstance.INFINITE_DURATION).setParticles(false));
+            if (effects.contains(EffectOptionFlags.SPEED))
+                player.addEffect(new PotionEffectInstance(PotionEffectType.of("minecraft:speed"), PotionEffectInstance.INFINITE_DURATION).setParticles(false));
+            player.addEffect(new PotionEffectInstance(PotionEffectType.of("minecraft:saturation"), 2)
+                    .setAmplifier(100)
+                    .setParticles(false));
+            player.addEffect(new PotionEffectInstance(PotionEffectType.of("minecraft:regeneration"), 2)
+                    .setAmplifier(100)
+                    .setParticles(false));
+            player.addEffect(new PotionEffectInstance(PotionEffectType.of("minecraft:resistance"), BingoReloaded.ONE_SECOND * gracePeriod)
+                    .setAmplifier(100)
+                    .setParticles(false));
+        });
     }
 
     /**
@@ -272,8 +279,10 @@ public class BingoPlayer implements BingoParticipant
 
             player.teleportBlocking(teleportLocation);
             player.playSound(Sound.sound().type(Key.key("minecraft:entity_shulker_teleport")).volume(0.8f).pitch(1.0f).build());
-            //FIXME: REFACTOR potion effects
-            //player.addPotionEffect(new PotionEffect(PotionEffectType.RESISTANCE, BingoReloaded.ONE_SECOND * 10, 100, false, false));
+
+            player.addEffect(new PotionEffectInstance(PotionEffectType.of("minecraft:resistance"), BingoReloaded.ONE_SECOND * 10)
+                    .setAmplifier(100)
+                    .setParticles(false));
 
             BingoReloaded.incrementPlayerStat(player, BingoStatType.WAND_USES);
         });

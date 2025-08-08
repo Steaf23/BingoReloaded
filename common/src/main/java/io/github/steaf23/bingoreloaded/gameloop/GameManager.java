@@ -7,6 +7,7 @@ import io.github.steaf23.bingoreloaded.data.config.BingoOptions;
 import io.github.steaf23.bingoreloaded.data.helper.SerializablePlayer;
 import io.github.steaf23.bingoreloaded.data.world.WorldData;
 import io.github.steaf23.bingoreloaded.data.world.WorldGroup;
+import io.github.steaf23.bingoreloaded.lib.api.BingoReloadedRuntime;
 import io.github.steaf23.bingoreloaded.lib.api.ServerSoftware;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.api.WorldHandle;
@@ -29,7 +30,7 @@ public class GameManager {
 
 	protected final Map<String, BingoSession> sessions;
 
-	private final ServerSoftware platform;
+	private final BingoReloadedRuntime runtime;
 	private final BingoConfigurationData config;
 
 	private final PlayerSerializationData playerData;
@@ -38,13 +39,13 @@ public class GameManager {
 
 	private boolean teleportingPlayer;
 
-	public GameManager(@NotNull ServerSoftware platform, BingoConfigurationData config) {
-		this.platform = platform;
+	public GameManager(@NotNull BingoReloadedRuntime runtime, BingoConfigurationData config) {
+		this.runtime = runtime;
 		this.config = config;
 
 		@Subst("gamemanager:none") String settingsName = config.getOptionValue(BingoOptions.CUSTOM_WORLD_GENERATION);
 		Key generationSettings = settingsName.equals("null") ? null : Key.key(settingsName);
-		this.worldData = new WorldData(platform, generationSettings);
+		this.worldData = new WorldData(runtime.getServerSoftware(), generationSettings);
 
 		this.sessions = new HashMap<>();
 		this.playerData = new PlayerSerializationData();
@@ -233,7 +234,7 @@ public class GameManager {
 				if (savePlayerInformation) {
 					teleportingPlayer = true;
 					// load player will teleport them, so we have to schedule it to make sure to do the right thing
-					platform.runTask(t -> {
+					runtime.getServerSoftware().runTask(t -> {
 						if (playerData.loadPlayer(player) == null) {
 //                        // Player data was not saved for some reason?
 //                        ConsoleMessenger.bug(Component.text("No saved player data could be found for ").append(event.getPlayer().displayName()).append(Component.text(", resetting data")), this);
@@ -251,7 +252,7 @@ public class GameManager {
 		if (targetSession != null) {
 			if (savePlayerInformation && sourceSession == null) {
                 // Only save player data if it does not pertain to a bingo world
-                SerializablePlayer serializablePlayer = SerializablePlayer.fromPlayer(platform, player);
+                SerializablePlayer serializablePlayer = SerializablePlayer.fromPlayer(runtime.getServerSoftware(), player);
                 serializablePlayer.location = toPos;
                 playerData.savePlayer(serializablePlayer, false);
 			}
@@ -314,7 +315,11 @@ public class GameManager {
 	}
 
 	public ServerSoftware getPlatform() {
-		return platform;
+		return runtime.getServerSoftware();
+	}
+
+	public BingoReloadedRuntime getRuntime() {
+		return runtime;
 	}
 
 	public BingoEventListener eventListener() {

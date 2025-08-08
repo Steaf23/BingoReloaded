@@ -286,9 +286,9 @@ public class BingoReloaded implements Namespaced {
 		}
 
 		if (config.getOptionValue(BingoOptions.CONFIGURATION) == BingoOptions.PluginConfiguration.SINGULAR) {
-			this.gameManager = new SingularGameManager(platform, config);
+			this.gameManager = new SingularGameManager(runtime, config);
 		} else {
-			this.gameManager = new GameManager(platform, config);
+			this.gameManager = new GameManager(runtime, config);
 		}
 
 		this.gameManager.setup(config.getOptionValue(BingoOptions.DEFAULT_WORLDS));

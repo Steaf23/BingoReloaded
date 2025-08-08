@@ -12,10 +12,12 @@ import io.github.steaf23.bingoreloaded.action.BingoConfigAction;
 import io.github.steaf23.bingoreloaded.action.BotCommandAction;
 import io.github.steaf23.bingoreloaded.action.CommandTemplate;
 import io.github.steaf23.bingoreloaded.action.TeamChatCommand;
+import io.github.steaf23.bingoreloaded.api.TeamDisplay;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.DataUpdaterV1;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gameloop.phase.PregameLobby;
+import io.github.steaf23.bingoreloaded.api.TeamDisplayPaper;
 import io.github.steaf23.bingoreloaded.gui.inventory.AdminBingoMenu;
 import io.github.steaf23.bingoreloaded.gui.inventory.TeamCardSelectMenu;
 import io.github.steaf23.bingoreloaded.gui.inventory.TeamEditorMenu;
@@ -274,6 +276,11 @@ public class BingoReloadedPaper extends JavaPlugin implements BingoReloadedRunti
 		menu.open(player);
 	}
 
+	@Override
+	public TeamDisplay createTeamDisplay(BingoSession session) {
+		return new TeamDisplayPaper(session);
+	}
+
 	public void registerCommand(boolean allowConsole, ActionTree action) {
 		TabExecutor commandExec = new CommandTemplate(allowConsole, action);
 
@@ -297,7 +304,7 @@ public class BingoReloadedPaper extends JavaPlugin implements BingoReloadedRunti
 
 	public static void showPacketDialog(PlayerHandle player, Dialog dialog) {
 		WrapperPlayServerShowDialog dialogWrapper = new WrapperPlayServerShowDialog(dialog);
-		PacketEvents.getAPI().getPlayerManager().sendPacket(((PlayerHandlePaper)player).handle(), dialogWrapper);
+		PacketEvents.getAPI().getPlayerManager().sendPacket(((PlayerHandlePaper) player).handle(), dialogWrapper);
 	}
 
 }

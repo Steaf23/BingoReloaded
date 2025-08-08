@@ -736,21 +736,21 @@ public class BingoGame implements GamePhase
 
     // Take care of player effects =======================
     @Override
-    public void handlePlayerJoinedSessionWorld(BingoEvents.PlayerSessionEvent event) {
-        BingoParticipant participant = teamManager.getPlayerAsParticipant(event.player());
-        if (!(participant instanceof BingoPlayer player))
+    public void handlePlayerJoinedSessionWorld(PlayerHandle player) {
+        BingoParticipant participant = teamManager.getPlayerAsParticipant(player);
+        if (!(participant instanceof BingoPlayer bingoPlayer))
             return;
 
-        player.giveEffects(settings.effects(), config.getOptionValue(BingoOptions.GRACE_PERIOD));
+        bingoPlayer.giveEffects(settings.effects(), config.getOptionValue(BingoOptions.GRACE_PERIOD));
     }
 
     @Override
-    public void handlePlayerLeftSessionWorld(BingoEvents.PlayerSessionEvent event) {
-        BingoParticipant participant = teamManager.getPlayerAsParticipant(event.player());
-        if (!(participant instanceof BingoPlayer player))
+    public void handlePlayerLeftSessionWorld(PlayerHandle player) {
+        BingoParticipant participant = teamManager.getPlayerAsParticipant(player);
+        if (!(participant instanceof BingoPlayer bingoPlayer))
             return;
 
-        player.takeEffects(false);
+        bingoPlayer.takeEffects(false);
     }
 
     @Override

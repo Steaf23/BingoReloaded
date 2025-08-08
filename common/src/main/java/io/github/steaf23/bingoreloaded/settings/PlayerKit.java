@@ -152,7 +152,7 @@ public enum PlayerKit
         };
     }
 
-    public static Set<PlayerKit> customKits() {
-        return Set.of(CUSTOM_1, CUSTOM_2, CUSTOM_3, CUSTOM_4, CUSTOM_5);
+    public static List<PlayerKit> customKits() {
+        return List.of(CUSTOM_1, CUSTOM_2, CUSTOM_3, CUSTOM_4, CUSTOM_5);
     }
 }

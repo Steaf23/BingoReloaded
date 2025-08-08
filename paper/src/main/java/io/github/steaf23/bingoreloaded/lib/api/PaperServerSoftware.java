@@ -138,6 +138,11 @@ public class PaperServerSoftware implements ServerSoftware {
 	}
 
 	@Override
+	public PotionEffectType resolvePotionEffectType(Key key) {
+		return new PotionEffectTypePaper(Registry.POTION_EFFECT_TYPE.get(key));
+	}
+
+	@Override
 	public ExtensionInfo getExtensionInfo() {
 		return new ExtensionInfo(plugin.getPluginMeta().getName(), plugin.getPluginMeta().getVersion(), plugin.getPluginMeta().getAuthors());
 	}
@@ -207,6 +212,9 @@ public class PaperServerSoftware implements ServerSoftware {
 
 	@Override
 	public StackHandle colorItemStack(StackHandle stack, TextColor color) {
+		if (!ItemTemplate.LEATHER_ARMOR.contains(stack.type())) {
+			return stack;
+		}
 		((StackHandlePaper)stack).handle().setData(DataComponentTypes.DYED_COLOR, DyedItemColor.dyedItemColor(Color.fromRGB(color.value())));
 		return stack;
 	}

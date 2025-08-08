@@ -4,6 +4,7 @@ import io.github.steaf23.bingoreloaded.lib.api.ActionUser;
 import io.github.steaf23.bingoreloaded.lib.api.AdvancementHandle;
 import io.github.steaf23.bingoreloaded.lib.api.EntityType;
 import io.github.steaf23.bingoreloaded.lib.api.PlayerGamemode;
+import io.github.steaf23.bingoreloaded.lib.api.PotionEffectInstance;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.api.StatisticType;
 import io.github.steaf23.bingoreloaded.lib.api.WorldHandle;
@@ -91,6 +92,8 @@ public interface PlayerHandle extends ForwardingAudience, ActionUser {
 	void setStatisticValue(StatisticType type, EntityType entity, int value);
 
 	void setStatisticValue(StatisticType type, ItemType item, int value);
+
+	void addEffect(PotionEffectInstance effect);
 
 	void clearAllEffects();
 
