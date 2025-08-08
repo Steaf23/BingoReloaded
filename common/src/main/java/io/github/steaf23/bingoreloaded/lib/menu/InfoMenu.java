@@ -1,13 +1,11 @@
-package io.github.steaf23.bingoreloaded.lib.gui.menu;
+package io.github.steaf23.bingoreloaded.lib.menu;
 
 import net.kyori.adventure.text.Component;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-public abstract class ValueListHUD implements PlayerHUD {
+public class InfoMenu {
 
 	protected final Map<String, Component[]> registeredFields = new HashMap<>();
 

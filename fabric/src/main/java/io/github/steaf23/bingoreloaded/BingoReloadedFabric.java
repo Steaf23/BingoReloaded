@@ -12,6 +12,7 @@ import io.github.steaf23.bingoreloaded.lib.api.PlatformResolver;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.api.ServerSoftware;
 import io.github.steaf23.bingoreloaded.lib.api.WorldHandle;
+import io.github.steaf23.bingoreloaded.lib.api.player.SharedDisplay;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataAccessor;
 import net.fabricmc.api.ModInitializer;
 import net.kyori.adventure.key.Key;
@@ -118,6 +119,16 @@ public class BingoReloadedFabric implements ModInitializer, BingoReloadedRuntime
 
 	@Override
 	public TeamDisplay createTeamDisplay(BingoSession session) {
+		return null;
+	}
+
+	@Override
+	public SharedDisplay gameDisplay() {
+		return null;
+	}
+
+	@Override
+	public SharedDisplay settingsDisplay() {
 		return null;
 	}
 }

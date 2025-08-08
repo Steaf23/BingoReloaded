@@ -3,7 +3,6 @@ package io.github.steaf23.bingoreloaded.gameloop;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.api.BingoEvents;
 import io.github.steaf23.bingoreloaded.api.TeamDisplay;
-import io.github.steaf23.bingoreloaded.gui.hud.DisabledBingoGameHUDGroup;
 import io.github.steaf23.bingoreloaded.lib.api.DimensionType;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.api.PlatformResolver;
@@ -21,7 +20,7 @@ import io.github.steaf23.bingoreloaded.gameloop.phase.PostGamePhase;
 import io.github.steaf23.bingoreloaded.gameloop.phase.PregameLobby;
 import io.github.steaf23.bingoreloaded.gameloop.vote.VoteCategory;
 import io.github.steaf23.bingoreloaded.gameloop.vote.VoteTicket;
-import io.github.steaf23.bingoreloaded.gui.hud.BingoGameHUDGroup;
+import io.github.steaf23.bingoreloaded.menu.BingoGameInfoMenu;
 import io.github.steaf23.bingoreloaded.lib.api.WorldPosition;
 import io.github.steaf23.bingoreloaded.lib.event.EventResult;
 import io.github.steaf23.bingoreloaded.lib.event.EventResults;
@@ -52,7 +51,7 @@ import java.util.function.Consumer;
 public class BingoSession implements ForwardingAudience
 {
     public BingoSettingsBuilder settingsBuilder;
-    public final BingoGameHUDGroup scoreboard;
+    public final BingoGameInfoMenu gameInfoMenu;
     public final TeamManager teamManager;
     private final GameManager gameManager;
     private final BingoConfigurationData config;
@@ -66,13 +65,14 @@ public class BingoSession implements ForwardingAudience
 		this.gameManager = gameManager;
         this.worlds = worlds;
         this.config = config;
-        //FIXME: REFACTOR add back scoreboard somehow
+        //FIXME: REFACTOR use this setting
         boolean showPlayerInScoreboard = config.getOptionValue(BingoOptions.SHOW_PLAYER_IN_SCOREBOARD);
-        if (config.getOptionValue(BingoOptions.DISABLE_SCOREBOARD_SIDEBAR)) {
-            this.scoreboard = new DisabledBingoGameHUDGroup(this, showPlayerInScoreboard);
-        } else {
-            this.scoreboard = new BingoGameHUDGroup( this, showPlayerInScoreboard);
-        }
+//        if (config.getOptionValue(BingoOptions.DISABLE_SCOREBOARD_SIDEBAR)) {
+//            this.scoreboard = new DisabledBingoGameHUDGroup(this, showPlayerInScoreboard);
+//        } else {
+//            this.scoreboard = new BingoGameInfoMenu( this, showPlayerInScoreboard);
+//        }
+		this.gameInfoMenu = new BingoGameInfoMenu(this);
         this.settingsBuilder = new BingoSettingsBuilder(this);
         if (config.getOptionValue(BingoOptions.SINGLE_PLAYER_TEAMS)) {
             this.teamManager = new SoloTeamManager(this);
@@ -126,7 +126,8 @@ public class BingoSession implements ForwardingAudience
         }
 
         teamManager.setup();
-        scoreboard.updateTeamScores();
+        gameInfoMenu.updateTeamScores();
+		getGameManager().getRuntime().gameDisplay().update(gameInfoMenu);
 
         // First make sure the previous phase (PregameLobby) is ended.
         phase.end();
@@ -217,7 +218,7 @@ public class BingoSession implements ForwardingAudience
             phase.handlePlayerJoinedSessionWorld(player);
 
             if (isRunning()) {
-                scoreboard.forceUpdate();
+                getGameManager().getRuntime().gameDisplay().addPlayer(player);
             }
             teamDisplay.update();
         });
@@ -239,7 +240,7 @@ public class BingoSession implements ForwardingAudience
                 BingoMessage.LEAVE.sendToAudience(player);
             }
 
-            scoreboard.forceUpdate();
+			getGameManager().getRuntime().gameDisplay().removePlayer(player);
             teamDisplay.update();
 
             if (!config.getOptionValue(BingoOptions.END_GAME_WITHOUT_TEAMS)) {

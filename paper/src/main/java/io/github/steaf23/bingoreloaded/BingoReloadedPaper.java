@@ -41,12 +41,14 @@ import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandlePaper;
 import io.github.steaf23.bingoreloaded.lib.api.ServerSoftware;
 import io.github.steaf23.bingoreloaded.lib.api.WorldHandle;
+import io.github.steaf23.bingoreloaded.lib.api.player.SharedDisplay;
 import io.github.steaf23.bingoreloaded.lib.data.core.ConfigDataAccessor;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataAccessor;
 import io.github.steaf23.bingoreloaded.lib.data.core.YamlDataAccessor;
 import io.github.steaf23.bingoreloaded.lib.events.EventListenerPaper;
 import io.github.steaf23.bingoreloaded.lib.inventory.BasicMenu;
 import io.github.steaf23.bingoreloaded.lib.inventory.MenuBoardPaper;
+import io.github.steaf23.bingoreloaded.lib.menu.ScoreboardDisplay;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import io.github.steaf23.bingoreloaded.lib.util.PlayerDisplayTranslationKey;
 import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
@@ -78,6 +80,8 @@ public class BingoReloadedPaper extends JavaPlugin implements BingoReloadedRunti
 	private BingoReloaded bingo;
 	private MenuBoard menuBoard;
 	private EventListenerPaper eventListener;
+	private SharedDisplay gameDisplay;
+	private SharedDisplay settingsDisplay;
 
 	public BingoReloadedPaper() {
 	}
@@ -106,6 +110,9 @@ public class BingoReloadedPaper extends JavaPlugin implements BingoReloadedRunti
 	@Override
 	public void onEnable() {
 		this.menuBoard = new MenuBoardPaper(platform, this);
+
+		gameDisplay = new ScoreboardDisplay("game");
+		settingsDisplay = new ScoreboardDisplay("lobby");
 
 		bingo.enable();
 
@@ -279,6 +286,16 @@ public class BingoReloadedPaper extends JavaPlugin implements BingoReloadedRunti
 	@Override
 	public TeamDisplay createTeamDisplay(BingoSession session) {
 		return new TeamDisplayPaper(session);
+	}
+
+	@Override
+	public SharedDisplay gameDisplay() {
+		return gameDisplay;
+	}
+
+	@Override
+	public SharedDisplay settingsDisplay() {
+		return settingsDisplay;
 	}
 
 	public void registerCommand(boolean allowConsole, ActionTree action) {

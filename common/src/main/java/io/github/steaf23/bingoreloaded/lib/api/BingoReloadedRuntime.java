@@ -3,14 +3,12 @@ package io.github.steaf23.bingoreloaded.lib.api;
 import io.github.steaf23.bingoreloaded.api.CardDisplayInfo;
 import io.github.steaf23.bingoreloaded.api.CardMenu;
 import io.github.steaf23.bingoreloaded.api.TeamDisplay;
-import io.github.steaf23.bingoreloaded.cards.CardSize;
 import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gameloop.phase.PregameLobby;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
+import io.github.steaf23.bingoreloaded.lib.api.player.SharedDisplay;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataAccessor;
-import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
-import io.github.steaf23.bingoreloaded.tasks.GameTask;
 import net.kyori.adventure.key.Key;
 
 import java.util.Collection;
@@ -46,4 +44,6 @@ public interface BingoReloadedRuntime {
 	void openVoteMenu(PlayerHandle player, PregameLobby lobby);
 
 	TeamDisplay createTeamDisplay(BingoSession session);
+	SharedDisplay gameDisplay();
+	SharedDisplay settingsDisplay();
 }

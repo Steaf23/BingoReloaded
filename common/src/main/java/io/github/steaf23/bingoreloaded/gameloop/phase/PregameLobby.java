@@ -2,7 +2,7 @@ package io.github.steaf23.bingoreloaded.gameloop.phase;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.api.BingoEvents;
-import io.github.steaf23.bingoreloaded.gui.hud.DisabledBingoSettingsHUDGroup;
+import io.github.steaf23.bingoreloaded.lib.api.BingoReloadedRuntime;
 import io.github.steaf23.bingoreloaded.lib.api.InteractAction;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
@@ -11,10 +11,10 @@ import io.github.steaf23.bingoreloaded.data.config.BingoOptions;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gameloop.vote.VoteCategory;
 import io.github.steaf23.bingoreloaded.gameloop.vote.VoteTicket;
-import io.github.steaf23.bingoreloaded.gui.hud.BingoSettingsHUDGroup;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.event.EventResult;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
+import io.github.steaf23.bingoreloaded.menu.BingoSettingsInfoMenu;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import io.github.steaf23.bingoreloaded.util.timer.CountdownTimer;
@@ -36,30 +36,35 @@ public class PregameLobby implements GamePhase
     private final Map<UUID, VoteTicket> votes;
     private final BingoConfigurationData config;
     private final CountdownTimer playerCountTimer;
+	private final BingoReloadedRuntime runtime;
 
-    private final BingoSettingsHUDGroup settingsHUD;
+	private final BingoSettingsInfoMenu infoMenu;
 
     private boolean playerCountTimerPaused = false;
     private boolean gameStarted = false;
 
     public PregameLobby(BingoSession session, BingoConfigurationData config) {
         this.session = session;
+		this.runtime = session.getGameManager().getRuntime();
 		this.votes = new HashMap<>();
         this.config = config;
         this.playerCountTimer = new CountdownTimer(config.getOptionValue(BingoOptions.PLAYER_WAIT_TIME), this::onCountdownTimerFinished);
 
-        if (config.getOptionValue(BingoOptions.DISABLE_SCOREBOARD_SIDEBAR)) {
-            this.settingsHUD = new DisabledBingoSettingsHUDGroup(session);
-        }
-        else {
-            this.settingsHUD = new BingoSettingsHUDGroup(session);
-        }
+		// FIXME: REFECTOR reimplement setting
+//
+//        if (config.getOptionValue(BingoOptions.DISABLE_SCOREBOARD_SIDEBAR)) {
+//            this.settingsHUD = new DisabledBingoSettingsHUDGroup(session);
+//        }
+//        else {
+//            this.settingsHUD = new BingoSettingsHUDGroup(session);
+//        }
+		this.infoMenu = new BingoSettingsInfoMenu();
 
         playerCountTimer.addNotifier(this::updateCounterVisual);
     }
 
     private void updateCounterVisual(long time) {
-        settingsHUD.setStatus(BingoMessage.STARTING_STATUS.asPhrase(Component.text(String.valueOf(time))));
+        infoMenu.setStatus(BingoMessage.STARTING_STATUS.asPhrase(Component.text(String.valueOf(time))));
         if (time == 10) {
             BingoMessage.STARTING_STATUS.sendToAudience(session, Component.text(time).color(NamedTextColor.GOLD));
         } else if (time <= 5) {
@@ -127,7 +132,7 @@ public class PregameLobby implements GamePhase
     }
 
     private void initializePlayer(PlayerHandle player) {
-        settingsHUD.forceUpdate();
+        runtime.settingsDisplay().addPlayer(player);
         player.clearInventory();
 
         if (config.getOptionValue(BingoOptions.USE_VOTE_SYSTEM) &&
@@ -143,7 +148,8 @@ public class PregameLobby implements GamePhase
     public void pausePlayerCountTimer() {
         playerCountTimerPaused = true;
         playerCountTimer.stop();
-        settingsHUD.setStatus(BingoMessage.WAIT_STATUS.asPhrase());
+        infoMenu.setStatus(BingoMessage.WAIT_STATUS.asPhrase());
+		runtime.settingsDisplay().update(infoMenu);
     }
 
     public void resumePlayerCountTimer() {
@@ -151,10 +157,11 @@ public class PregameLobby implements GamePhase
 
         int playerCount = session.teamManager.getParticipantCount();
         if (playerCount == 0) {
-            settingsHUD.setStatus(BingoMessage.WAIT_STATUS.asPhrase());
+            infoMenu.setStatus(BingoMessage.WAIT_STATUS.asPhrase());
         } else {
-            settingsHUD.setStatus(BingoMessage.PLAYER_STATUS.asPhrase(Component.text(playerCount)));
+            infoMenu.setStatus(BingoMessage.PLAYER_STATUS.asPhrase(Component.text(playerCount)));
         }
+		runtime.settingsDisplay().update(infoMenu);
 
         startPlayerCountTimerIfMinCountReached();
     }
@@ -198,12 +205,13 @@ public class PregameLobby implements GamePhase
     public void setup() {
         int playerCount = session.teamManager.getParticipantCount();
 
-        settingsHUD.updateSettings(session.settingsBuilder.view(), config);
+        infoMenu.updateSettings(session.settingsBuilder.view(), config);
         if (playerCount == 0) {
-            settingsHUD.setStatus(BingoMessage.WAIT_STATUS.asPhrase());
+            infoMenu.setStatus(BingoMessage.WAIT_STATUS.asPhrase());
         } else {
-            settingsHUD.setStatus(BingoMessage.PLAYER_STATUS.asPhrase(Component.text(playerCount)));
+            infoMenu.setStatus(BingoMessage.PLAYER_STATUS.asPhrase(Component.text(playerCount)));
         }
+		runtime.settingsDisplay().update(infoMenu);
 
         session.getGameManager().getPlatform().runTask(10L, (t) -> {
             if (gameStarted) {
@@ -224,8 +232,7 @@ public class PregameLobby implements GamePhase
     @Override
     public void end() {
         playerCountTimer.stop();
-        //FIXME: REFACTOR handle this?
-//        settingsHUD.removeAllPlayers();
+        runtime.settingsDisplay().clearPlayers();
     }
 
     @Override
@@ -235,14 +242,14 @@ public class PregameLobby implements GamePhase
 
     @Override
     public void handlePlayerLeftSessionWorld(PlayerHandle player) {
-        //FIXME: REFACTOR remove players from scoreboard when they leave (dont leave them hanging with outdated scoreboards...
-//        settingsHUD.removePlayer(event.player());
+		runtime.settingsDisplay().removePlayer(player);
         session.teamManager.removeMemberFromTeam(session.teamManager.getPlayerAsParticipant(player));
     }
 
     @Override
     public void handleSettingsUpdated(BingoSettings newSettings) {
-        settingsHUD.updateSettings(newSettings, config);
+        infoMenu.updateSettings(newSettings, config);
+		runtime.settingsDisplay().update(infoMenu);
     }
 
     @Override
@@ -267,7 +274,8 @@ public class PregameLobby implements GamePhase
 
     @Override
     public void handleParticipantJoinedTeam(final BingoEvents.TeamParticipantEvent event) {
-        settingsHUD.setStatus(BingoMessage.PLAYER_STATUS.asPhrase(Component.text(session.teamManager.getParticipantCount())));
+        infoMenu.setStatus(BingoMessage.PLAYER_STATUS.asPhrase(Component.text(session.teamManager.getParticipantCount())));
+		runtime.settingsDisplay().update(infoMenu);
 
         if (playerCountTimer.isRunning() && playerCountTimer.getTime() > 10) {
             event.participant().sessionPlayer().ifPresent(p -> {
@@ -284,10 +292,11 @@ public class PregameLobby implements GamePhase
         int playerCount = session.teamManager.getParticipantCount();
 
         if (playerCount == 0) {
-            settingsHUD.setStatus(BingoMessage.WAIT_STATUS.asPhrase());
+            infoMenu.setStatus(BingoMessage.WAIT_STATUS.asPhrase());
         } else {
-            settingsHUD.setStatus(BingoMessage.PLAYER_STATUS.asPhrase(Component.text("" + playerCount)));
+            infoMenu.setStatus(BingoMessage.PLAYER_STATUS.asPhrase(Component.text("" + playerCount)));
         }
+		runtime.settingsDisplay().update(infoMenu);
 
         // Schedule check in the future since a player can switch teams where they will briefly leave the team
         // and lower the participant count to possibly stop the timer.

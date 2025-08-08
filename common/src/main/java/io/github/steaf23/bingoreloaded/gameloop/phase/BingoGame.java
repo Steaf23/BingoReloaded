@@ -3,7 +3,6 @@ package io.github.steaf23.bingoreloaded.gameloop.phase;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.api.BingoEvents;
 import io.github.steaf23.bingoreloaded.lib.api.BiomeType;
-import io.github.steaf23.bingoreloaded.lib.api.EntityType;
 import io.github.steaf23.bingoreloaded.lib.api.InteractAction;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.api.MapRenderer;
@@ -22,7 +21,7 @@ import io.github.steaf23.bingoreloaded.data.BingoStatType;
 import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.data.config.BingoOptions;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
-import io.github.steaf23.bingoreloaded.gui.hud.BingoGameHUDGroup;
+import io.github.steaf23.bingoreloaded.menu.BingoGameInfoMenu;
 import io.github.steaf23.bingoreloaded.lib.event.EventResult;
 import io.github.steaf23.bingoreloaded.lib.event.EventResults;
 import io.github.steaf23.bingoreloaded.lib.world.BlockHelper;
@@ -69,7 +68,7 @@ public class BingoGame implements GamePhase
     private final ServerSoftware platform;
     private final BingoSession session;
     private final BingoSettings settings;
-    private final BingoGameHUDGroup scoreboard;
+    private final BingoGameInfoMenu scoreboard;
     private final TeamManager teamManager;
     private final PlayerRespawnManager respawnManager;
     private final TaskProgressTracker progressTracker;
@@ -90,7 +89,7 @@ public class BingoGame implements GamePhase
 		this.session = session;
         this.config = config;
         this.teamManager = session.teamManager;
-        this.scoreboard = session.scoreboard;
+        this.scoreboard = session.gameInfoMenu;
         this.settings = settings;
         this.actionBarManager = new ActionBarManager(session);
         this.progressTracker = new TaskProgressTracker(platform, this);
@@ -173,6 +172,7 @@ public class BingoGame implements GamePhase
                 returnCardToPlayer(settings.kit().getCardSlot(), p, null);
                 player.setLevel(0);
                 player.setExp(0.0f);
+				getSession().getGameManager().getRuntime().gameDisplay().addPlayer(player);
             } else if (!p.alwaysActive()) {
                 // If the player is not online, we can remove them from the game, as they probably did not intend on playing in this session
                 session.removeParticipant(p);
@@ -185,6 +185,7 @@ public class BingoGame implements GamePhase
 
         // Post-start Setup
         scoreboard.setup(settings);
+		session.getGameManager().getRuntime().gameDisplay().update(scoreboard);
 
         // Countdown before the game actually starts
         startingTimer = new CountdownTimer(Math.max(1, config.getOptionValue(BingoOptions.STARTING_COUNTDOWN_TIME)), 6, 3, this::onStartingTimerFinished);
@@ -233,6 +234,7 @@ public class BingoGame implements GamePhase
 
         if (!config.getOptionValue(BingoOptions.KEEP_SCOREBOARD_VISIBLE)) {
             scoreboard.setup(settings);
+			session.getGameManager().getRuntime().gameDisplay().update(scoreboard);
         }
 
         getTeamManager().getParticipants().forEach(p -> {
@@ -498,6 +500,7 @@ public class BingoGame implements GamePhase
         playSound(Sound.sound(Key.key("minecraft:entity_dragon_fireball_explode"), Sound.Source.UI, 1.0f, 1.0f));
 
         scoreboard.updateTeamScores();
+		session.getGameManager().getRuntime().gameDisplay().update(scoreboard);
 
         participant.sessionPlayer().ifPresent(player -> {
             BingoReloaded.incrementPlayerStat(player, BingoStatType.TASKS);

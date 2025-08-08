@@ -1,6 +1,5 @@
 package io.github.steaf23.bingoreloaded;
 
-import io.github.steaf23.bingoreloaded.api.BingoEventListener;
 import io.github.steaf23.bingoreloaded.data.DefaultKitData;
 import io.github.steaf23.bingoreloaded.data.serializers.DefaultKitStorageSerializer;
 import io.github.steaf23.bingoreloaded.lib.api.BingoReloadedRuntime;

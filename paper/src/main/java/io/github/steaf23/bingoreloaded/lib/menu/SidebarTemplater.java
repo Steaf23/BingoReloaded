@@ -1,4 +1,4 @@
-package io.github.steaf23.bingoreloaded.gui.hud;
+package io.github.steaf23.bingoreloaded.lib.menu;
 
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.ScoreboardData;
@@ -12,27 +12,22 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class TemplatedSidebarHUD
+public class SidebarTemplater
 {
-    private final ScoreboardData.SidebarTemplate template;
     private static final Pattern ARG_PATTERN = Pattern.compile("\\{[a-zA-Z0-9_]+}");
 
-    public TemplatedSidebarHUD(ScoreboardData.SidebarTemplate template) {
-        this.template = template;
-    }
+	public static Component title(ScoreboardData.SidebarTemplate template, PlayerHandle player) {
+		Component title = Component.empty();
+		Component[] titleComponents = BingoMessage.convertForPlayer(template.title(), player);
+		if (titleComponents.length > 0) {
+			title = titleComponents[0];
+		}
+		return title;
+	}
 
-    public List<Component> sidebarComponents(PlayerHandle forPlayer) {
-        Component title = Component.empty();
-        Component[] titleComponents = BingoMessage.convertForPlayer(template.title(), forPlayer);
-        if (titleComponents.length > 0) {
-            title = titleComponents[0];
-        }
-        //FIXME: REFACTOR sidebar handling somewhere else?
-//        sidebar.setTitle(title);
-//
-//        // Newlines on the scoreboard lines is not supported, so we can ignore it.
-//        // Also assume that every template line is a config string.
-//        sidebar.clear();
+    public static List<Component> sidebarComponents(ScoreboardData.SidebarTemplate template, PlayerHandle forPlayer) {
+        // Newlines on the scoreboard lines is not supported, so we can ignore it.
+        // Also assume that every template line is a config string.
 
         // Step 1. collect all components, including ones from template arguments, into a single list of components.
         int lineIndex = 0;
@@ -100,15 +95,6 @@ public class TemplatedSidebarHUD
             }
             lineIndex++;
         }
-
-        //FIXME: REFACTOR actually apply sidebar (somewhere else?)
-//        // Step 2. add all components to the scoreboard, stopping at the limit
-//        for (int i = 0; i < components.size(); i++) {
-//            if (i >= 15) {
-//                break;
-//            }
-//            sidebar.setText(i, components.get(i));
-//        }
 
         return components;
     }
