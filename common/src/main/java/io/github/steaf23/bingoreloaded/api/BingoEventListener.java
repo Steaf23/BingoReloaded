@@ -92,14 +92,6 @@ public final class BingoEventListener implements PlatformEventDispatcher {
 		BingoSession session = getSession(player.world());
 		if (session == null) return EventResult.PASS;
 
-		// FIXME: REFACTOR determine if this is needed
-//        // Determine if the event is fired for the correct hand, to avoid duplicate events
-//        if (!(event.getHand() == EquipmentSlot.HAND && event.getPlayer().getInventory().getItemInMainHand().equals(event.getItem()) ||
-//                event.getHand() == EquipmentSlot.OFF_HAND && event.getPlayer().getInventory().getItemInOffHand().equals(event.getItem())))
-//        {
-//            return;
-//        }
-
 		return session.phase().handlePlayerInteracted(player, handItem, action);
 	}
 

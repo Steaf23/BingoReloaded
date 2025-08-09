@@ -30,7 +30,7 @@ public class TaskPickerMenu extends PaginatedDataMenu<GameTask> {
 
 	protected static final Component[] SELECTED_LORE = createSelectedLore();
 	protected static final Component[] UNSELECTED_LORE = createUnselectedLore();
-	protected static final CardDisplayInfo DUMMY_DISPLAY_INFO = new CardDisplayInfo(
+	public static final CardDisplayInfo DUMMY_DISPLAY_INFO = new CardDisplayInfo(
 			BingoGamemode.REGULAR,
 			CardSize.X5,
 			TaskDisplayMode.UNIQUE_TASK_ITEMS,

@@ -13,11 +13,14 @@ import io.github.steaf23.bingoreloaded.action.BotCommandAction;
 import io.github.steaf23.bingoreloaded.action.CommandTemplate;
 import io.github.steaf23.bingoreloaded.action.TeamChatCommand;
 import io.github.steaf23.bingoreloaded.api.TeamDisplay;
+import io.github.steaf23.bingoreloaded.cards.TaskCard;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.DataUpdaterV1;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
+import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.gameloop.phase.PregameLobby;
 import io.github.steaf23.bingoreloaded.api.TeamDisplayPaper;
+import io.github.steaf23.bingoreloaded.gui.BingoCardMapRenderer;
 import io.github.steaf23.bingoreloaded.gui.inventory.AdminBingoMenu;
 import io.github.steaf23.bingoreloaded.gui.inventory.TeamCardSelectMenu;
 import io.github.steaf23.bingoreloaded.gui.inventory.TeamEditorMenu;
@@ -37,6 +40,9 @@ import io.github.steaf23.bingoreloaded.lib.api.EntityTypePaper;
 import io.github.steaf23.bingoreloaded.lib.api.MenuBoard;
 import io.github.steaf23.bingoreloaded.lib.api.PaperServerSoftware;
 import io.github.steaf23.bingoreloaded.lib.api.PlatformResolver;
+import io.github.steaf23.bingoreloaded.lib.api.WorldHandlePaper;
+import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
+import io.github.steaf23.bingoreloaded.lib.api.item.StackHandlePaper;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandlePaper;
 import io.github.steaf23.bingoreloaded.lib.api.ServerSoftware;
@@ -48,30 +54,42 @@ import io.github.steaf23.bingoreloaded.lib.data.core.YamlDataAccessor;
 import io.github.steaf23.bingoreloaded.lib.events.EventListenerPaper;
 import io.github.steaf23.bingoreloaded.lib.inventory.BasicMenu;
 import io.github.steaf23.bingoreloaded.lib.inventory.MenuBoardPaper;
+import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
+import io.github.steaf23.bingoreloaded.lib.menu.EmptyDisplay;
 import io.github.steaf23.bingoreloaded.lib.menu.ScoreboardDisplay;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import io.github.steaf23.bingoreloaded.lib.util.PlayerDisplayTranslationKey;
+import io.github.steaf23.bingoreloaded.player.BingoParticipant;
+import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
+import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import io.github.steaf23.bingoreloaded.util.bstats.Metrics;
 import io.github.steaf23.bingoreloaded.world.CustomWorldCreator;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.MapMeta;
+import org.bukkit.map.MapView;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class BingoReloadedPaper extends JavaPlugin implements BingoReloadedRuntime {
@@ -111,8 +129,6 @@ public class BingoReloadedPaper extends JavaPlugin implements BingoReloadedRunti
 	public void onEnable() {
 		this.menuBoard = new MenuBoardPaper(platform, this);
 
-		gameDisplay = new ScoreboardDisplay("game");
-		settingsDisplay = new ScoreboardDisplay("lobby");
 
 		bingo.enable();
 
@@ -130,6 +146,24 @@ public class BingoReloadedPaper extends JavaPlugin implements BingoReloadedRunti
 	@Override
 	public void onDisable() {
 		bingo.disable();
+	}
+
+	@Override
+	public void onConfigReloaded(BingoConfigurationData config) {
+		if (gameDisplay != null) {
+			gameDisplay.clearPlayers();
+		}
+		if (settingsDisplay != null) {
+			settingsDisplay.clearPlayers();
+		}
+
+		if (bingo.config().getOptionValue(BingoOptions.DISABLE_SCOREBOARD_SIDEBAR)) {
+			gameDisplay = new EmptyDisplay();
+			settingsDisplay = new EmptyDisplay();
+		} else {
+			gameDisplay = new ScoreboardDisplay("game");
+			settingsDisplay = new ScoreboardDisplay("lobby");
+		}
 	}
 
 	@Override
@@ -231,13 +265,44 @@ public class BingoReloadedPaper extends JavaPlugin implements BingoReloadedRunti
 		return platform;
 	}
 
+	public StackHandle createCardItemForPlayer(BingoParticipant player) {
+		if (player.sessionPlayer().isEmpty() || player.getCard().isEmpty() && player.getTeam() != null) {
+			return PlayerKit.CARD_ITEM.buildItem();
+		}
+
+		PlayerHandle playerHandle = player.sessionPlayer().get();
+
+		if (!bingo.config().getOptionValue(BingoOptions.USE_MAP_RENDERER)) {
+			return PlayerKit.CARD_ITEM.buildItem();
+		}
+
+		StackHandlePaper mapStack = (StackHandlePaper) PlayerKit.CARD_ITEM_RENDERABLE.buildItem();
+
+		ItemStack handle = mapStack.handle();
+		handle.editMeta(m -> {
+			if (m instanceof MapMeta meta) {
+				MapView view = Bukkit.createMap(((WorldHandlePaper) playerHandle.world()).handle());
+				for (var renderer : new ArrayList<>(view.getRenderers())) {
+					view.removeRenderer(renderer);
+				}
+
+				view.addRenderer(new BingoCardMapRenderer(platform, player.getCard().get(), player.getTeam()));
+				meta.setMapView(view);
+			} else {
+				ConsoleMessenger.bug("No valid map item found to render texture to.", this);
+			}
+		});
+
+		return mapStack;
+	}
+
 	@Override
 	public CardMenu createMenu(boolean textured, CardDisplayInfo displayInfo) {
 		if (textured) {
 			if (displayInfo.mode() == BingoGamemode.HOTSWAP) {
-				return new HotswapTexturedCardMenu(menuBoard, displayInfo);
+				return new HotswapTexturedCardMenu(bingo, menuBoard, displayInfo);
 			}
-			return new TexturedCardMenu(menuBoard, displayInfo);
+			return new TexturedCardMenu(bingo, menuBoard, displayInfo);
 		}
 
 		if (displayInfo.mode() == BingoGamemode.HOTSWAP) {

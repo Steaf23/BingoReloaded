@@ -50,14 +50,6 @@ public class PregameLobby implements GamePhase
         this.config = config;
         this.playerCountTimer = new CountdownTimer(config.getOptionValue(BingoOptions.PLAYER_WAIT_TIME), this::onCountdownTimerFinished);
 
-		// FIXME: REFECTOR reimplement setting
-//
-//        if (config.getOptionValue(BingoOptions.DISABLE_SCOREBOARD_SIDEBAR)) {
-//            this.settingsHUD = new DisabledBingoSettingsHUDGroup(session);
-//        }
-//        else {
-//            this.settingsHUD = new BingoSettingsHUDGroup(session);
-//        }
 		this.infoMenu = new BingoSettingsInfoMenu();
 
         playerCountTimer.addNotifier(this::updateCounterVisual);

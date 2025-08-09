@@ -5,7 +5,6 @@ import io.github.steaf23.bingoreloaded.api.BingoEvents;
 import io.github.steaf23.bingoreloaded.lib.api.BiomeType;
 import io.github.steaf23.bingoreloaded.lib.api.InteractAction;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
-import io.github.steaf23.bingoreloaded.lib.api.MapRenderer;
 import io.github.steaf23.bingoreloaded.lib.api.ServerSoftware;
 import io.github.steaf23.bingoreloaded.lib.api.PlayerGamemode;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
@@ -129,17 +128,6 @@ public class BingoGame implements GamePhase
         Set<TaskCard> uniqueCards = CardFactory.generateCardsForGame(this,
                 useAdvancements, !config.getOptionValue(BingoOptions.DISABLE_STATISTICS));
 
-        //FIXME: REFACTOR move to paper
-//        if (config.getOptionValue(BingoOptions.USE_MAP_RENDERER)) {
-//            getTeamManager().getActiveTeams().forEach(team -> {
-//                Optional<TaskCard> card = team.getCard();
-//                card.ifPresentOrElse(
-//                        taskCard -> renderers.put(team, new BingoCardMapRenderer(BingoReloaded.getInstance(), taskCard, team)),
-//                        () -> ConsoleMessenger.bug("Could not generate card for team " + PlainTextComponentSerializer.plainText().serialize(team.getColoredName()), this)
-//                );
-//            });
-//        }
-
         BingoMessage.GIVE_CARDS.sendToAudience(session);
         teleportPlayersToStart(world);
 
@@ -169,7 +157,7 @@ public class BingoGame implements GamePhase
 
                 p.giveKit(settings.kit());
 //                returnCardToPlayer(settings.kit().getCardSlot(), p, renderers.get(p.getTeam()));
-                returnCardToPlayer(settings.kit().getCardSlot(), p, null);
+                returnCardToPlayer(settings.kit().getCardSlot(), p);
                 player.setLevel(0);
                 player.setExp(0.0f);
 				getSession().getGameManager().getRuntime().gameDisplay().addPlayer(player);
@@ -303,11 +291,12 @@ public class BingoGame implements GamePhase
         return actionBarManager;
     }
 
-    public void returnCardToPlayer(int cardSlot, BingoParticipant participant, @Nullable MapRenderer cardRenderer) {
+    public void returnCardToPlayer(int cardSlot, BingoParticipant participant) {
         if (participant.sessionPlayer().isEmpty())
             return;
 
-        participant.giveBingoCard(cardSlot, cardRenderer);
+		StackHandle cardItem = getSession().getGameManager().getRuntime().createCardItemForPlayer(participant);
+        participant.giveBingoCard(cardSlot, cardItem);
         participant.sessionPlayer().get().setGamemode(PlayerGamemode.SURVIVAL);
 
         platform.runTask(task -> participant.giveEffects(settings.effects(), config.getOptionValue(BingoOptions.GRACE_PERIOD)));
@@ -605,7 +594,7 @@ public class BingoGame implements GamePhase
             return EventResults.playerRespawnResult(false, false, null);
 
         if (!settings.effects().contains(EffectOptionFlags.KEEP_INVENTORY)) {
-            returnCardToPlayer(settings.kit().getCardSlot(), bingoPlayer, null);
+            returnCardToPlayer(settings.kit().getCardSlot(), bingoPlayer);
             bingoPlayer.giveKit(settings.kit());
         } else {
             bingoPlayer.giveEffects(settings.effects(), 0);

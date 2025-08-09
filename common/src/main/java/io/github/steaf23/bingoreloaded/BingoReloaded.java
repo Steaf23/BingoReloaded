@@ -115,6 +115,7 @@ public class BingoReloaded implements Namespaced {
 		}
 
 		this.config = new BingoConfigurationData(runtime.getConfigData());
+		runtime.onConfigReloaded(config);
 		this.debugLogging = config.getOptionValue(BingoOptions.ENABLE_DEBUG_LOGGING);
 
 		useResourcePack = config.getOptionValue(BingoOptions.USE_INCLUDED_RESOURCE_PACK);
@@ -220,6 +221,7 @@ public class BingoReloaded implements Namespaced {
 	public void reloadConfigFromFile() {
 		runtime.setupConfig();
 		this.config.reload();
+		runtime.onConfigReloaded(config);
 	}
 
 	public void reloadScoreboards() {

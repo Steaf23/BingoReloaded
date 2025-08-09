@@ -1,12 +1,11 @@
 package io.github.steaf23.bingoreloaded.player;
 
-import io.github.steaf23.bingoreloaded.lib.api.MapRenderer;
+import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.lib.util.ComponentUtils;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
-import io.github.steaf23.bingoreloaded.tasks.GameTask;
 import io.github.steaf23.bingoreloaded.tasks.data.ItemTask;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
@@ -79,7 +78,7 @@ public class VirtualBingoPlayer implements BingoParticipant
     }
 
     @Override
-    public void giveBingoCard(int cardSlot, @Nullable MapRenderer renderer) {
+    public void giveBingoCard(int cardSlot, @NotNull StackHandle cardItem) {
     }
 
     @Override

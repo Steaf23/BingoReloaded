@@ -109,7 +109,7 @@ public class BingoAction extends ActionTree {
 				if (participant instanceof BingoPlayer bingoPlayer) {
 					int cardSlot = session.settingsBuilder.view().kit().getCardSlot();
 					BingoGame game = (BingoGame) session.phase();
-					game.returnCardToPlayer(cardSlot, bingoPlayer, null);
+					game.returnCardToPlayer(cardSlot, bingoPlayer);
 				}
 				return ActionResult.SUCCESS;
 			} else {

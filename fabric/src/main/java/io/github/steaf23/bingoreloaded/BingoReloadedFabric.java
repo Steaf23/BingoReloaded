@@ -9,11 +9,15 @@ import io.github.steaf23.bingoreloaded.gameloop.phase.PregameLobby;
 import io.github.steaf23.bingoreloaded.lib.api.BingoReloadedRuntime;
 import io.github.steaf23.bingoreloaded.lib.api.EntityType;
 import io.github.steaf23.bingoreloaded.lib.api.PlatformResolver;
+import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
+import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.api.ServerSoftware;
 import io.github.steaf23.bingoreloaded.lib.api.WorldHandle;
 import io.github.steaf23.bingoreloaded.lib.api.player.SharedDisplay;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataAccessor;
+import io.github.steaf23.bingoreloaded.player.BingoParticipant;
+import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import net.fabricmc.api.ModInitializer;
 import net.kyori.adventure.key.Key;
 
@@ -68,6 +72,11 @@ public class BingoReloadedFabric implements ModInitializer, BingoReloadedRuntime
 	}
 
 	@Override
+	public void onConfigReloaded(BingoConfigurationData config) {
+
+	}
+
+	@Override
 	public void registerActions(BingoConfigurationData config) {
 
 	}
@@ -85,6 +94,11 @@ public class BingoReloadedFabric implements ModInitializer, BingoReloadedRuntime
 	@Override
 	public CardMenu createMenu(boolean textured, CardDisplayInfo displayMode) {
 		return null;
+	}
+
+	@Override
+	public StackHandle createCardItemForPlayer(BingoParticipant player) {
+		return PlayerKit.CARD_ITEM.buildItem();
 	}
 
 	@Override

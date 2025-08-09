@@ -23,11 +23,13 @@ public class BingoGameInfoMenu extends InfoMenu {
 	// map of team IDs and their scores
 	private final Map<String, Integer> teamScores;
 	private final BingoSession session;
+	private final boolean showPlayerNames;
 
 	private static final Component PLAYER_PREFIX = ComponentUtils.MINI_BUILDER.deserialize("<gray><bold> ┗ </bold></gray><white>");
 
-	public BingoGameInfoMenu(BingoSession session) {
+	public BingoGameInfoMenu(BingoSession session, boolean showPlayerNames) {
 		this.session = session;
+		this.showPlayerNames = showPlayerNames;
 		this.teamScores = new HashMap<>();
 	}
 
@@ -68,6 +70,8 @@ public class BingoGameInfoMenu extends InfoMenu {
 
 		TeamManager teamManager = session.teamManager;
 
+		boolean useFullTeamDisplay = showPlayerNames && !(teamManager instanceof SoloTeamManager);
+
 		teamManager.getActiveTeams().getTeams().stream()
 				.sorted(Comparator.comparingInt(BingoTeam::getCompleteCount).reversed())
 				.forEach(team -> {
@@ -84,8 +88,12 @@ public class BingoGameInfoMenu extends InfoMenu {
 					teamInfo.add(teamScore);
 					teamInfoCondensed.add(teamScore);
 
-					for (BingoParticipant player : team.getMembers()) {
-						teamInfo.add(PLAYER_PREFIX.append(player.getDisplayName()));
+					// FIXME: REFACTOR don't grow menu larger than allowed size (15 lines)
+
+					if (useFullTeamDisplay) {
+						for (BingoParticipant player : team.getMembers()) {
+							teamInfo.add(PLAYER_PREFIX.append(player.getDisplayName()));
+						}
 					}
 				});
 

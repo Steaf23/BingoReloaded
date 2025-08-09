@@ -4,7 +4,6 @@ import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.lib.api.PotionEffectInstance;
 import io.github.steaf23.bingoreloaded.lib.api.PotionEffectType;
 import io.github.steaf23.bingoreloaded.lib.api.item.InventoryHandle;
-import io.github.steaf23.bingoreloaded.lib.api.MapRenderer;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.api.ServerSoftware;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
@@ -106,47 +105,22 @@ public class BingoPlayer implements BingoParticipant
     }
 
     @Override
-    public void giveBingoCard(int cardSlot, @Nullable MapRenderer mapRenderer) {
+    public void giveBingoCard(int cardSlot, @NotNull StackHandle cardItem) {
         if (sessionPlayer().isEmpty())
             return;
 
         PlayerHandle player = sessionPlayer().get();
 
-        ItemTemplate cardItem = mapRenderer == null ? PlayerKit.CARD_ITEM : PlayerKit.CARD_ITEM_RENDERABLE;
-
         server.runTask(task -> {
             for (StackHandle itemStack : player.inventory().contents()) {
-                if (cardItem.isCompareKeyEqual(itemStack)) {
+                if (PlayerKit.CARD_ITEM.isCompareKeyEqual(itemStack)) {
                     player.inventory().removeItem(itemStack);
                     break;
                 }
             }
             StackHandle existingItem = player.inventory().getItem(cardSlot);
-            StackHandle card;
-            card = cardItem.buildItem();
 
-            //FIXME: REFACTOR add back map renderer
-//            if (mapRenderer == null) {
-//                card = cardItem.buildItem();
-//            } else {
-//                ItemTemplate map = cardItem.copy().addItemComponent(meta -> {
-//                    if (meta instanceof MapMeta mapMeta) {
-//                        MapView view = Bukkit.createMap(player.getWorld());
-//                        for (MapRenderer renderer : new ArrayList<>(view.getRenderers())) {
-//                            view.removeRenderer(renderer);
-//                        }
-//
-//                        view.addRenderer(mapRenderer);
-//                        mapMeta.setMapView(view);
-//                        return mapMeta;
-//                    }
-//                    ConsoleMessenger.bug("No valid map item found to render texture to.", this);
-//                    return meta;
-//                });
-//                card = map.buildItem();
-//            }
-
-            player.inventory().setItem(cardSlot, card);
+            player.inventory().setItem(cardSlot, cardItem);
             if (!existingItem.type().isAir()) {
                 Map<Integer, StackHandle> leftOver = player.inventory().addItem(existingItem);
                 for (StackHandle stack : leftOver.values()) {

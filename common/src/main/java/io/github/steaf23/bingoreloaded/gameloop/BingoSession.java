@@ -65,14 +65,9 @@ public class BingoSession implements ForwardingAudience
 		this.gameManager = gameManager;
         this.worlds = worlds;
         this.config = config;
-        //FIXME: REFACTOR use this setting
+
         boolean showPlayerInScoreboard = config.getOptionValue(BingoOptions.SHOW_PLAYER_IN_SCOREBOARD);
-//        if (config.getOptionValue(BingoOptions.DISABLE_SCOREBOARD_SIDEBAR)) {
-//            this.scoreboard = new DisabledBingoGameHUDGroup(this, showPlayerInScoreboard);
-//        } else {
-//            this.scoreboard = new BingoGameInfoMenu( this, showPlayerInScoreboard);
-//        }
-		this.gameInfoMenu = new BingoGameInfoMenu(this);
+		this.gameInfoMenu = new BingoGameInfoMenu(this, showPlayerInScoreboard);
         this.settingsBuilder = new BingoSettingsBuilder(this);
         if (config.getOptionValue(BingoOptions.SINGLE_PLAYER_TEAMS)) {
             this.teamManager = new SoloTeamManager(this);

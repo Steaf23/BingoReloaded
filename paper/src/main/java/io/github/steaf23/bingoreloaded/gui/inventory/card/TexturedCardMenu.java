@@ -1,16 +1,19 @@
 package io.github.steaf23.bingoreloaded.gui.inventory.card;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
+import io.github.steaf23.bingoreloaded.BingoReloadedPaper;
 import io.github.steaf23.bingoreloaded.api.CardDisplayInfo;
 import io.github.steaf23.bingoreloaded.api.CardMenu;
 import io.github.steaf23.bingoreloaded.cards.CardSize;
 import io.github.steaf23.bingoreloaded.data.TexturedMenuData;
 import io.github.steaf23.bingoreloaded.gui.inventory.core.TexturedTitleBuilder;
+import io.github.steaf23.bingoreloaded.gui.inventory.item.OpenCardSelectAction;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemTypePaper;
 import io.github.steaf23.bingoreloaded.lib.api.MenuBoard;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandlePaper;
 import io.github.steaf23.bingoreloaded.lib.inventory.InventoryMenu;
+import io.github.steaf23.bingoreloaded.lib.inventory.action.MenuAction;
 import io.github.steaf23.bingoreloaded.lib.inventory.action.MenuItemGroup;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
@@ -40,6 +43,7 @@ public class TexturedCardMenu implements InventoryMenu, CardMenu
 {
     private final MenuBoard board;
     protected List<GameTask> tasks;
+	protected BingoReloaded bingo;
 
     private final MenuItemGroup itemGroup;
     private final Component startingTitle;
@@ -52,19 +56,19 @@ public class TexturedCardMenu implements InventoryMenu, CardMenu
 
     public static final ItemTemplate DUMMY_ITEM = new ItemTemplate(ItemTypePaper.of(Material.POISONOUS_POTATO));
 
-    public TexturedCardMenu(MenuBoard board, CardDisplayInfo displayInfo) {
+    public TexturedCardMenu(BingoReloaded bingo, MenuBoard board, CardDisplayInfo displayInfo) {
         ItemTemplate info = DUMMY_ITEM.copyToSlot(0);
 
+		this.bingo = bingo;
         this.board = board;
         this.tasks = new ArrayList<>();
         this.itemGroup = new MenuItemGroup();
         this.startingTitle = buildTitle(displayInfo.mode(), displayInfo.size());
         this.info = info;
         this.displayInfo = displayInfo;
-        //FIXME: REFACTOR ADD THIS BACK
-//        if (allowViewingAllCards) {
-//            addItem(CardMenu.createTeamViewItem().setSlot(8));
-//        }
+		if (displayInfo.allowViewingOtherCards()) {
+			addAction(OpenCardSelectAction.createItem(bingo, 8));
+		}
     }
 
     protected Component buildTitle(BingoGamemode mode, CardSize size) {
@@ -188,7 +192,7 @@ public class TexturedCardMenu implements InventoryMenu, CardMenu
      */
     @Override
     public CardMenu copy(@Nullable Component alternateTitle) {
-        return new TexturedCardMenu(getMenuBoard(), displayInfo);
+        return new TexturedCardMenu(bingo, getMenuBoard(), displayInfo);
     }
 
     @Override
@@ -213,6 +217,12 @@ public class TexturedCardMenu implements InventoryMenu, CardMenu
                 .setLore(MultilineComponent.from(NamedTextColor.YELLOW, TextDecoration.ITALIC, description))
                 .setCustomModelData(1011);
     }
+
+	public void addAction(@NotNull MenuAction action) {
+		ItemTemplate item = action.item();
+		itemGroup.addItem(item, action);
+		getInventory().setItem(item.getSlot(), ((StackHandlePaper)item.buildItem()).handle());
+	}
 
     public void addItem(@NotNull ItemTemplate item) {
         itemGroup.addItem(item, null);

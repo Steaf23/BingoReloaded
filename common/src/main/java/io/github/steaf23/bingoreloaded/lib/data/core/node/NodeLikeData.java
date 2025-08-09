@@ -75,7 +75,7 @@ public class NodeLikeData
         Node data = root.getData(fullPath[0]);
         if (data instanceof NodeBranch<?> branch) {
             removeNested(branch, key.substring(fullPath[0].length() + 1));
-            //TODO: decide if to remove itself if it has no children... its good because its auto cleanup but bad because of potential invalid access.
+            //TODO: decide if to remove itself if it has no children... its good because its auto cleanup but bad because of potential invalid access. Maybe it can be configurable?
 //            if (branch.isEmpty()) {
 //                removeNested(root, fullPath[0]);
 //            }
