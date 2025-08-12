@@ -1,8 +1,5 @@
 package io.github.steaf23.bingoreloaded.lib.events;
 
-import org.bukkit.event.HandlerList;
-import org.jetbrains.annotations.NotNull;
-
 import java.util.UUID;
 
 public class PlayerDisplayAnvilTextChangedEvent extends PlayerPacketEvent {

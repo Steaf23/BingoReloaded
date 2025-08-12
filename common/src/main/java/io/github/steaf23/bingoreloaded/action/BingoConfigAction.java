@@ -1,9 +1,9 @@
 package io.github.steaf23.bingoreloaded.action;
 
-import io.github.steaf23.bingoreloaded.lib.action.ActionResult;
-import io.github.steaf23.bingoreloaded.lib.action.ActionTree;
 import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.data.config.ConfigurationOption;
+import io.github.steaf23.bingoreloaded.lib.action.ActionResult;
+import io.github.steaf23.bingoreloaded.lib.action.ActionTree;
 import io.github.steaf23.bingoreloaded.lib.util.ComponentUtils;
 import io.github.steaf23.bingoreloaded.util.BingoPlayerSender;
 import net.kyori.adventure.audience.Audience;

@@ -1,5 +1,3 @@
-import io.papermc.paperweight.userdev.ReobfArtifactConfiguration
-
 plugins {
     id 'java'
     id 'io.github.goooler.shadow' version '8.1.7'

@@ -1,7 +1,7 @@
 package io.github.steaf23.bingoreloaded.lib.event;
 
-import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.api.WorldPosition;
+import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import org.jetbrains.annotations.Nullable;
 
 public class EventResults {

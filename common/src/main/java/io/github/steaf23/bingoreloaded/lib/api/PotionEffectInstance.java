@@ -1,7 +1,5 @@
 package io.github.steaf23.bingoreloaded.lib.api;
 
-import org.jetbrains.annotations.Nullable;
-
 public class PotionEffectInstance {
 
 	public static final int INFINITE_DURATION = -1;

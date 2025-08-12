@@ -6,7 +6,6 @@ import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.util.ComponentUtils;
 import net.kyori.adventure.text.Component;
 
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
