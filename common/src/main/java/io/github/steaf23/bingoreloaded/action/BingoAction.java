@@ -166,7 +166,8 @@ public class BingoAction extends ActionTree {
 				"placeholders",
 				"scoreboards",
 				"data",
-				"language"
+				"language",
+				"sounds"
 		)).addUsage("<option>"));
 
 
@@ -420,6 +421,7 @@ public class BingoAction extends ActionTree {
 			case "scoreboards" -> reloadScoreboards();
 			case "data" -> reloadData();
 			case "language" -> reloadLanguage();
+			case "sounds" -> reloadSounds();
 			default -> {
 				BingoPlayerSender.sendMessage(Component.text("Cannot reload '" + reloadOption + "', invalid option"), user);
 				return ActionResult.INCORRECT_USE;
@@ -436,6 +438,7 @@ public class BingoAction extends ActionTree {
 		reloadScoreboards();
 		reloadData();
 		reloadLanguage();
+		reloadSounds();
 
 		// reload worlds last to kick off everything else.
 		reloadWorlds();
@@ -463,6 +466,10 @@ public class BingoAction extends ActionTree {
 
 	public void reloadLanguage() {
 		bingo.reloadLanguage();
+	}
+
+	public void reloadSounds() {
+		bingo.reloadSounds();
 	}
 
 	public @Nullable BingoSession getSessionFromUser(ActionUser user) {

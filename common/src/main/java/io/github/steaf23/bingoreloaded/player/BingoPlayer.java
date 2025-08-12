@@ -14,14 +14,13 @@ import io.github.steaf23.bingoreloaded.data.BingoStatType;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.lib.data.core.tag.TagDataStorage;
-import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import io.github.steaf23.bingoreloaded.lib.util.ComponentUtils;
+import io.github.steaf23.bingoreloaded.data.BingoSound;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import io.github.steaf23.bingoreloaded.tasks.data.ItemTask;
 import net.kyori.adventure.audience.Audience;
-import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -252,7 +251,7 @@ public class BingoPlayer implements BingoParticipant
             });
 
             player.teleportBlocking(teleportLocation);
-            player.playSound(Sound.sound().type(Key.key("minecraft:entity_shulker_teleport")).volume(0.8f).pitch(1.0f).build());
+            player.playSound(Sound.sound().type(BingoSound.GO_UP_WAND_USED).volume(0.8f).pitch(1.0f).build());
 
             player.addEffect(new PotionEffectInstance(PotionEffectType.of("minecraft:resistance"), BingoReloaded.ONE_SECOND * 10)
                     .setAmplifier(100)

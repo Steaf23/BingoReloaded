@@ -183,10 +183,6 @@ public class BingoSession implements ForwardingAudience
         teamManager.handleSettingsUpdated(newSettings);
     }
 
-    public void handlePlaySoundEvent(final BingoEvents.PlaySound event) {
-        playSound(event.sound());
-    }
-
     public void addPlayer(PlayerHandle player) {
         onPlayerJoinedSessionWorld(player);
 

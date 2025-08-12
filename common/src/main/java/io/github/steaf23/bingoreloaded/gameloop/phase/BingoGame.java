@@ -20,6 +20,7 @@ import io.github.steaf23.bingoreloaded.data.BingoStatType;
 import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.data.config.BingoOptions;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
+import io.github.steaf23.bingoreloaded.data.BingoSound;
 import io.github.steaf23.bingoreloaded.menu.BingoGameInfoMenu;
 import io.github.steaf23.bingoreloaded.lib.event.EventResult;
 import io.github.steaf23.bingoreloaded.lib.event.EventResults;
@@ -42,7 +43,6 @@ import io.github.steaf23.bingoreloaded.util.timer.CountdownTimer;
 import io.github.steaf23.bingoreloaded.util.timer.CounterTimer;
 import io.github.steaf23.bingoreloaded.util.timer.GameTimer;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
-import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.JoinConfiguration;
@@ -156,7 +156,6 @@ public class BingoGame implements GamePhase
                 PlayerHandle player = p.sessionPlayer().get();
 
                 p.giveKit(settings.kit());
-//                returnCardToPlayer(settings.kit().getCardSlot(), p, renderers.get(p.getTeam()));
                 returnCardToPlayer(settings.kit().getCardSlot(), p);
                 player.setLevel(0);
                 player.setExp(0.0f);
@@ -199,8 +198,8 @@ public class BingoGame implements GamePhase
             BingoPlayerSender.sendTitle(timeComponent.color(color), session);
 
             if (time <= startingTimer.lowThreshold && time > 0) {
-                playSound(Sound.sound(Key.key("minecraft:block_note_block_bit"), Sound.Source.UI, 1.2f - time / 10.0f + 0.2f, pitch));
-                playSound(Sound.sound(Key.key("minecraft:block_note_block_pling"), Sound.Source.UI, 1.2f - time / 10.0f + 0.2f, pitch));
+                playSound(Sound.sound(BingoSound.COUNTDOWN_TICK_1, Sound.Source.UI, 1.2f - time / 10.0f + 0.2f, pitch));
+                playSound(Sound.sound(BingoSound.COUNTDOWN_TICK_2, Sound.Source.UI, 1.2f - time / 10.0f + 0.2f, pitch));
             }
         });
         platform.runTask(BingoReloaded.ONE_SECOND, task -> startingTimer.start());
@@ -235,7 +234,7 @@ public class BingoGame implements GamePhase
             });
         });
 
-        playSound(Sound.sound(Key.key("minecraft:entity_lightning_bolt_thunder"), Sound.Source.UI, 1.0f, 1.0f));
+        playSound(Sound.sound(BingoSound.GAME_ENDED, Sound.Source.UI, 1.0f, 1.0f));
 
         String command = config.getOptionValue(BingoOptions.SEND_COMMAND_AFTER_GAME_ENDS);
         if (!command.isEmpty()) {
@@ -260,7 +259,7 @@ public class BingoGame implements GamePhase
                 BingoReloaded.incrementPlayerStat(player, BingoStatType.LOSSES);
             }
         }
-        playSound(Sound.sound(Key.key("minecraft:ui_toast_challenge_complete"), Sound.Source.UI, 0.75f, 1.0f));
+        playSound(Sound.sound(BingoSound.GAME_WON, Sound.Source.UI, 0.75f, 1.0f));
         end(team);
     }
 
@@ -305,7 +304,7 @@ public class BingoGame implements GamePhase
     public void startDeathMatch(int seconds) {
         BingoMessage.DEATHMATCH_START.sendToAudience(session);
 
-        playSound(Sound.sound(Key.key("minecraft:entity_parrot_imitate_ghast"), Sound.Source.UI, 1.0f, 1.0f));
+        playSound(Sound.sound(BingoSound.DEATHMATCH_INITIATED, Sound.Source.UI, 1.0f, 1.0f));
         startDeathMatchRecurse(seconds);
     }
 
@@ -332,7 +331,7 @@ public class BingoGame implements GamePhase
                 p.showDeathMatchTask(itemTask);
             }
 
-            playSound(Sound.sound(Key.key("minecraft:entity_ghast_shoot"), Sound.Source.UI, 1.0f, 1.0f));
+            playSound(Sound.sound(BingoSound.DEATHMATCH_REVEAL, Sound.Source.UI, 1.0f, 1.0f));
 
             return;
         }
@@ -486,7 +485,7 @@ public class BingoGame implements GamePhase
                 participant.getDisplayName().color(team.getColor()).decorate(TextDecoration.BOLD),
                 timeString.color(NamedTextColor.WHITE));
 
-        playSound(Sound.sound(Key.key("minecraft:entity_dragon_fireball_explode"), Sound.Source.UI, 1.0f, 1.0f));
+        playSound(Sound.sound(BingoSound.TASK_COMPLETED, Sound.Source.UI, 1.0f, 1.0f));
 
         scoreboard.updateTeamScores();
 		session.getGameManager().getRuntime().gameDisplay().update(scoreboard);
@@ -613,8 +612,8 @@ public class BingoGame implements GamePhase
     public void onStartingTimerFinished() {
         timer.start();
         gameStarted = true;
-        playSound(Sound.sound(Key.key("minecraft:entity_firework_rocket_large_blast"), Sound.Source.UI, 1.0f, 1.0f));
-        playSound(Sound.sound(Key.key("minecraft:entity_firework_rocket_launch"), Sound.Source.UI, 1.0f, 1.0f));
+        playSound(Sound.sound(BingoSound.START_COUNTDOWN_FINISHED_1, Sound.Source.UI, 1.0f, 1.0f));
+        playSound(Sound.sound(BingoSound.START_COUNTDOWN_FINISHED_2, Sound.Source.UI, 1.0f, 1.0f));
     }
 
     public void onCountdownTimerFinished() {

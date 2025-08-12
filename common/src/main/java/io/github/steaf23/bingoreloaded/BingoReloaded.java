@@ -1,5 +1,6 @@
 package io.github.steaf23.bingoreloaded;
 
+import io.github.steaf23.bingoreloaded.data.BingoSound;
 import io.github.steaf23.bingoreloaded.data.DefaultKitData;
 import io.github.steaf23.bingoreloaded.data.serializers.DefaultKitStorageSerializer;
 import io.github.steaf23.bingoreloaded.lib.api.BingoReloadedRuntime;
@@ -121,6 +122,7 @@ public class BingoReloaded implements Namespaced {
 		useResourcePack = config.getOptionValue(BingoOptions.USE_INCLUDED_RESOURCE_PACK);
 		String language = config.getOptionValue(BingoOptions.LANGUAGE).replace(".yml", "");
 		setLanguage(language);
+		BingoSound.setSounds(getDataAccessor("sounds"));
 
 		this.textureData = new TexturedMenuData();
 
@@ -230,6 +232,12 @@ public class BingoReloaded implements Namespaced {
 
 	public void reloadPlaceholders() {
 		getDataAccessor("placeholders").load();
+	}
+
+	public void reloadSounds() {
+		DataAccessor data = getDataAccessor("sounds");
+		data.load();
+		BingoSound.setSounds(data);
 	}
 
 	public void reloadData() {
