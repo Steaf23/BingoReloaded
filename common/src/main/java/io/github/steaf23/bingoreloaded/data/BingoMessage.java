@@ -17,6 +17,7 @@ import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -168,6 +169,7 @@ public enum BingoMessage
     private static final Pattern SUBSTITUTE_PATTERN = Pattern.compile("\\{\\$(?<key>[\\w.]+)(\\((?<args>.+)\\))?}");
 
     private static final TagResolver SUBSTITUTE_RESOLVER = substituteResolver();
+	private static BingoMessagePreParser PRE_PARSER = new BingoMessagePreParser.PassthroughMessagePreParser();
 
     private static final Map<String, Component> cachedPhrases = new HashMap<>();
 
@@ -175,6 +177,10 @@ public enum BingoMessage
         this.key = key;
         this.translation = key;
     }
+
+	public static void setMessagePreParser(@NotNull BingoMessagePreParser preParser) {
+		PRE_PARSER = preParser;
+	}
 
     public static void setLanguage(BingoReloadedRuntime.LanguageData language) {
         DataAccessor text = language.selectedLanguage();
@@ -224,10 +230,9 @@ public enum BingoMessage
             //Translate and send in steps
             //1. Solve placeholders first (so they can be nested into arguments in the following formats).
             String playerMessage = translated;
-            //FIXME: REFACTOR placeholder API.
-            //if (innerAudience instanceof PlayerHandle player && BingoReloaded.PLACEHOLDER_API_ENABLED) {
-//                playerMessage = PlaceholderAPI.setPlaceholders(player, playerMessage);
-//            }
+            if (innerAudience instanceof PlayerHandle player) {
+                playerMessage = BingoMessage.preParseString(player, playerMessage);
+            }
 
             Component[] components = configStringAsMultiline(playerMessage, color, withArguments);
 
@@ -269,9 +274,7 @@ public enum BingoMessage
      * @return multiline component from string input text, including placeholders
      */
     public static Component[] convertForPlayer(String input, PlayerHandle player, Component... withArguments) {
-        //FIXME: REFACTOR placeholder API.
-//        if (BingoReloaded.PLACEHOLDER_API_ENABLED)
-//            input = PlaceholderAPI.setPlaceholders(player, input);
+		input = BingoMessage.preParseString(player, input);
 
         return configStringAsMultiline(input, null, withArguments);
     }
@@ -312,6 +315,10 @@ public enum BingoMessage
         }
         return phrase;
     }
+
+	public static String preParseString(@Nullable PlayerHandle player, String message) {
+		return PRE_PARSER.parse(player, message);
+	}
 
     public static Component createPhrase(String input, Component... arguments) {
         return createPhrase(input, true, arguments);

@@ -56,11 +56,13 @@ import io.github.steaf23.bingoreloaded.lib.menu.EmptyDisplay;
 import io.github.steaf23.bingoreloaded.lib.menu.ScoreboardDisplay;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import io.github.steaf23.bingoreloaded.lib.util.PlayerDisplayTranslationKey;
+import io.github.steaf23.bingoreloaded.placeholder.BingoReloadedPlaceholderExpansion;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import io.github.steaf23.bingoreloaded.util.bstats.Metrics;
 import io.github.steaf23.bingoreloaded.world.CustomWorldCreator;
+import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Bukkit;
@@ -94,6 +96,8 @@ public class BingoReloadedPaper extends JavaPlugin implements BingoReloadedRunti
 	private SharedDisplay gameDisplay;
 	private SharedDisplay settingsDisplay;
 
+	public static boolean PLACEHOLDER_API_ENABLED = false;
+
 	public BingoReloadedPaper() {
 	}
 
@@ -122,8 +126,19 @@ public class BingoReloadedPaper extends JavaPlugin implements BingoReloadedRunti
 	public void onEnable() {
 		this.menuBoard = new MenuBoardPaper(platform, this);
 
-
 		bingo.enable();
+
+		// Setup PlaceholderAPI
+		if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+			new BingoReloadedPlaceholderExpansion(platform, bingo).register();
+
+			BingoMessage.setMessagePreParser( (player, message) -> {
+				if (player == null) {
+					return message;
+				}
+				return PlaceholderAPI.setPlaceholders(((PlayerHandlePaper)player).handle(), message);
+			});
+		}
 
 		eventListener = new EventListenerPaper(this, bingo.getGameManager().eventListener());
 

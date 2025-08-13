@@ -63,7 +63,6 @@ public class BingoReloaded implements Namespaced {
 
 	// Amount of ticks per second.
 	public static final int ONE_SECOND = 20;
-	public static boolean PLACEHOLDER_API_ENABLED = false;
 
 	private static BingoReloaded INSTANCE;
 
@@ -302,10 +301,6 @@ public class BingoReloaded implements Namespaced {
 
 		this.gameManager.setup(config.getOptionValue(BingoOptions.DEFAULT_WORLDS));
 		runtime.registerActions(config);
-	}
-
-	public boolean canUsePlaceholderAPI() {
-		return PLACEHOLDER_API_ENABLED;
 	}
 
 	@KeyPattern.Namespace

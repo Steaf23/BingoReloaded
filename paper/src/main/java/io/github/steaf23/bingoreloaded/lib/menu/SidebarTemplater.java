@@ -32,11 +32,8 @@ public class SidebarTemplater
         int lineIndex = 0;
         List<Component> components = new ArrayList<>();
         for (String line : template.lines()) {
-            // convert placeholders
-            //FIXME: REFACTOR: placeholder API (Maybe make a ComponentPreParser that can convert strings into other strings for example placeholderAPI.
-//            if (BingoReloaded.PLACEHOLDER_API_ENABLED) {
-//                line = PlaceholderAPI.setPlaceholders(forPlayer, line);
-//            }
+            // Convert placeholders
+			line = BingoMessage.preParseString(forPlayer, line);
 
             // split out lines that contain arguments into separate components, that then join if they are single line or append separately if multiline.
             Matcher matcher = ARG_PATTERN.matcher(line);
