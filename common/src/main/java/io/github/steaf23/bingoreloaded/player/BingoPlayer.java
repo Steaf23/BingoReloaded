@@ -251,7 +251,7 @@ public class BingoPlayer implements BingoParticipant
             });
 
             player.teleportBlocking(teleportLocation);
-            player.playSound(Sound.sound().type(BingoSound.GO_UP_WAND_USED).volume(0.8f).pitch(1.0f).build());
+            player.playSound(BingoSound.GO_UP_WAND_USED.builder().build());
 
             player.addEffect(new PotionEffectInstance(PotionEffectType.of("minecraft:resistance"), BingoReloaded.ONE_SECOND * 10)
                     .setAmplifier(100)

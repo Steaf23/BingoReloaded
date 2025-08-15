@@ -198,8 +198,8 @@ public class BingoGame implements GamePhase
             BingoPlayerSender.sendTitle(timeComponent.color(color), session);
 
             if (time <= startingTimer.lowThreshold && time > 0) {
-                playSound(Sound.sound(BingoSound.COUNTDOWN_TICK_1, Sound.Source.UI, 1.2f - time / 10.0f + 0.2f, pitch));
-                playSound(Sound.sound(BingoSound.COUNTDOWN_TICK_2, Sound.Source.UI, 1.2f - time / 10.0f + 0.2f, pitch));
+                playSound(BingoSound.COUNTDOWN_TICK_1.builder().volume(1.2f - time / 10.0f + 0.2f).pitch(pitch).build());
+                playSound(BingoSound.COUNTDOWN_TICK_2.builder().volume(1.2f - time / 10.0f + 0.2f).pitch(pitch).build());
             }
         });
         platform.runTask(BingoReloaded.ONE_SECOND, task -> startingTimer.start());
@@ -234,7 +234,7 @@ public class BingoGame implements GamePhase
             });
         });
 
-        playSound(Sound.sound(BingoSound.GAME_ENDED, Sound.Source.UI, 1.0f, 1.0f));
+        playSound(BingoSound.GAME_ENDED.builder().build());
 
         String command = config.getOptionValue(BingoOptions.SEND_COMMAND_AFTER_GAME_ENDS);
         if (!command.isEmpty()) {
@@ -259,7 +259,7 @@ public class BingoGame implements GamePhase
                 BingoReloaded.incrementPlayerStat(player, BingoStatType.LOSSES);
             }
         }
-        playSound(Sound.sound(BingoSound.GAME_WON, Sound.Source.UI, 0.75f, 1.0f));
+        playSound(BingoSound.GAME_WON.builder().build());
         end(team);
     }
 
@@ -304,7 +304,7 @@ public class BingoGame implements GamePhase
     public void startDeathMatch(int seconds) {
         BingoMessage.DEATHMATCH_START.sendToAudience(session);
 
-        playSound(Sound.sound(BingoSound.DEATHMATCH_INITIATED, Sound.Source.UI, 1.0f, 1.0f));
+        playSound(BingoSound.DEATHMATCH_INITIATED.builder().build());
         startDeathMatchRecurse(seconds);
     }
 
@@ -331,7 +331,7 @@ public class BingoGame implements GamePhase
                 p.showDeathMatchTask(itemTask);
             }
 
-            playSound(Sound.sound(BingoSound.DEATHMATCH_REVEAL, Sound.Source.UI, 1.0f, 1.0f));
+            playSound(BingoSound.DEATHMATCH_REVEAL.builder().build());
 
             return;
         }
@@ -485,7 +485,7 @@ public class BingoGame implements GamePhase
                 participant.getDisplayName().color(team.getColor()).decorate(TextDecoration.BOLD),
                 timeString.color(NamedTextColor.WHITE));
 
-        playSound(Sound.sound(BingoSound.TASK_COMPLETED, Sound.Source.UI, 1.0f, 1.0f));
+        playSound(BingoSound.TASK_COMPLETED.builder().build());
 
         scoreboard.updateTeamScores();
 		session.getGameManager().getRuntime().gameDisplay().update(scoreboard);
@@ -612,8 +612,8 @@ public class BingoGame implements GamePhase
     public void onStartingTimerFinished() {
         timer.start();
         gameStarted = true;
-        playSound(Sound.sound(BingoSound.START_COUNTDOWN_FINISHED_1, Sound.Source.UI, 1.0f, 1.0f));
-        playSound(Sound.sound(BingoSound.START_COUNTDOWN_FINISHED_2, Sound.Source.UI, 1.0f, 1.0f));
+        playSound(BingoSound.START_COUNTDOWN_FINISHED_1.builder().build());
+        playSound(BingoSound.START_COUNTDOWN_FINISHED_2.builder().build());
     }
 
     public void onCountdownTimerFinished() {

@@ -1,12 +1,51 @@
-go_up_wand_used: "minecraft:entity.shulker.teleport"
-hotswap_task_added: "minecraft:entity.player.levelup"
-hotswap_task_expired: "minecraft:item.firecharge.use"
-countdown_tick_1: "minecraft:block.note_block.bit"
-countdown_tick_2: "minecraft:block.note_block.pling"
-game_ended: "minecraft:entity.lightning_bolt.thunder"
-game_won: "minecraft:ui.toast.challenge_complete"
-deathmatch_initiated: "minecraft:entity.happy_ghast.ambient"
-deathmatch_reveal: "minecraft:entity.ghast.shoot"
-task_completed: "minecraft:entity.dragon_fireball.explode"
-start_countdown_finished_1: "minecraft:entity.firework_rocket.large_blast"
-start_countdown_finished_2: "minecraft:entity.firework_rocket.launch"
+# Each sound contains some properties that can be changed:
+#   sound: Reference to the actual minecraft sound, as can be obtained using /playsound in-game.
+#   volume: Loudness of the sound between 0.0 and 1.0, where 0.0 is silent and 1.0 is the loudest possible
+
+go_up_wand_used:
+  sound: "minecraft:entity.shulker.teleport"
+  volume: 0.8
+
+hotswap_task_added:
+  sound: "minecraft:entity.player.levelup"
+  volume: 1.0
+
+hotswap_task_expired:
+  sound: "minecraft:item.firecharge.use"
+  volume: 1.0
+
+countdown_tick_1:
+  sound: "minecraft:block.note_block.bit"
+  volume: 1.0
+
+countdown_tick_2:
+  sound: "minecraft:block.note_block.pling"
+  volume: 1.0
+
+game_ended:
+  sound: "minecraft:entity.lightning_bolt.thunder"
+  volume: 1.0
+
+game_won:
+  sound: "minecraft:ui.toast.challenge_complete"
+  volume: 0.6
+
+deathmatch_initiated:
+  sound: "minecraft:entity.happy_ghast.ambient"
+  volume: 1.0
+
+deathmatch_reveal:
+  sound: "minecraft:entity.ghast.shoot"
+  volume: 1.0
+
+task_completed:
+  sound: "minecraft:entity.dragon_fireball.explode"
+  volume: 1.0
+
+start_countdown_finished_1:
+  sound: "minecraft:entity.firework_rocket.large_blast"
+  volume: 1.0
+
+start_countdown_finished_2:
+  sound: "minecraft:entity.firework_rocket.launch"
+  volume: 1.0

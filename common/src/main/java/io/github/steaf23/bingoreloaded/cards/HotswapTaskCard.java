@@ -18,7 +18,6 @@ import io.github.steaf23.bingoreloaded.tasks.TaskGenerator;
 import io.github.steaf23.bingoreloaded.tasks.data.TaskData;
 import io.github.steaf23.bingoreloaded.tasks.tracker.TaskProgressTracker;
 import io.github.steaf23.bingoreloaded.util.CollectionHelper;
-import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -211,7 +210,7 @@ public class HotswapTaskCard extends TaskCard
         }
 
         if (taskExpiredCount > 0) {
-            game.playSound(Sound.sound(BingoSound.HOTSWAP_TASK_EXPIRED, Sound.Source.UI, 1.0f, 1.0f));
+            game.playSound(BingoSound.HOTSWAP_TASK_EXPIRED.builder().build());
 
             if (taskExpiredCount == 1) {
                 GameTask taskToSend = lastExpiredTask;
@@ -225,7 +224,7 @@ public class HotswapTaskCard extends TaskCard
             }
         }
         if (taskRecoveredCount > 0) {
-            game.playSound(Sound.sound(BingoSound.HOTSWAP_TASK_ADDED, Sound.Source.UI, 1.0f, 1.0f));
+            game.playSound(BingoSound.HOTSWAP_TASK_ADDED.builder().build());
 
             if (taskRecoveredCount == 1) {
                 GameTask taskToSend = lastRecoverdTask;

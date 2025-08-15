@@ -27,6 +27,7 @@ public enum BingoSound implements Sound.Type {
 	private final String dataKey;
 	@Nullable
 	private Key soundKey;
+	private float volume = 1.0f;
 
 	BingoSound(@Subst("minecraft:invalid") String key) {
 		this.dataKey = key;
@@ -38,9 +39,15 @@ public enum BingoSound implements Sound.Type {
 				ConsoleMessenger.error("Did not find a sound for " + s.dataKey + ", maybe you made a mistake whilst editing the sounds.yml file.");
 				continue;
 			}
-			@Subst("minecraft:invalid") String value = sounds.getString(s.dataKey, "minecraft:invalid");
+			@Subst("minecraft:invalid") String value = sounds.getString(s.dataKey + ".sound", "minecraft:invalid");
+			float volume = sounds.getFloat(s.dataKey + ".volume", 1.0f);
 			s.soundKey = Key.key(value);
+			s.volume = volume;
 		}
+	}
+
+	public Sound.Builder builder() {
+		return Sound.sound().type(this).source(Sound.Source.UI).volume(volume);
 	}
 
 	@Override
