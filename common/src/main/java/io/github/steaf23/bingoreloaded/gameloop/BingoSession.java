@@ -95,6 +95,10 @@ public class BingoSession implements ForwardingAudience
         return phase instanceof BingoGame;
     }
 
+	public boolean canPlayersViewCard() {
+		return phase.canViewCard();
+	}
+
     public GamePhase phase() {
         return phase;
     }

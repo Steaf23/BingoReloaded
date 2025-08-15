@@ -299,7 +299,12 @@ public class PregameLobby implements GamePhase
         });
     }
 
-    public void handlePlayerRespawn(final PlayerHandle player) {
+	@Override
+	public boolean canViewCard() {
+		return false;
+	}
+
+	public void handlePlayerRespawn(final PlayerHandle player) {
         initializePlayer(player);
     }
 

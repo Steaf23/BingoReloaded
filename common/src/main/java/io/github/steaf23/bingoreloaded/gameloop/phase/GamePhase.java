@@ -22,4 +22,6 @@ public interface GamePhase extends SessionMember
 
     default void handleParticipantJoinedTeam(final BingoEvents.TeamParticipantEvent event) {};
     default void handleParticipantLeftTeam(final BingoEvents.TeamParticipantEvent event) {};
+
+	boolean canViewCard();
 }

@@ -764,4 +764,9 @@ public class BingoGame implements GamePhase
 
         player.takeEffects(false);
     }
+
+	@Override
+	public boolean canViewCard() {
+		return gameStarted;
+	}
 }

@@ -104,7 +104,7 @@ public class BingoAction extends ActionTree {
 				return ActionResult.IGNORED;
 			}
 
-			if (session.isRunning()) {
+			if (session.canPlayersViewCard()) {
 				BingoParticipant participant = session.teamManager.getPlayerAsParticipant(player);
 				if (participant instanceof BingoPlayer bingoPlayer) {
 					int cardSlot = session.settingsBuilder.view().kit().getCardSlot();
@@ -390,7 +390,7 @@ public class BingoAction extends ActionTree {
 	}
 
 	public void showTeamCardsToUser(BingoSession session) {
-		if (!session.isRunning()) {
+		if (!session.canPlayersViewCard()) {
 			return;
 		}
 

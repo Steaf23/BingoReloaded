@@ -34,18 +34,13 @@ public class TeamCardSelectMenu extends PaginatedSelectionMenu
 
     @Override
     public void onOptionClickedDelegate(InventoryClickEvent event, ItemTemplate clickedOption, PlayerHandle player) {
-        if (!session.isRunning()) {
-            return;
-        }
-
-        if (!(player instanceof PlayerHandle actualPlayer)) {
-            ConsoleMessenger.bug("entity is not a player, cannot open menu", this);
+        if (!session.canPlayersViewCard()) {
             return;
         }
 
         Optional<BingoTeam> team = session.teamManager.getActiveTeams().getById(clickedOption.getCompareKey());
         if (team.isPresent() && team.get().getCard().isPresent()) {
-            team.get().getCard().get().showInventory(actualPlayer);
+            team.get().getCard().get().showInventory(player);
         }
     }
 

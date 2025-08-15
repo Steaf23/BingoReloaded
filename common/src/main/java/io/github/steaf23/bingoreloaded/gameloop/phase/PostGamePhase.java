@@ -45,6 +45,11 @@ public class PostGamePhase implements GamePhase
 
     @Override
     public void end() {
+		// Players may still have the card GUI open even though the card does not exist anymore
+		for (PlayerHandle p : session.getPlayersInWorld()) {
+			p.closeInventory();
+		}
+
         for (BingoTeam team : session.teamManager.getActiveTeams()) {
             team.setCard(null);
         }
@@ -85,7 +90,12 @@ public class PostGamePhase implements GamePhase
         return EventResult.PASS;
     }
 
-    private void onTimerTicks(long timeLeft) {
+	@Override
+	public boolean canViewCard() {
+		return true;
+	}
+
+	private void onTimerTicks(long timeLeft) {
         if (timeLeft == 5) {
             sendRestartMessage(timeLeft, session);
         }
