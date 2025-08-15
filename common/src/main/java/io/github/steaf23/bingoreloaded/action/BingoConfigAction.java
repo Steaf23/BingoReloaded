@@ -86,21 +86,18 @@ public class BingoConfigAction extends ActionTree {
         BingoPlayerSender.sendMessage(ComponentUtils.MINI_BUILDER.deserialize("Value of option <yellow>" + optionKey + "</yellow> has been set to: ")
                 .append(Component.text(newValue).color(getColorOfOptionValue(newValue))), sender);
         switch (option.getEditUpdateTime()) {
-            case IMMEDIATE -> {}
-            case AFTER_GAME -> {
-                BingoPlayerSender.sendMessage(ComponentUtils.MINI_BUILDER.deserialize("<gold> This option will be applied to the world at the end of the current/ upcoming game"), sender);
-            }
-            case AFTER_SESSION -> {
-                BingoPlayerSender.sendMessage(ComponentUtils.MINI_BUILDER.deserialize("<gold> This option will be applied after the server has restarted, on a new world in configuration MULTIPLE, or using the <red>/bingo reload</red> command"), sender);
-            }
-            case AFTER_SERVER_RESTART -> {
-                BingoPlayerSender.sendMessage(ComponentUtils.MINI_BUILDER.deserialize("<gold> This option will be applied after the server has been restarted, or using the <red>/bingo reload</red> command if it can be reloaded dynamically"), sender);
-            }
-        }
-
-        // Perform additional setup to configure some options
-        //FIXME: add player display options
-//        PlayerDisplay.enableDebugLogging(configuration.getOptionValue(BingoOptions.ENABLE_DEBUG_LOGGING));
+			case IMMEDIATE -> {
+			}
+			case AFTER_GAME -> {
+				BingoPlayerSender.sendMessage(ComponentUtils.MINI_BUILDER.deserialize("<gold> This option will be applied to the world at the end of the current/ upcoming game"), sender);
+			}
+			case AFTER_SESSION -> {
+				BingoPlayerSender.sendMessage(ComponentUtils.MINI_BUILDER.deserialize("<gold> This option will be applied after the server has restarted, on a new world in configuration MULTIPLE, or using the <red>/bingo reload</red> command"), sender);
+			}
+			case AFTER_SERVER_RESTART -> {
+				BingoPlayerSender.sendMessage(ComponentUtils.MINI_BUILDER.deserialize("<gold> This option will be applied after the server has been restarted, or using the <red>/bingo reload</red> command if it can be reloaded dynamically"), sender);
+			}
+		}
 
         return ActionResult.SUCCESS;
     }

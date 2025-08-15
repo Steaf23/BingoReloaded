@@ -30,6 +30,7 @@ import io.github.steaf23.bingoreloaded.lib.data.core.tag.TagDataAccessor;
 import io.github.steaf23.bingoreloaded.lib.data.serializers.StatisticSerializer;
 import io.github.steaf23.bingoreloaded.lib.item.SerializableItem;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
+import io.github.steaf23.bingoreloaded.lib.util.DebugLogger;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
 import io.github.steaf23.bingoreloaded.settings.CustomKit;
 import io.github.steaf23.bingoreloaded.tasks.GameTask;
@@ -71,7 +72,6 @@ public class BingoReloaded implements Namespaced {
 	private BingoConfigurationData config;
 	private GameManager gameManager;
 	private TexturedMenuData textureData;
-	private boolean debugLogging = false;
 	private boolean useResourcePack = false;
 
 	BingoReloaded(BingoReloadedRuntime runtime) {
@@ -82,6 +82,7 @@ public class BingoReloaded implements Namespaced {
 	public void load() {
 		// Kinda ugly, but we can assume there will only be one instance of this class anyway.
 		INSTANCE = this;
+		DebugLogger.setupLogger(platform);
 	}
 
 	public void enable() {
@@ -116,7 +117,7 @@ public class BingoReloaded implements Namespaced {
 
 		this.config = new BingoConfigurationData(runtime.getConfigData());
 		runtime.onConfigReloaded(config);
-		this.debugLogging = config.getOptionValue(BingoOptions.ENABLE_DEBUG_LOGGING);
+		DebugLogger.setLoggingEnabled(config.getOptionValue(BingoOptions.ENABLE_DEBUG_LOGGING));
 
 		useResourcePack = config.getOptionValue(BingoOptions.USE_INCLUDED_RESOURCE_PACK);
 		String language = config.getOptionValue(BingoOptions.LANGUAGE).replace(".yml", "");
@@ -223,6 +224,7 @@ public class BingoReloaded implements Namespaced {
 		runtime.setupConfig();
 		this.config.reload();
 		runtime.onConfigReloaded(config);
+		DebugLogger.setLoggingEnabled(config.getOptionValue(BingoOptions.ENABLE_DEBUG_LOGGING));
 	}
 
 	public void reloadScoreboards() {

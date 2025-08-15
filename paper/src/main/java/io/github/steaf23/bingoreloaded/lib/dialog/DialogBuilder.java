@@ -109,7 +109,7 @@ public class DialogBuilder {
 		return buildDialogList(exitAction, dialogs, numActionColumns, 150);
 	}
 
-	public CommonDialogData buildCommonData() {
+	protected CommonDialogData buildCommonData() {
 		return new CommonDialogData(title, externalTitle, canCloseWithEscape, pause, afterAction, body, inputs);
 	}
 
