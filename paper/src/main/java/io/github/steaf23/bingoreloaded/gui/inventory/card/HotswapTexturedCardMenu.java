@@ -10,12 +10,14 @@ import io.github.steaf23.bingoreloaded.data.TexturedMenuData;
 import io.github.steaf23.bingoreloaded.gui.inventory.core.TexturedTitleBuilder;
 import io.github.steaf23.bingoreloaded.lib.api.MenuBoard;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
+import io.github.steaf23.bingoreloaded.lib.api.item.ItemTypePaper;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
 import io.github.steaf23.bingoreloaded.tasks.GameTask;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -102,7 +104,7 @@ public class HotswapTexturedCardMenu extends TexturedCardMenu implements Hotswap
     public @NotNull ItemTemplate getItemFromTask(int taskIndex) {
         ItemTemplate item = taskHolders.get(taskIndex).convertToItem(displayInfo());
         if (tasks.get(taskIndex).isCompleted()) {
-            item.setItemType(ItemType.of("minecraft:poisonous_potato"));
+            item.setItemType(ItemTypePaper.of(Material.POISONOUS_POTATO));
             item.setCustomModelData(1012);
             item.setGlowing(false);
         }

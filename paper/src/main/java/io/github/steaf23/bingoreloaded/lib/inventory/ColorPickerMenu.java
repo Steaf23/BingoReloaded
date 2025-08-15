@@ -2,6 +2,7 @@ package io.github.steaf23.bingoreloaded.lib.inventory;
 
 import io.github.steaf23.bingoreloaded.lib.api.MenuBoard;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
+import io.github.steaf23.bingoreloaded.lib.api.item.ItemTypePaper;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
@@ -9,6 +10,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
+import org.bukkit.Material;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
@@ -19,8 +21,8 @@ import java.util.function.Consumer;
 
 public final class ColorPickerMenu extends BasicMenu
 {
-    private static final ItemTemplate NEXT = new ItemTemplate(53, ItemType.of("structure_void"), Component.text("Scroll Left").color(NamedTextColor.LIGHT_PURPLE).decorate(TextDecoration.BOLD));
-    private static final ItemTemplate PREVIOUS = new ItemTemplate(45, ItemType.of("barrier"), Component.text("Scroll Right").color(NamedTextColor.LIGHT_PURPLE).decorate(TextDecoration.BOLD));
+    private static final ItemTemplate NEXT = new ItemTemplate(53, ItemTypePaper.of(Material.STRUCTURE_VOID), Component.text("Scroll Left").color(NamedTextColor.LIGHT_PURPLE).decorate(TextDecoration.BOLD));
+    private static final ItemTemplate PREVIOUS = new ItemTemplate(45, ItemTypePaper.of(Material.BARRIER), Component.text("Scroll Right").color(NamedTextColor.LIGHT_PURPLE).decorate(TextDecoration.BOLD));
 
     private static final int HUE_AMOUNT = 25;
 
@@ -38,7 +40,7 @@ public final class ColorPickerMenu extends BasicMenu
         for (int i = 0; i < HUE_AMOUNT; i++) {
             Color col = Color.getHSBColor(i * (1.0f / (HUE_AMOUNT - 1)), 1.0f, 1.0f);
             TextColor textColor = TextColor.color(col.getRGB());
-            hueItems.add(ItemTemplate.createColoredLeather(textColor, ItemType.of("leather_chestplate"))
+            hueItems.add(ItemTemplate.createColoredLeather(textColor, ItemTypePaper.of(Material.LEATHER_CHESTPLATE))
                     .setCompareKey(textColor.asHexString()));
         }
 
@@ -49,7 +51,7 @@ public final class ColorPickerMenu extends BasicMenu
 
         for (int i = 0; i < 45; i++) {
             TextColor color = TextColor.color(0);
-            addItem(ItemTemplate.createColoredLeather(color, ItemType.of("leather_chestplate"))
+            addItem(ItemTemplate.createColoredLeather(color, ItemTypePaper.of(Material.LEATHER_CHESTPLATE))
                     .setCompareKey(color.asHexString()));
         }
 
@@ -102,7 +104,7 @@ public final class ColorPickerMenu extends BasicMenu
 
                 TextColor textColor = TextColor.color(targetColor.getRGB());
 
-                ItemTemplate item = ItemTemplate.createColoredLeather(textColor, ItemType.of("leather_chestplate"))
+                ItemTemplate item = ItemTemplate.createColoredLeather(textColor, ItemTypePaper.of(Material.LEATHER_CHESTPLATE))
                         .setCompareKey(textColor.asHexString())
                         .setSlot(x, y);
                 addItem(item);

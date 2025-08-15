@@ -7,8 +7,10 @@ import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gui.inventory.TeamCardSelectMenu;
 import io.github.steaf23.bingoreloaded.lib.api.MenuBoard;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
+import io.github.steaf23.bingoreloaded.lib.api.item.ItemTypePaper;
 import io.github.steaf23.bingoreloaded.lib.inventory.action.MenuAction;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
+import org.bukkit.Material;
 
 public class OpenCardSelectAction extends MenuAction {
 
@@ -20,7 +22,7 @@ public class OpenCardSelectAction extends MenuAction {
 
 	public static OpenCardSelectAction createItem(BingoReloaded bingo, int slot) {
 		OpenCardSelectAction action = new OpenCardSelectAction(bingo);
-		action.setItem(new ItemTemplate(ItemType.of("minecraft:bundle"), BingoReloaded.applyTitleFormat(BingoMessage.SHOW_TEAM_CARD_TITLE.asPhrase())).setSlot(slot));
+		action.setItem(new ItemTemplate(ItemTypePaper.of(Material.BUNDLE), BingoReloaded.applyTitleFormat(BingoMessage.SHOW_TEAM_CARD_TITLE.asPhrase())).setSlot(slot));
 		return action;
 	}
 

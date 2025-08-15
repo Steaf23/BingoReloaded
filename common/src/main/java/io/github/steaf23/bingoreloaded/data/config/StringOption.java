@@ -12,6 +12,9 @@ public class StringOption extends ConfigurationOption<String>
 
     @Override
     public Optional<String> fromString(String value) {
+		if (value.isEmpty() || value.equals("null")) {
+			return Optional.empty();
+		}
         return Optional.of(value);
     }
 

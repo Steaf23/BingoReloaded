@@ -252,7 +252,7 @@ public class BingoAction extends ActionTree {
 			if (!(getLastUser() instanceof PlayerHandle player)) {
 				return ActionResult.IGNORED;
 			}
-			addPlayerKit(args[0], Arrays.stream(args).collect(Collectors.toList()).subList(1, args.length), player);
+			addPlayerKit(args[0], String.join(" ", Arrays.copyOfRange(args, 1, args.length)), player);
 			return ActionResult.SUCCESS;
 		})
 				.addTabCompletion(args -> List.of("1", "2", "3", "4", "5"))
@@ -306,7 +306,7 @@ public class BingoAction extends ActionTree {
 		});
 	}
 
-	public void addPlayerKit(String slot, List<String> kitNameParts, PlayerHandle fromPlayerInventory) {
+	public void addPlayerKit(String slot, String kitName, PlayerHandle fromPlayerInventory) {
 		PlayerKit kit = switch (slot) {
 			case "1" -> PlayerKit.CUSTOM_1;
 			case "2" -> PlayerKit.CUSTOM_2;
@@ -322,14 +322,8 @@ public class BingoAction extends ActionTree {
 			return;
 		}
 
-		StringBuilder kitName = new StringBuilder();
-		for (int i = 0; i < kitNameParts.size() - 1; i++) {
-			kitName.append(kitNameParts.get(i)).append(" ");
-		}
-		kitName.append(kitNameParts.getLast());
-
 		CustomKitData data = new CustomKitData();
-		if (!data.assignCustomKit(ComponentUtils.MINI_BUILDER.deserialize(kitName.toString()), kit, fromPlayerInventory)) {
+		if (!data.assignCustomKit(ComponentUtils.MINI_BUILDER.deserialize(kitName), kit, fromPlayerInventory)) {
 			Component message = ComponentUtils.MINI_BUILDER
 					.deserialize("<red>Cannot add custom kit " + kitName + " to slot " + slot + ", this slot already contains kit ")
 					.append(data.getCustomKit(kit).name())

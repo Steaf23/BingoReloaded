@@ -2,6 +2,7 @@ package io.github.steaf23.bingoreloaded.lib.inventory;
 
 import io.github.steaf23.bingoreloaded.lib.api.MenuBoard;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
+import io.github.steaf23.bingoreloaded.lib.api.item.ItemTypePaper;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataStorage;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
@@ -11,6 +12,7 @@ import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
+import org.bukkit.Material;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
@@ -19,6 +21,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
 
+//FIXME: maybe extend from PaginatedDataMenu to reduce code duplication?
 public abstract class PaginatedSelectionMenu extends BasicMenu {
 
 	/**
@@ -52,19 +55,19 @@ public abstract class PaginatedSelectionMenu extends BasicMenu {
 	private final ItemTemplate nextPageItem;
 	private final ItemTemplate previousPageItem;
 
-	protected static final ItemTemplate NEXT = new ItemTemplate(8, 5, ItemType.of("structure_void"),
+	protected static final ItemTemplate NEXT = new ItemTemplate(8, 5, ItemTypePaper.of(Material.STRUCTURE_VOID),
 			PlayerDisplayTranslationKey.MENU_NEXT.translate()
 					.color(NamedTextColor.LIGHT_PURPLE).decorate(TextDecoration.BOLD));
 
-	protected static final ItemTemplate PREVIOUS = new ItemTemplate(0, 5, ItemType.of("barrier"),
+	protected static final ItemTemplate PREVIOUS = new ItemTemplate(0, 5, ItemTypePaper.of(Material.BARRIER),
 			PlayerDisplayTranslationKey.MENU_PREVIOUS.translate()
 					.color(NamedTextColor.LIGHT_PURPLE).decorate(TextDecoration.BOLD));
 
-	protected static final ItemTemplate CLOSE = new ItemTemplate(4, 5, ItemType.of("redstone"),
+	protected static final ItemTemplate CLOSE = new ItemTemplate(4, 5, ItemTypePaper.of(Material.REDSTONE),
 			PlayerDisplayTranslationKey.MENU_SAVE_EXIT.translate()
 					.color(NamedTextColor.RED).decorate(TextDecoration.BOLD));
 
-	protected static final ItemTemplate FILTER = new ItemTemplate(1, 5, ItemType.of("hopper"),
+	protected static final ItemTemplate FILTER = new ItemTemplate(1, 5, ItemTypePaper.of(Material.HOPPER),
 			PlayerDisplayTranslationKey.MENU_FILTER.translate()
 					.color(NamedTextColor.GOLD).decorate(TextDecoration.BOLD));
 

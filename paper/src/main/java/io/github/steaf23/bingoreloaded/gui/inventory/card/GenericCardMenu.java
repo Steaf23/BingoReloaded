@@ -8,6 +8,7 @@ import io.github.steaf23.bingoreloaded.gui.inventory.item.OpenCardSelectAction;
 import io.github.steaf23.bingoreloaded.gui.inventory.item.TaskItemAction;
 import io.github.steaf23.bingoreloaded.lib.api.MenuBoard;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
+import io.github.steaf23.bingoreloaded.lib.api.item.ItemTypePaper;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.inventory.BasicMenu;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
@@ -16,6 +17,7 @@ import io.github.steaf23.bingoreloaded.tasks.GameTask;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
+import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -63,7 +65,7 @@ public class GenericCardMenu extends BasicMenu implements CardMenu
 
     public void setInfo(Component name, Component... description)
     {
-        ItemTemplate info = new ItemTemplate(0, ItemType.of("minecraft:map"),
+        ItemTemplate info = new ItemTemplate(0, ItemTypePaper.of(Material.MAP),
                 name.decorate(TextDecoration.BOLD).color(displayInfo.mode().getColor()),
                 MultilineComponent.from(NamedTextColor.YELLOW, TextDecoration.ITALIC, description));
         addItem(info);

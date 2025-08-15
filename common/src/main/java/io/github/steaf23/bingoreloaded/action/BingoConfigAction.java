@@ -11,8 +11,11 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.StringJoiner;
+import java.util.stream.Stream;
 
 public class BingoConfigAction extends ActionTree {
     private final BingoConfigurationData configuration;
@@ -29,8 +32,8 @@ public class BingoConfigAction extends ActionTree {
             if (args.length == 1) {
                 return readOption(getLastUser(), args[0]);
             }
-            if (args.length == 2) {
-                return writeOption(getLastUser(), args[0], args[1]);
+            if (args.length >= 2) {
+                return writeOption(getLastUser(), args[0], String.join(" ", Arrays.copyOfRange(args, 1, args.length)));
             }
 
             return ActionResult.INCORRECT_USE;

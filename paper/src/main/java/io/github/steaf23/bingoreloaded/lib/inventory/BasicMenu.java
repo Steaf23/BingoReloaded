@@ -2,6 +2,7 @@ package io.github.steaf23.bingoreloaded.lib.inventory;
 
 import io.github.steaf23.bingoreloaded.lib.api.MenuBoard;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
+import io.github.steaf23.bingoreloaded.lib.api.item.ItemTypePaper;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandlePaper;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataStorage;
@@ -12,6 +13,7 @@ import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
@@ -26,7 +28,7 @@ public class BasicMenu implements InventoryMenu
 {
     public static Component pluginTitlePrefix = Component.empty();
 
-    public static ItemTemplate BLANK = new ItemTemplate(ItemType.of("black_stained_glass_pane"), null)
+    public static ItemTemplate BLANK = new ItemTemplate(ItemTypePaper.of(Material.BLACK_STAINED_GLASS_PANE), null)
             .setNoTooltip(true);
 
     private final Inventory inventory;
