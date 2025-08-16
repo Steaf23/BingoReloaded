@@ -12,6 +12,7 @@ import io.github.steaf23.bingoreloaded.lib.api.item.InventoryHandle;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import net.kyori.adventure.audience.ForwardingAudience;
+import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.Nullable;
 
@@ -103,7 +104,11 @@ public interface PlayerHandle extends ForwardingAudience, ActionUser {
 
 	boolean hasCooldown(StackHandle stack);
 
+	boolean hasCooldownOnGroup(Key cooldownGroup);
+
 	void setCooldown(StackHandle stack, int cooldownTicks);
+
+	void setCooldownOnGroup(Key cooldownGroup, int cooldownTicks);
 
 	boolean isSneaking();
 

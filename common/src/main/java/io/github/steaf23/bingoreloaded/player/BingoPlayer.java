@@ -21,7 +21,7 @@ import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import io.github.steaf23.bingoreloaded.tasks.data.ItemTask;
 import net.kyori.adventure.audience.Audience;
-import net.kyori.adventure.sound.Sound;
+import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.jetbrains.annotations.NotNull;
@@ -39,8 +39,9 @@ import java.util.UUID;
  */
 public class BingoPlayer implements BingoParticipant
 {
-    private BingoTeam team;
-    public final String playerName;
+	public final String playerName;
+
+	private BingoTeam team;
     private final BingoSession session;
     private final UUID playerId;
     private final Component displayName;
@@ -219,14 +220,11 @@ public class BingoPlayer implements BingoParticipant
         if (!PlayerKit.WAND_ITEM.isCompareKeyEqual(wand))
             return;
 
-        if (player.hasCooldown(wand)) {
+        if (player.hasCooldownOnGroup(PlayerKit.WAND_ITEM.getCooldownGroup())) {
             return;
         }
 
-        //TODO: rewrite this to be a bit nicer, maybe add a cooldown support to item templates.
-        //FIXME: REFACTOR cooldown
-//        wand.(DataComponentTypes.USE_COOLDOWN, UseCooldown.useCooldown((float)wandCooldownSeconds).cooldownGroup(new NamespacedKey(BingoReloaded.getInstance(), "wand_cooldown")).build());
-//        player.setCooldown(wand, (int)(wand.getData(DataComponentTypes.USE_COOLDOWN).seconds() * 20));
+        player.setCooldownOnGroup(PlayerKit.WAND_ITEM.getCooldownGroup(), (int)(wandCooldownSeconds * 20));
 
         server.runTask(task -> {
             double distance;

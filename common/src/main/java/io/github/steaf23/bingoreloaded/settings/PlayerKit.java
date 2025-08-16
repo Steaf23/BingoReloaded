@@ -1,5 +1,6 @@
 package io.github.steaf23.bingoreloaded.settings;
 
+import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.CustomKitData;
 import io.github.steaf23.bingoreloaded.data.DefaultKitData;
@@ -7,7 +8,9 @@ import io.github.steaf23.bingoreloaded.lib.api.ServerSoftware;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import io.github.steaf23.bingoreloaded.lib.item.SerializableItem;
+import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.player.EffectOptionFlags;
+import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
@@ -30,12 +33,15 @@ public enum PlayerKit
     CUSTOM_5("custom_5", Component.text("CUSTOM 5"), EnumSet.noneOf(EffectOptionFlags.class)),
     ;
 
-    public static final ItemTemplate WAND_ITEM = new ItemTemplate(
+	private static final Key WAND_COOLDOWN_GROUP = BingoReloaded.resourceKey("wand_cooldown");
+
+	public static final ItemTemplate WAND_ITEM = new ItemTemplate(
             ItemType.of("minecraft:warped_fungus_on_a_stick"),
             BingoMessage.WAND_ITEM_NAME.asPhrase().color(NamedTextColor.DARK_PURPLE).decorate(TextDecoration.BOLD, TextDecoration.ITALIC),
             BingoMessage.WAND_ITEM_DESC.asMultiline())
-//            .addEnchantment(Enchantment.UNBREAKING, 3)
-            .setCompareKey("wand");
+			.addEnchantment(Key.key("minecraft:unbreaking"), 3)
+            .setCompareKey("wand")
+			.cooldownGroup(WAND_COOLDOWN_GROUP);
 
     public static final ItemTemplate CARD_ITEM_RENDERABLE = new ItemTemplate(
             ItemType.of("minecraft:filled_map"),
@@ -55,15 +61,15 @@ public enum PlayerKit
             ItemType.of("minecraft:emerald"),
             BingoMessage.VOTE_ITEM_NAME.asPhrase().color(NamedTextColor.DARK_PURPLE).decorate(TextDecoration.BOLD, TextDecoration.ITALIC),
             BingoMessage.VOTE_ITEM_DESC.asMultiline())
-            .setCompareKey("vote");
-//            .addEnchantment(Enchantment.VANISHING_CURSE, 1);
+            .setCompareKey("vote")
+			.addEnchantment(Key.key("minecraft:vanishing_curse"), 1);
 
     public static final ItemTemplate TEAM_ITEM = new ItemTemplate(
             ItemType.of("minecraft:white_glazed_terracotta"),
             BingoMessage.TEAM_ITEM_NAME.asPhrase().color(NamedTextColor.DARK_PURPLE).decorate(TextDecoration.BOLD, TextDecoration.ITALIC),
             BingoMessage.TEAM_ITEM_DESC.asMultiline())
-            .setCompareKey("team");
-//            .addEnchantment(Enchantment.VANISHING_CURSE, 1);
+            .setCompareKey("team")
+			.addEnchantment(Key.key("minecraft:vanishing_curse"), 1);
 
     public final String configName;
     private final Component displayName;

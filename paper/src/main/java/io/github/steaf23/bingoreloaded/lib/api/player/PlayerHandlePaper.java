@@ -20,6 +20,7 @@ import io.github.steaf23.bingoreloaded.lib.api.item.ItemTypePaper;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandlePaper;
 import net.kyori.adventure.audience.Audience;
+import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import org.bukkit.GameMode;
 import org.bukkit.advancement.AdvancementProgress;
@@ -240,8 +241,18 @@ public class PlayerHandlePaper implements PlayerHandle {
 	}
 
 	@Override
+	public boolean hasCooldownOnGroup(Key cooldownGroup) {
+		return player.getCooldown(cooldownGroup) > 0;
+	}
+
+	@Override
 	public void setCooldown(StackHandle stack, int cooldownTicks) {
 		player.setCooldown(((StackHandlePaper)stack).handle(), cooldownTicks);
+	}
+
+	@Override
+	public void setCooldownOnGroup(Key cooldownGroup, int cooldownTicks) {
+		player.setCooldown(cooldownGroup, cooldownTicks);
 	}
 
 	@Override

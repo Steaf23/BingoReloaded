@@ -8,6 +8,7 @@ import io.papermc.paper.datacomponent.item.DyedItemColor;
 import io.papermc.paper.datacomponent.item.ItemEnchantments;
 import io.papermc.paper.datacomponent.item.ItemLore;
 import io.papermc.paper.datacomponent.item.TooltipDisplay;
+import io.papermc.paper.datacomponent.item.UseCooldown;
 import io.papermc.paper.registry.RegistryAccess;
 import io.papermc.paper.registry.RegistryKey;
 import net.kyori.adventure.key.Key;
@@ -80,6 +81,8 @@ public class StackBuilderPaper implements StackBuilder {
 		if (template.getLeatherColor() != null) {
 			stack.setData(DataComponentTypes.DYED_COLOR, DyedItemColor.dyedItemColor(Color.fromRGB(template.getLeatherColor().value())));
 		}
+
+		stack.setData(DataComponentTypes.USE_COOLDOWN, UseCooldown.useCooldown(1).cooldownGroup(template.getCooldownGroup()));
 
 		//FIXME: REFACTOR reimplement custom model data
 //		stackMeta.setCustomModelData(customModelData);

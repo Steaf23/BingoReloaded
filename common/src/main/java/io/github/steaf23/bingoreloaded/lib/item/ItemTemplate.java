@@ -58,6 +58,7 @@ public class ItemTemplate
     private ItemTemplate texturedVariant = null;
     private TextColor leatherColor = null;
     private TagDataStorage extraData;
+	private @Nullable Key cooldownGroup;
 
     public ItemTemplate(ItemType type) {
         this.type = type;
@@ -232,6 +233,15 @@ public class ItemTemplate
     }
 
 
+	public ItemTemplate cooldownGroup(Key cooldownGroup) {
+		this.cooldownGroup = cooldownGroup;
+		return this;
+	}
+
+	public @Nullable Key getCooldownGroup() {
+		return cooldownGroup;
+	}
+
     /**
      * All added enchantments get added as unsafe enchantments to the built stack.
      */
@@ -324,6 +334,7 @@ public class ItemTemplate
         copy.currentDamage = currentDamage;
         copy.customModelData = customModelData;
         copy.texturedVariant = texturedVariant == null ? null : texturedVariant.copy();
+		copy.cooldownGroup = cooldownGroup;
         return copy;
     }
 
