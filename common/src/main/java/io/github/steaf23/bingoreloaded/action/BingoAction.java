@@ -15,6 +15,7 @@ import io.github.steaf23.bingoreloaded.lib.action.ActionTree;
 import io.github.steaf23.bingoreloaded.lib.api.ActionUser;
 import io.github.steaf23.bingoreloaded.lib.api.PlatformResolver;
 import io.github.steaf23.bingoreloaded.lib.api.ServerSoftware;
+import io.github.steaf23.bingoreloaded.lib.api.WorldPosition;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.util.ComponentUtils;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
@@ -30,7 +31,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.BiFunction;
-import java.util.stream.Collectors;
 
 public class BingoAction extends ActionTree {
 
@@ -172,14 +172,40 @@ public class BingoAction extends ActionTree {
 
 
 		this.addSessionSubAction("start", List.of("bingo.admin"), (args, session) -> {
-			if (args.length > 1) {
+			if (args.length == 0) {
+				session.startGame();
+				return ActionResult.SUCCESS;
+			} else if (args.length == 1 && args[0].equals("here")) {
+				if (!(getLastUser() instanceof PlayerHandle player)) {
+					return ActionResult.INCORRECT_USE;
+				}
+
+				WorldPosition pos = player.position();
+				session.startGame(pos);
+				return ActionResult.SUCCESS;
+			} else if (args.length == 2 && args[0].equals("here")) {
+				if (!(getLastUser() instanceof PlayerHandle player)) {
+					return ActionResult.INCORRECT_USE;
+				}
+
 				int seed = Integer.parseInt(args[1]);
 				session.settingsBuilder.cardSeed(seed);
+
+				WorldPosition pos = player.position();
+				session.startGame(pos);
+				return ActionResult.SUCCESS;
+			} else if (args.length == 1) {
+
+				int seed = Integer.parseInt(args[0]);
+				session.settingsBuilder.cardSeed(seed);
+
+				session.startGame();
+				return ActionResult.SUCCESS;
 			}
 
-			session.startGame();
-			return ActionResult.SUCCESS;
-		});
+			return ActionResult.INCORRECT_USE;
+		})
+				.usage("[here] [<seed>]");
 
 
 		this.addSessionSubAction("end", List.of("bingo.admin"), (args, session) -> {
@@ -474,8 +500,8 @@ public class BingoAction extends ActionTree {
 		return null;
 	}
 
-	public void addSessionSubAction(String name, List<String> permissions, BiFunction<String[], BingoSession, ActionResult> action) {
-		addSubAction(new ActionTree(name, permissions, (args) -> {
+	public ActionTree addSessionSubAction(String name, List<String> permissions, BiFunction<String[], BingoSession, ActionResult> action) {
+		return addSubAction(new ActionTree(name, permissions, (args) -> {
 			BingoSession session = getSessionFromUser(getLastUser());
 			if (session == null) {
 				return ActionResult.IGNORED;

@@ -103,7 +103,12 @@ public class BingoSession implements ForwardingAudience
         return phase;
     }
 
-    public void startGame() {
+
+	public void startGame() {
+		startGame(null);
+	}
+
+    public void startGame(@Nullable WorldPosition atPosition) {
         if (!(phase instanceof PregameLobby lobby)) {
             ConsoleMessenger.error("Cannot start a game on this world if it is not in the lobby phase!");
             return;
@@ -130,7 +135,7 @@ public class BingoSession implements ForwardingAudience
 
         // First make sure the previous phase (PregameLobby) is ended.
         phase.end();
-        phase = new BingoGame(gameManager.getPlatform(), this, gameSettings == null ? settings : gameSettings.view(), config, this::onGameEnded);
+        phase = new BingoGame(gameManager.getPlatform(), this, gameSettings == null ? settings : gameSettings.view(), config, this::onGameEnded, atPosition);
         phase.setup();
     }
 

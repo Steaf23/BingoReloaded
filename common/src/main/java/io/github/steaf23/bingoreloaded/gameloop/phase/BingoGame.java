@@ -83,7 +83,9 @@ public class BingoGame implements GamePhase
 
     private final Runnable onGameEndedCallback;
 
-    public BingoGame(ServerSoftware platform, @NotNull BingoSession session, @NotNull BingoSettings settings, @NotNull BingoConfigurationData config, Runnable onGameEndedCallback) {
+	private final @Nullable WorldPosition startPosition;
+
+    public BingoGame(ServerSoftware platform, @NotNull BingoSession session, @NotNull BingoSettings settings, @NotNull BingoConfigurationData config, Runnable onGameEndedCallback, @Nullable WorldPosition atPosition) {
 		this.platform = platform;
 		this.session = session;
         this.config = config;
@@ -96,6 +98,8 @@ public class BingoGame implements GamePhase
 
 		this.respawnManager = new PlayerRespawnManager(platform, config.getOptionValue(BingoOptions.TELEPORT_AFTER_DEATH_PERIOD));
         this.playerSpawnPoints = new HashMap<>();
+
+		this.startPosition = atPosition;
     }
 
     private void start() {
@@ -374,7 +378,22 @@ public class BingoGame implements GamePhase
 
         // Platform should at least last as long as the starting countdown time.
         int platformLifetime = Math.max(config.getOptionValue(BingoOptions.STARTING_COUNTDOWN_TIME), Math.max(0, gracePeriod - 5)) * BingoReloaded.ONE_SECOND;
-        switch (config.getOptionValue(BingoOptions.PLAYER_TELEPORT_STRATEGY)) {
+        if (startPosition != null) {
+
+			WorldPosition spawnLocation = startPosition.clone().setY(BlockHelper.getHighestBlockYAtPos(startPosition));
+			if (!getTeamManager().getParticipants().isEmpty()) {
+				spawnPlatform(spawnLocation, 5, true);
+
+				platform.runTask(platformLifetime, task ->
+						BingoGame.removePlatform(spawnLocation, 5));
+			}
+
+			Set<BingoParticipant> players = getTeamManager().getParticipants();
+			players.forEach(p -> teleportPlayerToStart(p, spawnLocation, 5));
+			return;
+		}
+
+		switch (config.getOptionValue(BingoOptions.PLAYER_TELEPORT_STRATEGY)) {
             case ALONE -> {
                 for (BingoParticipant p : getTeamManager().getParticipants()) {
                     WorldPosition platformLocation = getRandomSpawnLocation(world);
