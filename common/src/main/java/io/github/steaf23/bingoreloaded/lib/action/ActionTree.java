@@ -18,7 +18,7 @@ public class ActionTree
     protected String usage;
     protected Function<String[], List<String>> tabCompletionForArgs;
 
-    private ActionUser lastUser = null;
+    protected ActionUser lastUser = null;
 
     public ActionTree(String name, List<String> permissionWhitelist, Function<String[], ActionResult> action) {
         this.subActions = new ArrayList<>();
@@ -42,7 +42,7 @@ public class ActionTree
         return this;
     }
 
-    public ActionTree addSubAction(ActionTree subAction) {
+	public ActionTree addSubAction(ActionTree subAction) {
         subActions.add(subAction);
         return this;
     }

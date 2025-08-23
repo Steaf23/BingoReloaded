@@ -4,6 +4,7 @@ import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import io.github.steaf23.bingoreloaded.lib.util.PDCHelper;
 import io.papermc.paper.datacomponent.DataComponentTypes;
+import io.papermc.paper.datacomponent.item.CustomModelData;
 import io.papermc.paper.datacomponent.item.DyedItemColor;
 import io.papermc.paper.datacomponent.item.ItemEnchantments;
 import io.papermc.paper.datacomponent.item.ItemLore;
@@ -84,8 +85,7 @@ public class StackBuilderPaper implements StackBuilder {
 
 		stack.setData(DataComponentTypes.USE_COOLDOWN, UseCooldown.useCooldown(1).cooldownGroup(template.getCooldownGroup()));
 
-		//FIXME: REFACTOR reimplement custom model data
-//		stackMeta.setCustomModelData(customModelData);
+		stack.setData(DataComponentTypes.CUSTOM_MODEL_DATA, CustomModelData.customModelData().addString(template.getCustomModelData()).build());
 
 		if (template.getCompareKey() != null) {
 			ItemMeta meta = stack.getItemMeta();

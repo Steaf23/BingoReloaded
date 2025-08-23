@@ -203,7 +203,7 @@ public class TexturedCardMenu implements InventoryMenu, CardMenu
         ItemTemplate item = tasks.get(taskIndex).toItem(displayInfo);
         if (tasks.get(taskIndex).isCompleted()) {
             item.setItemType(ItemTypePaper.of(Material.POISONOUS_POTATO));
-            item.setCustomModelData(1012);
+            item.setCustomModelData("1012");
             item.setGlowing(false);
         }
         return item;
@@ -214,7 +214,7 @@ public class TexturedCardMenu implements InventoryMenu, CardMenu
         this.info = DUMMY_ITEM.copyToSlot(0)
                 .setName(name.decorate(TextDecoration.BOLD).color(displayInfo.mode().getColor()))
                 .setLore(MultilineComponent.from(NamedTextColor.YELLOW, TextDecoration.ITALIC, description))
-                .setCustomModelData(1011);
+                .setCustomModelData("1011");
     }
 
 	public void addAction(@NotNull MenuAction action) {

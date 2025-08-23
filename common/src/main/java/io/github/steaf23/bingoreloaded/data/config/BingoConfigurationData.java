@@ -38,6 +38,7 @@ public class BingoConfigurationData
         setOptionValueForce(BingoOptions.LANGUAGE, name -> config.getString(name, "en_us.yml"));
         setOptionValueForce(BingoOptions.SAVE_PLAYER_STATISTICS, name -> config.getBoolean(name, false));
         setOptionValueForce(BingoOptions.SEND_COMMAND_AFTER_GAME_ENDS, name -> config.getString(name, ""));
+        setOptionValueForce(BingoOptions.SEND_COMMAND_BEFORE_GAME_STARTS, name -> config.getString(name, ""));
         setOptionValueForce(BingoOptions.VOTE_USING_COMMANDS_ONLY, name -> config.getBoolean(name, false));
         setOptionValueForce(BingoOptions.SELECT_TEAMS_USING_COMMANDS_ONLY, name -> config.getBoolean(name, false));
         setOptionValueForce(BingoOptions.DISABLE_SCOREBOARD_SIDEBAR, name -> config.getBoolean(name, false));

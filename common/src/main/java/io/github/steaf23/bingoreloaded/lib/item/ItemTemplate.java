@@ -54,7 +54,7 @@ public class ItemTemplate
     private Integer maxDamage = null;
     private Integer maxStackSize = null;
     private int currentDamage = 0;
-    private int customModelData = 0;
+    private String customModelData = "";
     private ItemTemplate texturedVariant = null;
     private TextColor leatherColor = null;
     private TagDataStorage extraData;
@@ -295,10 +295,14 @@ public class ItemTemplate
         return this;
     }
 
-    public ItemTemplate setCustomModelData(int data) {
+    public ItemTemplate setCustomModelData(String data) {
         this.customModelData = data;
         return this;
     }
+
+	public String getCustomModelData() {
+		return customModelData;
+	}
 
     /**
      * Sets the ItemTemplate to build instead of this template when PlayerDisplay.useCustomTextures() returns true.

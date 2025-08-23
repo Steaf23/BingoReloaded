@@ -49,6 +49,7 @@ public class DeferredAction extends ActionTree
 
     @Override
     public ActionResult execute(ActionUser user, String... arguments) {
+		lastUser = user;
         // A substitute can't exist when there is nothing to defer it to (this is a developer mistake)
         if (subActions.isEmpty()) {
             ConsoleMessenger.bug("Wrongly formatted action by plugin {this is a developer mistake!}", this);

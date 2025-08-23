@@ -31,6 +31,7 @@ public class BingoOptions
             .withEditUpdate(ConfigurationOption.EditUpdateTime.AFTER_SERVER_RESTART);
     public static final ConfigurationOption<Boolean> SAVE_PLAYER_STATISTICS = new BooleanOption("savePlayerStatistics");
     public static final ConfigurationOption<String> SEND_COMMAND_AFTER_GAME_ENDS = new StringOption("sendCommandAfterGameEnds");
+    public static final ConfigurationOption<String> SEND_COMMAND_BEFORE_GAME_STARTS = new StringOption("sendCommandBeforeGameStarts");
     public static final ConfigurationOption<Boolean> VOTE_USING_COMMANDS_ONLY = new BooleanOption("voteUsingCommandsOnly");
     public static final ConfigurationOption<Boolean> SELECT_TEAMS_USING_COMMANDS_ONLY = new BooleanOption("selectTeamsUsingCommandsOnly");
     public static final ConfigurationOption<Boolean> DISABLE_SCOREBOARD_SIDEBAR = new BooleanOption("disableScoreboardSidebar")

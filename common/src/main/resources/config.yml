@@ -28,8 +28,11 @@ language: en_us.yml
 #   (Turning this option on later will not retroactively fill stats for games played with stats off).
 savePlayerStatistics: false # true or false
 
-# If this value is not an empty string it will be sent as a command to the console.
+# If this value is not an empty string it will be sent as a command to the console, right after the game ends.
 sendCommandAfterGameEnds: '' # command to send
+
+# If this value is not an empty string it will be sent as a command to the console, right before the game starts.
+sendCommandBeforeGameStarts: '' # command to send
 
 # If true this will prevent the player from receiving the voting item, allowing custom implementations using the available autobingo command.
 # Note: This will also disallow the use of the /bingo vote command such that only /autobingo <world_name> vote can be used to vote on behalf of a player.

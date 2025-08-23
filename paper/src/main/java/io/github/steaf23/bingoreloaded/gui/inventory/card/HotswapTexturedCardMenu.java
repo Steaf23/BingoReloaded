@@ -105,7 +105,7 @@ public class HotswapTexturedCardMenu extends TexturedCardMenu implements Hotswap
         ItemTemplate item = taskHolders.get(taskIndex).convertToItem(displayInfo());
         if (tasks.get(taskIndex).isCompleted()) {
             item.setItemType(ItemTypePaper.of(Material.POISONOUS_POTATO));
-            item.setCustomModelData(1012);
+            item.setCustomModelData("1012");
             item.setGlowing(false);
         }
         return item;

@@ -123,6 +123,11 @@ public class BingoGame implements GamePhase
             session.endGame();
             return;
         }
+		String commandBeforeGame = config.getOptionValue(BingoOptions.SEND_COMMAND_BEFORE_GAME_STARTS);
+		if (!commandBeforeGame.isEmpty()) {
+			platform.sendConsoleCommand(commandBeforeGame);
+		}
+
         world.setStorming(false);
         world.setTimeOfDay(1000);
 

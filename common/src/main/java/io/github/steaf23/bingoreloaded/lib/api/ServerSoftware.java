@@ -64,9 +64,6 @@ public interface ServerSoftware {
 
 	boolean areAdvancementsDisabled();
 
-//	void registerListener(EventListener listener);
-//	void unregisterListener(EventListener listener);
-
 	ExtensionTask runTaskTimer(long repeatTicks, long startDelayTicks, Consumer<ExtensionTask> consumer);
 	ExtensionTask runTask(Consumer<ExtensionTask> consumer);
 	ExtensionTask runTask(long startDelayTicks, Consumer<ExtensionTask> consumer);
