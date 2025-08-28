@@ -85,7 +85,11 @@ public class BingoConfigAction extends ActionTree {
             return ActionResult.IGNORED; // logically this is incorrect_use but technically the command was not used incorrectly.
         }
 
-        String newValue = configuration.getOptionValue(option).toString();
+		var val = configuration.getOptionValue(option);
+        String newValue = "null";
+		if (val != null) {
+			newValue = val.toString();
+		}
         BingoPlayerSender.sendMessage(ComponentUtils.MINI_BUILDER.deserialize("Value of option <yellow>" + optionKey + "</yellow> has been set to: ")
                 .append(Component.text(newValue).color(getColorOfOptionValue(newValue))), sender);
         switch (option.getEditUpdateTime()) {
@@ -130,6 +134,9 @@ public class BingoConfigAction extends ActionTree {
         else if (value.equals("true")) {
             result = NamedTextColor.GREEN;
         }
+		else if (value.equals("null")) {
+			result = NamedTextColor.DARK_PURPLE;
+		}
 
         return result;
     }

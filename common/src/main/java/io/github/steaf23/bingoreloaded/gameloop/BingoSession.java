@@ -183,7 +183,12 @@ public class BingoSession implements ForwardingAudience
     }
 
     public void onGameEnded() {
-        phase = new PostGamePhase(this, config.getOptionValue(BingoOptions.GAME_RESTART_TIME));
+		PlayerGamemode mode = config.getOptionValue(BingoOptions.PLAYER_GAMEMODE_AFTER_GAME);
+		if (mode != null) {
+			getPlayersInWorld().forEach(p -> p.setGamemode(mode));
+		}
+
+		phase = new PostGamePhase(this, config.getOptionValue(BingoOptions.GAME_RESTART_TIME));
         phase.setup();
     }
 

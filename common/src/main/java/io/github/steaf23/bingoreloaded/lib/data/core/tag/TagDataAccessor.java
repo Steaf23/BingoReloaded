@@ -24,10 +24,10 @@ public class TagDataAccessor extends TagDataStorage implements DataAccessor
     private final String filepath;
     private final boolean internalOnly;
 
-    public TagDataAccessor(ServerSoftware platform, String filepath, boolean internalOnly) {
+    public TagDataAccessor(ServerSoftware platform, String filepath, boolean internalReadOnly) {
         this.platform = platform;
         this.filepath = filepath;
-        this.internalOnly = internalOnly;
+        this.internalOnly = internalReadOnly;
     }
 
     @Override

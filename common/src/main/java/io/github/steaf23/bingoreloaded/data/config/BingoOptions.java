@@ -89,6 +89,12 @@ public class BingoOptions
     public static final ConfigurationOption<BingoConfigurationData.HotswapConfig> HOTSWAP_CONFIG = new NonSerializableOption<>("hotswapMode");
     public static final ConfigurationOption<Boolean> ALLOW_VIEWING_ALL_CARDS = new BooleanOption("allowViewingAllCards")
             .withEditUpdate(ConfigurationOption.EditUpdateTime.AFTER_GAME);
+	public static final ConfigurationOption<String> SEND_COMMAND_AFTER_GAME_ENDS = new StringOptionAllowEmpty("sendCommandAfterGameEnds")
+			.makeNullable();
+	public static final ConfigurationOption<String> SEND_COMMAND_BEFORE_GAME_STARTS = new StringOptionAllowEmpty("sendCommandBeforeGameStarts")
+			.makeNullable();
+	public static final ConfigurationOption<PlayerGamemode> PLAYER_GAMEMODE_AFTER_GAME = new EnumOption<>("playerGamemodeAfterGame", PlayerGamemode.class, PlayerGamemode.SURVIVAL)
+			.makeNullable();
 
     // Player Data
     public static final ConfigurationOption<Boolean> SAVE_PLAYER_INFORMATION = new BooleanOption("savePlayerInformation");

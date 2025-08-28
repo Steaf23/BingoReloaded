@@ -1,4 +1,4 @@
-version: 3.1.0
+version: 3.3.0
 # ==========================================================================
 #    General Configuration Options
 # ==========================================================================
@@ -33,6 +33,11 @@ sendCommandAfterGameEnds: '' # command to send
 
 # If this value is not an empty string it will be sent as a command to the console, right before the game starts.
 sendCommandBeforeGameStarts: '' # command to send
+
+# Determines what gamemode to set for all participants and spectators after the game ends, leave empty to not change gamemodes.
+# Can be one of:
+# SURVIVAL, CREATIVE, SPECTATOR, ADVENTURE
+playerGamemodeAfterGame: SURVIVAL
 
 # If true this will prevent the player from receiving the voting item, allowing custom implementations using the available autobingo command.
 # Note: This will also disallow the use of the /bingo vote command such that only /autobingo <world_name> vote can be used to vote on behalf of a player.

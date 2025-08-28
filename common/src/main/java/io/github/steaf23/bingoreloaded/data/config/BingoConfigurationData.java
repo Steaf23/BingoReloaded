@@ -1,8 +1,10 @@
 package io.github.steaf23.bingoreloaded.data.config;
 
+import io.github.steaf23.bingoreloaded.lib.api.PlayerGamemode;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataAccessor;
 import io.github.steaf23.bingoreloaded.lib.data.core.tag.TagDataType;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
+import io.github.steaf23.bingoreloaded.lib.util.EnumHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -39,6 +41,7 @@ public class BingoConfigurationData
         setOptionValueForce(BingoOptions.SAVE_PLAYER_STATISTICS, name -> config.getBoolean(name, false));
         setOptionValueForce(BingoOptions.SEND_COMMAND_AFTER_GAME_ENDS, name -> config.getString(name, ""));
         setOptionValueForce(BingoOptions.SEND_COMMAND_BEFORE_GAME_STARTS, name -> config.getString(name, ""));
+		setOptionValueForce(BingoOptions.PLAYER_GAMEMODE_AFTER_GAME, name -> EnumHelper.valueOfOrNull(PlayerGamemode.class, config.getString(name, null)));
         setOptionValueForce(BingoOptions.VOTE_USING_COMMANDS_ONLY, name -> config.getBoolean(name, false));
         setOptionValueForce(BingoOptions.SELECT_TEAMS_USING_COMMANDS_ONLY, name -> config.getBoolean(name, false));
         setOptionValueForce(BingoOptions.DISABLE_SCOREBOARD_SIDEBAR, name -> config.getBoolean(name, false));
@@ -103,7 +106,7 @@ public class BingoConfigurationData
         config.load();
     }
 
-    public <DataType> DataType getOptionValue(@Nullable ConfigurationOption<DataType> option) {
+    public <DataType> @Nullable DataType getOptionValue(@Nullable ConfigurationOption<DataType> option) {
         if (!options.containsKey(option))
         {
             if (option != null)
@@ -140,9 +143,14 @@ public class BingoConfigurationData
             option.toDataStorage(config, val);
             config.saveChanges();
             return true;
+        } else if (option.isNullable()) {
+			setOptionValue(option, null);
+			option.toDataStorage(config, null);
+			config.saveChanges();
+			return true;
         } else {
-            return false;
-        }
+			return false;
+		}
     }
 
     public <T> void setOptionValueForce(ConfigurationOption<T> option, Function<String, T> defaultValue) {

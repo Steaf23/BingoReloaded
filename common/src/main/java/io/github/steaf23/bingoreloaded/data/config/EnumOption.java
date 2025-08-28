@@ -11,23 +11,26 @@ public class EnumOption<T extends Enum<T>> extends ConfigurationOption<T>
     private final T defaultValue;
     private final Class<T> enumClass;
 
-    public EnumOption(String configName, Class<T> enumClass, T defaultValue) {
+    public EnumOption(String configName, Class<T> enumClass, @Nullable T defaultValue) {
         super(configName);
         this.enumClass = enumClass;
         this.defaultValue = defaultValue;
     }
 
     @Override
-    public @Nullable Optional<T> fromString(String value) {
+    public Optional<T> fromString(String value) {
         try {
             return Optional.of(Enum.valueOf(enumClass, value.toUpperCase(Locale.ROOT)));
         } catch (IllegalArgumentException e) {
-            return Optional.of(defaultValue);
+			if (isNullable()) {
+				return Optional.empty();
+			}
+            return Optional.ofNullable(defaultValue);
         }
     }
 
     @Override
     public void toDataStorage(DataStorage storage, T value) {
-        storage.setString(getConfigName(), value.name());
+        storage.setString(getConfigName(), value != null ? value.name() : "");
     }
 }
