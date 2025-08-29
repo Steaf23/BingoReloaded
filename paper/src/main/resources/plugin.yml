@@ -4,7 +4,7 @@ author: Steven
 main: io.github.steaf23.bingoreloaded.BingoReloadedPaper
 api-version: 1.21.7
 
-softdepend: [PlaceholderAPI]
+softdepend: [PlaceholderAPI, MultiWorld]
 depend: [packetevents]
 
 permissions:

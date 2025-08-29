@@ -119,6 +119,9 @@ public class BingoReloadedPaper extends JavaPlugin implements BingoReloadedRunti
 
 		this.bingo = new BingoReloaded(this);
 
+		platform.saveResource("bingoreloaded.zip", true);
+		platform.saveResource("bingoreloaded_lite.zip", true);
+
 		bingo.load();
 	}
 

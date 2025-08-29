@@ -1,6 +1,7 @@
 package io.github.steaf23.bingoreloaded.action;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
+import io.github.steaf23.bingoreloaded.data.BingoLobbyData;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.BingoStatData;
 import io.github.steaf23.bingoreloaded.data.CustomKitData;
@@ -37,12 +38,14 @@ public class BingoAction extends ActionTree {
 	private final BingoConfigurationData config;
 	private final GameManager gameManager;
 	private final BingoReloaded bingo;
+	private final BingoLobbyData lobbyData;
 
 	public BingoAction(BingoReloaded bingo, BingoConfigurationData config, GameManager gameManager) {
 		super("bingo", List.of("bingo.player"));
 		this.config = config;
 		this.bingo = bingo;
 		this.gameManager = gameManager;
+		this.lobbyData = new BingoLobbyData();
 
 		setAction((action) -> {
 			BingoSession session = getSessionFromUser(getLastUser());
@@ -330,6 +333,32 @@ public class BingoAction extends ActionTree {
 			});
 			return ActionResult.SUCCESS;
 		});
+
+		ActionTree createLobbyAction = new ActionTree("create", (args) -> {
+			if (!(getLastUser() instanceof PlayerHandle player)) {
+				return ActionResult.IGNORED;
+			}
+
+			WorldPosition pos = player.position();
+			gameManager.getLobbyData().create(pos);
+			BingoPlayerSender.sendMessage(ComponentUtils.MINI_BUILDER.deserialize("<green>Created a lobby spawn point at this position.\nPlayers can be teleported here using the option <dark_green>teleportToLobbyAfterGame</dark_green>.</green>"), player);
+
+			return ActionResult.SUCCESS;
+		});
+
+		ActionTree removeLobbyAction = new ActionTree("remove", (args) -> {
+			if (!gameManager.getLobbyData().isEnabled()) {
+				BingoPlayerSender.sendMessage(ComponentUtils.MINI_BUILDER.deserialize("<red>A lobby has not been created yet.</red>\n<yellow>Tip: </yellow><italic>Use <aqua>/bingo lobby create</aqua> to create a lobby spawn point at your current position.</italic>"), getLastUser());
+				return ActionResult.IGNORED;
+			}
+			gameManager.getLobbyData().remove();
+			BingoPlayerSender.sendMessage(ComponentUtils.MINI_BUILDER.deserialize("<green>Removed the created lobby.</green>\n<yellow>Tip: </yellow><italic>Use <aqua>/bingo lobby create</aqua> to create a lobby spawn point at your current position.</italic>"), getLastUser());
+			return ActionResult.SUCCESS;
+		});
+
+		this.addSubAction(new ActionTree("lobby", List.of("bingo.admin"))
+				.addSubAction(createLobbyAction)
+				.addSubAction(removeLobbyAction));
 	}
 
 	public void addPlayerKit(String slot, String kitName, PlayerHandle fromPlayerInventory) {

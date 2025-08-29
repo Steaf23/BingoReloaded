@@ -1,7 +1,7 @@
 package io.github.steaf23.bingoreloaded.data.config;
 
 import io.github.steaf23.bingoreloaded.lib.data.core.DataStorage;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,16 +25,15 @@ public abstract class ConfigurationOption<Data>
         }
     }
 
-    private final String configName;
+    private final @NotNull String configName;
     private EditUpdateTime editUpdate = EditUpdateTime.IMMEDIATE;
     private boolean locked = false;
-	private boolean nullable = false;
 
-    public ConfigurationOption(String configName) {
+    public ConfigurationOption(@NotNull String configName) {
         this.configName = configName;
     }
 
-    public String getConfigName() {
+    public @NotNull String getConfigName() {
         return configName;
     }
 
@@ -52,11 +51,6 @@ public abstract class ConfigurationOption<Data>
         return this;
     }
 
-	public ConfigurationOption<Data> makeNullable() {
-		nullable = true;
-		return this;
-	}
-
     public boolean canBeEdited() {
         return getEditUpdateTime() != EditUpdateTime.IMPOSSIBLE && !isLocked();
     }
@@ -65,11 +59,7 @@ public abstract class ConfigurationOption<Data>
         return locked;
     }
 
-	public boolean isNullable() {
-		return nullable;
-	}
-
     abstract public Optional<Data> fromString(String value);
 
-    abstract public void toDataStorage(DataStorage storage, @Nullable Data value);
+    abstract public void toDataStorage(DataStorage storage, @NotNull Data value);
 }

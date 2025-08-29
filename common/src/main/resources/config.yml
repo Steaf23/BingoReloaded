@@ -34,9 +34,9 @@ sendCommandAfterGameEnds: '' # command to send
 # If this value is not an empty string it will be sent as a command to the console, right before the game starts.
 sendCommandBeforeGameStarts: '' # command to send
 
-# Determines what gamemode to set for all participants and spectators after the game ends, leave empty to not change gamemodes.
+# Determines what gamemode to set for all participants and spectators after the game ends, use the value NONE to not change gamemodes.
 # Can be one of:
-# SURVIVAL, CREATIVE, SPECTATOR, ADVENTURE
+# SURVIVAL, CREATIVE, SPECTATOR, ADVENTURE, NONE
 playerGamemodeAfterGame: SURVIVAL
 
 # If true this will prevent the player from receiving the voting item, allowing custom implementations using the available autobingo command.
@@ -94,6 +94,16 @@ useVoteSystem: true
 
 # Prevent players from breaking or placing blocks when the game is not running
 preventPlayerGriefing: true
+
+# Teleport all players to the lobby set using /bingo lobby. Does nothing if no lobby is set in this way.
+# If the delay is bigger than gameRestartTime, that value will be used as the delay instead.
+# Set to 0 to spawn everyone at the exact spawn point set.
+# The spread determines how far away from the lobby a player can teleport, the target location being a random point in the area.
+# Height is not affected by the spread.
+teleportToLobbyAfterGame:
+  enabled: true #true or false
+  delay: 10.0 # teleportation delay in seconds
+  spread: 5 # spread in amount of blocks from the center. 0 means all players will teleport to the same exact position.
 
 # Use this to configure what options can be voted on.
 voteList:

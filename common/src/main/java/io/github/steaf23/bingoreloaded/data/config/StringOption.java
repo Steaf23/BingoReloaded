@@ -1,6 +1,7 @@
 package io.github.steaf23.bingoreloaded.data.config;
 
 import io.github.steaf23.bingoreloaded.lib.data.core.DataStorage;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
@@ -19,7 +20,7 @@ public class StringOption extends ConfigurationOption<String>
     }
 
     @Override
-    public void toDataStorage(DataStorage storage, String value) {
+    public void toDataStorage(DataStorage storage, @NotNull String value) {
         storage.setString(getConfigName(), value);
     }
 }

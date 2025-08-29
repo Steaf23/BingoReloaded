@@ -35,6 +35,10 @@ public interface BlockHelper {
 	}
 
 	static WorldPosition getRandomPosWithinRange(WorldPosition center, int rangeX, int rangeZ) {
+		if (rangeX == 0 && rangeZ == 0) {
+			return center.clone();
+		}
+
 		Position pos = Position.random()
 				.multiply(rangeX * 2, 1.0D, rangeZ * 2)
 				.add(new Position(-rangeX + 0.5D, 1.0D, -rangeZ + 0.5D));

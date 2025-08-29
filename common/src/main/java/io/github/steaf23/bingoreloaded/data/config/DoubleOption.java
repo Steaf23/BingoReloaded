@@ -1,6 +1,7 @@
 package io.github.steaf23.bingoreloaded.data.config;
 
 import io.github.steaf23.bingoreloaded.lib.data.core.DataStorage;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
@@ -21,7 +22,7 @@ public class DoubleOption extends ConfigurationOption<Double>
     }
 
     @Override
-    public void toDataStorage(DataStorage storage, Double value) {
+    public void toDataStorage(DataStorage storage, @NotNull Double value) {
         storage.setDouble(getConfigName(), value);
     }
 }

@@ -18,7 +18,7 @@ import java.util.Collection;
 import java.util.UUID;
 import java.util.function.Consumer;
 
-//FIXME: REFACTOR Split into several classes (resources, worlds, resolvers, etc..)
+//FIXME: Split into several classes (resources, worlds, resolvers, etc..) ?
 //
 
 /**
@@ -26,8 +26,19 @@ import java.util.function.Consumer;
  */
 public interface ServerSoftware {
 
-	InputStream getResource(String filePath);
+	/**
+	 * Should be called to get a resource directly embedded in the jar.
+	 */
+	@Nullable InputStream getResource(String filePath);
+
+	/**
+	 * Should be used to save a copy resource that's embedded in the jar into the data folder.
+	 */
 	void saveResource(String name, boolean replace);
+
+	/**
+	 * @return the folder where data and special config stuff is saved that is not contained in the default config file.
+	 */
 	File getDataFolder();
 
 	Collection<? extends PlayerHandle> getOnlinePlayers();
@@ -43,7 +54,6 @@ public interface ServerSoftware {
 	StatisticType resolveStatisticType(Key key);
 	PotionEffectType resolvePotionEffectType(Key key);
 
-	@Subst("")
 	ExtensionInfo getExtensionInfo();
 
 	ComponentLogger getComponentLogger();

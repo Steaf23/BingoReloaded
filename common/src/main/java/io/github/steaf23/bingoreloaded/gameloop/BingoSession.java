@@ -4,6 +4,8 @@ import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.api.BingoEvents;
 import io.github.steaf23.bingoreloaded.api.TeamDisplay;
 import io.github.steaf23.bingoreloaded.data.BingoCardData;
+import io.github.steaf23.bingoreloaded.data.BingoLobby;
+import io.github.steaf23.bingoreloaded.data.BingoLobbyData;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.data.config.BingoOptions;
@@ -16,6 +18,7 @@ import io.github.steaf23.bingoreloaded.gameloop.vote.VoteCategory;
 import io.github.steaf23.bingoreloaded.gameloop.vote.VoteTicket;
 import io.github.steaf23.bingoreloaded.lib.api.DimensionType;
 import io.github.steaf23.bingoreloaded.lib.api.PlatformResolver;
+import io.github.steaf23.bingoreloaded.lib.api.PlayerGamemode;
 import io.github.steaf23.bingoreloaded.lib.api.WorldHandle;
 import io.github.steaf23.bingoreloaded.lib.api.WorldPosition;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
@@ -24,6 +27,7 @@ import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.event.EventResult;
 import io.github.steaf23.bingoreloaded.lib.event.EventResults;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
+import io.github.steaf23.bingoreloaded.lib.world.BlockHelper;
 import io.github.steaf23.bingoreloaded.menu.BingoGameInfoMenu;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
@@ -183,12 +187,45 @@ public class BingoSession implements ForwardingAudience
     }
 
     public void onGameEnded() {
-		PlayerGamemode mode = config.getOptionValue(BingoOptions.PLAYER_GAMEMODE_AFTER_GAME);
+		int gameRestartTime = config.getOptionValue(BingoOptions.GAME_RESTART_TIME);
+
+		if (config.getOptionValue(BingoOptions.TELEPORT_TO_LOBBY_AFTER_GAME)) {
+			BingoLobby lobby = gameManager.getLobbyData().getCreatedLobby();
+			if (lobby != null) {
+				double delaySeconds = config.getOptionValue(BingoOptions.TELEPORT_TO_LOBBY_DELAY);
+				int spread = config.getOptionValue(BingoOptions.TELEPORT_TO_LOBBY_SPREAD);
+				delaySeconds = Math.min(delaySeconds, gameRestartTime);
+
+				if (delaySeconds > 0.0) {
+					gameManager.getPlatform().runTask((long) (delaySeconds * BingoReloaded.ONE_SECOND), t -> {
+						getPlayersInWorld().forEach(p -> {
+							WorldPosition pos = BlockHelper.getRandomPosWithinRange(lobby.spawnPosition(), spread, spread);
+							p.teleportAsync(pos);
+						});
+					});
+				} else {
+					getPlayersInWorld().forEach(p -> {
+						WorldPosition pos = BlockHelper.getRandomPosWithinRange(lobby.spawnPosition(), spread, spread);
+						p.teleportAsync(pos);
+					});
+				}
+			}
+		}
+
+		BingoOptions.ConfigGamemode gamemode = config.getOptionValue(BingoOptions.PLAYER_GAMEMODE_AFTER_GAME);
+
+		PlayerGamemode mode = switch (gamemode) {
+			case SURVIVAL -> PlayerGamemode.SURVIVAL;
+			case SPECTATOR -> PlayerGamemode.SPECTATOR;
+			case ADVENTURE -> PlayerGamemode.ADVENTURE;
+			case CREATIVE -> PlayerGamemode.CREATIVE;
+			default -> null;
+		};
 		if (mode != null) {
 			getPlayersInWorld().forEach(p -> p.setGamemode(mode));
 		}
 
-		phase = new PostGamePhase(this, config.getOptionValue(BingoOptions.GAME_RESTART_TIME));
+		phase = new PostGamePhase(this, gameRestartTime);
         phase.setup();
     }
 
@@ -200,6 +237,15 @@ public class BingoSession implements ForwardingAudience
     public void addPlayer(PlayerHandle player) {
         onPlayerJoinedSessionWorld(player);
 
+		// Teleport players always to the lobby if they haven't played before if the game is not running.
+		if (teamManager.getPlayerAsParticipant(player) == null || !isRunning()) {
+			BingoLobby lobby = gameManager.getLobbyData().getCreatedLobby();
+
+			int spread = config.getOptionValue(BingoOptions.TELEPORT_TO_LOBBY_SPREAD);
+			if (lobby != null) {
+				player.teleportAsync(BlockHelper.getRandomPosWithinRange(lobby.spawnPosition(), spread, spread));
+			}
+		}
         BingoReloaded.sendResourcePack(player);
     }
 

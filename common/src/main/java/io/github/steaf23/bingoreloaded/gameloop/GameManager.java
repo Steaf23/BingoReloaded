@@ -1,6 +1,7 @@
 package io.github.steaf23.bingoreloaded.gameloop;
 
 import io.github.steaf23.bingoreloaded.api.BingoEventListener;
+import io.github.steaf23.bingoreloaded.data.BingoLobbyData;
 import io.github.steaf23.bingoreloaded.data.PlayerSerializationData;
 import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.data.config.BingoOptions;
@@ -8,6 +9,7 @@ import io.github.steaf23.bingoreloaded.data.helper.SerializablePlayer;
 import io.github.steaf23.bingoreloaded.data.world.WorldData;
 import io.github.steaf23.bingoreloaded.data.world.WorldGroup;
 import io.github.steaf23.bingoreloaded.lib.api.BingoReloadedRuntime;
+import io.github.steaf23.bingoreloaded.lib.api.PlayerGamemode;
 import io.github.steaf23.bingoreloaded.lib.api.ServerSoftware;
 import io.github.steaf23.bingoreloaded.lib.api.WorldHandle;
 import io.github.steaf23.bingoreloaded.lib.api.WorldPosition;
@@ -25,6 +27,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public class GameManager {
 
@@ -36,12 +39,15 @@ public class GameManager {
 	private final PlayerSerializationData playerData;
 	private final BingoEventListener eventListener;
 	private final WorldData worldData;
+	private final BingoLobbyData lobbyData;
 
 	private boolean teleportingPlayer;
 
 	public GameManager(@NotNull BingoReloadedRuntime runtime, BingoConfigurationData config) {
 		this.runtime = runtime;
 		this.config = config;
+
+		this.lobbyData = new BingoLobbyData();
 
 		@Subst("gamemanager:none") String settingsName = config.getOptionValue(BingoOptions.CUSTOM_WORLD_GENERATION);
 		Key generationSettings = settingsName.equals("null") ? null : Key.key(settingsName);
@@ -324,5 +330,9 @@ public class GameManager {
 
 	public BingoEventListener eventListener() {
 		return eventListener;
+	}
+
+	public BingoLobbyData getLobbyData() {
+		return lobbyData;
 	}
 }

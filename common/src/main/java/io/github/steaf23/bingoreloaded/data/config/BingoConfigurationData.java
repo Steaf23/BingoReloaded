@@ -41,7 +41,7 @@ public class BingoConfigurationData
         setOptionValueForce(BingoOptions.SAVE_PLAYER_STATISTICS, name -> config.getBoolean(name, false));
         setOptionValueForce(BingoOptions.SEND_COMMAND_AFTER_GAME_ENDS, name -> config.getString(name, ""));
         setOptionValueForce(BingoOptions.SEND_COMMAND_BEFORE_GAME_STARTS, name -> config.getString(name, ""));
-		setOptionValueForce(BingoOptions.PLAYER_GAMEMODE_AFTER_GAME, name -> EnumHelper.valueOfOrNull(PlayerGamemode.class, config.getString(name, null)));
+		setOptionValueForce(BingoOptions.PLAYER_GAMEMODE_AFTER_GAME, name -> BingoOptions.ConfigGamemode.valueOf(config.getString(name, "SURVIVAL")));
         setOptionValueForce(BingoOptions.VOTE_USING_COMMANDS_ONLY, name -> config.getBoolean(name, false));
         setOptionValueForce(BingoOptions.SELECT_TEAMS_USING_COMMANDS_ONLY, name -> config.getBoolean(name, false));
         setOptionValueForce(BingoOptions.DISABLE_SCOREBOARD_SIDEBAR, name -> config.getBoolean(name, false));
@@ -60,6 +60,9 @@ public class BingoConfigurationData
         setOptionValueForce(BingoOptions.GAME_RESTART_TIME, name -> config.getInt(name, 20));
         setOptionValueForce(BingoOptions.USE_VOTE_SYSTEM, name -> config.getBoolean(name, true));
         setOptionValueForce(BingoOptions.PREVENT_PLAYER_GRIEFING, name -> config.getBoolean(name, true));
+		setOptionValueForce(BingoOptions.TELEPORT_TO_LOBBY_AFTER_GAME, name -> config.getBoolean(name, true));
+		setOptionValueForce(BingoOptions.TELEPORT_TO_LOBBY_DELAY, name -> config.getDouble(name, 10.0D));
+		setOptionValueForce(BingoOptions.TELEPORT_TO_LOBBY_SPREAD, name -> config.getInt(name, 5));
         setOptionValueForce(BingoOptions.VOTE_LIST, name -> new VoteList(
                 config.getList("voteList.gamemodes", TagDataType.STRING),
                 config.getList("voteList.kits", TagDataType.STRING),
@@ -106,7 +109,7 @@ public class BingoConfigurationData
         config.load();
     }
 
-    public <DataType> @Nullable DataType getOptionValue(@Nullable ConfigurationOption<DataType> option) {
+    public <DataType> @NotNull DataType getOptionValue(@Nullable ConfigurationOption<DataType> option) {
         if (!options.containsKey(option))
         {
             if (option != null)
@@ -118,7 +121,7 @@ public class BingoConfigurationData
                 ConsoleMessenger.bug("Config option does not exist, throwing error!", this);
             }
 
-            return null;
+			throw new IllegalArgumentException();
         }
         return (DataType) options.get(option);
     }
@@ -143,11 +146,6 @@ public class BingoConfigurationData
             option.toDataStorage(config, val);
             config.saveChanges();
             return true;
-        } else if (option.isNullable()) {
-			setOptionValue(option, null);
-			option.toDataStorage(config, null);
-			config.saveChanges();
-			return true;
         } else {
 			return false;
 		}

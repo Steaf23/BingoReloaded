@@ -1,5 +1,6 @@
 package io.github.steaf23.bingoreloaded;
 
+import io.github.steaf23.bingoreloaded.data.BingoLobby;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.BingoSound;
 import io.github.steaf23.bingoreloaded.data.BingoStatData;
@@ -10,6 +11,7 @@ import io.github.steaf23.bingoreloaded.data.TexturedMenuData;
 import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.data.config.BingoOptions;
 import io.github.steaf23.bingoreloaded.data.helper.SerializablePlayer;
+import io.github.steaf23.bingoreloaded.data.serializers.BingoLobbySerializer;
 import io.github.steaf23.bingoreloaded.data.serializers.BingoSettingsStorageSerializer;
 import io.github.steaf23.bingoreloaded.data.serializers.CustomKitStorageSerializer;
 import io.github.steaf23.bingoreloaded.data.serializers.DefaultKitStorageSerializer;
@@ -86,9 +88,6 @@ public class BingoReloaded implements Namespaced {
 	}
 
 	public void enable() {
-		platform.saveResource("bingoreloaded.zip", true);
-		platform.saveResource("bingoreloaded_lite.zip", true);
-
 		runtime.setupConfig();
 
 		DataStorageSerializerRegistry.addSerializer(new DefaultKitStorageSerializer(), DefaultKitData.Kit.class);
@@ -100,6 +99,7 @@ public class BingoReloaded implements Namespaced {
 		DataStorageSerializerRegistry.addSerializer(new StatisticSerializer(), StatisticHandle.class);
 		DataStorageSerializerRegistry.addSerializer(new ItemStorageSerializer(), SerializableItem.class);
 		DataStorageSerializerRegistry.addSerializer(new GameTaskSerializer(), GameTask.class);
+		DataStorageSerializerRegistry.addSerializer(new BingoLobbySerializer(), BingoLobby.class);
 
 		// Create data accessors
 		addDataAccessor(new TagDataAccessor(platform, "data/cards", false));
@@ -111,6 +111,7 @@ public class BingoReloaded implements Namespaced {
 		addDataAccessor(new TagDataAccessor(platform, "data/player_stats", false));
 		addDataAccessor(new TagDataAccessor(platform, "data/teams", false));
 		addDataAccessor(new TagDataAccessor(platform, "data/players", false));
+		addDataAccessor(new TagDataAccessor(platform, "data/lobby", false));
 		for (DataAccessor accessor : runtime.getDataToRegister()) { // platform specific data accessors
 			addDataAccessor(accessor);
 		}
@@ -250,6 +251,7 @@ public class BingoReloaded implements Namespaced {
 		getDataAccessor("data/player_stats").load();
 		getDataAccessor("data/teams").load();
 		getDataAccessor("data/players").load();
+		getDataAccessor("data/lobby").load();
 	}
 
 	public void reloadLanguage() {
