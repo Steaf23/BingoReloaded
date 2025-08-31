@@ -1,11 +1,11 @@
 package io.github.steaf23.bingoreloaded.lib.api;
 
 
-public class PotionEffectTypePaper implements PotionEffectType {
+public class StatusEffectTypePaper implements StatusEffectType {
 
 	private final org.bukkit.potion.PotionEffectType type;
 
-	public PotionEffectTypePaper(org.bukkit.potion.PotionEffectType type) {
+	public StatusEffectTypePaper(org.bukkit.potion.PotionEffectType type) {
 		this.type = type;
 	}
 
@@ -15,7 +15,7 @@ public class PotionEffectTypePaper implements PotionEffectType {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (!(obj instanceof PotionEffectTypePaper other)) {
+		if (!(obj instanceof StatusEffectTypePaper other)) {
 			return false;
 		}
 		return type.equals(other.type);

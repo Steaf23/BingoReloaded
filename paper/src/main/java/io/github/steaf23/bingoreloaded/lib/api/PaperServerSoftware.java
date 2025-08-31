@@ -107,7 +107,7 @@ public class PaperServerSoftware implements ServerSoftware {
 			return DimensionType.OVERWORLD;
 		} else if (key.value().equals("nether")) {
 			return DimensionType.NETHER;
-		} else if (key.value().equals("nether")) {
+		} else if (key.value().equals("the_end")) {
 			return DimensionType.THE_END;
 		}
 
@@ -138,8 +138,12 @@ public class PaperServerSoftware implements ServerSoftware {
 	}
 
 	@Override
-	public PotionEffectType resolvePotionEffectType(Key key) {
-		return new PotionEffectTypePaper(Registry.POTION_EFFECT_TYPE.get(key));
+	public StatusEffectType resolvePotionEffectType(Key key) {
+		org.bukkit.potion.PotionEffectType type = Registry.POTION_EFFECT_TYPE.get(key);
+		if (type == null) {
+			return null;
+		}
+		return new StatusEffectTypePaper(type);
 	}
 
 	@Override

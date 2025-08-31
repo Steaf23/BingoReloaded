@@ -7,7 +7,7 @@ import io.github.steaf23.bingoreloaded.lib.api.EntityTypePaper;
 import io.github.steaf23.bingoreloaded.lib.api.PaperApiHelper;
 import io.github.steaf23.bingoreloaded.lib.api.PlayerGamemode;
 import io.github.steaf23.bingoreloaded.lib.api.PotionEffectInstance;
-import io.github.steaf23.bingoreloaded.lib.api.PotionEffectTypePaper;
+import io.github.steaf23.bingoreloaded.lib.api.StatusEffectTypePaper;
 import io.github.steaf23.bingoreloaded.lib.api.StatisticType;
 import io.github.steaf23.bingoreloaded.lib.api.StatisticTypePaper;
 import io.github.steaf23.bingoreloaded.lib.api.WorldHandle;
@@ -198,7 +198,7 @@ public class PlayerHandlePaper implements PlayerHandle {
 	@Override
 	public void addEffect(PotionEffectInstance effect) {
 		player.addPotionEffect(new PotionEffect(
-				((PotionEffectTypePaper)effect.effect()).handle(),
+				((StatusEffectTypePaper)effect.effect()).handle(),
 				effect.durationTicks(),
 				effect.amplifier(),
 				effect.ambient(),

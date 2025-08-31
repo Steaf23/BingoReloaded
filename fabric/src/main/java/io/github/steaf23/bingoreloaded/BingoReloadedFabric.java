@@ -8,6 +8,7 @@ import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gameloop.phase.PregameLobby;
 import io.github.steaf23.bingoreloaded.lib.api.BingoReloadedRuntime;
 import io.github.steaf23.bingoreloaded.lib.api.EntityType;
+import io.github.steaf23.bingoreloaded.lib.api.FabricServerSoftware;
 import io.github.steaf23.bingoreloaded.lib.api.PlatformResolver;
 import io.github.steaf23.bingoreloaded.lib.api.ServerSoftware;
 import io.github.steaf23.bingoreloaded.lib.api.WorldHandle;
@@ -15,6 +16,7 @@ import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.api.player.SharedDisplay;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataAccessor;
+import io.github.steaf23.bingoreloaded.lib.data.core.SnakeYamlDataAccessor;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import net.fabricmc.api.ModInitializer;
@@ -26,10 +28,14 @@ import java.util.Set;
 
 public class BingoReloadedFabric implements ModInitializer, BingoReloadedRuntime {
 
+	private static final String MOD_ID = "bingoreloaded";
+
+	private final FabricServerSoftware platform;
 	private final BingoReloaded bingo;
 
 	public BingoReloadedFabric() {
-		PlatformResolver.set(new FabricServerSoftware());
+		this.platform = new FabricServerSoftware(MOD_ID);
+		PlatformResolver.set(platform);
 
 		this.bingo = new BingoReloaded(this);
 	}
@@ -42,12 +48,15 @@ public class BingoReloadedFabric implements ModInitializer, BingoReloadedRuntime
 
 	@Override
 	public DataAccessor getConfigData() {
-		return null;
+		return new SnakeYamlDataAccessor(platform, "config");
 	}
 
 	@Override
 	public Collection<DataAccessor> getDataToRegister() {
-		return List.of();
+		return List.of(
+				new SnakeYamlDataAccessor(platform, "scoreboards"),
+				new SnakeYamlDataAccessor(platform, "placeholders"),
+				new SnakeYamlDataAccessor(platform, "sounds"));
 	}
 
 	@Override
@@ -62,7 +71,13 @@ public class BingoReloadedFabric implements ModInitializer, BingoReloadedRuntime
 
 	@Override
 	public LanguageData getLanguageData(String language) {
-		return null;
+		var lang = new SnakeYamlDataAccessor(platform, language);
+		var fallback = new SnakeYamlDataAccessor(platform, "languages/en_us");
+
+		BingoReloaded.addDataAccessor(lang);
+		BingoReloaded.addDataAccessor(fallback);
+
+		return new LanguageData(lang, fallback);
 	}
 
 	@Override
@@ -87,7 +102,7 @@ public class BingoReloadedFabric implements ModInitializer, BingoReloadedRuntime
 
 	@Override
 	public ServerSoftware getServerSoftware() {
-		return null;
+		return platform;
 	}
 
 	@Override

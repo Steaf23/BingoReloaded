@@ -4,14 +4,14 @@ public class PotionEffectInstance {
 
 	public static final int INFINITE_DURATION = -1;
 
-	private final PotionEffectType effect;
+	private final StatusEffectType effect;
 	private final int durationTicks;
 	private int amplifier = 1;
 	private boolean ambient = false;
 	private boolean particles = true;
 	private boolean icon = true;
 
-	public PotionEffectInstance(PotionEffectType effect, int durationTicks) {
+	public PotionEffectInstance(StatusEffectType effect, int durationTicks) {
 		this.effect = effect;
 		this.durationTicks = durationTicks;
 	}
@@ -47,7 +47,7 @@ public class PotionEffectInstance {
 		return durationTicks;
 	}
 
-	public PotionEffectType effect() {
+	public StatusEffectType effect() {
 		return effect;
 	}
 

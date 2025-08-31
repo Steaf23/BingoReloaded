@@ -8,7 +8,6 @@ import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
-import org.intellij.lang.annotations.Subst;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -52,7 +51,7 @@ public interface ServerSoftware {
 	EntityType resolveEntityType(Key key);
 	AdvancementHandle resolveAdvancement(Key key);
 	StatisticType resolveStatisticType(Key key);
-	PotionEffectType resolvePotionEffectType(Key key);
+	StatusEffectType resolvePotionEffectType(Key key);
 
 	ExtensionInfo getExtensionInfo();
 

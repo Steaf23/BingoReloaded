@@ -8,7 +8,7 @@ import io.github.steaf23.bingoreloaded.data.BingoStatType;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.lib.api.PotionEffectInstance;
-import io.github.steaf23.bingoreloaded.lib.api.PotionEffectType;
+import io.github.steaf23.bingoreloaded.lib.api.StatusEffectType;
 import io.github.steaf23.bingoreloaded.lib.api.ServerSoftware;
 import io.github.steaf23.bingoreloaded.lib.api.WorldPosition;
 import io.github.steaf23.bingoreloaded.lib.api.item.InventoryHandle;
@@ -21,7 +21,6 @@ import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import io.github.steaf23.bingoreloaded.tasks.data.ItemTask;
 import net.kyori.adventure.audience.Audience;
-import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.jetbrains.annotations.NotNull;
@@ -140,20 +139,20 @@ public class BingoPlayer implements BingoParticipant
 
         server.runTask(task -> {
             if (effects.contains(EffectOptionFlags.NIGHT_VISION))
-                player.addEffect(new PotionEffectInstance(PotionEffectType.of("minecraft:night_vision"), PotionEffectInstance.INFINITE_DURATION).setParticles(false));
+                player.addEffect(new PotionEffectInstance(StatusEffectType.of("minecraft:night_vision"), PotionEffectInstance.INFINITE_DURATION).setParticles(false));
             if (effects.contains(EffectOptionFlags.WATER_BREATHING))
-                player.addEffect(new PotionEffectInstance(PotionEffectType.of("minecraft:water_breathing"), PotionEffectInstance.INFINITE_DURATION).setParticles(false));
+                player.addEffect(new PotionEffectInstance(StatusEffectType.of("minecraft:water_breathing"), PotionEffectInstance.INFINITE_DURATION).setParticles(false));
             if (effects.contains(EffectOptionFlags.FIRE_RESISTANCE))
-                player.addEffect(new PotionEffectInstance(PotionEffectType.of("minecraft:fire_resistance"), PotionEffectInstance.INFINITE_DURATION).setParticles(false));
+                player.addEffect(new PotionEffectInstance(StatusEffectType.of("minecraft:fire_resistance"), PotionEffectInstance.INFINITE_DURATION).setParticles(false));
             if (effects.contains(EffectOptionFlags.SPEED))
-                player.addEffect(new PotionEffectInstance(PotionEffectType.of("minecraft:speed"), PotionEffectInstance.INFINITE_DURATION).setParticles(false));
-            player.addEffect(new PotionEffectInstance(PotionEffectType.of("minecraft:saturation"), 2)
+                player.addEffect(new PotionEffectInstance(StatusEffectType.of("minecraft:speed"), PotionEffectInstance.INFINITE_DURATION).setParticles(false));
+            player.addEffect(new PotionEffectInstance(StatusEffectType.of("minecraft:saturation"), 2)
                     .setAmplifier(100)
                     .setParticles(false));
-            player.addEffect(new PotionEffectInstance(PotionEffectType.of("minecraft:regeneration"), 2)
+            player.addEffect(new PotionEffectInstance(StatusEffectType.of("minecraft:regeneration"), 2)
                     .setAmplifier(100)
                     .setParticles(false));
-            player.addEffect(new PotionEffectInstance(PotionEffectType.of("minecraft:resistance"), BingoReloaded.ONE_SECOND * gracePeriod)
+            player.addEffect(new PotionEffectInstance(StatusEffectType.of("minecraft:resistance"), BingoReloaded.ONE_SECOND * gracePeriod)
                     .setAmplifier(100)
                     .setParticles(false));
         });
@@ -251,7 +250,7 @@ public class BingoPlayer implements BingoParticipant
             player.teleportBlocking(teleportLocation);
             player.playSound(BingoSound.GO_UP_WAND_USED.builder().build());
 
-            player.addEffect(new PotionEffectInstance(PotionEffectType.of("minecraft:resistance"), BingoReloaded.ONE_SECOND * 10)
+            player.addEffect(new PotionEffectInstance(StatusEffectType.of("minecraft:resistance"), BingoReloaded.ONE_SECOND * 10)
                     .setAmplifier(100)
                     .setParticles(false));
 
