@@ -14,3 +14,4 @@ rootProject.name = "BingoReloaded"
 include ':common'
 include ':paper'
 include ':fabric'
+include ':BingoReloadedCompanion'

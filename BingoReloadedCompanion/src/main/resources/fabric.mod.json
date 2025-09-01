@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "id": "bingoreloadedcompanion",
+  "version": "${version}",
+
+  "name": "BingoReloadedCompanion",
+  "description": "Client companion mod for BingoReloaded",
+  "authors": [],
+  "contact": {},
+
+  "license": "GPL-3.0",
+  "icon": "assets/bingoreloadedcompanion/icon.png",
+
+  "environment": "client",
+  "entrypoints": {
+    "fabric-datagen": ["io.github.steaf23.bingoreloadedcompanion.client.BingoReloadedCompanionDataGenerator"],
+    "client": ["io.github.steaf23.bingoreloadedcompanion.client.BingoReloadedCompanionClient"],
+    "main": ["io.github.steaf23.bingoreloadedcompanion.BingoReloadedCompanion"]
+  },
+
+  "mixins": [
+    "bingoreloadedcompanion.mixins.json"
+    ,{
+      "config": "bingoreloadedcompanion.client.mixins.json",
+      "environment": "client"
+    }
+  ],
+
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric": "*",
+    "minecraft": "${minecraft_version}"
+  }
+}

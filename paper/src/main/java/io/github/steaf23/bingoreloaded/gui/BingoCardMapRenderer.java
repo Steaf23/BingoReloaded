@@ -1,5 +1,6 @@
 package io.github.steaf23.bingoreloaded.gui;
 
+import io.github.steaf23.bingoreloaded.api.CardDisplayInfo;
 import io.github.steaf23.bingoreloaded.cards.TaskCard;
 import io.github.steaf23.bingoreloaded.gui.inventory.creator.TaskPickerMenu;
 import io.github.steaf23.bingoreloaded.lib.api.Position;
@@ -156,7 +157,7 @@ public class BingoCardMapRenderer extends MapRenderer
     }
 
     public void drawTaskOnGrid(MapCanvas canvas, GameTask task, int gridX, int gridY, Position stampOffset) {
-        Key key = task.data.getDisplayMaterial(TaskPickerMenu.DUMMY_DISPLAY_INFO).key();
+        Key key = task.data.getDisplayMaterial(CardDisplayInfo.DUMMY_DISPLAY_INFO).key();
         int amount = task.data.getRequiredAmount();
 
         int extraOffset = 1;

@@ -169,6 +169,7 @@ public class BingoGame implements GamePhase
                 player.setLevel(0);
                 player.setExp(0.0f);
 				getSession().getGameManager().getRuntime().gameDisplay().addPlayer(player);
+				getSession().getGameManager().getRuntime().getClientManager().updateCard(player, p.getCard().orElse(null));
             } else if (!p.alwaysActive()) {
                 // If the player is not online, we can remove them from the game, as they probably did not intend on playing in this session
                 session.removeParticipant(p);
@@ -513,6 +514,15 @@ public class BingoGame implements GamePhase
 
         scoreboard.updateTeamScores();
 		session.getGameManager().getRuntime().gameDisplay().update(scoreboard);
+
+		teamManager.getParticipants().forEach(a -> {
+			if (a.sessionPlayer().isEmpty()) {
+				return;
+			}
+
+			session.getGameManager().getRuntime().getClientManager().updateCard(a.sessionPlayer().get(), a.getCard().orElse(null));
+		});
+
 
         participant.sessionPlayer().ifPresent(player -> {
             BingoReloaded.incrementPlayerStat(player, BingoStatType.TASKS);

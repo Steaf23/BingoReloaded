@@ -3,6 +3,7 @@ package io.github.steaf23.bingoreloaded.lib.api;
 import io.github.steaf23.bingoreloaded.api.CardDisplayInfo;
 import io.github.steaf23.bingoreloaded.api.CardMenu;
 import io.github.steaf23.bingoreloaded.api.TeamDisplay;
+import io.github.steaf23.bingoreloaded.api.network.BingoClientManager;
 import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gameloop.phase.PregameLobby;
@@ -50,4 +51,6 @@ public interface BingoReloadedRuntime {
 	TeamDisplay createTeamDisplay(BingoSession session);
 	SharedDisplay gameDisplay();
 	SharedDisplay settingsDisplay();
+
+	BingoClientManager getClientManager();
 }

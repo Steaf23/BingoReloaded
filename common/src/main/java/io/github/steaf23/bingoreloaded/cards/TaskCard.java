@@ -1,6 +1,7 @@
 package io.github.steaf23.bingoreloaded.cards;
 
 
+import io.github.steaf23.bingoreloaded.api.CardDisplayInfo;
 import io.github.steaf23.bingoreloaded.api.CardMenu;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
@@ -12,6 +13,8 @@ import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -77,4 +80,17 @@ public abstract class TaskCard
     }
 
     public void onTaskCompleted(BingoParticipant player, GameTask task, long timeSeconds) {}
+
+	//FIXME: write a more complete version of the task card for client reading
+	public void write(DataOutputStream stream) throws IOException {
+		stream.writeInt(size.size);
+		stream.writeInt(tasks.size());
+		for (GameTask task : tasks) {
+			stream.writeBoolean(task.isCompleted());
+			String key = task.data.getDisplayMaterial(CardDisplayInfo.DUMMY_DISPLAY_INFO).key().asString();
+			byte[] bytes = key.getBytes();
+			stream.writeShort(bytes.length);
+			stream.write(bytes);
+		}
+	}
 }

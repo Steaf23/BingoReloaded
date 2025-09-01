@@ -3,6 +3,7 @@ package io.github.steaf23.bingoreloaded;
 import io.github.steaf23.bingoreloaded.api.CardDisplayInfo;
 import io.github.steaf23.bingoreloaded.api.CardMenu;
 import io.github.steaf23.bingoreloaded.api.TeamDisplay;
+import io.github.steaf23.bingoreloaded.api.network.BingoClientManager;
 import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gameloop.phase.PregameLobby;
@@ -34,7 +35,7 @@ public class BingoReloadedFabric implements ModInitializer, BingoReloadedRuntime
 	private final BingoReloaded bingo;
 
 	public BingoReloadedFabric() {
-		this.platform = new FabricServerSoftware(MOD_ID);
+		this.platform = new FabricServerSoftware( MOD_ID);
 		PlatformResolver.set(platform);
 
 		this.bingo = new BingoReloaded(this);
@@ -157,6 +158,11 @@ public class BingoReloadedFabric implements ModInitializer, BingoReloadedRuntime
 
 	@Override
 	public SharedDisplay settingsDisplay() {
+		return null;
+	}
+
+	@Override
+	public BingoClientManager getClientManager() {
 		return null;
 	}
 }

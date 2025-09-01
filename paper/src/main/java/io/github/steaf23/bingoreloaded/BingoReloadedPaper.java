@@ -14,6 +14,8 @@ import io.github.steaf23.bingoreloaded.api.CardDisplayInfo;
 import io.github.steaf23.bingoreloaded.api.CardMenu;
 import io.github.steaf23.bingoreloaded.api.TeamDisplay;
 import io.github.steaf23.bingoreloaded.api.TeamDisplayPaper;
+import io.github.steaf23.bingoreloaded.api.network.BingoClientManager;
+import io.github.steaf23.bingoreloaded.api.network.PaperClientManager;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.DataUpdaterV1;
 import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
@@ -95,8 +97,7 @@ public class BingoReloadedPaper extends JavaPlugin implements BingoReloadedRunti
 	private EventListenerPaper eventListener;
 	private SharedDisplay gameDisplay;
 	private SharedDisplay settingsDisplay;
-
-	public static boolean PLACEHOLDER_API_ENABLED = false;
+	private BingoClientManager clientManager;
 
 	public BingoReloadedPaper() {
 	}
@@ -117,6 +118,7 @@ public class BingoReloadedPaper extends JavaPlugin implements BingoReloadedRunti
 				.checkForUpdates(true);
 		PacketEvents.getAPI().load();
 
+		this.clientManager = new PaperClientManager(this);
 		this.bingo = new BingoReloaded(this);
 
 		platform.saveResource("bingoreloaded.zip", true);
@@ -375,6 +377,11 @@ public class BingoReloadedPaper extends JavaPlugin implements BingoReloadedRunti
 		return settingsDisplay;
 	}
 
+	@Override
+	public BingoClientManager getClientManager() {
+		return clientManager;
+	}
+
 	public void registerCommand(boolean allowConsole, ActionTree action) {
 		TabExecutor commandExec = new CommandTemplate(allowConsole, action);
 
@@ -384,15 +391,6 @@ public class BingoReloadedPaper extends JavaPlugin implements BingoReloadedRunti
 			command.setTabCompleter(commandExec);
 		} else {
 			ConsoleMessenger.bug("Cannot register command named '" + action.name() + "'", this);
-		}
-	}
-
-	public static boolean doesAudienceHavePermission(Audience audience, String permission) {
-		if (audience instanceof CommandSender sender) {
-			return sender.hasPermission(permission);
-		}
-		else {
-			return false;
 		}
 	}
 

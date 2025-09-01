@@ -8,4 +8,11 @@ public record CardDisplayInfo(BingoGamemode mode,
 							  TaskDisplayMode advancementDisplay,
 							  TaskDisplayMode statisticDisplay,
 							  boolean allowViewingOtherCards) {
+
+	public static final CardDisplayInfo DUMMY_DISPLAY_INFO = new CardDisplayInfo(
+			BingoGamemode.REGULAR,
+			CardSize.X5,
+			TaskDisplayMode.UNIQUE_TASK_ITEMS,
+			TaskDisplayMode.UNIQUE_TASK_ITEMS,
+			false);
 }

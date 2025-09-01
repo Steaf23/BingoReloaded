@@ -1,5 +1,6 @@
 package io.github.steaf23.bingoreloaded;
 
+import io.github.steaf23.bingoreloaded.api.network.BingoClientManager;
 import io.github.steaf23.bingoreloaded.data.BingoLobby;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.BingoSound;
