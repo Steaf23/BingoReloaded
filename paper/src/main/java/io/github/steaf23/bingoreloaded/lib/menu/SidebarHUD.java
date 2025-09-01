@@ -79,7 +79,7 @@ public class SidebarHUD {
 		for (UUID sub : subscribers) {
 			Player player = Bukkit.getPlayer(sub);
 			if (player != null) {
-				removeFromPlayer(player);
+				player.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
 			}
 		}
 		subscribers.clear();

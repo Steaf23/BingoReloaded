@@ -118,8 +118,9 @@ public class BingoReloadedPaper extends JavaPlugin implements BingoReloadedRunti
 				.checkForUpdates(true);
 		PacketEvents.getAPI().load();
 
-		this.clientManager = new PaperClientManager(this);
+
 		this.bingo = new BingoReloaded(this);
+		this.clientManager = new PaperClientManager(this, bingo);
 
 		platform.saveResource("bingoreloaded.zip", true);
 		platform.saveResource("bingoreloaded_lite.zip", true);

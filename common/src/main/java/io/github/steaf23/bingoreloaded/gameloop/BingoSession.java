@@ -170,6 +170,8 @@ public class BingoSession implements ForwardingAudience
         phase.setup();
 
         getOverworld().players().forEach(p -> {
+			getGameManager().getRuntime().getClientManager().updateCard(p, null);
+
             if (teamManager.getPlayerAsParticipant(p) == null) {
                 teamManager.addMemberToTeam(new BingoPlayer(p, this), "auto");
             }
@@ -279,6 +281,7 @@ public class BingoSession implements ForwardingAudience
         // Clear player's teams before anything else.
         // This is because they might join another bingo as a result of leaving this one, so we have to remove the player's team display at this moment
         teamDisplay.clearTeamsForPlayer(player);
+		getGameManager().getRuntime().getClientManager().updateCard(player, null);
 
 
         getGameManager().getPlatform().runTask(t -> {

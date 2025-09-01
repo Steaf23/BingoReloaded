@@ -301,6 +301,8 @@ public class GameManager {
 			sourceSession.removePlayer(player);
 		}
 
+		runtime.getClientManager().playerLeavesServer(player);
+
 		return EventResult.PASS;
 	}
 

@@ -35,6 +35,14 @@ public class BingoReloadedCompanionClient implements ClientModInitializer {
 
 		}));
 
+		ClientPlayConnectionEvents.DISCONNECT.register(((handler, client) -> {
+			if (client == null) {
+				return;
+			}
+
+			cardElement.setCard(null);
+		}));
+
 		ClientPlayNetworking.registerGlobalReceiver(ServerUpdateCardPayload.ID,
 				(payload, context) -> {
 					BingoCard card = payload.getCard();

@@ -1,10 +1,13 @@
 package io.github.steaf23.bingoreloaded.api.network;
 
+import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.api.network.packets.TaskCardWriter;
 import io.github.steaf23.bingoreloaded.cards.TaskCard;
+import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandlePaper;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
+import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import org.apache.commons.lang3.function.FailableConsumer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -23,8 +26,11 @@ public class PaperClientManager implements BingoClientManager {
 	private final JavaPlugin plugin;
 	private final Set<UUID> connectedPlayers = new HashSet<>();
 
-	public PaperClientManager(JavaPlugin plugin) {
+	private final BingoReloaded bingo;
+
+	public PaperClientManager(JavaPlugin plugin, BingoReloaded bingo) {
 		this.plugin = plugin;
+		this.bingo = bingo;
 
 		Messenger messenger = plugin.getServer().getMessenger();
 		messenger.registerIncomingPluginChannel(plugin, "bingoreloaded:hello", (channel, player, buf) -> {
@@ -32,6 +38,21 @@ public class PaperClientManager implements BingoClientManager {
 
 			connectedPlayers.add(player.getUniqueId());
 			ConsoleMessenger.log("Player " + player.getName() + " said hi!");
+
+			PlayerHandle handle = new PlayerHandlePaper(player);
+			BingoSession session = bingo.getGameManager().getSessionOfPlayer(handle);
+			if (session == null) {
+				return;
+			}
+
+			BingoParticipant participant = session.teamManager.getPlayerAsParticipant(handle);
+			if (participant == null) {
+				return;
+			}
+
+			bingo.getGameManager().getPlatform().runTask(20, t -> {
+				updateCard(handle, participant.getCard().orElse(null));
+			});
 		});
 
 		messenger.registerOutgoingPluginChannel(plugin, "bingoreloaded:update_card");
