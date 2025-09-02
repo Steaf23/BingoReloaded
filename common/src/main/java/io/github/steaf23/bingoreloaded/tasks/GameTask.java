@@ -2,6 +2,7 @@ package io.github.steaf23.bingoreloaded.tasks;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.api.CardDisplayInfo;
+import io.github.steaf23.bingoreloaded.api.network.packets.DataWriter;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
@@ -9,7 +10,9 @@ import io.github.steaf23.bingoreloaded.lib.data.core.tag.TagDataStorage;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
+import io.github.steaf23.bingoreloaded.tasks.data.AdvancementTask;
 import io.github.steaf23.bingoreloaded.tasks.data.ItemTask;
+import io.github.steaf23.bingoreloaded.tasks.data.StatisticTask;
 import io.github.steaf23.bingoreloaded.tasks.data.TaskData;
 import io.github.steaf23.bingoreloaded.util.timer.GameTimer;
 import net.kyori.adventure.key.Key;
@@ -20,6 +23,8 @@ import net.kyori.adventure.text.format.TextDecoration;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.util.Optional;
 
 public class GameTask
@@ -180,4 +185,17 @@ public class GameTask
     public TaskData.TaskType taskType() {
         return data.getType();
     }
+
+	public void write(DataOutputStream stream) throws IOException {
+		stream.writeBoolean(isCompleted());
+		if (isCompleted()) {
+			DataWriter.writeString(completedBy.getName(), stream);
+			DataWriter.writeString(completedByTeam.getIdentifier(), stream);
+			stream.writeInt(completedByTeam.getColor().value());
+		}
+		DataWriter.writeString(BingoReloaded.resourceKey(taskType().id).asString(), stream);
+		stream.writeInt(data.getRequiredAmount());
+		String key = data.getDisplayMaterial(CardDisplayInfo.DUMMY_DISPLAY_INFO).key().asString();
+		DataWriter.writeString(key, stream);
+	}
 }

@@ -81,16 +81,12 @@ public abstract class TaskCard
 
     public void onTaskCompleted(BingoParticipant player, GameTask task, long timeSeconds) {}
 
-	//FIXME: write a more complete version of the task card for client reading
+
 	public void write(DataOutputStream stream) throws IOException {
 		stream.writeInt(size.size);
 		stream.writeInt(tasks.size());
 		for (GameTask task : tasks) {
-			stream.writeBoolean(task.isCompleted());
-			String key = task.data.getDisplayMaterial(CardDisplayInfo.DUMMY_DISPLAY_INFO).key().asString();
-			byte[] bytes = key.getBytes();
-			stream.writeShort(bytes.length);
-			stream.write(bytes);
+			task.write(stream);
 		}
 	}
 }

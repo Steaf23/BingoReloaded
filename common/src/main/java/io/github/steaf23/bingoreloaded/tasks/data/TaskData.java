@@ -8,10 +8,17 @@ public interface TaskData
 {
     enum TaskType
     {
-        ITEM,
-        STATISTIC,
-        ADVANCEMENT,
-    }
+        ITEM("item"),
+        STATISTIC("statistic"),
+        ADVANCEMENT("advancement"),
+		;
+
+		public final String id;
+
+		TaskType(String id) {
+			this.id = id;
+		}
+	}
 
     TaskType getType();
     Component getName();

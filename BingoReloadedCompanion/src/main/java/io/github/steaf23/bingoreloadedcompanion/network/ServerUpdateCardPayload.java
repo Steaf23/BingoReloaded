@@ -23,23 +23,7 @@ public class ServerUpdateCardPayload implements CustomPayload {
 	);
 
 	public static final PacketCodec<RegistryByteBuf, ServerUpdateCardPayload> CODEC = PacketCodec.of(
-			(payload, buf) -> {
-				if (payload.card == null) {
-					buf.writeBoolean(false);
-					return;
-				}
-
-				buf.writeBoolean(true);
-				BingoCard card = payload.card;
-
-				buf.writeInt(card.size());
-				buf.writeInt(card.tasks().size());
-
-				for (Task task : card.tasks()) {
-					buf.writeBoolean(task.completed());
-					buf.writeString(Registries.ITEM.getId(task.itemType()).toString());
-				}
-			},
+			(payload, buf) -> {}, // Not needed since we will only receive this packet, not send it.
 			buf -> {
 				boolean validCard = buf.readBoolean();
 				if (!validCard) {
@@ -52,15 +36,21 @@ public class ServerUpdateCardPayload implements CustomPayload {
 				List<Task> tasks = new ArrayList<>();
 				for (int i = 0; i < tasksSize; i++) {
 					boolean completed = buf.readBoolean();
-
-					short strSize = buf.readShort();
-					byte[] bytes = new byte[strSize];
-					for (int j = 0; j < strSize; j++) {
-						bytes[j] = buf.readByte();
+					Task.TaskCompletion completion;
+					if (completed) {
+						String player = readString(buf);
+						String team = readString(buf);
+						int color = buf.readInt();
+						completion = new Task.TaskCompletion(true, player, team, color);
+					} else {
+						completion = Task.TaskCompletion.INCOMPLETE;
 					}
-					String itemId = new String(bytes);
+
+					String taskType = readString(buf);
+					int requiredAmount = buf.readInt();
+					String itemId = readString(buf);
 					Item item = Registries.ITEM.get(Identifier.of(itemId));
-					tasks.add(new Task(completed, item));
+					tasks.add(new Task(completion, Identifier.of(taskType), item, requiredAmount));
 				}
 
 				BingoCard card = new BingoCard(size, tasks);
@@ -79,5 +69,14 @@ public class ServerUpdateCardPayload implements CustomPayload {
 
 	public @Nullable BingoCard getCard() {
 		return card;
+	}
+
+	private static String readString(RegistryByteBuf buf) {
+		short strSize = buf.readShort();
+		byte[] bytes = new byte[strSize];
+		for (int j = 0; j < strSize; j++) {
+			bytes[j] = buf.readByte();
+		}
+		return new String(bytes);
 	}
 }
