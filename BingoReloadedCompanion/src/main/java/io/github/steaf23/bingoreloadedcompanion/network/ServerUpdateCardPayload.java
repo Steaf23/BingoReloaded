@@ -2,6 +2,7 @@ package io.github.steaf23.bingoreloadedcompanion.network;
 
 import io.github.steaf23.bingoreloadedcompanion.BingoReloadedCompanion;
 import io.github.steaf23.bingoreloadedcompanion.card.BingoCard;
+import io.github.steaf23.bingoreloadedcompanion.card.BingoGamemode;
 import io.github.steaf23.bingoreloadedcompanion.card.Task;
 import net.minecraft.item.Item;
 import net.minecraft.network.RegistryByteBuf;
@@ -30,6 +31,10 @@ public class ServerUpdateCardPayload implements CustomPayload {
 					return new ServerUpdateCardPayload(null);
 				}
 
+				String gamemodeStr = readString(buf);
+				Identifier gamemodeId = Identifier.of(gamemodeStr);
+				BingoGamemode gamemode = BingoGamemode.fromId(gamemodeId, false);
+
 				int size = buf.readInt();
 				int tasksSize = buf.readInt();
 
@@ -53,7 +58,7 @@ public class ServerUpdateCardPayload implements CustomPayload {
 					tasks.add(new Task(completion, Identifier.of(taskType), item, requiredAmount));
 				}
 
-				BingoCard card = new BingoCard(size, tasks);
+				BingoCard card = new BingoCard(gamemode, size, tasks);
 
 				return new ServerUpdateCardPayload(card);
 			});

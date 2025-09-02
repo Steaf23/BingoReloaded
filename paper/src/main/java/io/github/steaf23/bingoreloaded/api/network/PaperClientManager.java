@@ -37,7 +37,7 @@ public class PaperClientManager implements BingoClientManager {
 			if (!channel.equals("bingoreloaded:hello")) return;
 
 			connectedPlayers.add(player.getUniqueId());
-			ConsoleMessenger.log("Player " + player.getName() + " said hi!");
+			ConsoleMessenger.log("Player " + player.getName() + " connected using the companion mod");
 
 			PlayerHandle handle = new PlayerHandlePaper(player);
 			BingoSession session = bingo.getGameManager().getSessionOfPlayer(handle);

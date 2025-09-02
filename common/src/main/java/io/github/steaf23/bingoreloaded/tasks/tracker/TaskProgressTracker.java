@@ -63,12 +63,19 @@ public class TaskProgressTracker
     private final Map<GameTask, List<TaskProgress>> progressMap;
     private final StatisticTracker statisticTracker;
 
+	private boolean updateClient;
+
     public TaskProgressTracker(ServerSoftware platform, @NotNull BingoGame game) {
         this.platform = platform;
         this.game = game;
         this.progressMap = new HashMap<>();
         this.statisticTracker = new StatisticTracker();
+		this.updateClient = true;
     }
+
+	public void setUpdateClient(boolean update) {
+		updateClient = update;
+	}
 
     public void startTrackingTask(GameTask task) {
         progressMap.put(task, new ArrayList<>());
@@ -105,6 +112,11 @@ public class TaskProgressTracker
 
             // add task to progress tracker
             progressMap.get(task).add(new TaskProgress(participant, finalCount));
+
+			PlayerHandle player = participant.sessionPlayer().orElse(null);
+			if (player != null && updateClient) {
+				game.getSession().getGameManager().getRuntime().getClientManager().updateCard(player, card.get());
+			}
         }
     }
 

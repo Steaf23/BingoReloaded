@@ -176,9 +176,11 @@ public class BingoGame implements GamePhase
             }
         });
 
+		getProgressTracker().setUpdateClient(false); // Don't trigger a bunch of packets for no reason.
         for (TaskCard card : uniqueCards) {
             card.getTasks().forEach(t -> getProgressTracker().startTrackingTask(t));
         }
+		getProgressTracker().setUpdateClient(true);
 
         // Post-start Setup
         scoreboard.setup(settings);

@@ -84,8 +84,8 @@ public abstract class TaskCard
 
 	public void write(DataOutputStream stream) throws IOException {
 		stream.writeInt(size.size);
-		stream.writeInt(tasks.size());
-		for (GameTask task : tasks) {
+		stream.writeInt(getTasks().size());
+		for (GameTask task : getTasks()) {
 			task.write(stream);
 		}
 	}
