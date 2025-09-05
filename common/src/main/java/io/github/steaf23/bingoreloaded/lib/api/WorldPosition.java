@@ -4,26 +4,59 @@ import org.jetbrains.annotations.NotNull;
 
 public class WorldPosition extends Position {
 
+	private double pitch;
+	private double yaw;
+
 	private @NotNull WorldHandle world;
 
 	public WorldPosition(WorldPosition fromOther) {
 		super(fromOther);
+		this.pitch = fromOther.pitch;
+		this.yaw = fromOther.yaw;
 		this.world = fromOther.world;
 	}
 
-	public WorldPosition(@NotNull WorldHandle world, Position fromOther) {
+	public WorldPosition(@NotNull WorldHandle world, double pitch, double yaw, Position fromOther) {
 		super(fromOther);
+		this.pitch = pitch;
+		this.yaw = yaw;
 		this.world = world;
 	}
 
 	public WorldPosition(@NotNull WorldHandle world, double x, double y, double z) {
+		this(world, x, y, z, 0.0D, 0.0D);
+	}
+
+	public WorldPosition(@NotNull WorldHandle world, double x, double y, double z, double pitch, double yaw) {
 		super(x, y, z);
+		this.pitch = pitch;
+		this.yaw = yaw;
 		this.world = world;
 	}
 
 	public void takeFrom(WorldPosition position) {
 		super.takeFrom(position);
+		this.pitch = position.pitch;
+		this.yaw = position.yaw;
 		this.world = position.world;
+	}
+
+	public double pitch() {
+		return pitch;
+	}
+
+	public WorldPosition setPitch(double pitch) {
+		this.pitch = pitch;
+		return this;
+	}
+
+	public double yaw() {
+		return yaw;
+	}
+
+	public WorldPosition setYaw(double yaw) {
+		this.yaw = yaw;
+		return this;
 	}
 
 	public WorldHandle world() {
