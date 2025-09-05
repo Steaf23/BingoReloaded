@@ -11,11 +11,11 @@ public class PaperApiHelper {
 		if (location == null) {
 			return null;
 		}
-		return new WorldPosition(new WorldHandlePaper(location.getWorld()), location.x(), location.y(), location.z());
+		return new WorldPosition(new WorldHandlePaper(location.getWorld()), location.x(), location.y(), location.z(), location.getPitch(), location.getYaw());
 	}
 
 	public static Location locationFromWorldPos(WorldPosition location) {
-		return new Location(((WorldHandlePaper)location.world()).handle(), location.x(), location.y(), location.z());
+		return new Location(((WorldHandlePaper)location.world()).handle(), location.x(), location.y(), location.z(), (float)location.yaw(), (float)location.pitch());
 	}
 
 
