@@ -56,6 +56,8 @@ public class BingoOptions {
 	public static final ConfigurationOption<Boolean> SHOW_UNIQUE_STATISTIC_ITEMS = new BooleanOption("showUniqueStatisticItems")
 			.withEditUpdate(ConfigurationOption.EditUpdateTime.AFTER_GAME);
 	public static final ConfigurationOption<Boolean> ENABLE_DEBUG_LOGGING = new BooleanOption("enableDebugLogging");
+	public static final ConfigurationOption<Boolean> DISABLE_CLIENT_MOD = new BooleanOption("disableCompanionMod")
+			.withEditUpdate(ConfigurationOption.EditUpdateTime.AFTER_SERVER_RESTART);
 
 	// Lobby
 	public static final ConfigurationOption<Boolean> SINGLE_PLAYER_TEAMS = new BooleanOption("singlePlayerTeams")

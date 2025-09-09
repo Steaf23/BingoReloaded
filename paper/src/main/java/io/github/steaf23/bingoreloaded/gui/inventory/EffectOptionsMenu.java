@@ -60,10 +60,10 @@ public class EffectOptionsMenu extends BasicMenu
     public void updateUI(EffectOptionFlags flag, ItemTemplate item) {
         if (flags.contains(flag)) {
             item.setName(Component.text().append(flag.name, Component.text(" "), BingoMessage.EFFECTS_ENABLED.asPhrase()).color(NamedTextColor.GREEN).decorate(TextDecoration.BOLD).build());
-            item.setLore(BingoMessage.EFFECTS_ENABLE.asMultiline(NamedTextColor.GREEN));
+            item.setLore(BingoMessage.EFFECTS_DISABLE.asMultiline(NamedTextColor.GREEN));
         } else {
             item.setName(Component.text().append(flag.name, Component.text(" "), BingoMessage.EFFECTS_DISABLED.asPhrase()).color(NamedTextColor.RED).decorate(TextDecoration.BOLD).build());
-            item.setLore(BingoMessage.EFFECTS_DISABLE.asMultiline(NamedTextColor.RED));
+            item.setLore(BingoMessage.EFFECTS_ENABLE.asMultiline(NamedTextColor.RED));
         }
     }
 

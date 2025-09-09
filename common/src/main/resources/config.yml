@@ -58,6 +58,7 @@ useIncludedResourcepack: true
 
 # Set to false if you want to disable the card rendering in the player hand on a map, may save a bit of server performance.
 # It's recommended to use this setting alongside showAdvancementItems for the best experience while playing.
+# This setting is ignored by a player if they have the Bingo Reloaded Companion mod installed and disableCompanionMod is set to false.
 useMapRenderer: true
 
 # Set to false if you want to display advancements as filled maps, regardless of the actual task.
@@ -69,6 +70,11 @@ showUniqueStatisticItems: true
 # Set to true if you want to log debug messages in /plugins/BingoReloaded/log/debug.log.
 # Usually used when trying to recreate bugs.
 enableDebugLogging: false
+
+# Set to true when you want players to not be able to use the Bingo Reloaded Companion mod when playing bingo.
+# (more fair for people that do not have the mod)
+disableCompanionMod: false
+
 
 # ==========================================================================
 #    Lobby Configuration Options

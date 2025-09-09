@@ -130,10 +130,12 @@ public class GamemodeOptionsMenu extends BasicMenu
 
     private static void updateExpireTasksEnabledVisual(ItemTemplate item, boolean enabled) {
         if (enabled) {
+			item.setName(BingoReloaded.applyTitleFormat("Expire tasks automatically"));
             item.setLore(
                     Component.text("Tasks always expire when they get completed, however..."),
                     ComponentUtils.MINI_BUILDER.deserialize("Tasks <red>EXPIRE</red> automatically after some random amount of time"));
         } else {
+			item.setName(BingoReloaded.applyTitleFormat("Do NOT expire tasks automatically"));
             item.setLore(
                     Component.text("Tasks always expire when they get completed, however..."),
                     ComponentUtils.MINI_BUILDER.deserialize("Tasks <gray>DO NOT EXPIRE</gray> automatically after some random amount of time"));

@@ -52,6 +52,7 @@ public class BingoConfigurationData
         setOptionValueForce(BingoOptions.SHOW_UNIQUE_ADVANCEMENT_ITEMS, name -> config.getBoolean(name, false));
         setOptionValueForce(BingoOptions.SHOW_UNIQUE_STATISTIC_ITEMS, name -> config.getBoolean(name, true));
         setOptionValueForce(BingoOptions.ENABLE_DEBUG_LOGGING, name -> config.getBoolean(name, false));
+		setOptionValueForce(BingoOptions.DISABLE_CLIENT_MOD, name -> config.getBoolean(name, false));
 
         // Lobby
         setOptionValueForce(BingoOptions.SINGLE_PLAYER_TEAMS, name -> config.getBoolean(name, false));

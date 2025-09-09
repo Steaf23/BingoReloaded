@@ -120,7 +120,6 @@ public class BingoReloadedPaper extends JavaPlugin implements BingoReloadedRunti
 
 
 		this.bingo = new BingoReloaded(this);
-		this.clientManager = new PaperClientManager(this, bingo);
 
 		platform.saveResource("bingoreloaded.zip", true);
 		platform.saveResource("bingoreloaded_lite.zip", true);
@@ -133,6 +132,12 @@ public class BingoReloadedPaper extends JavaPlugin implements BingoReloadedRunti
 		this.menuBoard = new MenuBoardPaper(platform, this);
 
 		bingo.enable();
+
+		if (bingo.config().getOptionValue(BingoOptions.DISABLE_CLIENT_MOD)) {
+			this.clientManager = new BingoClientManager.DisabledClientManager();
+		} else {
+			this.clientManager = new PaperClientManager(this, bingo);
+		}
 
 		// Setup PlaceholderAPI
 		if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
@@ -287,7 +292,7 @@ public class BingoReloadedPaper extends JavaPlugin implements BingoReloadedRunti
 
 		PlayerHandle playerHandle = player.sessionPlayer().get();
 
-		if (!bingo.config().getOptionValue(BingoOptions.USE_MAP_RENDERER)) {
+		if (!bingo.config().getOptionValue(BingoOptions.USE_MAP_RENDERER) || clientManager.playerHasClient(playerHandle)) {
 			return PlayerKit.CARD_ITEM.buildItem();
 		}
 

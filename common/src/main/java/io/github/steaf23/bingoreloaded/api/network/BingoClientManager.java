@@ -11,4 +11,22 @@ public interface BingoClientManager {
 	void updateCard(PlayerHandle player, @Nullable TaskCard card);
 
 	void playerLeavesServer(PlayerHandle player);
+
+	class DisabledClientManager implements BingoClientManager {
+
+		@Override
+		public boolean playerHasClient(PlayerHandle player) {
+			return false;
+		}
+
+		@Override
+		public void updateCard(PlayerHandle player, @Nullable TaskCard card) {
+
+		}
+
+		@Override
+		public void playerLeavesServer(PlayerHandle player) {
+
+		}
+	}
 }
