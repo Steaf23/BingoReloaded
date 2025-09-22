@@ -77,6 +77,10 @@ public class TaskProgressTracker
 		updateClient = update;
 	}
 
+	public boolean shouldUpdateClient() {
+		return updateClient;
+	}
+
     public void startTrackingTask(GameTask task) {
         progressMap.put(task, new ArrayList<>());
         for (BingoParticipant participant : game.getTeamManager().getParticipants()) {

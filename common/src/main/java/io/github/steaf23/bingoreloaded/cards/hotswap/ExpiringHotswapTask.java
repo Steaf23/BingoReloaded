@@ -62,7 +62,12 @@ public class ExpiringHotswapTask implements HotswapTaskHolder
         currentTime -= 1;
     }
 
-    @Override
+	@Override
+	public int getFullTime() {
+		return recovering ? recoveryTime : expirationTimeSeconds;
+	}
+
+	@Override
     public int getCurrentTime() {
         return currentTime;
     }

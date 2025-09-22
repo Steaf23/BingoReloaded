@@ -27,6 +27,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 import java.util.function.Supplier;
 
@@ -173,6 +174,8 @@ public class HotswapTaskCard extends TaskCard
         GameTask lastExpiredTask = null;
         GameTask lastRecoverdTask = null;
 
+		boolean dirty = false;
+
         for (HotswapTaskHolder holder : taskHolders) {
             if (!holder.isRecovering() && holder.getTask().isCompleted()) { // start recovering item when it's been completed
                 holder.startRecovering();
@@ -205,6 +208,7 @@ public class HotswapTaskCard extends TaskCard
                     holder.startRecovering();
                     progressTracker.removeTask(holder.getTask());
                 }
+				dirty = true;
             }
             idx++;
         }
@@ -237,7 +241,22 @@ public class HotswapTaskCard extends TaskCard
                         1, 3);
             }
         }
-        ((HotswapCardMenu)menu).updateTaskHolders(taskHolders);
+
+		if (progressTracker.shouldUpdateClient()) {
+			for (BingoParticipant participant : game.getTeamManager().getParticipants()) {
+				// only track progress if the participant has to complete the task.
+				Optional<TaskCard> card = participant.getCard();
+				if (!this.equals(card.orElse(null))) {
+					continue;
+				}
+
+				participant.sessionPlayer().ifPresent(player -> {
+					game.getSession().getGameManager().getRuntime().getClientManager().updateHotswapContext(player, taskHolders);
+				});
+			}
+		}
+
+		((HotswapCardMenu)menu).updateTaskHolders(taskHolders);
     }
 
     @Override

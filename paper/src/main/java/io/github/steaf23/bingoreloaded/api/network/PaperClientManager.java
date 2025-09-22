@@ -1,8 +1,10 @@
 package io.github.steaf23.bingoreloaded.api.network;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
+import io.github.steaf23.bingoreloaded.api.network.packets.HotswapTasksWriter;
 import io.github.steaf23.bingoreloaded.api.network.packets.TaskCardWriter;
 import io.github.steaf23.bingoreloaded.cards.TaskCard;
+import io.github.steaf23.bingoreloaded.cards.hotswap.HotswapTaskHolder;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandlePaper;
@@ -12,12 +14,14 @@ import org.apache.commons.lang3.function.FailableConsumer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.messaging.Messenger;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -56,6 +60,7 @@ public class PaperClientManager implements BingoClientManager {
 		});
 
 		messenger.registerOutgoingPluginChannel(plugin, "bingoreloaded:update_card");
+		messenger.registerOutgoingPluginChannel(plugin, "bingoreloaded:hotswap_tasks");
 	}
 
 	@Override
@@ -71,6 +76,13 @@ public class PaperClientManager implements BingoClientManager {
 
 		sendMessage(((PlayerHandlePaper) player).handle(), BingoReloadedPackets.SERVER_UPDATE_CARD.id(), stream -> {
 			TaskCardWriter.WRITER.write(card, stream);
+		});
+	}
+
+	@Override
+	public void updateHotswapContext(PlayerHandle player, @NotNull List<HotswapTaskHolder> holders) {
+		sendMessage(((PlayerHandlePaper)player).handle(), BingoReloadedPackets.SERVER_HOTSWAP_TASKS.id(), stream -> {
+			HotswapTasksWriter.WRITER.write(holders, stream);
 		});
 	}
 

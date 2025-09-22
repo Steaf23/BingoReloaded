@@ -12,6 +12,7 @@ public interface HotswapTaskHolder
     void startRecovering();
 
     void updateTaskTime();
+	int getFullTime();
     int getCurrentTime();
 
     ItemTemplate convertToItem(CardDisplayInfo displayInfo);

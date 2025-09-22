@@ -9,6 +9,7 @@ import net.kyori.adventure.text.format.TextColor;
 
 public class SimpleHotswapTask implements HotswapTaskHolder
 {
+	int fullTime;
     int currentTime;
     private final GameTask task;
     boolean recovering = false;
@@ -16,6 +17,7 @@ public class SimpleHotswapTask implements HotswapTaskHolder
     public SimpleHotswapTask(GameTask task, int recoveryTime) {
         this.task = task;
         this.currentTime = recoveryTime;
+		this.fullTime = recoveryTime;
     }
 
     @Override
@@ -40,7 +42,12 @@ public class SimpleHotswapTask implements HotswapTaskHolder
         }
     }
 
-    @Override
+	@Override
+	public int getFullTime() {
+		return recovering ? fullTime : -1;
+	}
+
+	@Override
     public int getCurrentTime() {
         return currentTime;
     }

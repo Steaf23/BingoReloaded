@@ -31,7 +31,7 @@ public class ServerUpdateCardPayload implements CustomPayload {
 					return new ServerUpdateCardPayload(null);
 				}
 
-				String gamemodeStr = readString(buf);
+				String gamemodeStr = PayloadHelper.readString(buf);
 				Identifier gamemodeId = Identifier.of(gamemodeStr);
 				BingoGamemode gamemode = BingoGamemode.fromId(gamemodeId, false);
 
@@ -43,17 +43,17 @@ public class ServerUpdateCardPayload implements CustomPayload {
 					boolean completed = buf.readBoolean();
 					Task.TaskCompletion completion;
 					if (completed) {
-						String player = readString(buf);
-						String team = readString(buf);
+						String player = PayloadHelper.readString(buf);
+						String team = PayloadHelper.readString(buf);
 						int color = buf.readInt();
 						completion = new Task.TaskCompletion(true, player, team, color);
 					} else {
 						completion = Task.TaskCompletion.INCOMPLETE;
 					}
 
-					String taskType = readString(buf);
+					String taskType = PayloadHelper.readString(buf);
 					int requiredAmount = buf.readInt();
-					String itemId = readString(buf);
+					String itemId = PayloadHelper.readString(buf);
 					Item item = Registries.ITEM.get(Identifier.of(itemId));
 					tasks.add(new Task(completion, Identifier.of(taskType), item, requiredAmount));
 				}
@@ -74,14 +74,5 @@ public class ServerUpdateCardPayload implements CustomPayload {
 
 	public @Nullable BingoCard getCard() {
 		return card;
-	}
-
-	private static String readString(RegistryByteBuf buf) {
-		short strSize = buf.readShort();
-		byte[] bytes = new byte[strSize];
-		for (int j = 0; j < strSize; j++) {
-			bytes[j] = buf.readByte();
-		}
-		return new String(bytes);
 	}
 }
