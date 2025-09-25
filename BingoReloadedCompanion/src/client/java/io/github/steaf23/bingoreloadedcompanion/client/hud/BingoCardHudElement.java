@@ -1,15 +1,20 @@
 package io.github.steaf23.bingoreloadedcompanion.client.hud;
 
 import com.google.common.collect.ImmutableList;
+import com.mojang.blaze3d.systems.RenderSystem;
 import io.github.steaf23.bingoreloadedcompanion.card.BingoCard;
 import io.github.steaf23.bingoreloadedcompanion.card.HotswapTaskHolder;
 import io.github.steaf23.bingoreloadedcompanion.card.Task;
+import io.github.steaf23.bingoreloadedcompanion.client.ExtraMath;
 import io.github.steaf23.bingoreloadedcompanion.client.TextColorGradient;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElement;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.ScreenPos;
+import net.minecraft.client.gui.ScreenRect;
+import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.TextColor;
@@ -20,6 +25,9 @@ import org.jetbrains.annotations.Nullable;
 public class BingoCardHudElement implements HudElement {
 
 	private static final Identifier GAMEMODE_LOGOS = Identifier.of("bingoreloadedcompanion:textures/gui/gamemode_logos.png");
+	private static final Identifier SLOT_BACKGROUND = Identifier.of("bingoreloadedcompanion:textures/gui/sprites/card_slot.png");
+	private static final Identifier TIMER_ROUND = Identifier.of("bingoreloadedcompanion:textures/gui/sprites/timer.png");
+	private static final Identifier TIMER_SQUARE = Identifier.of("bingoreloadedcompanion:textures/gui/sprites/timer_square.png");
 
 	private static final Integer ADVANCEMENT_COLOR = Formatting.GREEN.getColorValue();
 	private static final Integer STATISTIC_COLOR = Formatting.LIGHT_PURPLE.getColorValue();
@@ -35,6 +43,7 @@ public class BingoCardHudElement implements HudElement {
 
 	private @Nullable BingoCard card;
 	private @Nullable ImmutableList<HotswapTaskHolder> hotswapTaskHolders;
+	private long lastHotswapUpdateTick = 0;
 
 	boolean renderingInScreen = false;
 
@@ -53,6 +62,7 @@ public class BingoCardHudElement implements HudElement {
 
 	public void setHotswapHolders(ImmutableList<HotswapTaskHolder> holders) {
 		this.hotswapTaskHolders = holders;
+		lastHotswapUpdateTick = HudTimer.getTicks();
 	}
 
 	public void renderFromScreen(DrawContext drawContext, float tickDelta) {
@@ -102,7 +112,7 @@ public class BingoCardHudElement implements HudElement {
 				if (hotswapTaskHolders != null && taskIdx < hotswapTaskHolders.size()) {
 					holder = hotswapTaskHolders.get(taskIdx);
 				}
-				renderTask(drawContext, task, xStart, yStart, holder);
+				renderTask(drawContext, task, xStart, yStart, holder, tickDelta);
 				taskIdx++;
 			}
 		}
@@ -121,53 +131,29 @@ public class BingoCardHudElement implements HudElement {
 
 	}
 
-	protected void renderTask(DrawContext drawContext, Task task, int x, int y, @Nullable HotswapTaskHolder hotswapContext) {
+	protected void renderTask(DrawContext drawContext, Task task, int x, int y, @Nullable HotswapTaskHolder hotswapContext, float delta) {
+
+		boolean hotswapRecovering = hotswapContext != null && hotswapContext.recovering();
+		boolean hotswapExpires = hotswapContext != null && hotswapContext.expires();
 
 		Task.TaskCompletion completion = task.completion();
-		if (completion.completed()) {
-			drawContext.fill(x - 1, y - 1, x + ITEM_SIZE + 1, y + ITEM_SIZE + 1, addAlphaToColor(completion.teamColor(), 200));
-			drawContext.drawBorder(x - 1, y - 1, ITEM_SIZE + 2, ITEM_SIZE + 2, addAlphaToColor(completion.teamColor(), 255));
+		if (completion.completed() && !hotswapRecovering) {
+			drawContext.drawTexture(RenderPipelines.GUI_TEXTURED, SLOT_BACKGROUND, x, y, 0, 0, 17, 17, 17, 17, addAlphaToColor(completion.teamColor(), 200));
 		}
 
-		// Hotswap stuff
-		if (hotswapContext != null) {
-			if (hotswapContext.recovering() || hotswapContext.expires()) {
-				int expireStartX = x - 1;
-				int expireStartY = y - 1;
-				int expireSizeX = ITEM_SIZE + 2;
-				int expireSizeY = ITEM_SIZE / 4 * 3;
-
-				if (hotswapContext.recovering()) {
-					expireSizeY += 6;
-					int availablePixels = expireSizeY * expireSizeX;
-					int fillAmount = (int)((float)hotswapContext.currentTimeSeconds() / hotswapContext.totalTimeSeconds() * availablePixels);
-					int layers = fillAmount / expireSizeX;
-					int rem = fillAmount % expireSizeX;
-
-					int color = addAlphaToColor(RECOVERY_COLOR, 255);
-
-					drawContext.fill(expireStartX, expireStartY + (expireSizeY - layers), expireStartX + rem, expireStartY + (expireSizeY - layers) + 1, color);
-					drawContext.fill(expireStartX, expireStartY + (expireSizeY - layers + 1), expireStartX + expireSizeX, expireStartY + expireSizeY, color);
-				} else {
-					int availablePixels = expireSizeY * expireSizeX;
-					int fillAmount = (int)((float)hotswapContext.currentTimeSeconds() / hotswapContext.totalTimeSeconds() * availablePixels);
-					int layers = fillAmount / expireSizeX;
-					int rem = fillAmount % expireSizeX;
-
-					int color = addAlphaToColor(HOTSWAP_EXPIRATION_GRADIENT.sample(1 - (float)fillAmount / availablePixels).getRgb(), 255);
-					int blockXEnd = expireStartX + expireSizeX;
-					int blockYEnd = expireStartY + layers;
-					drawContext.fill(expireStartX, expireStartY, blockXEnd, blockYEnd, color);
-					drawContext.fill(expireStartX, blockYEnd, expireStartX + rem, blockYEnd + 1, color);
-				}
-			}
+		if (!completion.completed() && !hotswapRecovering) {
+			drawContext.drawTexture(RenderPipelines.GUI_TEXTURED, SLOT_BACKGROUND, x, y, 0, 0, 17, 17, 17, 17, 0x88000000);
+		} else if (hotswapRecovering) {
+			float predictedTime = hotswapContext.currentTimeSeconds() - ((HudTimer.getTicks() - lastHotswapUpdateTick) / 20.0f) + delta;
+			int color = addAlphaToColor(RECOVERY_COLOR, 255);
+			renderTimerRound(drawContext, (int) hotswapContext.totalTimeSeconds(), predictedTime, x, y, color, false);
+		} else if (hotswapExpires) {
+			float predictedTime = hotswapContext.currentTimeSeconds() - ((HudTimer.getTicks() - lastHotswapUpdateTick) / 20.0f) + delta;
+			int color = addAlphaToColor(HOTSWAP_EXPIRATION_GRADIENT.sample(1 - predictedTime / hotswapContext.totalTimeSeconds()).getRgb(), 200);
+			renderTimerSquare(drawContext, (int) hotswapContext.totalTimeSeconds(), predictedTime, x, y, color, true);
 		}
 
-		if (!completion.completed() && (hotswapContext == null || !hotswapContext.recovering())){
-			drawContext.fill(x, y, x + ITEM_SIZE, y + ITEM_SIZE, 0x88000000);
-		}
-
-		if (hotswapContext != null && hotswapContext.recovering()) {
+		if (hotswapRecovering) {
 			return;
 		}
 
@@ -188,6 +174,21 @@ public class BingoCardHudElement implements HudElement {
 		TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
 
 		drawContext.drawStackOverlay(textRenderer, stack, x, y);
+	}
+
+	private void renderTimerRound(DrawContext context, float startTime, float currentTime, int x, int y, int color, boolean reverse) {
+		renderTimer(TIMER_ROUND, context, startTime, currentTime, x, y, color, reverse);
+	}
+
+	private void renderTimerSquare(DrawContext context, float startTime, float currentTime, int x, int y, int color, boolean reverse) {
+		renderTimer(TIMER_SQUARE, context, startTime, currentTime, x, y, color, reverse);
+	}
+
+	private void renderTimer(Identifier type, DrawContext context, float startTime, float currentTime, int x, int y, int color, boolean reverse) {
+		int frameSize = 17;
+		int frame = (int)ExtraMath.map(currentTime, 0, startTime, 0, 41);
+		frame = reverse ? 41 - frame : frame;
+		context.drawTexture(RenderPipelines.GUI_TEXTURED, type, x, y, frame * frameSize, frameSize, frameSize, frameSize, frameSize * 41, frameSize, color);
 	}
 
 	private int addAlphaToColor(int color, int alpha) {

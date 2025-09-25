@@ -86,7 +86,7 @@ public class BingoCardMapRenderer extends MapRenderer
             addImagesFromAtlas(platform.getResource("taskimages/blocks.png"), blocks, false);
             addImagesFromAtlas(platform.getResource("taskimages/items.png"), items, true);
 
-            InputStream overlayStream = platform.getResource("taskimages/completed_stamp.png");
+            InputStream overlayStream = platform.getResource("taskimages/completed_slot.png");
             if (overlayStream != null)
                 COMPLETED_OVERLAY = ImageIO.read(overlayStream);
 
@@ -160,6 +160,9 @@ public class BingoCardMapRenderer extends MapRenderer
         Key key = task.data.getDisplayMaterial(CardDisplayInfo.DUMMY_DISPLAY_INFO).key();
         int amount = task.data.getRequiredAmount();
 
+		int x = gridX * 24 + 4;
+		int y = gridY * 24 + 4;
+
         int extraOffset = 1;
         if (!allItemImages.containsKey(key)) {
             return;
@@ -169,21 +172,21 @@ public class BingoCardMapRenderer extends MapRenderer
             extraOffset = 4;
         }
 
-        drawImageAlphaScissor(canvas, gridX * 24 + 4 + extraOffset, gridY * 24 + 4 + extraOffset, allItemImages.get(key), null);
+		if (task.isCompleted() && task.getCompletedByTeam().isPresent() && COMPLETED_OVERLAY != null) {
+			TextColor color = task.getCompletedByTeam().get().getColor();
+			drawImageAlphaScissor(canvas, x, y, COMPLETED_OVERLAY, color);
+		}
+
+        drawImageAlphaScissor(canvas, x + extraOffset, y + extraOffset, allItemImages.get(key), null);
 
         if (amount > 1) {
             drawTaskAmount(canvas, gridX, gridY, amount);
         }
 
         if (task.data instanceof AdvancementTask) {
-            drawImageAlphaScissor(canvas, gridX * 24 + 2, gridY * 24 + 15, ADVANCEMENT_ICON, null);
+            drawImageAlphaScissor(canvas, x - 2, y + 11, ADVANCEMENT_ICON, null);
         } else if (task.data instanceof StatisticTask) {
-            drawImageAlphaScissor(canvas, gridX * 24 + 2, gridY * 24 + 15, STATISTIC_ICON, null);
-        }
-
-        if (task.isCompleted() && task.getCompletedByTeam().isPresent() && COMPLETED_OVERLAY != null) {
-            TextColor color = task.getCompletedByTeam().get().getColor();
-            drawImageAlphaScissor(canvas, gridX * 24 + 4 + stampOffset.blockX(), gridY * 24 + 4 + stampOffset.blockY(), COMPLETED_OVERLAY, color);
+            drawImageAlphaScissor(canvas, x - 2, y + 11, STATISTIC_ICON, null);
         }
     }
 
@@ -233,5 +236,14 @@ public class BingoCardMapRenderer extends MapRenderer
         Position randomVec = new Position(random.nextInt(range + 1), random.nextInt(range + 1), random.nextInt(range + 1));
         return randomVec.add(new Position(minOffset, minOffset, minOffset));
     }
+
+	private void drawRect(MapCanvas canvas, int x, int y, int width, int height, TextColor color) {
+		Color c = new Color(color.value());
+		for (int loopY = y; loopY < y + height; loopY++) {
+			for (int loopX = x; loopX < x + width; loopX++) {
+				canvas.setPixelColor(loopX, loopY, c);
+			}
+		}
+	}
 
 }

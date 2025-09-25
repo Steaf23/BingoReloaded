@@ -8,6 +8,7 @@ import io.github.steaf23.bingoreloadedcompanion.client.hud.BingoCardHudElement;
 import io.github.steaf23.bingoreloadedcompanion.client.hud.ConfigurableHudRegistry;
 import io.github.steaf23.bingoreloadedcompanion.client.hud.HudPlacement;
 import io.github.steaf23.bingoreloadedcompanion.client.hud.HudInfo;
+import io.github.steaf23.bingoreloadedcompanion.client.hud.HudTimer;
 import io.github.steaf23.bingoreloadedcompanion.network.ClientHelloPayload;
 import io.github.steaf23.bingoreloadedcompanion.network.EditTaskListPayload;
 import io.github.steaf23.bingoreloadedcompanion.network.ServerHotswapPayload;
@@ -50,9 +51,11 @@ public class BingoReloadedCompanionClient implements ClientModInitializer {
 				new HudInfo(false, 128, 32),
 				new HudPlacement(0, 3 + 3 * 4 + 5 * 16, true, 0, 0));
 
+		ClientTickEvents.END_CLIENT_TICK.register(new HudTimer());
+
 		BingoCardHudElement cardElement = new BingoCardHudElement();
 
-		HudElementRegistry.addFirst(Identifier.of(BingoReloadedCompanion.ADDON_ID, "dd"), cardElement);
+		HudElementRegistry.addLast(Identifier.of(BingoReloadedCompanion.ADDON_ID, "card_display"), cardElement);
 
 		ScreenEvents.AFTER_INIT.register((client, screen, scaledWidth, scaledHeight) -> {
 			if (screen instanceof HandledScreen<?> handledScreen) {
