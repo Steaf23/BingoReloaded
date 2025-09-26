@@ -45,11 +45,11 @@ public class BingoReloadedCompanionClient implements ClientModInitializer {
 
 		ConfigurableHudRegistry.registerSubElement("bingocard", "tasks",
 				new HudInfo(false, 3 * 4 + 5 * 16, 3 * 4 + 5 * 16),
-				new HudPlacement(18, 3, true, 0, 0));
+				new HudPlacement(18, 10 + 32, true, 0, 0));
 
 		ConfigurableHudRegistry.registerSubElement("bingocard", "gamemode",
 				new HudInfo(false, 128, 32),
-				new HudPlacement(0, 3 + 3 * 4 + 5 * 16, true, 0, 0));
+				new HudPlacement(0, 5, true, 0, 0));
 
 		ClientTickEvents.END_CLIENT_TICK.register(new HudTimer());
 

@@ -1,7 +1,6 @@
 package io.github.steaf23.bingoreloadedcompanion.client.hud;
 
 import com.google.common.collect.ImmutableList;
-import com.mojang.blaze3d.systems.RenderSystem;
 import io.github.steaf23.bingoreloadedcompanion.card.BingoCard;
 import io.github.steaf23.bingoreloadedcompanion.card.HotswapTaskHolder;
 import io.github.steaf23.bingoreloadedcompanion.card.Task;
@@ -12,9 +11,6 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.ScreenPos;
-import net.minecraft.client.gui.ScreenRect;
-import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.TextColor;
