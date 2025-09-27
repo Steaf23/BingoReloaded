@@ -1,11 +1,15 @@
 package io.github.steaf23.bingoreloaded.lib.api.item;
 
+import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.lib.api.PlatformResolver;
 import io.github.steaf23.bingoreloaded.lib.data.core.tag.TagDataStorage;
 import io.github.steaf23.bingoreloaded.lib.data.core.tag.TagTree;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import io.github.steaf23.bingoreloaded.lib.util.PDCHelper;
 import io.github.steaf23.bingoreloaded.util.ItemHelper;
+import io.papermc.paper.datacomponent.DataComponentTypes;
+import io.papermc.paper.datacomponent.item.UseCooldown;
+import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -115,6 +119,12 @@ public class StackHandlePaper implements StackHandle {
 			e.printStackTrace();
 			return new TagDataStorage();
 		}
+	}
+
+	@SuppressWarnings("UnstableApiUsage")
+	@Override
+	public void setCooldown(Key cooldownGroup, double cooldownTimeSeconds) {
+		stack.setData(DataComponentTypes.USE_COOLDOWN, UseCooldown.useCooldown((float)cooldownTimeSeconds).cooldownGroup(cooldownGroup).build());
 	}
 
 	public ItemStack handle() {

@@ -33,15 +33,14 @@ public enum PlayerKit
     CUSTOM_5("custom_5", Component.text("CUSTOM 5"), EnumSet.noneOf(EffectOptionFlags.class)),
     ;
 
-	private static final Key WAND_COOLDOWN_GROUP = BingoReloaded.resourceKey("wand_cooldown");
+	public static final Key WAND_COOLDOWN_GROUP = BingoReloaded.resourceKey("wand_cooldown");
 
 	public static final ItemTemplate WAND_ITEM = new ItemTemplate(
             ItemType.of("minecraft:warped_fungus_on_a_stick"),
             BingoMessage.WAND_ITEM_NAME.asPhrase().color(NamedTextColor.DARK_PURPLE).decorate(TextDecoration.BOLD, TextDecoration.ITALIC),
             BingoMessage.WAND_ITEM_DESC.asMultiline())
 			.addEnchantment(Key.key("minecraft:unbreaking"), 3)
-            .setCompareKey("wand")
-			.cooldownGroup(WAND_COOLDOWN_GROUP);
+            .setCompareKey("wand");
 
     public static final ItemTemplate CARD_ITEM_RENDERABLE = new ItemTemplate(
             ItemType.of("minecraft:filled_map"),

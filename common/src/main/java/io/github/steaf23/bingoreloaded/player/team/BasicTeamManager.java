@@ -297,7 +297,10 @@ public class BasicTeamManager implements TeamManager {
     @Override
     public void reset() {
         activeTeams.addTeam(autoTeam);
+
+		removeAbsentMembers();
     }
+
 
     //== EventHandlers ==========================================
     @Override
@@ -350,4 +353,12 @@ public class BasicTeamManager implements TeamManager {
 
         addMemberToTeam(new BingoPlayer(player, session), "auto");
     }
+
+	private void removeAbsentMembers() {
+		activeTeams.forEach(t -> new HashSet<>(t.getMembers()).forEach(participant -> {
+			if (!participant.alwaysActive() && participant.sessionPlayer().isEmpty()) {
+				removeMemberFromTeam(participant);
+			}
+		}));
+	}
 }

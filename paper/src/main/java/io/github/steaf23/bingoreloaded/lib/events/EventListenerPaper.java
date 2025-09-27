@@ -15,6 +15,7 @@ import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -163,6 +164,11 @@ public class EventListenerPaper implements Listener {
 
 	@EventHandler
 	public void handlePlayerInteracted(final PlayerInteractEvent event) {
+
+		if (event.getClickedBlock() != null && event.getClickedBlock().getType().isInteractable()) {
+			return;
+		}
+
 		EventResult<?> result = dispatcher.sendPlayerInteracted(
 				new PlayerHandlePaper(event.getPlayer()),
 				new StackHandlePaper(event.getItem()),

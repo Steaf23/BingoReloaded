@@ -219,11 +219,12 @@ public class BingoPlayer implements BingoParticipant
         if (!PlayerKit.WAND_ITEM.isCompareKeyEqual(wand))
             return;
 
-        if (player.hasCooldownOnGroup(PlayerKit.WAND_ITEM.getCooldownGroup())) {
+        if (player.hasCooldown(wand)) {
             return;
         }
 
-        player.setCooldownOnGroup(PlayerKit.WAND_ITEM.getCooldownGroup(), (int)(wandCooldownSeconds * 20));
+		wand.setCooldown(PlayerKit.WAND_COOLDOWN_GROUP, wandCooldownSeconds);
+        player.setCooldown(wand, (int)(wandCooldownSeconds * 20));
 
         server.runTask(task -> {
             double distance;
