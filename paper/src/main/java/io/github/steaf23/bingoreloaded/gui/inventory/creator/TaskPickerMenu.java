@@ -60,7 +60,7 @@ public class TaskPickerMenu extends PaginatedDataMenu<GameTask> {
 
 	@Override
 	public boolean filterData(GameTask gameTask, MenuFilterSettings filter) {
-		return PlainTextComponentSerializer.plainText().serialize(gameTask.data.getName()).contains(filter.name());
+		return PlainTextComponentSerializer.plainText().serialize(gameTask.data.getName()).toLowerCase().contains(filter.name().toLowerCase());
 	}
 
 	@Override

@@ -8,6 +8,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -21,21 +23,34 @@ public class ComboBoxButtonAction extends MenuAction
         record ItemOption(String key, ItemTemplate item) {}
 
         private final List<ItemOption> options;
-        private Function<String, Boolean> callback;
+        private BiFunction<String, ActionArguments, Boolean> callback;
 
         public Builder(@NotNull String key, @NotNull ItemTemplate item) {
             this.options = new ArrayList<>();
-            this.callback = s -> true;
+            this.callback = (s, args) -> true;
             addOption(key, item);
         }
 
-        public Builder setCallback(@NotNull Function<String, Boolean> callback) {
+        public Builder setCallback(@NotNull BiFunction<String, ActionArguments, Boolean> callback) {
             this.callback = callback;
             return this;
         }
 
+		public Builder setCallback(@NotNull Function<String, Boolean> callback) {
+			this.callback = (s, args) -> callback.apply(s);
+			return this;
+		}
+
+		public Builder setCallback(@NotNull BiConsumer<String, ActionArguments> callback) {
+			this.callback = (s, args) -> {
+				callback.accept(s, args);
+				return true;
+			};
+			return this;
+		}
+
         public Builder setCallback(@NotNull Consumer<String> callback) {
-            this.callback = s -> {
+            this.callback = (s, args) -> {
                 callback.accept(s);
                 return true;
             };
@@ -86,11 +101,11 @@ public class ComboBoxButtonAction extends MenuAction
         }
     }
 
-    private final Function<String, Boolean> callback;
+    private final BiFunction<String, ActionArguments, Boolean> callback;
     private final List<String> options;
     private final List<ItemTemplate> optionItem;
 
-    private ComboBoxButtonAction(Function<String, Boolean> callback) {
+    private ComboBoxButtonAction(BiFunction<String, ActionArguments, Boolean> callback) {
         this.callback = callback;
         this.options = new ArrayList<>();
         this.optionItem = new ArrayList<>();
@@ -114,7 +129,7 @@ public class ComboBoxButtonAction extends MenuAction
         // schedule item change, because after the action the item is reset automatically
         final int finalNewIndex = newIndex;
         Bukkit.getScheduler().runTask(menu.getMenuBoard().plugin(), task -> {
-            boolean shouldUpdate = callback.apply(getSelectedOptionName());
+            boolean shouldUpdate = callback.apply(getSelectedOptionName(), arguments);
             if (!shouldUpdate) {
                 return;
             }

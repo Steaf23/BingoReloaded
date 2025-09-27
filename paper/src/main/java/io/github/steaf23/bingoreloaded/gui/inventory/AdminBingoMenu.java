@@ -17,6 +17,7 @@ import io.github.steaf23.bingoreloaded.lib.inventory.action.MenuAction;
 import io.github.steaf23.bingoreloaded.lib.inventory.action.SpinBoxButtonAction;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
+import io.github.steaf23.bingoreloaded.util.BingoPlayerSender;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
@@ -123,13 +124,21 @@ public class AdminBingoMenu extends BasicMenu
 
         MenuAction startAction = new ComboBoxButtonAction.Builder("start", START.copy())
                 .addOption("end", END.copy())
-                .setCallback(value -> {
-                    if (value.equals("end")) {
-                        session.startGame();
-                    }
-                    else if (value.equals("start")) {
+                .setCallback((clickedValue, args) -> {
+					if (clickedValue.equals("start")) {
+						if (!session.startGame()) {
+							BingoPlayerSender.sendMessage(Component.text("Could not start game, see console for details.").color(NamedTextColor.RED), args.player());
+							return false;
+						}
+						return true;
+					}
+					else if (clickedValue.equals("end")) {
                         session.endGame();
+						return true;
                     }
+					else {
+						return false;
+					}
                 })
                 .buildAction(ItemTemplate.slotFromXY(6, 0), session.isRunning() ? "end" : "start");
         addAction(startAction);

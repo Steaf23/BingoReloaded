@@ -12,6 +12,7 @@ import io.papermc.paper.datacomponent.item.TooltipDisplay;
 import io.papermc.paper.datacomponent.item.UseCooldown;
 import io.papermc.paper.registry.RegistryAccess;
 import io.papermc.paper.registry.RegistryKey;
+import io.papermc.paper.registry.keys.DataComponentTypeKeys;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -61,7 +62,9 @@ public class StackBuilderPaper implements StackBuilder {
 						DataComponentTypes.DYED_COLOR,
 						DataComponentTypes.STORED_ENCHANTMENTS,
 						DataComponentTypes.PROVIDES_TRIM_MATERIAL,
-						DataComponentTypes.BUNDLE_CONTENTS);
+						DataComponentTypes.BUNDLE_CONTENTS,
+						DataComponentTypes.BLOCK_DATA,
+						RegistryAccess.registryAccess().getRegistry(RegistryKey.DATA_COMPONENT_TYPE).get(DataComponentTypeKeys.BEES));
 		if (hideAttributes) {
 			tooltipBuilder.addHiddenComponents(DataComponentTypes.ATTRIBUTE_MODIFIERS);
 		}

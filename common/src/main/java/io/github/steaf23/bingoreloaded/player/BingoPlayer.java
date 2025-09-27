@@ -250,7 +250,8 @@ public class BingoPlayer implements BingoParticipant
             player.teleportBlocking(teleportLocation);
             player.playSound(BingoSound.GO_UP_WAND_USED.builder().build());
 
-            player.addEffect(new PotionEffectInstance(StatusEffectType.of("minecraft:resistance"), BingoReloaded.ONE_SECOND * 10)
+            player.addEffect(new PotionEffectInstance(StatusEffectType.of("minecraft:resistance"),
+					BingoReloaded.ONE_SECOND * (platformLifetimeSeconds + 4))
                     .setAmplifier(100)
                     .setParticles(false));
 

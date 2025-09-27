@@ -108,14 +108,14 @@ public class BingoSession implements ForwardingAudience
     }
 
 
-	public void startGame() {
-		startGame(null);
+	public boolean startGame() {
+		return startGame(null);
 	}
 
-    public void startGame(@Nullable WorldPosition atPosition) {
+    public boolean startGame(@Nullable WorldPosition atPosition) {
         if (!(phase instanceof PregameLobby lobby)) {
             ConsoleMessenger.error("Cannot start a game on this world if it is not in the lobby phase!");
-            return;
+            return false;
         }
 
         BingoSettingsBuilder gameSettings = determineSettingsByVote(lobby);
@@ -124,13 +124,13 @@ public class BingoSession implements ForwardingAudience
         BingoSettings settings = settingsBuilder.view();
         if (!cardsData.getCardNames().contains(settings.card())) {
             BingoMessage.NO_CARD.sendToAudience(this, NamedTextColor.RED, Component.text(settings.card()));
-            return;
+            return false;
         }
 
         if (teamManager.getParticipantCount() == 0) {
             ConsoleMessenger.log("Could not start bingo since no players have joined!", worlds.worldName());
             teamManager.reset();
-            return;
+            return false;
         }
 
         teamManager.setup();
@@ -141,6 +141,8 @@ public class BingoSession implements ForwardingAudience
         phase.end();
         phase = new BingoGame(gameManager.getPlatform(), this, gameSettings == null ? settings : gameSettings.view(), config, this::onGameEnded, atPosition);
         phase.setup();
+
+		return true;
     }
 
     public void endGame() {
