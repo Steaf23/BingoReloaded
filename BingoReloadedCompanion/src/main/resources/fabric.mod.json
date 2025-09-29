@@ -15,7 +15,8 @@
   "entrypoints": {
     "fabric-datagen": ["io.github.steaf23.bingoreloadedcompanion.client.BingoReloadedCompanionDataGenerator"],
     "client": ["io.github.steaf23.bingoreloadedcompanion.client.BingoReloadedCompanionClient"],
-    "main": ["io.github.steaf23.bingoreloadedcompanion.BingoReloadedCompanion"]
+    "main": ["io.github.steaf23.bingoreloadedcompanion.BingoReloadedCompanion"],
+    "modmenu": ["io.github.steaf23.bingoreloadedcompanion.client.config.BingoReloadedCompanionModMenu"]
   },
 
   "mixins": [

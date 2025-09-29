@@ -4,6 +4,7 @@ import io.github.steaf23.bingoreloadedcompanion.card.taskslot.AdvancementTask;
 import io.github.steaf23.bingoreloadedcompanion.card.taskslot.ItemTask;
 import io.github.steaf23.bingoreloadedcompanion.card.taskslot.TaskSlot;
 import io.github.steaf23.bingoreloadedcompanion.client.TaskTooltipComponent;
+import io.github.steaf23.bingoreloadedcompanion.client.util.ScreenHelper;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
@@ -76,7 +77,7 @@ public class BingoCardTaskListScreen extends Screen {
 
 	private boolean scrolling = false;
 
-	protected BingoCardTaskListScreen(Text title, List<? extends TaskSlot> tasks) {
+	public BingoCardTaskListScreen(Text title, List<? extends TaskSlot> tasks) {
 		super(title);
 		for (TaskSlot task : tasks) {
 			selectedTasks.put(task.id(), task);
@@ -403,25 +404,25 @@ public class BingoCardTaskListScreen extends Screen {
 	}
 
 	private boolean isMouseOverTab(int mouseX, int mouseY, TaskTab tab) {
-		return isPointWithinBounds(firstTabX() + getTabStartX(tab) + 4, tabStartY() + 4, TAB_WIDTH - 8, TAB_HEIGHT - 8, mouseX, mouseY);
+		return ScreenHelper.isPointWithinBounds(firstTabX() + getTabStartX(tab) + 4, tabStartY() + 4, TAB_WIDTH - 8, TAB_HEIGHT - 8, mouseX, mouseY);
 	}
 
 	private boolean isMouseOverSlot(int mouseX, int mouseY, int slotX, int slotY) {
-		return isPointWithinBounds(
+		return ScreenHelper.isPointWithinBounds(
 				menuStartX() + SLOT_START_X + SLOT_WIDTH * slotX + 1,
 				menuStartY() + SLOT_START_Y + SLOT_HEIGHT * slotY + 1,
 				SLOT_WIDTH - 2, SLOT_HEIGHT - 2, mouseX, mouseY);
 	}
 
 	private boolean isMouseOnIncreaseCountButton(int mouseX, int mouseY, int slotX, int slotY) {
-		return isPointWithinBounds(
+		return ScreenHelper.isPointWithinBounds(
 				menuStartX() + SLOT_START_X + SLOT_WIDTH * slotX + 1,
 				menuStartY() + SLOT_START_Y + SLOT_HEIGHT * slotY,
 				SLOT_WIDTH - 2, (SLOT_HEIGHT - 2) / 2, mouseX, mouseY);
 	}
 
 	private boolean isMouseOverScrollbar(int mouseX, int mouseY) {
-		return isPointWithinBounds(menuStartX() + SCROLL_X, menuStartY() + SCROLL_Y, SCROLLER_WIDTH, SCROLL_HEIGHT, mouseX, mouseY);
+		return ScreenHelper.isPointWithinBounds(menuStartX() + SCROLL_X, menuStartY() + SCROLL_Y, SCROLLER_WIDTH, SCROLL_HEIGHT, mouseX, mouseY);
 	}
 
 	private int menuStartX() {
@@ -438,10 +439,5 @@ public class BingoCardTaskListScreen extends Screen {
 
 	private int tabStartY() {
 		return menuStartY() - TAB_HEIGHT + 4;
-	}
-
-
-	private boolean isPointWithinBounds(int x, int y, int width, int height, double pointX, double pointY) {
-		return pointX >= (double)(x - 1) && pointX < (double)(x + width + 1) && pointY >= (double)(y - 1) && pointY < (double)(y + height + 1);
 	}
 }

@@ -48,6 +48,7 @@ public class BingoSettingsBuilder
         this.hotswapGoal = def.hotswapGoal();
         this.completeGoal = def.completeGoal();
         this.differentCardPerTeam = def.differentCardPerTeam();
+		this.expireHotswapTasks = def.expireHotswapTasks();
     }
 
     public void fromOther(BingoSettings settings)
@@ -64,6 +65,7 @@ public class BingoSettingsBuilder
         hotswapGoal = settings.hotswapGoal();
         completeGoal = settings.completeGoal();
         differentCardPerTeam = settings.differentCardPerTeam();
+		expireHotswapTasks = settings.expireHotswapTasks();
         settingsUpdated();
     }
 

@@ -6,6 +6,7 @@ import io.github.steaf23.bingoreloadedcompanion.card.HotswapTaskHolder;
 import io.github.steaf23.bingoreloadedcompanion.card.Task;
 import io.github.steaf23.bingoreloadedcompanion.client.ExtraMath;
 import io.github.steaf23.bingoreloadedcompanion.client.TextColorGradient;
+import io.github.steaf23.bingoreloadedcompanion.client.util.ScreenHelper;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElement;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
@@ -37,6 +38,7 @@ public class BingoCardHudElement implements HudElement {
 
 	private static final int ITEM_SIZE = 16;
 
+	private final HudConfigManager hudConfig;
 	private @Nullable BingoCard card;
 	private @Nullable ImmutableList<HotswapTaskHolder> hotswapTaskHolders;
 	private long lastHotswapUpdateTick = 0;
@@ -46,7 +48,8 @@ public class BingoCardHudElement implements HudElement {
 	private static final Identifier TASKS_ELEMENT = Identifier.of("bingoreloadedcompanion:hud/bingocard/tasks");
 	private static final Identifier GAMEMODE_ELEMENT = Identifier.of("bingoreloadedcompanion:hud/bingocard/gamemode");
 
-	public BingoCardHudElement() {
+	public BingoCardHudElement(HudConfigManager hudConfig) {
+		this.hudConfig = hudConfig;
 	}
 
 	public void setCard(@Nullable BingoCard card) {
@@ -81,16 +84,31 @@ public class BingoCardHudElement implements HudElement {
 	}
 
 	public void renderElement(DrawContext drawContext, float tickDelta) {
-		HudInfo tasksInfo = ConfigurableHudRegistry.getInfo(TASKS_ELEMENT);
-		HudPlacement tasksPlacement = ConfigurableHudRegistry.getDefaultPlacement(TASKS_ELEMENT);
+		if (card == null) {
+			return;
+		}
 
-		if (card == null || card.tasks().isEmpty() || tasksInfo == null || tasksPlacement == null) {
+		HudPlacement tasksPlacement = hudConfig.getHudPlacement(TASKS_ELEMENT);
+		if (tasksPlacement.visible()) {
+			renderTasks(drawContext, tickDelta);
+		}
+
+		HudPlacement bannerPlacement = hudConfig.getHudPlacement(GAMEMODE_ELEMENT);
+		if (bannerPlacement.visible()) {
+			renderBanner(drawContext, tickDelta);
+		}
+	}
+
+	private void renderTasks(DrawContext context, float tickDelta) {
+		HudConfigManager.Rect tasksRect = hudConfig.getUsedRectOfElement(TASKS_ELEMENT);
+
+		if (card.tasks().isEmpty()) {
 			return;
 		}
 
 		int spacing = 3;
-		int startOffsetX = tasksPlacement.x();
-		int startOffsetY = tasksPlacement.y();
+		int startOffsetX = tasksRect.x();
+		int startOffsetY = tasksRect.y();
 
 		int taskIdx = 0;
 		for (int y = 0; y < card.size(); y++) {
@@ -108,23 +126,23 @@ public class BingoCardHudElement implements HudElement {
 				if (hotswapTaskHolders != null && taskIdx < hotswapTaskHolders.size()) {
 					holder = hotswapTaskHolders.get(taskIdx);
 				}
-				renderTask(drawContext, task, xStart, yStart, holder, tickDelta);
+				renderTask(context, task, xStart, yStart, holder, tickDelta);
 				taskIdx++;
 			}
 		}
+	}
 
-		HudInfo gamemodeInfo = ConfigurableHudRegistry.getInfo(GAMEMODE_ELEMENT);
-		HudPlacement gamemodePlacement = ConfigurableHudRegistry.getDefaultPlacement(GAMEMODE_ELEMENT);
+	private void renderBanner(DrawContext context, float tickDelta) {
+		HudConfigManager.Rect gamemodeRect = hudConfig.getUsedRectOfElement(GAMEMODE_ELEMENT);
 
 		int textureIndex = card.mode().getIndex();
 		int gamemodeBannerSizeX = 128;
 		int gamemodeBannerSizeY = 32;
-		int gamemodeStartX = gamemodePlacement.x();
-		int gamemodeStartY = gamemodePlacement.y();
-		drawContext.drawTexture(RenderPipelines.GUI_TEXTURED, GAMEMODE_LOGOS, gamemodeStartX, gamemodeStartY,
+		int gamemodeStartX = gamemodeRect.x();
+		int gamemodeStartY = gamemodeRect.y();
+		context.drawTexture(RenderPipelines.GUI_TEXTURED, GAMEMODE_LOGOS, gamemodeStartX, gamemodeStartY,
 				0, textureIndex * gamemodeBannerSizeY, gamemodeBannerSizeX, gamemodeBannerSizeY,
 				gamemodeBannerSizeX, gamemodeBannerSizeY, 128, 128);
-
 	}
 
 	protected void renderTask(DrawContext drawContext, Task task, int x, int y, @Nullable HotswapTaskHolder hotswapContext, float delta) {
@@ -134,23 +152,18 @@ public class BingoCardHudElement implements HudElement {
 
 		Task.TaskCompletion completion = task.completion();
 		if (completion.completed() && !hotswapRecovering) {
-			drawContext.drawTexture(RenderPipelines.GUI_TEXTURED, SLOT_BACKGROUND, x, y, 0, 0, 17, 17, 17, 17, addAlphaToColor(completion.teamColor(), 200));
-		}
-
-		if (!completion.completed() && !hotswapRecovering) {
-			drawContext.drawTexture(RenderPipelines.GUI_TEXTURED, SLOT_BACKGROUND, x, y, 0, 0, 17, 17, 17, 17, 0x88000000);
+			drawContext.drawTexture(RenderPipelines.GUI_TEXTURED, SLOT_BACKGROUND, x, y, 0, 0, 17, 17, 17, 17, ScreenHelper.addAlphaToColor(completion.teamColor(), 200));
 		} else if (hotswapRecovering) {
 			float predictedTime = hotswapContext.currentTimeSeconds() - ((HudTimer.getTicks() - lastHotswapUpdateTick) / 20.0f) + delta;
-			int color = addAlphaToColor(RECOVERY_COLOR, 255);
+			int color = ScreenHelper.addAlphaToColor(RECOVERY_COLOR, 255);
 			renderTimerRound(drawContext, (int) hotswapContext.totalTimeSeconds(), predictedTime, x, y, color, false);
+			return;
 		} else if (hotswapExpires) {
 			float predictedTime = hotswapContext.currentTimeSeconds() - ((HudTimer.getTicks() - lastHotswapUpdateTick) / 20.0f) + delta;
-			int color = addAlphaToColor(HOTSWAP_EXPIRATION_GRADIENT.sample(1 - predictedTime / hotswapContext.totalTimeSeconds()).getRgb(), 200);
+			int color = ScreenHelper.addAlphaToColor(HOTSWAP_EXPIRATION_GRADIENT.sample(1 - predictedTime / hotswapContext.totalTimeSeconds()).getRgb(), 200);
 			renderTimerSquare(drawContext, (int) hotswapContext.totalTimeSeconds(), predictedTime, x, y, color, true);
-		}
-
-		if (hotswapRecovering) {
-			return;
+		} else {
+			drawContext.drawTexture(RenderPipelines.GUI_TEXTURED, SLOT_BACKGROUND, x, y, 0, 0, 17, 17, 17, 17, 0x88000000);
 		}
 
 		ItemStack stack = new ItemStack(task.itemType(), task.requiredAmount());
@@ -158,8 +171,8 @@ public class BingoCardHudElement implements HudElement {
 
 		String taskType = task.taskType().toString();
 		int bannerColor = switch (taskType) {
-			case "bingoreloaded:advancement" -> addAlphaToColor(ADVANCEMENT_COLOR, 255);
-			case "bingoreloaded:statistic" -> addAlphaToColor(STATISTIC_COLOR, 255);
+			case "bingoreloaded:advancement" -> ScreenHelper.addAlphaToColor(ADVANCEMENT_COLOR, 255);
+			case "bingoreloaded:statistic" -> ScreenHelper.addAlphaToColor(STATISTIC_COLOR, 255);
 			default -> 0;
 		};
 
@@ -185,10 +198,5 @@ public class BingoCardHudElement implements HudElement {
 		int frame = (int)ExtraMath.map(currentTime, 0, startTime, 0, 41);
 		frame = reverse ? 41 - frame : frame;
 		context.drawTexture(RenderPipelines.GUI_TEXTURED, type, x, y, frame * frameSize, frameSize, frameSize, frameSize, frameSize * 41, frameSize, color);
-	}
-
-	private int addAlphaToColor(int color, int alpha) {
-		alpha = alpha << 24;
-		return alpha | color;
 	}
 }
