@@ -25,12 +25,12 @@ import net.minecraft.util.Identifier;
 public class BingoReloadedCompanionClient implements ClientModInitializer {
 
 	public static final Identifier BINGO_CARD_TASKS = ConfigurableHudRegistry.registerSubElement("bingocard", "tasks",
-			new HudInfo(false, 3 * 4 + 5 * 16, 3 * 4 + 5 * 16),
-				new HudPlacement(18, 10 + 32, true, 0, 0));
+			new HudInfo(false, 5 * 22, 5 * 22),
+				new HudPlacement(10, 10 + 32, true, 3.0f, 3.0f));
 
 	public static final Identifier BINGO_CARD_GAMEMODE = ConfigurableHudRegistry.registerSubElement("bingocard", "gamemode",
 				new HudInfo(false, 128, 32),
-				new HudPlacement(0, 5, true, 0, 0));
+				new HudPlacement(0, 5, true, 3.0f, 3.0f));
 
 	private static final HudConfigManager HUD_CONFIG = new HudConfigManager();
 

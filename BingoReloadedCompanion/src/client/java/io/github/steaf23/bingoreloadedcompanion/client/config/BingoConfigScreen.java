@@ -8,6 +8,7 @@ import io.github.steaf23.bingoreloadedcompanion.client.hud.BingoCardHudElement;
 import io.github.steaf23.bingoreloadedcompanion.client.hud.HudConfigManager;
 import io.github.steaf23.bingoreloadedcompanion.client.hud.HudPlacement;
 import io.github.steaf23.bingoreloadedcompanion.client.util.ScreenHelper;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
@@ -33,6 +34,8 @@ public class BingoConfigScreen extends Screen {
 	private static final Identifier SHOW_BUTTON_HIGHLIGHT = Identifier.of("bingoreloadedcompanion:show_button_highlighted");
 	private static final Identifier RESET_BUTTON = Identifier.of("bingoreloadedcompanion:reset_button");
 	private static final Identifier RESET_BUTTON_HIGHLIGHT = Identifier.of("bingoreloadedcompanion:reset_button_highlighted");
+	private static final Identifier SCALE_BUTTON = Identifier.of("bingoreloadedcompanion:scale_button");
+	private static final Identifier SCALE_BUTTON_HIGHLIGHT = Identifier.of("bingoreloadedcompanion:scale_button_highlighted");
 	private static final int BUTTON_WIDTH = 14;
 	private static final int BUTTON_HEIGHT = 14;
 
@@ -93,9 +96,9 @@ public class BingoConfigScreen extends Screen {
 		context.drawTooltip(textRenderer, List.of(Text.of(""), Text.of("Click on an element to select it."), Text.of("You can move it by dragging the mouse or using the movement keys.")), width / 2 - (textWidth / 2), 10);
 
 		for (Identifier element : elements) {
+
 			HudPlacement placement = configManager.getHudPlacement(element);
 			HudConfigManager.Rect rect = configManager.getUsedRectOfElement(element);
-
 			if (!placement.visible()) {
 				context.fill(rect.x(), rect.y(), rect.endX(), rect.endY(), 0x44FF0000);
 			}
@@ -104,14 +107,15 @@ public class BingoConfigScreen extends Screen {
 				context.drawBorder(rect.x() - 3, rect.y() - 3, rect.width() + 6, rect.height() + 6, ScreenHelper.addAlphaToColor(Formatting.YELLOW.getColorValue(), 200));
 
 				int showButtonX = rect.endX() - (BUTTON_WIDTH * 2 + 2);
+				int scaleButtonX = rect.endX() - (BUTTON_WIDTH * 3 + 4);
 				int resetButtonX = rect.endX() - BUTTON_WIDTH;
 				int buttonY = height - rect.endY() > BUTTON_HEIGHT + 4 ? rect.endY() + 4 : rect.y() - BUTTON_HEIGHT - 4;
 
 				if (isMouseOverShowButton(mouseX, mouseY) && configManager.getHudPlacement(element).visible()) {
-					context.drawTooltip(textRenderer, Text.of("Hide"), 100, 100);
+					context.drawTooltip(MinecraftClient.getInstance().textRenderer, Text.of("Hide"), 100, 100);
 					context.drawGuiTexture(RenderPipelines.GUI_TEXTURED, HIDE_BUTTON_HIGHLIGHT, showButtonX, buttonY, BUTTON_WIDTH, BUTTON_HEIGHT);
 				} else if (isMouseOverShowButton(mouseX, mouseY)) {
-					context.drawTooltip(textRenderer, Text.of("Show"), mouseX, mouseY);
+					context.drawTooltip(MinecraftClient.getInstance().textRenderer, Text.of("Show"), mouseX, mouseY);
 					context.drawGuiTexture(RenderPipelines.GUI_TEXTURED, SHOW_BUTTON_HIGHLIGHT, showButtonX, buttonY, BUTTON_WIDTH, BUTTON_HEIGHT);
 				} else if (configManager.getHudPlacement(element).visible()) {
 					context.drawGuiTexture(RenderPipelines.GUI_TEXTURED, HIDE_BUTTON, showButtonX, buttonY, BUTTON_WIDTH, BUTTON_HEIGHT);
@@ -120,12 +124,19 @@ public class BingoConfigScreen extends Screen {
 				}
 
 				if (isMouseOverResetButton(mouseX, mouseY)) {
-					context.drawTooltip(textRenderer, Text.of("Reset"), mouseX, mouseY);
+					context.drawTooltip(MinecraftClient.getInstance().textRenderer, Text.of("Reset"), mouseX, mouseY);
 					context.drawGuiTexture(RenderPipelines.GUI_TEXTURED, RESET_BUTTON_HIGHLIGHT, resetButtonX, buttonY, BUTTON_WIDTH, BUTTON_HEIGHT);
 				} else {
 					context.drawGuiTexture(RenderPipelines.GUI_TEXTURED, RESET_BUTTON, resetButtonX, buttonY, BUTTON_WIDTH, BUTTON_HEIGHT);
-
 				}
+
+				if (isMouseOverScaleButton(mouseX, mouseY)) {
+					context.drawTooltip(MinecraftClient.getInstance().textRenderer, Text.of("Scale"), mouseX, mouseY);
+					context.drawGuiTexture(RenderPipelines.GUI_TEXTURED, SCALE_BUTTON_HIGHLIGHT, scaleButtonX, buttonY, BUTTON_WIDTH, BUTTON_HEIGHT);
+				} else {
+					context.drawGuiTexture(RenderPipelines.GUI_TEXTURED, SCALE_BUTTON, scaleButtonX, buttonY, BUTTON_WIDTH, BUTTON_HEIGHT);
+				}
+
 			} else if (hoveringElement == element) {
 				context.fill(rect.x() - 2, rect.y() - 2, rect.endX() + 2, rect.endY() + 2, 0x44DADADA);
 			}
@@ -142,6 +153,17 @@ public class BingoConfigScreen extends Screen {
 	private boolean isMouseOverElement(Identifier element, double mouseX, double mouseY) {
 		HudConfigManager.Rect rect = configManager.getUsedRectOfElement(element);
 		return ScreenHelper.isPointWithinBounds(rect.x(), rect.y(), rect.width(), rect.height(), mouseX, mouseY);
+	}
+
+	private boolean isMouseOverScaleButton(double mouseX, double mouseY) {
+		if (selectedElement == null) {
+			return false;
+		}
+		HudConfigManager.Rect usedRect = configManager.getUsedRectOfElement(selectedElement);
+
+		int buttonX = usedRect.endX() - (BUTTON_WIDTH * 3 + 4);
+		int buttonY = height - usedRect.endY() > BUTTON_HEIGHT + 4 ? usedRect.endY() + 4 : usedRect.y() - BUTTON_HEIGHT - 4;
+		return ScreenHelper.isPointWithinBounds(buttonX, buttonY, BUTTON_WIDTH, BUTTON_HEIGHT, mouseX, mouseY);
 	}
 
 	private boolean isMouseOverShowButton(double mouseX, double mouseY) {
@@ -181,6 +203,11 @@ public class BingoConfigScreen extends Screen {
 			return true;
 		} else if (isMouseOverResetButton(mouseX, mouseY)) {
 			configManager.resetElement(selectedElement);
+			return true;
+		} else if (isMouseOverScaleButton(mouseX, mouseY)) {
+			int scale = (int) configManager.getHudPlacement(selectedElement).scaleX();
+			scale = 1 + ((scale - 1) + 1) % 4;
+			configManager.setElementScale(selectedElement, scale, scale);
 			return true;
 		}
 

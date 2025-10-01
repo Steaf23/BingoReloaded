@@ -17,20 +17,26 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.text.TextColor;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Matrix3x2fStack;
 
 public class BingoCardHudElement implements HudElement {
 
 	private static final Identifier GAMEMODE_LOGOS = Identifier.of("bingoreloadedcompanion:textures/gui/gamemode_logos.png");
-	private static final Identifier SLOT_BACKGROUND = Identifier.of("bingoreloadedcompanion:textures/gui/sprites/card_slot.png");
-	private static final Identifier TIMER_ROUND = Identifier.of("bingoreloadedcompanion:textures/gui/sprites/timer.png");
-	private static final Identifier TIMER_SQUARE = Identifier.of("bingoreloadedcompanion:textures/gui/sprites/timer_square.png");
+	private static final Identifier TASK_BACKGROUND = Identifier.of("bingoreloadedcompanion:textures/gui/sprites/task_background.png");
+	private static final Identifier TASK_BACKGROUND_ADVANCEMENT = Identifier.of("bingoreloadedcompanion:textures/gui/sprites/task_background_advancement.png");
+	private static final Identifier TASK_BACKGROUND_STATISTIC = Identifier.of("bingoreloadedcompanion:textures/gui/sprites/task_background_statistic.png");
+	private static final Identifier TASK_BACKGROUND_HOTSWAP = Identifier.of("bingoreloadedcompanion:textures/gui/sprites/task_background_hotswap.png");
+	private static final Identifier TASK_ADVANCEMENT_ICON = Identifier.of("bingoreloadedcompanion:textures/gui/sprites/task_advancement_icon.png");
+	private static final Identifier TASK_STATISTIC_ICON = Identifier.of("bingoreloadedcompanion:textures/gui/sprites/task_statistic_icon.png");
+	private static final Identifier TASK_COMPLETED_OVERLAY = Identifier.of("bingoreloadedcompanion:textures/gui/sprites/task_completed_overlay.png");
 
-	private static final Integer ADVANCEMENT_COLOR = Formatting.GREEN.getColorValue();
-	private static final Integer STATISTIC_COLOR = Formatting.LIGHT_PURPLE.getColorValue();
 	private static final Integer RECOVERY_COLOR = TextColor.parse("#5cb1ff").getOrThrow().getRgb();
 	private static final TextColorGradient HOTSWAP_EXPIRATION_GRADIENT = new TextColorGradient()
-			.addColor(TextColor.parse("#ffd200").getOrThrow(), 0.0f)
+			.addColor(TextColor.parse("#ffffff").getOrThrow(), 0.00f)
+			.addColor(TextColor.parse("#3cff00").getOrThrow(), 0.05f)
+			.addColor(TextColor.parse("#ffd200").getOrThrow(), 0.25f)
 			.addColor(TextColor.parse("#e85e21").getOrThrow(), 0.5f)
 			.addColor(TextColor.parse("#750e0e").getOrThrow(), 0.8f)
 			.addColor(TextColor.fromFormatting(Formatting.DARK_GRAY), 1.0f);
@@ -100,13 +106,24 @@ public class BingoCardHudElement implements HudElement {
 	}
 
 	private void renderTasks(DrawContext context, float tickDelta) {
+
 		HudConfigManager.Rect tasksRect = hudConfig.getUsedRectOfElement(TASKS_ELEMENT);
+		HudPlacement placement = hudConfig.getHudPlacement(TASKS_ELEMENT);
+
+		float scaleFactorX = 1.0f / MinecraftClient.getInstance().getWindow().getScaleFactor() * placement.scaleX();
+		float scaleFactorY = 1.0f / MinecraftClient.getInstance().getWindow().getScaleFactor() * placement.scaleY();
+
+		Matrix3x2fStack matrices = context.getMatrices();
+		matrices.pushMatrix();
+		matrices.translate(tasksRect.x(), tasksRect.y());
+		matrices.scale(scaleFactorX, scaleFactorY);
+		matrices.translate(-tasksRect.x(), -tasksRect.y());
 
 		if (card.tasks().isEmpty()) {
 			return;
 		}
 
-		int spacing = 3;
+		int spacing = 6;
 		int startOffsetX = tasksRect.x();
 		int startOffsetY = tasksRect.y();
 
@@ -130,10 +147,22 @@ public class BingoCardHudElement implements HudElement {
 				taskIdx++;
 			}
 		}
+		matrices.popMatrix();
 	}
 
 	private void renderBanner(DrawContext context, float tickDelta) {
+
 		HudConfigManager.Rect gamemodeRect = hudConfig.getUsedRectOfElement(GAMEMODE_ELEMENT);
+		HudPlacement placement = hudConfig.getHudPlacement(GAMEMODE_ELEMENT);
+
+		float scaleFactorX = 1.0f / MinecraftClient.getInstance().getWindow().getScaleFactor() * placement.scaleX();
+		float scaleFactorY = 1.0f / MinecraftClient.getInstance().getWindow().getScaleFactor() * placement.scaleY();
+
+		Matrix3x2fStack matrices = context.getMatrices();
+		matrices.pushMatrix();
+		matrices.translate(gamemodeRect.x(), gamemodeRect.y());
+		matrices.scale(scaleFactorX, scaleFactorY);
+		matrices.translate(-gamemodeRect.x(), -gamemodeRect.y());
 
 		int textureIndex = card.mode().getIndex();
 		int gamemodeBannerSizeX = 128;
@@ -143,60 +172,74 @@ public class BingoCardHudElement implements HudElement {
 		context.drawTexture(RenderPipelines.GUI_TEXTURED, GAMEMODE_LOGOS, gamemodeStartX, gamemodeStartY,
 				0, textureIndex * gamemodeBannerSizeY, gamemodeBannerSizeX, gamemodeBannerSizeY,
 				gamemodeBannerSizeX, gamemodeBannerSizeY, 128, 128);
+
+		matrices.popMatrix();
 	}
 
-	protected void renderTask(DrawContext drawContext, Task task, int x, int y, @Nullable HotswapTaskHolder hotswapContext, float delta) {
+	protected void renderTask(DrawContext drawContext, @NotNull Task task, int x, int y, @Nullable HotswapTaskHolder hotswapContext, float delta) {
 
 		boolean hotswapRecovering = hotswapContext != null && hotswapContext.recovering();
 		boolean hotswapExpires = hotswapContext != null && hotswapContext.expires();
 
+		int borderX = x;
+		int borderY = y;
+		int taskX = x + 2;
+		int taskY = y + 2;
+
+		// Task background
 		Task.TaskCompletion completion = task.completion();
-		if (completion.completed() && !hotswapRecovering) {
-			drawContext.drawTexture(RenderPipelines.GUI_TEXTURED, SLOT_BACKGROUND, x, y, 0, 0, 17, 17, 17, 17, ScreenHelper.addAlphaToColor(completion.teamColor(), 200));
-		} else if (hotswapRecovering) {
+		if (hotswapRecovering) {
 			float predictedTime = hotswapContext.currentTimeSeconds() - ((HudTimer.getTicks() - lastHotswapUpdateTick) / 20.0f) + delta;
 			int color = ScreenHelper.addAlphaToColor(RECOVERY_COLOR, 255);
-			renderTimerRound(drawContext, (int) hotswapContext.totalTimeSeconds(), predictedTime, x, y, color, false);
+			renderHotswapBackground(drawContext, (int) hotswapContext.totalTimeSeconds(), predictedTime, borderX, borderY, color, false);
 			return;
 		} else if (hotswapExpires) {
 			float predictedTime = hotswapContext.currentTimeSeconds() - ((HudTimer.getTicks() - lastHotswapUpdateTick) / 20.0f) + delta;
 			int color = ScreenHelper.addAlphaToColor(HOTSWAP_EXPIRATION_GRADIENT.sample(1 - predictedTime / hotswapContext.totalTimeSeconds()).getRgb(), 200);
-			renderTimerSquare(drawContext, (int) hotswapContext.totalTimeSeconds(), predictedTime, x, y, color, true);
+			renderHotswapBackground(drawContext, (int) hotswapContext.totalTimeSeconds(), predictedTime, borderX, borderY, color, true);
 		} else {
-			drawContext.drawTexture(RenderPipelines.GUI_TEXTURED, SLOT_BACKGROUND, x, y, 0, 0, 17, 17, 17, 17, 0x88000000);
+			String taskType = task.taskType().toString();
+			Identifier backgroundTexture = switch (taskType) {
+				case "bingoreloaded:advancement" -> TASK_BACKGROUND_ADVANCEMENT;
+				case "bingoreloaded:statistic" -> TASK_BACKGROUND_STATISTIC;
+				default -> TASK_BACKGROUND;
+			};
+
+			drawContext.drawTexture(RenderPipelines.GUI_TEXTURED, backgroundTexture, borderX, borderY, 0, 0, 21, 21, 21, 21, ScreenHelper.addAlphaToColor(0xFFFFFF, 128));
 		}
 
+		// Completion overlay
+		if (completion.completed()) {
+			drawContext.drawTexture(RenderPipelines.GUI_TEXTURED, TASK_COMPLETED_OVERLAY, borderX, borderY, 0, 0, 21, 21, 21, 21, ScreenHelper.addAlphaToColor(completion.teamColor(), 255));
+		}
+
+		// Actual item representation of the task
 		ItemStack stack = new ItemStack(task.itemType(), task.requiredAmount());
-		drawContext.drawItem(stack, x, y);
+		drawContext.drawItem(stack, taskX, taskY);
 
+		// Draw statistic/ advancement overlay sprite last
 		String taskType = task.taskType().toString();
-		int bannerColor = switch (taskType) {
-			case "bingoreloaded:advancement" -> ScreenHelper.addAlphaToColor(ADVANCEMENT_COLOR, 255);
-			case "bingoreloaded:statistic" -> ScreenHelper.addAlphaToColor(STATISTIC_COLOR, 255);
-			default -> 0;
-		};
+		switch (taskType) {
+			case "bingoreloaded:advancement" -> {
+				drawContext.drawTexture(RenderPipelines.GUI_TEXTURED, TASK_ADVANCEMENT_ICON, borderX, borderY, 0, 0, 21, 24, 21, 24);
+			}
+			case "bingoreloaded:statistic" -> {
+				drawContext.drawTexture(RenderPipelines.GUI_TEXTURED, TASK_STATISTIC_ICON, borderX, borderY, 0, 0, 21, 24, 21, 24);
+			}
+		}
 
-		int bannerStartX = x - 1;
-		int bannerStartY = y + (ITEM_SIZE / 4 * 3);
-
-		drawContext.fill(bannerStartX, bannerStartY, bannerStartX + ITEM_SIZE + 2, bannerStartY + ITEM_SIZE / 4, bannerColor);
+		// Lastly draw the required amount of the task.
 		TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
-
-		drawContext.drawStackOverlay(textRenderer, stack, x, y);
+		drawContext.drawStackOverlay(textRenderer, stack, taskX, taskY);
 	}
 
-	private void renderTimerRound(DrawContext context, float startTime, float currentTime, int x, int y, int color, boolean reverse) {
-		renderTimer(TIMER_ROUND, context, startTime, currentTime, x, y, color, reverse);
-	}
+	private void renderHotswapBackground(DrawContext context, float startTime, float currentTime, int x, int y, int color, boolean reverse) {
+		int frameWidth = 21;
+		int frameHeight = 21;
+		int totalFrames = 62;
 
-	private void renderTimerSquare(DrawContext context, float startTime, float currentTime, int x, int y, int color, boolean reverse) {
-		renderTimer(TIMER_SQUARE, context, startTime, currentTime, x, y, color, reverse);
-	}
-
-	private void renderTimer(Identifier type, DrawContext context, float startTime, float currentTime, int x, int y, int color, boolean reverse) {
-		int frameSize = 17;
-		int frame = (int)ExtraMath.map(currentTime, 0, startTime, 0, 41);
-		frame = reverse ? 41 - frame : frame;
-		context.drawTexture(RenderPipelines.GUI_TEXTURED, type, x, y, frame * frameSize, frameSize, frameSize, frameSize, frameSize * 41, frameSize, color);
+		int currentFrame = (int)ExtraMath.map(currentTime, 0, startTime, 0, totalFrames);
+		currentFrame = reverse ? totalFrames - currentFrame : currentFrame;
+		context.drawTexture(RenderPipelines.GUI_TEXTURED, TASK_BACKGROUND_HOTSWAP, x, y, currentFrame * frameWidth, frameHeight, frameWidth, frameHeight, frameWidth * totalFrames, frameHeight, color);
 	}
 }

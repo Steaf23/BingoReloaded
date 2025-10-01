@@ -24,11 +24,11 @@ public record WorldGroup(ServerSoftware platform, String worldName, UUID overwor
     }
 
     public @Nullable WorldHandle getNetherWorld() {
-        return netherId == null ? null : platform.getWorld(overworldId);
+        return netherId == null ? null : platform.getWorld(netherId);
     }
 
     public @Nullable WorldHandle getEndWorld() {
-        return endId == null ? null : platform.getWorld(overworldId);
+        return endId == null ? null : platform.getWorld(endId);
     }
 
     public boolean hasWorld(UUID uuid) {

@@ -3,6 +3,7 @@ package io.github.steaf23.bingoreloadedcompanion.client.hud;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 
@@ -63,6 +64,7 @@ public class HudConfigManager {
 	public void moveElement(Identifier id, int toX, int toY, int borderX, int borderY) {
 		HudPlacement place = getHudPlacement(id);
 		Rect usedRect = getUsedRectOfElement(id);
+		//TODO: fix crash when borderY/X is smaller than usedRect
 		elementPlaces.put(id, place.move(
 				Math.clamp(toX, 0, borderX - usedRect.width()),
 				Math.clamp(toY, 0, borderY - usedRect.height())
@@ -79,6 +81,11 @@ public class HudConfigManager {
 		elementPlaces.put(id, placement.setVisible(!placement.visible()));
 	}
 
+	public void setElementScale(Identifier id, float scaleX, float scaleY) {
+		HudPlacement placement = getHudPlacement(id);
+		elementPlaces.put(id, placement.setScale(scaleX, scaleY));
+	}
+
 	public void resetElement(Identifier id) {
 		elementPlaces.remove(id);
 	}
@@ -92,8 +99,8 @@ public class HudConfigManager {
 		}
 
 		return new Rect(placement.x(), placement.y(),
-				Math.max(info.minSizeX(), placement.sizeX()),
-				Math.max(info.minSizeY(), placement.sizeY()));
+				(int)(info.minSizeX() * (1.0 / MinecraftClient.getInstance().getWindow().getScaleFactor() * placement.scaleX())),
+				(int)(info.minSizeY() * (1.0 / MinecraftClient.getInstance().getWindow().getScaleFactor() * placement.scaleY())));
 	}
 
 	public @NotNull HudPlacement getHudPlacement(Identifier id) {
@@ -101,7 +108,7 @@ public class HudConfigManager {
 			return elementPlaces.get(id);
 		} else {
 			HudPlacement def = ConfigurableHudRegistry.getDefaultPlacement(id);
-			return def == null ? new HudPlacement(0, 0, true, 0, 0) : def;
+			return def == null ? new HudPlacement(0, 0, true, 3.0f, 3.0f) : def;
 		}
 	}
 }

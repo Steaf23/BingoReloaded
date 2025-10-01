@@ -27,10 +27,10 @@ public class HudConfigSerializer extends TypeAdapter<HudConfig> {
 			jsonWriter.value(placement.y());
 			jsonWriter.name("visible");
 			jsonWriter.value(placement.visible());
-			jsonWriter.name("sizeX");
-			jsonWriter.value(placement.sizeX());
-			jsonWriter.name("sizeY");
-			jsonWriter.value(placement.sizeY());
+			jsonWriter.name("scaleX");
+			jsonWriter.value(placement.scaleX());
+			jsonWriter.name("scaleY");
+			jsonWriter.value(placement.scaleY());
 
 			jsonWriter.endObject();
 		}
@@ -56,12 +56,12 @@ public class HudConfigSerializer extends TypeAdapter<HudConfig> {
 			jsonReader.nextName();
 			boolean visible = jsonReader.nextBoolean();
 			jsonReader.nextName();
-			int sizeX = jsonReader.nextInt();
+			float scaleX = (float) jsonReader.nextDouble();
 			jsonReader.nextName();
-			int sizeY = jsonReader.nextInt();
+			float scaleY = (float) jsonReader.nextDouble();
 			jsonReader.endObject();
 
-			map.put(Identifier.of(id), new HudPlacement(x, y, visible, sizeX, sizeY));
+			map.put(Identifier.of(id), new HudPlacement(x, y, visible, scaleX, scaleY));
 		}
 
 		jsonReader.endObject();
