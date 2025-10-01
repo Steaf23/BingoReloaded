@@ -20,11 +20,11 @@ repositories {
 }
 
 dependencies {
-    compileOnly 'com.github.retrooper:packetevents-spigot:2.9.3'
+    compileOnly 'com.github.retrooper:packetevents-spigot:2.9.5'
     compileOnly 'me.clip:placeholderapi:2.11.6'
 
     implementation project(":common")
-    paperweightDevelopmentBundle("io.papermc.paper:dev-bundle:1.21.7-R0.1-SNAPSHOT")
+    paperweightDevelopmentBundle("io.papermc.paper:dev-bundle:$minecraft_version-R0.1-SNAPSHOT")
 }
 
 java {

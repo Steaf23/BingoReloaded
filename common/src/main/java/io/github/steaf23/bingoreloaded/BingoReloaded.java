@@ -107,6 +107,7 @@ public class BingoReloaded implements Namespaced {
 		addDataAccessor(new TagDataAccessor(platform, "data/textures", false));
 		addDataAccessor(new TagDataAccessor(platform, "data/default_kits", true));
 		addDataAccessor(new TagDataAccessor(platform, "data/kits", false));
+		addDataAccessor(new TagDataAccessor(platform, "data/default_lists", true));
 		addDataAccessor(new TagDataAccessor(platform, "data/" + getDefaultTasksVersion(), false));
 		addDataAccessor(new TagDataAccessor(platform, "data/presets", false));
 		addDataAccessor(new TagDataAccessor(platform, "data/player_stats", false));
@@ -247,6 +248,7 @@ public class BingoReloaded implements Namespaced {
 		getDataAccessor("data/cards").load();
 		getDataAccessor("data/textures").load();
 		getDataAccessor("data/kits").load();
+		getDataAccessor("data/default_lists").load();
 		getDataAccessor("data/" + getDefaultTasksVersion()).load();
 		getDataAccessor("data/presets").load();
 		getDataAccessor("data/player_stats").load();

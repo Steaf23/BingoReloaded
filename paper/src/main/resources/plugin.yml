@@ -2,7 +2,7 @@ name: BingoReloaded # the plugins name as it should appear in the plugin list /p
 version: 3.3.0 # the plugin's version
 author: Steven
 main: io.github.steaf23.bingoreloaded.BingoReloadedPaper
-api-version: 1.21.7
+api-version: 1.21.8
 
 softdepend: [PlaceholderAPI, MultiWorld]
 depend: [packetevents]
