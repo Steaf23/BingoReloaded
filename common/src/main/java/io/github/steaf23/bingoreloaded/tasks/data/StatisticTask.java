@@ -48,30 +48,30 @@ public record StatisticTask(StatisticHandle statistic, int count) implements Tas
                     Component entityName = ComponentUtils.entityName(statistic.entityType());
                     Component[] inPlaceArguments = new Component[]{amount, Component.empty()};
                     builder.append(ComponentUtils.statistic(statistic, inPlaceArguments))
-                            .append(Component.text(" ("))
-                            .append(entityName)
+                            .append(Component.text("("))
+                            .append(entityName.decorate(TextDecoration.BOLD))
                             .append(Component.text(")"));
                 }
                 else if (statistic.statisticType().equals(StatisticType.ENTITY_KILLED_BY)) {
                     Component entityName = ComponentUtils.entityName(statistic.entityType());
                     Component[] inPlaceArguments = new Component[]{Component.empty(), amount, Component.empty()};
-                    builder.append(Component.text(" ("))
-                            .append(entityName)
+                    builder.append(Component.text("("))
+                            .append(entityName.decorate(TextDecoration.BOLD))
                             .append(Component.text(")"))
                             .append(ComponentUtils.statistic(statistic, inPlaceArguments));
                 }
                 else
                 {
                     builder.append(ComponentUtils.statistic(statistic))
-                            .append(Component.text(" "))
-                            .append(ComponentUtils.itemName(statistic.itemType()))
+							.append(Component.text(" "))
+                            .append(ComponentUtils.itemName(statistic.itemType()).decorate(TextDecoration.BOLD))
                             .append(Component.text(": "))
                             .append(amount);
                 }
             }
             case TRAVEL -> builder.append(ComponentUtils.statistic(statistic))
                     .append(Component.text(": "))
-                    .append(Component.text(count * 10))
+                    .append(Component.text(count * 10).decorate(TextDecoration.BOLD))
                     .append(Component.text(" Blocks"));
 
             default -> builder.append(ComponentUtils.statistic(statistic))
