@@ -14,13 +14,17 @@ import io.github.steaf23.bingoreloadedcompanion.network.ServerHotswapPayload;
 import io.github.steaf23.bingoreloadedcompanion.network.ServerUpdateCardPayload;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
+import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.util.InputUtil;
 import net.minecraft.util.Identifier;
+import org.lwjgl.glfw.GLFW;
 
 public class BingoReloadedCompanionClient implements ClientModInitializer {
 
@@ -98,17 +102,17 @@ public class BingoReloadedCompanionClient implements ClientModInitializer {
 					cardElement.setHotswapHolders(payload.holders);
 				});
 
+		KeyBinding toggleCardVisibility = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+				"key.bingoreloadedcompanion.toggle_card_visibility",
+				InputUtil.Type.KEYSYM,
+				GLFW.GLFW_KEY_R,
+				"category.bingoreloadedcompanion"));
 
 //		ClientPlayNetworking.registerGlobalReceiver(EditTaskListPayload.ID,
 //				(payload, context) -> {
 //					context.client().setScreen(new BingoCardTaskListScreen(Text.empty(), payload.tasks()));
 //				});
 //
-//		KeyBinding binding = KeyBindingHelper.registerKeyBinding(new KeyBinding(
-//				"key.bingoreloadedcompanion.test",
-//				InputUtil.Type.KEYSYM,
-//				GLFW.GLFW_KEY_R,
-//				"category.bingoreloadedcompanion.test"));
 //
 //		KeyBinding binding2 = KeyBindingHelper.registerKeyBinding(new KeyBinding(
 //				"key.bingoreloadedcompanion.test2",
@@ -131,6 +135,12 @@ public class BingoReloadedCompanionClient implements ClientModInitializer {
 //				cardElement.setCard(testCard3x);
 //			}
 //		});
+
+		ClientTickEvents.END_CLIENT_TICK.register(client -> {
+			if (toggleCardVisibility.wasPressed()) {
+				cardElement.setVisible(cardElement.isHidden());
+			}
+		});
     }
 
 	public static HudConfigManager getHudConfig() {

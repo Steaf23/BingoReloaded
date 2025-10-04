@@ -49,6 +49,7 @@ public class BingoCardHudElement implements HudElement {
 	private @Nullable ImmutableList<HotswapTaskHolder> hotswapTaskHolders;
 	private long lastHotswapUpdateTick = 0;
 
+	boolean visible = true;
 	boolean renderingInScreen = false;
 
 	private static final Identifier TASKS_ELEMENT = Identifier.of("bingoreloadedcompanion:hud/bingocard/tasks");
@@ -63,6 +64,16 @@ public class BingoCardHudElement implements HudElement {
 		if (card == null) {
 			hotswapTaskHolders = null;
 		}
+	}
+
+	public void setVisible(boolean visible) {
+		if (card == null) return;
+
+		this.visible = visible;
+	}
+
+	public boolean isHidden() {
+		return !visible;
 	}
 
 	public void setHotswapHolders(ImmutableList<HotswapTaskHolder> holders) {
@@ -90,7 +101,7 @@ public class BingoCardHudElement implements HudElement {
 	}
 
 	public void renderElement(DrawContext drawContext, float tickDelta) {
-		if (card == null) {
+		if (card == null || isHidden()) {
 			return;
 		}
 
