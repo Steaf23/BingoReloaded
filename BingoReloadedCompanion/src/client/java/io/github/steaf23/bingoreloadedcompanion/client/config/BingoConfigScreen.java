@@ -56,6 +56,8 @@ public class BingoConfigScreen extends Screen {
 	private double clickOffsetX;
 	private double clickOffsetY;
 
+	private boolean removed = false;
+
 	private final List<Identifier> elements = List.of(BingoReloadedCompanionClient.BINGO_CARD_TASKS, BingoReloadedCompanionClient.BINGO_CARD_GAMEMODE);
 
 	protected BingoConfigScreen(Screen modMenuScreen, HudConfigManager hudConfig) {
@@ -79,7 +81,7 @@ public class BingoConfigScreen extends Screen {
 		ButtonWidget backButton = ButtonWidget.builder(Text.of("Save & Exit"), (btn) -> {
 			if (client == null) return;
 			configManager.save();
-			client.setScreen(modMenuScreen);
+			closeScreen();
 		})
 				.position(5, height - 20 - 5)
 				.build();
@@ -99,9 +101,7 @@ public class BingoConfigScreen extends Screen {
 
 	@Override
 	public void removed() {
-		configManager.load();
 		GLFW.glfwSetCursor(getGameWindowId(), 0);
-		super.removed();
 	}
 
 	@Override
@@ -375,6 +375,11 @@ public class BingoConfigScreen extends Screen {
 
 	@Override
 	public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+		if (keyCode == GLFW.GLFW_KEY_ESCAPE) {
+			closeScreen();
+			return true;
+		}
+
 		if (selectedElement == null) {
 			return super.keyPressed(keyCode, scanCode, modifiers);
 		}
@@ -394,5 +399,22 @@ public class BingoConfigScreen extends Screen {
 		}
 
 		return super.keyPressed(keyCode, scanCode, modifiers);
+	}
+
+	@Override
+	public boolean shouldCloseOnEsc() {
+		return false;
+	}
+
+	protected void closeScreen() {
+		if (client == null) return;
+		if (configManager.hasChanged()) {
+
+			client.setScreen(new DiscardConfirmScreen(new BingoConfigScreen(modMenuScreen, configManager), modMenuScreen, configManager::load));
+			return;
+		}
+
+		configManager.load();
+		client.setScreen(modMenuScreen);
 	}
 }

@@ -36,17 +36,19 @@ public class HudConfigManager {
 
 	private static final Path CONFIG_PATH = FabricLoader.getInstance().getConfigDir().resolve("bingoreloadedcompanion.json");
 
+	private HudConfig savedConfig;
+
 	private Map<Identifier, HudPlacement> elementPlaces = new HashMap<>();
 
 	public void load() {
 		if (Files.exists(CONFIG_PATH)) {
 			try (Reader reader = Files.newBufferedReader(CONFIG_PATH)) {
 				HudConfig config = GSON.fromJson(reader, HudConfig.class);
-				elementPlaces = config.elements();
+				elementPlaces = new HashMap<>(config.elements());
+				savedConfig = config;
 				if (BingoReloadedCompanion.isCurrentVersionNewer(config.version())) {
 					updateConfig();
 				}
-
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -58,9 +60,31 @@ public class HudConfigManager {
 	public void save() {
 		try (Writer writer = Files.newBufferedWriter(CONFIG_PATH)) {
 			GSON.toJson(new HudConfig(BingoReloadedCompanion.modVersion(), elementPlaces), writer);
+			savedConfig = new HudConfig(savedConfig.version(), new HashMap<>(elementPlaces));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public boolean hasChanged() {
+		if (savedConfig.elements().size() != elementPlaces.size()) {
+			return true;
+		}
+
+		for (Identifier id : savedConfig.elements().keySet()) {
+			if (!elementPlaces.containsKey(id)) {
+				return true;
+			}
+
+			HudPlacement currentPlacement = elementPlaces.get(id);
+			HudPlacement savedPlacement = savedConfig.elements().get(id);
+
+			if (!currentPlacement.equals(savedPlacement)) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	public void updateConfig() {
