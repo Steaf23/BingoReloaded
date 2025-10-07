@@ -12,6 +12,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.TextColor;
@@ -154,7 +155,7 @@ public class BingoCardHudElement implements HudElement {
 				if (hotswapTaskHolders != null && taskIdx < hotswapTaskHolders.size()) {
 					holder = hotswapTaskHolders.get(taskIdx);
 				}
-				renderTask(context, task, xStart, yStart, holder, tickDelta);
+				renderTask(context, task, xStart, yStart, holder, tickDelta, placement.transparency());
 				taskIdx++;
 			}
 		}
@@ -182,12 +183,12 @@ public class BingoCardHudElement implements HudElement {
 		int gamemodeStartY = gamemodeRect.y();
 		context.drawTexture(RenderPipelines.GUI_TEXTURED, GAMEMODE_LOGOS, gamemodeStartX, gamemodeStartY,
 				0, textureIndex * gamemodeBannerSizeY, gamemodeBannerSizeX, gamemodeBannerSizeY,
-				gamemodeBannerSizeX, gamemodeBannerSizeY, 128, 128);
+				gamemodeBannerSizeX, gamemodeBannerSizeY, 128, 128, ScreenHelper.addAlphaToColor(0xFFFFFF, (int)(255 * placement.transparency())));
 
 		matrices.popMatrix();
 	}
 
-	protected void renderTask(DrawContext drawContext, @NotNull Task task, int x, int y, @Nullable HotswapTaskHolder hotswapContext, float delta) {
+	protected void renderTask(DrawContext drawContext, @NotNull Task task, int x, int y, @Nullable HotswapTaskHolder hotswapContext, float delta, double transparency) {
 
 		boolean hotswapRecovering = hotswapContext != null && hotswapContext.recovering();
 		boolean hotswapExpires = hotswapContext != null && hotswapContext.expires();
@@ -216,7 +217,7 @@ public class BingoCardHudElement implements HudElement {
 				default -> TASK_BACKGROUND;
 			};
 
-			drawContext.drawTexture(RenderPipelines.GUI_TEXTURED, backgroundTexture, borderX, borderY, 0, 0, 21, 21, 21, 21, ScreenHelper.addAlphaToColor(0xFFFFFF, 128));
+			drawContext.drawTexture(RenderPipelines.GUI_TEXTURED, backgroundTexture, borderX, borderY, 0, 0, 21, 21, 21, 21, ScreenHelper.addAlphaToColor(0xFFFFFF, (int)(255 * transparency)));
 		}
 
 		// Completion overlay

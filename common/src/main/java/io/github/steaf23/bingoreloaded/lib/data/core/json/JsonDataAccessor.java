@@ -136,7 +136,7 @@ public class JsonDataAccessor extends JsonDataStorage implements DataAccessor
                 return new Tag.StringTag(jsonPrimitive.getAsString());
             }
         } else if (jsonElement.isJsonArray()) {
-            JsonArray jsonArray = (JsonArray) jsonElement;
+            JsonArray jsonArray = jsonElement.getAsJsonArray();
             TagList data = new TagList();
 
             try {
@@ -149,7 +149,7 @@ public class JsonDataAccessor extends JsonDataStorage implements DataAccessor
 
             return new Tag.ListTag(data);
         } else if (jsonElement.isJsonObject()) {
-            JsonObject jsonObject = (JsonObject) jsonElement;
+            JsonObject jsonObject = jsonElement.getAsJsonObject();
             TagTree nbtCompound = new TagTree();
 
             for (Map.Entry<String, JsonElement> jsonEntry : jsonObject.entrySet()) {

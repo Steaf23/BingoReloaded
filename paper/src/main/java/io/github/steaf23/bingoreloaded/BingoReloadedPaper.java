@@ -17,7 +17,6 @@ import io.github.steaf23.bingoreloaded.api.TeamDisplayPaper;
 import io.github.steaf23.bingoreloaded.api.network.BingoClientManager;
 import io.github.steaf23.bingoreloaded.api.network.PaperClientManager;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
-import io.github.steaf23.bingoreloaded.data.DataUpdaterV1;
 import io.github.steaf23.bingoreloaded.data.DataUpdaterV3_3_0;
 import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.data.config.BingoOptions;

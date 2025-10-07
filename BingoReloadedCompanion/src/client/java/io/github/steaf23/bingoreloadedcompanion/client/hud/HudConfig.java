@@ -4,6 +4,6 @@ import net.minecraft.util.Identifier;
 
 import java.util.Map;
 
-public record HudConfig(Map<Identifier, HudPlacement> elements) {
+public record HudConfig(String version, Map<Identifier, HudPlacement> elements) {
 
 }

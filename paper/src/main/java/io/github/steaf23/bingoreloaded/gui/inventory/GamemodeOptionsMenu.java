@@ -98,7 +98,7 @@ public class GamemodeOptionsMenu extends BasicMenu
         if (chosenMode == BingoGamemode.REGULAR || chosenMode == BingoGamemode.COMPLETE) {
             int slot = chosenMode == BingoGamemode.REGULAR ? 5 : 6;
             boolean separateGeneration = session.settingsBuilder.view().differentCardPerTeam();
-            ItemTemplate separateGenerationItem = new ItemTemplate(slot, ItemTypePaper.of(Material.GLOBE_BANNER_PATTERN), BingoReloaded.applyTitleFormat("Different cards generated per team"));
+            ItemTemplate separateGenerationItem = new ItemTemplate(slot, ItemTypePaper.of(Material.GLOBE_BANNER_PATTERN));
             updateSeparateGenerationVisual(separateGenerationItem, separateGeneration);
             ToggleButtonAction separateGenerationAction = new ToggleButtonAction(separateGeneration, newValue -> {
                 session.settingsBuilder.differentCardPerTeam(newValue);
@@ -144,8 +144,10 @@ public class GamemodeOptionsMenu extends BasicMenu
 
     private static void updateSeparateGenerationVisual(ItemTemplate item, boolean enabled) {
         if (enabled) {
+			item.setName(BingoReloaded.applyTitleFormat("Different tasks generated per team"));
             item.setLore(ComponentUtils.MINI_BUILDER.deserialize(("Different teams get <red>DIFFERENT</red> cards")));
         } else {
+			item.setName(BingoReloaded.applyTitleFormat("Same tasks generated for everyone"));
             item.setLore(ComponentUtils.MINI_BUILDER.deserialize(("Different teams get <gray>THE SAME</gray> cards")));
         }
     }

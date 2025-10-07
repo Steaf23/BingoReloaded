@@ -14,8 +14,6 @@ import net.kyori.adventure.text.format.TextColor;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.StringJoiner;
-import java.util.stream.Stream;
 
 public class BingoConfigAction extends ActionTree {
     private final BingoConfigurationData configuration;

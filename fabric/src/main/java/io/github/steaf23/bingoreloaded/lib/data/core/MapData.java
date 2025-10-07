@@ -4,7 +4,6 @@ import io.github.steaf23.bingoreloaded.lib.data.core.node.NodeLikeData;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
-import java.util.Map;
 
 public class MapData extends HashMap<String, MapData.DataNode> implements NodeLikeData.NodeBranch<MapData.DataNode> {
 

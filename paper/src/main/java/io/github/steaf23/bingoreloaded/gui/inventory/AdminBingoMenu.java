@@ -116,15 +116,16 @@ public class AdminBingoMenu extends BasicMenu
         MenuAction countdownAction = new ComboBoxButtonAction.Builder("DISABLED", COUNTDOWN_TYPE_DISABLED.copy())
                 .addOption("DURATION", COUNTDOWN_TYPE_DURATION.copy())
                 .addOption("TIME_LIMIT", COUNTDOWN_TYPE_LIMIT.copy())
-                .setCallback(value -> {
-                    session.settingsBuilder.countdownType(BingoSettings.CountdownType.valueOf(value));
+                .setCallback((oldValue, newValue, arguments) -> {
+                    session.settingsBuilder.countdownType(BingoSettings.CountdownType.valueOf(newValue));
+					return true;
                 })
                 .buildAction(COUNTDOWN_TYPE_DISABLED.getSlot(), view.countdownType().name());
         addActions(teamSizeAction, durationAction, countdownAction);
 
         MenuAction startAction = new ComboBoxButtonAction.Builder("start", START.copy())
                 .addOption("end", END.copy())
-                .setCallback((clickedValue, args) -> {
+                .setCallback((clickedValue, newValue, args) -> {
 					if (clickedValue.equals("start")) {
 						if (!session.startGame()) {
 							BingoPlayerSender.sendMessage(Component.text("Could not start game, see console for details.").color(NamedTextColor.RED), args.player());

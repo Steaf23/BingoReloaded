@@ -2,7 +2,6 @@ package io.github.steaf23.bingoreloaded.gui;
 
 import io.github.steaf23.bingoreloaded.api.CardDisplayInfo;
 import io.github.steaf23.bingoreloaded.cards.TaskCard;
-import io.github.steaf23.bingoreloaded.gui.inventory.creator.TaskPickerMenu;
 import io.github.steaf23.bingoreloaded.lib.api.Position;
 import io.github.steaf23.bingoreloaded.lib.api.ServerSoftware;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataStorage;

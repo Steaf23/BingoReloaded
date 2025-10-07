@@ -1,6 +1,5 @@
 package io.github.steaf23.bingoreloaded.lib.api.item;
 
-import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.lib.api.PlatformResolver;
 import io.github.steaf23.bingoreloaded.lib.data.core.tag.TagDataStorage;
 import io.github.steaf23.bingoreloaded.lib.data.core.tag.TagTree;

@@ -5,8 +5,8 @@ import io.github.steaf23.bingoreloadedcompanion.card.BingoCard;
 import io.github.steaf23.bingoreloadedcompanion.client.hud.BingoCardHudElement;
 import io.github.steaf23.bingoreloadedcompanion.client.hud.ConfigurableHudRegistry;
 import io.github.steaf23.bingoreloadedcompanion.client.hud.HudConfigManager;
-import io.github.steaf23.bingoreloadedcompanion.client.hud.HudPlacement;
 import io.github.steaf23.bingoreloadedcompanion.client.hud.HudInfo;
+import io.github.steaf23.bingoreloadedcompanion.client.hud.HudPlacement;
 import io.github.steaf23.bingoreloadedcompanion.client.hud.HudTimer;
 import io.github.steaf23.bingoreloadedcompanion.network.ClientHelloPayload;
 import io.github.steaf23.bingoreloadedcompanion.network.EditTaskListPayload;
@@ -30,11 +30,11 @@ public class BingoReloadedCompanionClient implements ClientModInitializer {
 
 	public static final Identifier BINGO_CARD_TASKS = ConfigurableHudRegistry.registerSubElement("bingocard", "tasks",
 			new HudInfo(false, 5 * 22, 5 * 22),
-				new HudPlacement(10, 10 + 32, true, 3.0f, 3.0f));
+			new HudPlacement(0.014, 0.1, true, 3.0f, 3.0f, 0.6));
 
 	public static final Identifier BINGO_CARD_GAMEMODE = ConfigurableHudRegistry.registerSubElement("bingocard", "gamemode",
-				new HudInfo(false, 128, 32),
-				new HudPlacement(0, 5, true, 3.0f, 3.0f));
+			new HudInfo(false, 128, 32),
+			new HudPlacement(0, 0, true, 3.0f, 3.0f, 1.0));
 
 	private static final HudConfigManager HUD_CONFIG = new HudConfigManager();
 
@@ -42,7 +42,7 @@ public class BingoReloadedCompanionClient implements ClientModInitializer {
 	}
 
 	@Override
-    public void onInitializeClient() {
+	public void onInitializeClient() {
 
 		PayloadTypeRegistry.playC2S().register(ClientHelloPayload.ID, ClientHelloPayload.CODEC);
 		PayloadTypeRegistry.playC2S().register(EditTaskListPayload.ID, EditTaskListPayload.CODEC);
@@ -141,7 +141,7 @@ public class BingoReloadedCompanionClient implements ClientModInitializer {
 				cardElement.setVisible(cardElement.isHidden());
 			}
 		});
-    }
+	}
 
 	public static HudConfigManager getHudConfig() {
 		return HUD_CONFIG;
