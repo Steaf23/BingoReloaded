@@ -1,0 +1,12 @@
+plugins {
+    id 'base'
+}
+
+allprojects {
+    group = 'io.github.steaf23.bingoreloaded'
+    version = '3.3.0'
+
+    repositories {
+        mavenCentral()
+    }
+}

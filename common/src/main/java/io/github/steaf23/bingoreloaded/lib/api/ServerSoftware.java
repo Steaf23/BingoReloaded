@@ -1,0 +1,84 @@
+package io.github.steaf23.bingoreloaded.lib.api;
+
+import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
+import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
+import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
+import io.github.steaf23.bingoreloaded.lib.api.player.PlayerInfo;
+import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
+import net.kyori.adventure.key.Key;
+import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.io.File;
+import java.io.InputStream;
+import java.util.Collection;
+import java.util.UUID;
+import java.util.function.Consumer;
+
+//FIXME: Split into several classes (resources, worlds, resolvers, etc..) ?
+//
+
+/**
+ * Used by the common code to execute platform specific code.
+ */
+public interface ServerSoftware {
+
+	/**
+	 * Should be called to get a resource directly embedded in the jar.
+	 */
+	@Nullable InputStream getResource(String filePath);
+
+	/**
+	 * Should be used to save a copy resource that's embedded in the jar into the data folder.
+	 */
+	void saveResource(String name, boolean replace);
+
+	/**
+	 * @return the folder where data and special config stuff is saved that is not contained in the default config file.
+	 */
+	File getDataFolder();
+
+	Collection<? extends PlayerHandle> getOnlinePlayers();
+	@Nullable PlayerHandle getPlayerFromUniqueId(UUID id);
+	@Nullable PlayerHandle getPlayerFromName(String name);
+	@NotNull PlayerInfo getPlayerInfo(UUID playerId);
+	@NotNull PlayerInfo getPlayerInfo(String playerName);
+
+	ItemType resolveItemType(Key key);
+	DimensionType resolveDimensionType(Key key);
+	EntityType resolveEntityType(Key key);
+	AdvancementHandle resolveAdvancement(Key key);
+	StatisticType resolveStatisticType(Key key);
+	StatusEffectType resolvePotionEffectType(Key key);
+
+	ExtensionInfo getExtensionInfo();
+
+	ComponentLogger getComponentLogger();
+
+	Collection<WorldHandle> getLoadedWorlds();
+	@Nullable WorldHandle getWorld(String worldName);
+	@Nullable WorldHandle getWorld(UUID worldName);
+	@Nullable WorldHandle createWorld(WorldOptions options);
+	boolean unloadWorld(@NotNull WorldHandle world, boolean save);
+
+	StackHandle createStack(ItemType type, int amount);
+	StackHandle createStackFromBytes(byte[] bytes);
+	StackHandle createStackFromTemplate(ItemTemplate template, boolean hideAttributes);
+	byte[] createBytesFromStack(StackHandle stack);
+	StackHandle colorItemStack(StackHandle stack, TextColor color);
+
+	StatisticHandle createStatistic(StatisticType type, @Nullable ItemType item, @Nullable EntityType entity);
+
+	boolean areAdvancementsDisabled();
+
+	ExtensionTask runTaskTimer(long repeatTicks, long startDelayTicks, Consumer<ExtensionTask> consumer);
+	ExtensionTask runTask(Consumer<ExtensionTask> consumer);
+	ExtensionTask runTask(long startDelayTicks, Consumer<ExtensionTask> consumer);
+
+	/**
+	 * Sends command as console.
+	 */
+	void sendConsoleCommand(String command);
+}

@@ -1,0 +1,242 @@
+version: 3.3.0
+# ==========================================================================
+#    General Configuration Options
+# ==========================================================================
+
+# Choose between:
+#   - SINGULAR: The main server world is repurposed for the use of bingo. This mode assumes that bingo is the only gamemode or gameplay option on the server
+#       This makes is good to just play a few rounds with some friends without worrying about the world configurations
+#       This can also be used for bigger server networks where each server represents an instance of the game.
+#   - MULTIPLE: The plugin creates worlds specifically for the purpose of playing bingo.
+#       The main world can be converted to a lobby world but this is not required.
+configuration: SINGULAR
+
+# This option means different things for each configuration:
+#   - SINGULAR: This world is the one where bingo is played. The plugin will not create this world, so make sure to create it before running this plugin.
+#     to allow the plugin to use the Nether and End dimensions, the names `<defaultWorldName>_nether` and `<defaultWorldName>_the_end` must also be valid worlds.
+#   - MULTIPLE: This world is used more like a lobby world, however it is not required. The actual game worlds can be will be created using autobingo commands .
+#     In this case, players can be teleported to any active game world using the /autobingo teleport command
+defaultWorldName: world
+
+# The yml file that contains the language data that will be used for this plugin
+#   Choose from: en_us.yml, nl.yml, fr_fr.yml, pt_br.yml, du.yml, zh_cn.yml, ja_jp.yml, ru.yml
+#     or make your own by using the existing ones as an example
+language: en_us.yml
+
+# Save player statistics (stats) like wins, losses, tasks completed, etc... Used for the leaderboard. Stats are saved to player_stats.yml.
+#   Stats are not automatically removed if you turn this to false if it has been on true before.
+#   (Turning this option on later will not retroactively fill stats for games played with stats off).
+savePlayerStatistics: false # true or false
+
+# If this value is not an empty string it will be sent as a command to the console, right after the game ends.
+sendCommandAfterGameEnds: '' # command to send
+
+# If this value is not an empty string it will be sent as a command to the console, right before the game starts.
+sendCommandBeforeGameStarts: '' # command to send
+
+# Determines what gamemode to set for all participants and spectators after the game ends, use the value NONE to not change gamemodes.
+# Can be one of:
+# SURVIVAL, CREATIVE, SPECTATOR, ADVENTURE, NONE
+playerGamemodeAfterGame: SURVIVAL
+
+# If true this will prevent the player from receiving the voting item, allowing custom implementations using the available autobingo command.
+# Note: This will also disallow the use of the /bingo vote command such that only /autobingo <world_name> vote can be used to vote on behalf of a player.
+voteUsingCommandsOnly: false
+
+# If true this will prevent the player from receiving the team selection item, allowing custom implementations using the available autobingo command.
+# Note: /bingo join will still be allowed, and so is joining using /bingo and selecting the Join Team option.
+selectTeamsUsingCommandsOnly: false
+
+# If true disables the scoreboard sidebar completely, useful for server (networks) with a pre-existing sidebar scoreboard.
+disableScoreboardSidebar: false
+
+# UNIMPLEMENTED
+# If true sends all players the resource pack made for bingo reloaded. This pack has visual changes only.
+# The resource pack is sent to any player joining a world where bingo can be played and gets removed when they leave.
+# If set to false will use the fallback menus and items without losing functionality.
+useIncludedResourcepack: true
+
+# Set to false if you want to disable the card rendering in the player hand on a map, may save a bit of server performance.
+# It's recommended to use this setting alongside showAdvancementItems for the best experience while playing.
+# This setting is ignored by a player if they have the Bingo Reloaded Companion mod installed and disableCompanionMod is set to false.
+useMapRenderer: true
+
+# Set to false if you want to display advancements as filled maps, regardless of the actual task.
+showUniqueAdvancementItems: false
+
+# Set to false if you want to display statistics as banner patterns, regardless of the actual task.
+showUniqueStatisticItems: true
+
+# Set to true if you want to log debug messages in /plugins/BingoReloaded/log/debug.log.
+# Usually used when trying to recreate bugs.
+enableDebugLogging: false
+
+# Set to true when you want players to not be able to use the Bingo Reloaded Companion mod when playing bingo.
+# (more fair for people that do not have the mod)
+disableCompanionMod: false
+
+
+# ==========================================================================
+#    Lobby Configuration Options
+# ==========================================================================
+# (Lobby configuration options apply to the world specified by defaultWorldName)
+
+# If true, existing teams will not be used. Instead, each player is in their own team, and they get a color assigned automatically.
+# This also allows for an unlimited amount of players/teams in a single game.
+# Additionally, players cannot decide to join a particular team, they can only opt in or opt out of playing the game.
+singlePlayerTeams: false
+
+# Amount of players needed to automatically start a game, set to 0 to never start a game automatically
+minimumPlayerCount: 4
+
+# The amount of time in seconds the lobby will wait for extra players when the minimum player count has been reached
+playerWaitTime: 30
+
+# The amount of time in seconds before a new game gets opened after the previous one has ended (the post-game phase)
+gameRestartTime: 20
+
+# If true, allows players to vote on certain options before the game starts.
+useVoteSystem: true
+
+# Prevent players from breaking or placing blocks when the game is not running
+preventPlayerGriefing: true
+
+# Teleport all players to the lobby set using /bingo lobby. Does nothing if no lobby is set in this way.
+# If the delay is bigger than gameRestartTime, that value will be used as the delay instead.
+# Set to 0 to spawn everyone at the exact spawn point set.
+# The spread determines how far away from the lobby a player can teleport, the target location being a random point in the area.
+# Height is not affected by the spread.
+teleportToLobbyAfterGame:
+  enabled: true #true or false
+  delay: 10.0 # teleportation delay in seconds
+  spread: 5 # spread in amount of blocks from the center. 0 means all players will teleport to the same exact position.
+
+# Use this to configure what options can be voted on.
+voteList:
+  gamemodes:
+  - regular
+  - lockout
+  - complete
+  - hotswap
+  kits:
+  - hardcore
+  - normal
+  - overpowered
+  - reloaded
+  - custom_1
+  - custom_2
+  - custom_3
+  - custom_4
+  - custom_5
+  cards:
+  - default_card
+  cardsizes:
+  - '3'
+  - '5'
+
+# ==========================================================================
+#    Gameplay Configuration Options
+# ==========================================================================
+
+# The amount of time in seconds before the game will release the players.
+startingCountdownTime: 10
+
+# When the game starts everyone will be teleported in a random square radius
+#   between 0 and teleportMaxDistance blocks from 0,0. (no more than 1.000.000 blocks)
+teleportMaxDistance: 1000000
+
+# Decide whether to teleport players:
+#   - everyone together (ALL),
+#   - everyone apart (ALONE),
+#   - everyone with their teammates (TEAM),
+#   - no one gets teleported at all (NONE),
+#   - using any other value will make it so no one teleports at all at the start of the game.
+playerTeleportStrategy: ALL
+
+# If true, the game will send a message to players that died while playing the game
+#   that can be used to teleport them back.
+teleportBackAfterDeathMessage: true # true or false
+
+# Amount of time the command is valid after a player dies, if they click the message after this time or use /bingo back, nothing will happen
+teleportAfterDeathPeriod: 60 # amount of time in seconds
+
+# Distances to teleport a player that uses the Go-Up-Wand
+GoUpWand:
+  upDistance: 75 # teleport up distance
+  downDistance: 5 # teleport down distance, watch out for the void ;)
+  cooldown: 5.0 # item cooldown in seconds
+  platformLifetime: 10 # time in seconds that placed platforms will stay before disappearing.
+
+# The period of time (in seconds) at the start of the game when a player is protected from any damage
+#   also determines the time after which the spawn platform will disappear.
+gracePeriod: 30
+
+# If true, items from "Obtain Item" tasks will be consumed from the player's inventory when it's completed.
+removeTaskItems: true # true or false
+
+# Enables the /btc options for players to use to communicate with each other.
+enableTeamChat: true # true or false
+
+# If true, keeps the player scoreboard visible to all participants after the game has ended.
+keepScoreboardVisible: true # true or false
+
+# If true, will display all participants' names on the scoreboard under their team.
+showPlayerInScoreboard: true # true or false
+
+# If false, advancements can appear on the bingo card.
+disableAdvancements: false # true or false
+
+# If false, statistics can appear on the bingo card.
+disableStatistics: false # true or false
+
+# If true, bingo games will end automatically when there is only 1 team left online in the world or when everyone has left.
+endGameWithoutTeams: true # true or false
+
+# Settings that only apply when playing the Hotswap gamemode
+hotswapMode:
+  minimumExpirationTime: 3 # Minimum amount of time in minutes that a task can expire in
+  maximumExpirationTime: 30 # Maximum amount of time in minutes that a task can expire in
+  recoverTime: 15 # Time in seconds that a completed/expired task needs to be replaced with a new task
+  showExpirationAsDurability: true # Attempts to show expiration time as durability of the item. This feature only works on Minecraft 1.21+ and late versions of 1.20.6.
+
+# Allows all players and spectators to view the cards assigned to every team using /bingo view
+allowViewingAllCards: true
+
+# ==========================================================================
+#    Player Data Configuration Options
+# ==========================================================================
+# For the purpose of loading and saving player data, any world outside the selected world in defaultWorldName or the worlds created by the plugin itself,
+#   is considered a plugin world and player data will not be saved there. When a player travels to a plugin world from the outside, player information can be retained.
+#   This data can then be restored when entering any non-plugin world again.
+
+# Enabling this option will save any player's state (inventory, position, spawn point, levels, etc...)
+#   when they enter this world by teleportation or otherwise.
+# NOTE: If set to false, all current player state will be removed when joining a bingo world (including inventory contents!)
+savePlayerInformation: true
+
+# This option only has an effect when savePlayerInformation is true. Determine the moment that the game will load the player's data,
+#   possibly sending them back to another world.
+# Possible values are:
+#   - AFTER_GAME: player data for all game players gets loaded as soon as the game end.
+#   - AFTER_LEAVING_WORLD: A player's data gets loaded only when they have left the bingo world
+# If this option is set to anything other than AFTER_LEAVING_WORLD and the player leaves the bingo world anyway, their data will also be loaded.
+#   (To prevent this from happening at all, disable savePlayerInformation)
+loadPlayerInformationStrategy: AFTER_LEAVING_WORLD
+
+# ==========================================================================
+#    Configuration: MULTIPLE Specific Configuration Options
+# ==========================================================================
+# Specify a list of worlds to create on server startup using /autobingo <world_name> create automatically.
+defaultWorlds:
+  - bingo_world
+
+# All worlds are automatically reset (removed and created again) when (re)starting the server. When false, this does not reset the worlds named specified by defaultWorlds.
+clearDefaultWorlds: true
+
+# When not empty, uses the noise generation settings specified by the key in any datapack installed to the main world.
+# By default, it uses the vanilla world generation, but it can be configured to work for the bingoreloaded datapack or any other datapack with noise generation settings.
+# This is formatted as a namespaced key, where the name of the datapack comes first and is (in this case) followed by the name of the worldgen/noise_settings file.
+# If you want to use vanilla generation, put "null" as the value.
+# If you want to use generation included in the bingoreloaded datapack, make sure to add it to your main world and set this setting to "bingoreloaded:small"
+# And then make sure to restart the server to apply the changes.
+customWorldGeneration: "null"

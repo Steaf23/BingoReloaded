@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "id": "bingoreloaded",
+  "version": "4.0.0",
+  "name": "Bingo Reloaded",
+  "description": "Fabric version of Bingo Reloaded",
+  "entrypoints": {
+    "main": [
+      "io.github.steaf23.bingoreloaded.BingoReloadedFabric"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.16.14",
+    "fabric": "*",
+    "minecraft": "1.21.7"
+  }
+}

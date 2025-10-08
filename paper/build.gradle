@@ -1,0 +1,46 @@
+plugins {
+    id 'java'
+    id 'io.github.goooler.shadow' version '8.1.7'
+    id 'io.papermc.paperweight.userdev' version '2.0.0-beta.17'
+    id("xyz.jpenilla.run-paper") version "2.3.1"
+}
+
+repositories {
+    mavenCentral()
+    maven {
+        name = "papermc-repo"
+        url = "https://repo.papermc.io/repository/maven-public/"
+    }
+    maven {
+        url 'https://repo.codemc.io/repository/maven-releases/'
+    }
+    maven {
+        url = 'https://repo.extendedclip.com/content/repositories/placeholderapi/'
+    }
+}
+
+dependencies {
+    compileOnly 'com.github.retrooper:packetevents-spigot:2.9.5'
+    compileOnly 'me.clip:placeholderapi:2.11.6'
+
+    implementation project(":common")
+    paperweightDevelopmentBundle("io.papermc.paper:dev-bundle:$minecraft_version-R0.1-SNAPSHOT")
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+tasks.jar {
+    manifest {
+        attributes["paperweight-mappings-namespace"] = "mojang"
+    }
+}
+// if you have shadowJar configured
+tasks.shadowJar {
+    manifest {
+        attributes["paperweight-mappings-namespace"] = "mojang"
+    }
+}
