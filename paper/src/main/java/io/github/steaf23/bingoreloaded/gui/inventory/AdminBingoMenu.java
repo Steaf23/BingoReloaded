@@ -16,10 +16,12 @@ import io.github.steaf23.bingoreloaded.lib.inventory.action.ComboBoxButtonAction
 import io.github.steaf23.bingoreloaded.lib.inventory.action.MenuAction;
 import io.github.steaf23.bingoreloaded.lib.inventory.action.SpinBoxButtonAction;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
+import io.github.steaf23.bingoreloaded.player.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
 import io.github.steaf23.bingoreloaded.util.BingoPlayerSender;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
@@ -85,14 +87,53 @@ public class AdminBingoMenu extends BasicMenu
 
         BingoSettings view = session.settingsBuilder.view();
 
+		Component selected = Component.text("Selected: ").color(NamedTextColor.YELLOW).decorate(TextDecoration.ITALIC);
+
+		BingoSettings settings = session.settingsBuilder.view();
+
+		ItemTemplate cardItem = CARD.copy().setLore(selected,
+				Component.text(" - ").append(Component.text(settings.card())));
+
+		ItemTemplate kitItem = KIT.copy().setLore(selected,
+				Component.text(" - ").append(settings.kit().getDisplayName()));
+
+		List<Component> modeLore = new ArrayList<>();
+		modeLore.add(selected);
+		modeLore.add(Component.text(" - ").append(settings.mode().asComponent()));
+		modeLore.add(Component.text("   Size: ").append(settings.size().asComponent()));
+		switch (settings.mode()) {
+			case HOTSWAP -> {
+				modeLore.add(Component.text("   Win goal: ").append(Component.text(settings.hotswapGoal())));
+				modeLore.add(settings.expireHotswapTasks() ?
+						Component.text("   Tasks expire").color(NamedTextColor.RED) :
+						Component.text("   Tasks do not expire").color(NamedTextColor.GRAY));
+			}
+			case REGULAR -> {
+				modeLore.add(settings.differentCardPerTeam() ?
+						Component.text("   Different cards generated").color(NamedTextColor.RED) :
+						Component.text("   Same cards generated").color(NamedTextColor.GRAY));
+			}
+			case COMPLETE -> {
+				modeLore.add(Component.text("   Win goal: ").append(Component.text(settings.completeGoal())));
+				modeLore.add(settings.differentCardPerTeam() ?
+						Component.text("   Different cards generated").color(NamedTextColor.RED) :
+						Component.text("   Same cards generated").color(NamedTextColor.GRAY));
+			}
+		}
+		ItemTemplate modeItem = MODE.copy().setLore(modeLore.toArray(new Component[]{}));
+
+		List<Component> effects = new ArrayList<>(List.of(EffectOptionFlags.effectsToText(settings.effects())));
+		effects.addFirst(selected);
+		ItemTemplate effectsItem = EFFECTS.copy().setLore(effects.toArray(new Component[]{}));
+
         addAction(JOIN, arguments -> {
             TeamSelectionMenu selectionMenu = new TeamSelectionMenu(getMenuBoard(), session);
             selectionMenu.open(arguments.player());
         });
-        addAction(KIT, arguments -> new KitOptionsMenu(getMenuBoard(), session).open(arguments.player()));
-        addAction(MODE, arguments -> new GamemodeOptionsMenu(getMenuBoard(), session).open(arguments.player()));
-        addAction(CARD, this::openCardPicker);
-        addAction(EFFECTS, arguments -> new EffectOptionsMenu(getMenuBoard(), session.settingsBuilder).open(arguments.player()));
+        addAction(kitItem, arguments -> new KitOptionsMenu(getMenuBoard(), session).open(arguments.player()));
+        addAction(modeItem, arguments -> new GamemodeOptionsMenu(getMenuBoard(), session).open(arguments.player()));
+        addAction(cardItem, this::openCardPicker);
+        addAction(effectsItem, arguments -> new EffectOptionsMenu(getMenuBoard(), session.settingsBuilder).open(arguments.player()));
         addAction(PRESETS, arguments -> new SettingsPresetMenu(getMenuBoard(), session.settingsBuilder).open(arguments.player()));
 
         ItemTemplate teamSizeItem = TEAM_SIZE.copy();
@@ -176,13 +217,18 @@ public class AdminBingoMenu extends BasicMenu
     }
 
     private void updateDurationLore(ItemTemplate item, int duration) {
-        item.setLore(Component.text("Timer set to " + duration + " minutes(s)").color(NamedTextColor.DARK_PURPLE),
-                Component.text("for bingo games on countdown mode").color(NamedTextColor.DARK_PURPLE));
+        item.setLore(
+				Component.text("Timer set to " + duration + " minutes(s)"),
+				Component.text("for bingo games on countdown mode"));
     }
 
     private void updateTeamSizeLore(ItemTemplate item, int value) {
-        item.setLore(Component.text("(When changing this setting all currently").color(NamedTextColor.GRAY),
-                Component.text("joined players will be kicked from their teams!)").color(NamedTextColor.GRAY),
-                Component.text("Maximum team size set to " + value + " players.").color(NamedTextColor.DARK_PURPLE));
+        item.setLore(
+				Component.text("Selected:").color(NamedTextColor.YELLOW).decorate(TextDecoration.ITALIC),
+				Component.text(" - ").append(Component.text(value)));
+
+		item.addDescription("warning", 1,
+				Component.text("(When changing this setting all currently").color(NamedTextColor.GRAY),
+				Component.text("joined players will be kicked from their teams!)").color(NamedTextColor.GRAY));
     }
 }

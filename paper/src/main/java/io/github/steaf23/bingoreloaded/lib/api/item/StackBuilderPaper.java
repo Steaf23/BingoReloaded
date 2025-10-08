@@ -64,6 +64,7 @@ public class StackBuilderPaper implements StackBuilder {
 						DataComponentTypes.PROVIDES_TRIM_MATERIAL,
 						DataComponentTypes.BUNDLE_CONTENTS,
 						DataComponentTypes.BLOCK_DATA,
+						DataComponentTypes.POTION_CONTENTS,
 						RegistryAccess.registryAccess().getRegistry(RegistryKey.DATA_COMPONENT_TYPE).get(DataComponentTypeKeys.BEES));
 		if (hideAttributes) {
 			tooltipBuilder.addHiddenComponents(DataComponentTypes.ATTRIBUTE_MODIFIERS);
