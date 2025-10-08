@@ -14,10 +14,10 @@ public class OfflinePlayerData {
 	}
 
 	public PlayerInfo getOfflinePlayer(UUID playerId) {
-
+		return null;
 	}
 
 	public PlayerInfo getOfflinePlayer(String playerName) {
-
+		return null;
 	}
 }

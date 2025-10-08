@@ -35,7 +35,7 @@ public class BingoReloadedFabric implements ModInitializer, BingoReloadedRuntime
 	private final BingoReloaded bingo;
 
 	public BingoReloadedFabric() {
-		this.platform = new FabricServerSoftware( MOD_ID);
+		this.platform = new FabricServerSoftware(null, MOD_ID);
 		PlatformResolver.set(platform);
 
 		this.bingo = new BingoReloaded(this);
