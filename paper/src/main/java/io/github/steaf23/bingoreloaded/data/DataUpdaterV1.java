@@ -256,6 +256,7 @@ public class DataUpdaterV1
     }
 
     protected void updateConfig() {
+    protected void updateConfig() {
         File configFile = new File(plugin.getDataFolder(), "config.yml");
         if (!configFile.exists()) {
             return;

@@ -36,13 +36,13 @@ public class TaskListData
     public Set<TaskData> getTasks(String listName, boolean withStatistics, boolean withAdvancements)
     {
         Collection<TaskData> tasks;
-		if (defaultData.contains(listName + ".tasks")) {
-			tasks = defaultData.getSerializableList(listName + ".tasks", TaskData.class);
-		} else if (data.contains(listName + ".tasks")) {
-			tasks = data.getSerializableList(listName + ".tasks", TaskData.class);
-		} else {
-			return new HashSet<>();
-		}
+        if (defaultData.contains(listName + ".tasks")) {
+            tasks = defaultData.getSerializableList(listName + ".tasks", TaskData.class);
+        } else if (data.contains(listName + ".tasks")) {
+            tasks = data.getSerializableList(listName + ".tasks", TaskData.class);
+        } else {
+            return new HashSet<>();
+        }
 
         return tasks.stream().filter((i ->
                 (i != null) && // don't parse empty (invalid) tasks
@@ -52,11 +52,11 @@ public class TaskListData
 
     public int getTaskCount(String listName)
     {
-		if (DEFAULT_LIST_NAMES.contains(listName)) {
-			return defaultData.getInt(listName + ".size", 0);
-		} else {
-			return data.getInt(listName + ".size", 0);
-		}
+        if (DEFAULT_LIST_NAMES.contains(listName)) {
+            return defaultData.getInt(listName + ".size", 0);
+        } else {
+            return data.getInt(listName + ".size", 0);
+        }
     }
 
     public void saveTasksFromGroup(String listName, List<TaskData> group, List<TaskData> tasksToSave)
@@ -107,11 +107,11 @@ public class TaskListData
             return false;
 
         DataStorage list;
-		if (DEFAULT_LIST_NAMES.contains(listName)) {
-			list = defaultData.getStorage(listName);
-		} else {
-			list = data.getStorage(listName);
-		}
+        if (DEFAULT_LIST_NAMES.contains(listName)) {
+            list = defaultData.getStorage(listName);
+        } else {
+            list = data.getStorage(listName);
+        }
 
         String newName = listName + "_copy";
         if (data.contains(newName)) // Card with newName already exists
