@@ -22,7 +22,9 @@ public class PlayerStorageSerializer implements DataStorageSerializer<Serializab
         storage.setDouble("health", value.health);
         storage.setInt("hunger", value.hunger);
         storage.setString("gamemode", value.gamemode.toString());
-        storage.setWorldPosition("spawn_point", value.spawnPoint);
+		if (value.spawnPoint != null) {
+			storage.setWorldPosition("spawn_point", value.spawnPoint);
+		}
         storage.setInt("xp_level", value.xpLevel);
         storage.setFloat("xp_points", value.xpPoints);
         storage.setSerializableList("inventory", SerializableItem.class, serializeInventory(value.inventory));
@@ -38,11 +40,13 @@ public class PlayerStorageSerializer implements DataStorageSerializer<Serializab
         player.health = storage.getDouble("health", 20.0);
         player.hunger = storage.getInt("hunger", 0);
         player.gamemode = PlayerGamemode.valueOf(storage.getString("gamemode", "SURVIVAL"));
-        player.spawnPoint = storage.getWorldPosition("location", new WorldPosition(null, 0.0, 0.0, 0.0));
+        player.spawnPoint = storage.getWorldPosition("location");
         player.xpLevel = storage.getInt("xp_level", 0);
         player.xpPoints = storage.getFloat("xp_points", 0.0f);
-        player.inventory = deserializeInventory(storage.getSerializableList("inventory", SerializableItem.class), 41);
-        player.enderInventory = deserializeInventory(storage.getSerializableList("ender_inventory", SerializableItem.class), 27);
+		List<SerializableItem> items = storage.getSerializableList("inventory", SerializableItem.class);
+        player.inventory = deserializeInventory(items, items.size());
+		List<SerializableItem> enderItems = storage.getSerializableList("ender_inventory", SerializableItem.class);
+        player.enderInventory = deserializeInventory(enderItems, enderItems.size());
         return player;
     }
 

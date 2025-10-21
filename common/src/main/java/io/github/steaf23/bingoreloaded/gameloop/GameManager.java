@@ -15,6 +15,7 @@ import io.github.steaf23.bingoreloaded.lib.api.WorldPosition;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.event.EventResult;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
+import io.github.steaf23.bingoreloaded.lib.util.DebugLogger;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import net.kyori.adventure.key.Key;
@@ -206,6 +207,7 @@ public class GameManager {
 			return EventResult.PASS;
 		}
 
+		DebugLogger.addLog("Teleporting player already, returning early? " + teleportingPlayer);
 		if (teleportingPlayer) {
 			teleportingPlayer = false;
 			return EventResult.PASS;
@@ -220,11 +222,18 @@ public class GameManager {
 			return EventResult.PASS;
 		}
 
+		DebugLogger.addLog("Source world: " + sourceWorld.name());
+		DebugLogger.addLog("Target world: " + targetWorld.name());
+
 		BingoSession sourceSession = getSessionFromWorld(sourceWorld);
 		BingoSession targetSession = getSessionFromWorld(targetWorld);
 
+		DebugLogger.addLog("Source session: " + (sourceSession != null ? getNameOfSession(sourceSession) : "<NULL>"));
+		DebugLogger.addLog("Target session: " +  (targetSession != null ? getNameOfSession(targetSession) : "<NULL>"));
+
 		// We could have gone through a portal, so still both worlds could be in the same session, so we can return.
 		if (sourceSession == targetSession) {
+			DebugLogger.addLog("Teleported using a portal, target session is the source session.");
 			return EventResult.PASS;
 		}
 
@@ -233,10 +242,12 @@ public class GameManager {
 		boolean cancel = false;
 		if (sourceSession != null) {
 			if (targetSession == null) {
+				DebugLogger.addLog("Player leaving the bingo world");
 				player.clearInventory(); // If we are leaving a bingo world, we can always clear the player's inventory
 
 				if (savePlayerInformation) {
 					teleportingPlayer = true;
+					DebugLogger.addLog("Scheduling player load...");
 					// load player will teleport them, so we have to schedule it to make sure to do the right thing
 					runtime.getServerSoftware().runTask(t -> {
 						if (playerData.loadPlayer(player) == null) {
@@ -245,6 +256,7 @@ public class GameManager {
 //                        // Using the boolean we can check if we were already teleporting the player.
 //                        SerializablePlayer.reset(plugin, event.getPlayer(), event.getTo()).apply(event.getPlayer());
 						}
+						DebugLogger.addLog("Player loaded?");
 					});
 
 					cancel = true;
@@ -255,9 +267,9 @@ public class GameManager {
 
 		if (targetSession != null) {
 			if (savePlayerInformation && sourceSession == null) {
+				DebugLogger.addLog("Saving player data as they are entering a session world");
                 // Only save player data if it does not pertain to a bingo world
                 SerializablePlayer serializablePlayer = SerializablePlayer.fromPlayer(runtime.getServerSoftware(), player);
-                serializablePlayer.location = toPos;
                 playerData.savePlayer(serializablePlayer, false);
 			}
 
@@ -272,6 +284,7 @@ public class GameManager {
 					BingoPlayer playerProxy = new BingoPlayer(player, previousSession);
 					previousSession.removeParticipant(playerProxy);
 				}
+				DebugLogger.addLog("Player teleported from one session to a different one(must be source session?) !");
 			}
 
 			// set spawn point of player in session world

@@ -102,7 +102,7 @@ public class WorldData
         return platform.getDataFolder().getPath().replace("\\", "/") + "/worlds/";
     }
 
-    private WorldHandle createWorld(String worldName, DimensionType dimension) {
+    private WorldHandle createWorld(String worldName, @NotNull DimensionType dimension) {
         String worldFolder = getWorldsFolder();
         WorldOptions options = new WorldOptions(worldFolder + worldName, dimension);
         return platform.createWorld(options);

@@ -20,7 +20,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly 'com.github.retrooper:packetevents-spigot:2.9.5'
+    compileOnly "com.github.retrooper:packetevents-spigot:$packet_events_version"
     compileOnly 'me.clip:placeholderapi:2.11.6'
 
     implementation project(":common")

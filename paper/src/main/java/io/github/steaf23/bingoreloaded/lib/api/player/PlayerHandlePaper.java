@@ -19,6 +19,7 @@ import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemTypePaper;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandlePaper;
+import io.github.steaf23.bingoreloaded.lib.util.DebugLogger;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
@@ -119,6 +120,8 @@ public class PlayerHandlePaper implements PlayerHandle {
 
 	@Override
 	public void teleportAsync(WorldPosition pos, @Nullable Consumer<Boolean> whenFinished) {
+		DebugLogger.addLog("Teleporting player async to pos: " + pos.x() + ", " + pos.y() + ", " + pos.z() + ", world: " + pos.world().name());
+
 		var future = player.teleportAsync(PaperApiHelper.locationFromWorldPos(pos), PlayerTeleportEvent.TeleportCause.PLUGIN);
 		if (whenFinished != null) {
 			future.thenAccept(whenFinished);
@@ -127,6 +130,7 @@ public class PlayerHandlePaper implements PlayerHandle {
 
 	@Override
 	public boolean teleportBlocking(WorldPosition pos) {
+		DebugLogger.addLog("Teleporting player blocking to pos: " + pos.x() + ", " + pos.y() + ", " + pos.z() + ", world: " + pos.world().name());
 		return player.teleport(PaperApiHelper.locationFromWorldPos(pos), PlayerTeleportEvent.TeleportCause.PLUGIN);
 	}
 

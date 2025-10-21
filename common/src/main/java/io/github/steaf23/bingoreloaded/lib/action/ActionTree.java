@@ -1,6 +1,7 @@
 package io.github.steaf23.bingoreloaded.lib.action;
 
 import io.github.steaf23.bingoreloaded.lib.api.ActionUser;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -89,7 +90,7 @@ public class ActionTree
         return permissionWhitelist.isEmpty() || user.hasAnyPermission(permissionWhitelist);
     }
 
-    public List<String> tabComplete(ActionUser user, String... arguments) {
+    public @Nullable List<String> tabComplete(ActionUser user, String... arguments) {
         if (subActions.isEmpty()) {
             return tabCompletionForArgs.apply(arguments);
         }

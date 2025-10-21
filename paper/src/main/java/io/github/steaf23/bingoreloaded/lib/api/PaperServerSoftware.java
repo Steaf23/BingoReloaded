@@ -103,15 +103,24 @@ public class PaperServerSoftware implements ServerSoftware {
 
 	@Override
 	public @Nullable DimensionType resolveDimensionType(Key key) {
+		DimensionType type = null;
 		if (key.value().equals("overworld")) {
-			return DimensionType.OVERWORLD;
+			if (DimensionType.OVERWORLD == null)
+				type = () -> Key.key("minecraft:overworld");
+			else
+				type = DimensionType.OVERWORLD;
 		} else if (key.value().equals("nether")) {
-			return DimensionType.NETHER;
+			if (DimensionType.NETHER == null)
+				type = () -> Key.key("minecraft:nether");
+			else
+				type = DimensionType.NETHER;
 		} else if (key.value().equals("the_end")) {
-			return DimensionType.THE_END;
+			if (DimensionType.THE_END == null)
+				type = () -> Key.key("minecraft:the_end");
+			else
+				type = DimensionType.THE_END;
 		}
-
-		return null;
+		return type;
 	}
 
 	@Override

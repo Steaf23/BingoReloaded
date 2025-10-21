@@ -141,7 +141,7 @@ public class VirtualDataAccessor implements DataAccessor
     }
 
     @Override
-    public <T> void setSerializable(String path, Class<T> classType, T value) {
+    public <T> void setSerializable(String path, Class<T> classType, @NotNull T value) {
 
     }
 

@@ -43,13 +43,13 @@ public interface DataStorage
     <T> void setSerializableList(String path, Class<T> dataType, List<T> values);
     <T> List<T> getSerializableList(String path, Class<T> dataType);
 
-    default <T> void setSerializable(String path, Class<T> classType, T value) {
+    default <T> void setSerializable(String path, Class<T> classType, @NotNull T value) {
         DataStorage storage = createNew();
         storage.fromSerializable(classType, value);
         setStorage(path, storage);
     }
 
-    default <T> void fromSerializable(Class<T> classType, T value) {
+    default <T> void fromSerializable(Class<T> classType, @NotNull T value) {
         DataStorageSerializer<T> serializer = DataStorageSerializerRegistry.getSerializer(classType);
         if (serializer == null) {
             ConsoleMessenger.bug("No serializer registered for serialization " + classType, this);

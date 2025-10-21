@@ -666,12 +666,12 @@ public class AutoBingoAction extends DeferredAction {
 		String targetWorldName = args[2];
 		WorldHandle world = platform.getWorld(targetWorldName);
 		if (world == null) {
-			sendFailed("Could not teleport player to invalid world " + targetWorldName + ".", worldName);
+			sendFailed("Could not teleport " + playerName + " to invalid world " + targetWorldName + ".", worldName);
 			return ActionResult.IGNORED;
 		}
 
 		if (!player.teleportBlocking(world.spawnPoint())) {
-			sendFailed("Could not teleport player to " + targetWorldName + ".", worldName);
+			sendFailed("Could not teleport " + playerName + " to " + targetWorldName + " either because of some error or because their player was loaded at the same time.", worldName);
 			return ActionResult.IGNORED;
 		}
 		sendSuccess("Teleported " + playerName + " to " + targetWorldName, worldName);

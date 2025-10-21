@@ -69,6 +69,9 @@ public class CommandTemplate implements TabExecutor
             return List.of();
         }
 
-        return this.command.tabComplete(user, strings).stream().filter(s -> StringUtils.containsIgnoreCase(s, strings[strings.length - 1])).toList();
+		List<String> tabComplete = this.command.tabComplete(user, strings);
+		if (tabComplete == null) return null;
+
+		return tabComplete.stream().filter(s -> StringUtils.containsIgnoreCase(s, strings[strings.length - 1])).toList();
     }
 }

@@ -3,6 +3,7 @@ package io.github.steaf23.bingoreloaded.lib.world;
 import io.github.steaf23.bingoreloaded.lib.api.Position;
 import io.github.steaf23.bingoreloaded.lib.api.WorldPosition;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public interface BlockHelper {
@@ -34,7 +35,7 @@ public interface BlockHelper {
 		}
 	}
 
-	static WorldPosition getRandomPosWithinRange(WorldPosition center, int rangeX, int rangeZ) {
+	static WorldPosition getRandomPosWithinRange(@NotNull WorldPosition center, int rangeX, int rangeZ) {
 		if (rangeX == 0 && rangeZ == 0) {
 			return center.clone();
 		}

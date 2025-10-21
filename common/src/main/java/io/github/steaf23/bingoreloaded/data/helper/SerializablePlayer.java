@@ -6,6 +6,7 @@ import io.github.steaf23.bingoreloaded.lib.api.WorldPosition;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
@@ -17,7 +18,7 @@ public class SerializablePlayer
     public double health;
     public int hunger;
     public PlayerGamemode gamemode;
-    public WorldPosition spawnPoint;
+    public @Nullable WorldPosition spawnPoint;
     public int xpLevel;
     public float xpPoints;
     public StackHandle[] inventory;

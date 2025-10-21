@@ -194,7 +194,7 @@ public class BingoSession implements ForwardingAudience
 
 		if (config.getOptionValue(BingoOptions.TELEPORT_TO_LOBBY_AFTER_GAME)) {
 			BingoLobby lobby = gameManager.getLobbyData().getCreatedLobby();
-			if (lobby != null) {
+			if (lobby != null && lobby.spawnPosition() != null) {
 				double delaySeconds = config.getOptionValue(BingoOptions.TELEPORT_TO_LOBBY_DELAY);
 				int spread = config.getOptionValue(BingoOptions.TELEPORT_TO_LOBBY_SPREAD);
 				delaySeconds = Math.min(delaySeconds, gameRestartTime);
@@ -245,7 +245,7 @@ public class BingoSession implements ForwardingAudience
 			BingoLobby lobby = gameManager.getLobbyData().getCreatedLobby();
 
 			int spread = config.getOptionValue(BingoOptions.TELEPORT_TO_LOBBY_SPREAD);
-			if (lobby != null) {
+			if (lobby != null && lobby.spawnPosition() != null) {
 				player.teleportAsync(BlockHelper.getRandomPosWithinRange(lobby.spawnPosition(), spread, spread));
 			}
 		}
