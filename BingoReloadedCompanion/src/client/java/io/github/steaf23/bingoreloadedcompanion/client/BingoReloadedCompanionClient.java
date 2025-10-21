@@ -102,11 +102,12 @@ public class BingoReloadedCompanionClient implements ClientModInitializer {
 					cardElement.setHotswapHolders(payload.holders);
 				});
 
+		KeyBinding.Category category = KeyBinding.Category.create(Identifier.of("bingoreloadedcompanion", "main"));
 		KeyBinding toggleCardVisibility = KeyBindingHelper.registerKeyBinding(new KeyBinding(
 				"key.bingoreloadedcompanion.toggle_card_visibility",
 				InputUtil.Type.KEYSYM,
 				GLFW.GLFW_KEY_R,
-				"category.bingoreloadedcompanion"));
+				category));
 
 //		ClientPlayNetworking.registerGlobalReceiver(EditTaskListPayload.ID,
 //				(payload, context) -> {

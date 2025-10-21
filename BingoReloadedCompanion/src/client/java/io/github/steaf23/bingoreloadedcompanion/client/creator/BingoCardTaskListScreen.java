@@ -7,10 +7,13 @@ import io.github.steaf23.bingoreloadedcompanion.client.TaskTooltipComponent;
 import io.github.steaf23.bingoreloadedcompanion.client.util.ScreenHelper;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gl.RenderPipelines;
+import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.tooltip.HoveredTooltipPositioner;
 import net.minecraft.client.gui.widget.TextFieldWidget;
+import net.minecraft.client.input.CharInput;
+import net.minecraft.client.input.KeyInput;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -20,6 +23,7 @@ import net.minecraft.util.Colors;
 import net.minecraft.util.Identifier;
 import org.lwjgl.glfw.GLFW;
 
+import javax.xml.crypto.dsig.keyinfo.KeyInfo;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -188,16 +192,15 @@ public class BingoCardTaskListScreen extends Screen {
 	}
 
 	@Override
-	public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-
+	public boolean keyPressed(KeyInput key) {
 		String oldFilter = filterField.getText();
 
-		boolean result = filterField.keyPressed(keyCode, scanCode, modifiers);
+		boolean result = filterField.keyPressed(key);
 		if (!oldFilter.equals(filterField.getText())) {
 			applyFilter();
 		}
 
-		if (super.keyPressed(keyCode, scanCode, modifiers)) {
+		if (super.keyPressed(key)) {
 			return true;
 		}
 
@@ -205,15 +208,15 @@ public class BingoCardTaskListScreen extends Screen {
 	}
 
 	@Override
-	public boolean charTyped(char chr, int modifiers) {
+	public boolean charTyped(CharInput charInput) {
 		String oldFilter = filterField.getText();
 
-		boolean result = filterField.charTyped(chr, modifiers);
+		boolean result = filterField.charTyped(charInput);
 		if (!oldFilter.equals(filterField.getText())) {
 			applyFilter();
 		}
 
-		if (super.charTyped(chr, modifiers)) {
+		if (super.charTyped(charInput)) {
 			return true;
 		}
 
@@ -324,7 +327,13 @@ public class BingoCardTaskListScreen extends Screen {
 	}
 
 	@Override
-	public boolean mouseClicked(double mouseX, double mouseY, int button) {
+	public boolean mouseClicked(Click click, boolean doubled) {
+		if (doubled) return true;
+
+		int button = click.button();
+		double mouseX = click.x();
+		double mouseY = click.y();
+
 		if (button != GLFW.GLFW_MOUSE_BUTTON_LEFT) {
 			return false;
 		}
@@ -365,16 +374,20 @@ public class BingoCardTaskListScreen extends Screen {
 	}
 
 	@Override
-	public boolean mouseReleased(double mouseX, double mouseY, int button) {
+	public boolean mouseReleased(Click click) {
 		scrolling = false;
-		return super.mouseReleased(mouseX, mouseY, button);
+		return super.mouseReleased(click);
 	}
 
 	@Override
-	public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
+	public boolean mouseDragged(Click click, double deltaX, double deltaY) {
+		int button = click.button();
+		double mouseX = click.x();
+		double mouseY = click.y();
+
 		if (!scrolling)
 		{
-			return super.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
+			return super.mouseDragged(click, deltaX, deltaY);
 		}
 		int min = menuStartY() + SCROLL_Y + SCROLLER_HEIGHT / 2;
 		int max = min + SCROLL_HEIGHT - SCROLLER_HEIGHT - SCROLLER_HEIGHT / 2;

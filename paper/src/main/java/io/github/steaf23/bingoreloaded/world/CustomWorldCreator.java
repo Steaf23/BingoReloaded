@@ -12,7 +12,7 @@ public class CustomWorldCreator
 {
     public static WorldHandle createWorld(ServerSoftware platform, String worldName, @Nullable Key generationSettingsResource) {
         String worldFolder = getWorldsFolder(platform);
-        World world = CustomWorldCreator_V1_21_4.createBingoWorld(worldFolder + worldName, generationSettingsResource);
+        World world = CustomWorldCreator_V1_21_10.createBingoWorld(worldFolder + worldName, generationSettingsResource);
         return new WorldHandlePaper(world);
     }
 

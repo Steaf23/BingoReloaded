@@ -10,9 +10,11 @@ import io.github.steaf23.bingoreloadedcompanion.client.hud.HudPlacement;
 import io.github.steaf23.bingoreloadedcompanion.client.util.ScreenHelper;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gl.RenderPipelines;
+import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.client.input.KeyInput;
 import net.minecraft.item.Items;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
@@ -150,7 +152,7 @@ public class BingoConfigScreen extends Screen {
 			}
 
 			if (selectedElement == element) {
-				context.drawBorder(rect.x() - 3, rect.y() - 3, rect.width() + 6, rect.height() + 6, ScreenHelper.addAlphaToColor(Formatting.YELLOW.getColorValue(), 200));
+				context.drawStrokedRectangle(rect.x() - 3, rect.y() - 3, rect.width() + 6, rect.height() + 6, ScreenHelper.addAlphaToColor(Formatting.YELLOW.getColorValue(), 200));
 
 				int showButtonX = rect.endX() - (BUTTON_WIDTH * 2 + 2);
 				int scaleButtonX = rect.endX() - (BUTTON_WIDTH * 3 + 4);
@@ -270,9 +272,15 @@ public class BingoConfigScreen extends Screen {
 	}
 
 	@Override
-	public boolean mouseClicked(double mouseX, double mouseY, int button) {
+	public boolean mouseClicked(Click click, boolean doubled) {
+		if (doubled) return true;
+
+		int button = click.button();
+		double mouseX = click.x();
+		double mouseY = click.y();
+
 		if (button != GLFW.GLFW_MOUSE_BUTTON_LEFT) {
-			return super.mouseClicked(mouseX, mouseY, button);
+			return super.mouseClicked(click, doubled);
 		}
 
 		if (isMouseOverShowButton(mouseX, mouseY)) {
@@ -317,11 +325,16 @@ public class BingoConfigScreen extends Screen {
 		}
 
 		selectedElement = null;
-		return super.mouseClicked(mouseX, mouseY, button);
+		return super.mouseClicked(click, doubled);
 	}
 
 	@Override
-	public boolean mouseReleased(double mouseX, double mouseY, int button) {
+	public boolean mouseReleased(Click click) {
+
+		int button = click.button();
+		double mouseX = click.x();
+		double mouseY = click.y();
+
 		if (selectedElement != null && dragging) {
 			configManager.moveElement(selectedElement, (int)(mouseX - clickOffsetX), (int)(mouseY - clickOffsetY), width, height);
 
@@ -334,7 +347,7 @@ public class BingoConfigScreen extends Screen {
 			draggingSlider = false;
 		}
 
-		return super.mouseReleased(mouseX, mouseY, button);
+		return super.mouseReleased(click);
 	}
 
 	@Override
@@ -373,15 +386,20 @@ public class BingoConfigScreen extends Screen {
 		}
 	}
 
+
 	@Override
-	public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+	public boolean keyPressed(KeyInput key) {
+		int keyCode = key.key();
+		int scanCode = key.scancode();
+		int modifiers = key.modifiers();
+
 		if (keyCode == GLFW.GLFW_KEY_ESCAPE) {
 			closeScreen();
 			return true;
 		}
 
 		if (selectedElement == null) {
-			return super.keyPressed(keyCode, scanCode, modifiers);
+			return super.keyPressed(key);
 		}
 
 		if (keyCode == GLFW.GLFW_KEY_W || keyCode == GLFW.GLFW_KEY_UP) {
@@ -398,7 +416,7 @@ public class BingoConfigScreen extends Screen {
 			configManager.moveElement(selectedElement, rect.x() + 1, rect.y(), width, height);
 		}
 
-		return super.keyPressed(keyCode, scanCode, modifiers);
+		return super.keyPressed(key);
 	}
 
 	@Override
