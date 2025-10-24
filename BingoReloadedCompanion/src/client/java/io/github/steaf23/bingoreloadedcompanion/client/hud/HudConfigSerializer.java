@@ -97,7 +97,6 @@ public class HudConfigSerializer extends TypeAdapter<HudConfig> {
 
 			String name = json.nextName();
 
-			boolean end = false;
 			switch (name) {
 				case "x" -> {
 					x = Math.clamp(json.nextDouble(), 0.0, 1.0);
@@ -118,10 +117,9 @@ public class HudConfigSerializer extends TypeAdapter<HudConfig> {
 					transparency = Math.clamp(json.nextDouble(), 0.0, 1.0);
 				}
 				default -> {
-					end = true;
+					json.skipValue();
 				}
 			}
-			if (end) break;
 		}
 		json.endObject();
 
