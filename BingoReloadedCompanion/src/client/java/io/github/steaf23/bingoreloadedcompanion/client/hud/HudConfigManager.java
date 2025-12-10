@@ -60,7 +60,7 @@ public class HudConfigManager {
 	public void save() {
 		try (Writer writer = Files.newBufferedWriter(CONFIG_PATH)) {
 			GSON.toJson(new HudConfig(BingoReloadedCompanion.modVersion(), elementPlaces), writer);
-			savedConfig = new HudConfig(savedConfig.version(), new HashMap<>(elementPlaces));
+			savedConfig = new HudConfig(BingoReloadedCompanion.modVersion(), new HashMap<>(elementPlaces));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

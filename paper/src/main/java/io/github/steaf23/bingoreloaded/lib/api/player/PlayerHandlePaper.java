@@ -23,9 +23,11 @@ import io.github.steaf23.bingoreloaded.lib.util.DebugLogger;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.advancement.AdvancementProgress;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.potion.PotionEffect;
 import org.jetbrains.annotations.NotNull;
@@ -267,6 +269,11 @@ public class PlayerHandlePaper implements PlayerHandle {
 	@Override
 	public void closeInventory() {
 		player.closeInventory();
+	}
+
+	@Override
+	public void kick(@Nullable Component reason) {
+		player.kick(reason, PlayerKickEvent.Cause.PLUGIN);
 	}
 
 	@Override

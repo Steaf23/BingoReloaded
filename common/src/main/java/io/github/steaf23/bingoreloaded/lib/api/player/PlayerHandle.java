@@ -113,4 +113,6 @@ public interface PlayerHandle extends ForwardingAudience, ActionUser {
 	boolean isSneaking();
 
 	void closeInventory();
+
+	void kick(@Nullable Component reason);
 }
