@@ -373,7 +373,7 @@ public enum BingoMessage
     }
 
     public static Component createInfoUrlComponent(Component hoverableText, String url) {
-        return hoverableText.decorate(TextDecoration.ITALIC).color(NamedTextColor.AQUA)
+        return Component.empty().color(NamedTextColor.AQUA).decorate(TextDecoration.ITALIC).append(hoverableText)
                 .hoverEvent(HoverEvent.showText(Component.text(url).color(NamedTextColor.BLUE)))
                 .clickEvent(ClickEvent.openUrl(url));
     }

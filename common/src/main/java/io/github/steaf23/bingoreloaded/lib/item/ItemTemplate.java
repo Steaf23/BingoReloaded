@@ -339,6 +339,7 @@ public class ItemTemplate
         copy.customModelData = customModelData;
         copy.texturedVariant = texturedVariant == null ? null : texturedVariant.copy();
 		copy.cooldownGroup = cooldownGroup;
+		copy.maxStackSize = maxStackSize;
         return copy;
     }
 

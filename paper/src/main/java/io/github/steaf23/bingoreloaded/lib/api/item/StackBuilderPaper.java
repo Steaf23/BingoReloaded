@@ -52,6 +52,7 @@ public class StackBuilderPaper implements StackBuilder {
 
 		if (template.getMaxStackSize() != null) {
 			stack.setData(DataComponentTypes.MAX_STACK_SIZE, template.getMaxStackSize());
+			stack.unsetData(DataComponentTypes.MAX_DAMAGE);
 		}
 
 		var tooltipBuilder = TooltipDisplay.tooltipDisplay()

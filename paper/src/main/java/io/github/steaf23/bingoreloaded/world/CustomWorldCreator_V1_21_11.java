@@ -1,5 +1,6 @@
 package io.github.steaf23.bingoreloaded.world;
 
+import com.github.retrooper.packetevents.resources.ResourceLocation;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.mojang.serialization.Dynamic;
@@ -11,8 +12,8 @@ import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.NbtException;
 import net.minecraft.nbt.ReportedNbtException;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.WorldLoader;
 import net.minecraft.server.dedicated.DedicatedServer;
@@ -22,9 +23,9 @@ import net.minecraft.util.GsonHelper;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.entity.ai.village.VillageSiege;
 import net.minecraft.world.entity.npc.CatSpawner;
-import net.minecraft.world.entity.npc.WanderingTraderSpawner;
+import net.minecraft.world.entity.npc.wanderingtrader.WanderingTraderSpawner;
 import net.minecraft.world.level.CustomSpawner;
-import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelSettings;
@@ -54,7 +55,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Random;
 
-public class CustomWorldCreator_V1_21_10 {
+public class CustomWorldCreator_V1_21_11 {
 
 	/**
 	 * Here be NMS Craft-magic dragons!
@@ -176,7 +177,7 @@ public class CustomWorldCreator_V1_21_10 {
 			customStem = null;
 		}
 		else {
-			ResourceKey<NoiseGeneratorSettings> noiseSettingsKey = ResourceKey.create(Registries.NOISE_SETTINGS, ResourceLocation.fromNamespaceAndPath(noiseSettingsLocation.namespace(), noiseSettingsLocation.value()));
+			ResourceKey<NoiseGeneratorSettings> noiseSettingsKey = ResourceKey.create(Registries.NOISE_SETTINGS, Identifier.fromNamespaceAndPath(noiseSettingsLocation.namespace(), noiseSettingsLocation.value()));
 			var settingsRegistry = console.registryAccess().lookupOrThrow(Registries.NOISE_SETTINGS);
 			var bingoNoiseSettings = settingsRegistry.get(noiseSettingsKey);
 
@@ -207,11 +208,8 @@ public class CustomWorldCreator_V1_21_10 {
 		} else if (worldName.equals(levelName + "_the_end")) {
 			dimensionKey = net.minecraft.world.level.Level.END;
 		} else {
-			dimensionKey = ResourceKey.create(Registries.DIMENSION, ResourceLocation.fromNamespaceAndPath("minecraft", worldName.toLowerCase(Locale.ROOT)));
+			dimensionKey = ResourceKey.create(Registries.DIMENSION, Identifier.fromNamespaceAndPath("minecraft", worldName.toLowerCase(Locale.ROOT)));
 		}
-
-		// Disable spawn chunks for bingo since players are going to run away from spawn anyway.
-		primaryLevelData.getGameRules().getRule(GameRules.RULE_SPAWN_RADIUS).set(0, null);
 
 		ServerLevel serverLevel = new ServerLevel(
 				console,

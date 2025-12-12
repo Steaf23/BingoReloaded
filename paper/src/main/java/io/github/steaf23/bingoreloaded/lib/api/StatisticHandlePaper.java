@@ -174,6 +174,7 @@ public record StatisticHandlePaper(@NotNull StatisticTypePaper statistic, @Nulla
             case INTERACT_WITH_SMITHING_TABLE -> ItemTypePaper.of(Material.SMITHING_TABLE);
             case STRIDER_ONE_CM -> ItemTypePaper.of(Material.WARPED_FUNGUS_ON_A_STICK);
             case HAPPY_GHAST_ONE_CM -> ItemTypePaper.of(Material.DRIED_GHAST);
+			case NAUTILUS_ONE_CM -> ItemTypePaper.of(Material.GOLDEN_NAUTILUS_ARMOR);
             case DROP,
                     PICKUP,
                     MINE_BLOCK,

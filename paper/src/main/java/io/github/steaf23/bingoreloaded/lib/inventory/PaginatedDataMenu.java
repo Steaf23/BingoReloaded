@@ -171,31 +171,11 @@ public abstract class PaginatedDataMenu<Data> extends BasicMenu {
 	}
 
 	public void addItemsToSelect(Collection<Data> newItems) {
-//		//first remove any previous whitespace
-//		while (!allItems.isEmpty()) {
-//			Data lastItem = allItems.getLast();
-//
-//			if (lastItem.isEmpty())
-//				allItems.remove(lastItem);
-//			else
-//
-//				break;
-//		}
-
 		allItems.addAll(newItems);
 		clearFilter();
 	}
 
 	public void removeItems(int... itemIndices) {
-		//first remove any previous whitespace
-//		while (!allItems.isEmpty()) {
-//			ItemTemplate lastItem = allItems.getLast();
-//
-//			if (lastItem.isEmpty())
-//				allItems.remove(lastItem);
-//			else
-//				break;
-//		}
 		for (int i : itemIndices)
 			allItems.remove(i);
 

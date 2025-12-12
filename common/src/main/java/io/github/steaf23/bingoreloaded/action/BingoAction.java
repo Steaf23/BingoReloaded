@@ -27,6 +27,7 @@ import io.github.steaf23.bingoreloaded.util.BingoPlayerSender;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.JoinConfiguration;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
@@ -148,10 +149,10 @@ public class BingoAction extends ActionTree {
 
 		this.addSessionSubAction("about", List.of(), (args, session) -> {
 			ServerSoftware server = PlatformResolver.get();
-			getLastUser().sendMessage(Component.text("Bingo Reloaded Version: " + server.getExtensionInfo().version() +
+			getLastUser().sendMessage(Component.text("\nBingo Reloaded Version: " + server.getExtensionInfo().version() +
 					" Created by: " + server.getExtensionInfo().authors()));
-			getLastUser().sendMessage(BingoMessage.createInfoUrlComponent(Component.text("Join the bingo reloaded discord server here to stay up to date!"), "https://discord.gg/AzZNxPRNPf"));
-
+			getLastUser().sendMessage(BingoMessage.createInfoUrlComponent(Component.text("\nJoin the bingo reloaded discord server here to stay up to date!"), "https://discord.gg/AzZNxPRNPf"));
+			getLastUser().sendMessage(BingoMessage.createInfoUrlComponent(Component.text("\nClick here to download the Bingo Reloaded Companion mod if you play bingo!").color(NamedTextColor.DARK_GREEN), "https://modrinth.com/mod/bingo-reloaded-companion"));
 			return ActionResult.SUCCESS;
 		});
 

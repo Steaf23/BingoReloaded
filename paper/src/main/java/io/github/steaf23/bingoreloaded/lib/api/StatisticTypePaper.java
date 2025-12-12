@@ -69,7 +69,8 @@ public class StatisticTypePaper implements StatisticType {
 				 DAMAGE_DEALT_RESISTED,
 				 DAMAGE_RESISTED,
 				 DAMAGE_ABSORBED,
-				 DAMAGE_BLOCKED_BY_SHIELD -> StatisticCategory.DAMAGE;
+				 DAMAGE_BLOCKED_BY_SHIELD
+					-> StatisticCategory.DAMAGE;
 
 			case TALKED_TO_VILLAGER,
 				 TRADED_WITH_VILLAGER,
@@ -92,7 +93,8 @@ public class StatisticTypePaper implements StatisticType {
 				 TIME_SINCE_REST,
 				 RAID_WIN,
 				 TARGET_HIT,
-				 CLEAN_SHULKER_BOX -> StatisticCategory.OTHER;
+				 CLEAN_SHULKER_BOX
+					-> StatisticCategory.OTHER;
 
 			case CAKE_SLICES_EATEN,
 				 CAULDRON_FILLED,
@@ -116,7 +118,8 @@ public class StatisticTypePaper implements StatisticType {
 				 BELL_RING,
 				 INTERACT_WITH_ANVIL,
 				 INTERACT_WITH_GRINDSTONE,
-				 INTERACT_WITH_SMITHING_TABLE -> StatisticCategory.BLOCK_INTERACT;
+				 INTERACT_WITH_SMITHING_TABLE
+					-> StatisticCategory.BLOCK_INTERACT;
 
 			case OPEN_BARREL,
 				 CHEST_OPENED,
@@ -125,7 +128,8 @@ public class StatisticTypePaper implements StatisticType {
 				 TRAPPED_CHEST_TRIGGERED,
 				 HOPPER_INSPECTED,
 				 DROPPER_INSPECTED,
-				 DISPENSER_INSPECTED -> StatisticCategory.CONTAINER_INTERACT;
+				 DISPENSER_INSPECTED
+					-> StatisticCategory.CONTAINER_INTERACT;
 
 			case STRIDER_ONE_CM,
 				 MINECART_ONE_CM,
@@ -142,7 +146,9 @@ public class StatisticTypePaper implements StatisticType {
 				 SWIM_ONE_CM,
 				 FALL_ONE_CM,
 				 SPRINT_ONE_CM,
-				 HAPPY_GHAST_ONE_CM -> StatisticCategory.TRAVEL;
+				 HAPPY_GHAST_ONE_CM,
+				 NAUTILUS_ONE_CM
+					-> StatisticCategory.TRAVEL;
 		};
 	}
 }
