@@ -1,10 +1,13 @@
 package io.github.steaf23.bingoreloaded.lib.api.player;
 
+import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.lib.api.AdvancementHandle;
 import io.github.steaf23.bingoreloaded.lib.api.AdvancementHandlePaper;
 import io.github.steaf23.bingoreloaded.lib.api.EntityType;
 import io.github.steaf23.bingoreloaded.lib.api.EntityTypePaper;
 import io.github.steaf23.bingoreloaded.lib.api.PaperApiHelper;
+import io.github.steaf23.bingoreloaded.lib.api.PaperServerSoftware;
+import io.github.steaf23.bingoreloaded.lib.api.PlatformResolver;
 import io.github.steaf23.bingoreloaded.lib.api.PlayerGamemode;
 import io.github.steaf23.bingoreloaded.lib.api.PotionEffectInstance;
 import io.github.steaf23.bingoreloaded.lib.api.StatisticType;
@@ -23,9 +26,17 @@ import io.github.steaf23.bingoreloaded.lib.util.DebugLogger;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextColor;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.waypoints.ServerWaypointManager;
+import net.minecraft.world.waypoints.Waypoint;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
+import org.bukkit.Server;
 import org.bukkit.advancement.AdvancementProgress;
+import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
@@ -34,6 +45,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
 
@@ -274,6 +286,15 @@ public class PlayerHandlePaper implements PlayerHandle {
 	@Override
 	public void kick(@Nullable Component reason) {
 		player.kick(reason, PlayerKickEvent.Cause.PLUGIN);
+	}
+
+	@Override
+	public void setWaypointColor(@Nullable TextColor color) {
+		ServerPlayer player = ((CraftPlayer)handle()).getHandle();
+		Waypoint.Icon icon = player.waypointIcon();
+		icon.color = color == null ? Optional.empty() : Optional.of(color.value());
+		icon.cloneAndAssignStyle(player);
+		player.level().getWaypointManager().addPlayer(player);
 	}
 
 	@Override

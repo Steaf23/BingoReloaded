@@ -14,6 +14,7 @@ import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import net.kyori.adventure.audience.ForwardingAudience;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextColor;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
@@ -115,4 +116,6 @@ public interface PlayerHandle extends ForwardingAudience, ActionUser {
 	void closeInventory();
 
 	void kick(@Nullable Component reason);
+
+	void setWaypointColor(@Nullable TextColor color);
 }

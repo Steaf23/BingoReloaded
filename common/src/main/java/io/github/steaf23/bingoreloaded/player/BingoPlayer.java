@@ -273,6 +273,8 @@ public class BingoPlayer implements BingoParticipant
     @Override
     public void setTeam(@Nullable BingoTeam team) {
         this.team = team;
+
+		sessionPlayer().ifPresent(p -> p.setWaypointColor(team == null ? null : team.getColor()));
     }
 
     @Override
