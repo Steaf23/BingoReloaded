@@ -1,14 +1,14 @@
 package io.github.steaf23.bingoreloadedcompanion.card;
 
 import io.github.steaf23.bingoreloadedcompanion.BingoReloadedCompanion;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.Nullable;
 
 public enum BingoGamemode {
-	REGULAR(Identifier.of(BingoReloadedCompanion.ADDON_ID, "gamemode/bingo"), 0),
-	LOCKOUT(Identifier.of(BingoReloadedCompanion.ADDON_ID, "gamemode/lockout"), 1),
-	COMPLETE(Identifier.of(BingoReloadedCompanion.ADDON_ID, "gamemode/complete"), 2),
-	HOTSWAP(Identifier.of(BingoReloadedCompanion.ADDON_ID, "gamemode/hotswap"), 3),
+	REGULAR(Identifier.fromNamespaceAndPath(BingoReloadedCompanion.ADDON_ID, "gamemode/bingo"), 0),
+	LOCKOUT(Identifier.fromNamespaceAndPath(BingoReloadedCompanion.ADDON_ID, "gamemode/lockout"), 1),
+	COMPLETE(Identifier.fromNamespaceAndPath(BingoReloadedCompanion.ADDON_ID, "gamemode/complete"), 2),
+	HOTSWAP(Identifier.fromNamespaceAndPath(BingoReloadedCompanion.ADDON_ID, "gamemode/hotswap"), 3),
 	;
 
 	private final Identifier id;

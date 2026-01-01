@@ -1,5 +1,6 @@
 package io.github.steaf23.bingoreloadedcompanion.client;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import io.github.steaf23.bingoreloadedcompanion.BingoReloadedCompanion;
 import io.github.steaf23.bingoreloadedcompanion.card.BingoCard;
 import io.github.steaf23.bingoreloadedcompanion.client.hud.BingoCardHudElement;
@@ -20,10 +21,9 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
-import net.minecraft.client.gui.screen.ingame.HandledScreen;
-import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.util.InputUtil;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.KeyMapping;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.resources.Identifier;
 import org.lwjgl.glfw.GLFW;
 
 public class BingoReloadedCompanionClient implements ClientModInitializer {
@@ -57,10 +57,10 @@ public class BingoReloadedCompanionClient implements ClientModInitializer {
 
 		BingoCardHudElement cardElement = new BingoCardHudElement(HUD_CONFIG);
 
-		HudElementRegistry.addLast(Identifier.of(BingoReloadedCompanion.ADDON_ID, "card_display"), cardElement);
+		HudElementRegistry.addLast(Identifier.fromNamespaceAndPath(BingoReloadedCompanion.ADDON_ID, "card_display"), cardElement);
 
 		ScreenEvents.AFTER_INIT.register((client, screen, scaledWidth, scaledHeight) -> {
-			if (screen instanceof HandledScreen<?> handledScreen) {
+			if (screen instanceof AbstractContainerScreen<?> containerScreen) {
 				cardElement.setRenderingInScreen(true);
 				ScreenEvents.afterRender(screen).register((renderedScreen, drawContext, mouseX, mouseY, tickDelta) -> {
 
@@ -78,7 +78,7 @@ public class BingoReloadedCompanionClient implements ClientModInitializer {
 			}
 
 			ClientHelloPayload payload = new ClientHelloPayload();
-			if (ClientPlayNetworking.canSend(payload.getId())) {
+			if (ClientPlayNetworking.canSend(payload.type())) {
 				ClientPlayNetworking.send(payload);
 			}
 
@@ -102,10 +102,10 @@ public class BingoReloadedCompanionClient implements ClientModInitializer {
 					cardElement.setHotswapHolders(payload.holders);
 				});
 
-		KeyBinding.Category category = KeyBinding.Category.create(Identifier.of("bingoreloadedcompanion", "main"));
-		KeyBinding toggleCardVisibility = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+		KeyMapping.Category category = KeyMapping.Category.register(Identifier.fromNamespaceAndPath("bingoreloadedcompanion", "main"));
+		KeyMapping toggleCardVisibility = KeyBindingHelper.registerKeyBinding(new KeyMapping(
 				"key.bingoreloadedcompanion.toggle_card_visibility",
-				InputUtil.Type.KEYSYM,
+				InputConstants.Type.KEYSYM,
 				GLFW.GLFW_KEY_R,
 				category));
 
@@ -138,7 +138,7 @@ public class BingoReloadedCompanionClient implements ClientModInitializer {
 //		});
 
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
-			if (toggleCardVisibility.wasPressed()) {
+			if (toggleCardVisibility.consumeClick()) {
 				cardElement.setVisible(cardElement.isHidden());
 			}
 		});

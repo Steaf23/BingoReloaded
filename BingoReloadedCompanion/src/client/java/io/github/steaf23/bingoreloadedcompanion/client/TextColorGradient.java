@@ -1,13 +1,13 @@
 package io.github.steaf23.bingoreloadedcompanion.client;
 
-import net.minecraft.text.TextColor;
-import net.minecraft.util.Formatting;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.TextColor;
 
 /**
  * Class used to create and sample from a gradient, returning adventure TextColors
@@ -46,7 +46,7 @@ public class TextColorGradient
 	 */
 	public TextColor sample(float position) {
 		if (colors.isEmpty()) {
-			return TextColor.fromFormatting(Formatting.WHITE);
+			return TextColor.fromLegacyFormat(ChatFormatting.WHITE);
 		}
 
 		if (colors.size() == 1) {
@@ -77,8 +77,8 @@ public class TextColorGradient
 	}
 
 	static public TextColor lerpChatColor(@NotNull TextColor left, @NotNull TextColor right, float value) {
-		int leftRgb = left.getRgb();
-		int rightRgb = right.getRgb();
+		int leftRgb = left.getValue();
+		int rightRgb = right.getValue();
 		int red = (int)ExtraMath.lerp((leftRgb & 0xFF0000) >> 16, (rightRgb & 0xFF0000) >> 16, value);
 		int green = (int)ExtraMath.lerp((leftRgb & 0x00FF00) >> 8, (rightRgb & 0x00FF00) >> 8, value);
 		int blue = (int)ExtraMath.lerp((leftRgb & 0x0000FF), (rightRgb & 0x0000FF), value);

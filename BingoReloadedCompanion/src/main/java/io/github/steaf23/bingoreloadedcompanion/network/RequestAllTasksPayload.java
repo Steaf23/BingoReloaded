@@ -1,19 +1,19 @@
 package io.github.steaf23.bingoreloadedcompanion.network;
 
 import io.github.steaf23.bingoreloadedcompanion.BingoReloadedCompanion;
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.packet.CustomPayload;
-import net.minecraft.util.Identifier;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.Identifier;
 
-public class RequestAllTasksPayload implements CustomPayload {
+public class RequestAllTasksPayload implements CustomPacketPayload {
 	private final Identifier taskType;
 
-	public static final CustomPayload.Id<RequestAllTasksPayload> ID = new CustomPayload.Id<>(
-			Identifier.of(BingoReloadedCompanion.ADDON_ID, "request_all_tasks")
+	public static final CustomPacketPayload.Type<RequestAllTasksPayload> ID = new CustomPacketPayload.Type<>(
+			Identifier.fromNamespaceAndPath(BingoReloadedCompanion.ADDON_ID, "request_all_tasks")
 	);
 
-	public static final PacketCodec<RegistryByteBuf, RequestAllTasksPayload> CODEC = PacketCodec.of(
+	public static final StreamCodec<RegistryFriendlyByteBuf, RequestAllTasksPayload> CODEC = StreamCodec.ofMember(
 			(payload, buf) -> {
 				PayloadHelper.writeString(payload.taskType.toString(), buf);
 			},
@@ -25,7 +25,7 @@ public class RequestAllTasksPayload implements CustomPayload {
 	}
 
 	@Override
-	public Id<? extends CustomPayload> getId() {
+	public Type<? extends CustomPacketPayload> type() {
 		return ID;
 	}
 }

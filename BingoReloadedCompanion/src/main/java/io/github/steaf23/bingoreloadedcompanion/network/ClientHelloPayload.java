@@ -1,24 +1,24 @@
 package io.github.steaf23.bingoreloadedcompanion.network;
 
 import io.github.steaf23.bingoreloadedcompanion.BingoReloadedCompanion;
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.packet.CustomPayload;
-import net.minecraft.util.Identifier;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.Identifier;
 
-public class ClientHelloPayload implements CustomPayload {
+public class ClientHelloPayload implements CustomPacketPayload {
 
-	public static final CustomPayload.Id<ClientHelloPayload> ID = new CustomPayload.Id<>(
-			Identifier.of(BingoReloadedCompanion.ADDON_ID, "hello")
+	public static final CustomPacketPayload.Type<ClientHelloPayload> ID = new CustomPacketPayload.Type<>(
+			Identifier.fromNamespaceAndPath(BingoReloadedCompanion.ADDON_ID, "hello")
 	);
 
-	public static final PacketCodec<RegistryByteBuf, ClientHelloPayload> CODEC = PacketCodec.of(
+	public static final StreamCodec<RegistryFriendlyByteBuf, ClientHelloPayload> CODEC = StreamCodec.ofMember(
 			(payload, buf) -> {},
 			buf -> new ClientHelloPayload()
 	);
 
 	@Override
-	public Id<? extends CustomPayload> getId() {
+	public Type<? extends CustomPacketPayload> type() {
 		return ID;
 	}
 }

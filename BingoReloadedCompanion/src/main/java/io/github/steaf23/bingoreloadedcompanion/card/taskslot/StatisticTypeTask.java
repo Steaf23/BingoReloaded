@@ -1,35 +1,35 @@
 package io.github.steaf23.bingoreloadedcompanion.card.taskslot;
 
-import net.minecraft.block.Block;
-import net.minecraft.entity.EntityType;
-import net.minecraft.item.Item;
-import net.minecraft.item.Items;
-import net.minecraft.item.SpawnEggItem;
-import net.minecraft.registry.Registries;
-import net.minecraft.stat.StatType;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
+import net.minecraft.stats.StatType;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.SpawnEggItem;
+import net.minecraft.world.level.block.Block;
 
 public record StatisticTypeTask<T>(StatType<T> stat, T data, int count) implements TaskSlot {
 
 	@Override
 	public Identifier id() {
-		return Registries.STAT_TYPE.getId(stat);
+		return BuiltInRegistries.STAT_TYPE.getKey(stat);
 	}
 
 	@Override
 	public Item item() {
 		return switch (data) {
 			case Item itemData -> itemData;
-			case EntityType<?> entity -> SpawnEggItem.forEntity(entity);
+			case EntityType<?> entity -> SpawnEggItem.byId(entity);
 			case Block blockData -> blockData.asItem();
 			default -> Items.BEDROCK;
 		};
 	}
 
 	@Override
-	public Text name() {
-		return stat.getName();
+	public Component name() {
+		return stat.getDisplayName();
 	}
 
 	@Override

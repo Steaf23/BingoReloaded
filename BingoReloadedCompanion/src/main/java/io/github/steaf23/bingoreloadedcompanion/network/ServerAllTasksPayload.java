@@ -2,23 +2,22 @@ package io.github.steaf23.bingoreloadedcompanion.network;
 
 import io.github.steaf23.bingoreloadedcompanion.BingoReloadedCompanion;
 import io.github.steaf23.bingoreloadedcompanion.card.taskslot.TaskSlot;
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.packet.CustomPayload;
-import net.minecraft.util.Identifier;
-
 import java.util.List;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.Identifier;
 
-public class ServerAllTasksPayload implements CustomPayload {
+public class ServerAllTasksPayload implements CustomPacketPayload {
 
 	private final Identifier taskType;
 	private final List<? extends TaskSlot> tasks;
 
-	public static final CustomPayload.Id<ServerAllTasksPayload> ID = new CustomPayload.Id<>(
-			Identifier.of(BingoReloadedCompanion.ADDON_ID, "all_tasks")
+	public static final CustomPacketPayload.Type<ServerAllTasksPayload> ID = new CustomPacketPayload.Type<>(
+			Identifier.fromNamespaceAndPath(BingoReloadedCompanion.ADDON_ID, "all_tasks")
 	);
 
-	public static final PacketCodec<RegistryByteBuf, RequestAllTasksPayload> CODEC = PacketCodec.of(
+	public static final StreamCodec<RegistryFriendlyByteBuf, RequestAllTasksPayload> CODEC = StreamCodec.ofMember(
 			(payload, buf) -> {}, // Packet will not be sent, only received.
 			buf -> {
 				String taskType = PayloadHelper.readString(buf);
@@ -34,7 +33,7 @@ public class ServerAllTasksPayload implements CustomPayload {
 	}
 
 	@Override
-	public Id<? extends CustomPayload> getId() {
+	public Type<? extends CustomPacketPayload> type() {
 		return ID;
 	}
 }

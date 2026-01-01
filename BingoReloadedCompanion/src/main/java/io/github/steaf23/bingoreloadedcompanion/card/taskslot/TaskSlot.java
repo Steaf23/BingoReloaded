@@ -1,8 +1,8 @@
 package io.github.steaf23.bingoreloadedcompanion.card.taskslot;
 
-import net.minecraft.item.Item;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.item.Item;
 
 public interface TaskSlot {
 
@@ -10,7 +10,7 @@ public interface TaskSlot {
 
 	Item item();
 
-	Text name();
+	Component name();
 
 	int completeCount();
 

@@ -1,12 +1,12 @@
 package io.github.steaf23.bingoreloadedcompanion.card.taskslot;
 
-import net.minecraft.advancement.AdvancementEntry;
-import net.minecraft.item.Item;
-import net.minecraft.item.Items;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import net.minecraft.advancements.AdvancementHolder;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 
-public record AdvancementTask(AdvancementEntry advancement, boolean counted) implements TaskSlot {
+public record AdvancementTask(AdvancementHolder advancement, boolean counted) implements TaskSlot {
 
 	@Override
 	public Identifier id() {
@@ -22,8 +22,8 @@ public record AdvancementTask(AdvancementEntry advancement, boolean counted) imp
 	}
 
 	@Override
-	public Text name() {
-		return advancement.value().name().orElse(Text.of("UNNAMED ADVANCEMENT"));
+	public Component name() {
+		return advancement.value().name().orElse(Component.nullToEmpty("UNNAMED ADVANCEMENT"));
 	}
 
 	@Override

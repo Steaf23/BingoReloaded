@@ -1,10 +1,10 @@
 package io.github.steaf23.bingoreloadedcompanion.card.taskslot;
 
-import net.minecraft.item.Item;
-import net.minecraft.registry.Registries;
-import net.minecraft.text.Text;
-import net.minecraft.util.Colors;
-import net.minecraft.util.Identifier;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
+import net.minecraft.util.CommonColors;
+import net.minecraft.world.item.Item;
 
 public record ItemTask(Identifier id, int count) implements TaskSlot {
 
@@ -14,12 +14,12 @@ public record ItemTask(Identifier id, int count) implements TaskSlot {
 	}
 
 	public Item item() {
-		return Registries.ITEM.get(id);
+		return BuiltInRegistries.ITEM.getValue(id);
 	}
 
-	public Text name() {
-		return Text.of(count + "x ").copy().withColor(Colors.LIGHT_YELLOW)
-				.append(Text.translatable(item().getTranslationKey()));
+	public Component name() {
+		return Component.nullToEmpty(count + "x ").copy().withColor(CommonColors.SOFT_YELLOW)
+				.append(Component.translatable(item().getDescriptionId()));
 	}
 
 	@Override

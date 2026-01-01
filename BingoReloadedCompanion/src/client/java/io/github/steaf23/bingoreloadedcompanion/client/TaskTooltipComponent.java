@@ -1,22 +1,22 @@
 package io.github.steaf23.bingoreloadedcompanion.client;
 
 import io.github.steaf23.bingoreloadedcompanion.card.taskslot.TaskSlot;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gl.RenderPipelines;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.tooltip.TooltipComponent;
-import net.minecraft.item.ItemStack;
-import net.minecraft.text.Text;
-import net.minecraft.util.Colors;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
+import net.minecraft.util.CommonColors;
+import net.minecraft.world.item.ItemStack;
 
-public class TaskTooltipComponent implements TooltipComponent {
+public class TaskTooltipComponent implements ClientTooltipComponent {
 
-	private static final Identifier ICON_BACKGROUND = Identifier.ofVanilla("container/bundle/slot_highlight_back");
+	private static final Identifier ICON_BACKGROUND = Identifier.withDefaultNamespace("container/bundle/slot_highlight_back");
 
 	private final TaskSlot task;
 	private final ItemStack icon;
-	private final Text taskName;
+	private final Component taskName;
 
 	public TaskTooltipComponent(TaskSlot task) {
 		this.task = task;
@@ -25,24 +25,24 @@ public class TaskTooltipComponent implements TooltipComponent {
 	}
 
 	@Override
-	public int getHeight(TextRenderer textRenderer) {
+	public int getHeight(Font textRenderer) {
 		return 26;
 	}
 
 	@Override
-	public int getWidth(TextRenderer textRenderer) {
-		return 20 + textRenderer.getWidth(taskName) + 4;
+	public int getWidth(Font textRenderer) {
+		return 20 + textRenderer.width(taskName) + 4;
 	}
 
 	@Override
-	public void drawItems(TextRenderer textRenderer, int x, int y, int width, int height, DrawContext context) {
-		context.drawGuiTexture(RenderPipelines.GUI_TEXTURED, ICON_BACKGROUND, x, y, 24, 24);
-		context.drawItem(icon, x + 4, y + 4);
-		context.drawStackOverlay(textRenderer, icon, x + 4, y + 4);
+	public void renderImage(Font textRenderer, int x, int y, int width, int height, GuiGraphics context) {
+		context.blitSprite(RenderPipelines.GUI_TEXTURED, ICON_BACKGROUND, x, y, 24, 24);
+		context.renderItem(icon, x + 4, y + 4);
+		context.renderItemDecorations(textRenderer, icon, x + 4, y + 4);
 	}
 
 	@Override
-	public void drawText(DrawContext context, TextRenderer textRenderer, int x, int y) {
-		context.drawText(textRenderer, taskName, x + 24, y, Colors.WHITE, true);
+	public void renderText(GuiGraphics context, Font textRenderer, int x, int y) {
+		context.drawString(textRenderer, taskName, x + 24, y, CommonColors.WHITE, true);
 	}
 }

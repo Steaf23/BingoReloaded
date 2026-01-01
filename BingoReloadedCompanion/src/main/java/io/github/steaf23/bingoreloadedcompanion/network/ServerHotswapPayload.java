@@ -3,21 +3,20 @@ package io.github.steaf23.bingoreloadedcompanion.network;
 import com.google.common.collect.ImmutableList;
 import io.github.steaf23.bingoreloadedcompanion.BingoReloadedCompanion;
 import io.github.steaf23.bingoreloadedcompanion.card.HotswapTaskHolder;
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.packet.CustomPayload;
-import net.minecraft.util.Identifier;
-
 import java.util.ArrayList;
 import java.util.List;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.Identifier;
 
-public class ServerHotswapPayload implements CustomPayload {
+public class ServerHotswapPayload implements CustomPacketPayload {
 
-	public static final CustomPayload.Id<ServerHotswapPayload> ID = new CustomPayload.Id<>(
-			Identifier.of(BingoReloadedCompanion.ADDON_ID, "hotswap_tasks")
+	public static final CustomPacketPayload.Type<ServerHotswapPayload> ID = new CustomPacketPayload.Type<>(
+			Identifier.fromNamespaceAndPath(BingoReloadedCompanion.ADDON_ID, "hotswap_tasks")
 	);
 
-	public static final PacketCodec<RegistryByteBuf, ServerHotswapPayload> CODEC = PacketCodec.of(
+	public static final StreamCodec<RegistryFriendlyByteBuf, ServerHotswapPayload> CODEC = StreamCodec.ofMember(
 			(payload, buf) -> {}, // Packet will not be sent, only received.
 			buf -> {
 				List<HotswapTaskHolder> holders = new ArrayList<>();
@@ -42,7 +41,7 @@ public class ServerHotswapPayload implements CustomPayload {
 	}
 
 	@Override
-	public Id<? extends CustomPayload> getId() {
+	public Type<? extends CustomPacketPayload> type() {
 		return ID;
 	}
 }

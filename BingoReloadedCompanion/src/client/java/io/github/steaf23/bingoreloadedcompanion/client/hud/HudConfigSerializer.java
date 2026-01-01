@@ -4,11 +4,10 @@ import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
-import net.minecraft.util.Identifier;
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import net.minecraft.resources.Identifier;
 
 public class HudConfigSerializer extends TypeAdapter<HudConfig> {
 
@@ -47,7 +46,7 @@ public class HudConfigSerializer extends TypeAdapter<HudConfig> {
 
 						HudPlacement placement = readPlacement(jsonReader);
 
-						map.put(Identifier.of(id), placement);
+						map.put(Identifier.parse(id), placement);
 					}
 
 					jsonReader.endObject();

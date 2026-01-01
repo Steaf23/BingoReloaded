@@ -8,21 +8,21 @@ import io.github.steaf23.bingoreloadedcompanion.client.hud.BingoCardHudElement;
 import io.github.steaf23.bingoreloadedcompanion.client.hud.HudConfigManager;
 import io.github.steaf23.bingoreloadedcompanion.client.hud.HudPlacement;
 import io.github.steaf23.bingoreloadedcompanion.client.util.ScreenHelper;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gl.RenderPipelines;
-import net.minecraft.client.gui.Click;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.input.KeyInput;
-import net.minecraft.item.Items;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
-import net.minecraft.util.Identifier;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
 import java.util.List;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.item.Items;
 
 public class BingoConfigScreen extends Screen {
 
@@ -30,18 +30,18 @@ public class BingoConfigScreen extends Screen {
 	private final HudConfigManager configManager;
 	private final BingoCardHudElement previewCard;
 
-	private static final Identifier HIDE_BUTTON = Identifier.of("bingoreloadedcompanion:hide_button");
-	private static final Identifier HIDE_BUTTON_HIGHLIGHT = Identifier.of("bingoreloadedcompanion:hide_button_highlighted");
-	private static final Identifier SHOW_BUTTON = Identifier.of("bingoreloadedcompanion:show_button");
-	private static final Identifier SHOW_BUTTON_HIGHLIGHT = Identifier.of("bingoreloadedcompanion:show_button_highlighted");
-	private static final Identifier RESET_BUTTON = Identifier.of("bingoreloadedcompanion:reset_button");
-	private static final Identifier RESET_BUTTON_HIGHLIGHT = Identifier.of("bingoreloadedcompanion:reset_button_highlighted");
-	private static final Identifier SCALE_BUTTON = Identifier.of("bingoreloadedcompanion:scale_button");
-	private static final Identifier SCALE_BUTTON_HIGHLIGHT = Identifier.of("bingoreloadedcompanion:scale_button_highlighted");
-	private static final Identifier SLIDER_BUTTON_SLIDER = Identifier.of("bingoreloadedcompanion:slider_button_slider");
-	private static final Identifier SLIDER_BUTTON_SLIDER_HIGHLIGHT = Identifier.of("bingoreloadedcompanion:slider_button_slider_highlighted");
-	private static final Identifier SLIDER_BUTTON_BACKGROUND = Identifier.of("bingoreloadedcompanion:slider_button_background");
-	private static final Identifier SLIDER_BUTTON_PROGRESS = Identifier.of("bingoreloadedcompanion:slider_button_progress");
+	private static final Identifier HIDE_BUTTON = Identifier.parse("bingoreloadedcompanion:hide_button");
+	private static final Identifier HIDE_BUTTON_HIGHLIGHT = Identifier.parse("bingoreloadedcompanion:hide_button_highlighted");
+	private static final Identifier SHOW_BUTTON = Identifier.parse("bingoreloadedcompanion:show_button");
+	private static final Identifier SHOW_BUTTON_HIGHLIGHT = Identifier.parse("bingoreloadedcompanion:show_button_highlighted");
+	private static final Identifier RESET_BUTTON = Identifier.parse("bingoreloadedcompanion:reset_button");
+	private static final Identifier RESET_BUTTON_HIGHLIGHT = Identifier.parse("bingoreloadedcompanion:reset_button_highlighted");
+	private static final Identifier SCALE_BUTTON = Identifier.parse("bingoreloadedcompanion:scale_button");
+	private static final Identifier SCALE_BUTTON_HIGHLIGHT = Identifier.parse("bingoreloadedcompanion:scale_button_highlighted");
+	private static final Identifier SLIDER_BUTTON_SLIDER = Identifier.parse("bingoreloadedcompanion:slider_button_slider");
+	private static final Identifier SLIDER_BUTTON_SLIDER_HIGHLIGHT = Identifier.parse("bingoreloadedcompanion:slider_button_slider_highlighted");
+	private static final Identifier SLIDER_BUTTON_BACKGROUND = Identifier.parse("bingoreloadedcompanion:slider_button_background");
+	private static final Identifier SLIDER_BUTTON_PROGRESS = Identifier.parse("bingoreloadedcompanion:slider_button_progress");
 	private static final int BUTTON_WIDTH = 14;
 	private static final int SLIDER_WIDTH = 10;
 	private static final int SLIDER_BACKGROUND_WIDTH = BUTTON_WIDTH * 2 + 2;
@@ -63,7 +63,7 @@ public class BingoConfigScreen extends Screen {
 	private final List<Identifier> elements = List.of(BingoReloadedCompanionClient.BINGO_CARD_TASKS, BingoReloadedCompanionClient.BINGO_CARD_GAMEMODE);
 
 	protected BingoConfigScreen(Screen modMenuScreen, HudConfigManager hudConfig) {
-		super(Text.of("Bingo Reloaded Options"));
+		super(Component.nullToEmpty("Bingo Reloaded Options"));
 		this.modMenuScreen = modMenuScreen;
 
 		this.configManager = hudConfig;
@@ -71,7 +71,7 @@ public class BingoConfigScreen extends Screen {
 
 		List<Task> testTasks = new ArrayList<>();
 		for (int i = 0; i < 25; i++) {
-			testTasks.add(new Task(Task.TaskCompletion.INCOMPLETE, Identifier.of("bingoreloaded:item"), Items.PAPER, 1));
+			testTasks.add(new Task(Task.TaskCompletion.INCOMPLETE, Identifier.parse("bingoreloaded:item"), Items.PAPER, 1));
 		}
 		BingoCard testCard5x = new BingoCard(BingoGamemode.REGULAR, 5, testTasks);
 		previewCard.setCard(testCard5x);
@@ -80,25 +80,25 @@ public class BingoConfigScreen extends Screen {
 	@Override
 	protected void init() {
 
-		ButtonWidget backButton = ButtonWidget.builder(Text.of("Save & Exit"), (btn) -> {
-			if (client == null) return;
+		Button backButton = Button.builder(Component.nullToEmpty("Save & Exit"), (btn) -> {
+			if (minecraft == null) return;
 			configManager.save();
 			closeScreen();
 		})
-				.position(5, height - 20 - 5)
+				.pos(5, height - 20 - 5)
 				.build();
 
-		addDrawableChild(backButton);
+		addRenderableWidget(backButton);
 
-		int buttonWidth = Math.max(150, textRenderer.getWidth(Text.of("Reset all elements")) + 10);
+		int buttonWidth = Math.max(150, font.width(Component.nullToEmpty("Reset all elements")) + 10);
 
-		ButtonWidget resetButton = ButtonWidget.builder(Text.of("Reset all elements"), (btn) -> {
+		Button resetButton = Button.builder(Component.nullToEmpty("Reset all elements"), (btn) -> {
 					configManager.resetAllElements();
 				})
-				.position(width - buttonWidth - 5, height - 20 - 5)
+				.pos(width - buttonWidth - 5, height - 20 - 5)
 				.build();
 
-		addDrawableChild(resetButton);
+		addRenderableWidget(resetButton);
 	}
 
 	@Override
@@ -107,7 +107,7 @@ public class BingoConfigScreen extends Screen {
 	}
 
 	@Override
-	public void render(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
+	public void render(GuiGraphics context, int mouseX, int mouseY, float deltaTicks) {
 		super.render(context, mouseX, mouseY, deltaTicks);
 
 		previewCard.renderElement(context, deltaTicks);
@@ -115,13 +115,13 @@ public class BingoConfigScreen extends Screen {
 		{ // Draw the info tooltip at the top
 			double infoAlpha = mouseY < 40 ? 0.5 : 1.0;
 
-			List<Text> text = List.of(
-					Text.of("Click on an element to select it."),
-					Text.of("You can move it by dragging the mouse or using the movement keys.")
+			List<Component> text = List.of(
+					Component.nullToEmpty("Click on an element to select it."),
+					Component.nullToEmpty("You can move it by dragging the mouse or using the movement keys.")
 			);
 			int recordWidth = 0;
-			for (Text t : text) {
-				int textWidth = textRenderer.getWidth(t);
+			for (Component t : text) {
+				int textWidth = font.width(t);
 				if (textWidth > recordWidth) {
 					recordWidth = textWidth;
 				}
@@ -133,10 +133,10 @@ public class BingoConfigScreen extends Screen {
 			context.fill(backgroundStartX, 0, backgroundStartX + backgroundWidth, textHeight, ScreenHelper.addAlphaToColor(0x000000, (int)(128 * infoAlpha)));
 
 			int y = 5;
-			for (Text t : text) {
-				int textWidth = textRenderer.getWidth(t);
+			for (Component t : text) {
+				int textWidth = font.width(t);
 				int textX = width / 2 - (textWidth / 2);
-				context.drawText(textRenderer, t, textX, y, ScreenHelper.addAlphaToColor(Formatting.WHITE.getColorValue(), (int)(255 * infoAlpha)), true);
+				context.drawString(font, t, textX, y, ScreenHelper.addAlphaToColor(ChatFormatting.WHITE.getColor(), (int)(255 * infoAlpha)), true);
 				y += 15;
 			}
 		}
@@ -152,7 +152,7 @@ public class BingoConfigScreen extends Screen {
 			}
 
 			if (selectedElement == element) {
-				context.drawStrokedRectangle(rect.x() - 3, rect.y() - 3, rect.width() + 6, rect.height() + 6, ScreenHelper.addAlphaToColor(Formatting.YELLOW.getColorValue(), 200));
+				context.renderOutline(rect.x() - 3, rect.y() - 3, rect.width() + 6, rect.height() + 6, ScreenHelper.addAlphaToColor(ChatFormatting.YELLOW.getColor(), 200));
 
 				int showButtonX = rect.endX() - (BUTTON_WIDTH * 2 + 2);
 				int scaleButtonX = rect.endX() - (BUTTON_WIDTH * 3 + 4);
@@ -160,29 +160,29 @@ public class BingoConfigScreen extends Screen {
 				int buttonY = height - rect.endY() > BUTTON_HEIGHT + 4 ? rect.endY() + 4 : rect.y() - BUTTON_HEIGHT - 4;
 
 				if (isMouseOverShowButton(mouseX, mouseY) && configManager.getHudPlacement(element).visible()) {
-					context.drawTooltip(MinecraftClient.getInstance().textRenderer, Text.of("Hide"), mouseX, mouseY);
-					context.drawGuiTexture(RenderPipelines.GUI_TEXTURED, HIDE_BUTTON_HIGHLIGHT, showButtonX, buttonY, BUTTON_WIDTH, BUTTON_HEIGHT);
+					context.setTooltipForNextFrame(Minecraft.getInstance().font, Component.nullToEmpty("Hide"), mouseX, mouseY);
+					context.blitSprite(RenderPipelines.GUI_TEXTURED, HIDE_BUTTON_HIGHLIGHT, showButtonX, buttonY, BUTTON_WIDTH, BUTTON_HEIGHT);
 				} else if (isMouseOverShowButton(mouseX, mouseY)) {
-					context.drawTooltip(MinecraftClient.getInstance().textRenderer, Text.of("Show"), mouseX, mouseY);
-					context.drawGuiTexture(RenderPipelines.GUI_TEXTURED, SHOW_BUTTON_HIGHLIGHT, showButtonX, buttonY, BUTTON_WIDTH, BUTTON_HEIGHT);
+					context.setTooltipForNextFrame(Minecraft.getInstance().font, Component.nullToEmpty("Show"), mouseX, mouseY);
+					context.blitSprite(RenderPipelines.GUI_TEXTURED, SHOW_BUTTON_HIGHLIGHT, showButtonX, buttonY, BUTTON_WIDTH, BUTTON_HEIGHT);
 				} else if (configManager.getHudPlacement(element).visible()) {
-					context.drawGuiTexture(RenderPipelines.GUI_TEXTURED, HIDE_BUTTON, showButtonX, buttonY, BUTTON_WIDTH, BUTTON_HEIGHT);
+					context.blitSprite(RenderPipelines.GUI_TEXTURED, HIDE_BUTTON, showButtonX, buttonY, BUTTON_WIDTH, BUTTON_HEIGHT);
 				} else {
-					context.drawGuiTexture(RenderPipelines.GUI_TEXTURED, SHOW_BUTTON, showButtonX, buttonY, BUTTON_WIDTH, BUTTON_HEIGHT);
+					context.blitSprite(RenderPipelines.GUI_TEXTURED, SHOW_BUTTON, showButtonX, buttonY, BUTTON_WIDTH, BUTTON_HEIGHT);
 				}
 
 				if (isMouseOverResetButton(mouseX, mouseY)) {
-					context.drawTooltip(MinecraftClient.getInstance().textRenderer, Text.of("Reset"), mouseX, mouseY);
-					context.drawGuiTexture(RenderPipelines.GUI_TEXTURED, RESET_BUTTON_HIGHLIGHT, resetButtonX, buttonY, BUTTON_WIDTH, BUTTON_HEIGHT);
+					context.setTooltipForNextFrame(Minecraft.getInstance().font, Component.nullToEmpty("Reset"), mouseX, mouseY);
+					context.blitSprite(RenderPipelines.GUI_TEXTURED, RESET_BUTTON_HIGHLIGHT, resetButtonX, buttonY, BUTTON_WIDTH, BUTTON_HEIGHT);
 				} else {
-					context.drawGuiTexture(RenderPipelines.GUI_TEXTURED, RESET_BUTTON, resetButtonX, buttonY, BUTTON_WIDTH, BUTTON_HEIGHT);
+					context.blitSprite(RenderPipelines.GUI_TEXTURED, RESET_BUTTON, resetButtonX, buttonY, BUTTON_WIDTH, BUTTON_HEIGHT);
 				}
 
 				if (isMouseOverScaleButton(mouseX, mouseY)) {
-					context.drawTooltip(MinecraftClient.getInstance().textRenderer, Text.of("Change size"), mouseX, mouseY);
-					context.drawGuiTexture(RenderPipelines.GUI_TEXTURED, SCALE_BUTTON_HIGHLIGHT, scaleButtonX, buttonY, BUTTON_WIDTH, BUTTON_HEIGHT);
+					context.setTooltipForNextFrame(Minecraft.getInstance().font, Component.nullToEmpty("Change size"), mouseX, mouseY);
+					context.blitSprite(RenderPipelines.GUI_TEXTURED, SCALE_BUTTON_HIGHLIGHT, scaleButtonX, buttonY, BUTTON_WIDTH, BUTTON_HEIGHT);
 				} else {
-					context.drawGuiTexture(RenderPipelines.GUI_TEXTURED, SCALE_BUTTON, scaleButtonX, buttonY, BUTTON_WIDTH, BUTTON_HEIGHT);
+					context.blitSprite(RenderPipelines.GUI_TEXTURED, SCALE_BUTTON, scaleButtonX, buttonY, BUTTON_WIDTH, BUTTON_HEIGHT);
 				}
 
 				int sliderButtonX = rect.endX() - (BUTTON_WIDTH * 5 + 8);
@@ -201,10 +201,10 @@ public class BingoConfigScreen extends Screen {
 		}
 	}
 
-	private void drawSlider(DrawContext context, int x, int y, double value, int mouseX, int mouseY) {
+	private void drawSlider(GuiGraphics context, int x, int y, double value, int mouseX, int mouseY) {
 		Identifier sliderTexture = SLIDER_BUTTON_SLIDER;
 		if (isMouseOverTransparencySlider(mouseX, mouseY)) {
-			context.drawTooltip(MinecraftClient.getInstance().textRenderer, Text.of("Transparency"), mouseX, mouseY);
+			context.setTooltipForNextFrame(Minecraft.getInstance().font, Component.nullToEmpty("Transparency"), mouseX, mouseY);
 			sliderTexture = SLIDER_BUTTON_SLIDER_HIGHLIGHT;
 		}
 
@@ -213,9 +213,9 @@ public class BingoConfigScreen extends Screen {
 		int progressStartX = (int)(range * (1.0 - value));
 		int progressSizeX = range - (progressStartX + SLIDER_WIDTH / 2);
 
-		context.drawGuiTexture(RenderPipelines.GUI_TEXTURED, SLIDER_BUTTON_BACKGROUND, x, y, SLIDER_BACKGROUND_WIDTH, BUTTON_HEIGHT);
-		context.drawGuiTexture(RenderPipelines.GUI_TEXTURED, SLIDER_BUTTON_PROGRESS, SLIDER_BACKGROUND_WIDTH, BUTTON_HEIGHT, progressStartX + SLIDER_WIDTH / 2, 0, x + progressStartX + SLIDER_WIDTH / 2, y, progressSizeX + SLIDER_WIDTH, BUTTON_HEIGHT);
-		context.drawGuiTexture(RenderPipelines.GUI_TEXTURED, sliderTexture, x + progressStartX, y, SLIDER_WIDTH, BUTTON_HEIGHT);
+		context.blitSprite(RenderPipelines.GUI_TEXTURED, SLIDER_BUTTON_BACKGROUND, x, y, SLIDER_BACKGROUND_WIDTH, BUTTON_HEIGHT);
+		context.blitSprite(RenderPipelines.GUI_TEXTURED, SLIDER_BUTTON_PROGRESS, SLIDER_BACKGROUND_WIDTH, BUTTON_HEIGHT, progressStartX + SLIDER_WIDTH / 2, 0, x + progressStartX + SLIDER_WIDTH / 2, y, progressSizeX + SLIDER_WIDTH, BUTTON_HEIGHT);
+		context.blitSprite(RenderPipelines.GUI_TEXTURED, sliderTexture, x + progressStartX, y, SLIDER_WIDTH, BUTTON_HEIGHT);
 	}
 
 	private boolean isMouseOverElement(Identifier element, double mouseX, double mouseY) {
@@ -268,11 +268,11 @@ public class BingoConfigScreen extends Screen {
 	}
 
 	private long getGameWindowId() {
-		return client.getWindow().getHandle();
+		return minecraft.getWindow().handle();
 	}
 
 	@Override
-	public boolean mouseClicked(Click click, boolean doubled) {
+	public boolean mouseClicked(MouseButtonEvent click, boolean doubled) {
 		if (doubled) return true;
 
 		int button = click.button();
@@ -329,7 +329,7 @@ public class BingoConfigScreen extends Screen {
 	}
 
 	@Override
-	public boolean mouseReleased(Click click) {
+	public boolean mouseReleased(MouseButtonEvent click) {
 
 		int button = click.button();
 		double mouseX = click.x();
@@ -388,7 +388,7 @@ public class BingoConfigScreen extends Screen {
 
 
 	@Override
-	public boolean keyPressed(KeyInput key) {
+	public boolean keyPressed(KeyEvent key) {
 		int keyCode = key.key();
 		int scanCode = key.scancode();
 		int modifiers = key.modifiers();
@@ -425,14 +425,14 @@ public class BingoConfigScreen extends Screen {
 	}
 
 	protected void closeScreen() {
-		if (client == null) return;
+		if (minecraft == null) return;
 		if (configManager.hasChanged()) {
 
-			client.setScreen(new DiscardConfirmScreen(new BingoConfigScreen(modMenuScreen, configManager), modMenuScreen, configManager::load));
+			minecraft.setScreen(new DiscardConfirmScreen(new BingoConfigScreen(modMenuScreen, configManager), modMenuScreen, configManager::load));
 			return;
 		}
 
 		configManager.load();
-		client.setScreen(modMenuScreen);
+		minecraft.setScreen(modMenuScreen);
 	}
 }

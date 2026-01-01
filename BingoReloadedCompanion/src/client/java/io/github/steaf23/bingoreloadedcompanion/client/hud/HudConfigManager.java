@@ -2,11 +2,11 @@ package io.github.steaf23.bingoreloadedcompanion.client.hud;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.mojang.blaze3d.platform.Window;
 import io.github.steaf23.bingoreloadedcompanion.BingoReloadedCompanion;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.util.Window;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.Minecraft;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -100,14 +100,14 @@ public class HudConfigManager {
 	 * Moves element in absolute window positions
 	 */
 	public void moveElement(Identifier id, int toX, int toY, int borderX, int borderY) {
-		Window window = MinecraftClient.getInstance().getWindow();
+		Window window = Minecraft.getInstance().getWindow();
 
 		HudPlacement place = getHudPlacement(id);
 		Rect usedRect = getUsedRectOfElement(id);
 		//TODO: fix crash when borderY/X is smaller than usedRect
 		elementPlaces.put(id, place.move(
-				Math.clamp((double)toX / window.getScaledWidth(), 0, ((double)borderX - usedRect.width()) / window.getScaledWidth()),
-				Math.clamp((double)toY / window.getScaledHeight(), 0, ((double)borderY - usedRect.height()) / window.getScaledHeight())
+				Math.clamp((double)toX / window.getGuiScaledWidth(), 0, ((double)borderX - usedRect.width()) / window.getGuiScaledWidth()),
+				Math.clamp((double)toY / window.getGuiScaledHeight(), 0, ((double)borderY - usedRect.height()) / window.getGuiScaledHeight())
 		));
 	}
 
@@ -143,15 +143,15 @@ public class HudConfigManager {
 		HudInfo info = ConfigurableHudRegistry.getInfo(id);
 		HudPlacement placement = getHudPlacement(id);
 
-		Window window = MinecraftClient.getInstance().getWindow();
+		Window window = Minecraft.getInstance().getWindow();
 
 		if (info == null) {
 			return new Rect(0, 0, 0, 0);
 		}
 
-		return new Rect((int)(placement.x() * window.getScaledWidth()), (int)(placement.y() * window.getScaledHeight()),
-				(int)(info.minSizeX() * (1.0 / window.getScaleFactor() * placement.scaleX())),
-				(int)(info.minSizeY() * (1.0 / window.getScaleFactor() * placement.scaleY())));
+		return new Rect((int)(placement.x() * window.getGuiScaledWidth()), (int)(placement.y() * window.getGuiScaledHeight()),
+				(int)(info.minSizeX() * (1.0 / window.getGuiScale() * placement.scaleX())),
+				(int)(info.minSizeY() * (1.0 / window.getGuiScale() * placement.scaleY())));
 	}
 
 	public @NotNull HudPlacement getHudPlacement(Identifier id) {

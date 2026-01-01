@@ -1,7 +1,7 @@
 package io.github.steaf23.bingoreloadedcompanion.card;
 
-import net.minecraft.item.Item;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.item.Item;
 
 public record Task(TaskCompletion completion, Identifier taskType, Item itemType, int requiredAmount) {
 

@@ -1,10 +1,10 @@
 package io.github.steaf23.bingoreloadedcompanion.card.taskslot;
 
-import net.minecraft.item.Item;
-import net.minecraft.item.Items;
-import net.minecraft.registry.Registries;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 
 public record StatisticCustomTask(Identifier stat, int count) implements TaskSlot {
 
@@ -19,8 +19,8 @@ public record StatisticCustomTask(Identifier stat, int count) implements TaskSlo
 	}
 
 	@Override
-	public Text name() {
-		return Text.translatable(Registries.CUSTOM_STAT.get(stat).toTranslationKey());
+	public Component name() {
+		return Component.translatable(BuiltInRegistries.CUSTOM_STAT.getValue(stat).toLanguageKey());
 	}
 
 	@Override

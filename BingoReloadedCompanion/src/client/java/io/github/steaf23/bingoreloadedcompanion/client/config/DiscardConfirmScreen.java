@@ -1,15 +1,15 @@
 package io.github.steaf23.bingoreloadedcompanion.client.config;
 
 import io.github.steaf23.bingoreloadedcompanion.client.util.ScreenHelper;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
 
 public class DiscardConfirmScreen extends Screen {
 
@@ -18,7 +18,7 @@ public class DiscardConfirmScreen extends Screen {
 	private final Screen targetScreen;
 
 	protected DiscardConfirmScreen(Screen sourceScreen, Screen targetScreen, @Nullable Runnable onDiscard) {
-		super(Text.of("Quit and discard changes?"));
+		super(Component.nullToEmpty("Quit and discard changes?"));
 		this.sourceScreen = sourceScreen;
 		this.targetScreen = targetScreen;
 		this.discardAction = onDiscard == null ? () -> {} : onDiscard;
@@ -28,33 +28,33 @@ public class DiscardConfirmScreen extends Screen {
 	protected void init() {
 		super.init();
 
-		ButtonWidget discardButton = new ButtonWidget.Builder(Text.of("Discard changes"), (btn) -> {
+		Button discardButton = new Button.Builder(Component.nullToEmpty("Discard changes"), (btn) -> {
 			discardAction.run();
-			MinecraftClient.getInstance().setScreen(targetScreen);
+			Minecraft.getInstance().setScreen(targetScreen);
 		})
-				.position(width / 2 - 150 - 30, height / 2)
+				.pos(width / 2 - 150 - 30, height / 2)
 				.build();
-		addDrawableChild(discardButton);
+		addRenderableWidget(discardButton);
 
-		ButtonWidget cancelButton = new ButtonWidget.Builder(Text.of("Go back to edit"), (btn) -> {
-			MinecraftClient.getInstance().setScreen(sourceScreen);
+		Button cancelButton = new Button.Builder(Component.nullToEmpty("Go back to edit"), (btn) -> {
+			Minecraft.getInstance().setScreen(sourceScreen);
 		})
-				.position(width / 2 + 30, height / 2)
+				.pos(width / 2 + 30, height / 2)
 				.build();
-		addDrawableChild(cancelButton);
+		addRenderableWidget(cancelButton);
 	}
 
 	@Override
-	public void render(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
+	public void render(GuiGraphics context, int mouseX, int mouseY, float deltaTicks) {
 
-		List<Text> text = List.of(
-				Text.of("You have made edits that have not been saved."),
-				Text.of("Would you like to discard these changes or go back to editing?"));
+		List<Component> text = List.of(
+				Component.nullToEmpty("You have made edits that have not been saved."),
+				Component.nullToEmpty("Would you like to discard these changes or go back to editing?"));
 
 		int i = height / 4;
 		int lineHeight = 15;
-		for (Text line : text) {
-			context.drawTextWithShadow(textRenderer, line, width / 2 - textRenderer.getWidth(line) / 2, i, ScreenHelper.addAlphaToColor(Formatting.WHITE.getColorValue(), 255));
+		for (Component line : text) {
+			context.drawString(font, line, width / 2 - font.width(line) / 2, i, ScreenHelper.addAlphaToColor(ChatFormatting.WHITE.getColor(), 255));
 			i += lineHeight;
 		}
 

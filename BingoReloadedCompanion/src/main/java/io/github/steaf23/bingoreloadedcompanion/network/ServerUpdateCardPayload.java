@@ -4,26 +4,26 @@ import io.github.steaf23.bingoreloadedcompanion.BingoReloadedCompanion;
 import io.github.steaf23.bingoreloadedcompanion.card.BingoCard;
 import io.github.steaf23.bingoreloadedcompanion.card.BingoGamemode;
 import io.github.steaf23.bingoreloadedcompanion.card.Task;
-import net.minecraft.item.Item;
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.packet.CustomPayload;
-import net.minecraft.registry.Registries;
-import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.item.Item;
 
-public class ServerUpdateCardPayload implements CustomPayload {
+public class ServerUpdateCardPayload implements CustomPacketPayload {
 
 	private final BingoCard card;
 
-	public static final CustomPayload.Id<ServerUpdateCardPayload> ID = new CustomPayload.Id<>(
-			Identifier.of(BingoReloadedCompanion.ADDON_ID, "update_card")
+	public static final CustomPacketPayload.Type<ServerUpdateCardPayload> ID = new CustomPacketPayload.Type<>(
+			Identifier.fromNamespaceAndPath(BingoReloadedCompanion.ADDON_ID, "update_card")
 	);
 
-	public static final PacketCodec<RegistryByteBuf, ServerUpdateCardPayload> CODEC = PacketCodec.of(
+	public static final StreamCodec<RegistryFriendlyByteBuf, ServerUpdateCardPayload> CODEC = StreamCodec.ofMember(
 			(payload, buf) -> {}, // Not needed since we will only receive this packet, not send it.
 			buf -> {
 				boolean validCard = buf.readBoolean();
@@ -32,7 +32,7 @@ public class ServerUpdateCardPayload implements CustomPayload {
 				}
 
 				String gamemodeStr = PayloadHelper.readString(buf);
-				Identifier gamemodeId = Identifier.of(gamemodeStr);
+				Identifier gamemodeId = Identifier.parse(gamemodeStr);
 				BingoGamemode gamemode = BingoGamemode.fromId(gamemodeId, false);
 
 				int size = buf.readInt();
@@ -54,8 +54,8 @@ public class ServerUpdateCardPayload implements CustomPayload {
 					String taskType = PayloadHelper.readString(buf);
 					int requiredAmount = buf.readInt();
 					String itemId = PayloadHelper.readString(buf);
-					Item item = Registries.ITEM.get(Identifier.of(itemId));
-					tasks.add(new Task(completion, Identifier.of(taskType), item, requiredAmount));
+					Item item = BuiltInRegistries.ITEM.getValue(Identifier.parse(itemId));
+					tasks.add(new Task(completion, Identifier.parse(taskType), item, requiredAmount));
 				}
 
 				BingoCard card = new BingoCard(gamemode, size, tasks);
@@ -68,7 +68,7 @@ public class ServerUpdateCardPayload implements CustomPayload {
 	}
 
 	@Override
-	public Id<? extends CustomPayload> getId() {
+	public Type<? extends CustomPacketPayload> type() {
 		return ID;
 	}
 

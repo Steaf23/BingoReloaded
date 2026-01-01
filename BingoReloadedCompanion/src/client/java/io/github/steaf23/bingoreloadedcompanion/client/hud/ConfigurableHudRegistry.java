@@ -1,17 +1,17 @@
 package io.github.steaf23.bingoreloadedcompanion.client.hud;
 
-import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
+import net.minecraft.resources.Identifier;
 
 public class ConfigurableHudRegistry {
 
 	private static final Map<Identifier, ConfigurableElement> ELEMENTS = new HashMap<>();
 
 	public static Identifier registerSubElement(String hudName, String elementName, HudInfo info, HudPlacement defaultPlacement) {
-		Identifier element = Identifier.of("bingoreloadedcompanion:hud/" + hudName + "/" + elementName);
+		Identifier element = Identifier.parse("bingoreloadedcompanion:hud/" + hudName + "/" + elementName);
 		ELEMENTS.put(element, new ConfigurableElement(info, defaultPlacement));
 		return element;
 	}
