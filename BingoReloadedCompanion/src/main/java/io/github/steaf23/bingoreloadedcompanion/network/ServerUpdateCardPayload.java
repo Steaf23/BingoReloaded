@@ -4,16 +4,16 @@ import io.github.steaf23.bingoreloadedcompanion.BingoReloadedCompanion;
 import io.github.steaf23.bingoreloadedcompanion.card.BingoCard;
 import io.github.steaf23.bingoreloadedcompanion.card.BingoGamemode;
 import io.github.steaf23.bingoreloadedcompanion.card.Task;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.ArrayList;
-import java.util.List;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ServerUpdateCardPayload implements CustomPacketPayload {
 

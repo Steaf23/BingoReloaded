@@ -12,6 +12,8 @@ import io.github.steaf23.bingoreloaded.data.BingoStatType;
 import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.data.config.BingoOptions;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
+import io.github.steaf23.bingoreloaded.item.BingoItems;
+import io.github.steaf23.bingoreloaded.item.GameItem;
 import io.github.steaf23.bingoreloaded.lib.api.BiomeType;
 import io.github.steaf23.bingoreloaded.lib.api.InteractAction;
 import io.github.steaf23.bingoreloaded.lib.api.PlayerGamemode;
@@ -78,6 +80,7 @@ public class BingoGame implements GamePhase
     private final ActionBarManager actionBarManager;
     //Used to override bed spawns if they get broken to reset spawn point to game spawn point.
     private final Map<UUID, WorldPosition> playerSpawnPoints;
+    private final BingoItems items;
 
     private GameTask deathMatchTask;
 
@@ -95,6 +98,7 @@ public class BingoGame implements GamePhase
         this.actionBarManager = new ActionBarManager(session);
         this.progressTracker = new TaskProgressTracker(platform, this);
 		this.onGameEndedCallback = onGameEndedCallback;
+        this.items = session.items();
 
 		this.respawnManager = new PlayerRespawnManager(platform, config.getOptionValue(BingoOptions.TELEPORT_AFTER_DEATH_PERIOD));
         this.playerSpawnPoints = new HashMap<>();
@@ -571,17 +575,17 @@ public class BingoGame implements GamePhase
 
         BingoParticipant participant = getTeamManager().getPlayerAsParticipant(player);
         if (participant == null || participant.sessionPlayer().isEmpty()) {
-            return EventResult.PASS;
+            return EventResult.IGNORE;
         }
 
         if (!getTeamManager().getParticipants().contains(participant)) {
-            return EventResult.PASS;
+            return EventResult.IGNORE;
         }
 
         if (settings.effects().contains(EffectOptionFlags.NO_FALL_DAMAGE)) {
-            return EventResult.CANCEL;
+            return EventResult.CONSUME;
         } else {
-            return EventResult.PASS;
+            return EventResult.IGNORE;
         }
     }
 
@@ -683,13 +687,13 @@ public class BingoGame implements GamePhase
 
     public EventResult<?> handlePlayerMove(final PlayerHandle player, WorldPosition from, WorldPosition to) {
         if (gameStarted)
-            return EventResult.PASS;
+            return EventResult.IGNORE;
 
         BingoParticipant participant = teamManager.getPlayerAsParticipant(player);
         if (participant == null)
-            return EventResult.PASS;
+            return EventResult.IGNORE;
 
-        return EventResult.CANCEL;
+        return EventResult.CONSUME;
     }
 
     public EventResult<?> handlePlayerStackDamaged(PlayerHandle player, StackHandle item) {
@@ -697,11 +701,11 @@ public class BingoGame implements GamePhase
             // Only disable durability for tools and armor due to some advancements being dependent on durability
             // decreasing, for example "this boat has legs" https://bugs.mojang.com/browse/MC-183764
             if (item.isTool() || item.isArmor()) {
-                return EventResult.CANCEL;
+                return EventResult.CONSUME;
             }
         }
 
-        return EventResult.PASS;
+        return EventResult.IGNORE;
     }
 
     @Override
@@ -718,42 +722,39 @@ public class BingoGame implements GamePhase
     public EventResult<?> handlePlayerInteracted(PlayerHandle player, @Nullable StackHandle stack, InteractAction action) {
         BingoParticipant participant = getTeamManager().getPlayerAsParticipant(player);
         if (participant == null || participant.sessionPlayer().isEmpty())
-            return EventResult.PASS;
+            return EventResult.IGNORE;
 
         // Spectators should not be able to interact with custom items.
         if (participant.sessionPlayer().get().gamemode() == PlayerGamemode.SPECTATOR) {
-            return EventResult.PASS;
+            return EventResult.IGNORE;
         }
 
         if (stack == null || stack.type().isAir())
-            return EventResult.PASS;
+            return EventResult.IGNORE;
 
         if (!action.rightClick())
-            return EventResult.PASS;
+            return EventResult.IGNORE;
 
-        if (PlayerKit.WAND_ITEM.isCompareKeyEqual(stack)) {
+        GameItem gameItem = items.getItem(stack);
+
+        if (gameItem != null) {
             if (!gameStarted)
-                return EventResult.PASS;
+                return EventResult.IGNORE;
 
-            ((BingoPlayer) participant).useGoUpWand(stack,
-                    config.getOptionValue(BingoOptions.GO_UP_WAND_COOLDOWN),
-                    config.getOptionValue(BingoOptions.GO_UP_WAND_DOWN_DISTANCE),
-                    config.getOptionValue(BingoOptions.GO_UP_WAND_UP_DISTANCE),
-                    config.getOptionValue(BingoOptions.GO_UP_WAND_PLATFORM_LIFETIME));
-            return EventResult.CANCEL;
+            return gameItem.use(stack, participant, config);
         } else if (PlayerKit.CARD_ITEM.isCompareKeyEqual(stack)) {
             // Only show item task as deathmatch tasks.
             if (deathMatchTask == null) {
                 participant.showCard(null);
             } else if (!(deathMatchTask.data instanceof ItemTask itemTask)) {
-                return EventResult.CANCEL;
+                return EventResult.CONSUME;
             } else {
                 participant.showCard(itemTask);
-                return EventResult.CANCEL;
+                return EventResult.CONSUME;
             }
         }
 
-        return EventResult.PASS;
+        return EventResult.IGNORE;
     }
 
     @Override

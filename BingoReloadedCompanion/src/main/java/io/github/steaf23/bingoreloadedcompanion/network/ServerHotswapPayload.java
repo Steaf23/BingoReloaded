@@ -3,12 +3,13 @@ package io.github.steaf23.bingoreloadedcompanion.network;
 import com.google.common.collect.ImmutableList;
 import io.github.steaf23.bingoreloadedcompanion.BingoReloadedCompanion;
 import io.github.steaf23.bingoreloadedcompanion.card.HotswapTaskHolder;
-import java.util.ArrayList;
-import java.util.List;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.Identifier;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ServerHotswapPayload implements CustomPacketPayload {
 

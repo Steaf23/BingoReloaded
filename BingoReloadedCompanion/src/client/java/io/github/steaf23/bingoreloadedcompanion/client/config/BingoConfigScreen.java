@@ -8,10 +8,6 @@ import io.github.steaf23.bingoreloadedcompanion.client.hud.BingoCardHudElement;
 import io.github.steaf23.bingoreloadedcompanion.client.hud.HudConfigManager;
 import io.github.steaf23.bingoreloadedcompanion.client.hud.HudPlacement;
 import io.github.steaf23.bingoreloadedcompanion.client.util.ScreenHelper;
-import org.lwjgl.glfw.GLFW;
-
-import java.util.ArrayList;
-import java.util.List;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -23,6 +19,10 @@ import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Items;
+import org.lwjgl.glfw.GLFW;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class BingoConfigScreen extends Screen {
 

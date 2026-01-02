@@ -11,6 +11,7 @@ import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gameloop.GameManager;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.gameloop.phase.PregameLobby;
+import io.github.steaf23.bingoreloaded.item.GoUpWand;
 import io.github.steaf23.bingoreloaded.lib.action.ActionResult;
 import io.github.steaf23.bingoreloaded.lib.action.ActionTree;
 import io.github.steaf23.bingoreloaded.lib.api.ActionUser;
@@ -27,7 +28,6 @@ import io.github.steaf23.bingoreloaded.util.BingoPlayerSender;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.JoinConfiguration;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.TextColor;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
@@ -426,9 +426,14 @@ public class BingoAction extends ActionTree {
 	}
 
 	public ActionResult giveUserBingoItem(PlayerHandle player, String itemName) {
+		BingoSession session = getSessionFromUser(getLastUser());
+		if (session == null) {
+			return ActionResult.IGNORED;
+		}
+
 		return switch (itemName) {
 			case "wand" -> {
-				player.inventory().addItem(PlayerKit.WAND_ITEM.buildItem());
+				player.inventory().addItem(session.items().createStack(GoUpWand.ID));
 				yield ActionResult.SUCCESS;
 			}
 			case "card" -> {

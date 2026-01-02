@@ -204,22 +204,22 @@ public class GameManager {
 
 		// If the world didn't change, the event is not interesting for us
 		if (sourceWorld == targetWorld) {
-			return EventResult.PASS;
+			return EventResult.IGNORE;
 		}
 
 		DebugLogger.addLog("Teleporting player already, returning early? " + teleportingPlayer);
 		if (teleportingPlayer) {
 			teleportingPlayer = false;
-			return EventResult.PASS;
+			return EventResult.IGNORE;
 		}
 
 		if (sourceWorld == null) {
 			ConsoleMessenger.bug("Source world is invalid", this);
-			return EventResult.PASS;
+			return EventResult.IGNORE;
 		}
 		if (targetWorld == null) {
 			ConsoleMessenger.bug("Target world is invalid", this);
-			return EventResult.PASS;
+			return EventResult.IGNORE;
 		}
 
 		DebugLogger.addLog("Source world: " + sourceWorld.name());
@@ -234,7 +234,7 @@ public class GameManager {
 		// We could have gone through a portal, so still both worlds could be in the same session, so we can return.
 		if (sourceSession == targetSession) {
 			DebugLogger.addLog("Teleported using a portal, target session is the source session.");
-			return EventResult.PASS;
+			return EventResult.IGNORE;
 		}
 
 		boolean savePlayerInformation = config.getOptionValue(BingoOptions.SAVE_PLAYER_INFORMATION);
@@ -302,7 +302,7 @@ public class GameManager {
 			targetSession.addPlayer(player);
 		}
 
-		return EventResult.PASS;
+		return EventResult.IGNORE;
 	}
 
 	public EventResult<?> handlePlayerQuitsServer(final PlayerHandle player) {
@@ -314,7 +314,7 @@ public class GameManager {
 
 		runtime.getClientManager().playerLeavesServer(player);
 
-		return EventResult.PASS;
+		return EventResult.IGNORE;
 	}
 
 	public void prepareNextBingoGame(BingoSession session) {

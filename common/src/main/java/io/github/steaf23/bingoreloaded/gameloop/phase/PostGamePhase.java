@@ -74,20 +74,20 @@ public class PostGamePhase implements GamePhase
     public EventResult<?> handlePlayerInteracted(PlayerHandle player, @Nullable StackHandle stack, InteractAction action) {
         BingoParticipant participant = session.teamManager.getPlayerAsParticipant(player);
         if (participant == null || participant.sessionPlayer().isEmpty())
-            return EventResult.PASS;
+            return EventResult.IGNORE;
 
         if (stack == null || stack.type().isAir())
-            return EventResult.PASS;
+            return EventResult.IGNORE;
 
         if (!action.rightClick())
-            return EventResult.PASS;
+            return EventResult.IGNORE;
 
         if (PlayerKit.CARD_ITEM.isCompareKeyEqual(stack)) {
             // Show bingo card to player
             participant.showCard(null);
-            return EventResult.CANCEL;
+            return EventResult.CONSUME;
         }
-        return EventResult.PASS;
+        return EventResult.IGNORE;
     }
 
 	@Override

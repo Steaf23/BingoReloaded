@@ -3,13 +3,14 @@ package io.github.steaf23.bingoreloadedcompanion.network;
 import io.github.steaf23.bingoreloadedcompanion.BingoReloadedCompanion;
 import io.github.steaf23.bingoreloadedcompanion.card.taskslot.ItemTask;
 import io.github.steaf23.bingoreloadedcompanion.card.taskslot.TaskSlot;
-import java.util.ArrayList;
-import java.util.List;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.Identifier;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class EditTaskListPayload implements CustomPacketPayload {
 

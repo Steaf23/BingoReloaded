@@ -5,15 +5,11 @@ import io.github.steaf23.bingoreloadedcompanion.card.taskslot.ItemTask;
 import io.github.steaf23.bingoreloadedcompanion.card.taskslot.TaskSlot;
 import io.github.steaf23.bingoreloadedcompanion.client.TaskTooltipComponent;
 import io.github.steaf23.bingoreloadedcompanion.client.util.ScreenHelper;
-import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
-import net.minecraft.world.item.ItemStack;
-import org.lwjgl.glfw.GLFW;
-
-import javax.xml.crypto.dsig.keyinfo.KeyInfo;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
 import net.minecraft.client.input.CharacterEvent;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
@@ -23,7 +19,10 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.CommonColors;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import org.lwjgl.glfw.GLFW;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

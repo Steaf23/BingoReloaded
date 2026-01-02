@@ -41,7 +41,7 @@ public final class BingoEventListener implements PlatformEventDispatcher {
 	@Override
 	public EventResult<?> sendPlayerMove(PlayerHandle player, WorldPosition from, WorldPosition to) {
 		BingoGame game = getBingoGame(player.world());
-		if (game == null) return EventResult.PASS;
+		if (game == null) return EventResult.IGNORE;
 
 		return game.handlePlayerMove(player, from, to);
 	}
@@ -66,7 +66,7 @@ public final class BingoEventListener implements PlatformEventDispatcher {
 	public EventResult<?> sendPlayerDroppedStack(PlayerHandle player, StackHandle item) {
 		BingoSession session = getSession(player.world());
 		if (session == null)
-			return EventResult.PASS;
+			return EventResult.IGNORE;
 
 		EventResult<?> sessionResult = session.handlePlayerDroppedStack(player, item);
 
@@ -82,7 +82,7 @@ public final class BingoEventListener implements PlatformEventDispatcher {
 	@Override
 	public EventResult<?> sendPlayerStackDamaged(PlayerHandle player, StackHandle item) {
 		BingoGame game = getBingoGame(player.world());
-		if (game == null) return EventResult.PASS;
+		if (game == null) return EventResult.IGNORE;
 
 		return game.handlePlayerStackDamaged(player, item);
 	}
@@ -90,7 +90,7 @@ public final class BingoEventListener implements PlatformEventDispatcher {
 	@Override
 	public EventResult<?> sendPlayerInteracted(PlayerHandle player, @Nullable StackHandle handItem, InteractAction action) {
 		BingoSession session = getSession(player.world());
-		if (session == null) return EventResult.PASS;
+		if (session == null) return EventResult.IGNORE;
 
 		return session.phase().handlePlayerInteracted(player, handItem, action);
 	}
@@ -98,7 +98,7 @@ public final class BingoEventListener implements PlatformEventDispatcher {
 	@Override
 	public EventResult<?> sendPlayerFallDamage(PlayerHandle player) {
 		BingoGame game = getBingoGame(player.world());
-		if (game == null) return EventResult.PASS;
+		if (game == null) return EventResult.IGNORE;
 
 		return game.handlePlayerFallDamage(player);
 	}
@@ -143,7 +143,7 @@ public final class BingoEventListener implements PlatformEventDispatcher {
 	public EventResult<?> sendPlayerBreaksBlock(PlayerHandle player, WorldPosition position, ItemType blockType) {
 		BingoSession session = getSession(player.world());
 		if (session == null)
-			return EventResult.PASS;
+			return EventResult.IGNORE;
 
 		return session.handlePlayerBlockBreak(player, position, blockType);
 	}
@@ -152,7 +152,7 @@ public final class BingoEventListener implements PlatformEventDispatcher {
 	public EventResult<?> sendPlayerPlacesBlock(PlayerHandle player, WorldPosition position, ItemType blockType) {
 		BingoSession session = getSession(player.world());
 		if (session == null)
-			return EventResult.PASS;
+			return EventResult.IGNORE;
 
 		return session.handlePlayerBlockPlace(player, position, blockType);
 	}
@@ -160,7 +160,7 @@ public final class BingoEventListener implements PlatformEventDispatcher {
 	@Override
 	public EventResult<?> sendPlayerStatisticIncrement(PlayerHandle player, StatisticHandle statistic, int newValue) {
 		if (disableStatistics)
-			return EventResult.PASS;
+			return EventResult.IGNORE;
 
 		BingoSession session = getSession(player.world());
 		BingoGame game = session != null && session.isRunning() ? (BingoGame)session.phase() : null;
@@ -169,13 +169,13 @@ public final class BingoEventListener implements PlatformEventDispatcher {
 			game.getProgressTracker().handlePlayerStatIncrement(player, statistic, newValue);
 		}
 
-		return EventResult.PASS;
+		return EventResult.IGNORE;
 	}
 
 	@Override
 	public EventResult<?> sendPlayerAdvancementDone(PlayerHandle player, AdvancementHandle advancement) {
 		if (disableAdvancements)
-			return EventResult.PASS;
+			return EventResult.IGNORE;
 
 		BingoSession session = getSession(player.world());
 		BingoGame game = session != null && session.isRunning() ? (BingoGame)session.phase() : null;
@@ -184,7 +184,7 @@ public final class BingoEventListener implements PlatformEventDispatcher {
 			game.getProgressTracker().handlePlayerAdvancementDone(player, advancement);
 		}
 
-		return EventResult.PASS;
+		return EventResult.IGNORE;
 	}
 
 	@Override
@@ -208,7 +208,7 @@ public final class BingoEventListener implements PlatformEventDispatcher {
 			game.getProgressTracker().handleInventoryClicked(player, itemOnCursor, resultSlot, shiftClick);
 		}
 
-		return EventResult.PASS;
+		return EventResult.IGNORE;
 	}
 
 

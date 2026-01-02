@@ -58,7 +58,7 @@ public class EventListenerPaper implements Listener {
 				PaperApiHelper.worldPosFromLocation(event.getFrom()),
 				PaperApiHelper.worldPosFromLocation(event.getTo()));
 
-		if (!result.cancel())
+		if (!result.consume())
 			return;
 
 		Location newLoc = event.getTo();
@@ -84,7 +84,7 @@ public class EventListenerPaper implements Listener {
 			event.setKeepInventory(true);
 		}
 
-		event.setCancelled(result.cancel());
+		event.setCancelled(result.consume());
 	}
 
 	@EventHandler
@@ -112,7 +112,7 @@ public class EventListenerPaper implements Listener {
 				PaperApiHelper.worldPosFromLocation(event.getFrom()),
 				PaperApiHelper.worldPosFromLocation(event.getTo()));
 
-		if (result.cancel()) {
+		if (result.consume()) {
 			event.setCancelled(true);
 		}
 	}
@@ -124,7 +124,7 @@ public class EventListenerPaper implements Listener {
 				PaperApiHelper.worldPosFromLocation(event.getFrom()),
 				PaperApiHelper.worldPosFromLocation(event.getTo()));
 
-		if (result.cancel()) {
+		if (result.consume()) {
 			event.setCancelled(true);
 		}
 
@@ -145,7 +145,7 @@ public class EventListenerPaper implements Listener {
 				new PlayerHandlePaper(event.getPlayer()),
 				new StackHandlePaper(event.getItemDrop().getItemStack()));
 
-		if (result.cancel()) {
+		if (result.consume()) {
 			event.setCancelled(true);
 		}
 	}
@@ -156,7 +156,7 @@ public class EventListenerPaper implements Listener {
 				new PlayerHandlePaper(event.getPlayer()),
 				new StackHandlePaper(event.getItem()));
 
-		if (result.cancel()) {
+		if (result.consume()) {
 			event.setCancelled(true);
 		}
 	}
@@ -173,7 +173,7 @@ public class EventListenerPaper implements Listener {
 				new StackHandlePaper(event.getItem()),
 				new InteractAction(event.getAction().isLeftClick(), event.getAction().isRightClick(), event.getAction() == Action.LEFT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_AIR));
 
-		if (result.cancel()) {
+		if (result.consume()) {
 			event.setCancelled(true);
 		}
 	}
@@ -190,7 +190,7 @@ public class EventListenerPaper implements Listener {
 
 		EventResult<?> result = dispatcher.sendPlayerFallDamage(new PlayerHandlePaper(player));
 
-		if (result.cancel()) {
+		if (result.consume()) {
 			event.setCancelled(true);
 		}
 	}
@@ -212,7 +212,7 @@ public class EventListenerPaper implements Listener {
 				PaperApiHelper.worldPosFromLocation(event.getBlock().getLocation()),
 				ItemTypePaper.of(event.getBlock().getType()));
 
-		if (result.cancel()) {
+		if (result.consume()) {
 			event.setCancelled(true);
 		}
 	}
@@ -224,7 +224,7 @@ public class EventListenerPaper implements Listener {
 				PaperApiHelper.worldPosFromLocation(event.getBlock().getLocation()),
 				ItemTypePaper.of(event.getBlock().getType()));
 
-		if (result.cancel()) {
+		if (result.consume()) {
 			event.setCancelled(true);
 		}
 	}
@@ -236,7 +236,7 @@ public class EventListenerPaper implements Listener {
 				StatisticHandlePaper.create(event.getStatistic(), event.getEntityType(), event.getMaterial()),
 				event.getNewValue());
 
-		if (result.cancel()) {
+		if (result.consume()) {
 			event.setCancelled(true);
 		}
 	}
@@ -259,7 +259,7 @@ public class EventListenerPaper implements Listener {
 				new StackHandlePaper(event.getItem().getItemStack()),
 				PaperApiHelper.worldPosFromLocation(event.getItem().getLocation()));
 
-		if (result.cancel()) {
+		if (result.consume()) {
 			event.setCancelled(true);
 		}
 
@@ -289,7 +289,7 @@ public class EventListenerPaper implements Listener {
 				event.getSlotType() == InventoryType.SlotType.RESULT,
 				event.isShiftClick());
 
-		if (result.cancel()) {
+		if (result.consume()) {
 			event.setCancelled(true);
 		}
 	}

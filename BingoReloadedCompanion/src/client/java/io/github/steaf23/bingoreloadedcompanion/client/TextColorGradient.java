@@ -1,13 +1,13 @@
 package io.github.steaf23.bingoreloadedcompanion.client;
 
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.TextColor;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.TextColor;
 
 /**
  * Class used to create and sample from a gradient, returning adventure TextColors

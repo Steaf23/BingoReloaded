@@ -197,6 +197,15 @@ public class ItemTemplate
     }
 
     /**
+     * Additional key that can be used for item comparison, saved in PersistentDataContainer of a built StackHandle.
+     * @param key identifiable key used for comparisons.
+     */
+    public ItemTemplate setCompareKey(Key key) {
+        this.compareKey = key.toString();
+        return this;
+    }
+
+    /**
      * @return Compare key as set by setCompareKey. Returns an empty string if no compare key was set.
      */
     public String getCompareKey() {

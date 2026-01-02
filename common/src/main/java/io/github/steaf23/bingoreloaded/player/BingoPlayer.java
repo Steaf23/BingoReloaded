@@ -3,14 +3,10 @@ package io.github.steaf23.bingoreloaded.player;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.cards.TaskCard;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
-import io.github.steaf23.bingoreloaded.data.BingoSound;
-import io.github.steaf23.bingoreloaded.data.BingoStatType;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
-import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.lib.api.PotionEffectInstance;
 import io.github.steaf23.bingoreloaded.lib.api.ServerSoftware;
 import io.github.steaf23.bingoreloaded.lib.api.StatusEffectType;
-import io.github.steaf23.bingoreloaded.lib.api.WorldPosition;
 import io.github.steaf23.bingoreloaded.lib.api.item.InventoryHandle;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
@@ -211,55 +207,6 @@ public class BingoPlayer implements BingoParticipant
         return false;
     }
 
-    public void useGoUpWand(StackHandle wand, double wandCooldownSeconds, int downDistance, int upDistance, int platformLifetimeSeconds) {
-        if (sessionPlayer().isEmpty())
-            return;
-
-        PlayerHandle player = sessionPlayer().get();
-        if (!PlayerKit.WAND_ITEM.isCompareKeyEqual(wand))
-            return;
-
-        if (player.hasCooldown(wand)) {
-            return;
-        }
-
-		wand.setCooldown(PlayerKit.WAND_COOLDOWN_GROUP, wandCooldownSeconds);
-        player.setCooldown(wand, (int)(wandCooldownSeconds * 20));
-
-        server.runTask(task -> {
-            double distance;
-            double fallDistance;
-            // Use the wand
-            if (sessionPlayer().isPresent() && sessionPlayer().get().isSneaking()) {
-                distance = -downDistance;
-                fallDistance = 0.0;
-            } else {
-                distance = upDistance;
-                fallDistance = 2.0;
-            }
-
-            WorldPosition teleportLocation = player.position();
-            WorldPosition platformLocation = teleportLocation.clone().floor();
-            teleportLocation.setY(teleportLocation.y() + distance + fallDistance);
-            platformLocation.setY(platformLocation.y() + distance);
-
-            BingoGame.spawnPlatform(platformLocation, 1, true);
-            server.runTask((long) Math.max(0, platformLifetimeSeconds) * BingoReloaded.ONE_SECOND, laterTask -> {
-                BingoGame.removePlatform(platformLocation, 1);
-            });
-
-            player.teleportBlocking(teleportLocation);
-            player.playSound(BingoSound.GO_UP_WAND_USED.builder().build());
-
-            player.addEffect(new PotionEffectInstance(StatusEffectType.of("minecraft:resistance"),
-					BingoReloaded.ONE_SECOND * (platformLifetimeSeconds + 4))
-                    .setAmplifier(100)
-                    .setParticles(false));
-
-            BingoReloaded.incrementPlayerStat(player, BingoStatType.WAND_USES);
-        });
-    }
-
     @Override
     public BingoSession getSession() {
         return session;
@@ -285,5 +232,9 @@ public class BingoPlayer implements BingoParticipant
     @Override
     public @NotNull Audience audience() {
         return sessionPlayer().isPresent() ? sessionPlayer().get() : Audience.empty();
+    }
+
+    public ServerSoftware server() {
+        return server;
     }
 }

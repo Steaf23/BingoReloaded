@@ -34,13 +34,6 @@ public enum PlayerKit
 
 	public static final Key WAND_COOLDOWN_GROUP = BingoReloaded.resourceKey("wand_cooldown");
 
-	public static final ItemTemplate WAND_ITEM = new ItemTemplate(
-            ItemType.of("minecraft:warped_fungus_on_a_stick"),
-            BingoMessage.WAND_ITEM_NAME.asPhrase().color(NamedTextColor.DARK_PURPLE).decorate(TextDecoration.BOLD, TextDecoration.ITALIC),
-            BingoMessage.WAND_ITEM_DESC.asMultiline())
-			.addEnchantment(Key.key("minecraft:unbreaking"), 3)
-            .setCompareKey("wand");
-
     public static final ItemTemplate CARD_ITEM_RENDERABLE = new ItemTemplate(
             ItemType.of("minecraft:filled_map"),
             BingoMessage.CARD_ITEM_NAME.asPhrase().color(NamedTextColor.DARK_PURPLE).decorate(TextDecoration.BOLD, TextDecoration.ITALIC),
@@ -72,8 +65,8 @@ public enum PlayerKit
     public final String configName;
     private final Component displayName;
     public final EnumSet<EffectOptionFlags> defaultEffects;
-    private static final DefaultKitData DEFAULT_KIT_DATA = new DefaultKitData();
-    private static final CustomKitData CUSTOM_KIT_DATA = new CustomKitData();
+    private static DefaultKitData DEFAULT_KIT_DATA = null;
+    private static CustomKitData CUSTOM_KIT_DATA = null;
 
     PlayerKit(String configName, Component displayName, EnumSet<EffectOptionFlags> defaultEffects)
     {
@@ -82,9 +75,25 @@ public enum PlayerKit
         this.defaultEffects = defaultEffects;
     }
 
+    private DefaultKitData getDefaultKitData() {
+        if (DEFAULT_KIT_DATA == null) {
+            DEFAULT_KIT_DATA = new DefaultKitData();
+        }
+
+        return DEFAULT_KIT_DATA;
+    }
+
+    private CustomKitData getCustomKitData() {
+        if (CUSTOM_KIT_DATA == null) {
+            CUSTOM_KIT_DATA = new CustomKitData();
+        }
+
+        return CUSTOM_KIT_DATA;
+    }
+
     public Component getDisplayName() {
         if (isCustomKit()) {
-            return CUSTOM_KIT_DATA.getCustomKit(this).name();
+            return getCustomKitData().getCustomKit(this).name();
         }
         return displayName;
     }
@@ -94,14 +103,14 @@ public enum PlayerKit
         List<SerializableItem> items = switch (this)
         {
             case HARDCORE, NORMAL, OVERPOWERED, RELOADED -> {
-                DefaultKitData.Kit kit = DEFAULT_KIT_DATA.getKit(this);
+                DefaultKitData.Kit kit = getDefaultKitData().getKit(this);
                 if (kit != null) {
                     yield kit.items();
                 }
                 yield List.of();
             }
             case CUSTOM_1, CUSTOM_2, CUSTOM_3, CUSTOM_4, CUSTOM_5 -> {
-                CustomKit kit = CUSTOM_KIT_DATA.getCustomKit(this);
+                CustomKit kit = getCustomKitData().getCustomKit(this);
                 if (kit != null) {
                     yield kit.items();
                 }
@@ -116,7 +125,7 @@ public enum PlayerKit
 
     public int getCardSlot() {
         if (isCustomKit()) {
-            return CUSTOM_KIT_DATA.getCustomKit(this).cardSlot();
+            return getCustomKitData().getCustomKit(this).cardSlot();
         }
         else {
             // off-hand slot: 40
@@ -129,7 +138,7 @@ public enum PlayerKit
     }
 
     public boolean isValid() {
-        return !isCustomKit() || (PlayerKit.customKits().contains(this) && CUSTOM_KIT_DATA.getCustomKit(this) != null);
+        return !isCustomKit() || (PlayerKit.customKits().contains(this) && getCustomKitData().getCustomKit(this) != null);
     }
 
     public static PlayerKit fromConfig(String name)

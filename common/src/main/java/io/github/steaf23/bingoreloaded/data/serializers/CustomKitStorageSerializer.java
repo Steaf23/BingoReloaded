@@ -46,7 +46,7 @@ public class CustomKitStorageSerializer implements DataStorageSerializer<CustomK
             case CUSTOM_3 -> 3;
             case CUSTOM_4 -> 4;
             case CUSTOM_5 -> 5;
-            default -> throw new IllegalStateException("Unexpected kit" + kit.getCardSlot());
+            default -> throw new IllegalStateException("Unexpected kit slot for kit" + kit.getDisplayName());
         };
     }
 }

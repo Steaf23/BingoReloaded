@@ -247,21 +247,21 @@ public class PregameLobby implements GamePhase
     @Override
     public EventResult<?> handlePlayerInteracted(PlayerHandle player, @Nullable StackHandle stack, InteractAction action) {
 		if (stack == null || stack.type().isAir())
-            return EventResult.PASS;
+            return EventResult.IGNORE;
 
         if (!action.rightClick()) {
-            return EventResult.PASS;
+            return EventResult.IGNORE;
         }
 
         if (PlayerKit.VOTE_ITEM.isCompareKeyEqual(stack)) {
             BingoReloaded.runtime().openVoteMenu(player, this);
-            return EventResult.CANCEL;
+            return EventResult.CONSUME;
         } else if (PlayerKit.TEAM_ITEM.isCompareKeyEqual(stack)) {
             BingoReloaded.runtime().openTeamSelector(player, session);
-            return EventResult.CANCEL;
+            return EventResult.CONSUME;
         }
 
-        return EventResult.PASS;
+        return EventResult.IGNORE;
     }
 
     @Override

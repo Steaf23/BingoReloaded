@@ -15,6 +15,7 @@ import io.github.steaf23.bingoreloaded.gameloop.phase.PostGamePhase;
 import io.github.steaf23.bingoreloaded.gameloop.phase.PregameLobby;
 import io.github.steaf23.bingoreloaded.gameloop.vote.VoteCategory;
 import io.github.steaf23.bingoreloaded.gameloop.vote.VoteTicket;
+import io.github.steaf23.bingoreloaded.item.BingoItems;
 import io.github.steaf23.bingoreloaded.lib.api.DimensionType;
 import io.github.steaf23.bingoreloaded.lib.api.PlatformResolver;
 import io.github.steaf23.bingoreloaded.lib.api.PlayerGamemode;
@@ -59,6 +60,7 @@ public class BingoSession implements ForwardingAudience
     private final GameManager gameManager;
     private final BingoConfigurationData config;
     private final TeamDisplay teamDisplay;
+    private final BingoItems items;
 
     // A bingo session controls 1 group of worlds
     private final WorldGroup worlds;
@@ -68,6 +70,7 @@ public class BingoSession implements ForwardingAudience
 		this.gameManager = gameManager;
         this.worlds = worlds;
         this.config = config;
+        this.items = new BingoItems();
 
         boolean showPlayerInScoreboard = config.getOptionValue(BingoOptions.SHOW_PLAYER_IN_SCOREBOARD);
 		this.gameInfoMenu = new BingoGameInfoMenu(this, showPlayerInScoreboard);
@@ -258,12 +261,12 @@ public class BingoSession implements ForwardingAudience
 
     public EventResult<?> handlePlayerDroppedStack(PlayerHandle player, StackHandle stack) {
 		if (PlayerKit.CARD_ITEM.isCompareKeyEqual(stack) ||
-				PlayerKit.WAND_ITEM.isCompareKeyEqual(stack) ||
 				PlayerKit.VOTE_ITEM.isCompareKeyEqual(stack) ||
-				PlayerKit.TEAM_ITEM.isCompareKeyEqual(stack)) {
-            return EventResult.CANCEL;
+				PlayerKit.TEAM_ITEM.isCompareKeyEqual(stack) ||
+                !items.canItemLeaveInventory(stack)) {
+            return EventResult.CONSUME;
         }
-        return EventResult.PASS;
+        return EventResult.IGNORE;
 	}
 
     public void onPlayerJoinedSessionWorld(PlayerHandle player) {
@@ -359,17 +362,17 @@ public class BingoSession implements ForwardingAudience
     public EventResult<?> handlePlayerBlockBreak(PlayerHandle player, WorldPosition position, ItemType block) {
         if (!isRunning() && config.getOptionValue(BingoOptions.PREVENT_PLAYER_GRIEFING) && !player.hasPermission("bingo.admin")) {
             BingoMessage.NO_GRIEFING.sendToAudience(player);
-            return EventResult.CANCEL;
+            return EventResult.CONSUME;
         }
-        return EventResult.PASS;
+        return EventResult.IGNORE;
     }
 
     public EventResult<?> handlePlayerBlockPlace(PlayerHandle player, WorldPosition position, ItemType block) {
         if (!isRunning() && config.getOptionValue(BingoOptions.PREVENT_PLAYER_GRIEFING) && !player.hasPermission("bingo.admin")) {
             BingoMessage.NO_GRIEFING.sendToAudience(player);
-            return EventResult.CANCEL;
+            return EventResult.CONSUME;
         }
-        return EventResult.PASS;
+        return EventResult.IGNORE;
     }
 
     public WorldHandle getOverworld() {
@@ -444,5 +447,9 @@ public class BingoSession implements ForwardingAudience
 
     public GameManager getGameManager() {
         return gameManager;
+    }
+
+    public BingoItems items() {
+        return items;
     }
 }

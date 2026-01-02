@@ -14,7 +14,7 @@ configuration: SINGULAR
 # This option means different things for each configuration:
 #   - SINGULAR: This world is the one where bingo is played. The plugin will not create this world, so make sure to create it before running this plugin.
 #     to allow the plugin to use the Nether and End dimensions, the names `<defaultWorldName>_nether` and `<defaultWorldName>_the_end` must also be valid worlds.
-#   - MULTIPLE: This world is used more like a lobby world, however it is not required. The actual game worlds can be will be created using autobingo commands .
+#   - MULTIPLE: This world is used more like a lobby world, however it is not required. The actual game worlds can be created using autobingo commands .
 #     In this case, players can be teleported to any active game world using the /autobingo teleport command
 defaultWorldName: world
 
