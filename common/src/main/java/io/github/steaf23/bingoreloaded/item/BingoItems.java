@@ -15,6 +15,7 @@ public class BingoItems {
 
 	public BingoItems() {
 		addItem(new GoUpWand());
+		addItem(new TeamShulker());
 	}
 
 	private void addItem(GameItem item) {

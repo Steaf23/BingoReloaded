@@ -7,7 +7,7 @@
 # Formats support using minimessage.
 # For more information about formatting yml files in Bingo Reloaded, read https://github.com/Steaf23/BingoReloaded/wiki/Text-Formatting
 
-version: 3.1.0
+version: 3.4.1
 
 placeholders:
   # Full team prefix. This should be used most of the time when you want to show the team that the player is in.

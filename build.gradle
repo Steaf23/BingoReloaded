@@ -4,7 +4,7 @@ plugins {
 
 allprojects {
     group = 'io.github.steaf23.bingoreloaded'
-    version = '3.5.0'
+    version = '3.4.1'
 
     repositories {
         mavenCentral()

@@ -26,6 +26,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -155,7 +156,7 @@ public class GameManager {
 	}
 
 	public void onPluginDisable() {
-		for (String session : sessions.keySet()) {
+		for (String session : new HashSet<>(sessions.keySet())) {
 			sessions.get(session).destroy();
 			sessions.remove(session);
 		}
