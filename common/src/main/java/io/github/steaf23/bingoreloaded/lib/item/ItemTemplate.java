@@ -60,6 +60,8 @@ public class ItemTemplate
     private TagDataStorage extraData;
 	private @Nullable Key cooldownGroup;
 
+    private boolean isDummy = false;
+
     public ItemTemplate(ItemType type) {
         this.type = type;
     }
@@ -329,6 +331,15 @@ public class ItemTemplate
         return type;
     }
 
+    public ItemTemplate setDummy(boolean dummy) {
+        isDummy = dummy;
+        return this;
+    }
+
+    public boolean isDummy() {
+        return isDummy;
+    }
+
     /**
      * Performs deep copy of the item template.
      * Assigns a copy of the textured variant to the copied template.
@@ -349,6 +360,7 @@ public class ItemTemplate
         copy.texturedVariant = texturedVariant == null ? null : texturedVariant.copy();
 		copy.cooldownGroup = cooldownGroup;
 		copy.maxStackSize = maxStackSize;
+        copy.isDummy = isDummy;
         return copy;
     }
 

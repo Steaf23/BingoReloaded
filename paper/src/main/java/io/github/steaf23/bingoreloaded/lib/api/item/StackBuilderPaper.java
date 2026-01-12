@@ -18,6 +18,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Color;
+import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -36,7 +37,18 @@ public class StackBuilderPaper implements StackBuilder {
 //		}
 
 		List<Component> descriptionList = template.buildDescriptionList();
-		ItemStack stack = new ItemStack(((ItemTypePaper)template.getItemType()).handle(), template.getAmount());
+
+		ItemStack stack;
+
+		if (template.isDummy()) {
+			stack = new ItemStack(Material.POISONOUS_POTATO, template.getAmount());
+			stack.unsetData(DataComponentTypes.CONSUMABLE);
+			stack.setData(DataComponentTypes.ITEM_MODEL, template.getItemType().key());
+		}
+		else {
+			stack = new ItemStack(((ItemTypePaper)template.getItemType()).handle(), template.getAmount());
+		}
+
 
 		if (template.getName() != null) {
 			stack.setData(DataComponentTypes.CUSTOM_NAME, template.getName().colorIfAbsent(NamedTextColor.WHITE).decorationIfAbsent(TextDecoration.ITALIC, TextDecoration.State.FALSE));

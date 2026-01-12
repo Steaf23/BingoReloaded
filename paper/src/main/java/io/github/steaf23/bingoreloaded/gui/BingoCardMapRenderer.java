@@ -119,16 +119,18 @@ public class BingoCardMapRenderer extends MapRenderer
     private static void addImagesFromAtlas(InputStream atlas, DataStorage atlasInfo, boolean renderAsItems) throws IOException {
         List<String> itemNames = atlasInfo.getList("names", TagDataType.STRING);
         int rowCount = atlasInfo.getInt("rows", 1);
+        int colCount = itemNames.size() / rowCount + 1;
         List<Integer> sizeVec = atlasInfo.getList("texture_size", TagDataType.INT);
         int sizeX = sizeVec.get(0);
         int sizeY = sizeVec.get(1);
 
         BufferedImage image = ImageIO.read(atlas);
 
+        flatItems.clear();
         int index = 0;
         for (String name : itemNames) {
-            NamespacedKey nameKey = NamespacedKey.minecraft(name);
-            BufferedImage subImage = image.getSubimage((index % rowCount) * sizeX, (index / rowCount) * sizeY, sizeX, sizeY);
+            NamespacedKey nameKey = NamespacedKey.fromString(name);
+            BufferedImage subImage = image.getSubimage((index % colCount) * sizeX, (index / colCount) * sizeY, sizeX, sizeY);
             index++;
             allItemImages.put(nameKey, subImage);
             if (renderAsItems) {

@@ -195,6 +195,10 @@ public class TaskProgressTracker
             return item;
         }
 
+        if (participant.getSession().items().getItem(item) != null) {
+            return item;
+        }
+
         GameTask deathMatchTask = game.getDeathMatchTask();
         if (deathMatchTask != null) {
             if (deathMatchTask.data instanceof ItemTask task) {

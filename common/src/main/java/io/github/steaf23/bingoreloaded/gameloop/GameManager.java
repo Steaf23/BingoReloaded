@@ -23,6 +23,7 @@ import org.intellij.lang.annotations.Subst;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -195,7 +196,7 @@ public class GameManager {
 	}
 
 	public Collection<String> getSessionNames() {
-		return sessions.keySet();
+		return new ArrayList<>(sessions.keySet());
 	}
 
 	public EventResult<?> handlePlayerTeleport(final PlayerHandle player, final WorldPosition fromPos, final WorldPosition toPos) {

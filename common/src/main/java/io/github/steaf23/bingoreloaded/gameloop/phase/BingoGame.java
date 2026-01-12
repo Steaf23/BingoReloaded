@@ -129,7 +129,8 @@ public class BingoGame implements GamePhase
         }
 		String commandBeforeGame = config.getOptionValue(BingoOptions.SEND_COMMAND_BEFORE_GAME_STARTS);
 		if (!commandBeforeGame.isEmpty()) {
-			platform.sendConsoleCommand(commandBeforeGame);
+            String commandToSend = commandBeforeGame.replace("{world}", session.getGameManager().getNameOfSession(session));
+			platform.sendConsoleCommand(commandToSend);
 		}
 
         world.setStorming(false);
@@ -254,7 +255,8 @@ public class BingoGame implements GamePhase
 
         String command = config.getOptionValue(BingoOptions.SEND_COMMAND_AFTER_GAME_ENDS);
         if (!command.isEmpty()) {
-            platform.sendConsoleCommand(command);
+            String commandToSend = command.replace("{world}", session.getGameManager().getNameOfSession(session));
+            platform.sendConsoleCommand(commandToSend);
         }
 
         session.sendMessage(Component.text(" "));

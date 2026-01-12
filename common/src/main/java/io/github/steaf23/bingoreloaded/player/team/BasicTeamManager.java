@@ -358,9 +358,11 @@ public class BasicTeamManager implements TeamManager {
 		activeTeams.forEach(t -> {
 			for (BingoParticipant participant : new HashSet<>(t.getMembers())) {
 				if (!participant.alwaysActive() && participant.sessionPlayer().isEmpty()) {
-					removeMemberFromTeam(participant);
+					removeMemberFromTeam(participant, false);
 				}
 			}
 		});
+
+        activeTeams.removeEmptyTeams("auto");
 	}
 }
