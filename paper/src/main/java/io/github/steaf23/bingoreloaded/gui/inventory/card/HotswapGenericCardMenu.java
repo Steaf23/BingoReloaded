@@ -7,6 +7,7 @@ import io.github.steaf23.bingoreloaded.api.HotswapCardMenu;
 import io.github.steaf23.bingoreloaded.cards.hotswap.HotswapTaskHolder;
 import io.github.steaf23.bingoreloaded.lib.api.MenuBoard;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
+import io.github.steaf23.bingoreloaded.lib.item.TaskItemConverter;
 import io.github.steaf23.bingoreloaded.tasks.GameTask;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
@@ -41,6 +42,6 @@ public class HotswapGenericCardMenu extends GenericCardMenu implements HotswapCa
     @Override
     public @NotNull ItemTemplate getItemFromTask(int taskIndex) {
         HotswapTaskHolder holder = taskHolders.get(taskIndex);
-        return holder.convertToItem(displayInfo());
+        return TaskItemConverter.hotswapTaskToItem(holder, displayInfo());
     }
 }

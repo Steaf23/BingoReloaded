@@ -1,7 +1,6 @@
 package io.github.steaf23.bingoreloaded.item;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
-import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.BingoSound;
 import io.github.steaf23.bingoreloaded.data.BingoStatType;
 import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
@@ -10,17 +9,13 @@ import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.lib.api.PotionEffectInstance;
 import io.github.steaf23.bingoreloaded.lib.api.StatusEffectType;
 import io.github.steaf23.bingoreloaded.lib.api.WorldPosition;
-import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.event.EventResult;
-import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import net.kyori.adventure.key.Key;
-import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.TextDecoration;
 
 public class GoUpWand extends GameItem {
 
@@ -28,16 +23,6 @@ public class GoUpWand extends GameItem {
 
 	public GoUpWand() {
 		super(ID);
-	}
-
-	@Override
-	public ItemTemplate defaultTemplate() {
-		return new ItemTemplate(
-				//FIXME: REFACTOR before release. Come up with a better design for creating item types on different platforms.
-				ItemType.of("Weapon_Staff_Mithril"),
-				BingoMessage.WAND_ITEM_NAME.asPhrase().color(NamedTextColor.DARK_PURPLE).decorate(TextDecoration.BOLD, TextDecoration.ITALIC),
-				BingoMessage.WAND_ITEM_DESC.asMultiline())
-				.addEnchantment(Key.key("minecraft:unbreaking"), 3);
 	}
 
 	@Override

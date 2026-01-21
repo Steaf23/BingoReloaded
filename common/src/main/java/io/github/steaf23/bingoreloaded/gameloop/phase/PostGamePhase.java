@@ -1,15 +1,15 @@
 package io.github.steaf23.bingoreloaded.gameloop.phase;
 
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
+import io.github.steaf23.bingoreloaded.gameloop.BingoInteraction;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
-import io.github.steaf23.bingoreloaded.lib.api.InteractAction;
+import io.github.steaf23.bingoreloaded.lib.api.PlayerInput;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.event.EventResult;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
-import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import io.github.steaf23.bingoreloaded.util.timer.CountdownTimer;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
@@ -71,7 +71,7 @@ public class PostGamePhase implements GamePhase
     }
 
     @Override
-    public EventResult<?> handlePlayerInteracted(PlayerHandle player, @Nullable StackHandle stack, InteractAction action) {
+    public EventResult<?> handlePlayerInteracted(PlayerHandle player, @Nullable StackHandle stack, PlayerInput action) {
         BingoParticipant participant = session.teamManager.getPlayerAsParticipant(player);
         if (participant == null || participant.sessionPlayer().isEmpty())
             return EventResult.IGNORE;
@@ -82,7 +82,7 @@ public class PostGamePhase implements GamePhase
         if (!action.rightClick())
             return EventResult.IGNORE;
 
-        if (PlayerKit.CARD_ITEM.isCompareKeyEqual(stack)) {
+        if (session.getGameManager().getRuntime().canItemBeUsedForInteraction(session, player, BingoInteraction.OPEN_CARD, stack, action)) {
             // Show bingo card to player
             participant.showCard(null);
             return EventResult.CONSUME;

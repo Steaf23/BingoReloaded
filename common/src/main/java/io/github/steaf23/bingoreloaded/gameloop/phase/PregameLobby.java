@@ -1,22 +1,21 @@
 package io.github.steaf23.bingoreloaded.gameloop.phase;
 
-import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.api.BingoEvents;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.data.config.BingoOptions;
+import io.github.steaf23.bingoreloaded.gameloop.BingoInteraction;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gameloop.vote.VoteCategory;
 import io.github.steaf23.bingoreloaded.gameloop.vote.VoteTicket;
 import io.github.steaf23.bingoreloaded.lib.api.BingoReloadedRuntime;
-import io.github.steaf23.bingoreloaded.lib.api.InteractAction;
+import io.github.steaf23.bingoreloaded.lib.api.PlayerInput;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.event.EventResult;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import io.github.steaf23.bingoreloaded.menu.BingoSettingsInfoMenu;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
-import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import io.github.steaf23.bingoreloaded.util.timer.CountdownTimer;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -115,26 +114,11 @@ public class PregameLobby implements GamePhase
                 category.getValueComponent(value));
     }
 
-    private void giveVoteItem(PlayerHandle player) {
-        player.inventory().addItem(PlayerKit.VOTE_ITEM.buildItem());
-    }
-
-    private void giveTeamItem(PlayerHandle player) {
-        player.inventory().addItem(PlayerKit.TEAM_ITEM.buildItem());
-    }
-
     private void initializePlayer(PlayerHandle player) {
         runtime.settingsDisplay().addPlayer(player);
         player.clearInventory();
 
-        if (config.getOptionValue(BingoOptions.USE_VOTE_SYSTEM) &&
-                !config.getOptionValue(BingoOptions.VOTE_USING_COMMANDS_ONLY) &&
-                !config.getOptionValue(BingoOptions.VOTE_LIST).isEmpty()) {
-            giveVoteItem(player);
-        }
-        if (!config.getOptionValue(BingoOptions.SELECT_TEAMS_USING_COMMANDS_ONLY)) {
-            giveTeamItem(player);
-        }
+        runtime.playerJoinedLobby(session, player);
     }
 
     public void pausePlayerCountTimer() {
@@ -245,7 +229,7 @@ public class PregameLobby implements GamePhase
     }
 
     @Override
-    public EventResult<?> handlePlayerInteracted(PlayerHandle player, @Nullable StackHandle stack, InteractAction action) {
+    public EventResult<?> handlePlayerInteracted(PlayerHandle player, @Nullable StackHandle stack, PlayerInput action) {
 		if (stack == null || stack.type().isAir())
             return EventResult.IGNORE;
 
@@ -253,11 +237,11 @@ public class PregameLobby implements GamePhase
             return EventResult.IGNORE;
         }
 
-        if (PlayerKit.VOTE_ITEM.isCompareKeyEqual(stack)) {
-            BingoReloaded.runtime().openVoteMenu(player, this);
+        if (runtime.canItemBeUsedForInteraction(session, player, BingoInteraction.START_VOTE, stack, action)) {
+            runtime.openVoteMenu(player, this);
             return EventResult.CONSUME;
-        } else if (PlayerKit.TEAM_ITEM.isCompareKeyEqual(stack)) {
-            BingoReloaded.runtime().openTeamSelector(player, session);
+        } else if (runtime.canItemBeUsedForInteraction(session, player, BingoInteraction.SELECT_TEAM, stack, action)) {
+            runtime.openTeamSelector(player, session);
             return EventResult.CONSUME;
         }
 

@@ -3,11 +3,11 @@ package io.github.steaf23.bingoreloaded.gui.inventory;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
+import io.github.steaf23.bingoreloaded.gui.inventory.core.FilterType;
+import io.github.steaf23.bingoreloaded.gui.inventory.core.PaginatedSelectionMenu;
 import io.github.steaf23.bingoreloaded.lib.api.MenuBoard;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemTypePaper;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
-import io.github.steaf23.bingoreloaded.lib.inventory.FilterType;
-import io.github.steaf23.bingoreloaded.lib.inventory.PaginatedSelectionMenu;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import org.bukkit.Material;
@@ -33,13 +33,9 @@ public class TeamCardSelectMenu extends PaginatedSelectionMenu
 
     @Override
     public void onOptionClickedDelegate(InventoryClickEvent event, ItemTemplate clickedOption, PlayerHandle player) {
-        if (!session.canPlayersViewCard()) {
-            return;
-        }
-
         Optional<BingoTeam> team = session.teamManager.getActiveTeams().getById(clickedOption.getCompareKey());
         if (team.isPresent() && team.get().getCard().isPresent()) {
-            team.get().getCard().get().showInventory(player);
+            team.get().getCard().get().showToPlayer(session, player);
         }
     }
 

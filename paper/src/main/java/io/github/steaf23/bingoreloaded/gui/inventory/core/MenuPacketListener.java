@@ -1,4 +1,4 @@
-package io.github.steaf23.bingoreloaded.lib.inventory;
+package io.github.steaf23.bingoreloaded.gui.inventory.core;
 
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.event.SimplePacketListenerAbstract;

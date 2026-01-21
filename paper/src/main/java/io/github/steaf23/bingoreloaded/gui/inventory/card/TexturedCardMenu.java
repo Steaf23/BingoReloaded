@@ -5,17 +5,18 @@ import io.github.steaf23.bingoreloaded.api.CardDisplayInfo;
 import io.github.steaf23.bingoreloaded.api.CardMenu;
 import io.github.steaf23.bingoreloaded.cards.CardSize;
 import io.github.steaf23.bingoreloaded.data.TexturedMenuData;
+import io.github.steaf23.bingoreloaded.gui.inventory.core.InventoryMenu;
 import io.github.steaf23.bingoreloaded.gui.inventory.core.TexturedTitleBuilder;
+import io.github.steaf23.bingoreloaded.gui.inventory.core.action.MenuAction;
+import io.github.steaf23.bingoreloaded.gui.inventory.core.action.MenuItemGroup;
 import io.github.steaf23.bingoreloaded.gui.inventory.item.OpenCardSelectAction;
 import io.github.steaf23.bingoreloaded.lib.api.MenuBoard;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemTypePaper;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandlePaper;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataStorage;
-import io.github.steaf23.bingoreloaded.lib.inventory.InventoryMenu;
-import io.github.steaf23.bingoreloaded.lib.inventory.action.MenuAction;
-import io.github.steaf23.bingoreloaded.lib.inventory.action.MenuItemGroup;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
+import io.github.steaf23.bingoreloaded.lib.item.TaskItemConverter;
 import io.github.steaf23.bingoreloaded.lib.util.MultilineComponent;
 import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
 import io.github.steaf23.bingoreloaded.tasks.GameTask;
@@ -200,7 +201,8 @@ public class TexturedCardMenu implements InventoryMenu, CardMenu
     }
 
     protected @NotNull ItemTemplate getItemFromTask(int taskIndex) {
-        ItemTemplate item = tasks.get(taskIndex).toItem(displayInfo);
+        GameTask task = tasks.get(taskIndex);
+        ItemTemplate item = TaskItemConverter.taskToItem(task, displayInfo);
         if (tasks.get(taskIndex).isCompleted()) {
             item.setItemType(ItemTypePaper.of(Material.POISONOUS_POTATO));
             item.setCustomModelData("1012");

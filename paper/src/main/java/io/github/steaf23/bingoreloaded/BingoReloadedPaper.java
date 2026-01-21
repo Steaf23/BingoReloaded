@@ -5,7 +5,7 @@ import com.github.retrooper.packetevents.protocol.dialog.Dialog;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerShowDialog;
 import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
 import io.github.steaf23.bingoreloaded.action.AutoBingoAction;
-import io.github.steaf23.bingoreloaded.action.BingoAction;
+import io.github.steaf23.bingoreloaded.action.BingoActionPaper;
 import io.github.steaf23.bingoreloaded.action.BingoConfigAction;
 import io.github.steaf23.bingoreloaded.action.BotCommandAction;
 import io.github.steaf23.bingoreloaded.action.CommandTemplate;
@@ -20,7 +20,9 @@ import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.DataUpdaterV3_5_0;
 import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.data.config.BingoOptions;
+import io.github.steaf23.bingoreloaded.gameloop.BingoInteraction;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
+import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.gameloop.phase.PregameLobby;
 import io.github.steaf23.bingoreloaded.gui.BingoCardMapRenderer;
 import io.github.steaf23.bingoreloaded.gui.inventory.AdminBingoMenu;
@@ -32,7 +34,13 @@ import io.github.steaf23.bingoreloaded.gui.inventory.card.GenericCardMenu;
 import io.github.steaf23.bingoreloaded.gui.inventory.card.HotswapGenericCardMenu;
 import io.github.steaf23.bingoreloaded.gui.inventory.card.HotswapTexturedCardMenu;
 import io.github.steaf23.bingoreloaded.gui.inventory.card.TexturedCardMenu;
+import io.github.steaf23.bingoreloaded.gui.inventory.core.BasicMenu;
+import io.github.steaf23.bingoreloaded.gui.inventory.core.MenuBoardPaper;
 import io.github.steaf23.bingoreloaded.gui.inventory.creator.BingoCreatorMenu;
+import io.github.steaf23.bingoreloaded.gui.inventory.item.MinecraftBingoItems;
+import io.github.steaf23.bingoreloaded.item.GameItem;
+import io.github.steaf23.bingoreloaded.item.GoUpWand;
+import io.github.steaf23.bingoreloaded.item.TeamShulker;
 import io.github.steaf23.bingoreloaded.lib.action.ActionTree;
 import io.github.steaf23.bingoreloaded.lib.api.BingoReloadedRuntime;
 import io.github.steaf23.bingoreloaded.lib.api.EntityType;
@@ -40,6 +48,7 @@ import io.github.steaf23.bingoreloaded.lib.api.EntityTypePaper;
 import io.github.steaf23.bingoreloaded.lib.api.MenuBoard;
 import io.github.steaf23.bingoreloaded.lib.api.PaperServerSoftware;
 import io.github.steaf23.bingoreloaded.lib.api.PlatformResolver;
+import io.github.steaf23.bingoreloaded.lib.api.PlayerInput;
 import io.github.steaf23.bingoreloaded.lib.api.ServerSoftware;
 import io.github.steaf23.bingoreloaded.lib.api.WorldHandle;
 import io.github.steaf23.bingoreloaded.lib.api.WorldHandlePaper;
@@ -53,8 +62,6 @@ import io.github.steaf23.bingoreloaded.lib.data.core.ConfigDataAccessor;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataAccessor;
 import io.github.steaf23.bingoreloaded.lib.data.core.YamlDataAccessor;
 import io.github.steaf23.bingoreloaded.lib.events.EventListenerPaper;
-import io.github.steaf23.bingoreloaded.lib.inventory.BasicMenu;
-import io.github.steaf23.bingoreloaded.lib.inventory.MenuBoardPaper;
 import io.github.steaf23.bingoreloaded.lib.menu.ScoreboardDisplay;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import io.github.steaf23.bingoreloaded.lib.util.LoggerWrapper;
@@ -62,7 +69,6 @@ import io.github.steaf23.bingoreloaded.lib.util.PlayerDisplayTranslationKey;
 import io.github.steaf23.bingoreloaded.placeholder.BingoReloadedPlaceholderExpansion;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
-import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import io.github.steaf23.bingoreloaded.util.bstats.Metrics;
 import io.github.steaf23.bingoreloaded.world.CustomWorldCreator;
 import me.clip.placeholderapi.PlaceholderAPI;
@@ -87,6 +93,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class BingoReloadedPaper extends JavaPlugin implements BingoReloadedRuntime {
@@ -282,7 +289,7 @@ public class BingoReloadedPaper extends JavaPlugin implements BingoReloadedRunti
 	public void registerActions(BingoConfigurationData config) {
 		registerCommand(true, new AutoBingoAction(platform, bingo.getGameManager()));
 		registerCommand(true, new BingoConfigAction(config));
-		registerCommand(false, new BingoAction(bingo, config, bingo.getGameManager()));
+		registerCommand(false, new BingoActionPaper(bingo, config, bingo.getGameManager()));
 		registerCommand(false, new BotCommandAction(bingo.getGameManager()));
 //		registerCommand("bingotest", new BingoTestCommand(this));
 		if (config.getOptionValue(BingoOptions.ENABLE_TEAM_CHAT)) {
@@ -304,16 +311,16 @@ public class BingoReloadedPaper extends JavaPlugin implements BingoReloadedRunti
 
 	public StackHandle createCardItemForPlayer(BingoParticipant player) {
 		if (player.sessionPlayer().isEmpty() || player.getCard().isEmpty() && player.getTeam() != null) {
-			return PlayerKit.CARD_ITEM.buildItem();
+			return MinecraftBingoItems.CARD_ITEM.buildItem();
 		}
 
 		PlayerHandle playerHandle = player.sessionPlayer().get();
 
 		if (!bingo.config().getOptionValue(BingoOptions.USE_MAP_RENDERER) || clientManager.playerHasClient(playerHandle)) {
-			return PlayerKit.CARD_ITEM.buildItem();
+			return MinecraftBingoItems.CARD_ITEM.buildItem();
 		}
 
-		StackHandlePaper mapStack = (StackHandlePaper) PlayerKit.CARD_ITEM_RENDERABLE.buildItem();
+		StackHandlePaper mapStack = (StackHandlePaper) MinecraftBingoItems.CARD_ITEM_RENDERABLE.buildItem();
 
 		ItemStack handle = mapStack.handle();
 		handle.editMeta(m -> {
@@ -347,6 +354,33 @@ public class BingoReloadedPaper extends JavaPlugin implements BingoReloadedRunti
 		}
 
 		return new GenericCardMenu(bingo, menuBoard, displayInfo, null);
+	}
+
+	@Override
+	public void setPlayerUpForGame(BingoGame game, BingoParticipant participant) {
+		if (participant.sessionPlayer().isEmpty())
+			return;
+
+		PlayerHandle player = participant.sessionPlayer().get();
+		int cardSlot = game.getSettings().kit().getCardSlot();
+
+		platform.runTask(player.world().uniqueId(), task -> {
+			for (StackHandle itemStack : player.inventory().contents()) {
+				if (MinecraftBingoItems.CARD_ITEM.isCompareKeyEqual(itemStack)) {
+					player.inventory().removeItem(itemStack);
+					break;
+				}
+			}
+			StackHandle existingItem = player.inventory().getItem(cardSlot);
+
+			player.inventory().setItem(cardSlot, createCardItemForPlayer(participant));
+			if (!existingItem.type().isAir()) {
+				Map<Integer, StackHandle> leftOver = player.inventory().addItem(existingItem);
+				for (StackHandle stack : leftOver.values()) {
+					player.world().dropItem(stack, player.position());
+				}
+			}
+		});
 	}
 
 	@Override
@@ -403,6 +437,61 @@ public class BingoReloadedPaper extends JavaPlugin implements BingoReloadedRunti
 	@Override
 	public BingoClientManager getClientManager() {
 		return clientManager;
+	}
+
+	@Override
+	public StackHandle defaultStack(GameItem item) {
+		if (item.key().equals(GoUpWand.ID)) {
+			return MinecraftBingoItems.GO_UP_WAND.buildItem();
+		}
+		if (item.key().equals(TeamShulker.ID)) {
+			return MinecraftBingoItems.TEAM_SHULKER.buildItem();
+		}
+
+		return StackHandle.empty();
+	}
+
+	@Override
+	public void playerJoinedLobby(BingoSession session, PlayerHandle player) {
+		BingoConfigurationData config = bingo.config();
+
+		if (config.getOptionValue(BingoOptions.USE_VOTE_SYSTEM) &&
+				!config.getOptionValue(BingoOptions.VOTE_USING_COMMANDS_ONLY) &&
+				!config.getOptionValue(BingoOptions.VOTE_LIST).isEmpty()) {
+			player.inventory().addItem(MinecraftBingoItems.VOTE_ITEM.buildItem());
+		}
+		if (!config.getOptionValue(BingoOptions.SELECT_TEAMS_USING_COMMANDS_ONLY)) {
+			player.inventory().addItem(MinecraftBingoItems.TEAM_ITEM.buildItem());
+		}
+	}
+
+	@Override
+	public void droppedItemsOnDeath(BingoSession session, PlayerHandle player, Collection<StackHandle> items) {
+		for (StackHandle drop : items) {
+			var data = drop.getStorage();
+			if (data.getBoolean("kit_item", false)
+					|| MinecraftBingoItems.CARD_ITEM.isCompareKeyEqual(drop)) {
+				drop.setAmount(0);
+			}
+		}
+	}
+
+	@Override
+	public boolean canItemBeUsedForInteraction(BingoSession session, PlayerHandle player, BingoInteraction interaction, StackHandle stack, PlayerInput input) {
+		return switch (interaction) {
+			case OPEN_CARD -> MinecraftBingoItems.CARD_ITEM.isCompareKeyEqual(stack);
+			case START_VOTE -> MinecraftBingoItems.VOTE_ITEM.isCompareKeyEqual(stack);
+			case SELECT_TEAM -> MinecraftBingoItems.TEAM_ITEM.isCompareKeyEqual(stack);
+			case CANCEL_ITEM_DROP ->
+					MinecraftBingoItems.CARD_ITEM.isCompareKeyEqual(stack) ||
+					MinecraftBingoItems.VOTE_ITEM.isCompareKeyEqual(stack) ||
+					MinecraftBingoItems.TEAM_ITEM.isCompareKeyEqual(stack);
+		};
+	}
+
+	@Override
+	public boolean canItemBeUsedInKit(StackHandle stack) {
+		return !MinecraftBingoItems.CARD_ITEM.isCompareKeyEqual(stack);
 	}
 
 	public void registerCommand(boolean allowConsole, ActionTree action) {

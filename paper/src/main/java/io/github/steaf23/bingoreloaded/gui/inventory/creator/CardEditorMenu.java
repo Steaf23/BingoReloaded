@@ -1,13 +1,13 @@
 package io.github.steaf23.bingoreloaded.gui.inventory.creator;
 
 import io.github.steaf23.bingoreloaded.data.BingoCardData;
+import io.github.steaf23.bingoreloaded.gui.inventory.core.BasicMenu;
+import io.github.steaf23.bingoreloaded.gui.inventory.core.FilterType;
+import io.github.steaf23.bingoreloaded.gui.inventory.core.InventoryMenu;
+import io.github.steaf23.bingoreloaded.gui.inventory.core.PaginatedSelectionMenu;
 import io.github.steaf23.bingoreloaded.lib.api.MenuBoard;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemTypePaper;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
-import io.github.steaf23.bingoreloaded.lib.inventory.BasicMenu;
-import io.github.steaf23.bingoreloaded.lib.inventory.FilterType;
-import io.github.steaf23.bingoreloaded.lib.inventory.InventoryMenu;
-import io.github.steaf23.bingoreloaded.lib.inventory.PaginatedSelectionMenu;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import io.github.steaf23.bingoreloaded.lib.util.ComponentUtils;
 import net.kyori.adventure.text.Component;

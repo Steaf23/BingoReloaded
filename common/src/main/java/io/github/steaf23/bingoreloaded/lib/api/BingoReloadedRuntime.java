@@ -5,8 +5,11 @@ import io.github.steaf23.bingoreloaded.api.CardMenu;
 import io.github.steaf23.bingoreloaded.api.TeamDisplay;
 import io.github.steaf23.bingoreloaded.api.network.BingoClientManager;
 import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
+import io.github.steaf23.bingoreloaded.gameloop.BingoInteraction;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
+import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.gameloop.phase.PregameLobby;
+import io.github.steaf23.bingoreloaded.item.GameItem;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.api.player.SharedDisplay;
@@ -39,7 +42,7 @@ public interface BingoReloadedRuntime {
 	ServerSoftware getServerSoftware();
 
 	CardMenu createMenu(boolean textured, CardDisplayInfo displayInfo);
-	StackHandle createCardItemForPlayer(BingoParticipant player);
+	void setPlayerUpForGame(BingoGame game, BingoParticipant participant);
 
 	void openBingoMenu(PlayerHandle player, BingoSession session);
 	void openTeamEditor(PlayerHandle player);
@@ -53,4 +56,11 @@ public interface BingoReloadedRuntime {
 	SharedDisplay settingsDisplay();
 
 	BingoClientManager getClientManager();
+
+	StackHandle defaultStack(GameItem item);
+
+	void playerJoinedLobby(BingoSession session, PlayerHandle player);
+	void droppedItemsOnDeath(BingoSession session, PlayerHandle player, Collection<StackHandle> items);
+	boolean canItemBeUsedForInteraction(BingoSession session, PlayerHandle player, BingoInteraction interaction, StackHandle stack, PlayerInput input);
+	boolean canItemBeUsedInKit(StackHandle stack);
 }

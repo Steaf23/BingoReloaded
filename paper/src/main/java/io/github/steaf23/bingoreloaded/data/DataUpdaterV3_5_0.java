@@ -1,5 +1,6 @@
 package io.github.steaf23.bingoreloaded.data;
 
+import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.BingoReloadedPaper;
 import io.github.steaf23.bingoreloaded.data.serializers.ItemStorageSerializer;
 import io.github.steaf23.bingoreloaded.item.BingoItems;
@@ -21,7 +22,7 @@ public class DataUpdaterV3_5_0 extends DataUpdaterV3_3_0 {
 	protected void updateKits() {
 		super.updateKits();
 
-		BingoItems items = new BingoItems();
+		BingoItems items = new BingoItems(BingoReloaded.runtime());
 
 		DataStorageSerializerRegistry.addSerializer(new ItemStorageSerializer(), SerializableItem.class);
 
@@ -37,7 +38,7 @@ public class DataUpdaterV3_5_0 extends DataUpdaterV3_3_0 {
 			for (SerializableItem item : immutableList) {
 				if (item.stack().compareKey().equals("wand")) {
 					itemsCopy.remove(index);
-					itemsCopy.add(index, new SerializableItem(item.slot(), items.createStack(GoUpWand.ID)));
+					itemsCopy.add(index, new SerializableItem(item.slot(), items.createStack(items.getItem(GoUpWand.ID))));
 					updated = true;
 				}
 

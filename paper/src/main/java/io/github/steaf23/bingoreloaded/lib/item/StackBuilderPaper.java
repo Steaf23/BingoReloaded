@@ -1,6 +1,8 @@
-package io.github.steaf23.bingoreloaded.lib.api.item;
+package io.github.steaf23.bingoreloaded.lib.item;
 
-import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
+import io.github.steaf23.bingoreloaded.lib.api.item.ItemTypePaper;
+import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
+import io.github.steaf23.bingoreloaded.lib.api.item.StackHandlePaper;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import io.github.steaf23.bingoreloaded.lib.util.PDCHelper;
 import io.papermc.paper.datacomponent.DataComponentTypes;
@@ -26,11 +28,10 @@ import org.bukkit.persistence.PersistentDataContainer;
 
 import java.util.List;
 
-public class StackBuilderPaper implements StackBuilder {
+public class StackBuilderPaper {
 
 
 	@SuppressWarnings("UnstableApiUsage")
-	@Override
 	public StackHandle buildItem(ItemTemplate template, boolean hideAttributes, boolean customTextures) {
 //		if (textured && texturedVariant != null) {
 //			return buildItem(hideAttributes, false);
@@ -119,5 +120,13 @@ public class StackBuilderPaper implements StackBuilder {
 		}
 
 		return handle;
+	}
+
+	public StackHandle buildItem(ItemTemplate template, boolean hideAttributes) {
+		return buildItem(template, hideAttributes, false);
+	}
+
+	public StackHandle buildItem(ItemTemplate template) {
+		return buildItem(template, false, false);
 	}
 }

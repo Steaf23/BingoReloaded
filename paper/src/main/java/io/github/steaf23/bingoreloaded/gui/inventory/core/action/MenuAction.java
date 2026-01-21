@@ -1,7 +1,7 @@
-package io.github.steaf23.bingoreloaded.lib.inventory.action;
+package io.github.steaf23.bingoreloaded.gui.inventory.core.action;
 
+import io.github.steaf23.bingoreloaded.gui.inventory.core.Menu;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
-import io.github.steaf23.bingoreloaded.lib.inventory.Menu;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import org.bukkit.event.inventory.ClickType;
 import org.jetbrains.annotations.NotNull;

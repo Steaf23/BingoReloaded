@@ -2,13 +2,13 @@ package io.github.steaf23.bingoreloaded.lib.api;
 
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemTypePaper;
-import io.github.steaf23.bingoreloaded.lib.api.item.StackBuilderPaper;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandlePaper;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandlePaper;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerInfo;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
+import io.github.steaf23.bingoreloaded.lib.item.StackBuilderPaper;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import io.github.steaf23.bingoreloaded.lib.util.LoggerWrapper;
 import io.papermc.paper.datacomponent.DataComponentTypes;
@@ -219,11 +219,6 @@ public class PaperServerSoftware implements ServerSoftware {
 	@Override
 	public StackHandle createStackFromBytes(byte[] bytes) {
 		return new StackHandlePaper(ItemStack.deserializeBytes(bytes));
-	}
-
-	@Override
-	public StackHandle createStackFromTemplate(ItemTemplate template, boolean hideAttributes) {
-		return new StackBuilderPaper().buildItem(template, hideAttributes);
 	}
 
 	@Override

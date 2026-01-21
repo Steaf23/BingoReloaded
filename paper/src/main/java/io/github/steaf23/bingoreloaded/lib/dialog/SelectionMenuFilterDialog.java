@@ -1,11 +1,11 @@
 package io.github.steaf23.bingoreloaded.lib.dialog;
 
 import com.github.retrooper.packetevents.protocol.dialog.Dialog;
+import io.github.steaf23.bingoreloaded.gui.inventory.core.FilterType;
+import io.github.steaf23.bingoreloaded.gui.inventory.core.MenuFilterSettings;
+import io.github.steaf23.bingoreloaded.gui.inventory.core.PaginatedSelectionMenu;
 import io.github.steaf23.bingoreloaded.lib.api.MenuBoard;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataStorage;
-import io.github.steaf23.bingoreloaded.lib.inventory.FilterType;
-import io.github.steaf23.bingoreloaded.lib.inventory.MenuFilterSettings;
-import io.github.steaf23.bingoreloaded.lib.inventory.PaginatedSelectionMenu;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;

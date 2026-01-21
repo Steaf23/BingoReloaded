@@ -2,14 +2,12 @@ package io.github.steaf23.bingoreloaded.player;
 
 import io.github.steaf23.bingoreloaded.cards.TaskCard;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
-import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import io.github.steaf23.bingoreloaded.tasks.data.ItemTask;
 import net.kyori.adventure.audience.ForwardingAudience;
 import net.kyori.adventure.text.Component;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.EnumSet;
@@ -54,8 +52,6 @@ public interface BingoParticipant extends ForwardingAudience.Single {
 		}
 		return getTeam().getCard();
 	}
-
-	void giveBingoCard(int cardSlot, @NotNull StackHandle cardItem);
 
 	void giveEffects(EnumSet<EffectOptionFlags> effects, int gracePeriod);
 

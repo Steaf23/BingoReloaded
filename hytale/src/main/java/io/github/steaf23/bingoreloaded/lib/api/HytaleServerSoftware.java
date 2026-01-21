@@ -14,7 +14,6 @@ import io.github.steaf23.bingoreloaded.lib.api.item.StackHandleHytale;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandleHytale;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerInfo;
-import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import io.github.steaf23.bingoreloaded.lib.util.LoggerWrapper;
 import net.kyori.adventure.key.Key;
@@ -219,10 +218,6 @@ public class HytaleServerSoftware implements ServerSoftware {
 		return null;
 	}
 
-	@Override
-	public StackHandle createStackFromTemplate(ItemTemplate template, boolean hideAttributes) {
-		return new StackHandleHytale(new ItemStack(((ItemTypeHytale)template.getItemType()).itemId(), template.getAmount()));
-	}
 
 	@Override
 	public byte[] createBytesFromStack(StackHandle stack) {

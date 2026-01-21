@@ -1,5 +1,6 @@
 package io.github.steaf23.bingoreloaded.settings;
 
+import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.item.SerializableItem;
@@ -19,7 +20,7 @@ public record CustomKit(Component name, PlayerKit slot, List<SerializableItem> i
         {
             if (itemStack != null && !itemStack.type().isAir()) {
                 // if this item is the card, save the slot instead and disregard the item itself.
-                if (PlayerKit.CARD_ITEM.isCompareKeyEqual(itemStack)) {
+                if (BingoReloaded.runtime().canItemBeUsedInKit(itemStack)) {
                     cardSlot = slot;
                 }
                 else {

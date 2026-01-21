@@ -4,7 +4,6 @@ import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerInfo;
-import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import io.github.steaf23.bingoreloaded.lib.util.LoggerWrapper;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.format.TextColor;
@@ -66,7 +65,6 @@ public interface ServerSoftware {
 
 	StackHandle createStack(ItemType type, int amount);
 	StackHandle createStackFromBytes(byte[] bytes);
-	StackHandle createStackFromTemplate(ItemTemplate template, boolean hideAttributes);
 	byte[] createBytesFromStack(StackHandle stack);
 	StackHandle colorItemStack(StackHandle stack, TextColor color);
 

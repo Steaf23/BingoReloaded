@@ -1,6 +1,6 @@
-package io.github.steaf23.bingoreloaded.lib.inventory.action;
+package io.github.steaf23.bingoreloaded.gui.inventory.core.action;
 
-import io.github.steaf23.bingoreloaded.lib.inventory.InventoryMenu;
+import io.github.steaf23.bingoreloaded.gui.inventory.core.InventoryMenu;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;

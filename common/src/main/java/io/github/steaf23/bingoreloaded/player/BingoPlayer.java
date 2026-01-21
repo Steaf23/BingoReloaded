@@ -8,7 +8,6 @@ import io.github.steaf23.bingoreloaded.lib.api.PotionEffectInstance;
 import io.github.steaf23.bingoreloaded.lib.api.ServerSoftware;
 import io.github.steaf23.bingoreloaded.lib.api.StatusEffectType;
 import io.github.steaf23.bingoreloaded.lib.api.item.InventoryHandle;
-import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.data.core.tag.TagDataStorage;
 import io.github.steaf23.bingoreloaded.lib.util.ComponentUtils;
@@ -23,7 +22,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.EnumSet;
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -100,32 +98,6 @@ public class BingoPlayer implements BingoParticipant
     }
 
     @Override
-    public void giveBingoCard(int cardSlot, @NotNull StackHandle cardItem) {
-        if (sessionPlayer().isEmpty())
-            return;
-
-        PlayerHandle player = sessionPlayer().get();
-
-        server.runTask(player.world().uniqueId(), task -> {
-            for (StackHandle itemStack : player.inventory().contents()) {
-                if (PlayerKit.CARD_ITEM.isCompareKeyEqual(itemStack)) {
-                    player.inventory().removeItem(itemStack);
-                    break;
-                }
-            }
-            StackHandle existingItem = player.inventory().getItem(cardSlot);
-
-            player.inventory().setItem(cardSlot, cardItem);
-            if (!existingItem.type().isAir()) {
-                Map<Integer, StackHandle> leftOver = player.inventory().addItem(existingItem);
-                for (StackHandle stack : leftOver.values()) {
-                    player.world().dropItem(stack, player.position());
-                }
-            }
-        });
-    }
-
-    @Override
     public void giveEffects(EnumSet<EffectOptionFlags> effects, int gracePeriod) {
         if (sessionPlayer().isEmpty())
             return;
@@ -198,7 +170,7 @@ public class BingoPlayer implements BingoParticipant
             }
 
             // if the player is actually participating, show it
-            card.ifPresentOrElse(c -> c.showInventory(player), () -> BingoMessage.NO_PLAYER_CARD.sendToAudience(player));
+            card.ifPresentOrElse(c -> c.showToPlayer(session, player), () -> BingoMessage.NO_PLAYER_CARD.sendToAudience(player));
         });
     }
 

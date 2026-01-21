@@ -2,8 +2,8 @@ package io.github.steaf23.bingoreloaded.lib.events;
 
 import io.github.steaf23.bingoreloaded.lib.api.AdvancementHandlePaper;
 import io.github.steaf23.bingoreloaded.lib.api.EntityTypePaper;
-import io.github.steaf23.bingoreloaded.lib.api.InteractAction;
 import io.github.steaf23.bingoreloaded.lib.api.PaperApiHelper;
+import io.github.steaf23.bingoreloaded.lib.api.PlayerInput;
 import io.github.steaf23.bingoreloaded.lib.api.StatisticDefinition;
 import io.github.steaf23.bingoreloaded.lib.api.StatisticTypePaper;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemTypePaper;
@@ -41,7 +41,9 @@ import org.bukkit.event.player.PlayerStatisticIncrementEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.List;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.stream.Collectors;
 
 public class EventListenerPaper implements Listener {
 
@@ -71,9 +73,9 @@ public class EventListenerPaper implements Listener {
 
 	@EventHandler
 	public void handlePlayerDeathEvent(final PlayerDeathEvent event) {
-		List<? extends StackHandle> drops = event.getDrops().stream()
+		Collection<StackHandle> drops = event.getDrops().stream()
 				.map(StackHandlePaper::new)
-				.toList();
+				.collect(Collectors.toCollection(ArrayList::new));
 		EventResult<EventResults.PlayerDeathResult> result = dispatcher.sendPlayerDeath(new PlayerHandlePaper(event.getPlayer()), drops);
 
 		event.getDrops().clear();
@@ -173,7 +175,7 @@ public class EventListenerPaper implements Listener {
 		EventResult<?> result = dispatcher.sendPlayerInteracted(
 				new PlayerHandlePaper(event.getPlayer()),
 				new StackHandlePaper(event.getItem()),
-				new InteractAction(event.getAction().isLeftClick(), event.getAction().isRightClick(), event.getAction() == Action.LEFT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_AIR));
+				new PlayerInput(event.getAction().isLeftClick(), event.getAction().isRightClick(), event.getAction() == Action.LEFT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_AIR));
 
 		if (result.consume()) {
 			event.setCancelled(true);

@@ -3,7 +3,6 @@ package io.github.steaf23.bingoreloaded.item;
 import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.event.EventResult;
-import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.key.Keyed;
@@ -25,8 +24,6 @@ public abstract class GameItem implements Keyed {
 	public boolean canLeaveInventory() {
 		return false;
 	}
-
-	public abstract ItemTemplate defaultTemplate();
 
 	public abstract EventResult<?> use(StackHandle stack, BingoParticipant participant, BingoConfigurationData config);
 }

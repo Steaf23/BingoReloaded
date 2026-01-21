@@ -221,16 +221,14 @@ public class PlayerHandlePaper implements PlayerHandle {
 			case SPECTATOR -> GameMode.SPECTATOR;
 			case CREATIVE -> GameMode.CREATIVE;
 			case SURVIVAL -> GameMode.SURVIVAL;
-			case ADVENTURE -> GameMode.ADVENTURE;
 		};
 	}
 
 	public static PlayerGamemode toPlayerMode(GameMode gameMode) {
 		return switch (gameMode) {
-			case SURVIVAL -> PlayerGamemode.SURVIVAL;
+			case SURVIVAL, ADVENTURE -> PlayerGamemode.SURVIVAL;
 			case CREATIVE -> PlayerGamemode.CREATIVE;
 			case SPECTATOR -> PlayerGamemode.SPECTATOR;
-			case ADVENTURE -> PlayerGamemode.ADVENTURE;
 		};
 	}
 

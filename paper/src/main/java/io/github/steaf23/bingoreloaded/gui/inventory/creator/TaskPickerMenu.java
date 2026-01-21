@@ -2,12 +2,13 @@ package io.github.steaf23.bingoreloaded.gui.inventory.creator;
 
 import io.github.steaf23.bingoreloaded.api.CardDisplayInfo;
 import io.github.steaf23.bingoreloaded.data.BingoCardData;
+import io.github.steaf23.bingoreloaded.gui.inventory.core.FilterType;
+import io.github.steaf23.bingoreloaded.gui.inventory.core.MenuFilterSettings;
+import io.github.steaf23.bingoreloaded.gui.inventory.core.PaginatedDataMenu;
 import io.github.steaf23.bingoreloaded.lib.api.MenuBoard;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
-import io.github.steaf23.bingoreloaded.lib.inventory.FilterType;
-import io.github.steaf23.bingoreloaded.lib.inventory.MenuFilterSettings;
-import io.github.steaf23.bingoreloaded.lib.inventory.PaginatedDataMenu;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
+import io.github.steaf23.bingoreloaded.lib.item.TaskItemConverter;
 import io.github.steaf23.bingoreloaded.lib.util.ComponentUtils;
 import io.github.steaf23.bingoreloaded.tasks.GameTask;
 import io.github.steaf23.bingoreloaded.tasks.data.TaskData;
@@ -45,7 +46,7 @@ public class TaskPickerMenu extends PaginatedDataMenu<GameTask> {
 
 	@Override
 	public ItemTemplate toItem(GameTask gameTask, boolean isSelected) {
-		ItemTemplate item = gameTask.toItem(CardDisplayInfo.DUMMY_DISPLAY_INFO);
+		ItemTemplate item = TaskItemConverter.taskToItem(gameTask, CardDisplayInfo.DUMMY_DISPLAY_INFO);
 
 		Component[] addedLore;
 		if (isSelected)

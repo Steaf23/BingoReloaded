@@ -3,6 +3,7 @@ package io.github.steaf23.bingoreloaded.cards;
 
 import io.github.steaf23.bingoreloaded.api.CardMenu;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
+import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
@@ -44,7 +45,11 @@ public abstract class TaskCard
         setTasks(TaskGenerator.generateCardTasks(settings));
     }
 
-    public void showInventory(PlayerHandle player) {
+    public void showToPlayer(BingoSession session, PlayerHandle player) {
+        if (!session.canPlayersViewCard()) {
+            return;
+        }
+
         menu.updateTasks(getTasks());
         menu.open(player);
     }

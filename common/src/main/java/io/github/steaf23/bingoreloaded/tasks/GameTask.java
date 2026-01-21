@@ -3,16 +3,13 @@ package io.github.steaf23.bingoreloaded.tasks;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.api.CardDisplayInfo;
 import io.github.steaf23.bingoreloaded.api.network.packets.DataWriter;
-import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.data.core.tag.TagDataStorage;
-import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.tasks.data.ItemTask;
 import io.github.steaf23.bingoreloaded.tasks.data.TaskData;
-import io.github.steaf23.bingoreloaded.util.timer.GameTimer;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
@@ -65,56 +62,6 @@ public class GameTask
         return completedBy != null || completedByTeam != null;
     }
 
-    public ItemTemplate toItem(CardDisplayInfo displayInfo)
-    {
-        ItemTemplate item;
-        // Step 1: create the item and put the new name, description and material on it.
-        if (isVoided()) // VOIDED TASK
-        {
-            item = new ItemTemplate(ItemType.of("structure_void"), null);
-            Component[] addedDesc = BingoMessage.VOIDED.asMultiline(NamedTextColor.DARK_GRAY);
-
-            item.setName(getName());
-            item.setLore(addedDesc);
-            item.setGlowing(true);
-        }
-        else if (isCompleted()) // COMPLETED TASK
-        {
-            ItemType completeMaterial = ItemType.of("barrier");
-
-            String timeString = GameTimer.getTimeAsString(completedAt);
-
-            Component[] desc = BingoMessage.COMPLETED_LORE.asMultiline(NamedTextColor.DARK_PURPLE,
-                    completedBy.getDisplayName()
-                            .color(completedBy.getTeam().getColor())
-                            .decorate(TextDecoration.BOLD)
-                            .decorate(TextDecoration.ITALIC),
-                    Component.text(timeString)
-                            .color(NamedTextColor.GOLD)
-                            .decorate(TextDecoration.ITALIC));
-
-            item = new ItemTemplate(completeMaterial, getName(), desc);
-        }
-        else // DEFAULT TASK
-        {
-            item = new ItemTemplate(icon(displayInfo), data.getName(), data.getItemDescription());
-            item.setAmount(data.getRequiredAmount());
-        }
-
-        // STEP 2: Add additional stuff like pdc data and glowing effect.
-
-        TagDataStorage storage = new TagDataStorage();
-        new GameTaskSerializer().toDataStorage(storage, this);
-        item.setExtraData(storage);
-
-        if ((data.shouldItemGlow() || isCompleted()) && !isVoided())
-        {
-            item.setGlowing(true);
-        }
-
-        item.setMaxStackSize(64);
-        return item;
-    }
 
     public static @Nullable GameTask fromItem(StackHandle in)
     {

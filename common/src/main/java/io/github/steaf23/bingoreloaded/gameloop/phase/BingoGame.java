@@ -11,12 +11,13 @@ import io.github.steaf23.bingoreloaded.data.BingoSound;
 import io.github.steaf23.bingoreloaded.data.BingoStatType;
 import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.data.config.BingoOptions;
+import io.github.steaf23.bingoreloaded.gameloop.BingoInteraction;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.item.BingoItems;
 import io.github.steaf23.bingoreloaded.item.GameItem;
 import io.github.steaf23.bingoreloaded.lib.api.BiomeType;
-import io.github.steaf23.bingoreloaded.lib.api.InteractAction;
 import io.github.steaf23.bingoreloaded.lib.api.PlayerGamemode;
+import io.github.steaf23.bingoreloaded.lib.api.PlayerInput;
 import io.github.steaf23.bingoreloaded.lib.api.ServerSoftware;
 import io.github.steaf23.bingoreloaded.lib.api.WorldHandle;
 import io.github.steaf23.bingoreloaded.lib.api.WorldPosition;
@@ -36,7 +37,6 @@ import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.player.team.TeamManager;
 import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
-import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import io.github.steaf23.bingoreloaded.tasks.GameTask;
 import io.github.steaf23.bingoreloaded.tasks.data.ItemTask;
 import io.github.steaf23.bingoreloaded.tasks.tracker.TaskProgressTracker;
@@ -171,7 +171,7 @@ public class BingoGame implements GamePhase
                 PlayerHandle player = p.sessionPlayer().get();
 
                 p.giveKit(settings.kit());
-                returnCardToPlayer(player.world(), settings.kit().getCardSlot(), p);
+                setupPlayer(player.world(), p);
                 player.setLevel(0);
                 player.setExp(0.0f);
 				getSession().getGameManager().getRuntime().gameDisplay().addPlayer(player);
@@ -309,12 +309,11 @@ public class BingoGame implements GamePhase
         return actionBarManager;
     }
 
-    public void returnCardToPlayer(WorldHandle world, int cardSlot, BingoParticipant participant) {
+    public void setupPlayer(WorldHandle world, BingoParticipant participant) {
         if (participant.sessionPlayer().isEmpty())
             return;
 
-		StackHandle cardItem = getSession().getGameManager().getRuntime().createCardItemForPlayer(participant);
-        participant.giveBingoCard(cardSlot, cardItem);
+        getSession().getGameManager().getRuntime().setPlayerUpForGame(this, participant);
         participant.sessionPlayer().get().setGamemode(PlayerGamemode.SURVIVAL);
 
         platform.runTask(world.uniqueId(), task -> participant.giveEffects(settings.effects(), config.getOptionValue(BingoOptions.GRACE_PERIOD)));
@@ -592,7 +591,7 @@ public class BingoGame implements GamePhase
         }
     }
 
-    public EventResult<EventResults.PlayerDeathResult> handlePlayerDeath(PlayerHandle player, Collection<? extends StackHandle> droppedItems) {
+    public EventResult<EventResults.PlayerDeathResult> handlePlayerDeath(PlayerHandle player, Collection<StackHandle> droppedItems) {
         BingoParticipant participant = getTeamManager().getPlayerAsParticipant(player);
         if (participant == null || participant.sessionPlayer().isEmpty())
             return new EventResult<>(false, null);
@@ -601,13 +600,7 @@ public class BingoGame implements GamePhase
         if (settings.effects().contains(EffectOptionFlags.KEEP_INVENTORY)) {
             keepInventory = true;
         } else {
-            for (StackHandle drop : droppedItems) {
-                var data = drop.getStorage();
-                if (data.getBoolean("kit_item", false)
-                        || PlayerKit.CARD_ITEM.isCompareKeyEqual(drop)) {
-                    drop.setAmount(0);
-                }
-            }
+            session.getGameManager().getRuntime().droppedItemsOnDeath(session, player, droppedItems);
         }
 
         WorldPosition deathCoords = player.position();
@@ -636,7 +629,7 @@ public class BingoGame implements GamePhase
             return EventResults.playerRespawnResult(false, false, null);
 
         if (!settings.effects().contains(EffectOptionFlags.KEEP_INVENTORY)) {
-            returnCardToPlayer(player.world(), settings.kit().getCardSlot(), bingoPlayer);
+            setupPlayer(player.world(), bingoPlayer);
             bingoPlayer.giveKit(settings.kit());
         } else {
             bingoPlayer.giveEffects(settings.effects(), 0);
@@ -722,7 +715,7 @@ public class BingoGame implements GamePhase
     }
 
     @Override
-    public EventResult<?> handlePlayerInteracted(PlayerHandle player, @Nullable StackHandle stack, InteractAction action) {
+    public EventResult<?> handlePlayerInteracted(PlayerHandle player, @Nullable StackHandle stack, PlayerInput action) {
         BingoParticipant participant = getTeamManager().getPlayerAsParticipant(player);
         if (participant == null || participant.sessionPlayer().isEmpty())
             return EventResult.IGNORE;
@@ -745,7 +738,7 @@ public class BingoGame implements GamePhase
                 return EventResult.IGNORE;
 
             return gameItem.use(stack, participant, config);
-        } else if (PlayerKit.CARD_ITEM.isCompareKeyEqual(stack)) {
+        } else if (session.getGameManager().getRuntime().canItemBeUsedForInteraction(session, player, BingoInteraction.OPEN_CARD, stack, action)) {
             // Only show item task as deathmatch tasks.
             if (deathMatchTask == null) {
                 participant.showCard(null);

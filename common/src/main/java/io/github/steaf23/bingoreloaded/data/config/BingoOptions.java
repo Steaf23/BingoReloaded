@@ -26,7 +26,6 @@ public class BingoOptions {
 	{
 		NONE,
 		SURVIVAL,
-		ADVENTURE,
 		CREATIVE,
 		SPECTATOR,
 	}

@@ -398,7 +398,7 @@ public class ItemTemplate
      * @return Item built from this template.
      */
     public StackHandle buildItem() {
-        return StackHandle.createFromTemplate(this, true);
+        return new StackBuilderPaper().buildItem(this, true);
     }
 
     public List<Component> buildDescriptionList() {

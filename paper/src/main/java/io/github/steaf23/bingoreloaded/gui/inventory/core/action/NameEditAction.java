@@ -1,9 +1,9 @@
-package io.github.steaf23.bingoreloaded.lib.inventory.action;
+package io.github.steaf23.bingoreloaded.gui.inventory.core.action;
 
 
+import io.github.steaf23.bingoreloaded.gui.inventory.core.UserInputMenu;
 import io.github.steaf23.bingoreloaded.lib.api.MenuBoard;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
-import io.github.steaf23.bingoreloaded.lib.inventory.UserInputMenu;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import io.github.steaf23.bingoreloaded.lib.util.ComponentUtils;
 import net.kyori.adventure.text.Component;

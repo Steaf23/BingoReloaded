@@ -2,7 +2,6 @@ package io.github.steaf23.bingoreloaded.lib.api.item;
 
 import io.github.steaf23.bingoreloaded.lib.api.PlatformResolver;
 import io.github.steaf23.bingoreloaded.lib.data.core.tag.TagDataStorage;
-import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
@@ -43,10 +42,6 @@ public interface StackHandle {
 	@NotNull TagDataStorage getStorage();
 
 	void setCooldown(Key cooldownGroup, double cooldownTimeSeconds);
-
-	static StackHandle createFromTemplate(ItemTemplate template, boolean hideAttributes) {
-		return PlatformResolver.get().createStackFromTemplate(template, hideAttributes);
-	}
 
 	static StackHandle create(ItemType type, int amount) {
 		return PlatformResolver.get().createStack(type, amount);

@@ -1,7 +1,7 @@
 package io.github.steaf23.bingoreloaded.lib.event;
 
 import io.github.steaf23.bingoreloaded.lib.api.AdvancementHandle;
-import io.github.steaf23.bingoreloaded.lib.api.InteractAction;
+import io.github.steaf23.bingoreloaded.lib.api.PlayerInput;
 import io.github.steaf23.bingoreloaded.lib.api.StatisticDefinition;
 import io.github.steaf23.bingoreloaded.lib.api.WorldPosition;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
@@ -21,9 +21,9 @@ public interface PlatformEventDispatcher {
 	EventResult<EventResults.PlayerMoveResult> sendPlayerPortal(PlayerHandle player, WorldPosition from, WorldPosition to);
 	EventResult<?> sendPlayerDroppedStack(PlayerHandle player, StackHandle item);
 	EventResult<?> sendPlayerStackDamaged(PlayerHandle player, StackHandle item);
-	EventResult<?> sendPlayerInteracted(PlayerHandle player, @Nullable StackHandle handItem, InteractAction action);
+	EventResult<?> sendPlayerInteracted(PlayerHandle player, @Nullable StackHandle handItem, PlayerInput action);
 	EventResult<?> sendPlayerFallDamage(PlayerHandle player);
-	EventResult<EventResults.PlayerDeathResult> sendPlayerDeath(PlayerHandle player, Collection<? extends StackHandle> drops);
+	EventResult<EventResults.PlayerDeathResult> sendPlayerDeath(PlayerHandle player, Collection<StackHandle> drops);
 	EventResult<EventResults.PlayerRespawnResult> sendPlayerRespawn(PlayerHandle player, boolean isBedSpawn, boolean isAnchorSpawn);
 	EventResult<?> sendPlayerJoinsServer(PlayerHandle player);
 	EventResult<?> sendPlayerQuitsServer(PlayerHandle player);

@@ -11,13 +11,17 @@ import io.github.steaf23.bingoreloaded.api.CardMenu;
 import io.github.steaf23.bingoreloaded.api.TeamDisplay;
 import io.github.steaf23.bingoreloaded.api.network.BingoClientManager;
 import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
+import io.github.steaf23.bingoreloaded.gameloop.BingoInteraction;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
+import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.gameloop.phase.PregameLobby;
+import io.github.steaf23.bingoreloaded.item.GameItem;
 import io.github.steaf23.bingoreloaded.lib.action.ActionTree;
 import io.github.steaf23.bingoreloaded.lib.api.BingoReloadedRuntime;
 import io.github.steaf23.bingoreloaded.lib.api.EntityType;
 import io.github.steaf23.bingoreloaded.lib.api.HytaleServerSoftware;
 import io.github.steaf23.bingoreloaded.lib.api.PlatformResolver;
+import io.github.steaf23.bingoreloaded.lib.api.PlayerInput;
 import io.github.steaf23.bingoreloaded.lib.api.ServerSoftware;
 import io.github.steaf23.bingoreloaded.lib.api.WorldHandle;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
@@ -138,8 +142,7 @@ public class BingoReloadedHytale extends JavaPlugin implements BingoReloadedRunt
     }
 
     @Override
-    public StackHandle createCardItemForPlayer(BingoParticipant player) {
-        return PlayerKit.CARD_ITEM.buildItem();
+    public void setPlayerUpForGame(BingoGame game, BingoParticipant participant) {
     }
 
     @Override
@@ -190,6 +193,31 @@ public class BingoReloadedHytale extends JavaPlugin implements BingoReloadedRunt
     @Override
     public BingoClientManager getClientManager() {
         return new BingoClientManager.DisabledClientManager();
+    }
+
+    @Override
+    public StackHandle defaultStack(GameItem item) {
+        return null;
+    }
+
+    @Override
+    public void playerJoinedLobby(BingoSession session, PlayerHandle player) {
+
+    }
+
+    @Override
+    public void droppedItemsOnDeath(BingoSession session, PlayerHandle player, Collection<StackHandle> items) {
+
+    }
+
+    @Override
+    public boolean canItemBeUsedForInteraction(BingoSession session, PlayerHandle player, BingoInteraction interaction, StackHandle stack, PlayerInput input) {
+        return false;
+    }
+
+    @Override
+    public boolean canItemBeUsedInKit(StackHandle stack) {
+        return true;
     }
 
     public void registerCommand(ActionTree tree, String description) {

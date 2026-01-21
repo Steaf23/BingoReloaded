@@ -1,4 +1,4 @@
-package io.github.steaf23.bingoreloaded.lib.inventory;
+package io.github.steaf23.bingoreloaded.gui.inventory.core;
 
 import io.github.steaf23.bingoreloaded.lib.util.StringAdditions;
 

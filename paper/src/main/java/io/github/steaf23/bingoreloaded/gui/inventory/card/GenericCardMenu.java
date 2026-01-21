@@ -4,13 +4,14 @@ import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.api.CardDisplayInfo;
 import io.github.steaf23.bingoreloaded.api.CardMenu;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
+import io.github.steaf23.bingoreloaded.gui.inventory.core.BasicMenu;
 import io.github.steaf23.bingoreloaded.gui.inventory.item.OpenCardSelectAction;
 import io.github.steaf23.bingoreloaded.gui.inventory.item.TaskItemAction;
 import io.github.steaf23.bingoreloaded.lib.api.MenuBoard;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemTypePaper;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
-import io.github.steaf23.bingoreloaded.lib.inventory.BasicMenu;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
+import io.github.steaf23.bingoreloaded.lib.item.TaskItemConverter;
 import io.github.steaf23.bingoreloaded.lib.util.MultilineComponent;
 import io.github.steaf23.bingoreloaded.tasks.GameTask;
 import net.kyori.adventure.text.Component;
@@ -59,7 +60,7 @@ public class GenericCardMenu extends BasicMenu implements CardMenu
     }
 
     public @NotNull ItemTemplate getItemFromTask(int taskIndex) {
-        return tasks.get(taskIndex).toItem(displayInfo);
+        return TaskItemConverter.taskToItem(tasks.get(taskIndex), displayInfo);
     }
 
     public void setInfo(Component name, Component... description)

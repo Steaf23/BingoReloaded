@@ -5,7 +5,7 @@ import io.github.steaf23.bingoreloaded.gameloop.GameManager;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.gameloop.phase.PregameLobby;
 import io.github.steaf23.bingoreloaded.lib.api.AdvancementHandle;
-import io.github.steaf23.bingoreloaded.lib.api.InteractAction;
+import io.github.steaf23.bingoreloaded.lib.api.PlayerInput;
 import io.github.steaf23.bingoreloaded.lib.api.StatisticDefinition;
 import io.github.steaf23.bingoreloaded.lib.api.WorldHandle;
 import io.github.steaf23.bingoreloaded.lib.api.WorldPosition;
@@ -86,7 +86,7 @@ public final class BingoEventListener implements PlatformEventDispatcher {
 	}
 
 	@Override
-	public EventResult<?> sendPlayerInteracted(PlayerHandle player, @Nullable StackHandle handItem, InteractAction action) {
+	public EventResult<?> sendPlayerInteracted(PlayerHandle player, @Nullable StackHandle handItem, PlayerInput action) {
 		BingoSession session = getSession(player.world());
 		if (session == null) return EventResult.IGNORE;
 
@@ -102,7 +102,7 @@ public final class BingoEventListener implements PlatformEventDispatcher {
 	}
 
 	@Override
-	public EventResult<EventResults.PlayerDeathResult> sendPlayerDeath(PlayerHandle player, Collection<? extends StackHandle> drops) {
+	public EventResult<EventResults.PlayerDeathResult> sendPlayerDeath(PlayerHandle player, Collection<StackHandle> drops) {
 		BingoGame game = getBingoGame(player.world());
 		if (game == null) return new EventResult<>(false, null);
 

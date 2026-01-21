@@ -11,7 +11,6 @@ import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gameloop.GameManager;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.gameloop.phase.PregameLobby;
-import io.github.steaf23.bingoreloaded.item.GoUpWand;
 import io.github.steaf23.bingoreloaded.lib.action.ActionArgument;
 import io.github.steaf23.bingoreloaded.lib.action.ActionResult;
 import io.github.steaf23.bingoreloaded.lib.action.ActionTree;
@@ -22,7 +21,6 @@ import io.github.steaf23.bingoreloaded.lib.api.WorldPosition;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.util.ComponentUtils;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
-import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.settings.CustomKit;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import io.github.steaf23.bingoreloaded.util.BingoPlayerSender;
@@ -100,25 +98,6 @@ public class BingoAction extends ActionTree {
 				return ActionResult.SUCCESS;
 			}
 			return ActionResult.IGNORED;
-		});
-
-
-		this.addSessionSubAction("getcard", List.of(), (user, session, args) -> {
-			if (!(user instanceof PlayerHandle player)) {
-				return ActionResult.IGNORED;
-			}
-
-			if (session.canPlayersViewCard()) {
-				BingoParticipant participant = session.teamManager.getPlayerAsParticipant(player);
-				if (participant instanceof BingoPlayer bingoPlayer) {
-					int cardSlot = session.settingsBuilder.view().kit().getCardSlot();
-					BingoGame game = (BingoGame) session.phase();
-					game.returnCardToPlayer(player.world(), cardSlot, bingoPlayer);
-				}
-				return ActionResult.SUCCESS;
-			} else {
-				return ActionResult.IGNORED;
-			}
 		});
 
 
@@ -294,19 +273,9 @@ public class BingoAction extends ActionTree {
 				.addArgument(ActionArgument.required("slot", List.of("1", "2", "3", "4", "5")).withUseDisplay(ActionArgument.UseDisplay.OPTIONS));
 
 
-		ActionTree itemKitAction = new ActionTree("item", (user, args) -> {
-			if (!(user instanceof PlayerHandle player)) {
-				return ActionResult.IGNORED;
-			}
-			return giveUserBingoItem(player, args[0]);
-		})
-				.addArgument(ActionArgument.required("item_name", List.of("wand", "card")));
-
-
 		this.addSubAction(new ActionTree("kit", List.of("bingo.admin"))
 				.addSubAction(addKitAction)
-				.addSubAction(removeKitAction)
-				.addSubAction(itemKitAction));
+				.addSubAction(removeKitAction));
 
 
 		this.addSessionSubAction("teamedit", List.of("bingo.admin"), (user, session, args) -> {
@@ -422,25 +391,6 @@ public class BingoAction extends ActionTree {
 		}
 
 		return ActionResult.SUCCESS;
-	}
-
-	public ActionResult giveUserBingoItem(PlayerHandle player, String itemName) {
-		BingoSession session = getSessionFromUser(player);
-		if (session == null) {
-			return ActionResult.IGNORED;
-		}
-
-		return switch (itemName) {
-			case "wand" -> {
-				player.inventory().addItem(session.items().createStack(GoUpWand.ID));
-				yield ActionResult.SUCCESS;
-			}
-			case "card" -> {
-				player.inventory().addItem(PlayerKit.CARD_ITEM.buildItem());
-				yield ActionResult.SUCCESS;
-			}
-			default -> ActionResult.INCORRECT_USE;
-		};
 	}
 
 	public void showTeamCardsToUser(ActionUser user, BingoSession session) {

@@ -53,6 +53,19 @@ public class ActionTree {
 		return this;
 	}
 
+	public void removeSubAction(ActionTree subAction) {
+		subActions.remove(subAction);
+	}
+
+	public @Nullable ActionTree getSubAction(String actionName) {
+		for (ActionTree subAction: subActions) {
+			if (subAction.name().equals(actionName)) {
+				return subAction;
+			}
+		}
+		return null;
+	}
+
 	public ActionTree addArgument(ActionArgument argument) {
 		arguments.add(argument);
 		return this;

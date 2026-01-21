@@ -1,7 +1,6 @@
 package io.github.steaf23.bingoreloaded.player;
 
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
-import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.util.ComponentUtils;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
@@ -75,10 +74,6 @@ public class VirtualBingoPlayer implements BingoParticipant
     @Override
     public boolean alwaysActive() {
         return true;
-    }
-
-    @Override
-    public void giveBingoCard(int cardSlot, @NotNull StackHandle cardItem) {
     }
 
     @Override

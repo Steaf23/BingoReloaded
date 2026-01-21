@@ -1,7 +1,6 @@
 package io.github.steaf23.bingoreloaded.lib.event;
 
 import com.hypixel.hytale.event.EventRegistry;
-import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.event.events.player.PlayerDisconnectEvent;
 import com.hypixel.hytale.server.core.event.events.player.PlayerReadyEvent;
 import com.hypixel.hytale.server.core.universe.PlayerRef;

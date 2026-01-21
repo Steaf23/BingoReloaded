@@ -8,6 +8,7 @@ import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandleFabric;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerInfo;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
+import io.github.steaf23.bingoreloaded.lib.util.LoggerWrapper;
 import io.github.steaf23.bingoreloaded.util.FabricTypes;
 import io.github.steaf23.bingoreloaded.util.OfflinePlayerData;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
@@ -16,7 +17,6 @@ import net.fabricmc.loader.api.ModContainer;
 import net.fabricmc.loader.api.metadata.Person;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.format.TextColor;
-import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.RegistryKey;
@@ -207,10 +207,12 @@ public class FabricServerSoftware implements ServerSoftware {
 		return info;
 	}
 
+
 	@Override
-	public ComponentLogger getComponentLogger() {
-		return ComponentLogger.logger(mod);
+	public LoggerWrapper getComponentLogger() {
+		return null;
 	}
+
 
 	@Override
 	public Collection<WorldHandle> getLoadedWorlds() {
@@ -263,11 +265,6 @@ public class FabricServerSoftware implements ServerSoftware {
 
 	@Override
 	public StackHandle colorItemStack(StackHandle stack, TextColor color) {
-		return null;
-	}
-
-	@Override
-	public StatisticDefinition createStatistic(StatisticType type, @Nullable ItemType item, @Nullable EntityType entity) {
 		return null;
 	}
 
