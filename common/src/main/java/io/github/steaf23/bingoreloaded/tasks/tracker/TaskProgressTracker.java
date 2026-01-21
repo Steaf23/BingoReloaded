@@ -5,7 +5,7 @@ import io.github.steaf23.bingoreloaded.data.config.BingoOptions;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.lib.api.AdvancementHandle;
 import io.github.steaf23.bingoreloaded.lib.api.ServerSoftware;
-import io.github.steaf23.bingoreloaded.lib.api.StatisticHandle;
+import io.github.steaf23.bingoreloaded.lib.api.StatisticDefinition;
 import io.github.steaf23.bingoreloaded.lib.api.WorldPosition;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
@@ -104,12 +104,12 @@ public class TaskProgressTracker
             } else if (type == TaskData.TaskType.STATISTIC) {
                 StatisticTask statisticTask = (StatisticTask) task.data;
                 // travel statistics are counted * 1000
-//                if (statisticTask.statistic().getCategory() == BingoStatistic.StatisticCategory.TRAVEL)
+//                if (statisticTask.type().getCategory() == BingoStatistic.StatisticCategory.TRAVEL)
 //                {
 //                    finalCount *= 1000;
 //                }
 
-                // the stat tracker will reset progress to 0 for every statistic added.
+                // the stat tracker will reset progress to 0 for every type added.
                 statisticTracker.addStatistic(statisticTask, participant, this::onBingoStatisticCompleted);
             }
             // No progress to reset for item tasks
@@ -165,7 +165,7 @@ public class TaskProgressTracker
             if (task.taskType() != TaskData.TaskType.STATISTIC) {
                 return false;
             }
-            StatisticHandle statistic = completedStat.getStatistic();
+            StatisticDefinition statistic = completedStat.getStatistic();
             StatisticTask data = (StatisticTask) task.data;
 
             if (!data.statistic().equals(statistic)) {
@@ -177,7 +177,7 @@ public class TaskProgressTracker
         });
     }
 
-    public void handlePlayerStatIncrement(PlayerHandle player, StatisticHandle statistic, int newValue) {
+    public void handlePlayerStatIncrement(PlayerHandle player, StatisticDefinition statistic, int newValue) {
 
         BingoParticipant participant = game.getTeamManager().getPlayerAsParticipant(player);
         if (participant == null || participant.sessionPlayer().isEmpty())
@@ -246,13 +246,13 @@ public class TaskProgressTracker
 
         // Used when crafting things.
         if (resultSlot && !shiftClicked) {
-            platform.runTask(task -> {
+            platform.runTask(player.world().uniqueId(), task -> {
                 completeItemSlot(itemOnCursor, participant);
             });
             return;
         }
 
-        platform.runTask(task -> {
+        platform.runTask(player.world().uniqueId(), task -> {
             // Other contents are updated, so we want to check the full inventory for task items..
             for (StackHandle stack : player.inventory().contents()) {
                 if (stack != null) {
@@ -286,7 +286,7 @@ public class TaskProgressTracker
 
             removeItem = true;
 
-            platform.runTask(task -> {
+            platform.runTask(player.world().uniqueId(), task -> {
                 participant.sessionPlayer().ifPresent(p -> p.world().dropItem(resultStack, itemLocation));
             });
         }
@@ -302,7 +302,7 @@ public class TaskProgressTracker
 
         //FIXME: REFACTOR remove wrap
         StackWrapped wrapped = new StackWrapped(stack);
-        platform.runTask(task -> {
+        platform.runTask(player.world().uniqueId(), task -> {
             StackHandle internal = wrapped.stack();
             internal = completeItemSlot(stack, participant);
         });

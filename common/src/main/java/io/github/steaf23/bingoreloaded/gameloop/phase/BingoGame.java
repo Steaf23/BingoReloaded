@@ -100,19 +100,21 @@ public class BingoGame implements GamePhase
 		this.onGameEndedCallback = onGameEndedCallback;
         this.items = session.items();
 
-		this.respawnManager = new PlayerRespawnManager(platform, config.getOptionValue(BingoOptions.TELEPORT_AFTER_DEATH_PERIOD));
+		this.respawnManager = new PlayerRespawnManager(session.getOverworld(), platform, config.getOptionValue(BingoOptions.TELEPORT_AFTER_DEATH_PERIOD));
         this.playerSpawnPoints = new HashMap<>();
 
 		this.startPosition = atPosition;
     }
 
     private void start() {
+        WorldHandle world = session.getOverworld();
+
         this.gameStarted = false;
         // Create timer
         if (settings.useCountdown())
-            timer = new CountdownTimer(settings.countdownDuration() * 60, 5 * 60, 60, this::onCountdownTimerFinished);
+            timer = new CountdownTimer(world, settings.countdownDuration() * 60, 5 * 60, 60, this::onCountdownTimerFinished);
         else
-            timer = new CounterTimer();
+            timer = new CounterTimer(world);
         timer.addNotifier(time ->
         {
             Component timerMessage = timer.getTimeDisplayMessage(false);
@@ -122,7 +124,6 @@ public class BingoGame implements GamePhase
         });
 
         deathMatchTask = null;
-        WorldHandle world = session.getOverworld();
         if (world == null) {
             session.endGame();
             return;
@@ -170,7 +171,7 @@ public class BingoGame implements GamePhase
                 PlayerHandle player = p.sessionPlayer().get();
 
                 p.giveKit(settings.kit());
-                returnCardToPlayer(settings.kit().getCardSlot(), p);
+                returnCardToPlayer(player.world(), settings.kit().getCardSlot(), p);
                 player.setLevel(0);
                 player.setExp(0.0f);
 				getSession().getGameManager().getRuntime().gameDisplay().addPlayer(player);
@@ -192,7 +193,7 @@ public class BingoGame implements GamePhase
 		session.getGameManager().getRuntime().gameDisplay().update(scoreboard);
 
         // Countdown before the game actually starts
-        startingTimer = new CountdownTimer(Math.max(1, config.getOptionValue(BingoOptions.STARTING_COUNTDOWN_TIME)), 6, 3, this::onStartingTimerFinished);
+        startingTimer = new CountdownTimer(world, Math.max(1, config.getOptionValue(BingoOptions.STARTING_COUNTDOWN_TIME)), 6, 3, this::onStartingTimerFinished);
         startingTimer.addNotifier(time -> {
             Component timeComponent = Component.text(time);
             if (time == 0) {
@@ -219,7 +220,7 @@ public class BingoGame implements GamePhase
                 playSound(BingoSound.COUNTDOWN_TICK_2.builder().volume(1.2f - time / 10.0f + 0.2f).pitch(pitch).build());
             }
         });
-        platform.runTask(BingoReloaded.ONE_SECOND, task -> startingTimer.start());
+        platform.runTask(world.uniqueId(), BingoReloaded.ONE_SECOND, task -> startingTimer.start());
     }
 
     public boolean hasStarted() {
@@ -308,7 +309,7 @@ public class BingoGame implements GamePhase
         return actionBarManager;
     }
 
-    public void returnCardToPlayer(int cardSlot, BingoParticipant participant) {
+    public void returnCardToPlayer(WorldHandle world, int cardSlot, BingoParticipant participant) {
         if (participant.sessionPlayer().isEmpty())
             return;
 
@@ -316,7 +317,7 @@ public class BingoGame implements GamePhase
         participant.giveBingoCard(cardSlot, cardItem);
         participant.sessionPlayer().get().setGamemode(PlayerGamemode.SURVIVAL);
 
-        platform.runTask(task -> participant.giveEffects(settings.effects(), config.getOptionValue(BingoOptions.GRACE_PERIOD)));
+        platform.runTask(world.uniqueId(), task -> participant.giveEffects(settings.effects(), config.getOptionValue(BingoOptions.GRACE_PERIOD)));
     }
 
     public void startDeathMatch(int seconds) {
@@ -364,7 +365,7 @@ public class BingoGame implements GamePhase
         BingoPlayerSender.sendTitle(countdownComponent.color(color), session);
         BingoPlayerSender.sendMessage(countdownComponent.color(color), session);
 
-        platform.runTask(BingoReloaded.ONE_SECOND, task -> startDeathMatchRecurse(countdown - 1));
+        platform.runTask(session.getOverworld().uniqueId(), BingoReloaded.ONE_SECOND, task -> startDeathMatchRecurse(countdown - 1));
     }
 
     public void teleportPlayerAfterDeath(PlayerHandle player) {
@@ -398,7 +399,7 @@ public class BingoGame implements GamePhase
 			if (!getTeamManager().getParticipants().isEmpty()) {
 				spawnPlatform(spawnLocation, 5, true);
 
-				platform.runTask(platformLifetime, task ->
+				platform.runTask(world.uniqueId(), platformLifetime, task ->
 						BingoGame.removePlatform(spawnLocation, 5));
 			}
 
@@ -414,7 +415,7 @@ public class BingoGame implements GamePhase
                     if (!getTeamManager().getParticipants().isEmpty()) {
                         spawnPlatform(platformLocation.clone(), 5, true);
 
-                        platform.runTask(platformLifetime, task ->
+                        platform.runTask(world.uniqueId(), platformLifetime, task ->
                                 BingoGame.removePlatform(platformLocation, 5));
                     }
                     teleportPlayerToStart(p, platformLocation, 5);
@@ -428,7 +429,7 @@ public class BingoGame implements GamePhase
                     if (!players.isEmpty()) {
                         spawnPlatform(teamLocation, 5, true);
 
-                        platform.runTask(platformLifetime, task ->
+                        platform.runTask(world.uniqueId(), platformLifetime, task ->
                                 BingoGame.removePlatform(teamLocation, 5));
                     }
                     players.forEach(p -> teleportPlayerToStart(p, teamLocation, 5));
@@ -439,7 +440,7 @@ public class BingoGame implements GamePhase
                 if (!getTeamManager().getParticipants().isEmpty()) {
                     spawnPlatform(spawnLocation, 5, true);
 
-                    platform.runTask(platformLifetime, task ->
+                    platform.runTask(world.uniqueId(), platformLifetime, task ->
                             BingoGame.removePlatform(spawnLocation, 5));
                 }
 
@@ -635,7 +636,7 @@ public class BingoGame implements GamePhase
             return EventResults.playerRespawnResult(false, false, null);
 
         if (!settings.effects().contains(EffectOptionFlags.KEEP_INVENTORY)) {
-            returnCardToPlayer(settings.kit().getCardSlot(), bingoPlayer);
+            returnCardToPlayer(player.world(), settings.kit().getCardSlot(), bingoPlayer);
             bingoPlayer.giveKit(settings.kit());
         } else {
             bingoPlayer.giveEffects(settings.effects(), 0);

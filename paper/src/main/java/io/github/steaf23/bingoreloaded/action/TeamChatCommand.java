@@ -31,8 +31,8 @@ public class TeamChatCommand extends ActionTree implements Listener {
 		this.enabledPlayers = new ArrayList<>();
 		this.sessionResolver = sessionResolver;
 
-		setAction((args) -> {
-			if (!(getLastUser() instanceof PlayerHandle handle)) {
+		setAction((user, args) -> {
+			if (!(user instanceof PlayerHandle handle)) {
 				return ActionResult.IGNORED;
 			}
 

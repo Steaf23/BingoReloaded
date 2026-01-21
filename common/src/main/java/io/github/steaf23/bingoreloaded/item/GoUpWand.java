@@ -33,7 +33,8 @@ public class GoUpWand extends GameItem {
 	@Override
 	public ItemTemplate defaultTemplate() {
 		return new ItemTemplate(
-				ItemType.of(Key.key("warped_fungus_on_a_stick")),
+				//FIXME: REFACTOR before release. Come up with a better design for creating item types on different platforms.
+				ItemType.of("Weapon_Staff_Mithril"),
 				BingoMessage.WAND_ITEM_NAME.asPhrase().color(NamedTextColor.DARK_PURPLE).decorate(TextDecoration.BOLD, TextDecoration.ITALIC),
 				BingoMessage.WAND_ITEM_DESC.asMultiline())
 				.addEnchantment(Key.key("minecraft:unbreaking"), 3);
@@ -62,7 +63,7 @@ public class GoUpWand extends GameItem {
 		wand.setCooldown(PlayerKit.WAND_COOLDOWN_GROUP, wandCooldownSeconds);
 		player.setCooldown(wand, (int)(wandCooldownSeconds * 20));
 
-		BingoReloaded.runtime().getServerSoftware().runTask(task -> {
+		BingoReloaded.runtime().getServerSoftware().runTask(player.world().uniqueId(), task -> {
 			double distance;
 			double fallDistance;
 			// Use the wand
@@ -80,7 +81,7 @@ public class GoUpWand extends GameItem {
 			platformLocation.setY(platformLocation.y() + distance);
 
 			BingoGame.spawnPlatform(platformLocation, 1, true);
-			BingoReloaded.runtime().getServerSoftware().runTask((long) Math.max(0, platformLifetimeSeconds) * BingoReloaded.ONE_SECOND, laterTask -> {
+			BingoReloaded.runtime().getServerSoftware().runTask(player.world().uniqueId(), (long) Math.max(0, platformLifetimeSeconds) * BingoReloaded.ONE_SECOND, laterTask -> {
 				BingoGame.removePlatform(platformLocation, 1);
 			});
 

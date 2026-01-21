@@ -1,7 +1,7 @@
 package io.github.steaf23.bingoreloaded.lib.data.serializers;
 
 import io.github.steaf23.bingoreloaded.lib.api.EntityType;
-import io.github.steaf23.bingoreloaded.lib.api.StatisticHandle;
+import io.github.steaf23.bingoreloaded.lib.api.StatisticDefinition;
 import io.github.steaf23.bingoreloaded.lib.api.StatisticType;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataStorage;
@@ -9,11 +9,11 @@ import io.github.steaf23.bingoreloaded.lib.data.core.DataStorageSerializer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class StatisticSerializer implements DataStorageSerializer<StatisticHandle> {
+public class StatisticSerializer implements DataStorageSerializer<StatisticDefinition> {
 
 	@Override
-	public void toDataStorage(@NotNull DataStorage storage, @NotNull StatisticHandle value) {
-		storage.setNamespacedKey("stat_type", value.statisticType().key());
+	public void toDataStorage(@NotNull DataStorage storage, @NotNull StatisticDefinition value) {
+		storage.setNamespacedKey("stat_type", value.type().key());
 
 		ItemType item = value.itemType();
 		if (item != null)
@@ -28,7 +28,7 @@ public class StatisticSerializer implements DataStorageSerializer<StatisticHandl
 	}
 
 	@Override
-	public @Nullable StatisticHandle fromDataStorage(@NotNull DataStorage storage) {
+	public @Nullable StatisticDefinition fromDataStorage(@NotNull DataStorage storage) {
 		StatisticType type = StatisticType.of(storage.getNamespacedKey("stat_type"));
 
 		ItemType item = null;
@@ -42,6 +42,6 @@ public class StatisticSerializer implements DataStorageSerializer<StatisticHandl
 			entity = EntityType.of(storage.getNamespacedKey("entity"));
 		}
 
-		return StatisticHandle.create(type, item, entity);
+		return new StatisticDefinition(type, entity, item);
 	}
 }

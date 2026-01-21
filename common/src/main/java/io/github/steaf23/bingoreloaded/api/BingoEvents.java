@@ -1,7 +1,7 @@
 package io.github.steaf23.bingoreloaded.api;
 
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
-import io.github.steaf23.bingoreloaded.lib.api.StatisticHandle;
+import io.github.steaf23.bingoreloaded.lib.api.StatisticDefinition;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
@@ -45,7 +45,7 @@ public class BingoEvents {
 
 	}
 
-	public record StatisticCompleted(BingoSession session, StatisticHandle statistic, BingoParticipant participant) {
+	public record StatisticCompleted(BingoSession session, StatisticDefinition statistic, BingoParticipant participant) {
 
 	}
 

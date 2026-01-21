@@ -14,7 +14,7 @@ public interface InventoryMenu extends Menu {
 	Inventory getInventory();
 
 	default void openInventory(PlayerHandle player) {
-		PlatformResolver.get().runTask(task -> player.openInventory(new InventoryHandlePaper(getInventory())));
+		PlatformResolver.get().runTask(player.world().uniqueId(), task -> player.openInventory(new InventoryHandlePaper(getInventory())));
 	}
 
 	static Component inputButtonText(Component buttonText) {

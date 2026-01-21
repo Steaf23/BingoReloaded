@@ -5,9 +5,9 @@ import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerInfo;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
+import io.github.steaf23.bingoreloaded.lib.util.LoggerWrapper;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.format.TextColor;
-import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -47,6 +47,7 @@ public interface ServerSoftware {
 	@NotNull PlayerInfo getPlayerInfo(String playerName);
 
 	ItemType resolveItemType(Key key);
+	ItemType resolveItemType(String key);
 	DimensionType resolveDimensionType(Key key);
 	EntityType resolveEntityType(Key key);
 	AdvancementHandle resolveAdvancement(Key key);
@@ -55,7 +56,7 @@ public interface ServerSoftware {
 
 	ExtensionInfo getExtensionInfo();
 
-	ComponentLogger getComponentLogger();
+	LoggerWrapper getComponentLogger();
 
 	Collection<WorldHandle> getLoadedWorlds();
 	@Nullable WorldHandle getWorld(String worldName);
@@ -69,13 +70,11 @@ public interface ServerSoftware {
 	byte[] createBytesFromStack(StackHandle stack);
 	StackHandle colorItemStack(StackHandle stack, TextColor color);
 
-	StatisticHandle createStatistic(StatisticType type, @Nullable ItemType item, @Nullable EntityType entity);
-
 	boolean areAdvancementsDisabled();
 
-	ExtensionTask runTaskTimer(long repeatTicks, long startDelayTicks, Consumer<ExtensionTask> consumer);
-	ExtensionTask runTask(Consumer<ExtensionTask> consumer);
-	ExtensionTask runTask(long startDelayTicks, Consumer<ExtensionTask> consumer);
+	ExtensionTask runTaskTimer(UUID worldId, long repeatTicks, long startDelayTicks, Consumer<ExtensionTask> consumer);
+	ExtensionTask runTask(UUID worldId, Consumer<ExtensionTask> consumer);
+	ExtensionTask runTask(UUID worldId, long startDelayTicks, Consumer<ExtensionTask> consumer);
 
 	/**
 	 * Sends command as console.

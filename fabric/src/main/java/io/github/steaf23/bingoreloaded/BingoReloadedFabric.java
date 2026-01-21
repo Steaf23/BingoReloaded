@@ -45,19 +45,20 @@ public class BingoReloadedFabric implements ModInitializer, BingoReloadedRuntime
 	public void onInitialize() {
 		bingo.load();
 		bingo.enable();
+		bingo.serverReady();
 	}
 
 	@Override
 	public DataAccessor getConfigData() {
-		return new SnakeYamlDataAccessor(platform, "config");
+		return new SnakeYamlDataAccessor("config");
 	}
 
 	@Override
 	public Collection<DataAccessor> getDataToRegister() {
 		return List.of(
-				new SnakeYamlDataAccessor(platform, "scoreboards"),
-				new SnakeYamlDataAccessor(platform, "placeholders"),
-				new SnakeYamlDataAccessor(platform, "sounds"));
+				new SnakeYamlDataAccessor("scoreboards"),
+				new SnakeYamlDataAccessor("placeholders"),
+				new SnakeYamlDataAccessor("sounds"));
 	}
 
 	@Override
@@ -72,8 +73,8 @@ public class BingoReloadedFabric implements ModInitializer, BingoReloadedRuntime
 
 	@Override
 	public LanguageData getLanguageData(String language) {
-		var lang = new SnakeYamlDataAccessor(platform, language);
-		var fallback = new SnakeYamlDataAccessor(platform, "languages/en_us");
+		var lang = new SnakeYamlDataAccessor(language);
+		var fallback = new SnakeYamlDataAccessor("languages/en_us");
 
 		BingoReloaded.addDataAccessor(lang);
 		BingoReloaded.addDataAccessor(fallback);

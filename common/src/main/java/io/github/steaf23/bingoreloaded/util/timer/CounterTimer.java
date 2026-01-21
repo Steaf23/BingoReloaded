@@ -2,12 +2,18 @@ package io.github.steaf23.bingoreloaded.util.timer;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
+import io.github.steaf23.bingoreloaded.lib.api.WorldHandle;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 
 public class CounterTimer extends GameTimer
 {
+
+    public CounterTimer(WorldHandle world) {
+        super(world);
+    }
+
     @Override
     public Component getTimeDisplayMessage(boolean asSeconds)
     {

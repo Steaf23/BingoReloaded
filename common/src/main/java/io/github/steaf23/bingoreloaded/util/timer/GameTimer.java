@@ -2,12 +2,14 @@ package io.github.steaf23.bingoreloaded.util.timer;
 
 import io.github.steaf23.bingoreloaded.lib.api.ExtensionTask;
 import io.github.steaf23.bingoreloaded.lib.api.PlatformResolver;
+import io.github.steaf23.bingoreloaded.lib.api.WorldHandle;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.function.Consumer;
 
 public abstract class GameTimer
@@ -15,14 +17,16 @@ public abstract class GameTimer
     private final List<Consumer<Long>> notifiers;
     private long time;
     private ExtensionTask task;
+    private final WorldHandle world;
 
     public abstract Component getTimeDisplayMessage(boolean asSeconds);
     public abstract int getStartDelay();
     public abstract int getUpdateInterval();
     public abstract int getStep();
 
-    public GameTimer()
+    public GameTimer(WorldHandle world)
     {
+        this.world = world;
         this.time = 0;
         this.task = null;
         this.notifiers = new ArrayList<>();
@@ -31,7 +35,7 @@ public abstract class GameTimer
     public void start()
     {
         stop();
-        this.task = PlatformResolver.get().runTaskTimer(getUpdateInterval(), getStartDelay(), (task) -> {
+        this.task = PlatformResolver.get().runTaskTimer(world.uniqueId(), getUpdateInterval(), getStartDelay(), (task) -> {
             updateTime(time + getStep());
         });
     }

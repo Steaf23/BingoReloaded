@@ -1,0 +1,22 @@
+{
+    "Group": "Steaf23",
+    "Name": "BingoReloaded",
+    "Version": "3.4.1",
+    "Description": "Bingo Reloaded, but in HyTale!",
+    "Authors": [
+        {
+            "Name": "Steven"
+        }
+    ],
+    "Website": "steaf23.github.io",
+    "ServerVersion": "*",
+    "Dependencies": {
+        
+    },
+    "OptionalDependencies": {
+        
+    },
+    "DisabledByDefault": false,
+    "Main": "io.github.steaf23.bingoreloaded.BingoReloadedHytale",
+    "IncludesAssetPack": true
+}

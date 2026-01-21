@@ -1,6 +1,6 @@
 package io.github.steaf23.bingoreloaded.tasks.tracker;
 
-import io.github.steaf23.bingoreloaded.lib.api.StatisticHandle;
+import io.github.steaf23.bingoreloaded.lib.api.StatisticDefinition;
 import io.github.steaf23.bingoreloaded.lib.api.StatisticType;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
@@ -9,7 +9,7 @@ import java.util.function.Consumer;
 
 public class StatisticProgress
 {
-    private final StatisticHandle statistic;
+    private final StatisticDefinition statistic;
     private final BingoParticipant player;
     private int progressLeft;
 
@@ -17,13 +17,13 @@ public class StatisticProgress
 
     private final Consumer<StatisticProgress> progressCompletedCallback;
 
-    public StatisticProgress(StatisticHandle statistic, BingoParticipant player, int targetScore, Consumer<StatisticProgress> progressCompletedCallback)
+    public StatisticProgress(StatisticDefinition statistic, BingoParticipant player, int targetScore, Consumer<StatisticProgress> progressCompletedCallback)
     {
         this.statistic = statistic;
         this.player = player;
         this.progressLeft = targetScore;
 		this.progressCompletedCallback = progressCompletedCallback;
-		if (statistic.statisticType().getCategory() == StatisticType.StatisticCategory.TRAVEL)
+		if (statistic.type().getCategory() == StatisticType.StatisticCategory.TRAVEL)
         {
             progressLeft *= 1000;
         }
@@ -43,7 +43,7 @@ public class StatisticProgress
      */
     public void updatePeriodicProgress()
     {
-        if (statistic.getsUpdatedAutomatically())
+        if (statistic.type().getsUpdatedAutomatically())
             return;
 
         int newProgress = getParticipantTotalScore();
@@ -73,20 +73,20 @@ public class StatisticProgress
         int value;
         if (statistic.hasItemType())
         {
-            value = gamePlayer.getStatisticValue(statistic.statisticType(), statistic.itemType());
+            value = gamePlayer.getStatisticValue(statistic.type(), statistic.itemType());
         }
         else if (statistic.hasEntity())
         {
-            value = gamePlayer.getStatisticValue(statistic.statisticType(), statistic.entityType());
+            value = gamePlayer.getStatisticValue(statistic.type(), statistic.entityType());
         }
         else
         {
-            value = gamePlayer.getStatisticValue(statistic.statisticType());
+            value = gamePlayer.getStatisticValue(statistic.type());
         }
         return value;
     }
 
-    public StatisticHandle getStatistic() {
+    public StatisticDefinition getStatistic() {
         return statistic;
     }
 

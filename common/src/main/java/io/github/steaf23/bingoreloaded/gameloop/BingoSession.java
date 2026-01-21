@@ -87,7 +87,7 @@ public class BingoSession implements ForwardingAudience
         //TODO: decide a better place for this command
 //        BingoReloaded.getInstance().registerCommand("bingobot", new BotCommand(this));
 
-        gameManager.getPlatform().runTask(10L, (t) -> {
+        gameManager.getPlatform().runTask(getOverworld().uniqueId(), 10L, (t) -> {
             for (PlayerHandle p : PlatformResolver.get().getOnlinePlayers()) {
                 if (hasPlayer(p)) {
                     addPlayer(p);
@@ -203,7 +203,7 @@ public class BingoSession implements ForwardingAudience
 				delaySeconds = Math.min(delaySeconds, gameRestartTime);
 
 				if (delaySeconds > 0.0) {
-					gameManager.getPlatform().runTask((long) (delaySeconds * BingoReloaded.ONE_SECOND), t -> {
+					gameManager.getPlatform().runTask(getOverworld().uniqueId(), (long) (delaySeconds * BingoReloaded.ONE_SECOND), t -> {
 						getPlayersInWorld().forEach(p -> {
 							WorldPosition pos = BlockHelper.getRandomPosWithinRange(lobby.spawnPosition(), spread, spread);
 							p.teleportAsync(pos);
@@ -270,7 +270,7 @@ public class BingoSession implements ForwardingAudience
 	}
 
     public void onPlayerJoinedSessionWorld(PlayerHandle player) {
-        gameManager.getPlatform().runTask(t -> {
+        gameManager.getPlatform().runTask(player.world().uniqueId(),t -> {
             teamManager.handlePlayerJoinedSessionWorld(player);
             phase.handlePlayerJoinedSessionWorld(player);
 
@@ -288,7 +288,7 @@ public class BingoSession implements ForwardingAudience
 		getGameManager().getRuntime().getClientManager().updateCard(player, null);
 
 
-        getGameManager().getPlatform().runTask(t -> {
+        getGameManager().getPlatform().runTask(player.uniqueId(), t -> {
             teamManager.handlePlayerLeftSessionWorld(player);
             phase.handlePlayerLeftSessionWorld(player);
 
@@ -375,7 +375,7 @@ public class BingoSession implements ForwardingAudience
         return EventResult.IGNORE;
     }
 
-    public WorldHandle getOverworld() {
+    public @Nullable WorldHandle getOverworld() {
         return worlds.getOverworld();
     }
 

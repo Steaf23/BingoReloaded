@@ -1,0 +1,22 @@
+{
+  "Input": [
+    {
+      "ItemId": "Soil_Dirt",
+      "Quantity": 10
+    }
+  ],
+  "PrimaryOutput": {
+    "ItemId": "Soil_Dirt",
+    "Quantity": 1
+  },
+  "BenchRequirement": [
+    {
+      "Id": "Fieldcraft",
+      "Type": "Crafting",
+      "Categories": [
+        "Tools"
+      ]
+    }
+  ],
+  "Seconds": 1
+}

@@ -16,7 +16,7 @@ configuration: SINGULAR
 #     to allow the plugin to use the Nether and End dimensions, the names `<defaultWorldName>_nether` and `<defaultWorldName>_the_end` must also be valid worlds.
 #   - MULTIPLE: This world is used more like a lobby world, however it is not required. The actual game worlds can be created using autobingo commands .
 #     In this case, players can be teleported to any active game world using the /autobingo teleport command
-defaultWorldName: world
+defaultWorldName: default
 
 # The yml file that contains the language data that will be used for this plugin
 #   Choose from: en_us.yml, nl.yml, fr_fr.yml, pt_br.yml, du.yml, zh_cn.yml, ja_jp.yml, ru.yml

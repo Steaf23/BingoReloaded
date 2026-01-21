@@ -4,9 +4,11 @@ import io.github.steaf23.bingoreloaded.BingoReloadedPaper;
 import io.github.steaf23.bingoreloaded.cards.CardSize;
 import io.github.steaf23.bingoreloaded.data.helper.SerializablePlayer;
 import io.github.steaf23.bingoreloaded.lib.api.AdvancementHandlePaper;
+import io.github.steaf23.bingoreloaded.lib.api.EntityTypePaper;
 import io.github.steaf23.bingoreloaded.lib.api.PaperApiHelper;
 import io.github.steaf23.bingoreloaded.lib.api.ServerSoftware;
-import io.github.steaf23.bingoreloaded.lib.api.StatisticHandlePaper;
+import io.github.steaf23.bingoreloaded.lib.api.StatisticDefinition;
+import io.github.steaf23.bingoreloaded.lib.api.StatisticTypePaper;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemTypePaper;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandlePaper;
@@ -427,10 +429,10 @@ public class DataUpdaterV1
                 }
                 if (task instanceof OldStatisticTask(int count, OldStatistic statistic)) {
                     newTasks.add(new StatisticTask(
-                            StatisticHandlePaper.create(
-                                    statistic.stat(),
-                                    statistic.entity(),
-                                    statistic.material),
+                            new StatisticDefinition(
+                                    new StatisticTypePaper(statistic.stat()),
+                                    new EntityTypePaper(statistic.entity()),
+                                    new ItemTypePaper(statistic.material)),
 							count));
                 }
                 if (task instanceof OldAdvancementTask(Advancement advancement)) {

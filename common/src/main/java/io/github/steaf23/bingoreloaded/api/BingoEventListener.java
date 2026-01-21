@@ -6,7 +6,7 @@ import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.gameloop.phase.PregameLobby;
 import io.github.steaf23.bingoreloaded.lib.api.AdvancementHandle;
 import io.github.steaf23.bingoreloaded.lib.api.InteractAction;
-import io.github.steaf23.bingoreloaded.lib.api.StatisticHandle;
+import io.github.steaf23.bingoreloaded.lib.api.StatisticDefinition;
 import io.github.steaf23.bingoreloaded.lib.api.WorldHandle;
 import io.github.steaf23.bingoreloaded.lib.api.WorldPosition;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
@@ -21,20 +21,19 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collection;
 
 public final class BingoEventListener implements PlatformEventDispatcher {
+
 	private final boolean disableAdvancements;
 	private final boolean disableStatistics;
 	private final GameManager gameManager;
 
-	public BingoEventListener(GameManager gameManager, boolean disableAdvancements, boolean disableStatistics)
-	{
+	public BingoEventListener(GameManager gameManager, boolean disableAdvancements, boolean disableStatistics) {
 		this.gameManager = gameManager;
 		this.disableAdvancements = disableAdvancements;
 		this.disableStatistics = disableStatistics;
 	}
 
 	@Nullable
-	private BingoSession getSession(@NotNull WorldHandle world)
-	{
+	private BingoSession getSession(@NotNull WorldHandle world) {
 		return gameManager.getSessionFromWorld(world);
 	}
 
@@ -70,9 +69,8 @@ public final class BingoEventListener implements PlatformEventDispatcher {
 
 		EventResult<?> sessionResult = session.handlePlayerDroppedStack(player, item);
 
-		BingoGame game = session.isRunning() ? (BingoGame)session.phase() : null;
-		if (game != null && game.hasStarted())
-		{
+		BingoGame game = session.isRunning() ? (BingoGame) session.phase() : null;
+		if (game != null && game.hasStarted()) {
 			game.getProgressTracker().handlePlayerDroppedItem(player, item);
 		}
 
@@ -118,9 +116,8 @@ public final class BingoEventListener implements PlatformEventDispatcher {
 			lobby.handlePlayerRespawn(player);
 		}
 
-		BingoGame game = session != null && session.isRunning() ? (BingoGame)session.phase() : null;
-		if (game != null)
-		{
+		BingoGame game = session != null && session.isRunning() ? (BingoGame) session.phase() : null;
+		if (game != null) {
 			return game.handlePlayerRespawn(player, isBedSpawn, isAnchorSpawn);
 		}
 
@@ -128,14 +125,12 @@ public final class BingoEventListener implements PlatformEventDispatcher {
 	}
 
 	@Override
-	public EventResult<?> sendPlayerJoinsServer(PlayerHandle player)
-	{
+	public EventResult<?> sendPlayerJoinsServer(PlayerHandle player) {
 		return gameManager.handlePlayerJoinsServer(player);
 	}
 
 	@Override
-	public EventResult<?> sendPlayerQuitsServer(final PlayerHandle player)
-	{
+	public EventResult<?> sendPlayerQuitsServer(final PlayerHandle player) {
 		return gameManager.handlePlayerQuitsServer(player);
 	}
 
@@ -158,14 +153,13 @@ public final class BingoEventListener implements PlatformEventDispatcher {
 	}
 
 	@Override
-	public EventResult<?> sendPlayerStatisticIncrement(PlayerHandle player, StatisticHandle statistic, int newValue) {
+	public EventResult<?> sendPlayerStatisticIncrement(PlayerHandle player, StatisticDefinition statistic, int newValue) {
 		if (disableStatistics)
 			return EventResult.IGNORE;
 
 		BingoSession session = getSession(player.world());
-		BingoGame game = session != null && session.isRunning() ? (BingoGame)session.phase() : null;
-		if (game != null)
-		{
+		BingoGame game = session != null && session.isRunning() ? (BingoGame) session.phase() : null;
+		if (game != null) {
 			game.getProgressTracker().handlePlayerStatIncrement(player, statistic, newValue);
 		}
 
@@ -178,9 +172,8 @@ public final class BingoEventListener implements PlatformEventDispatcher {
 			return EventResult.IGNORE;
 
 		BingoSession session = getSession(player.world());
-		BingoGame game = session != null && session.isRunning() ? (BingoGame)session.phase() : null;
-		if (game != null)
-		{
+		BingoGame game = session != null && session.isRunning() ? (BingoGame) session.phase() : null;
+		if (game != null) {
 			game.getProgressTracker().handlePlayerAdvancementDone(player, advancement);
 		}
 
@@ -190,9 +183,8 @@ public final class BingoEventListener implements PlatformEventDispatcher {
 	@Override
 	public EventResult<EventResults.PlayerPickupResult> sendPlayerPickupStack(PlayerHandle player, StackHandle stack, WorldPosition itemLocation) {
 		BingoSession session = getSession(player.world());
-		BingoGame game = session != null && session.isRunning() ? (BingoGame)session.phase() : null;
-		if (game != null && game.hasStarted())
-		{
+		BingoGame game = session != null && session.isRunning() ? (BingoGame) session.phase() : null;
+		if (game != null && game.hasStarted()) {
 			return game.getProgressTracker().handlePlayerPickupItem(player, stack, itemLocation);
 		}
 
@@ -202,9 +194,8 @@ public final class BingoEventListener implements PlatformEventDispatcher {
 	@Override
 	public EventResult<?> sendPlayerInventoryClick(PlayerHandle player, StackHandle itemOnCursor, boolean resultSlot, boolean shiftClick) {
 		BingoSession session = getSession(player.world());
-		BingoGame game = session != null && session.isRunning() ? (BingoGame)session.phase() : null;
-		if (game != null && game.hasStarted())
-		{
+		BingoGame game = session != null && session.isRunning() ? (BingoGame) session.phase() : null;
+		if (game != null && game.hasStarted()) {
 			game.getProgressTracker().handleInventoryClicked(player, itemOnCursor, resultSlot, shiftClick);
 		}
 

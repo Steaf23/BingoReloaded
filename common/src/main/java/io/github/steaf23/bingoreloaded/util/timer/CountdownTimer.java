@@ -2,6 +2,7 @@ package io.github.steaf23.bingoreloaded.util.timer;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
+import io.github.steaf23.bingoreloaded.lib.api.WorldHandle;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -14,14 +15,15 @@ public class CountdownTimer extends GameTimer
     public final int lowThreshold;
     private final Runnable onTimeoutCallback;
 
-    public CountdownTimer(int seconds, @Nullable Runnable onTimeoutCallback)
+    public CountdownTimer(WorldHandle world, int seconds, @Nullable Runnable onTimeoutCallback)
     {
-        this(seconds, 0, 0, onTimeoutCallback);
+        this(world, seconds, 0, 0, onTimeoutCallback);
     }
 
-    public CountdownTimer(int seconds, int medThreshold, int lowThreshold, @Nullable Runnable onTimeoutCallback)
+    public CountdownTimer(WorldHandle world, int seconds, int medThreshold, int lowThreshold, @Nullable Runnable onTimeoutCallback)
     {
-        this.medThreshold = medThreshold;
+		super(world);
+		this.medThreshold = medThreshold;
         this.lowThreshold = lowThreshold;
         this.startTime = seconds;
 		this.onTimeoutCallback = onTimeoutCallback;

@@ -137,8 +137,8 @@ public class BotCommandAction extends ActionTree {
 	}
 
 	public void addSessionSubAction(String name, List<String> permissions, BiFunction<String[], BingoSession, Boolean> action) {
-		addSubAction(new ActionTree(name, permissions, (args) -> {
-			BingoSession session = getSessionFromUser(getLastUser());
+		addSubAction(new ActionTree(name, permissions, (user, args) -> {
+			BingoSession session = getSessionFromUser(user);
 			if (session == null) {
 				return ActionResult.IGNORED;
 			} else {

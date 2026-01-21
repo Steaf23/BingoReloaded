@@ -36,3 +36,5 @@ paper/run/
 fabric/run/
 BingoReloadedCompanion/run/
 BingoReloadedCompanion/build/
+/run/*
+/hytale/build/*

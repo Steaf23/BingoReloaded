@@ -1,7 +1,7 @@
 package io.github.steaf23.bingoreloaded.tasks.data;
 
 import io.github.steaf23.bingoreloaded.lib.api.AdvancementHandle;
-import io.github.steaf23.bingoreloaded.lib.api.StatisticHandle;
+import io.github.steaf23.bingoreloaded.lib.api.StatisticDefinition;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataStorage;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataStorageSerializer;
@@ -22,7 +22,7 @@ public class TaskStorageSerializer implements DataStorageSerializer<TaskData>
                 }
             }
             case StatisticTask statisticTask -> {
-                storage.setSerializable("statistic", StatisticHandle.class, statisticTask.statistic());
+                storage.setSerializable("statistic", StatisticDefinition.class, statisticTask.statistic());
                 storage.setInt("count", statisticTask.getRequiredAmount());
             }
             default -> {
@@ -43,7 +43,7 @@ public class TaskStorageSerializer implements DataStorageSerializer<TaskData>
         }
         else if (storage.contains("statistic")) {
             return new StatisticTask(
-                    storage.getSerializable("statistic", StatisticHandle.class),
+                    storage.getSerializable("statistic", StatisticDefinition.class),
                     storage.getInt("count", 1));
         }
 

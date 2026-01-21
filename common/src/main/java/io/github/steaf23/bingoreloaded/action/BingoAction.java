@@ -12,6 +12,7 @@ import io.github.steaf23.bingoreloaded.gameloop.GameManager;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.gameloop.phase.PregameLobby;
 import io.github.steaf23.bingoreloaded.item.GoUpWand;
+import io.github.steaf23.bingoreloaded.lib.action.ActionArgument;
 import io.github.steaf23.bingoreloaded.lib.action.ActionResult;
 import io.github.steaf23.bingoreloaded.lib.action.ActionTree;
 import io.github.steaf23.bingoreloaded.lib.api.ActionUser;
@@ -32,7 +33,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.BiFunction;
 
 public class BingoAction extends ActionTree {
 
@@ -48,28 +48,28 @@ public class BingoAction extends ActionTree {
 		this.gameManager = gameManager;
 		this.lobbyData = new BingoLobbyData();
 
-		setAction((action) -> {
-			BingoSession session = getSessionFromUser(getLastUser());
+		setAction((user, args) -> {
+			BingoSession session = getSessionFromUser(user);
 			if (session == null) {
 				return ActionResult.IGNORED;
 			}
-			BingoReloaded.runtime().openBingoMenu((PlayerHandle)getLastUser(), session);
+			BingoReloaded.runtime().openBingoMenu((PlayerHandle) user, session);
 			return ActionResult.SUCCESS;
 		});
 
 
-		this.addSessionSubAction("vote", List.of(), (args, session) -> {
+		this.addSessionSubAction("vote", List.of(), (user, session, args) -> {
 			if (!(session.phase() instanceof PregameLobby lobby)) {
 				return ActionResult.IGNORED;
 			}
 			if (!config.getOptionValue(BingoOptions.USE_VOTE_SYSTEM) ||
 					config.getOptionValue(BingoOptions.VOTE_USING_COMMANDS_ONLY) ||
 					config.getOptionValue(BingoOptions.VOTE_LIST).isEmpty()) {
-				BingoPlayerSender.sendMessage(Component.text("Voting is disabled!").color(NamedTextColor.RED), getLastUser());
+				BingoPlayerSender.sendMessage(Component.text("Voting is disabled!").color(NamedTextColor.RED), user);
 				return ActionResult.IGNORED;
 			}
 
-			if (!(getLastUser() instanceof PlayerHandle player)) {
+			if (!(user instanceof PlayerHandle player)) {
 				return ActionResult.IGNORED;
 			}
 
@@ -79,8 +79,8 @@ public class BingoAction extends ActionTree {
 		});
 
 
-		this.addSessionSubAction("join", List.of(), (args, session) -> {
-			if (!(getLastUser() instanceof PlayerHandle player)) {
+		this.addSessionSubAction("join", List.of(), (user, session, args) -> {
+			if (!(user instanceof PlayerHandle player)) {
 				return ActionResult.IGNORED;
 			}
 
@@ -89,8 +89,8 @@ public class BingoAction extends ActionTree {
 		});
 
 
-		this.addSessionSubAction("leave", List.of(), (args, session) -> {
-			if (!(getLastUser() instanceof PlayerHandle player)) {
+		this.addSessionSubAction("leave", List.of(), (user, session, args) -> {
+			if (!(user instanceof PlayerHandle player)) {
 				return ActionResult.IGNORED;
 			}
 
@@ -103,8 +103,8 @@ public class BingoAction extends ActionTree {
 		});
 
 
-		this.addSessionSubAction("getcard", List.of(), (args, session) -> {
-			if (!(getLastUser() instanceof PlayerHandle player)) {
+		this.addSessionSubAction("getcard", List.of(), (user, session, args) -> {
+			if (!(user instanceof PlayerHandle player)) {
 				return ActionResult.IGNORED;
 			}
 
@@ -113,7 +113,7 @@ public class BingoAction extends ActionTree {
 				if (participant instanceof BingoPlayer bingoPlayer) {
 					int cardSlot = session.settingsBuilder.view().kit().getCardSlot();
 					BingoGame game = (BingoGame) session.phase();
-					game.returnCardToPlayer(cardSlot, bingoPlayer);
+					game.returnCardToPlayer(player.world(), cardSlot, bingoPlayer);
 				}
 				return ActionResult.SUCCESS;
 			} else {
@@ -122,8 +122,8 @@ public class BingoAction extends ActionTree {
 		});
 
 
-		this.addSessionSubAction("back", List.of(), (args, session) -> {
-			if (!(getLastUser() instanceof PlayerHandle player)) {
+		this.addSessionSubAction("back", List.of(), (user, session, args) -> {
+			if (!(user instanceof PlayerHandle player)) {
 				return ActionResult.IGNORED;
 			}
 
@@ -137,33 +137,33 @@ public class BingoAction extends ActionTree {
 		});
 
 
-		this.addSessionSubAction("view", List.of(), (args, session) -> {
-			if (!getLastUser().hasPermission("bingo.admin") && !config.getOptionValue(BingoOptions.ALLOW_VIEWING_ALL_CARDS)) {
+		this.addSessionSubAction("view", List.of(), (user, session, args) -> {
+			if (!user.hasPermission("bingo.admin") && !config.getOptionValue(BingoOptions.ALLOW_VIEWING_ALL_CARDS)) {
 				return ActionResult.NO_PERMISSION;
 			}
 
-			showTeamCardsToUser(session);
+			showTeamCardsToUser(user, session);
 			return ActionResult.SUCCESS;
 		});
 
 
-		this.addSessionSubAction("about", List.of(), (args, session) -> {
+		this.addSessionSubAction("about", List.of(), (user, session, args) -> {
 			ServerSoftware server = PlatformResolver.get();
-			getLastUser().sendMessage(Component.text("\nBingo Reloaded Version: " + server.getExtensionInfo().version() +
+			user.sendMessage(Component.text("\nBingo Reloaded Version: " + server.getExtensionInfo().version() +
 					" Created by: " + server.getExtensionInfo().authors()));
-			getLastUser().sendMessage(BingoMessage.createInfoUrlComponent(Component.text("\nJoin the bingo reloaded discord server here to stay up to date!"), "https://discord.gg/AzZNxPRNPf"));
-			getLastUser().sendMessage(BingoMessage.createInfoUrlComponent(Component.text("\nClick here to download the Bingo Reloaded Companion mod if you play bingo!").color(NamedTextColor.DARK_GREEN), "https://modrinth.com/mod/bingo-reloaded-companion"));
+			user.sendMessage(BingoMessage.createInfoUrlComponent(Component.text("\nJoin the bingo reloaded discord server here to stay up to date!"), "https://discord.gg/AzZNxPRNPf"));
+			user.sendMessage(BingoMessage.createInfoUrlComponent(Component.text("\nClick here to download the Bingo Reloaded Companion mod if you play bingo!").color(NamedTextColor.DARK_GREEN), "https://modrinth.com/mod/bingo-reloaded-companion"));
 			return ActionResult.SUCCESS;
 		});
 
 
-		this.addSubAction(new ActionTree("reload", List.of("bingo.admin"), args -> {
+		this.addSubAction(new ActionTree("reload", List.of("bingo.admin"), (user, args) -> {
 			if (args.length == 1) {
-				return reloadCommand(args[0], getLastUser());
+				return reloadCommand(args[0], user);
 			} else {
-				return reloadCommand("all", getLastUser());
+				return reloadCommand("all", user);
 			}
-		}).addTabCompletion(args -> List.of(
+		}).addArgument(ActionArgument.optional("option", List.of(
 				"all",
 				"config",
 				"worlds",
@@ -172,63 +172,64 @@ public class BingoAction extends ActionTree {
 				"data",
 				"language",
 				"sounds"
-		)).addUsage("<option>"));
+		))));
 
 
-		this.addSessionSubAction("start", List.of("bingo.admin"), (args, session) -> {
-			if (args.length == 0) {
-				session.startGame();
-				return ActionResult.SUCCESS;
-			} else if (args.length == 1 && args[0].equals("here")) {
-				if (!(getLastUser() instanceof PlayerHandle player)) {
+		this.addSessionSubAction("start", List.of("bingo.admin"), (user, session, args) -> {
+					if (args.length == 0) {
+						session.startGame();
+						return ActionResult.SUCCESS;
+					} else if (args.length == 1 && args[0].equals("here")) {
+						if (!(user instanceof PlayerHandle player)) {
+							return ActionResult.INCORRECT_USE;
+						}
+
+						WorldPosition pos = player.position();
+						session.startGame(pos);
+						return ActionResult.SUCCESS;
+					} else if (args.length == 2 && args[0].equals("here")) {
+						if (!(user instanceof PlayerHandle player)) {
+							return ActionResult.INCORRECT_USE;
+						}
+
+						int seed = Integer.parseInt(args[1]);
+						session.settingsBuilder.cardSeed(seed);
+
+						WorldPosition pos = player.position();
+						session.startGame(pos);
+						return ActionResult.SUCCESS;
+					} else if (args.length == 1) {
+
+						int seed = Integer.parseInt(args[0]);
+						session.settingsBuilder.cardSeed(seed);
+
+						session.startGame();
+						return ActionResult.SUCCESS;
+					}
+
 					return ActionResult.INCORRECT_USE;
-				}
-
-				WorldPosition pos = player.position();
-				session.startGame(pos);
-				return ActionResult.SUCCESS;
-			} else if (args.length == 2 && args[0].equals("here")) {
-				if (!(getLastUser() instanceof PlayerHandle player)) {
-					return ActionResult.INCORRECT_USE;
-				}
-
-				int seed = Integer.parseInt(args[1]);
-				session.settingsBuilder.cardSeed(seed);
-
-				WorldPosition pos = player.position();
-				session.startGame(pos);
-				return ActionResult.SUCCESS;
-			} else if (args.length == 1) {
-
-				int seed = Integer.parseInt(args[0]);
-				session.settingsBuilder.cardSeed(seed);
-
-				session.startGame();
-				return ActionResult.SUCCESS;
-			}
-
-			return ActionResult.INCORRECT_USE;
-		})
-				.usage("[here] [<seed>]");
+				})
+				.addArgument(ActionArgument.optional("here", List.of("here")))
+				.addArgument(ActionArgument.optional("seed"));
 
 
-		this.addSessionSubAction("end", List.of("bingo.admin"), (args, session) -> {
+		this.addSessionSubAction("end", List.of("bingo.admin"), (user, session, args) -> {
 			session.endGame();
 			return ActionResult.SUCCESS;
 		});
 
 
-		this.addSessionSubAction("wait", List.of("bingo.admin"), (args, session) -> {
+		this.addSessionSubAction("wait", List.of("bingo.admin"), (user, session, args) -> {
 			session.pauseAutomaticStart();
-			BingoPlayerSender.sendMessage(Component.text("Toggled automatic starting timer"), getLastUser());
+			BingoPlayerSender.sendMessage(Component.text("Toggled automatic starting timer"), user);
 			return ActionResult.SUCCESS;
 		});
 
 
-		this.addSessionSubAction("deathmatch", List.of("bingo.admin"), (args, session) -> {
+		this.addSessionSubAction("deathmatch", List.of("bingo.admin"), (user, session, args) -> {
 
 			if (!session.isRunning()) {
-				BingoMessage.NO_DEATHMATCH.sendToAudience(getLastUser(), NamedTextColor.RED);
+				BingoMessage.NO_DEATHMATCH.sendToAudience(user, NamedTextColor.RED);
 				return ActionResult.IGNORED;
 			}
 
@@ -236,8 +237,8 @@ public class BingoAction extends ActionTree {
 			return ActionResult.SUCCESS;
 		});
 
-		this.addSessionSubAction("creator", List.of("bingo.admin"), (args, session) -> {
-			if (!(getLastUser() instanceof PlayerHandle player)) {
+		this.addSessionSubAction("creator", List.of("bingo.admin"), (user, session, args) -> {
+			if (!(user instanceof PlayerHandle player)) {
 				return ActionResult.IGNORED;
 			}
 
@@ -246,62 +247,60 @@ public class BingoAction extends ActionTree {
 		});
 
 
-		this.addSessionSubAction("stats", List.of("bingo.admin"), (args, session) -> {
+		this.addSessionSubAction("stats", List.of("bingo.admin"), (user, session, args) -> {
 			if (!config.getOptionValue(BingoOptions.SAVE_PLAYER_STATISTICS)) {
 				Component text = Component.text("Player statistics are not being tracked at this moment!")
 						.color(NamedTextColor.RED);
-				BingoPlayerSender.sendMessage(text, getLastUser());
+				BingoPlayerSender.sendMessage(text, user);
 				return ActionResult.IGNORED;
 			}
 			BingoStatData statsData = new BingoStatData(gameManager.getPlatform());
 			Component msg;
-			if (args.length > 1 && getLastUser().hasPermission("bingo.admin")) {
+			if (args.length > 1 && user.hasPermission("bingo.admin")) {
 				msg = statsData.getPlayerStatsFormatted(args[1]);
 			} else {
-				if (!(getLastUser() instanceof PlayerHandle player)) {
+				if (!(user instanceof PlayerHandle player)) {
 					return ActionResult.IGNORED;
 				}
 
 				msg = statsData.getPlayerStatsFormatted(player.uniqueId());
 			}
-			BingoPlayerSender.sendMessage(msg, getLastUser());
+			BingoPlayerSender.sendMessage(msg, user);
 			return ActionResult.SUCCESS;
 		});
 
 
-		ActionTree addKitAction = new ActionTree("add", (args) -> {
+		ActionTree addKitAction = new ActionTree("add", (user, args) -> {
 			if (args.length < 1) {
 				return ActionResult.INCORRECT_USE;
 			}
 
 			if (args.length < 2) {
-				BingoPlayerSender.sendMessage(Component.text("Please specify a kit name for slot " + args[0]).color(NamedTextColor.RED), getLastUser());
+				BingoPlayerSender.sendMessage(Component.text("Please specify a kit name for slot " + args[0]).color(NamedTextColor.RED), user);
 				return ActionResult.INCORRECT_USE;
 			}
 
-			if (!(getLastUser() instanceof PlayerHandle player)) {
+			if (!(user instanceof PlayerHandle player)) {
 				return ActionResult.IGNORED;
 			}
 			addPlayerKit(args[0], String.join(" ", Arrays.copyOfRange(args, 1, args.length)), player);
 			return ActionResult.SUCCESS;
 		})
-				.addTabCompletion(args -> List.of("1", "2", "3", "4", "5"))
-				.addUsage("<slot> <name>");
+				.addArgument(ActionArgument.required("slot", List.of("1", "2", "3", "4", "5")).withUseDisplay(ActionArgument.UseDisplay.OPTIONS))
+				.addArgument(ActionArgument.required("name"));
 
 
-		ActionTree removeKitAction = new ActionTree("remove", (args) -> removePlayerKit(args[0]))
-				.addTabCompletion(args -> List.of("1", "2", "3", "4", "5"))
-				.addUsage("<slot>");
+		ActionTree removeKitAction = new ActionTree("remove", (user, args) -> removePlayerKit(user, args[0]))
+				.addArgument(ActionArgument.required("slot", List.of("1", "2", "3", "4", "5")).withUseDisplay(ActionArgument.UseDisplay.OPTIONS));
 
 
-		ActionTree itemKitAction = new ActionTree("item", (args) -> {
-			if (!(getLastUser() instanceof PlayerHandle player)) {
+		ActionTree itemKitAction = new ActionTree("item", (user, args) -> {
+			if (!(user instanceof PlayerHandle player)) {
 				return ActionResult.IGNORED;
 			}
 			return giveUserBingoItem(player, args[0]);
 		})
-				.addTabCompletion(args -> List.of("wand", "card"))
-				.addUsage("<item_name>");
+				.addArgument(ActionArgument.required("item_name", List.of("wand", "card")));
 
 
 		this.addSubAction(new ActionTree("kit", List.of("bingo.admin"))
@@ -310,8 +309,8 @@ public class BingoAction extends ActionTree {
 				.addSubAction(itemKitAction));
 
 
-		this.addSessionSubAction("teamedit", List.of("bingo.admin"), (args, session) -> {
-			if (!(getLastUser() instanceof PlayerHandle player)) {
+		this.addSessionSubAction("teamedit", List.of("bingo.admin"), (user, session, args) -> {
+			if (!(user instanceof PlayerHandle player)) {
 				return ActionResult.IGNORED;
 			}
 
@@ -320,13 +319,13 @@ public class BingoAction extends ActionTree {
 		});
 
 
-		this.addSessionSubAction("teams", List.of("bingo.admin"), (args, session) -> {
-			BingoPlayerSender.sendMessage(Component.text("Here are all the teams with at least 1 player:"), getLastUser());
+		this.addSessionSubAction("teams", List.of("bingo.admin"), (user, session, args) -> {
+			BingoPlayerSender.sendMessage(Component.text("Here are all the teams with at least 1 player:"), user);
 			session.teamManager.getActiveTeams().getTeams().forEach(team -> {
 				if (team.getMembers().isEmpty()) {
 					return;
 				}
-				getLastUser().sendMessage(Component.text(" - ").append(team.getColoredName()).append(Component.text(": ")
+				user.sendMessage(Component.text(" - ").append(team.getColoredName()).append(Component.text(": ")
 						.append(Component.join(JoinConfiguration.separator(Component.text(", ")),
 								team.getMembers().stream()
 										.map(BingoParticipant::getDisplayName)
@@ -335,8 +334,8 @@ public class BingoAction extends ActionTree {
 			return ActionResult.SUCCESS;
 		});
 
-		ActionTree createLobbyAction = new ActionTree("create", (args) -> {
-			if (!(getLastUser() instanceof PlayerHandle player)) {
+		ActionTree createLobbyAction = new ActionTree("create", (user, args) -> {
+			if (!(user instanceof PlayerHandle player)) {
 				return ActionResult.IGNORED;
 			}
 
@@ -347,13 +346,13 @@ public class BingoAction extends ActionTree {
 			return ActionResult.SUCCESS;
 		});
 
-		ActionTree removeLobbyAction = new ActionTree("remove", (args) -> {
+		ActionTree removeLobbyAction = new ActionTree("remove", (user, args) -> {
 			if (!gameManager.getLobbyData().isEnabled()) {
-				BingoPlayerSender.sendMessage(ComponentUtils.MINI_BUILDER.deserialize("<red>A lobby has not been created yet.</red>\n<yellow>Tip: </yellow><italic>Use <aqua>/bingo lobby create</aqua> to create a lobby spawn point at your current position.</italic>"), getLastUser());
+				BingoPlayerSender.sendMessage(ComponentUtils.MINI_BUILDER.deserialize("<red>A lobby has not been created yet.</red>\n<yellow>Tip: </yellow><italic>Use <aqua>/bingo lobby create</aqua> to create a lobby spawn point at your current position.</italic>"), user);
 				return ActionResult.IGNORED;
 			}
 			gameManager.getLobbyData().remove();
-			BingoPlayerSender.sendMessage(ComponentUtils.MINI_BUILDER.deserialize("<green>Removed the created lobby.</green>\n<yellow>Tip: </yellow><italic>Use <aqua>/bingo lobby create</aqua> to create a lobby spawn point at your current position.</italic>"), getLastUser());
+			BingoPlayerSender.sendMessage(ComponentUtils.MINI_BUILDER.deserialize("<green>Removed the created lobby.</green>\n<yellow>Tip: </yellow><italic>Use <aqua>/bingo lobby create</aqua> to create a lobby spawn point at your current position.</italic>"), user);
 			return ActionResult.SUCCESS;
 		});
 
@@ -370,7 +369,7 @@ public class BingoAction extends ActionTree {
 			case "4" -> PlayerKit.CUSTOM_4;
 			case "5" -> PlayerKit.CUSTOM_5;
 			default -> {
-				BingoPlayerSender.sendMessage(Component.text("Invalid slot, please pick a slot from 1 through 5 to save this kit in").color(NamedTextColor.RED), getLastUser());
+				BingoPlayerSender.sendMessage(Component.text("Invalid slot, please pick a slot from 1 through 5 to save this kit in").color(NamedTextColor.RED), fromPlayerInventory);
 				yield null;
 			}
 		};
@@ -384,15 +383,15 @@ public class BingoAction extends ActionTree {
 					.deserialize("<red>Cannot add custom kit " + kitName + " to slot " + slot + ", this slot already contains kit ")
 					.append(data.getCustomKit(kit).name())
 					.append(Component.text(". Remove it first!"));
-			BingoPlayerSender.sendMessage(message, getLastUser());
+			BingoPlayerSender.sendMessage(message, fromPlayerInventory);
 		} else {
 			Component message = ComponentUtils.MINI_BUILDER
 					.deserialize("<green>Created custom kit " + kitName + " in slot " + slot + " from your inventory");
-			BingoPlayerSender.sendMessage(message, getLastUser());
+			BingoPlayerSender.sendMessage(message, fromPlayerInventory);
 		}
 	}
 
-	public ActionResult removePlayerKit(String slot) {
+	public ActionResult removePlayerKit(ActionUser user, String slot) {
 		PlayerKit kit = switch (slot) {
 			case "1" -> PlayerKit.CUSTOM_1;
 			case "2" -> PlayerKit.CUSTOM_2;
@@ -400,7 +399,7 @@ public class BingoAction extends ActionTree {
 			case "4" -> PlayerKit.CUSTOM_4;
 			case "5" -> PlayerKit.CUSTOM_5;
 			default -> {
-				BingoPlayerSender.sendMessage(Component.text("Invalid slot, please a slot from 1 through 5 to save this kit in").color(NamedTextColor.RED), getLastUser());
+				BingoPlayerSender.sendMessage(Component.text("Invalid slot, please a slot from 1 through 5 to save this kit in").color(NamedTextColor.RED), user);
 				yield null;
 			}
 		};
@@ -413,20 +412,20 @@ public class BingoAction extends ActionTree {
 		if (customKit == null) {
 			Component message = ComponentUtils.MINI_BUILDER
 					.deserialize("<red>Cannot remove kit from slot " + slot + " because no custom kit is assigned to this slot");
-			BingoPlayerSender.sendMessage(message, getLastUser());
+			BingoPlayerSender.sendMessage(message, user);
 		} else {
 			data.removeCustomKit(kit);
 
 			Component message = ComponentUtils.MINI_BUILDER
 					.deserialize("<green>Removed custom kit " + ComponentUtils.MINI_BUILDER.serialize(customKit.name()) + " from slot " + slot);
-			BingoPlayerSender.sendMessage(message, getLastUser());
+			BingoPlayerSender.sendMessage(message, user);
 		}
 
 		return ActionResult.SUCCESS;
 	}
 
 	public ActionResult giveUserBingoItem(PlayerHandle player, String itemName) {
-		BingoSession session = getSessionFromUser(getLastUser());
+		BingoSession session = getSessionFromUser(player);
 		if (session == null) {
 			return ActionResult.IGNORED;
 		}
@@ -444,12 +443,12 @@ public class BingoAction extends ActionTree {
 		};
 	}
 
-	public void showTeamCardsToUser(BingoSession session) {
+	public void showTeamCardsToUser(ActionUser user, BingoSession session) {
 		if (!session.canPlayersViewCard()) {
 			return;
 		}
 
-		if (!(getLastUser() instanceof PlayerHandle player)) {
+		if (!(user instanceof PlayerHandle player)) {
 			return;
 		}
 
@@ -535,14 +534,20 @@ public class BingoAction extends ActionTree {
 		return null;
 	}
 
-	public ActionTree addSessionSubAction(String name, List<String> permissions, BiFunction<String[], BingoSession, ActionResult> action) {
-		return addSubAction(new ActionTree(name, permissions, (args) -> {
-			BingoSession session = getSessionFromUser(getLastUser());
+	public ActionTree addSessionSubAction(String name, List<String> permissions, SessionCommandFunction action) {
+		return addSubAction(new ActionTree(name, permissions, (user, args) -> {
+			BingoSession session = getSessionFromUser(user);
 			if (session == null) {
 				return ActionResult.IGNORED;
 			} else {
-				return action.apply(args, session);
+				return action.perform(user, session, args);
 			}
 		}));
+	}
+
+	@FunctionalInterface
+	public interface SessionCommandFunction {
+
+		ActionResult perform(ActionUser user, BingoSession session, String... arguments);
 	}
 }

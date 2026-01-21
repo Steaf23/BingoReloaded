@@ -23,7 +23,7 @@ public class PostGamePhase implements GamePhase
 
     public PostGamePhase(BingoSession session, int durationSeconds) {
         this.session = session;
-        this.timer = new CountdownTimer(durationSeconds, this::onTimerFinished);
+        this.timer = new CountdownTimer(session.getOverworld(), durationSeconds, this::onTimerFinished);
     }
 
     @Override

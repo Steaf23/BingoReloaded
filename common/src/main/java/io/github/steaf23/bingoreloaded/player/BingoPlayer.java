@@ -106,7 +106,7 @@ public class BingoPlayer implements BingoParticipant
 
         PlayerHandle player = sessionPlayer().get();
 
-        server.runTask(task -> {
+        server.runTask(player.world().uniqueId(), task -> {
             for (StackHandle itemStack : player.inventory().contents()) {
                 if (PlayerKit.CARD_ITEM.isCompareKeyEqual(itemStack)) {
                     player.inventory().removeItem(itemStack);
@@ -133,7 +133,7 @@ public class BingoPlayer implements BingoParticipant
         takeEffects(false);
         PlayerHandle player = sessionPlayer().get();
 
-        server.runTask(task -> {
+        server.runTask(player.world().uniqueId(), task -> {
             if (effects.contains(EffectOptionFlags.NIGHT_VISION))
                 player.addEffect(new PotionEffectInstance(StatusEffectType.of("minecraft:night_vision"), PotionEffectInstance.INFINITE_DURATION).setParticles(false));
             if (effects.contains(EffectOptionFlags.WATER_BREATHING))

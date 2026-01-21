@@ -54,7 +54,7 @@ public class PaperClientManager implements BingoClientManager {
 				return;
 			}
 
-			bingo.getGameManager().getPlatform().runTask(20, t -> {
+			bingo.getGameManager().getPlatform().runTask(player.getWorld().getUID(), 20, t -> {
 				updateCard(handle, participant.getCard().orElse(null));
 			});
 		});

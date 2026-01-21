@@ -3,7 +3,7 @@ package io.github.steaf23.bingoreloaded.tasks.data;
 import io.github.steaf23.bingoreloaded.api.CardDisplayInfo;
 import io.github.steaf23.bingoreloaded.api.TaskDisplayMode;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
-import io.github.steaf23.bingoreloaded.lib.api.StatisticHandle;
+import io.github.steaf23.bingoreloaded.lib.api.StatisticDefinition;
 import io.github.steaf23.bingoreloaded.lib.api.StatisticType;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.util.ComponentUtils;
@@ -14,14 +14,14 @@ import net.kyori.adventure.text.format.TextDecoration;
 
 import java.util.Objects;
 
-public record StatisticTask(StatisticHandle statistic, int count) implements TaskData
+public record StatisticTask(StatisticDefinition statistic, int count) implements TaskData
 {
-    public StatisticTask(StatisticHandle statistic)
+    public StatisticTask(StatisticDefinition statistic)
     {
         this(statistic, 1);
     }
 
-    public StatisticTask(StatisticHandle statistic, int count)
+    public StatisticTask(StatisticDefinition statistic, int count)
     {
         this.statistic = statistic;
         this.count = Math.min(64, Math.max(1, count));
@@ -40,10 +40,10 @@ public record StatisticTask(StatisticHandle statistic, int count) implements Tas
         TextComponent.Builder builder = Component.text().append(Component.text("*"))
                 .color(NamedTextColor.LIGHT_PURPLE).decorate(TextDecoration.ITALIC);
 
-        switch (statistic.statisticType().getCategory())
+        switch (statistic.type().getCategory())
         {
             case ROOT_STATISTIC -> {
-                if (statistic.statisticType().equals(StatisticType.KILL_ENTITY))
+                if (statistic.type().equals(StatisticType.KILL_ENTITY))
                 {
                     Component entityName = ComponentUtils.entityName(statistic.entityType());
                     Component[] inPlaceArguments = new Component[]{amount, Component.empty()};
@@ -52,7 +52,7 @@ public record StatisticTask(StatisticHandle statistic, int count) implements Tas
                             .append(entityName.decorate(TextDecoration.BOLD))
                             .append(Component.text(")"));
                 }
-                else if (statistic.statisticType().equals(StatisticType.ENTITY_KILLED_BY)) {
+                else if (statistic.type().equals(StatisticType.ENTITY_KILLED_BY)) {
                     Component entityName = ComponentUtils.entityName(statistic.entityType());
                     Component[] inPlaceArguments = new Component[]{Component.empty(), amount, Component.empty()};
                     builder.append(Component.text("("))
@@ -128,7 +128,7 @@ public record StatisticTask(StatisticHandle statistic, int count) implements Tas
         if (context.statisticDisplay() == TaskDisplayMode.GENERIC_TASK_ITEMS) {
             return ItemType.of("globe_banner_pattern");
         } else {
-            return statistic().icon();
+            return statistic().type().icon(statistic());
         }
     }
 

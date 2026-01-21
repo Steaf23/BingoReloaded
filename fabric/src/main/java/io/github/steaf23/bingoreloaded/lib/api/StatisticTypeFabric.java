@@ -1,5 +1,6 @@
 package io.github.steaf23.bingoreloaded.lib.api;
 
+import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.util.FabricTypes;
 import net.kyori.adventure.key.Key;
 import net.minecraft.registry.Registries;
@@ -21,6 +22,26 @@ public class StatisticTypeFabric implements StatisticType {
 	// FIXME: FABRIC REFACTOR
 	@Override
 	public StatisticCategory getCategory() {
+		return null;
+	}
+
+	@Override
+	public boolean isSubStatistic() {
+		return false;
+	}
+
+	@Override
+	public String translationKey() {
+		return "";
+	}
+
+	@Override
+	public boolean getsUpdatedAutomatically() {
+		return false;
+	}
+
+	@Override
+	public @NotNull ItemType icon(StatisticDefinition fullStatistic) {
 		return null;
 	}
 

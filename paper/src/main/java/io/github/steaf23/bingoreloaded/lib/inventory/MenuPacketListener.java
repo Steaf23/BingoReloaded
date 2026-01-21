@@ -10,7 +10,9 @@ import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientNa
 import io.github.steaf23.bingoreloaded.lib.api.ServerSoftware;
 import io.github.steaf23.bingoreloaded.lib.events.PlayerDisplayAnvilTextChangedEvent;
 import io.github.steaf23.bingoreloaded.lib.events.PlayerDisplayCustomClickActionEvent;
+import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,10 +33,14 @@ public class MenuPacketListener extends SimplePacketListenerAbstract
 
     @Override
     public void onPacketPlayReceive(PacketPlayReceiveEvent event) {
+        if (!(event.getPlayer() instanceof Player player)) {
+            ConsoleMessenger.bug("Invalid player!", this);
+            return;
+        }
         if (event.getPacketType() == PacketType.Play.Client.NAME_ITEM) {
             WrapperPlayClientNameItem nameItem = new WrapperPlayClientNameItem(event);
 
-            server.runTask((t) -> {
+            server.runTask(player.getWorld().getUID(), (t) -> {
                 var textChangedEvent = new PlayerDisplayAnvilTextChangedEvent(nameItem.getItemName(), event.getUser().getUUID());
                 Bukkit.getPluginManager().callEvent(textChangedEvent);
             });
@@ -42,7 +48,7 @@ public class MenuPacketListener extends SimplePacketListenerAbstract
         else if (event.getPacketType() == PacketType.Play.Client.CUSTOM_CLICK_ACTION) {
             WrapperPlayClientCustomClickAction customClickAction = new WrapperPlayClientCustomClickAction(event);
 
-            server.runTask((t) -> {
+            server.runTask(player.getWorld().getUID(), (t) -> {
                 var customClickActionEvent = new PlayerDisplayCustomClickActionEvent(event.getUser().getUUID(), customClickAction.getId().key(), (NBTCompound)customClickAction.getPayload());
                 Bukkit.getPluginManager().callEvent(customClickActionEvent);
             });

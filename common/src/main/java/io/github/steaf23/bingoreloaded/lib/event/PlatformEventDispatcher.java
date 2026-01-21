@@ -2,7 +2,7 @@ package io.github.steaf23.bingoreloaded.lib.event;
 
 import io.github.steaf23.bingoreloaded.lib.api.AdvancementHandle;
 import io.github.steaf23.bingoreloaded.lib.api.InteractAction;
-import io.github.steaf23.bingoreloaded.lib.api.StatisticHandle;
+import io.github.steaf23.bingoreloaded.lib.api.StatisticDefinition;
 import io.github.steaf23.bingoreloaded.lib.api.WorldPosition;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
@@ -29,7 +29,7 @@ public interface PlatformEventDispatcher {
 	EventResult<?> sendPlayerQuitsServer(PlayerHandle player);
 	EventResult<?> sendPlayerBreaksBlock(PlayerHandle player, WorldPosition position, ItemType blockType);
 	EventResult<?> sendPlayerPlacesBlock(PlayerHandle player, WorldPosition position, ItemType blockType);
-	EventResult<?> sendPlayerStatisticIncrement(PlayerHandle player, StatisticHandle statistic, int newValue);
+	EventResult<?> sendPlayerStatisticIncrement(PlayerHandle player, StatisticDefinition statistic, int newValue);
 	EventResult<?> sendPlayerAdvancementDone(PlayerHandle player, AdvancementHandle advancement);
 	EventResult<EventResults.PlayerPickupResult> sendPlayerPickupStack(PlayerHandle player, StackHandle stack, WorldPosition itemLocation);
 	EventResult<?> sendPlayerInventoryClick(PlayerHandle player, StackHandle itemOnCursor, boolean resultSlot, boolean shiftClick);

@@ -1,5 +1,7 @@
 plugins {
     id 'base'
+
+    id 'org.jetbrains.gradle.plugin.idea-ext' version '1.3'
 }
 
 allprojects {
@@ -8,5 +10,32 @@ allprojects {
 
     repositories {
         mavenCentral()
+    }
+}
+
+ext {
+    hytaleHome = "${System.getProperty("user.home")}/AppData/Roaming/Hytale"
+}
+
+// Create the working directory to run the server if it does not already exist.
+def serverRunDir = file("$projectDir/run")
+if (!serverRunDir.exists()) {
+    serverRunDir.mkdirs()
+}
+
+// Creates a run configuration in IDEA that will run the Hytale server with
+// your plugin and the default assets.
+idea.project.settings.runConfigurations {
+    'HytaleServer'(org.jetbrains.gradle.ext.Application) {
+        mainClass = 'com.hypixel.hytale.Main'
+        moduleName = project.idea.module.name + '.main'
+        programParameters = "--allow-op --assets=$hytaleHome/install/release/package/game/latest/Assets.zip"
+//        if (includes_pack.toBoolean()) {
+//            programParameters += " --mods=${sourceSets.main.java.srcDirs.first().parentFile.absolutePath}"
+//        }
+//        if (load_user_mods.toBoolean()) {
+//            programParameters += " --mods=$hytaleHome/UserData/Mods"
+//        }
+        workingDirectory = serverRunDir.absolutePath
     }
 }

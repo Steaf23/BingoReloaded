@@ -1,0 +1,53 @@
+plugins {
+    id 'java'
+    id 'io.github.goooler.shadow' version '8.1.7'
+}
+
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(java_version)
+    withSourcesJar()
+    withJavadocJar()
+}
+
+// Quiet warnings about missing Javadocs.
+javadoc {
+    options.addStringOption('Xdoclint:-missing', '-quiet')
+}
+
+// Adds the Hytale server as a build dependency, allowing you to reference and
+// compile against their code. This requires you to have Hytale installed using
+// the official launcher for now.
+dependencies {
+    implementation project(":common")
+
+    implementation(files("$hytaleHome/install/$patchline/package/game/latest/Server/HytaleServer.jar"))
+
+    implementation("org.yaml:snakeyaml:2.1")
+}
+
+// Create the working directory to run the server if it does not already exist.
+def serverRunDir = file("$projectDir/run")
+if (!serverRunDir.exists()) {
+    serverRunDir.mkdirs()
+}
+
+// Updates the manifest.json file with the latest properties defined in the
+// build.properties file. Currently we update the version and if packs are
+// included with the plugin.
+tasks.register('updatePluginManifest') {
+    def manifestFile = file('src/main/resources/manifest.json')
+    doLast {
+        if (!manifestFile.exists()) {
+            throw new GradleException("Could not find manifest.json at ${manifestFile.path}!")
+        }
+        def manifestJson = new groovy.json.JsonSlurper().parseText(manifestFile.text)
+        manifestJson.Version = version
+        manifestJson.IncludesAssetPack = includes_pack.toBoolean()
+        manifestFile.text = groovy.json.JsonOutput.prettyPrint(groovy.json.JsonOutput.toJson(manifestJson))
+    }
+}
+
+// Makes sure the plugin manifest is up to date.
+tasks.named('processResources') {
+    dependsOn 'updatePluginManifest'
+}

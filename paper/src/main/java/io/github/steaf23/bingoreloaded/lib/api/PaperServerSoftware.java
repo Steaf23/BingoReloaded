@@ -10,11 +10,11 @@ import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandlePaper;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerInfo;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
+import io.github.steaf23.bingoreloaded.lib.util.LoggerWrapper;
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import io.papermc.paper.datacomponent.item.DyedItemColor;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.format.TextColor;
-import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Material;
@@ -42,8 +42,11 @@ public class PaperServerSoftware implements ServerSoftware {
 
 	private final JavaPlugin plugin;
 
-	public PaperServerSoftware(JavaPlugin plugin) {
+	private final LoggerWrapper logger;
+
+	public PaperServerSoftware(JavaPlugin plugin, LoggerWrapper logger) {
 		this.plugin = plugin;
+		this.logger = logger;
 	}
 
 	@Override
@@ -99,6 +102,11 @@ public class PaperServerSoftware implements ServerSoftware {
 	@Override
 	public ItemType resolveItemType(Key key) {
 		return new ItemTypePaper(Registry.MATERIAL.get(key));
+	}
+
+	@Override
+	public ItemType resolveItemType(String key) {
+		return resolveItemType(Key.key(key));
 	}
 
 	@Override
@@ -161,8 +169,8 @@ public class PaperServerSoftware implements ServerSoftware {
 	}
 
 	@Override
-	public ComponentLogger getComponentLogger() {
-		return plugin.getComponentLogger();
+	public LoggerWrapper getComponentLogger() {
+		return logger;
 	}
 
 	@Override
@@ -233,17 +241,12 @@ public class PaperServerSoftware implements ServerSoftware {
 	}
 
 	@Override
-	public StatisticHandle createStatistic(StatisticType type, @Nullable ItemType item, @Nullable EntityType entity) {
-		return new StatisticHandlePaper((StatisticTypePaper) type, entity, item);
-	}
-
-	@Override
 	public boolean areAdvancementsDisabled() {
 		return !Bukkit.advancementIterator().hasNext() || Bukkit.advancementIterator().next() == null;
 	}
 
 	@Override
-	public ExtensionTask runTaskTimer(long repeatTicks, long startDelayTicks, Consumer<ExtensionTask> consumer) {
+	public ExtensionTask runTaskTimer(UUID worldId, long repeatTicks, long startDelayTicks, Consumer<ExtensionTask> consumer) {
 		ExtensionTaskPaper wrapper = new ExtensionTaskPaper();
 
 		Bukkit.getScheduler().runTaskTimer(plugin, (BukkitTask task) -> {
@@ -255,7 +258,7 @@ public class PaperServerSoftware implements ServerSoftware {
 	}
 
 	@Override
-	public ExtensionTask runTask(Consumer<ExtensionTask> consumer) {
+	public ExtensionTask runTask(UUID worldId, Consumer<ExtensionTask> consumer) {
 		ExtensionTaskPaper wrapper = new ExtensionTaskPaper();
 
 		Bukkit.getScheduler().runTask(plugin, (BukkitTask task) -> {
@@ -267,9 +270,9 @@ public class PaperServerSoftware implements ServerSoftware {
 	}
 
 	@Override
-	public ExtensionTask runTask(long startDelayTicks, Consumer<ExtensionTask> consumer) {
+	public ExtensionTask runTask(UUID worldId, long startDelayTicks, Consumer<ExtensionTask> consumer) {
 		if (startDelayTicks <= 0) {
-			return runTask(consumer);
+			return runTask(worldId, consumer);
 		}
 		else {
 			ExtensionTaskPaper wrapper = new ExtensionTaskPaper();

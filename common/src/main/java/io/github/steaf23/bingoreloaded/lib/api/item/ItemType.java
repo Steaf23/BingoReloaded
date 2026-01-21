@@ -3,7 +3,6 @@ package io.github.steaf23.bingoreloaded.lib.api.item;
 import io.github.steaf23.bingoreloaded.lib.api.PlatformResolver;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.key.Keyed;
-import org.intellij.lang.annotations.Subst;
 import org.jetbrains.annotations.NotNull;
 
 public interface ItemType extends Keyed {
@@ -16,8 +15,8 @@ public interface ItemType extends Keyed {
 	}
 	boolean isSolid();
 
-	static ItemType of(@NotNull @Subst("minecraft:resource") String type) {
-		return of(Key.key(type));
+	static ItemType of(@NotNull String type) {
+		return PlatformResolver.get().resolveItemType(type);
 	}
 
 	static ItemType of(@NotNull Key type) {

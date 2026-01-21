@@ -4,8 +4,7 @@ import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.lib.api.EntityType;
 import io.github.steaf23.bingoreloaded.lib.api.MenuBoard;
-import io.github.steaf23.bingoreloaded.lib.api.StatisticHandle;
-import io.github.steaf23.bingoreloaded.lib.api.StatisticHandlePaper;
+import io.github.steaf23.bingoreloaded.lib.api.StatisticDefinition;
 import io.github.steaf23.bingoreloaded.lib.api.StatisticType;
 import io.github.steaf23.bingoreloaded.lib.api.StatisticTypePaper;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemTypePaper;
@@ -59,10 +58,10 @@ public class StatisticSelectionMenu extends BasicMenu
 
     private TaskPickerMenu createEntityMenu(Statistic stat)
     {
-        Set<EntityType> entities = StatisticHandle.getValidEntityTypes();
+        Set<EntityType> entities = StatisticDefinition.getValidEntityTypes();
 
         List<GameTask> tasks = new ArrayList<>();
-        entities.forEach(e -> tasks.add(new GameTask(new StatisticTask(new StatisticHandlePaper(new StatisticTypePaper(stat), e)))));
+        entities.forEach(e -> tasks.add(new GameTask(new StatisticTask(new StatisticDefinition(new StatisticTypePaper(stat), e)))));
 
         return new TaskPickerMenu(getMenuBoard(), "Select Entities", tasks, listName);
     }
@@ -75,7 +74,7 @@ public class StatisticSelectionMenu extends BasicMenu
         {
             if (!m.name().contains("LEGACY_") && m.isBlock() && m.isItem() && !m.isAir())
             {
-                tasks.add(new GameTask(new StatisticTask(new StatisticHandlePaper(stat, m))));
+                tasks.add(new GameTask(new StatisticTask(new StatisticDefinition(new StatisticTypePaper(stat), new ItemTypePaper(m)))));
             }
         }
         return new TaskPickerMenu(getMenuBoard(), "Select Blocks", tasks, listName);
@@ -88,7 +87,7 @@ public class StatisticSelectionMenu extends BasicMenu
         {
             if (!m.name().contains("LEGACY_") && m.isItem() && !m.isAir())
             {
-                tasks.add(new GameTask(new StatisticTask(new StatisticHandlePaper(stat, m))));
+                tasks.add(new GameTask(new StatisticTask(new StatisticDefinition(new StatisticTypePaper(stat), new ItemTypePaper(m)))));
             }
         }
         return new TaskPickerMenu(getMenuBoard(), "Select Items", tasks, listName);
@@ -98,7 +97,7 @@ public class StatisticSelectionMenu extends BasicMenu
     {
         List<GameTask> tasks = new ArrayList<>();
         TRAVEL_STATS.forEach(type -> {
-            tasks.add(new GameTask(new StatisticTask(new StatisticHandlePaper(type))));
+            tasks.add(new GameTask(new StatisticTask(new StatisticDefinition(type))));
         });
         return new TaskPickerMenu(getMenuBoard(), "Travel Statistics", tasks, listName);
     }
@@ -107,7 +106,7 @@ public class StatisticSelectionMenu extends BasicMenu
     {
         List<GameTask> tasks = new ArrayList<>();
         CONTAINER_INTERACT_STATS.forEach(type -> {
-            tasks.add(new GameTask(new StatisticTask(new StatisticHandlePaper(type))));
+            tasks.add(new GameTask(new StatisticTask(new StatisticDefinition(type))));
         });
         return new TaskPickerMenu(getMenuBoard(), "Container Statistics", tasks, listName);
     }
@@ -116,7 +115,7 @@ public class StatisticSelectionMenu extends BasicMenu
     {
         List<GameTask> tasks = new ArrayList<>();
         BLOCK_INTERACT_STATS.forEach(type -> {
-            tasks.add(new GameTask(new StatisticTask(new StatisticHandlePaper(type))));
+            tasks.add(new GameTask(new StatisticTask(new StatisticDefinition(type))));
         });
         return new TaskPickerMenu(getMenuBoard(),  "Select Blocks", tasks, listName);
     }
@@ -125,7 +124,7 @@ public class StatisticSelectionMenu extends BasicMenu
     {
         List<GameTask> tasks = new ArrayList<>();
         DAMAGE_STATS.forEach(type -> {
-            tasks.add(new GameTask(new StatisticTask(new StatisticHandlePaper(type))));
+            tasks.add(new GameTask(new StatisticTask(new StatisticDefinition(type))));
         });
         return new TaskPickerMenu(getMenuBoard(), "Damage Statistics", tasks, listName);
     }
@@ -141,7 +140,7 @@ public class StatisticSelectionMenu extends BasicMenu
                                 TIME_SINCE_REST,
                                 TOTAL_WORLD_TIME,
                                 LEAVE_GAME -> {}
-                        default -> tasks.add(new GameTask(new StatisticTask(new StatisticHandlePaper(type))));
+                        default -> tasks.add(new GameTask(new StatisticTask(new StatisticDefinition(type))));
                     }
                 });
         return new TaskPickerMenu(getMenuBoard(), "Other Statistics", tasks, listName);

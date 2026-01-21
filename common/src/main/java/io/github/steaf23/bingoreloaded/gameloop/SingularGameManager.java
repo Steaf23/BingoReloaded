@@ -15,7 +15,9 @@ public class SingularGameManager extends GameManager
     public SingularGameManager(@NotNull BingoReloadedRuntime runtime, BingoConfigurationData config) {
         super(runtime, config);
 
-        WorldGroup group = createWorldGroupFromExistingWorlds();
+        //FIXME: REFACTOR before release. Re-implement old method with dimensions, move dimension definition to platform?
+
+        WorldGroup group = createGroupFromExistingOverworld();
         if (group == null) {
             return;
         }
@@ -58,5 +60,16 @@ public class SingularGameManager extends GameManager
             return null;
         }
         return new WorldGroup(getPlatform(), defaultWorldName, overworld.uniqueId(), nether.uniqueId(), theEnd.uniqueId());
+    }
+
+    private WorldGroup createGroupFromExistingOverworld() {
+        String defaultWorldName = getGameConfig().getOptionValue(BingoOptions.DEFAULT_WORLD_NAME);
+        WorldHandle overworld = getPlatform().getWorld(defaultWorldName);
+
+        if (overworld == null) {
+            ConsoleMessenger.error("Could not create world group from existing world; " + defaultWorldName + " does not exist. Make sure the world exists and reload the plugin.");
+            return null;
+        }
+        return new WorldGroup(getPlatform(), defaultWorldName, overworld.uniqueId(), overworld.uniqueId(), overworld.uniqueId());
     }
 }

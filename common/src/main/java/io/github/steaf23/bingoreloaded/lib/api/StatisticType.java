@@ -1,7 +1,9 @@
 package io.github.steaf23.bingoreloaded.lib.api;
 
+import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.key.Keyed;
+import org.jetbrains.annotations.NotNull;
 
 public interface StatisticType extends Keyed {
 	StatisticType KILL_ENTITY = StatisticType.of(Key.key("minecraft", "kill_entity"));
@@ -24,4 +26,12 @@ public interface StatisticType extends Keyed {
 	boolean equals(Object other);
 
 	StatisticCategory getCategory();
+
+	boolean isSubStatistic();
+
+	String translationKey();
+
+	boolean getsUpdatedAutomatically();
+
+	@NotNull ItemType icon(StatisticDefinition fullStatistic);
 }

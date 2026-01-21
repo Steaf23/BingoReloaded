@@ -21,15 +21,11 @@ public class DeferredAction extends ActionTree
         String deferred = "<" + deferredArgument + ">";
 
         if (arguments.length <= 1) {
-            if (tabCompletionForArgs != null) {
-                List<String> completions = tabCompletionForArgs.apply(arguments);
-                if (!completions.isEmpty())
-                    return tabCompletionForArgs.apply(arguments);
-                else
-                    return List.of(deferred);
-            } else {
+            List<String> completions = tabCompleteArgument(arguments);
+            if (!completions.isEmpty())
+                return completions;
+            else
                 return List.of(deferred);
-            }
         }
 
         if (arguments.length == 2) {
@@ -49,7 +45,6 @@ public class DeferredAction extends ActionTree
 
     @Override
     public ActionResult execute(ActionUser user, String... arguments) {
-		lastUser = user;
         // A substitute can't exist when there is nothing to defer it to (this is a developer mistake)
         if (subActions.isEmpty()) {
             ConsoleMessenger.bug("Wrongly formatted action by plugin {this is a developer mistake!}", this);
@@ -74,10 +69,14 @@ public class DeferredAction extends ActionTree
     }
 
     @Override
-    protected String determineUsage(String... arguments) {
+    protected String determineUsage(ActionArgument.TabCompletionContext context) {
         if (subActions.isEmpty()) {
-            return name + " " + usage;
+            return name + arguments.stream()
+                    .map(arg -> arg.createUsage(context))
+                    .reduce(" ", (acc, val) -> acc + " " + val);
         }
+
+        String[] arguments = context.arguments();
 
         if (arguments.length <= 2) {
             return name + " <" + deferredArgument + "> <" + subActions.stream().map(subCommand -> subCommand.name)
@@ -89,7 +88,7 @@ public class DeferredAction extends ActionTree
         if (cmd != null) {
             String[] finalArguments = Arrays.copyOfRange(arguments, 1, arguments.length);
             finalArguments[0] = userArgument;
-            return name + " <" + deferredArgument + "> " + cmd.determineUsage(finalArguments);
+            return name + " <" + deferredArgument + "> " + cmd.determineUsage(new ActionArgument.TabCompletionContext(finalArguments));
         }
 
         return name;

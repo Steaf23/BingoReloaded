@@ -9,6 +9,7 @@ import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.config.BingoOptions;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.lib.api.BingoReloadedRuntime;
+import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
 import io.github.steaf23.bingoreloaded.tasks.TaskGenerator;
 
@@ -35,9 +36,15 @@ public class CardFactory
                     new LockoutTaskCard(menu, size, game.getSession(), game.getTeamManager().getActiveTeams());
             case COMPLETE ->
                     new CompleteTaskCard(menu, size, game.getSettings().completeGoal());
-            case HOTSWAP ->
-                    new HotswapTaskCard((HotswapCardMenu) menu, size, game, game.getProgressTracker(), settings.hotswapGoal(),
-                        game.getConfig().getOptionValue(BingoOptions.HOTSWAP_CONFIG));
+            case HOTSWAP -> {
+                try {
+                    yield new HotswapTaskCard((HotswapCardMenu) menu, size, game, game.getProgressTracker(), settings.hotswapGoal(),
+                            game.getConfig().getOptionValue(BingoOptions.HOTSWAP_CONFIG));
+                } catch (ClassCastException castException) {
+                    ConsoleMessenger.bug("Cannot create hotswap card, menu != HotswapCardMenu", CardFactory.class);
+                    yield null;
+                }
+            }
             default -> new BingoTaskCard(menu, size);
         };
     }

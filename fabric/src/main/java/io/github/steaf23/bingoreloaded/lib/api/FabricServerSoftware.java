@@ -153,6 +153,11 @@ public class FabricServerSoftware implements ServerSoftware {
 	}
 
 	@Override
+	public ItemType resolveItemType(String key) {
+		return resolveItemType(Key.key(key));
+	}
+
+	@Override
 	public DimensionType resolveDimensionType(Key key) {
 		if (key.value().equals("overworld")) {
 			return DimensionType.OVERWORLD;
@@ -262,7 +267,7 @@ public class FabricServerSoftware implements ServerSoftware {
 	}
 
 	@Override
-	public StatisticHandle createStatistic(StatisticType type, @Nullable ItemType item, @Nullable EntityType entity) {
+	public StatisticDefinition createStatistic(StatisticType type, @Nullable ItemType item, @Nullable EntityType entity) {
 		return null;
 	}
 
@@ -272,17 +277,17 @@ public class FabricServerSoftware implements ServerSoftware {
 	}
 
 	@Override
-	public ExtensionTask runTaskTimer(long repeatTicks, long startDelayTicks, Consumer<ExtensionTask> consumer) {
+	public ExtensionTask runTaskTimer(UUID worldId, long repeatTicks, long startDelayTicks, Consumer<ExtensionTask> consumer) {
 		return null;
 	}
 
 	@Override
-	public ExtensionTask runTask(Consumer<ExtensionTask> consumer) {
+	public ExtensionTask runTask(UUID worldId, Consumer<ExtensionTask> consumer) {
 		return null;
 	}
 
 	@Override
-	public ExtensionTask runTask(long startDelayTicks, Consumer<ExtensionTask> consumer) {
+	public ExtensionTask runTask(UUID worldId, long startDelayTicks, Consumer<ExtensionTask> consumer) {
 		return null;
 	}
 

@@ -2,6 +2,7 @@ package io.github.steaf23.bingoreloaded.action;
 
 import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.data.config.ConfigurationOption;
+import io.github.steaf23.bingoreloaded.lib.action.ActionArgument;
 import io.github.steaf23.bingoreloaded.lib.action.ActionResult;
 import io.github.steaf23.bingoreloaded.lib.action.ActionTree;
 import io.github.steaf23.bingoreloaded.lib.util.ComponentUtils;
@@ -22,25 +23,23 @@ public class BingoConfigAction extends ActionTree {
 		super("bingoconfig", List.of("bingo.admin"));
 		this.configuration = configuration;
 
-        setAction((args) -> {
-            if (getLastUser() == null) {
+        setAction((user, args) -> {
+            if (user == null) {
                 return ActionResult.IGNORED;
             }
 
             if (args.length == 1) {
-                return readOption(getLastUser(), args[0]);
+                return readOption(user, args[0]);
             }
             if (args.length >= 2) {
-                return writeOption(getLastUser(), args[0], String.join(" ", Arrays.copyOfRange(args, 1, args.length)));
+                return writeOption(user, args[0], String.join(" ", Arrays.copyOfRange(args, 1, args.length)));
             }
 
             return ActionResult.INCORRECT_USE;
-        }).addTabCompletion(args ->
-                switch (args.length) {
-                    case 1 -> allOptionKeys(true);
-                    default -> List.of();
-                })
-                .addUsage("<option> [new_value]");
+        });
+
+        addArgument(ActionArgument.required("option", allOptionKeys(true)));
+        addArgument(ActionArgument.optional("new_value"));
     }
 
     private ActionResult readOption(Audience sender, String optionKey) {

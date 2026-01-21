@@ -6,145 +6,174 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class ActionTree
-{
-    protected final List<ActionTree> subActions;
-    protected final String name;
-    private Function<String[], ActionResult> action;
-    private final List<String> permissionWhitelist;
+public class ActionTree {
 
-    protected String usage;
-    protected Function<String[], List<String>> tabCompletionForArgs;
+	protected final List<ActionTree> subActions;
+	protected final List<ActionArgument> arguments;
+	protected final String name;
+	protected final String description;
+	private CommandFunction action;
+	private final List<String> permissionWhitelist;
+	//FIXME REFACTOR before release. remove staticArg because it's a bandaid fix for deferred actions in hytale. Come up with a proper fix for it.
+	String staticArg;
 
-    protected ActionUser lastUser = null;
+	public ActionTree(String name, List<String> permissionWhitelist, CommandFunction action) {
+		this.subActions = new ArrayList<>();
+		this.arguments = new ArrayList<>();
+		this.name = name;
+		this.description = "{description}";
+		this.action = action;
+		this.permissionWhitelist = permissionWhitelist;
+		this.staticArg = null;
+	}
 
-    public ActionTree(String name, List<String> permissionWhitelist, Function<String[], ActionResult> action) {
-        this.subActions = new ArrayList<>();
-        this.name = name;
-        this.action = action;
-        this.usage = "";
-        this.permissionWhitelist = permissionWhitelist;
-        this.tabCompletionForArgs = args -> List.of();
-    }
+	public ActionTree(String name, CommandFunction action) {
+		this(name, List.of(), action);
+	}
 
-    public ActionTree(String name, Function<String[], ActionResult> action) {
-        this(name, List.of(), action);
-    }
+	public ActionTree(String name, List<String> permissionWhitelist) {
+		this(name, permissionWhitelist, (CommandFunction) null);
+	}
 
-    public ActionTree(String name, List<String> permissionWhitelist) {
-        this(name, permissionWhitelist, null);
-    }
+	public ActionTree(String name, List<String> permissionWhitelist, String staticArg) {
+		this(name, permissionWhitelist, (CommandFunction) null);
+		this.staticArg = staticArg;
+	}
 
-    public ActionTree setAction(Function<String[], ActionResult> action) {
-        this.action = action;
-        return this;
-    }
+	public ActionTree setAction(CommandFunction action) {
+		this.action = action;
+		return this;
+	}
 
 	public ActionTree addSubAction(ActionTree subAction) {
-        subActions.add(subAction);
-        return this;
-    }
+		subAction.staticArg = staticArg;
+		subActions.add(subAction);
+		return this;
+	}
 
-    public ActionTree addUsage(String usage) {
-        this.usage = usage;
-        return this;
-    }
+	public ActionTree addArgument(ActionArgument argument) {
+		arguments.add(argument);
+		return this;
+	}
 
-    public ActionTree addTabCompletion(Function<String[], List<String>> tabCompletionForArgs) {
-        this.tabCompletionForArgs = tabCompletionForArgs;
-        return this;
-    }
+	public ActionResult execute(ActionUser user, String... arguments) {
 
-    public ActionResult execute(ActionUser user, String... arguments) {
-        lastUser = user;
+		if (staticArg != null) {
+			String[] result = new String[arguments.length + 1];
+			result[0] = staticArg;
+			System.arraycopy(arguments, 0, result, 1, arguments.length);
+			arguments = result;
+		}
 
-        if (!hasPermission(user)) {
-            return ActionResult.NO_PERMISSION;
-        }
+		if (!hasPermission(user)) {
+			return ActionResult.NO_PERMISSION;
+		}
 
-        if (action != null) {
-            if (subActions.isEmpty()) {
-                return action.apply(arguments);
-            }
+		if (action != null) {
+			if (subActions.isEmpty()) {
+				return action.perform(user, arguments);
+			}
 
-            if (arguments.length == 0) {
-                return action.apply(arguments);
-            }
-        }
+			if (arguments.length == 0) {
+				return action.perform(user, arguments);
+			}
+		}
 
-        if (arguments.length == 0) {
-            return ActionResult.INCORRECT_USE;
-        }
+		if (arguments.length == 0) {
+			return ActionResult.INCORRECT_USE;
+		}
 
-        ActionTree cmd = getSubCommand(arguments[0]);
-        if (cmd != null) {
-            return cmd.execute(lastUser, Arrays.copyOfRange(arguments, 1, arguments.length));
-        }
-        return ActionResult.INCORRECT_USE;
-    }
+		ActionTree cmd = getSubCommand(arguments[0]);
+		if (cmd != null) {
+			return cmd.execute(user, Arrays.copyOfRange(arguments, 1, arguments.length));
+		}
+		return ActionResult.INCORRECT_USE;
+	}
 
-    public boolean hasPermission(ActionUser user) {
-        return permissionWhitelist.isEmpty() || user.hasAnyPermission(permissionWhitelist);
-    }
+	public boolean hasPermission(ActionUser user) {
+		return permissionWhitelist.isEmpty() || user.hasAnyPermission(permissionWhitelist);
+	}
 
-    public @Nullable List<String> tabComplete(ActionUser user, String... arguments) {
-        if (subActions.isEmpty()) {
-            return tabCompletionForArgs.apply(arguments);
-        }
+	public @Nullable List<String> tabComplete(ActionUser user, String... args) {
+		if (subActions.isEmpty()) {
+			return tabCompleteArgument(args);
+		}
 
-        if (arguments.length == 1) {
-            return subActions.stream()
-                    .filter(cmd -> cmd.hasPermission(user))
-                    .map(cmd -> cmd.name).collect(Collectors.toList());
-        }
+		if (args.length == 1) {
+			return subActions.stream()
+					.filter(cmd -> cmd.hasPermission(user))
+					.map(cmd -> cmd.name).collect(Collectors.toList());
+		}
 
-        ActionTree cmd = getSubCommand(arguments[0]);
-        if (cmd != null) {
-            return cmd.tabComplete(user, Arrays.copyOfRange(arguments, 1, arguments.length));
-        }
+		ActionTree cmd = getSubCommand(args[0]);
+		if (cmd != null) {
+			return cmd.tabComplete(user, Arrays.copyOfRange(args, 1, args.length));
+		}
 
-        return List.of();
-    }
+		return List.of();
+	}
 
-    public ActionTree getSubCommand(String name) {
-        for (ActionTree actionTree : subActions) {
-            if (actionTree.name.equals(name)) {
-                return actionTree;
-            }
-        }
-        return null;
-    }
+	public List<String> tabCompleteArgument(String... args) {
+		int argumentIndex = args.length;
+		if (argumentIndex >= arguments.size()) {
+			return null;
+		}
+		ActionArgument argument = arguments.get(argumentIndex);
+		return argument.possibleValues().apply(new ActionArgument.TabCompletionContext(args));
+	}
 
-    public String usage(String... arguments) {
-        return "/" + determineUsage(arguments);
-    }
+	public ActionTree getSubCommand(String name) {
+		for (ActionTree actionTree : subActions) {
+			if (actionTree.name.equals(name)) {
+				return actionTree;
+			}
+		}
+		return null;
+	}
 
-    protected String determineUsage(String... arguments) {
-        if (subActions.isEmpty() || arguments.length == 0) {
-            return name + " " + usage;
-        }
+	public List<ActionTree> subCommands() {
+		return subActions;
+	}
 
-        ActionTree cmd = getSubCommand(arguments[0]);
-        if (cmd != null) {
-            return name + " " + cmd.determineUsage(Arrays.copyOfRange(arguments, 1, arguments.length));
-        }
+	public String usage(ActionArgument.TabCompletionContext context) {
+		return "/" + determineUsage(context);
+	}
 
-        if (arguments.length == 1) {
-            return name + " <" + subActions.stream().map(subCommand -> subCommand.name)
-                    .collect(Collectors.joining(" | ")) + ">";
-        }
+	protected String determineUsage(ActionArgument.TabCompletionContext context) {
+		if (subActions.isEmpty() || context.arguments().length == 0) {
+			return name + arguments.stream()
+					.map(arg -> arg.createUsage(context))
+					.reduce(" ", (acc, val) -> acc + " " + val);
+		}
 
-        return "";
-    }
+		String[] arguments = context.arguments();
 
-    public ActionUser getLastUser() {
-        return lastUser;
-    }
+		ActionTree cmd = getSubCommand(arguments[0]);
+		if (cmd != null) {
+			return name + " " + cmd.determineUsage(new ActionArgument.TabCompletionContext(Arrays.copyOfRange(arguments, 1, arguments.length)));
+		}
 
-    public String name() {
-        return name;
-    }
+		if (arguments.length == 1) {
+			return name + " <" + subActions.stream().map(subCommand -> subCommand.name)
+					.collect(Collectors.joining(" | ")) + ">";
+		}
+
+		return "";
+	}
+
+	public String name() {
+		return name;
+	}
+
+	public List<ActionArgument> arguments() {
+		return arguments;
+	}
+
+	@FunctionalInterface
+	public interface CommandFunction {
+
+		ActionResult perform(ActionUser user, String... arguments);
+	}
 }

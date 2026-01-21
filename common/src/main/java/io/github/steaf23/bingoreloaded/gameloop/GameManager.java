@@ -251,7 +251,7 @@ public class GameManager {
 					teleportingPlayer = true;
 					DebugLogger.addLog("Scheduling player load...");
 					// load player will teleport them, so we have to schedule it to make sure to do the right thing
-					runtime.getServerSoftware().runTask(t -> {
+					runtime.getServerSoftware().runTask(targetWorld.uniqueId(), t -> {
 						if (playerData.loadPlayer(player) == null) {
 //                        // Player data was not saved for some reason?
 //                        ConsoleMessenger.bug(Component.text("No saved player data could be found for ").append(event.getPlayer().displayName()).append(Component.text(", resetting data")), this);

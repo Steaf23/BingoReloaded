@@ -2,7 +2,7 @@ package io.github.steaf23.bingoreloaded.lib.util;
 
 import io.github.steaf23.bingoreloaded.lib.api.AdvancementHandle;
 import io.github.steaf23.bingoreloaded.lib.api.EntityType;
-import io.github.steaf23.bingoreloaded.lib.api.StatisticHandle;
+import io.github.steaf23.bingoreloaded.lib.api.StatisticDefinition;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -38,7 +38,7 @@ public class ComponentUtils
         return Component.translatable(advancementKey(advancement) + ".description");
     }
 
-    public static Component statistic(StatisticHandle statistic, Component... with)
+    public static Component statistic(StatisticDefinition statistic, Component... with)
     {
         return Component.translatable(statisticKey(statistic), with);
     }
@@ -61,11 +61,11 @@ public class ComponentUtils
         return "advancements." + result;
     }
 
-    private static String statisticKey(StatisticHandle statistic)
+    private static String statisticKey(StatisticDefinition statistic)
     {
-        String prefix = statistic.isSubStatistic() ? "stat_type.minecraft." : "stat.minecraft.";
-        String result = statistic.translationKey();
-        return !result.isEmpty() ? prefix + result : statistic.statisticType().key().asString();
+        String prefix = statistic.type().isSubStatistic() ? "stat_type.minecraft." : "stat.minecraft.";
+        String result = statistic.type().translationKey();
+        return !result.isEmpty() ? prefix + result : statistic.type().key().asString();
     }
 
     private static String itemKey(ItemType item)

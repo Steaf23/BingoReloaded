@@ -10,9 +10,10 @@ import io.github.steaf23.bingoreloaded.data.helper.SerializablePlayer;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gameloop.GameManager;
 import io.github.steaf23.bingoreloaded.gameloop.phase.PregameLobby;
+import io.github.steaf23.bingoreloaded.lib.action.ActionArgument;
 import io.github.steaf23.bingoreloaded.lib.action.ActionResult;
 import io.github.steaf23.bingoreloaded.lib.action.ActionTree;
-import io.github.steaf23.bingoreloaded.lib.action.DeferredAction;
+import io.github.steaf23.bingoreloaded.lib.api.ActionUser;
 import io.github.steaf23.bingoreloaded.lib.api.ServerSoftware;
 import io.github.steaf23.bingoreloaded.lib.api.WorldHandle;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
@@ -34,253 +35,252 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class AutoBingoAction extends DeferredAction {
+public class AutoBingoAction extends ActionTree {
 
 	private final ServerSoftware platform;
 	private final GameManager manager;
 
+	private ActionUser lastUser;
+
 	public AutoBingoAction(ServerSoftware platform, GameManager manager) {
-		super("autobingo", "world", List.of("bingo.admin"));
+		super("autobingo", List.of("bingo.admin"), "default");
 		this.platform = platform;
 		this.manager = manager;
 
-		addTabCompletion(args -> manager.getSessionNames().stream().toList());
+//		addArgument(ActionArgument.required("name", manager.getSessionNames().stream().toList()));
 
-		this.addSubAction(new ActionTree("create", args -> create(args[0])));
-
-
-		this.addSubAction(new ActionTree("destroy", args -> destroy(args[0])));
-
-
-		this.addSubAction(new ActionTree("start", args -> start(args[0])));
+		this.addSubAction(new ActionTree("create", (user, args) -> {
+			lastUser = user;
+			return create(args[0]);
+		}));
 
 
-		this.addSubAction(new ActionTree("kit", args -> {
+		this.addSubAction(new ActionTree("destroy", (user, args) -> {
+			lastUser = user;
+			return destroy(args[0]);
+		}));
+
+
+		this.addSubAction(new ActionTree("start", (user, args) -> {
+			lastUser = user;
+			return start(args[0]);
+		}));
+
+
+		this.addSubAction(new ActionTree("kit", (user, args) -> {
+			lastUser = user;
 			var settings = getSettingsBuilder(args[0]);
 			if (settings == null) {
 				sendFailed("Invalid world/ session name: " + args[0], args[0]);
 				return ActionResult.INCORRECT_USE;
 			}
 			return setKit(settings, args[0], Arrays.copyOfRange(args, 1, args.length));
-		}
-		).addTabCompletion(args ->
-				List.of("hardcore", "normal", "overpowered", "reloaded",
-						"custom_1", "custom_2", "custom_3", "custom_4", "custom_5")
-		).addUsage("<kit_name>"));
+		})
+				.addArgument(ActionArgument.required("kit_name",
+						List.of("hardcore", "normal", "overpowered", "reloaded",
+								"custom_1", "custom_2", "custom_3", "custom_4", "custom_5"))));
 
 
-		this.addSubAction(new ActionTree("effects", args -> {
+		this.addSubAction(new ActionTree("effects", (user, args) -> {
+			lastUser = user;
 			var settings = getSettingsBuilder(args[0]);
 			if (settings == null) {
 				sendFailed("Invalid world/ session name: " + args[0], args[0]);
 				return ActionResult.INCORRECT_USE;
 			}
 			return setEffect(settings, args[0], Arrays.copyOfRange(args, 1, args.length));
-		}).addUsage("<effect_name> [true | false]")
-				.addTabCompletion(args -> {
-					if (args.length <= 2) {
-						List<String> effects = Arrays.stream(EffectOptionFlags.values())
-								.map(v -> v.toString().toLowerCase())
-								.collect(Collectors.toList());
-						effects.add("none");
-						effects.add("all");
-						return effects;
-					} else if (args.length == 3) {
-						if (!args[0].equals("none") && !args[0].equals("all")) {
-							return List.of("true", "false");
-						}
+		})
+				.addArgument(ActionArgument.required("effect_name", ctx -> {
+					List<String> effects = Arrays.stream(EffectOptionFlags.values())
+							.map(v -> v.toString().toLowerCase())
+							.collect(Collectors.toList());
+					effects.add("none");
+					effects.add("all");
+					return effects;
+				}))
+				.addArgument(ActionArgument.optional("enable", ctx -> {
+					if (!ctx.arguments()[0].equals("none") && !ctx.arguments()[0].equals("all")) {
+						return List.of("true", "false");
+					} else {
+						return null;
 					}
-					return List.of();
-				}));
+				})));
 
 
-		this.addSubAction(new ActionTree("card", args -> {
+		this.addSubAction(new ActionTree("card", (user, args) -> {
+			lastUser = user;
 			var settings = getSettingsBuilder(args[0]);
 			if (settings == null) {
 				sendFailed("Invalid world/ session name: " + args[0], args[0]);
 				return ActionResult.INCORRECT_USE;
 			}
 			return setCard(settings, args[0], Arrays.copyOfRange(args, 1, args.length));
-		}).addUsage("<card_name>"));
+		})
+				.addArgument(ActionArgument.required("card_name")));
 
 
-		this.addSubAction(new ActionTree("countdown", args -> {
+		this.addSubAction(new ActionTree("countdown", (user, args) -> {
+			lastUser = user;
 			var settings = getSettingsBuilder(args[0]);
 			if (settings == null) {
 				sendFailed("Invalid world/ session name: " + args[0], args[0]);
 				return ActionResult.INCORRECT_USE;
 			}
 			return setCountdown(settings, args[0], Arrays.copyOfRange(args, 1, args.length));
-		}).addUsage("<type>")
-				.addTabCompletion(args -> args.length == 2 ? List.of("disabled", "duration", "time_limit") : List.of()));
+		})
+				.addArgument(ActionArgument.required("type", List.of("disabled", "duration", "time_limit"))));
 
 
-		this.addSubAction(new ActionTree("duration", args -> {
+		this.addSubAction(new ActionTree("duration", (user, args) -> {
+			lastUser = user;
 			var settings = getSettingsBuilder(args[0]);
 			if (settings == null) {
 				sendFailed("Invalid world/ session name: " + args[0], args[0]);
 				return ActionResult.INCORRECT_USE;
 			}
 			return setDuration(settings, args[0], Arrays.copyOfRange(args, 1, args.length));
-		}).addUsage("<duration_minutes>"));
+		})
+				.addArgument(ActionArgument.required("duration_minutes")));
 
 
-		this.addSubAction(new ActionTree("team", args -> {
+		this.addSubAction(new ActionTree("team", (user, args) -> {
+			lastUser = user;
 			var settings = getSettingsBuilder(args[0]);
 			if (settings == null) {
 				sendFailed("Invalid world/ session name: " + args[0], args[0]);
 				return ActionResult.INCORRECT_USE;
 			}
 			return setPlayerTeam(args[0], Arrays.copyOfRange(args, 1, args.length));
-		}).addUsage("<player_name> <team_name>")
-				.addTabCompletion(args -> args.length == 2 || args.length == 3 ? List.of("") : List.of()));
+		})
+				.addArgument(ActionArgument.required("player_name"))
+				.addArgument(ActionArgument.required("team_name")));
 
 
-		this.addSubAction(new ActionTree("teamsize", args -> {
+		this.addSubAction(new ActionTree("teamsize", (user, args) -> {
+			lastUser = user;
 			var settings = getSettingsBuilder(args[0]);
 			if (settings == null) {
 				sendFailed("Invalid world/ session name: " + args[0], args[0]);
 				return ActionResult.INCORRECT_USE;
 			}
 			return setTeamSize(settings, args[0], Arrays.copyOfRange(args, 1, args.length));
-		}).addUsage("<size>"));
+		}).addArgument(ActionArgument.required("size")));
 
 
-		this.addSubAction(new ActionTree("gamemode", args -> {
+		this.addSubAction(new ActionTree("gamemode", (user, args) -> {
+			lastUser = user;
 			var settings = getSettingsBuilder(args[0]);
 			if (settings == null) {
 				sendFailed("Invalid world/ session name: " + args[0], args[0]);
 				return ActionResult.INCORRECT_USE;
 			}
 			return setGamemode(settings, args[0], Arrays.copyOfRange(args, 1, args.length));
-		}).addUsage("<regular | lockout | complete | hotswap> [3 | 5]")
-				.addTabCompletion(args -> switch (args.length) {
-					case 2 -> List.of("regular", "lockout", "complete", "hotswap");
-					case 3 -> List.of("3", "5");
-					default -> List.of();
-				}));
+		})
+				.addArgument(ActionArgument.required("mode", List.of("regular", "lockout", "complete", "hotswap")))
+				.addArgument(ActionArgument.optional("size", List.of("3", "5"))));
 
 
-		this.addSubAction(new ActionTree("hotswap_goal", args -> {
+		this.addSubAction(new ActionTree("hotswap_goal", (user, args) -> {
+			lastUser = user;
 			var settings = getSettingsBuilder(args[0]);
 			if (settings == null) {
 				sendFailed("Invalid world/ session name: " + args[0], args[0]);
 				return ActionResult.INCORRECT_USE;
 			}
 			return setHotswapGoal(settings, args[0], Arrays.copyOfRange(args, 1, args.length));
-		})).addUsage("<win_goal>");
+		})
+				.addArgument(ActionArgument.required("win_goal")));
 
 
-		this.addSubAction(new ActionTree("hotswap_expire", args -> {
+		this.addSubAction(new ActionTree("hotswap_expire", (user, args) -> {
+			lastUser = user;
 			var settings = getSettingsBuilder(args[0]);
 			if (settings == null) {
 				sendFailed("Invalid world/ session name: " + args[0], args[0]);
 				return ActionResult.INCORRECT_USE;
 			}
 			return setHotswapExpire(settings, args[0], Arrays.copyOfRange(args, 1, args.length));
-		}).addUsage("<true | false>")
-				.addTabCompletion(args -> args.length == 2 ? List.of("true", "false") : List.of()));
+		})
+				.addArgument(ActionArgument.required("value", List.of("true", "false"))));
 
 
-		this.addSubAction(new ActionTree("complete_goal", args -> {
+		this.addSubAction(new ActionTree("complete_goal", (user, args) -> {
+			lastUser = user;
 			var settings = getSettingsBuilder(args[0]);
 			if (settings == null) {
 				sendFailed("Invalid world/ session name: " + args[0], args[0]);
 				return ActionResult.INCORRECT_USE;
 			}
 			return setCompleteGoal(settings, args[0], Arrays.copyOfRange(args, 1, args.length));
-		})).addUsage("<win_goal>");
+		})
+				.addArgument(ActionArgument.required("win_goal")));
 
 
-		this.addSubAction(new ActionTree("separate_cards", args -> {
+		this.addSubAction(new ActionTree("separate_cards", (user, args) -> {
+			lastUser = user;
 			var settings = getSettingsBuilder(args[0]);
 			if (settings == null) {
 				sendFailed("Invalid world/ session name: " + args[0], args[0]);
 				return ActionResult.INCORRECT_USE;
 			}
 			return setDifferentCardPerTeam(settings, args[0], Arrays.copyOfRange(args, 1, args.length));
-		}).addUsage("<true | false>")
-				.addTabCompletion(args -> args.length == 2 ? List.of("true", "false") : List.of()));
+		})
+				.addArgument(ActionArgument.required("value", List.of("true", "false"))));
 
 
-		this.addSubAction(new ActionTree("end", args -> end(args[0])));
+		this.addSubAction(new ActionTree("end", (user, args) -> {
+			lastUser = user;
+			return end(args[0]);
+		}));
 
 
-		this.addSubAction(new ActionTree("preset", args -> {
+		this.addSubAction(new ActionTree("preset", (user, args) -> {
+			lastUser = user;
 			var settings = getSettingsBuilder(args[0]);
 			if (settings == null) {
 				sendFailed("Invalid world/ session name: " + args[0], args[0]);
 				return ActionResult.INCORRECT_USE;
 			}
 			return preset(settings, args[0], Arrays.copyOfRange(args, 1, args.length));
-		}).addUsage("<save | load | remove | default> <preset_name>")
-				.addTabCompletion(args -> {
+		})
+				.addArgument(ActionArgument.required("option", List.of("save", "load", "remove", "default")))
+				.addArgument(ActionArgument.required("preset_name", ctx -> {
 					BingoSettingsData settingsData = new BingoSettingsData();
-					return switch (args.length) {
-						case 2 -> List.of("save", "load", "remove", "default");
-						case 3 -> new ArrayList<>(settingsData.getPresetNames());
+					return new ArrayList<>(settingsData.getPresetNames());
+				})));
+
+
+		this.addSubAction(new ActionTree("addplayer", this::addPlayerToSession)
+				.addArgument(ActionArgument.required("player_name", (List<String>) null)));
+
+
+		this.addSubAction(new ActionTree("kickplayer", this::removePlayerFromSession)
+				.addArgument(ActionArgument.required("player_name", (List<String>) null))
+				.addArgument(ActionArgument.required("target_world_name", platform.getLoadedWorlds().stream().map(WorldHandle::name).toList())));
+
+
+		this.addSubAction(new ActionTree("kickplayers", this::removeAllPlayersFromSession)
+				.addArgument(ActionArgument.required("target_world_name", platform.getLoadedWorlds().stream().map(WorldHandle::name).toList())));
+
+
+		this.addSubAction(new ActionTree("vote", this::voteForPlayer)
+				.addArgument(ActionArgument.required("player_name", (List<String>) null))
+				.addArgument(ActionArgument.required("vote_category", List.of("kits", "gamemodes", "cards", "cardsizes")).withUseDisplay(ActionArgument.UseDisplay.NAME))
+				.addArgument(ActionArgument.required("vote_for", ctx -> {
+					BingoConfigurationData.VoteList voteList = manager.getGameConfig().getOptionValue(BingoOptions.VOTE_LIST);
+
+					return switch (ctx.arguments()[1]) {
+						case "kits" -> voteList.kits();
+						case "gamemodes" -> voteList.gamemodes();
+						case "cards" -> voteList.cards();
+						case "cardsizes" -> voteList.cardSizes();
 						default -> List.of();
 					};
-				}));
-
-
-		this.addSubAction(new ActionTree("addplayer", this::addPlayerToSession).addUsage("<player_name>").addTabCompletion(args -> {
-			if (args.length == 2) {
-				return null;
-			} else {
-				return List.of();
-			}
-		}));
-
-
-		this.addSubAction(new ActionTree("kickplayer", this::removePlayerFromSession).addUsage("<player_name> <target_world_name>").addTabCompletion(args -> {
-			if (args.length == 2) {
-				return null;
-			} else if (args.length == 3) {
-				return platform.getLoadedWorlds().stream().map(WorldHandle::name).toList();
-			} else {
-				return List.of();
-			}
-		}));
-
-
-		this.addSubAction(new ActionTree("kickplayers", this::removeAllPlayersFromSession).addUsage("<target_world_name>").addTabCompletion(args -> {
-			if (args.length == 2) {
-				return platform.getLoadedWorlds().stream().map(WorldHandle::name).toList();
-			} else {
-				return List.of();
-			}
-		}));
-
-
-		this.addSubAction(new ActionTree("vote", this::voteForPlayer).addUsage("<player_name> <vote_category> <vote_for>").addTabCompletion(args -> {
-			BingoConfigurationData.VoteList voteList = manager.getGameConfig().getOptionValue(BingoOptions.VOTE_LIST);
-			if (args.length <= 2) {
-				return null;
-			} else if (args.length == 3) {
-				return List.of("kits", "gamemodes", "cards", "cardsizes");
-			} else if (args.length == 4) {
-				return switch (args[2]) {
-					case "kits" -> voteList.kits();
-					case "gamemodes" -> voteList.gamemodes();
-					case "cards" -> voteList.cards();
-					case "cardsizes" -> voteList.cardSizes();
-					default -> List.of();
-				};
-			}
-			return List.of();
-		}));
+				})));
 
 		this.addSubAction(new ActionTree("playerdata", this::playerDataCommand)
-				.addUsage("<save | load | remove> <player_name>")
-				.addTabCompletion(args -> {
-					if (args.length <= 2) {
-						return List.of("save", "load", "remove");
-					} else if (args.length == 3) {
-						return null;
-					}
-					return List.of();
-				}));
+				.addArgument(ActionArgument.required("option", List.of("save", "load", "remove")))
+				.addArgument(ActionArgument.required("player_name", (List<String>) null)));
 	}
 
 	private BingoSettingsBuilder getSettingsBuilder(String sessionName) {
@@ -328,11 +328,11 @@ public class AutoBingoAction extends DeferredAction {
 
 		if (!kit.isValid()) {
 			// Invalid custom kit selected, not possible!
-			sendFailed("Cannot set kit to " + kit.getDisplayName() + ". This custom kit is not defined. To create custom kits first, use /bingo kit.", worldName);
+			sendFailed(Component.text("Cannot set kit to ").append(kit.getDisplayName()).append(Component.text(". This custom kit is not defined. To create custom kits first, use /bingo kit.")), worldName);
 			return ActionResult.IGNORED;
 		}
 		settings.kit(kit);
-		sendSuccess("Kit set to " + kit.getDisplayName(), worldName);
+		sendSuccess(Component.text("Kit set to ").append(kit.getDisplayName()), worldName);
 		return ActionResult.SUCCESS;
 	}
 
@@ -622,7 +622,8 @@ public class AutoBingoAction extends DeferredAction {
 		return ActionResult.SUCCESS;
 	}
 
-	private ActionResult addPlayerToSession(String... args) {
+	private ActionResult addPlayerToSession(ActionUser user, String... args) {
+		lastUser = user;
 		String worldName = args[0];
 		if (args.length != 2) {
 			sendFailed("Expected 3 arguments!", worldName);
@@ -643,7 +644,8 @@ public class AutoBingoAction extends DeferredAction {
 		return ActionResult.SUCCESS;
 	}
 
-	private ActionResult removePlayerFromSession(String... args) {
+	private ActionResult removePlayerFromSession(ActionUser user, String... args) {
+		lastUser = user;
 		String worldName = args[0];
 		if (args.length != 3) {
 			sendFailed("Expected 4 arguments!", worldName);
@@ -678,7 +680,8 @@ public class AutoBingoAction extends DeferredAction {
 		return ActionResult.SUCCESS;
 	}
 
-	private ActionResult removeAllPlayersFromSession(String... args) {
+	private ActionResult removeAllPlayersFromSession(ActionUser user, String... args) {
+		lastUser = user;
 		String worldName = args[0];
 		if (args.length != 2) {
 			sendFailed("Expected 3 arguments!", worldName);
@@ -719,7 +722,8 @@ public class AutoBingoAction extends DeferredAction {
 		return ActionResult.SUCCESS;
 	}
 
-	private ActionResult voteForPlayer(String[] args) {
+	private ActionResult voteForPlayer(ActionUser user, String[] args) {
+		lastUser = user;
 		String sessionName = args[0];
 		if (args.length != 4) {
 			sendFailed("Expected 5 arguments!", sessionName);
@@ -790,7 +794,8 @@ public class AutoBingoAction extends DeferredAction {
 		return ActionResult.SUCCESS;
 	}
 
-	private ActionResult playerDataCommand(String... args) {
+	private ActionResult playerDataCommand(ActionUser user, String... args) {
+		lastUser = user;
 		String sessionName = args[0];
 		if (args.length != 3) {
 			return ActionResult.INCORRECT_USE;
@@ -839,10 +844,10 @@ public class AutoBingoAction extends DeferredAction {
 	}
 
 	private void sendSuccess(Component message, String sessionName) {
-		getLastUser().sendMessage(Component.text("(" + sessionName + ") ").append(message.color(NamedTextColor.GREEN)));
+		lastUser.sendMessage(Component.text("(" + sessionName + ") ").append(message.color(NamedTextColor.GREEN)));
 	}
 
 	private void sendFailed(Component message, String sessionName) {
-		getLastUser().sendMessage(Component.text("(" + sessionName + ") ").append(message.color(NamedTextColor.RED)));
+		lastUser.sendMessage(Component.text("(" + sessionName + ") ").append(message.color(NamedTextColor.RED)));
 	}
 }

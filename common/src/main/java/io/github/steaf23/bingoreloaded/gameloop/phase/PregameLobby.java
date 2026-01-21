@@ -48,7 +48,7 @@ public class PregameLobby implements GamePhase
 		this.runtime = session.getGameManager().getRuntime();
 		this.votes = new HashMap<>();
         this.config = config;
-        this.playerCountTimer = new CountdownTimer(config.getOptionValue(BingoOptions.PLAYER_WAIT_TIME), this::onCountdownTimerFinished);
+        this.playerCountTimer = new CountdownTimer(session.getOverworld(), config.getOptionValue(BingoOptions.PLAYER_WAIT_TIME), this::onCountdownTimerFinished);
 
 		this.infoMenu = new BingoSettingsInfoMenu();
 
@@ -205,7 +205,7 @@ public class PregameLobby implements GamePhase
         }
 		runtime.settingsDisplay().update(infoMenu);
 
-        session.getGameManager().getPlatform().runTask(10L, (t) -> {
+        session.getGameManager().getPlatform().runTask(session.getOverworld().uniqueId(), 10L, (t) -> {
             if (gameStarted) {
                 return;
             }
@@ -292,7 +292,7 @@ public class PregameLobby implements GamePhase
 
         // Schedule check in the future since a player can switch teams where they will briefly leave the team
         // and lower the participant count to possibly stop the timer.
-        session.getGameManager().getPlatform().runTask(t -> {
+        session.getGameManager().getPlatform().runTask(session.getOverworld().uniqueId(), t -> {
             if (session.teamManager.getParticipantCount() < config.getOptionValue(BingoOptions.MINIMUM_PLAYER_COUNT) && playerCountTimer.isRunning()) {
                 playerCountTimer.stop();
             }

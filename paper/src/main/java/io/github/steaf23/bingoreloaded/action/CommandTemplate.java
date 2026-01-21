@@ -1,5 +1,6 @@
 package io.github.steaf23.bingoreloaded.action;
 
+import io.github.steaf23.bingoreloaded.lib.action.ActionArgument;
 import io.github.steaf23.bingoreloaded.lib.action.ActionTree;
 import io.github.steaf23.bingoreloaded.lib.api.ActionUser;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandlePaper;
@@ -49,7 +50,7 @@ public class CommandTemplate implements TabExecutor
 
         switch (command.execute(user, arguments)) {
             case INCORRECT_USE -> {
-                commandSender.sendMessage(ComponentUtils.MINI_BUILDER.deserialize("<dark_gray>- <red>Usage: " + command.usage(arguments)));
+                commandSender.sendMessage(ComponentUtils.MINI_BUILDER.deserialize("<dark_gray>- <red>Usage: " + command.usage(new ActionArgument.TabCompletionContext(arguments))));
                 return false;
             }
             default -> {

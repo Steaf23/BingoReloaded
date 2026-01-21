@@ -23,7 +23,7 @@ import io.github.steaf23.bingoreloaded.gameloop.SingularGameManager;
 import io.github.steaf23.bingoreloaded.lib.api.BingoReloadedRuntime;
 import io.github.steaf23.bingoreloaded.lib.api.PlatformResolver;
 import io.github.steaf23.bingoreloaded.lib.api.ServerSoftware;
-import io.github.steaf23.bingoreloaded.lib.api.StatisticHandle;
+import io.github.steaf23.bingoreloaded.lib.api.StatisticDefinition;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataAccessor;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataStorageSerializerRegistry;
@@ -96,7 +96,7 @@ public class BingoReloaded implements Namespaced {
 		DataStorageSerializerRegistry.addSerializer(new PlayerStorageSerializer(), SerializablePlayer.class);
 		DataStorageSerializerRegistry.addSerializer(new TeamTemplateStorageSerializer(), TeamData.TeamTemplate.class);
 		DataStorageSerializerRegistry.addSerializer(new BingoSettingsStorageSerializer(), BingoSettings.class);
-		DataStorageSerializerRegistry.addSerializer(new StatisticSerializer(), StatisticHandle.class);
+		DataStorageSerializerRegistry.addSerializer(new StatisticSerializer(), StatisticDefinition.class);
 		DataStorageSerializerRegistry.addSerializer(new ItemStorageSerializer(), SerializableItem.class);
 		DataStorageSerializerRegistry.addSerializer(new GameTaskSerializer(), GameTask.class);
 		DataStorageSerializerRegistry.addSerializer(new BingoLobbySerializer(), BingoLobby.class);
@@ -117,7 +117,9 @@ public class BingoReloaded implements Namespaced {
 			addDataAccessor(accessor);
 		}
 
-		this.config = new BingoConfigurationData(runtime.getConfigData());
+		DataAccessor configData = runtime.getConfigData();
+		configData.load();
+		this.config = new BingoConfigurationData(configData);
 		runtime.onConfigReloaded(config);
 		DebugLogger.setLoggingEnabled(config.getOptionValue(BingoOptions.ENABLE_DEBUG_LOGGING));
 
@@ -128,9 +130,11 @@ public class BingoReloaded implements Namespaced {
 
 		this.textureData = new TexturedMenuData();
 
-		reloadManager();
-
 		ConsoleMessenger.log(Component.text("Enabled " + platform.getExtensionInfo().name()).color(NamedTextColor.GREEN));
+	}
+
+	public void serverReady() {
+		reloadManager();
 	}
 
 	public void disable() {

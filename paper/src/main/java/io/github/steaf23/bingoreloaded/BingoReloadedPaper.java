@@ -45,6 +45,7 @@ import io.github.steaf23.bingoreloaded.lib.api.WorldHandle;
 import io.github.steaf23.bingoreloaded.lib.api.WorldHandlePaper;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandlePaper;
+import io.github.steaf23.bingoreloaded.lib.api.player.EmptyDisplay;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandlePaper;
 import io.github.steaf23.bingoreloaded.lib.api.player.SharedDisplay;
@@ -54,9 +55,9 @@ import io.github.steaf23.bingoreloaded.lib.data.core.YamlDataAccessor;
 import io.github.steaf23.bingoreloaded.lib.events.EventListenerPaper;
 import io.github.steaf23.bingoreloaded.lib.inventory.BasicMenu;
 import io.github.steaf23.bingoreloaded.lib.inventory.MenuBoardPaper;
-import io.github.steaf23.bingoreloaded.lib.menu.EmptyDisplay;
 import io.github.steaf23.bingoreloaded.lib.menu.ScoreboardDisplay;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
+import io.github.steaf23.bingoreloaded.lib.util.LoggerWrapper;
 import io.github.steaf23.bingoreloaded.lib.util.PlayerDisplayTranslationKey;
 import io.github.steaf23.bingoreloaded.placeholder.BingoReloadedPlaceholderExpansion;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
@@ -66,6 +67,7 @@ import io.github.steaf23.bingoreloaded.util.bstats.Metrics;
 import io.github.steaf23.bingoreloaded.world.CustomWorldCreator;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.key.Key;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.PluginCommand;
@@ -102,8 +104,24 @@ public class BingoReloadedPaper extends JavaPlugin implements BingoReloadedRunti
 
 	@Override
 	public void onLoad() {
-		this.platform = new PaperServerSoftware(this);
-		PlatformResolver.set(new PaperServerSoftware(this));
+		this.platform = new PaperServerSoftware(this, new LoggerWrapper() {
+
+			@Override
+			public void info(Component message) {
+				getComponentLogger().info(message);
+			}
+
+			@Override
+			public void warn(Component message) {
+				getComponentLogger().warn(message);
+			}
+
+			@Override
+			public void error(Component message) {
+				getComponentLogger().error(message);
+			}
+		});
+		PlatformResolver.set(platform);
 
 		PacketEvents.setAPI(SpigotPacketEventsBuilder.build(this));
 		PacketEvents.getAPI().getSettings().reEncodeByDefault(false)
@@ -130,6 +148,7 @@ public class BingoReloadedPaper extends JavaPlugin implements BingoReloadedRunti
 		this.menuBoard = new MenuBoardPaper(platform, this);
 
 		bingo.enable();
+		bingo.serverReady();
 
 		if (bingo.config().getOptionValue(BingoOptions.DISABLE_CLIENT_MOD)) {
 			this.clientManager = new BingoClientManager.DisabledClientManager();

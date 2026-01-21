@@ -1,9 +1,11 @@
 package io.github.steaf23.bingoreloaded.lib.events;
 
 import io.github.steaf23.bingoreloaded.lib.api.AdvancementHandlePaper;
+import io.github.steaf23.bingoreloaded.lib.api.EntityTypePaper;
 import io.github.steaf23.bingoreloaded.lib.api.InteractAction;
 import io.github.steaf23.bingoreloaded.lib.api.PaperApiHelper;
-import io.github.steaf23.bingoreloaded.lib.api.StatisticHandlePaper;
+import io.github.steaf23.bingoreloaded.lib.api.StatisticDefinition;
+import io.github.steaf23.bingoreloaded.lib.api.StatisticTypePaper;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemTypePaper;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandlePaper;
@@ -233,7 +235,10 @@ public class EventListenerPaper implements Listener {
 	public void handlePlayerStatisticIncrementEvent(final PlayerStatisticIncrementEvent event) {
 		EventResult<?> result = dispatcher.sendPlayerStatisticIncrement(
 				new PlayerHandlePaper(event.getPlayer()),
-				StatisticHandlePaper.create(event.getStatistic(), event.getEntityType(), event.getMaterial()),
+				new StatisticDefinition(
+						new StatisticTypePaper(event.getStatistic()),
+						new EntityTypePaper(event.getEntityType()),
+						new ItemTypePaper(event.getMaterial())),
 				event.getNewValue());
 
 		if (result.consume()) {
