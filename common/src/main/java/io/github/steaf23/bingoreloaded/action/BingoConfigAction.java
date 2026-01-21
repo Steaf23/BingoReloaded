@@ -39,7 +39,7 @@ public class BingoConfigAction extends ActionTree {
         });
 
         addArgument(ActionArgument.required("option", allOptionKeys(true)));
-        addArgument(ActionArgument.optional("new_value"));
+        addArgument(ActionArgument.optional("new_value", List.of("true", "false")));
     }
 
     private ActionResult readOption(Audience sender, String optionKey) {

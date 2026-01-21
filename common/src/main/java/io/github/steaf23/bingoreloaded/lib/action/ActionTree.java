@@ -129,9 +129,9 @@ public class ActionTree {
 	}
 
 	public List<String> tabCompleteArgument(String... args) {
-		int argumentIndex = args.length;
+		int argumentIndex = args.length - 1;
 		if (argumentIndex >= arguments.size()) {
-			return null;
+			return List.of();
 		}
 		ActionArgument argument = arguments.get(argumentIndex);
 		return argument.possibleValues().apply(new ActionArgument.TabCompletionContext(args));

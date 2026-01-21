@@ -1,5 +1,6 @@
 package io.github.steaf23.bingoreloaded.item;
 
+import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.lib.api.BingoReloadedRuntime;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import net.kyori.adventure.key.Key;
@@ -33,7 +34,7 @@ public class BingoItems {
 
 	@SuppressWarnings("PatternValidation")
 	public @Nullable GameItem getItem(StackHandle stack) {
-		return items.getOrDefault(Key.key(stack.compareKey()), null);
+		return items.getOrDefault(BingoReloaded.resourceKey(stack.compareKey()), null);
 	}
 
 	public @Nullable GameItem getItem(Key key) {
