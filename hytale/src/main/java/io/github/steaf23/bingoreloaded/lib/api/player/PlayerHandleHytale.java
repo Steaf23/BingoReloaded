@@ -1,15 +1,24 @@
 package io.github.steaf23.bingoreloaded.lib.api.player;
 
+import com.hypixel.hytale.component.ComponentType;
+import com.hypixel.hytale.component.Store;
+import com.hypixel.hytale.math.vector.Vector3d;
+import com.hypixel.hytale.math.vector.Vector3f;
 import com.hypixel.hytale.server.core.entity.entities.Player;
+import com.hypixel.hytale.server.core.modules.entity.component.TransformComponent;
+import com.hypixel.hytale.server.core.modules.entity.teleport.Teleport;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.Universe;
+import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import io.github.steaf23.bingoreloaded.lib.api.AdvancementHandle;
 import io.github.steaf23.bingoreloaded.lib.api.EntityType;
 import io.github.steaf23.bingoreloaded.lib.api.HytaleServerSoftware;
+import io.github.steaf23.bingoreloaded.lib.api.PlatformResolver;
 import io.github.steaf23.bingoreloaded.lib.api.PlayerGamemode;
 import io.github.steaf23.bingoreloaded.lib.api.PotionEffectInstance;
 import io.github.steaf23.bingoreloaded.lib.api.StatisticType;
 import io.github.steaf23.bingoreloaded.lib.api.WorldHandle;
+import io.github.steaf23.bingoreloaded.lib.api.WorldHandleHytale;
 import io.github.steaf23.bingoreloaded.lib.api.WorldPosition;
 import io.github.steaf23.bingoreloaded.lib.api.item.InventoryHandle;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
@@ -57,7 +66,8 @@ public class PlayerHandleHytale implements PlayerHandle {
 
 	@Override
 	public WorldPosition position() {
-		return null;
+		TransformComponent transform = entityComponent(TransformComponent.getComponentType());
+		return fromTransformComponent(transform, world());
 	}
 
 	@Override
@@ -115,12 +125,21 @@ public class PlayerHandleHytale implements PlayerHandle {
 
 	@Override
 	public void teleportAsync(WorldPosition pos, @Nullable Consumer<Boolean> whenFinished) {
+		PlatformResolver.get().runTask(playerRef.getWorldUuid(), task -> {
+			Store<EntityStore> store = playerRef.getReference().getStore();
+			Teleport teleport = Teleport.createForPlayer(((WorldHandleHytale)pos.world()).handle(),
+					new Vector3d(pos.x(), pos.y(), pos.z()), // Target position
+					new Vector3f(0, 0, 0)  // Target rotation (pitch, yaw, roll)
+			);
 
+			store.addComponent(playerRef.getReference(), Teleport.getComponentType(), teleport);
+		});
 	}
 
 	@Override
 	public boolean teleportBlocking(WorldPosition pos) {
-		return false;
+		teleportAsync(pos);
+		return true;
 	}
 
 	@Override
@@ -249,6 +268,14 @@ public class PlayerHandleHytale implements PlayerHandle {
 	}
 
 	public Player playerFromInternal() {
-		return playerRef.getReference().getStore().getComponent(playerRef.getReference(), Player.getComponentType());
+		return entityComponent(Player.getComponentType());
+	}
+
+	public <T extends com.hypixel.hytale.component.Component<EntityStore>> T entityComponent(ComponentType<EntityStore, T> type) {
+		return playerRef.getReference().getStore().getComponent(playerRef.getReference(), type);
+	}
+
+	public WorldPosition fromTransformComponent(TransformComponent transform, WorldHandle world) {
+		return new WorldPosition(world, transform.getPosition().x, transform.getPosition().y, transform.getPosition().z, transform.getRotation().getPitch(), transform.getRotation().getYaw());
 	}
 }

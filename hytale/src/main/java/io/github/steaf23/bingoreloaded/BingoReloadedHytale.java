@@ -1,5 +1,7 @@
 package io.github.steaf23.bingoreloaded;
 
+import com.hypixel.hytale.server.core.modules.entity.component.Interactable;
+import com.hypixel.hytale.server.core.modules.interaction.interaction.config.Interaction;
 import com.hypixel.hytale.server.core.plugin.JavaPlugin;
 import com.hypixel.hytale.server.core.plugin.JavaPluginInit;
 import com.hypixel.hytale.server.core.universe.world.events.AllWorldsLoadedEvent;
@@ -15,6 +17,7 @@ import io.github.steaf23.bingoreloaded.gameloop.BingoInteraction;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.gameloop.phase.PregameLobby;
+import io.github.steaf23.bingoreloaded.interaction.GameItemInteraction;
 import io.github.steaf23.bingoreloaded.item.GameItem;
 import io.github.steaf23.bingoreloaded.lib.action.ActionTree;
 import io.github.steaf23.bingoreloaded.lib.api.BingoReloadedRuntime;
@@ -52,7 +55,7 @@ public class BingoReloadedHytale extends JavaPlugin implements BingoReloadedRunt
 
     private BingoReloaded bingo;
 
-    private HytaleEventListener eventListener;
+    public static HytaleEventListener EVENT_LISTENER;
 
     public BingoReloadedHytale(@Nonnull JavaPluginInit init) {
         super(init);
@@ -65,8 +68,10 @@ public class BingoReloadedHytale extends JavaPlugin implements BingoReloadedRunt
 
         getEventRegistry().registerGlobal(AllWorldsLoadedEvent.class, event -> {
             bingo.serverReady();
-            eventListener = new HytaleEventListener(getEventRegistry(), bingo.getGameManager().eventListener());
+            EVENT_LISTENER = new HytaleEventListener(getEventRegistry(), bingo.getGameManager().eventListener());
         });
+
+        this.getCodecRegistry(Interaction.CODEC).register("game_item_secondary", GameItemInteraction.class, GameItemInteraction.CODEC);
 
         ConsoleMessenger.log("Let the Bingo Begin!");
         bingo = new BingoReloaded(this);

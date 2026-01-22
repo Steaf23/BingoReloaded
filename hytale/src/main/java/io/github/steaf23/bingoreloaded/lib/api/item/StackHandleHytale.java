@@ -39,8 +39,7 @@ public class StackHandleHytale implements StackHandle {
 
 	@Override
 	public String compareKey() {
-		String value = stack.getFromMetadataOrNull("BingoReloaded_Compare_Key", Codec.STRING);
-		return value == null ? "" : value;
+		return stack.getItemId();
 	}
 
 	@Override

@@ -3,6 +3,7 @@ package io.github.steaf23.bingoreloaded.lib.api;
 import com.hypixel.hytale.server.core.asset.type.blocktype.config.BlockType;
 import com.hypixel.hytale.server.core.universe.world.World;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
+import io.github.steaf23.bingoreloaded.lib.api.item.ItemTypeHytale;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 
@@ -18,6 +19,10 @@ public class WorldHandleHytale implements WorldHandle {
 
 	public WorldHandleHytale(World world) {
 		this.world = world;
+	}
+
+	public World handle() {
+		return world;
 	}
 
 	@Override
@@ -67,7 +72,11 @@ public class WorldHandleHytale implements WorldHandle {
 
 	@Override
 	public ItemType typeAtPos(WorldPosition pos) {
-		return null;
+		BlockType type = world.getBlockType(pos.blockX(), pos.blockY(), pos.blockZ());
+		if (type != null) {
+			return new ItemTypeHytale(type.getId());
+		}
+		return ItemType.AIR;
 	}
 
 	@Override

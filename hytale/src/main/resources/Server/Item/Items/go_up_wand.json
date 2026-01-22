@@ -1,0 +1,22 @@
+{
+  "TranslationProperties": {
+    "Name": "items.go_up_wand.name",
+    "Description": "items.go_up_wand.desc"
+  },
+  "Model": "Resources/go_up_wand/model.blockymodel",
+  "Texture": "Resources/go_up_wand/texture.png",
+  "Quality": "Legendary",
+  "MaxStack": 1,
+  "Categories": [
+    "Items.Example"
+  ],
+  "Interactions": {
+    "Secondary": {
+      "Interactions": [
+        {
+          "Type": "game_item_secondary"
+        }
+      ]
+    }
+  }
+}
