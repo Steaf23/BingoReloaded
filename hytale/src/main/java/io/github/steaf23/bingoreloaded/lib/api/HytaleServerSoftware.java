@@ -2,11 +2,13 @@ package io.github.steaf23.bingoreloaded.lib.api;
 
 import com.hypixel.hytale.common.plugin.AuthorInfo;
 import com.hypixel.hytale.server.core.NameMatching;
+import com.hypixel.hytale.server.core.asset.type.blocktype.config.BlockType;
 import com.hypixel.hytale.server.core.inventory.ItemStack;
 import com.hypixel.hytale.server.core.plugin.JavaPlugin;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.Universe;
 import com.hypixel.hytale.server.core.universe.world.World;
+import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemTypeHytale;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
@@ -14,8 +16,9 @@ import io.github.steaf23.bingoreloaded.lib.api.item.StackHandleHytale;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandleHytale;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerInfo;
-import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import io.github.steaf23.bingoreloaded.lib.util.LoggerWrapper;
+import io.github.steaf23.bingoreloaded.platform.TaskTicker;
+import io.github.steaf23.bingoreloaded.platform.TickingTask;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.format.TextColor;
 import org.jetbrains.annotations.NotNull;
@@ -38,8 +41,11 @@ public class HytaleServerSoftware implements ServerSoftware {
 	private final JavaPlugin plugin;
 	private final Universe universe = Universe.get();
 
+	private final TaskTicker ticker;
+
 	public HytaleServerSoftware(JavaPlugin plugin) {
 		this.plugin = plugin;
+		this.ticker = new TaskTicker(this, plugin);
 	}
 
 	@Override
@@ -140,6 +146,9 @@ public class HytaleServerSoftware implements ServerSoftware {
 
 	@Override
 	public ItemType resolveItemType(Key key) {
+		if (key.equals(Key.key("air"))) {
+			return new ItemTypeHytale(BlockType.EMPTY.getId());
+		}
 		return new ItemTypeHytale(key.toString());
 	}
 
@@ -236,26 +245,23 @@ public class HytaleServerSoftware implements ServerSoftware {
 
 	@Override
 	public ExtensionTask runTaskTimer(UUID worldId, long repeatTicks, long startDelayTicks, Consumer<ExtensionTask> consumer) {
-		return null;
+		TickingTask task = TickingTask.timerTask(ticker, consumer, (double) startDelayTicks / BingoReloaded.ONE_SECOND, (double) repeatTicks / BingoReloaded.ONE_SECOND, worldId);
+		ticker.addTask(task);
+		return task;
 	}
 
 	@Override
 	public ExtensionTask runTask(UUID worldId, Consumer<ExtensionTask> consumer) {
-		World world = Universe.get().getWorld(worldId);
-		if (world == null) {
-			ConsoleMessenger.bug("Cannot run plugin task in unknown world (invalid world uuid: " + worldId  + ")", this);
-			return null;
-		}
-		ExtensionTaskHytale wrapper = new ExtensionTaskHytale();
-		world.execute(() -> {
-			consumer.accept(wrapper);
-		});
-		return wrapper;
+		TickingTask task = TickingTask.delayedTask(ticker, consumer, 0, worldId);
+		ticker.addTask(task);
+		return task;
 	}
 
 	@Override
 	public ExtensionTask runTask(UUID worldId, long startDelayTicks, Consumer<ExtensionTask> consumer) {
-		return null;
+		TickingTask task = TickingTask.delayedTask(ticker, consumer, (double) startDelayTicks / BingoReloaded.ONE_SECOND, worldId);
+		ticker.addTask(task);
+		return task;
 	}
 
 	@Override

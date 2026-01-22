@@ -146,11 +146,6 @@ public class PlayerHandlePaper implements PlayerHandle {
 	}
 
 	@Override
-	public void clearInventory() {
-		player.getInventory().clear();
-	}
-
-	@Override
 	public void openInventory(InventoryHandle inventory) {
 		player.openInventory(((InventoryHandlePaper)inventory).handle());
 	}

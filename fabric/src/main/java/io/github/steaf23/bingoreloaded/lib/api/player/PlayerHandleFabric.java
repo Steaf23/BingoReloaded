@@ -13,6 +13,7 @@ import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextColor;
 import net.minecraft.server.network.ServerPlayerEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -119,11 +120,6 @@ public class PlayerHandleFabric implements PlayerHandle {
 	}
 
 	@Override
-	public void clearInventory() {
-
-	}
-
-	@Override
 	public void openInventory(InventoryHandle inventory) {
 
 	}
@@ -220,6 +216,16 @@ public class PlayerHandleFabric implements PlayerHandle {
 
 	@Override
 	public void closeInventory() {
+
+	}
+
+	@Override
+	public void kick(@Nullable Component reason) {
+
+	}
+
+	@Override
+	public void setWaypointColor(@Nullable TextColor color) {
 
 	}
 

@@ -11,6 +11,8 @@ import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandleHytale;
 
+import java.util.UUID;
+
 public class HytaleEventListener {
 
 	final EventRegistry registry;
@@ -29,7 +31,11 @@ public class HytaleEventListener {
 	}
 
 	private void handlePlayerDisconnect(final PlayerDisconnectEvent event) {
-		Universe.get().getWorld(event.getPlayerRef().getWorldUuid()).execute( () -> {
+		UUID id = event.getPlayerRef().getWorldUuid();
+		if (id == null) {
+			return;
+		}
+		Universe.get().getWorld(id).execute( () -> {
 			dispatcher.sendPlayerQuitsServer(new PlayerHandleHytale(event.getPlayerRef()));
 		});
 	}

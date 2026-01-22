@@ -67,7 +67,7 @@ public class WorldHandleHytale implements WorldHandle {
 
 	@Override
 	public BiomeType biomeAtPos(WorldPosition pos) {
-		return null;
+		return new BiomeTypeHytale();
 	}
 
 	@Override
@@ -81,14 +81,14 @@ public class WorldHandleHytale implements WorldHandle {
 
 	@Override
 	public void setTypeAtPos(WorldPosition pos, ItemType type) {
-
+		world.setBlock(pos.blockX(), pos.blockY(), pos.blockZ(), ((ItemTypeHytale)type).itemId());
 	}
 
 	@Override
 	public WorldPosition highestBlockAt(WorldPosition pos) {
 
 		for (int y = WORLD_HEIGHT; y >= 0; y--) {
-			BlockType type = world.getBlockType(pos.blockX(), pos.blockY(), pos.blockZ());
+			BlockType type = world.getBlockType(pos.blockX(), y, pos.blockZ());
 			if (type == null || type.equals(BlockType.EMPTY)) {
 				continue;
 			}

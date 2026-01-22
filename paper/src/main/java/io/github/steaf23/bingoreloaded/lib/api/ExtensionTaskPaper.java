@@ -19,11 +19,6 @@ public class ExtensionTaskPaper implements ExtensionTask {
 	}
 
 	@Override
-	public boolean isSync() {
-		return task.isSync();
-	}
-
-	@Override
 	public void cancel() {
 		task.cancel();
 	}

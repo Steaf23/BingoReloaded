@@ -1,6 +1,5 @@
 package io.github.steaf23.bingoreloaded.lib.api.item;
 
-import com.hypixel.hytale.codec.Codec;
 import com.hypixel.hytale.server.core.inventory.ItemStack;
 import io.github.steaf23.bingoreloaded.lib.data.core.tag.TagDataStorage;
 import net.kyori.adventure.key.Key;

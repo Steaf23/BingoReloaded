@@ -1,6 +1,5 @@
 package io.github.steaf23.bingoreloaded;
 
-import com.hypixel.hytale.server.core.modules.entity.component.Interactable;
 import com.hypixel.hytale.server.core.modules.interaction.interaction.config.Interaction;
 import com.hypixel.hytale.server.core.plugin.JavaPlugin;
 import com.hypixel.hytale.server.core.plugin.JavaPluginInit;
@@ -36,7 +35,6 @@ import io.github.steaf23.bingoreloaded.lib.data.core.SnakeYamlDataAccessor;
 import io.github.steaf23.bingoreloaded.lib.event.HytaleEventListener;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
-import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import io.github.steaf23.bingoreloaded.ui.card.TextCardMenu;
 import net.kyori.adventure.key.Key;
 
@@ -167,7 +165,8 @@ public class BingoReloadedHytale extends JavaPlugin implements BingoReloadedRunt
 
     @Override
     public void openTeamCardSelect(PlayerHandle player, BingoSession session) {
-
+        BingoParticipant participant = session.teamManager.getPlayerAsParticipant(player);
+        participant.showCard(null);
     }
 
     @Override

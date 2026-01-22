@@ -29,4 +29,14 @@ public class HytalePlayerAudience implements Audience {
 	Player playerFromRef() {
 		return playerRef.getReference().getStore().getComponent(playerRef.getReference(), Player.getComponentType());
 	}
+
+	@Override
+	public void sendActionBar(@NotNull ComponentLike message) {
+		playerFromRef().sendMessage(MessageHelper.fromComponentLike(message));
+	}
+
+	@Override
+	public void sendActionBar(@NotNull Component message) {
+		playerFromRef().sendMessage(MessageHelper.fromComponentLike(message));
+	}
 }

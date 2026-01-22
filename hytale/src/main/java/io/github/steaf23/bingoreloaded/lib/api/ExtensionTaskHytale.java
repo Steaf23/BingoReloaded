@@ -8,11 +8,6 @@ public class ExtensionTaskHytale implements ExtensionTask {
 	}
 
 	@Override
-	public boolean isSync() {
-		return false;
-	}
-
-	@Override
 	public void cancel() {
 
 	}

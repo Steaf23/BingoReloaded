@@ -374,7 +374,8 @@ public class BingoGame implements GamePhase
     }
 
     public static void spawnPlatform(WorldPosition platformLocation, int size, boolean clearArea) {
-        BlockHelper.buildPlatform(ItemType.of("minecraft:white_stained_glass"), platformLocation, size, size, true, null);
+        // FIXME: REFACTOR before release. Block types need to not be hardcoded, but configurable by the bingo runtime (BlockSelection)
+        BlockHelper.buildPlatform(ItemType.of("rock_gold_brick_decorative"), platformLocation, size, size, true, null);
 
         if (!clearArea) {
             return;
@@ -384,7 +385,7 @@ public class BingoGame implements GamePhase
     }
 
     public static void removePlatform(WorldPosition platformLocation, int size) {
-        BlockHelper.buildPlatform(ItemType.AIR, platformLocation, size, size, true, ItemType.of("minecraft:white_stained_glass"));
+        BlockHelper.buildPlatform(ItemType.AIR, platformLocation, size, size, true, ItemType.of("rock_gold_brick_decorative"));
     }
 
     private void teleportPlayersToStart(WorldHandle world) {

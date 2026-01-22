@@ -6,7 +6,6 @@ import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandleFabric;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerInfo;
-import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import io.github.steaf23.bingoreloaded.lib.util.LoggerWrapper;
 import io.github.steaf23.bingoreloaded.util.FabricTypes;
@@ -250,11 +249,6 @@ public class FabricServerSoftware implements ServerSoftware {
 
 	@Override
 	public StackHandle createStackFromBytes(byte[] bytes) {
-		return null;
-	}
-
-	@Override
-	public StackHandle createStackFromTemplate(ItemTemplate template, boolean hideAttributes) {
 		return null;
 	}
 

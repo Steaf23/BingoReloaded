@@ -4,6 +4,7 @@ import com.hypixel.hytale.component.ComponentType;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.math.vector.Vector3d;
 import com.hypixel.hytale.math.vector.Vector3f;
+import com.hypixel.hytale.protocol.GameMode;
 import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.modules.entity.component.TransformComponent;
 import com.hypixel.hytale.server.core.modules.entity.teleport.Teleport;
@@ -133,6 +134,10 @@ public class PlayerHandleHytale implements PlayerHandle {
 			);
 
 			store.addComponent(playerRef.getReference(), Teleport.getComponentType(), teleport);
+
+			if (whenFinished != null) {
+				whenFinished.accept(true);
+			}
 		});
 	}
 
@@ -148,13 +153,7 @@ public class PlayerHandleHytale implements PlayerHandle {
 	}
 
 	@Override
-	public void clearInventory() {
-
-	}
-
-	@Override
 	public void openInventory(InventoryHandle inventory) {
-
 	}
 
 	@Override
@@ -189,7 +188,11 @@ public class PlayerHandleHytale implements PlayerHandle {
 
 	@Override
 	public void setGamemode(PlayerGamemode gamemode) {
-
+		Player.setGameMode(playerRef.getReference(), switch (gamemode) {
+			case SURVIVAL -> GameMode.Adventure;
+			case CREATIVE -> GameMode.Creative;
+			case SPECTATOR -> GameMode.Adventure;
+		}, store());
 	}
 
 	@Override
@@ -249,7 +252,6 @@ public class PlayerHandleHytale implements PlayerHandle {
 
 	@Override
 	public void closeInventory() {
-
 	}
 
 	@Override
@@ -273,6 +275,10 @@ public class PlayerHandleHytale implements PlayerHandle {
 
 	public <T extends com.hypixel.hytale.component.Component<EntityStore>> T entityComponent(ComponentType<EntityStore, T> type) {
 		return playerRef.getReference().getStore().getComponent(playerRef.getReference(), type);
+	}
+
+	public Store<EntityStore> store() {
+		return playerRef.getReference().getStore();
 	}
 
 	public WorldPosition fromTransformComponent(TransformComponent transform, WorldHandle world) {

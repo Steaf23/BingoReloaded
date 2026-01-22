@@ -67,7 +67,9 @@ public interface PlayerHandle extends ForwardingAudience, ActionUser {
 
 	PlayerInventoryHandle inventory();
 
-	void clearInventory();
+	default void clearInventory() {
+		inventory().clearContents();
+	}
 
 	void openInventory(InventoryHandle inventory);
 

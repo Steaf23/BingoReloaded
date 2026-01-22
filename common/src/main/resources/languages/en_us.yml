@@ -1,9 +1,9 @@
 name: "English"
 changed: "Language configured to English!"
 branding:
-  scoreboard_title: "<dark_aqua><bold>Bingo<reset><yellow><italic>Ⓡeloaded<reset>"
-  message_prefix: "<dark_red>[<dark_aqua><bold>Bingo</bold></dark_aqua><yellow><italic>Ⓡeloaded</italic></yellow>]</dark_red>: "
-  menu_prefix: "<dark_red>[<dark_aqua><bold>B</bold></dark_aqua><yellow><italic>Ⓡ</italic></yellow>]</dark_red>: <dark_gray>"
+  scoreboard_title: "<dark_aqua><bold>Bingo<reset><yellow><italic>®eloaded<reset>"
+  message_prefix: "<dark_red>[<dark_aqua><bold>Bingo</bold></dark_aqua><yellow><italic>®eloaded</italic></yellow>]</dark_red>: "
+  menu_prefix: "<dark_red>[<dark_aqua><bold>B</bold></dark_aqua><yellow><italic>®</italic></yellow>]</dark_red>: <dark_gray>"
 command:
   use: "Usage: {0}" # 0: cmd usage
   bingo:
