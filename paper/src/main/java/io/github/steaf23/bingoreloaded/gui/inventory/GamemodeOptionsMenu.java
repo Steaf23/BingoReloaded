@@ -61,7 +61,8 @@ public class GamemodeOptionsMenu extends BasicMenu
             ItemTemplate completeGoalItem = new ItemTemplate(5, ItemTypePaper.of(Material.RECOVERY_COMPASS), BingoReloaded.applyTitleFormat("Complete-X Win Score"),
                     Component.text("Complete " + completeGoal + " tasks to win complete-x."),
                     Component.text("Only effective if countdown mode is disabled"));
-            SpinBoxButtonAction goalAction = new SpinBoxButtonAction(1, 64, completeGoal, value -> {
+            // You can at most complete 25 tasks on complete-x (full-card)
+            SpinBoxButtonAction goalAction = new SpinBoxButtonAction(1, 25, completeGoal, value -> {
                 session.settingsBuilder.completeGoal(value);
                 completeGoalItem.setLore(ComponentUtils.createComponentsFromString(
                         "Complete " + value + " tasks to win complete-x.",
