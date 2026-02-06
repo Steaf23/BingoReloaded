@@ -19,7 +19,7 @@ public class AdvancementHandlePaper implements AdvancementHandle {
 	@Override
 	public ItemType displayIcon() {
 		if (advancement.getDisplay() == null) {
-			return ItemType.AIR;
+			return PlatformResolver.get().airItem();
 		}
 		return new ItemTypePaper(advancement.getDisplay().icon().getType());
 	}

@@ -1,5 +1,6 @@
 package io.github.steaf23.bingoreloaded.lib.api.item;
 
+import io.github.steaf23.bingoreloaded.lib.api.PlatformResolver;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -40,7 +41,7 @@ public class InventoryHandlePaper implements InventoryHandle {
 	public @NotNull StackHandle getItem(int index) {
 		ItemStack stack = inventory.getItem(index);
 		if (stack == null) {
-			return StackHandle.create(ItemType.AIR);
+			return PlatformResolver.get().airStack();
 		}
 		return new StackHandlePaper(stack);
 	}

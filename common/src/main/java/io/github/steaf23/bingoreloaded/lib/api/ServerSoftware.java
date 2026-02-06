@@ -4,6 +4,7 @@ import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerInfo;
+import io.github.steaf23.bingoreloaded.lib.data.core.DataStorage;
 import io.github.steaf23.bingoreloaded.lib.util.LoggerWrapper;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.format.TextColor;
@@ -45,8 +46,6 @@ public interface ServerSoftware {
 	@NotNull PlayerInfo getPlayerInfo(UUID playerId);
 	@NotNull PlayerInfo getPlayerInfo(String playerName);
 
-	ItemType resolveItemType(Key key);
-	ItemType resolveItemType(String key);
 	DimensionType resolveDimensionType(Key key);
 	EntityType resolveEntityType(Key key);
 	AdvancementHandle resolveAdvancement(Key key);
@@ -63,6 +62,13 @@ public interface ServerSoftware {
 	@Nullable WorldHandle createWorld(WorldOptions options);
 	boolean unloadWorld(@NotNull WorldHandle world, boolean save);
 
+	@NotNull ItemType readItemType(DataStorage storage, String path);
+	void writeItemType(DataStorage storage, String path, @NotNull ItemType itemType);
+
+	ItemType airItem();
+	default StackHandle airStack() {
+		return createStack(airItem(), 1);
+	}
 	StackHandle createStack(ItemType type, int amount);
 	StackHandle createStackFromBytes(byte[] bytes);
 	byte[] createBytesFromStack(StackHandle stack);

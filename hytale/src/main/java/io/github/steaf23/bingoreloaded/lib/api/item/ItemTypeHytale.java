@@ -19,6 +19,11 @@ public class ItemTypeHytale implements ItemType {
 	}
 
 	@Override
+	public boolean isAir() {
+		return itemId.equals("Empty");
+	}
+
+	@Override
 	public boolean isSolid() {
 		return false;
 	}

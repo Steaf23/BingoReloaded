@@ -5,6 +5,7 @@ import io.github.steaf23.bingoreloaded.lib.api.item.ItemTypePaper;
 import io.github.steaf23.bingoreloaded.util.StatisticsKeyConverter;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Material;
+import org.bukkit.Registry;
 import org.bukkit.Statistic;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -287,7 +288,7 @@ public class StatisticTypePaper implements StatisticType {
 		else if (entity != null &&
 				statistic.getType() == Statistic.Type.ENTITY)
 		{
-			return ItemType.of("minecraft:" + entity.key().value() + "_spawn_egg");
+			return ItemTypePaper.of(Registry.MATERIAL.get(Key.key("minecraft:" + entity.key().value() + "_spawn_egg")));
 		}
 
 		return ItemTypePaper.of(Material.GLOBE_BANNER_PATTERN);

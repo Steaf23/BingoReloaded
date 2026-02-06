@@ -1,8 +1,8 @@
 package io.github.steaf23.bingoreloaded.lib.api;
 
+import com.hypixel.hytale.codec.ExtraInfo;
 import com.hypixel.hytale.common.plugin.AuthorInfo;
 import com.hypixel.hytale.server.core.NameMatching;
-import com.hypixel.hytale.server.core.asset.type.blocktype.config.BlockType;
 import com.hypixel.hytale.server.core.inventory.ItemStack;
 import com.hypixel.hytale.server.core.plugin.JavaPlugin;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
@@ -16,11 +16,13 @@ import io.github.steaf23.bingoreloaded.lib.api.item.StackHandleHytale;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandleHytale;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerInfo;
+import io.github.steaf23.bingoreloaded.lib.data.core.DataStorage;
 import io.github.steaf23.bingoreloaded.lib.util.LoggerWrapper;
 import io.github.steaf23.bingoreloaded.platform.TaskTicker;
 import io.github.steaf23.bingoreloaded.platform.TickingTask;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.format.TextColor;
+import org.bson.BsonDocument;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -145,19 +147,6 @@ public class HytaleServerSoftware implements ServerSoftware {
 	}
 
 	@Override
-	public ItemType resolveItemType(Key key) {
-		if (key.equals(Key.key("air"))) {
-			return new ItemTypeHytale(BlockType.EMPTY.getId());
-		}
-		return new ItemTypeHytale(key.toString());
-	}
-
-	@Override
-	public ItemType resolveItemType(String key) {
-		return new ItemTypeHytale(key);
-	}
-
-	@Override
 	public DimensionType resolveDimensionType(Key key) {
 		return DimensionType.OVERWORLD;
 	}
@@ -218,24 +207,39 @@ public class HytaleServerSoftware implements ServerSoftware {
 	}
 
 	@Override
+	public @NotNull ItemType readItemType(DataStorage storage, String path) {
+		return new ItemTypeHytale(storage.getString(path, "Empty"));
+	}
+
+	@Override
+	public void writeItemType(DataStorage storage, String path, @NotNull ItemType itemType) {
+		storage.setString(path, ((ItemTypeHytale)itemType).itemId());
+	}
+
+	@Override
+	public ItemType airItem() {
+		return new ItemTypeHytale("Empty");
+	}
+
+	@Override
 	public StackHandle createStack(ItemType type, int amount) {
 		return new StackHandleHytale(new ItemStack(type.key().asString(), amount));
 	}
 
 	@Override
 	public StackHandle createStackFromBytes(byte[] bytes) {
-		return null;
+		return new StackHandleHytale(ItemStack.CODEC.decode(BsonDocument.parse(new String(bytes)), new ExtraInfo()));
 	}
-
 
 	@Override
 	public byte[] createBytesFromStack(StackHandle stack) {
-		return new byte[0];
+		return ItemStack.CODEC.encode(((StackHandleHytale)stack).handle(), new ExtraInfo()).toJson().getBytes();
 	}
+
 
 	@Override
 	public StackHandle colorItemStack(StackHandle stack, TextColor color) {
-		return null;
+		return stack;
 	}
 
 	@Override

@@ -1,12 +1,17 @@
 package io.github.steaf23.bingoreloaded.lib.api.item;
 
 import com.hypixel.hytale.server.core.inventory.Inventory;
+import com.hypixel.hytale.server.core.inventory.ItemStack;
+import com.hypixel.hytale.server.core.inventory.container.CombinedItemContainer;
+import com.hypixel.hytale.server.core.inventory.container.ItemContainer;
 import com.hypixel.hytale.server.core.inventory.transaction.ItemStackTransaction;
 import com.hypixel.hytale.server.core.inventory.transaction.ListTransaction;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 public class InventoryHandleHytale implements InventoryHandle {
 
@@ -23,7 +28,7 @@ public class InventoryHandleHytale implements InventoryHandle {
 
 	@Override
 	public void setItem(int index, StackHandle stack) {
-
+		inventory.getCombinedHotbarUtilityConsumableStorage().setItemStackForSlot((short) index, ((StackHandleHytale)stack).handle());
 	}
 
 	@Override
@@ -54,8 +59,13 @@ public class InventoryHandleHytale implements InventoryHandle {
 
 	@Override
 	public StackHandle[] contents() {
-//		return Arrays.stream(inventory.).map(StackHandlePaper::new).toArray(StackHandle[]::new);
-		return new StackHandle[0];
+		List<StackHandle> stacks = new ArrayList<>();
+		CombinedItemContainer container = inventory.getCombinedHotbarUtilityConsumableStorage();
+		for (short slot = 0; slot < container.getCapacity(); slot++) {
+			ItemStack stack = container.getItemStack(slot);
+			stacks.add(stack == null ?  null : new StackHandleHytale(stack));
+		}
+		return stacks.toArray(StackHandle[]::new);
 	}
 
 	@Override
@@ -65,6 +75,10 @@ public class InventoryHandleHytale implements InventoryHandle {
 
 	@Override
 	public void setContents(StackHandle[] contents) {
+		ItemContainer container = inventory.getCombinedHotbarUtilityConsumableStorage();
 
+		for (StackHandle s : contents) {
+
+		}
 	}
 }

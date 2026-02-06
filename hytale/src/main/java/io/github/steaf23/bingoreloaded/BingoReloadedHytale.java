@@ -9,6 +9,7 @@ import io.github.steaf23.bingoreloaded.action.BingoAction;
 import io.github.steaf23.bingoreloaded.action.BingoConfigAction;
 import io.github.steaf23.bingoreloaded.api.CardDisplayInfo;
 import io.github.steaf23.bingoreloaded.api.CardMenu;
+import io.github.steaf23.bingoreloaded.api.HytaleClientManager;
 import io.github.steaf23.bingoreloaded.api.TeamDisplay;
 import io.github.steaf23.bingoreloaded.api.network.BingoClientManager;
 import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
@@ -22,10 +23,13 @@ import io.github.steaf23.bingoreloaded.lib.action.ActionTree;
 import io.github.steaf23.bingoreloaded.lib.api.BingoReloadedRuntime;
 import io.github.steaf23.bingoreloaded.lib.api.EntityType;
 import io.github.steaf23.bingoreloaded.lib.api.HytaleServerSoftware;
+import io.github.steaf23.bingoreloaded.lib.api.ItemTypeFactory;
 import io.github.steaf23.bingoreloaded.lib.api.PlatformResolver;
 import io.github.steaf23.bingoreloaded.lib.api.PlayerInput;
 import io.github.steaf23.bingoreloaded.lib.api.ServerSoftware;
 import io.github.steaf23.bingoreloaded.lib.api.WorldHandle;
+import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
+import io.github.steaf23.bingoreloaded.lib.api.item.ItemTypeHytale;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.api.player.EmptyDisplay;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
@@ -50,13 +54,15 @@ import java.util.Set;
 public class BingoReloadedHytale extends JavaPlugin implements BingoReloadedRuntime {
 
     private HytaleServerSoftware platform;
-
     private BingoReloaded bingo;
+    private final HytaleClientManager clientManager;
 
     public static HytaleEventListener EVENT_LISTENER;
 
     public BingoReloadedHytale(@Nonnull JavaPluginInit init) {
         super(init);
+
+        this.clientManager = new HytaleClientManager();
     }
 
     @Override
@@ -196,12 +202,38 @@ public class BingoReloadedHytale extends JavaPlugin implements BingoReloadedRunt
 
     @Override
     public BingoClientManager getClientManager() {
-        return new BingoClientManager.DisabledClientManager();
+        return clientManager;
     }
 
     @Override
     public StackHandle defaultStack(GameItem item) {
         return null;
+    }
+
+    @Override
+    public ItemTypeFactory itemTypeFactory() {
+        return new ItemTypeFactory() {
+
+            @Override
+            public ItemType defaultTaskItem() {
+                return new ItemTypeHytale("Soil_Dirt");
+            }
+
+            @Override
+            public ItemType platformBlock() {
+                return new ItemTypeHytale("Rock_Gold_Brick_Decorative");
+            }
+
+            @Override
+            public ItemType genericStatisticTask() {
+                return new ItemTypeHytale("Paper");
+            }
+
+            @Override
+            public ItemType genericAdvancementTask() {
+                return new ItemTypeHytale("Paper");
+            }
+        };
     }
 
     @Override

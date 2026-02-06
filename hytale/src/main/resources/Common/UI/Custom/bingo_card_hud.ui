@@ -1,0 +1,8 @@
+Group {
+    LayoutMode: Center;
+
+    Label #MyLabel {
+        Anchor: (Top: 50);
+        Text: "CUSTOM HUD";
+    }
+}

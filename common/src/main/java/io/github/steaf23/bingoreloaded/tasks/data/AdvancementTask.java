@@ -1,5 +1,6 @@
 package io.github.steaf23.bingoreloaded.tasks.data;
 
+import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.api.CardDisplayInfo;
 import io.github.steaf23.bingoreloaded.api.TaskDisplayMode;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
@@ -84,7 +85,7 @@ public record AdvancementTask(AdvancementHandle advancement) implements TaskData
     @Override
     public ItemType getDisplayMaterial(CardDisplayInfo context) {
         if (context.advancementDisplay() == TaskDisplayMode.GENERIC_TASK_ITEMS || advancement().displayIcon() == null) {
-            return ItemType.of("filled_map");
+            return BingoReloaded.runtime().itemTypeFactory().genericAdvancementTask();
         }
         else {
             return advancement().displayIcon();

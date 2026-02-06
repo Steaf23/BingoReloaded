@@ -9,7 +9,6 @@ import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.BingoSound;
 import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
-import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
@@ -132,7 +131,7 @@ public class HotswapTaskCard extends TaskCard
                 Collections.shuffle(randomTasks, randomExpiryProvider);
             }
             if (randomTasks.isEmpty()) {
-                return GameTask.simpleItemTask(ItemType.of("dirt"), 1);
+                return GameTask.simpleItemTask(settings.defaultTaskItem(), 1);
             }
 
             TaskData data = randomTasks.removeLast();

@@ -26,10 +26,10 @@ public class GoUpWand extends GameItem {
 	}
 
 	@Override
-	public EventResult<?> use(StackHandle stack, BingoParticipant participant, BingoConfigurationData config) {
+	public EventResult<?> use(BingoGame game, StackHandle stack, BingoParticipant participant, BingoConfigurationData config) {
 		if (participant instanceof BingoPlayer player) {
 			player.sessionPlayer().ifPresent(sessionPlayer -> {
-				useGoUpWand(sessionPlayer, stack,
+				useGoUpWand(game, sessionPlayer, stack,
 						config.getOptionValue(BingoOptions.GO_UP_WAND_COOLDOWN),
 						config.getOptionValue(BingoOptions.GO_UP_WAND_DOWN_DISTANCE),
 						config.getOptionValue(BingoOptions.GO_UP_WAND_UP_DISTANCE),
@@ -40,7 +40,7 @@ public class GoUpWand extends GameItem {
 		return EventResult.CONSUME;
 	}
 
-	private void useGoUpWand(PlayerHandle player, StackHandle wand, double wandCooldownSeconds, int downDistance, int upDistance, int platformLifetimeSeconds) {
+	private void useGoUpWand(BingoGame game, PlayerHandle player, StackHandle wand, double wandCooldownSeconds, int downDistance, int upDistance, int platformLifetimeSeconds) {
 		if (player.hasCooldown(wand)) {
 			return;
 		}
@@ -48,7 +48,7 @@ public class GoUpWand extends GameItem {
 		wand.setCooldown(PlayerKit.WAND_COOLDOWN_GROUP, wandCooldownSeconds);
 		player.setCooldown(wand, (int)(wandCooldownSeconds * 20));
 
-		BingoReloaded.runtime().getServerSoftware().runTask(player.world().uniqueId(), task -> {
+		game.runtime().getServerSoftware().runTask(player.world().uniqueId(), task -> {
 			double distance;
 			double fallDistance;
 			// Use the wand
@@ -65,9 +65,9 @@ public class GoUpWand extends GameItem {
 			teleportLocation.setY(teleportLocation.y() + distance + fallDistance);
 			platformLocation.setY(platformLocation.y() + distance);
 
-			BingoGame.spawnPlatform(platformLocation, 1, true);
+			game.spawnPlatform(platformLocation, 1, true);
 			BingoReloaded.runtime().getServerSoftware().runTask(player.world().uniqueId(), (long) Math.max(0, platformLifetimeSeconds) * BingoReloaded.ONE_SECOND, laterTask -> {
-				BingoGame.removePlatform(platformLocation, 1);
+				game.removePlatform(platformLocation, 1);
 			});
 
 			player.teleportBlocking(teleportLocation);

@@ -1,7 +1,6 @@
 package io.github.steaf23.bingoreloaded.lib.api;
 
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
-import io.github.steaf23.bingoreloaded.lib.api.item.ItemTypeFabric;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandleFabric;
@@ -144,16 +143,6 @@ public class FabricServerSoftware implements ServerSoftware {
 			return new PlayerInfo(onlinePlayer.uniqueId(), playerName);
 		}
 		return getPlayerInfo(playerName);
-	}
-
-	@Override
-	public ItemType resolveItemType(Key key) {
-		return new ItemTypeFabric(Registries.ITEM.get(FabricTypes.idFromKey(key)));
-	}
-
-	@Override
-	public ItemType resolveItemType(String key) {
-		return resolveItemType(Key.key(key));
 	}
 
 	@Override

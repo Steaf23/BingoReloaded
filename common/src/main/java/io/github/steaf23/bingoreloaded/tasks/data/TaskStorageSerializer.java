@@ -2,9 +2,9 @@ package io.github.steaf23.bingoreloaded.tasks.data;
 
 import io.github.steaf23.bingoreloaded.lib.api.AdvancementHandle;
 import io.github.steaf23.bingoreloaded.lib.api.StatisticDefinition;
-import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataStorage;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataStorageSerializer;
+import net.kyori.adventure.key.Key;
 import org.jetbrains.annotations.NotNull;
 
 public class TaskStorageSerializer implements DataStorageSerializer<TaskData>
@@ -13,12 +13,12 @@ public class TaskStorageSerializer implements DataStorageSerializer<TaskData>
     public void toDataStorage(@NotNull DataStorage storage, @NotNull TaskData value) {
         switch (value) {
             case ItemTask itemTask -> {
-                storage.setNamespacedKey("item", itemTask.itemType().key());
+                storage.setItemType("item", itemTask.itemType());
                 storage.setInt("count", itemTask.getRequiredAmount());
             }
             case AdvancementTask advancementTask -> {
                 if (advancementTask.advancement() != null) {
-                    storage.setNamespacedKey("advancement", advancementTask.advancement().key());
+                    storage.setString("advancement", advancementTask.advancement().key().toString());
                 }
             }
             case StatisticTask statisticTask -> {
@@ -33,13 +33,12 @@ public class TaskStorageSerializer implements DataStorageSerializer<TaskData>
     @Override
     public TaskData fromDataStorage(@NotNull DataStorage storage) {
         if (storage.contains("item")) {
-            return new ItemTask(ItemType.of(
-                    storage.getNamespacedKey("item")),
+            return new ItemTask(storage.getItemType("item"),
                     storage.getInt("count", 1));
         }
         else if (storage.contains("advancement")) {
             return new AdvancementTask(AdvancementHandle.of(
-                    storage.getNamespacedKey("advancement")));
+                    Key.key(storage.getString("advancement", ""))));
         }
         else if (storage.contains("statistic")) {
             return new StatisticTask(

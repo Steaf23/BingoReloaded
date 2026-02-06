@@ -6,6 +6,7 @@ import io.github.steaf23.bingoreloaded.cards.hotswap.HotswapTaskHolder;
 import io.github.steaf23.bingoreloaded.cards.hotswap.SimpleHotswapTask;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
+import io.github.steaf23.bingoreloaded.lib.api.item.ItemTypePaper;
 import io.github.steaf23.bingoreloaded.lib.data.core.tag.TagDataStorage;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.tasks.GameTask;
@@ -15,6 +16,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
+import org.bukkit.Material;
 
 public class TaskItemConverter {
 
@@ -24,7 +26,7 @@ public class TaskItemConverter {
 		// Step 1: create the item and put the new name, description and material on it.
 		if (task.isVoided()) // VOIDED TASK
 		{
-			item = new ItemTemplate(ItemType.of("structure_void"), null);
+			item = new ItemTemplate(ItemTypePaper.of(Material.STRUCTURE_VOID), null);
 			Component[] addedDesc = BingoMessage.VOIDED.asMultiline(NamedTextColor.DARK_GRAY);
 
 			item.setName(task.getName());
@@ -33,7 +35,7 @@ public class TaskItemConverter {
 		}
 		else if (task.isCompleted()) // COMPLETED TASK
 		{
-			ItemType completeMaterial = ItemType.of("barrier");
+			ItemType completeMaterial = ItemTypePaper.of(Material.BARRIER);
 
 			String timeString = GameTimer.getTimeAsString(task.completedAt);
 

@@ -1,6 +1,6 @@
 package io.github.steaf23.bingoreloaded.lib.data.core.tag.adapters;
 
-import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
+import io.github.steaf23.bingoreloaded.lib.api.PlatformResolver;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.data.core.tag.Tag;
 import io.github.steaf23.bingoreloaded.lib.data.core.tag.TagAdapter;
@@ -17,7 +17,7 @@ public class ItemStackTagAdapter implements TagAdapter<StackHandle, byte[]>
     @Override
     public @NotNull StackHandle fromTag(Tag<byte[]> tag) {
 		if (tag.getValue().length == 0) {
-			return StackHandle.create(ItemType.AIR);
+			return StackHandle.create(PlatformResolver.get().airItem());
 		} else {
 			return StackHandle.deserializeBytes(tag.getValue());
 		}

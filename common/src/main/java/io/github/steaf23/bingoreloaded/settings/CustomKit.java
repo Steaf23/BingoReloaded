@@ -20,7 +20,7 @@ public record CustomKit(Component name, PlayerKit slot, List<SerializableItem> i
         {
             if (itemStack != null && !itemStack.type().isAir()) {
                 // if this item is the card, save the slot instead and disregard the item itself.
-                if (BingoReloaded.runtime().canItemBeUsedInKit(itemStack)) {
+                if (!BingoReloaded.runtime().canItemBeUsedInKit(itemStack)) {
                     cardSlot = slot;
                 }
                 else {

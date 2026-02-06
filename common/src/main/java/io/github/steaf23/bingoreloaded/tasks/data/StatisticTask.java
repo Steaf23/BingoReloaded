@@ -1,5 +1,6 @@
 package io.github.steaf23.bingoreloaded.tasks.data;
 
+import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.api.CardDisplayInfo;
 import io.github.steaf23.bingoreloaded.api.TaskDisplayMode;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
@@ -126,7 +127,7 @@ public record StatisticTask(StatisticDefinition statistic, int count) implements
     @Override
     public ItemType getDisplayMaterial(CardDisplayInfo context) {
         if (context.statisticDisplay() == TaskDisplayMode.GENERIC_TASK_ITEMS) {
-            return ItemType.of("globe_banner_pattern");
+            return BingoReloaded.runtime().itemTypeFactory().genericStatisticTask();
         } else {
             return statistic().type().icon(statistic());
         }

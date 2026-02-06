@@ -2,6 +2,7 @@ package io.github.steaf23.bingoreloaded.item;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
+import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.event.EventResult;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
@@ -17,7 +18,7 @@ public class TeamShulker extends GameItem {
 	}
 
 	@Override
-	public EventResult<?> use(StackHandle stack, BingoParticipant participant, BingoConfigurationData config) {
+	public EventResult<?> use(BingoGame game, StackHandle stack, BingoParticipant participant, BingoConfigurationData config) {
 		participant.sendMessage(Component.text("You clicked on the team shulker :D"));
 		return EventResult.CONSUME;
 	}

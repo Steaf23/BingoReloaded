@@ -284,4 +284,8 @@ public class PlayerHandleHytale implements PlayerHandle {
 	public WorldPosition fromTransformComponent(TransformComponent transform, WorldHandle world) {
 		return new WorldPosition(world, transform.getPosition().x, transform.getPosition().y, transform.getPosition().z, transform.getRotation().getPitch(), transform.getRotation().getYaw());
 	}
+
+	public PlayerRef ref() {
+		return playerRef;
+	}
 }

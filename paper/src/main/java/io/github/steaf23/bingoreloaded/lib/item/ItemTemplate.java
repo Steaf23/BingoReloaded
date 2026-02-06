@@ -1,6 +1,7 @@
 package io.github.steaf23.bingoreloaded.lib.item;
 
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
+import io.github.steaf23.bingoreloaded.lib.api.item.ItemTypePaper;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.data.core.tag.TagDataStorage;
 import net.kyori.adventure.key.Key;
@@ -9,6 +10,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
+import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -29,12 +31,12 @@ import java.util.Set;
  */
 public class ItemTemplate
 {
-    public static final ItemTemplate EMPTY = new ItemTemplate(ItemType.AIR);
-    public static final Set<ItemType> LEATHER_ARMOR = Set.of(
-            ItemType.of("minecraft:leather_chestplate"),
-            ItemType.of("minecraft:leather_boots"),
-            ItemType.of("minecraft:leather_leggings"),
-            ItemType.of("minecraft:leather_helmet"));
+    public static final ItemTemplate EMPTY = new ItemTemplate(ItemTypePaper.of(Material.AIR));
+    public static final Set<Material> LEATHER_ARMOR = Set.of(
+            Material.LEATHER_CHESTPLATE,
+            Material.LEATHER_BOOTS,
+            Material.LEATHER_LEGGINGS,
+            Material.LEATHER_HELMET);
 
     // higher priorities appear lower on the item description
     record DescriptionSection(int priority, Component[] text)
@@ -42,7 +44,7 @@ public class ItemTemplate
     }
 
     private int slot = 0;
-    private ItemType type;
+    private Material type;
     private Component name;
     private final Map<String, DescriptionSection> description = new HashMap<>();
     private int amount = 1;
@@ -63,18 +65,18 @@ public class ItemTemplate
     private boolean isDummy = false;
 
     public ItemTemplate(ItemType type) {
-        this.type = type;
+        this.type = ((ItemTypePaper)type).handle();
     }
 
     public ItemTemplate(ItemType type, @Nullable Component name, Component... lore) {
-        this.type = type;
+        this.type = ((ItemTypePaper)type).handle();
         this.name = name;
         setLore(lore);
     }
 
     public ItemTemplate(int slot, ItemType type) {
         this.slot = slot;
-        this.type = type;
+        this.type = ((ItemTypePaper)type).handle();
     }
 
     public ItemTemplate(int slotX, int slotY, ItemType type) {
@@ -87,7 +89,7 @@ public class ItemTemplate
 
     public ItemTemplate(int slot, ItemType type, Component name, Component... lore) {
         this.slot = slot;
-        this.type = type;
+        this.type = ((ItemTypePaper)type).handle();
         this.name = name;
         setLore(lore);
     }
@@ -147,7 +149,7 @@ public class ItemTemplate
         return this;
     }
 
-    public ItemTemplate setItemType(ItemType type) {
+    public ItemTemplate setItemType(Material type) {
         this.type = type;
         return this;
     }
@@ -327,7 +329,7 @@ public class ItemTemplate
         return type.isAir();
     }
 
-    public ItemType getItemType() {
+    public Material getItemType() {
         return type;
     }
 
@@ -346,7 +348,7 @@ public class ItemTemplate
      * @return The created copy.
      */
     public ItemTemplate copy() {
-        ItemTemplate copy = new ItemTemplate(slot, type, name);
+        ItemTemplate copy = new ItemTemplate(slot, ItemTypePaper.of(type), name);
         copy.description.putAll(description);
         copy.amount = amount;
         copy.glowing = glowing;
@@ -426,8 +428,8 @@ public class ItemTemplate
     }
 
     public static ItemTemplate createColoredLeather(TextColor color, ItemType leatherItemType) {
-        if (!LEATHER_ARMOR.contains(leatherItemType)) {
-            leatherItemType = ItemType.of("minecraft:leather_chestplate");
+        if (!LEATHER_ARMOR.contains(((ItemTypePaper)leatherItemType).handle())) {
+            leatherItemType = ItemTypePaper.of(Material.LEATHER_CHESTPLATE);
         }
 
         ItemTemplate item = new ItemTemplate(leatherItemType, Component.text(color.asHexString()).color(color));

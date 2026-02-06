@@ -45,6 +45,7 @@ import io.github.steaf23.bingoreloaded.lib.action.ActionTree;
 import io.github.steaf23.bingoreloaded.lib.api.BingoReloadedRuntime;
 import io.github.steaf23.bingoreloaded.lib.api.EntityType;
 import io.github.steaf23.bingoreloaded.lib.api.EntityTypePaper;
+import io.github.steaf23.bingoreloaded.lib.api.ItemTypeFactory;
 import io.github.steaf23.bingoreloaded.lib.api.MenuBoard;
 import io.github.steaf23.bingoreloaded.lib.api.PaperServerSoftware;
 import io.github.steaf23.bingoreloaded.lib.api.PlatformResolver;
@@ -52,6 +53,8 @@ import io.github.steaf23.bingoreloaded.lib.api.PlayerInput;
 import io.github.steaf23.bingoreloaded.lib.api.ServerSoftware;
 import io.github.steaf23.bingoreloaded.lib.api.WorldHandle;
 import io.github.steaf23.bingoreloaded.lib.api.WorldHandlePaper;
+import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
+import io.github.steaf23.bingoreloaded.lib.api.item.ItemTypePaper;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandlePaper;
 import io.github.steaf23.bingoreloaded.lib.api.player.EmptyDisplay;
@@ -448,7 +451,33 @@ public class BingoReloadedPaper extends JavaPlugin implements BingoReloadedRunti
 			return MinecraftBingoItems.TEAM_SHULKER.buildItem();
 		}
 
-		return StackHandle.empty();
+		return StackHandle.create(platform.airItem());
+	}
+
+	@Override
+	public ItemTypeFactory itemTypeFactory() {
+		return new ItemTypeFactory() {
+
+			@Override
+			public ItemType defaultTaskItem() {
+				return ItemTypePaper.of(Material.DIRT);
+			}
+
+			@Override
+			public ItemType platformBlock() {
+				return ItemTypePaper.of(Material.WHITE_STAINED_GLASS);
+			}
+
+			@Override
+			public ItemType genericStatisticTask() {
+				return ItemTypePaper.of(Material.GLOBE_BANNER_PATTERN);
+			}
+
+			@Override
+			public ItemType genericAdvancementTask() {
+				return ItemTypePaper.of(Material.FILLED_MAP);
+			}
+		};
 	}
 
 	@Override

@@ -17,7 +17,7 @@ import java.util.Set;
 
 public class BingoCardData
 {
-    private static final ItemType DEFAULT_ITEM = ItemType.of("minecraft:dirt");
+    private static final ItemType DEFAULT_ITEM = BingoReloaded.runtime().itemTypeFactory().defaultTaskItem();
 
     public static final Set<String> DEFAULT_CARD_NAMES = Set.of(
             "default_card",

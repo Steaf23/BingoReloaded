@@ -1,11 +1,11 @@
-package io.github.steaf23.bingoreloaded.lib.data.core;
+package io.github.steaf23.bingoreloaded.lib.data.core.plain;
 
+import io.github.steaf23.bingoreloaded.lib.api.PlatformResolver;
 import io.github.steaf23.bingoreloaded.lib.api.WorldPosition;
-import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
+import io.github.steaf23.bingoreloaded.lib.data.core.DataStorage;
 import io.github.steaf23.bingoreloaded.lib.data.core.tag.TagAdapter;
 import io.github.steaf23.bingoreloaded.lib.data.core.tag.TagDataType;
-import net.kyori.adventure.key.Key;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -166,7 +166,7 @@ public class PlainDataStorage implements DataStorage {
 	@Override
 	public @NotNull StackHandle getItemStack(String path) {
 		Object v = get(path);
-		return v instanceof StackHandle res ? res : StackHandle.create(ItemType.AIR);
+		return v instanceof StackHandle res ? res : PlatformResolver.get().airStack();
 	}
 
 	@Override
@@ -195,17 +195,6 @@ public class PlainDataStorage implements DataStorage {
 	public @NotNull WorldPosition getWorldPosition(String path, @NotNull WorldPosition def) {
 		Object v = get(path);
 		return v instanceof WorldPosition res ? res : def;
-	}
-
-	@Override
-	public void setNamespacedKey(String path, @NotNull Key value) {
-		set(path, value);
-	}
-
-	@Override
-	public @NotNull Key getNamespacedKey(String path) {
-		Object v = get(path);
-		return v instanceof Key res ? res : Key.key("", "");
 	}
 
 	@Override

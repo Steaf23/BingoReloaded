@@ -72,7 +72,7 @@ public class WorldHandlePaper implements WorldHandle {
 
 	@Override
 	public ItemType typeAtPos(WorldPosition pos) {
-		return ItemType.of(world.getType(pos.blockX(), pos.blockY(), pos.blockZ()).key());
+		return ItemTypePaper.of(world.getType(pos.blockX(), pos.blockY(), pos.blockZ()));
 	}
 
 	@Override

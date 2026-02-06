@@ -15,13 +15,13 @@ import io.github.steaf23.bingoreloaded.gameloop.BingoInteraction;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.item.BingoItems;
 import io.github.steaf23.bingoreloaded.item.GameItem;
+import io.github.steaf23.bingoreloaded.lib.api.BingoReloadedRuntime;
 import io.github.steaf23.bingoreloaded.lib.api.BiomeType;
 import io.github.steaf23.bingoreloaded.lib.api.PlayerGamemode;
 import io.github.steaf23.bingoreloaded.lib.api.PlayerInput;
 import io.github.steaf23.bingoreloaded.lib.api.ServerSoftware;
 import io.github.steaf23.bingoreloaded.lib.api.WorldHandle;
 import io.github.steaf23.bingoreloaded.lib.api.WorldPosition;
-import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.event.EventResult;
@@ -67,6 +67,7 @@ import java.util.UUID;
 public class BingoGame implements GamePhase
 {
     private final ServerSoftware platform;
+    private final BingoReloadedRuntime runtime;
     private final BingoSession session;
     private final BingoSettings settings;
     private final BingoGameInfoMenu scoreboard;
@@ -89,8 +90,9 @@ public class BingoGame implements GamePhase
 	private final @Nullable WorldPosition startPosition;
 
     public BingoGame(ServerSoftware platform, @NotNull BingoSession session, @NotNull BingoSettings settings, @NotNull BingoConfigurationData config, Runnable onGameEndedCallback, @Nullable WorldPosition atPosition) {
-		this.platform = platform;
+        this.platform = platform;
 		this.session = session;
+        this.runtime = session.getGameManager().getRuntime();
         this.config = config;
         this.teamManager = session.teamManager;
         this.scoreboard = session.gameInfoMenu;
@@ -174,8 +176,8 @@ public class BingoGame implements GamePhase
                 setupPlayer(player.world(), p);
                 player.setLevel(0);
                 player.setExp(0.0f);
-				getSession().getGameManager().getRuntime().gameDisplay().addPlayer(player);
-				getSession().getGameManager().getRuntime().getClientManager().updateCard(player, p.getCard().orElse(null));
+                runtime.gameDisplay().addPlayer(player);
+				runtime().getClientManager().updateCard(player, p.getCard().orElse(null));
             } else if (!p.alwaysActive()) {
                 // If the player is not online, we can remove them from the game, as they probably did not intend on playing in this session
                 session.removeParticipant(p);
@@ -190,7 +192,7 @@ public class BingoGame implements GamePhase
 
         // Post-start Setup
         scoreboard.setup(settings);
-		session.getGameManager().getRuntime().gameDisplay().update(scoreboard);
+		runtime().gameDisplay().update(scoreboard);
 
         // Countdown before the game actually starts
         startingTimer = new CountdownTimer(world, Math.max(1, config.getOptionValue(BingoOptions.STARTING_COUNTDOWN_TIME)), 6, 3, this::onStartingTimerFinished);
@@ -250,6 +252,7 @@ public class BingoGame implements GamePhase
                     BingoReloaded.setPlayerStat(player, BingoStatType.RECORD_TASKS, tasksCompleted);
                 }
             });
+            p.sendActionBar(Component.empty());
         });
 
         playSound(BingoSound.GAME_ENDED.builder().build());
@@ -373,19 +376,19 @@ public class BingoGame implements GamePhase
                 () -> BingoMessage.RESPAWN_EXPIRED.sendToAudience(player, NamedTextColor.RED));
     }
 
-    public static void spawnPlatform(WorldPosition platformLocation, int size, boolean clearArea) {
+    public void spawnPlatform(WorldPosition platformLocation, int size, boolean clearArea) {
         // FIXME: REFACTOR before release. Block types need to not be hardcoded, but configurable by the bingo runtime (BlockSelection)
-        BlockHelper.buildPlatform(ItemType.of("rock_gold_brick_decorative"), platformLocation, size, size, true, null);
+        BlockHelper.buildPlatform(runtime.itemTypeFactory().platformBlock(), platformLocation, size, size, true, null);
 
         if (!clearArea) {
             return;
         }
 
-        BlockHelper.buildCuboid(ItemType.AIR, platformLocation.clone(), size, size, 3, false, null);
+        BlockHelper.buildCuboid(platform.airItem(), platformLocation.clone(), size, size, 3, false, null);
     }
 
-    public static void removePlatform(WorldPosition platformLocation, int size) {
-        BlockHelper.buildPlatform(ItemType.AIR, platformLocation, size, size, true, ItemType.of("rock_gold_brick_decorative"));
+    public void removePlatform(WorldPosition platformLocation, int size) {
+        BlockHelper.buildPlatform(platform.airItem(), platformLocation, size, size, true, BingoReloaded.runtime().itemTypeFactory().platformBlock());
     }
 
     private void teleportPlayersToStart(WorldHandle world) {
@@ -400,7 +403,7 @@ public class BingoGame implements GamePhase
 				spawnPlatform(spawnLocation, 5, true);
 
 				platform.runTask(world.uniqueId(), platformLifetime, task ->
-						BingoGame.removePlatform(spawnLocation, 5));
+						this.removePlatform(spawnLocation, 5));
 			}
 
 			Set<BingoParticipant> players = getTeamManager().getParticipants();
@@ -416,7 +419,7 @@ public class BingoGame implements GamePhase
                         spawnPlatform(platformLocation.clone(), 5, true);
 
                         platform.runTask(world.uniqueId(), platformLifetime, task ->
-                                BingoGame.removePlatform(platformLocation, 5));
+                                removePlatform(platformLocation, 5));
                     }
                     teleportPlayerToStart(p, platformLocation, 5);
                 }
@@ -430,7 +433,7 @@ public class BingoGame implements GamePhase
                         spawnPlatform(teamLocation, 5, true);
 
                         platform.runTask(world.uniqueId(), platformLifetime, task ->
-                                BingoGame.removePlatform(teamLocation, 5));
+                                removePlatform(teamLocation, 5));
                     }
                     players.forEach(p -> teleportPlayerToStart(p, teamLocation, 5));
                 }
@@ -441,7 +444,7 @@ public class BingoGame implements GamePhase
                     spawnPlatform(spawnLocation, 5, true);
 
                     platform.runTask(world.uniqueId(), platformLifetime, task ->
-                            BingoGame.removePlatform(spawnLocation, 5));
+                            removePlatform(spawnLocation, 5));
                 }
 
                 Set<BingoParticipant> players = getTeamManager().getParticipants();
@@ -501,6 +504,10 @@ public class BingoGame implements GamePhase
 
     public void playSound(Sound sound) {
         session.playSound(sound);
+    }
+
+    public BingoReloadedRuntime runtime() {
+        return runtime;
     }
 
 // @EventHandlers ========================================================================
@@ -738,7 +745,7 @@ public class BingoGame implements GamePhase
             if (!gameStarted)
                 return EventResult.IGNORE;
 
-            return gameItem.use(stack, participant, config);
+            return gameItem.use((BingoGame)participant.getSession().getPhase(), stack, participant, config);
         } else if (session.getGameManager().getRuntime().canItemBeUsedForInteraction(session, player, BingoInteraction.OPEN_CARD, stack, action)) {
             // Only show item task as deathmatch tasks.
             if (deathMatchTask == null) {

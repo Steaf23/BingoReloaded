@@ -22,9 +22,8 @@ public class TaskGenerator
             int seed,
             boolean includeAdvancements,
             boolean includeStatistics,
-            CardSize size) {}
-
-    private static final TaskData DEFAULT_TASK = new ItemTask(ItemType.of("dirt"), 1);
+            CardSize size,
+            ItemType defaultTaskItem) {}
 
     /**
      * Generating a bingo card has a few steps:
@@ -104,7 +103,7 @@ public class TaskGenerator
             }
         }
         while (newTasks.size() < fullCardSize) {
-            newTasks.add(DEFAULT_TASK);
+            newTasks.add(new ItemTask(settings.defaultTaskItem()));
         }
         newTasks = newTasks.subList(0, fullCardSize);
 

@@ -2,8 +2,8 @@ package io.github.steaf23.bingoreloaded.data;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataAccessor;
-import io.github.steaf23.bingoreloaded.lib.util.BlockColor;
 import io.github.steaf23.bingoreloaded.lib.util.ComponentUtils;
+import io.github.steaf23.bingoreloaded.lib.util.DefaultTeamColors;
 import io.github.steaf23.bingoreloaded.lib.util.StringAdditions;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
@@ -62,7 +62,7 @@ public class TeamData {
         }
         data.saveChanges();
 
-        for (BlockColor col : BlockColor.values()) {
+        for (DefaultTeamColors col : DefaultTeamColors.values()) {
             addTeam(col.name, StringAdditions.capitalize(col.name), col.textColor);
         }
     }

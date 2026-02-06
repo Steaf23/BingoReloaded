@@ -1,11 +1,12 @@
 package io.github.steaf23.bingoreloaded.lib.data.core;
 
+import io.github.steaf23.bingoreloaded.lib.api.PlatformResolver;
 import io.github.steaf23.bingoreloaded.lib.api.WorldPosition;
+import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.data.core.tag.TagAdapter;
 import io.github.steaf23.bingoreloaded.lib.data.core.tag.TagDataType;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
-import net.kyori.adventure.key.Key;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -101,8 +102,13 @@ public interface DataStorage
     @Nullable WorldPosition getWorldPosition(String path);
     @NotNull WorldPosition getWorldPosition(String path, @NotNull WorldPosition def);
 
-    void setNamespacedKey(String path, @NotNull Key value);
-    @NotNull Key getNamespacedKey(String path);
+    default void setItemType(String path, @NotNull ItemType value) {
+        PlatformResolver.get().writeItemType(this, path, value);
+    }
+
+    default @NotNull ItemType getItemType(String path) {
+        return PlatformResolver.get().readItemType(this, path);
+    }
 
     void setStorage(String path, DataStorage value);
     @Nullable DataStorage getStorage(String path);

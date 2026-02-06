@@ -1,6 +1,5 @@
 package io.github.steaf23.bingoreloaded.lib.item;
 
-import io.github.steaf23.bingoreloaded.lib.api.item.ItemTypePaper;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandlePaper;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
@@ -42,12 +41,12 @@ public class StackBuilderPaper {
 		ItemStack stack;
 
 		if (template.isDummy()) {
-			stack = new ItemStack(Material.POISONOUS_POTATO, template.getAmount());
+			stack = ItemStack.of(Material.POISONOUS_POTATO, template.getAmount());
 			stack.unsetData(DataComponentTypes.CONSUMABLE);
 			stack.setData(DataComponentTypes.ITEM_MODEL, template.getItemType().key());
 		}
 		else {
-			stack = new ItemStack(((ItemTypePaper)template.getItemType()).handle(), template.getAmount());
+			stack = ItemStack.of(template.getItemType(), template.getAmount());
 		}
 
 

@@ -9,7 +9,6 @@ import io.github.steaf23.bingoreloaded.cards.hotswap.HotswapTaskHolder;
 import io.github.steaf23.bingoreloaded.data.TexturedMenuData;
 import io.github.steaf23.bingoreloaded.gui.inventory.core.TexturedTitleBuilder;
 import io.github.steaf23.bingoreloaded.lib.api.MenuBoard;
-import io.github.steaf23.bingoreloaded.lib.api.item.ItemTypePaper;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import io.github.steaf23.bingoreloaded.lib.item.TaskItemConverter;
 import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
@@ -104,7 +103,7 @@ public class HotswapTexturedCardMenu extends TexturedCardMenu implements Hotswap
     public @NotNull ItemTemplate getItemFromTask(int taskIndex) {
         ItemTemplate item = TaskItemConverter.hotswapTaskToItem(taskHolders.get(taskIndex), displayInfo());
         if (tasks.get(taskIndex).isCompleted()) {
-            item.setItemType(ItemTypePaper.of(Material.POISONOUS_POTATO));
+            item.setItemType(Material.POISONOUS_POTATO);
             item.setCustomModelData("1012");
             item.setGlowing(false);
         }

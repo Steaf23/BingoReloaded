@@ -6,6 +6,7 @@ import io.github.steaf23.bingoreloaded.lib.api.StatisticType;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataStorage;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataStorageSerializer;
+import net.kyori.adventure.key.Key;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -13,33 +14,33 @@ public class StatisticSerializer implements DataStorageSerializer<StatisticDefin
 
 	@Override
 	public void toDataStorage(@NotNull DataStorage storage, @NotNull StatisticDefinition value) {
-		storage.setNamespacedKey("stat_type", value.type().key());
+		storage.setString("stat_type", value.type().key().toString());
 
 		ItemType item = value.itemType();
 		if (item != null)
 		{
-			storage.setNamespacedKey("item", item.key());
+			storage.setItemType("item", item);
 		}
 		EntityType entity = value.entityType();
 		if (entity != null)
 		{
-			storage.setNamespacedKey("entity", entity.key());
+			storage.setString("entity", entity.key().toString());
 		}
 	}
 
 	@Override
 	public @Nullable StatisticDefinition fromDataStorage(@NotNull DataStorage storage) {
-		StatisticType type = StatisticType.of(storage.getNamespacedKey("stat_type"));
+		StatisticType type = StatisticType.of(Key.key(storage.getString("stat_type", "")));
 
 		ItemType item = null;
 		if (storage.contains("item"))
 		{
-			item = ItemType.of(storage.getNamespacedKey("item"));
+			item = storage.getItemType("item");
 		}
 		EntityType entity = null;
 		if (storage.contains("entity"))
 		{
-			entity = EntityType.of(storage.getNamespacedKey("entity"));
+			entity = EntityType.of(Key.key(storage.getString("entity", "")));
 		}
 
 		return new StatisticDefinition(type, entity, item);

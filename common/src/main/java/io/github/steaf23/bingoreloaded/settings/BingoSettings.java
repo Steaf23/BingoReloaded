@@ -42,7 +42,8 @@ public record BingoSettings(String card,
             return key;
         }
 
-        public static CountdownType fromNamespace(Key key) {
+        public static CountdownType fromNamespace(String val) {
+            Key key = Key.key(val);
             if (key.equals(CountdownType.DISABLED.key())) {
                 return CountdownType.DISABLED;
             } else if (key.equals(CountdownType.DURATION.key())) {

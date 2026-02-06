@@ -27,6 +27,11 @@ public class ItemTypePaper implements ItemType {
 	}
 
 	@Override
+	public boolean isAir() {
+		return type.equals(Material.AIR);
+	}
+
+	@Override
 	public boolean isSolid() {
 		return type.isSolid();
 	}

@@ -3,6 +3,7 @@ package io.github.steaf23.bingoreloaded.lib.api.player;
 import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import io.github.steaf23.bingoreloaded.adapter.MessageHelper;
+import io.github.steaf23.bingoreloaded.gui.ActionBarUIHud;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
@@ -32,11 +33,11 @@ public class HytalePlayerAudience implements Audience {
 
 	@Override
 	public void sendActionBar(@NotNull ComponentLike message) {
-		playerFromRef().sendMessage(MessageHelper.fromComponentLike(message));
+		ActionBarUIHud.sendMessage(playerRef, MessageHelper.fromComponentLike(message));
 	}
 
 	@Override
 	public void sendActionBar(@NotNull Component message) {
-		playerFromRef().sendMessage(MessageHelper.fromComponentLike(message));
+		ActionBarUIHud.sendMessage(playerRef, MessageHelper.fromComponentLike(message));
 	}
 }

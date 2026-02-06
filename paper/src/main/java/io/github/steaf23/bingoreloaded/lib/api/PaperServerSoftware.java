@@ -7,6 +7,7 @@ import io.github.steaf23.bingoreloaded.lib.api.item.StackHandlePaper;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandlePaper;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerInfo;
+import io.github.steaf23.bingoreloaded.lib.data.core.DataStorage;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import io.github.steaf23.bingoreloaded.lib.util.LoggerWrapper;
@@ -96,16 +97,6 @@ public class PaperServerSoftware implements ServerSoftware {
 	public @NotNull PlayerInfo getPlayerInfo(String playerName) {
 		OfflinePlayer offline = Bukkit.getOfflinePlayer(playerName);
 		return new PlayerInfo(offline.getUniqueId(), playerName);
-	}
-
-	@Override
-	public ItemType resolveItemType(Key key) {
-		return new ItemTypePaper(Registry.MATERIAL.get(key));
-	}
-
-	@Override
-	public ItemType resolveItemType(String key) {
-		return resolveItemType(Key.key(key));
 	}
 
 	@Override
@@ -207,6 +198,21 @@ public class PaperServerSoftware implements ServerSoftware {
 	@Override
 	public boolean unloadWorld(@NotNull WorldHandle world, boolean save) {
 		return Bukkit.unloadWorld(((WorldHandlePaper)world).handle(), save);
+	}
+
+	@Override
+	public @NotNull ItemType readItemType(DataStorage storage, String path) {
+		return new ItemTypePaper(Registry.MATERIAL.get(Key.key(storage.getString(path, ""))));
+	}
+
+	@Override
+	public void writeItemType(DataStorage storage, String path, @NotNull ItemType itemType) {
+
+	}
+
+	@Override
+	public ItemType airItem() {
+		return new ItemTypePaper(Material.AIR);
 	}
 
 	@Override

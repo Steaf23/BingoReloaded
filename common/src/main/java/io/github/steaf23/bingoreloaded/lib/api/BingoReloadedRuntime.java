@@ -59,6 +59,8 @@ public interface BingoReloadedRuntime {
 
 	StackHandle defaultStack(GameItem item);
 
+	ItemTypeFactory itemTypeFactory();
+
 	void playerJoinedLobby(BingoSession session, PlayerHandle player);
 	void droppedItemsOnDeath(BingoSession session, PlayerHandle player, Collection<StackHandle> items);
 	boolean canItemBeUsedForInteraction(BingoSession session, PlayerHandle player, BingoInteraction interaction, StackHandle stack, PlayerInput input);

@@ -51,10 +51,6 @@ public interface StackHandle {
 		return PlatformResolver.get().createStack(type, 1);
 	}
 
-	static StackHandle empty() {
-		return PlatformResolver.get().createStack(ItemType.AIR, 1);
-	}
-
 	static StackHandle deserializeBytes(byte[] bytes) {
 		return PlatformResolver.get().createStackFromBytes(bytes);
 	}

@@ -27,7 +27,7 @@ public class BingoSettingsStorageSerializer implements DataStorageSerializer<Bin
         storage.setList("effects", TagDataType.STRING, enumSetToList(value.effects()));
         storage.setInt("team_size", value.maxTeamSize());
         storage.setInt("duration", value.countdownDuration());
-        storage.setNamespacedKey("countdown_type", value.countdownType().key());
+        storage.setString("countdown_type", value.countdownType().key().toString());
         storage.setInt("hotswap_goal", value.hotswapGoal());
         storage.setBoolean("expire_hotswap_tasks", value.expireHotswapTasks());
         storage.setInt("complete_goal", value.completeGoal());
@@ -45,7 +45,7 @@ public class BingoSettingsStorageSerializer implements DataStorageSerializer<Bin
                 PlayerKit.fromConfig(storage.getString("kit", "")),
                 enumSetFromList(EffectOptionFlags.class, storage.getList("effects", TagDataType.STRING)),
                 storage.getInt("team_size", 1),
-                BingoSettings.CountdownType.fromNamespace(storage.getNamespacedKey("countdown_type")),
+                BingoSettings.CountdownType.fromNamespace(storage.getString("countdown_type", "disabled")),
                 storage.getInt("duration", 0),
                 storage.getInt("hotswap_goal", 10),
                 storage.getBoolean("expire_hotswap_tasks", true),

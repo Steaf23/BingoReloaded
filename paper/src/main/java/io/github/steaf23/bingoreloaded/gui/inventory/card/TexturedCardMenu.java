@@ -204,7 +204,7 @@ public class TexturedCardMenu implements InventoryMenu, CardMenu
         GameTask task = tasks.get(taskIndex);
         ItemTemplate item = TaskItemConverter.taskToItem(task, displayInfo);
         if (tasks.get(taskIndex).isCompleted()) {
-            item.setItemType(ItemTypePaper.of(Material.POISONOUS_POTATO));
+            item.setItemType(Material.POISONOUS_POTATO);
             item.setCustomModelData("1012");
             item.setGlowing(false);
         }

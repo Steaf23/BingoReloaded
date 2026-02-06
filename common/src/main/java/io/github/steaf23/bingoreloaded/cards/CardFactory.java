@@ -51,7 +51,13 @@ public class CardFactory
 
     public static Set<TaskCard> generateCardsForGame(BingoGame game, boolean includeAdvancements, boolean includeStatistics) {
         BingoSettings settings = game.getSettings();
-        TaskGenerator.GeneratorSettings generatorSettings = new TaskGenerator.GeneratorSettings(settings.card(), settings.seed(), includeAdvancements, includeStatistics, settings.size());
+        TaskGenerator.GeneratorSettings generatorSettings = new TaskGenerator.GeneratorSettings(
+                settings.card(),
+                settings.seed(),
+                includeAdvancements,
+                includeStatistics,
+                settings.size(),
+                game.runtime().itemTypeFactory().defaultTaskItem());
 
         Set<TaskCard> uniqueCards = new HashSet<>();
 

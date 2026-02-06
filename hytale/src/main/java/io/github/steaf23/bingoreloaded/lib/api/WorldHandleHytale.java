@@ -76,7 +76,7 @@ public class WorldHandleHytale implements WorldHandle {
 		if (type != null) {
 			return new ItemTypeHytale(type.getId());
 		}
-		return ItemType.AIR;
+		return PlatformResolver.get().airItem();
 	}
 
 	@Override
