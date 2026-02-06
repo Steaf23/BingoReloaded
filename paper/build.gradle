@@ -34,12 +34,14 @@ java {
 }
 
 tasks.jar {
+    archiveFileName.set("BingoReloaded-paper-${project.version}-shallow.jar")
     manifest {
         attributes["paperweight-mappings-namespace"] = "mojang"
     }
 }
 // if you have shadowJar configured
 tasks.shadowJar {
+    archiveFileName.set("BingoReloaded-paper-${project.version}.jar")
     manifest {
         attributes["paperweight-mappings-namespace"] = "mojang"
     }
