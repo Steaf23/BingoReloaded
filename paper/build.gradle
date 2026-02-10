@@ -2,7 +2,7 @@ plugins {
     id 'java'
     id 'io.github.goooler.shadow' version '8.1.7'
     id 'io.papermc.paperweight.userdev' version '2.0.0-beta.17'
-    id("xyz.jpenilla.run-paper") version "2.3.1"
+    id("xyz.jpenilla.run-paper") version "3.0.2"
 }
 
 repositories {
@@ -44,5 +44,11 @@ tasks.shadowJar {
     archiveFileName.set("BingoReloaded-paper-${project.version}.jar")
     manifest {
         attributes["paperweight-mappings-namespace"] = "mojang"
+    }
+}
+
+tasks.runServer {
+    downloadPlugins {
+        modrinth("packetevents", "$packet_events_version+spigot")
     }
 }

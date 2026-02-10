@@ -672,8 +672,9 @@ public class AutoBingoAction extends ActionTree {
 			return ActionResult.IGNORED;
 		}
 
-		if (!player.teleportBlocking(world.spawnPoint())) {
-			sendFailed("Could not teleport " + playerName + " to " + targetWorldName + " either because of some error or because their player was loaded at the same time.", worldName);
+		boolean teleportSucceeded = player.teleportBlocking(world.spawnPoint());
+		if (!manager.getGameConfig().getOptionValue(BingoOptions.SAVE_PLAYER_INFORMATION) && !teleportSucceeded) {
+			sendFailed("Could not teleport " + playerName + " to " + targetWorldName + " because of some error.", worldName);
 			return ActionResult.IGNORED;
 		}
 		sendSuccess("Teleported " + playerName + " to " + targetWorldName, worldName);
@@ -710,7 +711,8 @@ public class AutoBingoAction extends ActionTree {
 				continue;
 			}
 
-			if (!player.teleportBlocking(world.spawnPoint())) {
+			boolean teleportSucceeded = player.teleportBlocking(world.spawnPoint());
+			if (!manager.getGameConfig().getOptionValue(BingoOptions.SAVE_PLAYER_INFORMATION) && !teleportSucceeded) {
 				ConsoleMessenger.bug("Could not teleport player '" + player.playerName() + "'(" + player.uniqueId() + ") for some reason", this);
 				continue;
 			}

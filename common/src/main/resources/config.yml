@@ -15,7 +15,7 @@ configuration: SINGULAR
 #   - SINGULAR: This world is the one where bingo is played. The plugin will not create this world, so make sure to create it before running this plugin.
 #     to allow the plugin to use the Nether and End dimensions, the names `<defaultWorldName>_nether` and `<defaultWorldName>_the_end` must also be valid worlds.
 #   - MULTIPLE: This world is used more like a lobby world, however it is not required. The actual game worlds can be created using autobingo commands .
-#     In this case, players can be teleported to any active game world using the /autobingo teleport command
+#     In this case, players can be teleported to any active game world using the /autobingo addplayer command
 defaultWorldName: default
 
 # The yml file that contains the language data that will be used for this plugin
@@ -239,6 +239,6 @@ clearDefaultWorlds: true
 # By default, it uses the vanilla world generation, but it can be configured to work for the bingoreloaded datapack or any other datapack with noise generation settings.
 # This is formatted as a namespaced key, where the name of the datapack comes first and is (in this case) followed by the name of the worldgen/noise_settings file.
 # If you want to use vanilla generation, put "null" as the value.
-# If you want to use generation included in the bingoreloaded datapack, make sure to add it to your main world and set this setting to "bingoreloaded:small"
+# If you want to use generation included in the bingoreloaded datapack, make sure to add it to your main world and set this setting to "bingoreloaded:bingo"
 # And then make sure to restart the server to apply the changes.
 customWorldGeneration: "null"

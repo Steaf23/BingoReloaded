@@ -309,6 +309,12 @@ public class BingoAction extends ActionTree {
 			}
 
 			WorldPosition pos = player.position();
+			BingoSession session = getSessionFromUser(getLastUser());
+			// In multiple, we cannot create a lobby in a bingo world because there should only be one lobby ever.
+			if (config.getOptionValue(BingoOptions.CONFIGURATION) == BingoOptions.PluginConfiguration.MULTIPLE && session != null && session.ownsWorld(player.world())) {
+				BingoPlayerSender.sendMessage(ComponentUtils.MINI_BUILDER.deserialize("<red>Lobby cannot be created in a bingo-world. Please create it in the lobby world as defined by defaultWorldName.</red>"), player);
+				return ActionResult.IGNORED;
+			}
 			gameManager.getLobbyData().create(pos);
 			BingoPlayerSender.sendMessage(ComponentUtils.MINI_BUILDER.deserialize("<green>Created a lobby spawn point at this position.\nPlayers can be teleported here using the option <dark_green>teleportToLobbyAfterGame</dark_green>.</green>"), player);
 

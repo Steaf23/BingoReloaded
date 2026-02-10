@@ -19,6 +19,7 @@ import io.github.steaf23.bingoreloaded.lib.util.DebugLogger;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import net.kyori.adventure.key.Key;
+import net.kyori.adventure.text.Component;
 import org.intellij.lang.annotations.Subst;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -29,6 +30,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 
 public class GameManager {
 
@@ -42,7 +45,7 @@ public class GameManager {
 	private final WorldData worldData;
 	private final BingoLobbyData lobbyData;
 
-	private boolean teleportingPlayer;
+	private Set<UUID> teleportingPlayers;
 
 	public GameManager(@NotNull BingoReloadedRuntime runtime, BingoConfigurationData config) {
 		this.runtime = runtime;
@@ -57,7 +60,7 @@ public class GameManager {
 		this.sessions = new HashMap<>();
 		this.playerData = new PlayerSerializationData();
 
-		this.teleportingPlayer = false;
+		this.teleportingPlayers = new HashSet<>();
 
 		this.eventListener = new BingoEventListener(this,
 				config.getOptionValue(BingoOptions.DISABLE_ADVANCEMENTS),
@@ -209,9 +212,9 @@ public class GameManager {
 			return EventResult.IGNORE;
 		}
 
-		DebugLogger.addLog("Teleporting player already, returning early? " + teleportingPlayer);
-		if (teleportingPlayer) {
-			teleportingPlayer = false;
+		DebugLogger.addLog("Teleporting player already, returning early? " + teleportingPlayers.contains(player.uniqueId()));
+		if (teleportingPlayers.contains(player.uniqueId())) {
+			teleportingPlayers.remove(player.uniqueId());
 			return EventResult.IGNORE;
 		}
 
@@ -248,15 +251,14 @@ public class GameManager {
 				player.clearInventory(); // If we are leaving a bingo world, we can always clear the player's inventory
 
 				if (savePlayerInformation) {
-					teleportingPlayer = true;
+					teleportingPlayers.add(player.uniqueId());
 					DebugLogger.addLog("Scheduling player load...");
 					// load player will teleport them, so we have to schedule it to make sure to do the right thing
 					runtime.getServerSoftware().runTask(targetWorld.uniqueId(), t -> {
 						if (playerData.loadPlayer(player) == null) {
-//                        // Player data was not saved for some reason?
-//                        ConsoleMessenger.bug(Component.text("No saved player data could be found for ").append(event.getPlayer().displayName()).append(Component.text(", resetting data")), this);
-//                        // Using the boolean we can check if we were already teleporting the player.
-//                        SerializablePlayer.reset(plugin, event.getPlayer(), event.getTo()).apply(event.getPlayer());
+                        // Player data was not saved for some reason?
+                        ConsoleMessenger.bug(Component.text("No saved player data could be found for ").append(player.displayName()), this);
+                        // Using the boolean we can check if we were already teleporting the player.
 						}
 						DebugLogger.addLog("Player loaded?");
 					});

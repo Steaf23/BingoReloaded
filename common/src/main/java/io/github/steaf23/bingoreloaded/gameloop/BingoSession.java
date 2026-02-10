@@ -247,7 +247,7 @@ public class BingoSession implements ForwardingAudience {
 			BingoLobby lobby = gameManager.getLobbyData().getCreatedLobby();
 
 			int spread = config.getOptionValue(BingoOptions.TELEPORT_TO_LOBBY_SPREAD);
-			if (lobby != null && lobby.spawnPosition() != null) {
+			if (config.getOptionValue(BingoOptions.CONFIGURATION) == BingoOptions.PluginConfiguration.SINGULAR && lobby != null && lobby.spawnPosition() != null) {
 				player.teleportAsync(BlockHelper.getRandomPosWithinRange(lobby.spawnPosition(), spread, spread));
 			}
 		}
