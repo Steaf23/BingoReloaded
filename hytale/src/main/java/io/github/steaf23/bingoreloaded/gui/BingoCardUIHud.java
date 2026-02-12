@@ -4,6 +4,7 @@ import com.hypixel.hytale.server.core.entity.entities.player.hud.CustomUIHud;
 import com.hypixel.hytale.server.core.ui.builder.UICommandBuilder;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import io.github.steaf23.bingoreloaded.cards.TaskCard;
+import io.github.steaf23.bingoreloaded.lib.HytaleTaskItemConverter;
 import org.jetbrains.annotations.NotNull;
 
 public class BingoCardUIHud extends CustomUIHud {
@@ -23,6 +24,12 @@ public class BingoCardUIHud extends CustomUIHud {
 		this.card = card;
 
 		UICommandBuilder builder = new UICommandBuilder();
+
+		if (card != null) {
+			builder.set("#Tasks.ItemStacks", HytaleTaskItemConverter.extractAsItems(card));
+			builder.set("#Tasks.SlotsPerRow", card.size.size);
+		}
+
 		update(false, builder);
 	}
 }
