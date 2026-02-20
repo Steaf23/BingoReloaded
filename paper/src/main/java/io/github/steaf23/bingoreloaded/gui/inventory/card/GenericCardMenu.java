@@ -49,6 +49,11 @@ public class GenericCardMenu extends BasicMenu implements CardMenu
         }
     }
 
+    @Override
+    public List<GameTask> getTasks() {
+        return tasks;
+    }
+
     public CardMenu copy(@Nullable Component newTitle) {
         return new GenericCardMenu(bingo, getMenuBoard(), displayInfo(), newTitle);
     }
@@ -59,7 +64,7 @@ public class GenericCardMenu extends BasicMenu implements CardMenu
     }
 
     public @NotNull ItemTemplate getItemFromTask(int taskIndex) {
-        return tasks.get(taskIndex).toItem(displayInfo);
+        return tasks.get(taskIndex).toItem(displayInfo());
     }
 
     public void setInfo(Component name, Component... description)

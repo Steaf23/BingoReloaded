@@ -17,7 +17,7 @@ import io.github.steaf23.bingoreloaded.lib.inventory.action.MenuAction;
 import io.github.steaf23.bingoreloaded.lib.inventory.action.MenuItemGroup;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import io.github.steaf23.bingoreloaded.lib.util.MultilineComponent;
-import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
+import io.github.steaf23.bingoreloaded.settings.gamemode.BingoGamemode;
 import io.github.steaf23.bingoreloaded.tasks.GameTask;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
@@ -80,12 +80,7 @@ public class TexturedCardMenu implements InventoryMenu, CardMenu
             cardTexture = textures.getTexture("card_5");
         }
 
-        TexturedMenuData.Texture bannerTexture = switch (mode) {
-            case REGULAR -> textures.getTexture("banner_regular");
-            case LOCKOUT -> textures.getTexture("banner_lockout");
-            case COMPLETE -> textures.getTexture("banner_complete");
-            case HOTSWAP -> textures.getTexture("banner_hotswap");
-        };
+        TexturedMenuData.Texture bannerTexture = mode.bannerTexture(textures);
 
         if (bannerTexture == null || cardTexture == null) {
             return Component.empty();
@@ -109,6 +104,11 @@ public class TexturedCardMenu implements InventoryMenu, CardMenu
     @Override
     public void open(PlayerHandle entity) {
         board.open(this, entity);
+    }
+
+    @Override
+    public List<GameTask> getTasks() {
+        return tasks;
     }
 
     @Override

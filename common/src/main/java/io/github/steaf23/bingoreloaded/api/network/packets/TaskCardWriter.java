@@ -1,9 +1,5 @@
 package io.github.steaf23.bingoreloaded.api.network.packets;
 
-import io.github.steaf23.bingoreloaded.cards.BingoTaskCard;
-import io.github.steaf23.bingoreloaded.cards.CompleteTaskCard;
-import io.github.steaf23.bingoreloaded.cards.HotswapTaskCard;
-import io.github.steaf23.bingoreloaded.cards.LockoutTaskCard;
 import io.github.steaf23.bingoreloaded.cards.TaskCard;
 import org.jetbrains.annotations.Nullable;
 
@@ -21,22 +17,7 @@ public class TaskCardWriter implements DataWriter<TaskCard> {
 		}
 		else {
 			to.writeBoolean(true);
-			switch (taskCard) {
-				case BingoTaskCard ignored:
-					DataWriter.writeString("bingoreloaded:gamemode/bingo", to);
-					break;
-				case CompleteTaskCard ignored:
-					DataWriter.writeString("bingoreloaded:gamemode/complete", to);
-					break;
-				case LockoutTaskCard ignored:
-					DataWriter.writeString("bingoreloaded:gamemode/lockout", to);
-					break;
-				case HotswapTaskCard ignored:
-					DataWriter.writeString("bingoreloaded:gamemode/hotswap", to);
-					break;
-				default:
-					throw new IllegalStateException("Unexpected value: " + taskCard);
-			}
+			DataWriter.writeString("bingoreloaded:gamemode/" + taskCard.getMode().configName(), to);
 
 			taskCard.write(to);
 		}

@@ -18,6 +18,7 @@ import io.github.steaf23.bingoreloaded.lib.inventory.action.SpinBoxButtonAction;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import io.github.steaf23.bingoreloaded.player.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
+import io.github.steaf23.bingoreloaded.settings.gamemode.GamemodeFeature;
 import io.github.steaf23.bingoreloaded.util.BingoPlayerSender;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -101,25 +102,27 @@ public class AdminBingoMenu extends BasicMenu
 		modeLore.add(selected);
 		modeLore.add(Component.text(" - ").append(settings.mode().asComponent()));
 		modeLore.add(Component.text("   Size: ").append(settings.size().asComponent()));
-		switch (settings.mode()) {
-			case HOTSWAP -> {
-				modeLore.add(Component.text("   Win goal: ").append(Component.text(settings.hotswapGoal())));
-				modeLore.add(settings.expireHotswapTasks() ?
-						Component.text("   Tasks expire").color(NamedTextColor.RED) :
-						Component.text("   Tasks do not expire").color(NamedTextColor.GRAY));
-			}
-			case REGULAR -> {
-				modeLore.add(settings.differentCardPerTeam() ?
-						Component.text("   Different cards generated").color(NamedTextColor.RED) :
-						Component.text("   Same cards generated").color(NamedTextColor.GRAY));
-			}
-			case COMPLETE -> {
-				modeLore.add(Component.text("   Win goal: ").append(Component.text(settings.completeGoal())));
-				modeLore.add(settings.differentCardPerTeam() ?
-						Component.text("   Different cards generated").color(NamedTextColor.RED) :
-						Component.text("   Same cards generated").color(NamedTextColor.GRAY));
+		for (GamemodeFeature feature : settings.mode().featureSet()) {
+			switch (feature) {
+				case UNIQUE_CARD -> {
+					modeLore.add(settings.differentCardPerTeam() ?
+							Component.text("   Different cards generated").color(NamedTextColor.RED) :
+							Component.text("   Same cards generated").color(NamedTextColor.GRAY));
+				}
+				case HOTSWAP_WIN_GOAL -> {
+					modeLore.add(Component.text("   Win goal: ").append(Component.text(settings.hotswapGoal())));
+				}
+				case COMPLETE_WIN_GOAL -> {
+					modeLore.add(Component.text("   Win goal: ").append(Component.text(settings.completeGoal())));
+				}
+				case TASK_EXPIRATION -> {
+					modeLore.add(settings.expireHotswapTasks() ?
+							Component.text("   Tasks expire").color(NamedTextColor.RED) :
+							Component.text("   Tasks do not expire").color(NamedTextColor.GRAY));
+				}
 			}
 		}
+
 		ItemTemplate modeItem = MODE.copy().setLore(modeLore.toArray(new Component[]{}));
 
 		List<Component> effects = new ArrayList<>(List.of(EffectOptionFlags.effectsToText(settings.effects())));

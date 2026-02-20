@@ -60,8 +60,8 @@ import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import io.github.steaf23.bingoreloaded.lib.util.PlayerDisplayTranslationKey;
 import io.github.steaf23.bingoreloaded.placeholder.BingoReloadedPlaceholderExpansion;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
-import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
+import io.github.steaf23.bingoreloaded.settings.gamemode.BingoGamemodes;
 import io.github.steaf23.bingoreloaded.util.bstats.Metrics;
 import io.github.steaf23.bingoreloaded.world.CustomWorldCreator;
 import me.clip.placeholderapi.PlaceholderAPI;
@@ -317,13 +317,13 @@ public class BingoReloadedPaper extends JavaPlugin implements BingoReloadedRunti
 	@Override
 	public CardMenu createMenu(boolean textured, CardDisplayInfo displayInfo) {
 		if (textured) {
-			if (displayInfo.mode() == BingoGamemode.HOTSWAP) {
+			if (displayInfo.mode() == BingoGamemodes.HOTSWAP) {
 				return new HotswapTexturedCardMenu(bingo, menuBoard, displayInfo);
 			}
 			return new TexturedCardMenu(bingo, menuBoard, displayInfo);
 		}
 
-		if (displayInfo.mode() == BingoGamemode.HOTSWAP) {
+		if (displayInfo.mode() == BingoGamemodes.HOTSWAP) {
 			return new HotswapGenericCardMenu(bingo, menuBoard, displayInfo, null);
 		}
 

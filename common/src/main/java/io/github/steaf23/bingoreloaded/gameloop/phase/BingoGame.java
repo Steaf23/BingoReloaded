@@ -34,9 +34,10 @@ import io.github.steaf23.bingoreloaded.player.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.player.PlayerRespawnManager;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.player.team.TeamManager;
-import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
+import io.github.steaf23.bingoreloaded.settings.gamemode.BingoGamemode;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
+import io.github.steaf23.bingoreloaded.settings.gamemode.BingoGamemodes;
 import io.github.steaf23.bingoreloaded.tasks.GameTask;
 import io.github.steaf23.bingoreloaded.tasks.data.ItemTask;
 import io.github.steaf23.bingoreloaded.tasks.tracker.TaskProgressTracker;
@@ -664,9 +665,8 @@ public class BingoGame implements GamePhase
         Set<BingoTeam> tiedTeams = new HashSet<>();
         tiedTeams.add(leadingTeam);
 
-        // Regular bingo cannot draw, so end the game without a winner
-        if (settings.mode() == BingoGamemode.REGULAR || leadingTeam == null) {
-            end((BingoTeam)null);
+        if (settings.mode().canEndInDraw() || leadingTeam == null) {
+            end(null);
             return;
         }
 

@@ -10,8 +10,8 @@ import io.github.steaf23.bingoreloaded.lib.api.item.ItemTypePaper;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.inventory.BasicMenu;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
-import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
+import io.github.steaf23.bingoreloaded.settings.gamemode.BingoGamemodes;
 import io.github.steaf23.bingoreloaded.util.CollectionHelper;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -53,7 +53,7 @@ public class VoteMenu extends BasicMenu
             int itemIndex = 0;
             if (voteList.gamemodes().contains("regular")) {
                 gamemodeOptions.addAction(new ItemTemplate(itemIndex, ItemTypePaper.of(Material.LIME_CONCRETE),
-                        BingoGamemode.REGULAR.asComponent().decorate(TextDecoration.BOLD),
+                        BingoGamemodes.BINGO.asComponent().decorate(TextDecoration.BOLD),
                         BingoMessage.INFO_REGULAR_DESC.asMultiline()), (args) -> {
                     PlayerHandle player = args.player();
                     lobby.voteGamemode("regular", player);
@@ -63,7 +63,7 @@ public class VoteMenu extends BasicMenu
             }
             if (voteList.gamemodes().contains("lockout")) {
                 gamemodeOptions.addAction(new ItemTemplate(itemIndex, ItemTypePaper.of(Material.PINK_CONCRETE),
-                        BingoGamemode.LOCKOUT.asComponent().decorate(TextDecoration.BOLD),
+                        BingoGamemodes.LOCKOUT.asComponent().decorate(TextDecoration.BOLD),
                         BingoMessage.INFO_LOCKOUT_DESC.asMultiline()), (args) -> {
                     PlayerHandle player = args.player();
                     lobby.voteGamemode("lockout", player);
@@ -73,7 +73,7 @@ public class VoteMenu extends BasicMenu
             }
             if (voteList.gamemodes().contains("complete")) {
                 gamemodeOptions.addAction(new ItemTemplate(itemIndex, ItemTypePaper.of(Material.LIGHT_BLUE_CONCRETE),
-                        BingoGamemode.COMPLETE.asComponent().decorate(TextDecoration.BOLD),
+                        BingoGamemodes.COMPLETE.asComponent().decorate(TextDecoration.BOLD),
                         BingoMessage.INFO_COMPLETE_DESC.asMultiline()), (args) -> {
                     PlayerHandle player = args.player();
                     lobby.voteGamemode("complete", player);
@@ -83,7 +83,7 @@ public class VoteMenu extends BasicMenu
             }
             if (voteList.gamemodes().contains("hotswap")) {
                 gamemodeOptions.addAction(new ItemTemplate(itemIndex, ItemTypePaper.of(Material.YELLOW_CONCRETE),
-                        BingoGamemode.HOTSWAP.asComponent().decorate(TextDecoration.BOLD),
+                        BingoGamemodes.HOTSWAP.asComponent().decorate(TextDecoration.BOLD),
                         CollectionHelper.concatWithArrayCopy(
                                 BingoMessage.INFO_HOTSWAP_DESC_EXPIRE.asMultiline(),
                                 BingoMessage.INFO_HOTSWAP_DESC_ANY.asMultiline(Component.text("x")))), (args) -> {

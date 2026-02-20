@@ -17,9 +17,10 @@ import io.github.steaf23.bingoreloaded.lib.data.core.tag.TagDataType;
 import io.github.steaf23.bingoreloaded.lib.item.SerializableItem;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import io.github.steaf23.bingoreloaded.player.EffectOptionFlags;
-import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
+import io.github.steaf23.bingoreloaded.settings.gamemode.BingoGamemode;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
+import io.github.steaf23.bingoreloaded.settings.gamemode.BingoGamemodes;
 import io.github.steaf23.bingoreloaded.tasks.data.AdvancementTask;
 import io.github.steaf23.bingoreloaded.tasks.data.ItemTask;
 import io.github.steaf23.bingoreloaded.tasks.data.StatisticTask;
@@ -215,7 +216,7 @@ public class DataUpdaterV1
             ((List<String>) data.get("effects")).forEach(entry -> result.add(Enum.valueOf(EffectOptionFlags.class, entry)));
             return new OldBingoSettings(
                     (String) data.get("card"),
-                    BingoGamemode.fromDataString((String) data.get("mode")),
+                    BingoGamemodes.fromDataString((String) data.get("mode")),
                     CardSize.fromWidth((int) data.get("size")),
                     (int) data.get("seed"),
                     PlayerKit.fromConfig((String) data.get("kit")),

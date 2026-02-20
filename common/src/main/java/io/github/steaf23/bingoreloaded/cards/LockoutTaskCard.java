@@ -5,6 +5,8 @@ import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeamContainer;
+import io.github.steaf23.bingoreloaded.settings.gamemode.BingoGamemode;
+import io.github.steaf23.bingoreloaded.settings.gamemode.BingoGamemodes;
 import io.github.steaf23.bingoreloaded.tasks.GameTask;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
@@ -26,6 +28,11 @@ public class LockoutTaskCard extends TaskCard
 
         menu.setInfo(BingoMessage.INFO_LOCKOUT_NAME.asPhrase(),
                 BingoMessage.INFO_LOCKOUT_DESC.asMultiline());
+    }
+
+    @Override
+    public BingoGamemode getMode() {
+        return BingoGamemodes.LOCKOUT;
     }
 
     @Override

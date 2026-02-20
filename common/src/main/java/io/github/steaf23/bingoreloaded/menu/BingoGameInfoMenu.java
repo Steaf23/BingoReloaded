@@ -34,27 +34,7 @@ public class BingoGameInfoMenu extends InfoMenu {
 	}
 
 	public void updateWinScore(BingoSettings settings) {
-		String goal = "-";
-
-		switch (settings.mode()) {
-			case HOTSWAP -> {
-				if (!settings.useScoreAsWinCondition()) {
-					break;
-				}
-
-				goal = Integer.toString(settings.hotswapGoal());
-			}
-			case COMPLETE -> {
-				if (!settings.useScoreAsWinCondition()) {
-					break;
-				}
-
-				goal = Integer.toString(settings.completeGoal());
-			}
-			case REGULAR -> goal = "-----";
-			case LOCKOUT -> goal = Integer.toString(settings.size().fullCardSize);
-		}
-		addField("win_goal", Component.text(goal));
+		addField("win_goal", settings.mode().winScoreText(settings));
 	}
 
 	public void updateTeamScores() {

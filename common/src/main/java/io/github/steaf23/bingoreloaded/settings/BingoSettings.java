@@ -4,6 +4,7 @@ import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.cards.CardSize;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import io.github.steaf23.bingoreloaded.player.EffectOptionFlags;
+import io.github.steaf23.bingoreloaded.settings.gamemode.BingoGamemode;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.key.Keyed;
 import org.jetbrains.annotations.NotNull;

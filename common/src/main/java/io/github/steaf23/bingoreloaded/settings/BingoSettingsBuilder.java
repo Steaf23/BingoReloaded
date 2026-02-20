@@ -6,6 +6,7 @@ import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gameloop.vote.VoteTicket;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import io.github.steaf23.bingoreloaded.player.EffectOptionFlags;
+import io.github.steaf23.bingoreloaded.settings.gamemode.BingoGamemode;
 
 import java.util.EnumSet;
 import java.util.Objects;

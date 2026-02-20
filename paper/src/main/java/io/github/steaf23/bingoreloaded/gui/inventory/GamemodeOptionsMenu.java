@@ -15,8 +15,10 @@ import io.github.steaf23.bingoreloaded.lib.inventory.action.SpinBoxButtonAction;
 import io.github.steaf23.bingoreloaded.lib.inventory.action.ToggleButtonAction;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import io.github.steaf23.bingoreloaded.lib.util.ComponentUtils;
-import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
+import io.github.steaf23.bingoreloaded.settings.gamemode.BingoGamemode;
 import io.github.steaf23.bingoreloaded.settings.BingoSettingsBuilder;
+import io.github.steaf23.bingoreloaded.settings.gamemode.BingoGamemodes;
+import io.github.steaf23.bingoreloaded.settings.gamemode.GamemodeFeature;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -35,13 +37,13 @@ public class GamemodeOptionsMenu extends BasicMenu
         this.session = session;
 
         addAction(new ItemTemplate(1,
-                ItemTypePaper.of(Material.LIME_CONCRETE), BingoReloaded.applyTitleFormat(BingoMessage.MODE_REGULAR.asPhrase())), arguments -> selectGamemode(arguments.player(), BingoGamemode.REGULAR));
+                ItemTypePaper.of(Material.LIME_CONCRETE), BingoReloaded.applyTitleFormat(BingoMessage.MODE_BINGO.asPhrase())), arguments -> selectGamemode(arguments.player(), BingoGamemodes.BINGO));
         addAction(new ItemTemplate(3,
-                ItemTypePaper.of(Material.MAGENTA_CONCRETE), BingoReloaded.applyTitleFormat(BingoMessage.MODE_LOCKOUT.asPhrase())), arguments -> selectGamemode(arguments.player(), BingoGamemode.LOCKOUT));
+                ItemTypePaper.of(Material.MAGENTA_CONCRETE), BingoReloaded.applyTitleFormat(BingoMessage.MODE_LOCKOUT.asPhrase())), arguments -> selectGamemode(arguments.player(), BingoGamemodes.LOCKOUT));
         addAction(new ItemTemplate(5,
-                ItemTypePaper.of(Material.LIGHT_BLUE_CONCRETE), BingoReloaded.applyTitleFormat(BingoMessage.MODE_COMPLETE.asPhrase())), arguments -> selectGamemode(arguments.player(), BingoGamemode.COMPLETE));
+                ItemTypePaper.of(Material.LIGHT_BLUE_CONCRETE), BingoReloaded.applyTitleFormat(BingoMessage.MODE_COMPLETE.asPhrase())), arguments -> selectGamemode(arguments.player(), BingoGamemodes.COMPLETE));
         addAction(new ItemTemplate(7,
-                ItemTypePaper.of(Material.ORANGE_CONCRETE), BingoReloaded.applyTitleFormat(BingoMessage.MODE_HOTSWAP.asPhrase())), arguments -> selectGamemode(arguments.player(), BingoGamemode.HOTSWAP));
+                ItemTypePaper.of(Material.ORANGE_CONCRETE), BingoReloaded.applyTitleFormat(BingoMessage.MODE_HOTSWAP.asPhrase())), arguments -> selectGamemode(arguments.player(), BingoGamemodes.HOTSWAP));
     }
 
     public void selectGamemode(PlayerHandle player, BingoGamemode chosenMode) {
@@ -56,7 +58,7 @@ public class GamemodeOptionsMenu extends BasicMenu
                 .buildAction(3, session.settingsBuilder.view().size() == CardSize.X5 ? "5" : "3");
         optionMenu.addAction(cardSizeAction);
 
-        if (chosenMode == BingoGamemode.COMPLETE) {
+        if (chosenMode.featureSet().contains(GamemodeFeature.COMPLETE_WIN_GOAL)) {
             int completeGoal = session.settingsBuilder.view().completeGoal();
             ItemTemplate completeGoalItem = new ItemTemplate(5, ItemTypePaper.of(Material.RECOVERY_COMPASS), BingoReloaded.applyTitleFormat("Complete-X Win Score"),
                     Component.text("Complete " + completeGoal + " tasks to win complete-x."),
@@ -70,7 +72,7 @@ public class GamemodeOptionsMenu extends BasicMenu
             });
             optionMenu.addItem(completeGoalItem, goalAction);
 
-        } else if (chosenMode == BingoGamemode.HOTSWAP) {
+        } else if (chosenMode.featureSet().contains(GamemodeFeature.HOTSWAP_WIN_GOAL)) {
             int hotswapGoal = session.settingsBuilder.view().hotswapGoal();
             ItemTemplate hotswapGoalItem = new ItemTemplate(5, ItemTypePaper.of(Material.FIRE_CHARGE), BingoReloaded.applyTitleFormat("Hot-Swap Win Score"),
                     Component.text("Complete " + hotswapGoal + " tasks to win hot-swap."),
@@ -96,8 +98,8 @@ public class GamemodeOptionsMenu extends BasicMenu
         }
 
         // Generate separate card per team option
-        if (chosenMode == BingoGamemode.REGULAR || chosenMode == BingoGamemode.COMPLETE) {
-            int slot = chosenMode == BingoGamemode.REGULAR ? 5 : 6;
+        if (chosenMode.featureSet().contains(GamemodeFeature.UNIQUE_CARD)) {
+            int slot = chosenMode == BingoGamemodes.BINGO ? 5 : 6; // TODO: don't hardcode this?
             boolean separateGeneration = session.settingsBuilder.view().differentCardPerTeam();
             ItemTemplate separateGenerationItem = new ItemTemplate(slot, ItemTypePaper.of(Material.GLOBE_BANNER_PATTERN));
             updateSeparateGenerationVisual(separateGenerationItem, separateGeneration);

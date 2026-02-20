@@ -13,6 +13,8 @@ import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
+import io.github.steaf23.bingoreloaded.settings.gamemode.BingoGamemode;
+import io.github.steaf23.bingoreloaded.settings.gamemode.BingoGamemodes;
 import io.github.steaf23.bingoreloaded.tasks.GameTask;
 import io.github.steaf23.bingoreloaded.tasks.TaskGenerator;
 import io.github.steaf23.bingoreloaded.tasks.data.TaskData;
@@ -56,6 +58,7 @@ public class HotswapTaskCard extends TaskCard
 
     public HotswapTaskCard(@NotNull HotswapCardMenu menu, CardSize size, BingoGame game, TaskProgressTracker progressTracker, int winningScore, BingoConfigurationData.HotswapConfig config) {
         super(menu, size);
+
         this.randomExpiryProvider = new Random();
         this.taskHolders = new ArrayList<>();
         this.completedTasks = new ArrayList<>();
@@ -84,6 +87,11 @@ public class HotswapTaskCard extends TaskCard
             case TIME_LIMIT -> BingoMessage.INFO_HOTSWAP_DESC_ANY.asMultiline(Component.text(game.getSettings().hotswapGoal()));
         };
         menu.setInfo(BingoMessage.INFO_HOTSWAP_NAME.asPhrase(), CollectionHelper.concatWithArrayCopy(description, extraDescription));
+    }
+
+    @Override
+    public BingoGamemode getMode() {
+        return BingoGamemodes.HOTSWAP;
     }
 
     @Override

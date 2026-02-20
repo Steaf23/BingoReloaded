@@ -20,10 +20,11 @@ import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.player.EffectOptionFlags;
-import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
+import io.github.steaf23.bingoreloaded.settings.gamemode.BingoGamemode;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
 import io.github.steaf23.bingoreloaded.settings.BingoSettingsBuilder;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
+import io.github.steaf23.bingoreloaded.settings.gamemode.BingoGamemodes;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 
@@ -487,7 +488,7 @@ public class AutoBingoAction extends DeferredAction {
 			return ActionResult.INCORRECT_USE;
 		}
 
-		BingoGamemode mode = BingoGamemode.fromDataString(extraArguments[0], true);
+		BingoGamemode mode = BingoGamemodes.fromDataString(extraArguments[0], true);
 		if (mode == null) {
 			sendFailed("Unknown gamemode '" + extraArguments[0] + "'", worldName);
 			return ActionResult.INCORRECT_USE;

@@ -6,6 +6,8 @@ import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
+import io.github.steaf23.bingoreloaded.settings.gamemode.BingoGamemode;
+import io.github.steaf23.bingoreloaded.settings.gamemode.BingoGamemodes;
 import io.github.steaf23.bingoreloaded.tasks.GameTask;
 import io.github.steaf23.bingoreloaded.tasks.TaskGenerator;
 import net.kyori.adventure.text.Component;

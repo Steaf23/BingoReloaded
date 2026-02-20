@@ -2,6 +2,8 @@ package io.github.steaf23.bingoreloaded.cards;
 
 import io.github.steaf23.bingoreloaded.api.CardMenu;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
+import io.github.steaf23.bingoreloaded.settings.gamemode.BingoGamemode;
+import io.github.steaf23.bingoreloaded.settings.gamemode.BingoGamemodes;
 import io.github.steaf23.bingoreloaded.tasks.GameTask;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
@@ -14,6 +16,11 @@ public class BingoTaskCard extends TaskCard
 {
     public BingoTaskCard(@NotNull CardMenu menu, CardSize size) {
         super(menu, size);
+    }
+
+    @Override
+    public BingoGamemode getMode() {
+        return BingoGamemodes.BINGO;
     }
 
     @Override

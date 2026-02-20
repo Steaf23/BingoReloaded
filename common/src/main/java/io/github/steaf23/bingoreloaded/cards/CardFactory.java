@@ -30,16 +30,7 @@ public class CardFactory
                 allowViewingAllCards);
         CardMenu menu = runtime.createMenu(texturedMenu, displayInfo);
 
-        return switch (settings.mode()) {
-            case LOCKOUT ->
-                    new LockoutTaskCard(menu, size, game.getSession(), game.getTeamManager().getActiveTeams());
-            case COMPLETE ->
-                    new CompleteTaskCard(menu, size, game.getSettings().completeGoal());
-            case HOTSWAP ->
-                    new HotswapTaskCard((HotswapCardMenu) menu, size, game, game.getProgressTracker(), settings.hotswapGoal(),
-                        game.getConfig().getOptionValue(BingoOptions.HOTSWAP_CONFIG));
-            default -> new BingoTaskCard(menu, size);
-        };
+        return settings.mode().createTaskCard(menu, game);
     }
 
     public static Set<TaskCard> generateCardsForGame(BingoGame game, boolean includeAdvancements, boolean includeStatistics) {

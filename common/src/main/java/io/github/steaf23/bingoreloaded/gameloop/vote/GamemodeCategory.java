@@ -1,7 +1,8 @@
 package io.github.steaf23.bingoreloaded.gameloop.vote;
 
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
-import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
+import io.github.steaf23.bingoreloaded.settings.gamemode.BingoGamemode;
+import io.github.steaf23.bingoreloaded.settings.gamemode.BingoGamemodes;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -23,7 +24,7 @@ public class GamemodeCategory extends VoteCategory<BingoGamemode>
     @Override
     @Nullable
     BingoGamemode createResultForValue(String value) {
-        return BingoGamemode.fromDataString(value, true);
+        return BingoGamemodes.fromDataString(value, true);
     }
 
     @Override
