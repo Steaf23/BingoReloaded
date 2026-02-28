@@ -18,7 +18,7 @@ public class GamemodeCategory extends VoteCategory<BingoGamemode>
     @Override
     @NotNull
     List<String> getValidValues() {
-        return List.of("regular", "lockout", "complete", "hotswap");
+        return BingoGamemodes.GAMEMODES.keySet().stream().toList();
     }
 
     @Override

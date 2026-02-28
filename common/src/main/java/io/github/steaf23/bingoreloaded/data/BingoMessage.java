@@ -110,6 +110,8 @@ public enum BingoMessage
     INFO_HOTSWAP_DESC_SCORE("menu.card.info_hotswap.desc_score"),
     INFO_HOTSWAP_DESC_TIME("menu.card.info_hotswap.desc_time"),
     INFO_HOTSWAP_DESC_ANY("menu.card.info_hotswap.desc_any"),
+    INFO_BLITZ_NAME("menu.card.info_blitz.name"),
+    INFO_BLITZ_DESC("menu.card.info_blitz.desc"),
     SHOW_TEAM_CARD_TITLE("menu.card.show_team_card.title"),
     SHOW_TEAM_CARD_NAME("menu.card.show_team_card.name"),
     SHOW_TEAM_CARD_DESC("menu.card.show_team_card.desc"),

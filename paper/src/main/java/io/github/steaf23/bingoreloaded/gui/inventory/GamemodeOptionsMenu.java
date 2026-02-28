@@ -36,14 +36,16 @@ public class GamemodeOptionsMenu extends BasicMenu
         super(menuBoard, Component.text("Select Gamemode"), 1);
         this.session = session;
 
-        addAction(new ItemTemplate(1,
+        addAction(new ItemTemplate(0,
                 ItemTypePaper.of(Material.LIME_CONCRETE), BingoReloaded.applyTitleFormat(BingoMessage.MODE_BINGO.asPhrase())), arguments -> selectGamemode(arguments.player(), BingoGamemodes.BINGO));
-        addAction(new ItemTemplate(3,
+        addAction(new ItemTemplate(2,
                 ItemTypePaper.of(Material.MAGENTA_CONCRETE), BingoReloaded.applyTitleFormat(BingoMessage.MODE_LOCKOUT.asPhrase())), arguments -> selectGamemode(arguments.player(), BingoGamemodes.LOCKOUT));
-        addAction(new ItemTemplate(5,
+        addAction(new ItemTemplate(4,
                 ItemTypePaper.of(Material.LIGHT_BLUE_CONCRETE), BingoReloaded.applyTitleFormat(BingoMessage.MODE_COMPLETE.asPhrase())), arguments -> selectGamemode(arguments.player(), BingoGamemodes.COMPLETE));
-        addAction(new ItemTemplate(7,
-                ItemTypePaper.of(Material.ORANGE_CONCRETE), BingoReloaded.applyTitleFormat(BingoMessage.MODE_HOTSWAP.asPhrase())), arguments -> selectGamemode(arguments.player(), BingoGamemodes.HOTSWAP));
+        addAction(new ItemTemplate(6,
+                ItemTypePaper.of(Material.RED_CONCRETE), BingoReloaded.applyTitleFormat(BingoMessage.MODE_HOTSWAP.asPhrase())), arguments -> selectGamemode(arguments.player(), BingoGamemodes.HOTSWAP));
+        addAction(new ItemTemplate(8,
+                ItemTypePaper.of(Material.YELLOW_CONCRETE), BingoReloaded.applyTitleFormat(BingoMessage.MODE_BLITZ.asPhrase())), arguments -> selectGamemode(arguments.player(), BingoGamemodes.BLITZ));
     }
 
     public void selectGamemode(PlayerHandle player, BingoGamemode chosenMode) {

@@ -9,6 +9,7 @@ public enum BingoGamemode {
 	LOCKOUT(Identifier.fromNamespaceAndPath(BingoReloadedCompanion.ADDON_ID, "gamemode/lockout"), 1),
 	COMPLETE(Identifier.fromNamespaceAndPath(BingoReloadedCompanion.ADDON_ID, "gamemode/complete"), 2),
 	HOTSWAP(Identifier.fromNamespaceAndPath(BingoReloadedCompanion.ADDON_ID, "gamemode/hotswap"), 3),
+	BLITZ(Identifier.fromNamespaceAndPath(BingoReloadedCompanion.ADDON_ID, "gamemode/blitz"), 4),
 	;
 
 	private final Identifier id;

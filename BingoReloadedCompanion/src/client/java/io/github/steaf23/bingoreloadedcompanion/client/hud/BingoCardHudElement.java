@@ -182,7 +182,7 @@ public class BingoCardHudElement implements HudElement {
 		int gamemodeStartY = gamemodeRect.y();
 		context.blit(RenderPipelines.GUI_TEXTURED, GAMEMODE_LOGOS, gamemodeStartX, gamemodeStartY,
 				0, textureIndex * gamemodeBannerSizeY, gamemodeBannerSizeX, gamemodeBannerSizeY,
-				gamemodeBannerSizeX, gamemodeBannerSizeY, 128, 128, ScreenHelper.addAlphaToColor(0xFFFFFF, (int)(255 * placement.transparency())));
+				gamemodeBannerSizeX, gamemodeBannerSizeY, 128, 160, ScreenHelper.addAlphaToColor(0xFFFFFF, (int)(255 * placement.transparency())));
 
 		matrices.popMatrix();
 	}
