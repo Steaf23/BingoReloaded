@@ -20,10 +20,10 @@ import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.player.EffectOptionFlags;
-import io.github.steaf23.bingoreloaded.settings.gamemode.BingoGamemode;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
 import io.github.steaf23.bingoreloaded.settings.BingoSettingsBuilder;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
+import io.github.steaf23.bingoreloaded.settings.gamemode.BingoGamemode;
 import io.github.steaf23.bingoreloaded.settings.gamemode.BingoGamemodes;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -154,9 +154,9 @@ public class AutoBingoAction extends DeferredAction {
 				return ActionResult.INCORRECT_USE;
 			}
 			return setGamemode(settings, args[0], Arrays.copyOfRange(args, 1, args.length));
-		}).addUsage("<regular | lockout | complete | hotswap> [3 | 5]")
+		}).addUsage("<regular | lockout | complete | hotswap | blitz> [3 | 5]")
 				.addTabCompletion(args -> switch (args.length) {
-					case 2 -> List.of("regular", "lockout", "complete", "hotswap");
+					case 2 -> List.of("regular", "lockout", "complete", "hotswap", "blitz");
 					case 3 -> List.of("3", "5");
 					default -> List.of();
 				}));
@@ -502,7 +502,7 @@ public class AutoBingoAction extends DeferredAction {
 		}
 
 		BingoSettings view = settings.view();
-		sendSuccess("Set gamemode to " + view.mode() + " " + view.size().size + "x" + view.size().size, worldName);
+		sendSuccess("Set gamemode to " + extraArguments[0] + " " + view.size().size + "x" + view.size().size, worldName);
 		return ActionResult.SUCCESS;
 	}
 

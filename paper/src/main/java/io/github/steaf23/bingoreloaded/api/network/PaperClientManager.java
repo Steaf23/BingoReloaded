@@ -4,7 +4,7 @@ import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.api.network.packets.HotswapTasksWriter;
 import io.github.steaf23.bingoreloaded.api.network.packets.TaskCardWriter;
 import io.github.steaf23.bingoreloaded.cards.TaskCard;
-import io.github.steaf23.bingoreloaded.cards.hotswap.HotswapTaskHolder;
+import io.github.steaf23.bingoreloaded.cards.hotswap.HotswapTaskSlot;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandlePaper;
@@ -80,7 +80,7 @@ public class PaperClientManager implements BingoClientManager {
 	}
 
 	@Override
-	public void updateHotswapContext(PlayerHandle player, @NotNull List<HotswapTaskHolder> holders) {
+	public void updateHotswapContext(PlayerHandle player, @NotNull List<HotswapTaskSlot> holders) {
 		sendMessage(((PlayerHandlePaper)player).handle(), BingoReloadedPackets.SERVER_HOTSWAP_TASKS.id(), stream -> {
 			HotswapTasksWriter.WRITER.write(holders, stream);
 		});

@@ -7,9 +7,9 @@ import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.settings.gamemode.BingoGamemode;
-import io.github.steaf23.bingoreloaded.settings.gamemode.BingoGamemodes;
 import io.github.steaf23.bingoreloaded.tasks.GameTask;
 import io.github.steaf23.bingoreloaded.tasks.TaskGenerator;
+import io.github.steaf23.bingoreloaded.tasks.tracker.TaskProgressTracker;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -24,17 +24,21 @@ public abstract class TaskCard
 {
     public final CardSize size;
     private final List<GameTask> tasks;
+    private final TaskProgressTracker progressTracker;
 
     protected final CardMenu menu;
 
-    public TaskCard(CardMenu menu, CardSize size) {
+    public TaskCard(CardMenu menu, CardSize size, TaskProgressTracker progressTracker)
+    {
         this.size = size;
         this.tasks = new ArrayList<>();
         this.menu = menu;
+        this.progressTracker = progressTracker;
         menu.setInfo(BingoMessage.INFO_REGULAR_NAME.asPhrase(),
                 BingoMessage.INFO_REGULAR_DESC.asMultiline());
     }
 
+    public abstract BingoGamemode getMode();
     public abstract boolean hasTeamWon(BingoTeam team);
     public abstract TaskCard copy(@Nullable Component alternateTitle);
     public abstract boolean canGenerateSeparateCards();
@@ -78,6 +82,10 @@ public abstract class TaskCard
     public int getCompleteCount(@NotNull BingoParticipant participant) {
         return (int) getTasks().stream()
                 .filter(t -> t.getCompletedByPlayer().isPresent() && t.getCompletedByPlayer().get().getId().equals(participant.getId())).count();
+    }
+
+    TaskProgressTracker getProgressTracker() {
+        return progressTracker;
     }
 
     public void onTaskCompleted(BingoParticipant player, GameTask task, long timeSeconds) {}

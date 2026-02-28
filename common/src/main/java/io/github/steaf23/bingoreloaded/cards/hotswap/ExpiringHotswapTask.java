@@ -10,9 +10,8 @@ import io.github.steaf23.bingoreloaded.util.timer.GameTimer;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 
-public class ExpiringHotswapTask implements HotswapTaskHolder
+public class ExpiringHotswapTask implements HotswapTaskSlot
 {
-    public GameTask task;
     public int expirationTimeSeconds;
     public int recoveryTime;
     public int currentTime;
@@ -26,8 +25,7 @@ public class ExpiringHotswapTask implements HotswapTaskHolder
             .addColor(TextColor.fromHexString("#750e0e"), 0.8f)
             .addColor(NamedTextColor.DARK_GRAY, 1.0f);
 
-    public ExpiringHotswapTask(GameTask task, int expirationTimeMinutes, int recoverTime, boolean showExpirationAsDurability) {
-        this.task = task;
+    public ExpiringHotswapTask(int expirationTimeMinutes, int recoverTime, boolean showExpirationAsDurability) {
         this.expirationTimeSeconds = expirationTimeMinutes;
         this.recoveryTime = recoverTime;
         this.currentTime = expirationTimeMinutes;
@@ -36,7 +34,7 @@ public class ExpiringHotswapTask implements HotswapTaskHolder
     }
 
     @Override
-    public ItemTemplate convertToItem(CardDisplayInfo displayInfo) {
+    public ItemTemplate convertToItem(GameTask task, CardDisplayInfo displayInfo) {
         ItemTemplate item = task.toItem(displayInfo);
         if (isRecovering()) {
             item.addDescription("time", 1, BingoMessage.HOTSWAP_RECOVER.asPhrase(GameTimer.getTimeAsComponent(currentTime)).color(TextColor.fromHexString("#5cb1ff")));
@@ -70,11 +68,6 @@ public class ExpiringHotswapTask implements HotswapTaskHolder
 	@Override
     public int getCurrentTime() {
         return currentTime;
-    }
-
-    @Override
-    public GameTask getTask() {
-        return task;
     }
 
     @Override

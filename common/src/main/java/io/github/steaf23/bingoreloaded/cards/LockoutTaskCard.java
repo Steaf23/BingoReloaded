@@ -8,6 +8,7 @@ import io.github.steaf23.bingoreloaded.player.team.BingoTeamContainer;
 import io.github.steaf23.bingoreloaded.settings.gamemode.BingoGamemode;
 import io.github.steaf23.bingoreloaded.settings.gamemode.BingoGamemodes;
 import io.github.steaf23.bingoreloaded.tasks.GameTask;
+import io.github.steaf23.bingoreloaded.tasks.tracker.TaskProgressTracker;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -19,8 +20,8 @@ public class LockoutTaskCard extends TaskCard
     private final BingoSession session;
     private final BingoTeamContainer teams;
 
-    public LockoutTaskCard(@NotNull CardMenu menu, CardSize size, BingoSession session, BingoTeamContainer teams) {
-        super(menu, size);
+    public LockoutTaskCard(@NotNull CardMenu menu, CardSize size, BingoSession session, BingoTeamContainer teams, TaskProgressTracker progressTracker) {
+        super(menu, size, progressTracker);
         this.currentMaxTasks = size.fullCardSize;
         this.teamCount = teams.teamCount();
         this.session = session;

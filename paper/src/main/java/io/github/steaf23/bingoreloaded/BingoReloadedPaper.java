@@ -317,13 +317,13 @@ public class BingoReloadedPaper extends JavaPlugin implements BingoReloadedRunti
 	@Override
 	public CardMenu createMenu(boolean textured, CardDisplayInfo displayInfo) {
 		if (textured) {
-			if (displayInfo.mode() == BingoGamemodes.HOTSWAP) {
+			if (displayInfo.mode() == BingoGamemodes.HOTSWAP || displayInfo.mode() == BingoGamemodes.BLITZ) {
 				return new HotswapTexturedCardMenu(bingo, menuBoard, displayInfo);
 			}
 			return new TexturedCardMenu(bingo, menuBoard, displayInfo);
 		}
 
-		if (displayInfo.mode() == BingoGamemodes.HOTSWAP) {
+		if (displayInfo.mode() == BingoGamemodes.HOTSWAP || displayInfo.mode() == BingoGamemodes.BLITZ) {
 			return new HotswapGenericCardMenu(bingo, menuBoard, displayInfo, null);
 		}
 

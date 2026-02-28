@@ -5,5 +5,6 @@ public enum GamemodeFeature {
 	HOTSWAP_WIN_GOAL,
 	COMPLETE_WIN_GOAL,
 	TASK_EXPIRATION,
+	BLITZ_TIMER,
 	;
 }

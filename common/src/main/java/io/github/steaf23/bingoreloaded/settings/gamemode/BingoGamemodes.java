@@ -31,7 +31,7 @@ public class BingoGamemodes {
 			EnumSet.of(GamemodeFeature.UNIQUE_CARD)) {
 		@Override
 		public TaskCard createTaskCard(CardMenu menu, BingoGame game) {
-			return new BingoTaskCard(menu, game.getSettings().size());
+			return new BingoTaskCard(menu, game.getSettings().size(), game.getProgressTracker());
 		}
 
 		@Override
@@ -57,7 +57,7 @@ public class BingoGamemodes {
 			EnumSet.noneOf(GamemodeFeature.class)) {
 		@Override
 		public TaskCard createTaskCard(CardMenu menu, BingoGame game) {
-			return new LockoutTaskCard(menu, game.getSettings().size(), game.getSession(), game.getTeamManager().getActiveTeams());
+			return new LockoutTaskCard(menu, game.getSettings().size(), game.getSession(), game.getTeamManager().getActiveTeams(), game.getProgressTracker());
 		}
 
 		@Override
@@ -78,7 +78,7 @@ public class BingoGamemodes {
 			EnumSet.of(GamemodeFeature.UNIQUE_CARD, GamemodeFeature.COMPLETE_WIN_GOAL)) {
 		@Override
 		public TaskCard createTaskCard(CardMenu menu, BingoGame game) {
-			return new CompleteTaskCard(menu, game.getSettings().size(), game.getSettings().completeGoal());
+			return new CompleteTaskCard(menu, game.getSettings().size(), game.getSettings().completeGoal(), game.getProgressTracker());
 		}
 
 		@Override
@@ -99,7 +99,7 @@ public class BingoGamemodes {
 	public static BingoGamemode HOTSWAP = register(new BingoGamemode(
 			"hotswap",
 			BingoMessage.MODE_HOTSWAP.asPhrase(),
-			TextColor.fromHexString("#dd5e20"),
+			TextColor.fromHexString("#bd2a3f"),
 			EnumSet.of(GamemodeFeature.HOTSWAP_WIN_GOAL, GamemodeFeature.TASK_EXPIRATION)) {
 		@Override
 		public TaskCard createTaskCard(CardMenu menu, BingoGame game) {
@@ -125,11 +125,11 @@ public class BingoGamemodes {
 	public static BingoGamemode BLITZ = register(new BingoGamemode(
 			"blitz",
 			BingoMessage.MODE_BLITZ.asPhrase(),
-			TextColor.fromHexString("#c39832"),
-			EnumSet.noneOf(GamemodeFeature.class)) {
+			TextColor.fromHexString("#e5c93e"),
+			EnumSet.of(GamemodeFeature.BLITZ_TIMER)) {
 		@Override
 		public TaskCard createTaskCard(CardMenu menu, BingoGame game) {
-			return new BlitzTaskCard(menu, game.getSettings().size(), game);
+			return new BlitzTaskCard(menu, game.getSettings().size(), game, game.getConfig().getOptionValue(BingoOptions.HOTSWAP_CONFIG));
 		}
 
 		@Override

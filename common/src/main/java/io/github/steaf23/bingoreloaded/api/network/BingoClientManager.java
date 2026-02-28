@@ -1,7 +1,7 @@
 package io.github.steaf23.bingoreloaded.api.network;
 
 import io.github.steaf23.bingoreloaded.cards.TaskCard;
-import io.github.steaf23.bingoreloaded.cards.hotswap.HotswapTaskHolder;
+import io.github.steaf23.bingoreloaded.cards.hotswap.HotswapTaskSlot;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -14,7 +14,7 @@ public interface BingoClientManager {
 
 	void updateCard(PlayerHandle player, @Nullable TaskCard card);
 
-	void updateHotswapContext(PlayerHandle player, @NotNull List<HotswapTaskHolder> holders);
+	void updateHotswapContext(PlayerHandle player, @NotNull List<HotswapTaskSlot> holders);
 
 	void playerLeavesServer(PlayerHandle player);
 
@@ -31,7 +31,7 @@ public interface BingoClientManager {
 		}
 
 		@Override
-		public void updateHotswapContext(PlayerHandle player, @NotNull List<HotswapTaskHolder> holders) {
+		public void updateHotswapContext(PlayerHandle player, @NotNull List<HotswapTaskSlot> holders) {
 
 		}
 

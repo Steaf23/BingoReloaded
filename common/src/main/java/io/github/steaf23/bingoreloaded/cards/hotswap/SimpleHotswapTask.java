@@ -7,22 +7,15 @@ import io.github.steaf23.bingoreloaded.tasks.GameTask;
 import io.github.steaf23.bingoreloaded.util.timer.GameTimer;
 import net.kyori.adventure.text.format.TextColor;
 
-public class SimpleHotswapTask implements HotswapTaskHolder
+public class SimpleHotswapTask implements HotswapTaskSlot
 {
 	int fullTime;
     int currentTime;
-    private final GameTask task;
     boolean recovering = false;
 
-    public SimpleHotswapTask(GameTask task, int recoveryTime) {
-        this.task = task;
+    public SimpleHotswapTask(int recoveryTime) {
         this.currentTime = recoveryTime;
 		this.fullTime = recoveryTime;
-    }
-
-    @Override
-    public GameTask getTask() {
-        return task;
     }
 
     @Override
@@ -53,7 +46,7 @@ public class SimpleHotswapTask implements HotswapTaskHolder
     }
 
     @Override
-    public ItemTemplate convertToItem(CardDisplayInfo displayInfo) {
+    public ItemTemplate convertToItem(GameTask task, CardDisplayInfo displayInfo) {
         ItemTemplate item = task.toItem(displayInfo);
         if (isRecovering()) {
             item.addDescription("time", 1, BingoMessage.HOTSWAP_RECOVER.asPhrase(GameTimer.getTimeAsComponent(currentTime)).color(TextColor.fromHexString("#5cb1ff")));

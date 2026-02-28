@@ -4,10 +4,8 @@ import io.github.steaf23.bingoreloaded.api.CardDisplayInfo;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import io.github.steaf23.bingoreloaded.tasks.GameTask;
 
-public interface HotswapTaskHolder
+public interface HotswapTaskSlot
 {
-    GameTask getTask();
-
     boolean isRecovering();
     void startRecovering();
 
@@ -15,5 +13,5 @@ public interface HotswapTaskHolder
 	int getFullTime();
     int getCurrentTime();
 
-    ItemTemplate convertToItem(CardDisplayInfo displayInfo);
+    ItemTemplate convertToItem(GameTask task, CardDisplayInfo displayInfo);
 }

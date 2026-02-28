@@ -5,8 +5,8 @@ import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.settings.gamemode.BingoGamemode;
 import io.github.steaf23.bingoreloaded.settings.gamemode.BingoGamemodes;
 import io.github.steaf23.bingoreloaded.tasks.GameTask;
+import io.github.steaf23.bingoreloaded.tasks.tracker.TaskProgressTracker;
 import net.kyori.adventure.text.Component;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -14,8 +14,9 @@ import java.util.List;
 
 public class BingoTaskCard extends TaskCard
 {
-    public BingoTaskCard(@NotNull CardMenu menu, CardSize size) {
-        super(menu, size);
+
+    public BingoTaskCard(CardMenu menu, CardSize size, TaskProgressTracker progressTracker) {
+        super(menu, size, progressTracker);
     }
 
     @Override
@@ -70,7 +71,7 @@ public class BingoTaskCard extends TaskCard
 
     @Override
     public BingoTaskCard copy(@Nullable Component alternateTitle) {
-        BingoTaskCard card = new BingoTaskCard(menu.copy(alternateTitle), this.size);
+        BingoTaskCard card = new BingoTaskCard(menu.copy(alternateTitle), this.size, getProgressTracker());
         List<GameTask> newTasks = new ArrayList<>();
         for (GameTask slot : getTasks()) {
             newTasks.add(slot.copy());

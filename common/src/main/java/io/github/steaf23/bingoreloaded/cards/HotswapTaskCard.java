@@ -2,20 +2,20 @@ package io.github.steaf23.bingoreloaded.cards;
 
 import io.github.steaf23.bingoreloaded.api.HotswapCardMenu;
 import io.github.steaf23.bingoreloaded.cards.hotswap.ExpiringHotswapTask;
-import io.github.steaf23.bingoreloaded.cards.hotswap.HotswapTaskHolder;
+import io.github.steaf23.bingoreloaded.cards.hotswap.HotswapTaskSlot;
 import io.github.steaf23.bingoreloaded.cards.hotswap.SimpleHotswapTask;
 import io.github.steaf23.bingoreloaded.data.BingoCardData;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.BingoSound;
 import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
-import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.settings.gamemode.BingoGamemode;
 import io.github.steaf23.bingoreloaded.settings.gamemode.BingoGamemodes;
 import io.github.steaf23.bingoreloaded.tasks.GameTask;
+import io.github.steaf23.bingoreloaded.tasks.RotatingTaskList;
 import io.github.steaf23.bingoreloaded.tasks.TaskGenerator;
 import io.github.steaf23.bingoreloaded.tasks.data.TaskData;
 import io.github.steaf23.bingoreloaded.tasks.tracker.TaskProgressTracker;
@@ -27,7 +27,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
@@ -44,20 +43,19 @@ public class HotswapTaskCard extends TaskCard
     private final boolean showExpirationAsDurability;
     private final boolean expireTasksAutomatically;
 
-    private final List<HotswapTaskHolder> taskHolders;
+    private final List<HotswapTaskSlot> taskHolders;
     private Supplier<GameTask> bingoTaskGenerator;
 
     private final List<GameTask> completedTasks;
     private final BingoCardData cardData;
     // Used to call the play sound event for expiring tasks
     private final BingoGame game;
-    private final TaskProgressTracker progressTracker;
 
     // List used to draw random tasks from
-    private final List<TaskData> randomTasks;
+    private RotatingTaskList randomTasks = null;
 
     public HotswapTaskCard(@NotNull HotswapCardMenu menu, CardSize size, BingoGame game, TaskProgressTracker progressTracker, int winningScore, BingoConfigurationData.HotswapConfig config) {
-        super(menu, size);
+        super(menu, size, progressTracker);
 
         this.randomExpiryProvider = new Random();
         this.taskHolders = new ArrayList<>();
@@ -65,12 +63,10 @@ public class HotswapTaskCard extends TaskCard
         this.bingoTaskGenerator = () -> null;
         this.cardData = new BingoCardData();
         this.game = game;
-        this.progressTracker = progressTracker;
         this.minExpirationTime = config.minimumExpiration();
         this.maxExpirationTime = config.maximumExpiration();
         this.recoveryTimeSeconds = config.recoveryTime();
         this.showExpirationAsDurability = config.showExpirationAsDurability() && game.getSettings().expireHotswapTasks();
-        this.randomTasks = new ArrayList<>();
         this.expireTasksAutomatically = game.getSettings().expireHotswapTasks();
 
         game.getTimer().addNotifier(this::updateTaskExpiration);
@@ -124,28 +120,7 @@ public class HotswapTaskCard extends TaskCard
             randomExpiryProvider.setSeed(settings.seed());
         }
 
-        bingoTaskGenerator = () -> {
-            if (randomTasks.isEmpty()) {
-                randomTasks.addAll(cardData.getAllTasks(settings.cardName(), settings.includeStatistics(), settings.includeAdvancements()));
-                // Do not add the tasks that are currently on the card.
-                // This will result in less duplicates overall when cycling through tasks.
-                randomTasks.removeIf(data -> {
-                    for (GameTask task : getTasks()) {
-                        if (task.data.isTaskEqual(data)) {
-                            return true;
-                        }
-                    }
-                    return false;
-                });
-                Collections.shuffle(randomTasks, randomExpiryProvider);
-            }
-            if (randomTasks.isEmpty()) {
-                return GameTask.simpleItemTask(ItemType.of("dirt"), 1);
-            }
-
-            TaskData data = randomTasks.removeLast();
-            return TaskGenerator.createTaskFromData(data);
-        };
+        this.randomTasks = new RotatingTaskList(settings, settings.seed());
     }
 
     @Override
@@ -154,25 +129,22 @@ public class HotswapTaskCard extends TaskCard
         if (expireTasksAutomatically) {
             for (GameTask task : tasks) {
                 int expirationTime = randomExpiryProvider.nextInt(minExpirationTime * 60, (maxExpirationTime * 60) + 1);
-                taskHolders.add(new ExpiringHotswapTask(task, expirationTime, recoveryTimeSeconds, showExpirationAsDurability));
+                taskHolders.add(new ExpiringHotswapTask(expirationTime, recoveryTimeSeconds, showExpirationAsDurability));
             }
         } else {
             for (GameTask task : tasks) {
-                taskHolders.add(new SimpleHotswapTask(task, recoveryTimeSeconds));
+                taskHolders.add(new SimpleHotswapTask(recoveryTimeSeconds));
             }
         }
 
         ((HotswapCardMenu)menu).updateTaskHolders(taskHolders);
+        super.setTasks(tasks);
     }
 
     @Override
     public void onTaskCompleted(BingoParticipant player, GameTask task, long timeSeconds) {
+        super.onTaskCompleted(player, task, timeSeconds);
         completedTasks.add(task);
-    }
-
-    @Override
-    public List<GameTask> getTasks() {
-        return taskHolders.stream().map(HotswapTaskHolder::getTask).toList();
     }
 
     public void updateTaskExpiration(long timeElapsed) {
@@ -182,11 +154,11 @@ public class HotswapTaskCard extends TaskCard
         GameTask lastExpiredTask = null;
         GameTask lastRecoverdTask = null;
 
-		boolean dirty = false;
-
-        for (HotswapTaskHolder holder : taskHolders) {
-            if (!holder.isRecovering() && holder.getTask().isCompleted()) { // start recovering item when it's been completed
+        for (HotswapTaskSlot holder : taskHolders) {
+            GameTask task = getTasks().get(idx);
+            if (!holder.isRecovering() && task.isCompleted()) { // start recovering item when it's been completed
                 holder.startRecovering();
+                idx++;
                 continue;
             }
 
@@ -196,7 +168,7 @@ public class HotswapTaskCard extends TaskCard
                 if (holder.isRecovering()) {
                     taskRecoveredCount++;
                     // Recovery finished, replace task with a new one.
-                    GameTask newTask = bingoTaskGenerator.get();
+                    GameTask newTask = randomTasks.nextTask(this::canTaskBeAdded);
                     if (newTask == null) {
                         ConsoleMessenger.bug("Cannot generate new task for hot-swap", this);
                     }
@@ -204,19 +176,19 @@ public class HotswapTaskCard extends TaskCard
 
                     if (expireTasksAutomatically) {
                         int expirationTime = randomExpiryProvider.nextInt(minExpirationTime, (maxExpirationTime + 1)) * 60;
-                        taskHolders.set(idx, new ExpiringHotswapTask(newTask, expirationTime, recoveryTimeSeconds, showExpirationAsDurability));
+                        taskHolders.set(idx, new ExpiringHotswapTask(expirationTime, recoveryTimeSeconds, showExpirationAsDurability));
                     } else {
-                        taskHolders.set(idx, new SimpleHotswapTask(newTask, recoveryTimeSeconds));
+                        taskHolders.set(idx, new SimpleHotswapTask(recoveryTimeSeconds));
                     }
-                    progressTracker.startTrackingTask(newTask);
+                    getTasks().set(idx, newTask);
+                    getProgressTracker().startTrackingTask(newTask);
                 } else {
                     taskExpiredCount++;
-                    lastExpiredTask = holder.getTask();
-                    holder.getTask().setVoided(true);
+                    lastExpiredTask = task;
+                    task.setVoided(true);
                     holder.startRecovering();
-                    progressTracker.removeTask(holder.getTask());
+                    getProgressTracker().removeTask(task);
                 }
-				dirty = true;
             }
             idx++;
         }
@@ -250,7 +222,7 @@ public class HotswapTaskCard extends TaskCard
             }
         }
 
-		if (progressTracker.shouldUpdateClient()) {
+		if (getProgressTracker().shouldUpdateClient()) {
 			for (BingoParticipant participant : game.getTeamManager().getParticipants()) {
 				// only track progress if the participant has to complete the task.
 				Optional<TaskCard> card = participant.getCard();
@@ -264,6 +236,7 @@ public class HotswapTaskCard extends TaskCard
 			}
 		}
 
+        menu.updateTasks(getTasks());
 		((HotswapCardMenu)menu).updateTaskHolders(taskHolders);
     }
 
@@ -272,8 +245,18 @@ public class HotswapTaskCard extends TaskCard
         return (int) completedTasks.stream().filter(task -> task.isCompletedByTeam(team)).count();
     }
 
+    @Override
     public int getCompleteCount(@NotNull BingoParticipant participant) {
         return (int) completedTasks.stream()
                 .filter(t -> t.getCompletedByPlayer().isPresent() && t.getCompletedByPlayer().get().getId().equals(participant.getId())).count();
+    }
+
+    private boolean canTaskBeAdded(TaskData data) {
+        for (GameTask task : getTasks()) {
+            if (task.data.isTaskEqual(data)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
