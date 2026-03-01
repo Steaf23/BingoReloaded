@@ -115,6 +115,23 @@ public class TagDataStorage implements DataStorage
     }
 
     @Override
+    public void setList(String path, List<DataStorage> values) {
+        setList(path, TagDataType.COMPOUND, values.stream()
+                .map(v -> {
+                    TagDataStorage storage = (TagDataStorage)v;
+                    return storage.root.getValue();
+                })
+                .toList());
+    }
+
+    @Override
+    public List<DataStorage> getList(String path) {
+        return getList(path, TagDataType.COMPOUND).stream()
+                .map(v -> (DataStorage)new TagDataStorage(v))
+                .toList();
+    }
+
+    @Override
     public <T> void setList(String path, TagDataType<T> type, List<T> values) {
         if (type == TagDataType.BYTE) {
             byte[] bytes = new byte[values.size()];

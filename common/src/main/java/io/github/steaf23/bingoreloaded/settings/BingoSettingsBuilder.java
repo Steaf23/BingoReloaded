@@ -228,6 +228,7 @@ public class BingoSettingsBuilder
 
     public BingoSettings view()
     {
+        // Always generate a new id for the settings, by far the easiest way...
         return new BingoSettings(
                 card,
                 mode,
@@ -241,7 +242,8 @@ public class BingoSettingsBuilder
                 hotswapGoal,
                 expireHotswapTasks,
                 completeGoal,
-                differentCardPerTeam);
+                differentCardPerTeam
+        );
     }
 
     public void settingsUpdated()

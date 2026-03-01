@@ -62,6 +62,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.BiConsumer;
 
 public class BingoGame implements GamePhase
 {
@@ -83,11 +84,11 @@ public class BingoGame implements GamePhase
 
     private GameTask deathMatchTask;
 
-    private final Runnable onGameEndedCallback;
+    private final BiConsumer<BingoGame, @Nullable BingoTeam> onGameEndedCallback;
 
 	private final @Nullable WorldPosition startPosition;
 
-    public BingoGame(ServerSoftware platform, @NotNull BingoSession session, @NotNull BingoSettings settings, @NotNull BingoConfigurationData config, Runnable onGameEndedCallback, @Nullable WorldPosition atPosition) {
+    public BingoGame(ServerSoftware platform, @NotNull BingoSession session, @NotNull BingoSettings settings, @NotNull BingoConfigurationData config, BiConsumer<BingoGame, @Nullable BingoTeam> onGameEndedCallback, @Nullable WorldPosition atPosition) {
 		this.platform = platform;
 		this.session = session;
         this.config = config;
@@ -255,11 +256,11 @@ public class BingoGame implements GamePhase
         String command = config.getOptionValue(BingoOptions.SEND_COMMAND_AFTER_GAME_ENDS);
         if (!command.isEmpty()) {
             String commandToSend = command.replace("{world}", session.getGameManager().getNameOfSession(session));
-            platform.sendConsoleCommand(commandToSend);
+            platform.runTask( task -> platform.sendConsoleCommand(commandToSend)); // Send the command in the next tick so we have time to wrap up the game.
         }
 
         session.sendMessage(Component.text(" "));
-        onGameEndedCallback.run();
+        onGameEndedCallback.accept(this, winningTeam);
     }
 
     public void bingo(@NotNull BingoTeam team) {

@@ -34,6 +34,9 @@ public interface DataStorage
     void setString(String path, @NotNull String value);
     @NotNull String getString(String path, String def);
 
+    void setList(String path, List<DataStorage> values);
+    List<DataStorage> getList(String path);
+
     <T> void setList(String path, TagDataType<T> type, List<T> values);
     <T> List<T> getList(String path, TagDataType<T> dataType);
 

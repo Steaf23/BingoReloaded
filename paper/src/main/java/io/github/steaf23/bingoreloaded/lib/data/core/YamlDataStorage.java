@@ -94,6 +94,23 @@ public class YamlDataStorage implements DataStorage
     }
 
     @Override
+    public void setList(String path, List<DataStorage> values) {
+        config.set(path, values.stream()
+                .map(v -> {
+                    YamlDataStorage storage = (YamlDataStorage) v;
+                    return storage.config;
+                })
+                .toList());
+    }
+
+    @Override
+    public List<DataStorage> getList(String path) {
+        return config.getList(path, List.of()).stream()
+                .map(v -> (DataStorage) new YamlDataStorage())
+                .toList();
+    }
+
+    @Override
     public <T> void setList(String path, TagDataType<T> type, List<T> values) {
         config.set(path, values);
     }

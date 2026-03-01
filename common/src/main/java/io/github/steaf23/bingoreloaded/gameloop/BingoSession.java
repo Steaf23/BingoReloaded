@@ -32,6 +32,7 @@ import io.github.steaf23.bingoreloaded.menu.BingoGameInfoMenu;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.player.team.BasicTeamManager;
+import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.player.team.SoloTeamManager;
 import io.github.steaf23.bingoreloaded.player.team.TeamManager;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
@@ -192,7 +193,7 @@ public class BingoSession implements ForwardingAudience
         teamManager.removeMemberFromTeam(player);
     }
 
-    public void onGameEnded() {
+    public void onGameEnded(BingoGame game, @Nullable BingoTeam winningTeam) {
 		int gameRestartTime = config.getOptionValue(BingoOptions.GAME_RESTART_TIME);
 
 		if (config.getOptionValue(BingoOptions.TELEPORT_TO_LOBBY_AFTER_GAME)) {
@@ -217,6 +218,9 @@ public class BingoSession implements ForwardingAudience
 				}
 			}
 		}
+
+        // TODO: add config option for saving game history, add check for new record, etc...
+        gameManager.getRecordData().saveGame(game, winningTeam);
 
 		BingoOptions.ConfigGamemode gamemode = config.getOptionValue(BingoOptions.PLAYER_GAMEMODE_AFTER_GAME);
 

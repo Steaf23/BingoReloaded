@@ -111,6 +111,16 @@ public class VirtualDataAccessor implements DataAccessor
     }
 
     @Override
+    public void setList(String path, List<DataStorage> values) {
+
+    }
+
+    @Override
+    public List<DataStorage> getList(String path) {
+        return List.of();
+    }
+
+    @Override
     public <T> void setList(String path, TagDataType<T> type, List<T> values) {
 
     }
