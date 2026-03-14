@@ -174,6 +174,16 @@ public class BingoAction extends ActionTree {
 				"sounds"
 		)).addUsage("<option>"));
 
+		this.addSubAction(new ActionTree("scoreboard", List.of(), args -> {
+			if (!(getLastUser() instanceof PlayerHandle player)) {
+				return ActionResult.IGNORED;
+			}
+
+			// TODO: add config check
+			gameManager.getRuntime().openGameHistory(player, gameManager.getRecordData());
+			return ActionResult.SUCCESS;
+		}));
+
 
 		this.addSessionSubAction("start", List.of("bingo.admin"), (args, session) -> {
 			if (args.length == 0) {

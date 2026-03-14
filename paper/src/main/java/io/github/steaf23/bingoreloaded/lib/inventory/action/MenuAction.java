@@ -22,6 +22,11 @@ public abstract class MenuAction
         this.item = item;
     }
 
+    public MenuAction withItem(@NotNull ItemTemplate item) {
+        this.item = item;
+        return this;
+    }
+
     public ItemTemplate item() {
         return item;
     }

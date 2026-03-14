@@ -288,6 +288,13 @@ public class BingoGame implements GamePhase
         return 0;
     }
 
+    public long getGameTimePassed() {
+        if (timer != null) {
+            return timer.getIntervalsPassed();
+        }
+        return 0;
+    }
+
     public BingoSettings getSettings() {
         return settings;
     }

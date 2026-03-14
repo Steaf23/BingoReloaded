@@ -72,6 +72,12 @@ public class ItemTemplate
         setLore(lore);
     }
 
+    public ItemTemplate(ItemType type, @Nullable Component name, List<Component> lore) {
+        this.type = type;
+        this.name = name;
+        setLore(lore.toArray(new Component[]{}));
+    }
+
     public ItemTemplate(int slot, ItemType type) {
         this.slot = slot;
         this.type = type;

@@ -5,6 +5,7 @@ import io.github.steaf23.bingoreloaded.api.CardMenu;
 import io.github.steaf23.bingoreloaded.api.TeamDisplay;
 import io.github.steaf23.bingoreloaded.api.network.BingoClientManager;
 import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
+import io.github.steaf23.bingoreloaded.data.record.GameRecordData;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gameloop.phase.PregameLobby;
 import io.github.steaf23.bingoreloaded.lib.api.BingoReloadedRuntime;
@@ -143,6 +144,11 @@ public class BingoReloadedFabric implements ModInitializer, BingoReloadedRuntime
 
 	@Override
 	public void openVoteMenu(PlayerHandle player, PregameLobby lobby) {
+
+	}
+
+	@Override
+	public void openGameHistory(PlayerHandle player, GameRecordData historyData) {
 
 	}
 

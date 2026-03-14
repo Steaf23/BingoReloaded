@@ -14,6 +14,7 @@ public abstract class GameTimer
 {
     private final List<Consumer<Long>> notifiers;
     private long time;
+    private long intervals;
     private ExtensionTask task;
 
     public abstract Component getTimeDisplayMessage(boolean asSeconds);
@@ -26,12 +27,14 @@ public abstract class GameTimer
         this.time = 0;
         this.task = null;
         this.notifiers = new ArrayList<>();
+        this.intervals = 0;
     }
 
     public void start()
     {
         stop();
         this.task = PlatformResolver.get().runTaskTimer(getUpdateInterval(), getStartDelay(), (task) -> {
+            intervals++;
             updateTime(time + getStep());
         });
     }
@@ -69,6 +72,10 @@ public abstract class GameTimer
         for (var notifier : notifiers) {
             notifier.accept(newTime);
         }
+    }
+
+    public long getIntervalsPassed() {
+        return intervals;
     }
 
     public static String getTimeAsString(long seconds)

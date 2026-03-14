@@ -7,6 +7,7 @@ import io.github.steaf23.bingoreloaded.lib.data.core.DataAccessor;
 import io.github.steaf23.bingoreloaded.lib.util.ComponentUtils;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
+import io.github.steaf23.bingoreloaded.settings.gamemode.BingoGamemode;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -22,17 +23,28 @@ public class GameRecordData {
 
 	private final DataAccessor data = BingoReloaded.getDataAccessor("data/history");
 
-	List<GameRecord> getGamesFilteredBy(Predicate<GameRecord> filter) {
+	public List<GameRecord> getGamesFilteredBy(Predicate<GameRecord> filter) {
 		return getAllRecords().stream().filter(filter).toList();
 	}
 
-	List<GameRecord> getAllRecords() {
+	public List<GameRecord> getAllRecords() {
 		return data.getSerializableList("games", GameRecord.class);
 	}
 
-	BingoSettings settingsFromGame(GameRecord record) {
+	public BingoSettings settingsFromGame(GameRecord record) {
 		return data.getSerializable("settings." + record.settingsId().toString(), BingoSettings.class);
 	}
+
+	public Map<UUID, BingoSettings> getSettings() {
+		Map<UUID, BingoSettings> settingsMap = new HashMap<>();
+		Set<String> settings = data.getStorage("settings").getKeys();
+		for (String setting : settings) {
+			settingsMap.put(UUID.fromString(setting), data.getSerializable("settings." + setting, BingoSettings.class));
+		}
+
+		return settingsMap;
+	}
+
 
 	public void saveGame(BingoGame game, @Nullable BingoTeam winningTeam) {
 		UUID settingsId = getOrCreateSettingsIdFromGame(game);
@@ -48,7 +60,7 @@ public class GameRecordData {
 			teams.put(team.getIdentifier(), new GameRecord.TeamRecord(score, template, participants));
 		}
 
-		GameRecord record = new GameRecord(settingsId, teams, winningTeam == null ? "" : winningTeam.getIdentifier(), new Date());
+		GameRecord record = new GameRecord(settingsId, teams, winningTeam == null ? "" : winningTeam.getIdentifier(), new Date(), game.getGameTimePassed());
 		List<GameRecord> newRecords = new ArrayList<>(getAllRecords());
 		newRecords.add(record);
 
@@ -72,11 +84,11 @@ public class GameRecordData {
 		return settingsId;
 	}
 
-	public void purgeBottomRecords(int amountOfRecords) {
+	public void purgeBottomRecords(BingoGamemode gamemode, int amountOfRecords) {
 
 	}
 
-	public void purgeOldRecords(int amountOfRecords) {
+	public void purgeOldRecords(BingoGamemode gamemode, int amountOfRecords) {
 
 	}
 

@@ -21,6 +21,7 @@ public class GameRecordSerializer implements DataStorageSerializer<GameRecord> {
 		storage.setUUID("settings", value.settingsId());
 		storage.setString("winning_team", value.winningTeam());
 		storage.setLong("timestamp", value.timestamp().getTime());
+		storage.setLong("game_time", value.playTime());
 
 		for (String teamId : value.teams().keySet()) {
 			GameRecord.TeamRecord team = value.teams().get(teamId);
@@ -36,6 +37,7 @@ public class GameRecordSerializer implements DataStorageSerializer<GameRecord> {
 		String winningTeam = storage.getString("winning_team", "");
 		long time = storage.getLong("timestamp", 0);
 		Date date = new Date(time);
+		long gameTime = storage.getLong("game_time", 0);
 
 		Map<String, GameRecord.TeamRecord> teams = new HashMap<>();
 		for (String teamId : storage.getStorage("teams").getKeys()) {
@@ -43,7 +45,7 @@ public class GameRecordSerializer implements DataStorageSerializer<GameRecord> {
 			teams.put(teamId, team);
 		}
 
-		return new GameRecord(settings, teams, winningTeam, date);
+		return new GameRecord(settings, teams, winningTeam, date, gameTime);
 	}
 
 	private GameRecord.TeamRecord readTeam(DataStorage storage) {

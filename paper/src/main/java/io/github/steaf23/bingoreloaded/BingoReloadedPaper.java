@@ -20,10 +20,12 @@ import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.DataUpdaterV3_5_0;
 import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.data.config.BingoOptions;
+import io.github.steaf23.bingoreloaded.data.record.GameRecordData;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gameloop.phase.PregameLobby;
 import io.github.steaf23.bingoreloaded.gui.BingoCardMapRenderer;
 import io.github.steaf23.bingoreloaded.gui.inventory.AdminBingoMenu;
+import io.github.steaf23.bingoreloaded.gui.inventory.GameHistoryMenu;
 import io.github.steaf23.bingoreloaded.gui.inventory.TeamCardSelectMenu;
 import io.github.steaf23.bingoreloaded.gui.inventory.TeamEditorMenu;
 import io.github.steaf23.bingoreloaded.gui.inventory.TeamSelectionMenu;
@@ -363,6 +365,12 @@ public class BingoReloadedPaper extends JavaPlugin implements BingoReloadedRunti
 	@Override
 	public void openVoteMenu(PlayerHandle player, PregameLobby lobby) {
 		VoteMenu menu = new VoteMenu(menuBoard, bingo.config().getOptionValue(BingoOptions.VOTE_LIST), lobby);
+		menu.open(player);
+	}
+
+	@Override
+	public void openGameHistory(PlayerHandle player, GameRecordData historyData) {
+		GameHistoryMenu menu = new GameHistoryMenu(menuBoard, historyData);
 		menu.open(player);
 	}
 
