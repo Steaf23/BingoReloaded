@@ -70,7 +70,6 @@ public class GameHistoryMenu extends BasicMenu {
 	private final List<Category> categories = new ArrayList<>();
 	private int categoryOffset = 0;
 	private final StackedGroup stack;
-	private ScoreCondition currentOrdering = ScoreCondition.LOWEST_TIME;
 
 	public GameHistoryMenu(MenuBoard manager, GameRecordData historyData) {
 		super(manager, Component.text("Game History"), 6);

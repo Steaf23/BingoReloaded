@@ -18,6 +18,7 @@ import io.github.steaf23.bingoreloaded.lib.inventory.action.SpinBoxButtonAction;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import io.github.steaf23.bingoreloaded.player.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
+import io.github.steaf23.bingoreloaded.settings.gamemode.BingoGamemodes;
 import io.github.steaf23.bingoreloaded.settings.gamemode.GamemodeFeature;
 import io.github.steaf23.bingoreloaded.util.BingoPlayerSender;
 import net.kyori.adventure.text.Component;
@@ -35,6 +36,7 @@ public class AdminBingoMenu extends BasicMenu
 
     private static final int DURATION_MAX = 60;
     private static final int TEAMSIZE_MAX = 64;
+    private static final int TEAMCOUNT_MAX = 64;
 
     private static final Component COUNTDOWN_INPUT_LORE = InventoryMenu.inputButtonText(Component.text("Click")).append(Component.text("toggle countdown type"));
 
@@ -44,26 +46,26 @@ public class AdminBingoMenu extends BasicMenu
             ItemTypePaper.of(Material.RED_CONCRETE), BingoReloaded.applyTitleFormat(BingoMessage.OPTIONS_END.asPhrase()));
     private static final ItemTemplate JOIN = new ItemTemplate(2, 0,
             ItemTypePaper.of(Material.WHITE_GLAZED_TERRACOTTA), BingoReloaded.applyTitleFormat(BingoMessage.OPTIONS_TEAM.asPhrase()));
-    private static final ItemTemplate CARD = new ItemTemplate(1, 2,
+    private static final ItemTemplate CARD = new ItemTemplate(0, 2,
             ItemTypePaper.of(Material.MAP), BingoReloaded.applyTitleFormat(BingoMessage.OPTIONS_CARD.asPhrase()));
-    private static final ItemTemplate KIT = new ItemTemplate(3, 2,
+    private static final ItemTemplate KIT = new ItemTemplate(2, 2,
             ItemTypePaper.of(Material.LEATHER_HELMET), BingoReloaded.applyTitleFormat(BingoMessage.OPTIONS_KIT.asPhrase()));
     private static final ItemTemplate MODE = new ItemTemplate(1, 4,
             ItemTypePaper.of(Material.ENCHANTED_BOOK), BingoReloaded.applyTitleFormat(BingoMessage.OPTIONS_GAMEMODE.asPhrase()));
     private static final ItemTemplate EFFECTS = new ItemTemplate(3, 4,
             ItemTypePaper.of(Material.POTION), BingoReloaded.applyTitleFormat(BingoMessage.OPTIONS_EFFECTS.asPhrase()));
 
-    private static final ItemTemplate COUNTDOWN_TYPE_DISABLED = new ItemTemplate(5, 2,
+    private static final ItemTemplate COUNTDOWN_TYPE_DISABLED = new ItemTemplate(4, 2,
             ItemTypePaper.of(Material.COMPASS), BingoReloaded.applyTitleFormat("Countdown Disabled"),
             Component.text("No timer will be used to limit play time."))
             .addDescription("input", 10, COUNTDOWN_INPUT_LORE);
-    private static final ItemTemplate COUNTDOWN_TYPE_DURATION = new ItemTemplate(5, 2,
+    private static final ItemTemplate COUNTDOWN_TYPE_DURATION = new ItemTemplate(4, 2,
             ItemTypePaper.of(Material.CLOCK), BingoReloaded.applyTitleFormat("Countdown Duration"),
             Component.text("Countdown timer will be enabled."),
             Component.text("The game will end after the timer runs out,"),
             Component.text("this removes the win goal condition from Hot-Swap and Complete-X."))
             .addDescription("input", 10, COUNTDOWN_INPUT_LORE);
-    private static final ItemTemplate COUNTDOWN_TYPE_LIMIT = new ItemTemplate(5, 2,
+    private static final ItemTemplate COUNTDOWN_TYPE_LIMIT = new ItemTemplate(4, 2,
             ItemTypePaper.of(Material.RECOVERY_COMPASS), BingoReloaded.applyTitleFormat("Countdown Time Limit"),
             Component.text("Countdown timer will be enabled."),
             Component.text("Any goal is still a valid win condition,"),
@@ -72,8 +74,10 @@ public class AdminBingoMenu extends BasicMenu
 
     private static final ItemTemplate DURATION = new ItemTemplate(5, 4,
             ItemTypePaper.of(Material.RECOVERY_COMPASS), BingoReloaded.applyTitleFormat("Countdown Duration"));
-    private static final ItemTemplate TEAM_SIZE = new ItemTemplate(7, 2,
+    private static final ItemTemplate TEAM_SIZE = new ItemTemplate(6, 2,
             ItemTypePaper.of(Material.ENDER_EYE), BingoReloaded.applyTitleFormat("Maximum Team Size"));
+	private static final ItemTemplate TEAM_COUNT = new ItemTemplate(8, 2,
+			ItemTypePaper.of(Material.ENDER_PEARL), BingoReloaded.applyTitleFormat("Maximum Team Count")).setMaxStackSize(64);
     private static final ItemTemplate PRESETS = new ItemTemplate(7, 4,
             ItemTypePaper.of(Material.CHEST_MINECART), BingoReloaded.applyTitleFormat("Setting Presets"));
 
@@ -148,6 +152,24 @@ public class AdminBingoMenu extends BasicMenu
         });
         teamSizeAction.setItem(teamSizeItem);
 
+		ItemTemplate teamCountItem = TEAM_COUNT.copy();
+		int maxTeamCount = view.maxTeamCount();
+		MenuAction teamCountAction;
+		if (view.mode() == BingoGamemodes.BLITZ) {
+			updateTeamCountLore(teamCountItem, view.maxTeamCount());
+			teamCountItem.addDescription("warning", 1, Component.text("Cannot change team count when playing Blitz!").color(NamedTextColor.RED));
+			teamCountAction = new SpinBoxButtonAction(1, maxTeamCount, maxTeamCount, value -> {
+				BingoPlayerSender.sendMessage(Component.text("Cannot change team count when playing Blitz!").color(NamedTextColor.RED), player);
+			});
+		} else {
+			updateTeamCountLore(teamCountItem, maxTeamCount);
+			teamCountAction = new SpinBoxButtonAction(1, TEAMCOUNT_MAX, maxTeamCount, value -> {
+				session.settingsBuilder.maxTeamCount(value);
+				updateTeamCountLore(teamCountItem, value);
+			});
+		}
+		teamCountAction.setItem(teamCountItem);
+
         ItemTemplate durationItem = DURATION.copy();
         int duration = view.countdownDuration();
         updateDurationLore(durationItem, duration);
@@ -165,7 +187,7 @@ public class AdminBingoMenu extends BasicMenu
 					return true;
                 })
                 .buildAction(COUNTDOWN_TYPE_DISABLED.getSlot(), view.countdownType().name());
-        addActions(teamSizeAction, durationAction, countdownAction);
+        addActions(teamSizeAction, teamCountAction, durationAction, countdownAction);
 
         MenuAction startAction = new ComboBoxButtonAction.Builder("start", START.copy())
                 .addOption("end", END.copy())
@@ -234,4 +256,14 @@ public class AdminBingoMenu extends BasicMenu
 				Component.text("(When changing this setting all currently").color(NamedTextColor.GRAY),
 				Component.text("joined players will be kicked from their teams!)").color(NamedTextColor.GRAY));
     }
+
+	private void updateTeamCountLore(ItemTemplate item, int value) {
+		item.setLore(
+				Component.text("Selected:").color(NamedTextColor.YELLOW).decorate(TextDecoration.ITALIC),
+				Component.text(" - ").append(Component.text(value)));
+
+		item.addDescription("warning", 1,
+				Component.text("(When changing this setting all currently").color(NamedTextColor.GRAY),
+				Component.text("joined players will be kicked from their teams!)").color(NamedTextColor.GRAY));
+	}
 }

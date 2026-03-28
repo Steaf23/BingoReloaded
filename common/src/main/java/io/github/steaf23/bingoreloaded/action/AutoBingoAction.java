@@ -146,6 +146,15 @@ public class AutoBingoAction extends DeferredAction {
 			return setTeamSize(settings, args[0], Arrays.copyOfRange(args, 1, args.length));
 		}).addUsage("<size>"));
 
+		this.addSubAction(new ActionTree("teamcount", args -> {
+			var settings = getSettingsBuilder(args[0]);
+			if (settings == null) {
+				sendFailed("Invalid world/ session name: " + args[0], args[0]);
+				return ActionResult.INCORRECT_USE;
+			}
+			return setTeamCount(settings, args[0], Arrays.copyOfRange(args, 1, args.length));
+		}).addUsage("<count>"));
+
 
 		this.addSubAction(new ActionTree("gamemode", args -> {
 			var settings = getSettingsBuilder(args[0]);
@@ -479,6 +488,19 @@ public class AutoBingoAction extends DeferredAction {
 
 		settings.maxTeamSize(teamSize);
 		sendSuccess("Set maximum team size to " + teamSize + " players", worldName);
+		return ActionResult.SUCCESS;
+	}
+
+	public ActionResult setTeamCount(BingoSettingsBuilder settings, String worldName, String[] extraArguments) {
+		if (extraArguments.length != 1) {
+			sendFailed("Expected 3 arguments!", worldName);
+			return ActionResult.INCORRECT_USE;
+		}
+
+		int newCount = Math.min(64, Math.max(1, BingoAction.toInt(extraArguments[0], 1)));
+
+		settings.maxTeamCount(newCount);
+		sendSuccess("Set maximum team count to " + newCount + " teams", worldName);
 		return ActionResult.SUCCESS;
 	}
 

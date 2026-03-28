@@ -327,6 +327,7 @@ public class DataUpdaterV1
                         oldSettings.kit(),
                         oldSettings.effects(),
                         oldSettings.maxTeamSize(),
+                        64,
                         oldSettings.enableCountdown() ? BingoSettings.CountdownType.DURATION : BingoSettings.CountdownType.DISABLED,
                         oldSettings.countdownDuration(),
                         oldSettings.hotswapGoal(),

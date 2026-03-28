@@ -34,6 +34,7 @@ public class BasicTeamManager implements TeamManager {
     private final BingoTeamContainer activeTeams;
     private final TeamData teamData;
     private int maxTeamSize;
+    private int maxTeamCount;
     private final Map<String, TeamData.TeamTemplate> joinableTeams;
     private final BingoTeam autoTeam;
 
@@ -42,6 +43,7 @@ public class BasicTeamManager implements TeamManager {
         this.teamData = new TeamData();
         this.activeTeams = new BingoTeamContainer();
         this.maxTeamSize = session.settingsBuilder.view().maxTeamSize();
+        this.maxTeamCount = session.settingsBuilder.view().maxTeamCount();
         this.joinableTeams = teamData.getTeams();
         ConsoleMessenger.log("Loaded " + joinableTeams.size() + " team(s)");
 
@@ -190,7 +192,7 @@ public class BasicTeamManager implements TeamManager {
 
     @Override
     public int getTotalParticipantCapacity() {
-        return joinableTeams.size() * getMaxTeamSize();
+        return Math.min(joinableTeams.size(), maxTeamCount) * getMaxTeamSize();
     }
 
     @Override
@@ -205,6 +207,9 @@ public class BasicTeamManager implements TeamManager {
         BingoTeam bingoTeam = teamId.equals("auto") ? autoTeam : activateTeamFromId(teamId);
 
         if (bingoTeam == null) {
+            if (maxTeamsActivated()) {
+                BingoMessage.NO_TEAMS.sendToAudience(participant, NamedTextColor.RED);
+            }
             return false;
         }
         if (bingoTeam.hasMember(participant.getId())) {
@@ -260,8 +265,13 @@ public class BasicTeamManager implements TeamManager {
         }
 
         Optional<BingoTeam> existingTeam = activeTeams.getById(teamId);
-        if (existingTeam.isPresent())
+        if (existingTeam.isPresent()) {
             return existingTeam.get();
+        }
+
+        if (maxTeamsActivated()) {
+            return null;
+        }
 
         BingoTeam bTeam = new BingoTeam(teamId, team.color(), team.nameComponent(), createPrefix(team));
 
@@ -305,19 +315,16 @@ public class BasicTeamManager implements TeamManager {
     //== EventHandlers ==========================================
     @Override
     public void handleSettingsUpdated(final BingoSettings newSettings) {
-        int newTeamSize = newSettings.maxTeamSize();
-        if (newTeamSize == getMaxTeamSize())
-            return;
+        boolean changeTeams = updateMaxTeamSize(newSettings.maxTeamSize());
+        changeTeams |= updateMaxTeamCount(newSettings.maxTeamCount());
 
-        if (maxTeamSize < newTeamSize) {
-            maxTeamSize = newTeamSize;
-            return;
-        }
-
-        maxTeamSize = newTeamSize;
-        if (!session.isRunning()) {
-            getParticipants().forEach(p -> addMemberToTeam(p, "auto"));
-            BingoMessage.TEAM_SIZE_CHANGED.sendToAudience(session, NamedTextColor.RED);
+        if (changeTeams && !session.isRunning()) {
+            getParticipants().forEach(p -> {
+                if (!autoTeam.equals(p.getTeam())) {
+                    BingoMessage.TEAM_SIZE_CHANGED.sendToAudience(session, NamedTextColor.RED);
+                }
+                addMemberToTeam(p, "auto");
+            });
         }
     }
 
@@ -365,4 +372,36 @@ public class BasicTeamManager implements TeamManager {
 
         activeTeams.removeEmptyTeams("auto");
 	}
+
+    private boolean updateMaxTeamSize(int newSize) {
+        if (newSize == getMaxTeamSize())
+            return false;
+
+        if (maxTeamSize < newSize) {
+            maxTeamSize = newSize;
+            return false;
+        }
+
+        maxTeamSize = newSize;
+        return true;
+    }
+
+    private boolean updateMaxTeamCount(int newCount) {
+        if (newCount == maxTeamCount) {
+            return false;
+        }
+
+        if (maxTeamCount < newCount) {
+            maxTeamCount = newCount;
+            return false;
+        }
+
+        maxTeamCount = newCount;
+        return true;
+    }
+
+    private boolean maxTeamsActivated() {
+        int actualTeamCount = activeTeams.teamCount() + ( activeTeams.getById("auto").isPresent() ? -1 : 0);
+        return actualTeamCount >= maxTeamCount;
+    }
 }
