@@ -17,24 +17,30 @@ import io.github.steaf23.bingoreloaded.tasks.GameTask;
 import io.github.steaf23.bingoreloaded.tasks.RotatingTaskList;
 import io.github.steaf23.bingoreloaded.tasks.TaskGenerator;
 import io.github.steaf23.bingoreloaded.tasks.data.TaskData;
+import io.github.steaf23.bingoreloaded.util.timer.BlitzTimer;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Queue;
 
 public class BlitzTaskCard extends TaskCard {
 
 	private final List<HotswapTaskSlot> slots = new ArrayList<>();
 
-	int recoveryTimeSeconds = 0;
+	private final int recoveryTimeSeconds;
+	private final int resetBufferAmount;
 	private final List<GameTask> completedTasks = new ArrayList<>();
 	private RotatingTaskList randomTasks = null;
 	private final BingoGame game;
+
+	private final Queue<GameTask> taskResetBuffer = new ArrayDeque<>();
 
 	public BlitzTaskCard(CardMenu menu, CardSize size, BingoGame game, BingoConfigurationData.HotswapConfig config) {
 		super(menu, size, game.getProgressTracker());
@@ -42,6 +48,7 @@ public class BlitzTaskCard extends TaskCard {
 
 		game.getTimer().addNotifier(this::updateWithTime);
 		recoveryTimeSeconds = config.recoveryTime();
+		resetBufferAmount = 4;
 	}
 
 	@Override
@@ -83,9 +90,20 @@ public class BlitzTaskCard extends TaskCard {
 		int idx = 0;
 		for (HotswapTaskSlot slot : slots) {
 			GameTask task = getTasks().get(idx);
-			if (!slot.isRecovering() && task.isCompleted()) {
-				slot.startRecovering();
-				continue;
+
+			// Check if this task is the next task to be reset, if the buffer is full.
+			if (taskResetBuffer.peek() == task && taskResetBuffer.size() >= resetBufferAmount) {
+				if (!slot.isRecovering() && task.isCompleted()) {
+
+					taskResetBuffer.remove();
+					slot.startRecovering();
+					idx++;
+					continue;
+				}
+				else if (slot.isRecovering()) {
+					// Don't keep recovering tasks in the buffer.
+					taskResetBuffer.remove();
+				}
 			}
 
 			slot.updateTaskTime();
@@ -96,10 +114,11 @@ public class BlitzTaskCard extends TaskCard {
 					// Recovery finished, replace task with a new one.
 					GameTask newTask = randomTasks.nextTask(this::canTaskBeAdded);
 					if (newTask == null) {
-						ConsoleMessenger.bug("Cannot generate new task for hot-swap", this);
+						ConsoleMessenger.bug("Cannot generate new task for blitz", this);
 					}
 					lastRecoveredTask = newTask;
 					slots.set(idx, new SimpleHotswapTask(recoveryTimeSeconds));
+					getTasks().set(idx, newTask);
 					getProgressTracker().startTrackingTask(newTask);
 				}
 			}
@@ -164,9 +183,10 @@ public class BlitzTaskCard extends TaskCard {
 	public void onTaskCompleted(BingoParticipant player, GameTask task, long timeSeconds) {
 		super.onTaskCompleted(player, task, timeSeconds);
 		completedTasks.add(task);
-//		if (game.getTimer() instanceof BlitzTimer blitzTimer) {
-//			blitzTimer.resetTimer(60);
-//		}
+		taskResetBuffer.add(task);
+		if (game.getTimer() instanceof BlitzTimer timer) {
+			timer.reset();
+		}
 	}
 
 	private boolean canTaskBeAdded(TaskData data) {

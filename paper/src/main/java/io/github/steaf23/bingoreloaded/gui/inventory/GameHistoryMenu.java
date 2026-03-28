@@ -11,19 +11,15 @@ import io.github.steaf23.bingoreloaded.lib.inventory.group.PaginatedGroup;
 import io.github.steaf23.bingoreloaded.lib.inventory.group.StackedGroup;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import io.github.steaf23.bingoreloaded.lib.util.PlayerDisplayTranslationKey;
-import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
 import io.github.steaf23.bingoreloaded.settings.gamemode.BingoGamemode;
 import io.github.steaf23.bingoreloaded.settings.gamemode.BingoGamemodes;
 import io.github.steaf23.bingoreloaded.util.timer.GameTimer;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -50,9 +46,9 @@ public class GameHistoryMenu extends BasicMenu {
 
 	private static final Map<BingoGamemode, Set<ScoreCondition>> SCORE_CONDITIONS_PER_MODE = Map.of(
 			BingoGamemodes.BINGO, Set.of(ScoreCondition.LOWEST_TIME),
-			BingoGamemodes.LOCKOUT, Set.of(ScoreCondition.BIGGEST_SCORE, ScoreCondition.LOWEST_TIME),
+			BingoGamemodes.LOCKOUT, Set.of(ScoreCondition.LOWEST_TIME, ScoreCondition.BIGGEST_SCORE),
 			BingoGamemodes.COMPLETE, Set.of(ScoreCondition.LOWEST_TIME),
-			BingoGamemodes.HOTSWAP, Set.of(ScoreCondition.BIGGEST_SCORE, ScoreCondition.LOWEST_TIME),
+			BingoGamemodes.HOTSWAP, Set.of(ScoreCondition.LOWEST_TIME, ScoreCondition.BIGGEST_SCORE),
 			BingoGamemodes.BLITZ, Set.of(ScoreCondition.BIGGEST_SCORE)
 	);
 
@@ -129,7 +125,14 @@ public class GameHistoryMenu extends BasicMenu {
 					description.add(Component.text(participant.displayName()));
 				}
 
-				String score = GameTimer.getTimeAsString(game.playTime());
+				List<String> scoreString = new ArrayList<>();
+				for (ScoreCondition condition : SCORE_CONDITIONS_PER_MODE.get(settings.mode())) {
+					switch (condition) {
+						case LOWEST_TIME -> scoreString.add(GameTimer.getTimeAsString(game.playTime()));
+						case BIGGEST_SCORE -> scoreString.add(String.valueOf(team.score()));
+					}
+				}
+				String score = String.join(" - ", scoreString);
 
 				templates.add(new ItemTemplate(type, Component.empty()
 								.append(Component.text("#" + place + " - ").color(color).decorate(TextDecoration.BOLD))

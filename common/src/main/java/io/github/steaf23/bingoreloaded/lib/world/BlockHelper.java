@@ -8,8 +8,9 @@ import org.jetbrains.annotations.Nullable;
 
 public interface BlockHelper {
 	static void buildCuboid(ItemType blockType, WorldPosition center, int extendX, int extendZ, int extendY, boolean skipSolidBlocks, @Nullable ItemType mask) {
-		for (int y = -extendY; y < extendY + 1; y++) {
-			buildPlatform(blockType, center.moveYBlocks(1), extendX, extendZ, skipSolidBlocks, mask);
+		center.moveYBlocks(extendY * 2 + 1);
+		for (int y = extendY; y >= -extendY + 1; y--) {
+			buildPlatform(blockType, center.moveYBlocks(-1), extendX, extendZ, skipSolidBlocks, mask);
 		}
 	}
 

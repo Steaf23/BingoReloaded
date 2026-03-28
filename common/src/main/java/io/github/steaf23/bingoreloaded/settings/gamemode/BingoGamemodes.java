@@ -141,6 +141,11 @@ public class BingoGamemodes {
 		public TexturedMenuData.Texture bannerTexture(TexturedMenuData textureData) {
 			return textureData.getTexture("banner_blitz");
 		}
+
+		@Override
+		public boolean canEndInDraw() {
+			return false;
+		}
 	});
 
 	private static BingoGamemode register(BingoGamemode gamemode) {

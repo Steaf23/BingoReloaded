@@ -109,7 +109,7 @@ public class BotCommandAction extends ActionTree {
 
 		GameTask task = card.get().getTasks().get(taskIndex);
 		BingoGame game = (BingoGame) player.getSession().phase();
-		task.complete(player, game.getGameTime());
+		task.complete(player, game.getGameTimePassed());
 		game.onBingoTaskCompleted(player, task);
 	}
 

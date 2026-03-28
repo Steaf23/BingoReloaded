@@ -203,7 +203,7 @@ public class TaskProgressTracker
         if (deathMatchTask != null) {
             if (deathMatchTask.data instanceof ItemTask task) {
                 if (item.type().equals(task.itemType())) {
-                    deathMatchTask.complete(participant, game.getGameTime());
+                    deathMatchTask.complete(participant, game.getGameTimePassed());
                     game.onDeathmatchTaskComplete(participant, deathMatchTask);
                 }
             } else {
@@ -336,14 +336,14 @@ public class TaskProgressTracker
             return false;
         }
 
-        if (!task.complete(player, game.getGameTime()))
+        if (!task.complete(player, game.getGameTimePassed()))
             return false;
 
         if (player.getTeam() == null) {
             ConsoleMessenger.bug("Player " + player.getName() + " is not in a valid team!", this);
         }
         player.getCard().ifPresent(card ->
-                card.onTaskCompleted(player, task, game.getGameTime()));
+                card.onTaskCompleted(player, task, game.getGameTimePassed()));
 
         game.onBingoTaskCompleted(player, task);
         return true;

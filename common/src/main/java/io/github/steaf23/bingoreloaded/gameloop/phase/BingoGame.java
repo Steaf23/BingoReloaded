@@ -36,11 +36,13 @@ import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.player.team.TeamManager;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
+import io.github.steaf23.bingoreloaded.settings.gamemode.GamemodeFeature;
 import io.github.steaf23.bingoreloaded.tasks.GameTask;
 import io.github.steaf23.bingoreloaded.tasks.data.ItemTask;
 import io.github.steaf23.bingoreloaded.tasks.tracker.TaskProgressTracker;
 import io.github.steaf23.bingoreloaded.util.ActionBarManager;
 import io.github.steaf23.bingoreloaded.util.BingoPlayerSender;
+import io.github.steaf23.bingoreloaded.util.timer.BlitzTimer;
 import io.github.steaf23.bingoreloaded.util.timer.CountdownTimer;
 import io.github.steaf23.bingoreloaded.util.timer.CounterTimer;
 import io.github.steaf23.bingoreloaded.util.timer.GameTimer;
@@ -109,7 +111,9 @@ public class BingoGame implements GamePhase
     private void start() {
         this.gameStarted = false;
         // Create timer
-        if (settings.useCountdown())
+        if (settings.mode().featureSet().contains(GamemodeFeature.BLITZ_TIMER))
+            timer = new BlitzTimer(5 * 60, 2 * 60, this::onCountdownTimerFinished);
+        else if (settings.useCountdown())
             timer = new CountdownTimer(settings.countdownDuration() * 60, 5 * 60, 60, this::onCountdownTimerFinished);
         else
             timer = new CounterTimer();
@@ -512,7 +516,7 @@ public class BingoGame implements GamePhase
 // @EventHandlers ========================================================================
 
     public void onBingoTaskCompleted(@NotNull BingoParticipant participant, GameTask task) {
-        Component timeString = GameTimer.getTimeAsComponent(getGameTime());
+        Component timeString = GameTimer.getTimeAsComponent(getGameTimePassed());
         BingoTeam team = task.getCompletedByTeam().orElse(null);
 
         if (team == null) {
