@@ -37,12 +37,20 @@ public class PaginatedGroup<Data> extends ItemGroup {
 	}
 
 	public void setPage(BasicMenu menu, int newPage) {
-		if (newPage > getPageCount() || newPage < 0) {
+		if (newPage >= getPageCount() || newPage < 0) {
 			return;
 		}
 
 		currentPage = newPage;
 		updateVisibleItems(menu);
+	}
+
+	public void nextPage(BasicMenu menu) {
+		setPage(menu, currentPage + 1);
+	}
+
+	public void previousPage(BasicMenu menu) {
+		setPage(menu, currentPage - 1);
 	}
 
 
@@ -59,9 +67,10 @@ public class PaginatedGroup<Data> extends ItemGroup {
 			itemIdx++;
 		}
 
-		for (; itemIdx < emptyItems; itemIdx++) {
+		for (int i = 0; i < emptyItems; i++) {
 			int slotIdx = pageIndexToGlobal(itemIdx % rect().getSlotCount());
 			menu.addItem(ItemTemplate.EMPTY.copyToSlot(slotIdx));
+			itemIdx++;
 		}
 	}
 

@@ -28,6 +28,10 @@ public class StackedGroup extends ItemGroup {
 		return stack.get(current);
 	}
 
+	public int currentGroupIndex() {
+		return current;
+	}
+
 	@Override
 	public void updateVisibleItems(BasicMenu menu) {
 		ItemGroup current = getCurrentGroup();

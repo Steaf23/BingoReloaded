@@ -3,6 +3,7 @@ package io.github.steaf23.bingoreloaded.gui.inventory;
 import io.github.steaf23.bingoreloaded.data.record.GameRecord;
 import io.github.steaf23.bingoreloaded.data.record.GameRecordData;
 import io.github.steaf23.bingoreloaded.lib.api.MenuBoard;
+import io.github.steaf23.bingoreloaded.lib.api.PlatformResolver;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemTypePaper;
 import io.github.steaf23.bingoreloaded.lib.inventory.BasicMenu;
@@ -31,9 +32,19 @@ import java.util.UUID;
 public class GameHistoryMenu extends BasicMenu {
 
 	enum ScoreCondition {
-		LOWEST_TIME,
-		BIGGEST_SCORE,
+		LOWEST_TIME(Comparator.comparing(GameRecord::playTime)),
+		BIGGEST_SCORE(Comparator.<GameRecord>comparingInt((record) -> record.teams().get(record.winningTeam()).score()).reversed()),
 		;
+
+		private final Comparator<GameRecord> comparator;
+
+		ScoreCondition(Comparator<GameRecord> comparator) {
+			this.comparator = comparator;
+		}
+	}
+
+	private record Category(MenuAction action, BingoGamemode mode) {
+
 	}
 
 	private static final ItemTemplate NEXT = new ItemTemplate(0, ItemTypePaper.of(Material.STRUCTURE_VOID),
@@ -44,6 +55,9 @@ public class GameHistoryMenu extends BasicMenu {
 			PlayerDisplayTranslationKey.MENU_PREVIOUS.translate()
 					.color(NamedTextColor.LIGHT_PURPLE).decorate(TextDecoration.BOLD));
 
+	private static final ItemTemplate ORDER_BY_TIME = new ItemTemplate(0, 1, ItemType.of("minecraft:clock"), Component.text("Sort by Fastest Time"));
+	private static final ItemTemplate ORDER_BY_SCORE = new ItemTemplate(0, 1, ItemType.of("minecraft:compass"), Component.text("Sort by Highest Score"));
+
 	private static final Map<BingoGamemode, Set<ScoreCondition>> SCORE_CONDITIONS_PER_MODE = Map.of(
 			BingoGamemodes.BINGO, Set.of(ScoreCondition.LOWEST_TIME),
 			BingoGamemodes.LOCKOUT, Set.of(ScoreCondition.LOWEST_TIME, ScoreCondition.BIGGEST_SCORE),
@@ -53,8 +67,10 @@ public class GameHistoryMenu extends BasicMenu {
 	);
 
 	private final GameRecordData historyData;
-	private final List<MenuAction> categories = new ArrayList<>();
+	private final List<Category> categories = new ArrayList<>();
 	private int categoryOffset = 0;
+	private final StackedGroup stack;
+	private ScoreCondition currentOrdering = ScoreCondition.LOWEST_TIME;
 
 	public GameHistoryMenu(MenuBoard manager, GameRecordData historyData) {
 		super(manager, Component.text("Game History"), 6);
@@ -62,9 +78,7 @@ public class GameHistoryMenu extends BasicMenu {
 
 		Map<UUID, BingoSettings> settingIds = historyData.getSettings();
 
-		ScoreCondition scoring = ScoreCondition.LOWEST_TIME;
-
-		StackedGroup stack = new StackedGroup(1, 2, 7, 4);
+		stack = new StackedGroup(1, 2, 7, 4);
 		// Sort settings by gamemode
 		int i = 0;
 		List<List<UUID>> groupedSettings = groupSettingsByMode(settingIds);
@@ -86,65 +100,67 @@ public class GameHistoryMenu extends BasicMenu {
 			MenuAction action = new MenuAction() {
 				@Override
 				public void use(ActionArguments arguments) {
-					stack.setCurrentGroup(GameHistoryMenu.this, pageIndex);
+					showCategory(pageIndex);
 				}
 			};
 
-			PaginatedGroup<GameRecord> scores = new PaginatedGroup<>(1, 2, 7, 4, this::onScoresClicked);
-//			addAction(new ItemTemplate(ItemType.of("minecraft:apple")), args -> {
-//				scores.setPage(this, scores.getCurrentPage() + 1);
-//			});
+			StackedGroup categoriesStack = new StackedGroup(1, 2, 7, 4);
+			for (ScoreCondition condition : SCORE_CONDITIONS_PER_MODE.get(settings.mode())) {
+				PaginatedGroup<GameRecord> scores = new PaginatedGroup<>(1, 2, 7, 4, this::onScoresClicked);
 
-			List<GameRecord> orderedByTimeAsc = records.stream()
-					.sorted(Comparator.comparing(GameRecord::playTime))
-					.toList();
+				List<GameRecord> orderedByCondition = records.stream()
+						.sorted(condition.comparator)
+						.toList();
 
-			int place = 1;
-			List<ItemTemplate> templates = new ArrayList<>();
-			for (GameRecord game : orderedByTimeAsc) {
-				GameRecord.TeamRecord team = game.teams().get(game.winningTeam());
-				ItemType type = ItemType.of("minecraft:dried_ghast");
-				TextColor color = NamedTextColor.GRAY;
-				switch (place) {
-					case 1 -> {
-						type = ItemType.of("minecraft:gold_ingot");
-						color = TextColor.fromHexString("#fdd50e");
+				int place = 1;
+				List<ItemTemplate> templates = new ArrayList<>();
+				for (GameRecord game : orderedByCondition) {
+					GameRecord.TeamRecord team = game.teams().get(game.winningTeam());
+					ItemType type = ItemType.of("minecraft:dried_ghast");
+					TextColor color = NamedTextColor.GRAY;
+					switch (place) {
+						case 1 -> {
+							type = ItemType.of("minecraft:gold_ingot");
+							color = TextColor.fromHexString("#fdd50e");
+						}
+						case 2 -> {
+							type = ItemType.of("minecraft:iron_ingot");
+							color = TextColor.fromHexString("#b9e4d8");
+						}
+						case 3 -> {
+							type = ItemType.of("minecraft:copper_ingot");
+							color = TextColor.fromHexString("#cc6c54");
+						}
 					}
-					case 2 -> {
-						type = ItemType.of("minecraft:iron_ingot");
-						color = TextColor.fromHexString("#b9e4d8");
+					;
+					List<Component> description = new ArrayList<>();
+					description.add(team.team().nameComponent().color(team.team().color()).decorate(TextDecoration.BOLD));
+					for (GameRecord.ParticipantRecord participant : team.participants()) {
+						description.add(Component.text(participant.displayName()));
 					}
-					case 3 -> {
-						type = ItemType.of("minecraft:copper_ingot");
-						color = TextColor.fromHexString("#cc6c54");
-					}
-				};
-				List<Component> description = new ArrayList<>();
-				description.add(team.team().nameComponent().color(team.team().color()).decorate(TextDecoration.BOLD));
-				for (GameRecord.ParticipantRecord participant : team.participants()) {
-					description.add(Component.text(participant.displayName()));
-				}
 
-				List<String> scoreString = new ArrayList<>();
-				for (ScoreCondition condition : SCORE_CONDITIONS_PER_MODE.get(settings.mode())) {
+					List<String> scoreString = new ArrayList<>();
 					switch (condition) {
 						case LOWEST_TIME -> scoreString.add(GameTimer.getTimeAsString(game.playTime()));
 						case BIGGEST_SCORE -> scoreString.add(String.valueOf(team.score()));
 					}
-				}
-				String score = String.join(" - ", scoreString);
 
-				templates.add(new ItemTemplate(type, Component.empty()
-								.append(Component.text("#" + place + " - ").color(color).decorate(TextDecoration.BOLD))
-								.append(Component.text(score).decorate(TextDecoration.ITALIC)), description)
-						.setGlowing(place <= 3));
-				place += 1;
+					String score = String.join(" - ", scoreString);
+
+					templates.add(new ItemTemplate(type, Component.empty()
+							.append(Component.text("#" + place + " - ").color(color).decorate(TextDecoration.BOLD))
+							.append(Component.text(score).decorate(TextDecoration.ITALIC)), description)
+							.setGlowing(place <= 3));
+					place += 1;
+				}
+
+				scores.setItems(templates, orderedByCondition);
+				categoriesStack.addGroup(scores);
 			}
 
-			scores.setItems(templates, orderedByTimeAsc);
-			stack.addGroup(scores);
+			stack.addGroup(categoriesStack);
 
-			ItemTemplate item = new ItemTemplate(i, ItemType.of("minecraft:paper"),
+			ItemTemplate item = new ItemTemplate(i, ItemType.of("minecraft:leather_horse_armor"),
 					Component.empty().append(Component.text("Category: ").color(NamedTextColor.GRAY))
 							.append(settings.mode().asComponent())
 							.append(Component.text(" "))
@@ -153,9 +169,10 @@ public class GameHistoryMenu extends BasicMenu {
 					Component.empty().append(Component.text("Card: ").color(NamedTextColor.GRAY)).append(Component.text(settings.card())),
 					Component.empty().append(Component.text("Games played: ").color(NamedTextColor.GRAY)).append(Component.text(records.size())),
 					Component.empty(),
-					Component.empty().append(BasicMenu.INPUT_LEFT_CLICK).append(Component.text("View Scoreboard").color(TextColor.fromHexString("#ff661c")).decorate(TextDecoration.BOLD)));
+					Component.empty().append(BasicMenu.INPUT_LEFT_CLICK).append(Component.text("View Scoreboard").color(TextColor.fromHexString("#ff661c")).decorate(TextDecoration.BOLD)))
+					.setLeatherColor(settings.mode().getColor());
 			action.setItem(item);
-			categories.add(action);
+			categories.add(new Category(action, settings.mode()));
 			i++;
 		}
 
@@ -171,8 +188,7 @@ public class GameHistoryMenu extends BasicMenu {
 			addItem(BasicMenu.BLANK.copyToSlot(8, k));
 		}
 
-		addScrollingCategories();
-		stack.updateVisibleItems(this);
+		showCategory(0);
 	}
 
 	private void onScoresClicked(GameRecord record) {
@@ -181,7 +197,8 @@ public class GameHistoryMenu extends BasicMenu {
 
 	private List<List<UUID>> groupSettingsByMode(Map<UUID, BingoSettings> allSettings) {
 		List<List<UUID>> result = new ArrayList<>();
-		outer: for (UUID settingsId : allSettings.keySet()) {
+		outer:
+		for (UUID settingsId : allSettings.keySet()) {
 			BingoSettings settings = allSettings.get(settingsId);
 
 			// Check if this setting matches any already placed groups
@@ -231,20 +248,15 @@ public class GameHistoryMenu extends BasicMenu {
 
 		if (settings.mode() == BingoGamemodes.BINGO) {
 			return true;
-		}
-		else if (settings.mode() == BingoGamemodes.LOCKOUT) {
+		} else if (settings.mode() == BingoGamemodes.LOCKOUT) {
 			return true;
-		}
-		else if (settings.mode() == BingoGamemodes.COMPLETE) {
+		} else if (settings.mode() == BingoGamemodes.COMPLETE) {
 			return settings.completeGoal() == other.completeGoal();
-		}
-		else if (settings.mode() == BingoGamemodes.HOTSWAP) {
+		} else if (settings.mode() == BingoGamemodes.HOTSWAP) {
 			return settings.hotswapGoal() == other.hotswapGoal() && settings.expireHotswapTasks() == other.expireHotswapTasks();
-		}
-		else if (settings.mode() == BingoGamemodes.BLITZ) {
+		} else if (settings.mode() == BingoGamemodes.BLITZ) {
 			return true;
-		}
-		else {
+		} else {
 			return true;
 		}
 	}
@@ -252,8 +264,8 @@ public class GameHistoryMenu extends BasicMenu {
 	private void addScrollingCategories() {
 		if (categories.size() <= 9) {
 			for (int idx = 0; idx < categories.size(); idx++) {
-				ItemTemplate item = categories.get(idx).item().copyToSlot(idx);
-				addItem(item, categories.get(idx));
+				ItemTemplate item = categories.get(idx).action().item().copyToSlot(idx);
+				addItem(item, categories.get(idx).action());
 			}
 			return;
 		}
@@ -262,8 +274,8 @@ public class GameHistoryMenu extends BasicMenu {
 		addAction(PREVIOUS, args -> scrollCategories(-1));
 		for (int i = 0; i < 7; i++) {
 			int offsetIndex = (i + categoryOffset) % categories.size();
-			ItemTemplate item = categories.get(offsetIndex).item().copyToSlot(i + 1);
-			addItem(item, categories.get(offsetIndex));
+			ItemTemplate item = categories.get(offsetIndex).action().item().copyToSlot(i + 1);
+			addItem(item, categories.get(offsetIndex).action());
 		}
 	}
 
@@ -272,4 +284,93 @@ public class GameHistoryMenu extends BasicMenu {
 		addScrollingCategories();
 	}
 
+	public void showCategory(int pageIndex) {
+		for (Category category : categories) {
+			category.action().item().setGlowing(false);
+		}
+
+		Category current = categories.get(pageIndex);
+		current.action().item().setGlowing(true);
+
+		addScrollingCategories();
+		stack.setCurrentGroup(GameHistoryMenu.this, pageIndex);
+		if (!(stack.getCurrentGroup() instanceof StackedGroup categoryGroup)) {
+			return;
+		}
+
+		if (!(categoryGroup.getCurrentGroup() instanceof PaginatedGroup<?> paginatedGroup)) {
+			return;
+		}
+
+		paginatedGroup.setPage(this, 0);
+
+		updatePageNavigation(categoryGroup, paginatedGroup, current.mode());
+	}
+
+	public void updatePageNavigation(StackedGroup categoryPage, PaginatedGroup<?> page, BingoGamemode mode) {
+		int currentPage = page.getCurrentPage();
+		int pageCount = page.getPageCount();
+		Component pageCountDesc = Component.text(String.format("%02d", currentPage + 1) + "/" + String.format("%02d", pageCount));
+
+		ItemTemplate prevPage = PREVIOUS.copyToSlot(0, 5).setLore(pageCountDesc);
+		ItemTemplate nextPage = NEXT.copyToSlot(8, 5).setLore(pageCountDesc);
+
+		int orderIndex = 0;
+		int orderSlot = ItemTemplate.slotFromXY(0, 1);
+		if (SCORE_CONDITIONS_PER_MODE.get(mode).contains(ScoreCondition.LOWEST_TIME)) {
+			ItemTemplate timeOrder = ORDER_BY_TIME.copyToSlot(orderSlot + orderIndex);
+			int finalOrderIndex = orderIndex;
+			if (categoryPage.currentGroupIndex() == orderIndex) {
+				timeOrder.setGlowing(true);
+			}
+			addAction(timeOrder, (args) -> {
+				categoryPage.setCurrentGroup(this, finalOrderIndex);
+				PlatformResolver.get().runTask((t) -> {
+					updatePageNavigation(categoryPage, page, mode);
+				});
+			});
+			orderIndex++;
+		}
+
+		if (SCORE_CONDITIONS_PER_MODE.get(mode).contains(ScoreCondition.BIGGEST_SCORE)) {
+			ItemTemplate scoreOrder = ORDER_BY_SCORE.copyToSlot(orderSlot + orderIndex);
+			int finalOrderIndex = orderIndex;
+			if (categoryPage.currentGroupIndex() == orderIndex) {
+				scoreOrder.setGlowing(true);
+			}
+			addAction(scoreOrder, (args) -> {
+				categoryPage.setCurrentGroup(this, finalOrderIndex);
+				PlatformResolver.get().runTask((t) -> {
+					updatePageNavigation(categoryPage, page, mode);
+				});
+			});
+			orderIndex++;
+		}
+
+		for (int unusedOrderIndex = orderIndex; unusedOrderIndex < 9; unusedOrderIndex++) {
+			addItem(BLANK.copyToSlot(orderSlot + orderIndex));
+		}
+
+		if (currentPage > 0) {
+			addAction(prevPage, (args) -> {
+				page.previousPage(this);
+				PlatformResolver.get().runTask((t) -> {
+					updatePageNavigation(categoryPage, page, mode);
+				});
+			});
+		} else {
+			addItem(BLANK.copyToSlot(0, 5));
+		}
+
+		if (currentPage < pageCount - 1) {
+			addAction(nextPage, (args) -> {
+				page.nextPage(this);
+				PlatformResolver.get().runTask((t) -> {
+					updatePageNavigation(categoryPage, page, mode);
+				});
+			});
+		} else {
+			addItem(BLANK.copyToSlot(8, 5));
+		}
+	}
 }
