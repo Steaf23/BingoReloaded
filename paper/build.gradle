@@ -1,7 +1,7 @@
 plugins {
     id 'java'
     id 'io.github.goooler.shadow' version '8.1.7'
-    id 'io.papermc.paperweight.userdev' version '2.0.0-beta.17'
+    id 'io.papermc.paperweight.userdev' version '2.0.0-beta.21'
     id("xyz.jpenilla.run-paper") version "3.0.2"
 }
 
@@ -20,16 +20,16 @@ repositories {
 }
 
 dependencies {
-    compileOnly "com.github.retrooper:packetevents-spigot:$packet_events_version"
+    compileOnly "com.github.retrooper:packetevents-spigot:${packet_events_version}"
     compileOnly 'me.clip:placeholderapi:2.11.7'
 
     implementation project(":common")
-    paperweightDevelopmentBundle("io.papermc.paper:dev-bundle:$minecraft_version-R0.1-SNAPSHOT")
+    paperweightDevelopmentBundle("io.papermc.paper:dev-bundle:${minecraft_version}.build.+")
 }
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(21)
+        languageVersion = JavaLanguageVersion.of(25)
     }
 }
 

@@ -60,8 +60,9 @@ public class WorldData
      * @return created WorldGroup
      */
     public WorldGroup createWorldGroup(String worldName) {
-        WorldHandle overworld = BingoReloaded.runtime().createBingoWorld(worldName, generationOptions);
+        WorldHandle overworld = BingoReloaded.runtime().createBingoOverworld(worldName, generationOptions);
         if (overworld == null) {
+            ConsoleMessenger.bug("Could not create world using bingo small biome generation.", this);
             overworld = createWorld(worldName, DimensionType.OVERWORLD);
         }
         WorldHandle nether = createWorld( worldName + "_nether", DimensionType.NETHER);
@@ -104,7 +105,7 @@ public class WorldData
 
     private WorldHandle createWorld(String worldName, @NotNull DimensionType dimension) {
         String worldFolder = getWorldsFolder();
-        WorldOptions options = new WorldOptions(worldFolder + worldName, dimension);
+        WorldOptions options = new WorldOptions(worldName, dimension);
         return platform.createWorld(options);
     }
 

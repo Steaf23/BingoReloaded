@@ -10,9 +10,13 @@ import org.jetbrains.annotations.Nullable;
 
 public class CustomWorldCreator
 {
-    public static WorldHandle createWorld(ServerSoftware platform, String worldName, @Nullable Key generationSettingsResource) {
+    public static @Nullable WorldHandle createWorld(ServerSoftware platform, String worldName, @Nullable Key generationSettingsResource) {
         String worldFolder = getWorldsFolder(platform);
-        World world = CustomWorldCreator_V1_21_11.createBingoWorld(worldFolder + worldName, generationSettingsResource);
+
+        World world = CustomWorldCreator_V26_1_1.createBingoWorld(worldName, generationSettingsResource);
+        if (world == null) {
+            return null;
+        }
         return new WorldHandlePaper(world);
     }
 

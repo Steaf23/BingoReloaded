@@ -14,6 +14,7 @@ import io.github.steaf23.bingoreloaded.lib.api.player.SharedDisplay;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataAccessor;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import net.kyori.adventure.key.Key;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Set;
@@ -35,7 +36,7 @@ public interface BingoReloadedRuntime {
 
 	void registerActions(BingoConfigurationData config);
 
-	WorldHandle createBingoWorld(String worldName, Key generationOptions);
+	@Nullable WorldHandle createBingoOverworld(String worldName, Key generationOptions);
 
 	ServerSoftware getServerSoftware();
 

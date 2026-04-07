@@ -6,15 +6,15 @@ dependencies {
     api("commons-io:commons-io:2.19.0")
     api("com.google.code.gson:gson:2.13.1")
 
-    api("net.kyori:adventure-api:$adventure_version")
-    api("net.kyori:adventure-text-logger-slf4j:$adventure_version")
-    api("net.kyori:adventure-text-minimessage:$adventure_version")
-    api("net.kyori:adventure-text-serializer-plain:$adventure_version")
-    api("net.kyori:adventure-text-serializer-legacy:$adventure_version")
+    api("net.kyori:adventure-api:${adventure_version}")
+    api("net.kyori:adventure-text-logger-slf4j:${adventure_version}")
+    api("net.kyori:adventure-text-minimessage:${adventure_version}")
+    api("net.kyori:adventure-text-serializer-plain:${adventure_version}")
+    api("net.kyori:adventure-text-serializer-legacy:${adventure_version}")
 }
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(21)
+        languageVersion = JavaLanguageVersion.of(25)
     }
 }

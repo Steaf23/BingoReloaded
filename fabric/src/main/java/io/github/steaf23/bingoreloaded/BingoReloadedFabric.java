@@ -23,6 +23,7 @@ import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import net.fabricmc.api.ModInitializer;
 import net.kyori.adventure.key.Key;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.List;
@@ -98,7 +99,7 @@ public class BingoReloadedFabric implements ModInitializer, BingoReloadedRuntime
 	}
 
 	@Override
-	public WorldHandle createBingoWorld(String worldName, Key generationOptions) {
+	public @Nullable WorldHandle createBingoOverworld(String worldName, Key generationOptions) {
 		return null;
 	}
 

@@ -182,7 +182,7 @@ public class PaperServerSoftware implements ServerSoftware {
 
 	@Override
 	public @Nullable WorldHandle createWorld(WorldOptions options) {
-		var creator = new WorldCreator(options.name());
+		var creator = new WorldCreator("bingoreloaded:" + options.name());
 
 		if (options.dimension().equals(DimensionType.OVERWORLD)) {
 			creator.environment(World.Environment.NORMAL);
