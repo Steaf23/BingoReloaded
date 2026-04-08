@@ -100,6 +100,10 @@ public class BingoOptions {
 			.withEditUpdate(ConfigurationOption.EditUpdateTime.AFTER_SERVER_RESTART);
 	public static final ConfigurationOption<Boolean> DISABLE_STATISTICS = new BooleanOption("disableStatistics")
 			.withEditUpdate(ConfigurationOption.EditUpdateTime.AFTER_SERVER_RESTART);
+	public static final ConfigurationOption<Boolean> DISABLE_NETHER = new BooleanOption("disableNether")
+			.withEditUpdate(ConfigurationOption.EditUpdateTime.AFTER_SERVER_RESTART);
+	public static final ConfigurationOption<Boolean> DISABLE_THE_END = new BooleanOption("disableTheEnd")
+			.withEditUpdate(ConfigurationOption.EditUpdateTime.AFTER_SERVER_RESTART);
 	public static final ConfigurationOption<Boolean> END_GAME_WITHOUT_TEAMS = new BooleanOption("endGameWithoutTeams");
 	public static final ConfigurationOption<BingoConfigurationData.HotswapConfig> HOTSWAP_CONFIG = new NonSerializableOption<>("hotswapMode");
 	public static final ConfigurationOption<Boolean> ALLOW_VIEWING_ALL_CARDS = new BooleanOption("allowViewingAllCards")

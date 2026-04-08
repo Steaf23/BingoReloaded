@@ -9,6 +9,7 @@ import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.UUID;
 
 public class SingularGameManager extends GameManager
 {
@@ -50,13 +51,32 @@ public class SingularGameManager extends GameManager
         if (overworld == null) {
             ConsoleMessenger.error("Could not create world group from existing world; " + defaultWorldName + " does not exist. Make sure the world exists and reload the plugin.");
             return null;
-        } else if (nether == null) {
-            ConsoleMessenger.error("Could not create world group from existing world; " + defaultWorldName + "_nether does not exist. Make sure the world exists and reload the plugin.");
-            return null;
-        } else if (theEnd == null) {
-            ConsoleMessenger.error("Could not create world group from existing world; " + defaultWorldName + "_the_end does not exist. Make sure the world exists and reload the plugin.");
-            return null;
         }
-        return new WorldGroup(getPlatform(), defaultWorldName, overworld.uniqueId(), nether.uniqueId(), theEnd.uniqueId());
+
+        boolean createNether = !getGameConfig().getOptionValue(BingoOptions.DISABLE_NETHER);
+        boolean createTheEnd = !getGameConfig().getOptionValue(BingoOptions.DISABLE_THE_END);
+
+        UUID netherId = overworld.uniqueId();
+        UUID endId = overworld.uniqueId();
+
+        if (createNether) {
+            if (nether == null) {
+                ConsoleMessenger.error("Could not create world group from existing world; " + defaultWorldName + "_nether does not exist. Make sure the world exists and reload the plugin.");
+                return null;
+            }
+
+            netherId = nether.uniqueId();
+        }
+
+        if (createTheEnd) {
+            if (theEnd == null) {
+                ConsoleMessenger.error("Could not create world group from existing world; " + defaultWorldName + "_the_end does not exist. Make sure the world exists and reload the plugin.");
+                return null;
+            }
+
+            endId = theEnd.uniqueId();
+        }
+
+        return new WorldGroup(getPlatform(), defaultWorldName, overworld.uniqueId(), netherId, endId);
     }
 }

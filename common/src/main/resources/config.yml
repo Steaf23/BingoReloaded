@@ -194,6 +194,11 @@ disableAdvancements: false # true or false
 # If false, statistics can appear on the bingo card.
 disableStatistics: false # true or false
 
+# If false, these dimensions cannot be entered and will also not be created by MULTIPLE configuration when creating a world.
+# Set disabled to true if you have disabled these dimensions in your server config as well!
+disableNether: false
+disableTheEnd: false
+
 # If true, bingo games will end automatically when there is only 1 team left online in the world or when everyone has left.
 endGameWithoutTeams: true # true or false
 

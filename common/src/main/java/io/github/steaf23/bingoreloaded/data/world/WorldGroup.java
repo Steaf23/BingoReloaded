@@ -12,6 +12,7 @@ import java.util.UUID;
 /**
  * A world group represents a group of 3 worlds, world_name, world_name_nether and world_name_the_end
  * These worlds are saved in the plugin's data folder under the name worlds
+ * If the nether or end are disabled, they will be stored with the same UUID as the overworld.
  */
 public record WorldGroup(ServerSoftware platform, String worldName, UUID overworldId, UUID netherId, UUID endId)
 {

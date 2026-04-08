@@ -19,12 +19,14 @@ import java.util.UUID;
 
 public class WorldData
 {
-    private final ServerSoftware platform;
-    private final Key generationOptions;
+    public record Options(@Nullable Key noiseGenerationSettings, boolean createNether, boolean createEnd) {}
 
-    public WorldData(ServerSoftware platform, @Nullable Key generationOptions) {
+    private final ServerSoftware platform;
+    private final Options options;
+
+    public WorldData(ServerSoftware platform, Options options) {
         this.platform = platform;
-        this.generationOptions = generationOptions;
+        this.options = options;
     }
 
     /**
@@ -60,13 +62,23 @@ public class WorldData
      * @return created WorldGroup
      */
     public WorldGroup createWorldGroup(String worldName) {
-        WorldHandle overworld = BingoReloaded.runtime().createBingoWorld(worldName, generationOptions);
+        WorldHandle overworld = BingoReloaded.runtime().createBingoWorld(worldName, options.noiseGenerationSettings);
         if (overworld == null) {
             overworld = createWorld(worldName, DimensionType.OVERWORLD);
         }
-        WorldHandle nether = createWorld( worldName + "_nether", DimensionType.NETHER);
-        WorldHandle end = createWorld( worldName + "_the_end", DimensionType.THE_END);
-        return new WorldGroup(platform, worldName, overworld.uniqueId(), nether.uniqueId(), end.uniqueId());
+        UUID netherId = overworld.uniqueId();
+        UUID endId = overworld.uniqueId();
+        if (options.createNether()) {
+            WorldHandle nether = createWorld( worldName + "_nether", DimensionType.NETHER);
+            netherId = nether.uniqueId();
+        }
+
+        if (options.createEnd()) {
+            WorldHandle end = createWorld( worldName + "_the_end", DimensionType.THE_END);
+            endId = end.uniqueId();
+        }
+
+        return new WorldGroup(platform, worldName, overworld.uniqueId(), netherId, endId);
     }
 
     public @Nullable WorldGroup getWorldGroup(String worldName) {
@@ -77,14 +89,30 @@ public class WorldData
         if (overworld == null) {
             ConsoleMessenger.error("Could not fetch world group; " + worldName + " does not exist. Make sure the world exists and reload the plugin.");
             return null;
-        } else if (nether == null) {
-            ConsoleMessenger.error("Could not fetch world group; " + worldName + "_nether does not exist. Make sure the world exists and reload the plugin.");
-            return null;
-        } else if (theEnd == null) {
-            ConsoleMessenger.error("Could not fetch world group; " + worldName + "_the_end does not exist. Make sure the world exists and reload the plugin.");
-            return null;
         }
-        return new WorldGroup(platform, worldName, overworld.uniqueId(), nether.uniqueId(), theEnd.uniqueId());
+
+        UUID netherId = overworld.uniqueId();
+        UUID endId = overworld.uniqueId();
+
+        if (options.createNether()) {
+            if (nether == null) {
+                ConsoleMessenger.error("Could not fetch world group; " + worldName + "_nether does not exist. Make sure the world exists and reload the plugin.");
+                return null;
+            }
+
+            netherId = nether.uniqueId();
+        }
+
+        if (options.createEnd()) {
+            if (theEnd == null) {
+                ConsoleMessenger.error("Could not fetch world group; " + worldName + "_the_end does not exist. Make sure the world exists and reload the plugin.");
+                return null;
+            }
+
+            endId = theEnd.uniqueId();
+        }
+
+        return new WorldGroup(platform, worldName, overworld.uniqueId(), netherId, endId);
     }
 
     /**
@@ -92,6 +120,7 @@ public class WorldData
      * @return true if the worlds in the world group could be destroyed correctly
      */
     public boolean destroyWorldGroup(@NotNull WorldGroup worldGroup) {
+        //TODO: add logic for when end or nether were never created in the first place.
         boolean success = destroyWorld(worldGroup.worldName());
         success = success && destroyWorld(worldGroup.worldName() + "_nether");
         success = success && destroyWorld(worldGroup.worldName() + "_the_end");

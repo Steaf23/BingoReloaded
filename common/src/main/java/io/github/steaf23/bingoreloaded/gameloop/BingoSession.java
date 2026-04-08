@@ -337,9 +337,15 @@ public class BingoSession implements ForwardingAudience
             // coming from the OW we can go to either the nether or the end
             if (target.dimension() == DimensionType.NETHER) {
                 // Nether
+                if (config.getOptionValue(BingoOptions.DISABLE_NETHER)) {
+                    return EventResults.playerMoveResult(true, false, null);
+                }
                 targetLocation.setWorld(worlds.getNetherWorld());
             } else if (target.dimension() == DimensionType.THE_END) {
                 // The End
+                if (config.getOptionValue(BingoOptions.DISABLE_THE_END)) {
+                    return EventResults.playerMoveResult(true, false, null);
+                }
                 targetLocation.setWorld(worlds.getEndWorld());
             } else {
                 ConsoleMessenger.bug("Could not catch player going through portal", this);

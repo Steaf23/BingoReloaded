@@ -85,6 +85,8 @@ public class BingoConfigurationData
         setOptionValueForce(BingoOptions.SHOW_PLAYER_IN_SCOREBOARD, name -> config.getBoolean(name, true));
         setOptionValueForce(BingoOptions.DISABLE_ADVANCEMENTS, name -> config.getBoolean(name, false));
         setOptionValueForce(BingoOptions.DISABLE_STATISTICS, name -> config.getBoolean(name, false));
+        setOptionValueForce(BingoOptions.DISABLE_NETHER, name -> config.getBoolean(name, false));
+        setOptionValueForce(BingoOptions.DISABLE_THE_END, name -> config.getBoolean(name, false));
         setOptionValueForce(BingoOptions.END_GAME_WITHOUT_TEAMS, name -> config.getBoolean(name, true));
         setOptionValueForce(BingoOptions.HOTSWAP_CONFIG, name -> new HotswapConfig(
                 config.getInt(name + "minimumExpirationTime", 3),
