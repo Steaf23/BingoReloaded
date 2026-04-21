@@ -30,8 +30,9 @@ import java.util.List;
 public class BingoCreatorMenu extends BasicMenu
 {
     private final BingoCardData cardsData;
-    public static final ItemTemplate CARD = new ItemTemplate(11, ItemTypePaper.of(Material.FILLED_MAP), BingoReloaded.applyTitleFormat("Edit Cards"), Component.text("Click to view and edit bingo cards!"));
-    public static final ItemTemplate LIST = new ItemTemplate(15, ItemTypePaper.of(Material.PAPER), BingoReloaded.applyTitleFormat("Edit Lists"), Component.text("Click to view and edit bingo lists!"));
+    public static final ItemTemplate CARD = new ItemTemplate(1, 1, ItemTypePaper.of(Material.FILLED_MAP), BingoReloaded.applyTitleFormat("Edit Cards"), Component.text("Click to view and edit bingo cards!"));
+    public static final ItemTemplate LIST = new ItemTemplate(4, 1, ItemTypePaper.of(Material.PAPER), BingoReloaded.applyTitleFormat("Edit Lists"), Component.text("Click to view and edit bingo lists!"));
+    public static final ItemTemplate TAGS = new ItemTemplate(7, 1, ItemTypePaper.of(Material.NAME_TAG), BingoReloaded.applyTitleFormat("Edit Tags"), Component.text("Click to view and edit task tags!"));
 
     private static final ItemType REMOVE_ICON = ItemTypePaper.of(Material.BARRIER);
     private static final ItemType COPY_ICON = ItemTypePaper.of(Material.SHULKER_SHELL);
@@ -43,12 +44,13 @@ public class BingoCreatorMenu extends BasicMenu
         this.cardsData = new BingoCardData();
         addAction(CARD, arguments -> createCardPicker().open(arguments.player()));
         addAction(LIST, arguments -> createListPicker().open(arguments.player()));
+        addAction(TAGS, arguments -> createTagPicker().open(arguments.player()));
     }
 
     private BasicMenu createCardPicker() {
         return new PaginatedSelectionMenu(getMenuBoard(), Component.text("Choose A Card"), new ArrayList<>(), FilterType.DISPLAY_NAME)
         {
-            private static final ItemTemplate CREATE_CARD = new ItemTemplate(51, ItemTypePaper.of(Material.EMERALD),
+            private static final ItemTemplate CREATE_CARD = new ItemTemplate(6, 5, ItemTypePaper.of(Material.EMERALD),
                     Component.text("New Card").color(NamedTextColor.GREEN).decorate(TextDecoration.BOLD));
 
             @Override
@@ -80,20 +82,18 @@ public class BingoCreatorMenu extends BasicMenu
     private BasicMenu createListPicker() {
         return new PaginatedSelectionMenu(getMenuBoard(), Component.text("Choose A List"), new ArrayList<>(), FilterType.DISPLAY_NAME)
         {
-            private static final ItemTemplate CREATE_LIST = new ItemTemplate(51, ItemTypePaper.of(Material.EMERALD),
+            private static final ItemTemplate CREATE_LIST = new ItemTemplate(6, 5, ItemTypePaper.of(Material.EMERALD),
                     Component.text("New List").color(NamedTextColor.GREEN).decorate(TextDecoration.BOLD));
 
             @Override
             public void beforeOpening(PlayerHandle player) {
-                TaskListData listsData = new TaskListData();
-
                 addAction(CREATE_LIST, p -> createList(player));
                 clearItems();
 
                 List<ItemTemplate> items = new ArrayList<>();
-                for (String list : listsData.getListNames()) {
+                for (String list : cardsData.lists().getListNames()) {
                     ItemTemplate item = new ItemTemplate(ItemTypePaper.of(Material.PAPER), Component.text(list),
-                            Component.text("This list contains " + listsData.getTaskCount(list) + " task(s)"))
+                            Component.text("This list contains " + cardsData.lists().getTaskCount(list) + " task(s)"))
                             .addDescription("input", 5, InventoryMenu.INPUT_RIGHT_CLICK.append(Component.text("more options")));
                     items.add(item);
                 }
@@ -109,6 +109,10 @@ public class BingoCreatorMenu extends BasicMenu
                 }
             }
         };
+    }
+
+    public BasicMenu createTagPicker() {
+        return new TagEditorMenu(getMenuBoard(), cardsData.tags());
     }
 
     public void createCard(PlayerHandle player) {

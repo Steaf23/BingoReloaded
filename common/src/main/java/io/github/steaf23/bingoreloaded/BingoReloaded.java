@@ -6,6 +6,7 @@ import io.github.steaf23.bingoreloaded.data.BingoSound;
 import io.github.steaf23.bingoreloaded.data.BingoStatData;
 import io.github.steaf23.bingoreloaded.data.BingoStatType;
 import io.github.steaf23.bingoreloaded.data.DefaultKitData;
+import io.github.steaf23.bingoreloaded.data.TaskTagData;
 import io.github.steaf23.bingoreloaded.data.TeamData;
 import io.github.steaf23.bingoreloaded.data.TexturedMenuData;
 import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
@@ -19,6 +20,7 @@ import io.github.steaf23.bingoreloaded.data.serializers.DefaultKitStorageSeriali
 import io.github.steaf23.bingoreloaded.data.serializers.GameRecordSerializer;
 import io.github.steaf23.bingoreloaded.data.serializers.ItemStorageSerializer;
 import io.github.steaf23.bingoreloaded.data.serializers.PlayerStorageSerializer;
+import io.github.steaf23.bingoreloaded.data.serializers.TaskTagStorageSerializer;
 import io.github.steaf23.bingoreloaded.data.serializers.TeamTemplateStorageSerializer;
 import io.github.steaf23.bingoreloaded.gameloop.GameManager;
 import io.github.steaf23.bingoreloaded.gameloop.SingularGameManager;
@@ -103,6 +105,7 @@ public class BingoReloaded implements Namespaced {
 		DataStorageSerializerRegistry.addSerializer(new GameTaskSerializer(), GameTask.class);
 		DataStorageSerializerRegistry.addSerializer(new BingoLobbySerializer(), BingoLobby.class);
 		DataStorageSerializerRegistry.addSerializer(new GameRecordSerializer(), GameRecord.class);
+		DataStorageSerializerRegistry.addSerializer(new TaskTagStorageSerializer(), TaskTagData.TaskTag.class);
 
 		// Create data accessors
 		addDataAccessor(new TagDataAccessor(platform, "data/cards", false));
@@ -117,6 +120,8 @@ public class BingoReloaded implements Namespaced {
 		addDataAccessor(new TagDataAccessor(platform, "data/players", false));
 		addDataAccessor(new TagDataAccessor(platform, "data/lobby", false));
 		addDataAccessor(new TagDataAccessor(platform, "data/history", false));
+		addDataAccessor(new TagDataAccessor(platform, "data/tags", false));
+		addDataAccessor(new TagDataAccessor(platform, "data/default_tags", true));
 		for (DataAccessor accessor : runtime.getDataToRegister()) { // platform specific data accessors
 			addDataAccessor(accessor);
 		}
@@ -259,6 +264,8 @@ public class BingoReloaded implements Namespaced {
 		getDataAccessor("data/players").load();
 		getDataAccessor("data/lobby").load();
 		getDataAccessor("data/history").load();
+		getDataAccessor("data/tags").load();
+		getDataAccessor("data/default_tags").load();
 	}
 
 	public void reloadLanguage() {
