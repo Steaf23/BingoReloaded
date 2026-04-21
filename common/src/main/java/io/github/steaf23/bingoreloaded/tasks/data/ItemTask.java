@@ -7,88 +7,88 @@ import io.github.steaf23.bingoreloaded.lib.util.ComponentUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
-public record ItemTask(ItemType itemType, int count) implements TaskData
-{
-    public ItemTask(ItemType itemType)
-    {
-        this(itemType, 1);
-    }
+public record ItemTask(ItemType itemType, int count, Set<String> tags) implements TaskData {
 
-    public ItemTask(ItemType itemType, int count)
-    {
-        this.itemType = itemType;
-        this.count = Math.min(64, Math.max(1, count));
-    }
+	public ItemTask(ItemType itemType) {
+		this(itemType, 1);
+	}
 
-    @Override
-    public TaskType getType() {
-        return TaskType.ITEM;
-    }
+	public ItemTask(ItemType itemType, int count) {
+		this(itemType, count, new HashSet<>());
+	}
 
-    @Override
-    public Component getName()
-    {
-        return Component.text().color(NamedTextColor.YELLOW)
-                .append(Component.text(count + "x "))
-                .append(ComponentUtils.itemName(itemType)).build();
-    }
+	public ItemTask(ItemType itemType, int count, Set<String> tags) {
+		this.itemType = itemType;
+		this.count = Math.clamp(count, 1, 64);
+		this.tags = tags;
+	}
 
-    @Override
-    public Component[] getItemDescription()
-    {
-        return BingoMessage.LORE_ITEM.asMultiline(NamedTextColor.DARK_AQUA, Component.text(count));
-    }
+	@Override
+	public TaskType getType() {
+		return TaskType.ITEM;
+	}
 
-    @Override
-    public Component getChatDescription()
-    {
-        return Component.text().append(getItemDescription()).build();
-    }
+	@Override
+	public Component getName() {
+		return Component.text().color(NamedTextColor.YELLOW)
+				.append(Component.text(count + "x "))
+				.append(ComponentUtils.itemName(itemType)).build();
+	}
 
-    @Override
-    public boolean shouldItemGlow() {
-        return false;
-    }
+	@Override
+	public Component[] getItemDescription() {
+		return BingoMessage.LORE_ITEM.asMultiline(NamedTextColor.DARK_AQUA, Component.text(count));
+	}
 
-    @Override
-    public ItemType getDisplayMaterial(CardDisplayInfo context) {
-        // There is no generic material for item tasks
-        return itemType;
-    }
+	@Override
+	public Component getChatDescription() {
+		return Component.text().append(getItemDescription()).build();
+	}
 
-    @Override
-    public int getRequiredAmount() {
-        return count;
-    }
+	@Override
+	public boolean shouldItemGlow() {
+		return false;
+	}
 
-    @Override
-    public TaskData setRequiredAmount(int newAmount) {
-        return new ItemTask(itemType, newAmount);
-    }
 
-    @Override
-    public boolean equals(Object o)
-    {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        ItemTask itemTask = (ItemTask) o;
-        return itemType.equals(itemTask.itemType);
-    }
+	@Override
+	public ItemType getDisplayMaterial(CardDisplayInfo context) {
+		// There is no generic material for item tasks
+		return itemType;
+	}
 
-    @Override
-    public int hashCode()
-    {
-        return Objects.hashCode(itemType);
-    }
+	@Override
+	public int getRequiredAmount() {
+		return count;
+	}
 
-    @Override
-    public boolean isTaskEqual(TaskData other)
-    {
-        if (!(other instanceof ItemTask itemTask))
-            return false;
+	@Override
+	public TaskData setRequiredAmount(int newAmount) {
+		return new ItemTask(itemType, newAmount, tags);
+	}
 
-        return itemType.equals(itemTask.itemType);
-    }
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		ItemTask itemTask = (ItemTask) o;
+		return itemType.equals(itemTask.itemType);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hashCode(itemType);
+	}
+
+	@Override
+	public boolean isTaskEqual(TaskData other) {
+		if (!(other instanceof ItemTask itemTask))
+			return false;
+
+		return itemType.equals(itemTask.itemType);
+	}
 }

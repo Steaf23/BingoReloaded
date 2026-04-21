@@ -40,6 +40,7 @@ public class TaskPickerMenu extends PaginatedDataMenu<GameTask> {
 			case SHIFT_LEFT -> incrementItemCount(clickedOption, 10);
 			case RIGHT -> decrementItemCount(clickedOption, 1);
 			case SHIFT_RIGHT -> decrementItemCount(clickedOption, 10);
+			case MIDDLE -> tagItem(clickedOption, "nether");
 		}
 	}
 
@@ -55,6 +56,12 @@ public class TaskPickerMenu extends PaginatedDataMenu<GameTask> {
 
 		item.setLore(gameTask.data.getItemDescription());
 		item.addDescription("selected", 5, addedLore);
+
+		Component tagsLore = Component.empty();
+		for (String tag : gameTask.data.tags()) {
+			tagsLore = tagsLore.append(Component.text("<" + tag + ">").color(NamedTextColor.RED));
+		}
+		item.addDescription("tags", 10, tagsLore);
 		return item;
 	}
 
@@ -112,6 +119,16 @@ public class TaskPickerMenu extends PaginatedDataMenu<GameTask> {
 
 		item.data = item.data.setRequiredAmount(newAmount);
 		selectItem(item, true);
+	}
+
+	public void tagItem(GameTask item, String newTag) {
+		if (item.data.tags().contains(newTag)) {
+			item.data.tags().remove(newTag);
+		} else {
+			item.data.tags().add(newTag);
+		}
+
+		updatePage();
 	}
 
 	public void decrementItemCount(GameTask item, int by) {

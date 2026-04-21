@@ -5,12 +5,17 @@ import io.github.steaf23.bingoreloaded.lib.api.StatisticHandle;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataStorage;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataStorageSerializer;
+import io.github.steaf23.bingoreloaded.lib.data.core.tag.TagDataType;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.HashSet;
+import java.util.Set;
 
 public class TaskStorageSerializer implements DataStorageSerializer<TaskData>
 {
     @Override
     public void toDataStorage(@NotNull DataStorage storage, @NotNull TaskData value) {
+        storage.setList("tags", TagDataType.STRING, value.tags().stream().toList());
         switch (value) {
             case ItemTask itemTask -> {
                 storage.setNamespacedKey("item", itemTask.itemType().key());
@@ -32,19 +37,24 @@ public class TaskStorageSerializer implements DataStorageSerializer<TaskData>
 
     @Override
     public TaskData fromDataStorage(@NotNull DataStorage storage) {
+        Set<String> tags = new HashSet<>(storage.getList("tags", TagDataType.STRING));
+
         if (storage.contains("item")) {
             return new ItemTask(ItemType.of(
                     storage.getNamespacedKey("item")),
-                    storage.getInt("count", 1));
+                    storage.getInt("count", 1),
+                    tags);
         }
         else if (storage.contains("advancement")) {
             return new AdvancementTask(AdvancementHandle.of(
-                    storage.getNamespacedKey("advancement")));
+                    storage.getNamespacedKey("advancement")),
+                    tags);
         }
         else if (storage.contains("statistic")) {
             return new StatisticTask(
                     storage.getSerializable("statistic", StatisticHandle.class),
-                    storage.getInt("count", 1));
+                    storage.getInt("count", 1),
+                    tags);
         }
 
         throw new IllegalArgumentException("Task type not found while reading game task from file!");

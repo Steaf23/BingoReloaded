@@ -12,6 +12,7 @@ import io.github.steaf23.bingoreloaded.settings.BingoSettings;
 import io.github.steaf23.bingoreloaded.tasks.TaskGenerator;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class CardFactory
@@ -34,7 +35,13 @@ public class CardFactory
 
     public static Set<TaskCard> generateCardsForGame(BingoGame game, boolean includeAdvancements, boolean includeStatistics) {
         BingoSettings settings = game.getSettings();
-        TaskGenerator.GeneratorSettings generatorSettings = new TaskGenerator.GeneratorSettings(settings.card(), settings.seed(), includeAdvancements, includeStatistics, settings.size());
+        TaskGenerator.GeneratorSettings generatorSettings = new TaskGenerator.GeneratorSettings(
+                settings.card(),
+                settings.seed(),
+                includeAdvancements,
+                includeStatistics,
+                settings.size(),
+                game.getConfig().getOptionValue(BingoOptions.DISABLE_NETHER) ? Set.of("nether") : Set.of());
 
         Set<TaskCard> uniqueCards = new HashSet<>();
 

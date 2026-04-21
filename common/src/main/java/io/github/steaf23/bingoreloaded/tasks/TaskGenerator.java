@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 public class TaskGenerator
 {
@@ -22,7 +23,8 @@ public class TaskGenerator
             int seed,
             boolean includeAdvancements,
             boolean includeStatistics,
-            CardSize size) {}
+            CardSize size,
+            Set<String> blacklistedTags) {}
 
     private static final TaskData DEFAULT_TASK = new ItemTask(ItemType.of("dirt"), 1);
 
@@ -49,6 +51,7 @@ public class TaskGenerator
         Map<String, List<TaskData>> taskMap = new HashMap<>();
         for (String listName : cardsData.getListNames(settings.cardName)) {
             List<TaskData> tasks = new ArrayList<>(listsData.getTasks(listName, settings.includeStatistics, settings.includeAdvancements));
+            tasks = new ArrayList<>(tasks.stream().filter(taskData -> !taskData.hasAnyTag(settings.blacklistedTags)).toList());
             if (!tasks.isEmpty()) {
                 Collections.shuffle(tasks, shuffler);
                 taskMap.put(listName, tasks);
