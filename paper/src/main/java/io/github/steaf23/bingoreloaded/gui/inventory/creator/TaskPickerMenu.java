@@ -56,12 +56,6 @@ public class TaskPickerMenu extends PaginatedDataMenu<GameTask> {
 
 		item.setLore(gameTask.data.getItemDescription());
 		item.addDescription("selected", 5, addedLore);
-
-		Component tagsLore = Component.empty();
-		for (String tag : gameTask.data.tags()) {
-			tagsLore = tagsLore.append(Component.text("<" + tag + ">").color(NamedTextColor.RED));
-		}
-		item.addDescription("tags", 10, tagsLore);
 		return item;
 	}
 

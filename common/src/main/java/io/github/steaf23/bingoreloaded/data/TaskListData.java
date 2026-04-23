@@ -4,12 +4,11 @@ import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataAccessor;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataStorage;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
-import io.github.steaf23.bingoreloaded.tasks.data.AdvancementTask;
-import io.github.steaf23.bingoreloaded.tasks.data.StatisticTask;
 import io.github.steaf23.bingoreloaded.tasks.data.TaskData;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -35,6 +34,17 @@ public class TaskListData
 
     public Set<TaskData> getTasks(String listName, boolean withStatistics, boolean withAdvancements)
     {
+        EnumSet<TaskData.TaskType> types = EnumSet.of(TaskData.TaskType.ITEM);
+        if (withAdvancements) {
+            types.add(TaskData.TaskType.ADVANCEMENT);
+        }
+        if (withStatistics) {
+            types.add(TaskData.TaskType.STATISTIC);
+        }
+        return getTasks(listName, types);
+    }
+
+    public Set<TaskData> getTasks(String listName, EnumSet<TaskData.TaskType> allowedTypes) {
         Collection<TaskData> tasks;
         if (defaultData.contains(listName + ".tasks")) {
             tasks = defaultData.getSerializableList(listName + ".tasks", TaskData.class);
@@ -44,10 +54,7 @@ public class TaskListData
             return new HashSet<>();
         }
 
-        return tasks.stream().filter((i ->
-                (i != null) && // don't parse empty (invalid) tasks
-                !(i instanceof StatisticTask && !withStatistics) &&
-                !(i instanceof AdvancementTask && !withAdvancements))).collect(Collectors.toSet());
+        return tasks.stream().filter((i -> i != null && allowedTypes.contains(i.getType()))).collect(Collectors.toSet());
     }
 
     public int getTaskCount(String listName)

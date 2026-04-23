@@ -12,7 +12,6 @@ import io.github.steaf23.bingoreloaded.settings.BingoSettings;
 import io.github.steaf23.bingoreloaded.tasks.TaskGenerator;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 public class CardFactory

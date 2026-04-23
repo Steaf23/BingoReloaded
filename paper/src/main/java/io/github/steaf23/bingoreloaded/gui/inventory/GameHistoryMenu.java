@@ -7,8 +7,8 @@ import io.github.steaf23.bingoreloaded.lib.api.PlatformResolver;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemTypePaper;
 import io.github.steaf23.bingoreloaded.lib.inventory.BasicMenu;
-import io.github.steaf23.bingoreloaded.lib.inventory.action.MenuAction;
 import io.github.steaf23.bingoreloaded.lib.inventory.group.PaginatedGroup;
+import io.github.steaf23.bingoreloaded.lib.inventory.group.ScrollableItemBar;
 import io.github.steaf23.bingoreloaded.lib.inventory.group.StackedGroup;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import io.github.steaf23.bingoreloaded.lib.util.PlayerDisplayTranslationKey;
@@ -43,7 +43,7 @@ public class GameHistoryMenu extends BasicMenu {
 		}
 	}
 
-	private record Category(MenuAction action, BingoGamemode mode) {
+	private record Category(ItemTemplate item, BingoGamemode mode) {
 
 	}
 
@@ -67,16 +67,17 @@ public class GameHistoryMenu extends BasicMenu {
 	);
 
 	private final GameRecordData historyData;
-	private final List<Category> categories = new ArrayList<>();
-	private int categoryOffset = 0;
+	private final ScrollableItemBar<Category> categories = new ScrollableItemBar<>(this, 0, 0, 9, ScrollableItemBar.SelectMode.SINGLE);
 	private final StackedGroup stack;
 
 	public GameHistoryMenu(MenuBoard manager, GameRecordData historyData) {
 		super(manager, Component.text("Game History"), 6);
 		this.historyData = historyData;
+		this.categories.setItemClickedCallback((idx, item, category) -> showCategory(idx, category));
 
 		Map<UUID, BingoSettings> settingIds = historyData.getSettings();
 
+		List<Category> categoryData = new ArrayList<>();
 		stack = new StackedGroup(1, 2, 7, 4);
 		// Sort settings by gamemode
 		int i = 0;
@@ -95,13 +96,6 @@ public class GameHistoryMenu extends BasicMenu {
 				return false;
 			});
 			BingoSettings settings = settingIds.get(group.getFirst());
-			int pageIndex = i;
-			MenuAction action = new MenuAction() {
-				@Override
-				public void use(ActionArguments arguments) {
-					showCategory(pageIndex);
-				}
-			};
 
 			StackedGroup categoriesStack = new StackedGroup(1, 2, 7, 4);
 			for (ScoreCondition condition : SCORE_CONDITIONS_PER_MODE.get(settings.mode())) {
@@ -170,10 +164,13 @@ public class GameHistoryMenu extends BasicMenu {
 					Component.empty(),
 					Component.empty().append(BasicMenu.INPUT_LEFT_CLICK).append(Component.text("View Scoreboard").color(TextColor.fromHexString("#ff661c")).decorate(TextDecoration.BOLD)))
 					.setLeatherColor(settings.mode().getColor());
-			action.setItem(item);
-			categories.add(new Category(action, settings.mode()));
+			categoryData.add(new Category(item, settings.mode()));
 			i++;
 		}
+
+		categories.setItems(categoryData.stream()
+				.map(Category::item)
+				.toList(), categoryData);
 
 		for (int j = 0; j < 9; j++) {
 			addItem(BasicMenu.BLANK.copyToSlot(j, 1));
@@ -187,7 +184,9 @@ public class GameHistoryMenu extends BasicMenu {
 			addItem(BasicMenu.BLANK.copyToSlot(8, k));
 		}
 
-		showCategory(0);
+		categories.updateVisibleItems(this);
+
+		showCategory(0, categoryData.getFirst());
 	}
 
 	private void onScoresClicked(GameRecord record) {
@@ -260,38 +259,8 @@ public class GameHistoryMenu extends BasicMenu {
 		}
 	}
 
-	private void addScrollingCategories() {
-		if (categories.size() <= 9) {
-			for (int idx = 0; idx < categories.size(); idx++) {
-				ItemTemplate item = categories.get(idx).action().item().copyToSlot(idx);
-				addItem(item, categories.get(idx).action());
-			}
-			return;
-		}
+	private void showCategory(int pageIndex, Category current) {
 
-		addAction(NEXT, args -> scrollCategories(1));
-		addAction(PREVIOUS, args -> scrollCategories(-1));
-		for (int i = 0; i < 7; i++) {
-			int offsetIndex = (i + categoryOffset) % categories.size();
-			ItemTemplate item = categories.get(offsetIndex).action().item().copyToSlot(i + 1);
-			addItem(item, categories.get(offsetIndex).action());
-		}
-	}
-
-	void scrollCategories(int by) {
-		categoryOffset = Math.clamp(categoryOffset + by, 0, categories.size() - 7);
-		addScrollingCategories();
-	}
-
-	public void showCategory(int pageIndex) {
-		for (Category category : categories) {
-			category.action().item().setGlowing(false);
-		}
-
-		Category current = categories.get(pageIndex);
-		current.action().item().setGlowing(true);
-
-		addScrollingCategories();
 		stack.setCurrentGroup(GameHistoryMenu.this, pageIndex);
 		if (!(stack.getCurrentGroup() instanceof StackedGroup categoryGroup)) {
 			return;
@@ -306,7 +275,7 @@ public class GameHistoryMenu extends BasicMenu {
 		updatePageNavigation(categoryGroup, paginatedGroup, current.mode());
 	}
 
-	public void updatePageNavigation(StackedGroup categoryPage, PaginatedGroup<?> page, BingoGamemode mode) {
+	private void updatePageNavigation(StackedGroup categoryPage, PaginatedGroup<?> page, BingoGamemode mode) {
 		int currentPage = page.getCurrentPage();
 		int pageCount = page.getPageCount();
 		Component pageCountDesc = Component.text(String.format("%02d", currentPage + 1) + "/" + String.format("%02d", pageCount));
