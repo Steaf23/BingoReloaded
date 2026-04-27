@@ -100,7 +100,7 @@ public class GameHistoryMenu extends BasicMenu {
 
 			StackedGroup categoriesStack = new StackedGroup(1, 2, 7, 4);
 			for (ScoreCondition condition : SCORE_CONDITIONS_PER_MODE.get(settings.mode())) {
-				PaginatedGroup<GameRecord> scores = new PaginatedGroup<>(1, 2, 7, 4, null);
+				PaginatedGroup<GameRecord> scores = new PaginatedGroup<>(1, 2, 7, 4, null, SelectionModel.SelectMode.MULTIPLE_OR_NONE, false);
 
 				List<GameRecord> orderedByCondition = records.stream()
 						.sorted(condition.comparator)
@@ -143,12 +143,15 @@ public class GameHistoryMenu extends BasicMenu {
 
 					templates.add(new ItemTemplate(type, Component.empty()
 							.append(Component.text("#" + place + " - ").color(color).decorate(TextDecoration.BOLD))
-							.append(Component.text(score).decorate(TextDecoration.ITALIC)), description)
-							.setGlowing(place <= 3));
+							.append(Component.text(score).decorate(TextDecoration.ITALIC)), description));
 					place += 1;
 				}
 
 				scores.setItems(templates, orderedByCondition);
+				// Select the first 3 places to make them shiny.
+				for (int j = 0; j < Math.min(templates.size(), 3); j++) {
+					scores.selection().toggleSlot(j);
+				}
 				categoriesStack.addGroup(scores);
 			}
 

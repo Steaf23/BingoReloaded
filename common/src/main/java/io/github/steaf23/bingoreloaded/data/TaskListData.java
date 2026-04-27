@@ -44,6 +44,10 @@ public class TaskListData
         return getTasks(listName, types);
     }
 
+    public Set<TaskData> getTasks(String listName) {
+        return getTasks(listName, EnumSet.allOf(TaskData.TaskType.class));
+    }
+
     public Set<TaskData> getTasks(String listName, EnumSet<TaskData.TaskType> allowedTypes) {
         Collection<TaskData> tasks;
         if (defaultData.contains(listName + ".tasks")) {

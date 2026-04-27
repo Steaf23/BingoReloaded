@@ -30,12 +30,11 @@ import java.util.Set;
 public class TagManagerMenu extends BasicMenu {
 
 	private final String listName;
-	private final TaskData.TaskType taskType;
 	private final BingoCardData cardData;
 
 	private Map<String, TaskTagData.TaskTag> availableTags = new HashMap<>();
 	private final ScrollableItemBar<String> tagBar = new ScrollableItemBar<>(this, 0, 0, 9, SelectionModel.SelectMode.SINGLE);
-	private final PaginatedGroup<GameTask> taskGroup = new PaginatedGroup<>(1, 2, 7, 4, this::onTaskClicked, SelectionModel.SelectMode.MULTIPLE_OR_NONE);
+	private final PaginatedGroup<GameTask> taskGroup = new PaginatedGroup<>(1, 2, 7, 4, this::onTaskClicked, SelectionModel.SelectMode.MULTIPLE_OR_NONE, true);
 
 	private static final ItemTemplate NEXT = new ItemTemplate(0, ItemTypePaper.of(Material.STRUCTURE_VOID),
 			PlayerDisplayTranslationKey.MENU_NEXT.translate()
@@ -45,9 +44,8 @@ public class TagManagerMenu extends BasicMenu {
 			PlayerDisplayTranslationKey.MENU_PREVIOUS.translate()
 					.color(NamedTextColor.LIGHT_PURPLE).decorate(TextDecoration.BOLD));
 
-	public TagManagerMenu(MenuBoard manager, TaskData.TaskType taskType, String listName) {
+	public TagManagerMenu(MenuBoard manager, String listName) {
 		super(manager, Component.text("Manage task tags"), 6);
-		this.taskType = taskType;
 		this.listName = listName;
 		this.cardData = new BingoCardData();
 	}
@@ -56,7 +54,7 @@ public class TagManagerMenu extends BasicMenu {
 	public void beforeOpening(PlayerHandle player) {
 		super.beforeOpening(player);
 
-		Set<TaskData> tasks = cardData.lists().getTasks(listName, EnumSet.of(taskType));
+		Set<TaskData> tasks = cardData.lists().getTasks(listName);
 		TaskTagData data = new BingoCardData().tags();
 
 		availableTags = data.getAllTags();

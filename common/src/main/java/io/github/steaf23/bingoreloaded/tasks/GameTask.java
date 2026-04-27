@@ -97,7 +97,7 @@ public class GameTask
         }
         else // DEFAULT TASK
         {
-            item = new ItemTemplate(icon(displayInfo), data.getName(), data.getItemDescription());
+            item = new ItemTemplate(icon(displayInfo), data.getName(), data.getItemDescription()).setDummy(true);
             item.setAmount(data.getRequiredAmount());
         }
 

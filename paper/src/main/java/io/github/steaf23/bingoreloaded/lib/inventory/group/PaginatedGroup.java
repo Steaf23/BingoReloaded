@@ -21,15 +21,17 @@ public class PaginatedGroup<Data> extends ItemGroup {
 
 	private int currentPage = 0;
 	private final SelectionModel selection;
+	private final boolean allowUserSelection;
 
 	public PaginatedGroup(int startX, int startY, int sizeX, int sizeY, @Nullable BiConsumer<Integer, Data> dataClicked) {
-		this(startX, startY, sizeX, sizeY, dataClicked, SelectionModel.SelectMode.NONE);
+		this(startX, startY, sizeX, sizeY, dataClicked, SelectionModel.SelectMode.NONE, false);
 	}
 
-	public PaginatedGroup(int startX, int startY, int sizeX, int sizeY, @Nullable BiConsumer<Integer, Data> dataClicked, SelectionModel.SelectMode selectMode) {
+	public PaginatedGroup(int startX, int startY, int sizeX, int sizeY, @Nullable BiConsumer<Integer, Data> dataClicked, SelectionModel.SelectMode selectMode, boolean allowUserSelection) {
 		super(startX, startY, sizeX, sizeY);
 		this.dataClickedCallback = Objects.requireNonNullElse(dataClicked, (slot, data) -> {});
 		this.selection = new SelectionModel(selectMode, () -> !allData.isEmpty());
+		this.allowUserSelection = allowUserSelection;
 	}
 
 	public void setItems(List<ItemTemplate> items, List<Data> data) {
@@ -108,7 +110,9 @@ public class PaginatedGroup<Data> extends ItemGroup {
 
 	public void onClick(MenuAction.ActionArguments arguments, int groupSlotIndex, Data data) {
 		int indexInList = currentPage * rect().getSlotCount() + groupSlotIndex;
-		selection.toggleSlot(indexInList);
+		if (allowUserSelection) {
+			selection.toggleSlot(indexInList);
+		}
 
 		if (arguments.clickType() == ClickType.LEFT) {
 			dataClickedCallback.accept(indexInList, data);
