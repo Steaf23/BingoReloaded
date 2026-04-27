@@ -11,18 +11,9 @@ import org.bukkit.Material;
 import org.bukkit.event.inventory.ClickType;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class ScrollableItemBar<Data> extends ItemGroup {
-
-	public enum SelectMode {
-		NONE,
-		SINGLE_OR_NONE,
-		SINGLE,
-		MULTIPLE_OR_NONE,
-	}
 
 	private static final ItemTemplate NEXT = new ItemTemplate(ItemTypePaper.of(Material.STRUCTURE_VOID),
 			PlayerDisplayTranslationKey.MENU_NEXT.translate()
@@ -32,30 +23,25 @@ public class ScrollableItemBar<Data> extends ItemGroup {
 			PlayerDisplayTranslationKey.MENU_PREVIOUS.translate()
 					.color(NamedTextColor.LIGHT_PURPLE).decorate(TextDecoration.BOLD));
 
-	private final SelectMode selectMode;
-	private final Set<Integer> selectedIndices = new HashSet<>();
-
 	private ItemClickedCallback<Data> itemClickedCallback = (idx, item, data) -> {};
 	private List<ItemTemplate> items = new ArrayList<>();
 	private List<Data> data = new ArrayList<>();
 	private int scrollOffset = 0;
 	private final BasicMenu menu;
+	private final SelectionModel selection;
 
-	public ScrollableItemBar(BasicMenu menu, int startX, int startY, int length, SelectMode selectMode) {
+	public ScrollableItemBar(BasicMenu menu, int startX, int startY, int length, SelectionModel.SelectMode selectMode) {
 		super(new ItemRect(startX, startY, length, 1));
-		this.selectMode = selectMode;
 		this.menu = menu;
+		this.selection = new SelectionModel(selectMode, () -> !data.isEmpty());
 	}
 
 	public void setItems(List<ItemTemplate> items, List<Data> data) {
 		this.items = items;
 		this.data = data;
 		this.scrollOffset = 0;
-		this.selectedIndices.clear();
+		this.selection.reset();
 
-		if (selectMode == SelectMode.SINGLE && !items.isEmpty()) {
-			selectedIndices.add(0);
-		}
 		updateVisibleItems(menu);
 	}
 
@@ -70,7 +56,7 @@ public class ScrollableItemBar<Data> extends ItemGroup {
 			int idx = 0;
 			for (ItemTemplate item : items) {
 				int itemIdx = idx;
-				menu.addAction(item.copyToSlot(rect().startX() + idx, rect().startY()).setGlowing(selectedIndices.contains(itemIdx)), args -> {
+				menu.addAction(item.copyToSlot(rect().startX() + idx, rect().startY()).setGlowing(selection.contains(itemIdx)), args -> {
 					if (args.clickType() == ClickType.LEFT) {
 						onClick(item, itemIdx);
 					}
@@ -91,7 +77,7 @@ public class ScrollableItemBar<Data> extends ItemGroup {
 					ItemTemplate item = items.get(indexOfItemInList);
 					menu.addAction(item
 							.copyToSlot(rect().startX() + i + 1, rect().startY())
-							.setGlowing(selectedIndices.contains(indexOfItemInList)), args -> {
+							.setGlowing(selection.selectedSlots().contains(indexOfItemInList)), args -> {
 						if (args.clickType() == ClickType.LEFT) {
 							onClick(item, indexOfItemInList);
 						}
@@ -110,27 +96,7 @@ public class ScrollableItemBar<Data> extends ItemGroup {
 	}
 
 	public void onClick(ItemTemplate item, int itemIdx) {
-		switch (selectMode) {
-			case SINGLE -> {
-				selectedIndices.clear();
-				selectedIndices.add(itemIdx);
-			}
-			case SINGLE_OR_NONE -> {
-				if (selectedIndices.contains(itemIdx)) {
-					selectedIndices.clear();
-				} else {
-					selectedIndices.clear();
-					selectedIndices.add(itemIdx);
-				}
-			}
-			case MULTIPLE_OR_NONE -> {
-				if (selectedIndices.contains(itemIdx)) {
-					selectedIndices.remove(itemIdx);
-				} else {
-					selectedIndices.add(itemIdx);
-				}
-			}
-		}
+		selection.toggleSlot(itemIdx - scrollOffset);
 
 		itemClickedCallback.execute(itemIdx, item, data.get(itemIdx));
 		PlatformResolver.get().runTask(t -> {
@@ -138,13 +104,9 @@ public class ScrollableItemBar<Data> extends ItemGroup {
 		});
 	}
 
-	public Set<Integer> selectedItems() {
-		return selectedIndices;
-	}
-
 	public List<Data> selectedData() {
 		List<Data> dataSet = new ArrayList<>();
-		for (int idx : selectedIndices) {
+		for (int idx : selection.selectedSlots()) {
 			dataSet.add(data.get(idx));
 		}
 		return dataSet;
@@ -154,5 +116,4 @@ public class ScrollableItemBar<Data> extends ItemGroup {
 	public interface ItemClickedCallback<Data> {
 		void execute(int index, ItemTemplate item, Data data);
 	}
-
 }

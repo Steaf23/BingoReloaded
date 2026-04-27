@@ -4,24 +4,32 @@ import io.github.steaf23.bingoreloaded.lib.inventory.BasicMenu;
 import io.github.steaf23.bingoreloaded.lib.inventory.action.MenuAction;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import org.bukkit.event.inventory.ClickType;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.function.Consumer;
+import java.util.Objects;
+import java.util.function.BiConsumer;
 
 public class PaginatedGroup<Data> extends ItemGroup {
 
 	private final List<ItemTemplate> allItems = new ArrayList<>();
 	private final List<Data> allData = new ArrayList<>();
 
-	private final Consumer<Data> dataClickedCallback;
+	private final BiConsumer<Integer, Data> dataClickedCallback;
 
 	private int currentPage = 0;
+	private final SelectionModel selection;
 
-	public PaginatedGroup(int startX, int startY, int sizeX, int sizeY, Consumer<Data> dataClicked) {
+	public PaginatedGroup(int startX, int startY, int sizeX, int sizeY, @Nullable BiConsumer<Integer, Data> dataClicked) {
+		this(startX, startY, sizeX, sizeY, dataClicked, SelectionModel.SelectMode.NONE);
+	}
+
+	public PaginatedGroup(int startX, int startY, int sizeX, int sizeY, @Nullable BiConsumer<Integer, Data> dataClicked, SelectionModel.SelectMode selectMode) {
 		super(startX, startY, sizeX, sizeY);
-		this.dataClickedCallback = dataClicked;
+		this.dataClickedCallback = Objects.requireNonNullElse(dataClicked, (slot, data) -> {});
+		this.selection = new SelectionModel(selectMode, () -> !allData.isEmpty());
 	}
 
 	public void setItems(List<ItemTemplate> items, List<Data> data) {
@@ -30,6 +38,7 @@ public class PaginatedGroup<Data> extends ItemGroup {
 
 		allData.clear();
 		allData.addAll(data);
+		selection.reset();
 	}
 
 	public int getPageCount() {
@@ -45,6 +54,10 @@ public class PaginatedGroup<Data> extends ItemGroup {
 		updateVisibleItems(menu);
 	}
 
+	public SelectionModel selection() {
+		return selection;
+	}
+
 	public void nextPage(BasicMenu menu) {
 		setPage(menu, currentPage + 1);
 	}
@@ -53,6 +66,24 @@ public class PaginatedGroup<Data> extends ItemGroup {
 		setPage(menu, currentPage - 1);
 	}
 
+	public List<ItemTemplate> allItems() {
+		return allItems;
+	}
+
+	public List<Data> allData()
+	{
+		return allData;
+	}
+
+	public void setItem(int idx, Data newData, ItemTemplate newItem) {
+		if (idx >= allItems.size())
+		{
+			return;
+		}
+
+		allData.set(idx, newData);
+		allItems.set(idx, newItem);
+	}
 
 	@Override
 	public void updateVisibleItems(BasicMenu menu) {
@@ -61,9 +92,10 @@ public class PaginatedGroup<Data> extends ItemGroup {
 
 		int itemIdx = currentPage * rect().getSlotCount();
 		for (ItemTemplate item : items) {
-			int slotIdx = pageIndexToGlobal(itemIdx % rect().getSlotCount());
+			int groupSlot = itemIdx % rect().getSlotCount();
+			int slotIdx = pageIndexToGlobal(groupSlot);
 			Data data = allData.get(itemIdx);
-			menu.addAction(item.copyToSlot(slotIdx), args -> onClick(args, data));
+			menu.addAction(item.copyToSlot(slotIdx).setGlowing(selection.contains(itemIdx)), args -> onClick(args, groupSlot, data));
 			itemIdx++;
 		}
 
@@ -74,16 +106,18 @@ public class PaginatedGroup<Data> extends ItemGroup {
 		}
 	}
 
-	public void onClick(MenuAction.ActionArguments arguments, Data data) {
+	public void onClick(MenuAction.ActionArguments arguments, int groupSlotIndex, Data data) {
+		int indexInList = currentPage * rect().getSlotCount() + groupSlotIndex;
+		selection.toggleSlot(indexInList);
+
 		if (arguments.clickType() == ClickType.LEFT) {
-			dataClickedCallback.accept(data);
+			dataClickedCallback.accept(indexInList, data);
 		}
 	}
 
 	public int getCurrentPage() {
 		return currentPage;
 	}
-
 
 	public Collection<ItemTemplate> getItems() {
 		if (allItems.isEmpty()) {
@@ -106,5 +140,13 @@ public class PaginatedGroup<Data> extends ItemGroup {
 		int localX = index % rect().sizeX();
 		int localY = index / rect().sizeX();
 		return rect().toGlobal(localX, localY);
+	}
+
+	public List<Data> allSelectedData() {
+		List<Data> data = new ArrayList<>();
+		for (int slot : selection().selectedSlots()) {
+			data.add(allData.get(slot));
+		}
+		return data;
 	}
 }

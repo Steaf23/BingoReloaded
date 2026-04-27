@@ -9,6 +9,7 @@ import io.github.steaf23.bingoreloaded.lib.api.item.ItemTypePaper;
 import io.github.steaf23.bingoreloaded.lib.inventory.BasicMenu;
 import io.github.steaf23.bingoreloaded.lib.inventory.group.PaginatedGroup;
 import io.github.steaf23.bingoreloaded.lib.inventory.group.ScrollableItemBar;
+import io.github.steaf23.bingoreloaded.lib.inventory.group.SelectionModel;
 import io.github.steaf23.bingoreloaded.lib.inventory.group.StackedGroup;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import io.github.steaf23.bingoreloaded.lib.util.PlayerDisplayTranslationKey;
@@ -67,7 +68,7 @@ public class GameHistoryMenu extends BasicMenu {
 	);
 
 	private final GameRecordData historyData;
-	private final ScrollableItemBar<Category> categories = new ScrollableItemBar<>(this, 0, 0, 9, ScrollableItemBar.SelectMode.SINGLE);
+	private final ScrollableItemBar<Category> categories = new ScrollableItemBar<>(this, 0, 0, 9, SelectionModel.SelectMode.SINGLE);
 	private final StackedGroup stack;
 
 	public GameHistoryMenu(MenuBoard manager, GameRecordData historyData) {
@@ -99,7 +100,7 @@ public class GameHistoryMenu extends BasicMenu {
 
 			StackedGroup categoriesStack = new StackedGroup(1, 2, 7, 4);
 			for (ScoreCondition condition : SCORE_CONDITIONS_PER_MODE.get(settings.mode())) {
-				PaginatedGroup<GameRecord> scores = new PaginatedGroup<>(1, 2, 7, 4, this::onScoresClicked);
+				PaginatedGroup<GameRecord> scores = new PaginatedGroup<>(1, 2, 7, 4, null);
 
 				List<GameRecord> orderedByCondition = records.stream()
 						.sorted(condition.comparator)
@@ -187,10 +188,6 @@ public class GameHistoryMenu extends BasicMenu {
 		categories.updateVisibleItems(this);
 
 		showCategory(0, categoryData.getFirst());
-	}
-
-	private void onScoresClicked(GameRecord record) {
-
 	}
 
 	private List<List<UUID>> groupSettingsByMode(Map<UUID, BingoSettings> allSettings) {
