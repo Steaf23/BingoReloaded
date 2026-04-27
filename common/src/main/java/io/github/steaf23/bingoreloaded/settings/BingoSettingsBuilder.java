@@ -2,6 +2,7 @@ package io.github.steaf23.bingoreloaded.settings;
 
 import io.github.steaf23.bingoreloaded.cards.CardSize;
 import io.github.steaf23.bingoreloaded.data.BingoSettingsData;
+import io.github.steaf23.bingoreloaded.data.record.BingoCard;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gameloop.vote.VoteTicket;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
@@ -11,11 +12,12 @@ import io.github.steaf23.bingoreloaded.settings.gamemode.BingoGamemodes;
 
 import java.util.EnumSet;
 import java.util.Objects;
+import java.util.Set;
 
 public class BingoSettingsBuilder {
 
 	private final BingoSession session;
-	private String card;
+	private BingoCard card;
 	private BingoGamemode mode;
 	private CardSize cardSize;
 	private int cardSeed;
@@ -88,7 +90,7 @@ public class BingoSettingsBuilder {
 
 		String newCard = VoteTicket.CATEGORY_CARD.getValidResultOrNull(voteResult);
 		if (newCard != null) {
-			resultBuilder.card = newCard;
+			resultBuilder.card = new BingoCard(newCard, resultBuilder.card.excludedTags());
 		}
 
 		CardSize newCardsize = VoteTicket.CATEGORY_CARDSIZE.getValidResultOrNull(voteResult);
@@ -99,9 +101,17 @@ public class BingoSettingsBuilder {
 		return resultBuilder;
 	}
 
-	public BingoSettingsBuilder card(String card) {
-		if (!Objects.equals(this.card, card)) {
-			this.card = card;
+	public BingoSettingsBuilder cardName(String card) {
+		if (!Objects.equals(this.card.cardName(), card)) {
+			this.card = new BingoCard(card, this.card.excludedTags());
+			settingsUpdated();
+		}
+		return this;
+	}
+
+	public BingoSettingsBuilder excludedTags(Set<String> tags) {
+		if (!Objects.equals(this.card.excludedTags(), tags)) {
+			this.card = new BingoCard(this.card.cardName(), tags);
 			settingsUpdated();
 		}
 		return this;

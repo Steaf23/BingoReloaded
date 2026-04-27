@@ -5,14 +5,12 @@ import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataAccessor;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataStorage;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
-import io.github.steaf23.bingoreloaded.tasks.data.ItemTask;
 import io.github.steaf23.bingoreloaded.tasks.data.TaskData;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Random;
 import java.util.Set;
 
 public class BingoCardData {
@@ -91,35 +89,13 @@ public class BingoCardData {
 		data.erase(cardName + "." + listName);
 	}
 
-	public ItemTask getRandomItemTask(String cardName) {
-		return getRandomItemTask(cardName, new Random());
+	public List<TaskData> getAllTasks(String cardName) {
+		return getAllTasks(cardName, EnumSet.allOf(TaskData.TaskType.class));
 	}
 
-	public ItemTask getRandomItemTask(String cardName, @NotNull Random generator) {
+	public List<TaskData> getAllTasks(String cardName, EnumSet<TaskData.TaskType> types) {
 		List<TaskData> tasks = new ArrayList<>();
-		getListNames(cardName).forEach((l) -> tasks.addAll(listsData.getTasks(l, false, false)));
-
-		List<TaskData> allItemTasks = tasks.stream().filter(task -> task instanceof ItemTask).toList();
-
-		if (!allItemTasks.isEmpty())
-			return (ItemTask) allItemTasks.get(Math.abs(generator.nextInt(allItemTasks.size())));
-		else
-			return new ItemTask(DEFAULT_ITEM, 1);
-	}
-
-	public TaskData getRandomTask(String cardName, @NotNull Random generator, boolean withStatistics, boolean withAdvancements) {
-		List<TaskData> allTasks = getAllTasks(cardName, withStatistics, withAdvancements);
-
-		if (!allTasks.isEmpty())
-			return allTasks.get(Math.abs(generator.nextInt(allTasks.size())));
-		else
-			return new ItemTask(DEFAULT_ITEM, 1);
-	}
-
-
-	public List<TaskData> getAllTasks(String cardName, boolean withStatistics, boolean withAdvancements) {
-		List<TaskData> tasks = new ArrayList<>();
-		getListNames(cardName).forEach((l) -> tasks.addAll(listsData.getTasks(l, withStatistics, withAdvancements)));
+		getListNames(cardName).forEach((l) -> tasks.addAll(listsData.getTasks(l, types)));
 		return tasks;
 	}
 
@@ -127,18 +103,18 @@ public class BingoCardData {
 		if (!data.contains(cardName))
 			return new HashSet<>();
 		else {
-			return data.getStorage(cardName).getKeys();
+			return data.getStorageOrEmpty(cardName).getKeys();
 		}
 	}
 
 	public List<String> getListsSortedByMin(String cardName) {
-		List<String> result = new ArrayList<>(data.getStorage(cardName).getKeys());
+		List<String> result = new ArrayList<>(data.getStorageOrEmpty(cardName).getKeys());
 		result.sort((a, b) -> Integer.compare(getListMin(cardName, a), getListMin(cardName, b)));
 		return result;
 	}
 
 	public List<String> getListsSortedByMax(String cardName) {
-		List<String> result = new ArrayList<>(data.getStorage(cardName).getKeys());
+		List<String> result = new ArrayList<>(data.getStorageOrEmpty(cardName).getKeys());
 		result.sort((a, b) -> Integer.compare(getListMax(cardName, a), getListMax(cardName, b)));
 		return result;
 	}

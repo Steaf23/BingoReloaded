@@ -49,6 +49,9 @@ public class BlitzTaskCard extends TaskCard {
 		game.getTimer().addNotifier(this::updateWithTime);
 		recoveryTimeSeconds = config.recoveryTime();
 		resetBufferAmount = 4;
+
+		menu.setInfo(BingoMessage.INFO_BLITZ_NAME.asPhrase(),
+				BingoMessage.INFO_BLITZ_DESC.asMultiline());
 	}
 
 	@Override

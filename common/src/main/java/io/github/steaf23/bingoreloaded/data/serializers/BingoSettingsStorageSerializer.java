@@ -1,6 +1,7 @@
 package io.github.steaf23.bingoreloaded.data.serializers;
 
 import io.github.steaf23.bingoreloaded.cards.CardSize;
+import io.github.steaf23.bingoreloaded.data.record.BingoCard;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataStorage;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataStorageSerializer;
 import io.github.steaf23.bingoreloaded.lib.data.core.tag.TagDataType;
@@ -13,13 +14,15 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.List;
 
 public class BingoSettingsStorageSerializer implements DataStorageSerializer<BingoSettings>
 {
     @Override
     public void toDataStorage(@NotNull DataStorage storage, @NotNull BingoSettings value) {
-        storage.setString("card", value.card());
+        storage.setString("card", value.card().cardName());
+        storage.setList("excluded_tags", TagDataType.STRING, value.card().excludedTags().stream().toList());
         storage.setString("mode", value.mode().configName());
         storage.setInt("size", value.size().size);
         storage.setInt("seed", value.seed());
@@ -38,8 +41,13 @@ public class BingoSettingsStorageSerializer implements DataStorageSerializer<Bin
     @Override
     public @Nullable BingoSettings fromDataStorage(@NotNull DataStorage storage) {
         CardSize size = CardSize.fromWidth(storage.getInt("size", 5));
-        return new BingoSettings(
+        BingoCard card = new BingoCard(
                 storage.getString("card", ""),
+                new HashSet<>(storage.getList("excluded_tags", TagDataType.STRING))
+        );
+
+        return new BingoSettings(
+                card,
                 BingoGamemodes.fromDataString(storage.getString("mode", "")),
                 size,
                 storage.getInt("seed", 0),

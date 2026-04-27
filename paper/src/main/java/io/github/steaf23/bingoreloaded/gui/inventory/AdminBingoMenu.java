@@ -97,7 +97,7 @@ public class AdminBingoMenu extends BasicMenu
 		BingoSettings settings = session.settingsBuilder.view();
 
 		ItemTemplate cardItem = CARD.copy().setLore(selected,
-				Component.text(" - ").append(Component.text(settings.card())));
+				Component.text(" - ").append(Component.text(settings.card().cardName())));
 
 		ItemTemplate kitItem = KIT.copy().setLore(selected,
 				Component.text(" - ").append(settings.kit().getDisplayName()));
@@ -238,7 +238,7 @@ public class AdminBingoMenu extends BasicMenu
 
     private void cardSelected(String cardName) {
         if (cardName == null) return;
-        session.settingsBuilder.card(cardName);
+        session.settingsBuilder.cardName(cardName);
     }
 
     private void updateDurationLore(ItemTemplate item, int duration) {

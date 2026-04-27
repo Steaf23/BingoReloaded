@@ -104,6 +104,14 @@ public class AutoBingoAction extends DeferredAction {
 			return setCard(settings, args[0], Arrays.copyOfRange(args, 1, args.length));
 		}).addUsage("<card_name>"));
 
+		this.addSubAction(new ActionTree("excludetags", args -> {
+			var settings = getSettingsBuilder(args[0]);
+			if (settings == null) {
+				sendFailed("Invalid world/ session name: " + args[0], args[0]);
+				return ActionResult.INCORRECT_USE;
+			}
+			return setCardExcludedTags(settings, args[0], Arrays.copyOfRange(args, 1, args.length));
+		}).addUsage("<excluded_tags>"));
 
 		this.addSubAction(new ActionTree("countdown", args -> {
 			var settings = getSettingsBuilder(args[0]);
@@ -389,13 +397,27 @@ public class AutoBingoAction extends DeferredAction {
 
 		BingoCardData cardsData = new BingoCardData();
 		if (cardsData.getCardNames().contains(cardName)) {
-			settings.card(cardName).cardSeed(seed);
+			settings.cardName(cardName).cardSeed(seed);
 			sendSuccess("Playing card set to " + cardName + " with" +
 					(seed == 0 ? " no seed" : " seed " + seed), worldName);
 			return ActionResult.SUCCESS;
 		}
 		sendFailed("No card named '" + cardName + "' was found!", worldName);
 		return ActionResult.INCORRECT_USE;
+	}
+
+	public ActionResult setCardExcludedTags(BingoSettingsBuilder settings, String worldName, String[] extraArgs) {
+		BingoCardData cardsData = new BingoCardData();
+		Set<String> allTags = cardsData.tags().getAllTags().keySet();
+
+		Set<String> tags = Arrays.stream(extraArgs)
+				.map(String::toLowerCase)
+				.filter(allTags::contains)
+				.collect(Collectors.toSet());
+
+		settings.excludedTags(tags);
+		sendSuccess("Set card to exclude tasks with the following tags: " + tags, worldName);
+		return ActionResult.SUCCESS;
 	}
 
 	public ActionResult setCountdown(BingoSettingsBuilder settings, String worldName, String[] extraArguments) {

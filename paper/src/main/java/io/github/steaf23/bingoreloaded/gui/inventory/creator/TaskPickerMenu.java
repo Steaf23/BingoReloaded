@@ -18,7 +18,6 @@ import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 public class TaskPickerMenu extends PaginatedDataMenu<GameTask> {
@@ -69,7 +68,7 @@ public class TaskPickerMenu extends PaginatedDataMenu<GameTask> {
 		super.beforeOpening(player);
 
 		BingoCardData cardsData = new BingoCardData();
-		Set<TaskData> tasks = cardsData.lists().getTasks(listName, true, true);
+		List<TaskData> tasks = cardsData.lists().getTasks(listName);
 
 		for (GameTask item : getAllItems()) {
 			TaskData itemData = item.data;

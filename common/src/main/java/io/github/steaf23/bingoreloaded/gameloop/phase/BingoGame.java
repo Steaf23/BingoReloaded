@@ -5,7 +5,6 @@ import io.github.steaf23.bingoreloaded.api.BingoEvents;
 import io.github.steaf23.bingoreloaded.cards.CardFactory;
 import io.github.steaf23.bingoreloaded.cards.LockoutTaskCard;
 import io.github.steaf23.bingoreloaded.cards.TaskCard;
-import io.github.steaf23.bingoreloaded.data.BingoCardData;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.BingoSound;
 import io.github.steaf23.bingoreloaded.data.BingoStatType;
@@ -38,6 +37,7 @@ import io.github.steaf23.bingoreloaded.settings.BingoSettings;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import io.github.steaf23.bingoreloaded.settings.gamemode.GamemodeFeature;
 import io.github.steaf23.bingoreloaded.tasks.GameTask;
+import io.github.steaf23.bingoreloaded.tasks.TaskGenerator;
 import io.github.steaf23.bingoreloaded.tasks.data.ItemTask;
 import io.github.steaf23.bingoreloaded.tasks.tracker.TaskProgressTracker;
 import io.github.steaf23.bingoreloaded.util.ActionBarManager;
@@ -141,10 +141,7 @@ public class BingoGame implements GamePhase
         world.setTimeOfDay(1000);
 
         // Generate cards
-        boolean useAdvancements = !(platform.areAdvancementsDisabled() || config.getOptionValue(BingoOptions.DISABLE_ADVANCEMENTS));
-
-        Set<TaskCard> uniqueCards = CardFactory.generateCardsForGame(this,
-                useAdvancements, !config.getOptionValue(BingoOptions.DISABLE_STATISTICS));
+        Set<TaskCard> uniqueCards = CardFactory.generateCardsForGame(this);
 
         BingoMessage.GIVE_CARDS.sendToAudience(session);
         teleportPlayersToStart(world);
@@ -340,7 +337,7 @@ public class BingoGame implements GamePhase
     //FIXME: don't use recursion to create tasks..
     private void startDeathMatchRecurse(int countdown) {
         if (countdown == 0) {
-            deathMatchTask = new GameTask(new BingoCardData().getRandomItemTask(settings.card()));
+            deathMatchTask = TaskGenerator.generateDeathmatchTask(this);
 
             BingoPlayerSender.sendTitle(
                     Component.text("GO").color(NamedTextColor.GOLD).decorate(TextDecoration.BOLD),
@@ -818,4 +815,12 @@ public class BingoGame implements GamePhase
 	public boolean canViewCard() {
 		return gameStarted;
 	}
+
+    public boolean useAdvancements() {
+        return !(platform.areAdvancementsDisabled() || config.getOptionValue(BingoOptions.DISABLE_ADVANCEMENTS));
+    }
+
+    public boolean useStatistics() {
+        return !config.getOptionValue(BingoOptions.DISABLE_STATISTICS);
+    }
 }

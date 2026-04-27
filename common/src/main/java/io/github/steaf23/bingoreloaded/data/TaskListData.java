@@ -23,42 +23,27 @@ public class TaskListData
     public static final Set<String> DEFAULT_LIST_NAMES = Set.of(
             "default_items",
             "default_advancements",
-            "default_statistics",
-            "default_items_hardcore",
-            "default_advancements_hardcore",
-            "default_statistics_hardcore"
+            "default_statistics"
     );
 
     private final DataAccessor defaultData = BingoReloaded.getDataAccessor("data/default_lists");
     private final DataAccessor data = BingoReloaded.getDataAccessor("data/" + BingoReloaded.getDefaultTasksVersion());
 
-    public Set<TaskData> getTasks(String listName, boolean withStatistics, boolean withAdvancements)
-    {
-        EnumSet<TaskData.TaskType> types = EnumSet.of(TaskData.TaskType.ITEM);
-        if (withAdvancements) {
-            types.add(TaskData.TaskType.ADVANCEMENT);
-        }
-        if (withStatistics) {
-            types.add(TaskData.TaskType.STATISTIC);
-        }
-        return getTasks(listName, types);
-    }
-
-    public Set<TaskData> getTasks(String listName) {
+    public List<TaskData> getTasks(String listName) {
         return getTasks(listName, EnumSet.allOf(TaskData.TaskType.class));
     }
 
-    public Set<TaskData> getTasks(String listName, EnumSet<TaskData.TaskType> allowedTypes) {
+    public List<TaskData> getTasks(String listName, EnumSet<TaskData.TaskType> allowedTypes) {
         Collection<TaskData> tasks;
         if (defaultData.contains(listName + ".tasks")) {
             tasks = defaultData.getSerializableList(listName + ".tasks", TaskData.class);
         } else if (data.contains(listName + ".tasks")) {
             tasks = data.getSerializableList(listName + ".tasks", TaskData.class);
         } else {
-            return new HashSet<>();
+            return List.of();
         }
 
-        return tasks.stream().filter((i -> i != null && allowedTypes.contains(i.getType()))).collect(Collectors.toSet());
+        return tasks.stream().filter((i -> i != null && allowedTypes.contains(i.getType()))).toList();
     }
 
     public int getTaskCount(String listName)
@@ -72,7 +57,7 @@ public class TaskListData
 
     public void saveTasksFromGroup(String listName, List<TaskData> group, List<TaskData> tasksToSave)
     {
-        Set<TaskData> savedTasks = getTasks(listName, true, true);
+        Set<TaskData> savedTasks = new HashSet<>(getTasks(listName));
         Set<TaskData> tasksToRemove = group.stream().filter(t ->
                 tasksToSave.stream().noneMatch(i -> i.equals(t))).collect(Collectors.toSet());
 

@@ -21,11 +21,9 @@ import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
 
 import java.util.ArrayList;
-import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 public class TagManagerMenu extends BasicMenu {
 
@@ -54,7 +52,7 @@ public class TagManagerMenu extends BasicMenu {
 	public void beforeOpening(PlayerHandle player) {
 		super.beforeOpening(player);
 
-		Set<TaskData> tasks = cardData.lists().getTasks(listName);
+		List<TaskData> tasks = cardData.lists().getTasks(listName);
 		TaskTagData data = new BingoCardData().tags();
 
 		availableTags = data.getAllTags();

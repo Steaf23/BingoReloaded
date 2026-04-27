@@ -163,7 +163,7 @@ public class GameHistoryMenu extends BasicMenu {
 							.append(Component.text(" "))
 							.append(settings.size().asComponent()),
 					Component.empty().append(Component.text("Kit: ").color(NamedTextColor.GRAY)).append(settings.kit().getDisplayName()),
-					Component.empty().append(Component.text("Card: ").color(NamedTextColor.GRAY)).append(Component.text(settings.card())),
+					Component.empty().append(Component.text("Card: ").color(NamedTextColor.GRAY)).append(Component.text(settings.card().cardName())),
 					Component.empty().append(Component.text("Games played: ").color(NamedTextColor.GRAY)).append(Component.text(records.size())),
 					Component.empty(),
 					Component.empty().append(BasicMenu.INPUT_LEFT_CLICK).append(Component.text("View Scoreboard").color(TextColor.fromHexString("#ff661c")).decorate(TextDecoration.BOLD)))
@@ -236,7 +236,7 @@ public class GameHistoryMenu extends BasicMenu {
 			return false;
 		}
 
-		if (!settings.card().equals(other.card())) {
+		if (!settings.card().cardName().equals(other.card().cardName())) {
 			return false;
 		}
 

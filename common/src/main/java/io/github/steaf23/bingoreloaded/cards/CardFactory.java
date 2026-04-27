@@ -32,20 +32,13 @@ public class CardFactory
         return settings.mode().createTaskCard(menu, game);
     }
 
-    public static Set<TaskCard> generateCardsForGame(BingoGame game, boolean includeAdvancements, boolean includeStatistics) {
-        BingoSettings settings = game.getSettings();
-        TaskGenerator.GeneratorSettings generatorSettings = new TaskGenerator.GeneratorSettings(
-                settings.card(),
-                settings.seed(),
-                includeAdvancements,
-                includeStatistics,
-                settings.size(),
-                game.getConfig().getOptionValue(BingoOptions.DISABLE_NETHER) ? Set.of("nether") : Set.of());
-
+    public static Set<TaskCard> generateCardsForGame(BingoGame game) {
         Set<TaskCard> uniqueCards = new HashSet<>();
 
+        var generatorSettings = TaskGenerator.generatorSettingsFromGame(game);
+
         TaskCard masterCard = CardFactory.fromGame(BingoReloaded.runtime(), game, BingoReloaded.useResourcePack());
-        if (settings.differentCardPerTeam() && masterCard.canGenerateSeparateCards()) {
+        if (game.getSettings().differentCardPerTeam() && masterCard.canGenerateSeparateCards()) {
             // Generate a new card for each team.
             game.getTeamManager().getActiveTeams().forEach(t -> {
                 t.outOfTheGame = false;
