@@ -59,13 +59,11 @@ public class TagManagerMenu extends BasicMenu {
 
 		List<ItemTemplate> items = new ArrayList<>();
 		List<String> allTags = new ArrayList<>();
-		int i = 0;
 		for (String tagName : availableTags.keySet()) {
 			TaskTagData.TaskTag tag = availableTags.get(tagName);
 			items.add(ItemTemplate.createColoredLeather(tag.color(), ItemTypePaper.of(Material.LEATHER_HELMET))
 					.setName(Component.text("<" + tagName + ">").color(tag.color())));
 			allTags.add(tagName);
-			i++;
 		}
 
 		tagBar.setItems(items, allTags);
@@ -108,11 +106,12 @@ public class TagManagerMenu extends BasicMenu {
 		cardData.lists().saveTasksFromGroup(listName, mappedData, mappedData);
 	}
 
-	public void onTagBarClicked(int idx, ItemTemplate item, String tagName) {
+	public ItemTemplate onTagBarClicked(int idx, ItemTemplate item, String tagName) {
 		switchTabs(tagName);
 		PlatformResolver.get().runTask(t -> {
 			taskGroup.updateVisibleItems(this);
 		});
+		return null;
 	}
 
 	public void switchTabs(String newTag) {
@@ -153,12 +152,12 @@ public class TagManagerMenu extends BasicMenu {
 			return item;
 		}
 
-		Component tags = Component.empty();
+		List<Component> tags = new ArrayList<>();
 		for (String tag : task.data.tags()) {
 			TaskTagData.TaskTag tagInfo = availableTags.getOrDefault(tag, new TaskTagData.TaskTag(NamedTextColor.WHITE));
-			tags = tags.append(Component.text("<" + tag + "> ").color(tagInfo.color()));
+			tags.add(Component.text("<" + tag + "> ").color(tagInfo.color()));
 		}
-		item.addDescription("tags", 10, tags);
+		item.addDescription("tags", 10, tags.toArray(Component[]::new));
 		return item;
 	}
 

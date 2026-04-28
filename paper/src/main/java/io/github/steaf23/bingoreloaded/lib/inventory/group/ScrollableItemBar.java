@@ -23,7 +23,7 @@ public class ScrollableItemBar<Data> extends ItemGroup {
 			PlayerDisplayTranslationKey.MENU_PREVIOUS.translate()
 					.color(NamedTextColor.LIGHT_PURPLE).decorate(TextDecoration.BOLD));
 
-	private ItemClickedCallback<Data> itemClickedCallback = (idx, item, data) -> {};
+	private ItemClickedCallback<Data> itemClickedCallback = (idx, item, data) -> null;
 	private List<ItemTemplate> items = new ArrayList<>();
 	private List<Data> data = new ArrayList<>();
 	private int scrollOffset = 0;
@@ -98,7 +98,10 @@ public class ScrollableItemBar<Data> extends ItemGroup {
 	public void onClick(ItemTemplate item, int itemIdx) {
 		selection.toggleSlot(itemIdx - scrollOffset);
 
-		itemClickedCallback.execute(itemIdx, item, data.get(itemIdx));
+		ItemTemplate editedItem = itemClickedCallback.execute(itemIdx, item, data.get(itemIdx));
+		if (editedItem != null) {
+			items.set(itemIdx, editedItem);
+		}
 		PlatformResolver.get().runTask(t -> {
 			updateVisibleItems(menu);
 		});
@@ -114,6 +117,6 @@ public class ScrollableItemBar<Data> extends ItemGroup {
 
 	@FunctionalInterface
 	public interface ItemClickedCallback<Data> {
-		void execute(int index, ItemTemplate item, Data data);
+		ItemTemplate execute(int index, ItemTemplate item, Data data);
 	}
 }

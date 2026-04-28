@@ -74,7 +74,10 @@ public class GameHistoryMenu extends BasicMenu {
 	public GameHistoryMenu(MenuBoard manager, GameRecordData historyData) {
 		super(manager, Component.text("Game History"), 6);
 		this.historyData = historyData;
-		this.categories.setItemClickedCallback((idx, item, category) -> showCategory(idx, category));
+		this.categories.setItemClickedCallback((idx, item, category) -> {
+			showCategory(idx, category);
+			return null;
+		});
 
 		Map<UUID, BingoSettings> settingIds = historyData.getSettings();
 

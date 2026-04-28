@@ -126,7 +126,7 @@ public class ItemTemplate
 
     /**
      * Adds a description section to the template's item description.
-     * Each section is separated by ann empty line and the first description is shown directly under the item name.
+     * Each section is separated by an empty line and the first description is shown directly under the item name.
      * @param name identifiable name for the description, can be used to remove the description using removeDescription().
      * @param priority appends this description to the template where higher priorities are displayed further down.
      * @param description multiline description.
