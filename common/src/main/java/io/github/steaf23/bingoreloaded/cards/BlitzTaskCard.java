@@ -17,6 +17,7 @@ import io.github.steaf23.bingoreloaded.tasks.GameTask;
 import io.github.steaf23.bingoreloaded.tasks.RotatingTaskList;
 import io.github.steaf23.bingoreloaded.tasks.TaskGenerator;
 import io.github.steaf23.bingoreloaded.tasks.data.TaskData;
+import io.github.steaf23.bingoreloaded.util.ActionBarManager;
 import io.github.steaf23.bingoreloaded.util.timer.BlitzTimer;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
@@ -129,7 +130,7 @@ public class BlitzTaskCard extends TaskCard {
 		}
 
 		if (amountRecovered > 0) {
-			game.playSound(BingoSound.HOTSWAP_TASK_ADDED.builder().build());
+			game.playSound(BingoSound.HOTSWAP_TASK_ADDED.sound());
 
 			if (amountRecovered == 1) {
 				GameTask taskToSend = lastRecoveredTask;
@@ -189,6 +190,7 @@ public class BlitzTaskCard extends TaskCard {
 		taskResetBuffer.add(task);
 		if (game.getTimer() instanceof BlitzTimer timer) {
 			timer.reset();
+			player.getSession().playSound(BingoSound.HOTSWAP_TASK_ADDED.sound());
 		}
 	}
 

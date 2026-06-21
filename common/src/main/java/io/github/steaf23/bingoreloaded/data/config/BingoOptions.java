@@ -39,8 +39,6 @@ public class BingoOptions {
 	public static final ConfigurationOption<String> LANGUAGE = new StringOption("language")
 			.withEditUpdate(ConfigurationOption.EditUpdateTime.AFTER_SERVER_RESTART);
 	public static final ConfigurationOption<Boolean> SAVE_PLAYER_STATISTICS = new BooleanOption("savePlayerStatistics");
-	public static final ConfigurationOption<String> SEND_COMMAND_AFTER_GAME_ENDS = new StringOptionAllowEmpty("sendCommandAfterGameEnds");
-	public static final ConfigurationOption<String> SEND_COMMAND_BEFORE_GAME_STARTS = new StringOptionAllowEmpty("sendCommandBeforeGameStarts");
 	public static final ConfigurationOption<ConfigGamemode> PLAYER_GAMEMODE_AFTER_GAME = new EnumOption<>("playerGamemodeAfterGame", ConfigGamemode.class, ConfigGamemode.SURVIVAL);
 	public static final ConfigurationOption<Boolean> VOTE_USING_COMMANDS_ONLY = new BooleanOption("voteUsingCommandsOnly");
 	public static final ConfigurationOption<Boolean> SELECT_TEAMS_USING_COMMANDS_ONLY = new BooleanOption("selectTeamsUsingCommandsOnly");
@@ -59,6 +57,12 @@ public class BingoOptions {
 	public static final ConfigurationOption<Boolean> DISABLE_CLIENT_MOD = new BooleanOption("disableCompanionMod")
 			.withEditUpdate(ConfigurationOption.EditUpdateTime.AFTER_SERVER_RESTART);
 
+	// Commands
+	public static final ConfigurationOption<String> SEND_COMMAND_BEFORE_GAME_STARTS = new StringOptionAllowEmpty("sendCommandBeforeGameStarts");
+	public static final ConfigurationOption<String> SEND_COMMAND_AFTER_GAME_ENDS = new StringOptionAllowEmpty("sendCommandAfterGameEnds");
+	public static final ConfigurationOption<String> SEND_COMMAND_AFTER_GAME_END_EVERY_PLAYER = new StringOptionAllowEmpty("sendCommandAfterGameEndsPerPlayer.everyPlayer");
+	public static final ConfigurationOption<String> SEND_COMMAND_AFTER_GAME_END_WINNING_PLAYERS = new StringOptionAllowEmpty("sendCommandAfterGameEndsPerPlayer.winningPlayers");
+	public static final ConfigurationOption<String> SEND_COMMAND_AFTER_GAME_END_LOSING_PLAYERS = new StringOptionAllowEmpty("sendCommandAfterGameEndsPerPlayer.losingPlayers");
 	// Lobby
 	public static final ConfigurationOption<Boolean> SINGLE_PLAYER_TEAMS = new BooleanOption("singlePlayerTeams")
 			.withEditUpdate(ConfigurationOption.EditUpdateTime.AFTER_SESSION);

@@ -24,6 +24,7 @@ public enum BingoReloadedPlaceholder {
     SETTING_CARDNAME("setting_cardname"),
     SETTING_KIT("setting_kit"),
     SETTING_DURATION("setting_duration"),
+    SETTING_BLITZ_DURATION("setting_blitz_duration"),
     SETTING_EFFECTS("setting_effects"),
     SETTING_HOTSWAP_WINSCORE("setting_hotswap_winscore"),
     SETTING_HOTSWAP_EXPIRE("setting_hotswap_expire"),

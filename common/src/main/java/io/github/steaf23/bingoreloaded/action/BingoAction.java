@@ -138,6 +138,13 @@ public class BingoAction extends ActionTree {
 
 
 		this.addSessionSubAction("view", List.of(), (args, session) -> {
+			if (getLastUser() instanceof PlayerHandle player) {
+				BingoParticipant participant = session.teamManager.getPlayerAsParticipant(player);
+				if (participant != null) {
+					participant.showCard(null);
+					return ActionResult.SUCCESS;
+				}
+			}
 			if (!getLastUser().hasPermission("bingo.admin") && !config.getOptionValue(BingoOptions.ALLOW_VIEWING_ALL_CARDS)) {
 				return ActionResult.NO_PERMISSION;
 			}

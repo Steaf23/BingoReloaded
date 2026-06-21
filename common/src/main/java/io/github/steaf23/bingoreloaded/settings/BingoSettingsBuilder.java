@@ -27,6 +27,7 @@ public class BingoSettingsBuilder {
 	private int maxTeamCount;
 	private BingoSettings.CountdownType countdownType;
 	private int countdownGameDuration;
+	private int blitzGameDuration;
 	private int hotswapGoal;
 	private boolean expireHotswapTasks;
 	private int completeGoal;
@@ -40,23 +41,14 @@ public class BingoSettingsBuilder {
 			ConsoleMessenger.error("Could not find default settings, make sure you have at least 1 existing settings preset and its set to be the default settings!");
 			return;
 		}
-		this.card = def.card();
-		this.mode = def.mode();
-		this.cardSize = def.size();
-		this.cardSeed = def.seed();
-		this.kit = def.kit();
-		this.effects = def.effects();
-		this.maxTeamSize = def.maxTeamSize();
-		this.maxTeamCount = def.maxTeamCount();
-		this.countdownGameDuration = def.countdownDuration();
-		this.countdownType = def.countdownType();
-		this.hotswapGoal = def.hotswapGoal();
-		this.completeGoal = def.completeGoal();
-		this.differentCardPerTeam = def.differentCardPerTeam();
-		this.expireHotswapTasks = def.expireHotswapTasks();
+		fromOther(def, false);
 	}
 
 	public void fromOther(BingoSettings settings) {
+		fromOther(settings, true);
+	}
+
+	public void fromOther(BingoSettings settings, boolean sendUpdated) {
 		card = settings.card();
 		mode = settings.mode();
 		cardSize = settings.size();
@@ -66,12 +58,15 @@ public class BingoSettingsBuilder {
 		maxTeamSize = settings.maxTeamSize();
 		maxTeamCount = settings.maxTeamCount();
 		countdownGameDuration = settings.countdownDuration();
+		blitzGameDuration = settings.countdownDurationBlitz();
 		countdownType = settings.countdownType();
 		hotswapGoal = settings.hotswapGoal();
 		completeGoal = settings.completeGoal();
 		differentCardPerTeam = settings.differentCardPerTeam();
 		expireHotswapTasks = settings.expireHotswapTasks();
-		settingsUpdated();
+		if (sendUpdated) {
+			settingsUpdated();
+		}
 	}
 
 	public BingoSettingsBuilder applyVoteResult(VoteTicket voteResult) {
@@ -207,6 +202,14 @@ public class BingoSettingsBuilder {
 		return this;
 	}
 
+	public BingoSettingsBuilder blitzGameDuration(int blitzGameDuration) {
+		if (this.blitzGameDuration != blitzGameDuration) {
+			this.blitzGameDuration = blitzGameDuration;
+			settingsUpdated();
+		}
+		return this;
+	}
+
 	public BingoSettingsBuilder expireHotswapTasks(boolean expireHotswapTasks) {
 		if (this.expireHotswapTasks != expireHotswapTasks) {
 			this.expireHotswapTasks = expireHotswapTasks;
@@ -253,6 +256,7 @@ public class BingoSettingsBuilder {
 				maxTeamCount,
 				countdownType,
 				countdownGameDuration,
+				blitzGameDuration,
 				hotswapGoal,
 				expireHotswapTasks,
 				completeGoal,

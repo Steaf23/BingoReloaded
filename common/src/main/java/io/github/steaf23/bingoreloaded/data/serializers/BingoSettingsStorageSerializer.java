@@ -31,6 +31,7 @@ public class BingoSettingsStorageSerializer implements DataStorageSerializer<Bin
         storage.setInt("team_size", value.maxTeamSize());
         storage.setInt("team_count", value.maxTeamCount());
         storage.setInt("duration", value.countdownDuration());
+        storage.setInt("duration_blitz", value.countdownDurationBlitz());
         storage.setNamespacedKey("countdown_type", value.countdownType().key());
         storage.setInt("hotswap_goal", value.hotswapGoal());
         storage.setBoolean("expire_hotswap_tasks", value.expireHotswapTasks());
@@ -57,6 +58,7 @@ public class BingoSettingsStorageSerializer implements DataStorageSerializer<Bin
                 storage.getInt("team_count", 64),
                 BingoSettings.CountdownType.fromNamespace(storage.getNamespacedKey("countdown_type")),
                 storage.getInt("duration", 0),
+                storage.getInt("duration_blitz", 12),
                 storage.getInt("hotswap_goal", 10),
                 storage.getBoolean("expire_hotswap_tasks", true),
                 storage.getInt("complete_goal", size.fullCardSize),

@@ -50,8 +50,12 @@ placeholders:
   setting_kit:
     format: "{0}"
 
-  # The currently selected maximum duration of a game, '-' if countdown is not enabled.
+  # The currently selected maximum duration of a game in minutes, '-' if countdown is not enabled.
   setting_duration:
+    format: "{0}"
+
+  # The currently selected maximum duration of a blitz game in seconds, '-' if countdown is not enabled.
+  blitz_duration:
     format: "{0}"
 
   # The currently selected effects of the session the player is in. NOT IMPLEMENTED YET

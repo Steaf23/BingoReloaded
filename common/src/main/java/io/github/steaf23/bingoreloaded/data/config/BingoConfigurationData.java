@@ -37,9 +37,7 @@ public class BingoConfigurationData
         setOptionValueForce(BingoOptions.DEFAULT_WORLD_NAME, name -> config.getString(name, "world"));
         setOptionValueForce(BingoOptions.LANGUAGE, name -> config.getString(name, "en_us.yml"));
         setOptionValueForce(BingoOptions.SAVE_PLAYER_STATISTICS, name -> config.getBoolean(name, false));
-        setOptionValueForce(BingoOptions.SEND_COMMAND_AFTER_GAME_ENDS, name -> config.getString(name, ""));
-        setOptionValueForce(BingoOptions.SEND_COMMAND_BEFORE_GAME_STARTS, name -> config.getString(name, ""));
-		setOptionValueForce(BingoOptions.PLAYER_GAMEMODE_AFTER_GAME, name -> BingoOptions.ConfigGamemode.valueOf(config.getString(name, "SURVIVAL")));
+ 		setOptionValueForce(BingoOptions.PLAYER_GAMEMODE_AFTER_GAME, name -> BingoOptions.ConfigGamemode.valueOf(config.getString(name, "SURVIVAL")));
         setOptionValueForce(BingoOptions.VOTE_USING_COMMANDS_ONLY, name -> config.getBoolean(name, false));
         setOptionValueForce(BingoOptions.SELECT_TEAMS_USING_COMMANDS_ONLY, name -> config.getBoolean(name, false));
         setOptionValueForce(BingoOptions.DISABLE_SCOREBOARD_SIDEBAR, name -> config.getBoolean(name, false));
@@ -51,6 +49,13 @@ public class BingoConfigurationData
         setOptionValueForce(BingoOptions.SHOW_UNIQUE_STATISTIC_ITEMS, name -> config.getBoolean(name, true));
         setOptionValueForce(BingoOptions.ENABLE_DEBUG_LOGGING, name -> config.getBoolean(name, false));
 		setOptionValueForce(BingoOptions.DISABLE_CLIENT_MOD, name -> config.getBoolean(name, false));
+
+        // Commands
+        setOptionValueForce(BingoOptions.SEND_COMMAND_BEFORE_GAME_STARTS, name -> config.getString(name, ""));
+        setOptionValueForce(BingoOptions.SEND_COMMAND_AFTER_GAME_ENDS, name -> config.getString(name, ""));
+        setOptionValueForce(BingoOptions.SEND_COMMAND_AFTER_GAME_END_EVERY_PLAYER, name -> config.getString(name, ""));
+        setOptionValueForce(BingoOptions.SEND_COMMAND_AFTER_GAME_END_WINNING_PLAYERS, name -> config.getString(name, ""));
+        setOptionValueForce(BingoOptions.SEND_COMMAND_AFTER_GAME_END_LOSING_PLAYERS, name -> config.getString(name, ""));
 
         // Lobby
         setOptionValueForce(BingoOptions.SINGLE_PLAYER_TEAMS, name -> config.getBoolean(name, false));

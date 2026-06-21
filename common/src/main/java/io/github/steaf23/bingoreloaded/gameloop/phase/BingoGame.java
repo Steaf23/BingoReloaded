@@ -60,6 +60,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -112,7 +113,7 @@ public class BingoGame implements GamePhase
         this.gameStarted = false;
         // Create timer
         if (settings.mode().featureSet().contains(GamemodeFeature.BLITZ_TIMER))
-            timer = new BlitzTimer(5 * 60, 2 * 60, this::onCountdownTimerFinished);
+            timer = new BlitzTimer(settings.countdownDurationBlitz() * 10, settings.countdownDurationBlitz() * 10, this::onCountdownTimerFinished);
         else if (settings.useCountdown())
             timer = new CountdownTimer(settings.countdownDuration() * 60, 5 * 60, 60, this::onCountdownTimerFinished);
         else
@@ -123,6 +124,15 @@ public class BingoGame implements GamePhase
             actionBarManager.requestMessage(p -> timerMessage, 0);
             actionBarManager.update();
             getProgressTracker().updateStatisticProgress();
+
+            if (settings.mode().featureSet().contains(GamemodeFeature.BLITZ_TIMER)) {
+                if (time <= 5) {
+                    session.playSound(BingoSound.BLITZ_TIMEOUT_5.sound());
+                }
+                else if (time <= 10) {
+                    session.playSound(BingoSound.BLITZ_TIMEOUT_10.sound());
+                }
+            }
         });
 
         deathMatchTask = null;
@@ -156,14 +166,17 @@ public class BingoGame implements GamePhase
                 .append(settings.kit().getDisplayName()).append(Component.text("\n"))
                 .append(BingoMessage.OPTIONS_EFFECTS.asPhrase()).append(Component.text(": \n"))
                 .append(Component.join(JoinConfiguration.separator(Component.text("\n")), EffectOptionFlags.effectsToText(settings.effects()))).append(Component.text("\n"))
-                .append(BingoMessage.DURATION.asPhrase(settings.useCountdown() ?
-                        GameTimer.getTimeAsComponent(settings.countdownDuration() * 60L) : Component.text("∞")))
+                .append(timer instanceof CountdownTimer countdownTimer ?
+                        GameTimer.getTimeAsComponent(countdownTimer.getStartTime()) : Component.text("∞"))
                 .build();
         BingoPlayerSender.sendMessage(BingoMessage.createHoverableMessage(
                 Component.empty(),
                 BingoMessage.SETTINGS_HOVER.asPhrase(),
                 HoverEvent.showText(hoverMessage),
                 Component.empty()), session);
+
+        session.getPlayersInWorld().stream().filter(p -> getTeamManager().getPlayerAsParticipant(p) == null)
+                .forEach(spectator -> spectator.setGamemode(PlayerGamemode.SPECTATOR));
 
         getTeamManager().getParticipants().forEach(p ->
         {
@@ -252,7 +265,8 @@ public class BingoGame implements GamePhase
             });
         });
 
-        playSound(BingoSound.GAME_ENDED.builder().build());
+        session.sendMessage(Component.text(" "));
+        playSound(BingoSound.GAME_ENDED.sound());
 
         String command = config.getOptionValue(BingoOptions.SEND_COMMAND_AFTER_GAME_ENDS);
         if (!command.isEmpty()) {
@@ -260,7 +274,50 @@ public class BingoGame implements GamePhase
             platform.runTask( task -> platform.sendConsoleCommand(commandToSend)); // Send the command in the next tick so we have time to wrap up the game.
         }
 
-        session.sendMessage(Component.text(" "));
+        String commandAllPlayers = config.getOptionValue(BingoOptions.SEND_COMMAND_AFTER_GAME_END_EVERY_PLAYER);
+        if (!commandAllPlayers.isEmpty()) {
+            platform.runTask(task -> {
+                for (var player : session.getPlayersInWorld()) {
+                    String commandToSend = commandAllPlayers.replace("{player}", player.playerName());
+                    platform.sendConsoleCommand(commandToSend);
+                }
+            });
+        }
+
+		List<BingoParticipant> allParticipants = session.teamManager.getParticipants().stream()
+                .filter( p -> p.getTeam() != null)
+                .toList();
+
+        List<PlayerHandle> winningPlayers = allParticipants.stream()
+                .filter(p -> p.getTeam() != null && p.getTeam().equals(winningTeam))
+                .map(p -> p.sessionPlayer().orElseThrow())
+                .toList();
+
+        List<PlayerHandle> losingPlayers = allParticipants.stream()
+                .map(p -> p.sessionPlayer().orElseThrow())
+                .filter(handle -> !winningPlayers.contains(handle))
+                .toList();
+
+        String commandWinningPlayers = config.getOptionValue(BingoOptions.SEND_COMMAND_AFTER_GAME_END_WINNING_PLAYERS);
+        if (!commandWinningPlayers.isEmpty()) {
+            platform.runTask(task -> {
+                for (var player : winningPlayers) {
+                    String commandToSend = commandWinningPlayers.replace("{player}", player.playerName());
+                    platform.sendConsoleCommand(commandToSend);
+                }
+            });
+        }
+
+        String commandLosingPlayers = config.getOptionValue(BingoOptions.SEND_COMMAND_AFTER_GAME_END_LOSING_PLAYERS);
+        if (!commandLosingPlayers.isEmpty()) {
+            platform.runTask(task -> {
+                for (var player : losingPlayers) {
+                    String commandToSend = commandLosingPlayers.replace("{player}", player.playerName());
+                    platform.sendConsoleCommand(commandToSend);
+                }
+            });
+        }
+
         onGameEndedCallback.accept(this, winningTeam);
     }
 
@@ -278,7 +335,7 @@ public class BingoGame implements GamePhase
                 BingoReloaded.incrementPlayerStat(player, BingoStatType.LOSSES);
             }
         }
-        playSound(BingoSound.GAME_WON.builder().build());
+        playSound(BingoSound.GAME_WON.sound());
         end(team);
     }
 
@@ -330,7 +387,7 @@ public class BingoGame implements GamePhase
     public void startDeathMatch(int seconds) {
         BingoMessage.DEATHMATCH_START.sendToAudience(session);
 
-        playSound(BingoSound.DEATHMATCH_INITIATED.builder().build());
+        playSound(BingoSound.DEATHMATCH_INITIATED.sound());
         startDeathMatchRecurse(seconds);
     }
 
@@ -357,7 +414,7 @@ public class BingoGame implements GamePhase
                 p.showDeathMatchTask(itemTask);
             }
 
-            playSound(BingoSound.DEATHMATCH_REVEAL.builder().build());
+            playSound(BingoSound.DEATHMATCH_REVEAL.sound());
 
             return;
         }
@@ -526,7 +583,7 @@ public class BingoGame implements GamePhase
                 participant.getDisplayName().color(team.getColor()).decorate(TextDecoration.BOLD),
                 timeString.color(NamedTextColor.WHITE));
 
-        playSound(BingoSound.TASK_COMPLETED.builder().build());
+        playSound(BingoSound.TASK_COMPLETED.sound());
 
         scoreboard.updateTeamScores();
 		session.getGameManager().getRuntime().gameDisplay().update(scoreboard);
@@ -662,8 +719,8 @@ public class BingoGame implements GamePhase
     public void onStartingTimerFinished() {
         timer.start();
         gameStarted = true;
-        playSound(BingoSound.START_COUNTDOWN_FINISHED_1.builder().build());
-        playSound(BingoSound.START_COUNTDOWN_FINISHED_2.builder().build());
+        playSound(BingoSound.START_COUNTDOWN_FINISHED_1.sound());
+        playSound(BingoSound.START_COUNTDOWN_FINISHED_2.sound());
     }
 
     public void onCountdownTimerFinished() {

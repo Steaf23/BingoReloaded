@@ -194,7 +194,7 @@ public class HotswapTaskCard extends TaskCard
         }
 
         if (taskExpiredCount > 0) {
-            game.playSound(BingoSound.HOTSWAP_TASK_EXPIRED.builder().build());
+            game.playSound(BingoSound.HOTSWAP_TASK_EXPIRED.sound());
 
             if (taskExpiredCount == 1) {
                 GameTask taskToSend = lastExpiredTask;
@@ -208,7 +208,7 @@ public class HotswapTaskCard extends TaskCard
             }
         }
         if (taskRecoveredCount > 0) {
-            game.playSound(BingoSound.HOTSWAP_TASK_ADDED.builder().build());
+            game.playSound(BingoSound.HOTSWAP_TASK_ADDED.sound());
 
             if (taskRecoveredCount == 1) {
                 GameTask taskToSend = lastRecoverdTask;

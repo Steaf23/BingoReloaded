@@ -182,13 +182,18 @@ public class AdminBingoMenu extends BasicMenu {
 		teamCountAction.setItem(teamCountItem);
 
 		ItemTemplate durationItem = DURATION.copy();
-		int duration = view.countdownDuration();
-		updateDurationLore(durationItem, duration);
-		MenuAction durationAction = new SpinBoxButtonAction(1, DURATION_MAX, duration, value -> {
-			session.settingsBuilder.countdownGameDuration(value);
-			updateDurationLore(durationItem, value);
-		});
-		durationAction.setItem(durationItem);
+		if (settings.mode().featureSet().contains(GamemodeFeature.BLITZ_TIMER)) {
+		} else {
+			int duration = view.countdownDuration();
+			updateDurationLore(durationItem, duration);
+			MenuAction durationAction = new SpinBoxButtonAction(1, DURATION_MAX, duration, value -> {
+				session.settingsBuilder.countdownGameDuration(value);
+				updateDurationLore(durationItem, value);
+			});
+			durationAction.setItem(durationItem);
+			addAction(durationAction);
+		}
+
 
 		MenuAction countdownAction = new ComboBoxButtonAction.Builder("DISABLED", COUNTDOWN_TYPE_DISABLED.copy())
 				.addOption("DURATION", COUNTDOWN_TYPE_DURATION.copy())
@@ -198,7 +203,7 @@ public class AdminBingoMenu extends BasicMenu {
 					return true;
 				})
 				.buildAction(COUNTDOWN_TYPE_DISABLED.getSlot(), view.countdownType().name());
-		addActions(teamSizeAction, teamCountAction, durationAction, countdownAction);
+		addActions(teamSizeAction, teamCountAction, countdownAction);
 
 		MenuAction startAction = new ComboBoxButtonAction.Builder("start", START.copy())
 				.addOption("end", END.copy())

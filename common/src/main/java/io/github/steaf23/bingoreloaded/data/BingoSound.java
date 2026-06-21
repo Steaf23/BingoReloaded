@@ -22,12 +22,15 @@ public enum BingoSound implements Sound.Type {
 	TASK_COMPLETED("task_completed"),
 	START_COUNTDOWN_FINISHED_1("start_countdown_finished_1"),
 	START_COUNTDOWN_FINISHED_2("start_countdown_finished_2"),
+	BLITZ_TIMEOUT_10("blitz_timeout_10"),
+	BLITZ_TIMEOUT_5("blitz_timeout_5"),
 	;
 
 	private final String dataKey;
 	@Nullable
 	private Key soundKey;
 	private float volume = 1.0f;
+	private float pitch = 1.0f;
 
 	BingoSound(@Subst("minecraft:invalid") String key) {
 		this.dataKey = key;
@@ -41,13 +44,19 @@ public enum BingoSound implements Sound.Type {
 			}
 			@Subst("minecraft:invalid") String value = sounds.getString(s.dataKey + ".sound", "minecraft:invalid");
 			float volume = sounds.getFloat(s.dataKey + ".volume", 1.0f);
+			float pitch = sounds.getFloat(s.dataKey + ".pitch", 1.0f);
 			s.soundKey = Key.key(value);
 			s.volume = volume;
+			s.pitch = pitch;
 		}
 	}
 
+	public Sound sound() {
+		return builder().build();
+	}
+
 	public Sound.Builder builder() {
-		return Sound.sound().type(this).source(Sound.Source.UI).volume(volume);
+		return Sound.sound().type(this).source(Sound.Source.UI).volume(volume).pitch(pitch);
 	}
 
 	@Override
