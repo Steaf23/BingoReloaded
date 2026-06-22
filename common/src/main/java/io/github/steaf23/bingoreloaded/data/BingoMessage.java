@@ -163,6 +163,16 @@ public enum BingoMessage
     TEAM_AUTO("teams.auto"),
     LIST_COUNT("creator.card_item.desc"),
     COUNT_MORE("menu.count_more"),
+    LEADERBOARD_TITLE("menu.leaderboard.title"),
+    LEADERBOARD_PROMPT("menu.leaderboard.prompt"),
+    LEADERBOARD_CATEGORY("menu.leaderboard.category"),
+    LEADERBOARD_KIT("menu.leaderboard.kit"),
+    LEADERBOARD_CARD("menu.leaderboard.card"),
+    LEADERBOARD_GAMES_PLAYED("menu.leaderboard.games_played"),
+    LEADERBOARD_SETTINGS("menu.leaderboard.settings"),
+    LEADERBOARD_SORT_TIME("menu.leaderboard.sort_by_time"),
+    LEADERBOARD_SORT_SCORE("menu.leaderboard.sort_by_score"),
+    STATS_GAMES_PLAYED("menu.stats.games_played"),
     ;
 
     private final String key;

@@ -119,7 +119,7 @@ public class BingoReloaded implements Namespaced {
 		addDataAccessor(new TagDataAccessor(platform, "data/teams", false));
 		addDataAccessor(new TagDataAccessor(platform, "data/players", false));
 		addDataAccessor(new TagDataAccessor(platform, "data/lobby", false));
-		addDataAccessor(new TagDataAccessor(platform, "data/history", false));
+		addDataAccessor(new TagDataAccessor(platform, "data/leaderboard", false));
 		addDataAccessor(new TagDataAccessor(platform, "data/tags", false));
 		addDataAccessor(new TagDataAccessor(platform, "data/default_tags", true));
 		for (DataAccessor accessor : runtime.getDataToRegister()) { // platform specific data accessors
@@ -229,13 +229,6 @@ public class BingoReloaded implements Namespaced {
 
 	public static boolean containsDataAccessor(String name) {
 		return accessorMap.containsKey(name);
-	}
-
-	public void reloadConfigFromFile() {
-		runtime.setupConfig();
-		this.config.reload();
-		runtime.onConfigReloaded(config);
-		DebugLogger.setLoggingEnabled(config.getOptionValue(BingoOptions.ENABLE_DEBUG_LOGGING));
 	}
 
 	public void reloadScoreboards() {

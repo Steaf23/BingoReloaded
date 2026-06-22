@@ -69,9 +69,17 @@ enableDebugLogging: false
 # (more fair for people that do not have the mod)
 disableCompanionMod: false
 
-gameHistory:
-  saveCompletedGames: true
+leaderboard:
+  # Set to true to save all games that have been completed with a winner, to view the scores of these games on the leaderboard.
+  # When set to false, games played will not be saved, by turning this setting back on later,
+  # you cannot retroactively get stats for the games played while the option was disabled.
+  enabled: true
+  # Set to true to also save games that have been canceled or otherwise not completed. This means more data will be stored,
+  # but the amount of games played on the leaderboard will be more accurate.
   saveCancelledGames: false
+  # Set to true to hide automatically created categories by gamemode/kit and display a leaderboard per settings preset instead.
+  # This option does not work well with voting, as any deviation from a settings preset would not count the game towards the leaderboard.
+  onlyUsePresetCategories: false
 
 # ==========================================================================
 #    Event Commands

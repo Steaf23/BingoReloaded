@@ -56,6 +56,9 @@ public class BingoOptions {
 	public static final ConfigurationOption<Boolean> ENABLE_DEBUG_LOGGING = new BooleanOption("enableDebugLogging");
 	public static final ConfigurationOption<Boolean> DISABLE_CLIENT_MOD = new BooleanOption("disableCompanionMod")
 			.withEditUpdate(ConfigurationOption.EditUpdateTime.AFTER_SERVER_RESTART);
+	public static final ConfigurationOption<Boolean> LEADERBOARD_ENABLED = new BooleanOption("leaderboard.enabled");
+	public static final ConfigurationOption<Boolean> LEADERBOARD_SAVE_CANCELLED_GAMES = new BooleanOption("leaderboard.saveCancelledGames");
+	public static final ConfigurationOption<Boolean> LEADERBOARD_USE_PRESETS = new BooleanOption("leaderboard.onlyUsePresetCategories");
 
 	// Commands
 	public static final ConfigurationOption<String> SEND_COMMAND_BEFORE_GAME_STARTS = new StringOptionAllowEmpty("sendCommandBeforeGameStarts");

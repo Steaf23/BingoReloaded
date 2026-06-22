@@ -651,7 +651,7 @@ public class AutoBingoAction extends DeferredAction {
 					sendFailed("Invalid settings path " + path, sessionName);
 					return ActionResult.IGNORED;
 				}
-				settingsBuilder.fromOther(settings);
+				settingsBuilder.fromOther(settings, path);
 				sendSuccess("Loaded settings from '" + path + "'.", sessionName);
 			}
 			case "remove" -> {

@@ -24,7 +24,7 @@ import java.util.Map;
 public class BingoGamemodes {
 	public static final Map<String, BingoGamemode> GAMEMODES = new HashMap<>();
 
-	public static BingoGamemode BINGO = register(new BingoGamemode(
+	public static final BingoGamemode BINGO = register(new BingoGamemode(
 			"bingo",
 			BingoMessage.MODE_BINGO.asPhrase(),
 			TextColor.fromHexString("#309f14"),
@@ -50,7 +50,7 @@ public class BingoGamemodes {
 		}
 	});
 
-	public static BingoGamemode LOCKOUT = register(new BingoGamemode(
+	public static final BingoGamemode LOCKOUT = register(new BingoGamemode(
 			"lockout",
 			BingoMessage.MODE_LOCKOUT.asPhrase(),
 			TextColor.fromHexString("#8138d9"),
@@ -71,7 +71,7 @@ public class BingoGamemodes {
 		}
 	});
 
-	public static BingoGamemode COMPLETE = register(new BingoGamemode(
+	public static final BingoGamemode COMPLETE = register(new BingoGamemode(
 			"complete",
 			BingoMessage.MODE_COMPLETE.asPhrase(),
 			TextColor.fromHexString("#3d6fe3"),
@@ -96,7 +96,7 @@ public class BingoGamemodes {
 		}
 	});
 
-	public static BingoGamemode HOTSWAP = register(new BingoGamemode(
+	public static final BingoGamemode HOTSWAP = register(new BingoGamemode(
 			"hotswap",
 			BingoMessage.MODE_HOTSWAP.asPhrase(),
 			TextColor.fromHexString("#bd2a3f"),
@@ -122,7 +122,7 @@ public class BingoGamemodes {
 		}
 	});
 
-	public static BingoGamemode BLITZ = register(new BingoGamemode(
+	public static final BingoGamemode BLITZ = register(new BingoGamemode(
 			"blitz",
 			BingoMessage.MODE_BLITZ.asPhrase(),
 			TextColor.fromHexString("#e5c93e"),

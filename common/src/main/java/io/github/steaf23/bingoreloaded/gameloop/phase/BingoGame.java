@@ -404,7 +404,7 @@ public class BingoGame implements GamePhase
 
             if (!(deathMatchTask.data instanceof ItemTask itemTask)) {
                 ConsoleMessenger.bug("Cannot play deathmatch with a non-item task!", this);
-                end();
+                end(null);
                 return;
             }
 
@@ -724,6 +724,10 @@ public class BingoGame implements GamePhase
     }
 
     public void onCountdownTimerFinished() {
+        endWithPotentialWinner(true);
+    }
+
+    public void endWithPotentialWinner(boolean canDeathmatch) {
         BingoTeam leadingTeam = getTeamManager().getActiveTeams().getLeadingTeam();
 
         Set<BingoTeam> tiedTeams = new HashSet<>();
@@ -746,8 +750,10 @@ public class BingoGame implements GamePhase
         // If only 1 team is "tied" for first place, make that team win the game
         if (tiedTeams.size() == 1) {
             bingo(leadingTeam);
-        } else {
+        } else if (canDeathmatch) {
             startDeathMatch(5);
+        } else {
+            end(null);
         }
     }
 
@@ -781,7 +787,8 @@ public class BingoGame implements GamePhase
 
     @Override
     public void end() {
-        end((BingoTeam)null);
+        // Check leading team etc...
+        endWithPotentialWinner(false);
     }
 
     @Override

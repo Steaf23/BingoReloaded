@@ -125,6 +125,18 @@ public class ItemTemplate
     }
 
     /**
+     * Overload for setLore(Component...)
+     * @param lore multiline lore.
+     */
+    public ItemTemplate setLore(List<Component> lore) {
+        if (lore.isEmpty())
+            return this;
+
+        return addDescription("lore", 0, lore.toArray(new Component[]{}));
+    }
+
+
+    /**
      * Adds a description section to the template's item description.
      * Each section is separated by an empty line and the first description is shown directly under the item name.
      * @param name identifiable name for the description, can be used to remove the description using removeDescription().

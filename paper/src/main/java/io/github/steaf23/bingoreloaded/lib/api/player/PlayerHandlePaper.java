@@ -297,4 +297,9 @@ public class PlayerHandlePaper implements PlayerHandle {
 	public Player handle() {
 		return player;
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		return obj instanceof PlayerHandlePaper paperPlayer && paperPlayer.uniqueId().equals(uniqueId());
+	}
 }

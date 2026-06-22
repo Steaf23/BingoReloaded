@@ -15,6 +15,8 @@ import java.util.Objects;
 import java.util.Set;
 
 public class BingoSettingsBuilder {
+	// empty when this builder has changed. The preset name is not stored in the actual settings, only used by the builder.
+	private String preset;
 
 	private final BingoSession session;
 	private BingoCard card;
@@ -36,19 +38,20 @@ public class BingoSettingsBuilder {
 	public BingoSettingsBuilder(BingoSession session) {
 		this.session = session;
 
-		BingoSettings def = new BingoSettingsData().getDefaultSettings();
+		BingoSettingsData data = new BingoSettingsData();
+		BingoSettings def = data.getDefaultSettings();
 		if (def == null) {
 			ConsoleMessenger.error("Could not find default settings, make sure you have at least 1 existing settings preset and its set to be the default settings!");
 			return;
 		}
-		fromOther(def, false);
+		fromOther(def, data.getDefaultSettingsName(), false);
 	}
 
-	public void fromOther(BingoSettings settings) {
-		fromOther(settings, true);
+	public void fromOther(BingoSettings settings, String preset) {
+		fromOther(settings, preset, true);
 	}
 
-	public void fromOther(BingoSettings settings, boolean sendUpdated) {
+	public void fromOther(BingoSettings settings, String preset, boolean sendUpdated) {
 		card = settings.card();
 		mode = settings.mode();
 		cardSize = settings.size();
@@ -67,11 +70,12 @@ public class BingoSettingsBuilder {
 		if (sendUpdated) {
 			settingsUpdated();
 		}
+		this.preset = preset;
 	}
 
 	public BingoSettingsBuilder applyVoteResult(VoteTicket voteResult) {
 		BingoSettingsBuilder resultBuilder = new BingoSettingsBuilder(session);
-		resultBuilder.fromOther(view());
+		resultBuilder.fromOther(view(), ""); // it's not a preset anymore if we vote and change settings...
 
 		BingoGamemode newMode = VoteTicket.CATEGORY_GAMEMODE.getValidResultOrNull(voteResult);
 		if (newMode != null) {
@@ -265,6 +269,11 @@ public class BingoSettingsBuilder {
 	}
 
 	public void settingsUpdated() {
+		preset = "";
 		session.onSettingUpdated(view());
+	}
+
+	public String preset() {
+		return preset;
 	}
 }

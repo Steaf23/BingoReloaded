@@ -1,11 +1,14 @@
 package io.github.steaf23.bingoreloaded.gui.inventory;
 
+import io.github.steaf23.bingoreloaded.data.BingoMessage;
+import io.github.steaf23.bingoreloaded.data.BingoSettingsData;
 import io.github.steaf23.bingoreloaded.data.record.GameRecord;
-import io.github.steaf23.bingoreloaded.data.record.GameRecordData;
+import io.github.steaf23.bingoreloaded.data.record.LeaderboardData;
 import io.github.steaf23.bingoreloaded.lib.api.MenuBoard;
 import io.github.steaf23.bingoreloaded.lib.api.PlatformResolver;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemTypePaper;
+import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.inventory.BasicMenu;
 import io.github.steaf23.bingoreloaded.lib.inventory.group.PaginatedGroup;
 import io.github.steaf23.bingoreloaded.lib.inventory.group.ScrollableItemBar;
@@ -25,12 +28,17 @@ import org.bukkit.Material;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
 
-public class GameHistoryMenu extends BasicMenu {
+public class LeaderboardMenu extends BasicMenu {
+
+	private static BingoSettingsData settingsData = null;
+
+	private final LeaderboardData leaderboard;
 
 	enum ScoreCondition {
 		LOWEST_TIME(Comparator.comparing(GameRecord::playTime)),
@@ -48,6 +56,8 @@ public class GameHistoryMenu extends BasicMenu {
 
 	}
 
+	private record SettingsGroup(String presetName, BingoSettings settings, Set<String> aliases) {}
+
 	private static final ItemTemplate NEXT = new ItemTemplate(0, ItemTypePaper.of(Material.STRUCTURE_VOID),
 			PlayerDisplayTranslationKey.MENU_NEXT.translate()
 					.color(NamedTextColor.LIGHT_PURPLE).decorate(TextDecoration.BOLD));
@@ -56,8 +66,8 @@ public class GameHistoryMenu extends BasicMenu {
 			PlayerDisplayTranslationKey.MENU_PREVIOUS.translate()
 					.color(NamedTextColor.LIGHT_PURPLE).decorate(TextDecoration.BOLD));
 
-	private static final ItemTemplate ORDER_BY_TIME = new ItemTemplate(0, 1, ItemType.of("minecraft:clock"), Component.text("Sort by Fastest Time"));
-	private static final ItemTemplate ORDER_BY_SCORE = new ItemTemplate(0, 1, ItemType.of("minecraft:compass"), Component.text("Sort by Highest Score"));
+	private static final ItemTemplate ORDER_BY_TIME = new ItemTemplate(0, 1, ItemType.of("minecraft:clock"), BingoMessage.LEADERBOARD_SORT_TIME.asPhrase());
+	private static final ItemTemplate ORDER_BY_SCORE = new ItemTemplate(0, 1, ItemType.of("minecraft:compass"), BingoMessage.LEADERBOARD_SORT_SCORE.asPhrase());
 
 	private static final Map<BingoGamemode, Set<ScoreCondition>> SCORE_CONDITIONS_PER_MODE = Map.of(
 			BingoGamemodes.BINGO, Set.of(ScoreCondition.LOWEST_TIME),
@@ -67,39 +77,37 @@ public class GameHistoryMenu extends BasicMenu {
 			BingoGamemodes.BLITZ, Set.of(ScoreCondition.BIGGEST_SCORE)
 	);
 
-	private final GameRecordData historyData;
-	private final ScrollableItemBar<Category> categories = new ScrollableItemBar<>(this, 0, 0, 9, SelectionModel.SelectMode.SINGLE);
+	private final ScrollableItemBar<Category> categories = new ScrollableItemBar<>(this, 0, 0, 8, SelectionModel.SelectMode.SINGLE);
 	private final StackedGroup stack;
 
-	public GameHistoryMenu(MenuBoard manager, GameRecordData historyData) {
-		super(manager, Component.text("Game History"), 6);
-		this.historyData = historyData;
+	public LeaderboardMenu(MenuBoard manager, LeaderboardData leaderboard, PlayerHandle player, boolean categorizeByPresets) {
+		super(manager, BingoMessage.LEADERBOARD_TITLE.asPhrase(), 6);
+		this.leaderboard = leaderboard;
+
+		if (settingsData == null) {
+			settingsData = new BingoSettingsData();
+		}
+
 		this.categories.setItemClickedCallback((idx, item, category) -> {
 			showCategory(idx, category);
 			return null;
 		});
 
-		Map<UUID, BingoSettings> settingIds = historyData.getSettings();
+		Map<String, BingoSettings> allSettings = this.leaderboard.getSettings(settingsData);
+		stack = new StackedGroup(1, 2, 7, 4);
 
 		List<Category> categoryData = new ArrayList<>();
-		stack = new StackedGroup(1, 2, 7, 4);
-		// Sort settings by gamemode
 		int i = 0;
-		List<List<UUID>> groupedSettings = groupSettingsByMode(settingIds);
-		for (List<UUID> group : groupedSettings) {
-			List<GameRecord> records = historyData.getGamesFilteredBy(record -> {
-				if (record.winningTeam() == null || record.winningTeam().isEmpty()) {
+		List<SettingsGroup> groupedSettings = categorizeByPresets ? groupSettingsByPreset(allSettings) : groupSettingsInSameBracket(allSettings);
+		for (SettingsGroup group : groupedSettings) {
+			List<GameRecord> records = leaderboard.getGamesFilteredBy(record -> {
+				if(record.winningTeam() == null || record.winningTeam().isEmpty()) {
 					return false;
 				}
 
-				for (UUID id : group) {
-					if (record.settingsId().equals(id)) {
-						return true;
-					}
-				}
-				return false;
+				return group.aliases().contains(record.settingsId());
 			});
-			BingoSettings settings = settingIds.get(group.getFirst());
+			BingoSettings settings = group.settings;
 
 			StackedGroup categoriesStack = new StackedGroup(1, 2, 7, 4);
 			for (ScoreCondition condition : SCORE_CONDITIONS_PER_MODE.get(settings.mode())) {
@@ -160,21 +168,10 @@ public class GameHistoryMenu extends BasicMenu {
 
 			stack.addGroup(categoriesStack);
 
-			ItemTemplate item = new ItemTemplate(i, ItemType.of("minecraft:leather_horse_armor"),
-					Component.empty().append(Component.text("Category: ").color(NamedTextColor.GRAY))
-							.append(settings.mode().asComponent())
-							.append(Component.text(" "))
-							.append(settings.size().asComponent()),
-					Component.empty().append(Component.text("Kit: ").color(NamedTextColor.GRAY)).append(settings.kit().getDisplayName()),
-					Component.empty().append(Component.text("Card: ").color(NamedTextColor.GRAY)).append(Component.text(settings.card().cardName())),
-					Component.empty().append(Component.text("Games played: ").color(NamedTextColor.GRAY)).append(Component.text(records.size())),
-					Component.empty(),
-					Component.empty().append(BasicMenu.INPUT_LEFT_CLICK).append(Component.text("View Scoreboard").color(TextColor.fromHexString("#ff661c")).decorate(TextDecoration.BOLD)))
-					.setLeatherColor(settings.mode().getColor());
-			categoryData.add(new Category(item, settings.mode()));
+			ItemTemplate item = categoryItem(group, records.size());
+			categoryData.add(new Category(item.copyToSlot(i), settings.mode()));
 			i++;
 		}
-
 		categories.setItems(categoryData.stream()
 				.map(Category::item)
 				.toList(), categoryData);
@@ -193,36 +190,61 @@ public class GameHistoryMenu extends BasicMenu {
 
 		categories.updateVisibleItems(this);
 
+		if (categoryData.isEmpty()) {
+			return;
+		}
 		showCategory(0, categoryData.getFirst());
 	}
 
-	private List<List<UUID>> groupSettingsByMode(Map<UUID, BingoSettings> allSettings) {
-		List<List<UUID>> result = new ArrayList<>();
+	private List<SettingsGroup> groupSettingsInSameBracket(Map<String, BingoSettings> allSettings) {
+		List<SettingsGroup> result = new ArrayList<>();
 		outer:
-		for (UUID settingsId : allSettings.keySet()) {
+		for (String settingsId : allSettings.keySet()) {
 			BingoSettings settings = allSettings.get(settingsId);
 
 			// Check if this setting matches any already placed groups
-			for (List<UUID> ids : result) {
-				UUID id = ids.getFirst();
+			for (SettingsGroup ids : result) {
+				String id = ids.aliases.stream().findFirst().orElse("");
 				if (id.equals(settingsId)) {
 					continue;
 				}
 
 				BingoSettings other = allSettings.get(id);
-				if (other == settings) {
-					continue;
-				}
-
 				if (inSameBracket(settings, other)) {
-					ids.add(id);
+					ids.aliases.add(settingsId);
 					continue outer;
 				}
 			}
 
 			// if settings is not already matched before, add a new result set (different settings).
-			result.add(new ArrayList<>(List.of(settingsId)));
+			result.add(new SettingsGroup("", settings, new HashSet<>(Set.of(settingsId))));
 		}
+		return result;
+	}
+
+	private List<SettingsGroup> groupSettingsByPreset(Map<String, BingoSettings> allSettings) {
+		List<SettingsGroup> result = new ArrayList<>();
+
+		Map<String, Set<String>> presetsAndSimilarSettings = new HashMap<>();
+		for (String name : allSettings.keySet()) {
+			if (settingsData.containsSettings(name)) {
+				presetsAndSimilarSettings.put(name, new HashSet<>());
+			}
+		}
+
+		// Check which settings are secretly presets by comparing their contents.
+		for (String preset : presetsAndSimilarSettings.keySet()) {
+			BingoSettings presetSettings = allSettings.get(preset);
+			Set<String> settingsLikePreset = new HashSet<>();
+			for (String current : allSettings.keySet()) {
+				BingoSettings currentSettings = allSettings.get(current);
+				if (current.equals(preset) || presetSettings.equals(currentSettings)) {
+					settingsLikePreset.add(current);
+				}
+			}
+			result.add(new SettingsGroup(preset, presetSettings, settingsLikePreset));
+		}
+
 		return result;
 	}
 
@@ -264,7 +286,7 @@ public class GameHistoryMenu extends BasicMenu {
 
 	private void showCategory(int pageIndex, Category current) {
 
-		stack.setCurrentGroup(GameHistoryMenu.this, pageIndex);
+		stack.setCurrentGroup(LeaderboardMenu.this, pageIndex);
 		if (!(stack.getCurrentGroup() instanceof StackedGroup categoryGroup)) {
 			return;
 		}
@@ -344,4 +366,32 @@ public class GameHistoryMenu extends BasicMenu {
 			addItem(BLANK.copyToSlot(8, 5));
 		}
 	}
+
+	private ItemTemplate categoryItem(SettingsGroup group, int numGamesPlayed) {
+		BingoSettings settings = group.settings();
+		List<Component> lore = new ArrayList<>();
+
+		if (!group.presetName().isEmpty()) {
+			lore.add(Component.empty().append(BingoMessage.LEADERBOARD_SETTINGS.asPhrase().append(Component.text(": ")).color(NamedTextColor.GRAY)).append(Component.text(group.presetName())));
+		}
+
+		lore.addAll(List.of(
+				Component.empty().append(BingoMessage.LEADERBOARD_KIT.asPhrase().append(Component.text(": ")).color(NamedTextColor.GRAY)).append(settings.kit().getDisplayName()),
+				Component.empty().append(BingoMessage.LEADERBOARD_CARD.asPhrase().append(Component.text(": ")).color(NamedTextColor.GRAY)).append(Component.text(settings.card().cardName())),
+				Component.empty().append(BingoMessage.LEADERBOARD_GAMES_PLAYED.asPhrase().append(Component.text(": ")).color(NamedTextColor.GRAY)).append(Component.text(numGamesPlayed)),
+				Component.empty(),
+				Component.empty().append(BasicMenu.INPUT_LEFT_CLICK).append(BingoMessage.LEADERBOARD_PROMPT.asPhrase().color(TextColor.fromHexString("#ff661c")).decorate(TextDecoration.BOLD))
+			));
+
+		ItemTemplate item = new ItemTemplate(ItemType.of("minecraft:leather_horse_armor"),
+				Component.empty().append(BingoMessage.LEADERBOARD_CATEGORY.asPhrase().append(Component.text(": ")).color(NamedTextColor.GRAY))
+						.append(settings.mode().asComponent())
+						.append(Component.text(" "))
+						.append(settings.size().asComponent()),
+				lore)
+				.setLeatherColor(settings.mode().getColor());
+
+		return item;
+	}
+
 }

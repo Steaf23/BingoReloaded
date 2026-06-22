@@ -219,8 +219,7 @@ public class BingoSession implements ForwardingAudience
 			}
 		}
 
-        // TODO: add config option for saving game history, add check for new record, etc...
-        gameManager.getRecordData().saveGame(game, winningTeam);
+        addGameToLeaderboard(game, winningTeam);
 
 		BingoOptions.ConfigGamemode gamemode = config.getOptionValue(BingoOptions.PLAYER_GAMEMODE_AFTER_GAME);
 
@@ -257,6 +256,18 @@ public class BingoSession implements ForwardingAudience
 			}
 		}
         BingoReloaded.sendResourcePack(player);
+    }
+
+    public void addGameToLeaderboard(BingoGame game, @Nullable BingoTeam winningTeam) {
+        if (!config.getOptionValue(BingoOptions.LEADERBOARD_ENABLED)) {
+            return;
+        }
+
+        if (!config.getOptionValue(BingoOptions.LEADERBOARD_SAVE_CANCELLED_GAMES) && winningTeam == null) {
+            return;
+        }
+
+        gameManager.getLeaderboard().saveGame(settingsBuilder, game, winningTeam);
     }
 
     public void removePlayer(PlayerHandle player) {

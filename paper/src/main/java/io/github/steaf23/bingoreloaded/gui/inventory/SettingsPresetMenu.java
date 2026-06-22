@@ -42,7 +42,7 @@ public class SettingsPresetMenu extends PaginatedSelectionMenu
     @Override
     public void onOptionClickedDelegate(InventoryClickEvent event, ItemTemplate clickedOption, PlayerHandle player) {
         if (event.isLeftClick()) {
-            settingsBuilder.fromOther(settingsData.getSettings(clickedOption.getCompareKey()));
+            settingsBuilder.fromOther(settingsData.getSettings(clickedOption.getCompareKey()), clickedOption.getCompareKey());
             close(player);
         } else if (event.isRightClick()) {
             BasicMenu context = new BasicMenu(getMenuBoard(), clickedOption.getName(), 1);
@@ -84,6 +84,7 @@ public class SettingsPresetMenu extends PaginatedSelectionMenu
         addAction(SAVE_PRESET, arguments -> {
             new UserInputMenu(getMenuBoard(), Component.text("Rename preset..."), input -> {
                 settingsData.saveSettings(input, settingsBuilder.view());
+                settingsBuilder.fromOther(settingsBuilder.view(), input);
                 beforeOpening(arguments.player());
             }, "my_settings")
                     .open(player);

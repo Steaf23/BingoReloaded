@@ -17,7 +17,6 @@ import io.github.steaf23.bingoreloaded.tasks.GameTask;
 import io.github.steaf23.bingoreloaded.tasks.RotatingTaskList;
 import io.github.steaf23.bingoreloaded.tasks.TaskGenerator;
 import io.github.steaf23.bingoreloaded.tasks.data.TaskData;
-import io.github.steaf23.bingoreloaded.util.ActionBarManager;
 import io.github.steaf23.bingoreloaded.util.timer.BlitzTimer;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
