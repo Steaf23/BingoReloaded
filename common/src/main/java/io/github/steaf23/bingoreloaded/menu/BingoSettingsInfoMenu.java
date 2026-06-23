@@ -31,7 +31,7 @@ public class BingoSettingsInfoMenu extends InfoMenu
 		addField("team_size", config.getOptionValue(BingoOptions.SINGLE_PLAYER_TEAMS) ? Component.text("1").color(NamedTextColor.AQUA) : Component.text(Integer.toString(settings.maxTeamSize())));
 
 		if (settings.mode().featureSet().contains(GamemodeFeature.BLITZ_TIMER)) {
-			addField("duration", Component.text(Integer.toString(settings.countdownDurationBlitz() * 10)));
+			addField("duration", Component.text(settings.blitzStartDuration() * 10).append(Component.text(" (+" + (settings.blitzBonusDuration() * 10) + ")").color(NamedTextColor.GREEN)));
 		}
 		else if (settings.useCountdown()) {
 			addField("duration", Component.text(Integer.toString(settings.countdownDuration())));

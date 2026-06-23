@@ -54,10 +54,6 @@ placeholders:
   setting_duration:
     format: "{0}"
 
-  # The currently selected maximum duration of a blitz game in seconds, '-' if countdown is not enabled.
-  blitz_duration:
-    format: "{0}"
-
   # The currently selected effects of the session the player is in. NOT IMPLEMENTED YET
   setting_effects:
     format: "{0}"
@@ -80,6 +76,14 @@ placeholders:
 
   # The currently selected max team size.
   setting_teamsize:
+    format: "{0}"
+
+  # The currently selected starting duration of a blitz game in seconds, '-' if countdown is not enabled.
+  setting_blitz_start_duration:
+    format: "{0}"
+
+  # The currently selected bonus duration of a blitz game in seconds, '-' if countdown is not enabled.
+  setting_blitz_bonus_duration:
     format: "{0}"
 
   # Name of the session/world that the player is in.

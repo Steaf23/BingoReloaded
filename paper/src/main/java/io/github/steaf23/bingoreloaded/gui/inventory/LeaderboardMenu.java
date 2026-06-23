@@ -66,8 +66,8 @@ public class LeaderboardMenu extends BasicMenu {
 			PlayerDisplayTranslationKey.MENU_PREVIOUS.translate()
 					.color(NamedTextColor.LIGHT_PURPLE).decorate(TextDecoration.BOLD));
 
-	private static final ItemTemplate ORDER_BY_TIME = new ItemTemplate(0, 1, ItemType.of("minecraft:clock"), BingoMessage.LEADERBOARD_SORT_TIME.asPhrase());
-	private static final ItemTemplate ORDER_BY_SCORE = new ItemTemplate(0, 1, ItemType.of("minecraft:compass"), BingoMessage.LEADERBOARD_SORT_SCORE.asPhrase());
+	private static final ItemTemplate ORDER_BY_TIME = new ItemTemplate(0, 1, ItemTypePaper.of(Material.CLOCK), BingoMessage.LEADERBOARD_SORT_TIME.asPhrase());
+	private static final ItemTemplate ORDER_BY_SCORE = new ItemTemplate(0, 1, ItemTypePaper.of(Material.COMPASS), BingoMessage.LEADERBOARD_SORT_SCORE.asPhrase());
 
 	private static final Map<BingoGamemode, Set<ScoreCondition>> SCORE_CONDITIONS_PER_MODE = Map.of(
 			BingoGamemodes.BINGO, Set.of(ScoreCondition.LOWEST_TIME),
@@ -100,7 +100,7 @@ public class LeaderboardMenu extends BasicMenu {
 		int i = 0;
 		List<SettingsGroup> groupedSettings = categorizeByPresets ? groupSettingsByPreset(allSettings) : groupSettingsInSameBracket(allSettings);
 		for (SettingsGroup group : groupedSettings) {
-			List<GameRecord> records = leaderboard.getGamesFilteredBy(record -> {
+			List<GameRecord> records = this.leaderboard.getGamesFilteredBy(record -> {
 				if(record.winningTeam() == null || record.winningTeam().isEmpty()) {
 					return false;
 				}
@@ -121,26 +121,26 @@ public class LeaderboardMenu extends BasicMenu {
 				List<ItemTemplate> templates = new ArrayList<>();
 				for (GameRecord game : orderedByCondition) {
 					GameRecord.TeamRecord team = game.teams().get(game.winningTeam());
-					ItemType type = ItemType.of("minecraft:dried_ghast");
+					ItemType type = ItemTypePaper.of(Material.DRIED_GHAST);
 					TextColor color = NamedTextColor.GRAY;
 					switch (place) {
 						case 1 -> {
-							type = ItemType.of("minecraft:gold_ingot");
+							type = ItemTypePaper.of(Material.GOLD_INGOT);
 							color = TextColor.fromHexString("#fdd50e");
 						}
 						case 2 -> {
-							type = ItemType.of("minecraft:iron_ingot");
+							type = ItemTypePaper.of(Material.IRON_INGOT);
 							color = TextColor.fromHexString("#b9e4d8");
 						}
 						case 3 -> {
-							type = ItemType.of("minecraft:copper_ingot");
+							type = ItemTypePaper.of(Material.COPPER_INGOT);
 							color = TextColor.fromHexString("#cc6c54");
 						}
 					}
-					;
+
 					List<Component> description = new ArrayList<>();
 					description.add(team.team().nameComponent().color(team.team().color()).decorate(TextDecoration.BOLD));
-					for (GameRecord.ParticipantRecord participant : team.participants()) {
+					for (GameRecord.ParticipantRecord participant : team.participants().stream().sorted(Comparator.comparingInt(GameRecord.ParticipantRecord::contribution).reversed()).toList()) {
 						description.add(Component.text(participant.displayName()));
 					}
 
@@ -383,7 +383,7 @@ public class LeaderboardMenu extends BasicMenu {
 				Component.empty().append(BasicMenu.INPUT_LEFT_CLICK).append(BingoMessage.LEADERBOARD_PROMPT.asPhrase().color(TextColor.fromHexString("#ff661c")).decorate(TextDecoration.BOLD))
 			));
 
-		ItemTemplate item = new ItemTemplate(ItemType.of("minecraft:leather_horse_armor"),
+		ItemTemplate item = new ItemTemplate(ItemTypePaper.of(Material.LEATHER_HORSE_ARMOR),
 				Component.empty().append(BingoMessage.LEADERBOARD_CATEGORY.asPhrase().append(Component.text(": ")).color(NamedTextColor.GRAY))
 						.append(settings.mode().asComponent())
 						.append(Component.text(" "))

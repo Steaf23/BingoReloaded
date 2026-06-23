@@ -331,11 +331,12 @@ public class DataUpdaterV1
                         64,
                         oldSettings.enableCountdown() ? BingoSettings.CountdownType.DURATION : BingoSettings.CountdownType.DISABLED,
                         oldSettings.countdownDuration(),
-                        12,
                         oldSettings.hotswapGoal(),
                         true,
                         oldSettings.size.fullCardSize,
-                        false
+                        false,
+                        5 * 6,
+                        2 * 6
                 ));
             }
         }

@@ -29,11 +29,12 @@ public class BingoSettingsBuilder {
 	private int maxTeamCount;
 	private BingoSettings.CountdownType countdownType;
 	private int countdownGameDuration;
-	private int blitzGameDuration;
 	private int hotswapGoal;
 	private boolean expireHotswapTasks;
 	private int completeGoal;
 	private boolean differentCardPerTeam;
+	private int blitzStartDuration;
+	private int blitzBonusDuration;
 
 	public BingoSettingsBuilder(BingoSession session) {
 		this.session = session;
@@ -61,12 +62,13 @@ public class BingoSettingsBuilder {
 		maxTeamSize = settings.maxTeamSize();
 		maxTeamCount = settings.maxTeamCount();
 		countdownGameDuration = settings.countdownDuration();
-		blitzGameDuration = settings.countdownDurationBlitz();
 		countdownType = settings.countdownType();
 		hotswapGoal = settings.hotswapGoal();
 		completeGoal = settings.completeGoal();
 		differentCardPerTeam = settings.differentCardPerTeam();
 		expireHotswapTasks = settings.expireHotswapTasks();
+		blitzStartDuration = settings.blitzStartDuration();
+		blitzBonusDuration = settings.blitzBonusDuration();
 		if (sendUpdated) {
 			settingsUpdated();
 		}
@@ -206,9 +208,17 @@ public class BingoSettingsBuilder {
 		return this;
 	}
 
-	public BingoSettingsBuilder blitzGameDuration(int blitzGameDuration) {
-		if (this.blitzGameDuration != blitzGameDuration) {
-			this.blitzGameDuration = blitzGameDuration;
+	public BingoSettingsBuilder blitzStartDuration(int blitzStartDuration) {
+		if (this.blitzStartDuration != blitzStartDuration) {
+			this.blitzStartDuration = blitzStartDuration;
+			settingsUpdated();
+		}
+		return this;
+	}
+
+	public BingoSettingsBuilder blitzBonusDuration(int blitzBonusDuration) {
+		if (this.blitzBonusDuration != blitzBonusDuration) {
+			this.blitzBonusDuration = blitzBonusDuration;
 			settingsUpdated();
 		}
 		return this;
@@ -260,11 +270,12 @@ public class BingoSettingsBuilder {
 				maxTeamCount,
 				countdownType,
 				countdownGameDuration,
-				blitzGameDuration,
 				hotswapGoal,
 				expireHotswapTasks,
 				completeGoal,
-				differentCardPerTeam
+				differentCardPerTeam,
+				blitzStartDuration,
+				blitzBonusDuration
 		);
 	}
 

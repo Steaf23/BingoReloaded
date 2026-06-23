@@ -86,6 +86,10 @@ public class AdminBingoMenu extends BasicMenu {
 	private static final ItemTemplate PRESETS = new ItemTemplate(7, 4,
 			ItemTypePaper.of(Material.CHEST_MINECART), BingoReloaded.applyTitleFormat("Setting Presets"));
 
+	private static final ItemTemplate DISABLED_BY_BLITZ = new ItemTemplate(ItemTypePaper.of(Material.BARRIER),
+			BingoReloaded.applyTitleFormat("Disabled by Blitz").color(NamedTextColor.RED),
+			Component.text("This setting does not matter in Blitz").color(NamedTextColor.RED));
+
 	public AdminBingoMenu(MenuBoard menuBoard, BingoSession session) {
 		super(menuBoard, BingoMessage.OPTIONS_TITLE.asPhrase(), 6);
 		this.session = session;
@@ -135,6 +139,10 @@ public class AdminBingoMenu extends BasicMenu {
 							Component.text("   Tasks expire").color(NamedTextColor.RED) :
 							Component.text("   Tasks do not expire").color(NamedTextColor.GRAY));
 				}
+				case BLITZ_TIMER -> {
+					modeLore.add(Component.text("    Head start: ").append(Component.text(settings.blitzStartDuration() * 10).append(Component.text(" seconds"))));
+					modeLore.add(Component.text("    Bonus: ").append(Component.text(settings.blitzBonusDuration() * 10).color(NamedTextColor.GREEN).append(Component.text(" seconds"))));
+				}
 			}
 		}
 
@@ -162,28 +170,27 @@ public class AdminBingoMenu extends BasicMenu {
 			updateTeamSizeLore(teamSizeItem, value);
 		});
 		teamSizeAction.setItem(teamSizeItem);
+		addAction(teamSizeAction);
 
-		ItemTemplate teamCountItem = TEAM_COUNT.copy();
-		int maxTeamCount = view.maxTeamCount();
-		MenuAction teamCountAction;
-		if (view.mode() == BingoGamemodes.BLITZ) {
-			updateTeamCountLore(teamCountItem, view.maxTeamCount());
-			teamCountItem.addDescription("warning", 1, Component.text("Cannot change team count when playing Blitz!").color(NamedTextColor.RED));
-			teamCountAction = new SpinBoxButtonAction(1, maxTeamCount, maxTeamCount, value -> {
-				BingoPlayerSender.sendMessage(Component.text("Cannot change team count when playing Blitz!").color(NamedTextColor.RED), player);
-			});
+		if (settings.mode().featureSet().contains(GamemodeFeature.BLITZ_TIMER)) {
+			ItemTemplate disabledTeamCount = DISABLED_BY_BLITZ.copyToSlot(TEAM_COUNT.getSlot())
+					.setName(BingoReloaded.applyTitleFormat("In Blitz you work together in 1 team").color(NamedTextColor.RED));
+			ItemTemplate disabledDuration = DISABLED_BY_BLITZ.copyToSlot(DURATION.getSlot())
+					.setName(BingoReloaded.applyTitleFormat("Duration disabled by Blitz").color(NamedTextColor.RED));
+			ItemTemplate disabledCountdown = DISABLED_BY_BLITZ.copyToSlot(COUNTDOWN_TYPE_DISABLED.getSlot())
+					.setName(BingoReloaded.applyTitleFormat("Countdown disabled by Blitz").color(NamedTextColor.RED));
+			addItems(disabledTeamCount, disabledDuration, disabledCountdown);
 		} else {
+			ItemTemplate teamCountItem = TEAM_COUNT.copy();
+			int maxTeamCount = view.maxTeamCount();
 			updateTeamCountLore(teamCountItem, maxTeamCount);
-			teamCountAction = new SpinBoxButtonAction(1, TEAMCOUNT_MAX, maxTeamCount, value -> {
+			MenuAction teamCountAction = new SpinBoxButtonAction(1, TEAMCOUNT_MAX, maxTeamCount, value -> {
 				session.settingsBuilder.maxTeamCount(value);
 				updateTeamCountLore(teamCountItem, value);
 			});
-		}
-		teamCountAction.setItem(teamCountItem);
+			teamCountAction.setItem(teamCountItem);
 
-		ItemTemplate durationItem = DURATION.copy();
-		if (settings.mode().featureSet().contains(GamemodeFeature.BLITZ_TIMER)) {
-		} else {
+			ItemTemplate durationItem = DURATION.copy();
 			int duration = view.countdownDuration();
 			updateDurationLore(durationItem, duration);
 			MenuAction durationAction = new SpinBoxButtonAction(1, DURATION_MAX, duration, value -> {
@@ -191,19 +198,17 @@ public class AdminBingoMenu extends BasicMenu {
 				updateDurationLore(durationItem, value);
 			});
 			durationAction.setItem(durationItem);
-			addAction(durationAction);
+
+			MenuAction countdownAction = new ComboBoxButtonAction.Builder("DISABLED", COUNTDOWN_TYPE_DISABLED.copy())
+					.addOption("DURATION", COUNTDOWN_TYPE_DURATION.copy())
+					.addOption("TIME_LIMIT", COUNTDOWN_TYPE_LIMIT.copy())
+					.setCallback((oldValue, newValue, arguments) -> {
+						session.settingsBuilder.countdownType(BingoSettings.CountdownType.valueOf(newValue));
+						return true;
+					})
+					.buildAction(COUNTDOWN_TYPE_DISABLED.getSlot(), view.countdownType().name());
+			addActions(teamCountAction, durationAction, countdownAction);
 		}
-
-
-		MenuAction countdownAction = new ComboBoxButtonAction.Builder("DISABLED", COUNTDOWN_TYPE_DISABLED.copy())
-				.addOption("DURATION", COUNTDOWN_TYPE_DURATION.copy())
-				.addOption("TIME_LIMIT", COUNTDOWN_TYPE_LIMIT.copy())
-				.setCallback((oldValue, newValue, arguments) -> {
-					session.settingsBuilder.countdownType(BingoSettings.CountdownType.valueOf(newValue));
-					return true;
-				})
-				.buildAction(COUNTDOWN_TYPE_DISABLED.getSlot(), view.countdownType().name());
-		addActions(teamSizeAction, teamCountAction, countdownAction);
 
 		MenuAction startAction = new ComboBoxButtonAction.Builder("start", START.copy())
 				.addOption("end", END.copy())

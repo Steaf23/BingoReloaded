@@ -160,15 +160,6 @@ public class BingoReloadedPlaceholderExpansion extends PlaceholderExpansion
                     yield settings.useCountdown() ? Component.text(settings.countdownDuration()) : defaultComponent;
                 }
             }
-            case SETTING_BLITZ_DURATION -> {
-                BingoSettings settings = getSettings(player);
-                if (settings == null) {
-                    yield defaultComponent;
-                }
-                else {
-                    yield settings.useCountdown() ? Component.text(settings.countdownDurationBlitz() * 10) : defaultComponent;
-                }
-            }
             case SETTING_EFFECTS -> {
                 //TODO: implement
                 ConsoleMessenger.error("placeholder bingoreloaded_setting_effect is not implemented yet!");
@@ -226,6 +217,24 @@ public class BingoReloadedPlaceholderExpansion extends PlaceholderExpansion
                 }
                 else {
                     yield Component.text(settings.differentCardPerTeam());
+                }
+            }
+            case SETTING_BLITZ_START_DURATION -> {
+                BingoSettings settings = getSettings(player);
+                if (settings == null) {
+                    yield defaultComponent;
+                }
+                else {
+                    yield settings.useCountdown() ? Component.text(settings.blitzStartDuration() * 10) : defaultComponent;
+                }
+            }
+            case SETTING_BLITZ_BONUS_DURATION -> {
+                BingoSettings settings = getSettings(player);
+                if (settings == null) {
+                    yield defaultComponent;
+                }
+                else {
+                    yield settings.useCountdown() ? Component.text(settings.blitzBonusDuration() * 10) : defaultComponent;
                 }
             }
             case SESSION_NAME -> getPlayerSessionPlaceholder(player);

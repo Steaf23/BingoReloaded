@@ -113,7 +113,7 @@ public class BingoGame implements GamePhase
         this.gameStarted = false;
         // Create timer
         if (settings.mode().featureSet().contains(GamemodeFeature.BLITZ_TIMER))
-            timer = new BlitzTimer(settings.countdownDurationBlitz() * 10, settings.countdownDurationBlitz() * 10, this::onCountdownTimerFinished);
+            timer = new BlitzTimer(settings.blitzStartDuration() * 10, settings.blitzBonusDuration() * 10, this::onCountdownTimerFinished);
         else if (settings.useCountdown())
             timer = new CountdownTimer(settings.countdownDuration() * 60, 5 * 60, 60, this::onCountdownTimerFinished);
         else
