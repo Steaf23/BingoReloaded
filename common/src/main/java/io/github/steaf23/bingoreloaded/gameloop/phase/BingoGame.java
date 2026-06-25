@@ -91,6 +91,8 @@ public class BingoGame implements GamePhase
 
 	private final @Nullable WorldPosition startPosition;
 
+    private int displayBonusTime = 0;
+
     public BingoGame(ServerSoftware platform, @NotNull BingoSession session, @NotNull BingoSettings settings, @NotNull BingoConfigurationData config, BiConsumer<BingoGame, @Nullable BingoTeam> onGameEndedCallback, @Nullable WorldPosition atPosition) {
 		this.platform = platform;
 		this.session = session;
@@ -121,8 +123,6 @@ public class BingoGame implements GamePhase
         timer.addNotifier(time ->
         {
             Component timerMessage = timer.getTimeDisplayMessage(false);
-            actionBarManager.requestMessage(p -> timerMessage, 0);
-            actionBarManager.update();
             getProgressTracker().updateStatisticProgress();
 
             if (settings.mode().featureSet().contains(GamemodeFeature.BLITZ_TIMER)) {
@@ -132,7 +132,16 @@ public class BingoGame implements GamePhase
                 else if (time <= 10) {
                     session.playSound(BingoSound.BLITZ_TIMEOUT_10.sound());
                 }
+
+                if (displayBonusTime > 0) {
+                    displayBonusTime--;
+                    timerMessage = timerMessage.append(Component.text(" (+" + GameTimer.getTimeAsString(settings.blitzBonusDuration() * 10L) + ")").color(NamedTextColor.GREEN));
+                }
             }
+
+            Component finalMessage = timerMessage;
+            actionBarManager.requestMessage(p -> finalMessage, 0);
+            actionBarManager.update();
         });
 
         deathMatchTask = null;
@@ -584,6 +593,8 @@ public class BingoGame implements GamePhase
                 timeString.color(NamedTextColor.WHITE));
 
         playSound(BingoSound.TASK_COMPLETED.sound());
+
+        displayBonusTime = 4;
 
         scoreboard.updateTeamScores();
 		session.getGameManager().getRuntime().gameDisplay().update(scoreboard);
