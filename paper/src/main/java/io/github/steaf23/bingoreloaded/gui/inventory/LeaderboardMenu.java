@@ -1,14 +1,19 @@
 package io.github.steaf23.bingoreloaded.gui.inventory;
 
+import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.BingoSettingsData;
+import io.github.steaf23.bingoreloaded.data.BingoStatData;
+import io.github.steaf23.bingoreloaded.data.BingoStatType;
 import io.github.steaf23.bingoreloaded.data.record.GameRecord;
 import io.github.steaf23.bingoreloaded.data.record.LeaderboardData;
 import io.github.steaf23.bingoreloaded.lib.api.MenuBoard;
 import io.github.steaf23.bingoreloaded.lib.api.PlatformResolver;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemTypePaper;
+import io.github.steaf23.bingoreloaded.lib.api.item.PaperItemEditor;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
+import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandlePaper;
 import io.github.steaf23.bingoreloaded.lib.inventory.BasicMenu;
 import io.github.steaf23.bingoreloaded.lib.inventory.group.PaginatedGroup;
 import io.github.steaf23.bingoreloaded.lib.inventory.group.ScrollableItemBar;
@@ -25,6 +30,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
+import org.bukkit.inventory.meta.SkullMeta;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -77,10 +83,9 @@ public class LeaderboardMenu extends BasicMenu {
 			BingoGamemodes.BLITZ, Set.of(ScoreCondition.BIGGEST_SCORE)
 	);
 
-	private final ScrollableItemBar<Category> categories = new ScrollableItemBar<>(this, 0, 0, 8, SelectionModel.SelectMode.SINGLE);
 	private final StackedGroup stack;
 
-	public LeaderboardMenu(MenuBoard manager, LeaderboardData leaderboard, PlayerHandle player, boolean categorizeByPresets) {
+	public LeaderboardMenu(MenuBoard manager, LeaderboardData leaderboard, PlayerHandle player, boolean categorizeByPresets, boolean showPlayerStats) {
 		super(manager, BingoMessage.LEADERBOARD_TITLE.asPhrase(), 6);
 		this.leaderboard = leaderboard;
 
@@ -88,7 +93,8 @@ public class LeaderboardMenu extends BasicMenu {
 			settingsData = new BingoSettingsData();
 		}
 
-		this.categories.setItemClickedCallback((idx, item, category) -> {
+		ScrollableItemBar<Category> categories = new ScrollableItemBar<>(this, 0, 0, showPlayerStats ? 8 : 9, SelectionModel.SelectMode.SINGLE);
+		categories.setItemClickedCallback((idx, item, category) -> {
 			showCategory(idx, category);
 			return null;
 		});
@@ -194,6 +200,29 @@ public class LeaderboardMenu extends BasicMenu {
 			return;
 		}
 		showCategory(0, categoryData.getFirst());
+
+		if (showPlayerStats) {
+			BingoStatData data = new BingoStatData(PlatformResolver.get());
+			int wins = data.getPlayerStat(player.uniqueId(), BingoStatType.WINS);
+			int losses = data.getPlayerStat(player.uniqueId(), BingoStatType.LOSSES);
+			int wandUses = data.getPlayerStat(player.uniqueId(), BingoStatType.WAND_USES);
+
+			List<Component> lore = List.of(
+					Component.empty().append(BingoMessage.STATS_WINS.asPhrase().color(TextColor.fromHexString("#ff661c"))).append(Component.text(": " + wins)),
+					Component.empty().append(BingoMessage.STATS_LOSSES.asPhrase().color(TextColor.fromHexString("#ff661c"))).append(Component.text(": " + losses)),
+					Component.empty().append(BingoMessage.STATS_GAMES_PLAYED.asPhrase().color(TextColor.fromHexString("#ff661c"))).append(Component.text(": " + (wins + losses))),
+					Component.empty().append(BingoMessage.STATS_TASKS_COMPLETED.asPhrase().color(TextColor.fromHexString("#ff661c"))).append(Component.text(": " + data.getPlayerStat(player.uniqueId(), BingoStatType.TASKS))),
+					Component.empty().append(BingoMessage.STATS_TASKS_COMPLETED_RECORD.asPhrase().color(TextColor.fromHexString("#ff661c"))).append(Component.text(": " + data.getPlayerStat(player.uniqueId(), BingoStatType.RECORD_TASKS))),
+					Component.empty().append(BingoMessage.STATS_ITEM_USES.asPhrase().color(TextColor.fromHexString("#ff661c"))).append(Component.text(": " + wandUses)),
+					Component.empty().append(BingoMessage.STATS_WAND_USES.asPhrase().color(TextColor.fromHexString("#ff661c"))).append(Component.text(": " + wandUses))
+			);
+			ItemTemplate headItem = new ItemTemplate(ItemTemplate.slotFromXY(8, 0), ItemTypePaper.of(Material.PLAYER_HEAD), BingoReloaded.applyTitleFormat(BingoMessage.LEADERBOARD_STATS.asPhrase()), lore)
+					.customize(PaperItemEditor.class, stack -> {
+						stack.editMeta(SkullMeta.class, m -> m.setOwningPlayer(((PlayerHandlePaper)player).handle()));
+					});
+
+			addItem(headItem);
+		}
 	}
 
 	private List<SettingsGroup> groupSettingsInSameBracket(Map<String, BingoSettings> allSettings) {

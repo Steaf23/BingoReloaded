@@ -370,7 +370,7 @@ public class BingoReloadedPaper extends JavaPlugin implements BingoReloadedRunti
 
 	@Override
 	public void openLeaderboard(PlayerHandle player, LeaderboardData historyData, boolean categorizeByPresets) {
-		LeaderboardMenu menu = new LeaderboardMenu(menuBoard, historyData, player, categorizeByPresets);
+		LeaderboardMenu menu = new LeaderboardMenu(menuBoard, historyData, player, categorizeByPresets, bingo.config().getOptionValue(BingoOptions.SAVE_PLAYER_STATISTICS));
 		menu.open(player);
 	}
 

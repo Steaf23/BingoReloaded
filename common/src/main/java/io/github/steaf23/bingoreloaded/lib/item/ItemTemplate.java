@@ -60,6 +60,8 @@ public class ItemTemplate
     private TagDataStorage extraData;
 	private @Nullable Key cooldownGroup;
 
+    private final Map<Class<?>, Object> customizers = new HashMap<>();
+
     private boolean isDummy = false;
 
     public ItemTemplate(ItemType type) {
@@ -92,6 +94,13 @@ public class ItemTemplate
     }
 
     public ItemTemplate(int slot, ItemType type, Component name, Component... lore) {
+        this.slot = slot;
+        this.type = type;
+        this.name = name;
+        setLore(lore);
+    }
+
+    public ItemTemplate(int slot, ItemType type, Component name, List<Component> lore) {
         this.slot = slot;
         this.type = type;
         this.name = name;
@@ -379,6 +388,7 @@ public class ItemTemplate
 		copy.cooldownGroup = cooldownGroup;
 		copy.maxStackSize = maxStackSize;
         copy.isDummy = isDummy;
+        copy.customizers.putAll(customizers);
         return copy;
     }
 
@@ -410,6 +420,16 @@ public class ItemTemplate
 
     public TagDataStorage getExtraData() {
         return extraData;
+    }
+
+    public <T> ItemTemplate customize(Class<T> itemType, T editor) {
+        customizers.put(itemType, editor);
+        return this;
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> T getCustomizer(Class<T> itemType) {
+        return (T) customizers.get(itemType);
     }
 
     /**

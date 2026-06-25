@@ -172,7 +172,14 @@ public enum BingoMessage
     LEADERBOARD_SETTINGS("menu.leaderboard.settings"),
     LEADERBOARD_SORT_TIME("menu.leaderboard.sort_by_time"),
     LEADERBOARD_SORT_SCORE("menu.leaderboard.sort_by_score"),
+    LEADERBOARD_STATS("menu.leaderboard.stats"),
+    STATS_WINS("menu.stats.wins"),
+    STATS_LOSSES("menu.stats.losses"),
     STATS_GAMES_PLAYED("menu.stats.games_played"),
+    STATS_TASKS_COMPLETED("menu.stats.tasks_completed"),
+    STATS_TASKS_COMPLETED_RECORD("menu.stats.tasks_completed_record"),
+    STATS_ITEM_USES("menu.stats.item_uses"),
+    STATS_WAND_USES("menu.stats.wand_uses"),
     ;
 
     private final String key;

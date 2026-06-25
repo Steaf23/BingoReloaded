@@ -23,10 +23,10 @@ defaultWorldName: world
 #     or make your own by using the existing ones as an example
 language: en_us.yml
 
-# Save player statistics (stats) like wins, losses, tasks completed, etc... Used for the leaderboard. Stats are saved to player_stats.yml.
+# Save player statistics (stats) like wins, losses, tasks completed, etc... Used for the leaderboard.
 #   Stats are not automatically removed if you turn this to false if it has been on true before.
 #   (Turning this option on later will not retroactively fill stats for games played with stats off).
-savePlayerStatistics: false # true or false
+savePlayerStatistics: true # true or false
 
 # Determines what gamemode to set for all participants and spectators after the game ends, use the value NONE to not change gamemodes.
 # Can be one of:
