@@ -335,8 +335,9 @@ public class DataUpdaterV1
                         true,
                         oldSettings.size.fullCardSize,
                         false,
-                        5 * 6,
-                        2 * 6
+                        4 * 6,
+                        1 * 6,
+                        4
                 ));
             }
         }

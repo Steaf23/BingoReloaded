@@ -35,6 +35,7 @@ public class BingoSettingsBuilder {
 	private boolean differentCardPerTeam;
 	private int blitzStartDuration;
 	private int blitzBonusDuration;
+	private int blitzRecoveryDelay;
 
 	public BingoSettingsBuilder(BingoSession session) {
 		this.session = session;
@@ -69,6 +70,7 @@ public class BingoSettingsBuilder {
 		expireHotswapTasks = settings.expireHotswapTasks();
 		blitzStartDuration = settings.blitzStartDuration();
 		blitzBonusDuration = settings.blitzBonusDuration();
+		blitzRecoveryDelay = settings.blitzRecoveryDelay();
 		if (sendUpdated) {
 			settingsUpdated();
 		}
@@ -224,6 +226,14 @@ public class BingoSettingsBuilder {
 		return this;
 	}
 
+	public BingoSettingsBuilder blitzRecoveryDelay(int blitzRecoveryDelay) {
+		if (this.blitzRecoveryDelay != blitzRecoveryDelay) {
+			this.blitzRecoveryDelay = Math.clamp(blitzRecoveryDelay, 0, 24);
+			settingsUpdated();
+		}
+		return this;
+	}
+
 	public BingoSettingsBuilder expireHotswapTasks(boolean expireHotswapTasks) {
 		if (this.expireHotswapTasks != expireHotswapTasks) {
 			this.expireHotswapTasks = expireHotswapTasks;
@@ -275,7 +285,8 @@ public class BingoSettingsBuilder {
 				completeGoal,
 				differentCardPerTeam,
 				blitzStartDuration,
-				blitzBonusDuration
+				blitzBonusDuration,
+				blitzRecoveryDelay
 		);
 	}
 

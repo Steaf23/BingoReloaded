@@ -1,10 +1,10 @@
-package io.github.steaf23.bingoreloaded.cards.hotswap;
+package io.github.steaf23.bingoreloaded.cards.slot;
 
 import io.github.steaf23.bingoreloaded.api.CardDisplayInfo;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import io.github.steaf23.bingoreloaded.tasks.GameTask;
 
-public interface HotswapTaskSlot
+public interface TickingTaskSlot
 {
     boolean isRecovering();
     void startRecovering();

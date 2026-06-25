@@ -99,7 +99,7 @@ public class GamemodeOptionsMenu extends BasicMenu
             additionalOptions.add(settings -> settings.expireHotswapTasks(toggleExpireTasksAction.getValue()));
         } else if (chosenMode.featureSet().contains(GamemodeFeature.BLITZ_TIMER)) {
             int blitzStartDuration = session.settingsBuilder.view().blitzStartDuration();
-            ItemTemplate startDuration = new ItemTemplate(5, ItemTypePaper.of(Material.COMPASS), BingoReloaded.applyTitleFormat("Starting duration"),
+            ItemTemplate startDuration = new ItemTemplate(4, ItemTypePaper.of(Material.COMPASS), BingoReloaded.applyTitleFormat("Starting duration"),
                     Component.text("Start Blitz with a head start of " + (blitzStartDuration * 10) + " seconds"));
 
             SpinBoxButtonAction startAction = new SpinBoxButtonAction(1, 60, blitzStartDuration, value -> {
@@ -111,7 +111,7 @@ public class GamemodeOptionsMenu extends BasicMenu
             additionalOptions.add(settings -> settings.blitzStartDuration(startAction.getValue()));
 
             int blitzBonusDuration = session.settingsBuilder.view().blitzBonusDuration();
-            ItemTemplate bonusDuration = new ItemTemplate(6, ItemTypePaper.of(Material.RECOVERY_COMPASS), BingoReloaded.applyTitleFormat("Bonus duration"),
+            ItemTemplate bonusDuration = new ItemTemplate(5, ItemTypePaper.of(Material.RECOVERY_COMPASS), BingoReloaded.applyTitleFormat("Bonus duration"),
                     Component.text("Gain a bonus time of " + (blitzBonusDuration * 10) + " seconds each time you complete a task"));
 
             SpinBoxButtonAction bonusAction = new SpinBoxButtonAction(1, 60, blitzBonusDuration, value -> {
@@ -121,6 +121,18 @@ public class GamemodeOptionsMenu extends BasicMenu
             });
             optionMenu.addItem(bonusDuration, bonusAction);
             additionalOptions.add(settings -> settings.blitzBonusDuration(bonusAction.getValue()));
+
+            int blitzRecoveryDelay = session.settingsBuilder.view().blitzRecoveryDelay();
+            ItemTemplate delayItem = new ItemTemplate(6, ItemTypePaper.of(Material.BEDROCK), BingoReloaded.applyTitleFormat("Recovery delay"),
+                    Component.text("After completing " + blitzRecoveryDelay + " task(s), they will start to get replaced by new ones"));
+
+            SpinBoxButtonAction delayAction = new SpinBoxButtonAction(1, 25, blitzRecoveryDelay, value -> {
+                session.settingsBuilder.blitzRecoveryDelay(value - 1);
+                delayItem.setLore(ComponentUtils.createComponentsFromString(
+                        "After completing " + value + " task(s), they will start to get replaced by new ones"));
+            });
+            optionMenu.addItem(delayItem, delayAction);
+            additionalOptions.add(settings -> settings.blitzRecoveryDelay(delayAction.getValue() - 1));
         }
 
         // Generate separate card per team option

@@ -24,7 +24,7 @@ import java.util.Set;
  * A Builder for creating item stacks easily.
  * Has a few extra features such as
  *  - multi-level descriptions that can be added with priorities to influence the order.
- *  - meta modifier function that can be used to quickly change item meta on the item.
+ *  - item customizer function that can be used to make platform specific changes to an item.
  *  - textured variant, represented as a different item that will be displayed instead when a resource pack is enabled.
  */
 public class ItemTemplate

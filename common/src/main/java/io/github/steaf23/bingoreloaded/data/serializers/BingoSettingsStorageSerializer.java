@@ -38,6 +38,7 @@ public class BingoSettingsStorageSerializer implements DataStorageSerializer<Bin
         storage.setBoolean("different_card_per_team", value.differentCardPerTeam());
         storage.setInt("blitz_start_duration", value.blitzStartDuration());
         storage.setInt("blitz_bonus_duration", value.blitzBonusDuration());
+        storage.setInt("blitz_recovery_delay", value.blitzRecoveryDelay());
     }
 
     @Override
@@ -64,7 +65,8 @@ public class BingoSettingsStorageSerializer implements DataStorageSerializer<Bin
                 storage.getInt("complete_goal", size.fullCardSize),
                 storage.getBoolean("different_card_per_team", false),
                 storage.getInt("blitz_start_duration", 4 * 6),// blitz counts in 10 seconds, so 4 * 6 * 10 == 4 minutes.
-                storage.getInt("blitz_bonus_duration", 1 * 6)// blitz counts in 10 seconds, so 1 * 6 * 10 == 1 minute.
+                storage.getInt("blitz_bonus_duration", 1 * 6),// blitz counts in 10 seconds, so 1 * 6 * 10 == 1 minute.
+                storage.getInt("blitz_recovery_delay", 4)
         );
     }
 

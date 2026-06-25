@@ -1,4 +1,4 @@
-package io.github.steaf23.bingoreloaded.cards.hotswap;
+package io.github.steaf23.bingoreloaded.cards.slot;
 
 import io.github.steaf23.bingoreloaded.api.CardDisplayInfo;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
@@ -7,13 +7,13 @@ import io.github.steaf23.bingoreloaded.tasks.GameTask;
 import io.github.steaf23.bingoreloaded.util.timer.GameTimer;
 import net.kyori.adventure.text.format.TextColor;
 
-public class SimpleHotswapTask implements HotswapTaskSlot
+public class SimpleTickingTask implements TickingTaskSlot
 {
 	int fullTime;
     int currentTime;
     boolean recovering = false;
 
-    public SimpleHotswapTask(int recoveryTime) {
+    public SimpleTickingTask(int recoveryTime) {
         this.currentTime = recoveryTime;
 		this.fullTime = recoveryTime;
     }

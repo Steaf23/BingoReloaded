@@ -28,7 +28,8 @@ public record BingoSettings(BingoCard card,
                             int completeGoal,
                             boolean differentCardPerTeam,
                             int blitzStartDuration,
-                            int blitzBonusDuration)
+                            int blitzBonusDuration,
+                            int blitzRecoveryDelay)
 {
     public enum CountdownType implements Keyed
     {

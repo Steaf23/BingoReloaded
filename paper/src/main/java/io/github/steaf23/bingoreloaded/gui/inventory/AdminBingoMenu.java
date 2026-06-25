@@ -140,8 +140,9 @@ public class AdminBingoMenu extends BasicMenu {
 							Component.text("   Tasks do not expire").color(NamedTextColor.GRAY));
 				}
 				case BLITZ_TIMER -> {
-					modeLore.add(Component.text("    Head start: ").append(Component.text(settings.blitzStartDuration() * 10).append(Component.text(" seconds"))));
-					modeLore.add(Component.text("    Bonus: ").append(Component.text(settings.blitzBonusDuration() * 10).color(NamedTextColor.GREEN).append(Component.text(" seconds"))));
+					modeLore.add(Component.text("   Head start: ").append(Component.text(settings.blitzStartDuration() * 10).append(Component.text(" seconds"))));
+					modeLore.add(Component.text("   Bonus: ").append(Component.text(settings.blitzBonusDuration() * 10).color(NamedTextColor.GREEN).append(Component.text(" seconds"))));
+					modeLore.add(Component.text("   Recovery delay: ").append(Component.text(settings.blitzRecoveryDelay()).color(NamedTextColor.AQUA).append(Component.text(" tasks"))));
 				}
 			}
 		}

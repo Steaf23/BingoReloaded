@@ -129,7 +129,7 @@ public class BingoGamemodes {
 			EnumSet.of(GamemodeFeature.BLITZ_TIMER)) {
 		@Override
 		public TaskCard createTaskCard(CardMenu menu, BingoGame game) {
-			return new BlitzTaskCard(menu, game.getSettings().size(), game, game.getConfig().getOptionValue(BingoOptions.HOTSWAP_CONFIG));
+			return new BlitzTaskCard(menu, game.getSettings().size(), game, game.getConfig().getOptionValue(BingoOptions.HOTSWAP_CONFIG), game.getSettings().blitzRecoveryDelay());
 		}
 
 		@Override
