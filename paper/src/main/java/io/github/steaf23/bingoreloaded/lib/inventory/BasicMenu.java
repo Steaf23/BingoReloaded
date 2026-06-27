@@ -188,7 +188,7 @@ public class BasicMenu implements InventoryMenu
     }
 
     @Override
-    public void onCustomAction(Key key, DataStorage payload) {
+    public void onCustomAction(PlayerHandle player, Key key, DataStorage payload) {
     }
 
     @Override

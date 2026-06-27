@@ -442,6 +442,11 @@ public class TagDataStorage implements DataStorage
     }
 
     @Override
+    public boolean isEmpty() {
+        return root.isEmpty();
+    }
+
+    @Override
     public void erase(String path) {
         NodeLikeData.removeNested(root, path);
     }

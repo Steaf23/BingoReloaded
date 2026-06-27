@@ -108,11 +108,14 @@ public class BingoReloaded implements Namespaced {
 		DataStorageSerializerRegistry.addSerializer(new TaskTagStorageSerializer(), TaskTagData.TaskTag.class);
 
 		// Create data accessors
+		addDataAccessor(new TagDataAccessor(platform, "data/default_cards", true));
+		addDataAccessor(new TagDataAccessor(platform, "data/default_lists", true));
+		addDataAccessor(new TagDataAccessor(platform, "data/default_kits", true));
+		addDataAccessor(new TagDataAccessor(platform, "data/default_tags", true));
+
 		addDataAccessor(new TagDataAccessor(platform, "data/cards", false));
 		addDataAccessor(new TagDataAccessor(platform, "data/textures", false));
-		addDataAccessor(new TagDataAccessor(platform, "data/default_kits", true));
 		addDataAccessor(new TagDataAccessor(platform, "data/kits", false));
-		addDataAccessor(new TagDataAccessor(platform, "data/default_lists", true));
 		addDataAccessor(new TagDataAccessor(platform, "data/" + getDefaultTasksVersion(), false));
 		addDataAccessor(new TagDataAccessor(platform, "data/presets", false));
 		addDataAccessor(new TagDataAccessor(platform, "data/player_stats", false));
@@ -121,7 +124,7 @@ public class BingoReloaded implements Namespaced {
 		addDataAccessor(new TagDataAccessor(platform, "data/lobby", false));
 		addDataAccessor(new TagDataAccessor(platform, "data/leaderboard", false));
 		addDataAccessor(new TagDataAccessor(platform, "data/tags", false));
-		addDataAccessor(new TagDataAccessor(platform, "data/default_tags", true));
+
 		for (DataAccessor accessor : runtime.getDataToRegister()) { // platform specific data accessors
 			addDataAccessor(accessor);
 		}
@@ -246,10 +249,14 @@ public class BingoReloaded implements Namespaced {
 	}
 
 	public void reloadData() {
+		getDataAccessor("data/default_cards").load();
+		getDataAccessor("data/default_lists").load();
+		getDataAccessor("data/default_kits").load();
+		getDataAccessor("data/default_tags").load();
+
 		getDataAccessor("data/cards").load();
 		getDataAccessor("data/textures").load();
 		getDataAccessor("data/kits").load();
-		getDataAccessor("data/default_lists").load();
 		getDataAccessor("data/" + getDefaultTasksVersion()).load();
 		getDataAccessor("data/presets").load();
 		getDataAccessor("data/player_stats").load();
@@ -258,7 +265,6 @@ public class BingoReloaded implements Namespaced {
 		getDataAccessor("data/lobby").load();
 		getDataAccessor("data/history").load();
 		getDataAccessor("data/tags").load();
-		getDataAccessor("data/default_tags").load();
 	}
 
 	public void reloadLanguage() {

@@ -25,6 +25,7 @@ import io.github.steaf23.bingoreloaded.settings.gamemode.GamemodeFeature;
 import io.github.steaf23.bingoreloaded.util.BingoPlayerSender;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -255,7 +256,8 @@ public class AdminBingoMenu extends BasicMenu {
 			@Override
 			public ItemTemplate toItem(String s, boolean isSelected) {
 				return new ItemTemplate(ItemTypePaper.of(Material.PAPER), Component.text(s),
-						BingoMessage.LIST_COUNT.asPhrase(Component.text(cardsData.getListNames(s).size())
+						BingoMessage.configStringAsMultiline(cardsData.getDescription(s), Style.style(NamedTextColor.GRAY, TextDecoration.ITALIC)))
+						.addDescription("count", 5, BingoMessage.LIST_COUNT.asPhrase(Component.text(cardsData.getListNames(s).size())
 								.color(NamedTextColor.DARK_PURPLE)))
 						.addDescription("input", 10,
 								InventoryMenu.INPUT_LEFT_CLICK.append(Component.text("select this card.")),

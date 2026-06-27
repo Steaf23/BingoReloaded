@@ -126,20 +126,6 @@ public abstract class PaginatedSelectionMenu extends BasicMenu {
 		return cancel;
 	}
 
-	@Override
-	public void onCustomAction(Key key, DataStorage payload) {
-		ConsoleMessenger.log("Received " + key.asMinimalString() + " and " + payload.getString("filter", ""));
-
-		String filterTypeStr = payload.getString("filter_option", "NONE");
-
-		try {
-			applyFilter(new MenuFilterSettings(FilterType.valueOf(filterTypeStr),
-					payload.getString("filter", "")));
-		} catch (IllegalArgumentException illegalFilterTypeException) {
-			ConsoleMessenger.bug("Unknown filter type '" + filterTypeStr + "' from filter dialog", PaginatedSelectionMenu.class);
-		}
-	}
-
 	public void applyFilter(MenuFilterSettings filter) {
 		if (filter.filterType() == FilterType.NONE) {
 			return;

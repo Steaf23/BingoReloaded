@@ -57,6 +57,7 @@ game:
     join_team_desc: "Click to join this team"
     spectator_join: "You have joined this game as a spectator, use /bingo view to view all team's bingo cards."
     spectator_join_no_view: "You have joined this game as a spectator."
+    no_teams: "The game is full, you can only join as a spectator."
   item:
     voided: "This task cannot be completed anymore!"
     expire: "Expires in: {0}" # 0: time left

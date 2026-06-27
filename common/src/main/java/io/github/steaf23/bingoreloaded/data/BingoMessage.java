@@ -11,6 +11,8 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.Style;
+import net.kyori.adventure.text.format.StyleBuilderApplicable;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.tag.Tag;
@@ -242,7 +244,7 @@ public enum BingoMessage
      * Translate and parse this config string and then send it to the player.
      * This method supports minimessage, placeholders and bingo reloaded formatting.
      */
-    public void sendToAudience(@NotNull Audience audience, TextColor color, List<TextDecoration> decorations, Component... withArguments) {
+    public void sendToAudience(@NotNull Audience audience, @Nullable Style style, Component... withArguments) {
         //Untangle the mess before sending it.
         String translated = rawTranslation();
 
@@ -255,24 +257,20 @@ public enum BingoMessage
                 playerMessage = BingoMessage.preParseString(player, playerMessage);
             }
 
-            Component[] components = configStringAsMultiline(playerMessage, color, withArguments);
+            Component[] components = configStringAsMultiline(playerMessage, style, withArguments);
 
             for (Component c : components) {
-                innerAudience.sendMessage(BingoMessage.MESSAGE_PREFIX.asPhrase().append(c.decorate(decorations.toArray(TextDecoration[]::new))));
+                innerAudience.sendMessage(BingoMessage.MESSAGE_PREFIX.asPhrase().append(c));
             }
         });
     }
 
     public void sendToAudience(Audience audience, Component... withArguments) {
-        sendToAudience(audience, null, List.of(), withArguments);
+        sendToAudience(audience, (Style)null, withArguments);
     }
 
     public void sendToAudience(Audience audience, TextColor color, Component... withArguments) {
-        sendToAudience(audience, color, List.of(), withArguments);
-    }
-
-    public void sendToAudience(Audience audience, List<TextDecoration> decorations, Component... withArguments) {
-        sendToAudience(audience, null, decorations, withArguments);
+        sendToAudience(audience, Style.style(color), withArguments);
     }
 
     public static Component createHoverCommandMessage(Component prefix, Component hoverable, HoverEvent<?> hover, Component postfix, @NotNull String command) {
@@ -345,11 +343,15 @@ public enum BingoMessage
         return createPhrase(input, true, arguments);
     }
 
-    public Component[] asMultiline(TextColor color, Component... arguments) {
-        return configStringAsMultiline(rawTranslation(), color, arguments);
+    public Component[] asMultiline(Style style, Component... arguments) {
+        return configStringAsMultiline(rawTranslation(), style, arguments);
     }
 
-    public static Component[] configStringAsMultiline(String input, TextColor color, Component... arguments) {
+    public Component[] asMultiline(TextColor color, Component... arguments) {
+        return asMultiline(Style.style(color), arguments);
+    }
+
+    public static Component[] configStringAsMultiline(String input, Style style, Component... arguments) {
         List<Component> result = new ArrayList<>();
 
         for (String converted : convertConfigStringToMini(input)) {
@@ -360,8 +362,8 @@ public enum BingoMessage
             }
             resolvers.add(SUBSTITUTE_RESOLVER);
             Component c = ComponentUtils.MINI_BUILDER.deserialize(converted, resolvers.toArray(TagResolver[]::new));
-            if (color != null) {
-                result.add(c.color(color));
+            if (style != null) {
+                result.add(c.style(style));
             } else {
                 result.add(c);
             }
@@ -370,7 +372,7 @@ public enum BingoMessage
     }
 
     public Component[] asMultiline(Component... arguments) {
-        return asMultiline(null, arguments);
+        return asMultiline((Style)null, arguments);
     }
 
     /**

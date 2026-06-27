@@ -2,6 +2,7 @@ package io.github.steaf23.bingoreloaded.gui.inventory;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.cards.CardSize;
+import io.github.steaf23.bingoreloaded.data.BingoCardData;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.gameloop.phase.PregameLobby;
@@ -15,6 +16,7 @@ import io.github.steaf23.bingoreloaded.settings.gamemode.BingoGamemodes;
 import io.github.steaf23.bingoreloaded.util.CollectionHelper;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
 
@@ -31,6 +33,8 @@ public class VoteMenu extends BasicMenu {
 
 	public VoteMenu(MenuBoard menuBoard, BingoConfigurationData.VoteList voteList, PregameLobby lobbyPhase) {
 		super(menuBoard, BingoMessage.OPTIONS_VOTE.asPhrase(), 3);
+
+		BingoCardData cardData = new BingoCardData();
 
 		this.lobby = lobbyPhase;
 
@@ -199,7 +203,9 @@ public class VoteMenu extends BasicMenu {
 			int itemIndex = 0;
 			for (String card : voteList.cards()) {
 				Material material = Material.PAPER;
-				ItemTemplate itemTemplate = new ItemTemplate(itemIndex, ItemTypePaper.of(material), Component.text(card).decorate(TextDecoration.BOLD));
+				ItemTemplate itemTemplate = new ItemTemplate(itemIndex, ItemTypePaper.of(material),
+						Component.text(card).decorate(TextDecoration.BOLD),
+						BingoMessage.configStringAsMultiline(cardData.getDescription(card), Style.style(NamedTextColor.GRAY, TextDecoration.ITALIC)));
 
 				// Add the menu item to the cardOptions menu
 				cardOptions.addAction(itemTemplate, (args) -> {

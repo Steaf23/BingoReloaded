@@ -457,7 +457,7 @@ public class DataUpdaterV1
     }
 
 	protected void updateCards() {
-        if (!new File(plugin.getDataFolder(), "data/cards.yml").exists() || new File(plugin.getDataFolder(), "data/cards.nbt").exists()) {
+        if (!new File(plugin.getDataFolder(), "data/cards.yml").exists() || new File(plugin.getDataFolder(), "data/default_cards.nbt").exists()) {
             return;
         }
 

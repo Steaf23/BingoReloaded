@@ -115,6 +115,8 @@ public interface DataStorage
         return storage == null ? createNew() : storage;
     }
 
+    boolean isEmpty();
+
     /**
      * Also erases parent nodes of data node if they are empty after removal
      */

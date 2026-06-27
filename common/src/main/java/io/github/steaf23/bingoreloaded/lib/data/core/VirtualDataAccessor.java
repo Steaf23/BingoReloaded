@@ -255,6 +255,11 @@ public class VirtualDataAccessor implements DataAccessor
     }
 
     @Override
+    public boolean isEmpty() {
+        return true;
+    }
+
+    @Override
     public void erase(String path) {
 
     }

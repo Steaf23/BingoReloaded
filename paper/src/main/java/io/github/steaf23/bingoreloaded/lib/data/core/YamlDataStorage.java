@@ -272,6 +272,11 @@ public class YamlDataStorage implements DataStorage
     }
 
     @Override
+    public boolean isEmpty() {
+        return config.getKeys(false).isEmpty();
+    }
+
+    @Override
     public void erase(String path) {
         config.set(path, null);
     }

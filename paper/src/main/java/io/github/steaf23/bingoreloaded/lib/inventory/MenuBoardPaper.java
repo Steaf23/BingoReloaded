@@ -196,6 +196,6 @@ public class MenuBoardPaper implements MenuBoard, Listener
 
         Menu topMenu = activeMenus.get(playerId).peek();
         DataStorage payload = new TagDataStorage(NBTConverter.tagFromPacketEventsNBT(event.getPayload()));
-        topMenu.onCustomAction(event.getActionKey(), payload);
+        topMenu.onCustomAction(new PlayerHandlePaper(Bukkit.getPlayer(playerId)), event.getActionKey(), payload);
     }
 }

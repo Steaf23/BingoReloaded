@@ -14,6 +14,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -159,6 +160,10 @@ public class ItemTemplate
 
         this.description.put(name, new DescriptionSection(priority, description));
         return this;
+    }
+
+    public ItemTemplate addDescription(String name, int priority, Collection<Component> description) {
+        return addDescription(name, priority, description.toArray(new Component[]{}));
     }
 
     public int getSlot() {

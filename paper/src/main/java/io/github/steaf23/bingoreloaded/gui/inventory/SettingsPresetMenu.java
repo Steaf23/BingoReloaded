@@ -58,10 +58,10 @@ public class SettingsPresetMenu extends PaginatedSelectionMenu
             context.addAction(new ItemTemplate(2, ItemTypePaper.of(Material.NAME_TAG), BingoReloaded.applyTitleFormat("Rename")), clickType -> {
                         BingoSettings oldSettings = settingsData.getSettings(clickedOption.getCompareKey());
                         settingsData.removeSettings(clickedOption.getCompareKey());
-                        new TextInputDialog(getMenuBoard(), clickedOption.getCompareKey(), input -> {
+                        new UserInputMenu(getMenuBoard(), Component.text("Rename preset to:"), input -> {
                             settingsData.saveSettings(input, oldSettings);
                             context.close(player);
-                        }, Component.text("Rename preset to:"), null)
+                        }, clickedOption.getCompareKey())
                                 .open(player);
                     });
             context.addAction(new ItemTemplate(3, ItemTypePaper.of(Material.GLOBE_BANNER_PATTERN), BingoReloaded.applyTitleFormat("Overwrite"),

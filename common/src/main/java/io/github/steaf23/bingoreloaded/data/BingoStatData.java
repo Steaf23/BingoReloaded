@@ -7,6 +7,7 @@ import io.github.steaf23.bingoreloaded.lib.api.player.PlayerInfo;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataAccessor;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.jetbrains.annotations.NotNull;
 
@@ -75,7 +76,7 @@ public class BingoStatData {
 			return Component.text("Statistics for invalid id " + playerId + " unavailable.");
 		}
 
-		Component[] text = BingoMessage.configStringAsMultiline("{0}'s statistics: Wins: {1}, Losses: {2}, Games finished: {3}, Tasks completed: {4}, Tasks Completed Record: {5}, Wand uses: {6}", NamedTextColor.GREEN,
+		Component[] text = BingoMessage.configStringAsMultiline("{0}'s statistics: Wins: {1}, Losses: {2}, Games finished: {3}, Tasks completed: {4}, Tasks Completed Record: {5}, Wand uses: {6}", Style.style(NamedTextColor.GREEN),
 				Component.text(playerName, NamedTextColor.YELLOW, TextDecoration.BOLD),
 				Component.text(statList[0], NamedTextColor.WHITE, TextDecoration.BOLD),
 				Component.text(statList[1], NamedTextColor.WHITE, TextDecoration.BOLD),
