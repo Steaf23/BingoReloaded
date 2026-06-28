@@ -102,6 +102,7 @@ public class BingoConfigurationData
                 config.getInt(name + "recoverTime", 10),
                 config.getBoolean(name + "showExpirationAsDurability", true)));
         setOptionValueForce(BingoOptions.ALLOW_VIEWING_ALL_CARDS, name -> config.getBoolean(name, true));
+        setOptionValueForce(BingoOptions.DISABLE_CARD_MENU_FROM_ITEM, name -> config.getBoolean(name, false));
 
         // Player
         setOptionValueForce(BingoOptions.SAVE_PLAYER_INFORMATION, name -> config.getBoolean(name, true));

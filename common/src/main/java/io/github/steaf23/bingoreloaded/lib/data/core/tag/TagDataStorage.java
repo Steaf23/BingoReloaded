@@ -13,6 +13,8 @@ import org.intellij.lang.annotations.Subst;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -37,6 +39,17 @@ public class TagDataStorage implements DataStorage
     @Override
     public TagDataStorage createNew() {
         return new TagDataStorage();
+    }
+
+    @Override
+    public TagDataStorage duplicate() {
+        TagDataStorage dup = createNew();
+        var stream = new ByteArrayOutputStream();
+        root.data().getPayload(stream);
+        var inputStream = new ByteArrayInputStream(stream.toByteArray());
+        TagTree tree = TagTree.fromPayload(inputStream);
+        dup.root = new Tag.CompoundTag(tree);
+        return dup;
     }
 
     @Override

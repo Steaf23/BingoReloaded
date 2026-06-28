@@ -34,8 +34,13 @@ public class YamlDataStorage implements DataStorage
     }
 
     @Override
-    public DataStorage createNew() {
+    public YamlDataStorage createNew() {
         return new YamlDataStorage();
+    }
+
+    @Override
+    public YamlDataStorage duplicate() {
+        return this;
     }
 
     @Override

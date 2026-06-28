@@ -24,6 +24,7 @@ import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.settings.CustomKit;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
+import io.github.steaf23.bingoreloaded.tasks.data.ItemTask;
 import io.github.steaf23.bingoreloaded.util.BingoPlayerSender;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.JoinConfiguration;
@@ -141,7 +142,7 @@ public class BingoAction extends ActionTree {
 			if (getLastUser() instanceof PlayerHandle player) {
 				BingoParticipant participant = session.teamManager.getPlayerAsParticipant(player);
 				if (participant != null) {
-					participant.showCard(null);
+					participant.showCard(session.phase() instanceof BingoGame game ? (ItemTask)game.getDeathMatchTask().data : null);
 					return ActionResult.SUCCESS;
 				}
 			}

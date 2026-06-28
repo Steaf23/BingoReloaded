@@ -826,7 +826,7 @@ public class BingoGame implements GamePhase
                 return EventResult.IGNORE;
 
             return gameItem.use(stack, participant, config);
-        } else if (PlayerKit.CARD_ITEM.isCompareKeyEqual(stack)) {
+        } else if (PlayerKit.CARD_ITEM.isCompareKeyEqual(stack) && !config.getOptionValue(BingoOptions.DISABLE_CARD_MENU_FROM_ITEM)) {
             // Only show item task as deathmatch tasks.
             if (deathMatchTask == null) {
                 participant.showCard(null);

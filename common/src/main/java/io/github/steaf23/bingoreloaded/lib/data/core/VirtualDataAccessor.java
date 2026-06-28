@@ -56,6 +56,11 @@ public class VirtualDataAccessor implements DataAccessor
     }
 
     @Override
+    public DataStorage duplicate() {
+        return null;
+    }
+
+    @Override
     public Set<String> getKeys() {
         return Set.of();
     }

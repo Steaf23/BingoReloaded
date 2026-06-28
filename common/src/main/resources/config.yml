@@ -233,6 +233,9 @@ hotswapMode:
 # Allows all players and spectators to view the cards assigned to every team using /bingo view
 allowViewingAllCards: true
 
+# If true, the card item will not open a menu when right-clicked in your hand. To still be able to view your card, use /bingo view
+disableCardMenuFromItem: false
+
 # ==========================================================================
 #    Player Data Configuration Options
 # ==========================================================================

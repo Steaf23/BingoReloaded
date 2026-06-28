@@ -39,7 +39,7 @@ public class BingoCardData {
 			return false;
 		}
 
-		data.setStorage(cardName + "_copy", card);
+		data.setStorage(cardName + "_copy", card.duplicate());
 		data.saveChanges();
 		return true;
 	}

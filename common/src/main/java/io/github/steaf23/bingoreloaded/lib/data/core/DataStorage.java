@@ -16,6 +16,7 @@ import java.util.UUID;
 public interface DataStorage
 {
     DataStorage createNew();
+    DataStorage duplicate();
 
     Set<String> getKeys();
 

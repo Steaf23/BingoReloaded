@@ -104,16 +104,16 @@ public class TaskListData
 
         DataStorage list;
         if (DEFAULT_LIST_NAMES.contains(listName)) {
-            list = defaultData.getStorage(listName);
+            list = defaultData.getStorageOrEmpty(listName);
         } else {
-            list = data.getStorage(listName);
+            list = data.getStorageOrEmpty(listName);
         }
 
         String newName = listName + "_copy";
         if (data.contains(newName)) // Card with newName already exists
             return false;
 
-        data.setStorage(newName, list);
+        data.setStorage(newName, list.duplicate());
         data.saveChanges();
         return true;
     }
