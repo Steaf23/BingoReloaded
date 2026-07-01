@@ -5,7 +5,7 @@ import io.github.steaf23.bingoreloaded.api.CardDisplayInfo;
 import io.github.steaf23.bingoreloaded.api.CardMenu;
 import io.github.steaf23.bingoreloaded.api.HotswapCardMenu;
 import io.github.steaf23.bingoreloaded.cards.CardSize;
-import io.github.steaf23.bingoreloaded.cards.hotswap.HotswapTaskSlot;
+import io.github.steaf23.bingoreloaded.cards.slot.TickingTaskSlot;
 import io.github.steaf23.bingoreloaded.data.TexturedMenuData;
 import io.github.steaf23.bingoreloaded.gui.inventory.core.TexturedTitleBuilder;
 import io.github.steaf23.bingoreloaded.lib.api.MenuBoard;
@@ -27,7 +27,7 @@ import java.util.Map;
 
 public class HotswapTexturedCardMenu extends TexturedCardMenu implements HotswapCardMenu
 {
-    private List<HotswapTaskSlot> taskHolders;
+    private List<TickingTaskSlot> taskHolders;
 
     public HotswapTexturedCardMenu(BingoReloaded bingo, MenuBoard board, CardDisplayInfo displayInfo) {
         super(bingo, board, displayInfo);
@@ -63,7 +63,7 @@ public class HotswapTexturedCardMenu extends TexturedCardMenu implements Hotswap
     }
 
     @Override
-    public void updateTaskHolders(List<HotswapTaskSlot> taskHolders) {
+    public void updateTaskHolders(List<TickingTaskSlot> taskHolders) {
         this.taskHolders = taskHolders;
         updateTasks(null);
 

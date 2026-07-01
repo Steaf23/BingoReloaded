@@ -42,7 +42,7 @@ public class SettingsPresetMenu extends PaginatedSelectionMenu
     @Override
     public void onOptionClickedDelegate(InventoryClickEvent event, ItemTemplate clickedOption, PlayerHandle player) {
         if (event.isLeftClick()) {
-            settingsBuilder.fromOther(settingsData.getSettings(clickedOption.getCompareKey()));
+            settingsBuilder.fromOther(settingsData.getSettings(clickedOption.getCompareKey()), clickedOption.getCompareKey());
             close(player);
         } else if (event.isRightClick()) {
             BasicMenu context = new BasicMenu(getMenuBoard(), clickedOption.getName(), 1);
@@ -58,10 +58,10 @@ public class SettingsPresetMenu extends PaginatedSelectionMenu
             context.addAction(new ItemTemplate(2, ItemTypePaper.of(Material.NAME_TAG), BingoReloaded.applyTitleFormat("Rename")), clickType -> {
                         BingoSettings oldSettings = settingsData.getSettings(clickedOption.getCompareKey());
                         settingsData.removeSettings(clickedOption.getCompareKey());
-                        new TextInputDialog(getMenuBoard(), clickedOption.getCompareKey(), input -> {
+                        new UserInputMenu(getMenuBoard(), Component.text("Rename preset to:"), input -> {
                             settingsData.saveSettings(input, oldSettings);
                             context.close(player);
-                        }, Component.text("Rename preset to:"), null)
+                        }, clickedOption.getCompareKey())
                                 .open(player);
                     });
             context.addAction(new ItemTemplate(3, ItemTypePaper.of(Material.GLOBE_BANNER_PATTERN), BingoReloaded.applyTitleFormat("Overwrite"),
@@ -84,6 +84,7 @@ public class SettingsPresetMenu extends PaginatedSelectionMenu
         addAction(SAVE_PRESET, arguments -> {
             new UserInputMenu(getMenuBoard(), Component.text("Rename preset..."), input -> {
                 settingsData.saveSettings(input, settingsBuilder.view());
+                settingsBuilder.fromOther(settingsBuilder.view(), input);
                 beforeOpening(arguments.player());
             }, "my_settings")
                     .open(player);

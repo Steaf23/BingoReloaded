@@ -29,6 +29,10 @@ public class BingoSettingsData
         return null;
     }
 
+    public boolean containsSettings(String name) {
+        return data.contains("presets." + name);
+    }
+
     public void saveSettings(String name, BingoSettings settings) {
         if (name.isBlank()) {
             return;

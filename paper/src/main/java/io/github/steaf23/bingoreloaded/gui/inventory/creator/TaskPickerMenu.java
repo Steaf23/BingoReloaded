@@ -18,7 +18,6 @@ import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 public class TaskPickerMenu extends PaginatedDataMenu<GameTask> {
@@ -40,6 +39,7 @@ public class TaskPickerMenu extends PaginatedDataMenu<GameTask> {
 			case SHIFT_LEFT -> incrementItemCount(clickedOption, 10);
 			case RIGHT -> decrementItemCount(clickedOption, 1);
 			case SHIFT_RIGHT -> decrementItemCount(clickedOption, 10);
+			case MIDDLE -> tagItem(clickedOption, "nether");
 		}
 	}
 
@@ -68,7 +68,7 @@ public class TaskPickerMenu extends PaginatedDataMenu<GameTask> {
 		super.beforeOpening(player);
 
 		BingoCardData cardsData = new BingoCardData();
-		Set<TaskData> tasks = cardsData.lists().getTasks(listName, true, true);
+		List<TaskData> tasks = cardsData.lists().getTasks(listName);
 
 		for (GameTask item : getAllItems()) {
 			TaskData itemData = item.data;
@@ -112,6 +112,16 @@ public class TaskPickerMenu extends PaginatedDataMenu<GameTask> {
 
 		item.data = item.data.setRequiredAmount(newAmount);
 		selectItem(item, true);
+	}
+
+	public void tagItem(GameTask item, String newTag) {
+		if (item.data.tags().contains(newTag)) {
+			item.data.tags().remove(newTag);
+		} else {
+			item.data.tags().add(newTag);
+		}
+
+		updatePage();
 	}
 
 	public void decrementItemCount(GameTask item, int by) {

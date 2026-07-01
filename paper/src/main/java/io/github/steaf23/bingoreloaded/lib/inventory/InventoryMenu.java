@@ -28,5 +28,6 @@ public interface InventoryMenu extends Menu {
 
 	Component INPUT_LEFT_CLICK = inputButtonText(Component.keybind("key.attack"));
 	Component INPUT_RIGHT_CLICK = inputButtonText(Component.keybind("key.use"));
-	Component INPUT_SHIFT_CLICK = inputButtonText(Component.keybind("Hold Shift"));
+	// tutorial.punch_tree.description resolves to "Hold down %1" in English.
+	Component INPUT_SHIFT_CLICK = inputButtonText(Component.translatable("tutorial.punch_tree.description", Component.translatable("key.keyboard.left.shift")));
 }

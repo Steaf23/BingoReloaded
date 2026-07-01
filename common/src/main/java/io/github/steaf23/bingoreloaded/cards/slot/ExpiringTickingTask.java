@@ -1,4 +1,4 @@
-package io.github.steaf23.bingoreloaded.cards.hotswap;
+package io.github.steaf23.bingoreloaded.cards.slot;
 
 import io.github.steaf23.bingoreloaded.api.CardDisplayInfo;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
@@ -10,7 +10,7 @@ import io.github.steaf23.bingoreloaded.util.timer.GameTimer;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 
-public class ExpiringHotswapTask implements HotswapTaskSlot
+public class ExpiringTickingTask implements TickingTaskSlot
 {
     public int expirationTimeSeconds;
     public int recoveryTime;
@@ -25,7 +25,7 @@ public class ExpiringHotswapTask implements HotswapTaskSlot
             .addColor(TextColor.fromHexString("#750e0e"), 0.8f)
             .addColor(NamedTextColor.DARK_GRAY, 1.0f);
 
-    public ExpiringHotswapTask(int expirationTimeMinutes, int recoverTime, boolean showExpirationAsDurability) {
+    public ExpiringTickingTask(int expirationTimeMinutes, int recoverTime, boolean showExpirationAsDurability) {
         this.expirationTimeSeconds = expirationTimeMinutes;
         this.recoveryTime = recoverTime;
         this.currentTime = expirationTimeMinutes;

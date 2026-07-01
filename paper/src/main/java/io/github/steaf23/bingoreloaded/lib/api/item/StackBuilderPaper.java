@@ -113,6 +113,11 @@ public class StackBuilderPaper implements StackBuilder {
 			}
 		}
 
+		PaperItemEditor stackEditor = template.getCustomizer(PaperItemEditor.class);
+		if (stackEditor != null) {
+			stackEditor.edit(stack);
+		}
+
 		StackHandle handle = new StackHandlePaper(stack);
 		if (template.getExtraData() != null) {
 			handle.setStorage(template.getExtraData());

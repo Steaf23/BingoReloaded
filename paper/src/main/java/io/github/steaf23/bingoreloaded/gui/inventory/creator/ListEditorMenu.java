@@ -24,9 +24,11 @@ public class ListEditorMenu extends BasicMenu
 {
     private final String listName;
 
-    private static final ItemTemplate ITEMS = new ItemTemplate(2, 2, ItemTypePaper.of(Material.APPLE), BingoReloaded.applyTitleFormat("Items"), Component.text("Click to add or remove items"));
-    private static final ItemTemplate ADVANCEMENTS = new ItemTemplate(4, 2, ItemTypePaper.of(Material.ENDER_EYE), BingoReloaded.applyTitleFormat("Advancements"), net.kyori.adventure.text.Component.text("Click to add or remove advancements"));
-    private static final ItemTemplate STATISTICS = new ItemTemplate(6, 2, ItemTypePaper.of(Material.GLOBE_BANNER_PATTERN), BingoReloaded.applyTitleFormat("Statistics"), Component.text("Click to add or remove statistics"));
+    private static final ItemTemplate ITEMS = new ItemTemplate(2, 1, ItemTypePaper.of(Material.APPLE), BingoReloaded.applyTitleFormat("Items"), Component.text("Click to add or remove items"));
+    private static final ItemTemplate ADVANCEMENTS = new ItemTemplate(4, 1, ItemTypePaper.of(Material.ENDER_EYE), BingoReloaded.applyTitleFormat("Advancements"), net.kyori.adventure.text.Component.text("Click to add or remove advancements"));
+    private static final ItemTemplate STATISTICS = new ItemTemplate(6, 1, ItemTypePaper.of(Material.GLOBE_BANNER_PATTERN), BingoReloaded.applyTitleFormat("Statistics"), Component.text("Click to add or remove statistics"));
+    private static final ItemTemplate TAGS = new ItemTemplate(4, 3, ItemTypePaper.of(Material.NAME_TAG), BingoReloaded.applyTitleFormat("Task Tags"), Component.text("Click to add or remove tags from tasks"));
+
     private static final ItemTemplate SAVE = new ItemTemplate(4, 5, ItemTypePaper.of(Material.REDSTONE), BingoMessage.MENU_SAVE_EXIT.asPhrase().color(NamedTextColor.RED).decorate(TextDecoration.BOLD));
 
     public ListEditorMenu(MenuBoard manager, String listName) {
@@ -35,6 +37,7 @@ public class ListEditorMenu extends BasicMenu
         addAction(ITEMS, arguments -> createItemPicker(manager).open(arguments.player()));
         addAction(ADVANCEMENTS, arguments -> createAdvancementPicker(manager).open(arguments.player()));
         addAction(STATISTICS, arguments -> createStatisticsPicker(manager).open(arguments.player()));
+        addAction(TAGS, args -> createTagManager(manager).open(args.player()));
         addCloseAction(SAVE);
         addItems(BLANK.copyToSlot(0, 5),
                 BLANK.copyToSlot(1, 5),
@@ -76,5 +79,9 @@ public class ListEditorMenu extends BasicMenu
         }
 
         return new TaskPickerMenu(menuBoard, "Add Advancements", tasks, listName);
+    }
+
+    private BasicMenu createTagManager(MenuBoard menuBoard) {
+        return new TagManagerMenu(menuBoard, listName);
     }
 }

@@ -4,11 +4,15 @@ import io.github.steaf23.bingoreloaded.BingoReloadedPaper;
 import io.github.steaf23.bingoreloaded.data.serializers.ItemStorageSerializer;
 import io.github.steaf23.bingoreloaded.item.BingoItems;
 import io.github.steaf23.bingoreloaded.item.GoUpWand;
+import io.github.steaf23.bingoreloaded.lib.data.core.DataStorage;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataStorageSerializerRegistry;
 import io.github.steaf23.bingoreloaded.lib.data.core.tag.TagDataAccessor;
+import io.github.steaf23.bingoreloaded.lib.data.core.tag.TagDataStorage;
 import io.github.steaf23.bingoreloaded.lib.item.SerializableItem;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 
 public class DataUpdaterV3_5_0 extends DataUpdaterV3_3_0 {
@@ -46,6 +50,30 @@ public class DataUpdaterV3_5_0 extends DataUpdaterV3_3_0 {
 			if (updated) {
 				tagData.setSerializableList(kitName + ".items", SerializableItem.class, itemsCopy);
 			}
+		}
+
+		tagData.saveChanges();
+	}
+
+	@Override
+	protected void updateCards() {
+		super.updateCards();
+
+		TagDataAccessor tagData = new TagDataAccessor(server, "data/cards", false);
+		tagData.load();
+
+		tagData.erase("default_card");
+		tagData.erase("default_card_hardcore");
+
+		for (String card : new HashSet<>(tagData.getKeys())) {
+			if (tagData.contains(card + ".lists") && tagData.contains(card + ".description")) {
+				continue;
+			}
+
+			DataStorage lists = tagData.getStorage(card);
+			tagData.erase(card);
+			tagData.setStorage(card + ".lists", lists);
+			tagData.setString(card + ".description", "");
 		}
 
 		tagData.saveChanges();

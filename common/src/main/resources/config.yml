@@ -1,4 +1,4 @@
-version: 3.4.2
+version: 3.5.0
 # ==========================================================================
 #    General Configuration Options
 # ==========================================================================
@@ -23,18 +23,10 @@ defaultWorldName: world
 #     or make your own by using the existing ones as an example
 language: en_us.yml
 
-# Save player statistics (stats) like wins, losses, tasks completed, etc... Used for the leaderboard. Stats are saved to player_stats.yml.
+# Save player statistics (stats) like wins, losses, tasks completed, etc... Used for the leaderboard.
 #   Stats are not automatically removed if you turn this to false if it has been on true before.
 #   (Turning this option on later will not retroactively fill stats for games played with stats off).
-savePlayerStatistics: false # true or false
-
-# If this value is not an empty string it will be sent as a command to the console, right after the game ends.
-# If "{world}" is used as part of the command it will be replaced by the world that the game finished in, which can be useful for configuration: MULTIPLE
-sendCommandAfterGameEnds: '' # command to send
-
-# If this value is not an empty string it will be sent as a command to the console, right before the game starts.
-# If "{world}" is used as part of the command it will be replaced by the world that the game started in, which can be useful for configuration: MULTIPLE
-sendCommandBeforeGameStarts: '' # command to send
+savePlayerStatistics: true # true or false
 
 # Determines what gamemode to set for all participants and spectators after the game ends, use the value NONE to not change gamemodes.
 # Can be one of:
@@ -77,9 +69,38 @@ enableDebugLogging: false
 # (more fair for people that do not have the mod)
 disableCompanionMod: false
 
-gameHistory:
-  saveCompletedGames: true
+leaderboard:
+  # Set to true to save all games that have been completed with a winner, to view the scores of these games on the leaderboard.
+  # When set to false, games played will not be saved, by turning this setting back on later,
+  # you cannot retroactively get stats for the games played while the option was disabled.
+  enabled: true
+  # Set to true to also save games that have been canceled or otherwise not completed. This means more data will be stored,
+  # but the amount of games played on the leaderboard will be more accurate.
   saveCancelledGames: false
+  # Set to true to hide automatically created categories by gamemode/kit and display a leaderboard per settings preset instead.
+  # This option does not work well with voting, as any deviation from a settings preset would not count the game towards the leaderboard.
+  onlyUsePresetCategories: false
+
+# ==========================================================================
+#    Event Commands
+# ==========================================================================
+# configurable commands sent at different times during a game.
+
+# If this value is not an empty string it will be sent as a command to the console, right before the game starts.
+# If "{world}" is used as part of the command it will be replaced by the world that the game started in, which can be useful for configuration: MULTIPLE
+sendCommandBeforeGameStarts: '' # command to send
+
+# If this value is not an empty string it will be sent as a command to the console, right after the game ends.
+# If "{world}" is used as part of the command it will be replaced by the world that the game finished in, which can be useful for configuration: MULTIPLE
+sendCommandAfterGameEnds: '' # command to send
+
+# The following commands will be sent when the game ends, for each player. Use {player} in the command to reference the player's name used in the command.
+# Example: winningPlayers: /money {player} give 1000
+sendCommandAfterGameEndsPerPlayer:
+    # sent for every participant, regardless of if they won or lost, also counts spectators.
+    everyPlayer: '' # command to send
+    winningPlayers: '' #command to send
+    losingPlayers: '' #command to send
 
 # ==========================================================================
 #    Lobby Configuration Options
@@ -194,6 +215,11 @@ disableAdvancements: false # true or false
 # If false, statistics can appear on the bingo card.
 disableStatistics: false # true or false
 
+# If false, these dimensions cannot be entered and will also not be created by MULTIPLE configuration when creating a world.
+# Set disabled to true if you have disabled these dimensions in your server config as well!
+disableNether: false
+disableTheEnd: false
+
 # If true, bingo games will end automatically when there is only 1 team left online in the world or when everyone has left.
 endGameWithoutTeams: true # true or false
 
@@ -206,6 +232,9 @@ hotswapMode:
 
 # Allows all players and spectators to view the cards assigned to every team using /bingo view
 allowViewingAllCards: true
+
+# If true, the card item will not open a menu when right-clicked in your hand. To still be able to view your card, use /bingo view
+disableCardMenuFromItem: false
 
 # ==========================================================================
 #    Player Data Configuration Options

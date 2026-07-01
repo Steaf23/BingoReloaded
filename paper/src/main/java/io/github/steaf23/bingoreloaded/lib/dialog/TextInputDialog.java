@@ -2,6 +2,7 @@ package io.github.steaf23.bingoreloaded.lib.dialog;
 
 import com.github.retrooper.packetevents.protocol.dialog.Dialog;
 import io.github.steaf23.bingoreloaded.lib.api.MenuBoard;
+import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataStorage;
 import io.github.steaf23.bingoreloaded.lib.util.PlayerDisplayTranslationKey;
 import net.kyori.adventure.key.Key;
@@ -44,12 +45,12 @@ public class TextInputDialog extends DialogMenu {
 		return dialog;
 	}
 
-	@Override
-	public void onCustomAction(Key key, DataStorage payload) {
-		if (key != INPUT_ACCEPT_KEY) {
-			return;
-		}
-
-		callback.accept(payload.getString("input", initialValue));
-	}
+//	@Override
+//	public void onCustomAction(PlayerHandle player, Key key, DataStorage payload) {
+//		if (key != INPUT_ACCEPT_KEY) {
+//			return;
+//		}
+//
+//		callback.accept(payload.getString("input", initialValue));
+//	}
 }

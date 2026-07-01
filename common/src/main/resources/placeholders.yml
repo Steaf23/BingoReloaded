@@ -7,7 +7,7 @@
 # Formats support using minimessage.
 # For more information about formatting yml files in Bingo Reloaded, read https://github.com/Steaf23/BingoReloaded/wiki/Text-Formatting
 
-version: 3.4.2
+version: 3.5.0
 
 placeholders:
   # Full team prefix. This should be used most of the time when you want to show the team that the player is in.
@@ -50,7 +50,7 @@ placeholders:
   setting_kit:
     format: "{0}"
 
-  # The currently selected maximum duration of a game, '-' if countdown is not enabled.
+  # The currently selected maximum duration of a game in minutes, '-' if countdown is not enabled.
   setting_duration:
     format: "{0}"
 
@@ -76,6 +76,14 @@ placeholders:
 
   # The currently selected max team size.
   setting_teamsize:
+    format: "{0}"
+
+  # The currently selected starting duration of a blitz game in seconds, '-' if countdown is not enabled.
+  setting_blitz_start_duration:
+    format: "{0}"
+
+  # The currently selected bonus duration of a blitz game in seconds, '-' if countdown is not enabled.
+  setting_blitz_bonus_duration:
     format: "{0}"
 
   # Name of the session/world that the player is in.

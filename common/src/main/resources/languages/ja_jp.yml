@@ -1,3 +1,4 @@
+# Part of this file has been translated using ChatGPT
 name: "日本語"
 changed: "言語設定が日本語に変更されました！"
 branding:
@@ -57,6 +58,7 @@ game:
     join_team_desc: "クリックしてこのチームに参加"
     spectator_join: "観戦者としてゲームに参加しました。/bingo view でチームのビンゴカードを表示できます。"
     spectator_join_no_view: "観戦者としてゲームに参加しました。"
+    no_teams: "ゲームは満員です。観戦者としてのみ参加できます。"
   item:
     voided: "このタスクは完了できなくなりました！"
     expire: "期限切れ: {0}"
@@ -98,6 +100,9 @@ menu:
       desc_score: "{0} 個のタスクを完了した最初のチームが勝利します！"
       desc_time: "時間切れになる前に最も多くのタスクを完了したチームが勝利します。"
       desc_any: "時間切れになる前に最も多くのタスクを完了する、または{0}個のタスクを完了したチームが勝利します！"
+    info_blitz:
+      name: "ブリッツビンゴカード"
+      desc: "1つのチームとして協力し、ハイスコアを更新しましょう！\n制限時間があり、タスクを完了するたびにボーナス時間が追加されます。\n時間切れになるとゲーム終了です。"
     show_team_card:
       desc: "このチームのカードを表示します。"
       name: "<0> のビンゴカード"
@@ -119,6 +124,7 @@ menu:
       lockout: "ロックアウト"
       complete: "コンプリート-X"
       hotswap: "ホットスワップ"
+      blitz: "ブリッツ"
   effects:
     enable: "クリックしてエフェクトを有効化"
     disable: "クリックしてエフェクトを無効化"
@@ -172,6 +178,25 @@ menu:
           - エリトラ（耐久X付き）\n
           - 革のブーツ"
     custom: "カスタム"
+  leaderboard:
+    title: "ビンゴランキング"
+    prompt: "ランキングを見る"
+    category: "カテゴリー"
+    kit: "キット"
+    card: "カード"
+    games_played: "<bingo_translate:'menu.stats.games_played'>"
+    settings: "設定"
+    sort_by_time: "最速タイム順"
+    sort_by_score: "最高スコア順"
+    stats: "あなたの統計"
+  stats:
+    wins: "勝利数"
+    losses: "敗北数"
+    games_played: "プレイしたゲーム"
+    tasks_completed: "合計完了タスク"
+    tasks_completed_record: "タスク完了記録"
+    item_uses: "アイテム使用回数"
+    wand_uses: "Go-Up-Wand 使用回数"
 items:
   card:
     name: "ビンゴカード"

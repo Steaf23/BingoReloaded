@@ -4,12 +4,11 @@ import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataAccessor;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataStorage;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
-import io.github.steaf23.bingoreloaded.tasks.data.AdvancementTask;
-import io.github.steaf23.bingoreloaded.tasks.data.StatisticTask;
 import io.github.steaf23.bingoreloaded.tasks.data.TaskData;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -24,30 +23,27 @@ public class TaskListData
     public static final Set<String> DEFAULT_LIST_NAMES = Set.of(
             "default_items",
             "default_advancements",
-            "default_statistics",
-            "default_items_hardcore",
-            "default_advancements_hardcore",
-            "default_statistics_hardcore"
+            "default_statistics"
     );
 
     private final DataAccessor defaultData = BingoReloaded.getDataAccessor("data/default_lists");
     private final DataAccessor data = BingoReloaded.getDataAccessor("data/" + BingoReloaded.getDefaultTasksVersion());
 
-    public Set<TaskData> getTasks(String listName, boolean withStatistics, boolean withAdvancements)
-    {
+    public List<TaskData> getTasks(String listName) {
+        return getTasks(listName, EnumSet.allOf(TaskData.TaskType.class));
+    }
+
+    public List<TaskData> getTasks(String listName, EnumSet<TaskData.TaskType> allowedTypes) {
         Collection<TaskData> tasks;
         if (defaultData.contains(listName + ".tasks")) {
             tasks = defaultData.getSerializableList(listName + ".tasks", TaskData.class);
         } else if (data.contains(listName + ".tasks")) {
             tasks = data.getSerializableList(listName + ".tasks", TaskData.class);
         } else {
-            return new HashSet<>();
+            return List.of();
         }
 
-        return tasks.stream().filter((i ->
-                (i != null) && // don't parse empty (invalid) tasks
-                !(i instanceof StatisticTask && !withStatistics) &&
-                !(i instanceof AdvancementTask && !withAdvancements))).collect(Collectors.toSet());
+        return tasks.stream().filter((i -> i != null && allowedTypes.contains(i.getType()))).toList();
     }
 
     public int getTaskCount(String listName)
@@ -61,7 +57,7 @@ public class TaskListData
 
     public void saveTasksFromGroup(String listName, List<TaskData> group, List<TaskData> tasksToSave)
     {
-        Set<TaskData> savedTasks = getTasks(listName, true, true);
+        Set<TaskData> savedTasks = new HashSet<>(getTasks(listName));
         Set<TaskData> tasksToRemove = group.stream().filter(t ->
                 tasksToSave.stream().noneMatch(i -> i.equals(t))).collect(Collectors.toSet());
 
@@ -108,16 +104,16 @@ public class TaskListData
 
         DataStorage list;
         if (DEFAULT_LIST_NAMES.contains(listName)) {
-            list = defaultData.getStorage(listName);
+            list = defaultData.getStorageOrEmpty(listName);
         } else {
-            list = data.getStorage(listName);
+            list = data.getStorageOrEmpty(listName);
         }
 
         String newName = listName + "_copy";
         if (data.contains(newName)) // Card with newName already exists
             return false;
 
-        data.setStorage(newName, list);
+        data.setStorage(newName, list.duplicate());
         data.saveChanges();
         return true;
     }

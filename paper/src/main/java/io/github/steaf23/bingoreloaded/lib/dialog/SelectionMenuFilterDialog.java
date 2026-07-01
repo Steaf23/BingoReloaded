@@ -2,6 +2,7 @@ package io.github.steaf23.bingoreloaded.lib.dialog;
 
 import com.github.retrooper.packetevents.protocol.dialog.Dialog;
 import io.github.steaf23.bingoreloaded.lib.api.MenuBoard;
+import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataStorage;
 import io.github.steaf23.bingoreloaded.lib.inventory.FilterType;
 import io.github.steaf23.bingoreloaded.lib.inventory.MenuFilterSettings;
@@ -32,22 +33,22 @@ public class SelectionMenuFilterDialog extends DialogMenu {
 		return dialog;
 	}
 
-	@Override
-	public void onCustomAction(Key key, DataStorage payload) {
-		if (key.equals(ACCEPT_KEY)) {
-			ConsoleMessenger.log("Received " + key.asMinimalString() + " and " + payload.getString("filter", ""));
-
-			String filterTypeStr = payload.getString("filter_option", "NONE");
-
-			try {
-				var settings = new MenuFilterSettings(FilterType.valueOf(filterTypeStr),
-						payload.getString("filter", ""));
-				callback.accept(settings);
-			} catch (IllegalArgumentException illegalFilterTypeException) {
-				ConsoleMessenger.bug("Unknown filter type '" + filterTypeStr + "' from filter dialog", PaginatedSelectionMenu.class);
-			}
-		}
-	}
+//	@Override
+//	public void onCustomAction(PlayerHandle player, Key key, DataStorage payload) {
+//		if (key.equals(ACCEPT_KEY)) {
+//			ConsoleMessenger.log("Received " + key.asMinimalString() + " and " + payload.getString("filter", ""));
+//
+//			String filterTypeStr = payload.getString("filter_option", "NONE");
+//
+//			try {
+//				var settings = new MenuFilterSettings(FilterType.valueOf(filterTypeStr),
+//						payload.getString("filter", ""));
+//				callback.accept(settings);
+//			} catch (IllegalArgumentException illegalFilterTypeException) {
+//				ConsoleMessenger.bug("Unknown filter type '" + filterTypeStr + "' from filter dialog", PaginatedSelectionMenu.class);
+//			}
+//		}
+//	}
 
 	private static Dialog createFilterDialog(List<FilterType> availableFilterTypes, MenuFilterSettings currentSettings) {
 		var filterTypes = new DialogBuilder.SingleOptionInputBuilder("filter_option", Component.text("Filter by"));

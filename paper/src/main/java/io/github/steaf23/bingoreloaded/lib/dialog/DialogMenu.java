@@ -4,7 +4,9 @@ import com.github.retrooper.packetevents.protocol.dialog.Dialog;
 import io.github.steaf23.bingoreloaded.BingoReloadedPaper;
 import io.github.steaf23.bingoreloaded.lib.api.MenuBoard;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
+import io.github.steaf23.bingoreloaded.lib.data.core.DataStorage;
 import io.github.steaf23.bingoreloaded.lib.inventory.Menu;
+import net.kyori.adventure.key.Key;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
@@ -54,5 +56,9 @@ public abstract class DialogMenu implements Menu {
 
 	@Override
 	public void setOpenOnce(boolean value) {
+	}
+
+	@Override
+	public final void onCustomAction(PlayerHandle player, Key key, DataStorage payload) {
 	}
 }

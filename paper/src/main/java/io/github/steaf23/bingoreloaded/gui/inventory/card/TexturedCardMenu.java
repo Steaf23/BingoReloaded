@@ -154,7 +154,7 @@ public class TexturedCardMenu implements InventoryMenu, CardMenu
     }
 
     @Override
-    public void onCustomAction(Key key, DataStorage payload) {
+    public void onCustomAction(PlayerHandle player, Key key, DataStorage payload) {
 
     }
 

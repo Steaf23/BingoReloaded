@@ -2,6 +2,7 @@ package io.github.steaf23.bingoreloaded.settings;
 
 import io.github.steaf23.bingoreloaded.cards.CardSize;
 import io.github.steaf23.bingoreloaded.data.BingoSettingsData;
+import io.github.steaf23.bingoreloaded.data.record.BingoCard;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gameloop.vote.VoteTicket;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
@@ -11,11 +12,14 @@ import io.github.steaf23.bingoreloaded.settings.gamemode.BingoGamemodes;
 
 import java.util.EnumSet;
 import java.util.Objects;
+import java.util.Set;
 
 public class BingoSettingsBuilder {
+	// empty when this builder has changed. The preset name is not stored in the actual settings, only used by the builder.
+	private String preset;
 
 	private final BingoSession session;
-	private String card;
+	private BingoCard card;
 	private BingoGamemode mode;
 	private CardSize cardSize;
 	private int cardSeed;
@@ -29,32 +33,27 @@ public class BingoSettingsBuilder {
 	private boolean expireHotswapTasks;
 	private int completeGoal;
 	private boolean differentCardPerTeam;
+	private int blitzStartDuration;
+	private int blitzBonusDuration;
+	private int blitzRecoveryDelay;
 
 	public BingoSettingsBuilder(BingoSession session) {
 		this.session = session;
 
-		BingoSettings def = new BingoSettingsData().getDefaultSettings();
+		BingoSettingsData data = new BingoSettingsData();
+		BingoSettings def = data.getDefaultSettings();
 		if (def == null) {
 			ConsoleMessenger.error("Could not find default settings, make sure you have at least 1 existing settings preset and its set to be the default settings!");
 			return;
 		}
-		this.card = def.card();
-		this.mode = def.mode();
-		this.cardSize = def.size();
-		this.cardSeed = def.seed();
-		this.kit = def.kit();
-		this.effects = def.effects();
-		this.maxTeamSize = def.maxTeamSize();
-		this.maxTeamCount = def.maxTeamCount();
-		this.countdownGameDuration = def.countdownDuration();
-		this.countdownType = def.countdownType();
-		this.hotswapGoal = def.hotswapGoal();
-		this.completeGoal = def.completeGoal();
-		this.differentCardPerTeam = def.differentCardPerTeam();
-		this.expireHotswapTasks = def.expireHotswapTasks();
+		fromOther(def, data.getDefaultSettingsName(), false);
 	}
 
-	public void fromOther(BingoSettings settings) {
+	public void fromOther(BingoSettings settings, String preset) {
+		fromOther(settings, preset, true);
+	}
+
+	public void fromOther(BingoSettings settings, String preset, boolean sendUpdated) {
 		card = settings.card();
 		mode = settings.mode();
 		cardSize = settings.size();
@@ -69,12 +68,18 @@ public class BingoSettingsBuilder {
 		completeGoal = settings.completeGoal();
 		differentCardPerTeam = settings.differentCardPerTeam();
 		expireHotswapTasks = settings.expireHotswapTasks();
-		settingsUpdated();
+		blitzStartDuration = settings.blitzStartDuration();
+		blitzBonusDuration = settings.blitzBonusDuration();
+		blitzRecoveryDelay = settings.blitzRecoveryDelay();
+		if (sendUpdated) {
+			settingsUpdated();
+		}
+		this.preset = preset;
 	}
 
 	public BingoSettingsBuilder applyVoteResult(VoteTicket voteResult) {
 		BingoSettingsBuilder resultBuilder = new BingoSettingsBuilder(session);
-		resultBuilder.fromOther(view());
+		resultBuilder.fromOther(view(), ""); // it's not a preset anymore if we vote and change settings...
 
 		BingoGamemode newMode = VoteTicket.CATEGORY_GAMEMODE.getValidResultOrNull(voteResult);
 		if (newMode != null) {
@@ -88,7 +93,7 @@ public class BingoSettingsBuilder {
 
 		String newCard = VoteTicket.CATEGORY_CARD.getValidResultOrNull(voteResult);
 		if (newCard != null) {
-			resultBuilder.card = newCard;
+			resultBuilder.card = new BingoCard(newCard, resultBuilder.card.excludedTags());
 		}
 
 		CardSize newCardsize = VoteTicket.CATEGORY_CARDSIZE.getValidResultOrNull(voteResult);
@@ -99,9 +104,17 @@ public class BingoSettingsBuilder {
 		return resultBuilder;
 	}
 
-	public BingoSettingsBuilder card(String card) {
-		if (!Objects.equals(this.card, card)) {
-			this.card = card;
+	public BingoSettingsBuilder cardName(String card) {
+		if (!Objects.equals(this.card.cardName(), card)) {
+			this.card = new BingoCard(card, this.card.excludedTags());
+			settingsUpdated();
+		}
+		return this;
+	}
+
+	public BingoSettingsBuilder excludedTags(Set<String> tags) {
+		if (!Objects.equals(this.card.excludedTags(), tags)) {
+			this.card = new BingoCard(this.card.cardName(), tags);
 			settingsUpdated();
 		}
 		return this;
@@ -197,6 +210,30 @@ public class BingoSettingsBuilder {
 		return this;
 	}
 
+	public BingoSettingsBuilder blitzStartDuration(int blitzStartDuration) {
+		if (this.blitzStartDuration != blitzStartDuration) {
+			this.blitzStartDuration = blitzStartDuration;
+			settingsUpdated();
+		}
+		return this;
+	}
+
+	public BingoSettingsBuilder blitzBonusDuration(int blitzBonusDuration) {
+		if (this.blitzBonusDuration != blitzBonusDuration) {
+			this.blitzBonusDuration = blitzBonusDuration;
+			settingsUpdated();
+		}
+		return this;
+	}
+
+	public BingoSettingsBuilder blitzRecoveryDelay(int blitzRecoveryDelay) {
+		if (this.blitzRecoveryDelay != blitzRecoveryDelay) {
+			this.blitzRecoveryDelay = Math.clamp(blitzRecoveryDelay, 0, 24);
+			settingsUpdated();
+		}
+		return this;
+	}
+
 	public BingoSettingsBuilder expireHotswapTasks(boolean expireHotswapTasks) {
 		if (this.expireHotswapTasks != expireHotswapTasks) {
 			this.expireHotswapTasks = expireHotswapTasks;
@@ -246,11 +283,19 @@ public class BingoSettingsBuilder {
 				hotswapGoal,
 				expireHotswapTasks,
 				completeGoal,
-				differentCardPerTeam
+				differentCardPerTeam,
+				blitzStartDuration,
+				blitzBonusDuration,
+				blitzRecoveryDelay
 		);
 	}
 
 	public void settingsUpdated() {
+		preset = "";
 		session.onSettingUpdated(view());
+	}
+
+	public String preset() {
+		return preset;
 	}
 }

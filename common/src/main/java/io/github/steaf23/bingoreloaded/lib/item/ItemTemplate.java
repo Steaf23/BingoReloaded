@@ -14,6 +14,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -24,7 +25,7 @@ import java.util.Set;
  * A Builder for creating item stacks easily.
  * Has a few extra features such as
  *  - multi-level descriptions that can be added with priorities to influence the order.
- *  - meta modifier function that can be used to quickly change item meta on the item.
+ *  - item customizer function that can be used to make platform specific changes to an item.
  *  - textured variant, represented as a different item that will be displayed instead when a resource pack is enabled.
  */
 public class ItemTemplate
@@ -59,6 +60,8 @@ public class ItemTemplate
     private TextColor leatherColor = null;
     private TagDataStorage extraData;
 	private @Nullable Key cooldownGroup;
+
+    private final Map<Class<?>, Object> customizers = new HashMap<>();
 
     private boolean isDummy = false;
 
@@ -98,6 +101,13 @@ public class ItemTemplate
         setLore(lore);
     }
 
+    public ItemTemplate(int slot, ItemType type, Component name, List<Component> lore) {
+        this.slot = slot;
+        this.type = type;
+        this.name = name;
+        setLore(lore);
+    }
+
     public @NotNull String getPlainTextName() {
         return name == null ? "" : PlainTextComponentSerializer.plainText().serialize(name);
     }
@@ -125,8 +135,20 @@ public class ItemTemplate
     }
 
     /**
+     * Overload for setLore(Component...)
+     * @param lore multiline lore.
+     */
+    public ItemTemplate setLore(List<Component> lore) {
+        if (lore.isEmpty())
+            return this;
+
+        return addDescription("lore", 0, lore.toArray(new Component[]{}));
+    }
+
+
+    /**
      * Adds a description section to the template's item description.
-     * Each section is separated by ann empty line and the first description is shown directly under the item name.
+     * Each section is separated by an empty line and the first description is shown directly under the item name.
      * @param name identifiable name for the description, can be used to remove the description using removeDescription().
      * @param priority appends this description to the template where higher priorities are displayed further down.
      * @param description multiline description.
@@ -138,6 +160,10 @@ public class ItemTemplate
 
         this.description.put(name, new DescriptionSection(priority, description));
         return this;
+    }
+
+    public ItemTemplate addDescription(String name, int priority, Collection<Component> description) {
+        return addDescription(name, priority, description.toArray(new Component[]{}));
     }
 
     public int getSlot() {
@@ -367,6 +393,7 @@ public class ItemTemplate
 		copy.cooldownGroup = cooldownGroup;
 		copy.maxStackSize = maxStackSize;
         copy.isDummy = isDummy;
+        copy.customizers.putAll(customizers);
         return copy;
     }
 
@@ -398,6 +425,16 @@ public class ItemTemplate
 
     public TagDataStorage getExtraData() {
         return extraData;
+    }
+
+    public <T> ItemTemplate customize(Class<T> itemType, T editor) {
+        customizers.put(itemType, editor);
+        return this;
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> T getCustomizer(Class<T> itemType) {
+        return (T) customizers.get(itemType);
     }
 
     /**

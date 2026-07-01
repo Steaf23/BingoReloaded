@@ -4,6 +4,9 @@ import io.github.steaf23.bingoreloaded.api.CardDisplayInfo;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import net.kyori.adventure.text.Component;
 
+import java.util.Collections;
+import java.util.Set;
+
 public interface TaskData
 {
     enum TaskType
@@ -26,6 +29,7 @@ public interface TaskData
     Component[] getItemDescription();
     boolean isTaskEqual(TaskData other);
     boolean shouldItemGlow();
+	Set<String> tags();
 
     ItemType getDisplayMaterial(CardDisplayInfo context);
 
@@ -35,4 +39,8 @@ public interface TaskData
      * @return Copy with the new amount.
      */
     TaskData setRequiredAmount(int newAmount);
+
+	default boolean hasAnyTag(Set<String> tagsToCheck) {
+		return !Collections.disjoint(tagsToCheck, tags());
+	}
 }

@@ -1,3 +1,4 @@
+# Part of this file has been translated using ChatGPT
 name: "Português (Brasil)"
 changed: "Idioma configurado para Português (Brasil)"
 branding:
@@ -57,6 +58,7 @@ game:
     join_team_desc: "Clique para se juntar a este time"
     spectator_join: "Você entrou no jogo como espectador. Use /bingo view para ver as cartelas das equipes."
     spectator_join_no_view: "Você entrou no jogo como espectador."
+    no_teams: "A partida está cheia. Você só pode entrar como espectador."
   item:
     voided: "Esta tarefa não pode mais ser concluída!"
     expire: "Expira em: {0}" # 0: time left
@@ -98,6 +100,9 @@ menu:
       desc_score: "A primeira equipe a completar {0} tarefas vence!" #0: winning score
       desc_time: "A equipe que completar mais tarefas \nante que o tempo acabe vence!"
       desc_any: "A equipe que completar mais tarefas \nante que o tempo acabe ou completar {0} tarefas vence!" #0: winning score
+    info_blitz:
+      name: "Cartão de Bingo Blitz"
+      desc: "Trabalhem juntos como uma única equipe para melhorar sua pontuação máxima!\nVocês têm tempo limitado e cada tarefa concluída adiciona tempo bônus.\nA partida termina quando o tempo acabar."
     show_team_card:
       desc: "Veja a cartela de bingo desta equipe."
       name: "Cartela de <0>"
@@ -119,6 +124,7 @@ menu:
       lockout: "Lockout"
       complete: "Complete-X"
       hotswap: "Hot-Swap"
+      blitz: "Blitz"
   effects:
     enable: "Clique para ATIVAR esta opção de efeito"
     disable: "Clique para DESATIVAR esta opção de efeito"
@@ -171,6 +177,25 @@ menu:
           - Élitro (Durabilidade X) \n
           - Botas de Couro'"
     custom: "Custom"
+  leaderboard:
+    title: "Ranking de Bingo"
+    prompt: "Ver ranking"
+    category: "Categoria"
+    kit: "Kit"
+    card: "Cartela"
+    games_played: "<bingo_translate:'menu.stats.games_played'>"
+    settings: "Configurações"
+    sort_by_time: "Ordenar pelo menor tempo"
+    sort_by_score: "Ordenar pela maior pontuação"
+    stats: "Suas estatísticas"
+  stats:
+    wins: "Vitórias"
+    losses: "Derrotas"
+    games_played: "Partidas jogadas"
+    tasks_completed: "Total de tarefas concluídas"
+    tasks_completed_record: "Recorde de tarefas concluídas"
+    item_uses: "Usos de itens"
+    wand_uses: "Usos da Varinha Go-Up"
 items:
   card:
     name: "Cartela de Bingo"

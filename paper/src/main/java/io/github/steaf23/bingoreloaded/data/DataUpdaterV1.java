@@ -3,6 +3,7 @@ package io.github.steaf23.bingoreloaded.data;
 import io.github.steaf23.bingoreloaded.BingoReloadedPaper;
 import io.github.steaf23.bingoreloaded.cards.CardSize;
 import io.github.steaf23.bingoreloaded.data.helper.SerializablePlayer;
+import io.github.steaf23.bingoreloaded.data.record.BingoCard;
 import io.github.steaf23.bingoreloaded.lib.api.AdvancementHandlePaper;
 import io.github.steaf23.bingoreloaded.lib.api.PaperApiHelper;
 import io.github.steaf23.bingoreloaded.lib.api.ServerSoftware;
@@ -320,7 +321,7 @@ public class DataUpdaterV1
                 OldBingoSettings oldSettings = yamlData.getSection().getSerializable(key, OldBingoSettings.class);
                 if (oldSettings == null) continue;
                 tagData.setSerializable("presets." + key, BingoSettings.class, new BingoSettings(
-                        oldSettings.card(),
+                        new BingoCard(oldSettings.card),
                         oldSettings.mode(),
                         oldSettings.size(),
                         oldSettings.seed(),
@@ -333,7 +334,10 @@ public class DataUpdaterV1
                         oldSettings.hotswapGoal(),
                         true,
                         oldSettings.size.fullCardSize,
-                        false
+                        false,
+                        4 * 6,
+                        1 * 6,
+                        4
                 ));
             }
         }
@@ -453,7 +457,7 @@ public class DataUpdaterV1
     }
 
 	protected void updateCards() {
-        if (!new File(plugin.getDataFolder(), "data/cards.yml").exists() || new File(plugin.getDataFolder(), "data/cards.nbt").exists()) {
+        if (!new File(plugin.getDataFolder(), "data/cards.yml").exists() || new File(plugin.getDataFolder(), "data/default_cards.nbt").exists()) {
             return;
         }
 

@@ -139,7 +139,7 @@ public class BingoReloadedPlaceholderExpansion extends PlaceholderExpansion
                     yield defaultComponent;
                 }
                 else {
-                    yield Component.text(settings.card());
+                    yield Component.text(settings.card().cardName());
                 }
             }
             case SETTING_KIT -> {
@@ -217,6 +217,24 @@ public class BingoReloadedPlaceholderExpansion extends PlaceholderExpansion
                 }
                 else {
                     yield Component.text(settings.differentCardPerTeam());
+                }
+            }
+            case SETTING_BLITZ_START_DURATION -> {
+                BingoSettings settings = getSettings(player);
+                if (settings == null) {
+                    yield defaultComponent;
+                }
+                else {
+                    yield settings.useCountdown() ? Component.text(settings.blitzStartDuration() * 10) : defaultComponent;
+                }
+            }
+            case SETTING_BLITZ_BONUS_DURATION -> {
+                BingoSettings settings = getSettings(player);
+                if (settings == null) {
+                    yield defaultComponent;
+                }
+                else {
+                    yield settings.useCountdown() ? Component.text(settings.blitzBonusDuration() * 10) : defaultComponent;
                 }
             }
             case SESSION_NAME -> getPlayerSessionPlaceholder(player);

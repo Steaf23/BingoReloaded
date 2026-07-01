@@ -1,12 +1,14 @@
 package io.github.steaf23.bingoreloaded.data.record;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
+import io.github.steaf23.bingoreloaded.data.BingoSettingsData;
 import io.github.steaf23.bingoreloaded.data.TeamData;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataAccessor;
 import io.github.steaf23.bingoreloaded.lib.util.ComponentUtils;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
+import io.github.steaf23.bingoreloaded.settings.BingoSettingsBuilder;
 import io.github.steaf23.bingoreloaded.settings.gamemode.BingoGamemode;
 import org.jetbrains.annotations.Nullable;
 
@@ -19,9 +21,9 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.function.Predicate;
 
-public class GameRecordData {
+public class LeaderboardData {
 
-	private final DataAccessor data = BingoReloaded.getDataAccessor("data/history");
+	private final DataAccessor data = BingoReloaded.getDataAccessor("data/leaderboard");
 
 	public List<GameRecord> getGamesFilteredBy(Predicate<GameRecord> filter) {
 		return getAllRecords().stream().filter(filter).toList();
@@ -35,19 +37,26 @@ public class GameRecordData {
 		return data.getSerializable("settings." + record.settingsId().toString(), BingoSettings.class);
 	}
 
-	public Map<UUID, BingoSettings> getSettings() {
-		Map<UUID, BingoSettings> settingsMap = new HashMap<>();
+	public Map<String, BingoSettings> getSettings(BingoSettingsData presets) {
+		Map<String, BingoSettings> settingsMap = new HashMap<>();
 		Set<String> settings = data.getStorage("settings").getKeys();
 		for (String setting : settings) {
-			settingsMap.put(UUID.fromString(setting), data.getSerializable("settings." + setting, BingoSettings.class));
+			if (data.contains("settings." + setting)) {
+				settingsMap.put(setting, data.getSerializable("settings." + setting, BingoSettings.class));
+			} else {
+				settingsMap.put(setting, presets.getSettings(setting));
+			}
+		}
+
+		for (String preset : presets.getPresetNames()) {
+			settingsMap.put(preset, presets.getSettings(preset));
 		}
 
 		return settingsMap;
 	}
 
 
-	public void saveGame(BingoGame game, @Nullable BingoTeam winningTeam) {
-		UUID settingsId = getOrCreateSettingsIdFromGame(game);
+	public void saveGame(BingoSettingsBuilder originalSettings, BingoGame game, @Nullable BingoTeam winningTeam) {
 
 		Map<String, GameRecord.TeamRecord> teams = new HashMap<>();
 		for (BingoTeam team : game.getTeamManager().getActiveTeams()) {
@@ -60,7 +69,10 @@ public class GameRecordData {
 			teams.put(team.getIdentifier(), new GameRecord.TeamRecord(score, template, participants));
 		}
 
-		GameRecord record = new GameRecord(settingsId, teams, winningTeam == null ? "" : winningTeam.getIdentifier(), new Date(), game.getGameTimePassed());
+		boolean preset = !originalSettings.preset().isEmpty() && game.getSettings().equals(originalSettings.view());
+		String settingsId = preset ? originalSettings.preset() : getOrCreateSettingsIdFromGame(game);
+
+		GameRecord record = new GameRecord(preset ? originalSettings.preset() : settingsId, preset ? GameRecord.SettingsType.PRESET : GameRecord.SettingsType.CUSTOM, teams, winningTeam == null ? "" : winningTeam.getIdentifier(), new Date(), game.getGameTimePassed());
 		List<GameRecord> newRecords = new ArrayList<>(getAllRecords());
 		newRecords.add(record);
 
@@ -68,12 +80,12 @@ public class GameRecordData {
 		data.saveChanges();
 	}
 
-	public UUID getOrCreateSettingsIdFromGame(BingoGame game) {
+	public String getOrCreateSettingsIdFromGame(BingoGame game) {
 		Set<String> allIds = data.getStorage("settings").getKeys();
 		for (String id : allIds) {
 			BingoSettings settings = data.getSerializable("settings." + id, BingoSettings.class);
 			if (game.getSettings().equals(settings)) {
-				return UUID.fromString(id);
+				return id;
 			}
 		}
 		// Settings are not yet saved in the history file, save it here.
@@ -81,7 +93,7 @@ public class GameRecordData {
 		data.setSerializable("settings." + settingsId, BingoSettings.class, game.getSettings());
 		data.saveChanges();
 
-		return settingsId;
+		return settingsId.toString();
 	}
 
 	public void purgeBottomRecords(BingoGamemode gamemode, int amountOfRecords) {

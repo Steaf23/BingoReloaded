@@ -4,7 +4,7 @@ import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.api.CardDisplayInfo;
 import io.github.steaf23.bingoreloaded.api.CardMenu;
 import io.github.steaf23.bingoreloaded.api.HotswapCardMenu;
-import io.github.steaf23.bingoreloaded.cards.hotswap.HotswapTaskSlot;
+import io.github.steaf23.bingoreloaded.cards.slot.TickingTaskSlot;
 import io.github.steaf23.bingoreloaded.lib.api.MenuBoard;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import net.kyori.adventure.text.Component;
@@ -15,13 +15,13 @@ import java.util.List;
 
 public class HotswapGenericCardMenu extends GenericCardMenu implements HotswapCardMenu
 {
-    private List<HotswapTaskSlot> taskHolders;
+    private List<TickingTaskSlot> taskHolders;
 
     public HotswapGenericCardMenu(BingoReloaded bingo, MenuBoard menuBoard, CardDisplayInfo displayInfo, @Nullable Component alternateTitle) {
         super(bingo, menuBoard, displayInfo, alternateTitle);
     }
 
-    public void updateTaskHolders(List<HotswapTaskSlot> holders) {
+    public void updateTaskHolders(List<TickingTaskSlot> holders) {
         this.taskHolders = holders;
     }
 
@@ -32,7 +32,7 @@ public class HotswapGenericCardMenu extends GenericCardMenu implements HotswapCa
 
     @Override
     public @NotNull ItemTemplate getItemFromTask(int taskIndex) {
-        HotswapTaskSlot holder = taskHolders.get(taskIndex);
+        TickingTaskSlot holder = taskHolders.get(taskIndex);
         return holder.convertToItem(tasks.get(taskIndex), displayInfo());
     }
 }

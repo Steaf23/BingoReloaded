@@ -25,7 +25,7 @@ public class RotatingTaskList {
 
 	public GameTask nextTask(Predicate<TaskData> addPrecondition) {
 		if (randomTasks.isEmpty()) {
-			randomTasks.addAll(cardData.getAllTasks(settings.cardName(), settings.includeStatistics(), settings.includeAdvancements()));
+			randomTasks.addAll(cardData.getAllTasks(settings.cardName(), settings.includedTypes()));
 			// Do not add the tasks that are currently on the card.
 			// This will result in less duplicates overall when cycling through tasks.
 			randomTasks.removeIf(addPrecondition);

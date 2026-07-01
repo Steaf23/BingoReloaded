@@ -24,6 +24,7 @@ import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.settings.CustomKit;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
+import io.github.steaf23.bingoreloaded.tasks.data.ItemTask;
 import io.github.steaf23.bingoreloaded.util.BingoPlayerSender;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.JoinConfiguration;
@@ -62,9 +63,9 @@ public class BingoAction extends ActionTree {
 			if (!(session.phase() instanceof PregameLobby lobby)) {
 				return ActionResult.IGNORED;
 			}
-			if (!config.getOptionValue(BingoOptions.USE_VOTE_SYSTEM) ||
-					config.getOptionValue(BingoOptions.VOTE_USING_COMMANDS_ONLY) ||
-					config.getOptionValue(BingoOptions.VOTE_LIST).isEmpty()) {
+			if (!this.config.getOptionValue(BingoOptions.USE_VOTE_SYSTEM) ||
+					this.config.getOptionValue(BingoOptions.VOTE_USING_COMMANDS_ONLY) ||
+					this.config.getOptionValue(BingoOptions.VOTE_LIST).isEmpty()) {
 				BingoPlayerSender.sendMessage(Component.text("Voting is disabled!").color(NamedTextColor.RED), getLastUser());
 				return ActionResult.IGNORED;
 			}
@@ -128,7 +129,7 @@ public class BingoAction extends ActionTree {
 			}
 
 			if (session.isRunning()) {
-				if (config.getOptionValue(BingoOptions.TELEPORT_AFTER_DEATH)) {
+				if (this.config.getOptionValue(BingoOptions.TELEPORT_AFTER_DEATH)) {
 					((BingoGame) session.phase()).teleportPlayerAfterDeath(player);
 					return ActionResult.SUCCESS;
 				}
@@ -138,7 +139,14 @@ public class BingoAction extends ActionTree {
 
 
 		this.addSessionSubAction("view", List.of(), (args, session) -> {
-			if (!getLastUser().hasPermission("bingo.admin") && !config.getOptionValue(BingoOptions.ALLOW_VIEWING_ALL_CARDS)) {
+			if (getLastUser() instanceof PlayerHandle player) {
+				BingoParticipant participant = session.teamManager.getPlayerAsParticipant(player);
+				if (participant != null) {
+					participant.showCard(session.phase() instanceof BingoGame game ? (ItemTask)game.getDeathMatchTask().data : null);
+					return ActionResult.SUCCESS;
+				}
+			}
+			if (!getLastUser().hasPermission("bingo.admin") && !this.config.getOptionValue(BingoOptions.ALLOW_VIEWING_ALL_CARDS)) {
 				return ActionResult.NO_PERMISSION;
 			}
 
@@ -165,7 +173,6 @@ public class BingoAction extends ActionTree {
 			}
 		}).addTabCompletion(args -> List.of(
 				"all",
-				"config",
 				"worlds",
 				"placeholders",
 				"scoreboards",
@@ -174,14 +181,20 @@ public class BingoAction extends ActionTree {
 				"sounds"
 		)).addUsage("<option>"));
 
-		this.addSubAction(new ActionTree("scoreboard", List.of(), args -> {
+		this.addSubAction(new ActionTree("leaderboard", List.of(), args -> {
 			if (!(getLastUser() instanceof PlayerHandle player)) {
 				return ActionResult.IGNORED;
 			}
 
-			// TODO: add config check
-			gameManager.getRuntime().openGameHistory(player, gameManager.getRecordData());
-			return ActionResult.SUCCESS;
+			if (this.config.getOptionValue(BingoOptions.LEADERBOARD_ENABLED)) {
+				gameManager.getRuntime().openLeaderboard(
+						player,
+						gameManager.getLeaderboard(),
+						this.config.getOptionValue(BingoOptions.LEADERBOARD_USE_PRESETS)
+				);
+				return ActionResult.SUCCESS;
+			}
+			return ActionResult.IGNORED;
 		}));
 
 
@@ -257,7 +270,7 @@ public class BingoAction extends ActionTree {
 
 
 		this.addSessionSubAction("stats", List.of("bingo.admin"), (args, session) -> {
-			if (!config.getOptionValue(BingoOptions.SAVE_PLAYER_STATISTICS)) {
+			if (!this.config.getOptionValue(BingoOptions.SAVE_PLAYER_STATISTICS)) {
 				Component text = Component.text("Player statistics are not being tracked at this moment!")
 						.color(NamedTextColor.RED);
 				BingoPlayerSender.sendMessage(text, getLastUser());
@@ -353,7 +366,7 @@ public class BingoAction extends ActionTree {
 			WorldPosition pos = player.position();
 			BingoSession session = getSessionFromUser(getLastUser());
 			// In multiple, we cannot create a lobby in a bingo world because there should only be one lobby ever.
-			if (config.getOptionValue(BingoOptions.CONFIGURATION) == BingoOptions.PluginConfiguration.MULTIPLE && session != null && session.ownsWorld(player.world())) {
+			if (this.config.getOptionValue(BingoOptions.CONFIGURATION) == BingoOptions.PluginConfiguration.MULTIPLE && session != null && session.ownsWorld(player.world())) {
 				BingoPlayerSender.sendMessage(ComponentUtils.MINI_BUILDER.deserialize("<red>Lobby cannot be created in a bingo-world. Please create it in the lobby world as defined by defaultWorldName.</red>"), player);
 				return ActionResult.IGNORED;
 			}
@@ -486,7 +499,6 @@ public class BingoAction extends ActionTree {
 	public ActionResult reloadCommand(String reloadOption, ActionUser user) {
 		switch (reloadOption) {
 			case "all" -> reloadAll();
-			case "config" -> reloadConfig();
 			case "worlds" -> reloadWorlds();
 			case "placeholders" -> reloadPlaceholders();
 			case "scoreboards" -> reloadScoreboards();
@@ -504,7 +516,6 @@ public class BingoAction extends ActionTree {
 	}
 
 	public void reloadAll() {
-		reloadConfig();
 		reloadPlaceholders();
 		reloadScoreboards();
 		reloadData();
@@ -513,10 +524,6 @@ public class BingoAction extends ActionTree {
 
 		// reload worlds last to kick off everything else.
 		reloadWorlds();
-	}
-
-	public void reloadConfig() {
-		bingo.reloadConfigFromFile();
 	}
 
 	public void reloadWorlds() {

@@ -4,14 +4,14 @@ import org.jetbrains.annotations.Nullable;
 
 public class BlitzTimer extends CountdownTimer {
 
-	int time;
+	int bonusTime;
 
-	public BlitzTimer(int startTime, int refreshTime, @Nullable Runnable onTimeoutCallback) {
+	public BlitzTimer(int startTime, int bonusTime, @Nullable Runnable onTimeoutCallback) {
 		super(startTime, 30, 10, onTimeoutCallback);
-		this.time = refreshTime;
+		this.bonusTime = bonusTime;
 	}
 
 	public void reset() {
-		updateTime(time);
+		updateTime(getTime() + bonusTime);
 	}
 }

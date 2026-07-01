@@ -18,7 +18,8 @@ public class GameRecordSerializer implements DataStorageSerializer<GameRecord> {
 
 	@Override
 	public void toDataStorage(@NotNull DataStorage storage, @NotNull GameRecord value) {
-		storage.setUUID("settings", value.settingsId());
+		storage.setString("settings", value.settingsId());
+		storage.setString("settings_type", value.settingsType().configName);
 		storage.setString("winning_team", value.winningTeam());
 		storage.setLong("timestamp", value.timestamp().getTime());
 		storage.setLong("game_time", value.playTime());
@@ -33,7 +34,14 @@ public class GameRecordSerializer implements DataStorageSerializer<GameRecord> {
 
 	@Override
 	public @Nullable GameRecord fromDataStorage(@NotNull DataStorage storage) {
-		UUID settings = storage.getUUID("settings");
+		String settings = storage.getString("settings", "");
+		if (settings.isEmpty()) {
+			UUID oldId = storage.getUUID("settings");
+			if (oldId != null) {
+				settings = oldId.toString();
+			}
+		}
+		GameRecord.SettingsType settingsType = GameRecord.SettingsType.fromString(storage.getString("settings_type", "custom"));
 		String winningTeam = storage.getString("winning_team", "");
 		long time = storage.getLong("timestamp", 0);
 		Date date = new Date(time);
@@ -45,7 +53,7 @@ public class GameRecordSerializer implements DataStorageSerializer<GameRecord> {
 			teams.put(teamId, team);
 		}
 
-		return new GameRecord(settings, teams, winningTeam, date, gameTime);
+		return new GameRecord(settings, settingsType, teams, winningTeam, date, gameTime);
 	}
 
 	private GameRecord.TeamRecord readTeam(DataStorage storage) {

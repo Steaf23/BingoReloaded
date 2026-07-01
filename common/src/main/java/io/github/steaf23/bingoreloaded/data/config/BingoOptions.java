@@ -39,8 +39,6 @@ public class BingoOptions {
 	public static final ConfigurationOption<String> LANGUAGE = new StringOption("language")
 			.withEditUpdate(ConfigurationOption.EditUpdateTime.AFTER_SERVER_RESTART);
 	public static final ConfigurationOption<Boolean> SAVE_PLAYER_STATISTICS = new BooleanOption("savePlayerStatistics");
-	public static final ConfigurationOption<String> SEND_COMMAND_AFTER_GAME_ENDS = new StringOptionAllowEmpty("sendCommandAfterGameEnds");
-	public static final ConfigurationOption<String> SEND_COMMAND_BEFORE_GAME_STARTS = new StringOptionAllowEmpty("sendCommandBeforeGameStarts");
 	public static final ConfigurationOption<ConfigGamemode> PLAYER_GAMEMODE_AFTER_GAME = new EnumOption<>("playerGamemodeAfterGame", ConfigGamemode.class, ConfigGamemode.SURVIVAL);
 	public static final ConfigurationOption<Boolean> VOTE_USING_COMMANDS_ONLY = new BooleanOption("voteUsingCommandsOnly");
 	public static final ConfigurationOption<Boolean> SELECT_TEAMS_USING_COMMANDS_ONLY = new BooleanOption("selectTeamsUsingCommandsOnly");
@@ -58,7 +56,16 @@ public class BingoOptions {
 	public static final ConfigurationOption<Boolean> ENABLE_DEBUG_LOGGING = new BooleanOption("enableDebugLogging");
 	public static final ConfigurationOption<Boolean> DISABLE_CLIENT_MOD = new BooleanOption("disableCompanionMod")
 			.withEditUpdate(ConfigurationOption.EditUpdateTime.AFTER_SERVER_RESTART);
+	public static final ConfigurationOption<Boolean> LEADERBOARD_ENABLED = new BooleanOption("leaderboard.enabled");
+	public static final ConfigurationOption<Boolean> LEADERBOARD_SAVE_CANCELLED_GAMES = new BooleanOption("leaderboard.saveCancelledGames");
+	public static final ConfigurationOption<Boolean> LEADERBOARD_USE_PRESETS = new BooleanOption("leaderboard.onlyUsePresetCategories");
 
+	// Commands
+	public static final ConfigurationOption<String> SEND_COMMAND_BEFORE_GAME_STARTS = new StringOptionAllowEmpty("sendCommandBeforeGameStarts");
+	public static final ConfigurationOption<String> SEND_COMMAND_AFTER_GAME_ENDS = new StringOptionAllowEmpty("sendCommandAfterGameEnds");
+	public static final ConfigurationOption<String> SEND_COMMAND_AFTER_GAME_END_EVERY_PLAYER = new StringOptionAllowEmpty("sendCommandAfterGameEndsPerPlayer.everyPlayer");
+	public static final ConfigurationOption<String> SEND_COMMAND_AFTER_GAME_END_WINNING_PLAYERS = new StringOptionAllowEmpty("sendCommandAfterGameEndsPerPlayer.winningPlayers");
+	public static final ConfigurationOption<String> SEND_COMMAND_AFTER_GAME_END_LOSING_PLAYERS = new StringOptionAllowEmpty("sendCommandAfterGameEndsPerPlayer.losingPlayers");
 	// Lobby
 	public static final ConfigurationOption<Boolean> SINGLE_PLAYER_TEAMS = new BooleanOption("singlePlayerTeams")
 			.withEditUpdate(ConfigurationOption.EditUpdateTime.AFTER_SESSION);
@@ -100,10 +107,15 @@ public class BingoOptions {
 			.withEditUpdate(ConfigurationOption.EditUpdateTime.AFTER_SERVER_RESTART);
 	public static final ConfigurationOption<Boolean> DISABLE_STATISTICS = new BooleanOption("disableStatistics")
 			.withEditUpdate(ConfigurationOption.EditUpdateTime.AFTER_SERVER_RESTART);
+	public static final ConfigurationOption<Boolean> DISABLE_NETHER = new BooleanOption("disableNether")
+			.withEditUpdate(ConfigurationOption.EditUpdateTime.AFTER_SERVER_RESTART);
+	public static final ConfigurationOption<Boolean> DISABLE_THE_END = new BooleanOption("disableTheEnd")
+			.withEditUpdate(ConfigurationOption.EditUpdateTime.AFTER_SERVER_RESTART);
 	public static final ConfigurationOption<Boolean> END_GAME_WITHOUT_TEAMS = new BooleanOption("endGameWithoutTeams");
 	public static final ConfigurationOption<BingoConfigurationData.HotswapConfig> HOTSWAP_CONFIG = new NonSerializableOption<>("hotswapMode");
 	public static final ConfigurationOption<Boolean> ALLOW_VIEWING_ALL_CARDS = new BooleanOption("allowViewingAllCards")
 			.withEditUpdate(ConfigurationOption.EditUpdateTime.AFTER_GAME);
+	public static final ConfigurationOption<Boolean> DISABLE_CARD_MENU_FROM_ITEM = new BooleanOption("disableCardMenuFromItem");
 
 	// Player Data
 	public static final ConfigurationOption<Boolean> SAVE_PLAYER_INFORMATION = new BooleanOption("savePlayerInformation");

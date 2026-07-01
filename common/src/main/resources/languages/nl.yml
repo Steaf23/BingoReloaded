@@ -1,3 +1,4 @@
+# Part of this file has been translated using ChatGPT
 name: "Nederlands"
 changed: "Taal staat op Nederlands!"
 branding:
@@ -57,6 +58,7 @@ game:
     join_team_desc: "Klik om in dit team te komen"
     spectator_join: "Je bent toegetreden als toeschouwer. Gebruik /bingo view om de kaarten van de teams te bekijken."
     spectator_join_no_view: "Je bent toegetreden als toeschouwer."
+    no_teams: "Het spel is vol. Je kunt alleen als toeschouwer meedoen."
   item:
     voided: "Deze taak kan niet meer voltooid worden!"
     expire: "Verloopt in: {0}" # 0: time left
@@ -98,6 +100,9 @@ menu:
       desc_score: "Het eerste team dat {0} taken voltooit, wint!" #0: winning score
       desc_time: "Het team dat de meeste taken voltooit \nvoordat de tijdslimiet verloopt, wint!"
       desc_any: "Het team dat de meeste taken voltooit \nvoordat de tijdslimiet verloopt \nof dat {0} taken voltooit, wint!" #0: winning score
+    info_blitz:
+      name: "Blitz Bingokaart"
+      desc: "Werk samen als één team om jullie topscore te verbeteren!\nJe speelt tegen een strikte timer en elke voltooide taak voegt bonustijd toe.\nHet spel eindigt wanneer de tijd op is."
     show_team_card:
       desc: "Bekijk de bingokaart van dit team."
       name: "Bingokaart van <0>"
@@ -119,6 +124,7 @@ menu:
       lockout: "Lockout"
       complete: "Volle Kaart"
       hotswap: "Hot-Swap"
+      blitz: "Blitz"
   effects:
     enable: "Klik on dit effect AAN te zetten."
     disable: "Klik om dit effect UIT te zetten."
@@ -171,6 +177,25 @@ menu:
           - Elytra (Unbreaking X) \n
           - Leather Boots"
     custom: ""
+  leaderboard:
+    title: "Bingo-ranglijst"
+    prompt: "Bekijk ranglijst"
+    category: "Categorie"
+    kit: "Kit"
+    card: "Kaart"
+    games_played: "<bingo_translate:'menu.stats.games_played'>"
+    settings: "Instellingen"
+    sort_by_time: "Sorteer op snelste tijd"
+    sort_by_score: "Sorteer op hoogste score"
+    stats: "Jouw statistieken"
+  stats:
+    wins: "Gewonnen"
+    losses: "Verloren"
+    games_played: "Gespeelde spellen"
+    tasks_completed: "Totaal voltooide taken"
+    tasks_completed_record: "Record voltooide taken"
+    item_uses: "Items gebruikt"
+    wand_uses: "Go-Up-Wand gebruikt"
 items:
   card:
     name: "Bingo Kaart"

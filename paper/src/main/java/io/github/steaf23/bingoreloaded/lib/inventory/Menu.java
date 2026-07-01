@@ -26,7 +26,7 @@ public interface Menu
      */
     boolean onDrag(final InventoryDragEvent event);
 
-    void onCustomAction(Key key, DataStorage payload);
+    void onCustomAction(PlayerHandle player, Key key, DataStorage payload);
 
     void beforeClosing(PlayerHandle player);
 

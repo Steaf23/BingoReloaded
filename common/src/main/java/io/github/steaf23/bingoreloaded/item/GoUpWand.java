@@ -85,7 +85,7 @@ public class GoUpWand extends GameItem {
 			});
 
 			player.teleportBlocking(teleportLocation);
-			player.playSound(BingoSound.GO_UP_WAND_USED.builder().build());
+			player.playSound(BingoSound.GO_UP_WAND_USED.sound());
 
 			player.addEffect(new PotionEffectInstance(StatusEffectType.of("minecraft:resistance"),
 					BingoReloaded.ONE_SECOND * (platformLifetimeSeconds + 4))

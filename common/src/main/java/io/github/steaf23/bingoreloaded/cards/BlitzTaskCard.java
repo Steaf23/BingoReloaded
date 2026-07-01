@@ -2,8 +2,8 @@ package io.github.steaf23.bingoreloaded.cards;
 
 import io.github.steaf23.bingoreloaded.api.CardMenu;
 import io.github.steaf23.bingoreloaded.api.HotswapCardMenu;
-import io.github.steaf23.bingoreloaded.cards.hotswap.HotswapTaskSlot;
-import io.github.steaf23.bingoreloaded.cards.hotswap.SimpleHotswapTask;
+import io.github.steaf23.bingoreloaded.cards.slot.TickingTaskSlot;
+import io.github.steaf23.bingoreloaded.cards.slot.SimpleTickingTask;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.BingoSound;
 import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
@@ -32,7 +32,7 @@ import java.util.Queue;
 
 public class BlitzTaskCard extends TaskCard {
 
-	private final List<HotswapTaskSlot> slots = new ArrayList<>();
+	private final List<TickingTaskSlot> slots = new ArrayList<>();
 
 	private final int recoveryTimeSeconds;
 	private final int resetBufferAmount;
@@ -42,13 +42,16 @@ public class BlitzTaskCard extends TaskCard {
 
 	private final Queue<GameTask> taskResetBuffer = new ArrayDeque<>();
 
-	public BlitzTaskCard(CardMenu menu, CardSize size, BingoGame game, BingoConfigurationData.HotswapConfig config) {
+	public BlitzTaskCard(CardMenu menu, CardSize size, BingoGame game, BingoConfigurationData.HotswapConfig config, int recoveryDelay) {
 		super(menu, size, game.getProgressTracker());
 		this.game = game;
 
 		game.getTimer().addNotifier(this::updateWithTime);
 		recoveryTimeSeconds = config.recoveryTime();
-		resetBufferAmount = 4;
+		resetBufferAmount = recoveryDelay;
+
+		menu.setInfo(BingoMessage.INFO_BLITZ_NAME.asPhrase(),
+				BingoMessage.INFO_BLITZ_DESC.asMultiline());
 	}
 
 	@Override
@@ -88,7 +91,7 @@ public class BlitzTaskCard extends TaskCard {
 		GameTask lastRecoveredTask = null;
 
 		int idx = 0;
-		for (HotswapTaskSlot slot : slots) {
+		for (TickingTaskSlot slot : slots) {
 			GameTask task = getTasks().get(idx);
 
 			// Check if this task is the next task to be reset, if the buffer is full.
@@ -117,7 +120,7 @@ public class BlitzTaskCard extends TaskCard {
 						ConsoleMessenger.bug("Cannot generate new task for blitz", this);
 					}
 					lastRecoveredTask = newTask;
-					slots.set(idx, new SimpleHotswapTask(recoveryTimeSeconds));
+					slots.set(idx, new SimpleTickingTask(recoveryTimeSeconds));
 					getTasks().set(idx, newTask);
 					getProgressTracker().startTrackingTask(newTask);
 				}
@@ -126,7 +129,7 @@ public class BlitzTaskCard extends TaskCard {
 		}
 
 		if (amountRecovered > 0) {
-			game.playSound(BingoSound.HOTSWAP_TASK_ADDED.builder().build());
+			game.playSound(BingoSound.HOTSWAP_TASK_ADDED.sound());
 
 			if (amountRecovered == 1) {
 				GameTask taskToSend = lastRecoveredTask;
@@ -161,7 +164,7 @@ public class BlitzTaskCard extends TaskCard {
 	public void setTasks(List<GameTask> tasks) {
 		slots.clear();
 		for (GameTask task : tasks) {
-			slots.add(new SimpleHotswapTask(recoveryTimeSeconds));
+			slots.add(new SimpleTickingTask(recoveryTimeSeconds));
 		}
 
 		((HotswapCardMenu)menu).updateTaskHolders(slots);
@@ -186,6 +189,7 @@ public class BlitzTaskCard extends TaskCard {
 		taskResetBuffer.add(task);
 		if (game.getTimer() instanceof BlitzTimer timer) {
 			timer.reset();
+			player.getSession().playSound(BingoSound.HOTSWAP_TASK_ADDED.sound());
 		}
 	}
 

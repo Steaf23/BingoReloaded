@@ -34,8 +34,13 @@ public class YamlDataStorage implements DataStorage
     }
 
     @Override
-    public DataStorage createNew() {
+    public YamlDataStorage createNew() {
         return new YamlDataStorage();
+    }
+
+    @Override
+    public YamlDataStorage duplicate() {
+        return this;
     }
 
     @Override
@@ -269,6 +274,11 @@ public class YamlDataStorage implements DataStorage
             return null;
         }
         return new YamlDataStorage(section);
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return config.getKeys(false).isEmpty();
     }
 
     @Override

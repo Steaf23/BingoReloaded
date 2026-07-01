@@ -17,6 +17,7 @@ import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -72,7 +73,7 @@ public class GameTask
         if (isVoided()) // VOIDED TASK
         {
             item = new ItemTemplate(ItemType.of("structure_void"), null);
-            Component[] addedDesc = BingoMessage.VOIDED.asMultiline(NamedTextColor.DARK_GRAY);
+            Component[] addedDesc = BingoMessage.VOIDED.asMultiline(Style.style(NamedTextColor.DARK_GRAY));
 
             item.setName(getName());
             item.setLore(addedDesc);
@@ -97,7 +98,7 @@ public class GameTask
         }
         else // DEFAULT TASK
         {
-            item = new ItemTemplate(icon(displayInfo), data.getName(), data.getItemDescription());
+            item = new ItemTemplate(icon(displayInfo), data.getName(), data.getItemDescription()).setDummy(true);
             item.setAmount(data.getRequiredAmount());
         }
 

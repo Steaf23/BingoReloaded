@@ -2,13 +2,16 @@ package io.github.steaf23.bingoreloaded.lib.data.core;
 
 import io.github.steaf23.bingoreloaded.lib.api.ServerSoftware;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.yaml.snakeyaml.parser.ParserException;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.file.Paths;
+import java.util.List;
 
 public class YamlDataAccessor extends YamlDataStorage implements DataAccessor
 {
@@ -22,6 +25,28 @@ public class YamlDataAccessor extends YamlDataStorage implements DataAccessor
         this.platform = platform;
         this.location = location;
         this.internalOnly = internalOnly;
+    }
+
+    // Updates the config by copying all user set values over into a newly created config file.
+    private void patchUserConfig(YamlConfiguration userConfig, YamlConfiguration defaultConfig) {
+        if (isInternalReadOnly()) {
+            return;
+        }
+
+        // Only update leaf nodes, otherwise new child settings will not get copied.
+        List<String> userKeys = userConfig.getKeys(true).stream().filter(key -> !userConfig.isConfigurationSection(key)).toList();
+        for (String key : userKeys) {
+            if (defaultConfig.contains(key)) {
+                defaultConfig.set(key, userConfig.get(key));
+            }
+        }
+
+        config = defaultConfig;
+        try {
+            defaultConfig.save(new File(platform.getDataFolder(), getLocation() + getFileExtension()));
+        } catch (IOException e) {
+            ConsoleMessenger.bug("Could not update " + getLocation() + getFileExtension() + " to new version", this);
+        }
     }
 
     @Override
@@ -41,22 +66,19 @@ public class YamlDataAccessor extends YamlDataStorage implements DataAccessor
             if (stream != null) {
                 config = YamlConfiguration.loadConfiguration(new InputStreamReader(stream));
             }
-
             return;
         }
 
-        File file = new File(platform.getDataFolder(), getLocation() + getFileExtension());
-        if (!file.exists()) {
+        File userFile = new File(platform.getDataFolder(), getLocation() + getFileExtension());
+        if (!userFile.exists()) {
             platform.saveResource(Paths.get(getLocation() + getFileExtension()).toString(), false);
         }
 
-        config = YamlConfiguration.loadConfiguration(file);
-
-        // We have to fill this config with our plugin defaults, for when users decide to just remove parts of the file that we still want to use.
+        // Patch user config to add new settings but don't erase user settings.
         InputStream stream = platform.getResource(getLocation() + getFileExtension());
         if (stream != null) {
             YamlConfiguration defaultValues = YamlConfiguration.loadConfiguration(new InputStreamReader(stream));
-            ((YamlConfiguration) config).setDefaults(defaultValues);
+            patchUserConfig(YamlConfiguration.loadConfiguration(userFile), defaultValues);
         }
     }
 

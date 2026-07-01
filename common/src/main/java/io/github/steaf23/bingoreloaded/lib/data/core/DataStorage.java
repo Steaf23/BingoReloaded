@@ -16,6 +16,7 @@ import java.util.UUID;
 public interface DataStorage
 {
     DataStorage createNew();
+    DataStorage duplicate();
 
     Set<String> getKeys();
 
@@ -109,6 +110,13 @@ public interface DataStorage
 
     void setStorage(String path, DataStorage value);
     @Nullable DataStorage getStorage(String path);
+
+    default @NotNull DataStorage getStorageOrEmpty(String path) {
+        DataStorage storage = getStorage(path);
+        return storage == null ? createNew() : storage;
+    }
+
+    boolean isEmpty();
 
     /**
      * Also erases parent nodes of data node if they are empty after removal

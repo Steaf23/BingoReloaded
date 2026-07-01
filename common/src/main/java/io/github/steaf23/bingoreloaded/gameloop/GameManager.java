@@ -6,7 +6,7 @@ import io.github.steaf23.bingoreloaded.data.PlayerSerializationData;
 import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.data.config.BingoOptions;
 import io.github.steaf23.bingoreloaded.data.helper.SerializablePlayer;
-import io.github.steaf23.bingoreloaded.data.record.GameRecordData;
+import io.github.steaf23.bingoreloaded.data.record.LeaderboardData;
 import io.github.steaf23.bingoreloaded.data.world.WorldData;
 import io.github.steaf23.bingoreloaded.data.world.WorldGroup;
 import io.github.steaf23.bingoreloaded.lib.api.BingoReloadedRuntime;
@@ -45,7 +45,7 @@ public class GameManager {
 	private final BingoEventListener eventListener;
 	private final WorldData worldData;
 	private final BingoLobbyData lobbyData;
-	private final GameRecordData recordData;
+	private final LeaderboardData leaderboard;
 
 	private Set<UUID> teleportingPlayers;
 
@@ -54,11 +54,15 @@ public class GameManager {
 		this.config = config;
 
 		this.lobbyData = new BingoLobbyData();
-		this.recordData = new GameRecordData();
+		this.leaderboard = new LeaderboardData();
 
 		@Subst("gamemanager:none") String settingsName = config.getOptionValue(BingoOptions.CUSTOM_WORLD_GENERATION);
 		Key generationSettings = settingsName.equals("null") ? null : Key.key(settingsName);
-		this.worldData = new WorldData(runtime.getServerSoftware(), generationSettings);
+		this.worldData = new WorldData(runtime.getServerSoftware(), new WorldData.Options(
+				generationSettings,
+				!config.getOptionValue(BingoOptions.DISABLE_NETHER),
+				!config.getOptionValue(BingoOptions.DISABLE_THE_END))
+		);
 
 		this.sessions = new HashMap<>();
 		this.playerData = new PlayerSerializationData();
@@ -356,7 +360,7 @@ public class GameManager {
 		return lobbyData;
 	}
 
-	public GameRecordData getRecordData() {
-		return recordData;
+	public LeaderboardData getLeaderboard() {
+		return leaderboard;
 	}
 }

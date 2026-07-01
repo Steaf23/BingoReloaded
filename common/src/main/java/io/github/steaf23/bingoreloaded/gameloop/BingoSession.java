@@ -125,8 +125,8 @@ public class BingoSession implements ForwardingAudience
 
         BingoCardData cardsData = new BingoCardData();
         BingoSettings settings = settingsBuilder.view();
-        if (!cardsData.getCardNames().contains(settings.card())) {
-            BingoMessage.NO_CARD.sendToAudience(this, NamedTextColor.RED, Component.text(settings.card()));
+        if (!cardsData.getCardNames().contains(settings.card().cardName())) {
+            BingoMessage.NO_CARD.sendToAudience(this, NamedTextColor.RED, Component.text(settings.card().cardName()));
             return false;
         }
 
@@ -219,8 +219,7 @@ public class BingoSession implements ForwardingAudience
 			}
 		}
 
-        // TODO: add config option for saving game history, add check for new record, etc...
-        gameManager.getRecordData().saveGame(game, winningTeam);
+        addGameToLeaderboard(game, winningTeam);
 
 		BingoOptions.ConfigGamemode gamemode = config.getOptionValue(BingoOptions.PLAYER_GAMEMODE_AFTER_GAME);
 
@@ -257,6 +256,18 @@ public class BingoSession implements ForwardingAudience
 			}
 		}
         BingoReloaded.sendResourcePack(player);
+    }
+
+    public void addGameToLeaderboard(BingoGame game, @Nullable BingoTeam winningTeam) {
+        if (!config.getOptionValue(BingoOptions.LEADERBOARD_ENABLED)) {
+            return;
+        }
+
+        if (!config.getOptionValue(BingoOptions.LEADERBOARD_SAVE_CANCELLED_GAMES) && winningTeam == null) {
+            return;
+        }
+
+        gameManager.getLeaderboard().saveGame(settingsBuilder, game, winningTeam);
     }
 
     public void removePlayer(PlayerHandle player) {
@@ -337,9 +348,15 @@ public class BingoSession implements ForwardingAudience
             // coming from the OW we can go to either the nether or the end
             if (target.dimension() == DimensionType.NETHER) {
                 // Nether
+                if (config.getOptionValue(BingoOptions.DISABLE_NETHER)) {
+                    return EventResults.playerMoveResult(true, false, null);
+                }
                 targetLocation.setWorld(worlds.getNetherWorld());
             } else if (target.dimension() == DimensionType.THE_END) {
                 // The End
+                if (config.getOptionValue(BingoOptions.DISABLE_THE_END)) {
+                    return EventResults.playerMoveResult(true, false, null);
+                }
                 targetLocation.setWorld(worlds.getEndWorld());
             } else {
                 ConsoleMessenger.bug("Could not catch player going through portal", this);

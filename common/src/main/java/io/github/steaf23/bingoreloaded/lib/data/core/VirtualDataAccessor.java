@@ -56,6 +56,11 @@ public class VirtualDataAccessor implements DataAccessor
     }
 
     @Override
+    public DataStorage duplicate() {
+        return null;
+    }
+
+    @Override
     public Set<String> getKeys() {
         return Set.of();
     }
@@ -252,6 +257,11 @@ public class VirtualDataAccessor implements DataAccessor
     @Override
     public @Nullable DataStorage getStorage(String path) {
         return null;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return true;
     }
 
     @Override

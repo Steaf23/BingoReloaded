@@ -2,16 +2,18 @@ package io.github.steaf23.bingoreloaded.settings;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.cards.CardSize;
+import io.github.steaf23.bingoreloaded.data.record.BingoCard;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import io.github.steaf23.bingoreloaded.player.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.settings.gamemode.BingoGamemode;
+import io.github.steaf23.bingoreloaded.settings.gamemode.GamemodeFeature;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.key.Keyed;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.EnumSet;
 
-public record BingoSettings(String card,
+public record BingoSettings(BingoCard card,
                             BingoGamemode mode,
                             CardSize size,
                             int seed,
@@ -24,7 +26,10 @@ public record BingoSettings(String card,
                             int hotswapGoal,
                             boolean expireHotswapTasks,
                             int completeGoal,
-                            boolean differentCardPerTeam)
+                            boolean differentCardPerTeam,
+                            int blitzStartDuration,
+                            int blitzBonusDuration,
+                            int blitzRecoveryDelay)
 {
     public enum CountdownType implements Keyed
     {
@@ -59,10 +64,10 @@ public record BingoSettings(String card,
     }
 
     public boolean useCountdown() {
-        return countdownType == CountdownType.TIME_LIMIT || countdownType == CountdownType.DURATION;
+        return countdownType == CountdownType.TIME_LIMIT || countdownType == CountdownType.DURATION || mode.featureSet().contains(GamemodeFeature.BLITZ_TIMER);
     }
 
     public boolean useScoreAsWinCondition() {
-        return countdownType == CountdownType.DISABLED || countdownType == CountdownType.TIME_LIMIT;
+        return (countdownType == CountdownType.DISABLED || countdownType == CountdownType.TIME_LIMIT) && !mode.featureSet().contains(GamemodeFeature.BLITZ_TIMER);
     }
 }

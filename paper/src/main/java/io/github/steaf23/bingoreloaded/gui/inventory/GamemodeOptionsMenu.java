@@ -37,15 +37,15 @@ public class GamemodeOptionsMenu extends BasicMenu
         this.session = session;
 
         addAction(new ItemTemplate(0,
-                ItemTypePaper.of(Material.LIME_CONCRETE), BingoReloaded.applyTitleFormat(BingoMessage.MODE_BINGO.asPhrase())), arguments -> selectGamemode(arguments.player(), BingoGamemodes.BINGO));
+                ItemTypePaper.of(Material.LIME_CONCRETE), BingoReloaded.applyTitleFormat(BingoMessage.MODE_BINGO.asPhrase()), BingoMessage.INFO_REGULAR_DESC.asMultiline()), arguments -> selectGamemode(arguments.player(), BingoGamemodes.BINGO));
         addAction(new ItemTemplate(2,
-                ItemTypePaper.of(Material.MAGENTA_CONCRETE), BingoReloaded.applyTitleFormat(BingoMessage.MODE_LOCKOUT.asPhrase())), arguments -> selectGamemode(arguments.player(), BingoGamemodes.LOCKOUT));
+                ItemTypePaper.of(Material.MAGENTA_CONCRETE), BingoReloaded.applyTitleFormat(BingoMessage.MODE_LOCKOUT.asPhrase()), BingoMessage.INFO_LOCKOUT_DESC.asMultiline()), arguments -> selectGamemode(arguments.player(), BingoGamemodes.LOCKOUT));
         addAction(new ItemTemplate(4,
-                ItemTypePaper.of(Material.LIGHT_BLUE_CONCRETE), BingoReloaded.applyTitleFormat(BingoMessage.MODE_COMPLETE.asPhrase())), arguments -> selectGamemode(arguments.player(), BingoGamemodes.COMPLETE));
+                ItemTypePaper.of(Material.LIGHT_BLUE_CONCRETE), BingoReloaded.applyTitleFormat(BingoMessage.MODE_COMPLETE.asPhrase()), BingoMessage.INFO_COMPLETE_DESC.asMultiline()), arguments -> selectGamemode(arguments.player(), BingoGamemodes.COMPLETE));
         addAction(new ItemTemplate(6,
-                ItemTypePaper.of(Material.RED_CONCRETE), BingoReloaded.applyTitleFormat(BingoMessage.MODE_HOTSWAP.asPhrase())), arguments -> selectGamemode(arguments.player(), BingoGamemodes.HOTSWAP));
+                ItemTypePaper.of(Material.RED_CONCRETE), BingoReloaded.applyTitleFormat(BingoMessage.MODE_HOTSWAP.asPhrase()), BingoMessage.INFO_HOTSWAP_DESC_EXPIRE.asMultiline()), arguments -> selectGamemode(arguments.player(), BingoGamemodes.HOTSWAP));
         addAction(new ItemTemplate(8,
-                ItemTypePaper.of(Material.YELLOW_CONCRETE), BingoReloaded.applyTitleFormat(BingoMessage.MODE_BLITZ.asPhrase())), arguments -> selectGamemode(arguments.player(), BingoGamemodes.BLITZ));
+                ItemTypePaper.of(Material.YELLOW_CONCRETE), BingoReloaded.applyTitleFormat(BingoMessage.MODE_BLITZ.asPhrase()), BingoMessage.INFO_BLITZ_DESC.asMultiline()), arguments -> selectGamemode(arguments.player(), BingoGamemodes.BLITZ));
     }
 
     public void selectGamemode(PlayerHandle player, BingoGamemode chosenMode) {
@@ -97,6 +97,42 @@ public class GamemodeOptionsMenu extends BasicMenu
             });
             optionMenu.addItem(hotswapExpireItem, toggleExpireTasksAction);
             additionalOptions.add(settings -> settings.expireHotswapTasks(toggleExpireTasksAction.getValue()));
+        } else if (chosenMode.featureSet().contains(GamemodeFeature.BLITZ_TIMER)) {
+            int blitzStartDuration = session.settingsBuilder.view().blitzStartDuration();
+            ItemTemplate startDuration = new ItemTemplate(4, ItemTypePaper.of(Material.COMPASS), BingoReloaded.applyTitleFormat("Starting duration"),
+                    Component.text("Start Blitz with a head start of " + (blitzStartDuration * 10) + " seconds"));
+
+            SpinBoxButtonAction startAction = new SpinBoxButtonAction(1, 60, blitzStartDuration, value -> {
+                session.settingsBuilder.blitzStartDuration(value);
+                startDuration.setLore(ComponentUtils.createComponentsFromString(
+                        "Start Blitz with a head start of " + (value * 10) + " seconds"));
+            });
+            optionMenu.addItem(startDuration, startAction);
+            additionalOptions.add(settings -> settings.blitzStartDuration(startAction.getValue()));
+
+            int blitzBonusDuration = session.settingsBuilder.view().blitzBonusDuration();
+            ItemTemplate bonusDuration = new ItemTemplate(5, ItemTypePaper.of(Material.RECOVERY_COMPASS), BingoReloaded.applyTitleFormat("Bonus duration"),
+                    Component.text("Gain a bonus time of " + (blitzBonusDuration * 10) + " seconds each time you complete a task"));
+
+            SpinBoxButtonAction bonusAction = new SpinBoxButtonAction(1, 60, blitzBonusDuration, value -> {
+                session.settingsBuilder.blitzBonusDuration(value);
+                bonusDuration.setLore(ComponentUtils.createComponentsFromString(
+                        "Gain a bonus time of " + (value * 10) + " seconds each time you complete a task"));
+            });
+            optionMenu.addItem(bonusDuration, bonusAction);
+            additionalOptions.add(settings -> settings.blitzBonusDuration(bonusAction.getValue()));
+
+            int blitzRecoveryDelay = session.settingsBuilder.view().blitzRecoveryDelay();
+            ItemTemplate delayItem = new ItemTemplate(6, ItemTypePaper.of(Material.BEDROCK), BingoReloaded.applyTitleFormat("Recovery delay"),
+                    Component.text("After completing " + blitzRecoveryDelay + " task(s), they will start to get replaced by new ones"));
+
+            SpinBoxButtonAction delayAction = new SpinBoxButtonAction(1, 25, blitzRecoveryDelay, value -> {
+                session.settingsBuilder.blitzRecoveryDelay(value - 1);
+                delayItem.setLore(ComponentUtils.createComponentsFromString(
+                        "After completing " + value + " task(s), they will start to get replaced by new ones"));
+            });
+            optionMenu.addItem(delayItem, delayAction);
+            additionalOptions.add(settings -> settings.blitzRecoveryDelay(delayAction.getValue() - 1));
         }
 
         // Generate separate card per team option
