@@ -1,3 +1,4 @@
+# Part of this file has been translated using ChatGPT
 name: "Deutsch"
 changed: "Sprache auf Deutsch eingestellt!"
 branding:
@@ -57,6 +58,7 @@ game:
     join_team_desc: "Klicken Sie, um dieser Gruppe hinzuzufügen"
     spectator_join: "Du bist dem Spiel als Zuschauer beigetreten"
     spectator_join_no_view: "Du bist dem Spiel als Zuschauer beigetreten, kannst aber keine Teams sehen"
+    no_teams: "Das Spiel ist voll. Du kannst nur noch als Zuschauer beitreten."
   item:
     voided: "Diese Aufgabe kann nicht mehr abgeschlossen werden!"
     expire: "Läuft ab in: {0}" # 0: time left
@@ -98,6 +100,9 @@ menu:
       desc_score: "Das erste Team, das {0} Aufgaben abschließt, gewinnt!" #0: winning score
       desc_time: "Das Team, das die meisten Aufgaben \nvor Ablauf der Zeit abschließt, gewinnt!"
       desc_any: "Das Team, das die meisten Aufgaben \nvor Ablauf der Zeit abschließt oder {0} Aufgaben erledigt, gewinnt!" #0: winning score
+    info_blitz:
+      name: "Blitz-Bingokarte"
+      desc: "Arbeitet als ein Team zusammen, um euren Höchstpunktestand zu verbessern!\nIhr steht unter Zeitdruck und jede abgeschlossene Aufgabe bringt Bonuszeit.\nDas Spiel endet, sobald eure Zeit abgelaufen ist."
     show_team_card:
       desc: "Zeigt die Teamkarte an"
       name: "Teamkarte <0>"
@@ -119,6 +124,7 @@ menu:
       lockout: "Lockout"
       complete: "Komplett-X"
       hotswap: "Hot-Swap"
+      blitz: "Blitz"
   effects:
     enable: "Klicken, um diese Effektoption zu AKTIVIEREN"
     disable: "Klicken, um diese Effektoption zu DEAKTIVIEREN"
@@ -171,6 +177,25 @@ menu:
           - Elytra (Unbreaking X) \n
           - Leather Boots"
     custom: "Eigen"
+  leaderboard:
+    title: "Bingo-Bestenliste"
+    prompt: "Bestenliste anzeigen"
+    category: "Kategorie"
+    kit: "Kit"
+    card: "Karte"
+    games_played: "<bingo_translate:'menu.stats.games_played'>"
+    settings: "Einstellungen"
+    sort_by_time: "Nach schnellster Zeit sortieren"
+    sort_by_score: "Nach höchster Punktzahl sortieren"
+    stats: "Deine Statistiken"
+  stats:
+    wins: "Siege"
+    losses: "Niederlagen"
+    games_played: "Gespielte Spiele"
+    tasks_completed: "Insgesamt abgeschlossene Aufgaben"
+    tasks_completed_record: "Rekord abgeschlossener Aufgaben"
+    item_uses: "Verwendungen von items"
+    wand_uses: "Verwendungen des Go-Up-wand"
 items:
   card:
     name: "Bingo-Karte"

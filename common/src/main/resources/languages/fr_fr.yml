@@ -1,3 +1,4 @@
+# Part of this file has been translated using ChatGPT
 name: "Français"
 changed: "Langue changée en Français!"
 branding:
@@ -57,6 +58,7 @@ game:
     join_team_desc: "Click to join this team"
     spectator_join: "Vous avez rejoint cette partie en tant que spectateur, utilisez /bingo view pour voir les cartes des équipes."
     spectator_join_no_view: "Vous avez rejoint cette partie en tant que spectateur."
+    no_teams: "La partie est complète. Vous pouvez uniquement rejoindre en tant que spectateur."
   item:
     voided: "Cette tâche ne peut plus être complétée!"
     expire: "Expire dans: {0}" # 0: time left
@@ -98,6 +100,9 @@ menu:
       desc_score: "La première équipe à terminer {0} tâches gagne !" #0: winning score
       desc_time: "L'équipe qui termine le plus de tâches \n\navant la fin du temps imparti gagne !"
       desc_any: "L'équipe qui termine le plus de tâches \n\navant la fin du temps imparti ou qui termine {0} tâches gagne !" #0: winning score
+    info_blitz:
+      name: "Carte Bingo Blitz"
+      desc: "Travaillez ensemble en une seule équipe pour améliorer votre meilleur score !\nVous êtes limité par le temps et chaque tâche accomplie ajoute du temps bonus.\nLa partie se termine lorsque le temps est écoulé."
     show_team_card:
       desc: "Affiche la carte de votre équipe"
       name: "Carte d'équipe <0>"
@@ -119,6 +124,7 @@ menu:
       lockout: "Lockout"
       complete: "Toutes-Complétées-X"
       hotswap: "Hot-Swap"
+      blitz: "Blitz"
   effects:
     enable: "Cliquez pour ACTIVER cet effet"
     disable: "Cliquez pour DESACTIVER cet effet"
@@ -171,6 +177,25 @@ menu:
           - Elytres (Solidité X) \n
           - Bottes en cuir"
     custom: "Sur mesure"
+  leaderboard:
+    title: "Classement Bingo"
+    prompt: "Voir le classement"
+    category: "Catégorie"
+    kit: "Kit"
+    card: "Carte"
+    games_played: "<bingo_translate:'menu.stats.games_played'>"
+    settings: "Paramètres"
+    sort_by_time: "Trier par le temps le plus rapide"
+    sort_by_score: "Trier par le meilleur score"
+    stats: "Vos statistiques"
+  stats:
+    wins: "Victoires"
+    losses: "Défaites"
+    games_played: "Parties jouées"
+    tasks_completed: "Nombre total de tâches accomplies"
+    tasks_completed_record: "Record de tâches accomplies"
+    item_uses: "Utilisations d'objets"
+    wand_uses: "Utilisations de la Go-Up-Wand"
 items:
   card:
     name: "Carte de Bingo"

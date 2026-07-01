@@ -99,6 +99,9 @@ menu:
       desc_score: "First team to complete {0} tasks wins!" #0: winning score
       desc_time: "Team to complete the most tasks \nbefore the time limit runs out wins!"
       desc_any: "Team to complete the most tasks \nbefore the time limit runs our \nor to complete {0} tasks wins!" #0: winning score
+    info_blitz:
+      name: "Blitz Bingo Card"
+      desc: "Work together as 1 team to improve your highscore!\nYou are on a strict timer and each task you complete adds bonus time.\nThe game ends when your time runs out."
     show_team_card:
       title: "See cards of other teams"
       name: "<0>'s Bingo Card"
@@ -120,6 +123,7 @@ menu:
       lockout: "Lockout"
       complete: "Complete-X"
       hotswap: "Hot-Swap"
+      blitz: "Blitz"
   effects:
     enable: "Click to ENABLE this effect option"
     disable: "Click to DISABLE this effect option"
@@ -172,6 +176,25 @@ menu:
           - Elytra (Unbreaking X) \n
           - Leather Boots"
     custom: "Custom"
+  leaderboard:
+    title: "Bingo Leaderboard"
+    prompt: "View Leaderboard"
+    category: "Category"
+    kit: "Kit"
+    card: "Card"
+    games_played: "<bingo_translate:'menu.stats.games_played'>"
+    settings: "Settings"
+    sort_by_time: "Sort by fastest time"
+    sort_by_score: "Sort by highest score"
+    stats: "Your Statistics"
+  stats:
+    wins: "Wins"
+    losses: "Losses"
+    games_played: "Games Played"
+    tasks_completed: "Tasks Completed Overall"
+    tasks_completed_record: "Task Completed Record"
+    item_uses: "Item uses"
+    wand_uses: "Go-Up-Wand uses"
 items:
   card:
     name: "Bingo Card"
