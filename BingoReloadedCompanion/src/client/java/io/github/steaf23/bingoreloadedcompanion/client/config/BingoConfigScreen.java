@@ -10,7 +10,7 @@ import io.github.steaf23.bingoreloadedcompanion.client.hud.HudPlacement;
 import io.github.steaf23.bingoreloadedcompanion.client.util.ScreenHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.KeyEvent;
@@ -107,8 +107,8 @@ public class BingoConfigScreen extends Screen {
 	}
 
 	@Override
-	public void render(GuiGraphics context, int mouseX, int mouseY, float deltaTicks) {
-		super.render(context, mouseX, mouseY, deltaTicks);
+	public void extractRenderState(GuiGraphicsExtractor context, int mouseX, int mouseY, float deltaTicks) {
+		super.extractRenderState(context, mouseX, mouseY, deltaTicks);
 
 		previewCard.renderElement(context, deltaTicks);
 
@@ -136,7 +136,7 @@ public class BingoConfigScreen extends Screen {
 			for (Component t : text) {
 				int textWidth = font.width(t);
 				int textX = width / 2 - (textWidth / 2);
-				context.drawString(font, t, textX, y, ScreenHelper.addAlphaToColor(ChatFormatting.WHITE.getColor(), (int)(255 * infoAlpha)), true);
+				context.text(font, t, textX, y, ScreenHelper.addAlphaToColor(ChatFormatting.WHITE.getColor(), (int)(255 * infoAlpha)), true);
 				y += 15;
 			}
 		}
@@ -152,7 +152,7 @@ public class BingoConfigScreen extends Screen {
 			}
 
 			if (selectedElement == element) {
-				context.renderOutline(rect.x() - 3, rect.y() - 3, rect.width() + 6, rect.height() + 6, ScreenHelper.addAlphaToColor(ChatFormatting.YELLOW.getColor(), 200));
+				context.outline(rect.x() - 3, rect.y() - 3, rect.width() + 6, rect.height() + 6, ScreenHelper.addAlphaToColor(ChatFormatting.YELLOW.getColor(), 200));
 
 				int showButtonX = rect.endX() - (BUTTON_WIDTH * 2 + 2);
 				int scaleButtonX = rect.endX() - (BUTTON_WIDTH * 3 + 4);
@@ -201,7 +201,7 @@ public class BingoConfigScreen extends Screen {
 		}
 	}
 
-	private void drawSlider(GuiGraphics context, int x, int y, double value, int mouseX, int mouseY) {
+	private void drawSlider(GuiGraphicsExtractor context, int x, int y, double value, int mouseX, int mouseY) {
 		Identifier sliderTexture = SLIDER_BUTTON_SLIDER;
 		if (isMouseOverTransparencySlider(mouseX, mouseY)) {
 			context.setTooltipForNextFrame(Minecraft.getInstance().font, Component.nullToEmpty("Transparency"), mouseX, mouseY);

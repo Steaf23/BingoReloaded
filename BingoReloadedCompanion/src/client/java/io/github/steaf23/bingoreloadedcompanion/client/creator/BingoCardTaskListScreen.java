@@ -6,7 +6,7 @@ import io.github.steaf23.bingoreloadedcompanion.card.taskslot.TaskSlot;
 import io.github.steaf23.bingoreloadedcompanion.client.TaskTooltipComponent;
 import io.github.steaf23.bingoreloadedcompanion.client.util.ScreenHelper;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
@@ -223,8 +223,8 @@ public class BingoCardTaskListScreen extends Screen {
 	}
 
 	@Override
-	public void render(GuiGraphics context, int mouseX, int mouseY, float deltaTicks) {
-		super.render(context, mouseX, mouseY, deltaTicks);
+	public void extractRenderState(GuiGraphicsExtractor context, int mouseX, int mouseY, float deltaTicks) {
+		super.extractRenderState(context, mouseX, mouseY, deltaTicks);
 
 		int startX = menuStartX();
 		int startY = menuStartY();
@@ -244,10 +244,10 @@ public class BingoCardTaskListScreen extends Screen {
 		context.blitSprite(RenderPipelines.GUI_TEXTURED, TAB_SELECTED, firstTabX + getTabStartX(selectedTab), tabStartY, TAB_WIDTH, TAB_HEIGHT);
 
 		for (TaskTab tab : TABS) {
-			context.renderItem(tab.icon.getDefaultInstance(), firstTabX + getTabStartX(tab) + (TAB_WIDTH - 16) / 2, tabStartY + 8);
+			context.item(tab.icon.getDefaultInstance(), firstTabX + getTabStartX(tab) + (TAB_WIDTH - 16) / 2, tabStartY + 8);
 		}
 
-		context.drawString(Minecraft.getInstance().font, selectedTab.name(), startX + 8, startY + 6, CommonColors.DARK_GRAY, false);
+		context.text(Minecraft.getInstance().font, selectedTab.name(), startX + 8, startY + 6, CommonColors.DARK_GRAY, false);
 
 		if (filteredItemTasks.size() > 40) {
 			int scrollRange = SCROLL_HEIGHT - SCROLLER_HEIGHT;
@@ -291,8 +291,8 @@ public class BingoCardTaskListScreen extends Screen {
 			else {
 
 				ItemStack stack = new ItemStack(task.item(), task.completeCount() == 0 ? 1 : task.completeCount());
-				context.renderItem(stack, x, y);
-				context.renderItemDecorations(font, stack, x, y, task.completeCount() == 1 ? "1" : null);
+				context.item(stack, x, y);
+				context.itemDecorations(font, stack, x, y, task.completeCount() == 1 ? "1" : null);
 			}
 
 			index++;
@@ -312,7 +312,7 @@ public class BingoCardTaskListScreen extends Screen {
 
 			TaskTooltipComponent tooltipComponent = new TaskTooltipComponent(hoveredTask);
 
-			context.renderTooltip(font, List.of(tooltipComponent), slotX - tooltipComponent.getWidth(font) / 2, slotY - tooltipComponent.getHeight(font) + 9, DefaultTooltipPositioner.INSTANCE, null);
+			context.tooltip(font, List.of(tooltipComponent), slotX - tooltipComponent.getWidth(font) / 2, slotY - tooltipComponent.getHeight(font) + 9, DefaultTooltipPositioner.INSTANCE, null);
 		}
 
 		// Tooltips

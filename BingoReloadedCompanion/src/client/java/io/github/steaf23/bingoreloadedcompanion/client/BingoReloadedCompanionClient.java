@@ -15,7 +15,7 @@ import io.github.steaf23.bingoreloadedcompanion.network.ServerHotswapPayload;
 import io.github.steaf23.bingoreloadedcompanion.network.ServerUpdateCardPayload;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
@@ -44,12 +44,12 @@ public class BingoReloadedCompanionClient implements ClientModInitializer {
 	@Override
 	public void onInitializeClient() {
 
-		PayloadTypeRegistry.playC2S().register(ClientHelloPayload.ID, ClientHelloPayload.CODEC);
-		PayloadTypeRegistry.playC2S().register(EditTaskListPayload.ID, EditTaskListPayload.CODEC);
+		PayloadTypeRegistry.serverboundPlay().register(ClientHelloPayload.ID, ClientHelloPayload.CODEC);
+		PayloadTypeRegistry.serverboundPlay().register(EditTaskListPayload.ID, EditTaskListPayload.CODEC);
 
-		PayloadTypeRegistry.playS2C().register(ServerUpdateCardPayload.ID, ServerUpdateCardPayload.CODEC);
-		PayloadTypeRegistry.playS2C().register(ServerHotswapPayload.ID, ServerHotswapPayload.CODEC);
-		PayloadTypeRegistry.playS2C().register(EditTaskListPayload.ID, EditTaskListPayload.CODEC);
+		PayloadTypeRegistry.clientboundPlay().register(ServerUpdateCardPayload.ID, ServerUpdateCardPayload.CODEC);
+		PayloadTypeRegistry.clientboundPlay().register(ServerHotswapPayload.ID, ServerHotswapPayload.CODEC);
+		PayloadTypeRegistry.clientboundPlay().register(EditTaskListPayload.ID, EditTaskListPayload.CODEC);
 
 		HUD_CONFIG.load();
 
@@ -62,7 +62,7 @@ public class BingoReloadedCompanionClient implements ClientModInitializer {
 		ScreenEvents.AFTER_INIT.register((client, screen, scaledWidth, scaledHeight) -> {
 			if (screen instanceof AbstractContainerScreen<?> containerScreen) {
 				cardElement.setRenderingInScreen(true);
-				ScreenEvents.afterRender(screen).register((renderedScreen, drawContext, mouseX, mouseY, tickDelta) -> {
+				ScreenEvents.afterExtract(screen).register((renderedScreen, drawContext, mouseX, mouseY, tickDelta) -> {
 
 					cardElement.renderFromScreen(drawContext, tickDelta);
 				});
@@ -103,7 +103,7 @@ public class BingoReloadedCompanionClient implements ClientModInitializer {
 				});
 
 		KeyMapping.Category category = KeyMapping.Category.register(Identifier.fromNamespaceAndPath("bingoreloadedcompanion", "main"));
-		KeyMapping toggleCardVisibility = KeyBindingHelper.registerKeyBinding(new KeyMapping(
+		KeyMapping toggleCardVisibility = KeyMappingHelper.registerKeyMapping(new KeyMapping(
 				"key.bingoreloadedcompanion.toggle_card_visibility",
 				InputConstants.Type.KEYSYM,
 				GLFW.GLFW_KEY_R,

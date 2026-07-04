@@ -16,7 +16,7 @@ public record AdvancementTask(AdvancementHolder advancement, boolean counted) im
 	@Override
 	public Item item() {
 		if (advancement.value().display().isPresent()) {
-			return advancement.value().display().get().getIcon().getItem();
+			return advancement.value().display().get().getIcon().item().value();
 		}
 		return Items.BEDROCK;
 	}

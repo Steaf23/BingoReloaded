@@ -2,7 +2,7 @@ package io.github.steaf23.bingoreloadedcompanion.client;
 
 import io.github.steaf23.bingoreloadedcompanion.card.taskslot.TaskSlot;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
@@ -34,15 +34,16 @@ public class TaskTooltipComponent implements ClientTooltipComponent {
 		return 20 + textRenderer.width(taskName) + 4;
 	}
 
+
 	@Override
-	public void renderImage(Font textRenderer, int x, int y, int width, int height, GuiGraphics context) {
+	public void extractImage(Font textRenderer, int x, int y, int width, int height, GuiGraphicsExtractor context) {
 		context.blitSprite(RenderPipelines.GUI_TEXTURED, ICON_BACKGROUND, x, y, 24, 24);
-		context.renderItem(icon, x + 4, y + 4);
-		context.renderItemDecorations(textRenderer, icon, x + 4, y + 4);
+		context.item(icon, x + 4, y + 4);
+		context.itemDecorations(textRenderer, icon, x + 4, y + 4);
 	}
 
 	@Override
-	public void renderText(GuiGraphics context, Font textRenderer, int x, int y) {
-		context.drawString(textRenderer, taskName, x + 24, y, CommonColors.WHITE, true);
+	public void extractText(GuiGraphicsExtractor context, Font textRenderer, int x, int y) {
+		context.text(textRenderer, taskName, x + 24, y, CommonColors.WHITE, true);
 	}
 }

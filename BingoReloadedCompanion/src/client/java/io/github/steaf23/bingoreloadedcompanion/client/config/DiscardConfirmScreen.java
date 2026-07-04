@@ -3,7 +3,7 @@ package io.github.steaf23.bingoreloadedcompanion.client.config;
 import io.github.steaf23.bingoreloadedcompanion.client.util.ScreenHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
@@ -45,7 +45,7 @@ public class DiscardConfirmScreen extends Screen {
 	}
 
 	@Override
-	public void render(GuiGraphics context, int mouseX, int mouseY, float deltaTicks) {
+	public void extractRenderState(GuiGraphicsExtractor context, int mouseX, int mouseY, float deltaTicks) {
 
 		List<Component> text = List.of(
 				Component.nullToEmpty("You have made edits that have not been saved."),
@@ -54,11 +54,11 @@ public class DiscardConfirmScreen extends Screen {
 		int i = height / 4;
 		int lineHeight = 15;
 		for (Component line : text) {
-			context.drawString(font, line, width / 2 - font.width(line) / 2, i, ScreenHelper.addAlphaToColor(ChatFormatting.WHITE.getColor(), 255));
+			context.text(font, line, width / 2 - font.width(line) / 2, i, ScreenHelper.addAlphaToColor(ChatFormatting.WHITE.getColor(), 255));
 			i += lineHeight;
 		}
 
-		super.render(context, mouseX, mouseY, deltaTicks);
+		super.extractRenderState(context, mouseX, mouseY, deltaTicks);
 	}
 
 	@Override

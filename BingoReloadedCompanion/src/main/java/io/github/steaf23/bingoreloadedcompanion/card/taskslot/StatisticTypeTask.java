@@ -21,7 +21,7 @@ public record StatisticTypeTask<T>(StatType<T> stat, T data, int count) implemen
 	public Item item() {
 		return switch (data) {
 			case Item itemData -> itemData;
-			case EntityType<?> entity -> SpawnEggItem.byId(entity);
+			case EntityType<?> entity -> SpawnEggItem.byId(entity).orElseThrow().value();
 			case Block blockData -> blockData.asItem();
 			default -> Items.BEDROCK;
 		};

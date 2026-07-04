@@ -12,7 +12,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.resources.Identifier;
@@ -81,7 +81,7 @@ public class BingoCardHudElement implements HudElement {
 		lastHotswapUpdateTick = HudTimer.getTicks();
 	}
 
-	public void renderFromScreen(GuiGraphics drawContext, float tickDelta) {
+	public void renderFromScreen(GuiGraphicsExtractor drawContext, float tickDelta) {
 		if (!renderingInScreen) {
 			return;
 		}
@@ -89,7 +89,7 @@ public class BingoCardHudElement implements HudElement {
 	}
 
 	@Override
-	public void render(GuiGraphics drawContext, DeltaTracker renderTickCounter) {
+	public void extractRenderState(GuiGraphicsExtractor drawContext, DeltaTracker renderTickCounter) {
 		if (renderingInScreen) {
 			return;
 		}
@@ -100,7 +100,7 @@ public class BingoCardHudElement implements HudElement {
 		this.renderingInScreen = renderingInScreen;
 	}
 
-	public void renderElement(GuiGraphics drawContext, float tickDelta) {
+	public void renderElement(GuiGraphicsExtractor drawContext, float tickDelta) {
 		if (card == null || isHidden()) {
 			return;
 		}
@@ -116,7 +116,7 @@ public class BingoCardHudElement implements HudElement {
 		}
 	}
 
-	private void renderTasks(GuiGraphics context, float tickDelta) {
+	private void renderTasks(GuiGraphicsExtractor context, float tickDelta) {
 
 		HudConfigManager.Rect tasksRect = hudConfig.getUsedRectOfElement(TASKS_ELEMENT);
 		HudPlacement placement = hudConfig.getHudPlacement(TASKS_ELEMENT);
@@ -161,7 +161,7 @@ public class BingoCardHudElement implements HudElement {
 		matrices.popMatrix();
 	}
 
-	private void renderBanner(GuiGraphics context, float tickDelta) {
+	private void renderBanner(GuiGraphicsExtractor context, float tickDelta) {
 
 		HudConfigManager.Rect gamemodeRect = hudConfig.getUsedRectOfElement(GAMEMODE_ELEMENT);
 		HudPlacement placement = hudConfig.getHudPlacement(GAMEMODE_ELEMENT);
@@ -187,7 +187,7 @@ public class BingoCardHudElement implements HudElement {
 		matrices.popMatrix();
 	}
 
-	protected void renderTask(GuiGraphics drawContext, @NotNull Task task, int x, int y, @Nullable HotswapTaskHolder hotswapContext, float delta, double transparency) {
+	protected void renderTask(GuiGraphicsExtractor drawContext, @NotNull Task task, int x, int y, @Nullable HotswapTaskHolder hotswapContext, float delta, double transparency) {
 
 		boolean hotswapRecovering = hotswapContext != null && hotswapContext.recovering();
 		boolean hotswapExpires = hotswapContext != null && hotswapContext.expires();
@@ -226,7 +226,7 @@ public class BingoCardHudElement implements HudElement {
 
 		// Actual item representation of the task
 		ItemStack stack = new ItemStack(task.itemType(), task.requiredAmount());
-		drawContext.renderItem(stack, taskX, taskY);
+		drawContext.item(stack, taskX, taskY);
 
 		// Draw statistic/ advancement overlay sprite last
 		String taskType = task.taskType().toString();
@@ -241,10 +241,10 @@ public class BingoCardHudElement implements HudElement {
 
 		// Lastly draw the required amount of the task.
 		Font textRenderer = Minecraft.getInstance().font;
-		drawContext.renderItemDecorations(textRenderer, stack, taskX, taskY);
+		drawContext.itemDecorations(textRenderer, stack, taskX, taskY);
 	}
 
-	private void renderHotswapBackground(GuiGraphics context, float startTime, float currentTime, int x, int y, int color, boolean reverse) {
+	private void renderHotswapBackground(GuiGraphicsExtractor context, float startTime, float currentTime, int x, int y, int color, boolean reverse) {
 		int frameWidth = 21;
 		int frameHeight = 21;
 		int totalFrames = 62;

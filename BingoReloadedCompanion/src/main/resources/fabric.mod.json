@@ -5,7 +5,9 @@
 
   "name": "BingoReloadedCompanion",
   "description": "Client companion mod for BingoReloaded",
-  "authors": [],
+  "authors": [
+    "Steven"
+  ],
   "contact": {},
 
   "license": "GPL-3.0",
@@ -28,8 +30,9 @@
   ],
 
   "depends": {
-    "fabricloader": ">=${loader_version}",
-    "fabric": "*",
-    "minecraft": "${minecraft_version}"
+    "fabricloader": ">=0.19.3",
+    "minecraft": "~26.1.2",
+    "java": ">=25",
+    "fabric-api": "*"
   }
 }
