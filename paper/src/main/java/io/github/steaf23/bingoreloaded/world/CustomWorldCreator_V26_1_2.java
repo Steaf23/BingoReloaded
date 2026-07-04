@@ -162,16 +162,17 @@ public class CustomWorldCreator_V26_1_2 {
 				loadedWorldData
 		);
 
-		if (craftServer.getWorld(worldKey) == null) {
-			return null;
-		}
-
 		console.addLevel(serverLevel);
 		console.initWorld(serverLevel, null);
 
 		serverLevel.setSpawnSettings(true);
 
 		console.prepareLevel(serverLevel);
+
+		if (craftServer.getWorld(worldKey) == null) {
+			return null;
+		}
+
 		return serverLevel.getWorld();
 	}
 
