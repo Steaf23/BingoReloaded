@@ -99,7 +99,7 @@ public class BingoReloadedFabric implements ModInitializer, BingoReloadedRuntime
 	}
 
 	@Override
-	public @Nullable WorldHandle createBingoOverworld(String worldName, Key generationOptions) {
+	public @Nullable WorldHandle createBingoOverworld(Key worldKey, Key generationOptions) {
 		return null;
 	}
 

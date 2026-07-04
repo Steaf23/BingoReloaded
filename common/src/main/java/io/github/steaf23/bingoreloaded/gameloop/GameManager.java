@@ -92,7 +92,7 @@ public class GameManager {
 			return false;
 		}
 
-		BingoSession session = new BingoSession(this, worldData.createWorldGroup(sessionName), config);
+		BingoSession session = new BingoSession(this, worldData.createWorldGroupInSession(sessionName), config);
 		sessions.put(sessionName, session);
 		return true;
 	}
@@ -103,7 +103,7 @@ public class GameManager {
 		}
 
 		endGame(sessionName);
-		WorldGroup group = worldData.getWorldGroup(sessionName);
+		WorldGroup group = worldData.getWorldGroupInSession(sessionName);
 		if (group == null) {
 			ConsoleMessenger.bug("Could not destroy worlds from session properly", this);
 			return false;
@@ -185,7 +185,7 @@ public class GameManager {
 	}
 
 	public boolean teleportPlayerToSession(PlayerHandle player, String sessionName) {
-		WorldGroup bingoWorld = worldData.getWorldGroup(sessionName);
+		WorldGroup bingoWorld = worldData.getWorldGroupInSession(sessionName);
 		if (bingoWorld == null) {
 			return false;
 		}
@@ -234,8 +234,8 @@ public class GameManager {
 			return EventResult.IGNORE;
 		}
 
-		DebugLogger.addLog("Source world: " + sourceWorld.name());
-		DebugLogger.addLog("Target world: " + targetWorld.name());
+		DebugLogger.addLog("Source world: " + sourceWorld.key());
+		DebugLogger.addLog("Target world: " + targetWorld.key());
 
 		BingoSession sourceSession = getSessionFromWorld(sourceWorld);
 		BingoSession targetSession = getSessionFromWorld(targetWorld);

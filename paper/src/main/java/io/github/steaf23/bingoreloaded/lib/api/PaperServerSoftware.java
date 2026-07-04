@@ -1,5 +1,6 @@
 package io.github.steaf23.bingoreloaded.lib.api;
 
+import io.github.steaf23.bingoreloaded.data.helper.ResourceFileHelper;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemTypePaper;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackBuilderPaper;
@@ -31,12 +32,18 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 public class PaperServerSoftware implements ServerSoftware {
 
@@ -171,7 +178,29 @@ public class PaperServerSoftware implements ServerSoftware {
 	}
 
 	@Override
-	public @Nullable WorldHandle getWorld(String worldName) {
+	public Collection<Key> getAllWorldKeysOnDisk() {
+		Path dimensions = Bukkit.getServer().getLevelDirectory().resolve("dimensions");
+
+		if (!Files.isDirectory(dimensions)) {
+			return List.of();
+		}
+
+		try (Stream<Path> paths = Files.walk(dimensions, 2)) {
+			return paths
+					.filter(Files::isDirectory)
+					.filter(path -> path.getNameCount() == dimensions.getNameCount() + 2)
+					.map(path -> Key.key(
+							path.getName(path.getNameCount() - 2).toString(),
+							path.getFileName().toString()
+					))
+					.toList();
+		} catch (IOException e) {
+			return List.of();
+		}
+	}
+
+	@Override
+	public @Nullable WorldHandle getWorld(Key worldName) {
 		return fromWorld(Bukkit.getWorld(worldName));
 	}
 
@@ -182,7 +211,7 @@ public class PaperServerSoftware implements ServerSoftware {
 
 	@Override
 	public @Nullable WorldHandle createWorld(WorldOptions options) {
-		var creator = new WorldCreator("bingoreloaded:" + options.name());
+		var creator = WorldCreator.ofKey(NamespacedKey.fromString(options.levelKey().asString()));
 
 		if (options.dimension().equals(DimensionType.OVERWORLD)) {
 			creator.environment(World.Environment.NORMAL);
@@ -200,6 +229,28 @@ public class PaperServerSoftware implements ServerSoftware {
 	@Override
 	public boolean unloadWorld(@NotNull WorldHandle world, boolean save) {
 		return Bukkit.unloadWorld(((WorldHandlePaper)world).handle(), save);
+	}
+
+	@Override
+	public boolean deleteWorld(@NonNull Key worldKey) {
+		if (getLoadedWorlds().stream().anyMatch(w -> w.key().equals(worldKey)))
+		{
+			WorldHandle world = getWorld(worldKey);
+			if (world != null && !unloadWorld(world, false)) {
+				// Players are still in the world, it could not be unloaded
+				ConsoleMessenger.error("Could not remove " + worldKey + ", world could not be unloaded (Maybe there are still players present?).");
+				return false;
+			}
+		}
+
+		Path fullPath = plugin.getServer().getLevelDirectory().resolve("dimensions/" + worldKey.namespace() + "/" + worldKey.value());
+		if (!ResourceFileHelper.deleteFolderRecurse(fullPath.toString()))
+		{
+			ConsoleMessenger.bug("Could not remove folder for " + worldKey + ", cannot find the folder of this world (it might already be removed) or the folder could not be accessed", this);
+			return false;
+		}
+
+		return true;
 	}
 
 	@Override

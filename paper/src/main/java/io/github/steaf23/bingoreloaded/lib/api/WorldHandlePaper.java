@@ -7,6 +7,7 @@ import io.github.steaf23.bingoreloaded.lib.api.item.StackHandlePaper;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandlePaper;
 import io.github.steaf23.bingoreloaded.lib.util.DebugLogger;
+import net.kyori.adventure.key.Key;
 import org.bukkit.World;
 
 import java.util.Collection;
@@ -21,8 +22,8 @@ public class WorldHandlePaper implements WorldHandle {
 	}
 
 	@Override
-	public String name() {
-		return world.getName();
+	public Key key() {
+		return world.key();
 	}
 
 	@Override
@@ -37,7 +38,7 @@ public class WorldHandlePaper implements WorldHandle {
 
 	@Override
 	public WorldPosition spawnPoint() {
-		DebugLogger.addLog("Spawn point of " + name() + ": " + world.getSpawnLocation());
+		DebugLogger.addLog("Spawn point of " + key() + ": " + world.getSpawnLocation());
 		return PaperApiHelper.worldPosFromLocation(world.getSpawnLocation());
 	}
 

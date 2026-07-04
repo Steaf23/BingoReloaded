@@ -39,6 +39,7 @@ import net.minecraft.world.level.storage.SavedDataStorage;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.World;
+import org.bukkit.WorldCreator;
 import org.bukkit.WorldType;
 import org.bukkit.craftbukkit.CraftServer;
 import org.jetbrains.annotations.NotNull;
@@ -50,12 +51,12 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Random;
 
-public class CustomWorldCreator_V26_1_1 {
+public class CustomWorldCreator_V26_1_2 {
 
 	/**
 	 * Here be NMS Craft-magic dragons!
 	 */
-	public static @Nullable World createBingoWorld(@NotNull String worldName, @Nullable Key noiseSettingsLocation) {
+	public static @Nullable World createBingoWorld(@NotNull Key worldKey, @Nullable Key noiseSettingsLocation) {
 
 		CraftServer craftServer = (CraftServer) Bukkit.getServer();
 		DedicatedServer console = craftServer.getServer();
@@ -63,26 +64,14 @@ public class CustomWorldCreator_V26_1_1 {
 		Preconditions.checkState(console.getAllLevels().iterator().hasNext(), "Cannot create additional worlds on STARTUP");
 		//Preconditions.checkState(!this.console.isIteratingOverLevels, "Cannot create a world while worlds are being ticked"); // Paper - Cat - Temp disable. We'll see how this goes.
 
-		String name = worldName;
-
-		File folder = new File(Bukkit.getWorldContainer(), name);
-		World world = Bukkit.getWorld(name);
-
+		World world = Bukkit.getWorld(worldKey);
 		if (world != null) {
 			return world;
 		}
 
-		if (folder.exists()) {
-			Preconditions.checkArgument(folder.isDirectory(), "File (%s) exists and isn't a folder", name);
-		}
-
 		ResourceKey<LevelStem> actualDimension = LevelStem.OVERWORLD;
 
-		NamespacedKey worldKey = NamespacedKey.fromString("bingoreloaded:" + name);
-		if (worldKey == null) {
-			return null;
-		}
-		final ResourceKey<net.minecraft.world.level.Level> dimensionKey = PaperWorldLoader.dimensionKey(worldKey);
+		final ResourceKey<net.minecraft.world.level.Level> dimensionKey = PaperWorldLoader.dimensionKey(new NamespacedKey(worldKey.namespace(), worldKey.value()));
 		WorldLoader.DataLoadContext context = console.worldLoaderContext;
 		RegistryAccess.Frozen registryAccess = context.datapackDimensions();
 		net.minecraft.core.Registry<LevelStem> contextLevelStemRegistry = registryAccess.lookupOrThrow(Registries.LEVEL_STEM);
@@ -91,22 +80,13 @@ public class CustomWorldCreator_V26_1_1 {
 		if (configuredStem == null) {
 			throw new IllegalStateException("Missing configured level stem " + actualDimension);
 		}
-		try {
-			WorldFolderMigration.migrateApiWorld(
-					console.storageSource,
-					console.registryAccess(),
-					name,
-					actualDimension,
-					dimensionKey
-			);
-		} catch (final IOException ex) {
-			throw new RuntimeException("Failed to migrate legacy world " + name, ex);
-		}
+
+		// Removed migration code
 
 		PaperWorldLoader.LoadedWorldData loadedWorldData = PaperWorldLoader.loadWorldData(
 				console,
 				dimensionKey,
-				name
+				worldKey.value()
 		);
 		final PrimaryLevelData primaryLevelData = (PrimaryLevelData) console.getWorldData();
 		WorldGenSettings worldGenSettings = LevelStorageSource.readExistingSavedData(console.storageSource, dimensionKey, console.registryAccess(), WorldGenSettings.TYPE)
@@ -120,7 +100,7 @@ public class CustomWorldCreator_V26_1_1 {
 
 			WorldDimensions.Complete complete = worldDimensions.bake(contextLevelStemRegistry);
 			if (complete.dimensions().getValue(actualDimension) == null) {
-				throw new IllegalStateException("Missing generated level stem " + actualDimension + " for world " + name);
+				throw new IllegalStateException("Missing generated level stem " + actualDimension + " for world " + worldKey);
 			}
 
 			worldGenSettings = new WorldGenSettings(worldOptions, worldDimensions);
@@ -146,14 +126,14 @@ public class CustomWorldCreator_V26_1_1 {
 		// -------------- BINGO RELOADED (Replace customStem with the Bingo noise-generator-injected LevelStem--------------------
 		LevelStem customStem = createCustomStem(contextLevelStemRegistry, actualDimension, noiseSettingsLocation, console);
 		if (customStem == null) {
-			ConsoleMessenger.bug("Could not create a bingo world with smaller biomes", CustomWorldCreator_V26_1_1.class);
+			ConsoleMessenger.bug("Could not create a bingo world with smaller biomes", CustomWorldCreator_V26_1_2.class);
 			customStem = genSettingsFinal.dimensions().get(actualDimension).orElse(null);
 		}
 		if (customStem == null) {
 			customStem = contextLevelStemRegistry.getValue(actualDimension);
 		}
 		if (customStem == null) {
-			throw new IllegalStateException("Missing level stem for world " + name + " using key " + actualDimension);
+			throw new IllegalStateException("Missing level stem for world " + worldKey + " using key " + actualDimension);
 		}
 		// -------------- BINGO RELOADED END ------------------
 
@@ -182,12 +162,12 @@ public class CustomWorldCreator_V26_1_1 {
 				loadedWorldData
 		);
 
-		if (craftServer.getWorld(name.toLowerCase(Locale.ROOT)) == null) {
+		if (craftServer.getWorld(worldKey) == null) {
 			return null;
 		}
 
 		console.addLevel(serverLevel);
-		console.initWorld(serverLevel);
+		console.initWorld(serverLevel, null);
 
 		serverLevel.setSpawnSettings(true);
 

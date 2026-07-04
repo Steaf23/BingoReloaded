@@ -217,7 +217,7 @@ public class FabricServerSoftware implements ServerSoftware {
 	}
 
 	@Override
-	public @Nullable WorldHandle getWorld(String worldName) {
+	public @Nullable WorldHandle getWorld(Key worldName) {
 		return fromWorld(server.getWorld(RegistryKey.of(RegistryKeys.WORLD, FabricTypes.idFromKey(Key.key(worldName)))));
 	}
 

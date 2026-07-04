@@ -25,6 +25,7 @@ import io.github.steaf23.bingoreloaded.settings.BingoSettingsBuilder;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import io.github.steaf23.bingoreloaded.settings.gamemode.BingoGamemode;
 import io.github.steaf23.bingoreloaded.settings.gamemode.BingoGamemodes;
+import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 
@@ -255,7 +256,7 @@ public class AutoBingoAction extends DeferredAction {
 			if (args.length == 2) {
 				return null;
 			} else if (args.length == 3) {
-				return platform.getLoadedWorlds().stream().map(WorldHandle::name).toList();
+				return platform.getLoadedWorlds().stream().map(w -> w.key().asString()).toList();
 			} else {
 				return List.of();
 			}
@@ -264,7 +265,7 @@ public class AutoBingoAction extends DeferredAction {
 
 		this.addSubAction(new ActionTree("kickplayers", this::removeAllPlayersFromSession).addUsage("<target_world_name>").addTabCompletion(args -> {
 			if (args.length == 2) {
-				return platform.getLoadedWorlds().stream().map(WorldHandle::name).toList();
+				return platform.getLoadedWorlds().stream().map(w -> w.key().asString()).toList();
 			} else {
 				return List.of();
 			}
@@ -709,7 +710,7 @@ public class AutoBingoAction extends DeferredAction {
 		}
 
 		String targetWorldName = args[2];
-		WorldHandle world = platform.getWorld(targetWorldName);
+		WorldHandle world = platform.getWorld(Key.key(targetWorldName));
 		if (world == null) {
 			sendFailed("Could not teleport " + playerName + " to invalid world " + targetWorldName + ".", worldName);
 			return ActionResult.IGNORED;
@@ -738,7 +739,7 @@ public class AutoBingoAction extends DeferredAction {
 		}
 
 		String targetWorldName = args[1];
-		WorldHandle world = platform.getWorld(targetWorldName);
+		WorldHandle world = platform.getWorld(Key.key(targetWorldName));
 		if (world == null) {
 			sendFailed("Could not teleport players to invalid world " + targetWorldName + ".", worldName);
 			return ActionResult.IGNORED;

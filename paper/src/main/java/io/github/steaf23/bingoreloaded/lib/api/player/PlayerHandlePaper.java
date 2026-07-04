@@ -126,7 +126,7 @@ public class PlayerHandlePaper implements PlayerHandle {
 
 	@Override
 	public void teleportAsync(WorldPosition pos, @Nullable Consumer<Boolean> whenFinished) {
-		DebugLogger.addLog("Teleporting player async to pos: " + pos.x() + ", " + pos.y() + ", " + pos.z() + ", world: " + pos.world().name());
+		DebugLogger.addLog("Teleporting player async to pos: " + pos.x() + ", " + pos.y() + ", " + pos.z() + ", world: " + pos.world().key());
 
 		var future = player.teleportAsync(PaperApiHelper.locationFromWorldPos(pos), PlayerTeleportEvent.TeleportCause.PLUGIN);
 		if (whenFinished != null) {
@@ -136,7 +136,7 @@ public class PlayerHandlePaper implements PlayerHandle {
 
 	@Override
 	public boolean teleportBlocking(WorldPosition pos) {
-		DebugLogger.addLog("Teleporting player blocking to pos: " + pos.x() + ", " + pos.y() + ", " + pos.z() + ", world: " + pos.world().name());
+		DebugLogger.addLog("Teleporting player blocking to pos: " + pos.x() + ", " + pos.y() + ", " + pos.z() + ", world: " + pos.world().key());
 		return player.teleport(PaperApiHelper.locationFromWorldPos(pos), PlayerTeleportEvent.TeleportCause.PLUGIN);
 	}
 

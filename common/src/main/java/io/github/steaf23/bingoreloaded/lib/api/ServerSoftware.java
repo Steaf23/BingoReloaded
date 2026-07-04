@@ -1,5 +1,6 @@
 package io.github.steaf23.bingoreloaded.lib.api;
 
+import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
@@ -12,7 +13,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -58,10 +61,12 @@ public interface ServerSoftware {
 	ComponentLogger getComponentLogger();
 
 	Collection<WorldHandle> getLoadedWorlds();
-	@Nullable WorldHandle getWorld(String worldName);
+	Collection<Key> getAllWorldKeysOnDisk();
+	@Nullable WorldHandle getWorld(Key worldKey);
 	@Nullable WorldHandle getWorld(UUID worldName);
 	@Nullable WorldHandle createWorld(WorldOptions options);
 	boolean unloadWorld(@NotNull WorldHandle world, boolean save);
+	boolean deleteWorld(@NotNull Key worldKey);
 
 	StackHandle createStack(ItemType type, int amount);
 	StackHandle createStackFromBytes(byte[] bytes);

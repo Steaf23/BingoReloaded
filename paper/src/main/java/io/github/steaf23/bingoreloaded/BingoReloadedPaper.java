@@ -277,8 +277,8 @@ public class BingoReloadedPaper extends JavaPlugin implements BingoReloadedRunti
 	}
 
 	@Override
-	public @Nullable WorldHandle createBingoOverworld(String worldName, Key generationOptions) {
-		return CustomWorldCreator.createWorld(platform, worldName, generationOptions);
+	public @Nullable WorldHandle createBingoOverworld(Key worldKey, Key generationOptions) {
+		return CustomWorldCreator.createWorld(platform, worldKey, generationOptions);
 	}
 
 	@Override

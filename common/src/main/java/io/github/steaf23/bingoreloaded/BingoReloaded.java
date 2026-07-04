@@ -67,6 +67,7 @@ public class BingoReloaded implements Namespaced {
 			.hash(RESOURCE_PACK_HASH).build();
 
 	public static final String CARD_1_21 = "lists_1_21";
+	public static final String NAMESPACE = "bingoreloaded";
 
 	// Amount of ticks per second.
 	public static final int ONE_SECOND = 20;
@@ -323,7 +324,7 @@ public class BingoReloaded implements Namespaced {
 	@KeyPattern.Namespace
 	@Override
 	public @NotNull String namespace() {
-		return "bingoreloaded";
+		return NAMESPACE;
 	}
 
 	public static Key resourceKey(@Subst("value") String value) {

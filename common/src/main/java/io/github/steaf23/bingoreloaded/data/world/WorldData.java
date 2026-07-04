@@ -30,25 +30,16 @@ public class WorldData
     }
 
     /**
-     * Removes all worlds in the pluginFolder/worlds folder
+     * Removes all levels in the world/dimensions/bingoreloaded folder
      *
      * @return false if 1 or more worlds could not be removed for any reason
      */
     public boolean clearWorlds() {
-        String worldFolder = getWorldsFolder();
-        File worldsFolderDir = FileUtils.getFile(worldFolder);
-        if (!worldsFolderDir.exists()) {
-            if (!worldsFolderDir.mkdirs()) {
-                return false;
-            }
-        }
-
         int removeCount = 0;
-        for (File f : worldsFolderDir.listFiles(File::isDirectory)) {
-            if (f.equals(worldsFolderDir)) continue;
-
-            String worldName = f.getName();
-            if (destroyWorld(worldName)) {
+        for (Key worldKey : platform.getAllWorldKeysOnDisk().stream()
+                .filter(key -> key.namespace().equals(BingoReloaded.NAMESPACE))
+                .toList()) {
+            if (destroyWorld(worldKey)) {
                 removeCount++;
             }
         }
@@ -56,39 +47,47 @@ public class WorldData
         return true;
     }
 
+    public WorldGroup createWorldGroupInSession(String sessionName) {
+        return createWorldGroup(BingoReloaded.resourceKey(sessionName));
+    }
+
     /**
      * Creates a world group, creating all worlds if they do not exist yet.
-     * If worlds by the same name exist, this will just construct a world group with the pre-existing worlds
+     * If worlds by the same levelKey exist, this will just construct a world group with the pre-existing worlds
      * @return created WorldGroup
      */
-    public WorldGroup createWorldGroup(String worldName) {
-        WorldHandle overworld = BingoReloaded.runtime().createBingoOverworld(worldName, options.noiseGenerationSettings);
+    public WorldGroup createWorldGroup(Key overworldKey) {
+        WorldHandle overworld = BingoReloaded.runtime().createBingoOverworld(overworldKey, options.noiseGenerationSettings);
         if (overworld == null) {
             ConsoleMessenger.bug("Could not create world using bingo small biome generation.", this);
-            overworld = createWorld(worldName, DimensionType.OVERWORLD);
+            overworld = createWorld(overworldKey, DimensionType.OVERWORLD);
         }
         UUID netherId = overworld.uniqueId();
         UUID endId = overworld.uniqueId();
         if (options.createNether()) {
-            WorldHandle nether = createWorld( worldName + "_nether", DimensionType.NETHER);
+            WorldHandle nether = createWorld(Key.key(overworldKey.namespace(), overworldKey.value() + "_nether"), DimensionType.NETHER);
             netherId = nether.uniqueId();
         }
 
         if (options.createEnd()) {
-            WorldHandle end = createWorld( worldName + "_the_end", DimensionType.THE_END);
+            WorldHandle end = createWorld(Key.key(overworldKey.namespace(), overworldKey.value() + "_the_end"), DimensionType.THE_END);
             endId = end.uniqueId();
         }
 
-        return new WorldGroup(platform, worldName, overworld.uniqueId(), netherId, endId);
+        return new WorldGroup(platform, overworldKey, overworld.uniqueId(), netherId, endId);
     }
 
-    public @Nullable WorldGroup getWorldGroup(String worldName) {
-        WorldHandle overworld = platform.getWorld(getWorldsFolder() + worldName);
-        WorldHandle nether = platform.getWorld(getWorldsFolder() + worldName + "_nether");
-        WorldHandle theEnd = platform.getWorld(getWorldsFolder() + worldName + "_the_end");
+    public @Nullable WorldGroup getWorldGroupInSession(String sessionName) {
+        return getWorldGroup(BingoReloaded.resourceKey(sessionName));
+    }
+
+    public @Nullable WorldGroup getWorldGroup(Key overworldKey) {
+        WorldHandle overworld = platform.getWorld(overworldKey);
+        WorldHandle nether = platform.getWorld(Key.key(overworldKey.namespace(), overworldKey.value() + "_nether"));
+        WorldHandle theEnd = platform.getWorld(Key.key(overworldKey.namespace(), overworldKey.value() + "_the_end"));
 
         if (overworld == null) {
-            ConsoleMessenger.error("Could not fetch world group; " + worldName + " does not exist. Make sure the world exists and reload the plugin.");
+            ConsoleMessenger.error("Could not fetch world group; " + overworldKey + " does not exist. Make sure the world exists and reload the plugin.");
             return null;
         }
 
@@ -97,7 +96,7 @@ public class WorldData
 
         if (options.createNether()) {
             if (nether == null) {
-                ConsoleMessenger.error("Could not fetch world group; " + worldName + "_nether does not exist. Make sure the world exists and reload the plugin.");
+                ConsoleMessenger.error("Could not fetch world group; " + overworldKey + "_nether does not exist. Make sure the world exists and reload the plugin.");
                 return null;
             }
 
@@ -106,14 +105,14 @@ public class WorldData
 
         if (options.createEnd()) {
             if (theEnd == null) {
-                ConsoleMessenger.error("Could not fetch world group; " + worldName + "_the_end does not exist. Make sure the world exists and reload the plugin.");
+                ConsoleMessenger.error("Could not fetch world group; " + overworldKey + "_the_end does not exist. Make sure the world exists and reload the plugin.");
                 return null;
             }
 
             endId = theEnd.uniqueId();
         }
 
-        return new WorldGroup(platform, worldName, overworld.uniqueId(), netherId, endId);
+        return new WorldGroup(platform, overworldKey, overworld.uniqueId(), netherId, endId);
     }
 
     /**
@@ -122,9 +121,9 @@ public class WorldData
      */
     public boolean destroyWorldGroup(@NotNull WorldGroup worldGroup) {
         //TODO: add logic for when end or nether were never created in the first place.
-        boolean success = destroyWorld(worldGroup.worldName());
-        success = success && destroyWorld(worldGroup.worldName() + "_nether");
-        success = success && destroyWorld(worldGroup.worldName() + "_the_end");
+        boolean success = destroyWorld(worldGroup.worldKey());
+        success = success && destroyWorld(WorldGroup.netherKey(worldGroup.worldKey()));
+        success = success && destroyWorld(WorldGroup.theEndKey(worldGroup.worldKey()));
         return success;
     }
 
@@ -132,40 +131,12 @@ public class WorldData
         return platform.getDataFolder().getPath().replace("\\", "/") + "/worlds/";
     }
 
-    private WorldHandle createWorld(String worldName, @NotNull DimensionType dimension) {
-        String worldFolder = getWorldsFolder();
+    private WorldHandle createWorld(Key worldName, @NotNull DimensionType dimension) {
         WorldOptions options = new WorldOptions(worldName, dimension);
         return platform.createWorld(options);
     }
 
-    private boolean destroyWorld(String worldName) {
-        String worldsFolder = getWorldsFolder();
-
-        WorldHandle bukkitWorld = platform.getWorld(worldsFolder + worldName);
-        if (bukkitWorld == null)
-        {
-            if (!ResourceFileHelper.deleteFolderRecurse(worldsFolder + worldName))
-            {
-                ConsoleMessenger.bug("Could not remove folder for " + worldName + ", cannot find the folder of this world (it might already be removed) or the folder could not be accessed", platform);
-            }
-            return false;
-        }
-        UUID worldId = bukkitWorld.uniqueId();
-        boolean worldUnloaded = platform.unloadWorld(bukkitWorld, false);
-
-        // If world was not unloaded, it means that either it does not exist, it was already unloaded, or there are still players in the world
-        WorldHandle unloadedWorld = platform.getWorld(worldId);
-        boolean stillLoaded = unloadedWorld != null || !worldUnloaded;
-        if (stillLoaded) {
-            // Players are still in the world, it could not be unloaded
-            ConsoleMessenger.error("Could not remove " + worldName + ", world could not be unloaded (Maybe there are still players present?).");
-            return false;
-        }
-
-        if (!ResourceFileHelper.deleteFolderRecurse(worldsFolder + worldName))
-        {
-            ConsoleMessenger.bug("Could not remove folder for " + worldName + ", cannot find the folder of this world (it might already be removed) or the folder could not be accessed", platform);
-        }
-        return true;
+    private boolean destroyWorld(Key worldKey) {
+        return platform.deleteWorld(worldKey);
     }
 }

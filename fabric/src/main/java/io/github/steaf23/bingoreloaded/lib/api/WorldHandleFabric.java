@@ -4,6 +4,7 @@ import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.data.core.ExtendedPersistentState;
+import net.kyori.adventure.key.Key;
 import net.minecraft.server.world.ServerWorld;
 
 import java.util.Collection;
@@ -19,7 +20,7 @@ public class WorldHandleFabric implements WorldHandle {
 	}
 
 	@Override
-	public String name() {
+	public Key key() {
 		return world.getRegistryKey().getValue().toString();
 	}
 

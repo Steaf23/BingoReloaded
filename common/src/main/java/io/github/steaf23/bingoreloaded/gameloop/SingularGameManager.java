@@ -9,6 +9,7 @@ import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.event.EventResult;
 import io.github.steaf23.bingoreloaded.lib.util.ComponentUtils;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
+import net.kyori.adventure.key.Key;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -28,7 +29,9 @@ public class SingularGameManager extends GameManager
         }
 
         BingoSession session = new BingoSession(this, group, config);
-        sessions.put(config.getOptionValue(BingoOptions.DEFAULT_WORLD_NAME), session);
+        String name = config.getOptionValue(BingoOptions.DEFAULT_WORLD_NAME);
+        String[] nameSplit = name.split(":");
+        sessions.put(nameSplit.length == 2 ? nameSplit[1] : name, session);
     }
 
     // Don't create extra worlds...
@@ -50,9 +53,10 @@ public class SingularGameManager extends GameManager
 
     private WorldGroup createWorldGroupFromExistingWorlds() {
         String defaultWorldName = getGameConfig().getOptionValue(BingoOptions.DEFAULT_WORLD_NAME);
-        WorldHandle overworld = getPlatform().getWorld(defaultWorldName);
-        WorldHandle nether = getPlatform().getWorld(defaultWorldName + "_nether");
-        WorldHandle theEnd = getPlatform().getWorld(defaultWorldName + "_the_end");
+        Key key = Key.key(defaultWorldName);
+        WorldHandle overworld = getPlatform().getWorld(key);
+        WorldHandle nether = getPlatform().getWorld(WorldGroup.netherKey(key));
+        WorldHandle theEnd = getPlatform().getWorld(WorldGroup.theEndKey(key));
 
         if (overworld == null) {
             ConsoleMessenger.error("Could not create world group from existing world; " + defaultWorldName + " does not exist. Make sure the world exists and reload the plugin.");
@@ -83,7 +87,7 @@ public class SingularGameManager extends GameManager
             endId = theEnd.uniqueId();
         }
 
-        return new WorldGroup(getPlatform(), defaultWorldName, overworld.uniqueId(), netherId, endId);
+        return new WorldGroup(getPlatform(), key, overworld.uniqueId(), netherId, endId);
     }
 
     @Override

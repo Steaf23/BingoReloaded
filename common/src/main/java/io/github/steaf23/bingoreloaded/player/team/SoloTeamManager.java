@@ -154,7 +154,7 @@ public class SoloTeamManager implements TeamManager
 
     @Override
     public void handlePlayerJoinedSessionWorld(PlayerHandle player) {
-        ConsoleMessenger.log(player.displayName().append(Component.text(" joined world")).color(NamedTextColor.GOLD), session.getOverworld().name());
+        ConsoleMessenger.log(player.displayName().append(Component.text(" joined world")).color(NamedTextColor.GOLD), session.getOverworld().key().asString());
 
         BingoParticipant participant = getPlayerAsParticipant(player);
         if (participant != null) {
@@ -181,7 +181,7 @@ public class SoloTeamManager implements TeamManager
 
     @Override
     public void handlePlayerLeftSessionWorld(PlayerHandle player) {
-        ConsoleMessenger.log(player.displayName().append(Component.text(" left world")).color(NamedTextColor.GOLD), session.getOverworld().name());
+        ConsoleMessenger.log(player.displayName().append(Component.text(" left world")).color(NamedTextColor.GOLD), session.getOverworld().key().asString());
     }
 
     private void removeMemberFromTeamSilently(@NotNull BingoParticipant member) {

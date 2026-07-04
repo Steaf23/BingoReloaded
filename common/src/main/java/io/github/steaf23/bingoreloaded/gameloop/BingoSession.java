@@ -131,7 +131,7 @@ public class BingoSession implements ForwardingAudience
         }
 
         if (teamManager.getParticipantCount() == 0) {
-            ConsoleMessenger.log("Could not start bingo since no players have joined!", worlds.worldName());
+            ConsoleMessenger.log("Could not start bingo since no players have joined!", gameManager.getNameOfSession(this));
             teamManager.reset();
             return false;
         }
@@ -322,7 +322,7 @@ public class BingoSession implements ForwardingAudience
 
             if (teamManager.getActiveTeams().getOnlineTeamCount() <= 1 || teamManager.getActiveTeams().getAllOnlineParticipants().isEmpty()) {
                 if (isRunning()) {
-                    ConsoleMessenger.log(Component.text("Ending game because there is no competition anymore.").color(NamedTextColor.LIGHT_PURPLE), Component.text(worlds.worldName()));
+                    ConsoleMessenger.log(Component.text("Ending game because there is no competition anymore.").color(NamedTextColor.LIGHT_PURPLE), gameManager.getNameOfSession(this));
                 }
                 endGame();
             }

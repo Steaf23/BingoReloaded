@@ -330,12 +330,12 @@ public class BasicTeamManager implements TeamManager {
 
     @Override
     public void handlePlayerLeftSessionWorld(PlayerHandle player) {
-        ConsoleMessenger.log(player.displayName().append(Component.text(" left world")).color(NamedTextColor.GOLD), session.getOverworld().name());
+        ConsoleMessenger.log(player.displayName().append(Component.text(" left world")).color(NamedTextColor.GOLD), session.getOverworld().key().asString());
     }
 
     @Override
     public void handlePlayerJoinedSessionWorld(PlayerHandle player) {
-        ConsoleMessenger.log(player.displayName().append(Component.text(" joined world")).color(NamedTextColor.GOLD), session.getOverworld().name());
+        ConsoleMessenger.log(player.displayName().append(Component.text(" joined world")).color(NamedTextColor.GOLD), session.getOverworld().key().asString());
 
         BingoParticipant participant = getPlayerAsParticipant(player);
         if (participant != null) {

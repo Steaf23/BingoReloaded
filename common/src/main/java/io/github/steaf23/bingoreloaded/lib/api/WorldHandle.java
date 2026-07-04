@@ -3,13 +3,14 @@ package io.github.steaf23.bingoreloaded.lib.api;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
+import net.kyori.adventure.key.Key;
 
 import java.util.Collection;
 import java.util.UUID;
 
 public interface WorldHandle {
 
-	String name();
+	Key key();
 	UUID uniqueId();
 	Collection<? extends PlayerHandle> players();
 	WorldPosition spawnPoint();

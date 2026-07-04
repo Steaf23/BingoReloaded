@@ -36,7 +36,7 @@ public interface BingoReloadedRuntime {
 
 	void registerActions(BingoConfigurationData config);
 
-	@Nullable WorldHandle createBingoOverworld(String worldName, Key generationOptions);
+	@Nullable WorldHandle createBingoOverworld(Key worldKey, Key generationOptions);
 
 	ServerSoftware getServerSoftware();
 
