@@ -9,11 +9,19 @@ import io.github.steaf23.bingoreloaded.lib.data.core.DataStorageSerializerRegist
 import io.github.steaf23.bingoreloaded.lib.data.core.tag.TagDataAccessor;
 import io.github.steaf23.bingoreloaded.lib.data.core.tag.TagDataStorage;
 import io.github.steaf23.bingoreloaded.lib.item.SerializableItem;
+import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class DataUpdaterV3_5_0 extends DataUpdaterV3_3_0 {
 
@@ -77,5 +85,35 @@ public class DataUpdaterV3_5_0 extends DataUpdaterV3_3_0 {
 		}
 
 		tagData.saveChanges();
+	}
+
+	@Override
+	protected void updateConfig() {
+		super.updateConfig();
+
+		File configFile = new File(plugin.getDataFolder(), "config.yml");
+		if (!configFile.exists()) {
+			return;
+		}
+
+		YamlConfiguration existingConfig = YamlConfiguration.loadConfiguration(configFile);
+		String version = existingConfig.getString("version");
+
+		if (isNewerOrEqual(version, "3.5.0")) {
+			return;
+		}
+
+		FileConfiguration config = plugin.getConfig();
+		if (existingConfig.get("defaultWorldName", "world").equals("world")) {
+			config.set("defaultWorldName", "minecraft:overworld");
+		}
+
+		try {
+			config.save(configFile);
+		} catch (IOException e) {
+			ConsoleMessenger.bug("Could not update config.yml to new version", this);
+		}
+		ConsoleMessenger.log(Component.text("Found outdated config.yml file and updated it to new format (V? -> V3.5.0").color(NamedTextColor.GOLD));
+
 	}
 }

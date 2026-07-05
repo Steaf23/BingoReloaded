@@ -65,7 +65,7 @@ public class WorldData
         UUID netherId = overworld.uniqueId();
         UUID endId = overworld.uniqueId();
         if (options.createNether()) {
-            WorldHandle nether = createWorld(Key.key(overworldKey.namespace(), overworldKey.value() + "_nether"), DimensionType.NETHER);
+            WorldHandle nether = createWorld(Key.key(overworldKey.namespace(), overworldKey.value() + "_the_nether"), DimensionType.NETHER);
             netherId = nether.uniqueId();
         }
 
@@ -83,7 +83,7 @@ public class WorldData
 
     public @Nullable WorldGroup getWorldGroup(Key overworldKey) {
         WorldHandle overworld = platform.getWorld(overworldKey);
-        WorldHandle nether = platform.getWorld(Key.key(overworldKey.namespace(), overworldKey.value() + "_nether"));
+        WorldHandle nether = platform.getWorld(Key.key(overworldKey.namespace(), overworldKey.value() + "_the_nether"));
         WorldHandle theEnd = platform.getWorld(Key.key(overworldKey.namespace(), overworldKey.value() + "_the_end"));
 
         if (overworld == null) {

@@ -54,9 +54,18 @@ public class SingularGameManager extends GameManager
     private WorldGroup createWorldGroupFromExistingWorlds() {
         String defaultWorldName = getGameConfig().getOptionValue(BingoOptions.DEFAULT_WORLD_NAME);
         Key key = Key.key(defaultWorldName);
+
         WorldHandle overworld = getPlatform().getWorld(key);
-        WorldHandle nether = getPlatform().getWorld(WorldGroup.netherKey(key));
-        WorldHandle theEnd = getPlatform().getWorld(WorldGroup.theEndKey(key));
+        WorldHandle nether;
+        WorldHandle theEnd;
+        // Special case for default overworld...
+        if (key.equals(Key.key("minecraft:overworld"))) {
+            nether = getPlatform().getWorld(Key.key("minecraft:the_nether"));
+            theEnd = getPlatform().getWorld(Key.key("minecraft:the_end"));
+        } else {
+            nether = getPlatform().getWorld(WorldGroup.netherKey(key));
+            theEnd = getPlatform().getWorld(WorldGroup.theEndKey(key));
+        }
 
         if (overworld == null) {
             ConsoleMessenger.error("Could not create world group from existing world; " + defaultWorldName + " does not exist. Make sure the world exists and reload the plugin.");

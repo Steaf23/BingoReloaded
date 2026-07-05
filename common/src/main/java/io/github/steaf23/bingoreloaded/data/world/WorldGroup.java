@@ -34,7 +34,7 @@ public record WorldGroup(ServerSoftware platform, Key worldKey, UUID overworldId
     }
 
     public static Key netherKey(Key overworld) {
-        return Key.key(overworld.namespace(), overworld.value() + "_nether");
+        return Key.key(overworld.namespace(), overworld.value() + "_the_nether");
     }
 
     public static Key theEndKey(Key overworld) {
