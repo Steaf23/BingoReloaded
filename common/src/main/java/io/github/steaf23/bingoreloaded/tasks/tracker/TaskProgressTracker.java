@@ -63,6 +63,9 @@ public class TaskProgressTracker
     private final Map<GameTask, List<TaskProgress>> progressMap;
     private final StatisticTracker statisticTracker;
 
+    private boolean updatingProgress = false;
+    private final List<GameTask> pendingTasksToAdd = new ArrayList<>();
+    private final List<GameTask> pendingTasksToRemove = new ArrayList<>();
 	private boolean updateClient;
 
     public TaskProgressTracker(ServerSoftware platform, @NotNull BingoGame game) {
@@ -82,6 +85,11 @@ public class TaskProgressTracker
 	}
 
     public void startTrackingTask(GameTask task) {
+        if (updatingProgress) {
+            pendingTasksToAdd.add(task);
+            return;
+        }
+
         progressMap.put(task, new ArrayList<>());
         for (BingoParticipant participant : game.getTeamManager().getParticipants()) {
             // only track progress if the participant has to complete the task.
@@ -316,6 +324,10 @@ public class TaskProgressTracker
     }
 
     public void removeTask(GameTask task) {
+        if (updatingProgress) {
+            pendingTasksToRemove.add(task);
+            return;
+        }
         progressMap.remove(task);
         if (task.taskType() == TaskData.TaskType.STATISTIC) {
             statisticTracker.removeStatistic((StatisticTask) task.data);
@@ -372,6 +384,8 @@ public class TaskProgressTracker
      * When the update function returns true the task is considered completed and will be removed from the tracker.
      */
     private void updateProgressFromEvent(BingoParticipant participant, BiFunction<GameTask, TaskProgress, Boolean> updateFunction) {
+        updatingProgress = true;
+
         Set<GameTask> tasksToRemove = new HashSet<>();
         for (GameTask task : progressMap.keySet()) {
             for (TaskProgress progress : progressMap.get(task)) {
@@ -386,5 +400,13 @@ public class TaskProgressTracker
         }
 
         tasksToRemove.forEach(progressMap::remove);
+
+        updatingProgress = false;
+        for (GameTask task : pendingTasksToAdd) {
+            startTrackingTask(task);
+        }
+        for (GameTask task : pendingTasksToRemove) {
+            removeTask(task);
+        }
     }
 }
