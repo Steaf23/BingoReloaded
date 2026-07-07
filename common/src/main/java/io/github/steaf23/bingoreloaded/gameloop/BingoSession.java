@@ -320,7 +320,7 @@ public class BingoSession implements ForwardingAudience
                 return;
             }
 
-            if (settingsBuilder.view().maxTeamSize() == 1) {
+            if (settingsBuilder.view().maxTeamCount() == 1) {
                 return;
             }
 

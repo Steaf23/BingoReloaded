@@ -298,11 +298,12 @@ public class BingoGame implements GamePhase
                 .toList();
 
         List<PlayerHandle> winningPlayers = allParticipants.stream()
-                .filter(p -> p.getTeam() != null && p.getTeam().equals(winningTeam))
+                .filter(p -> p.getTeam() != null && p.getTeam().equals(winningTeam) && p.sessionPlayer().isPresent())
                 .map(p -> p.sessionPlayer().orElseThrow())
                 .toList();
 
         List<PlayerHandle> losingPlayers = allParticipants.stream()
+                .filter(p -> p.sessionPlayer().isPresent())
                 .map(p -> p.sessionPlayer().orElseThrow())
                 .filter(handle -> !winningPlayers.contains(handle))
                 .toList();
