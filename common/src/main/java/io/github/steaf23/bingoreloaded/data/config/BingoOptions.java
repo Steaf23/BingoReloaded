@@ -59,6 +59,8 @@ public class BingoOptions {
 	public static final ConfigurationOption<Boolean> LEADERBOARD_ENABLED = new BooleanOption("leaderboard.enabled");
 	public static final ConfigurationOption<Boolean> LEADERBOARD_SAVE_CANCELLED_GAMES = new BooleanOption("leaderboard.saveCancelledGames");
 	public static final ConfigurationOption<Boolean> LEADERBOARD_USE_PRESETS = new BooleanOption("leaderboard.onlyUsePresetCategories");
+	public static final ConfigurationOption<Boolean> DISABLE_TEAM_PREFIX = new BooleanOption("disableTeamPrefix")
+			.withEditUpdate(ConfigurationOption.EditUpdateTime.AFTER_SERVER_RESTART);
 
 	// Commands
 	public static final ConfigurationOption<String> SEND_COMMAND_BEFORE_GAME_STARTS = new StringOptionAllowEmpty("sendCommandBeforeGameStarts");

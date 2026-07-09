@@ -82,7 +82,12 @@ public class BingoSession implements ForwardingAudience
             this.teamManager = new BasicTeamManager(this);
         }
 
-        this.teamDisplay = gameManager.getRuntime().createTeamDisplay(this);
+        if (config.getOptionValue(BingoOptions.DISABLE_TEAM_PREFIX)) {
+            this.teamDisplay = TeamDisplay.DISABLED;
+        } else {
+            this.teamDisplay = gameManager.getRuntime().createTeamDisplay(this);
+        }
+
         this.phase = null;
 
         //TODO: decide a better place for this command
