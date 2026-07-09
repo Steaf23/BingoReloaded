@@ -564,7 +564,7 @@ public class BingoGame implements GamePhase
         return biome.isOcean() || biome.isRiver();
     }
 
-    public GameTask getDeathMatchTask() {
+    public @Nullable GameTask getDeathMatchTask() {
         return deathMatchTask;
     }
 

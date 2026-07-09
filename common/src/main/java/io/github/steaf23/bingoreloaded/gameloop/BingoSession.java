@@ -320,6 +320,10 @@ public class BingoSession implements ForwardingAudience
                 return;
             }
 
+            if (settingsBuilder.view().maxTeamSize() == 1) {
+                return;
+            }
+
             if (teamManager.getActiveTeams().getOnlineTeamCount() <= 1 || teamManager.getActiveTeams().getAllOnlineParticipants().isEmpty()) {
                 if (isRunning()) {
                     ConsoleMessenger.log(Component.text("Ending game because there is no competition anymore.").color(NamedTextColor.LIGHT_PURPLE), Component.text(worlds.worldName()));

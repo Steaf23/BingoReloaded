@@ -30,6 +30,7 @@ public class TeamDisplayPaper implements TeamDisplay
         this.createdTeams = new HashMap<>();
     }
 
+    @Override
     public void update() {
         reset();
 
@@ -37,6 +38,22 @@ public class TeamDisplayPaper implements TeamDisplay
         for (PlayerHandle player : session.getPlayersInWorld()) { // loop through all actual players.
             addTeamsForPlayer(player, activeTeams);
         }
+    }
+
+    @Override
+    public void clearTeamsForPlayer(@NotNull PlayerHandle player) {
+        for (TeamInfo info : createdTeams.getOrDefault(player.uniqueId(), Set.of())) {
+            removeTeamForPlayer(info.identifier(), player);
+        }
+        createdTeams.remove(player.uniqueId());
+    }
+
+    @Override
+    public void reset() {
+        for (PlayerHandle player : session.getPlayersInWorld()) {
+            clearTeamsForPlayer(player);
+        }
+        createdTeams.clear();
     }
 
     /**
@@ -77,19 +94,5 @@ public class TeamDisplayPaper implements TeamDisplay
 
     private void removeTeamForPlayer(String teamIdentifier, PlayerHandle player) {
         TeamPacketHelper.removeTeamVisibleToPlayer(player, teamIdentifier);
-    }
-
-    public void clearTeamsForPlayer(@NotNull PlayerHandle player) {
-        for (TeamInfo info : createdTeams.getOrDefault(player.uniqueId(), Set.of())) {
-            removeTeamForPlayer(info.identifier(), player);
-        }
-        createdTeams.remove(player.uniqueId());
-    }
-
-    public void reset() {
-        for (PlayerHandle player : session.getPlayersInWorld()) {
-            clearTeamsForPlayer(player);
-        }
-        createdTeams.clear();
     }
 }
