@@ -127,6 +127,9 @@ useVoteSystem: true
 # Prevent players from breaking or placing blocks when the game is not running
 preventPlayerGriefing: true
 
+# If true, disables changing the player's nametag or name in tab/chat to add the team name. (does not send team packets to players basically).
+disableTeamPrefix: false
+
 # Teleport all players to the lobby set using /bingo lobby. Does nothing if no lobby is set in this way.
 # If the delay is bigger than gameRestartTime, that value will be used as the delay instead.
 # Set to 0 to spawn everyone at the exact spawn point set.
