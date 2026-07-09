@@ -150,11 +150,11 @@ public class BingoGame implements GamePhase
             session.endGame();
             return;
         }
-		String commandBeforeGame = config.getOptionValue(BingoOptions.SEND_COMMAND_BEFORE_GAME_STARTS);
-		if (!commandBeforeGame.isEmpty()) {
-            String commandToSend = commandBeforeGame.replace("{world}", session.getGameManager().getNameOfSession(session));
-			platform.sendConsoleCommand(commandToSend);
-		}
+		List<String> commandBeforeGame = config.getOptionValue(BingoOptions.SEND_COMMAND_BEFORE_GAME_STARTS);
+        for (String command : commandBeforeGame) {
+            String commandToSend = command.replace("{world}", session.getGameManager().getNameOfSession(session));
+            platform.sendConsoleCommand(commandToSend);
+        }
 
         world.setStorming(false);
         world.setTimeOfDay(1000);
@@ -277,17 +277,17 @@ public class BingoGame implements GamePhase
         session.sendMessage(Component.text(" "));
         playSound(BingoSound.GAME_ENDED.sound());
 
-        String command = config.getOptionValue(BingoOptions.SEND_COMMAND_AFTER_GAME_ENDS);
-        if (!command.isEmpty()) {
-            String commandToSend = command.replace("{world}", session.getGameManager().getNameOfSession(session));
+        List<String> command = config.getOptionValue(BingoOptions.SEND_COMMAND_AFTER_GAME_ENDS);
+        for (String cmd : command) {
+            String commandToSend = cmd.replace("{world}", session.getGameManager().getNameOfSession(session));
             platform.runTask( task -> platform.sendConsoleCommand(commandToSend)); // Send the command in the next tick so we have time to wrap up the game.
         }
 
-        String commandAllPlayers = config.getOptionValue(BingoOptions.SEND_COMMAND_AFTER_GAME_END_EVERY_PLAYER);
-        if (!commandAllPlayers.isEmpty()) {
+        List<String> commandAllPlayers = config.getOptionValue(BingoOptions.SEND_COMMAND_AFTER_GAME_END_EVERY_PLAYER);
+        for (String cmd : commandAllPlayers) {
             platform.runTask(task -> {
                 for (var player : session.getPlayersInWorld()) {
-                    String commandToSend = commandAllPlayers.replace("{player}", player.playerName());
+                    String commandToSend = cmd.replace("{player}", player.playerName());
                     platform.sendConsoleCommand(commandToSend);
                 }
             });
@@ -308,21 +308,21 @@ public class BingoGame implements GamePhase
                 .filter(handle -> !winningPlayers.contains(handle))
                 .toList();
 
-        String commandWinningPlayers = config.getOptionValue(BingoOptions.SEND_COMMAND_AFTER_GAME_END_WINNING_PLAYERS);
-        if (!commandWinningPlayers.isEmpty()) {
+        List<String> commandWinningPlayers = config.getOptionValue(BingoOptions.SEND_COMMAND_AFTER_GAME_END_WINNING_PLAYERS);
+        for (String cmd : commandWinningPlayers) {
             platform.runTask(task -> {
                 for (var player : winningPlayers) {
-                    String commandToSend = commandWinningPlayers.replace("{player}", player.playerName());
+                    String commandToSend = cmd.replace("{player}", player.playerName());
                     platform.sendConsoleCommand(commandToSend);
                 }
             });
         }
 
-        String commandLosingPlayers = config.getOptionValue(BingoOptions.SEND_COMMAND_AFTER_GAME_END_LOSING_PLAYERS);
-        if (!commandLosingPlayers.isEmpty()) {
+        List<String> commandLosingPlayers = config.getOptionValue(BingoOptions.SEND_COMMAND_AFTER_GAME_END_LOSING_PLAYERS);
+        for (String cmd : commandLosingPlayers) {
             platform.runTask(task -> {
                 for (var player : losingPlayers) {
-                    String commandToSend = commandLosingPlayers.replace("{player}", player.playerName());
+                    String commandToSend = cmd.replace("{player}", player.playerName());
                     platform.sendConsoleCommand(commandToSend);
                 }
             });

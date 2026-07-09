@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 public class BingoConfigurationData
 {
@@ -55,11 +56,11 @@ public class BingoConfigurationData
         setOptionValueForce(BingoOptions.DISABLE_TEAM_PREFIX, name -> config.getBoolean(name, false));
 
         // Commands
-        setOptionValueForce(BingoOptions.SEND_COMMAND_BEFORE_GAME_STARTS, name -> config.getString(name, ""));
-        setOptionValueForce(BingoOptions.SEND_COMMAND_AFTER_GAME_ENDS, name -> config.getString(name, ""));
-        setOptionValueForce(BingoOptions.SEND_COMMAND_AFTER_GAME_END_EVERY_PLAYER, name -> config.getString(name, ""));
-        setOptionValueForce(BingoOptions.SEND_COMMAND_AFTER_GAME_END_WINNING_PLAYERS, name -> config.getString(name, ""));
-        setOptionValueForce(BingoOptions.SEND_COMMAND_AFTER_GAME_END_LOSING_PLAYERS, name -> config.getString(name, ""));
+        setOptionValueForce(BingoOptions.SEND_COMMAND_BEFORE_GAME_STARTS, name -> config.getList(name, TagDataType.STRING).stream().filter(Predicate.not(String::isEmpty)).toList());
+        setOptionValueForce(BingoOptions.SEND_COMMAND_AFTER_GAME_ENDS, name -> config.getList(name, TagDataType.STRING).stream().filter(Predicate.not(String::isEmpty)).toList());
+        setOptionValueForce(BingoOptions.SEND_COMMAND_AFTER_GAME_END_EVERY_PLAYER, name -> config.getList(name, TagDataType.STRING).stream().filter(Predicate.not(String::isEmpty)).toList());
+        setOptionValueForce(BingoOptions.SEND_COMMAND_AFTER_GAME_END_WINNING_PLAYERS, name -> config.getList(name, TagDataType.STRING).stream().filter(Predicate.not(String::isEmpty)).toList());
+        setOptionValueForce(BingoOptions.SEND_COMMAND_AFTER_GAME_END_LOSING_PLAYERS, name -> config.getList(name, TagDataType.STRING).stream().filter(Predicate.not(String::isEmpty)).toList());
 
         // Lobby
         setOptionValueForce(BingoOptions.SINGLE_PLAYER_TEAMS, name -> config.getBoolean(name, false));

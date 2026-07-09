@@ -1,5 +1,7 @@
 package io.github.steaf23.bingoreloaded.data.config;
 
+import java.util.List;
+
 public class BingoOptions {
 
 	public enum PluginConfiguration 
@@ -63,11 +65,11 @@ public class BingoOptions {
 			.withEditUpdate(ConfigurationOption.EditUpdateTime.AFTER_SERVER_RESTART);
 
 	// Commands
-	public static final ConfigurationOption<String> SEND_COMMAND_BEFORE_GAME_STARTS = new StringOptionAllowEmpty("sendCommandBeforeGameStarts");
-	public static final ConfigurationOption<String> SEND_COMMAND_AFTER_GAME_ENDS = new StringOptionAllowEmpty("sendCommandAfterGameEnds");
-	public static final ConfigurationOption<String> SEND_COMMAND_AFTER_GAME_END_EVERY_PLAYER = new StringOptionAllowEmpty("sendCommandAfterGameEndsPerPlayer.everyPlayer");
-	public static final ConfigurationOption<String> SEND_COMMAND_AFTER_GAME_END_WINNING_PLAYERS = new StringOptionAllowEmpty("sendCommandAfterGameEndsPerPlayer.winningPlayers");
-	public static final ConfigurationOption<String> SEND_COMMAND_AFTER_GAME_END_LOSING_PLAYERS = new StringOptionAllowEmpty("sendCommandAfterGameEndsPerPlayer.losingPlayers");
+	public static final ConfigurationOption<List<String>> SEND_COMMAND_BEFORE_GAME_STARTS = new StringListOption("sendCommandBeforeGameStarts");
+	public static final ConfigurationOption<List<String>> SEND_COMMAND_AFTER_GAME_ENDS = new StringListOption("sendCommandAfterGameEnds");
+	public static final ConfigurationOption<List<String>> SEND_COMMAND_AFTER_GAME_END_EVERY_PLAYER = new StringListOption("sendCommandAfterGameEndsPerPlayer.everyPlayer");
+	public static final ConfigurationOption<List<String>> SEND_COMMAND_AFTER_GAME_END_WINNING_PLAYERS = new StringListOption("sendCommandAfterGameEndsPerPlayer.winningPlayers");
+	public static final ConfigurationOption<List<String>> SEND_COMMAND_AFTER_GAME_END_LOSING_PLAYERS = new StringListOption("sendCommandAfterGameEndsPerPlayer.losingPlayers");
 	// Lobby
 	public static final ConfigurationOption<Boolean> SINGLE_PLAYER_TEAMS = new BooleanOption("singlePlayerTeams")
 			.withEditUpdate(ConfigurationOption.EditUpdateTime.AFTER_SESSION);
