@@ -27,6 +27,18 @@ dependencies {
     paperweightDevelopmentBundle("io.papermc.paper:dev-bundle:$minecraft_version-R0.1-SNAPSHOT")
 }
 
+processResources {
+    inputs.property("version", project.version)
+    inputs.property("minecraft_version", minecraft_version)
+
+    filesMatching("plugin.yml") {
+        expand(
+                version: project.version,
+                minecraft_version: minecraft_version,
+        )
+    }
+}
+
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(21)
