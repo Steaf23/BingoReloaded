@@ -18,7 +18,7 @@ public class StringListOption extends ConfigurationOption<List<String>> {
 	@Override
 	public Optional<List<String>> fromString(String value) {
 		String parsed = value.trim();
-		if (!parsed.startsWith("[") && parsed.endsWith("]")) {
+		if (parsed.startsWith("[") && parsed.endsWith("]")) {
 			return Optional.empty();
 		}
 
