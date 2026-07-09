@@ -164,7 +164,7 @@ public class BingoSession implements ForwardingAudience
 
     public void prepareNextGame() {
         teamManager.reset();
-        gameManager.prepareNextBingoGame(this);
+        tryRestorePlayerDataAfterGame();
 
         // When we came from the PostGamePhase we need to make sure to end it properly
         if (phase != null) {
@@ -476,5 +476,17 @@ public class BingoSession implements ForwardingAudience
 
     public BingoItems items() {
         return items;
+    }
+
+    public void tryRestorePlayerDataAfterGame() {
+        if (config.getOptionValue(BingoOptions.SAVE_PLAYER_INFORMATION) &&
+                config.getOptionValue(BingoOptions.LOAD_PLAYER_INFORMATION_STRATEGY) == BingoOptions.LoadPlayerInformationStrategy.AFTER_GAME) {
+            for (BingoParticipant participant : teamManager.getParticipants()) {
+                participant.sessionPlayer().ifPresent(player -> {
+                    teamManager.removeMemberFromTeam(participant);
+                    gameManager.getPlayerData().loadPlayer(player);
+                });
+            }
+        }
     }
 }

@@ -328,18 +328,6 @@ public class GameManager {
 		return EventResult.IGNORE;
 	}
 
-	public void prepareNextBingoGame(BingoSession session) {
-		if (config.getOptionValue(BingoOptions.SAVE_PLAYER_INFORMATION) &&
-				config.getOptionValue(BingoOptions.LOAD_PLAYER_INFORMATION_STRATEGY) == BingoOptions.LoadPlayerInformationStrategy.AFTER_GAME) {
-			for (BingoParticipant participant : session.teamManager.getParticipants()) {
-				participant.sessionPlayer().ifPresent(player -> {
-					session.teamManager.removeMemberFromTeam(participant);
-					playerData.loadPlayer(player);
-				});
-			}
-		}
-	}
-
 	public PlayerSerializationData getPlayerData() {
 		return playerData;
 	}
