@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+//TODO: implement DataStorageSerializer so options can convert from and to datastorage.
 public abstract class ConfigurationOption<Data>
 {
     public enum EditUpdateTime {
