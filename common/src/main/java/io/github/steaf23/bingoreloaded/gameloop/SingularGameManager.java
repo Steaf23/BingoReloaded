@@ -1,5 +1,6 @@
 package io.github.steaf23.bingoreloaded.gameloop;
 
+import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.data.config.BingoOptions;
 import io.github.steaf23.bingoreloaded.data.world.WorldGroup;
@@ -101,7 +102,7 @@ public class SingularGameManager extends GameManager
 
     @Override
     public EventResult<?> handlePlayerJoinsServer(PlayerHandle player) {
-        if (player.hasPermission("bingo.admin") && sendErrorOnJoin) {
+        if (BingoReloaded.isAdmin(player) && sendErrorOnJoin) {
             player.sendMessage(ComponentUtils.MINI_BUILDER.deserialize("v(<yellow>" + getPlatform().getExtensionInfo().version() + "</yellow>): <red>Cannot start Bingo Reloaded, something is up with your world setup.</red> 2 common causes: \n" +
                     "<gray>1.</gray> Check if the world name is correctly specified. If your world is named differently from <aqua>" + getGameConfig().getOptionValue(BingoOptions.DEFAULT_WORLD_NAME) + "</aqua> please edit the config by setting <aqua>defaultWorldName</aqua> to the actual world name." +
                     "\n<gray>2.</gray> Make sure If you have disabled the nether or the end, please reflect this change in the config by setting <aqua>disableNether/disableTheEnd</aqua> to true."));

@@ -468,6 +468,14 @@ public class ItemTemplate
         return 9 * slotY + slotX;
     }
 
+    public static int slotY(int slot) {
+        return slot / 9;
+    }
+
+    public static int slotX(int slot) {
+        return slot % 9;
+    }
+
     public static ItemTemplate createColoredLeather(TextColor color, ItemType leatherItemType) {
         if (!LEATHER_ARMOR.contains(leatherItemType)) {
             leatherItemType = ItemType.of("minecraft:leather_chestplate");

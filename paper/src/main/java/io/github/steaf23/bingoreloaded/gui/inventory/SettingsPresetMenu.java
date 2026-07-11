@@ -44,7 +44,7 @@ public class SettingsPresetMenu extends PaginatedSelectionMenu
         if (event.isLeftClick()) {
             settingsBuilder.fromOther(settingsData.getSettings(clickedOption.getCompareKey()), clickedOption.getCompareKey());
             close(player);
-        } else if (event.isRightClick()) {
+        } else if (event.isRightClick() && BingoReloaded.isAdmin(player)) {
             BasicMenu context = new BasicMenu(getMenuBoard(), clickedOption.getName(), 1);
             context.addAction(new ItemTemplate(0, ItemTypePaper.of(Material.BARRIER), BingoReloaded.applyTitleFormat("Remove")), clickType -> {
                         settingsData.removeSettings(clickedOption.getCompareKey());
@@ -99,10 +99,15 @@ public class SettingsPresetMenu extends PaginatedSelectionMenu
                 name = name.append(Component.text(" (default)").color(NamedTextColor.LIGHT_PURPLE));
             }
             ItemTemplate item = new ItemTemplate(ItemTypePaper.of(Material.GLOBE_BANNER_PATTERN), name)
-                    .addDescription("input", 5,
-                            InventoryMenu.INPUT_LEFT_CLICK.append(Component.text("apply this preset")),
-                            InventoryMenu.INPUT_RIGHT_CLICK.append(Component.text("more options")))
                     .setCompareKey(preset);
+            if (BingoReloaded.isAdmin(player)) {
+                item.addDescription("input", 5,
+                        InventoryMenu.INPUT_LEFT_CLICK.append(Component.text("apply this preset")),
+                        InventoryMenu.INPUT_RIGHT_CLICK.append(Component.text("more options")));
+            } else {
+                item.addDescription("input", 5,
+                        InventoryMenu.INPUT_LEFT_CLICK.append(Component.text("apply this preset")));
+            }
             items.add(item);
         }
         addItemsToSelect(items);

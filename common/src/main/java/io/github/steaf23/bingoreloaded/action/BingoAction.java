@@ -152,7 +152,7 @@ public class BingoAction extends ActionTree {
 					return ActionResult.SUCCESS;
 				}
 			}
-			if (!getLastUser().hasPermission("bingo.admin") && !this.config.getOptionValue(BingoOptions.ALLOW_VIEWING_ALL_CARDS)) {
+			if (!BingoReloaded.isAdmin(getLastUser()) && !this.config.getOptionValue(BingoOptions.ALLOW_VIEWING_ALL_CARDS)) {
 				return ActionResult.NO_PERMISSION;
 			}
 
@@ -204,7 +204,7 @@ public class BingoAction extends ActionTree {
 		}));
 
 
-		this.addSessionSubAction("start", List.of("bingo.admin"), (args, session) -> {
+		this.addSessionSubAction("start", List.of("bingo.host"), (args, session) -> {
 			if (args.length == 0) {
 				session.startGame();
 				return ActionResult.SUCCESS;
@@ -241,20 +241,20 @@ public class BingoAction extends ActionTree {
 				.usage("[here] [<seed>]");
 
 
-		this.addSessionSubAction("end", List.of("bingo.admin"), (args, session) -> {
+		this.addSessionSubAction("end", List.of("bingo.host"), (args, session) -> {
 			session.endGame();
 			return ActionResult.SUCCESS;
 		});
 
 
-		this.addSessionSubAction("wait", List.of("bingo.admin"), (args, session) -> {
+		this.addSessionSubAction("wait", List.of("bingo.host"), (args, session) -> {
 			session.pauseAutomaticStart();
 			BingoPlayerSender.sendMessage(Component.text("Toggled automatic starting timer"), getLastUser());
 			return ActionResult.SUCCESS;
 		});
 
 
-		this.addSessionSubAction("deathmatch", List.of("bingo.admin"), (args, session) -> {
+		this.addSessionSubAction("deathmatch", List.of("bingo.host"), (args, session) -> {
 
 			if (!session.isRunning()) {
 				BingoMessage.NO_DEATHMATCH.sendToAudience(getLastUser(), NamedTextColor.RED);
@@ -284,7 +284,7 @@ public class BingoAction extends ActionTree {
 			}
 			BingoStatData statsData = new BingoStatData(gameManager.getPlatform());
 			Component msg;
-			if (args.length > 1 && getLastUser().hasPermission("bingo.admin")) {
+			if (args.length > 1 && BingoReloaded.isHost(getLastUser())) {
 				msg = statsData.getPlayerStatsFormatted(args[1]);
 			} else {
 				if (!(getLastUser() instanceof PlayerHandle player)) {
@@ -349,7 +349,7 @@ public class BingoAction extends ActionTree {
 		});
 
 
-		this.addSessionSubAction("teams", List.of("bingo.admin"), (args, session) -> {
+		this.addSessionSubAction("teams", List.of("bingo.host"), (args, session) -> {
 			BingoPlayerSender.sendMessage(Component.text("Here are all the teams with at least 1 player:"), getLastUser());
 			session.teamManager.getActiveTeams().getTeams().forEach(team -> {
 				if (team.getMembers().isEmpty()) {

@@ -19,6 +19,8 @@ public class EffectOptionsMenu extends BasicMenu
 {
     private final EnumSet<EffectOptionFlags> flags;
     private final BingoSettingsBuilder settingsBuilder;
+    private static final ItemTemplate ENABLED_ITEM = new ItemTemplate(ItemTypePaper.of(Material.EMERALD)).setNoTooltip(true);
+    private static final ItemTemplate DISABLED_ITEM = new ItemTemplate(ItemTypePaper.of(Material.BARRIER)).setNoTooltip(true);
 
     public EffectOptionsMenu(MenuBoard menuBoard, BingoSettingsBuilder settings) {
         super(menuBoard, BingoMessage.OPTIONS_EFFECTS.asPhrase(), 6);
@@ -29,13 +31,14 @@ public class EffectOptionsMenu extends BasicMenu
             addItem(BLANK.copyToSlot(i, 5));
         }
 
-        addEffectAction(EffectOptionFlags.NIGHT_VISION, 5, 3, Material.GOLDEN_CARROT);
-        addEffectAction(EffectOptionFlags.WATER_BREATHING, 3, 3, Material.PUFFERFISH);
-        addEffectAction(EffectOptionFlags.FIRE_RESISTANCE, 7, 3, Material.MAGMA_CREAM);
-        addEffectAction(EffectOptionFlags.NO_FALL_DAMAGE, 2, 1, Material.NETHERITE_BOOTS);
+        addEffectAction(EffectOptionFlags.NO_FALL_DAMAGE, 2, 0, Material.NETHERITE_BOOTS);
+        addEffectAction(EffectOptionFlags.KEEP_INVENTORY, 4, 0, Material.CHEST);
+        addEffectAction(EffectOptionFlags.NO_DURABILITY, 6, 0, Material.NETHERITE_PICKAXE);
         addEffectAction(EffectOptionFlags.SPEED, 1, 3, Material.FEATHER);
-        addEffectAction(EffectOptionFlags.NO_DURABILITY, 6, 1, Material.NETHERITE_PICKAXE);
-        addEffectAction(EffectOptionFlags.KEEP_INVENTORY, 4, 1, Material.CHEST);
+        addEffectAction(EffectOptionFlags.WATER_BREATHING, 3, 3, Material.PUFFERFISH);
+        addEffectAction(EffectOptionFlags.NIGHT_VISION, 5, 3, Material.GOLDEN_CARROT);
+        addEffectAction(EffectOptionFlags.FIRE_RESISTANCE, 7, 3, Material.MAGMA_CREAM);
+
         addCloseAction(new ItemTemplate(8, 5, ItemTypePaper.of(Material.DIAMOND), BingoMessage.MENU_SAVE_EXIT.asPhrase().color(NamedTextColor.AQUA).decorate(TextDecoration.BOLD)));
     }
 
@@ -61,9 +64,11 @@ public class EffectOptionsMenu extends BasicMenu
         if (flags.contains(flag)) {
             item.setName(Component.text().append(flag.name, Component.text(" "), BingoMessage.EFFECTS_ENABLED.asPhrase()).color(NamedTextColor.GREEN).decorate(TextDecoration.BOLD).build());
             item.setLore(BingoMessage.EFFECTS_DISABLE.asMultiline(NamedTextColor.GREEN));
+            addItem(ENABLED_ITEM.copyToSlot(item.getSlot() + 9));
         } else {
             item.setName(Component.text().append(flag.name, Component.text(" "), BingoMessage.EFFECTS_DISABLED.asPhrase()).color(NamedTextColor.RED).decorate(TextDecoration.BOLD).build());
             item.setLore(BingoMessage.EFFECTS_ENABLE.asMultiline(NamedTextColor.RED));
+            addItem(DISABLED_ITEM.copyToSlot(item.getSlot() + 9));
         }
     }
 

@@ -24,7 +24,7 @@ import net.kyori.adventure.text.format.TextDecoration;
 
 public class GoUpWand extends GameItem {
 
-	public static Key ID = BingoReloaded.resourceKey("go_up_wand");
+	public static final Key ID = BingoReloaded.resourceKey("go_up_wand");
 
 	public GoUpWand() {
 		super(ID);

@@ -8,12 +8,21 @@ softdepend: [PlaceholderAPI, MultiWorld]
 depend: [packetevents]
 
 permissions:
-  bingo.admin:
-    description: Access all commands and features.
-    default: op
   bingo.player:
     description: Players can join teams and play games.
     default: true
+
+  bingo.host:
+    description: Start and configure games. Only able to change settings of the current game, cannot make settings presets.
+    default: false
+    children:
+      bingo.player: true
+
+  bingo.admin:
+    description: Access all commands and features.
+    default: op
+    children:
+      bingo.host: true
 
 commands:
   autobingo:

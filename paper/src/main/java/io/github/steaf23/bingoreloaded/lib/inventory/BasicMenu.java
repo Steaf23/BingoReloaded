@@ -27,7 +27,7 @@ public class BasicMenu implements InventoryMenu
 {
     public static Component pluginTitlePrefix = Component.empty();
 
-    public static ItemTemplate BLANK = new ItemTemplate(ItemTypePaper.of(Material.BLACK_STAINED_GLASS_PANE), null)
+    public static final ItemTemplate BLANK = new ItemTemplate(ItemTypePaper.of(Material.BLACK_STAINED_GLASS_PANE), null)
             .setNoTooltip(true);
 
     private final Inventory inventory;
