@@ -16,7 +16,9 @@ import io.github.steaf23.bingoreloaded.item.GameItem;
 import io.github.steaf23.bingoreloaded.lib.api.BiomeType;
 import io.github.steaf23.bingoreloaded.lib.api.InteractAction;
 import io.github.steaf23.bingoreloaded.lib.api.PlayerGamemode;
+import io.github.steaf23.bingoreloaded.lib.api.PotionEffectInstance;
 import io.github.steaf23.bingoreloaded.lib.api.ServerSoftware;
+import io.github.steaf23.bingoreloaded.lib.api.StatusEffectType;
 import io.github.steaf23.bingoreloaded.lib.api.WorldHandle;
 import io.github.steaf23.bingoreloaded.lib.api.WorldPosition;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
@@ -194,6 +196,10 @@ public class BingoGame implements GamePhase
 
                 p.giveKit(settings.kit());
                 returnCardToPlayer(settings.kit().getCardSlot(), p);
+                player.addEffect(new PotionEffectInstance(StatusEffectType.of("minecraft:resistance"),
+                        BingoReloaded.ONE_SECOND * config.getOptionValue(BingoOptions.STARTING_COUNTDOWN_TIME))
+                        .setAmplifier(100)
+                        .setParticles(false));
                 player.setLevel(0);
                 player.setExp(0.0f);
 				getSession().getGameManager().getRuntime().gameDisplay().addPlayer(player);
@@ -391,7 +397,6 @@ public class BingoGame implements GamePhase
         participant.giveBingoCard(cardSlot, cardItem);
         participant.sessionPlayer().get().setGamemode(PlayerGamemode.SURVIVAL);
 
-        platform.runTask(task -> participant.giveEffects(settings.effects(), config.getOptionValue(BingoOptions.GRACE_PERIOD)));
     }
 
     public void startDeathMatch(int seconds) {
@@ -733,6 +738,7 @@ public class BingoGame implements GamePhase
         gameStarted = true;
         playSound(BingoSound.START_COUNTDOWN_FINISHED_1.sound());
         playSound(BingoSound.START_COUNTDOWN_FINISHED_2.sound());
+        teamManager.getParticipants().forEach(p -> p.giveEffects(settings.effects(), config.getOptionValue(BingoOptions.GRACE_PERIOD)));
     }
 
     public void onCountdownTimerFinished() {
