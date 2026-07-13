@@ -3,11 +3,9 @@ package io.github.steaf23.bingoreloaded.lib.inventory;
 import io.github.steaf23.bingoreloaded.lib.api.MenuBoard;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemTypePaper;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
-import io.github.steaf23.bingoreloaded.lib.data.core.DataStorage;
+import io.github.steaf23.bingoreloaded.lib.inventory.action.MenuAction;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
-import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import io.github.steaf23.bingoreloaded.lib.util.PlayerDisplayTranslationKey;
-import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -50,9 +48,9 @@ public abstract class PaginatedSelectionMenu extends BasicMenu {
 	private String keywordFilter;
 	private MenuFilterSettings appliedFilter;
 
-	private final ItemTemplate filterItem;
-	private final ItemTemplate nextPageItem;
-	private final ItemTemplate previousPageItem;
+	private final MenuAction filterAction;
+	private final MenuAction nextPageAction;
+	private final MenuAction previousPageAction;
 
 	protected static final ItemTemplate NEXT = new ItemTemplate(8, 5, ItemTypePaper.of(Material.STRUCTURE_VOID),
 			PlayerDisplayTranslationKey.MENU_NEXT.translate()
@@ -82,20 +80,17 @@ public abstract class PaginatedSelectionMenu extends BasicMenu {
 	public PaginatedSelectionMenu(MenuBoard board, Component initialTitle, List<ItemTemplate> options, List<FilterType> availableFilterTypes) {
 		super(board, initialTitle, 6);
 
-		this.filterItem = FILTER.copy();
-		this.nextPageItem = NEXT.copy();
-		this.previousPageItem = PREVIOUS.copy();
-
-		addAction(nextPageItem, args -> this.nextPage());
+		this.nextPageAction = addAction(NEXT.copy(), args -> this.nextPage());
 		if (availableFilterTypes.isEmpty() || (availableFilterTypes.size() == 1 && availableFilterTypes.getFirst() == FilterType.NONE)) {
 			addItem(BLANK.copyToSlot(1, 5));
+			this.filterAction = null;
 		} else {
-			addAction(filterItem, args -> {
+			this.filterAction = addAction(FILTER.copy(), args -> {
 				new UserInputMenu(getMenuBoard(), Component.text("Filter on..."), f -> applyFilter(new MenuFilterSettings(availableFilterTypes.getFirst(), f)), appliedFilter.name())
 						.open(args.player());
 			});
 		}
-		addAction(previousPageItem, args -> this.previousPage());
+		this.previousPageAction = addAction(PREVIOUS.copy(), args -> this.previousPage());
 
 		addItems(
 				BLANK.copyToSlot(2, 5),
@@ -132,9 +127,9 @@ public abstract class PaginatedSelectionMenu extends BasicMenu {
 		}
 
 		appliedFilter = filter;
-		filterItem.setLore(Component.text("{" + appliedFilter.name() + "}"));
+		filterAction.item().setLore(Component.text("{" + appliedFilter.name() + "}"));
 		//TODO: automate addItem?
-		addItem(filterItem);
+		addAction(filterAction);
 
 		filteredItems.clear();
 
@@ -257,9 +252,9 @@ public abstract class PaginatedSelectionMenu extends BasicMenu {
 		//Update Page description e.g. (20/23) for the Next and Previous 'buttons'.
 		Component pageCountDesc = Component.text(String.format("%02d", currentPage + 1) + "/" + String.format("%02d", pageAmount));
 
-		nextPageItem.setLore(pageCountDesc);
-		previousPageItem.setLore(pageCountDesc);
-		addItems(nextPageItem, previousPageItem);
+		nextPageAction.item().setLore(pageCountDesc);
+		previousPageAction.item().setLore(pageCountDesc);
+		addActions(nextPageAction, previousPageAction);
 	}
 
 	private void updatePageAmount() {
