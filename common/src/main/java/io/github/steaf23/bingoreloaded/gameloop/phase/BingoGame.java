@@ -751,7 +751,7 @@ public class BingoGame implements GamePhase
         Set<BingoTeam> tiedTeams = new HashSet<>();
         tiedTeams.add(leadingTeam);
 
-        if (settings.mode().canEndInDraw() || leadingTeam == null) {
+        if (!settings.mode().canEndInDraw() || leadingTeam == null) {
             end(null);
             return;
         }
