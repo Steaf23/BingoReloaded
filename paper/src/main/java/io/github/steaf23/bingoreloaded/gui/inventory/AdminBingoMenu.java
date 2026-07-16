@@ -236,13 +236,13 @@ public class AdminBingoMenu extends BasicMenu {
 		PlayerHandle player = arguments.player();
 		BingoCardData cardsData = new BingoCardData();
 
-		PaginatedDataMenu<String> cardPicker = new PaginatedDataMenu<>(
+		var cardPicker = new PaginatedDataMenu.TextDataMenu(
 				getMenuBoard(),
 				Component.text("Choose A Card"),
-				new ArrayList<>(cardsData.getCardNames()),
-				FilterType.NONE) {
+				cardsData.getCardNames())
+				{
 			@Override
-			public void onOptionClickedDelegate(InventoryClickEvent event, String clickedOption, PlayerHandle player) {
+			public void onOptionClickedDelegate(MenuAction.ActionArguments event, String clickedOption) {
 				if (!clickedOption.isEmpty()) {
 					if (event.isLeftClick()) {
 						cardSelected(clickedOption);
@@ -254,18 +254,28 @@ public class AdminBingoMenu extends BasicMenu {
 			}
 
 			@Override
-			public ItemTemplate toItem(String s, boolean isSelected) {
-				return new ItemTemplate(ItemTypePaper.of(Material.PAPER), Component.text(s),
-						BingoMessage.configStringAsMultiline(cardsData.getDescription(s), Style.style(NamedTextColor.GRAY, TextDecoration.ITALIC)))
-						.addDescription("count", 5, BingoMessage.LIST_COUNT.asPhrase(Component.text(cardsData.getListNames(s).size())
-								.color(NamedTextColor.DARK_PURPLE)))
-						.addDescription("input", 10,
-								InventoryMenu.INPUT_LEFT_CLICK.append(Component.text("select this card.")),
-								InventoryMenu.INPUT_RIGHT_CLICK.append(Component.text("also edit allowed tasks using tags.")));
+			public Material material(String s, boolean selected) {
+				return Material.FLOWER_BANNER_PATTERN;
 			}
 
 			@Override
-			public boolean filterData(String s, MenuFilterSettings filter) {
+			public Component displayName(String s, boolean selected) {
+				return Component.text(s);
+			}
+
+			@Override
+			public ItemTemplate editItem(ItemTemplate item, String s, boolean selected) {
+				item.setLore(BingoMessage.configStringAsMultiline(cardsData.getDescription(s), Style.style(NamedTextColor.GRAY, TextDecoration.ITALIC)));
+				item.addDescription("count", 5, BingoMessage.LIST_COUNT.asPhrase(Component.text(cardsData.getListNames(s).size())
+						.color(NamedTextColor.DARK_PURPLE)));
+				item.addDescription("input", 10,
+						InventoryMenu.INPUT_LEFT_CLICK.append(Component.text("select this card.")),
+						InventoryMenu.INPUT_RIGHT_CLICK.append(Component.text("also edit allowed tasks using tags.")));
+				return item;
+			}
+
+			@Override
+			public boolean filterByData(String s, MenuFilterSettings filter) {
 				return false;
 			}
 

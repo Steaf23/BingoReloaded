@@ -33,6 +33,10 @@ public class SelectionModel {
 		}
 	}
 
+	public SelectMode mode() {
+		return selectMode;
+	}
+
 	public boolean contains(int slotIndex) {
 		return selectedSlots().contains(slotIndex);
 	}
@@ -62,6 +66,14 @@ public class SelectionModel {
 					selectedSlots.add(slotIndex);
 				}
 			}
+		}
+	}
+
+	public void selectManually(int slotIndex, boolean value) {
+		if (value) {
+			selectedSlots.add(slotIndex);
+		} else {
+			selectedSlots.remove(slotIndex);
 		}
 	}
 }

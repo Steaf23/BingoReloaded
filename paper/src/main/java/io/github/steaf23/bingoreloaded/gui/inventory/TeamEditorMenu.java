@@ -9,7 +9,8 @@ import io.github.steaf23.bingoreloaded.lib.inventory.BasicMenu;
 import io.github.steaf23.bingoreloaded.lib.inventory.ColorPickerMenu;
 import io.github.steaf23.bingoreloaded.lib.inventory.FilterType;
 import io.github.steaf23.bingoreloaded.lib.inventory.InventoryMenu;
-import io.github.steaf23.bingoreloaded.lib.inventory.PaginatedSelectionMenu;
+import io.github.steaf23.bingoreloaded.lib.inventory.MenuFilterSettings;
+import io.github.steaf23.bingoreloaded.lib.inventory.PaginatedDataMenu;
 import io.github.steaf23.bingoreloaded.lib.inventory.action.MenuAction;
 import io.github.steaf23.bingoreloaded.lib.inventory.action.NameEditAction;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
@@ -18,7 +19,6 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
-import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class TeamEditorMenu extends PaginatedSelectionMenu
+public class TeamEditorMenu extends PaginatedDataMenu<String>
 {
     private final TeamData teamData;
 
@@ -51,22 +51,7 @@ public class TeamEditorMenu extends PaginatedSelectionMenu
     }
 
     public void updateDisplay() {
-        clearFilter();
-        clearItems();
-        List<ItemTemplate> items = new ArrayList<>();
-
-        var teamMap = teamData.getTeams();
-        for (String key : teamMap.keySet()) {
-            TeamData.TeamTemplate template = teamMap.get(key);
-            items.add(ItemTemplate.createColoredLeather(template.color(), ItemTypePaper.of(Material.LEATHER_HELMET))
-                    .setName(template.nameComponent().color(template.color()).decorate(TextDecoration.BOLD))
-                    .setLore(Component.text("id: ").append(Component.text(key).color(NamedTextColor.GRAY).decorate(TextDecoration.ITALIC)))
-                    .setCompareKey(key)
-                    .addDescription("input", 5,
-                            InventoryMenu.INPUT_LEFT_CLICK.append(Component.text("edit team")),
-                            InventoryMenu.INPUT_RIGHT_CLICK.append(Component.text("remove team"))));
-        }
-        addItemsToSelect(items);
+        setData(teamData.getTeams().keySet());
     }
 
     public BasicMenu createTeamEditor(@NotNull String teamKey) {
@@ -74,20 +59,41 @@ public class TeamEditorMenu extends PaginatedSelectionMenu
     }
 
     @Override
-    public void onOptionClickedDelegate(InventoryClickEvent event, ItemTemplate clickedOption, PlayerHandle player) {
-        String key = clickedOption.getCompareKey();
-        if (event.getClick() == ClickType.RIGHT) {
-            teamData.removeTeam(key);
+    public void beforeOpening(PlayerHandle player) {
+        updateDisplay();
+        super.beforeOpening(player);
+    }
+
+    @Override
+    public void onOptionClickedDelegate(MenuAction.ActionArguments args, String clickedKey) {
+        if (args.isRightClick()) {
+            teamData.removeTeam(clickedKey);
             updateDisplay();
         } else {
-            createTeamEditor(key).open(player);
+            createTeamEditor(clickedKey).open(args.player());
         }
     }
 
     @Override
-    public void beforeOpening(PlayerHandle player) {
-        updateDisplay();
-        super.beforeOpening(player);
+    public Material material(String s, boolean selected) {
+        return Material.LEATHER_HELMET;
+    }
+
+    @Override
+    public Component displayName(String key, boolean selected) {
+        TeamData.TeamTemplate team = teamData.getTeam(key, DEFAULT_NEW_TEAM);
+        return team.nameComponent().color(team.color()).decorate(TextDecoration.BOLD);
+    }
+
+    @Override
+    public ItemTemplate editItem(ItemTemplate item, String key, boolean selected) {
+        TeamData.TeamTemplate team = teamData.getTeam(key, DEFAULT_NEW_TEAM);
+        return item
+                .setLeatherColor(team.color())
+                .setLore(Component.text("id: ").append(Component.text(key).color(NamedTextColor.GRAY).decorate(TextDecoration.ITALIC)))
+                .addDescription("input", 5,
+                        InventoryMenu.INPUT_LEFT_CLICK.append(Component.text("edit team")),
+                        InventoryMenu.INPUT_RIGHT_CLICK.append(Component.text("remove team")));
     }
 
     static class TeamEdit extends BasicMenu

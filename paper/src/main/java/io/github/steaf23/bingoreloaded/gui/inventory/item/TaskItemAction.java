@@ -17,7 +17,7 @@ public class TaskItemAction extends MenuAction
     @Override
     public void use(ActionArguments arguments) {
         arguments.player().sendMessage(Component.empty());
-        arguments.player().sendMessage(task.data.getName().decorate(TextDecoration.BOLD));
-        arguments.player().sendMessage(Component.text(" - ").append(task.data.getChatDescription()));
+        arguments.player().sendMessage(task.data().getName().decorate(TextDecoration.BOLD));
+        arguments.player().sendMessage(Component.text(" - ").append(task.data().getChatDescription()));
     }
 }

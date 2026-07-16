@@ -143,7 +143,7 @@ public class BingoAction extends ActionTree {
 				BingoParticipant participant = session.teamManager.getPlayerAsParticipant(player);
 				if (participant != null) {
 					if (session.phase() instanceof BingoGame game) {
-						if (game.getDeathMatchTask() != null && game.getDeathMatchTask().data instanceof ItemTask itemTask) {
+						if (game.getDeathMatchTask() != null && game.getDeathMatchTask().data() instanceof ItemTask itemTask) {
 							participant.showCard(itemTask);
 							return ActionResult.SUCCESS;
 						}

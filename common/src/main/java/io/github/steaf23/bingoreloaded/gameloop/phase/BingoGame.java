@@ -396,7 +396,6 @@ public class BingoGame implements GamePhase
 		StackHandle cardItem = getSession().getGameManager().getRuntime().createCardItemForPlayer(participant);
         participant.giveBingoCard(cardSlot, cardItem);
         participant.sessionPlayer().get().setGamemode(PlayerGamemode.SURVIVAL);
-
     }
 
     public void startDeathMatch(int seconds) {
@@ -417,7 +416,7 @@ public class BingoGame implements GamePhase
                     session
             );
 
-            if (!(deathMatchTask.data instanceof ItemTask itemTask)) {
+            if (!(deathMatchTask.data() instanceof ItemTask itemTask)) {
                 ConsoleMessenger.bug("Cannot play deathmatch with a non-item task!", this);
                 end(null);
                 return;
@@ -594,7 +593,7 @@ public class BingoGame implements GamePhase
         }
 
         BingoMessage.COMPLETED.sendToAudience(session, NamedTextColor.AQUA,
-                task.data.getName(),
+                task.data().getName(),
                 participant.getDisplayName().color(team.getColor()).decorate(TextDecoration.BOLD),
                 timeString.color(NamedTextColor.WHITE));
 
@@ -738,6 +737,7 @@ public class BingoGame implements GamePhase
         gameStarted = true;
         playSound(BingoSound.START_COUNTDOWN_FINISHED_1.sound());
         playSound(BingoSound.START_COUNTDOWN_FINISHED_2.sound());
+
         teamManager.getParticipants().forEach(p -> p.giveEffects(settings.effects(), config.getOptionValue(BingoOptions.GRACE_PERIOD)));
     }
 
@@ -837,7 +837,7 @@ public class BingoGame implements GamePhase
             // Only show item task as deathmatch tasks.
             if (deathMatchTask == null) {
                 participant.showCard(null);
-            } else if (!(deathMatchTask.data instanceof ItemTask itemTask)) {
+            } else if (!(deathMatchTask.data() instanceof ItemTask itemTask)) {
                 return EventResult.CONSUME;
             } else {
                 participant.showCard(itemTask);

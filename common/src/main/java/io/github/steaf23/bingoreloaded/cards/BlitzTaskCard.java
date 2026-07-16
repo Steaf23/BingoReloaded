@@ -134,7 +134,7 @@ public class BlitzTaskCard extends TaskCard {
 			if (amountRecovered == 1) {
 				GameTask taskToSend = lastRecoveredTask;
 				game.getActionBar().requestMessage(p ->
-								Component.text().decorate(TextDecoration.BOLD).append(BingoMessage.HOTSWAP_SINGLE_ADDED.asPhrase(taskToSend.data.getName()).color(TextColor.fromHexString("#5cb1ff"))).build(),
+								Component.text().decorate(TextDecoration.BOLD).append(BingoMessage.HOTSWAP_SINGLE_ADDED.asPhrase(taskToSend.data().getName()).color(TextColor.fromHexString("#5cb1ff"))).build(),
 						2, 3);
 			} else {
 				game.getActionBar().requestMessage(p -> Component.text().decorate(TextDecoration.BOLD).append(BingoMessage.HOTSWAP_MULTIPLE_ADDED.asPhrase().color(TextColor.fromHexString("#5cb1ff"))).build(),
@@ -195,7 +195,7 @@ public class BlitzTaskCard extends TaskCard {
 
 	private boolean canTaskBeAdded(TaskData data) {
 		for (GameTask task : getTasks()) {
-			if (task.data.isTaskEqual(data)) {
+			if (task.data().isTaskEqual(data)) {
 				return true;
 			}
 		}

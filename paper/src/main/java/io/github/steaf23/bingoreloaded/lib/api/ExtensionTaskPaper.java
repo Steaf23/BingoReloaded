@@ -15,7 +15,7 @@ public class ExtensionTaskPaper implements ExtensionTask {
 
 	@Override
 	public boolean isCancelled() {
-		return task.isCancelled();
+		return task != null && task.isCancelled();
 	}
 
 	@Override

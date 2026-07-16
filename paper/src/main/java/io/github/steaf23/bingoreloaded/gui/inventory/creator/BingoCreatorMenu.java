@@ -1,7 +1,6 @@
 package io.github.steaf23.bingoreloaded.gui.inventory.creator;
 
 import com.github.retrooper.packetevents.protocol.dialog.Dialog;
-import com.github.retrooper.packetevents.protocol.nbt.NBT;
 import com.github.retrooper.packetevents.protocol.nbt.NBTCompound;
 import com.github.retrooper.packetevents.protocol.nbt.NBTString;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
@@ -18,8 +17,9 @@ import io.github.steaf23.bingoreloaded.lib.dialog.DialogMenu;
 import io.github.steaf23.bingoreloaded.lib.inventory.BasicMenu;
 import io.github.steaf23.bingoreloaded.lib.inventory.FilterType;
 import io.github.steaf23.bingoreloaded.lib.inventory.InventoryMenu;
-import io.github.steaf23.bingoreloaded.lib.inventory.PaginatedSelectionMenu;
+import io.github.steaf23.bingoreloaded.lib.inventory.PaginatedDataMenu;
 import io.github.steaf23.bingoreloaded.lib.inventory.UserInputMenu;
+import io.github.steaf23.bingoreloaded.lib.inventory.action.MenuAction;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import io.github.steaf23.bingoreloaded.util.BingoPlayerSender;
 import net.kyori.adventure.key.Key;
@@ -58,70 +58,103 @@ public class BingoCreatorMenu extends BasicMenu {
 	}
 
 	private BasicMenu createCardPicker() {
-		return new PaginatedSelectionMenu(getMenuBoard(), Component.text("Choose A Card"), new ArrayList<>(), FilterType.DISPLAY_NAME) {
+		return new PaginatedDataMenu.TextDataMenu(getMenuBoard(), Component.text("Choose A Card"), cardsData.getCardNames()) {
+			@Override
+			public void onOptionClickedDelegate(MenuAction.ActionArguments args, String clickedOption) {
+				if (args.isLeftClick() && !cardsData.isDefaultCard(clickedOption)) {
+					openCardEditor(clickedOption, args.player());
+				} else if (args.isRightClick()) {
+					createCardContext(clickedOption).open(args.player());
+				}
+			}
+
+			@Override
+			public Material material(String cardName, boolean selected) {
+				return Material.FLOWER_BANNER_PATTERN;
+			}
+
+			@Override
+			public Component displayName(String cardName, boolean selected) {
+				return Component.text(cardName);
+			}
+
+			@Override
+			public ItemTemplate editItem(ItemTemplate item, String cardName, boolean selected) {
+				List<Component> fullDescription = new ArrayList<>();
+				fullDescription.add(Component.text("Description: "));
+				fullDescription.addAll(Arrays.stream(BingoMessage.configStringAsMultiline(cardsData.getDescription(cardName), Style.style(NamedTextColor.GRAY, TextDecoration.ITALIC))).toList());
+
+				item.setLore(Component.text("This card contains " + cardsData.getListNames(cardName).size() + " list(s)"))
+						.addDescription("description", 1, fullDescription);
+
+				if (cardsData.isDefaultCard(cardName)) {
+					item.addDescription("input", 5,
+							Component.text("Cannot edit default card, use right click to duplicate them instead!").color(NamedTextColor.RED),
+							InventoryMenu.INPUT_RIGHT_CLICK.append(Component.text("more options")));
+				} else {
+					item.addDescription("input", 5,
+							InventoryMenu.INPUT_LEFT_CLICK.append(Component.text("edit distribution")),
+							InventoryMenu.INPUT_RIGHT_CLICK.append(Component.text("more options")));
+				}
+				return item;
+			}
+
 			private static final ItemTemplate CREATE_CARD = new ItemTemplate(6, 5, ItemTypePaper.of(Material.EMERALD),
 					Component.text("New Card").color(NamedTextColor.GREEN).decorate(TextDecoration.BOLD));
 
 			@Override
 			public void beforeOpening(PlayerHandle player) {
 				addAction(CREATE_CARD, args -> createCard(args.player()));
-				clearItems();
-
-				List<ItemTemplate> items = new ArrayList<>();
-				for (String card : cardsData.getCardNames()) {
-					List<Component> fullDescription = new ArrayList<>();
-					fullDescription.add(Component.text("Description: "));
-					fullDescription.addAll(Arrays.stream(BingoMessage.configStringAsMultiline(cardsData.getDescription(card), Style.style(NamedTextColor.GRAY, TextDecoration.ITALIC))).toList());
-
-					ItemTemplate item = new ItemTemplate(ItemTypePaper.of(Material.FILLED_MAP), Component.text(card),
-							Component.text("This card contains " + cardsData.getListNames(card).size() + " list(s)"))
-							.addDescription("description", 1, fullDescription)
-							.addDescription("input", 5,
-									InventoryMenu.INPUT_LEFT_CLICK.append(Component.text("edit distribution")),
-									InventoryMenu.INPUT_RIGHT_CLICK.append(Component.text("more options")));
-					items.add(item);
-				}
-				addItemsToSelect(items);
-			}
-
-			@Override
-			public void onOptionClickedDelegate(InventoryClickEvent event, ItemTemplate clickedOption, PlayerHandle player) {
-				if (event.getClick() == ClickType.LEFT) {
-					openCardEditor(clickedOption.getPlainTextName(), player);
-				} else if (event.getClick() == ClickType.RIGHT) {
-					createCardContext(clickedOption.getPlainTextName()).open(player);
-				}
+				setData(cardsData.getCardNames());
 			}
 		};
 	}
 
 	private BasicMenu createListPicker() {
-		return new PaginatedSelectionMenu(getMenuBoard(), Component.text("Choose A List"), new ArrayList<>(), FilterType.DISPLAY_NAME) {
+		return new PaginatedDataMenu.TextDataMenu(getMenuBoard(), Component.text("Choose A List"), cardsData.lists().getListNames()) {
+			@Override
+			public void onOptionClickedDelegate(MenuAction.ActionArguments event, String clickedOption) {
+				if (event.isLeftClick() && !TaskListData.DEFAULT_LIST_NAMES.contains(clickedOption)) {
+					openListEditor(clickedOption, event.player());
+				} else if (event.isRightClick()) {
+					createListContext(clickedOption).open(event.player());
+				}
+			}
+
+			@Override
+			public Material material(String listName, boolean selected) {
+				return Material.BOOK;
+			}
+
+			@Override
+			public Component displayName(String listName, boolean selected) {
+				return Component.text(listName);
+			}
+
+			@Override
+			public ItemTemplate editItem(ItemTemplate item, String listName, boolean selected) {
+				item.setLore(Component.text("This list contains " + cardsData.lists().getTaskCount(listName) + " task(s)"));
+
+				if (TaskListData.DEFAULT_LIST_NAMES.contains(listName)) {
+					item.addDescription("input", 5,
+							Component.text("Cannot edit default list, use right click to duplicate them instead!").color(NamedTextColor.RED),
+							InventoryMenu.INPUT_RIGHT_CLICK.append(Component.text("more options"))
+					);
+				} else {
+					item.addDescription("input", 5,
+							InventoryMenu.INPUT_LEFT_CLICK.append(Component.text("edit tasks")),
+							InventoryMenu.INPUT_RIGHT_CLICK.append(Component.text("more options")));
+				}
+				return item;
+			}
+
 			private static final ItemTemplate CREATE_LIST = new ItemTemplate(6, 5, ItemTypePaper.of(Material.EMERALD),
 					Component.text("New List").color(NamedTextColor.GREEN).decorate(TextDecoration.BOLD));
 
 			@Override
 			public void beforeOpening(PlayerHandle player) {
-				addAction(CREATE_LIST, p -> createList(player));
-				clearItems();
-
-				List<ItemTemplate> items = new ArrayList<>();
-				for (String list : cardsData.lists().getListNames()) {
-					ItemTemplate item = new ItemTemplate(ItemTypePaper.of(Material.PAPER), Component.text(list),
-							Component.text("This list contains " + cardsData.lists().getTaskCount(list) + " task(s)"))
-							.addDescription("input", 5, InventoryMenu.INPUT_RIGHT_CLICK.append(Component.text("more options")));
-					items.add(item);
-				}
-				addItemsToSelect(items);
-			}
-
-			@Override
-			public void onOptionClickedDelegate(InventoryClickEvent event, ItemTemplate clickedOption, PlayerHandle player) {
-				if (event.getClick() == ClickType.LEFT) {
-					openListEditor(clickedOption.getPlainTextName(), player);
-				} else if (event.getClick() == ClickType.RIGHT) {
-					createListContext(clickedOption.getPlainTextName()).open(player);
-				}
+				addAction(CREATE_LIST, args -> createList(args.player()));
+				setData(cardsData.lists().getListNames());
 			}
 		};
 	}

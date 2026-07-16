@@ -8,6 +8,7 @@ import io.github.steaf23.bingoreloaded.lib.api.PlatformResolver;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemTypePaper;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.inventory.BasicMenu;
+import io.github.steaf23.bingoreloaded.lib.inventory.action.MenuAction;
 import io.github.steaf23.bingoreloaded.lib.inventory.group.PaginatedGroup;
 import io.github.steaf23.bingoreloaded.lib.inventory.group.ScrollableItemBar;
 import io.github.steaf23.bingoreloaded.lib.inventory.group.SelectionModel;
@@ -19,6 +20,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
+import org.bukkit.event.inventory.ClickType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -102,7 +104,7 @@ public class TagManagerMenu extends BasicMenu {
 	public void beforeClosing(PlayerHandle player) {
 		super.beforeClosing(player);
 
-		List<TaskData> mappedData = taskGroup.allData().stream().map(item -> item.data).toList();
+		List<TaskData> mappedData = taskGroup.allData().stream().map(GameTask::data).toList();
 		cardData.lists().saveTasksFromGroup(listName, mappedData, mappedData);
 	}
 
@@ -120,23 +122,27 @@ public class TagManagerMenu extends BasicMenu {
 
 		for (int i = 0; i < taskGroup.allData().size(); i++) {
 			GameTask task = taskGroup.allData().get(i);
-			if (task.data.tags().contains(newTag)) {
+			if (task.data().tags().contains(newTag)) {
 				taskGroup.selection().toggleSlot(i);
 			}
 		}
 	}
 
-	public void onTaskClicked(int slotIndex, GameTask task) {
+	public void onTaskClicked(MenuAction.ActionArguments arguments, int slotIndex, GameTask task) {
+		if (arguments.clickType() != ClickType.LEFT) {
+			return;
+		}
+
 		if (tagBar.selectedData().isEmpty()) {
 			return;
 		}
 
 		String selectedTag = tagBar.selectedData().getFirst();
 
-		if (task.data.tags().contains(selectedTag)) {
-			task.data.tags().remove(selectedTag);
+		if (task.data().tags().contains(selectedTag)) {
+			task.data().tags().remove(selectedTag);
 		} else {
-			task.data.tags().add(selectedTag);
+			task.data().tags().add(selectedTag);
 		}
 
 		taskGroup.setItem(slotIndex, task, createItemFromTask(task));
@@ -148,12 +154,12 @@ public class TagManagerMenu extends BasicMenu {
 	ItemTemplate createItemFromTask(GameTask task) {
 		ItemTemplate item = task.toItem(CardDisplayInfo.DUMMY_DISPLAY_INFO);
 
-		if (task.data.tags().isEmpty()) {
+		if (task.data().tags().isEmpty()) {
 			return item;
 		}
 
 		List<Component> tags = new ArrayList<>();
-		for (String tag : task.data.tags()) {
+		for (String tag : task.data().tags()) {
 			TaskTagData.TaskTag tagInfo = availableTags.getOrDefault(tag, new TaskTagData.TaskTag(NamedTextColor.WHITE));
 			tags.add(Component.text("<" + tag + "> ").color(tagInfo.color()));
 		}

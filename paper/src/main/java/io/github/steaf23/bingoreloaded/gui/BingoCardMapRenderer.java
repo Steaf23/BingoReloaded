@@ -158,8 +158,8 @@ public class BingoCardMapRenderer extends MapRenderer
     }
 
     public void drawTaskOnGrid(MapCanvas canvas, GameTask task, int gridX, int gridY, Position stampOffset) {
-        Key key = task.data.getDisplayMaterial(CardDisplayInfo.DUMMY_DISPLAY_INFO).key();
-        int amount = task.data.getRequiredAmount();
+        Key key = task.data().getDisplayMaterial(CardDisplayInfo.DUMMY_DISPLAY_INFO).key();
+        int amount = task.data().getRequiredAmount();
 
 		int x = gridX * 24 + 4;
 		int y = gridY * 24 + 4;
@@ -184,9 +184,9 @@ public class BingoCardMapRenderer extends MapRenderer
             drawTaskAmount(canvas, gridX, gridY, amount);
         }
 
-        if (task.data instanceof AdvancementTask) {
+        if (task.data() instanceof AdvancementTask) {
             drawImageAlphaScissor(canvas, x - 2, y + 11, ADVANCEMENT_ICON, null);
-        } else if (task.data instanceof StatisticTask) {
+        } else if (task.data() instanceof StatisticTask) {
             drawImageAlphaScissor(canvas, x - 2, y + 11, STATISTIC_ICON, null);
         }
     }

@@ -199,7 +199,7 @@ public class HotswapTaskCard extends TaskCard
             if (taskExpiredCount == 1) {
                 GameTask taskToSend = lastExpiredTask;
                 game.getActionBar().requestMessage(p ->
-                                Component.text().decorate(TextDecoration.BOLD).append(BingoMessage.HOTSWAP_SINGLE_EXPIRED.asPhrase(taskToSend.data.getName()).color(TextColor.fromHexString("#e85e21"))).build(),
+                                Component.text().decorate(TextDecoration.BOLD).append(BingoMessage.HOTSWAP_SINGLE_EXPIRED.asPhrase(taskToSend.data().getName()).color(TextColor.fromHexString("#e85e21"))).build(),
                         1, 3);
             }
             else {
@@ -213,7 +213,7 @@ public class HotswapTaskCard extends TaskCard
             if (taskRecoveredCount == 1) {
                 GameTask taskToSend = lastRecoverdTask;
                 game.getActionBar().requestMessage(p ->
-                                Component.text().decorate(TextDecoration.BOLD).append(BingoMessage.HOTSWAP_SINGLE_ADDED.asPhrase(taskToSend.data.getName()).color(TextColor.fromHexString("#5cb1ff"))).build(),
+                                Component.text().decorate(TextDecoration.BOLD).append(BingoMessage.HOTSWAP_SINGLE_ADDED.asPhrase(taskToSend.data().getName()).color(TextColor.fromHexString("#5cb1ff"))).build(),
                         2, 3);
             }
             else {
@@ -253,7 +253,7 @@ public class HotswapTaskCard extends TaskCard
 
     private boolean canTaskBeAdded(TaskData data) {
         for (GameTask task : getTasks()) {
-            if (task.data.isTaskEqual(data)) {
+            if (task.data().isTaskEqual(data)) {
                 return true;
             }
         }
