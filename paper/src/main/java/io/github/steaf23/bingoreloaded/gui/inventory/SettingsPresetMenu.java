@@ -2,12 +2,10 @@ package io.github.steaf23.bingoreloaded.gui.inventory;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.BingoSettingsData;
-import io.github.steaf23.bingoreloaded.lib.api.ActionUser;
 import io.github.steaf23.bingoreloaded.lib.api.MenuBoard;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemTypePaper;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.inventory.BasicMenu;
-import io.github.steaf23.bingoreloaded.lib.inventory.FilterType;
 import io.github.steaf23.bingoreloaded.lib.inventory.InventoryMenu;
 import io.github.steaf23.bingoreloaded.lib.inventory.PaginatedDataMenu;
 import io.github.steaf23.bingoreloaded.lib.inventory.UserInputMenu;
@@ -20,10 +18,8 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Material;
-import org.bukkit.event.inventory.InventoryClickEvent;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class SettingsPresetMenu extends PaginatedDataMenu.TextDataMenu
 {

@@ -2,29 +2,20 @@ package io.github.steaf23.bingoreloaded.lib.inventory;
 
 import io.github.steaf23.bingoreloaded.lib.api.MenuBoard;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemTypePaper;
-import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.inventory.action.MenuAction;
-import io.github.steaf23.bingoreloaded.lib.inventory.group.ItemGroup;
 import io.github.steaf23.bingoreloaded.lib.inventory.group.ItemRect;
 import io.github.steaf23.bingoreloaded.lib.inventory.group.PaginatedGroup;
 import io.github.steaf23.bingoreloaded.lib.inventory.group.SelectionModel;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
-import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import io.github.steaf23.bingoreloaded.lib.util.PlayerDisplayTranslationKey;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Material;
-import org.bukkit.event.inventory.ClickType;
-import org.bukkit.event.inventory.InventoryClickEvent;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public abstract class PaginatedDataMenu<Data> extends BasicMenu {

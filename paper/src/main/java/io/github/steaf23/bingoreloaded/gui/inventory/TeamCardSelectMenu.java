@@ -4,8 +4,6 @@ import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.lib.api.MenuBoard;
-import io.github.steaf23.bingoreloaded.lib.api.item.ItemTypePaper;
-import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.inventory.FilterType;
 import io.github.steaf23.bingoreloaded.lib.inventory.PaginatedDataMenu;
 import io.github.steaf23.bingoreloaded.lib.inventory.action.MenuAction;
@@ -13,12 +11,6 @@ import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
-import org.bukkit.event.inventory.InventoryClickEvent;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
 
 public class TeamCardSelectMenu extends PaginatedDataMenu<BingoTeam>
 {

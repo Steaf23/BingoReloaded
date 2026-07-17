@@ -2,11 +2,9 @@ package io.github.steaf23.bingoreloaded.world;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
-import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import io.github.steaf23.bingoreloaded.lib.util.DebugLogger;
 import io.papermc.paper.world.PaperWorldLoader;
-import io.papermc.paper.world.migration.WorldFolderMigration;
 import net.kyori.adventure.key.Key;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.Registries;
@@ -39,14 +37,11 @@ import net.minecraft.world.level.storage.SavedDataStorage;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.World;
-import org.bukkit.WorldCreator;
 import org.bukkit.WorldType;
 import org.bukkit.craftbukkit.CraftServer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;

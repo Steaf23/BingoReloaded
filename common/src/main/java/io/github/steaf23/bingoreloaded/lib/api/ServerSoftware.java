@@ -1,6 +1,5 @@
 package io.github.steaf23.bingoreloaded.lib.api;
 
-import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
@@ -13,9 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Path;
 import java.util.Collection;
 import java.util.UUID;
 import java.util.function.Consumer;

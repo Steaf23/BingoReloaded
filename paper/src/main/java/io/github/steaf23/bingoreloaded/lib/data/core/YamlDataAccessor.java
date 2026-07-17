@@ -2,9 +2,7 @@ package io.github.steaf23.bingoreloaded.lib.data.core;
 
 import io.github.steaf23.bingoreloaded.lib.api.ServerSoftware;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
-import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.yaml.snakeyaml.parser.ParserException;
 
 import java.io.File;
 import java.io.IOException;

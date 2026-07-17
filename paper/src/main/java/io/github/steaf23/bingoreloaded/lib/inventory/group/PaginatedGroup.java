@@ -1,6 +1,5 @@
 package io.github.steaf23.bingoreloaded.lib.inventory.group;
 
-import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.lib.api.ExtensionTask;
 import io.github.steaf23.bingoreloaded.lib.api.PlatformResolver;
 import io.github.steaf23.bingoreloaded.lib.inventory.BasicMenu;
@@ -15,7 +14,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.BiFunction;
-import java.util.function.Function;
 
 public class PaginatedGroup<Data> extends ItemGroup {
 

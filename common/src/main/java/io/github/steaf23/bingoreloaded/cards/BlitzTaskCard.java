@@ -2,8 +2,8 @@ package io.github.steaf23.bingoreloaded.cards;
 
 import io.github.steaf23.bingoreloaded.api.CardMenu;
 import io.github.steaf23.bingoreloaded.api.HotswapCardMenu;
-import io.github.steaf23.bingoreloaded.cards.slot.TickingTaskSlot;
 import io.github.steaf23.bingoreloaded.cards.slot.SimpleTickingTask;
+import io.github.steaf23.bingoreloaded.cards.slot.TickingTaskSlot;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.BingoSound;
 import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
