@@ -152,11 +152,6 @@ public class BingoGame implements GamePhase
             session.endGame();
             return;
         }
-		List<String> commandBeforeGame = config.getOptionValue(BingoOptions.SEND_COMMAND_BEFORE_GAME_STARTS);
-        for (String command : commandBeforeGame) {
-            String commandToSend = command.replace("{world}", session.getGameManager().getNameOfSession(session));
-            platform.sendConsoleCommand(commandToSend);
-        }
 
         world.setStorming(false);
         world.setTimeOfDay(1000);
@@ -248,6 +243,13 @@ public class BingoGame implements GamePhase
                 playSound(BingoSound.COUNTDOWN_TICK_2.builder().volume(1.2f - time / 10.0f + 0.2f).pitch(pitch).build());
             }
         });
+
+        List<String> commandBeforeGame = config.getOptionValue(BingoOptions.SEND_COMMAND_BEFORE_GAME_STARTS);
+        for (String command : commandBeforeGame) {
+            String commandToSend = command.replace("{world}", session.getGameManager().getNameOfSession(session));
+            platform.sendConsoleCommand(commandToSend);
+        }
+
         platform.runTask(BingoReloaded.ONE_SECOND, task -> startingTimer.start());
     }
 
