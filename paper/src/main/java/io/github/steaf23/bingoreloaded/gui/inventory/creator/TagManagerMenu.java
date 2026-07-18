@@ -34,13 +34,13 @@ public class TagManagerMenu extends BasicMenu {
 
 	private Map<String, TaskTagData.TaskTag> availableTags = new HashMap<>();
 	private final ScrollableItemBar<String> tagBar = new ScrollableItemBar<>(this, 0, 0, 9, SelectionModel.SelectMode.SINGLE);
-	private final PaginatedGroup<GameTask> taskGroup = new PaginatedGroup<>(1, 2, 7, 4, this::onTaskClicked, SelectionModel.SelectMode.MULTIPLE_OR_NONE, true);
+	private final PaginatedGroup<GameTask> taskGroup = new PaginatedGroup<>(0, 2, 9, 4, this::onTaskClicked, SelectionModel.SelectMode.MULTIPLE_OR_NONE, true);
 
-	private static final ItemTemplate NEXT = new ItemTemplate(0, ItemTypePaper.of(Material.STRUCTURE_VOID),
+	private static final ItemTemplate NEXT = new ItemTemplate(8, 1, ItemTypePaper.of(Material.STRUCTURE_VOID),
 			PlayerDisplayTranslationKey.MENU_NEXT.translate()
 					.color(NamedTextColor.LIGHT_PURPLE).decorate(TextDecoration.BOLD));
 
-	private static final ItemTemplate PREVIOUS = new ItemTemplate(8, ItemTypePaper.of(Material.BARRIER),
+	private static final ItemTemplate PREVIOUS = new ItemTemplate(0, 1, ItemTypePaper.of(Material.BARRIER),
 			PlayerDisplayTranslationKey.MENU_PREVIOUS.translate()
 					.color(NamedTextColor.LIGHT_PURPLE).decorate(TextDecoration.BOLD));
 
@@ -75,14 +75,6 @@ public class TagManagerMenu extends BasicMenu {
 			addItem(BasicMenu.BLANK.copyToSlot(j, 1));
 		}
 
-		for (int k = 2; k < 6; k++) {
-			addItem(BasicMenu.BLANK.copyToSlot(0, k));
-		}
-
-		for (int k = 2; k < 6; k++) {
-			addItem(BasicMenu.BLANK.copyToSlot(8, k));
-		}
-
 		List<ItemTemplate> taskItems = new ArrayList<>();
 		List<GameTask> taskData = new ArrayList<>();
 		for (TaskData task : tasks) {
@@ -91,13 +83,11 @@ public class TagManagerMenu extends BasicMenu {
 			taskItems.add(createItemFromTask(gameTask));
 		}
 		taskGroup.setItems(taskItems, taskData);
+		switchTabs(tagBar.selectedData().getFirst());
+		updatePageNavigation(taskGroup);
 		taskGroup.updateVisibleItems(this);
 
-		switchTabs(tagBar.selectedData().getFirst());
-		PlatformResolver.get().runTask(t -> {
-			taskGroup.updateVisibleItems(this);
-			updatePageNavigation(taskGroup);
-		});
+
 	}
 
 	@Override
@@ -172,8 +162,8 @@ public class TagManagerMenu extends BasicMenu {
 		int pageCount = page.getPageCount();
 		Component pageCountDesc = Component.text(String.format("%02d", currentPage + 1) + "/" + String.format("%02d", pageCount));
 
-		ItemTemplate prevPage = PREVIOUS.copyToSlot(0, 5).setLore(pageCountDesc);
-		ItemTemplate nextPage = NEXT.copyToSlot(8, 5).setLore(pageCountDesc);
+		ItemTemplate prevPage = PREVIOUS.copy().setLore(pageCountDesc);
+		ItemTemplate nextPage = NEXT.copy().setLore(pageCountDesc);
 
 		if (currentPage > 0) {
 			addAction(prevPage, (args) -> {
@@ -183,7 +173,7 @@ public class TagManagerMenu extends BasicMenu {
 				});
 			});
 		} else {
-			addItem(BLANK.copyToSlot(0, 5));
+			addItem(BLANK.copyToSlot(0, 1));
 		}
 
 		if (currentPage < pageCount - 1) {
@@ -194,7 +184,7 @@ public class TagManagerMenu extends BasicMenu {
 				});
 			});
 		} else {
-			addItem(BLANK.copyToSlot(8, 5));
+			addItem(BLANK.copyToSlot(8, 1));
 		}
 	}
 }

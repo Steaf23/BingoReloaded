@@ -2,11 +2,16 @@ package io.github.steaf23.bingoreloaded.data;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataAccessor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class TaskTagData {
 
@@ -49,5 +54,22 @@ public class TaskTagData {
 	public void addTag(@NotNull String tagKey, TaskTag tag) {
 		data.setSerializable(tagKey, TaskTag.class, tag);
 		data.saveChanges();
+	}
+
+	public Component tagDescription(List<String> tags) {
+
+		Map<String, TaskTag> allTags = getAllTags();
+		Component result = Component.text("   Excluding tasks tagged with ").color(NamedTextColor.GRAY);
+		int i = 0;
+
+		Set<String> uniqueTags = new HashSet<>(tags);
+		for (String tag : uniqueTags) {
+			result = result.append(Component.text("<" + tag + ">").color(allTags.getOrDefault(tag, new TaskTagData.TaskTag(NamedTextColor.WHITE)).color()));
+			if (i < uniqueTags.size() - 1) {
+				result = result.append(Component.text(", "));
+			}
+			i++;
+		}
+		return result;
 	}
 }

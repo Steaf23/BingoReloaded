@@ -7,6 +7,7 @@ import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.BingoCardData;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.TaskListData;
+import io.github.steaf23.bingoreloaded.gui.inventory.TagExclusionMenu;
 import io.github.steaf23.bingoreloaded.lib.api.MenuBoard;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemTypePaper;
@@ -43,7 +44,8 @@ public class BingoCreatorMenu extends BasicMenu {
 
 	private static final ItemType REMOVE_ICON = ItemTypePaper.of(Material.BARRIER);
 	private static final ItemType COPY_ICON = ItemTypePaper.of(Material.SHULKER_SHELL);
-	private static final ItemType RENAME_ICON = ItemTypePaper.of(Material.NAME_TAG);
+	private static final ItemType RENAME_ICON = ItemTypePaper.of(Material.WRITABLE_BOOK);
+	private static final ItemType TAGS_ICON = ItemTypePaper.of(Material.NAME_TAG);
 	private static final ItemType SAVE_ICON = ItemTypePaper.of(Material.DIAMOND);
 
 	public BingoCreatorMenu(MenuBoard manager) {
@@ -81,8 +83,14 @@ public class BingoCreatorMenu extends BasicMenu {
 				fullDescription.add(Component.text("Description: "));
 				fullDescription.addAll(Arrays.stream(BingoMessage.configStringAsMultiline(cardsData.getDescription(cardName), Style.style(NamedTextColor.GRAY, TextDecoration.ITALIC))).toList());
 
-				item.setLore(Component.text("This card contains " + cardsData.getListNames(cardName).size() + " list(s)"))
-						.addDescription("description", 1, fullDescription);
+				List<String> excludedTags = cardsData.excludedTags(cardName);
+				if (!excludedTags.isEmpty()) {
+					item.setLore(Component.text("This card contains " + cardsData.getListNames(cardName).size() + " list(s)"),
+							cardsData.tags().tagDescription(excludedTags));
+				} else {
+					item.setLore(Component.text("This card contains " + cardsData.getListNames(cardName).size() + " list(s)"))
+							.addDescription("description", 1, fullDescription);
+				}
 
 				if (cardsData.isDefaultCard(cardName)) {
 					item.addDescription("input", 5,
@@ -228,11 +236,6 @@ public class BingoCreatorMenu extends BasicMenu {
 
 		if (!cardsData.isDefaultCard(cardName)) {
 			context.addAction(new ItemTemplate(slot, RENAME_ICON, BingoReloaded.applyTitleFormat("Change Description")), (args) -> {
-				if (cardsData.isDefaultCard(cardName)) {
-					context.close(args.player());
-					return;
-				}
-
 				new DialogMenu(getMenuBoard()) {
 
 					@Override
@@ -251,6 +254,11 @@ public class BingoCreatorMenu extends BasicMenu {
 										DialogBuilder.ActionButtonBuilder.customAction(Component.translatable("gui.cancel"), BingoReloaded.resourceKey("card_name/cancel"), null).build());
 					}
 				}.open(args.player());
+			});
+			slot++;
+
+			context.addAction(new ItemTemplate(slot, TAGS_ICON, BingoReloaded.applyTitleFormat("Exclude certain tags")), (args) -> {
+				new TagExclusionMenu(getMenuBoard(), cardsData, cardName).open(args.player());
 			});
 			slot++;
 		}

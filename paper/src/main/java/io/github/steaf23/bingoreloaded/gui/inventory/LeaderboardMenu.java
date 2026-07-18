@@ -290,7 +290,7 @@ public class LeaderboardMenu extends BasicMenu {
 			return false;
 		}
 
-		if (!settings.card().cardName().equals(other.card().cardName())) {
+		if (!settings.cardName().equals(other.cardName())) {
 			return false;
 		}
 
@@ -406,7 +406,7 @@ public class LeaderboardMenu extends BasicMenu {
 
 		lore.addAll(List.of(
 				Component.empty().append(BingoMessage.LEADERBOARD_KIT.asPhrase().append(Component.text(": ")).color(NamedTextColor.GRAY)).append(settings.kit().getDisplayName()),
-				Component.empty().append(BingoMessage.LEADERBOARD_CARD.asPhrase().append(Component.text(": ")).color(NamedTextColor.GRAY)).append(Component.text(settings.card().cardName())),
+				Component.empty().append(BingoMessage.LEADERBOARD_CARD.asPhrase().append(Component.text(": ")).color(NamedTextColor.GRAY)).append(Component.text(settings.cardName())),
 				Component.empty().append(BingoMessage.LEADERBOARD_GAMES_PLAYED.asPhrase().append(Component.text(": ")).color(NamedTextColor.GRAY)).append(Component.text(numGamesPlayed)),
 				Component.empty(),
 				Component.empty().append(BasicMenu.INPUT_LEFT_CLICK).append(BingoMessage.LEADERBOARD_PROMPT.asPhrase().color(TextColor.fromHexString("#ff661c")).decorate(TextDecoration.BOLD))
