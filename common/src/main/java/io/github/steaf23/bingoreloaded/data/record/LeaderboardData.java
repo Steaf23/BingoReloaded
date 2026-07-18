@@ -61,7 +61,7 @@ public class LeaderboardData {
 		Map<String, GameRecord.TeamRecord> teams = new HashMap<>();
 		for (BingoTeam team : game.getTeamManager().getActiveTeams()) {
 			int score = team.getCompleteCount();
-			TeamData.TeamTemplate template = new TeamData.TeamTemplate(ComponentUtils.MINI_BUILDER.serialize(team.getName()), team.getColor());
+			TeamData.TeamTemplate template = new TeamData.TeamTemplate(ComponentUtils.MINI_BUILDER.serialize(team.getName()), team.getColor(), team.getDyeColor());
 
 			List<GameRecord.ParticipantRecord> participants = team.getMembers().stream()
 					.map(p -> new GameRecord.ParticipantRecord(p.getAmountOfTaskCompleted(), p.getName(), p.getId()))

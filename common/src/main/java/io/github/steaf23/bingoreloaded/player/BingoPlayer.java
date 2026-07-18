@@ -85,7 +85,7 @@ public class BingoPlayer implements BingoParticipant
 
         PlayerHandle player = sessionPlayer().get();
 
-        var items = kit.getItems(getTeam().getColor(), server);
+        var items = kit.getItems(getTeam(), server);
         player.closeInventory();
         InventoryHandle inv = player.inventory();
         inv.clearContents();

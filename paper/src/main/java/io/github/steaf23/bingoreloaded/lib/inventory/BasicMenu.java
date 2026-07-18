@@ -1,5 +1,7 @@
 package io.github.steaf23.bingoreloaded.lib.inventory;
 
+import io.github.steaf23.bingoreloaded.BingoReloaded;
+import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.lib.api.MenuBoard;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemTypePaper;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandlePaper;
@@ -132,6 +134,15 @@ public class BasicMenu implements InventoryMenu
         addItem(item, menuAction);
 
         return menuAction;
+    }
+
+    public BasicMenu addExitAction(int slot) {
+        return addCloseAction(new ItemTemplate(slot, ItemTypePaper.of(Material.REDSTONE), BingoReloaded.applyTitleFormat(BingoMessage.MENU_EXIT.asPhrase())));
+    }
+
+    public BasicMenu addSaveAction(int slot, Consumer<MenuAction.ActionArguments> action) {
+        addAction(new ItemTemplate(slot, ItemTypePaper.of(Material.EMERALD), BingoReloaded.applyTitleFormat(BingoMessage.MENU_SAVE.asPhrase())), action);
+        return this;
     }
 
     public BasicMenu addCloseAction(@NotNull ItemTemplate item) {

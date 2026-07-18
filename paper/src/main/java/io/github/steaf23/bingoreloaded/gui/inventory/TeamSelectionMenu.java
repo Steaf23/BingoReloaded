@@ -127,7 +127,7 @@ public class TeamSelectionMenu extends PaginatedDataMenu<String>
     @Override
     public Component displayName(String teamKey, boolean selected) {
         TeamData.TeamTemplate teamTemplate = allTeamsCache.get(teamKey);
-        return teamTemplate.nameComponent().color(teamTemplate.color()).decorate(TextDecoration.BOLD);
+        return teamTemplate.coloredName().decorate(TextDecoration.BOLD);
     }
 
     @Override

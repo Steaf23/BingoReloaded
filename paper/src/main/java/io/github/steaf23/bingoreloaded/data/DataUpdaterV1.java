@@ -16,6 +16,7 @@ import io.github.steaf23.bingoreloaded.lib.data.core.YamlDataAccessor;
 import io.github.steaf23.bingoreloaded.lib.data.core.tag.TagDataAccessor;
 import io.github.steaf23.bingoreloaded.lib.data.core.tag.TagDataType;
 import io.github.steaf23.bingoreloaded.lib.item.SerializableItem;
+import io.github.steaf23.bingoreloaded.lib.util.BlockColor;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import io.github.steaf23.bingoreloaded.player.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
@@ -527,7 +528,16 @@ public class DataUpdaterV1
             if (template == null) {
                 continue;
             }
-            tagData.setSerializable(key, TeamData.TeamTemplate.class, new TeamData.TeamTemplate(template.name(), TextColor.fromHexString(template.hexColor())));
+
+            // attempt to get automatic block color from team_id
+            BlockColor color;
+            try {
+                color = BlockColor.fromName(key);
+
+            } catch (IllegalArgumentException e) {
+                color = BlockColor.WHITE;
+            }
+            tagData.setSerializable(key, TeamData.TeamTemplate.class, new TeamData.TeamTemplate(template.name(), TextColor.fromHexString(template.hexColor()), color));
         }
 
         tagData.saveChanges();

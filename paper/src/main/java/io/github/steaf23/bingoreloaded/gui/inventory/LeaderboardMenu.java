@@ -145,7 +145,7 @@ public class LeaderboardMenu extends BasicMenu {
 					}
 
 					List<Component> description = new ArrayList<>();
-					description.add(team.team().nameComponent().color(team.team().color()).decorate(TextDecoration.BOLD));
+					description.add(team.team().coloredName().decorate(TextDecoration.BOLD));
 					for (GameRecord.ParticipantRecord participant : team.participants().stream().sorted(Comparator.comparingInt(GameRecord.ParticipantRecord::contribution).reversed()).toList()) {
 						description.add(Component.text(participant.displayName()));
 					}

@@ -7,6 +7,7 @@ import io.github.steaf23.bingoreloaded.data.config.BingoOptions;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.lib.api.PlayerGamemode;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
+import io.github.steaf23.bingoreloaded.lib.util.BlockColor;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import io.github.steaf23.bingoreloaded.placeholder.BingoPlaceholderFormatter;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
@@ -38,7 +39,7 @@ public class SoloTeamManager implements TeamManager
         if (autoTeamColor == null) {
             autoTeamColor = NamedTextColor.WHITE;
         }
-        this.autoTeam = new BingoTeam("auto", autoTeamColor, BingoMessage.TEAM_AUTO.asPhrase(), createPrefix(autoTeamColor));
+        this.autoTeam = new BingoTeam("auto", autoTeamColor, BingoMessage.TEAM_AUTO.asPhrase(), createPrefix(autoTeamColor), BlockColor.WHITE);
         this.teams.addTeam(autoTeam);
     }
 
@@ -93,7 +94,7 @@ public class SoloTeamManager implements TeamManager
     public void setupParticipant(BingoParticipant participant) {
         TextColor teamColor = determineTeamColor();
         // create a team where the id is the same as the participant's id, which is good enough for our use case.
-        BingoTeam team = new BingoTeam(participant.getId().toString(), teamColor, participant.getDisplayName(), createPrefix(teamColor));
+        BingoTeam team = new BingoTeam(participant.getId().toString(), teamColor, participant.getDisplayName(), createPrefix(teamColor), BlockColor.WHITE);
         team.addMember(participant);
         teams.addTeam(team);
 

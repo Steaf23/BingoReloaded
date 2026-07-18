@@ -7,6 +7,7 @@ import io.github.steaf23.bingoreloaded.data.config.BingoOptions;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.lib.api.PlayerGamemode;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
+import io.github.steaf23.bingoreloaded.lib.util.BlockColor;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import io.github.steaf23.bingoreloaded.placeholder.BingoPlaceholderFormatter;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
@@ -50,7 +51,7 @@ public class BasicTeamManager implements TeamManager {
         TextColor autoTeamColor = TextColor.fromHexString("#fdffa8");
         if (autoTeamColor == null) autoTeamColor = NamedTextColor.WHITE;
 
-        this.autoTeam = new BingoTeam("auto", autoTeamColor, BingoMessage.TEAM_AUTO.asPhrase(), createAutoPrefix(autoTeamColor));
+        this.autoTeam = new BingoTeam("auto", autoTeamColor, BingoMessage.TEAM_AUTO.asPhrase(), createAutoPrefix(autoTeamColor), BlockColor.WHITE);
     }
 
     private Component createAutoPrefix(TextColor color) {
@@ -273,7 +274,7 @@ public class BasicTeamManager implements TeamManager {
             return null;
         }
 
-        BingoTeam bTeam = new BingoTeam(teamId, team.color(), team.nameComponent(), createPrefix(team));
+        BingoTeam bTeam = new BingoTeam(teamId, team.color(), team.nameComponent(), createPrefix(team), team.dyeColor());
 
         activeTeams.addTeam(bTeam);
         return bTeam;

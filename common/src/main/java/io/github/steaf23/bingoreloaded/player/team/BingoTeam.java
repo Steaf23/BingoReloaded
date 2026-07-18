@@ -1,6 +1,7 @@
 package io.github.steaf23.bingoreloaded.player.team;
 
 import io.github.steaf23.bingoreloaded.cards.TaskCard;
+import io.github.steaf23.bingoreloaded.lib.util.BlockColor;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import net.kyori.adventure.audience.Audience;
@@ -24,16 +25,18 @@ public class BingoTeam implements ForwardingAudience
     private final TextColor color;
     private final Component name;
     private final Component prefix;
+    private final BlockColor dyeColor;
 
     private final Set<BingoParticipant> members;
 
-    public BingoTeam(String identifier, TextColor color, Component name, Component prefix) {
+    public BingoTeam(String identifier, TextColor color, Component name, Component prefix, BlockColor dyeColor) {
         this.id = identifier;
         this.card = null;
         this.color = color;
         this.name = name;
         this.members = new HashSet<>();
         this.prefix = prefix;
+        this.dyeColor = dyeColor;
     }
 
     public Optional<TaskCard> getCard() {
@@ -55,6 +58,10 @@ public class BingoTeam implements ForwardingAudience
 
     public TextColor getColor() {
         return color;
+    }
+
+    public BlockColor getDyeColor() {
+        return dyeColor;
     }
 
     public Component getName() {

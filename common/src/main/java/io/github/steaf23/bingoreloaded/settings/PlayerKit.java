@@ -9,6 +9,7 @@ import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import io.github.steaf23.bingoreloaded.lib.item.SerializableItem;
 import io.github.steaf23.bingoreloaded.player.EffectOptionFlags;
+import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -105,7 +106,7 @@ public enum PlayerKit
         return displayName;
     }
 
-    public List<SerializableItem> getItems(TextColor teamColor, ServerSoftware server)
+    public List<SerializableItem> getItems(BingoTeam team, ServerSoftware server)
     {
         List<SerializableItem> items = switch (this)
         {
@@ -126,7 +127,7 @@ public enum PlayerKit
         };
 
         return items.stream()
-            .map(item -> new SerializableItem(item.slot(), server.colorItemStack(item.stack(), teamColor)))
+            .map(item -> new SerializableItem(item.slot(), server.colorItemStack(item.stack(), team.getColor())))
             .toList();
     }
 

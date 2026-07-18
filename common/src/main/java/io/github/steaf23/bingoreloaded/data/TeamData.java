@@ -16,12 +16,17 @@ import java.util.Map;
 public class TeamData {
     /**
      * @param stringName name to use for the team, which is retrieved using minimessage deserialization
-     * @param color
+     * @param color chat color to use on completed tasks and in the chat when referring to this team
+     * @param
      */
-    public record TeamTemplate(String stringName, TextColor color)
+    public record TeamTemplate(String stringName, TextColor color, BlockColor dyeColor)
     {
         public Component nameComponent() {
             return ComponentUtils.MINI_BUILDER.deserialize(stringName);
+        }
+
+        public Component coloredName() {
+            return ComponentUtils.MINI_BUILDER.deserialize(stringName).color(color);
         }
     }
 
@@ -35,16 +40,16 @@ public class TeamData {
         return teams;
     }
 
-    public void addTeam(@NotNull String key, String name, TextColor color) {
+    public void addTeam(@NotNull String key, String name, TextColor color, BlockColor dyeColorName) {
         if (key.isEmpty()) {
             key = getNewTeamId();
         }
-        data.setSerializable(key, TeamTemplate.class, new TeamTemplate(name, color));
+        data.setSerializable(key, TeamTemplate.class, new TeamTemplate(name, color, dyeColorName));
         data.saveChanges();
     }
 
     public void addTeam(@NotNull String key, TeamTemplate template) {
-        addTeam(key, template.stringName(), template.color());
+        addTeam(key, template.stringName(), template.color(), template.dyeColor());
     }
 
     public TeamTemplate getTeam(String key, TeamTemplate def) {
@@ -63,7 +68,7 @@ public class TeamData {
         data.saveChanges();
 
         for (BlockColor col : BlockColor.values()) {
-            addTeam(col.name, StringAdditions.capitalize(col.name), col.textColor);
+            addTeam(col.name, StringAdditions.capitalize(col.name), col.textColor, col);
         }
     }
 
