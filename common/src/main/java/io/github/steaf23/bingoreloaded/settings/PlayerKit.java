@@ -62,6 +62,13 @@ public enum PlayerKit
             .setCompareKey("team")
 			.addEnchantment(Key.key("minecraft:vanishing_curse"), 1);
 
+    public static final ItemTemplate ADMIN_ITEM = new ItemTemplate(
+            ItemType.of("minecraft:command_block"),
+            Component.text("Settings").color(NamedTextColor.DARK_PURPLE).decorate(TextDecoration.BOLD, TextDecoration.ITALIC))
+            .setCompareKey("admin")
+            .setDummy(true)
+            .addEnchantment(Key.key("minecraft:vanishing_curse"), 1);
+
     public final String configName;
     private final Component displayName;
     public final EnumSet<EffectOptionFlags> defaultEffects;

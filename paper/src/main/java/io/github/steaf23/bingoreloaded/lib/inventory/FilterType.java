@@ -5,10 +5,11 @@ import io.github.steaf23.bingoreloaded.lib.util.StringAdditions;
 public enum FilterType
 {
     NONE,
-    ITEM_ID,
     DISPLAY_NAME,
     MATERIAL,
-    CUSTOM;
+    DATA,
+    SELECTED,
+    ;
 
     @Override
     public String toString() {

@@ -5,6 +5,8 @@ import io.github.steaf23.bingoreloaded.lib.api.ActionUser;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandlePaper;
 import io.github.steaf23.bingoreloaded.lib.util.ComponentUtils;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -50,6 +52,14 @@ public class CommandTemplate implements TabExecutor
         switch (command.execute(user, arguments)) {
             case INCORRECT_USE -> {
                 commandSender.sendMessage(ComponentUtils.MINI_BUILDER.deserialize("<dark_gray>- <red>Usage: " + command.usage(arguments)));
+                return false;
+            }
+            case NO_PERMISSION -> {
+                commandSender.sendMessage(Component.text("You do not have permission to execute this command.").color(NamedTextColor.RED));
+                return false;
+            }
+            case IGNORED -> {
+                commandSender.sendMessage(Component.text("There was an issue running this command.").color(NamedTextColor.RED));
                 return false;
             }
             default -> {

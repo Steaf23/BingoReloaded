@@ -91,6 +91,7 @@ public class TaskProgressTracker
         }
 
         progressMap.put(task, new ArrayList<>());
+        task.setProgress(0);
         for (BingoParticipant participant : game.getTeamManager().getParticipants()) {
             // only track progress if the participant has to complete the task.
             Optional<TaskCard> card = participant.getCard();
@@ -98,19 +99,19 @@ public class TaskProgressTracker
                 continue;
             }
 
-            int finalCount = task.data.getRequiredAmount();
-            TaskData.TaskType type = task.data.getType();
+            int finalCount = task.data().getRequiredAmount();
+            TaskData.TaskType type = task.data().getType();
 
             // reset any progress already made beforehand
             if (type == TaskData.TaskType.ADVANCEMENT) {
                 // revoke advancement from player
-                AdvancementTask advancementTask = (AdvancementTask) task.data;
+                AdvancementTask advancementTask = (AdvancementTask) task.data();
                 participant.sessionPlayer().ifPresent(player -> {
                     player.removeAdvancementProgress(advancementTask.advancement());
                     DebugLogger.addLog("Revoking advancement " + advancementTask.advancement().key().value() + " for player " + player.playerName());
                 });
             } else if (type == TaskData.TaskType.STATISTIC) {
-                StatisticTask statisticTask = (StatisticTask) task.data;
+                StatisticTask statisticTask = (StatisticTask) task.data();
                 // travel statistics are counted * 1000
 //                if (statisticTask.statistic().getCategory() == BingoStatistic.StatisticCategory.TRAVEL)
 //                {
@@ -148,7 +149,7 @@ public class TaskProgressTracker
             if (task.taskType() != TaskData.TaskType.ADVANCEMENT) {
                 return false;
             }
-            AdvancementTask data = (AdvancementTask) task.data;
+            AdvancementTask data = (AdvancementTask) task.data();
 
             if (!data.advancement().key().equals(advancement.key())) {
                 return false;
@@ -174,7 +175,7 @@ public class TaskProgressTracker
                 return false;
             }
             StatisticHandle statistic = completedStat.getStatistic();
-            StatisticTask data = (StatisticTask) task.data;
+            StatisticTask data = (StatisticTask) task.data();
 
             if (!data.statistic().equals(statistic)) {
                 return false;
@@ -209,7 +210,7 @@ public class TaskProgressTracker
 
         GameTask deathMatchTask = game.getDeathMatchTask();
         if (deathMatchTask != null) {
-            if (deathMatchTask.data instanceof ItemTask task) {
+            if (deathMatchTask.data() instanceof ItemTask task) {
                 if (item.type().equals(task.itemType())) {
                     deathMatchTask.complete(participant, game.getGameTimePassed());
                     game.onDeathmatchTaskComplete(participant, deathMatchTask);
@@ -225,7 +226,7 @@ public class TaskProgressTracker
             if (task.taskType() != TaskData.TaskType.ITEM) {
                 return false;
             }
-            ItemTask data = (ItemTask) task.data;
+            ItemTask data = (ItemTask) task.data();
             if (!data.itemType().equals(item.type()) || data.count() > item.amount()) {
                 return false;
             }
@@ -330,7 +331,7 @@ public class TaskProgressTracker
         }
         progressMap.remove(task);
         if (task.taskType() == TaskData.TaskType.STATISTIC) {
-            statisticTracker.removeStatistic((StatisticTask) task.data);
+            statisticTracker.removeStatistic((StatisticTask) task.data());
         }
     }
 

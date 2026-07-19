@@ -7,11 +7,9 @@ import io.github.steaf23.bingoreloaded.item.GoUpWand;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataStorage;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataStorageSerializerRegistry;
 import io.github.steaf23.bingoreloaded.lib.data.core.tag.TagDataAccessor;
-import io.github.steaf23.bingoreloaded.lib.data.core.tag.TagDataStorage;
 import io.github.steaf23.bingoreloaded.lib.item.SerializableItem;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 

@@ -32,8 +32,8 @@ public class GameTask
     private BingoTeam completedByTeam;
     public long completedAt;
     private boolean voided;
-
-    public TaskData data;
+    private int progress;
+    private TaskData data;
 
     public GameTask(@NotNull TaskData data)
     {
@@ -48,12 +48,29 @@ public class GameTask
         return new GameTask(new ItemTask(material, count));
     }
 
+    public void setData(TaskData data) {
+        this.data = data;
+        setProgress(0);
+    }
+
+    public TaskData data() {
+        return data;
+    }
+
     public void setVoided(boolean value)
     {
         if (isCompleted())
             return;
 
         voided = value;
+    }
+
+    public void setProgress(int progress) {
+        this.progress = progress;
+    }
+
+    public int progress() {
+        return this.progress;
     }
 
     public boolean isVoided()
@@ -98,7 +115,7 @@ public class GameTask
         }
         else // DEFAULT TASK
         {
-            item = new ItemTemplate(icon(displayInfo), data.getName(), data.getItemDescription()).setDummy(true);
+            item = new ItemTemplate(icon(displayInfo), getName(), data.getItemDescription()).setDummy(true);
             item.setAmount(data.getRequiredAmount());
         }
 

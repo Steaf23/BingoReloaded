@@ -4,13 +4,11 @@ package io.github.steaf23.bingoreloaded.gui.inventory;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.BingoCardData;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
-import io.github.steaf23.bingoreloaded.data.TaskTagData;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.lib.api.MenuBoard;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemTypePaper;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.inventory.BasicMenu;
-import io.github.steaf23.bingoreloaded.lib.inventory.FilterType;
 import io.github.steaf23.bingoreloaded.lib.inventory.InventoryMenu;
 import io.github.steaf23.bingoreloaded.lib.inventory.MenuFilterSettings;
 import io.github.steaf23.bingoreloaded.lib.inventory.PaginatedDataMenu;
@@ -20,7 +18,6 @@ import io.github.steaf23.bingoreloaded.lib.inventory.action.SpinBoxButtonAction;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import io.github.steaf23.bingoreloaded.player.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
-import io.github.steaf23.bingoreloaded.settings.gamemode.BingoGamemodes;
 import io.github.steaf23.bingoreloaded.settings.gamemode.GamemodeFeature;
 import io.github.steaf23.bingoreloaded.util.BingoPlayerSender;
 import net.kyori.adventure.text.Component;
@@ -28,12 +25,9 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
-import org.bukkit.event.inventory.InventoryClickEvent;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class AdminBingoMenu extends BasicMenu {
 
@@ -109,9 +103,10 @@ public class AdminBingoMenu extends BasicMenu {
 
 		List<Component> cardLore = new ArrayList<>();
 		cardLore.add(selected);
-		cardLore.add(Component.text(" - ").append(Component.text(settings.card().cardName())));
-		if (!settings.card().excludedTags().isEmpty()) {
-			cardLore.add(tagDescription(settings.card().excludedTags()));
+		cardLore.add(Component.text(" - ").append(Component.text(settings.cardName())));
+		List<String> excludedTags = cardData.excludedTags(settings.cardName());
+		if (!excludedTags.isEmpty()) {
+			cardLore.add(cardData.tags().tagDescription(excludedTags));
 		}
 		ItemTemplate cardItem = CARD.copy().setLore(cardLore.toArray(Component[]::new));
 
@@ -236,36 +231,50 @@ public class AdminBingoMenu extends BasicMenu {
 		PlayerHandle player = arguments.player();
 		BingoCardData cardsData = new BingoCardData();
 
-		PaginatedDataMenu<String> cardPicker = new PaginatedDataMenu<>(
+		var cardPicker = new PaginatedDataMenu.TextDataMenu(
 				getMenuBoard(),
 				Component.text("Choose A Card"),
-				new ArrayList<>(cardsData.getCardNames()),
-				FilterType.NONE) {
+				cardsData.getCardNames())
+				{
 			@Override
-			public void onOptionClickedDelegate(InventoryClickEvent event, String clickedOption, PlayerHandle player) {
+			public void onOptionClickedDelegate(MenuAction.ActionArguments event, String clickedOption) {
 				if (!clickedOption.isEmpty()) {
 					if (event.isLeftClick()) {
 						cardSelected(clickedOption);
-					} else if (event.isRightClick()) {
-						new TagExclusionMenu(AdminBingoMenu.this, cardData, clickedOption).open(player);
 					}
 				}
 				close(player);
 			}
 
 			@Override
-			public ItemTemplate toItem(String s, boolean isSelected) {
-				return new ItemTemplate(ItemTypePaper.of(Material.PAPER), Component.text(s),
-						BingoMessage.configStringAsMultiline(cardsData.getDescription(s), Style.style(NamedTextColor.GRAY, TextDecoration.ITALIC)))
-						.addDescription("count", 5, BingoMessage.LIST_COUNT.asPhrase(Component.text(cardsData.getListNames(s).size())
-								.color(NamedTextColor.DARK_PURPLE)))
-						.addDescription("input", 10,
-								InventoryMenu.INPUT_LEFT_CLICK.append(Component.text("select this card.")),
-								InventoryMenu.INPUT_RIGHT_CLICK.append(Component.text("also edit allowed tasks using tags.")));
+			public Material material(String s, boolean selected) {
+				return Material.FLOWER_BANNER_PATTERN;
 			}
 
 			@Override
-			public boolean filterData(String s, MenuFilterSettings filter) {
+			public Component displayName(String s, boolean selected) {
+				return Component.text(s);
+			}
+
+			@Override
+			public ItemTemplate editItem(ItemTemplate item, String cardName, boolean selected) {
+				item.setLore(BingoMessage.configStringAsMultiline(cardsData.getDescription(cardName), Style.style(NamedTextColor.GRAY, TextDecoration.ITALIC)));
+				List<String> excludedTags = cardData.excludedTags(cardName);
+				if (!excludedTags.isEmpty()) {
+					item.addDescription("count", 5, BingoMessage.LIST_COUNT.asPhrase(Component.text(cardsData.getListNames(cardName).size())
+							.color(NamedTextColor.DARK_PURPLE)),
+							cardData.tags().tagDescription(excludedTags));
+				} else {
+					item.addDescription("count", 5, BingoMessage.LIST_COUNT.asPhrase(Component.text(cardsData.getListNames(cardName).size())
+									.color(NamedTextColor.DARK_PURPLE)));
+				}
+				item.addDescription("input", 10,
+						InventoryMenu.INPUT_LEFT_CLICK.append(Component.text("select this card.")));
+				return item;
+			}
+
+			@Override
+			public boolean filterByData(String s, MenuFilterSettings filter) {
 				return false;
 			}
 
@@ -281,11 +290,6 @@ public class AdminBingoMenu extends BasicMenu {
 		if (cardName == null) return;
 
 		session.settingsBuilder.cardName(cardName);
-	}
-
-	public void cardAndTagSelected(String cardName, List<String> tags) {
-		cardSelected(cardName);
-		session.settingsBuilder.excludedTags(new HashSet<>(tags));
 	}
 
 	private void updateDurationLore(ItemTemplate item, int duration) {
@@ -312,19 +316,5 @@ public class AdminBingoMenu extends BasicMenu {
 		item.addDescription("warning", 1,
 				Component.text("(When changing this setting all currently").color(NamedTextColor.GRAY),
 				Component.text("joined players will be kicked from their teams!)").color(NamedTextColor.GRAY));
-	}
-
-	public Component tagDescription(Set<String> tags) {
-		TaskTagData tagData = cardData.tags();
-		Component result = Component.text("   Excluding tasks tagged with ").color(NamedTextColor.GRAY);
-		int i = 0;
-		for (String tag : tags) {
-			result = result.append(Component.text("<" + tag + ">").color(tagData.getAllTags().getOrDefault(tag, new TaskTagData.TaskTag(NamedTextColor.WHITE)).color()));
-			if (i < tags.size() - 1) {
-				result = result.append(Component.text(", "));
-			}
-			i++;
-		}
-		return result;
 	}
 }

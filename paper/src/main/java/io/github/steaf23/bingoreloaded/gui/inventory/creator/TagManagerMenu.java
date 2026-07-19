@@ -8,6 +8,7 @@ import io.github.steaf23.bingoreloaded.lib.api.PlatformResolver;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemTypePaper;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.inventory.BasicMenu;
+import io.github.steaf23.bingoreloaded.lib.inventory.action.MenuAction;
 import io.github.steaf23.bingoreloaded.lib.inventory.group.PaginatedGroup;
 import io.github.steaf23.bingoreloaded.lib.inventory.group.ScrollableItemBar;
 import io.github.steaf23.bingoreloaded.lib.inventory.group.SelectionModel;
@@ -19,6 +20,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
+import org.bukkit.event.inventory.ClickType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,13 +34,13 @@ public class TagManagerMenu extends BasicMenu {
 
 	private Map<String, TaskTagData.TaskTag> availableTags = new HashMap<>();
 	private final ScrollableItemBar<String> tagBar = new ScrollableItemBar<>(this, 0, 0, 9, SelectionModel.SelectMode.SINGLE);
-	private final PaginatedGroup<GameTask> taskGroup = new PaginatedGroup<>(1, 2, 7, 4, this::onTaskClicked, SelectionModel.SelectMode.MULTIPLE_OR_NONE, true);
+	private final PaginatedGroup<GameTask> taskGroup = new PaginatedGroup<>(0, 2, 9, 4, this::onTaskClicked, SelectionModel.SelectMode.MULTIPLE_OR_NONE, true);
 
-	private static final ItemTemplate NEXT = new ItemTemplate(0, ItemTypePaper.of(Material.STRUCTURE_VOID),
+	private static final ItemTemplate NEXT = new ItemTemplate(8, 1, ItemTypePaper.of(Material.STRUCTURE_VOID),
 			PlayerDisplayTranslationKey.MENU_NEXT.translate()
 					.color(NamedTextColor.LIGHT_PURPLE).decorate(TextDecoration.BOLD));
 
-	private static final ItemTemplate PREVIOUS = new ItemTemplate(8, ItemTypePaper.of(Material.BARRIER),
+	private static final ItemTemplate PREVIOUS = new ItemTemplate(0, 1, ItemTypePaper.of(Material.BARRIER),
 			PlayerDisplayTranslationKey.MENU_PREVIOUS.translate()
 					.color(NamedTextColor.LIGHT_PURPLE).decorate(TextDecoration.BOLD));
 
@@ -73,14 +75,6 @@ public class TagManagerMenu extends BasicMenu {
 			addItem(BasicMenu.BLANK.copyToSlot(j, 1));
 		}
 
-		for (int k = 2; k < 6; k++) {
-			addItem(BasicMenu.BLANK.copyToSlot(0, k));
-		}
-
-		for (int k = 2; k < 6; k++) {
-			addItem(BasicMenu.BLANK.copyToSlot(8, k));
-		}
-
 		List<ItemTemplate> taskItems = new ArrayList<>();
 		List<GameTask> taskData = new ArrayList<>();
 		for (TaskData task : tasks) {
@@ -89,20 +83,18 @@ public class TagManagerMenu extends BasicMenu {
 			taskItems.add(createItemFromTask(gameTask));
 		}
 		taskGroup.setItems(taskItems, taskData);
+		switchTabs(tagBar.selectedData().getFirst());
+		updatePageNavigation(taskGroup);
 		taskGroup.updateVisibleItems(this);
 
-		switchTabs(tagBar.selectedData().getFirst());
-		PlatformResolver.get().runTask(t -> {
-			taskGroup.updateVisibleItems(this);
-			updatePageNavigation(taskGroup);
-		});
+
 	}
 
 	@Override
 	public void beforeClosing(PlayerHandle player) {
 		super.beforeClosing(player);
 
-		List<TaskData> mappedData = taskGroup.allData().stream().map(item -> item.data).toList();
+		List<TaskData> mappedData = taskGroup.allData().stream().map(GameTask::data).toList();
 		cardData.lists().saveTasksFromGroup(listName, mappedData, mappedData);
 	}
 
@@ -120,23 +112,27 @@ public class TagManagerMenu extends BasicMenu {
 
 		for (int i = 0; i < taskGroup.allData().size(); i++) {
 			GameTask task = taskGroup.allData().get(i);
-			if (task.data.tags().contains(newTag)) {
+			if (task.data().tags().contains(newTag)) {
 				taskGroup.selection().toggleSlot(i);
 			}
 		}
 	}
 
-	public void onTaskClicked(int slotIndex, GameTask task) {
+	public void onTaskClicked(MenuAction.ActionArguments arguments, int slotIndex, GameTask task) {
+		if (arguments.clickType() != ClickType.LEFT) {
+			return;
+		}
+
 		if (tagBar.selectedData().isEmpty()) {
 			return;
 		}
 
 		String selectedTag = tagBar.selectedData().getFirst();
 
-		if (task.data.tags().contains(selectedTag)) {
-			task.data.tags().remove(selectedTag);
+		if (task.data().tags().contains(selectedTag)) {
+			task.data().tags().remove(selectedTag);
 		} else {
-			task.data.tags().add(selectedTag);
+			task.data().tags().add(selectedTag);
 		}
 
 		taskGroup.setItem(slotIndex, task, createItemFromTask(task));
@@ -148,12 +144,12 @@ public class TagManagerMenu extends BasicMenu {
 	ItemTemplate createItemFromTask(GameTask task) {
 		ItemTemplate item = task.toItem(CardDisplayInfo.DUMMY_DISPLAY_INFO);
 
-		if (task.data.tags().isEmpty()) {
+		if (task.data().tags().isEmpty()) {
 			return item;
 		}
 
 		List<Component> tags = new ArrayList<>();
-		for (String tag : task.data.tags()) {
+		for (String tag : task.data().tags()) {
 			TaskTagData.TaskTag tagInfo = availableTags.getOrDefault(tag, new TaskTagData.TaskTag(NamedTextColor.WHITE));
 			tags.add(Component.text("<" + tag + "> ").color(tagInfo.color()));
 		}
@@ -166,8 +162,8 @@ public class TagManagerMenu extends BasicMenu {
 		int pageCount = page.getPageCount();
 		Component pageCountDesc = Component.text(String.format("%02d", currentPage + 1) + "/" + String.format("%02d", pageCount));
 
-		ItemTemplate prevPage = PREVIOUS.copyToSlot(0, 5).setLore(pageCountDesc);
-		ItemTemplate nextPage = NEXT.copyToSlot(8, 5).setLore(pageCountDesc);
+		ItemTemplate prevPage = PREVIOUS.copy().setLore(pageCountDesc);
+		ItemTemplate nextPage = NEXT.copy().setLore(pageCountDesc);
 
 		if (currentPage > 0) {
 			addAction(prevPage, (args) -> {
@@ -177,7 +173,7 @@ public class TagManagerMenu extends BasicMenu {
 				});
 			});
 		} else {
-			addItem(BLANK.copyToSlot(0, 5));
+			addItem(BLANK.copyToSlot(0, 1));
 		}
 
 		if (currentPage < pageCount - 1) {
@@ -188,7 +184,7 @@ public class TagManagerMenu extends BasicMenu {
 				});
 			});
 		} else {
-			addItem(BLANK.copyToSlot(8, 5));
+			addItem(BLANK.copyToSlot(8, 1));
 		}
 	}
 }

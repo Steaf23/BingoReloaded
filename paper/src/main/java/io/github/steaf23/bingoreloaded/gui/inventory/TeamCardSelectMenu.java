@@ -4,25 +4,20 @@ import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.lib.api.MenuBoard;
-import io.github.steaf23.bingoreloaded.lib.api.item.ItemTypePaper;
-import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.inventory.FilterType;
-import io.github.steaf23.bingoreloaded.lib.inventory.PaginatedSelectionMenu;
+import io.github.steaf23.bingoreloaded.lib.inventory.PaginatedDataMenu;
+import io.github.steaf23.bingoreloaded.lib.inventory.action.MenuAction;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
-import org.bukkit.event.inventory.InventoryClickEvent;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-public class TeamCardSelectMenu extends PaginatedSelectionMenu
+public class TeamCardSelectMenu extends PaginatedDataMenu<BingoTeam>
 {
     private final BingoSession session;
 
     public TeamCardSelectMenu(MenuBoard board, BingoSession session) {
-        super(board, BingoMessage.SHOW_TEAM_CARD_TITLE.asPhrase(), buildTeamOptions(session), FilterType.DISPLAY_NAME);
+        super(board, BingoMessage.SHOW_TEAM_CARD_TITLE.asPhrase(), session.teamManager.getActiveTeams().getTeams(), FilterType.DISPLAY_NAME);
         this.session = session;
     }
 
@@ -31,31 +26,31 @@ public class TeamCardSelectMenu extends PaginatedSelectionMenu
         return true;
     }
 
+
     @Override
-    public void onOptionClickedDelegate(InventoryClickEvent event, ItemTemplate clickedOption, PlayerHandle player) {
+    public void onOptionClickedDelegate(MenuAction.ActionArguments args, BingoTeam clickedTeam) {
         if (!session.canPlayersViewCard()) {
             return;
         }
 
-        Optional<BingoTeam> team = session.teamManager.getActiveTeams().getById(clickedOption.getCompareKey());
-        if (team.isPresent() && team.get().getCard().isPresent()) {
-            team.get().getCard().get().showInventory(player);
+        if (clickedTeam.getCard().isPresent()) {
+            clickedTeam.getCard().get().showInventory(args.player());
         }
     }
 
-    public static List<ItemTemplate> buildTeamOptions(BingoSession session) {
-        List<ItemTemplate> result = new ArrayList<>();
-        for (BingoTeam team : session.teamManager.getActiveTeams()) {
-            team.getCard().ifPresent(card -> {
-                ItemTemplate item = new ItemTemplate(ItemTypePaper.of(Material.LEATHER_CHESTPLATE),
-                        BingoReloaded.applyTitleFormat(BingoMessage.SHOW_TEAM_CARD_NAME.asPhrase(team.getColoredName())),
-                        INPUT_LEFT_CLICK.append(BingoMessage.SHOW_TEAM_CARD_DESC.asPhrase()))
-                        .setLeatherColor(team.getColor())
-                        .setCompareKey(team.getIdentifier());
-                result.add(item);
-            });
-        }
+    @Override
+    public Material material(BingoTeam bingoTeam, boolean selected) {
+        return Material.LEATHER_CHESTPLATE;
+    }
 
-        return result;
+    @Override
+    public Component displayName(BingoTeam bingoTeam, boolean selected) {
+        return BingoReloaded.applyTitleFormat(BingoMessage.SHOW_TEAM_CARD_NAME.asPhrase(bingoTeam.getColoredName()));
+    }
+
+    @Override
+    public ItemTemplate editItem(ItemTemplate item, BingoTeam bingoTeam, boolean selected) {
+        return item.setLore(INPUT_LEFT_CLICK.append(BingoMessage.SHOW_TEAM_CARD_DESC.asPhrase()))
+                .setLeatherColor(bingoTeam.getColor());
     }
 }

@@ -4,6 +4,7 @@ import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataAccessor;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataStorage;
+import io.github.steaf23.bingoreloaded.lib.data.core.tag.TagDataType;
 import io.github.steaf23.bingoreloaded.tasks.data.TaskData;
 
 import java.util.ArrayList;
@@ -148,6 +149,15 @@ public class BingoCardData {
 		else {
 			return data.getStorageOrEmpty(cardName);
 		}
+	}
+
+	public void setExcludedTags(String cardName, List<String> tags) {
+		data.setList(cardName + ".excluded_tags", TagDataType.STRING, tags);
+		data.saveChanges();
+	}
+
+	public List<String> excludedTags(String cardName) {
+		return data.getList(cardName + ".excluded_tags", TagDataType.STRING);
 	}
 
 	public DataStorage getCardLists(String cardName) {

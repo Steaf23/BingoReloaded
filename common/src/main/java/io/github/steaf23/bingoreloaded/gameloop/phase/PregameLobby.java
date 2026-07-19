@@ -123,6 +123,10 @@ public class PregameLobby implements GamePhase
         player.inventory().addItem(PlayerKit.TEAM_ITEM.buildItem());
     }
 
+    private void giveAdminItem(PlayerHandle player) {
+        player.inventory().addItem(PlayerKit.ADMIN_ITEM.buildItem());
+    }
+
     private void initializePlayer(PlayerHandle player) {
         runtime.settingsDisplay().addPlayer(player);
         player.clearInventory();
@@ -134,6 +138,9 @@ public class PregameLobby implements GamePhase
         }
         if (!config.getOptionValue(BingoOptions.SELECT_TEAMS_USING_COMMANDS_ONLY)) {
             giveTeamItem(player);
+        }
+        if (BingoReloaded.isHost(player)) {
+            giveAdminItem(player);
         }
     }
 
@@ -258,6 +265,9 @@ public class PregameLobby implements GamePhase
             return EventResult.CONSUME;
         } else if (PlayerKit.TEAM_ITEM.isCompareKeyEqual(stack)) {
             BingoReloaded.runtime().openTeamSelector(player, session);
+            return EventResult.CONSUME;
+        } else if (PlayerKit.ADMIN_ITEM.isCompareKeyEqual(stack)) {
+            BingoReloaded.runtime().openBingoMenu(player, session);
             return EventResult.CONSUME;
         }
 

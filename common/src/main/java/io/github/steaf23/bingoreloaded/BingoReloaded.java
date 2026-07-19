@@ -24,6 +24,7 @@ import io.github.steaf23.bingoreloaded.data.serializers.TaskTagStorageSerializer
 import io.github.steaf23.bingoreloaded.data.serializers.TeamTemplateStorageSerializer;
 import io.github.steaf23.bingoreloaded.gameloop.GameManager;
 import io.github.steaf23.bingoreloaded.gameloop.SingularGameManager;
+import io.github.steaf23.bingoreloaded.lib.api.ActionUser;
 import io.github.steaf23.bingoreloaded.lib.api.BingoReloadedRuntime;
 import io.github.steaf23.bingoreloaded.lib.api.PlatformResolver;
 import io.github.steaf23.bingoreloaded.lib.api.ServerSoftware;
@@ -336,6 +337,18 @@ public class BingoReloaded implements Namespaced {
 
 	public static Component applyTitleFormat(String to) {
 		return Component.text(to).color(NamedTextColor.GOLD).decorate(TextDecoration.BOLD);
+	}
+
+	public static boolean isAdmin(ActionUser player) {
+		return player.hasPermission("bingo.admin");
+	}
+
+	public static boolean isHost(ActionUser player) {
+		return player.hasPermission("bingo.host");
+	}
+
+	public static boolean isPlayer(ActionUser player) {
+		return player.hasPermission("bingo.player");
 	}
 
 	public static BingoReloadedRuntime runtime() {

@@ -14,6 +14,13 @@ public abstract class MenuAction
 {
     public record ActionArguments(Menu menu, PlayerHandle player, ClickType clickType)
     {
+        public boolean isLeftClick() {
+            return clickType.isLeftClick();
+        }
+
+        public boolean isRightClick() {
+            return clickType.isRightClick();
+        }
     }
 
     protected ItemTemplate item;

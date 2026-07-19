@@ -2,62 +2,67 @@ package io.github.steaf23.bingoreloaded.lib.inventory;
 
 import io.github.steaf23.bingoreloaded.lib.api.MenuBoard;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemTypePaper;
-import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
-import io.github.steaf23.bingoreloaded.lib.data.core.DataStorage;
 import io.github.steaf23.bingoreloaded.lib.inventory.action.MenuAction;
+import io.github.steaf23.bingoreloaded.lib.inventory.group.ItemRect;
+import io.github.steaf23.bingoreloaded.lib.inventory.group.PaginatedGroup;
+import io.github.steaf23.bingoreloaded.lib.inventory.group.SelectionModel;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
-import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import io.github.steaf23.bingoreloaded.lib.util.PlayerDisplayTranslationKey;
-import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Material;
-import org.bukkit.event.inventory.ClickType;
-import org.bukkit.event.inventory.InventoryClickEvent;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.function.Function;
 
 public abstract class PaginatedDataMenu<Data> extends BasicMenu {
 
+	public static abstract class TextDataMenu extends PaginatedDataMenu<String> {
+
+		public TextDataMenu(MenuBoard board, Component initialTitle, Collection<String> options) {
+			super(board, initialTitle, options);
+		}
+
+		@Override
+		public boolean filterByData(String text, MenuFilterSettings filter) {
+			return text.toLowerCase().contains(filter.name().toLowerCase());
+		}
+	}
+
 	/**
 	 * Called by this Inventory's click event whenever an item in the page window gets clicked.
 	 *
-	 * @param event         the associated inventory click event
+	 * @param arguments     click context
 	 * @param clickedOption item that was clicked on, it's slot being the same slot that was clicked on.
-	 * @param player        player that clicked on the menu.
 	 */
-	public abstract void onOptionClickedDelegate(final InventoryClickEvent event, Data clickedOption, PlayerHandle player);
+	public abstract void onOptionClickedDelegate(MenuAction.ActionArguments arguments, Data clickedOption);
 
-	public abstract ItemTemplate toItem(Data data, boolean isSelected);
-	public abstract boolean filterData(Data data, MenuFilterSettings filter);
+	public abstract Material material(Data data, boolean selected);
+	public abstract Component displayName(Data data, boolean selected);
 
-	// There are 5 rows of items per page
-	public static final int ITEMS_PER_PAGE = 9 * 5;
+	public ItemTemplate editItem(ItemTemplate item, Data data, boolean selected) {
+		return item;
+	}
 
-	// All the items that exist in this picker
-	private final List<Data> allItems;
-
-	// All selected items in this picker by slot id
-	private final Set<Data> selectedItems;
-
-	private Function<Data, Boolean> customFilter;
+	public boolean filterByData(Data data, MenuFilterSettings filter) {
+		return false;
+	}
 
 	// All items that pass the filter, these are always the items shown to the player
-	private final List<Data> filteredItems;
-	private int pageAmount;
-	private int currentPage;
 	private String keywordFilter;
 	private MenuFilterSettings appliedFilter;
+	private boolean filteringSelected = false;
+
+	private final List<FilterType> availableFilters;
 
 	private final MenuAction filterAction;
 	private final MenuAction nextPageAction;
 	private final MenuAction previousPageAction;
+
+	private final PaginatedGroup<Data> pagination;
 
 	protected static final ItemTemplate NEXT = new ItemTemplate(8, 5, ItemTypePaper.of(Material.STRUCTURE_VOID),
 			PlayerDisplayTranslationKey.MENU_NEXT.translate()
@@ -75,19 +80,27 @@ public abstract class PaginatedDataMenu<Data> extends BasicMenu {
 			PlayerDisplayTranslationKey.MENU_FILTER.translate()
 					.color(NamedTextColor.GOLD).decorate(TextDecoration.BOLD));
 
-	public PaginatedDataMenu(MenuBoard board, Component initialTitle, List<Data> options, Function<Data, Boolean> customFilter) {
-		this(board, initialTitle, options, List.of(FilterType.CUSTOM));
-		this.customFilter = customFilter;
+	public PaginatedDataMenu(MenuBoard board, Component initialTitle, Collection<Data> options) {
+		this(board, initialTitle, options, List.of(FilterType.DATA));
 	}
 
-	public PaginatedDataMenu(MenuBoard board, Component initialTitle, List<Data> options, FilterType filterType) {
+	public PaginatedDataMenu(MenuBoard board, Component initialTitle, Collection<Data> options, FilterType filterType) {
 		this(board, initialTitle, options, List.of(filterType));
 	}
 
-	public PaginatedDataMenu(MenuBoard board, Component initialTitle, List<Data> options, List<FilterType> availableFilterTypes) {
-		super(board, initialTitle, 6);
+	public PaginatedDataMenu(MenuBoard board, Component initialTitle, Collection<Data> options, List<FilterType> availableFilterTypes) {
+		this(board, initialTitle, options, availableFilterTypes, new ItemRect(0, 0, 9, 5), SelectionModel.SelectMode.NONE);
+	}
 
-		this.nextPageAction = addAction(NEXT.copy(), args -> this.nextPage());
+	public PaginatedDataMenu(MenuBoard board, Component initialTitle, Collection<Data> options, List<FilterType> availableFilterTypes, ItemRect paginationRect, SelectionModel.SelectMode selectMode) {
+		super(board, initialTitle, 6);
+		this.availableFilters = availableFilterTypes;
+		this.pagination = new PaginatedGroup<>(paginationRect, this::groupItemClicked, selectMode, false);
+
+		this.nextPageAction = addAction(NEXT.copy(), _ -> {
+			this.pagination.nextPage(this);
+			updatePageNavigation();
+		});
 		if (availableFilterTypes.isEmpty() || (availableFilterTypes.size() == 1 && availableFilterTypes.getFirst() == FilterType.NONE)) {
 			addItem(BLANK.copyToSlot(1, 5));
 			this.filterAction = null;
@@ -97,7 +110,10 @@ public abstract class PaginatedDataMenu<Data> extends BasicMenu {
 						.open(args.player());
 			});
 		}
-		this.previousPageAction = addAction(PREVIOUS.copy(), args -> this.previousPage());
+		this.previousPageAction = addAction(PREVIOUS.copy(), _ -> {
+			this.pagination.previousPage(this);
+			updatePageNavigation();
+		});
 
 		addItems(
 				BLANK.copyToSlot(2, 5),
@@ -108,25 +124,22 @@ public abstract class PaginatedDataMenu<Data> extends BasicMenu {
 		);
 		addCloseAction(CLOSE.copy());
 
-		currentPage = 0;
-		allItems = options;
-		selectedItems = new HashSet<>();
-		filteredItems = new ArrayList<>(options);
 		appliedFilter = MenuFilterSettings.EMPTY;
 		clearFilter();
+		pagination.setItems(this::createItem, options);
+		updatePageNavigation();
 	}
 
-	@Override
-	public boolean onClick(InventoryClickEvent event, PlayerHandle player, int clickedSlot, ClickType clickType) {
-		boolean cancel = super.onClick(event, player, clickedSlot, clickType);
+	public boolean isDataSelected(Data data) {
+		return pagination.selection().selectedSlots().contains(getAllItems().indexOf(data));
+	}
 
-		boolean isValidSlot = ITEMS_PER_PAGE * currentPage + event.getRawSlot() < filteredItems.size() && event.getRawSlot() < ITEMS_PER_PAGE;
-		if (isValidSlot) {
-			Data item = filteredItems.get(ITEMS_PER_PAGE * currentPage + event.getRawSlot());
-//			onOptionClickedDelegate(event, item.setSlot(clickedSlot), player);
-			onOptionClickedDelegate(event, item, player);
-		}
-		return cancel;
+	public Collection<Data> getSelectedItems() {
+		return pagination.allSelectedData();
+	}
+
+	private void groupItemClicked(MenuAction.ActionArguments arguments, int slot, Data data) {
+		onOptionClickedDelegate(arguments, data);
 	}
 
 	public void applyFilter(MenuFilterSettings filter) {
@@ -134,136 +147,94 @@ public abstract class PaginatedDataMenu<Data> extends BasicMenu {
 			return;
 		}
 
+		this.pagination.showAllItems();
+
 		appliedFilter = filter;
 		filterAction.item().setLore(Component.text("{" + appliedFilter.name() + "}"));
-		//TODO: automate addItem?
 		addAction(filterAction);
 
-		filteredItems.clear();
+		Function<Data, Boolean> filterCriteria = switch(filter.filterType()) {
+			case MATERIAL -> d -> {
+				String matName = material(d, false).key().value().replace("_", " ").toLowerCase();
+				return matName.contains(filter.name().toLowerCase());
+			};
 
-		for (Data data : allItems) {
-			if (filterData(data, appliedFilter)) {
-				filteredItems.add(data);
+			case DISPLAY_NAME -> d -> {
+				String displayName = PlainTextComponentSerializer.plainText().serialize(displayName(d, false)).toLowerCase();
+				return displayName.contains(filter.name().toLowerCase());
+			};
+			case DATA -> d -> filterByData(d, appliedFilter);
+			case SELECTED -> this::isDataSelected;
+
+			default -> throw new IllegalStateException("Unexpected filter type while filtering menu items: " + filter.filterType());
+		};
+
+		for (int i = 0; i < getAllItems().size(); i++) {
+			Data data = getAllItems().get(i);
+			if (!filterCriteria.apply(data)) {
+				pagination.hideIndex(i);
 			}
 		}
 
-		currentPage = 0;
-		updatePageAmount();
-		updatePage();
+		this.pagination.setPage(this, 0);
+		updatePageNavigation();
 	}
 
 	public MenuFilterSettings getAppliedFilter() {
 		return appliedFilter;
 	}
 
-	public void addItemsToSelect(Collection<Data> newItems) {
-		allItems.addAll(newItems);
+	public void setData(Collection<Data> allData) {
+		this.pagination.setItems(this::createItem, allData);
+		this.pagination.updateVisibleItems(this);
 		clearFilter();
-	}
-
-	public void removeItems(int... itemIndices) {
-		for (int i : itemIndices)
-			allItems.remove(i);
-
-		updatePage();
-	}
-
-	public void clearItems() {
-		allItems.clear();
-		updatePage();
+		updatePageNavigation();
 	}
 
 	public List<Data> getAllItems() {
-		return allItems;
+		return pagination.allData();
 	}
 
-	public Set<Data> getSelectedItems() {
-		return selectedItems;
-	}
 
 	public void selectItem(Data item, boolean value) {
-		if (!allItems.contains(item)) {
+		if (!getAllItems().contains(item)) {
 			return;
 		}
 
-		if (value) {
-			selectedItems.add(item);
-		} else {
-			selectedItems.remove(item);
-		}
-
-		updatePage();
+		pagination.selection().selectManually(getAllItems().indexOf(item), value);
+		pagination.updateVisibleItems(this);
 	}
 
-	protected void nextPage() {
-		updatePageAmount();
-		currentPage = Math.floorMod(currentPage + 1, pageAmount);
-		updatePage();
-	}
-
-	protected void previousPage() {
-		updatePageAmount();
-		currentPage = Math.floorMod(currentPage - 1, pageAmount);
-		updatePage();
-	}
-
-	protected void updatePage() {
-		updatePageAmount();
-
-		int startingIndex = currentPage * ITEMS_PER_PAGE;
-		for (int i = 0; i < ITEMS_PER_PAGE; i++) {
-			if (startingIndex + i < filteredItems.size()) {
-				Data d = filteredItems.get(startingIndex + i);
-				boolean selected = selectedItems.contains(d);
-				ItemTemplate template = toItem(d, selected);
-				template.setGlowing(selectedItems.contains(d));
-				addItem(template.copyToSlot(i));
-			}
-			else {
-				addItem(ItemTemplate.EMPTY.copyToSlot(i));
-			}
-		}
-
+	protected void updatePageNavigation() {
 		//Update Page description e.g. (20/23) for the Next and Previous 'buttons'.
-		Component pageCountDesc = Component.text(String.format("%02d", currentPage + 1) + "/" + String.format("%02d", pageAmount));
+		Component pageCountDesc = Component.text(String.format("%02d", pagination.getCurrentPage() + 1) + "/" + String.format("%02d", pagination.getPageCount()));
 
 		nextPageAction.item().setLore(pageCountDesc);
 		previousPageAction.item().setLore(pageCountDesc);
 		addActions(nextPageAction, previousPageAction);
 	}
 
-	private void updatePageAmount() {
-		pageAmount = Math.max(1, (int) Math.ceil(filteredItems.size() / (double) ITEMS_PER_PAGE));
+	private ItemTemplate createItem(Data data, boolean selected) {
+		ItemTemplate template = new ItemTemplate(ItemTypePaper.of(material(data, selected)), displayName(data, selected));
+		template = editItem(template, data, selected);
+		template.setDummy(true);
+		return template;
 	}
-
-//	/**
-//	 * Replaces the item in the given slot at the current page to the new item. Keeps the item's selection status.
-//	 */
-//	public void replaceItem(ItemTemplate newItem, int slot) {
-//		ItemTemplate oldItem = filteredItems.get(ITEMS_PER_PAGE * currentPage + slot);
-//		replaceItem(newItem, oldItem);
-//	}
-//
-//	public void replaceItem(ItemTemplate newItem, ItemTemplate oldItem) {
-//		if (!allItems.contains(oldItem)) {
-//			return;
-//		}
-//
-//		allItems.set(allItems.indexOf(oldItem), newItem);
-//
-//		if (filteredItems.contains(oldItem))
-//			filteredItems.set(filteredItems.indexOf(oldItem), newItem);
-//
-//		selectedItems.remove(oldItem);
-//	}
 
 	public void clearFilter() {
 		if (appliedFilter.filterType() == FilterType.NONE) {
 			// When we have no filter type, all items pass the filter
-			filteredItems.clear();
-			filteredItems.addAll(allItems);
-			updatePage();
+			pagination.showAllItems();
+			this.pagination.updateVisibleItems(this);
 		}
-		applyFilter(new MenuFilterSettings(FilterType.NONE, ""));
+		applyFilter(new MenuFilterSettings(availableFilters.getFirst(), ""));
+	}
+
+	public void setFilterSelected(boolean value) {
+		if (value) {
+			applyFilter(new MenuFilterSettings(FilterType.SELECTED, ""));
+		} else {
+			clearFilter();
+		}
 	}
 }

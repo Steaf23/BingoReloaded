@@ -1,7 +1,10 @@
 package io.github.steaf23.bingoreloaded.gui.inventory;
 
+import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.BingoCardData;
+import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.TaskTagData;
+import io.github.steaf23.bingoreloaded.lib.api.MenuBoard;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemTypePaper;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.inventory.BasicMenu;
@@ -16,22 +19,18 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
 public class TagExclusionMenu extends BasicMenu {
 
-	private final AdminBingoMenu adminMenu;
-
 	private final BingoCardData cardData;
 	private final String cardName;
 
-	public TagExclusionMenu(AdminBingoMenu adminMenu, BingoCardData cardData, String cardName) {
-		super(adminMenu.getMenuBoard(), Component.text("Excluded tags"), 1);
+	public TagExclusionMenu(MenuBoard board, BingoCardData cardData, String cardName) {
+		super(board, Component.text("Excluded tags"), 1);
 		this.cardData = cardData;
 		this.cardName = cardName;
-		this.adminMenu = adminMenu;
 	}
 
 	@Override
@@ -40,38 +39,41 @@ public class TagExclusionMenu extends BasicMenu {
 
 		ScrollableItemBar<String> tagGroup = new ScrollableItemBar<>(this, 0, 0, 8, SelectionModel.SelectMode.MULTIPLE_OR_NONE);
 
-		ItemTemplate closeItem = new ItemTemplate(8, 0, ItemTypePaper.of(Material.EMERALD), Component.text("Play with ").append(Component.text(cardName).color(NamedTextColor.YELLOW)));
+		ItemTemplate closeItem = new ItemTemplate(8, 0, ItemTypePaper.of(Material.EMERALD), BingoReloaded.applyTitleFormat(BingoMessage.MENU_SAVE.asPhrase()));
 		// Action to use when the player finishes selecting the card and excluded tags.
 		MenuAction closeAction = new MenuAction() {
 			@Override
 			public void use(ActionArguments arguments) {
-				adminMenu.cardAndTagSelected(cardName, tagGroup.selectedData());
+				cardData.setExcludedTags(cardName, tagGroup.selectedData());
 				close(player);
 			}
 		};
+
+		List<String> excludedTags = cardData.excludedTags(cardName);
 
 		// Fill in all the available tags that can be excluded
 		List<ItemTemplate> templates = new ArrayList<>();
 		var availableTags = cardData.tags().getAllTags();
 		List<String> tags = new ArrayList<>();
+		int i = 0;
 		for (String tagName : availableTags.keySet()) {
 			TaskTagData.TaskTag tag = availableTags.get(tagName);
 			ItemTemplate tagItem = ItemTemplate.createColoredLeather(tag.color(), ItemTypePaper.of(Material.LEATHER_HELMET))
 					.setName(Component.text("<" + tagName + ">").color(tag.color()));
-			tagItem = updateTagItemLore(tagItem, false, tagName, availableTags);
+			tagItem = updateTagItemLore(tagItem, excludedTags.contains(tagName), tagName, availableTags);
 			templates.add(tagItem);
 			tags.add(tagName);
+			i++;
 		}
 		tagGroup.setItems(templates, tags);
+		for (String tag : excludedTags) {
+			tagGroup.selection().selectManually(tags.indexOf(tag), true);
+		}
+		tagGroup.updateVisibleItems(this);
 
 		// Action to use when the player toggles a tag to exclude, mainly used to re-render the accept item with correct description.
 		tagGroup.setItemClickedCallback((index, item, s) -> {
 			List<String> selectedTags = tagGroup.selectedData();
-			ItemTemplate newCloseItem = closeItem.copy();
-			if (!selectedTags.isEmpty()) {
-				newCloseItem.setLore(adminMenu.tagDescription(new HashSet<>(selectedTags)));
-			}
-			this.addItem(newCloseItem, closeAction);
 			return updateTagItemLore(item, selectedTags.contains(s), s, availableTags);
 		});
 		this.addItem(closeItem, closeAction);

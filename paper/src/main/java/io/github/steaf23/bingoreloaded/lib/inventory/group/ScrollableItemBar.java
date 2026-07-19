@@ -115,6 +115,10 @@ public class ScrollableItemBar<Data> extends ItemGroup {
 		return dataSet;
 	}
 
+	public SelectionModel selection() {
+		return selection;
+	}
+
 	@FunctionalInterface
 	public interface ItemClickedCallback<Data> {
 		ItemTemplate execute(int index, ItemTemplate item, Data data);

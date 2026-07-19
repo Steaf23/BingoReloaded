@@ -16,7 +16,9 @@ import io.github.steaf23.bingoreloaded.item.GameItem;
 import io.github.steaf23.bingoreloaded.lib.api.BiomeType;
 import io.github.steaf23.bingoreloaded.lib.api.InteractAction;
 import io.github.steaf23.bingoreloaded.lib.api.PlayerGamemode;
+import io.github.steaf23.bingoreloaded.lib.api.PotionEffectInstance;
 import io.github.steaf23.bingoreloaded.lib.api.ServerSoftware;
+import io.github.steaf23.bingoreloaded.lib.api.StatusEffectType;
 import io.github.steaf23.bingoreloaded.lib.api.WorldHandle;
 import io.github.steaf23.bingoreloaded.lib.api.WorldPosition;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
@@ -150,11 +152,6 @@ public class BingoGame implements GamePhase
             session.endGame();
             return;
         }
-		List<String> commandBeforeGame = config.getOptionValue(BingoOptions.SEND_COMMAND_BEFORE_GAME_STARTS);
-        for (String command : commandBeforeGame) {
-            String commandToSend = command.replace("{world}", session.getGameManager().getNameOfSession(session));
-            platform.sendConsoleCommand(commandToSend);
-        }
 
         world.setStorming(false);
         world.setTimeOfDay(1000);
@@ -194,6 +191,10 @@ public class BingoGame implements GamePhase
 
                 p.giveKit(settings.kit());
                 returnCardToPlayer(settings.kit().getCardSlot(), p);
+                player.addEffect(new PotionEffectInstance(StatusEffectType.of("minecraft:resistance"),
+                        BingoReloaded.ONE_SECOND * config.getOptionValue(BingoOptions.STARTING_COUNTDOWN_TIME))
+                        .setAmplifier(100)
+                        .setParticles(false));
                 player.setLevel(0);
                 player.setExp(0.0f);
 				getSession().getGameManager().getRuntime().gameDisplay().addPlayer(player);
@@ -242,6 +243,13 @@ public class BingoGame implements GamePhase
                 playSound(BingoSound.COUNTDOWN_TICK_2.builder().volume(1.2f - time / 10.0f + 0.2f).pitch(pitch).build());
             }
         });
+
+        List<String> commandBeforeGame = config.getOptionValue(BingoOptions.SEND_COMMAND_BEFORE_GAME_STARTS);
+        for (String command : commandBeforeGame) {
+            String commandToSend = command.replace("{world}", session.getGameManager().getNameOfSession(session));
+            platform.sendConsoleCommand(commandToSend);
+        }
+
         platform.runTask(BingoReloaded.ONE_SECOND, task -> startingTimer.start());
     }
 
@@ -390,8 +398,6 @@ public class BingoGame implements GamePhase
 		StackHandle cardItem = getSession().getGameManager().getRuntime().createCardItemForPlayer(participant);
         participant.giveBingoCard(cardSlot, cardItem);
         participant.sessionPlayer().get().setGamemode(PlayerGamemode.SURVIVAL);
-
-        platform.runTask(task -> participant.giveEffects(settings.effects(), config.getOptionValue(BingoOptions.GRACE_PERIOD)));
     }
 
     public void startDeathMatch(int seconds) {
@@ -412,7 +418,7 @@ public class BingoGame implements GamePhase
                     session
             );
 
-            if (!(deathMatchTask.data instanceof ItemTask itemTask)) {
+            if (!(deathMatchTask.data() instanceof ItemTask itemTask)) {
                 ConsoleMessenger.bug("Cannot play deathmatch with a non-item task!", this);
                 end(null);
                 return;
@@ -589,7 +595,7 @@ public class BingoGame implements GamePhase
         }
 
         BingoMessage.COMPLETED.sendToAudience(session, NamedTextColor.AQUA,
-                task.data.getName(),
+                task.data().getName(),
                 participant.getDisplayName().color(team.getColor()).decorate(TextDecoration.BOLD),
                 timeString.color(NamedTextColor.WHITE));
 
@@ -733,6 +739,8 @@ public class BingoGame implements GamePhase
         gameStarted = true;
         playSound(BingoSound.START_COUNTDOWN_FINISHED_1.sound());
         playSound(BingoSound.START_COUNTDOWN_FINISHED_2.sound());
+
+        teamManager.getParticipants().forEach(p -> p.giveEffects(settings.effects(), config.getOptionValue(BingoOptions.GRACE_PERIOD)));
     }
 
     public void onCountdownTimerFinished() {
@@ -745,7 +753,7 @@ public class BingoGame implements GamePhase
         Set<BingoTeam> tiedTeams = new HashSet<>();
         tiedTeams.add(leadingTeam);
 
-        if (settings.mode().canEndInDraw() || leadingTeam == null) {
+        if (!settings.mode().canEndInDraw() || leadingTeam == null) {
             end(null);
             return;
         }
@@ -831,7 +839,7 @@ public class BingoGame implements GamePhase
             // Only show item task as deathmatch tasks.
             if (deathMatchTask == null) {
                 participant.showCard(null);
-            } else if (!(deathMatchTask.data instanceof ItemTask itemTask)) {
+            } else if (!(deathMatchTask.data() instanceof ItemTask itemTask)) {
                 return EventResult.CONSUME;
             } else {
                 participant.showCard(itemTask);

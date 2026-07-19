@@ -334,9 +334,9 @@ public class BingoReloadedPaper extends JavaPlugin implements BingoReloadedRunti
 
 	@Override
 	public void openBingoMenu(PlayerHandle player, BingoSession session) {
-		if (player.hasPermission("bingo.admin")) {
+		if (BingoReloaded.isHost(player)) {
 			new AdminBingoMenu(menuBoard, session).open(player);
-		} else if (player.hasPermission("bingo.player")) {
+		} else if (BingoReloaded.isPlayer(player)) {
 			new TeamSelectionMenu(menuBoard, session).open(player);
 		}
 	}

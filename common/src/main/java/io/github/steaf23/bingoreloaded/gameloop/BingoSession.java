@@ -130,8 +130,8 @@ public class BingoSession implements ForwardingAudience
 
         BingoCardData cardsData = new BingoCardData();
         BingoSettings settings = settingsBuilder.view();
-        if (!cardsData.getCardNames().contains(settings.card().cardName())) {
-            BingoMessage.NO_CARD.sendToAudience(this, NamedTextColor.RED, Component.text(settings.card().cardName()));
+        if (!cardsData.getCardNames().contains(settings.cardName())) {
+            BingoMessage.NO_CARD.sendToAudience(this, NamedTextColor.RED, Component.text(settings.cardName()));
             return false;
         }
 
@@ -390,7 +390,7 @@ public class BingoSession implements ForwardingAudience
     }
 
     public EventResult<?> handlePlayerBlockBreak(PlayerHandle player, WorldPosition position, ItemType block) {
-        if (!isRunning() && config.getOptionValue(BingoOptions.PREVENT_PLAYER_GRIEFING) && !player.hasPermission("bingo.admin")) {
+        if (!isRunning() && config.getOptionValue(BingoOptions.PREVENT_PLAYER_GRIEFING) && !BingoReloaded.isAdmin(player)) {
             BingoMessage.NO_GRIEFING.sendToAudience(player);
             return EventResult.CONSUME;
         }
@@ -398,7 +398,7 @@ public class BingoSession implements ForwardingAudience
     }
 
     public EventResult<?> handlePlayerBlockPlace(PlayerHandle player, WorldPosition position, ItemType block) {
-        if (!isRunning() && config.getOptionValue(BingoOptions.PREVENT_PLAYER_GRIEFING) && !player.hasPermission("bingo.admin")) {
+        if (!isRunning() && config.getOptionValue(BingoOptions.PREVENT_PLAYER_GRIEFING) && !BingoReloaded.isAdmin(player)) {
             BingoMessage.NO_GRIEFING.sendToAudience(player);
             return EventResult.CONSUME;
         }

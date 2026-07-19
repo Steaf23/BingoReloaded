@@ -15,7 +15,7 @@ public class GameTaskSerializer implements DataStorageSerializer<GameTask> {
 		storage.setBoolean("voided", value.isVoided());
 		storage.setUUID("completed_by", value.getCompletedByPlayer().isPresent() ? value.getCompletedByPlayer().get().getId() : null);
 		storage.setLong("completed_at", value.completedAt);
-		storage.setSerializable("task", TaskData.class, value.data);
+		storage.setSerializable("task", TaskData.class, value.data());
 	}
 
 	@Override

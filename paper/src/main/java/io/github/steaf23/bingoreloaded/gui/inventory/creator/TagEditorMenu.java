@@ -7,9 +7,8 @@ import io.github.steaf23.bingoreloaded.lib.api.item.ItemTypePaper;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.inventory.BasicMenu;
 import io.github.steaf23.bingoreloaded.lib.inventory.ColorPickerMenu;
-import io.github.steaf23.bingoreloaded.lib.inventory.FilterType;
 import io.github.steaf23.bingoreloaded.lib.inventory.InventoryMenu;
-import io.github.steaf23.bingoreloaded.lib.inventory.PaginatedSelectionMenu;
+import io.github.steaf23.bingoreloaded.lib.inventory.PaginatedDataMenu;
 import io.github.steaf23.bingoreloaded.lib.inventory.action.MenuAction;
 import io.github.steaf23.bingoreloaded.lib.inventory.action.NameEditAction;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
@@ -18,17 +17,18 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
-import org.bukkit.event.inventory.ClickType;
-import org.bukkit.event.inventory.InventoryClickEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.BiConsumer;
 
-public class TagEditorMenu extends PaginatedSelectionMenu
+public class TagEditorMenu extends PaginatedDataMenu.TextDataMenu
 {
     private final TaskTagData tagData;
+
+    private Map<String, TaskTagData.TaskTag> tagCache = new HashMap<>();
 
     private static final TaskTagData.TaskTag DEFAULT_NEW_TAG = new TaskTagData.TaskTag(TextColor.fromHexString("#808080"));
     private static final String DEFAULT_NEW_TAG_NAME = "my_tag";
@@ -37,29 +37,15 @@ public class TagEditorMenu extends PaginatedSelectionMenu
             Component.text("Create New Tag").color(NamedTextColor.GREEN).decorate(TextDecoration.BOLD));
 
     public TagEditorMenu(MenuBoard manager, TaskTagData tagData) {
-        super(manager, Component.text("Edit Tags"), new ArrayList<>(), FilterType.DISPLAY_NAME);
+        super(manager, Component.text("Edit Tags"), new ArrayList<>());
         this.tagData = tagData;
 
         addAction(CREATE_TAG, arguments -> createTagEditor(DEFAULT_NEW_TAG_NAME).open(arguments.player()));
     }
 
     public void updateDisplay() {
-        clearFilter();
-        clearItems();
-        List<ItemTemplate> items = new ArrayList<>();
-
-        var tagMap = tagData.getCustomTags();
-        for (String key : tagMap.keySet()) {
-            TaskTagData.TaskTag tag = tagMap.get(key);
-            items.add(new ItemTemplate(ItemTypePaper.of(Material.NAME_TAG))
-                    .setName(Component.text("<" + key + ">").color(tag.color()))
-                    .setLore(Component.text("id: ").append(Component.text(key).color(NamedTextColor.GRAY).decorate(TextDecoration.ITALIC)))
-                    .setCompareKey(key)
-                    .addDescription("input", 5,
-                            InventoryMenu.INPUT_LEFT_CLICK.append(Component.text("edit tag")),
-                            InventoryMenu.INPUT_RIGHT_CLICK.append(Component.text("remove tag"))));
-        }
-        addItemsToSelect(items);
+        tagCache = tagData.getCustomTags();
+        setData(tagCache.keySet());
     }
 
     public BasicMenu createTagEditor(@NotNull String tagKey) {
@@ -67,20 +53,38 @@ public class TagEditorMenu extends PaginatedSelectionMenu
     }
 
     @Override
-    public void onOptionClickedDelegate(InventoryClickEvent event, ItemTemplate clickedOption, PlayerHandle player) {
-        String key = clickedOption.getCompareKey();
-        if (event.getClick() == ClickType.RIGHT) {
-            tagData.removeTag(key);
+    public void beforeOpening(PlayerHandle player) {
+        updateDisplay();
+        super.beforeOpening(player);
+    }
+
+    @Override
+    public void onOptionClickedDelegate(MenuAction.ActionArguments args, String clickedOption) {
+        if (args.isRightClick()) {
+            tagData.removeTag(clickedOption);
             updateDisplay();
         } else {
-            createTagEditor(key).open(player);
+            createTagEditor(clickedOption).open(args.player());
         }
     }
 
     @Override
-    public void beforeOpening(PlayerHandle player) {
-        updateDisplay();
-        super.beforeOpening(player);
+    public Material material(String s, boolean selected) {
+        return Material.NAME_TAG;
+    }
+
+    @Override
+    public Component displayName(String key, boolean selected) {
+        TaskTagData.TaskTag tag = tagCache.get(key);
+        return Component.text("<" + key + ">").color(tag.color());
+    }
+
+    @Override
+    public ItemTemplate editItem(ItemTemplate item, String key, boolean selected) {
+        return item.setLore(Component.text("id: ").append(Component.text(key).color(NamedTextColor.GRAY).decorate(TextDecoration.ITALIC)))
+                .addDescription("input", 5,
+                        InventoryMenu.INPUT_LEFT_CLICK.append(Component.text("edit tag")),
+                        InventoryMenu.INPUT_RIGHT_CLICK.append(Component.text("remove tag")));
     }
 
     static class TagEdit extends BasicMenu
