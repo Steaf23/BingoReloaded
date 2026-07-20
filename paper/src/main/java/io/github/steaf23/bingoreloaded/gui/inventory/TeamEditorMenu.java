@@ -15,6 +15,7 @@ import io.github.steaf23.bingoreloaded.lib.inventory.action.MenuAction;
 import io.github.steaf23.bingoreloaded.lib.inventory.action.NameEditAction;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import io.github.steaf23.bingoreloaded.lib.util.BlockColor;
+import io.github.steaf23.bingoreloaded.lib.util.ComponentUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
@@ -106,37 +107,7 @@ public class TeamEditorMenu extends PaginatedDataMenu<String>
             this.templateToEdit = teamToEdit;
             this.finishedCallback = callback;
 
-            addAction(getTeamNameAction());
-
-            // Add action to change the team's color.
-            ItemTemplate teamColorItem = new ItemTemplate(3, 1, ItemTypePaper.of(Material.LEATHER_CHESTPLATE), Component.text("Color").color(templateToEdit.color()).decorate(TextDecoration.BOLD))
-                    .setLeatherColor(templateToEdit.color());
-
-            // TODO: maybe find a less cursed way to fix this?
-            addAction(teamColorItem, args -> {
-                new ColorPickerMenu(getMenuBoard(), Component.text("Pick team color"), (result) -> {
-                    // Update template
-                    templateToEdit = new TeamData.TeamTemplate(templateToEdit.stringName(), result, templateToEdit.dyeColor());
-
-                    // Update menu item
-                    teamColorItem.setLeatherColor(templateToEdit.color())
-                            .setName(Component.text("Color").color(templateToEdit.color()).decorate(TextDecoration.BOLD));
-                    this.addItem(teamColorItem);
-                }).open(args.player());
-            });
-
-            ItemTemplate dyeColorItem = new ItemTemplate(5, 1, templateToEdit.dyeColor().dye,
-                    BingoReloaded.applyTitleFormat("Dye Color"), Component.text("Color used for kit items (Team Shulker, etc...)"));
-
-            addAction(dyeColorItem, args -> {
-                new DyePickerMenu(getMenuBoard(), (result) -> {
-                    templateToEdit = new TeamData.TeamTemplate(templateToEdit.stringName(), templateToEdit.color(), result);
-
-                    // Update menu item
-                    dyeColorItem.setItemType(result.dye);
-                    this.addItem(dyeColorItem);
-                }).open(args.player());
-            });
+            addActions(getTeamNameAction(), getTeamColorAction(), getDyeColorAction());
 
             addCloseAction(new ItemTemplate(7, 1, ItemTypePaper.of(Material.BARRIER),
                     BingoMessage.MENU_EXIT.asPhrase().color(NamedTextColor.RED).decorate(TextDecoration.BOLD)));
@@ -147,12 +118,48 @@ public class TeamEditorMenu extends PaginatedDataMenu<String>
                     templateToEdit.nameComponent(),
                     Component.text("Supports minimessage formatting").color(NamedTextColor.AQUA).decorate(TextDecoration.ITALIC));
 
-            MenuAction action = new NameEditAction(Component.text("Edit team name"), getMenuBoard(), templateToEdit.stringName(), (value, item) -> {
+            MenuAction action = new NameEditAction(Component.text("Edit team name"), getMenuBoard(), templateToEdit.stringName(), (value, _) -> {
                 templateToEdit = new TeamData.TeamTemplate(value, templateToEdit.color(), templateToEdit.dyeColor());
-                //TODO: find a way to do addItem(teamNameItem); automatically??
-                addItem(item);
+                addAction(getTeamNameAction());
             });
             action.setItem(teamNameItem);
+            return action;
+        }
+
+        private @NotNull MenuAction getTeamColorAction() {
+            ItemTemplate teamColorItem = new ItemTemplate(3, 1, ItemTypePaper.of(Material.LEATHER_CHESTPLATE),
+                    Component.text("Color").color(templateToEdit.color()).decorate(TextDecoration.BOLD))
+                    .setLeatherColor(templateToEdit.color());
+
+            MenuAction action = new MenuAction() {
+                @Override
+                public void use(ActionArguments arguments) {
+                    new ColorPickerMenu(getMenuBoard(), Component.text("Pick team color"), (result) -> {
+                        templateToEdit = new TeamData.TeamTemplate(templateToEdit.stringName(), result, templateToEdit.dyeColor());
+                        addAction(getTeamColorAction());
+                    }).open(arguments.player());
+                }
+            };
+            action.setItem(teamColorItem);
+            return action;
+        }
+
+        private @NotNull MenuAction getDyeColorAction() {
+            ItemTemplate dyeColorItem = new ItemTemplate(5, 1, templateToEdit.dyeColor().dye,
+                    BingoReloaded.applyTitleFormat("Dye Color"),
+                    ComponentUtils.itemName(templateToEdit.dyeColor().dye).color(templateToEdit.dyeColor().textColor).decorate(TextDecoration.ITALIC),
+                    Component.text("Color used for kit items (Team Shulker, etc...)").color(NamedTextColor.GRAY));
+
+            MenuAction action = new MenuAction() {
+                @Override
+                public void use(ActionArguments arguments) {
+                    new DyePickerMenu(getMenuBoard(), (result) -> {
+                        templateToEdit = new TeamData.TeamTemplate(templateToEdit.stringName(), templateToEdit.color(), result);
+                        addAction(getDyeColorAction());
+                    }).open(arguments.player());
+                }
+            };
+            action.setItem(dyeColorItem);
             return action;
         }
 
