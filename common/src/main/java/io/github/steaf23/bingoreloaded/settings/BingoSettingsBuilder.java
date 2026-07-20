@@ -2,7 +2,6 @@ package io.github.steaf23.bingoreloaded.settings;
 
 import io.github.steaf23.bingoreloaded.cards.CardSize;
 import io.github.steaf23.bingoreloaded.data.BingoSettingsData;
-import io.github.steaf23.bingoreloaded.data.record.BingoCard;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gameloop.vote.VoteTicket;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
@@ -12,14 +11,13 @@ import io.github.steaf23.bingoreloaded.settings.gamemode.BingoGamemodes;
 
 import java.util.EnumSet;
 import java.util.Objects;
-import java.util.Set;
 
 public class BingoSettingsBuilder {
 	// empty when this builder has changed. The preset name is not stored in the actual settings, only used by the builder.
 	private String preset;
 
 	private final BingoSession session;
-	private BingoCard card;
+	private String cardName;
 	private BingoGamemode mode;
 	private CardSize cardSize;
 	private int cardSeed;
@@ -54,7 +52,7 @@ public class BingoSettingsBuilder {
 	}
 
 	public void fromOther(BingoSettings settings, String preset, boolean sendUpdated) {
-		card = settings.card();
+		cardName = settings.cardName();
 		mode = settings.mode();
 		cardSize = settings.size();
 		cardSeed = settings.seed();
@@ -93,7 +91,7 @@ public class BingoSettingsBuilder {
 
 		String newCard = VoteTicket.CATEGORY_CARD.getValidResultOrNull(voteResult);
 		if (newCard != null) {
-			resultBuilder.card = new BingoCard(newCard, resultBuilder.card.excludedTags());
+			resultBuilder.cardName = newCard;
 		}
 
 		CardSize newCardsize = VoteTicket.CATEGORY_CARDSIZE.getValidResultOrNull(voteResult);
@@ -105,16 +103,8 @@ public class BingoSettingsBuilder {
 	}
 
 	public BingoSettingsBuilder cardName(String card) {
-		if (!Objects.equals(this.card.cardName(), card)) {
-			this.card = new BingoCard(card, this.card.excludedTags());
-			settingsUpdated();
-		}
-		return this;
-	}
-
-	public BingoSettingsBuilder excludedTags(Set<String> tags) {
-		if (!Objects.equals(this.card.excludedTags(), tags)) {
-			this.card = new BingoCard(this.card.cardName(), tags);
+		if (!Objects.equals(this.cardName, card)) {
+			this.cardName = card;
 			settingsUpdated();
 		}
 		return this;
@@ -270,7 +260,7 @@ public class BingoSettingsBuilder {
 	public BingoSettings view() {
 		// Always generate a new id for the settings, by far the easiest way...
 		return new BingoSettings(
-				card,
+				cardName,
 				mode,
 				cardSize,
 				cardSeed,

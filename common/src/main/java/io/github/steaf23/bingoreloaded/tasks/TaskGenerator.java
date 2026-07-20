@@ -3,7 +3,6 @@ package io.github.steaf23.bingoreloaded.tasks;
 import io.github.steaf23.bingoreloaded.cards.CardSize;
 import io.github.steaf23.bingoreloaded.data.BingoCardData;
 import io.github.steaf23.bingoreloaded.data.TaskListData;
-import io.github.steaf23.bingoreloaded.data.config.BingoOptions;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
@@ -15,10 +14,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.Set;
 
 public class TaskGenerator
 {
@@ -26,8 +25,7 @@ public class TaskGenerator
             String cardName,
             int seed,
             EnumSet<TaskData.TaskType> includedTypes,
-            CardSize size,
-            Set<String> blacklistedTags) {}
+            CardSize size) {}
 
     private static final TaskData DEFAULT_TASK = new ItemTask(ItemType.of("dirt"), 1);
 
@@ -53,7 +51,7 @@ public class TaskGenerator
 
         Map<String, List<TaskData>> taskMap = new HashMap<>();
         for (String listName : cardsData.getListNames(settings.cardName)) {
-            List<TaskData> tasks = new ArrayList<>(filterBySettings(listsData.getTasks(listName, settings.includedTypes), settings));
+            List<TaskData> tasks = new ArrayList<>(filterBySettings(cardsData, listsData.getTasks(listName, settings.includedTypes), settings));
             if (!tasks.isEmpty()) {
                 Collections.shuffle(tasks, shuffler);
                 taskMap.put(listName, tasks);
@@ -120,13 +118,6 @@ public class TaskGenerator
 
     public static GeneratorSettings generatorSettingsFromGame(BingoGame game) {
         BingoSettings settings = game.getSettings();
-        Set<String> tags = settings.card().excludedTags();
-        if (game.getConfig().getOptionValue(BingoOptions.DISABLE_NETHER)) {
-            tags.add("nether");
-        }
-        if (game.getConfig().getOptionValue(BingoOptions.DISABLE_THE_END)) {
-            tags.add("the_end");
-        }
 
         EnumSet<TaskData.TaskType> set = EnumSet.of(TaskData.TaskType.ITEM);
         if (game.useAdvancements()) {
@@ -137,17 +128,16 @@ public class TaskGenerator
         }
 
         return new TaskGenerator.GeneratorSettings(
-                settings.card().cardName(),
+                settings.cardName(),
                 settings.seed(),
                 set,
-                settings.size(),
-                tags);
+                settings.size());
     }
 
     public static GameTask generateDeathmatchTask(BingoGame game) {
         GeneratorSettings settings = TaskGenerator.generatorSettingsFromGame(game);
         BingoCardData cardData = new BingoCardData();
-        List<TaskData> allTasks = TaskGenerator.filterBySettings(cardData.getAllTasks(settings.cardName, EnumSet.of(TaskData.TaskType.ITEM)), settings);
+        List<TaskData> allTasks = TaskGenerator.filterBySettings(cardData, cardData.getAllTasks(settings.cardName, EnumSet.of(TaskData.TaskType.ITEM)), settings);
 
         Random generator = new Random(settings.seed);
 
@@ -157,9 +147,9 @@ public class TaskGenerator
             return new GameTask(DEFAULT_TASK);
     }
 
-    public static List<TaskData> filterBySettings(List<TaskData> tasks, GeneratorSettings settings) {
+    public static List<TaskData> filterBySettings(BingoCardData cardData, List<TaskData> tasks, GeneratorSettings settings) {
         return tasks.stream()
-                .filter(taskData -> !taskData.hasAnyTag(settings.blacklistedTags))
+                .filter(taskData -> !taskData.hasAnyTag(new HashSet<>(cardData.excludedTags(settings.cardName()))))
                 .toList();
     }
 

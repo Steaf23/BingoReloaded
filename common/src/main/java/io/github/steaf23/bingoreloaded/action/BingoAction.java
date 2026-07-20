@@ -284,7 +284,7 @@ public class BingoAction extends ActionTree {
 			}
 			BingoStatData statsData = new BingoStatData(gameManager.getPlatform());
 			Component msg;
-			if (args.length > 1 && BingoReloaded.isHost(getLastUser())) {
+			if (args.length > 1 && BingoReloaded.isAdmin(getLastUser())) {
 				msg = statsData.getPlayerStatsFormatted(args[1]);
 			} else {
 				if (!(getLastUser() instanceof PlayerHandle player)) {

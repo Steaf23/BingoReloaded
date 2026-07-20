@@ -130,8 +130,8 @@ public class BingoSession implements ForwardingAudience
 
         BingoCardData cardsData = new BingoCardData();
         BingoSettings settings = settingsBuilder.view();
-        if (!cardsData.getCardNames().contains(settings.card().cardName())) {
-            BingoMessage.NO_CARD.sendToAudience(this, NamedTextColor.RED, Component.text(settings.card().cardName()));
+        if (!cardsData.getCardNames().contains(settings.cardName())) {
+            BingoMessage.NO_CARD.sendToAudience(this, NamedTextColor.RED, Component.text(settings.cardName()));
             return false;
         }
 

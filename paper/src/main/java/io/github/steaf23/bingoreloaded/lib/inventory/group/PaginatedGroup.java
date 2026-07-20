@@ -36,7 +36,7 @@ public class PaginatedGroup<Data> extends ItemGroup {
 	}
 
 	public PaginatedGroup(int startX, int startY, int sizeX, int sizeY, @Nullable DataClickedCallback<Data> dataClicked, SelectionModel.SelectMode mode, boolean allowUserSelection) {
-		this(new ItemRect(startX, startY, sizeX, sizeY), dataClicked, SelectionModel.SelectMode.NONE, allowUserSelection);
+		this(new ItemRect(startX, startY, sizeX, sizeY), dataClicked, mode, allowUserSelection);
 	}
 
 	public PaginatedGroup(ItemRect rect, @Nullable DataClickedCallback<Data> dataClicked, SelectionModel.SelectMode selectMode, boolean allowUserSelection) {
@@ -174,7 +174,7 @@ public class PaginatedGroup<Data> extends ItemGroup {
 			for (int i : indicesOnPage) { // Importantly, if items are hidden, this list might not be in consecutive order.
 				int globalSlot = pageIndexToGlobal(indexOnPage);
 				Data data = allData.get(i);
-				ItemTemplate item = itemFunction.apply(data, selection.contains(i)).copyToSlot(globalSlot);
+				ItemTemplate item = getOrCreateItemAtDataIndex(i).copyToSlot(globalSlot);
 				if (selection.mode() != SelectionModel.SelectMode.NONE) {
 					item.setGlowing(selection.contains(i));
 				}
@@ -192,8 +192,7 @@ public class PaginatedGroup<Data> extends ItemGroup {
 		});
 	}
 
-	public void onClick(MenuAction.ActionArguments arguments, int slotInPage, Data data) {
-		int indexInList = currentPage * rect().getSlotCount() + slotInPage;
+	public void onClick(MenuAction.ActionArguments arguments, int indexInList, Data data) {
 		if (allowUserSelection) {
 			selection.toggleSlot(indexInList);
 		}

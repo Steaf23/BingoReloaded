@@ -139,7 +139,7 @@ public class BingoReloadedPlaceholderExpansion extends PlaceholderExpansion
                     yield defaultComponent;
                 }
                 else {
-                    yield Component.text(settings.card().cardName());
+                    yield Component.text(settings.cardName());
                 }
             }
             case SETTING_KIT -> {
