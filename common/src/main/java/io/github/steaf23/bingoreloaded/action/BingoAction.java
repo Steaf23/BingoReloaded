@@ -12,6 +12,7 @@ import io.github.steaf23.bingoreloaded.gameloop.GameManager;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.gameloop.phase.PregameLobby;
 import io.github.steaf23.bingoreloaded.item.GoUpWand;
+import io.github.steaf23.bingoreloaded.item.TeamPouch;
 import io.github.steaf23.bingoreloaded.lib.action.ActionResult;
 import io.github.steaf23.bingoreloaded.lib.action.ActionTree;
 import io.github.steaf23.bingoreloaded.lib.api.ActionUser;
@@ -329,7 +330,7 @@ public class BingoAction extends ActionTree {
 			}
 			return giveUserBingoItem(player, args[0]);
 		})
-				.addTabCompletion(args -> List.of("wand", "card"))
+				.addTabCompletion(args -> List.of("wand", "pouch", "card"))
 				.addUsage("<item_name>");
 
 
@@ -468,7 +469,11 @@ public class BingoAction extends ActionTree {
 
 		return switch (itemName) {
 			case "wand" -> {
-				player.inventory().addItem(session.items().createStack(GoUpWand.ID));
+				player.inventory().addItem(session.items().createStack(GoUpWand.ID, null));
+				yield ActionResult.SUCCESS;
+			}
+			case "pouch" -> {
+				player.inventory().addItem(session.items().createStack(TeamPouch.ID, null));
 				yield ActionResult.SUCCESS;
 			}
 			case "card" -> {

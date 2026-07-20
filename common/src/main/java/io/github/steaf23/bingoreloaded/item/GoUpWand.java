@@ -21,6 +21,7 @@ import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
+import org.jetbrains.annotations.Nullable;
 
 public class GoUpWand extends GameItem {
 
@@ -31,12 +32,13 @@ public class GoUpWand extends GameItem {
 	}
 
 	@Override
-	public ItemTemplate defaultTemplate() {
+	public ItemTemplate createForParticipant(@Nullable BingoParticipant participant) {
 		return new ItemTemplate(
 				ItemType.of(Key.key("warped_fungus_on_a_stick")),
-				BingoMessage.WAND_ITEM_NAME.asPhrase().color(NamedTextColor.DARK_PURPLE).decorate(TextDecoration.BOLD, TextDecoration.ITALIC),
-				BingoMessage.WAND_ITEM_DESC.asMultiline())
-				.addEnchantment(Key.key("minecraft:unbreaking"), 3);
+				BingoMessage.ITEM_WAND_NAME.asPhrase().color(NamedTextColor.DARK_PURPLE).decorate(TextDecoration.BOLD, TextDecoration.ITALIC),
+				BingoMessage.ITEM_WAND_DESC.asMultiline())
+				.addEnchantment(Key.key("minecraft:unbreaking"), 3)
+				.setGlowing(true);
 	}
 
 	@Override

@@ -46,7 +46,7 @@ public class DataUpdaterV3_5_0 extends DataUpdaterV3_3_0 {
 			for (SerializableItem item : immutableList) {
 				if (item.stack().compareKey().equals("wand")) {
 					itemsCopy.remove(index);
-					itemsCopy.add(index, new SerializableItem(item.slot(), items.createStack(GoUpWand.ID)));
+					itemsCopy.add(index, new SerializableItem(item.slot(), items.createStack(GoUpWand.ID, null)));
 					updated = true;
 				}
 

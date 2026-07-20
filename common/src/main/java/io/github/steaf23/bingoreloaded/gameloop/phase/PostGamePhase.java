@@ -51,7 +51,7 @@ public class PostGamePhase implements GamePhase
 		}
 
         for (BingoTeam team : session.teamManager.getActiveTeams()) {
-            team.setCard(null);
+            team.setup(null);
         }
     }
 

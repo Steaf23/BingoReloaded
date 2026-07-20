@@ -1,6 +1,8 @@
 package io.github.steaf23.bingoreloaded.lib.api;
 
 import io.github.steaf23.bingoreloaded.data.helper.ResourceFileHelper;
+import io.github.steaf23.bingoreloaded.lib.api.item.InventoryHandle;
+import io.github.steaf23.bingoreloaded.lib.api.item.InventoryHandlePaper;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemTypePaper;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackBuilderPaper;
@@ -14,6 +16,7 @@ import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import io.papermc.paper.datacomponent.item.DyedItemColor;
 import net.kyori.adventure.key.Key;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
 import org.bukkit.Bukkit;
@@ -251,6 +254,11 @@ public class PaperServerSoftware implements ServerSoftware {
 		}
 
 		return true;
+	}
+
+	@Override
+	public InventoryHandle createInventory(Component title, int rows) {
+		return new InventoryHandlePaper(Bukkit.createInventory(null, rows * 9, title));
 	}
 
 	@Override

@@ -17,6 +17,7 @@ import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import io.github.steaf23.bingoreloaded.tasks.data.ItemTask;
 import net.kyori.adventure.audience.Audience;
+import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.jetbrains.annotations.NotNull;
@@ -91,11 +92,17 @@ public class BingoPlayer implements BingoParticipant
         inv.clearContents();
         items.forEach(i ->
         {
-            TagDataStorage store = i.stack().getStorage();
+            // replace stack with a player customized item if it's a bingo item.
+            StackHandle stack = session.items().createStack(Key.key(i.stack().compareKey()), this);
+            if (stack == null) {
+                stack = i.stack();
+            }
+
+            TagDataStorage store = stack.getStorage();
 
             store.setBoolean("kit_item", true);
-            i.stack().setStorage(store);
-            inv.setItem(i.slot(), i.stack());
+            stack.setStorage(store);
+            inv.setItem(i.slot(), stack);
         });
     }
 

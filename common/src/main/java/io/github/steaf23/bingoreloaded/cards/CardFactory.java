@@ -41,19 +41,17 @@ public class CardFactory
         if (game.getSettings().differentCardPerTeam() && masterCard.canGenerateSeparateCards()) {
             // Generate a new card for each team.
             game.getTeamManager().getActiveTeams().forEach(t -> {
-                t.outOfTheGame = false;
                 TaskCard card = masterCard.copy(BingoMessage.SHOW_TEAM_CARD_NAME.asPhrase(t.getColoredName()));
                 card.generateCard(generatorSettings);
-                t.setCard(card);
+                t.setup(card);
                 uniqueCards.add(card);
             });
         } else {
             // Otherwise generate the card only once and copy it for all teams
             masterCard.generateCard(generatorSettings);
             game.getTeamManager().getActiveTeams().forEach(t -> {
-                t.outOfTheGame = false;
                 TaskCard card = masterCard.copy(BingoMessage.SHOW_TEAM_CARD_NAME.asPhrase(t.getColoredName()));
-                t.setCard(card);
+                t.setup(card);
                 uniqueCards.add(card);
             });
         }

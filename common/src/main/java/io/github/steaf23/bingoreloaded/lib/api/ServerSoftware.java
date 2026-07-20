@@ -1,11 +1,13 @@
 package io.github.steaf23.bingoreloaded.lib.api;
 
+import io.github.steaf23.bingoreloaded.lib.api.item.InventoryHandle;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerInfo;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import net.kyori.adventure.key.Key;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
 import org.jetbrains.annotations.NotNull;
@@ -64,6 +66,8 @@ public interface ServerSoftware {
 	@Nullable WorldHandle createWorld(WorldOptions options);
 	boolean unloadWorld(@NotNull WorldHandle world, boolean save);
 	boolean deleteWorld(@NotNull Key worldKey);
+
+	InventoryHandle createInventory(Component title, int rows);
 
 	StackHandle createStack(ItemType type, int amount);
 	StackHandle createStackFromBytes(byte[] bytes);

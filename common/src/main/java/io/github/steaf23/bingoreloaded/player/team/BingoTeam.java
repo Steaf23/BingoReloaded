@@ -1,6 +1,9 @@
 package io.github.steaf23.bingoreloaded.player.team;
 
 import io.github.steaf23.bingoreloaded.cards.TaskCard;
+import io.github.steaf23.bingoreloaded.data.BingoMessage;
+import io.github.steaf23.bingoreloaded.lib.api.PlatformResolver;
+import io.github.steaf23.bingoreloaded.lib.api.item.InventoryHandle;
 import io.github.steaf23.bingoreloaded.lib.util.BlockColor;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
@@ -21,6 +24,8 @@ public class BingoTeam implements ForwardingAudience
 {
     private TaskCard card;
     public boolean outOfTheGame = false;
+    private InventoryHandle teamStorage;
+
     private final String id;
     private final TextColor color;
     private final Component name;
@@ -39,12 +44,20 @@ public class BingoTeam implements ForwardingAudience
         this.dyeColor = dyeColor;
     }
 
+    public void reset() {
+    }
+
     public Optional<TaskCard> getCard() {
         return Optional.ofNullable(card);
     }
 
-    public void setCard(TaskCard card) {
+    public void setup(TaskCard card) {
         this.card = card;
+
+        if (this.card != null) {
+            this.outOfTheGame = false;
+            this.teamStorage = PlatformResolver.get().createInventory(BingoMessage.ITEM_POUCH_NAME.asPhrase(), 3);
+        }
     }
 
     public String getIdentifier() {
@@ -110,6 +123,10 @@ public class BingoTeam implements ForwardingAudience
 
     public Component getPrefix() {
         return prefix;
+    }
+
+    public InventoryHandle storage() {
+        return teamStorage;
     }
 
     @Override

@@ -8,6 +8,7 @@ import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.key.Keyed;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public abstract class GameItem implements Keyed {
 
@@ -26,7 +27,7 @@ public abstract class GameItem implements Keyed {
 		return false;
 	}
 
-	public abstract ItemTemplate defaultTemplate();
+	public abstract ItemTemplate createForParticipant(@Nullable BingoParticipant participant);
 
 	public abstract EventResult<?> use(StackHandle stack, BingoParticipant participant, BingoConfigurationData config);
 }

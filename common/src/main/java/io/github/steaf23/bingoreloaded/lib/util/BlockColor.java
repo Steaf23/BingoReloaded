@@ -5,41 +5,69 @@ import net.kyori.adventure.text.format.TextColor;
 
 public enum BlockColor
 {
-    BROWN("brown", TextColor.fromHexString("#734829"), ItemType.of("brown_dye"), ItemType.of("brown_concrete"), ItemType.of("brown_stained_glass_pane"), ItemType.of("brown_banner")),
-    ORANGE("orange", TextColor.fromHexString("#f17716"), ItemType.of("orange_dye"), ItemType.of("orange_concrete"), ItemType.of("orange_stained_glass_pane"), ItemType.of("orange_banner")),
-    WHITE("white", TextColor.fromHexString("#eaeded"), ItemType.of("white_dye"), ItemType.of("white_concrete"), ItemType.of("white_stained_glass_pane"), ItemType.of("white_banner")),
-    GRAY("gray", TextColor.fromHexString("#3f4548"), ItemType.of("gray_dye"), ItemType.of("gray_concrete"), ItemType.of("gray_stained_glass_pane"), ItemType.of("gray_banner")),
-    LIGHT_GRAY("light_gray", TextColor.fromHexString("#8e8f87"), ItemType.of("light_gray_dye"), ItemType.of("light_gray_concrete"), ItemType.of("light_gray_stained_glass_pane"), ItemType.of("light_gray_banner")),
-    BLACK("black", TextColor.fromHexString("#16161b"), ItemType.of("black_dye"), ItemType.of("black_concrete"), ItemType.of("black_stained_glass_pane"), ItemType.of("black_banner")),
-    BLUE("blue", TextColor.fromHexString("#353a9e"), ItemType.of("blue_dye"), ItemType.of("blue_concrete"), ItemType.of("blue_stained_glass_pane"), ItemType.of("blue_banner")),
-    LIGHT_BLUE("light_blue", TextColor.fromHexString("#3cb0da"), ItemType.of("light_blue_dye"), ItemType.of("light_blue_concrete"), ItemType.of("light_blue_stained_glass_pane"), ItemType.of("light_blue_banner")),
-    GREEN("green", TextColor.fromHexString("#556e1c"), ItemType.of("green_dye"), ItemType.of("green_concrete"), ItemType.of("green_stained_glass_pane"), ItemType.of("green_banner")),
-    LIME("lime", TextColor.fromHexString("#71ba1a"), ItemType.of("lime_dye"), ItemType.of("lime_concrete"), ItemType.of("lime_stained_glass_pane"), ItemType.of("lime_banner")),
-    MAGENTA("magenta", TextColor.fromHexString("#be46b5"), ItemType.of("magenta_dye"), ItemType.of("magenta_concrete"), ItemType.of("magenta_stained_glass_pane"), ItemType.of("magenta_banner")),
-    PURPLE("purple", TextColor.fromHexString("#7b2bad"), ItemType.of("purple_dye"), ItemType.of("purple_concrete"), ItemType.of("purple_stained_glass_pane"), ItemType.of("purple_banner")),
-    PINK("pink", TextColor.fromHexString("#ee90ad"), ItemType.of("pink_dye"), ItemType.of("pink_concrete"), ItemType.of("pink_stained_glass_pane"), ItemType.of("pink_banner")),
-    RED("red", TextColor.fromHexString("#a12823"), ItemType.of("red_dye"), ItemType.of("red_concrete"), ItemType.of("red_stained_glass_pane"), ItemType.of("red_banner")),
-    YELLOW("yellow", TextColor.fromHexString("#f9c629"), ItemType.of("yellow_dye"), ItemType.of("yellow_concrete"), ItemType.of("yellow_stained_glass_pane"), ItemType.of("yellow_banner")),
-    CYAN("cyan", TextColor.fromHexString("#158a91"), ItemType.of("cyan_dye"), ItemType.of("cyan_concrete"), ItemType.of("cyan_stained_glass_pane"), ItemType.of("cyan_banner")),
+    BROWN("brown", TextColor.fromHexString("#734829")),
+    ORANGE("orange", TextColor.fromHexString("#f17716")),
+    WHITE("white", TextColor.fromHexString("#eaeded")),
+    GRAY("gray", TextColor.fromHexString("#3f4548")),
+    LIGHT_GRAY("light_gray", TextColor.fromHexString("#8e8f87")),
+    BLACK("black", TextColor.fromHexString("#16161b")),
+    BLUE("blue", TextColor.fromHexString("#353a9e")),
+    LIGHT_BLUE("light_blue", TextColor.fromHexString("#3cb0da")),
+    GREEN("green", TextColor.fromHexString("#556e1c")),
+    LIME("lime", TextColor.fromHexString("#71ba1a")),
+    MAGENTA("magenta", TextColor.fromHexString("#be46b5")),
+    PURPLE("purple", TextColor.fromHexString("#7b2bad")),
+    PINK("pink", TextColor.fromHexString("#ee90ad")),
+    RED("red", TextColor.fromHexString("#a12823")),
+    YELLOW("yellow", TextColor.fromHexString("#f9c629")),
+    CYAN("cyan", TextColor.fromHexString("#158a91")),
     ;
 
     public final String name;
     public final TextColor textColor;
 
     public final ItemType dye;
+    public final ItemType concretePowder;
     public final ItemType concrete;
+    public final ItemType glass;
     public final ItemType glassPane;
     public final ItemType banner;
+    public final ItemType shulker;
+    public final ItemType bundle;
+    public final ItemType wool;
+    public final ItemType woolStair;
+    public final ItemType woolSlab;
+    public final ItemType cushion;
+    public final ItemType carpet;
+    public final ItemType terracotta;
+    public final ItemType glazedTerracotta;
+    public final ItemType candle;
+    public final ItemType bed;
+    public final ItemType harness;
 
-    BlockColor(String name, TextColor textColor, ItemType dye, ItemType concrete, ItemType glassPane, ItemType banner)
+    BlockColor(String name, TextColor textColor)
     {
         this.textColor = textColor;
         this.name = name;
 
-        this.dye = dye;
-        this.concrete = concrete;
-        this.glassPane = glassPane;
-        this.banner = banner;
+        this.dye = ItemType.of(name + "_dye");
+        this.concrete = ItemType.of(name + "_concrete");
+        this.concretePowder = ItemType.of(name + "_concrete_powder");
+        this.glass = ItemType.of(name + "_stained_glass");
+        this.glassPane = ItemType.of(name + "_stained_glass_pane");
+        this.banner = ItemType.of(name + "_banner");
+        this.shulker = ItemType.of(name + "_shulker_box");
+        this.bundle = ItemType.of(name + "_bundle");
+        this.wool = ItemType.of(name + "_wool");
+        this.woolStair = ItemType.of(name + "_wool_stairs");
+        this.woolSlab = ItemType.of(name + "_wool_slab");
+        this.cushion = ItemType.of(name + "_cushion");
+        this.carpet = ItemType.of(name + "_carpet");
+        this.terracotta = ItemType.of(name + "_terracotta");
+        this.glazedTerracotta = ItemType.of(name + "_glazed_terracotta");
+        this.candle = ItemType.of(name + "_candle");
+        this.bed = ItemType.of(name + "_bed");
+        this.harness = ItemType.of(name + "_harness");
     }
 
     public static BlockColor fromName(String name) throws IllegalArgumentException
