@@ -88,6 +88,8 @@ public class BingoConfigurationData
         setOptionValueForce(BingoOptions.GO_UP_WAND_DOWN_DISTANCE, name -> config.getInt(name, 5));
         setOptionValueForce(BingoOptions.GO_UP_WAND_COOLDOWN, name -> config.getDouble(name, 5.0D));
         setOptionValueForce(BingoOptions.GO_UP_WAND_PLATFORM_LIFETIME, name -> config.getInt(name, 10));
+        setOptionValueForce(BingoOptions.POUCH_INVENTORY_SLOTS, name -> config.getInt(name, 18));
+
         setOptionValueForce(BingoOptions.GRACE_PERIOD, name -> config.getInt(name, 30));
         setOptionValueForce(BingoOptions.REMOVE_TASK_ITEMS, name -> config.getBoolean(name, true));
         setOptionValueForce(BingoOptions.ENABLE_TEAM_CHAT, name -> config.getBoolean(name, true));

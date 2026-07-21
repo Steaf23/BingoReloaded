@@ -2,7 +2,9 @@ package io.github.steaf23.bingoreloaded.player.team;
 
 import io.github.steaf23.bingoreloaded.cards.TaskCard;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
-import io.github.steaf23.bingoreloaded.lib.api.PlatformResolver;
+import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
+import io.github.steaf23.bingoreloaded.data.config.BingoOptions;
+import io.github.steaf23.bingoreloaded.lib.api.item.CapacityInventoryProvider;
 import io.github.steaf23.bingoreloaded.lib.api.item.InventoryHandle;
 import io.github.steaf23.bingoreloaded.lib.util.BlockColor;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
@@ -31,10 +33,11 @@ public class BingoTeam implements ForwardingAudience
     private final Component name;
     private final Component prefix;
     private final BlockColor dyeColor;
+    private final CapacityInventoryProvider storageProvider;
 
     private final Set<BingoParticipant> members;
 
-    public BingoTeam(String identifier, TextColor color, Component name, Component prefix, BlockColor dyeColor) {
+    public BingoTeam(String identifier, TextColor color, Component name, Component prefix, BlockColor dyeColor, CapacityInventoryProvider storageProvider) {
         this.id = identifier;
         this.card = null;
         this.color = color;
@@ -42,6 +45,8 @@ public class BingoTeam implements ForwardingAudience
         this.members = new HashSet<>();
         this.prefix = prefix;
         this.dyeColor = dyeColor;
+        this.storageProvider = storageProvider;
+        storageProvider.setTitle(BingoMessage.ITEM_POUCH_DESC.asPhrase());
     }
 
     public void reset() {
@@ -51,12 +56,13 @@ public class BingoTeam implements ForwardingAudience
         return Optional.ofNullable(card);
     }
 
-    public void setup(TaskCard card) {
+    public void setup(TaskCard card, BingoConfigurationData config) {
         this.card = card;
 
         if (this.card != null) {
             this.outOfTheGame = false;
-            this.teamStorage = PlatformResolver.get().createInventory(BingoMessage.ITEM_POUCH_NAME.asPhrase(), 3);
+            storageProvider.setSlotCount(config.getOptionValue(BingoOptions.POUCH_INVENTORY_SLOTS));
+            this.teamStorage = storageProvider.create();
         }
     }
 

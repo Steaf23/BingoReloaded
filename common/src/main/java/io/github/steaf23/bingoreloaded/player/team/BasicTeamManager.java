@@ -51,7 +51,7 @@ public class BasicTeamManager implements TeamManager {
         TextColor autoTeamColor = TextColor.fromHexString("#fdffa8");
         if (autoTeamColor == null) autoTeamColor = NamedTextColor.WHITE;
 
-        this.autoTeam = new BingoTeam("auto", autoTeamColor, BingoMessage.TEAM_AUTO.asPhrase(), createAutoPrefix(autoTeamColor), BlockColor.WHITE);
+        this.autoTeam = new BingoTeam("auto", autoTeamColor, BingoMessage.TEAM_AUTO.asPhrase(), createAutoPrefix(autoTeamColor), BlockColor.WHITE, session.getGameManager().getRuntime().getPouchInventoryProvider());
     }
 
     private Component createAutoPrefix(TextColor color) {
@@ -274,7 +274,7 @@ public class BasicTeamManager implements TeamManager {
             return null;
         }
 
-        BingoTeam bTeam = new BingoTeam(teamId, team.color(), team.nameComponent(), createPrefix(team), team.dyeColor());
+        BingoTeam bTeam = new BingoTeam(teamId, team.color(), team.nameComponent(), createPrefix(team), team.dyeColor(), session.getGameManager().getRuntime().getPouchInventoryProvider());
 
         activeTeams.addTeam(bTeam);
         return bTeam;

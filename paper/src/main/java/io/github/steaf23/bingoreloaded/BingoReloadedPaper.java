@@ -40,11 +40,13 @@ import io.github.steaf23.bingoreloaded.lib.api.BingoReloadedRuntime;
 import io.github.steaf23.bingoreloaded.lib.api.EntityType;
 import io.github.steaf23.bingoreloaded.lib.api.EntityTypePaper;
 import io.github.steaf23.bingoreloaded.lib.api.MenuBoard;
+import io.github.steaf23.bingoreloaded.lib.api.PaperInventoryProvider;
 import io.github.steaf23.bingoreloaded.lib.api.PaperServerSoftware;
 import io.github.steaf23.bingoreloaded.lib.api.PlatformResolver;
 import io.github.steaf23.bingoreloaded.lib.api.ServerSoftware;
 import io.github.steaf23.bingoreloaded.lib.api.WorldHandle;
 import io.github.steaf23.bingoreloaded.lib.api.WorldHandlePaper;
+import io.github.steaf23.bingoreloaded.lib.api.item.CapacityInventoryProvider;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandlePaper;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
@@ -99,6 +101,7 @@ public class BingoReloadedPaper extends JavaPlugin implements BingoReloadedRunti
 	private SharedDisplay gameDisplay;
 	private SharedDisplay settingsDisplay;
 	private BingoClientManager clientManager;
+	private CapacityInventoryProvider pouchInventoryProvider;
 
 	public BingoReloadedPaper() {
 	}
@@ -154,8 +157,6 @@ public class BingoReloadedPaper extends JavaPlugin implements BingoReloadedRunti
 
 		eventListener = new EventListenerPaper(this, bingo.getGameManager().eventListener());
 
-//		menuBoard.setPlayerOpenPredicate(player -> player instanceof PlayerHandle handle && this.gameManager.canPlayerOpenMenus(handle));
-
 		Metrics bStatsMetrics = new Metrics(this, 22586);
 		bStatsMetrics.addCustomChart(new Metrics.SimplePie("selected_language",
 				() -> bingo.config().getOptionValue(BingoOptions.LANGUAGE).replace(".yml", "").replace("languages/", "")));
@@ -184,6 +185,8 @@ public class BingoReloadedPaper extends JavaPlugin implements BingoReloadedRunti
 			gameDisplay = new ScoreboardDisplay("game");
 			settingsDisplay = new ScoreboardDisplay("lobby");
 		}
+
+		pouchInventoryProvider = new PaperInventoryProvider(platform.plugin());
 	}
 
 	@Override
@@ -315,6 +318,11 @@ public class BingoReloadedPaper extends JavaPlugin implements BingoReloadedRunti
 		});
 
 		return mapStack;
+	}
+
+	@Override
+	public CapacityInventoryProvider getPouchInventoryProvider() {
+		return pouchInventoryProvider;
 	}
 
 	@Override

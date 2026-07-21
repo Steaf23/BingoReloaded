@@ -39,7 +39,7 @@ public class SoloTeamManager implements TeamManager
         if (autoTeamColor == null) {
             autoTeamColor = NamedTextColor.WHITE;
         }
-        this.autoTeam = new BingoTeam("auto", autoTeamColor, BingoMessage.TEAM_AUTO.asPhrase(), createPrefix(autoTeamColor), BlockColor.WHITE);
+        this.autoTeam = new BingoTeam("auto", autoTeamColor, BingoMessage.TEAM_AUTO.asPhrase(), createPrefix(autoTeamColor), BlockColor.WHITE, session.getGameManager().getRuntime().getPouchInventoryProvider());
         this.teams.addTeam(autoTeam);
     }
 
@@ -94,7 +94,7 @@ public class SoloTeamManager implements TeamManager
     public void setupParticipant(BingoParticipant participant) {
         TextColor teamColor = determineTeamColor();
         // create a team where the id is the same as the participant's id, which is good enough for our use case.
-        BingoTeam team = new BingoTeam(participant.getId().toString(), teamColor, participant.getDisplayName(), createPrefix(teamColor), BlockColor.WHITE);
+        BingoTeam team = new BingoTeam(participant.getId().toString(), teamColor, participant.getDisplayName(), createPrefix(teamColor), BlockColor.WHITE, session.getGameManager().getRuntime().getPouchInventoryProvider());
         team.addMember(participant);
         teams.addTeam(team);
 

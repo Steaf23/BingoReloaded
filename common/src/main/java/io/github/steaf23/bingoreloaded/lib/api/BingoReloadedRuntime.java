@@ -8,6 +8,7 @@ import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.data.record.LeaderboardData;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gameloop.phase.PregameLobby;
+import io.github.steaf23.bingoreloaded.lib.api.item.CapacityInventoryProvider;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.api.player.SharedDisplay;
@@ -42,6 +43,8 @@ public interface BingoReloadedRuntime {
 
 	CardMenu createMenu(boolean textured, CardDisplayInfo displayInfo);
 	StackHandle createCardItemForPlayer(BingoParticipant player);
+
+	CapacityInventoryProvider getPouchInventoryProvider();
 
 	void openBingoMenu(PlayerHandle player, BingoSession session);
 	void openTeamEditor(PlayerHandle player);

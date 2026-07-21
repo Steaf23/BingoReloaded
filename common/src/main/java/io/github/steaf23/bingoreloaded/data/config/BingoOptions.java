@@ -99,6 +99,8 @@ public class BingoOptions {
 	public static final ConfigurationOption<Integer> GO_UP_WAND_DOWN_DISTANCE = new IntegerOption("GoUpWand.downDistance");
 	public static final ConfigurationOption<Double> GO_UP_WAND_COOLDOWN = new DoubleOption("GoUpWand.cooldown");
 	public static final ConfigurationOption<Integer> GO_UP_WAND_PLATFORM_LIFETIME = new IntegerOption("GoUpWand.platformLifetime").withMin(0);
+	public static final ConfigurationOption<Integer> POUCH_INVENTORY_SLOTS = new IntegerOption("teamPouch.slots").withMin(1).withMax(54);
+
 	public static final ConfigurationOption<Integer> GRACE_PERIOD = new IntegerOption("gracePeriod").withMin(0);
 	public static final ConfigurationOption<Boolean> REMOVE_TASK_ITEMS = new BooleanOption("removeTaskItems");
 	public static final ConfigurationOption<Boolean> ENABLE_TEAM_CHAT = new BooleanOption("enableTeamChat")

@@ -43,7 +43,7 @@ public class CardFactory
             game.getTeamManager().getActiveTeams().forEach(t -> {
                 TaskCard card = masterCard.copy(BingoMessage.SHOW_TEAM_CARD_NAME.asPhrase(t.getColoredName()));
                 card.generateCard(generatorSettings);
-                t.setup(card);
+                t.setup(card, game.getConfig());
                 uniqueCards.add(card);
             });
         } else {
@@ -51,7 +51,7 @@ public class CardFactory
             masterCard.generateCard(generatorSettings);
             game.getTeamManager().getActiveTeams().forEach(t -> {
                 TaskCard card = masterCard.copy(BingoMessage.SHOW_TEAM_CARD_NAME.asPhrase(t.getColoredName()));
-                t.setup(card);
+                t.setup(card, game.getConfig());
                 uniqueCards.add(card);
             });
         }

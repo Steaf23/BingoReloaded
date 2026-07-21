@@ -14,6 +14,7 @@ import io.github.steaf23.bingoreloaded.lib.api.FabricServerSoftware;
 import io.github.steaf23.bingoreloaded.lib.api.PlatformResolver;
 import io.github.steaf23.bingoreloaded.lib.api.ServerSoftware;
 import io.github.steaf23.bingoreloaded.lib.api.WorldHandle;
+import io.github.steaf23.bingoreloaded.lib.api.item.CapacityInventoryProvider;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.api.player.SharedDisplay;
@@ -116,6 +117,11 @@ public class BingoReloadedFabric implements ModInitializer, BingoReloadedRuntime
 	@Override
 	public StackHandle createCardItemForPlayer(BingoParticipant player) {
 		return PlayerKit.CARD_ITEM.buildItem();
+	}
+
+	@Override
+	public CapacityInventoryProvider getPouchInventoryProvider() {
+		return null;
 	}
 
 	@Override

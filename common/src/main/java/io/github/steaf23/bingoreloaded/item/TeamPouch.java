@@ -29,6 +29,7 @@ public class TeamPouch extends GameItem {
 				BingoMessage.ITEM_POUCH_NAME.asPhrase()
 						.color(NamedTextColor.DARK_PURPLE).decorate(TextDecoration.ITALIC, TextDecoration.BOLD),
 				BingoMessage.ITEM_POUCH_DESC.asMultiline())
+				.setGlowing(true)
 				.setDummy(true);
 
 		if (participant == null) {
