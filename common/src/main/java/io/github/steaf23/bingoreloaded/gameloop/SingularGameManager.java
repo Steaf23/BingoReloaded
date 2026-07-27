@@ -6,6 +6,7 @@ import io.github.steaf23.bingoreloaded.data.config.BingoOptions;
 import io.github.steaf23.bingoreloaded.data.world.WorldGroup;
 import io.github.steaf23.bingoreloaded.lib.api.BingoReloadedRuntime;
 import io.github.steaf23.bingoreloaded.lib.api.WorldHandle;
+import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformServer;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.event.EventResult;
 import io.github.steaf23.bingoreloaded.lib.util.ComponentUtils;
@@ -20,8 +21,8 @@ public class SingularGameManager extends GameManager
 {
     private boolean sendErrorOnJoin = false;
 
-    public SingularGameManager(@NotNull BingoReloadedRuntime runtime, BingoConfigurationData config) {
-        super(runtime, config);
+    public SingularGameManager(PlatformServer server, @NotNull BingoReloadedRuntime runtime, BingoConfigurationData config) {
+        super(server, runtime, config);
 
         WorldGroup group = createWorldGroupFromExistingWorlds();
         if (group == null) {
@@ -56,16 +57,16 @@ public class SingularGameManager extends GameManager
         String defaultWorldName = getGameConfig().getOptionValue(BingoOptions.DEFAULT_WORLD_NAME);
         Key key = Key.key(defaultWorldName);
 
-        WorldHandle overworld = getPlatform().getWorld(key);
+        WorldHandle overworld = getServer().getWorld(key);
         WorldHandle nether;
         WorldHandle theEnd;
         // Special case for default overworld...
         if (key.equals(Key.key("minecraft:overworld"))) {
-            nether = getPlatform().getWorld(Key.key("minecraft:the_nether"));
-            theEnd = getPlatform().getWorld(Key.key("minecraft:the_end"));
+            nether = getServer().getWorld(Key.key("minecraft:the_nether"));
+            theEnd = getServer().getWorld(Key.key("minecraft:the_end"));
         } else {
-            nether = getPlatform().getWorld(WorldGroup.netherKey(key));
-            theEnd = getPlatform().getWorld(WorldGroup.theEndKey(key));
+            nether = getServer().getWorld(WorldGroup.netherKey(key));
+            theEnd = getServer().getWorld(WorldGroup.theEndKey(key));
         }
 
         if (overworld == null) {
@@ -90,13 +91,13 @@ public class SingularGameManager extends GameManager
             }
         }
 
-        return new WorldGroup(getPlatform(), key, createNether, createTheEnd);
+        return new WorldGroup(getServer(), key, createNether, createTheEnd);
     }
 
     @Override
     public EventResult<?> handlePlayerJoinsServer(PlayerHandle player) {
         if (BingoReloaded.isAdmin(player) && sendErrorOnJoin) {
-            player.sendMessage(ComponentUtils.MINI_BUILDER.deserialize("v(<yellow>" + getPlatform().getExtensionInfo().version() + "</yellow>): <red>Cannot start Bingo Reloaded, something is up with your world setup.</red> 2 common causes: \n" +
+            player.sendMessage(ComponentUtils.MINI_BUILDER.deserialize("v(<yellow>" + BingoReloaded.getMetaInfo().version() + "</yellow>): <red>Cannot start Bingo Reloaded, something is up with your world setup.</red> 2 common causes: \n" +
                     "<gray>1.</gray> Check if the world name is correctly specified. If your world is named differently from <aqua>" + getGameConfig().getOptionValue(BingoOptions.DEFAULT_WORLD_NAME) + "</aqua> please edit the config by setting <aqua>defaultWorldName</aqua> to the actual world name." +
                     "\n<gray>2.</gray> Make sure If you have disabled the nether or the end, please reflect this change in the config by setting <aqua>disableNether/disableTheEnd</aqua> to true."));
 
