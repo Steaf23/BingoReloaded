@@ -1,7 +1,7 @@
 package io.github.steaf23.bingoreloaded.data.helper;
 
 import io.github.steaf23.bingoreloaded.lib.api.PlayerGamemode;
-import io.github.steaf23.bingoreloaded.lib.api.ServerSoftware;
+import io.github.steaf23.bingoreloaded.lib.api.platform.ServerSoftware;
 import io.github.steaf23.bingoreloaded.lib.api.WorldPosition;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
@@ -24,10 +24,10 @@ public class SerializablePlayer
     public StackHandle[] inventory;
     public StackHandle[] enderInventory;
 
-    public static @NotNull SerializablePlayer fromPlayer(@NotNull ServerSoftware platform, @NotNull PlayerHandle player)
+    public static @NotNull SerializablePlayer fromPlayer(String extensionVersion, @NotNull PlayerHandle player)
     {
         SerializablePlayer data = new SerializablePlayer();
-        data.extensionVersion = platform.getExtensionInfo().version();
+        data.extensionVersion = extensionVersion;
         data.playerId = player.uniqueId();
         data.location = player.position();
         data.health = player.health();
@@ -44,10 +44,10 @@ public class SerializablePlayer
     /**
      * Reset all player data and set location
      */
-    public static SerializablePlayer reset(ServerSoftware platform, PlayerHandle player, WorldPosition location)
+    public static SerializablePlayer reset(String extensionVersion, PlayerHandle player, WorldPosition location)
     {
         SerializablePlayer data = new SerializablePlayer();
-        data.extensionVersion = platform.getExtensionInfo().version();
+        data.extensionVersion = extensionVersion;
         data.location = location;
         data.playerId = player.uniqueId();
         data.health = 20.0;

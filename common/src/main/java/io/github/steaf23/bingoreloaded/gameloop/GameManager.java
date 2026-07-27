@@ -1,5 +1,6 @@
 package io.github.steaf23.bingoreloaded.gameloop;
 
+import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.api.BingoEventListener;
 import io.github.steaf23.bingoreloaded.data.BingoLobbyData;
 import io.github.steaf23.bingoreloaded.data.PlayerSerializationData;
@@ -10,7 +11,8 @@ import io.github.steaf23.bingoreloaded.data.record.LeaderboardData;
 import io.github.steaf23.bingoreloaded.data.world.WorldData;
 import io.github.steaf23.bingoreloaded.data.world.WorldGroup;
 import io.github.steaf23.bingoreloaded.lib.api.BingoReloadedRuntime;
-import io.github.steaf23.bingoreloaded.lib.api.ServerSoftware;
+import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformServer;
+import io.github.steaf23.bingoreloaded.lib.api.platform.ServerSoftware;
 import io.github.steaf23.bingoreloaded.lib.api.WorldHandle;
 import io.github.steaf23.bingoreloaded.lib.api.WorldPosition;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
@@ -38,6 +40,7 @@ public class GameManager {
 
 	protected final Map<String, BingoSession> sessions;
 
+	private final PlatformServer server;
 	private final BingoReloadedRuntime runtime;
 	private final BingoConfigurationData config;
 
@@ -49,7 +52,8 @@ public class GameManager {
 
 	private Set<UUID> teleportingPlayers;
 
-	public GameManager(@NotNull BingoReloadedRuntime runtime, BingoConfigurationData config) {
+	public GameManager(@NotNull PlatformServer server, @NotNull BingoReloadedRuntime runtime, BingoConfigurationData config) {
+		this.server = server;
 		this.runtime = runtime;
 		this.config = config;
 
@@ -58,7 +62,7 @@ public class GameManager {
 
 		@Subst("gamemanager:none") String settingsName = config.getOptionValue(BingoOptions.CUSTOM_WORLD_GENERATION);
 		Key generationSettings = settingsName.equals("null") ? null : Key.key(settingsName);
-		this.worldData = new WorldData(runtime.getServerSoftware(), new WorldData.Options(
+		this.worldData = new WorldData(server, new WorldData.Options(
 				generationSettings,
 				!config.getOptionValue(BingoOptions.DISABLE_NETHER),
 				!config.getOptionValue(BingoOptions.DISABLE_THE_END))
@@ -261,7 +265,7 @@ public class GameManager {
 					teleportingPlayers.add(player.uniqueId());
 					DebugLogger.addLog("Scheduling player load...");
 					// load player will teleport them, so we have to schedule it to make sure to do the right thing
-					runtime.getServerSoftware().runTask(t -> {
+					runtime.tasks().runTask(t -> {
 						if (playerData.loadPlayer(player) == null) {
                         // Player data was not saved for some reason?
                         ConsoleMessenger.bug(Component.text("No saved player data could be found for ").append(player.displayName()), this);
@@ -280,7 +284,7 @@ public class GameManager {
 			if (savePlayerInformation && sourceSession == null) {
 				DebugLogger.addLog("Saving player data as they are entering a session world");
                 // Only save player data if it does not pertain to a bingo world
-                SerializablePlayer serializablePlayer = SerializablePlayer.fromPlayer(runtime.getServerSoftware(), player);
+                SerializablePlayer serializablePlayer = SerializablePlayer.fromPlayer(BingoReloaded.getMetaInfo().version(), player);
                 playerData.savePlayer(serializablePlayer, false);
 			}
 
@@ -332,8 +336,8 @@ public class GameManager {
 		return playerData;
 	}
 
-	public ServerSoftware getPlatform() {
-		return runtime.getServerSoftware();
+	public PlatformServer getServer() {
+		return server;
 	}
 
 	public BingoReloadedRuntime getRuntime() {

@@ -1,5 +1,6 @@
 package io.github.steaf23.bingoreloaded;
 
+import com.mojang.brigadier.Command;
 import io.github.steaf23.bingoreloaded.api.CardDisplayInfo;
 import io.github.steaf23.bingoreloaded.api.CardMenu;
 import io.github.steaf23.bingoreloaded.api.TeamDisplay;
@@ -8,28 +9,38 @@ import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.data.record.LeaderboardData;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gameloop.phase.PregameLobby;
+import io.github.steaf23.bingoreloaded.lib.action.ActionTree;
 import io.github.steaf23.bingoreloaded.lib.api.BingoReloadedRuntime;
 import io.github.steaf23.bingoreloaded.lib.api.EntityType;
-import io.github.steaf23.bingoreloaded.lib.api.FabricServerSoftware;
+import io.github.steaf23.bingoreloaded.lib.api.ExtensionInfo;
+import io.github.steaf23.bingoreloaded.lib.api.ExtensionTask;
+import io.github.steaf23.bingoreloaded.lib.api.platform.FabricResources;
+import io.github.steaf23.bingoreloaded.lib.api.platform.FabricServerSoftware;
 import io.github.steaf23.bingoreloaded.lib.api.PlatformResolver;
-import io.github.steaf23.bingoreloaded.lib.api.ServerSoftware;
+import io.github.steaf23.bingoreloaded.lib.api.platform.FabricTasks;
+import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformTasks;
+import io.github.steaf23.bingoreloaded.lib.api.platform.ServerSoftware;
 import io.github.steaf23.bingoreloaded.lib.api.WorldHandle;
 import io.github.steaf23.bingoreloaded.lib.api.item.CapacityInventoryProvider;
 import io.github.steaf23.bingoreloaded.lib.api.item.InventoryHandle;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.api.player.EmptyDisplay;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
+import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandleFabric;
 import io.github.steaf23.bingoreloaded.lib.api.player.SharedDisplay;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataAccessor;
 import io.github.steaf23.bingoreloaded.lib.data.core.SnakeYamlDataAccessor;
-import io.github.steaf23.bingoreloaded.lib.menu.InfoMenu;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.fabricmc.loader.api.FabricLoader;
+import net.fabricmc.loader.api.ModContainer;
+import net.fabricmc.loader.api.metadata.Person;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
-import net.minecraft.server.MinecraftServer;
+import net.minecraft.commands.Commands;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
@@ -42,22 +53,28 @@ public class BingoReloadedFabric implements ModInitializer, BingoReloadedRuntime
 
 	private FabricServerSoftware platform;
 	private BingoReloaded bingo;
+	private FabricResources resources;
+	private FabricTasks tasks;
 
 	@Override
 	public void onInitialize() {
-		ServerLifecycleEvents.SERVER_STARTED.register((server) -> {
-			this.platform = new FabricServerSoftware(server, MOD_ID);
-			PlatformResolver.set(platform);
+		this.platform = new FabricServerSoftware(MOD_ID);
+		PlatformResolver.set(platform);
 
-			this.bingo = new BingoReloaded(this);
-			bingo.load();
-			bingo.enable();
+		this.tasks = new FabricTasks();
+		ServerTickEvents.START_SERVER_TICK.register(server -> {
+			tasks.tick(server.getTickCount());
 		});
+
+		this.resources = new FabricResources(MOD_ID);
+		this.bingo = new BingoReloaded(this);
+		bingo.load();
+		bingo.enable(resources, createExtensionInfo());
 	}
 
 	@Override
 	public DataAccessor getConfigData() {
-		DataAccessor config = new SnakeYamlDataAccessor(platform, "config");
+		DataAccessor config = new SnakeYamlDataAccessor(resources, "config");
 		config.load();
 		return config;
 	}
@@ -65,9 +82,9 @@ public class BingoReloadedFabric implements ModInitializer, BingoReloadedRuntime
 	@Override
 	public Collection<DataAccessor> getDataToRegister() {
 		return List.of(
-				new SnakeYamlDataAccessor(platform, "scoreboards"),
-				new SnakeYamlDataAccessor(platform, "placeholders"),
-				new SnakeYamlDataAccessor(platform, "sounds"));
+				new SnakeYamlDataAccessor(resources, "scoreboards"),
+				new SnakeYamlDataAccessor(resources, "placeholders"),
+				new SnakeYamlDataAccessor(resources, "sounds"));
 	}
 
 	@Override
@@ -82,8 +99,8 @@ public class BingoReloadedFabric implements ModInitializer, BingoReloadedRuntime
 
 	@Override
 	public LanguageData getLanguageData(String language) {
-		var lang = new SnakeYamlDataAccessor(platform, language);
-		var fallback = new SnakeYamlDataAccessor(platform, "languages/en_us");
+		var lang = new SnakeYamlDataAccessor(resources, language);
+		var fallback = new SnakeYamlDataAccessor(resources, "languages/en_us");
 
 		BingoReloaded.addDataAccessor(lang);
 		BingoReloaded.addDataAccessor(fallback);
@@ -102,8 +119,18 @@ public class BingoReloadedFabric implements ModInitializer, BingoReloadedRuntime
 	}
 
 	@Override
-	public void registerActions(BingoConfigurationData config) {
+	public void registerAction(boolean allowConsole, ActionTree action) {
+		CommandRegistrationCallback.EVENT.register(((dispatcher, buildContext, selection) -> {
+			dispatcher.register(Commands.literal(action.name()).executes(context -> {
+				action.execute(platform, new PlayerHandleFabric(context.getSource().getPlayer()), context.getInput().split(" "));
 
+				return Command.SINGLE_SUCCESS;
+			}));
+		}));
+	}
+
+	@Override
+	public void registerExtraActions(BingoConfigurationData config) {
 	}
 
 	@Override
@@ -199,5 +226,23 @@ public class BingoReloadedFabric implements ModInitializer, BingoReloadedRuntime
 	@Override
 	public BingoClientManager getClientManager() {
 		return null;
+	}
+
+	@Override
+	public PlatformTasks tasks() {
+		return null;
+	}
+
+	private @Nullable ExtensionInfo createExtensionInfo() {
+		ModContainer container = FabricLoader.getInstance().getModContainer(MOD_ID).orElse(null);
+		if (container == null) {
+			return null;
+		}
+
+		List<String> authors = container.getMetadata().getAuthors().stream()
+				.map(Person::getName)
+				.toList();
+
+		return new ExtensionInfo(container.getMetadata().getName(), container.getMetadata().getVersion().getFriendlyString(), authors);
 	}
 }

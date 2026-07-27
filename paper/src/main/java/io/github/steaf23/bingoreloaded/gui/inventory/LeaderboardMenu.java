@@ -20,7 +20,6 @@ import io.github.steaf23.bingoreloaded.lib.inventory.group.ScrollableItemBar;
 import io.github.steaf23.bingoreloaded.lib.inventory.group.SelectionModel;
 import io.github.steaf23.bingoreloaded.lib.inventory.group.StackedGroup;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
-import io.github.steaf23.bingoreloaded.lib.util.PlayerDisplayTranslationKey;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
 import io.github.steaf23.bingoreloaded.settings.gamemode.BingoGamemode;
 import io.github.steaf23.bingoreloaded.settings.gamemode.BingoGamemodes;
@@ -65,11 +64,11 @@ public class LeaderboardMenu extends BasicMenu {
 	private record SettingsGroup(String presetName, BingoSettings settings, Set<String> aliases) {}
 
 	private static final ItemTemplate NEXT = new ItemTemplate(0, ItemTypePaper.of(Material.STRUCTURE_VOID),
-			PlayerDisplayTranslationKey.MENU_NEXT.translate()
+			BingoMessage.MENU_NEXT.asPhrase()
 					.color(NamedTextColor.LIGHT_PURPLE).decorate(TextDecoration.BOLD));
 
 	private static final ItemTemplate PREVIOUS = new ItemTemplate(8, ItemTypePaper.of(Material.BARRIER),
-			PlayerDisplayTranslationKey.MENU_PREVIOUS.translate()
+			BingoMessage.MENU_PREV.asPhrase()
 					.color(NamedTextColor.LIGHT_PURPLE).decorate(TextDecoration.BOLD));
 
 	private static final ItemTemplate ORDER_BY_TIME = new ItemTemplate(0, 1, ItemTypePaper.of(Material.CLOCK), BingoMessage.LEADERBOARD_SORT_TIME.asPhrase());

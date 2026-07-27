@@ -1,5 +1,6 @@
 package io.github.steaf23.bingoreloaded.action;
 
+import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.cards.CardSize;
 import io.github.steaf23.bingoreloaded.data.BingoCardData;
 import io.github.steaf23.bingoreloaded.data.BingoSettingsData;
@@ -13,7 +14,8 @@ import io.github.steaf23.bingoreloaded.gameloop.phase.PregameLobby;
 import io.github.steaf23.bingoreloaded.lib.action.ActionResult;
 import io.github.steaf23.bingoreloaded.lib.action.ActionTree;
 import io.github.steaf23.bingoreloaded.lib.action.DeferredAction;
-import io.github.steaf23.bingoreloaded.lib.api.ServerSoftware;
+import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformServer;
+import io.github.steaf23.bingoreloaded.lib.api.platform.ServerSoftware;
 import io.github.steaf23.bingoreloaded.lib.api.WorldHandle;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
@@ -37,13 +39,10 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class AutoBingoAction extends DeferredAction {
-
-	private final ServerSoftware platform;
 	private final GameManager manager;
 
-	public AutoBingoAction(ServerSoftware platform, GameManager manager) {
+	public AutoBingoAction(GameManager manager) {
 		super("autobingo", "world", List.of("bingo.admin"));
-		this.platform = platform;
 		this.manager = manager;
 
 		addTabCompletion(args -> manager.getSessionNames().stream().toList());
@@ -126,13 +125,13 @@ public class AutoBingoAction extends DeferredAction {
 		}).addUsage("<duration_minutes>"));
 
 
-		this.addSubAction(new ActionTree("team", args -> {
+		this.addSubAction(new ActionTree("team", (server, args) -> {
 			var settings = getSettingsBuilder(args[0]);
 			if (settings == null) {
 				sendFailed("Invalid world/ session name: " + args[0], args[0]);
 				return ActionResult.INCORRECT_USE;
 			}
-			return setPlayerTeam(args[0], Arrays.copyOfRange(args, 1, args.length));
+			return setPlayerTeam(server, args[0], Arrays.copyOfRange(args, 1, args.length));
 		}).addUsage("<player_name> <team_name>")
 				.addTabCompletion(args -> args.length == 2 || args.length == 3 ? List.of("") : List.of()));
 
@@ -243,20 +242,20 @@ public class AutoBingoAction extends DeferredAction {
 		}));
 
 
-		this.addSubAction(new ActionTree("kickplayer", this::removePlayerFromSession).addUsage("<player_name> <target_world_name>").addTabCompletion(args -> {
+		this.addSubAction(new ActionTree("kickplayer", this::removePlayerFromSession).addUsage("<player_name> <target_world_name>").addTabCompletion((server, args) -> {
 			if (args.length == 2) {
 				return null;
 			} else if (args.length == 3) {
-				return platform.getLoadedWorlds().stream().map(w -> w.key().asString()).toList();
+				return server.getLoadedWorlds().stream().map(w -> w.key().asString()).toList();
 			} else {
 				return List.of();
 			}
 		}));
 
 
-		this.addSubAction(new ActionTree("kickplayers", this::removeAllPlayersFromSession).addUsage("<target_world_name>").addTabCompletion(args -> {
+		this.addSubAction(new ActionTree("kickplayers", this::removeAllPlayersFromSession).addUsage("<target_world_name>").addTabCompletion((server, args) -> {
 			if (args.length == 2) {
-				return platform.getLoadedWorlds().stream().map(w -> w.key().asString()).toList();
+				return server.getLoadedWorlds().stream().map(w -> w.key().asString()).toList();
 			} else {
 				return List.of();
 			}
@@ -434,7 +433,7 @@ public class AutoBingoAction extends DeferredAction {
 		return ActionResult.INCORRECT_USE;
 	}
 
-	public ActionResult setPlayerTeam(String sessionName, String[] extraArguments) {
+	public ActionResult setPlayerTeam(PlatformServer server, String sessionName, String[] extraArguments) {
 		if (extraArguments.length != 2) {
 			sendFailed("Expected 4 arguments!", sessionName);
 			return ActionResult.INCORRECT_USE;
@@ -449,7 +448,7 @@ public class AutoBingoAction extends DeferredAction {
 		String playerName = extraArguments[0];
 		String teamName = extraArguments[1];
 
-		PlayerHandle player = platform.getPlayerFromName(playerName);
+		PlayerHandle player = server.getPlayerFromName(playerName);
 		if (player == null) {
 			sendFailed("Cannot add " + playerName + " to team, player does not exist/ is not online!", sessionName);
 			return ActionResult.IGNORED;
@@ -645,7 +644,7 @@ public class AutoBingoAction extends DeferredAction {
 		return ActionResult.SUCCESS;
 	}
 
-	private ActionResult addPlayerToSession(String... args) {
+	private ActionResult addPlayerToSession(PlatformServer server, String[] args) {
 		String worldName = args[0];
 		if (args.length != 2) {
 			sendFailed("Expected 3 arguments!", worldName);
@@ -653,7 +652,7 @@ public class AutoBingoAction extends DeferredAction {
 		}
 
 		String playerName = args[1];
-		PlayerHandle player = platform.getPlayerFromName(playerName);
+		PlayerHandle player = server.getPlayerFromName(playerName);
 		if (player == null) {
 			sendFailed("Player " + playerName + " could not be found.", worldName);
 			return ActionResult.IGNORED;
@@ -666,7 +665,7 @@ public class AutoBingoAction extends DeferredAction {
 		return ActionResult.SUCCESS;
 	}
 
-	private ActionResult removePlayerFromSession(String... args) {
+	private ActionResult removePlayerFromSession(PlatformServer server, String[] args) {
 		String worldName = args[0];
 		if (args.length != 3) {
 			sendFailed("Expected 4 arguments!", worldName);
@@ -674,7 +673,7 @@ public class AutoBingoAction extends DeferredAction {
 		}
 
 		String playerName = args[1];
-		PlayerHandle player = platform.getPlayerFromName(playerName);
+		PlayerHandle player = server.getPlayerFromName(playerName);
 		if (player == null) {
 			sendFailed("Player " + playerName + " could not be found.", worldName);
 			return ActionResult.IGNORED;
@@ -687,7 +686,7 @@ public class AutoBingoAction extends DeferredAction {
 		}
 
 		String targetWorldName = args[2];
-		WorldHandle world = platform.getWorld(Key.key(targetWorldName));
+		WorldHandle world = server.getWorld(Key.key(targetWorldName));
 		if (world == null) {
 			sendFailed("Could not teleport " + playerName + " to invalid world " + targetWorldName + ".", worldName);
 			return ActionResult.IGNORED;
@@ -702,7 +701,7 @@ public class AutoBingoAction extends DeferredAction {
 		return ActionResult.SUCCESS;
 	}
 
-	private ActionResult removeAllPlayersFromSession(String... args) {
+	private ActionResult removeAllPlayersFromSession(PlatformServer server, String[] args) {
 		String worldName = args[0];
 		if (args.length != 2) {
 			sendFailed("Expected 3 arguments!", worldName);
@@ -716,7 +715,7 @@ public class AutoBingoAction extends DeferredAction {
 		}
 
 		String targetWorldName = args[1];
-		WorldHandle world = platform.getWorld(Key.key(targetWorldName));
+		WorldHandle world = server.getWorld(Key.key(targetWorldName));
 		if (world == null) {
 			sendFailed("Could not teleport players to invalid world " + targetWorldName + ".", worldName);
 			return ActionResult.IGNORED;
@@ -744,7 +743,7 @@ public class AutoBingoAction extends DeferredAction {
 		return ActionResult.SUCCESS;
 	}
 
-	private ActionResult voteForPlayer(String[] args) {
+	private ActionResult voteForPlayer(PlatformServer server, String[] args) {
 		String sessionName = args[0];
 		if (args.length != 4) {
 			sendFailed("Expected 5 arguments!", sessionName);
@@ -757,7 +756,7 @@ public class AutoBingoAction extends DeferredAction {
 			return ActionResult.IGNORED;
 		}
 
-		PlayerHandle player = platform.getPlayerFromName(args[1]);
+		PlayerHandle player = server.getPlayerFromName(args[1]);
 		if (player == null) {
 			sendFailed("Player '" + args[1] + "' does not exist!", sessionName);
 			return ActionResult.IGNORED;
@@ -815,7 +814,7 @@ public class AutoBingoAction extends DeferredAction {
 		return ActionResult.SUCCESS;
 	}
 
-	private ActionResult playerDataCommand(String... args) {
+	private ActionResult playerDataCommand(PlatformServer server, String[] args) {
 		String sessionName = args[0];
 		if (args.length != 3) {
 			return ActionResult.INCORRECT_USE;
@@ -824,7 +823,7 @@ public class AutoBingoAction extends DeferredAction {
 		PlayerSerializationData playerData = manager.getPlayerData();
 
 		String playerName = args[2];
-		PlayerHandle player = platform.getPlayerFromName(args[1]);
+		PlayerHandle player = server.getPlayerFromName(args[1]);
 		if (player == null) {
 			sendFailed("Cannot edit player data, player " + playerName + " not found", sessionName);
 			return ActionResult.IGNORED;
@@ -841,7 +840,7 @@ public class AutoBingoAction extends DeferredAction {
 				yield ActionResult.SUCCESS;
 			}
 			case "save" -> {
-				SerializablePlayer data = SerializablePlayer.fromPlayer(platform, player);
+				SerializablePlayer data = SerializablePlayer.fromPlayer(BingoReloaded.getMetaInfo().version(), player);
 				playerData.savePlayer(data, true);
 				sendSuccess("Saved player data for " + playerName, sessionName);
 				yield ActionResult.SUCCESS;

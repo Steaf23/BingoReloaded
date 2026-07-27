@@ -1,5 +1,6 @@
 package io.github.steaf23.bingoreloaded.lib.api;
 
+import io.github.steaf23.bingoreloaded.lib.api.platform.ServerSoftware;
 import org.intellij.lang.annotations.Subst;
 
 public class PlatformResolver {

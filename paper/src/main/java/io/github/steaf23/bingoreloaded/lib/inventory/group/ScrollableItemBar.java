@@ -1,10 +1,10 @@
 package io.github.steaf23.bingoreloaded.lib.inventory.group;
 
+import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.lib.api.PlatformResolver;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemTypePaper;
 import io.github.steaf23.bingoreloaded.lib.inventory.BasicMenu;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
-import io.github.steaf23.bingoreloaded.lib.util.PlayerDisplayTranslationKey;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
@@ -16,11 +16,11 @@ import java.util.List;
 public class ScrollableItemBar<Data> extends ItemGroup {
 
 	private static final ItemTemplate NEXT = new ItemTemplate(ItemTypePaper.of(Material.STRUCTURE_VOID),
-			PlayerDisplayTranslationKey.MENU_NEXT.translate()
+			BingoMessage.MENU_NEXT.asPhrase()
 					.color(NamedTextColor.LIGHT_PURPLE).decorate(TextDecoration.BOLD));
 
 	private static final ItemTemplate PREVIOUS = new ItemTemplate(ItemTypePaper.of(Material.BARRIER),
-			PlayerDisplayTranslationKey.MENU_PREVIOUS.translate()
+			BingoMessage.MENU_PREV.asPhrase()
 					.color(NamedTextColor.LIGHT_PURPLE).decorate(TextDecoration.BOLD));
 
 	private ItemClickedCallback<Data> itemClickedCallback = (idx, item, data) -> null;

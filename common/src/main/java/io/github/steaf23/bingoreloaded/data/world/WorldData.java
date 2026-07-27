@@ -2,7 +2,8 @@ package io.github.steaf23.bingoreloaded.data.world;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.lib.api.DimensionType;
-import io.github.steaf23.bingoreloaded.lib.api.ServerSoftware;
+import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformServer;
+import io.github.steaf23.bingoreloaded.lib.api.platform.ServerSoftware;
 import io.github.steaf23.bingoreloaded.lib.api.WorldHandle;
 import io.github.steaf23.bingoreloaded.lib.api.WorldOptions;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
@@ -12,17 +13,15 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.UUID;
-
 public class WorldData
 {
     public record Options(@Nullable Key noiseGenerationSettings, boolean createNether, boolean createEnd) {}
 
-    private final ServerSoftware platform;
+    private final PlatformServer server;
     private final Options options;
 
-    public WorldData(ServerSoftware platform, Options options) {
-        this.platform = platform;
+    public WorldData(PlatformServer server, Options options) {
+        this.server = server;
         this.options = options;
     }
 
@@ -33,7 +32,7 @@ public class WorldData
      */
     public boolean clearWorlds() {
         int removeCount = 0;
-        for (Key worldKey : platform.getAllWorldKeysOnDisk().stream()
+        for (Key worldKey : server.getAllWorldKeysOnDisk().stream()
                 .filter(key -> key.namespace().equals(BingoReloaded.NAMESPACE))
                 .toList()) {
             if (destroyWorld(worldKey)) {
@@ -72,7 +71,7 @@ public class WorldData
             hasTheEnd = end != null;
         }
 
-        return new WorldGroup(platform, overworldKey, hasNether, hasTheEnd);
+        return new WorldGroup(server, overworldKey, hasNether, hasTheEnd);
     }
 
     public @Nullable WorldGroup getWorldGroupInSession(String sessionName) {
@@ -80,9 +79,9 @@ public class WorldData
     }
 
     public @Nullable WorldGroup getWorldGroup(Key overworldKey) {
-        WorldHandle overworld = platform.getWorld(overworldKey);
-        WorldHandle nether = platform.getWorld(WorldGroup.netherKey(overworldKey));
-        WorldHandle theEnd = platform.getWorld(WorldGroup.theEndKey(overworldKey));
+        WorldHandle overworld = server.getWorld(overworldKey);
+        WorldHandle nether = server.getWorld(WorldGroup.netherKey(overworldKey));
+        WorldHandle theEnd = server.getWorld(WorldGroup.theEndKey(overworldKey));
 
         if (overworld == null) {
             ConsoleMessenger.error("Could not fetch world group; " + overworldKey + " does not exist. Make sure the world exists and reload the plugin.");
@@ -103,7 +102,7 @@ public class WorldData
             }
         }
 
-        return new WorldGroup(platform, overworldKey, options.createNether(), options.createEnd());
+        return new WorldGroup(server, overworldKey, options.createNether(), options.createEnd());
     }
 
     /**
@@ -118,16 +117,12 @@ public class WorldData
         return success;
     }
 
-    private String getWorldsFolder() {
-        return platform.getDataFolder().getPath().replace("\\", "/") + "/worlds/";
-    }
-
     private @Nullable WorldHandle createWorld(Key worldName, @NotNull DimensionType dimension) {
         WorldOptions options = new WorldOptions(worldName, dimension);
-        return platform.createWorld(options);
+        return server.createWorld(options);
     }
 
     private boolean destroyWorld(Key worldKey) {
-        return platform.deleteWorld(worldKey);
+        return server.deleteWorld(worldKey);
     }
 }

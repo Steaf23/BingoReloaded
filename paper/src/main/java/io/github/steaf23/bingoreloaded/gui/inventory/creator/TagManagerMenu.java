@@ -2,6 +2,7 @@ package io.github.steaf23.bingoreloaded.gui.inventory.creator;
 
 import io.github.steaf23.bingoreloaded.api.CardDisplayInfo;
 import io.github.steaf23.bingoreloaded.data.BingoCardData;
+import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.TaskTagData;
 import io.github.steaf23.bingoreloaded.lib.api.MenuBoard;
 import io.github.steaf23.bingoreloaded.lib.api.PlatformResolver;
@@ -13,7 +14,6 @@ import io.github.steaf23.bingoreloaded.lib.inventory.group.PaginatedGroup;
 import io.github.steaf23.bingoreloaded.lib.inventory.group.ScrollableItemBar;
 import io.github.steaf23.bingoreloaded.lib.inventory.group.SelectionModel;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
-import io.github.steaf23.bingoreloaded.lib.util.PlayerDisplayTranslationKey;
 import io.github.steaf23.bingoreloaded.tasks.GameTask;
 import io.github.steaf23.bingoreloaded.tasks.data.TaskData;
 import net.kyori.adventure.text.Component;
@@ -37,11 +37,11 @@ public class TagManagerMenu extends BasicMenu {
 	private final PaginatedGroup<GameTask> taskGroup = new PaginatedGroup<>(0, 2, 9, 4, this::onTaskClicked, SelectionModel.SelectMode.MULTIPLE_OR_NONE, true);
 
 	private static final ItemTemplate NEXT = new ItemTemplate(8, 1, ItemTypePaper.of(Material.STRUCTURE_VOID),
-			PlayerDisplayTranslationKey.MENU_NEXT.translate()
+			BingoMessage.MENU_NEXT.asPhrase()
 					.color(NamedTextColor.LIGHT_PURPLE).decorate(TextDecoration.BOLD));
 
 	private static final ItemTemplate PREVIOUS = new ItemTemplate(0, 1, ItemTypePaper.of(Material.BARRIER),
-			PlayerDisplayTranslationKey.MENU_PREVIOUS.translate()
+			BingoMessage.MENU_PREV.asPhrase()
 					.color(NamedTextColor.LIGHT_PURPLE).decorate(TextDecoration.BOLD));
 
 	public TagManagerMenu(MenuBoard manager, String listName) {

@@ -8,7 +8,8 @@ import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gameloop.GameManager;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.lib.api.PlatformResolver;
-import io.github.steaf23.bingoreloaded.lib.api.ServerSoftware;
+import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformServer;
+import io.github.steaf23.bingoreloaded.lib.api.platform.ServerSoftware;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
@@ -26,9 +27,9 @@ public class BingoReloadedPlaceholderExpansion extends PlaceholderExpansion
 {
     private final BingoReloaded extension;
     private final BingoPlaceholderFormatter formatter;
-    private final ServerSoftware server;
+    private final PlatformServer server;
 
-    public BingoReloadedPlaceholderExpansion(ServerSoftware server, BingoReloaded extension) {
+    public BingoReloadedPlaceholderExpansion(PlatformServer server, BingoReloaded extension) {
         this.server = server;
         this.extension = extension;
         this.formatter = new BingoPlaceholderFormatter();
@@ -41,12 +42,12 @@ public class BingoReloadedPlaceholderExpansion extends PlaceholderExpansion
 
     @Override
     public @NotNull String getAuthor() {
-        return String.join(", ", PlatformResolver.get().getExtensionInfo().authors());
+        return String.join(", ", BingoReloaded.getMetaInfo().authors());
     }
 
     @Override
     public @NotNull String getVersion() {
-        return PlatformResolver.get().getExtensionInfo().version();
+        return BingoReloaded.getMetaInfo().version();
     }
 
     @Override

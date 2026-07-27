@@ -11,6 +11,7 @@ import io.github.steaf23.bingoreloaded.lib.api.WorldPosition;
 import io.github.steaf23.bingoreloaded.lib.api.item.InventoryHandle;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
+import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformServer;
 import net.kyori.adventure.audience.ForwardingAudience;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
@@ -21,6 +22,8 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 public interface PlayerHandle extends ForwardingAudience, ActionUser {
+
+	PlatformServer server();
 
 	String playerName();
 

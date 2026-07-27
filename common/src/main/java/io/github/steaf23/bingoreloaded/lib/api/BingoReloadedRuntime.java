@@ -8,8 +8,11 @@ import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.data.record.LeaderboardData;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gameloop.phase.PregameLobby;
+import io.github.steaf23.bingoreloaded.lib.action.ActionTree;
 import io.github.steaf23.bingoreloaded.lib.api.item.CapacityInventoryProvider;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
+import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformTasks;
+import io.github.steaf23.bingoreloaded.lib.api.platform.ServerSoftware;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.api.player.SharedDisplay;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataAccessor;
@@ -35,7 +38,8 @@ public interface BingoReloadedRuntime {
 	void onLanguageUpdated();
 	void onConfigReloaded(BingoConfigurationData config);
 
-	void registerActions(BingoConfigurationData config);
+	void registerAction(boolean allowConsole, ActionTree action);
+	void registerExtraActions(BingoConfigurationData config);
 
 	@Nullable WorldHandle createBingoOverworld(Key worldKey, Key generationOptions);
 
@@ -59,4 +63,6 @@ public interface BingoReloadedRuntime {
 	SharedDisplay settingsDisplay();
 
 	BingoClientManager getClientManager();
+
+	PlatformTasks tasks();
 }

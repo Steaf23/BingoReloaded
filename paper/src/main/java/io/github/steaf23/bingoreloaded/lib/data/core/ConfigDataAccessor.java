@@ -1,17 +1,17 @@
 package io.github.steaf23.bingoreloaded.lib.data.core;
 
-import io.github.steaf23.bingoreloaded.lib.api.PaperServerSoftware;
+import io.github.steaf23.bingoreloaded.lib.api.platform.PaperResources;
 
 /**
  * Specific yaml data accessor for the config.yml file provided by Bukkit.
  */
 public class ConfigDataAccessor extends YamlDataStorage implements DataAccessor
 {
-    private final PaperServerSoftware platform;
+    private final PaperResources resources;
 
-    public ConfigDataAccessor(PaperServerSoftware platform) {
-        super(platform.getConfig());
-        this.platform = platform;
+    public ConfigDataAccessor(PaperResources resources) {
+        super(resources.getConfig());
+        this.resources = resources;
     }
 
     /**
@@ -30,13 +30,13 @@ public class ConfigDataAccessor extends YamlDataStorage implements DataAccessor
 
     @Override
     public void load() {
-        platform.reloadConfig();
-        config = platform.getConfig();
+        resources.reloadConfig();
+        config = resources.getConfig();
     }
 
     @Override
     public void saveChanges() {
-        platform.saveConfig();
+        resources.saveConfig();
     }
 
     @Override

@@ -1,7 +1,5 @@
 package io.github.steaf23.bingoreloaded.lib.util;
 
-import io.github.steaf23.bingoreloaded.lib.api.ServerSoftware;
-
 import java.io.File;
 
 public class DebugLogger
@@ -15,9 +13,9 @@ public class DebugLogger
         }
     }
 
-    public static void setupLogger(ServerSoftware platform) {
-        logger = new SimpleLog(new File(platform.getDataFolder(), "log/debug.log"));
-        ConsoleMessenger.log("Set up debug logger for " + platform.getExtensionInfo().name());
+    public static void setupLogger(File dataFolder, String extensionName) {
+        logger = new SimpleLog(new File(dataFolder, "log/debug.log"));
+        ConsoleMessenger.log("Set up debug logger for " + extensionName);
     }
 
     public static void stopLogger() {

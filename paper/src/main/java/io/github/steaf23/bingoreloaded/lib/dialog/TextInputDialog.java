@@ -1,8 +1,8 @@
 package io.github.steaf23.bingoreloaded.lib.dialog;
 
 import com.github.retrooper.packetevents.protocol.dialog.Dialog;
+import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.lib.api.MenuBoard;
-import io.github.steaf23.bingoreloaded.lib.util.PlayerDisplayTranslationKey;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -19,8 +19,7 @@ public class TextInputDialog extends DialogMenu {
 
 	private static final Key INPUT_ACCEPT_KEY = Key.key("playerdisplay", "text_input_accept");
 
-	private static final Component BUTTON_TITLE = PlayerDisplayTranslationKey.MENU_ACCEPT
-			.translate()
+	private static final Component BUTTON_TITLE = BingoMessage.MENU_ACCEPT.asPhrase()
 			.color(NamedTextColor.GREEN)
 			.decorate(TextDecoration.BOLD);
 

@@ -1,6 +1,7 @@
 package io.github.steaf23.bingoreloaded.lib.data.core;
 
-import io.github.steaf23.bingoreloaded.lib.api.ServerSoftware;
+import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformResources;
+import io.github.steaf23.bingoreloaded.lib.api.platform.ServerSoftware;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -13,14 +14,14 @@ import java.util.List;
 
 public class YamlDataAccessor extends YamlDataStorage implements DataAccessor
 {
-    private final ServerSoftware platform;
+    private final PlatformResources resources;
     private final String location;
     private final boolean internalOnly;
 
-    public YamlDataAccessor(ServerSoftware platform, String location, boolean internalOnly) {
+    public YamlDataAccessor(PlatformResources resources, String location, boolean internalOnly) {
         // create default config to not throw null pointers everywhere when trying to use this class before its loaded
         super(new YamlConfiguration());
-        this.platform = platform;
+        this.resources = resources;
         this.location = location;
         this.internalOnly = internalOnly;
     }
@@ -41,7 +42,7 @@ public class YamlDataAccessor extends YamlDataStorage implements DataAccessor
 
         config = defaultConfig;
         try {
-            defaultConfig.save(new File(platform.getDataFolder(), getLocation() + getFileExtension()));
+            defaultConfig.save(new File(resources.getDataFolder(), getLocation() + getFileExtension()));
         } catch (IOException e) {
             ConsoleMessenger.bug("Could not update " + getLocation() + getFileExtension() + " to new version", this);
         }
@@ -60,20 +61,20 @@ public class YamlDataAccessor extends YamlDataStorage implements DataAccessor
     @Override
     public void load() {
         if (isInternalReadOnly()) {
-            InputStream stream = platform.getResource(getLocation() + getFileExtension());
+            InputStream stream = resources.getResource(getLocation() + getFileExtension());
             if (stream != null) {
                 config = YamlConfiguration.loadConfiguration(new InputStreamReader(stream));
             }
             return;
         }
 
-        File userFile = new File(platform.getDataFolder(), getLocation() + getFileExtension());
+        File userFile = new File(resources.getDataFolder(), getLocation() + getFileExtension());
         if (!userFile.exists()) {
-            platform.saveResource(Paths.get(getLocation() + getFileExtension()).toString(), false);
+            resources.saveResource(Paths.get(getLocation() + getFileExtension()).toString(), false);
         }
 
         // Patch user config to add new settings but don't erase user settings.
-        InputStream stream = platform.getResource(getLocation() + getFileExtension());
+        InputStream stream = resources.getResource(getLocation() + getFileExtension());
         if (stream != null) {
             YamlConfiguration defaultValues = YamlConfiguration.loadConfiguration(new InputStreamReader(stream));
             patchUserConfig(YamlConfiguration.loadConfiguration(userFile), defaultValues);
@@ -87,7 +88,7 @@ public class YamlDataAccessor extends YamlDataStorage implements DataAccessor
         }
 
         try {
-            ((YamlConfiguration) config).save(new File(platform.getDataFolder(), getLocation() + getFileExtension()));
+            ((YamlConfiguration) config).save(new File(resources.getDataFolder(), getLocation() + getFileExtension()));
         } catch (IOException e) {
             ConsoleMessenger.log(e.getMessage());
         }

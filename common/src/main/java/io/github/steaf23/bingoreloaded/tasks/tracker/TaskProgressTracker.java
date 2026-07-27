@@ -4,7 +4,8 @@ import io.github.steaf23.bingoreloaded.cards.TaskCard;
 import io.github.steaf23.bingoreloaded.data.config.BingoOptions;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.lib.api.AdvancementHandle;
-import io.github.steaf23.bingoreloaded.lib.api.ServerSoftware;
+import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformTasks;
+import io.github.steaf23.bingoreloaded.lib.api.platform.ServerSoftware;
 import io.github.steaf23.bingoreloaded.lib.api.StatisticHandle;
 import io.github.steaf23.bingoreloaded.lib.api.WorldPosition;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
@@ -58,7 +59,7 @@ public class TaskProgressTracker
         }
     }
 
-    private final ServerSoftware platform;
+    private final PlatformTasks tasks;
     private final BingoGame game;
     private final Map<GameTask, List<TaskProgress>> progressMap;
     private final StatisticTracker statisticTracker;
@@ -68,8 +69,8 @@ public class TaskProgressTracker
     private final List<GameTask> pendingTasksToRemove = new ArrayList<>();
 	private boolean updateClient;
 
-    public TaskProgressTracker(ServerSoftware platform, @NotNull BingoGame game) {
-        this.platform = platform;
+    public TaskProgressTracker(PlatformTasks tasks, @NotNull BingoGame game) {
+        this.tasks = tasks;
         this.game = game;
         this.progressMap = new HashMap<>();
         this.statisticTracker = new StatisticTracker();
@@ -255,13 +256,13 @@ public class TaskProgressTracker
 
         // Used when crafting things.
         if (resultSlot && !shiftClicked) {
-            platform.runTask(task -> {
+            tasks.runTask(task -> {
                 completeItemSlot(itemOnCursor, participant);
             });
             return;
         }
 
-        platform.runTask(task -> {
+        tasks.runTask(task -> {
             // Other contents are updated, so we want to check the full inventory for task items..
             for (StackHandle stack : player.inventory().contents()) {
                 if (stack != null) {
@@ -295,7 +296,7 @@ public class TaskProgressTracker
 
             removeItem = true;
 
-            platform.runTask(task -> {
+            tasks.runTask(task -> {
                 participant.sessionPlayer().ifPresent(p -> p.world().dropItem(resultStack, itemLocation));
             });
         }
@@ -311,7 +312,7 @@ public class TaskProgressTracker
 
         //FIXME: REFACTOR remove wrap
         StackWrapped wrapped = new StackWrapped(stack);
-        platform.runTask(task -> {
+        tasks.runTask(task -> {
             StackHandle internal = wrapped.stack();
             internal = completeItemSlot(stack, participant);
         });

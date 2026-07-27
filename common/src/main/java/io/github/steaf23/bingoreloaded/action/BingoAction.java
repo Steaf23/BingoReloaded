@@ -17,7 +17,8 @@ import io.github.steaf23.bingoreloaded.lib.action.ActionResult;
 import io.github.steaf23.bingoreloaded.lib.action.ActionTree;
 import io.github.steaf23.bingoreloaded.lib.api.ActionUser;
 import io.github.steaf23.bingoreloaded.lib.api.PlatformResolver;
-import io.github.steaf23.bingoreloaded.lib.api.ServerSoftware;
+import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformServer;
+import io.github.steaf23.bingoreloaded.lib.api.platform.ServerSoftware;
 import io.github.steaf23.bingoreloaded.lib.api.WorldPosition;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.util.ComponentUtils;
@@ -164,19 +165,19 @@ public class BingoAction extends ActionTree {
 
 		this.addSessionSubAction("about", List.of(), (args, session) -> {
 			ServerSoftware server = PlatformResolver.get();
-			getLastUser().sendMessage(Component.text("\nBingo Reloaded Version: " + server.getExtensionInfo().version() +
-					" Created by: " + server.getExtensionInfo().authors()));
+			getLastUser().sendMessage(Component.text("\nBingo Reloaded Version: " + BingoReloaded.getMetaInfo().version() +
+					" Created by: " + BingoReloaded.getMetaInfo().authors()));
 			getLastUser().sendMessage(BingoMessage.createInfoUrlComponent(Component.text("\nJoin the bingo reloaded discord server here to stay up to date!"), "https://discord.gg/AzZNxPRNPf"));
 			getLastUser().sendMessage(BingoMessage.createInfoUrlComponent(Component.text("\nClick here to download the Bingo Reloaded Companion mod if you play bingo!").color(NamedTextColor.DARK_GREEN), "https://modrinth.com/mod/bingo-reloaded-companion"));
 			return ActionResult.SUCCESS;
 		});
 
 
-		this.addSubAction(new ActionTree("reload", List.of("bingo.admin"), args -> {
+		this.addSubAction(new ActionTree("reload", List.of("bingo.admin"), (server, args) -> {
 			if (args.length == 1) {
-				return reloadCommand(args[0], getLastUser());
+				return reloadCommand(server, args[0], getLastUser());
 			} else {
-				return reloadCommand("all", getLastUser());
+				return reloadCommand(server, "all", getLastUser());
 			}
 		}).addTabCompletion(args -> List.of(
 				"all",
@@ -283,7 +284,7 @@ public class BingoAction extends ActionTree {
 				BingoPlayerSender.sendMessage(text, getLastUser());
 				return ActionResult.IGNORED;
 			}
-			BingoStatData statsData = new BingoStatData(gameManager.getPlatform());
+			BingoStatData statsData = new BingoStatData(gameManager.getServer());
 			Component msg;
 			if (args.length > 1 && BingoReloaded.isAdmin(getLastUser())) {
 				msg = statsData.getPlayerStatsFormatted(args[1]);
@@ -507,10 +508,10 @@ public class BingoAction extends ActionTree {
 		}
 	}
 
-	public ActionResult reloadCommand(String reloadOption, ActionUser user) {
+	public ActionResult reloadCommand(PlatformServer server, String reloadOption, ActionUser user) {
 		switch (reloadOption) {
-			case "all" -> reloadAll();
-			case "worlds" -> reloadWorlds();
+			case "all" -> reloadAll(server);
+			case "worlds" -> reloadWorlds(server);
 			case "placeholders" -> reloadPlaceholders();
 			case "scoreboards" -> reloadScoreboards();
 			case "data" -> reloadData();
@@ -526,7 +527,7 @@ public class BingoAction extends ActionTree {
 		return ActionResult.SUCCESS;
 	}
 
-	public void reloadAll() {
+	public void reloadAll(PlatformServer server) {
 		reloadPlaceholders();
 		reloadScoreboards();
 		reloadData();
@@ -534,11 +535,11 @@ public class BingoAction extends ActionTree {
 		reloadSounds();
 
 		// reload worlds last to kick off everything else.
-		reloadWorlds();
+		reloadWorlds(server);
 	}
 
-	public void reloadWorlds() {
-		bingo.reloadManager();
+	public void reloadWorlds(PlatformServer server) {
+		bingo.reloadManager(server);
 	}
 
 	public void reloadPlaceholders() {

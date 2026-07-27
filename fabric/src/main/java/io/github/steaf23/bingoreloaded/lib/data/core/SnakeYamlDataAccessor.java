@@ -1,6 +1,7 @@
 package io.github.steaf23.bingoreloaded.lib.data.core;
 
-import io.github.steaf23.bingoreloaded.lib.api.FabricServerSoftware;
+import io.github.steaf23.bingoreloaded.lib.api.platform.FabricServerSoftware;
+import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformResources;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import org.yaml.snakeyaml.Yaml;
 
@@ -12,11 +13,11 @@ import java.io.InputStream;
 public class SnakeYamlDataAccessor extends PlainDataStorage implements DataAccessor {
 
 	private final String location;
-	private final FabricServerSoftware platform;
+	private final PlatformResources resources;
 
-	public SnakeYamlDataAccessor(FabricServerSoftware platform, String location) {
+	public SnakeYamlDataAccessor(PlatformResources resources, String location) {
 		this.location = location;
-		this.platform = platform;
+		this.resources = resources;
 	}
 
 	@Override
@@ -32,7 +33,7 @@ public class SnakeYamlDataAccessor extends PlainDataStorage implements DataAcces
 	@Override
 	public void load() {
 		if (isInternalReadOnly()) {
-			InputStream stream = platform.getResource(getLocation() + getFileExtension());
+			InputStream stream = resources.getResource(getLocation() + getFileExtension());
 			if (stream != null) {
 				root = new Yaml().load(stream);
 			}
@@ -40,9 +41,9 @@ public class SnakeYamlDataAccessor extends PlainDataStorage implements DataAcces
 			return;
 		}
 
-		File file = new File(platform.getDataFolder(), getLocation() + getFileExtension());
+		File file = new File(resources.getDataFolder(), getLocation() + getFileExtension());
 		if (!file.exists()) {
-			platform.saveResource(getLocation() + getFileExtension(), false);
+			resources.saveResource(getLocation() + getFileExtension(), false);
 		}
 
 		try {

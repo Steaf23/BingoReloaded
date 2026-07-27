@@ -1,5 +1,9 @@
 package io.github.steaf23.bingoreloaded;
 
+import io.github.steaf23.bingoreloaded.action.AutoBingoAction;
+import io.github.steaf23.bingoreloaded.action.BingoAction;
+import io.github.steaf23.bingoreloaded.action.BingoConfigAction;
+import io.github.steaf23.bingoreloaded.action.BotCommandAction;
 import io.github.steaf23.bingoreloaded.data.BingoLobby;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.BingoSound;
@@ -26,9 +30,10 @@ import io.github.steaf23.bingoreloaded.gameloop.GameManager;
 import io.github.steaf23.bingoreloaded.gameloop.SingularGameManager;
 import io.github.steaf23.bingoreloaded.lib.api.ActionUser;
 import io.github.steaf23.bingoreloaded.lib.api.BingoReloadedRuntime;
-import io.github.steaf23.bingoreloaded.lib.api.PlatformResolver;
-import io.github.steaf23.bingoreloaded.lib.api.ServerSoftware;
+import io.github.steaf23.bingoreloaded.lib.api.ExtensionInfo;
+import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformResources;
 import io.github.steaf23.bingoreloaded.lib.api.StatisticHandle;
+import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformServer;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataAccessor;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataStorageSerializerRegistry;
@@ -75,25 +80,27 @@ public class BingoReloaded implements Namespaced {
 
 	private static BingoReloaded INSTANCE;
 
-	private final ServerSoftware platform;
 	private final BingoReloadedRuntime runtime;
 	private BingoConfigurationData config;
 	private GameManager gameManager;
 	private TexturedMenuData textureData;
 	private boolean useResourcePack = false;
+	private ExtensionInfo metaInfo;
+	private PlatformResources resources;
 
 	BingoReloaded(BingoReloadedRuntime runtime) {
-		this.platform = PlatformResolver.get();
 		this.runtime = runtime;
 	}
 
 	public void load() {
 		// Kinda ugly, but we can assume there will only be one instance of this class anyway.
 		INSTANCE = this;
-		DebugLogger.setupLogger(platform);
+//		DebugLogger.setupLogger(platform);
 	}
 
-	public void enable() {
+	public void enable(PlatformResources resources, ExtensionInfo info) {
+		this.metaInfo = info;
+		this.resources = resources;
 		runtime.setupConfig();
 
 		DataStorageSerializerRegistry.addSerializer(new DefaultKitStorageSerializer(), DefaultKitData.Kit.class);
@@ -110,22 +117,22 @@ public class BingoReloaded implements Namespaced {
 		DataStorageSerializerRegistry.addSerializer(new TaskTagStorageSerializer(), TaskTagData.TaskTag.class);
 
 		// Create data accessors
-		addDataAccessor(new TagDataAccessor(platform, "data/default_cards", true));
-		addDataAccessor(new TagDataAccessor(platform, "data/default_lists", true));
-		addDataAccessor(new TagDataAccessor(platform, "data/default_kits", true));
-		addDataAccessor(new TagDataAccessor(platform, "data/default_tags", true));
+		addDataAccessor(new TagDataAccessor(resources, "data/default_cards", true));
+		addDataAccessor(new TagDataAccessor(resources, "data/default_lists", true));
+		addDataAccessor(new TagDataAccessor(resources, "data/default_kits", true));
+		addDataAccessor(new TagDataAccessor(resources, "data/default_tags", true));
 
-		addDataAccessor(new TagDataAccessor(platform, "data/cards", false));
-		addDataAccessor(new TagDataAccessor(platform, "data/textures", false));
-		addDataAccessor(new TagDataAccessor(platform, "data/kits", false));
-		addDataAccessor(new TagDataAccessor(platform, "data/" + getDefaultTasksVersion(), false));
-		addDataAccessor(new TagDataAccessor(platform, "data/presets", false));
-		addDataAccessor(new TagDataAccessor(platform, "data/player_stats", false));
-		addDataAccessor(new TagDataAccessor(platform, "data/teams", false));
-		addDataAccessor(new TagDataAccessor(platform, "data/players", false));
-		addDataAccessor(new TagDataAccessor(platform, "data/lobby", false));
-		addDataAccessor(new TagDataAccessor(platform, "data/leaderboard", false));
-		addDataAccessor(new TagDataAccessor(platform, "data/tags", false));
+		addDataAccessor(new TagDataAccessor(resources, "data/cards", false));
+		addDataAccessor(new TagDataAccessor(resources, "data/textures", false));
+		addDataAccessor(new TagDataAccessor(resources, "data/kits", false));
+		addDataAccessor(new TagDataAccessor(resources, "data/" + getDefaultTasksVersion(), false));
+		addDataAccessor(new TagDataAccessor(resources, "data/presets", false));
+		addDataAccessor(new TagDataAccessor(resources, "data/player_stats", false));
+		addDataAccessor(new TagDataAccessor(resources, "data/teams", false));
+		addDataAccessor(new TagDataAccessor(resources, "data/players", false));
+		addDataAccessor(new TagDataAccessor(resources, "data/lobby", false));
+		addDataAccessor(new TagDataAccessor(resources, "data/leaderboard", false));
+		addDataAccessor(new TagDataAccessor(resources, "data/tags", false));
 
 		for (DataAccessor accessor : runtime.getDataToRegister()) { // platform specific data accessors
 			addDataAccessor(accessor);
@@ -141,10 +148,7 @@ public class BingoReloaded implements Namespaced {
 		BingoSound.setSounds(getDataAccessor("sounds"));
 
 		this.textureData = new TexturedMenuData();
-
-		reloadManager();
-
-		ConsoleMessenger.log(Component.text("Enabled " + platform.getExtensionInfo().name()).color(NamedTextColor.GREEN));
+		ConsoleMessenger.log(Component.text("Enabled " + metaInfo.name()).color(NamedTextColor.GREEN));
 	}
 
 	public void disable() {
@@ -162,7 +166,7 @@ public class BingoReloaded implements Namespaced {
 	public static void incrementPlayerStat(PlayerHandle player, BingoStatType stat) {
 		boolean savePlayerStatistics = INSTANCE.config.getOptionValue(BingoOptions.SAVE_PLAYER_STATISTICS);
 		if (savePlayerStatistics) {
-			BingoStatData statsData = new BingoStatData(INSTANCE.platform);
+			BingoStatData statsData = new BingoStatData(player.server());
 			statsData.incrementPlayerStat(player, stat);
 		}
 	}
@@ -170,7 +174,7 @@ public class BingoReloaded implements Namespaced {
 	public static void setPlayerStat(PlayerHandle player, BingoStatType stat, int value) {
 		boolean savePlayerStatistics = INSTANCE.config.getOptionValue(BingoOptions.SAVE_PLAYER_STATISTICS);
 		if (savePlayerStatistics) {
-			BingoStatData statsData = new BingoStatData(INSTANCE.platform);
+			BingoStatData statsData = new BingoStatData(player.server());
 			statsData.setPlayerStat(player.uniqueId(), stat, value);
 		}
 	}
@@ -178,7 +182,7 @@ public class BingoReloaded implements Namespaced {
 	public static int getPlayerStat(PlayerHandle player, BingoStatType stat) {
 		boolean savePlayerStatistics = INSTANCE.config.getOptionValue(BingoOptions.SAVE_PLAYER_STATISTICS);
 		if (savePlayerStatistics) {
-			BingoStatData statsData = new BingoStatData(INSTANCE.platform);
+			BingoStatData statsData = new BingoStatData(player.server());
 			return statsData.getPlayerStat(player.uniqueId(), stat);
 		}
 		return 0;
@@ -282,7 +286,7 @@ public class BingoReloaded implements Namespaced {
 		language = "languages/" + language;
 
 		// only reload the language when it exists
-		if (platform.getResource(language + ".yml") != null) {
+		if (resources.getResource(language + ".yml") != null) {
 			BingoMessage.setLanguage(runtime.getLanguageData(language));
 
 			runtime.onLanguageUpdated();
@@ -293,14 +297,14 @@ public class BingoReloaded implements Namespaced {
 		}
 	}
 
-	public void reloadManager() {
+	public void reloadManager(PlatformServer server) {
 		if (gameManager != null) {
 			for (String name : gameManager.getSessionNames()) {
 				gameManager.endGame(name);
 
 				// Reset player data regardless of whether saving player information is enabled, because we need to begin with a clean slate.
 				for (UUID playerId : gameManager.getPlayerData().getSavedPlayers()) {
-					PlayerHandle player = platform.getPlayerFromUniqueId(playerId);
+					PlayerHandle player = server.getPlayerFromUniqueId(playerId);
 
 					if (player != null) {
 						gameManager.getPlayerData().loadPlayer(player);
@@ -313,13 +317,18 @@ public class BingoReloaded implements Namespaced {
 		}
 
 		if (config.getOptionValue(BingoOptions.CONFIGURATION) == BingoOptions.PluginConfiguration.SINGULAR) {
-			this.gameManager = new SingularGameManager(runtime, config);
+			this.gameManager = new SingularGameManager(server, runtime, config);
 		} else {
-			this.gameManager = new GameManager(runtime, config);
+			this.gameManager = new GameManager(server, runtime, config);
 		}
 
 		this.gameManager.setup(config.getOptionValue(BingoOptions.DEFAULT_WORLDS));
-		runtime.registerActions(config);
+
+		runtime.registerAction(true, new AutoBingoAction(getGameManager()));
+		runtime.registerAction(true, new BingoConfigAction(config));
+		runtime.registerAction(false, new BingoAction(this, config, getGameManager()));
+		runtime.registerAction(false, new BotCommandAction(getGameManager()));
+		runtime.registerExtraActions(config);
 	}
 
 	@KeyPattern.Namespace
@@ -358,5 +367,9 @@ public class BingoReloaded implements Namespaced {
 
 	public static boolean useResourcePack() {
 		return INSTANCE.useResourcePack;
+	}
+
+	public static ExtensionInfo getMetaInfo() {
+		return INSTANCE.metaInfo;
 	}
 }

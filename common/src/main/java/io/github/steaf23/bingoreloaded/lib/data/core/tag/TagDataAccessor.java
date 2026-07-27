@@ -1,6 +1,7 @@
 package io.github.steaf23.bingoreloaded.lib.data.core.tag;
 
-import io.github.steaf23.bingoreloaded.lib.api.ServerSoftware;
+import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformResources;
+import io.github.steaf23.bingoreloaded.lib.api.platform.ServerSoftware;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataAccessor;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 
@@ -20,12 +21,12 @@ import java.util.zip.GZIPOutputStream;
  */
 public class TagDataAccessor extends TagDataStorage implements DataAccessor
 {
-    private final ServerSoftware platform;
+    private final PlatformResources resources;
     private final String filepath;
     private final boolean internalOnly;
 
-    public TagDataAccessor(ServerSoftware platform, String filepath, boolean internalReadOnly) {
-        this.platform = platform;
+    public TagDataAccessor(PlatformResources resources, String filepath, boolean internalReadOnly) {
+        this.resources = resources;
         this.filepath = filepath;
         this.internalOnly = internalReadOnly;
     }
@@ -44,12 +45,12 @@ public class TagDataAccessor extends TagDataStorage implements DataAccessor
     public void load() {
         InputStream inputStream;
         if (isInternalReadOnly()) {
-            inputStream = platform.getResource(getLocation() + getFileExtension());
+            inputStream = resources.getResource(getLocation() + getFileExtension());
         }
         else {
-            File file = new File(platform.getDataFolder(), getLocation() + getFileExtension());
+            File file = new File(resources.getDataFolder(), getLocation() + getFileExtension());
             if (!file.exists()) {
-                platform.saveResource(getLocation() + getFileExtension(), false);
+                resources.saveResource(getLocation() + getFileExtension(), false);
             }
 
             try {
@@ -69,7 +70,7 @@ public class TagDataAccessor extends TagDataStorage implements DataAccessor
         if (isInternalReadOnly()) {
             return;
         }
-        writeTagDataToFile(this, new File(platform.getDataFolder(), getLocation() + getFileExtension()));
+        writeTagDataToFile(this, new File(resources.getDataFolder(), getLocation() + getFileExtension()));
     }
 
     @Override

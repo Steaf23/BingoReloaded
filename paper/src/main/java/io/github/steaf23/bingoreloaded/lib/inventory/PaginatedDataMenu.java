@@ -1,5 +1,6 @@
 package io.github.steaf23.bingoreloaded.lib.inventory;
 
+import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.lib.api.MenuBoard;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemTypePaper;
 import io.github.steaf23.bingoreloaded.lib.inventory.action.MenuAction;
@@ -7,7 +8,6 @@ import io.github.steaf23.bingoreloaded.lib.inventory.group.ItemRect;
 import io.github.steaf23.bingoreloaded.lib.inventory.group.PaginatedGroup;
 import io.github.steaf23.bingoreloaded.lib.inventory.group.SelectionModel;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
-import io.github.steaf23.bingoreloaded.lib.util.PlayerDisplayTranslationKey;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -65,19 +65,19 @@ public abstract class PaginatedDataMenu<Data> extends BasicMenu {
 	private final PaginatedGroup<Data> pagination;
 
 	protected static final ItemTemplate NEXT = new ItemTemplate(8, 5, ItemTypePaper.of(Material.STRUCTURE_VOID),
-			PlayerDisplayTranslationKey.MENU_NEXT.translate()
+			BingoMessage.MENU_NEXT.asPhrase()
 					.color(NamedTextColor.LIGHT_PURPLE).decorate(TextDecoration.BOLD));
 
 	protected static final ItemTemplate PREVIOUS = new ItemTemplate(0, 5, ItemTypePaper.of(Material.BARRIER),
-			PlayerDisplayTranslationKey.MENU_PREVIOUS.translate()
+			BingoMessage.MENU_PREV.asPhrase()
 					.color(NamedTextColor.LIGHT_PURPLE).decorate(TextDecoration.BOLD));
 
 	protected static final ItemTemplate CLOSE = new ItemTemplate(4, 5, ItemTypePaper.of(Material.REDSTONE),
-			PlayerDisplayTranslationKey.MENU_SAVE_EXIT.translate()
+			BingoMessage.MENU_SAVE_EXIT.asPhrase()
 					.color(NamedTextColor.RED).decorate(TextDecoration.BOLD));
 
 	protected static final ItemTemplate FILTER = new ItemTemplate(1, 5, ItemTypePaper.of(Material.HOPPER),
-			PlayerDisplayTranslationKey.MENU_FILTER.translate()
+			BingoMessage.MENU_FILTER.asPhrase()
 					.color(NamedTextColor.GOLD).decorate(TextDecoration.BOLD));
 
 	public PaginatedDataMenu(MenuBoard board, Component initialTitle, Collection<Data> options) {

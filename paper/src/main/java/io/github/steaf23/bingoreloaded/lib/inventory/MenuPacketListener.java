@@ -7,7 +7,8 @@ import com.github.retrooper.packetevents.protocol.nbt.NBTCompound;
 import com.github.retrooper.packetevents.protocol.packettype.PacketType;
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientCustomClickAction;
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientNameItem;
-import io.github.steaf23.bingoreloaded.lib.api.ServerSoftware;
+import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformTasks;
+import io.github.steaf23.bingoreloaded.lib.api.platform.ServerSoftware;
 import io.github.steaf23.bingoreloaded.lib.events.PlayerDisplayAnvilTextChangedEvent;
 import io.github.steaf23.bingoreloaded.lib.events.PlayerDisplayCustomClickActionEvent;
 import org.bukkit.Bukkit;
@@ -21,10 +22,10 @@ public class MenuPacketListener extends SimplePacketListenerAbstract
     //Packet events listener =========================================
     protected final Map<UUID, Integer> openPlayerInventories;
 
-    private final ServerSoftware server;
+    private final PlatformTasks tasks;
 
-    public MenuPacketListener(ServerSoftware server) {
-        this.server = server;
+    public MenuPacketListener(PlatformTasks tasks) {
+        this.tasks = tasks;
         PacketEvents.getAPI().getEventManager().registerListener(this);
         this.openPlayerInventories = new HashMap<>();
     }
@@ -34,7 +35,7 @@ public class MenuPacketListener extends SimplePacketListenerAbstract
         if (event.getPacketType() == PacketType.Play.Client.NAME_ITEM) {
             WrapperPlayClientNameItem nameItem = new WrapperPlayClientNameItem(event);
 
-            server.runTask((t) -> {
+            tasks.runTask((t) -> {
                 var textChangedEvent = new PlayerDisplayAnvilTextChangedEvent(nameItem.getItemName(), event.getUser().getUUID());
                 Bukkit.getPluginManager().callEvent(textChangedEvent);
             });
@@ -42,7 +43,7 @@ public class MenuPacketListener extends SimplePacketListenerAbstract
         else if (event.getPacketType() == PacketType.Play.Client.CUSTOM_CLICK_ACTION) {
             WrapperPlayClientCustomClickAction customClickAction = new WrapperPlayClientCustomClickAction(event);
 
-            server.runTask((t) -> {
+            tasks.runTask((t) -> {
                 var customClickActionEvent = new PlayerDisplayCustomClickActionEvent(event.getUser().getUUID(), customClickAction.getId().key(), (NBTCompound)customClickAction.getPayload());
                 Bukkit.getPluginManager().callEvent(customClickActionEvent);
             });

@@ -94,8 +94,8 @@ public class BingoSession implements ForwardingAudience
         //TODO: decide a better place for this command
 //        BingoReloaded.getInstance().registerCommand("bingobot", new BotCommand(this));
 
-        gameManager.getPlatform().runTask(10L, (t) -> {
-            for (PlayerHandle p : PlatformResolver.get().getOnlinePlayers()) {
+        gameManager.getRuntime().tasks().runTask(10L, (t) -> {
+            for (PlayerHandle p : gameManager.getServer().getOnlinePlayers()) {
                 if (hasPlayer(p)) {
                     addPlayer(p);
                 }
@@ -148,7 +148,7 @@ public class BingoSession implements ForwardingAudience
 
         // First make sure the previous phase (PregameLobby) is ended.
         phase.end();
-        phase = new BingoGame(gameManager.getPlatform(), this, gameSettings == null ? settings : gameSettings.view(), config, this::onGameEnded, atPosition);
+        phase = new BingoGame(gameManager.getServer(), this, gameSettings == null ? settings : gameSettings.view(), config, this::onGameEnded, atPosition);
         phase.setup();
 
 		return true;
@@ -210,7 +210,7 @@ public class BingoSession implements ForwardingAudience
 				delaySeconds = Math.min(delaySeconds, gameRestartTime);
 
 				if (delaySeconds > 0.0) {
-					gameManager.getPlatform().runTask((long) (delaySeconds * BingoReloaded.ONE_SECOND), t -> {
+					gameManager.getRuntime().tasks().runTask((long) (delaySeconds * BingoReloaded.ONE_SECOND), t -> {
 						getPlayersInWorld().forEach(p -> {
 							WorldPosition pos = BlockHelper.getRandomPosWithinRange(lobby.spawnPosition(), spread, spread);
 							p.teleportAsync(pos);
@@ -291,7 +291,7 @@ public class BingoSession implements ForwardingAudience
 	}
 
     public void onPlayerJoinedSessionWorld(PlayerHandle player) {
-        gameManager.getPlatform().runTask(t -> {
+        gameManager.getRuntime().tasks().runTask(t -> {
             teamManager.handlePlayerJoinedSessionWorld(player);
             phase.handlePlayerJoinedSessionWorld(player);
 
@@ -309,7 +309,7 @@ public class BingoSession implements ForwardingAudience
 		getGameManager().getRuntime().getClientManager().updateCard(player, null);
 
 
-        getGameManager().getPlatform().runTask(t -> {
+        getGameManager().getRuntime().tasks().runTask(t -> {
             teamManager.handlePlayerLeftSessionWorld(player);
             phase.handlePlayerLeftSessionWorld(player);
 

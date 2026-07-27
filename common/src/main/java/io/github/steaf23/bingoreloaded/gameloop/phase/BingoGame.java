@@ -17,12 +17,13 @@ import io.github.steaf23.bingoreloaded.lib.api.BiomeType;
 import io.github.steaf23.bingoreloaded.lib.api.InteractAction;
 import io.github.steaf23.bingoreloaded.lib.api.PlayerGamemode;
 import io.github.steaf23.bingoreloaded.lib.api.PotionEffectInstance;
-import io.github.steaf23.bingoreloaded.lib.api.ServerSoftware;
+import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformServer;
 import io.github.steaf23.bingoreloaded.lib.api.StatusEffectType;
 import io.github.steaf23.bingoreloaded.lib.api.WorldHandle;
 import io.github.steaf23.bingoreloaded.lib.api.WorldPosition;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
+import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformTasks;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.event.EventResult;
 import io.github.steaf23.bingoreloaded.lib.event.EventResults;
@@ -71,7 +72,7 @@ import java.util.function.BiConsumer;
 
 public class BingoGame implements GamePhase
 {
-    private final ServerSoftware platform;
+    private final PlatformServer server;
     private final BingoSession session;
     private final BingoSettings settings;
     private final BingoGameInfoMenu scoreboard;
@@ -95,19 +96,19 @@ public class BingoGame implements GamePhase
 
     private int displayBonusTime = 0;
 
-    public BingoGame(ServerSoftware platform, @NotNull BingoSession session, @NotNull BingoSettings settings, @NotNull BingoConfigurationData config, BiConsumer<BingoGame, @Nullable BingoTeam> onGameEndedCallback, @Nullable WorldPosition atPosition) {
-		this.platform = platform;
+    public BingoGame(PlatformServer server, @NotNull BingoSession session, @NotNull BingoSettings settings, @NotNull BingoConfigurationData config, BiConsumer<BingoGame, @Nullable BingoTeam> onGameEndedCallback, @Nullable WorldPosition atPosition) {
+		this.server = server;
 		this.session = session;
         this.config = config;
         this.teamManager = session.teamManager;
         this.scoreboard = session.gameInfoMenu;
         this.settings = settings;
         this.actionBarManager = new ActionBarManager(session);
-        this.progressTracker = new TaskProgressTracker(platform, this);
+        this.progressTracker = new TaskProgressTracker(this.tasks(), this);
 		this.onGameEndedCallback = onGameEndedCallback;
         this.items = session.items();
 
-		this.respawnManager = new PlayerRespawnManager(platform, config.getOptionValue(BingoOptions.TELEPORT_AFTER_DEATH_PERIOD));
+		this.respawnManager = new PlayerRespawnManager(this.tasks(), config.getOptionValue(BingoOptions.TELEPORT_AFTER_DEATH_PERIOD));
         this.playerSpawnPoints = new HashMap<>();
 
 		this.startPosition = atPosition;
@@ -247,10 +248,10 @@ public class BingoGame implements GamePhase
         List<String> commandBeforeGame = config.getOptionValue(BingoOptions.SEND_COMMAND_BEFORE_GAME_STARTS);
         for (String command : commandBeforeGame) {
             String commandToSend = command.replace("{world}", session.getGameManager().getNameOfSession(session));
-            platform.sendConsoleCommand(commandToSend);
+            server.commandDispatcher().sendCommandFromConsole(command);
         }
 
-        platform.runTask(BingoReloaded.ONE_SECOND, task -> startingTimer.start());
+        tasks().runTask(BingoReloaded.ONE_SECOND, task -> startingTimer.start());
     }
 
     public boolean hasStarted() {
@@ -288,15 +289,15 @@ public class BingoGame implements GamePhase
         List<String> command = config.getOptionValue(BingoOptions.SEND_COMMAND_AFTER_GAME_ENDS);
         for (String cmd : command) {
             String commandToSend = cmd.replace("{world}", session.getGameManager().getNameOfSession(session));
-            platform.runTask( task -> platform.sendConsoleCommand(commandToSend)); // Send the command in the next tick so we have time to wrap up the game.
+            tasks().runTask(task ->  server.commandDispatcher().sendCommandFromConsole(commandToSend)); // Send the command in the next tick so we have time to wrap up the game.
         }
 
         List<String> commandAllPlayers = config.getOptionValue(BingoOptions.SEND_COMMAND_AFTER_GAME_END_EVERY_PLAYER);
         for (String cmd : commandAllPlayers) {
-            platform.runTask(task -> {
+            tasks().runTask(task -> {
                 for (var player : session.getPlayersInWorld()) {
                     String commandToSend = cmd.replace("{player}", player.playerName());
-                    platform.sendConsoleCommand(commandToSend);
+                    server.commandDispatcher().sendCommandFromConsole(commandToSend);
                 }
             });
         }
@@ -318,20 +319,20 @@ public class BingoGame implements GamePhase
 
         List<String> commandWinningPlayers = config.getOptionValue(BingoOptions.SEND_COMMAND_AFTER_GAME_END_WINNING_PLAYERS);
         for (String cmd : commandWinningPlayers) {
-            platform.runTask(task -> {
+            tasks().runTask(task -> {
                 for (var player : winningPlayers) {
                     String commandToSend = cmd.replace("{player}", player.playerName());
-                    platform.sendConsoleCommand(commandToSend);
+                    server.commandDispatcher().sendCommandFromConsole(commandToSend);
                 }
             });
         }
 
         List<String> commandLosingPlayers = config.getOptionValue(BingoOptions.SEND_COMMAND_AFTER_GAME_END_LOSING_PLAYERS);
         for (String cmd : commandLosingPlayers) {
-            platform.runTask(task -> {
+            tasks().runTask(task -> {
                 for (var player : losingPlayers) {
                     String commandToSend = cmd.replace("{player}", player.playerName());
-                    platform.sendConsoleCommand(commandToSend);
+                    server.commandDispatcher().sendCommandFromConsole(commandToSend);
                 }
             });
         }
@@ -445,7 +446,7 @@ public class BingoGame implements GamePhase
         BingoPlayerSender.sendTitle(countdownComponent.color(color), session);
         BingoPlayerSender.sendMessage(countdownComponent.color(color), session);
 
-        platform.runTask(BingoReloaded.ONE_SECOND, task -> startDeathMatchRecurse(countdown - 1));
+        tasks().runTask(BingoReloaded.ONE_SECOND, task -> startDeathMatchRecurse(countdown - 1));
     }
 
     public void teleportPlayerAfterDeath(PlayerHandle player) {
@@ -479,7 +480,7 @@ public class BingoGame implements GamePhase
 			if (!getTeamManager().getParticipants().isEmpty()) {
 				spawnPlatform(spawnLocation, 5, true);
 
-				platform.runTask(platformLifetime, task ->
+				tasks().runTask(platformLifetime, task ->
 						BingoGame.removePlatform(spawnLocation, 5));
 			}
 
@@ -495,7 +496,7 @@ public class BingoGame implements GamePhase
                     if (!getTeamManager().getParticipants().isEmpty()) {
                         spawnPlatform(platformLocation.clone(), 5, true);
 
-                        platform.runTask(platformLifetime, task ->
+                        tasks().runTask(platformLifetime, task ->
                                 BingoGame.removePlatform(platformLocation, 5));
                     }
                     teleportPlayerToStart(p, platformLocation, 5);
@@ -509,7 +510,7 @@ public class BingoGame implements GamePhase
                     if (!players.isEmpty()) {
                         spawnPlatform(teamLocation, 5, true);
 
-                        platform.runTask(platformLifetime, task ->
+                        tasks().runTask(platformLifetime, task ->
                                 BingoGame.removePlatform(teamLocation, 5));
                     }
                     players.forEach(p -> teleportPlayerToStart(p, teamLocation, 5));
@@ -520,7 +521,7 @@ public class BingoGame implements GamePhase
                 if (!getTeamManager().getParticipants().isEmpty()) {
                     spawnPlatform(spawnLocation, 5, true);
 
-                    platform.runTask(platformLifetime, task ->
+                    tasks().runTask(platformLifetime, task ->
                             BingoGame.removePlatform(spawnLocation, 5));
                 }
 
@@ -901,10 +902,14 @@ public class BingoGame implements GamePhase
 	}
 
     public boolean useAdvancements() {
-        return !(platform.areAdvancementsDisabled() || config.getOptionValue(BingoOptions.DISABLE_ADVANCEMENTS));
+        return !(server.registries().areAdvancementsDisabled() || config.getOptionValue(BingoOptions.DISABLE_ADVANCEMENTS));
     }
 
     public boolean useStatistics() {
         return !config.getOptionValue(BingoOptions.DISABLE_STATISTICS);
+    }
+
+    private PlatformTasks tasks() {
+        return session.getGameManager().getRuntime().tasks();
     }
 }

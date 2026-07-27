@@ -1,10 +1,10 @@
 package io.github.steaf23.bingoreloaded.lib.inventory;
 
+import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.lib.api.MenuBoard;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemTypePaper;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
-import io.github.steaf23.bingoreloaded.lib.util.PlayerDisplayTranslationKey;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -18,8 +18,8 @@ public class UserInputMenu extends BasicMenu
     private final Consumer<String> resultAction;
     private String text;
 
-    private final ItemTemplate save = new ItemTemplate(2, ItemTypePaper.of(Material.EMERALD), PlayerDisplayTranslationKey.MENU_ACCEPT.translate().color(NamedTextColor.GREEN).decorate(TextDecoration.BOLD));
-    private static final ItemTemplate CLEAR = new ItemTemplate(1, ItemTypePaper.of(Material.HOPPER), PlayerDisplayTranslationKey.MENU_CLEAR_FILTER.translate().color(NamedTextColor.GRAY).decorate(TextDecoration.BOLD));
+    private final ItemTemplate save = new ItemTemplate(2, ItemTypePaper.of(Material.EMERALD), BingoMessage.MENU_ACCEPT.asPhrase().color(NamedTextColor.GREEN).decorate(TextDecoration.BOLD));
+    private static final ItemTemplate CLEAR = new ItemTemplate(1, ItemTypePaper.of(Material.HOPPER), BingoMessage.MENU_CLEAR_FILTER.asPhrase().color(NamedTextColor.GRAY).decorate(TextDecoration.BOLD));
 
     public UserInputMenu(MenuBoard manager, Component initialTitle, Consumer<String> result, String startingText) {
         super(manager, initialTitle, InventoryType.ANVIL);
