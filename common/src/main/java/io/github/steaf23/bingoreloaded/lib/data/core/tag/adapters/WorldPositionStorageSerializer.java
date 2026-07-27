@@ -5,6 +5,7 @@ import io.github.steaf23.bingoreloaded.lib.api.WorldHandle;
 import io.github.steaf23.bingoreloaded.lib.api.WorldPosition;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataStorage;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataStorageSerializer;
+import net.kyori.adventure.key.Key;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
@@ -13,7 +14,7 @@ public class WorldPositionStorageSerializer implements DataStorageSerializer<Wor
 {
     @Override
     public void toDataStorage(@NotNull DataStorage storage, @NotNull WorldPosition value) {
-        storage.setUUID("world", value.world().uniqueId());
+        storage.setKey("world", value.world().key());
         storage.setDouble("x", value.x());
         storage.setDouble("y", value.y());
         storage.setDouble("z", value.z());
@@ -23,7 +24,7 @@ public class WorldPositionStorageSerializer implements DataStorageSerializer<Wor
 
     @Override
     public WorldPosition fromDataStorage(@NotNull DataStorage storage) {
-        UUID id = storage.getUUID("world");
+        Key id = storage.getKey("world");
         if (id == null) {
             return null;
         }

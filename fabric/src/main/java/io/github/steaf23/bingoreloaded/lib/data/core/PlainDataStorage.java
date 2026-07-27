@@ -30,6 +30,11 @@ public class PlainDataStorage implements DataStorage {
 	}
 
 	@Override
+	public DataStorage duplicate() {
+		return this;
+	}
+
+	@Override
 	public Set<String> getKeys() {
 		return root.keySet();
 	}

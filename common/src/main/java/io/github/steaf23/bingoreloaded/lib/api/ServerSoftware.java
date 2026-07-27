@@ -60,7 +60,6 @@ public interface ServerSoftware {
 	Collection<WorldHandle> getLoadedWorlds();
 	Collection<Key> getAllWorldKeysOnDisk();
 	@Nullable WorldHandle getWorld(Key worldKey);
-	@Nullable WorldHandle getWorld(UUID worldName);
 	@Nullable WorldHandle createWorld(WorldOptions options);
 	boolean unloadWorld(@NotNull WorldHandle world, boolean save);
 	boolean deleteWorld(@NotNull Key worldKey);

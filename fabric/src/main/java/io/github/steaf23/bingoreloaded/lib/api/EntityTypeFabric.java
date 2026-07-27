@@ -2,25 +2,25 @@ package io.github.steaf23.bingoreloaded.lib.api;
 
 import io.github.steaf23.bingoreloaded.util.FabricTypes;
 import net.kyori.adventure.key.Key;
-import net.minecraft.registry.Registries;
+import net.minecraft.core.registries.BuiltInRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
 public class EntityTypeFabric implements EntityType {
 
-	private final net.minecraft.entity.EntityType<?> type;
+	private final net.minecraft.world.entity.EntityType<?> type;
 
-	public EntityTypeFabric(net.minecraft.entity.EntityType<?> type) {
+	public EntityTypeFabric(net.minecraft.world.entity.EntityType<?> type) {
 		this.type = type;
 	}
 
 	@Override
 	public @NotNull Key key() {
-		return FabricTypes.keyFromId(Registries.ENTITY_TYPE.getId(type));
+		return FabricTypes.keyFromId(BuiltInRegistries.ENTITY_TYPE.getKey(type));
 	}
 
-	public net.minecraft.entity.EntityType<?> handle() {
+	public net.minecraft.world.entity.EntityType<?> handle() {
 		return type;
 	}
 

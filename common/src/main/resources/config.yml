@@ -5,7 +5,7 @@ version: 3.5.0
 
 # Choose between:
 #   - SINGULAR: The main server world is repurposed for the use of bingo. This mode assumes that bingo is the only gamemode or gameplay option on the server
-#       This makes is good to just play a few rounds with some friends without worrying about the world configurations
+#       This makes is good to just play a few rounds with some friends without worrying about the world configurations.
 #       This can also be used for bigger server networks where each server represents an instance of the game.
 #   - MULTIPLE: The plugin creates worlds specifically for the purpose of playing bingo.
 #       The main world can be converted to a lobby world but this is not required.

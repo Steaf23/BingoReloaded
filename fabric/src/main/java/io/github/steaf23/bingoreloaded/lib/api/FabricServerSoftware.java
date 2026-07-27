@@ -17,14 +17,15 @@ import net.fabricmc.loader.api.metadata.Person;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
-import net.minecraft.entity.effect.StatusEffect;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.RegistryKeys;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.stat.StatType;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.stats.StatType;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.entity.EntityTypes;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -113,7 +114,7 @@ public class FabricServerSoftware implements ServerSoftware {
 
 	@Override
 	public @Nullable PlayerHandle getPlayerFromUniqueId(UUID id) {
-		ServerPlayerEntity p = server.getPlayerManager().getPlayer(id);
+		ServerPlayer p = server.getPlayerList().getPlayer(id);
 		if (p == null) {
 			return null;
 		}
@@ -122,7 +123,7 @@ public class FabricServerSoftware implements ServerSoftware {
 
 	@Override
 	public @Nullable PlayerHandle getPlayerFromName(String name) {
-		ServerPlayerEntity p = server.getPlayerManager().getPlayer(name);
+		ServerPlayer p = server.getPlayerList().getPlayer(name);
 		if (p == null) {
 			return null;
 		}
@@ -149,7 +150,7 @@ public class FabricServerSoftware implements ServerSoftware {
 
 	@Override
 	public ItemType resolveItemType(Key key) {
-		return new ItemTypeFabric(Registries.ITEM.get(FabricTypes.idFromKey(key)));
+		return new ItemTypeFabric(BuiltInRegistries.ITEM.getValue(FabricTypes.idFromKey(key)));
 	}
 
 	@Override
@@ -167,8 +168,8 @@ public class FabricServerSoftware implements ServerSoftware {
 
 	@Override
 	public EntityType resolveEntityType(Key key) {
-		net.minecraft.entity.EntityType<?> type = Registries.ENTITY_TYPE.get(FabricTypes.idFromKey(key));
-		if (type == net.minecraft.entity.EntityType.PIG && !key.value().equals("pig")) { // MC chose pig as default for some reason...
+		net.minecraft.world.entity.EntityType<?> type = BuiltInRegistries.ENTITY_TYPE.getValue(FabricTypes.idFromKey(key));
+		if (type == EntityTypes.PIG && !key.value().equals("pig")) { // MC chose pig as default for some reason...
 			return null;
 		}
 		return new EntityTypeFabric(type);
@@ -181,7 +182,7 @@ public class FabricServerSoftware implements ServerSoftware {
 
 	@Override
 	public StatisticType resolveStatisticType(Key key) {
-		StatType<?> statType = Registries.STAT_TYPE.get(FabricTypes.idFromKey(key));
+		StatType<?> statType = BuiltInRegistries.STAT_TYPE.getValue(FabricTypes.idFromKey(key));
 		if (statType == null) {
 			return null;
 		}
@@ -190,7 +191,7 @@ public class FabricServerSoftware implements ServerSoftware {
 
 	@Override
 	public StatusEffectType resolvePotionEffectType(Key key) {
-		StatusEffect type = Registries.STATUS_EFFECT.get(FabricTypes.idFromKey(key));
+		MobEffect type = BuiltInRegistries.MOB_EFFECT.getValue(FabricTypes.idFromKey(key));
 		if (type == null) {
 			return null;
 		}
@@ -210,20 +211,20 @@ public class FabricServerSoftware implements ServerSoftware {
 	@Override
 	public Collection<WorldHandle> getLoadedWorlds() {
 		List<WorldHandle> worlds = new ArrayList<>();
-		for (ServerWorld w : server.getWorlds()) {
+		for (ServerLevel w : server.getAllLevels()) {
 			worlds.add(fromWorld(w));
 		}
 		return worlds;
 	}
 
 	@Override
-	public @Nullable WorldHandle getWorld(Key worldName) {
-		return fromWorld(server.getWorld(RegistryKey.of(RegistryKeys.WORLD, FabricTypes.idFromKey(Key.key(worldName)))));
+	public Collection<Key> getAllWorldKeysOnDisk() {
+		return List.of();
 	}
 
 	@Override
-	public @Nullable WorldHandle getWorld(UUID worldName) {
-		return null;
+	public @Nullable WorldHandle getWorld(Key worldKey) {
+		return fromWorld(server.getLevel(ResourceKey.create(Registries.DIMENSION, FabricTypes.idFromKey(worldKey))));
 	}
 
 	@Override
@@ -233,6 +234,11 @@ public class FabricServerSoftware implements ServerSoftware {
 
 	@Override
 	public boolean unloadWorld(@NotNull WorldHandle world, boolean save) {
+		return false;
+	}
+
+	@Override
+	public boolean deleteWorld(@NotNull Key worldKey) {
 		return false;
 	}
 
@@ -295,7 +301,7 @@ public class FabricServerSoftware implements ServerSoftware {
 		return mod;
 	}
 
-	private @Nullable WorldHandle fromWorld(@Nullable ServerWorld serverWorld) {
+	private @Nullable WorldHandle fromWorld(@Nullable ServerLevel serverWorld) {
 		return serverWorld == null ? null : new WorldHandleFabric(serverWorld);
 	}
 }

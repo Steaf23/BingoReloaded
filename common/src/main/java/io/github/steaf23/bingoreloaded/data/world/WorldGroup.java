@@ -4,6 +4,8 @@ import io.github.steaf23.bingoreloaded.lib.api.ServerSoftware;
 import io.github.steaf23.bingoreloaded.lib.api.WorldHandle;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import net.kyori.adventure.key.Key;
+import net.kyori.adventure.key.Keyed;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
@@ -15,22 +17,22 @@ import java.util.UUID;
  * These worlds are saved in the plugin's data folder under the levelKey worlds
  * If the nether or end are disabled, they will be stored with the same UUID as the overworld.
  */
-public record WorldGroup(ServerSoftware platform, Key worldKey, UUID overworldId, UUID netherId, UUID endId)
+public record WorldGroup(ServerSoftware platform, Key overworldKey, boolean hasNether, boolean hasTheEnd) implements Keyed
 {
     public void teleportPlayer(PlayerHandle player) {
-        player.teleportBlocking(platform.getWorld(overworldId).spawnPoint());
+        player.teleportBlocking(platform.getWorld(overworldKey).spawnPoint());
     }
 
     public @Nullable WorldHandle getOverworld() {
-        return overworldId == null ? null : platform.getWorld(overworldId);
+        return overworldKey == null ? null : platform.getWorld(overworldKey);
     }
 
     public @Nullable WorldHandle getNetherWorld() {
-        return netherId == null ? null : platform.getWorld(netherId);
+        return hasNether ? platform.getWorld(netherKey(overworldKey)) : null;
     }
 
     public @Nullable WorldHandle getEndWorld() {
-        return endId == null ? null : platform.getWorld(endId);
+        return hasTheEnd ? platform.getWorld(theEndKey(overworldKey)) : null;
     }
 
     public static Key netherKey(Key overworld) {
@@ -41,8 +43,8 @@ public record WorldGroup(ServerSoftware platform, Key worldKey, UUID overworldId
         return Key.key(overworld.namespace(), overworld.value() + "_the_end");
     }
 
-    public boolean hasWorld(UUID uuid) {
-        return overworldId.equals(uuid) || netherId.equals(uuid) || endId.equals(uuid);
+    public boolean hasWorld(Key key) {
+        return overworldKey.equals(key) || netherKey(overworldKey).equals(key) || theEndKey(overworldKey).equals(key);
     }
 
     public Set<PlayerHandle> getPlayers() {
@@ -54,5 +56,10 @@ public record WorldGroup(ServerSoftware platform, Key worldKey, UUID overworldId
         if (getEndWorld() != null)
             players.addAll(getEndWorld().players());
         return players;
+    }
+
+    @Override
+    public @NotNull Key key() {
+        return overworldKey;
     }
 }

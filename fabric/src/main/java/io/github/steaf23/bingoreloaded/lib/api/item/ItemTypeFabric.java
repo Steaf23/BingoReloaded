@@ -2,9 +2,9 @@ package io.github.steaf23.bingoreloaded.lib.api.item;
 
 import io.github.steaf23.bingoreloaded.util.FabricTypes;
 import net.kyori.adventure.key.Key;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
-import net.minecraft.registry.Registries;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
 import org.jetbrains.annotations.NotNull;
 
 public class ItemTypeFabric implements ItemType {
@@ -23,13 +23,13 @@ public class ItemTypeFabric implements ItemType {
 	@Override
 	public boolean isSolid() {
 		if (item instanceof BlockItem block) {
-			return block.getBlock().getDefaultState().isOpaque();
+			return !block.getBlock().defaultBlockState().canBeReplaced();
 		}
 		return false;
 	}
 
 	@Override
 	public @NotNull Key key() {
-		return FabricTypes.keyFromId(Registries.ITEM.getId(item));
+		return FabricTypes.keyFromId(BuiltInRegistries.ITEM.getKey(item));
 	}
 }

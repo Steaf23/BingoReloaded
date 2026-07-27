@@ -3,9 +3,9 @@ package io.github.steaf23.bingoreloaded.lib.api;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
-import io.github.steaf23.bingoreloaded.lib.data.core.ExtendedPersistentState;
+import io.github.steaf23.bingoreloaded.util.FabricTypes;
 import net.kyori.adventure.key.Key;
-import net.minecraft.server.world.ServerWorld;
+import net.minecraft.server.level.ServerLevel;
 
 import java.util.Collection;
 import java.util.List;
@@ -13,20 +13,15 @@ import java.util.UUID;
 
 public class WorldHandleFabric implements WorldHandle {
 
-	private final ServerWorld world;
+	private final ServerLevel world;
 
-	public WorldHandleFabric(ServerWorld world) {
+	public WorldHandleFabric(ServerLevel world) {
 		this.world = world;
 	}
 
 	@Override
 	public Key key() {
-		return world.getRegistryKey().getValue().toString();
-	}
-
-	@Override
-	public UUID uniqueId() {
-		return getId();
+		return FabricTypes.keyFromId(world.dimension().identifier());
 	}
 
 	@Override
@@ -82,9 +77,5 @@ public class WorldHandleFabric implements WorldHandle {
 	@Override
 	public void dropItem(StackHandle item, WorldPosition location) {
 
-	}
-
-	private UUID getId() {
-		return world.getPersistentStateManager().getOrCreate(ExtendedPersistentState.TYPE).uuid();
 	}
 }

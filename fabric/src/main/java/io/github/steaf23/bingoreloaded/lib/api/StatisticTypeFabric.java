@@ -2,8 +2,8 @@ package io.github.steaf23.bingoreloaded.lib.api;
 
 import io.github.steaf23.bingoreloaded.util.FabricTypes;
 import net.kyori.adventure.key.Key;
-import net.minecraft.registry.Registries;
-import net.minecraft.stat.StatType;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.stats.StatType;
 import org.jetbrains.annotations.NotNull;
 
 public class StatisticTypeFabric implements StatisticType {
@@ -26,6 +26,6 @@ public class StatisticTypeFabric implements StatisticType {
 
 	@Override
 	public @NotNull Key key() {
-		return FabricTypes.keyFromId(Registries.STAT_TYPE.getId(type));
+		return FabricTypes.keyFromId(BuiltInRegistries.STAT_TYPE.getKey(type));
 	}
 }

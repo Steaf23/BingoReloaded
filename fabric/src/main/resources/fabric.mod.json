@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "bingoreloaded",
-  "version": "4.0.0",
+  "version": "${version}",
   "name": "Bingo Reloaded",
   "description": "Fabric version of Bingo Reloaded",
   "entrypoints": {
@@ -10,8 +10,8 @@
     ]
   },
   "depends": {
-    "fabricloader": ">=0.16.14",
-    "fabric": "*",
-    "minecraft": "1.21.7"
+    "fabricloader": ">=${loader_version}",
+    "fabric-api": "*",
+    "minecraft": "${minecraft_version}"
   }
 }

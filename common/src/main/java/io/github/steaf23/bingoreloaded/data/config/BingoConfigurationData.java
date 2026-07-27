@@ -35,7 +35,7 @@ public class BingoConfigurationData
 
         // General
         setOptionValueForce(BingoOptions.CONFIGURATION, name -> BingoOptions.PluginConfiguration.valueOf(config.getString(name, "SINGULAR")));
-        setOptionValueForce(BingoOptions.DEFAULT_WORLD_NAME, name -> config.getString(name, "world"));
+        setOptionValueForce(BingoOptions.DEFAULT_WORLD_NAME, name -> config.getString(name, "minecraft:overworld"));
         setOptionValueForce(BingoOptions.LANGUAGE, name -> config.getString(name, "en_us.yml"));
         setOptionValueForce(BingoOptions.SAVE_PLAYER_STATISTICS, name -> config.getBoolean(name, false));
  		setOptionValueForce(BingoOptions.PLAYER_GAMEMODE_AFTER_GAME, name -> BingoOptions.ConfigGamemode.valueOf(config.getString(name, "SURVIVAL")));

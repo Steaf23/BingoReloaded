@@ -40,6 +40,7 @@ import io.github.steaf23.bingoreloaded.settings.BingoSettingsBuilder;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.audience.ForwardingAudience;
+import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -353,7 +354,8 @@ public class BingoSession implements ForwardingAudience
         WorldHandle target = toPos.world();
 
         WorldPosition targetLocation = new WorldPosition(toPos);
-        if (origin.uniqueId().equals(worlds.overworldId())) {
+        Key worldKey = worlds.key();
+        if (origin.key().equals(worldKey)) {
             // coming from the OW we can go to either the nether or the end
             if (target.dimension() == DimensionType.NETHER) {
                 // Nether
@@ -370,10 +372,10 @@ public class BingoSession implements ForwardingAudience
             } else {
                 ConsoleMessenger.bug("Could not catch player going through portal", this);
             }
-        } else if (origin.uniqueId().equals(worlds.netherId())) {
+        } else if (origin.key().equals(WorldGroup.netherKey(worldKey))) {
             // coming from the nether we can only go to the OW
             targetLocation.setWorld(worlds.getOverworld());
-        } else if (origin.uniqueId().equals(worlds.endId())) {
+        } else if (origin.key().equals(WorldGroup.theEndKey(worldKey))) {
             // coming from the end we can go to either the overworld or to the end spawn from an outer portal.
             if (target.dimension() == DimensionType.OVERWORLD) {
                 // Overworld
@@ -410,7 +412,7 @@ public class BingoSession implements ForwardingAudience
     }
 
     public boolean ownsWorld(@NotNull WorldHandle world) {
-        return worlds.hasWorld(world.uniqueId());
+        return worlds.hasWorld(world.key());
     }
 
     public BingoConfigurationData getPluginConfig() {

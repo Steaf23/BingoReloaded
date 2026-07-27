@@ -1,16 +1,16 @@
 package io.github.steaf23.bingoreloaded.lib.api;
 
-import net.minecraft.entity.effect.StatusEffect;
+import net.minecraft.world.effect.MobEffect;
 
 public class StatusEffectTypeFabric implements StatusEffectType {
 
-	private final StatusEffect effect;
+	private final MobEffect effect;
 
-	public StatusEffectTypeFabric(StatusEffect effect) {
+	public StatusEffectTypeFabric(MobEffect effect) {
 		this.effect = effect;
 	}
 
-	public StatusEffect handle() {
+	public MobEffect handle() {
 		return effect;
 	}
 

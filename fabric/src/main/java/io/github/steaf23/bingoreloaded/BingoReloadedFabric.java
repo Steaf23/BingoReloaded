@@ -15,15 +15,21 @@ import io.github.steaf23.bingoreloaded.lib.api.PlatformResolver;
 import io.github.steaf23.bingoreloaded.lib.api.ServerSoftware;
 import io.github.steaf23.bingoreloaded.lib.api.WorldHandle;
 import io.github.steaf23.bingoreloaded.lib.api.item.CapacityInventoryProvider;
+import io.github.steaf23.bingoreloaded.lib.api.item.InventoryHandle;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
+import io.github.steaf23.bingoreloaded.lib.api.player.EmptyDisplay;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.api.player.SharedDisplay;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataAccessor;
 import io.github.steaf23.bingoreloaded.lib.data.core.SnakeYamlDataAccessor;
+import io.github.steaf23.bingoreloaded.lib.menu.InfoMenu;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.kyori.adventure.key.Key;
+import net.kyori.adventure.text.Component;
+import net.minecraft.server.MinecraftServer;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
@@ -34,25 +40,26 @@ public class BingoReloadedFabric implements ModInitializer, BingoReloadedRuntime
 
 	private static final String MOD_ID = "bingoreloaded";
 
-	private final FabricServerSoftware platform;
-	private final BingoReloaded bingo;
-
-	public BingoReloadedFabric() {
-		this.platform = new FabricServerSoftware(null, MOD_ID);
-		PlatformResolver.set(platform);
-
-		this.bingo = new BingoReloaded(this);
-	}
+	private FabricServerSoftware platform;
+	private BingoReloaded bingo;
 
 	@Override
 	public void onInitialize() {
-		bingo.load();
-		bingo.enable();
+		ServerLifecycleEvents.SERVER_STARTED.register((server) -> {
+			this.platform = new FabricServerSoftware(server, MOD_ID);
+			PlatformResolver.set(platform);
+
+			this.bingo = new BingoReloaded(this);
+			bingo.load();
+			bingo.enable();
+		});
 	}
 
 	@Override
 	public DataAccessor getConfigData() {
-		return new SnakeYamlDataAccessor(platform, "config");
+		DataAccessor config = new SnakeYamlDataAccessor(platform, "config");
+		config.load();
+		return config;
 	}
 
 	@Override
@@ -121,7 +128,22 @@ public class BingoReloadedFabric implements ModInitializer, BingoReloadedRuntime
 
 	@Override
 	public CapacityInventoryProvider getPouchInventoryProvider() {
-		return null;
+		return new CapacityInventoryProvider() {
+			@Override
+			public void setSlotCount(int slots) {
+
+			}
+
+			@Override
+			public void setTitle(Component title) {
+
+			}
+
+			@Override
+			public InventoryHandle create() {
+				return null;
+			}
+		};
 	}
 
 	@Override
@@ -166,12 +188,12 @@ public class BingoReloadedFabric implements ModInitializer, BingoReloadedRuntime
 
 	@Override
 	public SharedDisplay gameDisplay() {
-		return null;
+		return new EmptyDisplay();
 	}
 
 	@Override
 	public SharedDisplay settingsDisplay() {
-		return null;
+		return new EmptyDisplay();
 	}
 
 	@Override

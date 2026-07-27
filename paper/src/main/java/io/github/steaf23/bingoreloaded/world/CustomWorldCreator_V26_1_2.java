@@ -66,7 +66,7 @@ public class CustomWorldCreator_V26_1_2 {
 
 		ResourceKey<LevelStem> actualDimension = LevelStem.OVERWORLD;
 
-		final ResourceKey<net.minecraft.world.level.Level> dimensionKey = PaperWorldLoader.dimensionKey(new NamespacedKey(worldKey.namespace(), worldKey.value()));
+		final ResourceKey<net.minecraft.world.level.Level> dimensionKey = PaperWorldLoader..dimensionKey(new NamespacedKey(worldKey.namespace(), worldKey.value()));
 		WorldLoader.DataLoadContext context = console.worldLoaderContext;
 		RegistryAccess.Frozen registryAccess = context.datapackDimensions();
 		net.minecraft.core.Registry<LevelStem> contextLevelStemRegistry = registryAccess.lookupOrThrow(Registries.LEVEL_STEM);

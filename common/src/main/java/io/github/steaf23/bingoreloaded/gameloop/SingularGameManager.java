@@ -76,16 +76,11 @@ public class SingularGameManager extends GameManager
         boolean createNether = !getGameConfig().getOptionValue(BingoOptions.DISABLE_NETHER);
         boolean createTheEnd = !getGameConfig().getOptionValue(BingoOptions.DISABLE_THE_END);
 
-        UUID netherId = overworld.uniqueId();
-        UUID endId = overworld.uniqueId();
-
         if (createNether) {
             if (nether == null) {
                 ConsoleMessenger.error("Could not create world group from existing world; " + defaultWorldName + "_nether does not exist. Make sure the world exists and reload the plugin.");
                 return null;
             }
-
-            netherId = nether.uniqueId();
         }
 
         if (createTheEnd) {
@@ -93,11 +88,9 @@ public class SingularGameManager extends GameManager
                 ConsoleMessenger.error("Could not create world group from existing world; " + defaultWorldName + "_the_end does not exist. Make sure the world exists and reload the plugin.");
                 return null;
             }
-
-            endId = theEnd.uniqueId();
         }
 
-        return new WorldGroup(getPlatform(), key, overworld.uniqueId(), netherId, endId);
+        return new WorldGroup(getPlatform(), key, createNether, createTheEnd);
     }
 
     @Override

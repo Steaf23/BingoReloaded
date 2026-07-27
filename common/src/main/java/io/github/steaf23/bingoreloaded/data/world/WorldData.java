@@ -57,21 +57,22 @@ public class WorldData
         WorldHandle overworld = BingoReloaded.runtime().createBingoOverworld(overworldKey, options.noiseGenerationSettings);
         if (overworld == null) {
             ConsoleMessenger.bug("Could not create world using bingo small biome generation.", this);
-            overworld = createWorld(overworldKey, DimensionType.OVERWORLD);
+            createWorld(overworldKey, DimensionType.OVERWORLD);
         }
-        UUID netherId = overworld.uniqueId();
-        UUID endId = overworld.uniqueId();
+
+        boolean hasNether = false;
+        boolean hasTheEnd = false;
         if (options.createNether()) {
-            WorldHandle nether = createWorld(Key.key(overworldKey.namespace(), overworldKey.value() + "_the_nether"), DimensionType.NETHER);
-            netherId = nether.uniqueId();
+            WorldHandle nether = createWorld(WorldGroup.theEndKey(overworldKey), DimensionType.NETHER);
+            hasNether = nether != null;
         }
 
         if (options.createEnd()) {
-            WorldHandle end = createWorld(Key.key(overworldKey.namespace(), overworldKey.value() + "_the_end"), DimensionType.THE_END);
-            endId = end.uniqueId();
+            WorldHandle end = createWorld(WorldGroup.theEndKey(overworldKey), DimensionType.THE_END);
+            hasTheEnd = end != null;
         }
 
-        return new WorldGroup(platform, overworldKey, overworld.uniqueId(), netherId, endId);
+        return new WorldGroup(platform, overworldKey, hasNether, hasTheEnd);
     }
 
     public @Nullable WorldGroup getWorldGroupInSession(String sessionName) {
@@ -80,24 +81,19 @@ public class WorldData
 
     public @Nullable WorldGroup getWorldGroup(Key overworldKey) {
         WorldHandle overworld = platform.getWorld(overworldKey);
-        WorldHandle nether = platform.getWorld(Key.key(overworldKey.namespace(), overworldKey.value() + "_the_nether"));
-        WorldHandle theEnd = platform.getWorld(Key.key(overworldKey.namespace(), overworldKey.value() + "_the_end"));
+        WorldHandle nether = platform.getWorld(WorldGroup.netherKey(overworldKey));
+        WorldHandle theEnd = platform.getWorld(WorldGroup.theEndKey(overworldKey));
 
         if (overworld == null) {
             ConsoleMessenger.error("Could not fetch world group; " + overworldKey + " does not exist. Make sure the world exists and reload the plugin.");
             return null;
         }
 
-        UUID netherId = overworld.uniqueId();
-        UUID endId = overworld.uniqueId();
-
         if (options.createNether()) {
             if (nether == null) {
                 ConsoleMessenger.error("Could not fetch world group; " + overworldKey + "_nether does not exist. Make sure the world exists and reload the plugin.");
                 return null;
             }
-
-            netherId = nether.uniqueId();
         }
 
         if (options.createEnd()) {
@@ -105,11 +101,9 @@ public class WorldData
                 ConsoleMessenger.error("Could not fetch world group; " + overworldKey + "_the_end does not exist. Make sure the world exists and reload the plugin.");
                 return null;
             }
-
-            endId = theEnd.uniqueId();
         }
 
-        return new WorldGroup(platform, overworldKey, overworld.uniqueId(), netherId, endId);
+        return new WorldGroup(platform, overworldKey, options.createNether(), options.createEnd());
     }
 
     /**
@@ -118,9 +112,9 @@ public class WorldData
      */
     public boolean destroyWorldGroup(@NotNull WorldGroup worldGroup) {
         //TODO: add logic for when end or nether were never created in the first place.
-        boolean success = destroyWorld(worldGroup.worldKey());
-        success = success && destroyWorld(WorldGroup.netherKey(worldGroup.worldKey()));
-        success = success && destroyWorld(WorldGroup.theEndKey(worldGroup.worldKey()));
+        boolean success = destroyWorld(worldGroup.key());
+        success = success && destroyWorld(WorldGroup.netherKey(worldGroup.key()));
+        success = success && destroyWorld(WorldGroup.theEndKey(worldGroup.key()));
         return success;
     }
 
@@ -128,7 +122,7 @@ public class WorldData
         return platform.getDataFolder().getPath().replace("\\", "/") + "/worlds/";
     }
 
-    private WorldHandle createWorld(Key worldName, @NotNull DimensionType dimension) {
+    private @Nullable WorldHandle createWorld(Key worldName, @NotNull DimensionType dimension) {
         WorldOptions options = new WorldOptions(worldName, dimension);
         return platform.createWorld(options);
     }

@@ -11,7 +11,6 @@ import java.util.UUID;
 public interface WorldHandle {
 
 	Key key();
-	UUID uniqueId();
 	Collection<? extends PlayerHandle> players();
 	WorldPosition spawnPoint();
 	DimensionType dimension();

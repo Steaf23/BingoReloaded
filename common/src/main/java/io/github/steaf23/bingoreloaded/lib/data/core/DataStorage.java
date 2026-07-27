@@ -116,6 +116,16 @@ public interface DataStorage
         return storage == null ? createNew() : storage;
     }
 
+    default void setKey(String path, Key key) {
+        setString(path, key.asString());
+    }
+
+    default @Nullable Key getKey(String path) {
+        String s = getString(path, "");
+        return s.isEmpty() ? null : Key.key(s);
+    }
+
+
     boolean isEmpty();
 
     /**

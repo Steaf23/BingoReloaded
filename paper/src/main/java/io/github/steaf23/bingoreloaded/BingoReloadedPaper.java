@@ -58,7 +58,7 @@ import io.github.steaf23.bingoreloaded.lib.data.core.YamlDataAccessor;
 import io.github.steaf23.bingoreloaded.lib.events.EventListenerPaper;
 import io.github.steaf23.bingoreloaded.lib.inventory.BasicMenu;
 import io.github.steaf23.bingoreloaded.lib.inventory.MenuBoardPaper;
-import io.github.steaf23.bingoreloaded.lib.menu.EmptyDisplay;
+import io.github.steaf23.bingoreloaded.lib.api.player.EmptyDisplay;
 import io.github.steaf23.bingoreloaded.lib.menu.ScoreboardDisplay;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import io.github.steaf23.bingoreloaded.lib.util.PlayerDisplayTranslationKey;

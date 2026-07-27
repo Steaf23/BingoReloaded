@@ -1,7 +1,6 @@
-package io.github.steaf23.bingoreloaded.lib.menu;
+package io.github.steaf23.bingoreloaded.lib.api.player;
 
-import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
-import io.github.steaf23.bingoreloaded.lib.api.player.SharedDisplay;
+import io.github.steaf23.bingoreloaded.lib.menu.InfoMenu;
 
 public class EmptyDisplay implements SharedDisplay {
 

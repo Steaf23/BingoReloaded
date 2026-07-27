@@ -27,11 +27,6 @@ public class WorldHandlePaper implements WorldHandle {
 	}
 
 	@Override
-	public UUID uniqueId() {
-		return world.getUID();
-	}
-
-	@Override
 	public Collection<? extends PlayerHandle> players() {
 		return world.getPlayers().stream().map(PlayerHandlePaper::new).toList();
 	}

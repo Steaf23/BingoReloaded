@@ -1,19 +1,34 @@
 plugins {
-    id 'net.fabricmc.fabric-loom' version '1.15-SNAPSHOT'
+    id 'net.fabricmc.fabric-loom' version "${loom_version}"
 }
 
 dependencies {
     api project(":common")
 
     minecraft "com.mojang:minecraft:${minecraft_version}"
-    implementation "net.fabricmc:fabric-loader:0.18.6"
-    implementation "net.fabricmc.fabric-api:fabric-api:0.145.3+26.1.1"
-    implementation "org.yaml:snakeyaml:2.1"
+    implementation "net.fabricmc:fabric-loader:${loader_version}"
+    implementation "net.fabricmc.fabric-api:fabric-api:${fabric_api_version}"
 
+    implementation "org.yaml:snakeyaml:2.1"
     implementation("commons-io:commons-io:2.19.0")
     implementation("com.google.code.gson:gson:2.13.1")
 
     implementation("net.kyori:adventure-api:${adventure_version}")
+}
+
+
+processResources {
+    inputs.property("version", project.version)
+    inputs.property("minecraft_version", minecraft_version)
+    inputs.property("loader_version", loader_version)
+
+    filesMatching("fabric.mod.json") {
+        expand(
+                version: project.version,
+                minecraft_version: minecraft_version,
+                loader_version: loader_version,
+        )
+    }
 }
 
 java {
