@@ -118,7 +118,5 @@ public interface PlayerHandle extends ForwardingAudience, ActionUser {
 
 	void closeInventory();
 
-	void kick(@Nullable Component reason);
-
 	void setWaypointColor(@Nullable TextColor color);
 }

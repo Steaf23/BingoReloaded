@@ -45,26 +45,26 @@ public interface StackHandle {
 	void setCooldown(Key cooldownGroup, double cooldownTimeSeconds);
 
 	static StackHandle createFromTemplate(ItemTemplate template, boolean hideAttributes) {
-		return PlatformResolver.get().createStackFromTemplate(template, hideAttributes);
+		return PlatformResolver.getItemStacker().createStackFromTemplate(template, hideAttributes);
 	}
 
 	static StackHandle create(ItemType type, int amount) {
-		return PlatformResolver.get().createStack(type, amount);
+		return PlatformResolver.getItemStacker().createStack(type, amount);
 	}
 
 	static StackHandle create(ItemType type) {
-		return PlatformResolver.get().createStack(type, 1);
+		return PlatformResolver.getItemStacker().createStack(type, 1);
 	}
 
 	static StackHandle empty() {
-		return PlatformResolver.get().createStack(ItemType.AIR, 1);
+		return PlatformResolver.getItemStacker().createStack(ItemType.AIR, 1);
 	}
 
 	static StackHandle deserializeBytes(byte[] bytes) {
-		return PlatformResolver.get().createStackFromBytes(bytes);
+		return PlatformResolver.getItemStacker().createStackFromBytes(bytes);
 	}
 
 	static byte[] serializeBytes(StackHandle stack) {
-		return PlatformResolver.get().createBytesFromStack(stack);
+		return PlatformResolver.getItemStacker().createBytesFromStack(stack);
 	}
 }

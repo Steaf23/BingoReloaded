@@ -17,7 +17,6 @@ import io.github.steaf23.bingoreloaded.gameloop.vote.VoteCategory;
 import io.github.steaf23.bingoreloaded.gameloop.vote.VoteTicket;
 import io.github.steaf23.bingoreloaded.item.BingoItems;
 import io.github.steaf23.bingoreloaded.lib.api.DimensionType;
-import io.github.steaf23.bingoreloaded.lib.api.PlatformResolver;
 import io.github.steaf23.bingoreloaded.lib.api.PlayerGamemode;
 import io.github.steaf23.bingoreloaded.lib.api.WorldHandle;
 import io.github.steaf23.bingoreloaded.lib.api.WorldPosition;
@@ -94,7 +93,7 @@ public class BingoSession implements ForwardingAudience
         //TODO: decide a better place for this command
 //        BingoReloaded.getInstance().registerCommand("bingobot", new BotCommand(this));
 
-        gameManager.getRuntime().tasks().runTask(10L, (t) -> {
+        gameManager.getRuntime().taskScheduler().runTask(10L, (t) -> {
             for (PlayerHandle p : gameManager.getServer().getOnlinePlayers()) {
                 if (hasPlayer(p)) {
                     addPlayer(p);
@@ -210,7 +209,7 @@ public class BingoSession implements ForwardingAudience
 				delaySeconds = Math.min(delaySeconds, gameRestartTime);
 
 				if (delaySeconds > 0.0) {
-					gameManager.getRuntime().tasks().runTask((long) (delaySeconds * BingoReloaded.ONE_SECOND), t -> {
+					gameManager.getRuntime().taskScheduler().runTask((long) (delaySeconds * BingoReloaded.ONE_SECOND), t -> {
 						getPlayersInWorld().forEach(p -> {
 							WorldPosition pos = BlockHelper.getRandomPosWithinRange(lobby.spawnPosition(), spread, spread);
 							p.teleportAsync(pos);
@@ -291,7 +290,7 @@ public class BingoSession implements ForwardingAudience
 	}
 
     public void onPlayerJoinedSessionWorld(PlayerHandle player) {
-        gameManager.getRuntime().tasks().runTask(t -> {
+        gameManager.getRuntime().taskScheduler().runTask(t -> {
             teamManager.handlePlayerJoinedSessionWorld(player);
             phase.handlePlayerJoinedSessionWorld(player);
 
@@ -309,7 +308,7 @@ public class BingoSession implements ForwardingAudience
 		getGameManager().getRuntime().getClientManager().updateCard(player, null);
 
 
-        getGameManager().getRuntime().tasks().runTask(t -> {
+        getGameManager().getRuntime().taskScheduler().runTask(t -> {
             teamManager.handlePlayerLeftSessionWorld(player);
             phase.handlePlayerLeftSessionWorld(player);
 

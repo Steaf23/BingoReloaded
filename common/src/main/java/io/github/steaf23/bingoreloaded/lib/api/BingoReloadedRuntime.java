@@ -11,8 +11,7 @@ import io.github.steaf23.bingoreloaded.gameloop.phase.PregameLobby;
 import io.github.steaf23.bingoreloaded.lib.action.ActionTree;
 import io.github.steaf23.bingoreloaded.lib.api.item.CapacityInventoryProvider;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
-import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformTasks;
-import io.github.steaf23.bingoreloaded.lib.api.platform.ServerSoftware;
+import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformTaskScheduler;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.api.player.SharedDisplay;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataAccessor;
@@ -27,6 +26,7 @@ import java.util.Set;
  * Used by BingoReloaded to set up features that are implemented by each platform separately.
  */
 public interface BingoReloadedRuntime {
+
 	DataAccessor getConfigData();
 	Collection<DataAccessor> getDataToRegister();
 	void setupConfig();
@@ -42,8 +42,6 @@ public interface BingoReloadedRuntime {
 	void registerExtraActions(BingoConfigurationData config);
 
 	@Nullable WorldHandle createBingoOverworld(Key worldKey, Key generationOptions);
-
-	ServerSoftware getServerSoftware();
 
 	CardMenu createMenu(boolean textured, CardDisplayInfo displayInfo);
 	StackHandle createCardItemForPlayer(BingoParticipant player);
@@ -64,5 +62,5 @@ public interface BingoReloadedRuntime {
 
 	BingoClientManager getClientManager();
 
-	PlatformTasks tasks();
+	PlatformTaskScheduler taskScheduler();
 }

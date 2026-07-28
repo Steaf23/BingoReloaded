@@ -3,7 +3,7 @@ package io.github.steaf23.bingoreloaded.gui;
 import io.github.steaf23.bingoreloaded.api.CardDisplayInfo;
 import io.github.steaf23.bingoreloaded.cards.TaskCard;
 import io.github.steaf23.bingoreloaded.lib.api.Position;
-import io.github.steaf23.bingoreloaded.lib.api.platform.ServerSoftware;
+import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformResources;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataStorage;
 import io.github.steaf23.bingoreloaded.lib.data.core.json.JsonDataAccessor;
 import io.github.steaf23.bingoreloaded.lib.data.core.json.JsonDataStorage;
@@ -56,7 +56,7 @@ public class BingoCardMapRenderer extends MapRenderer
     private static BufferedImage ADVANCEMENT_ICON = null;
     private static BufferedImage STATISTIC_ICON = null;
 
-    public BingoCardMapRenderer(ServerSoftware platform, TaskCard card, BingoTeam team) {
+    public BingoCardMapRenderer(PlatformResources resources, TaskCard card, BingoTeam team) {
         this.card = card;
 
         random = new Random();
@@ -73,7 +73,7 @@ public class BingoCardMapRenderer extends MapRenderer
 
         try {
             JsonDataStorage atlas = new JsonDataStorage();
-            JsonDataAccessor.readJsonFromFile(atlas, platform.getResource("taskimages/item_atlas.json"));
+            JsonDataAccessor.readJsonFromFile(atlas, resources.getResource("taskimages/item_atlas.json"));
             DataStorage blocks = atlas.getStorage("blocks");
             DataStorage items = atlas.getStorage("items");
 
@@ -82,22 +82,22 @@ public class BingoCardMapRenderer extends MapRenderer
                 return;
             }
 
-            addImagesFromAtlas(platform.getResource("taskimages/blocks.png"), blocks, false);
-            addImagesFromAtlas(platform.getResource("taskimages/items.png"), items, true);
+            addImagesFromAtlas(resources.getResource("taskimages/blocks.png"), blocks, false);
+            addImagesFromAtlas(resources.getResource("taskimages/items.png"), items, true);
 
-            InputStream overlayStream = platform.getResource("taskimages/completed_slot.png");
+            InputStream overlayStream = resources.getResource("taskimages/completed_slot.png");
             if (overlayStream != null)
                 COMPLETED_OVERLAY = ImageIO.read(overlayStream);
 
-            InputStream backgroundStream = platform.getResource("taskimages/card_background.png");
+            InputStream backgroundStream = resources.getResource("taskimages/card_background.png");
             if (backgroundStream != null)
                 BACKGROUND = ImageIO.read(backgroundStream);
 
-            InputStream iconStream = platform.getResource("taskimages/advancement_icon.png");
+            InputStream iconStream = resources.getResource("taskimages/advancement_icon.png");
             if (iconStream != null)
                 ADVANCEMENT_ICON = ImageIO.read(iconStream);
 
-            iconStream = platform.getResource("taskimages/statistic_icon.png");
+            iconStream = resources.getResource("taskimages/statistic_icon.png");
             if (iconStream != null)
                 STATISTIC_ICON = ImageIO.read(iconStream);
 

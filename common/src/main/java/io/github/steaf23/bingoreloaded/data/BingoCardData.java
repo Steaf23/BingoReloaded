@@ -2,6 +2,7 @@ package io.github.steaf23.bingoreloaded.data;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
+import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformServer;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataAccessor;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataStorage;
 import io.github.steaf23.bingoreloaded.lib.data.core.tag.TagDataType;
@@ -92,13 +93,13 @@ public class BingoCardData {
 		data.erase(cardName + ".lists." + listName);
 	}
 
-	public List<TaskData> getAllTasks(String cardName) {
-		return getAllTasks(cardName, EnumSet.allOf(TaskData.TaskType.class));
+	public List<TaskData> getAllTasks(PlatformServer server, String cardName) {
+		return getAllTasks(server, cardName, EnumSet.allOf(TaskData.TaskType.class));
 	}
 
-	public List<TaskData> getAllTasks(String cardName, EnumSet<TaskData.TaskType> types) {
+	public List<TaskData> getAllTasks(PlatformServer server, String cardName, EnumSet<TaskData.TaskType> types) {
 		List<TaskData> tasks = new ArrayList<>();
-		getListNames(cardName).forEach((l) -> tasks.addAll(listsData.getTasks(l, types)));
+		getListNames(cardName).forEach((l) -> tasks.addAll(listsData.getTasks(server, l, types)));
 		return tasks;
 	}
 

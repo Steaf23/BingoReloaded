@@ -4,6 +4,7 @@ import io.github.steaf23.bingoreloaded.lib.api.PaperApiHelper;
 import io.github.steaf23.bingoreloaded.lib.api.WorldPosition;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandlePaper;
+import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformServer;
 import io.github.steaf23.bingoreloaded.lib.data.core.tag.TagAdapter;
 import io.github.steaf23.bingoreloaded.lib.data.core.tag.TagDataType;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
@@ -35,7 +36,7 @@ public class YamlDataStorage implements DataStorage
 
     @Override
     public YamlDataStorage createNew() {
-        return new YamlDataStorage();
+        return new YamlDataStorage().addServerContext(server);
     }
 
     @Override
@@ -294,6 +295,18 @@ public class YamlDataStorage implements DataStorage
     @Override
     public void clear() {
         config = new YamlConfiguration();
+    }
+
+    private PlatformServer server;
+    @Override
+    public YamlDataStorage addServerContext(PlatformServer server) {
+        this.server = server;
+        return this;
+    }
+
+    @Override
+    public @Nullable PlatformServer serverContext() {
+        return server;
     }
 
     public @NotNull ConfigurationSection getSection() {

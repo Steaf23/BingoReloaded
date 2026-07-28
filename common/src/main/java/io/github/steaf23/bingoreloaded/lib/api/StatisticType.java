@@ -18,7 +18,7 @@ public interface StatisticType extends Keyed {
 	}
 
 	static StatisticType of(Key key) {
-		return PlatformResolver.get().resolveStatisticType(key);
+		return PlatformResolver.getRegistries().resolveStatisticType(key);
 	}
 
 	boolean equals(Object other);

@@ -13,7 +13,6 @@ import java.util.UUID;
 
 public interface PlatformServer {
 
-	PlatformRegistries registries();
 	PlatformCommandDispatcher commandDispatcher();
 
 	Collection<? extends PlayerHandle> getOnlinePlayers();

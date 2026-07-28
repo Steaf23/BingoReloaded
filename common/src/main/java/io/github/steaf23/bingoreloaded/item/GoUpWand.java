@@ -4,7 +4,6 @@ import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.BingoSound;
 import io.github.steaf23.bingoreloaded.data.BingoStatType;
-import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.data.config.BingoOptions;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.lib.api.PotionEffectInstance;
@@ -12,6 +11,7 @@ import io.github.steaf23.bingoreloaded.lib.api.StatusEffectType;
 import io.github.steaf23.bingoreloaded.lib.api.WorldPosition;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
+import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformTaskScheduler;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.event.EventResult;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
@@ -42,10 +42,11 @@ public class GoUpWand extends GameItem {
 	}
 
 	@Override
-	public EventResult<?> use(StackHandle stack, BingoParticipant participant, BingoConfigurationData config) {
+	public EventResult<?> use(StackHandle stack, BingoParticipant participant, BingoGame game) {
+		var config = game.getConfig();
 		if (participant instanceof BingoPlayer player) {
 			player.sessionPlayer().ifPresent(sessionPlayer -> {
-				useGoUpWand(sessionPlayer, stack,
+				useGoUpWand(game.taskScheduler(), sessionPlayer, stack,
 						config.getOptionValue(BingoOptions.GO_UP_WAND_COOLDOWN),
 						config.getOptionValue(BingoOptions.GO_UP_WAND_DOWN_DISTANCE),
 						config.getOptionValue(BingoOptions.GO_UP_WAND_UP_DISTANCE),
@@ -56,7 +57,7 @@ public class GoUpWand extends GameItem {
 		return EventResult.CONSUME;
 	}
 
-	private void useGoUpWand(PlayerHandle player, StackHandle wand, double wandCooldownSeconds, int downDistance, int upDistance, int platformLifetimeSeconds) {
+	private void useGoUpWand(PlatformTaskScheduler taskScheduler, PlayerHandle player, StackHandle wand, double wandCooldownSeconds, int downDistance, int upDistance, int platformLifetimeSeconds) {
 		if (player.hasCooldown(wand)) {
 			return;
 		}
@@ -64,7 +65,7 @@ public class GoUpWand extends GameItem {
 		wand.setCooldown(PlayerKit.WAND_COOLDOWN_GROUP, wandCooldownSeconds);
 		player.setCooldown(wand, (int)(wandCooldownSeconds * 20));
 
-		BingoReloaded.runtime().getServerSoftware().runTask(task -> {
+		taskScheduler.runTask(task -> {
 			double distance;
 			double fallDistance;
 			// Use the wand
@@ -82,7 +83,7 @@ public class GoUpWand extends GameItem {
 			platformLocation.setY(platformLocation.y() + distance);
 
 			BingoGame.spawnPlatform(platformLocation, 1, true);
-			BingoReloaded.runtime().getServerSoftware().runTask((long) Math.max(0, platformLifetimeSeconds) * BingoReloaded.ONE_SECOND, laterTask -> {
+			taskScheduler.runTask((long) Math.max(0, platformLifetimeSeconds) * BingoReloaded.ONE_SECOND, laterTask -> {
 				BingoGame.removePlatform(platformLocation, 1);
 			});
 

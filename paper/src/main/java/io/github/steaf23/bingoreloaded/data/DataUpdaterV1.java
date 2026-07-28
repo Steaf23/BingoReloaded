@@ -5,11 +5,11 @@ import io.github.steaf23.bingoreloaded.cards.CardSize;
 import io.github.steaf23.bingoreloaded.data.helper.SerializablePlayer;
 import io.github.steaf23.bingoreloaded.lib.api.AdvancementHandlePaper;
 import io.github.steaf23.bingoreloaded.lib.api.PaperApiHelper;
-import io.github.steaf23.bingoreloaded.lib.api.platform.ServerSoftware;
 import io.github.steaf23.bingoreloaded.lib.api.StatisticHandlePaper;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemTypePaper;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandlePaper;
+import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformStatics;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandlePaper;
 import io.github.steaf23.bingoreloaded.lib.data.core.YamlDataAccessor;
 import io.github.steaf23.bingoreloaded.lib.data.core.tag.TagDataAccessor;
@@ -62,7 +62,7 @@ import java.util.UUID;
 public class DataUpdaterV1
 {
     protected final BingoReloadedPaper plugin;
-    protected final ServerSoftware server;
+    protected final PlatformStatics server;
 
     public DataUpdaterV1(BingoReloadedPaper plugin) {
         this.plugin = plugin;

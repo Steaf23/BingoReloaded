@@ -8,6 +8,7 @@ import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.BingoSound;
 import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
+import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformServer;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
@@ -76,8 +77,8 @@ public class BlitzTaskCard extends TaskCard {
 	}
 
 	@Override
-	public void generateCard(TaskGenerator.GeneratorSettings settings) {
-		super.generateCard(settings);
+	public void generateCard(PlatformServer server, TaskGenerator.GeneratorSettings settings) {
+		super.generateCard(server, settings);
 
 		this.randomTasks = new RotatingTaskList(settings, settings.seed());
 	}
@@ -115,7 +116,7 @@ public class BlitzTaskCard extends TaskCard {
 				if (slot.isRecovering()) {
 					amountRecovered++;
 					// Recovery finished, replace task with a new one.
-					GameTask newTask = randomTasks.nextTask(this::canTaskBeAdded);
+					GameTask newTask = randomTasks.nextTask(game.getSession().getGameManager().getServer(), this::canTaskBeAdded);
 					if (newTask == null) {
 						ConsoleMessenger.bug("Cannot generate new task for blitz", this);
 					}

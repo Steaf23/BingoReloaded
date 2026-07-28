@@ -2,10 +2,9 @@ package io.github.steaf23.bingoreloaded.data.world;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.lib.api.DimensionType;
-import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformServer;
-import io.github.steaf23.bingoreloaded.lib.api.platform.ServerSoftware;
 import io.github.steaf23.bingoreloaded.lib.api.WorldHandle;
 import io.github.steaf23.bingoreloaded.lib.api.WorldOptions;
+import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformServer;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
@@ -53,7 +52,8 @@ public class WorldData
      * @return created WorldGroup
      */
     public WorldGroup createWorldGroup(Key overworldKey) {
-        WorldHandle overworld = BingoReloaded.runtime().createBingoOverworld(overworldKey, options.noiseGenerationSettings);
+        //TODO: REFACTOR re-implement.
+        WorldHandle overworld = null; //BingoReloaded.runtime().createBingoOverworld(overworldKey, options.noiseGenerationSettings);
         if (overworld == null) {
             ConsoleMessenger.bug("Could not create world using bingo small biome generation.", this);
             createWorld(overworldKey, DimensionType.OVERWORLD);

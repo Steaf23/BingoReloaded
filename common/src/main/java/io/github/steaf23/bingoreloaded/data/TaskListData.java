@@ -1,6 +1,7 @@
 package io.github.steaf23.bingoreloaded.data;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
+import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformServer;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataAccessor;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataStorage;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
@@ -29,12 +30,14 @@ public class TaskListData
     private final DataAccessor defaultData = BingoReloaded.getDataAccessor("data/default_lists");
     private final DataAccessor data = BingoReloaded.getDataAccessor("data/" + BingoReloaded.getDefaultTasksVersion());
 
-    public List<TaskData> getTasks(String listName) {
-        return getTasks(listName, EnumSet.allOf(TaskData.TaskType.class));
+    public List<TaskData> getTasks(PlatformServer server, String listName) {
+        return getTasks(server, listName, EnumSet.allOf(TaskData.TaskType.class));
     }
 
-    public List<TaskData> getTasks(String listName, EnumSet<TaskData.TaskType> allowedTypes) {
+    public List<TaskData> getTasks(PlatformServer server, String listName, EnumSet<TaskData.TaskType> allowedTypes) {
         Collection<TaskData> tasks;
+        data.addServerContext(server);
+        defaultData.addServerContext(server);
         if (defaultData.contains(listName + ".tasks")) {
             tasks = defaultData.getSerializableList(listName + ".tasks", TaskData.class);
         } else if (data.contains(listName + ".tasks")) {
@@ -55,9 +58,9 @@ public class TaskListData
         }
     }
 
-    public void saveTasksFromGroup(String listName, List<TaskData> group, List<TaskData> tasksToSave)
+    public void saveTasksFromGroup(PlatformServer server, String listName, List<TaskData> group, List<TaskData> tasksToSave)
     {
-        Set<TaskData> savedTasks = new HashSet<>(getTasks(listName));
+        Set<TaskData> savedTasks = new HashSet<>(getTasks(server, listName));
         Set<TaskData> tasksToRemove = group.stream().filter(t ->
                 tasksToSave.stream().noneMatch(i -> i.equals(t))).collect(Collectors.toSet());
 

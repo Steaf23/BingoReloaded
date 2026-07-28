@@ -15,7 +15,6 @@ import net.kyori.adventure.key.Key;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-import java.util.UUID;
 
 public class SingularGameManager extends GameManager
 {

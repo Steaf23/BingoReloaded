@@ -31,8 +31,8 @@ import io.github.steaf23.bingoreloaded.gameloop.SingularGameManager;
 import io.github.steaf23.bingoreloaded.lib.api.ActionUser;
 import io.github.steaf23.bingoreloaded.lib.api.BingoReloadedRuntime;
 import io.github.steaf23.bingoreloaded.lib.api.ExtensionInfo;
-import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformResources;
 import io.github.steaf23.bingoreloaded.lib.api.StatisticHandle;
+import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformResources;
 import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformServer;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataAccessor;
@@ -148,6 +148,13 @@ public class BingoReloaded implements Namespaced {
 		BingoSound.setSounds(getDataAccessor("sounds"));
 
 		this.textureData = new TexturedMenuData();
+
+		runtime.registerAction(true, new AutoBingoAction());
+		runtime.registerAction(true, new BingoConfigAction(config));
+		runtime.registerAction(false, new BingoAction(config));
+		runtime.registerAction(false, new BotCommandAction());
+		runtime.registerExtraActions(config);
+
 		ConsoleMessenger.log(Component.text("Enabled " + metaInfo.name()).color(NamedTextColor.GREEN));
 	}
 
@@ -323,12 +330,6 @@ public class BingoReloaded implements Namespaced {
 		}
 
 		this.gameManager.setup(config.getOptionValue(BingoOptions.DEFAULT_WORLDS));
-
-		runtime.registerAction(true, new AutoBingoAction(getGameManager()));
-		runtime.registerAction(true, new BingoConfigAction(config));
-		runtime.registerAction(false, new BingoAction(this, config, getGameManager()));
-		runtime.registerAction(false, new BotCommandAction(getGameManager()));
-		runtime.registerExtraActions(config);
 	}
 
 	@KeyPattern.Namespace
@@ -359,10 +360,6 @@ public class BingoReloaded implements Namespaced {
 
 	public static boolean isPlayer(ActionUser player) {
 		return player.hasPermission("bingo.player");
-	}
-
-	public static BingoReloadedRuntime runtime() {
-		return INSTANCE.runtime;
 	}
 
 	public static boolean useResourcePack() {

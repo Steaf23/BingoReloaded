@@ -5,7 +5,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
-import io.github.steaf23.bingoreloaded.lib.api.platform.ServerSoftware;
+import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformResources;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataAccessor;
 import io.github.steaf23.bingoreloaded.lib.data.core.tag.Tag;
 import io.github.steaf23.bingoreloaded.lib.data.core.tag.TagDataType;
@@ -25,12 +25,12 @@ import java.util.Map;
  */
 public class JsonDataAccessor extends JsonDataStorage implements DataAccessor
 {
-    private final ServerSoftware server;
+    private final PlatformResources resources;
     private final String filepath;
     private final boolean readOnly;
 
-    public JsonDataAccessor(ServerSoftware server, String filepath, boolean readOnly) {
-        this.server = server;
+    public JsonDataAccessor(PlatformResources resources, String filepath, boolean readOnly) {
+        this.resources = resources;
         this.filepath = filepath;
         this.readOnly = readOnly;
     }
@@ -48,16 +48,16 @@ public class JsonDataAccessor extends JsonDataStorage implements DataAccessor
     @Override
     public void load() {
         if (isInternalReadOnly()) {
-            InputStream stream = server.getResource(getLocation() + getFileExtension());
+            InputStream stream = resources.getResource(getLocation() + getFileExtension());
             if (stream != null) {
                 readJsonFromFile(this, stream);
             }
             return;
         }
 
-        File file = new File(server.getDataFolder(), getLocation() + getFileExtension());
+        File file = new File(resources.getDataFolder(), getLocation() + getFileExtension());
         if (!file.exists()) {
-            server.saveResource(getLocation() + getFileExtension(), false);
+            resources.saveResource(getLocation() + getFileExtension(), false);
         }
 
         try (InputStream input = new FileInputStream(file)) {

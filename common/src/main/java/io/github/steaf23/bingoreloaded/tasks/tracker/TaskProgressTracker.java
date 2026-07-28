@@ -4,11 +4,10 @@ import io.github.steaf23.bingoreloaded.cards.TaskCard;
 import io.github.steaf23.bingoreloaded.data.config.BingoOptions;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.lib.api.AdvancementHandle;
-import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformTasks;
-import io.github.steaf23.bingoreloaded.lib.api.platform.ServerSoftware;
 import io.github.steaf23.bingoreloaded.lib.api.StatisticHandle;
 import io.github.steaf23.bingoreloaded.lib.api.WorldPosition;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
+import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformTaskScheduler;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.event.EventResult;
 import io.github.steaf23.bingoreloaded.lib.event.EventResults;
@@ -59,7 +58,7 @@ public class TaskProgressTracker
         }
     }
 
-    private final PlatformTasks tasks;
+    private final PlatformTaskScheduler tasks;
     private final BingoGame game;
     private final Map<GameTask, List<TaskProgress>> progressMap;
     private final StatisticTracker statisticTracker;
@@ -69,7 +68,7 @@ public class TaskProgressTracker
     private final List<GameTask> pendingTasksToRemove = new ArrayList<>();
 	private boolean updateClient;
 
-    public TaskProgressTracker(PlatformTasks tasks, @NotNull BingoGame game) {
+    public TaskProgressTracker(PlatformTaskScheduler tasks, @NotNull BingoGame game) {
         this.tasks = tasks;
         this.game = game;
         this.progressMap = new HashMap<>();

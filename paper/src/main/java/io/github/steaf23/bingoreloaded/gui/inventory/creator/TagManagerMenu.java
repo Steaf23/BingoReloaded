@@ -1,11 +1,11 @@
 package io.github.steaf23.bingoreloaded.gui.inventory.creator;
 
+import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.api.CardDisplayInfo;
 import io.github.steaf23.bingoreloaded.data.BingoCardData;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.TaskTagData;
 import io.github.steaf23.bingoreloaded.lib.api.MenuBoard;
-import io.github.steaf23.bingoreloaded.lib.api.PlatformResolver;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemTypePaper;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.inventory.BasicMenu;
@@ -54,7 +54,7 @@ public class TagManagerMenu extends BasicMenu {
 	public void beforeOpening(PlayerHandle player) {
 		super.beforeOpening(player);
 
-		List<TaskData> tasks = cardData.lists().getTasks(listName);
+		List<TaskData> tasks = cardData.lists().getTasks(player.server(), listName);
 		TaskTagData data = new BingoCardData().tags();
 
 		availableTags = data.getAllTags();
@@ -95,12 +95,12 @@ public class TagManagerMenu extends BasicMenu {
 		super.beforeClosing(player);
 
 		List<TaskData> mappedData = taskGroup.allData().stream().map(GameTask::data).toList();
-		cardData.lists().saveTasksFromGroup(listName, mappedData, mappedData);
+		cardData.lists().saveTasksFromGroup(player.server(), listName, mappedData, mappedData);
 	}
 
 	public ItemTemplate onTagBarClicked(int idx, ItemTemplate item, String tagName) {
 		switchTabs(tagName);
-		PlatformResolver.get().runTask(t -> {
+		BingoReloaded.runtime().taskScheduler().runTask(t -> {
 			taskGroup.updateVisibleItems(this);
 		});
 		return null;
@@ -136,7 +136,7 @@ public class TagManagerMenu extends BasicMenu {
 		}
 
 		taskGroup.setItem(slotIndex, task, createItemFromTask(task));
-		PlatformResolver.get().runTask((t) -> {
+		BingoReloaded.runtime().taskScheduler().runTask((t) -> {
 			taskGroup.updateVisibleItems(this);
 		});
 	}
@@ -168,7 +168,7 @@ public class TagManagerMenu extends BasicMenu {
 		if (currentPage > 0) {
 			addAction(prevPage, (args) -> {
 				page.previousPage(this);
-				PlatformResolver.get().runTask((t) -> {
+				BingoReloaded.runtime().taskScheduler().runTask((t) -> {
 					updatePageNavigation(page);
 				});
 			});
@@ -179,7 +179,7 @@ public class TagManagerMenu extends BasicMenu {
 		if (currentPage < pageCount - 1) {
 			addAction(nextPage, (args) -> {
 				page.nextPage(this);
-				PlatformResolver.get().runTask((t) -> {
+				BingoReloaded.runtime().taskScheduler().runTask((t) -> {
 					updatePageNavigation(page);
 				});
 			});

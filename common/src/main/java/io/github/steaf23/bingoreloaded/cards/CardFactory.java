@@ -8,6 +8,7 @@ import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.config.BingoOptions;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.lib.api.BingoReloadedRuntime;
+import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformServer;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
 import io.github.steaf23.bingoreloaded.tasks.TaskGenerator;
 
@@ -35,20 +36,23 @@ public class CardFactory
     public static Set<TaskCard> generateCardsForGame(BingoGame game) {
         Set<TaskCard> uniqueCards = new HashSet<>();
 
+        PlatformServer server = game.getSession().getGameManager().getServer();
+        BingoReloadedRuntime runtime = game.getSession().getGameManager().getRuntime();
+
         var generatorSettings = TaskGenerator.generatorSettingsFromGame(game);
 
-        TaskCard masterCard = CardFactory.fromGame(BingoReloaded.runtime(), game, BingoReloaded.useResourcePack());
+        TaskCard masterCard = CardFactory.fromGame(runtime, game, BingoReloaded.useResourcePack());
         if (game.getSettings().differentCardPerTeam() && masterCard.canGenerateSeparateCards()) {
             // Generate a new card for each team.
             game.getTeamManager().getActiveTeams().forEach(t -> {
                 TaskCard card = masterCard.copy(BingoMessage.SHOW_TEAM_CARD_NAME.asPhrase(t.getColoredName()));
-                card.generateCard(generatorSettings);
+                card.generateCard(server, generatorSettings);
                 t.setup(card, game.getConfig());
                 uniqueCards.add(card);
             });
         } else {
             // Otherwise generate the card only once and copy it for all teams
-            masterCard.generateCard(generatorSettings);
+            masterCard.generateCard(server, generatorSettings);
             game.getTeamManager().getActiveTeams().forEach(t -> {
                 TaskCard card = masterCard.copy(BingoMessage.SHOW_TEAM_CARD_NAME.asPhrase(t.getColoredName()));
                 t.setup(card, game.getConfig());

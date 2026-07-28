@@ -11,10 +11,9 @@ import io.github.steaf23.bingoreloaded.data.record.LeaderboardData;
 import io.github.steaf23.bingoreloaded.data.world.WorldData;
 import io.github.steaf23.bingoreloaded.data.world.WorldGroup;
 import io.github.steaf23.bingoreloaded.lib.api.BingoReloadedRuntime;
-import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformServer;
-import io.github.steaf23.bingoreloaded.lib.api.platform.ServerSoftware;
 import io.github.steaf23.bingoreloaded.lib.api.WorldHandle;
 import io.github.steaf23.bingoreloaded.lib.api.WorldPosition;
+import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformServer;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.event.EventResult;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
@@ -265,7 +264,7 @@ public class GameManager {
 					teleportingPlayers.add(player.uniqueId());
 					DebugLogger.addLog("Scheduling player load...");
 					// load player will teleport them, so we have to schedule it to make sure to do the right thing
-					runtime.tasks().runTask(t -> {
+					runtime.taskScheduler().runTask(t -> {
 						if (playerData.loadPlayer(player) == null) {
                         // Player data was not saved for some reason?
                         ConsoleMessenger.bug(Component.text("No saved player data could be found for ").append(player.displayName()), this);

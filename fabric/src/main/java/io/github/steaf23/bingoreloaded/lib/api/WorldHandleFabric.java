@@ -9,7 +9,6 @@ import net.minecraft.server.level.ServerLevel;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.UUID;
 
 public class WorldHandleFabric implements WorldHandle {
 
@@ -17,6 +16,10 @@ public class WorldHandleFabric implements WorldHandle {
 
 	public WorldHandleFabric(ServerLevel world) {
 		this.world = world;
+	}
+
+	public ServerLevel handle() {
+		return world;
 	}
 
 	@Override

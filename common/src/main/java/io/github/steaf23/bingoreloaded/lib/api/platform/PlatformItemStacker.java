@@ -5,7 +5,7 @@ import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import net.kyori.adventure.text.format.TextColor;
 
-public interface PlatformItemStacks {
+public interface PlatformItemStacker {
 
 	StackHandle createStack(ItemType type, int amount);
 	StackHandle createStackFromBytes(byte[] bytes);

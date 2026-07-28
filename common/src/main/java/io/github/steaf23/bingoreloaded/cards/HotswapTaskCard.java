@@ -9,6 +9,7 @@ import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.BingoSound;
 import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
+import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformServer;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
@@ -113,8 +114,8 @@ public class HotswapTaskCard extends TaskCard
      * Overridden to set up the task generator
      */
     @Override
-    public void generateCard(TaskGenerator.GeneratorSettings settings) {
-        super.generateCard(settings);
+    public void generateCard(PlatformServer server, TaskGenerator.GeneratorSettings settings) {
+        super.generateCard(server, settings);
 
         if (settings.seed() != 0) {
             randomExpiryProvider.setSeed(settings.seed());
@@ -168,7 +169,7 @@ public class HotswapTaskCard extends TaskCard
                 if (holder.isRecovering()) {
                     taskRecoveredCount++;
                     // Recovery finished, replace task with a new one.
-                    GameTask newTask = randomTasks.nextTask(this::canTaskBeAdded);
+                    GameTask newTask = randomTasks.nextTask(game.getSession().getGameManager().getServer(), this::canTaskBeAdded);
                     if (newTask == null) {
                         ConsoleMessenger.bug("Cannot generate new task for hot-swap", this);
                     }

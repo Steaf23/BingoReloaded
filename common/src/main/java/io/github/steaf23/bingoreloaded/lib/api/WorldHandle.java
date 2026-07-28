@@ -6,7 +6,6 @@ import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import net.kyori.adventure.key.Key;
 
 import java.util.Collection;
-import java.util.UUID;
 
 public interface WorldHandle {
 

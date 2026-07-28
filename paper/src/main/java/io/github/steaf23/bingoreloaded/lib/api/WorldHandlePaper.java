@@ -11,7 +11,6 @@ import net.kyori.adventure.key.Key;
 import org.bukkit.World;
 
 import java.util.Collection;
-import java.util.UUID;
 
 public class WorldHandlePaper implements WorldHandle {
 

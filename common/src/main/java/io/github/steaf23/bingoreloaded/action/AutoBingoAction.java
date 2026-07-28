@@ -14,9 +14,8 @@ import io.github.steaf23.bingoreloaded.gameloop.phase.PregameLobby;
 import io.github.steaf23.bingoreloaded.lib.action.ActionResult;
 import io.github.steaf23.bingoreloaded.lib.action.ActionTree;
 import io.github.steaf23.bingoreloaded.lib.action.DeferredAction;
-import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformServer;
-import io.github.steaf23.bingoreloaded.lib.api.platform.ServerSoftware;
 import io.github.steaf23.bingoreloaded.lib.api.WorldHandle;
+import io.github.steaf23.bingoreloaded.lib.api.platform.GameContext;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
@@ -39,25 +38,23 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class AutoBingoAction extends DeferredAction {
-	private final GameManager manager;
 
-	public AutoBingoAction(GameManager manager) {
+	public AutoBingoAction() {
 		super("autobingo", "world", List.of("bingo.admin"));
-		this.manager = manager;
 
-		addTabCompletion(args -> manager.getSessionNames().stream().toList());
+		addTabCompletion((context,args) -> context.gameManager().getSessionNames().stream().toList());
 
-		this.addSubAction(new ActionTree("create", args -> create(args[0])));
-
-
-		this.addSubAction(new ActionTree("destroy", args -> destroy(args[0])));
+		this.addSubAction(new ActionTree("create", (context, args) -> create(context.gameManager(), args[0])));
 
 
-		this.addSubAction(new ActionTree("start", args -> start(args[0])));
+		this.addSubAction(new ActionTree("destroy", (context, args) -> destroy(context.gameManager(), args[0])));
 
 
-		this.addSubAction(new ActionTree("kit", args -> {
-			var settings = getSettingsBuilder(args[0]);
+		this.addSubAction(new ActionTree("start", (context, args) -> start(context.gameManager(), args[0])));
+
+
+		this.addSubAction(new ActionTree("kit", (context, args) -> {
+			var settings = getSettingsBuilder(context, args[0]);
 			if (settings == null) {
 				sendFailed("Invalid world/ session name: " + args[0], args[0]);
 				return ActionResult.INCORRECT_USE;
@@ -70,8 +67,8 @@ public class AutoBingoAction extends DeferredAction {
 		).addUsage("<kit_name>"));
 
 
-		this.addSubAction(new ActionTree("effects", args -> {
-			var settings = getSettingsBuilder(args[0]);
+		this.addSubAction(new ActionTree("effects", (context, args) -> {
+			var settings = getSettingsBuilder(context, args[0]);
 			if (settings == null) {
 				sendFailed("Invalid world/ session name: " + args[0], args[0]);
 				return ActionResult.INCORRECT_USE;
@@ -95,8 +92,8 @@ public class AutoBingoAction extends DeferredAction {
 				}));
 
 
-		this.addSubAction(new ActionTree("card", args -> {
-			var settings = getSettingsBuilder(args[0]);
+		this.addSubAction(new ActionTree("card", (context, args) -> {
+			var settings = getSettingsBuilder(context, args[0]);
 			if (settings == null) {
 				sendFailed("Invalid world/ session name: " + args[0], args[0]);
 				return ActionResult.INCORRECT_USE;
@@ -104,8 +101,8 @@ public class AutoBingoAction extends DeferredAction {
 			return setCard(settings, args[0], Arrays.copyOfRange(args, 1, args.length));
 		}).addUsage("<card_name>"));
 
-		this.addSubAction(new ActionTree("countdown", args -> {
-			var settings = getSettingsBuilder(args[0]);
+		this.addSubAction(new ActionTree("countdown", (context, args) -> {
+			var settings = getSettingsBuilder(context, args[0]);
 			if (settings == null) {
 				sendFailed("Invalid world/ session name: " + args[0], args[0]);
 				return ActionResult.INCORRECT_USE;
@@ -115,8 +112,8 @@ public class AutoBingoAction extends DeferredAction {
 				.addTabCompletion(args -> args.length == 2 ? List.of("disabled", "duration", "time_limit") : List.of()));
 
 
-		this.addSubAction(new ActionTree("duration", args -> {
-			var settings = getSettingsBuilder(args[0]);
+		this.addSubAction(new ActionTree("duration", (context, args) -> {
+			var settings = getSettingsBuilder(context, args[0]);
 			if (settings == null) {
 				sendFailed("Invalid world/ session name: " + args[0], args[0]);
 				return ActionResult.INCORRECT_USE;
@@ -125,19 +122,19 @@ public class AutoBingoAction extends DeferredAction {
 		}).addUsage("<duration_minutes>"));
 
 
-		this.addSubAction(new ActionTree("team", (server, args) -> {
-			var settings = getSettingsBuilder(args[0]);
+		this.addSubAction(new ActionTree("team", (context, args) -> {
+			var settings = getSettingsBuilder(context, args[0]);
 			if (settings == null) {
 				sendFailed("Invalid world/ session name: " + args[0], args[0]);
 				return ActionResult.INCORRECT_USE;
 			}
-			return setPlayerTeam(server, args[0], Arrays.copyOfRange(args, 1, args.length));
+			return setPlayerTeam(context, args[0], Arrays.copyOfRange(args, 1, args.length));
 		}).addUsage("<player_name> <team_name>")
 				.addTabCompletion(args -> args.length == 2 || args.length == 3 ? List.of("") : List.of()));
 
 
-		this.addSubAction(new ActionTree("teamsize", args -> {
-			var settings = getSettingsBuilder(args[0]);
+		this.addSubAction(new ActionTree("teamsize", (context, args) -> {
+			var settings = getSettingsBuilder(context, args[0]);
 			if (settings == null) {
 				sendFailed("Invalid world/ session name: " + args[0], args[0]);
 				return ActionResult.INCORRECT_USE;
@@ -145,8 +142,8 @@ public class AutoBingoAction extends DeferredAction {
 			return setTeamSize(settings, args[0], Arrays.copyOfRange(args, 1, args.length));
 		}).addUsage("<size>"));
 
-		this.addSubAction(new ActionTree("teamcount", args -> {
-			var settings = getSettingsBuilder(args[0]);
+		this.addSubAction(new ActionTree("teamcount", (context, args) -> {
+			var settings = getSettingsBuilder(context, args[0]);
 			if (settings == null) {
 				sendFailed("Invalid world/ session name: " + args[0], args[0]);
 				return ActionResult.INCORRECT_USE;
@@ -155,8 +152,8 @@ public class AutoBingoAction extends DeferredAction {
 		}).addUsage("<count>"));
 
 
-		this.addSubAction(new ActionTree("gamemode", args -> {
-			var settings = getSettingsBuilder(args[0]);
+		this.addSubAction(new ActionTree("gamemode", (context, args) -> {
+			var settings = getSettingsBuilder(context, args[0]);
 			if (settings == null) {
 				sendFailed("Invalid world/ session name: " + args[0], args[0]);
 				return ActionResult.INCORRECT_USE;
@@ -170,8 +167,8 @@ public class AutoBingoAction extends DeferredAction {
 				}));
 
 
-		this.addSubAction(new ActionTree("hotswap_goal", args -> {
-			var settings = getSettingsBuilder(args[0]);
+		this.addSubAction(new ActionTree("hotswap_goal", (context, args) -> {
+			var settings = getSettingsBuilder(context, args[0]);
 			if (settings == null) {
 				sendFailed("Invalid world/ session name: " + args[0], args[0]);
 				return ActionResult.INCORRECT_USE;
@@ -180,8 +177,8 @@ public class AutoBingoAction extends DeferredAction {
 		})).addUsage("<win_goal>");
 
 
-		this.addSubAction(new ActionTree("hotswap_expire", args -> {
-			var settings = getSettingsBuilder(args[0]);
+		this.addSubAction(new ActionTree("hotswap_expire", (context, args) -> {
+			var settings = getSettingsBuilder(context, args[0]);
 			if (settings == null) {
 				sendFailed("Invalid world/ session name: " + args[0], args[0]);
 				return ActionResult.INCORRECT_USE;
@@ -191,8 +188,8 @@ public class AutoBingoAction extends DeferredAction {
 				.addTabCompletion(args -> args.length == 2 ? List.of("true", "false") : List.of()));
 
 
-		this.addSubAction(new ActionTree("complete_goal", args -> {
-			var settings = getSettingsBuilder(args[0]);
+		this.addSubAction(new ActionTree("complete_goal", (context, args) -> {
+			var settings = getSettingsBuilder(context, args[0]);
 			if (settings == null) {
 				sendFailed("Invalid world/ session name: " + args[0], args[0]);
 				return ActionResult.INCORRECT_USE;
@@ -201,8 +198,8 @@ public class AutoBingoAction extends DeferredAction {
 		})).addUsage("<win_goal>");
 
 
-		this.addSubAction(new ActionTree("separate_cards", args -> {
-			var settings = getSettingsBuilder(args[0]);
+		this.addSubAction(new ActionTree("separate_cards", (context, args) -> {
+			var settings = getSettingsBuilder(context, args[0]);
 			if (settings == null) {
 				sendFailed("Invalid world/ session name: " + args[0], args[0]);
 				return ActionResult.INCORRECT_USE;
@@ -212,11 +209,11 @@ public class AutoBingoAction extends DeferredAction {
 				.addTabCompletion(args -> args.length == 2 ? List.of("true", "false") : List.of()));
 
 
-		this.addSubAction(new ActionTree("end", args -> end(args[0])));
+		this.addSubAction(new ActionTree("end", (context, args) -> end(context.gameManager(), args[0])));
 
 
-		this.addSubAction(new ActionTree("preset", args -> {
-			var settings = getSettingsBuilder(args[0]);
+		this.addSubAction(new ActionTree("preset", (context, args) -> {
+			var settings = getSettingsBuilder(context, args[0]);
 			if (settings == null) {
 				sendFailed("Invalid world/ session name: " + args[0], args[0]);
 				return ActionResult.INCORRECT_USE;
@@ -242,28 +239,28 @@ public class AutoBingoAction extends DeferredAction {
 		}));
 
 
-		this.addSubAction(new ActionTree("kickplayer", this::removePlayerFromSession).addUsage("<player_name> <target_world_name>").addTabCompletion((server, args) -> {
+		this.addSubAction(new ActionTree("kickplayer", this::removePlayerFromSession).addUsage("<player_name> <target_world_name>").addTabCompletion((context, args) -> {
 			if (args.length == 2) {
 				return null;
 			} else if (args.length == 3) {
-				return server.getLoadedWorlds().stream().map(w -> w.key().asString()).toList();
+				return context.server().getLoadedWorlds().stream().map(w -> w.key().asString()).toList();
 			} else {
 				return List.of();
 			}
 		}));
 
 
-		this.addSubAction(new ActionTree("kickplayers", this::removeAllPlayersFromSession).addUsage("<target_world_name>").addTabCompletion((server, args) -> {
+		this.addSubAction(new ActionTree("kickplayers", this::removeAllPlayersFromSession).addUsage("<target_world_name>").addTabCompletion((context, args) -> {
 			if (args.length == 2) {
-				return server.getLoadedWorlds().stream().map(w -> w.key().asString()).toList();
+				return context.server().getLoadedWorlds().stream().map(w -> w.key().asString()).toList();
 			} else {
 				return List.of();
 			}
 		}));
 
 
-		this.addSubAction(new ActionTree("vote", this::voteForPlayer).addUsage("<player_name> <vote_category> <vote_for>").addTabCompletion(args -> {
-			BingoConfigurationData.VoteList voteList = manager.getGameConfig().getOptionValue(BingoOptions.VOTE_LIST);
+		this.addSubAction(new ActionTree("vote", this::voteForPlayer).addUsage("<player_name> <vote_category> <vote_for>").addTabCompletion((context, args) -> {
+			BingoConfigurationData.VoteList voteList = context.gameManager().getGameConfig().getOptionValue(BingoOptions.VOTE_LIST);
 			if (args.length <= 2) {
 				return null;
 			} else if (args.length == 3) {
@@ -292,12 +289,12 @@ public class AutoBingoAction extends DeferredAction {
 				}));
 	}
 
-	private BingoSettingsBuilder getSettingsBuilder(String sessionName) {
-		BingoSession session = manager.getSession(sessionName);
+	private BingoSettingsBuilder getSettingsBuilder(GameContext context, String sessionName) {
+		BingoSession session = context.gameManager().getSession(sessionName);
 		return session == null ? null : session.settingsBuilder;
 	}
 
-	public ActionResult create(String worldName) {
+	public ActionResult create(GameManager manager, String worldName) {
 		if (manager.createSession(worldName)) {
 			sendSuccess("Connected Bingo Reloaded to this world!", worldName);
 			return ActionResult.SUCCESS;
@@ -307,7 +304,7 @@ public class AutoBingoAction extends DeferredAction {
 		return ActionResult.IGNORED;
 	}
 
-	public ActionResult destroy(String worldName) {
+	public ActionResult destroy(GameManager manager, String worldName) {
 		if (manager.destroySession(worldName)) {
 			sendSuccess("Disconnected Bingo Reloaded from this world!", worldName);
 			return ActionResult.SUCCESS;
@@ -317,7 +314,7 @@ public class AutoBingoAction extends DeferredAction {
 		return ActionResult.IGNORED;
 	}
 
-	public ActionResult start(String worldName) {
+	public ActionResult start(GameManager manager, String worldName) {
 		if (manager.startGame(worldName)) {
 			sendSuccess("The game has started!", worldName);
 			return ActionResult.SUCCESS;
@@ -433,22 +430,22 @@ public class AutoBingoAction extends DeferredAction {
 		return ActionResult.INCORRECT_USE;
 	}
 
-	public ActionResult setPlayerTeam(PlatformServer server, String sessionName, String[] extraArguments) {
+	public ActionResult setPlayerTeam(GameContext context, String sessionName, String[] extraArguments) {
 		if (extraArguments.length != 2) {
 			sendFailed("Expected 4 arguments!", sessionName);
 			return ActionResult.INCORRECT_USE;
 		}
 
-		if (manager.getSession(sessionName) == null) {
+		if (context.gameManager().getSession(sessionName) == null) {
 			sendFailed("Cannot add player to team, world '" + sessionName + "' is not a bingo world!", sessionName);
 			return ActionResult.INCORRECT_USE;
 		}
 
-		BingoSession session = manager.getSession(sessionName);
+		BingoSession session = context.gameManager().getSession(sessionName);
 		String playerName = extraArguments[0];
 		String teamName = extraArguments[1];
 
-		PlayerHandle player = server.getPlayerFromName(playerName);
+		PlayerHandle player = context.server().getPlayerFromName(playerName);
 		if (player == null) {
 			sendFailed("Cannot add " + playerName + " to team, player does not exist/ is not online!", sessionName);
 			return ActionResult.IGNORED;
@@ -593,7 +590,7 @@ public class AutoBingoAction extends DeferredAction {
 		return ActionResult.SUCCESS;
 	}
 
-	public ActionResult end(String worldName) {
+	public ActionResult end(GameManager manager, String worldName) {
 		if (manager.endGame(worldName)) {
 			sendSuccess("Game forcefully ended!", worldName);
 			return ActionResult.SUCCESS;
@@ -644,7 +641,7 @@ public class AutoBingoAction extends DeferredAction {
 		return ActionResult.SUCCESS;
 	}
 
-	private ActionResult addPlayerToSession(PlatformServer server, String[] args) {
+	private ActionResult addPlayerToSession(GameContext context, String[] args) {
 		String worldName = args[0];
 		if (args.length != 2) {
 			sendFailed("Expected 3 arguments!", worldName);
@@ -652,12 +649,12 @@ public class AutoBingoAction extends DeferredAction {
 		}
 
 		String playerName = args[1];
-		PlayerHandle player = server.getPlayerFromName(playerName);
+		PlayerHandle player = context.server().getPlayerFromName(playerName);
 		if (player == null) {
 			sendFailed("Player " + playerName + " could not be found.", worldName);
 			return ActionResult.IGNORED;
 		}
-		if (!manager.teleportPlayerToSession(player, worldName)) {
+		if (!context.gameManager().teleportPlayerToSession(player, worldName)) {
 			sendFailed("Could not teleport player to invalid world.", worldName);
 			return ActionResult.IGNORED;
 		}
@@ -665,12 +662,14 @@ public class AutoBingoAction extends DeferredAction {
 		return ActionResult.SUCCESS;
 	}
 
-	private ActionResult removePlayerFromSession(PlatformServer server, String[] args) {
+	private ActionResult removePlayerFromSession(GameContext context, String[] args) {
 		String worldName = args[0];
 		if (args.length != 3) {
 			sendFailed("Expected 4 arguments!", worldName);
 			return ActionResult.INCORRECT_USE;
 		}
+
+		var server = context.server();
 
 		String playerName = args[1];
 		PlayerHandle player = server.getPlayerFromName(playerName);
@@ -679,7 +678,7 @@ public class AutoBingoAction extends DeferredAction {
 			return ActionResult.IGNORED;
 		}
 
-		BingoSession session = manager.getSession(worldName);
+		BingoSession session = context.getSession(worldName);
 		if (session == null || !session.ownsWorld(player.world())) {
 			sendFailed("Player cannot be teleported. " + playerName + " is not in " + worldName, worldName);
 			return ActionResult.IGNORED;
@@ -693,7 +692,7 @@ public class AutoBingoAction extends DeferredAction {
 		}
 
 		boolean teleportSucceeded = player.teleportBlocking(world.spawnPoint());
-		if (!manager.getGameConfig().getOptionValue(BingoOptions.SAVE_PLAYER_INFORMATION) && !teleportSucceeded) {
+		if (!context.getConfigOption(BingoOptions.SAVE_PLAYER_INFORMATION) && !teleportSucceeded) {
 			sendFailed("Could not teleport " + playerName + " to " + targetWorldName + " because of some error.", worldName);
 			return ActionResult.IGNORED;
 		}
@@ -701,21 +700,21 @@ public class AutoBingoAction extends DeferredAction {
 		return ActionResult.SUCCESS;
 	}
 
-	private ActionResult removeAllPlayersFromSession(PlatformServer server, String[] args) {
+	private ActionResult removeAllPlayersFromSession(GameContext context, String[] args) {
 		String worldName = args[0];
 		if (args.length != 2) {
 			sendFailed("Expected 3 arguments!", worldName);
 			return ActionResult.INCORRECT_USE;
 		}
 
-		BingoSession session = manager.getSession(worldName);
+		BingoSession session = context.getSession(worldName);
 		if (session == null) {
 			sendFailed("Could not remove players from this world, invalid session", worldName);
 			return ActionResult.IGNORED;
 		}
 
 		String targetWorldName = args[1];
-		WorldHandle world = server.getWorld(Key.key(targetWorldName));
+		WorldHandle world = context.server().getWorld(Key.key(targetWorldName));
 		if (world == null) {
 			sendFailed("Could not teleport players to invalid world " + targetWorldName + ".", worldName);
 			return ActionResult.IGNORED;
@@ -731,7 +730,7 @@ public class AutoBingoAction extends DeferredAction {
 			}
 
 			boolean teleportSucceeded = player.teleportBlocking(world.spawnPoint());
-			if (!manager.getGameConfig().getOptionValue(BingoOptions.SAVE_PLAYER_INFORMATION) && !teleportSucceeded) {
+			if (!context.getConfigOption(BingoOptions.SAVE_PLAYER_INFORMATION) && !teleportSucceeded) {
 				ConsoleMessenger.bug("Could not teleport player '" + player.playerName() + "'(" + player.uniqueId() + ") for some reason", this);
 				continue;
 			}
@@ -743,20 +742,20 @@ public class AutoBingoAction extends DeferredAction {
 		return ActionResult.SUCCESS;
 	}
 
-	private ActionResult voteForPlayer(PlatformServer server, String[] args) {
+	private ActionResult voteForPlayer(GameContext context, String[] args) {
 		String sessionName = args[0];
 		if (args.length != 4) {
 			sendFailed("Expected 5 arguments!", sessionName);
 			return ActionResult.INCORRECT_USE;
 		}
 
-		BingoSession session = manager.getSession(sessionName);
+		BingoSession session = context.getSession(sessionName);
 		if (session == null) {
 			sendFailed("Cannot cast a vote in this world (bingo is not being played here!).", sessionName);
 			return ActionResult.IGNORED;
 		}
 
-		PlayerHandle player = server.getPlayerFromName(args[1]);
+		PlayerHandle player = context.server().getPlayerFromName(args[1]);
 		if (player == null) {
 			sendFailed("Player '" + args[1] + "' does not exist!", sessionName);
 			return ActionResult.IGNORED;
@@ -769,7 +768,7 @@ public class AutoBingoAction extends DeferredAction {
 			return ActionResult.IGNORED;
 		}
 
-		BingoConfigurationData.VoteList voteList = manager.getGameConfig().getOptionValue(BingoOptions.VOTE_LIST);
+		BingoConfigurationData.VoteList voteList = context.getConfigOption(BingoOptions.VOTE_LIST);
 
 		switch (category) {
 			case "kits" -> {
@@ -814,13 +813,14 @@ public class AutoBingoAction extends DeferredAction {
 		return ActionResult.SUCCESS;
 	}
 
-	private ActionResult playerDataCommand(PlatformServer server, String[] args) {
+	private ActionResult playerDataCommand(GameContext context, String[] args) {
 		String sessionName = args[0];
 		if (args.length != 3) {
 			return ActionResult.INCORRECT_USE;
 		}
 
-		PlayerSerializationData playerData = manager.getPlayerData();
+		PlayerSerializationData playerData = context.gameManager().getPlayerData();
+		var server = context.server();
 
 		String playerName = args[2];
 		PlayerHandle player = server.getPlayerFromName(args[1]);

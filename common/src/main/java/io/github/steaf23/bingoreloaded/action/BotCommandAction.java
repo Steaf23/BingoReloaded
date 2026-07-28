@@ -21,11 +21,8 @@ import java.util.function.BiFunction;
 
 public class BotCommandAction extends ActionTree {
 
-	private final GameManager manager;
-
-	public BotCommandAction(GameManager manager) {
+	public BotCommandAction() {
 		super("bingobot", List.of("bingo.admin"));
-		this.manager = manager;
 
 		addSessionSubAction("add", List.of(), (args, session) -> {
 			String playerName = args[0];
@@ -128,7 +125,7 @@ public class BotCommandAction extends ActionTree {
 		session.teamManager.addMemberToTeam(virtualPlayer, teamName);
 	}
 
-	public @Nullable BingoSession getSessionFromUser(ActionUser user) {
+	public @Nullable BingoSession getSessionFromUser(GameManager manager, ActionUser user) {
 		if (user instanceof PlayerHandle player) {
 			return manager.getSessionFromWorld(player.world());
 		}
@@ -137,16 +134,16 @@ public class BotCommandAction extends ActionTree {
 	}
 
 	public void addSessionSubAction(String name, List<String> permissions, BiFunction<String[], BingoSession, Boolean> action) {
-		addSubAction(new ActionTree(name, permissions, (args) -> {
-			BingoSession session = getSessionFromUser(getLastUser());
+		addSessionSubAction(name, permissions, ((context, args, session) -> action.apply(args, session) ? ActionResult.SUCCESS : ActionResult.IGNORED));
+	}
+
+	public void addSessionSubAction(String name, List<String> permissions, BingoAction.SessionActionExecutor action) {
+		addSubAction(new ActionTree(name, permissions, (context, args) -> {
+			BingoSession session = getSessionFromUser(context.gameManager(), getLastUser());
 			if (session == null) {
 				return ActionResult.IGNORED;
 			} else {
-				if (action.apply(args, session)) {
-					return ActionResult.SUCCESS;
-				} else {
-					return ActionResult.IGNORED;
-				}
+				return action.execute(context, args, session);
 			}
 		}));
 	}

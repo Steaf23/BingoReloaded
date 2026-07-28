@@ -1,14 +1,12 @@
 package io.github.steaf23.bingoreloaded.lib.data.core.tag.adapters;
 
-import io.github.steaf23.bingoreloaded.lib.api.PlatformResolver;
 import io.github.steaf23.bingoreloaded.lib.api.WorldHandle;
 import io.github.steaf23.bingoreloaded.lib.api.WorldPosition;
+import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformServer;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataStorage;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataStorageSerializer;
 import net.kyori.adventure.key.Key;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.UUID;
 
 public class WorldPositionStorageSerializer implements DataStorageSerializer<WorldPosition>
 {
@@ -28,7 +26,11 @@ public class WorldPositionStorageSerializer implements DataStorageSerializer<Wor
         if (id == null) {
             return null;
         }
-        WorldHandle world = PlatformResolver.get().getWorld(id);
+        PlatformServer server = storage.serverContext();
+        if (server == null) {
+            return null;
+        }
+        WorldHandle world = server.getWorld(id);
         if (world == null) {
             return null;
         }

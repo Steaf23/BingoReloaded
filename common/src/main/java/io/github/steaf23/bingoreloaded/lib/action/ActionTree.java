@@ -1,13 +1,12 @@
 package io.github.steaf23.bingoreloaded.lib.action;
 
 import io.github.steaf23.bingoreloaded.lib.api.ActionUser;
-import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformServer;
+import io.github.steaf23.bingoreloaded.lib.api.platform.GameContext;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -78,7 +77,7 @@ public class ActionTree
         return this;
     }
 
-    public ActionResult execute(PlatformServer server, ActionUser user, String... arguments) {
+    public ActionResult execute(GameContext context, ActionUser user, String... arguments) {
         lastUser = user;
 
         if (!hasPermission(user)) {
@@ -87,11 +86,11 @@ public class ActionTree
 
         if (action != null) {
             if (subActions.isEmpty()) {
-                return action.execute(server, arguments);
+                return action.execute(context, arguments);
             }
 
             if (arguments.length == 0) {
-                return action.execute(server, arguments);
+                return action.execute(context, arguments);
             }
         }
 
@@ -101,18 +100,22 @@ public class ActionTree
 
         ActionTree cmd = getSubCommand(arguments[0]);
         if (cmd != null) {
-            return cmd.execute(server, lastUser, Arrays.copyOfRange(arguments, 1, arguments.length));
+            return cmd.execute(context, lastUser, Arrays.copyOfRange(arguments, 1, arguments.length));
         }
         return ActionResult.INCORRECT_USE;
+    }
+
+    public void setLastUser(ActionUser user) {
+        this.lastUser = user;
     }
 
     public boolean hasPermission(ActionUser user) {
         return permissionWhitelist.isEmpty() || user.hasAnyPermission(permissionWhitelist);
     }
 
-    public @Nullable List<String> tabComplete(PlatformServer server, ActionUser user, String... arguments) {
+    public @Nullable List<String> tabComplete(GameContext context, ActionUser user, String... arguments) {
         if (subActions.isEmpty()) {
-            return tabCompletionForArgs.tabComplete(server, arguments);
+            return tabCompletionForArgs.tabComplete(context, arguments);
         }
 
         if (arguments.length == 1) {
@@ -123,7 +126,7 @@ public class ActionTree
 
         ActionTree cmd = getSubCommand(arguments[0]);
         if (cmd != null) {
-            return cmd.tabComplete(server, user, Arrays.copyOfRange(arguments, 1, arguments.length));
+            return cmd.tabComplete(context, user, Arrays.copyOfRange(arguments, 1, arguments.length));
         }
 
         return List.of();
@@ -168,13 +171,21 @@ public class ActionTree
         return name;
     }
 
+    public ActionExecutor getAction() {
+        return action;
+    }
+
+    public List<ActionTree> subActions() {
+        return subActions;
+    }
+
     @FunctionalInterface
     public interface ActionExecutor {
-        ActionResult execute(PlatformServer server, String[] args);
+        ActionResult execute(GameContext context, String[] args);
     }
 
     @FunctionalInterface
     public interface ActionTabCompleter {
-        List<String> tabComplete(PlatformServer server, String[] args);
+        List<String> tabComplete(GameContext context, String[] args);
     }
 }

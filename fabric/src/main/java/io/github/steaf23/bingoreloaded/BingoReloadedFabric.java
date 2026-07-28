@@ -1,6 +1,8 @@
 package io.github.steaf23.bingoreloaded;
 
 import com.mojang.brigadier.Command;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.mojang.brigadier.context.CommandContext;
 import io.github.steaf23.bingoreloaded.api.CardDisplayInfo;
 import io.github.steaf23.bingoreloaded.api.CardMenu;
 import io.github.steaf23.bingoreloaded.api.TeamDisplay;
@@ -10,20 +12,21 @@ import io.github.steaf23.bingoreloaded.data.record.LeaderboardData;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gameloop.phase.PregameLobby;
 import io.github.steaf23.bingoreloaded.lib.action.ActionTree;
+import io.github.steaf23.bingoreloaded.lib.api.ActionUser;
 import io.github.steaf23.bingoreloaded.lib.api.BingoReloadedRuntime;
 import io.github.steaf23.bingoreloaded.lib.api.EntityType;
 import io.github.steaf23.bingoreloaded.lib.api.ExtensionInfo;
-import io.github.steaf23.bingoreloaded.lib.api.ExtensionTask;
-import io.github.steaf23.bingoreloaded.lib.api.platform.FabricResources;
-import io.github.steaf23.bingoreloaded.lib.api.platform.FabricServerSoftware;
 import io.github.steaf23.bingoreloaded.lib.api.PlatformResolver;
-import io.github.steaf23.bingoreloaded.lib.api.platform.FabricTasks;
-import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformTasks;
-import io.github.steaf23.bingoreloaded.lib.api.platform.ServerSoftware;
 import io.github.steaf23.bingoreloaded.lib.api.WorldHandle;
 import io.github.steaf23.bingoreloaded.lib.api.item.CapacityInventoryProvider;
 import io.github.steaf23.bingoreloaded.lib.api.item.InventoryHandle;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
+import io.github.steaf23.bingoreloaded.lib.api.platform.FabricResources;
+import io.github.steaf23.bingoreloaded.lib.api.platform.FabricServer;
+import io.github.steaf23.bingoreloaded.lib.api.platform.FabricStatics;
+import io.github.steaf23.bingoreloaded.lib.api.platform.FabricTaskScheduler;
+import io.github.steaf23.bingoreloaded.lib.api.platform.GameContext;
+import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformTaskScheduler;
 import io.github.steaf23.bingoreloaded.lib.api.player.EmptyDisplay;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandleFabric;
@@ -34,13 +37,16 @@ import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
 import net.fabricmc.loader.api.metadata.Person;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
+import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.server.MinecraftServer;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
@@ -51,17 +57,15 @@ public class BingoReloadedFabric implements ModInitializer, BingoReloadedRuntime
 
 	private static final String MOD_ID = "bingoreloaded";
 
-	private FabricServerSoftware platform;
 	private BingoReloaded bingo;
 	private FabricResources resources;
-	private FabricTasks tasks;
+	private FabricTaskScheduler tasks;
 
 	@Override
 	public void onInitialize() {
-		this.platform = new FabricServerSoftware(MOD_ID);
-		PlatformResolver.set(platform);
+		PlatformResolver.set(new FabricStatics(MOD_ID));
 
-		this.tasks = new FabricTasks();
+		this.tasks = new FabricTaskScheduler();
 		ServerTickEvents.START_SERVER_TICK.register(server -> {
 			tasks.tick(server.getTickCount());
 		});
@@ -70,6 +74,10 @@ public class BingoReloadedFabric implements ModInitializer, BingoReloadedRuntime
 		this.bingo = new BingoReloaded(this);
 		bingo.load();
 		bingo.enable(resources, createExtensionInfo());
+
+		ServerLifecycleEvents.SERVER_STARTED.register(server -> {
+			bingo.reloadManager(new FabricServer(server));
+		});
 	}
 
 	@Override
@@ -121,12 +129,27 @@ public class BingoReloadedFabric implements ModInitializer, BingoReloadedRuntime
 	@Override
 	public void registerAction(boolean allowConsole, ActionTree action) {
 		CommandRegistrationCallback.EVENT.register(((dispatcher, buildContext, selection) -> {
-			dispatcher.register(Commands.literal(action.name()).executes(context -> {
-				action.execute(platform, new PlayerHandleFabric(context.getSource().getPlayer()), context.getInput().split(" "));
-
-				return Command.SINGLE_SUCCESS;
-			}));
+			dispatcher.register(createActionsRecurse(action, action));
 		}));
+	}
+
+	LiteralArgumentBuilder<CommandSourceStack> createActionsRecurse(ActionTree mainAction, ActionTree action) {
+		var command = Commands.literal(action.name()).executes(ctx -> executeCommand(mainAction, action, ctx));
+		for (ActionTree subAction : action.subActions()) {
+			command.then(createActionsRecurse(mainAction, subAction));
+		}
+		return command;
+	}
+
+	public int executeCommand(ActionTree mainAction, ActionTree action, CommandContext<CommandSourceStack> context) {
+		MinecraftServer server = context.getSource().getServer();
+		FabricServer serverWrapper = new FabricServer(server);
+		ActionUser user = new PlayerHandleFabric(serverWrapper, context.getSource().getPlayer());
+		mainAction.setLastUser(user);
+		action.setLastUser(user);
+		action.getAction().execute(new GameContext(serverWrapper, bingo), new String[]{""});
+
+		return Command.SINGLE_SUCCESS;
 	}
 
 	@Override
@@ -136,11 +159,6 @@ public class BingoReloadedFabric implements ModInitializer, BingoReloadedRuntime
 	@Override
 	public @Nullable WorldHandle createBingoOverworld(Key worldKey, Key generationOptions) {
 		return null;
-	}
-
-	@Override
-	public ServerSoftware getServerSoftware() {
-		return platform;
 	}
 
 	@Override
@@ -229,8 +247,8 @@ public class BingoReloadedFabric implements ModInitializer, BingoReloadedRuntime
 	}
 
 	@Override
-	public PlatformTasks tasks() {
-		return null;
+	public PlatformTaskScheduler taskScheduler() {
+		return tasks;
 	}
 
 	private @Nullable ExtensionInfo createExtensionInfo() {

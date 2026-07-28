@@ -3,6 +3,7 @@ package io.github.steaf23.bingoreloaded.tasks.data;
 import io.github.steaf23.bingoreloaded.lib.api.AdvancementHandle;
 import io.github.steaf23.bingoreloaded.lib.api.StatisticHandle;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
+import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformServer;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataStorage;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataStorageSerializer;
 import io.github.steaf23.bingoreloaded.lib.data.core.tag.TagDataType;
@@ -46,7 +47,11 @@ public class TaskStorageSerializer implements DataStorageSerializer<TaskData>
                     tags);
         }
         else if (storage.contains("advancement")) {
-            return new AdvancementTask(AdvancementHandle.of(
+            PlatformServer server = storage.serverContext();
+            if (server == null) {
+                throw new IllegalStateException("Data storage does not have server context when it is required for deserializing advancements.");
+            }
+            return new AdvancementTask(AdvancementHandle.of(server,
                     storage.getNamespacedKey("advancement")),
                     tags);
         }

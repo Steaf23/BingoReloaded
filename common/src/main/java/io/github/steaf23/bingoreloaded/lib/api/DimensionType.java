@@ -10,6 +10,6 @@ public interface DimensionType extends Keyed {
 	DimensionType THE_END = of(Key.key("minecraft:the_end"));
 
 	static DimensionType of(Key key) {
-		return PlatformResolver.get().resolveDimensionType(key);
+		return PlatformResolver.getRegistries().resolveDimensionType(key);
 	}
 }

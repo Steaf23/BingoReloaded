@@ -2,8 +2,7 @@ package io.github.steaf23.bingoreloaded.lib.inventory;
 
 
 import io.github.steaf23.bingoreloaded.lib.api.MenuBoard;
-import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformTasks;
-import io.github.steaf23.bingoreloaded.lib.api.platform.ServerSoftware;
+import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformTaskScheduler;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandlePaper;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataStorage;
@@ -39,7 +38,7 @@ public class MenuBoardPaper implements MenuBoard, Listener
 
     private static final Set<ClickType> CLICK_TYPES_TO_IGNORE = Set.of(ClickType.DOUBLE_CLICK, ClickType.DROP, ClickType.CREATIVE, ClickType.CONTROL_DROP, ClickType.SWAP_OFFHAND);
 
-    public MenuBoardPaper(PlatformTasks tasks, JavaPlugin plugin) {
+    public MenuBoardPaper(PlatformTaskScheduler tasks, JavaPlugin plugin) {
 		this.plugin = plugin;
 		this.activeMenus = new HashMap<>();
         this.packetListener = new MenuPacketListener(tasks);

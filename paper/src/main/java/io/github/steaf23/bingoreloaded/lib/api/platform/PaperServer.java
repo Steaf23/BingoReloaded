@@ -30,14 +30,8 @@ import java.util.stream.Stream;
 
 public class PaperServer implements PlatformServer {
 
-	private final PlatformRegistries registries = new PaperRegistries();
 	private final PlatformCommandDispatcher commandDispatcher = command ->
 			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
-
-	@Override
-	public PlatformRegistries registries() {
-		return registries;
-	}
 
 	@Override
 	public PlatformCommandDispatcher commandDispatcher() {

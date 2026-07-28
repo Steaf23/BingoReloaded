@@ -6,10 +6,10 @@ import org.intellij.lang.annotations.Subst;
 public interface StatusEffectType {
 
 	static StatusEffectType of(@Subst("minecraft:key") String key) {
-		return PlatformResolver.get().resolvePotionEffectType(Key.key(key));
+		return PlatformResolver.getRegistries().resolvePotionEffectType(Key.key(key));
 	}
 
 	static StatusEffectType of(Key key) {
-		return PlatformResolver.get().resolvePotionEffectType(key);
+		return PlatformResolver.getRegistries().resolvePotionEffectType(key);
 	}
 }

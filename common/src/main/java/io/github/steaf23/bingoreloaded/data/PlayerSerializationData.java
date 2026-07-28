@@ -33,6 +33,7 @@ public class PlayerSerializationData
             return null;
         }
 
+        data.addServerContext(player.server());
         SerializablePlayer playerData = data.getSerializable(player.uniqueId().toString(), SerializablePlayer.class);
         if (playerData == null) {
             return null;

@@ -3,6 +3,7 @@ package io.github.steaf23.bingoreloaded.lib.data.core;
 import io.github.steaf23.bingoreloaded.lib.api.WorldPosition;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
+import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformServer;
 import io.github.steaf23.bingoreloaded.lib.data.core.tag.TagAdapter;
 import io.github.steaf23.bingoreloaded.lib.data.core.tag.TagDataType;
 import net.kyori.adventure.key.Key;
@@ -251,6 +252,18 @@ public class PlainDataStorage implements DataStorage {
 	@Override
 	public void clear() {
 		root = new HashMap<>();
+	}
+
+	private PlatformServer server;
+	@Override
+	public PlainDataStorage addServerContext(PlatformServer server) {
+		this.server = server;
+		return this;
+	}
+
+	@Override
+	public @Nullable PlatformServer serverContext() {
+		return server;
 	}
 
 	private @Nullable Object get(String key) {

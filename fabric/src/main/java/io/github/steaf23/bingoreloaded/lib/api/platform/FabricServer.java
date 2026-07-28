@@ -25,15 +25,21 @@ import java.util.UUID;
 public class FabricServer implements PlatformServer {
 
 	private final MinecraftServer server;
+	private final PlatformCommandDispatcher commandDispatcher = command -> {};
 
 	public FabricServer(MinecraftServer server) {
 		this.server = server;
 	}
 
 	@Override
+	public PlatformCommandDispatcher commandDispatcher() {
+		return commandDispatcher;
+	}
+
+	@Override
 	public Collection<? extends PlayerHandle> getOnlinePlayers() {
 		return PlayerLookup.all(server).stream()
-				.map(PlayerHandleFabric::new)
+				.map(p -> new PlayerHandleFabric(this, p))
 				.toList();
 	}
 
@@ -43,7 +49,7 @@ public class FabricServer implements PlatformServer {
 		if (p == null) {
 			return null;
 		}
-		return new PlayerHandleFabric(p);
+		return new PlayerHandleFabric(this, p);
 	}
 
 	@Override
@@ -52,7 +58,7 @@ public class FabricServer implements PlatformServer {
 		if (p == null) {
 			return null;
 		}
-		return new PlayerHandleFabric(p);
+		return new PlayerHandleFabric(this, p);
 	}
 
 	@Override

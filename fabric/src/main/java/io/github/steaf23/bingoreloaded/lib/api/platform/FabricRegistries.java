@@ -14,6 +14,7 @@ import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemTypeFabric;
 import io.github.steaf23.bingoreloaded.util.FabricTypes;
 import net.kyori.adventure.key.Key;
+import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.stats.StatType;
 import net.minecraft.world.effect.MobEffect;
@@ -69,7 +70,8 @@ public class FabricRegistries implements PlatformRegistries {
 		if (type == null) {
 			return null;
 		}
-		return new StatusEffectTypeFabric(type);
+		Holder<MobEffect> holder = BuiltInRegistries.MOB_EFFECT.wrapAsHolder(type);
+		return new StatusEffectTypeFabric(holder);
 	}
 
 	@Override

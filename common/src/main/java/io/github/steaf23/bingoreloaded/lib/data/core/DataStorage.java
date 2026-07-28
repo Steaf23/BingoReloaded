@@ -2,6 +2,7 @@ package io.github.steaf23.bingoreloaded.lib.data.core;
 
 import io.github.steaf23.bingoreloaded.lib.api.WorldPosition;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
+import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformServer;
 import io.github.steaf23.bingoreloaded.lib.data.core.tag.TagAdapter;
 import io.github.steaf23.bingoreloaded.lib.data.core.tag.TagDataType;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
@@ -135,4 +136,8 @@ public interface DataStorage
 
     boolean contains(String path);
     void clear();
+
+    DataStorage addServerContext(PlatformServer server);
+
+    @Nullable PlatformServer serverContext();
 }

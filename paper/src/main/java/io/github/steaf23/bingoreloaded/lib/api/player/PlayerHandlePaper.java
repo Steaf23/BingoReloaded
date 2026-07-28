@@ -19,6 +19,7 @@ import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemTypePaper;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandlePaper;
+import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformServer;
 import io.github.steaf23.bingoreloaded.lib.util.DebugLogger;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.key.Key;
@@ -30,7 +31,6 @@ import org.bukkit.GameMode;
 import org.bukkit.advancement.AdvancementProgress;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.potion.PotionEffect;
 import org.jetbrains.annotations.NotNull;
@@ -44,9 +44,16 @@ import java.util.function.Consumer;
 public class PlayerHandlePaper implements PlayerHandle {
 
 	private final Player player;
+	private final PlatformServer server;
 
-	public PlayerHandlePaper(@NotNull Player player) {
+	public PlayerHandlePaper(@NotNull PlatformServer server, @NotNull Player player) {
 		this.player = player;
+		this.server = server;
+	}
+
+	@Override
+	public PlatformServer server() {
+		return server;
 	}
 
 	@Override
@@ -273,11 +280,6 @@ public class PlayerHandlePaper implements PlayerHandle {
 	@Override
 	public void closeInventory() {
 		player.closeInventory();
-	}
-
-	@Override
-	public void kick(@Nullable Component reason) {
-		player.kick(reason, PlayerKickEvent.Cause.PLUGIN);
 	}
 
 	@Override

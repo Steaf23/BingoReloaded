@@ -2,6 +2,7 @@ package io.github.steaf23.bingoreloaded.tasks;
 
 import io.github.steaf23.bingoreloaded.data.BingoCardData;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
+import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformServer;
 import io.github.steaf23.bingoreloaded.tasks.data.TaskData;
 
 import java.util.ArrayList;
@@ -23,9 +24,9 @@ public class RotatingTaskList {
 		this.seededRandom = new Random(seed);
 	}
 
-	public GameTask nextTask(Predicate<TaskData> addPrecondition) {
+	public GameTask nextTask(PlatformServer server, Predicate<TaskData> addPrecondition) {
 		if (randomTasks.isEmpty()) {
-			randomTasks.addAll(TaskGenerator.filterBySettings(cardData, cardData.getAllTasks(settings.cardName(), settings.includedTypes()), settings));
+			randomTasks.addAll(TaskGenerator.filterBySettings(cardData, cardData.getAllTasks(server, settings.cardName(), settings.includedTypes()), settings));
 			// Do not add the tasks that are currently on the card.
 			// This will result in less duplicates overall when cycling through tasks.
 			randomTasks.removeIf(addPrecondition);

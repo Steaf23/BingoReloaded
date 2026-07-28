@@ -2,7 +2,7 @@ package io.github.steaf23.bingoreloaded.item;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
-import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
+import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.event.EventResult;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
@@ -45,7 +45,7 @@ public class TeamPouch extends GameItem {
 	}
 
 	@Override
-	public EventResult<?> use(StackHandle stack, BingoParticipant participant, BingoConfigurationData config) {
+	public EventResult<?> use(StackHandle stack, BingoParticipant participant, BingoGame game) {
 		if (participant instanceof BingoPlayer player && player.getTeam() != null) {
 			player.sessionPlayer().ifPresent(handle -> handle.openInventory(player.getTeam().storage()));
 		}

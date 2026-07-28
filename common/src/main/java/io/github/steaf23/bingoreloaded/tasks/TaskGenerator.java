@@ -5,6 +5,7 @@ import io.github.steaf23.bingoreloaded.data.BingoCardData;
 import io.github.steaf23.bingoreloaded.data.TaskListData;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
+import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformServer;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
 import io.github.steaf23.bingoreloaded.tasks.data.ItemTask;
@@ -38,7 +39,7 @@ public class TaskGenerator
      * - Finally shuffle the tasks and add them to the card.
      * If the final task count is lower than the amount of spaces available on the card, it will be filled up using default tasks.
      */
-    public static List<GameTask> generateCardTasks(GeneratorSettings settings) {
+    public static List<GameTask> generateCardTasks(PlatformServer server, GeneratorSettings settings) {
         BingoCardData cardsData = new BingoCardData();
         TaskListData listsData = cardsData.lists();
         // Create shuffler
@@ -51,7 +52,7 @@ public class TaskGenerator
 
         Map<String, List<TaskData>> taskMap = new HashMap<>();
         for (String listName : cardsData.getListNames(settings.cardName)) {
-            List<TaskData> tasks = new ArrayList<>(filterBySettings(cardsData, listsData.getTasks(listName, settings.includedTypes), settings));
+            List<TaskData> tasks = new ArrayList<>(filterBySettings(cardsData, listsData.getTasks(server, listName, settings.includedTypes), settings));
             if (!tasks.isEmpty()) {
                 Collections.shuffle(tasks, shuffler);
                 taskMap.put(listName, tasks);
@@ -137,7 +138,7 @@ public class TaskGenerator
     public static GameTask generateDeathmatchTask(BingoGame game) {
         GeneratorSettings settings = TaskGenerator.generatorSettingsFromGame(game);
         BingoCardData cardData = new BingoCardData();
-        List<TaskData> allTasks = TaskGenerator.filterBySettings(cardData, cardData.getAllTasks(settings.cardName, EnumSet.of(TaskData.TaskType.ITEM)), settings);
+        List<TaskData> allTasks = TaskGenerator.filterBySettings(cardData, cardData.getAllTasks(game.getSession().getGameManager().getServer(), settings.cardName, EnumSet.of(TaskData.TaskType.ITEM)), settings);
 
         Random generator = new Random(settings.seed);
 

@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class FabricTasks implements PlatformTasks {
+public class FabricTaskScheduler implements PlatformTaskScheduler {
 
 	private final List<Task> tasks = new ArrayList<>();
 

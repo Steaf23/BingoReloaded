@@ -13,7 +13,7 @@ import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
-public class PaperItemStacks implements PlatformItemStacks {
+public class PaperItemStacker implements PlatformItemStacker {
 
 	@Override
 	public StackHandle createStack(ItemType type, int amount) {

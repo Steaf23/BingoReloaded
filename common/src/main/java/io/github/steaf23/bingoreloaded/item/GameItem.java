@@ -1,6 +1,6 @@
 package io.github.steaf23.bingoreloaded.item;
 
-import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
+import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.event.EventResult;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
@@ -29,5 +29,5 @@ public abstract class GameItem implements Keyed {
 
 	public abstract ItemTemplate createForParticipant(@Nullable BingoParticipant participant);
 
-	public abstract EventResult<?> use(StackHandle stack, BingoParticipant participant, BingoConfigurationData config);
+	public abstract EventResult<?> use(StackHandle stack, BingoParticipant participant, BingoGame game);
 }

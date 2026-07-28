@@ -59,7 +59,7 @@ public class StatisticSelectionMenu extends BasicMenu
 
     private TaskPickerMenu createEntityMenu(Statistic stat)
     {
-        Set<EntityType> entities = StatisticHandle.getValidEntityTypes();
+        Set<EntityType> entities = StatisticHandle.getValidEntityTypes(getMenuBoard().context().runtime());
 
         List<GameTask> tasks = new ArrayList<>();
         entities.forEach(e -> tasks.add(new GameTask(new StatisticTask(new StatisticHandlePaper(new StatisticTypePaper(stat), e)))));

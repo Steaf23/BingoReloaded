@@ -7,8 +7,7 @@ import com.github.retrooper.packetevents.protocol.nbt.NBTCompound;
 import com.github.retrooper.packetevents.protocol.packettype.PacketType;
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientCustomClickAction;
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientNameItem;
-import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformTasks;
-import io.github.steaf23.bingoreloaded.lib.api.platform.ServerSoftware;
+import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformTaskScheduler;
 import io.github.steaf23.bingoreloaded.lib.events.PlayerDisplayAnvilTextChangedEvent;
 import io.github.steaf23.bingoreloaded.lib.events.PlayerDisplayCustomClickActionEvent;
 import org.bukkit.Bukkit;
@@ -22,9 +21,9 @@ public class MenuPacketListener extends SimplePacketListenerAbstract
     //Packet events listener =========================================
     protected final Map<UUID, Integer> openPlayerInventories;
 
-    private final PlatformTasks tasks;
+    private final PlatformTaskScheduler tasks;
 
-    public MenuPacketListener(PlatformTasks tasks) {
+    public MenuPacketListener(PlatformTaskScheduler tasks) {
         this.tasks = tasks;
         PacketEvents.getAPI().getEventManager().registerListener(this);
         this.openPlayerInventories = new HashMap<>();

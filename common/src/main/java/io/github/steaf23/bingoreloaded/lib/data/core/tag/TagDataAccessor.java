@@ -1,7 +1,6 @@
 package io.github.steaf23.bingoreloaded.lib.data.core.tag;
 
 import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformResources;
-import io.github.steaf23.bingoreloaded.lib.api.platform.ServerSoftware;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataAccessor;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 

@@ -1,9 +1,8 @@
 package io.github.steaf23.bingoreloaded.player;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
-import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformTasks;
-import io.github.steaf23.bingoreloaded.lib.api.platform.ServerSoftware;
 import io.github.steaf23.bingoreloaded.lib.api.WorldPosition;
+import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformTaskScheduler;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -15,7 +14,7 @@ public class PlayerRespawnManager
 {
     private final Map<UUID, DeadPlayer> deadPlayers;
 
-	public PlayerRespawnManager(PlatformTasks tasks, int respawnPeriodSeconds) {
+	public PlayerRespawnManager(PlatformTaskScheduler tasks, int respawnPeriodSeconds) {
         this.deadPlayers = new HashMap<>();
         //TODO: Maybe only have the task running if there are dead players?
 		tasks.runTaskTimer(0, BingoReloaded.ONE_SECOND, (t) -> {

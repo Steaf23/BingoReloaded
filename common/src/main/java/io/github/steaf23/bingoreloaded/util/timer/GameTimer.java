@@ -1,7 +1,7 @@
 package io.github.steaf23.bingoreloaded.util.timer;
 
 import io.github.steaf23.bingoreloaded.lib.api.ExtensionTask;
-import io.github.steaf23.bingoreloaded.lib.api.PlatformResolver;
+import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformTaskScheduler;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
@@ -30,10 +30,10 @@ public abstract class GameTimer
         this.intervals = 0;
     }
 
-    public void start()
+    public void start(PlatformTaskScheduler tasks)
     {
         stop();
-        this.task = PlatformResolver.get().runTaskTimer(getUpdateInterval(), getStartDelay(), (task) -> {
+        this.task = tasks.runTaskTimer(getUpdateInterval(), getStartDelay(), (task) -> {
             intervals++;
             updateTime(time + getStep());
         });

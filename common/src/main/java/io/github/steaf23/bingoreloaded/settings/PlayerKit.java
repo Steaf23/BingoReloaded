@@ -4,7 +4,7 @@ import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.CustomKitData;
 import io.github.steaf23.bingoreloaded.data.DefaultKitData;
-import io.github.steaf23.bingoreloaded.lib.api.platform.ServerSoftware;
+import io.github.steaf23.bingoreloaded.lib.api.PlatformResolver;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import io.github.steaf23.bingoreloaded.lib.item.SerializableItem;
@@ -105,7 +105,7 @@ public enum PlayerKit
         return displayName;
     }
 
-    public List<SerializableItem> getItems(BingoTeam team, ServerSoftware server)
+    public List<SerializableItem> getItems(BingoTeam team)
     {
         List<SerializableItem> items = switch (this)
         {
@@ -126,7 +126,7 @@ public enum PlayerKit
         };
 
         return items.stream()
-            .map(item -> new SerializableItem(item.slot(), server.colorItemStack(item.stack(), team.getColor())))
+            .map(item -> new SerializableItem(item.slot(), PlatformResolver.getItemStacker().colorItemStack(item.stack(), team.getColor())))
             .toList();
     }
 

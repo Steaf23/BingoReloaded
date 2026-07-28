@@ -3,6 +3,7 @@ package io.github.steaf23.bingoreloaded.cards;
 
 import io.github.steaf23.bingoreloaded.api.CardMenu;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
+import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformServer;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
@@ -46,8 +47,8 @@ public abstract class TaskCard
     /**
      * @param settings settings to use for card generation.
      */
-    public void generateCard(TaskGenerator.GeneratorSettings settings) {
-        setTasks(TaskGenerator.generateCardTasks(settings));
+    public void generateCard(PlatformServer server, TaskGenerator.GeneratorSettings settings) {
+        setTasks(TaskGenerator.generateCardTasks(server, settings));
     }
 
     public void showInventory(PlayerHandle player) {

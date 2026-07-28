@@ -8,11 +8,11 @@ import org.bukkit.scheduler.BukkitTask;
 
 import java.util.function.Consumer;
 
-public class PaperTasks implements PlatformTasks {
+public class PaperTaskScheduler implements PlatformTaskScheduler {
 
 	private final JavaPlugin plugin;
 
-	public PaperTasks(JavaPlugin plugin) {
+	public PaperTaskScheduler(JavaPlugin plugin) {
 		this.plugin = plugin;
 	}
 

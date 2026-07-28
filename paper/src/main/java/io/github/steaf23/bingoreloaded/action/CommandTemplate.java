@@ -1,7 +1,10 @@
 package io.github.steaf23.bingoreloaded.action;
 
+import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.lib.action.ActionTree;
 import io.github.steaf23.bingoreloaded.lib.api.ActionUser;
+import io.github.steaf23.bingoreloaded.lib.api.platform.GameContext;
+import io.github.steaf23.bingoreloaded.lib.api.platform.PaperServer;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandlePaper;
 import io.github.steaf23.bingoreloaded.lib.util.ComponentUtils;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
@@ -22,10 +25,14 @@ public class CommandTemplate implements TabExecutor
 {
     private final boolean allowConsole;
     private final ActionTree command;
+    private final PaperServer server;
+    private final BingoReloaded bingo;
 
-    public CommandTemplate(boolean allowConsole, ActionTree command) {
+    public CommandTemplate(PaperServer server, BingoReloaded bingo, boolean allowConsole, ActionTree command) {
         this.command = command;
         this.allowConsole = allowConsole;
+        this.server = server;
+        this.bingo = bingo;
     }
 
     @Override
@@ -36,7 +43,7 @@ public class CommandTemplate implements TabExecutor
 
         ActionUser user;
         if (commandSender instanceof Player player) {
-            user = new PlayerHandlePaper(player);
+            user = new PlayerHandlePaper(server, player);
         } else if (commandSender instanceof ConsoleCommandSender console){
             user = new ConsoleActionUser(console);
         } else {
@@ -49,7 +56,7 @@ public class CommandTemplate implements TabExecutor
             return false;
         }
 
-        switch (command.execute(user, arguments)) {
+        switch (command.execute(new GameContext(server, bingo), user, arguments)) {
             case INCORRECT_USE -> {
                 commandSender.sendMessage(ComponentUtils.MINI_BUILDER.deserialize("<dark_gray>- <red>Usage: " + command.usage(arguments)));
                 return false;
@@ -72,14 +79,14 @@ public class CommandTemplate implements TabExecutor
     public @Nullable List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String alias, @NotNull String[] strings) {
         ActionUser user;
         if (commandSender instanceof Player player) {
-            user = new PlayerHandlePaper(player);
+            user = new PlayerHandlePaper(server, player);
         } else if (commandSender instanceof ConsoleCommandSender console){
             user = new ConsoleActionUser(console);
         } else {
             return List.of();
         }
 
-		List<String> tabComplete = this.command.tabComplete(user, strings);
+		List<String> tabComplete = this.command.tabComplete(new GameContext(server, bingo), user, strings);
 		if (tabComplete == null) return null;
 
 		return tabComplete.stream().filter(s -> StringUtils.containsIgnoreCase(s, strings[strings.length - 1])).toList();

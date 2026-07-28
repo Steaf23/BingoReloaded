@@ -1,6 +1,7 @@
 package io.github.steaf23.bingoreloaded.lib.action;
 
 import io.github.steaf23.bingoreloaded.lib.api.ActionUser;
+import io.github.steaf23.bingoreloaded.lib.api.platform.GameContext;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 
 import java.util.Arrays;
@@ -17,14 +18,14 @@ public class DeferredAction extends ActionTree
     }
 
     @Override
-    public List<String> tabComplete(ActionUser user, String... arguments) {
+    public List<String> tabComplete(GameContext context, ActionUser user, String... arguments) {
         String deferred = "<" + deferredArgument + ">";
 
         if (arguments.length <= 1) {
             if (tabCompletionForArgs != null) {
-                List<String> completions = tabCompletionForArgs.apply(arguments);
+                List<String> completions = tabCompletionForArgs.tabComplete(context, arguments);
                 if (!completions.isEmpty())
-                    return tabCompletionForArgs.apply(arguments);
+                    return tabCompletionForArgs.tabComplete(context, arguments);
                 else
                     return List.of(deferred);
             } else {
@@ -41,14 +42,14 @@ public class DeferredAction extends ActionTree
         if (cmd != null) {
             String[] finalArguments = Arrays.copyOfRange(arguments, 1, arguments.length);
             finalArguments[0] = userArgument;
-            return cmd.tabComplete(user, finalArguments);
+            return cmd.tabComplete(context, user, finalArguments);
         }
 
         return List.of();
     }
 
     @Override
-    public ActionResult execute(ActionUser user, String... arguments) {
+    public ActionResult execute(GameContext context, ActionUser user, String... arguments) {
 		lastUser = user;
         // A substitute can't exist when there is nothing to defer it to (this is a developer mistake)
         if (subActions.isEmpty()) {
@@ -68,7 +69,7 @@ public class DeferredAction extends ActionTree
         if (cmd != null) {
             String[] finalArguments = Arrays.copyOfRange(arguments, 1, arguments.length);
             finalArguments[0] = userArgument;
-            return cmd.execute(user, finalArguments);
+            return cmd.execute(context, user, finalArguments);
         }
         return ActionResult.INCORRECT_USE;
     }

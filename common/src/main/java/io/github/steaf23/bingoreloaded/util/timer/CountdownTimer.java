@@ -2,6 +2,7 @@ package io.github.steaf23.bingoreloaded.util.timer;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
+import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformTaskScheduler;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -36,7 +37,7 @@ public class CountdownTimer extends GameTimer
      * Attempts to start the timer, if this timer is already running it will be restarted.
      */
     @Override
-    public void start()
+    public void start(PlatformTaskScheduler tasks)
     {
         updateTime(startTime);
 
@@ -44,7 +45,7 @@ public class CountdownTimer extends GameTimer
             stop();
             return;
         }
-        super.start();
+        super.start(tasks);
     }
 
     @Override

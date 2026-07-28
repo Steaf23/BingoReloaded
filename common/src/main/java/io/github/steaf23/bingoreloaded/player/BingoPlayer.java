@@ -5,10 +5,11 @@ import io.github.steaf23.bingoreloaded.cards.TaskCard;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.lib.api.PotionEffectInstance;
-import io.github.steaf23.bingoreloaded.lib.api.platform.ServerSoftware;
 import io.github.steaf23.bingoreloaded.lib.api.StatusEffectType;
 import io.github.steaf23.bingoreloaded.lib.api.item.InventoryHandle;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
+import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformServer;
+import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformTaskScheduler;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.data.core.tag.TagDataStorage;
 import io.github.steaf23.bingoreloaded.lib.util.ComponentUtils;
@@ -42,12 +43,14 @@ public class BingoPlayer implements BingoParticipant
     private final UUID playerId;
     private final Component displayName;
 
-    private final ServerSoftware server;
+    private final PlatformServer server;
+    private final PlatformTaskScheduler tasks;
 
     public BingoPlayer(PlayerHandle player, BingoSession session) {
         this.playerId = player.uniqueId();
         this.session = session;
-        this.server = session.getGameManager().getPlatform();
+        this.server = session.getGameManager().getServer();
+        this.tasks = session.getGameManager().getRuntime().taskScheduler();
         this.playerName = player.playerName();
         this.displayName = player.displayName();
         this.team = null;
@@ -86,7 +89,7 @@ public class BingoPlayer implements BingoParticipant
 
         PlayerHandle player = sessionPlayer().get();
 
-        var items = kit.getItems(getTeam(), server);
+        var items = kit.getItems(getTeam());
         player.closeInventory();
         InventoryHandle inv = player.inventory();
         inv.clearContents();
@@ -113,7 +116,7 @@ public class BingoPlayer implements BingoParticipant
 
         PlayerHandle player = sessionPlayer().get();
 
-        server.runTask(task -> {
+        tasks.runTask(task -> {
             for (StackHandle itemStack : player.inventory().contents()) {
                 if (PlayerKit.CARD_ITEM.isCompareKeyEqual(itemStack)) {
                     player.inventory().removeItem(itemStack);
@@ -140,7 +143,7 @@ public class BingoPlayer implements BingoParticipant
         takeEffects(false);
         PlayerHandle player = sessionPlayer().get();
 
-        server.runTask(task -> {
+        tasks.runTask(task -> {
             if (effects.contains(EffectOptionFlags.NIGHT_VISION))
                 player.addEffect(new PotionEffectInstance(StatusEffectType.of("minecraft:night_vision"), PotionEffectInstance.INFINITE_DURATION).setParticles(false));
             if (effects.contains(EffectOptionFlags.WATER_BREATHING))
@@ -239,9 +242,5 @@ public class BingoPlayer implements BingoParticipant
     @Override
     public @NotNull Audience audience() {
         return sessionPlayer().isPresent() ? sessionPlayer().get() : Audience.empty();
-    }
-
-    public ServerSoftware server() {
-        return server;
     }
 }

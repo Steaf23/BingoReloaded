@@ -188,7 +188,7 @@ public class PregameLobby implements GamePhase
             return;
         }
 
-        playerCountTimer.start();
+        playerCountTimer.start(runtime.taskScheduler());
         if (playerCountTimer.getTime() > 10) {
             BingoMessage.STARTING_STATUS.sendToAudience(session,
                     Component.text(config.getOptionValue(BingoOptions.PLAYER_WAIT_TIME)).color(NamedTextColor.GOLD));
@@ -212,7 +212,7 @@ public class PregameLobby implements GamePhase
         }
 		runtime.settingsDisplay().update(infoMenu);
 
-        session.getGameManager().getPlatform().runTask(10L, (t) -> {
+        runtime.taskScheduler().runTask(10L, (t) -> {
             if (gameStarted) {
                 return;
             }
@@ -261,13 +261,13 @@ public class PregameLobby implements GamePhase
         }
 
         if (PlayerKit.VOTE_ITEM.isCompareKeyEqual(stack)) {
-            BingoReloaded.runtime().openVoteMenu(player, this);
+            runtime.openVoteMenu(player, this);
             return EventResult.CONSUME;
         } else if (PlayerKit.TEAM_ITEM.isCompareKeyEqual(stack)) {
-            BingoReloaded.runtime().openTeamSelector(player, session);
+            runtime.openTeamSelector(player, session);
             return EventResult.CONSUME;
         } else if (PlayerKit.ADMIN_ITEM.isCompareKeyEqual(stack)) {
-            BingoReloaded.runtime().openBingoMenu(player, session);
+            runtime.openBingoMenu(player, session);
             return EventResult.CONSUME;
         }
 
@@ -302,7 +302,7 @@ public class PregameLobby implements GamePhase
 
         // Schedule check in the future since a player can switch teams where they will briefly leave the team
         // and lower the participant count to possibly stop the timer.
-        session.getGameManager().getPlatform().runTask(t -> {
+        runtime.taskScheduler().runTask(t -> {
             if (session.teamManager.getParticipantCount() < config.getOptionValue(BingoOptions.MINIMUM_PLAYER_COUNT) && playerCountTimer.isRunning()) {
                 playerCountTimer.stop();
             }
