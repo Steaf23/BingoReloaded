@@ -1,0 +1,81 @@
+package io.github.steaf23.bingoreloaded.gui.inventory;
+
+import io.github.steaf23.bingoreloaded.data.BingoMessage;
+import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
+import io.github.steaf23.bingoreloaded.lib.api.item.VanillaItem;
+import io.github.steaf23.bingoreloaded.lib.api.item.VanillaItems;
+import io.github.steaf23.bingoreloaded.lib.inventory.MenuBoard;
+import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
+import io.github.steaf23.bingoreloaded.lib.inventory.BasicMenu;
+import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
+import io.github.steaf23.bingoreloaded.player.EffectOptionFlags;
+import io.github.steaf23.bingoreloaded.settings.BingoSettingsBuilder;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
+
+import java.util.EnumSet;
+
+public class EffectOptionsMenu extends BasicMenu
+{
+    private final EnumSet<EffectOptionFlags> flags;
+    private final BingoSettingsBuilder settingsBuilder;
+    private static final ItemTemplate ENABLED_ITEM = new ItemTemplate(VanillaItems.EMERALD.type()).setNoTooltip(true);
+    private static final ItemTemplate DISABLED_ITEM = new ItemTemplate(VanillaItems.BARRIER.type()).setNoTooltip(true);
+
+    public EffectOptionsMenu(MenuBoard menuBoard, BingoSettingsBuilder settings) {
+        super(menuBoard, BingoMessage.OPTIONS_EFFECTS.asPhrase(), 6);
+        this.settingsBuilder = settings;
+        flags = settings.view().effects();
+
+        for (int i = 0; i < 8; i++) {
+            addItem(BLANK.copyToSlot(i, 5));
+        }
+
+        addEffectAction(EffectOptionFlags.NO_FALL_DAMAGE, 2, 0, VanillaItems.NETHERITE_BOOTS);
+        addEffectAction(EffectOptionFlags.KEEP_INVENTORY, 4, 0, VanillaItems.CHEST);
+        addEffectAction(EffectOptionFlags.NO_DURABILITY, 6, 0, VanillaItems.NETHERITE_PICKAXE);
+        addEffectAction(EffectOptionFlags.SPEED, 1, 3, VanillaItems.FEATHER);
+        addEffectAction(EffectOptionFlags.WATER_BREATHING, 3, 3, VanillaItems.PUFFERFISH);
+        addEffectAction(EffectOptionFlags.NIGHT_VISION, 5, 3, VanillaItems.GOLDEN_CARROT);
+        addEffectAction(EffectOptionFlags.FIRE_RESISTANCE, 7, 3, VanillaItems.MAGMA_CREAM);
+
+        addCloseAction(new ItemTemplate(8, 5, VanillaItems.DIAMOND.type(), BingoMessage.MENU_SAVE_EXIT.asPhrase().color(NamedTextColor.AQUA).decorate(TextDecoration.BOLD)));
+    }
+
+    private void addEffectAction(EffectOptionFlags flag, int slotX, int slotY, VanillaItem material) {
+        ItemTemplate item = new ItemTemplate(slotX, slotY, material.type(), null);
+        updateUI(flag, item);
+        addAction(item,
+                player -> {
+                    toggleOption(flag);
+                    updateUI(flag, item);
+                }
+        );
+    }
+
+    private void toggleOption(EffectOptionFlags flag) {
+        if (flags.contains(flag))
+            flags.remove(flag);
+        else
+            flags.add(flag);
+    }
+
+    public void updateUI(EffectOptionFlags flag, ItemTemplate item) {
+        if (flags.contains(flag)) {
+            item.setName(Component.text().append(flag.name, Component.text(" "), BingoMessage.EFFECTS_ENABLED.asPhrase()).color(NamedTextColor.GREEN).decorate(TextDecoration.BOLD).build());
+            item.setLore(BingoMessage.EFFECTS_DISABLE.asMultiline(NamedTextColor.GREEN));
+            addItem(ENABLED_ITEM.copyToSlot(item.getSlot() + 9));
+        } else {
+            item.setName(Component.text().append(flag.name, Component.text(" "), BingoMessage.EFFECTS_DISABLED.asPhrase()).color(NamedTextColor.RED).decorate(TextDecoration.BOLD).build());
+            item.setLore(BingoMessage.EFFECTS_ENABLE.asMultiline(NamedTextColor.RED));
+            addItem(DISABLED_ITEM.copyToSlot(item.getSlot() + 9));
+        }
+    }
+
+    @Override
+    public void beforeClosing(PlayerHandle player) {
+        settingsBuilder.effects(flags);
+        super.beforeClosing(player);
+    }
+}

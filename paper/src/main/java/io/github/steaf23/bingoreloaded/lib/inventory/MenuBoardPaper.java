@@ -1,7 +1,8 @@
 package io.github.steaf23.bingoreloaded.lib.inventory;
 
 
-import io.github.steaf23.bingoreloaded.lib.api.MenuBoard;
+import io.github.steaf23.bingoreloaded.lib.api.item.InventoryHandlePaper;
+import io.github.steaf23.bingoreloaded.lib.api.platform.GameContext;
 import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformTaskScheduler;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandlePaper;
@@ -35,11 +36,13 @@ public class MenuBoardPaper implements MenuBoard, Listener
 
     private final MenuPacketListener packetListener;
     private final JavaPlugin plugin;
+    private final GameContext context;
 
     private static final Set<ClickType> CLICK_TYPES_TO_IGNORE = Set.of(ClickType.DOUBLE_CLICK, ClickType.DROP, ClickType.CREATIVE, ClickType.CONTROL_DROP, ClickType.SWAP_OFFHAND);
 
-    public MenuBoardPaper(PlatformTaskScheduler tasks, JavaPlugin plugin) {
+    public MenuBoardPaper(PlatformTaskScheduler tasks, JavaPlugin plugin, GameContext context) {
 		this.plugin = plugin;
+        this.context = context;
 		this.activeMenus = new HashMap<>();
         this.packetListener = new MenuPacketListener(tasks);
         Bukkit.getPluginManager().registerEvents(this, plugin);
@@ -81,8 +84,8 @@ public class MenuBoardPaper implements MenuBoard, Listener
     }
 
     @Override
-    public JavaPlugin plugin() {
-        return plugin;
+    public GameContext context() {
+        return context;
     }
 
     public void open(Menu menu, PlayerHandle player) {
@@ -118,7 +121,7 @@ public class MenuBoardPaper implements MenuBoard, Listener
             return;
 
         Menu menu = activeMenus.get(playerId).peek();
-        if (!(menu instanceof InventoryMenu invMenu) || invMenu.getInventory() != event.getInventory()) {
+        if (!(menu instanceof InventoryMenu invMenu) || !((InventoryHandlePaper)invMenu.getInventory()).handle().equals(event.getInventory())) {
             return;
         }
 
@@ -132,10 +135,18 @@ public class MenuBoardPaper implements MenuBoard, Listener
                 || event.getRawSlot() < 0 || event.getCurrentItem() == null || event.getCurrentItem().getType() == Material.AIR)
             return;
 
-        boolean cancel = menu.onClick(event,
-                new PlayerHandlePaper((Player)event.getWhoClicked()),
+        io.github.steaf23.bingoreloaded.lib.inventory.ClickType type = switch(event.getClick()) {
+            case LEFT -> io.github.steaf23.bingoreloaded.lib.inventory.ClickType.LEFT_CLICK;
+            case RIGHT -> io.github.steaf23.bingoreloaded.lib.inventory.ClickType.RIGHT_CLICK;
+            case SHIFT_LEFT -> io.github.steaf23.bingoreloaded.lib.inventory.ClickType.SHIFT_LEFT;
+            case SHIFT_RIGHT -> io.github.steaf23.bingoreloaded.lib.inventory.ClickType.SHIFT_RIGHT;
+            default -> io.github.steaf23.bingoreloaded.lib.inventory.ClickType.OTHER;
+        };
+
+        boolean cancel = menu.onClick(
+                new PlayerHandlePaper(context.server(), (Player)event.getWhoClicked()),
                 event.getRawSlot(),
-                event.getClick());
+                type);
         event.setCancelled(cancel);
     }
 
@@ -146,11 +157,11 @@ public class MenuBoardPaper implements MenuBoard, Listener
             return;
 
         Menu menu = activeMenus.get(playerId).peek();
-        if (!(menu instanceof InventoryMenu invMenu) || invMenu.getInventory() != event.getInventory()) {
+        if (!(menu instanceof InventoryMenu invMenu) || !((InventoryHandlePaper)invMenu.getInventory()).handle().equals(event.getInventory())) {
             return;
         }
 
-        boolean cancel = menu.onDrag(event);
+        boolean cancel = menu.onDrag();
         event.setCancelled(cancel);
     }
 
@@ -161,15 +172,15 @@ public class MenuBoardPaper implements MenuBoard, Listener
             return;
 
         Menu topMenu = activeMenus.get(playerId).peek();
-        if (topMenu instanceof InventoryMenu invMenu && invMenu.getInventory() == event.getInventory()) {
-            close(topMenu, new PlayerHandlePaper((Player) event.getPlayer()));
+        if (topMenu instanceof InventoryMenu invMenu && ((InventoryHandlePaper)invMenu.getInventory()).handle().equals(event.getInventory())) {
+            close(topMenu, new PlayerHandlePaper(context().server(), (Player) event.getPlayer()));
         }
     }
 
     @EventHandler
     public void handlePlayerQuit(final PlayerQuitEvent event) {
         if (activeMenus.containsKey(event.getPlayer().getUniqueId())) {
-            closeAll(new PlayerHandlePaper(event.getPlayer()));
+            closeAll(new PlayerHandlePaper(context.server(), event.getPlayer()));
         }
     }
 
@@ -196,6 +207,6 @@ public class MenuBoardPaper implements MenuBoard, Listener
 
         Menu topMenu = activeMenus.get(playerId).peek();
         DataStorage payload = new TagDataStorage(NBTConverter.tagFromPacketEventsNBT(event.getPayload()));
-        topMenu.onCustomAction(new PlayerHandlePaper(Bukkit.getPlayer(playerId)), event.getActionKey(), payload);
+        topMenu.onCustomAction(new PlayerHandlePaper(context.server(), Bukkit.getPlayer(playerId)), event.getActionKey(), payload);
     }
 }

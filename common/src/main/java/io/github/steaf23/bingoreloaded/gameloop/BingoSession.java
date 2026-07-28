@@ -143,7 +143,7 @@ public class BingoSession implements ForwardingAudience
 
         teamManager.setup();
         gameInfoMenu.updateTeamScores();
-		getGameManager().getRuntime().gameDisplay().update(gameInfoMenu);
+		getGameManager().getRuntime().gameDisplay().update(getGameManager().getServer(), gameInfoMenu);
 
         // First make sure the previous phase (PregameLobby) is ended.
         phase.end();

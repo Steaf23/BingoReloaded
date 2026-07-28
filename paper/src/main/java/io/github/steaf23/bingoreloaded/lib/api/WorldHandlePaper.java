@@ -4,6 +4,7 @@ import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemTypePaper;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandlePaper;
+import io.github.steaf23.bingoreloaded.lib.api.platform.PaperServer;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandlePaper;
 import io.github.steaf23.bingoreloaded.lib.util.DebugLogger;
@@ -27,7 +28,7 @@ public class WorldHandlePaper implements WorldHandle {
 
 	@Override
 	public Collection<? extends PlayerHandle> players() {
-		return world.getPlayers().stream().map(PlayerHandlePaper::new).toList();
+		return world.getPlayers().stream().map(p -> new PlayerHandlePaper(new PaperServer(), p)).toList();
 	}
 
 	@Override

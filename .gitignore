@@ -38,3 +38,4 @@ BingoReloadedCompanion/run/
 BingoReloadedCompanion/build/
 /run/*
 /hytale/build/*
+/scripts/

@@ -19,6 +19,10 @@ public class AdvancementHandleFabric implements AdvancementHandle {
 		this.advancement = server.getAdvancements().get(id);
 	}
 
+	public AdvancementHandleFabric(AdvancementHolder holder) {
+		this.advancement = holder;
+	}
+
 	@Override
 	public ItemType displayIcon() {
 		if (advancement.value().display().isEmpty()) {

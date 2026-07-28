@@ -1,10 +1,16 @@
 package io.github.steaf23.bingoreloaded.lib.api.platform;
 
+import io.github.steaf23.bingoreloaded.BingoReloaded;
+import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemTypePaper;
+import io.github.steaf23.bingoreloaded.lib.api.item.PaperItemEditor;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackBuilderPaper;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandlePaper;
+import io.github.steaf23.bingoreloaded.lib.api.item.VanillaItems;
+import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
+import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandlePaper;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import io.papermc.paper.datacomponent.item.DyedItemColor;
@@ -12,6 +18,7 @@ import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.SkullMeta;
 
 public class PaperItemStacker implements PlatformItemStacker {
 
@@ -43,5 +50,13 @@ public class PaperItemStacker implements PlatformItemStacker {
 		}
 		((StackHandlePaper)stack).handle().setData(DataComponentTypes.DYED_COLOR, DyedItemColor.dyedItemColor(Color.fromRGB(color.value())));
 		return stack;
+	}
+
+	@Override
+	public ItemTemplate createPlayerHeadTemplate(PlayerHandle player) {
+		return new ItemTemplate(VanillaItems.PLAYER_HEAD.type())
+				.customize(PaperItemEditor.class, stack -> {
+					stack.editMeta(SkullMeta.class, m -> m.setOwningPlayer(((PlayerHandlePaper)player).handle()));
+				});
 	}
 }

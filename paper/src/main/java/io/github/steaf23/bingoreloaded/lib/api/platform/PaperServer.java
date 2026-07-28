@@ -1,6 +1,8 @@
 package io.github.steaf23.bingoreloaded.lib.api.platform;
 
 import io.github.steaf23.bingoreloaded.data.helper.ResourceFileHelper;
+import io.github.steaf23.bingoreloaded.lib.api.AdvancementHandle;
+import io.github.steaf23.bingoreloaded.lib.api.AdvancementHandlePaper;
 import io.github.steaf23.bingoreloaded.lib.api.DimensionType;
 import io.github.steaf23.bingoreloaded.lib.api.WorldHandle;
 import io.github.steaf23.bingoreloaded.lib.api.WorldHandlePaper;
@@ -23,8 +25,12 @@ import org.jspecify.annotations.NonNull;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Stream;
 
@@ -33,6 +39,13 @@ public class PaperServer implements PlatformServer {
 	private final PlatformCommandDispatcher commandDispatcher = command ->
 			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
 
+	private final PlatformInventories inventories = new PaperInventories();
+
+	@Override
+	public PlatformInventories inventories() {
+		return inventories;
+	}
+
 	@Override
 	public PlatformCommandDispatcher commandDispatcher() {
 		return commandDispatcher;
@@ -40,7 +53,7 @@ public class PaperServer implements PlatformServer {
 
 	@Override
 	public Collection<? extends PlayerHandle> getOnlinePlayers() {
-		return Bukkit.getOnlinePlayers().stream().map(PlayerHandlePaper::new).toList();
+		return Bukkit.getOnlinePlayers().stream().map(p -> new PlayerHandlePaper(this, p)).toList();
 	}
 
 	@Override
@@ -49,7 +62,7 @@ public class PaperServer implements PlatformServer {
 		if (p == null) {
 			return null;
 		}
-		return new PlayerHandlePaper(p);
+		return new PlayerHandlePaper(this, p);
 	}
 
 	@Override
@@ -58,7 +71,7 @@ public class PaperServer implements PlatformServer {
 		if (p == null) {
 			return null;
 		}
-		return new PlayerHandlePaper(p);
+		return new PlayerHandlePaper(this, p);
 	}
 
 	@Override
@@ -147,6 +160,13 @@ public class PaperServer implements PlatformServer {
 		}
 
 		return true;
+	}
+
+	@Override
+	public Iterable<AdvancementHandle> allAdvancements() {
+		List<AdvancementHandle> handles = new ArrayList<>();
+		Bukkit.advancementIterator().forEachRemaining(adv -> handles.add(new AdvancementHandlePaper(adv)));
+		return handles;
 	}
 
 	private @Nullable WorldHandle fromWorld(@Nullable World world) {

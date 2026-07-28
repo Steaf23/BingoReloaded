@@ -1,7 +1,7 @@
 package io.github.steaf23.bingoreloaded.tasks.tracker;
 
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
-import io.github.steaf23.bingoreloaded.lib.api.StatisticHandle;
+import io.github.steaf23.bingoreloaded.lib.api.statistics.StatisticHandle;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
@@ -79,18 +79,6 @@ public class StatisticTracker
             return;
 
         PlayerHandle gamePlayer = player.sessionPlayer().get();
-
-        if (statistic.hasItemType())
-        {
-            gamePlayer.setStatisticValue(statistic.statisticType(), statistic.itemType(), value);
-        }
-        else if (statistic.hasEntity())
-        {
-            gamePlayer.setStatisticValue(statistic.statisticType(), statistic.entityType(), value);
-        }
-        else
-        {
-            gamePlayer.setStatisticValue(statistic.statisticType(), value);
-        }
+        gamePlayer.setStatisticValue(statistic, value);
     }
 }

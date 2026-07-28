@@ -1,5 +1,6 @@
 package io.github.steaf23.bingoreloaded.lib.api.item;
 
+import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.lib.api.PlatformResolver;
 import io.github.steaf23.bingoreloaded.lib.data.core.tag.TagDataStorage;
 import io.github.steaf23.bingoreloaded.lib.data.core.tag.TagTree;
@@ -27,7 +28,7 @@ public class StackHandlePaper implements StackHandle {
 	private final @NotNull ItemStack stack;
 
 	private static final NamespacedKey CUSTOM_DATA_KEY = new NamespacedKey(
-			PlatformResolver.get().getExtensionInfo().name().toLowerCase(),
+			BingoReloaded.getMetaInfo().name().toLowerCase(),
 			"custom");
 
 	public StackHandlePaper(@Nullable ItemStack stack) {

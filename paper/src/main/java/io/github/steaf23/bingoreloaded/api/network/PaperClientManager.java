@@ -43,7 +43,7 @@ public class PaperClientManager implements BingoClientManager {
 			connectedPlayers.add(player.getUniqueId());
 			ConsoleMessenger.log("Player " + player.getName() + " connected using the companion mod");
 
-			PlayerHandle handle = new PlayerHandlePaper(player);
+			PlayerHandle handle = new PlayerHandlePaper(bingo.getGameManager().getServer(), player);
 			BingoSession session = bingo.getGameManager().getSessionOfPlayer(handle);
 			if (session == null) {
 				return;
@@ -54,7 +54,7 @@ public class PaperClientManager implements BingoClientManager {
 				return;
 			}
 
-			bingo.getGameManager().getPlatform().runTask(20, t -> {
+			bingo.getGameManager().getRuntime().taskScheduler().runTask(20, t -> {
 				updateCard(handle, participant.getCard().orElse(null));
 			});
 		});

@@ -2,14 +2,12 @@ package io.github.steaf23.bingoreloaded.lib.api.player;
 
 import io.github.steaf23.bingoreloaded.lib.api.ActionUser;
 import io.github.steaf23.bingoreloaded.lib.api.AdvancementHandle;
-import io.github.steaf23.bingoreloaded.lib.api.EntityType;
 import io.github.steaf23.bingoreloaded.lib.api.PlayerGamemode;
 import io.github.steaf23.bingoreloaded.lib.api.PotionEffectInstance;
-import io.github.steaf23.bingoreloaded.lib.api.StatisticType;
+import io.github.steaf23.bingoreloaded.lib.api.statistics.StatisticHandle;
 import io.github.steaf23.bingoreloaded.lib.api.WorldHandle;
 import io.github.steaf23.bingoreloaded.lib.api.WorldPosition;
 import io.github.steaf23.bingoreloaded.lib.api.item.InventoryHandle;
-import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformServer;
 import net.kyori.adventure.audience.ForwardingAudience;
@@ -49,11 +47,7 @@ public interface PlayerHandle extends ForwardingAudience, ActionUser {
 
 	PlayerGamemode gamemode();
 
-	int getStatisticValue(StatisticType type);
-
-	int getStatisticValue(StatisticType type, EntityType entity);
-
-	int getStatisticValue(StatisticType type, ItemType item);
+	int getStatisticValue(StatisticHandle stat);
 
 	void teleportAsync(WorldPosition pos, @Nullable Consumer<Boolean> whenFinished);
 
@@ -92,11 +86,7 @@ public interface PlayerHandle extends ForwardingAudience, ActionUser {
 
 	void setGamemode(PlayerGamemode gamemode);
 
-	void setStatisticValue(StatisticType type, int value);
-
-	void setStatisticValue(StatisticType type, EntityType entity, int value);
-
-	void setStatisticValue(StatisticType type, ItemType item, int value);
+	void setStatisticValue(StatisticHandle stat, int value);
 
 	void addEffect(PotionEffectInstance effect);
 

@@ -14,4 +14,6 @@ public interface InventoryHandle {
 	StackHandle[] contents();
 	void clearContents();
 	void setContents(StackHandle[] contents);
+
+	void setMaxStackSize(int newSize);
 }

@@ -215,7 +215,7 @@ public class BingoGame implements GamePhase
 
         // Post-start Setup
         scoreboard.setup(settings);
-		session.getGameManager().getRuntime().gameDisplay().update(scoreboard);
+		session.getGameManager().getRuntime().gameDisplay().update(server, scoreboard);
 
         // Countdown before the game actually starts
         startingTimer = new CountdownTimer(Math.max(1, config.getOptionValue(BingoOptions.STARTING_COUNTDOWN_TIME)), 6, 3, this::onStartingTimerFinished);
@@ -271,7 +271,7 @@ public class BingoGame implements GamePhase
 
         if (!config.getOptionValue(BingoOptions.KEEP_SCOREBOARD_VISIBLE)) {
             scoreboard.setup(settings);
-			session.getGameManager().getRuntime().gameDisplay().update(scoreboard);
+			session.getGameManager().getRuntime().gameDisplay().update(server, scoreboard);
         }
 
         getTeamManager().getParticipants().forEach(p -> {
@@ -606,7 +606,7 @@ public class BingoGame implements GamePhase
         displayBonusTime = 4;
 
         scoreboard.updateTeamScores();
-		session.getGameManager().getRuntime().gameDisplay().update(scoreboard);
+		session.getGameManager().getRuntime().gameDisplay().update(server, scoreboard);
 
 		teamManager.getParticipants().forEach(a -> {
 			if (a.sessionPlayer().isEmpty()) {

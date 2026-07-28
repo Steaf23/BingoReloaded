@@ -24,5 +24,9 @@ public interface ItemType extends Keyed {
 		return PlatformResolver.getRegistries().resolveItemType(type);
 	}
 
+	static ItemType of(@NotNull VanillaItem item) {
+		return item.type();
+	}
+
 	boolean equals(Object other);
 }

@@ -1,6 +1,7 @@
 package io.github.steaf23.bingoreloaded.lib.menu;
 
 import io.github.steaf23.bingoreloaded.data.ScoreboardData;
+import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformServer;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandlePaper;
 import io.github.steaf23.bingoreloaded.lib.api.player.SharedDisplay;
@@ -29,7 +30,7 @@ public class ScoreboardDisplay implements SharedDisplay {
 	}
 
 	@Override
-	public void update(InfoMenu info) {
+	public void update(PlatformServer server, InfoMenu info) {
 		this.data = info;
 
 		ScoreboardData.SidebarTemplate template = new ScoreboardData().loadTemplate(templateKey, data.registeredFields);
@@ -41,7 +42,7 @@ public class ScoreboardDisplay implements SharedDisplay {
 			}
 			this.sidebar.clear();
 
-			PlayerHandle player = new PlayerHandlePaper(bukkitPlayer);
+			PlayerHandle player = new PlayerHandlePaper(server, bukkitPlayer);
 			this.sidebar.setTitle(SidebarTemplater.title(template, player));
 
 			List<Component> lines = SidebarTemplater.sidebarComponents(template, player);
@@ -57,7 +58,7 @@ public class ScoreboardDisplay implements SharedDisplay {
 	public void addPlayer(PlayerHandle player) {
 		players.add(player.uniqueId());
 
-		update(data);
+		update(player.server(), data);
 	}
 
 	@Override

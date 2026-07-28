@@ -4,12 +4,16 @@ import io.github.steaf23.bingoreloaded.BingoReloadedPaper;
 import io.github.steaf23.bingoreloaded.cards.CardSize;
 import io.github.steaf23.bingoreloaded.data.helper.SerializablePlayer;
 import io.github.steaf23.bingoreloaded.lib.api.AdvancementHandlePaper;
+import io.github.steaf23.bingoreloaded.lib.api.EntityTypePaper;
 import io.github.steaf23.bingoreloaded.lib.api.PaperApiHelper;
-import io.github.steaf23.bingoreloaded.lib.api.StatisticHandlePaper;
+import io.github.steaf23.bingoreloaded.lib.api.PlatformResolver;
+import io.github.steaf23.bingoreloaded.lib.api.statistics.StatisticHandle;
+import io.github.steaf23.bingoreloaded.lib.api.statistics.VanillaStatistic;
+import io.github.steaf23.bingoreloaded.lib.api.statistics.VanillaStatistics;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemTypePaper;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandlePaper;
-import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformStatics;
+import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformResources;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandlePaper;
 import io.github.steaf23.bingoreloaded.lib.data.core.YamlDataAccessor;
 import io.github.steaf23.bingoreloaded.lib.data.core.tag.TagDataAccessor;
@@ -62,11 +66,11 @@ import java.util.UUID;
 public class DataUpdaterV1
 {
     protected final BingoReloadedPaper plugin;
-    protected final PlatformStatics server;
+    protected final PlatformResources resources;
 
     public DataUpdaterV1(BingoReloadedPaper plugin) {
         this.plugin = plugin;
-        this.server = plugin.getServerSoftware();
+        this.resources = plugin.resources();
     }
 
     @SerializableAs("Bingo.CustomKit")
@@ -310,8 +314,8 @@ public class DataUpdaterV1
 
         ConfigurationSerialization.registerClass(OldBingoSettings.class);
 
-        YamlDataAccessor yamlData = new YamlDataAccessor(server, "data/presets", false);
-        TagDataAccessor tagData = new TagDataAccessor(server, "data/presets", false);
+        YamlDataAccessor yamlData = new YamlDataAccessor(resources, "data/presets", false);
+        TagDataAccessor tagData = new TagDataAccessor(resources, "data/presets", false);
 
         yamlData.load();
         for (String key : yamlData.getKeys()) {
@@ -356,8 +360,8 @@ public class DataUpdaterV1
 
         ConfigurationSerialization.registerClass(OldPlayer.class);
 
-        YamlDataAccessor yamlData = new YamlDataAccessor(server, "data/players", false);
-        TagDataAccessor tagData = new TagDataAccessor(server, "data/players", false);
+        YamlDataAccessor yamlData = new YamlDataAccessor(resources, "data/players", false);
+        TagDataAccessor tagData = new TagDataAccessor(resources, "data/players", false);
 
         yamlData.load();
 
@@ -393,8 +397,8 @@ public class DataUpdaterV1
             return;
         }
 
-        YamlDataAccessor yamlData = new YamlDataAccessor(server, "data/player_stats", false);
-        TagDataAccessor tagData = new TagDataAccessor(server, "data/player_stats", false);
+        YamlDataAccessor yamlData = new YamlDataAccessor(resources, "data/player_stats", false);
+        TagDataAccessor tagData = new TagDataAccessor(resources, "data/player_stats", false);
 
         yamlData.load();
         for (String id : yamlData.getKeys()) {
@@ -415,8 +419,8 @@ public class DataUpdaterV1
         ConfigurationSerialization.registerClass(OldStatisticTask.class);
         ConfigurationSerialization.registerClass(OldAdvancementTask.class);
 
-        YamlDataAccessor yamlData = new YamlDataAccessor(server, filename, false);
-        TagDataAccessor tagData = new TagDataAccessor(server, filename, false);
+        YamlDataAccessor yamlData = new YamlDataAccessor(resources, filename, false);
+        TagDataAccessor tagData = new TagDataAccessor(resources, filename, false);
 
         yamlData.load();
 
@@ -432,12 +436,11 @@ public class DataUpdaterV1
                     newTasks.add(new ItemTask(new ItemTypePaper(item), count));
                 }
                 if (task instanceof OldStatisticTask(int count, OldStatistic statistic)) {
-                    newTasks.add(new StatisticTask(
-                            StatisticHandlePaper.create(
-                                    statistic.stat(),
-                                    statistic.entity(),
-                                    statistic.material),
-							count));
+                    VanillaStatistic stat = VanillaStatistics.fromKey(statistic.stat.getKey());
+                    StatisticHandle handle = new StatisticHandle(stat,
+                            statistic.entity() == null ? null : new EntityTypePaper(statistic.entity()),
+                            statistic.material() == null ? null : new ItemTypePaper(statistic.material()));
+                    newTasks.add(new StatisticTask(handle, count));
                 }
                 if (task instanceof OldAdvancementTask(Advancement advancement)) {
                     newTasks.add(new AdvancementTask(new AdvancementHandlePaper(advancement)));
@@ -461,8 +464,8 @@ public class DataUpdaterV1
             return;
         }
 
-        YamlDataAccessor yamlData = new YamlDataAccessor(server, "data/cards", false);
-        TagDataAccessor tagData = new TagDataAccessor(server, "data/cards", false);
+        YamlDataAccessor yamlData = new YamlDataAccessor(resources, "data/cards", false);
+        TagDataAccessor tagData = new TagDataAccessor(resources, "data/cards", false);
 
         yamlData.load();
 
@@ -485,8 +488,8 @@ public class DataUpdaterV1
         ConfigurationSerialization.registerClass(OldMenuItem.class);
         ConfigurationSerialization.registerClass(OldCustomKit.class);
 
-        YamlDataAccessor yamlData = new YamlDataAccessor(server, "data/kits", false);
-        TagDataAccessor tagData = new TagDataAccessor(server, "data/kits", false);
+        YamlDataAccessor yamlData = new YamlDataAccessor(resources, "data/kits", false);
+        TagDataAccessor tagData = new TagDataAccessor(resources, "data/kits", false);
 
         yamlData.load();
 
@@ -517,8 +520,8 @@ public class DataUpdaterV1
 
         ConfigurationSerialization.registerClass(OldTeamTemplate.class);
 
-        YamlDataAccessor yamlData = new YamlDataAccessor(server, "data/teams", false);
-        TagDataAccessor tagData = new TagDataAccessor(server, "data/teams", false);
+        YamlDataAccessor yamlData = new YamlDataAccessor(resources, "data/teams", false);
+        TagDataAccessor tagData = new TagDataAccessor(resources, "data/teams", false);
 
         yamlData.load();
 
@@ -547,8 +550,8 @@ public class DataUpdaterV1
     }
 
 	protected void updateTextures() {
-        YamlDataAccessor yamlData = new YamlDataAccessor(server, "data/textures", false);
-        TagDataAccessor tagData = new TagDataAccessor(server, "data/textures", false);
+        YamlDataAccessor yamlData = new YamlDataAccessor(resources, "data/textures", false);
+        TagDataAccessor tagData = new TagDataAccessor(resources, "data/textures", false);
 
         yamlData.load();
 
@@ -565,7 +568,7 @@ public class DataUpdaterV1
     }
 
 	protected void updateScoreboards() {
-        YamlDataAccessor yamlData = new YamlDataAccessor(server, "scoreboards", false);
+        YamlDataAccessor yamlData = new YamlDataAccessor(resources, "scoreboards", false);
         yamlData.load();
 
         String version = yamlData.getString("version", "");
@@ -606,7 +609,7 @@ public class DataUpdaterV1
     }
 
 	protected void updatePlaceholders() {
-        YamlDataAccessor yamlData = new YamlDataAccessor(server, "placeholders", false);
+        YamlDataAccessor yamlData = new YamlDataAccessor(resources, "placeholders", false);
         yamlData.load();
 
         String version = yamlData.getString("version", "");

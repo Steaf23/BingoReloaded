@@ -5,20 +5,19 @@ import io.github.steaf23.bingoreloaded.lib.api.AdvancementHandlePaper;
 import io.github.steaf23.bingoreloaded.lib.api.DimensionType;
 import io.github.steaf23.bingoreloaded.lib.api.EntityType;
 import io.github.steaf23.bingoreloaded.lib.api.EntityTypePaper;
-import io.github.steaf23.bingoreloaded.lib.api.StatisticHandle;
-import io.github.steaf23.bingoreloaded.lib.api.StatisticHandlePaper;
-import io.github.steaf23.bingoreloaded.lib.api.StatisticType;
-import io.github.steaf23.bingoreloaded.lib.api.StatisticTypePaper;
 import io.github.steaf23.bingoreloaded.lib.api.StatusEffectType;
 import io.github.steaf23.bingoreloaded.lib.api.StatusEffectTypePaper;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemTypePaper;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Registry;
-import org.bukkit.Statistic;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class PaperRegistries implements PlatformRegistries {
 
@@ -64,15 +63,6 @@ public class PaperRegistries implements PlatformRegistries {
 	}
 
 	@Override
-	public StatisticType resolveStatisticType(Key key) {
-		Statistic stat = Registry.STATISTIC.get(key);
-		if (stat == null) {
-			return null;
-		}
-		return new StatisticTypePaper(stat);
-	}
-
-	@Override
 	public StatusEffectType resolvePotionEffectType(Key key) {
 		org.bukkit.potion.PotionEffectType type = Registry.POTION_EFFECT_TYPE.get(key);
 		if (type == null) {
@@ -82,12 +72,15 @@ public class PaperRegistries implements PlatformRegistries {
 	}
 
 	@Override
-	public StatisticHandle createStatistic(StatisticType type, @Nullable ItemType item, @Nullable EntityType entity) {
-		return new StatisticHandlePaper((StatisticTypePaper) type, entity, item);
+	public boolean areAdvancementsDisabled() {
+		return !Bukkit.advancementIterator().hasNext() || Bukkit.advancementIterator().next() == null;
 	}
 
 	@Override
-	public boolean areAdvancementsDisabled() {
-		return !Bukkit.advancementIterator().hasNext() || Bukkit.advancementIterator().next() == null;
+	public List<ItemType> allItems() {
+		return Arrays.stream(Material.values())
+				.filter(m -> !m.isLegacy() && !m.isAir() && m.isItem())
+				.<ItemType>map(ItemTypePaper::of)
+				.toList();
 	}
 }

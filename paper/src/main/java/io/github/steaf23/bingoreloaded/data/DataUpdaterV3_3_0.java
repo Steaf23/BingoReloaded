@@ -13,7 +13,7 @@ public class DataUpdaterV3_3_0 extends DataUpdaterV1 {
 	protected void updateLists(String filename) {
 		super.updateLists(filename);
 
-		TagDataAccessor tagData = new TagDataAccessor(server, filename, false);
+		TagDataAccessor tagData = new TagDataAccessor(resources, filename, false);
 		tagData.load();
 		tagData.erase("default_items");
 		tagData.erase("default_advancements");

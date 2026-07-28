@@ -3,8 +3,9 @@ package io.github.steaf23.bingoreloaded.tasks.data;
 import io.github.steaf23.bingoreloaded.api.CardDisplayInfo;
 import io.github.steaf23.bingoreloaded.api.TaskDisplayMode;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
-import io.github.steaf23.bingoreloaded.lib.api.StatisticHandle;
-import io.github.steaf23.bingoreloaded.lib.api.StatisticType;
+import io.github.steaf23.bingoreloaded.lib.api.statistics.StatisticHandle;
+import io.github.steaf23.bingoreloaded.lib.api.statistics.VanillaStatistic;
+import io.github.steaf23.bingoreloaded.lib.api.statistics.VanillaStatistics;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.util.ComponentUtils;
 import net.kyori.adventure.text.Component;
@@ -44,16 +45,17 @@ public record StatisticTask(StatisticHandle statistic, int count, Set<String> ta
 		TextComponent.Builder builder = Component.text().append(Component.text("*"))
 				.color(NamedTextColor.LIGHT_PURPLE).decorate(TextDecoration.ITALIC);
 
-		switch (statistic.statisticType().getCategory()) {
+		VanillaStatistic stat = statistic.type();
+		switch (stat.category()) {
 			case ROOT_STATISTIC -> {
-				if (statistic.statisticType().equals(StatisticType.KILL_ENTITY)) {
+				if (stat == VanillaStatistics.KILL_ENTITY) {
 					Component entityName = ComponentUtils.entityName(statistic.entityType());
 					Component[] inPlaceArguments = new Component[]{amount, Component.empty()};
 					builder.append(ComponentUtils.statistic(statistic, inPlaceArguments))
 							.append(Component.text("("))
 							.append(entityName.decorate(TextDecoration.BOLD))
 							.append(Component.text(")"));
-				} else if (statistic.statisticType().equals(StatisticType.ENTITY_KILLED_BY)) {
+				} else if (stat == VanillaStatistics.ENTITY_KILLED_BY) {
 					Component entityName = ComponentUtils.entityName(statistic.entityType());
 					Component[] inPlaceArguments = new Component[]{Component.empty(), amount, Component.empty()};
 					builder.append(Component.text("("))

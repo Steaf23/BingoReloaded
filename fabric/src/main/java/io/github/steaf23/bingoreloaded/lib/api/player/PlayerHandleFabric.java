@@ -1,16 +1,14 @@
 package io.github.steaf23.bingoreloaded.lib.api.player;
 
 import io.github.steaf23.bingoreloaded.lib.api.AdvancementHandle;
-import io.github.steaf23.bingoreloaded.lib.api.EntityType;
 import io.github.steaf23.bingoreloaded.lib.api.PlayerGamemode;
 import io.github.steaf23.bingoreloaded.lib.api.PotionEffectInstance;
-import io.github.steaf23.bingoreloaded.lib.api.StatisticType;
+import io.github.steaf23.bingoreloaded.lib.api.statistics.StatisticHandle;
 import io.github.steaf23.bingoreloaded.lib.api.StatusEffectTypeFabric;
 import io.github.steaf23.bingoreloaded.lib.api.WorldHandle;
 import io.github.steaf23.bingoreloaded.lib.api.WorldHandleFabric;
 import io.github.steaf23.bingoreloaded.lib.api.WorldPosition;
 import io.github.steaf23.bingoreloaded.lib.api.item.InventoryHandle;
-import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.api.platform.FabricServer;
 import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformServer;
@@ -144,17 +142,7 @@ public class PlayerHandleFabric implements PlayerHandle {
 	}
 
 	@Override
-	public int getStatisticValue(StatisticType type) {
-		return 0;
-	}
-
-	@Override
-	public int getStatisticValue(StatisticType type, EntityType entity) {
-		return 0;
-	}
-
-	@Override
-	public int getStatisticValue(StatisticType type, ItemType item) {
+	public int getStatisticValue(StatisticHandle stat) {
 		return 0;
 	}
 
@@ -221,17 +209,7 @@ public class PlayerHandleFabric implements PlayerHandle {
 	}
 
 	@Override
-	public void setStatisticValue(StatisticType type, int value) {
-
-	}
-
-	@Override
-	public void setStatisticValue(StatisticType type, EntityType entity, int value) {
-
-	}
-
-	@Override
-	public void setStatisticValue(StatisticType type, ItemType item, int value) {
+	public void setStatisticValue(StatisticHandle stat, int value) {
 
 	}
 

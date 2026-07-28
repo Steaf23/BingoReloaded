@@ -31,7 +31,7 @@ import io.github.steaf23.bingoreloaded.gameloop.SingularGameManager;
 import io.github.steaf23.bingoreloaded.lib.api.ActionUser;
 import io.github.steaf23.bingoreloaded.lib.api.BingoReloadedRuntime;
 import io.github.steaf23.bingoreloaded.lib.api.ExtensionInfo;
-import io.github.steaf23.bingoreloaded.lib.api.StatisticHandle;
+import io.github.steaf23.bingoreloaded.lib.api.statistics.StatisticHandle;
 import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformResources;
 import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformServer;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
@@ -92,14 +92,14 @@ public class BingoReloaded implements Namespaced {
 		this.runtime = runtime;
 	}
 
-	public void load() {
+	public void load(ExtensionInfo info) {
+		this.metaInfo = info;
 		// Kinda ugly, but we can assume there will only be one instance of this class anyway.
 		INSTANCE = this;
 //		DebugLogger.setupLogger(platform);
 	}
 
-	public void enable(PlatformResources resources, ExtensionInfo info) {
-		this.metaInfo = info;
+	public void enable(PlatformResources resources) {
 		this.resources = resources;
 		runtime.setupConfig();
 

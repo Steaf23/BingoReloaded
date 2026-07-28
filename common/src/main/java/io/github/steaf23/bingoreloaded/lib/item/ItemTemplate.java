@@ -1,7 +1,10 @@
 package io.github.steaf23.bingoreloaded.lib.item;
 
+import io.github.steaf23.bingoreloaded.lib.api.PlatformResolver;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
+import io.github.steaf23.bingoreloaded.lib.api.item.VanillaItems;
+import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.data.core.tag.TagDataStorage;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
@@ -32,10 +35,10 @@ public class ItemTemplate
 {
     public static final ItemTemplate EMPTY = new ItemTemplate(ItemType.AIR);
     public static final Set<ItemType> LEATHER_ARMOR = Set.of(
-            ItemType.of("minecraft:leather_chestplate"),
-            ItemType.of("minecraft:leather_boots"),
-            ItemType.of("minecraft:leather_leggings"),
-            ItemType.of("minecraft:leather_helmet"));
+            VanillaItems.LEATHER_HELMET.type(),
+            VanillaItems.LEATHER_BOOTS.type(),
+            VanillaItems.LEATHER_CHESTPLATE.type(),
+            VanillaItems.LEATHER_LEGGINGS.type());
 
     // higher priorities appear lower on the item description
     record DescriptionSection(int priority, Component[] text)
@@ -478,11 +481,15 @@ public class ItemTemplate
 
     public static ItemTemplate createColoredLeather(TextColor color, ItemType leatherItemType) {
         if (!LEATHER_ARMOR.contains(leatherItemType)) {
-            leatherItemType = ItemType.of("minecraft:leather_chestplate");
+            leatherItemType = ItemType.of(VanillaItems.LEATHER_CHESTPLATE);
         }
 
         ItemTemplate item = new ItemTemplate(leatherItemType, Component.text(color.asHexString()).color(color));
         item.setLeatherColor(color);
         return item;
+    }
+
+    public static ItemTemplate createPlayerHead(PlayerHandle player) {
+        return PlatformResolver.getItemStacker().createPlayerHeadTemplate(player);
     }
 }

@@ -1,0 +1,320 @@
+package io.github.steaf23.bingoreloaded.gui.inventory;
+
+
+import io.github.steaf23.bingoreloaded.BingoReloaded;
+import io.github.steaf23.bingoreloaded.data.BingoCardData;
+import io.github.steaf23.bingoreloaded.data.BingoMessage;
+import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
+import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
+import io.github.steaf23.bingoreloaded.lib.api.item.VanillaItems;
+import io.github.steaf23.bingoreloaded.lib.inventory.MenuBoard;
+import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
+import io.github.steaf23.bingoreloaded.lib.inventory.BasicMenu;
+import io.github.steaf23.bingoreloaded.lib.inventory.InventoryMenu;
+import io.github.steaf23.bingoreloaded.lib.inventory.MenuFilterSettings;
+import io.github.steaf23.bingoreloaded.lib.inventory.PaginatedDataMenu;
+import io.github.steaf23.bingoreloaded.lib.inventory.action.ComboBoxButtonAction;
+import io.github.steaf23.bingoreloaded.lib.inventory.action.MenuAction;
+import io.github.steaf23.bingoreloaded.lib.inventory.action.SpinBoxButtonAction;
+import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
+import io.github.steaf23.bingoreloaded.player.EffectOptionFlags;
+import io.github.steaf23.bingoreloaded.settings.BingoSettings;
+import io.github.steaf23.bingoreloaded.settings.gamemode.GamemodeFeature;
+import io.github.steaf23.bingoreloaded.util.BingoPlayerSender;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.Style;
+import net.kyori.adventure.text.format.TextDecoration;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class AdminBingoMenu extends BasicMenu {
+
+	private final BingoSession session;
+	private final BingoCardData cardData;
+
+	private static final int DURATION_MAX = 60;
+	private static final int TEAMSIZE_MAX = 64;
+	private static final int TEAMCOUNT_MAX = 64;
+
+	private static final Component COUNTDOWN_INPUT_LORE = InventoryMenu.inputButtonText(Component.text("Click")).append(Component.text("toggle countdown type"));
+
+	private static final ItemTemplate START = new ItemTemplate(6, 0,
+			VanillaItems.LIME_CONCRETE.type(), BingoReloaded.applyTitleFormat(BingoMessage.OPTIONS_START.asPhrase()));
+	private static final ItemTemplate END = new ItemTemplate(6, 0,
+			VanillaItems.RED_CONCRETE.type(), BingoReloaded.applyTitleFormat(BingoMessage.OPTIONS_END.asPhrase()));
+	private static final ItemTemplate JOIN = new ItemTemplate(2, 0,
+			VanillaItems.WHITE_GLAZED_TERRACOTTA.type(), BingoReloaded.applyTitleFormat(BingoMessage.OPTIONS_TEAM.asPhrase()));
+	private static final ItemTemplate CARD = new ItemTemplate(0, 2,
+			VanillaItems.MAP.type(), BingoReloaded.applyTitleFormat(BingoMessage.OPTIONS_CARD.asPhrase()));
+	private static final ItemTemplate KIT = new ItemTemplate(2, 2,
+			VanillaItems.LEATHER_HELMET.type(), BingoReloaded.applyTitleFormat(BingoMessage.OPTIONS_KIT.asPhrase()));
+	private static final ItemTemplate MODE = new ItemTemplate(1, 4,
+			VanillaItems.ENCHANTED_BOOK.type(), BingoReloaded.applyTitleFormat(BingoMessage.OPTIONS_GAMEMODE.asPhrase()));
+	private static final ItemTemplate EFFECTS = new ItemTemplate(3, 4,
+			VanillaItems.POTION.type(), BingoReloaded.applyTitleFormat(BingoMessage.OPTIONS_EFFECTS.asPhrase()));
+
+	private static final ItemTemplate COUNTDOWN_TYPE_DISABLED = new ItemTemplate(4, 2,
+			VanillaItems.COMPASS.type(), BingoReloaded.applyTitleFormat("Countdown Disabled"),
+			Component.text("No timer will be used to limit play time."))
+			.addDescription("input", 10, COUNTDOWN_INPUT_LORE);
+	private static final ItemTemplate COUNTDOWN_TYPE_DURATION = new ItemTemplate(4, 2,
+			VanillaItems.CLOCK.type(), BingoReloaded.applyTitleFormat("Countdown Duration"),
+			Component.text("Countdown timer will be enabled."),
+			Component.text("The game will end after the timer runs out,"),
+			Component.text("this removes the win goal condition from Hot-Swap and Complete-X."))
+			.addDescription("input", 10, COUNTDOWN_INPUT_LORE);
+	private static final ItemTemplate COUNTDOWN_TYPE_LIMIT = new ItemTemplate(4, 2,
+			VanillaItems.RECOVERY_COMPASS.type(), BingoReloaded.applyTitleFormat("Countdown Time Limit"),
+			Component.text("Countdown timer will be enabled."),
+			Component.text("Any goal is still a valid win condition,"),
+			Component.text("but the game will end after the timer runs out."))
+			.addDescription("input", 10, COUNTDOWN_INPUT_LORE);
+
+	private static final ItemTemplate DURATION = new ItemTemplate(5, 4,
+			VanillaItems.RECOVERY_COMPASS.type(), BingoReloaded.applyTitleFormat("Countdown Duration"));
+	private static final ItemTemplate TEAM_SIZE = new ItemTemplate(6, 2,
+			VanillaItems.ENDER_EYE.type(), BingoReloaded.applyTitleFormat("Maximum Team Size"));
+	private static final ItemTemplate TEAM_COUNT = new ItemTemplate(8, 2,
+			VanillaItems.ENDER_PEARL.type(), BingoReloaded.applyTitleFormat("Maximum Team Count")).setMaxStackSize(64);
+	private static final ItemTemplate PRESETS = new ItemTemplate(7, 4,
+			VanillaItems.CHEST_MINECART.type(), BingoReloaded.applyTitleFormat("Setting Presets"));
+
+	private static final ItemTemplate DISABLED_BY_BLITZ = new ItemTemplate(VanillaItems.BARRIER.type(),
+			BingoReloaded.applyTitleFormat("Disabled by Blitz").color(NamedTextColor.RED),
+			Component.text("This setting does not matter in Blitz").color(NamedTextColor.RED));
+
+	public AdminBingoMenu(MenuBoard menuBoard, BingoSession session) {
+		super(menuBoard, BingoMessage.OPTIONS_TITLE.asPhrase(), 6);
+		this.session = session;
+		this.cardData = new BingoCardData();
+	}
+
+	@Override
+	public void beforeOpening(PlayerHandle player) {
+		super.beforeOpening(player);
+
+		BingoSettings view = session.settingsBuilder.view();
+
+		Component selected = Component.text("Selected: ").color(NamedTextColor.YELLOW).decorate(TextDecoration.ITALIC);
+
+		BingoSettings settings = session.settingsBuilder.view();
+
+		List<Component> cardLore = new ArrayList<>();
+		cardLore.add(selected);
+		cardLore.add(Component.text(" - ").append(Component.text(settings.cardName())));
+		List<String> excludedTags = cardData.excludedTags(settings.cardName());
+		if (!excludedTags.isEmpty()) {
+			cardLore.add(cardData.tags().tagDescription(excludedTags));
+		}
+		ItemTemplate cardItem = CARD.copy().setLore(cardLore.toArray(Component[]::new));
+
+		ItemTemplate kitItem = KIT.copy().setLore(selected,
+				Component.text(" - ").append(settings.kit().getDisplayName()));
+
+		List<Component> modeLore = new ArrayList<>();
+		modeLore.add(selected);
+		modeLore.add(Component.text(" - ").append(settings.mode().asComponent()));
+		modeLore.add(Component.text("   Size: ").append(settings.size().asComponent()));
+		for (GamemodeFeature feature : settings.mode().featureSet()) {
+			switch (feature) {
+				case UNIQUE_CARD -> {
+					modeLore.add(settings.differentCardPerTeam() ?
+							Component.text("   Different cards generated").color(NamedTextColor.RED) :
+							Component.text("   Same cards generated").color(NamedTextColor.GRAY));
+				}
+				case HOTSWAP_WIN_GOAL -> {
+					modeLore.add(Component.text("   Win goal: ").append(Component.text(settings.hotswapGoal())));
+				}
+				case COMPLETE_WIN_GOAL -> {
+					modeLore.add(Component.text("   Win goal: ").append(Component.text(settings.completeGoal())));
+				}
+				case TASK_EXPIRATION -> {
+					modeLore.add(settings.expireHotswapTasks() ?
+							Component.text("   Tasks expire").color(NamedTextColor.RED) :
+							Component.text("   Tasks do not expire").color(NamedTextColor.GRAY));
+				}
+				case BLITZ_TIMER -> {
+					modeLore.add(Component.text("   Head start: ").append(Component.text(settings.blitzStartDuration() * 10).append(Component.text(" seconds"))));
+					modeLore.add(Component.text("   Bonus: ").append(Component.text(settings.blitzBonusDuration() * 10).color(NamedTextColor.GREEN).append(Component.text(" seconds"))));
+					modeLore.add(Component.text("   Recovery delay: ").append(Component.text(settings.blitzRecoveryDelay()).color(NamedTextColor.AQUA).append(Component.text(" tasks"))));
+				}
+			}
+		}
+
+		ItemTemplate modeItem = MODE.copy().setLore(modeLore.toArray(Component[]::new));
+
+		List<Component> effects = new ArrayList<>(List.of(EffectOptionFlags.effectsToText(settings.effects())));
+		effects.addFirst(selected);
+		ItemTemplate effectsItem = EFFECTS.copy().setLore(effects.toArray(Component[]::new));
+
+		addAction(JOIN, arguments -> {
+			TeamSelectionMenu selectionMenu = new TeamSelectionMenu(getMenuBoard(), session);
+			selectionMenu.open(arguments.player());
+		});
+		addAction(kitItem, arguments -> new KitOptionsMenu(getMenuBoard(), session).open(arguments.player()));
+		addAction(modeItem, arguments -> new GamemodeOptionsMenu(getMenuBoard(), session).open(arguments.player()));
+		addAction(cardItem, this::openCardPicker);
+		addAction(effectsItem, arguments -> new EffectOptionsMenu(getMenuBoard(), session.settingsBuilder).open(arguments.player()));
+		addAction(PRESETS, arguments -> new SettingsPresetMenu(getMenuBoard(), session.settingsBuilder).open(arguments.player()));
+
+		ItemTemplate teamSizeItem = TEAM_SIZE.copy();
+		int maxTeamSize = view.maxTeamSize();
+		updateTeamSizeLore(teamSizeItem, maxTeamSize);
+		MenuAction teamSizeAction = new SpinBoxButtonAction(1, TEAMSIZE_MAX, maxTeamSize, value -> {
+			session.settingsBuilder.maxTeamSize(value);
+			updateTeamSizeLore(teamSizeItem, value);
+		});
+		teamSizeAction.setItem(teamSizeItem);
+		addAction(teamSizeAction);
+
+		if (settings.mode().featureSet().contains(GamemodeFeature.BLITZ_TIMER)) {
+			ItemTemplate disabledTeamCount = DISABLED_BY_BLITZ.copyToSlot(TEAM_COUNT.getSlot())
+					.setName(BingoReloaded.applyTitleFormat("In Blitz you work together in 1 team").color(NamedTextColor.RED));
+			ItemTemplate disabledDuration = DISABLED_BY_BLITZ.copyToSlot(DURATION.getSlot())
+					.setName(BingoReloaded.applyTitleFormat("Duration disabled by Blitz").color(NamedTextColor.RED));
+			ItemTemplate disabledCountdown = DISABLED_BY_BLITZ.copyToSlot(COUNTDOWN_TYPE_DISABLED.getSlot())
+					.setName(BingoReloaded.applyTitleFormat("Countdown disabled by Blitz").color(NamedTextColor.RED));
+			addItems(disabledTeamCount, disabledDuration, disabledCountdown);
+		} else {
+			ItemTemplate teamCountItem = TEAM_COUNT.copy();
+			int maxTeamCount = view.maxTeamCount();
+			updateTeamCountLore(teamCountItem, maxTeamCount);
+			MenuAction teamCountAction = new SpinBoxButtonAction(1, TEAMCOUNT_MAX, maxTeamCount, value -> {
+				session.settingsBuilder.maxTeamCount(value);
+				updateTeamCountLore(teamCountItem, value);
+			});
+			teamCountAction.setItem(teamCountItem);
+
+			ItemTemplate durationItem = DURATION.copy();
+			int duration = view.countdownDuration();
+			updateDurationLore(durationItem, duration);
+			MenuAction durationAction = new SpinBoxButtonAction(1, DURATION_MAX, duration, value -> {
+				session.settingsBuilder.countdownGameDuration(value);
+				updateDurationLore(durationItem, value);
+			});
+			durationAction.setItem(durationItem);
+
+			MenuAction countdownAction = new ComboBoxButtonAction.Builder("DISABLED", COUNTDOWN_TYPE_DISABLED.copy())
+					.addOption("DURATION", COUNTDOWN_TYPE_DURATION.copy())
+					.addOption("TIME_LIMIT", COUNTDOWN_TYPE_LIMIT.copy())
+					.setCallback((oldValue, newValue, arguments) -> {
+						session.settingsBuilder.countdownType(BingoSettings.CountdownType.valueOf(newValue));
+						return true;
+					})
+					.buildAction(COUNTDOWN_TYPE_DISABLED.getSlot(), view.countdownType().name());
+			addActions(teamCountAction, durationAction, countdownAction);
+		}
+
+		MenuAction startAction = new ComboBoxButtonAction.Builder("start", START.copy())
+				.addOption("end", END.copy())
+				.setCallback((clickedValue, newValue, args) -> {
+					if (clickedValue.equals("start")) {
+						if (!session.startGame()) {
+							BingoPlayerSender.sendMessage(Component.text("Could not start game, see console for details.").color(NamedTextColor.RED), args.player());
+							return false;
+						}
+						return true;
+					} else if (clickedValue.equals("end")) {
+						session.endGame();
+						return true;
+					} else {
+						return false;
+					}
+				})
+				.buildAction(ItemTemplate.slotFromXY(6, 0), session.isRunning() ? "end" : "start");
+		addAction(startAction);
+	}
+
+	private void openCardPicker(MenuAction.ActionArguments arguments) {
+		PlayerHandle player = arguments.player();
+		BingoCardData cardsData = new BingoCardData();
+
+		var cardPicker = new PaginatedDataMenu.TextDataMenu(
+				getMenuBoard(),
+				Component.text("Choose A Card"),
+				cardsData.getCardNames())
+				{
+			@Override
+			public void onOptionClickedDelegate(MenuAction.ActionArguments event, String clickedOption) {
+				if (!clickedOption.isEmpty()) {
+					if (event.isLeftClick()) {
+						cardSelected(clickedOption);
+					}
+				}
+				close(player);
+			}
+
+			@Override
+			public ItemType itemType(String s, boolean selected) {
+				return VanillaItems.FLOWER_BANNER_PATTERN.type();
+			}
+
+			@Override
+			public Component displayName(String s, boolean selected) {
+				return Component.text(s);
+			}
+
+			@Override
+			public ItemTemplate editItem(ItemTemplate item, String cardName, boolean selected) {
+				item.setLore(BingoMessage.configStringAsMultiline(cardsData.getDescription(cardName), Style.style(NamedTextColor.GRAY, TextDecoration.ITALIC)));
+				List<String> excludedTags = cardData.excludedTags(cardName);
+				if (!excludedTags.isEmpty()) {
+					item.addDescription("count", 5, BingoMessage.LIST_COUNT.asPhrase(Component.text(cardsData.getListNames(cardName).size())
+							.color(NamedTextColor.DARK_PURPLE)),
+							cardData.tags().tagDescription(excludedTags));
+				} else {
+					item.addDescription("count", 5, BingoMessage.LIST_COUNT.asPhrase(Component.text(cardsData.getListNames(cardName).size())
+									.color(NamedTextColor.DARK_PURPLE)));
+				}
+				item.addDescription("input", 10,
+						InventoryMenu.INPUT_LEFT_CLICK.append(Component.text("select this card.")));
+				return item;
+			}
+
+			@Override
+			public boolean filterByData(String s, MenuFilterSettings filter) {
+				return false;
+			}
+
+			@Override
+			public boolean openOnce() {
+				return true;
+			}
+		};
+		cardPicker.open(player);
+	}
+
+	private void cardSelected(String cardName) {
+		if (cardName == null) return;
+
+		session.settingsBuilder.cardName(cardName);
+	}
+
+	private void updateDurationLore(ItemTemplate item, int duration) {
+		item.setLore(
+				Component.text("Timer set to " + duration + " minutes(s)"),
+				Component.text("for bingo games on countdown mode"));
+	}
+
+	private void updateTeamSizeLore(ItemTemplate item, int value) {
+		item.setLore(
+				Component.text("Selected:").color(NamedTextColor.YELLOW).decorate(TextDecoration.ITALIC),
+				Component.text(" - ").append(Component.text(value)));
+
+		item.addDescription("warning", 1,
+				Component.text("(When changing this setting all currently").color(NamedTextColor.GRAY),
+				Component.text("joined players will be kicked from their teams!)").color(NamedTextColor.GRAY));
+	}
+
+	private void updateTeamCountLore(ItemTemplate item, int value) {
+		item.setLore(
+				Component.text("Selected:").color(NamedTextColor.YELLOW).decorate(TextDecoration.ITALIC),
+				Component.text(" - ").append(Component.text(value)));
+
+		item.addDescription("warning", 1,
+				Component.text("(When changing this setting all currently").color(NamedTextColor.GRAY),
+				Component.text("joined players will be kicked from their teams!)").color(NamedTextColor.GRAY));
+	}
+}

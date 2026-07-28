@@ -6,6 +6,7 @@ import io.github.steaf23.bingoreloaded.data.CustomKitData;
 import io.github.steaf23.bingoreloaded.data.DefaultKitData;
 import io.github.steaf23.bingoreloaded.lib.api.PlatformResolver;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
+import io.github.steaf23.bingoreloaded.lib.api.item.VanillaItems;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import io.github.steaf23.bingoreloaded.lib.item.SerializableItem;
 import io.github.steaf23.bingoreloaded.player.EffectOptionFlags;
@@ -35,35 +36,36 @@ public enum PlayerKit
 	public static final Key WAND_COOLDOWN_GROUP = BingoReloaded.resourceKey("wand_cooldown");
 
     public static final ItemTemplate CARD_ITEM_RENDERABLE = new ItemTemplate(
-            ItemType.of("minecraft:filled_map"),
+            VanillaItems.FILLED_MAP.type(),
             BingoMessage.ITEM_CARD_NAME.asPhrase().color(NamedTextColor.DARK_PURPLE).decorate(TextDecoration.BOLD, TextDecoration.ITALIC),
             BingoMessage.ITEM_CARD_DESC.asMultiline())
             .setGlowing(true)
             .setCompareKey("card");
 
     public static final ItemTemplate CARD_ITEM = new ItemTemplate(
-            ItemType.of("minecraft:flower_banner_pattern"),
+            VanillaItems.FLOWER_BANNER_PATTERN.type(),
             BingoMessage.ITEM_CARD_NAME.asPhrase().color(NamedTextColor.DARK_PURPLE).decorate(TextDecoration.BOLD, TextDecoration.ITALIC),
             BingoMessage.ITEM_CARD_DESC.asMultiline())
             .setGlowing(true)
             .setCompareKey("card");
 
     public static final ItemTemplate VOTE_ITEM = new ItemTemplate(
-            ItemType.of("minecraft:emerald"),
+            VanillaItems.EMERALD.type(),
             BingoMessage.ITEM_VOTE_NAME.asPhrase().color(NamedTextColor.DARK_PURPLE).decorate(TextDecoration.BOLD, TextDecoration.ITALIC),
             BingoMessage.ITEM_VOTE_DESC.asMultiline())
             .setCompareKey("vote")
 			.addEnchantment(Key.key("minecraft:vanishing_curse"), 1);
 
     public static final ItemTemplate TEAM_ITEM = new ItemTemplate(
-            ItemType.of("minecraft:white_glazed_terracotta"),
+            VanillaItems.WHITE_GLAZED_TERRACOTTA.type(),
             BingoMessage.ITEM_TEAM_NAME.asPhrase().color(NamedTextColor.DARK_PURPLE).decorate(TextDecoration.BOLD, TextDecoration.ITALIC),
             BingoMessage.ITEM_TEAM_DESC.asMultiline())
             .setCompareKey("team")
+            .setDummy(true)
 			.addEnchantment(Key.key("minecraft:vanishing_curse"), 1);
 
     public static final ItemTemplate ADMIN_ITEM = new ItemTemplate(
-            ItemType.of("minecraft:command_block"),
+            VanillaItems.COMMAND_BLOCK.type(),
             Component.text("Settings").color(NamedTextColor.DARK_PURPLE).decorate(TextDecoration.BOLD, TextDecoration.ITALIC))
             .setCompareKey("admin")
             .setDummy(true)

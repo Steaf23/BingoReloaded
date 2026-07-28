@@ -15,6 +15,7 @@ import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformTaskScheduler;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.api.player.SharedDisplay;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataAccessor;
+import io.github.steaf23.bingoreloaded.lib.inventory.BasicMenu;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import net.kyori.adventure.key.Key;
 import org.jetbrains.annotations.Nullable;
@@ -55,6 +56,7 @@ public interface BingoReloadedRuntime {
 	void openTeamSelector(PlayerHandle player, BingoSession session);
 	void openVoteMenu(PlayerHandle player, PregameLobby lobby);
 	void openLeaderboard(PlayerHandle player, LeaderboardData historyData, boolean categorizeByPresets);
+	void editCardDescription(PlayerHandle playerHandle, String currentName, String currentDescription, BasicMenu parentMenu, CardDescriptionEditor callback);
 
 	TeamDisplay createTeamDisplay(BingoSession session);
 	SharedDisplay gameDisplay();
@@ -63,4 +65,10 @@ public interface BingoReloadedRuntime {
 	BingoClientManager getClientManager();
 
 	PlatformTaskScheduler taskScheduler();
+
+	@FunctionalInterface
+	interface CardDescriptionEditor
+	{
+		void edit(PlayerHandle player, BasicMenu parentMenu, String oldName, String newName, String newDescription);
+	}
 }

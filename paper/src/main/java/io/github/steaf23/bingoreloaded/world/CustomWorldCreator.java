@@ -11,11 +11,12 @@ import org.jetbrains.annotations.Nullable;
 public class CustomWorldCreator
 {
     public static @Nullable WorldHandle createWorld(Key worldKey, @Nullable Key generationSettingsResource) {
-        World world = CustomWorldCreator_V26_1_2.createBingoWorld(worldKey, generationSettingsResource);
-        if (world == null) {
-            return null;
-        }
-        return new WorldHandlePaper(world);
+//        World world = CustomWorldCreator_V26_1_2.createBingoWorld(worldKey, generationSettingsResource);
+//        if (world == null) {
+//            return null;
+//        }
+//        return new WorldHandlePaper(world);
+        return null;
     }
 
     private static String getWorldsFolder(PlatformResources resources) {

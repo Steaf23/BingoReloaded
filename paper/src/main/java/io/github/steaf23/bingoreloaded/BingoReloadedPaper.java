@@ -1,8 +1,6 @@
 package io.github.steaf23.bingoreloaded;
 
 import com.github.retrooper.packetevents.PacketEvents;
-import com.github.retrooper.packetevents.protocol.dialog.Dialog;
-import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerShowDialog;
 import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
 import io.github.steaf23.bingoreloaded.action.CommandTemplate;
 import io.github.steaf23.bingoreloaded.action.TeamChatCommand;
@@ -28,15 +26,15 @@ import io.github.steaf23.bingoreloaded.gui.inventory.TeamSelectionMenu;
 import io.github.steaf23.bingoreloaded.gui.inventory.VoteMenu;
 import io.github.steaf23.bingoreloaded.gui.inventory.card.GenericCardMenu;
 import io.github.steaf23.bingoreloaded.gui.inventory.card.HotswapGenericCardMenu;
-import io.github.steaf23.bingoreloaded.gui.inventory.card.HotswapTexturedCardMenu;
-import io.github.steaf23.bingoreloaded.gui.inventory.card.TexturedCardMenu;
 import io.github.steaf23.bingoreloaded.gui.inventory.creator.BingoCreatorMenu;
 import io.github.steaf23.bingoreloaded.lib.action.ActionTree;
 import io.github.steaf23.bingoreloaded.lib.api.BingoReloadedRuntime;
 import io.github.steaf23.bingoreloaded.lib.api.EntityType;
 import io.github.steaf23.bingoreloaded.lib.api.EntityTypePaper;
 import io.github.steaf23.bingoreloaded.lib.api.ExtensionInfo;
-import io.github.steaf23.bingoreloaded.lib.api.MenuBoard;
+import io.github.steaf23.bingoreloaded.lib.api.platform.GameContext;
+import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformResources;
+import io.github.steaf23.bingoreloaded.lib.inventory.MenuBoard;
 import io.github.steaf23.bingoreloaded.lib.api.PaperInventoryProvider;
 import io.github.steaf23.bingoreloaded.lib.api.PlatformResolver;
 import io.github.steaf23.bingoreloaded.lib.api.WorldHandle;
@@ -46,7 +44,7 @@ import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandlePaper;
 import io.github.steaf23.bingoreloaded.lib.api.platform.PaperResources;
 import io.github.steaf23.bingoreloaded.lib.api.platform.PaperServer;
-import io.github.steaf23.bingoreloaded.lib.api.platform.PaperServerSoftware;
+import io.github.steaf23.bingoreloaded.lib.api.platform.PaperStatics;
 import io.github.steaf23.bingoreloaded.lib.api.platform.PaperTaskScheduler;
 import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformTaskScheduler;
 import io.github.steaf23.bingoreloaded.lib.api.player.EmptyDisplay;
@@ -67,14 +65,24 @@ import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import io.github.steaf23.bingoreloaded.settings.gamemode.BingoGamemodes;
 import io.github.steaf23.bingoreloaded.util.bstats.Metrics;
 import io.github.steaf23.bingoreloaded.world.CustomWorldCreator;
+import io.papermc.paper.dialog.Dialog;
+import io.papermc.paper.registry.data.dialog.ActionButton;
+import io.papermc.paper.registry.data.dialog.DialogBase;
+import io.papermc.paper.registry.data.dialog.action.DialogAction;
+import io.papermc.paper.registry.data.dialog.input.DialogInput;
+import io.papermc.paper.registry.data.dialog.input.TextDialogInput;
+import io.papermc.paper.registry.data.dialog.type.DialogType;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.key.Key;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickCallback;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.MapMeta;
 import org.bukkit.map.MapView;
@@ -91,7 +99,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class BingoReloadedPaper extends JavaPlugin implements BingoReloadedRuntime {
+public class BingoReloadedPaper extends JavaPlugin implements BingoReloadedRuntime, Listener {
 
 	private PaperTaskScheduler tasks;
 	private PaperServer server;
@@ -110,9 +118,13 @@ public class BingoReloadedPaper extends JavaPlugin implements BingoReloadedRunti
 		this.tasks = new PaperTaskScheduler(this);
 	}
 
+	public PlatformResources resources() {
+		return resources;
+	}
+
 	@Override
 	public void onLoad() {
-		PlatformResolver.set(new PaperServerSoftware(this));
+		PlatformResolver.set(new PaperStatics(this));
 
 		PacketEvents.setAPI(SpigotPacketEventsBuilder.build(this));
 		PacketEvents.getAPI().getSettings().reEncodeByDefault(false)
@@ -125,7 +137,8 @@ public class BingoReloadedPaper extends JavaPlugin implements BingoReloadedRunti
 		resources.saveResource("bingoreloaded.zip", true);
 		resources.saveResource("bingoreloaded_lite.zip", true);
 
-		bingo.load();
+		ExtensionInfo info = new ExtensionInfo(this.getPluginMeta().getName(), this.getPluginMeta().getVersion(), this.getPluginMeta().getAuthors());
+		bingo.load(info);
 
 		// Data file updater (backwards compatibility)
 		{
@@ -136,12 +149,11 @@ public class BingoReloadedPaper extends JavaPlugin implements BingoReloadedRunti
 
 	@Override
 	public void onEnable() {
-		this.menuBoard = new MenuBoardPaper(tasks, this);
-
-		ExtensionInfo info = new ExtensionInfo(this.getPluginMeta().getName(), this.getPluginMeta().getVersion(), this.getPluginMeta().getAuthors());
-		bingo.enable(resources, info);
+		Bukkit.getPluginManager().registerEvents(this, this);
+		bingo.enable(resources);
 
 		this.server = new PaperServer();
+		this.menuBoard = new MenuBoardPaper(tasks, this, new GameContext(server, bingo));
 		bingo.reloadManager(server);
 
 		if (bingo.config().getOptionValue(BingoOptions.DISABLE_CLIENT_MOD)) {
@@ -162,7 +174,7 @@ public class BingoReloadedPaper extends JavaPlugin implements BingoReloadedRunti
 			});
 		}
 
-		eventListener = new EventListenerPaper(this, bingo.getGameManager().eventListener());
+		eventListener = new EventListenerPaper(this, server, bingo.getGameManager().eventListener());
 
 		Metrics bStatsMetrics = new Metrics(this, 22586);
 		bStatsMetrics.addCustomChart(new Metrics.SimplePie("selected_language",
@@ -330,13 +342,6 @@ public class BingoReloadedPaper extends JavaPlugin implements BingoReloadedRunti
 	@Override
 	public CardMenu createMenu(boolean textured, CardDisplayInfo displayInfo) {
 		boolean useHotswapMenu = displayInfo.mode() == BingoGamemodes.HOTSWAP || displayInfo.mode() == BingoGamemodes.BLITZ;
-		if (textured) {
-			if (useHotswapMenu) {
-				return new HotswapTexturedCardMenu(bingo, menuBoard, displayInfo);
-			}
-			return new TexturedCardMenu(bingo, menuBoard, displayInfo);
-		}
-
 		if (useHotswapMenu) {
 			return new HotswapGenericCardMenu(bingo, menuBoard, displayInfo, null);
 		}
@@ -386,6 +391,42 @@ public class BingoReloadedPaper extends JavaPlugin implements BingoReloadedRunti
 		menu.open(player);
 	}
 
+	@SuppressWarnings("UnstableApiUsage")
+	@Override
+	public void editCardDescription(PlayerHandle playerHandle, String currentName, String currentDescription, BasicMenu parentMenu, CardDescriptionEditor callback) {
+		Dialog.create(builder -> builder.empty()
+				.base(DialogBase.builder(Component.text("Change card name/ description"))
+						.inputs(List.of(
+								DialogInput.text("name", Component.text("Name"))
+										.initial(currentName)
+										.build(),
+								DialogInput.text("description", Component.text("Description"))
+										.initial(currentDescription)
+										.multiline(TextDialogInput.MultilineOptions.create(4, 100))
+										.maxLength(300)
+										.build()
+								)
+						)
+						.build()
+				).type(DialogType.confirmation(
+						ActionButton.create(
+								Component.translatable("selectWorld.edit.save"),
+								Component.empty(),
+								100,
+								DialogAction.customClick((view, audience) -> {
+									callback.edit(playerHandle, parentMenu, currentName, view.getText("name"), view.getText("description"));
+								}, ClickCallback.Options.builder().build())
+						),
+						ActionButton.create(
+								Component.translatable("gui.cancel"),
+								Component.empty(),
+								100,
+								null
+						)
+				))
+		);
+	}
+
 	@Override
 	public TeamDisplay createTeamDisplay(BingoSession session) {
 		return new TeamDisplayPaper(session);
@@ -409,11 +450,6 @@ public class BingoReloadedPaper extends JavaPlugin implements BingoReloadedRunti
 	@Override
 	public PlatformTaskScheduler taskScheduler() {
 		return tasks;
-	}
-
-	public static void showPacketDialog(PlayerHandle player, Dialog dialog) {
-		WrapperPlayServerShowDialog dialogWrapper = new WrapperPlayServerShowDialog(dialog);
-		PacketEvents.getAPI().getPlayerManager().sendPacket(((PlayerHandlePaper) player).handle(), dialogWrapper);
 	}
 
 }

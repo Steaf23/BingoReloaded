@@ -1,0 +1,171 @@
+package io.github.steaf23.bingoreloaded.gui.inventory;
+
+import io.github.steaf23.bingoreloaded.BingoReloaded;
+import io.github.steaf23.bingoreloaded.data.BingoMessage;
+import io.github.steaf23.bingoreloaded.data.TeamData;
+import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
+import io.github.steaf23.bingoreloaded.lib.api.item.VanillaItems;
+import io.github.steaf23.bingoreloaded.lib.inventory.MenuBoard;
+import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
+import io.github.steaf23.bingoreloaded.lib.inventory.BasicMenu;
+import io.github.steaf23.bingoreloaded.lib.inventory.ColorPickerMenu;
+import io.github.steaf23.bingoreloaded.lib.inventory.FilterType;
+import io.github.steaf23.bingoreloaded.lib.inventory.InventoryMenu;
+import io.github.steaf23.bingoreloaded.lib.inventory.PaginatedDataMenu;
+import io.github.steaf23.bingoreloaded.lib.inventory.action.MenuAction;
+import io.github.steaf23.bingoreloaded.lib.inventory.action.NameEditAction;
+import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
+import io.github.steaf23.bingoreloaded.lib.util.BlockColor;
+import io.github.steaf23.bingoreloaded.lib.util.ComponentUtils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.format.TextDecoration;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.function.Consumer;
+
+public class TeamEditorMenu extends PaginatedDataMenu<String>
+{
+    private final TeamData teamData;
+
+    private static final TeamData.TeamTemplate DEFAULT_NEW_TEAM = new TeamData.TeamTemplate("MyTeam", TextColor.fromHexString("#808080"), BlockColor.LIGHT_GRAY);
+
+    private static final ItemTemplate RESTORE_DEFAULT = new ItemTemplate(2, 5, VanillaItems.TNT.type(),
+            Component.text("Restore Default Teams").color(NamedTextColor.RED).decorate(TextDecoration.BOLD),
+            Component.text("This option will remove all created teams!"));
+
+    private static final ItemTemplate CREATE_TEAM = new ItemTemplate(6, 5, VanillaItems.EMERALD.type(),
+            Component.text("Create New Team").color(NamedTextColor.GREEN).decorate(TextDecoration.BOLD));
+
+    public TeamEditorMenu(MenuBoard manager) {
+        super(manager, Component.text("Edit Teams"), new ArrayList<>(), FilterType.DISPLAY_NAME);
+        this.teamData = new TeamData();
+
+        addAction(RESTORE_DEFAULT, arguments -> {
+            teamData.reset();
+            updateDisplay();
+        });
+        addAction(CREATE_TEAM, arguments -> createTeamEditor("").open(arguments.player()));
+    }
+
+    public void updateDisplay() {
+        setData(teamData.getTeams().keySet());
+    }
+
+    public BasicMenu createTeamEditor(@NotNull String teamKey) {
+        return new TeamEdit(getMenuBoard(), teamData.getTeam(teamKey, DEFAULT_NEW_TEAM), editedTemplate -> teamData.addTeam(teamKey, editedTemplate));
+    }
+
+    @Override
+    public void beforeOpening(PlayerHandle player) {
+        updateDisplay();
+        super.beforeOpening(player);
+    }
+
+    @Override
+    public void onOptionClickedDelegate(MenuAction.ActionArguments args, String clickedKey) {
+        if (args.isRightClick()) {
+            teamData.removeTeam(clickedKey);
+            updateDisplay();
+        } else {
+            createTeamEditor(clickedKey).open(args.player());
+        }
+    }
+
+    @Override
+    public ItemType itemType(String s, boolean selected) {
+        return VanillaItems.LEATHER_HELMET.type();
+    }
+
+    @Override
+    public Component displayName(String key, boolean selected) {
+        TeamData.TeamTemplate team = teamData.getTeam(key, DEFAULT_NEW_TEAM);
+        return team.coloredName().decorate(TextDecoration.BOLD);
+    }
+
+    @Override
+    public ItemTemplate editItem(ItemTemplate item, String key, boolean selected) {
+        TeamData.TeamTemplate team = teamData.getTeam(key, DEFAULT_NEW_TEAM);
+        return item
+                .setLeatherColor(team.color())
+                .setLore(Component.text("id: ").append(Component.text(key).color(NamedTextColor.GRAY).decorate(TextDecoration.ITALIC)))
+                .addDescription("input", 5,
+                        InventoryMenu.INPUT_LEFT_CLICK.append(Component.text("edit team")),
+                        InventoryMenu.INPUT_RIGHT_CLICK.append(Component.text("remove team")));
+    }
+
+    static class TeamEdit extends BasicMenu
+    {
+        private final Consumer<TeamData.TeamTemplate> finishedCallback;
+        private TeamData.TeamTemplate templateToEdit;
+
+        public TeamEdit(MenuBoard manager, TeamData.TeamTemplate teamToEdit, Consumer<TeamData.TeamTemplate> callback) {
+            super(manager, Component.text("Edit team"), 3);
+            this.templateToEdit = teamToEdit;
+            this.finishedCallback = callback;
+
+            addActions(getTeamNameAction(), getTeamColorAction(), getDyeColorAction());
+
+            addCloseAction(new ItemTemplate(7, 1, VanillaItems.BARRIER.type(),
+                    BingoMessage.MENU_EXIT.asPhrase().color(NamedTextColor.RED).decorate(TextDecoration.BOLD)));
+        }
+
+        private @NotNull MenuAction getTeamNameAction() {
+            ItemTemplate teamNameItem = new ItemTemplate(1, 1, VanillaItems.WRITABLE_BOOK.type(),
+                    templateToEdit.nameComponent(),
+                    Component.text("Supports minimessage formatting").color(NamedTextColor.AQUA).decorate(TextDecoration.ITALIC));
+
+            MenuAction action = new NameEditAction(Component.text("Edit team name"), getMenuBoard(), templateToEdit.stringName(), (value, _) -> {
+                templateToEdit = new TeamData.TeamTemplate(value, templateToEdit.color(), templateToEdit.dyeColor());
+                addAction(getTeamNameAction());
+            });
+            action.setItem(teamNameItem);
+            return action;
+        }
+
+        private @NotNull MenuAction getTeamColorAction() {
+            ItemTemplate teamColorItem = new ItemTemplate(3, 1, VanillaItems.LEATHER_CHESTPLATE.type(),
+                    Component.text("Color").color(templateToEdit.color()).decorate(TextDecoration.BOLD))
+                    .setLeatherColor(templateToEdit.color());
+
+            MenuAction action = new MenuAction() {
+                @Override
+                public void use(ActionArguments arguments) {
+                    new ColorPickerMenu(getMenuBoard(), Component.text("Pick team color"), (result) -> {
+                        templateToEdit = new TeamData.TeamTemplate(templateToEdit.stringName(), result, templateToEdit.dyeColor());
+                        addAction(getTeamColorAction());
+                    }).open(arguments.player());
+                }
+            };
+            action.setItem(teamColorItem);
+            return action;
+        }
+
+        private @NotNull MenuAction getDyeColorAction() {
+            ItemTemplate dyeColorItem = new ItemTemplate(5, 1, templateToEdit.dyeColor().dye,
+                    BingoReloaded.applyTitleFormat("Dye Color"),
+                    ComponentUtils.itemName(templateToEdit.dyeColor().dye).color(templateToEdit.dyeColor().textColor).decorate(TextDecoration.ITALIC),
+                    Component.text("Color used for kit items (Team Shulker, etc...)").color(NamedTextColor.GRAY));
+
+            MenuAction action = new MenuAction() {
+                @Override
+                public void use(ActionArguments arguments) {
+                    new DyePickerMenu(getMenuBoard(), (result) -> {
+                        templateToEdit = new TeamData.TeamTemplate(templateToEdit.stringName(), templateToEdit.color(), result);
+                        addAction(getDyeColorAction());
+                    }).open(arguments.player());
+                }
+            };
+            action.setItem(dyeColorItem);
+            return action;
+        }
+
+        @Override
+        public void beforeClosing(PlayerHandle player) {
+            super.beforeClosing(player);
+            finishedCallback.accept(templateToEdit);
+        }
+    }
+}

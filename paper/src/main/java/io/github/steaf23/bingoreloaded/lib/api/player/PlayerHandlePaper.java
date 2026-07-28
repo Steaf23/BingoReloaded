@@ -2,20 +2,17 @@ package io.github.steaf23.bingoreloaded.lib.api.player;
 
 import io.github.steaf23.bingoreloaded.lib.api.AdvancementHandle;
 import io.github.steaf23.bingoreloaded.lib.api.AdvancementHandlePaper;
-import io.github.steaf23.bingoreloaded.lib.api.EntityType;
 import io.github.steaf23.bingoreloaded.lib.api.EntityTypePaper;
 import io.github.steaf23.bingoreloaded.lib.api.PaperApiHelper;
 import io.github.steaf23.bingoreloaded.lib.api.PlayerGamemode;
 import io.github.steaf23.bingoreloaded.lib.api.PotionEffectInstance;
-import io.github.steaf23.bingoreloaded.lib.api.StatisticType;
-import io.github.steaf23.bingoreloaded.lib.api.StatisticTypePaper;
+import io.github.steaf23.bingoreloaded.lib.api.statistics.StatisticHandle;
 import io.github.steaf23.bingoreloaded.lib.api.StatusEffectTypePaper;
 import io.github.steaf23.bingoreloaded.lib.api.WorldHandle;
 import io.github.steaf23.bingoreloaded.lib.api.WorldHandlePaper;
 import io.github.steaf23.bingoreloaded.lib.api.WorldPosition;
 import io.github.steaf23.bingoreloaded.lib.api.item.InventoryHandle;
 import io.github.steaf23.bingoreloaded.lib.api.item.InventoryHandlePaper;
-import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemTypePaper;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandlePaper;
@@ -28,6 +25,7 @@ import net.kyori.adventure.text.format.TextColor;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.waypoints.Waypoint;
 import org.bukkit.GameMode;
+import org.bukkit.Registry;
 import org.bukkit.advancement.AdvancementProgress;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.Player;
@@ -117,18 +115,14 @@ public class PlayerHandlePaper implements PlayerHandle {
 	}
 
 	@Override
-	public int getStatisticValue(StatisticType type) {
-		return player.getStatistic(((StatisticTypePaper)type).handle());
-	}
-
-	@Override
-	public int getStatisticValue(StatisticType type, EntityType entity) {
-		return player.getStatistic(((StatisticTypePaper)type).handle(), ((EntityTypePaper)entity).handle());
-	}
-
-	@Override
-	public int getStatisticValue(StatisticType type, ItemType item) {
-		return player.getStatistic(((StatisticTypePaper)type).handle(), ((ItemTypePaper)item).handle());
+	public int getStatisticValue(StatisticHandle stat) {
+		if (stat.hasEntity()) {
+			return player.getStatistic(Registry.STATISTIC.get(stat.type().key()), ((EntityTypePaper)stat.entityType()).handle());
+		} else if (stat.hasItemType()) {
+			return player.getStatistic(Registry.STATISTIC.get(stat.type().key()), ((ItemTypePaper)stat.itemType()).handle());
+		} else {
+			return player.getStatistic(Registry.STATISTIC.get(stat.type().key()));
+		}
 	}
 
 	@Override
@@ -198,18 +192,14 @@ public class PlayerHandlePaper implements PlayerHandle {
 	}
 
 	@Override
-	public void setStatisticValue(StatisticType type, int value) {
-		player.setStatistic(((StatisticTypePaper)type).handle(), value);
-	}
-
-	@Override
-	public void setStatisticValue(StatisticType type, EntityType entity, int value) {
-		player.setStatistic(((StatisticTypePaper)type).handle(), ((EntityTypePaper)entity).handle(), value);
-	}
-
-	@Override
-	public void setStatisticValue(StatisticType type, ItemType item, int value) {
-		player.setStatistic(((StatisticTypePaper)type).handle(), ((ItemTypePaper)item).handle(), value);
+	public void setStatisticValue(StatisticHandle stat, int value) {
+		if (stat.hasEntity()) {
+			player.setStatistic(Registry.STATISTIC.get(stat.type().key()), ((EntityTypePaper)stat.entityType()).handle(), value);
+		} else if (stat.hasItemType()) {
+			player.setStatistic(Registry.STATISTIC.get(stat.type().key()), ((ItemTypePaper)stat.itemType()).handle(), value);
+		} else {
+			player.setStatistic(Registry.STATISTIC.get(stat.type().key()), value);
+		}
 	}
 
 	@Override

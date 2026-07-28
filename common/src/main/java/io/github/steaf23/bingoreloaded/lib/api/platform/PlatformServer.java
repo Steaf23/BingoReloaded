@@ -1,5 +1,6 @@
 package io.github.steaf23.bingoreloaded.lib.api.platform;
 
+import io.github.steaf23.bingoreloaded.lib.api.AdvancementHandle;
 import io.github.steaf23.bingoreloaded.lib.api.WorldHandle;
 import io.github.steaf23.bingoreloaded.lib.api.WorldOptions;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
@@ -9,10 +10,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 
 public interface PlatformServer {
 
+	PlatformInventories inventories();
 	PlatformCommandDispatcher commandDispatcher();
 
 	Collection<? extends PlayerHandle> getOnlinePlayers();
@@ -27,4 +30,6 @@ public interface PlatformServer {
 	@Nullable WorldHandle createWorld(WorldOptions options);
 	boolean unloadWorld(@NotNull WorldHandle world, boolean save);
 	boolean deleteWorld(@NotNull Key worldKey);
+
+	Iterable<AdvancementHandle> allAdvancements();
 }

@@ -4,6 +4,8 @@ import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.lib.action.ActionResult;
 import io.github.steaf23.bingoreloaded.lib.action.ActionTree;
+import io.github.steaf23.bingoreloaded.lib.api.platform.PaperServer;
+import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformServer;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandlePaper;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
@@ -69,7 +71,7 @@ public class TeamChatCommand extends ActionTree implements Listener {
 
 	@EventHandler
 	public void onPlayerSendMessage(final AsyncChatEvent event) {
-		PlayerHandle handle = new PlayerHandlePaper(event.getPlayer());
+		PlayerHandle handle = new PlayerHandlePaper(new PaperServer(), event.getPlayer());
 		BingoSession session = getSession(handle);
 		if (session == null)
 			return;

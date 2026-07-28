@@ -8,6 +8,7 @@ import io.github.steaf23.bingoreloaded.lib.api.BingoReloadedRuntime;
 import org.jetbrains.annotations.Nullable;
 
 public record GameContext(PlatformServer server, BingoReloaded bingo) {
+
 	public @Nullable BingoSession getSession(String sessionName) {
 		return bingo.getGameManager().getSession(sessionName);
 	}
@@ -22,5 +23,13 @@ public record GameContext(PlatformServer server, BingoReloaded bingo) {
 
 	public GameManager gameManager() {
 		return bingo.getGameManager();
+	}
+
+	public PlatformTaskScheduler taskScheduler() {
+		return runtime().taskScheduler();
+	}
+
+	public PlatformInventories inventories() {
+		return server.inventories();
 	}
 }

@@ -148,7 +148,7 @@ public class PregameLobby implements GamePhase
         playerCountTimerPaused = true;
         playerCountTimer.stop();
         infoMenu.setStatus(BingoMessage.WAIT_STATUS.asPhrase());
-		runtime.settingsDisplay().update(infoMenu);
+		runtime.settingsDisplay().update(session.getGameManager().getServer(), infoMenu);
     }
 
     public void resumePlayerCountTimer() {
@@ -160,7 +160,7 @@ public class PregameLobby implements GamePhase
         } else {
             infoMenu.setStatus(BingoMessage.PLAYER_STATUS.asPhrase(Component.text(playerCount)));
         }
-		runtime.settingsDisplay().update(infoMenu);
+		runtime.settingsDisplay().update(session.getGameManager().getServer(), infoMenu);
 
         startPlayerCountTimerIfMinCountReached();
     }
@@ -210,7 +210,7 @@ public class PregameLobby implements GamePhase
         } else {
             infoMenu.setStatus(BingoMessage.PLAYER_STATUS.asPhrase(Component.text(playerCount)));
         }
-		runtime.settingsDisplay().update(infoMenu);
+		runtime.settingsDisplay().update(session.getGameManager().getServer(), infoMenu);
 
         runtime.taskScheduler().runTask(10L, (t) -> {
             if (gameStarted) {
@@ -248,7 +248,7 @@ public class PregameLobby implements GamePhase
     @Override
     public void handleSettingsUpdated(BingoSettings newSettings) {
         infoMenu.updateSettings(newSettings, config);
-		runtime.settingsDisplay().update(infoMenu);
+		runtime.settingsDisplay().update(session.getGameManager().getServer(), infoMenu);
     }
 
     @Override
@@ -277,7 +277,7 @@ public class PregameLobby implements GamePhase
     @Override
     public void handleParticipantJoinedTeam(final BingoEvents.TeamParticipantEvent event) {
         infoMenu.setStatus(BingoMessage.PLAYER_STATUS.asPhrase(Component.text(session.teamManager.getParticipantCount())));
-		runtime.settingsDisplay().update(infoMenu);
+		runtime.settingsDisplay().update(session.getGameManager().getServer(), infoMenu);
 
         if (playerCountTimer.isRunning() && playerCountTimer.getTime() > 10) {
             event.participant().sessionPlayer().ifPresent(p -> {
@@ -298,7 +298,7 @@ public class PregameLobby implements GamePhase
         } else {
             infoMenu.setStatus(BingoMessage.PLAYER_STATUS.asPhrase(Component.text("" + playerCount)));
         }
-		runtime.settingsDisplay().update(infoMenu);
+		runtime.settingsDisplay().update(session.getGameManager().getServer(), infoMenu);
 
         // Schedule check in the future since a player can switch teams where they will briefly leave the team
         // and lower the participant count to possibly stop the timer.

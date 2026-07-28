@@ -5,21 +5,21 @@ import io.github.steaf23.bingoreloaded.lib.api.AdvancementHandleFabric;
 import io.github.steaf23.bingoreloaded.lib.api.DimensionType;
 import io.github.steaf23.bingoreloaded.lib.api.EntityType;
 import io.github.steaf23.bingoreloaded.lib.api.EntityTypeFabric;
-import io.github.steaf23.bingoreloaded.lib.api.StatisticHandle;
-import io.github.steaf23.bingoreloaded.lib.api.StatisticType;
-import io.github.steaf23.bingoreloaded.lib.api.StatisticTypeFabric;
+import io.github.steaf23.bingoreloaded.lib.api.statistics.StatisticHandle;
 import io.github.steaf23.bingoreloaded.lib.api.StatusEffectType;
 import io.github.steaf23.bingoreloaded.lib.api.StatusEffectTypeFabric;
+import io.github.steaf23.bingoreloaded.lib.api.statistics.VanillaStatistic;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemTypeFabric;
 import io.github.steaf23.bingoreloaded.util.FabricTypes;
 import net.kyori.adventure.key.Key;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.stats.StatType;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.EntityTypes;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public class FabricRegistries implements PlatformRegistries {
 
@@ -56,15 +56,6 @@ public class FabricRegistries implements PlatformRegistries {
 	}
 
 	@Override
-	public StatisticType resolveStatisticType(Key key) {
-		StatType<?> statType = BuiltInRegistries.STAT_TYPE.getValue(FabricTypes.idFromKey(key));
-		if (statType == null) {
-			return null;
-		}
-		return new StatisticTypeFabric(statType);
-	}
-
-	@Override
 	public StatusEffectType resolvePotionEffectType(Key key) {
 		MobEffect type = BuiltInRegistries.MOB_EFFECT.getValue(FabricTypes.idFromKey(key));
 		if (type == null) {
@@ -75,12 +66,17 @@ public class FabricRegistries implements PlatformRegistries {
 	}
 
 	@Override
-	public StatisticHandle createStatistic(StatisticType type, @Nullable ItemType item, @Nullable EntityType entity) {
+	public StatisticHandle createStatistic(VanillaStatistic type, @Nullable ItemType item, @Nullable EntityType entity) {
 		return null;
 	}
 
 	@Override
 	public boolean areAdvancementsDisabled() {
 		return false;
+	}
+
+	@Override
+	public List<ItemType> allItems() {
+		return List.of();
 	}
 }

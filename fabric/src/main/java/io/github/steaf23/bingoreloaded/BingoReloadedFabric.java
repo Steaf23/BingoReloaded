@@ -33,6 +33,7 @@ import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandleFabric;
 import io.github.steaf23.bingoreloaded.lib.api.player.SharedDisplay;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataAccessor;
 import io.github.steaf23.bingoreloaded.lib.data.core.SnakeYamlDataAccessor;
+import io.github.steaf23.bingoreloaded.lib.inventory.BasicMenu;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import net.fabricmc.api.ModInitializer;
@@ -72,8 +73,8 @@ public class BingoReloadedFabric implements ModInitializer, BingoReloadedRuntime
 
 		this.resources = new FabricResources(MOD_ID);
 		this.bingo = new BingoReloaded(this);
-		bingo.load();
-		bingo.enable(resources, createExtensionInfo());
+		bingo.load(createExtensionInfo());
+		bingo.enable(resources);
 
 		ServerLifecycleEvents.SERVER_STARTED.register(server -> {
 			bingo.reloadManager(new FabricServer(server));
@@ -224,6 +225,11 @@ public class BingoReloadedFabric implements ModInitializer, BingoReloadedRuntime
 	@Override
 	public void openLeaderboard(PlayerHandle player, LeaderboardData historyData, boolean categorizeByPresets) {
 
+	}
+
+	@Override
+	public void editCardDescription(PlayerHandle playerHandle, String currentName, String currentDescription, BasicMenu parentMenu, CardDescriptionEditor callback) {
+		callback.edit(playerHandle, parentMenu, currentName, currentName, currentDescription);
 	}
 
 	@Override

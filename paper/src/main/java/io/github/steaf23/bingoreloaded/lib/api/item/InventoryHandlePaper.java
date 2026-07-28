@@ -64,4 +64,9 @@ public class InventoryHandlePaper implements InventoryHandle {
 	public void setContents(StackHandle[] contents) {
 		inventory.setContents(Arrays.stream(contents).map(s -> ((StackHandlePaper)s).handle()).toArray(ItemStack[]::new));
 	}
+
+	@Override
+	public void setMaxStackSize(int newSize) {
+		inventory.setMaxStackSize(newSize);
+	}
 }

@@ -141,7 +141,7 @@ public class TagDataStorage implements DataStorage
     @Override
     public List<DataStorage> getList(String path) {
         return getList(path, TagDataType.COMPOUND).stream()
-                .map(v -> (DataStorage)new TagDataStorage(v))
+                .map(v -> (DataStorage)new TagDataStorage(v).addServerContext(server))
                 .toList();
     }
 
@@ -309,7 +309,7 @@ public class TagDataStorage implements DataStorage
     public <T> void setSerializableList(String path, Class<T> classType, List<T> values) {
         setList(path, TagDataType.COMPOUND, values.stream()
                 .map(v -> {
-                    TagDataStorage storage = new TagDataStorage();
+                    TagDataStorage storage = createNew();
                     DataStorageSerializer<T> serializer = DataStorageSerializerRegistry.getSerializer(classType);
                     if (serializer == null) {
                         return storage.root.getValue();
@@ -329,7 +329,7 @@ public class TagDataStorage implements DataStorage
         }
 
         return getList(path, TagDataType.COMPOUND).stream()
-                .map(v -> serializer.fromDataStorage(new TagDataStorage(new Tag.CompoundTag(v))))
+                .map(v -> serializer.fromDataStorage(new TagDataStorage(new Tag.CompoundTag(v)).addServerContext(server)))
                 .toList();
     }
 

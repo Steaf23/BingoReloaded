@@ -1,5 +1,7 @@
 package io.github.steaf23.bingoreloaded.lib.api.platform;
 
+import io.github.steaf23.bingoreloaded.lib.api.AdvancementHandle;
+import io.github.steaf23.bingoreloaded.lib.api.AdvancementHandleFabric;
 import io.github.steaf23.bingoreloaded.lib.api.WorldHandle;
 import io.github.steaf23.bingoreloaded.lib.api.WorldHandleFabric;
 import io.github.steaf23.bingoreloaded.lib.api.WorldOptions;
@@ -21,14 +23,21 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class FabricServer implements PlatformServer {
 
 	private final MinecraftServer server;
 	private final PlatformCommandDispatcher commandDispatcher = command -> {};
+	private final PlatformInventories inventories = new FabricInventories();
 
 	public FabricServer(MinecraftServer server) {
 		this.server = server;
+	}
+
+	@Override
+	public PlatformInventories inventories() {
+		return inventories;
 	}
 
 	@Override
@@ -111,6 +120,11 @@ public class FabricServer implements PlatformServer {
 	@Override
 	public boolean deleteWorld(@NotNull Key worldKey) {
 		return false;
+	}
+
+	@Override
+	public Iterable<AdvancementHandle> allAdvancements() {
+		return server.getAdvancements().getAllAdvancements().stream().map(AdvancementHandleFabric::new).collect(Collectors.toSet());
 	}
 
 	private @Nullable WorldHandle fromWorld(@Nullable ServerLevel serverWorld) {

@@ -34,7 +34,7 @@ public class DataUpdaterV3_5_0 extends DataUpdaterV3_3_0 {
 
 		DataStorageSerializerRegistry.addSerializer(new ItemStorageSerializer(), SerializableItem.class);
 
-		TagDataAccessor tagData = new TagDataAccessor(server, "data/kits", false);
+		TagDataAccessor tagData = new TagDataAccessor(resources, "data/kits", false);
 		tagData.load();
 
 		for (String kitName : tagData.getKeys()) {
@@ -64,7 +64,7 @@ public class DataUpdaterV3_5_0 extends DataUpdaterV3_3_0 {
 	protected void updateCards() {
 		super.updateCards();
 
-		TagDataAccessor tagData = new TagDataAccessor(server, "data/cards", false);
+		TagDataAccessor tagData = new TagDataAccessor(resources, "data/cards", false);
 		tagData.load();
 
 		tagData.erase("default_card");
