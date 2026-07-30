@@ -1,6 +1,6 @@
 package io.github.steaf23.bingoreloaded.lib.data.core;
 
-import io.github.steaf23.bingoreloaded.lib.api.WorldPosition;
+import io.github.steaf23.bingoreloaded.lib.api.GlobalPosition;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformServer;
 import io.github.steaf23.bingoreloaded.lib.data.core.tag.TagAdapter;
@@ -227,16 +227,16 @@ public class VirtualDataAccessor implements DataAccessor
     }
 
     @Override
-    public void setWorldPosition(String path, @NotNull WorldPosition value) {
+    public void setWorldPosition(String path, @NotNull GlobalPosition value) {
 
     }
 
     @Override
-    public @Nullable WorldPosition getWorldPosition(String path) {
+    public @Nullable GlobalPosition getWorldPosition(String path) {
         return null;
     }
 
-    public @NotNull WorldPosition getWorldPosition(String path, @NotNull WorldPosition def) {
+    public @NotNull GlobalPosition getWorldPosition(String path, @NotNull GlobalPosition def) {
         return def;
     }
 

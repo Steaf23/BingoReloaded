@@ -5,7 +5,7 @@ import io.github.steaf23.bingoreloaded.data.config.BingoOptions;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.lib.api.AdvancementHandle;
 import io.github.steaf23.bingoreloaded.lib.api.statistics.StatisticHandle;
-import io.github.steaf23.bingoreloaded.lib.api.WorldPosition;
+import io.github.steaf23.bingoreloaded.lib.api.GlobalPosition;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformTaskScheduler;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
@@ -274,7 +274,7 @@ public class TaskProgressTracker
         });
     }
 
-    public EventResult<EventResults.PlayerPickupResult> handlePlayerPickupItem(PlayerHandle player, StackHandle stack, WorldPosition itemLocation) {
+    public EventResult<EventResults.PlayerPickupResult> handlePlayerPickupItem(PlayerHandle player, StackHandle stack, GlobalPosition itemLocation) {
 
         BingoParticipant participant = getValidParticipant(player);
         if (participant == null) {

@@ -33,7 +33,6 @@ public class GenericCardMenu extends BasicMenu implements CardMenu
         super(menuBoard, alternateTitle == null ? BingoMessage.CARD_TITLE.asPhrase() : alternateTitle, displayInfo.size().size);
 		this.bingo = bingo;
 		this.tasks = new ArrayList<>();
-        setMaxStackSizeOverride(64);
         this.displayInfo = displayInfo;
         if (displayInfo.allowViewingOtherCards()) {
             addAction(OpenCardSelectAction.createItem(bingo, 8));

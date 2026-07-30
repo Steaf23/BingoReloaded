@@ -1,14 +1,14 @@
 package io.github.steaf23.bingoreloaded.lib.api.player;
 
 import io.github.steaf23.bingoreloaded.lib.api.AdvancementHandle;
+import io.github.steaf23.bingoreloaded.lib.api.GlobalPosition;
 import io.github.steaf23.bingoreloaded.lib.api.PlayerGamemode;
 import io.github.steaf23.bingoreloaded.lib.api.PotionEffectInstance;
+import io.github.steaf23.bingoreloaded.lib.api.inventory.InventoryTemplate;
 import io.github.steaf23.bingoreloaded.lib.api.statistics.StatisticHandle;
 import io.github.steaf23.bingoreloaded.lib.api.StatusEffectTypeFabric;
 import io.github.steaf23.bingoreloaded.lib.api.WorldHandle;
 import io.github.steaf23.bingoreloaded.lib.api.WorldHandleFabric;
-import io.github.steaf23.bingoreloaded.lib.api.WorldPosition;
-import io.github.steaf23.bingoreloaded.lib.api.item.InventoryHandle;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.api.platform.FabricServer;
 import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformServer;
@@ -61,6 +61,10 @@ public class PlayerHandleFabric implements PlayerHandle {
 		};
 	}
 
+	public ServerPlayer handle() {
+		return player;
+	}
+
 	@Override
 	public PlatformServer server() {
 		return server;
@@ -87,13 +91,13 @@ public class PlayerHandleFabric implements PlayerHandle {
 	}
 
 	@Override
-	public WorldPosition position() {
+	public GlobalPosition position() {
 		Vec3 pos = player.position();
-		return new WorldPosition(world(), pos.x, pos.y, pos.z);
+		return new GlobalPosition(world(), pos.x, pos.y, pos.z);
 	}
 
 	@Override
-	public @Nullable WorldPosition respawnPoint() {
+	public @Nullable GlobalPosition respawnPoint() {
 		ServerPlayer.RespawnConfig config = player.getRespawnConfig();
 		if (config == null) {
 			return null;
@@ -108,7 +112,7 @@ public class PlayerHandleFabric implements PlayerHandle {
 			}
 		}
 
-		return new WorldPosition(new WorldHandleFabric(levelToRespawn), pos.pos().getX(), pos.pos().getY(), pos.pos().getZ());
+		return new GlobalPosition(new WorldHandleFabric(levelToRespawn), pos.pos().getX(), pos.pos().getY(), pos.pos().getZ());
 	}
 
 	@Override
@@ -147,19 +151,17 @@ public class PlayerHandleFabric implements PlayerHandle {
 	}
 
 	@Override
-	public void teleportAsync(WorldPosition pos, @Nullable Consumer<Boolean> whenFinished) {
-
+	public void teleportAsync(GlobalPosition pos, @Nullable Consumer<Boolean> whenFinished) {
+		teleportBlocking(pos);
+		if (whenFinished != null) {
+			whenFinished.accept(true);
+		}
 	}
 
 	@Override
-	public boolean teleportBlocking(WorldPosition pos) {
-		player.teleportTo(((WorldHandleFabric)pos.world()).handle(), pos.x(), pos.y(), pos.z(), Set.of(), 0, 0, false);
+	public boolean teleportBlocking(GlobalPosition pos) {
+		player.teleportTo(((WorldHandleFabric)pos.world(server)).handle(), pos.x(), pos.y(), pos.z(), Set.of(), 0, 0, false);
 		return false;
-	}
-
-	@Override
-	public PlayerInventoryHandle inventory() {
-		return null;
 	}
 
 	@Override
@@ -168,17 +170,12 @@ public class PlayerHandleFabric implements PlayerHandle {
 	}
 
 	@Override
-	public void openInventory(InventoryHandle inventory) {
+	public void tryOpenInventory(InventoryTemplate inventory) {
 
 	}
 
 	@Override
-	public InventoryHandle enderChest() {
-		return null;
-	}
-
-	@Override
-	public void setRespawnPoint(WorldPosition newSpawn, boolean force) {
+	public void setRespawnPoint(GlobalPosition newSpawn, boolean force) {
 		BlockPos pos = new BlockPos(newSpawn.blockX(), newSpawn.blockY(), newSpawn.blockZ());
 		player.setRespawnPosition(new ServerPlayer.RespawnConfig(new LevelData.RespawnData(GlobalPos.of(player.level().dimension(), pos), 0, 0), force), false);
 	}

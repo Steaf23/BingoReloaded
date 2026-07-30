@@ -5,16 +5,17 @@ import io.github.steaf23.bingoreloaded.gameloop.GameManager;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.gameloop.phase.PregameLobby;
 import io.github.steaf23.bingoreloaded.lib.api.AdvancementHandle;
+import io.github.steaf23.bingoreloaded.lib.api.GlobalPosition;
 import io.github.steaf23.bingoreloaded.lib.api.InteractAction;
 import io.github.steaf23.bingoreloaded.lib.api.statistics.StatisticHandle;
 import io.github.steaf23.bingoreloaded.lib.api.WorldHandle;
-import io.github.steaf23.bingoreloaded.lib.api.WorldPosition;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.event.EventResult;
 import io.github.steaf23.bingoreloaded.lib.event.EventResults;
 import io.github.steaf23.bingoreloaded.lib.event.PlatformEventDispatcher;
+import net.kyori.adventure.key.Key;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -38,8 +39,14 @@ public final class BingoEventListener implements PlatformEventDispatcher {
 		return gameManager.getSessionFromWorld(world);
 	}
 
+	@Nullable
+	private BingoSession getSessionFromKey(@NotNull Key world)
+	{
+		return gameManager.getSessionFromWorld(world);
+	}
+
 	@Override
-	public EventResult<?> sendPlayerMove(PlayerHandle player, WorldPosition from, WorldPosition to) {
+	public EventResult<?> sendPlayerMove(PlayerHandle player, GlobalPosition from, GlobalPosition to) {
 		BingoGame game = getBingoGame(player.world());
 		if (game == null) return EventResult.IGNORE;
 
@@ -47,15 +54,15 @@ public final class BingoEventListener implements PlatformEventDispatcher {
 	}
 
 	@Override
-	public EventResult<?> sendPlayerTeleport(PlayerHandle player, WorldPosition from, WorldPosition to) {
+	public EventResult<?> sendPlayerTeleport(PlayerHandle player, GlobalPosition from, GlobalPosition to) {
 		return gameManager.handlePlayerTeleport(player, from, to);
 	}
 
 
 	@Override
-	public EventResult<EventResults.PlayerMoveResult> sendPlayerPortal(PlayerHandle player, WorldPosition from, WorldPosition to) {
+	public EventResult<EventResults.PlayerMoveResult> sendPlayerPortal(PlayerHandle player, GlobalPosition from, GlobalPosition to) {
 		// We only care about this event when it was sent from a bingo world.
-		BingoSession session = getSession(from.world());
+		BingoSession session = getSessionFromKey(from.dimension());
 		if (session == null)
 			return new EventResult<>(false, null);
 
@@ -140,7 +147,7 @@ public final class BingoEventListener implements PlatformEventDispatcher {
 	}
 
 	@Override
-	public EventResult<?> sendPlayerBreaksBlock(PlayerHandle player, WorldPosition position, ItemType blockType) {
+	public EventResult<?> sendPlayerBreaksBlock(PlayerHandle player, GlobalPosition position, ItemType blockType) {
 		BingoSession session = getSession(player.world());
 		if (session == null)
 			return EventResult.IGNORE;
@@ -149,7 +156,7 @@ public final class BingoEventListener implements PlatformEventDispatcher {
 	}
 
 	@Override
-	public EventResult<?> sendPlayerPlacesBlock(PlayerHandle player, WorldPosition position, ItemType blockType) {
+	public EventResult<?> sendPlayerPlacesBlock(PlayerHandle player, GlobalPosition position, ItemType blockType) {
 		BingoSession session = getSession(player.world());
 		if (session == null)
 			return EventResult.IGNORE;
@@ -188,7 +195,7 @@ public final class BingoEventListener implements PlatformEventDispatcher {
 	}
 
 	@Override
-	public EventResult<EventResults.PlayerPickupResult> sendPlayerPickupStack(PlayerHandle player, StackHandle stack, WorldPosition itemLocation) {
+	public EventResult<EventResults.PlayerPickupResult> sendPlayerPickupStack(PlayerHandle player, StackHandle stack, GlobalPosition itemLocation) {
 		BingoSession session = getSession(player.world());
 		BingoGame game = session != null && session.isRunning() ? (BingoGame)session.phase() : null;
 		if (game != null && game.hasStarted())

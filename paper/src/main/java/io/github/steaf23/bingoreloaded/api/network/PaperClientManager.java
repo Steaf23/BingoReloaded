@@ -7,7 +7,7 @@ import io.github.steaf23.bingoreloaded.cards.TaskCard;
 import io.github.steaf23.bingoreloaded.cards.slot.TickingTaskSlot;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
-import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandlePaper;
+import io.github.steaf23.bingoreloaded.lib.api.PlayerHandlePaper;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import org.apache.commons.lang3.function.FailableConsumer;
@@ -54,7 +54,7 @@ public class PaperClientManager implements BingoClientManager {
 				return;
 			}
 
-			bingo.getGameManager().getRuntime().taskScheduler().runTask(20, t -> {
+			bingo.getGameManager().getServer().taskScheduler().runTask(20, t -> {
 				updateCard(handle, participant.getCard().orElse(null));
 			});
 		});

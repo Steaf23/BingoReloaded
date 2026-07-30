@@ -1,11 +1,11 @@
 package io.github.steaf23.bingoreloaded.lib.api;
 
 import io.github.steaf23.bingoreloaded.item.TeamPouch;
-import io.github.steaf23.bingoreloaded.lib.api.item.CapacityInventoryProvider;
-import io.github.steaf23.bingoreloaded.lib.api.item.InventoryHandle;
-import io.github.steaf23.bingoreloaded.lib.api.item.InventoryHandlePaper;
+import io.github.steaf23.bingoreloaded.lib.api.inventory.CapacityInventoryProvider;
+import io.github.steaf23.bingoreloaded.lib.api.inventory.InventoryTemplate;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandlePaper;
+import io.github.steaf23.bingoreloaded.lib.api.platform.PaperInventories;
 import io.github.steaf23.bingoreloaded.lib.inventory.BasicMenu;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
@@ -49,23 +49,24 @@ public class PaperInventoryProvider implements CapacityInventoryProvider, Listen
 	}
 
 	@Override
-	public InventoryHandle create() {
+	public InventoryTemplate create() {
 		DummyHolder holder = new DummyHolder();
 		int startRows = slots / 9;
 		int extraSlots = slots % 9;
 		int rows = extraSlots > 0 ? startRows + 1 : startRows;
 		holder.inventory = Bukkit.createInventory(holder, rows * 9, title);
+		PaperInventories.BukkitInventoryUpdater updater = new PaperInventories.BukkitInventoryUpdater(holder.getInventory());
+		InventoryTemplate template = new InventoryTemplate(updater.inventory().getSize()).addListener(updater);
 
-		InventoryHandle handle = new InventoryHandlePaper(holder.inventory);
 		if (rows == startRows) {
-			return handle;
+			return template;
 		}
 
 		for (int i = 0; i < 9 - extraSlots; i++) {
 			ItemTemplate item = BasicMenu.BLANK.copyToSlot(8 - i, rows - 1).setCompareKey("locked");
-			handle.setItem(item.getSlot(), item.buildItem());
+			template.setItem(item.getSlot(), item.buildItem());
 		}
-		return handle;
+		return template;
 	}
 
 	@EventHandler

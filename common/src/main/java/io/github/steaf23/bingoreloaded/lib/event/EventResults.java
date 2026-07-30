@@ -1,6 +1,6 @@
 package io.github.steaf23.bingoreloaded.lib.event;
 
-import io.github.steaf23.bingoreloaded.lib.api.WorldPosition;
+import io.github.steaf23.bingoreloaded.lib.api.GlobalPosition;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import org.jetbrains.annotations.Nullable;
 
@@ -17,19 +17,19 @@ public class EventResults {
 
 	}
 
-	public static EventResult<PlayerRespawnResult> playerRespawnResult(boolean cancel, boolean overwriteSpawnPoint, @Nullable WorldPosition newSpawnPoint) {
+	public static EventResult<PlayerRespawnResult> playerRespawnResult(boolean cancel, boolean overwriteSpawnPoint, @Nullable GlobalPosition newSpawnPoint) {
 		return new EventResult<>(cancel, new PlayerRespawnResult(overwriteSpawnPoint, newSpawnPoint));
 	}
 
-	public record PlayerRespawnResult(boolean overwriteSpawnPoint, @Nullable WorldPosition newSpawnPoint) {
+	public record PlayerRespawnResult(boolean overwriteSpawnPoint, @Nullable GlobalPosition newSpawnPoint) {
 
 	}
 
-	public static EventResult<PlayerMoveResult> playerMoveResult(boolean cancel, boolean overwritePosition, @Nullable WorldPosition newPosition) {
+	public static EventResult<PlayerMoveResult> playerMoveResult(boolean cancel, boolean overwritePosition, @Nullable GlobalPosition newPosition) {
 		return new EventResult<>(cancel, new PlayerMoveResult(overwritePosition, newPosition));
 	}
 
-	public record PlayerMoveResult(boolean overwritePosition, @Nullable WorldPosition newPosition) {
+	public record PlayerMoveResult(boolean overwritePosition, @Nullable GlobalPosition newPosition) {
 
 	}
 

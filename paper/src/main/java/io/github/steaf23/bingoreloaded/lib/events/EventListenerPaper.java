@@ -4,7 +4,6 @@ import io.github.steaf23.bingoreloaded.lib.api.AdvancementHandlePaper;
 import io.github.steaf23.bingoreloaded.lib.api.EntityTypePaper;
 import io.github.steaf23.bingoreloaded.lib.api.InteractAction;
 import io.github.steaf23.bingoreloaded.lib.api.PaperApiHelper;
-import io.github.steaf23.bingoreloaded.lib.api.PlatformResolver;
 import io.github.steaf23.bingoreloaded.lib.api.statistics.StatisticHandle;
 import io.github.steaf23.bingoreloaded.lib.api.statistics.VanillaStatistic;
 import io.github.steaf23.bingoreloaded.lib.api.statistics.VanillaStatistics;
@@ -12,7 +11,7 @@ import io.github.steaf23.bingoreloaded.lib.api.item.ItemTypePaper;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandlePaper;
 import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformServer;
-import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandlePaper;
+import io.github.steaf23.bingoreloaded.lib.api.PlayerHandlePaper;
 import io.github.steaf23.bingoreloaded.lib.event.EventResult;
 import io.github.steaf23.bingoreloaded.lib.event.EventResults;
 import io.github.steaf23.bingoreloaded.lib.event.PlatformEventDispatcher;
@@ -107,7 +106,7 @@ public class EventListenerPaper implements Listener {
 				ConsoleMessenger.bug("New spawnpoint cannot be null when respawing player!", this);
 				return;
 			}
-			event.setRespawnLocation(PaperApiHelper.locationFromWorldPos(data.newSpawnPoint()));
+			event.setRespawnLocation(PaperApiHelper.locationFromWorldPos(server.getWorld(data.newSpawnPoint().dimension()), data.newSpawnPoint()));
 		}
 	}
 
@@ -143,7 +142,7 @@ public class EventListenerPaper implements Listener {
 			return;
 		}
 
-		event.setTo(PaperApiHelper.locationFromWorldPos(result.data().newPosition()));
+		event.setTo(PaperApiHelper.locationFromWorldPos(server.getWorld(result.data().newPosition().dimension()), result.data().newPosition()));
 	}
 
 	@EventHandler

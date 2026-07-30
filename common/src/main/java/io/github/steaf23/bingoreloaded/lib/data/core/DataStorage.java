@@ -1,6 +1,6 @@
 package io.github.steaf23.bingoreloaded.lib.data.core;
 
-import io.github.steaf23.bingoreloaded.lib.api.WorldPosition;
+import io.github.steaf23.bingoreloaded.lib.api.GlobalPosition;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformServer;
 import io.github.steaf23.bingoreloaded.lib.data.core.tag.TagAdapter;
@@ -102,9 +102,9 @@ public interface DataStorage
     void setUUID(String path, @Nullable UUID value);
     @Nullable UUID getUUID(String path);
 
-    void setWorldPosition(String path, @NotNull WorldPosition value);
-    @Nullable WorldPosition getWorldPosition(String path);
-    @NotNull WorldPosition getWorldPosition(String path, @NotNull WorldPosition def);
+    void setWorldPosition(String path, @NotNull GlobalPosition value);
+    @Nullable GlobalPosition getWorldPosition(String path);
+    @NotNull GlobalPosition getWorldPosition(String path, @NotNull GlobalPosition def);
 
     void setNamespacedKey(String path, @NotNull Key value);
     @NotNull Key getNamespacedKey(String path);

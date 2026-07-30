@@ -9,15 +9,13 @@ import io.github.steaf23.bingoreloaded.lib.api.item.VanillaItems;
 import io.github.steaf23.bingoreloaded.lib.inventory.MenuBoard;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
-import io.github.steaf23.bingoreloaded.lib.data.core.DataStorage;
 import io.github.steaf23.bingoreloaded.lib.inventory.BasicMenu;
-import io.github.steaf23.bingoreloaded.lib.inventory.InventoryMenu;
+import io.github.steaf23.bingoreloaded.lib.inventory.Menu;
 import io.github.steaf23.bingoreloaded.lib.inventory.PaginatedDataMenu;
 import io.github.steaf23.bingoreloaded.lib.inventory.UserInputMenu;
 import io.github.steaf23.bingoreloaded.lib.inventory.action.MenuAction;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import io.github.steaf23.bingoreloaded.util.BingoPlayerSender;
-import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.Style;
@@ -89,11 +87,11 @@ public class BingoCreatorMenu extends BasicMenu {
 				if (cardsData.isDefaultCard(cardName)) {
 					item.addDescription("input", 5,
 							Component.text("Cannot edit default card, use right click to duplicate them instead!").color(NamedTextColor.RED),
-							InventoryMenu.INPUT_RIGHT_CLICK.append(Component.text("more options")));
+							Menu.INPUT_RIGHT_CLICK.append(Component.text("more options")));
 				} else {
 					item.addDescription("input", 5,
-							InventoryMenu.INPUT_LEFT_CLICK.append(Component.text("edit distribution")),
-							InventoryMenu.INPUT_RIGHT_CLICK.append(Component.text("more options")));
+							Menu.INPUT_LEFT_CLICK.append(Component.text("edit distribution")),
+							Menu.INPUT_RIGHT_CLICK.append(Component.text("more options")));
 				}
 				return item;
 			}
@@ -137,12 +135,12 @@ public class BingoCreatorMenu extends BasicMenu {
 				if (TaskListData.DEFAULT_LIST_NAMES.contains(listName)) {
 					item.addDescription("input", 5,
 							Component.text("Cannot edit default list, use right click to duplicate them instead!").color(NamedTextColor.RED),
-							InventoryMenu.INPUT_RIGHT_CLICK.append(Component.text("more options"))
+							Menu.INPUT_RIGHT_CLICK.append(Component.text("more options"))
 					);
 				} else {
 					item.addDescription("input", 5,
-							InventoryMenu.INPUT_LEFT_CLICK.append(Component.text("edit tasks")),
-							InventoryMenu.INPUT_RIGHT_CLICK.append(Component.text("more options")));
+							Menu.INPUT_LEFT_CLICK.append(Component.text("edit tasks")),
+							Menu.INPUT_RIGHT_CLICK.append(Component.text("more options")));
 				}
 				return item;
 			}

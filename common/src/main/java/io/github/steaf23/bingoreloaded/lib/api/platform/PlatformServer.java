@@ -17,6 +17,8 @@ public interface PlatformServer {
 
 	PlatformInventories inventories();
 	PlatformCommandDispatcher commandDispatcher();
+	PlatformTaskScheduler taskScheduler();
+	PlatformMenus menus();
 
 	Collection<? extends PlayerHandle> getOnlinePlayers();
 	@Nullable PlayerHandle getPlayerFromUniqueId(UUID id);

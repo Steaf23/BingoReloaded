@@ -8,7 +8,7 @@ import io.github.steaf23.bingoreloaded.lib.api.item.VanillaItems;
 import io.github.steaf23.bingoreloaded.lib.inventory.MenuBoard;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.inventory.BasicMenu;
-import io.github.steaf23.bingoreloaded.lib.inventory.InventoryMenu;
+import io.github.steaf23.bingoreloaded.lib.inventory.Menu;
 import io.github.steaf23.bingoreloaded.lib.inventory.action.ComboBoxButtonAction;
 import io.github.steaf23.bingoreloaded.lib.inventory.action.MenuAction;
 import io.github.steaf23.bingoreloaded.lib.inventory.action.SpinBoxButtonAction;
@@ -51,7 +51,7 @@ public class GamemodeOptionsMenu extends BasicMenu
         BasicMenu optionMenu = new BasicMenu(getMenuBoard(), Component.text("Select Gamemode Options"), 1);
         List<Consumer<BingoSettingsBuilder>> additionalOptions = new ArrayList<>();
 
-        Component toggleInput = InventoryMenu.INPUT_LEFT_CLICK.append(Component.text("toggle option"));
+        Component toggleInput = Menu.INPUT_LEFT_CLICK.append(Component.text("toggle option"));
         MenuAction cardSizeAction = new ComboBoxButtonAction.Builder("3",
                 new ItemTemplate(VanillaItems.RABBIT_HIDE.type(), BingoReloaded.applyTitleFormat("Small card (3x3)")).addDescription("input", 10, toggleInput))
                 .addOption("5",

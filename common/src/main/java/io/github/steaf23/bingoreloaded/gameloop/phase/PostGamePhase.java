@@ -38,7 +38,7 @@ public class PostGamePhase implements GamePhase
             timer.stop();
             return;
         }
-        timer.start(session.getGameManager().getRuntime().taskScheduler());
+        timer.start(session.getGameManager().getServer().taskScheduler());
         timer.addNotifier(this::onTimerTicks);
         sendRestartMessage(timer.getTime(), session);
     }

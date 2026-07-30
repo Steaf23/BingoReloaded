@@ -8,7 +8,7 @@ import io.github.steaf23.bingoreloaded.lib.api.item.VanillaItems;
 import io.github.steaf23.bingoreloaded.lib.inventory.MenuBoard;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.inventory.BasicMenu;
-import io.github.steaf23.bingoreloaded.lib.inventory.InventoryMenu;
+import io.github.steaf23.bingoreloaded.lib.inventory.Menu;
 import io.github.steaf23.bingoreloaded.lib.inventory.action.MenuAction;
 import io.github.steaf23.bingoreloaded.lib.inventory.group.ScrollableItemBar;
 import io.github.steaf23.bingoreloaded.lib.inventory.group.SelectionModel;
@@ -85,12 +85,12 @@ public class TagExclusionMenu extends BasicMenu {
 			newItem.setLore(Component.text("Tasks tagged with ")
 							.append(tagComponent)
 							.append(ComponentUtils.MINI_BUILDER.deserialize(" are <red>excluded</red> from this card")))
-					.addDescription("input", 10, InventoryMenu.INPUT_LEFT_CLICK.append(Component.text("Include tasks instead")));
+					.addDescription("input", 10, Menu.INPUT_LEFT_CLICK.append(Component.text("Include tasks instead")));
 		} else {
 			newItem.setLore(Component.text("Tasks tagged with ")
 							.append(tagComponent)
 							.append(ComponentUtils.MINI_BUILDER.deserialize(" are <green>included</green> with this card")))
-					.addDescription("input", 10, InventoryMenu.INPUT_LEFT_CLICK.append(Component.text("Exclude tasks instead")));
+					.addDescription("input", 10, Menu.INPUT_LEFT_CLICK.append(Component.text("Exclude tasks instead")));
 		}
 		return newItem;
 	}

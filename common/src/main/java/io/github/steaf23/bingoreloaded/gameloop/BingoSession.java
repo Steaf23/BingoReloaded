@@ -17,16 +17,16 @@ import io.github.steaf23.bingoreloaded.gameloop.vote.VoteCategory;
 import io.github.steaf23.bingoreloaded.gameloop.vote.VoteTicket;
 import io.github.steaf23.bingoreloaded.item.BingoItems;
 import io.github.steaf23.bingoreloaded.lib.api.DimensionType;
+import io.github.steaf23.bingoreloaded.lib.api.GlobalPosition;
 import io.github.steaf23.bingoreloaded.lib.api.PlayerGamemode;
 import io.github.steaf23.bingoreloaded.lib.api.WorldHandle;
-import io.github.steaf23.bingoreloaded.lib.api.WorldPosition;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.event.EventResult;
 import io.github.steaf23.bingoreloaded.lib.event.EventResults;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
-import io.github.steaf23.bingoreloaded.lib.world.BlockHelper;
+import io.github.steaf23.bingoreloaded.lib.world.BlockBuilder;
 import io.github.steaf23.bingoreloaded.menu.BingoGameInfoMenu;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
@@ -93,7 +93,7 @@ public class BingoSession implements ForwardingAudience
         //TODO: decide a better place for this command
 //        BingoReloaded.getInstance().registerCommand("bingobot", new BotCommand(this));
 
-        gameManager.getRuntime().taskScheduler().runTask(10L, (t) -> {
+        gameManager.getServer().taskScheduler().runTask(10L, (t) -> {
             for (PlayerHandle p : gameManager.getServer().getOnlinePlayers()) {
                 if (hasPlayer(p)) {
                     addPlayer(p);
@@ -120,7 +120,7 @@ public class BingoSession implements ForwardingAudience
 		return startGame(null);
 	}
 
-    public boolean startGame(@Nullable WorldPosition atPosition) {
+    public boolean startGame(@Nullable GlobalPosition atPosition) {
         if (!(phase instanceof PregameLobby lobby)) {
             ConsoleMessenger.error("Cannot start a game on this world if it is not in the lobby phase!");
             return false;
@@ -209,15 +209,15 @@ public class BingoSession implements ForwardingAudience
 				delaySeconds = Math.min(delaySeconds, gameRestartTime);
 
 				if (delaySeconds > 0.0) {
-					gameManager.getRuntime().taskScheduler().runTask((long) (delaySeconds * BingoReloaded.ONE_SECOND), t -> {
+					gameManager.getServer().taskScheduler().runTask((long) (delaySeconds * BingoReloaded.ONE_SECOND), t -> {
 						getPlayersInWorld().forEach(p -> {
-							WorldPosition pos = BlockHelper.getRandomPosWithinRange(lobby.spawnPosition(), spread, spread);
+							GlobalPosition pos = BlockBuilder.getRandomPosWithinRange(lobby.spawnPosition(), spread, spread);
 							p.teleportAsync(pos);
 						});
 					});
 				} else {
 					getPlayersInWorld().forEach(p -> {
-						WorldPosition pos = BlockHelper.getRandomPosWithinRange(lobby.spawnPosition(), spread, spread);
+						GlobalPosition pos = BlockBuilder.getRandomPosWithinRange(lobby.spawnPosition(), spread, spread);
 						p.teleportAsync(pos);
 					});
 				}
@@ -257,7 +257,7 @@ public class BingoSession implements ForwardingAudience
 
 			int spread = config.getOptionValue(BingoOptions.TELEPORT_TO_LOBBY_SPREAD);
 			if (config.getOptionValue(BingoOptions.CONFIGURATION) == BingoOptions.PluginConfiguration.SINGULAR && lobby != null && lobby.spawnPosition() != null) {
-				player.teleportAsync(BlockHelper.getRandomPosWithinRange(lobby.spawnPosition(), spread, spread));
+				player.teleportAsync(BlockBuilder.getRandomPosWithinRange(lobby.spawnPosition(), spread, spread));
 			}
 		}
         BingoReloaded.sendResourcePack(player);
@@ -290,7 +290,7 @@ public class BingoSession implements ForwardingAudience
 	}
 
     public void onPlayerJoinedSessionWorld(PlayerHandle player) {
-        gameManager.getRuntime().taskScheduler().runTask(t -> {
+        gameManager.getServer().taskScheduler().runTask(t -> {
             teamManager.handlePlayerJoinedSessionWorld(player);
             phase.handlePlayerJoinedSessionWorld(player);
 
@@ -308,7 +308,7 @@ public class BingoSession implements ForwardingAudience
 		getGameManager().getRuntime().getClientManager().updateCard(player, null);
 
 
-        getGameManager().getRuntime().taskScheduler().runTask(t -> {
+        getGameManager().getServer().taskScheduler().runTask(t -> {
             teamManager.handlePlayerLeftSessionWorld(player);
             phase.handlePlayerLeftSessionWorld(player);
 
@@ -348,40 +348,40 @@ public class BingoSession implements ForwardingAudience
         teamDisplay.update();
     }
 
-    public EventResult<EventResults.PlayerMoveResult> handlePlayerPortalEvent(final PlayerHandle player, final WorldPosition fromPos, @NotNull WorldPosition toPos) {
-        WorldHandle origin = fromPos.world();
-        WorldHandle target = toPos.world();
+    public EventResult<EventResults.PlayerMoveResult> handlePlayerPortalEvent(final PlayerHandle player, final GlobalPosition fromPos, @NotNull GlobalPosition toPos) {
+        WorldHandle origin = fromPos.world(gameManager.getServer());
+        WorldHandle target = toPos.world(gameManager.getServer());
 
-        WorldPosition targetLocation = new WorldPosition(toPos);
+        GlobalPosition targetLocation = new GlobalPosition(toPos);
         Key worldKey = worlds.key();
         if (origin.key().equals(worldKey)) {
             // coming from the OW we can go to either the nether or the end
-            if (target.dimension() == DimensionType.NETHER) {
+            if (target.dimensionType() == DimensionType.NETHER) {
                 // Nether
                 if (config.getOptionValue(BingoOptions.DISABLE_NETHER)) {
                     return EventResults.playerMoveResult(true, false, null);
                 }
-                targetLocation.setWorld(worlds.getNetherWorld());
-            } else if (target.dimension() == DimensionType.THE_END) {
+                targetLocation.setDimension(WorldGroup.netherKey(worlds.key()));
+            } else if (target.dimensionType() == DimensionType.THE_END) {
                 // The End
                 if (config.getOptionValue(BingoOptions.DISABLE_THE_END)) {
                     return EventResults.playerMoveResult(true, false, null);
                 }
-                targetLocation.setWorld(worlds.getEndWorld());
+                targetLocation.setDimension(WorldGroup.theEndKey(worlds.key()));
             } else {
                 ConsoleMessenger.bug("Could not catch player going through portal", this);
             }
         } else if (origin.key().equals(WorldGroup.netherKey(worldKey))) {
             // coming from the nether we can only go to the OW
-            targetLocation.setWorld(worlds.getOverworld());
+            targetLocation.setDimension(worlds.overworldKey());
         } else if (origin.key().equals(WorldGroup.theEndKey(worldKey))) {
             // coming from the end we can go to either the overworld or to the end spawn from an outer portal.
-            if (target.dimension() == DimensionType.OVERWORLD) {
+            if (target.dimensionType() == DimensionType.OVERWORLD) {
                 // Overworld
-                targetLocation.setWorld(worlds.getOverworld());
-            } else if (target.dimension() == DimensionType.THE_END) {
+                targetLocation.setDimension(worlds.overworldKey());
+            } else if (target.dimensionType() == DimensionType.THE_END) {
                 // The End
-                targetLocation.setWorld(worlds.getEndWorld());
+                targetLocation.setDimension(WorldGroup.netherKey(worlds.key()));
             } else {
                 ConsoleMessenger.bug("Could not catch player going through portal", this);
             }
@@ -390,7 +390,7 @@ public class BingoSession implements ForwardingAudience
         return EventResults.playerMoveResult(false, true, targetLocation);
     }
 
-    public EventResult<?> handlePlayerBlockBreak(PlayerHandle player, WorldPosition position, ItemType block) {
+    public EventResult<?> handlePlayerBlockBreak(PlayerHandle player, GlobalPosition position, ItemType block) {
         if (!isRunning() && config.getOptionValue(BingoOptions.PREVENT_PLAYER_GRIEFING) && !BingoReloaded.isAdmin(player)) {
             BingoMessage.NO_GRIEFING.sendToAudience(player);
             return EventResult.CONSUME;
@@ -398,7 +398,7 @@ public class BingoSession implements ForwardingAudience
         return EventResult.IGNORE;
     }
 
-    public EventResult<?> handlePlayerBlockPlace(PlayerHandle player, WorldPosition position, ItemType block) {
+    public EventResult<?> handlePlayerBlockPlace(PlayerHandle player, GlobalPosition position, ItemType block) {
         if (!isRunning() && config.getOptionValue(BingoOptions.PREVENT_PLAYER_GRIEFING) && !BingoReloaded.isAdmin(player)) {
             BingoMessage.NO_GRIEFING.sendToAudience(player);
             return EventResult.CONSUME;
@@ -408,6 +408,10 @@ public class BingoSession implements ForwardingAudience
 
     public WorldHandle getOverworld() {
         return worlds.getOverworld();
+    }
+
+    public boolean ownsWorld(@NotNull Key worldKey) {
+        return worlds.hasWorld(worldKey);
     }
 
     public boolean ownsWorld(@NotNull WorldHandle world) {

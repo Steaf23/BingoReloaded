@@ -8,9 +8,7 @@ public class Position {
 	private double z;
 
 	public Position(Position fromOther) {
-		x = fromOther.x;
-		y = fromOther.y;
-		z = fromOther.z;
+		takeFrom(fromOther);
 	}
 
 	public Position(double x, double y, double z) {

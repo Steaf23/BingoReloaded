@@ -26,10 +26,14 @@ public record GameContext(PlatformServer server, BingoReloaded bingo) {
 	}
 
 	public PlatformTaskScheduler taskScheduler() {
-		return runtime().taskScheduler();
+		return server().taskScheduler();
 	}
 
 	public PlatformInventories inventories() {
 		return server.inventories();
+	}
+
+	public PlatformMenus menus() {
+		return server().menus();
 	}
 }

@@ -1,6 +1,6 @@
 package io.github.steaf23.bingoreloaded.lib.inventory.action;
 
-import io.github.steaf23.bingoreloaded.lib.inventory.InventoryMenu;
+import io.github.steaf23.bingoreloaded.lib.inventory.Menu;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
@@ -27,7 +27,7 @@ public class ToggleButtonAction extends MenuAction
         item.setGlowing(enabled);
 
         item.addDescription("input", 10,
-                InventoryMenu.INPUT_LEFT_CLICK.append(Component.text("toggle")));
+                Menu.INPUT_LEFT_CLICK.append(Component.text("toggle")));
     }
 
     @Override

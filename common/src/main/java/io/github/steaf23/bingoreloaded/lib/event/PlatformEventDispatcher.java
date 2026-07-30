@@ -1,9 +1,9 @@
 package io.github.steaf23.bingoreloaded.lib.event;
 
 import io.github.steaf23.bingoreloaded.lib.api.AdvancementHandle;
+import io.github.steaf23.bingoreloaded.lib.api.GlobalPosition;
 import io.github.steaf23.bingoreloaded.lib.api.InteractAction;
 import io.github.steaf23.bingoreloaded.lib.api.statistics.StatisticHandle;
-import io.github.steaf23.bingoreloaded.lib.api.WorldPosition;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
@@ -16,9 +16,9 @@ import java.util.Collection;
  */
 public interface PlatformEventDispatcher {
 
-	EventResult<?> sendPlayerMove(PlayerHandle player, WorldPosition from, WorldPosition to);
-	EventResult<?> sendPlayerTeleport(PlayerHandle player, WorldPosition from, WorldPosition to);
-	EventResult<EventResults.PlayerMoveResult> sendPlayerPortal(PlayerHandle player, WorldPosition from, WorldPosition to);
+	EventResult<?> sendPlayerMove(PlayerHandle player, GlobalPosition from, GlobalPosition to);
+	EventResult<?> sendPlayerTeleport(PlayerHandle player, GlobalPosition from, GlobalPosition to);
+	EventResult<EventResults.PlayerMoveResult> sendPlayerPortal(PlayerHandle player, GlobalPosition from, GlobalPosition to);
 	EventResult<?> sendPlayerDroppedStack(PlayerHandle player, StackHandle item);
 	EventResult<?> sendPlayerStackDamaged(PlayerHandle player, StackHandle item);
 	EventResult<?> sendPlayerInteracted(PlayerHandle player, @Nullable StackHandle handItem, InteractAction action);
@@ -27,10 +27,10 @@ public interface PlatformEventDispatcher {
 	EventResult<EventResults.PlayerRespawnResult> sendPlayerRespawn(PlayerHandle player, boolean isBedSpawn, boolean isAnchorSpawn);
 	EventResult<?> sendPlayerJoinsServer(PlayerHandle player);
 	EventResult<?> sendPlayerQuitsServer(PlayerHandle player);
-	EventResult<?> sendPlayerBreaksBlock(PlayerHandle player, WorldPosition position, ItemType blockType);
-	EventResult<?> sendPlayerPlacesBlock(PlayerHandle player, WorldPosition position, ItemType blockType);
+	EventResult<?> sendPlayerBreaksBlock(PlayerHandle player, GlobalPosition position, ItemType blockType);
+	EventResult<?> sendPlayerPlacesBlock(PlayerHandle player, GlobalPosition position, ItemType blockType);
 	EventResult<?> sendPlayerStatisticIncrement(PlayerHandle player, StatisticHandle statistic, int newValue);
 	EventResult<?> sendPlayerAdvancementDone(PlayerHandle player, AdvancementHandle advancement);
-	EventResult<EventResults.PlayerPickupResult> sendPlayerPickupStack(PlayerHandle player, StackHandle stack, WorldPosition itemLocation);
+	EventResult<EventResults.PlayerPickupResult> sendPlayerPickupStack(PlayerHandle player, StackHandle stack, GlobalPosition itemLocation);
 	EventResult<?> sendPlayerInventoryClick(PlayerHandle player, StackHandle itemOnCursor, boolean resultSlot, boolean shiftClick);
 }

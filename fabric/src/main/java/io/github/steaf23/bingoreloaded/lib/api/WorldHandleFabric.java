@@ -33,17 +33,17 @@ public class WorldHandleFabric implements WorldHandle {
 	}
 
 	@Override
-	public WorldPosition spawnPoint() {
+	public GlobalPosition spawnPoint() {
 		return null;
 	}
 
 	@Override
-	public DimensionType dimension() {
+	public DimensionType dimensionType() {
 		return null;
 	}
 
 	@Override
-	public void spawnEntity(EntityType type, WorldPosition pos) {
+	public void spawnEntity(EntityType type, GlobalPosition pos) {
 
 	}
 
@@ -58,27 +58,27 @@ public class WorldHandleFabric implements WorldHandle {
 	}
 
 	@Override
-	public BiomeType biomeAtPos(WorldPosition pos) {
+	public BiomeType biomeAtPos(GlobalPosition pos) {
 		return null;
 	}
 
 	@Override
-	public ItemType typeAtPos(WorldPosition pos) {
+	public ItemType typeAtPos(GlobalPosition pos) {
 		return null;
 	}
 
 	@Override
-	public void setTypeAtPos(WorldPosition pos, ItemType type) {
+	public void setTypeAtPos(GlobalPosition pos, ItemType type) {
 
 	}
 
 	@Override
-	public WorldPosition highestBlockAt(WorldPosition pos) {
+	public GlobalPosition highestBlockAt(GlobalPosition pos) {
 		return null;
 	}
 
 	@Override
-	public void dropItem(StackHandle item, WorldPosition location) {
+	public void dropItem(StackHandle item, GlobalPosition location) {
 
 	}
 }

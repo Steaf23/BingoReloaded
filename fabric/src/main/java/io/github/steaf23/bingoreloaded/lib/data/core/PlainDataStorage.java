@@ -1,6 +1,6 @@
 package io.github.steaf23.bingoreloaded.lib.data.core;
 
-import io.github.steaf23.bingoreloaded.lib.api.WorldPosition;
+import io.github.steaf23.bingoreloaded.lib.api.GlobalPosition;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformServer;
@@ -197,20 +197,20 @@ public class PlainDataStorage implements DataStorage {
 	}
 
 	@Override
-	public void setWorldPosition(String path, @NotNull WorldPosition value) {
+	public void setWorldPosition(String path, @NotNull GlobalPosition value) {
 		set(path, value);
 	}
 
 	@Override
-	public @Nullable WorldPosition getWorldPosition(String path) {
+	public @Nullable GlobalPosition getWorldPosition(String path) {
 		Object v = get(path);
-		return v instanceof WorldPosition res ? res : null;
+		return v instanceof GlobalPosition res ? res : null;
 	}
 
 	@Override
-	public @NotNull WorldPosition getWorldPosition(String path, @NotNull WorldPosition def) {
+	public @NotNull GlobalPosition getWorldPosition(String path, @NotNull GlobalPosition def) {
 		Object v = get(path);
-		return v instanceof WorldPosition res ? res : def;
+		return v instanceof GlobalPosition res ? res : def;
 	}
 
 	@Override

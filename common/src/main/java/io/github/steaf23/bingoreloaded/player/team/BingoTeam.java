@@ -4,8 +4,8 @@ import io.github.steaf23.bingoreloaded.cards.TaskCard;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.data.config.BingoOptions;
-import io.github.steaf23.bingoreloaded.lib.api.item.CapacityInventoryProvider;
-import io.github.steaf23.bingoreloaded.lib.api.item.InventoryHandle;
+import io.github.steaf23.bingoreloaded.lib.api.inventory.CapacityInventoryProvider;
+import io.github.steaf23.bingoreloaded.lib.api.inventory.InventoryTemplate;
 import io.github.steaf23.bingoreloaded.lib.util.BlockColor;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
@@ -26,7 +26,7 @@ public class BingoTeam implements ForwardingAudience
 {
     private TaskCard card;
     public boolean outOfTheGame = false;
-    private InventoryHandle teamStorage;
+    private InventoryTemplate teamStorage;
 
     private final String id;
     private final TextColor color;
@@ -131,7 +131,7 @@ public class BingoTeam implements ForwardingAudience
         return prefix;
     }
 
-    public InventoryHandle storage() {
+    public InventoryTemplate storage() {
         return teamStorage;
     }
 

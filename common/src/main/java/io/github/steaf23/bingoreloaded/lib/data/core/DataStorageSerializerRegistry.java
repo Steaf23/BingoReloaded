@@ -1,6 +1,6 @@
 package io.github.steaf23.bingoreloaded.lib.data.core;
 
-import io.github.steaf23.bingoreloaded.lib.api.WorldPosition;
+import io.github.steaf23.bingoreloaded.lib.api.GlobalPosition;
 import io.github.steaf23.bingoreloaded.lib.data.core.tag.adapters.WorldPositionStorageSerializer;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import org.jetbrains.annotations.Nullable;
@@ -13,7 +13,7 @@ public class DataStorageSerializerRegistry
     private static final Map<Class<?>, DataStorageSerializer<?>> serializers = new HashMap<>();
 
     static {
-        addSerializer(new WorldPositionStorageSerializer(), WorldPosition.class);
+        addSerializer(new WorldPositionStorageSerializer(), GlobalPosition.class);
     }
 
     public static <T> void addSerializer(DataStorageSerializer<T> serializer, Class<T> classType) {

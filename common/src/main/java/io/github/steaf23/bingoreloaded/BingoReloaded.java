@@ -305,6 +305,10 @@ public class BingoReloaded implements Namespaced {
 	}
 
 	public void reloadManager(PlatformServer server) {
+		for (DataAccessor accessor : accessorMap.values()) {
+			accessor.addServerContext(server);
+		}
+
 		if (gameManager != null) {
 			for (String name : gameManager.getSessionNames()) {
 				gameManager.endGame(name);

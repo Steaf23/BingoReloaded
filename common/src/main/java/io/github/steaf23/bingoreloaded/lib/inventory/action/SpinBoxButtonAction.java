@@ -1,6 +1,6 @@
 package io.github.steaf23.bingoreloaded.lib.inventory.action;
 
-import io.github.steaf23.bingoreloaded.lib.inventory.InventoryMenu;
+import io.github.steaf23.bingoreloaded.lib.inventory.Menu;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
@@ -36,9 +36,9 @@ public class SpinBoxButtonAction extends MenuAction
         item.setAmount(value);
 
         item.addDescription("input", 10,
-                InventoryMenu.INPUT_LEFT_CLICK.append(Component.text("increase")),
-                InventoryMenu.INPUT_RIGHT_CLICK.append(Component.text("decrease")),
-                InventoryMenu.INPUT_SHIFT_CLICK.append(Component.text("edit faster")));
+                Menu.INPUT_LEFT_CLICK.append(Component.text("increase")),
+                Menu.INPUT_RIGHT_CLICK.append(Component.text("decrease")),
+                Menu.INPUT_SHIFT_CLICK.append(Component.text("edit faster")));
     }
 
     @Override

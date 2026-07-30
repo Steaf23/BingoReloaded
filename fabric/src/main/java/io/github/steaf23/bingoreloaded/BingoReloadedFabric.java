@@ -11,6 +11,8 @@ import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.data.record.LeaderboardData;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gameloop.phase.PregameLobby;
+import io.github.steaf23.bingoreloaded.gui.inventory.AdminBingoMenu;
+import io.github.steaf23.bingoreloaded.gui.inventory.TeamSelectionMenu;
 import io.github.steaf23.bingoreloaded.lib.action.ActionTree;
 import io.github.steaf23.bingoreloaded.lib.api.ActionUser;
 import io.github.steaf23.bingoreloaded.lib.api.BingoReloadedRuntime;
@@ -18,15 +20,14 @@ import io.github.steaf23.bingoreloaded.lib.api.EntityType;
 import io.github.steaf23.bingoreloaded.lib.api.ExtensionInfo;
 import io.github.steaf23.bingoreloaded.lib.api.PlatformResolver;
 import io.github.steaf23.bingoreloaded.lib.api.WorldHandle;
-import io.github.steaf23.bingoreloaded.lib.api.item.CapacityInventoryProvider;
-import io.github.steaf23.bingoreloaded.lib.api.item.InventoryHandle;
+import io.github.steaf23.bingoreloaded.lib.api.inventory.CapacityInventoryProvider;
+import io.github.steaf23.bingoreloaded.lib.api.inventory.InventoryTemplate;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.api.platform.FabricResources;
 import io.github.steaf23.bingoreloaded.lib.api.platform.FabricServer;
 import io.github.steaf23.bingoreloaded.lib.api.platform.FabricStatics;
 import io.github.steaf23.bingoreloaded.lib.api.platform.FabricTaskScheduler;
 import io.github.steaf23.bingoreloaded.lib.api.platform.GameContext;
-import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformTaskScheduler;
 import io.github.steaf23.bingoreloaded.lib.api.player.EmptyDisplay;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandleFabric;
@@ -34,6 +35,8 @@ import io.github.steaf23.bingoreloaded.lib.api.player.SharedDisplay;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataAccessor;
 import io.github.steaf23.bingoreloaded.lib.data.core.SnakeYamlDataAccessor;
 import io.github.steaf23.bingoreloaded.lib.inventory.BasicMenu;
+import io.github.steaf23.bingoreloaded.lib.inventory.MenuBoard;
+import io.github.steaf23.bingoreloaded.lib.inventory.MenuBoardFabric;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import net.fabricmc.api.ModInitializer;
@@ -61,6 +64,8 @@ public class BingoReloadedFabric implements ModInitializer, BingoReloadedRuntime
 	private BingoReloaded bingo;
 	private FabricResources resources;
 	private FabricTaskScheduler tasks;
+	private MenuBoard menuBoard;
+	private FabricServer server;
 
 	@Override
 	public void onInitialize() {
@@ -77,7 +82,9 @@ public class BingoReloadedFabric implements ModInitializer, BingoReloadedRuntime
 		bingo.enable(resources);
 
 		ServerLifecycleEvents.SERVER_STARTED.register(server -> {
-			bingo.reloadManager(new FabricServer(server));
+			this.server = new FabricServer(server, tasks);
+			this.menuBoard = new MenuBoardFabric(new GameContext(this.server, bingo));
+			bingo.reloadManager(this.server);
 		});
 	}
 
@@ -144,7 +151,7 @@ public class BingoReloadedFabric implements ModInitializer, BingoReloadedRuntime
 
 	public int executeCommand(ActionTree mainAction, ActionTree action, CommandContext<CommandSourceStack> context) {
 		MinecraftServer server = context.getSource().getServer();
-		FabricServer serverWrapper = new FabricServer(server);
+		FabricServer serverWrapper = new FabricServer(server, tasks);
 		ActionUser user = new PlayerHandleFabric(serverWrapper, context.getSource().getPlayer());
 		mainAction.setLastUser(user);
 		action.setLastUser(user);
@@ -186,7 +193,7 @@ public class BingoReloadedFabric implements ModInitializer, BingoReloadedRuntime
 			}
 
 			@Override
-			public InventoryHandle create() {
+			public InventoryTemplate create() {
 				return null;
 			}
 		};
@@ -194,7 +201,11 @@ public class BingoReloadedFabric implements ModInitializer, BingoReloadedRuntime
 
 	@Override
 	public void openBingoMenu(PlayerHandle player, BingoSession session) {
-
+		if (BingoReloaded.isHost(player)) {
+			new AdminBingoMenu(menuBoard, session).open(player);
+		} else if (BingoReloaded.isPlayer(player)) {
+			new TeamSelectionMenu(menuBoard, session).open(player);
+		}
 	}
 
 	@Override
@@ -233,6 +244,11 @@ public class BingoReloadedFabric implements ModInitializer, BingoReloadedRuntime
 	}
 
 	@Override
+	public void givePlayerCardItem(PlayerHandle player, int cardSlot, StackHandle stack) {
+
+	}
+
+	@Override
 	public TeamDisplay createTeamDisplay(BingoSession session) {
 		return null;
 	}
@@ -250,11 +266,6 @@ public class BingoReloadedFabric implements ModInitializer, BingoReloadedRuntime
 	@Override
 	public BingoClientManager getClientManager() {
 		return null;
-	}
-
-	@Override
-	public PlatformTaskScheduler taskScheduler() {
-		return tasks;
 	}
 
 	private @Nullable ExtensionInfo createExtensionInfo() {

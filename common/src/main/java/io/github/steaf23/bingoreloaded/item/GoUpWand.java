@@ -8,7 +8,7 @@ import io.github.steaf23.bingoreloaded.data.config.BingoOptions;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.lib.api.PotionEffectInstance;
 import io.github.steaf23.bingoreloaded.lib.api.StatusEffectType;
-import io.github.steaf23.bingoreloaded.lib.api.WorldPosition;
+import io.github.steaf23.bingoreloaded.lib.api.GlobalPosition;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformTaskScheduler;
@@ -50,14 +50,15 @@ public class GoUpWand extends GameItem {
 						config.getOptionValue(BingoOptions.GO_UP_WAND_COOLDOWN),
 						config.getOptionValue(BingoOptions.GO_UP_WAND_DOWN_DISTANCE),
 						config.getOptionValue(BingoOptions.GO_UP_WAND_UP_DISTANCE),
-						config.getOptionValue(BingoOptions.GO_UP_WAND_PLATFORM_LIFETIME));
+						config.getOptionValue(BingoOptions.GO_UP_WAND_PLATFORM_LIFETIME),
+						game);
 			});
 		}
 
 		return EventResult.CONSUME;
 	}
 
-	private void useGoUpWand(PlatformTaskScheduler taskScheduler, PlayerHandle player, StackHandle wand, double wandCooldownSeconds, int downDistance, int upDistance, int platformLifetimeSeconds) {
+	private void useGoUpWand(PlatformTaskScheduler taskScheduler, PlayerHandle player, StackHandle wand, double wandCooldownSeconds, int downDistance, int upDistance, int platformLifetimeSeconds, BingoGame game) {
 		if (player.hasCooldown(wand)) {
 			return;
 		}
@@ -77,14 +78,14 @@ public class GoUpWand extends GameItem {
 				fallDistance = 2.0;
 			}
 
-			WorldPosition teleportLocation = player.position();
-			WorldPosition platformLocation = teleportLocation.clone().floor();
+			GlobalPosition teleportLocation = player.position();
+			GlobalPosition platformLocation = teleportLocation.clone().floor();
 			teleportLocation.setY(teleportLocation.y() + distance + fallDistance);
 			platformLocation.setY(platformLocation.y() + distance);
 
-			BingoGame.spawnPlatform(platformLocation, 1, true);
+			game.spawnPlatform(platformLocation, 1, true);
 			taskScheduler.runTask((long) Math.max(0, platformLifetimeSeconds) * BingoReloaded.ONE_SECOND, laterTask -> {
-				BingoGame.removePlatform(platformLocation, 1);
+				game.removePlatform(platformLocation, 1);
 			});
 
 			player.teleportBlocking(teleportLocation);

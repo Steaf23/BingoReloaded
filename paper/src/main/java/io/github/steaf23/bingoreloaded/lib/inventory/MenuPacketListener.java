@@ -9,7 +9,6 @@ import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientCu
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientNameItem;
 import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformTaskScheduler;
 import io.github.steaf23.bingoreloaded.lib.events.PlayerDisplayAnvilTextChangedEvent;
-import io.github.steaf23.bingoreloaded.lib.events.PlayerDisplayCustomClickActionEvent;
 import org.bukkit.Bukkit;
 
 import java.util.HashMap;
@@ -37,14 +36,6 @@ public class MenuPacketListener extends SimplePacketListenerAbstract
             tasks.runTask((t) -> {
                 var textChangedEvent = new PlayerDisplayAnvilTextChangedEvent(nameItem.getItemName(), event.getUser().getUUID());
                 Bukkit.getPluginManager().callEvent(textChangedEvent);
-            });
-        }
-        else if (event.getPacketType() == PacketType.Play.Client.CUSTOM_CLICK_ACTION) {
-            WrapperPlayClientCustomClickAction customClickAction = new WrapperPlayClientCustomClickAction(event);
-
-            tasks.runTask((t) -> {
-                var customClickActionEvent = new PlayerDisplayCustomClickActionEvent(event.getUser().getUUID(), customClickAction.getId().key(), (NBTCompound)customClickAction.getPayload());
-                Bukkit.getPluginManager().callEvent(customClickActionEvent);
             });
         }
     }

@@ -1,7 +1,7 @@
 package io.github.steaf23.bingoreloaded.lib.data.core;
 
+import io.github.steaf23.bingoreloaded.lib.api.GlobalPosition;
 import io.github.steaf23.bingoreloaded.lib.api.PaperApiHelper;
-import io.github.steaf23.bingoreloaded.lib.api.WorldPosition;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandlePaper;
 import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformServer;
@@ -229,19 +229,19 @@ public class YamlDataStorage implements DataStorage
     }
 
     @Override
-    public void setWorldPosition(String path, @NotNull WorldPosition value) {
+    public void setWorldPosition(String path, @NotNull GlobalPosition value) {
         config.set(path, value);
     }
 
     @Override
-    public @Nullable WorldPosition getWorldPosition(String path) {
+    public @Nullable GlobalPosition getWorldPosition(String path) {
         Location loc = config.getLocation(path);
         return loc == null ? null : PaperApiHelper.worldPosFromLocation(loc);
     }
 
     @Override
-    public @NotNull WorldPosition getWorldPosition(String path, @NotNull WorldPosition def) {
-        WorldPosition pos = getWorldPosition(path);
+    public @NotNull GlobalPosition getWorldPosition(String path, @NotNull GlobalPosition def) {
+        GlobalPosition pos = getWorldPosition(path);
         return pos == null ? def : pos;
     }
 

@@ -11,8 +11,8 @@ import io.github.steaf23.bingoreloaded.data.record.LeaderboardData;
 import io.github.steaf23.bingoreloaded.data.world.WorldData;
 import io.github.steaf23.bingoreloaded.data.world.WorldGroup;
 import io.github.steaf23.bingoreloaded.lib.api.BingoReloadedRuntime;
+import io.github.steaf23.bingoreloaded.lib.api.GlobalPosition;
 import io.github.steaf23.bingoreloaded.lib.api.WorldHandle;
-import io.github.steaf23.bingoreloaded.lib.api.WorldPosition;
 import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformServer;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.event.EventResult;
@@ -151,9 +151,13 @@ public class GameManager {
 	}
 
 	public @Nullable BingoSession getSessionFromWorld(@NotNull WorldHandle world) {
+		return getSessionFromWorld(world.key());
+	}
+
+	public @Nullable BingoSession getSessionFromWorld(@NotNull Key worldKey) {
 		for (String session : sessions.keySet()) {
 			BingoSession s = sessions.get(session);
-			if (s.ownsWorld(world)) {
+			if (s.ownsWorld(worldKey)) {
 				return s;
 			}
 		}
@@ -213,9 +217,9 @@ public class GameManager {
 		return new ArrayList<>(sessions.keySet());
 	}
 
-	public EventResult<?> handlePlayerTeleport(final PlayerHandle player, final WorldPosition fromPos, final WorldPosition toPos) {
-		WorldHandle sourceWorld = fromPos.world();
-		WorldHandle targetWorld = toPos.world();
+	public EventResult<?> handlePlayerTeleport(final PlayerHandle player, final GlobalPosition fromPos, final GlobalPosition toPos) {
+		WorldHandle sourceWorld = fromPos.world(server);
+		WorldHandle targetWorld = toPos.world(server);
 
 		// If the world didn't change, the event is not interesting for us
 		if (sourceWorld == targetWorld) {
@@ -264,7 +268,7 @@ public class GameManager {
 					teleportingPlayers.add(player.uniqueId());
 					DebugLogger.addLog("Scheduling player load...");
 					// load player will teleport them, so we have to schedule it to make sure to do the right thing
-					runtime.taskScheduler().runTask(t -> {
+					server.taskScheduler().runTask(t -> {
 						if (playerData.loadPlayer(player) == null) {
                         // Player data was not saved for some reason?
                         ConsoleMessenger.bug(Component.text("No saved player data could be found for ").append(player.displayName()), this);

@@ -8,7 +8,7 @@ import io.github.steaf23.bingoreloaded.lib.api.WorldHandle;
 import io.github.steaf23.bingoreloaded.lib.api.WorldHandlePaper;
 import io.github.steaf23.bingoreloaded.lib.api.WorldOptions;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
-import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandlePaper;
+import io.github.steaf23.bingoreloaded.lib.api.PlayerHandlePaper;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerInfo;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import net.kyori.adventure.key.Key;
@@ -27,10 +27,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Stream;
 
@@ -39,7 +36,15 @@ public class PaperServer implements PlatformServer {
 	private final PlatformCommandDispatcher commandDispatcher = command ->
 			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
 
-	private final PlatformInventories inventories = new PaperInventories();
+	private final PlatformInventories inventories;
+	private final PlatformTaskScheduler taskScheduler;
+	private final PaperMenus menus;
+
+	public PaperServer(PlatformTaskScheduler taskScheduler) {
+		this.inventories = new PaperInventories();
+		this.menus = new PaperMenus(taskScheduler);
+		this.taskScheduler = taskScheduler;
+	}
 
 	@Override
 	public PlatformInventories inventories() {
@@ -49,6 +54,16 @@ public class PaperServer implements PlatformServer {
 	@Override
 	public PlatformCommandDispatcher commandDispatcher() {
 		return commandDispatcher;
+	}
+
+	@Override
+	public PlatformTaskScheduler taskScheduler() {
+		return taskScheduler;
+	}
+
+	@Override
+	public PaperMenus menus() {
+		return menus;
 	}
 
 	@Override
@@ -170,6 +185,6 @@ public class PaperServer implements PlatformServer {
 	}
 
 	private @Nullable WorldHandle fromWorld(@Nullable World world) {
-		return world == null ? null : new WorldHandlePaper(world);
+		return world == null ? null : new WorldHandlePaper(this, world);
 	}
 }

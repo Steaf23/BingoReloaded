@@ -66,11 +66,6 @@ public class FabricRegistries implements PlatformRegistries {
 	}
 
 	@Override
-	public StatisticHandle createStatistic(VanillaStatistic type, @Nullable ItemType item, @Nullable EntityType entity) {
-		return null;
-	}
-
-	@Override
 	public boolean areAdvancementsDisabled() {
 		return false;
 	}

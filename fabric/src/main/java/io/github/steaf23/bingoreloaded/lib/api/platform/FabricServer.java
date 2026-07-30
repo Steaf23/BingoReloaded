@@ -29,10 +29,15 @@ public class FabricServer implements PlatformServer {
 
 	private final MinecraftServer server;
 	private final PlatformCommandDispatcher commandDispatcher = command -> {};
-	private final PlatformInventories inventories = new FabricInventories();
+	private final PlatformInventories inventories;
+	private final PlatformMenus menus;
+	private final PlatformTaskScheduler taskScheduler;
 
-	public FabricServer(MinecraftServer server) {
+	public FabricServer(MinecraftServer server, PlatformTaskScheduler taskScheduler) {
 		this.server = server;
+		this.taskScheduler = taskScheduler;
+		this.inventories = new FabricInventories();
+		this.menus = new FabricMenus();
 	}
 
 	@Override
@@ -43,6 +48,16 @@ public class FabricServer implements PlatformServer {
 	@Override
 	public PlatformCommandDispatcher commandDispatcher() {
 		return commandDispatcher;
+	}
+
+	@Override
+	public PlatformTaskScheduler taskScheduler() {
+		return taskScheduler;
+	}
+
+	@Override
+	public PlatformMenus menus() {
+		return menus;
 	}
 
 	@Override

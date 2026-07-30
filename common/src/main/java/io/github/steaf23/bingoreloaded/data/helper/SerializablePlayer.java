@@ -1,7 +1,8 @@
 package io.github.steaf23.bingoreloaded.data.helper;
 
 import io.github.steaf23.bingoreloaded.lib.api.PlayerGamemode;
-import io.github.steaf23.bingoreloaded.lib.api.WorldPosition;
+import io.github.steaf23.bingoreloaded.lib.api.GlobalPosition;
+import io.github.steaf23.bingoreloaded.lib.api.inventory.InventoryTemplate;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import org.jetbrains.annotations.NotNull;
@@ -13,11 +14,11 @@ public class SerializablePlayer
 {
     public String extensionVersion;
     public UUID playerId;
-    public WorldPosition location;
+    public GlobalPosition location;
     public double health;
     public int hunger;
     public PlayerGamemode gamemode;
-    public @Nullable WorldPosition spawnPoint;
+    public @Nullable GlobalPosition spawnPoint;
     public int xpLevel;
     public float xpPoints;
     public StackHandle[] inventory;
@@ -43,7 +44,7 @@ public class SerializablePlayer
     /**
      * Reset all player data and set location
      */
-    public static SerializablePlayer reset(String extensionVersion, PlayerHandle player, WorldPosition location)
+    public static SerializablePlayer reset(String extensionVersion, PlayerHandle player, GlobalPosition location)
     {
         SerializablePlayer data = new SerializablePlayer();
         data.extensionVersion = extensionVersion;
@@ -55,8 +56,8 @@ public class SerializablePlayer
         data.spawnPoint = null;
         data.xpLevel = 0;
         data.xpPoints = 0.0f;
-        data.inventory = new StackHandle[player.inventory().contents().length];
-        data.enderInventory = new StackHandle[player.enderChest().contents().length];
+        data.inventory = new StackHandle[player.inventory().size()];
+        data.enderInventory = new StackHandle[player.enderChest().size()];
         return data;
     }
 
@@ -82,10 +83,12 @@ public class SerializablePlayer
         {
             player.inventory().setContents(inventory);
         }
-        player.enderChest().clearContents();
+
+        InventoryTemplate template = player.enderChest();
+        template.clearContents();
         if (enderInventory != null)
         {
-            player.enderChest().setContents(enderInventory);
+            template.setContents(enderInventory);
         }
     }
 }

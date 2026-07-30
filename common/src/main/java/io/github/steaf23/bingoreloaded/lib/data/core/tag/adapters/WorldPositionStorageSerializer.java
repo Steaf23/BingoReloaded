@@ -1,36 +1,28 @@
 package io.github.steaf23.bingoreloaded.lib.data.core.tag.adapters;
 
 import io.github.steaf23.bingoreloaded.lib.api.WorldHandle;
-import io.github.steaf23.bingoreloaded.lib.api.WorldPosition;
+import io.github.steaf23.bingoreloaded.lib.api.GlobalPosition;
 import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformServer;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataStorage;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataStorageSerializer;
 import net.kyori.adventure.key.Key;
 import org.jetbrains.annotations.NotNull;
 
-public class WorldPositionStorageSerializer implements DataStorageSerializer<WorldPosition>
+public class WorldPositionStorageSerializer implements DataStorageSerializer<GlobalPosition>
 {
     @Override
-    public void toDataStorage(@NotNull DataStorage storage, @NotNull WorldPosition value) {
-        storage.setKey("world", value.world().key());
+    public void toDataStorage(@NotNull DataStorage storage, @NotNull GlobalPosition value) {
+        storage.setKey("world", value.dimension());
         storage.setDouble("x", value.x());
         storage.setDouble("y", value.y());
         storage.setDouble("z", value.z());
-//        storage.setFloat("yaw", value.getYaw());
-//        storage.setFloat("pitch", value.getPitch());
+        storage.setFloat("yaw", (float)value.yaw());
+        storage.setFloat("pitch", (float)value.pitch());
     }
 
     @Override
-    public WorldPosition fromDataStorage(@NotNull DataStorage storage) {
-        Key id = storage.getKey("world");
-        if (id == null) {
-            return null;
-        }
-        PlatformServer server = storage.serverContext();
-        if (server == null) {
-            return null;
-        }
-        WorldHandle world = server.getWorld(id);
+    public GlobalPosition fromDataStorage(@NotNull DataStorage storage) {
+        Key world = storage.getKey("world");
         if (world == null) {
             return null;
         }
@@ -40,6 +32,6 @@ public class WorldPositionStorageSerializer implements DataStorageSerializer<Wor
         double z = storage.getDouble("z", 0.0D);
         float yaw = storage.getFloat("yaw", 0.0f);
         float pitch = storage.getFloat("pitch", 0.0f);
-        return new WorldPosition(world, x, y, z);
+        return new GlobalPosition(world, x, y, z);
     }
 }

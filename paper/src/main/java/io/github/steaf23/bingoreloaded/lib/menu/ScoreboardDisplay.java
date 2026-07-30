@@ -3,7 +3,7 @@ package io.github.steaf23.bingoreloaded.lib.menu;
 import io.github.steaf23.bingoreloaded.data.ScoreboardData;
 import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformServer;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
-import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandlePaper;
+import io.github.steaf23.bingoreloaded.lib.api.PlayerHandlePaper;
 import io.github.steaf23.bingoreloaded.lib.api.player.SharedDisplay;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;

@@ -8,7 +8,7 @@ import io.github.steaf23.bingoreloaded.lib.inventory.MenuBoard;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.inventory.BasicMenu;
 import io.github.steaf23.bingoreloaded.lib.inventory.ColorPickerMenu;
-import io.github.steaf23.bingoreloaded.lib.inventory.InventoryMenu;
+import io.github.steaf23.bingoreloaded.lib.inventory.Menu;
 import io.github.steaf23.bingoreloaded.lib.inventory.PaginatedDataMenu;
 import io.github.steaf23.bingoreloaded.lib.inventory.action.MenuAction;
 import io.github.steaf23.bingoreloaded.lib.inventory.action.NameEditAction;
@@ -83,8 +83,8 @@ public class TagEditorMenu extends PaginatedDataMenu.TextDataMenu
     public ItemTemplate editItem(ItemTemplate item, String key, boolean selected) {
         return item.setLore(Component.text("id: ").append(Component.text(key).color(NamedTextColor.GRAY).decorate(TextDecoration.ITALIC)))
                 .addDescription("input", 5,
-                        InventoryMenu.INPUT_LEFT_CLICK.append(Component.text("edit tag")),
-                        InventoryMenu.INPUT_RIGHT_CLICK.append(Component.text("remove tag")));
+                        Menu.INPUT_LEFT_CLICK.append(Component.text("edit tag")),
+                        Menu.INPUT_RIGHT_CLICK.append(Component.text("remove tag")));
     }
 
     static class TagEdit extends BasicMenu

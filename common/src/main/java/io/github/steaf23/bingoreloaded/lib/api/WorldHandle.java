@@ -11,18 +11,18 @@ public interface WorldHandle {
 
 	Key key();
 	Collection<? extends PlayerHandle> players();
-	WorldPosition spawnPoint();
-	DimensionType dimension();
+	GlobalPosition spawnPoint();
+	DimensionType dimensionType();
 
-	void spawnEntity(EntityType type, WorldPosition pos);
+	void spawnEntity(EntityType type, GlobalPosition pos);
 
 	void setStorming(boolean storm);
 	void setTimeOfDay(long time);
-	BiomeType biomeAtPos(WorldPosition pos);
+	BiomeType biomeAtPos(GlobalPosition pos);
 
-	ItemType typeAtPos(WorldPosition pos);
-	void setTypeAtPos(WorldPosition pos, ItemType type);
-	WorldPosition highestBlockAt(WorldPosition pos);
+	ItemType typeAtPos(GlobalPosition pos);
+	void setTypeAtPos(GlobalPosition pos, ItemType type);
+	GlobalPosition highestBlockAt(GlobalPosition pos);
 
-	void dropItem(StackHandle item, WorldPosition location);
+	void dropItem(StackHandle item, GlobalPosition location);
 }

@@ -5,7 +5,7 @@ import io.github.steaf23.bingoreloaded.lib.action.ActionTree;
 import io.github.steaf23.bingoreloaded.lib.api.ActionUser;
 import io.github.steaf23.bingoreloaded.lib.api.platform.GameContext;
 import io.github.steaf23.bingoreloaded.lib.api.platform.PaperServer;
-import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandlePaper;
+import io.github.steaf23.bingoreloaded.lib.api.PlayerHandlePaper;
 import io.github.steaf23.bingoreloaded.lib.util.ComponentUtils;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import net.kyori.adventure.text.Component;

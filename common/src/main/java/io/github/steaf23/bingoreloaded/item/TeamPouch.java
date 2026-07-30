@@ -47,7 +47,7 @@ public class TeamPouch extends GameItem {
 	@Override
 	public EventResult<?> use(StackHandle stack, BingoParticipant participant, BingoGame game) {
 		if (participant instanceof BingoPlayer player && player.getTeam() != null) {
-			player.sessionPlayer().ifPresent(handle -> handle.openInventory(player.getTeam().storage()));
+			player.sessionPlayer().ifPresent(handle -> handle.tryOpenInventory(player.getTeam().storage()));
 		}
 		return EventResult.CONSUME;
 	}

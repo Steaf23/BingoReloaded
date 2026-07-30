@@ -9,9 +9,8 @@ import io.github.steaf23.bingoreloaded.data.record.LeaderboardData;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gameloop.phase.PregameLobby;
 import io.github.steaf23.bingoreloaded.lib.action.ActionTree;
-import io.github.steaf23.bingoreloaded.lib.api.item.CapacityInventoryProvider;
+import io.github.steaf23.bingoreloaded.lib.api.inventory.CapacityInventoryProvider;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
-import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformTaskScheduler;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.api.player.SharedDisplay;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataAccessor;
@@ -57,14 +56,13 @@ public interface BingoReloadedRuntime {
 	void openVoteMenu(PlayerHandle player, PregameLobby lobby);
 	void openLeaderboard(PlayerHandle player, LeaderboardData historyData, boolean categorizeByPresets);
 	void editCardDescription(PlayerHandle playerHandle, String currentName, String currentDescription, BasicMenu parentMenu, CardDescriptionEditor callback);
+	void givePlayerCardItem(PlayerHandle player, int cardSlot, StackHandle stack);
 
 	TeamDisplay createTeamDisplay(BingoSession session);
 	SharedDisplay gameDisplay();
 	SharedDisplay settingsDisplay();
 
 	BingoClientManager getClientManager();
-
-	PlatformTaskScheduler taskScheduler();
 
 	@FunctionalInterface
 	interface CardDescriptionEditor

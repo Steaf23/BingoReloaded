@@ -1,7 +1,7 @@
 package io.github.steaf23.bingoreloaded.player;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
-import io.github.steaf23.bingoreloaded.lib.api.WorldPosition;
+import io.github.steaf23.bingoreloaded.lib.api.GlobalPosition;
 import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformTaskScheduler;
 
 import java.util.HashMap;
@@ -27,15 +27,15 @@ public class PlayerRespawnManager
 		});
 	}
 
-    private record DeadPlayer(WorldPosition deathLocation, Long deathTime)
+    private record DeadPlayer(GlobalPosition deathLocation, Long deathTime)
     {
     }
 
-    public void addPlayer(UUID playerId, WorldPosition deathLocation) {
+    public void addPlayer(UUID playerId, GlobalPosition deathLocation) {
         deadPlayers.put(playerId, new DeadPlayer(deathLocation, System.currentTimeMillis()));
     }
 
-    public Optional<WorldPosition> removeDeadPlayer(UUID playerId) {
+    public Optional<GlobalPosition> removeDeadPlayer(UUID playerId) {
         DeadPlayer player = deadPlayers.remove(playerId);
         if (player == null) {
             return Optional.empty();

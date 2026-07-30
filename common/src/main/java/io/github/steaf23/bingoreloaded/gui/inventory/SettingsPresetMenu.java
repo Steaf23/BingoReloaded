@@ -7,7 +7,7 @@ import io.github.steaf23.bingoreloaded.lib.api.item.VanillaItems;
 import io.github.steaf23.bingoreloaded.lib.inventory.MenuBoard;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.inventory.BasicMenu;
-import io.github.steaf23.bingoreloaded.lib.inventory.InventoryMenu;
+import io.github.steaf23.bingoreloaded.lib.inventory.Menu;
 import io.github.steaf23.bingoreloaded.lib.inventory.PaginatedDataMenu;
 import io.github.steaf23.bingoreloaded.lib.inventory.UserInputMenu;
 import io.github.steaf23.bingoreloaded.lib.inventory.action.MenuAction;
@@ -120,11 +120,11 @@ public class SettingsPresetMenu extends PaginatedDataMenu.TextDataMenu
     public ItemTemplate editItem(ItemTemplate item, String preset, boolean selected) {
         if (cachedPlayer != null && BingoReloaded.isAdmin(cachedPlayer)) {
             item.addDescription("input", 5,
-                    InventoryMenu.INPUT_LEFT_CLICK.append(Component.text("apply this preset")),
-                    InventoryMenu.INPUT_RIGHT_CLICK.append(Component.text("more options")));
+                    Menu.INPUT_LEFT_CLICK.append(Component.text("apply this preset")),
+                    Menu.INPUT_RIGHT_CLICK.append(Component.text("more options")));
         } else {
             item.addDescription("input", 5,
-                    InventoryMenu.INPUT_LEFT_CLICK.append(Component.text("apply this preset")));
+                    Menu.INPUT_LEFT_CLICK.append(Component.text("apply this preset")));
         }
 
         return item;

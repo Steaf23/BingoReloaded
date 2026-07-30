@@ -6,7 +6,7 @@ import io.github.steaf23.bingoreloaded.lib.api.item.VanillaItems;
 import io.github.steaf23.bingoreloaded.lib.inventory.MenuBoard;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.inventory.BasicMenu;
-import io.github.steaf23.bingoreloaded.lib.inventory.InventoryMenu;
+import io.github.steaf23.bingoreloaded.lib.inventory.Menu;
 import io.github.steaf23.bingoreloaded.lib.inventory.PaginatedDataMenu;
 import io.github.steaf23.bingoreloaded.lib.inventory.action.MenuAction;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
@@ -69,7 +69,7 @@ public class CardEditorMenu extends PaginatedDataMenu.TextDataMenu
             public ItemTemplate editItem(ItemTemplate item, String listName, boolean selected) {
                 item.setLore(
                         Component.text("This list contains " + cardsData.lists().getTaskCount(listName) + " task(s)"));
-                item.addDescription("input", 1, InventoryMenu.INPUT_LEFT_CLICK.append(Component.text("select")));
+                item.addDescription("input", 1, Menu.INPUT_LEFT_CLICK.append(Component.text("select")));
                 return item;
             }
         };
@@ -113,8 +113,8 @@ public class CardEditorMenu extends PaginatedDataMenu.TextDataMenu
                 ComponentUtils.MINI_BUILDER.deserialize("At <bold>least</bold> <aqua>" + min + "</aqua> tasks will be used from this list."),
                 ComponentUtils.MINI_BUILDER.deserialize("At <bold>most</bold> <aqua>" + max + "</aqua> tasks will be used from this list."));
         item.addDescription("input", 5,
-                InventoryMenu.INPUT_LEFT_CLICK.append(Component.text("edit distribution")),
-                InventoryMenu.INPUT_RIGHT_CLICK.append(Component.text("remove this list")));
+                Menu.INPUT_LEFT_CLICK.append(Component.text("edit distribution")),
+                Menu.INPUT_RIGHT_CLICK.append(Component.text("remove this list")));
         item.setAmount(max);
         return item;
     }

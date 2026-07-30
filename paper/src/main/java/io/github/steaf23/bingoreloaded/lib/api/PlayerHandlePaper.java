@@ -1,18 +1,9 @@
-package io.github.steaf23.bingoreloaded.lib.api.player;
+package io.github.steaf23.bingoreloaded.lib.api;
 
-import io.github.steaf23.bingoreloaded.lib.api.AdvancementHandle;
-import io.github.steaf23.bingoreloaded.lib.api.AdvancementHandlePaper;
-import io.github.steaf23.bingoreloaded.lib.api.EntityTypePaper;
-import io.github.steaf23.bingoreloaded.lib.api.PaperApiHelper;
-import io.github.steaf23.bingoreloaded.lib.api.PlayerGamemode;
-import io.github.steaf23.bingoreloaded.lib.api.PotionEffectInstance;
+import io.github.steaf23.bingoreloaded.lib.api.inventory.InventoryTemplate;
+import io.github.steaf23.bingoreloaded.lib.api.platform.PaperInventories;
+import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.api.statistics.StatisticHandle;
-import io.github.steaf23.bingoreloaded.lib.api.StatusEffectTypePaper;
-import io.github.steaf23.bingoreloaded.lib.api.WorldHandle;
-import io.github.steaf23.bingoreloaded.lib.api.WorldHandlePaper;
-import io.github.steaf23.bingoreloaded.lib.api.WorldPosition;
-import io.github.steaf23.bingoreloaded.lib.api.item.InventoryHandle;
-import io.github.steaf23.bingoreloaded.lib.api.item.InventoryHandlePaper;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemTypePaper;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandlePaper;
@@ -71,16 +62,16 @@ public class PlayerHandlePaper implements PlayerHandle {
 
 	@Override
 	public WorldHandle world() {
-		return new WorldHandlePaper(player.getWorld());
+		return new WorldHandlePaper(server, player.getWorld());
 	}
 
 	@Override
-	public WorldPosition position() {
+	public GlobalPosition position() {
 		return PaperApiHelper.worldPosFromLocation(player.getLocation());
 	}
 
 	@Override
-	public @Nullable WorldPosition respawnPoint() {
+	public @Nullable GlobalPosition respawnPoint() {
 		return PaperApiHelper.worldPosFromLocation(player.getRespawnLocation());
 	}
 
@@ -126,24 +117,19 @@ public class PlayerHandlePaper implements PlayerHandle {
 	}
 
 	@Override
-	public void teleportAsync(WorldPosition pos, @Nullable Consumer<Boolean> whenFinished) {
-		DebugLogger.addLog("Teleporting player async to pos: " + pos.x() + ", " + pos.y() + ", " + pos.z() + ", world: " + pos.world().key());
+	public void teleportAsync(GlobalPosition pos, @Nullable Consumer<Boolean> whenFinished) {
+		DebugLogger.addLog("Teleporting player async to pos: " + pos.x() + ", " + pos.y() + ", " + pos.z() + ", world: " + pos.dimension());
 
-		var future = player.teleportAsync(PaperApiHelper.locationFromWorldPos(pos), PlayerTeleportEvent.TeleportCause.PLUGIN);
+		var future = player.teleportAsync(PaperApiHelper.locationFromWorldPos(world(), pos), PlayerTeleportEvent.TeleportCause.PLUGIN);
 		if (whenFinished != null) {
 			future.thenAccept(whenFinished);
 		}
 	}
 
 	@Override
-	public boolean teleportBlocking(WorldPosition pos) {
-		DebugLogger.addLog("Teleporting player blocking to pos: " + pos.x() + ", " + pos.y() + ", " + pos.z() + ", world: " + pos.world().key());
-		return player.teleport(PaperApiHelper.locationFromWorldPos(pos), PlayerTeleportEvent.TeleportCause.PLUGIN);
-	}
-
-	@Override
-	public PlayerInventoryHandle inventory() {
-		return new PlayerInventoryHandlePaper(player.getInventory());
+	public boolean teleportBlocking(GlobalPosition pos) {
+		DebugLogger.addLog("Teleporting player blocking to pos: " + pos.x() + ", " + pos.y() + ", " + pos.z() + ", world: " + pos.dimension());
+		return player.teleport(PaperApiHelper.locationFromWorldPos(world(), pos), PlayerTeleportEvent.TeleportCause.PLUGIN);
 	}
 
 	@Override
@@ -152,18 +138,18 @@ public class PlayerHandlePaper implements PlayerHandle {
 	}
 
 	@Override
-	public void openInventory(InventoryHandle inventory) {
-		player.openInventory(((InventoryHandlePaper)inventory).handle());
+	public void tryOpenInventory(InventoryTemplate inventory) {
+		PaperInventories.BukkitInventoryUpdater updater = inventory.firstListenerOfType(PaperInventories.BukkitInventoryUpdater.class);
+		if (updater == null) {
+			return;
+		}
+
+		player.openInventory(updater.inventory());
 	}
 
 	@Override
-	public InventoryHandle enderChest() {
-		return new InventoryHandlePaper(player.getEnderChest());
-	}
-
-	@Override
-	public void setRespawnPoint(WorldPosition newSpawn, boolean force) {
-		player.setRespawnLocation(PaperApiHelper.locationFromWorldPos(newSpawn), force);
+	public void setRespawnPoint(GlobalPosition newSpawn, boolean force) {
+		player.setRespawnLocation(PaperApiHelper.locationFromWorldPos(world(), newSpawn), force);
 	}
 
 	@Override

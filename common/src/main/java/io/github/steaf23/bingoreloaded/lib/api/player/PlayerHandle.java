@@ -2,12 +2,12 @@ package io.github.steaf23.bingoreloaded.lib.api.player;
 
 import io.github.steaf23.bingoreloaded.lib.api.ActionUser;
 import io.github.steaf23.bingoreloaded.lib.api.AdvancementHandle;
+import io.github.steaf23.bingoreloaded.lib.api.GlobalPosition;
 import io.github.steaf23.bingoreloaded.lib.api.PlayerGamemode;
 import io.github.steaf23.bingoreloaded.lib.api.PotionEffectInstance;
+import io.github.steaf23.bingoreloaded.lib.api.inventory.InventoryTemplate;
 import io.github.steaf23.bingoreloaded.lib.api.statistics.StatisticHandle;
 import io.github.steaf23.bingoreloaded.lib.api.WorldHandle;
-import io.github.steaf23.bingoreloaded.lib.api.WorldPosition;
-import io.github.steaf23.bingoreloaded.lib.api.item.InventoryHandle;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformServer;
 import net.kyori.adventure.audience.ForwardingAudience;
@@ -31,9 +31,9 @@ public interface PlayerHandle extends ForwardingAudience, ActionUser {
 
 	WorldHandle world();
 
-	WorldPosition position();
+	GlobalPosition position();
 
-	@Nullable WorldPosition respawnPoint();
+	@Nullable GlobalPosition respawnPoint();
 
 	boolean hasPermission(String permission);
 
@@ -49,9 +49,9 @@ public interface PlayerHandle extends ForwardingAudience, ActionUser {
 
 	int getStatisticValue(StatisticHandle stat);
 
-	void teleportAsync(WorldPosition pos, @Nullable Consumer<Boolean> whenFinished);
+	void teleportAsync(GlobalPosition pos, @Nullable Consumer<Boolean> whenFinished);
 
-	default void teleportAsync(WorldPosition pos) {
+	default void teleportAsync(GlobalPosition pos) {
 		teleportAsync(pos, null);
 	}
 
@@ -60,21 +60,29 @@ public interface PlayerHandle extends ForwardingAudience, ActionUser {
 	 *
 	 * @return true when the teleport was successful.
 	 */
-	boolean teleportBlocking(WorldPosition pos);
-
-	PlayerInventoryHandle inventory();
+	boolean teleportBlocking(GlobalPosition pos);
 
 	void clearInventory();
 
-	void openInventory(InventoryHandle inventory);
+	void tryOpenInventory(InventoryTemplate inventory);
 
-	InventoryHandle enderChest();
+	default InventoryTemplate enderChest() {
+		return server().inventories().enderChest(this);
+	}
+
+	default InventoryTemplate inventory() {
+		return server().inventories().playerInventory(this);
+	}
+
+	default void addItemsToInventory(StackHandle... stacks) {
+		server().inventories().addItemToPlayerInventory(this, stacks);
+	}
 
 	/**
 	 * @param newSpawn new position.
 	 * @param force    true if setting the spawn point should ignore valid bed/respawn positions too.
 	 */
-	void setRespawnPoint(WorldPosition newSpawn, boolean force);
+	void setRespawnPoint(GlobalPosition newSpawn, boolean force);
 
 	void setLevel(int level);
 

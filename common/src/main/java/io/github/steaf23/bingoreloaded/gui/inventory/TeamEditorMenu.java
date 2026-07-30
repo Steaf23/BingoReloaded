@@ -10,7 +10,7 @@ import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.inventory.BasicMenu;
 import io.github.steaf23.bingoreloaded.lib.inventory.ColorPickerMenu;
 import io.github.steaf23.bingoreloaded.lib.inventory.FilterType;
-import io.github.steaf23.bingoreloaded.lib.inventory.InventoryMenu;
+import io.github.steaf23.bingoreloaded.lib.inventory.Menu;
 import io.github.steaf23.bingoreloaded.lib.inventory.PaginatedDataMenu;
 import io.github.steaf23.bingoreloaded.lib.inventory.action.MenuAction;
 import io.github.steaf23.bingoreloaded.lib.inventory.action.NameEditAction;
@@ -92,8 +92,8 @@ public class TeamEditorMenu extends PaginatedDataMenu<String>
                 .setLeatherColor(team.color())
                 .setLore(Component.text("id: ").append(Component.text(key).color(NamedTextColor.GRAY).decorate(TextDecoration.ITALIC)))
                 .addDescription("input", 5,
-                        InventoryMenu.INPUT_LEFT_CLICK.append(Component.text("edit team")),
-                        InventoryMenu.INPUT_RIGHT_CLICK.append(Component.text("remove team")));
+                        Menu.INPUT_LEFT_CLICK.append(Component.text("edit team")),
+                        Menu.INPUT_RIGHT_CLICK.append(Component.text("remove team")));
     }
 
     static class TeamEdit extends BasicMenu

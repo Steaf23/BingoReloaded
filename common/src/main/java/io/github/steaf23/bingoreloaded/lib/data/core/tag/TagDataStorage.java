@@ -1,6 +1,6 @@
 package io.github.steaf23.bingoreloaded.lib.data.core.tag;
 
-import io.github.steaf23.bingoreloaded.lib.api.WorldPosition;
+import io.github.steaf23.bingoreloaded.lib.api.GlobalPosition;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformServer;
@@ -404,17 +404,17 @@ public class TagDataStorage implements DataStorage
     }
 
     @Override
-    public void setWorldPosition(String path, @NotNull WorldPosition value) {
-        setSerializable(path, WorldPosition.class, value);
+    public void setWorldPosition(String path, @NotNull GlobalPosition value) {
+        setSerializable(path, GlobalPosition.class, value);
     }
 
     @Override
-    public @Nullable WorldPosition getWorldPosition(String path) {
-        return getSerializable(path, WorldPosition.class);
+    public @Nullable GlobalPosition getWorldPosition(String path) {
+        return getSerializable(path, GlobalPosition.class);
     }
 
-    public @NotNull WorldPosition getWorldPosition(String path, @NotNull WorldPosition def) {
-        WorldPosition loc = getSerializable(path, WorldPosition.class);
+    public @NotNull GlobalPosition getWorldPosition(String path, @NotNull GlobalPosition def) {
+        GlobalPosition loc = getSerializable(path, GlobalPosition.class);
         return loc == null ? def : loc;
     }
 

@@ -21,7 +21,7 @@ public class UserInputMenu extends BasicMenu
     private static final ItemTemplate CLEAR = new ItemTemplate(1, VanillaItems.HOPPER.type(), BingoMessage.MENU_CLEAR_FILTER.asPhrase().color(NamedTextColor.GRAY).decorate(TextDecoration.BOLD));
 
     public UserInputMenu(MenuBoard manager, Component initialTitle, Consumer<String> result, String startingText) {
-        super(manager, initialTitle, PlatformInventories.Type.ANVIL);
+        super(manager, initialTitle, MenuType.ANVIL);
 
         this.resultAction = result;
         this.text = "";

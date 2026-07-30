@@ -10,7 +10,7 @@ import io.github.steaf23.bingoreloaded.lib.api.item.VanillaItems;
 import io.github.steaf23.bingoreloaded.lib.inventory.MenuBoard;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.inventory.BasicMenu;
-import io.github.steaf23.bingoreloaded.lib.inventory.InventoryMenu;
+import io.github.steaf23.bingoreloaded.lib.inventory.Menu;
 import io.github.steaf23.bingoreloaded.lib.inventory.MenuFilterSettings;
 import io.github.steaf23.bingoreloaded.lib.inventory.PaginatedDataMenu;
 import io.github.steaf23.bingoreloaded.lib.inventory.action.ComboBoxButtonAction;
@@ -38,7 +38,7 @@ public class AdminBingoMenu extends BasicMenu {
 	private static final int TEAMSIZE_MAX = 64;
 	private static final int TEAMCOUNT_MAX = 64;
 
-	private static final Component COUNTDOWN_INPUT_LORE = InventoryMenu.inputButtonText(Component.text("Click")).append(Component.text("toggle countdown type"));
+	private static final Component COUNTDOWN_INPUT_LORE = Menu.inputButtonText(Component.text("Click")).append(Component.text("toggle countdown type"));
 
 	private static final ItemTemplate START = new ItemTemplate(6, 0,
 			VanillaItems.LIME_CONCRETE.type(), BingoReloaded.applyTitleFormat(BingoMessage.OPTIONS_START.asPhrase()));
@@ -269,7 +269,7 @@ public class AdminBingoMenu extends BasicMenu {
 									.color(NamedTextColor.DARK_PURPLE)));
 				}
 				item.addDescription("input", 10,
-						InventoryMenu.INPUT_LEFT_CLICK.append(Component.text("select this card.")));
+						Menu.INPUT_LEFT_CLICK.append(Component.text("select this card.")));
 				return item;
 			}
 

@@ -6,7 +6,7 @@ import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.lib.api.PotionEffectInstance;
 import io.github.steaf23.bingoreloaded.lib.api.StatusEffectType;
-import io.github.steaf23.bingoreloaded.lib.api.item.InventoryHandle;
+import io.github.steaf23.bingoreloaded.lib.api.inventory.InventoryTemplate;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformServer;
 import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformTaskScheduler;
@@ -25,7 +25,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.EnumSet;
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -50,7 +49,7 @@ public class BingoPlayer implements BingoParticipant
         this.playerId = player.uniqueId();
         this.session = session;
         this.server = session.getGameManager().getServer();
-        this.tasks = session.getGameManager().getRuntime().taskScheduler();
+        this.tasks = session.getGameManager().getServer().taskScheduler();
         this.playerName = player.playerName();
         this.displayName = player.displayName();
         this.team = null;
@@ -91,8 +90,8 @@ public class BingoPlayer implements BingoParticipant
 
         var items = kit.getItems(getTeam());
         player.closeInventory();
-        InventoryHandle inv = player.inventory();
-        inv.clearContents();
+        player.clearInventory();
+        InventoryTemplate inv = player.inventory();
         items.forEach(i ->
         {
             // replace stack with a player customized item if it's a bingo item.
@@ -117,21 +116,7 @@ public class BingoPlayer implements BingoParticipant
         PlayerHandle player = sessionPlayer().get();
 
         tasks.runTask(task -> {
-            for (StackHandle itemStack : player.inventory().contents()) {
-                if (PlayerKit.CARD_ITEM.isCompareKeyEqual(itemStack)) {
-                    player.inventory().removeItem(itemStack);
-                    break;
-                }
-            }
-            StackHandle existingItem = player.inventory().getItem(cardSlot);
-
-            player.inventory().setItem(cardSlot, cardItem);
-            if (!existingItem.type().isAir()) {
-                Map<Integer, StackHandle> leftOver = player.inventory().addItem(existingItem);
-                for (StackHandle stack : leftOver.values()) {
-                    player.world().dropItem(stack, player.position());
-                }
-            }
+            session.getGameManager().getRuntime().givePlayerCardItem(player, cardSlot, cardItem);
         });
     }
 

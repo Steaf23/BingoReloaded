@@ -4,9 +4,8 @@ import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemTypePaper;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandlePaper;
-import io.github.steaf23.bingoreloaded.lib.api.platform.PaperServer;
+import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformServer;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
-import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandlePaper;
 import io.github.steaf23.bingoreloaded.lib.util.DebugLogger;
 import net.kyori.adventure.key.Key;
 import org.bukkit.World;
@@ -16,9 +15,11 @@ import java.util.Collection;
 public class WorldHandlePaper implements WorldHandle {
 
 	private final World world;
+	private final PlatformServer server;
 
-	public WorldHandlePaper(World world) {
+	public WorldHandlePaper(PlatformServer server, World world) {
 		this.world = world;
+		this.server = server;
 	}
 
 	@Override
@@ -28,17 +29,17 @@ public class WorldHandlePaper implements WorldHandle {
 
 	@Override
 	public Collection<? extends PlayerHandle> players() {
-		return world.getPlayers().stream().map(p -> new PlayerHandlePaper(new PaperServer(), p)).toList();
+		return world.getPlayers().stream().map(p -> new PlayerHandlePaper(server, p)).toList();
 	}
 
 	@Override
-	public WorldPosition spawnPoint() {
+	public GlobalPosition spawnPoint() {
 		DebugLogger.addLog("Spawn point of " + key() + ": " + world.getSpawnLocation());
 		return PaperApiHelper.worldPosFromLocation(world.getSpawnLocation());
 	}
 
 	@Override
-	public DimensionType dimension() {
+	public DimensionType dimensionType() {
 		return switch (world.getEnvironment()) {
 			case NETHER -> DimensionType.NETHER;
 			case THE_END -> DimensionType.THE_END;
@@ -47,8 +48,8 @@ public class WorldHandlePaper implements WorldHandle {
 	}
 
 	@Override
-	public void spawnEntity(EntityType type, WorldPosition pos) {
-		world.spawnEntity(PaperApiHelper.locationFromWorldPos(pos), ((EntityTypePaper)type).handle());
+	public void spawnEntity(EntityType type, GlobalPosition pos) {
+		world.spawnEntity(PaperApiHelper.locationFromWorldPos(this, pos), ((EntityTypePaper)type).handle());
 	}
 
 	@Override
@@ -62,28 +63,28 @@ public class WorldHandlePaper implements WorldHandle {
 	}
 
 	@Override
-	public BiomeType biomeAtPos(WorldPosition pos) {
-		return new BiomeTypePaper(world.getBiome(PaperApiHelper.locationFromWorldPos(pos)));
+	public BiomeType biomeAtPos(GlobalPosition pos) {
+		return new BiomeTypePaper(world.getBiome(PaperApiHelper.locationFromWorldPos(this, pos)));
 	}
 
 	@Override
-	public ItemType typeAtPos(WorldPosition pos) {
+	public ItemType typeAtPos(GlobalPosition pos) {
 		return ItemType.of(world.getType(pos.blockX(), pos.blockY(), pos.blockZ()).key());
 	}
 
 	@Override
-	public void setTypeAtPos(WorldPosition pos, ItemType type) {
-		world.setType(PaperApiHelper.locationFromWorldPos(pos), ((ItemTypePaper)type).handle());
+	public void setTypeAtPos(GlobalPosition pos, ItemType type) {
+		world.setType(PaperApiHelper.locationFromWorldPos(this, pos), ((ItemTypePaper)type).handle());
 	}
 
 	@Override
-	public WorldPosition highestBlockAt(WorldPosition pos) {
+	public GlobalPosition highestBlockAt(GlobalPosition pos) {
 		return PaperApiHelper.worldPosFromLocation(world.getHighestBlockAt(pos.blockX(), pos.blockZ()).getLocation());
 	}
 
 	@Override
-	public void dropItem(StackHandle item, WorldPosition location) {
-		world.dropItem(PaperApiHelper.locationFromWorldPos(location), ((StackHandlePaper)item).handle());
+	public void dropItem(StackHandle item, GlobalPosition location) {
+		world.dropItem(PaperApiHelper.locationFromWorldPos(this, location), ((StackHandlePaper)item).handle());
 	}
 
 	public World handle() {

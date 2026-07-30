@@ -34,29 +34,29 @@ import io.github.steaf23.bingoreloaded.lib.api.EntityTypePaper;
 import io.github.steaf23.bingoreloaded.lib.api.ExtensionInfo;
 import io.github.steaf23.bingoreloaded.lib.api.platform.GameContext;
 import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformResources;
+import io.github.steaf23.bingoreloaded.lib.inventory.InventoryEventListener;
 import io.github.steaf23.bingoreloaded.lib.inventory.MenuBoard;
 import io.github.steaf23.bingoreloaded.lib.api.PaperInventoryProvider;
 import io.github.steaf23.bingoreloaded.lib.api.PlatformResolver;
 import io.github.steaf23.bingoreloaded.lib.api.WorldHandle;
 import io.github.steaf23.bingoreloaded.lib.api.WorldHandlePaper;
-import io.github.steaf23.bingoreloaded.lib.api.item.CapacityInventoryProvider;
+import io.github.steaf23.bingoreloaded.lib.api.inventory.CapacityInventoryProvider;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandlePaper;
 import io.github.steaf23.bingoreloaded.lib.api.platform.PaperResources;
 import io.github.steaf23.bingoreloaded.lib.api.platform.PaperServer;
 import io.github.steaf23.bingoreloaded.lib.api.platform.PaperStatics;
 import io.github.steaf23.bingoreloaded.lib.api.platform.PaperTaskScheduler;
-import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformTaskScheduler;
 import io.github.steaf23.bingoreloaded.lib.api.player.EmptyDisplay;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
-import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandlePaper;
+import io.github.steaf23.bingoreloaded.lib.api.PlayerHandlePaper;
 import io.github.steaf23.bingoreloaded.lib.api.player.SharedDisplay;
 import io.github.steaf23.bingoreloaded.lib.data.core.ConfigDataAccessor;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataAccessor;
 import io.github.steaf23.bingoreloaded.lib.data.core.YamlDataAccessor;
 import io.github.steaf23.bingoreloaded.lib.events.EventListenerPaper;
 import io.github.steaf23.bingoreloaded.lib.inventory.BasicMenu;
-import io.github.steaf23.bingoreloaded.lib.inventory.MenuBoardPaper;
+import io.github.steaf23.bingoreloaded.lib.inventory.MenuPacketListener;
 import io.github.steaf23.bingoreloaded.lib.menu.ScoreboardDisplay;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import io.github.steaf23.bingoreloaded.placeholder.BingoReloadedPlaceholderExpansion;
@@ -82,6 +82,7 @@ import org.bukkit.command.PluginCommand;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.MapMeta;
@@ -97,6 +98,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class BingoReloadedPaper extends JavaPlugin implements BingoReloadedRuntime, Listener {
@@ -106,6 +108,8 @@ public class BingoReloadedPaper extends JavaPlugin implements BingoReloadedRunti
 	private BingoReloaded bingo;
 	private MenuBoard menuBoard;
 	private EventListenerPaper eventListener;
+	private InventoryEventListener inventoryListener;
+	private MenuPacketListener packetListener;
 	private SharedDisplay gameDisplay;
 	private SharedDisplay settingsDisplay;
 	private BingoClientManager clientManager;
@@ -150,10 +154,15 @@ public class BingoReloadedPaper extends JavaPlugin implements BingoReloadedRunti
 	@Override
 	public void onEnable() {
 		Bukkit.getPluginManager().registerEvents(this, this);
+		this.server = new PaperServer(tasks);
 		bingo.enable(resources);
 
-		this.server = new PaperServer();
-		this.menuBoard = new MenuBoardPaper(tasks, this, new GameContext(server, bingo));
+
+		this.menuBoard = new MenuBoard(new GameContext(server, bingo));
+		this.inventoryListener = new InventoryEventListener(menuBoard, server.menus());
+		Bukkit.getPluginManager().registerEvents(inventoryListener, this);
+
+		packetListener = new MenuPacketListener(tasks);
 		bingo.reloadManager(server);
 
 		if (bingo.config().getOptionValue(BingoOptions.DISABLE_CLIENT_MOD)) {
@@ -428,6 +437,27 @@ public class BingoReloadedPaper extends JavaPlugin implements BingoReloadedRunti
 	}
 
 	@Override
+	public void givePlayerCardItem(PlayerHandle player, int cardSlot, StackHandle stack) {
+		Player paperPlayer = ((PlayerHandlePaper)player).handle();
+		for (ItemStack itemStack : paperPlayer.getInventory()) {
+			if (PlayerKit.CARD_ITEM.isCompareKeyEqual(new StackHandlePaper(itemStack))) {
+				paperPlayer.getInventory().remove(itemStack);
+				break;
+			}
+		}
+
+		ItemStack existingItem = paperPlayer.getInventory().getItem(cardSlot);
+		paperPlayer.getInventory().setItem(cardSlot, ((StackHandlePaper)stack).handle());
+
+		if (existingItem != null && !existingItem.isEmpty()) {
+			Map<Integer, ItemStack> leftOver = paperPlayer.getInventory().addItem(existingItem);
+			for (ItemStack stackToDrop : leftOver.values()) {
+				paperPlayer.dropItem(stackToDrop);
+			}
+		}
+	}
+
+	@Override
 	public TeamDisplay createTeamDisplay(BingoSession session) {
 		return new TeamDisplayPaper(session);
 	}
@@ -445,11 +475,6 @@ public class BingoReloadedPaper extends JavaPlugin implements BingoReloadedRunti
 	@Override
 	public BingoClientManager getClientManager() {
 		return clientManager;
-	}
-
-	@Override
-	public PlatformTaskScheduler taskScheduler() {
-		return tasks;
 	}
 
 }

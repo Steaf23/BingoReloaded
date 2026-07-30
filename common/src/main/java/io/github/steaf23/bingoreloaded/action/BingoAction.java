@@ -18,7 +18,7 @@ import io.github.steaf23.bingoreloaded.lib.action.ActionTree;
 import io.github.steaf23.bingoreloaded.lib.api.ActionUser;
 import io.github.steaf23.bingoreloaded.lib.api.BingoReloadedRuntime;
 import io.github.steaf23.bingoreloaded.lib.api.PlatformResolver;
-import io.github.steaf23.bingoreloaded.lib.api.WorldPosition;
+import io.github.steaf23.bingoreloaded.lib.api.GlobalPosition;
 import io.github.steaf23.bingoreloaded.lib.api.platform.GameContext;
 import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformServer;
 import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformStatics;
@@ -213,7 +213,7 @@ public class BingoAction extends ActionTree {
 					return ActionResult.INCORRECT_USE;
 				}
 
-				WorldPosition pos = player.position();
+				GlobalPosition pos = player.position();
 				session.startGame(pos);
 				return ActionResult.SUCCESS;
 			} else if (args.length == 2 && args[0].equals("here")) {
@@ -224,7 +224,7 @@ public class BingoAction extends ActionTree {
 				int seed = Integer.parseInt(args[1]);
 				session.settingsBuilder.cardSeed(seed);
 
-				WorldPosition pos = player.position();
+				GlobalPosition pos = player.position();
 				session.startGame(pos);
 				return ActionResult.SUCCESS;
 			} else if (args.length == 1) {
@@ -371,7 +371,7 @@ public class BingoAction extends ActionTree {
 
 			GameManager gameManager = context.gameManager();
 
-			WorldPosition pos = player.position();
+			GlobalPosition pos = player.position();
 			BingoSession session = getSessionFromUser(gameManager, getLastUser());
 			// In multiple, we cannot create a lobby in a bingo world because there should only be one lobby ever.
 			if (this.config.getOptionValue(BingoOptions.CONFIGURATION) == BingoOptions.PluginConfiguration.MULTIPLE && session != null && session.ownsWorld(player.world())) {
@@ -471,15 +471,15 @@ public class BingoAction extends ActionTree {
 
 		return switch (itemName) {
 			case "wand" -> {
-				player.inventory().addItem(session.items().createStack(GoUpWand.ID, null));
+				player.addItemsToInventory(session.items().createStack(GoUpWand.ID, null));
 				yield ActionResult.SUCCESS;
 			}
 			case "pouch" -> {
-				player.inventory().addItem(session.items().createStack(TeamPouch.ID, null));
+				player.addItemsToInventory(session.items().createStack(TeamPouch.ID, null));
 				yield ActionResult.SUCCESS;
 			}
 			case "card" -> {
-				player.inventory().addItem(PlayerKit.CARD_ITEM.buildItem());
+				player.addItemsToInventory(PlayerKit.CARD_ITEM.buildItem());
 				yield ActionResult.SUCCESS;
 			}
 			default -> ActionResult.INCORRECT_USE;

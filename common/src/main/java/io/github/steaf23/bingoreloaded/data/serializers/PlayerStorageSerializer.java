@@ -2,11 +2,12 @@ package io.github.steaf23.bingoreloaded.data.serializers;
 
 import io.github.steaf23.bingoreloaded.data.helper.SerializablePlayer;
 import io.github.steaf23.bingoreloaded.lib.api.PlayerGamemode;
-import io.github.steaf23.bingoreloaded.lib.api.WorldPosition;
+import io.github.steaf23.bingoreloaded.lib.api.GlobalPosition;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataStorage;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataStorageSerializer;
 import io.github.steaf23.bingoreloaded.lib.item.SerializableItem;
+import net.kyori.adventure.key.Key;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -36,7 +37,7 @@ public class PlayerStorageSerializer implements DataStorageSerializer<Serializab
         var player = new SerializablePlayer();
         player.extensionVersion = storage.getString("version", "-");
         player.playerId = storage.getUUID("uuid");
-        player.location = storage.getWorldPosition("location", new WorldPosition(null, 0.0, 0.0, 0.0));
+        player.location = storage.getWorldPosition("location", new GlobalPosition((Key)null, 0.0, 0.0, 0.0));
         player.health = storage.getDouble("health", 20.0);
         player.hunger = storage.getInt("hunger", 0);
         player.gamemode = PlayerGamemode.valueOf(storage.getString("gamemode", "SURVIVAL"));

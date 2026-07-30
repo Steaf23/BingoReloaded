@@ -116,15 +116,15 @@ public class PregameLobby implements GamePhase
     }
 
     private void giveVoteItem(PlayerHandle player) {
-        player.inventory().addItem(PlayerKit.VOTE_ITEM.buildItem());
+        player.addItemsToInventory(PlayerKit.VOTE_ITEM.buildItem());
     }
 
     private void giveTeamItem(PlayerHandle player) {
-        player.inventory().addItem(PlayerKit.TEAM_ITEM.buildItem());
+        player.addItemsToInventory(PlayerKit.TEAM_ITEM.buildItem());
     }
 
     private void giveAdminItem(PlayerHandle player) {
-        player.inventory().addItem(PlayerKit.ADMIN_ITEM.buildItem());
+        player.addItemsToInventory(PlayerKit.ADMIN_ITEM.buildItem());
     }
 
     private void initializePlayer(PlayerHandle player) {
@@ -188,7 +188,7 @@ public class PregameLobby implements GamePhase
             return;
         }
 
-        playerCountTimer.start(runtime.taskScheduler());
+        playerCountTimer.start(session.getGameManager().getServer().taskScheduler());
         if (playerCountTimer.getTime() > 10) {
             BingoMessage.STARTING_STATUS.sendToAudience(session,
                     Component.text(config.getOptionValue(BingoOptions.PLAYER_WAIT_TIME)).color(NamedTextColor.GOLD));
@@ -212,7 +212,7 @@ public class PregameLobby implements GamePhase
         }
 		runtime.settingsDisplay().update(session.getGameManager().getServer(), infoMenu);
 
-        runtime.taskScheduler().runTask(10L, (t) -> {
+        session.getGameManager().getServer().taskScheduler().runTask(10L, (t) -> {
             if (gameStarted) {
                 return;
             }
@@ -302,7 +302,7 @@ public class PregameLobby implements GamePhase
 
         // Schedule check in the future since a player can switch teams where they will briefly leave the team
         // and lower the participant count to possibly stop the timer.
-        runtime.taskScheduler().runTask(t -> {
+        session.getGameManager().getServer().taskScheduler().runTask(t -> {
             if (session.teamManager.getParticipantCount() < config.getOptionValue(BingoOptions.MINIMUM_PLAYER_COUNT) && playerCountTimer.isRunning()) {
                 playerCountTimer.stop();
             }

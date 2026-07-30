@@ -2,60 +2,56 @@ package io.github.steaf23.bingoreloaded.lib.inventory;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
-import io.github.steaf23.bingoreloaded.lib.api.item.InventoryHandle;
+import io.github.steaf23.bingoreloaded.lib.api.inventory.InventoryTemplate;
 import io.github.steaf23.bingoreloaded.lib.api.item.VanillaItems;
-import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformInventories;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
-import io.github.steaf23.bingoreloaded.lib.data.core.DataStorage;
 import io.github.steaf23.bingoreloaded.lib.inventory.action.MenuAction;
 import io.github.steaf23.bingoreloaded.lib.inventory.action.MenuItemGroup;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
-import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
 
-public class BasicMenu implements InventoryMenu
+public class BasicMenu implements Menu
 {
     public static Component pluginTitlePrefix = Component.empty();
 
     public static final ItemTemplate BLANK = new ItemTemplate(VanillaItems.BLACK_STAINED_GLASS_PANE.type(), null)
             .setNoTooltip(true);
 
-    private final InventoryHandle inventory;
+    private final InventoryTemplate inventory;
+    private final MenuType type;
     private final MenuBoard manager;
-    private int maxStackSizeOverride = -1; // -1 means no override (i.e. default stack sizes for all items)
     private final MenuItemGroup itemGroup;
 
     private Component title;
     private boolean openOnce;
 
     public BasicMenu(MenuBoard manager, Component initialTitle, int rows) {
-        this(manager, manager.context().inventories().createInventory(rows * 9, Component.text().append(pluginTitlePrefix).append(initialTitle).build()));
-        this.title = initialTitle;
+        this(manager, new InventoryTemplate(rows * 9), Component.text().append(pluginTitlePrefix).append(initialTitle).build(), MenuType.CHEST);
     }
 
     /**
      * Useful for textured menus, sets title as component string without prefix, to put custom fonts in the title.
      */
     public BasicMenu(MenuBoard manager, Component initialTitle, boolean usePrefix) {
-        this(manager, manager.context().inventories().createInventory(6 * 9, usePrefix ? Component.text().append(pluginTitlePrefix).append(initialTitle).build() : initialTitle));
-        this.title = Component.empty();
+        this(manager, new InventoryTemplate(6 * 9), usePrefix ? Component.text().append(pluginTitlePrefix).append(initialTitle).build() : initialTitle, MenuType.CHEST);
     }
 
-    public BasicMenu(MenuBoard manager, Component initialTitle, PlatformInventories.Type type) {
-        this(manager, manager.context().inventories().createInventory(type, Component.text().append(pluginTitlePrefix).append(initialTitle).build()));
-        this.title = initialTitle;
+    public BasicMenu(MenuBoard manager, Component initialTitle, MenuType menuType) {
+        this(manager, new InventoryTemplate(slotCountForMenu(menuType)), Component.text().append(pluginTitlePrefix).append(initialTitle).build(), menuType);
     }
 
     // Used for common setup
-    private BasicMenu(MenuBoard manager, InventoryHandle inventory) {
+    private BasicMenu(MenuBoard manager, InventoryTemplate inventory, Component title, MenuType type) {
         this.inventory = inventory;
         this.manager = manager;
         this.itemGroup = new MenuItemGroup();
+        this.title = title;
+        this.type = type;
     }
 
     public void open(PlayerHandle player) {
@@ -76,25 +72,17 @@ public class BasicMenu implements InventoryMenu
     }
 
     public @Nullable ItemTemplate getItemAtSlot(int slot) {
-        for (ItemTemplate item : itemGroup.items) {
-            if (item.getSlot() == slot) {
-                return item;
-            }
-        }
-        return null;
+        return itemGroup.getItem(slot);
     }
 
     public BasicMenu addItem(@NotNull ItemTemplate item, @Nullable MenuAction action, boolean replaceExisting) {
-        if (maxStackSizeOverride != -1)
-            getInventory().setMaxStackSize(maxStackSizeOverride);
-
-        if (!replaceExisting && getInventory().getItem(item.getSlot()) != null) {
+        if (!replaceExisting && this.getBackedInventory().getItem(item.getSlot()).type().isAir()) {
             return this;
         }
 
         itemGroup.addItem(item, action);
         // Replace/ set new item in its target slot
-        getInventory().setItem(item.getSlot(), item.buildItem());
+        this.getBackedInventory().setItem(item.getSlot(), item.buildItem());
 
         return this;
     }
@@ -164,17 +152,20 @@ public class BasicMenu implements InventoryMenu
     }
 
     public BasicMenu removeItem(int slotIdx) {
-        getInventory().setItem(slotIdx, null);
+        this.getBackedInventory().setItem(slotIdx, null);
         itemGroup.removeItem(slotIdx);
         return this;
     }
 
-    protected void setMaxStackSizeOverride(int maxValue) {
-        maxStackSizeOverride = Math.min(64, Math.max(1, maxValue));
-    }
-
     public MenuBoard getMenuBoard() {
         return this.manager;
+    }
+
+    public static int slotCountForMenu(MenuType type) {
+        return switch (type) {
+            case CHEST -> 27;
+            case ANVIL -> 3;
+        };
     }
 
     @Override
@@ -191,16 +182,23 @@ public class BasicMenu implements InventoryMenu
         return true;
     }
 
-    @Override
-    public void onCustomAction(PlayerHandle player, Key key, DataStorage payload) {
-    }
 
     @Override
     public void beforeClosing(PlayerHandle player) {
     }
 
     @Override
-    public @NotNull InventoryHandle getInventory() {
+    public MenuType type() {
+        return type;
+    }
+
+    @Override
+    public Component title() {
+        return title;
+    }
+
+    @Override
+    public @NotNull InventoryTemplate getBackedInventory() {
         return inventory;
     }
 
