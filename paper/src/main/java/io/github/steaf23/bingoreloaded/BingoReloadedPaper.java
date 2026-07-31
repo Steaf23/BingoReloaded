@@ -32,30 +32,30 @@ import io.github.steaf23.bingoreloaded.lib.api.BingoReloadedRuntime;
 import io.github.steaf23.bingoreloaded.lib.api.EntityType;
 import io.github.steaf23.bingoreloaded.lib.api.EntityTypePaper;
 import io.github.steaf23.bingoreloaded.lib.api.ExtensionInfo;
-import io.github.steaf23.bingoreloaded.lib.api.platform.GameContext;
-import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformResources;
-import io.github.steaf23.bingoreloaded.lib.inventory.InventoryEventListener;
-import io.github.steaf23.bingoreloaded.lib.inventory.MenuBoard;
 import io.github.steaf23.bingoreloaded.lib.api.PaperInventoryProvider;
 import io.github.steaf23.bingoreloaded.lib.api.PlatformResolver;
+import io.github.steaf23.bingoreloaded.lib.api.PlayerHandlePaper;
 import io.github.steaf23.bingoreloaded.lib.api.WorldHandle;
 import io.github.steaf23.bingoreloaded.lib.api.WorldHandlePaper;
 import io.github.steaf23.bingoreloaded.lib.api.inventory.CapacityInventoryProvider;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandlePaper;
+import io.github.steaf23.bingoreloaded.lib.api.platform.GameContext;
 import io.github.steaf23.bingoreloaded.lib.api.platform.PaperResources;
 import io.github.steaf23.bingoreloaded.lib.api.platform.PaperServer;
 import io.github.steaf23.bingoreloaded.lib.api.platform.PaperStatics;
 import io.github.steaf23.bingoreloaded.lib.api.platform.PaperTaskScheduler;
+import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformResources;
 import io.github.steaf23.bingoreloaded.lib.api.player.EmptyDisplay;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
-import io.github.steaf23.bingoreloaded.lib.api.PlayerHandlePaper;
 import io.github.steaf23.bingoreloaded.lib.api.player.SharedDisplay;
 import io.github.steaf23.bingoreloaded.lib.data.core.ConfigDataAccessor;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataAccessor;
 import io.github.steaf23.bingoreloaded.lib.data.core.YamlDataAccessor;
 import io.github.steaf23.bingoreloaded.lib.events.EventListenerPaper;
 import io.github.steaf23.bingoreloaded.lib.inventory.BasicMenu;
+import io.github.steaf23.bingoreloaded.lib.inventory.InventoryEventListener;
+import io.github.steaf23.bingoreloaded.lib.inventory.MenuBoard;
 import io.github.steaf23.bingoreloaded.lib.inventory.MenuPacketListener;
 import io.github.steaf23.bingoreloaded.lib.menu.ScoreboardDisplay;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
@@ -314,16 +314,16 @@ public class BingoReloadedPaper extends JavaPlugin implements BingoReloadedRunti
 
 	public StackHandle createCardItemForPlayer(BingoParticipant player) {
 		if (player.sessionPlayer().isEmpty() || player.getCard().isEmpty() && player.getTeam() != null) {
-			return PlayerKit.CARD_ITEM.buildItem();
+			return PlayerKit.CARD_ITEM.buildItem(server);
 		}
 
 		PlayerHandle playerHandle = player.sessionPlayer().get();
 
 		if (!bingo.config().getOptionValue(BingoOptions.USE_MAP_RENDERER) || clientManager.playerHasClient(playerHandle)) {
-			return PlayerKit.CARD_ITEM.buildItem();
+			return PlayerKit.CARD_ITEM.buildItem(server);
 		}
 
-		StackHandlePaper mapStack = (StackHandlePaper) PlayerKit.CARD_ITEM_RENDERABLE.buildItem();
+		StackHandlePaper mapStack = (StackHandlePaper) PlayerKit.CARD_ITEM_RENDERABLE.buildItem(server);
 
 		ItemStack handle = mapStack.handle();
 		handle.editMeta(m -> {

@@ -18,6 +18,11 @@ public class MenuSlot extends Slot {
 	}
 
 	@Override
+	public boolean allowModification(Player player) {
+		return false;
+	}
+
+	@Override
 	public boolean mayPlace(ItemStack stack) {
 		return false;
 	}

@@ -30,7 +30,7 @@ public class DataUpdaterV3_5_0 extends DataUpdaterV3_3_0 {
 	protected void updateKits() {
 		super.updateKits();
 
-		BingoItems items = new BingoItems();
+		BingoItems items = new BingoItems(null);
 
 		DataStorageSerializerRegistry.addSerializer(new ItemStorageSerializer(), SerializableItem.class);
 

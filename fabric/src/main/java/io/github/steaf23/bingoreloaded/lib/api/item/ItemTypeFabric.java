@@ -15,6 +15,10 @@ public class ItemTypeFabric implements ItemType {
 		this.item = item;
 	}
 
+	public Item handle() {
+		return item;
+	}
+
 	@Override
 	public boolean isBlock() {
 		return item instanceof BlockItem;

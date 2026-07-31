@@ -4,6 +4,7 @@ import io.github.steaf23.bingoreloaded.lib.api.PlatformResolver;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.api.item.VanillaItems;
+import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformServer;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.data.core.tag.TagDataStorage;
 import net.kyori.adventure.key.Key;
@@ -443,8 +444,8 @@ public class ItemTemplate
     /**
      * @return Item built from this template.
      */
-    public StackHandle buildItem() {
-        return StackHandle.createFromTemplate(this, true);
+    public StackHandle buildItem(PlatformServer server) {
+        return server.createItemStackFromTemplate(this, true);
     }
 
     public List<Component> buildDescriptionList() {

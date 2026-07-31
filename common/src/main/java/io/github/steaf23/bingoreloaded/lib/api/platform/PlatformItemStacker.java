@@ -10,7 +10,6 @@ public interface PlatformItemStacker {
 
 	StackHandle createStack(ItemType type, int amount);
 	StackHandle createStackFromBytes(byte[] bytes);
-	StackHandle createStackFromTemplate(ItemTemplate template, boolean hideAttributes);
 	byte[] createBytesFromStack(StackHandle stack);
 	StackHandle colorItemStack(StackHandle stack, TextColor color);
 

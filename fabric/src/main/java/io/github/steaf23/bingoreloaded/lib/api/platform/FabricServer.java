@@ -5,9 +5,12 @@ import io.github.steaf23.bingoreloaded.lib.api.AdvancementHandleFabric;
 import io.github.steaf23.bingoreloaded.lib.api.WorldHandle;
 import io.github.steaf23.bingoreloaded.lib.api.WorldHandleFabric;
 import io.github.steaf23.bingoreloaded.lib.api.WorldOptions;
+import io.github.steaf23.bingoreloaded.lib.api.item.StackBuilderFabric;
+import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandleFabric;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerInfo;
+import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import io.github.steaf23.bingoreloaded.util.FabricTypes;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.kyori.adventure.key.Key;
@@ -37,7 +40,7 @@ public class FabricServer implements PlatformServer {
 		this.server = server;
 		this.taskScheduler = taskScheduler;
 		this.inventories = new FabricInventories();
-		this.menus = new FabricMenus();
+		this.menus = new FabricMenus(taskScheduler);
 	}
 
 	@Override
@@ -135,6 +138,11 @@ public class FabricServer implements PlatformServer {
 	@Override
 	public boolean deleteWorld(@NotNull Key worldKey) {
 		return false;
+	}
+
+	@Override
+	public StackHandle createItemStackFromTemplate(ItemTemplate template, boolean hideAttributes) {
+		return new StackBuilderFabric(this).buildItem(template, hideAttributes);
 	}
 
 	@Override

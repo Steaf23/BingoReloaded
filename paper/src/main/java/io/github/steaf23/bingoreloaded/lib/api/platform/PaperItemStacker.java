@@ -1,14 +1,13 @@
 package io.github.steaf23.bingoreloaded.lib.api.platform;
 
+import io.github.steaf23.bingoreloaded.lib.api.PlayerHandlePaper;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemTypePaper;
 import io.github.steaf23.bingoreloaded.lib.api.item.PaperItemEditor;
-import io.github.steaf23.bingoreloaded.lib.api.item.StackBuilderPaper;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandlePaper;
 import io.github.steaf23.bingoreloaded.lib.api.item.VanillaItems;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
-import io.github.steaf23.bingoreloaded.lib.api.PlayerHandlePaper;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import io.papermc.paper.datacomponent.item.DyedItemColor;
@@ -29,11 +28,6 @@ public class PaperItemStacker implements PlatformItemStacker {
 	@Override
 	public StackHandle createStackFromBytes(byte[] bytes) {
 		return new StackHandlePaper(ItemStack.deserializeBytes(bytes));
-	}
-
-	@Override
-	public StackHandle createStackFromTemplate(ItemTemplate template, boolean hideAttributes) {
-		return new StackBuilderPaper().buildItem(template, hideAttributes);
 	}
 
 	@Override

@@ -8,7 +8,6 @@ import io.github.steaf23.bingoreloaded.lib.inventory.Menu;
 import io.github.steaf23.bingoreloaded.lib.inventory.UserInputMenu;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.Nullable;
@@ -56,8 +55,7 @@ public class PaperMenus implements PlatformMenus {
 	@Override
 	public void close(PlayerHandle player) {
 		taskScheduler.runTask(task -> {
-			Player paperPlayer = ((PlayerHandlePaper)player).handle();
-			paperPlayer.closeInventory(InventoryCloseEvent.Reason.PLUGIN);
+			player.closeInventory();
 		});
 	}
 

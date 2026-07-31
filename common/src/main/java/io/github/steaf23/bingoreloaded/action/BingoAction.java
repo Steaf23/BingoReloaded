@@ -17,8 +17,8 @@ import io.github.steaf23.bingoreloaded.lib.action.ActionResult;
 import io.github.steaf23.bingoreloaded.lib.action.ActionTree;
 import io.github.steaf23.bingoreloaded.lib.api.ActionUser;
 import io.github.steaf23.bingoreloaded.lib.api.BingoReloadedRuntime;
-import io.github.steaf23.bingoreloaded.lib.api.PlatformResolver;
 import io.github.steaf23.bingoreloaded.lib.api.GlobalPosition;
+import io.github.steaf23.bingoreloaded.lib.api.PlatformResolver;
 import io.github.steaf23.bingoreloaded.lib.api.platform.GameContext;
 import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformServer;
 import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformStatics;
@@ -479,7 +479,7 @@ public class BingoAction extends ActionTree {
 				yield ActionResult.SUCCESS;
 			}
 			case "card" -> {
-				player.addItemsToInventory(PlayerKit.CARD_ITEM.buildItem());
+				player.addItemsToInventory(PlayerKit.CARD_ITEM.buildItem(context.server()));
 				yield ActionResult.SUCCESS;
 			}
 			default -> ActionResult.INCORRECT_USE;

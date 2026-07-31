@@ -1,7 +1,6 @@
 package io.github.steaf23.bingoreloaded.lib.data.core;
 
 import io.github.steaf23.bingoreloaded.lib.api.GlobalPosition;
-import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformServer;
 import io.github.steaf23.bingoreloaded.lib.data.core.tag.TagAdapter;
@@ -182,7 +181,7 @@ public class PlainDataStorage implements DataStorage {
 	@Override
 	public @NotNull StackHandle getItemStack(String path) {
 		Object v = get(path);
-		return v instanceof StackHandle res ? res : StackHandle.create(ItemType.AIR);
+		return v instanceof StackHandle res ? res : StackHandle.empty();
 	}
 
 	@Override

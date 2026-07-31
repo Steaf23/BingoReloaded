@@ -4,12 +4,15 @@ import io.github.steaf23.bingoreloaded.data.helper.ResourceFileHelper;
 import io.github.steaf23.bingoreloaded.lib.api.AdvancementHandle;
 import io.github.steaf23.bingoreloaded.lib.api.AdvancementHandlePaper;
 import io.github.steaf23.bingoreloaded.lib.api.DimensionType;
+import io.github.steaf23.bingoreloaded.lib.api.PlayerHandlePaper;
 import io.github.steaf23.bingoreloaded.lib.api.WorldHandle;
 import io.github.steaf23.bingoreloaded.lib.api.WorldHandlePaper;
 import io.github.steaf23.bingoreloaded.lib.api.WorldOptions;
+import io.github.steaf23.bingoreloaded.lib.api.item.StackBuilderPaper;
+import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
-import io.github.steaf23.bingoreloaded.lib.api.PlayerHandlePaper;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerInfo;
+import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Bukkit;
@@ -175,6 +178,11 @@ public class PaperServer implements PlatformServer {
 		}
 
 		return true;
+	}
+
+	@Override
+	public StackHandle createItemStackFromTemplate(ItemTemplate template, boolean hideAttributes) {
+		return new StackBuilderPaper().buildItem(template, hideAttributes);
 	}
 
 	@Override

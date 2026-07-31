@@ -82,7 +82,7 @@ public class BasicMenu implements Menu
 
         itemGroup.addItem(item, action);
         // Replace/ set new item in its target slot
-        this.getBackedInventory().setItem(item.getSlot(), item.buildItem());
+        this.getBackedInventory().setItem(item.getSlot(), item.buildItem(getMenuBoard().context().server()));
 
         return this;
     }

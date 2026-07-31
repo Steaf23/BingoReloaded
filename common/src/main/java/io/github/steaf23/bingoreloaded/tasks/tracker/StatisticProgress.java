@@ -1,8 +1,8 @@
 package io.github.steaf23.bingoreloaded.tasks.tracker;
 
+import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.api.statistics.StatisticHandle;
 import io.github.steaf23.bingoreloaded.lib.api.statistics.VanillaStatistic;
-import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 
 import java.util.function.Consumer;

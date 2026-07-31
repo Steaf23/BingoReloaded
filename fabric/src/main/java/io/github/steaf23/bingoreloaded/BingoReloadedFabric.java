@@ -8,11 +8,19 @@ import io.github.steaf23.bingoreloaded.api.CardMenu;
 import io.github.steaf23.bingoreloaded.api.TeamDisplay;
 import io.github.steaf23.bingoreloaded.api.network.BingoClientManager;
 import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
+import io.github.steaf23.bingoreloaded.data.config.BingoOptions;
 import io.github.steaf23.bingoreloaded.data.record.LeaderboardData;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gameloop.phase.PregameLobby;
 import io.github.steaf23.bingoreloaded.gui.inventory.AdminBingoMenu;
+import io.github.steaf23.bingoreloaded.gui.inventory.LeaderboardMenu;
+import io.github.steaf23.bingoreloaded.gui.inventory.TeamCardSelectMenu;
+import io.github.steaf23.bingoreloaded.gui.inventory.TeamEditorMenu;
 import io.github.steaf23.bingoreloaded.gui.inventory.TeamSelectionMenu;
+import io.github.steaf23.bingoreloaded.gui.inventory.VoteMenu;
+import io.github.steaf23.bingoreloaded.gui.inventory.card.GenericCardMenu;
+import io.github.steaf23.bingoreloaded.gui.inventory.card.HotswapGenericCardMenu;
+import io.github.steaf23.bingoreloaded.gui.inventory.creator.BingoCreatorMenu;
 import io.github.steaf23.bingoreloaded.lib.action.ActionTree;
 import io.github.steaf23.bingoreloaded.lib.api.ActionUser;
 import io.github.steaf23.bingoreloaded.lib.api.BingoReloadedRuntime;
@@ -39,6 +47,7 @@ import io.github.steaf23.bingoreloaded.lib.inventory.MenuBoard;
 import io.github.steaf23.bingoreloaded.lib.inventory.MenuBoardFabric;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
+import io.github.steaf23.bingoreloaded.settings.gamemode.BingoGamemodes;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
@@ -170,13 +179,18 @@ public class BingoReloadedFabric implements ModInitializer, BingoReloadedRuntime
 	}
 
 	@Override
-	public CardMenu createMenu(boolean textured, CardDisplayInfo displayMode) {
-		return null;
+	public CardMenu createMenu(boolean textured, CardDisplayInfo displayInfo) {
+		boolean useHotswapMenu = displayInfo.mode() == BingoGamemodes.HOTSWAP || displayInfo.mode() == BingoGamemodes.BLITZ;
+		if (useHotswapMenu) {
+			return new HotswapGenericCardMenu(bingo, menuBoard, displayInfo, null);
+		}
+
+		return new GenericCardMenu(bingo, menuBoard, displayInfo, null);
 	}
 
 	@Override
 	public StackHandle createCardItemForPlayer(BingoParticipant player) {
-		return PlayerKit.CARD_ITEM.buildItem();
+		return PlayerKit.CARD_ITEM.buildItem(server);
 	}
 
 	@Override
@@ -210,32 +224,32 @@ public class BingoReloadedFabric implements ModInitializer, BingoReloadedRuntime
 
 	@Override
 	public void openTeamEditor(PlayerHandle player) {
-
+		new TeamEditorMenu(menuBoard).open(player);
 	}
 
 	@Override
 	public void openBingoCreator(PlayerHandle player) {
-
+		new BingoCreatorMenu(menuBoard).open(player);
 	}
 
 	@Override
 	public void openTeamCardSelect(PlayerHandle player, BingoSession session) {
-
+		new TeamCardSelectMenu(menuBoard, session).open(player);
 	}
 
 	@Override
 	public void openTeamSelector(PlayerHandle player, BingoSession session) {
-
+		new TeamSelectionMenu(menuBoard, session).open(player);
 	}
 
 	@Override
 	public void openVoteMenu(PlayerHandle player, PregameLobby lobby) {
-
+		new VoteMenu(menuBoard, bingo.config().getOptionValue(BingoOptions.VOTE_LIST), lobby).open(player);
 	}
 
 	@Override
 	public void openLeaderboard(PlayerHandle player, LeaderboardData historyData, boolean categorizeByPresets) {
-
+		new LeaderboardMenu(menuBoard, historyData, player, categorizeByPresets, bingo.config().getOptionValue(BingoOptions.SAVE_PLAYER_STATISTICS)).open(player);
 	}
 
 	@Override

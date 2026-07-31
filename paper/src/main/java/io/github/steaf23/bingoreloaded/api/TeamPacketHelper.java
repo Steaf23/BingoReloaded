@@ -3,8 +3,8 @@ package io.github.steaf23.bingoreloaded.api;
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerTeams;
-import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.api.PlayerHandlePaper;
+import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import net.kyori.adventure.text.Component;
 
 import java.util.Collection;

@@ -64,7 +64,7 @@ public class PaperInventoryProvider implements CapacityInventoryProvider, Listen
 
 		for (int i = 0; i < 9 - extraSlots; i++) {
 			ItemTemplate item = BasicMenu.BLANK.copyToSlot(8 - i, rows - 1).setCompareKey("locked");
-			template.setItem(item.getSlot(), item.buildItem());
+			template.setItem(item.getSlot(), item.buildItem(null));
 		}
 		return template;
 	}

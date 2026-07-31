@@ -5,10 +5,8 @@ import io.github.steaf23.bingoreloaded.lib.api.AdvancementHandleFabric;
 import io.github.steaf23.bingoreloaded.lib.api.DimensionType;
 import io.github.steaf23.bingoreloaded.lib.api.EntityType;
 import io.github.steaf23.bingoreloaded.lib.api.EntityTypeFabric;
-import io.github.steaf23.bingoreloaded.lib.api.statistics.StatisticHandle;
 import io.github.steaf23.bingoreloaded.lib.api.StatusEffectType;
 import io.github.steaf23.bingoreloaded.lib.api.StatusEffectTypeFabric;
-import io.github.steaf23.bingoreloaded.lib.api.statistics.VanillaStatistic;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemTypeFabric;
 import io.github.steaf23.bingoreloaded.util.FabricTypes;
@@ -17,7 +15,6 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.EntityTypes;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 

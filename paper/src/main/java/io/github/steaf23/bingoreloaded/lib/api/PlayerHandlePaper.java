@@ -1,13 +1,13 @@
 package io.github.steaf23.bingoreloaded.lib.api;
 
 import io.github.steaf23.bingoreloaded.lib.api.inventory.InventoryTemplate;
-import io.github.steaf23.bingoreloaded.lib.api.platform.PaperInventories;
-import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
-import io.github.steaf23.bingoreloaded.lib.api.statistics.StatisticHandle;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemTypePaper;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandlePaper;
+import io.github.steaf23.bingoreloaded.lib.api.platform.PaperInventories;
 import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformServer;
+import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
+import io.github.steaf23.bingoreloaded.lib.api.statistics.StatisticHandle;
 import io.github.steaf23.bingoreloaded.lib.util.DebugLogger;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.key.Key;
@@ -20,6 +20,7 @@ import org.bukkit.Registry;
 import org.bukkit.advancement.AdvancementProgress;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.potion.PotionEffect;
 import org.jetbrains.annotations.NotNull;
@@ -255,7 +256,7 @@ public class PlayerHandlePaper implements PlayerHandle {
 
 	@Override
 	public void closeInventory() {
-		player.closeInventory();
+		player.closeInventory(InventoryCloseEvent.Reason.PLUGIN);
 	}
 
 	@Override

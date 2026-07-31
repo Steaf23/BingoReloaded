@@ -1,6 +1,5 @@
 package io.github.steaf23.bingoreloaded.lib.api;
 
-import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformServer;
 import org.bukkit.Location;
 import org.jetbrains.annotations.Nullable;
 

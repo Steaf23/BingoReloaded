@@ -1,6 +1,7 @@
 package io.github.steaf23.bingoreloaded.item;
 
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
+import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformServer;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import net.kyori.adventure.key.Key;
@@ -11,9 +12,12 @@ import java.util.Map;
 
 public class BingoItems {
 
+	private final PlatformServer server;
+
 	Map<Key, GameItem> items = new HashMap<>();
 
-	public BingoItems() {
+	public BingoItems(PlatformServer server) {
+		this.server = server;
 		addItem(new GoUpWand());
 		addItem(new TeamPouch());
 	}
@@ -30,7 +34,7 @@ public class BingoItems {
 		GameItem item = items.get(itemKey);
 		ItemTemplate template = item.createForParticipant(participant)
 				.setCompareKey(itemKey.asString());
-		return template == null ? null : template.buildItem();
+		return template == null ? null : template.buildItem(server);
 	}
 
 	public @Nullable StackHandle createStack(GameItem item, @Nullable BingoParticipant participant) {

@@ -7,10 +7,8 @@ import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -34,7 +32,7 @@ public class MenuItemGroup {
         }
 
         // Rebuild in case the action modified the ItemTemplate.
-        menu.getBackedInventory().setItem(clickedSlot, slot.item().buildItem());
+        menu.getBackedInventory().setItem(clickedSlot, slot.item().buildItem(menu.getMenuBoard().context().server()));
 
         return true;
     }

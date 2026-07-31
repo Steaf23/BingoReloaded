@@ -71,7 +71,7 @@ public class BingoSession implements ForwardingAudience
 		this.gameManager = gameManager;
         this.worlds = worlds;
         this.config = config;
-        this.items = new BingoItems();
+        this.items = new BingoItems(gameManager.getServer());
 
         boolean showPlayerInScoreboard = config.getOptionValue(BingoOptions.SHOW_PLAYER_IN_SCOREBOARD);
 		this.gameInfoMenu = new BingoGameInfoMenu(this, showPlayerInScoreboard);

@@ -13,5 +13,8 @@
     "fabricloader": ">=${loader_version}",
     "fabric-api": "*",
     "minecraft": "${minecraft_version}"
-  }
+  },
+  "mixins": [
+    "bingoreloaded.fabric.mixins.json"
+  ]
 }
