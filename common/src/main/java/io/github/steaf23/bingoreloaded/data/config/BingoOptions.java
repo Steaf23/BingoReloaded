@@ -92,7 +92,7 @@ public class BingoOptions {
 			.withEditUpdate(ConfigurationOption.EditUpdateTime.AFTER_GAME);
 	public static final ConfigurationOption<PlayerTeleportStrategy> PLAYER_TELEPORT_STRATEGY = new EnumOption<>("playerTeleportStrategy", PlayerTeleportStrategy.class, PlayerTeleportStrategy.ALL)
 			.withEditUpdate(ConfigurationOption.EditUpdateTime.AFTER_GAME);
-	public static final ConfigurationOption<Boolean> TELEPORT_AFTER_DEATH = new BooleanOption("teleportAfterDeath");
+	public static final ConfigurationOption<Boolean> TELEPORT_AFTER_DEATH = new BooleanOption("teleportBackAfterDeathMessage");
 	public static final ConfigurationOption<Integer> TELEPORT_AFTER_DEATH_PERIOD = new IntegerOption("teleportAfterDeathPeriod").withMin(0)
 			.withEditUpdate(ConfigurationOption.EditUpdateTime.AFTER_GAME);
 	public static final ConfigurationOption<Integer> GO_UP_WAND_UP_DISTANCE = new IntegerOption("GoUpWand.upDistance");
