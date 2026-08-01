@@ -137,9 +137,9 @@ public class TaskGenerator
     public static GameTask generateDeathmatchTask(BingoGame game) {
         GeneratorSettings settings = TaskGenerator.generatorSettingsFromGame(game);
         BingoCardData cardData = new BingoCardData();
-        List<TaskData> allTasks = TaskGenerator.filterBySettings(cardData, cardData.getAllTasks(settings.cardName, EnumSet.of(TaskData.TaskType.ITEM)), settings);
+        List<TaskData> allTasks = TaskGenerator.filterBySettings(cardData, cardData.getAllTasks(settings.cardName(), EnumSet.of(TaskData.TaskType.ITEM)), settings);
 
-        Random generator = new Random(settings.seed);
+        Random generator = settings.seed() == 0 ? new Random() : new Random(settings.seed());
 
         if (!allTasks.isEmpty())
             return new GameTask(allTasks.get(Math.abs(generator.nextInt(allTasks.size()))));
