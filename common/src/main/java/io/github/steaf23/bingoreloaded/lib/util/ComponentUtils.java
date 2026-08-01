@@ -30,14 +30,6 @@ public class ComponentUtils
         return Component.translatable(itemKey(item));
     }
 
-    public static Component advancementTitle(@NotNull AdvancementHandle advancement) {
-        return Component.translatable(advancementKey(advancement) + ".title");
-    }
-
-    public static Component advancementDescription(@NotNull AdvancementHandle advancement) {
-        return Component.translatable(advancementKey(advancement) + ".description");
-    }
-
     public static Component statistic(StatisticHandle statistic, Component... with)
     {
         return Component.translatable(statisticKey(statistic), with);
@@ -46,19 +38,6 @@ public class ComponentUtils
     public static Component entityName(EntityType entity)
     {
         return Component.translatable(entityKey(entity));
-    }
-
-    private static String advancementKey(@NotNull AdvancementHandle advancement)
-    {
-        String result = advancement.key().value().replace("/", ".");
-        result = switch (result) // Needed to correct Mojang on some advancement keys vs how they appear in the lang files
-        {
-            case "husbandry.obtain_netherite_hoe" -> "husbandry.netherite_hoe";
-            case "husbandry.bred_all_animals" -> "husbandry.breed_all_animals";
-            case "adventure.read_power_of_chiseled_bookshelf" -> "adventure.read_power_from_chiseled_bookshelf";
-            default -> result;
-        };
-        return "advancements." + result;
     }
 
     private static String statisticKey(StatisticHandle statistic)

@@ -34,7 +34,7 @@ public record AdvancementTask(AdvancementHandle advancement, Set<String> tags) i
 			ConsoleMessenger.log("Could not get advancement, returning null!");
 			builder.append(Component.text("no advancement?"));
 		} else {
-			builder.append(ComponentUtils.advancementTitle(advancement));
+			builder.append(advancement.displayName());
 		}
 		builder.append(Component.text("]"));
 		return builder.build();
@@ -49,7 +49,7 @@ public record AdvancementTask(AdvancementHandle advancement, Set<String> tags) i
 	// which makes it impossible to use as item names or descriptions without getting a missing character.
 	@Override
 	public Component getChatDescription() {
-		return ComponentUtils.advancementDescription(advancement)
+		return advancement.description()
 				.color(NamedTextColor.DARK_AQUA);
 	}
 

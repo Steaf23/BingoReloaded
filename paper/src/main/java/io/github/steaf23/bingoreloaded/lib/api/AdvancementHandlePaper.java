@@ -2,7 +2,11 @@ package io.github.steaf23.bingoreloaded.lib.api;
 
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemTypePaper;
+import io.papermc.paper.advancement.PaperAdvancementDisplay;
+import io.papermc.paper.adventure.AdventureComponent;
+import io.papermc.paper.adventure.PaperAdventure;
 import net.kyori.adventure.key.Key;
+import net.kyori.adventure.text.Component;
 import org.bukkit.advancement.Advancement;
 import org.jetbrains.annotations.NotNull;
 
@@ -17,11 +21,34 @@ public class AdvancementHandlePaper implements AdvancementHandle {
 	}
 
 	@Override
+	public boolean hasDisplay() {
+		return advancement.getDisplay() != null;
+	}
+
+	@Override
 	public ItemType displayIcon() {
 		if (advancement.getDisplay() == null) {
 			return ItemType.AIR;
 		}
 		return new ItemTypePaper(advancement.getDisplay().icon().getType());
+	}
+
+	@Override
+	public Component displayName() {
+		if (advancement.getDisplay() == null) {
+			return Component.text(advancement.key().asString());
+		}
+		// For some reason paper decides to add extra formatting here that we don't want (specifically adding square brackets and making it green).
+		// This will allow bingo to apply its own advancement task formatting on the title/name component.
+		return PaperAdventure.asAdventure(((PaperAdvancementDisplay) advancement.getDisplay()).handle().getTitle());
+	}
+
+	@Override
+	public Component description() {
+		if (advancement.getDisplay() == null) {
+			return Component.empty();
+		}
+		return advancement.getDisplay().description();
 	}
 
 	@Override

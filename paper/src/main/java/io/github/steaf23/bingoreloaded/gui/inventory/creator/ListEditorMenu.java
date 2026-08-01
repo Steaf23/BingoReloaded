@@ -74,6 +74,10 @@ public class ListEditorMenu extends BasicMenu
                 continue;
             }
 
+            if (a.getDisplay() == null) {
+                continue;
+            }
+
             AdvancementTask task = new AdvancementTask(new AdvancementHandlePaper(a));
             tasks.add(new GameTask(task));
         }
