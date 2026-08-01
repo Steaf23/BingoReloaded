@@ -86,7 +86,8 @@ public class BingoCreatorMenu extends BasicMenu {
 				List<String> excludedTags = cardsData.excludedTags(cardName);
 				if (!excludedTags.isEmpty()) {
 					item.setLore(Component.text("This card contains " + cardsData.getListNames(cardName).size() + " list(s)"),
-							cardsData.tags().tagDescription(excludedTags));
+							cardsData.tags().tagDescription(excludedTags))
+							.addDescription("description", 1, fullDescription);
 				} else {
 					item.setLore(Component.text("This card contains " + cardsData.getListNames(cardName).size() + " list(s)"))
 							.addDescription("description", 1, fullDescription);
