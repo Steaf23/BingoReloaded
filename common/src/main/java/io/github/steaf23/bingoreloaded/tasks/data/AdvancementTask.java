@@ -3,13 +3,11 @@ package io.github.steaf23.bingoreloaded.tasks.data;
 import io.github.steaf23.bingoreloaded.api.CardDisplayInfo;
 import io.github.steaf23.bingoreloaded.api.TaskDisplayMode;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
+import io.github.steaf23.bingoreloaded.data.helper.TaskFormatting;
 import io.github.steaf23.bingoreloaded.lib.api.AdvancementHandle;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
-import io.github.steaf23.bingoreloaded.lib.util.ComponentUtils;
-import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.TextDecoration;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -26,31 +24,20 @@ public record AdvancementTask(AdvancementHandle advancement, Set<String> tags) i
 	}
 
 	@Override
-	public Component getName() {
-		var builder = Component.text().append(Component.text("["))
-				.color(NamedTextColor.GREEN).decorate(TextDecoration.ITALIC);
-
-		if (advancement == null) {
-			ConsoleMessenger.log("Could not get advancement, returning null!");
-			builder.append(Component.text("no advancement?"));
-		} else {
-			builder.append(advancement.displayName());
-		}
-		builder.append(Component.text("]"));
-		return builder.build();
+	public Component getName(TaskFormatting formatting) {
+		return formatting.advancementNameComponent(this);
 	}
 
 	@Override
-	public Component[] getItemDescription() {
+	public Component[] getItemDescription(TaskFormatting formatting) {
 		return BingoMessage.LORE_ADVANCEMENT.asMultiline(NamedTextColor.DARK_AQUA);
 	}
 
 	// This method exists because advancement descriptions can contain newlines,
 	// which makes it impossible to use as item names or descriptions without getting a missing character.
 	@Override
-	public Component getChatDescription() {
-		return advancement.description()
-				.color(NamedTextColor.DARK_AQUA);
+	public Component getChatDescription(TaskFormatting formatting) {
+		return formatting.advancementDescriptionComponent(this).color(NamedTextColor.DARK_AQUA);
 	}
 
 	@Override

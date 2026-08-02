@@ -45,7 +45,7 @@ public class GenericCardMenu extends BasicMenu implements CardMenu
         this.tasks = tasks;
         for (int i = 0; i < tasks.size(); i++)
         {
-            addItem(getItemFromTask(i).setSlot(displayInfo().size().getCardInventorySlot(i)), new TaskItemAction(tasks.get(i)));
+            addItem(getItemFromTask(i).setSlot(displayInfo().size().getCardInventorySlot(i)), new TaskItemAction(displayInfo.formatting(), tasks.get(i)));
         }
     }
 

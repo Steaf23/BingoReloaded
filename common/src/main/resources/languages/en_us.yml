@@ -5,39 +5,39 @@ branding:
   message_prefix: "<dark_red>[<dark_aqua><bold>Bingo</bold></dark_aqua><yellow><italic>Ⓡeloaded</italic></yellow>]</dark_red>: "
   menu_prefix: "<dark_red>[<dark_aqua><bold>B</bold></dark_aqua><yellow><italic>Ⓡ</italic></yellow>]</dark_red>: <dark_gray>"
 command:
-  use: "Usage: {0}" # 0: cmd usage
+  use: "Usage: <0>" # 0: cmd usage
   bingo:
     no_deathmatch: "Cannot start a death match when there is no game active!" # DYNAMIC
 game:
   timer:
-    duration: "Game duration: {0}" # 0: total game time duration
-    time_left: "Time remaining: {0}" # 0: total game time left (for Countdown cards)
+    duration: "Game duration: <0>" # 0: total game time duration
+    time_left: "Time remaining: <0>" # 0: total game time left (for Countdown cards)
   lobby:
     settings_updated: "Game settings have been updated, check the information sidebar!" # DYNAMIC
     wait_status: "Waiting for players..." # DYNAMIC
-    player_status: "{0} player(s) joined a team" # DYNAMIC 0: player count
-    starting_status: "Game starting in {0} seconds!" # DYNAMIC 0: starting time (seconds)
+    player_status: "<0> player(s) joined a team" # DYNAMIC 0: player count
+    starting_status: "Game starting in <0> seconds!" # DYNAMIC 0: starting time (seconds)
     vote_kit: "Vote for a Kit"
     vote_gamemode: "Vote for a Gamemode"
     vote_card: "Vote for a Card"
     vote_cardsize: "Vote for a card size"
-    vote_count: "{0} player(s) voted for {1} {2}" # DYNAMIC 0: player count, 1: vote category, 2: vote item
-    vote_won: "{0} {1} received the most votes!" # DYNAMIC 0: vote category, 1: vote item
+    vote_count: "<0> player(s) voted for <1> <2>" # DYNAMIC 0: player count, 1: vote category, 2: vote item
+    vote_won: "<0> <1> received the most votes!" # DYNAMIC 0: vote category, 1: vote item
     no_griefing: "<red>You cannot place or break any blocks before the game has started!"
   start:
     no_players: "Bingo could not be started since nobody joined :(" # DYNAMIC (current unused)
     already_started: "Cannot start a game of Bingo when there is already one active!" # DYNAMIC (currently unused)
     give_cards: "Giving all participants Kits and Cards!" # DYNAMIC
-    no_card: "Cannot start game with the card '{0}' because it does not exist!" # DYNAMIC 0: card_name
+    no_card: "Cannot start game with the card '<0>' because it does not exist!" # DYNAMIC 0: card_name
     chosen_settings: "Starting bingo game! <gold>Move your cursor here</gold> to view all settings."
   end:
-    bingo: "Congratulations! Team {0} has won the Bingo!" # DYNAMIC 0: winning team
+    bingo: "Congratulations! Team <0> has won the Bingo!" # DYNAMIC 0: winning team
   postgame:
-    start: "This game will re-open in {0} seconds" # DYNAMIC 0: time until restart (seconds)
+    start: "This game will re-open in <0> seconds" # DYNAMIC 0: time until restart (seconds)
   deathmatch:
     start: "Several teams have completed the same amount of tasks, starting Deathmatch to break the tie!" # DYNAMIC
     search: "Find the item listed in chat to win the game!" # DYNAMIC
-    item: "DeathMatch - Be the first to get this item to win: {0}" # DYNAMIC 0: item name
+    item: "DeathMatch - Be the first to get this item to win: <0>" # DYNAMIC 0: item name
   player:
     leave: "You have left the game!" # DYNAMIC 0: /bingo command
     no_start: "The game has not started yet!" # DYNAMIC
@@ -46,12 +46,12 @@ game:
     respawn_expired: "Teleport to death location has expired!" # DYNAMIC
   team:
     no_join: "You cannot join an ongoing game!" # DYNAMIC
-    join: "You successfully joined team {0}!" # DYNAMIC 0: team name
+    join: "You successfully joined team <0>!" # DYNAMIC 0: team name
     join_auto: "You will be joining a team automatically when the game starts!" # DYNAMIC
-    dropped: "Team {0} cannot win anymore, they are out of the game!" # DYNAMIC 0: team name
+    dropped: "Team <0> cannot win anymore, they are out of the game!" # DYNAMIC 0: team name
     no_chat: "Can't toggle team chat since you aren't in a team!" # DYNAMIC
-    chat_off: "Team chat is now <red>off</red>, use {0} to enable it again." # DYNAMIC 0: /btc
-    chat_on: "Team chat is now <green>on</green>, use {0} to disable it." # DYNAMIC 0: /btc
+    chat_off: "Team chat is now <red>off</red>, use <0> to enable it again." # DYNAMIC 0: /btc
+    chat_on: "Team chat is now <green>on</green>, use <0> to disable it." # DYNAMIC 0: /btc
     size_changed: "The maximum team sized has been changed, please rejoin your team of choice!" # DYNAMIC
     full_team_desc: "This team is full"
     join_team_desc: "Click to join this team"
@@ -60,17 +60,17 @@ game:
     no_teams: "The game is full, you can only join as a spectator."
   item:
     voided: "This task cannot be completed anymore!"
-    expire: "Expires in: {0}" # 0: time left
-    recover: "Regenerates in: {0}" # 0: time left
-    single_expired: "{0} Expired" # 0: task
-    single_added: "{0} Added" # 0: task
+    expire: "Expires in: <0>" # 0: time left
+    recover: "Regenerates in: <0>" # 0: time left
+    single_expired: "<0> Expired" # 0: task
+    single_added: "<0> Added" # 0: task
     multiple_expired: "Multiple Tasks Expired"
     multiple_added: "Added Multiple New Tasks"
-    lore: "Obtain {0} of this item to complete this task!" # 0: item count
+    lore: "Obtain <0> of this item to complete this task!" # 0: item count
     lore_advancement: "Click to learn more!"
     lore_statistic: "Obtain this statistic to complete the task!"
-    completed: "Completed {0} by {1} at {2}" # DYNAMIC 0: item name, 1: team, 2: completion time
-    complete_lore: "Completed by {0} \nat {1}" # 0: team, 1: completion time
+    completed: "Completed <0> by <3> <1> at <2>" # 0: item name, 1: player name, 2: completion time, 3: player sprite
+    complete_lore: "Completed by <2> <0> \nat <1>" # 0: player name, 1: completion time, 2: player sprite
 menu:
   save: "Save"
   exit: "Close Menu"
@@ -81,7 +81,7 @@ menu:
   filter: "Filter..."
   clear: "Clear Filter/ Cancel"
   completed: "Completed Tasks"
-  count_more: "and {0} others..." # 0: amount
+  count_more: "and <0> others..." # 0: amount
   card:
     title: "Card Viewer"
     info_regular:
@@ -96,9 +96,9 @@ menu:
     info_hotswap:
       name: "Hot-Swap Bingo Card"
       desc_expire: "Tasks will get replaced when they expire \nafter some amount of time."
-      desc_score: "First team to complete {0} tasks wins!" #0: winning score
+      desc_score: "First team to complete <0> tasks wins!" #0: winning score
       desc_time: "Team to complete the most tasks \nbefore the time limit runs out wins!"
-      desc_any: "Team to complete the most tasks \nbefore the time limit runs our \nor to complete {0} tasks wins!" #0: winning score
+      desc_any: "Team to complete the most tasks \nbefore the time limit runs our \nor to complete <0> tasks wins!" #0: winning score
     info_blitz:
       name: "Blitz Bingo Card"
       desc: "Work together as 1 team to improve your highscore!\nYou are on a strict timer and each task you complete adds bonus time.\nThe game ends when your time runs out."
@@ -210,6 +210,6 @@ items:
     desc: "Click to select your team"
 creator:
   card_item:
-    desc: "Contains {0} list(s)" # 0: list count
+    desc: "Contains <0> list(s)" # 0: list count
 teams:
   auto: "Automatic"

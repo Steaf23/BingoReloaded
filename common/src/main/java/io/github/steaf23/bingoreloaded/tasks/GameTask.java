@@ -4,6 +4,7 @@ import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.api.CardDisplayInfo;
 import io.github.steaf23.bingoreloaded.api.network.packets.DataWriter;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
+import io.github.steaf23.bingoreloaded.data.helper.TaskFormatting;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.data.core.tag.TagDataStorage;
@@ -19,6 +20,7 @@ import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.text.object.ObjectContents;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -85,6 +87,7 @@ public class GameTask
 
     public ItemTemplate toItem(CardDisplayInfo displayInfo)
     {
+        TaskFormatting formatting = displayInfo.formatting();
         ItemTemplate item;
         // Step 1: create the item and put the new name, description and material on it.
         if (isVoided()) // VOIDED TASK
@@ -92,7 +95,7 @@ public class GameTask
             item = new ItemTemplate(ItemType.of("structure_void"), null);
             Component[] addedDesc = BingoMessage.VOIDED.asMultiline(Style.style(NamedTextColor.DARK_GRAY));
 
-            item.setName(getName());
+            item.setName(getName(formatting));
             item.setLore(addedDesc);
             item.setGlowing(true);
         }
@@ -109,13 +112,14 @@ public class GameTask
                             .decorate(TextDecoration.ITALIC),
                     Component.text(timeString)
                             .color(NamedTextColor.GOLD)
-                            .decorate(TextDecoration.ITALIC));
+                            .decorate(TextDecoration.ITALIC),
+                    Component.object(ObjectContents.playerHead(completedBy.getId())).color(NamedTextColor.WHITE));
 
-            item = new ItemTemplate(completeMaterial, getName(), desc);
+            item = new ItemTemplate(completeMaterial, getName(formatting), desc);
         }
         else // DEFAULT TASK
         {
-            item = new ItemTemplate(icon(displayInfo), getName(), data.getItemDescription()).setDummy(true);
+            item = new ItemTemplate(icon(displayInfo), getName(formatting), data.getItemDescription(formatting)).setDummy(true);
             item.setAmount(data.getRequiredAmount());
         }
 
@@ -173,24 +177,24 @@ public class GameTask
         return team.equals(completedByTeam);
     }
 
-    public Component getName() {
+    public Component getName(TaskFormatting formatting) {
         if (isVoided())
         {
             TextComponent.Builder nameBuilder = Component.text()
                     .color(NamedTextColor.DARK_GRAY).decorate(TextDecoration.STRIKETHROUGH);
             nameBuilder.append(Component.text("A").decorate(TextDecoration.OBFUSCATED));
-            nameBuilder.append(data.getName().color(NamedTextColor.DARK_GRAY));
+            nameBuilder.append(data.getName(formatting).color(NamedTextColor.DARK_GRAY));
             nameBuilder.append(Component.text("A").decorate(TextDecoration.OBFUSCATED));
             return nameBuilder.build();
         }
         else if (isCompleted()) {
             TextComponent.Builder nameBuilder = Component.text()
                     .color(NamedTextColor.GRAY).decorate(TextDecoration.STRIKETHROUGH);
-            nameBuilder.append(data.getName());
+            nameBuilder.append(data.getName(formatting));
             return nameBuilder.build();
         }
         else {
-            return data.getName();
+            return data.getName(formatting);
         }
     }
 

@@ -10,6 +10,7 @@ import io.github.steaf23.bingoreloaded.data.BingoSound;
 import io.github.steaf23.bingoreloaded.data.BingoStatType;
 import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.data.config.BingoOptions;
+import io.github.steaf23.bingoreloaded.data.helper.TaskFormatting;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.item.BingoItems;
 import io.github.steaf23.bingoreloaded.item.GameItem;
@@ -55,6 +56,7 @@ import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.text.object.ObjectContents;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -71,6 +73,8 @@ import java.util.function.BiConsumer;
 
 public class BingoGame implements GamePhase
 {
+    public final TaskFormatting taskFormatting;
+
     private final ServerSoftware platform;
     private final BingoSession session;
     private final BingoSettings settings;
@@ -106,6 +110,7 @@ public class BingoGame implements GamePhase
         this.progressTracker = new TaskProgressTracker(platform, this);
 		this.onGameEndedCallback = onGameEndedCallback;
         this.items = session.items();
+        this.taskFormatting = TaskFormatting.fromDataAccessor();
 
 		this.respawnManager = new PlayerRespawnManager(platform, config.getOptionValue(BingoOptions.TELEPORT_AFTER_DEATH_PERIOD));
         this.playerSpawnPoints = new HashMap<>();
@@ -595,9 +600,10 @@ public class BingoGame implements GamePhase
         }
 
         BingoMessage.COMPLETED.sendToAudience(session, NamedTextColor.AQUA,
-                task.data().getName(),
+                task.data().getName(taskFormatting),
                 participant.getDisplayName().color(team.getColor()).decorate(TextDecoration.BOLD),
-                timeString.color(NamedTextColor.WHITE));
+                timeString.color(NamedTextColor.WHITE),
+                Component.object(ObjectContents.playerHead(participant.getId())).color(NamedTextColor.WHITE));
 
         playSound(BingoSound.TASK_COMPLETED.sound());
 

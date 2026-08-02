@@ -26,7 +26,8 @@ public class CardFactory
                 size,
                 game.getConfig().getOptionValue(BingoOptions.SHOW_UNIQUE_ADVANCEMENT_ITEMS) ? TaskDisplayMode.UNIQUE_TASK_ITEMS : TaskDisplayMode.GENERIC_TASK_ITEMS,
                 game.getConfig().getOptionValue(BingoOptions.SHOW_UNIQUE_STATISTIC_ITEMS) ? TaskDisplayMode.UNIQUE_TASK_ITEMS : TaskDisplayMode.GENERIC_TASK_ITEMS,
-                allowViewingAllCards);
+                allowViewingAllCards,
+                game.taskFormatting);
         CardMenu menu = runtime.createMenu(texturedMenu, displayInfo);
 
         return settings.mode().createTaskCard(menu, game);

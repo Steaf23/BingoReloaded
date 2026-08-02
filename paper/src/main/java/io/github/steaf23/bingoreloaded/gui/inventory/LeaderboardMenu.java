@@ -29,6 +29,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.text.object.ObjectContents;
 import org.bukkit.Material;
 import org.bukkit.inventory.meta.SkullMeta;
 
@@ -147,7 +148,9 @@ public class LeaderboardMenu extends BasicMenu {
 					List<Component> description = new ArrayList<>();
 					description.add(team.team().nameComponent().color(team.team().color()).decorate(TextDecoration.BOLD));
 					for (GameRecord.ParticipantRecord participant : team.participants().stream().sorted(Comparator.comparingInt(GameRecord.ParticipantRecord::contribution).reversed()).toList()) {
-						description.add(Component.text(participant.displayName()));
+						description.add(Component.empty()
+								.append(Component.object(ObjectContents.playerHead(participant.id())))
+								.append(Component.text(" " + participant.displayName())));
 					}
 
 					List<String> scoreString = new ArrayList<>();

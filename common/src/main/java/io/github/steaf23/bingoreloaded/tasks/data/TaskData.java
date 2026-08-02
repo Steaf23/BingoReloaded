@@ -1,6 +1,7 @@
 package io.github.steaf23.bingoreloaded.tasks.data;
 
 import io.github.steaf23.bingoreloaded.api.CardDisplayInfo;
+import io.github.steaf23.bingoreloaded.data.helper.TaskFormatting;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import net.kyori.adventure.text.Component;
 
@@ -24,9 +25,9 @@ public interface TaskData
 	}
 
     TaskType getType();
-    Component getName();
-    Component getChatDescription();
-    Component[] getItemDescription();
+    Component getName(TaskFormatting formatData);
+    Component getChatDescription(TaskFormatting formatData);
+    Component[] getItemDescription(TaskFormatting formatData);
     boolean isTaskEqual(TaskData other);
     boolean shouldItemGlow();
 	Set<String> tags();

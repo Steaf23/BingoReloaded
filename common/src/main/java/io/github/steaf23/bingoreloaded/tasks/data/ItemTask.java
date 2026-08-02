@@ -2,8 +2,8 @@ package io.github.steaf23.bingoreloaded.tasks.data;
 
 import io.github.steaf23.bingoreloaded.api.CardDisplayInfo;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
+import io.github.steaf23.bingoreloaded.data.helper.TaskFormatting;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
-import io.github.steaf23.bingoreloaded.lib.util.ComponentUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 
@@ -33,20 +33,21 @@ public record ItemTask(ItemType itemType, int count, Set<String> tags) implement
 	}
 
 	@Override
-	public Component getName() {
-		return Component.text().color(NamedTextColor.YELLOW)
-				.append(Component.text(count + "x "))
-				.append(ComponentUtils.itemName(itemType)).build();
+	public Component getName(TaskFormatting formatting) {
+		return formatting.itemNameComponent(this);
+//		return Component.text().color(NamedTextColor.YELLOW)
+//				.append(Component.text(count + "x "))
+//				.append(ComponentUtils.itemName(itemType)).build();
 	}
 
 	@Override
-	public Component[] getItemDescription() {
+	public Component[] getItemDescription(TaskFormatting formatting) {
 		return BingoMessage.LORE_ITEM.asMultiline(NamedTextColor.DARK_AQUA, Component.text(count));
 	}
 
 	@Override
-	public Component getChatDescription() {
-		return Component.text().append(getItemDescription()).build();
+	public Component getChatDescription(TaskFormatting formatting) {
+		return Component.text().append(getItemDescription(formatting)).build();
 	}
 
 	@Override

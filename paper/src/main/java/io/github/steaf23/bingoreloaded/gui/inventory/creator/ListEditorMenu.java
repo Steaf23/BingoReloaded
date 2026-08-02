@@ -2,6 +2,7 @@ package io.github.steaf23.bingoreloaded.gui.inventory.creator;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
+import io.github.steaf23.bingoreloaded.data.helper.TaskFormatting;
 import io.github.steaf23.bingoreloaded.lib.api.AdvancementHandlePaper;
 import io.github.steaf23.bingoreloaded.lib.api.MenuBoard;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemTypePaper;
@@ -23,6 +24,7 @@ import java.util.List;
 public class ListEditorMenu extends BasicMenu
 {
     private final String listName;
+    private final TaskFormatting formatting;
 
     private static final ItemTemplate ITEMS = new ItemTemplate(2, 1, ItemTypePaper.of(Material.APPLE), BingoReloaded.applyTitleFormat("Items"), Component.text("Click to add or remove items"));
     private static final ItemTemplate ADVANCEMENTS = new ItemTemplate(4, 1, ItemTypePaper.of(Material.ENDER_EYE), BingoReloaded.applyTitleFormat("Advancements"), net.kyori.adventure.text.Component.text("Click to add or remove advancements"));
@@ -31,9 +33,10 @@ public class ListEditorMenu extends BasicMenu
 
     private static final ItemTemplate SAVE = new ItemTemplate(4, 5, ItemTypePaper.of(Material.REDSTONE), BingoMessage.MENU_SAVE_EXIT.asPhrase().color(NamedTextColor.RED).decorate(TextDecoration.BOLD));
 
-    public ListEditorMenu(MenuBoard manager, String listName) {
+    public ListEditorMenu(MenuBoard manager, String listName, TaskFormatting formatting) {
         super(manager, Component.text("Editing '" + listName + "'"), 6);
         this.listName = listName;
+        this.formatting = formatting;
         addAction(ITEMS, arguments -> createItemPicker(manager).open(arguments.player()));
         addAction(ADVANCEMENTS, arguments -> createAdvancementPicker(manager).open(arguments.player()));
         addAction(STATISTICS, arguments -> createStatisticsPicker(manager).open(arguments.player()));
@@ -50,7 +53,7 @@ public class ListEditorMenu extends BasicMenu
     }
 
     public BasicMenu createStatisticsPicker(MenuBoard menuBoard) {
-        return new StatisticSelectionMenu(menuBoard, listName);
+        return new StatisticSelectionMenu(menuBoard, listName, formatting);
     }
 
     private BasicMenu createItemPicker(MenuBoard menuBoard) {
@@ -62,7 +65,7 @@ public class ListEditorMenu extends BasicMenu
             }
         }
 
-        return new TaskPickerMenu(menuBoard, "Select Items", tasks, listName);
+        return new TaskPickerMenu(menuBoard, "Select Items", tasks, listName, formatting);
     }
 
     private BasicMenu createAdvancementPicker(MenuBoard menuBoard) {
@@ -82,7 +85,7 @@ public class ListEditorMenu extends BasicMenu
             tasks.add(new GameTask(task));
         }
 
-        return new TaskPickerMenu(menuBoard, "Add Advancements", tasks, listName);
+        return new TaskPickerMenu(menuBoard, "Add Advancements", tasks, listName, formatting);
     }
 
     private BasicMenu createTagManager(MenuBoard menuBoard) {

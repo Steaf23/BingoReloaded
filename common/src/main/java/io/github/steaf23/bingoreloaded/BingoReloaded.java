@@ -250,6 +250,10 @@ public class BingoReloaded implements Namespaced {
 		BingoSound.setSounds(data);
 	}
 
+	public void reloadTaskFormat() {
+		getDataAccessor("taskformat").load();
+	}
+
 	public void reloadData() {
 		getDataAccessor("data/default_cards").load();
 		getDataAccessor("data/default_lists").load();

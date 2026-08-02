@@ -3,6 +3,7 @@ package io.github.steaf23.bingoreloaded.gui.inventory.creator;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.api.CardDisplayInfo;
 import io.github.steaf23.bingoreloaded.data.BingoCardData;
+import io.github.steaf23.bingoreloaded.data.helper.TaskFormatting;
 import io.github.steaf23.bingoreloaded.lib.api.MenuBoard;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemTypePaper;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
@@ -13,11 +14,13 @@ import io.github.steaf23.bingoreloaded.lib.inventory.action.MenuAction;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import io.github.steaf23.bingoreloaded.lib.util.ComponentUtils;
 import io.github.steaf23.bingoreloaded.tasks.GameTask;
+import io.github.steaf23.bingoreloaded.tasks.data.AdvancementTask;
 import io.github.steaf23.bingoreloaded.tasks.data.TaskData;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
+import net.kyori.adventure.util.Nag;
 import org.bukkit.Material;
 
 import java.util.List;
@@ -26,6 +29,7 @@ import java.util.stream.Collectors;
 public class TaskPickerMenu extends PaginatedDataMenu<GameTask> {
 
 	private final String listName;
+	private final TaskFormatting formatting;
 
 	protected static final Component[] SELECTED_LORE = createSelectedLore();
 	protected static final Component[] UNSELECTED_LORE = createUnselectedLore();
@@ -33,9 +37,10 @@ public class TaskPickerMenu extends PaginatedDataMenu<GameTask> {
 	public static final ItemTemplate SHOW_SELECTED_ONLY = new ItemTemplate(6, 5, ItemTypePaper.of(Material.OPEN_EYEBLOSSOM), BingoReloaded.applyTitleFormat("Show selected tasks only"));
 	public static final ItemTemplate SHOW_ALL = new ItemTemplate(6, 5, ItemTypePaper.of(Material.CLOSED_EYEBLOSSOM), BingoReloaded.applyTitleFormat("Show all tasks"));
 
-	public TaskPickerMenu(MenuBoard board, String initialTitle, List<GameTask> options, String listName) {
+	public TaskPickerMenu(MenuBoard board, String initialTitle, List<GameTask> options, String listName, TaskFormatting formatting) {
 		super(board, Component.text(initialTitle), options);
 		this.listName = listName;
+		this.formatting = formatting;
 	}
 
 	@Override
@@ -50,17 +55,17 @@ public class TaskPickerMenu extends PaginatedDataMenu<GameTask> {
 
 	@Override
 	public Material material(GameTask gameTask, boolean selected) {
-		return ((ItemTypePaper)gameTask.icon(CardDisplayInfo.DUMMY_DISPLAY_INFO)).handle();
+		return ((ItemTypePaper)gameTask.icon(CardDisplayInfo.defaultWithFormatting(formatting))).handle();
 	}
 
 	@Override
 	public Component displayName(GameTask gameTask, boolean selected) {
-		return gameTask.getName();
+		return gameTask.getName(formatting);
 	}
 
 	@Override
 	public ItemTemplate editItem(ItemTemplate item, GameTask gameTask, boolean selected) {
-		ItemTemplate newItem = gameTask.toItem(CardDisplayInfo.DUMMY_DISPLAY_INFO);
+		ItemTemplate newItem = gameTask.toItem(CardDisplayInfo.defaultWithFormatting(formatting));
 
 		Component[] addedLore;
 		if (selected)
@@ -69,15 +74,14 @@ public class TaskPickerMenu extends PaginatedDataMenu<GameTask> {
 			addedLore = UNSELECTED_LORE;
 
 		newItem.setGlowing(selected);
-		newItem.setLore(gameTask.data().getItemDescription());
+		newItem.setLore(gameTask.data().getItemDescription(formatting));
 		newItem.addDescription("selected", 5, addedLore);
 		return newItem;
 	}
 
 	@Override
 	public boolean filterByData(GameTask gameTask, MenuFilterSettings filter) {
-
-		return PlainTextComponentSerializer.plainText().serialize(gameTask.data().getName()).toLowerCase().contains(filter.name().toLowerCase());
+		return PlainTextComponentSerializer.plainText().serialize(gameTask.data().getName(formatting)).toLowerCase().contains(filter.name().toLowerCase());
 	}
 
 	@Override

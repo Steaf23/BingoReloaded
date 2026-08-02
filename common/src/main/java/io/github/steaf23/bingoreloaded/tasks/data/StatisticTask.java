@@ -3,14 +3,12 @@ package io.github.steaf23.bingoreloaded.tasks.data;
 import io.github.steaf23.bingoreloaded.api.CardDisplayInfo;
 import io.github.steaf23.bingoreloaded.api.TaskDisplayMode;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
+import io.github.steaf23.bingoreloaded.data.helper.TaskFormatting;
 import io.github.steaf23.bingoreloaded.lib.api.StatisticHandle;
 import io.github.steaf23.bingoreloaded.lib.api.StatisticType;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
-import io.github.steaf23.bingoreloaded.lib.util.ComponentUtils;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.TextDecoration;
 
 import java.util.HashSet;
 import java.util.Objects;
@@ -38,57 +36,30 @@ public record StatisticTask(StatisticHandle statistic, int count, Set<String> ta
 	}
 
 	@Override
-	public Component getName() {
-		Component amount = Component.text(count);
-
-		TextComponent.Builder builder = Component.text().append(Component.text("*"))
-				.color(NamedTextColor.LIGHT_PURPLE).decorate(TextDecoration.ITALIC);
-
-		switch (statistic.statisticType().getCategory()) {
+	public Component getName(TaskFormatting formatting) {
+		return switch(statistic.statisticType().getCategory()) {
 			case ROOT_STATISTIC -> {
 				if (statistic.statisticType().equals(StatisticType.KILL_ENTITY)) {
-					Component entityName = ComponentUtils.entityName(statistic.entityType());
-					Component[] inPlaceArguments = new Component[]{amount, Component.empty()};
-					builder.append(ComponentUtils.statistic(statistic, inPlaceArguments))
-							.append(Component.text("("))
-							.append(entityName.decorate(TextDecoration.BOLD))
-							.append(Component.text(")"));
+					yield formatting.statisticKillEntityComponent(this);
 				} else if (statistic.statisticType().equals(StatisticType.ENTITY_KILLED_BY)) {
-					Component entityName = ComponentUtils.entityName(statistic.entityType());
-					Component[] inPlaceArguments = new Component[]{Component.empty(), amount, Component.empty()};
-					builder.append(Component.text("("))
-							.append(entityName.decorate(TextDecoration.BOLD))
-							.append(Component.text(")"))
-							.append(ComponentUtils.statistic(statistic, inPlaceArguments));
+					yield formatting.statisticKilledByEntityComponent(this);
 				} else {
-					builder.append(ComponentUtils.statistic(statistic))
-							.append(Component.text(" "))
-							.append(ComponentUtils.itemName(statistic.itemType()).decorate(TextDecoration.BOLD))
-							.append(Component.text(": "))
-							.append(amount);
+					yield formatting.statisticItemComponent(this);
 				}
 			}
-			case TRAVEL -> builder.append(ComponentUtils.statistic(statistic))
-					.append(Component.text(": "))
-					.append(Component.text(count * 10).decorate(TextDecoration.BOLD))
-					.append(Component.text(" Blocks"));
-
-			default -> builder.append(ComponentUtils.statistic(statistic))
-					.append(Component.text(": "))
-					.append(amount);
-		}
-		builder.append(Component.text("*"));
-		return builder.build();
+			case TRAVEL -> formatting.statisticNameComponent(this, Component.text(" ").append(Component.translatable("soundCategory.block")), 10);
+			default -> formatting.statisticNameComponent(this, Component.empty(), 1);
+		};
 	}
 
 	@Override
-	public Component[] getItemDescription() {
+	public Component[] getItemDescription(TaskFormatting formatting) {
 		return BingoMessage.LORE_STATISTIC.asMultiline(NamedTextColor.DARK_AQUA);
 	}
 
 	@Override
-	public Component getChatDescription() {
-		return Component.text().append(getItemDescription()).build();
+	public Component getChatDescription(TaskFormatting formatting) {
+		return Component.text().append(getItemDescription(formatting)).build();
 	}
 
 	@Override
