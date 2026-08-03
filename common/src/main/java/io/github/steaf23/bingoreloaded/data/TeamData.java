@@ -2,6 +2,7 @@ package io.github.steaf23.bingoreloaded.data;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataAccessor;
+import io.github.steaf23.bingoreloaded.lib.data.core.DataStorageSerializer;
 import io.github.steaf23.bingoreloaded.lib.util.BlockColor;
 import io.github.steaf23.bingoreloaded.lib.util.ComponentUtils;
 import io.github.steaf23.bingoreloaded.lib.util.StringAdditions;
@@ -20,6 +21,17 @@ public class TeamData {
      */
     public record TeamTemplate(String stringName, TextColor color)
     {
+        public static final DataStorageSerializer<TeamTemplate> SERIALIZER = DataStorageSerializer.of(TeamTemplate.class,
+                (storage, value) -> {
+                    storage.setString("name", value.stringName());
+                    storage.setString("color", value.color().asHexString());
+                }, storage -> {
+                    return new TeamData.TeamTemplate(
+                            storage.getString("name", ""),
+                            TextColor.fromHexString(storage.getString("color", "#808080"))
+                    );
+                });
+
         public Component nameComponent() {
             return ComponentUtils.MINI_BUILDER.deserialize(stringName);
         }
@@ -30,7 +42,7 @@ public class TeamData {
     public Map<String, TeamTemplate> getTeams() {
         Map<String, TeamTemplate> teams = new HashMap<>();
         for (String key : data.getKeys()) {
-            teams.put(key, data.getSerializable(key, TeamTemplate.class));
+            teams.put(key, data.getSerializable(key, TeamTemplate.SERIALIZER));
         }
         return teams;
     }
@@ -39,7 +51,7 @@ public class TeamData {
         if (key.isEmpty()) {
             key = getNewTeamId();
         }
-        data.setSerializable(key, TeamTemplate.class, new TeamTemplate(name, color));
+        data.setSerializable(key, TeamTemplate.SERIALIZER, new TeamTemplate(name, color));
         data.saveChanges();
     }
 
@@ -48,7 +60,7 @@ public class TeamData {
     }
 
     public TeamTemplate getTeam(String key, TeamTemplate def) {
-        return data.getSerializable(key, TeamTemplate.class, def);
+        return data.getSerializable(key, TeamTemplate.SERIALIZER, def);
     }
 
     public void removeTeam(String key) {

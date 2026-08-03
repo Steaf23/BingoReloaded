@@ -146,27 +146,27 @@ public class VirtualDataAccessor implements DataAccessor
     }
 
     @Override
-    public <T> void setSerializableList(String path, Class<T> dataType, List<T> values) {
+    public <T> void setSerializableList(String path, DataStorageSerializer<T> serializer, List<T> values) {
 
     }
 
     @Override
-    public <T> List<T> getSerializableList(String path, Class<T> dataType) {
+    public <T> List<T> getSerializableList(String path, DataStorageSerializer<T> serializer) {
         return List.of();
     }
 
     @Override
-    public <T> void setSerializable(String path, Class<T> classType, @NotNull T value) {
+    public <T> void setSerializable(String path, DataStorageSerializer<T> serializer, @NotNull T value) {
 
     }
 
     @Override
-    public <T> @Nullable T getSerializable(String path, Class<T> classType) {
+    public <T> @Nullable T getSerializable(String path, DataStorageSerializer<T> serializer) {
         return null;
     }
 
     @Override
-    public <T> @NotNull T getSerializable(String path, Class<T> classType, T def) {
+    public <T> @NotNull T getSerializable(String path, DataStorageSerializer<T> serializer, T def) {
         return def;
     }
 

@@ -14,7 +14,7 @@ public class BingoLobbyData {
 	}
 
 	public void create(WorldPosition location) {
-		data.setSerializable("lobby", BingoLobby.class, new BingoLobby(location));
+		data.setSerializable("lobby", BingoLobby.SERIALIZER, new BingoLobby(location));
 		data.setBoolean("enabled", true);
 		data.saveChanges();
 	}
@@ -34,6 +34,6 @@ public class BingoLobbyData {
 			return null;
 		}
 
-		return data.getSerializable("lobby", BingoLobby.class);
+		return data.getSerializable("lobby", BingoLobby.SERIALIZER);
 	}
 }

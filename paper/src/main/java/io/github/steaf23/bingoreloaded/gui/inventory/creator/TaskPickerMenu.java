@@ -14,13 +14,11 @@ import io.github.steaf23.bingoreloaded.lib.inventory.action.MenuAction;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import io.github.steaf23.bingoreloaded.lib.util.ComponentUtils;
 import io.github.steaf23.bingoreloaded.tasks.GameTask;
-import io.github.steaf23.bingoreloaded.tasks.data.AdvancementTask;
 import io.github.steaf23.bingoreloaded.tasks.data.TaskData;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
-import net.kyori.adventure.util.Nag;
 import org.bukkit.Material;
 
 import java.util.List;

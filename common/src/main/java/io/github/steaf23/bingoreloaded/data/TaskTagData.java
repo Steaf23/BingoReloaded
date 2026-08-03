@@ -2,6 +2,7 @@ package io.github.steaf23.bingoreloaded.data;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataAccessor;
+import io.github.steaf23.bingoreloaded.lib.data.core.DataStorageSerializer;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
@@ -15,7 +16,14 @@ import java.util.Set;
 
 public class TaskTagData {
 
-	public record TaskTag(TextColor color) {};
+	public record TaskTag(TextColor color) {
+		public static final DataStorageSerializer<TaskTag> SERIALIZER = DataStorageSerializer.of(TaskTagData.TaskTag.class,
+				(storage, value) -> {
+					storage.setString("color", value.color().asHexString());
+				}, storage -> {
+					return new TaskTagData.TaskTag(TextColor.fromHexString(storage.getString("color", "#808080")));
+				});
+	};
 
 	private final DataAccessor data = BingoReloaded.getDataAccessor("data/tags");
 	private final DataAccessor defaultData = BingoReloaded.getDataAccessor("data/default_tags");
@@ -23,7 +31,7 @@ public class TaskTagData {
 	public Map<String, TaskTag> getDefaultTags() {
 		Map<String, TaskTag> tags = new HashMap<>();
 		for (String key : defaultData.getKeys()) {
-			tags.put(key, defaultData.getSerializable(key, TaskTag.class));
+			tags.put(key, defaultData.getSerializable(key, TaskTag.SERIALIZER));
 		}
 		return tags;
 	}
@@ -41,7 +49,7 @@ public class TaskTagData {
 	public Map<String, TaskTag> getCustomTags() {
 		Map<String, TaskTag> tags = new HashMap<>();
 		for (String key : data.getKeys()) {
-			tags.put(key, data.getSerializable(key, TaskTag.class));
+			tags.put(key, data.getSerializable(key, TaskTag.SERIALIZER));
 		}
 		return tags;
 	}
@@ -52,7 +60,7 @@ public class TaskTagData {
 	}
 
 	public void addTag(@NotNull String tagKey, TaskTag tag) {
-		data.setSerializable(tagKey, TaskTag.class, tag);
+		data.setSerializable(tagKey, TaskTag.SERIALIZER, tag);
 		data.saveChanges();
 	}
 

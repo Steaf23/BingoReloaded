@@ -36,9 +36,9 @@ public class TaskListData
     public List<TaskData> getTasks(String listName, EnumSet<TaskData.TaskType> allowedTypes) {
         Collection<TaskData> tasks;
         if (defaultData.contains(listName + ".tasks")) {
-            tasks = defaultData.getSerializableList(listName + ".tasks", TaskData.class);
+            tasks = defaultData.getSerializableList(listName + ".tasks", TaskData.SERIALIZER);
         } else if (data.contains(listName + ".tasks")) {
-            tasks = data.getSerializableList(listName + ".tasks", TaskData.class);
+            tasks = data.getSerializableList(listName + ".tasks", TaskData.SERIALIZER);
         } else {
             return List.of();
         }
@@ -77,7 +77,7 @@ public class TaskListData
             }
         }
 
-        data.setSerializableList(listName + ".tasks", TaskData.class, new ArrayList<>(savedTasks));
+        data.setSerializableList(listName + ".tasks", TaskData.SERIALIZER, new ArrayList<>(savedTasks));
         data.setInt(listName + ".size", savedTasks.size());
         data.saveChanges();
     }

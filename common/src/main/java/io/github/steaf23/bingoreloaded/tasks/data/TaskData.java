@@ -2,19 +2,65 @@ package io.github.steaf23.bingoreloaded.tasks.data;
 
 import io.github.steaf23.bingoreloaded.api.CardDisplayInfo;
 import io.github.steaf23.bingoreloaded.data.helper.TaskFormatting;
+import io.github.steaf23.bingoreloaded.lib.api.AdvancementHandle;
+import io.github.steaf23.bingoreloaded.lib.api.StatisticHandle;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
+import io.github.steaf23.bingoreloaded.lib.data.core.DataStorageSerializer;
+import io.github.steaf23.bingoreloaded.lib.data.core.tag.TagDataType;
 import net.kyori.adventure.text.Component;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
-public interface TaskData
-{
-    enum TaskType
-    {
-        ITEM("item"),
-        STATISTIC("statistic"),
-        ADVANCEMENT("advancement"),
+public interface TaskData {
+
+	DataStorageSerializer<TaskData> SERIALIZER = new DataStorageSerializer<>(TaskData.class,
+			(storage, value) -> {
+				storage.setList("tags", TagDataType.STRING, value.tags().stream().toList());
+				switch (value) {
+					case ItemTask itemTask -> {
+						storage.setNamespacedKey("item", itemTask.itemType().key());
+						storage.setInt("count", itemTask.getRequiredAmount());
+					}
+					case AdvancementTask advancementTask -> {
+						if (advancementTask.advancement() != null) {
+							storage.setNamespacedKey("advancement", advancementTask.advancement().key());
+						}
+					}
+					case StatisticTask statisticTask -> {
+						storage.setSerializable("statistic", StatisticHandle.SERIALIZER, statisticTask.statistic());
+						storage.setInt("count", statisticTask.getRequiredAmount());
+					}
+					default -> {
+					}
+				}
+			}, storage -> {
+				Set<String> tags = new HashSet<>(storage.getList("tags", TagDataType.STRING));
+
+				if (storage.contains("item")) {
+					return new ItemTask(ItemType.of(
+							storage.getNamespacedKey("item")),
+							storage.getInt("count", 1),
+							tags);
+				} else if (storage.contains("advancement")) {
+					return new AdvancementTask(AdvancementHandle.of(
+							storage.getNamespacedKey("advancement")),
+							tags);
+				} else if (storage.contains("statistic")) {
+					return new StatisticTask(
+							storage.getSerializable("statistic", StatisticHandle.SERIALIZER),
+							storage.getInt("count", 1),
+							tags);
+				}
+
+				throw new IllegalArgumentException("Task type not found while reading game task from file!");
+			});
+
+	enum TaskType {
+		ITEM("item"),
+		STATISTIC("statistic"),
+		ADVANCEMENT("advancement"),
 		;
 
 		public final String id;
@@ -24,22 +70,28 @@ public interface TaskData
 		}
 	}
 
-    TaskType getType();
-    Component getName(TaskFormatting formatData);
-    Component getChatDescription(TaskFormatting formatData);
-    Component[] getItemDescription(TaskFormatting formatData);
-    boolean isTaskEqual(TaskData other);
-    boolean shouldItemGlow();
+	TaskType getType();
+
+	Component getName(TaskFormatting formatData);
+
+	Component getChatDescription(TaskFormatting formatData);
+
+	Component[] getItemDescription(TaskFormatting formatData);
+
+	boolean isTaskEqual(TaskData other);
+
+	boolean shouldItemGlow();
+
 	Set<String> tags();
 
-    ItemType getDisplayMaterial(CardDisplayInfo context);
+	ItemType getDisplayMaterial(CardDisplayInfo context);
 
-    int getRequiredAmount();
+	int getRequiredAmount();
 
-    /**
-     * @return Copy with the new amount.
-     */
-    TaskData setRequiredAmount(int newAmount);
+	/**
+	 * @return Copy with the new amount.
+	 */
+	TaskData setRequiredAmount(int newAmount);
 
 	default boolean hasAnyTag(Set<String> tagsToCheck) {
 		return !Collections.disjoint(tagsToCheck, tags());

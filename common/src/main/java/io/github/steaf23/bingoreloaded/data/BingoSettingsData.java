@@ -21,10 +21,10 @@ public class BingoSettingsData
         }
 
         if (data.contains("presets." + name)) {
-            return data.getSerializable("presets." + name, BingoSettings.class);
+            return data.getSerializable("presets." + name, BingoSettings.SERIALIZER);
         }
         else if (!getDefaultSettingsName().isEmpty()) {
-            return data.getSerializable("presets." + getDefaultSettingsName(), BingoSettings.class);
+            return data.getSerializable("presets." + getDefaultSettingsName(), BingoSettings.SERIALIZER);
         }
         return null;
     }
@@ -49,7 +49,7 @@ public class BingoSettingsData
         } else {
             ConsoleMessenger.log("Saved preset '" + name + "'");
         }
-        data.setSerializable("presets." + name, BingoSettings.class, settings);
+        data.setSerializable("presets." + name, BingoSettings.SERIALIZER, settings);
         data.saveChanges();
     }
 

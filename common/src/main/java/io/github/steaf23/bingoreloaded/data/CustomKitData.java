@@ -17,7 +17,7 @@ public class CustomKitData
         if (data.contains(slot.configName))
             return false;
 
-        data.setSerializable(slot.configName, CustomKit.class, CustomKit.fromPlayerInventory(player, kitName, slot));
+        data.setSerializable(slot.configName, CustomKit.SERIALIZER, CustomKit.fromPlayerInventory(player, kitName, slot));
         data.saveChanges();
         return true;
     }
@@ -35,6 +35,6 @@ public class CustomKitData
 
     public @Nullable CustomKit getCustomKit(PlayerKit slot)
     {
-        return data.getSerializable(slot.configName, CustomKit.class);
+        return data.getSerializable(slot.configName, CustomKit.SERIALIZER);
     }
 }

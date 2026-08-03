@@ -1,11 +1,9 @@
 package io.github.steaf23.bingoreloaded.data;
 
 import io.github.steaf23.bingoreloaded.BingoReloadedPaper;
-import io.github.steaf23.bingoreloaded.data.serializers.ItemStorageSerializer;
 import io.github.steaf23.bingoreloaded.item.BingoItems;
 import io.github.steaf23.bingoreloaded.item.GoUpWand;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataStorage;
-import io.github.steaf23.bingoreloaded.lib.data.core.DataStorageSerializerRegistry;
 import io.github.steaf23.bingoreloaded.lib.data.core.tag.TagDataAccessor;
 import io.github.steaf23.bingoreloaded.lib.item.SerializableItem;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
@@ -32,13 +30,11 @@ public class DataUpdaterV3_5_0 extends DataUpdaterV3_3_0 {
 
 		BingoItems items = new BingoItems();
 
-		DataStorageSerializerRegistry.addSerializer(new ItemStorageSerializer(), SerializableItem.class);
-
 		TagDataAccessor tagData = new TagDataAccessor(server, "data/kits", false);
 		tagData.load();
 
 		for (String kitName : tagData.getKeys()) {
-			List<SerializableItem> immutableList = tagData.getSerializableList(kitName + ".items", SerializableItem.class);
+			List<SerializableItem> immutableList = tagData.getSerializableList(kitName + ".items", SerializableItem.SERIALIZER);
 
 			List<SerializableItem> itemsCopy = new ArrayList<>(immutableList);
 			boolean updated = false;
@@ -53,7 +49,7 @@ public class DataUpdaterV3_5_0 extends DataUpdaterV3_3_0 {
 				index++;
 			}
 			if (updated) {
-				tagData.setSerializableList(kitName + ".items", SerializableItem.class, itemsCopy);
+				tagData.setSerializableList(kitName + ".items", SerializableItem.SERIALIZER, itemsCopy);
 			}
 		}
 

@@ -140,11 +140,10 @@ public class YamlDataStorage implements DataStorage
     }
 
     @Override
-    public <T> void setSerializableList(String path, Class<T> dataType, List<T> values) {
+    public <T> void setSerializableList(String path, DataStorageSerializer<T> serializer, List<T> values) {
         config.set(path, values.stream()
                 .map(v -> {
                     YamlDataStorage storage = new YamlDataStorage();
-                    DataStorageSerializer<T> serializer = DataStorageSerializerRegistry.getSerializer(dataType);
                     if (serializer == null) {
                         ConsoleMessenger.bug("No serializer registered for this type of data at path " + path, this);
                         return storage.config;
@@ -156,8 +155,7 @@ public class YamlDataStorage implements DataStorage
     }
 
     @Override
-    public <T> List<T> getSerializableList(String path, Class<T> dataType) {
-        DataStorageSerializer<T> serializer = DataStorageSerializerRegistry.getSerializer(dataType);
+    public <T> List<T> getSerializableList(String path, DataStorageSerializer<T> serializer) {
         if (serializer == null) {
             ConsoleMessenger.bug("No serializer registered for this type of data at path " + path, this);
             return List.of();

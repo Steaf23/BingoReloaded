@@ -2,6 +2,7 @@ package io.github.steaf23.bingoreloaded.data;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataAccessor;
+import io.github.steaf23.bingoreloaded.lib.data.core.DataStorageSerializer;
 import io.github.steaf23.bingoreloaded.lib.item.SerializableItem;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import org.jetbrains.annotations.Nullable;
@@ -12,10 +13,18 @@ public class DefaultKitData {
 	private final DataAccessor data = BingoReloaded.getDataAccessor("data/default_kits");
 
 	public record Kit(List<SerializableItem> items) {
+
+		public static final DataStorageSerializer<Kit> SERIALIZER = DataStorageSerializer.of(DefaultKitData.Kit.class,
+				(storage, value) -> {
+					storage.setSerializableList("items", SerializableItem.SERIALIZER, value.items());
+				}, storage -> {
+					List<SerializableItem> items = storage.getSerializableList("items", SerializableItem.SERIALIZER);
+					return new DefaultKitData.Kit(items);
+				});
 	}
 
 	public @Nullable Kit getKit(PlayerKit slot)
 	{
-		return data.getSerializable(slot.configName, Kit.class);
+		return data.getSerializable(slot.configName, Kit.SERIALIZER);
 	}
 }

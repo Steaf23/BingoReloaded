@@ -13,15 +13,6 @@ import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.data.config.BingoOptions;
 import io.github.steaf23.bingoreloaded.data.helper.SerializablePlayer;
 import io.github.steaf23.bingoreloaded.data.record.GameRecord;
-import io.github.steaf23.bingoreloaded.data.serializers.BingoLobbySerializer;
-import io.github.steaf23.bingoreloaded.data.serializers.BingoSettingsStorageSerializer;
-import io.github.steaf23.bingoreloaded.data.serializers.CustomKitStorageSerializer;
-import io.github.steaf23.bingoreloaded.data.serializers.DefaultKitStorageSerializer;
-import io.github.steaf23.bingoreloaded.data.serializers.GameRecordSerializer;
-import io.github.steaf23.bingoreloaded.data.serializers.ItemStorageSerializer;
-import io.github.steaf23.bingoreloaded.data.serializers.PlayerStorageSerializer;
-import io.github.steaf23.bingoreloaded.data.serializers.TaskTagStorageSerializer;
-import io.github.steaf23.bingoreloaded.data.serializers.TeamTemplateStorageSerializer;
 import io.github.steaf23.bingoreloaded.gameloop.GameManager;
 import io.github.steaf23.bingoreloaded.gameloop.SingularGameManager;
 import io.github.steaf23.bingoreloaded.lib.api.ActionUser;
@@ -31,19 +22,15 @@ import io.github.steaf23.bingoreloaded.lib.api.ServerSoftware;
 import io.github.steaf23.bingoreloaded.lib.api.StatisticHandle;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataAccessor;
-import io.github.steaf23.bingoreloaded.lib.data.core.DataStorageSerializerRegistry;
 import io.github.steaf23.bingoreloaded.lib.data.core.VirtualDataAccessor;
 import io.github.steaf23.bingoreloaded.lib.data.core.tag.TagDataAccessor;
-import io.github.steaf23.bingoreloaded.lib.data.serializers.StatisticSerializer;
 import io.github.steaf23.bingoreloaded.lib.item.SerializableItem;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import io.github.steaf23.bingoreloaded.lib.util.DebugLogger;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
 import io.github.steaf23.bingoreloaded.settings.CustomKit;
 import io.github.steaf23.bingoreloaded.tasks.GameTask;
-import io.github.steaf23.bingoreloaded.tasks.GameTaskSerializer;
 import io.github.steaf23.bingoreloaded.tasks.data.TaskData;
-import io.github.steaf23.bingoreloaded.tasks.data.TaskStorageSerializer;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.key.KeyPattern;
 import net.kyori.adventure.key.Namespaced;
@@ -95,19 +82,6 @@ public class BingoReloaded implements Namespaced {
 
 	public void enable() {
 		runtime.setupConfig();
-
-		DataStorageSerializerRegistry.addSerializer(new DefaultKitStorageSerializer(), DefaultKitData.Kit.class);
-		DataStorageSerializerRegistry.addSerializer(new CustomKitStorageSerializer(), CustomKit.class);
-		DataStorageSerializerRegistry.addSerializer(new TaskStorageSerializer(), TaskData.class);
-		DataStorageSerializerRegistry.addSerializer(new PlayerStorageSerializer(), SerializablePlayer.class);
-		DataStorageSerializerRegistry.addSerializer(new TeamTemplateStorageSerializer(), TeamData.TeamTemplate.class);
-		DataStorageSerializerRegistry.addSerializer(new BingoSettingsStorageSerializer(), BingoSettings.class);
-		DataStorageSerializerRegistry.addSerializer(new StatisticSerializer(), StatisticHandle.class);
-		DataStorageSerializerRegistry.addSerializer(new ItemStorageSerializer(), SerializableItem.class);
-		DataStorageSerializerRegistry.addSerializer(new GameTaskSerializer(), GameTask.class);
-		DataStorageSerializerRegistry.addSerializer(new BingoLobbySerializer(), BingoLobby.class);
-		DataStorageSerializerRegistry.addSerializer(new GameRecordSerializer(), GameRecord.class);
-		DataStorageSerializerRegistry.addSerializer(new TaskTagStorageSerializer(), TaskTagData.TaskTag.class);
 
 		// Create data accessors
 		addDataAccessor(new TagDataAccessor(platform, "data/default_cards", true));

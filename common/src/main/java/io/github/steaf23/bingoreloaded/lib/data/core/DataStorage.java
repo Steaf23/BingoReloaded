@@ -44,42 +44,40 @@ public interface DataStorage
     <T> void setList(String path, TagAdapter<T, ?> adapterType, List<T> values);
     <T> List<T> getList(String path, TagAdapter<T, ?> adapterType);
 
-    <T> void setSerializableList(String path, Class<T> dataType, List<T> values);
-    <T> List<T> getSerializableList(String path, Class<T> dataType);
+    <T> void setSerializableList(String path, DataStorageSerializer<T> serializer, List<T> values);
+    <T> List<T> getSerializableList(String path, DataStorageSerializer<T> serializer);
 
-    default <T> void setSerializable(String path, Class<T> classType, @NotNull T value) {
+    default <T> void setSerializable(String path, DataStorageSerializer<T> serializer, @NotNull T value) {
         DataStorage storage = createNew();
-        storage.fromSerializable(classType, value);
+        storage.fromSerializable(serializer, value);
         setStorage(path, storage);
     }
 
-    default <T> void fromSerializable(Class<T> classType, @NotNull T value) {
-        DataStorageSerializer<T> serializer = DataStorageSerializerRegistry.getSerializer(classType);
+    default <T> void fromSerializable(DataStorageSerializer<T> serializer, @NotNull T value) {
         if (serializer == null) {
-            ConsoleMessenger.bug("No serializer registered for serialization " + classType, this);
+            ConsoleMessenger.bug("No serializer registered for serialization " + serializer, this);
             return;
         }
         serializer.toDataStorage(this, value);
     }
 
-    default <T> @Nullable T getSerializable(String path, Class<T> classType) {
-        return getSerializable(path, classType, null);
+    default <T> @Nullable T getSerializable(String path, DataStorageSerializer<T> serializer) {
+        return getSerializable(path, serializer, null);
     }
 
-    default <T> @NotNull T getSerializable(String path, Class<T> classType, T def) {
+    default <T> @NotNull T getSerializable(String path, DataStorageSerializer<T> serializer, T def) {
         DataStorage serializable = getStorage(path);
         if (serializable == null) {
             return def;
         }
 
-        T value = serializable.toSerializable(classType);
+        T value = serializable.toSerializable(serializer);
         return value == null ? def : value;
     }
 
-    default <T> @Nullable T toSerializable(Class<T> classType) {
-        DataStorageSerializer<T> serializer = DataStorageSerializerRegistry.getSerializer(classType);
+    default <T> @Nullable T toSerializable(DataStorageSerializer<T> serializer) {
         if (serializer == null) {
-            ConsoleMessenger.bug("No serializer registered for deserialization " + classType, this);
+            ConsoleMessenger.bug("No serializer registered for deserialization " + serializer, this);
             return null;
         }
         return serializer.fromDataStorage(this);
