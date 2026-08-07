@@ -26,5 +26,10 @@ public interface WorldHandle {
 	void setTypeAtPos(WorldPosition pos, ItemType type);
 	WorldPosition highestBlockAt(WorldPosition pos);
 
+	default WorldPosition highestBlockAt(int x, int z) {
+		WorldPosition pos = new WorldPosition(this, x, 0.0D, z);
+		return highestBlockAt(pos);
+	}
+
 	void dropItem(StackHandle item, WorldPosition location);
 }

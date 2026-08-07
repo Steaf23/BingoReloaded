@@ -12,6 +12,7 @@ import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.data.config.BingoOptions;
 import io.github.steaf23.bingoreloaded.data.helper.TaskFormatting;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
+import io.github.steaf23.bingoreloaded.gameloop.spawn.PlayerSpawnCoordinator;
 import io.github.steaf23.bingoreloaded.item.BingoItems;
 import io.github.steaf23.bingoreloaded.item.GameItem;
 import io.github.steaf23.bingoreloaded.lib.api.BiomeType;
@@ -90,16 +91,15 @@ public class BingoGame implements GamePhase
     //Used to override bed spawns if they get broken to reset spawn point to game spawn point.
     private final Map<UUID, WorldPosition> playerSpawnPoints;
     private final BingoItems items;
+    private final PlayerSpawnCoordinator spawnCoordinator;
 
     private GameTask deathMatchTask;
 
     private final BiConsumer<BingoGame, @Nullable BingoTeam> onGameEndedCallback;
 
-	private final @Nullable WorldPosition startPosition;
-
     private int displayBonusTime = 0;
 
-    public BingoGame(ServerSoftware platform, @NotNull BingoSession session, @NotNull BingoSettings settings, @NotNull BingoConfigurationData config, BiConsumer<BingoGame, @Nullable BingoTeam> onGameEndedCallback, @Nullable WorldPosition atPosition) {
+    public BingoGame(ServerSoftware platform, @NotNull BingoSession session, @NotNull BingoSettings settings, @NotNull BingoConfigurationData config, BiConsumer<BingoGame, @Nullable BingoTeam> onGameEndedCallback, @NotNull PlayerSpawnCoordinator spawnCoordinator) {
 		this.platform = platform;
 		this.session = session;
         this.config = config;
@@ -115,7 +115,7 @@ public class BingoGame implements GamePhase
 		this.respawnManager = new PlayerRespawnManager(platform, config.getOptionValue(BingoOptions.TELEPORT_AFTER_DEATH_PERIOD));
         this.playerSpawnPoints = new HashMap<>();
 
-		this.startPosition = atPosition;
+		this.spawnCoordinator = spawnCoordinator;
     }
 
     private void start() {
@@ -165,7 +165,7 @@ public class BingoGame implements GamePhase
         Set<TaskCard> uniqueCards = CardFactory.generateCardsForGame(this);
 
         BingoMessage.GIVE_CARDS.sendToAudience(session);
-        teleportPlayersToStart(world);
+        teleportPlayersToStart();
 
         // Show settings to player inside a hover message
         Component hoverMessage = Component.text()
@@ -473,97 +473,12 @@ public class BingoGame implements GamePhase
         BlockHelper.buildPlatform(ItemType.AIR, platformLocation, size, size, true, ItemType.of("minecraft:white_stained_glass"));
     }
 
-    private void teleportPlayersToStart(WorldHandle world) {
+    private void teleportPlayersToStart() {
         int gracePeriod = config.getOptionValue(BingoOptions.GRACE_PERIOD);
 
         // Platform should at least last as long as the starting countdown time.
         int platformLifetime = Math.max(config.getOptionValue(BingoOptions.STARTING_COUNTDOWN_TIME), Math.max(0, gracePeriod - 5)) * BingoReloaded.ONE_SECOND;
-        if (startPosition != null) {
-
-			WorldPosition spawnLocation = startPosition.clone().setY(BlockHelper.getHighestBlockYAtPos(startPosition));
-			if (!getTeamManager().getParticipants().isEmpty()) {
-				spawnPlatform(spawnLocation, 5, true);
-
-				platform.runTask(platformLifetime, task ->
-						BingoGame.removePlatform(spawnLocation, 5));
-			}
-
-			Set<BingoParticipant> players = getTeamManager().getParticipants();
-			players.forEach(p -> teleportPlayerToStart(p, spawnLocation, 5));
-			return;
-		}
-
-		switch (config.getOptionValue(BingoOptions.PLAYER_TELEPORT_STRATEGY)) {
-            case ALONE -> {
-                for (BingoParticipant p : getTeamManager().getParticipants()) {
-                    WorldPosition platformLocation = getRandomSpawnLocation(world);
-                    if (!getTeamManager().getParticipants().isEmpty()) {
-                        spawnPlatform(platformLocation.clone(), 5, true);
-
-                        platform.runTask(platformLifetime, task ->
-                                BingoGame.removePlatform(platformLocation, 5));
-                    }
-                    teleportPlayerToStart(p, platformLocation, 5);
-                }
-            }
-            case TEAM -> {
-                for (BingoTeam t : getTeamManager().getActiveTeams()) {
-                    WorldPosition teamLocation = getRandomSpawnLocation(world);
-
-                    Set<BingoParticipant> players = t.getMembers();
-                    if (!players.isEmpty()) {
-                        spawnPlatform(teamLocation, 5, true);
-
-                        platform.runTask(platformLifetime, task ->
-                                BingoGame.removePlatform(teamLocation, 5));
-                    }
-                    players.forEach(p -> teleportPlayerToStart(p, teamLocation, 5));
-                }
-            }
-            case ALL -> {
-                WorldPosition spawnLocation = getRandomSpawnLocation(world);
-                if (!getTeamManager().getParticipants().isEmpty()) {
-                    spawnPlatform(spawnLocation, 5, true);
-
-                    platform.runTask(platformLifetime, task ->
-                            BingoGame.removePlatform(spawnLocation, 5));
-                }
-
-                Set<BingoParticipant> players = getTeamManager().getParticipants();
-                players.forEach(p -> teleportPlayerToStart(p, spawnLocation, 5));
-            }
-            default -> {
-            }
-        }
-    }
-
-    private void teleportPlayerToStart(BingoParticipant participant, WorldPosition to, int spread) {
-        if (participant.sessionPlayer().isEmpty())
-            return;
-        PlayerHandle player = participant.sessionPlayer().get();
-
-        WorldPosition playerLocation = BlockHelper.getRandomPosWithinRange(to, spread, spread);
-        playerLocation.moveYBlocks(5);
-        player.teleportAsync(playerLocation);
-
-        WorldPosition spawnLocation = to.clone().moveYBlocks(2);
-        player.setRespawnPoint(spawnLocation, true);
-        playerSpawnPoints.put(player.uniqueId(), spawnLocation);
-    }
-
-    private WorldPosition getRandomSpawnLocation(WorldHandle world) {
-        int teleportMaxDistance = config.getOptionValue(BingoOptions.TELEPORT_MAX_DISTANCE);
-
-        WorldPosition randomPosition = BlockHelper.getRandomPosWithinRange(new WorldPosition(world, 0.0D, 0.0D, 0.0D), teleportMaxDistance, teleportMaxDistance);
-        WorldPosition location = new WorldPosition(world, randomPosition.x(), BlockHelper.getHighestBlockYAtPos(randomPosition), randomPosition.z());
-
-        //find a not-ocean biome to start the game in
-        while (isOceanBiome(world.biomeAtPos(location))) {
-            randomPosition = BlockHelper.getRandomPosWithinRange(new WorldPosition(world, 0.0D, 0.0D, 0.0D), teleportMaxDistance, teleportMaxDistance);
-            location = new WorldPosition(world, randomPosition.x(), BlockHelper.getHighestBlockYAtPos(randomPosition), randomPosition.z());
-        }
-
-        return location;
+        spawnCoordinator.teleportPlayersToStart(session, teamManager.getActiveTeams(), platformLifetime);
     }
 
     /**

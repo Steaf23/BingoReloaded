@@ -1,5 +1,6 @@
 package io.github.steaf23.bingoreloaded.data.config;
 
+import io.github.steaf23.bingoreloaded.data.teleportgrid.TeleportationGrid;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataAccessor;
 import io.github.steaf23.bingoreloaded.lib.data.core.tag.TagDataType;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
@@ -99,10 +100,10 @@ public class BingoConfigurationData
         setOptionValueForce(BingoOptions.DISABLE_THE_END, name -> config.getBoolean(name, false));
         setOptionValueForce(BingoOptions.END_GAME_WITHOUT_TEAMS, name -> config.getBoolean(name, true));
         setOptionValueForce(BingoOptions.HOTSWAP_CONFIG, name -> new HotswapConfig(
-                config.getInt(name + "minimumExpirationTime", 3),
-                config.getInt(name + "maximumExpirationTime", 20),
-                config.getInt(name + "recoverTime", 10),
-                config.getBoolean(name + "showExpirationAsDurability", true)));
+                config.getInt(name + ".minimumExpirationTime", 3),
+                config.getInt(name + ".maximumExpirationTime", 20),
+                config.getInt(name + ".recoverTime", 10),
+                config.getBoolean(name + ".showExpirationAsDurability", true)));
         setOptionValueForce(BingoOptions.ALLOW_VIEWING_ALL_CARDS, name -> config.getBoolean(name, true));
         setOptionValueForce(BingoOptions.DISABLE_CARD_MENU_FROM_ITEM, name -> config.getBoolean(name, false));
 
@@ -110,6 +111,9 @@ public class BingoConfigurationData
         setOptionValueForce(BingoOptions.SAVE_PLAYER_INFORMATION, name -> config.getBoolean(name, true));
         setOptionValueForce(BingoOptions.LOAD_PLAYER_INFORMATION_STRATEGY, name -> BingoOptions.LoadPlayerInformationStrategy.valueOf(
                 config.getString(name, "AFTER_LEAVING_WORLD")));
+
+        // Configuration SINGULAR
+        setOptionValueForce(BingoOptions.TELEPORTATION_GRID, name -> config.getSerializable(name, TeleportationGrid.SERIALIZER));
 
         // Configuration: MULTIPLE
         setOptionValueForce(BingoOptions.DEFAULT_WORLDS, name -> new ConfigurationOption.StringList(config.getList(name, TagDataType.STRING)));

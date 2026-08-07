@@ -29,7 +29,7 @@ public interface TeamManager
      */
     Map<String, TeamData.TeamTemplate> getJoinableTeams();
 
-    BingoTeamContainer getActiveTeams();
+    TeamContainer getActiveTeams();
 
     /**
      * Attempts to retrieve the given player as a BingoParticipant.

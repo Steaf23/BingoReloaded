@@ -31,7 +31,7 @@ import java.util.Set;
  */
 public class BasicTeamManager implements TeamManager {
     private final BingoSession session;
-    private final BingoTeamContainer activeTeams;
+    private final TeamContainer activeTeams;
     private final TeamData teamData;
     private int maxTeamSize;
     private int maxTeamCount;
@@ -41,7 +41,7 @@ public class BasicTeamManager implements TeamManager {
     public BasicTeamManager(BingoSession session) {
         this.session = session;
         this.teamData = new TeamData();
-        this.activeTeams = new BingoTeamContainer();
+        this.activeTeams = new TeamContainer();
         this.maxTeamSize = session.settingsBuilder.view().maxTeamSize();
         this.maxTeamCount = session.settingsBuilder.view().maxTeamCount();
         this.joinableTeams = teamData.getTeams();
@@ -249,7 +249,7 @@ public class BasicTeamManager implements TeamManager {
     }
 
     @Override
-    public BingoTeamContainer getActiveTeams() {
+    public TeamContainer getActiveTeams() {
         return activeTeams;
     }
 

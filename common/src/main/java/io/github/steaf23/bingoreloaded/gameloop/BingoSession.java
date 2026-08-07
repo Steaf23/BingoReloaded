@@ -147,7 +147,7 @@ public class BingoSession implements ForwardingAudience
 
         // First make sure the previous phase (PregameLobby) is ended.
         phase.end();
-        phase = new BingoGame(gameManager.getPlatform(), this, gameSettings == null ? settings : gameSettings.view(), config, this::onGameEnded, atPosition);
+        phase = new BingoGame(gameManager.getPlatform(), this, gameSettings == null ? settings : gameSettings.view(), config, this::onGameEnded, gameManager.createSpawnCoordinator(atPosition));
         phase.setup();
 
 		return true;

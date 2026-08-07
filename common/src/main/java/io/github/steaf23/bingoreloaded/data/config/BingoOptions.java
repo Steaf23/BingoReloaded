@@ -1,5 +1,7 @@
 package io.github.steaf23.bingoreloaded.data.config;
 
+import io.github.steaf23.bingoreloaded.data.teleportgrid.TeleportationGrid;
+
 import java.util.List;
 
 public class BingoOptions {
@@ -15,6 +17,7 @@ public class BingoOptions {
 		ALONE,
 		TEAM,
 		ALL,
+		GRID,
 		NONE,
 	}
 
@@ -124,6 +127,9 @@ public class BingoOptions {
 	// Player Data
 	public static final ConfigurationOption<Boolean> SAVE_PLAYER_INFORMATION = new BooleanOption("savePlayerInformation");
 	public static final ConfigurationOption<LoadPlayerInformationStrategy> LOAD_PLAYER_INFORMATION_STRATEGY = new EnumOption<>("loadPlayerInformationStrategy", LoadPlayerInformationStrategy.class, LoadPlayerInformationStrategy.AFTER_LEAVING_WORLD);
+
+	// Configuration: SINGULAR
+	public static final ConfigurationOption<TeleportationGrid> TELEPORTATION_GRID = new NonSerializableOption<>("teleportGrid");
 
 	// Configuration: MULTIPLE
 	public static final ConfigurationOption<ConfigurationOption.StringList> DEFAULT_WORLDS = new NonSerializableOption<ConfigurationOption.StringList>("defaultWorlds")

@@ -7,6 +7,7 @@ import io.github.steaf23.bingoreloaded.data.BingoStatData;
 import io.github.steaf23.bingoreloaded.data.CustomKitData;
 import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.data.config.BingoOptions;
+import io.github.steaf23.bingoreloaded.data.teleportgrid.TeleportGridData;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gameloop.GameManager;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
@@ -33,6 +34,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 import java.util.function.BiFunction;
 
 public class BingoAction extends ActionTree {
@@ -396,6 +398,23 @@ public class BingoAction extends ActionTree {
 		this.addSubAction(new ActionTree("lobby", List.of("bingo.admin"))
 				.addSubAction(createLobbyAction)
 				.addSubAction(removeLobbyAction));
+
+		ActionTree resetGridAction = new ActionTree("reset", (args) -> {
+			TeleportGridData data = new TeleportGridData(config.getOptionValue(BingoOptions.TELEPORTATION_GRID), new Random());
+			data.reset();
+			BingoPlayerSender.sendMessage(Component.text("Grid has been reset, you can now play up to " + data.getGamesLeft() + " games with these grid settings."), getLastUser());
+			return ActionResult.SUCCESS;
+		});
+
+		ActionTree gridStatusAction = new ActionTree("status", (args) -> {
+			TeleportGridData data = new TeleportGridData(config.getOptionValue(BingoOptions.TELEPORTATION_GRID), new Random());
+			BingoPlayerSender.sendMessage(Component.text("You can now play " + data.getGamesLeft() + " more games with these grid settings, before you need to reset it."), getLastUser());
+			return ActionResult.SUCCESS;
+		});
+
+		this.addSubAction(new ActionTree("grid", List.of("bingo.admin"))
+				.addSubAction(resetGridAction)
+				.addSubAction(gridStatusAction));
 	}
 
 	public void addPlayerKit(String slot, String kitName, PlayerHandle fromPlayerInventory) {

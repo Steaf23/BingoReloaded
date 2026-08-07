@@ -165,23 +165,28 @@ voteList:
   - '5'
 
 # ==========================================================================
-#    Gameplay Configuration Options
+#    Teleport Configuration Options
 # ==========================================================================
-
-# The amount of time in seconds before the game will release the players.
-startingCountdownTime: 10
 
 # When the game starts everyone will be teleported in a random square radius
 #   between 0 and teleportMaxDistance blocks from 0,0. (no more than 1.000.000 blocks)
 teleportMaxDistance: 1000000
 
 # Decide whether to teleport players:
-#   - everyone together (ALL),
-#   - everyone apart (ALONE),
-#   - everyone with their teammates (TEAM),
-#   - no one gets teleported at all (NONE),
+#   - ALL: everyone together (ALL),
+#   - ALONE: everyone apart (ALONE),
+#   - TEAM: everyone with their teammates (TEAM),
+#   - NONE: no one gets teleported at all (NONE),
+#   - GRID: use configured grid settings (only works on configuration: SINGULAR),
 #   - using any other value will make it so no one teleports at all at the start of the game.
 playerTeleportStrategy: ALL
+
+# ==========================================================================
+#    Gameplay Configuration Options
+# ==========================================================================
+
+# The amount of time in seconds before the game will release the players.
+startingCountdownTime: 10
 
 # If true, the game will send a message to players that died while playing the game
 #   that can be used to teleport them back.
@@ -262,8 +267,36 @@ savePlayerInformation: true
 loadPlayerInformationStrategy: AFTER_LEAVING_WORLD
 
 # ==========================================================================
+#    Configuration: SINGULAR Specific Configuration Options
+# ==========================================================================
+
+# When true, the world is divided into a rectangular grid. This teleportation method can be enabled by setting it in the playerTeleportStrategy.
+# This setting is useful if you want to pre-generate a world and then play multiple games on it instead of having a huge teleport range.
+# Using this option in the playerTeleportStrategy will ignore the maxTeleportDistance.
+# For more info, see this wiki page: https://github.com/Steaf23/BingoReloaded/wiki/Grid-Teleportation
+teleportGrid:
+  # The size of a single "cell" on the grid. e.g. game 1, players will start at (0, 0), game 2 they will start at (500, 500), etc...
+  cellSize:
+    x: 500
+    z: 500
+  # Optional command to send when the last game has ended and the next game cannot be played on the current grid anymore.
+  sendCommandWhenGridFinished: ""
+
+  # center position of the grid.
+  center:
+    x: 0
+    z: 0
+  # Determine the size of the total grid in amount of grid cells.
+  # By default, this means that the teleport range will be between (500 * 50, 500 * 50) = (25000 x 25000) blocks/ radius 12500 blocks out from the center position.
+  size:
+    x: 50
+    z: 50
+  skipOceanBiomes: true
+
+# ==========================================================================
 #    Configuration: MULTIPLE Specific Configuration Options
 # ==========================================================================
+
 # Specify a list of worlds to create on server startup using /autobingo <world_name> create automatically.
 defaultWorlds:
   - bingo_world
