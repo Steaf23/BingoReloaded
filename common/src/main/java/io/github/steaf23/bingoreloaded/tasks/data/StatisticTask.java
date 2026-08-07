@@ -7,8 +7,10 @@ import io.github.steaf23.bingoreloaded.data.helper.TaskFormatting;
 import io.github.steaf23.bingoreloaded.lib.api.StatisticHandle;
 import io.github.steaf23.bingoreloaded.lib.api.StatisticType;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
+import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.object.ObjectContents;
 
 import java.util.HashSet;
 import java.util.Objects;
@@ -48,6 +50,7 @@ public record StatisticTask(StatisticHandle statistic, int count, Set<String> ta
 				}
 			}
 			case TRAVEL -> formatting.statisticNameComponent(this, Component.text(" ").append(Component.translatable("soundCategory.block")), 10);
+			case DAMAGE -> formatting.statisticNameComponent(this, Component.object(ObjectContents.sprite(Key.key("gui"), Key.key("hud/heart/full"))), 1);
 			default -> formatting.statisticNameComponent(this, Component.empty(), 1);
 		};
 	}

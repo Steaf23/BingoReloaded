@@ -7,94 +7,85 @@ import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 
 import java.util.function.Consumer;
 
-public class StatisticProgress
-{
-    private final StatisticHandle statistic;
-    private final BingoParticipant player;
-    private int progressLeft;
+public class StatisticProgress {
 
-    private int previousGlobalProgress;
+	private final StatisticHandle statistic;
+	private final BingoParticipant player;
+	private int progressLeft;
 
-    private final Consumer<StatisticProgress> progressCompletedCallback;
+	private int previousGlobalProgress;
 
-    public StatisticProgress(StatisticHandle statistic, BingoParticipant player, int targetScore, Consumer<StatisticProgress> progressCompletedCallback)
-    {
-        this.statistic = statistic;
-        this.player = player;
-        this.progressLeft = targetScore;
+	private final Consumer<StatisticProgress> progressCompletedCallback;
+
+	public StatisticProgress(StatisticHandle statistic, BingoParticipant player, int targetScore, Consumer<StatisticProgress> progressCompletedCallback) {
+		this.statistic = statistic;
+		this.player = player;
+		this.progressLeft = targetScore;
 		this.progressCompletedCallback = progressCompletedCallback;
-		if (statistic.statisticType().getCategory() == StatisticType.StatisticCategory.TRAVEL)
-        {
-            progressLeft *= 1000;
-        }
+		if (statistic.statisticType().getCategory() == StatisticType.StatisticCategory.TRAVEL) {
+			progressLeft *= 1000;
+		} else if (statistic.statisticType().getCategory() == StatisticType.StatisticCategory.DAMAGE) {
+			progressLeft *= 20; // statistics value shows in 1/10 of a damage point. 2 damage points == 1 heart.
+		}
 
-        this.previousGlobalProgress = 0;
+		this.previousGlobalProgress = 0;
 
 //        setPlayerTotalScore(0);
-    }
+	}
 
-    public boolean done()
-    {
-        return progressLeft <= 0;
-    }
+	public boolean done() {
+		return progressLeft <= 0;
+	}
 
-    /**
-     * Updates the progress for statistics that don't get updated with the default Increment event
-     */
-    public void updatePeriodicProgress()
-    {
-        if (statistic.getsUpdatedAutomatically())
-            return;
+	/**
+	 * Updates the progress for statistics that don't get updated with the default Increment event
+	 */
+	public void updatePeriodicProgress() {
+		if (statistic.getsUpdatedAutomatically())
+			return;
 
-        int newProgress = getParticipantTotalScore();
-        setProgress(newProgress);
-    }
+		int newProgress = getParticipantTotalScore();
+		setProgress(newProgress);
+	}
 
-    public void setProgress(int newProgress)
-    {
-        int progressDelta = newProgress - previousGlobalProgress;
+	public void setProgress(int newProgress) {
+		int progressDelta = newProgress - previousGlobalProgress;
 
-        progressLeft -= Math.max(0, progressDelta);
+		progressLeft -= Math.max(0, progressDelta);
 
-        previousGlobalProgress = newProgress;
+		previousGlobalProgress = newProgress;
 
-        if (done()) {
-            progressCompletedCallback.accept(this);
-        }
-    }
+		if (done()) {
+			progressCompletedCallback.accept(this);
+		}
+	}
 
-    public int getParticipantTotalScore()
-    {
-        PlayerHandle gamePlayer = player.sessionPlayer().orElse(null);
-        if (gamePlayer == null) {
-            return 0;
-        }
+	public int getParticipantTotalScore() {
+		PlayerHandle gamePlayer = player.sessionPlayer().orElse(null);
+		if (gamePlayer == null) {
+			return 0;
+		}
 
-        int value;
-        if (statistic.hasItemType())
-        {
-            value = gamePlayer.getStatisticValue(statistic.statisticType(), statistic.itemType());
-        }
-        else if (statistic.hasEntity())
-        {
-            value = gamePlayer.getStatisticValue(statistic.statisticType(), statistic.entityType());
-        }
-        else
-        {
-            value = gamePlayer.getStatisticValue(statistic.statisticType());
-        }
-        return value;
-    }
+		int value;
+		if (statistic.hasItemType()) {
+			value = gamePlayer.getStatisticValue(statistic.statisticType(), statistic.itemType());
+		} else if (statistic.hasEntity()) {
+			value = gamePlayer.getStatisticValue(statistic.statisticType(), statistic.entityType());
+		} else {
+			value = gamePlayer.getStatisticValue(statistic.statisticType());
+		}
+		return value;
+	}
 
-    public StatisticHandle getStatistic() {
-        return statistic;
-    }
+	public StatisticHandle getStatistic() {
+		return statistic;
+	}
 
-    public int getProgressLeft() {
-        return progressLeft;
-    }
+	public int getProgressLeft() {
+		return progressLeft;
+	}
 
-    public BingoParticipant getParticipant() {
-        return player;
-    }
+	public BingoParticipant getParticipant() {
+		return player;
+	}
 }
