@@ -1,8 +1,5 @@
 package io.github.steaf23.bingoreloaded.gui.inventory.creator;
 
-import com.github.retrooper.packetevents.protocol.dialog.Dialog;
-import com.github.retrooper.packetevents.protocol.nbt.NBTCompound;
-import com.github.retrooper.packetevents.protocol.nbt.NBTString;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.BingoCardData;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
@@ -13,9 +10,7 @@ import io.github.steaf23.bingoreloaded.lib.api.MenuBoard;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemTypePaper;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
-import io.github.steaf23.bingoreloaded.lib.data.core.DataStorage;
-import io.github.steaf23.bingoreloaded.lib.dialog.DialogBuilder;
-import io.github.steaf23.bingoreloaded.lib.dialog.DialogMenu;
+import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandlePaper;
 import io.github.steaf23.bingoreloaded.lib.inventory.BasicMenu;
 import io.github.steaf23.bingoreloaded.lib.inventory.InventoryMenu;
 import io.github.steaf23.bingoreloaded.lib.inventory.PaginatedDataMenu;
@@ -23,8 +18,15 @@ import io.github.steaf23.bingoreloaded.lib.inventory.UserInputMenu;
 import io.github.steaf23.bingoreloaded.lib.inventory.action.MenuAction;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import io.github.steaf23.bingoreloaded.util.BingoPlayerSender;
-import net.kyori.adventure.key.Key;
+import io.papermc.paper.dialog.Dialog;
+import io.papermc.paper.registry.data.dialog.ActionButton;
+import io.papermc.paper.registry.data.dialog.DialogBase;
+import io.papermc.paper.registry.data.dialog.action.DialogAction;
+import io.papermc.paper.registry.data.dialog.input.DialogInput;
+import io.papermc.paper.registry.data.dialog.input.TextDialogInput;
+import io.papermc.paper.registry.data.dialog.type.DialogType;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickCallback;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -89,7 +91,7 @@ public class BingoCreatorMenu extends BasicMenu {
 				List<String> excludedTags = cardsData.excludedTags(cardName);
 				if (!excludedTags.isEmpty()) {
 					item.setLore(Component.text("This card contains " + cardsData.getListNames(cardName).size() + " list(s)"),
-							cardsData.tags().tagDescription(excludedTags))
+									cardsData.tags().tagDescription(excludedTags))
 							.addDescription("description", 1, fullDescription);
 				} else {
 					item.setLore(Component.text("This card contains " + cardsData.getListNames(cardName).size() + " list(s)"))
@@ -173,11 +175,7 @@ public class BingoCreatorMenu extends BasicMenu {
 	}
 
 	public void createCard(PlayerHandle player) {
-		new UserInputMenu(getMenuBoard(), Component.text("Enter new card name"), (input) -> {
-			if (!input.isEmpty())
-				openCardEditor(input, player);
-		}, "name")
-				.open(player);
+		editCardMenu(this, player, "name", "", this::createCardCallback);
 	}
 
 	public void createList(PlayerHandle player) {
@@ -208,21 +206,8 @@ public class BingoCreatorMenu extends BasicMenu {
 
 
 	public BasicMenu createCardContext(String cardName) {
-		BasicMenu context = new BasicMenu(getMenuBoard(), Component.text(cardName), 1) {
-			@Override
-			public void onCustomAction(PlayerHandle player, Key key, DataStorage payload) {
-				switch (key.value()) {
-					case "card_name/save" -> {
-						String cardName = payload.getString("card_name", "");
-						cardsData.setDescription(cardName, payload.getString("description", ""));
-						cardsData.renameCard(cardName, payload.getString("name", cardName));
-					}
-					case "card_name/cancel" -> {
-					}
-				}
-				close(player);
-			}
-		};
+		BasicMenu context = new BasicMenu(getMenuBoard(), Component.text(cardName), 1);
+
 		int slot = 0;
 		if (!cardsData.isDefaultCard(cardName)) {
 			context.addAction(new ItemTemplate(slot, REMOVE_ICON, BingoReloaded.applyTitleFormat("Remove")), (args) -> {
@@ -240,24 +225,7 @@ public class BingoCreatorMenu extends BasicMenu {
 
 		if (!cardsData.isDefaultCard(cardName)) {
 			context.addAction(new ItemTemplate(slot, RENAME_ICON, BingoReloaded.applyTitleFormat("Change Description")), (args) -> {
-				new DialogMenu(getMenuBoard()) {
-
-					@Override
-					public Dialog getDialog() {
-						NBTCompound cardNameTag = new NBTCompound();
-						cardNameTag.setTag("card_name", new NBTString(cardName));
-
-						return new DialogBuilder(Component.text("Change card name/ description"))
-								.addTextInput(new DialogBuilder.TextInputBuilder("name", Component.text("Name")).initial(cardName))
-								.addTextInput(new DialogBuilder.TextInputBuilder("description", Component.text("Description"))
-										.initial(cardsData.getDescription(cardName))
-										.multilineOptions(4, 100)
-										.maxLength(300))
-								.buildConfirmation(
-										DialogBuilder.ActionButtonBuilder.dynamicCustomAction(Component.translatable("selectWorld.edit.save"), BingoReloaded.resourceKey("card_name/save"), cardNameTag).build(),
-										DialogBuilder.ActionButtonBuilder.customAction(Component.translatable("gui.cancel"), BingoReloaded.resourceKey("card_name/cancel"), null).build());
-					}
-				}.open(args.player());
+				editCardMenu(context, args.player(), cardName, cardsData.getDescription(cardName), this::renameCard);
 			});
 			slot++;
 
@@ -303,5 +271,59 @@ public class BingoCreatorMenu extends BasicMenu {
 		}
 		context.addCloseAction(new ItemTemplate(8, SAVE_ICON, BingoReloaded.applyTitleFormat(BingoMessage.MENU_EXIT.asPhrase())));
 		return context;
+	}
+
+	@FunctionalInterface
+	interface CardDescriptionEditor {
+
+		void edit(PlayerHandle player, BasicMenu parentMenu, String oldName, String newName, String newDescription);
+	}
+
+	@SuppressWarnings("UnstableApiUsage")
+	void editCardMenu(BasicMenu parentMenu, PlayerHandle playerHandle, String currentName, String currentDescription, CardDescriptionEditor callback) {
+		Dialog dialog = Dialog.create(builder -> builder.empty()
+				.base(DialogBase.builder(Component.text("Change card name/ description"))
+						.inputs(List.of(
+										DialogInput.text("name", Component.text("Name"))
+												.initial(currentName)
+												.build(),
+										DialogInput.text("description", Component.text("Description"))
+												.initial(currentDescription)
+												.multiline(TextDialogInput.MultilineOptions.create(4, 100))
+												.maxLength(300)
+												.build()
+								)
+						)
+						.build()
+				).type(DialogType.confirmation(
+						ActionButton.create(
+								Component.translatable("selectWorld.edit.save"),
+								Component.empty(),
+								100,
+								DialogAction.customClick((view, audience) -> {
+									callback.edit(playerHandle, parentMenu, currentName, view.getText("name"), view.getText("description"));
+								}, ClickCallback.Options.builder().build())
+						),
+						ActionButton.create(
+								Component.translatable("gui.cancel"),
+								Component.empty(),
+								100,
+								null
+						)
+				))
+		);
+
+		((PlayerHandlePaper) playerHandle).handle().showDialog(dialog);
+	}
+
+	public void renameCard(PlayerHandle player, BasicMenu parentMenu, String oldName, String newName, String description) {
+		cardsData.setDescription(oldName, description);
+		cardsData.renameCard(oldName, newName);
+		parentMenu.close(player);
+	}
+
+	public void createCardCallback(PlayerHandle player, BasicMenu parentMenu, String oldName, String newName, String description) {
+		cardsData.setDescription(newName, description);
+		openCardEditor(newName, player);
 	}
 }
