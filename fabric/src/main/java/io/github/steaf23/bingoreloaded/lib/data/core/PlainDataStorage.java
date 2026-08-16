@@ -125,12 +125,12 @@ public class PlainDataStorage implements DataStorage {
 	}
 
 	@Override
-	public <T> void setSerializableList(String path, Class<T> dataType, List<T> values) {
+	public <T> void setSerializableList(String path, DataStorageSerializer<T> serializer, List<T> values) {
 		set(path, values);
 	}
 
 	@Override
-	public <T> List<T> getSerializableList(String path, Class<T> dataType) {
+	public <T> List<T> getSerializableList(String path, DataStorageSerializer<T> serializer) {
 		return List.of();
 	}
 
@@ -196,12 +196,12 @@ public class PlainDataStorage implements DataStorage {
 	}
 
 	@Override
-	public void setWorldPosition(String path, @NotNull GlobalPosition value) {
+	public void setGlobalPosition(String path, @NotNull GlobalPosition value) {
 		set(path, value);
 	}
 
 	@Override
-	public @Nullable GlobalPosition getWorldPosition(String path) {
+	public @Nullable GlobalPosition getGlobalPosition(String path) {
 		Object v = get(path);
 		return v instanceof GlobalPosition res ? res : null;
 	}

@@ -4,6 +4,7 @@ import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemTypeFabric;
 import io.github.steaf23.bingoreloaded.util.FabricTypes;
 import net.kyori.adventure.key.Key;
+import net.kyori.adventure.text.Component;
 import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
@@ -24,11 +25,36 @@ public class AdvancementHandleFabric implements AdvancementHandle {
 	}
 
 	@Override
+	public boolean hasDisplay() {
+		return advancement.value().display().isPresent();
+	}
+
+	@Override
 	public ItemType displayIcon() {
 		if (advancement.value().display().isEmpty()) {
 			return ItemType.AIR;
 		}
 		return new ItemTypeFabric(advancement.value().display().get().getIcon().item().value());
+	}
+
+	@Override
+	public Component displayName() {
+		if (advancement.value().display().isEmpty()) {
+			return Component.empty();
+		}
+		else {
+			return FabricTypes.toAdventureComponent(advancement.value().display().get().getTitle());
+		}
+	}
+
+	@Override
+	public Component description() {
+		if (advancement.value().display().isEmpty()) {
+			return Component.empty();
+		}
+		else {
+			return FabricTypes.toAdventureComponent(advancement.value().display().get().getDescription());
+		}
 	}
 
 	@Override
