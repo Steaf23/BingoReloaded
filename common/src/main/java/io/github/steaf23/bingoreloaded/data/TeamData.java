@@ -26,10 +26,12 @@ public class TeamData {
                 (storage, value) -> {
                     storage.setString("name", value.stringName());
                     storage.setString("color", value.color().asHexString());
+                    storage.setString("dye_color", value.dyeColor().getName());
                 }, storage -> {
                     return new TeamData.TeamTemplate(
                             storage.getString("name", ""),
-                            TextColor.fromHexString(storage.getString("color", "#808080"))
+                            TextColor.fromHexString(storage.getString("color", "#808080")),
+                            BlockColor.fromName(storage.getString("dye_color", "white"))
                     );
                 });
 
