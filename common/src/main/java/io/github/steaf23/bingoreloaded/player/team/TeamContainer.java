@@ -13,11 +13,11 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-public class BingoTeamContainer implements Iterable<BingoTeam>
+public class TeamContainer implements Iterable<BingoTeam>
 {
     private final Set<BingoTeam> teams;
 
-    BingoTeamContainer() {
+    TeamContainer() {
         teams = new HashSet<>();
     }
 

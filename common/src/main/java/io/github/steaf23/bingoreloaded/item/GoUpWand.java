@@ -83,9 +83,9 @@ public class GoUpWand extends GameItem {
 			teleportLocation.setY(teleportLocation.y() + distance + fallDistance);
 			platformLocation.setY(platformLocation.y() + distance);
 
-			game.spawnPlatform(platformLocation, 1, true);
+			BingoGame.spawnPlatform(player.world(), platformLocation, 1, true);
 			taskScheduler.runTask((long) Math.max(0, platformLifetimeSeconds) * BingoReloaded.ONE_SECOND, laterTask -> {
-				game.removePlatform(platformLocation, 1);
+				BingoGame.removePlatform(player.world(), platformLocation, 1);
 			});
 
 			player.teleportBlocking(teleportLocation);

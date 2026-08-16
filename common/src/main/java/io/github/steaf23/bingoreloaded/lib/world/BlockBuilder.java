@@ -55,8 +55,4 @@ public final class BlockBuilder {
 				.add(new Position(-rangeX + 0.5D, 1.0D, -rangeZ + 0.5D));
 		return center.clone().add(pos);
 	}
-
-	public static int getHighestBlockYAtPos(PlatformServer server, GlobalPosition pos) {
-		return pos.world(server).highestBlockAt(pos).blockY();
-	}
 }

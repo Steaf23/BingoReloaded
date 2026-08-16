@@ -8,8 +8,17 @@ import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.data.config.BingoOptions;
 import io.github.steaf23.bingoreloaded.data.helper.SerializablePlayer;
 import io.github.steaf23.bingoreloaded.data.record.LeaderboardData;
+import io.github.steaf23.bingoreloaded.data.teleportgrid.TeleportGridData;
 import io.github.steaf23.bingoreloaded.data.world.WorldData;
 import io.github.steaf23.bingoreloaded.data.world.WorldGroup;
+import io.github.steaf23.bingoreloaded.gameloop.spawn.strategy.DispersedSpawnStrategy;
+import io.github.steaf23.bingoreloaded.gameloop.spawn.strategy.GridSpawnStrategy;
+import io.github.steaf23.bingoreloaded.gameloop.spawn.strategy.NoTeleportStrategy;
+import io.github.steaf23.bingoreloaded.gameloop.spawn.PlayerSpawnCoordinator;
+import io.github.steaf23.bingoreloaded.gameloop.spawn.strategy.SharedSpawnStrategy;
+import io.github.steaf23.bingoreloaded.gameloop.spawn.strategy.SpawnStrategy;
+import io.github.steaf23.bingoreloaded.gameloop.spawn.strategy.StaticSpawnStrategy;
+import io.github.steaf23.bingoreloaded.gameloop.spawn.strategy.TeamSpawnStrategy;
 import io.github.steaf23.bingoreloaded.lib.api.BingoReloadedRuntime;
 import io.github.steaf23.bingoreloaded.lib.api.GlobalPosition;
 import io.github.steaf23.bingoreloaded.lib.api.WorldHandle;
@@ -32,6 +41,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
 
@@ -215,6 +225,23 @@ public class GameManager {
 
 	public Collection<String> getSessionNames() {
 		return new ArrayList<>(sessions.keySet());
+	}
+
+	public PlayerSpawnCoordinator createSpawnCoordinator(@Nullable GlobalPosition overridePosition) {
+		int maxTeleport = config.getOptionValue(BingoOptions.TELEPORT_MAX_DISTANCE);
+		if (overridePosition != null) {
+			return new PlayerSpawnCoordinator(getServer(), new StaticSpawnStrategy(overridePosition), maxTeleport);
+		}
+
+		SpawnStrategy strat = switch (config.getOptionValue(BingoOptions.PLAYER_TELEPORT_STRATEGY)) {
+			case ALONE -> new DispersedSpawnStrategy();
+			case TEAM -> new TeamSpawnStrategy();
+			case ALL -> new SharedSpawnStrategy();
+			case GRID -> new GridSpawnStrategy(new TeleportGridData(config.getOptionValue(BingoOptions.TELEPORTATION_GRID), new Random()));
+			case NONE -> new NoTeleportStrategy();
+		};
+
+		return new PlayerSpawnCoordinator(getServer(), strat, maxTeleport);
 	}
 
 	public EventResult<?> handlePlayerTeleport(final PlayerHandle player, final GlobalPosition fromPos, final GlobalPosition toPos) {

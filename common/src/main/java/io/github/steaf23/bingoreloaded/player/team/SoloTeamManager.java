@@ -27,13 +27,13 @@ import java.util.Map;
  */
 public class SoloTeamManager implements TeamManager
 {
-    private final BingoTeamContainer teams;
+    private final TeamContainer teams;
     private final BingoSession session;
     private final BingoTeam autoTeam;
 
     public SoloTeamManager(BingoSession session) {
         this.session = session;
-        this.teams = new BingoTeamContainer();
+        this.teams = new TeamContainer();
 
         TextColor autoTeamColor = TextColor.fromHexString("#fdffa8");
         if (autoTeamColor == null) {
@@ -109,7 +109,7 @@ public class SoloTeamManager implements TeamManager
     }
 
     @Override
-    public BingoTeamContainer getActiveTeams() {
+    public TeamContainer getActiveTeams() {
         return teams;
     }
 
