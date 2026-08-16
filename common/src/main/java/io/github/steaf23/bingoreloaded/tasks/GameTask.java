@@ -7,6 +7,7 @@ import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.helper.TaskFormatting;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
+import io.github.steaf23.bingoreloaded.lib.data.core.DataStorageSerializer;
 import io.github.steaf23.bingoreloaded.lib.data.core.tag.TagDataStorage;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
@@ -27,9 +28,30 @@ import org.jetbrains.annotations.Nullable;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.Optional;
+import java.util.UUID;
 
 public class GameTask
 {
+    public static final DataStorageSerializer<GameTask> SERIALIZER = DataStorageSerializer.of(GameTask.class,
+            (storage, value) -> {
+                storage.setBoolean("voided", value.isVoided());
+                storage.setUUID("completed_by", value.getCompletedByPlayer().isPresent() ? value.getCompletedByPlayer().get().getId() : null);
+                storage.setLong("completed_at", value.completedAt);
+                storage.setSerializable("task", TaskData.SERIALIZER, value.data());
+            }, storage -> {
+                boolean voided = storage.getBoolean("voided", false);
+                UUID completedByUUID = storage.getUUID("completed_by");
+                long timeStr = storage.getLong("completed_at", -1L);
+                TaskData data = storage.getSerializable("task", TaskData.SERIALIZER);
+                GameTask task = new GameTask(data);
+
+                task.setVoided(voided);
+                task.completedAt = timeStr;
+                //TODO: implement completedBy deserialization (need access to teamManager to get participant object).
+
+                return task;
+            });
+
     private BingoParticipant completedBy;
     private BingoTeam completedByTeam;
     public long completedAt;
@@ -126,7 +148,7 @@ public class GameTask
         // STEP 2: Add additional stuff like pdc data and glowing effect.
 
         TagDataStorage storage = new TagDataStorage();
-        new GameTaskSerializer().toDataStorage(storage, this);
+        GameTask.SERIALIZER.toDataStorage(storage, this);
         item.setExtraData(storage);
 
         if ((data.shouldItemGlow() || isCompleted()) && !isVoided())
@@ -141,7 +163,7 @@ public class GameTask
     public static @Nullable GameTask fromItem(StackHandle in)
     {
         TagDataStorage store = in.getStorage();
-		return store.toSerializable(GameTask.class);
+		return store.toSerializable(GameTask.SERIALIZER);
     }
 
     public static Key getTaskDataKey(String property)

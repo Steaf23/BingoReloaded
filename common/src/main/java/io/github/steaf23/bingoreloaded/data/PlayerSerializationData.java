@@ -19,7 +19,7 @@ public class PlayerSerializationData
         if (data.contains(player.playerId.toString()) && !overwriteExisting)
             return;
 
-        data.setSerializable(player.playerId.toString(), SerializablePlayer.class, player);
+        data.setSerializable(player.playerId.toString(), SerializablePlayer.SERIALIZER, player);
         data.saveChanges();
     }
 
@@ -34,7 +34,7 @@ public class PlayerSerializationData
         }
 
         data.addServerContext(player.server());
-        SerializablePlayer playerData = data.getSerializable(player.uniqueId().toString(), SerializablePlayer.class);
+        SerializablePlayer playerData = data.getSerializable(player.uniqueId().toString(), SerializablePlayer.SERIALIZER);
         if (playerData == null) {
             return null;
         }

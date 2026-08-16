@@ -141,11 +141,10 @@ public class YamlDataStorage implements DataStorage
     }
 
     @Override
-    public <T> void setSerializableList(String path, Class<T> dataType, List<T> values) {
+    public <T> void setSerializableList(String path, DataStorageSerializer<T> serializer, List<T> values) {
         config.set(path, values.stream()
                 .map(v -> {
                     YamlDataStorage storage = new YamlDataStorage();
-                    DataStorageSerializer<T> serializer = DataStorageSerializerRegistry.getSerializer(dataType);
                     if (serializer == null) {
                         ConsoleMessenger.bug("No serializer registered for this type of data at path " + path, this);
                         return storage.config;
@@ -157,8 +156,7 @@ public class YamlDataStorage implements DataStorage
     }
 
     @Override
-    public <T> List<T> getSerializableList(String path, Class<T> dataType) {
-        DataStorageSerializer<T> serializer = DataStorageSerializerRegistry.getSerializer(dataType);
+    public <T> List<T> getSerializableList(String path, DataStorageSerializer<T> serializer) {
         if (serializer == null) {
             ConsoleMessenger.bug("No serializer registered for this type of data at path " + path, this);
             return List.of();
@@ -229,19 +227,19 @@ public class YamlDataStorage implements DataStorage
     }
 
     @Override
-    public void setWorldPosition(String path, @NotNull GlobalPosition value) {
+    public void setGlobalPosition(String path, @NotNull GlobalPosition value) {
         config.set(path, value);
     }
 
     @Override
-    public @Nullable GlobalPosition getWorldPosition(String path) {
+    public @Nullable GlobalPosition getGlobalPosition(String path) {
         Location loc = config.getLocation(path);
         return loc == null ? null : PaperApiHelper.worldPosFromLocation(loc);
     }
 
     @Override
-    public @NotNull GlobalPosition getWorldPosition(String path, @NotNull GlobalPosition def) {
-        GlobalPosition pos = getWorldPosition(path);
+    public @NotNull GlobalPosition getGlobalPosition(String path, @NotNull GlobalPosition def) {
+        GlobalPosition pos = getGlobalPosition(path);
         return pos == null ? def : pos;
     }
 

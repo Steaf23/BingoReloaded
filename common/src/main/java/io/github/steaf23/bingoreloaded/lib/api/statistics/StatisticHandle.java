@@ -3,6 +3,7 @@ package io.github.steaf23.bingoreloaded.lib.api.statistics;
 import io.github.steaf23.bingoreloaded.lib.api.BingoReloadedRuntime;
 import io.github.steaf23.bingoreloaded.lib.api.EntityType;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
+import io.github.steaf23.bingoreloaded.lib.data.core.DataStorageSerializer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -10,6 +11,37 @@ import java.util.Set;
 
 
 public record StatisticHandle(@NotNull VanillaStatistic type, @Nullable EntityType entityType, @Nullable ItemType itemType) {
+
+	public static final DataStorageSerializer<StatisticHandle> SERIALIZER = DataStorageSerializer.of(StatisticHandle.class,
+			(storage, value) -> {
+				storage.setNamespacedKey("stat_type", value.type.key());
+
+				ItemType item = value.itemType();
+				if (item != null)
+				{
+					storage.setNamespacedKey("item", item.key());
+				}
+				EntityType entity = value.entityType();
+				if (entity != null)
+				{
+					storage.setNamespacedKey("entity", entity.key());
+				}
+			}, storage -> {
+				VanillaStatistic type = VanillaStatistics.fromKey(storage.getNamespacedKey("stat_type"));
+
+				ItemType item = null;
+				if (storage.contains("item"))
+				{
+					item = ItemType.of(storage.getNamespacedKey("item"));
+				}
+				EntityType entity = null;
+				if (storage.contains("entity"))
+				{
+					entity = EntityType.of(storage.getNamespacedKey("entity"));
+				}
+
+				return new StatisticHandle(type, entity, item);
+			});
 
 	public StatisticHandle(VanillaStatistic type) {
 		this(type, null, null);

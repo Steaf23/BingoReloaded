@@ -30,11 +30,11 @@ public class LeaderboardData {
 	}
 
 	public List<GameRecord> getAllRecords() {
-		return data.getSerializableList("games", GameRecord.class);
+		return data.getSerializableList("games", GameRecord.SERIALIZER);
 	}
 
 	public BingoSettings settingsFromGame(GameRecord record) {
-		return data.getSerializable("settings." + record.settingsId().toString(), BingoSettings.class);
+		return data.getSerializable("settings." + record.settingsId().toString(), BingoSettings.SERIALIZER);
 	}
 
 	public Map<String, BingoSettings> getSettings(BingoSettingsData presets) {
@@ -42,7 +42,7 @@ public class LeaderboardData {
 		Set<String> settings = data.getStorage("settings").getKeys();
 		for (String setting : settings) {
 			if (data.contains("settings." + setting)) {
-				settingsMap.put(setting, data.getSerializable("settings." + setting, BingoSettings.class));
+				settingsMap.put(setting, data.getSerializable("settings." + setting, BingoSettings.SERIALIZER));
 			} else {
 				settingsMap.put(setting, presets.getSettings(setting));
 			}
@@ -76,21 +76,21 @@ public class LeaderboardData {
 		List<GameRecord> newRecords = new ArrayList<>(getAllRecords());
 		newRecords.add(record);
 
-		data.setSerializableList("games", GameRecord.class, newRecords);
+		data.setSerializableList("games", GameRecord.SERIALIZER, newRecords);
 		data.saveChanges();
 	}
 
 	public String getOrCreateSettingsIdFromGame(BingoGame game) {
 		Set<String> allIds = data.getStorage("settings").getKeys();
 		for (String id : allIds) {
-			BingoSettings settings = data.getSerializable("settings." + id, BingoSettings.class);
+			BingoSettings settings = data.getSerializable("settings." + id, BingoSettings.SERIALIZER);
 			if (game.getSettings().equals(settings)) {
 				return id;
 			}
 		}
 		// Settings are not yet saved in the history file, save it here.
 		UUID settingsId = UUID.randomUUID();
-		data.setSerializable("settings." + settingsId, BingoSettings.class, game.getSettings());
+		data.setSerializable("settings." + settingsId, BingoSettings.SERIALIZER, game.getSettings());
 		data.saveChanges();
 
 		return settingsId.toString();

@@ -1,11 +1,34 @@
 package io.github.steaf23.bingoreloaded.lib.api;
 
 import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformServer;
+import io.github.steaf23.bingoreloaded.lib.data.core.DataStorageSerializer;
 import net.kyori.adventure.key.Key;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class GlobalPosition extends Position {
+
+	public static final DataStorageSerializer<GlobalPosition> SERIALIZER = DataStorageSerializer.of(GlobalPosition.class,
+			(storage, value) -> {
+				storage.setKey("world", value.dimension());
+				storage.setDouble("x", value.x());
+				storage.setDouble("y", value.y());
+				storage.setDouble("z", value.z());
+//        storage.setFloat("yaw", value.getYaw());
+//        storage.setFloat("pitch", value.getPitch());
+			}, storage -> {
+				Key id = storage.getKey("world");
+				if (id == null) {
+					return null;
+				}
+
+				double x = storage.getDouble("x", 0.0D);
+				double y = storage.getDouble("y", 0.0D);
+				double z = storage.getDouble("z", 0.0D);
+				float yaw = storage.getFloat("yaw", 0.0f);
+				float pitch = storage.getFloat("pitch", 0.0f);
+				return new GlobalPosition(id, x, y, z);
+			});
 
 	private double pitch;
 	private double yaw;

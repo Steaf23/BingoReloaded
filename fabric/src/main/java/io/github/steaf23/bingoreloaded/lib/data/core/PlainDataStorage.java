@@ -207,7 +207,7 @@ public class PlainDataStorage implements DataStorage {
 	}
 
 	@Override
-	public @NotNull GlobalPosition getWorldPosition(String path, @NotNull GlobalPosition def) {
+	public @NotNull GlobalPosition getGlobalPosition(String path, @NotNull GlobalPosition def) {
 		Object v = get(path);
 		return v instanceof GlobalPosition res ? res : def;
 	}

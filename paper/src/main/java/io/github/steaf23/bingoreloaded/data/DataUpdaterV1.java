@@ -323,7 +323,7 @@ public class DataUpdaterV1
             } else {
                 OldBingoSettings oldSettings = yamlData.getSection().getSerializable(key, OldBingoSettings.class);
                 if (oldSettings == null) continue;
-                tagData.setSerializable("presets." + key, BingoSettings.class, new BingoSettings(
+                tagData.setSerializable("presets." + key, BingoSettings.SERIALIZER, new BingoSettings(
                         oldSettings.card(),
                         oldSettings.mode(),
                         oldSettings.size(),
@@ -381,7 +381,7 @@ public class DataUpdaterV1
             newPlayer.xpPoints = player.xpPoints();
             newPlayer.inventory = Arrays.stream(player.inventory()).map(stack -> new StackHandlePaper(stack)).toArray(StackHandle[]::new);
             newPlayer.enderInventory = Arrays.stream(player.enderInventory()).map(stack -> new StackHandlePaper(stack)).toArray(StackHandle[]::new);
-            tagData.setSerializable(id, SerializablePlayer.class, newPlayer);
+            tagData.setSerializable(id, SerializablePlayer.SERIALIZER, newPlayer);
         }
 
         tagData.saveChanges();
@@ -445,7 +445,7 @@ public class DataUpdaterV1
                     newTasks.add(new AdvancementTask(new AdvancementHandlePaper(advancement)));
                 }
             }
-            tagData.setSerializableList(list + ".tasks", TaskData.class, newTasks);
+            tagData.setSerializableList(list + ".tasks", TaskData.SERIALIZER, newTasks);
         }
 
         tagData.saveChanges();
@@ -500,7 +500,7 @@ public class DataUpdaterV1
             tagData.setByte(kit + ".card_slot", (byte) oldKit.cardSlot);
             tagData.setString(kit + ".name", oldKit.name);
 
-            tagData.setSerializableList(kit + ".items", SerializableItem.class, oldKit.items.stream()
+            tagData.setSerializableList(kit + ".items", SerializableItem.SERIALIZER, oldKit.items.stream()
                     .map(old -> new SerializableItem(old.slot, new StackHandlePaper(old.stack)))
                     .toList());
         }
@@ -538,7 +538,7 @@ public class DataUpdaterV1
             } catch (IllegalArgumentException e) {
                 color = BlockColor.WHITE;
             }
-            tagData.setSerializable(key, TeamData.TeamTemplate.class, new TeamData.TeamTemplate(template.name(), TextColor.fromHexString(template.hexColor()), color));
+            tagData.setSerializable(key, TeamData.TeamTemplate.SERIALIZER, new TeamData.TeamTemplate(template.name(), TextColor.fromHexString(template.hexColor()), color));
         }
 
         tagData.saveChanges();

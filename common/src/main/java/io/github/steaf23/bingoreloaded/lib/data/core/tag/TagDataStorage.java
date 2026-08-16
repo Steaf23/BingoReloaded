@@ -5,7 +5,6 @@ import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformServer;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataStorage;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataStorageSerializer;
-import io.github.steaf23.bingoreloaded.lib.data.core.DataStorageSerializerRegistry;
 import io.github.steaf23.bingoreloaded.lib.data.core.node.NodeLikeData;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import net.kyori.adventure.key.Key;
@@ -305,11 +304,10 @@ public class TagDataStorage implements DataStorage
     }
 
     @Override
-    public <T> void setSerializableList(String path, Class<T> classType, List<T> values) {
+    public <T> void setSerializableList(String path, DataStorageSerializer<T> serializer, List<T> values) {
         setList(path, TagDataType.COMPOUND, values.stream()
                 .map(v -> {
                     TagDataStorage storage = createNew();
-                    DataStorageSerializer<T> serializer = DataStorageSerializerRegistry.getSerializer(classType);
                     if (serializer == null) {
                         return storage.root.getValue();
                     }
@@ -320,8 +318,7 @@ public class TagDataStorage implements DataStorage
     }
 
     @Override
-    public <T> List<T> getSerializableList(String path, Class<T> classType) {
-        DataStorageSerializer<T> serializer = DataStorageSerializerRegistry.getSerializer(classType);
+    public <T> List<T> getSerializableList(String path, DataStorageSerializer<T> serializer) {
         if (serializer == null) {
             ConsoleMessenger.bug("No serializer registered for this type of data at path " + path, this);
             return List.of();
@@ -403,17 +400,17 @@ public class TagDataStorage implements DataStorage
     }
 
     @Override
-    public void setWorldPosition(String path, @NotNull GlobalPosition value) {
-        setSerializable(path, GlobalPosition.class, value);
+    public void setGlobalPosition(String path, @NotNull GlobalPosition value) {
+        setSerializable(path, GlobalPosition.SERIALIZER, value);
     }
 
     @Override
-    public @Nullable GlobalPosition getWorldPosition(String path) {
-        return getSerializable(path, GlobalPosition.class);
+    public @Nullable GlobalPosition getGlobalPosition(String path) {
+        return getSerializable(path, GlobalPosition.SERIALIZER);
     }
 
-    public @NotNull GlobalPosition getWorldPosition(String path, @NotNull GlobalPosition def) {
-        GlobalPosition loc = getSerializable(path, GlobalPosition.class);
+    public @NotNull GlobalPosition getGlobalPosition(String path, @NotNull GlobalPosition def) {
+        GlobalPosition loc = getSerializable(path, GlobalPosition.SERIALIZER);
         return loc == null ? def : loc;
     }
 
