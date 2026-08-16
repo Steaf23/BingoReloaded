@@ -227,7 +227,8 @@ public class BingoReloadedPaper extends JavaPlugin implements BingoReloadedRunti
 		return List.of(
 				new YamlDataAccessor(resources, "scoreboards", false),
 				new YamlDataAccessor(resources, "placeholders", false),
-				new YamlDataAccessor(resources, "sounds", false));
+				new YamlDataAccessor(resources, "sounds", false),
+				new YamlDataAccessor(resources, "taskformat", false));
 	}
 
 	@Override

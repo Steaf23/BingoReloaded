@@ -1,0 +1,17 @@
+# Contains a few format settings to change the text of tasks.
+# This format is using minimessage to add colors and other text decorations.
+# See for more information for formatting text in bingo reloaded.
+
+# In addition, each setting has additional arguments. Read below which arguments you can use for each setting.
+
+types:
+  item:
+    name: "<yellow>x<1> <0></yellow>" #0: name of the item, 1: required quantity of the item e.g. "x1 Apple"
+  advancement:
+    name: "<green><italic>[<0>]</italic></green>" #0: name of the advancement e.g. [Return to Sender]
+    description: "<0>" #0: description of the advancement (when shown in chat)
+  statistic:
+    name: "<light_purple><italic>*<0>: <1><2>*</italic></light_purple>" #0: name of the statistic, 1: quantity of the statistic, 2: unit of the statistic (default empty, only used for travel statistics. (i.e. "Distance Swum: 20 Blocks")
+    name_item: "<light_purple><italic>*<0> <bold><1></bold>: <2>*</italic></light_purple>" #0: name of the statistic, 1: name of the item or block, 2: quantity of the item or block e.g. "*Timed Mined Budding Amethyst: 1*"
+    name_kill_entity: "<light_purple><italic>*<0>(<bold><1></bold>)*</italic></light_purple>" #0: name + quantity of the statistic ("You Killed 1"), 1: name of the entity e.g. "*You Killed 1 (Goat)*"
+    name_killed_by_entity: "<light_purple><italic>*(<bold><1></bold>)<0>*</italic></light_purple>" #0: name + quantity of the statistic ("killed you 1 times(s)"), 2: name of the entity e.g. "*(Iron Golem) killed you 1 time(s)*"

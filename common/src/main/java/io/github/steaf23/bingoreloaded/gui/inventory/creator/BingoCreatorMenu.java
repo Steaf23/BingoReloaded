@@ -4,6 +4,7 @@ import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.BingoCardData;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.TaskListData;
+import io.github.steaf23.bingoreloaded.data.helper.TaskFormatting;
 import io.github.steaf23.bingoreloaded.gui.inventory.TagExclusionMenu;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.api.item.VanillaItems;
@@ -30,6 +31,7 @@ import java.util.List;
 public class BingoCreatorMenu extends BasicMenu {
 
 	private final BingoCardData cardsData;
+	private final TaskFormatting formatting;
 	public static final ItemTemplate CARD = new ItemTemplate(1, 1, VanillaItems.FILLED_MAP.type(), BingoReloaded.applyTitleFormat("Edit Cards"), Component.text("Click to view and edit bingo cards!"));
 	public static final ItemTemplate LIST = new ItemTemplate(4, 1, VanillaItems.PAPER.type(), BingoReloaded.applyTitleFormat("Edit Lists"), Component.text("Click to view and edit bingo lists!"));
 	public static final ItemTemplate TAGS = new ItemTemplate(7, 1, VanillaItems.NAME_TAG.type(), BingoReloaded.applyTitleFormat("Edit Tags"), Component.text("Click to view and edit task tags!"));
@@ -43,6 +45,7 @@ public class BingoCreatorMenu extends BasicMenu {
 	public BingoCreatorMenu(MenuBoard manager) {
 		super(manager, Component.text("Card Creator"), 3);
 		this.cardsData = new BingoCardData();
+		this.formatting = TaskFormatting.fromDataAccessor();
 		addAction(CARD, arguments -> createCardPicker().open(arguments.player()));
 		addAction(LIST, arguments -> createListPicker().open(arguments.player()));
 		addAction(TAGS, arguments -> createTagPicker().open(arguments.player()));
@@ -78,7 +81,8 @@ public class BingoCreatorMenu extends BasicMenu {
 				List<String> excludedTags = cardsData.excludedTags(cardName);
 				if (!excludedTags.isEmpty()) {
 					item.setLore(Component.text("This card contains " + cardsData.getListNames(cardName).size() + " list(s)"),
-							cardsData.tags().tagDescription(excludedTags));
+							cardsData.tags().tagDescription(excludedTags))
+							.addDescription("description", 1, fullDescription);
 				} else {
 					item.setLore(Component.text("This card contains " + cardsData.getListNames(cardName).size() + " list(s)"))
 							.addDescription("description", 1, fullDescription);
@@ -163,7 +167,7 @@ public class BingoCreatorMenu extends BasicMenu {
 	public void createCard(PlayerHandle player) {
 		new UserInputMenu(getMenuBoard(), Component.text("Enter new card name"), (input) -> {
 			if (!input.isEmpty())
-				openCardEditor(input.toLowerCase().replace(" ", "_"), player);
+				openCardEditor(input, player);
 		}, "name")
 				.open(player);
 	}
@@ -171,7 +175,7 @@ public class BingoCreatorMenu extends BasicMenu {
 	public void createList(PlayerHandle player) {
 		new UserInputMenu(getMenuBoard(), Component.text("Enter new list name"), (input) -> {
 			if (!input.isEmpty())
-				openListEditor(input.toLowerCase().replace(" ", "_"), player);
+				openListEditor(input, player);
 		}, "name")
 				.open(player);
 	}
@@ -190,7 +194,7 @@ public class BingoCreatorMenu extends BasicMenu {
 			BingoPlayerSender.sendMessage(Component.text("Cannot edit default lists, use right click to duplicate them instead!").color(NamedTextColor.RED), player);
 			return;
 		}
-		ListEditorMenu editor = new ListEditorMenu(getMenuBoard(), listName);
+		ListEditorMenu editor = new ListEditorMenu(getMenuBoard(), listName, formatting);
 		editor.open(player);
 	}
 

@@ -2,6 +2,7 @@ package io.github.steaf23.bingoreloaded.gui.inventory.creator;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
+import io.github.steaf23.bingoreloaded.data.helper.TaskFormatting;
 import io.github.steaf23.bingoreloaded.lib.api.EntityType;
 import io.github.steaf23.bingoreloaded.lib.api.PlatformResolver;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
@@ -26,15 +27,17 @@ import java.util.Set;
 public class StatisticSelectionMenu extends BasicMenu
 {
     public String listName;
+    private final TaskFormatting formatting;
     protected static final ItemTemplate QUIT = new ItemTemplate(49, VanillaItems.REDSTONE.type(), BingoMessage.MENU_SAVE_EXIT.asPhrase().color(NamedTextColor.RED).decorate(TextDecoration.BOLD));
 
     PlatformRegistries registries = PlatformResolver.getRegistries();
 
-    public StatisticSelectionMenu(MenuBoard menuBoard, String listName)
+    public StatisticSelectionMenu(MenuBoard menuBoard, String listName, TaskFormatting formatting)
     {
         super(menuBoard, Component.text("Pick Statistics"), 6);
         this.listName = listName;
-        addAction(new ItemTemplate(1, 0, VanillaItems.LEATHER_BOOTS.type(), BingoReloaded.applyTitleFormat("Travel")), args -> createTravelMenu().open(args.player()));
+		this.formatting = formatting;
+		addAction(new ItemTemplate(1, 0, VanillaItems.LEATHER_BOOTS.type(), BingoReloaded.applyTitleFormat("Travel")), args -> createTravelMenu().open(args.player()));
         addAction(new ItemTemplate(3, 0, VanillaItems.DIAMOND_SWORD.type(), BingoReloaded.applyTitleFormat("Kill")), args -> createEntityMenu(VanillaStatistics.KILL_ENTITY).open(args.player()));
         addAction(new ItemTemplate(5, 0, VanillaItems.SKELETON_SKULL.type(), BingoReloaded.applyTitleFormat("Get Killed")), args -> createEntityMenu(VanillaStatistics.ENTITY_KILLED_BY).open(args.player()));
         addAction(new ItemTemplate(7, 0, VanillaItems.STONECUTTER.type(), BingoReloaded.applyTitleFormat("Block Interactions")), args -> createBlockInteractMenu().open(args.player()));
@@ -65,7 +68,7 @@ public class StatisticSelectionMenu extends BasicMenu
         List<GameTask> tasks = new ArrayList<>();
         entities.forEach(e -> tasks.add(new GameTask(new StatisticTask(new StatisticHandle(stat, e)))));
 
-        return new TaskPickerMenu(getMenuBoard(), "Select Entities", tasks, listName);
+        return new TaskPickerMenu(getMenuBoard(), "Select Entities", tasks, listName, formatting);
     }
 
     private TaskPickerMenu createBlockMenu(VanillaStatistic stat)
@@ -79,7 +82,7 @@ public class StatisticSelectionMenu extends BasicMenu
                 tasks.add(new GameTask(new StatisticTask(new StatisticHandle(stat, m))));
             }
         }
-        return new TaskPickerMenu(getMenuBoard(), "Select Blocks", tasks, listName);
+        return new TaskPickerMenu(getMenuBoard(), "Select Blocks", tasks, listName, formatting);
     }
 
     private TaskPickerMenu createItemMenu(VanillaStatistic stat)
@@ -92,7 +95,7 @@ public class StatisticSelectionMenu extends BasicMenu
                 tasks.add(new GameTask(new StatisticTask(new StatisticHandle(stat, m))));
             }
         }
-        return new TaskPickerMenu(getMenuBoard(), "Select Items", tasks, listName);
+        return new TaskPickerMenu(getMenuBoard(), "Select Items", tasks, listName, formatting);
     }
 
     public TaskPickerMenu createTravelMenu()
@@ -101,7 +104,7 @@ public class StatisticSelectionMenu extends BasicMenu
         VanillaStatistics.STATISTICS_BY_CATEGORY.getOrDefault(VanillaStatistic.Category.TRAVEL, List.of()).forEach(type -> {
             tasks.add(new GameTask(new StatisticTask(new StatisticHandle(type))));
         });
-        return new TaskPickerMenu(getMenuBoard(), "Travel Statistics", tasks, listName);
+        return new TaskPickerMenu(getMenuBoard(), "Travel Statistics", tasks, listName, formatting);
     }
 
     private TaskPickerMenu createContainerMenu()
@@ -110,7 +113,7 @@ public class StatisticSelectionMenu extends BasicMenu
         VanillaStatistics.STATISTICS_BY_CATEGORY.getOrDefault(VanillaStatistic.Category.CONTAINER_INTERACT, List.of()).forEach(type -> {
             tasks.add(new GameTask(new StatisticTask(new StatisticHandle(type))));
         });
-        return new TaskPickerMenu(getMenuBoard(), "Container Statistics", tasks, listName);
+        return new TaskPickerMenu(getMenuBoard(), "Container Statistics", tasks, listName, formatting);
     }
 
     private TaskPickerMenu createBlockInteractMenu()
@@ -119,7 +122,7 @@ public class StatisticSelectionMenu extends BasicMenu
         VanillaStatistics.STATISTICS_BY_CATEGORY.getOrDefault(VanillaStatistic.Category.BLOCK_INTERACT, List.of()).forEach(type -> {
             tasks.add(new GameTask(new StatisticTask(new StatisticHandle(type))));
         });
-        return new TaskPickerMenu(getMenuBoard(),  "Select Blocks", tasks, listName);
+        return new TaskPickerMenu(getMenuBoard(),  "Select Blocks", tasks, listName, formatting);
     }
 
     private TaskPickerMenu createDamageMenu()
@@ -128,7 +131,7 @@ public class StatisticSelectionMenu extends BasicMenu
         VanillaStatistics.STATISTICS_BY_CATEGORY.getOrDefault(VanillaStatistic.Category.DAMAGE, List.of()).forEach(type -> {
             tasks.add(new GameTask(new StatisticTask(new StatisticHandle(type))));
         });
-        return new TaskPickerMenu(getMenuBoard(), "Damage Statistics", tasks, listName);
+        return new TaskPickerMenu(getMenuBoard(), "Damage Statistics", tasks, listName, formatting);
     }
 
     private TaskPickerMenu createMiscMenu() {
@@ -141,6 +144,6 @@ public class StatisticSelectionMenu extends BasicMenu
                         t != VanillaStatistics.LEAVE_GAME)
                 .forEach(type -> tasks.add(new GameTask(new StatisticTask(new StatisticHandle(type)))));
 
-        return new TaskPickerMenu(getMenuBoard(), "Other Statistics", tasks, listName);
+        return new TaskPickerMenu(getMenuBoard(), "Other Statistics", tasks, listName, formatting);
     }
 }
