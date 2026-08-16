@@ -18,6 +18,7 @@ import io.github.steaf23.bingoreloaded.lib.inventory.action.MenuAction;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import io.github.steaf23.bingoreloaded.util.BingoPlayerSender;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickCallback;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -81,7 +82,7 @@ public class BingoCreatorMenu extends BasicMenu {
 				List<String> excludedTags = cardsData.excludedTags(cardName);
 				if (!excludedTags.isEmpty()) {
 					item.setLore(Component.text("This card contains " + cardsData.getListNames(cardName).size() + " list(s)"),
-							cardsData.tags().tagDescription(excludedTags))
+									cardsData.tags().tagDescription(excludedTags))
 							.addDescription("description", 1, fullDescription);
 				} else {
 					item.setLore(Component.text("This card contains " + cardsData.getListNames(cardName).size() + " list(s)"))
@@ -165,11 +166,7 @@ public class BingoCreatorMenu extends BasicMenu {
 	}
 
 	public void createCard(PlayerHandle player) {
-		new UserInputMenu(getMenuBoard(), Component.text("Enter new card name"), (input) -> {
-			if (!input.isEmpty())
-				openCardEditor(input, player);
-		}, "name")
-				.open(player);
+		getMenuBoard().context().runtime().editCardDescription(player, "name", "", this, this::renameCard);
 	}
 
 	public void createList(PlayerHandle player) {
@@ -218,7 +215,7 @@ public class BingoCreatorMenu extends BasicMenu {
 
 		if (!cardsData.isDefaultCard(cardName)) {
 			context.addAction(new ItemTemplate(slot, RENAME_ICON, BingoReloaded.applyTitleFormat("Change Description")), (args) -> {
-				getMenuBoard().context().runtime().editCardDescription(args.player(), cardName, cardsData.getDescription(cardName), context, this::setCardName);
+				getMenuBoard().context().runtime().editCardDescription(args.player(), cardName, cardsData.getDescription(cardName), context, this::renameCard);
 			});
 			slot++;
 
@@ -230,12 +227,6 @@ public class BingoCreatorMenu extends BasicMenu {
 
 		context.addCloseAction(new ItemTemplate(8, SAVE_ICON, BingoReloaded.applyTitleFormat(BingoMessage.MENU_EXIT.asPhrase())));
 		return context;
-	}
-
-	public void setCardName(PlayerHandle player, BasicMenu parentMenu, String oldName, String newName, String description) {
-		cardsData.setDescription(oldName, description);
-		cardsData.renameCard(oldName, newName);
-		parentMenu.close(player);
 	}
 
 	public BasicMenu createListContext(String listName) {
@@ -270,5 +261,16 @@ public class BingoCreatorMenu extends BasicMenu {
 		}
 		context.addCloseAction(new ItemTemplate(8, SAVE_ICON, BingoReloaded.applyTitleFormat(BingoMessage.MENU_EXIT.asPhrase())));
 		return context;
+	}
+
+	public void renameCard(PlayerHandle player, BasicMenu parentMenu, String oldName, String newName, String description) {
+		cardsData.setDescription(oldName, description);
+		cardsData.renameCard(oldName, newName);
+		parentMenu.close(player);
+	}
+
+	public void createCardCallback(PlayerHandle player, BasicMenu parentMenu, String oldName, String newName, String description) {
+		cardsData.setDescription(newName, description);
+		openCardEditor(newName, player);
 	}
 }
