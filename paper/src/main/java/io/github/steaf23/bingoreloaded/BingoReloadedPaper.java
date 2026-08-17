@@ -404,7 +404,7 @@ public class BingoReloadedPaper extends JavaPlugin implements BingoReloadedRunti
 	@SuppressWarnings("UnstableApiUsage")
 	@Override
 	public void editCardDescription(PlayerHandle playerHandle, String currentName, String currentDescription, BasicMenu parentMenu, CardDescriptionEditor callback) {
-		Dialog.create(builder -> builder.empty()
+		Dialog dialog = Dialog.create(builder -> builder.empty()
 				.base(DialogBase.builder(Component.text("Change card name/ description"))
 						.inputs(List.of(
 								DialogInput.text("name", Component.text("Name"))
@@ -435,6 +435,7 @@ public class BingoReloadedPaper extends JavaPlugin implements BingoReloadedRunti
 						)
 				))
 		);
+		((PlayerHandlePaper) playerHandle).handle().showDialog(dialog);
 	}
 
 	@Override

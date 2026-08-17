@@ -165,7 +165,7 @@ public class BingoCreatorMenu extends BasicMenu {
 	}
 
 	public void createCard(PlayerHandle player) {
-		getMenuBoard().context().runtime().editCardDescription(player, "name", "", this, this::renameCard);
+		getMenuBoard().context().runtime().editCardDescription(player, "name", "", this, this::createCardCallback);
 	}
 
 	public void createList(PlayerHandle player) {
