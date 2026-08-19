@@ -43,7 +43,6 @@ public class FabricMenu extends AbstractContainerMenu implements InventoryListen
 
 	@Override
 	public void clicked(int slotIndex, int buttonNum, @NonNull ContainerInput containerInput, @NonNull Player player) {
-		System.out.println("Slot " + slotIndex + " clicked on with button " + buttonNum + " to perform: " + containerInput);
 
 		// NOTE: throwing an item by dragging it out of the inventory will not be possible with this,
 		// as the slotIndex will be -999. This means the ClickType WINDOW_BORDER_* will never be called.

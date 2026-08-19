@@ -9,7 +9,9 @@ import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.util.DebugLogger;
 import net.kyori.adventure.key.Key;
 import org.bukkit.World;
+import org.bukkit.block.Biome;
 
+import java.awt.print.Paper;
 import java.util.Collection;
 
 public class WorldHandlePaper implements WorldHandle {
@@ -63,8 +65,24 @@ public class WorldHandlePaper implements WorldHandle {
 	}
 
 	@Override
-	public BiomeType biomeAtPos(GlobalPosition pos) {
-		return new BiomeTypePaper(world.getBiome(PaperApiHelper.locationFromWorldPos(this, pos)));
+	public boolean isOceanBiome(GlobalPosition pos) {
+		Biome biome = world.getBiome(PaperApiHelper.locationFromWorldPos(this, pos));
+		return biome == Biome.DEEP_COLD_OCEAN ||
+				biome == Biome.DEEP_LUKEWARM_OCEAN ||
+				biome == Biome.DEEP_FROZEN_OCEAN ||
+				biome == Biome.DEEP_OCEAN ||
+				biome == Biome.COLD_OCEAN ||
+				biome == Biome.FROZEN_OCEAN ||
+				biome == Biome.LUKEWARM_OCEAN ||
+				biome == Biome.OCEAN ||
+				biome == Biome.WARM_OCEAN;
+	}
+
+	@Override
+	public boolean isRiverBiome(GlobalPosition pos) {
+		Biome biome = world.getBiome(PaperApiHelper.locationFromWorldPos(this, pos));
+		return biome == Biome.RIVER ||
+				biome == Biome.FROZEN_RIVER;
 	}
 
 	@Override

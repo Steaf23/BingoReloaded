@@ -20,7 +20,7 @@ public record GridSpawnStrategy(TeleportGridData data) implements SpawnStrategy 
 		while (!data.isDone()) {
 			TeleportationGrid.Point nextStart = data.createNextStart();
 			pos = context.world().highestBlockAt(nextStart.x(), nextStart.z());
-			if (!data.getGridOptions().skipOceanBiomes() || !BingoGame.isOceanBiome(context.world().biomeAtPos(pos))) {
+			if (!data.getGridOptions().skipOceanBiomes() || !BingoGame.isOceanBiome(context.world(), pos)) {
 				break;
 			}
 		}

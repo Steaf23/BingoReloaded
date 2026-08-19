@@ -87,7 +87,7 @@ public class PlayerHandleFabric implements PlayerHandle {
 
 	@Override
 	public WorldHandle world() {
-		return new WorldHandleFabric(player.level());
+		return new WorldHandleFabric(server, player.level());
 	}
 
 	@Override
@@ -112,7 +112,7 @@ public class PlayerHandleFabric implements PlayerHandle {
 			}
 		}
 
-		return new GlobalPosition(new WorldHandleFabric(levelToRespawn), pos.pos().getX(), pos.pos().getY(), pos.pos().getZ());
+		return new GlobalPosition(new WorldHandleFabric(server, levelToRespawn), pos.pos().getX(), pos.pos().getY(), pos.pos().getZ());
 	}
 
 	@Override
@@ -264,7 +264,7 @@ public class PlayerHandleFabric implements PlayerHandle {
 
 	@Override
 	public void setWaypointColor(@Nullable TextColor color) {
-		player.waypointIcon().color = Optional.of(color.value());
+		player.waypointIcon().color = color == null ? Optional.empty() : Optional.of(color.value());
 	}
 
 	@Override

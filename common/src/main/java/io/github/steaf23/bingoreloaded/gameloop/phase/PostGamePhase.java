@@ -2,7 +2,6 @@ package io.github.steaf23.bingoreloaded.gameloop.phase;
 
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
-import io.github.steaf23.bingoreloaded.lib.api.InteractAction;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.event.EventResult;
@@ -71,15 +70,12 @@ public class PostGamePhase implements GamePhase
     }
 
     @Override
-    public EventResult<?> handlePlayerInteracted(PlayerHandle player, @Nullable StackHandle stack, InteractAction action) {
+    public EventResult<?> handlePlayerUseItem(PlayerHandle player, @Nullable StackHandle stack) {
         BingoParticipant participant = session.teamManager.getPlayerAsParticipant(player);
         if (participant == null || participant.sessionPlayer().isEmpty())
             return EventResult.IGNORE;
 
         if (stack == null || stack.type().isAir())
-            return EventResult.IGNORE;
-
-        if (!action.rightClick())
             return EventResult.IGNORE;
 
         if (PlayerKit.CARD_ITEM.isCompareKeyEqual(stack)) {

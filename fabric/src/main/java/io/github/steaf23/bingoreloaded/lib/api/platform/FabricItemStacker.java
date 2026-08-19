@@ -1,11 +1,13 @@
 package io.github.steaf23.bingoreloaded.lib.api.platform;
 
 import com.mojang.serialization.DataResult;
+import com.mojang.serialization.DynamicOps;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandleFabric;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
+import io.github.steaf23.bingoreloaded.util.FabricTypes;
 import net.kyori.adventure.text.format.TextColor;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
@@ -13,8 +15,14 @@ import net.minecraft.nbt.NbtAccounter;
 import net.minecraft.nbt.NbtIo;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
+import net.minecraft.resources.RegistryOps;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.DyedItemColor;
+import net.minecraft.world.level.storage.TagValueInput;
+import net.minecraft.world.level.storage.TagValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -34,14 +42,14 @@ public class FabricItemStacker implements PlatformItemStacker {
 		var stream = new ByteArrayInputStream(bytes);
 
 		CompoundTag tag = new CompoundTag();
-
 		try {
 			tag = NbtIo.readCompressed(stream, NbtAccounter.defaultQuota());
 		} catch (IOException e) {
 
 		}
 
-		var pair = ItemStack.CODEC.decode(NbtOps.INSTANCE, tag);
+		DynamicOps<Tag> ops = RegistryOps.create(NbtOps.INSTANCE, FabricTypes.SERVER.registryAccess());
+		var pair = ItemStack.CODEC.decode(ops, tag);
 		ItemStack itemStack = pair.getOrThrow().getFirst();
 		return new StackHandleFabric(itemStack);
 	}

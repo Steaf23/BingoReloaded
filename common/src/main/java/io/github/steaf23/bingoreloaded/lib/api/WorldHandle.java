@@ -18,7 +18,8 @@ public interface WorldHandle {
 
 	void setStorming(boolean storm);
 	void setTimeOfDay(long time);
-	BiomeType biomeAtPos(GlobalPosition pos);
+	boolean isOceanBiome(GlobalPosition pos);
+	boolean isRiverBiome(GlobalPosition pos);
 
 	ItemType typeAtPos(GlobalPosition pos);
 	void setTypeAtPos(GlobalPosition pos, ItemType type);

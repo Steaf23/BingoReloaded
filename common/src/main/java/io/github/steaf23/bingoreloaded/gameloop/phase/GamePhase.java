@@ -2,7 +2,6 @@ package io.github.steaf23.bingoreloaded.gameloop.phase;
 
 import io.github.steaf23.bingoreloaded.api.BingoEvents;
 import io.github.steaf23.bingoreloaded.gameloop.SessionMember;
-import io.github.steaf23.bingoreloaded.lib.api.InteractAction;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.event.EventResult;
@@ -18,7 +17,7 @@ public interface GamePhase extends SessionMember
     void handlePlayerJoinedSessionWorld(PlayerHandle player);
     void handlePlayerLeftSessionWorld(PlayerHandle player);
     void handleSettingsUpdated(final BingoSettings newSettings);
-    EventResult<?> handlePlayerInteracted(PlayerHandle player, @Nullable StackHandle stack, InteractAction action);
+    EventResult<?> handlePlayerUseItem(PlayerHandle player, @Nullable StackHandle stack);
 
     default void handleParticipantJoinedTeam(final BingoEvents.TeamParticipantEvent event) {};
     default void handleParticipantLeftTeam(final BingoEvents.TeamParticipantEvent event) {};

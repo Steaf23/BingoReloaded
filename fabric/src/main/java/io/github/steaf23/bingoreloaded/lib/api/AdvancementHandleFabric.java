@@ -41,8 +41,7 @@ public class AdvancementHandleFabric implements AdvancementHandle {
 	public Component displayName() {
 		if (advancement.value().display().isEmpty()) {
 			return Component.empty();
-		}
-		else {
+		} else {
 			return FabricTypes.toAdventureComponent(advancement.value().display().get().getTitle());
 		}
 	}
@@ -51,8 +50,7 @@ public class AdvancementHandleFabric implements AdvancementHandle {
 	public Component description() {
 		if (advancement.value().display().isEmpty()) {
 			return Component.empty();
-		}
-		else {
+		} else {
 			return FabricTypes.toAdventureComponent(advancement.value().display().get().getDescription());
 		}
 	}

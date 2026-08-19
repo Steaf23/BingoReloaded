@@ -78,10 +78,6 @@ public class VirtualBingoPlayer implements BingoParticipant
     }
 
     @Override
-    public void giveBingoCard(int cardSlot, @NotNull StackHandle cardItem) {
-    }
-
-    @Override
     public void giveEffects(EnumSet<EffectOptionFlags> effects, int gracePeriod) {
     }
 

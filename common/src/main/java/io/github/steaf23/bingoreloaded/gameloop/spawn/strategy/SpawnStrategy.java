@@ -27,7 +27,7 @@ public interface SpawnStrategy {
 			}
 
 			//find a not-ocean biome to teleport to
-			while (BingoGame.isOceanBiome(world().biomeAtPos(location))) {
+			while (BingoGame.isOceanBiome(world(), location)) {
 				randomPosition = BlockBuilder.getRandomPosWithinRange(new GlobalPosition(world(), 0.0D, 0.0D, 0.0D), maxSpawnDistance, maxSpawnDistance);
 				location = world().highestBlockAt(randomPosition);
 			}

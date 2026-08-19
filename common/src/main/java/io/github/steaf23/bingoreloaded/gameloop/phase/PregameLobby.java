@@ -9,7 +9,6 @@ import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gameloop.vote.VoteCategory;
 import io.github.steaf23.bingoreloaded.gameloop.vote.VoteTicket;
 import io.github.steaf23.bingoreloaded.lib.api.BingoReloadedRuntime;
-import io.github.steaf23.bingoreloaded.lib.api.InteractAction;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.event.EventResult;
@@ -252,13 +251,9 @@ public class PregameLobby implements GamePhase
     }
 
     @Override
-    public EventResult<?> handlePlayerInteracted(PlayerHandle player, @Nullable StackHandle stack, InteractAction action) {
+    public EventResult<?> handlePlayerUseItem(PlayerHandle player, @Nullable StackHandle stack) {
 		if (stack == null || stack.type().isAir())
             return EventResult.IGNORE;
-
-        if (!action.rightClick()) {
-            return EventResult.IGNORE;
-        }
 
         if (PlayerKit.VOTE_ITEM.isCompareKeyEqual(stack)) {
             runtime.openVoteMenu(player, this);

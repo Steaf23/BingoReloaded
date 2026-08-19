@@ -55,8 +55,6 @@ public interface BingoParticipant extends ForwardingAudience.Single {
 		return getTeam().getCard();
 	}
 
-	void giveBingoCard(int cardSlot, @NotNull StackHandle cardItem);
-
 	void giveEffects(EnumSet<EffectOptionFlags> effects, int gracePeriod);
 
 	void takeEffects(boolean force);

@@ -96,7 +96,13 @@ public class StackHandleFabric implements StackHandle {
 
 	@Override
 	public void setStorage(TagDataStorage newStorage) {
-		stack.get(DataComponents.CUSTOM_DATA).update(tag -> {
+		CustomData data;
+		if (stack.has(DataComponents.CUSTOM_DATA)) {
+			data = stack.get(DataComponents.CUSTOM_DATA);
+		} else {
+			data = CustomData.EMPTY;
+		}
+		stack.set(DataComponents.CUSTOM_DATA, data.update(tag -> {
 			try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
 				newStorage.getTree().getPayload(out);
 				byte[] bytes = out.toByteArray();
@@ -106,7 +112,7 @@ public class StackHandleFabric implements StackHandle {
 				ConsoleMessenger.bug("Custom Data (in setStorage()) exception", this);
 				e.printStackTrace(); // You can log or rethrow this if needed
 			}
-		});
+		}));
 	}
 
 	@Override

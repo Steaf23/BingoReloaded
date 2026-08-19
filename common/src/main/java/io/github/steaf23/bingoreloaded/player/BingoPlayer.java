@@ -109,18 +109,6 @@ public class BingoPlayer implements BingoParticipant
     }
 
     @Override
-    public void giveBingoCard(int cardSlot, @NotNull StackHandle cardItem) {
-        if (sessionPlayer().isEmpty())
-            return;
-
-        PlayerHandle player = sessionPlayer().get();
-
-        tasks.runTask(task -> {
-            session.getGameManager().getRuntime().givePlayerCardItem(player, cardSlot, cardItem);
-        });
-    }
-
-    @Override
     public void giveEffects(EnumSet<EffectOptionFlags> effects, int gracePeriod) {
         if (sessionPlayer().isEmpty())
             return;

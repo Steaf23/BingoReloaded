@@ -21,6 +21,7 @@ import io.github.steaf23.bingoreloaded.gui.inventory.VoteMenu;
 import io.github.steaf23.bingoreloaded.gui.inventory.card.GenericCardMenu;
 import io.github.steaf23.bingoreloaded.gui.inventory.card.HotswapGenericCardMenu;
 import io.github.steaf23.bingoreloaded.gui.inventory.creator.BingoCreatorMenu;
+import io.github.steaf23.bingoreloaded.lib.EventListenerFabric;
 import io.github.steaf23.bingoreloaded.lib.action.ActionTree;
 import io.github.steaf23.bingoreloaded.lib.api.ActionUser;
 import io.github.steaf23.bingoreloaded.lib.api.BingoReloadedRuntime;
@@ -30,7 +31,7 @@ import io.github.steaf23.bingoreloaded.lib.api.PlatformResolver;
 import io.github.steaf23.bingoreloaded.lib.api.WorldHandle;
 import io.github.steaf23.bingoreloaded.lib.api.inventory.CapacityInventoryProvider;
 import io.github.steaf23.bingoreloaded.lib.api.inventory.InventoryTemplate;
-import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
+import io.github.steaf23.bingoreloaded.lib.api.item.StackHandleFabric;
 import io.github.steaf23.bingoreloaded.lib.api.platform.FabricResources;
 import io.github.steaf23.bingoreloaded.lib.api.platform.FabricServer;
 import io.github.steaf23.bingoreloaded.lib.api.platform.FabricStatics;
@@ -45,9 +46,10 @@ import io.github.steaf23.bingoreloaded.lib.data.core.SnakeYamlDataAccessor;
 import io.github.steaf23.bingoreloaded.lib.inventory.BasicMenu;
 import io.github.steaf23.bingoreloaded.lib.inventory.MenuBoard;
 import io.github.steaf23.bingoreloaded.lib.inventory.MenuBoardFabric;
-import io.github.steaf23.bingoreloaded.player.BingoParticipant;
+import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import io.github.steaf23.bingoreloaded.settings.gamemode.BingoGamemodes;
+import io.github.steaf23.bingoreloaded.util.FabricTypes;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
@@ -60,6 +62,8 @@ import net.kyori.adventure.text.Component;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
@@ -75,6 +79,7 @@ public class BingoReloadedFabric implements ModInitializer, BingoReloadedRuntime
 	private FabricTaskScheduler tasks;
 	private MenuBoard menuBoard;
 	private FabricServer server;
+	private EventListenerFabric eventListener;
 
 	@Override
 	public void onInitialize() {
@@ -92,8 +97,10 @@ public class BingoReloadedFabric implements ModInitializer, BingoReloadedRuntime
 
 		ServerLifecycleEvents.SERVER_STARTED.register(server -> {
 			this.server = new FabricServer(server, tasks);
+			FabricTypes.SERVER = server;
 			this.menuBoard = new MenuBoardFabric(new GameContext(this.server, bingo));
 			bingo.reloadManager(this.server);
+			this.eventListener = new EventListenerFabric(this.server, bingo.getGameManager().eventListener());
 		});
 	}
 
@@ -109,7 +116,8 @@ public class BingoReloadedFabric implements ModInitializer, BingoReloadedRuntime
 		return List.of(
 				new SnakeYamlDataAccessor(resources, "scoreboards"),
 				new SnakeYamlDataAccessor(resources, "placeholders"),
-				new SnakeYamlDataAccessor(resources, "sounds"));
+				new SnakeYamlDataAccessor(resources, "sounds"),
+				new SnakeYamlDataAccessor(resources, "taskformat"));
 	}
 
 	@Override
@@ -164,7 +172,7 @@ public class BingoReloadedFabric implements ModInitializer, BingoReloadedRuntime
 		ActionUser user = new PlayerHandleFabric(serverWrapper, context.getSource().getPlayer());
 		mainAction.setLastUser(user);
 		action.setLastUser(user);
-		action.getAction().execute(new GameContext(serverWrapper, bingo), new String[]{""});
+		action.getAction().execute(new GameContext(serverWrapper, bingo), new String[]{});
 
 		return Command.SINGLE_SUCCESS;
 	}
@@ -186,11 +194,6 @@ public class BingoReloadedFabric implements ModInitializer, BingoReloadedRuntime
 		}
 
 		return new GenericCardMenu(bingo, menuBoard, displayInfo, null);
-	}
-
-	@Override
-	public StackHandle createCardItemForPlayer(BingoParticipant player) {
-		return PlayerKit.CARD_ITEM.buildItem(server);
 	}
 
 	@Override
@@ -258,13 +261,20 @@ public class BingoReloadedFabric implements ModInitializer, BingoReloadedRuntime
 	}
 
 	@Override
-	public void givePlayerCardItem(PlayerHandle player, int cardSlot, StackHandle stack) {
+	public void givePlayerCardItem(BingoPlayer player, int cardSlot) {
+		if (player.sessionPlayer().isEmpty()) {
+			return;
+		}
 
+		ItemStack stack = ((StackHandleFabric)PlayerKit.CARD_ITEM.buildItem(server)).handle();
+		ServerPlayer serverPlayer = ((PlayerHandleFabric)player.sessionPlayer().get()).handle();
+
+		serverPlayer.getInventory().setItem(cardSlot, stack);
 	}
 
 	@Override
 	public TeamDisplay createTeamDisplay(BingoSession session) {
-		return null;
+		return TeamDisplay.DISABLED;
 	}
 
 	@Override
@@ -279,7 +289,7 @@ public class BingoReloadedFabric implements ModInitializer, BingoReloadedRuntime
 
 	@Override
 	public BingoClientManager getClientManager() {
-		return null;
+		return new BingoClientManager.DisabledClientManager();
 	}
 
 	private @Nullable ExtensionInfo createExtensionInfo() {

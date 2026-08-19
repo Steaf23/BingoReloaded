@@ -2,7 +2,6 @@ package io.github.steaf23.bingoreloaded.lib.events;
 
 import io.github.steaf23.bingoreloaded.lib.api.AdvancementHandlePaper;
 import io.github.steaf23.bingoreloaded.lib.api.EntityTypePaper;
-import io.github.steaf23.bingoreloaded.lib.api.InteractAction;
 import io.github.steaf23.bingoreloaded.lib.api.PaperApiHelper;
 import io.github.steaf23.bingoreloaded.lib.api.PlayerHandlePaper;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemTypePaper;
@@ -174,10 +173,13 @@ public class EventListenerPaper implements Listener {
 			return;
 		}
 
-		EventResult<?> result = dispatcher.sendPlayerInteracted(
+		if (!event.getAction().isRightClick()) {
+			return;
+		}
+
+		EventResult<?> result = dispatcher.sendPlayerUseItem(
 				new PlayerHandlePaper(server, event.getPlayer()),
-				new StackHandlePaper(event.getItem()),
-				new InteractAction(event.getAction().isLeftClick(), event.getAction().isRightClick(), event.getAction() == Action.LEFT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_AIR));
+				new StackHandlePaper(event.getItem()));
 
 		if (result.consume()) {
 			event.setCancelled(true);

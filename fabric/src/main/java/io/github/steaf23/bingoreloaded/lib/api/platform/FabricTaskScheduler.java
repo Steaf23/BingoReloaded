@@ -11,8 +11,13 @@ public class FabricTaskScheduler implements PlatformTaskScheduler {
 
 	private final List<Task> tasks = new ArrayList<>();
 
+	private final List<Task> taskQueue = new ArrayList<>();
+
 	public void tick(int currentTick) {
 		List<Task> tasksToRemove = new ArrayList<>();
+
+		tasks.addAll(taskQueue);
+		taskQueue.clear();
 
 		for (Task t : tasks) {
 			if (t.tryRunAndCancel(currentTick)) {
@@ -28,21 +33,21 @@ public class FabricTaskScheduler implements PlatformTaskScheduler {
 	@Override
 	public ExtensionTask runTaskTimer(long repeatTicks, long startDelayTicks, Consumer<ExtensionTask> consumer) {
 		ExtensionTaskFabric extensionTask = new ExtensionTaskFabric();
-		tasks.add(new Task(extensionTask, startDelayTicks, consumer, repeatTicks));
+		taskQueue.add(new Task(extensionTask, startDelayTicks, consumer, repeatTicks));
 		return extensionTask;
 	}
 
 	@Override
 	public ExtensionTask runTask(Consumer<ExtensionTask> consumer) {
 		ExtensionTaskFabric extensionTask = new ExtensionTaskFabric();
-		tasks.add(new Task(extensionTask, 0, consumer));
+		taskQueue.add(new Task(extensionTask, 0, consumer));
 		return extensionTask;
 	}
 
 	@Override
 	public ExtensionTask runTask(long startDelayTicks, Consumer<ExtensionTask> consumer) {
 		ExtensionTaskFabric extensionTask = new ExtensionTaskFabric();
-		tasks.add(new Task(extensionTask, startDelayTicks, consumer));
+		taskQueue.add(new Task(extensionTask, startDelayTicks, consumer));
 		return extensionTask;
 	}
 
@@ -94,8 +99,10 @@ public class FabricTaskScheduler implements PlatformTaskScheduler {
 
 			if (isStarted(currentTick)) {
 				boolean continueNow = currentTick > lastRun + repeatInterval;
-				lastRun = currentTick;
-				task.accept(outerTask);
+				if (continueNow) {
+					lastRun = currentTick;
+					task.accept(outerTask);
+				}
 				return outerTask.isCancelled();
 			}
 			else if (shouldStartNow(currentTick)) {

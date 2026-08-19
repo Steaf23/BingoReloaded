@@ -17,7 +17,6 @@ import io.github.steaf23.bingoreloaded.item.BingoItems;
 import io.github.steaf23.bingoreloaded.item.GameItem;
 import io.github.steaf23.bingoreloaded.lib.api.BiomeType;
 import io.github.steaf23.bingoreloaded.lib.api.GlobalPosition;
-import io.github.steaf23.bingoreloaded.lib.api.InteractAction;
 import io.github.steaf23.bingoreloaded.lib.api.PlatformResolver;
 import io.github.steaf23.bingoreloaded.lib.api.PlayerGamemode;
 import io.github.steaf23.bingoreloaded.lib.api.PotionEffectInstance;
@@ -399,11 +398,12 @@ public class BingoGame implements GamePhase
     }
 
     public void returnCardToPlayer(int cardSlot, BingoParticipant participant) {
-        if (participant.sessionPlayer().isEmpty())
+        if (participant.sessionPlayer().isEmpty() || (!(participant instanceof BingoPlayer player)))
             return;
 
-		StackHandle cardItem = getSession().getGameManager().getRuntime().createCardItemForPlayer(participant);
-        participant.giveBingoCard(cardSlot, cardItem);
+        taskScheduler().runTask(task -> {
+            session.getGameManager().getRuntime().givePlayerCardItem(player, cardSlot);
+        });
         participant.sessionPlayer().get().setGamemode(PlayerGamemode.SURVIVAL);
     }
 
@@ -490,11 +490,10 @@ public class BingoGame implements GamePhase
     /**
      * Counts RIVER as ocean biome!
      *
-     * @param biome biome to check
-     * @return true if the biome is considered to be an ocean-like biome
+     * @return true if the biome in the world at the given position is considered to be an ocean-like biome
      */
-    public static boolean isOceanBiome(BiomeType biome) {
-        return biome.isOcean() || biome.isRiver();
+    public static boolean isOceanBiome(WorldHandle world, GlobalPosition pos) {
+        return world.isOceanBiome(pos) || world.isRiverBiome(pos);
     }
 
     public @Nullable GameTask getDeathMatchTask() {
@@ -738,8 +737,7 @@ public class BingoGame implements GamePhase
         endWithPotentialWinner(false);
     }
 
-    @Override
-    public EventResult<?> handlePlayerInteracted(PlayerHandle player, @Nullable StackHandle stack, InteractAction action) {
+    public EventResult<?> handlePlayerUseItem(PlayerHandle player, @Nullable StackHandle stack) {
         BingoParticipant participant = getTeamManager().getPlayerAsParticipant(player);
         if (participant == null || participant.sessionPlayer().isEmpty())
             return EventResult.IGNORE;
@@ -750,9 +748,6 @@ public class BingoGame implements GamePhase
         }
 
         if (stack == null || stack.type().isAir())
-            return EventResult.IGNORE;
-
-        if (!action.rightClick())
             return EventResult.IGNORE;
 
         GameItem gameItem = items.getItem(stack);

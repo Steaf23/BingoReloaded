@@ -61,6 +61,7 @@ import io.github.steaf23.bingoreloaded.lib.menu.ScoreboardDisplay;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import io.github.steaf23.bingoreloaded.placeholder.BingoReloadedPlaceholderExpansion;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
+import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import io.github.steaf23.bingoreloaded.settings.gamemode.BingoGamemodes;
 import io.github.steaf23.bingoreloaded.util.bstats.Metrics;
@@ -313,37 +314,6 @@ public class BingoReloadedPaper extends JavaPlugin implements BingoReloadedRunti
 		return CustomWorldCreator.createWorld(worldKey, generationOptions);
 	}
 
-	public StackHandle createCardItemForPlayer(BingoParticipant player) {
-		if (player.sessionPlayer().isEmpty() || player.getCard().isEmpty() && player.getTeam() != null) {
-			return PlayerKit.CARD_ITEM.buildItem(server);
-		}
-
-		PlayerHandle playerHandle = player.sessionPlayer().get();
-
-		if (!bingo.config().getOptionValue(BingoOptions.USE_MAP_RENDERER) || clientManager.playerHasClient(playerHandle)) {
-			return PlayerKit.CARD_ITEM.buildItem(server);
-		}
-
-		StackHandlePaper mapStack = (StackHandlePaper) PlayerKit.CARD_ITEM_RENDERABLE.buildItem(server);
-
-		ItemStack handle = mapStack.handle();
-		handle.editMeta(m -> {
-			if (m instanceof MapMeta meta) {
-				MapView view = Bukkit.createMap(((WorldHandlePaper) playerHandle.world()).handle());
-				for (var renderer : new ArrayList<>(view.getRenderers())) {
-					view.removeRenderer(renderer);
-				}
-
-				view.addRenderer(new BingoCardMapRenderer(resources, player.getCard().get(), player.getTeam()));
-				meta.setMapView(view);
-			} else {
-				ConsoleMessenger.bug("No valid map item found to render texture to.", this);
-			}
-		});
-
-		return mapStack;
-	}
-
 	@Override
 	public CapacityInventoryProvider getPouchInventoryProvider() {
 		return pouchInventoryProvider;
@@ -439,8 +409,12 @@ public class BingoReloadedPaper extends JavaPlugin implements BingoReloadedRunti
 	}
 
 	@Override
-	public void givePlayerCardItem(PlayerHandle player, int cardSlot, StackHandle stack) {
-		Player paperPlayer = ((PlayerHandlePaper)player).handle();
+	public void givePlayerCardItem(BingoPlayer player, int cardSlot) {
+		if (player.sessionPlayer().isEmpty()) {
+			return;
+		}
+
+		Player paperPlayer = ((PlayerHandlePaper)player.sessionPlayer().get()).handle();
 		for (ItemStack itemStack : paperPlayer.getInventory()) {
 			if (PlayerKit.CARD_ITEM.isCompareKeyEqual(new StackHandlePaper(itemStack))) {
 				paperPlayer.getInventory().remove(itemStack);
@@ -449,7 +423,7 @@ public class BingoReloadedPaper extends JavaPlugin implements BingoReloadedRunti
 		}
 
 		ItemStack existingItem = paperPlayer.getInventory().getItem(cardSlot);
-		paperPlayer.getInventory().setItem(cardSlot, ((StackHandlePaper)stack).handle());
+		paperPlayer.getInventory().setItem(cardSlot, createCardItemForPlayer(player));
 
 		if (existingItem != null && !existingItem.isEmpty()) {
 			Map<Integer, ItemStack> leftOver = paperPlayer.getInventory().addItem(existingItem);
@@ -477,6 +451,37 @@ public class BingoReloadedPaper extends JavaPlugin implements BingoReloadedRunti
 	@Override
 	public BingoClientManager getClientManager() {
 		return clientManager;
+	}
+
+	private ItemStack createCardItemForPlayer(BingoParticipant player) {
+		if (player.sessionPlayer().isEmpty() || player.getCard().isEmpty() && player.getTeam() != null) {
+			return ((StackHandlePaper)PlayerKit.CARD_ITEM.buildItem(server)).handle();
+		}
+
+		PlayerHandle playerHandle = player.sessionPlayer().get();
+
+		if (!bingo.config().getOptionValue(BingoOptions.USE_MAP_RENDERER) || clientManager.playerHasClient(playerHandle)) {
+			return ((StackHandlePaper)PlayerKit.CARD_ITEM.buildItem(server)).handle();
+		}
+
+		StackHandlePaper mapStack = (StackHandlePaper) PlayerKit.CARD_ITEM_RENDERABLE.buildItem(server);
+
+		ItemStack handle = mapStack.handle();
+		handle.editMeta(m -> {
+			if (m instanceof MapMeta meta) {
+				MapView view = Bukkit.createMap(((WorldHandlePaper) playerHandle.world()).handle());
+				for (var renderer : new ArrayList<>(view.getRenderers())) {
+					view.removeRenderer(renderer);
+				}
+
+				view.addRenderer(new BingoCardMapRenderer(resources, player.getCard().get(), player.getTeam()));
+				meta.setMapView(view);
+			} else {
+				ConsoleMessenger.bug("No valid map item found to render texture to.", this);
+			}
+		});
+
+		return handle;
 	}
 
 }

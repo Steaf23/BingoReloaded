@@ -1,5 +1,6 @@
 package io.github.steaf23.bingoreloaded.lib.api.item;
 
+import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.lib.api.platform.FabricServer;
 import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformServer;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
@@ -113,11 +114,9 @@ public class StackBuilderFabric implements StackBuilder {
 		stack.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(List.of(), List.of(), List.of(template.getCustomModelData()), List.of()));
 
 		if (template.getCompareKey() != null) {
-			CustomData data = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY);
-			data.update(tag -> {
-				tag.putString("compare_key", template.getCompareKey());
+			CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> {
+				tag.putString(BingoReloaded.resourceKey("compare_key").asString(), template.getCompareKey());
 			});
-			stack.set(DataComponents.CUSTOM_DATA, data);
 		}
 
 		// TODO: add if a fabric item editor is needed.

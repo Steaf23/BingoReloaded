@@ -340,17 +340,15 @@ public class GameManager {
 		return new EventResult<>(cancel, null);
 	}
 
-	public EventResult<?> handlePlayerJoinsServer(final PlayerHandle player) {
+	public void handlePlayerJoinsServer(final PlayerHandle player) {
 		BingoSession targetSession = getSessionFromWorld(player.world());
 
 		if (targetSession != null) {
 			targetSession.addPlayer(player);
 		}
-
-		return EventResult.IGNORE;
 	}
 
-	public EventResult<?> handlePlayerQuitsServer(final PlayerHandle player) {
+	public void handlePlayerQuitsServer(final PlayerHandle player) {
 		BingoSession sourceSession = getSessionFromWorld(player.world());
 
 		if (sourceSession != null) {
@@ -358,8 +356,6 @@ public class GameManager {
 		}
 
 		runtime.getClientManager().playerLeavesServer(player);
-
-		return EventResult.IGNORE;
 	}
 
 	public PlayerSerializationData getPlayerData() {

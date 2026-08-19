@@ -151,7 +151,7 @@ public class FabricServer implements PlatformServer {
 	}
 
 	private @Nullable WorldHandle fromWorld(@Nullable ServerLevel serverWorld) {
-		return serverWorld == null ? null : new WorldHandleFabric(serverWorld);
+		return serverWorld == null ? null : new WorldHandleFabric(this, serverWorld);
 	}
 
 	public MinecraftServer handle() {

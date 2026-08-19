@@ -16,6 +16,7 @@ import io.github.steaf23.bingoreloaded.lib.api.player.SharedDisplay;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataAccessor;
 import io.github.steaf23.bingoreloaded.lib.inventory.BasicMenu;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
+import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import net.kyori.adventure.key.Key;
 import org.jetbrains.annotations.Nullable;
 
@@ -44,7 +45,6 @@ public interface BingoReloadedRuntime {
 	@Nullable WorldHandle createBingoOverworld(Key worldKey, Key generationOptions);
 
 	CardMenu createMenu(boolean textured, CardDisplayInfo displayInfo);
-	StackHandle createCardItemForPlayer(BingoParticipant player);
 
 	CapacityInventoryProvider getPouchInventoryProvider();
 
@@ -56,7 +56,7 @@ public interface BingoReloadedRuntime {
 	void openVoteMenu(PlayerHandle player, PregameLobby lobby);
 	void openLeaderboard(PlayerHandle player, LeaderboardData historyData, boolean categorizeByPresets);
 	void editCardDescription(PlayerHandle playerHandle, String currentName, String currentDescription, BasicMenu parentMenu, CardDescriptionEditor callback);
-	void givePlayerCardItem(PlayerHandle player, int cardSlot, StackHandle stack);
+	void givePlayerCardItem(BingoPlayer player, int cardSlot);
 
 	TeamDisplay createTeamDisplay(BingoSession session);
 	SharedDisplay gameDisplay();
