@@ -71,22 +71,20 @@ public record StatisticHandle(@NotNull VanillaStatistic type, @Nullable EntityTy
 		return entityType() != null;
 	}
 
-	public boolean getsUpdatedAutomatically() {
-		if (type().category() == VanillaStatistic.Category.TRAVEL) {
-			return false;
-		} else return
-				type() != VanillaStatistics.PLAY_ONE_MINUTE &&
-				type() != VanillaStatistics.SNEAK_TIME &&
-				type() != VanillaStatistics.TOTAL_WORLD_TIME &&
-				type() != VanillaStatistics.TIME_SINCE_REST &&
-				type() != VanillaStatistics.TIME_SINCE_DEATH;
-	}
-
 	public ItemType icon() {
 		return type().icon(this);
 	}
 
 	public static Set<EntityType> getValidEntityTypes(BingoReloadedRuntime runtime) {
 		return runtime.getValidEntityTypesForStatistics();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (!(obj instanceof StatisticHandle(VanillaStatistic otherType, EntityType otherEntity, ItemType otherItem))) {
+			return false;
+		}
+
+		return otherType.equals(type) && otherEntity == entityType && otherItem == itemType;
 	}
 }

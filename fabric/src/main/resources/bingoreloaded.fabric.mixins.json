@@ -3,7 +3,10 @@
   "package": "io.github.steaf23.bingoreloaded.mixin",
   "compatibilityLevel": "JAVA_25",
   "mixins": [
-    "ServerPlayerAccessor"
+    "LivingEntityMixin",
+    "PlayerAdvancementsMixin",
+    "ServerPlayerAccessor",
+    "ServerStatsCounterMixin"
   ],
   "injectors": {
     "defaultRequire": 1

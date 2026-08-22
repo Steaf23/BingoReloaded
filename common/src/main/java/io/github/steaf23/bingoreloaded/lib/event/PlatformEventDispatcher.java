@@ -29,7 +29,7 @@ public interface PlatformEventDispatcher {
 	EventResult<?> sendPlayerBreaksBlock(PlayerHandle player, GlobalPosition position, ItemType blockType);
 	EventResult<?> sendPlayerPlacesBlock(PlayerHandle player, GlobalPosition position, ItemType blockType);
 	EventResult<?> sendPlayerStatisticIncrement(PlayerHandle player, StatisticHandle statistic, int newValue);
-	EventResult<?> sendPlayerAdvancementDone(PlayerHandle player, AdvancementHandle advancement);
+	void sendPlayerAdvancementDone(PlayerHandle player, AdvancementHandle advancement);
 	EventResult<EventResults.PlayerPickupResult> sendPlayerPickupStack(PlayerHandle player, StackHandle stack, GlobalPosition itemLocation);
 	EventResult<?> sendPlayerInventoryClick(PlayerHandle player, StackHandle itemOnCursor, boolean resultSlot, boolean shiftClick);
 }

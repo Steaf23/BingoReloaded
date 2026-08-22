@@ -27,6 +27,8 @@ public class TaskListData
             "default_statistics"
     );
 
+    public static final String PATCH_LEVEL_KEY = "_patch_level";
+
     private final DataAccessor defaultData = BingoReloaded.getDataAccessor("data/default_lists");
     private final DataAccessor data = BingoReloaded.getDataAccessor("data/" + BingoReloaded.getDefaultTasksVersion());
 
@@ -87,6 +89,10 @@ public class TaskListData
 
     public boolean removeList(String listName)
     {
+        if (listName.equals(PATCH_LEVEL_KEY)) {
+            return false;
+        }
+
         if (!data.contains(listName))
             return false;
 
@@ -123,7 +129,7 @@ public class TaskListData
 
     public boolean renameList(String oldName, String newName)
     {
-        if (DEFAULT_LIST_NAMES.contains(oldName) || DEFAULT_LIST_NAMES.contains(newName))
+        if (DEFAULT_LIST_NAMES.contains(oldName) || DEFAULT_LIST_NAMES.contains(newName) || newName.equals(PATCH_LEVEL_KEY))
             return false;
         if (!data.contains(oldName))
             return false;
@@ -143,7 +149,9 @@ public class TaskListData
     public Set<String> getListNames()
     {
 		Set<String> names = new HashSet<>(defaultData.getKeys());
-		names.addAll(data.getKeys());
+		names.addAll(data.getKeys().stream()
+                .filter(key -> !key.equals(PATCH_LEVEL_KEY))
+                .toList());
         return names;
     }
 }

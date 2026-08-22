@@ -63,4 +63,9 @@ public abstract class ConfigurationOption<Data>
     abstract public Optional<Data> fromString(String value);
 
     abstract public void toDataStorage(DataStorage storage, @NotNull Data value);
+
+    @Override
+    public String toString() {
+        return configName;
+    }
 }

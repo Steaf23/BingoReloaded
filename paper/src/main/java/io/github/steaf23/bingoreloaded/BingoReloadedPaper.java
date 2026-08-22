@@ -12,6 +12,7 @@ import io.github.steaf23.bingoreloaded.api.network.BingoClientManager;
 import io.github.steaf23.bingoreloaded.api.network.PaperClientManager;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.DataUpdaterV3_5_0;
+import io.github.steaf23.bingoreloaded.data.DataUpdaterV3_6_0;
 import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.data.config.BingoOptions;
 import io.github.steaf23.bingoreloaded.data.record.LeaderboardData;
@@ -147,7 +148,7 @@ public class BingoReloadedPaper extends JavaPlugin implements BingoReloadedRunti
 
 		// Data file updater (backwards compatibility)
 		{
-			DataUpdaterV3_5_0 updater = new DataUpdaterV3_5_0(this);
+			DataUpdaterV3_6_0 updater = new DataUpdaterV3_6_0(this);
 			updater.update();
 		}
 	}

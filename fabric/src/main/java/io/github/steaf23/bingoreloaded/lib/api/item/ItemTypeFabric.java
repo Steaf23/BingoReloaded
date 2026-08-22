@@ -7,6 +7,8 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+
 public class ItemTypeFabric implements ItemType {
 
 	private final Item item;
@@ -35,5 +37,19 @@ public class ItemTypeFabric implements ItemType {
 	@Override
 	public @NotNull Key key() {
 		return FabricTypes.keyFromId(BuiltInRegistries.ITEM.getKey(item));
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof ItemTypeFabric other) {
+			return item.equals(other.item);
+		}
+
+		return super.equals(obj);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hashCode(item);
 	}
 }

@@ -172,17 +172,15 @@ public final class BingoEventListener implements PlatformEventDispatcher {
 	}
 
 	@Override
-	public EventResult<?> sendPlayerAdvancementDone(PlayerHandle player, AdvancementHandle advancement) {
+	public void sendPlayerAdvancementDone(PlayerHandle player, AdvancementHandle advancement) {
 		if (disableAdvancements)
-			return EventResult.IGNORE;
+			return;
 
 		BingoSession session = getSession(player.world());
 		BingoGame game = session != null && session.isRunning() ? (BingoGame) session.phase() : null;
 		if (game != null) {
 			game.getProgressTracker().handlePlayerAdvancementDone(player, advancement);
 		}
-
-		return EventResult.IGNORE;
 	}
 
 	@Override

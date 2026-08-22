@@ -43,9 +43,9 @@ public record StatisticTask(StatisticHandle statistic, int count, Set<String> ta
 		VanillaStatistic stat = statistic.type();
 		return switch (stat.category()) {
 			case ROOT_STATISTIC -> {
-				if (stat == VanillaStatistics.KILL_ENTITY) {
+				if (stat == VanillaStatistics.KILLED) {
 					yield formatting.statisticKillEntityComponent(this);
-				} else if (stat == VanillaStatistics.ENTITY_KILLED_BY) {
+				} else if (stat == VanillaStatistics.KILLED_BY) {
 					yield formatting.statisticKilledByEntityComponent(this);
 				} else {
 					yield formatting.statisticItemComponent(this);

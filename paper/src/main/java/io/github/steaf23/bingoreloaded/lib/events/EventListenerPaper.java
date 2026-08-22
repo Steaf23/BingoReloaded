@@ -1,6 +1,7 @@
 package io.github.steaf23.bingoreloaded.lib.events;
 
 import io.github.steaf23.bingoreloaded.lib.api.AdvancementHandlePaper;
+import io.github.steaf23.bingoreloaded.lib.api.BukkitStatistics;
 import io.github.steaf23.bingoreloaded.lib.api.EntityTypePaper;
 import io.github.steaf23.bingoreloaded.lib.api.PaperApiHelper;
 import io.github.steaf23.bingoreloaded.lib.api.PlayerHandlePaper;
@@ -239,7 +240,7 @@ public class EventListenerPaper implements Listener {
 
 	@EventHandler
 	public void handlePlayerStatisticIncrementEvent(final PlayerStatisticIncrementEvent event) {
-		VanillaStatistic stat = VanillaStatistics.fromKey(event.getStatistic().getKey());
+		VanillaStatistic stat = BukkitStatistics.getVanillaStatistic(event.getStatistic());
 		EventResult<?> result = dispatcher.sendPlayerStatisticIncrement(
 				new PlayerHandlePaper(server, event.getPlayer()),
 				new StatisticHandle(stat,

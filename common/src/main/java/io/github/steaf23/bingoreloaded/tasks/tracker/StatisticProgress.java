@@ -41,7 +41,7 @@ public class StatisticProgress {
 	 * Updates the progress for statistics that don't get updated with the default Increment event
 	 */
 	public void updatePeriodicProgress() {
-		if (statistic.getsUpdatedAutomatically())
+		if (!statistic.type().getsUpdatedOften())
 			return;
 
 		int newProgress = getParticipantTotalScore();
