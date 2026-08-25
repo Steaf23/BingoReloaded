@@ -24,7 +24,7 @@ public record ItemTask(Identifier id, int count) implements TaskSlot {
 
 	@Override
 	public int completeCount() {
-		return 0;
+		return count;
 	}
 
 	@Override

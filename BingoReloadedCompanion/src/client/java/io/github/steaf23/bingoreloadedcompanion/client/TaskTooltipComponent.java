@@ -44,6 +44,6 @@ public class TaskTooltipComponent implements ClientTooltipComponent {
 
 	@Override
 	public void extractText(GuiGraphicsExtractor context, Font textRenderer, int x, int y) {
-		context.text(textRenderer, taskName, x + 24, y, CommonColors.WHITE, true);
+		context.text(textRenderer, taskName, x + 24, y + 8, CommonColors.WHITE, true);
 	}
 }
