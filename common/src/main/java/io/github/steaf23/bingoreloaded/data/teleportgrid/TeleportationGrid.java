@@ -2,8 +2,6 @@ package io.github.steaf23.bingoreloaded.data.teleportgrid;
 
 import io.github.steaf23.bingoreloaded.lib.data.core.DataStorageSerializer;
 
-import java.awt.*;
-
 public record TeleportationGrid(Point cellSize, String finishedCommand, Point center, Point size, boolean skipOceanBiomes) {
 
 	public record Point(int x, int z) {
