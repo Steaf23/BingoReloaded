@@ -95,7 +95,6 @@ public class BingoGame implements GamePhase
     private final Map<UUID, GlobalPosition> playerSpawnPoints;
     private final BingoItems items;
     private final PlayerSpawnCoordinator spawnCoordinator;
-    private final PlayerSpawnCoordinator spawnCoordinator;
 
     private GameTask deathMatchTask;
 
@@ -115,12 +114,10 @@ public class BingoGame implements GamePhase
 		this.onGameEndedCallback = onGameEndedCallback;
         this.items = session.items();
         this.taskFormatting = TaskFormatting.fromDataAccessor();
-        this.taskFormatting = TaskFormatting.fromDataAccessor();
 
 		this.respawnManager = new PlayerRespawnManager(this.taskScheduler(), config.getOptionValue(BingoOptions.TELEPORT_AFTER_DEATH_PERIOD));
         this.playerSpawnPoints = new HashMap<>();
 
-		this.spawnCoordinator = spawnCoordinator;
 		this.spawnCoordinator = spawnCoordinator;
     }
 

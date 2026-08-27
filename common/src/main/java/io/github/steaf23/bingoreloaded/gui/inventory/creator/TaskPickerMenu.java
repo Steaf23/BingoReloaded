@@ -28,7 +28,6 @@ public class TaskPickerMenu extends PaginatedDataMenu<GameTask> {
 
 	private final String listName;
 	private final TaskFormatting formatting;
-	private final TaskFormatting formatting;
 
 	protected static final Component[] SELECTED_LORE = createSelectedLore();
 	protected static final Component[] UNSELECTED_LORE = createUnselectedLore();
@@ -37,10 +36,8 @@ public class TaskPickerMenu extends PaginatedDataMenu<GameTask> {
 	public static final ItemTemplate SHOW_ALL = new ItemTemplate(6, 5, VanillaItems.CLOSED_EYEBLOSSOM.type(), BingoReloaded.applyTitleFormat("Show all tasks"));
 
 	public TaskPickerMenu(MenuBoard board, String initialTitle, List<GameTask> options, String listName, TaskFormatting formatting) {
-	public TaskPickerMenu(MenuBoard board, String initialTitle, List<GameTask> options, String listName, TaskFormatting formatting) {
 		super(board, Component.text(initialTitle), options);
 		this.listName = listName;
-		this.formatting = formatting;
 		this.formatting = formatting;
 	}
 
@@ -62,12 +59,10 @@ public class TaskPickerMenu extends PaginatedDataMenu<GameTask> {
 	@Override
 	public Component displayName(GameTask gameTask, boolean selected) {
 		return gameTask.getName(formatting);
-		return gameTask.getName(formatting);
 	}
 
 	@Override
 	public ItemTemplate editItem(ItemTemplate item, GameTask gameTask, boolean selected) {
-		ItemTemplate newItem = gameTask.toItem(CardDisplayInfo.defaultWithFormatting(formatting));
 		ItemTemplate newItem = gameTask.toItem(CardDisplayInfo.defaultWithFormatting(formatting));
 
 		Component[] addedLore;
@@ -85,7 +80,6 @@ public class TaskPickerMenu extends PaginatedDataMenu<GameTask> {
 
 	@Override
 	public boolean filterByData(GameTask gameTask, MenuFilterSettings filter) {
-		return PlainTextComponentSerializer.plainText().serialize(gameTask.data().getName(formatting)).toLowerCase().contains(filter.name().toLowerCase());
 		return PlainTextComponentSerializer.plainText().serialize(gameTask.data().getName(formatting)).toLowerCase().contains(filter.name().toLowerCase());
 	}
 

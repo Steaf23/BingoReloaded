@@ -101,12 +101,7 @@ public class SerializablePlayer {
 
 	public SerializablePlayer() {
 	}
-	public SerializablePlayer() {
-	}
 
-	public void apply(PlayerHandle player) {
-		if (!playerId.equals(player.uniqueId()))
-			return;
 	public void apply(PlayerHandle player) {
 		if (!playerId.equals(player.uniqueId()))
 			return;

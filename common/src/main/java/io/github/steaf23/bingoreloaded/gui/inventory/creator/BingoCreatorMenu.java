@@ -48,7 +48,6 @@ public class BingoCreatorMenu extends BasicMenu {
 		super(manager, Component.text("Card Creator"), 3);
 		this.cardsData = new BingoCardData();
 		this.formatting = TaskFormatting.fromDataAccessor();
-		this.formatting = TaskFormatting.fromDataAccessor();
 		addAction(CARD, arguments -> createCardPicker().open(arguments.player()));
 		addAction(LIST, arguments -> createListPicker().open(arguments.player()));
 		addAction(TAGS, arguments -> createTagPicker().open(arguments.player()));
@@ -194,7 +193,6 @@ public class BingoCreatorMenu extends BasicMenu {
 			BingoPlayerSender.sendMessage(Component.text("Cannot edit default lists, use right click to duplicate them instead!").color(NamedTextColor.RED), player);
 			return;
 		}
-		ListEditorMenu editor = new ListEditorMenu(getMenuBoard(), listName, formatting);
 		ListEditorMenu editor = new ListEditorMenu(getMenuBoard(), listName, formatting);
 		editor.open(player);
 	}
