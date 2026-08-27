@@ -5,6 +5,7 @@ import io.github.steaf23.bingoreloaded.data.BingoCardData;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.TaskListData;
 import io.github.steaf23.bingoreloaded.data.helper.TaskFormatting;
+import io.github.steaf23.bingoreloaded.data.helper.TaskFormatting;
 import io.github.steaf23.bingoreloaded.gui.inventory.TagExclusionMenu;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.api.item.VanillaItems;
@@ -18,6 +19,7 @@ import io.github.steaf23.bingoreloaded.lib.inventory.action.MenuAction;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import io.github.steaf23.bingoreloaded.util.BingoPlayerSender;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickCallback;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -45,6 +47,7 @@ public class BingoCreatorMenu extends BasicMenu {
 	public BingoCreatorMenu(MenuBoard manager) {
 		super(manager, Component.text("Card Creator"), 3);
 		this.cardsData = new BingoCardData();
+		this.formatting = TaskFormatting.fromDataAccessor();
 		this.formatting = TaskFormatting.fromDataAccessor();
 		addAction(CARD, arguments -> createCardPicker().open(arguments.player()));
 		addAction(LIST, arguments -> createListPicker().open(arguments.player()));
@@ -172,6 +175,7 @@ public class BingoCreatorMenu extends BasicMenu {
 		new UserInputMenu(getMenuBoard(), Component.text("Enter new list name"), (input) -> {
 			if (!input.isEmpty())
 				openListEditor(input, player);
+				openListEditor(input, player);
 		}, "name")
 				.open(player);
 	}
@@ -190,6 +194,7 @@ public class BingoCreatorMenu extends BasicMenu {
 			BingoPlayerSender.sendMessage(Component.text("Cannot edit default lists, use right click to duplicate them instead!").color(NamedTextColor.RED), player);
 			return;
 		}
+		ListEditorMenu editor = new ListEditorMenu(getMenuBoard(), listName, formatting);
 		ListEditorMenu editor = new ListEditorMenu(getMenuBoard(), listName, formatting);
 		editor.open(player);
 	}

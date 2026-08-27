@@ -145,6 +145,9 @@ public class LeaderboardMenu extends BasicMenu {
 						description.add(Component.empty()
 								.append(Component.object(ObjectContents.playerHead(participant.id())))
 								.append(Component.text(" " + participant.displayName())));
+						description.add(Component.empty()
+								.append(Component.object(ObjectContents.playerHead(participant.id())))
+								.append(Component.text(" " + participant.displayName())));
 					}
 
 					List<String> scoreString = new ArrayList<>();

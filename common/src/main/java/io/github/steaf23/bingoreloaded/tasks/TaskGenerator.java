@@ -141,6 +141,7 @@ public class TaskGenerator
         List<TaskData> allTasks = TaskGenerator.filterBySettings(cardData, cardData.getAllTasks(game.getSession().getGameManager().getServer(), settings.cardName(), EnumSet.of(TaskData.TaskType.ITEM)), settings);
 
         Random generator = settings.seed() == 0 ? new Random() : new Random(settings.seed());
+        Random generator = settings.seed() == 0 ? new Random() : new Random(settings.seed());
 
         if (!allTasks.isEmpty())
             return new GameTask(allTasks.get(Math.abs(generator.nextInt(allTasks.size()))));

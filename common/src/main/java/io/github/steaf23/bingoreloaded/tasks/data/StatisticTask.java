@@ -12,6 +12,7 @@ import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.object.ObjectContents;
+import net.kyori.adventure.text.object.ObjectContents;
 
 import java.util.HashSet;
 import java.util.Objects;
@@ -55,14 +56,24 @@ public record StatisticTask(StatisticHandle statistic, int count, Set<String> ta
 			case DAMAGE -> formatting.statisticNameComponent(this, Component.object(ObjectContents.sprite(Key.key("gui"), Key.key("hud/heart/full"))), 1);
 			default -> formatting.statisticNameComponent(this, Component.empty(), 1);
 		};
+					yield formatting.statisticItemComponent(this);
+				}
+			}
+			case TRAVEL -> formatting.statisticNameComponent(this, Component.text(" ").append(Component.translatable("soundCategory.block")), 10);
+			case DAMAGE -> formatting.statisticNameComponent(this, Component.object(ObjectContents.sprite(Key.key("gui"), Key.key("hud/heart/full"))), 1);
+			default -> formatting.statisticNameComponent(this, Component.empty(), 1);
+		};
 	}
 
 	@Override
+	public Component[] getItemDescription(TaskFormatting formatting) {
 	public Component[] getItemDescription(TaskFormatting formatting) {
 		return BingoMessage.LORE_STATISTIC.asMultiline(NamedTextColor.DARK_AQUA);
 	}
 
 	@Override
+	public Component getChatDescription(TaskFormatting formatting) {
+		return Component.text().append(getItemDescription(formatting)).build();
 	public Component getChatDescription(TaskFormatting formatting) {
 		return Component.text().append(getItemDescription(formatting)).build();
 	}

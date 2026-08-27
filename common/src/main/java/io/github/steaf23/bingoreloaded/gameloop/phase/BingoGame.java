@@ -11,7 +11,9 @@ import io.github.steaf23.bingoreloaded.data.BingoStatType;
 import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.data.config.BingoOptions;
 import io.github.steaf23.bingoreloaded.data.helper.TaskFormatting;
+import io.github.steaf23.bingoreloaded.data.helper.TaskFormatting;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
+import io.github.steaf23.bingoreloaded.gameloop.spawn.PlayerSpawnCoordinator;
 import io.github.steaf23.bingoreloaded.gameloop.spawn.PlayerSpawnCoordinator;
 import io.github.steaf23.bingoreloaded.item.BingoItems;
 import io.github.steaf23.bingoreloaded.item.GameItem;
@@ -58,6 +60,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.object.ObjectContents;
+import net.kyori.adventure.text.object.ObjectContents;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -92,6 +95,7 @@ public class BingoGame implements GamePhase
     private final Map<UUID, GlobalPosition> playerSpawnPoints;
     private final BingoItems items;
     private final PlayerSpawnCoordinator spawnCoordinator;
+    private final PlayerSpawnCoordinator spawnCoordinator;
 
     private GameTask deathMatchTask;
 
@@ -111,10 +115,12 @@ public class BingoGame implements GamePhase
 		this.onGameEndedCallback = onGameEndedCallback;
         this.items = session.items();
         this.taskFormatting = TaskFormatting.fromDataAccessor();
+        this.taskFormatting = TaskFormatting.fromDataAccessor();
 
 		this.respawnManager = new PlayerRespawnManager(this.taskScheduler(), config.getOptionValue(BingoOptions.TELEPORT_AFTER_DEATH_PERIOD));
         this.playerSpawnPoints = new HashMap<>();
 
+		this.spawnCoordinator = spawnCoordinator;
 		this.spawnCoordinator = spawnCoordinator;
     }
 

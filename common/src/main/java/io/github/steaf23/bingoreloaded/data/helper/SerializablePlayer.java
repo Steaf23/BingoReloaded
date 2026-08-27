@@ -13,6 +13,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class SerializablePlayer {
@@ -99,13 +101,25 @@ public class SerializablePlayer {
 
 	public SerializablePlayer() {
 	}
+	public SerializablePlayer() {
+	}
 
+	public void apply(PlayerHandle player) {
+		if (!playerId.equals(player.uniqueId()))
+			return;
 	public void apply(PlayerHandle player) {
 		if (!playerId.equals(player.uniqueId()))
 			return;
 
 		player.teleportBlocking(location);
+		player.teleportBlocking(location);
 
+		player.setHealth(health);
+		player.setFoodLevel(hunger);
+		player.setGamemode(gamemode);
+		player.setRespawnPoint(spawnPoint, true);
+		player.setLevel(xpLevel);
+		player.setExp(xpPoints);
 		player.setHealth(health);
 		player.setFoodLevel(hunger);
 		player.setGamemode(gamemode);

@@ -3,6 +3,7 @@ package io.github.steaf23.bingoreloadedcompanion.client;
 import com.mojang.blaze3d.platform.InputConstants;
 import io.github.steaf23.bingoreloadedcompanion.BingoReloadedCompanion;
 import io.github.steaf23.bingoreloadedcompanion.card.BingoCard;
+import io.github.steaf23.bingoreloadedcompanion.client.creator.BingoCardTaskListScreen;
 import io.github.steaf23.bingoreloadedcompanion.client.hud.BingoCardHudElement;
 import io.github.steaf23.bingoreloadedcompanion.client.hud.ConfigurableHudRegistry;
 import io.github.steaf23.bingoreloadedcompanion.client.hud.HudConfigManager;
@@ -23,8 +24,11 @@ import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import org.lwjgl.glfw.GLFW;
+
+import java.util.List;
 
 public class BingoReloadedCompanionClient implements ClientModInitializer {
 
@@ -109,6 +113,12 @@ public class BingoReloadedCompanionClient implements ClientModInitializer {
 				GLFW.GLFW_KEY_R,
 				category));
 
+		KeyMapping testCreator = KeyMappingHelper.registerKeyMapping(new KeyMapping(
+				"key.bingoreloadedcompanion.test_creator",
+				InputConstants.Type.KEYSYM,
+				GLFW.GLFW_KEY_Y,
+				category));
+
 //		ClientPlayNetworking.registerGlobalReceiver(EditTaskListPayload.ID,
 //				(payload, context) -> {
 //					context.client().setScreen(new BingoCardTaskListScreen(Text.empty(), payload.tasks()));
@@ -140,6 +150,9 @@ public class BingoReloadedCompanionClient implements ClientModInitializer {
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
 			if (toggleCardVisibility.consumeClick()) {
 				cardElement.setVisible(cardElement.isHidden());
+			}
+			if (testCreator.consumeClick()) {
+				client.setScreen(new BingoCardTaskListScreen(Component.literal("title"), List.of()));
 			}
 		});
 	}

@@ -305,6 +305,7 @@ public class TagDataStorage implements DataStorage
 
     @Override
     public <T> void setSerializableList(String path, DataStorageSerializer<T> serializer, List<T> values) {
+    public <T> void setSerializableList(String path, DataStorageSerializer<T> serializer, List<T> values) {
         setList(path, TagDataType.COMPOUND, values.stream()
                 .map(v -> {
                     TagDataStorage storage = createNew();
@@ -318,6 +319,7 @@ public class TagDataStorage implements DataStorage
     }
 
     @Override
+    public <T> List<T> getSerializableList(String path, DataStorageSerializer<T> serializer) {
     public <T> List<T> getSerializableList(String path, DataStorageSerializer<T> serializer) {
         if (serializer == null) {
             ConsoleMessenger.bug("No serializer registered for this type of data at path " + path, this);

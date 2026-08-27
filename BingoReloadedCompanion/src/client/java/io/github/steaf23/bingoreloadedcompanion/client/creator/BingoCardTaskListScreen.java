@@ -4,10 +4,15 @@ import io.github.steaf23.bingoreloadedcompanion.card.taskslot.AdvancementTask;
 import io.github.steaf23.bingoreloadedcompanion.card.taskslot.ItemTask;
 import io.github.steaf23.bingoreloadedcompanion.card.taskslot.TaskSlot;
 import io.github.steaf23.bingoreloadedcompanion.client.TaskTooltipComponent;
+import io.github.steaf23.bingoreloadedcompanion.client.core.CustomScrollableLayout;
 import io.github.steaf23.bingoreloadedcompanion.client.util.ScreenHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.components.AbstractScrollArea;
 import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.layouts.GridLayout;
+import net.minecraft.client.gui.layouts.LayoutSettings;
+import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
 import net.minecraft.client.input.CharacterEvent;
@@ -19,8 +24,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.CommonColors;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import org.jspecify.annotations.NonNull;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
@@ -40,13 +45,12 @@ public class BingoCardTaskListScreen extends Screen {
 
 	private static final Identifier MENU = Identifier.parse("bingoreloadedcompanion:textures/gui/task_list.png");
 	private static final Identifier SELECTED_SLOT = Identifier.parse("bingoreloadedcompanion:selected_slot");
-	private static final Identifier HIGHER_COUNT_BUTTON = Identifier.parse("bingoreloadedcompanion:higher_count");
-	private static final Identifier LOWER_COUNT_BUTTON = Identifier.parse("bingoreloadedcompanion:lower_count");
 	private static final Identifier FILTER_EMPTY = Identifier.parse("bingoreloadedcompanion:filter_empty");
 	private static final Identifier TAB_SELECTED = Identifier.withDefaultNamespace("container/creative_inventory/tab_top_selected_2");
 	private static final Identifier TAB_UNSELECTED = Identifier.withDefaultNamespace("container/creative_inventory/tab_top_unselected_2");
 	private static final Identifier SCROLLER = Identifier.withDefaultNamespace("container/creative_inventory/scroller");
 	private static final Identifier SCROLLER_DISABLED = Identifier.withDefaultNamespace("container/creative_inventory/scroller_disabled");
+	private static final Identifier SCROLLER_BACKGROUND = Identifier.parse("bingoreloadedcompanion:empty");
 
 	private static final int MENU_WIDTH = 222;
 	private static final int MENU_HEIGHT = 148;
@@ -65,17 +69,15 @@ public class BingoCardTaskListScreen extends Screen {
 	private static final int SLOT_START_X = 7;
 	private static final int SLOT_START_Y = 19;
 
-	private static final int BUTTON_WIDTH = 26;
-	private static final int BUTTON_HEIGHT = 26;
 
 	private TaskTab selectedTab;
 	private EditBox filterField;
-	private int scrollStep = -1;
+	private CustomScrollableLayout taskListLayout = null;
 
 	private final Map<Identifier, TaskSlot> selectedTasks = new HashMap<>();
 
 	private List<? extends TaskSlot> filteredItemTasks;
-	private List<? extends TaskSlot> visibleTasks;
+	private List<TaskWidget> taskWidgets;
 	private List<ScreenTab> tabs;
 
 	private boolean scrolling = false;
@@ -87,7 +89,7 @@ public class BingoCardTaskListScreen extends Screen {
 		}
 
 		filteredItemTasks = new ArrayList<>();
-		visibleTasks = new ArrayList<>();
+		taskWidgets = new ArrayList<>();
 	}
 
 	@Override
@@ -97,15 +99,42 @@ public class BingoCardTaskListScreen extends Screen {
 		int startX = menuStartX();
 		int startY = menuStartY();
 
-		filterField = new EditBox(Minecraft.getInstance().font, startX + 114, startY + 4, 85, 14, Component.nullToEmpty(""));
+		filterField = new EditBox(Minecraft.getInstance().font, startX + 20, startY + 4, 85, 14, Component.nullToEmpty(""));
 		filterField.setBordered(true);
 		filterField.setVisible(true);
 		filterField.setCanLoseFocus(false);
 		filterField.setFocused(true);
 		this.addRenderableWidget(filterField);
 
-		setScrollStep(0);
+		AbstractScrollArea.ScrollbarSettings settings = new AbstractScrollArea.ScrollbarSettings(SCROLLER, SCROLLER_DISABLED, SCROLLER_BACKGROUND, SCROLLER_WIDTH, SCROLLER_HEIGHT, 24, false);
+
 		applyFilter();
+
+		int heightLeft = height - TAB_HEIGHT - 10;
+		int widthLeft = SLOT_WIDTH * 10 + SCROLLER_WIDTH + 3;
+
+		LinearLayout padding = LinearLayout.vertical();
+		GridLayout contents = new GridLayout();
+		padding.addChild(contents, LayoutSettings.defaults().padding(3));
+
+		int colCount = (widthLeft - (3 + SCROLLER_WIDTH)) / SLOT_WIDTH;
+		int tasksStartX = (width - widthLeft) / 2;
+		for (int i = 0; i < filteredItemTasks.size(); i++) {
+			int col = i % colCount;
+			int row = i / colCount;
+			TaskWidget widget = new TaskWidget(filteredItemTasks.get(i), font, w -> {
+				System.out.println("Changed SELECTION");
+			});
+			taskWidgets.add(widget);
+			contents.addChild(widget, row, col);
+		}
+
+		taskListLayout = new CustomScrollableLayout(tasksStartX,
+				TAB_HEIGHT,
+				3 + SCROLLER_WIDTH, heightLeft, padding, settings);
+		taskListLayout.arrangeElements();
+
+		this.addRenderableWidget(taskListLayout);
 	}
 
 	@Override
@@ -113,16 +142,6 @@ public class BingoCardTaskListScreen extends Screen {
 		return false;
 	}
 
-	private void setScrollStep(int newStep) {
-		if (scrollStep == newStep) {
-			return;
-		}
-
-		// subtract 4 out of 5 rows because the step acts like a sliding window, not as a collection of singular rows.
-		scrollStep = Math.clamp(newStep, 0, getOverflowRows());
-
-		updateVisibleTasks();
-	}
 
 	private void setTaskCount(TaskSlot task, int newCount) {
 		Identifier id = task.id();
@@ -146,19 +165,6 @@ public class BingoCardTaskListScreen extends Screen {
 		filteredItemTasks = tasks.stream()
 				.filter(t -> t.id().toString().contains(text))
 				.toList();
-
-		updateVisibleTasks();
-	}
-
-	private void updateVisibleTasks() {
-		int startIndex = scrollStep * 8;
-
-		if (filteredItemTasks.isEmpty()) {
-			visibleTasks = List.of();
-		} else {
-			visibleTasks = filteredItemTasks
-					.subList(startIndex, Math.min(startIndex + 40, filteredItemTasks.size() - 1));
-		}
 	}
 
 	private int getOverflowRows() {
@@ -184,8 +190,6 @@ public class BingoCardTaskListScreen extends Screen {
 	private void switchTab(TaskTab newTab) {
 		selectedTab = newTab;
 		filterField.setValue("");
-
-
 
 		applyFilter();
 	}
@@ -223,8 +227,7 @@ public class BingoCardTaskListScreen extends Screen {
 	}
 
 	@Override
-	public void extractRenderState(GuiGraphicsExtractor context, int mouseX, int mouseY, float deltaTicks) {
-		super.extractRenderState(context, mouseX, mouseY, deltaTicks);
+	public void extractRenderState(@NonNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, float deltaTicks) {
 
 		int startX = menuStartX();
 		int startY = menuStartY();
@@ -235,84 +238,60 @@ public class BingoCardTaskListScreen extends Screen {
 
 		for (TaskTab tab : TABS) {
 			if (tab.index != selectedTab.index) {
-				context.blitSprite(RenderPipelines.GUI_TEXTURED, TAB_UNSELECTED, firstTabX + getTabStartX(tab), tabStartY, TAB_WIDTH, TAB_HEIGHT);
+				graphics.blitSprite(RenderPipelines.GUI_TEXTURED, TAB_UNSELECTED, firstTabX + getTabStartX(tab), tabStartY, TAB_WIDTH, TAB_HEIGHT);
 			}
 		}
 
-		context.blit(RenderPipelines.GUI_TEXTURED, MENU, startX, startY, 0, 0, 256, 256, 256, 256);
+//		if (taskListLayout != null) {
+//			ScreenHelper.extractInventoryBackground(graphics, taskListLayout.getRectangle());
+//		}
 
-		context.blitSprite(RenderPipelines.GUI_TEXTURED, TAB_SELECTED, firstTabX + getTabStartX(selectedTab), tabStartY, TAB_WIDTH, TAB_HEIGHT);
+//		context.blit(RenderPipelines.GUI_TEXTURED, MENU, startX, startY, 0, 0, 256, 256, 256, 256);
+		super.extractRenderState(graphics, mouseX, mouseY, deltaTicks);
+
+		graphics.blitSprite(RenderPipelines.GUI_TEXTURED, TAB_SELECTED, firstTabX + getTabStartX(selectedTab), tabStartY, TAB_WIDTH, TAB_HEIGHT);
 
 		for (TaskTab tab : TABS) {
-			context.item(tab.icon.getDefaultInstance(), firstTabX + getTabStartX(tab) + (TAB_WIDTH - 16) / 2, tabStartY + 8);
+			graphics.item(tab.icon.getDefaultInstance(), firstTabX + getTabStartX(tab) + (TAB_WIDTH - 16) / 2, tabStartY + 8);
 		}
 
-		context.text(Minecraft.getInstance().font, selectedTab.name(), startX + 8, startY + 6, CommonColors.DARK_GRAY, false);
+		graphics.text(Minecraft.getInstance().font, selectedTab.name(), startX + 0, startY + 6, CommonColors.DARK_GRAY, false);
 
-		if (filteredItemTasks.size() > 40) {
-			int scrollRange = SCROLL_HEIGHT - SCROLLER_HEIGHT;
-			int scrollerHeight = scrollStep * scrollRange / getOverflowRows();
-
-			context.blitSprite(RenderPipelines.GUI_TEXTURED, SCROLLER, startX + SCROLL_X, startY + SCROLL_Y + scrollerHeight, SCROLLER_WIDTH, SCROLLER_HEIGHT);
-		} else {
-			context.blitSprite(RenderPipelines.GUI_TEXTURED, SCROLLER_DISABLED, startX + SCROLL_X, startY + SCROLL_Y, SCROLLER_WIDTH, SCROLLER_HEIGHT);
-		}
+//		if (filteredItemTasks.size() > 40) {
+//			int scrollRange = SCROLL_HEIGHT - SCROLLER_HEIGHT;
+//			int scrollerHeight = scrollStep * scrollRange / getOverflowRows();
+//
+//			context.blitSprite(RenderPipelines.GUI_TEXTURED, SCROLLER, startX + SCROLL_X, startY + SCROLL_Y + scrollerHeight, SCROLLER_WIDTH, SCROLLER_HEIGHT);
+//		} else {
+//			context.blitSprite(RenderPipelines.GUI_TEXTURED, SCROLLER_DISABLED, startX + SCROLL_X, startY + SCROLL_Y, SCROLLER_WIDTH, SCROLLER_HEIGHT);
+//		}
 
 		// Item slots
 
-		int slotStartX = startX + SLOT_START_X;
-		int slotStartY = startY + SLOT_START_Y;
-
 		int hoveredIndex = -1;
-		TaskSlot hoveredTask = null;
+		TaskWidget hoveredTask = null;
 		int index = 0;
-		for (TaskSlot visibleTask : visibleTasks) {
-			TaskSlot task = visibleTask;
-			Identifier id = task.id();
-			if (selectedTasks.containsKey(id)) {
-				task = selectedTasks.get(id);
-			}
-
-			int slotX = index % 8;
-			int slotY = index / 8;
-
-			int x = slotStartX + slotX * SLOT_WIDTH + 4;
-			int y = slotStartY + slotY * SLOT_HEIGHT + 4;
-
-			if (task.completeCount() > 0) {
-				context.blitSprite(RenderPipelines.GUI_TEXTURED, SELECTED_SLOT, x - 4, y - 4, SLOT_WIDTH, SLOT_HEIGHT);
-			}
-
-			if (isMouseOverSlot(mouseX, mouseY, slotX, slotY))
-			{
+		for (TaskWidget visibleTask : taskWidgets) {
+			if (visibleTask.isHovered()) {
 				hoveredIndex = index;
-				hoveredTask = task;
+				hoveredTask = visibleTask;
+				break;
 			}
-			else {
-
-				ItemStack stack = new ItemStack(task.item(), task.completeCount() == 0 ? 1 : task.completeCount());
-				context.item(stack, x, y);
-				context.itemDecorations(font, stack, x, y, task.completeCount() == 1 ? "1" : null);
-			}
-
 			index++;
 		}
 
 		if (hoveredIndex != -1) {
-			int xIndex = hoveredIndex % 8;
-			int yIndex = hoveredIndex / 8;
-			int slotX = slotStartX + SLOT_WIDTH * xIndex;
-			int slotY = slotStartY + SLOT_HEIGHT * yIndex;
+//			if (isMouseOnIncreaseCountButton(mouseX, mouseY, xIndex, yIndex)) {
+//				context.blitSprite(RenderPipelines.GUI_TEXTURED, HIGHER_COUNT_BUTTON, slotX - 1, slotY - 1, BUTTON_WIDTH, BUTTON_HEIGHT);
+//			} else {
+//				context.blitSprite(RenderPipelines.GUI_TEXTURED, LOWER_COUNT_BUTTON, slotX - 1, slotY - 1, BUTTON_WIDTH, BUTTON_HEIGHT);
+//			}
 
-			if (isMouseOnIncreaseCountButton(mouseX, mouseY, xIndex, yIndex)) {
-				context.blitSprite(RenderPipelines.GUI_TEXTURED, HIGHER_COUNT_BUTTON, slotX - 1, slotY - 1, BUTTON_WIDTH, BUTTON_HEIGHT);
-			} else {
-				context.blitSprite(RenderPipelines.GUI_TEXTURED, LOWER_COUNT_BUTTON, slotX - 1, slotY - 1, BUTTON_WIDTH, BUTTON_HEIGHT);
-			}
+			TaskTooltipComponent tooltipComponent = new TaskTooltipComponent(hoveredTask.task());
 
-			TaskTooltipComponent tooltipComponent = new TaskTooltipComponent(hoveredTask);
-
-			context.tooltip(font, List.of(tooltipComponent), slotX - tooltipComponent.getWidth(font) / 2, slotY - tooltipComponent.getHeight(font) + 9, DefaultTooltipPositioner.INSTANCE, null);
+			int slotX = hoveredTask.getX();
+			int slotY = hoveredTask.getY();
+			graphics.tooltip(font, List.of(tooltipComponent), slotX - tooltipComponent.getWidth(font) / 2, slotY - tooltipComponent.getHeight(font) + 9, DefaultTooltipPositioner.INSTANCE, null);
 		}
 
 		// Tooltips
@@ -320,13 +299,17 @@ public class BingoCardTaskListScreen extends Screen {
 		for (TaskTab tab : TABS) {
 			if (isMouseOverTab(mouseX, mouseY, tab))
 			{
-				context.setTooltipForNextFrame(tab.name, mouseX, mouseY);
+				graphics.setTooltipForNextFrame(tab.name, mouseX, mouseY);
 			}
 		}
 	}
 
 	@Override
 	public boolean mouseClicked(MouseButtonEvent click, boolean doubled) {
+		if (super.mouseClicked(click, doubled)) {
+			return true;
+		}
+
 		if (doubled) return true;
 
 		int button = click.button();
@@ -346,28 +329,24 @@ public class BingoCardTaskListScreen extends Screen {
 			}
 		}
 
-		for (int y = 0; y < 5; y++) {
-			for (int x = 0; x < 8; x++) {
-				if (!isMouseOverSlot((int) mouseX, (int) mouseY, x, y)) {
-					continue;
-				}
-
-				TaskSlot task = visibleTasks.get(y * 8 + x);
-				Identifier id = task.id();
-				if (selectedTasks.containsKey(id)) {
-					task = selectedTasks.get(id);
-				}
-				if (isMouseOnIncreaseCountButton((int) mouseX, (int) mouseY, x, y)) {
-					setTaskCount(task, task.completeCount() + 1);
-				} else {
-					setTaskCount(task, task.completeCount() - 1);
-				}
-			}
-		}
-
-		if (isMouseOverScrollbar((int) mouseX, (int) mouseY)) {
-			scrolling = true;
-		}
+//		for (int y = 0; y < 5; y++) {
+//			for (int x = 0; x < 8; x++) {
+//				if (!isMouseOverSlot((int) mouseX, (int) mouseY, x, y)) {
+//					continue;
+//				}
+//
+//				TaskSlot task = visibleTasks.get(y * 8 + x);
+//				Identifier id = task.id();
+//				if (selectedTasks.containsKey(id)) {
+//					task = selectedTasks.get(id);
+//				}
+////				if (isMouseOnIncreaseCountButton((int) mouseX, (int) mouseY, x, y)) {
+////					setTaskCount(task, task.completeCount() + 1);
+////				} else {
+////					setTaskCount(task, task.completeCount() - 1);
+////				}
+//			}
+//		}
 
 		return false;
 	}
@@ -378,39 +357,6 @@ public class BingoCardTaskListScreen extends Screen {
 		return super.mouseReleased(click);
 	}
 
-	@Override
-	public boolean mouseDragged(MouseButtonEvent click, double deltaX, double deltaY) {
-		int button = click.button();
-		double mouseX = click.x();
-		double mouseY = click.y();
-
-		if (!scrolling)
-		{
-			return super.mouseDragged(click, deltaX, deltaY);
-		}
-		int min = menuStartY() + SCROLL_Y + SCROLLER_HEIGHT / 2;
-		int max = min + SCROLL_HEIGHT - SCROLLER_HEIGHT - SCROLLER_HEIGHT / 2;
-
-		int targetPixel = (int) mouseY;
-		targetPixel = Math.clamp(targetPixel, min, max);
-		targetPixel -= min;
-
-		setScrollStep(targetPixel * getOverflowRows() / (max - min));
-
-		return true;
-	}
-
-	@Override
-	public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
-		if (super.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount)) {
-			return true;
-		}
-
-		setScrollStep(scrollStep - (int) Math.signum(verticalAmount));
-
-		return true;
-	}
-
 	private int getTabStartX(TaskTab tab) {
 		return TAB_WIDTH * tab.index + tab.index - 1;
 	}
@@ -419,37 +365,19 @@ public class BingoCardTaskListScreen extends Screen {
 		return ScreenHelper.isPointWithinBounds(firstTabX() + getTabStartX(tab) + 4, tabStartY() + 4, TAB_WIDTH - 8, TAB_HEIGHT - 8, mouseX, mouseY);
 	}
 
-	private boolean isMouseOverSlot(int mouseX, int mouseY, int slotX, int slotY) {
-		return ScreenHelper.isPointWithinBounds(
-				menuStartX() + SLOT_START_X + SLOT_WIDTH * slotX + 1,
-				menuStartY() + SLOT_START_Y + SLOT_HEIGHT * slotY + 1,
-				SLOT_WIDTH - 2, SLOT_HEIGHT - 2, mouseX, mouseY);
-	}
-
-	private boolean isMouseOnIncreaseCountButton(int mouseX, int mouseY, int slotX, int slotY) {
-		return ScreenHelper.isPointWithinBounds(
-				menuStartX() + SLOT_START_X + SLOT_WIDTH * slotX + 1,
-				menuStartY() + SLOT_START_Y + SLOT_HEIGHT * slotY,
-				SLOT_WIDTH - 2, (SLOT_HEIGHT - 2) / 2, mouseX, mouseY);
-	}
-
-	private boolean isMouseOverScrollbar(int mouseX, int mouseY) {
-		return ScreenHelper.isPointWithinBounds(menuStartX() + SCROLL_X, menuStartY() + SCROLL_Y, SCROLLER_WIDTH, SCROLL_HEIGHT, mouseX, mouseY);
-	}
-
 	private int menuStartX() {
-		return (width / 2 - MENU_WIDTH / 2);
+		return (width / 2 - (MENU_WIDTH + 200) / 2);
 	}
 
 	private int menuStartY() {
-		return (height / 2 - MENU_HEIGHT / 2);
+		return (height / 2 - (MENU_HEIGHT + 200) / 2);
 	}
 
 	private int firstTabX() {
-		return menuStartX() + MENU_WIDTH / 2 - (TABS.length * TAB_WIDTH + (TABS.length - 1)) / 2;
+		return width / 2 - (TABS.length * TAB_WIDTH + (TABS.length - 1)) / 2;
 	}
 
 	private int tabStartY() {
-		return menuStartY() - TAB_HEIGHT + 4;
+		return 0;
 	}
 }

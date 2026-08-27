@@ -20,6 +20,7 @@ public class PlayerSerializationData
             return;
 
         data.setSerializable(player.playerId.toString(), SerializablePlayer.SERIALIZER, player);
+        data.setSerializable(player.playerId.toString(), SerializablePlayer.SERIALIZER, player);
         data.saveChanges();
     }
 

@@ -7,11 +7,11 @@ import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 
 import java.util.function.Consumer;
 
-public class StatisticProgress {
-
-	private final StatisticHandle statistic;
-	private final BingoParticipant player;
-	private int progressLeft;
+public class StatisticProgress
+{
+    private final StatisticHandle statistic;
+    private final BingoParticipant player;
+    private int progressLeft;
 
 	private int previousGlobalProgress;
 
