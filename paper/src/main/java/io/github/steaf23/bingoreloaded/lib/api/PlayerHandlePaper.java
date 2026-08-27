@@ -1,7 +1,5 @@
 package io.github.steaf23.bingoreloaded.lib.api;
 
-import com.google.common.collect.BiMap;
-import com.google.common.collect.ImmutableBiMap;
 import io.github.steaf23.bingoreloaded.lib.api.inventory.InventoryTemplate;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemTypePaper;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
@@ -10,27 +8,16 @@ import io.github.steaf23.bingoreloaded.lib.api.platform.PaperInventories;
 import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformServer;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.api.statistics.StatisticHandle;
-import io.github.steaf23.bingoreloaded.lib.api.statistics.VanillaStatistic;
-import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import io.github.steaf23.bingoreloaded.lib.util.DebugLogger;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.stats.Stat;
-import net.minecraft.stats.StatType;
-import net.minecraft.stats.Stats;
-import net.minecraft.world.level.levelgen.structure.BuiltinStructures;
 import net.minecraft.world.waypoints.Waypoint;
 import org.bukkit.GameMode;
-import org.bukkit.NamespacedKey;
-import org.bukkit.Registry;
 import org.bukkit.Statistic;
 import org.bukkit.advancement.AdvancementProgress;
-import org.bukkit.craftbukkit.CraftStatistic;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryCloseEvent;
@@ -39,13 +26,10 @@ import org.bukkit.potion.PotionEffect;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
-import java.util.logging.Handler;
 
 public class PlayerHandlePaper implements PlayerHandle {
 

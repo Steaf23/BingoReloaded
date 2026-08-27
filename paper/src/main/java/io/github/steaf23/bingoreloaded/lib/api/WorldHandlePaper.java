@@ -11,7 +11,6 @@ import net.kyori.adventure.key.Key;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
 
-import java.awt.print.Paper;
 import java.util.Collection;
 
 public class WorldHandlePaper implements WorldHandle {
