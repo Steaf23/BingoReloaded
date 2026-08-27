@@ -2,7 +2,6 @@ package io.github.steaf23.bingoreloaded.lib.item;
 
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataStorageSerializer;
-import io.github.steaf23.bingoreloaded.lib.data.core.DataStorageSerializer;
 import org.jetbrains.annotations.NotNull;
 
 

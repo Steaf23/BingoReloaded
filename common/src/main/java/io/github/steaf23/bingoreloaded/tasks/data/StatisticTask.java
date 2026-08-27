@@ -12,7 +12,6 @@ import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.object.ObjectContents;
-import net.kyori.adventure.text.object.ObjectContents;
 
 import java.util.HashSet;
 import java.util.Objects;

@@ -12,7 +12,6 @@ import net.kyori.adventure.text.Component;
 
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.HashSet;
 import java.util.Set;
 
 public interface TaskData {
