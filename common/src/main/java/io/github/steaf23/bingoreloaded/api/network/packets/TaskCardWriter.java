@@ -17,7 +17,7 @@ public class TaskCardWriter implements DataWriter<TaskCard> {
 		}
 		else {
 			to.writeBoolean(true);
-			DataWriter.writeString("bingoreloaded:gamemode/" + taskCard.getMode().configName(), to);
+			DataWriter.writeString(to, "bingoreloaded:gamemode/" + taskCard.getMode().configName());
 
 			taskCard.write(to);
 		}

@@ -3,12 +3,13 @@ package io.github.steaf23.bingoreloadedcompanion.client.config;
 import io.github.steaf23.bingoreloadedcompanion.card.BingoCard;
 import io.github.steaf23.bingoreloadedcompanion.card.BingoGamemode;
 import io.github.steaf23.bingoreloadedcompanion.card.Task;
+import io.github.steaf23.bingoreloadedcompanion.card.taskslot.TaskDefinition;
+import io.github.steaf23.bingoreloadedcompanion.card.taskslot.TaskId;
 import io.github.steaf23.bingoreloadedcompanion.client.BingoReloadedCompanionClient;
 import io.github.steaf23.bingoreloadedcompanion.client.hud.BingoCardHudElement;
 import io.github.steaf23.bingoreloadedcompanion.client.hud.HudConfigManager;
 import io.github.steaf23.bingoreloadedcompanion.client.hud.HudPlacement;
 import io.github.steaf23.bingoreloadedcompanion.client.util.ScreenHelper;
-import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
@@ -18,7 +19,7 @@ import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
-import net.minecraft.world.item.Items;
+import net.minecraft.util.CommonColors;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
@@ -67,11 +68,13 @@ public class BingoConfigScreen extends Screen {
 		this.modMenuScreen = modMenuScreen;
 
 		this.configManager = hudConfig;
-		this.previewCard = new BingoCardHudElement(this.configManager);
+		this.previewCard = new BingoCardHudElement(this.configManager, true);
 
 		List<Task> testTasks = new ArrayList<>();
 		for (int i = 0; i < 25; i++) {
-			testTasks.add(new Task(Task.TaskCompletion.INCOMPLETE, Identifier.parse("bingoreloaded:item"), Items.PAPER, 1));
+			testTasks.add(new Task(
+					new TaskDefinition(TaskId.DUMMY, "", "", Identifier.withDefaultNamespace("paper"), Identifier.parse("bingoreloadedcompanion:dummy"), 64),
+					Task.TaskCompletion.INCOMPLETE, 1));
 		}
 		BingoCard testCard5x = new BingoCard(BingoGamemode.REGULAR, 5, testTasks);
 		previewCard.setCard(testCard5x);
@@ -136,7 +139,7 @@ public class BingoConfigScreen extends Screen {
 			for (Component t : text) {
 				int textWidth = font.width(t);
 				int textX = width / 2 - (textWidth / 2);
-				context.text(font, t, textX, y, ScreenHelper.addAlphaToColor(ChatFormatting.WHITE.getColor(), (int)(255 * infoAlpha)), true);
+				context.text(font, t, textX, y, ScreenHelper.addAlphaToColor(0xFFFFFF, (int)(255 * infoAlpha)), true);
 				y += 15;
 			}
 		}
@@ -152,7 +155,7 @@ public class BingoConfigScreen extends Screen {
 			}
 
 			if (selectedElement == element) {
-				context.outline(rect.x() - 3, rect.y() - 3, rect.width() + 6, rect.height() + 6, ScreenHelper.addAlphaToColor(ChatFormatting.YELLOW.getColor(), 200));
+				context.outline(rect.x() - 3, rect.y() - 3, rect.width() + 6, rect.height() + 6, ScreenHelper.addAlphaToColor(CommonColors.YELLOW, 200));
 
 				int showButtonX = rect.endX() - (BUTTON_WIDTH * 2 + 2);
 				int scaleButtonX = rect.endX() - (BUTTON_WIDTH * 3 + 4);
@@ -425,14 +428,13 @@ public class BingoConfigScreen extends Screen {
 	}
 
 	protected void closeScreen() {
-		if (minecraft == null) return;
 		if (configManager.hasChanged()) {
 
-			minecraft.setScreen(new DiscardConfirmScreen(new BingoConfigScreen(modMenuScreen, configManager), modMenuScreen, configManager::load));
+			minecraft.setScreenAndShow(new DiscardConfirmScreen(new BingoConfigScreen(modMenuScreen, configManager), modMenuScreen, configManager::load));
 			return;
 		}
 
 		configManager.load();
-		minecraft.setScreen(modMenuScreen);
+		minecraft.setScreenAndShow(modMenuScreen);
 	}
 }

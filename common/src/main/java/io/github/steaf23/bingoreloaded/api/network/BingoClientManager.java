@@ -3,6 +3,7 @@ package io.github.steaf23.bingoreloaded.api.network;
 import io.github.steaf23.bingoreloaded.cards.TaskCard;
 import io.github.steaf23.bingoreloaded.cards.slot.TickingTaskSlot;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
+import io.github.steaf23.bingoreloaded.tasks.data.TaskData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -17,6 +18,8 @@ public interface BingoClientManager {
 	void updateHotswapContext(PlayerHandle player, @NotNull List<TickingTaskSlot> holders);
 
 	void playerLeavesServer(PlayerHandle player);
+
+	void openCreator(PlayerHandle player, @NotNull List<TaskData> tasks);
 
 	class DisabledClientManager implements BingoClientManager {
 
@@ -37,6 +40,11 @@ public interface BingoClientManager {
 
 		@Override
 		public void playerLeavesServer(PlayerHandle player) {
+
+		}
+
+		@Override
+		public void openCreator(PlayerHandle player, @NotNull List<TaskData> tasks) {
 
 		}
 	}

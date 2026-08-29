@@ -3,22 +3,16 @@ package io.github.steaf23.bingoreloaded.gui.inventory.creator;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.helper.TaskFormatting;
-import io.github.steaf23.bingoreloaded.lib.api.AdvancementHandle;
-import io.github.steaf23.bingoreloaded.lib.api.PlatformResolver;
-import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.api.item.VanillaItems;
 import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformServer;
 import io.github.steaf23.bingoreloaded.lib.inventory.BasicMenu;
 import io.github.steaf23.bingoreloaded.lib.inventory.MenuBoard;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import io.github.steaf23.bingoreloaded.tasks.GameTask;
-import io.github.steaf23.bingoreloaded.tasks.data.AdvancementTask;
+import io.github.steaf23.bingoreloaded.tasks.Tasks;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class ListEditorMenu extends BasicMenu
 {
@@ -56,36 +50,12 @@ public class ListEditorMenu extends BasicMenu
     }
 
     private BasicMenu createItemPicker(MenuBoard menuBoard) {
-
-        List<GameTask> tasks = new ArrayList<>();
-        for (ItemType m : PlatformResolver.getRegistries().allItems()) {
-            if (!m.isAir()) {
-                tasks.add(GameTask.simpleItemTask(m, 1));
-            }
-        }
-
-        return new TaskPickerMenu(menuBoard, "Select Items", tasks, listName, formatting);
+        return new TaskPickerMenu(menuBoard, "Select Items", Tasks.allItems().stream().map(GameTask::new).toList(), listName, formatting);
     }
 
     private BasicMenu createAdvancementPicker(MenuBoard menuBoard) {
-
         PlatformServer server = menuBoard.context().server();
-        List<GameTask> tasks = new ArrayList<>();
-        for (AdvancementHandle advancement : server.allAdvancements()) {
-            String key = advancement.key().value();
-            if (key.startsWith("recipes/") || key.endsWith("/root")) {
-                continue;
-            }
-
-            if (!advancement.hasDisplay()) {
-                continue;
-            }
-
-            AdvancementTask task = new AdvancementTask(advancement);
-            tasks.add(new GameTask(task));
-        }
-
-        return new TaskPickerMenu(menuBoard, "Add Advancements", tasks, listName, formatting);
+        return new TaskPickerMenu(menuBoard, "Add Advancements", Tasks.allAdvancements(server).stream().map(GameTask::new).toList(), listName, formatting);
     }
 
     private BasicMenu createTagManager(MenuBoard menuBoard) {

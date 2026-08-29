@@ -4,12 +4,11 @@ import io.github.steaf23.bingoreloadedcompanion.BingoReloadedCompanion;
 import io.github.steaf23.bingoreloadedcompanion.card.BingoCard;
 import io.github.steaf23.bingoreloadedcompanion.card.BingoGamemode;
 import io.github.steaf23.bingoreloadedcompanion.card.Task;
-import net.minecraft.core.registries.BuiltInRegistries;
+import io.github.steaf23.bingoreloadedcompanion.card.taskslot.TaskDefinition;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.Identifier;
-import net.minecraft.world.item.Item;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -31,8 +30,7 @@ public class ServerUpdateCardPayload implements CustomPacketPayload {
 					return new ServerUpdateCardPayload(null);
 				}
 
-				String gamemodeStr = PayloadHelper.readString(buf);
-				Identifier gamemodeId = Identifier.parse(gamemodeStr);
+				Identifier gamemodeId = PayloadHelper.ID_CODEC.decode(buf);
 				BingoGamemode gamemode = BingoGamemode.fromId(gamemodeId, false);
 
 				int size = buf.readInt();
@@ -43,19 +41,17 @@ public class ServerUpdateCardPayload implements CustomPacketPayload {
 					boolean completed = buf.readBoolean();
 					Task.TaskCompletion completion;
 					if (completed) {
-						String player = PayloadHelper.readString(buf);
-						String team = PayloadHelper.readString(buf);
+						String player = PayloadHelper.STRING_CODEC.decode(buf);
+						String team = PayloadHelper.STRING_CODEC.decode(buf);
 						int color = buf.readInt();
 						completion = new Task.TaskCompletion(true, player, team, color);
 					} else {
 						completion = Task.TaskCompletion.INCOMPLETE;
 					}
 
-					String taskType = PayloadHelper.readString(buf);
+					TaskDefinition task = TaskDefinition.CODEC.decode(buf);
 					int requiredAmount = buf.readInt();
-					String itemId = PayloadHelper.readString(buf);
-					Item item = BuiltInRegistries.ITEM.getValue(Identifier.parse(itemId));
-					tasks.add(new Task(completion, Identifier.parse(taskType), item, requiredAmount));
+					tasks.add(new Task(task, completion, requiredAmount));
 				}
 
 				BingoCard card = new BingoCard(gamemode, size, tasks);

@@ -3,6 +3,7 @@ package io.github.steaf23.bingoreloaded.tasks;
 import io.github.steaf23.bingoreloaded.data.BingoCardData;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformServer;
+import io.github.steaf23.bingoreloaded.tasks.data.ItemTask;
 import io.github.steaf23.bingoreloaded.tasks.data.TaskData;
 
 import java.util.ArrayList;
@@ -33,7 +34,7 @@ public class RotatingTaskList {
 			Collections.shuffle(randomTasks, seededRandom);
 		}
 		if (randomTasks.isEmpty()) {
-			return GameTask.simpleItemTask(ItemType.of("dirt"), 1);
+			return new GameTask(new ItemTask(ItemType.of("dirt"), 1));
 		}
 
 		TaskData data = randomTasks.removeLast();

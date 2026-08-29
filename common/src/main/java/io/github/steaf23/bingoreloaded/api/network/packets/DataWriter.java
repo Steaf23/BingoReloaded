@@ -15,7 +15,7 @@ public interface DataWriter<WriteFrom> {
 		}
 	}
 
-	static void writeString(String text, DataOutputStream stream) throws IOException {
+	static void writeString(DataOutputStream stream, String text) throws IOException {
 		byte[] bytes = text.getBytes();
 		stream.writeShort(bytes.length);
 		stream.write(bytes);

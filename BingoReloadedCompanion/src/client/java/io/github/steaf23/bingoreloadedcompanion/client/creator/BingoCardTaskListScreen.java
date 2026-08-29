@@ -1,8 +1,8 @@
 package io.github.steaf23.bingoreloadedcompanion.client.creator;
 
-import io.github.steaf23.bingoreloadedcompanion.card.taskslot.AdvancementTask;
-import io.github.steaf23.bingoreloadedcompanion.card.taskslot.ItemTask;
-import io.github.steaf23.bingoreloadedcompanion.card.taskslot.TaskSlot;
+import io.github.steaf23.bingoreloadedcompanion.card.taskslot.TaskDefinition;
+import io.github.steaf23.bingoreloadedcompanion.card.taskslot.TaskType;
+import io.github.steaf23.bingoreloadedcompanion.card.taskslot.TaskWithCount;
 import io.github.steaf23.bingoreloadedcompanion.client.TaskTooltipComponent;
 import io.github.steaf23.bingoreloadedcompanion.client.core.CustomScrollableLayout;
 import io.github.steaf23.bingoreloadedcompanion.client.util.ScreenHelper;
@@ -15,11 +15,8 @@ import net.minecraft.client.gui.layouts.LayoutSettings;
 import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
-import net.minecraft.client.input.CharacterEvent;
-import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.CommonColors;
@@ -29,23 +26,18 @@ import org.jspecify.annotations.NonNull;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class BingoCardTaskListScreen extends Screen {
 
-	private record TaskTab(int index, Item icon, Component name) {}
+	private record TaskTab(int index, Item icon, Component name, TaskType type) {}
 
 	private static final TaskTab[] TABS = new TaskTab[]{
-			new TaskTab(0, Items.APPLE, Component.nullToEmpty("Items")),
-			new TaskTab(1, Items.ENDER_EYE, Component.nullToEmpty("Advancements")),
-			new TaskTab(2, Items.GLOBE_BANNER_PATTERN, Component.nullToEmpty("Statistics"))
+			new TaskTab(0, Items.APPLE, Component.nullToEmpty("Items"), TaskType.ITEM),
+			new TaskTab(1, Items.ENDER_EYE, Component.nullToEmpty("Advancements"), TaskType.ADVANCEMENT),
+			new TaskTab(2, Items.GLOBE_BANNER_PATTERN, Component.nullToEmpty("Statistics"), TaskType.STATISTIC)
 	};
 
-	private static final Identifier MENU = Identifier.parse("bingoreloadedcompanion:textures/gui/task_list.png");
-	private static final Identifier SELECTED_SLOT = Identifier.parse("bingoreloadedcompanion:selected_slot");
-	private static final Identifier FILTER_EMPTY = Identifier.parse("bingoreloadedcompanion:filter_empty");
 	private static final Identifier TAB_SELECTED = Identifier.withDefaultNamespace("container/creative_inventory/tab_top_selected_2");
 	private static final Identifier TAB_UNSELECTED = Identifier.withDefaultNamespace("container/creative_inventory/tab_top_unselected_2");
 	private static final Identifier SCROLLER = Identifier.withDefaultNamespace("container/creative_inventory/scroller");
@@ -60,42 +52,26 @@ public class BingoCardTaskListScreen extends Screen {
 
 	private static final int SCROLLER_WIDTH = 12;
 	private static final int SCROLLER_HEIGHT = 15;
-	private static final int SCROLL_HEIGHT = 118;
-	private static final int SCROLL_X = 202;
-	private static final int SCROLL_Y = 20;
-
 	private static final int SLOT_WIDTH = 24;
-	private static final int SLOT_HEIGHT = 24;
-	private static final int SLOT_START_X = 7;
-	private static final int SLOT_START_Y = 19;
 
 
 	private TaskTab selectedTab;
 	private EditBox filterField;
 	private CustomScrollableLayout taskListLayout = null;
 
-	private final Map<Identifier, TaskSlot> selectedTasks = new HashMap<>();
+	private List<TaskDefinition> allTasks;
+	private List<TaskWidget> visibleWidgets;
 
-	private List<? extends TaskSlot> filteredItemTasks;
-	private List<TaskWidget> taskWidgets;
-	private List<ScreenTab> tabs;
-
-	private boolean scrolling = false;
-
-	public BingoCardTaskListScreen(Component title, List<? extends TaskSlot> tasks) {
+	public BingoCardTaskListScreen(Component title, List<TaskDefinition> tasks) {
 		super(title);
-		for (TaskSlot task : tasks) {
-			selectedTasks.put(task.id(), task);
-		}
+		selectedTab = TABS[0];
 
-		filteredItemTasks = new ArrayList<>();
-		taskWidgets = new ArrayList<>();
+		allTasks = tasks;
+		visibleWidgets = new ArrayList<>();
 	}
 
 	@Override
 	protected void init() {
-		selectedTab = TABS[0];
-
 		int startX = menuStartX();
 		int startY = menuStartY();
 
@@ -108,8 +84,6 @@ public class BingoCardTaskListScreen extends Screen {
 
 		AbstractScrollArea.ScrollbarSettings settings = new AbstractScrollArea.ScrollbarSettings(SCROLLER, SCROLLER_DISABLED, SCROLLER_BACKGROUND, SCROLLER_WIDTH, SCROLLER_HEIGHT, 24, false);
 
-		applyFilter();
-
 		int heightLeft = height - TAB_HEIGHT - 10;
 		int widthLeft = SLOT_WIDTH * 10 + SCROLLER_WIDTH + 3;
 
@@ -119,14 +93,18 @@ public class BingoCardTaskListScreen extends Screen {
 
 		int colCount = (widthLeft - (3 + SCROLLER_WIDTH)) / SLOT_WIDTH;
 		int tasksStartX = (width - widthLeft) / 2;
-		for (int i = 0; i < filteredItemTasks.size(); i++) {
+
+		visibleWidgets = allTasks.stream()
+				.filter(def -> def.type() == selectedTab.type())
+				.map(def -> new TaskWidget(new TaskWithCount(def, 0), font, _ -> {}, (event, widget) -> {
+					widget.updateCount(widget.task().count() + 1);
+					int idx = visibleWidgets.indexOf(widget);
+				}))
+				.toList();
+		for (int i = 0; i < visibleWidgets.size(); i++) {
 			int col = i % colCount;
 			int row = i / colCount;
-			TaskWidget widget = new TaskWidget(filteredItemTasks.get(i), font, w -> {
-				System.out.println("Changed SELECTION");
-			});
-			taskWidgets.add(widget);
-			contents.addChild(widget, row, col);
+			contents.addChild(visibleWidgets.get(i), row, col);
 		}
 
 		taskListLayout = new CustomScrollableLayout(tasksStartX,
@@ -142,89 +120,48 @@ public class BingoCardTaskListScreen extends Screen {
 		return false;
 	}
 
-
-	private void setTaskCount(TaskSlot task, int newCount) {
-		Identifier id = task.id();
-
-		if (newCount > 0) {
-			selectedTasks.put(id, task.copyWithCount(newCount));
-		} else {
-			selectedTasks.remove(id);
-		}
-	}
-
-	private void applyFilter() {
-		String text = filterField.getValue().toLowerCase().replace(" ", "_");
-
-		List<? extends TaskSlot> tasks = switch (selectedTab.index) {
-			case 0 -> allItemTasks();
-			case 1 -> allAdvancementTasks();
-			case 2 -> allStatisticTasks();
-			default -> List.of();
-		};
-		filteredItemTasks = tasks.stream()
-				.filter(t -> t.id().toString().contains(text))
-				.toList();
-	}
-
 	private int getOverflowRows() {
-		return Math.max(0, (filteredItemTasks.size() / 8) - 4);
-	}
-
-	private List<? extends TaskSlot> allItemTasks() {
-		return BuiltInRegistries.ITEM.stream()
-				.map(item -> new ItemTask(BuiltInRegistries.ITEM.getKey(item), 0)).toList()
-				.subList(1, BuiltInRegistries.ITEM.size() - 1);
-	}
-
-	private List<? extends TaskSlot> allAdvancementTasks() {
-		return Minecraft.getInstance().getConnection().getAdvancements().getTree().nodes()
-				.stream().map(placedAdv -> new AdvancementTask(placedAdv.holder(), false))
-				.toList();
-	}
-
-	private List<? extends TaskSlot> allStatisticTasks() {
-		return List.of();
+		return Math.max(0, (allTasks.size() / 8) - 4);
 	}
 
 	private void switchTab(TaskTab newTab) {
 		selectedTab = newTab;
 		filterField.setValue("");
 
-		applyFilter();
+		rebuildWidgets();
 	}
-
-	@Override
-	public boolean keyPressed(KeyEvent key) {
-		String oldFilter = filterField.getValue();
-
-		boolean result = filterField.keyPressed(key);
-		if (!oldFilter.equals(filterField.getValue())) {
-			applyFilter();
-		}
-
-		if (super.keyPressed(key)) {
-			return true;
-		}
-
-		return result;
-	}
-
-	@Override
-	public boolean charTyped(CharacterEvent charInput) {
-		String oldFilter = filterField.getValue();
-
-		boolean result = filterField.charTyped(charInput);
-		if (!oldFilter.equals(filterField.getValue())) {
-			applyFilter();
-		}
-
-		if (super.charTyped(charInput)) {
-			return true;
-		}
-
-		return result;
-	}
+//
+//	@Override
+//	public boolean keyPressed(KeyEvent key) {
+//		String oldFilter = filterField.getValue();
+//
+//		boolean result = filterField.keyPressed(key);
+//		if (!oldFilter.equals(filterField.getValue())) {
+//			applyFilter();
+//		}
+//
+//		if (super.keyPressed(key)) {
+//			return true;
+//		}
+//
+//		return result;
+//	}
+//
+//	@Override
+//	public boolean charTyped(CharacterEvent charInput) {
+//		String oldFilter = filterField.getValue();
+//
+//		boolean result = filterField.charTyped(charInput);
+//		if (!oldFilter.equals(filterField.getValue())) {
+//			applyFilter();
+//		}
+//
+//		if (super.charTyped(charInput)) {
+//			return true;
+//		}
+//
+//		return result;
+//	}
 
 	@Override
 	public void extractRenderState(@NonNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, float deltaTicks) {
@@ -271,7 +208,7 @@ public class BingoCardTaskListScreen extends Screen {
 		int hoveredIndex = -1;
 		TaskWidget hoveredTask = null;
 		int index = 0;
-		for (TaskWidget visibleTask : taskWidgets) {
+		for (TaskWidget visibleTask : visibleWidgets) {
 			if (visibleTask.isHovered()) {
 				hoveredIndex = index;
 				hoveredTask = visibleTask;
@@ -329,32 +266,7 @@ public class BingoCardTaskListScreen extends Screen {
 			}
 		}
 
-//		for (int y = 0; y < 5; y++) {
-//			for (int x = 0; x < 8; x++) {
-//				if (!isMouseOverSlot((int) mouseX, (int) mouseY, x, y)) {
-//					continue;
-//				}
-//
-//				TaskSlot task = visibleTasks.get(y * 8 + x);
-//				Identifier id = task.id();
-//				if (selectedTasks.containsKey(id)) {
-//					task = selectedTasks.get(id);
-//				}
-////				if (isMouseOnIncreaseCountButton((int) mouseX, (int) mouseY, x, y)) {
-////					setTaskCount(task, task.completeCount() + 1);
-////				} else {
-////					setTaskCount(task, task.completeCount() - 1);
-////				}
-//			}
-//		}
-
 		return false;
-	}
-
-	@Override
-	public boolean mouseReleased(MouseButtonEvent click) {
-		scrolling = false;
-		return super.mouseReleased(click);
 	}
 
 	private int getTabStartX(TaskTab tab) {

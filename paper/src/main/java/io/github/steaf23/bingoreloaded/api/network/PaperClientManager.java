@@ -10,6 +10,8 @@ import io.github.steaf23.bingoreloaded.lib.api.PlayerHandlePaper;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
+import io.github.steaf23.bingoreloaded.protocol.TaskDefinitionProtocol;
+import io.github.steaf23.bingoreloaded.tasks.data.TaskData;
 import org.apache.commons.lang3.function.FailableConsumer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -37,8 +39,8 @@ public class PaperClientManager implements BingoClientManager {
 		this.bingo = bingo;
 
 		Messenger messenger = plugin.getServer().getMessenger();
-		messenger.registerIncomingPluginChannel(plugin, "bingoreloaded:hello", (channel, player, buf) -> {
-			if (!channel.equals("bingoreloaded:hello")) return;
+		messenger.registerIncomingPluginChannel(plugin, BingoReloadedPackets.CLIENT_HELLO.id(), (channel, player, buf) -> {
+			if (!channel.equals(BingoReloadedPackets.CLIENT_HELLO.id())) return;
 
 			connectedPlayers.add(player.getUniqueId());
 			ConsoleMessenger.log("Player " + player.getName() + " connected using the companion mod");
@@ -59,8 +61,9 @@ public class PaperClientManager implements BingoClientManager {
 			});
 		});
 
-		messenger.registerOutgoingPluginChannel(plugin, "bingoreloaded:update_card");
-		messenger.registerOutgoingPluginChannel(plugin, "bingoreloaded:hotswap_tasks");
+		messenger.registerOutgoingPluginChannel(plugin, BingoReloadedPackets.SERVER_UPDATE_CARD.id());
+		messenger.registerOutgoingPluginChannel(plugin, BingoReloadedPackets.SERVER_HOTSWAP_TASKS.id());
+		messenger.registerOutgoingPluginChannel(plugin, BingoReloadedPackets.SERVER_OPEN_CREATOR.id());
 	}
 
 	@Override
@@ -89,6 +92,16 @@ public class PaperClientManager implements BingoClientManager {
 	@Override
 	public void playerLeavesServer(PlayerHandle player) {
 		connectedPlayers.remove(player.uniqueId());
+	}
+
+	@Override
+	public void openCreator(PlayerHandle player, @NotNull List<TaskData> tasks) {
+		sendMessage(((PlayerHandlePaper)player).handle(), BingoReloadedPackets.SERVER_OPEN_CREATOR.id(), stream -> {
+			stream.writeInt(tasks.size());
+			for (TaskData data : tasks) {
+				TaskDefinitionProtocol.writeTaskData(stream, data);
+			}
+		});
 	}
 
 	private void sendMessage(Player player, String channel, FailableConsumer<DataOutputStream, IOException> writer) {

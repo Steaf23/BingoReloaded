@@ -84,4 +84,9 @@ public class CustomScrollableLayout extends AbstractScrollArea implements Layout
 		Layout.super.arrangeElements();
 		setWidth(innerLayout.getWidth() + scrollerWidth);
 	}
+
+	@Override
+	public void removeChildren() {
+		innerLayout.removeChildren();
+	}
 }

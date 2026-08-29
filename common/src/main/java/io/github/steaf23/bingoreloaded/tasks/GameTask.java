@@ -12,7 +12,7 @@ import io.github.steaf23.bingoreloaded.lib.data.core.tag.TagDataStorage;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
-import io.github.steaf23.bingoreloaded.tasks.data.ItemTask;
+import io.github.steaf23.bingoreloaded.protocol.TaskDefinitionProtocol;
 import io.github.steaf23.bingoreloaded.tasks.data.TaskData;
 import io.github.steaf23.bingoreloaded.util.timer.GameTimer;
 import net.kyori.adventure.key.Key;
@@ -66,10 +66,6 @@ public class GameTask
         this.completedByTeam = null;
         this.voided = false;
         this.completedAt = -1L;
-    }
-
-    public static GameTask simpleItemTask(ItemType material, int count) {
-        return new GameTask(new ItemTask(material, count));
     }
 
     public void setData(TaskData data) {
@@ -231,13 +227,12 @@ public class GameTask
 	public void write(DataOutputStream stream) throws IOException {
 		stream.writeBoolean(isCompleted());
 		if (isCompleted()) {
-			DataWriter.writeString(completedBy.getName(), stream);
-			DataWriter.writeString(completedByTeam.getIdentifier(), stream);
+			DataWriter.writeString(stream, completedBy.getName());
+            DataWriter.writeString(stream, completedByTeam.getIdentifier());
 			stream.writeInt(completedByTeam.getColor().value());
 		}
-		DataWriter.writeString(BingoReloaded.resourceKey(taskType().id).asString(), stream);
+
+        TaskDefinitionProtocol.writeTaskData(stream, data);
 		stream.writeInt(data.getRequiredAmount());
-		String key = data.getDisplayMaterial(CardDisplayInfo.DUMMY_DISPLAY_INFO).key().asString();
-		DataWriter.writeString(key, stream);
 	}
 }

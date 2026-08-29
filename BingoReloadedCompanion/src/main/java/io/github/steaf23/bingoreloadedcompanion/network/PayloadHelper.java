@@ -1,21 +1,22 @@
 package io.github.steaf23.bingoreloadedcompanion.network;
 
-import net.minecraft.network.RegistryFriendlyByteBuf;
+import io.netty.buffer.ByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.resources.Identifier;
+
+import java.nio.charset.Charset;
 
 public class PayloadHelper {
 
-	public static String readString(RegistryFriendlyByteBuf buf) {
-		short strSize = buf.readShort();
-		byte[] bytes = new byte[strSize];
-		for (int j = 0; j < strSize; j++) {
-			bytes[j] = buf.readByte();
-		}
-		return new String(bytes);
-	}
+	public static final StreamCodec<ByteBuf, String> STRING_CODEC = StreamCodec.of(
+			(buf, str) -> {
+				buf.writeShort(str.length());
+				buf.writeBytes(str.getBytes(Charset.defaultCharset()));
+			}, (buf) -> {
+				int len = buf.readShort();
+				return buf.readBytes(len).toString(Charset.defaultCharset());
+			}
+	);
 
-	static void writeString(String text, RegistryFriendlyByteBuf stream) {
-		byte[] bytes = text.getBytes();
-		stream.writeShort(bytes.length);
-		stream.writeBytes(bytes);
-	}
+	public static final StreamCodec<ByteBuf, Identifier> ID_CODEC = STRING_CODEC.map(Identifier::parse, Identifier::toString);
 }

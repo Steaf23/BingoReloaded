@@ -14,6 +14,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
@@ -32,6 +33,8 @@ public class BingoCardHudElement implements HudElement {
 	private static final Identifier TASK_STATISTIC_ICON = Identifier.parse("bingoreloadedcompanion:textures/gui/sprites/task_statistic_icon.png");
 	private static final Identifier TASK_COMPLETED_OVERLAY = Identifier.parse("bingoreloadedcompanion:textures/gui/sprites/task_completed_overlay.png");
 
+	private static final Identifier PREVIEW_TASK_TEXTURE = Identifier.withDefaultNamespace("textures/item/paper.png");
+
 	private static final Integer RECOVERY_COLOR = TextColor.parseColor("#5cb1ff").getOrThrow().getValue();
 	private static final TextColorGradient HOTSWAP_EXPIRATION_GRADIENT = new TextColorGradient()
 			.addColor(TextColor.parseColor("#ffffff").getOrThrow(), 0.00f)
@@ -48,6 +51,7 @@ public class BingoCardHudElement implements HudElement {
 	private @Nullable BingoCard card;
 	private @Nullable ImmutableList<HotswapTaskHolder> hotswapTaskHolders;
 	private long lastHotswapUpdateTick = 0;
+	private final boolean preview;
 
 	boolean visible = true;
 	boolean renderingInScreen = false;
@@ -55,8 +59,9 @@ public class BingoCardHudElement implements HudElement {
 	private static final Identifier TASKS_ELEMENT = Identifier.parse("bingoreloadedcompanion:hud/bingocard/tasks");
 	private static final Identifier GAMEMODE_ELEMENT = Identifier.parse("bingoreloadedcompanion:hud/bingocard/gamemode");
 
-	public BingoCardHudElement(HudConfigManager hudConfig) {
+	public BingoCardHudElement(HudConfigManager hudConfig, boolean preview) {
 		this.hudConfig = hudConfig;
+		this.preview = preview;
 	}
 
 	public void setCard(@Nullable BingoCard card) {
@@ -209,10 +214,9 @@ public class BingoCardHudElement implements HudElement {
 			int color = ScreenHelper.addAlphaToColor(HOTSWAP_EXPIRATION_GRADIENT.sample(1 - predictedTime / hotswapContext.totalTimeSeconds()).getValue(), 200);
 			renderHotswapBackground(drawContext, (int) hotswapContext.totalTimeSeconds(), predictedTime, borderX, borderY, color, true);
 		} else {
-			String taskType = task.taskType().toString();
-			Identifier backgroundTexture = switch (taskType) {
-				case "bingoreloaded:advancement" -> TASK_BACKGROUND_ADVANCEMENT;
-				case "bingoreloaded:statistic" -> TASK_BACKGROUND_STATISTIC;
+			Identifier backgroundTexture = switch (task.task().type()) {
+				case ADVANCEMENT -> TASK_BACKGROUND_ADVANCEMENT;
+				case STATISTIC -> TASK_BACKGROUND_STATISTIC;
 				default -> TASK_BACKGROUND;
 			};
 
@@ -225,23 +229,29 @@ public class BingoCardHudElement implements HudElement {
 		}
 
 		// Actual item representation of the task
-		ItemStack stack = new ItemStack(task.itemType(), task.requiredAmount());
-		drawContext.item(stack, taskX, taskY);
+		ItemStack stack = null;
+		if (preview) {
+			drawContext.blit(RenderPipelines.GUI_TEXTURED, PREVIEW_TASK_TEXTURE, taskX, taskY, 0, 0, 16, 16, 16, 16);
+		} else {
+			stack = new ItemStack(BuiltInRegistries.ITEM.getValue(task.task().iconItem()), task.requiredAmount());
+			drawContext.item(stack, taskX, taskY);
+		}
 
 		// Draw statistic/ advancement overlay sprite last
-		String taskType = task.taskType().toString();
-		switch (taskType) {
-			case "bingoreloaded:advancement" -> {
+		switch (task.task().type()) {
+			case ADVANCEMENT -> {
 				drawContext.blit(RenderPipelines.GUI_TEXTURED, TASK_ADVANCEMENT_ICON, borderX, borderY, 0, 0, 21, 24, 21, 24);
 			}
-			case "bingoreloaded:statistic" -> {
+			case STATISTIC -> {
 				drawContext.blit(RenderPipelines.GUI_TEXTURED, TASK_STATISTIC_ICON, borderX, borderY, 0, 0, 21, 24, 21, 24);
 			}
 		}
 
-		// Lastly draw the required amount of the task.
-		Font textRenderer = Minecraft.getInstance().font;
-		drawContext.itemDecorations(textRenderer, stack, taskX, taskY);
+		if (!preview) {
+			// Lastly draw the required amount of the task.
+			Font textRenderer = Minecraft.getInstance().font;
+			drawContext.itemDecorations(textRenderer, stack, taskX, taskY);
+		}
 	}
 
 	private void renderHotswapBackground(GuiGraphicsExtractor context, float startTime, float currentTime, int x, int y, int color, boolean reverse) {

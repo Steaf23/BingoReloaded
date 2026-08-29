@@ -1,7 +1,7 @@
 package io.github.steaf23.bingoreloadedcompanion.client.creator;
 
 import com.mojang.blaze3d.platform.cursor.CursorTypes;
-import io.github.steaf23.bingoreloadedcompanion.card.taskslot.TaskSlot;
+import io.github.steaf23.bingoreloadedcompanion.card.taskslot.TaskWithCount;
 import io.github.steaf23.bingoreloadedcompanion.client.util.ScreenHelper;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -17,6 +17,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import org.jspecify.annotations.NonNull;
 
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 public class TaskWidget extends AbstractWidget {
@@ -27,22 +28,29 @@ public class TaskWidget extends AbstractWidget {
 	private static final int TASK_WIDTH = 24;
 	private static final int TASK_HEIGHT = 24;
 
-	private TaskSlot task;
+	private TaskWithCount task;
 	private final Font font;
 	private final ScreenRectangle drawRect;
 
 	private final Consumer<TaskWidget> selectionChangedCallback;
+	private final BiConsumer<MouseButtonEvent, TaskWidget> requestEdit;
 
-	public TaskWidget(TaskSlot task, Font font, Consumer<TaskWidget> selectionChangedCallback) {
+	public TaskWidget(TaskWithCount task, Font font, Consumer<TaskWidget> selectionChangedCallback, BiConsumer<MouseButtonEvent, TaskWidget> requestEdit) {
 		super(0, 0, TASK_WIDTH, TASK_HEIGHT, Component.empty());
 		this.task = task;
 		this.font = font;
 		this.selectionChangedCallback = selectionChangedCallback;
+		this.requestEdit = requestEdit;
+
 		drawRect = new ScreenRectangle(getX() + 2, getY() + 2, getWidth() - 4, getHeight() - 4);
 	}
 
-	public TaskSlot task() {
+	public TaskWithCount task() {
 		return task;
+	}
+
+	public void updateCount(int newCount) {
+		task = task.copy(newCount);
 	}
 
 	@Override
@@ -53,7 +61,7 @@ public class TaskWidget extends AbstractWidget {
 
 		if (isMouseOver(mouseX, mouseY)) {
 			Identifier sprite = TASK_ADD;
-			if (task.completeCount() != 0) {
+			if (task.count() != 0) {
 				sprite = TASK_REMOVE;
 			}
 			graphics.blitSprite(RenderPipelines.GUI_TEXTURED, sprite, getX(), getY(), TASK_WIDTH, TASK_HEIGHT);
@@ -61,13 +69,13 @@ public class TaskWidget extends AbstractWidget {
 		} else {
 			ItemStack stack = task.createStack();
 			graphics.item(task.createStack(), getX() + 4, getY() + 4);
-			graphics.itemDecorations(font, stack, getX() + 4, getY() + 4, task.completeCount() == 0 ? null : "" + task.completeCount());
+			graphics.itemDecorations(font, stack, getX() + 4, getY() + 4, task.countString());
 		}
 	}
 
 	@Override
 	protected void updateWidgetNarration(@NonNull NarrationElementOutput output) {
-		output.add(NarratedElementType.TITLE, task.name());
+		output.add(NarratedElementType.TITLE, task.task().name());
 	}
 
 	@Override
@@ -77,20 +85,20 @@ public class TaskWidget extends AbstractWidget {
 
 	@Override
 	public void onClick(@NonNull MouseButtonEvent event, boolean doubleClick) {
-
-		if (isSelected()) {
-			task = task.copyWithCount(0);
-		}
-		else {
-			task = task.copyWithCount(1);
+		if (event.button() == 1) {
+			requestEdit.accept(event, this);
+		} else if (event.button() == 0) {
+			if (isSelected()) {
+				task = task.copy(0);
+			} else {
+				task = task.copy(1);
+			}
 		}
 
 		selectionChangedCallback.accept(this);
-
-		super.onClick(event, false);
 	}
 
 	public boolean isSelected() {
-		return task.completeCount() > 0;
+		return task.count() > 0;
 	}
 }

@@ -1,6 +1,6 @@
 package io.github.steaf23.bingoreloadedcompanion.client;
 
-import io.github.steaf23.bingoreloadedcompanion.card.taskslot.TaskSlot;
+import io.github.steaf23.bingoreloadedcompanion.card.taskslot.TaskWithCount;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
@@ -14,14 +14,14 @@ public class TaskTooltipComponent implements ClientTooltipComponent {
 
 	private static final Identifier ICON_BACKGROUND = Identifier.withDefaultNamespace("container/bundle/slot_highlight_back");
 
-	private final TaskSlot task;
+	private final TaskWithCount task;
 	private final ItemStack icon;
 	private final Component taskName;
 
-	public TaskTooltipComponent(TaskSlot task) {
+	public TaskTooltipComponent(TaskWithCount task) {
 		this.task = task;
-		this.icon = new ItemStack(task.item(), task.completeCount() == 0 ? 1 : task.completeCount());
-		this.taskName = task.name();
+		this.icon = task.createStack();
+		this.taskName = Component.literal(task.task().name());
 	}
 
 	@Override

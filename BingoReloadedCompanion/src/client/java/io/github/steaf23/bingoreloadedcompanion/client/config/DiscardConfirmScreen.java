@@ -1,12 +1,12 @@
 package io.github.steaf23.bingoreloadedcompanion.client.config;
 
 import io.github.steaf23.bingoreloadedcompanion.client.util.ScreenHelper;
-import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.CommonColors;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -30,14 +30,14 @@ public class DiscardConfirmScreen extends Screen {
 
 		Button discardButton = new Button.Builder(Component.nullToEmpty("Discard changes"), (btn) -> {
 			discardAction.run();
-			Minecraft.getInstance().setScreen(targetScreen);
+			Minecraft.getInstance().setScreenAndShow(targetScreen);
 		})
 				.pos(width / 2 - 150 - 30, height / 2)
 				.build();
 		addRenderableWidget(discardButton);
 
 		Button cancelButton = new Button.Builder(Component.nullToEmpty("Go back to edit"), (btn) -> {
-			Minecraft.getInstance().setScreen(sourceScreen);
+			Minecraft.getInstance().setScreenAndShow(sourceScreen);
 		})
 				.pos(width / 2 + 30, height / 2)
 				.build();
@@ -54,7 +54,7 @@ public class DiscardConfirmScreen extends Screen {
 		int i = height / 4;
 		int lineHeight = 15;
 		for (Component line : text) {
-			context.text(font, line, width / 2 - font.width(line) / 2, i, ScreenHelper.addAlphaToColor(ChatFormatting.WHITE.getColor(), 255));
+			context.text(font, line, width / 2 - font.width(line) / 2, i, ScreenHelper.addAlphaToColor(CommonColors.WHITE, 255));
 			i += lineHeight;
 		}
 
