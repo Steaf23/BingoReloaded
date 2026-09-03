@@ -2,8 +2,8 @@ package io.github.steaf23.bingoreloaded.tasks.tracker;
 
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.api.statistics.StatisticHandle;
-import io.github.steaf23.bingoreloaded.lib.api.statistics.VanillaStatistic;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
+import io.github.steaf23.bingoreloaded.protocol.data.task.StatisticCategory;
 
 import java.util.function.Consumer;
 
@@ -22,9 +22,9 @@ public class StatisticProgress
 		this.player = player;
 		this.progressLeft = targetScore;
 		this.progressCompletedCallback = progressCompletedCallback;
-		if (statistic.type().category() == VanillaStatistic.Category.TRAVEL) {
+		if (statistic.type().category() == StatisticCategory.TRAVEL) {
 			progressLeft *= 1000;
-		} else if (statistic.type().category() == VanillaStatistic.Category.DAMAGE) {
+		} else if (statistic.type().category() == StatisticCategory.DAMAGE) {
 			progressLeft *= 20; // statistics value shows in 1/10 of a damage point. 2 damage points == 1 heart.
 		}
 

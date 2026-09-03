@@ -1,6 +1,8 @@
-package io.github.steaf23.bingoreloadedcompanion.card.taskslot;
+package io.github.steaf23.bingoreloadedcompanion.card.taskdata;
 
+import io.github.steaf23.bingoreloaded.protocol.data.task.TaskDefinition;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 
 public record TaskWithCount(TaskDefinition task, int count) {
@@ -13,7 +15,7 @@ public record TaskWithCount(TaskDefinition task, int count) {
 	}
 
 	public ItemStack createStack() {
-		return new ItemStack(BuiltInRegistries.ITEM.getValue(task.iconItem()));
+		return new ItemStack(BuiltInRegistries.ITEM.getValue(Identifier.fromNamespaceAndPath(task.iconItem().namespace(), task.iconItem().value())));
 	}
 
 	public String countString() {

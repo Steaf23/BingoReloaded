@@ -6,7 +6,7 @@ import com.mojang.brigadier.context.CommandContext;
 import io.github.steaf23.bingoreloaded.api.CardDisplayInfo;
 import io.github.steaf23.bingoreloaded.api.CardMenu;
 import io.github.steaf23.bingoreloaded.api.TeamDisplay;
-import io.github.steaf23.bingoreloaded.api.network.BingoClientManager;
+import io.github.steaf23.bingoreloaded.api.BingoClientManager;
 import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.data.config.BingoOptions;
 import io.github.steaf23.bingoreloaded.data.record.LeaderboardData;

@@ -24,6 +24,7 @@ dependencies {
     compileOnly 'me.clip:placeholderapi:2.11.7'
 
     implementation project(":common")
+    implementation project(":protocol")
     paperweightDevelopmentBundle("io.papermc.paper:dev-bundle:${minecraft_version}.build.+")
 }
 

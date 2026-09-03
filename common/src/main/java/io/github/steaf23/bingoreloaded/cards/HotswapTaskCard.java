@@ -10,9 +10,11 @@ import io.github.steaf23.bingoreloaded.data.BingoSound;
 import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformServer;
+import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
+import io.github.steaf23.bingoreloaded.protocol.data.TaskSlot;
 import io.github.steaf23.bingoreloaded.settings.gamemode.BingoGamemode;
 import io.github.steaf23.bingoreloaded.settings.gamemode.BingoGamemodes;
 import io.github.steaf23.bingoreloaded.tasks.GameTask;
@@ -232,7 +234,7 @@ public class HotswapTaskCard extends TaskCard
 				}
 
 				participant.sessionPlayer().ifPresent(player -> {
-					game.getSession().getGameManager().getRuntime().getClientManager().updateHotswapContext(player, taskHolders);
+                    updateTaskSlotsOnClient(game, player, taskHolders);
 				});
 			}
 		}
@@ -259,5 +261,11 @@ public class HotswapTaskCard extends TaskCard
             }
         }
         return false;
+    }
+
+    public static void updateTaskSlotsOnClient(BingoGame game, PlayerHandle player, List<TickingTaskSlot> slots) {
+        game.getSession().getGameManager().getRuntime().getClientManager().updateHotswapContext(player, slots.stream()
+                .map(s -> new TaskSlot(s.getFullTime(), s.getCurrentTime(), s.isRecovering(), s instanceof ExpiringTickingTask))
+                .toList());
     }
 }

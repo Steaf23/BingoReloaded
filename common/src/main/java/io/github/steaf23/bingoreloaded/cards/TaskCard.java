@@ -15,8 +15,6 @@ import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.DataOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -90,13 +88,4 @@ public abstract class TaskCard
     }
 
     public void onTaskCompleted(BingoParticipant player, GameTask task, long timeSeconds) {}
-
-
-	public void write(DataOutputStream stream) throws IOException {
-		stream.writeInt(size.size);
-		stream.writeInt(getTasks().size());
-		for (GameTask task : getTasks()) {
-			task.write(stream);
-		}
-	}
 }

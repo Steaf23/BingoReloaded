@@ -1,7 +1,7 @@
 package io.github.steaf23.bingoreloadedcompanion.client.creator;
 
 import com.mojang.blaze3d.platform.cursor.CursorTypes;
-import io.github.steaf23.bingoreloadedcompanion.card.taskslot.TaskWithCount;
+import io.github.steaf23.bingoreloadedcompanion.card.taskdata.TaskWithCount;
 import io.github.steaf23.bingoreloadedcompanion.client.util.ScreenHelper;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;

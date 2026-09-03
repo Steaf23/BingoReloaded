@@ -14,6 +14,7 @@ import io.github.steaf23.bingoreloaded.lib.api.statistics.VanillaStatistics;
 import io.github.steaf23.bingoreloaded.lib.inventory.BasicMenu;
 import io.github.steaf23.bingoreloaded.lib.inventory.MenuBoard;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
+import io.github.steaf23.bingoreloaded.protocol.data.task.StatisticCategory;
 import io.github.steaf23.bingoreloaded.tasks.GameTask;
 import io.github.steaf23.bingoreloaded.tasks.data.StatisticTask;
 import net.kyori.adventure.text.Component;
@@ -101,7 +102,7 @@ public class StatisticSelectionMenu extends BasicMenu
     public TaskPickerMenu createTravelMenu()
     {
         List<GameTask> tasks = new ArrayList<>();
-        VanillaStatistics.STATISTICS_BY_CATEGORY.getOrDefault(VanillaStatistic.Category.TRAVEL, List.of()).forEach(type -> {
+        VanillaStatistics.STATISTICS_BY_CATEGORY.getOrDefault(StatisticCategory.TRAVEL, List.of()).forEach(type -> {
             tasks.add(new GameTask(new StatisticTask(new StatisticHandle(type))));
         });
         return new TaskPickerMenu(getMenuBoard(), "Travel Statistics", tasks, listName, formatting);
@@ -110,7 +111,7 @@ public class StatisticSelectionMenu extends BasicMenu
     private TaskPickerMenu createContainerMenu()
     {
         List<GameTask> tasks = new ArrayList<>();
-        VanillaStatistics.STATISTICS_BY_CATEGORY.getOrDefault(VanillaStatistic.Category.CONTAINER_INTERACT, List.of()).forEach(type -> {
+        VanillaStatistics.STATISTICS_BY_CATEGORY.getOrDefault(StatisticCategory.CONTAINER_INTERACT, List.of()).forEach(type -> {
             tasks.add(new GameTask(new StatisticTask(new StatisticHandle(type))));
         });
         return new TaskPickerMenu(getMenuBoard(), "Container Statistics", tasks, listName, formatting);
@@ -119,7 +120,7 @@ public class StatisticSelectionMenu extends BasicMenu
     private TaskPickerMenu createBlockInteractMenu()
     {
         List<GameTask> tasks = new ArrayList<>();
-        VanillaStatistics.STATISTICS_BY_CATEGORY.getOrDefault(VanillaStatistic.Category.BLOCK_INTERACT, List.of()).forEach(type -> {
+        VanillaStatistics.STATISTICS_BY_CATEGORY.getOrDefault(StatisticCategory.BLOCK_INTERACT, List.of()).forEach(type -> {
             tasks.add(new GameTask(new StatisticTask(new StatisticHandle(type))));
         });
         return new TaskPickerMenu(getMenuBoard(),  "Select Blocks", tasks, listName, formatting);
@@ -128,7 +129,7 @@ public class StatisticSelectionMenu extends BasicMenu
     private TaskPickerMenu createDamageMenu()
     {
         List<GameTask> tasks = new ArrayList<>();
-        VanillaStatistics.STATISTICS_BY_CATEGORY.getOrDefault(VanillaStatistic.Category.DAMAGE, List.of()).forEach(type -> {
+        VanillaStatistics.STATISTICS_BY_CATEGORY.getOrDefault(StatisticCategory.DAMAGE, List.of()).forEach(type -> {
             tasks.add(new GameTask(new StatisticTask(new StatisticHandle(type))));
         });
         return new TaskPickerMenu(getMenuBoard(), "Damage Statistics", tasks, listName, formatting);
@@ -136,7 +137,7 @@ public class StatisticSelectionMenu extends BasicMenu
 
     private TaskPickerMenu createMiscMenu() {
         List<GameTask> tasks = new ArrayList<>();
-        VanillaStatistics.STATISTICS_BY_CATEGORY.getOrDefault(VanillaStatistic.Category.OTHER, List.of()).stream()
+        VanillaStatistics.STATISTICS_BY_CATEGORY.getOrDefault(StatisticCategory.MISC, List.of()).stream()
                 .filter(t ->
                         t != VanillaStatistics.TIME_SINCE_DEATH &&
                         t != VanillaStatistics.TIME_SINCE_REST &&

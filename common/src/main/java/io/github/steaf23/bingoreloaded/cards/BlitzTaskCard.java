@@ -152,7 +152,7 @@ public class BlitzTaskCard extends TaskCard {
 				}
 
 				participant.sessionPlayer().ifPresent(player -> {
-					game.getSession().getGameManager().getRuntime().getClientManager().updateHotswapContext(player, slots);
+					HotswapTaskCard.updateTaskSlotsOnClient(game, player, slots);
 				});
 			}
 		}
@@ -202,4 +202,5 @@ public class BlitzTaskCard extends TaskCard {
 		}
 		return false;
 	}
+
 }

@@ -7,7 +7,6 @@ import io.github.steaf23.bingoreloaded.data.helper.TaskFormatting;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.api.statistics.StatisticHandle;
 import io.github.steaf23.bingoreloaded.lib.api.statistics.VanillaStatistic;
-import io.github.steaf23.bingoreloaded.lib.api.statistics.VanillaStatistics;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -42,18 +41,15 @@ public record StatisticTask(StatisticHandle statistic, int count, Set<String> ta
 	public Component getName(TaskFormatting formatting) {
 		VanillaStatistic stat = statistic.type();
 		return switch (stat.category()) {
-			case ROOT_STATISTIC -> {
-				if (stat == VanillaStatistics.KILLED) {
-					yield formatting.statisticKillEntityComponent(this);
-				} else if (stat == VanillaStatistics.KILLED_BY) {
-					yield formatting.statisticKilledByEntityComponent(this);
-				} else {
-					yield formatting.statisticItemComponent(this);
-				}
-			}
+			case ENTITY_KILLED -> formatting.statisticKillEntityComponent(this);
+			case KILLED_BY -> formatting.statisticKilledByEntityComponent(this);
 			case TRAVEL -> formatting.statisticNameComponent(this, Component.text(" ").append(Component.translatable("soundCategory.block")), 10);
 			case DAMAGE -> formatting.statisticNameComponent(this, Component.object(ObjectContents.sprite(Key.key("gui"), Key.key("hud/heart/full"))), 1);
-			default -> formatting.statisticNameComponent(this, Component.empty(), 1);
+			default -> switch (stat.category().type) {
+				case CUSTOM -> formatting.statisticNameComponent(this, Component.empty(), 1);
+				case ITEM, BLOCK -> formatting.statisticItemComponent(this);
+				case ENTITY -> formatting.statisticKillEntityComponent(this); // technically modeled to be impossible, but whatever.
+			};
 		};
 	}
 

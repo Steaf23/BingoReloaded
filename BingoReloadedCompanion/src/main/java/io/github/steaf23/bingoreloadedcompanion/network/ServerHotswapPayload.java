@@ -1,43 +1,31 @@
 package io.github.steaf23.bingoreloadedcompanion.network;
 
+
 import com.google.common.collect.ImmutableList;
+import io.github.steaf23.bingoreloaded.protocol.payload.BingoReloadedPayloads;
 import io.github.steaf23.bingoreloadedcompanion.BingoReloadedCompanion;
-import io.github.steaf23.bingoreloadedcompanion.card.HotswapTaskHolder;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.Identifier;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class ServerHotswapPayload implements CustomPacketPayload {
 
 	public static final CustomPacketPayload.Type<ServerHotswapPayload> ID = new CustomPacketPayload.Type<>(
-			Identifier.fromNamespaceAndPath(BingoReloadedCompanion.ADDON_ID, "hotswap_tasks")
+			Identifier.fromNamespaceAndPath(BingoReloadedCompanion.ADDON_ID, BingoReloadedPayloads.UPDATE_HOTSWAP_CARD.key().value())
 	);
 
-	public static final StreamCodec<RegistryFriendlyByteBuf, ServerHotswapPayload> CODEC = StreamCodec.ofMember(
-			(payload, buf) -> {}, // Packet will not be sent, only received.
-			buf -> {
-				List<HotswapTaskHolder> holders = new ArrayList<>();
-
-				int arrSize = buf.readInt();
-				for (int i = 0; i < arrSize; i++) {
-					long total = buf.readLong();
-					long current = buf.readLong();
-					boolean recovering = buf.readBoolean();
-					boolean expires = buf.readBoolean();
-					holders.add(new HotswapTaskHolder(total, current, recovering, expires));
-				}
-
-				return new ServerHotswapPayload(ImmutableList.copyOf(holders));
-			}
+	public static final StreamCodec<RegistryFriendlyByteBuf, ServerHotswapPayload> CODEC = StreamCodecs.usingByteCodec(
+			(buf, payload) -> {
+				BingoReloadedPayloads.UPDATE_HOTSWAP_CARD.codec().encode(buf, payload.holders);
+			}, // Packet will not be sent, only received.
+			buf -> new ServerHotswapPayload(ImmutableList.copyOf(BingoReloadedPayloads.UPDATE_HOTSWAP_CARD.codec().decode(buf)))
 	);
 
-	public final ImmutableList<HotswapTaskHolder> holders;
 
-	public ServerHotswapPayload(ImmutableList<HotswapTaskHolder> holders) {
+	public final ImmutableList<io.github.steaf23.bingoreloaded.protocol.data.TaskSlot> holders;
+
+	public ServerHotswapPayload(ImmutableList<io.github.steaf23.bingoreloaded.protocol.data.TaskSlot> holders) {
 		this.holders = holders;
 	}
 

@@ -4,6 +4,7 @@ import io.github.steaf23.bingoreloaded.lib.api.BingoReloadedRuntime;
 import io.github.steaf23.bingoreloaded.lib.api.EntityType;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataStorageSerializer;
+import io.github.steaf23.bingoreloaded.protocol.data.task.StatisticCategory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -56,7 +57,7 @@ public record StatisticHandle(@NotNull VanillaStatistic type, @Nullable EntityTy
 	}
 
 	public boolean isSubStatistic() {
-		return type.category() == VanillaStatistic.Category.ROOT_STATISTIC;
+		return type.category().type != StatisticCategory.Type.CUSTOM;
 	}
 
 	public String translationKey() {

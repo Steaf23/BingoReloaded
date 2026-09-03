@@ -3,15 +3,17 @@ plugins {
 }
 
 dependencies {
-    api("commons-io:commons-io:2.19.0")
-    api("com.google.code.gson:gson:2.13.1")
-    compileOnly("org.slf4j:slf4j-api:2.0.17")
+    implementation project(":protocol")
 
-    implementation("net.kyori:adventure-api:${adventure_version}")
-    implementation("net.kyori:adventure-text-logger-slf4j:${adventure_version}")
-    implementation("net.kyori:adventure-text-minimessage:${adventure_version}")
-    implementation("net.kyori:adventure-text-serializer-plain:${adventure_version}")
-    implementation("net.kyori:adventure-text-serializer-legacy:${adventure_version}")
+    compileOnlyApi("commons-io:commons-io:2.19.0")
+    compileOnlyApi("com.google.code.gson:gson:2.13.1")
+    compileOnlyApi("org.slf4j:slf4j-api:2.0.17")
+
+    compileOnlyApi("net.kyori:adventure-api:${adventure_version}")
+    compileOnlyApi("net.kyori:adventure-text-logger-slf4j:${adventure_version}")
+    compileOnlyApi("net.kyori:adventure-text-minimessage:${adventure_version}")
+    compileOnlyApi("net.kyori:adventure-text-serializer-plain:${adventure_version}")
+    compileOnlyApi("net.kyori:adventure-text-serializer-legacy:${adventure_version}")
 }
 
 java {

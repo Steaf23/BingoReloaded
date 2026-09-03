@@ -8,7 +8,7 @@ import io.github.steaf23.bingoreloaded.api.CardDisplayInfo;
 import io.github.steaf23.bingoreloaded.api.CardMenu;
 import io.github.steaf23.bingoreloaded.api.TeamDisplay;
 import io.github.steaf23.bingoreloaded.api.TeamDisplayPaper;
-import io.github.steaf23.bingoreloaded.api.network.BingoClientManager;
+import io.github.steaf23.bingoreloaded.api.BingoClientManager;
 import io.github.steaf23.bingoreloaded.api.network.PaperClientManager;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.DataUpdaterV3_6_0;

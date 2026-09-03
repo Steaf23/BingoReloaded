@@ -2,7 +2,6 @@ package io.github.steaf23.bingoreloaded.tasks;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.api.CardDisplayInfo;
-import io.github.steaf23.bingoreloaded.api.network.packets.DataWriter;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.helper.TaskFormatting;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
@@ -13,6 +12,7 @@ import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.protocol.TaskDefinitionProtocol;
+import io.github.steaf23.bingoreloaded.protocol.data.task.Task;
 import io.github.steaf23.bingoreloaded.tasks.data.TaskData;
 import io.github.steaf23.bingoreloaded.util.timer.GameTimer;
 import net.kyori.adventure.key.Key;
@@ -25,7 +25,6 @@ import net.kyori.adventure.text.object.ObjectContents;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.Optional;
 import java.util.UUID;
@@ -224,15 +223,17 @@ public class GameTask
         return data.getType();
     }
 
-	public void write(DataOutputStream stream) throws IOException {
-		stream.writeBoolean(isCompleted());
-		if (isCompleted()) {
-			DataWriter.writeString(stream, completedBy.getName());
-            DataWriter.writeString(stream, completedByTeam.getIdentifier());
-			stream.writeInt(completedByTeam.getColor().value());
+    public Task asProtocolTask() {
+		try {
+			return new Task(TaskDefinitionProtocol.taskDefinition(data),
+                    new Task.TaskCompletion(
+                            isCompleted(),
+                            getCompletedByPlayer().map(BingoParticipant::getName).orElse(""),
+                            getCompletedByTeam().map(BingoTeam::toString).orElse(""),
+                            getCompletedByTeam().map(BingoTeam::getColor).orElse(NamedTextColor.WHITE).value()),
+                            data().getRequiredAmount());
+	    } catch (IOException e) {
+			throw new RuntimeException(e);
 		}
-
-        TaskDefinitionProtocol.writeTaskData(stream, data);
-		stream.writeInt(data.getRequiredAmount());
 	}
 }

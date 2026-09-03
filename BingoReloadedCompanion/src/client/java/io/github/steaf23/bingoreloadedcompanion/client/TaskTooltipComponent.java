@@ -1,6 +1,6 @@
 package io.github.steaf23.bingoreloadedcompanion.client;
 
-import io.github.steaf23.bingoreloadedcompanion.card.taskslot.TaskWithCount;
+import io.github.steaf23.bingoreloadedcompanion.card.taskdata.TaskWithCount;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;

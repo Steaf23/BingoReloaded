@@ -2,7 +2,7 @@ package io.github.steaf23.bingoreloadedcompanion.client;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import io.github.steaf23.bingoreloadedcompanion.BingoReloadedCompanion;
-import io.github.steaf23.bingoreloadedcompanion.card.BingoCard;
+import io.github.steaf23.bingoreloaded.protocol.data.BingoCard;
 import io.github.steaf23.bingoreloadedcompanion.client.creator.BingoCardTaskListScreen;
 import io.github.steaf23.bingoreloadedcompanion.client.hud.BingoCardHudElement;
 import io.github.steaf23.bingoreloadedcompanion.client.hud.ConfigurableHudRegistry;
@@ -29,8 +29,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import org.lwjgl.glfw.GLFW;
 
-import java.util.List;
-
 public class BingoReloadedCompanionClient implements ClientModInitializer {
 
 	public static final Identifier BINGO_CARD_TASKS = ConfigurableHudRegistry.registerSubElement("bingocard", "tasks",
@@ -48,7 +46,6 @@ public class BingoReloadedCompanionClient implements ClientModInitializer {
 
 	@Override
 	public void onInitializeClient() {
-
 		PayloadTypeRegistry.serverboundPlay().register(ClientHelloPayload.ID, ClientHelloPayload.CODEC);
 
 		PayloadTypeRegistry.clientboundPlay().register(ServerUpdateCardPayload.ID, ServerUpdateCardPayload.CODEC);
@@ -89,10 +86,6 @@ public class BingoReloadedCompanionClient implements ClientModInitializer {
 		}));
 
 		ClientPlayConnectionEvents.DISCONNECT.register(((handler, client) -> {
-			if (client == null) {
-				return;
-			}
-
 			cardElement.setCard(null);
 		}));
 
@@ -107,7 +100,7 @@ public class BingoReloadedCompanionClient implements ClientModInitializer {
 				});
 		ClientPlayNetworking.registerGlobalReceiver(ServerOpenCreatorCreatorPayload.ID,
 				(payload, context) -> {
-					Minecraft.getInstance().setScreenAndShow(new BingoCardTaskListScreen(Component.empty(), payload.tasks()));
+					Minecraft.getInstance().setScreenAndShow(new BingoCardTaskListScreen(Component.empty(), payload.taskSupplier()));
 				});
 
 		KeyMapping.Category category = KeyMapping.Category.register(Identifier.fromNamespaceAndPath("bingoreloadedcompanion", "main"));
@@ -156,7 +149,7 @@ public class BingoReloadedCompanionClient implements ClientModInitializer {
 				cardElement.setVisible(cardElement.isHidden());
 			}
 			if (testCreator.consumeClick()) {
-				client.setScreenAndShow(new BingoCardTaskListScreen(Component.literal("title"), List.of()));
+//				client.setScreenAndShow(new BingoCardTaskListScreen(Component.literal("title"), null));
 			}
 		});
 	}

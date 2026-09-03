@@ -1,47 +1,31 @@
 package io.github.steaf23.bingoreloadedcompanion.network;
 
+import io.github.steaf23.bingoreloaded.protocol.data.CreatorTaskSupplier;
+import io.github.steaf23.bingoreloaded.protocol.payload.BingoReloadedPayloads;
 import io.github.steaf23.bingoreloadedcompanion.BingoReloadedCompanion;
-import io.github.steaf23.bingoreloadedcompanion.card.taskslot.TaskDefinition;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.Identifier;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class ServerOpenCreatorCreatorPayload implements CustomPacketPayload {
 
-	private final List<TaskDefinition> tasks;
+	private final CreatorTaskSupplier taskSupplier;
 
 	public static final CustomPacketPayload.Type<ServerOpenCreatorCreatorPayload> ID = new CustomPacketPayload.Type<>(
-			Identifier.fromNamespaceAndPath(BingoReloadedCompanion.ADDON_ID, "open_creator")
+			Identifier.fromNamespaceAndPath(BingoReloadedCompanion.ADDON_ID, BingoReloadedPayloads.OPEN_CREATOR.key().value())
 	);
 
-	public static final StreamCodec<RegistryFriendlyByteBuf, ServerOpenCreatorCreatorPayload> CODEC = StreamCodec.ofMember(
-			(payload, buf) -> {}, // Packet will not be sent, only received.
-			buf -> {
+	public static final StreamCodec<RegistryFriendlyByteBuf, ServerOpenCreatorCreatorPayload> CODEC = StreamCodec.composite(
+			StreamCodecs.fromByteCodec(BingoReloadedPayloads.OPEN_CREATOR.codec()), ServerOpenCreatorCreatorPayload::taskSupplier,
+			ServerOpenCreatorCreatorPayload::new);
 
-				int count = buf.readInt();
-				System.out.println("Received task count: " + count);
-				System.out.println("Bytes remaining: " + buf.readableBytes());
-
-				List<TaskDefinition> tasks = new ArrayList<>();
-				for (int i = 0; i < count; i ++) {
-					tasks.add(TaskDefinition.CODEC.decode(buf));
-					System.out.println("Read " + i + " tasks");
-				}
-				return new ServerOpenCreatorCreatorPayload(tasks);
-			}
-	);
-
-
-	public ServerOpenCreatorCreatorPayload(List<TaskDefinition> tasks) {
-		this.tasks = tasks;
+	public ServerOpenCreatorCreatorPayload(CreatorTaskSupplier taskSupplier) {
+		this.taskSupplier = taskSupplier;
 	}
 
-	public List<TaskDefinition> tasks() {
-		return tasks;
+	public CreatorTaskSupplier taskSupplier() {
+		return taskSupplier;
 	}
 
 	@Override

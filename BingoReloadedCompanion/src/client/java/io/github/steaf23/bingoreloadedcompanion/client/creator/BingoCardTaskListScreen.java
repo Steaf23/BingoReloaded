@@ -1,11 +1,17 @@
 package io.github.steaf23.bingoreloadedcompanion.client.creator;
 
-import io.github.steaf23.bingoreloadedcompanion.card.taskslot.TaskDefinition;
-import io.github.steaf23.bingoreloadedcompanion.card.taskslot.TaskType;
-import io.github.steaf23.bingoreloadedcompanion.card.taskslot.TaskWithCount;
+import io.github.steaf23.bingoreloaded.protocol.data.CreatorTaskSupplier;
+import io.github.steaf23.bingoreloaded.protocol.data.task.StatisticCategory;
+import io.github.steaf23.bingoreloaded.protocol.data.task.TaskDefinition;
+import io.github.steaf23.bingoreloaded.protocol.data.task.TaskId;
+import io.github.steaf23.bingoreloaded.protocol.data.task.TaskType;
+import io.github.steaf23.bingoreloadedcompanion.card.taskdata.TaskWithCount;
 import io.github.steaf23.bingoreloadedcompanion.client.TaskTooltipComponent;
+import io.github.steaf23.bingoreloadedcompanion.client.core.CollapsibleTreeLayout;
 import io.github.steaf23.bingoreloadedcompanion.client.core.CustomScrollableLayout;
 import io.github.steaf23.bingoreloadedcompanion.client.util.ScreenHelper;
+import jdk.jfr.Category;
+import net.kyori.adventure.key.Key;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractScrollArea;
@@ -17,16 +23,21 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.CommonColors;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import org.jspecify.annotations.NonNull;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Stream;
 
 public class BingoCardTaskListScreen extends Screen {
 
@@ -59,15 +70,53 @@ public class BingoCardTaskListScreen extends Screen {
 	private EditBox filterField;
 	private CustomScrollableLayout taskListLayout = null;
 
-	private List<TaskDefinition> allTasks;
+	private CreatorTaskSupplier taskSupplier;
+	private List<TaskDefinition> allTasks = new ArrayList<>();
 	private List<TaskWidget> visibleWidgets;
 
-	public BingoCardTaskListScreen(Component title, List<TaskDefinition> tasks) {
+	public BingoCardTaskListScreen(Component title, CreatorTaskSupplier tasks) {
 		super(title);
 		selectedTab = TABS[0];
 
-		allTasks = tasks;
+		taskSupplier = tasks;
+		allTasks.addAll(tasks.availableItems().stream()
+				.map(this::itemTask)
+				.toList());
+		allTasks.addAll(tasks.advancements());
+		allTasks.addAll(tasks.statistics().stream()
+				.flatMap(task -> {
+					if (!(task.id() instanceof TaskId.Statistic stat)) {
+						return Stream.of(task);
+					}
+
+					return switch (stat.category().type) {
+						case CUSTOM -> Stream.of(task);
+						case ITEM -> taskSupplier.availableItems().stream()
+								.map(item -> itemTaskFromStatistic(stat.category(), item, task.category()));
+						case BLOCK -> taskSupplier.availableBlocks().stream()
+								.map(item -> itemTaskFromStatistic(stat.category(), item, task.category()));
+						case ENTITY -> taskSupplier.availableEntities().stream()
+								.map(item -> entityTaskFromStatistic(stat.category(), item, task.category()));
+					};
+				}).toList());
 		visibleWidgets = new ArrayList<>();
+//
+//		if (w.task().task().id() instanceof TaskId.Statistic stat && stat.category().type != StatisticCategory.Type.CUSTOM) {
+//			widgetByCategory.get(cat).addAll(switch (stat.category().type) {
+//				case ITEM -> {
+//					List<TaskWidget> widgets = new ArrayList<>();
+////						for (var item : taskSupplier.availableItems()) {
+////							widgets.add(new TaskWidget(
+////									new TaskWithCount(new TaskDefinition(w.task().task()))
+////							));
+////						}
+//					yield widgets;
+//				}
+//				case BLOCK -> List.of();
+//				case ENTITY -> List.of();
+//				default -> throw new IllegalStateException("Unexpected value: " + stat.category().type);
+//			});
+//		}
 	}
 
 	@Override
@@ -87,9 +136,7 @@ public class BingoCardTaskListScreen extends Screen {
 		int heightLeft = height - TAB_HEIGHT - 10;
 		int widthLeft = SLOT_WIDTH * 10 + SCROLLER_WIDTH + 3;
 
-		LinearLayout padding = LinearLayout.vertical();
-		GridLayout contents = new GridLayout();
-		padding.addChild(contents, LayoutSettings.defaults().padding(3));
+		CollapsibleTreeLayout itemTree = new CollapsibleTreeLayout(font);
 
 		int colCount = (widthLeft - (3 + SCROLLER_WIDTH)) / SLOT_WIDTH;
 		int tasksStartX = (width - widthLeft) / 2;
@@ -101,15 +148,30 @@ public class BingoCardTaskListScreen extends Screen {
 					int idx = visibleWidgets.indexOf(widget);
 				}))
 				.toList();
-		for (int i = 0; i < visibleWidgets.size(); i++) {
-			int col = i % colCount;
-			int row = i / colCount;
-			contents.addChild(visibleWidgets.get(i), row, col);
+
+		Map<String, List<TaskWidget>> widgetByCategory = new HashMap<>();
+		for (TaskWidget w : visibleWidgets) {
+			String cat = w.task().task().category();
+			widgetByCategory.computeIfAbsent(cat, category -> new ArrayList<>());
+			widgetByCategory.get(cat).add(w);
+		}
+
+		for (String category : widgetByCategory.keySet()) {
+			LinearLayout padding = LinearLayout.vertical();
+			GridLayout contents = new GridLayout();
+			padding.addChild(contents, LayoutSettings.defaults().padding(3));
+			itemTree.addTopLevelNode(category.isEmpty() ? Component.empty() : Component.literal(category), padding);
+
+			for (int i = 0; i < widgetByCategory.get(category).size(); i++) {
+				int col = i % colCount;
+				int row = i / colCount;
+				contents.addChild(widgetByCategory.get(category).get(i), row, col);
+			}
 		}
 
 		taskListLayout = new CustomScrollableLayout(tasksStartX,
 				TAB_HEIGHT,
-				3 + SCROLLER_WIDTH, heightLeft, padding, settings);
+				3 + SCROLLER_WIDTH, heightLeft, itemTree, settings);
 		taskListLayout.arrangeElements();
 
 		this.addRenderableWidget(taskListLayout);
@@ -179,11 +241,6 @@ public class BingoCardTaskListScreen extends Screen {
 			}
 		}
 
-//		if (taskListLayout != null) {
-//			ScreenHelper.extractInventoryBackground(graphics, taskListLayout.getRectangle());
-//		}
-
-//		context.blit(RenderPipelines.GUI_TEXTURED, MENU, startX, startY, 0, 0, 256, 256, 256, 256);
 		super.extractRenderState(graphics, mouseX, mouseY, deltaTicks);
 
 		graphics.blitSprite(RenderPipelines.GUI_TEXTURED, TAB_SELECTED, firstTabX + getTabStartX(selectedTab), tabStartY, TAB_WIDTH, TAB_HEIGHT);
@@ -218,12 +275,6 @@ public class BingoCardTaskListScreen extends Screen {
 		}
 
 		if (hoveredIndex != -1) {
-//			if (isMouseOnIncreaseCountButton(mouseX, mouseY, xIndex, yIndex)) {
-//				context.blitSprite(RenderPipelines.GUI_TEXTURED, HIGHER_COUNT_BUTTON, slotX - 1, slotY - 1, BUTTON_WIDTH, BUTTON_HEIGHT);
-//			} else {
-//				context.blitSprite(RenderPipelines.GUI_TEXTURED, LOWER_COUNT_BUTTON, slotX - 1, slotY - 1, BUTTON_WIDTH, BUTTON_HEIGHT);
-//			}
-
 			TaskTooltipComponent tooltipComponent = new TaskTooltipComponent(hoveredTask.task());
 
 			int slotX = hoveredTask.getX();
@@ -291,5 +342,40 @@ public class BingoCardTaskListScreen extends Screen {
 
 	private int tabStartY() {
 		return 0;
+	}
+
+	public TaskDefinition itemTask(Key key) {
+		Item item = BuiltInRegistries.ITEM.getValue(Identifier.fromNamespaceAndPath(key.namespace(), key.value()));
+		return new TaskDefinition(
+				new TaskId.Item(key),
+				"x1 " + item.getDescriptionId(),
+				"item description",
+				key,
+				"",
+				64);
+	}
+
+	public TaskDefinition itemTaskFromStatistic(StatisticCategory statCategory, Key itemKey, String category) {
+		Item item = BuiltInRegistries.ITEM.getValue(Identifier.fromNamespaceAndPath(itemKey.namespace(), itemKey.value()));
+		return new TaskDefinition(
+				new TaskId.Statistic(Key.key("custom"), itemKey, statCategory),
+				"STAT: " + item.getDescriptionId(),
+				"stat description",
+				itemKey,
+				category,
+				64
+		);
+	}
+
+	public TaskDefinition entityTaskFromStatistic(StatisticCategory statCategory, Key entityKey, String category) {
+		EntityType<?> entity = BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.fromNamespaceAndPath(entityKey.namespace(), entityKey.value()));
+		return new TaskDefinition(
+				new TaskId.Statistic(Key.key("custom"), entityKey, statCategory),
+				"STAT: " + entity.getDescriptionId(),
+				"stat description",
+				Key.key(entityKey.namespace(), entityKey.value() + "_spawn_egg"),
+				category,
+				64
+		);
 	}
 }

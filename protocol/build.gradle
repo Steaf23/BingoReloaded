@@ -1,0 +1,19 @@
+plugins {
+    id 'java-library'
+}
+
+group = 'io.github.steaf23.bingoreloaded'
+version = '3.5.2'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+//    compileOnly("io.netty:netty-buffer:4.2.17.Final")
+    compileOnlyApi("net.kyori:adventure-api:${adventure_version}")
+    compileOnlyApi("net.kyori:adventure-text-logger-slf4j:${adventure_version}")
+    compileOnlyApi("net.kyori:adventure-text-minimessage:${adventure_version}")
+    compileOnlyApi("net.kyori:adventure-text-serializer-plain:${adventure_version}")
+    compileOnlyApi("net.kyori:adventure-text-serializer-legacy:${adventure_version}")
+}

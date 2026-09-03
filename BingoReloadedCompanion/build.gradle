@@ -40,12 +40,14 @@ repositories {
 }
 
 dependencies {
+    implementation project(":protocol")
     // To change the versions see the gradle.properties file
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
     implementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
     implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
     implementation("com.terraformersmc:modmenu:${project.modmenu_version}")
+    implementation("net.kyori:adventure-platform-fabric:7.1.1")
 }
 
 processResources {

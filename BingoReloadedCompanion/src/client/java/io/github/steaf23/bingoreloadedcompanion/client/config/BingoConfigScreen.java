@@ -1,15 +1,16 @@
 package io.github.steaf23.bingoreloadedcompanion.client.config;
 
-import io.github.steaf23.bingoreloadedcompanion.card.BingoCard;
-import io.github.steaf23.bingoreloadedcompanion.card.BingoGamemode;
-import io.github.steaf23.bingoreloadedcompanion.card.Task;
-import io.github.steaf23.bingoreloadedcompanion.card.taskslot.TaskDefinition;
-import io.github.steaf23.bingoreloadedcompanion.card.taskslot.TaskId;
+import io.github.steaf23.bingoreloaded.protocol.data.BingoCard;
+import io.github.steaf23.bingoreloaded.protocol.data.BingoGamemode;
+import io.github.steaf23.bingoreloaded.protocol.data.task.Task;
+import io.github.steaf23.bingoreloaded.protocol.data.task.TaskDefinition;
+import io.github.steaf23.bingoreloaded.protocol.data.task.TaskId;
 import io.github.steaf23.bingoreloadedcompanion.client.BingoReloadedCompanionClient;
 import io.github.steaf23.bingoreloadedcompanion.client.hud.BingoCardHudElement;
 import io.github.steaf23.bingoreloadedcompanion.client.hud.HudConfigManager;
 import io.github.steaf23.bingoreloadedcompanion.client.hud.HudPlacement;
 import io.github.steaf23.bingoreloadedcompanion.client.util.ScreenHelper;
+import net.kyori.adventure.key.Key;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
@@ -73,7 +74,7 @@ public class BingoConfigScreen extends Screen {
 		List<Task> testTasks = new ArrayList<>();
 		for (int i = 0; i < 25; i++) {
 			testTasks.add(new Task(
-					new TaskDefinition(TaskId.DUMMY, "", "", Identifier.withDefaultNamespace("paper"), Identifier.parse("bingoreloadedcompanion:dummy"), 64),
+					new TaskDefinition(TaskId.DUMMY, "", "", Key.key("paper"),"", 64),
 					Task.TaskCompletion.INCOMPLETE, 1));
 		}
 		BingoCard testCard5x = new BingoCard(BingoGamemode.REGULAR, 5, testTasks);

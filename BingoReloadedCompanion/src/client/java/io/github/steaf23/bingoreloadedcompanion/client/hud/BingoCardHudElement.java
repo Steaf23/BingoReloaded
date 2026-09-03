@@ -1,9 +1,8 @@
 package io.github.steaf23.bingoreloadedcompanion.client.hud;
 
 import com.google.common.collect.ImmutableList;
-import io.github.steaf23.bingoreloadedcompanion.card.BingoCard;
-import io.github.steaf23.bingoreloadedcompanion.card.HotswapTaskHolder;
-import io.github.steaf23.bingoreloadedcompanion.card.Task;
+import io.github.steaf23.bingoreloaded.protocol.data.BingoCard;
+import io.github.steaf23.bingoreloaded.protocol.data.task.Task;
 import io.github.steaf23.bingoreloadedcompanion.client.ExtraMath;
 import io.github.steaf23.bingoreloadedcompanion.client.TextColorGradient;
 import io.github.steaf23.bingoreloadedcompanion.client.util.ScreenHelper;
@@ -49,7 +48,7 @@ public class BingoCardHudElement implements HudElement {
 
 	private final HudConfigManager hudConfig;
 	private @Nullable BingoCard card;
-	private @Nullable ImmutableList<HotswapTaskHolder> hotswapTaskHolders;
+	private @Nullable ImmutableList<io.github.steaf23.bingoreloaded.protocol.data.TaskSlot> taskSlots;
 	private long lastHotswapUpdateTick = 0;
 	private final boolean preview;
 
@@ -67,7 +66,7 @@ public class BingoCardHudElement implements HudElement {
 	public void setCard(@Nullable BingoCard card) {
 		this.card = card;
 		if (card == null) {
-			hotswapTaskHolders = null;
+			taskSlots = null;
 		}
 	}
 
@@ -81,8 +80,8 @@ public class BingoCardHudElement implements HudElement {
 		return !visible;
 	}
 
-	public void setHotswapHolders(ImmutableList<HotswapTaskHolder> holders) {
-		this.hotswapTaskHolders = holders;
+	public void setHotswapHolders(ImmutableList<io.github.steaf23.bingoreloaded.protocol.data.TaskSlot> holders) {
+		this.taskSlots = holders;
 		lastHotswapUpdateTick = HudTimer.getTicks();
 	}
 
@@ -155,9 +154,9 @@ public class BingoCardHudElement implements HudElement {
 				}
 
 				Task task = card.tasks().get(taskIdx);
-				HotswapTaskHolder holder = null;
-				if (hotswapTaskHolders != null && taskIdx < hotswapTaskHolders.size()) {
-					holder = hotswapTaskHolders.get(taskIdx);
+				io.github.steaf23.bingoreloaded.protocol.data.TaskSlot holder = null;
+				if (taskSlots != null && taskIdx < taskSlots.size()) {
+					holder = taskSlots.get(taskIdx);
 				}
 				renderTask(context, task, xStart, yStart, holder, tickDelta, placement.transparency());
 				taskIdx++;
@@ -192,7 +191,7 @@ public class BingoCardHudElement implements HudElement {
 		matrices.popMatrix();
 	}
 
-	protected void renderTask(GuiGraphicsExtractor drawContext, @NotNull Task task, int x, int y, @Nullable HotswapTaskHolder hotswapContext, float delta, double transparency) {
+	protected void renderTask(GuiGraphicsExtractor drawContext, @NotNull Task task, int x, int y, @Nullable io.github.steaf23.bingoreloaded.protocol.data.TaskSlot hotswapContext, float delta, double transparency) {
 
 		boolean hotswapRecovering = hotswapContext != null && hotswapContext.recovering();
 		boolean hotswapExpires = hotswapContext != null && hotswapContext.expires();
@@ -233,7 +232,7 @@ public class BingoCardHudElement implements HudElement {
 		if (preview) {
 			drawContext.blit(RenderPipelines.GUI_TEXTURED, PREVIEW_TASK_TEXTURE, taskX, taskY, 0, 0, 16, 16, 16, 16);
 		} else {
-			stack = new ItemStack(BuiltInRegistries.ITEM.getValue(task.task().iconItem()), task.requiredAmount());
+			stack = new ItemStack(BuiltInRegistries.ITEM.getValue(Identifier.fromNamespaceAndPath(task.task().iconItem().namespace(), task.task().iconItem().value())), task.requiredAmount());
 			drawContext.item(stack, taskX, taskY);
 		}
 

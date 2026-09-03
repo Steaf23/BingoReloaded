@@ -3,7 +3,8 @@ plugins {
 }
 
 dependencies {
-    api project(":common")
+    implementation project(":common")
+    implementation project(":protocol")
 
     minecraft "com.mojang:minecraft:${minecraft_version}"
     implementation "net.fabricmc:fabric-loader:${loader_version}"

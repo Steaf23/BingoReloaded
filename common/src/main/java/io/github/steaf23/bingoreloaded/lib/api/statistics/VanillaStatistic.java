@@ -1,34 +1,33 @@
 package io.github.steaf23.bingoreloaded.lib.api.statistics;
 
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
+import io.github.steaf23.bingoreloaded.protocol.data.task.StatisticCategory;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.key.Keyed;
 import org.jspecify.annotations.NonNull;
 
 import java.util.function.Function;
 
-public record VanillaStatistic(String keyStr, Category category, Function<StatisticHandle, ItemType> iconFunction, Specification specification) implements Keyed {
-
-	public enum Category
-	{
-		TRAVEL,
-		BLOCK_INTERACT,
-		CONTAINER_INTERACT,
-		DAMAGE,
-		ROOT_STATISTIC,
-		OTHER,
-	}
-
-	public enum Specification
-	{
-		NONE,
-		ITEM,
-		ENTITY,
-	}
+public record VanillaStatistic(String keyStr, StatisticCategory category, Function<StatisticHandle, ItemType> iconFunction) implements Keyed {
 
 	@Override
 	public @NonNull Key key() {
-		return Key.key(keyStr);
+		return switch (category.type) {
+			case CUSTOM -> Key.key("custom");
+			case ITEM, BLOCK, ENTITY -> Key.key(keyStr());
+		};
+	}
+
+	public Key type() {
+		return key();
+	}
+
+	public Key specification(StatisticHandle handle) {
+		return switch (category.type) {
+			case CUSTOM -> key();
+			case ITEM, BLOCK -> handle.itemType().key();
+			case ENTITY -> handle.entityType().key();
+		};
 	}
 
 	public ItemType icon(StatisticHandle handle) {
@@ -36,7 +35,7 @@ public record VanillaStatistic(String keyStr, Category category, Function<Statis
 	}
 
 	public boolean getsUpdatedOften() {
-		if (category() == VanillaStatistic.Category.TRAVEL) {
+		if (category() == StatisticCategory.TRAVEL) {
 			return true;
 		} else return this == VanillaStatistics.PLAY_TIME ||
 				this == VanillaStatistics.SNEAK_TIME ||

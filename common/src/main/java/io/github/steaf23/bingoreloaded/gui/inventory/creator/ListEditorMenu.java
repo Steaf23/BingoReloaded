@@ -55,7 +55,7 @@ public class ListEditorMenu extends BasicMenu
 
     private BasicMenu createAdvancementPicker(MenuBoard menuBoard) {
         PlatformServer server = menuBoard.context().server();
-        return new TaskPickerMenu(menuBoard, "Add Advancements", Tasks.allAdvancements(server).stream().map(GameTask::new).toList(), listName, formatting);
+        return new TaskPickerMenu(menuBoard, "Add Advancements", Tasks.allAdvancementTasks(server).stream().map(GameTask::new).toList(), listName, formatting);
     }
 
     private BasicMenu createTagManager(MenuBoard menuBoard) {
