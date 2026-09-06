@@ -29,7 +29,7 @@ import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.settings.CustomKit;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
-import io.github.steaf23.bingoreloaded.tasks.Tasks;
+import io.github.steaf23.bingoreloaded.tasks.CreatorTaskFactory;
 import io.github.steaf23.bingoreloaded.tasks.data.ItemTask;
 import io.github.steaf23.bingoreloaded.util.BingoPlayerSender;
 import net.kyori.adventure.text.Component;
@@ -275,7 +275,7 @@ public class BingoAction extends ActionTree {
 			}
 
 			if (context.runtime().getClientManager().playerHasClient(player)) {
-				context.runtime().getClientManager().openCreator(player, Tasks.allTasks(context));
+				context.runtime().getClientManager().openCreator(player, CreatorTaskFactory.create(context));
 			} else {
 				context.runtime().openBingoCreator(player);
 			}

@@ -20,8 +20,8 @@ public class CustomScrollableLayout extends AbstractScrollArea implements Layout
 	private final int scrollRate;
 	private final int scrollerWidth;
 
-	public CustomScrollableLayout(int x, int y, int scrollerWidth, int height, Layout innerLayout, ScrollbarSettings scrollbarSettings) {
-		super(x, y, scrollerWidth, height, Component.empty(), scrollbarSettings);
+	public CustomScrollableLayout(int x, int y, int width, int scrollerWidth, int height, Layout innerLayout, ScrollbarSettings scrollbarSettings) {
+		super(x, y, width, height, Component.empty(), scrollbarSettings);
 		this.innerLayout = innerLayout;
 		this.innerLayout.setPosition(x, y);
 		this.scrollRate = scrollbarSettings.scrollRate();
@@ -39,6 +39,7 @@ public class CustomScrollableLayout extends AbstractScrollArea implements Layout
 		ScreenHelper.extractScrollAreaBackground(graphics, new ScreenRectangle(getRectangle().right() - scrollbarWidth() - 1, getY(), scrollbarWidth() + 1, getRectangle().height()));
 
 		graphics.enableScissor(getX(), getY(), getX() + width - scrollbarWidth(), getY() + height);
+
 		innerLayout.visitWidgets(widget -> widget.extractRenderState(graphics, mouseX, mouseY, a));
 
 		graphics.disableScissor();
@@ -82,7 +83,8 @@ public class CustomScrollableLayout extends AbstractScrollArea implements Layout
 	@Override
 	public void arrangeElements() {
 		Layout.super.arrangeElements();
-		setWidth(innerLayout.getWidth() + scrollerWidth);
+//		setWidth(innerLayout.getWidth() + scrollerWidth);
+		setScrollAmount(scrollAmount());
 	}
 
 	@Override

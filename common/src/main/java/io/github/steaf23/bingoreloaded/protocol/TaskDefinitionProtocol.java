@@ -24,7 +24,7 @@ public class TaskDefinitionProtocol {
 			case AdvancementTask advancement ->
 					new TaskId.Advancement(advancement.advancement().key());
 			case StatisticTask statistic -> {
-				Key type = statistic.statistic().type().key();
+				Key type = statistic.statistic().type().nameOrGroup();
 				Key key = null;
 				EntityType entity = statistic.statistic().entityType();
 				if (entity != null) {

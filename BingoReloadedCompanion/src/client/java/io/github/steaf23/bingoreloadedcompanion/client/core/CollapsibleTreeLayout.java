@@ -1,7 +1,7 @@
 package io.github.steaf23.bingoreloadedcompanion.client.core;
 
+import io.github.steaf23.bingoreloaded.protocol.data.task.AdvancementNode;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.components.Checkbox;
 import net.minecraft.client.gui.layouts.AbstractLayout;
 import net.minecraft.client.gui.layouts.Layout;
 import net.minecraft.client.gui.layouts.LayoutElement;
@@ -23,7 +23,7 @@ public class CollapsibleTreeLayout extends AbstractLayout {
 
 	public static class Node {
 
-		private final @Nullable Node parent;
+		private @Nullable Node parent;
 		private final List<Node> children = new ArrayList<>();
 		// layout is only displayed for leaf nodes
 		private final @Nullable Layout layout;
@@ -59,6 +59,15 @@ public class CollapsibleTreeLayout extends AbstractLayout {
 	public CollapsibleTreeLayout(Font font) {
 		super(0, 0, 0, 0);
 		this.font = font;
+	}
+
+	public Node getRoot() {
+		return root;
+	}
+
+	public void clear() {
+		root.children.clear();
+		rebuildTree();
 	}
 
 	@Override

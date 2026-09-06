@@ -8,8 +8,8 @@ import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformServer;
 import io.github.steaf23.bingoreloaded.lib.inventory.BasicMenu;
 import io.github.steaf23.bingoreloaded.lib.inventory.MenuBoard;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
+import io.github.steaf23.bingoreloaded.tasks.CreatorTaskFactory;
 import io.github.steaf23.bingoreloaded.tasks.GameTask;
-import io.github.steaf23.bingoreloaded.tasks.Tasks;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -50,12 +50,12 @@ public class ListEditorMenu extends BasicMenu
     }
 
     private BasicMenu createItemPicker(MenuBoard menuBoard) {
-        return new TaskPickerMenu(menuBoard, "Select Items", Tasks.allItems().stream().map(GameTask::new).toList(), listName, formatting);
+        return new TaskPickerMenu(menuBoard, "Select Items", CreatorTaskFactory.allItems().stream().map(GameTask::new).toList(), listName, formatting);
     }
 
     private BasicMenu createAdvancementPicker(MenuBoard menuBoard) {
         PlatformServer server = menuBoard.context().server();
-        return new TaskPickerMenu(menuBoard, "Add Advancements", Tasks.allAdvancementTasks(server).stream().map(GameTask::new).toList(), listName, formatting);
+        return new TaskPickerMenu(menuBoard, "Add Advancements", CreatorTaskFactory.allAdvancementTasks(server).stream().map(GameTask::new).toList(), listName, formatting);
     }
 
     private BasicMenu createTagManager(MenuBoard menuBoard) {

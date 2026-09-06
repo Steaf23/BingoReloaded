@@ -30,4 +30,12 @@ public record TaskDefinition(
 	public TaskType type() {
 		return id.type();
 	}
+
+	public boolean passesFilter(String filter) {
+		if (filter.isBlank()) {
+			return true;
+		}
+
+		return name.toLowerCase().contains(filter.toLowerCase());
+	}
 }

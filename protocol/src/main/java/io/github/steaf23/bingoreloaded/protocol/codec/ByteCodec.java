@@ -6,8 +6,13 @@ import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Function;
 
 public interface ByteCodec<T> {
@@ -50,13 +55,49 @@ public interface ByteCodec<T> {
 				(buf, in) -> {
 					buf.writeInt(in.size());
 					for (T i : in) {
-						encode(buf, i);
+						this.encode(buf, i);
 					}
 				}, (buf) -> {
 					List<T> result = new ArrayList<>();
 					int size = buf.readInt();
 					for (int i = 0; i < size; i++) {
-						result.add(decode(buf));
+						result.add(this.decode(buf));
+					}
+					return result;
+				});
+	}
+
+	default <V> ByteCodec<Map<T, V>> mapWithValues(ByteCodec<V> valueCodec) {
+		return ByteCodec.create(
+				(buf, map) -> {
+					ByteCodec.INT.encode(buf, map.size());
+					for (T key : map.keySet()) {
+						this.encode(buf, key);
+						valueCodec.encode(buf, map.get(key));
+					}
+
+				}, (buf) -> {
+					Map<T, V> result = new HashMap<>();
+					int count = ByteCodec.INT.decode(buf);
+					for (int i = 0; i < count; i++) {
+						result.put(this.decode(buf), valueCodec.decode(buf));
+					}
+					return result;
+				});
+	}
+
+	default ByteCodec<Set<T>> hashSet() {
+		return ByteCodec.create(
+				(buf, in) -> {
+					buf.writeInt(in.size());
+					for (T i : in) {
+						this.encode(buf, i);
+					}
+				}, (buf) -> {
+					Set<T> result = new HashSet<>();
+					int size = buf.readInt();
+					for (int i = 0; i < size; i++) {
+						result.add(this.decode(buf));
 					}
 					return result;
 				});

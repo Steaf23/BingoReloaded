@@ -129,9 +129,9 @@ public class EventListenerFabric {
 			return InteractionResult.PASS;
 		}
 
-   		StatisticHandle handle = switch (statistic.specification()) {
-			case NONE -> new StatisticHandle(statistic);
-			case ITEM -> {
+   		StatisticHandle handle = switch (statistic.category().type) {
+			case CUSTOM -> new StatisticHandle(statistic);
+			case ITEM, BLOCK -> {
 				Item item;
 				if (stat.getValue() instanceof Block block) {
 					item = block.asItem();

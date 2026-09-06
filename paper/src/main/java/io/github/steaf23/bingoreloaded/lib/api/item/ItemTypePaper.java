@@ -46,7 +46,7 @@ public class ItemTypePaper implements ItemType {
 			return type.equals(other.type);
 		}
 
-		return super.equals(obj);
+		return false;
 	}
 
 	@Override

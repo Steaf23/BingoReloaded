@@ -8,6 +8,7 @@ import io.github.steaf23.bingoreloaded.protocol.data.task.StatisticCategory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
 import java.util.Set;
 
 
@@ -86,6 +87,6 @@ public record StatisticHandle(@NotNull VanillaStatistic type, @Nullable EntityTy
 			return false;
 		}
 
-		return otherType.equals(type) && otherEntity == entityType && otherItem == itemType;
+		return otherType.equals(type) &&  Objects.equals(otherEntity, entityType) && Objects.equals(otherItem, itemType);
 	}
 }

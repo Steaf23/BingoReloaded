@@ -8,6 +8,7 @@ import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import org.bukkit.advancement.Advancement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
@@ -17,6 +18,11 @@ public class AdvancementHandlePaper implements AdvancementHandle {
 
 	public AdvancementHandlePaper(Advancement advancement) {
 		this.advancement = advancement;
+	}
+
+	@Override
+	public @Nullable AdvancementHandle getParent() {
+		return advancement.getParent() == null ? null : new AdvancementHandlePaper(advancement.getParent());
 	}
 
 	@Override

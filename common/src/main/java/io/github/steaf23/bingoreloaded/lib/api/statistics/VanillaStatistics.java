@@ -105,10 +105,9 @@ public class VanillaStatistics {
 	public static final VanillaStatistic USED = register("used", StatisticCategory.USED);
 
 	public static @Nullable VanillaStatistic fromKey(Key key) {
-		String compare = key.value();
 		for (StatisticCategory cat : STATISTICS_BY_CATEGORY.keySet()) {
 			for (VanillaStatistic stat : STATISTICS_BY_CATEGORY.get(cat)) {
-				if (compare.equals(stat.keyStr())) {
+				if (key.equals(stat.key())) {
 					return stat;
 				}
 			}
@@ -134,22 +133,22 @@ public class VanillaStatistics {
 		return ItemType.of("minecraft:" + type.key().value() + "_spawn_egg");
 	}
 
-	private static VanillaStatistic register(String id, StatisticCategory category, Function<StatisticHandle, ItemType> icon) {
-		VanillaStatistic stat = new VanillaStatistic(id, category, icon);
+	private static VanillaStatistic register(String nameOrGroup, StatisticCategory category, Function<StatisticHandle, ItemType> icon) {
+		VanillaStatistic stat = new VanillaStatistic(Key.key(nameOrGroup), category, icon);
 		STATISTICS_BY_CATEGORY.putIfAbsent(category, new ArrayList<>());
 		STATISTICS_BY_CATEGORY.get(category).add(stat);
 		return stat;
 	}
 
-	private static VanillaStatistic register(String id, StatisticCategory category, VanillaItem icon) {
-		return VanillaStatistics.register(id, category, i -> icon.type());
+	private static VanillaStatistic register(String nameOrGroup, StatisticCategory category, VanillaItem icon) {
+		return VanillaStatistics.register(nameOrGroup, category, i -> icon.type());
 	}
 
-	private static VanillaStatistic register(String id, StatisticCategory category) {
+	private static VanillaStatistic register(String nameOrGroup, StatisticCategory category) {
 		return switch (category.type) {
 			case CUSTOM -> throw new IllegalArgumentException("Cannot register stat with specification NONE and no icon!");
-			case ITEM, BLOCK -> VanillaStatistics.register(id, category, VanillaStatistics::iconFromItem);
-			case ENTITY -> VanillaStatistics.register(id, category, VanillaStatistics::iconFromEntity);
+			case ITEM, BLOCK -> VanillaStatistics.register(nameOrGroup, category, VanillaStatistics::iconFromItem);
+			case ENTITY -> VanillaStatistics.register(nameOrGroup, category, VanillaStatistics::iconFromEntity);
 		};
 	}
 

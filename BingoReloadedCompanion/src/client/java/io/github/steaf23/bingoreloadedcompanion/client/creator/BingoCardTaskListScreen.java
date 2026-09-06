@@ -1,157 +1,175 @@
 package io.github.steaf23.bingoreloadedcompanion.client.creator;
 
 import io.github.steaf23.bingoreloaded.protocol.data.CreatorTaskSupplier;
+import io.github.steaf23.bingoreloaded.protocol.data.task.AdvancementNode;
 import io.github.steaf23.bingoreloaded.protocol.data.task.StatisticCategory;
 import io.github.steaf23.bingoreloaded.protocol.data.task.TaskDefinition;
 import io.github.steaf23.bingoreloaded.protocol.data.task.TaskId;
-import io.github.steaf23.bingoreloaded.protocol.data.task.TaskType;
 import io.github.steaf23.bingoreloadedcompanion.card.taskdata.TaskWithCount;
 import io.github.steaf23.bingoreloadedcompanion.client.TaskTooltipComponent;
 import io.github.steaf23.bingoreloadedcompanion.client.core.CollapsibleTreeLayout;
 import io.github.steaf23.bingoreloadedcompanion.client.core.CustomScrollableLayout;
 import io.github.steaf23.bingoreloadedcompanion.client.util.ScreenHelper;
-import jdk.jfr.Category;
 import net.kyori.adventure.key.Key;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractScrollArea;
 import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.components.ImageWidget;
+import net.minecraft.client.gui.components.StringWidget;
 import net.minecraft.client.gui.layouts.GridLayout;
 import net.minecraft.client.gui.layouts.LayoutSettings;
 import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
-import net.minecraft.client.input.MouseButtonEvent;
-import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
-import net.minecraft.util.CommonColors;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.Items;
 import org.jspecify.annotations.NonNull;
-import org.lwjgl.glfw.GLFW;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class BingoCardTaskListScreen extends Screen {
 
-	private record TaskTab(int index, Item icon, Component name, TaskType type) {}
-
-	private static final TaskTab[] TABS = new TaskTab[]{
-			new TaskTab(0, Items.APPLE, Component.nullToEmpty("Items"), TaskType.ITEM),
-			new TaskTab(1, Items.ENDER_EYE, Component.nullToEmpty("Advancements"), TaskType.ADVANCEMENT),
-			new TaskTab(2, Items.GLOBE_BANNER_PATTERN, Component.nullToEmpty("Statistics"), TaskType.STATISTIC)
-	};
-
-	private static final Identifier TAB_SELECTED = Identifier.withDefaultNamespace("container/creative_inventory/tab_top_selected_2");
-	private static final Identifier TAB_UNSELECTED = Identifier.withDefaultNamespace("container/creative_inventory/tab_top_unselected_2");
+	private static final Identifier SEARCH_ICON = Identifier.withDefaultNamespace("icon/search");
 	private static final Identifier SCROLLER = Identifier.withDefaultNamespace("container/creative_inventory/scroller");
 	private static final Identifier SCROLLER_DISABLED = Identifier.withDefaultNamespace("container/creative_inventory/scroller_disabled");
 	private static final Identifier SCROLLER_BACKGROUND = Identifier.parse("bingoreloadedcompanion:empty");
 
-	private static final int MENU_WIDTH = 222;
-	private static final int MENU_HEIGHT = 148;
-
-	private static final int TAB_WIDTH = 26;
-	private static final int TAB_HEIGHT = 32;
+	private static final int TAB_HEIGHT = 20;
 
 	private static final int SCROLLER_WIDTH = 12;
 	private static final int SCROLLER_HEIGHT = 15;
 	private static final int SLOT_WIDTH = 24;
 
-
-	private TaskTab selectedTab;
+	private final TabSelectionButton tabSelection = new TabSelectionButton(this::tabChanged);
 	private EditBox filterField;
-	private CustomScrollableLayout taskListLayout = null;
+	private StringWidget tabName;
+	private CollapsibleTreeLayout treeLayout;
+	private CustomScrollableLayout scrollLayout;
+	private LinearLayout topLayout;
 
-	private CreatorTaskSupplier taskSupplier;
-	private List<TaskDefinition> allTasks = new ArrayList<>();
-	private List<TaskWidget> visibleWidgets;
+	private final Map<CreativeModeTab, Set<TaskDefinition>> itemsPerTab = new HashMap<>();
+	private final List<TaskDefinition> allStatistics = new ArrayList<>();
+
+	private final CreatorTaskSupplier taskSupplier;
+
+	private final List<TaskWidget> visibleTasks = new ArrayList<>();
+	private final Map<TaskId, Integer> selectedTasks = new HashMap<>();
+
+	String currentFilter = "";
 
 	public BingoCardTaskListScreen(Component title, CreatorTaskSupplier tasks) {
 		super(title);
-		selectedTab = TABS[0];
 
 		taskSupplier = tasks;
-		allTasks.addAll(tasks.availableItems().stream()
-				.map(this::itemTask)
-				.toList());
-		allTasks.addAll(tasks.advancements());
-		allTasks.addAll(tasks.statistics().stream()
-				.flatMap(task -> {
-					if (!(task.id() instanceof TaskId.Statistic stat)) {
-						return Stream.of(task);
-					}
+		BuiltInRegistries.CREATIVE_MODE_TAB.stream().forEach(tab -> {
+			if (tab.getType() == CreativeModeTab.Type.SEARCH) {
+				return;
+			}
+			tab.buildContents(new CreativeModeTab.ItemDisplayParameters(
+					Minecraft.getInstance().player.connection.enabledFeatures(),
+					Minecraft.getInstance().player.canUseGameMasterBlocks(),
+					Minecraft.getInstance().player.level().registryAccess()));
+			Set<TaskDefinition> items = tab.getDisplayItems().stream()
+					.map(stack -> {
+						Identifier itemId = BuiltInRegistries.ITEM.getKey(stack.getItem());
+						return itemTask(Key.key(itemId.getNamespace(), itemId.value()), tab.getDisplayName().getString());
+					})
+					.collect(Collectors.toSet());
+			itemsPerTab.put(tab, items);
+		});
 
-					return switch (stat.category().type) {
-						case CUSTOM -> Stream.of(task);
-						case ITEM -> taskSupplier.availableItems().stream()
-								.map(item -> itemTaskFromStatistic(stat.category(), item, task.category()));
-						case BLOCK -> taskSupplier.availableBlocks().stream()
-								.map(item -> itemTaskFromStatistic(stat.category(), item, task.category()));
-						case ENTITY -> taskSupplier.availableEntities().stream()
-								.map(item -> entityTaskFromStatistic(stat.category(), item, task.category()));
+		allStatistics.addAll(tasks.statistics().stream()
+				.flatMap(task -> {
+					TaskId.Statistic stat = task.statistic();
+					return switch (task.statistic().category().type) {
+						case CUSTOM -> Stream.of(new TaskDefinition(
+								stat,
+								task.name(),
+								"",
+								task.customIcon(),
+								stat.category().name(),
+								64));
+						case ITEM -> taskSupplier.items().stream()
+								.map(item -> itemTaskFromStatistic(stat.category(), item, stat.category().name()));
+						case BLOCK -> taskSupplier.validBlocks().stream()
+								.map(item -> itemTaskFromStatistic(stat.category(), item, stat.category().name()));
+						case ENTITY -> taskSupplier.validEntityTypes().stream()
+								.map(item -> entityTaskFromStatistic(stat.category(), item, stat.category().name()));
 					};
 				}).toList());
-		visibleWidgets = new ArrayList<>();
-//
-//		if (w.task().task().id() instanceof TaskId.Statistic stat && stat.category().type != StatisticCategory.Type.CUSTOM) {
-//			widgetByCategory.get(cat).addAll(switch (stat.category().type) {
-//				case ITEM -> {
-//					List<TaskWidget> widgets = new ArrayList<>();
-////						for (var item : taskSupplier.availableItems()) {
-////							widgets.add(new TaskWidget(
-////									new TaskWithCount(new TaskDefinition(w.task().task()))
-////							));
-////						}
-//					yield widgets;
-//				}
-//				case BLOCK -> List.of();
-//				case ENTITY -> List.of();
-//				default -> throw new IllegalStateException("Unexpected value: " + stat.category().type);
-//			});
-//		}
-	}
 
-	@Override
-	protected void init() {
-		int startX = menuStartX();
-		int startY = menuStartY();
-
-		filterField = new EditBox(Minecraft.getInstance().font, startX + 20, startY + 4, 85, 14, Component.nullToEmpty(""));
+		// ui setup
+		this.filterField = new EditBox(Minecraft.getInstance().font, 0, 0, 85, 14, Component.nullToEmpty(""));
 		filterField.setBordered(true);
 		filterField.setVisible(true);
 		filterField.setCanLoseFocus(false);
 		filterField.setFocused(true);
-		this.addRenderableWidget(filterField);
+		filterField.setResponder(this::applyFilter);
 
-		AbstractScrollArea.ScrollbarSettings settings = new AbstractScrollArea.ScrollbarSettings(SCROLLER, SCROLLER_DISABLED, SCROLLER_BACKGROUND, SCROLLER_WIDTH, SCROLLER_HEIGHT, 24, false);
+		this.tabName = new StringWidget(tabSelection.getSelectedTab().name().copy().withStyle(ScreenHelper.INVENTORY_STYLE), font);
 
-		int heightLeft = height - TAB_HEIGHT - 10;
+		topLayout = LinearLayout.horizontal();
+		topLayout.addChild(tabName, LayoutSettings.defaults().padding(3).alignVerticallyMiddle());
+		topLayout.addChild(ImageWidget.sprite(12, 12, SEARCH_ICON), LayoutSettings.defaults().padding(2).paddingRight(1));
+		topLayout.addChild(filterField, LayoutSettings.defaults().alignVerticallyMiddle().padding(3));
+		topLayout.addChild(tabSelection, LayoutSettings.defaults().paddingRight(3));
+		topLayout.arrangeElements();
+
+		treeLayout = new CollapsibleTreeLayout(font);
+	}
+
+	@Override
+	protected void init() {
+		int heightLeft = height - TAB_HEIGHT - 30;
 		int widthLeft = SLOT_WIDTH * 10 + SCROLLER_WIDTH + 3;
 
-		CollapsibleTreeLayout itemTree = new CollapsibleTreeLayout(font);
-
-		int colCount = (widthLeft - (3 + SCROLLER_WIDTH)) / SLOT_WIDTH;
 		int tasksStartX = (width - widthLeft) / 2;
 
-		visibleWidgets = allTasks.stream()
-				.filter(def -> def.type() == selectedTab.type())
-				.map(def -> new TaskWidget(new TaskWithCount(def, 0), font, _ -> {}, (event, widget) -> {
-					widget.updateCount(widget.task().count() + 1);
-					int idx = visibleWidgets.indexOf(widget);
-				}))
-				.toList();
+		applyFilter(currentFilter);
+
+		AbstractScrollArea.ScrollbarSettings settings = new AbstractScrollArea.ScrollbarSettings(SCROLLER, SCROLLER_DISABLED, SCROLLER_BACKGROUND, SCROLLER_WIDTH, SCROLLER_HEIGHT, 24, false);
+		scrollLayout = new CustomScrollableLayout(tasksStartX,
+				TAB_HEIGHT + 15,
+				SLOT_WIDTH * 10 + SCROLLER_WIDTH + 8, 3 + SCROLLER_WIDTH, heightLeft, treeLayout, settings);
+		scrollLayout.arrangeElements();
+		scrollLayout.refreshScrollAmount();
+		this.addRenderableWidget(scrollLayout);
+
+		tabName.setWidth(scrollLayout.getWidth() - topLayout.getWidth() + tabName.getWidth() + 5);
+		topLayout.arrangeElements();
+
+		topLayout.setY(11);
+		topLayout.visitWidgets(this::addRenderableWidget);
+
+		topLayout.setX((width - scrollLayout.getWidth()) / 2);
+	}
+
+	public void tabChanged(int newIndex, TabSelectionButton.TaskTab newTab) {
+		applyFilter("");
+	}
+
+	public void standardLayout(List<TaskWidget> widgets, int columns) {
+		treeLayout.clear();
 
 		Map<String, List<TaskWidget>> widgetByCategory = new HashMap<>();
-		for (TaskWidget w : visibleWidgets) {
-			String cat = w.task().task().category();
+		for (TaskWidget w : widgets) {
+			if (!w.task().passesFilter(currentFilter)) {
+				continue;
+			}
+
+			String cat = w.task().category();
 			widgetByCategory.computeIfAbsent(cat, category -> new ArrayList<>());
 			widgetByCategory.get(cat).add(w);
 		}
@@ -160,21 +178,69 @@ public class BingoCardTaskListScreen extends Screen {
 			LinearLayout padding = LinearLayout.vertical();
 			GridLayout contents = new GridLayout();
 			padding.addChild(contents, LayoutSettings.defaults().padding(3));
-			itemTree.addTopLevelNode(category.isEmpty() ? Component.empty() : Component.literal(category), padding);
 
 			for (int i = 0; i < widgetByCategory.get(category).size(); i++) {
-				int col = i % colCount;
-				int row = i / colCount;
+				int col = i % columns;
+				int row = i / columns;
+				TaskWidget widget = widgetByCategory.get(category).get(i);
+				widget.select(selectedTasks.containsKey(widget.task().id()));
 				contents.addChild(widgetByCategory.get(category).get(i), row, col);
 			}
+
+			treeLayout.addTopLevelNode(category.isEmpty() ? Component.empty() : Component.literal(category), padding);
+		}
+	}
+
+	public void buildItemWidgets(int colCount) {
+		visibleTasks.clear();
+		List<TaskWidget> widgets = new ArrayList<>();
+		for (CreativeModeTab tab : itemsPerTab.keySet()) {
+			widgets.addAll(itemsPerTab.get(tab).stream()
+					.map(this::createWidget).toList());
 		}
 
-		taskListLayout = new CustomScrollableLayout(tasksStartX,
-				TAB_HEIGHT,
-				3 + SCROLLER_WIDTH, heightLeft, itemTree, settings);
-		taskListLayout.arrangeElements();
+		visibleTasks.addAll(widgets);
+		standardLayout(widgets, colCount);
+	}
 
-		this.addRenderableWidget(taskListLayout);
+	public void buildStatisticWidgets(int colCount) {
+		visibleTasks.clear();
+		List<TaskWidget> widgets = allStatistics.stream()
+				.map(this::createWidget).toList();
+		visibleTasks.addAll(widgets);
+		standardLayout(widgets, colCount);
+	}
+
+	public void buildAdvancementWidgets(int colCount) {
+		visibleTasks.clear();
+		List<TaskWidget> widgets = new ArrayList<>();
+		for (Key key : taskSupplier.advancements().keySet()) {
+			AdvancementNode node = taskSupplier.advancements().get(key);
+			if (!node.hasDisplay()) {
+				continue;
+			}
+			String category = findAdvancementRoot(key);
+			TaskDefinition def = new TaskDefinition(new TaskId.Advancement(key), node.displayName(), node.displayDescription(), node.displayIcon(), category,1);
+			widgets.add(this.createWidget(def));
+		}
+
+		visibleTasks.addAll(widgets);
+		standardLayout(widgets, colCount);
+	}
+
+	public @Nullable String findAdvancementRoot(Key advancement) {
+		return advancement.asString().split("/")[0];
+	}
+
+	public TaskWidget createWidget(TaskDefinition definition) {
+		return new TaskWidget(definition, font, widget -> {
+			TaskId id = widget.task().id();
+			if (widget.isSelected() && !selectedTasks.containsKey(id)) {
+				selectedTasks.put(id, 1);
+			} else if (!widget.isSelected()) {
+				selectedTasks.remove(id);
+			}
+		});
 	}
 
 	@Override
@@ -182,74 +248,26 @@ public class BingoCardTaskListScreen extends Screen {
 		return false;
 	}
 
-	private int getOverflowRows() {
-		return Math.max(0, (allTasks.size() / 8) - 4);
-	}
+	public void applyFilter(String filter) {
+		currentFilter = filter;
 
-	private void switchTab(TaskTab newTab) {
-		selectedTab = newTab;
-		filterField.setValue("");
+		int colCount = 10;
+		switch (tabSelection.getSelectedTab().type()) {
+			case ITEM -> buildItemWidgets(colCount);
+			case ADVANCEMENT -> buildAdvancementWidgets(colCount);
+			case STATISTIC -> buildStatisticWidgets(colCount);
+		};
 
-		rebuildWidgets();
+		if (scrollLayout != null) {
+			scrollLayout.setScrollAmount(0.0);
+		}
 	}
-//
-//	@Override
-//	public boolean keyPressed(KeyEvent key) {
-//		String oldFilter = filterField.getValue();
-//
-//		boolean result = filterField.keyPressed(key);
-//		if (!oldFilter.equals(filterField.getValue())) {
-//			applyFilter();
-//		}
-//
-//		if (super.keyPressed(key)) {
-//			return true;
-//		}
-//
-//		return result;
-//	}
-//
-//	@Override
-//	public boolean charTyped(CharacterEvent charInput) {
-//		String oldFilter = filterField.getValue();
-//
-//		boolean result = filterField.charTyped(charInput);
-//		if (!oldFilter.equals(filterField.getValue())) {
-//			applyFilter();
-//		}
-//
-//		if (super.charTyped(charInput)) {
-//			return true;
-//		}
-//
-//		return result;
-//	}
 
 	@Override
 	public void extractRenderState(@NonNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, float deltaTicks) {
-
-		int startX = menuStartX();
-		int startY = menuStartY();
-
-		// Tab and menu textures
-		int firstTabX = firstTabX();
-		int tabStartY = tabStartY();
-
-		for (TaskTab tab : TABS) {
-			if (tab.index != selectedTab.index) {
-				graphics.blitSprite(RenderPipelines.GUI_TEXTURED, TAB_UNSELECTED, firstTabX + getTabStartX(tab), tabStartY, TAB_WIDTH, TAB_HEIGHT);
-			}
-		}
+		ScreenHelper.extractInnerInventoryBackground(graphics, topLayout.getRectangle());
 
 		super.extractRenderState(graphics, mouseX, mouseY, deltaTicks);
-
-		graphics.blitSprite(RenderPipelines.GUI_TEXTURED, TAB_SELECTED, firstTabX + getTabStartX(selectedTab), tabStartY, TAB_WIDTH, TAB_HEIGHT);
-
-		for (TaskTab tab : TABS) {
-			graphics.item(tab.icon.getDefaultInstance(), firstTabX + getTabStartX(tab) + (TAB_WIDTH - 16) / 2, tabStartY + 8);
-		}
-
-		graphics.text(Minecraft.getInstance().font, selectedTab.name(), startX + 0, startY + 6, CommonColors.DARK_GRAY, false);
 
 //		if (filteredItemTasks.size() > 40) {
 //			int scrollRange = SCROLL_HEIGHT - SCROLLER_HEIGHT;
@@ -265,7 +283,7 @@ public class BingoCardTaskListScreen extends Screen {
 		int hoveredIndex = -1;
 		TaskWidget hoveredTask = null;
 		int index = 0;
-		for (TaskWidget visibleTask : visibleWidgets) {
+		for (TaskWidget visibleTask : visibleTasks) {
 			if (visibleTask.isHovered()) {
 				hoveredIndex = index;
 				hoveredTask = visibleTask;
@@ -275,85 +293,29 @@ public class BingoCardTaskListScreen extends Screen {
 		}
 
 		if (hoveredIndex != -1) {
-			TaskTooltipComponent tooltipComponent = new TaskTooltipComponent(hoveredTask.task());
+			int count = 0;
+			if (selectedTasks.containsKey(hoveredTask.task().id())) {
+				count = selectedTasks.get(hoveredTask.task().id());
+			}
+			TaskTooltipComponent tooltipComponent = new TaskTooltipComponent(new TaskWithCount(hoveredTask.task(), count));
 
 			int slotX = hoveredTask.getX();
 			int slotY = hoveredTask.getY();
 			graphics.tooltip(font, List.of(tooltipComponent), slotX - tooltipComponent.getWidth(font) / 2, slotY - tooltipComponent.getHeight(font) + 9, DefaultTooltipPositioner.INSTANCE, null);
 		}
-
-		// Tooltips
-
-		for (TaskTab tab : TABS) {
-			if (isMouseOverTab(mouseX, mouseY, tab))
-			{
-				graphics.setTooltipForNextFrame(tab.name, mouseX, mouseY);
-			}
-		}
 	}
 
-	@Override
-	public boolean mouseClicked(MouseButtonEvent click, boolean doubled) {
-		if (super.mouseClicked(click, doubled)) {
-			return true;
-		}
-
-		if (doubled) return true;
-
-		int button = click.button();
-		double mouseX = click.x();
-		double mouseY = click.y();
-
-		if (button != GLFW.GLFW_MOUSE_BUTTON_LEFT) {
-			return false;
-		}
-
-		for (TaskTab tab : TABS) {
-			if (isMouseOverTab((int) mouseX, (int) mouseY, tab)) {
-				if (tab.index != selectedTab.index) {
-					switchTab(tab);
-				}
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	private int getTabStartX(TaskTab tab) {
-		return TAB_WIDTH * tab.index + tab.index - 1;
-	}
-
-	private boolean isMouseOverTab(int mouseX, int mouseY, TaskTab tab) {
-		return ScreenHelper.isPointWithinBounds(firstTabX() + getTabStartX(tab) + 4, tabStartY() + 4, TAB_WIDTH - 8, TAB_HEIGHT - 8, mouseX, mouseY);
-	}
-
-	private int menuStartX() {
-		return (width / 2 - (MENU_WIDTH + 200) / 2);
-	}
-
-	private int menuStartY() {
-		return (height / 2 - (MENU_HEIGHT + 200) / 2);
-	}
-
-	private int firstTabX() {
-		return width / 2 - (TABS.length * TAB_WIDTH + (TABS.length - 1)) / 2;
-	}
-
-	private int tabStartY() {
-		return 0;
-	}
-
-	public TaskDefinition itemTask(Key key) {
+	public TaskDefinition itemTask(Key key, String category) {
 		Item item = BuiltInRegistries.ITEM.getValue(Identifier.fromNamespaceAndPath(key.namespace(), key.value()));
 		return new TaskDefinition(
 				new TaskId.Item(key),
 				"x1 " + item.getDescriptionId(),
 				"item description",
 				key,
-				"",
+				category,
 				64);
 	}
+
 
 	public TaskDefinition itemTaskFromStatistic(StatisticCategory statCategory, Key itemKey, String category) {
 		Item item = BuiltInRegistries.ITEM.getValue(Identifier.fromNamespaceAndPath(itemKey.namespace(), itemKey.value()));

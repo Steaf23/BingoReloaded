@@ -8,25 +8,20 @@ import org.jspecify.annotations.NonNull;
 
 import java.util.function.Function;
 
-public record VanillaStatistic(String keyStr, StatisticCategory category, Function<StatisticHandle, ItemType> iconFunction) implements Keyed {
+public record VanillaStatistic(Key nameOrGroup, StatisticCategory category, Function<StatisticHandle, ItemType> iconFunction) implements Keyed {
 
-	@Override
-	public @NonNull Key key() {
+	public Key group() {
 		return switch (category.type) {
 			case CUSTOM -> Key.key("custom");
-			case ITEM, BLOCK, ENTITY -> Key.key(keyStr());
+			case ITEM, BLOCK, ENTITY -> nameOrGroup;
 		};
 	}
 
-	public Key type() {
-		return key();
-	}
-
-	public Key specification(StatisticHandle handle) {
+	public Key specification(StatisticHandle stat) {
 		return switch (category.type) {
-			case CUSTOM -> key();
-			case ITEM, BLOCK -> handle.itemType().key();
-			case ENTITY -> handle.entityType().key();
+			case CUSTOM -> nameOrGroup;
+			case ITEM, BLOCK -> stat.itemType().key();
+			case ENTITY -> stat.entityType().key();
 		};
 	}
 
@@ -42,5 +37,10 @@ public record VanillaStatistic(String keyStr, StatisticCategory category, Functi
 				this == VanillaStatistics.TOTAL_WORLD_TIME ||
 				this == VanillaStatistics.TIME_SINCE_REST ||
 				this == VanillaStatistics.TIME_SINCE_DEATH;
+	}
+
+	@Override
+	public @NonNull Key key() {
+		return nameOrGroup;
 	}
 }
