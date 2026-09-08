@@ -67,8 +67,8 @@ public record BingoSettings(String cardName,
         }
     }
 
-    public static final DataStorageSerializer<BingoSettings> SERIALIZER = DataStorageSerializer.of(BingoSettings.class,
-            (storage, value) -> {
+    public static final DataStorageSerializer<BingoSettings> SERIALIZER = DataStorageSerializer.of(
+			(storage, value) -> {
                 storage.setString("card", value.cardName());
                 storage.setString("mode", value.mode().configName());
                 storage.setInt("size", value.size().size);

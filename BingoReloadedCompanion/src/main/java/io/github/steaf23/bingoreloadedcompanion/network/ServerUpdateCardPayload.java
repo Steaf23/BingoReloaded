@@ -7,32 +7,21 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.Identifier;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
-public class ServerUpdateCardPayload implements CustomPacketPayload {
+public record ServerUpdateCardPayload(Optional<BingoCard> card) implements CustomPacketPayload {
 
-	private final BingoCard card;
-
-	public static final CustomPacketPayload.Type<ServerUpdateCardPayload> ID = new CustomPacketPayload.Type<>(
+	public static final Type<ServerUpdateCardPayload> ID = new Type<>(
 			Identifier.fromNamespaceAndPath(BingoReloadedCompanion.ADDON_ID, BingoReloadedPayloads.UPDATE_CARD.key().value())
 	);
 
 	public static final StreamCodec<RegistryFriendlyByteBuf, ServerUpdateCardPayload> CODEC = StreamCodecs.usingByteCodec(
-			(buf, in) -> BingoReloadedPayloads.UPDATE_CARD.codec().encode(buf, Optional.ofNullable(in.card)),
-			(buf) -> new ServerUpdateCardPayload(BingoReloadedPayloads.UPDATE_CARD.codec().decode(buf).orElse(null)));
-
-	public ServerUpdateCardPayload(BingoCard card) {
-		this.card = card;
-	}
+			(buf, in) -> BingoReloadedPayloads.UPDATE_CARD.codec().encode(buf, in.card),
+			(buf) -> new ServerUpdateCardPayload(BingoReloadedPayloads.UPDATE_CARD.codec().decode(buf)));
 
 	@Override
 	public Type<? extends CustomPacketPayload> type() {
 		return ID;
-	}
-
-	public @Nullable BingoCard getCard() {
-		return card;
 	}
 }

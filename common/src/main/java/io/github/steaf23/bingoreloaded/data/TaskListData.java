@@ -5,8 +5,12 @@ import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformServer;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataAccessor;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataStorage;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
+import io.github.steaf23.bingoreloaded.protocol.TaskDefinitionProtocol;
+import io.github.steaf23.bingoreloaded.protocol.data.card.CustomList;
+import io.github.steaf23.bingoreloaded.protocol.data.task.ConfiguredTask;
 import io.github.steaf23.bingoreloaded.tasks.data.TaskData;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumSet;
@@ -153,5 +157,19 @@ public class TaskListData
                 .filter(key -> !key.equals(PATCH_LEVEL_KEY))
                 .toList());
         return names;
+    }
+
+    public CustomList getList(PlatformServer server, String listName) {
+        boolean readOnly = DEFAULT_LIST_NAMES.contains(listName);
+
+        return new CustomList(listName, getTasks(server, listName, EnumSet.allOf(TaskData.TaskType.class)).stream()
+                .map(t -> {
+	                try {
+						return new ConfiguredTask(TaskDefinitionProtocol.taskDefinition(t).id(), t.getRequiredAmount());
+	                } catch (IOException e) {
+						throw new RuntimeException(e);
+					}
+                })
+                .toList(), readOnly);
     }
 }

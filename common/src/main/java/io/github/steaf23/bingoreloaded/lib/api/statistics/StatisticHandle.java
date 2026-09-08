@@ -14,7 +14,7 @@ import java.util.Set;
 
 public record StatisticHandle(@NotNull VanillaStatistic type, @Nullable EntityType entityType, @Nullable ItemType itemType) {
 
-	public static final DataStorageSerializer<StatisticHandle> SERIALIZER = DataStorageSerializer.of(StatisticHandle.class,
+	public static final DataStorageSerializer<StatisticHandle> SERIALIZER = DataStorageSerializer.of(
 			(storage, value) -> {
 				storage.setNamespacedKey("stat_type", value.type.key());
 

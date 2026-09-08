@@ -6,7 +6,10 @@ import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformServer;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataAccessor;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataStorage;
 import io.github.steaf23.bingoreloaded.lib.data.core.tag.TagDataType;
+import io.github.steaf23.bingoreloaded.protocol.data.card.CustomCard;
+import io.github.steaf23.bingoreloaded.protocol.data.card.ListReference;
 import io.github.steaf23.bingoreloaded.tasks.data.TaskData;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
@@ -36,7 +39,7 @@ public class BingoCardData {
 	}
 
 	public boolean duplicateCard(String cardName) {
-		DataStorage card = getCard(cardName);
+		DataStorage card = getStoredCard(cardName);
 		if (card.isEmpty()) {
 			return false;
 		}
@@ -67,12 +70,20 @@ public class BingoCardData {
 		return names;
 	}
 
+	public List<CustomCard> getAllCards() {
+		return getCardNames().stream().map(this::getCard).toList();
+	}
+
 	public byte getListMax(String cardName, String listName) {
 		return getCardLists(cardName).getByte(listName + ".max", MAX_ITEMS);
 	}
 
 	public byte getListMin(String cardName, String listName) {
 		return getCardLists(cardName).getByte(listName + ".min", MIN_ITEMS);
+	}
+
+	public void setList(String cardName, ListReference list) {
+		setList(cardName, list.name(), list.max(), list.min());
 	}
 
 	public void setList(String cardName, String listName, int max, int min) {
@@ -120,7 +131,7 @@ public class BingoCardData {
 	}
 
 	public String getDescription(String cardName) {
-		return getCard(cardName).getString("description", "");
+		return getStoredCard(cardName).getString("description", "");
 	}
 
 	public void setDescription(String cardName, String description) {
@@ -143,7 +154,18 @@ public class BingoCardData {
 		return tagData;
 	}
 
-	public DataStorage getCard(String cardName) {
+	public @Nullable CustomCard getCard(String cardName) {
+		DataStorage lists = getCardLists(cardName);
+
+		List<ListReference> list = new ArrayList<>();
+		for (String listName : lists.getKeys()) {
+			list.add(new ListReference(listName, getListMin(cardName, listName), getListMax(cardName, listName)));
+		}
+
+		return new CustomCard(list, getDescription(cardName), isDefaultCard(cardName));
+	}
+
+	private DataStorage getStoredCard(String cardName) {
 		if (defaultData.contains(cardName)) {
 			return defaultData.getStorageOrEmpty(cardName);
 		}
@@ -162,6 +184,6 @@ public class BingoCardData {
 	}
 
 	public DataStorage getCardLists(String cardName) {
-		return getCard(cardName).getStorageOrEmpty("lists");
+		return getStoredCard(cardName).getStorageOrEmpty("lists");
 	}
 }

@@ -83,7 +83,18 @@ public class CustomScrollableLayout extends AbstractScrollArea implements Layout
 	@Override
 	public void arrangeElements() {
 		Layout.super.arrangeElements();
-//		setWidth(innerLayout.getWidth() + scrollerWidth);
+		setScrollAmount(scrollAmount());
+	}
+
+	@Override
+	public void setX(int x) {
+		super.setX(x);
+		innerLayout.setX(x);
+	}
+
+	@Override
+	public void setY(int y) {
+		super.setY(y);
 		setScrollAmount(scrollAmount());
 	}
 

@@ -31,8 +31,8 @@ import java.util.UUID;
 
 public class GameTask
 {
-    public static final DataStorageSerializer<GameTask> SERIALIZER = DataStorageSerializer.of(GameTask.class,
-            (storage, value) -> {
+    public static final DataStorageSerializer<GameTask> SERIALIZER = DataStorageSerializer.of(
+			(storage, value) -> {
                 storage.setBoolean("voided", value.isVoided());
                 storage.setUUID("completed_by", value.getCompletedByPlayer().isPresent() ? value.getCompletedByPlayer().get().getId() : null);
                 storage.setLong("completed_at", value.completedAt);

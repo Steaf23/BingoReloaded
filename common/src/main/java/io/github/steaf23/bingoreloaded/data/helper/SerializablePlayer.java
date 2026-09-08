@@ -17,7 +17,7 @@ import java.util.UUID;
 
 public class SerializablePlayer {
 
-	public static final DataStorageSerializer<SerializablePlayer> SERIALIZER = DataStorageSerializer.of(SerializablePlayer.class,
+	public static final DataStorageSerializer<SerializablePlayer> SERIALIZER = DataStorageSerializer.of(
 			(storage, value) -> {
 				storage.setString("version", value.extensionVersion);
 				storage.setUUID("uuid", value.playerId);

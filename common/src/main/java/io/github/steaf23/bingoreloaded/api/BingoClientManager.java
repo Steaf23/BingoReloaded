@@ -1,8 +1,10 @@
 package io.github.steaf23.bingoreloaded.api;
 
 import io.github.steaf23.bingoreloaded.cards.TaskCard;
+import io.github.steaf23.bingoreloaded.data.BingoCardData;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.protocol.data.CreatorTaskSupplier;
+import io.github.steaf23.bingoreloaded.protocol.data.card.CustomList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -18,7 +20,9 @@ public interface BingoClientManager {
 
 	void playerLeavesServer(PlayerHandle player);
 
-	void openCreator(PlayerHandle player, @NotNull CreatorTaskSupplier tasks);
+	void openCreator(PlayerHandle player, @NotNull CreatorTaskSupplier tasks, @NotNull BingoCardData cardData);
+
+	void sendCreatorList(PlayerHandle player, CustomList list);
 
 	class DisabledClientManager implements BingoClientManager {
 
@@ -43,7 +47,12 @@ public interface BingoClientManager {
 		}
 
 		@Override
-		public void openCreator(PlayerHandle player, @NotNull CreatorTaskSupplier tasks) {
+		public void openCreator(PlayerHandle player, @NotNull CreatorTaskSupplier tasks, @NotNull BingoCardData cardData) {
+
+		}
+
+		@Override
+		public void sendCreatorList(PlayerHandle player, CustomList list) {
 
 		}
 	}

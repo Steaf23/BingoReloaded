@@ -22,8 +22,8 @@ public class TeamData {
      */
     public record TeamTemplate(String stringName, TextColor color, BlockColor dyeColor)
     {
-        public static final DataStorageSerializer<TeamTemplate> SERIALIZER = DataStorageSerializer.of(TeamTemplate.class,
-                (storage, value) -> {
+        public static final DataStorageSerializer<TeamTemplate> SERIALIZER = DataStorageSerializer.of(
+				(storage, value) -> {
                     storage.setString("name", value.stringName());
                     storage.setString("color", value.color().asHexString());
                     storage.setString("dye_color", value.dyeColor().getName());

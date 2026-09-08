@@ -8,13 +8,11 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.Identifier;
 
-public class ClientHelloPayload implements CustomPacketPayload {
+public record ClientHelloPayload() implements CustomPacketPayload {
 
 	public static final CustomPacketPayload.Type<ClientHelloPayload> ID = new CustomPacketPayload.Type<>(
 			Identifier.fromNamespaceAndPath(BingoReloadedCompanion.ADDON_ID, BingoReloadedPayloads.CLIENT_HELLO.key().value())
 	);
-
-	public static final ClientHelloPayload INST = new ClientHelloPayload();
 
 	public static final StreamCodec<RegistryFriendlyByteBuf, ClientHelloPayload> CODEC = StreamCodecs.fromByteCodec(ByteCodec.unit(new ClientHelloPayload()));
 

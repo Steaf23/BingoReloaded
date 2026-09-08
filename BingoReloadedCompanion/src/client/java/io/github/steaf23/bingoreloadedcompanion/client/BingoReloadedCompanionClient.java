@@ -3,16 +3,20 @@ package io.github.steaf23.bingoreloadedcompanion.client;
 import com.mojang.blaze3d.platform.InputConstants;
 import io.github.steaf23.bingoreloadedcompanion.BingoReloadedCompanion;
 import io.github.steaf23.bingoreloaded.protocol.data.BingoCard;
-import io.github.steaf23.bingoreloadedcompanion.client.creator.BingoCardTaskListScreen;
+import io.github.steaf23.bingoreloadedcompanion.client.creator.CreatorSuite;
 import io.github.steaf23.bingoreloadedcompanion.client.hud.BingoCardHudElement;
 import io.github.steaf23.bingoreloadedcompanion.client.hud.ConfigurableHudRegistry;
 import io.github.steaf23.bingoreloadedcompanion.client.hud.HudConfigManager;
 import io.github.steaf23.bingoreloadedcompanion.client.hud.HudInfo;
 import io.github.steaf23.bingoreloadedcompanion.client.hud.HudPlacement;
 import io.github.steaf23.bingoreloadedcompanion.client.hud.HudTimer;
+import io.github.steaf23.bingoreloadedcompanion.network.ClientGetCreatorListPayload;
 import io.github.steaf23.bingoreloadedcompanion.network.ClientHelloPayload;
+import io.github.steaf23.bingoreloadedcompanion.network.ClientUpsertCreatorCardPayload;
+import io.github.steaf23.bingoreloadedcompanion.network.ClientUpsertCreatorListPayload;
+import io.github.steaf23.bingoreloadedcompanion.network.ServerCreatorListPayload;
 import io.github.steaf23.bingoreloadedcompanion.network.ServerHotswapPayload;
-import io.github.steaf23.bingoreloadedcompanion.network.ServerOpenCreatorCreatorPayload;
+import io.github.steaf23.bingoreloadedcompanion.network.ServerOpenCreatorPayload;
 import io.github.steaf23.bingoreloadedcompanion.network.ServerUpdateCardPayload;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
@@ -23,9 +27,8 @@ import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.minecraft.client.KeyMapping;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.Identifier;
 import org.lwjgl.glfw.GLFW;
 
@@ -41,16 +44,19 @@ public class BingoReloadedCompanionClient implements ClientModInitializer {
 
 	private static final HudConfigManager HUD_CONFIG = new HudConfigManager();
 
-	public BingoReloadedCompanionClient() {
-	}
+	private final CreatorSuite suite = new CreatorSuite();
 
 	@Override
 	public void onInitializeClient() {
 		PayloadTypeRegistry.serverboundPlay().register(ClientHelloPayload.ID, ClientHelloPayload.CODEC);
+		PayloadTypeRegistry.serverboundPlay().register(ClientGetCreatorListPayload.ID, ClientGetCreatorListPayload.CODEC);
+		PayloadTypeRegistry.serverboundPlay().register(ClientUpsertCreatorListPayload.ID, ClientUpsertCreatorListPayload.CODEC);
+		PayloadTypeRegistry.serverboundPlay().register(ClientUpsertCreatorCardPayload.ID, ClientUpsertCreatorCardPayload.CODEC);
 
 		PayloadTypeRegistry.clientboundPlay().register(ServerUpdateCardPayload.ID, ServerUpdateCardPayload.CODEC);
 		PayloadTypeRegistry.clientboundPlay().register(ServerHotswapPayload.ID, ServerHotswapPayload.CODEC);
-		PayloadTypeRegistry.clientboundPlay().register(ServerOpenCreatorCreatorPayload.ID, ServerOpenCreatorCreatorPayload.CODEC);
+		PayloadTypeRegistry.clientboundPlay().register(ServerOpenCreatorPayload.ID, ServerOpenCreatorPayload.CODEC);
+		PayloadTypeRegistry.clientboundPlay().register(ServerCreatorListPayload.ID, ServerCreatorListPayload.CODEC);
 
 		HUD_CONFIG.load();
 
@@ -78,11 +84,7 @@ public class BingoReloadedCompanionClient implements ClientModInitializer {
 				return;
 			}
 
-			ClientHelloPayload payload = new ClientHelloPayload();
-			if (ClientPlayNetworking.canSend(payload.type())) {
-				ClientPlayNetworking.send(payload);
-			}
-
+			BingoReloadedCompanionClient.sendPayloadToServer(new ClientHelloPayload());
 		}));
 
 		ClientPlayConnectionEvents.DISCONNECT.register(((handler, client) -> {
@@ -91,16 +93,19 @@ public class BingoReloadedCompanionClient implements ClientModInitializer {
 
 		ClientPlayNetworking.registerGlobalReceiver(ServerUpdateCardPayload.ID,
 				(payload, context) -> {
-					BingoCard card = payload.getCard();
-					cardElement.setCard(card);
+					cardElement.setCard(payload.card().orElse(null));
 				});
 		ClientPlayNetworking.registerGlobalReceiver(ServerHotswapPayload.ID,
 				(payload, context) -> {
-					cardElement.setHotswapHolders(payload.holders);
+					cardElement.setHotswapHolders(payload.holders());
 				});
-		ClientPlayNetworking.registerGlobalReceiver(ServerOpenCreatorCreatorPayload.ID,
+		ClientPlayNetworking.registerGlobalReceiver(ServerOpenCreatorPayload.ID,
 				(payload, context) -> {
-					Minecraft.getInstance().setScreenAndShow(new BingoCardTaskListScreen(Component.empty(), payload.taskSupplier()));
+					suite.openListEditor(payload.creatorContext());
+				});
+		ClientPlayNetworking.registerGlobalReceiver(ServerCreatorListPayload.ID,
+				(payload, context) -> {
+					suite.listReceived(payload.list());
 				});
 
 		KeyMapping.Category category = KeyMapping.Category.register(Identifier.fromNamespaceAndPath("bingoreloadedcompanion", "main"));
@@ -156,5 +161,11 @@ public class BingoReloadedCompanionClient implements ClientModInitializer {
 
 	public static HudConfigManager getHudConfig() {
 		return HUD_CONFIG;
+	}
+
+	public static void sendPayloadToServer(CustomPacketPayload payload) {
+		if (ClientPlayNetworking.canSend(payload.type())) {
+			ClientPlayNetworking.send(payload);
+		}
 	}
 }

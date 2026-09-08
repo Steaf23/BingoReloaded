@@ -2,12 +2,15 @@ package io.github.steaf23.bingoreloadedcompanion.client.creator;
 
 import com.mojang.blaze3d.platform.cursor.CursorTypes;
 import io.github.steaf23.bingoreloaded.protocol.data.task.TaskType;
+import io.github.steaf23.bingoreloadedcompanion.client.util.ScreenHelper;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
@@ -18,9 +21,9 @@ public class TabSelectionButton extends AbstractWidget {
 	public record TaskTab(int index, Item icon, Component name, TaskType type) {}
 
 	private static final TaskTab[] TABS = new TaskTab[]{
-			new TaskTab(0, Items.APPLE, Component.nullToEmpty("Items"), TaskType.ITEM),
-			new TaskTab(1, Items.ENDER_EYE, Component.nullToEmpty("Advancements"), TaskType.ADVANCEMENT),
-			new TaskTab(2, Items.GLOBE_BANNER_PATTERN, Component.nullToEmpty("Statistics"), TaskType.STATISTIC)
+			new TaskTab(0, Items.APPLE, Component.literal("Items").withStyle(ScreenHelper.INVENTORY_STYLE), TaskType.ITEM),
+			new TaskTab(1, Items.ENDER_EYE, Component.literal("Advancements").withStyle(ScreenHelper.INVENTORY_STYLE), TaskType.ADVANCEMENT),
+			new TaskTab(2, Items.GLOBE_BANNER_PATTERN, Component.literal("Statistics").withStyle(ScreenHelper.INVENTORY_STYLE), TaskType.STATISTIC)
 	};
 
 	private static final Identifier TAB_SELECTED = Identifier.parse("bingoreloadedcompanion:tab_selected");
@@ -71,7 +74,7 @@ public class TabSelectionButton extends AbstractWidget {
 
 			if (isMouseOverTab(tab.index, mouseX, mouseY))
 			{
-				graphics.setTooltipForNextFrame(tab.name, mouseX, mouseY);
+				graphics.setTooltipForNextFrame(tab.name.copy().setStyle(Style.EMPTY), mouseX, mouseY);
 				if (tab.index != selectedIndex) {
 					graphics.requestCursor(CursorTypes.POINTING_HAND);
 				}

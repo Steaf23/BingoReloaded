@@ -14,7 +14,7 @@ public class DefaultKitData {
 
 	public record Kit(List<SerializableItem> items) {
 
-		public static final DataStorageSerializer<Kit> SERIALIZER = DataStorageSerializer.of(DefaultKitData.Kit.class,
+		public static final DataStorageSerializer<Kit> SERIALIZER = DataStorageSerializer.of(
 				(storage, value) -> {
 					storage.setSerializableList("items", SerializableItem.SERIALIZER, value.items());
 				}, storage -> {

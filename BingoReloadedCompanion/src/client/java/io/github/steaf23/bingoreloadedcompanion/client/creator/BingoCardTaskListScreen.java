@@ -1,12 +1,12 @@
 package io.github.steaf23.bingoreloadedcompanion.client.creator;
 
-import io.github.steaf23.bingoreloaded.protocol.data.CreatorTaskSupplier;
+import io.github.steaf23.bingoreloaded.protocol.data.card.CustomList;
 import io.github.steaf23.bingoreloaded.protocol.data.task.AdvancementNode;
+import io.github.steaf23.bingoreloaded.protocol.data.task.ConfiguredTask;
 import io.github.steaf23.bingoreloaded.protocol.data.task.StatisticCategory;
 import io.github.steaf23.bingoreloaded.protocol.data.task.TaskDefinition;
 import io.github.steaf23.bingoreloaded.protocol.data.task.TaskId;
 import io.github.steaf23.bingoreloadedcompanion.card.taskdata.TaskWithCount;
-import io.github.steaf23.bingoreloadedcompanion.client.TaskTooltipComponent;
 import io.github.steaf23.bingoreloadedcompanion.client.core.CollapsibleTreeLayout;
 import io.github.steaf23.bingoreloadedcompanion.client.core.CustomScrollableLayout;
 import io.github.steaf23.bingoreloadedcompanion.client.util.ScreenHelper;
@@ -14,6 +14,7 @@ import net.kyori.adventure.key.Key;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractScrollArea;
+import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.ImageWidget;
 import net.minecraft.client.gui.components.StringWidget;
@@ -35,9 +36,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class BingoCardTaskListScreen extends Screen {
 
@@ -57,58 +55,23 @@ public class BingoCardTaskListScreen extends Screen {
 	private StringWidget tabName;
 	private CollapsibleTreeLayout treeLayout;
 	private CustomScrollableLayout scrollLayout;
+	private CustomScrollableLayout selectedScroll;
 	private LinearLayout topLayout;
+	private LinearLayout topRightLayout;
+	private LinearLayout selectedTasksLayout = LinearLayout.vertical().spacing(4);
 
-	private final Map<CreativeModeTab, Set<TaskDefinition>> itemsPerTab = new HashMap<>();
-	private final List<TaskDefinition> allStatistics = new ArrayList<>();
-
-	private final CreatorTaskSupplier taskSupplier;
+	private final CreatorSuite creatorSuite;
 
 	private final List<TaskWidget> visibleTasks = new ArrayList<>();
-	private final Map<TaskId, Integer> selectedTasks = new HashMap<>();
+
+	private final Map<TaskId, TaskWithCount> selectedTasks = new HashMap<>();
 
 	String currentFilter = "";
 
-	public BingoCardTaskListScreen(Component title, CreatorTaskSupplier tasks) {
-		super(title);
+	public BingoCardTaskListScreen(CreatorSuite creatorSuite) {
+		super(Component.empty());
 
-		taskSupplier = tasks;
-		BuiltInRegistries.CREATIVE_MODE_TAB.stream().forEach(tab -> {
-			if (tab.getType() == CreativeModeTab.Type.SEARCH) {
-				return;
-			}
-			tab.buildContents(new CreativeModeTab.ItemDisplayParameters(
-					Minecraft.getInstance().player.connection.enabledFeatures(),
-					Minecraft.getInstance().player.canUseGameMasterBlocks(),
-					Minecraft.getInstance().player.level().registryAccess()));
-			Set<TaskDefinition> items = tab.getDisplayItems().stream()
-					.map(stack -> {
-						Identifier itemId = BuiltInRegistries.ITEM.getKey(stack.getItem());
-						return itemTask(Key.key(itemId.getNamespace(), itemId.value()), tab.getDisplayName().getString());
-					})
-					.collect(Collectors.toSet());
-			itemsPerTab.put(tab, items);
-		});
-
-		allStatistics.addAll(tasks.statistics().stream()
-				.flatMap(task -> {
-					TaskId.Statistic stat = task.statistic();
-					return switch (task.statistic().category().type) {
-						case CUSTOM -> Stream.of(new TaskDefinition(
-								stat,
-								task.name(),
-								"",
-								task.customIcon(),
-								stat.category().name(),
-								64));
-						case ITEM -> taskSupplier.items().stream()
-								.map(item -> itemTaskFromStatistic(stat.category(), item, stat.category().name()));
-						case BLOCK -> taskSupplier.validBlocks().stream()
-								.map(item -> itemTaskFromStatistic(stat.category(), item, stat.category().name()));
-						case ENTITY -> taskSupplier.validEntityTypes().stream()
-								.map(item -> entityTaskFromStatistic(stat.category(), item, stat.category().name()));
-					};
-				}).toList());
+		this.creatorSuite = creatorSuite;
 
 		// ui setup
 		this.filterField = new EditBox(Minecraft.getInstance().font, 0, 0, 85, 14, Component.nullToEmpty(""));
@@ -127,37 +90,60 @@ public class BingoCardTaskListScreen extends Screen {
 		topLayout.addChild(tabSelection, LayoutSettings.defaults().paddingRight(3));
 		topLayout.arrangeElements();
 
+		topRightLayout = LinearLayout.horizontal();
+		topRightLayout.addChild(new StringWidget(Component.literal("Selected").withStyle(ScreenHelper.INVENTORY_STYLE), font),
+				LayoutSettings.defaults().paddingTop(5).paddingBottom(6).paddingHorizontal(24));
+
 		treeLayout = new CollapsibleTreeLayout(font);
 	}
 
 	@Override
 	protected void init() {
-		int heightLeft = height - TAB_HEIGHT - 30;
-		int widthLeft = SLOT_WIDTH * 10 + SCROLLER_WIDTH + 3;
-
-		int tasksStartX = (width - widthLeft) / 2;
+		int heightLeft = height - TAB_HEIGHT - 55;
 
 		applyFilter(currentFilter);
 
+		LinearLayout mainLayout = LinearLayout.vertical().spacing(3);
+		LinearLayout centerLayout = LinearLayout.horizontal().spacing(6);
+
 		AbstractScrollArea.ScrollbarSettings settings = new AbstractScrollArea.ScrollbarSettings(SCROLLER, SCROLLER_DISABLED, SCROLLER_BACKGROUND, SCROLLER_WIDTH, SCROLLER_HEIGHT, 24, false);
-		scrollLayout = new CustomScrollableLayout(tasksStartX,
-				TAB_HEIGHT + 15,
+		scrollLayout = new CustomScrollableLayout(0,
+				0,
 				SLOT_WIDTH * 10 + SCROLLER_WIDTH + 8, 3 + SCROLLER_WIDTH, heightLeft, treeLayout, settings);
 		scrollLayout.arrangeElements();
 		scrollLayout.refreshScrollAmount();
-		this.addRenderableWidget(scrollLayout);
 
-		tabName.setWidth(scrollLayout.getWidth() - topLayout.getWidth() + tabName.getWidth() + 5);
+		LinearLayout leftLayout = LinearLayout.vertical();
+
+		tabName.setWidth(scrollLayout.getWidth() - topLayout.getWidth() + tabName.getWidth());
 		topLayout.arrangeElements();
+		leftLayout.addChild(topLayout, LayoutSettings.defaults().paddingVertical(4));
+		leftLayout.addChild(scrollLayout);
 
-		topLayout.setY(11);
-		topLayout.visitWidgets(this::addRenderableWidget);
+		LinearLayout rightLayout = LinearLayout.vertical();
+		selectedScroll = new CustomScrollableLayout(((width - scrollLayout.getWidth()) / 2) + scrollLayout.getWidth() + 8, scrollLayout.getY(),
+				90, SCROLLER_WIDTH, heightLeft, selectedTasksLayout, settings);
+		rightLayout.addChild(topRightLayout, LayoutSettings.defaults().paddingVertical(4));
+		rightLayout.addChild(selectedScroll);
 
-		topLayout.setX((width - scrollLayout.getWidth()) / 2);
+		centerLayout.addChild(leftLayout);
+		centerLayout.addChild(rightLayout);
+		mainLayout.addChild(centerLayout);
+
+		LinearLayout buttonLayout = LinearLayout.horizontal().spacing(55);
+		buttonLayout.addChild(Button.builder(Component.literal("Save & Exit"), this::savePressed).build());
+		buttonLayout.addChild(Button.builder(Component.literal("Cancel"), this::cancelPressed).build(), LayoutSettings.defaults().alignHorizontallyCenter());
+		mainLayout.addChild(buttonLayout, LayoutSettings.defaults().paddingTop(10));
+		mainLayout.arrangeElements();
+
+		mainLayout.setX((width - mainLayout.getWidth()) / 2);
+		mainLayout.setY((height - mainLayout.getHeight()) / 2);
+		mainLayout.visitWidgets(this::addRenderableWidget);
 	}
 
 	public void tabChanged(int newIndex, TabSelectionButton.TaskTab newTab) {
 		applyFilter("");
+		tabName.setMessage(newTab.name().copy().withStyle(ScreenHelper.INVENTORY_STYLE));
 	}
 
 	public void standardLayout(List<TaskWidget> widgets, int columns) {
@@ -194,8 +180,8 @@ public class BingoCardTaskListScreen extends Screen {
 	public void buildItemWidgets(int colCount) {
 		visibleTasks.clear();
 		List<TaskWidget> widgets = new ArrayList<>();
-		for (CreativeModeTab tab : itemsPerTab.keySet()) {
-			widgets.addAll(itemsPerTab.get(tab).stream()
+		for (CreativeModeTab tab : creatorSuite.itemsPerTab.keySet()) {
+			widgets.addAll(creatorSuite.itemsPerTab.get(tab).stream()
 					.map(this::createWidget).toList());
 		}
 
@@ -205,7 +191,7 @@ public class BingoCardTaskListScreen extends Screen {
 
 	public void buildStatisticWidgets(int colCount) {
 		visibleTasks.clear();
-		List<TaskWidget> widgets = allStatistics.stream()
+		List<TaskWidget> widgets = creatorSuite.allStatistics.values().stream()
 				.map(this::createWidget).toList();
 		visibleTasks.addAll(widgets);
 		standardLayout(widgets, colCount);
@@ -214,12 +200,12 @@ public class BingoCardTaskListScreen extends Screen {
 	public void buildAdvancementWidgets(int colCount) {
 		visibleTasks.clear();
 		List<TaskWidget> widgets = new ArrayList<>();
-		for (Key key : taskSupplier.advancements().keySet()) {
-			AdvancementNode node = taskSupplier.advancements().get(key);
+		for (Key key : creatorSuite.taskSupplier().advancements().keySet()) {
+			AdvancementNode node = creatorSuite.taskSupplier().advancements().get(key);
 			if (!node.hasDisplay()) {
 				continue;
 			}
-			String category = findAdvancementRoot(key);
+			String category = creatorSuite.findAdvancementRoot(key);
 			TaskDefinition def = new TaskDefinition(new TaskId.Advancement(key), node.displayName(), node.displayDescription(), node.displayIcon(), category,1);
 			widgets.add(this.createWidget(def));
 		}
@@ -228,17 +214,19 @@ public class BingoCardTaskListScreen extends Screen {
 		standardLayout(widgets, colCount);
 	}
 
-	public @Nullable String findAdvancementRoot(Key advancement) {
-		return advancement.asString().split("/")[0];
+	public TaskWidget createWidget(TaskId id) {
+		return createWidget(creatorSuite.getTaskById(id));
 	}
 
 	public TaskWidget createWidget(TaskDefinition definition) {
 		return new TaskWidget(definition, font, widget -> {
 			TaskId id = widget.task().id();
 			if (widget.isSelected() && !selectedTasks.containsKey(id)) {
-				selectedTasks.put(id, 1);
+				selectedTasks.put(id, new TaskWithCount(widget.task(), 1));
+				updateSelectedTasks();
 			} else if (!widget.isSelected()) {
 				selectedTasks.remove(id);
+				updateSelectedTasks();
 			}
 		});
 	}
@@ -263,9 +251,39 @@ public class BingoCardTaskListScreen extends Screen {
 		}
 	}
 
+	public void updateSelectedTasks() {
+		selectedScroll.visitWidgets(this::removeWidget);
+		selectedTasksLayout.removeChildren();
+		for (TaskId id : selectedTasks.keySet()) {
+			selectedTasksLayout.addChild(new SelectedTaskComponent(selectedTasks.get(id), font));
+		}
+
+		selectedScroll.arrangeElements();
+		selectedScroll.visitWidgets(this::addRenderableWidget);
+	}
+
+	public void loadList(CustomList list) {
+		selectedTasks.clear();
+		for (ConfiguredTask task : list.tasks()) {
+			TaskDefinition def = creatorSuite.getTaskById(task.id());
+			selectedTasks.put(task.id(), new TaskWithCount(def, task.count()));
+		}
+		updateSelectedTasks();
+		applyFilter("");
+	}
+
+	public void savePressed(Button btn) {
+		Minecraft.getInstance().gui.setScreen(null);
+	}
+
+	public void cancelPressed(Button btn) {
+		Minecraft.getInstance().gui.setScreen(null);
+	}
+
 	@Override
 	public void extractRenderState(@NonNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, float deltaTicks) {
 		ScreenHelper.extractInnerInventoryBackground(graphics, topLayout.getRectangle());
+		ScreenHelper.extractInnerInventoryBackground(graphics, topRightLayout.getRectangle());
 
 		super.extractRenderState(graphics, mouseX, mouseY, deltaTicks);
 
@@ -295,7 +313,7 @@ public class BingoCardTaskListScreen extends Screen {
 		if (hoveredIndex != -1) {
 			int count = 0;
 			if (selectedTasks.containsKey(hoveredTask.task().id())) {
-				count = selectedTasks.get(hoveredTask.task().id());
+				count = selectedTasks.get(hoveredTask.task().id()).count();
 			}
 			TaskTooltipComponent tooltipComponent = new TaskTooltipComponent(new TaskWithCount(hoveredTask.task(), count));
 
@@ -303,41 +321,5 @@ public class BingoCardTaskListScreen extends Screen {
 			int slotY = hoveredTask.getY();
 			graphics.tooltip(font, List.of(tooltipComponent), slotX - tooltipComponent.getWidth(font) / 2, slotY - tooltipComponent.getHeight(font) + 9, DefaultTooltipPositioner.INSTANCE, null);
 		}
-	}
-
-	public TaskDefinition itemTask(Key key, String category) {
-		Item item = BuiltInRegistries.ITEM.getValue(Identifier.fromNamespaceAndPath(key.namespace(), key.value()));
-		return new TaskDefinition(
-				new TaskId.Item(key),
-				"x1 " + item.getDescriptionId(),
-				"item description",
-				key,
-				category,
-				64);
-	}
-
-
-	public TaskDefinition itemTaskFromStatistic(StatisticCategory statCategory, Key itemKey, String category) {
-		Item item = BuiltInRegistries.ITEM.getValue(Identifier.fromNamespaceAndPath(itemKey.namespace(), itemKey.value()));
-		return new TaskDefinition(
-				new TaskId.Statistic(Key.key("custom"), itemKey, statCategory),
-				"STAT: " + item.getDescriptionId(),
-				"stat description",
-				itemKey,
-				category,
-				64
-		);
-	}
-
-	public TaskDefinition entityTaskFromStatistic(StatisticCategory statCategory, Key entityKey, String category) {
-		EntityType<?> entity = BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.fromNamespaceAndPath(entityKey.namespace(), entityKey.value()));
-		return new TaskDefinition(
-				new TaskId.Statistic(Key.key("custom"), entityKey, statCategory),
-				"STAT: " + entity.getDescriptionId(),
-				"stat description",
-				Key.key(entityKey.namespace(), entityKey.value() + "_spawn_egg"),
-				category,
-				64
-		);
 	}
 }

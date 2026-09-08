@@ -1,4 +1,4 @@
-package io.github.steaf23.bingoreloadedcompanion.client;
+package io.github.steaf23.bingoreloadedcompanion.client.creator;
 
 import io.github.steaf23.bingoreloadedcompanion.card.taskdata.TaskWithCount;
 import net.minecraft.client.gui.Font;

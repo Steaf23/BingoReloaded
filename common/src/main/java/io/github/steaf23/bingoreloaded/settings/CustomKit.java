@@ -12,7 +12,7 @@ import java.util.List;
 
 public record CustomKit(Component name, PlayerKit slot, List<SerializableItem> items, int cardSlot) {
 
-	public static final DataStorageSerializer<CustomKit> SERIALIZER = DataStorageSerializer.of(CustomKit.class,
+	public static final DataStorageSerializer<CustomKit> SERIALIZER = DataStorageSerializer.of(
 			(storage, value) -> {
 				storage.setByte("card_slot", (byte) value.cardSlot());
 				storage.setString("name", ComponentUtils.MINI_BUILDER.serialize(value.name()));

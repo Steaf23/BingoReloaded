@@ -16,7 +16,7 @@ import java.util.Set;
 
 public interface TaskData {
 
-	DataStorageSerializer<TaskData> SERIALIZER = new DataStorageSerializer<>(TaskData.class,
+	DataStorageSerializer<TaskData> SERIALIZER = DataStorageSerializer.of(
 			(storage, value) -> {
 				storage.setList("tags", TagDataType.STRING, value.tags().stream().toList());
 				switch (value) {

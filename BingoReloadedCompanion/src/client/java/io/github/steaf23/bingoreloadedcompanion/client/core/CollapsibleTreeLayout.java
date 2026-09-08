@@ -1,6 +1,5 @@
 package io.github.steaf23.bingoreloadedcompanion.client.core;
 
-import io.github.steaf23.bingoreloaded.protocol.data.task.AdvancementNode;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.layouts.AbstractLayout;
 import net.minecraft.client.gui.layouts.Layout;

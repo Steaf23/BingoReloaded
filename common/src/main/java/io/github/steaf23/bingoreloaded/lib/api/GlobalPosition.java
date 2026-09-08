@@ -8,7 +8,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class GlobalPosition extends Position {
 
-	public static final DataStorageSerializer<GlobalPosition> SERIALIZER = DataStorageSerializer.of(GlobalPosition.class,
+	public static final DataStorageSerializer<GlobalPosition> SERIALIZER = DataStorageSerializer.of(
 			(storage, value) -> {
 				storage.setKey("world", value.dimension());
 				storage.setDouble("x", value.x());

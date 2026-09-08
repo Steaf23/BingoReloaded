@@ -1,6 +1,7 @@
 package io.github.steaf23.bingoreloaded.action;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
+import io.github.steaf23.bingoreloaded.data.BingoCardData;
 import io.github.steaf23.bingoreloaded.data.BingoLobbyData;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.BingoStatData;
@@ -275,7 +276,7 @@ public class BingoAction extends ActionTree {
 			}
 
 			if (context.runtime().getClientManager().playerHasClient(player)) {
-				context.runtime().getClientManager().openCreator(player, CreatorTaskFactory.create(context));
+				context.runtime().getClientManager().openCreator(player, CreatorTaskFactory.create(context), new BingoCardData());
 			} else {
 				context.runtime().openBingoCreator(player);
 			}

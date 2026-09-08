@@ -17,7 +17,7 @@ import java.util.Set;
 public class TaskTagData {
 
 	public record TaskTag(TextColor color) {
-		public static final DataStorageSerializer<TaskTag> SERIALIZER = DataStorageSerializer.of(TaskTagData.TaskTag.class,
+		public static final DataStorageSerializer<TaskTag> SERIALIZER = DataStorageSerializer.of(
 				(storage, value) -> {
 					storage.setString("color", value.color().asHexString());
 				}, storage -> {

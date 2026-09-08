@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 
 public record SerializableItem(int slot, @NotNull StackHandle stack) {
 
-	public static final DataStorageSerializer<SerializableItem> SERIALIZER = DataStorageSerializer.of(SerializableItem.class,
+	public static final DataStorageSerializer<SerializableItem> SERIALIZER = DataStorageSerializer.of(
 			(storage, value) -> {
 				storage.setInt("slot", value.slot());
 				storage.setItemStack("stack", value.stack());

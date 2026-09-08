@@ -5,7 +5,7 @@ import io.github.steaf23.bingoreloaded.lib.data.core.DataStorageSerializer;
 
 public record BingoLobby(GlobalPosition spawnPosition) {
 
-	public static final DataStorageSerializer<BingoLobby> SERIALIZER = DataStorageSerializer.of(BingoLobby.class,
+	public static final DataStorageSerializer<BingoLobby> SERIALIZER = DataStorageSerializer.of(
 			(storage, value) -> {
 				storage.setGlobalPosition("spawn", value.spawnPosition());
 			}, storage -> {

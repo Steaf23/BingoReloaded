@@ -41,7 +41,7 @@ public record GameRecord(String settingsId, SettingsType settingsType, Map<Strin
 		}
 	}
 
-	public static final DataStorageSerializer<GameRecord> SERIALIZER = DataStorageSerializer.of(GameRecord.class,
+	public static final DataStorageSerializer<GameRecord> SERIALIZER = DataStorageSerializer.of(
 			(storage, value) -> {
 				storage.setString("settings", value.settingsId());
 				storage.setString("settings_type", value.settingsType().configName);
