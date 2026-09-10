@@ -9,11 +9,23 @@ import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 import org.jspecify.annotations.NonNull;
 
 import java.util.function.Consumer;
 
 public class CustomScrollableLayout extends AbstractScrollArea implements Layout {
+
+	public static final int SCROLLER_WIDTH = 12;
+	public static final int SCROLLER_HEIGHT = 15;
+
+	private static final Identifier SCROLLER = Identifier.withDefaultNamespace("container/creative_inventory/scroller");
+	private static final Identifier SCROLLER_DISABLED = Identifier.withDefaultNamespace("container/creative_inventory/scroller_disabled");
+	private static final Identifier SCROLLER_BACKGROUND = Identifier.parse("bingoreloadedcompanion:empty");
+
+	public static final ScrollbarSettings DEFAULT_SETTINGS = new AbstractScrollArea.ScrollbarSettings(
+			SCROLLER, SCROLLER_DISABLED, SCROLLER_BACKGROUND,
+			SCROLLER_WIDTH, SCROLLER_HEIGHT, 24, false);
 
 	private final Layout innerLayout;
 

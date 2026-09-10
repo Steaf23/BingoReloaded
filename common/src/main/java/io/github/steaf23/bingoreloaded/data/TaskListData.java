@@ -9,6 +9,8 @@ import io.github.steaf23.bingoreloaded.protocol.TaskDefinitionProtocol;
 import io.github.steaf23.bingoreloaded.protocol.data.card.CustomList;
 import io.github.steaf23.bingoreloaded.protocol.data.task.ConfiguredTask;
 import io.github.steaf23.bingoreloaded.tasks.data.TaskData;
+import io.github.steaf23.bingoreloaded.util.BingoPlayerSender;
+import net.kyori.adventure.text.Component;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -62,6 +64,20 @@ public class TaskListData
         } else {
             return data.getInt(listName + ".size", 0);
         }
+    }
+
+    public void saveList(PlatformServer server, CustomList list) {
+        if (DEFAULT_LIST_NAMES.contains(list.name())) {
+            ConsoleMessenger.bug("You cannot edit the task list '" + list.name() + "'", this);
+            return;
+        }
+        List<TaskData> tasksToSave = list.tasks().stream()
+                .map(t -> TaskDefinitionProtocol.fromConfiguredTask(server, t))
+                .toList();
+
+        data.setSerializableList(list.name() + ".tasks", TaskData.SERIALIZER, new ArrayList<>(tasksToSave));
+        data.setInt(list.name() + ".size", tasksToSave.size());
+        data.saveChanges();
     }
 
     public void saveTasksFromGroup(PlatformServer server, String listName, List<TaskData> group, List<TaskData> tasksToSave)
@@ -162,7 +178,7 @@ public class TaskListData
     public CustomList getList(PlatformServer server, String listName) {
         boolean readOnly = DEFAULT_LIST_NAMES.contains(listName);
 
-        return new CustomList(listName, getTasks(server, listName, EnumSet.allOf(TaskData.TaskType.class)).stream()
+        return new CustomList(listName, getTasks(server, listName).stream()
                 .map(t -> {
 	                try {
 						return new ConfiguredTask(TaskDefinitionProtocol.taskDefinition(t).id(), t.getRequiredAmount());

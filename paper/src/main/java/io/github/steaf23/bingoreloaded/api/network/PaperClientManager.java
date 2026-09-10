@@ -35,8 +35,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -45,6 +47,9 @@ public class PaperClientManager implements BingoClientManager {
 
 	private final JavaPlugin plugin;
 	private final Set<UUID> connectedPlayers = new HashSet<>();
+
+	//FIXME: find a way to clean up the map when a player cancels editing the list.
+	private final Map<String, OnListEdited> editingLists = new HashMap<>();
 
 	private final BingoReloaded bingo;
 
@@ -93,6 +98,25 @@ public class PaperClientManager implements BingoClientManager {
 			sendCreatorList(playerHandle, new BingoCardData().lists().getList(server, list));
 		});
 
+		messenger.registerIncomingPluginChannel(plugin, BingoReloadedPayloads.CLIENT_UPSERT_CREATOR_LIST.key().asString(), (channel, player, buf) -> {
+			if (!channel.equals(BingoReloadedPayloads.CLIENT_UPSERT_CREATOR_LIST.key().asString())) return;
+
+			CustomList list = decodePayload(BingoReloadedPayloads.CLIENT_UPSERT_CREATOR_LIST, buf);
+
+			PlatformServer server = bingo.getGameManager().getServer();
+			PlayerHandle playerHandle = new PlayerHandlePaper(bingo.getGameManager().getServer(), player);
+			if (!BingoReloaded.isAdmin(playerHandle)) {
+				BingoPlayerSender.sendMessage(Component.text("You do not have permission to edit tasks!").color(NamedTextColor.RED), playerHandle);
+				return;
+			}
+
+			if (editingLists.containsKey(list.name())) {
+				editingLists.get(list.name()).onListEdited(list);
+			}
+
+			editingLists.remove(list.name());
+		});
+
 		messenger.registerOutgoingPluginChannel(plugin, BingoReloadedPayloads.UPDATE_CARD.key().asString());
 		messenger.registerOutgoingPluginChannel(plugin, BingoReloadedPayloads.UPDATE_HOTSWAP_CARD.key().toString());
 		messenger.registerOutgoingPluginChannel(plugin, BingoReloadedPayloads.OPEN_CREATOR.key().toString());
@@ -136,6 +160,15 @@ public class PaperClientManager implements BingoClientManager {
 	public void openCreator(PlayerHandle player, @NotNull CreatorTaskSupplier tasks, @NonNull BingoCardData cardData) {
 		CreatorContext context = new CreatorContext(tasks, cardData.getAllCards());
 		sendMessage(((PlayerHandlePaper)player).handle(), BingoReloadedPayloads.OPEN_CREATOR, context);
+	}
+
+	@Override
+	public void editListTasks(PlayerHandle player, @NotNull CreatorTaskSupplier tasks, String listName, OnListEdited onListEdited) {
+		editingLists.put(listName, onListEdited);
+
+		CreatorContext context = new CreatorContext(tasks, List.of());
+		sendMessage(((PlayerHandlePaper)player).handle(), BingoReloadedPayloads.OPEN_CREATOR, context);
+		sendCreatorList(player, new BingoCardData().lists().getList(player.server(), listName));
 	}
 
 	@Override

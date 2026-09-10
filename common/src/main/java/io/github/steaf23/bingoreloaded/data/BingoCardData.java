@@ -162,7 +162,7 @@ public class BingoCardData {
 			list.add(new ListReference(listName, getListMin(cardName, listName), getListMax(cardName, listName)));
 		}
 
-		return new CustomCard(list, getDescription(cardName), isDefaultCard(cardName));
+		return new CustomCard(cardName, list, getDescription(cardName), isDefaultCard(cardName));
 	}
 
 	private DataStorage getStoredCard(String cardName) {

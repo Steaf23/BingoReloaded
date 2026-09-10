@@ -72,6 +72,18 @@ public class MenuBoard {
 		context.menus().close(player);
 	}
 
+	public void reopenCurrentMenu(PlayerHandle player) {
+		UUID playerId = player.uniqueId();
+		if (!activeMenus.containsKey(playerId))
+			return;
+
+		MenuStack menus = activeMenus.get(playerId);
+		Menu menu = menus.peek();
+		if (menu != null) {
+			menu.beforeOpening(player);
+		}
+	}
+
 	public GameContext context() {
 		return context;
 	}

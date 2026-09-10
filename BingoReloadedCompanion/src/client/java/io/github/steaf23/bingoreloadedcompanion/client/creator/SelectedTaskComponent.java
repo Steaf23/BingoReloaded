@@ -14,11 +14,13 @@ public class SelectedTaskComponent extends LinearLayout {
 
 	private final Font font;
 	private TaskWithCount task;
+	private final CreatorTaskScreen taskScreen;
 
-	public SelectedTaskComponent(TaskWithCount task, Font font) {
+	public SelectedTaskComponent(TaskWithCount task, Font font, CreatorTaskScreen taskScreen) {
 		super(0, 0, Orientation.HORIZONTAL);
 		this.task = task;
 		this.font = font;
+		this.taskScreen = taskScreen;
 
 		addChild(new ItemDisplayWidget(Minecraft.getInstance(),0, 0, 16, 16, Component.empty(), task.createStack(), false, false) {
 			@Override
@@ -34,5 +36,6 @@ public class SelectedTaskComponent extends LinearLayout {
 
 	public void valueChanged(int newValue) {
 		task = task.copy(newValue);
+		taskScreen.updateSelectedTask(task);
 	}
 }

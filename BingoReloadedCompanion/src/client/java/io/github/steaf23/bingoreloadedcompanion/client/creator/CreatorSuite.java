@@ -4,19 +4,22 @@ import io.github.steaf23.bingoreloaded.protocol.data.CreatorContext;
 import io.github.steaf23.bingoreloaded.protocol.data.CreatorTaskSupplier;
 import io.github.steaf23.bingoreloaded.protocol.data.card.CustomCard;
 import io.github.steaf23.bingoreloaded.protocol.data.card.CustomList;
-import io.github.steaf23.bingoreloaded.protocol.data.task.AdvancementNode;
 import io.github.steaf23.bingoreloaded.protocol.data.task.StatisticCategory;
 import io.github.steaf23.bingoreloaded.protocol.data.task.TaskDefinition;
 import io.github.steaf23.bingoreloaded.protocol.data.task.TaskId;
 import io.github.steaf23.bingoreloadedcompanion.client.BingoReloadedCompanionClient;
 import io.github.steaf23.bingoreloadedcompanion.network.ClientGetCreatorListPayload;
+import io.github.steaf23.bingoreloadedcompanion.network.ClientUpsertCreatorCardPayload;
+import io.github.steaf23.bingoreloadedcompanion.network.ClientUpsertCreatorListPayload;
 import net.kyori.adventure.key.Key;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
+import org.jetbrains.annotations.NotNull;
 import org.jspecify.annotations.Nullable;
 
 import java.util.HashMap;
@@ -34,16 +37,30 @@ public class CreatorSuite {
 	public final Map<CreativeModeTab, Set<TaskId>> itemsPerTab = new HashMap<>();
 
 	private CreatorContext context = null;
-	private BingoCardTaskListScreen screen = null;
+	private CreatorCardScreen cardScreen = null;
+	private CreatorTaskScreen taskScreen = null;
 
-	public void openListEditor(CreatorContext context) {
+	private Screen openScreen;
+
+	public void openListEditor(@Nullable CreatorContext context) {
+		if (context != null) {
+			this.context = context;
+			extractContext();
+		}
+
+		this.taskScreen = new CreatorTaskScreen(this);
+		openScreen = Minecraft.getInstance().gui.screen();
+		Minecraft.getInstance().setScreenAndShow(taskScreen);
+	}
+
+	public void openCardEditor(@NotNull CreatorContext context) {
 		this.context = context;
 
 		extractContext();
 
-		this.screen = new BingoCardTaskListScreen(this);
-		Minecraft.getInstance().setScreenAndShow(screen);
-		openList("default_items");
+		this.cardScreen = new CreatorCardScreen(this);
+		openScreen = Minecraft.getInstance().gui.screen();
+		Minecraft.getInstance().setScreenAndShow(cardScreen);
 	}
 
 	public void extractContext() {
@@ -119,13 +136,29 @@ public class CreatorSuite {
 		return context.cards();
 	}
 
+	public void closeScreen(Screen screen) {
+		if (openScreen == null) {
+			Minecraft.getInstance().gui.setScreen(null);
+		}
+		Minecraft.getInstance().setScreenAndShow(openScreen);
+		openScreen = null;
+	}
+
 	public void openList(String listName) {
 		BingoReloadedCompanionClient.sendPayloadToServer(new ClientGetCreatorListPayload(listName));
 	}
 
+	public void saveCard(CustomCard card) {
+		BingoReloadedCompanionClient.sendPayloadToServer(new ClientUpsertCreatorCardPayload(card));
+	}
+
+	public void saveList(CustomList list) {
+		BingoReloadedCompanionClient.sendPayloadToServer(new ClientUpsertCreatorListPayload(list));
+	}
+
 	public void listReceived(CustomList list) {
-		if (screen != null) {
-			screen.loadList(list);
+		if (taskScreen != null) {
+			taskScreen.loadList(list);
 		}
 	}
 

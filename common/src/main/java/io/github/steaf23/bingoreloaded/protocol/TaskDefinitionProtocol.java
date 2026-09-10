@@ -2,10 +2,18 @@ package io.github.steaf23.bingoreloaded.protocol;
 
 import io.github.steaf23.bingoreloaded.api.CardDisplayInfo;
 import io.github.steaf23.bingoreloaded.data.helper.TaskFormatting;
+import io.github.steaf23.bingoreloaded.lib.api.AdvancementHandle;
 import io.github.steaf23.bingoreloaded.lib.api.EntityType;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
+import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformServer;
+import io.github.steaf23.bingoreloaded.lib.api.statistics.StatisticHandle;
+import io.github.steaf23.bingoreloaded.lib.api.statistics.VanillaStatistic;
+import io.github.steaf23.bingoreloaded.lib.api.statistics.VanillaStatistics;
+import io.github.steaf23.bingoreloaded.protocol.data.task.ConfiguredTask;
+import io.github.steaf23.bingoreloaded.protocol.data.task.StatisticCategory;
 import io.github.steaf23.bingoreloaded.protocol.data.task.TaskDefinition;
 import io.github.steaf23.bingoreloaded.protocol.data.task.TaskId;
+import io.github.steaf23.bingoreloaded.tasks.GameTask;
 import io.github.steaf23.bingoreloaded.tasks.data.AdvancementTask;
 import io.github.steaf23.bingoreloaded.tasks.data.ItemTask;
 import io.github.steaf23.bingoreloaded.tasks.data.StatisticTask;
@@ -65,5 +73,35 @@ public class TaskDefinitionProtocol {
 		};
 
 		return new TaskDefinition(id, name, description, iconItem, category, max);
+	}
+
+	public static TaskData fromConfiguredTask(PlatformServer server, ConfiguredTask task) {
+		return switch (task.id()) {
+			case TaskId.Advancement advancement -> new AdvancementTask(AdvancementHandle.of(server, advancement.id()));
+			case TaskId.Item item -> new ItemTask(ItemType.of(item.id()), task.count());
+			case TaskId.Statistic statistic -> {
+				Key type;
+				EntityType entity = null;
+				ItemType itemType = null;
+				if (statistic.category().type == StatisticCategory.Type.CUSTOM) {
+					type = statistic.statisticSpecification();
+				} else {
+					type = statistic.statisticType();
+					Key specification = statistic.statisticSpecification();
+
+					switch (statistic.category().type) {
+						case ITEM, BLOCK -> {
+							itemType = ItemType.of(specification);
+						}
+						case ENTITY -> {
+							entity = EntityType.of(specification);
+						}
+					}
+				}
+
+				yield new StatisticTask(
+					new StatisticHandle(VanillaStatistics.fromKey(type), entity, itemType), task.count());
+			}
+		};
 	}
 }

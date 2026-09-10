@@ -6,8 +6,8 @@ public record ListReference(String name, int min, int max) {
 	public static final ByteCodec<ListReference> CODEC = ByteCodec.create(
 			(buf, data) -> {
 				ByteCodec.STRING.encode(buf, data.name);
-				ByteCodec.INT.encode(buf, data.max);
 				ByteCodec.INT.encode(buf, data.min);
+				ByteCodec.INT.encode(buf, data.max);
 			}, (buf) -> new ListReference(
 					ByteCodec.STRING.decode(buf),
 					ByteCodec.INT.decode(buf),

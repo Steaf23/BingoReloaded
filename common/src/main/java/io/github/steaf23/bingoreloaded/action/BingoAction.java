@@ -275,11 +275,7 @@ public class BingoAction extends ActionTree {
 				return ActionResult.IGNORED;
 			}
 
-			if (context.runtime().getClientManager().playerHasClient(player)) {
-				context.runtime().getClientManager().openCreator(player, CreatorTaskFactory.create(context), new BingoCardData());
-			} else {
-				context.runtime().openBingoCreator(player);
-			}
+			context.runtime().openBingoCreator(player);
 			return ActionResult.SUCCESS;
 		});
 

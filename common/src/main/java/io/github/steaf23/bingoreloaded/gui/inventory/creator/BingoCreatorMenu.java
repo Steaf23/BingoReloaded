@@ -1,6 +1,7 @@
 package io.github.steaf23.bingoreloaded.gui.inventory.creator;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
+import io.github.steaf23.bingoreloaded.api.BingoClientManager;
 import io.github.steaf23.bingoreloaded.data.BingoCardData;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.TaskListData;
@@ -16,6 +17,8 @@ import io.github.steaf23.bingoreloaded.lib.inventory.PaginatedDataMenu;
 import io.github.steaf23.bingoreloaded.lib.inventory.UserInputMenu;
 import io.github.steaf23.bingoreloaded.lib.inventory.action.MenuAction;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
+import io.github.steaf23.bingoreloaded.protocol.data.card.CustomList;
+import io.github.steaf23.bingoreloaded.tasks.CreatorTaskFactory;
 import io.github.steaf23.bingoreloaded.util.BingoPlayerSender;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -172,7 +175,6 @@ public class BingoCreatorMenu extends BasicMenu {
 		new UserInputMenu(getMenuBoard(), Component.text("Enter new list name"), (input) -> {
 			if (!input.isEmpty())
 				openListEditor(input, player);
-				openListEditor(input, player);
 		}, "name")
 				.open(player);
 	}
@@ -191,8 +193,13 @@ public class BingoCreatorMenu extends BasicMenu {
 			BingoPlayerSender.sendMessage(Component.text("Cannot edit default lists, use right click to duplicate them instead!").color(NamedTextColor.RED), player);
 			return;
 		}
-		ListEditorMenu editor = new ListEditorMenu(getMenuBoard(), listName, formatting);
-		editor.open(player);
+
+		if (getMenuBoard().context().runtime().getClientManager().playerHasClient(player)) {
+			getMenuBoard().context().runtime().getClientManager().editListTasks(player, CreatorTaskFactory.create(getMenuBoard().context()), listName, list -> saveCustomList(player, list));
+		} else {
+			ListEditorMenu editor = new ListEditorMenu(getMenuBoard(), listName, formatting);
+			editor.open(player);
+		}
 	}
 
 
@@ -272,5 +279,10 @@ public class BingoCreatorMenu extends BasicMenu {
 	public void createCardCallback(PlayerHandle player, BasicMenu parentMenu, String oldName, String newName, String description) {
 		cardsData.setDescription(newName, description);
 		openCardEditor(newName, player);
+	}
+
+	public void saveCustomList(PlayerHandle player, CustomList list) {
+		cardsData.lists().saveList(getMenuBoard().context().server(), list);
+		getMenuBoard().reopenCurrentMenu(player);
 	}
 }

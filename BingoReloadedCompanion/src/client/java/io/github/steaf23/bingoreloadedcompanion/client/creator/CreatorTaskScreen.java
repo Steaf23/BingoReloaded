@@ -3,7 +3,6 @@ package io.github.steaf23.bingoreloadedcompanion.client.creator;
 import io.github.steaf23.bingoreloaded.protocol.data.card.CustomList;
 import io.github.steaf23.bingoreloaded.protocol.data.task.AdvancementNode;
 import io.github.steaf23.bingoreloaded.protocol.data.task.ConfiguredTask;
-import io.github.steaf23.bingoreloaded.protocol.data.task.StatisticCategory;
 import io.github.steaf23.bingoreloaded.protocol.data.task.TaskDefinition;
 import io.github.steaf23.bingoreloaded.protocol.data.task.TaskId;
 import io.github.steaf23.bingoreloadedcompanion.card.taskdata.TaskWithCount;
@@ -23,31 +22,22 @@ import net.minecraft.client.gui.layouts.LayoutSettings;
 import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.Item;
 import org.jspecify.annotations.NonNull;
-import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class BingoCardTaskListScreen extends Screen {
+public class CreatorTaskScreen extends Screen {
 
 	private static final Identifier SEARCH_ICON = Identifier.withDefaultNamespace("icon/search");
-	private static final Identifier SCROLLER = Identifier.withDefaultNamespace("container/creative_inventory/scroller");
-	private static final Identifier SCROLLER_DISABLED = Identifier.withDefaultNamespace("container/creative_inventory/scroller_disabled");
-	private static final Identifier SCROLLER_BACKGROUND = Identifier.parse("bingoreloadedcompanion:empty");
 
 	private static final int TAB_HEIGHT = 20;
 
-	private static final int SCROLLER_WIDTH = 12;
-	private static final int SCROLLER_HEIGHT = 15;
 	private static final int SLOT_WIDTH = 24;
 
 	private final TabSelectionButton tabSelection = new TabSelectionButton(this::tabChanged);
@@ -67,8 +57,9 @@ public class BingoCardTaskListScreen extends Screen {
 	private final Map<TaskId, TaskWithCount> selectedTasks = new HashMap<>();
 
 	String currentFilter = "";
+	String listName = "";
 
-	public BingoCardTaskListScreen(CreatorSuite creatorSuite) {
+	public CreatorTaskScreen(CreatorSuite creatorSuite) {
 		super(Component.empty());
 
 		this.creatorSuite = creatorSuite;
@@ -106,10 +97,9 @@ public class BingoCardTaskListScreen extends Screen {
 		LinearLayout mainLayout = LinearLayout.vertical().spacing(3);
 		LinearLayout centerLayout = LinearLayout.horizontal().spacing(6);
 
-		AbstractScrollArea.ScrollbarSettings settings = new AbstractScrollArea.ScrollbarSettings(SCROLLER, SCROLLER_DISABLED, SCROLLER_BACKGROUND, SCROLLER_WIDTH, SCROLLER_HEIGHT, 24, false);
 		scrollLayout = new CustomScrollableLayout(0,
 				0,
-				SLOT_WIDTH * 10 + SCROLLER_WIDTH + 8, 3 + SCROLLER_WIDTH, heightLeft, treeLayout, settings);
+				SLOT_WIDTH * 10 + CustomScrollableLayout.SCROLLER_WIDTH + 8, 3 + CustomScrollableLayout.SCROLLER_WIDTH, heightLeft, treeLayout, CustomScrollableLayout.DEFAULT_SETTINGS);
 		scrollLayout.arrangeElements();
 		scrollLayout.refreshScrollAmount();
 
@@ -122,7 +112,7 @@ public class BingoCardTaskListScreen extends Screen {
 
 		LinearLayout rightLayout = LinearLayout.vertical();
 		selectedScroll = new CustomScrollableLayout(((width - scrollLayout.getWidth()) / 2) + scrollLayout.getWidth() + 8, scrollLayout.getY(),
-				90, SCROLLER_WIDTH, heightLeft, selectedTasksLayout, settings);
+				90, CustomScrollableLayout.SCROLLER_WIDTH, heightLeft, selectedTasksLayout, CustomScrollableLayout.DEFAULT_SETTINGS);
 		rightLayout.addChild(topRightLayout, LayoutSettings.defaults().paddingVertical(4));
 		rightLayout.addChild(selectedScroll);
 
@@ -136,8 +126,7 @@ public class BingoCardTaskListScreen extends Screen {
 		mainLayout.addChild(buttonLayout, LayoutSettings.defaults().paddingTop(10));
 		mainLayout.arrangeElements();
 
-		mainLayout.setX((width - mainLayout.getWidth()) / 2);
-		mainLayout.setY((height - mainLayout.getHeight()) / 2);
+		ScreenHelper.centerLayout(this, mainLayout);
 		mainLayout.visitWidgets(this::addRenderableWidget);
 	}
 
@@ -255,14 +244,19 @@ public class BingoCardTaskListScreen extends Screen {
 		selectedScroll.visitWidgets(this::removeWidget);
 		selectedTasksLayout.removeChildren();
 		for (TaskId id : selectedTasks.keySet()) {
-			selectedTasksLayout.addChild(new SelectedTaskComponent(selectedTasks.get(id), font));
+			selectedTasksLayout.addChild(new SelectedTaskComponent(selectedTasks.get(id), font, this));
 		}
 
 		selectedScroll.arrangeElements();
 		selectedScroll.visitWidgets(this::addRenderableWidget);
 	}
 
+	public void updateSelectedTask(TaskWithCount task) {
+		selectedTasks.put(task.task().id(), task);
+	}
+
 	public void loadList(CustomList list) {
+		listName = list.name();
 		selectedTasks.clear();
 		for (ConfiguredTask task : list.tasks()) {
 			TaskDefinition def = creatorSuite.getTaskById(task.id());
@@ -273,11 +267,14 @@ public class BingoCardTaskListScreen extends Screen {
 	}
 
 	public void savePressed(Button btn) {
-		Minecraft.getInstance().gui.setScreen(null);
+		creatorSuite.closeScreen(this);
+		creatorSuite.saveList(new CustomList(listName, selectedTasks.keySet().stream()
+				.map(key -> new ConfiguredTask(key, selectedTasks.get(key).count()))
+				.toList(), false));
 	}
 
 	public void cancelPressed(Button btn) {
-		Minecraft.getInstance().gui.setScreen(null);
+		creatorSuite.closeScreen(this);
 	}
 
 	@Override

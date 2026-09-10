@@ -1,7 +1,9 @@
 package io.github.steaf23.bingoreloadedcompanion.client.util;
 
 import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.layouts.Layout;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.Identifier;
@@ -43,6 +45,11 @@ public class ScreenHelper {
 	public static int addAlphaToColor(int color, int alpha) {
 		alpha = alpha << 24;
 		return alpha | color;
+	}
+
+	public static void centerLayout(Screen screen, Layout layout) {
+		layout.setX((screen.width - layout.getWidth()) / 2);
+		layout.setY((screen.height - layout.getHeight()) / 2);
 	}
 
 }
