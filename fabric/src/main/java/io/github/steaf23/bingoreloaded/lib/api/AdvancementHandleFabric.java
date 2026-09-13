@@ -9,19 +9,30 @@ import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
 public class AdvancementHandleFabric implements AdvancementHandle {
 
 	private final AdvancementHolder advancement;
+	private final MinecraftServer server;
 
 	public AdvancementHandleFabric(Identifier id, MinecraftServer server) {
 		this.advancement = server.getAdvancements().get(id);
+		this.server = server;
 	}
 
-	public AdvancementHandleFabric(AdvancementHolder holder) {
+	public AdvancementHandleFabric(AdvancementHolder holder, MinecraftServer server) {
 		this.advancement = holder;
+		this.server = server;
+	}
+
+	@Override
+	public @Nullable AdvancementHandle getParent() {
+		return advancement.value().parent()
+				.map(id -> new AdvancementHandleFabric(id, server))
+				.orElse(null);
 	}
 
 	@Override

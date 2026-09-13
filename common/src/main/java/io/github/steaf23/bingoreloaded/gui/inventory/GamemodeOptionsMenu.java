@@ -15,6 +15,7 @@ import io.github.steaf23.bingoreloaded.lib.inventory.action.SpinBoxButtonAction;
 import io.github.steaf23.bingoreloaded.lib.inventory.action.ToggleButtonAction;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import io.github.steaf23.bingoreloaded.lib.util.ComponentUtils;
+import io.github.steaf23.bingoreloaded.protocol.message.MessageParser;
 import io.github.steaf23.bingoreloaded.settings.BingoSettingsBuilder;
 import io.github.steaf23.bingoreloaded.settings.gamemode.BingoGamemode;
 import io.github.steaf23.bingoreloaded.settings.gamemode.BingoGamemodes;
@@ -173,22 +174,22 @@ public class GamemodeOptionsMenu extends BasicMenu
 			item.setName(BingoReloaded.applyTitleFormat("Expire tasks automatically"));
             item.setLore(
                     Component.text("Tasks always expire when they get completed, however..."),
-                    ComponentUtils.MINI_BUILDER.deserialize("Tasks <red>EXPIRE</red> automatically after some random amount of time"));
+                    MessageParser.MINI_BUILDER.deserialize("Tasks <red>EXPIRE</red> automatically after some random amount of time"));
         } else {
 			item.setName(BingoReloaded.applyTitleFormat("Do NOT expire tasks automatically"));
             item.setLore(
                     Component.text("Tasks always expire when they get completed, however..."),
-                    ComponentUtils.MINI_BUILDER.deserialize("Tasks <gray>DO NOT EXPIRE</gray> automatically after some random amount of time"));
+                    MessageParser.MINI_BUILDER.deserialize("Tasks <gray>DO NOT EXPIRE</gray> automatically after some random amount of time"));
         }
     }
 
     private static void updateSeparateGenerationVisual(ItemTemplate item, boolean enabled) {
         if (enabled) {
 			item.setName(BingoReloaded.applyTitleFormat("Different tasks generated per team"));
-            item.setLore(ComponentUtils.MINI_BUILDER.deserialize(("Different teams get <red>DIFFERENT</red> cards")));
+            item.setLore(MessageParser.MINI_BUILDER.deserialize(("Different teams get <red>DIFFERENT</red> cards")));
         } else {
 			item.setName(BingoReloaded.applyTitleFormat("Same tasks generated for everyone"));
-            item.setLore(ComponentUtils.MINI_BUILDER.deserialize(("Different teams get <gray>THE SAME</gray> cards")));
+            item.setLore(MessageParser.MINI_BUILDER.deserialize(("Different teams get <gray>THE SAME</gray> cards")));
         }
     }
 

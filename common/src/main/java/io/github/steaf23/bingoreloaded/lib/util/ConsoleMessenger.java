@@ -2,6 +2,7 @@ package io.github.steaf23.bingoreloaded.lib.util;
 
 import io.github.steaf23.bingoreloaded.lib.api.PlatformResolver;
 import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformStatics;
+import io.github.steaf23.bingoreloaded.protocol.message.MessageParser;
 import net.kyori.adventure.text.Component;
 
 public class ConsoleMessenger
@@ -10,35 +11,35 @@ public class ConsoleMessenger
 
     public static void log(String message) {
         PLATFORM.getComponentLogger().info(
-                ComponentUtils.MINI_BUILDER.deserialize(message));
+                MessageParser.MINI_BUILDER.deserialize(message));
     }
 
     public static void warn(String message) {
         PLATFORM.getComponentLogger().warn(
-                ComponentUtils.MINI_BUILDER.deserialize(message));
+                MessageParser.MINI_BUILDER.deserialize(message));
     }
 
     public static void error(String message) {
         PLATFORM.getComponentLogger().error(
-                ComponentUtils.MINI_BUILDER.deserialize(message));
+                MessageParser.MINI_BUILDER.deserialize(message));
     }
 
     public static void log(String message, String source) {
         PLATFORM.getComponentLogger().info(
                 Component.text("(" + source + "): ")
-                        .append(ComponentUtils.MINI_BUILDER.deserialize(message)));
+                        .append(MessageParser.MINI_BUILDER.deserialize(message)));
     }
 
     public static void warn(String message, String source) {
         PLATFORM.getComponentLogger().warn(
                 Component.text("(" + source + "): ")
-                        .append(ComponentUtils.MINI_BUILDER.deserialize(message)));
+                        .append(MessageParser.MINI_BUILDER.deserialize(message)));
     }
 
     public static void error(String message, String source) {
         PLATFORM.getComponentLogger().error(
                 Component.text("(" + source + "): ")
-                        .append(ComponentUtils.MINI_BUILDER.deserialize(message)));
+                        .append(MessageParser.MINI_BUILDER.deserialize(message)));
     }
 
     public static void log(Component message) {
@@ -59,13 +60,13 @@ public class ConsoleMessenger
 
     public static void bug(String message, Class<?> source) {
         PLATFORM.getComponentLogger().error(
-                ComponentUtils.MINI_BUILDER.deserialize(message)
+                MessageParser.MINI_BUILDER.deserialize(message)
                         .append(Component.text("; Source: " + source.getName() + " (Please report!)")));
     }
 
     public static void bug(String message, Object source) {
         PLATFORM.getComponentLogger().error(
-                ComponentUtils.MINI_BUILDER.deserialize(message)
+                MessageParser.MINI_BUILDER.deserialize(message)
                         .append(Component.text("; Source: " + source.getClass().getName() + " (Please report!)")));
     }
 

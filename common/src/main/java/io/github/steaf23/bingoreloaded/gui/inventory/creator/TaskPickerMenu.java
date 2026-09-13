@@ -3,7 +3,6 @@ package io.github.steaf23.bingoreloaded.gui.inventory.creator;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.api.CardDisplayInfo;
 import io.github.steaf23.bingoreloaded.data.BingoCardData;
-import io.github.steaf23.bingoreloaded.data.helper.TaskFormatting;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.api.item.VanillaItems;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
@@ -13,7 +12,8 @@ import io.github.steaf23.bingoreloaded.lib.inventory.PaginatedDataMenu;
 import io.github.steaf23.bingoreloaded.lib.inventory.action.ComboBoxButtonAction;
 import io.github.steaf23.bingoreloaded.lib.inventory.action.MenuAction;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
-import io.github.steaf23.bingoreloaded.lib.util.ComponentUtils;
+import io.github.steaf23.bingoreloaded.protocol.data.task.TaskFormatting;
+import io.github.steaf23.bingoreloaded.protocol.message.MessageParser;
 import io.github.steaf23.bingoreloaded.tasks.GameTask;
 import io.github.steaf23.bingoreloaded.tasks.data.TaskData;
 import net.kyori.adventure.text.Component;
@@ -167,12 +167,12 @@ public class TaskPickerMenu extends PaginatedDataMenu<GameTask> {
 
 	private static Component[] createSelectedLore() {
 		return new Component[]{
-				ComponentUtils.MINI_BUILDER.deserialize("<white><italic> - <dark_purple>This task has been added to the list")};
+				MessageParser.MINI_BUILDER.deserialize("<white><italic> - <dark_purple>This task has been added to the list")};
 	}
 
 	private static Component[] createUnselectedLore() {
 		return new Component[]{
-				ComponentUtils.MINI_BUILDER.deserialize("<white><italic> - <gray>Click to make this task"),
+				MessageParser.MINI_BUILDER.deserialize("<white><italic> - <gray>Click to make this task"),
 				Component.text("   appear on bingo cards", NamedTextColor.GRAY, TextDecoration.ITALIC)};
 	}
 }

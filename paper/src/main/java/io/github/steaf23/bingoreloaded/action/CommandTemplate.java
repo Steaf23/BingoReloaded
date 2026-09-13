@@ -6,8 +6,8 @@ import io.github.steaf23.bingoreloaded.lib.api.ActionUser;
 import io.github.steaf23.bingoreloaded.lib.api.PlayerHandlePaper;
 import io.github.steaf23.bingoreloaded.lib.api.platform.GameContext;
 import io.github.steaf23.bingoreloaded.lib.api.platform.PaperServer;
-import io.github.steaf23.bingoreloaded.lib.util.ComponentUtils;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
+import io.github.steaf23.bingoreloaded.protocol.message.MessageParser;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.apache.commons.lang3.StringUtils;
@@ -58,7 +58,7 @@ public class CommandTemplate implements TabExecutor
 
         switch (command.execute(new GameContext(server, bingo), user, arguments)) {
             case INCORRECT_USE -> {
-                commandSender.sendMessage(ComponentUtils.MINI_BUILDER.deserialize("<dark_gray>- <red>Usage: " + command.usage(arguments)));
+                commandSender.sendMessage(MessageParser.MINI_BUILDER.deserialize("<dark_gray>- <red>Usage: " + command.usage(arguments)));
                 return false;
             }
             case NO_PERMISSION -> {

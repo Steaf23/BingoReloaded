@@ -4,11 +4,15 @@ import io.github.steaf23.bingoreloadedcompanion.card.taskdata.TaskWithCount;
 import io.github.steaf23.bingoreloadedcompanion.client.core.SpinBoxWidget;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.ItemDisplayWidget;
 import net.minecraft.client.gui.layouts.LayoutSettings;
 import net.minecraft.client.gui.layouts.LinearLayout;
+import net.minecraft.client.gui.screens.inventory.tooltip.MenuTooltipPositioner;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
+
+import java.util.List;
 
 public class SelectedTaskComponent extends LinearLayout {
 
@@ -27,11 +31,23 @@ public class SelectedTaskComponent extends LinearLayout {
 			public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
 				return false;
 			}
+
+			@Override
+			protected void extractWidgetRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
+				super.extractWidgetRenderState(graphics, mouseX, mouseY, a);
+
+				if (this.isHovered()) {
+					graphics.tooltip(font, List.of(new TaskTooltipComponent(task, task.getName(), false)), mouseX, mouseY, new MenuTooltipPositioner(getRectangle()), null);
+				}
+			}
 		}, LayoutSettings.defaults().padding(2));
-		addChild(SpinBoxWidget.defaultIntegerBox(font, this::valueChanged)
-				.minValue(1.0)
-				.maxValue(64.0)
-				.startValue(task.count()), LayoutSettings.defaults().paddingVertical(3).paddingLeft(6));
+
+		if (task.task().maxCount() > 1) {
+			addChild(SpinBoxWidget.defaultIntegerBox(font, this::valueChanged)
+					.minValue(1.0)
+					.maxValue(64.0)
+					.startValue(task.count()), LayoutSettings.defaults().paddingVertical(3).paddingLeft(6));
+		}
 	}
 
 	public void valueChanged(int newValue) {

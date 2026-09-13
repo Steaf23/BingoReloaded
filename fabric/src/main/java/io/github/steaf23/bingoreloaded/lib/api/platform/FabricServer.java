@@ -147,7 +147,7 @@ public class FabricServer implements PlatformServer {
 
 	@Override
 	public Iterable<AdvancementHandle> allAdvancements() {
-		return server.getAdvancements().getAllAdvancements().stream().map(AdvancementHandleFabric::new).collect(Collectors.toSet());
+		return server.getAdvancements().getAllAdvancements().stream().map(a -> new AdvancementHandleFabric(a, server)).collect(Collectors.toSet());
 	}
 
 	private @Nullable WorldHandle fromWorld(@Nullable ServerLevel serverWorld) {

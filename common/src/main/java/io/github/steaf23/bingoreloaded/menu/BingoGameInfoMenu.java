@@ -2,11 +2,11 @@ package io.github.steaf23.bingoreloaded.menu;
 
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.lib.menu.InfoMenu;
-import io.github.steaf23.bingoreloaded.lib.util.ComponentUtils;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.player.team.SoloTeamManager;
 import io.github.steaf23.bingoreloaded.player.team.TeamManager;
+import io.github.steaf23.bingoreloaded.protocol.message.MessageParser;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -25,7 +25,7 @@ public class BingoGameInfoMenu extends InfoMenu {
 	private final BingoSession session;
 	private final boolean showPlayerNames;
 
-	private static final Component PLAYER_PREFIX = ComponentUtils.MINI_BUILDER.deserialize("<gray><bold> ┗ </bold></gray><white>");
+	private static final Component PLAYER_PREFIX = MessageParser.MINI_BUILDER.deserialize("<gray><bold> ┗ </bold></gray><white>");
 
 	public BingoGameInfoMenu(BingoSession session, boolean showPlayerNames) {
 		this.session = session;

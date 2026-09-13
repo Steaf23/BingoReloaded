@@ -137,7 +137,7 @@ public class CreatorTaskFactory {
 						StatisticHandle defaultHandle = new StatisticHandle(stat, EntityType.of(Key.key("zombie")), ItemType.of("dirt"));
 						return new StatisticNode(
 								new TaskId.Statistic(
-										stat.key(),
+										stat.group(),
 										stat.specification(defaultHandle),
 										cat),
 								stat.key().asString(),

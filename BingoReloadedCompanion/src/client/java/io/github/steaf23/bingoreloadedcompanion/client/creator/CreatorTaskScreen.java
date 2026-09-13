@@ -12,7 +12,6 @@ import io.github.steaf23.bingoreloadedcompanion.client.util.ScreenHelper;
 import net.kyori.adventure.key.Key;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
-import net.minecraft.client.gui.components.AbstractScrollArea;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.ImageWidget;
@@ -159,7 +158,7 @@ public class CreatorTaskScreen extends Screen {
 				int row = i / columns;
 				TaskWidget widget = widgetByCategory.get(category).get(i);
 				widget.select(selectedTasks.containsKey(widget.task().id()));
-				contents.addChild(widgetByCategory.get(category).get(i), row, col);
+				contents.addChild(widget, row, col);
 			}
 
 			treeLayout.addTopLevelNode(category.isEmpty() ? Component.empty() : Component.literal(category), padding);
@@ -168,20 +167,38 @@ public class CreatorTaskScreen extends Screen {
 
 	public void buildItemWidgets(int colCount) {
 		visibleTasks.clear();
-		List<TaskWidget> widgets = new ArrayList<>();
-		for (CreativeModeTab tab : creatorSuite.itemsPerTab.keySet()) {
-			widgets.addAll(creatorSuite.itemsPerTab.get(tab).stream()
-					.map(this::createWidget).toList());
-		}
 
-		visibleTasks.addAll(widgets);
-		standardLayout(widgets, colCount);
+		treeLayout.clear();
+		for (CreativeModeTab tab : creatorSuite.itemsPerTab.keySet()) {
+			LinearLayout padding = LinearLayout.vertical();
+			GridLayout contents = new GridLayout();
+			padding.addChild(contents, LayoutSettings.defaults().padding(3));
+
+			String category = tab.getDisplayName().getString();
+
+			for (int i = 0; i < creatorSuite.itemsPerTab.get(tab).size(); i++) {
+				int col = i % colCount;
+				int row = i / colCount;
+
+				TaskId.Item id = (TaskId.Item)creatorSuite.itemsPerTab.get(tab).get(i);
+				TaskWidget widget = createWidget(id);
+				if (!widget.task().passesFilter(currentFilter)) {
+					continue;
+				}
+				widget.select(selectedTasks.containsKey(id));
+				contents.addChild(widget, row, col);
+				visibleTasks.add(widget);
+			}
+
+			treeLayout.addTopLevelNode(category.isEmpty() ? Component.empty() : Component.literal(category), padding);
+		}
 	}
 
 	public void buildStatisticWidgets(int colCount) {
 		visibleTasks.clear();
 		List<TaskWidget> widgets = creatorSuite.allStatistics.values().stream()
-				.map(this::createWidget).toList();
+				.map(this::createWidget)
+				.toList();
 		visibleTasks.addAll(widgets);
 		standardLayout(widgets, colCount);
 	}
@@ -195,8 +212,8 @@ public class CreatorTaskScreen extends Screen {
 				continue;
 			}
 			String category = creatorSuite.findAdvancementRoot(key);
-			TaskDefinition def = new TaskDefinition(new TaskId.Advancement(key), node.displayName(), node.displayDescription(), node.displayIcon(), category,1);
-			widgets.add(this.createWidget(def));
+			TaskDefinition def = new TaskDefinition(new TaskId.Advancement(key), node.displayName(), node.displayIcon(), category,1);
+			widgets.add(this.createWidget(def.id()));
 		}
 
 		visibleTasks.addAll(widgets);
@@ -207,11 +224,11 @@ public class CreatorTaskScreen extends Screen {
 		return createWidget(creatorSuite.getTaskById(id));
 	}
 
-	public TaskWidget createWidget(TaskDefinition definition) {
-		return new TaskWidget(definition, font, widget -> {
+	public TaskWidget createWidget(CreatorSuite.TaskWithName definition) {
+		return new TaskWidget(definition.def(), font, definition.name(), widget -> {
 			TaskId id = widget.task().id();
 			if (widget.isSelected() && !selectedTasks.containsKey(id)) {
-				selectedTasks.put(id, new TaskWithCount(widget.task(), 1));
+				selectedTasks.put(id, new TaskWithCount(definition.def(), 1, definition.name()));
 				updateSelectedTasks();
 			} else if (!widget.isSelected()) {
 				selectedTasks.remove(id);
@@ -244,7 +261,8 @@ public class CreatorTaskScreen extends Screen {
 		selectedScroll.visitWidgets(this::removeWidget);
 		selectedTasksLayout.removeChildren();
 		for (TaskId id : selectedTasks.keySet()) {
-			selectedTasksLayout.addChild(new SelectedTaskComponent(selectedTasks.get(id), font, this));
+			TaskWithCount countable = selectedTasks.get(id);
+			selectedTasksLayout.addChild(new SelectedTaskComponent(countable, font, this));
 		}
 
 		selectedScroll.arrangeElements();
@@ -259,8 +277,8 @@ public class CreatorTaskScreen extends Screen {
 		listName = list.name();
 		selectedTasks.clear();
 		for (ConfiguredTask task : list.tasks()) {
-			TaskDefinition def = creatorSuite.getTaskById(task.id());
-			selectedTasks.put(task.id(), new TaskWithCount(def, task.count()));
+			CreatorSuite.TaskWithName def = creatorSuite.getTaskById(task.id());
+			selectedTasks.put(task.id(), new TaskWithCount(def.def(), task.count(), def.name()));
 		}
 		updateSelectedTasks();
 		applyFilter("");
@@ -312,11 +330,17 @@ public class CreatorTaskScreen extends Screen {
 			if (selectedTasks.containsKey(hoveredTask.task().id())) {
 				count = selectedTasks.get(hoveredTask.task().id()).count();
 			}
-			TaskTooltipComponent tooltipComponent = new TaskTooltipComponent(new TaskWithCount(hoveredTask.task(), count));
+			TaskWithCount countable = new TaskWithCount(hoveredTask.task(), count, hoveredTask::getName);
+			TaskTooltipComponent tooltipComponent = new TaskTooltipComponent(countable, countable.getName());
 
 			int slotX = hoveredTask.getX();
 			int slotY = hoveredTask.getY();
 			graphics.tooltip(font, List.of(tooltipComponent), slotX - tooltipComponent.getWidth(font) / 2, slotY - tooltipComponent.getHeight(font) + 9, DefaultTooltipPositioner.INSTANCE, null);
 		}
+	}
+
+	@Override
+	public void onClose() {
+		creatorSuite.closeScreen(this);
 	}
 }

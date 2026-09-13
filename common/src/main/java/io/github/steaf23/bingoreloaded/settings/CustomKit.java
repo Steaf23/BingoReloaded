@@ -4,7 +4,7 @@ import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataStorageSerializer;
 import io.github.steaf23.bingoreloaded.lib.item.SerializableItem;
-import io.github.steaf23.bingoreloaded.lib.util.ComponentUtils;
+import io.github.steaf23.bingoreloaded.protocol.message.MessageParser;
 import net.kyori.adventure.text.Component;
 
 import java.util.ArrayList;
@@ -15,11 +15,11 @@ public record CustomKit(Component name, PlayerKit slot, List<SerializableItem> i
 	public static final DataStorageSerializer<CustomKit> SERIALIZER = DataStorageSerializer.of(
 			(storage, value) -> {
 				storage.setByte("card_slot", (byte) value.cardSlot());
-				storage.setString("name", ComponentUtils.MINI_BUILDER.serialize(value.name()));
+				storage.setString("name", MessageParser.MINI_BUILDER.serialize(value.name()));
 				storage.setByte("kit_id", slotFromKit(value.slot()));
 				storage.setSerializableList("items", SerializableItem.SERIALIZER, value.items());
 			}, storage -> {
-				return new CustomKit(ComponentUtils.MINI_BUILDER.deserialize(storage.getString("name", "")),
+				return new CustomKit(MessageParser.MINI_BUILDER.deserialize(storage.getString("name", "")),
 						kitFromSlot(storage.getByte("kit_id", (byte) 0)),
 						storage.getSerializableList("items", SerializableItem.SERIALIZER),
 						storage.getByte("card_slot", (byte) 40)); //off-hand slot

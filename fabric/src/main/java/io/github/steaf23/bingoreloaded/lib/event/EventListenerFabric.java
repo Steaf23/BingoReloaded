@@ -154,6 +154,6 @@ public class EventListenerFabric {
 	}
 
 	private void playerAdvancement(ServerPlayer player, AdvancementHolder advancement, String lastCriterion) {
-		dispatcher.sendPlayerAdvancementDone(new PlayerHandleFabric(server, player), new AdvancementHandleFabric(advancement));
+		dispatcher.sendPlayerAdvancementDone(new PlayerHandleFabric(server, player), new AdvancementHandleFabric(advancement, server.handle()));
 	}
 }

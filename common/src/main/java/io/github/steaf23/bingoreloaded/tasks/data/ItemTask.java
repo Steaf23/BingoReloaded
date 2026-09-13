@@ -2,8 +2,9 @@ package io.github.steaf23.bingoreloaded.tasks.data;
 
 import io.github.steaf23.bingoreloaded.api.CardDisplayInfo;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
-import io.github.steaf23.bingoreloaded.data.helper.TaskFormatting;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
+import io.github.steaf23.bingoreloaded.lib.util.ComponentUtils;
+import io.github.steaf23.bingoreloaded.protocol.data.task.TaskFormatting;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 
@@ -34,10 +35,7 @@ public record ItemTask(ItemType itemType, int count, Set<String> tags) implement
 
 	@Override
 	public Component getName(TaskFormatting formatting) {
-		return formatting.itemNameComponent(this);
-//		return Component.text().color(NamedTextColor.YELLOW)
-//				.append(Component.text(count + "x "))
-//				.append(ComponentUtils.itemName(itemType)).build();
+		return formatting.itemNameComponent(ComponentUtils.itemName(itemType), count);
 	}
 
 	@Override

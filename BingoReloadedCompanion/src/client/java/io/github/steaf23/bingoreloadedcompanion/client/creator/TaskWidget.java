@@ -2,6 +2,7 @@ package io.github.steaf23.bingoreloadedcompanion.client.creator;
 
 import com.mojang.blaze3d.platform.cursor.CursorTypes;
 import io.github.steaf23.bingoreloaded.protocol.data.task.TaskDefinition;
+import io.github.steaf23.bingoreloadedcompanion.card.taskdata.TaskWithCount;
 import io.github.steaf23.bingoreloadedcompanion.client.util.ScreenHelper;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -31,16 +32,18 @@ public class TaskWidget extends AbstractWidget {
 	private final TaskDefinition task;
 	private final Font font;
 	private final ScreenRectangle drawRect;
+	private final TaskWithCount.NameSupplier nameSupplier;
 
 	private final Consumer<TaskWidget> selectionChangedCallback;
 
 	private boolean selected = false;
 
-	public TaskWidget(TaskDefinition task, Font font, Consumer<TaskWidget> selectionChangedCallback) {
+	public TaskWidget(TaskDefinition task, Font font, TaskWithCount.NameSupplier nameSupplier, Consumer<TaskWidget> selectionChangedCallback) {
 		super(0, 0, TASK_WIDTH, TASK_HEIGHT, Component.empty());
 		this.task = task;
 		this.font = font;
 		this.selectionChangedCallback = selectionChangedCallback;
+		this.nameSupplier = nameSupplier;
 
 		drawRect = new ScreenRectangle(getX() + 2, getY() + 2, getWidth() - 4, getHeight() - 4);
 	}
@@ -97,5 +100,9 @@ public class TaskWidget extends AbstractWidget {
 
 	public void select(boolean select) {
 		selected = select;
+	}
+
+	public Component getName(TaskWithCount task) {
+		return nameSupplier.get(task);
 	}
 }

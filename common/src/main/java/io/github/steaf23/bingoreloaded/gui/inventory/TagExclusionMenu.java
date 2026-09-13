@@ -13,7 +13,7 @@ import io.github.steaf23.bingoreloaded.lib.inventory.action.MenuAction;
 import io.github.steaf23.bingoreloaded.lib.inventory.group.ScrollableItemBar;
 import io.github.steaf23.bingoreloaded.lib.inventory.group.SelectionModel;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
-import io.github.steaf23.bingoreloaded.lib.util.ComponentUtils;
+import io.github.steaf23.bingoreloaded.protocol.message.MessageParser;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 
@@ -84,12 +84,12 @@ public class TagExclusionMenu extends BasicMenu {
 		if (selected) {
 			newItem.setLore(Component.text("Tasks tagged with ")
 							.append(tagComponent)
-							.append(ComponentUtils.MINI_BUILDER.deserialize(" are <red>excluded</red> from this card")))
+							.append(MessageParser.MINI_BUILDER.deserialize(" are <red>excluded</red> from this card")))
 					.addDescription("input", 10, Menu.INPUT_LEFT_CLICK.append(Component.text("Include tasks instead")));
 		} else {
 			newItem.setLore(Component.text("Tasks tagged with ")
 							.append(tagComponent)
-							.append(ComponentUtils.MINI_BUILDER.deserialize(" are <green>included</green> with this card")))
+							.append(MessageParser.MINI_BUILDER.deserialize(" are <green>included</green> with this card")))
 					.addDescription("input", 10, Menu.INPUT_LEFT_CLICK.append(Component.text("Exclude tasks instead")));
 		}
 		return newItem;

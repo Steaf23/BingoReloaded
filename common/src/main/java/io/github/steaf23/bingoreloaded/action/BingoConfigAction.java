@@ -4,7 +4,7 @@ import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.data.config.ConfigurationOption;
 import io.github.steaf23.bingoreloaded.lib.action.ActionResult;
 import io.github.steaf23.bingoreloaded.lib.action.ActionTree;
-import io.github.steaf23.bingoreloaded.lib.util.ComponentUtils;
+import io.github.steaf23.bingoreloaded.protocol.message.MessageParser;
 import io.github.steaf23.bingoreloaded.util.BingoPlayerSender;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
@@ -47,7 +47,7 @@ public class BingoConfigAction extends ActionTree {
         Optional<ConfigurationOption<?>> someOption = configuration.getOptionFromName(optionKey);
 
         if (someOption.isEmpty()) {
-            BingoPlayerSender.sendMessage(ComponentUtils.MINI_BUILDER.deserialize("Config option '<red>" + optionKey + "</red>' doesn't exist."), sender);
+            BingoPlayerSender.sendMessage(MessageParser.MINI_BUILDER.deserialize("Config option '<red>" + optionKey + "</red>' doesn't exist."), sender);
             return ActionResult.INCORRECT_USE;
         }
 
@@ -55,7 +55,7 @@ public class BingoConfigAction extends ActionTree {
         String value = configuration.getOptionValue(option).toString();
 
         BingoPlayerSender.sendMessage(
-                ComponentUtils.MINI_BUILDER.deserialize("Config option <yellow>" + optionKey + "</yellow> is set to: ")
+                MessageParser.MINI_BUILDER.deserialize("Config option <yellow>" + optionKey + "</yellow> is set to: ")
                         .append(Component.text(value).color(getColorOfOptionValue(value))), sender);
         return ActionResult.SUCCESS;
     }
@@ -64,40 +64,40 @@ public class BingoConfigAction extends ActionTree {
         Optional<ConfigurationOption<?>> someOption = configuration.getOptionFromName(optionKey);
 
         if (someOption.isEmpty()) {
-            BingoPlayerSender.sendMessage(ComponentUtils.MINI_BUILDER.deserialize("Config option '<red>" + optionKey + "</red>' doesn't exist."), sender);
+            BingoPlayerSender.sendMessage(MessageParser.MINI_BUILDER.deserialize("Config option '<red>" + optionKey + "</red>' doesn't exist."), sender);
             return ActionResult.INCORRECT_USE;
         }
 
         ConfigurationOption<?> option = someOption.get();
 
         if (option.isLocked()) {
-            BingoPlayerSender.sendMessage(ComponentUtils.MINI_BUILDER.deserialize("<red>This option is not (yet) available, please wait for a future update.</red>"), sender);
+            BingoPlayerSender.sendMessage(MessageParser.MINI_BUILDER.deserialize("<red>This option is not (yet) available, please wait for a future update.</red>"), sender);
             return ActionResult.INCORRECT_USE;
         }
         if (!option.canBeEdited()) {
-            BingoPlayerSender.sendMessage(ComponentUtils.MINI_BUILDER.deserialize("<red>This option cannot be changed in-game. Please change it in the config.yml file and restart the server."), sender);
+            BingoPlayerSender.sendMessage(MessageParser.MINI_BUILDER.deserialize("<red>This option cannot be changed in-game. Please change it in the config.yml file and restart the server."), sender);
             return ActionResult.IGNORED; // logically this is incorrect_use but technically the command was not used incorrectly.
         }
         if (!configuration.setOptionValueFromString(option, value)) {
-            BingoPlayerSender.sendMessage(ComponentUtils.MINI_BUILDER.deserialize("The value of option <yellow>" + optionKey + "</yellow> cannot be set to value <red>" + value), sender);
+            BingoPlayerSender.sendMessage(MessageParser.MINI_BUILDER.deserialize("The value of option <yellow>" + optionKey + "</yellow> cannot be set to value <red>" + value), sender);
             return ActionResult.IGNORED; // logically this is incorrect_use but technically the command was not used incorrectly.
         }
 
 		String newValue = configuration.getOptionValue(option).toString();
 
-        BingoPlayerSender.sendMessage(ComponentUtils.MINI_BUILDER.deserialize("Value of option <yellow>" + optionKey + "</yellow> has been set to: ")
+        BingoPlayerSender.sendMessage(MessageParser.MINI_BUILDER.deserialize("Value of option <yellow>" + optionKey + "</yellow> has been set to: ")
                 .append(Component.text(newValue).color(getColorOfOptionValue(newValue))), sender);
         switch (option.getEditUpdateTime()) {
 			case IMMEDIATE -> {
 			}
 			case AFTER_GAME -> {
-				BingoPlayerSender.sendMessage(ComponentUtils.MINI_BUILDER.deserialize("<gold> This option will be applied to the world at the end of the current/ upcoming game"), sender);
+				BingoPlayerSender.sendMessage(MessageParser.MINI_BUILDER.deserialize("<gold> This option will be applied to the world at the end of the current/ upcoming game"), sender);
 			}
 			case AFTER_SESSION -> {
-				BingoPlayerSender.sendMessage(ComponentUtils.MINI_BUILDER.deserialize("<gold> This option will be applied after the server has restarted, on a new world in configuration MULTIPLE, or using the <red>/bingo reload</red> command"), sender);
+				BingoPlayerSender.sendMessage(MessageParser.MINI_BUILDER.deserialize("<gold> This option will be applied after the server has restarted, on a new world in configuration MULTIPLE, or using the <red>/bingo reload</red> command"), sender);
 			}
 			case AFTER_SERVER_RESTART -> {
-				BingoPlayerSender.sendMessage(ComponentUtils.MINI_BUILDER.deserialize("<gold> This option will be applied after the server has been restarted, or using the <red>/bingo reload</red> command if it can be reloaded dynamically"), sender);
+				BingoPlayerSender.sendMessage(MessageParser.MINI_BUILDER.deserialize("<gold> This option will be applied after the server has been restarted, or using the <red>/bingo reload</red> command if it can be reloaded dynamically"), sender);
 			}
 		}
 

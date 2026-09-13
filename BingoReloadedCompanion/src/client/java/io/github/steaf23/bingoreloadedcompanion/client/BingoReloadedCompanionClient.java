@@ -2,7 +2,6 @@ package io.github.steaf23.bingoreloadedcompanion.client;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import io.github.steaf23.bingoreloadedcompanion.BingoReloadedCompanion;
-import io.github.steaf23.bingoreloaded.protocol.data.BingoCard;
 import io.github.steaf23.bingoreloadedcompanion.client.creator.CreatorSuite;
 import io.github.steaf23.bingoreloadedcompanion.client.hud.BingoCardHudElement;
 import io.github.steaf23.bingoreloadedcompanion.client.hud.ConfigurableHudRegistry;

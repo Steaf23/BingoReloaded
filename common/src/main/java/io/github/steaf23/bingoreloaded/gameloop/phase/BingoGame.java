@@ -8,9 +8,9 @@ import io.github.steaf23.bingoreloaded.cards.TaskCard;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.BingoSound;
 import io.github.steaf23.bingoreloaded.data.BingoStatType;
+import io.github.steaf23.bingoreloaded.data.TaskFormatData;
 import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.data.config.BingoOptions;
-import io.github.steaf23.bingoreloaded.data.helper.TaskFormatting;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gameloop.spawn.PlayerSpawnCoordinator;
 import io.github.steaf23.bingoreloaded.item.BingoItems;
@@ -37,6 +37,7 @@ import io.github.steaf23.bingoreloaded.player.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.player.PlayerRespawnManager;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.player.team.TeamManager;
+import io.github.steaf23.bingoreloaded.protocol.data.task.TaskFormatting;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import io.github.steaf23.bingoreloaded.settings.gamemode.GamemodeFeature;
@@ -110,7 +111,7 @@ public class BingoGame implements GamePhase
         this.progressTracker = new TaskProgressTracker(this.taskScheduler(), this);
 		this.onGameEndedCallback = onGameEndedCallback;
         this.items = session.items();
-        this.taskFormatting = TaskFormatting.fromDataAccessor();
+        this.taskFormatting = TaskFormatData.fromDataAccessor();
 
 		this.respawnManager = new PlayerRespawnManager(this.taskScheduler(), config.getOptionValue(BingoOptions.TELEPORT_AFTER_DEATH_PERIOD));
         this.playerSpawnPoints = new HashMap<>();

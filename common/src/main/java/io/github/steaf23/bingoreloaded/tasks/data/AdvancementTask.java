@@ -3,9 +3,9 @@ package io.github.steaf23.bingoreloaded.tasks.data;
 import io.github.steaf23.bingoreloaded.api.CardDisplayInfo;
 import io.github.steaf23.bingoreloaded.api.TaskDisplayMode;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
-import io.github.steaf23.bingoreloaded.data.helper.TaskFormatting;
 import io.github.steaf23.bingoreloaded.lib.api.AdvancementHandle;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
+import io.github.steaf23.bingoreloaded.protocol.data.task.TaskFormatting;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 
@@ -25,7 +25,7 @@ public record AdvancementTask(AdvancementHandle advancement, Set<String> tags) i
 
 	@Override
 	public Component getName(TaskFormatting formatting) {
-		return formatting.advancementNameComponent(this);
+		return formatting.advancementNameComponent(advancement().displayName());
 	}
 
 	@Override
@@ -37,7 +37,7 @@ public record AdvancementTask(AdvancementHandle advancement, Set<String> tags) i
 	// which makes it impossible to use as item names or descriptions without getting a missing character.
 	@Override
 	public Component getChatDescription(TaskFormatting formatting) {
-		return formatting.advancementDescriptionComponent(this).color(NamedTextColor.DARK_AQUA);
+		return formatting.advancementDescriptionComponent(advancement().description()).color(NamedTextColor.DARK_AQUA);
 	}
 
 	@Override

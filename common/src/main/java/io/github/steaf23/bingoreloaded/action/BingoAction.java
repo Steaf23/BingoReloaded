@@ -1,7 +1,6 @@
 package io.github.steaf23.bingoreloaded.action;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
-import io.github.steaf23.bingoreloaded.data.BingoCardData;
 import io.github.steaf23.bingoreloaded.data.BingoLobbyData;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.BingoStatData;
@@ -25,12 +24,11 @@ import io.github.steaf23.bingoreloaded.lib.api.platform.GameContext;
 import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformServer;
 import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformStatics;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
-import io.github.steaf23.bingoreloaded.lib.util.ComponentUtils;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
+import io.github.steaf23.bingoreloaded.protocol.message.MessageParser;
 import io.github.steaf23.bingoreloaded.settings.CustomKit;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
-import io.github.steaf23.bingoreloaded.tasks.CreatorTaskFactory;
 import io.github.steaf23.bingoreloaded.tasks.data.ItemTask;
 import io.github.steaf23.bingoreloaded.util.BingoPlayerSender;
 import net.kyori.adventure.text.Component;
@@ -380,11 +378,11 @@ public class BingoAction extends ActionTree {
 			BingoSession session = getSessionFromUser(gameManager, getLastUser());
 			// In multiple, we cannot create a lobby in a bingo world because there should only be one lobby ever.
 			if (this.config.getOptionValue(BingoOptions.CONFIGURATION) == BingoOptions.PluginConfiguration.MULTIPLE && session != null && session.ownsWorld(player.world())) {
-				BingoPlayerSender.sendMessage(ComponentUtils.MINI_BUILDER.deserialize("<red>Lobby cannot be created in a bingo-world. Please create it in the lobby world as defined by defaultWorldName.</red>"), player);
+				BingoPlayerSender.sendMessage(MessageParser.MINI_BUILDER.deserialize("<red>Lobby cannot be created in a bingo-world. Please create it in the lobby world as defined by defaultWorldName.</red>"), player);
 				return ActionResult.IGNORED;
 			}
 			gameManager.getLobbyData().create(pos);
-			BingoPlayerSender.sendMessage(ComponentUtils.MINI_BUILDER.deserialize("<green>Created a lobby spawn point at this position.\nPlayers can be teleported here using the option <dark_green>teleportToLobbyAfterGame</dark_green>.</green>"), player);
+			BingoPlayerSender.sendMessage(MessageParser.MINI_BUILDER.deserialize("<green>Created a lobby spawn point at this position.\nPlayers can be teleported here using the option <dark_green>teleportToLobbyAfterGame</dark_green>.</green>"), player);
 
 			return ActionResult.SUCCESS;
 		});
@@ -392,11 +390,11 @@ public class BingoAction extends ActionTree {
 		ActionTree removeLobbyAction = new ActionTree("remove", (context, args) -> {
 			GameManager gameManager = context.gameManager();
 			if (!gameManager.getLobbyData().isEnabled()) {
-				BingoPlayerSender.sendMessage(ComponentUtils.MINI_BUILDER.deserialize("<red>A lobby has not been created yet.</red>\n<yellow>Tip: </yellow><italic>Use <aqua>/bingo lobby create</aqua> to create a lobby spawn point at your current position.</italic>"), getLastUser());
+				BingoPlayerSender.sendMessage(MessageParser.MINI_BUILDER.deserialize("<red>A lobby has not been created yet.</red>\n<yellow>Tip: </yellow><italic>Use <aqua>/bingo lobby create</aqua> to create a lobby spawn point at your current position.</italic>"), getLastUser());
 				return ActionResult.IGNORED;
 			}
 			gameManager.getLobbyData().remove();
-			BingoPlayerSender.sendMessage(ComponentUtils.MINI_BUILDER.deserialize("<green>Removed the created lobby.</green>\n<yellow>Tip: </yellow><italic>Use <aqua>/bingo lobby create</aqua> to create a lobby spawn point at your current position.</italic>"), getLastUser());
+			BingoPlayerSender.sendMessage(MessageParser.MINI_BUILDER.deserialize("<green>Removed the created lobby.</green>\n<yellow>Tip: </yellow><italic>Use <aqua>/bingo lobby create</aqua> to create a lobby spawn point at your current position.</italic>"), getLastUser());
 			return ActionResult.SUCCESS;
 		});
 
@@ -439,14 +437,14 @@ public class BingoAction extends ActionTree {
 		}
 
 		CustomKitData data = new CustomKitData();
-		if (!data.assignCustomKit(ComponentUtils.MINI_BUILDER.deserialize(kitName), kit, fromPlayerInventory)) {
-			Component message = ComponentUtils.MINI_BUILDER
+		if (!data.assignCustomKit(MessageParser.MINI_BUILDER.deserialize(kitName), kit, fromPlayerInventory)) {
+			Component message = MessageParser.MINI_BUILDER
 					.deserialize("<red>Cannot add custom kit " + kitName + " to slot " + slot + ", this slot already contains kit ")
 					.append(data.getCustomKit(kit).name())
 					.append(Component.text(". Remove it first!"));
 			BingoPlayerSender.sendMessage(message, getLastUser());
 		} else {
-			Component message = ComponentUtils.MINI_BUILDER
+			Component message = MessageParser.MINI_BUILDER
 					.deserialize("<green>Created custom kit " + kitName + " in slot " + slot + " from your inventory");
 			BingoPlayerSender.sendMessage(message, getLastUser());
 		}
@@ -471,14 +469,14 @@ public class BingoAction extends ActionTree {
 		CustomKitData data = new CustomKitData();
 		CustomKit customKit = data.getCustomKit(kit);
 		if (customKit == null) {
-			Component message = ComponentUtils.MINI_BUILDER
+			Component message = MessageParser.MINI_BUILDER
 					.deserialize("<red>Cannot remove kit from slot " + slot + " because no custom kit is assigned to this slot");
 			BingoPlayerSender.sendMessage(message, getLastUser());
 		} else {
 			data.removeCustomKit(kit);
 
-			Component message = ComponentUtils.MINI_BUILDER
-					.deserialize("<green>Removed custom kit " + ComponentUtils.MINI_BUILDER.serialize(customKit.name()) + " from slot " + slot);
+			Component message = MessageParser.MINI_BUILDER
+					.deserialize("<green>Removed custom kit " + MessageParser.MINI_BUILDER.serialize(customKit.name()) + " from slot " + slot);
 			BingoPlayerSender.sendMessage(message, getLastUser());
 		}
 

@@ -5,8 +5,8 @@ import io.github.steaf23.bingoreloaded.data.teleportgrid.TeleportGridData;
 import io.github.steaf23.bingoreloaded.data.teleportgrid.TeleportationGrid;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.lib.api.GlobalPosition;
-import io.github.steaf23.bingoreloaded.lib.util.ComponentUtils;
 import io.github.steaf23.bingoreloaded.player.team.TeamContainer;
+import io.github.steaf23.bingoreloaded.protocol.message.MessageParser;
 import io.github.steaf23.bingoreloaded.util.BingoPlayerSender;
 import net.kyori.adventure.audience.ForwardingAudience;
 
@@ -32,7 +32,7 @@ public record GridSpawnStrategy(TeleportGridData data) implements SpawnStrategy 
 				context.session().getGameManager().getServer().commandDispatcher().sendCommandFromConsole(commandToSend);
 			}
 			BingoPlayerSender.sendMessage(
-					ComponentUtils.MINI_BUILDER.deserialize("<red>Ran out of grid positions. The grid has been reset but you probably want to reset the world.</red>"),
+					MessageParser.MINI_BUILDER.deserialize("<red>Ran out of grid positions. The grid has been reset but you probably want to reset the world.</red>"),
 					(ForwardingAudience)() -> teams.getAllOnlineParticipants().stream()
 							.filter(p -> p.sessionPlayer()
 									.map(BingoReloaded::isAdmin)

@@ -6,7 +6,6 @@ import net.kyori.adventure.key.Key;
 public record TaskDefinition(
 		TaskId id,
 		String name,
-		String description,
 		Key iconItem,
 		String category,
 		int maxCount) {
@@ -15,13 +14,11 @@ public record TaskDefinition(
 			(output, def) -> {
 				TaskId.CODEC.encode(output, def.id());
 				output.writeUTF(def.name());
-				output.writeUTF(def.description());
 				ByteCodec.KEY.encode(output, def.iconItem());
 				output.writeUTF(def.category());
 				output.writeInt(def.maxCount());
 			}, (input) -> new TaskDefinition(
 					TaskId.CODEC.decode(input),
-					input.readUTF(),
 					input.readUTF(),
 					ByteCodec.KEY.decode(input),
 					input.readUTF(),

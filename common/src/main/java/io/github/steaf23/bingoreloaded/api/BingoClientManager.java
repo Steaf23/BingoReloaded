@@ -4,7 +4,6 @@ import io.github.steaf23.bingoreloaded.cards.TaskCard;
 import io.github.steaf23.bingoreloaded.data.BingoCardData;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.protocol.data.CreatorTaskSupplier;
-import io.github.steaf23.bingoreloaded.protocol.data.card.CustomCard;
 import io.github.steaf23.bingoreloaded.protocol.data.card.CustomList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

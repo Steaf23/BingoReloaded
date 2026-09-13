@@ -9,8 +9,6 @@ import io.github.steaf23.bingoreloaded.protocol.TaskDefinitionProtocol;
 import io.github.steaf23.bingoreloaded.protocol.data.card.CustomList;
 import io.github.steaf23.bingoreloaded.protocol.data.task.ConfiguredTask;
 import io.github.steaf23.bingoreloaded.tasks.data.TaskData;
-import io.github.steaf23.bingoreloaded.util.BingoPlayerSender;
-import net.kyori.adventure.text.Component;
 
 import java.io.IOException;
 import java.util.ArrayList;

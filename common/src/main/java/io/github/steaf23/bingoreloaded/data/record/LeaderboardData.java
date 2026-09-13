@@ -5,8 +5,8 @@ import io.github.steaf23.bingoreloaded.data.BingoSettingsData;
 import io.github.steaf23.bingoreloaded.data.TeamData;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataAccessor;
-import io.github.steaf23.bingoreloaded.lib.util.ComponentUtils;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
+import io.github.steaf23.bingoreloaded.protocol.message.MessageParser;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
 import io.github.steaf23.bingoreloaded.settings.BingoSettingsBuilder;
 import io.github.steaf23.bingoreloaded.settings.gamemode.BingoGamemode;
@@ -61,7 +61,7 @@ public class LeaderboardData {
 		Map<String, GameRecord.TeamRecord> teams = new HashMap<>();
 		for (BingoTeam team : game.getTeamManager().getActiveTeams()) {
 			int score = team.getCompleteCount();
-			TeamData.TeamTemplate template = new TeamData.TeamTemplate(ComponentUtils.MINI_BUILDER.serialize(team.getName()), team.getColor(), team.getDyeColor());
+			TeamData.TeamTemplate template = new TeamData.TeamTemplate(MessageParser.MINI_BUILDER.serialize(team.getName()), team.getColor(), team.getDyeColor());
 
 			List<GameRecord.ParticipantRecord> participants = team.getMembers().stream()
 					.map(p -> new GameRecord.ParticipantRecord(p.getAmountOfTaskCompleted(), p.getName(), p.getId()))

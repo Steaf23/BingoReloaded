@@ -3,9 +3,9 @@ package io.github.steaf23.bingoreloaded.data;
 import io.github.steaf23.bingoreloaded.lib.api.BingoReloadedRuntime;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataAccessor;
-import io.github.steaf23.bingoreloaded.lib.util.ComponentUtils;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
-import io.github.steaf23.bingoreloaded.lib.util.TinyCaps;
+import io.github.steaf23.bingoreloaded.protocol.message.MessageParser;
+import io.github.steaf23.bingoreloaded.protocol.message.TinyCaps;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
@@ -190,10 +190,10 @@ public enum BingoMessage
 
     private static final Pattern HEX_PATTERN = Pattern.compile("\\{#[a-fA-F0-9]{6}}");
     private static final Pattern SMALL_CAPS_PATTERN = Pattern.compile("\\{@.+}");
+    private static final TagResolver SUBSTITUTE_RESOLVER = substituteResolver();
     private static final Pattern SUBSTITUTE_PATTERN = Pattern.compile("\\{\\$(?<key>[\\w.]+)(\\((?<args>.+)\\))?}");
 
-    private static final TagResolver SUBSTITUTE_RESOLVER = substituteResolver();
-	private static BingoMessagePreParser PRE_PARSER = new BingoMessagePreParser.PassthroughMessagePreParser();
+    private static BingoMessagePreParser PRE_PARSER = new BingoMessagePreParser.PassthroughMessagePreParser();
 
     private static final Map<String, Component> cachedPhrases = new HashMap<>();
 
@@ -211,7 +211,7 @@ public enum BingoMessage
         DataAccessor fallbackText = language.selectedLanguage();
         for (BingoMessage value : BingoMessage.values()) {
             if (!text.contains(value.key)) {
-                ConsoleMessenger.log(ComponentUtils.MINI_BUILDER.deserialize("The message '<yellow>" + value.key + "</yellow>' in translation file <blue>" + text.getLocation() + text.getFileExtension() + "</blue> has no translation, using fallback (<green>English</green>)"));
+                ConsoleMessenger.log(MessageParser.MINI_BUILDER.deserialize("The message '<yellow>" + value.key + "</yellow>' in translation file <blue>" + text.getLocation() + text.getFileExtension() + "</blue> has no translation, using fallback (<green>English</green>)"));
             }
             value.translation = text.getString(value.key, fallbackText.getString(value.key, value.translation));
         }
@@ -317,18 +317,8 @@ public enum BingoMessage
             return cachedPhrases.get(input);
         }
 
-        // phrases cannot contain newlines, which is why this is filtered explicitly using convertConfigStringToMini
         String converted = String.join("", convertConfigStringToMini(input));
-        // create tag resolvers for each argument, which will appear as <0>, <1> etc... in the mini message string and be replaced by the correct components.
-        List<TagResolver> resolvers = new ArrayList<>();
-        for (int i = 0; i < arguments.length; i++) {
-            resolvers.add(Placeholder.component(Integer.toString(i), arguments[i]));
-        }
-        if (allowSubstitution) {
-            resolvers.add(SUBSTITUTE_RESOLVER);
-        }
-
-        Component phrase = ComponentUtils.MINI_BUILDER.deserialize(converted, resolvers.toArray(TagResolver[]::new));
+        Component phrase = MessageParser.createPhrase(converted, allowSubstitution ? List.of(SUBSTITUTE_RESOLVER) : List.of(), arguments);
         if (arguments.length == 0) {
             //caching only works without arguments
             cachedPhrases.put(input, phrase);
@@ -362,7 +352,7 @@ public enum BingoMessage
                 resolvers.add(Placeholder.component(Integer.toString(i), arguments[i]));
             }
             resolvers.add(SUBSTITUTE_RESOLVER);
-            Component c = ComponentUtils.MINI_BUILDER.deserialize(converted, resolvers.toArray(TagResolver[]::new));
+            Component c = MessageParser.MINI_BUILDER.deserialize(converted, resolvers.toArray(TagResolver[]::new));
             if (style != null) {
                 result.add(c.style(style));
             } else {
@@ -429,6 +419,29 @@ public enum BingoMessage
         return result;
     }
 
+    //FIXME: Fool proof this against infinite cycles (add new tag and preprocess existing tag into other one??)
+    private static TagResolver substituteResolver() {
+        return TagResolver.resolver(TagResolver.resolver("bingo_translate", (args, ctx) -> {
+                    if (!args.hasNext()) {
+                        return Tag.preProcessParsed("");
+                    }
+
+                    String key = args.pop().toString();
+                    if (!args.hasNext()) {
+                        return Tag.inserting(BingoMessage.getByKey(key).asPhrase(true));
+                    }
+
+                    String translateWith = args.pop().toString();
+                    return Tag.inserting(BingoMessage.getByKey(key).asPhrase(true, Arrays.stream(translateWith
+                                    .split(","))
+                            .map(a -> MessageParser.MINI_BUILDER.deserialize(a, SUBSTITUTE_RESOLVER))
+                            .toArray(Component[]::new)));
+                }),
+                TagResolver.resolver("bingo_translate_recurse", (args, ctx) -> {
+                    return Tag.preProcessParsed("DD");
+                }));
+    }
+
     public static String replaceSubstitutionTags(String input) {
         Matcher matcher = SUBSTITUTE_PATTERN.matcher(input);
 
@@ -445,28 +458,5 @@ public enum BingoMessage
             }
         }
         return input;
-    }
-
-    //FIXME: Fool proof this against infinite cycles (add new tag and preprocess existing tag into other one??)
-    private static TagResolver substituteResolver() {
-        return TagResolver.resolver(TagResolver.resolver("bingo_translate", (args, ctx) -> {
-                    if (!args.hasNext()) {
-                        return Tag.preProcessParsed("");
-                    }
-
-                    String key = args.pop().toString();
-                    if (!args.hasNext()) {
-                        return Tag.inserting(BingoMessage.getByKey(key).asPhrase(true));
-                    }
-
-                    String translateWith = args.pop().toString();
-                    return Tag.inserting(BingoMessage.getByKey(key).asPhrase(true, Arrays.stream(translateWith
-                                    .split(","))
-                            .map(a -> ComponentUtils.MINI_BUILDER.deserialize(a, SUBSTITUTE_RESOLVER))
-                            .toArray(Component[]::new)));
-                }),
-                TagResolver.resolver("bingo_translate_recurse", (args, ctx) -> {
-                    return Tag.preProcessParsed("DD");
-                }));
     }
 }

@@ -1,19 +1,17 @@
 package io.github.steaf23.bingoreloaded.protocol;
 
 import io.github.steaf23.bingoreloaded.api.CardDisplayInfo;
-import io.github.steaf23.bingoreloaded.data.helper.TaskFormatting;
+import io.github.steaf23.bingoreloaded.data.TaskFormatData;
 import io.github.steaf23.bingoreloaded.lib.api.AdvancementHandle;
 import io.github.steaf23.bingoreloaded.lib.api.EntityType;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformServer;
 import io.github.steaf23.bingoreloaded.lib.api.statistics.StatisticHandle;
-import io.github.steaf23.bingoreloaded.lib.api.statistics.VanillaStatistic;
 import io.github.steaf23.bingoreloaded.lib.api.statistics.VanillaStatistics;
 import io.github.steaf23.bingoreloaded.protocol.data.task.ConfiguredTask;
 import io.github.steaf23.bingoreloaded.protocol.data.task.StatisticCategory;
 import io.github.steaf23.bingoreloaded.protocol.data.task.TaskDefinition;
 import io.github.steaf23.bingoreloaded.protocol.data.task.TaskId;
-import io.github.steaf23.bingoreloaded.tasks.GameTask;
 import io.github.steaf23.bingoreloaded.tasks.data.AdvancementTask;
 import io.github.steaf23.bingoreloaded.tasks.data.ItemTask;
 import io.github.steaf23.bingoreloaded.tasks.data.StatisticTask;
@@ -54,9 +52,7 @@ public class TaskDefinitionProtocol {
 		};
 
 		//name
-		String name = PlainTextComponentSerializer.plainText().serialize(task.getName(TaskFormatting.DEFAULT));
-		//description
-		String description = PlainTextComponentSerializer.plainText().serialize(task.getChatDescription(TaskFormatting.DEFAULT));
+		String name = PlainTextComponentSerializer.plainText().serialize(task.getName(TaskFormatData.DEFAULT));
 		//iconItem
 		Key iconItem = task.getDisplayMaterial(CardDisplayInfo.DUMMY_DISPLAY_INFO).key();
 		//category
@@ -72,7 +68,7 @@ public class TaskDefinitionProtocol {
 			case ADVANCEMENT -> 1;
 		};
 
-		return new TaskDefinition(id, name, description, iconItem, category, max);
+		return new TaskDefinition(id, name, iconItem, category, max);
 	}
 
 	public static TaskData fromConfiguredTask(PlatformServer server, ConfiguredTask task) {

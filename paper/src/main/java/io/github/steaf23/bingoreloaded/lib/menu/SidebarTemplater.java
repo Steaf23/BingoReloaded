@@ -3,7 +3,7 @@ package io.github.steaf23.bingoreloaded.lib.menu;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.ScoreboardData;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
-import io.github.steaf23.bingoreloaded.lib.util.ComponentUtils;
+import io.github.steaf23.bingoreloaded.protocol.message.MessageParser;
 import net.kyori.adventure.text.Component;
 
 import java.util.ArrayList;
@@ -53,7 +53,7 @@ public class SidebarTemplater
                 } else {
                     componentToAdd = Component.empty();
                 }
-                componentToAdd = componentToAdd.append(ComponentUtils.MINI_BUILDER.deserialize(before));
+                componentToAdd = componentToAdd.append(MessageParser.MINI_BUILDER.deserialize(before));
 
                 appendToLastComponent = true;
                 Component[] argument = template.arguments().getOrDefault(key, new Component[]{});
@@ -83,7 +83,7 @@ public class SidebarTemplater
             }
 
             // finish the end of the line
-            Component rightSide = ComponentUtils.MINI_BUILDER.deserialize(line);
+            Component rightSide = MessageParser.MINI_BUILDER.deserialize(line);
             if (appendToLastComponent) {
                 components.set(components.size() - 1, components.getLast().append(rightSide));
             } else {

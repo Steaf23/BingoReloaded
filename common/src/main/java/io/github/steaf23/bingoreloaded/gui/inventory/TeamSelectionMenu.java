@@ -13,12 +13,12 @@ import io.github.steaf23.bingoreloaded.lib.inventory.action.MenuAction;
 import io.github.steaf23.bingoreloaded.lib.inventory.group.ItemRect;
 import io.github.steaf23.bingoreloaded.lib.inventory.group.SelectionModel;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
-import io.github.steaf23.bingoreloaded.lib.util.ComponentUtils;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.player.team.TeamManager;
+import io.github.steaf23.bingoreloaded.protocol.message.MessageParser;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
@@ -38,7 +38,7 @@ public class TeamSelectionMenu extends PaginatedDataMenu<String>
     private PlayerHandle cachedPlayer = null;
     private Map<String, TeamData.TeamTemplate> allTeamsCache = new HashMap<>();
 
-    private static final Component PLAYER_PREFIX = ComponentUtils.MINI_BUILDER.deserialize("<gray><bold> ┗ </bold></gray><white>");
+    private static final Component PLAYER_PREFIX = MessageParser.MINI_BUILDER.deserialize("<gray><bold> ┗ </bold></gray><white>");
 
     public TeamSelectionMenu(MenuBoard manager, BingoSession session) {
         super(manager, BingoMessage.OPTIONS_TEAM.asPhrase(), new ArrayList<>(), List.of(FilterType.NONE), new ItemRect(0, 1, 9, 4), SelectionModel.SelectMode.NONE);

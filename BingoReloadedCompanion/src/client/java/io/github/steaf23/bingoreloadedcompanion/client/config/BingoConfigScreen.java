@@ -74,7 +74,7 @@ public class BingoConfigScreen extends Screen {
 		List<Task> testTasks = new ArrayList<>();
 		for (int i = 0; i < 25; i++) {
 			testTasks.add(new Task(
-					new TaskDefinition(TaskId.DUMMY, "", "", Key.key("paper"),"", 64),
+					new TaskDefinition(TaskId.DUMMY, "", Key.key("paper"),"", 64),
 					Task.TaskCompletion.INCOMPLETE, 1));
 		}
 		BingoCard testCard5x = new BingoCard(BingoGamemode.REGULAR, 5, testTasks);

@@ -4,6 +4,7 @@ import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.api.BingoClientManager;
 import io.github.steaf23.bingoreloaded.cards.TaskCard;
 import io.github.steaf23.bingoreloaded.data.BingoCardData;
+import io.github.steaf23.bingoreloaded.data.TaskFormatData;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.lib.api.PlayerHandlePaper;
 import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformServer;
@@ -158,7 +159,7 @@ public class PaperClientManager implements BingoClientManager {
 
 	@Override
 	public void openCreator(PlayerHandle player, @NotNull CreatorTaskSupplier tasks, @NonNull BingoCardData cardData) {
-		CreatorContext context = new CreatorContext(tasks, cardData.getAllCards());
+		CreatorContext context = new CreatorContext(tasks, TaskFormatData.fromDataAccessor(), cardData.getAllCards());
 		sendMessage(((PlayerHandlePaper)player).handle(), BingoReloadedPayloads.OPEN_CREATOR, context);
 	}
 
@@ -166,7 +167,7 @@ public class PaperClientManager implements BingoClientManager {
 	public void editListTasks(PlayerHandle player, @NotNull CreatorTaskSupplier tasks, String listName, OnListEdited onListEdited) {
 		editingLists.put(listName, onListEdited);
 
-		CreatorContext context = new CreatorContext(tasks, List.of());
+		CreatorContext context = new CreatorContext(tasks, TaskFormatData.fromDataAccessor(), List.of());
 		sendMessage(((PlayerHandlePaper)player).handle(), BingoReloadedPayloads.OPEN_CREATOR, context);
 		sendCreatorList(player, new BingoCardData().lists().getList(player.server(), listName));
 	}

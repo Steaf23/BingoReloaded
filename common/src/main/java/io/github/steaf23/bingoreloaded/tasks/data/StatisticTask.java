@@ -3,10 +3,11 @@ package io.github.steaf23.bingoreloaded.tasks.data;
 import io.github.steaf23.bingoreloaded.api.CardDisplayInfo;
 import io.github.steaf23.bingoreloaded.api.TaskDisplayMode;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
-import io.github.steaf23.bingoreloaded.data.helper.TaskFormatting;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.api.statistics.StatisticHandle;
 import io.github.steaf23.bingoreloaded.lib.api.statistics.VanillaStatistic;
+import io.github.steaf23.bingoreloaded.lib.util.ComponentUtils;
+import io.github.steaf23.bingoreloaded.protocol.data.task.TaskFormatting;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -41,16 +42,40 @@ public record StatisticTask(StatisticHandle statistic, int count, Set<String> ta
 	public Component getName(TaskFormatting formatting) {
 		VanillaStatistic stat = statistic.type();
 		return switch (stat.category()) {
-			case ENTITY_KILLED -> formatting.statisticKillEntityComponent(this);
-			case KILLED_BY -> formatting.statisticKilledByEntityComponent(this);
-			case TRAVEL -> formatting.statisticNameComponent(this, Component.text(" ").append(Component.translatable("soundCategory.block")), 10);
-			case DAMAGE -> formatting.statisticNameComponent(this, Component.object(ObjectContents.sprite(Key.key("gui"), Key.key("hud/heart/full"))), 1);
+			case ENTITY_KILLED -> formatting.statisticKillEntityComponent(
+					this::entityStatText,
+					ComponentUtils.entityName(statistic.entityType()),
+					count);
+			case KILLED_BY -> formatting.statisticKilledByEntityComponent(
+					this::entityStatText,
+					ComponentUtils.entityName(statistic.entityType()),
+					count);
+			case TRAVEL -> formatting.statisticNameComponent(
+					ComponentUtils.statistic(statistic),
+					count,
+					Component.text(" ").append(Component.translatable("soundCategory.block")),
+					10);
+			case DAMAGE -> formatting.statisticNameComponent(
+					ComponentUtils.statistic(statistic),
+					count,
+					Component.object(ObjectContents.sprite(Key.key("gui"), Key.key("hud/heart/full"))), 1);
 			default -> switch (stat.category().type) {
-				case CUSTOM -> formatting.statisticNameComponent(this, Component.empty(), 1);
-				case ITEM, BLOCK -> formatting.statisticItemComponent(this);
-				case ENTITY -> formatting.statisticKillEntityComponent(this); // technically modeled to be impossible, but whatever.
+				case CUSTOM -> formatting.statisticNameComponent(
+						ComponentUtils.statistic(statistic),
+						count,
+						Component.empty(),
+						1);
+				case ITEM, BLOCK -> formatting.statisticItemComponent(
+						ComponentUtils.statistic(statistic),
+						ComponentUtils.itemName(statistic.itemType()),
+						count);
+				case ENTITY -> throw new IllegalStateException("This code should not be reachable, please contact the developer!");
 			};
 		};
+	}
+
+	private Component entityStatText(Component... with) {
+		return ComponentUtils.statistic(statistic, with);
 	}
 
 	@Override

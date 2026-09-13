@@ -4,7 +4,7 @@ import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.inventory.MenuBoard;
 import io.github.steaf23.bingoreloaded.lib.inventory.UserInputMenu;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
-import io.github.steaf23.bingoreloaded.lib.util.ComponentUtils;
+import io.github.steaf23.bingoreloaded.protocol.message.MessageParser;
 import net.kyori.adventure.text.Component;
 
 import java.util.function.BiConsumer;
@@ -39,7 +39,7 @@ public class NameEditAction extends MenuAction
         new UserInputMenu(board, prompt, (result) -> {
             value = result;
             if (item != null) {
-                item.setName(ComponentUtils.MINI_BUILDER.deserialize(value));
+                item.setName(MessageParser.MINI_BUILDER.deserialize(value));
             }
             callback.accept(value, item);
 

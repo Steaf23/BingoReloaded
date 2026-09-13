@@ -10,7 +10,7 @@ import io.github.steaf23.bingoreloaded.lib.inventory.MenuBoard;
 import io.github.steaf23.bingoreloaded.lib.inventory.PaginatedDataMenu;
 import io.github.steaf23.bingoreloaded.lib.inventory.action.MenuAction;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
-import io.github.steaf23.bingoreloaded.lib.util.ComponentUtils;
+import io.github.steaf23.bingoreloaded.protocol.message.MessageParser;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -110,8 +110,8 @@ public class CardEditorMenu extends PaginatedDataMenu.TextDataMenu
         int min = cardsData.getListMin(cardName, listName);
         int max = cardsData.getListMax(cardName, listName);
         item.addDescription("uses", 1,
-                ComponentUtils.MINI_BUILDER.deserialize("At <bold>least</bold> <aqua>" + min + "</aqua> tasks will be used from this list."),
-                ComponentUtils.MINI_BUILDER.deserialize("At <bold>most</bold> <aqua>" + max + "</aqua> tasks will be used from this list."));
+                MessageParser.MINI_BUILDER.deserialize("At <bold>least</bold> <aqua>" + min + "</aqua> tasks will be used from this list."),
+                MessageParser.MINI_BUILDER.deserialize("At <bold>most</bold> <aqua>" + max + "</aqua> tasks will be used from this list."));
         item.addDescription("input", 5,
                 Menu.INPUT_LEFT_CLICK.append(Component.text("edit distribution")),
                 Menu.INPUT_RIGHT_CLICK.append(Component.text("remove this list")));

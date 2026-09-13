@@ -1,11 +1,10 @@
 package io.github.steaf23.bingoreloaded.gui.inventory.creator;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
-import io.github.steaf23.bingoreloaded.api.BingoClientManager;
 import io.github.steaf23.bingoreloaded.data.BingoCardData;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
+import io.github.steaf23.bingoreloaded.data.TaskFormatData;
 import io.github.steaf23.bingoreloaded.data.TaskListData;
-import io.github.steaf23.bingoreloaded.data.helper.TaskFormatting;
 import io.github.steaf23.bingoreloaded.gui.inventory.TagExclusionMenu;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.api.item.VanillaItems;
@@ -18,6 +17,7 @@ import io.github.steaf23.bingoreloaded.lib.inventory.UserInputMenu;
 import io.github.steaf23.bingoreloaded.lib.inventory.action.MenuAction;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import io.github.steaf23.bingoreloaded.protocol.data.card.CustomList;
+import io.github.steaf23.bingoreloaded.protocol.data.task.TaskFormatting;
 import io.github.steaf23.bingoreloaded.tasks.CreatorTaskFactory;
 import io.github.steaf23.bingoreloaded.util.BingoPlayerSender;
 import net.kyori.adventure.text.Component;
@@ -48,7 +48,7 @@ public class BingoCreatorMenu extends BasicMenu {
 	public BingoCreatorMenu(MenuBoard manager) {
 		super(manager, Component.text("Card Creator"), 3);
 		this.cardsData = new BingoCardData();
-		this.formatting = TaskFormatting.fromDataAccessor();
+		this.formatting = TaskFormatData.fromDataAccessor();
 		addAction(CARD, arguments -> createCardPicker().open(arguments.player()));
 		addAction(LIST, arguments -> createListPicker().open(arguments.player()));
 		addAction(TAGS, arguments -> createTagPicker().open(arguments.player()));
@@ -201,7 +201,6 @@ public class BingoCreatorMenu extends BasicMenu {
 			editor.open(player);
 		}
 	}
-
 
 	public BasicMenu createCardContext(String cardName) {
 		BasicMenu context = new BasicMenu(getMenuBoard(), Component.text(cardName), 1);
