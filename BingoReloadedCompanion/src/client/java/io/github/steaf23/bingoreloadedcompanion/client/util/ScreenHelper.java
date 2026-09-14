@@ -1,12 +1,18 @@
 package io.github.steaf23.bingoreloadedcompanion.client.util;
 
+import io.github.steaf23.bingoreloadedcompanion.client.mixin.accessor.GuiGraphicsExtractorAccessor;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.layouts.Layout;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
+import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipPositioner;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.Identifier;
+
+import java.util.List;
 
 public class ScreenHelper {
 
@@ -40,6 +46,15 @@ public class ScreenHelper {
 
 	public static boolean isPointWithinBounds(int x, int y, int width, int height, double pointX, double pointY) {
 		return pointX >= (double) (x - 1) && pointX < (double) (x + width + 1) && pointY >= (double) (y - 1) && pointY < (double) (y + height + 1);
+	}
+
+	public static void extractTooltipComponent(
+			GuiGraphicsExtractor graphics,
+			Font font,
+			ClientTooltipComponent component,
+			int x, int y,
+			ClientTooltipPositioner positioner) {
+		((GuiGraphicsExtractorAccessor)graphics).bingoreloadedcompanion$setTooltipForNextFrameInternal(font, List.of(component), x, y, positioner, null, false);
 	}
 
 	public static int addAlphaToColor(int color, int alpha) {

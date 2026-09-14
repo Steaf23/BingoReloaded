@@ -21,6 +21,7 @@ import net.minecraft.client.gui.layouts.LayoutSettings;
 import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.CreativeModeTab;
@@ -57,6 +58,7 @@ public class CreatorTaskScreen extends Screen {
 
 	String currentFilter = "";
 	String listName = "";
+	boolean reupdate = false;
 
 	public CreatorTaskScreen(CreatorSuite creatorSuite) {
 		super(Component.empty());
@@ -82,7 +84,7 @@ public class CreatorTaskScreen extends Screen {
 
 		topRightLayout = LinearLayout.horizontal();
 		topRightLayout.addChild(new StringWidget(Component.literal("Selected").withStyle(ScreenHelper.INVENTORY_STYLE), font),
-				LayoutSettings.defaults().paddingTop(5).paddingBottom(6).paddingHorizontal(24));
+				LayoutSettings.defaults().paddingTop(5).paddingBottom(6).paddingHorizontal(32));
 
 		treeLayout = new CollapsibleTreeLayout(font);
 	}
@@ -111,7 +113,7 @@ public class CreatorTaskScreen extends Screen {
 
 		LinearLayout rightLayout = LinearLayout.vertical();
 		selectedScroll = new CustomScrollableLayout(((width - scrollLayout.getWidth()) / 2) + scrollLayout.getWidth() + 8, scrollLayout.getY(),
-				90, CustomScrollableLayout.SCROLLER_WIDTH, heightLeft, selectedTasksLayout, CustomScrollableLayout.DEFAULT_SETTINGS);
+				106, CustomScrollableLayout.SCROLLER_WIDTH, heightLeft, selectedTasksLayout, CustomScrollableLayout.DEFAULT_SETTINGS);
 		rightLayout.addChild(topRightLayout, LayoutSettings.defaults().paddingVertical(4));
 		rightLayout.addChild(selectedScroll);
 
@@ -130,7 +132,7 @@ public class CreatorTaskScreen extends Screen {
 	}
 
 	public void tabChanged(int newIndex, TabSelectionButton.TaskTab newTab) {
-		applyFilter("");
+		filterField.setValue("");
 		tabName.setMessage(newTab.name().copy().withStyle(ScreenHelper.INVENTORY_STYLE));
 	}
 
@@ -176,11 +178,11 @@ public class CreatorTaskScreen extends Screen {
 
 			String category = tab.getDisplayName().getString();
 
-			for (int i = 0; i < creatorSuite.itemsPerTab.get(tab).size(); i++) {
-				int col = i % colCount;
-				int row = i / colCount;
+			int currentIndex = 0;
+			for (TaskId id : creatorSuite.itemsPerTab.get(tab)) {
+				int col = currentIndex % colCount;
+				int row = currentIndex / colCount;
 
-				TaskId.Item id = (TaskId.Item)creatorSuite.itemsPerTab.get(tab).get(i);
 				TaskWidget widget = createWidget(id);
 				if (!widget.task().passesFilter(currentFilter)) {
 					continue;
@@ -188,6 +190,11 @@ public class CreatorTaskScreen extends Screen {
 				widget.select(selectedTasks.containsKey(id));
 				contents.addChild(widget, row, col);
 				visibleTasks.add(widget);
+				currentIndex++;
+			}
+
+			if (currentIndex == 0) {
+				continue;
 			}
 
 			treeLayout.addTopLevelNode(category.isEmpty() ? Component.empty() : Component.literal(category), padding);
@@ -242,8 +249,19 @@ public class CreatorTaskScreen extends Screen {
 		return false;
 	}
 
+	@Override
+	public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+		reupdate = false;
+		boolean cancel = super.mouseClicked(event, doubleClick);
+
+		if (reupdate) {
+			updateSelectedTasks();
+		}
+		return cancel;
+	}
+
 	public void applyFilter(String filter) {
-		currentFilter = filter;
+		currentFilter = filter.toLowerCase().replace("_", " ");
 
 		int colCount = 10;
 		switch (tabSelection.getSelectedTab().type()) {
@@ -267,10 +285,29 @@ public class CreatorTaskScreen extends Screen {
 
 		selectedScroll.arrangeElements();
 		selectedScroll.visitWidgets(this::addRenderableWidget);
+		updateWidgets();
+	}
+
+	public void updateWidgets() {
+		for (TaskWidget widget : visibleTasks) {
+			if (selectedTasks.containsKey(widget.task().id())) {
+				widget.select(selectedTasks.get(widget.task().id()).isSelected());
+			} else if (widget.isSelected()) {
+				widget.select(false);
+			}
+		}
+	}
+
+	public void updateSelectedTasksLater() {
+		reupdate = true;
 	}
 
 	public void updateSelectedTask(TaskWithCount task) {
-		selectedTasks.put(task.task().id(), task);
+		if (task.count() == 0 && selectedTasks.containsKey(task.task().id())) {
+			selectedTasks.remove(task.task().id());
+		} else {
+			selectedTasks.put(task.task().id(), task);
+		}
 	}
 
 	public void loadList(CustomList list) {

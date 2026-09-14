@@ -33,6 +33,6 @@ public record TaskDefinition(
 			return true;
 		}
 
-		return name.toLowerCase().contains(filter.toLowerCase());
+		return name.toLowerCase().replace("_", " ").contains(filter);
 	}
 }

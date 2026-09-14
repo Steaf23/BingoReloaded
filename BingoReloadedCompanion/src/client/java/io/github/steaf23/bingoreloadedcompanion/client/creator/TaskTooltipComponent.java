@@ -41,9 +41,13 @@ public class TaskTooltipComponent implements ClientTooltipComponent {
 
 	@Override
 	public int getWidth(Font font) {
-		return Math.max(20 + font.width(taskName), task.count() == 0 ? font.width(ADD_TEXT) : font.width(REMOVE_TEXT)) + 4;
-	}
+		int topWidth = 20 + font.width(taskName);
 
+		if (addHint) {
+			return Math.max(topWidth, task.count() == 0 ? font.width(ADD_TEXT) : font.width(REMOVE_TEXT)) + 4;
+		}
+		return topWidth + 4;
+	}
 
 	@Override
 	public void extractImage(Font font, int x, int y, int width, int height, GuiGraphicsExtractor context) {
@@ -55,6 +59,8 @@ public class TaskTooltipComponent implements ClientTooltipComponent {
 	@Override
 	public void extractText(GuiGraphicsExtractor context, Font font, int x, int y) {
 		context.text(font, taskName, x + 24, y + 8, CommonColors.WHITE, true);
-		context.text(font, task.count() == 0 ? ADD_TEXT : REMOVE_TEXT, x + 2, y + 16 + 1 + font.lineHeight, CommonColors.WHITE, true);
+		if (addHint) {
+			context.text(font, task.count() == 0 ? ADD_TEXT : REMOVE_TEXT, x + 2, y + 16 + 1 + font.lineHeight, CommonColors.WHITE, true);
+		}
 	}
 }

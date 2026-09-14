@@ -43,14 +43,10 @@ public class CreatorCardScreen extends Screen {
 
 		ScreenHelper.centerLayout(this, cardPopup.layout());
 
-
-
 		LinearLayout padding = LinearLayout.vertical();
-
 		for (CustomCard card : creatorSuite.cards()) {
 			padding.addChild(cardButton(card), LayoutSettings.defaults().padding(15));
 		}
-
 		padding.addChild(newCardButton(), LayoutSettings.defaults().padding(27));
 
 		CustomScrollableLayout cardScroll = new CustomScrollableLayout(0, 0, 48 + 30 + CustomScrollableLayout.SCROLLER_WIDTH, CustomScrollableLayout.SCROLLER_WIDTH, 48 * 5 + 30, padding, CustomScrollableLayout.DEFAULT_SETTINGS);
