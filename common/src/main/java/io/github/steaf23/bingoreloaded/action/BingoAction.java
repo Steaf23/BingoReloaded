@@ -12,6 +12,7 @@ import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gameloop.GameManager;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.gameloop.phase.PregameLobby;
+import io.github.steaf23.bingoreloaded.item.EndlessPearl;
 import io.github.steaf23.bingoreloaded.item.GoUpWand;
 import io.github.steaf23.bingoreloaded.item.TeamPouch;
 import io.github.steaf23.bingoreloaded.lib.action.ActionResult;
@@ -332,7 +333,7 @@ public class BingoAction extends ActionTree {
 			}
 			return giveUserBingoItem(context, player, args[0]);
 		})
-				.addTabCompletion(args -> List.of("wand", "pouch", "card"))
+				.addTabCompletion(args -> List.of("wand", "pouch", "card", "pearl"))
 				.addUsage("<item_name>");
 
 
@@ -500,6 +501,10 @@ public class BingoAction extends ActionTree {
 			}
 			case "card" -> {
 				player.addItemsToInventory(PlayerKit.CARD_ITEM.buildItem(context.server()));
+				yield ActionResult.SUCCESS;
+			}
+			case "pearl" -> {
+				player.addItemsToInventory(session.items().createStack(EndlessPearl.ID, null));
 				yield ActionResult.SUCCESS;
 			}
 			default -> ActionResult.INCORRECT_USE;

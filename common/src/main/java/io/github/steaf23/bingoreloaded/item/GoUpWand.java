@@ -9,21 +9,22 @@ import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.lib.api.GlobalPosition;
 import io.github.steaf23.bingoreloaded.lib.api.PotionEffectInstance;
 import io.github.steaf23.bingoreloaded.lib.api.StatusEffectType;
-import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
+import io.github.steaf23.bingoreloaded.lib.api.item.VanillaItems;
 import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformTaskScheduler;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.event.EventResult;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
-import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.jetbrains.annotations.Nullable;
 
 public class GoUpWand extends GameItem {
+
+	public static final Key WAND_COOLDOWN_GROUP = BingoReloaded.resourceKey("wand_cooldown");
 
 	public static final Key ID = BingoReloaded.resourceKey("go_up_wand");
 
@@ -34,7 +35,7 @@ public class GoUpWand extends GameItem {
 	@Override
 	public ItemTemplate createForParticipant(@Nullable BingoParticipant participant) {
 		return new ItemTemplate(
-				ItemType.of(Key.key("warped_fungus_on_a_stick")),
+				VanillaItems.WARPED_FUNGUS_ON_A_STICK.type(),
 				BingoMessage.ITEM_WAND_NAME.asPhrase().color(NamedTextColor.DARK_PURPLE).decorate(TextDecoration.BOLD, TextDecoration.ITALIC),
 				BingoMessage.ITEM_WAND_DESC.asMultiline())
 				.addEnchantment(Key.key("minecraft:unbreaking"), 3)
@@ -63,7 +64,7 @@ public class GoUpWand extends GameItem {
 			return;
 		}
 
-		wand.setCooldown(PlayerKit.WAND_COOLDOWN_GROUP, wandCooldownSeconds);
+		wand.setCooldown(WAND_COOLDOWN_GROUP, wandCooldownSeconds);
 		player.setCooldown(wand, (int)(wandCooldownSeconds * 20));
 
 		taskScheduler.runTask(task -> {

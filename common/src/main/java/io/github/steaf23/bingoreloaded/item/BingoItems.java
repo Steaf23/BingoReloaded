@@ -20,6 +20,7 @@ public class BingoItems {
 		this.server = server;
 		addItem(new GoUpWand());
 		addItem(new TeamPouch());
+		addItem(new EndlessPearl());
 	}
 
 	private void addItem(GameItem item) {

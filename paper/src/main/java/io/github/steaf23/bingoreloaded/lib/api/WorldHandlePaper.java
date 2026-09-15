@@ -8,8 +8,15 @@ import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformServer;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.util.DebugLogger;
 import net.kyori.adventure.key.Key;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.item.EnderpearlItem;
+import net.minecraft.world.item.Items;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
+import org.bukkit.craftbukkit.CraftWorld;
+import org.bukkit.craftbukkit.entity.CraftPlayer;
+import org.bukkit.entity.Player;
 
 import java.util.Collection;
 
@@ -102,6 +109,15 @@ public class WorldHandlePaper implements WorldHandle {
 	@Override
 	public void dropItem(StackHandle item, GlobalPosition location) {
 		world.dropItem(PaperApiHelper.locationFromWorldPos(this, location), ((StackHandlePaper)item).handle());
+	}
+
+	@Override
+	public void throwPearlForPlayer(PlayerHandle player) {
+		ServerPlayer serverPlayer = ((CraftPlayer)((PlayerHandlePaper)player).handle()).getHandle();
+		if (!serverPlayer.hasInfiniteMaterials()) { // add an extra to not consume it in the 'use' method
+			serverPlayer.getItemInHand(InteractionHand.MAIN_HAND).setCount(2);
+		}
+		Items.ENDER_PEARL.use(((CraftWorld)world).getHandle(), serverPlayer, InteractionHand.MAIN_HAND);
 	}
 
 	public World handle() {

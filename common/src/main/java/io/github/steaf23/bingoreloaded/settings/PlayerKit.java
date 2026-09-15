@@ -1,6 +1,5 @@
 package io.github.steaf23.bingoreloaded.settings;
 
-import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.CustomKitData;
 import io.github.steaf23.bingoreloaded.data.DefaultKitData;
@@ -31,8 +30,6 @@ public enum PlayerKit
     CUSTOM_4("custom_4", Component.text("CUSTOM 4"), EnumSet.noneOf(EffectOptionFlags.class)),
     CUSTOM_5("custom_5", Component.text("CUSTOM 5"), EnumSet.noneOf(EffectOptionFlags.class)),
     ;
-
-	public static final Key WAND_COOLDOWN_GROUP = BingoReloaded.resourceKey("wand_cooldown");
 
     public static final ItemTemplate CARD_ITEM_RENDERABLE = new ItemTemplate(
             VanillaItems.FILLED_MAP.type(),

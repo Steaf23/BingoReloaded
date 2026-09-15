@@ -207,6 +207,10 @@ teamPouch:
   # The amount of slots that can be used to store items in the team pouch, does not have to be a multiple of 9, can be anywhere between 1 and 54.
   slots: 18
 
+# Settings for the endless pearl item
+endlessPearl:
+  cooldown: 5.0 # item cooldown in seconds
+
 # The period of time (in seconds) at the start of the game when a player is protected from any damage
 #   also determines the time after which the spawn platform will disappear.
 gracePeriod: 30

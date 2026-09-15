@@ -163,6 +163,8 @@ public enum BingoMessage
     ITEM_TEAM_DESC("items.team.desc"),
     ITEM_POUCH_NAME("items.pouch.name"),
     ITEM_POUCH_DESC("items.pouch.desc"),
+    ENDLESS_PEARL_NAME("items.pearl.name"),
+    ENDLESS_PEARL_DESC("items.pearl.desc"),
     TEAM_AUTO("teams.auto"),
     LIST_COUNT("creator.card_item.desc"),
     COUNT_MORE("menu.count_more"),
