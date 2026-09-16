@@ -44,6 +44,10 @@ public abstract class GameItem implements Keyed {
 	}
 
 	public EventResult<?> tryUse(StackHandle stack, PlayerHandle player, BingoParticipant participant, BingoGame game) {
+		if (player.hasCooldown(stack)) {
+			return EventResult.IGNORE;
+		}
+
 		if (!automaticCooldown || applyCooldown(stack, player, game).consume()) {
 			return use(stack, player, participant, game);
 		} else {
