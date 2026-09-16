@@ -210,16 +210,10 @@ public class BingoSession implements ForwardingAudience
 
 				if (delaySeconds > 0.0) {
 					gameManager.getServer().taskScheduler().runTask((long) (delaySeconds * BingoReloaded.ONE_SECOND), t -> {
-						getPlayersInWorld().forEach(p -> {
-							GlobalPosition pos = BlockBuilder.getRandomPosWithinRange(lobby.spawnPosition(), spread, spread);
-							p.teleportAsync(pos);
-						});
+						teleportPlayersToLobby(lobby, spread);
 					});
 				} else {
-					getPlayersInWorld().forEach(p -> {
-						GlobalPosition pos = BlockBuilder.getRandomPosWithinRange(lobby.spawnPosition(), spread, spread);
-						p.teleportAsync(pos);
-					});
+                    teleportPlayersToLobby(lobby, spread);
 				}
 			}
 		}
@@ -498,5 +492,17 @@ public class BingoSession implements ForwardingAudience
                 });
             }
         }
+    }
+
+    private void teleportPlayersToLobby(BingoLobby lobby, int spread) {
+        getPlayersInWorld().forEach(p -> {
+            GlobalPosition pos = BlockBuilder.getRandomPosWithinRange(lobby.spawnPosition(), spread, spread);
+            p.teleportAsync(pos);
+            p.clearInventory();
+            BingoParticipant participant = teamManager.getPlayerAsParticipant(p);
+            if (participant instanceof BingoPlayer player) {
+                gameManager.getRuntime().givePlayerCardItem(player, settingsBuilder.view().kit().getCardSlot());
+            }
+        });
     }
 }

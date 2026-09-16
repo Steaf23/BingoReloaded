@@ -508,6 +508,10 @@ public class BingoGame implements GamePhase
         session.playSound(sound);
     }
 
+    public PlayerSpawnCoordinator getSpawnCoordinator() {
+        return spawnCoordinator;
+    }
+
 // @EventHandlers ========================================================================
 
     public void onBingoTaskCompleted(@NotNull BingoParticipant participant, GameTask task) {
@@ -756,7 +760,7 @@ public class BingoGame implements GamePhase
             if (!gameStarted)
                 return EventResult.IGNORE;
 
-            return gameItem.use(stack, participant, this);
+            return gameItem.tryUse(stack, player, participant, this);
         } else if (PlayerKit.CARD_ITEM.isCompareKeyEqual(stack) && !config.getOptionValue(BingoOptions.DISABLE_CARD_MENU_FROM_ITEM)) {
             // Only show item task as deathmatch tasks.
             if (deathMatchTask == null) {

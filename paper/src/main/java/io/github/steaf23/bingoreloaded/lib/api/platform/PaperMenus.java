@@ -31,12 +31,11 @@ public class PaperMenus implements PlatformMenus {
 			Player paperPlayer = ((PlayerHandlePaper) player).handle();
 
 			Inventory inventory = inventories.computeIfAbsent(menu, m -> {
-				Inventory inv;
-				if (m instanceof UserInputMenu) {
-					inv = Bukkit.createInventory(null, InventoryType.ANVIL, m.title());
-				} else {
-					inv = Bukkit.createInventory(null, m.getBackedInventory().size(), m.title());
-				}
+				Inventory inv = switch (m.type()) {
+					case CHEST -> Bukkit.createInventory(null, m.getBackedInventory().size(), m.title());
+					case ANVIL -> Bukkit.createInventory(null, InventoryType.ANVIL, m.title());
+					case DROPPER -> Bukkit.createInventory(null, InventoryType.DROPPER, m.title());
+				};
 				sync(inv, m.getBackedInventory());
 				m.getBackedInventory().addListener(new PaperInventories.BukkitInventoryUpdater(inv));
 				return inv;

@@ -16,6 +16,7 @@ import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.data.config.BingoOptions;
 import io.github.steaf23.bingoreloaded.data.record.LeaderboardData;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
+import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.gameloop.phase.PregameLobby;
 import io.github.steaf23.bingoreloaded.gui.BingoCardMapRenderer;
 import io.github.steaf23.bingoreloaded.gui.inventory.AdminBingoMenu;
@@ -23,6 +24,7 @@ import io.github.steaf23.bingoreloaded.gui.inventory.LeaderboardMenu;
 import io.github.steaf23.bingoreloaded.gui.inventory.TeamCardSelectMenu;
 import io.github.steaf23.bingoreloaded.gui.inventory.TeamEditorMenu;
 import io.github.steaf23.bingoreloaded.gui.inventory.TeamSelectionMenu;
+import io.github.steaf23.bingoreloaded.gui.inventory.TeamTeleporterMenu;
 import io.github.steaf23.bingoreloaded.gui.inventory.VoteMenu;
 import io.github.steaf23.bingoreloaded.gui.inventory.card.GenericCardMenu;
 import io.github.steaf23.bingoreloaded.gui.inventory.card.HotswapGenericCardMenu;
@@ -100,6 +102,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
 
 public class BingoReloadedPaper extends JavaPlugin implements BingoReloadedRuntime, Listener {
 
@@ -368,6 +371,11 @@ public class BingoReloadedPaper extends JavaPlugin implements BingoReloadedRunti
 	public void openLeaderboard(PlayerHandle player, LeaderboardData historyData, boolean categorizeByPresets) {
 		LeaderboardMenu menu = new LeaderboardMenu(menuBoard, historyData, player, categorizeByPresets, bingo.config().getOptionValue(BingoOptions.SAVE_PLAYER_STATISTICS));
 		menu.open(player);
+	}
+
+	@Override
+	public void openTeamTeleporter(BingoPlayer player, BingoGame game, Consumer<PlayerHandle> callback) {
+		new TeamTeleporterMenu(menuBoard, player, game, callback).open();
 	}
 
 	@SuppressWarnings("UnstableApiUsage")

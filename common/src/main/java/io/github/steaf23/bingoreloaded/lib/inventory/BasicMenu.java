@@ -165,6 +165,7 @@ public class BasicMenu implements Menu
         return switch (type) {
             case CHEST -> 27;
             case ANVIL -> 3;
+            case DROPPER -> 9;
         };
     }
 

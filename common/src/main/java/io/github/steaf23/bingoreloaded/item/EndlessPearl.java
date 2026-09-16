@@ -22,37 +22,22 @@ public class EndlessPearl extends GameItem {
 	public static final Key ID = BingoReloaded.resourceKey("endless_pearl");
 
 	public EndlessPearl() {
-		super(ID);
+		super(ID, ItemCooldown.configurableCooldown(PEARL_COOLDOWN_GROUP, BingoOptions.ENDLESS_PEARL_COOLDOWN));
 	}
 
 	@Override
 	public ItemTemplate createForParticipant(@Nullable BingoParticipant participant) {
 		return new ItemTemplate(VanillaItems.ENDER_PEARL.type(),
-				BingoMessage.ENDLESS_PEARL_NAME.asPhrase().color(NamedTextColor.DARK_PURPLE).decorate(TextDecoration.BOLD, TextDecoration.ITALIC),
-				BingoMessage.ENDLESS_PEARL_DESC.asMultiline())
+				BingoMessage.ITEM_ENDLESS_PEARL_NAME.asPhrase().color(NamedTextColor.DARK_PURPLE).decorate(TextDecoration.BOLD, TextDecoration.ITALIC),
+				BingoMessage.ITEM_ENDLESS_PEARL_DESC.asMultiline())
 				.setDummy(true)
 				.setGlowing(true);
 	}
 
 	@Override
-	public EventResult<?> use(StackHandle stack, BingoParticipant participant, BingoGame game) {
-		if (participant.sessionPlayer().isEmpty()) {
-			return EventResult.IGNORE;
-		}
-
-		PlayerHandle player = participant.sessionPlayer().orElseThrow();
-
-		if (player.hasCooldown(stack)) {
-			return EventResult.IGNORE;
-		}
-
-		double cooldownSeconds = game.getConfig().getOptionValue(BingoOptions.ENDLESS_PEARL_COOLDOWN);
-
-		stack.setCooldown(PEARL_COOLDOWN_GROUP, cooldownSeconds);
-		player.setCooldown(stack, (int)(cooldownSeconds * 20));
+	public EventResult<?> use(StackHandle stack, PlayerHandle player, BingoParticipant participant, BingoGame game) {
 
 		player.world().throwPearlForPlayer(player);
-
 		return EventResult.CONSUME;
 	}
 }

@@ -7,6 +7,7 @@ import io.github.steaf23.bingoreloaded.api.TeamDisplay;
 import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.data.record.LeaderboardData;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
+import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.gameloop.phase.PregameLobby;
 import io.github.steaf23.bingoreloaded.lib.action.ActionTree;
 import io.github.steaf23.bingoreloaded.lib.api.inventory.CapacityInventoryProvider;
@@ -14,12 +15,15 @@ import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.api.player.SharedDisplay;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataAccessor;
 import io.github.steaf23.bingoreloaded.lib.inventory.BasicMenu;
+import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
+import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import net.kyori.adventure.key.Key;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Set;
+import java.util.function.Consumer;
 
 /**
  * Used by BingoReloaded to set up features that are implemented by each platform separately.
@@ -53,6 +57,8 @@ public interface BingoReloadedRuntime {
 	void openTeamSelector(PlayerHandle player, BingoSession session);
 	void openVoteMenu(PlayerHandle player, PregameLobby lobby);
 	void openLeaderboard(PlayerHandle player, LeaderboardData historyData, boolean categorizeByPresets);
+	void openTeamTeleporter(BingoPlayer player, BingoGame game, Consumer<PlayerHandle> callback);
+
 	void editCardDescription(PlayerHandle playerHandle, String currentName, String currentDescription, BasicMenu parentMenu, CardDescriptionEditor callback);
 	void givePlayerCardItem(BingoPlayer player, int cardSlot);
 

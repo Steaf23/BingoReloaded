@@ -40,6 +40,14 @@ public class PlayerSpawnCoordinator {
 		}
 	}
 
+	public void teleportPlayerToSpawn(BingoParticipant participant) {
+		for (SpawnStrategy.SpawnSite site : sites) {
+			if (site.players().contains(participant)) {
+				teleportPlayerToStart(participant, site.position(), 4);
+			}
+		}
+	}
+
 	private void teleportPlayerToStart(BingoParticipant participant, GlobalPosition to, int spread) {
 		if (participant.sessionPlayer().isEmpty())
 			return;

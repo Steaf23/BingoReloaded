@@ -21,6 +21,7 @@ public class BingoItems {
 		addItem(new GoUpWand());
 		addItem(new TeamPouch());
 		addItem(new EndlessPearl());
+		addItem(new TeamBox());
 	}
 
 	private void addItem(GameItem item) {

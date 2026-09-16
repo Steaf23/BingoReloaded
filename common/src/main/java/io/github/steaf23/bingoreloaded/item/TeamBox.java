@@ -2,56 +2,46 @@ package io.github.steaf23.bingoreloaded.item;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
+import io.github.steaf23.bingoreloaded.data.config.BingoOptions;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
+import io.github.steaf23.bingoreloaded.lib.api.item.VanillaItems;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.event.EventResult;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
-import io.github.steaf23.bingoreloaded.lib.util.BlockColor;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
-import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.jetbrains.annotations.Nullable;
 
-public class TeamPouch extends GameItem {
+public class TeamBox extends GameItem {
 
-	public static final Key ID = BingoReloaded.resourceKey("team_pouch");
+	public static final Key TEAM_BOX_COOLDOWN_GROUP = BingoReloaded.resourceKey("team_box_cooldown");
 
-	public TeamPouch() {
-		super(ID);
+	public static final Key ID = BingoReloaded.resourceKey("team_box");
+
+	public TeamBox() {
+		super(ID, ItemCooldown.configurableCooldown(TEAM_BOX_COOLDOWN_GROUP, BingoOptions.TEAM_BOX_COOLDOWN), false);
 	}
 
 	@Override
 	public ItemTemplate createForParticipant(@Nullable BingoParticipant participant) {
-		ItemTemplate def = new ItemTemplate(BlockColor.WHITE.bundle,
-				BingoMessage.ITEM_POUCH_NAME.asPhrase()
+		return new ItemTemplate(VanillaItems.ENDER_CHEST.type(),
+				BingoMessage.ITEM_TEAM_BOX_NAME.asPhrase()
 						.color(NamedTextColor.DARK_PURPLE).decorate(TextDecoration.ITALIC, TextDecoration.BOLD),
-				BingoMessage.ITEM_POUCH_DESC.asMultiline())
-				.setGlowing(true)
-				.setDummy(true);
-
-		if (participant == null) {
-			return def;
-		}
-
-		BingoTeam team = participant.getTeam();
-		if (team == null) {
-			return def;
-		}
-
-		return def.setItemType(team.getDyeColor().bundle);
+				BingoMessage.ITEM_TEAM_BOX_DESC.asPhrase())
+				.setDummy(true)
+				.setGlowing(true);
 	}
 
 	@Override
 	public EventResult<?> use(StackHandle stack, PlayerHandle player, BingoParticipant participant, BingoGame game) {
-		if (participant.getTeam() == null) {
+		if (!(participant instanceof BingoPlayer bingoPlayer)) {
 			return EventResult.IGNORE;
 		}
-
-		player.tryOpenInventory(participant.getTeam().storage());
+		game.getSession().getGameManager().getRuntime().openTeamTeleporter(bingoPlayer, game, p -> applyCooldown(stack, p, game));
 		return EventResult.CONSUME;
 	}
 }

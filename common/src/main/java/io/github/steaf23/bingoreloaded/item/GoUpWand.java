@@ -16,7 +16,6 @@ import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.event.EventResult;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
-import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -29,7 +28,7 @@ public class GoUpWand extends GameItem {
 	public static final Key ID = BingoReloaded.resourceKey("go_up_wand");
 
 	public GoUpWand() {
-		super(ID);
+		super(ID, ItemCooldown.configurableCooldown(WAND_COOLDOWN_GROUP, BingoOptions.GO_UP_WAND_COOLDOWN));
 	}
 
 	@Override
@@ -43,30 +42,18 @@ public class GoUpWand extends GameItem {
 	}
 
 	@Override
-	public EventResult<?> use(StackHandle stack, BingoParticipant participant, BingoGame game) {
+	public EventResult<?> use(StackHandle stack, PlayerHandle player, BingoParticipant participant, BingoGame game) {
 		var config = game.getConfig();
-		if (participant instanceof BingoPlayer player) {
-			player.sessionPlayer().ifPresent(sessionPlayer -> {
-				useGoUpWand(game.taskScheduler(), sessionPlayer, stack,
-						config.getOptionValue(BingoOptions.GO_UP_WAND_COOLDOWN),
-						config.getOptionValue(BingoOptions.GO_UP_WAND_DOWN_DISTANCE),
-						config.getOptionValue(BingoOptions.GO_UP_WAND_UP_DISTANCE),
-						config.getOptionValue(BingoOptions.GO_UP_WAND_PLATFORM_LIFETIME),
-						game);
-			});
-		}
+
+		useGoUpWand(game.taskScheduler(), player,
+				config.getOptionValue(BingoOptions.GO_UP_WAND_DOWN_DISTANCE),
+				config.getOptionValue(BingoOptions.GO_UP_WAND_UP_DISTANCE),
+				config.getOptionValue(BingoOptions.GO_UP_WAND_PLATFORM_LIFETIME));
 
 		return EventResult.CONSUME;
 	}
 
-	private void useGoUpWand(PlatformTaskScheduler taskScheduler, PlayerHandle player, StackHandle wand, double wandCooldownSeconds, int downDistance, int upDistance, int platformLifetimeSeconds, BingoGame game) {
-		if (player.hasCooldown(wand)) {
-			return;
-		}
-
-		wand.setCooldown(WAND_COOLDOWN_GROUP, wandCooldownSeconds);
-		player.setCooldown(wand, (int)(wandCooldownSeconds * 20));
-
+	private void useGoUpWand(PlatformTaskScheduler taskScheduler, PlayerHandle player, int downDistance, int upDistance, int platformLifetimeSeconds) {
 		taskScheduler.runTask(task -> {
 			double distance;
 			double fallDistance;
