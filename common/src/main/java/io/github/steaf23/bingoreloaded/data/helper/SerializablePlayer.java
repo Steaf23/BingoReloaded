@@ -105,14 +105,6 @@ public class SerializablePlayer {
 			return;
 
 		player.teleportBlocking(location);
-		player.teleportBlocking(location);
-
-		player.setHealth(health);
-		player.setFoodLevel(hunger);
-		player.setGamemode(gamemode);
-		player.setRespawnPoint(spawnPoint, true);
-		player.setLevel(xpLevel);
-		player.setExp(xpPoints);
 		player.setHealth(health);
 		player.setFoodLevel(hunger);
 		player.setGamemode(gamemode);

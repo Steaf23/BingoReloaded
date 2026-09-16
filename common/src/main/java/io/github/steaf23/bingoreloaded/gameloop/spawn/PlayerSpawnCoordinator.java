@@ -59,6 +59,5 @@ public class PlayerSpawnCoordinator {
 
 		GlobalPosition spawnLocation = to.clone().moveYBlocks(2);
 		player.setRespawnPoint(spawnLocation, true);
-//		playerSpawnPoints.put(player.uniqueId(), spawnLocation);
 	}
 }

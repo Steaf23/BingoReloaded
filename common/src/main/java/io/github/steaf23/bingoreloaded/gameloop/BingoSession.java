@@ -208,6 +208,8 @@ public class BingoSession implements ForwardingAudience
 				int spread = config.getOptionValue(BingoOptions.TELEPORT_TO_LOBBY_SPREAD);
 				delaySeconds = Math.min(delaySeconds, gameRestartTime);
 
+                getPlayersInWorld().forEach(p -> p.setRespawnPoint(lobby.spawnPosition(), true));
+
 				if (delaySeconds > 0.0) {
 					gameManager.getServer().taskScheduler().runTask((long) (delaySeconds * BingoReloaded.ONE_SECOND), t -> {
 						teleportPlayersToLobby(lobby, spread);
