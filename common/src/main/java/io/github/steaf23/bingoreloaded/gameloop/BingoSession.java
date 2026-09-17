@@ -17,6 +17,7 @@ import io.github.steaf23.bingoreloaded.gameloop.vote.VoteCategory;
 import io.github.steaf23.bingoreloaded.gameloop.vote.VoteTicket;
 import io.github.steaf23.bingoreloaded.item.BingoItems;
 import io.github.steaf23.bingoreloaded.lib.api.DimensionType;
+import io.github.steaf23.bingoreloaded.lib.api.EntityType;
 import io.github.steaf23.bingoreloaded.lib.api.GlobalPosition;
 import io.github.steaf23.bingoreloaded.lib.api.PlayerGamemode;
 import io.github.steaf23.bingoreloaded.lib.api.WorldHandle;
@@ -46,6 +47,7 @@ import net.kyori.adventure.text.format.TextDecoration;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
 
@@ -284,6 +286,29 @@ public class BingoSession implements ForwardingAudience
         }
         return EventResult.IGNORE;
 	}
+
+    public EventResult<EventResults.BlockDropsItemResult> handleBlockDropsItem(PlayerHandle player, GlobalPosition blockPos, ItemType blockType, List<StackHandle> itemsToDrop) {
+        boolean consume = false;
+        if (phase instanceof BingoGame game) {
+            consume = game.useItemMagnet(player, blockPos, itemsToDrop);
+        }
+
+        return new EventResult<>(consume, new EventResults.BlockDropsItemResult());
+    }
+
+    public EventResult<EventResults.PlayerKilledEntityResult> handlePlayerKilledEntity(PlayerHandle player, GlobalPosition entityPos, EntityType entityType, List<StackHandle> drops) {
+        if (entityType == EntityType.PLAYER) {
+            return new EventResult<>(false, null);
+        }
+
+        boolean consume = false;
+        if (phase instanceof BingoGame game) {
+            consume = game.useItemMagnet(player, entityPos, drops);
+        }
+
+        // Only remove the items, do not cancel the event.
+        return new EventResult<>(false, new EventResults.PlayerKilledEntityResult(consume));
+    }
 
     public void onPlayerJoinedSessionWorld(PlayerHandle player) {
         gameManager.getServer().taskScheduler().runTask(t -> {

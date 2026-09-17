@@ -5,6 +5,7 @@ import io.github.steaf23.bingoreloaded.gameloop.GameManager;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.gameloop.phase.PregameLobby;
 import io.github.steaf23.bingoreloaded.lib.api.AdvancementHandle;
+import io.github.steaf23.bingoreloaded.lib.api.EntityType;
 import io.github.steaf23.bingoreloaded.lib.api.GlobalPosition;
 import io.github.steaf23.bingoreloaded.lib.api.WorldHandle;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
@@ -19,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
+import java.util.List;
 
 public final class BingoEventListener implements PlatformEventDispatcher {
 
@@ -155,6 +157,24 @@ public final class BingoEventListener implements PlatformEventDispatcher {
 			return EventResult.IGNORE;
 
 		return session.handlePlayerBlockPlace(player, position, blockType);
+	}
+
+	@Override
+	public EventResult<EventResults.BlockDropsItemResult> sendBlockDropsItem(PlayerHandle player, GlobalPosition blockPos, ItemType blockType, List<StackHandle> itemsToDrop) {
+		BingoSession session = getSession(player.world());
+		if (session == null)
+			return new EventResult<>(false, null);
+
+		return session.handleBlockDropsItem(player, blockPos, blockType, itemsToDrop);
+	}
+
+	@Override
+	public EventResult<EventResults.PlayerKilledEntityResult> sendPlayerKilledEntity(PlayerHandle player, GlobalPosition entityPos, EntityType entityType, List<StackHandle> drops) {
+		BingoSession session = getSession(player.world());
+		if (session == null)
+			return new EventResult<>(false, null);
+
+		return session.handlePlayerKilledEntity(player, entityPos, entityType, drops);
 	}
 
 	@Override

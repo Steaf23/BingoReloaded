@@ -5,6 +5,7 @@ import io.github.steaf23.bingoreloaded.lib.api.BukkitStatistics;
 import io.github.steaf23.bingoreloaded.lib.api.EntityTypePaper;
 import io.github.steaf23.bingoreloaded.lib.api.PaperApiHelper;
 import io.github.steaf23.bingoreloaded.lib.api.PlayerHandlePaper;
+import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemTypePaper;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandlePaper;
@@ -17,13 +18,16 @@ import io.github.steaf23.bingoreloaded.lib.event.PlatformEventDispatcher;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockDropItemEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -39,6 +43,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerStatisticIncrementEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.List;
@@ -218,6 +223,43 @@ public class EventListenerPaper implements Listener {
 				new PlayerHandlePaper(server, event.getPlayer()),
 				PaperApiHelper.worldPosFromLocation(event.getBlock().getLocation()),
 				ItemTypePaper.of(event.getBlock().getType()));
+
+		if (result.consume()) {
+			event.setCancelled(true);
+		}
+	}
+
+	@EventHandler
+	public void handleEntityDeathEvent(final EntityDeathEvent event) {
+		if (event.getDamageSource().getDirectEntity() instanceof Player player) {
+			EventResult<EventResults.PlayerKilledEntityResult> result = dispatcher.sendPlayerKilledEntity(
+					new PlayerHandlePaper(server, player),
+					PaperApiHelper.worldPosFromLocation(event.getEntity().getLocation()),
+					new EntityTypePaper(event.getEntityType()),
+					event.getDrops().stream()
+							.<StackHandle>map(StackHandlePaper::new)
+							.toList());
+
+			if (result.consume()) {
+				event.setCancelled(true);
+			}
+
+			if (result.data() != null && result.data().cancelItemDrops()) {
+				event.getDrops().clear();
+			}
+		}
+	}
+
+	@EventHandler
+	public void handleBlockDropItemEvent(final BlockDropItemEvent event) {
+		EventResult<EventResults.BlockDropsItemResult> result = dispatcher.sendBlockDropsItem(
+				new PlayerHandlePaper(server, event.getPlayer()),
+				PaperApiHelper.worldPosFromLocation(event.getBlock().getLocation()),
+				ItemTypePaper.of(event.getBlockState().getType()),
+				event.getItems().stream()
+						.<StackHandle>map(i -> new StackHandlePaper(i.getItemStack()))
+						.toList()
+				);
 
 		if (result.consume()) {
 			event.setCancelled(true);

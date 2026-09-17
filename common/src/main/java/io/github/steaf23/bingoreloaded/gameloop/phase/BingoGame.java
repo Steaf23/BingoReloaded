@@ -21,6 +21,7 @@ import io.github.steaf23.bingoreloaded.lib.api.PlayerGamemode;
 import io.github.steaf23.bingoreloaded.lib.api.PotionEffectInstance;
 import io.github.steaf23.bingoreloaded.lib.api.StatusEffectType;
 import io.github.steaf23.bingoreloaded.lib.api.WorldHandle;
+import io.github.steaf23.bingoreloaded.lib.api.inventory.InventoryTemplate;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformServer;
@@ -51,6 +52,7 @@ import io.github.steaf23.bingoreloaded.util.timer.BlitzTimer;
 import io.github.steaf23.bingoreloaded.util.timer.CountdownTimer;
 import io.github.steaf23.bingoreloaded.util.timer.CounterTimer;
 import io.github.steaf23.bingoreloaded.util.timer.GameTimer;
+import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.JoinConfiguration;
@@ -728,6 +730,23 @@ public class BingoGame implements GamePhase
         }
 
         return EventResult.IGNORE;
+    }
+
+    public boolean useItemMagnet(PlayerHandle player, GlobalPosition position, List<StackHandle> itemsToDrop) {
+        if (!gameStarted || !settings.effects().contains(EffectOptionFlags.ITEM_MAGNET)) {
+            return false;
+        }
+
+        if (!itemsToDrop.isEmpty()) {
+            player.playSound(Sound.sound(builder -> {
+                builder.type(Key.key("entity.item.pickup"));
+                builder.source(Sound.Source.PLAYER);
+                builder.volume(0.35f);
+                builder.pitch((float)(Math.random() - Math.random()) * 1.4F + 2.0F);
+            }), position.x(), position.y(), position.z());
+        }
+        player.addItemsToInventory(itemsToDrop.toArray(StackHandle[]::new));
+        return true;
     }
 
     @Override

@@ -1,6 +1,7 @@
 package io.github.steaf23.bingoreloaded.lib.event;
 
 import io.github.steaf23.bingoreloaded.lib.api.AdvancementHandle;
+import io.github.steaf23.bingoreloaded.lib.api.EntityType;
 import io.github.steaf23.bingoreloaded.lib.api.GlobalPosition;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
@@ -9,6 +10,7 @@ import io.github.steaf23.bingoreloaded.lib.api.statistics.StatisticHandle;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Represents the events that are expected to be sent by the target platform/software
@@ -28,6 +30,8 @@ public interface PlatformEventDispatcher {
 	void sendPlayerQuitsServer(PlayerHandle player);
 	EventResult<?> sendPlayerBreaksBlock(PlayerHandle player, GlobalPosition position, ItemType blockType);
 	EventResult<?> sendPlayerPlacesBlock(PlayerHandle player, GlobalPosition position, ItemType blockType);
+	EventResult<EventResults.BlockDropsItemResult> sendBlockDropsItem(PlayerHandle player, GlobalPosition blockPos, ItemType blockType, List<StackHandle> itemsToDrop);
+	EventResult<EventResults.PlayerKilledEntityResult> sendPlayerKilledEntity(PlayerHandle player, GlobalPosition entityPos, EntityType entityType, List<StackHandle> drops);
 	EventResult<?> sendPlayerStatisticIncrement(PlayerHandle player, StatisticHandle statistic, int newValue);
 	void sendPlayerAdvancementDone(PlayerHandle player, AdvancementHandle advancement);
 	EventResult<EventResults.PlayerPickupResult> sendPlayerPickupStack(PlayerHandle player, StackHandle stack, GlobalPosition itemLocation);

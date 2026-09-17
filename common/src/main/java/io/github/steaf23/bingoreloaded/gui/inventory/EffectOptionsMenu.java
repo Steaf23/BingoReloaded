@@ -31,13 +31,16 @@ public class EffectOptionsMenu extends BasicMenu
             addItem(BLANK.copyToSlot(i, 5));
         }
 
-        addEffectAction(EffectOptionFlags.NO_FALL_DAMAGE, 2, 0, VanillaItems.NETHERITE_BOOTS);
-        addEffectAction(EffectOptionFlags.KEEP_INVENTORY, 4, 0, VanillaItems.CHEST);
-        addEffectAction(EffectOptionFlags.NO_DURABILITY, 6, 0, VanillaItems.NETHERITE_PICKAXE);
-        addEffectAction(EffectOptionFlags.SPEED, 1, 3, VanillaItems.FEATHER);
-        addEffectAction(EffectOptionFlags.WATER_BREATHING, 3, 3, VanillaItems.PUFFERFISH);
-        addEffectAction(EffectOptionFlags.NIGHT_VISION, 5, 3, VanillaItems.GOLDEN_CARROT);
-        addEffectAction(EffectOptionFlags.FIRE_RESISTANCE, 7, 3, VanillaItems.MAGMA_CREAM);
+        addEffectAction(EffectOptionFlags.NO_FALL_DAMAGE, 1, 0, VanillaItems.NETHERITE_BOOTS);
+        addEffectAction(EffectOptionFlags.KEEP_INVENTORY, 3, 0, VanillaItems.CHEST);
+        addEffectAction(EffectOptionFlags.NO_DURABILITY, 5, 0, VanillaItems.NETHERITE_AXE);
+        addEffectAction(EffectOptionFlags.ITEM_MAGNET, 7, 0, VanillaItems.HOPPER);
+        addEffectAction(EffectOptionFlags.SPEED, 0, 3, VanillaItems.FEATHER);
+        addEffectAction(EffectOptionFlags.WATER_BREATHING, 2, 3, VanillaItems.PUFFERFISH);
+        addEffectAction(EffectOptionFlags.NIGHT_VISION, 4, 3, VanillaItems.GOLDEN_CARROT);
+        addEffectAction(EffectOptionFlags.FIRE_RESISTANCE, 6, 3, VanillaItems.MAGMA_CREAM);
+        addEffectAction(EffectOptionFlags.VEIN_MINER, 8, 3, VanillaItems.GOLDEN_PICKAXE);
+
 
         addCloseAction(new ItemTemplate(8, 5, VanillaItems.DIAMOND.type(), BingoMessage.MENU_SAVE_EXIT.asPhrase().color(NamedTextColor.AQUA).decorate(TextDecoration.BOLD)));
     }

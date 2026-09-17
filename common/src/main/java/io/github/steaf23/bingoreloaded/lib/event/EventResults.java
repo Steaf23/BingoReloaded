@@ -40,6 +40,22 @@ public class EventResults {
 	public record PlayerPickupResult(boolean removeItem, boolean overwriteItem, @Nullable StackHandle newItem) {
 
 	}
+
+	public static EventResult<BlockDropsItemResult> blockDropsItemResult(boolean cancel) {
+		return new EventResult<>(cancel, new BlockDropsItemResult());
+	}
+
+	public record BlockDropsItemResult() {
+
+	}
+
+	public static EventResult<PlayerKilledEntityResult> playerKilledEntityResult(boolean cancel, boolean cancelItemDrops) {
+		return new EventResult<>(cancel, new PlayerKilledEntityResult(cancelItemDrops));
+	}
+
+	public record PlayerKilledEntityResult(boolean cancelItemDrops) {
+
+	}
 }
 
 

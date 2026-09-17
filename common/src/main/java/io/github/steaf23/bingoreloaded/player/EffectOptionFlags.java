@@ -16,7 +16,10 @@ public enum EffectOptionFlags
     NO_FALL_DAMAGE(BingoMessage.EFFECTS_NO_FALL_DMG.asPhrase()),
     SPEED(BingoMessage.EFFECTS_SPEED.asPhrase()),
     NO_DURABILITY(BingoMessage.EFFECTS_NO_DURABILITY.asPhrase()),
-    KEEP_INVENTORY(BingoMessage.EFFECTS_KEEP_INVENTORY.asPhrase());
+    KEEP_INVENTORY(BingoMessage.EFFECTS_KEEP_INVENTORY.asPhrase()),
+    ITEM_MAGNET(BingoMessage.EFFECTS_ITEM_MAGNET.asPhrase()),
+    VEIN_MINER(BingoMessage.EFFECTS_VEIN_MINER.asPhrase()),
+    ;
 
     public final Component name;
 
