@@ -10,13 +10,11 @@ import io.github.steaf23.bingoreloaded.lib.util.DebugLogger;
 import net.kyori.adventure.key.Key;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.item.EnderpearlItem;
 import net.minecraft.world.item.Items;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
-import org.bukkit.entity.Player;
 
 import java.util.Collection;
 
