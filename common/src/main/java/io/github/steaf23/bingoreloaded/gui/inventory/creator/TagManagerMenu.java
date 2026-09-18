@@ -95,7 +95,7 @@ public class TagManagerMenu extends BasicMenu {
 		cardData.lists().saveTasksFromGroup(player.server(), listName, mappedData, mappedData);
 	}
 
-	public ItemTemplate onTagBarClicked(int idx, ItemTemplate item, String tagName) {
+	public ItemTemplate onTagBarClicked(MenuAction.ActionArguments args, int idx, ItemTemplate item, String tagName) {
 		switchTabs(tagName);
 		getMenuBoard().context().taskScheduler().runTask(t -> {
 			taskGroup.updateVisibleItems(this);

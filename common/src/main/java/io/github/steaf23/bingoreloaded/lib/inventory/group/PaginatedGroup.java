@@ -14,7 +14,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.BiFunction;
 
-public class PaginatedGroup<Data> extends io.github.steaf23.bingoreloaded.lib.inventory.group.ItemGroup {
+public class PaginatedGroup<Data> extends ItemGroup {
 
 	private final List<ItemTemplate> allItems = new ArrayList<>(); // only used when no itemFunction is used.
 	private final List<Data> allData = new ArrayList<>();

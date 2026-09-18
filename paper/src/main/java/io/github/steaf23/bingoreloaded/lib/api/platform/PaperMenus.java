@@ -5,15 +5,17 @@ import io.github.steaf23.bingoreloaded.lib.api.inventory.InventoryTemplate;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandlePaper;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.inventory.Menu;
-import io.github.steaf23.bingoreloaded.lib.inventory.UserInputMenu;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.IdentityHashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class PaperMenus implements PlatformMenus {
 
@@ -25,17 +27,38 @@ public class PaperMenus implements PlatformMenus {
 		this.taskScheduler = taskScheduler;
 	}
 
+	public static class MenuHolder implements InventoryHolder {
+
+		private Inventory inventory;
+		private final Menu menu;
+
+		public MenuHolder(Menu menu) {
+			this.menu = menu;
+		}
+
+		public void setInventory(Inventory inventory) {
+			this.inventory = inventory;
+		}
+
+		@Override
+		public @NotNull Inventory getInventory() {
+			return inventory;
+		}
+	}
+
 	@Override
 	public void show(Menu menu, PlayerHandle player) {
 		taskScheduler.runTask(task -> {
 			Player paperPlayer = ((PlayerHandlePaper) player).handle();
 
 			Inventory inventory = inventories.computeIfAbsent(menu, m -> {
+				MenuHolder holder = new MenuHolder(menu);
 				Inventory inv = switch (m.type()) {
-					case CHEST -> Bukkit.createInventory(null, m.getBackedInventory().size(), m.title());
-					case ANVIL -> Bukkit.createInventory(null, InventoryType.ANVIL, m.title());
-					case DROPPER -> Bukkit.createInventory(null, InventoryType.DROPPER, m.title());
+					case CHEST -> Bukkit.createInventory(holder, m.getBackedInventory().size(), m.title());
+					case ANVIL -> Bukkit.createInventory(holder, InventoryType.ANVIL, m.title());
+					case DROPPER -> Bukkit.createInventory(holder, InventoryType.DROPPER, m.title());
 				};
+				holder.setInventory(inv);
 				sync(inv, m.getBackedInventory());
 				m.getBackedInventory().addListener(new PaperInventories.BukkitInventoryUpdater(inv));
 				return inv;
@@ -65,7 +88,7 @@ public class PaperMenus implements PlatformMenus {
 
 	public @Nullable Menu menuFor(Inventory inv) {
 		for (Menu menu : inventories.keySet()) {
-			if (inventories.get(menu) == inv) {
+			if (Objects.equals(inventories.get(menu).getHolder(), inv.getHolder())) {
 				return menu;
 			}
 		}

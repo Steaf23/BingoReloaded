@@ -89,7 +89,7 @@ public class LeaderboardMenu extends BasicMenu {
 		}
 
 		ScrollableItemBar<Category> categories = new ScrollableItemBar<>(this, 0, 0, showPlayerStats ? 8 : 9, SelectionModel.SelectMode.SINGLE);
-		categories.setItemClickedCallback((idx, item, category) -> {
+		categories.setItemClickedCallback((args, idx, item, category) -> {
 			showCategory(idx, category);
 			return null;
 		});

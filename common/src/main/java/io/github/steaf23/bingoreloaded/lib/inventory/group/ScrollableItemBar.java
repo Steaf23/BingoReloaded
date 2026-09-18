@@ -3,6 +3,7 @@ package io.github.steaf23.bingoreloaded.lib.inventory.group;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.lib.api.item.VanillaItems;
 import io.github.steaf23.bingoreloaded.lib.inventory.BasicMenu;
+import io.github.steaf23.bingoreloaded.lib.inventory.action.MenuAction;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -10,7 +11,7 @@ import net.kyori.adventure.text.format.TextDecoration;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ScrollableItemBar<Data> extends io.github.steaf23.bingoreloaded.lib.inventory.group.ItemGroup {
+public class ScrollableItemBar<Data> extends ItemGroup {
 
 	private static final ItemTemplate NEXT = new ItemTemplate(VanillaItems.STRUCTURE_VOID.type(),
 			BingoMessage.MENU_NEXT.asPhrase()
@@ -20,7 +21,7 @@ public class ScrollableItemBar<Data> extends io.github.steaf23.bingoreloaded.lib
 			BingoMessage.MENU_PREV.asPhrase()
 					.color(NamedTextColor.LIGHT_PURPLE).decorate(TextDecoration.BOLD));
 
-	private ItemClickedCallback<Data> itemClickedCallback = (idx, item, data) -> null;
+	private ItemClickedCallback<Data> itemClickedCallback = (args, idx, item, data) -> null;
 	private List<ItemTemplate> items = new ArrayList<>();
 	private List<Data> data = new ArrayList<>();
 	private int scrollOffset = 0;
@@ -55,7 +56,7 @@ public class ScrollableItemBar<Data> extends io.github.steaf23.bingoreloaded.lib
 				int itemIdx = idx;
 				menu.addAction(item.copyToSlot(rect().startX() + idx, rect().startY()).setGlowing(selection.contains(itemIdx)), args -> {
 					if (args.isLeftClick()) {
-						onClick(item, itemIdx);
+						onClick(args, item, itemIdx);
 					}
 				});
 				idx++;
@@ -76,7 +77,7 @@ public class ScrollableItemBar<Data> extends io.github.steaf23.bingoreloaded.lib
 							.copyToSlot(rect().startX() + i + 1, rect().startY())
 							.setGlowing(selection.selectedSlots().contains(indexOfItemInList)), args -> {
 						if (args.isLeftClick()) {
-							onClick(item, indexOfItemInList);
+							onClick(args, item, indexOfItemInList);
 						}
 					});
 
@@ -92,10 +93,10 @@ public class ScrollableItemBar<Data> extends io.github.steaf23.bingoreloaded.lib
 		updateVisibleItems(menu);
 	}
 
-	public void onClick(ItemTemplate item, int itemIdx) {
+	public void onClick(MenuAction.ActionArguments args, ItemTemplate item, int itemIdx) {
 		selection.toggleSlot(itemIdx - scrollOffset);
 
-		ItemTemplate editedItem = itemClickedCallback.execute(itemIdx, item, data.get(itemIdx));
+		ItemTemplate editedItem = itemClickedCallback.execute(args, itemIdx, item, data.get(itemIdx));
 		if (editedItem != null) {
 			items.set(itemIdx, editedItem);
 		}
@@ -118,6 +119,6 @@ public class ScrollableItemBar<Data> extends io.github.steaf23.bingoreloaded.lib
 
 	@FunctionalInterface
 	public interface ItemClickedCallback<Data> {
-		ItemTemplate execute(int index, ItemTemplate item, Data data);
+		ItemTemplate execute(MenuAction.ActionArguments args, int index, ItemTemplate item, Data data);
 	}
 }

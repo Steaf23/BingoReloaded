@@ -72,6 +72,7 @@ public class FabricMenus implements PlatformMenus {
 				};
 			}
 			case ANVIL -> MenuType.ANVIL;
+			case DROPPER -> MenuType.GENERIC_3x3;
 		};
 	}
 }

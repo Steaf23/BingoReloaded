@@ -71,7 +71,7 @@ public class TagExclusionMenu extends BasicMenu {
 		tagGroup.updateVisibleItems(this);
 
 		// Action to use when the player toggles a tag to exclude, mainly used to re-render the accept item with correct description.
-		tagGroup.setItemClickedCallback((index, item, s) -> {
+		tagGroup.setItemClickedCallback((args, index, item, s) -> {
 			List<String> selectedTags = tagGroup.selectedData();
 			return updateTagItemLore(item, selectedTags.contains(s), s, availableTags);
 		});
