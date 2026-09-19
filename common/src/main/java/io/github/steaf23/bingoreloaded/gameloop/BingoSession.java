@@ -252,11 +252,13 @@ public class BingoSession implements ForwardingAudience
 		// Teleport players always to the lobby if they haven't played before if the game is not running.
 		if (teamManager.getPlayerAsParticipant(player) == null || !isRunning()) {
 			BingoLobby lobby = gameManager.getLobbyData().getCreatedLobby();
-
-			int spread = config.getOptionValue(BingoOptions.TELEPORT_TO_LOBBY_SPREAD);
-			if (config.getOptionValue(BingoOptions.CONFIGURATION) == BingoOptions.PluginConfiguration.SINGULAR && lobby != null && lobby.spawnPosition() != null) {
-				player.teleportAsync(BlockBuilder.getRandomPosWithinRange(lobby.spawnPosition(), spread, spread));
-			}
+            if (lobby != null && lobby.spawnPosition() != null) {
+                player.setRespawnPoint(lobby.spawnPosition(), true);
+                int spread = config.getOptionValue(BingoOptions.TELEPORT_TO_LOBBY_SPREAD);
+                if (config.getOptionValue(BingoOptions.CONFIGURATION) == BingoOptions.PluginConfiguration.SINGULAR) {
+                    player.teleportAsync(BlockBuilder.getRandomPosWithinRange(lobby.spawnPosition(), spread, spread));
+                }
+            }
 		}
         BingoReloaded.sendResourcePack(player);
     }
