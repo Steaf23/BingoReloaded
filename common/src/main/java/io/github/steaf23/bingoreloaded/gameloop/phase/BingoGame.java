@@ -659,6 +659,7 @@ public class BingoGame implements GamePhase
         if (!settings.effects().contains(EffectOptionFlags.KEEP_INVENTORY)) {
             returnCardToPlayer(settings.kit().getCardSlot(), bingoPlayer);
             bingoPlayer.giveKit(settings.kit());
+            bingoPlayer.giveEffects(settings.effects(), 0);
         } else {
             bingoPlayer.giveEffects(settings.effects(), 0);
         }

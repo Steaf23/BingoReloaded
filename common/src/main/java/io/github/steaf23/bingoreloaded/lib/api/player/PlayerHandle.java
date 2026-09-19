@@ -4,6 +4,7 @@ import io.github.steaf23.bingoreloaded.lib.api.ActionUser;
 import io.github.steaf23.bingoreloaded.lib.api.AdvancementHandle;
 import io.github.steaf23.bingoreloaded.lib.api.GlobalPosition;
 import io.github.steaf23.bingoreloaded.lib.api.PlayerGamemode;
+import io.github.steaf23.bingoreloaded.lib.api.Position;
 import io.github.steaf23.bingoreloaded.lib.api.PotionEffectInstance;
 import io.github.steaf23.bingoreloaded.lib.api.WorldHandle;
 import io.github.steaf23.bingoreloaded.lib.api.inventory.InventoryTemplate;
@@ -20,6 +21,8 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 public interface PlayerHandle extends ForwardingAudience, ActionUser {
+
+	record LookDirection(float pitch, float yaw){}
 
 	PlatformServer server();
 
@@ -61,6 +64,10 @@ public interface PlayerHandle extends ForwardingAudience, ActionUser {
 	 * @return true when the teleport was successful.
 	 */
 	boolean teleportBlocking(GlobalPosition pos);
+
+	LookDirection lookDirection();
+
+	void setLookDirection(LookDirection direction);
 
 	void clearInventory();
 

@@ -5,8 +5,10 @@ import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.BingoSound;
 import io.github.steaf23.bingoreloaded.data.BingoStatType;
 import io.github.steaf23.bingoreloaded.data.config.BingoOptions;
+import io.github.steaf23.bingoreloaded.data.teleportgrid.TeleportationGrid;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.lib.api.GlobalPosition;
+import io.github.steaf23.bingoreloaded.lib.api.Position;
 import io.github.steaf23.bingoreloaded.lib.api.PotionEffectInstance;
 import io.github.steaf23.bingoreloaded.lib.api.StatusEffectType;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
@@ -76,7 +78,9 @@ public class GoUpWand extends GameItem {
 				BingoGame.removePlatform(player.world(), platformLocation, 1);
 			});
 
+			PlayerHandle.LookDirection rotation = player.lookDirection();
 			player.teleportBlocking(teleportLocation);
+			player.setLookDirection(rotation);
 			player.playSound(BingoSound.GO_UP_WAND_USED.sound());
 
 			player.addEffect(new PotionEffectInstance(StatusEffectType.of("minecraft:resistance"),

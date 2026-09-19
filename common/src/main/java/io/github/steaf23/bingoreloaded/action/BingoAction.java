@@ -14,7 +14,7 @@ import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.gameloop.phase.PregameLobby;
 import io.github.steaf23.bingoreloaded.item.EndlessPearl;
 import io.github.steaf23.bingoreloaded.item.GoUpWand;
-import io.github.steaf23.bingoreloaded.item.TeamBox;
+import io.github.steaf23.bingoreloaded.item.TeamTeleporter;
 import io.github.steaf23.bingoreloaded.item.TeamPouch;
 import io.github.steaf23.bingoreloaded.lib.action.ActionResult;
 import io.github.steaf23.bingoreloaded.lib.action.ActionTree;
@@ -509,7 +509,7 @@ public class BingoAction extends ActionTree {
 				yield ActionResult.SUCCESS;
 			}
 			case "teambox" -> {
-				player.addItemsToInventory(session.items().createStack(TeamBox.ID, null));
+				player.addItemsToInventory(session.items().createStack(TeamTeleporter.ID, null));
 				yield ActionResult.SUCCESS;
 			}
 			default -> ActionResult.INCORRECT_USE;

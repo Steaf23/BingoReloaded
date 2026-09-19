@@ -7,52 +7,53 @@ branding:
 command:
   use: "Usage: <0>" # 0: cmd usage
   bingo:
-    no_deathmatch: "Cannot start a death match when there is no game active!" # DYNAMIC
+    no_deathmatch: "Cannot start a death match when there is no game active!"
 game:
   timer:
     duration: "Game duration: <0>" # 0: total game time duration
     time_left: "Time remaining: <0>" # 0: total game time left (for Countdown cards)
   lobby:
-    settings_updated: "Game settings have been updated, check the information sidebar!" # DYNAMIC
-    wait_status: "Waiting for players..." # DYNAMIC
-    player_status: "<0> player(s) joined a team" # DYNAMIC 0: player count
-    starting_status: "Game starting in <0> seconds!" # DYNAMIC 0: starting time (seconds)
+    settings_updated: "Game settings have been updated, check the information sidebar!"
+    wait_status: "Waiting for players..."
+    player_status: "<0> player(s) joined a team" # 0: player count
+    starting_status: "Game starting in <0> seconds!" # 0: starting time (seconds)
     vote_kit: "Vote for a Kit"
     vote_gamemode: "Vote for a Gamemode"
     vote_card: "Vote for a Card"
     vote_cardsize: "Vote for a card size"
-    vote_count: "<0> player(s) voted for <1> <2>" # DYNAMIC 0: player count, 1: vote category, 2: vote item
-    vote_won: "<0> <1> received the most votes!" # DYNAMIC 0: vote category, 1: vote item
+    vote_count: "<0> player(s) voted for <1> <2>" # 0: player count, 1: vote category, 2: vote item
+    vote_won: "<0> <1> received the most votes!" # 0: vote category, 1: vote item
     no_griefing: "<red>You cannot place or break any blocks before the game has started!"
   start:
-    no_players: "Bingo could not be started since nobody joined :(" # DYNAMIC (current unused)
-    already_started: "Cannot start a game of Bingo when there is already one active!" # DYNAMIC (currently unused)
-    give_cards: "Giving all participants Kits and Cards!" # DYNAMIC
-    no_card: "Cannot start game with the card '<0>' because it does not exist!" # DYNAMIC 0: card_name
+    no_players: "Bingo could not be started since nobody joined :("
+    already_started: "Cannot start a game of Bingo when there is already one active!"
+    give_cards: "Giving all participants Kits and Cards!"
+    no_card: "Cannot start game with the card '<0>' because it does not exist!"
     chosen_settings: "Starting bingo game! <gold>Move your cursor here</gold> to view all settings."
   end:
-    bingo: "Congratulations! Team <0> has won the Bingo!" # DYNAMIC 0: winning team
+    bingo: "Congratulations! Team <0> has won the Bingo!" # 0: winning team
   postgame:
-    start: "This game will re-open in <0> seconds" # DYNAMIC 0: time until restart (seconds)
+    start: "This game will re-open in <0> seconds" # 0: time until restart (seconds)
   deathmatch:
-    start: "Several teams have completed the same amount of tasks, starting Deathmatch to break the tie!" # DYNAMIC
-    search: "Find the item listed in chat to win the game!" # DYNAMIC
-    item: "DeathMatch - Be the first to get this item to win: <0>" # DYNAMIC 0: item name
+    start: "Several teams have completed the same amount of tasks, starting Deathmatch to break the tie!"
+    search: "Find the item listed in chat to win the game!"
+    item: "DeathMatch - Be the first to get this item to win: <0>" # 0: item name
   player:
-    leave: "You have left the game!" # DYNAMIC 0: /bingo command
-    no_start: "The game has not started yet!" # DYNAMIC
-    no_card: "Could not find your card!" # DYNAMIC
-    respawn: "<dark_aqua><bold>Click here to teleport back to where you died" # DYNAMIC
-    respawn_expired: "Teleport to death location has expired!" # DYNAMIC
+    leave: "You have left the game!"
+    no_start: "The game has not started yet!"
+    no_card: "Could not find your card!"
+    respawn: "<dark_aqua><bold>Click here to teleport back to where you died"
+    respawn_expired: "Teleport to death location has expired!"
+    teleport_to_start: "Teleport to start"
   team:
-    no_join: "You cannot join an ongoing game!" # DYNAMIC
-    join: "You successfully joined team <0>!" # DYNAMIC 0: team name
-    join_auto: "You will be joining a team automatically when the game starts!" # DYNAMIC
-    dropped: "Team <0> cannot win anymore, they are out of the game!" # DYNAMIC 0: team name
-    no_chat: "Can't toggle team chat since you aren't in a team!" # DYNAMIC
-    chat_off: "Team chat is now <red>off</red>, use <0> to enable it again." # DYNAMIC 0: /btc
-    chat_on: "Team chat is now <green>on</green>, use <0> to disable it." # DYNAMIC 0: /btc
-    size_changed: "The maximum team sized has been changed, please rejoin your team of choice!" # DYNAMIC
+    no_join: "You cannot join an ongoing game!"
+    join: "You successfully joined team <0>!" # 0: team name
+    join_auto: "You will be joining a team automatically when the game starts!"
+    dropped: "Team <0> cannot win anymore, they are out of the game!" # 0: team name
+    no_chat: "Can't toggle team chat since you aren't in a team!"
+    chat_off: "Team chat is now <red>off</red>, use <0> to enable it again." # 0: /btc
+    chat_on: "Team chat is now <green>on</green>, use <0> to disable it." # 0: /btc
+    size_changed: "The maximum team sized has been changed, please rejoin your team of choice!"
     full_team_desc: "This team is full"
     join_team_desc: "Click to join this team"
     spectator_join: "You have joined this game as a spectator, use /bingo view to view all team's bingo cards."
@@ -136,6 +137,8 @@ menu:
     no_durability: "Infinite Durability"
     keep_inventory: "Keep Inventory"
     speed: "Speed"
+    item_magnet: "Item Magnet"
+    vein_miner: "Vein Miner"
   kits:
     hardcore:
       name: "<dark_red><bold>Hardcore"
@@ -195,6 +198,8 @@ menu:
     tasks_completed_record: "Task Completed Record"
     item_uses: "Item uses"
     wand_uses: "Go-Up-Wand uses"
+  team_teleporter:
+    teleport_to_start: "Teleport to Start"
 items:
   card:
     name: "Bingo Card"
@@ -202,6 +207,15 @@ items:
   wand:
     name: "The Go-Up-Wand"
     desc: "Right-Click To Teleport Upwards! (& hold shift to go down)"
+  team_teleporter:
+    name: "Team Teleporter"
+    desc: "Right-Click to teleport to your teammates or the beginning platform"
+  pouch:
+    name: "Shared Pouch"
+    desc: "Share items with other team members, like a pocket dimension"
+  pearl:
+    name: "Neverending Pearl"
+    desc: "Like if you combine an Ender Pearl with a boomerang"
   vote:
     name: "Vote"
     desc: "Click to vote for game options"

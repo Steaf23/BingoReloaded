@@ -46,7 +46,7 @@ public class BingoTeam implements ForwardingAudience
         this.prefix = prefix;
         this.dyeColor = dyeColor;
         this.storageProvider = storageProvider;
-        storageProvider.setTitle(BingoMessage.ITEM_POUCH_DESC.asPhrase());
+        storageProvider.setTitle(BingoMessage.ITEM_POUCH_NAME.asPhrase());
     }
 
     public void reset() {

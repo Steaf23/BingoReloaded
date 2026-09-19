@@ -25,14 +25,14 @@ import java.util.function.Consumer;
 
 public class TeamTeleporterMenu extends BasicMenu {
 
-	private static final ItemTemplate TO_SPAWN = new ItemTemplate(VanillaItems.COMPASS.type(), BingoReloaded.applyTitleFormat(BingoMessage.TELEPORT_TO_SPAWN.asPhrase()));
+	private static final ItemTemplate TO_START = new ItemTemplate(VanillaItems.COMPASS.type(), BingoReloaded.applyTitleFormat(BingoMessage.TELEPORT_TO_START.asPhrase()));
 
 	private final BingoPlayer player;
 	private final Consumer<PlayerHandle> optionSelected;
 	private final BingoGame game;
 
 	public TeamTeleporterMenu(MenuBoard manager, BingoPlayer player, BingoGame game, Consumer<PlayerHandle> optionSelected) {
-		super(manager, BingoMessage.TEAM_TELEPORTER_TITLE.asPhrase(), MenuType.DROPPER);
+		super(manager, BingoMessage.ITEM_TEAM_TELEPORTER_NAME.asPhrase(), MenuType.DROPPER);
 		this.player = player;
 		this.game = game;
 		this.optionSelected = optionSelected;
@@ -42,7 +42,7 @@ public class TeamTeleporterMenu extends BasicMenu {
 	public void beforeOpening(PlayerHandle playerHandle) {
 		super.beforeOpening(playerHandle);
 
-		addAction(TO_SPAWN.copyToSlot(1), args -> {
+		addAction(TO_START.copyToSlot(1), args -> {
 			game.getSpawnCoordinator().teleportPlayerToSpawn(player);
 			close(args.player());
 			optionSelected.accept(args.player());

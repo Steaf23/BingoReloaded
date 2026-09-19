@@ -16,22 +16,22 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.jetbrains.annotations.Nullable;
 
-public class TeamBox extends GameItem {
+public class TeamTeleporter extends GameItem {
 
-	public static final Key TEAM_BOX_COOLDOWN_GROUP = BingoReloaded.resourceKey("team_box_cooldown");
+	public static final Key TEAM_TELEPORTER_COOLDOWN_GROUP = BingoReloaded.resourceKey("team_teleporter_cooldown");
 
-	public static final Key ID = BingoReloaded.resourceKey("team_box");
+	public static final Key ID = BingoReloaded.resourceKey("team_teleporter");
 
-	public TeamBox() {
-		super(ID, ItemCooldown.configurableCooldown(TEAM_BOX_COOLDOWN_GROUP, BingoOptions.TEAM_BOX_COOLDOWN), false);
+	public TeamTeleporter() {
+		super(ID, ItemCooldown.configurableCooldown(TEAM_TELEPORTER_COOLDOWN_GROUP, BingoOptions.TEAM_BOX_COOLDOWN), false);
 	}
 
 	@Override
 	public ItemTemplate createForParticipant(@Nullable BingoParticipant participant) {
 		return new ItemTemplate(VanillaItems.ENDER_CHEST.type(),
-				BingoMessage.ITEM_TEAM_BOX_NAME.asPhrase()
+				BingoMessage.ITEM_TEAM_TELEPORTER_NAME.asPhrase()
 						.color(NamedTextColor.DARK_PURPLE).decorate(TextDecoration.ITALIC, TextDecoration.BOLD),
-				BingoMessage.ITEM_TEAM_BOX_DESC.asPhrase())
+				BingoMessage.ITEM_TEAM_TELEPORTER_DESC.asPhrase())
 				.setDummy(true)
 				.setGlowing(true);
 	}

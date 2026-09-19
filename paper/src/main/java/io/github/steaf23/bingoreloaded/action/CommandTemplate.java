@@ -87,9 +87,16 @@ public class CommandTemplate implements BasicCommand
             return List.of();
         }
 
-        List<String> tabComplete = this.command.tabComplete(new GameContext(server, bingo), user, args);
+        String[] finalArgs;
+        if (args.length == 0) {
+            finalArgs = new String[]{""};
+        } else {
+	        finalArgs = args;
+        }
+
+		List<String> tabComplete = this.command.tabComplete(new GameContext(server, bingo), user, finalArgs);
         if (tabComplete == null) return null;
 
-        return tabComplete.stream().filter(s -> StringUtils.containsIgnoreCase(s, args[args.length - 1])).toList();
+        return tabComplete.stream().filter(s -> StringUtils.containsIgnoreCase(s, finalArgs[finalArgs.length - 1])).toList();
     }
 }

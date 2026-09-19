@@ -20,7 +20,6 @@ import net.minecraft.world.waypoints.Waypoint;
 import org.bukkit.GameMode;
 import org.bukkit.Statistic;
 import org.bukkit.advancement.AdvancementProgress;
-import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryCloseEvent;
@@ -138,6 +137,16 @@ public class PlayerHandlePaper implements PlayerHandle {
 	public boolean teleportBlocking(GlobalPosition pos) {
 		DebugLogger.addLog("Teleporting player blocking to pos: " + pos.x() + ", " + pos.y() + ", " + pos.z() + ", world: " + pos.dimension());
 		return player.teleport(PaperApiHelper.locationFromWorldPos(world(), pos), PlayerTeleportEvent.TeleportCause.PLUGIN);
+	}
+
+	@Override
+	public LookDirection lookDirection() {
+		return new LookDirection(player.getPitch(), player.getYaw());
+	}
+
+	@Override
+	public void setLookDirection(LookDirection direction) {
+		player.setRotation(direction.yaw(), direction.pitch());
 	}
 
 	@Override
