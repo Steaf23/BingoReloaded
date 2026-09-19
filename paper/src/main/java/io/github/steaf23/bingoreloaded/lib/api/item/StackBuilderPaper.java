@@ -19,17 +19,18 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Color;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
 
 import java.util.List;
 
 public class StackBuilderPaper implements StackBuilder {
 
 
-	@SuppressWarnings("UnstableApiUsage")
 	@Override
 	public StackHandle buildItem(ItemTemplate template, boolean hideAttributes, boolean customTextures) {
 //		if (textured && texturedVariant != null) {
@@ -44,6 +45,7 @@ public class StackBuilderPaper implements StackBuilder {
 			stack = new ItemStack(Material.POISONOUS_POTATO, template.getAmount());
 			stack.unsetData(DataComponentTypes.CONSUMABLE);
 			stack.setData(DataComponentTypes.ITEM_MODEL, template.getItemType().key());
+			stack.editPersistentDataContainer( data -> data.set(new NamespacedKey("bingoreloaded", "menu_item"), PersistentDataType.BOOLEAN, true));
 		}
 		else {
 			stack = new ItemStack(((ItemTypePaper)template.getItemType()).handle(), template.getAmount());

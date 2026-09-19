@@ -226,6 +226,11 @@ public class TaskProgressTracker
             if (task.taskType() != TaskData.TaskType.ITEM) {
                 return false;
             }
+
+            if (item.isMenuItem()) {
+                return false;
+            }
+
             ItemTask data = (ItemTask) task.data();
             if (!data.itemType().equals(item.type()) || data.count() > item.amount()) {
                 return false;

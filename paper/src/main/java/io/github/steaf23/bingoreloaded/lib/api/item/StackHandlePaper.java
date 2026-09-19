@@ -14,6 +14,7 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
+import org.checkerframework.checker.units.qual.N;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -120,10 +121,14 @@ public class StackHandlePaper implements StackHandle {
 		}
 	}
 
-	@SuppressWarnings("UnstableApiUsage")
 	@Override
 	public void setCooldown(Key cooldownGroup, double cooldownTimeSeconds) {
 		stack.setData(DataComponentTypes.USE_COOLDOWN, UseCooldown.useCooldown((float)cooldownTimeSeconds).cooldownGroup(cooldownGroup).build());
+	}
+
+	@Override
+	public boolean isMenuItem() {
+		return stack.getPersistentDataContainer().has(new NamespacedKey("bingoreloaded", "menu_item"));
 	}
 
 	public ItemStack handle() {

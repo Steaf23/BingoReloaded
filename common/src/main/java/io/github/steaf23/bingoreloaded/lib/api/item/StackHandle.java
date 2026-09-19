@@ -43,6 +43,8 @@ public interface StackHandle {
 
 	void setCooldown(Key cooldownGroup, double cooldownTimeSeconds);
 
+	boolean isMenuItem();
+
 
 	static StackHandle empty() {
 		return PlatformResolver.getItemStacker().createStack(ItemType.AIR, 1);
