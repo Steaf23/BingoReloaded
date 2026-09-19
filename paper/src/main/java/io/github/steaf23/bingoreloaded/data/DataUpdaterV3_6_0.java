@@ -2,8 +2,10 @@ package io.github.steaf23.bingoreloaded.data;
 
 import io.github.steaf23.bingoreloaded.BingoReloadedPaper;
 import io.github.steaf23.bingoreloaded.lib.api.BukkitStatistics;
+import io.github.steaf23.bingoreloaded.lib.data.core.DataAccessor;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataStorage;
 import io.github.steaf23.bingoreloaded.lib.data.core.tag.TagDataAccessor;
+import io.github.steaf23.bingoreloaded.lib.util.BlockColor;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
@@ -41,7 +43,7 @@ public class DataUpdaterV3_6_0 extends DataUpdaterV3_5_0 {
 					if (key == null) {
 						continue;
 					}
-					storage.setKey("statistic.item_type", BukkitStatistics.getVanillaStatistic(Statistic.valueOf(key.value())).key());
+					storage.setKey("statistic.stat_type", BukkitStatistics.getVanillaStatistic(Statistic.valueOf(key.value())).key());
 				}
 			}
 			tagData.setList(list, tasks);
@@ -51,4 +53,29 @@ public class DataUpdaterV3_6_0 extends DataUpdaterV3_5_0 {
 		ConsoleMessenger.log(Component.text("Found outdated list configuration file and updated it to new format (0 -> 1)").color(NamedTextColor.GOLD));
 	}
 
+	@Override
+	protected void updateTeams() {
+		super.updateTeams();
+
+		DataAccessor teams = new TagDataAccessor(resources, "data/teams", false);
+		teams.load();
+
+		for (String teamId : teams.getKeys()) {
+			if (teams.contains(teamId + "." + "dye_color")) {
+				continue;
+			}
+
+			BlockColor color;
+			try {
+				color = BlockColor.fromName(teamId);
+
+			} catch (IllegalArgumentException e) {
+				color = BlockColor.WHITE;
+			}
+
+			teams.setString(teamId + ".dye_color", color.name);
+		}
+
+		teams.saveChanges();
+	}
 }
