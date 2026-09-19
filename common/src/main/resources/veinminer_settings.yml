@@ -1,0 +1,8 @@
+# This list accepts both tags and individual blocks.
+# Tags are specified using # and all tags can be found at https://minecraft.wiki/w/Block_tag_(Java_Edition)
+allowedBlocks:
+  - "#minecraft:ores"
+  - "#minecraft:overworld_natural_logs"
+  - "minecraft:crimson_stem"
+  - "minecraft:warped_stem"
+  - "minecraft:ancient_debris"

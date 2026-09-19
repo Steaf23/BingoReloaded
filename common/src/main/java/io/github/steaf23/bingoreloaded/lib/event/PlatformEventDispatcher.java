@@ -28,7 +28,7 @@ public interface PlatformEventDispatcher {
 	EventResult<EventResults.PlayerRespawnResult> sendPlayerRespawn(PlayerHandle player, boolean isBedSpawn, boolean isAnchorSpawn);
 	void sendPlayerJoinsServer(PlayerHandle player);
 	void sendPlayerQuitsServer(PlayerHandle player);
-	EventResult<?> sendPlayerBreaksBlock(PlayerHandle player, GlobalPosition position, ItemType blockType);
+	EventResult<?> sendPlayerBreaksBlock(PlayerHandle player, GlobalPosition position, ItemType blockType, StackHandle tool);
 	EventResult<?> sendPlayerPlacesBlock(PlayerHandle player, GlobalPosition position, ItemType blockType);
 	EventResult<EventResults.BlockDropsItemResult> sendBlockDropsItem(PlayerHandle player, GlobalPosition blockPos, ItemType blockType, List<StackHandle> itemsToDrop);
 	EventResult<EventResults.PlayerKilledEntityResult> sendPlayerKilledEntity(PlayerHandle player, GlobalPosition entityPos, EntityType entityType, List<StackHandle> drops);

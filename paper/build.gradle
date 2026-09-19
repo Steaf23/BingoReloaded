@@ -32,7 +32,7 @@ processResources {
     inputs.property("version", project.version)
     inputs.property("minecraft_version", minecraft_version)
 
-    filesMatching("plugin.yml") {
+    filesMatching(["plugin.yml", "paper-plugin.yml"]) {
         expand(
                 version: project.version,
                 minecraft_version: minecraft_version,

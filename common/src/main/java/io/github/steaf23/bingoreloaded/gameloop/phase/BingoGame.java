@@ -13,6 +13,8 @@ import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.data.config.BingoOptions;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gameloop.spawn.PlayerSpawnCoordinator;
+import io.github.steaf23.bingoreloaded.gameloop.veinminer.CubeVeinMiner;
+import io.github.steaf23.bingoreloaded.gameloop.veinminer.VeinMiner;
 import io.github.steaf23.bingoreloaded.item.BingoItems;
 import io.github.steaf23.bingoreloaded.item.GameItem;
 import io.github.steaf23.bingoreloaded.lib.api.GlobalPosition;
@@ -94,6 +96,7 @@ public class BingoGame implements GamePhase
     private final Map<UUID, GlobalPosition> playerSpawnPoints;
     private final BingoItems items;
     private final PlayerSpawnCoordinator spawnCoordinator;
+    private final VeinMiner veinMiner;
 
     private GameTask deathMatchTask;
 
@@ -118,6 +121,11 @@ public class BingoGame implements GamePhase
         this.playerSpawnPoints = new HashMap<>();
 
 		this.spawnCoordinator = spawnCoordinator;
+        if (settings.effects().contains(EffectOptionFlags.VEIN_MINER)) {
+            this.veinMiner = new CubeVeinMiner(2);
+        } else {
+            this.veinMiner = VeinMiner.DISABLED;
+        }
     }
 
     private void start() {
@@ -746,6 +754,14 @@ public class BingoGame implements GamePhase
         }
         player.addItemsToInventory(itemsToDrop.toArray(StackHandle[]::new));
         return true;
+    }
+
+    public void tryVeinMine(PlayerHandle player, GlobalPosition position, StackHandle tool) {
+        if (!gameStarted || !settings.effects().contains(EffectOptionFlags.VEIN_MINER)) {
+            return;
+        }
+
+        veinMiner.playerBreaksBlock(player, this, position, tool);
     }
 
     @Override

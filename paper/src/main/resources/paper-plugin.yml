@@ -1,0 +1,20 @@
+name: BingoReloaded
+version: ${version}
+author: Steven
+main: io.github.steaf23.bingoreloaded.BingoReloadedPaper
+api-version: ${minecraft_version}
+bootstrapper: io.github.steaf23.bingoreloaded.BingoReloadedBootstrap
+
+dependencies:
+  server:
+    # hard depend
+    packetevents:
+      load: BEFORE
+      required: true
+    # soft depend
+    PlaceholderAPI:
+      load: BEFORE
+      required: false
+    MultiWorld:
+      load: BEFORE
+      required: false

@@ -219,7 +219,8 @@ public class EventListenerPaper implements Listener {
 		EventResult<?> result = dispatcher.sendPlayerBreaksBlock(
 				new PlayerHandlePaper(server, event.getPlayer()),
 				PaperApiHelper.worldPosFromLocation(event.getBlock().getLocation()),
-				ItemTypePaper.of(event.getBlock().getType()));
+				ItemTypePaper.of(event.getBlock().getType()),
+				new StackHandlePaper(event.getPlayer().getInventory().getItemInMainHand()));
 
 		if (result.consume()) {
 			event.setCancelled(true);

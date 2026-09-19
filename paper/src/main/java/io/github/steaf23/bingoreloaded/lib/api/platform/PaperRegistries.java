@@ -7,8 +7,11 @@ import io.github.steaf23.bingoreloaded.lib.api.EntityType;
 import io.github.steaf23.bingoreloaded.lib.api.EntityTypePaper;
 import io.github.steaf23.bingoreloaded.lib.api.StatusEffectType;
 import io.github.steaf23.bingoreloaded.lib.api.StatusEffectTypePaper;
+import io.github.steaf23.bingoreloaded.lib.api.item.BlockTag;
+import io.github.steaf23.bingoreloaded.lib.api.item.BlockTagPaper;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemTypePaper;
+import io.papermc.paper.registry.keys.tags.BlockTypeTagKeys;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -69,6 +72,11 @@ public class PaperRegistries implements PlatformRegistries {
 			return null;
 		}
 		return new StatusEffectTypePaper(type);
+	}
+
+	@Override
+	public BlockTag resolveTag(Key key) {
+		return new BlockTagPaper(BlockTypeTagKeys.create(key));
 	}
 
 	@Override

@@ -7,6 +7,7 @@ import io.github.steaf23.bingoreloaded.lib.api.EntityType;
 import io.github.steaf23.bingoreloaded.lib.api.EntityTypeFabric;
 import io.github.steaf23.bingoreloaded.lib.api.StatusEffectType;
 import io.github.steaf23.bingoreloaded.lib.api.StatusEffectTypeFabric;
+import io.github.steaf23.bingoreloaded.lib.api.item.BlockTag;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemType;
 import io.github.steaf23.bingoreloaded.lib.api.item.ItemTypeFabric;
 import io.github.steaf23.bingoreloaded.util.FabricTypes;
@@ -60,6 +61,11 @@ public class FabricRegistries implements PlatformRegistries {
 		}
 		Holder<MobEffect> holder = BuiltInRegistries.MOB_EFFECT.wrapAsHolder(type);
 		return new StatusEffectTypeFabric(holder);
+	}
+
+	@Override
+	public BlockTag resolveTag(Key key) {
+		return null;
 	}
 
 	@Override

@@ -142,12 +142,12 @@ public final class BingoEventListener implements PlatformEventDispatcher {
 	}
 
 	@Override
-	public EventResult<?> sendPlayerBreaksBlock(PlayerHandle player, GlobalPosition position, ItemType blockType) {
+	public EventResult<?> sendPlayerBreaksBlock(PlayerHandle player, GlobalPosition position, ItemType blockType, @Nullable StackHandle tool) {
 		BingoSession session = getSession(player.world());
 		if (session == null)
 			return EventResult.IGNORE;
 
-		return session.handlePlayerBlockBreak(player, position, blockType);
+		return session.handlePlayerBlockBreak(player, position, blockType, tool);
 	}
 
 	@Override

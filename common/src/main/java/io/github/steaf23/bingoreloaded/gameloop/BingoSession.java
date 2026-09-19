@@ -411,11 +411,16 @@ public class BingoSession implements ForwardingAudience
         return EventResults.playerMoveResult(false, true, targetLocation);
     }
 
-    public EventResult<?> handlePlayerBlockBreak(PlayerHandle player, GlobalPosition position, ItemType block) {
+    public EventResult<?> handlePlayerBlockBreak(PlayerHandle player, GlobalPosition position, ItemType block, StackHandle tool) {
         if (!isRunning() && config.getOptionValue(BingoOptions.PREVENT_PLAYER_GRIEFING) && !BingoReloaded.isAdmin(player)) {
             BingoMessage.NO_GRIEFING.sendToAudience(player);
             return EventResult.CONSUME;
         }
+
+        if (phase instanceof BingoGame game) {
+            game.tryVeinMine(player, position, tool);
+        }
+
         return EventResult.IGNORE;
     }
 

@@ -15,6 +15,7 @@ public interface ItemType extends Keyed {
 		return key().equals(AIR.key());
 	}
 	boolean isSolid();
+	boolean isPreferredTool(StackHandle tool);
 
 	static ItemType of(@NotNull @Subst("minecraft:resource") String type) {
 		return of(Key.key(type));

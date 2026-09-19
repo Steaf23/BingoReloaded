@@ -31,6 +31,4 @@ public interface WorldHandle {
 	}
 
 	void dropItem(StackHandle item, GlobalPosition location);
-
-	void throwPearlForPlayer(PlayerHandle player);
 }

@@ -32,6 +32,11 @@ public class ItemTypePaper implements ItemType {
 	}
 
 	@Override
+	public boolean isPreferredTool(StackHandle tool) {
+		return type.createBlockData().isPreferredTool(((StackHandlePaper)tool).handle());
+	}
+
+	@Override
 	public @NotNull Key key() {
 		return type.key();
 	}

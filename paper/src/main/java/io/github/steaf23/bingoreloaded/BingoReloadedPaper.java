@@ -68,6 +68,8 @@ import io.github.steaf23.bingoreloaded.settings.gamemode.BingoGamemodes;
 import io.github.steaf23.bingoreloaded.util.bstats.Metrics;
 import io.github.steaf23.bingoreloaded.world.CustomWorldCreator;
 import io.papermc.paper.dialog.Dialog;
+import io.papermc.paper.plugin.lifecycle.event.LifecycleEvent;
+import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import io.papermc.paper.registry.data.dialog.ActionButton;
 import io.papermc.paper.registry.data.dialog.DialogBase;
 import io.papermc.paper.registry.data.dialog.action.DialogAction;
@@ -231,7 +233,8 @@ public class BingoReloadedPaper extends JavaPlugin implements BingoReloadedRunti
 				new YamlDataAccessor(resources, "scoreboards", false),
 				new YamlDataAccessor(resources, "placeholders", false),
 				new YamlDataAccessor(resources, "sounds", false),
-				new YamlDataAccessor(resources, "taskformat", false));
+				new YamlDataAccessor(resources, "taskformat", false),
+				new YamlDataAccessor(resources, "veinminer_settings", false));
 	}
 
 	@Override
@@ -300,15 +303,9 @@ public class BingoReloadedPaper extends JavaPlugin implements BingoReloadedRunti
 
 	@Override
 	public void registerAction(boolean allowConsole, ActionTree action) {
-		TabExecutor commandExec = new CommandTemplate(server, bingo, allowConsole, action);
-
-		PluginCommand command = getCommand(action.name());
-		if (command != null) {
-			command.setExecutor(commandExec);
-			command.setTabCompleter(commandExec);
-		} else {
-			ConsoleMessenger.bug("Cannot register command named '" + action.name() + "'", this);
-		}
+		getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, event -> {
+			event.registrar().register(action.name(), new CommandTemplate(server, bingo, allowConsole, action));
+		});
 	}
 
 	@Override

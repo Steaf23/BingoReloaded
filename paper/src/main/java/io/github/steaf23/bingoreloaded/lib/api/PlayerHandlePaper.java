@@ -14,10 +14,13 @@ import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.waypoints.Waypoint;
 import org.bukkit.GameMode;
 import org.bukkit.Statistic;
 import org.bukkit.advancement.AdvancementProgress;
+import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryCloseEvent;
@@ -270,11 +273,29 @@ public class PlayerHandlePaper implements PlayerHandle {
 
 	@Override
 	public void setWaypointColor(@Nullable TextColor color) {
+		// NMS BEGIN
 		ServerPlayer player = ((CraftPlayer)handle()).getHandle();
 		Waypoint.Icon icon = player.waypointIcon();
 		icon.color = color == null ? Optional.empty() : Optional.of(color.value());
 		icon.cloneAndAssignStyle(player);
 		player.level().getWaypointManager().addPlayer(player);
+		// NMS END
+	}
+
+	@Override
+	public void throwPearl() {
+		// NMS BEGIN
+		ServerPlayer serverPlayer = ((CraftPlayer)player).getHandle();
+		if (!serverPlayer.hasInfiniteMaterials()) { // add an extra to not consume it in the 'use' method
+			serverPlayer.getItemInHand(InteractionHand.MAIN_HAND).setCount(2);
+		}
+		Items.ENDER_PEARL.use(serverPlayer.level(), serverPlayer, InteractionHand.MAIN_HAND);
+		// NMS END
+	}
+
+	@Override
+	public void breakBlock(GlobalPosition position) {
+		player.breakBlock(player.getWorld().getBlockAt(PaperApiHelper.locationFromWorldPos(world(), position)));
 	}
 
 	@Override
