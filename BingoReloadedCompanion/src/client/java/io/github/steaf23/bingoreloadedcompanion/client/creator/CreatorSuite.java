@@ -15,6 +15,7 @@ import io.github.steaf23.bingoreloadedcompanion.network.ClientGetCreatorListPayl
 import io.github.steaf23.bingoreloadedcompanion.network.ClientUpsertCreatorCardPayload;
 import io.github.steaf23.bingoreloadedcompanion.network.ClientUpsertCreatorListPayload;
 import net.kyori.adventure.key.Key;
+import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.object.ObjectContents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
@@ -43,6 +44,7 @@ public class CreatorSuite {
 	public final Map<TaskId, TaskWithName> allStatistics = new HashMap<>();
 	public final Map<TaskId, TaskWithName> allItems = new HashMap<>();
 	public final Map<TaskId, TaskWithName> allAdvancements = new HashMap<>();
+	public final Map<String, TextColor> allTags = new HashMap<>();
 	public final List<TaskId> itemOrder = new ArrayList<>();
 	public final List<TaskId> advancementOrder = new ArrayList<>();
 	public final List<TaskId> statisticOrder = new ArrayList<>();
@@ -94,6 +96,8 @@ public class CreatorSuite {
 		allStatistics.clear();
 		allAdvancements.clear();
 		itemsPerTab.clear();
+		allTags.clear();
+		allTags.putAll(context.tags());
 
 		ORDERED_TABS.stream().map(BuiltInRegistries.CREATIVE_MODE_TAB::getValueOrThrow)
 				.filter(t -> t.getType() != CreativeModeTab.Type.SEARCH)

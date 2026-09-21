@@ -22,13 +22,21 @@ public class HudConfigSerializer extends TypeAdapter<HudConfig> {
 			writePlacement(jsonWriter, hudConfig.elements().get(id));
 		}
 		jsonWriter.endObject();
+		jsonWriter.name("options");
+		jsonWriter.beginObject();
+		for (Identifier id : hudConfig.options().keySet()) {
+			jsonWriter.name(id.toString());
+			writeOption(jsonWriter, hudConfig.options().get(id));
+		}
+		jsonWriter.endObject();
 		writeVersion(jsonWriter, hudConfig.version());
 		jsonWriter.endObject();
 	}
 
 	@Override
 	public HudConfig read(JsonReader jsonReader) throws IOException {
-		Map<Identifier, HudPlacement> map = new HashMap<>();
+		Map<Identifier, HudPlacement> placements = new HashMap<>();
+		Map<Identifier, ConfigOption> options = new HashMap<>();
 		String version = "0.0";
 		jsonReader.beginObject();
 
@@ -47,7 +55,19 @@ public class HudConfigSerializer extends TypeAdapter<HudConfig> {
 
 						HudPlacement placement = readPlacement(jsonReader);
 
-						map.put(Identifier.parse(id), placement);
+						placements.put(Identifier.parse(id), placement);
+					}
+
+					jsonReader.endObject();
+				}
+				case "options" -> {
+					jsonReader.beginObject();
+
+					while (jsonReader.hasNext()) {
+						String id = jsonReader.nextName();
+
+						ConfigOption option = readOption(jsonReader);
+						options.put(Identifier.parse(id), option);
 					}
 
 					jsonReader.endObject();
@@ -60,7 +80,7 @@ public class HudConfigSerializer extends TypeAdapter<HudConfig> {
 
 		jsonReader.endObject();
 
-		return new HudConfig(version, map);
+		return new HudConfig(version, placements, options);
 	}
 
 	protected void writePlacement(JsonWriter json, HudPlacement placement) throws IOException {
@@ -77,6 +97,17 @@ public class HudConfigSerializer extends TypeAdapter<HudConfig> {
 		json.value(placement.scaleY());
 		json.name("transparency");
 		json.value(placement.transparency());
+		json.endObject();
+	}
+
+	protected void writeOption(JsonWriter json, ConfigOption option) throws IOException {
+		json.beginObject();
+		json.name("string");
+		json.value(option.stringOption());
+		json.name("int");
+		json.value(option.intOption());
+		json.name("bool");
+		json.value(option.boolOption());
 		json.endObject();
 	}
 
@@ -124,6 +155,40 @@ public class HudConfigSerializer extends TypeAdapter<HudConfig> {
 		json.endObject();
 
 		return new HudPlacement(x, y, visible, (float)scaleX, (float)scaleY, transparency);
+	}
+
+	protected ConfigOption readOption(JsonReader json) throws IOException {
+		json.beginObject();
+
+		String stringOpt = ConfigOption.DEFAULT.stringOption();
+		int intOpt = ConfigOption.DEFAULT.intOption();
+		boolean boolOpt = ConfigOption.DEFAULT.boolOption();
+
+		while (json.hasNext()) {
+			if (!json.peek().equals(JsonToken.NAME)) {
+				break;
+			}
+
+			String name = json.nextName();
+
+			switch (name) {
+				case "string" -> {
+					stringOpt = json.nextString();
+				}
+				case "int" -> {
+					intOpt = json.nextInt();
+				}
+				case "bool" -> {
+					boolOpt = json.nextBoolean();
+				}
+				default -> {
+					json.skipValue();
+				}
+			}
+		}
+		json.endObject();
+
+		return new ConfigOption(stringOpt, boolOpt, intOpt);
 	}
 
 	protected void writeVersion(JsonWriter json, String version) throws IOException {

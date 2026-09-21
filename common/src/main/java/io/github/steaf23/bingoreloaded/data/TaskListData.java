@@ -179,7 +179,7 @@ public class TaskListData
         return new CustomList(listName, getTasks(server, listName).stream()
                 .map(t -> {
 	                try {
-						return new ConfiguredTask(TaskDefinitionProtocol.taskDefinition(t).id(), t.getRequiredAmount());
+						return new ConfiguredTask(TaskDefinitionProtocol.taskDefinition(t).id(), t.getRequiredAmount(), t.tags());
 	                } catch (IOException e) {
 						throw new RuntimeException(e);
 					}

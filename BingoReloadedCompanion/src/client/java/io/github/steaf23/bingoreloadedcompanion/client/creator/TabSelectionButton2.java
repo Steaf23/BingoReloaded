@@ -6,7 +6,6 @@ import io.github.steaf23.bingoreloadedcompanion.client.util.ScreenHelper;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
@@ -16,27 +15,26 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import org.lwjgl.glfw.GLFW;
 
-public class TabSelectionButton extends AbstractWidget {
+public class TabSelectionButton2 extends AbstractWidget {
 
-	public record TaskTab(int index, Item icon, Component name, TaskType type) {}
+	public record TaskTab(int index, Item icon, Component name) {}
 
 	private static final TaskTab[] TABS = new TaskTab[]{
-			new TaskTab(0, Items.APPLE, Component.literal("Items").withStyle(ScreenHelper.INVENTORY_STYLE), TaskType.ITEM),
-			new TaskTab(1, Items.ENDER_EYE, Component.literal("Advancements").withStyle(ScreenHelper.INVENTORY_STYLE), TaskType.ADVANCEMENT),
-			new TaskTab(2, Items.GLOBE_BANNER_PATTERN, Component.literal("Statistics").withStyle(ScreenHelper.INVENTORY_STYLE), TaskType.STATISTIC)
+			new TaskTab(0, Items.COMPASS, Component.literal("Count").withStyle(ScreenHelper.INVENTORY_STYLE)),
+			new TaskTab(1, Items.NAME_TAG, Component.literal("Tags").withStyle(ScreenHelper.INVENTORY_STYLE)),
 	};
 
 	private static final Identifier TAB_SELECTED = Identifier.parse("bingoreloadedcompanion:tab_selected");
-	private static final Identifier TAB_BACKGROUND = Identifier.parse("bingoreloadedcompanion:tab_background");
+	private static final Identifier TAB_BACKGROUND_2 = Identifier.parse("bingoreloadedcompanion:tab_background_2");
 
 	private static final int TAB_WIDTH = 20;
-	private static final int TAB_INTERVAL = 17;
+	private static final int TAB_INTERVAL = 18;
 	private static final int TAB_HEIGHT = 20;
 
 	private int selectedIndex = 0;
 	private final TabChangedCallback tabChanged;
 
-	public TabSelectionButton(TabChangedCallback onTabChanged) {
+	public TabSelectionButton2(TabChangedCallback onTabChanged) {
 		super(0, 0, TAB_INTERVAL * TABS.length, TAB_HEIGHT, Component.empty());
 		this.tabChanged = onTabChanged;
 	}
@@ -63,14 +61,14 @@ public class TabSelectionButton extends AbstractWidget {
 
 	@Override
 	protected void extractWidgetRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
-		graphics.blitSprite(RenderPipelines.GUI_TEXTURED, TAB_BACKGROUND, getX() + 2, getY(), getWidth(), getHeight());
+		graphics.blitSprite(RenderPipelines.GUI_TEXTURED, TAB_BACKGROUND_2, getX(), getY(), getWidth(), getHeight());
 
-		graphics.blitSprite(RenderPipelines.GUI_TEXTURED, TAB_SELECTED, getTabStartX(selectedIndex) + 1, getY(), TAB_WIDTH, TAB_HEIGHT);
+		graphics.blitSprite(RenderPipelines.GUI_TEXTURED, TAB_SELECTED, getTabStartX(selectedIndex), getY(), TAB_WIDTH, TAB_HEIGHT);
 
 		// Tooltip
 
 		for (TaskTab tab : TABS) {
-			graphics.item(tab.icon.getDefaultInstance(), getTabStartX(tab.index) + 3, getY() + 2);
+			graphics.item(tab.icon.getDefaultInstance(), getTabStartX(tab.index) + 2, getY() + 2);
 
 			if (isMouseOverTab(tab.index, mouseX, mouseY))
 			{

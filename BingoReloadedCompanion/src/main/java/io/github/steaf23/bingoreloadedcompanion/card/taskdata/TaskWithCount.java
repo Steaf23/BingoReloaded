@@ -6,9 +6,15 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 
-public record TaskWithCount(TaskDefinition task, int count, NameSupplier nameSupplier) {
+import java.util.Set;
+
+public record TaskWithCount(TaskDefinition task, int count, NameSupplier nameSupplier, Set<String> tags) {
 	public TaskWithCount copy(int newCount) {
-		return new TaskWithCount(task, newCount, nameSupplier);
+		return new TaskWithCount(task, newCount, nameSupplier, tags);
+	}
+
+	public TaskWithCount copy(Set<String> tags) {
+		return new TaskWithCount(task, count, nameSupplier, tags);
 	}
 
 	public boolean isSelected() {

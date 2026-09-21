@@ -73,8 +73,8 @@ public class TaskDefinitionProtocol {
 
 	public static TaskData fromConfiguredTask(PlatformServer server, ConfiguredTask task) {
 		return switch (task.id()) {
-			case TaskId.Advancement advancement -> new AdvancementTask(AdvancementHandle.of(server, advancement.id()));
-			case TaskId.Item item -> new ItemTask(ItemType.of(item.id()), task.count());
+			case TaskId.Advancement advancement -> new AdvancementTask(AdvancementHandle.of(server, advancement.id()), task.tags());
+			case TaskId.Item item -> new ItemTask(ItemType.of(item.id()), task.count(), task.tags());
 			case TaskId.Statistic statistic -> {
 				Key type;
 				EntityType entity = null;
@@ -96,7 +96,8 @@ public class TaskDefinitionProtocol {
 				}
 
 				yield new StatisticTask(
-					new StatisticHandle(VanillaStatistics.fromKey(type), entity, itemType), task.count());
+					new StatisticHandle(VanillaStatistics.fromKey(type), entity, itemType), task.count(),
+						task.tags());
 			}
 		};
 	}

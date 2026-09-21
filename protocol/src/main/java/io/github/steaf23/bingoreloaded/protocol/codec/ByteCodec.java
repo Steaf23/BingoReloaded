@@ -1,6 +1,7 @@
 package io.github.steaf23.bingoreloaded.protocol.codec;
 
 import net.kyori.adventure.key.Key;
+import net.kyori.adventure.text.format.TextColor;
 
 import java.io.DataInput;
 import java.io.DataOutput;
@@ -39,6 +40,7 @@ public interface ByteCodec<T> {
 	ByteCodec<Integer> INT = ByteCodec.create(DataOutput::writeInt, DataInput::readInt);
 	ByteCodec<Boolean> BOOL = ByteCodec.create(DataOutput::writeBoolean, DataInput::readBoolean);
 	ByteCodec<Key> KEY = STRING.map(Key::key, Key::asString);
+	ByteCodec<TextColor> COLOR = INT.map(TextColor::color, TextColor::value);
 
 	static <T> ByteCodec<T> unit(T value) {
 		return ByteCodec.create((_, _) -> {}, (_) -> value);

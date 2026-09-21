@@ -2,6 +2,7 @@ package io.github.steaf23.bingoreloaded.protocol.payload;
 
 import io.github.steaf23.bingoreloaded.protocol.codec.ByteCodec;
 import io.github.steaf23.bingoreloaded.protocol.data.BingoCard;
+import io.github.steaf23.bingoreloaded.protocol.data.ClientSettings;
 import io.github.steaf23.bingoreloaded.protocol.data.CreatorContext;
 import io.github.steaf23.bingoreloaded.protocol.codec.Empty;
 import io.github.steaf23.bingoreloaded.protocol.data.TaskSlot;
@@ -14,7 +15,7 @@ import java.util.Optional;
 public class BingoReloadedPayloads {
 
 	// General
-	public static final PayloadDefinition<Empty> CLIENT_HELLO = new PayloadDefinition<>("client_hello", Empty.CODEC);
+	public static final PayloadDefinition<ClientSettings> CLIENT_HELLO = new PayloadDefinition<>("client_hello", ClientSettings.CODEC);
 
 	// Game loop
 	public static final PayloadDefinition<Optional<BingoCard>> UPDATE_CARD = new PayloadDefinition<>("server_update_card", BingoCard.CODEC.optional());

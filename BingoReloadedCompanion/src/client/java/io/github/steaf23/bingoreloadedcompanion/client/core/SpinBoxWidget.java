@@ -159,6 +159,10 @@ public class SpinBoxWidget extends LinearLayout {
 		}
 	}
 
+	public void setVisible(boolean visible) {
+		visitWidgets(w -> w.visible = visible);
+	}
+
 	private boolean validateValue(String value) {
 		double val = 0.0;
 		if (!value.isBlank()) {

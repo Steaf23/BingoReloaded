@@ -39,12 +39,14 @@ public class HudConfigManager {
 	private HudConfig savedConfig;
 
 	private Map<Identifier, HudPlacement> elementPlaces = new HashMap<>();
+	private Map<Identifier, ConfigOption> options = new HashMap<>();
 
 	public void load() {
 		if (Files.exists(CONFIG_PATH)) {
 			try (Reader reader = Files.newBufferedReader(CONFIG_PATH)) {
 				HudConfig config = GSON.fromJson(reader, HudConfig.class);
 				elementPlaces = new HashMap<>(config.elements());
+				options = new HashMap<>(config.options());
 				savedConfig = config;
 				if (BingoReloadedCompanion.isCurrentVersionNewer(config.version())) {
 					updateConfig();
@@ -59,8 +61,8 @@ public class HudConfigManager {
 
 	public void save() {
 		try (Writer writer = Files.newBufferedWriter(CONFIG_PATH)) {
-			GSON.toJson(new HudConfig(BingoReloadedCompanion.modVersion(), elementPlaces), writer);
-			savedConfig = new HudConfig(BingoReloadedCompanion.modVersion(), new HashMap<>(elementPlaces));
+			GSON.toJson(new HudConfig(BingoReloadedCompanion.modVersion(), elementPlaces, options), writer);
+			savedConfig = new HudConfig(BingoReloadedCompanion.modVersion(), new HashMap<>(elementPlaces), new HashMap<>(options));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -80,6 +82,19 @@ public class HudConfigManager {
 			HudPlacement savedPlacement = savedConfig.elements().get(id);
 
 			if (!currentPlacement.equals(savedPlacement)) {
+				return true;
+			}
+		}
+
+		for (Identifier id : savedConfig.options().keySet()) {
+			if (!options.containsKey(id)) {
+				return true;
+			}
+
+			ConfigOption current = options.get(id);
+			ConfigOption saved = savedConfig.options().get(id);
+
+			if (!current.equals(saved)) {
 				return true;
 			}
 		}
@@ -129,6 +144,30 @@ public class HudConfigManager {
 	public void setElementTransparency(Identifier id, double transparency) {
 		HudPlacement placement = getHudPlacement(id);
 		elementPlaces.put(id, placement.setTransparency(transparency));
+	}
+
+	public boolean getBooleanOption(Identifier id) {
+		return options.getOrDefault(id, ConfigurableHudRegistry.getDefaultOption(id)).boolOption();
+	}
+
+	public String getStringOption(Identifier id) {
+		return options.getOrDefault(id, ConfigurableHudRegistry.getDefaultOption(id)).stringOption();
+	}
+
+	public int getIntOption(Identifier id) {
+		return options.getOrDefault(id, ConfigurableHudRegistry.getDefaultOption(id)).intOption();
+	}
+
+	public void setBooleanOption(Identifier id, boolean value) {
+		options.put(id, new ConfigOption(value));
+	}
+
+	public void setStringOption(Identifier id, String value) {
+		options.put(id, new ConfigOption(value));
+	}
+
+	public void setIntOption(Identifier id, int value) {
+		options.put(id, new ConfigOption(value));
 	}
 
 	public void resetElement(Identifier id) {

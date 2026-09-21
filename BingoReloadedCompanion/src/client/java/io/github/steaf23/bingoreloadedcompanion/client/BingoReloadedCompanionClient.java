@@ -1,9 +1,11 @@
 package io.github.steaf23.bingoreloadedcompanion.client;
 
 import com.mojang.blaze3d.platform.InputConstants;
+import io.github.steaf23.bingoreloaded.protocol.data.ClientSettings;
 import io.github.steaf23.bingoreloadedcompanion.BingoReloadedCompanion;
 import io.github.steaf23.bingoreloadedcompanion.client.creator.CreatorSuite;
 import io.github.steaf23.bingoreloadedcompanion.client.hud.BingoCardHudElement;
+import io.github.steaf23.bingoreloadedcompanion.client.hud.ConfigOption;
 import io.github.steaf23.bingoreloadedcompanion.client.hud.ConfigurableHudRegistry;
 import io.github.steaf23.bingoreloadedcompanion.client.hud.HudConfigManager;
 import io.github.steaf23.bingoreloadedcompanion.client.hud.HudInfo;
@@ -40,6 +42,9 @@ public class BingoReloadedCompanionClient implements ClientModInitializer {
 	public static final Identifier BINGO_CARD_GAMEMODE = ConfigurableHudRegistry.registerSubElement("bingocard", "gamemode",
 			new HudInfo(false, 128, 32),
 			new HudPlacement(0, 0, true, 3.0f, 3.0f, 1.0));
+
+	public static final Identifier CREATOR_USE_CLIENT_CREATOR = ConfigurableHudRegistry.createSimpleOption("creator", "use_client_creator",
+			new ConfigOption(true));
 
 	private static final HudConfigManager HUD_CONFIG = new HudConfigManager();
 
@@ -83,7 +88,11 @@ public class BingoReloadedCompanionClient implements ClientModInitializer {
 				return;
 			}
 
-			BingoReloadedCompanionClient.sendPayloadToServer(new ClientHelloPayload());
+			ClientSettings settings = new ClientSettings(
+					HUD_CONFIG.getBooleanOption(BingoReloadedCompanionClient.CREATOR_USE_CLIENT_CREATOR)
+			);
+
+			BingoReloadedCompanionClient.sendPayloadToServer(new ClientHelloPayload(settings));
 		}));
 
 		ClientPlayConnectionEvents.DISCONNECT.register(((handler, client) -> {
@@ -114,46 +123,9 @@ public class BingoReloadedCompanionClient implements ClientModInitializer {
 				GLFW.GLFW_KEY_R,
 				category));
 
-		KeyMapping testCreator = KeyMappingHelper.registerKeyMapping(new KeyMapping(
-				"key.bingoreloadedcompanion.test_creator",
-				InputConstants.Type.KEYSYM,
-				GLFW.GLFW_KEY_Y,
-				category));
-
-//		ClientPlayNetworking.registerGlobalReceiver(EditTaskListPayload.ID,
-//				(payload, context) -> {
-//					context.client().setScreen(new BingoCardTaskListScreen(Text.empty(), payload.tasks()));
-//				});
-//
-//
-//		KeyBinding binding2 = KeyBindingHelper.registerKeyBinding(new KeyBinding(
-//				"key.bingoreloadedcompanion.test2",
-//				InputUtil.Type.KEYSYM,
-//				GLFW.GLFW_KEY_Y,
-//				"category.bingoreloadedcompanion.test"));
-
-//		List<Task> testTasks = new ArrayList<>();
-//		for (int i = 0; i < 25; i++) {
-//			testTasks.add(new Task(Task.TaskCompletion.INCOMPLETE, Identifier.of("bingoreloaded:item"), Items.PAPER, 1));
-//		}
-//		BingoCard testCard5x = new BingoCard(BingoGamemode.HOTSWAP, 5, testTasks);
-//		BingoCard testCard3x = new BingoCard(BingoGamemode.REGULAR, 3, testTasks.subList(0, 9));
-//
-//		ClientTickEvents.END_CLIENT_TICK.register(c -> {
-//			if (binding.wasPressed()) {
-//				cardElement.setCard(testCard5x);
-////				c.setScreen(new BingoCardTaskListScreen(Text.empty(), List.of(new ItemTask(Identifier.of("minecraft:polished_granite"), 5), new ItemTask(Identifier.of("minecraft:budding_amethyst"), 1))));
-//			} else if (binding2.wasPressed()) {
-//				cardElement.setCard(testCard3x);
-//			}
-//		});
-
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
 			if (toggleCardVisibility.consumeClick()) {
 				cardElement.setVisible(cardElement.isHidden());
-			}
-			if (testCreator.consumeClick()) {
-//				client.setScreenAndShow(new BingoCardTaskListScreen(Component.literal("title"), null));
 			}
 		});
 	}

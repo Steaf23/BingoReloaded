@@ -2,6 +2,7 @@ package io.github.steaf23.bingoreloadedcompanion.client.config;
 
 import io.github.steaf23.bingoreloaded.protocol.data.BingoCard;
 import io.github.steaf23.bingoreloaded.protocol.data.BingoGamemode;
+import io.github.steaf23.bingoreloaded.protocol.data.ClientSettings;
 import io.github.steaf23.bingoreloaded.protocol.data.task.Task;
 import io.github.steaf23.bingoreloaded.protocol.data.task.TaskDefinition;
 import io.github.steaf23.bingoreloaded.protocol.data.task.TaskId;
@@ -10,10 +11,14 @@ import io.github.steaf23.bingoreloadedcompanion.client.hud.BingoCardHudElement;
 import io.github.steaf23.bingoreloadedcompanion.client.hud.HudConfigManager;
 import io.github.steaf23.bingoreloadedcompanion.client.hud.HudPlacement;
 import io.github.steaf23.bingoreloadedcompanion.client.util.ScreenHelper;
+import io.github.steaf23.bingoreloadedcompanion.network.ClientHelloPayload;
 import net.kyori.adventure.key.Key;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.Checkbox;
+import net.minecraft.client.gui.layouts.FrameLayout;
+import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
@@ -49,7 +54,6 @@ public class BingoConfigScreen extends Screen {
 	private static final int SLIDER_BACKGROUND_WIDTH = BUTTON_WIDTH * 2 + 2;
 	private static final int BUTTON_HEIGHT = 14;
 
-
 	private static final long MOVE_CURSOR = GLFW.glfwCreateStandardCursor(GLFW.GLFW_RESIZE_ALL_CURSOR);
 
 	private Identifier selectedElement;
@@ -63,6 +67,8 @@ public class BingoConfigScreen extends Screen {
 	private boolean removed = false;
 
 	private final List<Identifier> elements = List.of(BingoReloadedCompanionClient.BINGO_CARD_TASKS, BingoReloadedCompanionClient.BINGO_CARD_GAMEMODE);
+
+	private Checkbox clientSideCreator;
 
 	protected BingoConfigScreen(Screen modMenuScreen, HudConfigManager hudConfig) {
 		super(Component.nullToEmpty("Bingo Reloaded Options"));
@@ -103,6 +109,23 @@ public class BingoConfigScreen extends Screen {
 				.build();
 
 		addRenderableWidget(resetButton);
+
+		FrameLayout frame = new FrameLayout(200, 100);
+		LinearLayout layout = LinearLayout.vertical();
+		frame.addChild(layout);
+
+		clientSideCreator = Checkbox.builder(Component.literal("Use client side card creator"), font)
+				.selected(configManager.getBooleanOption(BingoReloadedCompanionClient.CREATOR_USE_CLIENT_CREATOR))
+				.onValueChange((box, val) -> configManager.setBooleanOption(BingoReloadedCompanionClient.CREATOR_USE_CLIENT_CREATOR, val))
+				.build();
+		layout.addChild(clientSideCreator);
+
+		frame.arrangeElements();
+		frame.setX(0);
+		frame.setY(height - frame.getHeight());
+		frame.arrangeElements();
+
+		frame.visitWidgets(this::addRenderableWidget);
 	}
 
 	@Override
@@ -437,5 +460,9 @@ public class BingoConfigScreen extends Screen {
 
 		configManager.load();
 		minecraft.setScreenAndShow(modMenuScreen);
+
+		BingoReloadedCompanionClient.sendPayloadToServer(new ClientHelloPayload(new ClientSettings(
+				configManager.getBooleanOption(BingoReloadedCompanionClient.CREATOR_USE_CLIENT_CREATOR))
+		));
 	}
 }

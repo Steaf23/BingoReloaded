@@ -1,7 +1,6 @@
 package io.github.steaf23.bingoreloaded.api;
 
 import io.github.steaf23.bingoreloaded.cards.TaskCard;
-import io.github.steaf23.bingoreloaded.data.BingoCardData;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.protocol.data.CreatorTaskSupplier;
 import io.github.steaf23.bingoreloaded.protocol.data.card.CustomList;
@@ -14,13 +13,13 @@ public interface BingoClientManager {
 
 	boolean playerHasClient(PlayerHandle player);
 
+	boolean playerUsesClientCreator(PlayerHandle player);
+
 	void updateCard(PlayerHandle player, @Nullable TaskCard card);
 
 	void updateHotswapContext(PlayerHandle player, @NotNull List<io.github.steaf23.bingoreloaded.protocol.data.TaskSlot> holders);
 
 	void playerLeavesServer(PlayerHandle player);
-
-	void openCreator(PlayerHandle player, @NotNull CreatorTaskSupplier tasks, @NotNull BingoCardData cardData);
 
 	void editListTasks(PlayerHandle player, @NotNull CreatorTaskSupplier tasks, String listName, OnListEdited onListEdited);
 
@@ -30,6 +29,11 @@ public interface BingoClientManager {
 
 		@Override
 		public boolean playerHasClient(PlayerHandle player) {
+			return false;
+		}
+
+		@Override
+		public boolean playerUsesClientCreator(PlayerHandle player) {
 			return false;
 		}
 
@@ -45,11 +49,6 @@ public interface BingoClientManager {
 
 		@Override
 		public void playerLeavesServer(PlayerHandle player) {
-
-		}
-
-		@Override
-		public void openCreator(PlayerHandle player, @NotNull CreatorTaskSupplier tasks, @NotNull BingoCardData cardData) {
 
 		}
 

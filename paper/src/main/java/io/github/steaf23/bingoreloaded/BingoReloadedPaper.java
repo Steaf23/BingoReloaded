@@ -68,7 +68,6 @@ import io.github.steaf23.bingoreloaded.settings.gamemode.BingoGamemodes;
 import io.github.steaf23.bingoreloaded.util.bstats.Metrics;
 import io.github.steaf23.bingoreloaded.world.CustomWorldCreator;
 import io.papermc.paper.dialog.Dialog;
-import io.papermc.paper.plugin.lifecycle.event.LifecycleEvent;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import io.papermc.paper.registry.data.dialog.ActionButton;
 import io.papermc.paper.registry.data.dialog.DialogBase;
@@ -82,8 +81,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickCallback;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.command.PluginCommand;
-import org.bukkit.command.TabExecutor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -219,7 +216,7 @@ public class BingoReloadedPaper extends JavaPlugin implements BingoReloadedRunti
 			settingsDisplay = new ScoreboardDisplay("lobby");
 		}
 
-		pouchInventoryProvider = new PaperInventoryProvider(this);
+		pouchInventoryProvider = new PaperInventoryProvider(this, server);
 	}
 
 	@Override

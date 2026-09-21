@@ -194,7 +194,7 @@ public class BingoCreatorMenu extends BasicMenu {
 			return;
 		}
 
-		if (getMenuBoard().context().runtime().getClientManager().playerHasClient(player)) {
+		if (getMenuBoard().context().runtime().getClientManager().playerUsesClientCreator(player)) {
 			getMenuBoard().context().runtime().getClientManager().editListTasks(player, CreatorTaskFactory.create(getMenuBoard().context()), listName, list -> saveCustomList(player, list));
 		} else {
 			ListEditorMenu editor = new ListEditorMenu(getMenuBoard(), listName, formatting);

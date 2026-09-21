@@ -10,6 +10,7 @@ import io.github.steaf23.bingoreloadedcompanion.client.core.CollapsibleTreeLayou
 import io.github.steaf23.bingoreloadedcompanion.client.core.CustomScrollableLayout;
 import io.github.steaf23.bingoreloadedcompanion.client.util.ScreenHelper;
 import net.kyori.adventure.key.Key;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
@@ -22,6 +23,7 @@ import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
 import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.CreativeModeTab;
@@ -31,10 +33,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class CreatorTaskScreen extends Screen {
 
 	private static final Identifier SEARCH_ICON = Identifier.withDefaultNamespace("icon/search");
+	private static final Identifier CURSOR_ICON = Identifier.parse("bingoreloadedcompanion:tag");
 
 	private static final int TAB_HEIGHT = 20;
 
@@ -56,9 +60,12 @@ public class CreatorTaskScreen extends Screen {
 
 	private final Map<TaskId, TaskWithCount> selectedTasks = new HashMap<>();
 
-	String currentFilter = "";
-	String listName = "";
-	boolean reupdate = false;
+	private String currentFilter = "";
+	private String currentCategoryFilter = "";
+	private String listName = "";
+	private boolean reupdate = false;
+	private TaskEditMode currentEditMode = TaskEditMode.COUNT;
+	private TagBarWidget.Tag selectedTag = null;
 
 	public CreatorTaskScreen(CreatorSuite creatorSuite) {
 		super(Component.empty());
@@ -84,7 +91,10 @@ public class CreatorTaskScreen extends Screen {
 
 		topRightLayout = LinearLayout.horizontal();
 		topRightLayout.addChild(new StringWidget(Component.literal("Selected").withStyle(ScreenHelper.INVENTORY_STYLE), font),
-				LayoutSettings.defaults().paddingTop(5).paddingBottom(6).paddingHorizontal(32));
+				LayoutSettings.defaults().paddingTop(5).paddingBottom(6).paddingHorizontal(12));
+		topRightLayout.addChild(new TabSelectionButton2((idx, tab) -> {
+			updateEditMode(idx == 0 ? TaskEditMode.COUNT : TaskEditMode.TAG);
+		}), LayoutSettings.defaults().paddingRight(3));
 
 		treeLayout = new CollapsibleTreeLayout(font);
 	}
@@ -131,9 +141,21 @@ public class CreatorTaskScreen extends Screen {
 		mainLayout.visitWidgets(this::addRenderableWidget);
 	}
 
+	public CreatorSuite creatorSuite() {
+		return creatorSuite;
+	}
+
+	public TagBarWidget.Tag selectedTag() {
+		return selectedTag;
+	}
+
 	public void tabChanged(int newIndex, TabSelectionButton.TaskTab newTab) {
 		filterField.setValue("");
 		tabName.setMessage(newTab.name().copy().withStyle(ScreenHelper.INVENTORY_STYLE));
+	}
+
+	public void arrangeSelectedTasks() {
+		selectedScroll.arrangeElements();
 	}
 
 	public void standardLayout(List<TaskWidget> widgets, int columns) {
@@ -146,6 +168,10 @@ public class CreatorTaskScreen extends Screen {
 			}
 
 			String cat = w.task().category();
+			if (filterOutCategory(cat)) {
+				continue;
+			}
+
 			widgetByCategory.computeIfAbsent(cat, category -> new ArrayList<>());
 			widgetByCategory.get(cat).add(w);
 		}
@@ -177,6 +203,9 @@ public class CreatorTaskScreen extends Screen {
 			padding.addChild(contents, LayoutSettings.defaults().padding(3));
 
 			String category = tab.getDisplayName().getString();
+			if (filterOutCategory(category)) {
+				continue;
+			}
 
 			int currentIndex = 0;
 			for (TaskId id : creatorSuite.itemsPerTab.get(tab)) {
@@ -227,6 +256,24 @@ public class CreatorTaskScreen extends Screen {
 		standardLayout(widgets, colCount);
 	}
 
+	public void buildTagWidgets() {
+		visibleTasks.clear();
+		treeLayout.clear();
+
+		LinearLayout tagLayout = LinearLayout.vertical().spacing(3);
+		List<TagBarWidget.Tag> tags = new ArrayList<>();
+		for (String tagName : creatorSuite.allTags.keySet()) {
+			TagBarWidget.Tag tag = new TagBarWidget.Tag(tagName, creatorSuite.allTags.getOrDefault(tagName, NamedTextColor.WHITE));
+			tagLayout.addChild(new TagComboButton(tag, font, t -> {
+				selectedTag = t;
+			}));
+			tags.add(tag);
+		}
+		selectedTag = tags.isEmpty() ? null : tags.getFirst();
+
+		treeLayout.addTopLevelChild(tagLayout, LayoutSettings.defaults());
+	}
+
 	public TaskWidget createWidget(TaskId id) {
 		return createWidget(creatorSuite.getTaskById(id));
 	}
@@ -235,13 +282,17 @@ public class CreatorTaskScreen extends Screen {
 		return new TaskWidget(definition.def(), font, definition.name(), widget -> {
 			TaskId id = widget.task().id();
 			if (widget.isSelected() && !selectedTasks.containsKey(id)) {
-				selectedTasks.put(id, new TaskWithCount(definition.def(), 1, definition.name()));
+				selectedTasks.put(id, new TaskWithCount(definition.def(), 1, definition.name(), Set.of()));
 				updateSelectedTasks();
 			} else if (!widget.isSelected()) {
 				selectedTasks.remove(id);
 				updateSelectedTasks();
 			}
 		});
+	}
+
+	public boolean filterOutCategory(String category) {
+		return !currentCategoryFilter.isEmpty() && !category.toLowerCase().replace("_", " ").contains(currentCategoryFilter);
 	}
 
 	@Override
@@ -261,18 +312,42 @@ public class CreatorTaskScreen extends Screen {
 	}
 
 	public void applyFilter(String filter) {
-		currentFilter = filter.toLowerCase().replace("_", " ");
 
-		int colCount = 10;
-		switch (tabSelection.getSelectedTab().type()) {
-			case ITEM -> buildItemWidgets(colCount);
-			case ADVANCEMENT -> buildAdvancementWidgets(colCount);
-			case STATISTIC -> buildStatisticWidgets(colCount);
-		};
+		String cleaned = filter.toLowerCase().replace("_", " ");
+		// Filter by category when starting with @
+		if (cleaned.startsWith("@")) {
+			currentFilter = "";
+			currentCategoryFilter = cleaned.substring(1);
+		} else {
+			currentFilter = cleaned.toLowerCase().replace("_", " ");
+			currentCategoryFilter = "";
+		}
+
+		switch (currentEditMode) {
+			case COUNT -> {
+				int colCount = 10;
+				switch (tabSelection.getSelectedTab().type()) {
+					case ITEM -> buildItemWidgets(colCount);
+					case ADVANCEMENT -> buildAdvancementWidgets(colCount);
+					case STATISTIC -> buildStatisticWidgets(colCount);
+				}
+				selectedTag = null;
+			}
+			case TAG -> {
+				buildTagWidgets();
+			}
+		}
 
 		if (scrollLayout != null) {
 			scrollLayout.setScrollAmount(0.0);
 		}
+	}
+
+	public void updateEditMode(TaskEditMode newEditMode) {
+		currentEditMode = newEditMode;
+		applyFilter("");
+
+		updateSelectedTasks();
 	}
 
 	public void updateSelectedTasks() {
@@ -280,7 +355,9 @@ public class CreatorTaskScreen extends Screen {
 		selectedTasksLayout.removeChildren();
 		for (TaskId id : selectedTasks.keySet()) {
 			TaskWithCount countable = selectedTasks.get(id);
-			selectedTasksLayout.addChild(new SelectedTaskComponent(countable, font, this));
+			SelectedTaskComponent task = new SelectedTaskComponent(countable, font, this);
+			task.setEditMode(currentEditMode);
+			selectedTasksLayout.addChild(task);
 		}
 
 		selectedScroll.arrangeElements();
@@ -315,7 +392,7 @@ public class CreatorTaskScreen extends Screen {
 		selectedTasks.clear();
 		for (ConfiguredTask task : list.tasks()) {
 			CreatorSuite.TaskWithName def = creatorSuite.getTaskById(task.id());
-			selectedTasks.put(task.id(), new TaskWithCount(def.def(), task.count(), def.name()));
+			selectedTasks.put(task.id(), new TaskWithCount(def.def(), task.count(), def.name(), task.tags()));
 		}
 		updateSelectedTasks();
 		applyFilter("");
@@ -324,7 +401,7 @@ public class CreatorTaskScreen extends Screen {
 	public void savePressed(Button btn) {
 		creatorSuite.closeScreen(this);
 		creatorSuite.saveList(new CustomList(listName, selectedTasks.keySet().stream()
-				.map(key -> new ConfiguredTask(key, selectedTasks.get(key).count()))
+				.map(key -> new ConfiguredTask(key, selectedTasks.get(key).count(), selectedTasks.get(key).tags()))
 				.toList(), false));
 	}
 
@@ -364,15 +441,23 @@ public class CreatorTaskScreen extends Screen {
 
 		if (hoveredIndex != -1) {
 			int count = 0;
+			Set<String> tags = Set.of();
+
 			if (selectedTasks.containsKey(hoveredTask.task().id())) {
-				count = selectedTasks.get(hoveredTask.task().id()).count();
+				TaskWithCount selected = selectedTasks.get(hoveredTask.task().id());
+				count = selected.count();
+				tags = selected.tags();
 			}
-			TaskWithCount countable = new TaskWithCount(hoveredTask.task(), count, hoveredTask::getName);
+			TaskWithCount countable = new TaskWithCount(hoveredTask.task(), count, hoveredTask::getName, tags);
 			TaskTooltipComponent tooltipComponent = new TaskTooltipComponent(countable, countable.getName());
 
 			int slotX = hoveredTask.getX();
 			int slotY = hoveredTask.getY();
 			graphics.tooltip(font, List.of(tooltipComponent), slotX - tooltipComponent.getWidth(font) / 2, slotY - tooltipComponent.getHeight(font) + 9, DefaultTooltipPositioner.INSTANCE, null);
+		}
+
+		if (currentEditMode == TaskEditMode.TAG && selectedTag != null) {
+			graphics.blitSprite(RenderPipelines.GUI_TEXTURED, CURSOR_ICON, mouseX - 10, mouseY - 4, 24, 16, ScreenHelper.addAlphaToColor(selectedTag.color().value(), 255));
 		}
 	}
 

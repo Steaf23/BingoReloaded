@@ -5,6 +5,7 @@ import io.github.steaf23.bingoreloaded.api.BingoClientManager;
 import io.github.steaf23.bingoreloaded.cards.TaskCard;
 import io.github.steaf23.bingoreloaded.data.BingoCardData;
 import io.github.steaf23.bingoreloaded.data.TaskFormatData;
+import io.github.steaf23.bingoreloaded.data.TaskTagData;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.lib.api.PlayerHandlePaper;
 import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformServer;
@@ -13,6 +14,7 @@ import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.protocol.data.BingoCard;
 import io.github.steaf23.bingoreloaded.protocol.data.BingoGamemode;
+import io.github.steaf23.bingoreloaded.protocol.data.ClientSettings;
 import io.github.steaf23.bingoreloaded.protocol.data.CreatorContext;
 import io.github.steaf23.bingoreloaded.protocol.data.CreatorTaskSupplier;
 import io.github.steaf23.bingoreloaded.protocol.data.TaskSlot;
@@ -24,12 +26,12 @@ import io.github.steaf23.bingoreloaded.util.BingoPlayerSender;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.messaging.Messenger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jspecify.annotations.NonNull;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -37,17 +39,15 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
 
 public class PaperClientManager implements BingoClientManager {
 
 	private final JavaPlugin plugin;
-	private final Set<UUID> connectedPlayers = new HashSet<>();
+	private final Map<UUID, ClientSettings> connectedPlayers = new HashMap<>();
 
 	//FIXME: find a way to clean up the map when a player cancels editing the list.
 	private final Map<String, OnListEdited> editingLists = new HashMap<>();
@@ -62,7 +62,15 @@ public class PaperClientManager implements BingoClientManager {
 		messenger.registerIncomingPluginChannel(plugin, BingoReloadedPayloads.CLIENT_HELLO.key().asString(), (channel, player, buf) -> {
 			if (!channel.equals(BingoReloadedPayloads.CLIENT_HELLO.key().asString())) return;
 
-			connectedPlayers.add(player.getUniqueId());
+			ClientSettings clientSettings = decodePayload(BingoReloadedPayloads.CLIENT_HELLO, buf);
+
+			if (connectedPlayers.containsKey(player.getUniqueId())) {
+				// Just update settings
+				connectedPlayers.put(player.getUniqueId(), clientSettings);
+				return;
+			}
+
+			connectedPlayers.put(player.getUniqueId(), clientSettings);
 			ConsoleMessenger.log("Player " + player.getName() + " connected using the companion mod");
 
 			PlayerHandle handle = new PlayerHandlePaper(bingo.getGameManager().getServer(), player);
@@ -126,7 +134,16 @@ public class PaperClientManager implements BingoClientManager {
 
 	@Override
 	public boolean playerHasClient(PlayerHandle player) {
-		return connectedPlayers.contains(player.uniqueId());
+		return connectedPlayers.containsKey(player.uniqueId());
+	}
+
+	@Override
+	public boolean playerUsesClientCreator(PlayerHandle player) {
+		if (!connectedPlayers.containsKey(player.uniqueId())) {
+			return false;
+		}
+
+		return connectedPlayers.get(player.uniqueId()).useClientCreator();
 	}
 
 	@Override
@@ -158,18 +175,20 @@ public class PaperClientManager implements BingoClientManager {
 	}
 
 	@Override
-	public void openCreator(PlayerHandle player, @NotNull CreatorTaskSupplier tasks, @NonNull BingoCardData cardData) {
-		CreatorContext context = new CreatorContext(tasks, TaskFormatData.fromDataAccessor(), cardData.getAllCards());
-		sendMessage(((PlayerHandlePaper)player).handle(), BingoReloadedPayloads.OPEN_CREATOR, context);
-	}
-
-	@Override
 	public void editListTasks(PlayerHandle player, @NotNull CreatorTaskSupplier tasks, String listName, OnListEdited onListEdited) {
 		editingLists.put(listName, onListEdited);
 
-		CreatorContext context = new CreatorContext(tasks, TaskFormatData.fromDataAccessor(), List.of());
+		BingoCardData cardData = new BingoCardData();
+
+		Map<String, TaskTagData.TaskTag> original = cardData.tags().getAllTags();
+		Map<String, TextColor> tags = new HashMap<>();
+		for (String tag : original.keySet()) {
+			tags.put(tag, original.get(tag).color());
+		}
+
+		CreatorContext context = new CreatorContext(tasks, TaskFormatData.fromDataAccessor(), List.of(), tags);
 		sendMessage(((PlayerHandlePaper)player).handle(), BingoReloadedPayloads.OPEN_CREATOR, context);
-		sendCreatorList(player, new BingoCardData().lists().getList(player.server(), listName));
+		sendCreatorList(player, cardData.lists().getList(player.server(), listName));
 	}
 
 	@Override
