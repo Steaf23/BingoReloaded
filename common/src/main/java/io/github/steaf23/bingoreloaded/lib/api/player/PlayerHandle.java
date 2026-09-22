@@ -84,6 +84,10 @@ public interface PlayerHandle extends ForwardingAudience, ActionUser {
 		server().inventories().addItemToPlayerInventory(this, stacks);
 	}
 
+	StackHandle getItemInMainHand();
+
+	StackHandle getItemInOffHand();
+
 	/**
 	 * @param newSpawn new position.
 	 * @param force    true if setting the spawn point should ignore valid bed/respawn positions too.
@@ -124,7 +128,7 @@ public interface PlayerHandle extends ForwardingAudience, ActionUser {
 
 	void setWaypointColor(@Nullable TextColor color);
 
-	void throwPearl();
+	void throwPearl(boolean fromOffhand);
 
 	void breakBlock(GlobalPosition position);
 }

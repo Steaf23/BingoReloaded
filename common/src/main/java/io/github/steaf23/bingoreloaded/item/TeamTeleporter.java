@@ -37,7 +37,7 @@ public class TeamTeleporter extends GameItem {
 	}
 
 	@Override
-	public EventResult<?> use(StackHandle stack, PlayerHandle player, BingoParticipant participant, BingoGame game) {
+	public EventResult<?> use(StackHandle stack, PlayerHandle player, BingoParticipant participant, BingoGame game, boolean fromOffhand) {
 		if (!(participant instanceof BingoPlayer bingoPlayer)) {
 			return EventResult.IGNORE;
 		}

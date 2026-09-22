@@ -251,7 +251,7 @@ public class PregameLobby implements GamePhase
     }
 
     @Override
-    public EventResult<?> handlePlayerUseItem(PlayerHandle player, @Nullable StackHandle stack) {
+    public EventResult<?> handlePlayerUseItem(PlayerHandle player, @Nullable StackHandle stack, boolean inOffhand) {
 		if (stack == null || stack.type().isAir())
             return EventResult.IGNORE;
 

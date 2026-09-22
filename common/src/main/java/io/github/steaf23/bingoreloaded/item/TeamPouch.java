@@ -45,7 +45,7 @@ public class TeamPouch extends GameItem {
 	}
 
 	@Override
-	public EventResult<?> use(StackHandle stack, PlayerHandle player, BingoParticipant participant, BingoGame game) {
+	public EventResult<?> use(StackHandle stack, PlayerHandle player, BingoParticipant participant, BingoGame game, boolean fromOffhand) {
 		if (participant.getTeam() == null) {
 			return EventResult.IGNORE;
 		}

@@ -17,7 +17,7 @@ public interface GamePhase extends SessionMember
     void handlePlayerJoinedSessionWorld(PlayerHandle player);
     void handlePlayerLeftSessionWorld(PlayerHandle player);
     void handleSettingsUpdated(final BingoSettings newSettings);
-    EventResult<?> handlePlayerUseItem(PlayerHandle player, @Nullable StackHandle stack);
+    EventResult<?> handlePlayerUseItem(PlayerHandle player, @Nullable StackHandle stack, boolean inOffhand);
 
     default void handleParticipantJoinedTeam(final BingoEvents.TeamParticipantEvent event) {};
     default void handleParticipantLeftTeam(final BingoEvents.TeamParticipantEvent event) {};

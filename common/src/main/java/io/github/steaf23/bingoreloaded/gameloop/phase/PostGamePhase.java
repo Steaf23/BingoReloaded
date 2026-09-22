@@ -70,7 +70,7 @@ public class PostGamePhase implements GamePhase
     }
 
     @Override
-    public EventResult<?> handlePlayerUseItem(PlayerHandle player, @Nullable StackHandle stack) {
+    public EventResult<?> handlePlayerUseItem(PlayerHandle player, @Nullable StackHandle stack, boolean inOffhand) {
         BingoParticipant participant = session.teamManager.getPlayerAsParticipant(player);
         if (participant == null || participant.sessionPlayer().isEmpty())
             return EventResult.IGNORE;

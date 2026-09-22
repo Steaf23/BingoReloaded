@@ -776,7 +776,13 @@ public class BingoGame implements GamePhase
         endWithPotentialWinner(false);
     }
 
-    public EventResult<?> handlePlayerUseItem(PlayerHandle player, @Nullable StackHandle stack) {
+    private boolean justUsedMainHand = false;
+    @Override
+    public EventResult<?> handlePlayerUseItem(PlayerHandle player, @Nullable StackHandle stack, boolean inOffhand) {
+        if (!inOffhand) {
+            justUsedMainHand = false;
+        }
+
         BingoParticipant participant = getTeamManager().getPlayerAsParticipant(player);
         if (participant == null || participant.sessionPlayer().isEmpty())
             return EventResult.IGNORE;
@@ -789,26 +795,47 @@ public class BingoGame implements GamePhase
         if (stack == null || stack.type().isAir())
             return EventResult.IGNORE;
 
+        // Ignore off-hand events if the main hand can be used instead
+        if (inOffhand) {
+            StackHandle mainStack = player.getItemInMainHand();
+            if (PlayerKit.CARD_ITEM.isCompareKeyEqual(mainStack)) {
+                return EventResult.IGNORE;
+            }
+
+            GameItem mainItem = items.getItem(mainStack);
+            if (mainItem != null && (justUsedMainHand || !player.hasCooldown(mainStack))) {
+                return EventResult.IGNORE;
+            }
+        }
+
         GameItem gameItem = items.getItem(stack);
 
         if (gameItem != null) {
             if (!gameStarted)
                 return EventResult.IGNORE;
 
-            return gameItem.tryUse(stack, player, participant, this);
+            EventResult<?> result = gameItem.tryUse(stack, player, participant, this, inOffhand);
+            if (result.consume()) {
+                justUsedMainHand = !inOffhand;
+            }
+            return result;
         } else if (PlayerKit.CARD_ITEM.isCompareKeyEqual(stack) && !config.getOptionValue(BingoOptions.DISABLE_CARD_MENU_FROM_ITEM)) {
             // Only show item task as deathmatch tasks.
             if (deathMatchTask == null) {
                 participant.showCard(null);
+                justUsedMainHand = !inOffhand;
+                return EventResult.CONSUME;
             } else if (!(deathMatchTask.data() instanceof ItemTask itemTask)) {
+                justUsedMainHand = !inOffhand;
                 return EventResult.CONSUME;
             } else {
                 participant.showCard(itemTask);
+                justUsedMainHand = !inOffhand;
                 return EventResult.CONSUME;
             }
+        } else {
+            return EventResult.IGNORE;
         }
-
-        return EventResult.IGNORE;
     }
 
     @Override

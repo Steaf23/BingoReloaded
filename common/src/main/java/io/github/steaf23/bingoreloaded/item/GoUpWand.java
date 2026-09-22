@@ -42,7 +42,7 @@ public class GoUpWand extends GameItem {
 	}
 
 	@Override
-	public EventResult<?> use(StackHandle stack, PlayerHandle player, BingoParticipant participant, BingoGame game) {
+	public EventResult<?> use(StackHandle stack, PlayerHandle player, BingoParticipant participant, BingoGame game, boolean fromOffhand) {
 		var config = game.getConfig();
 
 		useGoUpWand(game.taskScheduler(), player,

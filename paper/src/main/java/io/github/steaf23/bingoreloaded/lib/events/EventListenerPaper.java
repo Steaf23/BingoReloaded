@@ -41,6 +41,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerStatisticIncrementEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.List;
@@ -180,7 +181,8 @@ public class EventListenerPaper implements Listener {
 
 		EventResult<?> result = dispatcher.sendPlayerUseItem(
 				new PlayerHandlePaper(server, event.getPlayer()),
-				new StackHandlePaper(event.getItem()));
+				new StackHandlePaper(event.getItem()),
+				event.getHand() == EquipmentSlot.OFF_HAND);
 
 		if (result.consume()) {
 			event.setCancelled(true);

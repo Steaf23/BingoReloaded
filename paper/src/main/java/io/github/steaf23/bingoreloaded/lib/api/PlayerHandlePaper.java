@@ -165,6 +165,16 @@ public class PlayerHandlePaper implements PlayerHandle {
 	}
 
 	@Override
+	public StackHandle getItemInMainHand() {
+		return new StackHandlePaper(player.getInventory().getItemInMainHand());
+	}
+
+	@Override
+	public StackHandle getItemInOffHand() {
+		return new StackHandlePaper(player.getInventory().getItemInOffHand());
+	}
+
+	@Override
 	public void setRespawnPoint(GlobalPosition newSpawn, boolean force) {
 		player.setRespawnLocation(PaperApiHelper.locationFromWorldPos(world(), newSpawn), force);
 	}
@@ -292,13 +302,15 @@ public class PlayerHandlePaper implements PlayerHandle {
 	}
 
 	@Override
-	public void throwPearl() {
+	public void throwPearl(boolean fromOffhand) {
 		// NMS BEGIN
+		InteractionHand hand = fromOffhand ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND;
+
 		ServerPlayer serverPlayer = ((CraftPlayer)player).getHandle();
 		if (!serverPlayer.hasInfiniteMaterials()) { // add an extra to not consume it in the 'use' method
-			serverPlayer.getItemInHand(InteractionHand.MAIN_HAND).setCount(2);
+			serverPlayer.getItemInHand(hand).setCount(2);
 		}
-		Items.ENDER_PEARL.use(serverPlayer.level(), serverPlayer, InteractionHand.MAIN_HAND);
+		Items.ENDER_PEARL.use(serverPlayer.level(), serverPlayer, hand);
 		// NMS END
 	}
 

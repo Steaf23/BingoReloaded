@@ -35,8 +35,8 @@ public class EndlessPearl extends GameItem {
 	}
 
 	@Override
-	public EventResult<?> use(StackHandle stack, PlayerHandle player, BingoParticipant participant, BingoGame game) {
-		player.throwPearl();
+	public EventResult<?> use(StackHandle stack, PlayerHandle player, BingoParticipant participant, BingoGame game, boolean fromOffhand) {
+		player.throwPearl(fromOffhand);
 		return EventResult.CONSUME;
 	}
 }

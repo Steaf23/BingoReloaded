@@ -42,13 +42,13 @@ public abstract class GameItem implements Keyed {
 		return Optional.ofNullable(cooldown);
 	}
 
-	public EventResult<?> tryUse(StackHandle stack, PlayerHandle player, BingoParticipant participant, BingoGame game) {
+	public EventResult<?> tryUse(StackHandle stack, PlayerHandle player, BingoParticipant participant, BingoGame game, boolean fromOffhand) {
 		if (player.hasCooldown(stack)) {
 			return EventResult.IGNORE;
 		}
 
 		if (!automaticCooldown || applyCooldown(stack, player, game).consume()) {
-			return use(stack, player, participant, game);
+			return use(stack, player, participant, game, fromOffhand);
 		} else {
 			return EventResult.IGNORE;
 		}
@@ -79,5 +79,5 @@ public abstract class GameItem implements Keyed {
 
 	public abstract ItemTemplate createForParticipant(@Nullable BingoParticipant participant);
 
-	public abstract EventResult<?> use(StackHandle stack, PlayerHandle player, BingoParticipant participant, BingoGame game);
+	public abstract EventResult<?> use(StackHandle stack, PlayerHandle player, BingoParticipant participant, BingoGame game, boolean fromOffhand);
 }

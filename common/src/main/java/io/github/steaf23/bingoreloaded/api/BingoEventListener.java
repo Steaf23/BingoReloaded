@@ -93,11 +93,11 @@ public final class BingoEventListener implements PlatformEventDispatcher {
 	}
 
 	@Override
-	public EventResult<?> sendPlayerUseItem(PlayerHandle player, @Nullable StackHandle handItem) {
+	public EventResult<?> sendPlayerUseItem(PlayerHandle player, @Nullable StackHandle handItem, boolean inOffhand) {
 		BingoSession session = getSession(player.world());
 		if (session == null) return EventResult.IGNORE;
 
-		return session.phase().handlePlayerUseItem(player, handItem);
+		return session.phase().handlePlayerUseItem(player, handItem, inOffhand);
 	}
 
 	@Override

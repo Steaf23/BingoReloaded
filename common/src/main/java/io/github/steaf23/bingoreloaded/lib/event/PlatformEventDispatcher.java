@@ -22,7 +22,7 @@ public interface PlatformEventDispatcher {
 	EventResult<EventResults.PlayerMoveResult> sendPlayerPortal(PlayerHandle player, GlobalPosition from, GlobalPosition to);
 	EventResult<?> sendPlayerDroppedStack(PlayerHandle player, StackHandle item);
 	EventResult<?> sendPlayerStackDamaged(PlayerHandle player, StackHandle item);
-	EventResult<?> sendPlayerUseItem(PlayerHandle player, @Nullable StackHandle handItem);
+	EventResult<?> sendPlayerUseItem(PlayerHandle player, @Nullable StackHandle handItem, boolean inOffhand);
 	EventResult<?> sendPlayerFallDamage(PlayerHandle player);
 	EventResult<EventResults.PlayerDeathResult> sendPlayerDeath(PlayerHandle player, Collection<? extends StackHandle> drops);
 	EventResult<EventResults.PlayerRespawnResult> sendPlayerRespawn(PlayerHandle player, boolean isBedSpawn, boolean isAnchorSpawn);
