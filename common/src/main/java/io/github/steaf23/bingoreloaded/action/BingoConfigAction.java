@@ -38,7 +38,7 @@ public class BingoConfigAction extends ActionTree {
         }).addTabCompletion(args ->
                 switch (args.length) {
                     case 1 -> allOptionKeys(true);
-                    default -> List.of();
+                    default -> COMPLETE_NOTHING;
                 })
                 .addUsage("<option> [new_value]");
     }

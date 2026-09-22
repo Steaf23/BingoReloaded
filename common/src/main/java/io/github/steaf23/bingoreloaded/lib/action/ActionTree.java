@@ -2,6 +2,7 @@ package io.github.steaf23.bingoreloaded.lib.action;
 
 import io.github.steaf23.bingoreloaded.lib.api.ActionUser;
 import io.github.steaf23.bingoreloaded.lib.api.platform.GameContext;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -12,6 +13,9 @@ import java.util.stream.Collectors;
 
 public class ActionTree
 {
+    public static final List<String> COMPLETE_PLAYER = List.of("");
+    public static final List<String> COMPLETE_NOTHING = List.of();
+
     protected final List<ActionTree> subActions;
     protected final String name;
     private ActionExecutor action;
@@ -67,7 +71,7 @@ public class ActionTree
         return this;
     }
 
-    public ActionTree addTabCompletion(Function<String[], List<String>> tabCompletionForArgs) {
+    public ActionTree addTabCompletion(Function<String[], @NotNull List<String>> tabCompletionForArgs) {
         this.tabCompletionForArgs = (_, args) -> tabCompletionForArgs.apply(args);
         return this;
     }

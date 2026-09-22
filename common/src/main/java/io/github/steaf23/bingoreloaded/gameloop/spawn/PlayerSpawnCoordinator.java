@@ -12,6 +12,7 @@ import io.github.steaf23.bingoreloaded.player.team.TeamContainer;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
 public class PlayerSpawnCoordinator {
@@ -41,11 +42,17 @@ public class PlayerSpawnCoordinator {
 	}
 
 	public void teleportPlayerToSpawn(BingoParticipant participant) {
+		getPlayerStartPosition(participant).ifPresent(position ->
+				teleportPlayerToStart(participant, position, 4));
+	}
+
+	public Optional<GlobalPosition> getPlayerStartPosition(BingoParticipant participant) {
 		for (SpawnStrategy.SpawnSite site : sites) {
 			if (site.players().contains(participant)) {
-				teleportPlayerToStart(participant, site.position(), 4);
+				return Optional.of(site.position());
 			}
 		}
+		return Optional.empty();
 	}
 
 	private void teleportPlayerToStart(BingoParticipant participant, GlobalPosition to, int spread) {

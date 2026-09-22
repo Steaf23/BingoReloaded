@@ -2,9 +2,6 @@ plugins {
     id 'java-library'
 }
 
-group = 'io.github.steaf23.bingoreloaded'
-version = '3.5.2'
-
 repositories {
     mavenCentral()
 }

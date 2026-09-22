@@ -127,7 +127,7 @@ public class PlayerHandlePaper implements PlayerHandle {
 	public void teleportAsync(GlobalPosition pos, @Nullable Consumer<Boolean> whenFinished) {
 		DebugLogger.addLog("Teleporting player async to pos: " + pos.x() + ", " + pos.y() + ", " + pos.z() + ", world: " + pos.dimension());
 
-		var future = player.teleportAsync(PaperApiHelper.locationFromWorldPos(world(), pos), PlayerTeleportEvent.TeleportCause.PLUGIN);
+		var future = player.teleportAsync(PaperApiHelper.locationFromWorldPos(server.getWorld(pos.dimension()), pos), PlayerTeleportEvent.TeleportCause.PLUGIN);
 		if (whenFinished != null) {
 			future.thenAccept(whenFinished);
 		}
@@ -136,7 +136,7 @@ public class PlayerHandlePaper implements PlayerHandle {
 	@Override
 	public boolean teleportBlocking(GlobalPosition pos) {
 		DebugLogger.addLog("Teleporting player blocking to pos: " + pos.x() + ", " + pos.y() + ", " + pos.z() + ", world: " + pos.dimension());
-		return player.teleport(PaperApiHelper.locationFromWorldPos(world(), pos), PlayerTeleportEvent.TeleportCause.PLUGIN);
+		return player.teleport(PaperApiHelper.locationFromWorldPos(server.getWorld(pos.dimension()), pos), PlayerTeleportEvent.TeleportCause.PLUGIN);
 	}
 
 	@Override
@@ -176,7 +176,7 @@ public class PlayerHandlePaper implements PlayerHandle {
 
 	@Override
 	public void setRespawnPoint(GlobalPosition newSpawn, boolean force) {
-		player.setRespawnLocation(PaperApiHelper.locationFromWorldPos(world(), newSpawn), force);
+		player.setRespawnLocation(PaperApiHelper.locationFromWorldPos(server.getWorld(newSpawn.dimension()), newSpawn), force);
 	}
 
 	@Override

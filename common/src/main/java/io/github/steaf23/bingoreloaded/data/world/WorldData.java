@@ -62,7 +62,7 @@ public class WorldData
         boolean hasNether = false;
         boolean hasTheEnd = false;
         if (options.createNether()) {
-            WorldHandle nether = createWorld(WorldGroup.theEndKey(overworldKey), DimensionType.NETHER);
+            WorldHandle nether = createWorld(WorldGroup.netherKey(overworldKey), DimensionType.NETHER);
             hasNether = nether != null;
         }
 

@@ -149,4 +149,12 @@ public class GlobalPosition extends Position {
 	public GlobalPosition floor() {
 		return (GlobalPosition)super.floor();
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof GlobalPosition pos) {
+			return pos.x() == x() && pos.y() == y() && pos.z() == z() && pos.dimension().equals(dimension());
+		}
+		return super.equals(obj);
+	}
 }

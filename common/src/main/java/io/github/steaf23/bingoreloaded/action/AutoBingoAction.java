@@ -88,7 +88,7 @@ public class AutoBingoAction extends DeferredAction {
 							return List.of("true", "false");
 						}
 					}
-					return List.of();
+					return COMPLETE_NOTHING;
 				}));
 
 
@@ -163,7 +163,7 @@ public class AutoBingoAction extends DeferredAction {
 				.addTabCompletion(args -> switch (args.length) {
 					case 2 -> List.of("regular", "lockout", "complete", "hotswap", "blitz");
 					case 3 -> List.of("3", "5");
-					default -> List.of();
+					default -> COMPLETE_NOTHING;
 				}));
 
 
@@ -185,7 +185,7 @@ public class AutoBingoAction extends DeferredAction {
 			}
 			return setHotswapExpire(settings, args[0], Arrays.copyOfRange(args, 1, args.length));
 		}).addUsage("<true | false>")
-				.addTabCompletion(args -> args.length == 2 ? List.of("true", "false") : List.of()));
+				.addTabCompletion(args -> args.length == 2 ? List.of("true", "false") : COMPLETE_NOTHING));
 
 
 		this.addSubAction(new ActionTree("complete_goal", (context, args) -> {
@@ -206,7 +206,7 @@ public class AutoBingoAction extends DeferredAction {
 			}
 			return setDifferentCardPerTeam(settings, args[0], Arrays.copyOfRange(args, 1, args.length));
 		}).addUsage("<true | false>")
-				.addTabCompletion(args -> args.length == 2 ? List.of("true", "false") : List.of()));
+				.addTabCompletion(args -> args.length == 2 ? List.of("true", "false") : COMPLETE_NOTHING));
 
 
 		this.addSubAction(new ActionTree("end", (context, args) -> end(context.gameManager(), args[0])));
@@ -225,27 +225,27 @@ public class AutoBingoAction extends DeferredAction {
 					return switch (args.length) {
 						case 2 -> List.of("save", "load", "remove", "default");
 						case 3 -> new ArrayList<>(settingsData.getPresetNames());
-						default -> List.of();
+						default -> COMPLETE_NOTHING;
 					};
 				}));
 
 
 		this.addSubAction(new ActionTree("addplayer", this::addPlayerToSession).addUsage("<player_name>").addTabCompletion(args -> {
 			if (args.length == 2) {
-				return null;
+				return COMPLETE_PLAYER;
 			} else {
-				return List.of();
+				return COMPLETE_NOTHING;
 			}
 		}));
 
 
 		this.addSubAction(new ActionTree("kickplayer", this::removePlayerFromSession).addUsage("<player_name> <target_world_name>").addTabCompletion((context, args) -> {
 			if (args.length == 2) {
-				return null;
+				return COMPLETE_PLAYER;
 			} else if (args.length == 3) {
 				return context.server().getLoadedWorlds().stream().map(w -> w.key().asString()).toList();
 			} else {
-				return List.of();
+				return COMPLETE_NOTHING;
 			}
 		}));
 
@@ -254,7 +254,7 @@ public class AutoBingoAction extends DeferredAction {
 			if (args.length == 2) {
 				return context.server().getLoadedWorlds().stream().map(w -> w.key().asString()).toList();
 			} else {
-				return List.of();
+				return COMPLETE_NOTHING;
 			}
 		}));
 
@@ -271,10 +271,10 @@ public class AutoBingoAction extends DeferredAction {
 					case "gamemodes" -> voteList.gamemodes();
 					case "cards" -> voteList.cards();
 					case "cardsizes" -> voteList.cardSizes();
-					default -> List.of();
+					default -> COMPLETE_NOTHING;
 				};
 			}
-			return List.of();
+			return COMPLETE_NOTHING;
 		}));
 
 		this.addSubAction(new ActionTree("playerdata", this::playerDataCommand)
@@ -283,9 +283,9 @@ public class AutoBingoAction extends DeferredAction {
 					if (args.length <= 2) {
 						return List.of("save", "load", "remove");
 					} else if (args.length == 3) {
-						return null;
+						return COMPLETE_PLAYER;
 					}
-					return List.of();
+					return COMPLETE_NOTHING;
 				}));
 	}
 

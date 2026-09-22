@@ -19,7 +19,7 @@ import java.util.Set;
 public record WorldGroup(PlatformServer server, Key overworldKey, boolean hasNether, boolean hasTheEnd) implements Keyed
 {
     public void teleportPlayer(PlayerHandle player) {
-        player.teleportBlocking(server.getWorld(overworldKey).spawnPoint());
+        player.teleportAsync(server.getWorld(overworldKey).spawnPoint());
     }
 
     public @Nullable WorldHandle getOverworld() {
