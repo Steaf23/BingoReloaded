@@ -1,7 +1,11 @@
 package io.github.steaf23.bingoreloaded.lib.api.item;
 
+import io.papermc.paper.datacomponent.DataComponentTypes;
+import io.papermc.paper.datacomponent.item.Tool;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Material;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -33,7 +37,15 @@ public class ItemTypePaper implements ItemType {
 
 	@Override
 	public boolean isPreferredTool(StackHandle tool) {
-		return type.createBlockData().isPreferredTool(((StackHandlePaper)tool).handle());
+		ItemStack stack = ((StackHandlePaper)tool).handle();
+
+		Tool toolComp = stack.getData(DataComponentTypes.TOOL);
+		if (toolComp == null) {
+			return false;
+		}
+
+		BlockData block = type.createBlockData();
+		return block.getDestroySpeed(stack) > toolComp.defaultMiningSpeed();
 	}
 
 	@Override

@@ -5,7 +5,6 @@ import io.github.steaf23.bingoreloaded.lib.data.core.tag.TagDataStorage;
 import io.github.steaf23.bingoreloaded.lib.data.core.tag.TagTree;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import io.github.steaf23.bingoreloaded.lib.util.PDCHelper;
-import io.github.steaf23.bingoreloaded.util.ItemHelper;
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import io.papermc.paper.datacomponent.item.UseCooldown;
 import net.kyori.adventure.key.Key;
@@ -14,7 +13,6 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
-import org.checkerframework.checker.units.qual.N;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -69,12 +67,12 @@ public class StackHandlePaper implements StackHandle {
 
 	@Override
 	public boolean isTool() {
-		return ItemHelper.isTool(stack.getType());
+		return stack.hasData(DataComponentTypes.TOOL);
 	}
 
 	@Override
 	public boolean isArmor() {
-		return ItemHelper.isArmor(stack.getType());
+		return stack.hasData(DataComponentTypes.EQUIPPABLE);
 	}
 
 	@Override

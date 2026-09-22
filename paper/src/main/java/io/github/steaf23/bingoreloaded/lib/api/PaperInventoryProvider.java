@@ -6,6 +6,7 @@ import io.github.steaf23.bingoreloaded.lib.api.inventory.InventoryTemplate;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandlePaper;
 import io.github.steaf23.bingoreloaded.lib.api.platform.PaperInventories;
+import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformServer;
 import io.github.steaf23.bingoreloaded.lib.inventory.BasicMenu;
 import io.github.steaf23.bingoreloaded.lib.item.ItemTemplate;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
@@ -33,9 +34,11 @@ public class PaperInventoryProvider implements CapacityInventoryProvider, Listen
 
 	private int slots = 54;
 	private Component title = Component.text("Inventory");
+	private final PlatformServer server;
 
-	public PaperInventoryProvider(JavaPlugin plugin) {
+	public PaperInventoryProvider(JavaPlugin plugin, PlatformServer server) {
 		Bukkit.getPluginManager().registerEvents(this, plugin);
+		this.server = server;
 	}
 
 	@Override
@@ -64,7 +67,7 @@ public class PaperInventoryProvider implements CapacityInventoryProvider, Listen
 
 		for (int i = 0; i < 9 - extraSlots; i++) {
 			ItemTemplate item = BasicMenu.BLANK.copyToSlot(8 - i, rows - 1).setCompareKey("locked");
-			template.setItem(item.getSlot(), item.buildItem(null));
+			template.setItem(item.getSlot(), item.buildItem(server));
 		}
 		return template;
 	}
