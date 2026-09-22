@@ -91,7 +91,8 @@ public class EventListenerFabric {
 	private InteractionResult playerUseItem(Player player, Level level, InteractionHand hand) {
 		EventResult<?> result = dispatcher.sendPlayerUseItem(
 				new PlayerHandleFabric(server, (ServerPlayer)player),
-				new StackHandleFabric(player.getItemInHand(hand)));
+				new StackHandleFabric(player.getItemInHand(hand)),
+				hand == InteractionHand.OFF_HAND);
 		return result.consume() ? InteractionResult.FAIL : InteractionResult.PASS;
 	}
 

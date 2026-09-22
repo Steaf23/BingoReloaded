@@ -1,6 +1,7 @@
 package io.github.steaf23.bingoreloaded.data.world;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
+import io.github.steaf23.bingoreloaded.lib.api.BingoReloadedRuntime;
 import io.github.steaf23.bingoreloaded.lib.api.DimensionType;
 import io.github.steaf23.bingoreloaded.lib.api.WorldHandle;
 import io.github.steaf23.bingoreloaded.lib.api.WorldOptions;
@@ -18,9 +19,11 @@ public class WorldData
 
     private final PlatformServer server;
     private final Options options;
+    private final BingoReloadedRuntime runtime;
 
-    public WorldData(PlatformServer server, Options options) {
+    public WorldData(PlatformServer server, BingoReloadedRuntime runtime, Options options) {
         this.server = server;
+        this.runtime = runtime;
         this.options = options;
     }
 
@@ -52,8 +55,7 @@ public class WorldData
      * @return created WorldGroup
      */
     public WorldGroup createWorldGroup(Key overworldKey) {
-        //TODO: REFACTOR re-implement.
-        WorldHandle overworld = null; //BingoReloaded.runtime().createBingoOverworld(overworldKey, options.noiseGenerationSettings);
+        WorldHandle overworld = runtime.createBingoOverworld(overworldKey, options.noiseGenerationSettings);
         if (overworld == null) {
             ConsoleMessenger.bug("Could not create world using bingo small biome generation.", this);
             createWorld(overworldKey, DimensionType.OVERWORLD);

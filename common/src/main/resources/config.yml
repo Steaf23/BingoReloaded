@@ -317,6 +317,6 @@ clearDefaultWorlds: true
 # By default, it uses the vanilla world generation, but it can be configured to work for the bingoreloaded datapack or any other datapack with noise generation settings.
 # This is formatted as a namespaced key, where the name of the datapack comes first and is (in this case) followed by the name of the worldgen/noise_settings file.
 # If you want to use vanilla generation, put "null" as the value.
-# If you want to use generation included in the bingoreloaded datapack, make sure to add it to your main world and set this setting to "bingoreloaded:bingo"
+# If you want to use generation included in the bingoreloaded datapack, make sure to add it to the world/datapacks folder and set this setting to "bingoreloaded:bingo"
 # And then make sure to restart the server to apply the changes.
 customWorldGeneration: "null"

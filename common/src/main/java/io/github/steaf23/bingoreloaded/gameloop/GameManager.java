@@ -71,7 +71,7 @@ public class GameManager {
 
 		@Subst("gamemanager:none") String settingsName = config.getOptionValue(BingoOptions.CUSTOM_WORLD_GENERATION);
 		Key generationSettings = settingsName.equals("null") ? null : Key.key(settingsName);
-		this.worldData = new WorldData(server, new WorldData.Options(
+		this.worldData = new WorldData(server, runtime, new WorldData.Options(
 				generationSettings,
 				!config.getOptionValue(BingoOptions.DISABLE_NETHER),
 				!config.getOptionValue(BingoOptions.DISABLE_THE_END))

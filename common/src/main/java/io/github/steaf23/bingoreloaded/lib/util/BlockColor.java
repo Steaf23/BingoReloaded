@@ -87,6 +87,4 @@ public enum BlockColor
     public String getName() {
         return name;
     }
-
-    //TODO: finish all colored blocks
 }

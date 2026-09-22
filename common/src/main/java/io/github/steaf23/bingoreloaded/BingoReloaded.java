@@ -71,10 +71,10 @@ public class BingoReloaded implements Namespaced {
 		this.metaInfo = info;
 		// Kinda ugly, but we can assume there will only be one instance of this class anyway.
 		INSTANCE = this;
-//		DebugLogger.setupLogger(platform);
 	}
 
 	public void enable(PlatformResources resources) {
+		DebugLogger.setupLogger(resources.getDataFolder(), metaInfo.name());
 		this.resources = resources;
 		runtime.setupConfig();
 
