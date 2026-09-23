@@ -31,7 +31,6 @@ import net.minecraft.client.KeyMapping;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.Identifier;
-import org.lwjgl.glfw.GLFW;
 
 public class BingoReloadedCompanionClient implements ClientModInitializer {
 
@@ -119,8 +118,8 @@ public class BingoReloadedCompanionClient implements ClientModInitializer {
 		KeyMapping.Category category = KeyMapping.Category.register(Identifier.fromNamespaceAndPath("bingoreloadedcompanion", "main"));
 		KeyMapping toggleCardVisibility = KeyMappingHelper.registerKeyMapping(new KeyMapping(
 				"key.bingoreloadedcompanion.toggle_card_visibility",
-				InputConstants.Type.KEYSYM,
-				GLFW.GLFW_KEY_R,
+				InputConstants.Type.KEYBOARD,
+				InputConstants.KEY_R,
 				category));
 
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {

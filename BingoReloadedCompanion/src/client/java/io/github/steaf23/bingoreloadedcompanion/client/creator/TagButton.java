@@ -1,5 +1,6 @@
 package io.github.steaf23.bingoreloadedcompanion.client.creator;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
@@ -46,13 +47,13 @@ public class TagButton extends AbstractWidget {
 
 	@Override
 	public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
-		if (!isMouseOver(event.x(), event.y()) || event.button() != 0) {
-			return super.mouseClicked(event, doubleClick);
+		if (!isMouseOver(event.x(), event.y()) || event.button() != InputConstants.MOUSE_BUTTON_LEFT) {
+			return false;
 		}
 
 		TagBarWidget.Tag tag = selectedTask.taskScreen().selectedTag();
 		selectedTask.tagChanged(tag);
 
-		return false;
+		return super.mouseClicked(event, doubleClick);
 	}
 }

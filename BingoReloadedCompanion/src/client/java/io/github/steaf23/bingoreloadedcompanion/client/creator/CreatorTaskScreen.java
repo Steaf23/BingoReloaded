@@ -453,11 +453,11 @@ public class CreatorTaskScreen extends Screen {
 
 			int slotX = hoveredTask.getX();
 			int slotY = hoveredTask.getY();
-			graphics.tooltip(font, List.of(tooltipComponent), slotX - tooltipComponent.getWidth(font) / 2, slotY - tooltipComponent.getHeight(font) + 9, DefaultTooltipPositioner.INSTANCE, null);
+			graphics.tooltip(font, List.of(tooltipComponent), slotX - tooltipComponent.getWidth(font) / 2, slotY - tooltipComponent.getHeight(font) + 9, DefaultTooltipPositioner.INSTANCE, null, false);
 		}
 
 		if (currentEditMode == TaskEditMode.TAG && selectedTag != null) {
-			graphics.blitSprite(RenderPipelines.GUI_TEXTURED, CURSOR_ICON, mouseX - 10, mouseY - 4, 24, 16, ScreenHelper.addAlphaToColor(selectedTag.color().value(), 255));
+			graphics.blitSprite(RenderPipelines.GUI_TEXTURED, CURSOR_ICON, mouseX - 3, mouseY - 7, 24, 16, ScreenHelper.addAlphaToColor(selectedTag.color().value(), 255));
 		}
 	}
 

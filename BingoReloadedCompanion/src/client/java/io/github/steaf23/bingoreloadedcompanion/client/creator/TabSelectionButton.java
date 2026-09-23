@@ -1,12 +1,12 @@
 package io.github.steaf23.bingoreloadedcompanion.client.creator;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.platform.cursor.CursorTypes;
 import io.github.steaf23.bingoreloaded.protocol.data.task.TaskType;
 import io.github.steaf23.bingoreloadedcompanion.client.util.ScreenHelper;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
@@ -14,7 +14,6 @@ import net.minecraft.network.chat.Style;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
-import org.lwjgl.glfw.GLFW;
 
 public class TabSelectionButton extends AbstractWidget {
 
@@ -96,7 +95,7 @@ public class TabSelectionButton extends AbstractWidget {
 		double mouseX = event.x();
 		double mouseY = event.y();
 
-		if (button != GLFW.GLFW_MOUSE_BUTTON_LEFT) {
+		if (button != InputConstants.MOUSE_BUTTON_LEFT) {
 			return false;
 		}
 

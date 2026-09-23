@@ -1,5 +1,7 @@
 package io.github.steaf23.bingoreloadedcompanion.client.config;
 
+import com.mojang.blaze3d.platform.InputConstants;
+import com.mojang.blaze3d.platform.cursor.CursorTypes;
 import io.github.steaf23.bingoreloaded.protocol.data.BingoCard;
 import io.github.steaf23.bingoreloaded.protocol.data.BingoGamemode;
 import io.github.steaf23.bingoreloaded.protocol.data.ClientSettings;
@@ -23,10 +25,11 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.CommonColors;
-import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,8 +56,6 @@ public class BingoConfigScreen extends Screen {
 	private static final int SLIDER_WIDTH = 10;
 	private static final int SLIDER_BACKGROUND_WIDTH = BUTTON_WIDTH * 2 + 2;
 	private static final int BUTTON_HEIGHT = 14;
-
-	private static final long MOVE_CURSOR = GLFW.glfwCreateStandardCursor(GLFW.GLFW_RESIZE_ALL_CURSOR);
 
 	private Identifier selectedElement;
 	private Identifier hoveringElement;
@@ -129,11 +130,6 @@ public class BingoConfigScreen extends Screen {
 	}
 
 	@Override
-	public void removed() {
-		GLFW.glfwSetCursor(getGameWindowId(), 0);
-	}
-
-	@Override
 	public void extractRenderState(GuiGraphicsExtractor context, int mouseX, int mouseY, float deltaTicks) {
 		super.extractRenderState(context, mouseX, mouseY, deltaTicks);
 
@@ -189,9 +185,11 @@ public class BingoConfigScreen extends Screen {
 				if (isMouseOverShowButton(mouseX, mouseY) && configManager.getHudPlacement(element).visible()) {
 					context.setTooltipForNextFrame(Minecraft.getInstance().font, Component.nullToEmpty("Hide"), mouseX, mouseY);
 					context.blitSprite(RenderPipelines.GUI_TEXTURED, HIDE_BUTTON_HIGHLIGHT, showButtonX, buttonY, BUTTON_WIDTH, BUTTON_HEIGHT);
+					context.requestCursor(CursorTypes.POINTING_HAND);
 				} else if (isMouseOverShowButton(mouseX, mouseY)) {
 					context.setTooltipForNextFrame(Minecraft.getInstance().font, Component.nullToEmpty("Show"), mouseX, mouseY);
 					context.blitSprite(RenderPipelines.GUI_TEXTURED, SHOW_BUTTON_HIGHLIGHT, showButtonX, buttonY, BUTTON_WIDTH, BUTTON_HEIGHT);
+					context.requestCursor(CursorTypes.POINTING_HAND);
 				} else if (configManager.getHudPlacement(element).visible()) {
 					context.blitSprite(RenderPipelines.GUI_TEXTURED, HIDE_BUTTON, showButtonX, buttonY, BUTTON_WIDTH, BUTTON_HEIGHT);
 				} else {
@@ -201,6 +199,7 @@ public class BingoConfigScreen extends Screen {
 				if (isMouseOverResetButton(mouseX, mouseY)) {
 					context.setTooltipForNextFrame(Minecraft.getInstance().font, Component.nullToEmpty("Reset"), mouseX, mouseY);
 					context.blitSprite(RenderPipelines.GUI_TEXTURED, RESET_BUTTON_HIGHLIGHT, resetButtonX, buttonY, BUTTON_WIDTH, BUTTON_HEIGHT);
+					context.requestCursor(CursorTypes.POINTING_HAND);
 				} else {
 					context.blitSprite(RenderPipelines.GUI_TEXTURED, RESET_BUTTON, resetButtonX, buttonY, BUTTON_WIDTH, BUTTON_HEIGHT);
 				}
@@ -208,12 +207,17 @@ public class BingoConfigScreen extends Screen {
 				if (isMouseOverScaleButton(mouseX, mouseY)) {
 					context.setTooltipForNextFrame(Minecraft.getInstance().font, Component.nullToEmpty("Change size"), mouseX, mouseY);
 					context.blitSprite(RenderPipelines.GUI_TEXTURED, SCALE_BUTTON_HIGHLIGHT, scaleButtonX, buttonY, BUTTON_WIDTH, BUTTON_HEIGHT);
+					context.requestCursor(CursorTypes.POINTING_HAND);
 				} else {
 					context.blitSprite(RenderPipelines.GUI_TEXTURED, SCALE_BUTTON, scaleButtonX, buttonY, BUTTON_WIDTH, BUTTON_HEIGHT);
 				}
 
 				int sliderButtonX = rect.endX() - (BUTTON_WIDTH * 5 + 8);
 				drawSlider(context, sliderButtonX, buttonY, placement.transparency(), mouseX, mouseY);
+
+				if (hoveringElement == element) {
+					context.requestCursor(CursorTypes.RESIZE_ALL);
+				}
 
 			} else if (hoveringElement == element) {
 				context.fill(rect.x() - 2, rect.y() - 2, rect.endX() + 2, rect.endY() + 2, 0x44DADADA);
@@ -225,6 +229,7 @@ public class BingoConfigScreen extends Screen {
 			int offsetX = (int)(mouseX - clickOffsetX);
 			int offsetY = (int)(mouseY - clickOffsetY);
 			context.fill(offsetX - 2, offsetY - 2, offsetX + dragRect.width() + 2, offsetY + dragRect.height() + 2, 0x44DADADA);
+			context.requestCursor(CursorTypes.RESIZE_ALL);
 		}
 	}
 
@@ -233,6 +238,11 @@ public class BingoConfigScreen extends Screen {
 		if (isMouseOverTransparencySlider(mouseX, mouseY)) {
 			context.setTooltipForNextFrame(Minecraft.getInstance().font, Component.nullToEmpty("Transparency"), mouseX, mouseY);
 			sliderTexture = SLIDER_BUTTON_SLIDER_HIGHLIGHT;
+			if (draggingSlider) {
+				context.requestCursor(CursorTypes.RESIZE_EW);
+			} else {
+				context.requestCursor(CursorTypes.POINTING_HAND);
+			}
 		}
 
 		int range = SLIDER_BACKGROUND_WIDTH - SLIDER_WIDTH;
@@ -294,10 +304,6 @@ public class BingoConfigScreen extends Screen {
 		return ScreenHelper.isPointWithinBounds(buttonX, buttonY, SLIDER_BACKGROUND_WIDTH, BUTTON_HEIGHT, mouseX, mouseY);
 	}
 
-	private long getGameWindowId() {
-		return minecraft.getWindow().handle();
-	}
-
 	@Override
 	public boolean mouseClicked(MouseButtonEvent click, boolean doubled) {
 		if (doubled) return true;
@@ -306,21 +312,23 @@ public class BingoConfigScreen extends Screen {
 		double mouseX = click.x();
 		double mouseY = click.y();
 
-		if (button != GLFW.GLFW_MOUSE_BUTTON_LEFT) {
+		if (button != InputConstants.MOUSE_BUTTON_LEFT) {
 			return super.mouseClicked(click, doubled);
 		}
 
+		boolean success = false;
+
 		if (isMouseOverShowButton(mouseX, mouseY)) {
 			configManager.toggleElementVisible(selectedElement);
-			return true;
+			success = true;
 		} else if (isMouseOverResetButton(mouseX, mouseY)) {
 			configManager.resetElement(selectedElement);
-			return true;
+			success = true;
 		} else if (isMouseOverScaleButton(mouseX, mouseY)) {
 			int scale = (int) configManager.getHudPlacement(selectedElement).scaleX();
 			scale = 1 + ((scale - 1) + 1) % 4;
 			configManager.setElementScale(selectedElement, scale, scale);
-			return true;
+			success = true;
 		} else if (isMouseOverTransparencySlider(mouseX, mouseY)) {
 			draggingSlider = true;
 			int range = SLIDER_BACKGROUND_WIDTH - SLIDER_WIDTH;
@@ -332,6 +340,11 @@ public class BingoConfigScreen extends Screen {
 
 			int pixelValue = Math.clamp(targetX, 5, range + 5);
 			configManager.setElementTransparency(selectedElement, 1.0 - (double) (pixelValue - 5) / (double) range);
+			success = true;
+		}
+
+		if (success) {
+			playButtonSound();
 			return true;
 		}
 
@@ -343,9 +356,8 @@ public class BingoConfigScreen extends Screen {
 					clickOffsetX = mouseX - selectedRect.x();
 					clickOffsetY = mouseY - selectedRect.y();
 				}
-				else if (selectedElement != element) {
+				else {
 					selectedElement = element;
-					GLFW.glfwSetCursor(getGameWindowId(), MOVE_CURSOR);
 				}
 				return true;
 			}
@@ -394,22 +406,13 @@ public class BingoConfigScreen extends Screen {
 
 		for (Identifier element : elements) {
 			if (isMouseOverElement(element, mouseX, mouseY)) {
-				if (element == selectedElement) {
-					GLFW.glfwSetCursor(getGameWindowId(), MOVE_CURSOR);
-				}
-
 				hoveringElement = element;
-
-				if (hoveringElement != selectedElement) {
-					GLFW.glfwSetCursor(getGameWindowId(), 0);
-				}
 				return;
 			}
 		}
 
 		if (hoveringElement != null) {
 			hoveringElement = null;
-			GLFW.glfwSetCursor(getGameWindowId(), 0);
 		}
 	}
 
@@ -417,10 +420,8 @@ public class BingoConfigScreen extends Screen {
 	@Override
 	public boolean keyPressed(KeyEvent key) {
 		int keyCode = key.key();
-		int scanCode = key.scancode();
-		int modifiers = key.modifiers();
 
-		if (keyCode == GLFW.GLFW_KEY_ESCAPE) {
+		if (keyCode == InputConstants.KEY_ESCAPE) {
 			closeScreen();
 			return true;
 		}
@@ -429,16 +430,16 @@ public class BingoConfigScreen extends Screen {
 			return super.keyPressed(key);
 		}
 
-		if (keyCode == GLFW.GLFW_KEY_W || keyCode == GLFW.GLFW_KEY_UP) {
+		if (keyCode == InputConstants.KEY_W || keyCode == InputConstants.KEY_UP) {
 			HudConfigManager.Rect rect = configManager.getUsedRectOfElement(selectedElement);
 			configManager.moveElement(selectedElement, rect.x(), rect.y() - 1, width, height);
-		} else if (keyCode == GLFW.GLFW_KEY_S || keyCode == GLFW.GLFW_KEY_DOWN) {
+		} else if (keyCode == InputConstants.KEY_S || keyCode == InputConstants.KEY_DOWN) {
 			HudConfigManager.Rect rect = configManager.getUsedRectOfElement(selectedElement);
 			configManager.moveElement(selectedElement, rect.x(), rect.y() + 1, width, height);
-		} else if (keyCode == GLFW.GLFW_KEY_A || keyCode == GLFW.GLFW_KEY_LEFT) {
+		} else if (keyCode == InputConstants.KEY_A || keyCode == InputConstants.KEY_LEFT) {
 			HudConfigManager.Rect rect = configManager.getUsedRectOfElement(selectedElement);
 			configManager.moveElement(selectedElement, rect.x() - 1, rect.y(), width, height);
-		} else if (keyCode == GLFW.GLFW_KEY_D || keyCode == GLFW.GLFW_KEY_RIGHT) {
+		} else if (keyCode == InputConstants.KEY_D || keyCode == InputConstants.KEY_RIGHT) {
 			HudConfigManager.Rect rect = configManager.getUsedRectOfElement(selectedElement);
 			configManager.moveElement(selectedElement, rect.x() + 1, rect.y(), width, height);
 		}
@@ -464,5 +465,9 @@ public class BingoConfigScreen extends Screen {
 		BingoReloadedCompanionClient.sendPayloadToServer(new ClientHelloPayload(new ClientSettings(
 				configManager.getBooleanOption(BingoReloadedCompanionClient.CREATOR_USE_CLIENT_CREATOR))
 		));
+	}
+
+	private void playButtonSound() {
+		minecraft.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0f));
 	}
 }
