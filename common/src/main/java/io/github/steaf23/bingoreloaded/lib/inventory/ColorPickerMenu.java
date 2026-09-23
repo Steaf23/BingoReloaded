@@ -16,8 +16,8 @@ import java.util.function.Consumer;
 
 public final class ColorPickerMenu extends BasicMenu
 {
-    private static final ItemTemplate NEXT = new ItemTemplate(53, VanillaItems.STRUCTURE_VOID.type(), Component.text("Scroll Left").color(NamedTextColor.LIGHT_PURPLE).decorate(TextDecoration.BOLD));
-    private static final ItemTemplate PREVIOUS = new ItemTemplate(45, VanillaItems.BARRIER.type(), Component.text("Scroll Right").color(NamedTextColor.LIGHT_PURPLE).decorate(TextDecoration.BOLD));
+    private static final ItemTemplate NEXT = new ItemTemplate(53, VanillaItems.STRUCTURE_VOID.type(), Component.text("Scroll Right").color(NamedTextColor.LIGHT_PURPLE).decorate(TextDecoration.BOLD));
+    private static final ItemTemplate PREVIOUS = new ItemTemplate(45, VanillaItems.BARRIER.type(), Component.text("Scroll Left").color(NamedTextColor.LIGHT_PURPLE).decorate(TextDecoration.BOLD));
 
     private static final int HUE_AMOUNT = 25;
 

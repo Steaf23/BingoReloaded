@@ -35,8 +35,8 @@ public class BingoCreatorMenu extends BasicMenu {
 
 	private final BingoCardData cardsData;
 	private final TaskFormatting formatting;
-	public static final ItemTemplate CARD = new ItemTemplate(1, 1, VanillaItems.FILLED_MAP.type(), BingoReloaded.applyTitleFormat("Edit Cards"), Component.text("Click to view and edit bingo cards!"));
-	public static final ItemTemplate LIST = new ItemTemplate(4, 1, VanillaItems.PAPER.type(), BingoReloaded.applyTitleFormat("Edit Lists"), Component.text("Click to view and edit bingo lists!"));
+	public static final ItemTemplate CARD = new ItemTemplate(1, 1, VanillaItems.MAP.type(), BingoReloaded.applyTitleFormat("Edit Cards"), Component.text("Click to view and edit bingo cards!"));
+	public static final ItemTemplate LIST = new ItemTemplate(4, 1, VanillaItems.WRITABLE_BOOK.type(), BingoReloaded.applyTitleFormat("Edit Lists"), Component.text("Click to view and edit bingo lists!"));
 	public static final ItemTemplate TAGS = new ItemTemplate(7, 1, VanillaItems.NAME_TAG.type(), BingoReloaded.applyTitleFormat("Edit Tags"), Component.text("Click to view and edit task tags!"));
 
 	private static final ItemType REMOVE_ICON = VanillaItems.BARRIER.type();

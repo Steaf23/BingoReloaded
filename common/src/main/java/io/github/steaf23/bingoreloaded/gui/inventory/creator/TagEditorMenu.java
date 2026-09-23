@@ -49,7 +49,7 @@ public class TagEditorMenu extends PaginatedDataMenu.TextDataMenu
     }
 
     public BasicMenu createTagEditor(@NotNull String tagKey) {
-        return new TagEdit(getMenuBoard(), tagKey, DEFAULT_NEW_TAG, tagData::addTag);
+        return new TagEdit(getMenuBoard(), tagKey, tagData.getCustomTag(tagKey, DEFAULT_NEW_TAG), tagData::addTag);
     }
 
     @Override
@@ -108,20 +108,16 @@ public class TagEditorMenu extends PaginatedDataMenu.TextDataMenu
 
         private @NotNull MenuAction tagColorAction() {
             // Add action to change the team's color.
-            ItemTemplate teamColorItem = new ItemTemplate(4, 1, VanillaItems.LEATHER_CHESTPLATE.type(), Component.text("Color").color(tagToEdit.color()).decorate(TextDecoration.BOLD))
+            ItemTemplate teamColorItem = new ItemTemplate(4, 1, VanillaItems.LEATHER_CHESTPLATE.type(),
+                    Component.text("Color").color(tagToEdit.color()).decorate(TextDecoration.BOLD))
                     .setLeatherColor(tagToEdit.color());
 
             MenuAction action = new MenuAction() {
                 @Override
                 public void use(ActionArguments arguments) {
                     new ColorPickerMenu(getMenuBoard(), Component.text("Pick tag color"), (result) -> {
-                        // Update template
                         tagToEdit = new TaskTagData.TaskTag(result);
-
-                        // Update menu item
-                        teamColorItem.setLeatherColor(tagToEdit.color())
-                                .setName(Component.text("Color").color(tagToEdit.color()).decorate(TextDecoration.BOLD));
-                        addItem(teamColorItem);
+                        addAction(tagColorAction());
                     }).open(arguments.player());
                 }
             };

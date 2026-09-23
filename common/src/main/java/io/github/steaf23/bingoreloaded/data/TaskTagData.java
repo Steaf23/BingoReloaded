@@ -54,6 +54,11 @@ public class TaskTagData {
 		return tags;
 	}
 
+	public TaskTag getCustomTag(String key, TaskTag fallback) {
+		var tags = getCustomTags();
+		return tags.getOrDefault(key, fallback);
+	}
+
 	public void removeTag(String name) {
 		data.erase(name);
 		data.saveChanges();

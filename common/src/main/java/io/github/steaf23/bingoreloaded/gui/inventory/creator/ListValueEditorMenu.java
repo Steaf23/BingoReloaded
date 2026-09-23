@@ -49,7 +49,7 @@ public class ListValueEditorMenu extends BasicMenu
 		minCounterButtonAction.setItem(minCounter);
         addAction(minCounterButtonAction);
 
-        maxCounterButtonAction = new SpinBoxButtonAction(minCount, Math.min(BingoCardData.MAX_ITEMS, cardEditor.cardsData.lists().getTaskCount(listName)), maxStart, value -> {
+        maxCounterButtonAction = new SpinBoxButtonAction(minCount, Math.clamp(cardEditor.cardsData.lists().getTaskCount(listName), 1, BingoCardData.MAX_ITEMS), maxStart, value -> {
             maxCounter.setName(BingoReloaded.applyTitleFormat(String.valueOf(value)));
             maxCounter.setLore(Component.text("Not more than " + value + " item(s)"),
                     Component.text("will be picked from this list"));
