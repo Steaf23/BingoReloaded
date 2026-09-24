@@ -23,7 +23,7 @@ public class TeamTeleporter extends GameItem {
 	public static final Key ID = BingoReloaded.resourceKey("team_teleporter");
 
 	public TeamTeleporter() {
-		super(ID, ItemCooldown.configurableCooldown(TEAM_TELEPORTER_COOLDOWN_GROUP, BingoOptions.TEAM_BOX_COOLDOWN), false);
+		super(ID, ItemCooldown.configurableCooldown(TEAM_TELEPORTER_COOLDOWN_GROUP, BingoOptions.TEAM_TELEPORTER_COOLDOWN), false);
 	}
 
 	@Override

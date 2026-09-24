@@ -91,7 +91,7 @@ public class BingoConfigurationData
         setOptionValueForce(BingoOptions.GO_UP_WAND_PLATFORM_LIFETIME, name -> config.getInt(name, 10));
         setOptionValueForce(BingoOptions.POUCH_INVENTORY_SLOTS, name -> config.getInt(name, 18));
         setOptionValueForce(BingoOptions.ENDLESS_PEARL_COOLDOWN, name -> config.getDouble(name, 5.0D));
-        setOptionValueForce(BingoOptions.TEAM_BOX_COOLDOWN, name -> config.getDouble(name, 5.0D));
+        setOptionValueForce(BingoOptions.TEAM_TELEPORTER_COOLDOWN, name -> config.getDouble(name, 5.0D));
 
         setOptionValueForce(BingoOptions.GRACE_PERIOD, name -> config.getInt(name, 30));
         setOptionValueForce(BingoOptions.REMOVE_TASK_ITEMS, name -> config.getBoolean(name, true));
