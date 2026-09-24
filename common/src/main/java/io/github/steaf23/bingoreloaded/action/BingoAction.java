@@ -334,7 +334,12 @@ public class BingoAction extends ActionTree {
 			}
 			return giveUserBingoItem(context, player, args[0]);
 		})
-				.addTabCompletion(args -> List.of("wand", "pouch", "card", "pearl"))
+				.addTabCompletion(args -> List.of(
+						"card",
+						"wand",
+						"pouch",
+						"pearl",
+						"teleporter"))
 				.addUsage("<item_name>");
 
 
@@ -492,6 +497,10 @@ public class BingoAction extends ActionTree {
 		}
 
 		return switch (itemName) {
+			case "card" -> {
+				player.addItemsToInventory(PlayerKit.CARD_ITEM.buildItem(context.server()));
+				yield ActionResult.SUCCESS;
+			}
 			case "wand" -> {
 				player.addItemsToInventory(session.items().createStack(GoUpWand.ID, null));
 				yield ActionResult.SUCCESS;
@@ -500,15 +509,11 @@ public class BingoAction extends ActionTree {
 				player.addItemsToInventory(session.items().createStack(TeamPouch.ID, null));
 				yield ActionResult.SUCCESS;
 			}
-			case "card" -> {
-				player.addItemsToInventory(PlayerKit.CARD_ITEM.buildItem(context.server()));
-				yield ActionResult.SUCCESS;
-			}
 			case "pearl" -> {
 				player.addItemsToInventory(session.items().createStack(EndlessPearl.ID, null));
 				yield ActionResult.SUCCESS;
 			}
-			case "teambox" -> {
+			case "teleporter" -> {
 				player.addItemsToInventory(session.items().createStack(TeamTeleporter.ID, null));
 				yield ActionResult.SUCCESS;
 			}

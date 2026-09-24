@@ -41,6 +41,8 @@ repositories {
 
 dependencies {
     implementation project(":protocol")
+    include project(":protocol")
+
     // To change the versions see the gradle.properties file
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
     implementation "net.fabricmc:fabric-loader:${project.loader_version}"
@@ -48,6 +50,11 @@ dependencies {
     implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
     implementation("com.terraformersmc:modmenu:${project.modmenu_version}")
     implementation("net.kyori:adventure-platform-fabric:${project.adventure_fabric_version}")
+    include "net.kyori:adventure-platform-fabric:${project.adventure_fabric_version}"
+    implementation "net.kyori:adventure-api:${adventure_version}"
+    include "net.kyori:adventure-api:${adventure_version}"
+    implementation "net.kyori:adventure-key:${adventure_version}"
+    include "net.kyori:adventure-key:${adventure_version}"
 }
 
 processResources {

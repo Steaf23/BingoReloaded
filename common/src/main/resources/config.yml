@@ -211,6 +211,10 @@ teamPouch:
 endlessPearl:
   cooldown: 5.0 # item cooldown in seconds
 
+# Settings for the team teleporter item
+teamTeleporter:
+  cooldown: 5.0 # item cooldown in seconds
+
 # The period of time (in seconds) at the start of the game when a player is protected from any damage
 #   also determines the time after which the spawn platform will disappear.
 gracePeriod: 30

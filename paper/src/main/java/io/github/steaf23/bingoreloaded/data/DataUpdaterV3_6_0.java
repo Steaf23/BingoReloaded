@@ -43,10 +43,10 @@ public class DataUpdaterV3_6_0 extends DataUpdaterV3_5_0 {
 					if (key == null) {
 						continue;
 					}
-					storage.setKey("statistic.stat_type", BukkitStatistics.getVanillaStatistic(Statistic.valueOf(key.value())).key());
+					storage.setKey("statistic.stat_type", BukkitStatistics.getVanillaStatistic(Statistic.valueOf(key.value().toUpperCase())).key());
 				}
 			}
-			tagData.setList(list, tasks);
+			tagData.setList(list + ".tasks", tasks);
 		}
 		tagData.saveChanges();
 
