@@ -225,6 +225,15 @@ public final class BingoEventListener implements PlatformEventDispatcher {
 		return EventResult.IGNORE;
 	}
 
+	@Override
+	public void sendPlayerInventorySlotChanged(PlayerHandle player, StackHandle oldStack, StackHandle newStack) {
+		BingoSession session = getSession(player.world());
+		BingoGame game = session != null && session.isRunning() ? (BingoGame) session.phase() : null;
+		if (game != null && game.hasStarted()) {
+			game.getProgressTracker().handlePlayerInventorySlotChanged(player, newStack);
+		}
+	}
+
 
 	private @Nullable BingoGame getBingoGame(WorldHandle world) {
 		BingoSession session = getSession(world);

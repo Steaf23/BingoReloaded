@@ -35,10 +35,16 @@ public record WorldGroup(PlatformServer server, Key overworldKey, boolean hasNet
     }
 
     public static Key netherKey(Key overworld) {
+        if (overworld.namespace().equals("minecraft") && overworld.value().equals("overworld")) {
+            return Key.key("the_nether");
+        }
         return Key.key(overworld.namespace(), overworld.value() + "_the_nether");
     }
 
     public static Key theEndKey(Key overworld) {
+        if (overworld.namespace().equals("minecraft") && overworld.value().equals("overworld")) {
+            return Key.key("the_end");
+        }
         return Key.key(overworld.namespace(), overworld.value() + "_the_end");
     }
 

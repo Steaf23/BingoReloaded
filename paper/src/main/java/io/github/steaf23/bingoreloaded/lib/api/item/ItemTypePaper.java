@@ -1,10 +1,10 @@
 package io.github.steaf23.bingoreloaded.lib.api.item;
 
-import io.papermc.paper.datacomponent.DataComponentTypes;
-import io.papermc.paper.datacomponent.item.Tool;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Material;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.craftbukkit.block.data.CraftBlockData;
+import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -38,14 +38,14 @@ public class ItemTypePaper implements ItemType {
 	@Override
 	public boolean isPreferredTool(StackHandle tool) {
 		ItemStack stack = ((StackHandlePaper)tool).handle();
-
-		Tool toolComp = stack.getData(DataComponentTypes.TOOL);
-		if (toolComp == null) {
-			return false;
-		}
-
 		BlockData block = type.createBlockData();
-		return block.getDestroySpeed(stack) > toolComp.defaultMiningSpeed();
+
+		// NMS BEGIN
+		net.minecraft.world.item.ItemStack nmsStack = CraftItemStack.asNMSCopy(stack);
+		net.minecraft.world.level.block.state.BlockState nmsState = ((CraftBlockData) block).getState();
+
+		return nmsStack.isCorrectToolForDrops(nmsState);
+		// NMS END
 	}
 
 	@Override

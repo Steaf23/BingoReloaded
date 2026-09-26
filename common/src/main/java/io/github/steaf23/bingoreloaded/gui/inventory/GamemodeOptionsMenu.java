@@ -20,6 +20,7 @@ import io.github.steaf23.bingoreloaded.settings.BingoSettingsBuilder;
 import io.github.steaf23.bingoreloaded.settings.gamemode.BingoGamemode;
 import io.github.steaf23.bingoreloaded.settings.gamemode.BingoGamemodes;
 import io.github.steaf23.bingoreloaded.settings.gamemode.GamemodeFeature;
+import io.github.steaf23.bingoreloaded.util.timer.GameTimer;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -100,12 +101,12 @@ public class GamemodeOptionsMenu extends BasicMenu
         } else if (chosenMode.featureSet().contains(GamemodeFeature.BLITZ_TIMER)) {
             int blitzStartDuration = session.settingsBuilder.view().blitzStartDuration();
             ItemTemplate startDuration = new ItemTemplate(4, VanillaItems.COMPASS.type(), BingoReloaded.applyTitleFormat("Starting duration"),
-                    Component.text("Start Blitz with a head start of " + (blitzStartDuration * 10) + " seconds"));
+                    Component.text("Start Blitz with a head start of " + GameTimer.getTimeAsString(blitzStartDuration * 10L)));
 
             SpinBoxButtonAction startAction = new SpinBoxButtonAction(1, 60, blitzStartDuration, value -> {
                 session.settingsBuilder.blitzStartDuration(value);
                 startDuration.setLore(ComponentUtils.createComponentsFromString(
-                        "Start Blitz with a head start of " + (value * 10) + " seconds"));
+                        "Start Blitz with a head start of " + GameTimer.getTimeAsString(value * 10L)));
             });
             optionMenu.addItem(startDuration, startAction);
             additionalOptions.add(settings -> settings.blitzStartDuration(startAction.getValue()));

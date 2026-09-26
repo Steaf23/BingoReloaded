@@ -12,6 +12,8 @@ import net.kyori.adventure.text.format.TextDecoration;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 
@@ -25,15 +27,7 @@ public class BingoStatData {
 	}
 
 	public int getPlayerStat(UUID playerId, BingoStatType statType) {
-		if (statType == BingoStatType.PLAYED)
-			return getPlayerStat(playerId, BingoStatType.WINS) + getPlayerStat(playerId, BingoStatType.LOSSES);
-
-		if (statType.idx < 0)
-			return 0;
-
-		String statsString = getPlayerData(playerId);
-		String[] stats = statsString.split(";");
-		return Integer.parseInt(stats[statType.idx]);
+		return getStatMap(playerId).getOrDefault(statType, 0);
 	}
 
 	public void incrementPlayerStat(PlayerHandle player, BingoStatType statType) {
@@ -48,12 +42,9 @@ public class BingoStatData {
 		if (statType.idx < 0)
 			return;
 
-		String statsString = getPlayerData(playerId);
-		String[] stats = statsString.split(";");
-		String newStat = Integer.toString(value);
-		stats[statType.idx] = newStat;
-
-		setPlayerData(playerId, String.join(";", stats));
+		Map<BingoStatType, Integer> map = new HashMap<>(getStatMap(playerId));
+		map.put(statType, value);
+		setPlayerData(playerId, map);
 	}
 
 	//TODO: Implement
@@ -68,24 +59,23 @@ public class BingoStatData {
 //    }
 
 	public Component getPlayerStatsFormatted(UUID playerId) {
-		String stats = getPlayerData(playerId);
-		String[] statList = stats.split(";");
+		Map<BingoStatType, Integer> stats = getStatMap(playerId);
 
 		String playerName = server.getPlayerInfo(playerId).playerName();
 		if (playerName == null) {
 			return Component.text("Statistics for invalid id " + playerId + " unavailable.");
 		}
 
-		Component[] text = BingoMessage.configStringAsMultiline("{0}'s statistics: Wins: {1}, Losses: {2}, Games finished: {3}, Tasks completed: {4}, Tasks Completed Record: {5}, Wand uses: {6}", Style.style(NamedTextColor.GREEN),
+		Component[] text = BingoMessage.configStringAsMultiline("{0}'s statistics: Wins: {1}, Losses: {2}, Games finished: {3}, Tasks completed: {4}, Tasks Completed Record: {5}, Item uses: {6}", Style.style(NamedTextColor.GREEN),
 				Component.text(playerName, NamedTextColor.YELLOW, TextDecoration.BOLD),
-				Component.text(statList[0], NamedTextColor.WHITE, TextDecoration.BOLD),
-				Component.text(statList[1], NamedTextColor.WHITE, TextDecoration.BOLD),
-				Component.text(Integer.parseInt(statList[0]) + Integer.parseInt(statList[1]), NamedTextColor.WHITE, TextDecoration.BOLD),
-				Component.text(statList[2], NamedTextColor.WHITE, TextDecoration.BOLD),
-				Component.text(statList[3], NamedTextColor.WHITE, TextDecoration.BOLD),
-				Component.text(statList[4], NamedTextColor.WHITE, TextDecoration.BOLD));
+				Component.text(stats.get(BingoStatType.WINS), NamedTextColor.WHITE, TextDecoration.BOLD),
+				Component.text(stats.get(BingoStatType.LOSSES), NamedTextColor.WHITE, TextDecoration.BOLD),
+				Component.text(stats.get(BingoStatType.PLAYED), NamedTextColor.WHITE, TextDecoration.BOLD),
+				Component.text(stats.get(BingoStatType.TASKS), NamedTextColor.WHITE, TextDecoration.BOLD),
+				Component.text(stats.get(BingoStatType.RECORD_TASKS), NamedTextColor.WHITE, TextDecoration.BOLD),
+				Component.text(stats.get(BingoStatType.ITEM_USES), NamedTextColor.WHITE, TextDecoration.BOLD));
 
-		return Arrays.stream(text).reduce(Component::append).get();
+		return Arrays.stream(text).reduce(Component::append).orElseThrow();
 	}
 
 	/**
@@ -97,8 +87,28 @@ public class BingoStatData {
 		return getPlayerStatsFormatted(playerId);
 	}
 
-	private String getPlayerData(UUID playerId) {
-		return data.getString(playerId.toString(), "0;0;0;0;0");
+	public Map<BingoStatType, Integer> getStatMap(UUID playerId) {
+		Map<BingoStatType, Integer> result = new HashMap<>();
+		String raw = data.getString(playerId.toString(), "0");
+		String[] rawSplit = raw.split(";");
+		for (BingoStatType type : BingoStatType.values()) {
+			if (type.idx == -1) {
+				continue;
+			}
+			if (rawSplit.length > type.idx) {
+				result.put(type, Integer.parseInt(rawSplit[type.idx]));
+			} else {
+				result.put(type, 0);
+			}
+		}
+
+		result.put(BingoStatType.PLAYED, result.getOrDefault(BingoStatType.WINS, 0) +
+				result.getOrDefault(BingoStatType.LOSSES, 0));
+		result.put(BingoStatType.ITEM_USES, result.getOrDefault(BingoStatType.WAND_USES, 0) +
+				result.getOrDefault(BingoStatType.PEARL_USES, 0) +
+				result.getOrDefault(BingoStatType.POUCH_USES, 0) +
+				result.getOrDefault(BingoStatType.TELEPORTER_USES, 0));
+		return result;
 	}
 
 	private @NotNull UUID getPlayerUUID(String playerName) {
@@ -106,8 +116,17 @@ public class BingoStatData {
 		return player.uniqueId();
 	}
 
-	private void setPlayerData(UUID playerId, String statData) {
-		data.setString(playerId.toString(), statData);
+	private void setPlayerData(UUID playerId, Map<BingoStatType, Integer> statData) {
+		data.setString(playerId.toString(), String.format("%d;%d;%d;%d;%d;%d;%d;%d",
+				statData.getOrDefault(BingoStatType.WINS, 0),
+				statData.getOrDefault(BingoStatType.LOSSES, 0),
+				statData.getOrDefault(BingoStatType.TASKS, 0),
+				statData.getOrDefault(BingoStatType.RECORD_TASKS, 0),
+				statData.getOrDefault(BingoStatType.WAND_USES, 0),
+				statData.getOrDefault(BingoStatType.PEARL_USES, 0),
+				statData.getOrDefault(BingoStatType.POUCH_USES, 0),
+				statData.getOrDefault(BingoStatType.TELEPORTER_USES, 0)
+		));
 		data.saveChanges();
 	}
 }

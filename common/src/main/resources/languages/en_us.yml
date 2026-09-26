@@ -197,7 +197,7 @@ menu:
     tasks_completed: "Tasks Completed Overall"
     tasks_completed_record: "Task Completed Record"
     item_uses: "Item uses"
-    wand_uses: "Go-Up-Wand uses"
+    uses: "<0> uses" # 0: item name
   team_teleporter:
     teleport_to_start: "Teleport to Start"
 items:

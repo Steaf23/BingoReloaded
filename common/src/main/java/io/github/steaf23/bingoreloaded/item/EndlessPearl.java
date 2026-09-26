@@ -2,6 +2,7 @@ package io.github.steaf23.bingoreloaded.item;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
+import io.github.steaf23.bingoreloaded.data.BingoStatType;
 import io.github.steaf23.bingoreloaded.data.config.BingoOptions;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
@@ -37,6 +38,7 @@ public class EndlessPearl extends GameItem {
 	@Override
 	public EventResult<?> use(StackHandle stack, PlayerHandle player, BingoParticipant participant, BingoGame game, boolean fromOffhand) {
 		player.throwPearl(fromOffhand);
+		BingoReloaded.incrementPlayerStat(player, BingoStatType.PEARL_USES);
 		return EventResult.CONSUME;
 	}
 }

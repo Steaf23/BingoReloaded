@@ -16,6 +16,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
 
@@ -80,8 +81,8 @@ public interface PlayerHandle extends ForwardingAudience, ActionUser {
 		return server().inventories().playerInventory(this);
 	}
 
-	default void addItemsToInventory(StackHandle... stacks) {
-		server().inventories().addItemToPlayerInventory(this, stacks);
+	default List<StackHandle> addItemsToInventory(StackHandle... stacks) {
+		return server().inventories().addItemToPlayerInventory(this, stacks);
 	}
 
 	StackHandle getItemInMainHand();

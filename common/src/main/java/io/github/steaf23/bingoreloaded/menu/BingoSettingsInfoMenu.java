@@ -7,6 +7,7 @@ import io.github.steaf23.bingoreloaded.player.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
 import io.github.steaf23.bingoreloaded.settings.gamemode.BingoGamemodes;
 import io.github.steaf23.bingoreloaded.settings.gamemode.GamemodeFeature;
+import io.github.steaf23.bingoreloaded.util.timer.GameTimer;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.jetbrains.annotations.NotNull;
@@ -31,7 +32,7 @@ public class BingoSettingsInfoMenu extends InfoMenu
 		addField("team_size", config.getOptionValue(BingoOptions.SINGLE_PLAYER_TEAMS) ? Component.text("1").color(NamedTextColor.AQUA) : Component.text(Integer.toString(settings.maxTeamSize())));
 
 		if (settings.mode().featureSet().contains(GamemodeFeature.BLITZ_TIMER)) {
-			addField("duration", Component.text(settings.blitzStartDuration() * 10).append(Component.text(" (+" + (settings.blitzBonusDuration() * 10) + ")").color(NamedTextColor.GREEN)));
+			addField("duration", GameTimer.getTimeAsComponent(settings.blitzStartDuration() * 10L).append(Component.text(" (+" + (settings.blitzBonusDuration() * 10) + ")").color(NamedTextColor.GREEN)));
 		}
 		else if (settings.useCountdown()) {
 			addField("duration", Component.text(Integer.toString(settings.countdownDuration())));

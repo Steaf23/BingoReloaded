@@ -745,7 +745,12 @@ public class BingoGame implements GamePhase
             return false;
         }
 
-        if (!itemsToDrop.isEmpty()) {
+        List<StackHandle> leftOver = player.addItemsToInventory(itemsToDrop.toArray(StackHandle[]::new));
+        for (StackHandle item : leftOver) {
+            player.world().dropItem(item, position);
+        }
+
+        if (!itemsToDrop.isEmpty() && leftOver.isEmpty()) {
             player.playSound(Sound.sound(builder -> {
                 builder.type(Key.key("entity.item.pickup"));
                 builder.source(Sound.Source.PLAYER);
@@ -753,7 +758,6 @@ public class BingoGame implements GamePhase
                 builder.pitch((float)(Math.random() - Math.random()) * 1.4F + 2.0F);
             }), position.x(), position.y(), position.z());
         }
-        player.addItemsToInventory(itemsToDrop.toArray(StackHandle[]::new));
         return true;
     }
 

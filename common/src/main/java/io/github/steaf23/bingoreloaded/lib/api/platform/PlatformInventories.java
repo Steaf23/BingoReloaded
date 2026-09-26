@@ -4,6 +4,8 @@ import io.github.steaf23.bingoreloaded.lib.api.inventory.InventoryTemplate;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 
+import java.util.List;
+
 public interface PlatformInventories {
 
 	/**
@@ -24,5 +26,5 @@ public interface PlatformInventories {
 	 */
 	InventoryTemplate enderChest(PlayerHandle player);
 
-	void addItemToPlayerInventory(PlayerHandle player, StackHandle[] stacks);
+	List<StackHandle> addItemToPlayerInventory(PlayerHandle player, StackHandle[] stacks);
 }

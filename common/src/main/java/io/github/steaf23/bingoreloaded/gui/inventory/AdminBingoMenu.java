@@ -21,6 +21,7 @@ import io.github.steaf23.bingoreloaded.player.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
 import io.github.steaf23.bingoreloaded.settings.gamemode.GamemodeFeature;
 import io.github.steaf23.bingoreloaded.util.BingoPlayerSender;
+import io.github.steaf23.bingoreloaded.util.timer.GameTimer;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.Style;
@@ -136,7 +137,7 @@ public class AdminBingoMenu extends BasicMenu {
 							Component.text("   Tasks do not expire").color(NamedTextColor.GRAY));
 				}
 				case BLITZ_TIMER -> {
-					modeLore.add(Component.text("   Head start: ").append(Component.text(settings.blitzStartDuration() * 10).append(Component.text(" seconds"))));
+					modeLore.add(Component.text("   Head start: ").append(GameTimer.getTimeAsComponent(settings.blitzStartDuration() * 10L)));
 					modeLore.add(Component.text("   Bonus: ").append(Component.text(settings.blitzBonusDuration() * 10).color(NamedTextColor.GREEN).append(Component.text(" seconds"))));
 					modeLore.add(Component.text("   Recovery delay: ").append(Component.text(settings.blitzRecoveryDelay()).color(NamedTextColor.AQUA).append(Component.text(" tasks"))));
 				}
@@ -159,25 +160,26 @@ public class AdminBingoMenu extends BasicMenu {
 		addAction(effectsItem, arguments -> new EffectOptionsMenu(getMenuBoard(), session.settingsBuilder).open(arguments.player()));
 		addAction(PRESETS, arguments -> new SettingsPresetMenu(getMenuBoard(), session.settingsBuilder).open(arguments.player()));
 
-		ItemTemplate teamSizeItem = TEAM_SIZE.copy();
-		int maxTeamSize = view.maxTeamSize();
-		updateTeamSizeLore(teamSizeItem, maxTeamSize);
-		MenuAction teamSizeAction = new SpinBoxButtonAction(1, TEAMSIZE_MAX, maxTeamSize, value -> {
-			session.settingsBuilder.maxTeamSize(value);
-			updateTeamSizeLore(teamSizeItem, value);
-		});
-		teamSizeAction.setItem(teamSizeItem);
-		addAction(teamSizeAction);
-
 		if (settings.mode().featureSet().contains(GamemodeFeature.BLITZ_TIMER)) {
+			ItemTemplate disabledTeamSize = DISABLED_BY_BLITZ.copyToSlot(TEAM_SIZE.getSlot())
+					.setName(BingoReloaded.applyTitleFormat("Team Size is irrelevant in Blitz").color(NamedTextColor.RED));
 			ItemTemplate disabledTeamCount = DISABLED_BY_BLITZ.copyToSlot(TEAM_COUNT.getSlot())
 					.setName(BingoReloaded.applyTitleFormat("In Blitz you work together in 1 team").color(NamedTextColor.RED));
 			ItemTemplate disabledDuration = DISABLED_BY_BLITZ.copyToSlot(DURATION.getSlot())
 					.setName(BingoReloaded.applyTitleFormat("Duration disabled by Blitz").color(NamedTextColor.RED));
 			ItemTemplate disabledCountdown = DISABLED_BY_BLITZ.copyToSlot(COUNTDOWN_TYPE_DISABLED.getSlot())
 					.setName(BingoReloaded.applyTitleFormat("Countdown disabled by Blitz").color(NamedTextColor.RED));
-			addItems(disabledTeamCount, disabledDuration, disabledCountdown);
+			addItems(disabledTeamSize, disabledTeamCount, disabledDuration, disabledCountdown);
 		} else {
+			ItemTemplate teamSizeItem = TEAM_SIZE.copy();
+			int maxTeamSize = view.maxTeamSize();
+			updateTeamSizeLore(teamSizeItem, maxTeamSize);
+			MenuAction teamSizeAction = new SpinBoxButtonAction(1, TEAMSIZE_MAX, maxTeamSize, value -> {
+				session.settingsBuilder.maxTeamSize(value);
+				updateTeamSizeLore(teamSizeItem, value);
+			});
+			teamSizeAction.setItem(teamSizeItem);
+
 			ItemTemplate teamCountItem = TEAM_COUNT.copy();
 			int maxTeamCount = view.maxTeamCount();
 			updateTeamCountLore(teamCountItem, maxTeamCount);
@@ -204,7 +206,7 @@ public class AdminBingoMenu extends BasicMenu {
 						return true;
 					})
 					.buildAction(COUNTDOWN_TYPE_DISABLED.getSlot(), view.countdownType().name());
-			addActions(teamCountAction, durationAction, countdownAction);
+			addActions(teamSizeAction, teamCountAction, durationAction, countdownAction);
 		}
 
 		MenuAction startAction = new ComboBoxButtonAction.Builder("start", START.copy())

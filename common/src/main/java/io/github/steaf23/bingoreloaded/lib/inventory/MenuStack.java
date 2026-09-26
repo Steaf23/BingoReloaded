@@ -43,10 +43,9 @@ public class MenuStack {
 	}
 
 	public void popAll(Consumer<Menu> whenPopped) {
-		Menu menu = menus.pop();
-		while (menu != null) {
+		while (!menus.isEmpty()) {
+			Menu menu = menus.pop();
 			whenPopped.accept(menu);
-			menu = menus.pop();
 		}
 	}
 
