@@ -15,6 +15,7 @@ import io.github.steaf23.bingoreloaded.lib.event.EventResult;
 import io.github.steaf23.bingoreloaded.lib.event.EventResults;
 import io.github.steaf23.bingoreloaded.lib.event.PlatformEventDispatcher;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
+import io.papermc.paper.event.player.PlayerInventorySlotChangeEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -344,5 +345,13 @@ public class EventListenerPaper implements Listener {
 		if (result.consume()) {
 			event.setCancelled(true);
 		}
+	}
+
+	@EventHandler
+	public void handlePlayerInventorySlotChanged(final PlayerInventorySlotChangeEvent event) {
+		dispatcher.sendPlayerInventorySlotChanged(
+				new PlayerHandlePaper(server, event.getPlayer()),
+				new StackHandlePaper(event.getOldItemStack()),
+				new StackHandlePaper(event.getNewItemStack()));
 	}
 }

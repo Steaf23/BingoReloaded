@@ -322,6 +322,22 @@ public class TaskProgressTracker
         });
     }
 
+    public void handlePlayerInventorySlotChanged(PlayerHandle player, StackHandle newStack) {
+        BingoParticipant participant = getValidParticipant(player);
+        if (participant == null) {
+            return;
+        }
+
+        tasks.runTask(task -> {
+            // Other contents are updated, so we want to check the full inventory for task items..
+            for (StackHandle stack : player.inventory().contents()) {
+                if (stack != null) {
+                    completeItemSlot(stack, participant);
+                }
+            }
+        });
+    }
+
     private record StackWrapped(StackHandle stack) {
     }
 

@@ -36,4 +36,5 @@ public interface PlatformEventDispatcher {
 	void sendPlayerAdvancementDone(PlayerHandle player, AdvancementHandle advancement);
 	EventResult<EventResults.PlayerPickupResult> sendPlayerPickupStack(PlayerHandle player, StackHandle stack, GlobalPosition itemLocation);
 	EventResult<?> sendPlayerInventoryClick(PlayerHandle player, StackHandle itemOnCursor, boolean resultSlot, boolean shiftClick);
+	void sendPlayerInventorySlotChanged(PlayerHandle player, StackHandle oldStack, StackHandle newStack);
 }

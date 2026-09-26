@@ -117,9 +117,11 @@ public class BingoSettingsBuilder {
 			// Blitz can only have a single team.
 			if (mode == BingoGamemodes.BLITZ) {
 				this.maxTeamCount = 1;
+				this.maxTeamSize = 64;
 			}
 			if (wasBlitz) {
 				this.maxTeamCount = 64;
+				this.maxTeamSize = 5;
 			}
 			settingsUpdated();
 		}
@@ -168,6 +170,11 @@ public class BingoSettingsBuilder {
 	}
 
 	public BingoSettingsBuilder maxTeamSize(int maxTeamSize) {
+		// max team size cannot be changed in blitz.
+		if (mode == BingoGamemodes.BLITZ) {
+			return this;
+		}
+
 		if (this.maxTeamSize != maxTeamSize) {
 			this.maxTeamSize = maxTeamSize;
 			settingsUpdated();
@@ -177,7 +184,7 @@ public class BingoSettingsBuilder {
 
 	public BingoSettingsBuilder maxTeamCount(int maxTeamCount) {
 		// max team count cannot be changed in blitz.
-		if (maxTeamCount == 1 || mode == BingoGamemodes.BLITZ) {
+		if (mode == BingoGamemodes.BLITZ) {
 			return this;
 		}
 
