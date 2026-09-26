@@ -145,9 +145,6 @@ public class LeaderboardMenu extends BasicMenu {
 						description.add(Component.empty()
 								.append(Component.object(ObjectContents.playerHead(participant.id())))
 								.append(Component.text(" " + participant.displayName())));
-						description.add(Component.empty()
-								.append(Component.object(ObjectContents.playerHead(participant.id())))
-								.append(Component.text(" " + participant.displayName())));
 					}
 
 					List<String> scoreString = new ArrayList<>();
@@ -202,19 +199,29 @@ public class LeaderboardMenu extends BasicMenu {
 		showCategory(0, categoryData.getFirst());
 
 		if (showPlayerStats) {
-			BingoStatData data = new BingoStatData(player.server());
-			int wins = data.getPlayerStat(player.uniqueId(), BingoStatType.WINS);
-			int losses = data.getPlayerStat(player.uniqueId(), BingoStatType.LOSSES);
-			int wandUses = data.getPlayerStat(player.uniqueId(), BingoStatType.WAND_USES);
+			Map<BingoStatType, Integer> statData = new BingoStatData(player.server()).getStatMap(player.uniqueId());
+			int plays = statData.getOrDefault(BingoStatType.PLAYED, 0);
+			int wins = statData.getOrDefault(BingoStatType.WINS, 0);
+			int losses = statData.getOrDefault(BingoStatType.LOSSES, 0);
+			int tasks = statData.getOrDefault(BingoStatType.TASKS, 0);
+			int tasksRecord = statData.getOrDefault(BingoStatType.RECORD_TASKS, 0);
+			int itemUses = statData.getOrDefault(BingoStatType.ITEM_USES, 0);
+			int wandUses = statData.getOrDefault(BingoStatType.WAND_USES, 0);
+			int pouchUses = statData.getOrDefault(BingoStatType.POUCH_USES, 0);
+			int pearlUses = statData.getOrDefault(BingoStatType.PEARL_USES, 0);
+			int teleporterUses = statData.getOrDefault(BingoStatType.TELEPORTER_USES, 0);
 
 			List<Component> lore = List.of(
 					Component.empty().append(BingoMessage.STATS_WINS.asPhrase().color(TextColor.fromHexString("#ff661c"))).append(Component.text(": " + wins)),
 					Component.empty().append(BingoMessage.STATS_LOSSES.asPhrase().color(TextColor.fromHexString("#ff661c"))).append(Component.text(": " + losses)),
-					Component.empty().append(BingoMessage.STATS_GAMES_PLAYED.asPhrase().color(TextColor.fromHexString("#ff661c"))).append(Component.text(": " + (wins + losses))),
-					Component.empty().append(BingoMessage.STATS_TASKS_COMPLETED.asPhrase().color(TextColor.fromHexString("#ff661c"))).append(Component.text(": " + data.getPlayerStat(player.uniqueId(), BingoStatType.TASKS))),
-					Component.empty().append(BingoMessage.STATS_TASKS_COMPLETED_RECORD.asPhrase().color(TextColor.fromHexString("#ff661c"))).append(Component.text(": " + data.getPlayerStat(player.uniqueId(), BingoStatType.RECORD_TASKS))),
-					Component.empty().append(BingoMessage.STATS_ITEM_USES.asPhrase().color(TextColor.fromHexString("#ff661c"))).append(Component.text(": " + wandUses)),
-					Component.empty().append(BingoMessage.STATS_WAND_USES.asPhrase().color(TextColor.fromHexString("#ff661c"))).append(Component.text(": " + wandUses))
+					Component.empty().append(BingoMessage.STATS_GAMES_PLAYED.asPhrase().color(TextColor.fromHexString("#ff661c"))).append(Component.text(": " + plays)),
+					Component.empty().append(BingoMessage.STATS_TASKS_COMPLETED.asPhrase().color(TextColor.fromHexString("#ff661c"))).append(Component.text(": " + tasks)),
+					Component.empty().append(BingoMessage.STATS_TASKS_COMPLETED_RECORD.asPhrase().color(TextColor.fromHexString("#ff661c"))).append(Component.text(": " + tasksRecord)),
+					Component.empty().append(BingoMessage.STATS_ITEM_USES.asPhrase().color(TextColor.fromHexString("#ff661c"))).append(Component.text(": " + itemUses)),
+					Component.empty().append(BingoMessage.STATS_USES.asPhrase(BingoMessage.ITEM_WAND_NAME.asPhrase()).color(TextColor.fromHexString("#ff661c"))).append(Component.text(": " + wandUses)),
+					Component.empty().append(BingoMessage.STATS_USES.asPhrase(BingoMessage.ITEM_POUCH_NAME.asPhrase()).color(TextColor.fromHexString("#ff661c"))).append(Component.text(": " + pouchUses)),
+					Component.empty().append(BingoMessage.STATS_USES.asPhrase(BingoMessage.ITEM_ENDLESS_PEARL_DESC.asPhrase()).color(TextColor.fromHexString("#ff661c"))).append(Component.text(": " + pearlUses)),
+					Component.empty().append(BingoMessage.STATS_USES.asPhrase(BingoMessage.ITEM_TEAM_TELEPORTER_NAME.asPhrase()).color(TextColor.fromHexString("#ff661c"))).append(Component.text(": " + teleporterUses))
 			);
 			ItemTemplate headItem = ItemTemplate.createPlayerHead(player).setSlot(8, 0)
 					.setName(BingoReloaded.applyTitleFormat(BingoMessage.LEADERBOARD_STATS.asPhrase()))

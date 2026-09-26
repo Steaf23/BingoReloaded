@@ -532,10 +532,13 @@ public class BingoSession implements ForwardingAudience
         getPlayersInWorld().forEach(p -> {
             GlobalPosition pos = BlockBuilder.getRandomPosWithinRange(lobby.spawnPosition(), spread, spread);
             p.teleportAsync(pos);
-            p.clearInventory();
-            BingoParticipant participant = teamManager.getPlayerAsParticipant(p);
-            if (participant instanceof BingoPlayer player) {
-                gameManager.getRuntime().givePlayerCardItem(player, settingsBuilder.view().kit().getCardSlot());
+
+            if (phase instanceof PostGamePhase) {
+                p.clearInventory();
+                BingoParticipant participant = teamManager.getPlayerAsParticipant(p);
+                if (participant instanceof BingoPlayer player) {
+                    gameManager.getRuntime().givePlayerCardItem(player, settingsBuilder.view().kit().getCardSlot());
+                }
             }
         });
     }

@@ -112,10 +112,14 @@ public class BingoSettingsBuilder {
 
 	public BingoSettingsBuilder mode(BingoGamemode mode) {
 		if (this.mode != mode) {
+			boolean wasBlitz = this.mode == BingoGamemodes.BLITZ;
 			this.mode = mode;
 			// Blitz can only have a single team.
 			if (mode == BingoGamemodes.BLITZ) {
 				this.maxTeamCount = 1;
+			}
+			if (wasBlitz) {
+				this.maxTeamCount = 64;
 			}
 			settingsUpdated();
 		}
@@ -265,7 +269,7 @@ public class BingoSettingsBuilder {
 				cardSize,
 				cardSeed,
 				kit,
-				effects,
+				EnumSet.copyOf(effects),
 				maxTeamSize,
 				maxTeamCount,
 				countdownType,

@@ -189,7 +189,7 @@ public enum BingoMessage
     STATS_TASKS_COMPLETED("menu.stats.tasks_completed"),
     STATS_TASKS_COMPLETED_RECORD("menu.stats.tasks_completed_record"),
     STATS_ITEM_USES("menu.stats.item_uses"),
-    STATS_WAND_USES("menu.stats.wand_uses"),
+    STATS_USES("menu.stats.uses"),
     ;
 
     private final String key;

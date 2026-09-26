@@ -21,6 +21,7 @@ import io.github.steaf23.bingoreloaded.player.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
 import io.github.steaf23.bingoreloaded.settings.gamemode.GamemodeFeature;
 import io.github.steaf23.bingoreloaded.util.BingoPlayerSender;
+import io.github.steaf23.bingoreloaded.util.timer.GameTimer;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.Style;
@@ -136,7 +137,7 @@ public class AdminBingoMenu extends BasicMenu {
 							Component.text("   Tasks do not expire").color(NamedTextColor.GRAY));
 				}
 				case BLITZ_TIMER -> {
-					modeLore.add(Component.text("   Head start: ").append(Component.text(settings.blitzStartDuration() * 10).append(Component.text(" seconds"))));
+					modeLore.add(Component.text("   Head start: ").append(GameTimer.getTimeAsComponent(settings.blitzStartDuration() * 10L)));
 					modeLore.add(Component.text("   Bonus: ").append(Component.text(settings.blitzBonusDuration() * 10).color(NamedTextColor.GREEN).append(Component.text(" seconds"))));
 					modeLore.add(Component.text("   Recovery delay: ").append(Component.text(settings.blitzRecoveryDelay()).color(NamedTextColor.AQUA).append(Component.text(" tasks"))));
 				}

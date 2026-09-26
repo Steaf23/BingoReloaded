@@ -11,6 +11,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
+import java.util.List;
 
 public class PaperInventories implements PlatformInventories {
 
@@ -26,8 +27,9 @@ public class PaperInventories implements PlatformInventories {
 	}
 
 	@Override
-	public void addItemToPlayerInventory(PlayerHandle player, StackHandle[] stacks) {
-		((PlayerHandlePaper)player).handle().getInventory().addItem(mapStackArray(stacks));
+	public List<StackHandle> addItemToPlayerInventory(PlayerHandle player, StackHandle[] stacks) {
+		return ((PlayerHandlePaper)player).handle().getInventory().addItem(mapStackArray(stacks)).values().stream()
+				.<StackHandle>map(StackHandlePaper::new).toList();
 	}
 
 	InventoryTemplate wrapBukkitInventory(Inventory bukkitInv) {

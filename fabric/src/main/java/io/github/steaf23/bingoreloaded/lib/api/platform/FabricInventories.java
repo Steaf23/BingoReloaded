@@ -10,6 +10,8 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+
 public class FabricInventories implements PlatformInventories {
 
 	@Override
@@ -25,7 +27,7 @@ public class FabricInventories implements PlatformInventories {
 	}
 
 	@Override
-	public void addItemToPlayerInventory(PlayerHandle player, StackHandle[] stacks) {
+	public List<StackHandle> addItemToPlayerInventory(PlayerHandle player, StackHandle[] stacks) {
 		ServerPlayer fabricPlayer = player(player);
 		for (StackHandle stack : stacks) {
 			if (!fabricPlayer.addItem(((StackHandleFabric)stack).handle())) {

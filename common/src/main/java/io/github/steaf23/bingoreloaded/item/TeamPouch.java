@@ -2,6 +2,7 @@ package io.github.steaf23.bingoreloaded.item;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
+import io.github.steaf23.bingoreloaded.data.BingoStatType;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
@@ -51,6 +52,7 @@ public class TeamPouch extends GameItem {
 		}
 
 		player.tryOpenInventory(participant.getTeam().storage());
+		BingoReloaded.incrementPlayerStat(player, BingoStatType.POUCH_USES);
 		return EventResult.CONSUME;
 	}
 }

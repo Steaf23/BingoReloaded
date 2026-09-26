@@ -2,6 +2,7 @@ package io.github.steaf23.bingoreloaded.item;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
+import io.github.steaf23.bingoreloaded.data.BingoStatType;
 import io.github.steaf23.bingoreloaded.data.config.BingoOptions;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
@@ -41,7 +42,10 @@ public class TeamTeleporter extends GameItem {
 		if (!(participant instanceof BingoPlayer bingoPlayer)) {
 			return EventResult.IGNORE;
 		}
-		game.getSession().getGameManager().getRuntime().openTeamTeleporter(bingoPlayer, game, p -> applyCooldown(stack, p, game));
+		game.getSession().getGameManager().getRuntime().openTeamTeleporter(bingoPlayer, game, p -> {
+			applyCooldown(stack, p, game);
+			BingoReloaded.incrementPlayerStat(player, BingoStatType.TELEPORTER_USES);
+		});
 		return EventResult.CONSUME;
 	}
 }

@@ -198,6 +198,36 @@ public class AutoBingoAction extends DeferredAction {
 		})).addUsage("<win_goal>");
 
 
+		this.addSubAction(new ActionTree("blitz_headstart", (context, args) -> {
+			var settings = getSettingsBuilder(context, args[0]);
+			if (settings == null) {
+				sendFailed("Invalid world/ session name: " + args[0], args[0]);
+				return ActionResult.INCORRECT_USE;
+			}
+			return setBlitzHeadstart(settings, args[0], Arrays.copyOfRange(args, 1, args.length));
+		})).addUsage("<duration_seconds>");
+
+
+		this.addSubAction(new ActionTree("blitz_bonus", (context, args) -> {
+			var settings = getSettingsBuilder(context, args[0]);
+			if (settings == null) {
+				sendFailed("Invalid world/ session name: " + args[0], args[0]);
+				return ActionResult.INCORRECT_USE;
+			}
+			return setBlitzBonus(settings, args[0], Arrays.copyOfRange(args, 1, args.length));
+		})).addUsage("<duration_seconds>");
+
+
+		this.addSubAction(new ActionTree("blitz_recovery_delay", (context, args) -> {
+			var settings = getSettingsBuilder(context, args[0]);
+			if (settings == null) {
+				sendFailed("Invalid world/ session name: " + args[0], args[0]);
+				return ActionResult.INCORRECT_USE;
+			}
+			return setBlitzRecovery(settings, args[0], Arrays.copyOfRange(args, 1, args.length));
+		})).addUsage("<amount of items>");
+
+
 		this.addSubAction(new ActionTree("separate_cards", (context, args) -> {
 			var settings = getSettingsBuilder(context, args[0]);
 			if (settings == null) {
@@ -574,6 +604,66 @@ public class AutoBingoAction extends DeferredAction {
 		settings.completeGoal(goal);
 
 		sendSuccess("Set complete goal to " + goal, worldName);
+		return ActionResult.SUCCESS;
+	}
+
+	public ActionResult setBlitzHeadstart(BingoSettingsBuilder settings, String worldName, String[] extraArguments) {
+		if (extraArguments.length == 0) {
+			sendFailed("Expected at least 3 arguments!", worldName);
+			return ActionResult.INCORRECT_USE;
+		}
+
+		int goal;
+		try {
+			goal = Integer.parseInt(extraArguments[0]);
+		} catch (NumberFormatException exception) {
+			sendFailed("Invalid duration '" + extraArguments[0] + "'", worldName);
+			return ActionResult.INCORRECT_USE;
+		}
+
+		settings.blitzStartDuration(goal);
+
+		sendSuccess("Set blitz head start to " + goal, worldName);
+		return ActionResult.SUCCESS;
+	}
+
+	public ActionResult setBlitzBonus(BingoSettingsBuilder settings, String worldName, String[] extraArguments) {
+		if (extraArguments.length == 0) {
+			sendFailed("Expected at least 3 arguments!", worldName);
+			return ActionResult.INCORRECT_USE;
+		}
+
+		int goal;
+		try {
+			goal = Integer.parseInt(extraArguments[0]);
+		} catch (NumberFormatException exception) {
+			sendFailed("Invalid duration '" + extraArguments[0] + "'", worldName);
+			return ActionResult.INCORRECT_USE;
+		}
+
+		settings.blitzBonusDuration(goal);
+
+		sendSuccess("Set blitz bonus to " + goal, worldName);
+		return ActionResult.SUCCESS;
+	}
+
+	public ActionResult setBlitzRecovery(BingoSettingsBuilder settings, String worldName, String[] extraArguments) {
+		if (extraArguments.length == 0) {
+			sendFailed("Expected at least 3 arguments!", worldName);
+			return ActionResult.INCORRECT_USE;
+		}
+
+		int goal;
+		try {
+			goal = Integer.parseInt(extraArguments[0]);
+		} catch (NumberFormatException exception) {
+			sendFailed("Invalid task amount '" + extraArguments[0] + "'", worldName);
+			return ActionResult.INCORRECT_USE;
+		}
+
+		settings.blitzRecoveryDelay(goal);
+
+		sendSuccess("Set recovery delay goal to " + goal, worldName);
 		return ActionResult.SUCCESS;
 	}
 

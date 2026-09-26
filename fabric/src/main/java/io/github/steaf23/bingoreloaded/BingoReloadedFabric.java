@@ -11,6 +11,7 @@ import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.data.config.BingoOptions;
 import io.github.steaf23.bingoreloaded.data.record.LeaderboardData;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
+import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.gameloop.phase.PregameLobby;
 import io.github.steaf23.bingoreloaded.gui.inventory.AdminBingoMenu;
 import io.github.steaf23.bingoreloaded.gui.inventory.LeaderboardMenu;
@@ -69,6 +70,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Consumer;
 
 public class BingoReloadedFabric implements ModInitializer, BingoReloadedRuntime {
 
@@ -253,6 +255,11 @@ public class BingoReloadedFabric implements ModInitializer, BingoReloadedRuntime
 	@Override
 	public void openLeaderboard(PlayerHandle player, LeaderboardData historyData, boolean categorizeByPresets) {
 		new LeaderboardMenu(menuBoard, historyData, player, categorizeByPresets, bingo.config().getOptionValue(BingoOptions.SAVE_PLAYER_STATISTICS)).open(player);
+	}
+
+	@Override
+	public void openTeamTeleporter(BingoPlayer player, BingoGame game, Consumer<PlayerHandle> callback) {
+
 	}
 
 	@Override
