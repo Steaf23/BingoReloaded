@@ -9,11 +9,13 @@ import io.github.steaf23.bingoreloaded.data.config.BingoOptions;
 import io.github.steaf23.bingoreloaded.data.helper.SerializablePlayer;
 import io.github.steaf23.bingoreloaded.data.record.LeaderboardData;
 import io.github.steaf23.bingoreloaded.data.teleportgrid.TeleportGridData;
+import io.github.steaf23.bingoreloaded.data.teleportspiral.TeleportSpiralData;
 import io.github.steaf23.bingoreloaded.data.world.WorldData;
 import io.github.steaf23.bingoreloaded.data.world.WorldGroup;
 import io.github.steaf23.bingoreloaded.gameloop.spawn.PlayerSpawnCoordinator;
 import io.github.steaf23.bingoreloaded.gameloop.spawn.strategy.DispersedSpawnStrategy;
 import io.github.steaf23.bingoreloaded.gameloop.spawn.strategy.GridSpawnStrategy;
+import io.github.steaf23.bingoreloaded.gameloop.spawn.strategy.SpiralSpawnStrategy;
 import io.github.steaf23.bingoreloaded.gameloop.spawn.strategy.NoTeleportStrategy;
 import io.github.steaf23.bingoreloaded.gameloop.spawn.strategy.SharedSpawnStrategy;
 import io.github.steaf23.bingoreloaded.gameloop.spawn.strategy.SpawnStrategy;
@@ -238,6 +240,7 @@ public class GameManager {
 			case TEAM -> new TeamSpawnStrategy();
 			case ALL -> new SharedSpawnStrategy();
 			case GRID -> new GridSpawnStrategy(new TeleportGridData(config.getOptionValue(BingoOptions.TELEPORTATION_GRID), new Random()));
+			case SPIRAL -> new SpiralSpawnStrategy(new TeleportSpiralData(config.getOptionValue(BingoOptions.TELEPORTATION_SPIRAL)));
 			case NONE -> new NoTeleportStrategy();
 		};
 
