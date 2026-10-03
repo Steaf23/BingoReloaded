@@ -1,5 +1,6 @@
-package io.github.steaf23.bingoreloadedcompanion.client.creator;
+package io.github.steaf23.bingoreloadedcompanion.client.creator.tasklist.selection;
 
+import io.github.steaf23.bingoreloadedcompanion.client.creator.tasklist.TagInfo;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
@@ -15,17 +16,23 @@ public class TagButton extends AbstractWidget {
 	private static final Identifier DROP_TAG = Identifier.parse("bingoreloadedcompanion:tag_drop");
 
 	private final SelectedTaskComponent selectedTask;
+	private final TagInfo info;
 
-	public TagButton(SelectedTaskComponent selectedTask) {
+	public TagButton(SelectedTaskComponent selectedTask, TagInfo info) {
 		super(0, 0, 28, 20, Component.empty());
 		this.selectedTask = selectedTask;
+		this.info = info;
 	}
 
 	@Override
 	protected void extractWidgetRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
 		Identifier sprite;
 		if (isMouseOver(mouseX, mouseY)) {
-			TagBarWidget.Tag tag = selectedTask.taskScreen().selectedTag();
+			TagInfo.Tag tag = info.selectedTag();
+			if (tag == null) {
+				return;
+			}
+
 			if (selectedTask.task().tags().contains(tag.name())) {
 				sprite = REMOVE_TAG;
 			} else {
@@ -50,9 +57,9 @@ public class TagButton extends AbstractWidget {
 			return super.mouseClicked(event, doubleClick);
 		}
 
-		TagBarWidget.Tag tag = selectedTask.taskScreen().selectedTag();
-		selectedTask.tagChanged(tag);
+		TagInfo.Tag tag = info.selectedTag();
+		selectedTask.tagChanged(info.selectedTag());
 
-		return false;
+		return super.mouseClicked(event, doubleClick);
 	}
 }

@@ -49,7 +49,7 @@ public class CreatorCardScreen extends Screen {
 		}
 		padding.addChild(newCardButton(), LayoutSettings.defaults().padding(27));
 
-		CustomScrollableLayout cardScroll = new CustomScrollableLayout(0, 0, 48 + 30 + CustomScrollableLayout.SCROLLER_WIDTH, CustomScrollableLayout.SCROLLER_WIDTH, 48 * 5 + 30, padding, CustomScrollableLayout.DEFAULT_SETTINGS);
+		CustomScrollableLayout cardScroll = new CustomScrollableLayout(48 + 30 + CustomScrollableLayout.SCROLLER_WIDTH, 48 * 5 + 30, padding);
 		centerLayout.addChild(cardScroll);
 		centerLayout.arrangeElements();
 

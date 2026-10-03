@@ -1,7 +1,6 @@
-package io.github.steaf23.bingoreloadedcompanion.client.creator;
+package io.github.steaf23.bingoreloadedcompanion.client.creator.tasklist;
 
 import com.mojang.blaze3d.platform.cursor.CursorTypes;
-import io.github.steaf23.bingoreloaded.protocol.data.task.TaskType;
 import io.github.steaf23.bingoreloadedcompanion.client.util.ScreenHelper;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
@@ -15,7 +14,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import org.lwjgl.glfw.GLFW;
 
-public class TabSelectionButton2 extends AbstractWidget {
+public class EditModeOptionButton extends AbstractWidget {
 
 	public record TaskTab(int index, Item icon, Component name) {}
 
@@ -34,9 +33,12 @@ public class TabSelectionButton2 extends AbstractWidget {
 	private int selectedIndex = 0;
 	private final TabChangedCallback tabChanged;
 
-	public TabSelectionButton2(TabChangedCallback onTabChanged) {
+	public EditModeOptionButton(int startingIndex, TabChangedCallback onTabChanged) {
 		super(0, 0, TAB_INTERVAL * TABS.length, TAB_HEIGHT, Component.empty());
 		this.tabChanged = onTabChanged;
+		if (TABS.length > startingIndex) {
+			selectedIndex = startingIndex;
+		}
 	}
 
 	public TaskTab getSelectedTab() {

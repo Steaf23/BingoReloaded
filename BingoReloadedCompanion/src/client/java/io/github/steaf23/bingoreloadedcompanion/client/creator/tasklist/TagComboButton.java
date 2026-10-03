@@ -1,4 +1,4 @@
-package io.github.steaf23.bingoreloadedcompanion.client.creator;
+package io.github.steaf23.bingoreloadedcompanion.client.creator.tasklist;
 
 import io.github.steaf23.bingoreloadedcompanion.client.util.ScreenHelper;
 import net.minecraft.client.gui.Font;
@@ -20,9 +20,9 @@ public class TagComboButton extends LinearLayout {
 
 	private static final Identifier TAG_ICON = Identifier.parse("bingoreloadedcompanion:tag");
 
-	private final TagBarWidget.Tag tag;
+	private final TagInfo.Tag tag;
 
-	public TagComboButton(TagBarWidget.Tag tag, Font font, Consumer<TagBarWidget.Tag> clicked) {
+	public TagComboButton(TagInfo.Tag tag, Font font, Consumer<TagInfo.Tag> clicked) {
 		super(0, 0, Orientation.HORIZONTAL);
 		this.tag = tag;
 
@@ -58,7 +58,7 @@ public class TagComboButton extends LinearLayout {
 		}, LayoutSettings.defaults().paddingVertical(4).paddingHorizontal(10).alignHorizontallyLeft());
 	}
 
-	public TagBarWidget.Tag tag() {
+	public TagInfo.Tag tag() {
 		return tag;
 	}
 }

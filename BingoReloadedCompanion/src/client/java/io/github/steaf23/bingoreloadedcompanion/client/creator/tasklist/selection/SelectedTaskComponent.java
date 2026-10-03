@@ -1,10 +1,11 @@
-package io.github.steaf23.bingoreloadedcompanion.client.creator;
+package io.github.steaf23.bingoreloadedcompanion.client.creator.tasklist.selection;
 
 import io.github.steaf23.bingoreloadedcompanion.card.taskdata.TaskWithCount;
-import io.github.steaf23.bingoreloadedcompanion.client.core.SpinBoxWidget;
+import io.github.steaf23.bingoreloadedcompanion.client.core.SlidingSpinbox;
+import io.github.steaf23.bingoreloadedcompanion.client.creator.tasklist.TaskEditMode;
+import io.github.steaf23.bingoreloadedcompanion.client.creator.tasklist.TaskTooltipComponent;
+import io.github.steaf23.bingoreloadedcompanion.client.creator.tasklist.TagInfo;
 import io.github.steaf23.bingoreloadedcompanion.client.util.ScreenHelper;
-import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.TextColor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -23,8 +24,8 @@ import net.minecraft.resources.Identifier;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
 
 public class SelectedTaskComponent extends LinearLayout {
 
@@ -33,18 +34,22 @@ public class SelectedTaskComponent extends LinearLayout {
 	private static final Identifier CLEAR_HOVER_BTN = Identifier.parse("bingoreloadedcompanion:clear_hover");
 	private final Font font;
 	private TaskWithCount task;
-	private final CreatorTaskScreen taskScreen;
-	private final SpinBoxWidget countEdit;
+//	private final SpinBoxWidget countEdit;
 	private final TagButton tagButton;
+	private final SlidingSpinbox countSlider;
 	private final TagBarWidget tagBar;
+	private final Consumer<SelectedTaskComponent> updatedCallback;
+	private final TagInfo tagInfo;
+
 	private boolean initialized;
 	private ItemDisplayWidget display;
 
-	public SelectedTaskComponent(TaskWithCount task, Font font, CreatorTaskScreen taskScreen) {
+	public SelectedTaskComponent(TaskWithCount task, Font font, TagInfo tags, Consumer<SelectedTaskComponent> updatedCallback) {
 		super(0, 0, Orientation.VERTICAL);
 		this.task = task;
 		this.font = font;
-		this.taskScreen = taskScreen;
+		this.updatedCallback = updatedCallback;
+		this.tagInfo = tags;
 
 		FrameLayout frame = new FrameLayout(92, 10);
 		addChild(frame);
@@ -66,24 +71,27 @@ public class SelectedTaskComponent extends LinearLayout {
 		};
 		frame.addChild(display, LayoutSettings.defaults().padding(2).alignHorizontallyLeft());
 
-		countEdit = SpinBoxWidget.defaultIntegerBox(font, this::countChanged)
-				.minValue(1.0)
-				.maxValue(64.0)
-				.startValue(task.count());
-		frame.addChild(countEdit, LayoutSettings.defaults().paddingVertical(3).alignHorizontallyCenter());
+//		countEdit = SpinBoxWidget.defaultIntegerBox(font, this::countChanged)
+//				.minValue(1.0)
+//				.maxValue(64.0)
+//				.startValue(task.count());
+//		frame.addChild(countEdit, LayoutSettings.defaults().paddingVertical(3).alignHorizontallyCenter());
 
-		tagButton = new TagButton(this);
+		countSlider = new SlidingSpinbox(1, 64, font, this::countChanged).withValue(task().count());
+		frame.addChild(countSlider);
+
+		tagButton = new TagButton(this, tagInfo);
 		frame.addChild(tagButton, LayoutSettings.defaults().alignHorizontallyCenter());
 
 		ImageButton removeBtn = new ImageButton(0, 0, 16, 16, new WidgetSprites(CLEAR_BTN, CLEAR_HOVER_BTN),
 				_ -> {
 			countChanged(0);
-			taskScreen.updateSelectedTasksLater();
+			updatedCallback.accept(this);
 			}, Component.literal("Create New Card"));
 
 		frame.addChild(removeBtn, LayoutSettings.defaults().paddingHorizontal(3).alignHorizontallyRight());
 
-		List<TagBarWidget.Tag> tagsToDraw = getTagsToDraw();
+		List<TagInfo.Tag> tagsToDraw = getTagsToDraw();
 
 		tagBar = new TagBarWidget(tagsToDraw, 2);
 		addChild(tagBar);
@@ -93,24 +101,26 @@ public class SelectedTaskComponent extends LinearLayout {
 		initialized = true;
 	}
 
-	public CreatorTaskScreen taskScreen() {
-		return taskScreen;
-	}
-
 	public TaskWithCount task() {
 		return task;
 	}
 
-	public void countChanged(int newValue) {
+	public void updateTask(TaskWithCount newTask) {
+		task = newTask;
+		countSlider.withValue(task().count());
+		tagBar.setTags(getTagsToDraw());
+	}
+
+	private void countChanged(int newValue) {
 		if (!initialized) {
 			return;
 		}
 
 		task = task.copy(newValue);
-		taskScreen.updateSelectedTask(task);
+		updatedCallback.accept(this);
 	}
 
-	public void tagChanged(TagBarWidget.Tag tag) {
+	public void tagChanged(TagInfo.Tag tag) {
 		Set<String> tags = new HashSet<>(task.tags());
 		if (tags.contains(tag.name())) {
 			tags.remove(tag.name());
@@ -119,28 +129,27 @@ public class SelectedTaskComponent extends LinearLayout {
 		}
 		task = task.copy(tags);
 		tagBar.setTags(getTagsToDraw());
-		taskScreen.updateSelectedTask(task);
-		taskScreen.arrangeSelectedTasks();
+		updatedCallback.accept(this);
 	}
 
 	public void setEditMode(TaskEditMode editMode) {
 		switch (editMode) {
 			case COUNT -> {
-				countEdit.setVisible(task.task().maxCount() > 1);
+				boolean showCount = task.task().maxCount() > 1;
+				countSlider.visible = showCount;
 				tagButton.visible = false;
 			}
 			case TAG -> {
-				countEdit.setVisible(false);
+				countSlider.visible = false;
 				tagButton.visible = true;
 			}
 		}
 	}
 
-	public List<TagBarWidget.Tag> getTagsToDraw() {
-		Map<String, TextColor> existingTags = taskScreen.creatorSuite().allTags;
-		List<TagBarWidget.Tag> tags = new ArrayList<>();
+	public List<TagInfo.Tag> getTagsToDraw() {
+		List<TagInfo.Tag> tags = new ArrayList<>();
 		for (String tag : task.tags()) {
-			tags.add(new TagBarWidget.Tag(tag, existingTags.getOrDefault(tag, NamedTextColor.WHITE)));
+			tags.add(tagInfo.tagByName(tag));
 		}
 		return tags;
 	}

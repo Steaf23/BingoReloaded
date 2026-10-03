@@ -1,4 +1,4 @@
-package io.github.steaf23.bingoreloadedcompanion.client.creator;
+package io.github.steaf23.bingoreloadedcompanion.client.creator.tasklist;
 
 import com.mojang.blaze3d.platform.cursor.CursorTypes;
 import io.github.steaf23.bingoreloaded.protocol.data.task.TaskType;
@@ -6,7 +6,6 @@ import io.github.steaf23.bingoreloadedcompanion.client.util.ScreenHelper;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
@@ -16,7 +15,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import org.lwjgl.glfw.GLFW;
 
-public class TabSelectionButton extends AbstractWidget {
+public class TaskTypeOptionButton extends AbstractWidget {
 
 	public record TaskTab(int index, Item icon, Component name, TaskType type) {}
 
@@ -25,6 +24,10 @@ public class TabSelectionButton extends AbstractWidget {
 			new TaskTab(1, Items.ENDER_EYE, Component.literal("Advancements").withStyle(ScreenHelper.INVENTORY_STYLE), TaskType.ADVANCEMENT),
 			new TaskTab(2, Items.GLOBE_BANNER_PATTERN, Component.literal("Statistics").withStyle(ScreenHelper.INVENTORY_STYLE), TaskType.STATISTIC)
 	};
+
+	public static TaskTab firstTab() {
+		return TABS[0];
+	}
 
 	private static final Identifier TAB_SELECTED = Identifier.parse("bingoreloadedcompanion:tab_selected");
 	private static final Identifier TAB_BACKGROUND = Identifier.parse("bingoreloadedcompanion:tab_background");
@@ -36,9 +39,12 @@ public class TabSelectionButton extends AbstractWidget {
 	private int selectedIndex = 0;
 	private final TabChangedCallback tabChanged;
 
-	public TabSelectionButton(TabChangedCallback onTabChanged) {
+	public TaskTypeOptionButton(int startingIndex, TabChangedCallback onTabChanged) {
 		super(0, 0, TAB_INTERVAL * TABS.length, TAB_HEIGHT, Component.empty());
 		this.tabChanged = onTabChanged;
+		if (TABS.length > startingIndex) {
+			selectedIndex = startingIndex;
+		}
 	}
 
 	public TaskTab getSelectedTab() {

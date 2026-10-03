@@ -22,7 +22,10 @@ public class CustomSliderWidget extends AbstractWidget {
 
 	private final boolean highlightOnHover;
 
-	private int leftX = 0;
+	private int dragStartX = 0;
+	private double dragStartValue = 0.0;
+
+	private double currentValue = 0.0;
 
 	public CustomSliderWidget(int x, int y, int width, boolean highlightOnHover) {
 		super(x, y, Math.max(width, SLIDER_WIDTH), SLIDER_HEIGHT, Component.empty());
@@ -31,10 +34,21 @@ public class CustomSliderWidget extends AbstractWidget {
 		visible = false;
 	}
 
+	public int sliderX() {
+		int range = getWidth() - SLIDER_WIDTH / 2;
+
+		int progressStartX = (int) (range * currentValue);
+
+		return getX() + progressStartX;
+	}
+
 	@Override
 	protected void extractWidgetRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
-		double valueRaw = 1.0 - (double) (mouseX - leftX) / getWidth();
-		double percentage = Math.clamp(valueRaw, 0.0, 1.0);
+		int mouseDelta = mouseX - dragStartX;
+		double valueDiff = mouseDelta / (double)getWidth();
+
+		double percentage = Math.clamp(dragStartValue + valueDiff, 0.0, 1.0);
+		currentValue = percentage;
 		extractSlider(graphics, getX(), getY(), percentage, mouseX, mouseY);
 
 		if (isMouseOver(mouseX, mouseY)) {
@@ -56,41 +70,28 @@ public class CustomSliderWidget extends AbstractWidget {
 
 		int range = getWidth() - SLIDER_WIDTH;
 
-		int progressStartX = (int) (range * (1.0 - value));
-		int progressSizeX = range - (progressStartX + SLIDER_WIDTH / 2);
+		int progressStartX = (int) (range * value);
 
 		graphics.blitSprite(RenderPipelines.GUI_TEXTURED, SLIDER_BUTTON_BACKGROUND, x, y, getWidth(), SLIDER_HEIGHT);
-		graphics.blitSprite(RenderPipelines.GUI_TEXTURED, SLIDER_BUTTON_PROGRESS, getWidth(), SLIDER_HEIGHT, progressStartX + SLIDER_WIDTH / 2, 0, x + progressStartX + SLIDER_WIDTH / 2, y, progressSizeX + SLIDER_WIDTH, SLIDER_HEIGHT);
-		graphics.blitSprite(RenderPipelines.GUI_TEXTURED, sliderTexture, x + progressStartX, y, SLIDER_WIDTH, SLIDER_HEIGHT);
+		graphics.blitSprite(RenderPipelines.GUI_TEXTURED, SLIDER_BUTTON_PROGRESS, getWidth(), SLIDER_HEIGHT,
+				0, 0,
+				x, y, progressStartX + SLIDER_WIDTH / 2, SLIDER_HEIGHT);
+		graphics.blitSprite(RenderPipelines.GUI_TEXTURED, sliderTexture, sliderX() - SLIDER_WIDTH / 2, y, SLIDER_WIDTH, SLIDER_HEIGHT);
 	}
 
-	public void show(int centerX, int centerY) {
-		leftX = centerX - getWidth() / 2;
-
-		setY(centerY);
-		setX(leftX);
+	public void show(double valuePercent, int mouseX) {
+		dragStartX = mouseX;
+		dragStartValue = valuePercent;
+		currentValue = dragStartValue;
 		visible = true;
 	}
 
 	@Override
-	public void onRelease(MouseButtonEvent event) {
-		leftX = 0;
-		visible = false;
+	public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+		return false;
 	}
 
 	public double currentValue() {
-		if (!visible) {
-			return 0;
-		} else {
-			return pixelValue() / (double)getWidth();
-		}
-	}
-
-	public int pixelValue() {
-		if (!visible) {
-			return 0;
-		} else {
-			return leftX;
-		}
+		return currentValue;
 	}
 }
