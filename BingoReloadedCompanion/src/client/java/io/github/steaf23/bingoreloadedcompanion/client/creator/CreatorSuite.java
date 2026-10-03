@@ -10,6 +10,7 @@ import io.github.steaf23.bingoreloaded.protocol.data.task.TaskFormatting;
 import io.github.steaf23.bingoreloaded.protocol.data.task.TaskId;
 import io.github.steaf23.bingoreloadedcompanion.card.taskdata.TaskWithCount;
 import io.github.steaf23.bingoreloadedcompanion.client.BingoReloadedCompanionClient;
+import io.github.steaf23.bingoreloadedcompanion.client.creator.tasklist.TaskPickerScreen;
 import io.github.steaf23.bingoreloadedcompanion.client.util.FabricTypes;
 import io.github.steaf23.bingoreloadedcompanion.network.ClientGetCreatorListPayload;
 import io.github.steaf23.bingoreloadedcompanion.network.ClientUpsertCreatorCardPayload;
@@ -39,18 +40,22 @@ import java.util.stream.Stream;
 
 public class CreatorSuite {
 
-	public record TaskWithName(TaskDefinition def, TaskWithCount.NameSupplier name) {}
+	@FunctionalInterface
+	public interface TaskInfo {
+		void update(TaskId id, NamedTask namedTask);
+	}
 
-	public final Map<TaskId, TaskWithName> allStatistics = new HashMap<>();
-	public final Map<TaskId, TaskWithName> allItems = new HashMap<>();
-	public final Map<TaskId, TaskWithName> allAdvancements = new HashMap<>();
+	public record NamedTask(TaskDefinition def, TaskWithCount.NameSupplier name) {}
+
+	public final Map<TaskId, NamedTask> allStatistics = new HashMap<>();
+	public final Map<TaskId, NamedTask> allItems = new HashMap<>();
+	public final Map<TaskId, NamedTask> allAdvancements = new HashMap<>();
+	public final Map<TaskId, Integer> taskIndices = new HashMap<>();
+
 	public final Map<String, TextColor> allTags = new HashMap<>();
-	public final List<TaskId> itemOrder = new ArrayList<>();
-	public final List<TaskId> advancementOrder = new ArrayList<>();
-	public final List<TaskId> statisticOrder = new ArrayList<>();
 	public final Map<CreativeModeTab, List<TaskId>> itemsPerTab = new HashMap<>();
 
-	private final List<ResourceKey<CreativeModeTab>> ORDERED_TABS = List.of(
+	public static final List<ResourceKey<CreativeModeTab>> ORDERED_TABS = List.of(
 			CreativeModeTabs.BUILDING_BLOCKS,
 			CreativeModeTabs.COLORED_BLOCKS,
 			CreativeModeTabs.NATURAL_BLOCKS,
@@ -66,9 +71,13 @@ public class CreatorSuite {
 
 	private CreatorContext context = null;
 	private CreatorCardScreen cardScreen = null;
-	private CreatorTaskScreen taskScreen = null;
+	private TaskPickerScreen taskScreen = null;
 
 	private Screen openScreen;
+
+	private int itemsFirstIndex = 0;
+	private int advancementsFirstIndex = 0;
+	private int statisticsFirstIndex = 0;
 
 	public void openListEditor(@Nullable CreatorContext context) {
 		if (context != null) {
@@ -76,7 +85,7 @@ public class CreatorSuite {
 			extractContext();
 		}
 
-		this.taskScreen = new CreatorTaskScreen(this);
+		this.taskScreen = new TaskPickerScreen(this);
 		openScreen = Minecraft.getInstance().gui.screen();
 		Minecraft.getInstance().setScreenAndShow(taskScreen);
 	}
@@ -98,11 +107,12 @@ public class CreatorSuite {
 		itemsPerTab.clear();
 		allTags.clear();
 		allTags.putAll(context.tags());
+		taskIndices.clear();
 
-		ORDERED_TABS.stream().map(BuiltInRegistries.CREATIVE_MODE_TAB::getValueOrThrow)
-				.filter(t -> t.getType() != CreativeModeTab.Type.SEARCH)
-				.forEach(tab -> {
-
+		int idx = 0;
+		itemsFirstIndex = idx;
+		for (CreativeModeTab tab : ORDERED_TABS.stream().map(BuiltInRegistries.CREATIVE_MODE_TAB::getValueOrThrow)
+				.filter(t -> t.getType() != CreativeModeTab.Type.SEARCH).toList()) {
 			tab.buildContents(new CreativeModeTab.ItemDisplayParameters(
 					Minecraft.getInstance().player.connection.enabledFeatures(),
 					Minecraft.getInstance().player.canUseGameMasterBlocks(),
@@ -122,11 +132,33 @@ public class CreatorSuite {
 				allItems.put(id, itemTask(key, id, tab.getDisplayName().getString()));
 			});
 
+			for (TaskId item : items) {
+				taskIndices.putIfAbsent(item, idx);
+				idx++;
+			}
 			itemsPerTab.put(tab, items);
+		}
+
+		List<TaskId> advancements = new ArrayList<>();
+		taskSupplier().advancements().forEach((key, node) -> {
+			if (!node.hasDisplay()) {
+				return;
+			}
+			String category = findAdvancementRoot(key);
+			TaskDefinition def = new TaskDefinition(new TaskId.Advancement(key), node.displayName(), node.displayIcon(), category,1);
+			Component comp = FabricTypes.toNativeComponent(taskFormatting().advancementNameComponent(net.kyori.adventure.text.Component.text(node.displayName())));
+			advancements.add(def.id());
+			allAdvancements.put(def.id(), new NamedTask(def, _ -> comp));
+			advancements.add(def.id());
 		});
 
-		itemOrder.addAll(allItems.keySet().stream().map(i -> (TaskId.Item)i).sorted(Comparator.comparing(TaskId.Item::id)).toList());
+		advancementsFirstIndex = idx;
+		for (TaskId adv : advancements) {
+			taskIndices.put(adv, idx);
+			idx++;
+		}
 
+		List<TaskId> statistics = new ArrayList<>();
 		taskSupplier().statistics().stream()
 				.flatMap(task -> {
 					TaskId.Statistic stat = task.statistic();
@@ -138,23 +170,25 @@ public class CreatorSuite {
 								stat.category().name(),
 								64));
 						case ITEM -> taskSupplier().items().stream()
+								.sorted(Comparator.comparing(Key::value))
 								.map(item -> itemTaskFromStatistic(stat.category(), item, stat.category().name(), stat.statisticType()));
 						case BLOCK -> taskSupplier().validBlocks().stream()
-								.map(item -> itemTaskFromStatistic(stat.category(), item, stat.category().name(), stat.statisticType()));
+								.sorted(Comparator.comparing(Key::value))
+								.map(block -> itemTaskFromStatistic(stat.category(), block, stat.category().name(), stat.statisticType()));
 						case ENTITY -> taskSupplier().validEntityTypes().stream()
-								.map(item -> entityTaskFromStatistic(stat.category(), item, stat.category().name(), stat.statisticType()));
+								.sorted(Comparator.comparing(Key::value))
+								.map(entity -> entityTaskFromStatistic(stat.category(), entity, stat.category().name(), stat.statisticType()));
 					};
-				}).forEach(s -> allStatistics.put(s.id(), new TaskWithName(s, t -> FabricTypes.toNativeComponent(createStatisticName(t)))));
+				}).forEach(s -> {
+					allStatistics.put(s.id(), new NamedTask(s, t -> FabricTypes.toNativeComponent(createStatisticName(t))));
+					statistics.add(s.id());
+				});
 
-		taskSupplier().advancements().forEach((key, node) -> {
-			if (!node.hasDisplay()) {
-				return;
-			}
-			String category = findAdvancementRoot(key);
-			TaskDefinition def = new TaskDefinition(new TaskId.Advancement(key), node.displayName(), node.displayIcon(), category,1);
-			Component comp = FabricTypes.toNativeComponent(taskFormatting().advancementNameComponent(net.kyori.adventure.text.Component.text(node.displayName())));
-			allAdvancements.put(def.id(), new TaskWithName(def, _ -> comp));
-		});
+		statisticsFirstIndex = idx;
+		for (TaskId stat : statistics) {
+			taskIndices.put(stat, idx);
+			idx++;
+		}
 	}
 
 	public net.kyori.adventure.text.Component createStatisticName(TaskWithCount task) {
@@ -213,12 +247,23 @@ public class CreatorSuite {
 		return net.kyori.adventure.text.Component.translatable(BuiltInRegistries.ENTITY_TYPE.getValue(FabricTypes.idFromKey(key)).getDescriptionId());
 	}
 
-	public TaskWithName getTaskById(TaskId id) {
+	public NamedTask getTaskById(TaskId id) {
 		return switch (id.type()) {
 			case ITEM -> allItems.get(id);
 			case ADVANCEMENT -> allAdvancements.get(id);
 			case STATISTIC -> allStatistics.get(id);
 		};
+	}
+
+	public void iterateAllTasks(TaskInfo forEachTask) {
+		allItems.forEach(forEachTask::update);
+		allAdvancements.forEach(forEachTask::update);
+		allStatistics.forEach(forEachTask::update);
+	}
+
+	public int taskIndex(TaskId id) {
+		int val =  taskIndices.getOrDefault(id, Integer.MAX_VALUE);
+		return val;
 	}
 
 	public CreatorTaskSupplier taskSupplier() {
@@ -259,14 +304,14 @@ public class CreatorSuite {
 		}
 	}
 
-	public TaskWithName itemTask(Key key, String category) {
+	public NamedTask itemTask(Key key, String category) {
 		return itemTask(key, new TaskId.Item(key), category);
 	}
 
-	public TaskWithName itemTask(Key key, TaskId id, String category) {
+	public NamedTask itemTask(Key key, TaskId id, String category) {
 		Item item = BuiltInRegistries.ITEM.getValue(Identifier.fromNamespaceAndPath(key.namespace(), key.value()));
 		net.kyori.adventure.text.Component name = createItemName(key);
-		return new TaskWithName(new TaskDefinition(
+		return new NamedTask(new TaskDefinition(
 				id,
 				"x1 " + item.getDescriptionId(),
 				key,

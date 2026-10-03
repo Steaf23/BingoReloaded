@@ -7,9 +7,13 @@ import net.minecraft.client.gui.layouts.Layout;
 import net.minecraft.client.gui.layouts.LayoutElement;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
+import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipPositioner;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
+import net.minecraft.util.Mth;
+import org.joml.Vector2i;
+import org.joml.Vector2ic;
 import org.jspecify.annotations.NonNull;
 
 import java.util.function.Consumer;
@@ -27,17 +31,20 @@ public class CustomScrollableLayout extends AbstractScrollArea implements Layout
 			SCROLLER, SCROLLER_DISABLED, SCROLLER_BACKGROUND,
 			SCROLLER_WIDTH, SCROLLER_HEIGHT, 24, false);
 
-	private final Layout innerLayout;
+	private final LayoutElement innerLayout;
 
 	private final int scrollRate;
 	private final int scrollerWidth;
 
-	public CustomScrollableLayout(int x, int y, int width, int scrollerWidth, int height, Layout innerLayout, ScrollbarSettings scrollbarSettings) {
-		super(x, y, width, height, Component.empty(), scrollbarSettings);
+	public CustomScrollableLayout(int width, int height, LayoutElement innerLayout) {
+		super(0, 0, width, height, Component.empty(), DEFAULT_SETTINGS);
 		this.innerLayout = innerLayout;
-		this.innerLayout.setPosition(x, y);
-		this.scrollRate = scrollbarSettings.scrollRate();
-		this.scrollerWidth = scrollerWidth;
+		this.scrollRate = DEFAULT_SETTINGS.scrollRate();
+		this.scrollerWidth = SCROLLER_WIDTH;
+	}
+
+	public InnerTooltipPositioner tooltipPositioner() {
+		return new InnerTooltipPositioner(getRectangle());
 	}
 
 	@Override
@@ -81,8 +88,13 @@ public class CustomScrollableLayout extends AbstractScrollArea implements Layout
 			return super.mouseClicked(event, doubleClick);
 		} else {
 			innerLayout.visitWidgets(w-> w.mouseClicked(event, doubleClick));
+			return true;
 		}
-		return false;
+	}
+
+	@Override
+	public void onRelease(MouseButtonEvent event) {
+		innerLayout.visitWidgets(w -> w.onRelease(event));
 	}
 
 	@Override
@@ -112,6 +124,47 @@ public class CustomScrollableLayout extends AbstractScrollArea implements Layout
 
 	@Override
 	public void removeChildren() {
-		innerLayout.removeChildren();
+		if (innerLayout instanceof Layout layout) {
+			layout.removeChildren();
+		}
+	}
+
+	public static class InnerTooltipPositioner implements ClientTooltipPositioner {
+		private static final int MARGIN = 5;
+		private static final int MOUSE_OFFSET_X = 12;
+		public static final int MAX_OVERLAP_WITH_WIDGET = 3;
+		public static final int MAX_DISTANCE_TO_WIDGET = 5;
+		private final ScreenRectangle innerRectangle;
+
+		public InnerTooltipPositioner(final ScreenRectangle innerRectangle) {
+			this.innerRectangle = innerRectangle;
+		}
+
+		@Override
+		public @NonNull Vector2ic positionTooltip(int screenWidth, int screenHeight, int x, int y, int tooltipWidth, int tooltipHeight) {
+//			Vector2i result = new Vector2i(x + 12, y);
+//			if (result.x + tooltipWidth > screenWidth - 5) {
+//				result.x = Math.max(x - 12 - tooltipWidth, 9);
+//			}
+//
+//			result.y += 3;
+//			int paddedHeight = tooltipHeight + 3 + 3;
+//			int lowestPossibleY = this.innerRectangle.bottom() + 3 + getOffset(0, 0, this.innerRectangle.height());
+//			int maxY = screenHeight - 5;
+//			if (lowestPossibleY + paddedHeight <= maxY) {
+//				result.y = result.y + getOffset(result.y, this.innerRectangle.top(), this.innerRectangle.height());
+//			} else {
+//				result.y = result.y - (paddedHeight + getOffset(result.y, this.innerRectangle.bottom(), this.innerRectangle.height()));
+//			}
+//
+//			return result;
+
+			return new Vector2i(x + 12, y);
+		}
+
+		private static int getOffset(final int mouseY, final int widgetY, final int widgetHeight) {
+			int distance = Math.min(Math.abs(mouseY - widgetY), widgetHeight);
+			return Math.round(Mth.lerp((float)distance / widgetHeight, widgetHeight - 3, 5.0F));
+		}
 	}
 }
