@@ -8,6 +8,11 @@ public record TeleportationSpiral(
     boolean skipOceanBiomes
 ) {
     public record Point(int x, int z) {
+        @Override
+        public String toString() {
+            return "(%d, %d)".formatted(x, z);
+        }
+
         public static final DataStorageSerializer<Point> SERIALIZER =
             DataStorageSerializer.of(
                 (storage, value) -> {

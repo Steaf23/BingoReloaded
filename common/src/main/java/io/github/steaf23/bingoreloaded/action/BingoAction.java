@@ -8,6 +8,7 @@ import io.github.steaf23.bingoreloaded.data.CustomKitData;
 import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.data.config.BingoOptions;
 import io.github.steaf23.bingoreloaded.data.teleportgrid.TeleportGridData;
+import io.github.steaf23.bingoreloaded.data.teleportspiral.TeleportSpiralData;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gameloop.GameManager;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
@@ -425,6 +426,17 @@ public class BingoAction extends ActionTree {
 		this.addSubAction(new ActionTree("grid", List.of("bingo.admin"))
 				.addSubAction(resetGridAction)
 				.addSubAction(gridStatusAction));
+
+		ActionTree spiralStatusAction = new ActionTree("status", (args) -> {
+			TeleportSpiralData data = new TeleportSpiralData(config.getOptionValue(BingoOptions.TELEPORTATION_SPIRAL));
+			BingoPlayerSender.sendMessage(Component.text("Current step is " + data.getStep() + " and next spawn will be " + data.peekNextSpiralPosition()), getLastUser());
+			return ActionResult.SUCCESS;
+		});
+		
+		this.addSubAction(
+		    new ActionTree("spiral", List.of("bingo.admin"))
+				.addSubAction(spiralStatusAction)
+		);
 	}
 
 	public void addPlayerKit(String slot, String kitName, PlayerHandle fromPlayerInventory) {

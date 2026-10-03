@@ -19,20 +19,16 @@ public class TeleportSpiralData {
         return spiralOptions;
     }
 
-    public TeleportationSpiral.Point getNextSpiralPosition() {
-        int step = data.getInt("step", 0);
-        data.setInt("step", step + 1);
-        data.saveChanges();
-        
+    public int getStep() {
+        return data.getInt("step", 0);
+    }
+
+    private TeleportationSpiral.Point computeNextSpiralPosition(int step) {
         var center = this.spiralOptions.center();
         var size = this.spiralOptions.size();
 
-        System.out.println("Step: " + step);
         if (step == 0) {
-            return new TeleportationSpiral.Point(
-                center.x(),
-                center.z()
-            );
+            return new TeleportationSpiral.Point(center.x(), center.z());
         }
 
         int m = (int) Math.floor(Math.sqrt(step));
@@ -69,5 +65,19 @@ public class TeleportSpiralData {
             center.x() + ux * size.x(),
             center.z() + uz * size.z()
         );
+    }
+
+    public TeleportationSpiral.Point peekNextSpiralPosition() {
+        int step = getStep();
+
+        return computeNextSpiralPosition(step);
+    }
+
+    public TeleportationSpiral.Point getNextSpiralPosition() {
+        int step = getStep();
+        data.setInt("step", step + 1);
+        data.saveChanges();
+
+        return computeNextSpiralPosition(step);
     }
 }
