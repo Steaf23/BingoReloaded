@@ -96,6 +96,7 @@ public class BingoReloaded implements Namespaced {
 		addDataAccessor(new TagDataAccessor(resources, "data/leaderboard", false));
 		addDataAccessor(new TagDataAccessor(resources, "data/tags", false));
 		addDataAccessor(new TagDataAccessor(resources, "data/grid", false));
+		addDataAccessor(new TagDataAccessor(resources, "data/spiral", false));
 
 		for (DataAccessor accessor : runtime.getDataToRegister()) { // platform specific data accessors
 			addDataAccessor(accessor);

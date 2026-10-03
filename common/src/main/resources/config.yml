@@ -178,6 +178,7 @@ teleportMaxDistance: 1000000
 #   - TEAM: everyone with their teammates (TEAM),
 #   - NONE: no one gets teleported at all (NONE),
 #   - GRID: use configured grid settings (only works on configuration: SINGULAR),
+#   - SPIRAL: use configured spiral settings (only works on configuration: SINGULAR),
 #   - using any other value will make it so no one teleports at all at the start of the game.
 playerTeleportStrategy: ALL
 
@@ -304,6 +305,16 @@ teleportGrid:
   size:
     x: 50
     z: 50
+  skipOceanBiomes: true
+
+teleportSpiral:
+  center:
+    x: 0
+    z: 0
+
+  size:
+    x: 20000
+    z: 20000
   skipOceanBiomes: true
 
 # ==========================================================================
