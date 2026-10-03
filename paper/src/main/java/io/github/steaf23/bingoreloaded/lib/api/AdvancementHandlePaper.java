@@ -45,7 +45,7 @@ public class AdvancementHandlePaper implements AdvancementHandle {
 		}
 		// For some reason paper decides to add extra formatting here that we don't want (specifically adding square brackets and making it green).
 		// This will allow bingo to apply its own advancement task formatting on the title/name component.
-		return PaperAdventure.asAdventure(((PaperAdvancementDisplay) advancement.getDisplay()).handle().getTitle());
+		return PaperAdventure.asAdventure(((PaperAdvancementDisplay) advancement.getDisplay()).handle().title());
 	}
 
 	@Override

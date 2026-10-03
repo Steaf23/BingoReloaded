@@ -49,8 +49,8 @@ dependencies {
 
     implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
     implementation("com.terraformersmc:modmenu:${project.modmenu_version}")
-    implementation("net.kyori:adventure-platform-fabric:7.1.1")
-    include "net.kyori:adventure-platform-fabric:7.1.1"
+    implementation("net.kyori:adventure-platform-fabric:${project.adventure_fabric_version}")
+    include "net.kyori:adventure-platform-fabric:${project.adventure_fabric_version}"
     implementation "net.kyori:adventure-api:${adventure_version}"
     include "net.kyori:adventure-api:${adventure_version}"
     implementation "net.kyori:adventure-key:${adventure_version}"
