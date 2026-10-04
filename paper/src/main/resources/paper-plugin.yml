@@ -18,6 +18,9 @@ dependencies:
     MultiWorld:
       load: BEFORE
       required: false
+    Chunky:
+      load: BEFORE
+      required: false
 
 permissions:
   bingo.player:

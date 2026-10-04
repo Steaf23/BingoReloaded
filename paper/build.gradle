@@ -17,11 +17,15 @@ repositories {
     maven {
         url = 'https://repo.extendedclip.com/content/repositories/placeholderapi/'
     }
+    maven {
+        url = 'https://repo.codemc.io/repository/maven-public/'
+    }
 }
 
 dependencies {
     compileOnly "com.github.retrooper:packetevents-spigot:${packet_events_version}"
     compileOnly 'me.clip:placeholderapi:2.11.7'
+    compileOnly "org.popcraft:chunky-common:${chunky_version}"
 
     implementation project(":common")
     implementation project(":protocol")
@@ -63,5 +67,6 @@ tasks.shadowJar {
 tasks.runServer {
     downloadPlugins {
         modrinth("packetevents", "$packet_events_version+spigot")
+        hangar("chunky", "$chunky_version")
     }
 }
