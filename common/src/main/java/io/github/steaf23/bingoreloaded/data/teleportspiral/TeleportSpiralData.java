@@ -73,6 +73,10 @@ public class TeleportSpiralData {
         return computeNextSpiralPosition(step);
     }
 
+    public TeleportationSpiral.Point peekSpiralPosition(int step) {
+        return computeNextSpiralPosition(step);
+    }
+
     public TeleportationSpiral.Point getNextSpiralPosition() {
         int step = getStep();
         data.setInt("step", step + 1);
@@ -80,4 +84,9 @@ public class TeleportSpiralData {
 
         return computeNextSpiralPosition(step);
     }
+
+    public void reset() {
+		data.setInt("step", 0);
+		data.saveChanges();
+	}
 }

@@ -6,9 +6,11 @@ import io.github.steaf23.bingoreloaded.api.CardMenu;
 import io.github.steaf23.bingoreloaded.api.TeamDisplay;
 import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.data.record.LeaderboardData;
+import io.github.steaf23.bingoreloaded.data.teleportspiral.TeleportSpiralData;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.gameloop.phase.PregameLobby;
+import io.github.steaf23.bingoreloaded.lib.action.ActionResult;
 import io.github.steaf23.bingoreloaded.lib.action.ActionTree;
 import io.github.steaf23.bingoreloaded.lib.api.inventory.CapacityInventoryProvider;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
@@ -59,6 +61,7 @@ public interface BingoReloadedRuntime {
 
 	void editCardDescription(PlayerHandle playerHandle, String currentName, String currentDescription, BasicMenu parentMenu, CardDescriptionEditor callback);
 	void givePlayerCardItem(BingoPlayer player, int cardSlot);
+	ActionResult pregenerateGrid(TeleportSpiralData data, int rounds, int radius, ActionUser user);
 
 	TeamDisplay createTeamDisplay(BingoSession session);
 	SharedDisplay gameDisplay();

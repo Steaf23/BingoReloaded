@@ -10,6 +10,7 @@ import io.github.steaf23.bingoreloaded.api.TeamDisplay;
 import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.data.config.BingoOptions;
 import io.github.steaf23.bingoreloaded.data.record.LeaderboardData;
+import io.github.steaf23.bingoreloaded.data.teleportspiral.TeleportSpiralData;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.gameloop.phase.PregameLobby;
@@ -22,6 +23,7 @@ import io.github.steaf23.bingoreloaded.gui.inventory.VoteMenu;
 import io.github.steaf23.bingoreloaded.gui.inventory.card.GenericCardMenu;
 import io.github.steaf23.bingoreloaded.gui.inventory.card.HotswapGenericCardMenu;
 import io.github.steaf23.bingoreloaded.gui.inventory.creator.BingoCreatorMenu;
+import io.github.steaf23.bingoreloaded.lib.action.ActionResult;
 import io.github.steaf23.bingoreloaded.lib.action.ActionTree;
 import io.github.steaf23.bingoreloaded.lib.api.ActionUser;
 import io.github.steaf23.bingoreloaded.lib.api.BingoReloadedRuntime;
@@ -278,6 +280,12 @@ public class BingoReloadedFabric implements ModInitializer, BingoReloadedRuntime
 
 		serverPlayer.getInventory().setItem(cardSlot, stack);
 	}
+
+	@Override
+	public ActionResult pregenerateGrid(TeleportSpiralData data, int rounds, int radius, ActionUser user) {
+	    user.sendMessage(Component.text("Pregeneration is not implemented on fabric yet"));
+	    return ActionResult.IGNORED;
+	};
 
 	@Override
 	public TeamDisplay createTeamDisplay(BingoSession session) {

@@ -9,6 +9,7 @@ import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.data.config.BingoOptions;
 import io.github.steaf23.bingoreloaded.data.teleportgrid.TeleportGridData;
 import io.github.steaf23.bingoreloaded.data.teleportspiral.TeleportSpiralData;
+import io.github.steaf23.bingoreloaded.data.teleportspiral.TeleportationSpiral;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gameloop.GameManager;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
@@ -432,10 +433,43 @@ public class BingoAction extends ActionTree {
 			BingoPlayerSender.sendMessage(Component.text("Current step is " + data.getStep() + " and next spawn will be " + data.peekNextSpiralPosition()), getLastUser());
 			return ActionResult.SUCCESS;
 		});
+
+		ActionTree spiralResetAction = new ActionTree("reset", (args) -> {
+			TeleportSpiralData data = new TeleportSpiralData(config.getOptionValue(BingoOptions.TELEPORTATION_SPIRAL));
+			data.reset();
+			BingoPlayerSender.sendMessage(Component.text("Spiral has been reset back to step " + data.getStep()), getLastUser());
+			return ActionResult.SUCCESS;
+		});
+
+		ActionTree spiralPregenAction = new ActionTree("pregen", (context, args) -> {
+		    TeleportSpiralData data = new TeleportSpiralData(config.getOptionValue(BingoOptions.TELEPORTATION_SPIRAL));
+
+			if (args.length != 2) {
+			    return ActionResult.INCORRECT_USE;
+			}
+
+			int rounds, radius;
+
+			try {
+				rounds = Integer.parseInt(args[0]);
+			} catch (Exception e) {
+				return ActionResult.INCORRECT_USE;
+			}
+
+			try {
+				radius = Integer.parseInt(args[1]);
+			} catch (Exception e) {
+				return ActionResult.INCORRECT_USE;
+			}
+
+		    return context.runtime().pregenerateGrid(data, rounds, radius, getLastUser());
+		}).addUsage("<rounds> <radius>");
 		
 		this.addSubAction(
 		    new ActionTree("spiral", List.of("bingo.admin"))
 				.addSubAction(spiralStatusAction)
+				.addSubAction(spiralResetAction)
+				.addSubAction(spiralPregenAction)
 		);
 	}
 
