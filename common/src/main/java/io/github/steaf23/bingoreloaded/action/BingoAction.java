@@ -9,7 +9,6 @@ import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.data.config.BingoOptions;
 import io.github.steaf23.bingoreloaded.data.teleportgrid.TeleportGridData;
 import io.github.steaf23.bingoreloaded.data.teleportspiral.TeleportSpiralData;
-import io.github.steaf23.bingoreloaded.data.teleportspiral.TeleportationSpiral;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gameloop.GameManager;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
