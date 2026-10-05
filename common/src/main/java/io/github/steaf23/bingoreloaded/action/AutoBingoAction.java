@@ -1,7 +1,13 @@
 package io.github.steaf23.bingoreloaded.action;
 
+import com.mojang.brigadier.Command;
+import com.mojang.brigadier.arguments.StringArgumentType;
+import com.mojang.brigadier.context.CommandContext;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
+import io.github.steaf23.bingoreloaded.api.BingoCommandSource;
 import io.github.steaf23.bingoreloaded.cards.CardSize;
+import io.github.steaf23.bingoreloaded.command.BingoCommand;
+import io.github.steaf23.bingoreloaded.command.MappedCommand;
 import io.github.steaf23.bingoreloaded.data.BingoCardData;
 import io.github.steaf23.bingoreloaded.data.BingoSettingsData;
 import io.github.steaf23.bingoreloaded.data.PlayerSerializationData;
@@ -13,7 +19,6 @@ import io.github.steaf23.bingoreloaded.gameloop.GameManager;
 import io.github.steaf23.bingoreloaded.gameloop.phase.PregameLobby;
 import io.github.steaf23.bingoreloaded.lib.action.ActionResult;
 import io.github.steaf23.bingoreloaded.lib.action.ActionTree;
-import io.github.steaf23.bingoreloaded.lib.action.DeferredAction;
 import io.github.steaf23.bingoreloaded.lib.api.WorldHandle;
 import io.github.steaf23.bingoreloaded.lib.api.platform.GameContext;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
@@ -34,32 +39,26 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class AutoBingoAction extends DeferredAction {
+public class AutoBingoAction<Source> extends MappedCommand<Source> {
 
-	public AutoBingoAction() {
-		super("autobingo", "world", List.of("bingo.admin"));
+	public AutoBingoAction(Function<Source, BingoCommandSource> mapper) {
+		super("autobingo", List.of("bingo.admin"), mapper);
 
-		addTabCompletion((context,args) -> context.gameManager().getSessionNames().stream().toList());
+		this.addSessionNameSubAction("create", (context, name) -> create(context.gameManager(), name));
 
-		this.addSubAction(new ActionTree("create", (context, args) -> create(context.gameManager(), args[0])));
+		this.addSessionNameSubAction("destroy", (context, name) -> destroy(context.gameManager(), name));
 
-
-		this.addSubAction(new ActionTree("destroy", (context, args) -> destroy(context.gameManager(), args[0])));
-
-
-		this.addSubAction(new ActionTree("start", (context, args) -> start(context.gameManager(), args[0])));
+		this.addSessionNameSubAction("start", (context, name) -> start(context.gameManager(), name));
 
 
-		this.addSubAction(new ActionTree("kit", (context, args) -> {
-			var settings = getSettingsBuilder(context, args[0]);
-			if (settings == null) {
-				sendFailed("Invalid world/ session name: " + args[0], args[0]);
-				return ActionResult.INCORRECT_USE;
-			}
-			return setKit(settings, args[0], Arrays.copyOfRange(args, 1, args.length));
+		this.addSettingsSubAction("kit", (source, settings, args) -> {
+			return setKit(settings, Arrays.copyOfRange(args, 1, args.length));
 		}
 		).addTabCompletion(args ->
 				List.of("hardcore", "normal", "overpowered", "reloaded",
@@ -324,62 +323,48 @@ public class AutoBingoAction extends DeferredAction {
 		return session == null ? null : session.settingsBuilder;
 	}
 
-	public ActionResult create(GameManager manager, String worldName) {
+	public AutoResult create(GameManager manager, String worldName) {
 		if (manager.createSession(worldName)) {
-			sendSuccess("Connected Bingo Reloaded to this world!", worldName);
-			return ActionResult.SUCCESS;
+			return sendSuccess("Connected Bingo Reloaded to this world!");
 		}
 
-		sendFailed("Could not create session, see console for details.", worldName);
-		return ActionResult.IGNORED;
+		return sendFailed("Could not create session, see console for details.");
 	}
 
-	public ActionResult destroy(GameManager manager, String worldName) {
+	public AutoResult destroy(GameManager manager, String worldName) {
 		if (manager.destroySession(worldName)) {
-			sendSuccess("Disconnected Bingo Reloaded from this world!", worldName);
-			return ActionResult.SUCCESS;
+			return sendSuccess("Disconnected Bingo Reloaded from this world!");
 		}
 
-		sendFailed("Could not destroy session, see console for details.", worldName);
-		return ActionResult.IGNORED;
+		return sendFailed("Could not destroy session, see console for details.");
 	}
 
-	public ActionResult start(GameManager manager, String worldName) {
+	public AutoResult start(GameManager manager, String worldName) {
 		if (manager.startGame(worldName)) {
-			sendSuccess("The game has started!", worldName);
-			return ActionResult.SUCCESS;
+			return sendSuccess("The game has started!");
 		}
 
-		sendFailed("Could not start game, see console for details.", worldName);
-		return ActionResult.IGNORED;
+		return sendFailed("Could not start game, see console for details.");
 	}
 
-	public ActionResult setKit(BingoSettingsBuilder settings, String worldName, String[] extraArguments) {
-		if (extraArguments.length != 1) {
-			sendFailed("Expected 3 arguments!", worldName);
-			return ActionResult.INCORRECT_USE;
-		}
-
-		PlayerKit kit = PlayerKit.fromConfig(extraArguments[0]);
+	public AutoResult setKit(BingoSettingsBuilder settings, String kitName) {
+		PlayerKit kit = PlayerKit.fromConfig(kitName);
 
 		if (!kit.isValid()) {
 			// Invalid custom kit selected, not possible!
-			sendFailed("Cannot set kit to " + kit.getDisplayName() + ". This custom kit is not defined. To create custom kits first, use /bingo kit.", worldName);
-			return ActionResult.IGNORED;
+			return sendFailed("Cannot set kit to " + kit.getDisplayName() + ". This custom kit is not defined. To create custom kits first, use /bingo kit.");
 		}
 		settings.kit(kit);
-		sendSuccess("Kit set to " + kit.getDisplayName(), worldName);
-		return ActionResult.SUCCESS;
+		return sendSuccess("Kit set to " + kit.getDisplayName());
 	}
 
-	public ActionResult setEffect(BingoSettingsBuilder settings, String worldName, String[] extraArguments) {
+	public AutoResult setEffect(BingoSettingsBuilder settings, String worldName, String[] extraArguments) {
 		// autobingo world effect <effect_name> [true | false]
 		// If argument count is only 1, enable all, none or just the single effect typed.
 		//     Else default enable effect unless the second argument is "false".
 
 		if (extraArguments.length == 0) {
-			sendFailed("Expected at least 3 arguments!", worldName);
-			return ActionResult.INCORRECT_USE;
+			return sendFailed("Expected at least 3 arguments!");
 		}
 		String effect = extraArguments[0];
 		boolean enable = extraArguments.length == 1 || !extraArguments[1].equals("false");
@@ -387,44 +372,44 @@ public class AutoBingoAction extends DeferredAction {
 		if (effect.equals("all")) {
 			settings.effects(EnumSet.allOf(EffectOptionFlags.class));
 			sendSuccess("Updated active effects to " + EnumSet.allOf(EffectOptionFlags.class), worldName);
-			return ActionResult.SUCCESS;
+			return Command.SINGLE_SUCCESS;
 		} else if (effect.equals("none")) {
 			settings.effects(EnumSet.noneOf(EffectOptionFlags.class));
 			sendSuccess("Updated active effects to " + EnumSet.noneOf(EffectOptionFlags.class), worldName);
-			return ActionResult.SUCCESS;
+			return Command.SINGLE_SUCCESS;
 		}
 
 		try {
 			settings.toggleEffect(EffectOptionFlags.valueOf(effect.toUpperCase()), enable);
 			sendSuccess("Updated active effects to " + settings.view().effects(), worldName);
-			return ActionResult.SUCCESS;
+			return Command.SINGLE_SUCCESS;
 		} catch (IllegalArgumentException e) {
 			sendFailed("Invalid effect: " + effect, worldName);
 			return ActionResult.INCORRECT_USE;
 		}
 	}
 
-	public ActionResult setCard(BingoSettingsBuilder settings, String worldName, String[] extraArguments) {
+	public AutoResult setCard(BingoSettingsBuilder settings, String worldName, String[] extraArguments) {
 		if (extraArguments.length == 0) {
 			sendFailed("Expected at least 3 arguments!", worldName);
 			return ActionResult.INCORRECT_USE;
 		}
 
 		String cardName = extraArguments[0];
-		int seed = extraArguments.length > 1 ? BingoAction.toInt(extraArguments[1], 0) : 0;
+		int seed = extraArguments.length > 1 ? BingoCommand.toInt(extraArguments[1], 0) : 0;
 
 		BingoCardData cardsData = new BingoCardData();
 		if (cardsData.getCardNames().contains(cardName)) {
 			settings.cardName(cardName).cardSeed(seed);
 			sendSuccess("Playing card set to " + cardName + " with" +
 					(seed == 0 ? " no seed" : " seed " + seed), worldName);
-			return ActionResult.SUCCESS;
+			return Command.SINGLE_SUCCESS;
 		}
 		sendFailed("No card named '" + cardName + "' was found!", worldName);
 		return ActionResult.INCORRECT_USE;
 	}
 
-	public ActionResult setCountdown(BingoSettingsBuilder settings, String worldName, String[] extraArguments) {
+	public AutoResult setCountdown(BingoSettingsBuilder settings, String worldName, String[] extraArguments) {
 		if (extraArguments.length != 1) {
 			sendFailed("Expected 3 arguments!", worldName);
 			return ActionResult.INCORRECT_USE;
@@ -440,27 +425,27 @@ public class AutoBingoAction extends DeferredAction {
 			}
 		}
 		sendSuccess("Set countdown type to " + extraArguments[0], worldName);
-		return ActionResult.SUCCESS;
+		return Command.SINGLE_SUCCESS;
 	}
 
-	public ActionResult setDuration(BingoSettingsBuilder settings, String worldName, String[] extraArguments) {
+	public AutoResult setDuration(BingoSettingsBuilder settings, String worldName, String[] extraArguments) {
 		if (extraArguments.length != 1) {
 			sendFailed("Expected 3 arguments!", worldName);
 			return ActionResult.INCORRECT_USE;
 		}
 
-		int gameDuration = BingoAction.toInt(extraArguments[0], 0);
+		int gameDuration = BingoCommand.toInt(extraArguments[0], 0);
 		if (gameDuration > 0) {
 			settings.countdownGameDuration(gameDuration);
 			sendSuccess("Set game duration for countdown mode to " + gameDuration, worldName);
-			return ActionResult.SUCCESS;
+			return Command.SINGLE_SUCCESS;
 		}
 
 		sendFailed("Cannot set duration to " + gameDuration, worldName);
 		return ActionResult.INCORRECT_USE;
 	}
 
-	public ActionResult setPlayerTeam(GameContext context, String sessionName, String[] extraArguments) {
+	public AutoResult setPlayerTeam(GameContext context, String sessionName, String[] extraArguments) {
 		if (extraArguments.length != 2) {
 			sendFailed("Expected 4 arguments!", sessionName);
 			return ActionResult.INCORRECT_USE;
@@ -478,19 +463,19 @@ public class AutoBingoAction extends DeferredAction {
 		PlayerHandle player = context.server().getPlayerFromName(playerName);
 		if (player == null) {
 			sendFailed("Cannot add " + playerName + " to team, player does not exist/ is not online!", sessionName);
-			return ActionResult.IGNORED;
+			return 0;
 		}
 
 		if (teamName.equalsIgnoreCase("none")) {
 			BingoParticipant participant = session.teamManager.getPlayerAsParticipant(player);
 			if (participant == null) {
 				sendFailed(playerName + " did not join any teams!", sessionName);
-				return ActionResult.IGNORED;
+				return 0;
 			}
 
 			session.teamManager.removeMemberFromTeam(participant);
 			sendSuccess("Player " + playerName + " removed from all teams", sessionName);
-			return ActionResult.SUCCESS;
+			return Command.SINGLE_SUCCESS;
 		}
 		BingoParticipant participant = session.teamManager.getPlayerAsParticipant(player);
 		if (participant == null) {
@@ -498,39 +483,39 @@ public class AutoBingoAction extends DeferredAction {
 		}
 		if (!session.teamManager.addMemberToTeam(participant, teamName)) {
 			sendFailed("Player " + playerName + " could not be added to team " + teamName, sessionName);
-			return ActionResult.IGNORED;
+			return 0;
 		}
 		sendSuccess("Player " + playerName + " added to team " + teamName, sessionName);
-		return ActionResult.SUCCESS;
+		return Command.SINGLE_SUCCESS;
 	}
 
-	public ActionResult setTeamSize(BingoSettingsBuilder settings, String worldName, String[] extraArguments) {
+	public AutoResult setTeamSize(BingoSettingsBuilder settings, String worldName, String[] extraArguments) {
 		if (extraArguments.length != 1) {
 			sendFailed("Expected 3 arguments!", worldName);
 			return ActionResult.INCORRECT_USE;
 		}
 
-		int teamSize = Math.min(64, Math.max(1, BingoAction.toInt(extraArguments[0], 1)));
+		int teamSize = Math.min(64, Math.max(1, BingoCommand.toInt(extraArguments[0], 1)));
 
 		settings.maxTeamSize(teamSize);
 		sendSuccess("Set maximum team size to " + teamSize + " players", worldName);
-		return ActionResult.SUCCESS;
+		return Command.SINGLE_SUCCESS;
 	}
 
-	public ActionResult setTeamCount(BingoSettingsBuilder settings, String worldName, String[] extraArguments) {
+	public AutoResult setTeamCount(BingoSettingsBuilder settings, String worldName, String[] extraArguments) {
 		if (extraArguments.length != 1) {
 			sendFailed("Expected 3 arguments!", worldName);
 			return ActionResult.INCORRECT_USE;
 		}
 
-		int newCount = Math.min(64, Math.max(1, BingoAction.toInt(extraArguments[0], 1)));
+		int newCount = Math.min(64, Math.max(1, BingoCommand.toInt(extraArguments[0], 1)));
 
 		settings.maxTeamCount(newCount);
 		sendSuccess("Set maximum team count to " + newCount + " teams", worldName);
-		return ActionResult.SUCCESS;
+		return Command.SINGLE_SUCCESS;
 	}
 
-	public ActionResult setGamemode(BingoSettingsBuilder settings, String worldName, String[] extraArguments) {
+	public AutoResult setGamemode(BingoSettingsBuilder settings, String worldName, String[] extraArguments) {
 		if (extraArguments.length == 0) {
 			sendFailed("Expected at least 3 arguments!", worldName);
 			return ActionResult.INCORRECT_USE;
@@ -551,10 +536,10 @@ public class AutoBingoAction extends DeferredAction {
 
 		BingoSettings view = settings.view();
 		sendSuccess("Set gamemode to " + extraArguments[0] + " " + view.size().size + "x" + view.size().size, worldName);
-		return ActionResult.SUCCESS;
+		return Command.SINGLE_SUCCESS;
 	}
 
-	public ActionResult setHotswapGoal(BingoSettingsBuilder settings, String worldName, String[] extraArguments) {
+	public AutoResult setHotswapGoal(BingoSettingsBuilder settings, String worldName, String[] extraArguments) {
 		if (extraArguments.length == 0) {
 			sendFailed("Expected at least 3 arguments!", worldName);
 			return ActionResult.INCORRECT_USE;
@@ -571,10 +556,10 @@ public class AutoBingoAction extends DeferredAction {
 		settings.hotswapGoal(goal);
 
 		sendSuccess("Set hotswap goal to " + goal, worldName);
-		return ActionResult.SUCCESS;
+		return Command.SINGLE_SUCCESS;
 	}
 
-	public ActionResult setHotswapExpire(BingoSettingsBuilder settings, String worldName, String[] extraArguments) {
+	public AutoResult setHotswapExpire(BingoSettingsBuilder settings, String worldName, String[] extraArguments) {
 		if (extraArguments.length != 1) {
 			sendFailed("Expected 3 arguments!", worldName);
 			return ActionResult.INCORRECT_USE;
@@ -584,10 +569,10 @@ public class AutoBingoAction extends DeferredAction {
 		settings.expireHotswapTasks(value);
 
 		sendSuccess((value ? "Enabled" : "Disabled") + " hotswap task expiration", worldName);
-		return ActionResult.SUCCESS;
+		return Command.SINGLE_SUCCESS;
 	}
 
-	public ActionResult setCompleteGoal(BingoSettingsBuilder settings, String worldName, String[] extraArguments) {
+	public AutoResult setCompleteGoal(BingoSettingsBuilder settings, String worldName, String[] extraArguments) {
 		if (extraArguments.length == 0) {
 			sendFailed("Expected at least 3 arguments!", worldName);
 			return ActionResult.INCORRECT_USE;
@@ -604,10 +589,10 @@ public class AutoBingoAction extends DeferredAction {
 		settings.completeGoal(goal);
 
 		sendSuccess("Set complete goal to " + goal, worldName);
-		return ActionResult.SUCCESS;
+		return Command.SINGLE_SUCCESS;
 	}
 
-	public ActionResult setBlitzHeadstart(BingoSettingsBuilder settings, String worldName, String[] extraArguments) {
+	public AutoResult setBlitzHeadstart(BingoSettingsBuilder settings, String worldName, String[] extraArguments) {
 		if (extraArguments.length == 0) {
 			sendFailed("Expected at least 3 arguments!", worldName);
 			return ActionResult.INCORRECT_USE;
@@ -624,10 +609,10 @@ public class AutoBingoAction extends DeferredAction {
 		settings.blitzStartDuration(goal);
 
 		sendSuccess("Set blitz head start to " + goal, worldName);
-		return ActionResult.SUCCESS;
+		return Command.SINGLE_SUCCESS;
 	}
 
-	public ActionResult setBlitzBonus(BingoSettingsBuilder settings, String worldName, String[] extraArguments) {
+	public AutoResult setBlitzBonus(BingoSettingsBuilder settings, String worldName, String[] extraArguments) {
 		if (extraArguments.length == 0) {
 			sendFailed("Expected at least 3 arguments!", worldName);
 			return ActionResult.INCORRECT_USE;
@@ -644,10 +629,10 @@ public class AutoBingoAction extends DeferredAction {
 		settings.blitzBonusDuration(goal);
 
 		sendSuccess("Set blitz bonus to " + goal, worldName);
-		return ActionResult.SUCCESS;
+		return Command.SINGLE_SUCCESS;
 	}
 
-	public ActionResult setBlitzRecovery(BingoSettingsBuilder settings, String worldName, String[] extraArguments) {
+	public AutoResult setBlitzRecovery(BingoSettingsBuilder settings, String worldName, String[] extraArguments) {
 		if (extraArguments.length == 0) {
 			sendFailed("Expected at least 3 arguments!", worldName);
 			return ActionResult.INCORRECT_USE;
@@ -664,10 +649,10 @@ public class AutoBingoAction extends DeferredAction {
 		settings.blitzRecoveryDelay(goal);
 
 		sendSuccess("Set recovery delay goal to " + goal, worldName);
-		return ActionResult.SUCCESS;
+		return Command.SINGLE_SUCCESS;
 	}
 
-	public ActionResult setDifferentCardPerTeam(BingoSettingsBuilder settings, String worldName, String[] extraArguments) {
+	public AutoResult setDifferentCardPerTeam(BingoSettingsBuilder settings, String worldName, String[] extraArguments) {
 		if (extraArguments.length != 1) {
 			sendFailed("Expected 3 arguments!", worldName);
 			return ActionResult.INCORRECT_USE;
@@ -677,20 +662,20 @@ public class AutoBingoAction extends DeferredAction {
 		settings.differentCardPerTeam(value);
 
 		sendSuccess((value ? "Enabled" : "Disabled") + " separate cards per team", worldName);
-		return ActionResult.SUCCESS;
+		return Command.SINGLE_SUCCESS;
 	}
 
-	public ActionResult end(GameManager manager, String worldName) {
+	public AutoResult end(GameManager manager, String worldName) {
 		if (manager.endGame(worldName)) {
 			sendSuccess("Game forcefully ended!", worldName);
-			return ActionResult.SUCCESS;
+			return Command.SINGLE_SUCCESS;
 		} else {
 			sendFailed("Could not end the game, see console for details.", worldName);
-			return ActionResult.IGNORED;
+			return 0;
 		}
 	}
 
-	public ActionResult preset(BingoSettingsBuilder settingsBuilder, String sessionName, String[] extraArguments) {
+	public AutoResult preset(BingoSettingsBuilder settingsBuilder, String sessionName, String[] extraArguments) {
 		if (extraArguments.length != 2) {
 			sendFailed("Expected 4 arguments!", sessionName);
 			return ActionResult.INCORRECT_USE;
@@ -713,7 +698,7 @@ public class AutoBingoAction extends DeferredAction {
 				BingoSettings settings = settingsData.getSettings(path);
 				if (settings == null) {
 					sendFailed("Invalid settings path " + path, sessionName);
-					return ActionResult.IGNORED;
+					return 0;
 				}
 				settingsBuilder.fromOther(settings, path);
 				sendSuccess("Loaded settings from '" + path + "'.", sessionName);
@@ -728,10 +713,10 @@ public class AutoBingoAction extends DeferredAction {
 			}
 		}
 
-		return ActionResult.SUCCESS;
+		return Command.SINGLE_SUCCESS;
 	}
 
-	private ActionResult addPlayerToSession(GameContext context, String[] args) {
+	private AutoResult addPlayerToSession(GameContext context, String[] args) {
 		String worldName = args[0];
 		if (args.length != 2) {
 			sendFailed("Expected 3 arguments!", worldName);
@@ -742,17 +727,17 @@ public class AutoBingoAction extends DeferredAction {
 		PlayerHandle player = context.server().getPlayerFromName(playerName);
 		if (player == null) {
 			sendFailed("Player " + playerName + " could not be found.", worldName);
-			return ActionResult.IGNORED;
+			return 0;
 		}
 		if (!context.gameManager().teleportPlayerToSession(player, worldName)) {
 			sendFailed("Could not teleport player to invalid world.", worldName);
-			return ActionResult.IGNORED;
+			return 0;
 		}
 		sendSuccess("Teleported " + playerName + " to " + worldName, worldName);
-		return ActionResult.SUCCESS;
+		return Command.SINGLE_SUCCESS;
 	}
 
-	private ActionResult removePlayerFromSession(GameContext context, String[] args) {
+	private AutoResult removePlayerFromSession(GameContext context, String[] args) {
 		String worldName = args[0];
 		if (args.length != 3) {
 			sendFailed("Expected 4 arguments!", worldName);
@@ -765,32 +750,32 @@ public class AutoBingoAction extends DeferredAction {
 		PlayerHandle player = server.getPlayerFromName(playerName);
 		if (player == null) {
 			sendFailed("Player " + playerName + " could not be found.", worldName);
-			return ActionResult.IGNORED;
+			return 0;
 		}
 
 		BingoSession session = context.getSession(worldName);
 		if (session == null || !session.ownsWorld(player.world())) {
 			sendFailed("Player cannot be teleported. " + playerName + " is not in " + worldName, worldName);
-			return ActionResult.IGNORED;
+			return 0;
 		}
 
 		String targetWorldName = args[2];
 		WorldHandle world = server.getWorld(Key.key(targetWorldName));
 		if (world == null) {
 			sendFailed("Could not teleport " + playerName + " to invalid world " + targetWorldName + ".", worldName);
-			return ActionResult.IGNORED;
+			return 0;
 		}
 
 		boolean teleportSucceeded = player.teleportBlocking(world.spawnPoint());
 		if (!context.getConfigOption(BingoOptions.SAVE_PLAYER_INFORMATION) && !teleportSucceeded) {
 			sendFailed("Could not teleport " + playerName + " to " + targetWorldName + " because of some error.", worldName);
-			return ActionResult.IGNORED;
+			return 0;
 		}
 		sendSuccess("Teleported " + playerName + " to " + targetWorldName, worldName);
-		return ActionResult.SUCCESS;
+		return Command.SINGLE_SUCCESS;
 	}
 
-	private ActionResult removeAllPlayersFromSession(GameContext context, String[] args) {
+	private AutoResult removeAllPlayersFromSession(GameContext context, String[] args) {
 		String worldName = args[0];
 		if (args.length != 2) {
 			sendFailed("Expected 3 arguments!", worldName);
@@ -800,14 +785,14 @@ public class AutoBingoAction extends DeferredAction {
 		BingoSession session = context.getSession(worldName);
 		if (session == null) {
 			sendFailed("Could not remove players from this world, invalid session", worldName);
-			return ActionResult.IGNORED;
+			return 0;
 		}
 
 		String targetWorldName = args[1];
 		WorldHandle world = context.server().getWorld(Key.key(targetWorldName));
 		if (world == null) {
 			sendFailed("Could not teleport players to invalid world " + targetWorldName + ".", worldName);
-			return ActionResult.IGNORED;
+			return 0;
 		}
 
 		Set<PlayerHandle> allPlayers = session.getPlayersInWorld();
@@ -829,10 +814,10 @@ public class AutoBingoAction extends DeferredAction {
 		}
 
 		sendSuccess("Teleported " + (playerCount - playersLeft) + " out of " + playerCount + " players in " + worldName + " to " + targetWorldName, worldName);
-		return ActionResult.SUCCESS;
+		return Command.SINGLE_SUCCESS;
 	}
 
-	private ActionResult voteForPlayer(GameContext context, String[] args) {
+	private AutoResult voteForPlayer(GameContext context, String[] args) {
 		String sessionName = args[0];
 		if (args.length != 4) {
 			sendFailed("Expected 5 arguments!", sessionName);
@@ -842,20 +827,20 @@ public class AutoBingoAction extends DeferredAction {
 		BingoSession session = context.getSession(sessionName);
 		if (session == null) {
 			sendFailed("Cannot cast a vote in this world (bingo is not being played here!).", sessionName);
-			return ActionResult.IGNORED;
+			return 0;
 		}
 
 		PlayerHandle player = context.server().getPlayerFromName(args[1]);
 		if (player == null) {
 			sendFailed("Player '" + args[1] + "' does not exist!", sessionName);
-			return ActionResult.IGNORED;
+			return 0;
 		}
 
 		String category = args[2];
 		String voteFor = args[3];
 		if (!(session.phase() instanceof PregameLobby lobby)) {
 			sendFailed("Cannot vote for player, game is not in lobby phase.", sessionName);
-			return ActionResult.IGNORED;
+			return 0;
 		}
 
 		BingoConfigurationData.VoteList voteList = context.getConfigOption(BingoOptions.VOTE_LIST);
@@ -900,10 +885,10 @@ public class AutoBingoAction extends DeferredAction {
 			}
 		}
 		sendSuccess(player.displayName().append(Component.text(" voted for " + category + " " + voteFor)), sessionName);
-		return ActionResult.SUCCESS;
+		return Command.SINGLE_SUCCESS;
 	}
 
-	private ActionResult playerDataCommand(GameContext context, String[] args) {
+	private AutoResult playerDataCommand(GameContext context, String[] args) {
 		String sessionName = args[0];
 		if (args.length != 3) {
 			return ActionResult.INCORRECT_USE;
@@ -916,7 +901,7 @@ public class AutoBingoAction extends DeferredAction {
 		PlayerHandle player = server.getPlayerFromName(args[1]);
 		if (player == null) {
 			sendFailed("Cannot edit player data, player " + playerName + " not found", sessionName);
-			return ActionResult.IGNORED;
+			return 0;
 		}
 
 		return switch (args[1]) {
@@ -924,39 +909,110 @@ public class AutoBingoAction extends DeferredAction {
 				SerializablePlayer data = playerData.loadPlayer(player);
 				if (data == null) {
 					sendFailed("Cannot load player data, no data saved for " + playerName, sessionName);
-					yield ActionResult.IGNORED;
+					yield 0;
 				}
 				sendSuccess("Loaded player data for " + playerName, sessionName);
-				yield ActionResult.SUCCESS;
+				yield Command.SINGLE_SUCCESS;
 			}
 			case "save" -> {
 				SerializablePlayer data = SerializablePlayer.fromPlayer(BingoReloaded.getMetaInfo().version(), player);
 				playerData.savePlayer(data, true);
 				sendSuccess("Saved player data for " + playerName, sessionName);
-				yield ActionResult.SUCCESS;
+				yield Command.SINGLE_SUCCESS;
 			}
 			case "remove" -> {
 				playerData.removePlayer(player.uniqueId());
 				sendSuccess("Removed previously saved player data for " + playerName, sessionName);
-				yield ActionResult.SUCCESS;
+				yield Command.SINGLE_SUCCESS;
 			}
 			default -> ActionResult.INCORRECT_USE;
 		};
 	}
 
-	private void sendSuccess(String message, String sessionName) {
-		sendSuccess(Component.text(message), sessionName);
+	private AutoResult sendSuccess(String message) {
+		return new AutoResult(Command.SINGLE_SUCCESS, message);
 	}
 
-	private void sendFailed(String message, String sessionName) {
-		sendFailed(Component.text(message), sessionName);
+	private AutoResult sendFailed(String message) {
+		return new AutoResult(0, message);
 	}
 
-	private void sendSuccess(Component message, String sessionName) {
+	private AutoResult sendSuccess(Component message) {
 		getLastUser().sendMessage(Component.text("(" + sessionName + ") ").append(message.color(NamedTextColor.GREEN)));
 	}
 
-	private void sendFailed(Component message, String sessionName) {
+	private AutoResult sendFailed(Component message) {
 		getLastUser().sendMessage(Component.text("(" + sessionName + ") ").append(message.color(NamedTextColor.RED)));
 	}
+
+	public void addSessionNameSubAction(String name, BiFunction<BingoCommandSource, String, AutoResult> action) {
+		then(literal(name)
+				.then(argument("world", StringArgumentType.string())
+						.executes(ctx -> {
+							String sessionName = StringArgumentType.getString(ctx, "world");
+							BingoCommandSource source = mapSource(ctx.getSource());
+							AutoResult result = action.apply(source, sessionName);
+							if (result.code() == Command.SINGLE_SUCCESS) {
+								sendSuccess(result.message(), sessionName);
+							} else {
+								sendFailed(result.message(), sessionName);
+							}
+							return result.code();
+						})
+				)
+		);
+	}
+
+	public void addSessionSubAction(String name, BingoCommand.SessionActionExecutor<Source> action) {
+		then(literal(name)
+				.executes(sessionExecutor(action))
+		);
+	}
+
+	public void addSettingsSubAction(String name, SettingsActionExecutor<Source> action) {
+		then(literal(name)
+				.then(argument("world", StringArgumentType.string())
+						.executes(ctx -> {
+							String sessionName = StringArgumentType.getString(ctx, "world");
+							BingoCommandSource source = mapSource(ctx.getSource());
+							Optional<BingoSession> session = source.getSessionByName(sessionName);
+							if (session.isEmpty()) {
+								sendFailed("Invalid world/ session name: " + sessionName, sessionName);
+								return 0;
+							}
+							AutoResult result = action.execute(source, session.get().settingsBuilder, ctx);
+							if (result.code() == Command.SINGLE_SUCCESS) {
+								sendSuccess(result.message(), sessionName);
+							} else {
+								sendFailed(result.message(), sessionName);
+							}
+							return result.code();
+						})
+				)
+		);
+	}
+
+	private Command<Source> sessionExecutor(BingoCommand.SessionActionExecutor<Source> executor) {
+		return ctx -> {
+			String sessionName = StringArgumentType.getString(ctx, "world");
+			BingoCommandSource source = mapSource(ctx.getSource());
+			Optional<BingoSession> session = source.getSessionByName(sessionName);
+			if (session.isEmpty()) {
+				return 0;
+			}
+			return executor.execute(source, ctx, session.orElseThrow());
+		};
+	}
+
+	public record AutoResult(int code, Component message) {
+		public AutoResult(int code, String message) {
+			this(code, Component.text(message));
+		}
+	}
+
+	@FunctionalInterface
+	public interface SettingsActionExecutor<Source> {
+		AutoResult execute(BingoCommandSource source, BingoSettingsBuilder settings, CommandContext<Source> args);
+	}
+
 }

@@ -153,7 +153,7 @@ public class GameManager {
 		return true;
 	}
 
-	public BingoSession getSession(String sessionName) {
+	public @Nullable BingoSession getSession(String sessionName) {
 		if (sessions.containsKey(sessionName)) {
 			return sessions.get(sessionName);
 		}

@@ -6,7 +6,8 @@ import io.github.steaf23.bingoreloaded.lib.data.core.DataAccessor;
 import io.github.steaf23.bingoreloaded.settings.CustomKit;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import net.kyori.adventure.text.Component;
-import org.jetbrains.annotations.Nullable;
+
+import java.util.Optional;
 
 public class CustomKitData
 {
@@ -33,8 +34,8 @@ public class CustomKitData
         return true;
     }
 
-    public @Nullable CustomKit getCustomKit(PlayerKit slot)
+    public Optional<CustomKit> getCustomKit(PlayerKit slot)
     {
-        return data.getSerializable(slot.configName, CustomKit.SERIALIZER);
+        return Optional.ofNullable(data.getSerializable(slot.configName, CustomKit.SERIALIZER));
     }
 }

@@ -1,11 +1,14 @@
 package io.github.steaf23.bingoreloaded.action;
 
+import com.mojang.brigadier.Command;
+import com.mojang.brigadier.context.CommandContext;
+import io.github.steaf23.bingoreloaded.api.BingoCommandSource;
 import io.github.steaf23.bingoreloaded.cards.TaskCard;
+import io.github.steaf23.bingoreloaded.command.BingoCommand;
+import io.github.steaf23.bingoreloaded.command.MappedCommand;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gameloop.GameManager;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
-import io.github.steaf23.bingoreloaded.lib.action.ActionResult;
-import io.github.steaf23.bingoreloaded.lib.action.ActionTree;
 import io.github.steaf23.bingoreloaded.lib.api.ActionUser;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
@@ -18,79 +21,80 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 
-public class BotCommandAction extends ActionTree {
+public class BotCommandAction<Source> extends MappedCommand<Source> {
 
-	public BotCommandAction() {
-		super("bingobot", List.of("bingo.admin"));
+	public BotCommandAction(Function<Source, BingoCommandSource> mapper) {
+		super("bingobot", List.of("bingo.admin"), mapper);
 
-		addSessionSubAction("add", List.of(), (args, session) -> {
-			String playerName = args[0];
-			String teamName = args[1];
-
-			addVirtualPlayerToTeam(session, playerName, teamName);
-			return true;
-		});
-
-		addSessionSubAction("add10", List.of(), (args, session) -> {
-			for (int i = 0; i < 10; i++) {
-				String playerName = "testPlayer_" + i;
-				String teamName = args[0];
-				addVirtualPlayerToTeam(session, playerName, teamName);
-			}
-
-			return true;
-		});
-
-		addSessionSubAction("add100", List.of(), (args, session) -> {
-			for (int i = 0; i < 100; i++) {
-				String playerName = "testPlayer_" + i;
-				String teamName = args[0];
-				addVirtualPlayerToTeam(session, playerName, teamName);
-			}
-
-			return true;
-		});
-
-		addSessionSubAction("fill", List.of(), (args, session) -> {
-			ConsoleMessenger.log("CAPACITY: " + session.teamManager.getTotalParticipantCapacity());
-			for (String teamId : session.teamManager.getJoinableTeams().keySet()) {
-				for (int i = 0; i < session.teamManager.getMaxTeamSize(); i++) {
-					String name = "test_" + teamId + "_" + i;
-					addVirtualPlayerToTeam(session, name, teamId);
-				}
-			}
-			return true;
-		});
-
-		addSessionSubAction("fillauto", List.of(), (args, session) -> {
-			ConsoleMessenger.log("CAPACITY: " + session.teamManager.getTotalParticipantCapacity());
-			for (int i = 0; i < session.teamManager.getTotalParticipantCapacity() + 3; i++) {
-				String name = "test_" + i;
-				addVirtualPlayerToTeam(session, name, "auto");
-			}
-			return true;
-		});
-
-		addSessionSubAction("remove", List.of(), (args, session) -> {
-			String playerName = args[0];
-			BingoParticipant player = getVirtualPlayerFromName(session, playerName);
-			if (player != null) {
-				session.teamManager.removeMemberFromTeam(player);
-			}
-			return true;
-		});
-
-		addSessionSubAction("complete", List.of(), (args, session) -> {
-			BingoParticipant virtualPlayer = getVirtualPlayerFromName(session, args[0]);
-			int taskIndex = Integer.parseInt(args[1]);
-			if (virtualPlayer == null) {
-				ConsoleMessenger.error("Cannot complete task " + args[1] + " for non existing virtual player: " + args[0]);
-				return false;
-			}
-			completeTaskByPlayer(virtualPlayer, taskIndex);
-			return true;
-		});
+//		addSessionSubAction("add", List.of(), (args, session) -> {
+//			String playerName = args[0];
+//			String teamName = args[1];
+//
+//			addVirtualPlayerToTeam(session, playerName, teamName);
+//			return true;
+//		});
+//
+//		addSessionSubAction("add10", List.of(), (args, session) -> {
+//			for (int i = 0; i < 10; i++) {
+//				String playerName = "testPlayer_" + i;
+//				String teamName = args[0];
+//				addVirtualPlayerToTeam(session, playerName, teamName);
+//			}
+//
+//			return true;
+//		});
+//
+//		addSessionSubAction("add100", List.of(), (args, session) -> {
+//			for (int i = 0; i < 100; i++) {
+//				String playerName = "testPlayer_" + i;
+//				String teamName = args[0];
+//				addVirtualPlayerToTeam(session, playerName, teamName);
+//			}
+//
+//			return true;
+//		});
+//
+//		addSessionSubAction("fill", List.of(), (args, session) -> {
+//			ConsoleMessenger.log("CAPACITY: " + session.teamManager.getTotalParticipantCapacity());
+//			for (String teamId : session.teamManager.getJoinableTeams().keySet()) {
+//				for (int i = 0; i < session.teamManager.getMaxTeamSize(); i++) {
+//					String name = "test_" + teamId + "_" + i;
+//					addVirtualPlayerToTeam(session, name, teamId);
+//				}
+//			}
+//			return true;
+//		});
+//
+//		addSessionSubAction("fillauto", List.of(), (args, session) -> {
+//			ConsoleMessenger.log("CAPACITY: " + session.teamManager.getTotalParticipantCapacity());
+//			for (int i = 0; i < session.teamManager.getTotalParticipantCapacity() + 3; i++) {
+//				String name = "test_" + i;
+//				addVirtualPlayerToTeam(session, name, "auto");
+//			}
+//			return true;
+//		});
+//
+//		addSessionSubAction("remove", List.of(), (args, session) -> {
+//			String playerName = args[0];
+//			BingoParticipant player = getVirtualPlayerFromName(session, playerName);
+//			if (player != null) {
+//				session.teamManager.removeMemberFromTeam(player);
+//			}
+//			return true;
+//		});
+//
+//		addSessionSubAction("complete", List.of(), (args, session) -> {
+//			BingoParticipant virtualPlayer = getVirtualPlayerFromName(session, args[0]);
+//			int taskIndex = Integer.parseInt(args[1]);
+//			if (virtualPlayer == null) {
+//				ConsoleMessenger.error("Cannot complete task " + args[1] + " for non existing virtual player: " + args[0]);
+//				return false;
+//			}
+//			completeTaskByPlayer(virtualPlayer, taskIndex);
+//			return true;
+//		});
 	}
 
 	void completeTaskByPlayer(BingoParticipant player, int taskIndex) {
@@ -133,18 +137,25 @@ public class BotCommandAction extends ActionTree {
 		return null;
 	}
 
-	public void addSessionSubAction(String name, List<String> permissions, BiFunction<String[], BingoSession, Boolean> action) {
-		addSessionSubAction(name, permissions, ((context, args, session) -> action.apply(args, session) ? ActionResult.SUCCESS : ActionResult.IGNORED));
+	public void addSessionSubAction(String name, List<String> permissions, BiFunction<CommandContext<Source>, BingoSession, Boolean> action) {
+		addSessionSubAction(name, permissions, ((context, args, session) -> action.apply(args, session) ? Command.SINGLE_SUCCESS : 0));
 	}
 
-	public void addSessionSubAction(String name, List<String> permissions, BingoAction.SessionActionExecutor action) {
-		addSubAction(new ActionTree(name, permissions, (context, args) -> {
-			BingoSession session = getSessionFromUser(context.gameManager(), getLastUser());
-			if (session == null) {
-				return ActionResult.IGNORED;
-			} else {
-				return action.execute(context, args, session);
+	public void addSessionSubAction(String name, List<String> permissions, BingoCommand.SessionActionExecutor<Source> action) {
+		then(literal(name)
+				.requires(permissionRequirement(permissions))
+				.executes(sessionExecutor(action))
+		);
+	}
+
+	private Command<Source> sessionExecutor(BingoCommand.SessionActionExecutor<Source> executor) {
+		return ctx -> {
+			BingoCommandSource source = mapSource(ctx.getSource());
+			Optional<BingoSession> session = source.getSession();
+			if (session.isEmpty()) {
+				return 0;
 			}
-		}));
+			return executor.execute(source, ctx, session.orElseThrow());
+		};
 	}
 }
