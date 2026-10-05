@@ -282,7 +282,7 @@ public class BingoReloadedFabric implements ModInitializer, BingoReloadedRuntime
 	}
 
 	@Override
-	public ActionResult pregenerateGrid(TeleportSpiralData data, int rounds, int radius, ActionUser user) {
+	public ActionResult pregenerateSpiral(TeleportSpiralData data, int rounds, int radius, ActionUser user) {
 	    user.sendMessage(Component.text("Pregeneration is not implemented on fabric yet"));
 	    return ActionResult.IGNORED;
 	};

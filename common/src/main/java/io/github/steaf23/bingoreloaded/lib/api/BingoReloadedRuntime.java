@@ -61,7 +61,7 @@ public interface BingoReloadedRuntime {
 
 	void editCardDescription(PlayerHandle playerHandle, String currentName, String currentDescription, BasicMenu parentMenu, CardDescriptionEditor callback);
 	void givePlayerCardItem(BingoPlayer player, int cardSlot);
-	ActionResult pregenerateGrid(TeleportSpiralData data, int rounds, int radius, ActionUser user);
+	ActionResult pregenerateSpiral(TeleportSpiralData data, int rounds, int radius, ActionUser user);
 
 	TeamDisplay createTeamDisplay(BingoSession session);
 	SharedDisplay gameDisplay();

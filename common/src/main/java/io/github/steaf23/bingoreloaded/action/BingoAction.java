@@ -461,7 +461,7 @@ public class BingoAction extends ActionTree {
 				return ActionResult.INCORRECT_USE;
 			}
 
-		    return context.runtime().pregenerateGrid(data, rounds, radius, getLastUser());
+		    return context.runtime().pregenerateSpiral(data, rounds, radius, getLastUser());
 		}).addUsage("<rounds> <radius>");
 		
 		this.addSubAction(

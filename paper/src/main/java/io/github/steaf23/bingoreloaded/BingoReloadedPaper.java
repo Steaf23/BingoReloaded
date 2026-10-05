@@ -444,7 +444,7 @@ public class BingoReloadedPaper extends JavaPlugin implements BingoReloadedRunti
 	}
 
 	@Override
-	public ActionResult pregenerateGrid(TeleportSpiralData data, int rounds, int radius, ActionUser user) {
+	public ActionResult pregenerateSpiral(TeleportSpiralData data, int rounds, int radius, ActionUser user) {
     	if (this.chunkyBridge != null) {
             user.sendMessage(Component.text("Pre-generating for " + rounds + " rounds with radius of " + radius + " blocks"));
             return this.chunkyBridge.preGenerate(data, rounds, radius, user);
