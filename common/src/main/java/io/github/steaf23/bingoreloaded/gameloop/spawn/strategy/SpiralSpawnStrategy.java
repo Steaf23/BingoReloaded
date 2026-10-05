@@ -12,6 +12,7 @@ public record SpiralSpawnStrategy(
 ) implements SpawnStrategy {
     @Override
     public List<SpawnSite> getSpawnSites(Context context, TeamContainer teams) {
+        // Infinite loop until we find a non-ocean spiral position (if skipping oceans is enabled).
         while (true) {
             TeleportationSpiral.Point nextStart = data.getNextSpiralPosition();
             GlobalPosition pos = context

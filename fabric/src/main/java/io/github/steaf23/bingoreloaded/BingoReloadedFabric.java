@@ -281,6 +281,7 @@ public class BingoReloadedFabric implements ModInitializer, BingoReloadedRuntime
 		serverPlayer.getInventory().setItem(cardSlot, stack);
 	}
 
+	// TODO: Implement pre-generation on fabirc.
 	@Override
 	public ActionResult pregenerateSpiral(TeleportSpiralData data, int rounds, int radius, ActionUser user) {
 	    user.sendMessage(Component.text("Pregeneration is not implemented on fabric yet"));

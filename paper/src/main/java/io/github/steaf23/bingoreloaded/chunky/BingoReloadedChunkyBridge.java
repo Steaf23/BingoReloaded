@@ -28,7 +28,7 @@ public class BingoReloadedChunkyBridge {
     private int completedTasks = 0;
     private GenerationTask currentTask;
 
-    // Helper data record to hold individual task parameters
+    // Helper data record to hold individual task parameters.
     private record GenerationTask(
         String worldName,
         double x,
@@ -39,11 +39,15 @@ public class BingoReloadedChunkyBridge {
 
     public BingoReloadedChunkyBridge(BingoReloaded bingo) {
         this.bingo = bingo;
+
+        // Retrieve the Chunky API class.
         this.chunky = Bukkit.getServer()
             .getServicesManager()
             .load(ChunkyAPI.class);
 
-        // Register the generation complete callback once during initialization
+        // Register the generation complete callback
+        // Once Chunky finishes its current task, it processes the next task.
+        // This is necessary because Chunky does not have its own queue system.
         if (this.chunky != null && this.chunky.version() == 0) {
             this.chunky.onGenerationComplete(event -> {
                 userNotifyTaskComplete(event.world(), currentTask);
@@ -52,6 +56,7 @@ public class BingoReloadedChunkyBridge {
         }
     }
 
+    // Commands the Chunky API to pre-generate a list of locations.
     public ActionResult preGenerate(
         TeleportSpiralData data,
         int rounds,
@@ -68,6 +73,7 @@ public class BingoReloadedChunkyBridge {
             return ActionResult.IGNORED;
         }
 
+        // Retrieve the world group for the active bingo session.
         Optional<String> firstSessionName = this.bingo
             .getGameManager()
             .getSessionNames()
@@ -94,6 +100,7 @@ public class BingoReloadedChunkyBridge {
         var overworld = worldGroup.getOverworld();
         var nether = worldGroup.getNetherWorld();
 
+        // Get dimension names for the overworld and nether, to give to Chunky.
         String overworldName = ((WorldHandlePaper) overworld)
             .handle()
             .getName();
@@ -105,7 +112,7 @@ public class BingoReloadedChunkyBridge {
         int round = 0;
         int firstStep = data.getStep();
 
-        // Build the queue of tasks
+        // Build the queue of generation tasks, making sure to skip any ocean spawns if the config indicates that the spawn picker will do so too.
         while (round < rounds) {
             TeleportationSpiral.Point nextStart = data.peekSpiralPosition(
                 firstStep
@@ -133,7 +140,7 @@ public class BingoReloadedChunkyBridge {
                 // Queue Nether task if nether exists
                 if (netherWorldName != null) {
                     int netherFactor = 4;
-                    int netherRadius = Math.max(radius / netherFactor, 16); // Ensure at least 1 chunk radius (16 blocks)
+                    int netherRadius = Math.max(radius / netherFactor, 16); // Make sure the radius is at least 1 chunk
                     taskQueue.add(
                         new GenerationTask(
                             netherWorldName,
@@ -180,7 +187,7 @@ public class BingoReloadedChunkyBridge {
 
         isProcessing = true;
 
-        // Start the single current task in Chunky
+        // Start the task in chunky.
         chunky.startTask(
             currentTask.worldName(),
             "square",
@@ -192,6 +199,7 @@ public class BingoReloadedChunkyBridge {
         );
     }
 
+    // Send a message to the user with a progress update.
     private void userNotifyTaskComplete(String worldName, GenerationTask task) {
         if (activeUser == null || totalTasks == 0) {
             return;

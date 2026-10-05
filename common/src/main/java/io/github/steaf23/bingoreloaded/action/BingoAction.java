@@ -427,12 +427,16 @@ public class BingoAction extends ActionTree {
 				.addSubAction(resetGridAction)
 				.addSubAction(gridStatusAction));
 
+		// `/bingo spiral status`
+		// Tells the user what step of the spiral they are on and what the next spawn location will be.
 		ActionTree spiralStatusAction = new ActionTree("status", (args) -> {
 			TeleportSpiralData data = new TeleportSpiralData(config.getOptionValue(BingoOptions.TELEPORTATION_SPIRAL));
 			BingoPlayerSender.sendMessage(Component.text("Current step is " + data.getStep() + " and next spawn will be " + data.peekNextSpiralPosition()), getLastUser());
 			return ActionResult.SUCCESS;
 		});
 
+		// `/bingo spiral reset`
+		// Resets the spiral step back to zero.
 		ActionTree spiralResetAction = new ActionTree("reset", (args) -> {
 			TeleportSpiralData data = new TeleportSpiralData(config.getOptionValue(BingoOptions.TELEPORTATION_SPIRAL));
 			data.reset();
@@ -440,13 +444,18 @@ public class BingoAction extends ActionTree {
 			return ActionResult.SUCCESS;
 		});
 
+		// `/bingo spiral pregen <rounds> <radius>`
+		// Tells the bingo runtime to pre-generate the spawns for <rounds> rounds in the future,
+		// with a radius of <radius> blocks.
 		ActionTree spiralPregenAction = new ActionTree("pregen", (context, args) -> {
 		    TeleportSpiralData data = new TeleportSpiralData(config.getOptionValue(BingoOptions.TELEPORTATION_SPIRAL));
 
+            // Command must have both arguments.
 			if (args.length != 2) {
 			    return ActionResult.INCORRECT_USE;
 			}
 
+            // rounds and radius must both be integers, else the command is invalid.
 			int rounds, radius;
 
 			try {
@@ -463,7 +472,8 @@ public class BingoAction extends ActionTree {
 
 		    return context.runtime().pregenerateSpiral(data, rounds, radius, getLastUser());
 		}).addUsage("<rounds> <radius>");
-		
+
+		// Only admins can run `/bingo spiral` commands.
 		this.addSubAction(
 		    new ActionTree("spiral", List.of("bingo.admin"))
 				.addSubAction(spiralStatusAction)
