@@ -23,7 +23,7 @@ public class TeleportSpiralData {
         return data.getInt("step", 0);
     }
 
-    private TeleportationSpiral.Point computeNextSpiralPosition(int step) {
+    private TeleportationSpiral.Point computeSpiralPosition(int step) {
         var center = this.spiralOptions.center();
         var size = this.spiralOptions.size();
 
@@ -70,11 +70,11 @@ public class TeleportSpiralData {
     public TeleportationSpiral.Point peekNextSpiralPosition() {
         int step = getStep();
 
-        return computeNextSpiralPosition(step);
+        return computeSpiralPosition(step);
     }
 
     public TeleportationSpiral.Point peekSpiralPosition(int step) {
-        return computeNextSpiralPosition(step);
+        return computeSpiralPosition(step);
     }
 
     public TeleportationSpiral.Point getNextSpiralPosition() {
@@ -82,7 +82,7 @@ public class TeleportSpiralData {
         data.setInt("step", step + 1);
         data.saveChanges();
 
-        return computeNextSpiralPosition(step);
+        return computeSpiralPosition(step);
     }
 
     public void reset() {
