@@ -244,4 +244,8 @@ public class BingoReloadedChunkyBridge {
             this.currentTask = null;
         }
     }
+
+    public boolean isProcessingTask() {
+        return isProcessing;
+    }
 }
