@@ -15,6 +15,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
@@ -81,6 +82,10 @@ public enum PlayerKit
         this.defaultEffects = defaultEffects;
     }
 
+    public String configName() {
+        return configName;
+    }
+
     private DefaultKitData getDefaultKitData() {
         if (DEFAULT_KIT_DATA == null) {
             DEFAULT_KIT_DATA = new DefaultKitData();
@@ -140,6 +145,10 @@ public enum PlayerKit
 
     public boolean isValid() {
         return !isCustomKit() || (PlayerKit.customKits().contains(this) && getCustomKitData().getCustomKit(this).isPresent());
+    }
+
+    public static List<PlayerKit> validKits() {
+        return Arrays.stream(values()).filter(PlayerKit::isValid).toList();
     }
 
     public static PlayerKit fromConfig(String name)

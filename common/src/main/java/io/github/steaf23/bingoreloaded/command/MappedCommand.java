@@ -2,11 +2,13 @@ package io.github.steaf23.bingoreloaded.command;
 
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.arguments.ArgumentType;
+import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import io.github.steaf23.bingoreloaded.api.BingoCommandSource;
+import net.kyori.adventure.key.Key;
 
 import java.util.List;
 import java.util.function.BiFunction;
@@ -14,17 +16,20 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 public class MappedCommand<Source> {
-	private final Function<Source, BingoCommandSource> mapper;
-	private final LiteralArgumentBuilder<Source> rootBuilder;
+	public record Settings<Source>(Function<Source, BingoCommandSource> mapper, ArgumentType<Key> keyType) {
+	}
 
-	public MappedCommand(String commandName, List<String> permissions, Function<Source, BingoCommandSource> mapper) {
-		this.mapper = mapper;
+	private final LiteralArgumentBuilder<Source> rootBuilder;
+	private final Settings<Source> settings;
+
+	public MappedCommand(String commandName, List<String> permissions, Settings<Source> settings) {
+		this.settings = settings;
 		rootBuilder = literal(commandName)
 				.requires(permissionRequirement(permissions));
 	}
 
 	public BingoCommandSource mapSource(Source source) {
-		return mapper.apply(source);
+		return settings.mapper.apply(source);
 	}
 
 	public LiteralArgumentBuilder<Source> literal(String name) {
@@ -47,11 +52,11 @@ public class MappedCommand<Source> {
 		rootBuilder.executes(executor(rootCommand));
 	}
 
-	public void then(LiteralArgumentBuilder<Source> node) {
+	public void then(ArgumentBuilder<Source, ?> node) {
 		rootBuilder.then(node);
 	}
 
-	public void then(List<String> permissions, LiteralArgumentBuilder<Source> node) {
+	public void then(List<String> permissions, ArgumentBuilder<Source, ?> node) {
 		rootBuilder.then(node.requires(permissionRequirement(permissions)));
 	}
 
@@ -67,5 +72,13 @@ public class MappedCommand<Source> {
 
 	public LiteralCommandNode<Source> buildCommand() {
 		return rootBuilder.build();
+	}
+
+	public ArgumentType<Key> keyType() {
+		return settings.keyType;
+	}
+
+	public Key getKey(CommandContext<Source> context, String name) {
+		return context.getArgument(name, Key.class);
 	}
 }

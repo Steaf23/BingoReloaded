@@ -21,12 +21,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.BiFunction;
-import java.util.function.Function;
 
 public class BotCommandAction<Source> extends MappedCommand<Source> {
 
-	public BotCommandAction(Function<Source, BingoCommandSource> mapper) {
-		super("bingobot", List.of("bingo.admin"), mapper);
+	public BotCommandAction(Settings<Source> settings) {
+		super("bingobot", List.of("bingo.admin"), settings);
 
 //		addSessionSubAction("add", List.of(), (args, session) -> {
 //			String playerName = args[0];

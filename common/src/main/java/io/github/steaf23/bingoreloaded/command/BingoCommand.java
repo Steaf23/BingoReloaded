@@ -43,15 +43,14 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 import java.util.function.BiFunction;
-import java.util.function.Function;
 
 public class BingoCommand<Source> extends MappedCommand<Source> {
 
 	private final BingoConfigurationData config;
 	private final BingoLobbyData lobbyData;
 
-	public BingoCommand(BingoConfigurationData config, Function<Source, BingoCommandSource> sourceMapper) {
-		super("bingo", List.of("bingo.player"), sourceMapper);
+	public BingoCommand(BingoConfigurationData config, Settings<Source> settings) {
+		super("bingo", List.of("bingo.player"), settings);
 		this.config = config;
 		this.lobbyData = new BingoLobbyData();
 
@@ -227,7 +226,7 @@ public class BingoCommand<Source> extends MappedCommand<Source> {
 
 		then(literal("stats")
 				.executes(executor(source -> stats(source, "")))
-				.then(argument("player_name", StringArgumentType.string())
+				.then(argument("player_name", StringArgumentType.word())
 						.requires(permissionRequirement(List.of("bingo.admin")))
 						.executes(ctx -> {
 							BingoCommandSource source = mapSource(ctx.getSource());

@@ -14,6 +14,7 @@ import io.github.steaf23.bingoreloaded.api.CardMenu;
 import io.github.steaf23.bingoreloaded.api.TeamDisplay;
 import io.github.steaf23.bingoreloaded.api.TeamDisplayPaper;
 import io.github.steaf23.bingoreloaded.api.network.PaperClientManager;
+import io.github.steaf23.bingoreloaded.command.MappedCommand;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.DataUpdaterV3_6_0;
 import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
@@ -73,6 +74,7 @@ import io.github.steaf23.bingoreloaded.settings.gamemode.BingoGamemodes;
 import io.github.steaf23.bingoreloaded.util.bstats.Metrics;
 import io.github.steaf23.bingoreloaded.world.CustomWorldCreator;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
+import io.papermc.paper.command.brigadier.argument.ArgumentTypes;
 import io.papermc.paper.dialog.Dialog;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import io.papermc.paper.registry.data.dialog.ActionButton;
@@ -175,8 +177,9 @@ public class BingoReloadedPaper extends JavaPlugin implements BingoReloadedRunti
 		bingo.reloadManager(server);
 
 		getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, event -> {
-			event.registrar().register(new BingoCommand<>(bingo.config(), this::mapCommandSource).buildCommand());
-			event.registrar().register(new AutoBingoAction<>(this::mapCommandSource).buildCommand());
+			MappedCommand.Settings<CommandSourceStack> settings = new MappedCommand.Settings<>(this::mapCommandSource, ArgumentTypes.key());
+			event.registrar().register(new BingoCommand<>(bingo.config(), settings).buildCommand());
+			event.registrar().register(new AutoBingoAction<>(settings).buildCommand());
 		});
 
 		if (bingo.config().getOptionValue(BingoOptions.DISABLE_CLIENT_MOD)) {
