@@ -1,7 +1,9 @@
 package io.github.steaf23.bingoreloaded.action;
 
 import com.mojang.brigadier.Command;
+import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.arguments.BoolArgumentType;
+import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
@@ -11,7 +13,6 @@ import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.api.BingoCommandSource;
 import io.github.steaf23.bingoreloaded.cards.CardSize;
-import io.github.steaf23.bingoreloaded.command.BingoCommand;
 import io.github.steaf23.bingoreloaded.command.MappedCommand;
 import io.github.steaf23.bingoreloaded.data.BingoCardData;
 import io.github.steaf23.bingoreloaded.data.BingoSettingsData;
@@ -30,6 +31,7 @@ import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.player.EffectOptionFlags;
+import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.settings.BingoSettings;
 import io.github.steaf23.bingoreloaded.settings.BingoSettingsBuilder;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
@@ -53,18 +55,20 @@ public class AutoBingoAction<Source> extends MappedCommand<Source> {
 	public AutoBingoAction(Settings<Source> mappingSettings) {
 		super("autobingo", List.of("bingo.admin"), mappingSettings);
 
-		this.addSessionNameSubAction("create", (context, name) -> create(context.gameManager(), name));
+		addGameManagerSubAction("create", this::create);
 
-		this.addSessionNameSubAction("destroy", (context, name) -> destroy(context.gameManager(), name));
+		addGameManagerSubAction("destroy", this::destroy);
 
-		this.addSessionNameSubAction("start", (context, name) -> start(context.gameManager(), name));
+		addGameManagerSubAction("start", this::start);
+
+		addGameManagerSubAction("end", this::end);
 
 		fromSession(literal("kit")
 				.then(argument("kit_name", StringArgumentType.word())
 						.suggests((ctx, builder) -> {
 							return suggestAll(builder, PlayerKit.validKits(), PlayerKit::configName);
 						})
-						.executes(settingsExecutor((context, settings, args) -> {
+						.executes(settingsExecutor((settings, args) -> {
 							return setKit(settings, StringArgumentType.getString(args, "kit_name"));
 						}))
 				)
@@ -75,7 +79,8 @@ public class AutoBingoAction<Source> extends MappedCommand<Source> {
 						.executes(sessionNameExecutor((source, worldName, args) -> {
 							String playerName = playerArgValue("player_name", args);
 							return addPlayerToSession(source, worldName, playerName);
-						}))));
+						})))
+		);
 
 		fromSession(literal("kickplayer")
 				.then(playerArg("player_name")
@@ -85,7 +90,8 @@ public class AutoBingoAction<Source> extends MappedCommand<Source> {
 									String playerName = playerArgValue("player_name", args);
 									Key targetWorld = getKey(args, "target_world");
 									return removePlayerFromSession(source, worldName, playerName, targetWorld);
-								})))));
+								}))))
+		);
 
 		fromSession(literal("kickplayers")
 				.then(argument("target_world", keyType())
@@ -93,15 +99,26 @@ public class AutoBingoAction<Source> extends MappedCommand<Source> {
 						.executes(sessionNameExecutor((source, worldName, args) -> {
 							Key targetWorld = getKey(args, "target_world");
 							return removeAllPlayersFromSession(source, worldName, targetWorld);
-						}))));
+						})))
+		);
+
+		fromSession(literal("team")
+				.then(playerArg("player_name")
+						.then(teamArg()
+								.executes(sessionExecutor((context, session, args) -> {
+									String playerName = playerArgValue("player_name", args);
+									String teamName = teamArgValue(args);
+									return setPlayerTeam(context, session, playerName, teamName);
+								}))))
+		);
 
 		var effectsRoot = literal("effects")
 				.then(literal("none")
-						.executes(settingsExecutor((context, settings, args) -> {
+						.executes(settingsExecutor((settings, args) -> {
 							return setEffect(settings, "none", true);
 						})))
 				.then(literal("all")
-						.executes(settingsExecutor((context, settings, args) -> {
+						.executes(settingsExecutor((settings, args) -> {
 							return setEffect(settings, "all", true);
 						}))
 				);
@@ -109,13 +126,15 @@ public class AutoBingoAction<Source> extends MappedCommand<Source> {
 		for (EffectOptionFlags flag : EnumSet.allOf(EffectOptionFlags.class)) {
 			String effect = flag.name().toLowerCase();
 			effectsRoot.then(literal(effect)
-					.executes(settingsExecutor((context, settings, args) -> {
+					.executes(settingsExecutor((settings, args) -> {
 						return setEffect(settings, effect, true);
 					}))
 					.then(argument("enable", BoolArgumentType.bool())
-							.executes(settingsExecutor((context, settings, args) -> {
-								return setEffect(settings, effect, BoolArgumentType.getBool(args, "enable"));
-							}))));
+							.executes(settingsExecutor((settings, args) -> {
+								boolean enable = BoolArgumentType.getBool(args, "enable");
+								return setEffect(settings, effect, enable);
+							})))
+			);
 		}
 		fromSession(effectsRoot);
 
@@ -124,204 +143,128 @@ public class AutoBingoAction<Source> extends MappedCommand<Source> {
 						.suggests((source, builder) -> {
 							return suggestAll(builder, new BingoCardData().getCardNames());
 						})
-						.executes()));
-//
-//		this.addSubAction(new ActionTree("card", (context, args) -> {
-//			var settings = getSettingsBuilder(context, args[0]);
-//			if (settings == null) {
-//				sendFailed("Invalid world/ session name: " + args[0], args[0]);
-//				return ActionResult.INCORRECT_USE;
-//			}
-//			return setCard(settings, args[0], Arrays.copyOfRange(args, 1, args.length));
-//		}).addUsage("<card_name>"));
-//
-//		this.addSubAction(new ActionTree("countdown", (context, args) -> {
-//			var settings = getSettingsBuilder(context, args[0]);
-//			if (settings == null) {
-//				sendFailed("Invalid world/ session name: " + args[0], args[0]);
-//				return ActionResult.INCORRECT_USE;
-//			}
-//			return setCountdown(settings, args[0], Arrays.copyOfRange(args, 1, args.length));
-//		}).addUsage("<type>")
-//				.addTabCompletion(args -> args.length == 2 ? List.of("disabled", "duration", "time_limit") : List.of()));
-//
-//
-//		this.addSubAction(new ActionTree("duration", (context, args) -> {
-//			var settings = getSettingsBuilder(context, args[0]);
-//			if (settings == null) {
-//				sendFailed("Invalid world/ session name: " + args[0], args[0]);
-//				return ActionResult.INCORRECT_USE;
-//			}
-//			return setDuration(settings, args[0], Arrays.copyOfRange(args, 1, args.length));
-//		}).addUsage("<duration_minutes>"));
-//
-//
-//		this.addSubAction(new ActionTree("team", (context, args) -> {
-//			var settings = getSettingsBuilder(context, args[0]);
-//			if (settings == null) {
-//				sendFailed("Invalid world/ session name: " + args[0], args[0]);
-//				return ActionResult.INCORRECT_USE;
-//			}
-//			return setPlayerTeam(context, args[0], Arrays.copyOfRange(args, 1, args.length));
-//		}).addUsage("<player_name> <team_name>")
-//				.addTabCompletion(args -> args.length == 2 || args.length == 3 ? List.of("") : List.of()));
-//
-//
-//		this.addSubAction(new ActionTree("teamsize", (context, args) -> {
-//			var settings = getSettingsBuilder(context, args[0]);
-//			if (settings == null) {
-//				sendFailed("Invalid world/ session name: " + args[0], args[0]);
-//				return ActionResult.INCORRECT_USE;
-//			}
-//			return setTeamSize(settings, args[0], Arrays.copyOfRange(args, 1, args.length));
-//		}).addUsage("<size>"));
-//
-//		this.addSubAction(new ActionTree("teamcount", (context, args) -> {
-//			var settings = getSettingsBuilder(context, args[0]);
-//			if (settings == null) {
-//				sendFailed("Invalid world/ session name: " + args[0], args[0]);
-//				return ActionResult.INCORRECT_USE;
-//			}
-//			return setTeamCount(settings, args[0], Arrays.copyOfRange(args, 1, args.length));
-//		}).addUsage("<count>"));
-//
-//
-//		this.addSubAction(new ActionTree("gamemode", (context, args) -> {
-//			var settings = getSettingsBuilder(context, args[0]);
-//			if (settings == null) {
-//				sendFailed("Invalid world/ session name: " + args[0], args[0]);
-//				return ActionResult.INCORRECT_USE;
-//			}
-//			return setGamemode(settings, args[0], Arrays.copyOfRange(args, 1, args.length));
-//		}).addUsage("<regular | lockout | complete | hotswap | blitz> [3 | 5]")
-//				.addTabCompletion(args -> switch (args.length) {
-//					case 2 -> List.of("regular", "lockout", "complete", "hotswap", "blitz");
-//					case 3 -> List.of("3", "5");
-//					default -> COMPLETE_NOTHING;
-//				}));
-//
-//
-//		this.addSubAction(new ActionTree("hotswap_goal", (context, args) -> {
-//			var settings = getSettingsBuilder(context, args[0]);
-//			if (settings == null) {
-//				sendFailed("Invalid world/ session name: " + args[0], args[0]);
-//				return ActionResult.INCORRECT_USE;
-//			}
-//			return setHotswapGoal(settings, args[0], Arrays.copyOfRange(args, 1, args.length));
-//		})).addUsage("<win_goal>");
-//
-//
-//		this.addSubAction(new ActionTree("hotswap_expire", (context, args) -> {
-//			var settings = getSettingsBuilder(context, args[0]);
-//			if (settings == null) {
-//				sendFailed("Invalid world/ session name: " + args[0], args[0]);
-//				return ActionResult.INCORRECT_USE;
-//			}
-//			return setHotswapExpire(settings, args[0], Arrays.copyOfRange(args, 1, args.length));
-//		}).addUsage("<true | false>")
-//				.addTabCompletion(args -> args.length == 2 ? List.of("true", "false") : COMPLETE_NOTHING));
-//
-//
-//		this.addSubAction(new ActionTree("complete_goal", (context, args) -> {
-//			var settings = getSettingsBuilder(context, args[0]);
-//			if (settings == null) {
-//				sendFailed("Invalid world/ session name: " + args[0], args[0]);
-//				return ActionResult.INCORRECT_USE;
-//			}
-//			return setCompleteGoal(settings, args[0], Arrays.copyOfRange(args, 1, args.length));
-//		})).addUsage("<win_goal>");
-//
-//
-//		this.addSubAction(new ActionTree("blitz_headstart", (context, args) -> {
-//			var settings = getSettingsBuilder(context, args[0]);
-//			if (settings == null) {
-//				sendFailed("Invalid world/ session name: " + args[0], args[0]);
-//				return ActionResult.INCORRECT_USE;
-//			}
-//			return setBlitzHeadstart(settings, args[0], Arrays.copyOfRange(args, 1, args.length));
-//		})).addUsage("<duration_seconds>");
-//
-//
-//		this.addSubAction(new ActionTree("blitz_bonus", (context, args) -> {
-//			var settings = getSettingsBuilder(context, args[0]);
-//			if (settings == null) {
-//				sendFailed("Invalid world/ session name: " + args[0], args[0]);
-//				return ActionResult.INCORRECT_USE;
-//			}
-//			return setBlitzBonus(settings, args[0], Arrays.copyOfRange(args, 1, args.length));
-//		})).addUsage("<duration_seconds>");
-//
-//
-//		this.addSubAction(new ActionTree("blitz_recovery_delay", (context, args) -> {
-//			var settings = getSettingsBuilder(context, args[0]);
-//			if (settings == null) {
-//				sendFailed("Invalid world/ session name: " + args[0], args[0]);
-//				return ActionResult.INCORRECT_USE;
-//			}
-//			return setBlitzRecovery(settings, args[0], Arrays.copyOfRange(args, 1, args.length));
-//		})).addUsage("<amount of items>");
-//
-//
-//		this.addSubAction(new ActionTree("separate_cards", (context, args) -> {
-//			var settings = getSettingsBuilder(context, args[0]);
-//			if (settings == null) {
-//				sendFailed("Invalid world/ session name: " + args[0], args[0]);
-//				return ActionResult.INCORRECT_USE;
-//			}
-//			return setDifferentCardPerTeam(settings, args[0], Arrays.copyOfRange(args, 1, args.length));
-//		}).addUsage("<true | false>")
-//				.addTabCompletion(args -> args.length == 2 ? List.of("true", "false") : COMPLETE_NOTHING));
-//
-//
-//		this.addSubAction(new ActionTree("end", (context, args) -> end(context.gameManager(), args[0])));
-//
-//
-//		this.addSubAction(new ActionTree("preset", (context, args) -> {
-//			var settings = getSettingsBuilder(context, args[0]);
-//			if (settings == null) {
-//				sendFailed("Invalid world/ session name: " + args[0], args[0]);
-//				return ActionResult.INCORRECT_USE;
-//			}
-//			return preset(settings, args[0], Arrays.copyOfRange(args, 1, args.length));
-//		}).addUsage("<save | load | remove | default> <preset_name>")
-//				.addTabCompletion(args -> {
-//					BingoSettingsData settingsData = new BingoSettingsData();
-//					return switch (args.length) {
-//						case 2 -> List.of("save", "load", "remove", "default");
-//						case 3 -> new ArrayList<>(settingsData.getPresetNames());
-//						default -> COMPLETE_NOTHING;
-//					};
-//				}));
+						.executes(settingsExecutor((settings, args) -> {
+							String cardName = StringArgumentType.getString(args, "card_name");
+							return setCard(settings, cardName, 0);
+						}))
+						.then(argument("seed", IntegerArgumentType.integer())
+								.executes(settingsExecutor((settings, args) -> {
+									String cardName = StringArgumentType.getString(args, "card_name");
+									int seed = IntegerArgumentType.getInteger(args, "seed");
+									return setCard(settings, cardName, seed);
+								}))))
+		);
 
-//
-//		this.addSubAction(new ActionTree("vote", this::voteForPlayer).addUsage("<player_name> <vote_category> <vote_for>").addTabCompletion((context, args) -> {
-//			BingoConfigurationData.VoteList voteList = context.gameManager().getGameConfig().getOptionValue(BingoOptions.VOTE_LIST);
-//			if (args.length <= 2) {
-//				return null;
-//			} else if (args.length == 3) {
-//				return List.of("kits", "gamemodes", "cards", "cardsizes");
-//			} else if (args.length == 4) {
-//				return switch (args[2]) {
-//					case "kits" -> voteList.kits();
-//					case "gamemodes" -> voteList.gamemodes();
-//					case "cards" -> voteList.cards();
-//					case "cardsizes" -> voteList.cardSizes();
-//					default -> COMPLETE_NOTHING;
-//				};
-//			}
-//			return COMPLETE_NOTHING;
-//		}));
-//
-//		this.addSubAction(new ActionTree("playerdata", this::playerDataCommand)
-//				.addUsage("<save | load | remove> <player_name>")
-//				.addTabCompletion(args -> {
-//					if (args.length <= 2) {
-//						return List.of("save", "load", "remove");
-//					} else if (args.length == 3) {
-//						return COMPLETE_PLAYER;
-//					}
-//					return COMPLETE_NOTHING;
-//				}));
+		fromSession(literal("countdown")
+				.then(literal("disabled").executes(settingsExecutor((settings, _) -> setCountdown(settings, "disabled"))))
+				.then(literal("duration").executes(settingsExecutor((settings, _) -> setCountdown(settings, "duration"))))
+				.then(literal("time_limit").executes(settingsExecutor((settings, _) -> setCountdown(settings, "time_limit"))))
+		);
+
+		basicSetting("duration", "duration_minutes", IntegerArgumentType.integer(), IntegerArgumentType::getInteger, this::setDuration);
+
+		basicSetting("teamsize", "size", IntegerArgumentType.integer(1, 64), IntegerArgumentType::getInteger, this::setTeamSize);
+
+		basicSetting("teamcount", "count", IntegerArgumentType.integer(1, 64), IntegerArgumentType::getInteger, this::setTeamCount);
+
+		basicSetting("hotswap_goal", "goal", IntegerArgumentType.integer(1, 64), IntegerArgumentType::getInteger, this::setHotswapGoal);
+
+		basicSetting("complete_goal", "goal", IntegerArgumentType.integer(1, 64), IntegerArgumentType::getInteger, this::setCompleteGoal);
+
+		basicSetting("hotswap_expire", "expire", BoolArgumentType.bool(), BoolArgumentType::getBool, this::setHotswapExpire);
+
+		basicSetting("blitz_headstart", "headstart", IntegerArgumentType.integer(1, 64), IntegerArgumentType::getInteger, this::setBlitzHeadstart);
+
+		basicSetting("blitz_bonus", "bonus", IntegerArgumentType.integer(1, 64), IntegerArgumentType::getInteger, this::setBlitzBonus);
+
+		basicSetting("blitz_recovery_delay", "recovery_delay", IntegerArgumentType.integer(1, 64), IntegerArgumentType::getInteger, this::setBlitzRecovery);
+
+		basicSetting("separate_cards", "separate", BoolArgumentType.bool(), BoolArgumentType::getBool, this::setDifferentCardPerTeam);
+
+		fromSession(literal("gamemode")
+				.then(argument("mode", StringArgumentType.word())
+						.suggests((source, builder) -> {
+							return suggestAll(builder, BingoGamemodes.GAMEMODES.keySet());
+						})
+						.executes(settingsExecutor((settings, args) -> {
+							String mode = StringArgumentType.getString(args, "mode");
+							return setGamemode(settings, mode, 5);
+						}))
+						.then(literal("3")
+								.executes(settingsExecutor((settings, args) -> {
+									String mode = StringArgumentType.getString(args, "mode");
+									return setGamemode(settings, mode, 3);
+								})))
+						.then(literal("5")
+								.executes(settingsExecutor((settings, args) -> {
+									String mode = StringArgumentType.getString(args, "mode");
+									return setGamemode(settings, mode, 5);
+								})))
+				)
+		);
+
+		fromSession(literal("preset")
+				.then(addPresetOption("save", (settingsBuilder, data, path) -> {
+					data.saveSettings(path, settingsBuilder.view());
+					return sendSuccess("Saved settings to '" + path + "'.");
+				}))
+				.then(addPresetOption("load", (settingsBuilder, data, path) -> {
+					BingoSettings settings = data.getSettings(path);
+					if (settings == null) {
+						return sendFailed("Invalid settings path " + path);
+					}
+					settingsBuilder.fromOther(settings, path);
+					return sendSuccess("Loaded settings from '" + path + "'.");
+				}))
+				.then(addPresetOption("remove", (settingsBuilder, data, path) -> {
+					data.removeSettings(path);
+					return sendSuccess("Removed settings preset '" + path + "'.");
+				}))
+				.then(addPresetOption("default", (settingsBuilder, data, path) -> {
+					data.setDefaultSettings(path);
+					return sendSuccess("Set '" + path + "' as default settings for new worlds.");
+				}))
+		);
+
+		fromSession(literal("vote")
+				.then(playerArg("player_name")
+						.then(argument("category", StringArgumentType.word())
+								.suggests((context, builder) -> {
+									BingoCommandSource source = mapSource(context.getSource());
+									return suggestAll(builder, source.context().getConfigOption(BingoOptions.VOTE_LIST).usedCategories());
+								})
+								.then(argument("vote_for", StringArgumentType.word())
+										.suggests((args, builder) -> {
+											BingoCommandSource source = mapSource(args.getSource());
+											String category = StringArgumentType.getString(args, "category");
+											return suggestAll(builder, source.context().getConfigOption(BingoOptions.VOTE_LIST).optionsPerCategory(category));
+										})
+										.executes(sessionExecutor((source, session, args) -> {
+											String playerName = playerArgValue("player_name", args);
+											String category = StringArgumentType.getString(args, "category");
+											String voteFor = StringArgumentType.getString(args, "vote_for");
+											return voteForPlayer(source, session, playerName, category, voteFor);
+										})))))
+		);
+
+		fromSession(literal("playerdata")
+				.then(addPlayerDataOption("load", (player, playerData, playerName) -> {
+					SerializablePlayer data = playerData.loadPlayer(player);
+					if (data == null) {
+						return sendFailed("Cannot load player data, no data saved for " + playerName);
+					}
+					return sendSuccess("Loaded player data for " + playerName);
+				}))
+				.then(addPlayerDataOption("save", (player, playerData, playerName) -> {
+					SerializablePlayer data = SerializablePlayer.fromPlayer(BingoReloaded.getMetaInfo().version(), player);
+					playerData.savePlayer(data, true);
+					return sendSuccess("Saved player data for " + playerName);
+				}))
+				.then(addPlayerDataOption("remove", (player, playerData, playerName) -> {
+					playerData.removePlayer(player.uniqueId());
+					return sendSuccess("Removed previously saved player data for " + playerName);
+				}))
+		);
 	}
 
 	private BingoSettingsBuilder getSettingsBuilder(GameContext context, String sessionName) {
@@ -408,7 +351,6 @@ public class AutoBingoAction<Source> extends MappedCommand<Source> {
 	}
 
 	public AutoResult setDuration(BingoSettingsBuilder settings, int gameDuration) {
-
 		if (gameDuration > 0) {
 			settings.countdownGameDuration(gameDuration);
 			return sendSuccess("Set game duration for countdown mode to " + gameDuration);
@@ -442,153 +384,65 @@ public class AutoBingoAction<Source> extends MappedCommand<Source> {
 		return sendSuccess("Player " + playerName + " added to team " + teamName);
 	}
 
-	public AutoResult setTeamSize(BingoSettingsBuilder settings, String[] extraArguments) {
-		if (extraArguments.length != 1) {
-			return sendFailed("Expected 3 arguments!");
-		}
-
-		int teamSize = Math.min(64, Math.max(1, BingoCommand.toInt(extraArguments[0], 1)));
-
+	public AutoResult setTeamSize(BingoSettingsBuilder settings, int teamSize) {
 		settings.maxTeamSize(teamSize);
 		return sendSuccess("Set maximum team size to " + teamSize + " players");
 	}
 
-	public AutoResult setTeamCount(BingoSettingsBuilder settings, String[] extraArguments) {
-		if (extraArguments.length != 1) {
-			return sendFailed("Expected 3 arguments!");
-		}
-
-		int newCount = Math.min(64, Math.max(1, BingoCommand.toInt(extraArguments[0], 1)));
-
+	public AutoResult setTeamCount(BingoSettingsBuilder settings, int newCount) {
 		settings.maxTeamCount(newCount);
 		return sendSuccess("Set maximum team count to " + newCount + " teams");
 	}
 
-	public AutoResult setGamemode(BingoSettingsBuilder settings, String[] extraArguments) {
-		if (extraArguments.length == 0) {
-			return sendFailed("Expected at least 3 arguments!");
-		}
-
-		BingoGamemode mode = BingoGamemodes.fromDataString(extraArguments[0], true);
+	public AutoResult setGamemode(BingoSettingsBuilder settings, String gamemodeString, int cardSize) {
+		BingoGamemode mode = BingoGamemodes.fromDataString(gamemodeString, true);
 		if (mode == null) {
-			return sendFailed("Unknown gamemode '" + extraArguments[0] + "'");
+			return sendFailed("Unknown gamemode '" + gamemodeString + "'");
 		}
 		settings.mode(mode);
 
-		if (extraArguments.length == 2 && extraArguments[1].equals("3")) {
+		if (cardSize == 3) {
 			settings.cardSize(CardSize.X3);
 		} else {
 			settings.cardSize(CardSize.X5);
 		}
 
 		BingoSettings view = settings.view();
-		return sendSuccess("Set gamemode to " + extraArguments[0] + " " + view.size().size + "x" + view.size().size);
+		return sendSuccess("Set gamemode to " + gamemodeString + " " + view.size().size + "x" + view.size().size);
 	}
 
-	public AutoResult setHotswapGoal(BingoSettingsBuilder settings, String[] extraArguments) {
-		if (extraArguments.length == 0) {
-			return sendFailed("Expected at least 3 arguments!");
-		}
-
-		int goal = 10;
-		try {
-			goal = Integer.parseInt(extraArguments[0]);
-		} catch (NumberFormatException exception) {
-			return sendFailed("Invalid win goal amount '" + extraArguments[0] + "'");
-		}
-
+	public AutoResult setHotswapGoal(BingoSettingsBuilder settings, int goal) {
 		settings.hotswapGoal(goal);
-
 		return sendSuccess("Set hotswap goal to " + goal);
 	}
 
-	public AutoResult setHotswapExpire(BingoSettingsBuilder settings, String[] extraArguments) {
-		if (extraArguments.length != 1) {
-			return sendFailed("Expected 3 arguments!");
-		}
-
-		boolean value = extraArguments[0].equals("true");
+	public AutoResult setHotswapExpire(BingoSettingsBuilder settings, boolean value) {
 		settings.expireHotswapTasks(value);
-
 		return sendSuccess((value ? "Enabled" : "Disabled") + " hotswap task expiration");
 	}
 
-	public AutoResult setCompleteGoal(BingoSettingsBuilder settings, String[] extraArguments) {
-		if (extraArguments.length == 0) {
-			return sendFailed("Expected at least 3 arguments!");
-		}
-
-		int goal;
-		try {
-			goal = Integer.parseInt(extraArguments[0]);
-		} catch (NumberFormatException exception) {
-			return sendFailed("Invalid win goal amount '" + extraArguments[0] + "'");
-		}
-
+	public AutoResult setCompleteGoal(BingoSettingsBuilder settings, int goal) {
 		settings.completeGoal(goal);
-
 		return sendSuccess("Set complete goal to " + goal);
 	}
 
-	public AutoResult setBlitzHeadstart(BingoSettingsBuilder settings, String[] extraArguments) {
-		if (extraArguments.length == 0) {
-			return sendFailed("Expected at least 3 arguments!");
-		}
-
-		int goal;
-		try {
-			goal = Integer.parseInt(extraArguments[0]);
-		} catch (NumberFormatException exception) {
-			return sendFailed("Invalid duration '" + extraArguments[0] + "'");
-		}
-
-		settings.blitzStartDuration(goal);
-
-		return sendSuccess("Set blitz head start to " + goal);
+	public AutoResult setBlitzHeadstart(BingoSettingsBuilder settings, int headStart) {
+		settings.blitzStartDuration(headStart);
+		return sendSuccess("Set blitz head start to " + headStart);
 	}
 
-	public AutoResult setBlitzBonus(BingoSettingsBuilder settings, String[] extraArguments) {
-		if (extraArguments.length == 0) {
-			return sendFailed("Expected at least 3 arguments!");
-		}
-
-		int goal;
-		try {
-			goal = Integer.parseInt(extraArguments[0]);
-		} catch (NumberFormatException exception) {
-			return sendFailed("Invalid duration '" + extraArguments[0] + "'");
-		}
-
-		settings.blitzBonusDuration(goal);
-
-		return sendSuccess("Set blitz bonus to " + goal);
+	public AutoResult setBlitzBonus(BingoSettingsBuilder settings, int bonus) {
+		settings.blitzBonusDuration(bonus);
+		return sendSuccess("Set blitz bonus to " + bonus);
 	}
 
-	public AutoResult setBlitzRecovery(BingoSettingsBuilder settings, String[] extraArguments) {
-		if (extraArguments.length == 0) {
-			return sendFailed("Expected at least 3 arguments!");
-		}
-
-		int goal;
-		try {
-			goal = Integer.parseInt(extraArguments[0]);
-		} catch (NumberFormatException exception) {
-			return sendFailed("Invalid task amount '" + extraArguments[0] + "'");
-		}
-
-		settings.blitzRecoveryDelay(goal);
-
-		return sendSuccess("Set recovery delay goal to " + goal);
+	public AutoResult setBlitzRecovery(BingoSettingsBuilder settings, int recoveryDelay) {
+		settings.blitzRecoveryDelay(recoveryDelay);
+		return sendSuccess("Set recovery delay goal to " + recoveryDelay);
 	}
 
-	public AutoResult setDifferentCardPerTeam(BingoSettingsBuilder settings, String[] extraArguments) {
-		if (extraArguments.length != 1) {
-			return sendFailed("Expected 3 arguments!");
-		}
-
-		boolean value = extraArguments[0].equals("true");
+	public AutoResult setDifferentCardPerTeam(BingoSettingsBuilder settings, boolean value) {
 		settings.differentCardPerTeam(value);
-
 		return sendSuccess((value ? "Enabled" : "Disabled") + " separate cards per team");
 	}
 
@@ -597,45 +451,6 @@ public class AutoBingoAction<Source> extends MappedCommand<Source> {
 			return sendSuccess("Game forcefully ended!");
 		} else {
 			return sendFailed("Could not end the game, see console for details.");
-		}
-	}
-
-	public AutoResult preset(BingoSettingsBuilder settingsBuilder, String sessionName, String[] extraArguments) {
-		if (extraArguments.length != 2) {
-			return sendFailed("Expected 4 arguments!");
-		}
-
-		BingoSettingsData settingsData = new BingoSettingsData();
-
-		String path = extraArguments[1];
-		if (path.isBlank()) {
-			return sendFailed("Please enter a valid preset name");
-		}
-
-		switch (extraArguments[0]) {
-			case "save" -> {
-				settingsData.saveSettings(path, settingsBuilder.view());
-				return sendSuccess("Saved settings to '" + path + "'.");
-			}
-			case "load" -> {
-				BingoSettings settings = settingsData.getSettings(path);
-				if (settings == null) {
-					return sendFailed("Invalid settings path " + path);
-				}
-				settingsBuilder.fromOther(settings, path);
-				return sendSuccess("Loaded settings from '" + path + "'.");
-			}
-			case "remove" -> {
-				settingsData.removeSettings(path);
-				return sendSuccess("Removed settings preset '" + path + "'.");
-			}
-			case "default" -> {
-				settingsData.setDefaultSettings(path);
-				return sendSuccess("Set '" + path + "' as default settings for new worlds.");
-			}
-			default -> {
-				return sendFailed("Unknown error");
-			}
 		}
 	}
 
@@ -708,24 +523,12 @@ public class AutoBingoAction<Source> extends MappedCommand<Source> {
 		return sendSuccess("Teleported " + (playerCount - playersLeft) + " out of " + playerCount + " players in " + worldName + " to " + targetWorld);
 	}
 
-	private AutoResult voteForPlayer(GameContext context, String[] args) {
-		String sessionName = args[0];
-		if (args.length != 4) {
-			return sendFailed("Expected 5 arguments!");
-		}
-
-		BingoSession session = context.getSession(sessionName);
-		if (session == null) {
-			return sendFailed("Cannot cast a vote in this world (bingo is not being played here!).");
-		}
-
-		PlayerHandle player = context.server().getPlayerFromName(args[1]);
+	private AutoResult voteForPlayer(GameContext context, BingoSession session, String playerName, String category, String voteFor) {
+		PlayerHandle player = context.server().getPlayerFromName(playerName);
 		if (player == null) {
-			return sendFailed("Player '" + args[1] + "' does not exist!");
+			return sendFailed("Player " + playerName + " could not be found.");
 		}
 
-		String category = args[2];
-		String voteFor = args[3];
 		if (!(session.phase() instanceof PregameLobby lobby)) {
 			return sendFailed("Cannot vote for player, game is not in lobby phase.");
 		}
@@ -768,42 +571,6 @@ public class AutoBingoAction<Source> extends MappedCommand<Source> {
 		return sendSuccess(player.displayName().append(Component.text(" voted for " + category + " " + voteFor)));
 	}
 
-	private AutoResult playerDataCommand(GameContext context, String[] args) {
-		String sessionName = args[0];
-		if (args.length != 3) {
-			return sendFailed("Unknown error");
-		}
-
-		PlayerSerializationData playerData = context.gameManager().getPlayerData();
-		var server = context.server();
-
-		String playerName = args[2];
-		PlayerHandle player = server.getPlayerFromName(args[1]);
-		if (player == null) {
-			return sendFailed("Cannot edit player data, player " + playerName + " not found");
-		}
-
-		return switch (args[1]) {
-			case "load" -> {
-				SerializablePlayer data = playerData.loadPlayer(player);
-				if (data == null) {
-					yield sendFailed("Cannot load player data, no data saved for " + playerName);
-				}
-				yield sendSuccess("Loaded player data for " + playerName);
-			}
-			case "save" -> {
-				SerializablePlayer data = SerializablePlayer.fromPlayer(BingoReloaded.getMetaInfo().version(), player);
-				playerData.savePlayer(data, true);
-				yield sendSuccess("Saved player data for " + playerName);
-			}
-			case "remove" -> {
-				playerData.removePlayer(player.uniqueId());
-				yield sendSuccess("Removed previously saved player data for " + playerName);
-			}
-			default -> sendFailed("Unknown error");
-		};
-	}
-
 	private AutoResult sendSuccess(String message) {
 		return new AutoResult(Command.SINGLE_SUCCESS, message);
 	}
@@ -828,9 +595,9 @@ public class AutoBingoAction<Source> extends MappedCommand<Source> {
 		user.sendMessage(Component.text("(" + sessionName + ") ").append(message.color(NamedTextColor.RED)));
 	}
 
-	public void addSessionNameSubAction(String name, BiFunction<GameContext, String, AutoResult> action) {
+	public void addGameManagerSubAction(String name, BiFunction<GameManager, String, AutoResult> action) {
 		fromSession(literal(name)
-				.executes(sessionNameExecutor((source, worldName, _) -> action.apply(source, worldName)))
+				.executes(sessionNameExecutor((source, worldName, _) -> action.apply(source.gameManager(), worldName)))
 		);
 	}
 
@@ -841,24 +608,7 @@ public class AutoBingoAction<Source> extends MappedCommand<Source> {
 //		);
 //	}
 
-	public void addSettingsSubAction(String name, SettingsActionExecutor<Source> action) {
-		fromSession(literal(name)
-				.executes(settingsExecutor(action)));
-	}
-
-//	private Command<Source> sessionExecutor(BingoCommand.SessionActionExecutor<Source> executor) {
-//		return ctx -> {
-//			String sessionName = StringArgumentType.getString(ctx, "world");
-//			BingoCommandSource source = mapSource(ctx.getSource());
-//			Optional<BingoSession> session = source.getSessionByName(sessionName);
-//			if (session.isEmpty()) {
-//				return 0;
-//			}
-//			return executor.execute(source, ctx, session.orElseThrow());
-//		};
-//	}
-
-	private Command<Source> settingsExecutor(SettingsActionExecutor<Source> action) {
+	private Command<Source> sessionExecutor(ActionExecutor2<Source, BingoSession> action) {
 		return ctx -> {
 			String sessionName = StringArgumentType.getString(ctx, "world");
 			BingoCommandSource source = mapSource(ctx.getSource());
@@ -867,7 +617,7 @@ public class AutoBingoAction<Source> extends MappedCommand<Source> {
 				sendFailed(source.user(), Component.text("Invalid world/ session name: " + sessionName), sessionName);
 				return 0;
 			}
-			AutoResult result = action.execute(source.context(), session.get().settingsBuilder, ctx);
+			AutoResult result = action.execute(source.context(), session.get(), ctx);
 			if (result.code() == Command.SINGLE_SUCCESS) {
 				sendSuccess(source.user(), result.message(), sessionName);
 			} else {
@@ -877,7 +627,26 @@ public class AutoBingoAction<Source> extends MappedCommand<Source> {
 		};
 	}
 
-	private Command<Source> sessionNameExecutor(SessionNameActionExecuter<Source> action) {
+	private Command<Source> settingsExecutor(ActionExecutor3<Source, BingoSettingsBuilder> action) {
+		return ctx -> {
+			String sessionName = StringArgumentType.getString(ctx, "world");
+			BingoCommandSource source = mapSource(ctx.getSource());
+			Optional<BingoSession> session = source.getSessionByName(sessionName);
+			if (session.isEmpty()) {
+				sendFailed(source.user(), Component.text("Invalid world/ session name: " + sessionName), sessionName);
+				return 0;
+			}
+			AutoResult result = action.execute(session.get().settingsBuilder, ctx);
+			if (result.code() == Command.SINGLE_SUCCESS) {
+				sendSuccess(source.user(), result.message(), sessionName);
+			} else {
+				sendFailed(source.user(), result.message(), sessionName);
+			}
+			return result.code();
+		};
+	}
+
+	private Command<Source> sessionNameExecutor(ActionExecutor2<Source, String> action) {
 		return ctx -> {
 			String sessionName = StringArgumentType.getString(ctx, "world");
 			BingoCommandSource source = mapSource(ctx.getSource());
@@ -893,6 +662,42 @@ public class AutoBingoAction<Source> extends MappedCommand<Source> {
 
 	private void fromSession(LiteralArgumentBuilder<Source> subCommand) {
 		then(sessionArg("world").then(subCommand));
+	}
+
+	private <Arg> void basicSetting(String settingName, String argName, ArgumentType<Arg> argType, BiFunction<CommandContext<Source>, String, Arg> argExtractor, SettingsActionExecutor<Arg> action) {
+		fromSession(literal(settingName)
+				.then(argument(argName, argType)
+						.executes(settingsExecutor((settings, args) -> {
+							Arg argument = argExtractor.apply(args, argName);
+							return action.execute(settings, argument);
+						}))
+				)
+		);
+	}
+
+	private ArgumentBuilder<Source, ?> addPresetOption(String optionName, PresetCallback callback) {
+		return literal(optionName)
+				.then(argument("preset", StringArgumentType.greedyString())
+						.suggests((context, builder) -> {
+							return suggestAll(builder, new BingoSettingsData().getPresetNames());
+						})
+						.executes(settingsExecutor((settings, args) -> {
+							String preset = StringArgumentType.getString(args, "preset");
+							return callback.execute(settings, new BingoSettingsData(), preset);
+						})));
+	}
+
+	private ArgumentBuilder<Source, ?> addPlayerDataOption(String optionName, PlayerDataCallback callback) {
+		return literal(optionName)
+				.then(playerArg("player_name")
+						.executes(sessionExecutor((context, session, args) -> {
+							String playerName = playerArgValue("player_name", args);
+							PlayerHandle player = context.server().getPlayerFromName(playerName);
+							if (player == null) {
+								return sendFailed("Cannot edit player data, player " + playerName + " not found");
+							}
+							return callback.execute(player, context.gameManager().getPlayerData(), playerName);
+						})));
 	}
 
 	private ArgumentBuilder<Source, ?> sessionArg(String argName) {
@@ -914,6 +719,20 @@ public class AutoBingoAction<Source> extends MappedCommand<Source> {
 
 	private String playerArgValue(String name, CommandContext<Source> context) {
 		return StringArgumentType.getString(context, name);
+	}
+
+	private ArgumentBuilder<Source, ?> teamArg() {
+		return argument("team_id", StringArgumentType.word())
+				.suggests((context, builder) -> {
+					BingoCommandSource source = mapSource(context.getSource());
+					return suggestAll(builder, source.getSession()
+							.map(s -> s.teamManager.getActiveTeams().getTeams())
+							.orElse(Set.of()), BingoTeam::toString);
+				});
+	}
+
+	private String teamArgValue(CommandContext<Source> context) {
+		return StringArgumentType.getString(context, "team_id");
 	}
 
 	private CompletableFuture<Suggestions> allWorlds(final CommandContext<Source> context, final SuggestionsBuilder builder) {
@@ -943,15 +762,33 @@ public class AutoBingoAction<Source> extends MappedCommand<Source> {
 	}
 
 	@FunctionalInterface
-	public interface SettingsActionExecutor<Source> {
+	public interface SettingsActionExecutor<ArgType> {
 
-		AutoResult execute(GameContext context, BingoSettingsBuilder settings, CommandContext<Source> args);
+		AutoResult execute(BingoSettingsBuilder settings, ArgType arg);
 	}
 
 	@FunctionalInterface
-	public interface SessionNameActionExecuter<Source> {
+	public interface ActionExecutor2<Source, ArgType> {
 
-		AutoResult execute(GameContext context, String sessionName, CommandContext<Source> args);
+		AutoResult execute(GameContext context, ArgType arg, CommandContext<Source> args);
+	}
+
+	@FunctionalInterface
+	public interface ActionExecutor3<Source, ArgType> {
+
+		AutoResult execute(ArgType arg, CommandContext<Source> args);
+	}
+
+	@FunctionalInterface
+	public interface PresetCallback {
+
+		AutoResult execute(BingoSettingsBuilder builder, BingoSettingsData data, String presetPath);
+	}
+
+	@FunctionalInterface
+	public interface PlayerDataCallback {
+
+		AutoResult execute(PlayerHandle player, PlayerSerializationData playerData, String playerName);
 	}
 
 }
