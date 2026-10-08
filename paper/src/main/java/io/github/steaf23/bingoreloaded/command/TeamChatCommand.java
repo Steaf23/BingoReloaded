@@ -1,9 +1,8 @@
-package io.github.steaf23.bingoreloaded.action;
+package io.github.steaf23.bingoreloaded.command;
 
+import com.mojang.brigadier.Command;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
-import io.github.steaf23.bingoreloaded.lib.action.ActionResult;
-import io.github.steaf23.bingoreloaded.lib.action.ActionTree;
 import io.github.steaf23.bingoreloaded.lib.api.PlayerHandlePaper;
 import io.github.steaf23.bingoreloaded.lib.api.platform.PaperServer;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
@@ -11,6 +10,7 @@ import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.player.team.BingoTeam;
 import io.github.steaf23.bingoreloaded.player.team.TeamManager;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.event.player.AsyncChatEvent;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -22,34 +22,34 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
-public class TeamChatCommand extends ActionTree implements Listener {
+public class TeamChatCommand extends MappedCommand<CommandSourceStack> implements Listener {
 
 	private final List<BingoPlayer> enabledPlayers;
 	private final Function<PlayerHandle, @Nullable BingoSession> sessionResolver;
 
-	public TeamChatCommand(Function<PlayerHandle, @Nullable BingoSession> sessionResolver) {
-		super("btc", List.of("bingo.player"));
+	public TeamChatCommand(Function<PlayerHandle, @Nullable BingoSession> sessionResolver, Settings<CommandSourceStack> mapper) {
+		super("btc", List.of("bingo.player"), mapper);
 		this.enabledPlayers = new ArrayList<>();
 		this.sessionResolver = sessionResolver;
 
-		setAction((args) -> {
-			if (!(getLastUser() instanceof PlayerHandle handle)) {
-				return ActionResult.IGNORED;
+		execute(source -> {
+			if (!(source.user() instanceof PlayerHandle handle)) {
+				return 0;
 			}
 
 			BingoSession session = getSession(handle);
 			if (session == null)
-				return ActionResult.IGNORED;
+				return 0;
 
 			TeamManager teamManager = session.teamManager;
 			BingoParticipant participant = teamManager.getPlayerAsParticipant(handle);
 
 			if (!(participant instanceof BingoPlayer player))
-				return ActionResult.IGNORED;
+				return 0;
 
 			if (!teamManager.getParticipants().contains(player)) {
 				BingoMessage.NO_CHAT.sendToAudience(player, NamedTextColor.RED);
-				return ActionResult.IGNORED;
+				return 0;
 			}
 
 			if (enabledPlayers.contains(player)) {
@@ -60,7 +60,7 @@ public class TeamChatCommand extends ActionTree implements Listener {
 				BingoMessage.CHAT_ON.sendToAudience(player, NamedTextColor.GREEN, Component.text("/btc").color(NamedTextColor.GRAY));
 			}
 
-			return ActionResult.SUCCESS;
+			return Command.SINGLE_SUCCESS;
 		});
 	}
 

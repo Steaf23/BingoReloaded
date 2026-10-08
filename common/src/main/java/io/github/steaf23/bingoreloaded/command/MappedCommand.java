@@ -61,6 +61,10 @@ public class MappedCommand<Source> {
 	}
 
 	public void then(List<String> permissions, ArgumentBuilder<Source, ?> node) {
+		if (permissions.isEmpty()) {
+			then(node);
+			return;
+		}
 		rootBuilder.then(node.requires(permissionRequirement(permissions)));
 	}
 
@@ -70,7 +74,7 @@ public class MappedCommand<Source> {
 			if (mapped.user() == null) {
 				return false;
 			}
-			return mapped.user().hasAnyPermission(permissions);
+			return permissions.isEmpty() || mapped.user().hasAnyPermission(permissions);
 		};
 	}
 

@@ -1,4 +1,4 @@
-package io.github.steaf23.bingoreloaded.action;
+package io.github.steaf23.bingoreloaded.command;
 
 import io.github.steaf23.bingoreloaded.lib.api.ActionUser;
 import net.kyori.adventure.audience.Audience;

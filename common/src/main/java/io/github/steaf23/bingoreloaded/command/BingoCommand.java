@@ -58,7 +58,7 @@ public class BingoCommand<Source> extends MappedCommand<Source> {
 
 		then(literal("vote").executes(sessionExecutor(this::vote)));
 
-		this.addSessionSubAction("leave", List.of(), (source, session) -> {
+		this.addSessionSubAction("join", (source, session) -> {
 			if (!(source.user() instanceof PlayerHandle player)) {
 				return 0;
 			}
@@ -68,7 +68,7 @@ public class BingoCommand<Source> extends MappedCommand<Source> {
 		});
 
 
-		this.addSessionSubAction("leave", List.of(), (source, session) -> {
+		this.addSessionSubAction("leave", (source, session) -> {
 			if (!(source.user() instanceof PlayerHandle player)) {
 				return 0;
 			}
@@ -82,7 +82,7 @@ public class BingoCommand<Source> extends MappedCommand<Source> {
 		});
 
 
-		this.addSessionSubAction("getcard", List.of(), (source, session) -> {
+		this.addSessionSubAction("getcard", (source, session) -> {
 			if (!(source.user() instanceof PlayerHandle player)) {
 				return 0;
 			}
@@ -101,7 +101,7 @@ public class BingoCommand<Source> extends MappedCommand<Source> {
 		});
 
 
-		this.addSessionSubAction("back", List.of(), (source, session) -> {
+		this.addSessionSubAction("back", (source, session) -> {
 			if (!(source.user() instanceof PlayerHandle player)) {
 				return 0;
 			}
@@ -116,7 +116,7 @@ public class BingoCommand<Source> extends MappedCommand<Source> {
 		});
 
 
-		this.addSessionSubAction("view", List.of(), (source, session) -> {
+		this.addSessionSubAction("view", (source, session) -> {
 			if (source.user() instanceof PlayerHandle player) {
 				BingoParticipant participant = session.teamManager.getPlayerAsParticipant(player);
 				if (participant != null) {
