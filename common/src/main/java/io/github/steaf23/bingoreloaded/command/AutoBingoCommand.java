@@ -1,4 +1,4 @@
-package io.github.steaf23.bingoreloaded.action;
+package io.github.steaf23.bingoreloaded.command;
 
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.arguments.ArgumentType;
@@ -13,7 +13,6 @@ import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.api.BingoCommandSource;
 import io.github.steaf23.bingoreloaded.cards.CardSize;
-import io.github.steaf23.bingoreloaded.command.MappedCommand;
 import io.github.steaf23.bingoreloaded.data.BingoCardData;
 import io.github.steaf23.bingoreloaded.data.BingoSettingsData;
 import io.github.steaf23.bingoreloaded.data.PlayerSerializationData;
@@ -41,18 +40,16 @@ import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 
-import java.util.Collection;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiFunction;
-import java.util.function.Function;
 
-public class AutoBingoAction<Source> extends MappedCommand<Source> {
+public class AutoBingoCommand<Source> extends MappedCommand<Source> {
 
-	public AutoBingoAction(Settings<Source> mappingSettings) {
+	public AutoBingoCommand(Settings<Source> mappingSettings) {
 		super("autobingo", List.of("bingo.admin"), mappingSettings);
 
 		addGameManagerSubAction("create", this::create);
@@ -738,20 +735,6 @@ public class AutoBingoAction<Source> extends MappedCommand<Source> {
 	private CompletableFuture<Suggestions> allWorlds(final CommandContext<Source> context, final SuggestionsBuilder builder) {
 		BingoCommandSource source = mapSource(context.getSource());
 		return suggestAll(builder, source.context().server().getLoadedWorlds(), w -> w.key().asString());
-	}
-
-	private <E> CompletableFuture<Suggestions> suggestAll(SuggestionsBuilder builder, Collection<E> collection, Function<E, String> map) {
-		for (E e : collection) {
-			builder.suggest(map.apply(e));
-		}
-		return builder.buildFuture();
-	}
-
-	private CompletableFuture<Suggestions> suggestAll(SuggestionsBuilder builder, Collection<String> collection) {
-		for (String e : collection) {
-			builder.suggest(e);
-		}
-		return builder.buildFuture();
 	}
 
 	public record AutoResult(int code, Component message) {

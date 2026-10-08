@@ -40,7 +40,7 @@ public interface BingoReloadedRuntime {
 	void onConfigReloaded(BingoConfigurationData config);
 
 	void registerAction(boolean allowConsole, ActionTree action);
-	void registerExtraActions(BingoConfigurationData config);
+	void registerCommands(BingoConfigurationData config);
 
 	@Nullable WorldHandle createBingoOverworld(Key worldKey, Key generationOptions);
 

@@ -6,11 +6,15 @@ import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.suggestion.Suggestions;
+import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import io.github.steaf23.bingoreloaded.api.BingoCommandSource;
 import net.kyori.adventure.key.Key;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -81,4 +85,19 @@ public class MappedCommand<Source> {
 	public Key getKey(CommandContext<Source> context, String name) {
 		return context.getArgument(name, Key.class);
 	}
+
+	public static <E> CompletableFuture<Suggestions> suggestAll(SuggestionsBuilder builder, Collection<E> collection, Function<E, String> map) {
+		for (E e : collection) {
+			builder.suggest(map.apply(e));
+		}
+		return builder.buildFuture();
+	}
+
+	public static CompletableFuture<Suggestions> suggestAll(SuggestionsBuilder builder, Collection<String> collection) {
+		for (String e : collection) {
+			builder.suggest(e);
+		}
+		return builder.buildFuture();
+	}
+
 }

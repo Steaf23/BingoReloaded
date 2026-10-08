@@ -136,8 +136,7 @@ public class BingoOptions {
 	public static final ConfigurationOption<TeleportationGrid> TELEPORTATION_GRID = new NonSerializableOption<>("teleportGrid");
 
 	// Configuration: MULTIPLE
-	public static final ConfigurationOption<ConfigurationOption.StringList> DEFAULT_WORLDS = new NonSerializableOption<ConfigurationOption.StringList>("defaultWorlds")
-			.withEditUpdate(ConfigurationOption.EditUpdateTime.AFTER_GAME);
+	public static final ConfigurationOption<ConfigurationOption.StringList> DEFAULT_WORLDS = new NonSerializableOption<>("defaultWorlds");
 	public static final ConfigurationOption<Boolean> CLEAR_DEFAULT_WORLDS = new BooleanOption("clearDefaultWorlds");
 	public static final ConfigurationOption<String> CUSTOM_WORLD_GENERATION = new StringOption("customWorldGeneration")
 			.withEditUpdate(ConfigurationOption.EditUpdateTime.AFTER_SERVER_RESTART);

@@ -1,5 +1,8 @@
 package io.github.steaf23.bingoreloaded.data.config;
 
+import com.mojang.brigadier.arguments.ArgumentType;
+import com.mojang.brigadier.arguments.IntegerArgumentType;
+import com.mojang.brigadier.context.CommandContext;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataStorage;
 import org.jetbrains.annotations.NotNull;
 
@@ -12,6 +15,11 @@ public class IntegerOption extends ConfigurationOption<Integer>
 
     public IntegerOption(String configName) {
         super(configName);
+    }
+
+    @Override
+    public Optional<Integer> fromArgument(CommandContext<?> context, String name) {
+        return Optional.of(IntegerArgumentType.getInteger(context, name));
     }
 
     /**
@@ -35,17 +43,12 @@ public class IntegerOption extends ConfigurationOption<Integer>
     }
 
     @Override
-    public Optional<Integer> fromString(String value) {
-        try {
-            int val = Integer.parseInt(value);
-            return Optional.of(Math.clamp(val, min, max));
-        } catch (NumberFormatException e) {
-            return Optional.empty();
-        }
+    public void toDataStorage(DataStorage storage, @NotNull Integer value) {
+        storage.setInt(getConfigName(), value);
     }
 
     @Override
-    public void toDataStorage(DataStorage storage, @NotNull Integer value) {
-        storage.setInt(getConfigName(), value);
+    public ArgumentType<?> argumentType() {
+        return IntegerArgumentType.integer(min, max);
     }
 }

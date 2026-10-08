@@ -2,8 +2,7 @@ package io.github.steaf23.bingoreloaded;
 
 import com.github.retrooper.packetevents.PacketEvents;
 import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
-import io.github.steaf23.bingoreloaded.action.AutoBingoAction;
-import io.github.steaf23.bingoreloaded.command.BingoCommand;
+import io.github.steaf23.bingoreloaded.command.BingoConfigCommand;
 import io.github.steaf23.bingoreloaded.action.CommandTemplate;
 import io.github.steaf23.bingoreloaded.action.ConsoleActionUser;
 import io.github.steaf23.bingoreloaded.action.TeamChatCommand;
@@ -14,6 +13,8 @@ import io.github.steaf23.bingoreloaded.api.CardMenu;
 import io.github.steaf23.bingoreloaded.api.TeamDisplay;
 import io.github.steaf23.bingoreloaded.api.TeamDisplayPaper;
 import io.github.steaf23.bingoreloaded.api.network.PaperClientManager;
+import io.github.steaf23.bingoreloaded.command.AutoBingoCommand;
+import io.github.steaf23.bingoreloaded.command.BingoCommand;
 import io.github.steaf23.bingoreloaded.command.MappedCommand;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.DataUpdaterV3_6_0;
@@ -176,12 +177,6 @@ public class BingoReloadedPaper extends JavaPlugin implements BingoReloadedRunti
 		packetListener = new MenuPacketListener(tasks);
 		bingo.reloadManager(server);
 
-		getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, event -> {
-			MappedCommand.Settings<CommandSourceStack> settings = new MappedCommand.Settings<>(this::mapCommandSource, ArgumentTypes.key());
-			event.registrar().register(new BingoCommand<>(bingo.config(), settings).buildCommand());
-			event.registrar().register(new AutoBingoAction<>(settings).buildCommand());
-		});
-
 		if (bingo.config().getOptionValue(BingoOptions.DISABLE_CLIENT_MOD)) {
 			this.clientManager = new BingoClientManager.DisabledClientManager();
 		} else {
@@ -304,8 +299,14 @@ public class BingoReloadedPaper extends JavaPlugin implements BingoReloadedRunti
 	}
 
 	@Override
-	public void registerExtraActions(BingoConfigurationData config) {
-//		registerCommand("bingotest", new BingoTestCommand(this));
+	public void registerCommands(BingoConfigurationData config) {
+		getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, event -> {
+			MappedCommand.Settings<CommandSourceStack> settings = new MappedCommand.Settings<>(this::mapCommandSource, ArgumentTypes.key());
+			event.registrar().register(new BingoCommand<>(bingo.config(), settings).buildCommand());
+			event.registrar().register(new AutoBingoCommand<>(settings).buildCommand());
+			event.registrar().register(new BingoConfigCommand<>(bingo.config(), settings).buildCommand());
+		});
+
 		if (config.getOptionValue(BingoOptions.ENABLE_TEAM_CHAT)) {
 			TeamChatCommand command = new TeamChatCommand(player -> bingo.getGameManager().getSessionFromWorld(player.world()));
 			registerAction(false, command);

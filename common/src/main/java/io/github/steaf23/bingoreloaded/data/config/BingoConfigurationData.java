@@ -179,24 +179,8 @@ public class BingoConfigurationData
             return;
 
         options.put(option, value);
-    }
-
-    /**
-     * @return true if the value was set to the option successfully.
-     */
-    public <DataType> boolean setOptionValueFromString(@NotNull ConfigurationOption<DataType> option, String value) {
-        Optional<DataType> someValue = option.fromString(value);
-
-        if (someValue.isPresent()) {
-            DataType val = someValue.get();
-            setOptionValue(option, val);
-            //TODO: check if this needs to be inside setOptionValue
-            option.toDataStorage(config, val);
-            config.saveChanges();
-            return true;
-        } else {
-			return false;
-		}
+        option.toDataStorage(config, value);
+        config.saveChanges();
     }
 
     public <T> void setOptionValueForce(ConfigurationOption<T> option, Function<String, T> defaultValue) {

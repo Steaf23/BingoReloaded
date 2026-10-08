@@ -1,11 +1,9 @@
-package io.github.steaf23.bingoreloaded.action;
+package io.github.steaf23.bingoreloaded.command;
 
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.context.CommandContext;
 import io.github.steaf23.bingoreloaded.api.BingoCommandSource;
 import io.github.steaf23.bingoreloaded.cards.TaskCard;
-import io.github.steaf23.bingoreloaded.command.BingoCommand;
-import io.github.steaf23.bingoreloaded.command.MappedCommand;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gameloop.GameManager;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
@@ -22,9 +20,9 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.function.BiFunction;
 
-public class BotCommandAction<Source> extends MappedCommand<Source> {
+public class BotCommand<Source> extends MappedCommand<Source> {
 
-	public BotCommandAction(Settings<Source> settings) {
+	public BotCommand(Settings<Source> settings) {
 		super("bingobot", List.of("bingo.admin"), settings);
 
 //		addSessionSubAction("add", List.of(), (args, session) -> {

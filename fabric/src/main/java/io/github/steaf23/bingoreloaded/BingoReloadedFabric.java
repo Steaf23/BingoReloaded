@@ -180,7 +180,7 @@ public class BingoReloadedFabric implements ModInitializer, BingoReloadedRuntime
 	}
 
 	@Override
-	public void registerExtraActions(BingoConfigurationData config) {
+	public void registerCommands(BingoConfigurationData config) {
 	}
 
 	@Override

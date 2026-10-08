@@ -1,5 +1,7 @@
 package io.github.steaf23.bingoreloaded.data.config;
 
+import com.mojang.brigadier.arguments.ArgumentType;
+import com.mojang.brigadier.context.CommandContext;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataStorage;
 import org.jetbrains.annotations.NotNull;
 
@@ -34,6 +36,12 @@ public abstract class ConfigurationOption<Data>
         this.configName = configName;
     }
 
+    public abstract Optional<Data> fromArgument(CommandContext<?> context, String name);
+
+    public abstract void toDataStorage(DataStorage storage, @NotNull Data value);
+
+    public abstract ArgumentType<?> argumentType();
+
     public @NotNull String getConfigName() {
         return configName;
     }
@@ -59,10 +67,6 @@ public abstract class ConfigurationOption<Data>
     public boolean isLocked() {
         return locked;
     }
-
-    abstract public Optional<Data> fromString(String value);
-
-    abstract public void toDataStorage(DataStorage storage, @NotNull Data value);
 
     @Override
     public String toString() {

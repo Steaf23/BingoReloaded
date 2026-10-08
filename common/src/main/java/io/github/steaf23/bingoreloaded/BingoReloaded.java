@@ -1,6 +1,5 @@
 package io.github.steaf23.bingoreloaded;
 
-import io.github.steaf23.bingoreloaded.action.BingoConfigAction;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.BingoSound;
 import io.github.steaf23.bingoreloaded.data.BingoStatData;
@@ -110,10 +109,10 @@ public class BingoReloaded implements Namespaced {
 		this.textureData = new TexturedMenuData();
 
 //		runtime.registerAction(true, new AutoBingoAction());
-		runtime.registerAction(true, new BingoConfigAction(config));
+//		runtime.registerAction(true, new BingoConfigAction(config));
 //		runtime.registerAction(false, new BingoAction(config));
 //		runtime.registerAction(false, new BotCommandAction());
-		runtime.registerExtraActions(config);
+		runtime.registerCommands(config);
 
 		ConsoleMessenger.log(Component.text("Enabled " + metaInfo.name()).color(NamedTextColor.GREEN));
 	}
