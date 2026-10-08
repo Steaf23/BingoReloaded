@@ -139,4 +139,9 @@ public class StackHandleFabric implements StackHandle {
 	public void setCooldown(Key cooldownGroup, double cooldownTimeSeconds) {
 		stack.set(DataComponents.USE_COOLDOWN, new UseCooldown((float)cooldownTimeSeconds, Optional.of(FabricTypes.idFromKey(cooldownGroup))));
 	}
+
+	@Override
+	public boolean isMenuItem() {
+		return stack.has(DataComponents.CUSTOM_DATA) && stack.get(DataComponents.CUSTOM_DATA).copyTag().contains("bingoreloaded:menu_item");
+	}
 }

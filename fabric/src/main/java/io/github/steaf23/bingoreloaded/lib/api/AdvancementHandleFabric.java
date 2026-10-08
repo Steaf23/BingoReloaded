@@ -45,7 +45,7 @@ public class AdvancementHandleFabric implements AdvancementHandle {
 		if (advancement.value().display().isEmpty()) {
 			return ItemType.AIR;
 		}
-		return new ItemTypeFabric(advancement.value().display().get().getIcon().item().value());
+		return new ItemTypeFabric(advancement.value().display().get().icon().item().value());
 	}
 
 	@Override
@@ -53,7 +53,7 @@ public class AdvancementHandleFabric implements AdvancementHandle {
 		if (advancement.value().display().isEmpty()) {
 			return Component.empty();
 		} else {
-			return FabricTypes.toAdventureComponent(advancement.value().display().get().getTitle());
+			return FabricTypes.toAdventureComponent(advancement.value().display().get().title());
 		}
 	}
 
@@ -62,7 +62,7 @@ public class AdvancementHandleFabric implements AdvancementHandle {
 		if (advancement.value().display().isEmpty()) {
 			return Component.empty();
 		} else {
-			return FabricTypes.toAdventureComponent(advancement.value().display().get().getDescription());
+			return FabricTypes.toAdventureComponent(advancement.value().display().get().description());
 		}
 	}
 

@@ -301,13 +301,13 @@ public class BingoReloadedPaper extends JavaPlugin implements BingoReloadedRunti
 	public void registerCommands(BingoConfigurationData config) {
 		getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, event -> {
 			MappedCommand.Settings<CommandSourceStack> settings = new MappedCommand.Settings<>(this::mapCommandSource, ArgumentTypes.key());
-			event.registrar().register(new BingoCommand<>(bingo.config(), settings).buildCommand());
-			event.registrar().register(new AutoBingoCommand<>(settings).buildCommand());
-			event.registrar().register(new BingoConfigCommand<>(bingo.config(), settings).buildCommand());
+			event.registrar().register(new BingoCommand<>(bingo.config(), settings).builder().build());
+			event.registrar().register(new AutoBingoCommand<>(settings).builder().build());
+			event.registrar().register(new BingoConfigCommand<>(bingo.config(), settings).builder().build());
 
 			if (config.getOptionValue(BingoOptions.ENABLE_TEAM_CHAT)) {
 				TeamChatCommand command = new TeamChatCommand(player -> bingo.getGameManager().getSessionFromWorld(player.world()), settings);
-				event.registrar().register(command.buildCommand());
+				event.registrar().register(command.builder().build());
 				Bukkit.getPluginManager().registerEvents(command, this);
 			}
 		});

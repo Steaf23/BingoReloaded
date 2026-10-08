@@ -8,7 +8,6 @@ import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
-import com.mojang.brigadier.tree.LiteralCommandNode;
 import io.github.steaf23.bingoreloaded.api.BingoCommandSource;
 import net.kyori.adventure.key.Key;
 
@@ -78,8 +77,8 @@ public class MappedCommand<Source> {
 		};
 	}
 
-	public LiteralCommandNode<Source> buildCommand() {
-		return rootBuilder.build();
+	public LiteralArgumentBuilder<Source> builder() {
+		return rootBuilder;
 	}
 
 	public ArgumentType<Key> keyType() {
