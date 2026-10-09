@@ -13,6 +13,8 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 
+import java.util.Optional;
+
 public class KitOptionsMenu extends BasicMenu
 {
     private final BingoSession session;
@@ -59,10 +61,10 @@ public class KitOptionsMenu extends BasicMenu
         int kitIdx = 0;
         CustomKitData customKitData = new CustomKitData();
         for (PlayerKit kit : PlayerKit.customKits()) {
-            CustomKit customkit = customKitData.getCustomKit(kit);
-            if (customkit != null) {
+            Optional<CustomKit> customkit = customKitData.getCustomKit(kit);
+            if (customkit.isPresent()) {
                 addAction(new ItemTemplate(kitIdx * 2, 3, VanillaItems.WHITE_CONCRETE.type(),
-                        customkit.name(), Component.text("Custom kit").color(NamedTextColor.DARK_GRAY)), args -> {
+                        customkit.get().name(), Component.text("Custom kit").color(NamedTextColor.DARK_GRAY)), args -> {
                     setKit(PlayerKit.fromConfig(kit.configName));
                     close(args.player());
                 });

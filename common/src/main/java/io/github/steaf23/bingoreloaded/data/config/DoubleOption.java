@@ -1,5 +1,8 @@
 package io.github.steaf23.bingoreloaded.data.config;
 
+import com.mojang.brigadier.arguments.ArgumentType;
+import com.mojang.brigadier.arguments.DoubleArgumentType;
+import com.mojang.brigadier.context.CommandContext;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataStorage;
 import org.jetbrains.annotations.NotNull;
 
@@ -12,17 +15,17 @@ public class DoubleOption extends ConfigurationOption<Double>
     }
 
     @Override
-    public Optional<Double> fromString(String value) {
-        try {
-            double val = Double.parseDouble(value);
-            return Optional.of(val);
-        } catch (NumberFormatException e) {
-            return Optional.empty();
-        }
+    public Optional<Double> fromArgument(CommandContext<?> context, String name) {
+        return Optional.of(DoubleArgumentType.getDouble(context, name));
     }
 
     @Override
     public void toDataStorage(DataStorage storage, @NotNull Double value) {
         storage.setDouble(getConfigName(), value);
+    }
+
+    @Override
+    public ArgumentType<?> argumentType() {
+        return DoubleArgumentType.doubleArg();
     }
 }

@@ -10,6 +10,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class FabricInventories implements PlatformInventories {
@@ -28,12 +29,16 @@ public class FabricInventories implements PlatformInventories {
 
 	@Override
 	public List<StackHandle> addItemToPlayerInventory(PlayerHandle player, StackHandle[] stacks) {
+		List<StackHandle> result = new ArrayList<>();
 		ServerPlayer fabricPlayer = player(player);
 		for (StackHandle stack : stacks) {
-			if (!fabricPlayer.addItem(((StackHandleFabric)stack).handle())) {
-				return;
+			fabricPlayer.addItem(((StackHandleFabric)stack).handle());
+			if (stack.amount() != 0) {
+				result.add(stack);
 			}
 		}
+
+		return result;
 	}
 
 	private ServerPlayer player(PlayerHandle player) {

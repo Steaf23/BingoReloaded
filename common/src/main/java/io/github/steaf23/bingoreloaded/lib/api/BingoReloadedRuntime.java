@@ -9,7 +9,6 @@ import io.github.steaf23.bingoreloaded.data.record.LeaderboardData;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.gameloop.phase.PregameLobby;
-import io.github.steaf23.bingoreloaded.lib.action.ActionTree;
 import io.github.steaf23.bingoreloaded.lib.api.inventory.CapacityInventoryProvider;
 import io.github.steaf23.bingoreloaded.lib.api.player.PlayerHandle;
 import io.github.steaf23.bingoreloaded.lib.api.player.SharedDisplay;
@@ -39,8 +38,7 @@ public interface BingoReloadedRuntime {
 	void onLanguageUpdated();
 	void onConfigReloaded(BingoConfigurationData config);
 
-	void registerAction(boolean allowConsole, ActionTree action);
-	void registerExtraActions(BingoConfigurationData config);
+	void registerCommands(BingoConfigurationData config);
 
 	@Nullable WorldHandle createBingoOverworld(Key worldKey, Key generationOptions);
 

@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -21,6 +22,33 @@ public class BingoConfigurationData
     {
         public boolean isEmpty() {
             return this.gamemodes.isEmpty() && this.kits.isEmpty() && this.cards.isEmpty() && this.cardSizes.isEmpty();
+        }
+
+        public Set<String> usedCategories() {
+            Set<String> result = new HashSet<>();
+            if (!gamemodes().isEmpty()) {
+                result.add("gamemodes");
+            }
+            if (!kits().isEmpty()) {
+                result.add("kits");
+            }
+            if (!cards().isEmpty()) {
+                result.add("cards");
+            }
+            if (!cardSizes().isEmpty()) {
+                result.add("cardsizes");
+            }
+            return result;
+        }
+
+        public List<String> optionsPerCategory(String category) {
+            return switch (category) {
+                case "gamemodes" -> gamemodes();
+                case "kits" -> kits();
+                case "cards" -> cards();
+                case "cardsizes" -> cardSizes();
+                default -> List.of();
+            };
         }
     }
 
@@ -151,24 +179,8 @@ public class BingoConfigurationData
             return;
 
         options.put(option, value);
-    }
-
-    /**
-     * @return true if the value was set to the option successfully.
-     */
-    public <DataType> boolean setOptionValueFromString(@NotNull ConfigurationOption<DataType> option, String value) {
-        Optional<DataType> someValue = option.fromString(value);
-
-        if (someValue.isPresent()) {
-            DataType val = someValue.get();
-            setOptionValue(option, val);
-            //TODO: check if this needs to be inside setOptionValue
-            option.toDataStorage(config, val);
-            config.saveChanges();
-            return true;
-        } else {
-			return false;
-		}
+        option.toDataStorage(config, value);
+        config.saveChanges();
     }
 
     public <T> void setOptionValueForce(ConfigurationOption<T> option, Function<String, T> defaultValue) {

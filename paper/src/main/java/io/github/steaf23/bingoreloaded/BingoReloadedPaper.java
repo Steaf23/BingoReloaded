@@ -2,14 +2,20 @@ package io.github.steaf23.bingoreloaded;
 
 import com.github.retrooper.packetevents.PacketEvents;
 import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
-import io.github.steaf23.bingoreloaded.action.CommandTemplate;
-import io.github.steaf23.bingoreloaded.action.TeamChatCommand;
 import io.github.steaf23.bingoreloaded.api.BingoClientManager;
+import io.github.steaf23.bingoreloaded.api.BingoCommandSource;
 import io.github.steaf23.bingoreloaded.api.CardDisplayInfo;
 import io.github.steaf23.bingoreloaded.api.CardMenu;
 import io.github.steaf23.bingoreloaded.api.TeamDisplay;
 import io.github.steaf23.bingoreloaded.api.TeamDisplayPaper;
 import io.github.steaf23.bingoreloaded.api.network.PaperClientManager;
+import io.github.steaf23.bingoreloaded.command.AutoBingoCommand;
+import io.github.steaf23.bingoreloaded.command.BingoCommand;
+import io.github.steaf23.bingoreloaded.command.BingoConfigCommand;
+import io.github.steaf23.bingoreloaded.command.ConsoleActionUser;
+import io.github.steaf23.bingoreloaded.command.DefaultActionUser;
+import io.github.steaf23.bingoreloaded.command.MappedCommand;
+import io.github.steaf23.bingoreloaded.command.TeamChatCommand;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.DataUpdaterV3_6_0;
 import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
@@ -29,7 +35,7 @@ import io.github.steaf23.bingoreloaded.gui.inventory.VoteMenu;
 import io.github.steaf23.bingoreloaded.gui.inventory.card.GenericCardMenu;
 import io.github.steaf23.bingoreloaded.gui.inventory.card.HotswapGenericCardMenu;
 import io.github.steaf23.bingoreloaded.gui.inventory.creator.BingoCreatorMenu;
-import io.github.steaf23.bingoreloaded.lib.action.ActionTree;
+import io.github.steaf23.bingoreloaded.lib.api.ActionUser;
 import io.github.steaf23.bingoreloaded.lib.api.BingoReloadedRuntime;
 import io.github.steaf23.bingoreloaded.lib.api.EntityType;
 import io.github.steaf23.bingoreloaded.lib.api.EntityTypePaper;
@@ -67,6 +73,8 @@ import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import io.github.steaf23.bingoreloaded.settings.gamemode.BingoGamemodes;
 import io.github.steaf23.bingoreloaded.util.bstats.Metrics;
 import io.github.steaf23.bingoreloaded.world.CustomWorldCreator;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
+import io.papermc.paper.command.brigadier.argument.ArgumentTypes;
 import io.papermc.paper.dialog.Dialog;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import io.papermc.paper.registry.data.dialog.ActionButton;
@@ -81,6 +89,8 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickCallback;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -158,7 +168,6 @@ public class BingoReloadedPaper extends JavaPlugin implements BingoReloadedRunti
 		Bukkit.getPluginManager().registerEvents(this, this);
 		this.server = new PaperServer(tasks);
 		bingo.enable(resources);
-
 
 		this.menuBoard = new MenuBoard(new GameContext(server, bingo));
 		this.inventoryListener = new InventoryEventListener(menuBoard, server.menus());
@@ -289,19 +298,18 @@ public class BingoReloadedPaper extends JavaPlugin implements BingoReloadedRunti
 	}
 
 	@Override
-	public void registerExtraActions(BingoConfigurationData config) {
-//		registerCommand("bingotest", new BingoTestCommand(this));
-		if (config.getOptionValue(BingoOptions.ENABLE_TEAM_CHAT)) {
-			TeamChatCommand command = new TeamChatCommand(player -> bingo.getGameManager().getSessionFromWorld(player.world()));
-			registerAction(false, command);
-			Bukkit.getPluginManager().registerEvents(command, this);
-		}
-	}
-
-	@Override
-	public void registerAction(boolean allowConsole, ActionTree action) {
+	public void registerCommands(BingoConfigurationData config) {
 		getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, event -> {
-			event.registrar().register(action.name(), new CommandTemplate(server, bingo, allowConsole, action));
+			MappedCommand.Settings<CommandSourceStack> settings = new MappedCommand.Settings<>(this::mapCommandSource, ArgumentTypes.key());
+			event.registrar().register(new BingoCommand<>(bingo.config(), settings).builder().build());
+			event.registrar().register(new AutoBingoCommand<>(settings).builder().build());
+			event.registrar().register(new BingoConfigCommand<>(bingo.config(), settings).builder().build());
+
+			if (config.getOptionValue(BingoOptions.ENABLE_TEAM_CHAT)) {
+				TeamChatCommand command = new TeamChatCommand(player -> bingo.getGameManager().getSessionFromWorld(player.world()), settings);
+				event.registrar().register(command.builder().build());
+				Bukkit.getPluginManager().registerEvents(command, this);
+			}
 		});
 	}
 
@@ -483,6 +491,19 @@ public class BingoReloadedPaper extends JavaPlugin implements BingoReloadedRunti
 		});
 
 		return handle;
+	}
+
+	private BingoCommandSource mapCommandSource(CommandSourceStack source) {
+		CommandSender sender = source.getSender();
+		ActionUser user;
+		if (sender instanceof Player player) {
+			user = new PlayerHandlePaper(server, player);
+		} else if (sender instanceof ConsoleCommandSender console) {
+			user = new ConsoleActionUser(console);
+		} else {
+			user = new DefaultActionUser(false);
+		}
+		return new BingoCommandSource(new GameContext(server, bingo), user);
 	}
 
 }

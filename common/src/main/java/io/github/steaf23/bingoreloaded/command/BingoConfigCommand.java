@@ -1,9 +1,10 @@
-package io.github.steaf23.bingoreloaded.action;
+package io.github.steaf23.bingoreloaded.command;
 
+import com.mojang.brigadier.Command;
+import com.mojang.brigadier.context.CommandContext;
 import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.data.config.ConfigurationOption;
-import io.github.steaf23.bingoreloaded.lib.action.ActionResult;
-import io.github.steaf23.bingoreloaded.lib.action.ActionTree;
+import io.github.steaf23.bingoreloaded.data.config.EnumOption;
 import io.github.steaf23.bingoreloaded.protocol.message.MessageParser;
 import io.github.steaf23.bingoreloaded.util.BingoPlayerSender;
 import net.kyori.adventure.audience.Audience;
@@ -15,40 +16,39 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-public class BingoConfigAction extends ActionTree {
+public class BingoConfigCommand<Source> extends MappedCommand<Source> {
     private final BingoConfigurationData configuration;
 
-    public BingoConfigAction(BingoConfigurationData configuration) {
-		super("bingoconfig", List.of("bingo.admin"));
+    public BingoConfigCommand(BingoConfigurationData configuration, Settings<Source> settings) {
+		super("bingoconfig", List.of("bingo.admin"), settings);
 		this.configuration = configuration;
 
-        setAction((args) -> {
-            if (getLastUser() == null) {
-                return ActionResult.IGNORED;
-            }
+		for (ConfigurationOption<?> option : allOptions(true)) {
 
-            if (args.length == 1) {
-                return readOption(getLastUser(), args[0]);
-            }
-            if (args.length >= 2) {
-                return writeOption(getLastUser(), args[0], String.join(" ", Arrays.copyOfRange(args, 1, args.length)));
-            }
+			var valueArg = argument("value", option.argumentType())
+					.executes(executor((source, context) -> {
+						return writeOption(source.user(), option, context);
+					}));
+			if (option instanceof EnumOption<?> enumOption) {
+				valueArg.suggests((context, builder) -> {
+					return suggestAll(builder, Arrays.stream(enumOption.enumClass().getEnumConstants()).toList(), Enum::name);
+				});
+			}
 
-            return ActionResult.INCORRECT_USE;
-        }).addTabCompletion(args ->
-                switch (args.length) {
-                    case 1 -> allOptionKeys(true);
-                    default -> COMPLETE_NOTHING;
-                })
-                .addUsage("<option> [new_value]");
+			then(literal(option.getConfigName())
+					.executes(executor((source, context) -> {
+						return readOption(source.user(), option.getConfigName());
+					}))
+					.then(valueArg));
+		}
     }
 
-    private ActionResult readOption(Audience sender, String optionKey) {
+    private int readOption(Audience sender, String optionKey) {
         Optional<ConfigurationOption<?>> someOption = configuration.getOptionFromName(optionKey);
 
         if (someOption.isEmpty()) {
             BingoPlayerSender.sendMessage(MessageParser.MINI_BUILDER.deserialize("Config option '<red>" + optionKey + "</red>' doesn't exist."), sender);
-            return ActionResult.INCORRECT_USE;
+            return 0;
         }
 
         ConfigurationOption<?> option = someOption.get();
@@ -57,35 +57,28 @@ public class BingoConfigAction extends ActionTree {
         BingoPlayerSender.sendMessage(
                 MessageParser.MINI_BUILDER.deserialize("Config option <yellow>" + optionKey + "</yellow> is set to: ")
                         .append(Component.text(value).color(getColorOfOptionValue(value))), sender);
-        return ActionResult.SUCCESS;
+        return Command.SINGLE_SUCCESS;
     }
 
-    private ActionResult writeOption(Audience sender, String optionKey, String value) {
-        Optional<ConfigurationOption<?>> someOption = configuration.getOptionFromName(optionKey);
-
-        if (someOption.isEmpty()) {
-            BingoPlayerSender.sendMessage(MessageParser.MINI_BUILDER.deserialize("Config option '<red>" + optionKey + "</red>' doesn't exist."), sender);
-            return ActionResult.INCORRECT_USE;
-        }
-
-        ConfigurationOption<?> option = someOption.get();
-
+    private <T> int writeOption(Audience sender, ConfigurationOption<T> option, CommandContext<?> context) {
         if (option.isLocked()) {
             BingoPlayerSender.sendMessage(MessageParser.MINI_BUILDER.deserialize("<red>This option is not (yet) available, please wait for a future update.</red>"), sender);
-            return ActionResult.INCORRECT_USE;
+            return 0;
         }
         if (!option.canBeEdited()) {
             BingoPlayerSender.sendMessage(MessageParser.MINI_BUILDER.deserialize("<red>This option cannot be changed in-game. Please change it in the config.yml file and restart the server."), sender);
-            return ActionResult.IGNORED; // logically this is incorrect_use but technically the command was not used incorrectly.
+            return 0;
         }
-        if (!configuration.setOptionValueFromString(option, value)) {
-            BingoPlayerSender.sendMessage(MessageParser.MINI_BUILDER.deserialize("The value of option <yellow>" + optionKey + "</yellow> cannot be set to value <red>" + value), sender);
-            return ActionResult.IGNORED; // logically this is incorrect_use but technically the command was not used incorrectly.
-        }
+		Optional<T> value = option.fromArgument(context, "value");
+		if (value.isEmpty()) {
+			BingoPlayerSender.sendMessage(MessageParser.MINI_BUILDER.deserialize("The value of option <yellow>" + option.getConfigName() + "</yellow> cannot be set to value <red>" + value), sender);
+			return 0;
+		}
+        configuration.setOptionValue(option, value.get());
 
-		String newValue = configuration.getOptionValue(option).toString();
+		String newValue = value.get().toString();
 
-        BingoPlayerSender.sendMessage(MessageParser.MINI_BUILDER.deserialize("Value of option <yellow>" + optionKey + "</yellow> has been set to: ")
+        BingoPlayerSender.sendMessage(MessageParser.MINI_BUILDER.deserialize("Value of option <yellow>" + option.getConfigName() + "</yellow> has been set to: ")
                 .append(Component.text(newValue).color(getColorOfOptionValue(newValue))), sender);
         switch (option.getEditUpdateTime()) {
 			case IMMEDIATE -> {
@@ -101,10 +94,7 @@ public class BingoConfigAction extends ActionTree {
 			}
 		}
 
-        return ActionResult.SUCCESS;
-    }
-    private List<String> allOptionKeys() {
-        return allOptionKeys(false);
+        return Command.SINGLE_SUCCESS;
     }
 
     private List<String> allOptionKeys(boolean onlyEditable) {
@@ -114,13 +104,19 @@ public class BingoConfigAction extends ActionTree {
                 .toList();
     }
 
+	private List<ConfigurationOption<?>> allOptions(boolean onlyEditable) {
+		return configuration.getAvailableOptions().stream()
+				.filter(o -> o.canBeEdited() || !onlyEditable)
+				.toList();
+	}
+
     private static boolean isValueNumeric(String value) {
         return value.matches("-?\\d+(\\.\\d+)?");
     }
 
     private TextColor getColorOfOptionValue(String value) {
         TextColor result = NamedTextColor.BLUE;
-        if (BingoConfigAction.isValueNumeric(value)) {
+        if (BingoConfigCommand.isValueNumeric(value)) {
             result = NamedTextColor.AQUA;
         }
         else if (value.equals("false")) {

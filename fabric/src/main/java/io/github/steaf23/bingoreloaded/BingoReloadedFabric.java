@@ -1,12 +1,14 @@
 package io.github.steaf23.bingoreloaded;
 
-import com.mojang.brigadier.Command;
-import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import com.mojang.brigadier.context.CommandContext;
 import io.github.steaf23.bingoreloaded.api.BingoClientManager;
+import io.github.steaf23.bingoreloaded.api.BingoCommandSource;
 import io.github.steaf23.bingoreloaded.api.CardDisplayInfo;
 import io.github.steaf23.bingoreloaded.api.CardMenu;
 import io.github.steaf23.bingoreloaded.api.TeamDisplay;
+import io.github.steaf23.bingoreloaded.command.AutoBingoCommand;
+import io.github.steaf23.bingoreloaded.command.BingoCommand;
+import io.github.steaf23.bingoreloaded.command.BingoConfigCommand;
+import io.github.steaf23.bingoreloaded.command.MappedCommand;
 import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.data.config.BingoOptions;
 import io.github.steaf23.bingoreloaded.data.record.LeaderboardData;
@@ -22,7 +24,6 @@ import io.github.steaf23.bingoreloaded.gui.inventory.VoteMenu;
 import io.github.steaf23.bingoreloaded.gui.inventory.card.GenericCardMenu;
 import io.github.steaf23.bingoreloaded.gui.inventory.card.HotswapGenericCardMenu;
 import io.github.steaf23.bingoreloaded.gui.inventory.creator.BingoCreatorMenu;
-import io.github.steaf23.bingoreloaded.lib.action.ActionTree;
 import io.github.steaf23.bingoreloaded.lib.api.ActionUser;
 import io.github.steaf23.bingoreloaded.lib.api.BingoReloadedRuntime;
 import io.github.steaf23.bingoreloaded.lib.api.EntityType;
@@ -59,10 +60,9 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
 import net.fabricmc.loader.api.metadata.Person;
 import net.kyori.adventure.key.Key;
+import net.kyori.adventure.platform.modcommon.KeyArgumentType;
 import net.kyori.adventure.text.Component;
 import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.commands.Commands;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
@@ -154,33 +154,20 @@ public class BingoReloadedFabric implements ModInitializer, BingoReloadedRuntime
 	}
 
 	@Override
-	public void registerAction(boolean allowConsole, ActionTree action) {
+	public void registerCommands(BingoConfigurationData config) {
 		CommandRegistrationCallback.EVENT.register(((dispatcher, buildContext, selection) -> {
-			dispatcher.register(createActionsRecurse(action, action));
+			MappedCommand.Settings<CommandSourceStack> settings = new MappedCommand.Settings<>(this::mapCommandSource, KeyArgumentType.key());
+			dispatcher.register(new BingoCommand<>(bingo.config(), settings).builder());
+			dispatcher.register(new AutoBingoCommand<>(settings).builder());
+			dispatcher.register(new BingoConfigCommand<>(bingo.config(), settings).builder());
+
+			// TODO: add team chat command
+//			if (config.getOptionValue(BingoOptions.ENABLE_TEAM_CHAT)) {
+//				TeamChatCommand command = new TeamChatCommand(player -> bingo.getGameManager().getSessionFromWorld(player.world()), settings);
+//				dispatcher.register(command.buildCommand());
+//				Bukkit.getPluginManager().registerEvents(command, this);
+//			}
 		}));
-	}
-
-	LiteralArgumentBuilder<CommandSourceStack> createActionsRecurse(ActionTree mainAction, ActionTree action) {
-		var command = Commands.literal(action.name()).executes(ctx -> executeCommand(mainAction, action, ctx));
-		for (ActionTree subAction : action.subActions()) {
-			command.then(createActionsRecurse(mainAction, subAction));
-		}
-		return command;
-	}
-
-	public int executeCommand(ActionTree mainAction, ActionTree action, CommandContext<CommandSourceStack> context) {
-		MinecraftServer server = context.getSource().getServer();
-		FabricServer serverWrapper = new FabricServer(server, tasks);
-		ActionUser user = new PlayerHandleFabric(serverWrapper, context.getSource().getPlayer());
-		mainAction.setLastUser(user);
-		action.setLastUser(user);
-		action.getAction().execute(new GameContext(serverWrapper, bingo), new String[]{});
-
-		return Command.SINGLE_SUCCESS;
-	}
-
-	@Override
-	public void registerExtraActions(BingoConfigurationData config) {
 	}
 
 	@Override
@@ -310,5 +297,18 @@ public class BingoReloadedFabric implements ModInitializer, BingoReloadedRuntime
 				.toList();
 
 		return new ExtensionInfo(container.getMetadata().getName(), container.getMetadata().getVersion().getFriendlyString(), authors);
+	}
+
+	private BingoCommandSource mapCommandSource(CommandSourceStack source) {
+		ServerPlayer player = source.getPlayer();
+		ActionUser user;
+
+		// TODO: handle console sender
+		if (player != null) {
+			user = new PlayerHandleFabric(server, player);
+		} else {
+			user = null;
+		}
+		return new BingoCommandSource(new GameContext(server, bingo), user);
 	}
 }

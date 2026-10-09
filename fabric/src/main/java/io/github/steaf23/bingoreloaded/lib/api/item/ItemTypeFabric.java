@@ -35,6 +35,12 @@ public class ItemTypeFabric implements ItemType {
 	}
 
 	@Override
+	public boolean isPreferredTool(StackHandle tool) {
+		//TODO: implement this
+		return false;
+	}
+
+	@Override
 	public @NotNull Key key() {
 		return FabricTypes.keyFromId(BuiltInRegistries.ITEM.getKey(item));
 	}

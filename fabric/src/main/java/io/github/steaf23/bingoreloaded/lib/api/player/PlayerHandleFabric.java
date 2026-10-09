@@ -9,6 +9,7 @@ import io.github.steaf23.bingoreloaded.lib.api.WorldHandle;
 import io.github.steaf23.bingoreloaded.lib.api.WorldHandleFabric;
 import io.github.steaf23.bingoreloaded.lib.api.inventory.InventoryTemplate;
 import io.github.steaf23.bingoreloaded.lib.api.item.StackHandle;
+import io.github.steaf23.bingoreloaded.lib.api.item.StackHandleFabric;
 import io.github.steaf23.bingoreloaded.lib.api.platform.FabricServer;
 import io.github.steaf23.bingoreloaded.lib.api.platform.PlatformServer;
 import io.github.steaf23.bingoreloaded.lib.api.statistics.StatisticHandle;
@@ -117,6 +118,7 @@ public class PlayerHandleFabric implements PlayerHandle {
 
 	@Override
 	public boolean hasPermission(String permission) {
+		// TODO: Basically don't do this and instead implement actual permission checks?
 		return true;
 	}
 
@@ -165,6 +167,17 @@ public class PlayerHandleFabric implements PlayerHandle {
 	}
 
 	@Override
+	public LookDirection lookDirection() {
+		return new LookDirection(player.getXRot(), player.getYRot());
+	}
+
+	@Override
+	public void setLookDirection(LookDirection direction) {
+		player.setXRot(direction.pitch());
+		player.setYRot(direction.yaw());
+	}
+
+	@Override
 	public void clearInventory() {
 		player.getInventory().clearContent();
 	}
@@ -172,6 +185,16 @@ public class PlayerHandleFabric implements PlayerHandle {
 	@Override
 	public void tryOpenInventory(InventoryTemplate inventory) {
 
+	}
+
+	@Override
+	public StackHandle getItemInMainHand() {
+		return new StackHandleFabric(player.getMainHandItem());
+	}
+
+	@Override
+	public StackHandle getItemInOffHand() {
+		return new StackHandleFabric(player.getOffhandItem());
 	}
 
 	@Override
@@ -265,6 +288,16 @@ public class PlayerHandleFabric implements PlayerHandle {
 	@Override
 	public void setWaypointColor(@Nullable TextColor color) {
 		player.waypointIcon().color = color == null ? Optional.empty() : Optional.of(color.value());
+	}
+
+	@Override
+	public void throwPearl(boolean fromOffhand) {
+
+	}
+
+	@Override
+	public void breakBlock(GlobalPosition position) {
+
 	}
 
 	@Override

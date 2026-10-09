@@ -15,8 +15,10 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Optional;
 
 public enum PlayerKit
 {
@@ -80,6 +82,10 @@ public enum PlayerKit
         this.defaultEffects = defaultEffects;
     }
 
+    public String configName() {
+        return configName;
+    }
+
     private DefaultKitData getDefaultKitData() {
         if (DEFAULT_KIT_DATA == null) {
             DEFAULT_KIT_DATA = new DefaultKitData();
@@ -98,7 +104,8 @@ public enum PlayerKit
 
     public Component getDisplayName() {
         if (isCustomKit()) {
-            return getCustomKitData().getCustomKit(this).name();
+            Optional<CustomKit> kit = getCustomKitData().getCustomKit(this);
+            return kit.map(CustomKit::name).orElse(Component.text("<" + this.configName + ">(deleted)"));
         }
         return displayName;
     }
@@ -108,18 +115,12 @@ public enum PlayerKit
         List<SerializableItem> items = switch (this)
         {
             case HARDCORE, NORMAL, OVERPOWERED, RELOADED -> {
-                DefaultKitData.Kit kit = getDefaultKitData().getKit(this);
-                if (kit != null) {
-                    yield kit.items();
-                }
-                yield List.of();
+                Optional<DefaultKitData.Kit> kit = getDefaultKitData().getKit(this);
+                yield kit.map(DefaultKitData.Kit::items).orElse(List.of());
             }
             case CUSTOM_1, CUSTOM_2, CUSTOM_3, CUSTOM_4, CUSTOM_5 -> {
-                CustomKit kit = getCustomKitData().getCustomKit(this);
-                if (kit != null) {
-                    yield kit.items();
-                }
-                yield List.of();
+                Optional<CustomKit> kit = getCustomKitData().getCustomKit(this);
+                yield kit.map(CustomKit::items).orElse(List.of());
             }
         };
 
@@ -130,7 +131,7 @@ public enum PlayerKit
 
     public int getCardSlot() {
         if (isCustomKit()) {
-            return getCustomKitData().getCustomKit(this).cardSlot();
+            return getCustomKitData().getCustomKit(this).map(CustomKit::cardSlot).orElse(40);
         }
         else {
             // off-hand slot: 40
@@ -143,7 +144,11 @@ public enum PlayerKit
     }
 
     public boolean isValid() {
-        return !isCustomKit() || (PlayerKit.customKits().contains(this) && getCustomKitData().getCustomKit(this) != null);
+        return !isCustomKit() || (PlayerKit.customKits().contains(this) && getCustomKitData().getCustomKit(this).isPresent());
+    }
+
+    public static List<PlayerKit> validKits() {
+        return Arrays.stream(values()).filter(PlayerKit::isValid).toList();
     }
 
     public static PlayerKit fromConfig(String name)

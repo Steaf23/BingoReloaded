@@ -2,6 +2,12 @@ plugins {
     id 'java-library'
 }
 
+repositories {
+    maven {
+        url "https://libraries.minecraft.net"
+    }
+}
+
 dependencies {
     implementation project(":protocol")
 
@@ -14,6 +20,8 @@ dependencies {
     compileOnlyApi("net.kyori:adventure-text-minimessage:${adventure_version}")
     compileOnlyApi("net.kyori:adventure-text-serializer-plain:${adventure_version}")
     compileOnlyApi("net.kyori:adventure-text-serializer-legacy:${adventure_version}")
+
+    compileOnlyApi("com.mojang:brigadier:1.0.18")
 }
 
 java {

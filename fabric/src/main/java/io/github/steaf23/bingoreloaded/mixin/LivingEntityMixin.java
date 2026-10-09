@@ -2,6 +2,7 @@ package io.github.steaf23.bingoreloaded.mixin;
 
 import io.github.steaf23.bingoreloaded.lib.event.PlayerDroppedItem;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.Prediction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
@@ -17,10 +18,10 @@ public class LivingEntityMixin {
 
 	// Nearly identical to paper's patch for the PlayerDropItemEvent
 	@Inject(
-			method = "drop(Lnet/minecraft/world/item/ItemStack;ZZ)Lnet/minecraft/world/entity/item/ItemEntity;",
+			method = "drop",
 			at = @At("HEAD"),
 			cancellable = true)
-	private void onDrop(ItemStack itemStack, boolean randomly, boolean thrownFromHand, CallbackInfoReturnable<ItemEntity> cir) {
+	private void onDrop(ItemStack itemStack, boolean thrownFromHand, Prediction prediction, CallbackInfoReturnable<ItemEntity> cir) {
 		if (!thrownFromHand) {
 			return;
 		}
