@@ -178,6 +178,7 @@ teleportMaxDistance: 1000000
 #   - TEAM: everyone with their teammates (TEAM),
 #   - NONE: no one gets teleported at all (NONE),
 #   - GRID: use configured grid settings (only works on configuration: SINGULAR),
+#   - SPIRAL: use configured spiral settings (only works on configuration: SINGULAR),
 #   - using any other value will make it so no one teleports at all at the start of the game.
 playerTeleportStrategy: ALL
 
@@ -304,6 +305,26 @@ teleportGrid:
   size:
     x: 50
     z: 50
+  skipOceanBiomes: true
+
+# When true, the spawn positions become deterministic and are laid out in a spiral.
+# This teleportation method can be enabled by setting it in the playerTeleportStrategy.
+# This setting is useful if you want to be able to pre-generate the spawn for each round, but you still want the spawn points to be far apart
+# to prevent cheating.
+# This can help prevent players getting stuck at the edge of unloaded chunks as the server works to generate them on the fly.
+# For the default settings, the first spawn would be (0,0), the next (20k, 0), then (20k, 20k), then (0, 20k), then (-20k, 20k) etc.
+teleportSpiral:
+  # The start position for the spiral.
+  center:
+    x: 0
+    z: 0
+
+  # The step size of the spiral in X and Z dimensions
+  size:
+    x: 20000
+    z: 20000
+
+  # Whether the spiral should skip spawns in the ocean.
   skipOceanBiomes: true
 
 # ==========================================================================

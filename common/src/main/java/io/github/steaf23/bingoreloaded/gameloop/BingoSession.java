@@ -434,6 +434,10 @@ public class BingoSession implements ForwardingAudience
         return EventResult.IGNORE;
     }
 
+    public WorldGroup getWorldGroup() {
+        return worlds;
+    }
+
     public WorldHandle getOverworld() {
         return worlds.getOverworld();
     }

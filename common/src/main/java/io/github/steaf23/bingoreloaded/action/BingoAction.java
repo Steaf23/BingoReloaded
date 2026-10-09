@@ -8,6 +8,7 @@ import io.github.steaf23.bingoreloaded.data.CustomKitData;
 import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.data.config.BingoOptions;
 import io.github.steaf23.bingoreloaded.data.teleportgrid.TeleportGridData;
+import io.github.steaf23.bingoreloaded.data.teleportspiral.TeleportSpiralData;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gameloop.GameManager;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
@@ -425,6 +426,60 @@ public class BingoAction extends ActionTree {
 		this.addSubAction(new ActionTree("grid", List.of("bingo.admin"))
 				.addSubAction(resetGridAction)
 				.addSubAction(gridStatusAction));
+
+		// `/bingo spiral status`
+		// Tells the user what step of the spiral they are on and what the next spawn location will be.
+		ActionTree spiralStatusAction = new ActionTree("status", (args) -> {
+			TeleportSpiralData data = new TeleportSpiralData(config.getOptionValue(BingoOptions.TELEPORTATION_SPIRAL));
+			BingoPlayerSender.sendMessage(Component.text("Current step is " + data.getStep() + " and next spawn will be " + data.peekNextSpiralPosition()), getLastUser());
+			return ActionResult.SUCCESS;
+		});
+
+		// `/bingo spiral reset`
+		// Resets the spiral step back to zero.
+		ActionTree spiralResetAction = new ActionTree("reset", (args) -> {
+			TeleportSpiralData data = new TeleportSpiralData(config.getOptionValue(BingoOptions.TELEPORTATION_SPIRAL));
+			data.reset();
+			BingoPlayerSender.sendMessage(Component.text("Spiral has been reset back to step " + data.getStep()), getLastUser());
+			return ActionResult.SUCCESS;
+		});
+
+		// `/bingo spiral pregen <rounds> <radius>`
+		// Tells the bingo runtime to pre-generate the spawns for <rounds> rounds in the future,
+		// with a radius of <radius> blocks.
+		ActionTree spiralPregenAction = new ActionTree("pregen", (context, args) -> {
+		    TeleportSpiralData data = new TeleportSpiralData(config.getOptionValue(BingoOptions.TELEPORTATION_SPIRAL));
+
+            // Command must have both arguments.
+			if (args.length != 2) {
+			    return ActionResult.INCORRECT_USE;
+			}
+
+            // rounds and radius must both be integers, else the command is invalid.
+			int rounds, radius;
+
+			try {
+				rounds = Integer.parseInt(args[0]);
+			} catch (Exception e) {
+				return ActionResult.INCORRECT_USE;
+			}
+
+			try {
+				radius = Integer.parseInt(args[1]);
+			} catch (Exception e) {
+				return ActionResult.INCORRECT_USE;
+			}
+
+		    return context.runtime().pregenerateSpiral(data, rounds, radius, getLastUser());
+		}).addUsage("<rounds> <radius>");
+
+		// Only admins can run `/bingo spiral` commands.
+		this.addSubAction(
+		    new ActionTree("spiral", List.of("bingo.admin"))
+				.addSubAction(spiralStatusAction)
+				.addSubAction(spiralResetAction)
+				.addSubAction(spiralPregenAction)
+		);
 	}
 
 	public void addPlayerKit(String slot, String kitName, PlayerHandle fromPlayerInventory) {

@@ -10,11 +10,13 @@ import io.github.steaf23.bingoreloaded.api.CardMenu;
 import io.github.steaf23.bingoreloaded.api.TeamDisplay;
 import io.github.steaf23.bingoreloaded.api.TeamDisplayPaper;
 import io.github.steaf23.bingoreloaded.api.network.PaperClientManager;
+import io.github.steaf23.bingoreloaded.chunky.BingoReloadedChunkyBridge;
 import io.github.steaf23.bingoreloaded.data.BingoMessage;
 import io.github.steaf23.bingoreloaded.data.DataUpdaterV3_6_0;
 import io.github.steaf23.bingoreloaded.data.config.BingoConfigurationData;
 import io.github.steaf23.bingoreloaded.data.config.BingoOptions;
 import io.github.steaf23.bingoreloaded.data.record.LeaderboardData;
+import io.github.steaf23.bingoreloaded.data.teleportspiral.TeleportSpiralData;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gameloop.phase.BingoGame;
 import io.github.steaf23.bingoreloaded.gameloop.phase.PregameLobby;
@@ -29,7 +31,9 @@ import io.github.steaf23.bingoreloaded.gui.inventory.VoteMenu;
 import io.github.steaf23.bingoreloaded.gui.inventory.card.GenericCardMenu;
 import io.github.steaf23.bingoreloaded.gui.inventory.card.HotswapGenericCardMenu;
 import io.github.steaf23.bingoreloaded.gui.inventory.creator.BingoCreatorMenu;
+import io.github.steaf23.bingoreloaded.lib.action.ActionResult;
 import io.github.steaf23.bingoreloaded.lib.action.ActionTree;
+import io.github.steaf23.bingoreloaded.lib.api.ActionUser;
 import io.github.steaf23.bingoreloaded.lib.api.BingoReloadedRuntime;
 import io.github.steaf23.bingoreloaded.lib.api.EntityType;
 import io.github.steaf23.bingoreloaded.lib.api.EntityTypePaper;
@@ -116,6 +120,7 @@ public class BingoReloadedPaper extends JavaPlugin implements BingoReloadedRunti
 	private SharedDisplay settingsDisplay;
 	private BingoClientManager clientManager;
 	private CapacityInventoryProvider pouchInventoryProvider;
+	private BingoReloadedChunkyBridge chunkyBridge;
 
 	private final PaperResources resources;
 
@@ -184,6 +189,10 @@ public class BingoReloadedPaper extends JavaPlugin implements BingoReloadedRunti
 				return PlaceholderAPI.setPlaceholders(((PlayerHandlePaper)player).handle(), message);
 			});
 		}
+		
+		if (Bukkit.getPluginManager().isPluginEnabled("Chunky")) {
+            this.chunkyBridge = new BingoReloadedChunkyBridge(this.bingo);
+        }
 
 		eventListener = new EventListenerPaper(this, server, bingo.getGameManager().eventListener());
 
@@ -432,6 +441,17 @@ public class BingoReloadedPaper extends JavaPlugin implements BingoReloadedRunti
 				paperPlayer.dropItem(stackToDrop);
 			}
 		}
+	}
+
+	@Override
+	public ActionResult pregenerateSpiral(TeleportSpiralData data, int rounds, int radius, ActionUser user) {
+    	if (this.chunkyBridge != null) {
+            user.sendMessage(Component.text("Pre-generating for " + rounds + " rounds with radius of " + radius + " blocks"));
+            return this.chunkyBridge.preGenerate(data, rounds, radius, user);
+        }
+
+		user.sendMessage(Component.text("Pre-Generation unavailable: Chunky plugin not installed/enabled"));		
+	    return ActionResult.IGNORED;
 	}
 
 	@Override

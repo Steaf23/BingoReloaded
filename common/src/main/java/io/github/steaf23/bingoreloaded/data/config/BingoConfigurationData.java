@@ -1,6 +1,7 @@
 package io.github.steaf23.bingoreloaded.data.config;
 
 import io.github.steaf23.bingoreloaded.data.teleportgrid.TeleportationGrid;
+import io.github.steaf23.bingoreloaded.data.teleportspiral.TeleportationSpiral;
 import io.github.steaf23.bingoreloaded.lib.data.core.DataAccessor;
 import io.github.steaf23.bingoreloaded.lib.data.core.tag.TagDataType;
 import io.github.steaf23.bingoreloaded.lib.util.ConsoleMessenger;
@@ -118,6 +119,7 @@ public class BingoConfigurationData
 
         // Configuration SINGULAR
         setOptionValueForce(BingoOptions.TELEPORTATION_GRID, name -> config.getSerializable(name, TeleportationGrid.SERIALIZER));
+        setOptionValueForce(BingoOptions.TELEPORTATION_SPIRAL, name -> config.getSerializable(name, TeleportationSpiral.SERIALIZER));
 
         // Configuration: MULTIPLE
         setOptionValueForce(BingoOptions.DEFAULT_WORLDS, name -> new ConfigurationOption.StringList(config.getList(name, TagDataType.STRING)));
